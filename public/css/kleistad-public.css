@@ -1,0 +1,176 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+/*
+Description: stylesheet functions voor kleistad_plugin
+  Version: 4.0.0
+  Author: Eric Sprangers
+  Author URI: http://www.sprako.nl/
+  License: GPL2
+*/
+
+.ui-widget{
+  font-size:14px !important;
+}
+.ui-dialog-title{
+  display:none;
+}
+.ui-widget-content {
+  border: none;
+}
+.ui-tabs .ui-tabs-nav{
+  font-size:13px;
+}
+.ui-tabs-panel{
+  font-size:12px;
+  border: 2px solid #DDD;
+}
+
+.kleistad_hover {
+    color: blue;
+}
+
+input.kleistad_tijd {
+    width: 4em;
+}
+
+div.kleistad_fout {
+    background-color: #D4A190;
+    border-left: 6px solid #D67750;
+}
+div.kleistad_succes {
+    background-color: #A1D490;
+    border-left: 6px solid #6CD650;
+}
+div.kleistad_form_popup {
+    display: none;
+}
+table.kleistad_form {
+    vertical-align: middle;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-style: none;
+    border: none;
+    font-size: small;
+    padding: 0px;
+}
+table.kleistad_form tr {
+    margin: 0;
+}
+table.kleistad_form td {
+    border-style: none;
+}
+table.kleistad_form th {
+    border-style: none;
+    text-align: center;
+}
+table.kleistad_form>tfoot>tr:last-child th { 
+    padding: 2px; 
+}
+table.kleistad_form input[type=text], select {
+    width: 100%;
+}
+table.kleistad_form select {
+    -webkit-appearance: menulist-button;
+    font-size:small;
+}
+table.kleistad_form button {
+    font-size: small;
+    height: 2.5em;
+    width: 100%;
+    padding: 0px;
+}
+table.kleistad_form option, input {
+    font-size: small;
+    height: 2.1em;
+}
+table.kleistad_form input[type=number] {
+    width: 5em;
+}
+table.kleistad_form input[type=submit] {
+    font-size: small;
+    height: 2.5em;
+}
+table.kleistad_reserveringen {
+    width: 90%;
+    table-layout: auto;
+    vertical-align: middle;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-style: none;
+    font-size: small;
+}
+table.kleistad_reserveringen th {
+    border-style:solid;
+    border-width: 0px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    overflow: hidden;
+}
+table.kleistad_reserveringen th[colspan] {
+    text-align: center;
+    vertical-align: middle;
+}
+table.kleistad_reserveringen td {
+    border-style:solid;
+    border-width: 0px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    overflow: hidden;
+}
+table.kleistad_reserveringen td:nth-child(4n) {
+    text-align: right;
+}
+table.kleistad_reserveringen th[data-align='right'] {
+    text-align: right;
+}
+table.kleistad_reserveringen a {
+    color: black;
+    width: 100%;
+    text-decoration: none;
+}
+table.kleistad_reserveringen a:hover {
+    color: blue;
+    width: 100%;
+    text-decoration: none;
+    cursor: pointer;
+}
+table.kleistad_tabel {
+    table-layout: auto;
+    font-size: small;
+}
+table.kleistad_rapport {
+    table-layout: auto;
+}
+table.kleistad_rapport th {
+    font-size: small;
+    font-weight: bold;
+}
+table.kleistad_rapport td {
+    font-size: small;
+}
+table.kleistad_rapport thead {
+    background-color: #F2F2F2;
+}
+table.kleistad_rapport tr:nth-child(even) {
+    background-color: #F2F2F2;
+}
+
+@media screen and (max-width: 700px) {
+    table.kleistad_reserveringen th {
+        font-size: x-small;
+    }
+    table.kleistad_reserveringen td {
+        font-size: x-small;
+    }
+    table.kleistad_reserveringen button {
+        font-size: x-small;
+    }
+    table.kleistad_rapport th {
+        font-size: x-small;
+    }
+    table.kleistad_rapport td {
+        font-size: x-small;
+    }
+}
