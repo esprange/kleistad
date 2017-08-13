@@ -235,6 +235,9 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
     $inschrijvingen = get_user_meta($this->_cursist_id, 'kleistad_cursus', true);
     if (is_array($inschrijvingen) && (isset($inschrijvingen[$this->_cursus_id]))) {
       $this->_data = $inschrijvingen[$this->_cursus_id];
+      if (!isset($this->_data['geannuleerd'])) {
+        $this->_data['geannuleerd'] = 0; // voor oude inschrijvingen
+      }
     } else {
       $this->_data = $default_data;
     }
