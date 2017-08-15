@@ -135,6 +135,7 @@ if (!Kleistad_Roles::override()) :
                     'docent' => $row['cursus']->docent,
                     'technieken' => $row['cursus']->technieken,
                     'vervallen' => $row['cursus']->vervallen,
+                    'vol' => $row['cursus']->vol,
                     'techniekkeuze' => $row['cursus']->techniekkeuze,
                     'inschrijfkosten' => $row['cursus']->inschrijfkosten,
                     'cursuskosten' => $row['cursus']->cursuskosten,
