@@ -84,7 +84,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
       case 'vervallen':
       case 'vol':
       case 'techniekkeuze':
-        return $this->_data[$attribuut] === 1;
+        return $this->_data[$attribuut] == 1;
       case 'array':
         return $this->_data;
       default:
