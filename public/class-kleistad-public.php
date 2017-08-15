@@ -223,11 +223,7 @@ class Kleistad_Public {
       wp_enqueue_script($this->plugin_name . $form);
     }
 
-    $formwords = explode('_', $form);
-    foreach ($formwords as &$formword) {
-      $formword = ucfirst($formword);
-    }
-    $formClass = 'Kleistad_Public_' . implode($formwords);
+    $formClass = 'Kleistad_Public_' . str_replace(' ', '', ucwords(str_replace('_', ' ', $form))); 
     $formObject = new $formClass($this->plugin_name, $atts);
 
     if (!is_null(filter_input(INPUT_POST, 'kleistad_submit_' . $form))) {
