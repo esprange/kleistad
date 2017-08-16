@@ -263,7 +263,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
       case 'c_betaald':
       case 'geannuleerd':
       case 'bericht':
-        return $this->_data[$attribuut] === 1;
+        return $this->_data[$attribuut] == 1;
       default:
         return $this->_data[$attribuut];
     }
