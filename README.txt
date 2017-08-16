@@ -1,10 +1,10 @@
-=== Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
+=== Kleistad ===
+Contributors: esprange
 Donate link: www.sprako.nl/wordpress/eric
-Tags: comments, spam
-Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 4.3
+Tags: comments
+Requires at least: 4.8.0
+Tested up to: 4.8.0
+Stable tag: 4.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,6 +39,9 @@ Reguliere Wordpress plugin installatie door:
 2. Activering plugin in het Wordpress 'plugins' menu.
 
 Plaats de shortcodes in de pagina's
+
+== Screenshot ==
+* None yet
 
 == Changelog ==
 

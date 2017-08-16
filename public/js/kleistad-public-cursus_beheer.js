@@ -36,12 +36,33 @@
 
         });
 
-
+        $.widget("ui.timespinner", $.ui.spinner, {
+            options: {
+                step: 15,
+                page: 60,
+                max: 60 * 23 + 45,
+                min: 0
+            },
+            _parse: function (value) {
+                if (typeof value === "string") {
+                    if (Number( value) == value ) {
+                        return Number (value);
+                    } 
+                    var hours = value.substring(0,2);
+                    var minutes = value.substring(3);
+                    return Number(hours * 60) + Number(minutes);
+                }
+                return value;
+            },
+            _format: function (value) {
+                var hours = Math.floor(value / 60);
+                var minutes = value % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        
         $(".kleistad_tijd").each(function () {
-            $(this).timeEntry({
-                show24Hours: true,
-                spinnerImage: ""
-            });
+            $(this).timespinner();
         });
 
         $(".kleistad_datum").each(function () {

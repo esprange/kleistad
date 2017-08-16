@@ -75,9 +75,7 @@ abstract class Kleistad_Public_Shortcode {
    * @return string
    */
   public static function wp_mail_from_callback($old) {
-    $domein = substr(strrchr(get_option('admin_email'), '@'), 1);
-    $from_email = 'no-reply@' . $domein;
-    return $from_email;
+    return 'no-reply@' . substr(strrchr(get_option('admin_email'), '@'), 1);
   } 
 
   /**
@@ -108,11 +106,11 @@ abstract class Kleistad_Public_Shortcode {
         'from' => 'no-reply@' . $domein,
         'copy' => 'stook@' . $domein,];
 
-    if (! has_filter ('wp_mail_from', ['Kleistad_Public_Shortcode', 'wp_mail_from_callback'] )) {
-      add_filter('wp_mail_from', ['Kleistad_Public_Shortcode', 'wp_mail_from_callback']);
+    if (! has_filter ('wp_mail_from', [static::class, 'wp_mail_from_callback'] )) {
+      add_filter('wp_mail_from', [static::class, 'wp_mail_from_callback']);
     }
-    if (! has_filter ('wp_mail_from_name', ['Kleistad_Public_Shortcode', 'wp_mail_from_name_callback'] )) {
-      add_filter('wp_mail_from_name', ['Kleistad_Public_Shortcode', 'wp_mail_from_name_callback']);
+    if (! has_filter ('wp_mail_from_name', [static::class, 'wp_mail_from_name_callback'] )) {
+      add_filter('wp_mail_from_name', [static::class, 'wp_mail_from_name_callback']);
     }
     $headers[] = "Content-Type: text/html; charset=UTF-8";
     $headers[] = "From: Kleistad <{$emailadresses['from']}>";

@@ -91,15 +91,13 @@ class Kleistad_Public {
    * @since    4.0.0
    */
   public function register_scripts() {
-    wp_register_script('time-entry-plugin', plugin_dir_url(__FILE__) . 'vendor/timeentry/jquery.plugin.min.js', ['jquery']);
-    wp_register_script('time-entry', plugin_dir_url(__FILE__) . 'vendor/timeentry/jquery.timeentry.min.js', ['jquery', 'time-entry-plugin',]);
     wp_register_script('datatables', "//cdn.datatables.net/1.10.15/js/jquery.dataTables.js", ['jquery']);
     wp_register_script($this->plugin_name . 'cursus_inschrijving', plugin_dir_url(__FILE__) . 'js/kleistad-public-cursus_inschrijving.js', ['jquery',], $this->version, false);
     wp_register_script($this->plugin_name . 'abonnee_inschrijving', plugin_dir_url(__FILE__) . 'js/kleistad-public-abonnee_inschrijving.js', ['jquery', 'jquery-ui-datepicker',], $this->version, false);
-    wp_register_script($this->plugin_name . 'cursus_beheer', plugin_dir_url(__FILE__) . 'js/kleistad-public-cursus_beheer.js', ['jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-datepicker', 'time-entry', 'datatables',], $this->version, false);
+    wp_register_script($this->plugin_name . 'cursus_beheer', plugin_dir_url(__FILE__) . 'js/kleistad-public-cursus_beheer.js', ['jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables',], $this->version, false);
     wp_register_script($this->plugin_name . 'saldo', plugin_dir_url(__FILE__) . 'js/kleistad-public-saldo.js', ['jquery', 'jquery-ui-datepicker',], $this->version, false);
     wp_register_script($this->plugin_name . 'stookbestand', plugin_dir_url(__FILE__) . 'js/kleistad-public-stookbestand.js', ['jquery', 'jquery-ui-datepicker',], $this->version, false);
-    wp_register_script($this->plugin_name . 'registratie_overzicht', plugin_dir_url(__FILE__) . 'js/kleistad-public-registratie_overzicht.js', ['jquery', 'jquery-ui-dialog', 'time-entry', 'datatables'], $this->version, false);
+    wp_register_script($this->plugin_name . 'registratie_overzicht', plugin_dir_url(__FILE__) . 'js/kleistad-public-registratie_overzicht.js', ['jquery', 'jquery-ui-dialog', 'datatables'], $this->version, false);
     wp_register_script($this->plugin_name . 'rapport', plugin_dir_url(__FILE__) . 'js/kleistad-public-rapport.js', ['jquery', 'jquery-ui-dialog', 'datatables'], $this->version, false);
     wp_register_script($this->plugin_name . 'betalingen', plugin_dir_url(__FILE__) . 'js/kleistad-public-betalingen.js', ['jquery', 'jquery-ui-dialog', 'datatables'], $this->version, false);
     wp_register_script($this->plugin_name . 'reservering', plugin_dir_url(__FILE__) . 'js/kleistad-public-reservering.js', ['jquery', 'jquery-ui-dialog',], $this->version, false);
