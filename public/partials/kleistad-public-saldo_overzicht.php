@@ -14,7 +14,7 @@ if (!Kleistad_Roles::override()) : ?>
 <p>Geen toegang tot dit formulier</p>
 <?php else : extract ($data); ?>
 
-<table class="kleistad_rapport">
+<table class="kleistad_rapport" id="kleistad_saldo_overzicht">
     <thead>
         <tr><th>Naam</th><th>Saldo</th></tr>
     </thead>

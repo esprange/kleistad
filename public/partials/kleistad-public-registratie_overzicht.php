@@ -44,7 +44,8 @@ if (!Kleistad_Roles::override()) :
           <?php foreach ($registraties as $registratie) : ?>
             <tr class="kleistad_deelnemer_info" 
                 data-inschrijvingen='<?php echo json_encode($registratie["inschrijvingen"]) ?>'
-                data-deelnemer='<?php echo json_encode($registratie["deelnemer_info"]) ?>' >
+                data-deelnemer='<?php echo json_encode($registratie["deelnemer_info"]) ?>' 
+                data-abonnee='<?php echo json_encode($registratie["abonnee_info"]) ?>' >
                 <td><?php echo $registratie['is_lid'] ?></td>
                 <td><?php echo $registratie['cursuslijst'] ?></td>
                 <td><?php echo $registratie['achternaam'] ?></td>

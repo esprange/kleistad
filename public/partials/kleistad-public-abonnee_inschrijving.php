@@ -37,8 +37,8 @@ if (is_user_logged_in() && !is_super_admin()) :
         </tr>
         <tr>
             <td><label for="kleistad_start_datum">Start abonnement</label></td>
-            <td colspan="2"><input id="kleistad_start_datum" class="kleistad_datum" type="text" name="start_datum" value="" /></td>
-            <td></td>
+            <td><input id="kleistad_start_datum" class="kleistad_datum" type="text" name="start_datum" value="<?php echo date('d-m-Y') ?>" /></td>
+            <td colspan="2"></td>
         </tr>
         <?php if (is_super_admin()) : ?>
         <tr>
@@ -77,7 +77,7 @@ if (is_user_logged_in() && !is_super_admin()) :
             <td colspan="2" ><input type="text" name="plaats" id="kleistad_plaats" required maxlength="50" placeholder="MijnWoonplaats" value="<?php echo $input['plaats'] ?>" /></td>
         </tr>
         <?php endif ?>
-        <tr title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zijn voor de cursus indeling" >
+        <tr title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad" >
             <td><label for="kleistad_opmerking_veld">Opmerking</label></td>
             <td colspan="3" ><textarea name="opmerking" id="kleistad_opmerking_veld" rows="5" cols="50"><?php echo $input['opmerking'] ?></textarea>
             </td>

@@ -29,23 +29,6 @@ class Kleistad_Public_CursusInschrijving extends Kleistad_Public_Shortcode {
    */
   public function prepare($data = null) {
 
-    $cursusStore = new Kleistad_Cursussen();
-    $cursussen = $cursusStore->get();
-    foreach ($cursussen as $cursus) {
-
-      if ($cursus->eind_datum < time()) {
-        continue; 
-      }
-      $open_cursussen[$cursus->id] = ['naam' => $cursus->naam .
-          ', start ' . strftime('%A %d-%m-%y', $cursus->start_datum) .
-          ' vanaf ' . strftime('%H:%M', $cursus->start_tijd) .
-          ($cursus->vervallen ? ': vervallen' : ($cursus->vol ? ': vol' : '')),
-          'vol' => $cursus->vol,
-          'vervallen' => $cursus->vervallen,
-          'technieken' => $cursus->technieken,
-      ];
-    }
-
     if (is_null($data)) {
       $input = [
           'emailadres' => '',
@@ -63,7 +46,24 @@ class Kleistad_Public_CursusInschrijving extends Kleistad_Public_Shortcode {
       extract($data);
     }
     $gebruikers = get_users(['fields' => ['id', 'display_name'], 'orderby' => ['nicename']]);
+    $open_cursussen = [];
+    
+    $cursusStore = new Kleistad_Cursussen();
+    $cursussen = $cursusStore->get();
+    foreach ($cursussen as $cursus) {
 
+      if ($cursus->eind_datum < time()) {
+        continue; 
+      }
+      $open_cursussen[$cursus->id] = ['naam' => $cursus->naam .
+          ', start ' . strftime('%A %d-%m-%y', $cursus->start_datum) .
+          ' vanaf ' . strftime('%H:%M', $cursus->start_tijd) .
+          ($cursus->vervallen ? ': vervallen' : ($cursus->vol ? ': vol' : '')),
+          'vol' => $cursus->vol,
+          'vervallen' => $cursus->vervallen,
+          'technieken' => $cursus->technieken,
+      ];
+    }
     return compact('gebruikers', 'input', 'open_cursussen');
   }
 

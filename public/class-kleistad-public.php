@@ -93,9 +93,10 @@ class Kleistad_Public {
   public function register_scripts() {
     wp_register_script('datatables', "//cdn.datatables.net/1.10.15/js/jquery.dataTables.js", ['jquery']);
     wp_register_script($this->plugin_name . 'cursus_inschrijving', plugin_dir_url(__FILE__) . 'js/kleistad-public-cursus_inschrijving.js', ['jquery',], $this->version, false);
-    wp_register_script($this->plugin_name . 'abonnee_inschrijving', plugin_dir_url(__FILE__) . 'js/kleistad-public-abonnee_inschrijving.js', ['jquery', 'jquery-ui-datepicker',], $this->version, false);
+    wp_register_script($this->plugin_name . 'abonnee_inschrijving', plugin_dir_url(__FILE__) . 'js/kleistad-public-abonnee_inschrijving.js', ['jquery', 'jquery-ui-datepicker',], $this->version, true);
     wp_register_script($this->plugin_name . 'cursus_beheer', plugin_dir_url(__FILE__) . 'js/kleistad-public-cursus_beheer.js', ['jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables',], $this->version, false);
     wp_register_script($this->plugin_name . 'saldo', plugin_dir_url(__FILE__) . 'js/kleistad-public-saldo.js', ['jquery', 'jquery-ui-datepicker',], $this->version, false);
+    wp_register_script($this->plugin_name . 'saldo_overzicht', plugin_dir_url(__FILE__) . 'js/kleistad-public-saldo_overzicht.js', ['jquery', 'datatables',], $this->version, false);
     wp_register_script($this->plugin_name . 'stookbestand', plugin_dir_url(__FILE__) . 'js/kleistad-public-stookbestand.js', ['jquery', 'jquery-ui-datepicker',], $this->version, false);
     wp_register_script($this->plugin_name . 'registratie_overzicht', plugin_dir_url(__FILE__) . 'js/kleistad-public-registratie_overzicht.js', ['jquery', 'jquery-ui-dialog', 'datatables'], $this->version, false);
     wp_register_script($this->plugin_name . 'rapport', plugin_dir_url(__FILE__) . 'js/kleistad-public-rapport.js', ['jquery', 'jquery-ui-dialog', 'datatables'], $this->version, false);
@@ -237,12 +238,17 @@ class Kleistad_Public {
           }
         } else {
           $html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
+          $input = null;
         }
       } else {
         $html .= '<div class="kleistad_fout"><p>security fout</p></div>';
       }
     }
     $data = $formObject->prepare($input);
+    if (is_wp_error($data)) {
+      $html .= '<div class="kleistad_fout"><p>' . $data->get_error_message() . '</p></div>';
+      return $html;
+    }
     ob_start();
     require plugin_dir_path(dirname(__FILE__)) . 'public/partials/kleistad-public-' . $form . '.php';
     $html .= ob_get_contents();

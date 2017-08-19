@@ -1,5 +1,9 @@
 (function ($) {
     'use strict';
+    
+    $("#kleistad_start_datum").datepicker({
+        dateFormat: "dd-mm-yy"
+    });
 
     $(document).ready(function () {
         $('input[name=abonnement_keuze]').change(function () {
@@ -8,9 +12,6 @@
             } else {
                 $('#kleistad_dag').css('visibility', 'hidden');
             }
-        });
-        $(".kleistad_datum").datepicker({
-            dateFormat: "dd-mm-yy"
         });
 
     });

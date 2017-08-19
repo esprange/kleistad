@@ -28,14 +28,9 @@ class Kleistad_Public_RegistratieOverzicht extends Kleistad_Public_Shortcode {
    * @since   4.0.0
    */
   public function prepare($data = null) {
-    wp_enqueue_script('jquery-ui-dialog');
-    wp_enqueue_style('jqueryui-css');
-    wp_enqueue_style('datatables');
-    wp_enqueue_script('datatables');
-    wp_enqueue_script($this->plugin_name . 'registratie_overzicht');
-
     $cursusStore = new Kleistad_Cursussen();
     $cursussen = $cursusStore->get();
+    $registraties = [];
 
     $inschrijvingStore = new Kleistad_Inschrijvingen();
     $inschrijvingen = $inschrijvingStore->get();
@@ -44,6 +39,20 @@ class Kleistad_Public_RegistratieOverzicht extends Kleistad_Public_Shortcode {
     foreach ($gebruikers as $gebruiker_id => $gebruiker) {
       $cursuslijst = '';
       $inschrijvinglijst = [];
+      $is_lid = (!empty($gebruiker->rol) or ( is_array($gebruiker->rol) and ( count($gebruiker->rol) > 0 ) ) );
+      if ($is_lid) {
+        $abonnement = new Kleistad_Abonnement($gebruiker_id);
+        $abonnee_info = [
+          'code' => $abonnement->code,
+          'start_datum' => date('d-m-Y', $abonnement->start_datum),
+          'dag' => $abonnement->beperkt ? $abonnement->dag : '',
+          'beperkt' => $abonnement->beperkt ? 'beperkt' : 'onbeperkt',
+          'geannuleerd' => $abonnement->geannuleerd,
+          'opmerking' => $abonnement->opmerking,
+        ]; 
+      } else {
+        $abonnee_info = [];
+      }
       if (array_key_exists($gebruiker_id, $inschrijvingen)) {
         foreach ($inschrijvingen[$gebruiker_id] as $cursus_id => $inschrijving) {
           $cursuslijst .= 'C' . $cursus_id . ';';
@@ -68,9 +77,10 @@ class Kleistad_Public_RegistratieOverzicht extends Kleistad_Public_Shortcode {
       ];
 
       $registraties[] = [
-          'is_lid' => (!empty($gebruiker->rol) or ( is_array($gebruiker->rol) and ( count($gebruiker->rol) > 0 ) ) ),
+          'is_lid' => $is_lid,
           'cursuslijst' => $cursuslijst,
           'deelnemer_info' => $deelnemer_info,
+          'abonnee_info' => $abonnee_info,
           'inschrijvingen' => $inschrijvinglijst,
           'achternaam' => $gebruiker->achternaam,
           'voornaam' => $gebruiker->voornaam,

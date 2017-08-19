@@ -36,8 +36,8 @@ class Kleistad_Public_CursusBeheer extends Kleistad_Public_Shortcode {
 
     $gebruikerStore = new Kleistad_Gebruikers();
     $gebruikers = $gebruikerStore->get();
-
     $rows = [];
+
     foreach ($cursussen as $cursus_id => $cursus) {
       $wachtlijst = [];
       $ingedeeld = [];

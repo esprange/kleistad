@@ -37,8 +37,8 @@ class Kleistad_Activator {
    */
   public static function activate() {
     $default_options = [
-        'voltijd_abonnement' => 50,
-        'deeltijd_abonnement' => 30,
+        'onbeperkt_abonnement' => 50,
+        'beperkt_abonnement' => 30,
         'dagdelenkaart' => 60,
         'cursusprijs' => 130,
         'cursusinschrijfprijs' => 25,
@@ -46,12 +46,8 @@ class Kleistad_Activator {
         'kinderworkshopprijs' => 110,
         'termijn' => 4,
     ];
-    $options = get_option('kleistad-opties');
-    if ( $options ) {
-      $options = $options + $default_options;
-    }
+    $options = shortcode_atts( $default_options, get_option('kleistad-opties') );
     update_option('kleistad-opties', $options);
-
 
     $database_version = intval(get_option('kleistad-database-versie', 0));
     if ($database_version < self::DBVERSIE) {

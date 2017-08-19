@@ -13,9 +13,6 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
- *
  * @package    Kleistad
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
@@ -31,23 +28,27 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
    * @since   4.0.0
    */
   public function prepare($data = null) {
+    $error = new WP_Error();
     if (!Kleistad_Roles::reserveer()) {
-      return '';
+      $error->add('security', 'hiervoor moet je ingelogd zijn');
+      return $error;
     }
     $atts = shortcode_atts(['oven' => 'niet ingevuld'], $this->atts, 'kleistad_reservering');
     if (is_numeric($atts['oven'])) {
       $oven_id = $atts['oven'];
 
       $oven = new Kleistad_Oven($oven_id);
-      if (is_null($oven->id)) {
-        return "oven met id $oven_id is niet bekend in de database !";
+      if (!intval($oven->id)) {
+        $error->add('fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !');
+        return $error;
       }
 
       $gebruikers = get_users(['fields' => ['id', 'display_name'], 'orderby' => ['nicename']]);
       $huidige_gebruiker = wp_get_current_user();
       return compact('gebruikers', 'oven', 'huidige_gebruiker');
     } else {
-      return "<p>de shortcode bevat geen oven nummer tussen 1 en 999 !</p>";
+      $error->add('fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !');
+      return $error;
     }
   }
 
@@ -98,7 +99,6 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
               'programma' => '',
               'verdeling' => [['id' => $huidige_gebruiker_id, 'perc' => 100],
                   ['id' => 0, 'perc' => 0], ['id' => 0, 'perc' => 0], ['id' => 0, 'perc' => 0], ['id' => 0, 'perc' => 0],],
-              /* 'opmerking' => '', */
               'gereserveerd' => 0,
               'verwijderbaar' => 0,
               'wijzigbaar' => $wijzigbaar ? 1 : 0,
@@ -129,7 +129,6 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
                   'soortstook' => $reservering->soortstook,
                   'temperatuur' => $reservering->temperatuur,
                   'programma' => $reservering->programma,
-                  /* 'opmerking' => $reservering->opmerking,*/
                   'verdeling' => $reservering->verdeling,
                   'gebruiker_id' => $reservering->gebruiker_id,
                   'gebruiker' => $gebruiker_info->display_name,
@@ -151,10 +150,6 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
                     <td>{$selectie['soortstook']}</td>
                     <td>{$selectie['temperatuur']}</td>
                 </tr>";
-                /*   <td>{$selectie['opmerking']}</td> */
-//          break;
-//        default:
-//          break;
       }
       $rows[] = $row_html;
     }
@@ -194,7 +189,6 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
         $reservering->soortstook = sanitize_text_field($request->get_param('soortstook'));
         $reservering->programma = intval($request->get_param('programma'));
         $reservering->verdeling = $request->get_param('verdeling');
-        /* $reservering->opmerking = sanitize_text_field($request->get_param('opmerking')); */
         $reservering->save();
       } else {
         //er is door een andere gebruiker al een reservering aangemaakt, niet toegestaan

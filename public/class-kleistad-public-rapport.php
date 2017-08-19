@@ -28,11 +28,10 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
    * @since   4.0.0
    */
   public function prepare($data = null) {
-    //wp_enqueue_style('datatables');
-
     $huidige_gebruiker = wp_get_current_user();
     $naam = $huidige_gebruiker->display_name;
     $saldo = number_format((float) get_user_meta($huidige_gebruiker->ID, 'stooksaldo', true), 2, ',', '');
+    $items = [];
 
     $ovenStore = new Kleistad_Ovens();
     $ovens = $ovenStore->get();

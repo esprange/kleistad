@@ -41,12 +41,14 @@ class Kleistad_Oven extends Kleistad_Entity {
         'id' => null,
         'naam' => '',
         'kosten' => 0,
-        'beschikbaarheid' => [],
+        'beschikbaarheid' => json_encode([]),
     ];
-    if (is_null($oven_id)) {
-      $this->_data = $default_data;
-    } else {
-      $this->_data = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}kleistad_ovens WHERE id=$oven_id", ARRAY_A);
+    $this->_data = $default_data;
+    if (!is_null($oven_id)) {
+      $result = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}kleistad_ovens WHERE id=$oven_id", ARRAY_A);
+      if (!is_null($result)) {
+        $this->_data = $result;
+      }
     }
   }
 
@@ -197,7 +199,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
         'programma' => 0,
         'gemeld' => 0,
         'verwerkt' => 0,
-        'verdeling' => '',
+        'verdeling' => json_encode([]),
         'opmerking' => '',
     ];
     $this->_data = $default_data;

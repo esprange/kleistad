@@ -117,8 +117,8 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
 
       $gebruiker_id = email_exists($input['emailadres']);
       if ($gebruiker_id) {
-        $gebruiker = get_userdata($gebruiker_id);
-        if ($gebruiker->roles != '') {
+        $gebruiker = new Kleistad_Gebruiker($gebruiker_id);
+        if (Kleistad_Roles::reserveer($gebruiker_id)) {
           $error->add('niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen');
           return $error;
         }
@@ -141,7 +141,6 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
       $error->add('niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen');
       return $error;
     }
-    
 
     $abonnement = new Kleistad_Abonnement($gebruiker_id);
     $abonnement->soort = $input['abonnement_keuze'];

@@ -46,7 +46,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
         'start_tijd' => '',
         'eind_tijd' => '',
         'docent' => '',
-        'technieken' => '',
+        'technieken' => json_encode([]),
         'vervallen' => 0,
         'vol' => 0,
         'techniekkeuze' => 0,

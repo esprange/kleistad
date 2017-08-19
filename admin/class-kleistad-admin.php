@@ -143,11 +143,11 @@ class Kleistad_Admin {
    * @param int $user_id
    */
   public function check_role(&$errors, $update, &$user) {
-      if ((get_the_author_meta('kleistad_disable_user', $user->ID) == 1)) {
-        $user->role = '';
-      }    
+    if ((get_the_author_meta('kleistad_disable_user', $user->ID) == 1)) {
+      $user->role = '';
+    }
   }
-  
+
   /**
    * Add custom disabled column to users list
    *
@@ -245,23 +245,23 @@ class Kleistad_Admin {
   public function ovens_form_page_handler() {
     $message = '';
     $notice = '';
-
-    // this is default $item which will be used for new records
-    $default = [
-        'id' => 0,
-        'naam' => '',
-        'kosten' => 0,
-        'beschikbaarheid' => [],
-    ];
     // here we are verifying does this request is post back and have correct nonce
     if (isset($_REQUEST['nonce']) && wp_verify_nonce($_REQUEST['nonce'], 'kleistad_oven')) {
-      // combine our default item with request params
-      $item = shortcode_atts($default, $_REQUEST);
+      $item = filter_input_array(INPUT_POST, [
+          'id' => FILTER_SANITIZE_NUMBER_INT,
+          'naam' => FILTER_SANITIZE_STRING,
+          'kosten' => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_FRACTION],
+          'beschikbaarheid' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FORCE_ARRAY],
+      ]);
       // validate data, and if all ok save item to database
       // if id is zero insert otherwise update
       $item_valid = $this->validate_oven($item);
       if ($item_valid === true) {
-        $oven = new Kleistad_Oven($item['id']);
+        if ($item['id'] > 0) {
+          $oven = new Kleistad_Oven($item['id']);
+        } else {
+          $oven = new Kleistad_Oven();
+        }
         $oven->naam = $item['naam'];
         $oven->kosten = $item['kosten'];
         $oven->beschikbaarheid = $item['beschikbaarheid'];
@@ -276,16 +276,15 @@ class Kleistad_Admin {
       if (isset($_REQUEST['id'])) {
         $oven = new Kleistad_Oven($_REQUEST['id']);
       } else {
-       $oven = new Kleistad_Oven();
+        $oven = new Kleistad_Oven();
       }
       $item['id'] = $oven->id;
-      $item['naam']  = $oven->naam;
+      $item['naam'] = $oven->naam;
       $item['kosten'] = $oven->kosten;
       $item['beschikbaarheid'] = $oven->beschikbaarheid;
     }
     // here we adding our custom meta box
     add_meta_box('ovens_form_meta_box', 'Ovens', [$this, 'ovens_form_meta_box_handler'], 'oven', 'normal', 'default');
-
     require_once 'partials/kleistad-admin-ovens-form-page.php';
   }
 
@@ -431,7 +430,7 @@ class Kleistad_Admin {
     $gebruikers = get_users(['fields' => ['id', 'display_name'], 'orderby' => ['nicename'],]);
     $ovenStore = new Kleistad_Ovens();
     $ovens = $ovenStore->get();
-            
+
     require_once 'partials/kleistad-admin-regelingen-form-meta-box.php';
   }
 

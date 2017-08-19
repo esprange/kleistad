@@ -72,6 +72,7 @@
             $('#kleistad_deelnemer_info').dialog('open');
             var inschrijvingen = $(this).data('inschrijvingen');
             var deelnemer = $(this).data('deelnemer');
+            var abonnee = $(this).data('abonnee');
             $('#kleistad_deelnemer_tabel').empty();
             $('#kleistad_deelnemer_tabel')
                     .append('<tr><th colspan="6">' + deelnemer['naam'] + '<br/>' +
@@ -95,7 +96,14 @@
                     $('#kleistad_deelnemer_tabel').append(html + '</td></tr>');
                 });
             } else {
-                $('#kleistad_deelnemer_tabel').append('<tr><td colspan="6">Geen cursus inschrijvingen aanwezig</td></tr>');
+                $('#kleistad_deelnemer_tabel').append('<tr><td colspan="6" >Geen cursus inschrijvingen aanwezig</td></tr>');
+            }
+            if (typeof abonnee !== 'undefined') {
+                $('#kleistad_deelnemer_tabel').append('<tr><th colspan="2" ><Abonnee code</th><th>Type<br/>abonnement</th><th>Dag</th><th>Start<br/>Datum</th></tr>' +
+                        '<tr><td colspan="2" >' + abonnee['code'] + '</td><td>' + 
+                        abonnee['beperkt'] + '</td><td>' + 
+                        abonnee['dag'] + '</td><td>' + 
+                        abonnee['start_datum'] + '</td></tr>');
             }
         });
     });

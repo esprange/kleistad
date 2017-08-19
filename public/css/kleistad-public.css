@@ -35,6 +35,11 @@ input.kleistad_tijd {
     width: 4em;
 }
 
+input.kleistad_datum {
+    width: 8em;
+}
+
+
 div.kleistad_fout {
     background-color: #D4A190;
     border-left: 6px solid #D67750;
