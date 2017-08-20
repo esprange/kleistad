@@ -42,9 +42,9 @@ if (!Kleistad_Roles::override()) :
                       </tr>
                       <tr>
                           <th>Start</th>
-                          <td><input type="text" name="start_datum" id="kleistad_cursus_start_datum" class="kleistad_datum" required /></td>
+                          <td><input type="text" name="start_datum" id="kleistad_cursus_start_datum" class="kleistad_datum" required value="<?php echo date('d-m-Y') ?>" /></td>
                           <th>Eind</th>
-                          <td><input type="text" name="eind_datum" id="kleistad_cursus_eind_datum" class="kleistad_datum" required /></td>
+                          <td><input type="text" name="eind_datum" id="kleistad_cursus_eind_datum" class="kleistad_datum" required value="<?php echo date('d-m-Y') ?>" /></td>
                       </tr>
                       <tr>
                           <th>Begintijd</th>
@@ -163,5 +163,5 @@ if (!Kleistad_Roles::override()) :
   <?php endforeach ?>
       </tbody>
   </table>
-  <button id="kleistad_toevoegen_cursus_beheer" >Toevoegen</button>
+  <button id="kleistad_cursus_toevoegen" >Toevoegen</button>
 <?php endif ?>
