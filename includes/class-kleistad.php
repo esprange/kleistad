@@ -128,15 +128,12 @@ class Kleistad {
 
     $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
     $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-
     $this->loader->add_action('admin_menu', $plugin_admin, 'add_plugin_admin_menu');
     $this->loader->add_action('admin_init', $plugin_admin, 'register_settings' );
-    
     $this->loader->add_action('show_user_profile', $plugin_admin, 'use_profile_field');
     $this->loader->add_action('edit_user_profile', $plugin_admin, 'use_profile_field');
     $this->loader->add_action('personal_options_update', $plugin_admin, 'user_profile_field_save');
     $this->loader->add_action('edit_user_profile_update', $plugin_admin, 'user_profile_field_save');
-
     $this->loader->add_action('manage_users_custom_column', $plugin_admin, 'manage_users_column_content', 10, 3);
     $this->loader->add_action('admin_footer-users.php',	$plugin_admin, 'manage_users_css');
     
@@ -158,9 +155,7 @@ class Kleistad {
     $this->loader->add_action('wp_login', $plugin_public, 'user_login', 10, 2);
     $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'register_styles');
     $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'register_scripts');
-
     $this->loader->add_action('delete_user', $plugin_public, 'verwijder_gebruiker');
-
     $this->loader->add_action('rest_api_init', $plugin_public, 'register_endpoints');
     $this->loader->add_action('kleistad_kosten', $plugin_public, 'update_ovenkosten');
 
