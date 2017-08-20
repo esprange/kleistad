@@ -380,7 +380,7 @@ class Kleistad_Regelingen {
    * @access private
    * @var array $_data contains regeling attributes.
    */
-  private $_data;
+  private $_data = [];
 
   /**
    * Constructor
