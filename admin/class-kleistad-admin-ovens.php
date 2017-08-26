@@ -3,13 +3,13 @@
 /**
  * The admin-specific functionality for management of ovens of the plugin.
  *
- * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @link www.sprako.nl/wordpress/eric
+ * @since 4.0.0
  *
- * @package    Kleistad
+ * @package Kleistad
  * @subpackage Kleistad/admin
  */
-if ( !class_exists( 'WP_List_Table' ) ) {
+if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
@@ -19,7 +19,7 @@ if ( !class_exists( 'WP_List_Table' ) ) {
 class Ovens_List_Table extends WP_List_Table {
 
 	/**
-	 * 
+	 * Constructor
 	 */
 	function __construct() {
 		parent::__construct( [
@@ -29,7 +29,8 @@ class Ovens_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 *
+	 * Set the defaults for columns
+	 * 
 	 * @param $item - row (key, value array)
 	 * @param $column_name - string (key)
 	 * @return HTML
@@ -39,8 +40,9 @@ class Ovens_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 *
-	 * @param $item - row (key, value array)
+	 * Render the column naam with the actions
+	 * 
+	 * @param array $item - row (key, value array)
 	 * @return HTML
 	 */
 	function column_naam( $item ) {
@@ -52,29 +54,24 @@ class Ovens_List_Table extends WP_List_Table {
 		);
 	}
 
+	/**
+	 * render the column beschikbaarheid
+	 * 
+	 * @param array $item - row (key, value array)
+	 * @return HTML
+	 */
 	function column_beschikbaarheid( $item ) {
 		$beschikbaarheid = json_decode( $item[ 'beschikbaarheid' ], true );
 		return implode( ', ', $beschikbaarheid );
 	}
 
 	/**
-	 *
-	 * @param $item - row (key, value array)
-	 * @return HTML
-	 */
-	function column_cb( $item ) {
-		return sprintf(
-		'<input type="checkbox" name="id[]" value="%s" />', $item[ 'id' ]
-		);
-	}
-
-	/**
-	 *
+	 * return the column titles
+	 * 
 	 * @return array
 	 */
 	function get_columns() {
 		$columns = [
-//            'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 			'naam'				 => 'Naam',
 			'kosten'			 => 'Tarief',
 			'beschikbaarheid'	 => 'Beschikbaarheid',
@@ -84,7 +81,8 @@ class Ovens_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 *
+	 * define the sortable columns
+	 * 
 	 * @return array
 	 */
 	function get_sortable_columns() {
@@ -100,7 +98,7 @@ class Ovens_List_Table extends WP_List_Table {
 	 */
 	function prepare_items() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'kleistad_ovens'; // do not forget about tables prefix
+		$table_name = $wpdb->prefix . 'kleistad_ovens';
 
 		$per_page = 5; // constant, how much records will be shown per page
 
@@ -108,12 +106,10 @@ class Ovens_List_Table extends WP_List_Table {
 		$hidden		 = [];
 		$sortable	 = $this->get_sortable_columns();
 
-// here we configure table headers, defined in our methods
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-// will be used in pagination settings
 		$total_items = $wpdb->get_var( "SELECT COUNT(id) FROM $table_name" );
-// prepare query params, as usual current page, order by and order direction
+
 		$paged		 = isset( $_REQUEST[ 'paged' ] ) ? max( 0, intval( $_REQUEST[ 'paged' ] ) - 1 ) : 0;
 		$orderby	 = (isset( $_REQUEST[ 'orderby' ] ) && in_array( $_REQUEST[ 'orderby' ], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST[ 'orderby' ] : 'naam';
 		$order		 = (isset( $_REQUEST[ 'order' ] ) && in_array( $_REQUEST[ 'order' ], [ 'asc', 'desc' ] )) ? $_REQUEST[ 'order' ] : 'asc';
