@@ -12,7 +12,9 @@
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
-
+/**
+ * List table for regelingen.
+ */
 class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 	/**
@@ -28,8 +30,8 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	/**
 	 * Render default columns
 	 *
-	 * @param $item - row (key, value array)
-	 * @param $column_name - string (key)
+	 * @param array $item - row (key, value array)
+	 * @param string $column_name - (key)
 	 * @return HTML
 	 */
 	function column_default( $item, $column_name ) {
@@ -38,7 +40,8 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 	/**
 	 * Render the gebruiker_naam column with action
-	 * @param $item - row (key, value array)
+	 *
+	 * @param array $item - row (key, value array)
 	 * @return HTML
 	 */
 	function column_gebruiker_naam( $item ) {
@@ -84,25 +87,29 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 */
 	function prepare_items() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'kleistad_ovens'; // do not forget about tables prefix
+		$table_name = $wpdb->prefix . 'kleistad_ovens';
 
-		$per_page = 5; // constant, how much records will be shown per page
+		$per_page = 5; // constant, how much records will be shown per page.
 
-		$columns	 = $this->get_columns();
-		$hidden		 = [];
-		$sortable	 = $this->get_sortable_columns();
+		$columns = $this->get_columns();
+		$hidden = [];
+		$sortable = $this->get_sortable_columns();
 
-		// here we configure table headers, defined in our methods
+		// here we configure table headers, defined in our methods.
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		// prepare query params, as usual current page, order by and order direction
-		$paged	 = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
+		// prepare query params, as usual current page, order by and order direction.
+		$paged = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
 		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
-		$order	 = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
+		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
 
-		// will be used in pagination settings
+		// will be used in pagination settings.
 		$gebruikers = get_users(
-		[ 'fields' => [ 'id', 'display_name' ], 'meta_key' => 'ovenkosten', 'orderby' => [ 'display_name' ], 'order' => $order ] );
+		[ 'fields'	 => [ 'id', 'display_name' ],
+			'meta_key'	 => 'ovenkosten',
+			'orderby'	 => [ 'display_name' ],
+			'order'		 => $order,
+		] );
 
 		$regelingen = [];
 

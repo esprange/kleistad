@@ -31,7 +31,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	/**
 	 * Set the defaults for columns
 	 *
-	 * @param array $item          row (key, value array).
+	 * @param array $item   row (key, value array).
 	 * @param string $column_name  key.
 	 * @return HTML
 	 */
@@ -114,7 +114,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
 		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
 
-		$this->items = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %s ORDER BY %s %s LIMIT %d OFFSET %d", $table_name, $orderby, $order, $per_page, $paged ), ARRAY_A );
+		$this->items = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %s ORDER BY %s %s LIMIT %d OFFSET %d', $table_name, $orderby, $order, $per_page, $paged ), ARRAY_A );
 		$this->set_pagination_args( [
 			'total_items' => $total_items, // total items defined above.
 			'per_page' => $per_page, // per page constant defined at top of method.
