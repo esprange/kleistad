@@ -13,7 +13,7 @@ if (!class_exists('WP_List_Table')) {
   require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-class Stooksaldo_List_Table extends WP_List_Table {
+class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 
   /**
    * 

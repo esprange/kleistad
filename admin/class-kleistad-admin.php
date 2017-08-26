@@ -332,7 +332,7 @@ class Kleistad_Admin {
     require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-kleistad-admin-regelingen.php';
 
     $message = '';
-    $table = new Regelingen_List_Table();
+    $table = new Kleistad_Admin_Regelingen();
     if ('delete' === $table->current_action()) {
 //      if (isset($_REQUEST['id'])) {
       list($gebruiker_id, $oven_id) = sscanf($_REQUEST['id'], "%d %d");
@@ -469,7 +469,7 @@ class Kleistad_Admin {
   public function stooksaldo_page_handler() {
     require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-kleistad-admin-stooksaldo.php';
 
-    $table = new Stooksaldo_List_Table();
+    $table = new Kleistad_Admin_Stooksaldo();
     $table->prepare_items();
 
     $message = '';
