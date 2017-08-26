@@ -31,8 +31,8 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	/**
 	 * Set the defaults for columns
 	 *
-	 * @param array $item   row (key, value array).
-	 * @param string $column_name  key.
+	 * @param array  $item row (key, value).
+	 * @param string  $column_name key.
 	 * @return HTML
 	 */
 	function column_default( $item, $column_name ) {
@@ -42,7 +42,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	/**
 	 * Render the column naam with the actions
 	 *
-	 * @param array $item  row (key, value array).
+	 * @param array  $item row (key, value).
 	 * @return HTML
 	 */
 	function column_naam( $item ) {

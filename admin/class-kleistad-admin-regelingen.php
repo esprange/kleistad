@@ -30,18 +30,18 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	/**
 	 * Render default columns
 	 *
-	 * @param array $item - row (key, value array)
-	 * @param string $column_name - (key)
+	 * @param array $item - row (key, value).
+	 * @param string $column_name - (key).
 	 * @return HTML
 	 */
 	function column_default( $item, $column_name ) {
-		return $item[$column_name];
+		return $item[ $column_name ];
 	}
 
 	/**
 	 * Render the gebruiker_naam column with action
 	 *
-	 * @param array $item - row (key, value array)
+	 * @param array $item - row (key, value).
 	 * @return HTML
 	 */
 	function column_gebruiker_naam( $item ) {
@@ -105,29 +105,35 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 		// will be used in pagination settings.
 		$gebruikers = get_users(
-		[ 'fields'	 => [ 'id', 'display_name' ],
-			'meta_key'	 => 'ovenkosten',
-			'orderby'	 => [ 'display_name' ],
-			'order'		 => $order,
+		[ 
+			'fields' => [
+				'id',
+				'display_name',
+				],
+			'meta_key' => 'ovenkosten',
+			'orderby' => [
+				'display_name',
+				],
+			'order' => $order,
 		] );
 
 		$regelingen = [];
 
 		$ovens = $wpdb->get_results( $wpdb->prepare ('SELECT id, naam FROM %s ORDER BY naam %s', $table_name, $order ), OBJECT_K );
 
-		if ( $orderby == 'gebruiker_naam' ) {
+		if ( 'gebruiker_naam' == $orderby ) {
 			foreach ( $gebruikers as $gebruiker ) {
 				$gebruikers_regelingen = json_decode( get_user_meta( $gebruiker->id, 'ovenkosten', true ), true );
 				foreach ( $gebruikers_regelingen as $oven_id => $gebruikers_regeling ) {
 					$regelingen[] = [
 						'id' => $gebruiker->id . ' ' . $oven_id,
 						'gebruiker_naam' => $gebruiker->display_name,
-						'oven_naam' => $ovens[$oven_id]->naam,
+						'oven_naam' => $ovens[ $oven_id ]->naam,
 						'kosten' => $gebruikers_regeling,
 					];
 				}
 			}
-		} else { // oven_naam
+		} else { // sort by oven_naam.
 			foreach ( $ovens as $oven ) {
 				foreach ( $gebruikers as $gebruiker ) {
 					$gebruikers_regelingen = json_decode( get_user_meta( $gebruiker->id, 'ovenkosten', true ), true );
@@ -136,7 +142,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 							'id' => $gebruiker->id . ' ' . $oven->id,
 							'gebruiker_naam' => $gebruiker->display_name,
 							'oven_naam' => $oven->naam,
-							'kosten' => $gebruikers_regelingen[$oven->id],
+							'kosten' => $gebruikers_regelingen[ $oven->id ],
 						];
 					}
 				}
@@ -146,9 +152,9 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 		$this->items = array_slice( $regelingen, $paged, $per_page, true );
 		$this->set_pagination_args( [
-			'total_items' => $total_items, // total items defined above
-			'per_page' => $per_page, // per page constant defined at top of method
-			'total_pages' => ceil( $total_items / $per_page ) // calculate pages count
+			'total_items' => $total_items, // total items defined above.
+			'per_page' => $per_page, // per page constant defined at top of method.
+			'total_pages' => ceil( $total_items / $per_page ) // calculate pages count.
 		] );
 	}
 
