@@ -229,7 +229,7 @@ class Kleistad_Admin {
   public function ovens_page_handler() {
     require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-kleistad-admin-ovens.php';
 
-    $table = new Ovens_List_Table();
+    $table = new Kleistad_Admin_Ovens();
     $table->prepare_items();
 
     $message = '';
