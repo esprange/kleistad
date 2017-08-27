@@ -90,7 +90,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 */
 	function prepare_items() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'kleistad_ovens';
+		$tabel = $wpdb->prefix . 'kleistad_ovens';
 
 		$per_page = 5; // constant, how much records will be shown per page.
 
@@ -123,7 +123,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 		$regelingen = [];
 
-		$ovens = $wpdb->get_results( $wpdb->prepare( 'SELECT id, naam FROM %s ORDER BY naam %s', $table_name, $order ), OBJECT_K );
+		$ovens = $wpdb->get_results( $wpdb->prepare( 'SELECT id, naam FROM ' . $tabel . ' ORDER BY naam %s', $order ), OBJECT_K );
 
 		if ( 'gebruiker_naam' == $orderby ) {
 			foreach ( $gebruikers as $gebruiker ) {

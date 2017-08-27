@@ -57,7 +57,8 @@ class Kleistad_Cursus extends Kleistad_Entity {
 		if ( is_null( $cursus_id ) ) {
 			$this->_data = $default_data;
 		} else {
-			$this->_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %s WHERE id = %d', $wpdb->prefix . 'kleistad_cursussen', $cursus_id ), ARRAY_A );
+			$tabel = $wpdb->prefix . 'kleistad_cursussen';
+			$this->_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM '. $tabel . ' WHERE id = %d', $cursus_id ), ARRAY_A );
 		}
 	}
 

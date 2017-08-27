@@ -44,7 +44,8 @@ class Kleistad_Oven extends Kleistad_Entity {
 		];
 		$this->_data     = $default_data;
 		if ( ! is_null( $oven_id ) ) {
-			$result = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %s  WHERE id = %d', $wpdb->prefix . 'kleistad_ovens', $oven_id ), ARRAY_A );
+			$tabel = $wpdb->prefix . 'kleistad_ovens';
+			$result = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $tabel . ' WHERE id = %d', $oven_id ), ARRAY_A );
 			if ( ! is_null( $result ) ) {
 				$this->_data = $result;
 			}
@@ -387,10 +388,11 @@ class Kleistad_Reserveringen extends Kleistad_EntityStore {
 	 */
 	public function __construct( $oven_id = null ) {
 		global $wpdb;
+		$tabel = $wpdb->prefix . 'kleistad_reserveringen';
 		if ( is_null( $oven_id ) ) {
-			$reserveringen = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %s ORDER BY jaar DESC, maand DESC, dag DESC', $wpdb->prefix . 'kleistad_reserveringen' ), ARRAY_A );
+			$reserveringen = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $tabel . ' ORDER BY jaar DESC, maand DESC, dag DESC'), ARRAY_A );
 		} else {
-			$reserveringen = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %s WHERE oven_id = %d ORDER BY jaar DESC, maand DESC, dag DESC', $wpdb->prefix . 'kleistad_reserveringen', $oven_id ), ARRAY_A );
+			$reserveringen = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $tabel . ' WHERE oven_id = %d ORDER BY jaar DESC, maand DESC, dag DESC', $oven_id ), ARRAY_A );
 		}
 		foreach ( $reserveringen as $reservering_id => $reservering ) {
 			$this->_data[ $reservering_id ] = new Kleistad_Reservering( $reservering['oven_id'] );
