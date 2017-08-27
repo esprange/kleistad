@@ -25,29 +25,29 @@ require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-r
 
 class Kleistad_Deactivator {
 
-  /**
-   * Short Description. (use period)
-   *
-   * Long Description.
-   *
-   * @since    4.0.0
-   */
-  public static function deactivate() {
-    wp_clear_scheduled_hook('kleistad_kosten');
+	/**
+	 * Short Description. (use period)
+	 *
+	 * Long Description.
+	 *
+	 * @since    4.0.0
+	 */
+	public static function deactivate() {
+		wp_clear_scheduled_hook( 'kleistad_kosten' );
 
-    global $wp_roles;
-    /*
-     * de rollen verwijderen bij deactivering van de plugin. Bij aanpassing rollen (zie activate) het onderstaande ook aanpassen.
-     */
-    $wp_roles->remove_cap('administrator', Kleistad_Roles::OVERRIDE);
-    $wp_roles->remove_cap('editor', Kleistad_Roles::OVERRIDE);
-    $wp_roles->remove_cap('author', Kleistad_Roles::OVERRIDE);
+		global $wp_roles;
+		/*
+		* de rollen verwijderen bij deactivering van de plugin. Bij aanpassing rollen (zie activate) het onderstaande ook aanpassen.
+		*/
+		$wp_roles->remove_cap( 'administrator', Kleistad_Roles::OVERRIDE );
+		$wp_roles->remove_cap( 'editor', Kleistad_Roles::OVERRIDE );
+		$wp_roles->remove_cap( 'author', Kleistad_Roles::OVERRIDE );
 
-    $wp_roles->remove_cap('administrator', Kleistad_Roles::RESERVEER);
-    $wp_roles->remove_cap('editor', Kleistad_Roles::RESERVEER);
-    $wp_roles->remove_cap('author', Kleistad_Roles::RESERVEER);
-    $wp_roles->remove_cap('contributor', Kleistad_Roles::RESERVEER);
-    $wp_roles->remove_cap('subscriber', Kleistad_Roles::RESERVEER);
-  }
+		$wp_roles->remove_cap( 'administrator', Kleistad_Roles::RESERVEER );
+		$wp_roles->remove_cap( 'editor', Kleistad_Roles::RESERVEER );
+		$wp_roles->remove_cap( 'author', Kleistad_Roles::RESERVEER );
+		$wp_roles->remove_cap( 'contributor', Kleistad_Roles::RESERVEER );
+		$wp_roles->remove_cap( 'subscriber', Kleistad_Roles::RESERVEER );
+	}
 
 }
