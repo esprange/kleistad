@@ -21,16 +21,18 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 * Constructor
 	 */
 	function __construct() {
-		parent::__construct( [
-			'singular' => 'regeling',
-			'plural' => 'regelingen',
-		] );
+		parent::__construct(
+			[
+				'singular' => 'regeling',
+				'plural' => 'regelingen',
+			]
+		);
 	}
 
 	/**
 	 * Render default columns
 	 *
-	 * @param array $item - row (key, value).
+	 * @param array  $item - row (key, value).
 	 * @param string $column_name - (key).
 	 * @return HTML
 	 */
@@ -50,7 +52,8 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 			'delete' => sprintf( '<a href="?page=%s&action=delete&id=%s">%s</a>', $_REQUEST['page'], $item['id'], 'Verwijderen' ),
 		];
 
-		return sprintf( '%s %s', $item['gebruiker_naam'], $this->row_actions( $actions )
+		return sprintf(
+			'%s %s', $item['gebruiker_naam'], $this->row_actions( $actions )
 		);
 	}
 
@@ -105,21 +108,22 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 		// will be used in pagination settings.
 		$gebruikers = get_users(
-		[ 
-			'fields' => [
-				'id',
-				'display_name',
+			[
+				'fields' => [
+					'id',
+					'display_name',
 				],
-			'meta_key' => 'ovenkosten',
-			'orderby' => [
-				'display_name',
+				'meta_key' => 'ovenkosten',
+				'orderby' => [
+					'display_name',
 				],
-			'order' => $order,
-		] );
+				'order' => $order,
+			]
+		);
 
 		$regelingen = [];
 
-		$ovens = $wpdb->get_results( $wpdb->prepare ('SELECT id, naam FROM %s ORDER BY naam %s', $table_name, $order ), OBJECT_K );
+		$ovens = $wpdb->get_results( $wpdb->prepare( 'SELECT id, naam FROM %s ORDER BY naam %s', $table_name, $order ), OBJECT_K );
 
 		if ( 'gebruiker_naam' == $orderby ) {
 			foreach ( $gebruikers as $gebruiker ) {
@@ -151,11 +155,13 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		$total_items = count( $regelingen );
 
 		$this->items = array_slice( $regelingen, $paged, $per_page, true );
-		$this->set_pagination_args( [
-			'total_items' => $total_items, // total items defined above.
+		$this->set_pagination_args(
+			[
+				'total_items' => $total_items, // total items defined above.
 			'per_page' => $per_page, // per page constant defined at top of method.
-			'total_pages' => ceil( $total_items / $per_page ) // calculate pages count.
-		] );
+			'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
+			]
+		);
 	}
 
 }

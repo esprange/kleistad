@@ -22,17 +22,19 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 * Constructor
 	 */
 	function __construct() {
-		parent::__construct( [
-			'singular' => 'oven',
-			'plural' => 'ovens',
-		] );
+		parent::__construct(
+			[
+				'singular' => 'oven',
+				'plural' => 'ovens',
+			]
+		);
 	}
 
 	/**
 	 * Set the defaults for columns
 	 *
 	 * @param array  $item row (key, value).
-	 * @param string  $column_name key.
+	 * @param string $column_name key.
 	 * @return HTML
 	 */
 	function column_default( $item, $column_name ) {
@@ -42,7 +44,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	/**
 	 * Render the column naam with the actions
 	 *
-	 * @param array  $item row (key, value).
+	 * @param array $item row (key, value).
 	 * @return HTML
 	 */
 	function column_naam( $item ) {
@@ -50,7 +52,8 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 			'edit' => sprintf( '<a href="?page=ovens_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
 
-		return sprintf( '%s %s', $item['naam'], $this->row_actions( $actions )
+		return sprintf(
+			'%s %s', $item['naam'], $this->row_actions( $actions )
 		);
 	}
 
@@ -115,11 +118,13 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
 
 		$this->items = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %s ORDER BY %s %s LIMIT %d OFFSET %d', $table_name, $orderby, $order, $per_page, $paged ), ARRAY_A );
-		$this->set_pagination_args( [
-			'total_items' => $total_items, // total items defined above.
+		$this->set_pagination_args(
+			[
+				'total_items' => $total_items, // total items defined above.
 			'per_page' => $per_page, // per page constant defined at top of method.
 			'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
-		] );
+			]
+		);
 	}
 
 }
