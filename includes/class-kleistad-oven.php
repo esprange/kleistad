@@ -390,7 +390,7 @@ class Kleistad_Reserveringen extends Kleistad_EntityStore {
 		global $wpdb;
 		$tabel = $wpdb->prefix . 'kleistad_reserveringen';
 		if ( is_null( $oven_id ) ) {
-			$reserveringen = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $tabel . ' ORDER BY jaar DESC, maand DESC, dag DESC'), ARRAY_A );
+			$reserveringen = $wpdb->get_results( 'SELECT * FROM ' . $tabel . ' ORDER BY jaar DESC, maand DESC, dag DESC', ARRAY_A );
 		} else {
 			$reserveringen = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $tabel . ' WHERE oven_id = %d ORDER BY jaar DESC, maand DESC, dag DESC', $oven_id ), ARRAY_A );
 		}

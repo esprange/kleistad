@@ -111,7 +111,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$total_items = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(id) FROM ' . $tabel ) );
+		$total_items = $wpdb->get_var( 'SELECT COUNT(id) FROM ' . $tabel );
 
 		$paged = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
 		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
