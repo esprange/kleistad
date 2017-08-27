@@ -10,54 +10,57 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
-if (!Kleistad_Roles::override()) :
-  ?>
+if ( ! Kleistad_Roles::override() ) :
+	?>
   <p>Geen toegang tot dit formulier</p>
-<?php else : extract($data); ?>
+<?php
+else :
+	extract( $data );
+?>
 
   <div id="kleistad_deelnemer_info">
-      <table class="kleistad_tabel" id="kleistad_deelnemer_tabel" >
-      </table>
+	  <table class="kleistad_tabel" id="kleistad_deelnemer_tabel" >
+	  </table>
   </div>
   <p><label for="kleistad_deelnemer_selectie">Selectie</label>
-      <select id="kleistad_deelnemer_selectie" name="selectie" >
-          <option value="*" >&nbsp;</option>
-          <option value="0" >Leden</option>
-          <?php foreach ($cursussen as $cursus) : ?>
-            <option value="C<?php echo $cursus->id ?>;">C<?php echo $cursus->id . ' ' . $cursus->naam ?></option>
-          <?php endforeach ?>
+	  <select id="kleistad_deelnemer_selectie" name="selectie" >
+		  <option value="*" >&nbsp;</option>
+		  <option value="0" >Leden</option>
+			<?php foreach ( $cursussen as $cursus ) : ?>
+			<option value="C<?php echo $cursus->id; ?>;">C<?php echo $cursus->id . ' ' . $cursus->naam; ?></option>
+			<?php endforeach ?>
 
-      </select>
+	  </select>
   </p>
   <table class="kleistad_tabel, kleistad_rapport" id="kleistad_deelnemer_lijst">
-      <thead>
-          <tr>
-              <th>Lid</th>
-              <th>Cursuslijst</th>
-              <th>Achternaam</th>
-              <th>Voornaam</th>
-              <th>Email</th>
-              <th>Telnr</th>
-          </tr>
-      </thead>
-      <tbody>
-          <?php foreach ($registraties as $registratie) : ?>
-            <tr class="kleistad_deelnemer_info" 
-                data-inschrijvingen='<?php echo json_encode($registratie["inschrijvingen"]) ?>'
-                data-deelnemer='<?php echo json_encode($registratie["deelnemer_info"]) ?>' 
-                data-abonnee='<?php echo json_encode($registratie["abonnee_info"]) ?>' >
-                <td><?php echo $registratie['is_lid'] ?></td>
-                <td><?php echo $registratie['cursuslijst'] ?></td>
-                <td><?php echo $registratie['achternaam'] ?></td>
-                <td><?php echo $registratie['voornaam'] ?></td>
-                <td><?php echo $registratie['email'] ?></td>
-                <td><?php echo $registratie['telnr'] ?></td>
-            </tr>
-          <?php endforeach ?>
-      </tbody>
+	  <thead>
+		  <tr>
+			  <th>Lid</th>
+			  <th>Cursuslijst</th>
+			  <th>Achternaam</th>
+			  <th>Voornaam</th>
+			  <th>Email</th>
+			  <th>Telnr</th>
+		  </tr>
+	  </thead>
+	  <tbody>
+			<?php foreach ( $registraties as $registratie ) : ?>
+			<tr class="kleistad_deelnemer_info" 
+				data-inschrijvingen='<?php echo json_encode( $registratie['inschrijvingen'] ); ?>'
+				data-deelnemer='<?php echo json_encode( $registratie['deelnemer_info'] ); ?>' 
+				data-abonnee='<?php echo json_encode( $registratie['abonnee_info'] ); ?>' >
+				<td><?php echo $registratie['is_lid']; ?></td>
+				<td><?php echo $registratie['cursuslijst']; ?></td>
+				<td><?php echo $registratie['achternaam']; ?></td>
+				<td><?php echo $registratie['voornaam']; ?></td>
+				<td><?php echo $registratie['email']; ?></td>
+				<td><?php echo $registratie['telnr']; ?></td>
+			</tr>
+			<?php endforeach ?>
+	  </tbody>
   </table>
   <form action="#" method="post" >
-      <?php wp_nonce_field('kleistad_registratie_overzicht') ?>
-      <button type="submit" name="kleistad_submit_registratie_overzicht" >Bestand aanmaken</button>
+		<?php wp_nonce_field( 'kleistad_registratie_overzicht' ); ?>
+	  <button type="submit" name="kleistad_submit_registratie_overzicht" >Bestand aanmaken</button>
   </form>
 <?php endif; ?>

@@ -10,21 +10,24 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
-if (!Kleistad_Roles::override()) : ?>
+if ( ! Kleistad_Roles::override() ) : ?>
 <p>Geen toegang tot dit formulier</p>
-<?php else : extract ($data); ?>
+<?php
+else :
+	extract( $data );
+?>
 
 <table class="kleistad_rapport" id="kleistad_saldo_overzicht">
-    <thead>
-        <tr><th>Naam</th><th>Saldo</th></tr>
-    </thead>
-    <tbody>
-    <?php foreach ($stokers as $stoker) : ?>
-        <tr>
-            <td><?php echo $stoker['naam'] ?></td>
-            <td>&euro; <?php echo $stoker['saldo'] ?></td>
-        </tr>
-    <?php endforeach ?>
-    </tbody>
+	<thead>
+		<tr><th>Naam</th><th>Saldo</th></tr>
+	</thead>
+	<tbody>
+	<?php foreach ( $stokers as $stoker ) : ?>
+		<tr>
+			<td><?php echo $stoker['naam']; ?></td>
+			<td>&euro; <?php echo $stoker['saldo']; ?></td>
+		</tr>
+	<?php endforeach ?>
+	</tbody>
 </table>
 <?php endif ?>
