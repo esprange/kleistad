@@ -107,7 +107,9 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}
-		$data = [ 'input' => $input ];
+		$data = [
+			'input' => $input,
+		];
 		return $data;
 	}
 

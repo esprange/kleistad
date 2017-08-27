@@ -42,7 +42,9 @@ class Kleistad_Public_Saldo_Overzicht extends Kleistad_Public_Shortcode {
 				];
 			}
 		}
-		$data = ['stokers' => $stokers];
+		$data = [
+			'stokers' => $stokers,
+		];
 		return $data;
 	}
 
