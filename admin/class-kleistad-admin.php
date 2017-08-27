@@ -340,7 +340,7 @@ class Kleistad_Admin {
 		$message = '';
 		$table = new Kleistad_Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
-			if (isset($_REQUEST['id'])) {
+			if ( isset( $_REQUEST['id'] ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d %d' );
 				$gebruiker_regelingen = json_decode( get_user_meta( $gebruiker_id, 'ovenkosten', true ), true );
 				unset( $gebruiker_regelingen[ $oven_id ] );
