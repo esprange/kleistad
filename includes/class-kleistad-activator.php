@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Fired during plugin activation
  *
@@ -9,18 +8,15 @@
  * @package    Kleistad
  * @subpackage Kleistad/includes
  */
+
 /**
- * Fired during plugin activation.
- *
- * This class defines all code necessary to run during the plugin's activation.
- *
- * @since      4.0.0
- * @package    Kleistad
- * @subpackage Kleistad/includes
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
+ * Include the kleistad roles
  */
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
 
+/**
+ * The activator class
+ */
 class Kleistad_Activator {
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Fired during plugin deactivation
  *
@@ -23,6 +22,9 @@
 
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
 
+/**
+ * The Deactivator class
+ */
 class Kleistad_Deactivator {
 
 	/**
@@ -36,9 +38,7 @@ class Kleistad_Deactivator {
 		wp_clear_scheduled_hook( 'kleistad_kosten' );
 
 		global $wp_roles;
-		/*
-		* de rollen verwijderen bij deactivering van de plugin. Bij aanpassing rollen (zie activate) het onderstaande ook aanpassen.
-		*/
+		// de rollen verwijderen bij deactivering van de plugin. Bij aanpassing rollen (zie activate) het onderstaande ook aanpassen.
 		$wp_roles->remove_cap( 'administrator', Kleistad_Roles::OVERRIDE );
 		$wp_roles->remove_cap( 'editor', Kleistad_Roles::OVERRIDE );
 		$wp_roles->remove_cap( 'author', Kleistad_Roles::OVERRIDE );

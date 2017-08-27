@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the oven class
  *
@@ -24,83 +23,70 @@
  */
 abstract class Kleistad_Entity {
 
-  /**
-   * Store the cursus data
-   *
-   * @since 4.0.0
-   * @access private
-   * @var array $_data contains cursus attributes.
-   */
-  protected $_data = [];
+	/**
+	 * Store the cursus data
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 * @var array $_data contains cursus attributes.
+	 */
+	protected $_data = [];
 
-  /**
-   * Constructor
-   *
-   * Constructor, Long description.
-   *
-   * @since 4.0.0
-   *
-   * @return null.
-   */
-  // abstract public function __construct($id = null);
+	/**
+	 * Getter, using the magic function
+	 *
+	 * Get attribuut from the object.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param string $attribuut Attribuut name.
+	 * @return mixed Attribute value.
+	 */
+	public function __get( $attribuut ) {
+		switch ( $attribuut ) {
+			default:
+				return $this->_data[ $attribuut ];
+		}
+	}
 
-  /**
-   * Getter, using the magic function
-   *
-   * get attribuut from the object.
-   *
-   * @since 4.0.0
-   *
-   * @param  string $attribuut Attribuut name.
-   * @return mixed Attribute value.
-   */
-  public function __get($attribuut) {
-    switch ($attribuut) {
-      default:
-        return $this->_data[$attribuut];
-    }
-  }
+	/**
+	 * Setter, using the magic function
+	 *
+	 * Set attribuut from the object.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param string $attribuut Attribuut name.
+	 * @param mixed  $waarde Attribuut value.
+	 */
+	public function __set( $attribuut, $waarde ) {
+		switch ( $attribuut ) {
+			default:
+				$this->_data[ $attribuut ] = $waarde;
+		}
+	}
 
-  /**
-   * Setter, using the magic function
-   *
-   * Set attribuut from the object.
-   *
-   * @since 4.0.0
-   *
-   * @param  string $attribuut Attribuut name.
-   * @param  mixed $waarde Attribuut value.
-   * @return null.
-   */
-  public function __set($attribuut, $waarde) {
-    switch ($attribuut) {
-      default:
-        $this->_data[$attribuut] = $waarde;
-    }
-  }
+	/**
+	 * Save the data
+	 *
+	 * Saves the data to the database.
+	 *
+	 * @since 4.0.0
+	 */
+	abstract public function save();
 
-  /**
-   * Save the data
-   *
-   * Saves the data to the database.
-   *
-   * @since 4.0.0
-   */
-  abstract public function save();
-
-  /**
-   * Load the data
-   *
-   * Loads the data from the database.
-   *
-   * @since 4.0.0
-   *
-   * @param  array $data oven attribute values.
-   * @return null.
-   */
-  public function load($data) {
-    $this->_data = $data;
-  }
+	/**
+	 * Load the data
+	 *
+	 * Loads the data from the database.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param array $data oven attribute values.
+	 */
+	public function load( $data ) {
+		$this->_data = $data;
+	}
 
 }
 
@@ -116,52 +102,40 @@ abstract class Kleistad_Entity {
     */
 abstract class Kleistad_EntityStore {
 
-  /**
-   * Store the entity data
-   *
-   * @since 4.0.0
-   * @access private
-   * @var array $_data contains oven objects.
-   */
-  protected $_data = [];
+	/**
+	 * Store the entity data
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 * @var array $_data contains oven objects.
+	 */
+	protected $_data = [];
 
-  /**
-   * Constructor
-   *
-   * Loads the data from the database.
-   *
-   * @since 4.0.0
-   *
-   * @global  object $wpdb Wordpress database.
-   * @return null.
-   */
-   // abstract public function __construct($id);
+	/**
+	 * Get the loaded data
+	 *
+	 * Retrieve the data as an array.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @return array Array of oven objects.
+	 */
+	public function get() {
+		return $this->_data;
+	}
 
-  /**
-   * Get the loaded data
-   *
-   * Retrieve the data as an array.
-   *
-   * @since 4.0.0
-   *
-   * @return array Array of oven objects.
-   */
-  public function get() {
-    return $this->_data;
-  }
-
-  /**
-   * Return the count
-   *
-   * Return the number of loaded ovens.
-   *
-   * @since 4.0.0
-   *
-   * @return int The count of loaded ovens objects.
-   */
-  public function count() {
-    return count($this->_data);
-  }
+	/**
+	 * Return the count
+	 *
+	 * Return the number of loaded ovens.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @return int The count of loaded ovens objects.
+	 */
+	public function count() {
+		return count( $this->_data );
+	}
 
 }
 

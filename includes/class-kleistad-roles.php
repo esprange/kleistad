@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the x plugin class
  *
@@ -26,7 +25,7 @@ class Kleistad_Roles {
 	const RESERVEER = 'kleistad_reservering_aanmaken';
 
 	/**
-	 * help functie, bestuursleden kunnen publiceren en mogen daarom aanpassen
+	 * Help functie, bestuursleden kunnen publiceren en mogen daarom aanpassen
 	 *
 	 * @return bool
 	 */
@@ -35,12 +34,12 @@ class Kleistad_Roles {
 	}
 
 	/**
-	 * help functie, leden moeten kunnen reserveren en stooksaldo aanpassingen doen
+	 * Help functie, leden moeten kunnen reserveren en stooksaldo aanpassingen doen
+	 *
+	 * @param int $id the user id.
 	 */
 	static function reserveer( $id = 0 ) {
 		return ($id ? user_can( $id, self::RESERVEER ) : current_user_can( self::RESERVEER ));
 	}
 
-
-	// put your code here
 }
