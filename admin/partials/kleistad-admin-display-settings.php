@@ -10,6 +10,7 @@
  * @package    Kleistad
  * @subpackage Kleistad/admin/partials
  */
+
 ?>
 <div class="wrap">
 

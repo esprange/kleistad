@@ -10,8 +10,8 @@
  * @package    Kleistad
  * @subpackage Kleistad/admin/partials
  */
-?>
 
+?>
 <table cellspacing="2" cellpadding="5" style="width: 100%;" class="form-table">
 	<tbody>
 		<tr class="form-field">

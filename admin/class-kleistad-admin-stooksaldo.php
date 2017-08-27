@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The admin-specific functionality for management of stooksaldo of the plugin.
  *
@@ -9,14 +8,18 @@
  * @package    Kleistad
  * @subpackage Kleistad/admin
  */
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
+/**
+ * Beheer stooksaldo van leden
+ */
 class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 
 	/**
-	 *
+	 * Constructor
 	 */
 	function __construct() {
 		parent::__construct(
@@ -28,9 +31,10 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
+	 * Default rendering for columns
 	 *
-	 * @param $item - row (key, value array)
-	 * @param $column_name - string (key)
+	 * @param array  $item - row (key, value).
+	 * @param string $column_name - string (key).
 	 * @return HTML
 	 */
 	function column_default( $item, $column_name ) {
@@ -38,8 +42,9 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
+	 * Render the column naam
 	 *
-	 * @param $item - row (key, value array)
+	 * @param array $item - row (key, value array).
 	 * @return HTML
 	 */
 	function column_naam( $item ) {
@@ -53,30 +58,20 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 *
-	 * @param $item - row (key, value array)
-	 * @return HTML
-	 */
-	function column_cb( $item ) {
-		return sprintf(
-			'<input type="checkbox" name="id[]" value="%s" />', $item['id']
-		);
-	}
-
-	/**
+	 * Retrieve the column titles
 	 *
 	 * @return array
 	 */
 	function get_columns() {
 		$columns = [
-			// 'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-					'naam' => 'Naam gebruiker',
+			'naam' => 'Naam gebruiker',
 			'saldo' => 'Saldo',
 		];
 		return $columns;
 	}
 
 	/**
+	 * Retrieve the sortable columns
 	 *
 	 * @return array
 	 */
@@ -93,21 +88,18 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 * It will get rows from database and prepare them to be showed in table
 	 */
 	function prepare_items() {
-		$per_page = 5; // constant, how much records will be shown per page
+		$per_page = 5;
 
 		$columns = $this->get_columns();
 		$hidden = [];
 		$sortable = $this->get_sortable_columns();
 
-		// here we configure table headers, defined in our methods
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		// prepare query params, as usual current page, order by and order direction
 		$paged = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
 		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
 		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
 
-		// will be used in pagination settings
 		$gebruikers = get_users(
 			[
 				'fields' => [ 'id', 'display_name' ],
@@ -126,8 +118,8 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 				'saldo' => get_user_meta( $gebruiker->id, 'stooksaldo', true ),
 			];
 		}
-		if ( $orderby == 'naam' ) {
-		} else { // oven_naam
+		if ( 'naam' == $orderby ) {
+		} else {
 			foreach ( $stooksaldi as $key => $saldo ) {
 				$bedrag[ $key ] = $saldo['saldo'];
 			}
@@ -137,9 +129,9 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 		$this->items = array_slice( $stooksaldi, $paged * $per_page, $per_page, true );
 		$this->set_pagination_args(
 			[
-				'total_items' => $total_items, // total items defined above
-			'per_page' => $per_page, // per page constant defined at top of method
-			'total_pages' => ceil( $total_items / $per_page ), // calculate pages count
+				'total_items' => $total_items,
+				'per_page' => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
 			]
 		);
 	}

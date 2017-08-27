@@ -10,6 +10,7 @@
  * @package    Kleistad
  * @subpackage Kleistad/admin/partials
  */
+
 ?>
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
