@@ -340,12 +340,12 @@ class Kleistad_Admin {
 		$message = '';
 		$table = new Kleistad_Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
-			/* if (isset($_REQUEST['id'])) { */
-			list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d %d' );
-			$gebruiker_regelingen = json_decode( get_user_meta( $gebruiker_id, 'ovenkosten', true ), true );
-			unset( $gebruiker_regelingen[ $oven_id ] );
-			update_user_meta( $gebruiker_id, 'ovenkosten', json_encode( $gebruiker_regelingen ) );
-			/* } */
+			if (isset($_REQUEST['id'])) {
+				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d %d' );
+				$gebruiker_regelingen = json_decode( get_user_meta( $gebruiker_id, 'ovenkosten', true ), true );
+				unset( $gebruiker_regelingen[ $oven_id ] );
+				update_user_meta( $gebruiker_id, 'ovenkosten', json_encode( $gebruiker_regelingen ) );
+			}
 			$message = '<div class="updated below-h2" id="message"><p>' . sprintf( 'Aantal verwijderd: %d', count( $_REQUEST['id'] ) ) . '</p></div>';
 		}
 		$table->prepare_items();
