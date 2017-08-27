@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -17,12 +16,12 @@
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
-class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
+class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 
 	/**
+	 * Prepareer 'abonnee_inschrijving' form
 	 *
-	 * prepareer 'abonnee_inschrijving' form
-	 *
+	 * @param array $data data to be prepared.
 	 * @return array
 	 *
 	 * @since   4.0.0
@@ -43,7 +42,7 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
 				'opmerking' => '',
 			];
 		} else {
-			extract( $data );
+			$input = $data ['input'];
 		}
 		$gebruikers = get_users(
 			[
@@ -51,12 +50,15 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		return compact( 'gebruikers', 'input' );
+		$data = [
+			'gebruikers' => $gebruikers,
+			'input' => $input,
+		];
+		return $data;
 	}
 
 	/**
-	 *
-	 * valideer/sanitize 'abonnee_inschrijving' form
+	 * Valideer/sanitize 'abonnee_inschrijving' form
 	 *
 	 * @return array
 	 *
@@ -83,10 +85,10 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
 			]
 		);
 
-		if ( $input['abonnement_keuze'] == '' ) {
+		if ( '' == $input['abonnement_keuze'] ) {
 			$error->add( 'verplicht', 'Er is nog geen type abonnement gekozen' );
 		}
-		if ( $input['start_datum'] == '' ) {
+		if ( '' == $input['start_datum'] ) {
 			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
 		}
 		if ( intval( $input['gebruiker_id'] ) == 0 ) {
@@ -105,20 +107,19 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}
-
-		return compact( 'input' );
+		$data = [ 'input' => $input ];
+		return $data;
 	}
 
 	/**
+	 * Bewaar 'abonnee_inschrijving' form gegevens
 	 *
-	 * bewaar 'abonnee_inschrijving' form gegevens
-	 *
+	 * @param array $data data to be saved.
 	 * @return string
 	 *
 	 * @since   4.0.0
 	 */
 	public function save( $data ) {
-		extract( $data );
 		$error = new WP_Error();
 
 		if ( ! is_user_logged_in() ) {
@@ -132,18 +133,18 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
 				}
 			} else {
 				$gebruiker = new Kleistad_Gebruiker();
-				$gebruiker->voornaam = $input['voornaam'];
-				$gebruiker->achternaam = $input['achternaam'];
-				$gebruiker->straat = $input['straat'];
-				$gebruiker->huisnr = $input['huisnr'];
-				$gebruiker->pcode = $input['pcode'];
-				$gebruiker->plaats = $input['plaats'];
-				$gebruiker->email = $input['emailadres'];
-				$gebruiker->telnr = $input['telnr'];
+				$gebruiker->voornaam = $data['input']['voornaam'];
+				$gebruiker->achternaam = $data['input']['achternaam'];
+				$gebruiker->straat = $data['input']['straat'];
+				$gebruiker->huisnr = $data['input']['huisnr'];
+				$gebruiker->pcode = $data['input']['pcode'];
+				$gebruiker->plaats = $data['input']['plaats'];
+				$gebruiker->email = $data['input']['emailadres'];
+				$gebruiker->telnr = $data['input']['telnr'];
 				$gebruiker_id = $gebruiker->save();
 			}
 		} elseif ( is_super_admin() ) {
-			$gebruiker_id = $input['gebruiker_id'];
+			$gebruiker_id = $data['input']['gebruiker_id'];
 			$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 		} else {
 			$error->add( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' );
@@ -151,10 +152,10 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
 		}
 
 		$abonnement = new Kleistad_Abonnement( $gebruiker_id );
-		$abonnement->soort = $input['abonnement_keuze'];
-		$abonnement->opmerking = $input['opmerking'];
-		$abonnement->start_datum = strtotime( $input['start_datum'] );
-		$abonnement->dag = $input['dag'];
+		$abonnement->soort = $data['input']['abonnement_keuze'];
+		$abonnement->opmerking = $data['input']['opmerking'];
+		$abonnement->start_datum = strtotime( $data['input']['start_datum'] );
+		$abonnement->dag = $data['input']['dag'];
 		$abonnement->save();
 
 		if ( is_super_admin() ) {
@@ -166,7 +167,7 @@ class Kleistad_Public_AbonneeInschrijving extends Kleistad_Public_Shortcode {
 			$to, 'inschrijving abonnement', 'kleistad_email_abonnement', [
 				'voornaam' => $gebruiker->voornaam,
 				'achternaam' => $gebruiker->achternaam,
-				'start_datum' => strftime( '%A %d-%m-%y', strtotime( $input['start_datum'] ) ),
+				'start_datum' => strftime( '%A %d-%m-%y', strtotime( $data['input']['start_datum'] ) ),
 				'abonnement' => $abonnement->soort,
 				'abonnement_code' => $abonnement->code,
 				'abonnement_startgeld' => number_format( 3 * $this->options[ $abonnement->soort . '_abonnement' ], 2, ',', '' ),

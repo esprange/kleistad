@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -9,22 +8,20 @@
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
+
+/**
+ * Include the classes
+ */
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-entity.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-ovens.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-cursussen.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-abonnementen.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-oven.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-cursus.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-abonnement.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-gebruikers.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-gebruiker.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-shortcode.php';
 
 /**
  * The public-facing functionality of the plugin.
- *
- * Defines the plugin name, version, generic shortcode handler as well as callbacks and scheduled job.
- *
- * @package    Kleistad
- * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public {
 
@@ -47,12 +44,14 @@ class Kleistad_Public {
 	private $version;
 
 	/**
+	 * The url for Ajax callbacks.
 	 *
 	 * @var string url voor Ajax callbacks
 	 */
 	private $url;
 
 	/**
+	 * Array containing all plugin settings
 	 *
 	 * @var array kleistad plugin settings
 	 */
@@ -186,8 +185,8 @@ class Kleistad_Public {
 	 * After login check to see if user account is disabled
 	 *
 	 * @since 4.0.0
-	 * @param string $user_login
-	 * @param object $user
+	 * @param string $user_login unused.
+	 * @param object $user wp user object.
 	 */
 	public function user_login( $user_login, $user = null ) {
 
@@ -195,18 +194,18 @@ class Kleistad_Public {
 			$user = get_user_by( 'login', $user_login );
 		}
 		if ( ! $user ) {
-			// not logged in - definitely not disabled
+			// not logged in - definitely not disabled.
 			return;
 		}
-		// Get user meta
+		// Get user meta.
 		$disabled = get_user_meta( $user->ID, 'kleistad_disable_user', true );
 
 		// Is the use logging in disabled?
-		if ( $disabled == '1' ) {
-			// Clear cookies, a.k.a log user out
+		if ( '1' == $disabled ) {
+			// Clear cookies, a.k.a log user out.
 			wp_clear_auth_cookie();
 
-			// Build login URL and then redirect
+			// Build login URL and then redirect.
 			$login_url = add_query_arg( 'disabled', '1', site_url( 'wp-login.php', 'login' ) );
 			wp_redirect( $login_url );
 			exit;
@@ -217,33 +216,33 @@ class Kleistad_Public {
 	 * Show a notice to users who try to login and are disabled
 	 *
 	 * @since 4.0.0
-	 * @param string $message
+	 * @param string $message the message shown to the user.
 	 * @return string
 	 */
 	public function user_login_message( $message ) {
 
-		// Show the error message if it seems to be a disabled user
-		if ( isset( $_GET['disabled'] ) && $_GET['disabled'] == 1 ) {
+		// Show the error message if it seems to be a disabled user.
+		if ( isset( $_GET['disabled'] ) && 1 == $_GET['disabled'] ) {
 			$message = '<div id="login_error">' . apply_filters( 'kleistad_disable_users_notice', 'Inloggen op dit account niet toegestaan' ) . '</div>';
 		}
 		return $message;
 	}
 
 	/**
-	 * shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
+	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
 	 *
 	 * @since 4.0.0
-	 * @param array  $atts       wordt niet gebruikt
-	 * @param string $content   wordt niet gebruikt
-	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen
-	 * @return string           html resultaat
+	 * @param array  $atts      the params of the shortcode.
+	 * @param string $content   wordt niet gebruikt.
+	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
+	 * @return string           html resultaat.
 	 */
 	public function shortcode_handler( $atts, $content = '', $tag ) {
 
 		$html = '';
 		$input = null;
 		$form = substr( $tag, strlen( 'kleistad-' ) );
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-' . $form . '.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-' . str_replace( '_', '-', $form ) . '.php';
 
 		wp_enqueue_style( $this->plugin_name );
 		if ( wp_style_is( $this->plugin_name . $form, 'registered' ) ) {
@@ -253,15 +252,15 @@ class Kleistad_Public {
 			wp_enqueue_script( $this->plugin_name . $form );
 		}
 
-		$formClass = 'Kleistad_Public_' . str_replace( ' ', '', ucwords( str_replace( '_', ' ', $form ) ) );
-		$formObject = new $formClass($this->plugin_name, $atts);
+		$form_class = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
+		$form_object = new $form_class($this->plugin_name, $atts);
 
 		if ( ! is_null( filter_input( INPUT_POST, 'kleistad_submit_' . $form ) ) ) {
 			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $form ) ) {
-				$result = $formObject->validate();
+				$result = $form_object->validate();
 				if ( ! is_wp_error( $result ) ) {
 					$input = $result;
-					$result = $formObject->save( $input );
+					$result = $form_object->save( $input );
 				}
 				if ( is_wp_error( $result ) ) {
 					foreach ( $result->get_error_messages() as $error ) {
@@ -275,7 +274,7 @@ class Kleistad_Public {
 				$html .= '<div class="kleistad_fout"><p>security fout</p></div>';
 			}
 		}
-		$data = $formObject->prepare( $input );
+		$data = $form_object->prepare( $input );
 		if ( is_wp_error( $data ) ) {
 			$html .= '<div class="kleistad_fout"><p>' . $data->get_error_message() . '</p></div>';
 			return $html;
@@ -294,7 +293,7 @@ class Kleistad_Public {
 	 * @since 4.0.0
 	 */
 	public function update_ovenkosten() {
-		// class included to enable usage of compose_email method
+		// class included to enable usage of compose_email method.
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-saldo.php';
 
 		  Kleistad_Oven::log_saldo( 'verwerking stookkosten gestart.' );
@@ -302,11 +301,11 @@ class Kleistad_Public {
 
 		$regelingen = new Kleistad_Regelingen();
 
-		$ovenStore = new Kleistad_Ovens();
-		$ovens = $ovenStore->get();
+		$oven_store = new Kleistad_Ovens();
+		$ovens = $oven_store->get();
 
-		$reserveringStore = new Kleistad_Reserveringen();
-		$reserveringen = $reserveringStore->get();
+		$reservering_store = new Kleistad_Reserveringen();
+		$reserveringen = $reservering_store->get();
 
 		/*
 		* saldering transacties uitvoeren
@@ -324,7 +323,7 @@ class Kleistad_Public {
 					$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
 
 					$huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
-					$nieuw_saldo = ($huidig_saldo == '') ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
+					$nieuw_saldo = ('' == $huidig_saldo) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
 
 					Kleistad_Oven::log_saldo(
 						"wijziging saldo $medestoker->display_name van $huidig_saldo naar $nieuw_saldo, stook op " .
@@ -350,6 +349,7 @@ class Kleistad_Public {
 				}
 			}
 		}
+
 		/*
         * de notificaties uitsturen voor stook die nog niet verwerkt is.
 		*/
@@ -365,8 +365,8 @@ class Kleistad_Public {
 						'voornaam' => $gebruiker->first_name,
 						'achternaam' => $gebruiker->last_name,
 						'bedrag' => number_format( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling, 2, ',', '' ),
-						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // $datum_verwerking,
-					'datum_deadline' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // $datum_deadline,
+						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
+					'datum_deadline' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
 					'stookoven' => $ovens[ $reservering->oven_id ]->naam,
 					]
 				);
@@ -382,7 +382,7 @@ class Kleistad_Public {
 	 * Verwijder gebruiker, geactiveerd als er een gebruiker verwijderd wordt.
 	 *
 	 * @since 4.0.0
-	 * @param int $gebruiker_id gebruiker id
+	 * @param int $gebruiker_id gebruiker id.
 	 */
 	public function verwijder_gebruiker( $gebruiker_id ) {
 		Kleistad_reservering::verwijder( $gebruiker_id );

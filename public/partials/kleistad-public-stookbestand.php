@@ -15,7 +15,6 @@ if ( ! Kleistad_Roles::override() ) : ?>
 <p>Geen toegang tot dit formulier</p>
 <?php
 else :
-	extract( $data );
 ?>
 
 <form action="<?php echo get_permalink(); ?>" method="POST" >

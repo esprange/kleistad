@@ -10,12 +10,12 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
+
 if ( ! Kleistad_Roles::override() ) :
 	?>
   <p>Geen toegang tot dit formulier</p>
 <?php
 else :
-	extract( $data );
 ?>
   <form id="kleistad_form_betalingen" action="#" method="post" >
 		<?php wp_nonce_field( 'kleistad_betalingen' ); ?>
@@ -35,7 +35,7 @@ else :
 			  </tr>
 		  </thead>
 		  <tbody>
-				<?php foreach ( $rows as $row ) : ?>
+				<?php foreach ( $data['rows'] as $row ) : ?>
 				<tr style="<?php echo $row['geannuleerd'] ? 'color:grey' : ''; ?>" >
 					<td><?php echo date( 'd-m-y', $row['datum'] ); ?></td>
 					<td><?php echo date( 'ymd', $row['datum'] ); ?></td>

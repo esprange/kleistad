@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -17,25 +16,26 @@
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
-class Kleistad_Public_RegistratieOverzicht extends Kleistad_Public_Shortcode {
+class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 
 	/**
 	 *
-	 * prepareer 'registratie_overzicht' form
+	 * Prepareer 'registratie_overzicht' form
 	 *
+	 * @param array $data data to be prepared.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
 	public function prepare( $data = null ) {
-		$cursusStore = new Kleistad_Cursussen();
-		$cursussen = $cursusStore->get();
+		$cursus_store = new Kleistad_Cursussen();
+		$cursussen = $cursus_store->get();
 		$registraties = [];
 
-		$inschrijvingStore = new Kleistad_Inschrijvingen();
-		$inschrijvingen = $inschrijvingStore->get();
-		$gebruikerStore = new Kleistad_Gebruikers;
-		$gebruikers = $gebruikerStore->get();
+		$inschrijving_store = new Kleistad_Inschrijvingen();
+		$inschrijvingen = $inschrijving_store->get();
+		$gebruiker_store = new Kleistad_Gebruikers;
+		$gebruikers = $gebruiker_store->get();
 		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
 			$cursuslijst = '';
 			$inschrijvinglijst = [];
@@ -88,26 +88,31 @@ class Kleistad_Public_RegistratieOverzicht extends Kleistad_Public_Shortcode {
 				'telnr' => $gebruiker->telnr,
 			];
 		}
-		return compact( 'registraties', 'cursussen' );
+		$data = [
+			'registraties' => $registraties,
+			'cursussen' => $cursussen,
+		];
+		return $data;
 	}
 
 	/**
 	 *
-	 * valideer/sanitize 'registratie_overzicht' form
+	 * Valideer/sanitize 'registratie_overzicht' form
 	 *
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.0
 	 */
 	public function validate() {
-		// nothing to validate
+		// nothing to validate.
 		return true;
 	}
 
 	/**
 	 *
-	 * bewaar 'registratie_overzicht' form gegevens
+	 * Bewaar 'registratie_overzicht' form gegevens
 	 *
+	 * @param array $data data to save.
 	 * @return string
 	 *
 	 * @since   4.0.0
@@ -118,14 +123,14 @@ class Kleistad_Public_RegistratieOverzicht extends Kleistad_Public_Shortcode {
 		}
 		$error = new WP_Error();
 
-		$cursusStore = new Kleistad_Cursussen();
-		$cursussen = $cursusStore->get();
+		$cursus_store = new Kleistad_Cursussen();
+		$cursussen = $cursus_store->get();
 
-		$gebruikerStore = new Kleistad_Gebruikers();
-		$gebruikers = $gebruikerStore->get();
+		$gebruiker_store = new Kleistad_Gebruikers();
+		$gebruikers = $gebruiker_store->get();
 
-		$inschrijvingStore = new Kleistad_Inschrijvingen();
-		$inschrijvingen = $inschrijvingStore->get();
+		$inschrijving_store = new Kleistad_Inschrijvingen();
+		$inschrijvingen = $inschrijving_store->get();
 
 		$upload_dir = wp_upload_dir();
 		$bijlage = $upload_dir['basedir'] . '/registratiebestand_' . date( 'Y_m_d' ) . '.csv';

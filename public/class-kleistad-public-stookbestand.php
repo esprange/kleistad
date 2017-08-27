@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -21,36 +20,46 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 
 	/**
 	 *
-	 * prepareer 'stookbestand' form
+	 * Prepareer 'stookbestand' form
 	 *
+	 * @param array $data data to be prepared.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
 	public function prepare( $data = null ) {
-		$gebruiker_id = get_current_user_id();
-		return compact( 'gebruiker_id' );
+		$gebruiker_id    = get_current_user_id();
+		$data            = [
+			'gebruiker_id' => $gebruiker_id,
+		];
+		return $data;
 	}
 
 	/**
 	 *
-	 * valideer/sanitize 'stookbestand' form
+	 * Valideer/sanitize 'stookbestand' form
 	 *
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
 	public function validate() {
-		$vanaf_datum = strtotime( filter_input( INPUT_POST, 'kleistad_vanaf_datum', FILTER_SANITIZE_STRING ) );
-		$tot_datum = strtotime( filter_input( INPUT_POST, 'kleistad_tot_datum', FILTER_SANITIZE_STRING ) );
-		$gebruiker_id = filter_input( INPUT_POST, 'kleistad_gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
-		return compact( 'vanaf_datum', 'tot_datum', 'gebruiker_id' );
+		$vanaf_datum     = strtotime( filter_input( INPUT_POST, 'kleistad_vanaf_datum', FILTER_SANITIZE_STRING ) );
+		$tot_datum       = strtotime( filter_input( INPUT_POST, 'kleistad_tot_datum', FILTER_SANITIZE_STRING ) );
+		$gebruiker_id    = filter_input( INPUT_POST, 'kleistad_gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
+		$data            = [
+			'vanaf_datum' => $vanaf_datum,
+			'tot_datum' => $tot_datum,
+			'gebruiker_id' => $gebruiker_id,
+		];
+		return $data;
 	}
 
 	/**
 	 *
-	 * bewaar 'stookbestand' form gegevens
+	 * Bewaar 'stookbestand' form gegevens
 	 *
+	 * @param array $data data to be saved.
 	 * @return string
 	 *
 	 * @since   4.0.0
@@ -58,26 +67,25 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 	public function save( $data ) {
 		$error = new WP_Error();
 
-		extract( $data );
-		$gebruiker = get_userdata( $gebruiker_id );
+		$gebruiker = get_userdata( $data['gebruiker_id'] );
 
-		$upload_dir = wp_upload_dir();
-		$bijlage = $upload_dir['basedir'] . '/stookbestand_' . date( 'Y_m_d' ) . '.csv';
-		$f = fopen( $bijlage, 'w' );
+		$upload_dir  = wp_upload_dir();
+		$bijlage     = $upload_dir['basedir'] . '/stookbestand_' . date( 'Y_m_d' ) . '.csv';
+		$f           = fopen( $bijlage, 'w' );
 
-		$ovenStore = new Kleistad_Ovens();
-		$ovens = $ovenStore->get();
-		$reserveringStore = new Kleistad_Reserveringen();
-		$reserveringen = $reserveringStore->get();
-		$regelingStore = new Kleistad_Regelingen();
+		$oven_store          = new Kleistad_Ovens();
+		$ovens               = $oven_store->get();
+		$reservering_store   = new Kleistad_Reserveringen();
+		$reserveringen       = $reservering_store->get();
+		$regeling_store      = new Kleistad_Regelingen();
 
 		$medestokers = [];
 		foreach ( $reserveringen as $reservering ) {
 			$datum = strtotime( $reservering->jaar . '-' . $reservering->maand . '-' . $reservering->dag );
-			if ( ($datum < $vanaf_datum) || ($datum > $tot_datum) ) {
+			if ( ($datum < $data['vanaf_datum']) || ($datum > $data['tot_datum']) ) {
 				continue;
 			}
-			for ( $i = 0; $i < 5; $i++ ) {
+			for ( $i = 0; $i < 5; $i ++ ) {
 				$medestoker_id = $reservering->verdeling[ $i ]['id'];
 				if ( $medestoker_id > 0 ) {
 					if ( ! array_key_exists( $medestoker_id, $medestokers ) ) {
@@ -92,7 +100,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 
 		asort( $medestokers );
 		$fields = [ 'Stoker', 'Datum', 'Oven', 'Kosten', 'Soort Stook', 'Temperatuur', 'Programma' ];
-		for ( $i = 1; $i <= 2; $i++ ) {
+		for ( $i = 1; $i <= 2; $i ++ ) {
 			foreach ( $medestokers as $medestoker ) {
 				$fields[] = $medestoker;
 			}
@@ -101,10 +109,10 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 		fputcsv( $f, $fields, ';', '"' );
 
 		foreach ( $reserveringen as $reservering ) {
-			$stoker = get_userdata( $reservering->gebruiker_id );
+			$stoker      = get_userdata( $reservering->gebruiker_id );
 			$stoker_naam = ( ! $stoker) ? 'onbekend' : $stoker->display_name;
-			$totaal = 0;
-			$values = [
+			$totaal      = 0;
+			$values      = [
 				$stoker_naam,
 				$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
 				$ovens[ $reservering->oven_id ]->naam,
@@ -120,7 +128,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 						$percentage = $percentage + $reservering->verdeling[ $i ]['perc'];
 					}
 				}
-				$values [] = ($percentage == 0) ? '' : $percentage;
+				$values [] = (0 == $percentage) ? '' : $percentage;
 			}
 			foreach ( $medestokers as $id => $medestoker ) {
 				$percentage = 0;
@@ -130,12 +138,12 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 					}
 				}
 				if ( $percentage > 0 ) {
-					// als er een speciale regeling / tarief is afgesproken, dan geldt dat tarief
-					$regeling = $regelingStore->get( $id, $reservering->oven_id );
-					$kosten = round( ($percentage * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling )) / 100, 2 );
-					$totaal += $kosten;
+					// als er een speciale regeling / tarief is afgesproken, dan geldt dat tarief.
+					$regeling    = $regeling_store->get( $id, $reservering->oven_id );
+					$kosten      = round( ($percentage * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling )) / 100, 2 );
+					$totaal      += $kosten;
 				}
-				$values [] = ($percentage == 0) ? '' : number_format( $kosten, 2, ',', '' );
+				$values [] = (0 == $percentage) ? '' : number_format( $kosten, 2, ',', '' );
 			}
 			$values [] = number_format( $totaal, 2, ',', '' );
 			fputcsv( $f, $values, ';', '"' );
@@ -143,8 +151,8 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 
 		fclose( $f );
 
-		$to = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
-		$message = '<p>Bijgaand het bestand in .CSV formaat met alle transacties tussen ' . date( 'd-m-Y', $vanaf_datum ) . ' en ' . date( 'd-m-Y', $tot_datum ) . '.</p>';
+		$to          = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
+		$message     = '<p>Bijgaand het bestand in .CSV formaat met alle transacties tussen ' . date( 'd-m-Y', $data['vanaf_datum'] ) . ' en ' . date( 'd-m-Y', $data['tot_datum'] ) . '.</p>';
 		$attachments = [ $bijlage ];
 		if ( self::compose_email( $to, 'Kleistad stookbestand', $message, [], $attachments ) ) {
 			return 'Het bestand is per email verzonden.';

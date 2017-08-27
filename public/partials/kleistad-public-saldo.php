@@ -15,14 +15,13 @@ if ( ! Kleistad_Roles::reserveer() ) : ?>
 <p>Geen toegang tot dit formulier</p>
 <?php
 else :
-	extract( $data );
 ?>
 
-<p>Je huidige stooksaldo is <strong>&euro; <?php echo $saldo; ?></strong></p>
+<p>Je huidige stooksaldo is <strong>&euro; <?php echo $data['saldo']; ?></strong></p>
 <p>Je kunt onderstaand melden dat je het saldo hebt aangevuld</p><hr />
 <form action="<?php echo get_permalink(); ?>" method="POST">
 	<?php wp_nonce_field( 'kleistad_saldo' ); ?>
-	<input type="hidden" name="kleistad_gebruiker_id" value="<?php echo $gebruiker_id; ?>" />
+	<input type="hidden" name="kleistad_gebruiker_id" value="<?php echo $data['gebruiker_id']; ?>" />
 	<fieldset><legend>Betaald</legend>
 		<label for="kleistad_bank">Bank
 			<input type="radio" name="kleistad_via" id="kleistad_bank" value="bank" checked="checked" /></label>

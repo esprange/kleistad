@@ -10,6 +10,7 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
+
 ?>
 <thead>
 	<tr>

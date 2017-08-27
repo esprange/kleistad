@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -21,8 +20,9 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 
 	/**
 	 *
-	 * prepareer 'saldo' form
+	 * Prepareer 'saldo' form
 	 *
+	 * @param array $data data to be prepared.
 	 * @return array
 	 *
 	 * @since   4.0.0
@@ -54,7 +54,12 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 				]
 			);
 			$huidige_gebruiker = wp_get_current_user();
-			return compact( 'gebruikers', 'oven', 'huidige_gebruiker' );
+			$data = [
+				'gebruikers' => $gebruikers,
+				'oven' => $oven,
+				'huidige_gebruiker' => $huidige_gebruiker,
+			];
+			return $data;
 		} else {
 			$error->add( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
 			return $error;
@@ -62,11 +67,10 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 	}
 
 	/**
+	 * Callback from Ajax request
 	 *
-	 * callback from Ajax request
-	 *
-	 * @param WP_REST_Request $request Ajax request params
-	 * @return WP_REST_Response Ajax response
+	 * @param WP_REST_Request $request Ajax request params.
+	 * @return WP_REST_Response Ajax response.
 	 */
 	public static function callback_show( WP_REST_Request $request ) {
 
@@ -101,9 +105,9 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 			7 => 'zondag',
 		];
 
-		  $oven = new Kleistad_Oven( $oven_id );
-		$reserveringStore = new Kleistad_Reserveringen( $oven_id );
-		$reserveringen = $reserveringStore->get();
+		$oven = new Kleistad_Oven( $oven_id );
+		$reservering_store = new Kleistad_Reserveringen( $oven_id );
+		$reserveringen = $reservering_store->get();
 		$huidige_gebruiker_id = get_current_user_id();
 		$huidige_gebruiker = get_userdata( $huidige_gebruiker_id );
 
@@ -165,7 +169,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 							$verwijderbaar = Kleistad_Roles::override() ? ! $verwerkt : ! $datum_verstreken;
 						} else {
 							$kleur = ! $datum_verstreken ? 'pink' : $kleur;
-							// als de huidige gebruiker geen bevoegdheid heeft, dan geen actie
+							// als de huidige gebruiker geen bevoegdheid heeft, dan geen actie.
 							$wijzigbaar = ( ! $verwerkt && Kleistad_Roles::override()) || is_super_admin();
 							$verwijderbaar = ! $verwerkt && Kleistad_Roles::override();
 						}
@@ -188,7 +192,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 							'verwijderbaar' => $verwijderbaar ? 1 : 0,
 							'wijzigbaar' => $wijzigbaar ? 1 : 0,
 						];
-						break; // exit de foreach loop
+						break; // exit de foreach loop.
 					}
 				}
 				$row_html .= "<tr style=\"background-color: $kleur\">";
@@ -220,10 +224,10 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 
 	/**
 	 *
-	 * callback from Ajax request
+	 * Callback from Ajax request
 	 *
-	 * @param WP_REST_Request $request Ajax request params
-	 * @return WP_REST_Response Ajax response
+	 * @param WP_REST_Request $request Ajax request params.
+	 * @return WP_REST_Response Ajax response.
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) {
 		$gebruiker_id = intval( $request->get_param( 'gebruiker_id' ) );
@@ -235,7 +239,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 		);
 
 		if ( $request->get_param( 'oven_id' ) > 0 ) {
-			// het betreft een toevoeging of wijziging, check of er al niet een bestaande reservering is
+			// het betreft een toevoeging of wijziging, check of er al niet een bestaande reservering is.
 			if ( ! $bestaande_reservering || ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) {
 				$reservering->gebruiker_id = $gebruiker_id;
 				$reservering->dag = intval( $request->get_param( 'dag' ) );
@@ -247,19 +251,17 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 				$reservering->verdeling = $request->get_param( 'verdeling' );
 				$reservering->save();
 			} else {
-				// er is door een andere gebruiker al een reservering aangemaakt, niet toegestaan
-				// error_log('reservering niet toegestaan');
+				// er is door een andere gebruiker al een reservering aangemaakt, niet toegestaan.
 			}
 		} else {
-			// het betreft een annulering, mag alleen verwijderd worden door de gebruiker of een bevoegde
+			// het betreft een annulering, mag alleen verwijderd worden door de gebruiker of een bevoegde.
 			if ( $bestaande_reservering && (( $reservering->gebruiker_id == $gebruiker_id) || Kleistad_Roles::override()) ) {
 				$reservering->delete();
 			} else {
-				// de reservering is al verwijderd of de gebruiker mag dit niet
-				// error_log('reservering al verwijderd');
+				// de reservering is al verwijderd of de gebruiker mag dit niet.
 			}
 		}
-		$request->set_param( 'oven_id', $oven_id ); // zorg dat het over_id correct is
+		$request->set_param( 'oven_id', $oven_id ); // zorg dat het over_id correct is.
 		return self::callback_show( $request );
 	}
 

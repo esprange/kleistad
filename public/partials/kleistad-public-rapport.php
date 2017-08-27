@@ -15,9 +15,8 @@ if ( ! Kleistad_Roles::reserveer() ) : ?>
 <p>Geen toegang tot dit formulier</p>
 <?php
 else :
-	extract( $data );
 ?>
-<p>Stookrapport voor <?php echo $naam; ?> (je huidig saldo is &euro; <?php echo $saldo; ?>)</p>
+<p>Stookrapport voor <?php echo $naam; ?> (je huidig saldo is &euro; <?php echo $data['saldo']; ?>)</p>
 
 <table class="kleistad_rapport" data-order='[[ 1, "asc" ]]' >
 	<thead>
@@ -34,7 +33,7 @@ else :
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach ( $items as $item ) : ?>
+		<?php foreach ( $data['items'] as $item ) : ?>
 		  <tr>
 			  <td><span style="display:none"><?php echo $item['sdatum']; ?></span> <?php echo $item['datum']; ?></td>
 			  <td><?php echo $item['oven']; ?></td>

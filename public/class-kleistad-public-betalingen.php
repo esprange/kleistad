@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -20,9 +19,9 @@
 class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
 
 	/**
+	 * Prepareer 'betalingen' form
 	 *
-	 * prepareer 'betalingen' form
-	 *
+	 * @param array $data data to be prepared.
 	 * @return array
 	 *
 	 * @since   4.0.0
@@ -33,12 +32,12 @@ class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
 		}
 
 		$rows = [];
-		$cursusStore = new Kleistad_Cursussen();
-		$cursussen = $cursusStore->get();
-		$inschrijvingStore = new Kleistad_Inschrijvingen;
-		$inschrijvingen = $inschrijvingStore->get();
-		$cursistStore = new Kleistad_Gebruikers();
-		$cursisten = $cursistStore->get();
+		$cursus_store = new Kleistad_Cursussen();
+		$cursussen = $cursus_store->get();
+		$inschrijving_store = new Kleistad_Inschrijvingen;
+		$inschrijvingen = $inschrijving_store->get();
+		$cursist_store = new Kleistad_Gebruikers();
+		$cursisten = $cursist_store->get();
 
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
@@ -56,13 +55,15 @@ class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
 				}
 			}
 		}
-
-		return compact( 'rows' );
+		$data = [
+			'rows' => $rows,
+		];
+		return $data;
 	}
 
 	/**
 	 *
-	 * valideer/sanitize 'betalingen' form
+	 * Valideer/sanitize 'betalingen' form
 	 *
 	 * @return array
 	 *
@@ -98,21 +99,22 @@ class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
 				$cursisten[ $cursist_id ]['geannuleerd'][ $cursus_id ] = 1;
 			}
 		}
-		return compact( 'cursisten' );
+		$data = [
+			'cursisten' => $cursisten,
+		];
+		return $data;
 	}
 
 	/**
+	 * Bewaar 'betalingen' form gegevens
 	 *
-	 * bewaar 'betalingen' form gegevens
-	 *
+	 * @param array $data data to be saved.
 	 * @return string
 	 *
 	 * @since   4.0.0
 	 */
 	public function save( $data ) {
-		extract( $data );
-
-		foreach ( $cursisten as $cursist_id => $cursist ) {
+		foreach ( $data['cursisten'] as $cursist_id => $cursist ) {
 			if ( isset( $cursist['c_betaald'] ) ) {
 				foreach ( $cursist['c_betaald'] as $cursus_id => $value ) {
 					$inschrijving = new Kleistad_Inschrijving( $cursist_id, $cursus_id );

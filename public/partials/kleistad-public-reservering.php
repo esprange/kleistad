@@ -10,18 +10,18 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
+
 if ( ! Kleistad_Roles::reserveer() ) :
 	?>
   <p>Geen toegang tot dit formulier</p>
 <?php
 else :
-	extract( $data );
 ?>
 
-  <h1 id="kleistad<?php echo $oven->id; ?>">Reserveringen voor de <?php echo $oven->naam; ?></h1>
-  <table id="reserveringen<?php echo $oven->id; ?>" class="kleistad_reserveringen"
-		 data-oven_id="<?php echo $oven->id; ?>" 
-		 data-oven-naam="<?php echo $oven->naam; ?>" 
+  <h1 id="kleistad<?php echo $data['oven']->id; ?>">Reserveringen voor de <?php echo $data['oven']->naam; ?></h1>
+  <table id="reserveringen<?php echo $data['oven']->id; ?>" class="kleistad_reserveringen"
+		 data-oven_id="<?php echo $data['oven']->id; ?>" 
+		 data-oven-naam="<?php echo $data['oven']->naam; ?>" 
 		 data-maand="<?php echo date( 'n' ); ?>" 
 		 data-jaar="<?php echo date( 'Y' ); ?>" >
 	  <tr>
@@ -76,7 +76,7 @@ else :
 						<td><select name="kleistad_stoker_id" class="kleistad_verdeel" >
 								<option value="0" >&nbsp;</option>
 								<?php
-								foreach ( $gebruikers as $gebruiker ) :
+								foreach ( $data['gebruikers'] as $gebruiker ) :
 									if ( Kleistad_Roles::reserveer( $gebruiker->id ) and ( $gebruiker->id <> $huidige_gebruiker->ID) || Kleistad_Roles::override() ) :
 										?>
 									  <option value="<?php echo $gebruiker->id; ?>"><?php echo $gebruiker->display_name; ?></option>

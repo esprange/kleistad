@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -17,12 +16,12 @@
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
-class Kleistad_Public_SaldoOverzicht extends Kleistad_Public_Shortcode {
+class Kleistad_Public_Saldo_Overzicht extends Kleistad_Public_Shortcode {
 
 	/**
+	 * Prepareer 'saldo_overzicht' form
 	 *
-	 * prepareer 'saldo_overzicht' form
-	 *
+	 * @param mixed $data data to prepare.
 	 * @return array
 	 *
 	 * @since   4.0.0
@@ -43,7 +42,8 @@ class Kleistad_Public_SaldoOverzicht extends Kleistad_Public_Shortcode {
 				];
 			}
 		}
-		return compact( 'stokers' );
+		$data = ['stokers' => $stokers];
+		return $data;
 	}
 
 

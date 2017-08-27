@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -17,12 +16,13 @@
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
-class Kleistad_Public_CursusInschrijving extends Kleistad_Public_Shortcode {
+class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 
 	/**
 	 *
-	 * prepareer 'cursus_inschrijving' form
+	 * Prepareer 'cursus_inschrijving' form
 	 *
+	 * @param array $data data to be prepared.
 	 * @return array
 	 *
 	 * @since   4.0.0
@@ -43,7 +43,7 @@ class Kleistad_Public_CursusInschrijving extends Kleistad_Public_Shortcode {
 				'opmerking' => '',
 			];
 		} else {
-			extract( $data );
+			$input = $data['input'];
 		}
 		$gebruikers = get_users(
 			[
@@ -53,8 +53,8 @@ class Kleistad_Public_CursusInschrijving extends Kleistad_Public_Shortcode {
 		);
 		$open_cursussen = [];
 
-		  $cursusStore = new Kleistad_Cursussen();
-		$cursussen = $cursusStore->get();
+		  $cursus_store = new Kleistad_Cursussen();
+		$cursussen = $cursus_store->get();
 		foreach ( $cursussen as $cursus ) {
 
 			if ( $cursus->eind_datum < time() ) {
@@ -70,12 +70,16 @@ class Kleistad_Public_CursusInschrijving extends Kleistad_Public_Shortcode {
 				'technieken' => $cursus->technieken,
 			];
 		}
-		return compact( 'gebruikers', 'input', 'open_cursussen' );
+		$data = [
+			'gebruikers' => $gebruikers,
+			'input' => $input,
+			'open_cursussen' => $open_cursussen,
+		];
+		return $data;
 	}
 
 	/**
-	 *
-	 * valideer/sanitize 'cursus_inschrijving' form
+	 * Valideer/sanitize 'cursus_inschrijving' form
 	 *
 	 * @return array
 	 *
@@ -128,36 +132,39 @@ class Kleistad_Public_CursusInschrijving extends Kleistad_Public_Shortcode {
 		if ( ! empty( $err ) ) {
 			return $error;
 		}
-
-		return compact( 'input', 'cursus' );
+		$data = [
+			'input' => $input,
+			'cursus' => $cursus,
+		];
+		return $data;
 	}
 
 	/**
 	 *
-	 * bewaar 'cursus_inschrijving' form gegevens
+	 * Bewaar 'cursus_inschrijving' form gegevens
 	 *
+	 * @param array $data data to be saved.
 	 * @return string
 	 *
 	 * @since   4.0.0
 	 */
 	public function save( $data ) {
-		extract( $data );
 		$error = new WP_Error();
 
 		if ( ! is_user_logged_in() ) {
 			$gebruiker = new Kleistad_Gebruiker();
-			$gebruiker->voornaam = $input['voornaam'];
-			$gebruiker->achternaam = $input['achternaam'];
-			$gebruiker->straat = $input['straat'];
-			$gebruiker->huisnr = $input['huisnr'];
-			$gebruiker->pcode = $input['pcode'];
-			$gebruiker->plaats = $input['plaats'];
-			$gebruiker->email = $input['emailadres'];
-			$gebruiker->telnr = $input['telnr'];
+			$gebruiker->voornaam = $data['input']['voornaam'];
+			$gebruiker->achternaam = $data['input']['achternaam'];
+			$gebruiker->straat = $data['input']['straat'];
+			$gebruiker->huisnr = $data['input']['huisnr'];
+			$gebruiker->pcode = $data['input']['pcode'];
+			$gebruiker->plaats = $data['input']['plaats'];
+			$gebruiker->email = $data['input']['emailadres'];
+			$gebruiker->telnr = $data['input']['telnr'];
 			$gebruiker_id = $gebruiker->save();
 		} else {
 			if ( is_super_admin() ) {
-				$gebruiker_id = $input['gebruiker_id'];
+				$gebruiker_id = $data['input']['gebruiker_id'];
 			} else {
 				$gebruiker_id = get_current_user_id();
 			}
@@ -165,8 +172,8 @@ class Kleistad_Public_CursusInschrijving extends Kleistad_Public_Shortcode {
 		}
 
 		$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus->id );
-		$inschrijving->technieken = $input['technieken'];
-		$inschrijving->opmerking = $input['opmerking'];
+		$inschrijving->technieken = $data['input']['technieken'];
+		$inschrijving->opmerking = $data['input']['opmerking'];
 		$inschrijving->datum = time();
 		$inschrijving->save();
 		if ( is_super_admin() ) {

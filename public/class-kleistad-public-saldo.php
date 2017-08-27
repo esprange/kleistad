@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -21,8 +20,9 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 
 	/**
 	 *
-	 * prepareer 'saldo' form
+	 * Prepareer 'saldo' form
 	 *
+	 * @param mixed $data the prepared data.
 	 * @return array
 	 *
 	 * @since   4.0.0
@@ -30,12 +30,15 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 	public function prepare( $data = null ) {
 		$gebruiker_id = get_current_user_id();
 		$saldo = number_format( (float) get_user_meta( $gebruiker_id, 'stooksaldo', true ), 2, ',', '' );
-		return compact( 'gebruiker_id', 'saldo' );
+		$data = [
+			'gebruiker_id' => $gebruiker_id,
+			'saldo' => $saldo,
+		];
+		return $data;
 	}
 
 	/**
-	 *
-	 * valideer/sanitize 'saldo' form
+	 * Valideer/sanitize 'saldo' form
 	 *
 	 * @return array
 	 *
@@ -48,13 +51,19 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 		$bedrag = filter_input( INPUT_POST, 'kleistad_bedrag', FILTER_SANITIZE_NUMBER_FLOAT );
 		$datum = strftime( '%d-%m-%Y', strtotime( filter_input( INPUT_POST, 'kleistad_datum', FILTER_SANITIZE_STRING ) ) );
 
-		return compact( 'gebruiker_id', 'via', 'bedrag', 'datum' );
+		$data = [
+			'gebruiker_id' => $gebruiker_id,
+			'via' => $via,
+			'bedrag' => $bedrag,
+			'datum' => $datum,
+		];
+		return $data;
 	}
 
 	/**
+	 * Bewaar 'saldo' form gegevens
 	 *
-	 * bewaar 'saldo' form gegevens
-	 *
+	 * @param array $data the data to be saved.
 	 * @return string
 	 *
 	 * @since   4.0.0
@@ -62,23 +71,22 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 	public function save( $data ) {
 		$error = new WP_Error();
 
-		extract( $data );
-		$gebruiker = get_userdata( $gebruiker_id );
+		$gebruiker = get_userdata( $data['gebruiker_id'] );
 
 		$to = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
 		if ( self::compose_email(
 			$to, 'wijziging stooksaldo', 'kleistad_email_saldo_wijziging', [
-				'datum' => $datum,
-				'via' => $via,
-				'bedrag' => $bedrag,
+				'datum' => $data['datum'],
+				'via' => $data['via'],
+				'bedrag' => $data['bedrag'],
 				'voornaam' => $gebruiker->first_name,
 				'achternaam' => $gebruiker->last_name,
 			]
 		) ) {
-			$huidig = (float) get_user_meta( $gebruiker_id, 'stooksaldo', true );
-			$saldo = $bedrag + $huidig;
+			$huidig = (float) get_user_meta( $data['gebruiker_id'], 'stooksaldo', true );
+			$saldo = $data['bedrag'] + $huidig;
 			update_user_meta( $gebruiker->ID, 'stooksaldo', $saldo );
-			Kleistad_Oven::log_saldo( "wijziging saldo $gebruiker->display_name van $huidig naar $saldo, betaling per $via." );
+			Kleistad_Oven::log_saldo( "wijziging saldo $gebruiker->display_name van $huidig naar $saldo, betaling per {$data['via']}." );
 			return "Het saldo is bijgewerkt naar &euro; $saldo en een email is verzonden.";
 		} else {
 			$error->add( '', 'Er is een fout opgetreden want de email kon niet verzonden worden' );

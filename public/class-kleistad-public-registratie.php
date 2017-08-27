@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -20,9 +19,9 @@
 class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 
 	/**
+	 * Prepareer 'registratie' form
 	 *
-	 * prepareer 'registratie' form
-	 *
+	 * @param array $data data to be prepared.
 	 * @return array
 	 *
 	 * @since   4.0.0
@@ -32,7 +31,7 @@ class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 		$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 
 		if ( is_null( $data ) ) {
-			$input = [
+			$data['input'] = [
 				'voornaam' => $gebruiker->voornaam,
 				'achternaam' => $gebruiker->achternaam,
 				'straat' => $gebruiker->straat,
@@ -41,15 +40,12 @@ class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 				'plaats' => $gebruiker->plaats,
 				'telnr' => $gebruiker->telnr,
 			];
-		} else {
-			extract( $data );
 		}
-		return compact( 'input' );
+		return $data;
 	}
 
 	/**
-	 *
-	 * valideer/sanitize 'registratie' form
+	 * Valideer/sanitize 'registratie' form
 	 *
 	 * @return array
 	 *
@@ -83,33 +79,35 @@ class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 			return $error;
 		}
 
-		return compact( 'input' );
+		$data = [
+			'input' => $input,
+		];
 	}
 
 	/**
 	 *
-	 * bewaar 'registratie' form gegevens
+	 * Bewaar 'registratie' form gegevens
 	 *
+	 * @param array $data data to be saved.
 	 * @return string
 	 *
 	 * @since   4.0.0
 	 */
 	public function save( $data ) {
-		extract( $data );
 		$error = new WP_Error();
 
 		if ( ! is_user_logged_in() ) {
 			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
 			return $error;
 		} else {
-			$gebruiker = new Kleistad_Gebruiker( $input['gebruiker_id'] );
-			$gebruiker->voornaam = $input['voornaam'];
-			$gebruiker->achternaam = $input['achternaam'];
-			$gebruiker->straat = $input['straat'];
-			$gebruiker->huisnr = $input['huisnr'];
-			$gebruiker->pcode = $input['pcode'];
-			$gebruiker->plaats = $input['plaats'];
-			$gebruiker->telnr = $input['telnr'];
+			$gebruiker = new Kleistad_Gebruiker( $data['input']['gebruiker_id'] );
+			$gebruiker->voornaam = $data['input']['voornaam'];
+			$gebruiker->achternaam = $data['input']['achternaam'];
+			$gebruiker->straat = $data['input']['straat'];
+			$gebruiker->huisnr = $data['input']['huisnr'];
+			$gebruiker->pcode = $data['input']['pcode'];
+			$gebruiker->plaats = $data['input']['plaats'];
+			$gebruiker->telnr = $data['input']['telnr'];
 			if ( $gebruiker->save() ) {
 				return 'De wijzigingen zijn verwerkt';
 			} else {

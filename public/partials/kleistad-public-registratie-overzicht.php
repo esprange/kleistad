@@ -10,12 +10,12 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
+
 if ( ! Kleistad_Roles::override() ) :
 	?>
   <p>Geen toegang tot dit formulier</p>
 <?php
 else :
-	extract( $data );
 ?>
 
   <div id="kleistad_deelnemer_info">
@@ -26,7 +26,7 @@ else :
 	  <select id="kleistad_deelnemer_selectie" name="selectie" >
 		  <option value="*" >&nbsp;</option>
 		  <option value="0" >Leden</option>
-			<?php foreach ( $cursussen as $cursus ) : ?>
+			<?php foreach ( $data['cursussen'] as $cursus ) : ?>
 			<option value="C<?php echo $cursus->id; ?>;">C<?php echo $cursus->id . ' ' . $cursus->naam; ?></option>
 			<?php endforeach ?>
 
@@ -44,7 +44,7 @@ else :
 		  </tr>
 	  </thead>
 	  <tbody>
-			<?php foreach ( $registraties as $registratie ) : ?>
+			<?php foreach ( $data['registraties'] as $registratie ) : ?>
 			<tr class="kleistad_deelnemer_info" 
 				data-inschrijvingen='<?php echo json_encode( $registratie['inschrijvingen'] ); ?>'
 				data-deelnemer='<?php echo json_encode( $registratie['deelnemer_info'] ); ?>' 

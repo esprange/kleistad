@@ -10,12 +10,12 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
+
 if ( ! Kleistad_Roles::override() ) :
 	?>
   <p>Geen toegang tot dit formulier</p>
 <?php
 else :
-	extract( $data );
 ?>
 
   <div id="kleistad_cursus">
@@ -38,7 +38,7 @@ else :
 						  <th>Docent</th>
 						  <td colspan="3"><input type="text" name="docent" id="kleistad_cursus_docent" list="kleistad_docenten" >
 							  <datalist id="kleistad_docenten">
-									<?php foreach ( $gebruikers as $gebruiker ) : ?>
+									<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
 									<option value="<?php echo $gebruiker->voornaam . ' ' . $gebruiker->achternaam; ?>">
 										<?php endforeach ?>
 							  </datalist></td>
@@ -87,7 +87,6 @@ else :
 
 		  <div id="kleistad_cursus_indeling" >
 			  <form id="kleistad_form_cursus_indeling" action="#" method="post" >
-					<?php ;/* wp_nonce_field('kleistad_cursus_beheer') */ ?>
 				  <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'kleistad_cursus_beheer' ); ?>" />
 					<?php wp_referer_field(); ?>
 				  <input type="hidden" name="cursus_id" value="0"/>
@@ -125,7 +124,7 @@ else :
 		  </tr>
 	  </thead>
 	  <tbody>
-			<?php foreach ( $rows as $row ) : ?>
+			<?php foreach ( $data['rows'] as $row ) : ?>
 			<tr style="background-color:<?php $row['cursus']->vol ? 'lightblue' : ($row['cursus']->vervallen ? 'lightgray' : ''); ?>" class="kleistad_cursus_info" 
 				data-cursus='
 				<?php
