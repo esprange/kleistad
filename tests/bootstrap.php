@@ -18,15 +18,20 @@ require_once $_tests_dir . '/includes/functions.php';
  */
 function _manually_load_environment() {
 
-	require dirname( dirname( __FILE__ ) ) . '/kleistad.php';
+	$plugin_file = dirname( dirname( __FILE__ ) ) . '/kleistad.php';
+	require $plugin_file;
+
+	activate_plugin( $plugin_file );
 
 	switch_theme( 'kleistad' );
-
+	
+/*
 	require dirname( dirname( __FILE__ ) ) . '/includes/class-kleistad-activator.php';
 	Kleistad_Activator::activate();
-
+	
 	$plugins_to_active = [ 'kleistad/kleistad.php' ];
 	update_option( 'active_plugins', $plugins_to_active );
+*/
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_environment' );
