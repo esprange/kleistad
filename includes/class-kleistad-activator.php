@@ -50,7 +50,7 @@ class Kleistad_Activator {
 			global $wpdb;
 			$charset_collate = $wpdb->get_charset_collate();
 
-			flush_rewrite_rules();
+			// flush_rewrite_rules call removed.
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 			dbDelta(
 				"CREATE TABLE {$wpdb->prefix}kleistad_reserveringen (
