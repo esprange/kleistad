@@ -17,16 +17,16 @@ require_once $_tests_dir . '/includes/functions.php';
  * Manually load the plugin being tested.
  */
 function _manually_load_environment() {
-	
+
 	require dirname( dirname( __FILE__ ) ) . '/kleistad.php';
 
-	// Add your theme …
-	switch_theme('kleistad');
-	
-	// Update array with plugins to include ...
-	$plugins_to_active = ['kleistad/kleistad.php'];
-	update_option( 'active_plugins', $plugins_to_active );
+	switch_theme( 'kleistad' );
 
+	require_once dirname( dirname( __FILE__ ) ) . 'includes/class-kleistad-activator.php';
+	Kleistad_Activator::activate();
+
+	$plugins_to_active = [ 'kleistad/kleistad.php' ];
+	update_option( 'active_plugins', $plugins_to_active );
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_environment' );
