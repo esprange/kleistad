@@ -22,7 +22,7 @@ function _manually_load_environment() {
 
 	switch_theme( 'kleistad' );
 
-	require_once dirname( dirname( __FILE__ ) ) . 'includes/class-kleistad-activator.php';
+	require dirname( dirname( __FILE__ ) ) . '/includes/class-kleistad-activator.php';
 	Kleistad_Activator::activate();
 
 	$plugins_to_active = [ 'kleistad/kleistad.php' ];
