@@ -10,7 +10,7 @@
  */
 class OvensTest extends WP_UnitTestCase {
 
-	protected function setUp() {
+	public function setUp() {
 		activate_kleistad();
 	}
 	/**
