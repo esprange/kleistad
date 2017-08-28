@@ -10,6 +10,9 @@
  */
 class OvensTest extends WP_UnitTestCase {
 
+	/**
+	 * Activate the plugin which includes the kleistad specific tables if not present.
+	 */
 	public function setUp() {
 		activate_kleistad();
 	}

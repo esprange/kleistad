@@ -4,6 +4,7 @@
  *
  * @package Kleistad
  */
+
 $GLOBALS['wp_tests_options'] = array(
 
 	'active_plugins' => array( 'kleistad/kleistad.php' ),
@@ -26,11 +27,6 @@ function _manually_load_environment() {
 	$plugin_file = dirname( dirname( __FILE__ ) ) . '/kleistad.php';
 	require $plugin_file;
 
-/*	$plugins_to_activate = [ $plugin_file ];
-	update_option( 'active_plugins', $plugins_to_activate );
-*/
-	switch_theme( 'kleistad' );
-	
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_environment' );
