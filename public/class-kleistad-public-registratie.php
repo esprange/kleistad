@@ -82,6 +82,7 @@ class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 		$data = [
 			'input' => $input,
 		];
+		return $data;
 	}
 
 	/**

@@ -122,8 +122,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		);
 
 		$regelingen = [];
-
-		$ovens = $wpdb->get_results( $wpdb->prepare( 'SELECT id, naam FROM ' . $tabel . ' ORDER BY naam %s', $order ), OBJECT_K );
+		$ovens = $wpdb->get_results( "SELECT id, naam FROM {$wpdb->prefix}kleistad_ovens ORDER BY naam $order", OBJECT_K );// WPCS: unprepared SQL OK.
 
 		if ( 'gebruiker_naam' == $orderby ) {
 			foreach ( $gebruikers as $gebruiker ) {

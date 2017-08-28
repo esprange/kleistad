@@ -171,7 +171,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 			$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 		}
 
-		$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus->id );
+		$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );
 		$inschrijving->technieken = $data['input']['technieken'];
 		$inschrijving->opmerking = $data['input']['opmerking'];
 		$inschrijving->datum = time();
@@ -181,20 +181,20 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 		}
 		$to = "$gebruiker->voornaam $gebruiker->achternaam <$gebruiker->email>";
 		if ( self::compose_email(
-			$to, 'inschrijving cursus', $cursus->inschrijfslug, [
+			$to, 'inschrijving cursus', $data['cursus']->inschrijfslug, [
 				'voornaam' => $gebruiker->voornaam,
 				'achternaam' => $gebruiker->achternaam,
-				'cursus_naam' => $cursus->naam,
-				'cursus_docent' => $cursus->docent,
-				'cursus_start_datum' => strftime( '%A %d-%m-%y', $cursus->start_datum ),
-				'cursus_eind_datum' => strftime( '%A %d-%m-%y', $cursus->eind_datum ),
-				'cursus_start_tijd' => strftime( '%H:%M', $cursus->start_tijd ),
-				'cursus_eind_tijd' => strftime( '%H:%M', $cursus->eind_tijd ),
+				'cursus_naam' => $data['cursus']->naam,
+				'cursus_docent' => $data['cursus']->docent,
+				'cursus_start_datum' => strftime( '%A %d-%m-%y', $data['cursus']->start_datum ),
+				'cursus_eind_datum' => strftime( '%A %d-%m-%y', $data['cursus']->eind_datum ),
+				'cursus_start_tijd' => strftime( '%H:%M', $data['cursus']->start_tijd ),
+				'cursus_eind_tijd' => strftime( '%H:%M', $data['cursus']->eind_tijd ),
 				'cursus_technieken' => implode( ', ', $inschrijving->technieken ),
 				'cursus_opmerking' => $inschrijving->opmerking,
 				'cursus_code' => $inschrijving->code,
-				'cursus_kosten' => $cursus->cursuskosten,
-				'cursus_inschrijfkosten' => $cursus->inschrijfkosten,
+				'cursus_kosten' => $data['cursus']->cursuskosten,
+				'cursus_inschrijfkosten' => $data['cursus']->inschrijfkosten,
 			]
 		) ) {
 			return 'De inschrijving is verwerkt en er is een email verzonden met bevestiging';

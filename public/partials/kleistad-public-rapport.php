@@ -16,7 +16,7 @@ if ( ! Kleistad_Roles::reserveer() ) : ?>
 <?php
 else :
 ?>
-<p>Stookrapport voor <?php echo $naam; ?> (je huidig saldo is &euro; <?php echo $data['saldo']; ?>)</p>
+<p>Stookrapport voor <?php echo $data['naam']; ?> (je huidig saldo is &euro; <?php echo $data['saldo']; ?>)</p>
 
 <table class="kleistad_rapport" data-order='[[ 1, "asc" ]]' >
 	<thead>

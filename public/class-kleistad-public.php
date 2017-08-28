@@ -280,7 +280,7 @@ class Kleistad_Public {
 			return $html;
 		}
 		ob_start();
-		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-' . $form . '.php';
+		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-' . str_replace( '_', '-', $form ) . '.php';
 		$html .= ob_get_contents();
 		ob_clean();
 		return $html;

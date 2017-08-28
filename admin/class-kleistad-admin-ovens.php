@@ -101,7 +101,6 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 */
 	function prepare_items() {
 		global $wpdb;
-		$tabel = $wpdb->prefix . 'kleistad_ovens';
 
 		$per_page = 5; // constant, how much records will be shown per page.
 
@@ -111,13 +110,13 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$total_items = $wpdb->get_var( 'SELECT COUNT(id) FROM ' . $tabel );
+		$total_items = $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}kleistad_ovens" ); // WPCS: unprepared SQL OK.
 
 		$paged = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
 		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
 		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
 
-		$this->items = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $tabel . ' ORDER BY %s %s LIMIT %d OFFSET %d', $orderby, $order, $per_page, $paged ), ARRAY_A );
+		$this->items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens ORDER BY $orderby $order LIMIT $per_page OFFSET $paged", ARRAY_A ); // WPCS: unprepared SQL OK.
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items, // total items defined above.

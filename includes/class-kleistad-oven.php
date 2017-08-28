@@ -44,8 +44,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 		];
 		$this->_data     = $default_data;
 		if ( ! is_null( $oven_id ) ) {
-			$tabel = $wpdb->prefix . 'kleistad_ovens';
-			$result = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $tabel . ' WHERE id = %d', $oven_id ), ARRAY_A );
+			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_ovens WHERE id = %d", $oven_id ), ARRAY_A ); // WPCS: unprepared SQL OK.
 			if ( ! is_null( $result ) ) {
 				$this->_data = $result;
 			}
@@ -156,7 +155,7 @@ class Kleistad_Ovens extends Kleistad_EntityStore {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$ovens = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens", ARRAY_A );
+		$ovens = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens", ARRAY_A ); // WPCS: unprepared SQL OK.
 		foreach ( $ovens as $oven ) {
 			$this->_data[ $oven['id'] ] = new Kleistad_Oven();
 			$this->_data[ $oven['id'] ]->load( $oven );
@@ -220,9 +219,9 @@ class Kleistad_Reservering extends Kleistad_Entity {
 
 		$resultaat = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM %s WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d', $wpdb->prefix . 'kleistad_reserveringen', $this->_data['oven_id'], $jaar, $maand, $dag
+				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d", $this->_data['oven_id'], $jaar, $maand, $dag
 			), ARRAY_A
-		);
+		); // WPCS: unprepared SQL OK.
 		if ( $resultaat ) {
 			$this->_data = $resultaat;
 			return true;
@@ -390,9 +389,9 @@ class Kleistad_Reserveringen extends Kleistad_EntityStore {
 		global $wpdb;
 		$tabel = $wpdb->prefix . 'kleistad_reserveringen';
 		if ( is_null( $oven_id ) ) {
-			$reserveringen = $wpdb->get_results( 'SELECT * FROM ' . $tabel . ' ORDER BY jaar DESC, maand DESC, dag DESC', ARRAY_A );
+			$reserveringen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_reserveringen ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A ); // WPCS: unprepared SQL OK.
 		} else {
-			$reserveringen = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $tabel . ' WHERE oven_id = %d ORDER BY jaar DESC, maand DESC, dag DESC', $oven_id ), ARRAY_A );
+			$reserveringen = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d ORDER BY jaar DESC, maand DESC, dag DESC", $oven_id ), ARRAY_A ); // WPCS: unprepared SQL OK.
 		}
 		foreach ( $reserveringen as $reservering_id => $reservering ) {
 			$this->_data[ $reservering_id ] = new Kleistad_Reservering( $reservering['oven_id'] );

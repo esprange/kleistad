@@ -96,8 +96,8 @@
             $('#kleistad_cursus_docent').val(cursus.docent);
             $('#kleistad_cursus_start_datum').val(cursus.start_datum);
             $('#kleistad_cursus_eind_datum').val(cursus.eind_datum);
-            $('#kleistad_cursus_start_tijd').val(cursus.start_tijd.substr(0, 5));
-            $('#kleistad_cursus_eind_tijd').val(cursus.eind_tijd.substr(0, 5));
+            $('#kleistad_cursus_start_tijd').val(cursus.start_tijd); // .substr(0, 5)
+            $('#kleistad_cursus_eind_tijd').val(cursus.eind_tijd); // .substr(0, 5)
             $('#kleistad_cursuskosten').val(cursus.cursuskosten);
             $('#kleistad_inschrijfkosten').val(cursus.inschrijfkosten);
             $('#kleistad_inschrijfslug').val(cursus.inschrijfslug);

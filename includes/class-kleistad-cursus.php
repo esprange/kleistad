@@ -57,8 +57,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 		if ( is_null( $cursus_id ) ) {
 			$this->_data = $default_data;
 		} else {
-			$tabel = $wpdb->prefix . 'kleistad_cursussen';
-			$this->_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM '. $tabel . ' WHERE id = %d', $cursus_id ), ARRAY_A );
+			$this->_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
 		}
 	}
 
@@ -166,7 +165,7 @@ class Kleistad_Cursussen extends Kleistad_EntityStore {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$cursussen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen ORDER BY id DESC", ARRAY_A );
+		$cursussen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen ORDER BY id DESC", ARRAY_A ); // WPCS: unprepared SQL OK.
 		foreach ( $cursussen as $cursus ) {
 			$this->_data[ $cursus['id'] ] = new Kleistad_Cursus( $cursus['id'] );
 		}

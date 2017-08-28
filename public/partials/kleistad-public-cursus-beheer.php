@@ -126,9 +126,9 @@ else :
 	  <tbody>
 			<?php foreach ( $data['rows'] as $row ) : ?>
 			<tr style="background-color:<?php $row['cursus']->vol ? 'lightblue' : ($row['cursus']->vervallen ? 'lightgray' : ''); ?>" class="kleistad_cursus_info" 
-				data-cursus='
+				data-cursus=
 				<?php
-				echo json_encode(
+				echo "'" . json_encode(
 					[
 						'id' => $row['cursus']->id,
 						'naam' => $row['cursus']->naam,
@@ -146,9 +146,8 @@ else :
 						'inschrijfslug' => $row['cursus']->inschrijfslug,
 						'indelingslug' => $row['cursus']->indelingslug,
 					]
-				)
+				) . "'"
 				?>
-				' 
 				data-wachtlijst='<?php echo json_encode( $row['wachtlijst'] ); ?>' 
 				data-ingedeeld='<?php echo json_encode( $row['ingedeeld'] ); ?>' >
 				<td><?php echo $row['cursus']->id; ?></td>

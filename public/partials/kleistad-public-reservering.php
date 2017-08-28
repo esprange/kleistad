@@ -67,7 +67,7 @@ else :
 				  </tr> -->
 				  <tr>
 					  <td><label>Stoker</label></td>
-					  <td><span id="kleistad_stoker"><?php echo $huidige_gebruiker->display_name; ?></span><input type="hidden" name="kleistad_stoker_id" id="kleistad_1e_stoker" value="<?php echo $huidige_gebruiker->ID; ?>" /></td>
+					  <td><span id="kleistad_stoker"><?php echo $data['huidige_gebruiker']->display_name; ?></span><input type="hidden" name="kleistad_stoker_id" id="kleistad_1e_stoker" value="<?php echo $data['huidige_gebruiker']->ID; ?>" /></td>
 					  <td><input type="number" name="kleistad_stoker_perc" readonly /> %</td>
 				  </tr>
 	<?php for ( $i = 1; $i < 5; $i++ ) : ?>
@@ -77,7 +77,7 @@ else :
 								<option value="0" >&nbsp;</option>
 								<?php
 								foreach ( $data['gebruikers'] as $gebruiker ) :
-									if ( Kleistad_Roles::reserveer( $gebruiker->id ) and ( $gebruiker->id <> $huidige_gebruiker->ID) || Kleistad_Roles::override() ) :
+									if ( Kleistad_Roles::reserveer( $gebruiker->id ) and ( $gebruiker->id <> $data['huidige_gebruiker']->ID) || Kleistad_Roles::override() ) :
 										?>
 									  <option value="<?php echo $gebruiker->id; ?>"><?php echo $gebruiker->display_name; ?></option>
 									<?php
