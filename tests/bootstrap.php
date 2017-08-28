@@ -21,17 +21,11 @@ function _manually_load_environment() {
 	$plugin_file = dirname( dirname( __FILE__ ) ) . '/kleistad.php';
 	require $plugin_file;
 
-	activate_plugin( $plugin_file );
+	$plugins_to_activate = [ $plugin_file ];
+	update_option( 'active_plugins', $plugins_to_activate );
 
 	switch_theme( 'kleistad' );
 	
-/*
-	require dirname( dirname( __FILE__ ) ) . '/includes/class-kleistad-activator.php';
-	Kleistad_Activator::activate();
-	
-	$plugins_to_active = [ 'kleistad/kleistad.php' ];
-	update_option( 'active_plugins', $plugins_to_active );
-*/
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_environment' );
