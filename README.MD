@@ -1,6 +1,6 @@
 # [Kleistad] [![Build Status](https://travis-ci.org/esprange/kleistad.png)]
 
-=== Kleistad ===
+# Kleistad
 Contributors: esprange
 Donate link: www.sprako.nl/wordpress/eric
 Tags: comments
@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Wordpress plugin for Stichting Kleistad, Amersfoort (The Netherlands), see www.kleistad.nl.
 
-== Description ==
+## Description
 
 Deze plugin is specifiek ontwikkeld voor de site www.kleistad.nl en voegt een aantal uitbreidingen via shortcode toe aan deze Wordpress site.
 
@@ -64,5 +64,3 @@ Deze plugin voegt drie tabellen toe aan de database:
 * kleistad_cursussen
 
 Alle overige informatie wordt via user_meta informatie vastgelegd.
-
-`<?php code(); // goes in backticks ?>`
