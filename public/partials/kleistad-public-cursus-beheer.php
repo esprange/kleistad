@@ -125,41 +125,19 @@ else :
 	  </thead>
 	  <tbody>
 			<?php foreach ( $data['rows'] as $row ) : ?>
-			<tr style="background-color:<?php $row['cursus']->vol ? 'lightblue' : ($row['cursus']->vervallen ? 'lightgray' : ''); ?>" class="kleistad_cursus_info" 
-				data-cursus=
-				<?php
-				echo "'" . json_encode(
-					[
-						'id' => $row['cursus']->id,
-						'naam' => $row['cursus']->naam,
-						'start_datum' => date( 'd-m-Y', $row['cursus']->start_datum ),
-						'eind_datum' => date( 'd-m-Y', $row['cursus']->eind_datum ),
-						'start_tijd' => date( 'H:i', $row['cursus']->start_tijd ),
-						'eind_tijd' => date( 'H:i', $row['cursus']->eind_tijd ),
-						'docent' => $row['cursus']->docent,
-						'technieken' => $row['cursus']->technieken,
-						'vervallen' => $row['cursus']->vervallen,
-						'vol' => $row['cursus']->vol,
-						'techniekkeuze' => $row['cursus']->techniekkeuze,
-						'inschrijfkosten' => $row['cursus']->inschrijfkosten,
-						'cursuskosten' => $row['cursus']->cursuskosten,
-						'inschrijfslug' => $row['cursus']->inschrijfslug,
-						'indelingslug' => $row['cursus']->indelingslug,
-					]
-				) . "'"
-				?>
+			<tr style="background-color:<?php $row['cursus']['vol'] ? 'lightblue' : ($row['cursus']['vervallen'] ? 'lightgray' : ''); ?>" class="kleistad_cursus_info" 
+				data-cursus='<?php echo json_encode( $row['cursus'] ); ?>'
 				data-wachtlijst='<?php echo json_encode( $row['wachtlijst'] ); ?>' 
 				data-ingedeeld='<?php echo json_encode( $row['ingedeeld'] ); ?>' >
-				<td><?php echo $row['cursus']->id; ?></td>
-				<td>C<?php echo $row['cursus']->id; ?></td>
-				<td><?php echo $row['cursus']->naam; ?></td>
-				<td><?php echo $row['cursus']->docent; ?></td>
-				<td><?php echo strftime( '%d-%m', $row['cursus']->start_datum ) . ' .. ' . strftime( '%d-%m', $row['cursus']->eind_datum ); ?></td>
-				<td><?php echo strftime( '%H:%M', $row['cursus']->start_tijd ) . ' - ' . strftime( '%H:%M', $row['cursus']->eind_tijd ); ?></td>
+				<td><?php echo $row['cursus']['id']; ?></td>
+				<td>C<?php echo $row['cursus']['id']; ?></td>
+				<td><?php echo $row['cursus']['naam']; ?></td>
+				<td><?php echo $row['cursus']['docent']; ?></td>
+				<td><?php echo $row['cursus']['start_datum']; ?><br/><?php echo $row['cursus']['eind_datum']; ?></td>
+				<td><?php echo $row['cursus']['start_tijd']; ?><br/><?php echo $row['cursus']['eind_tijd']; ?></td>
 				<td>
 					<?php
-					$technieken = $row['cursus']->technieken;
-					foreach ( $technieken as $techniek ) {
+					foreach ( $row['cursus']['technieken'] as $techniek ) {
 						echo $techniek . '<br/>';
 					}
 					?>

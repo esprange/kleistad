@@ -60,7 +60,23 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 				}
 			}
 			$rows[] = [
-				'cursus' => $cursus,
+				'cursus' => [
+					'id' => $cursus->id,
+					'naam' => $cursus->naam,
+					'start_datum' => date( 'd-m-Y', $cursus->start_datum ),
+					'eind_datum' => date( 'd-m-Y', $cursus->eind_datum ),
+					'start_tijd' => date( 'H:i', $cursus->start_tijd ),
+					'eind_tijd' => date( 'H:i', $cursus->eind_tijd ),
+					'docent' => $cursus->docent,
+					'technieken' => $cursus->technieken,
+					'vervallen' => $cursus->vervallen,
+					'vol' => $cursus->vol,
+					'techniekkeuze' => $cursus->techniekkeuze,
+					'inschrijfkosten' => $cursus->inschrijfkosten,
+					'cursuskosten' => $cursus->cursuskosten,
+					'inschrijfslug' => $cursus->inschrijfslug,
+					'indelingslug' => $cursus->indelingslug,
+				],
 				'wachtlijst' => $wachtlijst,
 				'ingedeeld' => $ingedeeld,
 			];

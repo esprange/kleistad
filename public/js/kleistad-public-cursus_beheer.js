@@ -110,11 +110,11 @@
             $('#kleistad_vervallen').prop("checked", cursus.vervallen > 0);
             $('#kleistad_wachtlijst').children().remove().end();
             $.each(wachtlijst, function (key, value) {
-                $('#kleistad_wachtlijst').append(new Option(value['naam'], JSON.stringify(value), true, true));
+                $('#kleistad_wachtlijst').append(new Option(value['naam'], JSON.stringify(value), false, false));
             });
             $('#kleistad_indeling').children().remove().end();
             $.each(ingedeeld, function (key, value) {
-                var option = new Option(value['naam'], JSON.stringify(value), true, true);
+                var option = new Option(value['naam'], JSON.stringify(value), false, false);
                 option.style.backgroundColor = 'lightgreen';
                 option.style.fontWeight = 700; // bold
                 $('#kleistad_indeling').append(option);
