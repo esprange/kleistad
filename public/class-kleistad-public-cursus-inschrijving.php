@@ -30,7 +30,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 	public function prepare( $data = null ) {
 
 		if ( is_null( $data ) ) {
-			$input = [
+			$data['input'] = [
 				'emailadres' => '',
 				'voornaam' => '',
 				'achternaam' => '',
@@ -42,8 +42,6 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 				'cursus_id' => '',
 				'opmerking' => '',
 			];
-		} else {
-			$input = $data['input'];
 		}
 		$gebruikers = get_users(
 			[
@@ -51,9 +49,10 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$open_cursussen = [];
+		$data['gebruikers'] = $gebruikers;
 
-		  $cursus_store = new Kleistad_Cursussen();
+		$open_cursussen = [];
+		$cursus_store = new Kleistad_Cursussen();
 		$cursussen = $cursus_store->get();
 		foreach ( $cursussen as $cursus ) {
 
@@ -70,11 +69,8 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 				'technieken' => $cursus->technieken,
 			];
 		}
-		$data = [
-			'gebruikers' => $gebruikers,
-			'input' => $input,
-			'open_cursussen' => $open_cursussen,
-		];
+		$data['open_cursussen'] = $open_cursussen;
+
 		return $data;
 	}
 

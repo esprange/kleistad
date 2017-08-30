@@ -28,7 +28,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 	 */
 	public function prepare( $data = null ) {
 		if ( is_null( $data ) ) {
-			$input = [
+			$data['input'] = [
 				'emailadres' => '',
 				'voornaam' => '',
 				'achternaam' => '',
@@ -41,8 +41,6 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 				'start' => '',
 				'opmerking' => '',
 			];
-		} else {
-			$input = $data ['input'];
 		}
 		$gebruikers = get_users(
 			[
@@ -50,10 +48,8 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$data = [
-			'gebruikers' => $gebruikers,
-			'input' => $input,
-		];
+		$data ['gebruikers'] = $gebruikers;
+
 		return $data;
 	}
 
@@ -126,7 +122,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 
 		if ( ! is_user_logged_in() ) {
 
-			$gebruiker_id = email_exists( $input['emailadres'] );
+			$gebruiker_id = email_exists( $data['input']['emailadres'] );
 			if ( $gebruiker_id ) {
 				$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 				if ( Kleistad_Roles::reserveer( $gebruiker_id ) ) {
