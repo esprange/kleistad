@@ -98,7 +98,7 @@
             } else {
                 $('#kleistad_deelnemer_tabel').append('<tr><td colspan="6" >Geen cursus inschrijvingen aanwezig</td></tr>');
             }
-            if (typeof abonnee !== 'undefined') {
+            if ((typeof abonnee !== 'undefined') && (abonnee.length !== 0)){
                 $('#kleistad_deelnemer_tabel').append('<tr><th colspan="2" ><Abonnee code</th><th>Type<br/>abonnement</th><th>Dag</th><th>Start<br/>Datum</th></tr>' +
                         '<tr><td colspan="2" >' + abonnee.code + '</td><td>' + 
                         abonnee.beperkt + '</td><td>' + 
