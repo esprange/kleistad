@@ -110,11 +110,11 @@
             $('#kleistad_vervallen').prop("checked", cursus.vervallen > 0);
             $('#kleistad_wachtlijst').children().remove().end();
             $.each(wachtlijst, function (key, value) {
-                $('#kleistad_wachtlijst').append(new Option(value['naam'], JSON.stringify(value), false, false));
+                $('#kleistad_wachtlijst').append(new Option(value.naam, JSON.stringify(value), false, false));
             });
             $('#kleistad_indeling').children().remove().end();
             $.each(ingedeeld, function (key, value) {
-                var option = new Option(value['naam'], JSON.stringify(value), false, false);
+                var option = new Option(value.naam, JSON.stringify(value), false, false);
                 option.style.backgroundColor = 'lightgreen';
                 option.style.fontWeight = 700; // bold
                 $('#kleistad_indeling').append(option);
@@ -148,7 +148,7 @@
             var options = $('#kleistad_indeling option');
             var cursisten = $.map(options, function (option) {
                 var element = JSON.parse(option.value);
-                return Number(element['id']);
+                return Number(element.id);
             });
             $('#kleistad_indeling_lijst').val(JSON.stringify(cursisten));
         });
@@ -158,7 +158,7 @@
             var wachtend = $('#kleistad_wachtlijst option:selected');
             if (ingedeeld.length) {
                 var element = JSON.parse(ingedeeld.val());
-                if (element['ingedeeld'] === 0) {
+                if (element.ingedeeld === 0) {
                     return !ingedeeld.remove().appendTo('#kleistad_wachtlijst');
                 }
             }
@@ -192,8 +192,8 @@
 
     function kleistad_toon_cursist(cursist) {
         var element = JSON.parse(cursist.val());
-        var opmerking = element['opmerking'];
-        var technieken = element['technieken'];
+        var opmerking = element.opmerking;
+        var technieken = element.technieken;
 
         if (technieken !== null) {
             var techniektekst = '<p>Gekozen technieken : ';

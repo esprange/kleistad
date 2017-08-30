@@ -113,7 +113,7 @@
     }
 
     function kleistad_show(oven_id, maand, jaar) {
-        jQuery.ajax({
+        $.ajax({
             url: kleistad_data.base_url + '/show/',
             method: 'POST',
             beforeSend: function (xhr) {
