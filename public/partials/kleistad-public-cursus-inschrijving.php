@@ -85,7 +85,7 @@ else :
 			  </tr>
 			  <tr>
 				  <td><label for="kleistad_pcode">Postcode, Plaats</label></td>
-				  <td><input type="text" name="pcode" id="kleistad_pcode" maxlength="10" placeholder="1234AB" pattern="[1-9][0-9]{3}\s?[a-zA-Z]{2}" title="1234AB" value="<?php echo $input['pcode']; ?>" /></td>
+				  <td><input type="text" name="pcode" id="kleistad_pcode" maxlength="10" placeholder="1234AB" pattern="[1-9][0-9]{3}\s?[a-zA-Z]{2}" title="1234AB" value="<?php echo $data['input']['pcode']; ?>" /></td>
 				  <td colspan="2" ><input type="text" name="plaats" id="kleistad_plaats" required maxlength="50" placeholder="MijnWoonplaats" value="<?php echo $data['input']['plaats']; ?>" /></td>
 			  </tr>
 			<?php endif ?>
