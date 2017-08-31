@@ -30,7 +30,6 @@ matrix:
       env: WP_TRAVISCI=phpcs
 
 before_script:
-  - phpenv config-rm xdebug.ini
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
