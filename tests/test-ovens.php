@@ -74,7 +74,7 @@ class OvensTest extends WP_UnitTestCase {
 			]
 		);
 		$now = time();
-		$datum = strtotime( date( 'Y', $now ), date( 'm', $now ), date( 'd', $now ) );
+		$datum = strtotime( date( 'Y', $now ) . '-' . date( 'm', $now ) . '-' . date( 'd', $now ) );
 		$temperatuur = 999;
 		$soortstook = 'test';
 		$programma = 1;
