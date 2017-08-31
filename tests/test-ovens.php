@@ -37,7 +37,7 @@ class OvensTest extends WP_UnitTestCase {
 		$transactie_log  = $upload_dir['basedir'] . '/stooksaldo.log';
 
 		Kleistad_Oven::log_saldo( 'test' );
-		$this->assertFileExists( $transactielog );
+		$this->assertFileExists( $transactie_log );
 	}
 
 	/**
