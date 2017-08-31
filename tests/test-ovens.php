@@ -123,7 +123,7 @@ class OvensTest extends WP_UnitTestCase {
 		$this->assertEquals( $programma, $reservering2->programma, 'progroamma reservering not equal' );
 		$this->assertEquals( $verdeling, $reservering2->verdeling, 'verdeling reservering not equal' );
 		$this->assertEquals( $opmerking, $reservering2->opmerking, 'opmerking reservering not equal' );
-		$this->assertFalse( $reservering2->find( date( 2015, 1, 1 ) ), 'non existing reservering found' );
+		$this->assertFalse( $reservering2->find( 2015, 1, 1 ), 'non existing reservering found' );
 
 		$reservering2->delete();
 		$this->assertFalse( $reservering2->find( date( 'Y', $datum ), date( 'm', $datum ), date( 'd', $datum ) ), 'reservering not deleted' );
