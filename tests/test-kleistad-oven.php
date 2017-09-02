@@ -164,4 +164,26 @@ class OvensTest extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * Test the regelingen class.
+	 */
+	function test_regelingen() {
+		$oven = new Kleistad_Oven();
+		$oven_id = $oven->save();
+
+		$user_id = $this->factory->user->create(
+			[
+				'role' => 'subscriber',
+			]
+		);
+		$kosten = 123;
+
+		$regelingen = new Kleistad_Regelingen();
+
+		$regelingen->set_and_save( $user_id, $oven_id, $kosten );
+
+		$regelingen2 = new Kleistad_Regelingen();
+
+		$this->assertEquals( $kosten, $regelingen2->get( $user_id, $oven_id ) );
+	}
 }
