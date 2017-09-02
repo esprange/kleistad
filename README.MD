@@ -1,4 +1,4 @@
-# [Kleistad] [![Build Status](https://travis-ci.org/esprange/kleistad.png)]
+# Kleistad ![Build Status](https://travis-ci.org/esprange/kleistad.png)
 
 # Kleistad
 Contributors: esprange
