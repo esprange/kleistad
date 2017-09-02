@@ -8,7 +8,7 @@
 /**
  * Sample test case.
  */
-class OvensTest extends WP_UnitTestCase {
+class KleistadRolesTest extends WP_UnitTestCase {
 
 	/**
 	 * Activate the plugin which includes the kleistad specific tables if not present.
@@ -17,7 +17,7 @@ class OvensTest extends WP_UnitTestCase {
 		activate_kleistad();
 	}
 	/**
-	 * Test creation and modification of an oven.
+	 * Test creation and modification of roles.
 	 */
 	function test_roles() {
 		$user_id1 = $this->factory->user->create(
@@ -26,24 +26,24 @@ class OvensTest extends WP_UnitTestCase {
 			]
 		);
 
-		$this->assertTrue( Kleistad_Roles::reserveer( $user_id1 ) );
-		$this->assertFalse( Kleistad_Roles::override( $user_id1 ) );
+		$this->assertTrue( Kleistad_Roles::reserveer( $user_id1 ), 'subscriber cannot reserveer' );
+		$this->assertFalse( Kleistad_Roles::override( $user_id1 ), 'subscriber can override' );
 
 		$user_id2 = $this->factory->user->create(
 			[
-				'role' => 'subscriber',
+				'role' => 'editor',
 			]
 		);
-		$this->assertTrue( Kleistad_Roles::reserveer( $user_id2 ) );
-		$this->assertTrue( Kleistad_Roles::override( $user_id2 ) );
+		$this->assertTrue( Kleistad_Roles::reserveer( $user_id2 ), 'editor cannot reserveer' );
+		$this->assertTrue( Kleistad_Roles::override( $user_id2 ), 'editor cannot override' );
 
 		$user_id2 = $this->factory->user->create(
 			[
 				'role' => '',
 			]
 		);
-		$this->assertFalse( Kleistad_Roles::reserveer( $user_id2 ) );
-		$this->assertFalse( Kleistad_Roles::override( $user_id2 ) );
+		$this->assertFalse( Kleistad_Roles::reserveer( $user_id2 ), 'no role can reserveer' );
+		$this->assertFalse( Kleistad_Roles::override( $user_id2 ), 'no role an override' );
 	}
 
 }

@@ -8,7 +8,7 @@
 /**
  * Sample test case.
  */
-class OvensTest extends WP_UnitTestCase {
+class KleistadOvenTest extends WP_UnitTestCase {
 
 	/**
 	 * Activate the plugin which includes the kleistad specific tables if not present.
@@ -184,6 +184,6 @@ class OvensTest extends WP_UnitTestCase {
 
 		$regelingen2 = new Kleistad_Regelingen();
 
-		$this->assertEquals( $kosten, $regelingen2->get( $user_id, $oven_id ) );
+		$this->assertEquals( $kosten, $regelingen2->get( $user_id, $oven_id ), 'regelingen not equal' );
 	}
 }
