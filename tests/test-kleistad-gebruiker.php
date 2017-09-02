@@ -62,7 +62,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 		$gebruikers_store = new Kleistad_Gebruikers();
 		$gebruikers_from_store = $gebruikers_store->get();
 
-		$this->assertGreaterThan( 0, $gebruikers_from_store->count(), 'gebruikers count not greater than 0' );
+		$this->assertGreaterThan( 0, $gebruikers_store->count(), 'gebruikers count not greater than 0' );
 	}
 
 }
