@@ -114,24 +114,21 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 		$gebruiker_id = email_exists( $this->_data['email'] );
 		if ( $gebruiker_id ) {
 			$user = get_userdata( $gebruiker_id );
-		}
 
-		if ( $this->_gebruiker_id > 0 && $this->_gebruiker_id == $gebruiker_id ) {
-			/*
-            * existing user
-			*/
-			$userdata = [
-				'ID' => $this->_gebruiker_id,
-				'user_nicename' => $this->_data['voornaam'] . ' ' . $this->_data['achternaam'],
-				'display_name' => $this->_data['voornaam'] . ' ' . $this->_data['achternaam'],
-				'first_name' => $this->_data['voornaam'],
-				'last_name' => $this->_data['achternaam'],
-			];
-			$result = wp_update_user( $userdata );
-		} elseif ( 0 == $this->_gebruiker_id && ! $gebruiker_id ) {
-			/*
-            * new user
-			*/
+			if ( ( 0 != $this->_gebruiker_id && $this->_gebruiker_id == $gebruiker_id )  // Existing user, no new entry.
+				|| ( 0 == $this->_gebruiker_id && '' == $user->role ) ) { // Existing user with no role is re-registered.
+				$userdata = [
+					'ID' => $this->_gebruiker_id,
+					'user_nicename' => $this->_data['voornaam'] . ' ' . $this->_data['achternaam'],
+					'display_name' => $this->_data['voornaam'] . ' ' . $this->_data['achternaam'],
+					'first_name' => $this->_data['voornaam'],
+					'last_name' => $this->_data['achternaam'],
+				];
+				$result = wp_update_user( $userdata );
+			} else {
+				return false; // Email exists, but entered as new user.
+			}
+		} elseif ( 0 == $this->_gebruiker_id ) { // New email, thus new user.
 			$uniek = '';
 			$startnaam = strtolower( $this->_data['voornaam'] );
 			while ( username_exists( $startnaam . $uniek ) ) {
@@ -151,24 +148,10 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 				'role' => '',
 			];
 			$result = wp_insert_user( $userdata );
-		} elseif ( '' == $user->role ) {
-			/*
-            * existing user with no role is re-registered
-			*/
-			$userdata = [
-				'ID' => $this->_gebruiker_id,
-				'user_nicename' => $this->_data['voornaam'] . ' ' . $this->_data['achternaam'],
-				'display_name' => $this->_data['voornaam'] . ' ' . $this->_data['achternaam'],
-				'first_name' => $this->_data['voornaam'],
-				'last_name' => $this->_data['achternaam'],
-			];
-			$result = wp_update_user( $userdata );
-		} else {
-			/*
-            * existing user with identical emailadres exists while trying to register new user
-			*/
+		} else { // This should not happen.
 			return false;
 		}
+
 		if ( is_wp_error( $result ) ) {
 			return false;
 		} else {
