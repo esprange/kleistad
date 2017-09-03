@@ -22,7 +22,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	 */
 	function test_gebruiker() {
 		$user_id = $this->factory->user->create();
-
+		echo $user_id;
 		$gebruiker1 = new Kleistad_Gebruiker( $user_id );
 		$gebruiker1->telnr = 'telnr';
 		$gebruiker1->straat = 'straat';
@@ -35,6 +35,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 		$gebruiker1->save();
 
 		$gebruiker2 = new Kleistad_Gebruiker( $user_id );
+		print_r ($gebruiker2);
 		$this->assertEquals( 'telnr', $gebruiker2->telnr, 'gebruiker not equals telnr' );
 		$this->assertEquals( 'straat', $gebruiker2->straat, 'gebruiker not equals straat' );
 		$this->assertEquals( 'huisnr', $gebruiker2->huisnr, 'gebruiker not equals huisnr' );
