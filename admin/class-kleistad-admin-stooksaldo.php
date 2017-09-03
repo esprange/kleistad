@@ -120,6 +120,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 		}
 		if ( 'naam' == $orderby ) {
 		} else {
+			$bedrag = [];
 			foreach ( $stooksaldi as $key => $saldo ) {
 				$bedrag[ $key ] = $saldo['saldo'];
 			}

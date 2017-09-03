@@ -21,11 +21,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	 * Test creation and modification of a gebruiker.
 	 */
 	function test_gebruiker() {
-		$user_id = $this->factory->user->create(
-			[
-				'role' => 'subscriber',
-			]
-		);
+		$user_id = $this->factory->user->create();
 
 		$gebruiker1 = new Kleistad_Gebruiker( $user_id );
 		$gebruiker1->telnr = 'telnr';
@@ -53,11 +49,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	 * Test creation and modification of a gebruiker.
 	 */
 	function test_gebruikers() {
-		$user_id = $this->factory->user->create(
-			[
-				'role' => 'subscriber',
-			]
-		);
+		$user_id = $this->factory->user->create();
 
 		$gebruikers_store = new Kleistad_Gebruikers();
 		$gebruikers_from_store = $gebruikers_store->get();
