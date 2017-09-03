@@ -22,11 +22,11 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 	 * Prepareer 'abonnee_inschrijving' form
 	 *
 	 * @param array $data data to be prepared.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( &$data = null ) {
+	public function prepare( &$data ) {
 		if ( is_null( $data ) ) {
 			$data['input'] = [
 				'emailadres' => '',
@@ -101,12 +101,11 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 				$error->add( 'verplicht', 'Een achternaam is verplicht' );
 			}
 		}
+		$data['input'] = $input;
+
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}
-		$data = [
-			'input' => $input,
-		];
 		return true;
 	}
 

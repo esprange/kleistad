@@ -32,7 +32,7 @@ else :
 					$disabled = ($cursus['vervallen'] || $cursus['vol']) ? 'disabled' : '';
 					?>
 				  <tr>
-					  <td style="text-align:center"><input type="radio" name="cursus_id" value="<?php echo $cursus_id; ?>" 
+					  <td style="text-align:center"><input type="radio" name="cursus_id" required value="<?php echo $cursus_id; ?>" 
 													   data-technieken='<?php echo json_encode( $cursus['technieken'] ); ?>' <?php echo $checked . ' ' . $disabled; ?> ></td>
 				  <td colspan="3"><?php echo $cursus['naam']; ?></td>
 				  </tr>
@@ -81,7 +81,7 @@ else :
 			  <tr>    
 				  <td><label for="kleistad_straat">Straat, nr</label></td>
 				  <td colspan="2" ><input type="text" name="straat" id="kleistad_straat" required placeholder="straat" maxlength="50" value="<?php echo $data['input']['straat']; ?>" /></td>
-				  <td><input type="text" name="huisnr" id="kleistad_huisnr" maxlength="10" placeholder="nr" value="<?php echo $data['input']['huisnr']; ?>" /></td>
+				  <td><input type="text" name="huisnr" id="kleistad_huisnr" maxlength="10" required placeholder="nr" value="<?php echo $data['input']['huisnr']; ?>" /></td>
 			  </tr>
 			  <tr>
 				  <td><label for="kleistad_pcode">Postcode, Plaats</label></td>

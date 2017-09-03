@@ -23,24 +23,24 @@ else :
 	<table class="kleistad_form" >
 		<tr>
 			<td><label for="kleistad_abonnement_keuze">Keuze abonnement</label></td>
-			<td><input type="radio" name="abonnement_keuze" id="kleistad_abonnement_keuze" value="onbeperkt" />Onbeperkt</td>
-			<td><input type="radio" name="abonnement_keuze" value="beperkt" />Beperkt</td>
+			<td><input type="radio" name="abonnement_keuze" required id="kleistad_abonnement_keuze" value="onbeperkt" <?php echo ('onbeperkt' == $data['input']['abonnement_keuze']) ? 'checked' : ''; ?> />Onbeperkt</td>
+			<td><input type="radio" name="abonnement_keuze" value="beperkt" <?php echo ('beperkt' == $data['input']['abonnement_keuze']) ? 'checked' : ''; ?>/>Beperkt</td>
 			<td></td>
 		</tr>
 		<tr title="kies de dag dat je van jouw beperkt abonnement gebruikt gaat maken" >
 			<td></td>
 			<td style="visibility:hidden" id="kleistad_dag"><select name="dag" >
-					<option value="maandag" selected="selected">Maandag</option>
-					<option value="dinsdag" >Dinsdag</option>
-					<option value="woensdag" >Woensdag</option>
-					<option value="donderdag" >Donderdag</option>
-					<option value="vrijdag" >Vrijdag</option>
+					<option value="maandag" <?php selected( $data['input']['dag'], 'maandag' ); ?> >Maandag</option>
+					<option value="dinsdag" <?php selected( $data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
+					<option value="woensdag" <?php selected( $data['input']['dag'], 'woensdag' ); ?>>Woensdag</option>
+					<option value="donderdag" <?php selected( $data['input']['dag'], 'donderdag' ); ?>>Donderdag</option>
+					<option value="vrijdag" <?php selected( $data['input']['dag'], 'vrijdag' ); ?>>Vrijdag</option>
 				</select></td>
 			<td colspan="2"></td>
 		</tr>
 		<tr>
 			<td><label for="kleistad_start_datum">Start abonnement</label></td>
-			<td><input id="kleistad_start_datum" class="kleistad_datum" type="text" name="start_datum" value="<?php echo date( 'd-m-Y' ); ?>" /></td>
+			<td><input id="kleistad_start_datum" class="kleistad_datum" required type="text" name="start_datum" value="<?php echo date( 'd-m-Y' ); ?>" /></td>
 			<td colspan="2"></td>
 		</tr>
 		<?php if ( is_super_admin() ) : ?>
@@ -72,7 +72,7 @@ else :
 		<tr>    
 			<td><label for="kleistad_straat">Straat, nr</label></td>
 			<td colspan="2" ><input type="text" name="straat" id="kleistad_straat" required placeholder="straat" maxlength="50" value="<?php echo $data['input']['straat']; ?>" /></td>
-			<td><input type="text" name="huisnr" id="kleistad_huisnr" maxlength="10" placeholder="nr" value="<?php echo $data['input']['huisnr']; ?>" /></td>
+			<td><input type="text" name="huisnr" id="kleistad_huisnr" maxlength="10" required placeholder="nr" value="<?php echo $data['input']['huisnr']; ?>" /></td>
 		</tr>
 		<tr>
 			<td><label for="kleistad_pcode">Postcode, Plaats</label></td>

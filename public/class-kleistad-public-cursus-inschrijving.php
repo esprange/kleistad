@@ -125,14 +125,12 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 				$error->add( 'verplicht', 'Een achternaam is verplicht' );
 			}
 		}
-		$err = $error->get_error_codes();
-		if ( ! empty( $err ) ) {
+		$data ['input'] = $input;
+		$data ['cursus'] = $cursus;
+
+		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}
-		$data = [
-			'input' => $input,
-			'cursus' => $cursus,
-		];
 		return true;
 	}
 
