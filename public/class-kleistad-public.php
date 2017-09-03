@@ -240,7 +240,7 @@ class Kleistad_Public {
 	public function shortcode_handler( $atts, $content = '', $tag ) {
 
 		$html = '';
-		$input = null;
+		$data = null;
 		$form = substr( $tag, strlen( 'kleistad-' ) );
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-' . str_replace( '_', '-', $form ) . '.php';
 
@@ -257,25 +257,22 @@ class Kleistad_Public {
 
 		if ( ! is_null( filter_input( INPUT_POST, 'kleistad_submit_' . $form ) ) ) {
 			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $form ) ) {
-				$result = $form_object->validate();
+				$result = $form_object->validate( $data );
 				if ( ! is_wp_error( $result ) ) {
-					$input = $result;
-					$result = $form_object->save( $input );
-				}
-				if ( is_wp_error( $result ) ) {
+					$result = $form_object->save( $data );
+					$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
+					$data = null;
+				} else {
 					foreach ( $result->get_error_messages() as $error ) {
 						$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
 					}
-				} else {
-					$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-					$input = null;
 				}
 			} else {
 				$html .= '<div class="kleistad_fout"><p>security fout</p></div>';
 			}
 		}
-		$data = $form_object->prepare( $input );
-		if ( is_wp_error( $data ) ) {
+		$result = $form_object->prepare( $data );
+		if ( is_wp_error( $result ) ) {
 			$html .= '<div class="kleistad_fout"><p>' . $data->get_error_message() . '</p></div>';
 			return $html;
 		}

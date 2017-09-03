@@ -26,7 +26,7 @@ class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		$gebruiker_id = get_current_user_id();
 		$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 
@@ -41,17 +41,18 @@ class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 				'telnr' => $gebruiker->telnr,
 			];
 		}
-		return $data;
+		return true;
 	}
 
 	/**
 	 * Valideer/sanitize 'registratie' form
 	 *
+	 * @param array $data Returned data.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
-	public function validate() {
+	public function validate( &$data ) {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
@@ -82,7 +83,7 @@ class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 		$data = [
 			'input' => $input,
 		];
-		return $data;
+		return true;
 	}
 
 	/**

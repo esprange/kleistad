@@ -27,7 +27,7 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		$huidige_gebruiker = wp_get_current_user();
 		$naam = $huidige_gebruiker->display_name;
 		$saldo = number_format( (float) get_user_meta( $huidige_gebruiker->ID, 'stooksaldo', true ), 2, ',', '' );
@@ -66,7 +66,7 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 			'saldo' => $saldo,
 			'items' => $items,
 		];
-		return $data;
+		return true;
 	}
 
 }

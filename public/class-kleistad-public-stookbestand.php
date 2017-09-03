@@ -27,23 +27,24 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		$gebruiker_id    = get_current_user_id();
 		$data            = [
 			'gebruiker_id' => $gebruiker_id,
 		];
-		return $data;
+		return true;
 	}
 
 	/**
 	 *
 	 * Valideer/sanitize 'stookbestand' form
 	 *
+	 * @param array $data Returned data.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
-	public function validate() {
+	public function validate( &$data ) {
 		$vanaf_datum     = strtotime( filter_input( INPUT_POST, 'kleistad_vanaf_datum', FILTER_SANITIZE_STRING ) );
 		$tot_datum       = strtotime( filter_input( INPUT_POST, 'kleistad_tot_datum', FILTER_SANITIZE_STRING ) );
 		$gebruiker_id    = filter_input( INPUT_POST, 'kleistad_gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
@@ -52,7 +53,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 			'tot_datum' => $tot_datum,
 			'gebruiker_id' => $gebruiker_id,
 		];
-		return $data;
+		return true;
 	}
 
 	/**

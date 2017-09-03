@@ -27,7 +27,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		$cursus_store = new Kleistad_Cursussen();
 		$cursussen = $cursus_store->get();
 		$registraties = [];
@@ -92,19 +92,6 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 			'registraties' => $registraties,
 			'cursussen' => $cursussen,
 		];
-		return $data;
-	}
-
-	/**
-	 *
-	 * Valideer/sanitize 'registratie_overzicht' form
-	 *
-	 * @return bool
-	 *
-	 * @since   4.0.0
-	 */
-	public function validate() {
-		// nothing to validate.
 		return true;
 	}
 

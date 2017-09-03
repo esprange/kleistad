@@ -22,29 +22,30 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 	 *
 	 * Prepareer 'saldo' form
 	 *
-	 * @param mixed $data the prepared data.
+	 * @param array $data the prepared data.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		$gebruiker_id = get_current_user_id();
 		$saldo = number_format( (float) get_user_meta( $gebruiker_id, 'stooksaldo', true ), 2, ',', '' );
 		$data = [
 			'gebruiker_id' => $gebruiker_id,
 			'saldo' => $saldo,
 		];
-		return $data;
+		return true;
 	}
 
 	/**
 	 * Valideer/sanitize 'saldo' form
 	 *
+	 * @param array $data Returned data.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
-	public function validate() {
+	public function validate( &$data ) {
 
 		$gebruiker_id = filter_input( INPUT_POST, 'kleistad_gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
 		$via = filter_input( INPUT_POST, 'kleistad_via', FILTER_SANITIZE_STRING );
@@ -57,7 +58,7 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 			'bedrag' => $bedrag,
 			'datum' => $datum,
 		];
-		return $data;
+		return true;
 	}
 
 	/**

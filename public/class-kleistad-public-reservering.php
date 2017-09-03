@@ -27,7 +27,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		$error = new WP_Error();
 		if ( ! Kleistad_Roles::reserveer() ) {
 			$error->add( 'security', 'hiervoor moet je ingelogd zijn' );
@@ -59,7 +59,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 				'oven' => $oven,
 				'huidige_gebruiker' => $huidige_gebruiker,
 			];
-			return $data;
+			return true;
 		} else {
 			$error->add( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
 			return $error;

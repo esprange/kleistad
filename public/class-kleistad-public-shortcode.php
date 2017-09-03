@@ -53,23 +53,24 @@ abstract class Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 *
-	 * @param mixed $data the data to prepare.
+	 * @param array $data the data to prepare.
 	 */
-	abstract public function prepare( $data);
+	abstract public function prepare( &$data);
 
 	/**
 	 * Validate function, only used in case of forms
 	 *
 	 * @since   4.0.0
+	 * @param array $data the data validated.
 	 */
-	public function validate() {
+	public function validate( &$data ) {
 	}
 
 	/**
 	 * Save function, only used in case of forms
 	 *
 	 * @since   4.0.0
-	 * @param mixed $data the data to store.
+	 * @param array $data the data to store.
 	 */
 	public function save( $data ) {
 	}

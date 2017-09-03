@@ -27,7 +27,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		$cursus_store = new Kleistad_Cursussen();
 		$cursussen = $cursus_store->get();
 
@@ -85,17 +85,18 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 			'rows' => $rows,
 			'gebruikers' => $gebruikers,
 		];
-		return $data;
+		return true;
 	}
 
 	/**
 	 * Valideer/sanitize 'cursus_beheer' form
 	 *
+	 * @param array $data Returned data.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
-	public function validate() {
+	public function validate( &$data ) {
 
 		$tab = filter_input( INPUT_POST, 'tab', FILTER_SANITIZE_STRING );
 		if ( 'info' == $tab ) {
@@ -141,7 +142,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 		$data = [
 			'input' => $input,
 		];
-		return $data;
+		return true;
 	}
 
 	/**

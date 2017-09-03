@@ -26,7 +26,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		if ( is_null( $data ) ) {
 			$data['input'] = [
 				'emailadres' => '',
@@ -50,17 +50,18 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 		);
 		$data ['gebruikers'] = $gebruikers;
 
-		return $data;
+		return true;
 	}
 
 	/**
 	 * Valideer/sanitize 'abonnee_inschrijving' form
 	 *
+	 * @param array $data Returned data.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
-	public function validate() {
+	public function validate( &$data ) {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
@@ -106,7 +107,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 		$data = [
 			'input' => $input,
 		];
-		return $data;
+		return true;
 	}
 
 	/**

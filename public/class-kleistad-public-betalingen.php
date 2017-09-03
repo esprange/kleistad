@@ -26,7 +26,7 @@ class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		if ( ! Kleistad_Roles::override() ) {
 			return '';
 		}
@@ -58,18 +58,19 @@ class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
 		$data = [
 			'rows' => $rows,
 		];
-		return $data;
+		return true;
 	}
 
 	/**
 	 *
 	 * Valideer/sanitize 'betalingen' form
 	 *
+	 * @param array $data Returned data.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
-	public function validate() {
+	public function validate( &$data ) {
 		$cursisten = [];
 
 		$i_betalingen = filter_input( INPUT_POST, 'i_betaald', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
@@ -102,7 +103,7 @@ class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
 		$data = [
 			'cursisten' => $cursisten,
 		];
-		return $data;
+		return true;
 	}
 
 	/**

@@ -21,12 +21,12 @@ class Kleistad_Public_Saldo_Overzicht extends Kleistad_Public_Shortcode {
 	/**
 	 * Prepareer 'saldo_overzicht' form
 	 *
-	 * @param mixed $data data to prepare.
+	 * @param array $data data to prepare.
 	 * @return array
 	 *
 	 * @since   4.0.0
 	 */
-	public function prepare( $data = null ) {
+	public function prepare( &$data = null ) {
 		$gebruikers = get_users(
 			[
 				'fields' => [ 'id', 'display_name' ],
@@ -45,7 +45,7 @@ class Kleistad_Public_Saldo_Overzicht extends Kleistad_Public_Shortcode {
 		$data = [
 			'stokers' => $stokers,
 		];
-		return $data;
+		return true;
 	}
 
 
