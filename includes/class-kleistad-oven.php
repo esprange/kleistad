@@ -423,19 +423,19 @@ class Kleistad_Regelingen {
 	public function __construct() {
 		$gebruikers = get_users(
 			[
-				'meta_key' => 'ovenkosten',
+				'meta_key' => 'kleistad_regeling',
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$ovenkosten = json_decode( get_user_meta( $gebruiker->ID, 'ovenkosten', true ), true );
-			$this->_data[ $gebruiker->ID ] = $ovenkosten;
+			$regelingen = get_user_meta( $gebruiker->ID, 'kleistad_regeling', true );
+			$this->_data[ $gebruiker->ID ] = $regelingen;
 		}
 	}
 
 	/**
 	 * Getter,
 	 *
-	 * Get single regeling from the object.
+	 * Get regeling from the object.
 	 *
 	 * @since 4.0.0
 	 *
@@ -443,10 +443,14 @@ class Kleistad_Regelingen {
 	 * @param int $oven_id oven id.
 	 * @return float kosten or null if unknown regeling.
 	 */
-	public function get( $gebruiker_id, $oven_id ) {
+	public function get( $gebruiker_id, $oven_id = null ) {
 		if ( array_key_exists( $gebruiker_id, $this->_data ) ) {
-			if ( array_key_exists( $oven_id, $this->_data[ $gebruiker_id ] ) ) {
-				return $this->_data[ $gebruiker_id ][ $oven_id ];
+			if ( is_null( $oven_id ) ) {
+				return $this->_data[ $gebruiker_id ];
+			} else {
+				if ( array_key_exists( $oven_id, $this->_data[ $gebruiker_id ] ) ) {
+					return $this->_data[ $gebruiker_id ][ $oven_id ];
+				}
 			}
 		}
 		return null;
@@ -465,7 +469,26 @@ class Kleistad_Regelingen {
 	 */
 	public function set_and_save( $gebruiker_id, $oven_id, $kosten ) {
 		$this->_data[ $gebruiker_id ][ $oven_id ] = $kosten;
-		update_user_meta( $gebruiker_id, 'ovenkosten', json_encode( $this->_data[ $gebruiker_id ][ $oven_id ] ) );
+		return update_user_meta( $gebruiker_id, 'kleistad_regeling', $this->_data[ $gebruiker_id ] );
+	}
+
+	/**
+	 * Deleter
+	 *
+	 * Cancel the regeling and remove it from the database.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param int $gebruiker_id wp user id.
+	 * @param int $oven_id oven id.
+	 */
+	public function delete_and_save( $gebruiker_id, $oven_id ) {
+		unset( $this->_data[ $gebruiker_id ][ $oven_id ] );
+		if ( 0 == count( $this->_data[ $gebruiker_id ] ) ) {
+			return delete_user_meta( $gebruiker_id, 'kleistad_regeling' );
+		} else {
+			return update_user_meta( $gebruiker_id, 'kleistad_regeling', $this->_data[ $gebruiker_id ] );
+		}
 	}
 
 }

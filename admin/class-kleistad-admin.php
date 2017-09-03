@@ -342,9 +342,8 @@ class Kleistad_Admin {
 		if ( 'delete' === $table->current_action() ) {
 			if ( isset( $_REQUEST['id'] ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d %d' );
-				$gebruiker_regelingen = json_decode( get_user_meta( $gebruiker_id, 'ovenkosten', true ), true );
-				unset( $gebruiker_regelingen[ $oven_id ] );
-				update_user_meta( $gebruiker_id, 'ovenkosten', json_encode( $gebruiker_regelingen ) );
+				$regelingen = new Kleistad_Regelingen();
+				$regelingen->delete_and_save( $gebruiker_id, $oven_id );
 			}
 			$message = '<div class="updated below-h2" id="message"><p>' . sprintf( 'Aantal verwijderd: %d', count( $_REQUEST['id'] ) ) . '</p></div>';
 		}
@@ -380,9 +379,8 @@ class Kleistad_Admin {
 			// if id is zero insert otherwise update.
 			$item_valid = $this->validate_regeling( $item );
 			if ( true === $item_valid ) {
-				$gebruiker_regelingen = json_decode( get_user_meta( $item['gebruiker_id'], 'ovenkosten', true ), true );
-				$gebruiker_regelingen[ $item['oven_id'] ] = $item['kosten'];
-				$result = update_user_meta( $item['gebruiker_id'], 'ovenkosten', json_encode( $gebruiker_regelingen ) );
+				$regelingen = new Kleistad_Regelingen();
+				$result = $regelingen->set_and_save( $item['gebruiker_id'], $item['oven_id'] , $item['kosten'] );
 				if ( '' == $item['id'] ) {
 					if ( $result ) {
 						$message = 'De regeling is bewaard';
@@ -405,8 +403,10 @@ class Kleistad_Admin {
 			$item = $default;
 			if ( isset( $_REQUEST['id'] ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d %d' );
+				$regelingen = new Kleistad_Regelingen();
+				$gebruiker_regeling = $regelingen->get( $gebruiker_id, $oven_id );
+
 				$gebruiker = get_userdata( $gebruiker_id );
-				$gebruiker_regelingen = json_decode( get_user_meta( $gebruiker_id, 'ovenkosten', true ), true );
 				$oven = new Kleistad_Oven( $oven_id );
 				$item = [
 					'id' => $_REQUEST['id'],
@@ -414,7 +414,7 @@ class Kleistad_Admin {
 					'gebruiker_naam' => $gebruiker->display_name,
 					'oven_id' => $oven_id,
 					'oven_naam' => $oven->naam,
-					'kosten' => $gebruiker_regelingen[ $oven_id ],
+					'kosten' => $gebruiker_regeling,
 				];
 				if ( ! $item ) {
 					$item = $default;

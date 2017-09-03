@@ -79,7 +79,6 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	function get_sortable_columns() {
 		$sortable_columns = [
 			'gebruiker_naam' => [ 'gebruiker_naam', true ],
-			'oven_naam' => [ 'oven_naam', false ],
 		];
 		return $sortable_columns;
 	}
@@ -89,9 +88,6 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 * It will get rows from database and prepare them to be showed in table
 	 */
 	function prepare_items() {
-		global $wpdb;
-		$tabel = $wpdb->prefix . 'kleistad_ovens';
-
 		$per_page = 5; // constant, how much records will be shown per page.
 
 		$columns = $this->get_columns();
@@ -113,7 +109,6 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 					'id',
 					'display_name',
 				],
-				'meta_key' => 'ovenkosten',
 				'orderby' => [
 					'display_name',
 				],
@@ -121,34 +116,23 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 			]
 		);
 
-		$regelingen = [];
-		$ovens = $wpdb->get_results( "SELECT id, naam FROM {$wpdb->prefix}kleistad_ovens ORDER BY naam $order", OBJECT_K );// WPCS: unprepared SQL OK.
+		$gebruikers_regelingen = new Kleistad_Regelingen();
 
-		if ( 'gebruiker_naam' == $orderby ) {
-			foreach ( $gebruikers as $gebruiker ) {
-				$gebruikers_regelingen = json_decode( get_user_meta( $gebruiker->id, 'ovenkosten', true ), true );
-				foreach ( $gebruikers_regelingen as $oven_id => $gebruikers_regeling ) {
-					$regelingen[] = [
-						'id' => $gebruiker->id . ' ' . $oven_id,
-						'gebruiker_naam' => $gebruiker->display_name,
-						'oven_naam' => $ovens[ $oven_id ]->naam,
-						'kosten' => $gebruikers_regeling,
-					];
-				}
+		$ovens_store = new Kleistad_Ovens();
+		$ovens = $ovens_store->get();
+
+		foreach ( $gebruikers as $gebruiker ) {
+			$kosten_ovens = $gebruikers_regelingen->get( $gebruiker->id );
+			if ( is_null( $kosten_ovens ) ) {
+				continue;
 			}
-		} else { // sort by oven_naam.
-			foreach ( $ovens as $oven ) {
-				foreach ( $gebruikers as $gebruiker ) {
-					$gebruikers_regelingen = json_decode( get_user_meta( $gebruiker->id, 'ovenkosten', true ), true );
-					if ( array_key_exists( $oven->id, $gebruikers_regelingen ) ) {
-						$regelingen[] = [
-							'id' => $gebruiker->id . ' ' . $oven->id,
-							'gebruiker_naam' => $gebruiker->display_name,
-							'oven_naam' => $oven->naam,
-							'kosten' => $gebruikers_regelingen[ $oven->id ],
-						];
-					}
-				}
+			foreach ( $kosten_ovens as $oven_id => $kosten_oven ) {
+				$regelingen[] = [
+					'id' => $gebruiker->id . ' ' . $oven_id,
+					'gebruiker_naam' => $gebruiker->display_name,
+					'oven_naam' => $ovens[ $oven_id ]->naam,
+					'kosten' => $kosten_oven,
+				];
 			}
 		}
 		$total_items = count( $regelingen );
