@@ -427,8 +427,8 @@ class Kleistad_Regelingen {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$ovenkosten                      = json_decode( get_user_meta( $gebruiker->ID, 'ovenkosten', true ), true );
-			$this->_data[ $gebruiker->ID ]     = $ovenkosten;
+			$ovenkosten = json_decode( get_user_meta( $gebruiker->ID, 'ovenkosten', true ), true );
+			$this->_data[ $gebruiker->ID ] = $ovenkosten;
 		}
 	}
 
@@ -465,7 +465,7 @@ class Kleistad_Regelingen {
 	 */
 	public function set_and_save( $gebruiker_id, $oven_id, $kosten ) {
 		$this->_data[ $gebruiker_id ][ $oven_id ] = $kosten;
-		update_user_meta( $gebruiker_id, 'ovenkosten', json_encode( $kosten ) );
+		update_user_meta( $gebruiker_id, 'ovenkosten', json_encode( $this->_data[ $gebruiker_id ][ $oven_id ] ) );
 	}
 
 }
