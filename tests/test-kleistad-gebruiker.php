@@ -32,10 +32,8 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 		$gebruiker1->achternaam = 'achternaam';
 		$gebruiker1->save();
 		$user = get_userdata( $user_id );
-		print_r( $user );
-
+		
 		$gebruiker2 = new Kleistad_Gebruiker( $user_id );
-		print_r( $gebruiker2 );
 		$this->assertEquals( 'telnr', $gebruiker2->telnr, 'gebruiker not equals telnr' );
 		$this->assertEquals( 'straat', $gebruiker2->straat, 'gebruiker not equals straat' );
 		$this->assertEquals( 'huisnr', $gebruiker2->huisnr, 'gebruiker not equals huisnr' );
