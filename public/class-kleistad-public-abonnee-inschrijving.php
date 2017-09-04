@@ -38,7 +38,8 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 				'plaats' => '',
 				'telnr' => '',
 				'abonnement_keuze' => '',
-				'start' => '',
+				'dag' => '',
+				'start_datum' => '',
 				'opmerking' => '',
 			];
 		}

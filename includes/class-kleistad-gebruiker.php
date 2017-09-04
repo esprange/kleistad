@@ -115,10 +115,11 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 		if ( $gebruiker_id ) {
 			$user = get_userdata( $gebruiker_id );
 
-			if ( ( 0 != $this->_gebruiker_id && $this->_gebruiker_id == $gebruiker_id )  // Existing user, no new entry.
-				|| ( 0 == $this->_gebruiker_id && '' == $user->role ) ) { // Existing user with no role is re-registered.
+			if ( ( $this->_gebruiker_id == $user->ID )  // Existing user, no new entry.
+				|| ( '' == $user->role ) ) { // Existing user with no role re-registered.
+				$this->_gebruiker_id = $user->ID;
 				$userdata = [
-					'ID' => $this->_gebruiker_id,
+					'ID' => $user->ID,
 					'user_nicename' => $this->_data['voornaam'] . ' ' . $this->_data['achternaam'],
 					'display_name' => $this->_data['voornaam'] . ' ' . $this->_data['achternaam'],
 					'first_name' => $this->_data['voornaam'],

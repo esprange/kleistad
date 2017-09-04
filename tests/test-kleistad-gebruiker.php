@@ -28,7 +28,6 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 		$gebruiker1->huisnr = 'huisnr';
 		$gebruiker1->pcode = 'pcode';
 		$gebruiker1->plaats = 'plaats';
-		$gebruiker1->email = 'email';
 		$gebruiker1->voornaam = 'voornaam';
 		$gebruiker1->achternaam = 'achternaam';
 		$gebruiker1->save();
@@ -42,7 +41,6 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 		$this->assertEquals( 'huisnr', $gebruiker2->huisnr, 'gebruiker not equals huisnr' );
 		$this->assertEquals( 'pcode', $gebruiker2->pcode, 'gebruiker not equals pcode' );
 		$this->assertEquals( 'plaats', $gebruiker2->plaats, 'gebruiker not equals plaats' );
-		$this->assertEquals( 'email', $gebruiker2->email, 'gebruiker not equals email' );
 		$this->assertEquals( 'voornaam', $gebruiker2->voornaam, 'gebruiker not equals voornaam' );
 		$this->assertEquals( 'achternaam', $gebruiker2->achternaam, 'gebruiker not equals voornaam' );
 	}
