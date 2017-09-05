@@ -273,7 +273,7 @@ class Kleistad_Public {
 		}
 		$result = $form_object->prepare( $data );
 		if ( is_wp_error( $result ) ) {
-			$html .= '<div class="kleistad_fout"><p>' . $data->get_error_message() . '</p></div>';
+			$html .= '<div class="kleistad_fout"><p>' . $result->get_error_message() . '</p></div>';
 			return $html;
 		}
 		ob_start();

@@ -64,6 +64,7 @@ abstract class Kleistad_Public_Shortcode {
 	 * @param array $data the data validated.
 	 */
 	public function validate( &$data ) {
+		return true;
 	}
 
 	/**
@@ -73,6 +74,7 @@ abstract class Kleistad_Public_Shortcode {
 	 * @param array $data the data to store.
 	 */
 	public function save( $data ) {
+		return true;
 	}
 
 	/**
