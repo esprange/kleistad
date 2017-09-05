@@ -22,8 +22,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	 */
 	public function setUp() {
 		activate_kleistad();
-		$this->user1_id = $this->factory->user->create();
-		$this->user2_id = $this->factory->user->create();
+		$this->user_id = $this->factory->user->create();
 	}
 
 	/**
