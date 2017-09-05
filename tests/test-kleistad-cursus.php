@@ -86,7 +86,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 		$cursus = new Kleistad_Cursus();
 
 		$teststring = 'test inschrijvingen';
-		$inschrijvingsen = [];
+		$inschrijvingen = [];
 		for ( $i = 0; $i < 10; $i++ ) {
 			$inschrijvingen[ $i ] = new Kleistad_Inschrijving( $cursist_ids[ $i ], $cursus->id );
 			$inschrijvingen[ $i ]->opmerking = "$teststring{$cursist_ids[$i]}";
