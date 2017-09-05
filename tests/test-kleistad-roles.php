@@ -35,20 +35,20 @@ class KleistadRolesTest extends WP_UnitTestCase {
 	 * Activate the plugin which includes the kleistad specific tables if not present.
 	 */
 	public function setUp() {
-		parent::Setup();
+		parent::setUp();
 		
 		activate_kleistad();
-		$this->subscriber_id = $this->factory->user->create(
+		self::$subscriber_id = $this->factory->user->create(
 			[
 				'role' => 'subscriber',
 			]
 		);
-		$this->editor_id = $this->factory->user->create(
+		self::$editor_id = $this->factory->user->create(
 			[
 				'role' => 'editor',
 			]
 		);
-		$this->nonmember_id = $this->factory->user->create(
+		self::$nonmember_id = $this->factory->user->create(
 			[
 				'role' => '',
 			]
@@ -58,14 +58,14 @@ class KleistadRolesTest extends WP_UnitTestCase {
 	 * Test creation and modification of roles.
 	 */
 	function test_roles() {
-		$this->assertTrue( Kleistad_Roles::reserveer( $this->subscriber_id ), 'subscriber cannot reserveer' );
-		$this->assertFalse( Kleistad_Roles::override( $this->subscriber_id ), 'subscriber can override' );
+		$this->assertTrue( Kleistad_Roles::reserveer( self::$subscriber_id ), 'subscriber cannot reserveer' );
+		$this->assertFalse( Kleistad_Roles::override( self::$subscriber_id ), 'subscriber can override' );
 
-		$this->assertTrue( Kleistad_Roles::reserveer( $this->editor_id ), 'editor cannot reserveer' );
-		$this->assertTrue( Kleistad_Roles::override( $this->editor_id ), 'editor cannot override' );
+		$this->assertTrue( Kleistad_Roles::reserveer( self::$editor_id ), 'editor cannot reserveer' );
+		$this->assertTrue( Kleistad_Roles::override( self::$editor_id ), 'editor cannot override' );
 
-		$this->assertFalse( Kleistad_Roles::reserveer( $this->nonmember_id ), 'no role can reserveer' );
-		$this->assertFalse( Kleistad_Roles::override( $this->nonmember_id ), 'no role can override' );
+		$this->assertFalse( Kleistad_Roles::reserveer( self::$nonmember_id ), 'no role can reserveer' );
+		$this->assertFalse( Kleistad_Roles::override( self::$nonmember_id ), 'no role can override' );
 	}
 
 }
