@@ -112,7 +112,8 @@ class Kleistad_Oven extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_ovens", $this->_data );
-		return $wpdb->insert_id;
+		$this->_data['id'] = $wpdb->insert_id;
+		return $this->_data['id'];
 	}
 
 	/**
@@ -341,7 +342,8 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_reserveringen", $this->_data );
-		return $wpdb->insert_id;
+		$this->_data['id'] = $wpdb->insert_id;
+		return $this->_data['id'];
 	}
 
 	/**

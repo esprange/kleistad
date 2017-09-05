@@ -137,7 +137,8 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->_data );
-		return $wpdb->insert_id;
+		$this->_data['id'] = $wpdb->insert_id;
+		return $this->_data['id'];
 	}
 }
 
