@@ -88,7 +88,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 
 		$teststring = 'test inschrijvingen';
 		$inschrijvingen = [];
-		for ( $i = 0; $i < 10; $i++ ) {
+		for ( $i = 0; $i < 3; $i++ ) {
 			$inschrijvingen[ $i ] = new Kleistad_Inschrijving( $cursist_ids[ $i ], $cursus->id );
 			$inschrijvingen[ $i ]->opmerking = "$teststring{$cursist_ids[$i]}";
 			$inschrijvingen[ $i ]->save();
@@ -96,9 +96,11 @@ class KleistadCursusTest extends WP_UnitTestCase {
 
 		$inschrijvingen_store = new Kleistad_Inschrijvingen();
 		$inschrijvingen_from_store = $inschrijvingen_store->get();
-		foreach ( $inschrijvingen_from_store as $cursist_id => $inschrijving ) {
-			if ( substr( $inschrijving->opmerking, 0, strlen( $teststring ) ) == $teststring ) {
-				$this->assertEquals( $teststring . $cursist_id, $inschrijving->opmerking, 'naam inschrijvingen not equal' );
+		foreach ( $inschrijvingen_from_store as $cursist_id => $cursist_inschrijvingen ) {
+			foreach ($cursist_inschrijvingen as $cursus_id => $cursist_inschrijving ) {
+				if ( substr( $cursist_inschrijving->opmerking, 0, strlen( $teststring ) ) == $teststring ) {
+					$this->assertEquals( $teststring . $cursist_id, $inschrijving->opmerking, 'naam inschrijvingen not equal' );
+				}
 			}
 		}
 
