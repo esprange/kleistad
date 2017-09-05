@@ -36,14 +36,6 @@ class KleistadRolesTest extends WP_UnitTestCase {
 	 */
 	static function wpSetUpBeforeClass() {
 		activate_kleistad();
-	}
-
-	/**
-	 * Define the test users.
-	 */
-	public function setUp() {
-		parent::setUp();
-
 		self::$subscriber_id = $this->factory->user->create(
 			[
 				'role' => 'subscriber',
@@ -60,6 +52,20 @@ class KleistadRolesTest extends WP_UnitTestCase {
 			]
 		);
 	}
+
+	/**
+	 * Define the test users.
+	 */
+	public function setUp() {
+		parent::setUp();
+		// we want to make sure we're testing against the db, not just in-memory data.
+		// this will flush everything and reload it from the db.
+		unset( $GLOBALS['wp_user_roles'] );
+		global $wp_roles;
+		$wp_roles = new WP_Roles();
+	}
+
+
 	/**
 	 * Test creation and modification of roles.
 	 */
