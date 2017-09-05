@@ -34,19 +34,19 @@ class KleistadRolesTest extends WP_UnitTestCase {
 	/**
 	 * Activate the plugin which includes the kleistad specific tables if not present.
 	 */
-	static function wpSetUpBeforeClass() {
+	static function wpSetUpBeforeClass($factory) {
 		activate_kleistad();
-		self::$subscriber_id = $this->factory->user->create(
+		self::$subscriber_id = $factory->user->create(
 			[
 				'role' => 'subscriber',
 			]
 		);
-		self::$editor_id = $this->factory->user->create(
+		self::$editor_id = $factory->user->create(
 			[
 				'role' => 'editor',
 			]
 		);
-		self::$nonmember_id = $this->factory->user->create(
+		self::$nonmember_id = $factory->user->create(
 			[
 				'role' => '',
 			]
