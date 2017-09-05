@@ -11,18 +11,11 @@
 class KleistadGebruikerTest extends WP_UnitTestCase {
 
 	/**
-	 * User1 id
+	 * User id
 	 *
-	 * @var int $user1_id The first user.
+	 * @var int $user_id The user.
 	 */
-	private $user1_id;
-
-	/**
-	 * User2 id
-	 *
-	 * @var int $user2_id The second user.
-	 */
-	private $user2_id;
+	private $user_id;
 
 	/**
 	 * Activate the plugin which includes the kleistad specific tables if not present.
@@ -37,7 +30,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	 * Test creation and modification of a gebruiker.
 	 */
 	function test_gebruiker() {
-		$gebruiker1 = new Kleistad_Gebruiker( $this->user1_id );
+		$gebruiker1 = new Kleistad_Gebruiker( $this->user_id );
 		$gebruiker1->telnr = 'telnr';
 		$gebruiker1->straat = 'straat';
 		$gebruiker1->huisnr = 'huisnr';
@@ -47,7 +40,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 		$gebruiker1->achternaam = 'achternaam';
 		$gebruiker1->save();
 
-		$gebruiker2 = new Kleistad_Gebruiker( $this->user2_id );
+		$gebruiker2 = new Kleistad_Gebruiker( $this->user_id );
 		$this->assertEquals( 'telnr', $gebruiker2->telnr, 'gebruiker not equals telnr' );
 		$this->assertEquals( 'straat', $gebruiker2->straat, 'gebruiker not equals straat' );
 		$this->assertEquals( 'huisnr', $gebruiker2->huisnr, 'gebruiker not equals huisnr' );
