@@ -33,8 +33,10 @@ class KleistadRolesTest extends WP_UnitTestCase {
 
 	/**
 	 * Activate the plugin which includes the kleistad specific tables if not present.
+	 *
+	 * @param object $factory test factory object.
 	 */
-	static function wpSetUpBeforeClass($factory) {
+	static function wpSetUpBeforeClass( $factory ) {
 		activate_kleistad();
 		self::$subscriber_id = $factory->user->create(
 			[
