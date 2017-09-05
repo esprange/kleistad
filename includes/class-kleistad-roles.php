@@ -27,16 +27,18 @@ class Kleistad_Roles {
 	/**
 	 * Help functie, bestuursleden kunnen publiceren en mogen daarom aanpassen
 	 *
+	 * @param int $id the user id.
 	 * @return bool
 	 */
-	static function override() {
-		return current_user_can( self::OVERRIDE );
+	static function override( $id = 0 ) {
+		return ($id ? user_can( $id, self::OVERRIDE ) : current_user_can( self::OVERRIDE ));
 	}
 
 	/**
 	 * Help functie, leden moeten kunnen reserveren en stooksaldo aanpassingen doen
 	 *
 	 * @param int $id the user id.
+	 * @return bool
 	 */
 	static function reserveer( $id = 0 ) {
 		return ($id ? user_can( $id, self::RESERVEER ) : current_user_can( self::RESERVEER ));
