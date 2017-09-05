@@ -15,26 +15,28 @@ class KleistadRolesTest extends WP_UnitTestCase {
 	 *
 	 * @var int $subscriber_id The subscriber.
 	 */
-	private $subscriber_id;
+	protected static $subscriber_id;
 
 	/**
 	 * Editor id
 	 *
 	 * @var int $editor_id The editor.
 	 */
-	private $editor_id;
+	protected static $editor_id;
 
 	/**
 	 * Nonmember id
 	 *
 	 * @var int $nonmember_id The nonmember.
 	 */
-	private $nonmember_id;
+	protected static $nonmember_id;
 
 	/**
 	 * Activate the plugin which includes the kleistad specific tables if not present.
 	 */
 	public function setUp() {
+		parent::Setup();
+		
 		activate_kleistad();
 		$this->subscriber_id = $this->factory->user->create(
 			[
