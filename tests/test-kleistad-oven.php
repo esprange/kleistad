@@ -14,6 +14,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	 * Activate the plugin which includes the kleistad specific tables if not present.
 	 */
 	public function setUp() {
+		parent::setUp();
 		activate_kleistad();
 	}
 	/**

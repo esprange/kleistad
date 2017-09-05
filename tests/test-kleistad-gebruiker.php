@@ -21,6 +21,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	 * Activate the plugin which includes the kleistad specific tables if not present.
 	 */
 	public function setUp() {
+		parent::setUp();
 		activate_kleistad();
 		$this->user_id = $this->factory->user->create();
 	}
