@@ -1,12 +1,12 @@
 <?php
 /**
- * Class SampleTest
+ * Class RolesTest
  *
  * @package Kleistad
  */
 
 /**
- * Sample test case.
+ * Roles test case.
  */
 class KleistadRolesTest extends WP_UnitTestCase {
 
