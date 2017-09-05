@@ -112,17 +112,17 @@ class Kleistad_Activator {
 		* n.b. in principe heeft de (toekomstige) rol bestuurde de override capability en de (toekomstige) rol lid de reserve capability
 		* zolang die rollen nog niet gedefinieerd zijn hanteren we de onderstaande toekenning
 		*/
-		global $wp_roles;
+		$roles = wp_roles();
 
-		$wp_roles->add_cap( 'administrator', Kleistad_Roles::OVERRIDE );
-		$wp_roles->add_cap( 'editor', Kleistad_Roles::OVERRIDE );
-		$wp_roles->add_cap( 'author', Kleistad_Roles::OVERRIDE );
+		$roles->add_cap( 'administrator', Kleistad_Roles::OVERRIDE );
+		$roles->add_cap( 'editor', Kleistad_Roles::OVERRIDE );
+		$roles->add_cap( 'author', Kleistad_Roles::OVERRIDE );
 
-		$wp_roles->add_cap( 'administrator', Kleistad_Roles::RESERVEER );
-		$wp_roles->add_cap( 'editor', Kleistad_Roles::RESERVEER );
-		$wp_roles->add_cap( 'author', Kleistad_Roles::RESERVEER );
-		$wp_roles->add_cap( 'contributor', Kleistad_Roles::RESERVEER );
-		$wp_roles->add_cap( 'subscriber', Kleistad_Roles::RESERVEER );
+		$roles->add_cap( 'administrator', Kleistad_Roles::RESERVEER );
+		$roles->add_cap( 'editor', Kleistad_Roles::RESERVEER );
+		$roles->add_cap( 'author', Kleistad_Roles::RESERVEER );
+		$roles->add_cap( 'contributor', Kleistad_Roles::RESERVEER );
+		$roles->add_cap( 'subscriber', Kleistad_Roles::RESERVEER );
 	}
 
 }
