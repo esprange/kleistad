@@ -11,44 +11,59 @@
 class KleistadRolesTest extends WP_UnitTestCase {
 
 	/**
+	 * Subscriber id
+	 *
+	 * @var int $subscriber_id The subscriber.
+	 */
+	private $subscriber_id;
+
+	/**
+	 * Editor id
+	 *
+	 * @var int $editor_id The editor.
+	 */
+	private $editor_id;
+
+	/**
+	 * Nonmember id
+	 *
+	 * @var int $nonmember_id The nonmember.
+	 */
+	private $nonmember_id;
+
+	/**
 	 * Activate the plugin which includes the kleistad specific tables if not present.
 	 */
 	public function setUp() {
 		activate_kleistad();
+		$this->subscriber_id = $this->factory->user->create(
+			[
+				'role' => 'subscriber',
+			]
+		);
+		$this->editor_id = $this->factory->user->create(
+			[
+				'role' => 'editor',
+			]
+		);
+		$this->nonmember_id = $this->factory->user->create(
+			[
+				'role' => '',
+			]
+		);
 	}
 	/**
 	 * Test creation and modification of roles.
 	 */
 	function test_roles() {
-		$user_id1 = $this->factory->user->create(
-			[
-				'role' => 'subscriber',
-			]
-		);
-		$user1 = get_userdata( $user_id1 );
-		print_r( $user1 );
-		$this->assertTrue( Kleistad_Roles::reserveer( $user_id1 ), 'subscriber cannot reserveer' );
-		$this->assertFalse( Kleistad_Roles::override( $user_id1 ), 'subscriber can override' );
+		$this->assertTrue( Kleistad_Roles::reserveer( $this->subscriber_id ), 'subscriber cannot reserveer' );
+		$this->assertFalse( Kleistad_Roles::override( $this->subscriber_id ), 'subscriber can override' );
 
-		$user_id2 = $this->factory->user->create(
-			[
-				'role' => 'editor',
-			]
-		);
-		$user2 = get_userdata( $user_id2 );
-		print_r( $user2 );
-		$this->assertTrue( Kleistad_Roles::reserveer( $user_id2 ), 'editor cannot reserveer' );
-		$this->assertTrue( Kleistad_Roles::override( $user_id2 ), 'editor cannot override' );
+		$this->assertTrue( Kleistad_Roles::reserveer( $this->editor_id ), 'editor cannot reserveer' );
+		$this->assertTrue( Kleistad_Roles::override( $this->editor_id ), 'editor cannot override' );
 
-		$user_id3 = $this->factory->user->create(
-			[
-				'role' => '',
-			]
-		);
-		$user3 = get_userdata( $user_id3 );
-		print_r( $user3 );
-		$this->assertFalse( Kleistad_Roles::reserveer( $user_id3 ), 'no role can reserveer' );
-		$this->assertFalse( Kleistad_Roles::override( $user_id3 ), 'no role can override' );
+		$this->assertFalse( Kleistad_Roles::reserveer( $this->nonmember_id ), 'no role can reserveer' );
+		$this->assertFalse( Kleistad_Roles::override( $this->nonmember_id ), 'no role can override' );
 	}
 
 }
