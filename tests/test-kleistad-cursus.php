@@ -99,7 +99,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 		foreach ( $inschrijvingen_from_store as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ($cursist_inschrijvingen as $cursus_id => $cursist_inschrijving ) {
 				if ( substr( $cursist_inschrijving->opmerking, 0, strlen( $teststring ) ) == $teststring ) {
-					$this->assertEquals( $teststring . $cursist_id, $inschrijving->opmerking, 'naam inschrijvingen not equal' );
+					$this->assertEquals( $teststring . $cursist_id, $cursist_inschrijving->opmerking, 'naam inschrijvingen not equal' );
 				}
 			}
 		}
