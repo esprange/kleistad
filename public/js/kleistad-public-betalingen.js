@@ -1,8 +1,8 @@
-(function ($) {
+( function ( $ ) {
     'use strict';
 
-    $(document).ready(function () {
-        $('.kleistad_rapport').DataTable({
+    $( document ).ready( function () {
+        $( '.kleistad_rapport' ).DataTable( {
             language: {
                     "sProcessing": "Bezig...",
                     "sLengthMenu": "_MENU_ resultaten weergeven",
@@ -27,14 +27,14 @@
                     }
             },
             columnDefs: [
-                {'orderData': [1], 'targets': [0]},
-                {'orderData': [5], 'targets': [4]},
-                {'orderData': [7], 'targets': [6]},
-                {'orderData': [9], 'targets': [8]},
-                {'targets': [1, 5, 7, 9], 'visible': false, 'searchable': false }
+                { 'orderData': [ 1 ], 'targets': [ 0 ] },
+                { 'orderData': [ 5 ], 'targets': [ 4 ] },
+                { 'orderData': [ 7 ], 'targets': [ 6 ] },
+                { 'orderData': [ 9 ], 'targets': [ 8 ] },
+                { 'targets': [ 1, 5, 7, 9 ], 'visible': false, 'searchable': false }
             ]
-        });
-    });
+        } );
+    } );
 
 
-})(jQuery);
+} )( jQuery );

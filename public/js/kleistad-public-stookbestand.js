@@ -1,14 +1,14 @@
-(function ($) {
+( function ( $ ) {
     'use strict';
 
-    $(document).ready(function () {
+    $( document ).ready( function () {
 
-        $(".kleistad_datum").each(function () {
-            $(this).datepicker({
+        $( ".kleistad_datum" ).each( function () {
+            $( this ).datepicker( {
                 dateFormat: "dd-mm-yy"
-            });
-        });
-        
-    });
+            } );
+        } );
 
-})(jQuery);
+    } );
+
+} )( jQuery );

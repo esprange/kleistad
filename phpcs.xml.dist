@@ -14,4 +14,12 @@
 
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/wpcs/*</exclude-pattern>
+	<exclude-pattern>*/tmp/*</exclude-pattern>
+	<exclude-pattern>*/bin/*</exclude-pattern>
+        
+      	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+
 </ruleset>

@@ -1,8 +1,8 @@
-(function ($) {
+( function ( $ ) {
     'use strict';
 
-    $(document).ready(function () {
-        $('#kleistad_saldo_overzicht').DataTable({
+    $( document ).ready( function () {
+        $( '#kleistad_saldo_overzicht' ).DataTable( {
             language: {
                     "sProcessing": "Bezig...",
                     "sLengthMenu": "_MENU_ resultaten weergeven",
@@ -26,7 +26,7 @@
                             "sSortDescending": ": activeer om kolom aflopend te sorteren"
                     }
             }
-        });
-    });
+        } );
+    } );
 
-})(jQuery);
+} )( jQuery );
