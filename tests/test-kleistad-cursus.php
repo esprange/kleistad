@@ -64,13 +64,14 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	function test_inschrijving() {
 		$cursist_id = $this->factory->user->create();
 		$cursus = new Kleistad_Cursus();
-		$cursus->save();
+		$cursus->start_datum = date ('Y-m-d');
+		$cursus_id = $cursus->save();
 
-		$inschrijving1 = new Kleistad_Inschrijving( $cursist_id, $cursus->id );
+		$inschrijving1 = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
 		$inschrijving1->opmerking = 'test inschrijving';
 		$inschrijving1->save();
 
-		$inschrijving2 = new Kleistad_Cursus( $cursist_id, $cursus->id );
+		$inschrijving2 = new Kleistad_Cursus( $cursist_id, $cursus_id );
 		$this->assertEquals( 'test inschrijving', $inschrijving2->opmerking, 'opmerking inschrijving not equal' );
 
 		$inschrijving2->technieken = [ 'techniek1', 'techniek2' ];
