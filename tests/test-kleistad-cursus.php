@@ -64,7 +64,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	function test_inschrijving() {
 		$cursist_id = $this->factory->user->create();
 		$cursus = new Kleistad_Cursus();
-		$cursus->start_datum = date ('Y-m-d');
+		$cursus->start_datum = strtotime( 'now' );
 		$cursus_id = $cursus->save();
 
 		$inschrijving1 = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
