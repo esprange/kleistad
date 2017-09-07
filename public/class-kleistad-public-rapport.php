@@ -42,9 +42,12 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 		foreach ( $reserveringen as $reservering ) {
 			foreach ( $reservering->verdeling as $stookdeel ) {
 				if ( $stookdeel['id'] == $huidige_gebruiker->ID ) {
-					// als er een speciale regeling / tarief is afgesproken, dan geldt dat tarief.
-					$regeling = $regeling_store->get( $huidige_gebruiker->ID, $reservering->oven_id );
-					$kosten = number_format( round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling )) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 ), 2, ',', '' );
+					if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
+						$kosten = $stookdeel['prijs'];
+					} else { // Voorlopige berekening.
+						$regeling = $regeling_store->get( $huidige_gebruiker->ID, $reservering->oven_id );
+						$kosten = number_format( round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling )) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 ), 2, ',', '' );
+					}
 					$stoker = get_userdata( $reservering->gebruiker_id );
 					$items[] = [
 						'datum' => $reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,

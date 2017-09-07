@@ -310,7 +310,8 @@ class Kleistad_Public {
 		foreach ( $reserveringen as &$reservering ) {
 			if ( ! $reservering->verwerkt && $reservering->datum <= strtotime( '- ' . $options['termijn'] . ' days' ) ) {
 				$gebruiker = get_userdata( $reservering->gebruiker_id );
-				foreach ( $reservering->verdeling as $stookdeel ) {
+				$verdeling = $reservering->verdeling;
+				foreach ( $verdeling as &$stookdeel ) {
 					if ( intval( $stookdeel['id'] ) == 0 ) {
 						continue;
 					}
@@ -318,8 +319,8 @@ class Kleistad_Public {
 					$regeling = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
 					$kosten = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
 					$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
-
-					$huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
+					$stookdeel['prijs'] = $prijs;
+					 $huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
 					$nieuw_saldo = ('' == $huidig_saldo) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
 
 					Kleistad_Oven::log_saldo(
@@ -327,8 +328,6 @@ class Kleistad_Public {
 						date( 'd-m-Y', $reservering->datum )
 					);
 					update_user_meta( $stookdeel['id'], 'stooksaldo', $nieuw_saldo );
-					$reservering->verwerkt = true;
-					$reservering->save();
 
 					$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
 					Kleistad_Public_Saldo::compose_email(
@@ -344,6 +343,9 @@ class Kleistad_Public {
 						]
 					);
 				}
+				$reservering->verdeling = $verdeling;
+				$reservering->verwerkt = true;
+				$reservering->save();
 			}
 		}
 

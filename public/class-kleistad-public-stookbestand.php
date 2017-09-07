@@ -112,7 +112,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 		foreach ( $reserveringen as $reservering ) {
 			$stoker      = get_userdata( $reservering->gebruiker_id );
 			$stoker_naam = ( ! $stoker) ? 'onbekend' : $stoker->display_name;
-			$totaal      = 0;
 			$values      = [
 				$stoker_naam,
 				$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
@@ -122,29 +121,34 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 				$reservering->temperatuur,
 				$reservering->programma,
 			];
+
 			foreach ( $medestokers as $id => $medestoker ) {
 				$percentage = 0;
-				for ( $i = 0; $i < 5; $i ++ ) {
-					if ( $reservering->verdeling[ $i ]['id'] == $id ) {
-						$percentage = $percentage + $reservering->verdeling[ $i ]['perc'];
+				foreach ( $reservering->verdeling as $stookdeel ) {
+					if ( $stookdeel['id'] == $id ) {
+						$percentage += $stookdeel['perc'];
 					}
 				}
 				$values [] = (0 == $percentage) ? '' : $percentage;
 			}
+
+			$totaal = 0;
 			foreach ( $medestokers as $id => $medestoker ) {
-				$percentage = 0;
-				for ( $i = 0; $i < 5; $i ++ ) {
-					if ( $reservering->verdeling[ $i ]['id'] == $id ) {
-						$percentage = $percentage + $reservering->verdeling[ $i ]['perc'];
+				$kosten = 0;
+				$kosten_tonen = false;
+				foreach ( $reservering->verdeling as $stookdeel ) {
+					if ( $stookdeel['id'] == $id ) {
+						if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
+							$kosten += $stookdeel['prijs'];
+						} else { // Voorlopige berekening.
+							$regeling = $regeling_store->get( $id, $reservering->oven_id );
+							$kosten += number_format( round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling )) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 ), 2, ',', '' );
+						}
+						$totaal += $kosten;
+						$kosten_tonen = true;
 					}
 				}
-				if ( $percentage > 0 ) {
-					// als er een speciale regeling / tarief is afgesproken, dan geldt dat tarief.
-					$regeling    = $regeling_store->get( $id, $reservering->oven_id );
-					$kosten      = round( ($percentage * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling )) / 100, 2 );
-					$totaal      += $kosten;
-				}
-				$values [] = (0 == $percentage) ? '' : number_format( $kosten, 2, ',', '' );
+				$values [] = ($kosten_tonen) ? number_format( $kosten, 2, ',', '' ) : '';
 			}
 			$values [] = number_format( $totaal, 2, ',', '' );
 			fputcsv( $f, $values, ';', '"' );
