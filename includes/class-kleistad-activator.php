@@ -103,9 +103,35 @@ class Kleistad_Activator {
                 PRIMARY KEY  (id)
               ) $charset_collate;"
 			);
+			/**
+			 * Prijs toevoegen aan reeds uitgevoerde transacties.
+			 */
+			$regelingen = new Kleistad_Regelingen();
+
+			$oven_store = new Kleistad_Ovens();
+			$ovens = $oven_store->get();
+
+			$reservering_store = new Kleistad_Reserveringen();
+			$reserveringen = $reservering_store->get();
+
+			foreach ( $reserveringen as &$reservering ) {
+				if ( $reservering->verwerkt ) {
+					$verdeling = $reservering->verdeling;
+					foreach ( $verdeling as &$stookdeel ) {
+						if ( intval( $stookdeel['id'] ) == 0 ) {
+							continue;
+						}
+						$regeling = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
+						$kosten = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
+						$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
+						$stookdeel['prijs'] = $prijs;
+					}
+					$reservering->verdeling = $verdeling;
+					$reservering->save();
+				}
+			}
 			update_option( 'kleistad-database-versie', self::DBVERSIE );
 
-			self::prijs_toevoegen(); // Eenmalig, prijs toevoegen aan reeds verwerkte transacties.
 		}
 
 		if ( ! wp_next_scheduled( 'kleistad_kosten' ) ) {
@@ -129,34 +155,5 @@ class Kleistad_Activator {
 		$roles->add_cap( 'subscriber', Kleistad_Roles::RESERVEER );
 	}
 
-	/**
-	 * Prijs toevoegen aan reeds uitgevoerde transacties.
-	 */
-	private function prijs_toevoegen() {
-		$regelingen = new Kleistad_Regelingen();
-
-		$oven_store = new Kleistad_Ovens();
-		$ovens = $oven_store->get();
-
-		$reservering_store = new Kleistad_Reserveringen();
-		$reserveringen = $reservering_store->get();
-
-		foreach ( $reserveringen as &$reservering ) {
-			if ( $reservering->verwerkt ) {
-				$verdeling = $reservering->verdeling;
-				foreach ( $verdeling as &$stookdeel ) {
-					if ( intval( $stookdeel['id'] ) == 0 ) {
-						continue;
-					}
-					$regeling = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
-					$kosten = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
-					$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
-					$stookdeel['prijs'] = $prijs;
-				}
-				$reservering->verdeling = $verdeling;
-				$reservering->save();
-			}
-		}
-	}
 
 }
