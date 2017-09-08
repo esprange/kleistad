@@ -368,6 +368,8 @@ class Kleistad_Admin {
 			'id' => '',
 			'gebruiker_id' => 0,
 			'oven_id' => 0,
+			'oven_naam' => '',
+			'gebruiker_naam' => '',
 			'kosten' => 0,
 		];
 
@@ -394,6 +396,10 @@ class Kleistad_Admin {
 						$notice = 'Er was een probleem met het wijzigen van gegevens';
 					}
 				}
+				$oven = new Kleistad_Oven( $item['oven_id'] );
+				$gebruiker = get_userdata( $item['gebruiker_id'] );
+				$item['gebruiker_naam'] = $gebruiker->display_name;
+				$item['oven_naam'] = $oven->naam;
 			} else {
 				// if $item_valid not true it contains error message(s).
 				$notice = $item_valid;
@@ -416,10 +422,6 @@ class Kleistad_Admin {
 					'oven_naam' => $oven->naam,
 					'kosten' => $gebruiker_regeling,
 				];
-				if ( ! $item ) {
-					$item = $default;
-					$notice = 'De regeling is niet gevonden';
-				}
 			}
 		}
 		// here we adding our custom meta box.

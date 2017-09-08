@@ -142,7 +142,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 							$kosten += $stookdeel['prijs'];
 						} else { // Voorlopige berekening.
 							$regeling = $regeling_store->get( $id, $reservering->oven_id );
-							$kosten += number_format( round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling )) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 ), 2, ',', '' );
+							$kosten += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling )) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
 						}
 						$totaal += $kosten;
 						$kosten_tonen = true;
