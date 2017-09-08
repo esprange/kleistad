@@ -6,7 +6,7 @@
  * public-facing side of the site and the admin area.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -22,7 +22,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Store the cursist id
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @access private
 	 * @var int $_cursist_id the wp user id the of cursist.
 	 */
@@ -33,7 +33,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * Create the abonnee object .
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int $abonnee_id id of the abonnee.
 	 */
@@ -62,7 +62,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * Get attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @return mixed Attribute value.
@@ -84,7 +84,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * Set attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @param mixed  $waarde Attribuut value.
@@ -108,7 +108,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * Saves the data to the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 */
 	public function save() {
 		update_user_meta( $this->_abonnee_id, 'kleistad_abonnement', $this->_data );

@@ -6,7 +6,7 @@
  * public-facing side of the site and the admin area.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes

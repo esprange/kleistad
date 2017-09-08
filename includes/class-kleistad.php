@@ -6,7 +6,7 @@
  * public-facing side of the site and the admin area.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -21,7 +21,7 @@
  * Also maintains the unique identifier of this plugin as well as the current
  * version of the plugin.
  *
- * @since      4.0.0
+ * @since      4.0.87
  * @package    Kleistad
  * @subpackage Kleistad/includes
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
@@ -32,7 +32,7 @@ class Kleistad {
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   protected
 	 * @var      Kleistad_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
@@ -41,7 +41,7 @@ class Kleistad {
 	/**
 	 * The unique identifier of this plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   protected
 	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
 	 */
@@ -50,7 +50,7 @@ class Kleistad {
 	/**
 	 * The current version of the plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   protected
 	 * @var      string    $version    The current version of the plugin.
 	 */
@@ -63,12 +63,12 @@ class Kleistad {
 	 * Load the dependencies, define the locale, and set the hooks for the admin area and
 	 * the public-facing side of the site.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function __construct() {
 
 		$this->plugin_name = 'kleistad';
-		$this->version = '4.0.0';
+		$this->version = '4.0.87';
 
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
@@ -89,7 +89,7 @@ class Kleistad {
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   private
 	 */
 	private function load_dependencies() {
@@ -118,7 +118,7 @@ class Kleistad {
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
@@ -144,7 +144,7 @@ class Kleistad {
 	 * Register all of the hooks related to the public-facing functionality
 	 * of the plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   private
 	 */
 	private function define_public_hooks() {
@@ -176,7 +176,7 @@ class Kleistad {
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function run() {
 		$this->loader->run();
@@ -186,7 +186,7 @@ class Kleistad {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since     4.0.0
+	 * @since     4.0.87
 	 * @return    string    The name of the plugin.
 	 */
 	public function get_plugin_name() {
@@ -196,7 +196,7 @@ class Kleistad {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @since     4.0.0
+	 * @since     4.0.87
 	 * @return    Kleistad_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
@@ -206,7 +206,7 @@ class Kleistad {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since     4.0.0
+	 * @since     4.0.87
 	 * @return    string    The version number of the plugin.
 	 */
 	public function get_version() {

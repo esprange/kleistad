@@ -3,7 +3,7 @@
  * The public-facing functionality of the plugin.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
@@ -28,7 +28,7 @@ class Kleistad_Public {
 	/**
 	 * The ID of this plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
@@ -37,7 +37,7 @@ class Kleistad_Public {
 	/**
 	 * The version of this plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
@@ -60,7 +60,7 @@ class Kleistad_Public {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @param      string $plugin_name       The name of the plugin.
 	 * @param      string $version    The version of this plugin.
 	 */
@@ -76,7 +76,7 @@ class Kleistad_Public {
 	/**
 	 * Register the stylesheets for the public-facing side of the site.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function register_styles() {
 		wp_register_style( 'jqueryui-css', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
@@ -87,7 +87,7 @@ class Kleistad_Public {
 	/**
 	 * Register the JavaScripts for the public-facing side of the site.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function register_scripts() {
 		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.15/js/jquery.dataTables.js', [ 'jquery' ] );
@@ -114,7 +114,7 @@ class Kleistad_Public {
 	/**
 	 * Register the AJAX endpoints
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 */
 	public function register_endpoints() {
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-reservering.php';
@@ -184,7 +184,7 @@ class Kleistad_Public {
 	/**
 	 * After login check to see if user account is disabled
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @param string $user_login unused.
 	 * @param object $user wp user object.
 	 */
@@ -215,7 +215,7 @@ class Kleistad_Public {
 	/**
 	 * Show a notice to users who try to login and are disabled
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @param string $message the message shown to the user.
 	 * @return string
 	 */
@@ -231,7 +231,7 @@ class Kleistad_Public {
 	/**
 	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @param array  $atts      the params of the shortcode.
 	 * @param string $content   wordt niet gebruikt.
 	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
@@ -287,7 +287,7 @@ class Kleistad_Public {
 	 *
 	 * Update ovenkosten batch job
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 */
 	public function update_ovenkosten() {
 		// class included to enable usage of compose_email method.
@@ -380,7 +380,7 @@ class Kleistad_Public {
 	/**
 	 * Verwijder gebruiker, geactiveerd als er een gebruiker verwijderd wordt.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @param int $gebruiker_id gebruiker id.
 	 */
 	public function verwijder_gebruiker( $gebruiker_id ) {

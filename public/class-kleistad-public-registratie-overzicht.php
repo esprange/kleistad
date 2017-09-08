@@ -3,7 +3,7 @@
  * The public-facing functionality of the plugin.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
@@ -25,7 +25,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 	 * @param array $data data to be prepared.
 	 * @return array
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
 		$cursus_store = new Kleistad_Cursussen();
@@ -102,7 +102,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 	 * @param array $data data to save.
 	 * @return string
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 */
 	public function save( $data ) {
 		if ( ! Kleistad_Roles::override() ) {

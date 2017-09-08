@@ -5,7 +5,7 @@
  * A class definition including the ovens, reserveringen and regelingen
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -16,7 +16,7 @@
  *
  * A class definition that define the attributes of a single oven class.
  *
- * @since 4.0.0
+ * @since 4.0.87
  *
  * @see n.a.
  * @link URL
@@ -28,7 +28,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 *
 	 * Constructor, Long description.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int $oven_id (optional) oven to load.
 	 * @global object $wpdb WordPress database.
@@ -56,7 +56,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 *
 	 * Get attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @return mixed Attribute value.
@@ -83,7 +83,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 *
 	 * Set attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @param mixed  $waarde Attribuut value.
@@ -104,7 +104,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 *
 	 * Saves the data to the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
 	 * @return int The id of the oven.
@@ -137,7 +137,7 @@ class Kleistad_Oven extends Kleistad_Entity {
    *
    * Collection of Oven, loaded from the database.
    *
-   * @since 4.0.0
+   * @since 4.0.87
    *
    * @see class Kleistad_Oven
    * @link URL
@@ -149,7 +149,7 @@ class Kleistad_Ovens extends Kleistad_EntityStore {
 	 *
 	 * Loads the data from the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
 	 * @return null.
@@ -170,7 +170,7 @@ class Kleistad_Ovens extends Kleistad_EntityStore {
  *
  * A class definition that define the attributes of a single reservering class.
  *
- * @since 4.0.0
+ * @since 4.0.87
  *
  * @see n.a.
  * @link URL
@@ -182,7 +182,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 *
 	 * Constructor, Long description.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int $oven_id (optional) reservering to load.
 	 * @return null.
@@ -251,7 +251,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 *
 	 * Get attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @return mixed Attribute value.
@@ -301,7 +301,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 *
 	 * Set attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @param mixed  $waarde Attribuut value.
@@ -334,7 +334,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 *
 	 * Saves the data to the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
 	 * @return int The id of the oven.
@@ -351,7 +351,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 *
 	 * Get attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress db
 	 * @param int $gebruiker_id Gebruiker id.
@@ -369,7 +369,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
    *
    * Collection of Oven, loaded from the database.
    *
-   * @since 4.0.0
+   * @since 4.0.87
    *
    * @see class Kleistad_Reservering
    * @link URL
@@ -381,7 +381,7 @@ class Kleistad_Reserveringen extends Kleistad_EntityStore {
 	 *
 	 * Loads the data from the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
 	 * @param int $oven_id the oven id.
@@ -411,7 +411,7 @@ class Kleistad_Regelingen {
 	/**
 	 * Store the regeling data
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @access private
 	 * @var array $_data contains regeling attributes.
 	 */
@@ -420,7 +420,7 @@ class Kleistad_Regelingen {
 	/**
 	 * Constructor
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 */
 	public function __construct() {
 		$gebruikers = get_users(
@@ -439,7 +439,7 @@ class Kleistad_Regelingen {
 	 *
 	 * Get regeling from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int $gebruiker_id wp user id.
 	 * @param int $oven_id oven id.
@@ -463,7 +463,7 @@ class Kleistad_Regelingen {
 	 *
 	 * Set the regeling and store it to the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int   $gebruiker_id wp user id.
 	 * @param int   $oven_id oven id.
@@ -479,7 +479,7 @@ class Kleistad_Regelingen {
 	 *
 	 * Cancel the regeling and remove it from the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int $gebruiker_id wp user id.
 	 * @param int $oven_id oven id.

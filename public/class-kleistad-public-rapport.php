@@ -3,7 +3,7 @@
  * The public-facing functionality of the plugin.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
@@ -25,7 +25,7 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 	 * @param array $data date to be prepared.
 	 * @return array
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
 		$huidige_gebruiker = wp_get_current_user();

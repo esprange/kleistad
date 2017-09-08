@@ -6,7 +6,7 @@
  * public-facing side of the site and the admin area.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -20,7 +20,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	/**
 	 * Store the gebruiker id
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @access private
 	 * @var int $_gebruiker_id contains WP user id.
 	 */
@@ -31,7 +31,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 *
 	 * Create the gebruiker.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int $gebruiker_id id of the gebruiker.
 	 * @return null.
@@ -69,7 +69,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 *
 	 * Get attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @return mixed Attribute value.
@@ -88,7 +88,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 *
 	 * Set attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @param mixed  $waarde Attribuut value.
@@ -105,7 +105,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 *
 	 * Saves the data to the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @return null.
 	 */
@@ -177,7 +177,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
  *
  * Collection of Gebruiker, loaded from the database.
  *
- * @since 4.0.0
+ * @since 4.0.87
  *
  * @see class Kleistad_Inschrijving
  * @link URL
@@ -189,7 +189,7 @@ class Kleistad_Gebruikers extends Kleistad_EntityStore {
 	 *
 	 * Loads the data from the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @return null.
 	 */

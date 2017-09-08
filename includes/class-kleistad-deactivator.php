@@ -3,7 +3,7 @@
  * Fired during plugin deactivation
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -14,7 +14,7 @@
  *
  * This class defines all code necessary to run during the plugin's deactivation.
  *
- * @since      4.0.0
+ * @since      4.0.87
  * @package    Kleistad
  * @subpackage Kleistad/includes
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
@@ -32,7 +32,7 @@ class Kleistad_Deactivator {
 	 *
 	 * Long Description.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public static function deactivate() {
 		wp_clear_scheduled_hook( 'kleistad_kosten' );

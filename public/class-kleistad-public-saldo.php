@@ -3,7 +3,7 @@
  * The public-facing functionality of the plugin.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
@@ -25,7 +25,7 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 	 * @param array $data the prepared data.
 	 * @return array
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
 		$gebruiker_id = get_current_user_id();
@@ -43,7 +43,7 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 	 * @param array $data Returned data.
 	 * @return array
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 */
 	public function validate( &$data ) {
 
@@ -67,7 +67,7 @@ class Kleistad_Public_Saldo extends Kleistad_Public_Shortcode {
 	 * @param array $data the data to be saved.
 	 * @return string
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 */
 	public function save( $data ) {
 		$error = new WP_Error();

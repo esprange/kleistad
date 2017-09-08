@@ -3,7 +3,7 @@
  * Fired during plugin activation
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -24,14 +24,14 @@ class Kleistad_Activator {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 4;
+	const DBVERSIE = 5;
 
 	/**
 	 * Short Description. (use period)
 	 *
 	 * Long Description.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public static function activate() {
 		$default_options = [

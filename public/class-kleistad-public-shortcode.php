@@ -3,7 +3,7 @@
  * The abstract class for shortcodes.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
@@ -37,7 +37,7 @@ abstract class Kleistad_Public_Shortcode {
 	/**
 	 * The constructor
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 * @param string $plugin_name plugin naam.
 	 * @param array  $atts shortcode parameters.
 	 */
@@ -51,7 +51,7 @@ abstract class Kleistad_Public_Shortcode {
 	/**
 	 * Abstract definition of prepare function
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 *
 	 * @param array $data the data to prepare.
 	 */
@@ -60,7 +60,7 @@ abstract class Kleistad_Public_Shortcode {
 	/**
 	 * Validate function, only used in case of forms
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 * @param array $data the data validated.
 	 */
 	public function validate( &$data ) {
@@ -70,7 +70,7 @@ abstract class Kleistad_Public_Shortcode {
 	/**
 	 * Save function, only used in case of forms
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 * @param array $data the data to store.
 	 */
 	public function save( $data ) {
@@ -81,7 +81,7 @@ abstract class Kleistad_Public_Shortcode {
 	 * Filter function, to be used only by compose_email
 	 *    *
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 * @param type $old unused.
 	 * @return string
 	 */
@@ -93,7 +93,7 @@ abstract class Kleistad_Public_Shortcode {
 	 * Filter function, to be used only by compose_email
 	 *    *
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 * @param type $old unused.
 	 * @return string
 	 */
@@ -104,7 +104,7 @@ abstract class Kleistad_Public_Shortcode {
 	/**
 	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 * @param string $to bestemming.
 	 * @param string $subject onderwerp.
 	 * @param string $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).

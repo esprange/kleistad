@@ -3,7 +3,7 @@
  * Register all actions and filters for the plugin
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -25,7 +25,7 @@ class Kleistad_Loader {
 	/**
 	 * The array of actions registered with WordPress.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   protected
 	 * @var      array    $actions    The actions registered with WordPress to fire when the plugin loads.
 	 */
@@ -34,7 +34,7 @@ class Kleistad_Loader {
 	/**
 	 * The array of filters registered with WordPress.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   protected
 	 * @var      array    $filters    The filters registered with WordPress to fire when the plugin loads.
 	 */
@@ -43,7 +43,7 @@ class Kleistad_Loader {
 	/**
 	 * The array of shortcodes registered with WordPress.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   protected
 	 * @var      array    $shortcodes    The shortcodes registered with WordPress to fire when the plugin loads.
 	 */
@@ -52,7 +52,7 @@ class Kleistad_Loader {
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function __construct() {
 
@@ -64,7 +64,7 @@ class Kleistad_Loader {
 	/**
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @param    string $hook             The name of the WordPress action that is being registered.
 	 * @param    object $component        A reference to the instance of the object on which the action is defined.
 	 * @param    string $callback         The name of the function definition on the $component.
@@ -78,7 +78,7 @@ class Kleistad_Loader {
 	/**
 	 * Add a new filter to the collection to be registered with WordPress.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @param    string $hook             The name of the WordPress filter that is being registered.
 	 * @param    object $component        A reference to the instance of the object on which the filter is defined.
 	 * @param    string $callback         The name of the function definition on the $component.
@@ -92,7 +92,7 @@ class Kleistad_Loader {
 	/**
 	 * Add a new shortcode to the collection to be registered with WordPress
 	 *
-	 * @since     4.0.0
+	 * @since     4.0.87
 	 * @param     string $tag           The name of the new shortcode.
 	 * @param     object $component      A reference to the instance of the object on which the shortcode is defined.
 	 * @param     string $callback       The name of the function that defines the shortcode.
@@ -106,7 +106,7 @@ class Kleistad_Loader {
 	 * A utility function that is used to register the actions and hooks into a single
 	 * collection.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   private
 	 * @param    array  $hooks            The collection of hooks that is being registered (that is, actions or filters).
 	 * @param    string $hook             The name of the WordPress filter that is being registered.
@@ -132,7 +132,7 @@ class Kleistad_Loader {
 	/**
 	 * Register the filters and actions with WordPress.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function run() {
 

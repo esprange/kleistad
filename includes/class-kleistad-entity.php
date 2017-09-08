@@ -5,7 +5,7 @@
  * A class definition including the ovens, reserveringen and regelingen
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -16,7 +16,7 @@
  *
  * A class definition that define the attributes of a single oven class.
  *
- * @since 4.0.0
+ * @since 4.0.87
  *
  * @see n.a.
  * @link URL
@@ -26,7 +26,7 @@ abstract class Kleistad_Entity {
 	/**
 	 * Store the cursus data
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @access private
 	 * @var array $_data contains cursus attributes.
 	 */
@@ -37,7 +37,7 @@ abstract class Kleistad_Entity {
 	 *
 	 * Get attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @return mixed Attribute value.
@@ -54,7 +54,7 @@ abstract class Kleistad_Entity {
 	 *
 	 * Set attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @param mixed  $waarde Attribuut value.
@@ -71,7 +71,7 @@ abstract class Kleistad_Entity {
 	 *
 	 * Saves the data to the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 */
 	abstract public function save();
 
@@ -80,7 +80,7 @@ abstract class Kleistad_Entity {
 	 *
 	 * Loads the data from the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param array $data oven attribute values.
 	 */
@@ -95,7 +95,7 @@ abstract class Kleistad_Entity {
    *
    * Collection of Oven, loaded from the database.
    *
-   * @since 4.0.0
+   * @since 4.0.87
    *
    * @see class Kleistad_Entity
    * @link URL
@@ -105,7 +105,7 @@ abstract class Kleistad_EntityStore {
 	/**
 	 * Store the entity data
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @access private
 	 * @var array $_data contains oven objects.
 	 */
@@ -116,7 +116,7 @@ abstract class Kleistad_EntityStore {
 	 *
 	 * Retrieve the data as an array.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @return array Array of oven objects.
 	 */
@@ -129,7 +129,7 @@ abstract class Kleistad_EntityStore {
 	 *
 	 * Return the number of loaded ovens.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @return int The count of loaded ovens objects.
 	 */

@@ -8,14 +8,14 @@
  * that starts the plugin.
  *
  * @link              www.sprako.nl/wordpress/eric
- * @since             4.0.0
+ * @since             4.0.87
  * @package           Kleistad
  *
  * @wordpress-plugin
  * Plugin Name:       Kleistad
  * Plugin URI:        www.sprako.nl/wordpress/kleistad
  * Description:       Een plugin voor vereniging Kleistad. Reserveren van ovens, verwerken van stook saldo en cursus administratie.
- * Version:           4.0.0
+ * Version:           4.0.87
  * Author:            Eric Sprangers
  * Author URI:        www.sprako.nl/wordpress/eric
  * License:           GPL-2.0+
@@ -63,7 +63,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-kleistad.php';
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    4.0.0
+ * @since    4.0.87
  */
 function run_kleistad() {
 

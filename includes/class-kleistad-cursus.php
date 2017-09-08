@@ -6,7 +6,7 @@
  * a inschrijving, a collection of inschrijvingen.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
@@ -17,7 +17,7 @@
  *
  * A class definition that define the attributes of a single cursus class.
  *
- * @since 4.0.0
+ * @since 4.0.87
  *
  * @see n.a.
  * @link URL
@@ -29,7 +29,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 *
 	 * Constructor, Long description.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int $cursus_id (optional) cursus to load.
 	 * @return null.
@@ -66,7 +66,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 *
 	 * Get attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @return mixed Attribute value.
@@ -96,7 +96,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 *
 	 * Set attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @param mixed  $waarde Attribuut value.
@@ -129,7 +129,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 *
 	 * Saves the data to the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
 	 * @return int The id of the cursus.
@@ -147,7 +147,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
    *
    * Collection of Cursus, loaded from the database.
    *
-   * @since 4.0.0
+   * @since 4.0.87
    *
    * @see class Kleistad_Cursus
    * @link URL
@@ -159,7 +159,7 @@ class Kleistad_Cursussen extends Kleistad_EntityStore {
 	 *
 	 * Loads the data from the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
 	 * @return null.
@@ -178,7 +178,7 @@ class Kleistad_Cursussen extends Kleistad_EntityStore {
  *
  * A class definition that define the attributes of a inschrijving class.
  *
- * @since 4.0.0
+ * @since 4.0.87
  *
  * @see n.a.
  * @link URL
@@ -188,7 +188,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	/**
 	 * Store the cursist id
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @access private
 	 * @var int $_cursist_id the wp user id the of cursist.
 	 */
@@ -197,7 +197,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	/**
 	 * Store the cursus id
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 * @access private
 	 * @var int $_cursus_id the id of the cursus in the database.
 	 */
@@ -208,7 +208,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 *
 	 * Create the inschrijving object for cursus to be provided to cursist.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param int $cursist_id id of the cursist.
 	 * @param int $cursus_id id of the cursus.
@@ -246,7 +246,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 *
 	 * Get attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @return mixed Attribute value.
@@ -272,7 +272,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 *
 	 * Set attribuut from the object.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @param string $attribuut Attribuut name.
 	 * @param mixed  $waarde Attribuut value.
@@ -301,7 +301,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 *
 	 * Saves the data to the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 */
 	public function save() {
 		$inschrijvingen = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
@@ -316,7 +316,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
    *
    * Collection of Inschrijvingen, loaded from the database.
    *
-   * @since 4.0.0
+   * @since 4.0.87
    *
    * @see class Kleistad_Inschrijving
    * @link URL
@@ -328,7 +328,7 @@ class Kleistad_Inschrijvingen extends Kleistad_EntityStore {
 	 *
 	 * Loads the data from the database.
 	 *
-	 * @since 4.0.0
+	 * @since 4.0.87
 	 *
 	 * @return null.
 	 */

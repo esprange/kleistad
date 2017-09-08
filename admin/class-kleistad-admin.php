@@ -3,7 +3,7 @@
  * The admin-specific functionality of the plugin.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.0
+ * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/admin
@@ -26,7 +26,7 @@ class Kleistad_Admin {
 	/**
 	 * The ID of this plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
@@ -35,7 +35,7 @@ class Kleistad_Admin {
 	/**
 	 * The version of this plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
@@ -44,7 +44,7 @@ class Kleistad_Admin {
 	/**
 	 *  The plugin options
 	 *
-	 * @since     4.0.0
+	 * @since     4.0.87
 	 * @access    private
 	 * @var       array     $options  the plugin options
 	 */
@@ -53,7 +53,7 @@ class Kleistad_Admin {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 * @param      string $plugin_name       The name of this plugin.
 	 * @param      string $version    The version of this plugin.
 	 */
@@ -66,7 +66,7 @@ class Kleistad_Admin {
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-admin.css', [], $this->version, 'all' );
@@ -75,7 +75,7 @@ class Kleistad_Admin {
 	/**
 	 * Register the JavaScript for the admin area.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/kleistad-admin.js', [ 'jquery' ], $this->version, false );
@@ -84,7 +84,7 @@ class Kleistad_Admin {
 	/**
 	 * Define the admin panels
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function add_plugin_admin_menu() {
 		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', $this->plugin_name, [ $this, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), ++$GLOBALS['_wp_last_object_menu'] );
@@ -102,7 +102,7 @@ class Kleistad_Admin {
 	/**
 	 * Add the field to user profiles
 	 *
-	 * @since 1.0.0
+	 * @since 4.0.87
 	 * @param object $user unused.
 	 */
 	public function use_profile_field( $user ) {
@@ -116,7 +116,7 @@ class Kleistad_Admin {
 	/**
 	 * Saves the custom field to user meta
 	 *
-	 * @since 1.0.0
+	 * @since 4.0.87
 	 * @param int $user_id unused.
 	 */
 	public function user_profile_field_save( $user_id ) {
@@ -135,7 +135,7 @@ class Kleistad_Admin {
 	/**
 	 * Saves the custom field to user meta
 	 *
-	 * @since 1.0.0
+	 * @since 4.0.87
 	 * @param array  $errors unused.
 	 * @param int    $update unused.
 	 * @param object $user unused.
@@ -149,7 +149,7 @@ class Kleistad_Admin {
 	/**
 	 * Add custom disabled column to users list
 	 *
-	 * @since 1.0.3
+	 * @since 4.0.87
 	 * @param array $defaults default settings for user.
 	 * @return array
 	 */
@@ -161,7 +161,7 @@ class Kleistad_Admin {
 	/**
 	 * Set content of disabled users column
 	 *
-	 * @since 1.0.3
+	 * @since 4.0.87
 	 * @param empty  $empty unused.
 	 * @param string $column_name the column involved.
 	 * @param int    $user_id the user_id.
@@ -179,7 +179,7 @@ class Kleistad_Admin {
 	/**
 	 * Specifiy the width of our custom column
 	 *
-	 * @since 1.0.3
+	 * @since 4.0.87
 	 */
 	public function manage_users_css() {
 		echo '<style type="text/css">.column-kleistad_user_disabled { width: 80px; }</style>';
@@ -188,7 +188,7 @@ class Kleistad_Admin {
 	/**
 	 * Register the settings
 	 *
-	 * @since   4.0.0
+	 * @since   4.0.87
 	 */
 	public function register_settings() {
 		register_setting( 'kleistad-opties', 'kleistad-opties', [ $this, 'validate_settings' ] );
@@ -197,7 +197,7 @@ class Kleistad_Admin {
 	/**
 	 * Render the settings page for this plugin.
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
 		$this->options = get_option( 'kleistad-opties' );
@@ -223,7 +223,7 @@ class Kleistad_Admin {
 	/**
 	 * List page handler
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function ovens_page_handler() {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-ovens.php';
@@ -239,7 +239,7 @@ class Kleistad_Admin {
 	 * Form page handler checks is there some data posted and tries to save it
 	 * Also it renders basic wrapper in which we are callin meta box render
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function ovens_form_page_handler() {
 		$message = '';
@@ -332,7 +332,7 @@ class Kleistad_Admin {
 	/**
 	 * List page handler
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function regelingen_page_handler() {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-regelingen.php';
@@ -356,7 +356,7 @@ class Kleistad_Admin {
 	 * Form page handler checks is there some data posted and tries to save it
 	 * Also it renders basic wrapper in which we are callin meta box render
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function regelingen_form_page_handler() {
 
@@ -478,7 +478,7 @@ class Kleistad_Admin {
 	/**
 	 * List page handler
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function stooksaldo_page_handler() {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-stooksaldo.php';
@@ -494,7 +494,7 @@ class Kleistad_Admin {
 	 * Form page handler checks is there some data posted and tries to save it
 	 * Also it renders basic wrapper in which we are callin meta box render
 	 *
-	 * @since    4.0.0
+	 * @since    4.0.87
 	 */
 	public function stooksaldo_form_page_handler() {
 

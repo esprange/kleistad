@@ -4,7 +4,7 @@ Donate link: www.sprako.nl/wordpress/eric
 Tags: comments
 Requires at least: 4.8.0
 Tested up to: 4.8.0
-Stable tag: 4.0.0
+Stable tag: 4.0.87
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,12 +45,12 @@ Plaats de shortcodes in de pagina's
 
 == Changelog ==
 
-= 4.0.0 =
+= 4.0.87 =
 * None yet
 
 == Upgrade Notice ==
 
-= 4.0.0 =
+= 4.0.87 =
 Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
 
 == Arbitrary section ==
