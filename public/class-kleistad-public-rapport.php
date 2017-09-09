@@ -55,8 +55,8 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 						'oven' => $ovens[ $reservering->oven_id ]->naam,
 						'stoker' => ! $stoker ? 'onbekend' : $stoker->display_name,
 						'stook' => $reservering->soortstook,
-						'temp' => $reservering->temperatuur,
-						'prog' => $reservering->programma,
+						'temp' => $reservering->temperatuur > 0 ? $reservering->temperatuur : '',
+						'prog' => $reservering->programma > 0 ? $reservering->programma : '',
 						'perc' => $stookdeel['perc'],
 						'kosten' => number_format( $kosten, 2, ',', '' ),
 						'voorlopig' => $reservering->verwerkt ? '' : '<span class="genericon genericon-checkmark"></span>',
@@ -64,6 +64,11 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 				}
 			}
 		}
+		usort(
+			$items, function ( $a, $b ) {
+				return $a['sdatum'] < $b['sdatum'] ? 1 : -1 ;
+			}
+		);
 		$data = [
 			'naam' => $naam,
 			'saldo' => $saldo,

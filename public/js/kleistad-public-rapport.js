@@ -3,10 +3,6 @@
 
     $( document ).ready( function () {
         $( '.kleistad_rapport' ).DataTable( {
-            columnDefs: [
-                { className: "dt-body-right", "targets": [ 0, 4, 5, 6, 7 ] },
-                { className: "dt-body-center", "targets": [ 8 ] }
-            ],
             language: {
                     "sProcessing": "Bezig...",
                     "sLengthMenu": "_MENU_ resultaten weergeven",
@@ -28,8 +24,15 @@
                     "oAria": {
                             "sSortAscending":  ": activeer om kolom oplopend te sorteren",
                             "sSortDescending": ": activeer om kolom aflopend te sorteren"
-                    }
-            }
+                    },
+            },
+            order: ['desc'],
+            columnDefs: [
+                { className: "dt-body-right", targets: [ 0, 5, 6, 7, 8 ] },
+                { className: "dt-body-center", targets: [ 9 ] },
+                { orderData: [ 1 ], targets: [ 0 ] },
+                { targets: [ 1 ], visible: false, searchable: false }
+            ]
         } );
     } );
 

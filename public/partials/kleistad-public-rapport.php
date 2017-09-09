@@ -22,6 +22,7 @@ else :
 	<thead>
 		<tr>
 			<th>Datum</th>
+			<th>SDatum</th>
 			<th>Oven</th>
 			<th>Stoker</th>
 			<th>Stook</th>
@@ -35,7 +36,8 @@ else :
 	<tbody>
 		<?php foreach ( $data['items'] as $item ) : ?>
 		  <tr>
-			  <td><span style="display:none"><?php echo $item['sdatum']; ?></span> <?php echo $item['datum']; ?></td>
+			  <td><?php echo $item['datum']; ?></td>
+			  <td><?php echo - $item['sdatum']; ?></td>
 			  <td><?php echo $item['oven']; ?></td>
 			  <td><?php echo $item['stoker']; ?></td>
 			  <td><?php echo $item['stook']; ?></td>
