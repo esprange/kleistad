@@ -3,6 +3,10 @@
 
     $( document ).ready( function () {
         $( '.kleistad_rapport' ).DataTable( {
+            columnDefs: [
+                { className: "dt-body-right", "targets": [ 0, 4, 5, 6, 7 ] },
+                { className: "dt-body-center", "targets": [ 8 ] }
+            ],
             language: {
                     "sProcessing": "Bezig...",
                     "sLengthMenu": "_MENU_ resultaten weergeven",

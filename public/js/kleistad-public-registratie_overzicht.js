@@ -75,18 +75,25 @@
             var abonnee = $( this ).data( 'abonnee' );
             $( '#kleistad_deelnemer_tabel' ).empty();
             $( '#kleistad_deelnemer_tabel' )
-                .append( '<tr><th colspan="6">' + deelnemer.naam + '<br/>' +
+                .append( '<tr><th colspan="7">' + deelnemer.naam + '<br/>' +
                     deelnemer.straat + ' ' + deelnemer.huisnr + ' ' +
                     deelnemer.pcode + ' ' + deelnemer.plaats + '</td></tr>' );
 
-            var header = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Inschrijfgeld<br/>voldaan</th><th>Cursusgeld<br/>voldaan</th><th>Technieken</th></tr>';
+            var header = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Inschrijfgeld</th><th>Cursusgeld</th><th>Geannuleerd</th><th>Technieken</th></tr>';
             if ( typeof inschrijvingen !== 'undefined' ) {
                 $.each( inschrijvingen, function ( key, value ) {
                     var status = ( value.ingedeeld ) ? '<span class="dashicons dashicons-yes"></span>' : '';
                     var i_betaald = ( value.i_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '';
                     var c_betaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '';
+                    var geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '';
 
-                    var html = header + '<tr><td>' + value.naam + '</td><td>' + value.code + '</td><td>' + status + '</td><td>' + i_betaald + '</td><td>' + c_betaald + '</td><td>';
+                    var html = header + '<tr><td>' + value.naam + 
+                        '</td><td>' + value.code + 
+                        '</td><td>' + status + 
+                        '</td><td>' + i_betaald + 
+                        '</td><td>' + c_betaald + 
+                        '</td><td>' + geannuleerd + 
+                        '</td><td>';
                     header = '';
                     var separator = '';
                     $.each( value.technieken, function ( key, value ) {
@@ -99,9 +106,9 @@
                 $( '#kleistad_deelnemer_tabel' ).append( '<tr><td colspan="6" >Geen cursus inschrijvingen aanwezig</td></tr>' );
             }
             if ( ( typeof abonnee !== 'undefined' ) && ( abonnee.length !== 0 ) ) {
-                $( '#kleistad_deelnemer_tabel' ).append( '<tr><th colspan="2" ><Abonnee code</th><th>Type<br/>abonnement</th><th>Dag</th><th>Start<br/>Datum</th></tr>' +
-                    '<tr><td colspan="2" >' + abonnee.code + '</td><td>' +
-                    abonnee.beperkt + '</td><td>' +
+                $( '#kleistad_deelnemer_tabel' ).append( '<tr><th>Abonnement</th><th>Code</th><th>Dag</th><th>Start Datum</th></tr>' +
+                    '<tr><td>' + abonnee.beperkt + '</td><td>' +
+                    abonnee.code + '</td><td>' +
                     abonnee.dag + '</td><td>' +
                     abonnee.start_datum + '</td></tr>' );
             }

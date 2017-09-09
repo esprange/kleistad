@@ -60,6 +60,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 						'ingedeeld' => $inschrijving->ingedeeld,
 						'i_betaald' => $inschrijving->i_betaald,
 						'c_betaald' => $inschrijving->c_betaald,
+						'geannuleerd' => $inschrijving->geannuleerd,
 						'code' => $inschrijving->code,
 						'naam' => $cursussen[ $cursus_id ]->naam,
 						'technieken' => $inschrijving->technieken,
@@ -123,13 +124,31 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 		$bijlage = $upload_dir['basedir'] . '/registratiebestand_' . date( 'Y_m_d' ) . '.csv';
 		$f = fopen( $bijlage, 'w' );
 
-		$fields = [ 'Achternaam', 'Voornaam', 'Email', 'Straat', 'Huisnr', 'Postcode', 'Plaats', 'Telefoon', 'Lid', 'Cursus', 'Cursus code', 'Inschrijf datum', 'Inschrijf status', 'Technieken', 'Opmerking' ];
+		$fields = [
+			'Achternaam',
+			'Voornaam',
+			'Email',
+			'Straat',
+			'Huisnr',
+			'Postcode',
+			'Plaats',
+			'Telefoon',
+			'Lid',
+			'Cursus',
+			'Cursus code',
+			'Inschrijf datum',
+			'Inschrijf status',
+			'Technieken',
+			'Inschrijfgeld',
+			'Cursusgeld',
+			'Opmerking',
+		];
 		fputcsv( $f, $fields, ';', '"' );
 
 		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
 			$is_lid = ( ! empty( $gebruiker->rol ) or ( is_array( $gebruiker->rol ) and ( count( $gebruiker->rol ) > 0 ) ) );
 
-			$values = [
+			$gebruiker_gegevens = [
 				$gebruiker->achternaam,
 				$gebruiker->voornaam,
 				$gebruiker->email,
@@ -143,20 +162,22 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 
 			if ( array_key_exists( $gebruiker_id, $inschrijvingen ) ) {
 				foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
-					$values = array_merge(
-						$values, [
+					$gebruiker_cursus_gegevens = array_merge(
+						$gebruiker_gegevens, [
 							$cursussen[ $cursus_id ]->naam,
 							$inschrijving->code,
 							date( 'm-d-Y', $inschrijving->datum ),
-							$inschrijving->ingedeeld ? 'ingedeeld' : $inschrijving->i_betaald ? 'wachtlijst' : 'wacht op betaling',
+							$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : ( $inschrijving->i_betaald ? 'wachtlijst' : 'wacht op betaling')),
 							implode( ' ', $inschrijving->technieken ),
+							$inschrijving->i_betaald ? 'Ja' : 'Nee',
+							$inschrijving->c_betaald ? 'Ja' : 'Nee',
 							$inschrijving->opmerking,
 						]
 					);
-					fputcsv( $f, $values, ';', '"' );
+					fputcsv( $f, $gebruiker_cursus_gegevens, ';', '"' );
 				}
 			} else {
-				fputcsv( $f, $values, ';', '"' );
+				fputcsv( $f, $gebruiker_gegevens, ';', '"' );
 			}
 		}
 		fclose( $f );

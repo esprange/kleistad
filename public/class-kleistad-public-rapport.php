@@ -46,7 +46,7 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 						$kosten = $stookdeel['prijs'];
 					} else { // Voorlopige berekening.
 						$regeling = $regeling_store->get( $huidige_gebruiker->ID, $reservering->oven_id );
-						$kosten = number_format( round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling )) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 ), 2, ',', '' );
+						$kosten = round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling )) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
 					}
 					$stoker = get_userdata( $reservering->gebruiker_id );
 					$items[] = [
@@ -58,7 +58,7 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 						'temp' => $reservering->temperatuur,
 						'prog' => $reservering->programma,
 						'perc' => $stookdeel['perc'],
-						'kosten' => $kosten,
+						'kosten' => number_format( $kosten, 2, ',', '' ),
 						'voorlopig' => $reservering->verwerkt ? '' : '<span class="genericon genericon-checkmark"></span>',
 					];
 				}

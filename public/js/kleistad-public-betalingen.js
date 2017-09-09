@@ -27,6 +27,8 @@
                     }
             },
             columnDefs: [
+                { className: "dt-body-right", 'targets': [ 0 ] },
+                { className: "dt-body-center", 'targets': [ 4, 6, 8 ] },
                 { 'orderData': [ 1 ], 'targets': [ 0 ] },
                 { 'orderData': [ 5 ], 'targets': [ 4 ] },
                 { 'orderData': [ 7 ], 'targets': [ 6 ] },

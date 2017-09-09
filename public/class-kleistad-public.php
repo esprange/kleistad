@@ -260,6 +260,8 @@ class Kleistad_Public {
 				$result = $form_object->validate( $data );
 				if ( ! is_wp_error( $result ) ) {
 					$result = $form_object->save( $data );
+				}
+				if ( ! is_wp_error( $result ) ) {
 					$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
 					$data = null;
 				} else {

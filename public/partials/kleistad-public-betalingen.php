@@ -41,24 +41,24 @@ else :
 					<td><?php echo date( 'ymd', $row['datum'] ); ?></td>
 					<td><?php echo $row['code']; ?></td>
 					<td><?php echo $row['naam']; ?></td>
-					<td style="text-align:center" ><?php if ( $row['i_betaald'] ) : ?>
+					<td><?php if ( $row['i_betaald'] ) : ?>
 						  <span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
 						  <input type="checkbox" name="i_betaald[]" value="<?php echo $row['value']; ?>" >
 						<?php endif ?>
 					</td>
 					<td><?php echo $row['i_betaald'] ? 1 : 0; ?></td>
-					<td style="text-align:center" ><?php if ( $row['c_betaald'] ) : ?>
+					<td><?php if ( $row['c_betaald'] ) : ?>
 						  <span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
 						  <input type="checkbox" name="c_betaald[]" value="<?php echo $row['value']; ?>" >
 						<?php endif ?>
 					</td>
 					<td><?php echo $row['c_betaald'] ? 1 : 0; ?></td>
-					<td style="text-align:center" ><?php if ( $row['geannuleerd'] ) : ?>
+					<td><?php if ( $row['geannuleerd'] ) : ?>
 						  <span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
-						  <input type="checkbox" name="c_betaald[]" value="<?php echo $row['value']; ?>" >
+						  <input type="checkbox" name="geannuleerd[]" value="<?php echo $row['value']; ?>" >
 						<?php endif ?>
 					</td>
 					<td><?php echo $row['geannuleerd'] ? 1 : 0; ?></td>

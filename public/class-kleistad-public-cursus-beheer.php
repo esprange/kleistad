@@ -45,6 +45,9 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 			foreach ( $inschrijvingen as $cursist_id => $inschrijving ) {
 
 				if ( array_key_exists( $cursus_id, $inschrijving ) ) {
+					if ( $inschrijving[ $cursus_id ]->geannuleerd ) {
+						continue;
+					}
 					$element = [
 						'naam' => $gebruikers[ $cursist_id ]->voornaam . ' ' . $gebruikers[ $cursist_id ]->achternaam,
 						'opmerking' => $inschrijving[ $cursus_id ]->opmerking,

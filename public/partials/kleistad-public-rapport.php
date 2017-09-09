@@ -43,7 +43,7 @@ else :
 			  <td><?php echo $item['prog']; ?></td>
 			  <td><?php echo $item['perc']; ?></td>
 			  <td>&euro; <?php echo $item['kosten']; ?></td>
-			  <td style="text-align:center"><?php echo $item['voorlopig']; ?></td>
+			  <td><?php echo $item['voorlopig']; ?></td>
 		  </tr>
 		<?php endforeach ?>
 	</tbody>
