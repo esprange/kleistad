@@ -13,35 +13,59 @@
 
 if ( ! is_user_logged_in() ) :
 	?>
-  <p>Geen toegang tot dit formulier</p>
-<?php
+	<p>Geen toegang tot dit formulier</p>
+	<?php
 else :
-?>
+	?>
 
-  <form action="<?php echo get_permalink(); ?>" method="POST">
+	<form action="<?php echo get_permalink(); ?>" method="POST">
 		<?php wp_nonce_field( 'kleistad_registratie' ); ?>
-	  <input type="hidden" name="gebruiker_id" value="<?php echo get_current_user_id(); ?>" >
-	  <table class="kleistad_form" >
-		  <tr>
-			  <td><label for="kleistad_voornaam">Naam</label></td>
-			  <td><input type="text" name="voornaam" id="kleistad_voornaam" required maxlength="25" placeholder="voornaam" value="<?php echo $data['input']['voornaam']; ?>" /></td>
-			  <td colspan="2" ><input type="text" name="achternaam" id="kleistad_achternaam" required maxlength="25" placeholder="achternaam" value="<?php echo $data['input']['achternaam']; ?>" /></td>
-		  </tr>
-		  <tr>
-			  <td><label for="kleistad_telnr">Telefoon</label></td>
-			  <td colspan="3" ><input type="text" name="telnr" id="kleistad_telnr" maxlength="15" placeholder="0123456789" value="<?php echo $data['input']['telnr']; ?>" /></td>
-		  </tr>
-		  <tr>    
-			  <td><label for="kleistad_straat">Straat, nr</label></td>
-			  <td colspan="2" ><input type="text" name="straat" id="kleistad_straat" required placeholder="straat" maxlength="50" value="<?php echo $data['input']['straat']; ?>" /></td>
-			  <td><input type="text" name="huisnr" id="kleistad_huisnr" required maxlength="10" placeholder="nr" value="<?php echo $data['input']['huisnr']; ?>" /></td>
-		  </tr>
-		  <tr>
-			  <td><label for="kleistad_pcode">Postcode, Plaats</label></td>
-			  <td><input type="text" name="pcode" id="kleistad_pcode" required maxlength="10" placeholder="1234AB" value="<?php echo $data['input']['pcode']; ?>" /></td>
-			  <td colspan="2" ><input type="text" name="plaats" id="kleistad_plaats" required maxlength="50" placeholder="MijnWoonplaats" value="<?php echo $data['input']['plaats']; ?>" /></td>
-		  </tr>
-	  </table>
-	  <button type="submit" name="kleistad_submit_registratie" >Opslaan</button>
-  </form>
+		<input type="hidden" name="gebruiker_id" value="<?php echo get_current_user_id(); ?>" >
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_3">
+				 <label for="kleistad_voornaam">Naam</label>
+			</div>
+			<div class="kleistad_col_3">
+				<input class="kleistad_input" name="voornaam" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo $data['input']['voornaam']; ?>" />
+			</div>
+			<div class="kleistad_col_4">
+				<input class="kleistad_input" name="achternaam" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo $data['input']['achternaam']; ?>" />
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_3">
+				<label for="kleistad_telnr">Telefoon</label>
+			</div>
+			<div class="kleistad_col_7">
+				<input class="kleistad_input" name="telnr" id="kleistad_telnr" type="text" maxlength="15" placeholder="0123456789" value="<?php echo $data['input']['telnr']; ?>" />
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_3">
+				<label for="kleistad_straat">Straat, nr</label>
+			</div>
+			<div class="kleistad_col_5">
+				<input class="kleistad_input" name="straat" id="kleistad_straat" type="text" required placeholder="straat" maxlength="50" value="<?php echo $data['input']['straat']; ?>" />
+			</div>
+			<div class="kleistad_col_2">
+				<input class="kleistad_input" name="huisnr" id="kleistad_huisnr" type="text" maxlength="10" required placeholder="nr" value="<?php echo $data['input']['huisnr']; ?>" />
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_3">
+				<label for="kleistad_pcode">Postcode, Plaats</label>
+			</div>
+			<div class="kleistad_col_2">
+				<input class="kleistad_input" name="pcode" id="kleistad_pcode" type="text" maxlength="10" placeholder="1234AB" pattern="[1-9][0-9]{3}\s?[a-zA-Z]{2}" title="1234AB" value="<?php echo $data['input']['pcode']; ?>" />
+			</div>
+			<div class="kleistad_col_5">
+				<input class="kleistad_input" name="plaats" id="kleistad_plaats" type="text" required maxlength="50" placeholder="MijnWoonplaats" value="<?php echo $data['input']['plaats']; ?>" />
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_10">
+				<button name="kleistad_submit_registratie" id="kleistad_submit_registratie" type="submit" >Opslaan</button>
+			</div>
+		</div>
+	</form>
 <?php endif ?>

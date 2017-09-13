@@ -110,8 +110,9 @@ class Kleistad_Public_Registratie extends Kleistad_Public_Shortcode {
 			$gebruiker->pcode = $data['input']['pcode'];
 			$gebruiker->plaats = $data['input']['plaats'];
 			$gebruiker->telnr = $data['input']['telnr'];
-			if ( $gebruiker->save() ) {
-				return 'De wijzigingen zijn verwerkt';
+			$result = $gebruiker->save();
+			if ( false !== $result ) {
+				return 'Gegevens zijn opgeslagen';
 			} else {
 				$error->add( 'security', 'De wijzigingen konden niet worden verwerkt' );
 				return $error;
