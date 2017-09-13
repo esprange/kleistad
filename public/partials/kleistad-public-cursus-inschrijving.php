@@ -30,12 +30,21 @@ else :
 		else :
 			foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
 				$checked     = ($data['input']['cursus_id'] == $cursus_id ) ? 'checked' : '';
-				$disabled    = ($cursus['vervallen'] || $cursus['vol']) ? 'disabled' : '';
+				if ( $cursus['vervallen'] ) {
+					$disabled = 'disabled';
+					$cursus_naam = '<span style="color: gray;">' . $cursus['naam'] . ': VERVALLEN</span>';
+				} elseif ( $cursus['vol'] ) {
+					$disabled = 'disabled';
+					$cursus_naam = '<span style="color: gray;">' . $cursus['naam'] . ': VOL</span>';
+				} else {
+					$disabled = '';
+					$cursus_naam = $cursus['naam'];
+				}
 				?>
 				<div class="kleistad_row kleistad_col_10">
 					<input class="kleistad_input_cbr" name="cursus_id" id="kleistad_cursus_<?php echo $cursus_id; ?>" type="radio" required value="<?php echo $cursus_id; ?>" 
 						   data-technieken='<?php echo json_encode( $cursus['technieken'] ); ?>' <?php echo $checked . ' ' . $disabled; ?> >
-					<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo $cursus_id; ?>"><?php echo $cursus['naam']; ?></label>
+					<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo $cursus_id; ?>"><?php echo $cursus_naam; ?></label>
 				</div>
 			<?php endforeach ?>
 			<div id="kleistad_cursus_technieken" style="visibility: hidden" >
