@@ -177,19 +177,18 @@ table.kleistad_rapport tr:nth-child(even) {
     visibility: hidden;
 }
 .kleistad_input_cbr:checked ~ .kleistad_label_cbr {
-    color: #BB4430;
+    color: green;
 }
 .kleistad_input_cbr:checked ~ .kleistad_label_cbr::before {
     margin-right: 20px;
-    border: 7px solid #BB4430;
-    background: #F8F7FF;
+    border: 7px solid green;
+    background: whitesmoke;
 }
 .kleistad_input_cbr:disabled ~ .kleistad_label_cbr::before {
     margin-right: 20px;
-    border: 7px solid #999966;
-    background: #F8F7FF;
+    border: 7px solid darkgray;
+    background: whitesmoke;
 }
-
 .kleistad_label_cbr {
     display: flex;
     align-items: center;
@@ -201,7 +200,7 @@ table.kleistad_rapport tr:nth-child(even) {
 .kleistad_label_cbr::before {
     display: block;
     content: '';
-    border: 7px solid #F8F7FF;
+    border: 7px solid lightgray;
     border-radius: 50%;
     height: 18px;
     width: 18px;
@@ -212,7 +211,7 @@ table.kleistad_rapport tr:nth-child(even) {
 [class*="kleistad_col_"] {
     float: left;
     padding: 15px;
-    border: 0px; /* 1px solid red; */
+    border: 0px;
     width: 100%;
 }
 
