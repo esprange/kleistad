@@ -20,10 +20,10 @@ else :
 
 	<form class="kleistad_formulier" action="<?php echo get_permalink(); ?>" method="POST">
 		<?php wp_nonce_field( 'kleistad_cursus_inschrijving' ); ?>
-		<div class="kleistad_row" >
 			<?php if ( count( $data['open_cursussen'] ) < 1 ) : ?>
+			<div class="kleistad_row" >
 				<div class="kleistad_label kleistad_col_10" >
-					<td colspan="4">Helaas zijn er geen cursussen beschikbaar of zijn ze al volgeboekt </td>
+					Helaas zijn er geen cursussen beschikbaar of zijn ze al volgeboekt
 				</div>
 			</div>
 			<?php
@@ -51,11 +51,11 @@ else :
 						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_draaien" type="checkbox" value="Draaien">
 						<label class="kleistad_label_cbr" for="kleistad_draaien" >Draaien</label>
 					</div>
-					<div class="kleistad_label kleistad_col_3" id="kleistad_cursus_handvormen" style="visibility: hidden" id="kleistad_cursus_technieken" >
+					<div class="kleistad_label kleistad_col_3" id="kleistad_cursus_handvormen" style="visibility: hidden" >
 						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_handvormen" type="checkbox" value="Handvormen">
 						<label class="kleistad_label_cbr" for="kleistad_handvormen" >Handvormen</label>
 					</div>
-					<div class="kleistad_label kleistad_col_3" id="kleistad_cursus_boetseren" style="visibility: hidden" id="kleistad_cursus_technieken" >
+					<div class="kleistad_label kleistad_col_3" id="kleistad_cursus_boetseren" style="visibility: hidden" >
 						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_boetseren" type="checkbox" value="Boetseren">
 						<label class="kleistad_label_cbr" for="kleistad_boetseren" >Boetseren</label>
 					</div>
@@ -80,7 +80,7 @@ else :
 				<input type="hidden" name="gebruiker_id" value="<?php echo get_current_user_id(); ?>" />
 			<?php else : ?> 
 				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_3"
+					<div class="kleistad_label kleistad_col_3">
 						 <label for="kleistad_voornaam">Naam</label>
 					</div>
 					<div class="kleistad_col_3">

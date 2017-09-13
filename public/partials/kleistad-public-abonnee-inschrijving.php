@@ -21,26 +21,26 @@ else :
 	<form class="kleistad_formuler" action="<?php echo get_permalink(); ?>" method="POST">
 		<?php wp_nonce_field( 'kleistad_abonnee_inschrijving' ); ?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
-				<legend>Keuze abonnement</legend>
+			<div class="kleistad_col_3">
+				<label class="kleistad_label">Keuze abonnement</label>
 			</div>
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required value="onbeperkt" <?php checked( 'onbeperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_onbeperkt" >Onbeperkt</label>
 			</div>
-			<div class="kleistad_col_1" >
+			<div class="kleistad_col_1">
 			</div>
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_beperkt" type="radio" required value="beperkt" <?php checked( 'beperkt', $data['input']['abonnement_keuze'] ); ?> />
-				<label  class="kleistad_label_cbr" for="kleistad_beperkt">Beperkt</label>
+				<label class="kleistad_label_cbr" for="kleistad_beperkt">Beperkt</label>
 			</div>
 		</div>
 		<div class="kleistad_row" id="kleistad_dag" style="visibility:hidden" title="kies de dag dat je van jouw beperkt abonnement gebruikt gaat maken" >
 			<div class="kleistad_label kleistad_col_3">
-				<label for="kleistad_dag">Dag</label>
+				<label for="kleistad_dag_keuze">Dag</label>
 			</div>
 			<div class ="kleistad_col_7">
-				<select class="kleistad_input" name="dag" id="kleistad_dag" >
+				<select class="kleistad_input" name="dag" id="kleistad_dag_keuze" >
 					<option value="maandag" <?php selected( $data['input']['dag'], 'maandag' ); ?> >Maandag</option>
 					<option value="dinsdag" <?php selected( $data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
 					<option value="woensdag" <?php selected( $data['input']['dag'], 'woensdag' ); ?>>Woensdag</option>
@@ -72,7 +72,7 @@ else :
 			</div>
 		<?php else : ?> 
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3"
+				<div class="kleistad_label kleistad_col_3">
 					 <label for="kleistad_voornaam">Naam</label>
 				</div>
 				<div class="kleistad_col_3">
