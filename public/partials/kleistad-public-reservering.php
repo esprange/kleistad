@@ -50,35 +50,25 @@ else :
 				  </tr>
 				  <tr>
 					  <td><label>Temperatuur</label></td>
-					  <td colspan="2"><input type="number" min="100" max="1300" id="kleistad_temperatuur"></td>
+					  <td colspan="2"><input type="number" min="0" max="1300" id="kleistad_temperatuur"></td>
 				  </tr>
 				  <tr>
 					  <td><label>Programma</label></td>
-					  <td colspan="2"><input type="number" min="1" max="19" id="kleistad_programma"></td>
+					  <td colspan="2"><input type="number" min="0" max="99" id="kleistad_programma"></td>
 				  </tr>
-<!--                  <tr>
-					  <td><label>Tijdstip stoken</label></td>
-					  <td colspan="2"><select id="kleistad_opmerking">
-							  <option value="voor 13:00 uur" >voor 13:00 uur</option>
-							  <option value="tussen 13:00 en 16:00 uur" >tussen 13:00 en 16:00 uur</option>
-							  <option value="na 16:00 uur" >na 16:00 uur</option>
-						  </select>
-					  </td>
-				  </tr> -->
-				  <tr>
+				  <tr id="kleistad_stoker_row" >
 					  <td><label>Stoker</label></td>
 					  <td><span id="kleistad_stoker"><?php echo $data['huidige_gebruiker']->display_name; ?></span><input type="hidden" name="kleistad_stoker_id" id="kleistad_1e_stoker" value="<?php echo $data['huidige_gebruiker']->ID; ?>" /></td>
 					  <td><input type="number" name="kleistad_stoker_perc" readonly /> %</td>
 				  </tr>
-	<?php for ( $i = 1; $i < 5; $i++ ) : ?>
-					<tr>
+				  <tr name="kleistad_medestoker_row" >
 						<td><label>Stoker</label></td>
 						<td><select name="kleistad_stoker_id" class="kleistad_verdeel" >
 								<option value="0" >&nbsp;</option>
 								<?php
 								foreach ( $data['gebruikers'] as $gebruiker ) :
 									if ( Kleistad_Roles::reserveer( $gebruiker->id ) and ( $gebruiker->id <> $data['huidige_gebruiker']->ID) || Kleistad_Roles::override() ) :
-										?>
+									?>
 									  <option value="<?php echo $gebruiker->id; ?>"><?php echo $gebruiker->display_name; ?></option>
 									<?php
 								  endif;
@@ -87,8 +77,10 @@ else :
 							</select></td>
 						<td><input type="number" class="kleistad_verdeel" name="kleistad_stoker_perc" min="0" max="100" > %</td>
 					</tr>
-	<?php endfor; ?>
-
+					<tr>
+						<td><button style="font-size:16px;border-radius:25%;width:40px;text-align:center;padding:0px;" id="kleistad_stoker_toevoegen"><span class="genericon genericon-plus"></span></button></td>
+						<td colspan="2"></td>
+					</tr>
 			  </tbody>
 			  <tfoot>
 				  <tr>

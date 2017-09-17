@@ -86,8 +86,8 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 			if ( ($datum < $data['vanaf_datum']) || ($datum > $data['tot_datum']) ) {
 				continue;
 			}
-			for ( $i = 0; $i < 5; $i ++ ) {
-				$medestoker_id = $reservering->verdeling[ $i ]['id'];
+			foreach ( $reservering->verdeling as $verdeling ) {
+				$medestoker_id = $verdeling['id'];
 				if ( $medestoker_id > 0 ) {
 					if ( ! array_key_exists( $medestoker_id, $medestokers ) ) {
 						$medestoker = get_userdata( $medestoker_id );
