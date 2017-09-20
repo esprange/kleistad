@@ -254,7 +254,7 @@ class Kleistad_Public {
 		}
 
 		$form_class = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
-		$form_object = new $form_class($this->plugin_name, $atts);
+		$form_object = new $form_class( $this->plugin_name, $atts );
 
 		if ( ! is_null( filter_input( INPUT_POST, 'kleistad_submit_' . $form ) ) ) {
 			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $form ) ) {
