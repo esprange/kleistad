@@ -169,6 +169,8 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 				'start_datum' => strftime( '%A %d-%m-%y', strtotime( $data['input']['start_datum'] ) ),
 				'abonnement' => $abonnement->soort,
 				'abonnement_code' => $abonnement->code,
+				'abonnement_dag' => $abonnement->dag,
+				'abonnement_opmerking' => $abonnement->opmerking,
 				'abonnement_startgeld' => number_format( 3 * $this->options[ $abonnement->soort . '_abonnement' ], 2, ',', '' ),
 				'abonnement_maandgeld' => number_format( $this->options[ $abonnement->soort . '_abonnement' ], 2, ',', '' ),
 			]
