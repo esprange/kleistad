@@ -2,6 +2,10 @@
     'use strict';
 
     $( document ).ready( function () {
+        
+        /**
+         * Toon afhankelijk van de cursus de technieken.
+         */
         $( 'input[name=cursus_id]:radio' ).change( function () {
             var technieken = $( this ).data( 'technieken' );
             $( '#kleistad_cursus_draaien' ).css( 'visibility', 'hidden' );
