@@ -136,7 +136,7 @@ class Kleistad {
 		$this->loader->add_action( 'manage_users_custom_column', $plugin_admin, 'manage_users_column_content', 10, 3 );
 		$this->loader->add_action( 'admin_footer-users.php', $plugin_admin, 'manage_users_css' );
 
-		  $this->loader->add_filter( 'manage_users_columns', $plugin_admin, 'manage_users_columns' );
+		$this->loader->add_filter( 'manage_users_columns', $plugin_admin, 'manage_users_columns' );
 		$this->loader->add_filter( 'user_profile_update_errors', $plugin_admin, 'check_role', 10, 3 );
 	}
 

@@ -287,7 +287,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 					];
 				}
 			case 'datum':
-				return strtotime( $this->_data['jaar'] . '-' . $this->_data['maand'] . '-' . $this->_data['dag'] );
+				return strtotime( $this->_data['jaar'] . '-' . $this->_data['maand'] . '-' . $this->_data['dag'] . ' 00:00' );
 			case 'gemeld':
 			case 'verwerkt':
 				return 1 == $this->_data[ $attribuut ];
