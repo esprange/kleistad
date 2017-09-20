@@ -69,6 +69,7 @@ class Kleistad_Public {
 		$this->version = $version;
 		$this->url = 'kleistad_reserveren/v' . $version;
 		$this->options = get_option( 'kleistad-opties' );
+		date_default_timezone_set( 'Europe/Amsterdam' );
 
 		add_filter( 'widget_text', 'do_shortcode' );
 	}
@@ -310,7 +311,7 @@ class Kleistad_Public {
 		* saldering transacties uitvoeren
 		*/
 		foreach ( $reserveringen as &$reservering ) {
-			if ( ! $reservering->verwerkt && $reservering->datum <= strtotime( '- ' . $options['termijn'] . ' days' ) ) {
+			if ( ! $reservering->verwerkt && $reservering->datum <= strtotime( '- ' . $options['termijn'] . ' days 00:00' ) ) {
 				$gebruiker = get_userdata( $reservering->gebruiker_id );
 				$verdeling = $reservering->verdeling;
 				foreach ( $verdeling as &$stookdeel ) {
@@ -355,7 +356,7 @@ class Kleistad_Public {
         * de notificaties uitsturen voor stook die nog niet verwerkt is.
 		*/
 		foreach ( $reserveringen as &$reservering ) {
-			if ( ! $reservering->verwerkt && ! $reservering->gemeld && $reservering->datum < time() ) {
+			if ( ! $reservering->verwerkt && ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
 
 				$regeling = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
 

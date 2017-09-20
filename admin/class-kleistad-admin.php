@@ -61,6 +61,8 @@ class Kleistad_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->options = get_option( 'kleistad-opties' );
+		date_default_timezone_set( 'Europe/Amsterdam' );
 	}
 
 	/**
@@ -200,7 +202,6 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
-		$this->options = get_option( 'kleistad-opties' );
 		require_once 'partials/kleistad-admin-display-settings.php';
 	}
 
