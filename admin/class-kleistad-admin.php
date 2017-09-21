@@ -202,8 +202,34 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
+		add_meta_box( 'kleistad_instellingen_form_meta_box', 'Instellingen', [ $this, 'instellingen_form_meta_box_handler' ], 'instellingen', 'normal', 'default' );
+		add_meta_box( 'kleistad_shortcodes_meta_box', 'Gebruik van de plugin', [ $this, 'shortcodes_meta_box_handler' ], 'shortcodes', 'normal', 'default' );
+		add_meta_box( 'kleistad_email_parameters_meta_box', 'E-Mail Parameters', [ $this, 'email_parameters_meta_box_handler' ], 'email_parameters', 'normal', 'default' );
+
 		require_once 'partials/kleistad-admin-display-settings.php';
 	}
+
+	/**
+	 * This function renders our custom meta box
+	 */
+	public function instellingen_form_meta_box_handler() {
+		require_once 'partials/kleistad-admin-instellingen-form-meta-box.php';
+	}
+
+	/**
+	 * This function renders our custom meta box
+	 */
+	public function shortcodes_meta_box_handler() {
+		require_once 'partials/kleistad-admin-shortcodes-meta-box.php';
+	}
+
+	/**
+	 * This function renders our custom meta box
+	 */
+	public function email_parameters_meta_box_handler() {
+		require_once 'partials/kleistad-admin-email-parameters-meta-box.php';
+	}
+
 
 	/**
 	 * Validate the settings entered

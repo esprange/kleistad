@@ -33,7 +33,7 @@
 			<div id="post-body">
 				<div id="post-body-content">
 					<?php do_meta_boxes( 'regeling', 'normal', $item ); ?>
-					<input type="submit" value="Opslaan" id="submit" class="button-primary" name="submit">
+					<?php submit_button(); ?>
 				</div>
 			</div>
 		</div>
