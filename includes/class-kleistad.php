@@ -68,7 +68,7 @@ class Kleistad {
 	public function __construct() {
 
 		$this->plugin_name = 'kleistad';
-		$this->version = '4.0.87';
+		$this->version = '4.0.88';
 
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
