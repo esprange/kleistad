@@ -45,8 +45,8 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 				$abonnee_info = [
 					'code' => $abonnement->code,
 					'start_datum' => date( 'd-m-Y', $abonnement->start_datum ),
-					'dag' => $abonnement->beperkt ? $abonnement->dag : '',
-					'beperkt' => $abonnement->beperkt ? 'beperkt' : 'onbeperkt',
+					'dag' => ('beperkt' == $abonnement->soort) ? $abonnement->dag : '',
+					'soort' => $abonnement->soort,
 					'geannuleerd' => $abonnement->geannuleerd,
 					'opmerking' => $abonnement->opmerking,
 				];

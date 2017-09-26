@@ -43,9 +43,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			'datum' => date( 'Y-m-d' ),
 			'start_datum' => '',
 			'dag' => '',
-			'beperkt' => '',
 			'geannuleerd' => 0,
 			'opmerking' => '',
+			'soort' => 'onbeperkt',
 		];
 
 		$this->_abonnee_id = $abonnee_id;

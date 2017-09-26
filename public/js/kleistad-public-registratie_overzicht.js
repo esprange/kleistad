@@ -118,7 +118,7 @@
             }
             if ( ( typeof abonnee !== 'undefined' ) && ( abonnee.length !== 0 ) ) {
                 $( '#kleistad_deelnemer_tabel' ).append( '<tr><th>Abonnement</th><th>Code</th><th>Dag</th><th>Start Datum</th></tr>' +
-                    '<tr><td>' + abonnee.beperkt + '</td><td>' +
+                    '<tr><td>' + abonnee.soort + '</td><td>' +
                     abonnee.code + '</td><td>' +
                     abonnee.dag + '</td><td>' +
                     abonnee.start_datum + '</td></tr>' );
