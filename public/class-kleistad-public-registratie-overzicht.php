@@ -120,11 +120,16 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 		$inschrijving_store = new Kleistad_Inschrijvingen();
 		$inschrijvingen = $inschrijving_store->get();
 
-		$upload_dir = wp_upload_dir();
-		$bijlage = $upload_dir['basedir'] . '/registratiebestand_' . date( 'Y_m_d' ) . '.csv';
-		$f = fopen( $bijlage, 'w' );
+		$abonnementen_store = new Kleistad_Abonnementen();
+		$abonnementen = $abonnementen_store->get();
 
-		$fields = [
+		$upload_dir = wp_upload_dir();
+		$bijlage_cursus = $upload_dir['basedir'] . '/cursusregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
+		$bijlage_abonnee = $upload_dir['basedir'] . '/abonneeregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
+		$f_cursus = fopen( $bijlage_cursus, 'w' );
+		$f_abonnee = fopen( $bijlage_abonnee, 'w' );
+
+		$cursus_fields = [
 			'Achternaam',
 			'Voornaam',
 			'Email',
@@ -143,7 +148,24 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 			'Cursusgeld',
 			'Opmerking',
 		];
-		fputcsv( $f, $fields, ';', '"' );
+		fputcsv( $f_cursus, $cursus_fields, ';', '"' );
+		$abonnee_fields = [
+			'Achternaam',
+			'Voornaam',
+			'Email',
+			'Straat',
+			'Huisnr',
+			'Postcode',
+			'Plaats',
+			'Telefoon',
+			'Inschrijf datum',
+			'Start_datum',
+			'Abonnee code',
+			'Abonnement_soort',
+			'Dag',
+			'Opmerking',
+		];
+		fputcsv( $f_abonnee, $abonnee_fields, ';', '"' );
 
 		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
 			$is_lid = ( ! empty( $gebruiker->rol ) or ( is_array( $gebruiker->rol ) and ( count( $gebruiker->rol ) > 0 ) ) );
@@ -157,13 +179,13 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 				$gebruiker->pcode,
 				$gebruiker->plaats,
 				$gebruiker->telnr,
-				$is_lid ? 'Ja' : 'Nee',
 			];
 
 			if ( array_key_exists( $gebruiker_id, $inschrijvingen ) ) {
 				foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
 					$gebruiker_cursus_gegevens = array_merge(
 						$gebruiker_gegevens, [
+							$is_lid ? 'Ja' : 'Nee',
 							$cursussen[ $cursus_id ]->naam,
 							$inschrijving->code,
 							date( 'm-d-Y', $inschrijving->datum ),
@@ -174,23 +196,35 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 							$inschrijving->opmerking,
 						]
 					);
-					fputcsv( $f, $gebruiker_cursus_gegevens, ';', '"' );
+					fputcsv( $f_cursus, $gebruiker_cursus_gegevens, ';', '"' );
 				}
-			} else {
-				fputcsv( $f, $gebruiker_gegevens, ';', '"' );
+			}
+			if ( array_key_exists( $gebruiker_id, $abonnementen ) ) {
+				$gebruiker_abonnee_gegevens = array_merge(
+					$gebruiker_gegevens, [
+						date( 'm-d-Y', $abonnementen[ $gebruiker_id ]->datum ),
+						date( 'm-d-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
+						$abonnementen[ $gebruiker_id ]->code,
+						$abonnementen[ $gebruiker_id ]->soort,
+						$abonnementen[ $gebruiker_id ]->dag,
+						$abonnementen[ $gebruiker_id ]->opmerking,
+					]
+				);
+				fputcsv( $f_abonnee, $gebruiker_abonnee_gegevens, ';', '"' );
 			}
 		}
-		fclose( $f );
+		fclose( $f_cursus );
+		fclose( $f_abonnee );
 
 		$gebruiker = wp_get_current_user();
 		$to = "$gebruiker->user_firstname $gebruiker->user_lastname <$gebruiker->user_email>";
-		$message = '<p>Bijgaand het bestand in .CSV formaat met alle registraties.</p>';
-		$attachments = [ $bijlage ];
-		if ( ! self::compose_email( $to, 'Kleistad registratiebestand', $message, [], $attachments ) ) {
+		$message = '<p>Bijgaand de bestanden in .CSV formaat met alle registraties voor cursussen en abonnementen.</p>';
+		$attachments = [ $bijlage_cursus, $bijlage_abonnee ];
+		if ( ! self::compose_email( $to, 'Kleistad registratiebestanden', $message, [], $attachments ) ) {
 			$error->add( 'fout', 'Er is een fout opgetreden' );
 			return $error;
 		}
-		return 'Het bestand is per email verzonden.';
+		return 'De registratiebestanden zijn per email verzonden.';
 	}
 
 }

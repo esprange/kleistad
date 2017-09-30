@@ -115,3 +115,38 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 }
+
+/**
+   * Collection of Abonnement
+   *
+   * Collection of Abonnementen, loaded from the database.
+   *
+   * @since 4.0.87
+   *
+   * @see class Kleistad_Abonnement
+   * @link URL
+    */
+class Kleistad_Abonnementen extends Kleistad_EntityStore {
+
+	/**
+	 * Constructor
+	 *
+	 * Loads the data from the database.
+	 *
+	 * @since 4.0.91
+	 *
+	 * @return null.
+	 */
+	public function __construct() {
+		$abonnees = get_users(
+			[
+				'meta_key' => 'kleistad_abonnement',
+			]
+		);
+		foreach ( $abonnees as $abonnee ) {
+			$abonnement = get_user_meta( $abonnee->ID, 'kleistad_abonnement', true );
+			$this->_data[ $abonnee->ID ] = new Kleistad_Abonnement( $abonnee->ID );
+			$this->_data[ $abonnee->ID ]->load( $abonnement );
+		}
+	}
+}

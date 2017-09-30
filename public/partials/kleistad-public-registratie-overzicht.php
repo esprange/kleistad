@@ -61,6 +61,6 @@ else :
   </table>
   <form action="#" method="post" >
 		<?php wp_nonce_field( 'kleistad_registratie_overzicht' ); ?>
-	  <button type="submit" name="kleistad_submit_registratie_overzicht" >Bestand aanmaken</button>
+	  <button type="submit" name="kleistad_submit_registratie_overzicht" >Bestanden aanmaken</button>
   </form>
 <?php endif; ?>
