@@ -206,7 +206,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 						date( 'm-d-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
 						$abonnementen[ $gebruiker_id ]->code,
 						$abonnementen[ $gebruiker_id ]->soort,
-						$abonnementen[ $gebruiker_id ]->dag,
+						( 'beperkt' == $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
 						$abonnementen[ $gebruiker_id ]->opmerking,
 					]
 				);
