@@ -175,7 +175,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 		}
 		$to = "$gebruiker->voornaam $gebruiker->achternaam <$gebruiker->email>";
 		if ( self::compose_email(
-			$to, 'inschrijving cursus', $data['cursus']->inschrijfslug, [
+			$to, 'inschrijving bij Kleistad', $data['cursus']->inschrijfslug, [
 				'voornaam' => $gebruiker->voornaam,
 				'achternaam' => $gebruiker->achternaam,
 				'cursus_naam' => $data['cursus']->naam,
