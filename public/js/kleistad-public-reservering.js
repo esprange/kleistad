@@ -1,6 +1,6 @@
 /* global kleistad_data */
 
-(function ($) {
+( function ( $ ) {
     'use strict';
 
     /**
@@ -25,24 +25,23 @@
         $('#kleistad_stoker').html(formData.gebruiker);
         $('#kleistad_1e_stoker').val(formData.gebruiker_id);
 
-        aantal = $('[name=kleistad_stoker_id]').length; 
-        while ( aantal > 2) {
-            row = $('#kleistad_stoker_row').next();
-            row.remove();
+        aantal = $( '[name=kleistad_medestoker_row]' ).length;
+        while ( aantal > Math.max( formData.verdeling.length, 4 ) ) {
+            $( '[name=kleistad_medestoker_row]' ).last().remove();
             aantal--;
         }
-        $('[name=kleistad_stoker_id]').val('0');
-        $('[name=kleistad_stoker_perc]').val('0');
-        
-        while (aantal < Math.max(formData.verdeling.length, 5)) {
-            row = $('#kleistad_stoker_row').next().clone(true);
-            $('#kleistad_stoker_row').after(row);
+        while ( aantal < Math.max( formData.verdeling.length, 4 ) ) {
+            row = $( '[name=kleistad_medestoker_row]' ).first().clone( true );
+            $( '[name=kleistad_medestoker_row]' ).last().after( row );
             aantal++;
         }
-        stokerIds = $('[name=kleistad_stoker_id]').toArray();
-        stokerPercs = $('[name=kleistad_stoker_perc]').toArray();
-        
-        formData.verdeling.forEach(function (item, index) {
+        $( '[name=kleistad_stoker_id]' ).val( '0' );
+        $( '[name=kleistad_stoker_perc]' ).val( '0' );
+
+        stokerIds = $( '[name=kleistad_stoker_id]' ).toArray();
+        stokerPercs = $( '[name=kleistad_stoker_perc]' ).toArray();
+
+        formData.verdeling.forEach( function ( item, index ) {
             stokerIds[index].value = item.id;
             stokerPercs[index].value = item.perc;
         });        
@@ -69,25 +68,57 @@
      * @param {object} element gewijzigd percentage veld.
      * @returns {undefined}
      */
-    function kleistadVerdeel(element) {
-        var stokerPercs = $('[name=kleistad_stoker_perc]').toArray(),
-            stokerIds = $('[name=kleistad_stoker_id]').toArray(),
-            sum = 0;
-        stokerIds.forEach(function (item, index) {
-            if (index > 0) {
-                if (item.value === '0') {
-                    stokerPercs[index].value = 0;
-                }
-                sum += +stokerPercs[index].value;
-            }
-        });
-        if (sum > 100) {
-            element.value = element.value - (sum - 100);
-            sum = 100;
-        } else {
-            element.value = +element.value;
+    function kleistadVerdeel( element ) {
+        var stokerPercs = $( '[name=kleistad_stoker_perc]' ).toArray(),
+            stokerIds = $( '[name=kleistad_stoker_id]' ).toArray(),
+            sum = 0,
+            selectedRow = 0;
+
+        /*
+         * Vind de geselecteerde row en bepaal de som. Het element kan zowel het select field als het percentage zijn
+         * Voer tevens sanitizing uit.
+         */
+        switch ( element.name ) {
+            case 'kleistad_stoker_id':
+                stokerIds.forEach( function ( item, index ) {
+                    if ( item === element ) {
+                        selectedRow = index;
+                        // sanitize, als geen id, dan ook geen percentage
+                        if ( Number(item.value) === 0 ) {
+                            stokerPercs[index] = 0;
+                        }
+                    }
+                    sum += Number(stokerPercs[index].value);
+                } );
+                break;
+            case 'kleistad_stoker_perc':
+                stokerPercs.forEach( function ( item, index ) {
+                    if ( item === element ) {
+                        selectedRow = index;
+                        // sanitize, als geen id, dan ook geen percentage
+                        if (Number(stokerIds[index].value) === 0) {
+                            item.value = 0;
+                        } else {
+                            // sanitize, value moet tussen 0 en 100 liggen (html moet dit al afvangen) 
+                            item.value = Math.min( Math.max( +item.value, 0 ), 100 );
+                        }
+                    }
+                    sum += Number(item.value);
+                } );
+                break;
+            default:
+                ;
         }
-        stokerPercs[0].value = 100 - sum;
+        
+        // Pas het percentage aan
+        if (sum !== 100) {
+            stokerPercs[0].value = Number(stokerPercs[0].value) - ( sum - 100 );
+            if (Number(stokerPercs[0].value) < 0) {
+                stokerPercs[selectedRow].value = Number(stokerPercs[selectedRow].value) + Number(stokerPercs[0].value);
+                stokerPercs[0].value = 0;
+                alert ('De hoofdstoker heeft niets meer te verdelen.');
+            }
+        }
     }
 
     /**
@@ -143,7 +174,7 @@
             stokerIds = $('[name=kleistad_stoker_id]').toArray(),
             verdeling = [];
         stokerIds.forEach(function (item, index) {
-            if (stokerPercs[index].value !== '0') {
+            if ((stokerPercs[index].value !== '0') || (index === 0)) {
                 verdeling.push({ id: +item.value, perc: +stokerPercs[index].value });
             }
         });
@@ -173,90 +204,90 @@
                 kleistadFalen(jqXHR.responseJSON.message);
                 return;
             }
-            kleistadFalen(kleistad_data.error_message);
-        });
+            kleistadFalen( kleistad_data.error_message );
+        } );
     }
 
-    $(document).ready(function () {
+    $( document ).ready( function () {
         /**
          * Definieer het formulier.
          */
-        $('.kleistad_form_popup').each(function () {
-            $(this).dialog({
+        $( '.kleistad_form_popup' ).each( function () {
+            $( this ).dialog( {
                 autoOpen: false,
                 height: 550,
                 width: 360,
                 modal: true
-            });
-        });
+            } );
+        } );
         
         /**
          * Toon de tabel.
          */
-        $('.kleistad_reserveringen').each(function () {
-            var ovenId = $(this).data('oven_id'),
-                maand = $(this).data('maand'),
-                jaar = $(this).data('jaar');
-            kleistadShow(ovenId, maand, jaar);
-        });
+        $( '.kleistad_reserveringen' ).each( function () {
+            var ovenId = $( this ).data( 'oven_id' ),
+                maand = $( this ).data( 'maand' ),
+                jaar = $( this ).data( 'jaar' );
+            kleistadShow( ovenId, maand, jaar );
+        } );
 
         /**
          * Verdeel de percentages als de gebruiker een percentage wijzigt.
          */
-        $('.kleistad_verdeel').change(function () {
-            kleistadVerdeel(this);
-        });
+        $( '.kleistad_verdeel' ).change( function () {
+            kleistadVerdeel( this );
+        } );
 
         /**
          * Wijzig de periode als de gebruiker op eerder of later klikt.
          */
-        $('body').on('click', '.kleistad_periode', function () {
-            var ovenId = $(this).data('oven_id'),
-                maand = $(this).data('maand'),
-                jaar = $(this).data('jaar');
-            kleistadShow(ovenId, maand, jaar);
-        });
+        $( 'body' ).on( 'click', '.kleistad_periode', function () {
+            var ovenId = $( this ).data( 'oven_id' ),
+                maand = $( this ).data( 'maand' ),
+                jaar = $( this ).data( 'jaar' );
+            kleistadShow( ovenId, maand, jaar );
+        } );
 
         /**
          * Open een reservering (nieuw of bestaand).
          */
-        $('body').on('click', '.kleistad_box', function () {
-            $('#kleistad_oven').dialog('open');
-            kleistadForm($(this).data('form'));
+        $( 'body' ).on( 'click', '.kleistad_box', function () {
+            $( '#kleistad_oven' ).dialog( 'open' );
+            kleistadForm( $( this ).data( 'form' ) );
             return false;
-        });
+        } );
 
         /**
          * Wijzig een reservering.
          */
-        $('body').on('click', '.kleistad_muteer', function () {
-            kleistadMuteer(1);
-        });
+        $( 'body' ).on( 'click', '.kleistad_muteer', function () {
+            kleistadMuteer( 1 );
+        } );
 
         /**
          * Verwijder een reservering
          */
-        $('body').on('click', '.kleistad_verwijder', function () {
-            kleistadMuteer(-1);
-        });
+        $( 'body' ).on( 'click', '.kleistad_verwijder', function () {
+            kleistadMuteer( -1 );
+        } );
 
         /**
          * Sluit het formulier
          */
-        $('body').on('click', '.kleistad_sluit', function () {
-            $('#kleistad_oven').dialog('close');
-        });
+        $( 'body' ).on( 'click', '.kleistad_sluit', function () {
+            $( '#kleistad_oven' ).dialog( 'close' );
+        } );
 
         /**
          * Voeg een medestoker toe
          */
-        $('body').on('click', '#kleistad_stoker_toevoegen', function () {
-            var row = $('#kleistad_stoker_row').next().clone(true);
-            $('[name=kleistad_medestoker_row]').last().after(row);
-            $('[name=kleistad_stoker_perc]').last().val(0);
+        $( 'body' ).on( 'click', '#kleistad_stoker_toevoegen', function () {
+            var row = $( '[name=kleistad_medestoker_row]' ).first().clone( true );
+            $( '[name=kleistad_medestoker_row]' ).last().after( row );
+            $( '[name=kleistad_stoker_perc]' ).last().val( 0 );
             return false;
-        });
+        } );
 
-    });
+    } );
 
-})(jQuery);
+} )( jQuery );

@@ -6,7 +6,7 @@ Donate link: www.sprako.nl/wordpress/eric
 Tags: comments
 Requires at least: 4.8.0
 Tested up to: 4.8.0
-Stable tag: 4.0.87
+Stable tag: 4.0.92
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,8 @@ Plaats de shortcodes in de pagina's
 
 = 4.0.87 =
 * None yet
+= 4.0.92 =
+Berekening verdeling gewijzigd
 
 == Upgrade Notice ==
 

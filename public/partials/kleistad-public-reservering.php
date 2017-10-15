@@ -5,7 +5,7 @@
  * This file is used to markup the public-facing aspects of the plugin.
  *
  * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.87
+ * @since      4.0.92
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
