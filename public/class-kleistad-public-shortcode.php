@@ -145,7 +145,7 @@ abstract class Kleistad_Public_Shortcode {
 		}
 
 		ob_start();
-		require_once 'partials/kleistad-public-email.php';
+		require 'partials/kleistad-public-email.php';
 		$html = ob_get_contents();
 		ob_clean();
 

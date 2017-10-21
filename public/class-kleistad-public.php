@@ -323,7 +323,7 @@ class Kleistad_Public {
 					$kosten = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
 					$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
 					$stookdeel['prijs'] = $prijs;
-					 $huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
+					$huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
 					$nieuw_saldo = ('' == $huidig_saldo) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
 
 					Kleistad_Oven::log_saldo(
