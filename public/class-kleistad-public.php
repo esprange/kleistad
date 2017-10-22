@@ -118,7 +118,7 @@ class Kleistad_Public {
 	 * @since   4.0.87
 	 */
 	public function register_endpoints() {
-		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-reservering.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-reservering.php';
 		register_rest_route(
 			$this->url, '/reserveer', [
 				'methods' => 'POST',
@@ -294,7 +294,7 @@ class Kleistad_Public {
 	 */
 	public function update_ovenkosten() {
 		// class included to enable usage of compose_email method.
-		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-saldo.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-saldo.php';
 
 		  Kleistad_Oven::log_saldo( 'verwerking stookkosten gestart.' );
 		$options = get_option( 'kleistad-opties' );

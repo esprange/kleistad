@@ -112,7 +112,7 @@ class Kleistad_Admin {
 		if ( ! current_user_can( 'edit_users' ) ) {
 			return;
 		}
-		require_once 'partials/kleistad-admin-use-profile-field.php';
+		require 'partials/kleistad-admin-use-profile-field.php';
 	}
 
 	/**
@@ -206,28 +206,28 @@ class Kleistad_Admin {
 		add_meta_box( 'kleistad_shortcodes_meta_box', 'Gebruik van de plugin', [ $this, 'shortcodes_meta_box_handler' ], 'shortcodes', 'normal', 'default' );
 		add_meta_box( 'kleistad_email_parameters_meta_box', 'E-Mail Parameters', [ $this, 'email_parameters_meta_box_handler' ], 'email_parameters', 'normal', 'default' );
 
-		require_once 'partials/kleistad-admin-display-settings.php';
+		require 'partials/kleistad-admin-display-settings.php';
 	}
 
 	/**
 	 * This function renders our custom meta box
 	 */
 	public function instellingen_form_meta_box_handler() {
-		require_once 'partials/kleistad-admin-instellingen-form-meta-box.php';
+		require 'partials/kleistad-admin-instellingen-form-meta-box.php';
 	}
 
 	/**
 	 * This function renders our custom meta box
 	 */
 	public function shortcodes_meta_box_handler() {
-		require_once 'partials/kleistad-admin-shortcodes-meta-box.php';
+		require 'partials/kleistad-admin-shortcodes-meta-box.php';
 	}
 
 	/**
 	 * This function renders our custom meta box
 	 */
 	public function email_parameters_meta_box_handler() {
-		require_once 'partials/kleistad-admin-email-parameters-meta-box.php';
+		require 'partials/kleistad-admin-email-parameters-meta-box.php';
 	}
 
 
@@ -259,7 +259,7 @@ class Kleistad_Admin {
 		$table->prepare_items();
 
 		$message = '';
-		require_once 'partials/kleistad-admin-ovens-page.php';
+		require 'partials/kleistad-admin-ovens-page.php';
 	}
 
 	/**
@@ -319,7 +319,7 @@ class Kleistad_Admin {
 		}
 		// here we adding our custom meta box.
 		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this, 'ovens_form_meta_box_handler' ], 'oven', 'normal', 'default' );
-		require_once 'partials/kleistad-admin-ovens-form-page.php';
+		require 'partials/kleistad-admin-ovens-form-page.php';
 	}
 
 	/**
@@ -328,7 +328,7 @@ class Kleistad_Admin {
 	 * @param array $item the oven involved.
 	 */
 	public function ovens_form_meta_box_handler( $item ) {
-		require_once 'partials/kleistad-admin-ovens-form-meta-box.php';
+		require 'partials/kleistad-admin-ovens-form-meta-box.php';
 	}
 
 	/**
@@ -376,7 +376,7 @@ class Kleistad_Admin {
 		}
 		$table->prepare_items();
 
-		require_once 'partials/kleistad-admin-regelingen-page.php';
+		require 'partials/kleistad-admin-regelingen-page.php';
 	}
 
 	/**
@@ -454,7 +454,7 @@ class Kleistad_Admin {
 		// here we adding our custom meta box.
 		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this, 'regelingen_form_meta_box_handler' ], 'regeling', 'normal', 'default' );
 
-		require_once 'partials/kleistad-admin-regelingen-form-page.php';
+		require 'partials/kleistad-admin-regelingen-form-page.php';
 	}
 
 	/**
@@ -472,7 +472,7 @@ class Kleistad_Admin {
 		$ovenstore = new Kleistad_Ovens();
 		$ovens = $ovenstore->get();
 
-		require_once 'partials/kleistad-admin-regelingen-form-meta-box.php';
+		require 'partials/kleistad-admin-regelingen-form-meta-box.php';
 	}
 
 	/**
@@ -514,7 +514,7 @@ class Kleistad_Admin {
 		$table->prepare_items();
 
 		$message = '';
-		require_once 'partials/kleistad-admin-stooksaldo-page.php';
+		require 'partials/kleistad-admin-stooksaldo-page.php';
 	}
 
 	/**
@@ -576,7 +576,7 @@ class Kleistad_Admin {
 		// here we adding our custom meta box.
 		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this, 'stooksaldo_form_meta_box_handler' ], 'stooksaldo', 'normal', 'default' );
 
-		require_once 'partials/kleistad-admin-stooksaldo-form-page.php';
+		require 'partials/kleistad-admin-stooksaldo-form-page.php';
 	}
 
 	/**
@@ -586,7 +586,7 @@ class Kleistad_Admin {
 	 * @param array $item the stooksaldo.
 	 */
 	public function stooksaldo_form_meta_box_handler( $item ) {
-		require_once 'partials/kleistad-admin-stooksaldo-form-meta-box.php';
+		require 'partials/kleistad-admin-stooksaldo-form-meta-box.php';
 	}
 
 	/**
