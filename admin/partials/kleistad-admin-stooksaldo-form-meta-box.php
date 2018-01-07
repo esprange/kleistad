@@ -33,6 +33,15 @@
 					   size="10" step="0.01" class="code" placeholder="99.99" required>
 			</td>
 		</tr>
+		<tr>
+			<th scope="row">
+				<label>Toevoegen</label>
+			</th>
+			<td>
+				<button id="add15">15</button>&nbsp;
+				<button id="add30">30</button>
+			</td>
+		</tr>
 	</tbody>
 </table>
 

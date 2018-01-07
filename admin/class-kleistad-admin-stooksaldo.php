@@ -96,6 +96,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
+		$search = ( isset( $_REQUEST['s'] ) ) ? $_REQUEST['s'] : false;
 		$paged = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
 		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
 		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
@@ -106,6 +107,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 				'meta_key' => 'stooksaldo',
 				'orderby' => [ 'display_name' ],
 				'order' => $order,
+				'search' => '*' . $search . '*',
 			]
 		);
 

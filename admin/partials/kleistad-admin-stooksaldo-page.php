@@ -19,6 +19,10 @@
 
 	<form id="stooksaldo-table" method="GET">
 		<input type="hidden" name="page" value="<?php echo $_REQUEST['page']; ?>"/>
-		<?php $table->display(); ?>
+		<?php
+		$table->prepare_items();
+		$table->search_box( 'zoek abonnee', 'search' );
+		$table->display();
+		?>
 	</form>
 </div>    
