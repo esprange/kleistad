@@ -38,8 +38,8 @@
 				<label>Toevoegen</label>
 			</th>
 			<td>
-				<button id="add15">15</button>&nbsp;
-				<button id="add30">30</button>
+				<button type="button" id="add15">15</button>&nbsp;
+				<button type="button" id="add30">30</button>
 			</td>
 		</tr>
 	</tbody>
