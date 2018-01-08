@@ -58,7 +58,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		$ovens_store = new Kleistad_Ovens();
 		$ovens_from_store = $ovens_store->get();
 		foreach ( $ovens_from_store as $oven ) {
-			if ( substr( $oven->naam, 0, strlen( $teststring ) ) == $teststring ) {
+			if ( substr( $oven->naam, 0, strlen( $teststring ) ) === $teststring ) {
 				$this->assertEquals( $teststring . intval( $oven->kosten ), $oven->naam, 'naam ovens not equal' );
 			}
 		}
@@ -159,7 +159,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		$reserveringen_store = new Kleistad_Reserveringen();
 		$reserveringen_from_store = $reserveringen_store->get();
 		foreach ( $reserveringen_from_store as $reservering ) {
-			if ( substr( $reservering->opmerking, 0, strlen( $teststring ) ) == $teststring ) {
+			if ( substr( $reservering->opmerking, 0, strlen( $teststring ) ) === $teststring ) {
 				$this->assertEquals( 'test reserveringen' . intval( $reservering->programma ), $reservering->opmerking, 'opmerking reserveringen not equal' );
 			}
 		}

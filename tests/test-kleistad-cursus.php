@@ -51,7 +51,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 		$cursussen_store = new Kleistad_Cursussen();
 		$cursussen_from_store = $cursussen_store->get();
 		foreach ( $cursussen_from_store as $cursus ) {
-			if ( substr( $cursus->naam, 0, strlen( $teststring ) ) == $teststring ) {
+			if ( substr( $cursus->naam, 0, strlen( $teststring ) ) === $teststring ) {
 				$this->assertEquals( $teststring . $cursus->docent, $cursus->naam, 'naam cursussen not equal' );
 			}
 		}
@@ -99,7 +99,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 		$inschrijvingen_from_store = $inschrijvingen_store->get();
 		foreach ( $inschrijvingen_from_store as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $cursist_inschrijving ) {
-				if ( substr( $cursist_inschrijving->opmerking, 0, strlen( $teststring ) ) == $teststring ) {
+				if ( substr( $cursist_inschrijving->opmerking, 0, strlen( $teststring ) ) === $teststring ) {
 					$this->assertEquals( $teststring . $cursist_id, $cursist_inschrijving->opmerking, 'opmerking inschrijvingen not equal' );
 				}
 			}
