@@ -202,7 +202,7 @@ class Kleistad_Public {
 		$disabled = get_user_meta( $user->ID, 'kleistad_disable_user', true );
 
 		// Is the use logging in disabled?
-		if ( '1' == $disabled ) {
+		if ( '1' === $disabled ) {
 			// Clear cookies, a.k.a log user out.
 			wp_clear_auth_cookie();
 
@@ -223,7 +223,8 @@ class Kleistad_Public {
 	public function user_login_message( $message ) {
 
 		// Show the error message if it seems to be a disabled user.
-		if ( isset( $_GET['disabled'] ) && 1 == $_GET['disabled'] ) {
+		$disabled = filter_input( INPUT_GET, 'disabled' );
+		if ( ! is_null( $disabled ) && 1 === $disabled ) {
 			$message = '<div id="login_error">' . apply_filters( 'kleistad_disable_users_notice', 'Inloggen op dit account niet toegestaan' ) . '</div>';
 		}
 		return $message;
@@ -315,7 +316,7 @@ class Kleistad_Public {
 				$gebruiker = get_userdata( $reservering->gebruiker_id );
 				$verdeling = $reservering->verdeling;
 				foreach ( $verdeling as &$stookdeel ) {
-					if ( intval( $stookdeel['id'] ) == 0 ) {
+					if ( 0 === intval( $stookdeel['id'] ) ) {
 						continue;
 					}
 					$medestoker = get_userdata( $stookdeel['id'] );
@@ -324,7 +325,7 @@ class Kleistad_Public {
 					$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
 					$stookdeel['prijs'] = $prijs;
 					$huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
-					$nieuw_saldo = ('' == $huidig_saldo) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
+					$nieuw_saldo = ('' === $huidig_saldo) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
 
 					Kleistad_Oven::log_saldo(
 						"wijziging saldo $medestoker->display_name van $huidig_saldo naar $nieuw_saldo, stook op " .

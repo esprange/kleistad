@@ -162,8 +162,8 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 				];
 
 				foreach ( $reserveringen as $reservering ) {
-					if ( ($reservering->jaar == $jaar) && ( $reservering->maand == $maand) && ( $reservering->dag == $dag) ) {
-						if ( $reservering->gebruiker_id == $huidige_gebruiker_id ) {
+					if ( ($reservering->jaar === $jaar) && ( $reservering->maand === $maand) && ( $reservering->dag === $dag) ) {
+						if ( $reservering->gebruiker_id === $huidige_gebruiker_id ) {
 							$kleur = ! $datum_verstreken ? 'lightgreen' : $kleur;
 							$wijzigbaar = ! $verwerkt || is_super_admin();
 							$verwijderbaar = Kleistad_Roles::override() ? ! $verwerkt : ! $datum_verstreken;
@@ -197,7 +197,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 				}
 				$row_html .= "<tr style=\"background-color: $kleur\">";
 				if ( $wijzigbaar ) {
-					$row_html .= "<td><a class=\"kleistad_box\" data-form='" . json_encode( $selectie ) . "' >$dag $dagnamen[$weekdag]</a></td>";
+					$row_html .= "<td><a class=\"kleistad_box\" data-form='" . wp_json_encode( $selectie ) . "' >$dag $dagnamen[$weekdag]</a></td>";
 				} else {
 					$row_html .= "<td>$dag $dagnamen[$weekdag]</td>";
 				}
@@ -240,7 +240,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 
 		if ( $request->get_param( 'oven_id' ) > 0 ) {
 			// het betreft een toevoeging of wijziging, check of er al niet een bestaande reservering is.
-			if ( ! $bestaande_reservering || ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) {
+			if ( ! $bestaande_reservering || ( $reservering->gebruiker_id === $gebruiker_id ) || Kleistad_Roles::override() ) {
 				$reservering->gebruiker_id = $gebruiker_id;
 				$reservering->dag = intval( $request->get_param( 'dag' ) );
 				$reservering->maand = intval( $request->get_param( 'maand' ) );
@@ -250,15 +250,11 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 				$reservering->programma = intval( $request->get_param( 'programma' ) );
 				$reservering->verdeling = $request->get_param( 'verdeling' );
 				$reservering->save();
-			} else {
-				// er is door een andere gebruiker al een reservering aangemaakt, niet toegestaan.
 			}
 		} else {
 			// het betreft een annulering, mag alleen verwijderd worden door de gebruiker of een bevoegde.
-			if ( $bestaande_reservering && (( $reservering->gebruiker_id == $gebruiker_id) || Kleistad_Roles::override()) ) {
+			if ( $bestaande_reservering && (( $reservering->gebruiker_id === $gebruiker_id) || Kleistad_Roles::override()) ) {
 				$reservering->delete();
-			} else {
-				// de reservering is al verwijderd of de gebruiker mag dit niet.
 			}
 		}
 		$request->set_param( 'oven_id', $oven_id ); // zorg dat het over_id correct is.

@@ -24,8 +24,8 @@ else :
 	<tbody>
 	<?php foreach ( $data['stokers'] as $stoker ) : ?>
 		<tr>
-			<td><?php echo $stoker['naam']; ?></td>
-			<td>&euro; <?php echo $stoker['saldo']; ?></td>
+			<td><?php echo esc_html( $stoker['naam'] ); ?></td>
+			<td>&euro; <?php echo esc_html( $stoker['saldo'] ); ?></td>
 		</tr>
 	<?php endforeach ?>
 	</tbody>

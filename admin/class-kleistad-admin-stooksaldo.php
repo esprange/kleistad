@@ -96,10 +96,14 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$search = ( isset( $_REQUEST['s'] ) ) ? $_REQUEST['s'] : false;
-		$paged = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
-		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
-		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
+		$search_val = filter_input( INPUT_GET, 's' );
+		$search = ! is_null( $search_val ) ? $search_val : false;
+		$paged_val = filter_input( INPUT_GET, 'paged' );
+		$paged   = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$orderby_val = filter_input( INPUT_GET, 'orderby' );
+		$orderby = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val = filter_input( INPUT_GET, 'order' );
+		$order = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 
 		$gebruikers = get_users(
 			[
@@ -120,8 +124,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 				'saldo' => get_user_meta( $gebruiker->id, 'stooksaldo', true ),
 			];
 		}
-		if ( 'naam' == $orderby ) {
-		} else {
+		if ( 'naam' !== $orderby ) {
 			$bedrag = [];
 			foreach ( $stooksaldi as $key => $saldo ) {
 				$bedrag[ $key ] = $saldo['saldo'];

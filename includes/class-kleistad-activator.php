@@ -118,7 +118,7 @@ class Kleistad_Activator {
 				if ( $reservering->verwerkt ) {
 					$verdeling = $reservering->verdeling;
 					foreach ( $verdeling as &$stookdeel ) {
-						if ( intval( $stookdeel['id'] ) == 0 ) {
+						if ( 0 === intval( $stookdeel['id'] ) ) {
 							continue;
 						}
 						$regeling = $regelingen->get( $stookdeel['id'], $reservering->oven_id );

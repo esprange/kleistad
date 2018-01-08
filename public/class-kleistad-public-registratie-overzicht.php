@@ -34,18 +34,18 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 
 		$inschrijving_store = new Kleistad_Inschrijvingen();
 		$inschrijvingen = $inschrijving_store->get();
-		$gebruiker_store = new Kleistad_Gebruikers;
+		$gebruiker_store = new Kleistad_Gebruikers();
 		$gebruikers = $gebruiker_store->get();
 		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
 			$cursuslijst = '';
 			$inschrijvinglijst = [];
-			$is_lid = ( ! empty( $gebruiker->rol ) or ( is_array( $gebruiker->rol ) and ( count( $gebruiker->rol ) > 0 ) ) );
+			$is_lid = ( ! empty( $gebruiker->rol ) || ( is_array( $gebruiker->rol ) && ( count( $gebruiker->rol ) > 0 ) ) );
 			if ( $is_lid ) {
 				$abonnement = new Kleistad_Abonnement( $gebruiker_id );
 				$abonnee_info = [
 					'code' => $abonnement->code,
 					'start_datum' => date( 'd-m-Y', $abonnement->start_datum ),
-					'dag' => ('beperkt' == $abonnement->soort) ? $abonnement->dag : '',
+					'dag' => ('beperkt' === $abonnement->soort) ? $abonnement->dag : '',
 					'soort' => $abonnement->soort,
 					'geannuleerd' => $abonnement->geannuleerd,
 					'opmerking' => $abonnement->opmerking,
@@ -168,7 +168,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 		fputcsv( $f_abonnee, $abonnee_fields, ';', '"' );
 
 		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
-			$is_lid = ( ! empty( $gebruiker->rol ) or ( is_array( $gebruiker->rol ) and ( count( $gebruiker->rol ) > 0 ) ) );
+			$is_lid = ( ! empty( $gebruiker->rol ) || ( is_array( $gebruiker->rol ) && ( count( $gebruiker->rol ) > 0 ) ) );
 
 			$gebruiker_gegevens = [
 				$gebruiker->achternaam,
@@ -206,7 +206,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 						date( 'm-d-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
 						$abonnementen[ $gebruiker_id ]->code,
 						$abonnementen[ $gebruiker_id ]->soort,
-						( 'beperkt' == $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
+						( 'beperkt' === $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
 						$abonnementen[ $gebruiker_id ]->opmerking,
 					]
 				);

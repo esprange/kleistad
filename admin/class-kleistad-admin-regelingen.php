@@ -20,7 +20,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct(
 			[
 				'singular' => 'regeling',
@@ -36,7 +36,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 * @param string $column_name - (key).
 	 * @return HTML
 	 */
-	function column_default( $item, $column_name ) {
+	public function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
 	}
 
@@ -46,10 +46,10 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 * @param array $item - row (key, value).
 	 * @return HTML
 	 */
-	function column_gebruiker_naam( $item ) {
+	public function column_gebruiker_naam( $item ) {
 		$actions = [
 			'edit' => sprintf( '<a href="?page=regelingen_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
-			'delete' => sprintf( '<a href="?page=%s&action=delete&id=%s">%s</a>', $_REQUEST['page'], $item['id'], 'Verwijderen' ),
+			'delete' => sprintf( '<a href="?page=%s&action=delete&id=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['id'], 'Verwijderen' ),
 		];
 
 		return sprintf(
@@ -62,7 +62,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = [
 			'gebruiker_naam' => 'Naam gebruiker',
 			'oven_naam' => 'Oven',
@@ -76,7 +76,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_sortable_columns() {
+	public function get_sortable_columns() {
 		$sortable_columns = [
 			'gebruiker_naam' => [ 'gebruiker_naam', true ],
 		];
@@ -87,7 +87,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 * Prepare the items
 	 * It will get rows from database and prepare them to be showed in table
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 		$per_page = 5; // constant, how much records will be shown per page.
 
 		$columns = $this->get_columns();
@@ -98,9 +98,12 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
 		// prepare query params, as usual current page, order by and order direction.
-		$paged = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
-		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
-		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
+		$paged_val = filter_input( INPUT_GET, 'paged' );
+		$paged   = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$orderby_val = filter_input( INPUT_GET, 'orderby' );
+		$orderby = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val = filter_input( INPUT_GET, 'order' );
+		$order = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 
 		// will be used in pagination settings.
 		$gebruikers = get_users(

@@ -18,16 +18,16 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta name="viewport" content="initial-scale=1.0"/>
 		<meta name="format-detection" content="telephone=no"/>
-		<title><?php echo $subject; ?></title>
+		<title><?php echo esc_html( $subject ); ?></title>
 	</head>
 	<body>
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 			<tr>
 				<td align="left" style="font-family:helvetica; font-size:13pt" >
-					<?php echo preg_replace( '/\s+/', ' ', $text ); ?><br />
+					<?php echo preg_replace( '/\s+/', ' ', $text ); // WPCS: XSS ok. ?><br />
 					<p>Met vriendelijke groet,</p>
 					<p>Kleistad</p>
-					<p><a href="mailto:<?php echo $emailadresses['info']; ?>" target="_top"><?php echo $emailadresses['info']; ?></a></p>
+					<p><a href="mailto:<?php echo esc_attr( $emailadresses['info'] ); ?>" target="_top"><?php echo esc_html( $emailadresses['info'] ); ?></a></p>
 				</td>                         
 			</tr>
 			<tr>

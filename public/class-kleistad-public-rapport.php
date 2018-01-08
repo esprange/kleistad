@@ -41,7 +41,7 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 
 		foreach ( $reserveringen as $reservering ) {
 			foreach ( $reservering->verdeling as $stookdeel ) {
-				if ( $stookdeel['id'] == $huidige_gebruiker->ID ) {
+				if ( $stookdeel['id'] === $huidige_gebruiker->ID ) {
 					if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
 						$kosten = $stookdeel['prijs'];
 					} else { // Voorlopige berekening.
@@ -59,7 +59,7 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 						'prog' => $reservering->programma > 0 ? $reservering->programma : '',
 						'perc' => $stookdeel['perc'],
 						'kosten' => number_format( $kosten, 2, ',', '' ),
-						'voorlopig' => $reservering->verwerkt ? '' : '<span class="genericon genericon-checkmark"></span>',
+						'voorlopig' => $reservering->verwerkt ? '' : 'genericon genericon-checkmark',
 					];
 				}
 			}

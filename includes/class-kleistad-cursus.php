@@ -45,7 +45,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			'start_tijd' => '',
 			'eind_tijd' => '',
 			'docent' => '',
-			'technieken' => json_encode( [] ),
+			'technieken' => wp_json_encode( [] ),
 			'vervallen' => 0,
 			'vol' => 0,
 			'techniekkeuze' => 0,
@@ -74,7 +74,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return ( 'null' == $this->_data['technieken']) ? [] : json_decode( $this->_data['technieken'], true );
+				return ( 'null' === $this->_data['technieken']) ? [] : json_decode( $this->_data['technieken'], true );
 			case 'start_datum':
 			case 'eind_datum':
 			case 'start_tijd':
@@ -83,7 +83,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'vervallen':
 			case 'vol':
 			case 'techniekkeuze':
-				return 1 == $this->_data[ $attribuut ];
+				return 1 === $this->_data[ $attribuut ];
 			case 'array':
 				return $this->_data;
 			default:
@@ -104,7 +104,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				$this->_data[ $attribuut ] = json_encode( $waarde );
+				$this->_data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
 			case 'start_datum':
 			case 'eind_datum':
@@ -261,7 +261,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'c_betaald':
 			case 'geannuleerd':
 			case 'bericht':
-				return 1 == $this->_data[ $attribuut ];
+				return 1 === $this->_data[ $attribuut ];
 			default:
 				return $this->_data[ $attribuut ];
 		}
@@ -341,12 +341,8 @@ class Kleistad_Inschrijvingen extends Kleistad_EntityStore {
 		foreach ( $cursisten as $cursist ) {
 			$inschrijvingen = get_user_meta( $cursist->ID, 'kleistad_cursus', true );
 			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! $cursus_id ) {
-					error_log( "fout inschrijving id=$cursist->ID" . print_r( $inschrijvingen,true ) );
-				} else {
-					$this->_data[ $cursist->ID ][ $cursus_id ] = new Kleistad_Inschrijving( $cursist->ID, $cursus_id );
-					$this->_data[ $cursist->ID ][ $cursus_id ]->load( $inschrijving );
-				}
+				$this->_data[ $cursist->ID ][ $cursus_id ] = new Kleistad_Inschrijving( $cursist->ID, $cursus_id );
+				$this->_data[ $cursist->ID ][ $cursus_id ]->load( $inschrijving );
 			}
 		}
 	}

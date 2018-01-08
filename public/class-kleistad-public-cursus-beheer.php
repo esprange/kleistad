@@ -102,7 +102,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 	public function validate( &$data ) {
 
 		$tab = filter_input( INPUT_POST, 'tab', FILTER_SANITIZE_STRING );
-		if ( 'info' == $tab ) {
+		if ( 'info' === $tab ) {
 			$input = filter_input_array(
 				INPUT_POST, [
 					'tab'                => FILTER_SANITIZE_STRING,
@@ -132,7 +132,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 					],
 				]
 			);
-		} elseif ( 'indeling' == $tab ) {
+		} elseif ( 'indeling' === $tab ) {
 			$input               = filter_input_array(
 				INPUT_POST, [
 					'tab'            => FILTER_SANITIZE_STRING,
@@ -140,7 +140,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 					'indeling_lijst' => FILTER_SANITIZE_STRING,
 				]
 			);
-			$input['cursisten']  = ('' == $input['indeling_lijst']) ? [] : json_decode( $input['indeling_lijst'], true );
+			$input['cursisten']  = ('' === $input['indeling_lijst']) ? [] : json_decode( $input['indeling_lijst'], true );
 		}
 		$data = [
 			'input' => $input,
@@ -164,16 +164,16 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 			$cursus = new Kleistad_Cursus();
 		}
 
-		if ( 'info' == $data['input']['tab'] ) {
+		if ( 'info' === $data['input']['tab'] ) {
 			$cursus->naam            = $data['input']['naam'];
 			$cursus->docent          = $data['input']['docent'];
 			$cursus->start_datum     = strtotime( $data['input']['start_datum'] );
 			$cursus->eind_datum      = strtotime( $data['input']['eind_datum'] );
 			$cursus->start_tijd      = strtotime( $data['input']['start_tijd'] );
 			$cursus->eind_tijd       = strtotime( $data['input']['eind_tijd'] );
-			$cursus->techniekkeuze   = '' <> $data['input']['techniekkeuze'];
-			$cursus->vol             = '' <> $data['input']['vol'];
-			$cursus->vervallen       = '' <> $data['input']['vervallen'];
+			$cursus->techniekkeuze   = '' !== $data['input']['techniekkeuze'];
+			$cursus->vol             = '' !== $data['input']['vol'];
+			$cursus->vervallen       = '' !== $data['input']['vervallen'];
 			$cursus->inschrijfkosten = $data['input']['inschrijfkosten'];
 			$cursus->cursuskosten    = $data['input']['cursuskosten'];
 			$cursus->inschrijfslug   = $data['input']['inschrijfslug'];
@@ -181,7 +181,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 			$cursus->technieken      = $data['input']['technieken'];
 			$cursus->save();
 			return 'Gegevens zijn opgeslagen';
-		} elseif ( 'indeling' == $data['input']['tab'] ) {
+		} elseif ( 'indeling' === $data['input']['tab'] ) {
 			$aantal_ingedeeld = 0;
 			foreach ( $data['input']['cursisten'] as $cursist ) {
 				$inschrijving = new Kleistad_Inschrijving( $cursist, $cursus_id );

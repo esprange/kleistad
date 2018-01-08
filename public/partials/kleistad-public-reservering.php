@@ -18,12 +18,12 @@ if ( ! Kleistad_Roles::reserveer() ) :
 else :
 ?>
 
-  <h1 id="kleistad<?php echo $data['oven']->id; ?>">Reserveringen voor de <?php echo $data['oven']->naam; ?></h1>
-  <table id="reserveringen<?php echo $data['oven']->id; ?>" class="kleistad_reserveringen"
-		 data-oven_id="<?php echo $data['oven']->id; ?>" 
-		 data-oven-naam="<?php echo $data['oven']->naam; ?>" 
-		 data-maand="<?php echo date( 'n' ); ?>" 
-		 data-jaar="<?php echo date( 'Y' ); ?>" >
+  <h1 id="<?php echo esc_attr( 'kleistad' . $data['oven']->id ); ?>">Reserveringen voor de <?php echo esc_html( $data['oven']->naam ); ?></h1>
+  <table id="reserveringen<?php echo esc_attr( $data['oven']->id ); ?>" class="kleistad_reserveringen"
+		 data-oven_id="<?php echo esc_attr( $data['oven']->id ); ?>" 
+		 data-oven-naam="<?php echo esc_attr( $data['oven']->naam ); ?>" 
+		 data-maand="<?php echo esc_attr( date( 'n' ) ); ?>" 
+		 data-jaar="<?php echo esc_attr( date( 'Y' ) ); ?>" >
 	  <tr>
 		  <th>de reserveringen worden opgehaald...</th>
 	  </tr>
@@ -58,7 +58,7 @@ else :
 				  </tr>
 				  <tr id="kleistad_stoker_row" >
 					  <td><label>Stoker</label></td>
-					  <td><span id="kleistad_stoker"><?php echo $data['huidige_gebruiker']->display_name; ?></span><input type="hidden" name="kleistad_stoker_id" id="kleistad_1e_stoker" value="<?php echo $data['huidige_gebruiker']->ID; ?>" /></td>
+					  <td><span id="kleistad_stoker"><?php echo esc_html( $data['huidige_gebruiker']->display_name ); ?></span><input type="hidden" name="kleistad_stoker_id" id="kleistad_1e_stoker" value="<?php echo esc_attr( $data['huidige_gebruiker']->ID ); ?>" /></td>
 					  <td><input type="number" name="kleistad_stoker_perc" readonly /> %</td>
 				  </tr>
 				  <tr name="kleistad_medestoker_row" >
@@ -67,9 +67,9 @@ else :
 								<option value="0" >&nbsp;</option>
 								<?php
 								foreach ( $data['gebruikers'] as $gebruiker ) :
-									if ( Kleistad_Roles::reserveer( $gebruiker->id ) and ( $gebruiker->id <> $data['huidige_gebruiker']->ID) || Kleistad_Roles::override() ) :
+									if ( Kleistad_Roles::reserveer( $gebruiker->id ) && ( $gebruiker->id !== $data['huidige_gebruiker']->ID) || Kleistad_Roles::override() ) :
 									?>
-									  <option value="<?php echo $gebruiker->id; ?>"><?php echo $gebruiker->display_name; ?></option>
+									  <option value="<?php echo esc_attr( $gebruiker->id ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
 									<?php
 								  endif;
 								endforeach;

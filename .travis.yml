@@ -64,6 +64,7 @@ script:
     fi
   - |
     if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
-      $PHPCS_DIR/bin/phpcs -p . --standard=WordPress;
+      $PHPCS_DIR/bin/phpcs;
+      ## $PHPCS_DIR/bin/phpcs -p . --standard=WordPress-Extra;
       ## phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
     fi

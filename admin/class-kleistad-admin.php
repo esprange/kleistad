@@ -126,11 +126,8 @@ class Kleistad_Admin {
 		if ( ! current_user_can( 'edit_users' ) ) {
 			return;
 		}
-		if ( ! isset( $_POST['kleistad_disable_user'] ) ) {
-			$disabled = 0;
-		} else {
-			$disabled = $_POST['kleistad_disable_user'];
-		}
+		$disabled_val = filter_input( INPUT_POST, 'kleistad_disable_user' );
+		$disabled = ! is_null( $disabled_val ) ? $disabled_val : 0;
 		update_user_meta( $user_id, 'kleistad_disable_user', $disabled );
 	}
 
@@ -143,7 +140,7 @@ class Kleistad_Admin {
 	 * @param object $user unused.
 	 */
 	public function check_role( &$errors, $update, &$user ) {
-		if ( (get_the_author_meta( 'kleistad_disable_user', $user->ID ) == 1) ) {
+		if ( (get_the_author_meta( 'kleistad_disable_user', $user->ID ) === 1) ) {
 			$user->role = '';
 		}
 	}
@@ -171,8 +168,8 @@ class Kleistad_Admin {
 	 */
 	public function manage_users_column_content( $empty, $column_name, $user_id ) {
 
-		if ( 'kleistad_user_disabled' == $column_name ) {
-			if ( get_the_author_meta( 'kleistad_disable_user', $user_id ) == 1 ) {
+		if ( 'kleistad_user_disabled' === $column_name ) {
+			if ( get_the_author_meta( 'kleistad_disable_user', $user_id ) === 1 ) {
 				return 'Gedeactiveerd';
 			}
 		}
@@ -367,12 +364,14 @@ class Kleistad_Admin {
 		$message = '';
 		$table = new Kleistad_Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
-			if ( isset( $_REQUEST['id'] ) ) {
-				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d %d' );
+			$id = filter_input( INPUT_GET, 'id' );
+
+			if ( ! is_null( $id ) ) {
+				list($gebruiker_id, $oven_id) = sscanf( $id, '%d %d' );
 				$regelingen = new Kleistad_Regelingen();
 				$regelingen->delete_and_save( $gebruiker_id, $oven_id );
 			}
-			$message = '<div class="updated below-h2" id="message"><p>' . sprintf( 'Aantal verwijderd: %d', count( $_REQUEST['id'] ) ) . '</p></div>';
+			$message = sprintf( 'Aantal verwijderd: %d', count( $id ) );
 		}
 		$table->prepare_items();
 
@@ -410,7 +409,7 @@ class Kleistad_Admin {
 			if ( true === $item_valid ) {
 				$regelingen = new Kleistad_Regelingen();
 				$result = $regelingen->set_and_save( $item['gebruiker_id'], $item['oven_id'] , $item['kosten'] );
-				if ( '' == $item['id'] ) {
+				if ( '' === $item['id'] ) {
 					if ( $result ) {
 						$message = 'De regeling is bewaard';
 					} else {

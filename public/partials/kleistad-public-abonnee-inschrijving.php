@@ -18,7 +18,7 @@ if ( is_user_logged_in() && ! is_super_admin() ) :
 else :
 	?>
 
-	<form class="kleistad_formuler" action="<?php echo get_permalink(); ?>" method="POST">
+	<form class="kleistad_formuler" action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
 		<?php wp_nonce_field( 'kleistad_abonnee_inschrijving' ); ?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3">
@@ -54,7 +54,7 @@ else :
 				<label for="kleistad_start_datum">Start per</label>
 			</div>
 			<div class="kleistad_input kleistad_col_7">
-				<input class="kleistad_datum, kleistad_input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo date( 'd-m-Y' ); ?>" />
+				<input class="kleistad_datum, kleistad_input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" />
 			</div>
 		</div>
 		<?php if ( is_super_admin() ) : ?>
@@ -65,7 +65,7 @@ else :
 				<div class="kleistad_col_7">
 					<select class="kleistad_input" name="gebruiker_id" id="kleistad_gebruiker_id" >      
 						<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
-							<option value="<?php echo $gebruiker->id; ?>"><?php echo $gebruiker->display_name; ?></option>
+							<option value="<?php echo esc_attr( $gebruiker->id ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
 						<?php endforeach ?>
 					</select>
 				</div>
@@ -76,10 +76,10 @@ else :
 					 <label for="kleistad_voornaam">Naam</label>
 				</div>
 				<div class="kleistad_col_3">
-					<input class="kleistad_input" name="voornaam" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo $data['input']['voornaam']; ?>" />
+					<input class="kleistad_input" name="voornaam" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo esc_attr( $data['input']['voornaam'] ); ?>" />
 				</div>
 				<div class="kleistad_col_4">
-					<input class="kleistad_input" name="achternaam" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo $data['input']['achternaam']; ?>" />
+					<input class="kleistad_input" name="achternaam" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo esc_attr( $data['input']['achternaam'] ); ?>" />
 				</div>
 			</div>
 			<div class="kleistad_row">
@@ -87,7 +87,7 @@ else :
 					<label for="kleistad_emailadres">Email adres</label>
 				</div>
 				<div class="kleistad_col_7">
-					<input class="kleistad_input" name="emailadres" id="kleistad_emailadres" type="email" required placeholder="mijnemailadres@voorbeeld.nl" value="<?php echo $data['input']['emailadres']; ?>" />
+					<input class="kleistad_input" name="emailadres" id="kleistad_emailadres" type="email" required placeholder="mijnemailadres@voorbeeld.nl" value="<?php echo esc_attr( $data['input']['emailadres'] ); ?>" />
 				</div>
 			</div>
 			<div class="kleistad_row">
@@ -95,7 +95,7 @@ else :
 					<label for="kleistad_telnr">Telefoon</label>
 				</div>
 				<div class="kleistad_col_7">
-					<input class="kleistad_input" name="telnr" id="kleistad_telnr" type="text" maxlength="15" placeholder="0123456789" value="<?php echo $data['input']['telnr']; ?>" />
+					<input class="kleistad_input" name="telnr" id="kleistad_telnr" type="text" maxlength="15" placeholder="0123456789" value="<?php echo esc_attr( $data['input']['telnr'] ); ?>" />
 				</div>
 			</div>
 			<div class="kleistad_row">
@@ -103,10 +103,10 @@ else :
 					<label for="kleistad_straat">Straat, nr</label>
 				</div>
 				<div class="kleistad_col_5">
-					<input class="kleistad_input" name="straat" id="kleistad_straat" type="text" required placeholder="straat" maxlength="50" value="<?php echo $data['input']['straat']; ?>" />
+					<input class="kleistad_input" name="straat" id="kleistad_straat" type="text" required placeholder="straat" maxlength="50" value="<?php echo esc_attr( $data['input']['straat'] ); ?>" />
 				</div>
 				<div class="kleistad_col_2">
-					<input class="kleistad_input" name="huisnr" id="kleistad_huisnr" type="text" maxlength="10" required placeholder="nr" value="<?php echo $data['input']['huisnr']; ?>" />
+					<input class="kleistad_input" name="huisnr" id="kleistad_huisnr" type="text" maxlength="10" required placeholder="nr" value="<?php echo esc_attr( $data['input']['huisnr'] ); ?>" />
 				</div>
 			</div>
 			<div class="kleistad_row">
@@ -114,10 +114,10 @@ else :
 					<label for="kleistad_pcode">Postcode, Plaats</label>
 				</div>
 				<div class="kleistad_col_2">
-					<input class="kleistad_input" name="pcode" id="kleistad_pcode" type="text" maxlength="10" placeholder="1234AB" pattern="[1-9][0-9]{3}\s?[a-zA-Z]{2}" title="1234AB" value="<?php echo $data['input']['pcode']; ?>" />
+					<input class="kleistad_input" name="pcode" id="kleistad_pcode" type="text" maxlength="10" placeholder="1234AB" pattern="[1-9][0-9]{3}\s?[a-zA-Z]{2}" title="1234AB" value="<?php echo esc_attr( $data['input']['pcode'] ); ?>" />
 				</div>
 				<div class="kleistad_col_5">
-					<input class="kleistad_input" name="plaats" id="kleistad_plaats" type="text" required maxlength="50" placeholder="MijnWoonplaats" value="<?php echo $data['input']['plaats']; ?>" />
+					<input class="kleistad_input" name="plaats" id="kleistad_plaats" type="text" required maxlength="50" placeholder="MijnWoonplaats" value="<?php echo esc_attr( $data['input']['plaats'] ); ?>" />
 				</div>
 			</div>
 		<?php endif ?>
@@ -126,7 +126,7 @@ else :
 				<label for="kleistad_opmerking">Opmerking</label>
 			</div>
 			<div class="kleistad_input kleistad_col_7">
-				<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" rows="5" cols="50"><?php echo $data['input']['opmerking']; ?></textarea>
+				<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" rows="5" cols="50"><?php echo esc_textarea( $data['input']['opmerking'] ); ?></textarea>
 			</div>
 		</div>
 		<div class="kleistad_row">

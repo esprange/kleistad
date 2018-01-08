@@ -15,10 +15,13 @@
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
 	<h2>Stooksaldo</h2>
-<?php echo $message; ?>
-
+	<?php if ( '' !== $message ) : ?>
+	<div class="updated below-h2" id="message"><p>
+		<?php echo esc_html( $message ); ?>
+	</p></div>
+	<?php endif; ?>
 	<form id="stooksaldo-table" method="GET">
-		<input type="hidden" name="page" value="<?php echo $_REQUEST['page']; ?>"/>
+		<input type="hidden" name="page" value="<?php echo filter_input( INPUT_GET, 'page' ); ?>"/>
 		<?php
 		$table->prepare_items();
 		$table->search_box( 'zoek abonnee', 'search' );

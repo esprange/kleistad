@@ -27,7 +27,7 @@ else :
 		  <option value="*" >&nbsp;</option>
 		  <option value="0" >Leden</option>
 			<?php foreach ( $data['cursussen'] as $cursus ) : ?>
-			<option value="C<?php echo $cursus->id; ?>;">C<?php echo $cursus->id . ' ' . $cursus->naam; ?></option>
+			<option value="<?php echo esc_attr( 'C' . $cursus->id ); ?>;">C<?php echo esc_html( $cursus->id . ' ' . $cursus->naam ); ?></option>
 			<?php endforeach ?>
 
 	  </select>
@@ -46,15 +46,15 @@ else :
 	  <tbody>
 			<?php foreach ( $data['registraties'] as $registratie ) : ?>
 			<tr class="kleistad_deelnemer_info" 
-				data-inschrijvingen='<?php echo json_encode( $registratie['inschrijvingen'] ); ?>'
-				data-deelnemer='<?php echo json_encode( $registratie['deelnemer_info'] ); ?>' 
-				data-abonnee='<?php echo json_encode( $registratie['abonnee_info'] ); ?>' >
-				<td><?php echo $registratie['is_lid']; ?></td>
-				<td><?php echo $registratie['cursuslijst']; ?></td>
-				<td><?php echo $registratie['achternaam']; ?></td>
-				<td><?php echo $registratie['voornaam']; ?></td>
-				<td><?php echo $registratie['email']; ?></td>
-				<td><?php echo $registratie['telnr']; ?></td>
+				data-inschrijvingen='<?php echo wp_json_encode( $registratie['inschrijvingen'] ); ?>'
+				data-deelnemer='<?php echo wp_json_encode( $registratie['deelnemer_info'] ); ?>' 
+				data-abonnee='<?php echo wp_json_encode( $registratie['abonnee_info'] ); ?>' >
+				<td><?php echo esc_html( $registratie['is_lid'] ); ?></td>
+				<td><?php echo esc_html( $registratie['cursuslijst'] ); ?></td>
+				<td><?php echo esc_html( $registratie['achternaam'] ); ?></td>
+				<td><?php echo esc_html( $registratie['voornaam'] ); ?></td>
+				<td><?php echo esc_html( $registratie['email'] ); ?></td>
+				<td><?php echo esc_html( $registratie['telnr'] ); ?></td>
 			</tr>
 			<?php endforeach ?>
 	  </tbody>

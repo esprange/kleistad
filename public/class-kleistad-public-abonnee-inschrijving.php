@@ -83,13 +83,13 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 			]
 		);
 
-		if ( '' == $input['abonnement_keuze'] ) {
+		if ( '' === $input['abonnement_keuze'] ) {
 			$error->add( 'verplicht', 'Er is nog geen type abonnement gekozen' );
 		}
-		if ( '' == $input['start_datum'] ) {
+		if ( '' === $input['start_datum'] ) {
 			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
 		}
-		if ( intval( $input['gebruiker_id'] ) == 0 ) {
+		if ( 0 === intval( $input['gebruiker_id'] ) ) {
 			$input['emailadres'] = strtolower( $input['emailadres'] );
 			if ( ! filter_var( $input['emailadres'], FILTER_VALIDATE_EMAIL ) ) {
 				$error->add( 'verplicht', 'Een geldig E-mail adres is verplicht' );

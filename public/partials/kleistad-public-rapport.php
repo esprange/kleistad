@@ -16,7 +16,7 @@ if ( ! Kleistad_Roles::reserveer() ) : ?>
 <?php
 else :
 ?>
-<p>Stookrapport voor <?php echo $data['naam']; ?> (je huidig saldo is &euro; <?php echo $data['saldo']; ?>)</p>
+<p>Stookrapport voor <?php echo esc_html( $data['naam'] ); ?> (je huidig saldo is &euro; <?php echo esc_html( $data['saldo'] ); ?>)</p>
 
 <table class="kleistad_rapport" data-order='[[ 1, "asc" ]]' >
 	<thead>
@@ -36,16 +36,16 @@ else :
 	<tbody>
 		<?php foreach ( $data['items'] as $item ) : ?>
 		  <tr>
-			  <td><?php echo $item['datum']; ?></td>
-			  <td><?php echo - $item['sdatum']; ?></td>
-			  <td><?php echo $item['oven']; ?></td>
-			  <td><?php echo $item['stoker']; ?></td>
-			  <td><?php echo $item['stook']; ?></td>
-			  <td><?php echo $item['temp']; ?></td>
-			  <td><?php echo $item['prog']; ?></td>
-			  <td><?php echo $item['perc']; ?></td>
-			  <td>&euro; <?php echo $item['kosten']; ?></td>
-			  <td><?php echo $item['voorlopig']; ?></td>
+			  <td><?php echo esc_html( $item['datum'] ); ?></td>
+			  <td><?php echo esc_html( - $item['sdatum'] ); ?></td>
+			  <td><?php echo esc_html( $item['oven'] ); ?></td>
+			  <td><?php echo esc_html( $item['stoker'] ); ?></td>
+			  <td><?php echo esc_html( $item['stook'] ); ?></td>
+			  <td><?php echo esc_html( $item['temp'] ); ?></td>
+			  <td><?php echo esc_html( $item['prog'] ); ?></td>
+			  <td><?php echo esc_html( $item['perc'] ); ?></td>
+			  <td>&euro; <?php echo esc_html( $item['kosten'] ); ?></td>
+			  <td><span class="<?php echo esc_attr( $item['voorlopig'] ); ?>"></span></td>
 		  </tr>
 		<?php endforeach ?>
 	</tbody>

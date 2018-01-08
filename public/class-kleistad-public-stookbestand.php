@@ -125,11 +125,11 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 			foreach ( $medestokers as $id => $medestoker ) {
 				$percentage = 0;
 				foreach ( $reservering->verdeling as $stookdeel ) {
-					if ( $stookdeel['id'] == $id ) {
+					if ( $stookdeel['id'] === $id ) {
 						$percentage += $stookdeel['perc'];
 					}
 				}
-				$values [] = (0 == $percentage) ? '' : $percentage;
+				$values [] = (0 === $percentage) ? '' : $percentage;
 			}
 
 			$totaal = 0;
@@ -137,7 +137,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 				$kosten = 0;
 				$kosten_tonen = false;
 				foreach ( $reservering->verdeling as $stookdeel ) {
-					if ( $stookdeel['id'] == $id ) {
+					if ( $stookdeel['id'] === $id ) {
 						if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
 							$kosten += $stookdeel['prijs'];
 						} else { // Voorlopige berekening.

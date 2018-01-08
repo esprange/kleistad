@@ -19,9 +19,9 @@
 				<label for="naam">Naam gebruiker</label>
 			</th>
 			<td>
-				<?php echo $item['naam']; ?>
-				<input name="naam" type="hidden" value="<?php echo $item['naam']; ?>" >
-				<input name="id" type="hidden" value="<?php echo $item['id']; ?>" >
+				<?php echo esc_html( $item['naam'] ); ?>
+				<input name="naam" type="hidden" value="<?php echo esc_attr( $item['naam'] ); ?>" >
+				<input name="id" type="hidden" value="<?php echo esc_attr( $item['id'] ); ?>" >
 			</td>
 		</tr>
 		<tr class="form-field">

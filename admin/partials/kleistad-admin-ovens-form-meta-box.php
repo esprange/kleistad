@@ -37,13 +37,13 @@
 				<label>Beschikbaarheid></label>
 			</th>
 			<td>
-				<input name="beschikbaarheid[]" value="zondag" type="checkbox" <?php echo array_search( 'zondag', $item['beschikbaarheid'] ) !== false ? 'checked' : ''; ?> />Zondag
-				<input name="beschikbaarheid[]" value="maandag" type="checkbox" <?php echo array_search( 'maandag', $item['beschikbaarheid'] ) !== false ? 'checked' : ''; ?> />Maandag
-				<input name="beschikbaarheid[]" value="dinsdag" type="checkbox" <?php echo array_search( 'dinsdag', $item['beschikbaarheid'] ) !== false ? 'checked' : ''; ?> />Dinsdag
-				<input name="beschikbaarheid[]" value="woensdag" type="checkbox" <?php echo array_search( 'woensdag', $item['beschikbaarheid'] ) !== false ? 'checked' : ''; ?> />Woensdag
-				<input name="beschikbaarheid[]" value="donderdag" type="checkbox" <?php echo array_search( 'donderdag', $item['beschikbaarheid'] ) !== false ? 'checked' : ''; ?> />Donderdag
-				<input name="beschikbaarheid[]" value="vrijdag" type="checkbox" <?php echo array_search( 'vrijdag', $item['beschikbaarheid'] ) !== false ? 'checked' : ''; ?> />Vrijdag
-				<input name="beschikbaarheid[]" value="zaterdag" type="checkbox" <?php echo array_search( 'zaterdag', $item['beschikbaarheid'] ) !== false ? 'checked' : ''; ?> />Zaterdag
+				<input name="beschikbaarheid[]" value="zondag" type="checkbox" <?php echo array_search( 'zondag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Zondag
+				<input name="beschikbaarheid[]" value="maandag" type="checkbox" <?php echo array_search( 'maandag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Maandag
+				<input name="beschikbaarheid[]" value="dinsdag" type="checkbox" <?php echo array_search( 'dinsdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Dinsdag
+				<input name="beschikbaarheid[]" value="woensdag" type="checkbox" <?php echo array_search( 'woensdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Woensdag
+				<input name="beschikbaarheid[]" value="donderdag" type="checkbox" <?php echo array_search( 'donderdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Donderdag
+				<input name="beschikbaarheid[]" value="vrijdag" type="checkbox" <?php echo array_search( 'vrijdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Vrijdag
+				<input name="beschikbaarheid[]" value="zaterdag" type="checkbox" <?php echo array_search( 'zaterdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Zaterdag
 			</td>
 		</tr>
 

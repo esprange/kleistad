@@ -104,14 +104,14 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Public_Shortcode {
 			]
 		);
 
-		if ( intval( $input['cursus_id'] ) == 0 ) {
+		if ( 0 === intval( $input['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 		}
 		$cursus = new Kleistad_Cursus( $input['cursus_id'] );
 		if ( is_null( $cursus->id ) ) {
 			$error->add( 'onbekend', 'De gekozen cursus is niet bekend' );
 		}
-		if ( intval( $input['gebruiker_id'] ) == 0 ) {
+		if ( 0 === intval( $input['gebruiker_id'] ) ) {
 			$input['emailadres'] = strtolower( $input['emailadres'] );
 			if ( ! filter_var( $input['emailadres'], FILTER_VALIDATE_EMAIL ) ) {
 				$error->add( 'verplicht', 'Een geldig E-mail adres is verplicht' );

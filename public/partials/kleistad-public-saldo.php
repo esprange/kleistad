@@ -18,11 +18,11 @@ if ( ! Kleistad_Roles::reserveer() ) :
 else :
 	?>
 
-	<p>Je huidige stooksaldo is <strong>&euro; <?php echo $data['saldo']; ?></strong></p>
+	<p>Je huidige stooksaldo is <strong>&euro; <?php echo esc_html( $data['saldo'] ); ?></strong></p>
 	<p>Je kunt onderstaand melden dat je het saldo hebt aangevuld</p><hr />
-	<form action="<?php echo get_permalink(); ?>" method="POST">
+	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
 		<?php wp_nonce_field( 'kleistad_saldo' ); ?>
-		<input type="hidden" name="kleistad_gebruiker_id" value="<?php echo $data['gebruiker_id']; ?>" />
+		<input type="hidden" name="kleistad_gebruiker_id" value="<?php echo esc_attr( $data['gebruiker_id'] ); ?>" />
 		<div class="kleistad_row">
 			<div class="kleistad_col_3">
 				<label class="kleistad_label" >Betaald</label>
@@ -54,7 +54,7 @@ else :
 				<label class="kleistad_label" for="kleistad_datum">Datum betaald</label>
 			</div>
 			<div class="kleistad_col_6">
-				<input class="kleistad_input kleistad_datum" name="kleistad_datum" id="kleistad_datum" type="text" value="<?php echo date( 'd-m-Y' ); ?>" /><br /><br />
+				<input class="kleistad_input kleistad_datum" name="kleistad_datum" id="kleistad_datum" type="text" value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" /><br /><br />
 			</div>
 		</div>
 		<div class="kleistad_row">

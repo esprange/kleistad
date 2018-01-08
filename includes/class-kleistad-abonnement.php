@@ -73,7 +73,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'start_datum':
 				return strtotime( $this->_data[ $attribuut ] );
 			case 'geannuleerd':
-				return 1 == $this->_data[ $attribuut ];
+				return 1 === $this->_data[ $attribuut ];
 			default:
 				return $this->_data[ $attribuut ];
 		}

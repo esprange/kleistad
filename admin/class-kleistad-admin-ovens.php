@@ -10,7 +10,7 @@
  */
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php' ;
 }
 
 /**
@@ -21,11 +21,11 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct(
 			[
 				'singular' => 'oven',
-				'plural' => 'ovens',
+				'plural'   => 'ovens',
 			]
 		);
 	}
@@ -37,7 +37,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 * @param string $column_name key.
 	 * @return HTML
 	 */
-	function column_default( $item, $column_name ) {
+	public function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
 	}
 
@@ -47,7 +47,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 * @param array $item row (key, value).
 	 * @return HTML
 	 */
-	function column_naam( $item ) {
+	public function column_naam( $item ) {
 		$actions = [
 			'edit' => sprintf( '<a href="?page=ovens_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
@@ -63,7 +63,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 * @param array $item   row (key, value array).
 	 * @return HTML
 	 */
-	function column_beschikbaarheid( $item ) {
+	public function column_beschikbaarheid( $item ) {
 		$beschikbaarheid = json_decode( $item['beschikbaarheid'], true );
 		return implode( ', ', $beschikbaarheid );
 	}
@@ -73,12 +73,12 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = [
-			'naam' => 'Naam',
-			'kosten' => 'Tarief',
+			'naam'            => 'Naam',
+			'kosten'          => 'Tarief',
 			'beschikbaarheid' => 'Beschikbaarheid',
-			'id' => 'Id',
+			'id'              => 'Id',
 		];
 		return $columns;
 	}
@@ -88,7 +88,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_sortable_columns() {
+	public function get_sortable_columns() {
 		$sortable_columns = [
 			'naam' => [ 'naam', true ],
 		];
@@ -99,24 +99,26 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 *
 	 * It will get rows from database and prepare them to be showed in table
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 		global $wpdb;
 
 		$per_page = 5; // constant, how much records will be shown per page.
 
-		$columns = $this->get_columns();
-		$hidden = [];
+		$columns  = $this->get_columns();
+		$hidden   = [];
 		$sortable = $this->get_sortable_columns();
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$total_items = $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}kleistad_ovens" ); // WPCS: unprepared SQL OK.
+		$total_items = $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}kleistad_ovens" ); // WPCS: db call ok, cache ok, unprepared SQL ok.
 
-		$paged = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
-		$orderby = (isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) )) ? $_REQUEST['orderby'] : 'naam';
-		$order = (isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], [ 'asc', 'desc' ] )) ? $_REQUEST['order'] : 'asc';
-
-		$this->items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens ORDER BY $orderby $order LIMIT $per_page OFFSET $paged", ARRAY_A ); // WPCS: unprepared SQL OK.
+		$paged_val = filter_input( INPUT_GET, 'paged' );
+		$paged   = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$orderby_val = filter_input( INPUT_GET, 'orderby' );
+		$orderby = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val = filter_input( INPUT_GET, 'order' );
+		$order = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$this->items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens ORDER BY $orderby $order LIMIT $per_page OFFSET $paged", ARRAY_A ); // WPCS: db call ok, cache ok, unprepared SQL OK.
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items, // total items defined above.

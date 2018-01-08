@@ -40,7 +40,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 			'id'                 => null,
 			'naam'               => '',
 			'kosten'             => 0,
-			'beschikbaarheid'    => json_encode( [] ),
+			'beschikbaarheid'    => wp_json_encode( [] ),
 		];
 		$this->_data     = $default_data;
 		if ( ! is_null( $oven_id ) ) {
@@ -72,7 +72,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 			case 'donderdag':
 			case 'vrijdag':
 			case 'zaterdag':
-				return (array_search( $attribuut, json_decode( $this->_data['beschikbaarheid'], true ) ) !== false);
+				return (array_search( $attribuut, json_decode( $this->_data['beschikbaarheid'], true ), true ) !== false);
 			default:
 				return $this->_data[ $attribuut ];
 		}
@@ -92,7 +92,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'beschikbaarheid':
-				$this->_data[ $attribuut ]     = json_encode( $waarde );
+				$this->_data[ $attribuut ]     = wp_json_encode( $waarde );
 				break;
 			default:
 				$this->_data[ $attribuut ]     = $waarde;
@@ -200,7 +200,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			'programma'      => 0,
 			'gemeld'         => 0,
 			'verwerkt'       => 0,
-			'verdeling'      => json_encode( [] ),
+			'verdeling'      => wp_json_encode( [] ),
 			'opmerking'      => '',
 		];
 		$this->_data     = $default_data;
@@ -290,7 +290,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				return strtotime( $this->_data['jaar'] . '-' . $this->_data['maand'] . '-' . $this->_data['dag'] . ' 00:00' );
 			case 'gemeld':
 			case 'verwerkt':
-				return 1 == $this->_data[ $attribuut ];
+				return 1 === $this->_data[ $attribuut ];
 			default:
 				return $this->_data[ $attribuut ];
 		}
@@ -310,7 +310,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 		switch ( $attribuut ) {
 			case 'verdeling':
 				if ( is_array( $waarde ) ) {
-					$this->_data[ $attribuut ] = json_encode( $waarde );
+					$this->_data[ $attribuut ] = wp_json_encode( $waarde );
 				} else {
 					$this->_data[ $attribuut ] = $waarde;
 				}
@@ -486,7 +486,7 @@ class Kleistad_Regelingen {
 	 */
 	public function delete_and_save( $gebruiker_id, $oven_id ) {
 		unset( $this->_data[ $gebruiker_id ][ $oven_id ] );
-		if ( 0 == count( $this->_data[ $gebruiker_id ] ) ) {
+		if ( 0 === count( $this->_data[ $gebruiker_id ] ) ) {
 			return delete_user_meta( $gebruiker_id, 'kleistad_regeling' );
 		} else {
 			return update_user_meta( $gebruiker_id, 'kleistad_regeling', $this->_data[ $gebruiker_id ] );
