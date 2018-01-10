@@ -1,14 +1,14 @@
-( function ( $ ) {
+( function( $ ) {
     'use strict';
 
     $( document ).ready(
-        function () {
+        function() {
 
             /**
              * Definieer het datum veld.
              */
             $( '.kleistad_datum' ).each(
-                function () {
+                function() {
                     $( this ).datepicker(
                         {
                             dateFormat: 'dd-mm-yy'

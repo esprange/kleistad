@@ -148,7 +148,7 @@
                     $( '#kleistad_vervallen' ).prop( 'checked', cursus.vervallen > 0 );
                     $( '#kleistad_wachtlijst' ).children().remove().end();
                     $.each(
-                        wachtlijst, function ( key, value ) {
+                        wachtlijst, function( key, value ) {
                             $( '#kleistad_wachtlijst' ).append( new Option( value.naam, JSON.stringify( value ), false, false ) );
                         }
                     );
@@ -200,7 +200,7 @@
                     var element,
                         options = $( '#kleistad_indeling option' ),
                         cursisten = $.map(
-                            options, function ( option ) {
+                            options, function( option ) {
                                 element = JSON.parse( option.value );
                                 return Number( element.id );
                             }
@@ -278,7 +278,7 @@
         if ( technieken !== null ) {
             techniekTekst = '<p>Gekozen technieken : ';
             $.each(
-                technieken, function ( key, value ) {
+                technieken, function( key, value ) {
                     techniekTekst += value + ' ';
                 }
             );

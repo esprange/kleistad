@@ -1,8 +1,8 @@
-( function ( $ ) {
+( function( $ ) {
     'use strict';
 
     $( document ).ready(
-        function () {
+        function() {
             /**
              * Definieer de popup dialoog
              */
@@ -13,7 +13,7 @@
                     width: 750,
                     modal: true,
                     buttons: {
-                        Ok: function () {
+                        Ok: function() {
                             $( this ).dialog( 'close' );
                         }
                     }
@@ -61,7 +61,7 @@
              * Verander de opmaak bij hovering.
              */
             $( 'body' ).on(
-                'hover', '.kleistad_deelnemer_info', function () {
+                'hover', '.kleistad_deelnemer_info', function() {
                     $( this ).css( 'cursor', 'pointer' );
                     $( this ).toggleClass( 'kleistad_hover' );
                 }
@@ -71,7 +71,7 @@
              * Filter de abonnees/cursisten.
              */
             $( 'body' ).on(
-                'click', '#kleistad_deelnemer_selectie', function () {
+                'click', '#kleistad_deelnemer_selectie', function() {
                     var selectie = $( this ).val();
                     switch ( selectie ) {
                         case '*':
@@ -95,7 +95,7 @@
              * Toon de detailinformatie van de deelnemer
              */
             $( 'body' ).on(
-                'click', '.kleistad_deelnemer_info', function () {
+                'click', '.kleistad_deelnemer_info', function() {
                     var header = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Inschrijfgeld</th><th>Cursusgeld</th><th>Geannuleerd</th><th>Technieken</th></tr>',
                         inschrijvingen = $( this ).data( 'inschrijvingen' ),
                         deelnemer = $( this ).data( 'deelnemer' ),
@@ -111,7 +111,7 @@
 
                     if ( typeof inschrijvingen !== 'undefined' ) {
                         $.each(
-                            inschrijvingen, function ( key, value ) {
+                            inschrijvingen, function( key, value ) {
                                 var status = ( value.ingedeeld ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     i_betaald = ( value.i_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     c_betaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
@@ -120,7 +120,7 @@
                                     '</td><td>' + i_betaald + '</td><td>' + c_betaald + '</td><td>' + geannuleerd + '</td><td>',
                                     separator = '';
                                 $.each(
-                                    value.technieken, function ( key, value ) {
+                                    value.technieken, function( key, value ) {
                                         html += separator + value;
                                         separator = '<br/>';
                                     }
