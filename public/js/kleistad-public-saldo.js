@@ -1,23 +1,23 @@
 ( function ( $ ) {
-	'use strict';
+    'use strict';
 
-	$( document ).ready(
-		function () {
+    $( document ).ready(
+        function () {
 
-				/**
-		 * Definieer het datum veld.
-		 */
-				$( ".kleistad_datum" ).each(
-					function () {
-						$( this ).datepicker(
-							{
-								dateFormat: "dd-mm-yy"
-							}
-						);
-					}
-				);
+            /**
+             * Definieer het datum veld.
+             */
+            $( ".kleistad_datum" ).each(
+                function () {
+                    $( this ).datepicker(
+                        {
+                            dateFormat: "dd-mm-yy"
+                        }
+                    );
+                }
+            );
 
-		}
-	);
+        }
+    );
 
 } )( jQuery );

@@ -113,8 +113,7 @@
 					}
 				);
 				break;
-			default:
-				;
+			default:				
 		}
 
 				// Pas het percentage aan
@@ -123,7 +122,7 @@
 			if (Number( stokerPercs[0].value ) < 0) {
 				stokerPercs[selectedRow].value = Number( stokerPercs[selectedRow].value ) + Number( stokerPercs[0].value );
 				stokerPercs[0].value = 0;
-				alert( 'De hoofdstoker heeft niets meer te verdelen.' );
+				window.alert( 'De hoofdstoker heeft niets meer te verdelen.' );
 			}
 		}
 	}
@@ -136,7 +135,7 @@
 	 */
 	function kleistadFalen(message) {
 		// rapporteer falen
-		alert( message );
+		window.alert( message );
 	}
 
 	/**
@@ -166,6 +165,7 @@
 					$( '#reserveringen' + data.oven_id ).html( data.html );
 			}
 		).fail(
+                        /* jshint unused:vars */
 			function (jqXHR, textStatus, errorThrown) {
 				if ('undefined' !== typeof jqXHR.responseJSON.message) {
 					kleistadFalen( jqXHR.responseJSON.message );
@@ -219,6 +219,7 @@
 					$( '#reserveringen' + data.oven_id ).html( data.html );
 			}
 		).fail(
+                        /* jshint unused:vars */
 			function (jqXHR, textStatus, errorThrown) {
 				if ('undefined' !== typeof jqXHR.responseJSON.message) {
 					kleistadFalen( jqXHR.responseJSON.message );
