@@ -8,9 +8,9 @@
              */
             $( '#kleistad_deelnemer_info' ).dialog(
                 {
-                            autoOpen: false,
-                            height: 400,
-                            width: 750,
+                    autoOpen: false,
+                    height: 400,
+                    width: 750,
                     modal: true,
                     buttons: {
                         Ok: function () {
@@ -46,7 +46,7 @@
                             sPrevious: 'Vorige'
                         },
                         oAria: {
-                            sSortAscending:  ': activeer om kolom oplopend te sorteren',
+                            sSortAscending: ': activeer om kolom oplopend te sorteren',
                             sSortDescending: ': activeer om kolom aflopend te sorteren'
                         }
                     },

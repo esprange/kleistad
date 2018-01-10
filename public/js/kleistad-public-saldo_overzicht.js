@@ -27,7 +27,7 @@
                             sPrevious: 'Vorige'
                         },
                         oAria: {
-                            sSortAscending:  ': activeer om kolom oplopend te sorteren',
+                            sSortAscending: ': activeer om kolom oplopend te sorteren',
                             sSortDescending: ': activeer om kolom aflopend te sorteren'
                         }
                     }

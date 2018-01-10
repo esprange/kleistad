@@ -28,7 +28,7 @@
                             sPrevious: 'Vorige'
                         },
                         oAria: {
-                            sSortAscending:  ': activeer om kolom oplopend te sorteren',
+                            sSortAscending: ': activeer om kolom oplopend te sorteren',
                             sSortDescending: ': activeer om kolom aflopend te sorteren'
                         }
                     },
@@ -98,10 +98,10 @@
              */
             $( '#kleistad_cursus' ).dialog(
                 {
-                            autoOpen: false,
-                            height: 550,
-                            width: 750,
-                            modal: true,
+                    autoOpen: false,
+                    height: 550,
+                    width: 750,
+                    modal: true,
                     /* jshint unused:vars */
                     open: function ( event, ui ) {
                         $( '#kleistad_cursus_tabs' ).tabs( { active: 0 } );
