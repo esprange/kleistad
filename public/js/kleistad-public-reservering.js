@@ -217,7 +217,7 @@
 				}
 			}
 		).done(
-			function(data) {
+			function( data ) {
 					$( '#reserveringen' + data.oven_id ).html( data.html );
 			}
 		).fail(
