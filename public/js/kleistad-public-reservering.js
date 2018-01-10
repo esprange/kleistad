@@ -1,4 +1,4 @@
-/* global kleistad_data */
+/* global kleistadData */
 
 ( function( $ ) {
 	'use strict';
@@ -87,7 +87,7 @@
 					function( item, index ) {
 						if ( item === element ) {
 							selectedRow = index;
-                                                        
+
 							// Sanitize, als geen id, dan ook geen percentage.
 							if ( 0 === Number( item.value ) ) {
 								stokerPercs[index] = 0;
@@ -102,12 +102,12 @@
 					function( item, index ) {
 						if ( item === element ) {
 							selectedRow = index;
-                                                        
+
 							// Sanitize, als geen id, dan ook geen percentage.
 							if ( 0 === Number( stokerIds[index].value ) ) {
 								item.value = 0;
 							} else {
-                                                            
+
 								// Sanitize, value moet tussen 0 en 100 liggen (html moet dit al afvangen).
 								item.value = Math.min( Math.max( +item.value, 0 ), 100 );
 							}
@@ -116,13 +116,13 @@
 					}
 				);
 				break;
-			default:				
+			default:
 		}
 
 				// Pas het percentage aan
 		if ( 100 !== sum ) {
 			stokerPercs[0].value = Number( stokerPercs[0].value ) - ( sum - 100 );
-			if (Number( stokerPercs[0].value ) < 0) {
+			if ( Number( stokerPercs[0].value ) < 0 ) {
 				stokerPercs[selectedRow].value = Number( stokerPercs[selectedRow].value ) + Number( stokerPercs[0].value );
 				stokerPercs[0].value = 0;
 				window.alert( 'De hoofdstoker heeft niets meer te verdelen.' );
@@ -136,8 +136,7 @@
 	 * @param {string} message foutmelding tekst.
 	 * @returns {undefined}
 	 */
-	function kleistadFalen(message) {
-		// rapporteer falen
+	function kleistadFalen( message ) {
 		window.alert( message );
 	}
 
@@ -149,13 +148,13 @@
 	 * @param {int} jaar jaarnummer van de opgevraagde periode.
 	 * @returns {undefined}
 	 */
-	function kleistadShow(ovenId, maand, jaar) {
+	function kleistadShow( ovenId, maand, jaar ) {
 		$.ajax(
 			{
-				url: kleistad_data.base_url + '/show/',
+				url: kleistadData.base_url + '/show/',
 				method: 'POST',
-				beforeSend: function(xhr) {
-					xhr.setRequestHeader( 'X-WP-Nonce', kleistad_data.nonce );
+				beforeSend: function( xhr ) {
+					xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
 				},
 				data: {
 					maand: maand,
@@ -164,17 +163,17 @@
 				}
 			}
 		).done(
-			function(data) {
+			function( data ) {
 					$( '#reserveringen' + data.oven_id ).html( data.html );
 			}
 		).fail(
                         /* jshint unused:vars */
-			function(jqXHR, textStatus, errorThrown) {
-				if ('undefined' !== typeof jqXHR.responseJSON.message) {
+			function( jqXHR, textStatus, errorThrown ) {
+				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 					kleistadFalen( jqXHR.responseJSON.message );
 					return;
 				}
-					kleistadFalen( kleistad_data.error_message );
+					kleistadFalen( kleistadData.error_message );
 			}
 		);
 	}
@@ -185,13 +184,13 @@
 	 * @param {int} wijzigen als 1 dan wijzigen en -1 dan verwijderen.
 	 * @returns {undefined}
 	 */
-	function kleistadMuteer(wijzigen) {
+	function kleistadMuteer( wijzigen ) {
 		var stokerPercs = $( '[name=kleistad_stoker_perc]' ).toArray(),
 			stokerIds = $( '[name=kleistad_stoker_id]' ).toArray(),
 			verdeling = [];
 		stokerIds.forEach(
-			function(item, index) {
-				if ((stokerPercs[index].value !== '0') || (index === 0)) {
+			function( item, index ) {
+				if ( ( '0' !== stokerPercs[index].value ) || ( 0 === index ) ) {
 					verdeling.push( { id: +item.value, perc: +stokerPercs[index].value } );
 				}
 			}
@@ -200,10 +199,10 @@
 
 		$.ajax(
 			{
-				url: kleistad_data.base_url + '/reserveer/',
+				url: kleistadData.base_url + '/reserveer/',
 				method: 'POST',
-				beforeSend: function(xhr) {
-					xhr.setRequestHeader( 'X-WP-Nonce', kleistad_data.nonce );
+				beforeSend: function( xhr ) {
+					xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
 				},
 				data: {
 					dag: $( '#kleistad_dag' ).val(),
@@ -223,12 +222,12 @@
 			}
 		).fail(
                         /* jshint unused:vars */
-			function(jqXHR, textStatus, errorThrown) {
-				if ('undefined' !== typeof jqXHR.responseJSON.message) {
+			function( jqXHR, textStatus, errorThrown ) {
+				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 					kleistadFalen( jqXHR.responseJSON.message );
 					return;
 				}
-					kleistadFalen( kleistad_data.error_message );
+					kleistadFalen( kleistadData.error_message );
 			}
 		);
 	}

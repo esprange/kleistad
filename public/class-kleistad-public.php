@@ -103,7 +103,7 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'betalingen', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-betalingen.js', [ 'jquery', 'jquery-ui-dialog', 'datatables' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'reservering', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-reservering.js', [ 'jquery', 'jquery-ui-dialog' ], $this->version, false );
 		wp_localize_script(
-			$this->plugin_name . 'reservering', 'kleistad_data', [
+			$this->plugin_name . 'reservering', 'kleistadData', [
 				'nonce' => wp_create_nonce( 'wp_rest' ),
 				'base_url' => rest_url( $this->url ),
 				'success_message' => 'de reservering is geslaagd!',
