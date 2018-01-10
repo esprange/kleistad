@@ -43,25 +43,25 @@ before_script:
       fi
     fi
   - |
-    # Install CodeSniffer for WordPress Coding Standards checks.
-    - if [[ $WP_TRAVISCI" == "phpcs" ]]; then git clone -b master --depth 1 https://github.com/squizlabs/PHP_CodeSniffer.git $PHPCS_DIR; fi
-    # Install WordPress Coding Standards.
-    - if [[ $WP_TRAVISCI" == "phpcs" ]]; then git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git $SNIFFS_DIR; fi
-    # Install PHP Compatibility sniffs.
-    - if [[ $WP_TRAVISCI" == "phpcs" ]]; then git clone -b master --depth 1 https://github.com/wimg/PHPCompatibility.git $SNIFFS_DIR/PHPCompatibility; fi
-    # Set install path for PHPCS sniffs.
-    # @link https://github.com/squizlabs/PHP_CodeSniffer/blob/4237c2fc98cc838730b76ee9cee316f99286a2a7/CodeSniffer.php#L1941
-    - if [[ $WP_TRAVISCI" == "phpcs" ]]; then $PHPCS_DIR/scripts/phpcs --config-set installed_paths $SNIFFS_DIR; fi
-    # After CodeSniffer install you should refresh your path.
-    - if [[ $WP_TRAVISCI" == "phpcs" ]]; then phpenv rehash; fi
-    # Install JSCS: JavaScript Code Style checker.
-    # @link http://jscs.info/
-    - if [[ $WP_TRAVISCI" == "phpcs" ]]; then npm install -g jscs; fi
-    # Install JSHint, a JavaScript Code Quality Tool.
-    # @link http://jshint.com/docs/
-    - if [[ $WP_TRAVISCI" == "phpcs" ]]; then npm install -g jshint; fi
-    # Pull in the WP Core jshint rules.
-    - if [[ $WP_TRAVISCI" == "phpcs" ]]; then wget https://develop.svn.wordpress.org/trunk/.jshintrc; fi
+  # Install CodeSniffer for WordPress Coding Standards checks.
+  - if [[ $WP_TRAVISCI" == "phpcs" ]]; then git clone -b master --depth 1 https://github.com/squizlabs/PHP_CodeSniffer.git $PHPCS_DIR; fi
+  # Install WordPress Coding Standards.
+  - if [[ $WP_TRAVISCI" == "phpcs" ]]; then git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git $SNIFFS_DIR; fi
+  # Install PHP Compatibility sniffs.
+  - if [[ $WP_TRAVISCI" == "phpcs" ]]; then git clone -b master --depth 1 https://github.com/wimg/PHPCompatibility.git $SNIFFS_DIR/PHPCompatibility; fi
+  # Set install path for PHPCS sniffs.
+  # @link https://github.com/squizlabs/PHP_CodeSniffer/blob/4237c2fc98cc838730b76ee9cee316f99286a2a7/CodeSniffer.php#L1941
+  - if [[ $WP_TRAVISCI" == "phpcs" ]]; then $PHPCS_DIR/scripts/phpcs --config-set installed_paths $SNIFFS_DIR; fi
+  # After CodeSniffer install you should refresh your path.
+  - if [[ $WP_TRAVISCI" == "phpcs" ]]; then phpenv rehash; fi
+  # Install JSCS: JavaScript Code Style checker.
+  # @link http://jscs.info/
+  - if [[ $WP_TRAVISCI" == "phpcs" ]]; then npm install -g jscs; fi
+  # Install JSHint, a JavaScript Code Quality Tool.
+  # @link http://jshint.com/docs/
+  - if [[ $WP_TRAVISCI" == "phpcs" ]]; then npm install -g jshint; fi
+  # Pull in the WP Core jshint rules.
+  - if [[ $WP_TRAVISCI" == "phpcs" ]]; then wget https://develop.svn.wordpress.org/trunk/.jshintrc; fi
 
         # Install PHP_CodeSniffer.
         #composer global require "squizlabs/php_codesniffer=*"
