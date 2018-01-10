@@ -1,8 +1,8 @@
-( function ( $ ) {
+( function( $ ) {
     'use strict';
 
     $( document ).ready(
-        function () {
+        function() {
 
             /**
              * Definieer de tabel.
@@ -52,18 +52,19 @@
                         max: 60 * 23 + 45,
                         min: 0
                     },
-                    _parse: function ( value ) {
-                        if ( typeof value === 'string' ) {
+                    _parse: function( value ) {
+                        var hours, minutes;
+                        if ( 'string' === typeof value ) {
                             if ( Number( value ) === value ) {
                                 return Number( value );
                             }
-                            var hours = value.substring( 0, 2 );
-                            var minutes = value.substring( 3 );
+                            hours = value.substring( 0, 2 );
+                            minutes = value.substring( 3 );
                             return Number( hours * 60 ) + Number( minutes );
                         }
                         return value;
                     },
-                    _format: function ( value ) {
+                    _format: function( value ) {
                         var hours = Math.floor( value / 60 );
                         var minutes = value % 60;
                         return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
@@ -75,7 +76,7 @@
              * Definieer de timespinners.
              */
             $( '.kleistad_tijd' ).each(
-                function () {
+                function() {
                     $( this ).timespinner();
                 }
             );
@@ -84,7 +85,7 @@
              * Definieer de datumpickers.
              */
             $( '.kleistad_datum' ).each(
-                function () {
+                function() {
                     $( this ).datepicker(
                         {
                             dateFormat: 'dd-mm-yy'
@@ -103,7 +104,7 @@
                     width: 750,
                     modal: true,
                     /* jshint unused:vars */
-                    open: function ( event, ui ) {
+                    open: function( event, ui ) {
                         $( '#kleistad_cursus_tabs' ).tabs( { active: 0 } );
                     }
                 }
@@ -113,7 +114,7 @@
              * Verander de opmaak bij hover
              */
             $( 'body' ).on(
-                'hover', '.kleistad_cursus_info', function () {
+                'hover', '.kleistad_cursus_info', function() {
                     $( this ).css( 'cursor', 'pointer' );
                     $( this ).toggleClass( 'kleistad_hover' );
                 }
@@ -123,7 +124,7 @@
              * Toon de details van de geselecteerde cursus.
              */
             $( 'body' ).on(
-                'click', '.kleistad_cursus_info', function () {
+                'click', '.kleistad_cursus_info', function() {
                     var cursus = $( this ).data( 'cursus' ),
                         wachtlijst = $( this ).data( 'wachtlijst' ),
                         ingedeeld = $( this ).data( 'ingedeeld' );
@@ -153,7 +154,7 @@
                     );
                     $( '#kleistad_indeling' ).children().remove().end();
                     $.each(
-                        ingedeeld, function ( key, value ) {
+                        ingedeeld, function( key, value ) {
                             var option = new Option( value.naam, JSON.stringify( value ), false, false );
                             option.style.backgroundColor = 'lightgreen';
                             option.style.fontWeight = 700; // bold
@@ -167,7 +168,7 @@
              * Toon een lege popup dialoog voor een nieuwe cursus
              */
             $( 'body' ).on(
-                'click', '#kleistad_cursus_toevoegen', function () {
+                'click', '#kleistad_cursus_toevoegen', function() {
                     $( '#kleistad_cursus' ).dialog( 'open' );
                     $( 'input[name="cursus_id"]' ).removeAttr( 'value' );
                     $( '#kleistad_cursus_naam' ).removeAttr( 'value' );
@@ -195,7 +196,7 @@
              * Wijzig de cursus
              */
             $( 'body' ).on(
-                'click', '[name="kleistad_submit_cursus_beheer"]', function () {
+                'click', '[name="kleistad_submit_cursus_beheer"]', function() {
                     var element,
                         options = $( '#kleistad_indeling option' ),
                         cursisten = $.map(
@@ -212,7 +213,7 @@
              * Wissel een cursist van wachtlijst naar indeling en v.v.
              */
             $( 'body' ).on(
-                'click', '#kleistad_wissel_indeling', function () {
+                'click', '#kleistad_wissel_indeling', function() {
                     var element,
                         ingedeeld = $( '#kleistad_indeling option:selected' ),
                         wachtend = $( '#kleistad_wachtlijst option:selected' );
@@ -233,7 +234,7 @@
              * Toon de wachtende cursist info indien geselecteerd.
              */
             $( 'body' ).on(
-                'click', '#kleistad_wachtlijst', function () {
+                'click', '#kleistad_wachtlijst', function() {
                     var cursist = $( 'option:selected', this );
                     $( '#kleistad_indeling option:selected' ).prop( 'selected', false );
                     $( '#kleistad_cursist_technieken' ).empty();
@@ -248,7 +249,7 @@
              * Toon de ingedeelde cursist info indien geselecteerd.
              */
             $( 'body' ).on(
-                'click', '#kleistad_indeling', function () {
+                'click', '#kleistad_indeling', function() {
                     var cursist = $( 'option:selected', this );
                     $( '#kleistad_wachtlijst option:selected' ).prop( 'selected', false );
                     $( '#kleistad_cursist_technieken' ).empty();
