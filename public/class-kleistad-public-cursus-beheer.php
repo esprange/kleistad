@@ -140,7 +140,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 					'indeling_lijst' => FILTER_SANITIZE_STRING,
 				]
 			);
-			$input['cursisten']  = ('' === $input['indeling_lijst']) ? [] : json_decode( $input['indeling_lijst'], true );
+			$input['cursisten']  = ( '' === $input['indeling_lijst'] ) ? [] : json_decode( $input['indeling_lijst'], true );
 		}
 		$data = [
 			'input' => $input,

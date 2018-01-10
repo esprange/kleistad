@@ -29,7 +29,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of a gebruiker.
 	 */
-	function test_gebruiker() {
+	public function test_gebruiker() {
 		$gebruiker1 = new Kleistad_Gebruiker( $this->user_id );
 		$gebruiker1->telnr = 'telnr';
 		$gebruiker1->straat = 'straat';
@@ -53,7 +53,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of a gebruiker.
 	 */
-	function test_gebruikers() {
+	public function test_gebruikers() {
 		$gebruikers_store = new Kleistad_Gebruikers();
 		$gebruikers_from_store = $gebruikers_store->get();
 

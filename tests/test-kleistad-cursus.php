@@ -20,7 +20,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of a cursus.
 	 */
-	function test_cursus() {
+	public function test_cursus() {
 		$cursus1 = new Kleistad_Cursus();
 		$cursus1->naam = 'test cursus';
 		$cursus_id = $cursus1->save();
@@ -37,7 +37,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of multiple cursussen.
 	 */
-	function test_cursussen() {
+	public function test_cursussen() {
 
 		$teststring = 'test cursussen';
 		$cursussen = [];
@@ -61,7 +61,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of an inschrijving.
 	 */
-	function test_inschrijving() {
+	public function test_inschrijving() {
 		$cursist_id = $this->factory->user->create();
 		$cursus = new Kleistad_Cursus();
 		$cursus->start_datum = strtotime( 'now' );
@@ -82,7 +82,7 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of multiple inschrijvingen.
 	 */
-	function test_inschrijvingen() {
+	public function test_inschrijvingen() {
 		$cursist_ids = $this->factory->user->create_many( 10 );
 		$cursus = new Kleistad_Cursus();
 		$cursus->save();

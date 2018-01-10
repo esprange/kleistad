@@ -10,7 +10,7 @@
  */
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php' ;
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 /**
@@ -122,8 +122,8 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items, // total items defined above.
-			'per_page' => $per_page, // per page constant defined at top of method.
-			'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
+				'per_page' => $per_page, // per page constant defined at top of method.
+				'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
 			]
 		);
 	}

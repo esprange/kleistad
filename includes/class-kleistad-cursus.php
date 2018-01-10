@@ -74,7 +74,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return ( 'null' === $this->_data['technieken']) ? [] : json_decode( $this->_data['technieken'], true );
+				return ( 'null' === $this->_data['technieken'] ) ? [] : json_decode( $this->_data['technieken'], true );
 			case 'start_datum':
 			case 'eind_datum':
 			case 'start_tijd':
@@ -231,7 +231,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		];
 
 		  $inschrijvingen = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
-		if ( is_array( $inschrijvingen ) && (isset( $inschrijvingen[ $this->_cursus_id ] )) ) {
+		if ( is_array( $inschrijvingen ) && ( isset( $inschrijvingen[ $this->_cursus_id ] ) ) ) {
 			$this->_data = $inschrijvingen[ $this->_cursus_id ];
 			if ( ! isset( $this->_data['geannuleerd'] ) ) {
 				$this->_data['geannuleerd'] = 0; // voor oude inschrijvingen.
@@ -254,7 +254,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return (is_array( $this->_data[ $attribuut ] )) ? $this->_data[ $attribuut ] : [];
+				return ( is_array( $this->_data[ $attribuut ] ) ) ? $this->_data[ $attribuut ] : [];
 			case 'datum':
 				return strtotime( $this->_data[ $attribuut ] );
 			case 'i_betaald':

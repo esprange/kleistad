@@ -21,7 +21,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct(
 			[
 				'singular' => 'stooksaldo',
@@ -37,7 +37,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 * @param string $column_name - string (key).
 	 * @return HTML
 	 */
-	function column_default( $item, $column_name ) {
+	public function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
 	}
 
@@ -47,7 +47,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 * @param array $item - row (key, value array).
 	 * @return HTML
 	 */
-	function column_naam( $item ) {
+	public function column_naam( $item ) {
 		$actions = [
 			'edit' => sprintf( '<a href="?page=stooksaldo_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
@@ -62,7 +62,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = [
 			'naam' => 'Naam gebruiker',
 			'saldo' => 'Saldo',
@@ -75,7 +75,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_sortable_columns() {
+	public function get_sortable_columns() {
 		$sortable_columns = [
 			'naam' => [ 'naam', true ],
 			'saldo' => [ 'saldo', false ],
@@ -87,7 +87,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 *
 	 * It will get rows from database and prepare them to be showed in table
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 		$per_page = 5;
 
 		$columns = $this->get_columns();

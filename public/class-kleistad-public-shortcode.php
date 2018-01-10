@@ -129,7 +129,7 @@ abstract class Kleistad_Public_Shortcode {
 		$headers[] = "From: Kleistad <{$emailadresses['from']}>";
 
 		$page = get_page_by_title( $slug, OBJECT );
-		$text = ( ! is_null( $page )) ? apply_filters( 'the_content', $page->post_content ) : $slug;
+		$text = ( ! is_null( $page ) ) ? apply_filters( 'the_content', $page->post_content ) : $slug;
 
 		foreach ( $args as $key => $value ) {
 			$text = str_replace( '[' . $key . ']', $value, $text );
@@ -137,7 +137,7 @@ abstract class Kleistad_Public_Shortcode {
 		$fields = [ 'cc', 'bcc' ];
 		foreach ( $fields as $field ) {
 			$gevonden = stripos( $text, '[' . $field . ':' );
-			if ( ! (false === $gevonden) ) {
+			if ( ! ( false === $gevonden ) ) {
 				$eind = stripos( $text, ']', $gevonden );
 				$headers[] = ucfirst( substr( $text, $gevonden + 1, $eind - $gevonden - 1 ) );
 				$text = substr( $text, 0, $gevonden ) . substr( $text, $eind + 1 );

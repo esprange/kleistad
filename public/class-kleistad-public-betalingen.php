@@ -41,7 +41,7 @@ class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
 
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ( $cursussen[ $cursus_id ]->eind_datum > time()) && ( ! $inschrijving->i_betaald || ! $inschrijving->c_betaald ) ) {
+				if ( ( $cursussen[ $cursus_id ]->eind_datum > time() ) && ( ! $inschrijving->i_betaald || ! $inschrijving->c_betaald ) ) {
 					$rows[] = [
 						'inschrijver_id' => $cursist_id,
 						'naam' => $cursisten[ $cursist_id ]->voornaam . ' ' . $cursisten[ $cursist_id ]->achternaam,

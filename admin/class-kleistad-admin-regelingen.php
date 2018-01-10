@@ -145,8 +145,8 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items, // total items defined above.
-			'per_page' => $per_page, // per page constant defined at top of method.
-			'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
+				'per_page' => $per_page, // per page constant defined at top of method.
+				'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
 			]
 		);
 	}

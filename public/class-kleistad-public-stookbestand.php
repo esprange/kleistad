@@ -83,7 +83,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 		$medestokers = [];
 		foreach ( $reserveringen as $reservering ) {
 			$datum = strtotime( $reservering->jaar . '-' . $reservering->maand . '-' . $reservering->dag );
-			if ( ($datum < $data['vanaf_datum']) || ($datum > $data['tot_datum']) ) {
+			if ( ( $datum < $data['vanaf_datum'] ) || ( $datum > $data['tot_datum'] ) ) {
 				continue;
 			}
 			foreach ( $reservering->verdeling as $verdeling ) {
@@ -111,7 +111,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 
 		foreach ( $reserveringen as $reservering ) {
 			$stoker      = get_userdata( $reservering->gebruiker_id );
-			$stoker_naam = ( ! $stoker) ? 'onbekend' : $stoker->display_name;
+			$stoker_naam = ( ! $stoker ) ? 'onbekend' : $stoker->display_name;
 			$values      = [
 				$stoker_naam,
 				$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
@@ -129,7 +129,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 						$percentage += $stookdeel['perc'];
 					}
 				}
-				$values [] = (0 === $percentage) ? '' : $percentage;
+				$values [] = ( 0 === $percentage ) ? '' : $percentage;
 			}
 
 			$totaal = 0;
@@ -142,13 +142,13 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 							$kosten += $stookdeel['prijs'];
 						} else { // Voorlopige berekening.
 							$regeling = $regeling_store->get( $id, $reservering->oven_id );
-							$kosten += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling )) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
+							$kosten += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
 						}
 						$totaal += $kosten;
 						$kosten_tonen = true;
 					}
 				}
-				$values [] = ($kosten_tonen) ? number_format( $kosten, 2, ',', '' ) : '';
+				$values [] = ( $kosten_tonen ) ? number_format( $kosten, 2, ',', '' ) : '';
 			}
 			$values [] = number_format( $totaal, 2, ',', '' );
 			fputcsv( $f, $values, ';', '"' );

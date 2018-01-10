@@ -20,7 +20,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of an oven.
 	 */
-	function test_oven() {
+	public function test_oven() {
 		$oven1 = new Kleistad_Oven();
 		$oven1->naam = 'test oven';
 		$oven1->kosten = 10;
@@ -44,7 +44,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of multiple ovens.
 	 */
-	function test_ovens() {
+	public function test_ovens() {
 
 		$teststring = 'test ovens';
 		$ovens = [];
@@ -68,7 +68,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of a reservering.
 	 */
-	function test_reservering() {
+	public function test_reservering() {
 		$user_id = $this->factory->user->create(
 			[
 				'role' => 'subscriber',
@@ -134,7 +134,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	/**
 	 * Test retrieval of multiple reserveringen.
 	 */
-	function test_reserveringen() {
+	public function test_reserveringen() {
 
 		$oven = new Kleistad_Oven();
 		$oven_id = $oven->save();
@@ -168,7 +168,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	/**
 	 * Test the regelingen class.
 	 */
-	function test_regelingen() {
+	public function test_regelingen() {
 		$oven = new Kleistad_Oven();
 		$oven_id = $oven->save();
 

@@ -325,7 +325,7 @@ class Kleistad_Public {
 					$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
 					$stookdeel['prijs'] = $prijs;
 					$huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
-					$nieuw_saldo = ('' === $huidig_saldo) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
+					$nieuw_saldo = ( '' === $huidig_saldo ) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
 
 					Kleistad_Oven::log_saldo(
 						"wijziging saldo $medestoker->display_name van $huidig_saldo naar $nieuw_saldo, stook op " .
@@ -354,7 +354,7 @@ class Kleistad_Public {
 		}
 
 		/*
-        * de notificaties uitsturen voor stook die nog niet verwerkt is.
+		* de notificaties uitsturen voor stook die nog niet verwerkt is.
 		*/
 		foreach ( $reserveringen as &$reservering ) {
 			if ( ! $reservering->verwerkt && ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
@@ -369,8 +369,8 @@ class Kleistad_Public {
 						'achternaam' => $gebruiker->last_name,
 						'bedrag' => number_format( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling, 2, ',', '' ),
 						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
-					'datum_deadline' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
-					'stookoven' => $ovens[ $reservering->oven_id ]->naam,
+						'datum_deadline' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
+						'stookoven' => $ovens[ $reservering->oven_id ]->naam,
 					]
 				);
 				$reservering->gemeld = true;

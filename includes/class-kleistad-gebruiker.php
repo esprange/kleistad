@@ -53,7 +53,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 			$this->_gebruiker_id = $gebruiker_id;
 			$gebruiker = get_userdata( $gebruiker_id );
 			$contactinfo = get_user_meta( $gebruiker_id, 'contactinfo', true );
-			$this->_data = ('' === $contactinfo) ? $default_data : $contactinfo;
+			$this->_data = ( '' === $contactinfo ) ? $default_data : $contactinfo;
 			$this->_data['achternaam'] = $gebruiker->last_name;
 			$this->_data['voornaam'] = $gebruiker->first_name;
 			$this->_data['email'] = $gebruiker->user_email;

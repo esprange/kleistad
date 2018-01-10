@@ -45,7 +45,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 				$abonnee_info = [
 					'code' => $abonnement->code,
 					'start_datum' => date( 'd-m-Y', $abonnement->start_datum ),
-					'dag' => ('beperkt' === $abonnement->soort) ? $abonnement->dag : '',
+					'dag' => ( 'beperkt' === $abonnement->soort ) ? $abonnement->dag : '',
 					'soort' => $abonnement->soort,
 					'geannuleerd' => $abonnement->geannuleerd,
 					'opmerking' => $abonnement->opmerking,
@@ -189,7 +189,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
 							$cursussen[ $cursus_id ]->naam,
 							$inschrijving->code,
 							date( 'm-d-Y', $inschrijving->datum ),
-							$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : ( $inschrijving->i_betaald ? 'wachtlijst' : 'wacht op betaling')),
+							$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : ( $inschrijving->i_betaald ? 'wachtlijst' : 'wacht op betaling' ) ),
 							implode( ' ', $inschrijving->technieken ),
 							$inschrijving->i_betaald ? 'Ja' : 'Nee',
 							$inschrijving->c_betaald ? 'Ja' : 'Nee',

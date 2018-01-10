@@ -72,7 +72,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 			case 'donderdag':
 			case 'vrijdag':
 			case 'zaterdag':
-				return (array_search( $attribuut, json_decode( $this->_data['beschikbaarheid'], true ), true ) !== false);
+				return ( array_search( $attribuut, json_decode( $this->_data['beschikbaarheid'], true ), true ) !== false );
 			default:
 				return $this->_data[ $attribuut ];
 		}
@@ -121,7 +121,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 *
 	 * @param string $tekstregel tekst to log.
 	 */
-	static public function log_saldo( $tekstregel ) {
+	public static function log_saldo( $tekstregel ) {
 		$upload_dir      = wp_upload_dir();
 		$transactie_log  = $upload_dir['basedir'] . '/stooksaldo.log';
 		$f               = fopen( $transactie_log, 'a' );

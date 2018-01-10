@@ -30,8 +30,8 @@ class Kleistad_Roles {
 	 * @param int $id the user id.
 	 * @return bool
 	 */
-	static function override( $id = 0 ) {
-		return ($id ? user_can( $id, self::OVERRIDE ) : current_user_can( self::OVERRIDE ));
+	public static function override( $id = 0 ) {
+		return ( $id ? user_can( $id, self::OVERRIDE ) : current_user_can( self::OVERRIDE ) );
 	}
 
 	/**
@@ -40,8 +40,8 @@ class Kleistad_Roles {
 	 * @param int $id the user id.
 	 * @return bool
 	 */
-	static function reserveer( $id = 0 ) {
-		return ($id ? user_can( $id, self::RESERVEER ) : current_user_can( self::RESERVEER ));
+	public static function reserveer( $id = 0 ) {
+		return ( $id ? user_can( $id, self::RESERVEER ) : current_user_can( self::RESERVEER ) );
 	}
 
 }

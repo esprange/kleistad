@@ -140,7 +140,7 @@ class Kleistad_Admin {
 	 * @param object $user unused.
 	 */
 	public function check_role( &$errors, $update, &$user ) {
-		if ( (get_the_author_meta( 'kleistad_disable_user', $user->ID ) === 1) ) {
+		if ( ( get_the_author_meta( 'kleistad_disable_user', $user->ID ) === 1 ) ) {
 			$user->role = '';
 		}
 	}
@@ -408,7 +408,7 @@ class Kleistad_Admin {
 			$item_valid = $this->validate_regeling( $item );
 			if ( true === $item_valid ) {
 				$regelingen = new Kleistad_Regelingen();
-				$result = $regelingen->set_and_save( $item['gebruiker_id'], $item['oven_id'] , $item['kosten'] );
+				$result = $regelingen->set_and_save( $item['gebruiker_id'], $item['oven_id'], $item['kosten'] );
 				if ( '' === $item['id'] ) {
 					if ( $result ) {
 						$message = 'De regeling is bewaard';

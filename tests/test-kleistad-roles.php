@@ -36,7 +36,7 @@ class KleistadRolesTest extends WP_UnitTestCase {
 	 *
 	 * @param object $factory test factory object.
 	 */
-	static function wpSetUpBeforeClass( $factory ) {
+	public static function wpSetUpBeforeClass( $factory ) {
 		activate_kleistad();
 		self::$subscriber_id = $factory->user->create(
 			[
@@ -71,7 +71,7 @@ class KleistadRolesTest extends WP_UnitTestCase {
 	/**
 	 * Test creation and modification of roles.
 	 */
-	function test_roles() {
+	public function test_roles() {
 		$this->assertTrue( Kleistad_Roles::reserveer( self::$subscriber_id ), 'subscriber cannot reserveer' );
 		$this->assertFalse( Kleistad_Roles::override( self::$subscriber_id ), 'subscriber can override' );
 

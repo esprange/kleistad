@@ -67,7 +67,7 @@ else :
 								<option value="0" >&nbsp;</option>
 								<?php
 								foreach ( $data['gebruikers'] as $gebruiker ) :
-									if ( Kleistad_Roles::reserveer( $gebruiker->id ) && ( $gebruiker->id !== $data['huidige_gebruiker']->ID) || Kleistad_Roles::override() ) :
+									if ( Kleistad_Roles::reserveer( $gebruiker->id ) && ( $gebruiker->id !== $data['huidige_gebruiker']->ID ) || Kleistad_Roles::override() ) :
 									?>
 									  <option value="<?php echo esc_attr( $gebruiker->id ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
 									<?php

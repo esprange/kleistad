@@ -162,7 +162,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 				];
 
 				foreach ( $reserveringen as $reservering ) {
-					if ( ($reservering->jaar === $jaar) && ( $reservering->maand === $maand) && ( $reservering->dag === $dag) ) {
+					if ( ( $reservering->jaar === $jaar ) && ( $reservering->maand === $maand ) && ( $reservering->dag === $dag ) ) {
 						if ( $reservering->gebruiker_id === $huidige_gebruiker_id ) {
 							$kleur = ! $datum_verstreken ? 'lightgreen' : $kleur;
 							$wijzigbaar = ! $verwerkt || is_super_admin();
@@ -170,7 +170,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 						} else {
 							$kleur = ! $datum_verstreken ? 'pink' : $kleur;
 							// als de huidige gebruiker geen bevoegdheid heeft, dan geen actie.
-							$wijzigbaar = ( ! $verwerkt && Kleistad_Roles::override()) || is_super_admin();
+							$wijzigbaar = ( ! $verwerkt && Kleistad_Roles::override() ) || is_super_admin();
 							$verwijderbaar = ! $verwerkt && Kleistad_Roles::override();
 						}
 
@@ -253,7 +253,7 @@ class Kleistad_Public_Reservering extends Kleistad_Public_Shortcode {
 			}
 		} else {
 			// het betreft een annulering, mag alleen verwijderd worden door de gebruiker of een bevoegde.
-			if ( $bestaande_reservering && (( $reservering->gebruiker_id === $gebruiker_id) || Kleistad_Roles::override()) ) {
+			if ( $bestaande_reservering && ( ( $reservering->gebruiker_id === $gebruiker_id ) || Kleistad_Roles::override() ) ) {
 				$reservering->delete();
 			}
 		}
