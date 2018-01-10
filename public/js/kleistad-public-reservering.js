@@ -9,8 +9,8 @@
 	 * @param {array} formData bevat alle inhoud van de formuliervelden.
 	 * @returns {undefined}
 	 */
-	function kleistadForm(formData) {
-		var row, aantal, stokerIds, stokerPercs, verdeling_aantal;
+	function kleistadForm( formData ) {
+		var row, aantal, stokerIds, stokerPercs, verdelingAantal;
 
 		$( '#kleistad_oven_id' ).val( formData.oven_id );
 		$( '#kleistad_wanneer' ).text( formData.dag + '-' + formData.maand + '-' + formData.jaar );
@@ -25,13 +25,13 @@
 		$( '#kleistad_stoker' ).html( formData.gebruiker );
 		$( '#kleistad_1e_stoker' ).val( formData.gebruiker_id );
 
-				verdeling_aantal = Math.max( formData.verdeling.length, 4 );
+                verdelingAantal = Math.max( formData.verdeling.length, 4 );
 		aantal = $( '[name=kleistad_medestoker_row]' ).length;
-		while ( aantal > verdeling_aantal ) {
+		while ( aantal > verdelingAantal ) {
 			$( '[name=kleistad_medestoker_row]' ).last().remove();
 			aantal--;
 		}
-		while ( aantal < verdeling_aantal ) {
+		while ( aantal < verdelingAantal ) {
 			row = $( '[name=kleistad_medestoker_row]' ).first().clone( true );
 			$( '[name=kleistad_medestoker_row]' ).last().after( row );
 			aantal++;
@@ -49,9 +49,9 @@
 			}
 		);
 
-		if (formData.gereserveerd === 1) {
+		if ( 1 === formData.gereserveerd ) {
 			$( '#kleistad_muteer' ).text( 'Wijzig' );
-			if (formData.verwijderbaar === 1) {
+			if ( 1 === formData.verwijderbaar ) {
 				$( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen of verwijderen ?' );
 				$( '#kleistad_verwijder' ).show();
 			} else {
@@ -87,8 +87,9 @@
 					function( item, index ) {
 						if ( item === element ) {
 							selectedRow = index;
-							// sanitize, als geen id, dan ook geen percentage
-							if ( Number( item.value ) === 0 ) {
+                                                        
+							// Sanitize, als geen id, dan ook geen percentage.
+							if ( 0 === Number( item.value ) ) {
 								stokerPercs[index] = 0;
 							}
 						}
@@ -101,11 +102,13 @@
 					function( item, index ) {
 						if ( item === element ) {
 							selectedRow = index;
-							// sanitize, als geen id, dan ook geen percentage
-							if (Number( stokerIds[index].value ) === 0) {
+                                                        
+							// Sanitize, als geen id, dan ook geen percentage.
+							if ( 0 === Number( stokerIds[index].value ) ) {
 								item.value = 0;
 							} else {
-								// sanitize, value moet tussen 0 en 100 liggen (html moet dit al afvangen)
+                                                            
+								// Sanitize, value moet tussen 0 en 100 liggen (html moet dit al afvangen).
 								item.value = Math.min( Math.max( +item.value, 0 ), 100 );
 							}
 						}
@@ -117,7 +120,7 @@
 		}
 
 				// Pas het percentage aan
-		if (sum !== 100) {
+		if ( 100 !== sum ) {
 			stokerPercs[0].value = Number( stokerPercs[0].value ) - ( sum - 100 );
 			if (Number( stokerPercs[0].value ) < 0) {
 				stokerPercs[selectedRow].value = Number( stokerPercs[selectedRow].value ) + Number( stokerPercs[0].value );

@@ -157,7 +157,7 @@
                         ingedeeld, function( key, value ) {
                             var option = new Option( value.naam, JSON.stringify( value ), false, false );
                             option.style.backgroundColor = 'lightgreen';
-                            option.style.fontWeight = 700; // bold
+                            option.style.fontWeight = 700; // Bold
                             $( '#kleistad_indeling' ).append( option );
                         }
                     );
@@ -219,12 +219,12 @@
                         wachtend = $( '#kleistad_wachtlijst option:selected' );
                     if ( ingedeeld.length ) {
                         element = JSON.parse( ingedeeld.val() );
-                        if ( element.ingedeeld === 0 ) {
-                            return !ingedeeld.remove().appendTo( '#kleistad_wachtlijst' );
+                        if ( 0 === element.ingedeeld ) {
+                            return ! ingedeeld.remove().appendTo( '#kleistad_wachtlijst' );
                         }
                     }
                     if ( wachtend.length ) {
-                        return !wachtend.remove().appendTo( '#kleistad_indeling' );
+                        return ! wachtend.remove().appendTo( '#kleistad_indeling' );
                     }
                     return false;
                 }
@@ -275,7 +275,7 @@
             opmerking = element.opmerking,
             technieken = element.technieken;
 
-        if ( technieken !== null ) {
+        if ( null !== technieken ) {
             techniekTekst = '<p>Gekozen technieken : ';
             $.each(
                 technieken, function( key, value ) {

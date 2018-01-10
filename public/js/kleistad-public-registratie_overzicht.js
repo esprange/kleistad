@@ -4,23 +4,6 @@
     $( document ).ready(
         function() {
             /**
-             * Definieer de popup dialoog
-             */
-            $( '#kleistad_deelnemer_info' ).dialog(
-                {
-                    autoOpen: false,
-                    height: 400,
-                    width: 750,
-                    modal: true,
-                    buttons: {
-                        Ok: function() {
-                            $( this ).dialog( 'close' );
-                        }
-                    }
-                }
-            );
-
-            /**
              * Definieer de tabel
              *
              * @type array kleistadDeelnemerLijst array van deelnemers
@@ -54,6 +37,23 @@
                         { visible: false, targets: [ 0, 1 ] }
                     ]
 
+                }
+            );
+
+            /**
+             * Definieer de popup dialoog
+             */
+            $( '#kleistad_deelnemer_info' ).dialog(
+                {
+                    autoOpen: false,
+                    height: 400,
+                    width: 750,
+                    modal: true,
+                    buttons: {
+                        Ok: function() {
+                            $( this ).dialog( 'close' );
+                        }
+                    }
                 }
             );
 
@@ -109,15 +109,15 @@
                             deelnemer.pcode + ' ' + deelnemer.plaats + '</td></tr>'
                             );
 
-                    if ( typeof inschrijvingen !== 'undefined' ) {
+                    if ( 'undefined' !== typeof inschrijvingen ) {
                         $.each(
                             inschrijvingen, function( key, value ) {
                                 var status = ( value.ingedeeld ) ? '<span class="dashicons dashicons-yes"></span>' : '',
-                                    i_betaald = ( value.i_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
-                                    c_betaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
+                                    ibetaald = ( value.i_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
+                                    cbetaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     html = header + '<tr><td>' + value.naam + '</td><td>' + value.code + '</td><td>' + status +
-                                    '</td><td>' + i_betaald + '</td><td>' + c_betaald + '</td><td>' + geannuleerd + '</td><td>',
+                                    '</td><td>' + ibetaald + '</td><td>' + cbetaald + '</td><td>' + geannuleerd + '</td><td>',
                                     separator = '';
                                 $.each(
                                     value.technieken, function( key, value ) {
@@ -132,7 +132,7 @@
                     } else {
                         $( '#kleistad_deelnemer_tabel' ).append( '<tr><td colspan="6" >Geen cursus inschrijvingen aanwezig</td></tr>' );
                     }
-                    if ( ( typeof abonnee !== 'undefined' ) && ( abonnee.length !== 0 ) ) {
+                    if ( ( 'undefined' !== typeof abonnee ) && ( 0 !== abonnee.length ) ) {
                         $( '#kleistad_deelnemer_tabel' ).append(
                             '<tr><th>Abonnement</th><th>Code</th><th>Dag</th><th>Start Datum</th></tr>' +
                             '<tr><td>' + abonnee.soort + '</td><td>' +
