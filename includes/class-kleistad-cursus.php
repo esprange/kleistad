@@ -219,7 +219,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		$this->_cursus_id = $cursus_id;
 
 		$default_data = [
-			'code' => "C$this->_cursus_id-$this->_cursist_id-" . strftime( '%y%m%d', $cursus->start_datum ),
+			'code' => "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $cursus->start_datum ),
 			'datum' => date( 'Y-m-d' ),
 			'technieken' => [],
 			'i_betaald' => 0,
@@ -230,7 +230,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			'opmerking' => '',
 		];
 
-		  $inschrijvingen = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
+		$inschrijvingen = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
 		if ( is_array( $inschrijvingen ) && ( isset( $inschrijvingen[ $this->_cursus_id ] ) ) ) {
 			$this->_data = $inschrijvingen[ $this->_cursus_id ];
 			if ( ! isset( $this->_data['geannuleerd'] ) ) {
