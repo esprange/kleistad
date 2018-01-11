@@ -83,7 +83,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'vervallen':
 			case 'vol':
 			case 'techniekkeuze':
-				return 1 === $this->_data[ $attribuut ];
+				return 1 === intval( $this->_data[ $attribuut ] );
 			case 'array':
 				return $this->_data;
 			default:
@@ -261,7 +261,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'c_betaald':
 			case 'geannuleerd':
 			case 'bericht':
-				return 1 === $this->_data[ $attribuut ];
+				return 1 === intval( $this->_data[ $attribuut ] );
 			default:
 				return $this->_data[ $attribuut ];
 		}
