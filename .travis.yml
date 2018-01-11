@@ -84,21 +84,18 @@ script:
   - find -L . -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   
   # phpcs section
-  - |
-    if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then 
-      # Run the theme through JSHint.
-      jshint .
-      # Run the theme through JavaScript Code Style checker.
-      jscs .
-      # WordPress Coding Standards.
-      # @link https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
-      # @link http://pear.php.net/package/PHP_CodeSniffer/
-      # -p flag: Show progress of the run.
-      # -s flag: Show sniff codes in all reports.
-      # -v flag: Print verbose output.
-      # -n flag: Do not print warnings. (shortcut for --warning-severity=0)
-      # --standard: Use WordPress as the standard.
-      # --extensions: Only sniff PHP files.
-      $PHPCS_DIR/bin/phpcs -p -s -v -n . --standard=./phpcs.xml.dist --extensions=php
-    fi
-  - |
+
+  # Run the theme through JSHint.
+  - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then jshint . ; fi
+  # Run the theme through JavaScript Code Style checker.
+  - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then jscs . ; fi
+  # WordPress Coding Standards.
+  # @link https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
+  # @link http://pear.php.net/package/PHP_CodeSniffer/
+  # -p flag: Show progress of the run.
+  # -s flag: Show sniff codes in all reports.
+  # -v flag: Print verbose output.
+  # -n flag: Do not print warnings. (shortcut for --warning-severity=0)
+  # --standard: Use WordPress as the standard.
+  # --extensions: Only sniff PHP files.
+  - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then $PHPCS_DIR/bin/phpcs -p -s -v -n . --standard=./phpcs.xml.dist --extensions=php ; fi
