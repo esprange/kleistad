@@ -290,7 +290,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				return strtotime( $this->_data['jaar'] . '-' . $this->_data['maand'] . '-' . $this->_data['dag'] . ' 00:00' );
 			case 'gemeld':
 			case 'verwerkt':
-				return 1 === $this->_data[ $attribuut ];
+				return 1 === intval( $this->_data[ $attribuut ] );
 			default:
 				return $this->_data[ $attribuut ];
 		}
@@ -389,7 +389,6 @@ class Kleistad_Reserveringen extends Kleistad_EntityStore {
 	 */
 	public function __construct( $oven_id = null ) {
 		global $wpdb;
-		$tabel = $wpdb->prefix . 'kleistad_reserveringen';
 		if ( is_null( $oven_id ) ) {
 			$reserveringen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_reserveringen ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A ); // WPCS: unprepared SQL OK.
 		} else {
