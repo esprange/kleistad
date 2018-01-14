@@ -24,7 +24,7 @@
 					<?php
 					foreach ( $gebruikers as $gebruiker ) :
 						if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
-							$selected = ( $item['gebruiker_id'] === $gebruiker->id ) ? 'selected' : '';
+							$selected = ( $item['gebruiker_id'] == $gebruiker->id ) ? 'selected' : '';  // WPCS: loose comparison ok.
 							?>
 						<option value="<?php echo esc_attr( $gebruiker->id ); ?>" <?php echo esc_attr( $selected ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
 						<?php } endforeach ?>
@@ -45,7 +45,7 @@
 				<select name="oven_id" id="oven_id" style="width: 95%" required>
 					<?php
 					foreach ( $ovens as $oven ) :
-						$selected = ( $item['oven_id'] === $oven->id ) ? 'selected' : '';
+						$selected = ( $item['oven_id'] == $oven->id ) ? 'selected' : ''; // WPCS: loose comparison ok.
 						?>
 					  <option value="<?php echo esc_attr( $oven->id ); ?>" <?php echo esc_attr( $selected ); ?> ><?php echo esc_html( $oven->naam ); ?></option>
 					<?php endforeach ?>
