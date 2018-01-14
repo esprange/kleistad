@@ -76,10 +76,10 @@ else :
 					 <label for="kleistad_voornaam">Naam</label>
 				</div>
 				<div class="kleistad_col_3">
-					<input class="kleistad_input" name="voornaam" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo esc_attr( $data['input']['voornaam'] ); ?>" />
+					<input class="kleistad_input" name="FNAME" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo esc_attr( $data['input']['FNAME'] ); ?>" />
 				</div>
 				<div class="kleistad_col_4">
-					<input class="kleistad_input" name="achternaam" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo esc_attr( $data['input']['achternaam'] ); ?>" />
+					<input class="kleistad_input" name="LNAME" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo esc_attr( $data['input']['LNAME'] ); ?>" />
 				</div>
 			</div>
 			<div class="kleistad_row">
@@ -87,7 +87,7 @@ else :
 					<label for="kleistad_emailadres">Email adres</label>
 				</div>
 				<div class="kleistad_col_7">
-					<input class="kleistad_input" name="emailadres" id="kleistad_emailadres" type="email" required placeholder="mijnemailadres@voorbeeld.nl" value="<?php echo esc_attr( $data['input']['emailadres'] ); ?>" />
+					<input class="kleistad_input" name="EMAIL" id="kleistad_emailadres" type="email" required placeholder="mijnemailadres@voorbeeld.nl" value="<?php echo esc_attr( $data['input']['EMAIL'] ); ?>" />
 				</div>
 			</div>
 			<div class="kleistad_row">
@@ -118,6 +118,15 @@ else :
 				</div>
 				<div class="kleistad_col_5">
 					<input class="kleistad_input" name="plaats" id="kleistad_plaats" type="text" required maxlength="50" placeholder="MijnWoonplaats" value="<?php echo esc_attr( $data['input']['plaats'] ); ?>" />
+				</div>
+			</div>
+			<div class="kleistad_row">
+				<div class="kleistad_label kleistad_col_3"
+					 <label for="subscribe"></label>
+				</div>
+				<div class="kleistad_col_7">
+					<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" />
+					Ik wil de Kleistad nieuwsbrief ontvangen.
 				</div>
 			</div>
 		<?php endif ?>

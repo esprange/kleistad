@@ -29,9 +29,9 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 	public function prepare( &$data ) {
 		if ( is_null( $data ) ) {
 			$data['input'] = [
-				'emailadres' => '',
-				'voornaam' => '',
-				'achternaam' => '',
+				'EMAIL' => '',
+				'FNAME' => '',
+				'LNAME' => '',
 				'straat' => '',
 				'huisnr' => '',
 				'pcode' => '',
@@ -68,9 +68,9 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 		$input = filter_input_array(
 			INPUT_POST, [
 				'gebruiker_id' => FILTER_SANITIZE_EMAIL,
-				'emailadres' => FILTER_SANITIZE_EMAIL,
-				'voornaam' => FILTER_SANITIZE_STRING,
-				'achternaam' => FILTER_SANITIZE_STRING,
+				'EMAIL' => FILTER_SANITIZE_EMAIL,
+				'FNAME' => FILTER_SANITIZE_STRING,
+				'LNAME' => FILTER_SANITIZE_STRING,
 				'straat' => FILTER_SANITIZE_STRING,
 				'huisnr' => FILTER_SANITIZE_STRING,
 				'pcode' => FILTER_SANITIZE_STRING,
@@ -90,15 +90,15 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
 		}
 		if ( 0 === intval( $input['gebruiker_id'] ) ) {
-			$input['emailadres'] = strtolower( $input['emailadres'] );
-			if ( ! filter_var( $input['emailadres'], FILTER_VALIDATE_EMAIL ) ) {
+			$input['EMAIL'] = strtolower( $input['EMAIL'] );
+			if ( ! filter_var( $input['EMAIL'], FILTER_VALIDATE_EMAIL ) ) {
 				$error->add( 'verplicht', 'Een geldig E-mail adres is verplicht' );
 			}
 			$input['pcode'] = strtoupper( $input['pcode'] );
-			if ( ! $input['voornaam'] ) {
+			if ( ! $input['FNAME'] ) {
 				$error->add( 'verplicht', 'Een voornaam is verplicht' );
 			}
-			if ( ! $input['achternaam'] ) {
+			if ( ! $input['LNAME'] ) {
 				$error->add( 'verplicht', 'Een achternaam is verplicht' );
 			}
 		}
@@ -123,7 +123,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 
 		if ( ! is_user_logged_in() ) {
 
-			$gebruiker_id = email_exists( $data['input']['emailadres'] );
+			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
 			if ( $gebruiker_id ) {
 				$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 				if ( Kleistad_Roles::reserveer( $gebruiker_id ) ) {
@@ -132,13 +132,13 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 				}
 			} else {
 				$gebruiker = new Kleistad_Gebruiker();
-				$gebruiker->voornaam = $data['input']['voornaam'];
-				$gebruiker->achternaam = $data['input']['achternaam'];
+				$gebruiker->voornaam = $data['input']['FNAME'];
+				$gebruiker->achternaam = $data['input']['LNAME'];
 				$gebruiker->straat = $data['input']['straat'];
 				$gebruiker->huisnr = $data['input']['huisnr'];
 				$gebruiker->pcode = $data['input']['pcode'];
 				$gebruiker->plaats = $data['input']['plaats'];
-				$gebruiker->email = $data['input']['emailadres'];
+				$gebruiker->email = $data['input']['EMAIL'];
 				$gebruiker->telnr = $data['input']['telnr'];
 				$gebruiker_id = $gebruiker->save();
 			}
