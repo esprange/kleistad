@@ -115,7 +115,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 		if ( $gebruiker_id ) {
 			$user = get_userdata( $gebruiker_id );
 
-			if ( ( $this->_gebruiker_id == $user->ID )  // WPCS: loose comparison ok. 
+			if ( ( $this->_gebruiker_id == $user->ID ) // WPCS: loose comparison ok.
 				|| ( '' === $user->role ) ) { // Existing user with no role re-registered.
 				$this->_gebruiker_id = $user->ID;
 				$userdata = [
