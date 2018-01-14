@@ -53,7 +53,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 			'tot_datum' => $tot_datum,
 			'gebruiker_id' => $gebruiker_id,
 		];
-		error_log(print_r($data,true));
 		return true;
 	}
 
