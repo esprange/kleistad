@@ -125,7 +125,7 @@ else :
 					 <label for="subscribe"></label>
 				</div>
 				<div class="kleistad_col_7">
-					<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" />
+					<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" checked />
 					Ik wil de Kleistad nieuwsbrief ontvangen.
 				</div>
 			</div>

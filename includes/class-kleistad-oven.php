@@ -291,6 +291,10 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			case 'gemeld':
 			case 'verwerkt':
 				return 1 === intval( $this->_data[ $attribuut ] );
+			case 'jaar':
+			case 'maand':
+			case 'dag':
+				return intval( $this->_data[ $attribuut ] );
 			default:
 				return $this->_data[ $attribuut ];
 		}
