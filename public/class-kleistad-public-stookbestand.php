@@ -45,14 +45,15 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 	 * @since   4.0.87
 	 */
 	public function validate( &$data ) {
-		$vanaf_datum     = strtotime( filter_input( INPUT_POST, 'kleistad_vanaf_datum', FILTER_SANITIZE_STRING ) );
-		$tot_datum       = strtotime( filter_input( INPUT_POST, 'kleistad_tot_datum', FILTER_SANITIZE_STRING ) );
+		$vanaf_datum     = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
+		$tot_datum       = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
 		$gebruiker_id    = filter_input( INPUT_POST, 'kleistad_gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
 		$data            = [
 			'vanaf_datum' => $vanaf_datum,
 			'tot_datum' => $tot_datum,
 			'gebruiker_id' => $gebruiker_id,
 		];
+		error_log(print_r($data,true));
 		return true;
 	}
 
@@ -82,8 +83,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 
 		$medestokers = [];
 		foreach ( $reserveringen as $reservering ) {
-			$datum = strtotime( $reservering->jaar . '-' . $reservering->maand . '-' . $reservering->dag );
-			if ( ( $datum < $data['vanaf_datum'] ) || ( $datum > $data['tot_datum'] ) ) {
+			if ( ( $reservering->datum < $data['vanaf_datum'] ) || ( $reservering->datum > $data['tot_datum'] ) ) {
 				continue;
 			}
 			foreach ( $reservering->verdeling as $verdeling ) {
@@ -110,6 +110,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 		fputcsv( $f, $fields, ';', '"' );
 
 		foreach ( $reserveringen as $reservering ) {
+			if ( ( $reservering->datum < $data['vanaf_datum'] ) || ( $reservering->datum > $data['tot_datum'] ) ) {
+				continue;
+			}
 			$stoker      = get_userdata( $reservering->gebruiker_id );
 			$stoker_naam = ( ! $stoker ) ? 'onbekend' : $stoker->display_name;
 			$values      = [
