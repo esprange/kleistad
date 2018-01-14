@@ -41,7 +41,7 @@ class Kleistad_Public_Rapport extends Kleistad_Public_Shortcode {
 
 		foreach ( $reserveringen as $reservering ) {
 			foreach ( $reservering->verdeling as $stookdeel ) {
-				if ( $stookdeel['id'] === $huidige_gebruiker->ID ) {
+				if ( $stookdeel['id'] == $huidige_gebruiker->ID ) {  // WPCS: loose comparison ok.
 					if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
 						$kosten = $stookdeel['prijs'];
 					} else { // Voorlopige berekening.
