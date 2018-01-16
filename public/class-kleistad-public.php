@@ -326,26 +326,28 @@ class Kleistad_Public {
 					$stookdeel['prijs'] = $prijs;
 					$huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
 					$nieuw_saldo = ( '' === $huidig_saldo ) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
-
-					Kleistad_Oven::log_saldo(
-						"wijziging saldo $medestoker->display_name van $huidig_saldo naar $nieuw_saldo, stook op " .
-						date( 'd-m-Y', $reservering->datum )
-					);
-					update_user_meta( $stookdeel['id'], 'stooksaldo', $nieuw_saldo );
-
-					$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
-					Kleistad_Public_Saldo::compose_email(
-						$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
-							'voornaam' => $medestoker->first_name,
-							'achternaam' => $medestoker->last_name,
-							'stoker' => $gebruiker->display_name,
-							'bedrag' => number_format( $prijs, 2, ',', '' ),
-							'saldo' => number_format( $nieuw_saldo, 2, ',', '' ),
-							'stookdeel' => $stookdeel['perc'],
-							'stookdatum' => date( 'd-m-Y', $reservering->datum ),
-							'stookoven' => $ovens[ $reservering->oven_id ]->naam,
-						]
-					);
+					
+					if ( $nieuw_saldo != $huidige_saldo ) { // WPCS: loose comparison ok.
+						Kleistad_Oven::log_saldo(
+							"wijziging saldo $medestoker->display_name van $huidig_saldo naar $nieuw_saldo, stook op " .
+							date( 'd-m-Y', $reservering->datum )
+						);
+						update_user_meta( $stookdeel['id'], 'stooksaldo', $nieuw_saldo );
+					
+						$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
+						Kleistad_Public_Saldo::compose_email(
+							$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
+								'voornaam' => $medestoker->first_name,
+								'achternaam' => $medestoker->last_name,
+								'stoker' => $gebruiker->display_name,
+								'bedrag' => number_format( $prijs, 2, ',', '' ),
+								'saldo' => number_format( $nieuw_saldo, 2, ',', '' ),
+								'stookdeel' => $stookdeel['perc'],
+								'stookdatum' => date( 'd-m-Y', $reservering->datum ),
+								'stookoven' => $ovens[ $reservering->oven_id ]->naam,
+							]
+						);
+					}
 				}
 				$reservering->verdeling = $verdeling;
 				$reservering->verwerkt = true;
