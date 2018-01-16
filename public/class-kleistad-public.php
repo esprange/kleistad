@@ -326,14 +326,14 @@ class Kleistad_Public {
 					$stookdeel['prijs'] = $prijs;
 					$huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
 					$nieuw_saldo = ( '' === $huidig_saldo ) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
-					
-					if ( $nieuw_saldo != $huidige_saldo ) { // WPCS: loose comparison ok.
+
+					if ( $nieuw_saldo != $huidig_saldo ) { // WPCS: loose comparison ok.
 						Kleistad_Oven::log_saldo(
 							"wijziging saldo $medestoker->display_name van $huidig_saldo naar $nieuw_saldo, stook op " .
 							date( 'd-m-Y', $reservering->datum )
 						);
 						update_user_meta( $stookdeel['id'], 'stooksaldo', $nieuw_saldo );
-					
+
 						$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
 						Kleistad_Public_Saldo::compose_email(
 							$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
