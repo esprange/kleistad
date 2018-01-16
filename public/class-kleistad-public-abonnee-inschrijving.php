@@ -43,6 +43,11 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 				'opmerking' => '',
 			];
 		}
+		$atts = shortcode_atts(
+			[
+				'verklaring' => '',
+			], $this->atts, 'kleistad_abonnee_inschrijving'
+		);
 		$gebruikers = get_users(
 			[
 				'fields' => [ 'id', 'display_name' ],
@@ -50,6 +55,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Public_Shortcode {
 			]
 		);
 		$data ['gebruikers'] = $gebruikers;
+		$data ['verklaring'] = htmlspecialchars_decode( $atts['verklaring'] );
 
 		return true;
 	}

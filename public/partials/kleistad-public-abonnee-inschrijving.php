@@ -121,7 +121,7 @@ else :
 				</div>
 			</div>
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3"
+				<div class="kleistad_label kleistad_col_3">
 					 <label for="subscribe"></label>
 				</div>
 				<div class="kleistad_col_7">
@@ -129,6 +129,17 @@ else :
 					Ik wil de Kleistad nieuwsbrief ontvangen.
 				</div>
 			</div>
+			<?php if ( '' !== $data['verklaring'] ) : ?>
+				<div class="kleistad_row">
+					<div class="kleistad_label kleistad_col_3">
+						 <label for="verklaring"></label>
+					</div>
+					<div class="kleistad_col_7">
+						<input type="checkbox" id="verklaring" onchange="document.getElementById( 'kleistad_submit_abonnee_inschrijving' ).disabled = !this.checked;" />
+						<?php echo $data['verklaring']; // WPCS: XSS ok. ?>
+					</div>
+				</div>
+			<?php endif ?>
 		<?php endif ?>
 		<div class ="kleistad_row" title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad" >
 			<div class="kleistad_label kleistad_col_3">
@@ -140,7 +151,7 @@ else :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_10">
-				<button name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit_abonnee_inschrijving" type="submit" >Verzenden</button>
+				<button name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit_abonnee_inschrijving" type="submit" <?php echo ( '' !== $data['verklaring'] ? 'disabled' : '' ); ?>>Verzenden</button>
 			</div>
 		</div>
 	</form>

@@ -118,7 +118,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Public_Shortcode {
 				$stoker_naam,
 				$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
 				$ovens[ $reservering->oven_id ]->naam,
-				$ovens[ $reservering->oven_id ]->kosten,
+				number_format( $ovens[ $reservering->oven_id ]->kosten, 2, ',', '' ),
 				$reservering->soortstook,
 				$reservering->temperatuur,
 				$reservering->programma,
