@@ -171,9 +171,9 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Public_Shortcode {
 			$cursus->eind_datum      = strtotime( $data['input']['eind_datum'] );
 			$cursus->start_tijd      = strtotime( $data['input']['start_tijd'] );
 			$cursus->eind_tijd       = strtotime( $data['input']['eind_tijd'] );
-			$cursus->techniekkeuze   = '' !== $data['input']['techniekkeuze'];
-			$cursus->vol             = '' !== $data['input']['vol'];
-			$cursus->vervallen       = '' !== $data['input']['vervallen'];
+			$cursus->techniekkeuze   = '' != $data['input']['techniekkeuze']; // WPCS: loose comparison ok.
+			$cursus->vol             = '' != $data['input']['vol']; // WPCS: loose comparison ok.
+			$cursus->vervallen       = '' != $data['input']['vervallen']; // WPCS: loose comparison ok.
 			$cursus->inschrijfkosten = $data['input']['inschrijfkosten'];
 			$cursus->cursuskosten    = $data['input']['cursuskosten'];
 			$cursus->inschrijfslug   = $data['input']['inschrijfslug'];
