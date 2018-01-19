@@ -24,7 +24,7 @@ class Kleistad_Activator {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 5;
+	const DBVERSIE = 6;
 
 	/**
 	 * Short Description. (use period)
@@ -67,7 +67,7 @@ class Kleistad_Activator {
                 programma smallint(4),
                 gemeld tinyint(1) DEFAULT 0,
                 verwerkt tinyint(1) DEFAULT 0,
-                verdeling tinytext,
+                verdeling text,
                 opmerking tinytext,
                 PRIMARY KEY  (id)
                 ) $charset_collate;"
