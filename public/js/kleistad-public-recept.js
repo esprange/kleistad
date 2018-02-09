@@ -80,8 +80,8 @@
                 displayFilters( $( this ).val() );
             } );
 
-            $( '#kleistad_zoek' ).on('keyup', function(e) {
-                if (e.keyCode == 13) {
+            $( '#kleistad_zoek' ).on( 'keyup', function( e ) {
+                if ( 13 === e.keyCode ) {
                     zoekRecepten();
                 }
                 return false;
