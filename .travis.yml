@@ -9,6 +9,7 @@ notifications:
 branches:
   only:
     - master
+    - Recepten
 
 cache:
   - composer
