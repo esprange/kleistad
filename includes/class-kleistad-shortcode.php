@@ -12,7 +12,7 @@
 /**
  * The abstract class for shortcodes
  */
-abstract class Kleistad_Public_Shortcode {
+abstract class Kleistad_Shortcode {
 	/**
 	 * The plugin name.
 	 *

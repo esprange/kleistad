@@ -16,7 +16,7 @@
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
-class Kleistad_Public_Betalingen extends Kleistad_Public_Shortcode {
+class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 
 	/**
 	 * Prepareer 'betalingen' form

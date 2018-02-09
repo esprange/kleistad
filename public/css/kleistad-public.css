@@ -11,258 +11,312 @@ Description: stylesheet functions voor kleistad_plugin
 */
 
 .ui-widget{
-	font-size:14px !important;
+    font-size:14px !important;
 }
 .ui-dialog-title{
-	display:none;
+    display:none;
 }
 .ui-widget-content {
-	border: none;
+    border: none;
 }
 .ui-tabs .ui-tabs-nav{
-	font-size:13px;
+    font-size:13px;
 }
 .ui-tabs-panel{
-	font-size:12px;
-	border: 2px solid #DDD;
+    font-size:12px;
+    border: 2px solid #DDD;
 }
 
 .kleistad_hover {
-	color: blue;
+    color: blue;
 }
 
 input.kleistad_tijd {
-	width: 4em;
+    width: 4em;
 }
 
 input.kleistad_datum {
-	width: 9em;
+    width: 9em;
 }
-
 
 div.kleistad_fout {
-	background-color: #D4A190;
-	border-left: 6px solid #D67750;
+    background-color: #D4A190;
+    border-left: 6px solid #D67750;
 }
 div.kleistad_succes {
-	background-color: #A1D490;
-	border-left: 6px solid #6CD650;
+    background-color: #A1D490;
+    border-left: 6px solid #6CD650;
 }
 div.kleistad_form_popup {
-	display: none;
+    display: none;
 }
 table.kleistad_form {
-	vertical-align: middle;
-	border-collapse: collapse;
-	border-spacing: 0;
-	border-style: none;
-	border: none;
-	font-size: small;
-	padding: 0px;
+    vertical-align: middle;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-style: none;
+    border: none;
+    font-size: small;
+    padding: 0px;
 }
 table.kleistad_form tr {
-	margin: 0;
+    margin: 0;
 }
 table.kleistad_form td {
-	border-style: none;
+    border-style: none;
 }
 table.kleistad_form th {
-	border-style: none;
-	text-align: center;
+    border-style: none;
+    text-align: center;
 }
 table.kleistad_form>tfoot>tr:last-child th {
-	padding: 2px;
+    padding: 2px;
 }
 table.kleistad_form input[type=text], select {
-	width: 100%;
+    width: 100%;
 }
 table.kleistad_form select {
-	-webkit-appearance: menulist-button;
-	font-size:small;
+    -webkit-appearance: menulist-button;
+    font-size:small;
 }
 table.kleistad_form button {
-	font-size: small;
-	height: 2.5em;
-	width: 100%;
-	padding: 0px;
+    font-size: small;
+    height: 2.5em;
+    width: 100%;
+    padding: 0px;
 }
 table.kleistad_form option, input {
-	font-size: small;
-	height: 2.1em;
+    font-size: small;
+    height: 2.1em;
 }
 table.kleistad_form input[type=number] {
-	width: 5em;
+    width: 5em;
 }
 table.kleistad_form input[type=submit] {
-	font-size: small;
-	height: 2.5em;
+    font-size: small;
+    height: 2.5em;
 }
 table.kleistad_reserveringen {
-	width: 90%;
-	table-layout: auto;
-	vertical-align: middle;
-	border-collapse: collapse;
-	border-spacing: 0;
-	border-style: none;
-	font-size: small;
+    width: 90%;
+    table-layout: auto;
+    vertical-align: middle;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-style: none;
+    font-size: small;
 }
 table.kleistad_reserveringen th {
-	border-style:solid;
-	border-width: 0px;
-	border-top-width: 1px;
-	border-bottom-width: 1px;
-	overflow: hidden;
+    border-style:solid;
+    border-width: 0px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    overflow: hidden;
 }
 table.kleistad_reserveringen th[colspan] {
-	text-align: center;
-	vertical-align: middle;
+    text-align: center;
+    vertical-align: middle;
 }
 table.kleistad_reserveringen td {
-	border-style:solid;
-	border-width: 0px;
-	border-top-width: 1px;
-	border-bottom-width: 1px;
-	overflow: hidden;
+    border-style:solid;
+    border-width: 0px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    overflow: hidden;
 }
 table.kleistad_reserveringen td:nth-child(4n) {
-	text-align: right;
+    text-align: right;
 }
 table.kleistad_reserveringen th[data-align='right'] {
-	text-align: right;
+    text-align: right;
 }
 table.kleistad_reserveringen a {
-	color: black;
-	width: 100%;
-	text-decoration: none;
+    color: black;
+    width: 100%;
+    text-decoration: none;
 }
 table.kleistad_reserveringen a:hover {
-	color: blue;
-	width: 100%;
-	text-decoration: none;
-	cursor: pointer;
+    color: blue;
+    width: 100%;
+    text-decoration: none;
+    cursor: pointer;
 }
 table.kleistad_tabel {
-	table-layout: auto;
-	font-size: small;
+    table-layout: auto;
+    font-size: small;
 }
 table.kleistad_rapport {
-	table-layout: auto;
+    table-layout: auto;
 }
 table.kleistad_rapport th {
-	font-size: small;
-	font-weight: bold;
+    font-size: small;
+    font-weight: bold;
 }
 table.kleistad_rapport td {
-	font-size: small;
+    font-size: small;
 }
 table.kleistad_rapport thead {
-	background-color: #F2F2F2;
+    background-color: #F2F2F2;
 }
 table.kleistad_rapport tr:nth-child(even) {
-	background-color: #F2F2F2;
+    background-color: #F2F2F2;
 }
 
 .kleistad_label {
-	font-weight: bold;
+    font-weight: bold;
 }
 .kleistad_input {
 }
 .kleistad_row::after {
-	content: "";
-	clear: both;
-	display: table;
+    content: "";
+    clear: both;
+    display: table;
 }
 .kleistad_input_cbr {
-	position: absolute;
-	visibility: hidden;
+    position: absolute;
+    visibility: hidden;
 }
 .kleistad_input_cbr:checked ~ .kleistad_label_cbr {
-	color: green;
+    color: green;
 }
 .kleistad_input_cbr:checked ~ .kleistad_label_cbr::before {
-	margin-right: 20px;
-	border: 7px solid green;
-	background: whitesmoke;
+    margin-right: 20px;
+    border: 7px solid green;
+    background: whitesmoke;
 }
 .kleistad_input_cbr:disabled ~ .kleistad_label_cbr::before {
-	margin-right: 20px;
-	border: 7px solid darkgray;
-	background: whitesmoke;
+    margin-right: 20px;
+    border: 7px solid darkgray;
+    background: whitesmoke;
 }
 .kleistad_label_cbr {
-	display: flex;
-	align-items: center;
-	font-weight: bold;
-	cursor: pointer;
-	transition: all 0.25s linear;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.25s linear;
 }
 
 .kleistad_label_cbr::before {
-	display: block;
-	content: '';
-	border: 7px solid lightgray;
-	border-radius: 50%;
-	height: 18px;
-	width: 18px;
-	margin-right: 20px;
-	transition: all .25s linear;
+    display: block;
+    content: '';
+    border: 7px solid lightgray;
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    margin-right: 20px;
+    transition: all .25s linear;
+}
+
+.kleistad_recept_img {
+    position: relative;
+    float: left;
+    width:  100%; /* 300px */;
+    height: 300px;
+    background-position: 50% 50%;
+    background-repeat:   no-repeat;
+    background-size:     cover;
+}
+.kleistad_recept_titel {
+    position: relative;
+    float: left;
+}
+
+.kleistad_filters {
+    float: left;
+    width: 30%;
+    height: 100%;
+    padding: 15px;
+    border: 0px;
+    display: none;
+}
+
+.kleistad_filter_term {
+    border-bottom:1px solid black;
+    list-style-position:inside;
+    list-style-type:none;
+}
+
+.kleistad_filter_term label:hover {
+    background:#eee;
+    cursor:pointer;
+}
+
+.kleistad_recept_overzicht {
+    margin-left: 0%;
+}
+
+.kleistad_zoek {
+    width: 250px;
+    vertical-align: middle;
+    white-space: nowrap;
+    position: relative;
+}
+.kleistad_zoek input#search {
+    width: 250px;
+    height: 50px;
+    background: #2b303b;
+    border: none;
+    font-size: 10pt;
+    float: left;
+    color: #262626;
+    padding-left: 45px;
 }
 
 [class*="kleistad_col_"] {
-	float: left;
-	padding: 15px;
-	border: 0px;
-	width: 100%;
+    float: left;
+    padding: 0px 15px;
+    border: 0px;
+    width: 100%;
 }
 
 @media screen and (min-width: 700px) {
-	.kleistad_col_1 {
-		width: 10%;
-	}
-	.kleistad_col_2 {
-		width: 20%;
-	}
-	.kleistad_col_3 {
-		width: 30%;
-	}
-	.kleistad_col_4 {
-		width: 40%;
-	}
-	.kleistad_col_5 {
-		width: 50%;
-	}
-	.kleistad_col_6 {
-		width: 60%;
-	}
-	.kleistad_col_7 {
-		width: 70%;
-	}
-	.kleistad_col_8 {
-		width: 80%;
-	}
-	.kleistad_col_9 {
-		width: 90%;
-	}
-	.kleistad_col_10 {
-		width: 100%;
-	}
+    .kleistad_col_1 {
+        width: 10%;
+    }
+    .kleistad_col_2 {
+        width: 20%;
+    }
+    .kleistad_col_3 {
+        width: 30%;
+    }
+    .kleistad_col_4 {
+        width: 40%;
+    }
+    .kleistad_col_5 {
+        width: 50%;
+    }
+    .kleistad_col_6 {
+        width: 60%;
+    }
+    .kleistad_col_7 {
+        width: 70%;
+    }
+    .kleistad_col_8 {
+        width: 80%;
+    }
+    .kleistad_col_9 {
+        width: 90%;
+    }
+    .kleistad_col_10 {
+        width: 100%;
+    }
 }
 
 
 @media screen and (max-width: 700px) {
-	table.kleistad_reserveringen th {
-		font-size: x-small;
-	}
-	table.kleistad_reserveringen td {
-		font-size: x-small;
-	}
-	table.kleistad_reserveringen button {
-		font-size: x-small;
-	}
-	table.kleistad_rapport th {
-		font-size: x-small;
-	}
-	table.kleistad_rapport td {
-		font-size: x-small;
-	}
+    table.kleistad_reserveringen th {
+        font-size: x-small;
+    }
+    table.kleistad_reserveringen td {
+        font-size: x-small;
+    }
+    table.kleistad_reserveringen button {
+        font-size: x-small;
+    }
+    table.kleistad_rapport th {
+        font-size: x-small;
+    }
+    table.kleistad_rapport td {
+        font-size: x-small;
+    }
 }
