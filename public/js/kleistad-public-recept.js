@@ -1,42 +1,42 @@
 /* global kleistadData */
 
-( function ( $ ){
+( function( $ ) {
     'use strict';
 
-    function displayFilters( status ){
+    function displayFilters( status ) {
         if ( 'show' === status ) {
             $( '#kleistad_filters' ).css( { width: '30%', display: 'block' } );
             $( '#kleistad_recept_overzicht' ).css( { marginLeft: '30%' } );
-            $( '#kleistad_filter_btn').html ( '- verberg filters' ).val( status );
-        } else {            
+            $( '#kleistad_filter_btn' ).html( '- verberg filters' ).val( status );
+        } else {
             $( '#kleistad_filters' ).css( { display: 'none' } );
             $( '#kleistad_recept_overzicht' ).css( { marginLeft: '0%' } );
-            $( '#kleistad_filter_btn').html ( '+ filter resultaten' ).val( status );
+            $( '#kleistad_filter_btn' ).html( '+ filter resultaten' ).val( status );
         }
         sessionStorage.receptFilter = status;
     };
 
-    function zoekRecepten(){
+    function zoekRecepten() {
         var terms = [];
         $( '#kleistad_filters input[type="checkbox"]:checked' ).each( function() {
-            terms.push ( $( this ).val() );
+            terms.push( $( this ).val() );
         });
         $.ajax(
             {
                 url: kleistadData.base_url + '/recept/',
                 method: 'POST',
-                beforeSend: function ( xhr ){
+                beforeSend: function( xhr ) {
                     xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
                 },
                 data: {
-                    zoek: { 
+                    zoek: {
                         zoeker: $( '#kleistad_zoek' ).val(),
                         terms: terms
                     }
                 }
             }
         ).done(
-            function ( data ){
+            function( data ) {
                 $( '#kleistad_recepten' ).html( data.html );
                 $( '#kleistad_filters input[type="checkbox"]' ).each( function() {
                     if ( -1 !== $.inArray( $( this ).val(), data.zoek.terms ) ) {
@@ -52,7 +52,7 @@
             }
         ).fail(
             /* jshint unused:vars */
-                function ( jqXHR, textStatus, errorThrown ){
+                function( jqXHR, textStatus, errorThrown ) {
                     if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
                         window.alert( jqXHR.responseJSON.message );
                         return;
@@ -65,22 +65,22 @@
     ;
 
     $( document ).ready(
-        function (){
+        function() {
             $( '#kleistad_recepten' ).ready( function() {
                 zoekRecepten();
                 return false;
             });
 
-            $( '#kleistad_filter_btn' ).click ( function (){
-                if ( 'show' === $( this ).val()) {
+            $( '#kleistad_filter_btn' ).click( function() {
+                if ( 'show' === $( this ).val() ) {
                     $( this ).val( 'hide' );
                 } else {
                     $( this ).val( 'show' );
                 }
                 displayFilters( $( this ).val() );
             } );
-            
-            $( '#kleistad_zoek' ).on('keyup', function (e) {
+
+            $( '#kleistad_zoek' ).on('keyup', function(e) {
                 if (e.keyCode == 13) {
                     zoekRecepten();
                 }
@@ -88,7 +88,7 @@
             });
 
             $( 'body' ).on(
-                'click', '.kleistad_filter', function (){
+                'click', '.kleistad_filter', function() {
                     if ( $( this ).is( ':checked' ) ) {
                         $( this ).parent().css( { fontWeight: 'bold' } );
                     } else {
@@ -96,11 +96,11 @@
                     }
                     zoekRecepten();
                     return false;
-                } 
+                }
             );
-        
+
             $( 'body' ).on(
-                'click', '.kleistad_meer', function (){
+                'click', '.kleistad_meer', function() {
                     var filter;
                     var name = $( this ).attr( 'name' );
 
@@ -110,11 +110,10 @@
                         filter = $( 'input[name=' + name + '][value=meer]' ).parent().parent();
                     }
                     filter.toggle();
-                    filter.nextAll().toggle(); 
+                    filter.nextAll().toggle();
                     return false;
-                } 
+                }
             );
-
         }
     );
 
