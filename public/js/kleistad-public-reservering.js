@@ -160,10 +160,10 @@
             /* jshint unused:vars */
                 function( jqXHR, textStatus, errorThrown ) {
                     if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-                        alert( jqXHR.responseJSON.message );
+                        window.alert( jqXHR.responseJSON.message );
                         return;
                     }
-                    alert( kleistadData.error_message );
+                    window.alert( kleistadData.error_message );
                 }
             );
         }
@@ -214,10 +214,10 @@
             /* jshint unused:vars */
                 function( jqXHR, textStatus, errorThrown ) {
                     if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-                        alert( jqXHR.responseJSON.message );
+                        window.alert( jqXHR.responseJSON.message );
                         return;
                     }
-                    alert( kleistadData.error_message );
+                    window.alert( kleistadData.error_message );
                 }
             );
         }
