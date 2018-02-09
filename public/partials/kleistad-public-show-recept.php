@@ -73,7 +73,7 @@ function filter( $titel, $naam, $termen ) {
 
 <div id="kleistad_recept_overzicht" class="kleistad_recept_overzicht">
 <?php
-if ( count ( $data['recepten' ] ) ) :
+if ( count( $data['recepten'] ) ) :
 	foreach ( $data['recepten'] as $recept ) :
 	?>
 		<div style="width:250px;float:left;padding:15px;border:0px;">

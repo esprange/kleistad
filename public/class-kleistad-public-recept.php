@@ -115,13 +115,13 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				'numberposts' => '-1',
 				'post__in' => $object_ids,
 				'meta_query' => [
-						[
-							'key' => '_kleistad_recept',
-							'value' => $zoek['zoeker'],
-							'compare' => 'LIKE',
-						],
-					]
-				];
+					[
+						'key' => '_kleistad_recept',
+						'value' => $zoek['zoeker'],
+						'compare' => 'LIKE',
+					],
+				],
+			];
 			$recepten_3 = get_posts( $query_3 );
 			$recepten = array_merge( $recepten_2, $recepten_3 );
 			$object_ids = wp_list_pluck( $recepten, 'ID' );

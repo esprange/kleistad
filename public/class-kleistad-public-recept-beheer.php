@@ -284,7 +284,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			}
 		}
 
-		$data['recept']['meta']['kenmerk'] = wp_kses( $data['recept']['meta']['kenmerk'],  $allowedhtml );
+		$data['recept']['meta']['kenmerk'] = wp_kses( $data['recept']['meta']['kenmerk'], $allowedhtml );
 		$data['recept']['meta']['herkomst'] = wp_kses( $data['recept']['meta']['herkomst'], $allowedhtml );
 		$data['recept']['meta']['stookschema'] = wp_kses( $data['recept']['meta']['stookschema'], $allowedhtml );
 		$data['recept']['meta']['foto'] = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
