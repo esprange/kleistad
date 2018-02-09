@@ -84,7 +84,7 @@
 
             $( '.extra_regel' ).click( function() {
                 var oldRow, newRow;
-                oldRow = $( this ).closest( 'tr' ).prev();;
+                oldRow = $( this ).closest( 'tr' ).prev();
                 newRow = oldRow.clone().find( 'input' ).val( '' ).end();
                 oldRow.after( newRow );
                 return false;
