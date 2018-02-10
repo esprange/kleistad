@@ -51,7 +51,7 @@ Plaats de shortcodes in de pagina's
 == Changelog ==
 
 = 4.0.87 =
-* None yet
+Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
 = 4.0.92 =
 Berekening verdeling gewijzigd
 = 4.1.4 =

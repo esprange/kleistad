@@ -260,38 +260,7 @@ class Kleistad_Public {
 				'show_admin_column' => true,
 			]
 		);
-		if ( ! get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' ) ) {
-			wp_insert_term(
-				'_glazuur', 'kleistad_recept_cat', [
-					'slug' => 'glazuur',
-					'description' => 'hoofdcategorie voor type glazuuur',
-				]
-			);
-		}
-		if ( ! get_term_by( 'name', '_kleur', 'kleistad_recept_cat' ) ) {
-			wp_insert_term(
-				'_kleur', 'kleistad_recept_cat', [
-					'slug' => 'kleur',
-					'description' => 'hoofdcategorie voor kleuren',
-				]
-			);
-		}
-		if ( ! get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' ) ) {
-			wp_insert_term(
-				'_uiterlijk', 'kleistad_recept_cat', [
-					'slug' => 'uiterlijk',
-					'description' => 'hoofdcategorie voor keramiek uiterlijk',
-				]
-			);
-		}
-		if ( ! get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' ) ) {
-			wp_insert_term(
-				'_grondstof', 'kleistad_recept_cat', [
-					'slug' => 'grondstof',
-					'description' => 'hoofdcategorie voor keramiek grondstoffen',
-				]
-			);
-		}
+		register_taxonomy_for_object_type( 'kleistad_recept_cat', 'kleistad_recept' );
 	}
 
 	/**

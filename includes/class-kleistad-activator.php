@@ -85,7 +85,7 @@ class Kleistad_Activator {
 
 			dbDelta(
 				"CREATE TABLE {$wpdb->prefix}kleistad_cursussen (
-                id int(10) NOT NULL AUTO_INCREMENT, 
+                id int(10) NOT NULL AUTO_INCREMENT,
                 naam tinytext,
                 start_datum date,
                 eind_datum date,
@@ -154,7 +154,82 @@ class Kleistad_Activator {
 		$roles->add_cap( 'author', Kleistad_Roles::RESERVEER );
 		$roles->add_cap( 'contributor', Kleistad_Roles::RESERVEER );
 		$roles->add_cap( 'subscriber', Kleistad_Roles::RESERVEER );
-	}
 
+		/*
+		 * voeg de termen toe.
+		 */
+		$categories = [
+			'_glazuur' => [
+				'Hoge temperatuur',
+				'Midden temperatuur',
+				'Lage temperatuur',
+				'Slibs engobes',
+				'Terra sigillatas',
+				'Raku',
+				'Zout/soda hout',
+			],
+			'_kleur' => [
+				'Rood',
+				'Zwart',
+				'Grijs',
+				'Blauw',
+				'Groen',
+				'Geel',
+				'Wit/creme',
+			],
+			'_uiterlijk' => [
+				'Mat',
+				'Glanzend',
+				'Transparant',
+				'Effect',
+			],
+			'_grondstof' => [
+				'Aluminiumoxide',
+				'Bentoniet',
+				'Calciumcarbonaat',
+				'Chroomoxide',
+				'Cobaltcarbonaat',
+				'Cobaltoxide',
+				'Colemaniet',
+				'Dolomiet',
+				'Ijzeroxide rood',
+				'Ijzeroxide zwart',
+				'Kaliveldspaat',
+				'Kaolin',
+				'Koperoxide zwart',
+				'Kwarts',
+				'Litiumcarbonaat',
+				'Magnesiumcarbonaat',
+				'Mangaanoxide',
+				'Natriumcarbonaat',
+				'Natronveldspaat',
+				'Nephaline Seyenite',
+				'Nikkeloxide',
+				'Rutiel',
+				'Strontiumcarbonaat',
+				'Talk',
+				'Tinoxide',
+				'Wollastoniet',
+				'Zinkoxide',
+				'Zircoonoxide',
+				'Zirkoonsilicaat',
+			],
+		];
+
+		do_action( 'init' );
+		foreach ( $categories as $categorie_naam => $subcategories ) {
+			if ( ! get_term_by( 'name', $categorie_naam, 'kleistad_recept_cat' ) ) {
+				$parent = wp_insert_term( $categorie_naam, 'kleistad_recept_cat' );
+				foreach ( $subcategories as $subcategorie_naam ) {
+					wp_insert_term(
+						$subcategorie_naam, 'kleistad_recept_cat', [
+							'parent' => $parent['term_id'],
+						]
+					);
+				}
+			}
+		}
+		flush_rewrite_rules();
+	}
 
 }
