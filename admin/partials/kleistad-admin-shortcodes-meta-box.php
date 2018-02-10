@@ -19,6 +19,7 @@
 			<ul style="list-style-type:square">
 				<li>[kleistad_abonnee_inschrijving] inschrijving als abonnee</li>
 				<li>[kleistad_cursus_inschrijving] inschrijving voor cursus</li>
+				<li>[kleistad_recept] overzicht van keramiek recepten</li>
 			</ul>                      
 		</li>
 		<li><h3>toegankelijk voor leden</h3>
@@ -27,6 +28,7 @@
 				<li>[kleistad_rapport] overzicht stook activiteiten door lid</li>
 				<li>[kleistad_saldo] wijzigen stooksaldo door lid</li>
 				<li>[kleistad_registratie] wijzigen adresgegevens door lid</li>
+				<li>[kleistad_recept_beheer] wijzigen keramiek recepten door lid</li>
 			</ul>
 		</li>
 		<li><h3>toegankelijk voor bestuur</h3>

@@ -20,7 +20,7 @@ else :
 		add_filter( 'wp_dropdown_cats', 'wp_dropdown_categories_required' );
 		/**
 		 * Voegt 'required' toe aan dropdown list.
-		 * 
+		 *
 		 * @param string $output Door wp_dropdown_categories aangemaakte select list.
 		 * @return string
 		 */

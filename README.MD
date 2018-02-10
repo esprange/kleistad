@@ -5,8 +5,8 @@ Contributors: esprange
 Donate link: www.sprako.nl/wordpress/eric
 Tags: comments
 Requires at least: 4.8.0
-Tested up to: 4.8.0
-Stable tag: 4.0.92
+Tested up to: 4.9.4
+Stable tag: 4.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,17 +22,20 @@ Deze plugin is specifiek ontwikkeld voor de site www.kleistad.nl en voegt een aa
 * publiek toegankelijk (dus zonder ingelogd te zijn)
     + [kleistad_abonnee_inschrijving] inschrijving als abonnee
     + [kleistad_cursus_inschrijving] inschrijving voor cursus
+    + [kleistad_recept] overzicht van beschikbare keramiek recepten
 * toegankelijk voor leden
     + [kleistad_reservering oven=1] reserveren ovenstook
     + [kleistad_rapport] overzicht stook activiteiten door lid
     + [kleistad_saldo] wijzigen stooksaldo door lid
     + [kleistad_registratie] wijzigen adresgegevens door lid
+    + [kleistad_recept_beheer] wijzigen keramiek recepten door lid
 * toegankelijk voor bestuur
     + [kleistad_saldo_overzicht] overzicht stooksaldo leden
     + [kleistad_stookbestand] opvragen stookbestand
     + [kleistad_registratie_overzicht] overzicht van alle cursisten en leden
     + [kleistad_cursus_beheer] formulier om cursussen te beheren
     + [kleistad_betalingen] formulier om betalingen cursisten te registreren
+
 
 == Installation ==
 
@@ -51,6 +54,8 @@ Plaats de shortcodes in de pagina's
 * None yet
 = 4.0.92 =
 Berekening verdeling gewijzigd
+= 4.1.4 =
+Toevoeging keramiek recepten functionaliteit
 
 == Upgrade Notice ==
 
@@ -65,4 +70,4 @@ Deze plugin voegt drie tabellen toe aan de database:
 * kleistad_reserveringen
 * kleistad_cursussen
 
-Alle overige informatie wordt via user_meta informatie vastgelegd.
+Alle overige informatie wordt via bestaande wp tabellen vastgelegd.
