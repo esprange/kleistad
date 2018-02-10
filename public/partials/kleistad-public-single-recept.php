@@ -62,28 +62,28 @@ get_header(); ?>
 			});
 		} )( jQuery );
 		</script>
-		<style>
-		table, td, th {
-			border: 0px;
-			vertical-align: top;
-			text-align: left;
-		}
-		table {
-			table-layout: auto;
-			font-size: small;
-			padding: 0px;
-		}
-		</style>
-
 		<button id="kleistad_recept_print">Afdrukken</button>
 		<div class="kleistad_recept" >
+			<style>
+			table, td, th {
+				border: 0px;
+				vertical-align: top;
+				text-align: left;
+			}
+			table {
+				table-layout: auto;
+				font-size: small;
+				padding: 0px;
+			}
+			</style>
+
 			<h2><?php the_title(); ?></h2>
 			<div style="width:100%"> 
 				<div style="float:left;width:40%;">
 					<img src="<?php echo esc_url( $meta['foto'] ); ?>" width="100%" style="padding:15px;">
 				</div>
 				<div style="float:left;width:60%;">
-					<table>
+					<table style="padding:15px;">
 					<tr>
 						<th>Type glazuur</th>
 						<td><?php echo esc_html( $glazuur_naam ); ?></td>

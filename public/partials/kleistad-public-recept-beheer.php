@@ -17,8 +17,18 @@ if ( ! is_user_logged_in() ) :
 	<?php
 else :
 	if ( isset( $data['id'] ) ) :
+		add_filter( 'wp_dropdown_cats', 'wp_dropdown_categories_required' );
+		/**
+		 * Voegt 'required' toe aan dropdown list.
+		 * 
+		 * @param string $output Door wp_dropdown_categories aangemaakte select list.
+		 * @return string
+		 */
+		function wp_dropdown_categories_required( $output ) {
+			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output );
+		}
 	?>
-	<form method="post" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data">
+	<form method="post" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data" >
 		<input type="hidden" name="action" value="" />
 		<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
 		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
@@ -27,7 +37,7 @@ else :
 				<label for="kleistad_titel">Recept naam</label>
 			</div>
 			<div class="kleistad_col_7">
-				<input class="kleistad_input" type="text" size="20" name="titel" id="kleistad_titel"
+				<input class="kleistad_input" type="text" size="20" name="titel" tabindex="1" required id="kleistad_titel"
 					   value="<?php echo esc_attr( $data['recept']['titel'] ); ?>"/>
 			</div>
 		</div>
@@ -52,6 +62,7 @@ else :
 					'hide_empty' => 0,
 					'show_count' => 0,
 					'show_option_none' => 'Kies soort glazuur',
+					'option_none_value' => '',
 					'class' => 'cat',
 					'taxonomy' => 'kleistad_recept_cat',
 					'hierarchical' => 1,
@@ -59,6 +70,7 @@ else :
 					'name' => 'glazuur',
 					'selected' => $data['recept']['glazuur'],
 					'child_of' => $glazuur->term_id,
+					'tabindex' => 2,
 				]
 			);
 			?>
@@ -66,12 +78,13 @@ else :
 			<div class="kleistad_col_3">
 			<?php
 			$kleur = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
-			wp_dropdown_categories(
+			$cat_dropdown = wp_dropdown_categories(
 				[
 					'orderby' => 'name',
 					'hide_empty' => 0,
 					'show_count' => 0,
 					'show_option_none' => 'Kies kleur',
+					'option_none_value' => '',
 					'class' => 'cat',
 					'taxonomy' => 'kleistad_recept_cat',
 					'hierarchical' => 1,
@@ -79,6 +92,7 @@ else :
 					'name' => 'kleur',
 					'selected' => $data['recept']['kleur'],
 					'child_of' => $kleur->term_id,
+					'tabindex' => 3,
 				]
 			);
 			?>
@@ -92,6 +106,7 @@ else :
 					'hide_empty' => 0,
 					'show_count' => 0,
 					'show_option_none' => 'Kies uiterlijk',
+					'option_none_value' => '',
 					'class' => 'cat',
 					'taxonomy' => 'kleistad_recept_cat',
 					'hierarchical' => 1,
@@ -99,6 +114,7 @@ else :
 					'name' => 'uiterlijk',
 					'selected' => $data['recept']['uiterlijk'],
 					'child_of' => $uiterlijk->term_id,
+					'tabindex' => 4,
 				]
 			);
 			?>
@@ -118,10 +134,11 @@ else :
 				wp_editor(
 					$data['recept']['meta']['kenmerk'], 'kleistad_kenmerk', [
 						'textarea_name' => 'kenmerk',
-						'textarea_rows' => 2,
+						'textarea_rows' => 5,
 						'media_buttons' => false,
 						'teeny' => true,
 						'quicktags' => false,
+						'tabindex' => 5,
 					]
 				);
 				?>
@@ -131,10 +148,11 @@ else :
 				wp_editor(
 					$data['recept']['meta']['herkomst'], 'kleistad_herkomst', [
 						'textarea_name' => 'herkomst',
-						'textarea_rows' => 2,
+						'textarea_rows' => 5,
 						'media_buttons' => false,
 						'teeny' => true,
 						'quicktags' => false,
+						'tabindex' => 6,
 					]
 				);
 				?>
@@ -154,10 +172,11 @@ else :
 				wp_editor(
 					$data['recept']['meta']['stookschema'], 'kleistad_stookschema', [
 						'textarea_name' => 'stookschema',
-						'textarea_rows' => 2,
+						'textarea_rows' => 5,
 						'media_buttons' => false,
 						'teeny' => true,
 						'quicktags' => false,
+						'tabindex' => 7,
 					]
 				);
 				?>
@@ -180,62 +199,36 @@ else :
 			<?php
 			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
 			$terms = get_terms(
-				array(
-					'taxonomy' => 'kleistad_recept_cat',
+				[
+					'taxonomy'   => 'kleistad_recept_cat',
 					'hide_empty' => false,
 					'orderby'    => 'name',
-				)
+					'parent'     => $grondstof_parent->term_id,
+				]
 			);
 			foreach ( $terms as $term ) :
-				if ( intval( $term->parent ) === intval( $grondstof_parent->term_id ) ) :
 			?>
 				<option value="<?php echo esc_attr( $term->name ); ?>">
 			<?php
-				endif;
 			endforeach
 			?>
-	
-					</datalist>
+		</datalist>
 		<div class="kleistad_row">
 			<div class="kleistad_col_5">
 				<table>
 			<?php
-			$basis_regel = false;
-			foreach ( $data['recept']['meta']['basis'] as $basis ) :
-				$basis_regel = true;
+			$index = 0;
+			$count = count( $data['recept']['meta']['basis'] );
+			do {
+				$component = $index < $count ? $data['recept']['meta']['basis'][ $index ]['component'] : '';
+				$gewicht   = $index < $count ? $data['recept']['meta']['basis'][ $index ]['gewicht'] : '';
 			?>
 				<tr>
-					<td><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" value="<?php echo esc_attr( $basis['component'] ); ?>" ></td>
-					<td><input type="text" name="basis_gewicht[]" value="<?php echo esc_attr( $basis['gewicht'] ); ?>"  min="0" max="999" maxlength="3" style="width:50%">&nbsp;gram</td>
+					<td><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
+					<td><input type="number" name="basis_gewicht[]" min="0" max="999" maxlength="3" style="width:50%" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gram</td>
 				</tr>
 			<?php
-			endforeach;
-			if ( ! $basis_regel ) :
-			?>
-				<tr>
-					<td>
-					<div class="select-editable">
-						<select onchange="this.nextElementSibling.value=this.value">
-							<option value=""></option>
-			<?php
-			foreach ( $terms as $term ) :
-				if ( intval( $term->parent ) === intval( $grondstof_parent->term_id ) ) :
-			?>
-							<option value="<?php echo esc_attr( $term->name ); ?>">
-								<?php echo esc_html( $term->name ); ?>
-							</option>
-			<?php
-				endif;
-			endforeach
-			?>
-						</select>
-						<input type="text" name="basis_component[]" list="kleistad_recept_grondstof" >
-					</div>
-					</td>
-					<td><input type="number" name="basis_gewicht[]"  min="0" max="999" maxlength="3" style="width:50%">&nbsp;gram</td>
-				</tr>
-			<?php
-			endif;
+			} while ( $index++ < $count );
 			?>
 				<tr>
 					<td col="2"><button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
@@ -245,24 +238,18 @@ else :
 			<div class="kleistad_col_5">
 				<table>
 			<?php
-			$toevoeging_regel = false;
-			foreach ( $data['recept']['meta']['toevoeging'] as $toevoeging ) :
-				$toevoeging_regel = true;
+			$index = 0;
+			$count = count( $data['recept']['meta']['toevoeging'] );
+			do {
+				$component = $index < $count ? $data['recept']['meta']['toevoeging'][ $index ]['component'] : '';
+				$gewicht   = $index < $count ? $data['recept']['meta']['toevoeging'][ $index ]['gewicht'] : '';
 			?>
 				<tr>
-					<td><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" value="<?php echo esc_attr( $toevoeging['component'] ); ?>" ></td>
-					<td><input type="number" name="toevoeging_gewicht[]" value="<?php echo esc_attr( $toevoeging['gewicht'] ); ?>"  min="0" max="999" maxlength="3" style="width:50%">&nbsp;gram</td>
+					<td><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
+					<td><input type="number" name="toevoeging_gewicht[]" min="0" max="999" maxlength="3" style="width:50%" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gram</td>
 				</tr>
 			<?php
-			endforeach;
-			if ( ! $toevoeging_regel ) :
-			?>
-				<tr>
-					<td><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" ></td>
-					<td><input type="number" name="toevoeging_gewicht[]" min="0" max="999" maxlength="3" style="width:50%">&nbsp;gram</td>
-				</tr>
-			<?php
-			endif;
+			} while ( $index++ < $count );
 			?>
 				<tr>
 					<td col="2"><button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
@@ -273,6 +260,7 @@ else :
 		<button id="kleistad_recept_opslaan" name="kleistad_submit_recept_beheer">Opslaan</button>
 	</form>
 	<?php
+		remove_filter( 'wp_dropdown_cats', 'wp_dropdown_categories_required' );
 	else :
 	?>
 	<div id="kleistad_verwijder_recept" title="Recept verwijderen ?">
