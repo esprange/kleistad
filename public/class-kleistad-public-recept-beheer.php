@@ -324,6 +324,23 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 						]
 					);
 					if ( $file && ! isset( $file['error'] ) ) {
+						$exif = exif_read_data( $file['file'] );
+						$image = imagecreatefromjpeg( $file['file'] );
+						if ( ! empty( $exif['Orientation'] ) ) {
+							switch ( $exif['Orientation'] ) {
+								case 3:
+									$image = imagerotate( $image, 180, 0 );
+									break;
+								case 6:
+									$image = imagerotate( $image, -90, 0 );
+									break;
+								case 8:
+									$image = imagerotate( $image, 90, 0 );
+									break;
+							}
+						}
+						$result = imagejpeg( $image, $file['file'] );
+						imagedestroy( $image );
 						$data['recept']['content']['foto'] = $file['url'];
 					} else {
 						$error = new WP_Error();

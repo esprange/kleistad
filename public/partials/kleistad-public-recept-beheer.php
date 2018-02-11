@@ -182,7 +182,7 @@ else :
 				?>
 			</div>
 			<div class="kleistad_col_5">
-				<input type="file" name="foto" id="kleistad_foto"  multiple="false" accept="image/*" /><br />
+				<input type="file" name="foto" id="kleistad_foto"  multiple="false" accept=".jpg" /><br />
 				<img src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
 				<input type="hidden" name="foto_url" value="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
 			</div>
