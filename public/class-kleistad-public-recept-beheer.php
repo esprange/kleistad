@@ -47,7 +47,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 		$data['recept'] = [];
 
 		foreach ( $recepten as $recept ) {
-			$content = unserialize( $recept->post_content );
+			$content = json_decode( $recept->post_content, true );
 			$data['recept'][] = [
 				'id' => $recept->ID,
 				'titel' => $recept->post_title,
@@ -114,7 +114,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 					'post_status' => $recept->post_status,
 					'created' => $recept->post_date,
 					'modified' => $recept->post_modified,
-					'content' => unserialize( $recept->post_content ),
+					'content' => json_decode( $recept->post_content, true ),
 					'glazuur' => $glazuur_id,
 					'kleur' => $kleur_id,
 					'uiterlijk' => $uiterlijk_id,
@@ -335,7 +335,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 					$recept = get_post( $data['recept']['id'] );
 					$recept->post_title = $data['recept']['titel'];
 					$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
-					$recept->post_content = serialize( $data['recept']['content'] );
+					$recept->post_content = wp_json_encode( $data['recept']['content'] );
 					$error = wp_update_post( $recept, true );
 					if ( ! is_wp_error( $error ) ) {
 						$recept_id = $error;
@@ -347,7 +347,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 						'post_status' => 'private', // Initiële publicatie status is prive.
 						'post_title' => $data['recept']['titel'],
 						'post_type' => 'kleistad_recept',
-						'post_content' => serialize( $data['recept']['content'] ),
+						'post_content' => wp_json_encode( $data['recept']['content'] ),
 					];
 					$error = wp_insert_post( $recept );
 					if ( ! is_wp_error( $error ) ) {

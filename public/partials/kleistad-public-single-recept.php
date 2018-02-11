@@ -34,7 +34,7 @@ get_header(); ?>
 					$uiterlijk_naam = $term->name;
 				}
 			}
-			$content = unserialize ( get_the_content() );
+			$content = json_decode( get_the_content(), true );
 
 		?>
 		<script type="text/javascript">

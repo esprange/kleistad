@@ -290,7 +290,10 @@ class Kleistad_Public {
 			$in['paste_remove_spans'] = true;
 			$in['paste_as_text'] = true;
 			$in['paste_strip_class_attributes'] = 'all';
-			$in['formats']['underline'] = [ 'inline' => 'u', 'exact' => true ];
+			$in['formats']['underline'] = [
+				'inline' => 'u',
+				'exact' => true,
+			];
 		}
 		return $in;
 	}

@@ -110,7 +110,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 
 		$data['recepten'] = [];
 		foreach ( $recepten as $recept ) {
-			$content = unserialize( $recept->post_content );
+			$content = json_decode( $recept->post_content, true );
 			$data['recepten'][] = [
 				'id' => $recept->ID,
 				'titel' => $recept->post_title,
