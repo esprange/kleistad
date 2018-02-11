@@ -240,7 +240,6 @@ class Kleistad_Public {
 				],
 				'show_ui' => true,
 				'show_in_admin_bar' => false,
-				//'exclude_from_search' => true,
 			]
 		);
 		register_taxonomy(
