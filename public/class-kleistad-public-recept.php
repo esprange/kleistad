@@ -93,47 +93,28 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 		$object_ids = wp_list_pluck( $recepten, 'ID' );
 
 		/*
-		 * Tweede stap, we kijken of er een zoekterm is ingevoerd, en zo ja, doorzoek de meta velden.
+		 * Tweede stap, we kijken of er een zoekterm is ingevoerd
 		 */
 		if ( '' !== $zoek['zoeker'] ) {
 			/*
 			 * Stap 2a, kijk of de term in de titel voorkomt
 			 */
-			$query_2 = [
+			$query = [
 				's' => $zoek['zoeker'],
 				'post_type' => 'kleistad_recept',
 				'numberposts' => '-1',
 				'post__in' => $object_ids,
 			];
-			$recepten_2 = get_posts( $query_2 );
-
-			/*
-			 * Stap 2b, kijk of de term in de inhoud voorkomt
-			 */
-			$query_3 = [
-				'post_type' => 'kleistad_recept',
-				'numberposts' => '-1',
-				'post__in' => $object_ids,
-				'meta_query' => [
-					[
-						'key' => '_kleistad_recept',
-						'value' => $zoek['zoeker'],
-						'compare' => 'LIKE',
-					],
-				],
-			];
-			$recepten_3 = get_posts( $query_3 );
-			$recepten = array_merge( $recepten_2, $recepten_3 );
-			$object_ids = wp_list_pluck( $recepten, 'ID' );
+			$recepten = get_posts( $query );
 		}
 
 		$data['recepten'] = [];
 		foreach ( $recepten as $recept ) {
-			$meta = get_post_meta( $recept->ID, '_kleistad_recept', true );
+			$content = unserialize( $recept->post_content );
 			$data['recepten'][] = [
 				'id' => $recept->ID,
 				'titel' => $recept->post_title,
-				'foto' => $meta['foto'],
+				'foto' => $content['foto'],
 			];
 		}
 

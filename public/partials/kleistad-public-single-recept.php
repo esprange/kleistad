@@ -34,7 +34,7 @@ get_header(); ?>
 					$uiterlijk_naam = $term->name;
 				}
 			}
-			$meta = get_post_meta( get_the_ID(), '_kleistad_recept', true );
+			$content = unserialize ( get_the_content() );
 
 		?>
 		<script type="text/javascript">
@@ -80,7 +80,7 @@ get_header(); ?>
 			<h2><?php the_title(); ?></h2>
 			<div style="width:100%"> 
 				<div style="float:left;width:40%;">
-					<img src="<?php echo esc_url( $meta['foto'] ); ?>" width="100%" style="padding:15px;">
+					<img src="<?php echo esc_url( $content['foto'] ); ?>" width="100%" style="padding:15px;">
 				</div>
 				<div style="float:left;width:60%;">
 					<table style="padding:15px;">
@@ -98,7 +98,7 @@ get_header(); ?>
 					</tr>
 					<tr>
 						<th>Stookschema</th>
-						<td><?php echo $meta['stookschema']; // WPCS: XSS ok. ?></td>
+						<td><?php echo $content['stookschema']; // WPCS: XSS ok. ?></td>
 					</tr>
 					</table>
 				</div>
@@ -119,7 +119,7 @@ get_header(); ?>
 						<td colspan="2">
 							<table>
 						<?php
-						foreach ( $meta['basis'] as $basis ) :
+						foreach ( $content['basis'] as $basis ) :
 						?>
 								<tr>
 									<td><?php echo esc_html( $basis['component'] ); ?></td>
@@ -133,7 +133,7 @@ get_header(); ?>
 						<td colspan="2">
 							<table>
 						<?php
-						foreach ( $meta['toevoeging'] as $toevoeging ) :
+						foreach ( $content['toevoeging'] as $toevoeging ) :
 						?>
 								<tr>
 									<td><?php echo esc_html( $toevoeging['component'] ); ?></td>
@@ -149,11 +149,11 @@ get_header(); ?>
 			</div>
 			<div>
 				<h3>Kenmerken</h3>
-				<?php echo $meta['kenmerk']; // WPCS: XSS ok. ?>
+				<?php echo $content['kenmerk']; // WPCS: XSS ok. ?>
 			</div>
 			<div>
 				<h3>Oorsprong</h3>
-				<?php echo $meta['herkomst']; // WPCS: XSS ok. ?>
+				<?php echo $content['herkomst']; // WPCS: XSS ok. ?>
 			</div>
 		</div>
 		<?php

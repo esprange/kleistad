@@ -132,7 +132,7 @@ else :
 			<div class="kleistad_col_5">
 				<?php
 				wp_editor(
-					$data['recept']['meta']['kenmerk'], 'kleistad_kenmerk', [
+					$data['recept']['content']['kenmerk'], 'kleistad_kenmerk', [
 						'textarea_name' => 'kenmerk',
 						'textarea_rows' => 5,
 						'media_buttons' => false,
@@ -146,7 +146,7 @@ else :
 			<div class="kleistad_col_5">
 				<?php
 				wp_editor(
-					$data['recept']['meta']['herkomst'], 'kleistad_herkomst', [
+					$data['recept']['content']['herkomst'], 'kleistad_herkomst', [
 						'textarea_name' => 'herkomst',
 						'textarea_rows' => 5,
 						'media_buttons' => false,
@@ -170,7 +170,7 @@ else :
 			<div class="kleistad_col_5">
 				<?php
 				wp_editor(
-					$data['recept']['meta']['stookschema'], 'kleistad_stookschema', [
+					$data['recept']['content']['stookschema'], 'kleistad_stookschema', [
 						'textarea_name' => 'stookschema',
 						'textarea_rows' => 5,
 						'media_buttons' => false,
@@ -183,8 +183,8 @@ else :
 			</div>
 			<div class="kleistad_col_5">
 				<input type="file" name="foto" id="kleistad_foto"  multiple="false" accept="image/*" /><br />
-				<img src="<?php echo esc_url( $data['recept']['meta']['foto'] ); ?>" >
-				<input type="hidden" name="foto_url" value="<?php echo esc_url( $data['recept']['meta']['foto'] ); ?>" >
+				<img src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
+				<input type="hidden" name="foto_url" value="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -218,10 +218,10 @@ else :
 				<table>
 			<?php
 			$index = 0;
-			$count = count( $data['recept']['meta']['basis'] );
+			$count = count( $data['recept']['content']['basis'] );
 			do {
-				$component = $index < $count ? $data['recept']['meta']['basis'][ $index ]['component'] : '';
-				$gewicht   = $index < $count ? $data['recept']['meta']['basis'][ $index ]['gewicht'] : '';
+				$component = $index < $count ? $data['recept']['content']['basis'][ $index ]['component'] : '';
+				$gewicht   = $index < $count ? $data['recept']['content']['basis'][ $index ]['gewicht'] : '';
 			?>
 				<tr>
 					<td><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
@@ -239,10 +239,10 @@ else :
 				<table>
 			<?php
 			$index = 0;
-			$count = count( $data['recept']['meta']['toevoeging'] );
+			$count = count( $data['recept']['content']['toevoeging'] );
 			do {
-				$component = $index < $count ? $data['recept']['meta']['toevoeging'][ $index ]['component'] : '';
-				$gewicht   = $index < $count ? $data['recept']['meta']['toevoeging'][ $index ]['gewicht'] : '';
+				$component = $index < $count ? $data['recept']['content']['toevoeging'][ $index ]['component'] : '';
+				$gewicht   = $index < $count ? $data['recept']['content']['toevoeging'][ $index ]['gewicht'] : '';
 			?>
 				<tr>
 					<td><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>

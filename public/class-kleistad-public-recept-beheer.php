@@ -47,14 +47,14 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 		$data['recept'] = [];
 
 		foreach ( $recepten as $recept ) {
-			$meta = get_post_meta( $recept->ID, '_kleistad_recept', true );
+			$content = unserialize( $recept->post_content );
 			$data['recept'][] = [
 				'id' => $recept->ID,
 				'titel' => $recept->post_title,
 				'post_status' => $recept->post_status,
 				'created' => $recept->post_date,
 				'modified' => $recept->post_modified,
-				'foto' => $meta['foto'],
+				'foto' => $content['foto'],
 			];
 		}
 	}
@@ -90,7 +90,6 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 				$glazuur = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
 				$kleur = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
 				$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
-				$grondstof = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
 
 				$glazuur_id = 0;
 				$kleur_id = 0;
@@ -115,7 +114,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 					'post_status' => $recept->post_status,
 					'created' => $recept->post_date,
 					'modified' => $recept->post_modified,
-					'meta' => get_post_meta( $recept->ID, '_kleistad_recept', true ),
+					'content' => unserialize( $recept->post_content ),
 					'glazuur' => $glazuur_id,
 					'kleur' => $kleur_id,
 					'uiterlijk' => $uiterlijk_id,
@@ -169,7 +168,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 				'post_status' => 'private',
 				'created' => 0,
 				'modified' => 0,
-				'meta' => [
+				'content' => [
 					'kenmerk' => '',
 					'herkomst' => '',
 					'basis' => [],
@@ -232,7 +231,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 				'uiterlijk' => FILTER_SANITIZE_NUMBER_INT,
 			]
 		);
-		$data['recept']['meta'] = filter_input_array(
+		$data['recept']['content'] = filter_input_array(
 			INPUT_POST, [
 				'kenmerk' => FILTER_DEFAULT,
 				'herkomst' => FILTER_DEFAULT,
@@ -263,31 +262,31 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 				],
 			]
 		);
-		$data['recept']['meta']['basis'] = [];
+		$data['recept']['content']['basis'] = [];
 		$basis_limiet = count( $basis['basis_component'] );
 		for ( $i = 0; $i < $basis_limiet; $i++ ) {
 			if ( ( '' !== $basis['basis_component'][ $i ] ) && ( 0 !== intval( $basis['basis_gewicht'][ $i ] ) ) ) {
-				$data['recept']['meta']['basis'][ $i ] = [
+				$data['recept']['content']['basis'][ $i ] = [
 					'component' => $basis['basis_component'][ $i ],
 					'gewicht' => $basis['basis_gewicht'][ $i ],
 				];
 			}
 		}
-		$data['recept']['meta']['toevoeging'] = [];
+		$data['recept']['content']['toevoeging'] = [];
 		$toevoeging_limiet = count( $toevoeging['toevoeging_component'] );
 		for ( $i = 0; $i < $toevoeging_limiet; $i++ ) {
 			if ( '' !== $toevoeging['toevoeging_component'][ $i ] && 0 !== intval( $toevoeging['toevoeging_gewicht'][ $i ] ) ) {
-				$data['recept']['meta']['toevoeging'][ $i ] = [
+				$data['recept']['content']['toevoeging'][ $i ] = [
 					'component' => $toevoeging['toevoeging_component'][ $i ],
 					'gewicht' => $toevoeging['toevoeging_gewicht'][ $i ],
 				];
 			}
 		}
 
-		$data['recept']['meta']['kenmerk'] = wp_kses( $data['recept']['meta']['kenmerk'], $allowedhtml );
-		$data['recept']['meta']['herkomst'] = wp_kses( $data['recept']['meta']['herkomst'], $allowedhtml );
-		$data['recept']['meta']['stookschema'] = wp_kses( $data['recept']['meta']['stookschema'], $allowedhtml );
-		$data['recept']['meta']['foto'] = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
+		$data['recept']['content']['kenmerk'] = wp_kses( $data['recept']['content']['kenmerk'], $allowedhtml );
+		$data['recept']['content']['herkomst'] = wp_kses( $data['recept']['content']['herkomst'], $allowedhtml );
+		$data['recept']['content']['stookschema'] = wp_kses( $data['recept']['content']['stookschema'], $allowedhtml );
+		$data['recept']['content']['foto'] = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
 
 		if ( UPLOAD_ERR_INI_SIZE === $_FILES['foto']['error'] ) {
 			$error->add( 'foto', 'De foto is te groot qua omvang !' );
@@ -318,9 +317,25 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			return $error;
 		} else {
 			if ( isset( $data['recept'] ) ) {
+				if ( ! empty( $data['foto']['name'] ) ) {
+					$file = wp_handle_upload(
+						$data['foto'], [
+							'test_form' => false,
+						]
+					);
+					if ( $file && ! isset( $file['error'] ) ) {
+						$data['recept']['content']['foto'] = $file['url'];
+					} else {
+						$error = new WP_Error();
+						$error->add( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] );
+						return $error;
+					}
+				}
 				if ( $data['recept']['id'] ) {
 					$recept = get_post( $data['recept']['id'] );
 					$recept->post_title = $data['recept']['titel'];
+					$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
+					$recept->post_content = serialize( $data['recept']['content'] );
 					$error = wp_update_post( $recept, true );
 					if ( ! is_wp_error( $error ) ) {
 						$recept_id = $error;
@@ -332,26 +347,12 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 						'post_status' => 'private', // Initiële publicatie status is prive.
 						'post_title' => $data['recept']['titel'],
 						'post_type' => 'kleistad_recept',
-						'post_content' => '',
+						'post_content' => serialize( $data['recept']['content'] ),
 					];
 					$error = wp_insert_post( $recept );
 					if ( ! is_wp_error( $error ) ) {
 						$recept_id = $error;
 					} else {
-						return $error;
-					}
-				}
-				if ( ! empty( $data['foto']['name'] ) ) {
-					$file = wp_handle_upload(
-						$data['foto'], [
-							'test_form' => false,
-						]
-					);
-					if ( $file && ! isset( $file['error'] ) ) {
-						$data['recept']['meta']['foto'] = $file['url'];
-					} else {
-						$error = new WP_Error();
-						$error->add( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] );
 						return $error;
 					}
 				}
@@ -363,7 +364,6 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 					],
 					'kleistad_recept_cat'
 				);
-				update_post_meta( $recept_id, '_kleistad_recept', $data['recept']['meta'] );
 				return 'Gegevens zijn opgeslagen';
 			}
 		}

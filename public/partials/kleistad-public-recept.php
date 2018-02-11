@@ -18,7 +18,7 @@ if ( isset( $data['recept'] ) ) :
 	<h2><?php echo esc_html( $data['recept']['titel'] ); ?></h2>
 	<div style="width:100%"> 
 		<div style="float:left;width:30%;">
-			<img src="<?php echo esc_url( $data['recept']['meta']['foto'] ); ?>" width="100%" >
+			<img src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" width="100%" >
 		</div>
 		<div style="float:left;width:70%;">
 			<table>
@@ -36,7 +36,7 @@ if ( isset( $data['recept'] ) ) :
 			</tr>
 			<tr>
 				<th>Stookschema</th>
-				<td><?php echo $data['recept']['meta']['stookschema']; // WPCS: XSS ok. ?></td>
+				<td><?php echo $data['recept']['content']['stookschema']; // WPCS: XSS ok. ?></td>
 			</tr>
 			</table>
 		</div>
@@ -57,7 +57,7 @@ if ( isset( $data['recept'] ) ) :
 				<td colspan="2">
 					<table>
 				<?php
-				foreach ( $data['recept']['meta']['basis'] as $basis ) :
+				foreach ( $data['recept']['content']['basis'] as $basis ) :
 				?>
 						<tr>
 							<td><?php echo esc_html( $basis['component'] ); ?></td>
@@ -71,7 +71,7 @@ if ( isset( $data['recept'] ) ) :
 				<td colspan="2">
 					<table>
 				<?php
-				foreach ( $data['recept']['meta']['toevoeging'] as $toevoeging ) :
+				foreach ( $data['recept']['content']['toevoeging'] as $toevoeging ) :
 				?>
 						<tr>
 							<td><?php echo esc_html( $toevoeging['component'] ); ?></td>
@@ -87,11 +87,11 @@ if ( isset( $data['recept'] ) ) :
 	</div>
 	<div>
 		<h3>Kenmerken</h3>
-		<?php echo $data['recept']['meta']['kenmerk']; // WPCS: XSS ok. ?>
+		<?php echo $data['recept']['content']['kenmerk']; // WPCS: XSS ok. ?>
 	</div>
 	<div>
 		<h3>Oorsprong</h3>
-		<?php echo $data['recept']['meta']['herkomst']; // WPCS: XSS ok. ?>
+		<?php echo $data['recept']['content']['herkomst']; // WPCS: XSS ok. ?>
 	</div>
 </div>
 	<?php

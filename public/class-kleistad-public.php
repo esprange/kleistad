@@ -232,14 +232,15 @@ class Kleistad_Public {
 				'public' => true,
 				'supports' => [
 					'title',
-					'editor',
 					'comments',
 					'thumbnail',
-					'custom-fields',
 				],
 				'rewrite' => [
 					'slug' => 'recepten',
 				],
+				'show_ui' => true,
+				'show_in_admin_bar' => false,
+				//'exclude_from_search' => true,
 			]
 		);
 		register_taxonomy(
@@ -257,6 +258,7 @@ class Kleistad_Public {
 					'menu_name' => 'Recept categoriën',
 				],
 				'query_var' => true,
+				'show_ui' => true,
 				'show_admin_column' => true,
 			]
 		);
@@ -289,6 +291,7 @@ class Kleistad_Public {
 			$in['paste_remove_spans'] = true;
 			$in['paste_as_text'] = true;
 			$in['paste_strip_class_attributes'] = 'all';
+			$in['formats']['underline'] = [ 'inline' => 'u', 'exact' => true ];
 		}
 		return $in;
 	}
