@@ -287,9 +287,10 @@ else :
 			<tr>
 				<td><img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" >
 				<td><?php echo esc_html( $recept['titel'] ); ?></td>
-				<td><?php echo esc_html( strtotime( $recept['modified'] ) );?></td>
-				<td><?php echo esc_html( date_i18n( 'd-m-Y H:i', strtotime( $recept['modified'] ) ) );?></td>
-				<td><?php
+				<td><?php echo esc_html( strtotime( $recept['modified'] ) ); ?></td>
+				<td><?php echo esc_html( date_i18n( 'd-m-Y H:i', strtotime( $recept['modified'] ) ) ); ?></td>
+				<td>
+				<?php
 						echo ( 'private' === $recept['post_status'] ? ' prive' : // WPCS: XSS ok.
 							( 'publish' === $recept['post_status'] ? ' gepubliceerd' :
 							( 'draft' === $recept['post_status'] ? ' concept' : '' ) ) );

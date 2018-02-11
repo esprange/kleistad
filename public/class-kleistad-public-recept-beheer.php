@@ -341,8 +341,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 							}
 						}
 						$quality = intval( min( 600000 / filesize( $file['file'] ) * 100, 100 ) );
-						$result = imagejpeg( $image, $file['file'], $quality );
-						error_log($quality);
+						imagejpeg( $image, $file['file'], $quality );
 						imagedestroy( $image );
 						$data['recept']['content']['foto'] = $file['url'];
 					} else {
