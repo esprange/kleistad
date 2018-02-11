@@ -33,11 +33,12 @@
                         }
                     },
                     pageLength: 5,
-                    order: [ 1, 'desc' ],
+                    order: [ 2, 'desc' ],
                     columnDefs: [
-                        {
-                            width: 100, targets: [ 0, 2]
-                        }
+                        { width: 100, targets: [ 0 ] },
+                        { orderable: false, targets: [ 0, 5 ] },
+                        { orderData: [ 2 ], targets: [ 3 ] },
+                        { visible: false, searchable: false, targets: [ 2 ] }
                     ]
 
                 }
@@ -51,6 +52,11 @@
             $( '#kleistad_foto_input' ).change( function() {
                 var reader = new FileReader();
                 if ( this.files && this.files[0] ) {
+                    if ( this.files[0].size > 2000000 ) {
+                        window.alert( 'deze foto is te groot (' + this.files[0].size + ' bytes)' );
+                        $( this ).val( '' );
+                        return false;
+                    }
                     reader.onload = function( e ) {
                         $( '#kleistad_foto' ).attr( 'src', e.target.result );
                     };

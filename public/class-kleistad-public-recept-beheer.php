@@ -42,6 +42,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 				'private',
 				'draft',
 			],
+			'orderby' => 'date',
 		];
 		$recepten = get_posts( $query );
 		$data['recept'] = [];
@@ -339,7 +340,9 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 									break;
 							}
 						}
-						$result = imagejpeg( $image, $file['file'] );
+						$quality = intval( min( 600000 / filesize( $file['file'] ) * 100, 100 ) );
+						$result = imagejpeg( $image, $file['file'], $quality );
+						error_log($quality);
 						imagedestroy( $image );
 						$data['recept']['content']['foto'] = $file['url'];
 					} else {
