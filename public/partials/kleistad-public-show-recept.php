@@ -73,22 +73,34 @@ function filter( $titel, $naam, $termen ) {
 
 <div id="kleistad_recept_overzicht" class="kleistad_recept_overzicht">
 <?php
-if ( count( $data['recepten'] ) ) :
+$index = 0;
+$count = count( $data['recepten'] );
+if ( $count ) :
 	foreach ( $data['recepten'] as $recept ) :
+		$index++;
+		if ( $index > 24 ) :
+			break;
+		endif
 	?>
-		<div style="width:250px;float:left;padding:15px;border:0px;">
-			<a href="<?php echo esc_url( get_post_permalink( $recept['id'] ) ); ?>" >
-			<div class="kleistad_recept_img" style="background-image:url('<?php echo esc_url( $recept['foto'] ); ?>');" ></div>
-			<div class="kleistad_recept_titel" >
+	<div style="width:250px;float:left;padding:15px;border:0px;">
+		<a href="<?php echo esc_url( get_post_permalink( $recept['id'] ) ); ?>" >
+		<div class="kleistad_recept_img" style="background-image:url('<?php echo esc_url( $recept['foto'] ); ?>');" >
+		</div>
+		<div class="kleistad_recept_titel" >
 	<?php
 			// De titel wordt afgekapt op de eerste 30 karakters...
 			echo esc_html( truncate_string( $recept['titel'], 25 ) );
 	?>
-			</div>
-			</a>
 		</div>
+		</a>
+	</div>
 	<?php
 	endforeach;
+	if ( $count > $index ) :
+	?>
+	<p>er zijn meer recepten dan er nu getoond worden. Pas het filter aan</p>
+	<?php
+	endif;
 else :
 	?>
 	<p>er zijn geen recepten gevonden...</p>

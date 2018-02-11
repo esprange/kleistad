@@ -35,7 +35,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 		$query = [
 			'post_type' => 'kleistad_recept',
 			'numberposts' => '-1',
-			'post_author' => get_current_user_id(),
+			'author' => get_current_user_id(),
 			'post_status' => [
 				'publish',
 				'pending',
@@ -143,10 +143,10 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_publiceer_recept_' . $recept_id ) ) {
 				$recept = get_post( $recept_id );
 				if ( Kleistad_Roles::override() ) {
-					$recept->post_status = ( 'publish' === $recept->post_status ) ? 'private' : 'publish';
+					$recept->post_status = ( 'publish' === $recept->post_status ) ? 'draft' : 'publish';
 				} else {
-					$recept->post_status = ( 'pending' === $recept->post_status ) ? 'private' :
-						( 'publish' === $recept->post_status ) ? 'private' : 'publish';
+					$recept->post_status = ( 'pending' === $recept->post_status ) ? 'draft' :
+						( 'publish' === $recept->post_status ) ? 'draft' : 'publish';
 				}
 				$error = wp_update_post( $recept, true );
 				if ( is_wp_error( $error ) ) {
@@ -165,7 +165,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			$data['recept'] = [
 				'id' => 0,
 				'titel' => '',
-				'post_status' => 'private',
+				'post_status' => 'draft',
 				'created' => 0,
 				'modified' => 0,
 				'content' => [
@@ -344,7 +344,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 					}
 				} else {
 					$recept = [
-						'post_status' => 'private', // Initiële publicatie status is prive.
+						'post_status' => 'draft', // Initiële publicatie status is prive.
 						'post_title' => $data['recept']['titel'],
 						'post_type' => 'kleistad_recept',
 						'post_content' => wp_json_encode( $data['recept']['content'] ),

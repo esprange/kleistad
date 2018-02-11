@@ -82,7 +82,7 @@ class Kleistad_Public {
 	public function register_styles() {
 		wp_register_style( 'jqueryui-css', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
 		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.15/css/jquery.dataTables.css' );
-		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui-css', 'datatables' ], $this->version, 'all' );
+		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui-css', 'datatables', 'dashicons' ], $this->version, 'all' );
 	}
 
 	/**
