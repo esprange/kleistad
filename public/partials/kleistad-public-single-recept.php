@@ -83,7 +83,7 @@ get_header(); ?>
 					<img src="<?php echo esc_url( $content['foto'] ); ?>" width="100%" style="padding:15px;">
 				</div>
 				<div style="float:left;width:60%;">
-					<table style="padding:15px;">
+					<table style="padding-left:25px;">
 					<tr>
 						<th>Type glazuur</th>
 						<td><?php echo esc_html( $glazuur_naam ); ?></td>
