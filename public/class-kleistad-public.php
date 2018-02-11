@@ -265,7 +265,7 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Used by filter single-kleistad_recept_template, directs WP to template file.
+	 * Used by filter single_template, directs WP to template file.
 	 *
 	 * @param string $single_template the template path.
 	 * @return string
@@ -277,6 +277,21 @@ class Kleistad_Public {
 			$single_template = dirname( __FILE__ ) . '/partials/kleistad-public-single-recept.php';
 		}
 		return $single_template;
+	}
+
+	/**
+	 * Used by filter comments_template, directs WP to template file.
+	 *
+	 * @param string $comments_template the template path.
+	 * @return string
+	 */
+	public function comments_template( $comments_template ) {
+		global $post;
+
+		if ( 'kleistad_recept' === $post->post_type ) {
+			$comments_template = dirname( __FILE__ ) . '/partials/kleistad-public-comments-recept.php';
+		}
+		return $comments_template;
 	}
 
 	/**

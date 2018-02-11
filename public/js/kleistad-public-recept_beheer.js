@@ -47,6 +47,16 @@
                 $( '#kleistad_recept_action' ).val( 'toevoegen' );
                 $( '#kleistad_recept_id' ).val( 0 );
             });
+            
+            $( '#kleistad_foto_input' ).change( function() {
+                if ( this.files && this.files[0] ) {
+                    var reader = new FileReader();
+                    reader.onload = function( e ) {
+                        $( '#kleistad_foto' ).attr( 'src', e.target.result );
+                    };
+                    reader.readAsDataURL( this.files[0]);
+                }
+            });
 
             $( '[name="wijzigen"]' ).click( function() {
                 var id = $( this ).data( 'recept_id' );
