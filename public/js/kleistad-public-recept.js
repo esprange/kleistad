@@ -18,10 +18,10 @@
 
     function zoekRecepten() {
         var terms = [];
+        var auteurs = [];
         $( '#kleistad_filters input[name="term"]:checked' ).each( function() {
             terms.push( $( this ).val() );
         });
-        var auteurs = [];
         $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
             auteurs.push( $( this ).val() );
         });
