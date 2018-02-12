@@ -163,6 +163,7 @@ class Kleistad {
 		$this->loader->add_filter( 'tiny_mce_before_init', $plugin_public, 'configure_tinymce' );
 		$this->loader->add_filter( 'single_template', $plugin_public, 'recept_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
+		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
 
 		$this->loader->add_shortcode( 'kleistad_reservering', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_stookbestand', $plugin_public, 'shortcode_handler' );

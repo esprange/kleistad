@@ -158,6 +158,9 @@ get_header(); ?>
 		</div>
 		<?php
 			// If comments are open or we have at least one comment, load up the comment template.
+		if ( function_exists( 'the_ratings' ) ) {
+			the_ratings();
+		}
 		if ( comments_open() || get_comments_number() ) {
 			comments_template();
 		}
@@ -170,6 +173,5 @@ get_header(); ?>
 	<?php get_sidebar( 'content-bottom' ); ?>
 
 </div><!-- .content-area -->
-
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>

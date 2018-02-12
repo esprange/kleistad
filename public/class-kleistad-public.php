@@ -295,6 +295,19 @@ class Kleistad_Public {
 	}
 
 	/**
+	 * Used by filter comment form default fields, om niet te vragen naar een website url.
+	 *
+	 * @param array $fields De commentaar velden.
+	 * @return array
+	 */
+	public function comment_fields( $fields ) {
+		if ( isset( $fields['url'] ) ) {
+			unset( $fields['url'] );
+		}
+		return $fields;
+	}
+
+	/**
 	 *  Configureer de TinyMCE editor, alleen voor de recepten
 	 *
 	 * @param array $in TinyMCE settings.
