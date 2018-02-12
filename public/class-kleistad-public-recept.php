@@ -67,20 +67,15 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 		$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
 
 		$zoek = $request->get_param( 'zoek' );
-
-		/*
-		 * Eerste stap, we passen de filters toe om te bepalen in welke groep recepten we gaan zoeken.
-		 */
-		$query_1 = [
+		$query = [
 			'post_type' => 'kleistad_recept',
 			'numberposts' => '-1',
 			'post_status' => [
 				'publish',
 			],
 		];
-
 		if ( isset( $zoek['terms'] ) ) {
-			$query_1['tax_query']  = [
+			$query['tax_query']  = [
 				[
 					'taxonomy' => 'kleistad_recept_cat',
 					'field' => 'id',
@@ -89,24 +84,26 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				],
 			];
 		}
-		$recepten = get_posts( $query_1 );
-		$object_ids = wp_list_pluck( $recepten, 'ID' );
-
-		/*
-		 * Tweede stap, we kijken of er een zoekterm is ingevoerd
-		 */
 		if ( '' !== $zoek['zoeker'] ) {
-			/*
-			 * Stap 2a, kijk of de term in de titel voorkomt
-			 */
-			$query = [
-				's' => $zoek['zoeker'],
-				'post_type' => 'kleistad_recept',
-				'numberposts' => '-1',
-				'post__in' => $object_ids,
-			];
-			$recepten = get_posts( $query );
+			$query['s'] = $zoek['zoeker'];
 		}
+		if ( isset( $zoek['auteurs'] ) ) {
+			$query['author'] = implode( ',', $zoek['auteurs'] );
+		}
+		$recepten = get_posts( $query );
+
+		$object_ids = wp_list_pluck( $recepten, 'ID' );
+		$auteur_ids = array_unique( wp_list_pluck( $recepten, 'post_author' ) );
+		$auteurs = get_users(
+			[
+				'include' => $auteur_ids,
+				'fields'  => [
+					'display_name',
+					'ID',
+				],
+			]
+		);
+		$data['auteur'] = wp_list_pluck( $auteurs, 'display_name', 'ID' );
 
 		$data['recepten'] = [];
 		foreach ( $recepten as $recept ) {
@@ -125,6 +122,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
 				'parent'     => $glazuur_parent->term_id,
+				'fields'     => 'id=>name',
 			]
 		);
 		$data['kleur'] = get_terms(
@@ -134,6 +132,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
 				'parent'     => $kleur_parent->term_id,
+				'fields'     => 'id=>name',
 			]
 		);
 		$data['uiterlijk'] = get_terms(
@@ -143,6 +142,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
 				'parent'     => $uiterlijk_parent->term_id,
+				'fields'     => 'id=>name',
 			]
 		);
 

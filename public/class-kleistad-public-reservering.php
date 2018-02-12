@@ -156,7 +156,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 					'gereserveerd' => 0,
 					'verwijderbaar' => 0,
 					'wijzigbaar' => $wijzigbaar ? 1 : 0,
-					'wie' => $wijzigbaar ? '-beschikbaar-' : '',
+					'wie' => ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '',
 					'gebruiker_id' => $huidige_gebruiker_id,
 					'gebruiker' => $huidige_gebruiker->display_name,
 				];

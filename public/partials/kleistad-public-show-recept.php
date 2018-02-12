@@ -41,12 +41,12 @@ function filter( $titel, $naam, $termen ) {
 	if ( 0 < $count ) {
 		$html .= "<h3>$titel</h3><ul>";
 		$index = 0;
-		foreach ( $termen as $term ) {
+		foreach ( $termen as $id => $term ) {
 			$index++;
 			$style = ( $toon < $index ) ? 'display:none;' : '';
 			$html .= '<li class="kleistad_filter_term" style="' . $style . '">';
-			$html .= '<label><input type="checkbox" class="kleistad_filter" value="' . $term->term_id . '" style="display:none;" >';
-			$html .= esc_html( truncate_string( $term->name, 25 ) ); // Max. 30 karakters.
+			$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad_filter" value="' . $id . '" style="display:none;" >';
+			$html .= esc_html( truncate_string( $term, 25 ) ); // Max. 30 karakters.
 			$html .= '<span style="visibility:hidden;float:right">&#9932;</span></label></li>';
 			if ( $toon === $index ) {
 				$html .= '<li class="kleistad_filter_term">';
@@ -62,48 +62,49 @@ function filter( $titel, $naam, $termen ) {
 	return $html;
 }
 
-?>
-<div id="kleistad_filters" class="kleistad_filters" >
-<?php
-	echo filter( 'Type glazuur', 'glazuur', $data['glazuur'] ); // WPCS: XSS ok.
-	echo filter( 'Uiterlijk', 'uiterlijk', $data['uiterlijk'] ); // WPCS: XSS ok.
-	echo filter( 'Kleur', 'kleur', $data['kleur'] ); // WPCS: XSS ok.
-?>
-</div>
-
-<div id="kleistad_recept_overzicht" class="kleistad_recept_overzicht">
-<?php
-$index = 0;
 $count = count( $data['recepten'] );
 if ( $count ) :
+?>
+	<div id="kleistad_filters" class="kleistad_filters" >
+	<?php
+		echo filter( 'Type glazuur', 'term', $data['glazuur'] ); // WPCS: XSS ok.
+		echo filter( 'Uiterlijk', 'term', $data['uiterlijk'] ); // WPCS: XSS ok.
+		echo filter( 'Kleur', 'term', $data['kleur'] ); // WPCS: XSS ok.
+		echo filter( 'Auteur', 'auteur', $data['auteur'] ); // WPCS: XSS ok.
+	?>
+	</div>
+
+	<div id="kleistad_recept_overzicht" class="kleistad_recept_overzicht">
+	<?php
+	$index = 0;
 	foreach ( $data['recepten'] as $recept ) :
 		$index++;
 		if ( $index > 24 ) :
 			break;
-		endif
+		endif;
 	?>
-	<div style="width:250px;float:left;padding:15px;border:0px;">
-		<a href="<?php echo esc_url( get_post_permalink( $recept['id'] ) ); ?>" >
-		<div class="kleistad_recept_img" style="background-image:url('<?php echo esc_url( $recept['foto'] ); ?>');" >
-		</div>
-		<div class="kleistad_recept_titel" >
+		<div style="width:250px;float:left;padding:15px;border:0px;">
+			<a href="<?php echo esc_url( get_post_permalink( $recept['id'] ) ); ?>" >
+			<div class="kleistad_recept_img" style="background-image:url('<?php echo esc_url( $recept['foto'] ); ?>');" >
+			</div>
+			<div class="kleistad_recept_titel" >
 	<?php
 			// De titel wordt afgekapt op de eerste 30 karakters...
 			echo esc_html( truncate_string( $recept['titel'], 25 ) );
 	?>
+			</div>
+			</a>
 		</div>
-		</a>
-	</div>
 	<?php
 	endforeach;
 	if ( $count > $index ) :
 	?>
-	<p>er zijn meer recepten dan er nu getoond worden. Pas het filter aan</p>
+	<p style="text-align:center;">er zijn meer recepten dan er nu getoond worden. Pas het filter aan</p>
 	<?php
 	endif;
 else :
 	?>
-	<p>er zijn geen recepten gevonden...</p>
+	<p style="text-align:center;">er zijn geen recepten gevonden...</p>
 	<?php
 endif;
 ?>

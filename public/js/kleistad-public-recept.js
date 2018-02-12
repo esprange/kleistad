@@ -18,8 +18,12 @@
 
     function zoekRecepten() {
         var terms = [];
-        $( '#kleistad_filters input[type="checkbox"]:checked' ).each( function() {
+        $( '#kleistad_filters input[name="term"]:checked' ).each( function() {
             terms.push( $( this ).val() );
+        });
+        var auteurs = [];
+        $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
+            auteurs.push( $( this ).val() );
         });
         $.ajax(
             {
@@ -31,15 +35,23 @@
                 data: {
                     zoek: {
                         zoeker: $( '#kleistad_zoek' ).val(),
-                        terms: terms
+                        terms: terms,
+                        auteurs: auteurs
                     }
                 }
             }
         ).done(
             function( data ) {
                 $( '#kleistad_recepten' ).html( data.html );
-                $( '#kleistad_filters input[type="checkbox"]' ).each( function() {
+                $( '#kleistad_filters input[name="term"]' ).each( function() {
                     if ( -1 !== $.inArray( $( this ).val(), data.zoek.terms ) ) {
+                        $( this ).prop( 'checked', true );
+                        $( this ).next().css( { visibility: 'visible' } );
+                        $( this ).parent().css( { fontWeight: 'bold' } );
+                    }
+                });
+                $( '#kleistad_filters input[name="auteur"]' ).each( function() {
+                    if ( -1 !== $.inArray( $( this ).val(), data.zoek.auteurs ) ) {
                         $( this ).prop( 'checked', true );
                         $( this ).next().css( { visibility: 'visible' } );
                         $( this ).parent().css( { fontWeight: 'bold' } );
