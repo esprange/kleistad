@@ -97,13 +97,25 @@ if ( isset( $data['recept'] ) ) :
 	<?php
 else :
 ?>
-<div class="kleistad_row" >
-	<div class="kleistad_col_3">
+<div class="kleistad_row" style="padding-bottom:15px;">
+	<div class="kleistad_col_2">
 		<label for="kleistad_zoek" >Zoek een recept</label>
 	</div>
-	<div class="kleistad_col_7 kleistad_zoek" >
+	<div class="kleistad_col_4 kleistad_zoek" >
 		<span class="dashicons dashicons-search"></span>		
 		<input type="search" id="kleistad_zoek" placeholder="zoeken..." value="" >
+	</div>
+	<div class="kleistad_col_2" style="text-align:right;">
+		<label for="kleistad_sorteer" >Sorteer op</label>
+	</div>
+	<div class="kleistad_col_2">
+		<select id="kleistad_sorteer" >
+			<option value="titel" selected>Titel</option>
+			<?php if ( function_exists( 'the_ratings' ) ) : ?>
+			<option value="waardering">Waardering</option>
+			<?php endif ?>
+			<option value="nieuwste">Nieuwste</option>
+		</select>
 	</div>
 </div>
 <div class="kleistad_row">

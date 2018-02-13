@@ -36,7 +36,8 @@
                     zoek: {
                         zoeker: $( '#kleistad_zoek' ).val(),
                         terms: terms,
-                        auteurs: auteurs
+                        auteurs: auteurs,
+                        sorteer: $( '#kleistad_sorteer' ).val()
                     }
                 }
             }
@@ -94,6 +95,11 @@
                 if ( 13 === e.keyCode ) {
                     zoekRecepten();
                 }
+                return false;
+            });
+
+            $( '#kleistad_sorteer' ).change( function() {
+                zoekRecepten();
                 return false;
             });
 

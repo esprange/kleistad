@@ -74,6 +74,33 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				'publish',
 			],
 		];
+		switch ( $zoek['sorteer'] ) {
+			case 'nieuwste':
+				$query['orderby'] = 'date';
+				$query['order'] = 'DESC';
+				break;
+			case 'waardering':
+				$query['orderby'] = 'meta_key';
+				$query['order'] = 'DESC';
+				$query['meta_query'] = [
+					'relation' => 'OR',
+					[
+						'key' => 'ratings_average',
+						'compare' => 'EXISTS',
+					],					
+					[
+						'key' => 'ratings_average',
+						'value' => '',
+						'compare' => 'NOT EXISTS',
+					],					
+				];
+				break;
+			case 'titel':
+			default:
+				$query['orderby'] = 'title';
+				$query['order'] = 'ASC';
+				break;
+		}
 		if ( isset( $zoek['terms'] ) ) {
 			$query['tax_query']  = [
 				[
