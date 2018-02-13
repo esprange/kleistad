@@ -27,31 +27,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	 * @since   4.1.0
 	 */
 	public function prepare( &$data = null ) {
-		return true;
-	}
-
-	/**
-	 * Valideer/sanitize 'recept' form
-	 *
-	 * @param array $data Returned data.
-	 * @return array
-	 *
-	 * @since   4.1.0
-	 */
-	public function validate( &$data ) {
-		return true;
-	}
-
-	/**
-	 *
-	 * Bewaar 'recept' form gegevens
-	 *
-	 * @param array $data data to be saved.
-	 * @return string
-	 *
-	 * @since   4.1.0
-	 */
-	public function save( $data ) {
+		// Geen acties nodig in deze functie.
 		return true;
 	}
 
@@ -87,12 +63,12 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 					[
 						'key' => 'ratings_average',
 						'compare' => 'EXISTS',
-					],					
+					],
 					[
 						'key' => 'ratings_average',
 						'value' => '',
 						'compare' => 'NOT EXISTS',
-					],					
+					],
 				];
 				break;
 			case 'titel':
