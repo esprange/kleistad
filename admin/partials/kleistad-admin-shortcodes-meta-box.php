@@ -13,14 +13,14 @@
 
 ?>
 <div class="card">
-	De shortcodes zijn: 
+	De shortcodes zijn:
 	<ul style="list-style-type:none">
 		<li><h3>publiek toegankelijk (dus zonder ingelogd te zijn)</h3>
 			<ul style="list-style-type:square">
 				<li>[kleistad_abonnee_inschrijving verklaring=''] inschrijving als abonnee</li>
 				<li>[kleistad_cursus_inschrijving] inschrijving voor cursus</li>
 				<li>[kleistad_recept] overzicht van keramiek recepten</li>
-			</ul>                      
+			</ul>
 		</li>
 		<li><h3>toegankelijk voor leden</h3>
 			<ul style="list-style-type:square">
@@ -42,6 +42,6 @@
 		</li>
 	</ul>
 	<p>bij de optionele verklaring parameter bij <strong>kleistad_abonnee_inschrijving</strong> kan bijvoorbeeld ingevuld worden:</p>
-	<code><?php echo htmlspecialchars('ik heb de <a href="https://www.kleistad.nl/wp/wp-content/uploads/2017/08/Huisregels-inloop-atelier-KLEISTAD-aug2017.pdf" target="_blank" rel="noopener">Huisregels inloop atelier KLEISTAD -aug2017</a> gelezen' ); ?></code>
- 
+	<code><?php echo htmlspecialchars( 'ik heb de <a href="https://www.kleistad.nl/wp/wp-content/uploads/2017/08/Huisregels-inloop-atelier-KLEISTAD-aug2017.pdf" target="_blank" rel="noopener">Huisregels inloop atelier KLEISTAD -aug2017</a> gelezen' ); // WPCS: XSS ok. ?></code>
+
 </div>
