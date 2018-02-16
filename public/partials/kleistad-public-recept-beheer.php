@@ -257,6 +257,7 @@ else :
 				</table>
 			</div>
 		</div>
+		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p> 
 		<button id="kleistad_recept_opslaan" name="kleistad_submit_recept_beheer">Opslaan</button>
 	</form>
 	<?php

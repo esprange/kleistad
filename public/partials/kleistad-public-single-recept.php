@@ -119,11 +119,23 @@ get_header(); ?>
 						<td colspan="2">
 							<table>
 						<?php
+						$normeren = 0;
 						foreach ( $content['basis'] as $basis ) :
+							$normeren += $basis['gewicht'];
+						endforeach;
+						$som = 0;
+						foreach ( $content['basis'] as $basis ) :
+							$som += round( $basis['gewicht'] * 100 / $normeren );
+						endforeach;
+						$restant = 100 - $som;
+						// To make sure that the total equals 100.
+						foreach ( $content['basis'] as $basis ) :
+							$gewicht = round( $basis['gewicht'] * 100 / $normeren ) + $restant;
+							$restant = 0;
 						?>
 								<tr>
 									<td><?php echo esc_html( $basis['component'] ); ?></td>
-									<td><?php echo esc_html( $basis['gewicht'] ); ?> gr.</td>
+									<td><?php echo esc_html( $gewicht ); ?> gr.</td>
 								</tr>
 						<?php
 						endforeach;
@@ -137,7 +149,7 @@ get_header(); ?>
 						?>
 								<tr>
 									<td><?php echo esc_html( $toevoeging['component'] ); ?></td>
-									<td><?php echo esc_html( $toevoeging['gewicht'] ); ?> gr.</td>
+									<td><?php echo esc_html( round( $toevoeging['gewicht'] * 100 / $normeren ) ); ?> gr.</td>
 								</tr>
 						<?php
 						endforeach;
