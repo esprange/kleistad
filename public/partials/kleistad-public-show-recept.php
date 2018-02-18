@@ -79,7 +79,7 @@ if ( $count ) :
 	$index = 0;
 	foreach ( $data['recepten'] as $recept ) :
 		$index++;
-		if ( $index > 4 ) : // Meer dan 24 recepten getoond.
+		if ( $index > 24 ) :
 			break;
 		endif;
 	?>
