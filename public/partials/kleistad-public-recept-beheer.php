@@ -1,0 +1,324 @@
+<?php
+/**
+ * Provide a public-facing view for the plugin
+ *
+ * This file is used to markup the public-facing aspects of the plugin.
+ *
+ * @link       www.sprako.nl/wordpress/eric
+ * @since      4.1.0
+ *
+ * @package    Kleistad
+ * @subpackage Kleistad/public/partials
+ */
+
+if ( ! is_user_logged_in() ) :
+	?>
+	<p>Geen toegang tot dit formulier</p>
+	<?php
+else :
+	if ( isset( $data['id'] ) ) :
+		add_filter( 'wp_dropdown_cats', 'wp_dropdown_categories_required' );
+		/**
+		 * Voegt 'required' toe aan dropdown list.
+		 *
+		 * @param string $output Door wp_dropdown_categories aangemaakte select list.
+		 * @return string
+		 */
+		function wp_dropdown_categories_required( $output ) {
+			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output );
+		}
+	?>
+	<form method="post" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data" >
+		<input type="hidden" name="action" value="" />
+		<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
+		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_3">
+				<label for="kleistad_titel">Recept naam</label>
+			</div>
+			<div class="kleistad_col_7">
+				<input class="kleistad_input" type="text" size="20" name="titel" tabindex="1" required id="kleistad_titel"
+					   value="<?php echo esc_attr( $data['recept']['titel'] ); ?>"/>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_3">
+				<label for="kleistad_glazuur">Soort glazuur</label>
+			</div>
+			<div class="kleistad_label kleistad_col_3">
+				<label for="kleistad_kleur">Kleur</label>
+			</div>
+			<div class="kleistad_label kleistad_col_3">
+				<label for="kleistad_uiterlijk">Uiterlijk</label>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_3">
+			<?php
+			$glazuur = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
+			wp_dropdown_categories(
+				[
+					'orderby' => 'name',
+					'hide_empty' => 0,
+					'show_count' => 0,
+					'show_option_none' => 'Kies soort glazuur',
+					'option_none_value' => '',
+					'class' => 'cat',
+					'taxonomy' => 'kleistad_recept_cat',
+					'hierarchical' => 1,
+					'id' => 'kleistad_glazuur',
+					'name' => 'glazuur',
+					'selected' => $data['recept']['glazuur'],
+					'child_of' => $glazuur->term_id,
+					'tabindex' => 2,
+				]
+			);
+			?>
+			</div>
+			<div class="kleistad_col_3">
+			<?php
+			$kleur = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
+			$cat_dropdown = wp_dropdown_categories(
+				[
+					'orderby' => 'name',
+					'hide_empty' => 0,
+					'show_count' => 0,
+					'show_option_none' => 'Kies kleur',
+					'option_none_value' => '',
+					'class' => 'cat',
+					'taxonomy' => 'kleistad_recept_cat',
+					'hierarchical' => 1,
+					'id' => 'kleistad_kleur',
+					'name' => 'kleur',
+					'selected' => $data['recept']['kleur'],
+					'child_of' => $kleur->term_id,
+					'tabindex' => 3,
+				]
+			);
+			?>
+			</div>
+			<div class="kleistad_col_3">
+			<?php
+			$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
+			wp_dropdown_categories(
+				[
+					'orderby' => 'name',
+					'hide_empty' => 0,
+					'show_count' => 0,
+					'show_option_none' => 'Kies uiterlijk',
+					'option_none_value' => '',
+					'class' => 'cat',
+					'taxonomy' => 'kleistad_recept_cat',
+					'hierarchical' => 1,
+					'id' => 'kleistad_uiterlijk',
+					'name' => 'uiterlijk',
+					'selected' => $data['recept']['uiterlijk'],
+					'child_of' => $uiterlijk->term_id,
+					'tabindex' => 4,
+				]
+			);
+			?>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_5">
+				<label for="kleistad_kenmerk">Kenmerken</label>
+			</div>
+			<div class="kleistad_label kleistad_col_5">
+				<label for="kleistad_herkomst">Herkomst</label>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_5">
+				<?php
+				wp_editor(
+					$data['recept']['content']['kenmerk'], 'kleistad_kenmerk', [
+						'textarea_name' => 'kenmerk',
+						'textarea_rows' => 5,
+						'media_buttons' => false,
+						'teeny' => true,
+						'quicktags' => false,
+						'tabindex' => 5,
+					]
+				);
+				?>
+			</div>
+			<div class="kleistad_col_5">
+				<?php
+				wp_editor(
+					$data['recept']['content']['herkomst'], 'kleistad_herkomst', [
+						'textarea_name' => 'herkomst',
+						'textarea_rows' => 5,
+						'media_buttons' => false,
+						'teeny' => true,
+						'quicktags' => false,
+						'tabindex' => 6,
+					]
+				);
+				?>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_5">
+				<label for="kleistad_stookschema">Stookschema</label>
+			</div>
+			<div class="kleistad_label kleistad_col_5">
+				<label for="kleistad_foto">Foto (max 2M bytes)</label>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_5">
+				<?php
+				wp_editor(
+					$data['recept']['content']['stookschema'], 'kleistad_stookschema', [
+						'textarea_name' => 'stookschema',
+						'textarea_rows' => 5,
+						'media_buttons' => false,
+						'teeny' => true,
+						'quicktags' => false,
+						'tabindex' => 7,
+					]
+				);
+				?>
+			</div>
+			<div class="kleistad_col_5">
+				<input type="file" name="foto" id="kleistad_foto_input"  multiple="false" accept=".jpg" /><br />
+				<img id="kleistad_foto" src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
+				<input type="hidden" name="foto_url" value="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_5">
+				<label>Basis recept</label>
+			</div>
+			<div class="kleistad_col_5">
+				<label>Toevoegingen</label>
+			</div>
+		</div>
+		<datalist id="kleistad_recept_grondstof">
+			<?php
+			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
+			$terms = get_terms(
+				[
+					'taxonomy'   => 'kleistad_recept_cat',
+					'hide_empty' => false,
+					'orderby'    => 'name',
+					'parent'     => $grondstof_parent->term_id,
+				]
+			);
+			foreach ( $terms as $term ) :
+			?>
+				<option value="<?php echo esc_attr( $term->name ); ?>">
+			<?php
+			endforeach
+			?>
+		</datalist>
+		<div class="kleistad_row">
+			<div class="kleistad_col_5">
+				<table>
+			<?php
+			$index = 0;
+			$count = count( $data['recept']['content']['basis'] );
+			do {
+				$component = $index < $count ? $data['recept']['content']['basis'][ $index ]['component'] : '';
+				$gewicht   = $index < $count ? $data['recept']['content']['basis'][ $index ]['gewicht'] * 1.0 : 0.0;
+			?>
+				<tr>
+					<td><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
+					<td><input type="text" class="kleistad_gewicht" name="basis_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( number_format_i18n( $gewicht, 2 ) ); ?>" >&nbsp;gram</td>
+				</tr>
+			<?php
+			} while ( $index++ < $count );
+			?>
+				<tr>
+					<td col="2"><button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
+				</tr>
+				</table>
+			</div>
+			<div class="kleistad_col_5">
+				<table>
+			<?php
+			$index = 0;
+			$count = count( $data['recept']['content']['toevoeging'] );
+			do {
+				$component = $index < $count ? $data['recept']['content']['toevoeging'][ $index ]['component'] : '';
+				$gewicht   = $index < $count ? $data['recept']['content']['toevoeging'][ $index ]['gewicht'] * 1.0 : 0.0;
+			?>
+				<tr>
+					<td><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
+					<td><input type="text" class="kleistad_gewicht" name="toevoeging_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( number_format_i18n( $gewicht, 2 ) ); ?>" >&nbsp;gram</td>
+				</tr>
+			<?php
+			} while ( $index++ < $count );
+			?>
+				<tr>
+					<td col="2"><button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
+				</tr>
+				</table>
+			</div>
+		</div>
+		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p> 
+		<button id="kleistad_recept_opslaan" name="kleistad_submit_recept_beheer">Opslaan</button>
+		<button onClick="window.history.back();">Annuleren</button>
+	</form>
+	<?php
+		remove_filter( 'wp_dropdown_cats', 'wp_dropdown_categories_required' );
+	else :
+	?>
+	<div id="kleistad_verwijder_recept" title="Recept verwijderen ?">
+	  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Dit recept wordt verwijderd</p>
+	</div>
+	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
+
+		<input id="kleistad_recept_action" type="hidden" name="action" value="recept_overzicht" />
+		<input id="kleistad_recept_id" type="hidden" name="recept_id" value="0" />
+		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
+		<table class="kleistad_rapport">
+			<thead>
+			<tr>
+				<th>Glazuur</th>
+				<th>Titel</th>
+				<th>xDatum</th>
+				<th>Datum</th>
+				<th>Status</th>
+				<th>&nbsp;</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php foreach ( $data['recept'] as $recept ) : ?>
+			<tr>
+				<td><img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" >
+				<td><?php echo esc_html( $recept['titel'] ); ?></td>
+				<td><?php echo esc_html( strtotime( $recept['modified'] ) ); ?></td>
+				<td><?php echo esc_html( date_i18n( 'd-m-Y H:i', strtotime( $recept['modified'] ) ) ); ?></td>
+				<td>
+				<?php
+						echo ( 'private' === $recept['post_status'] ? ' prive' : // WPCS: XSS ok.
+							( 'publish' === $recept['post_status'] ? ' gepubliceerd' :
+							( 'draft' === $recept['post_status'] ? ' concept' : '' ) ) );
+					?>
+				</td>
+				<td>
+					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_wijzig_recept_' . $recept['id'] ) . '&action=wijzigen&id=' . $recept['id'] ); ?>"
+					   title="wijzig recept" class="ui-button ui-widget ui-corner-all" style="color:green;padding:.4em .8em;" name="wijzigen" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
+						<span class="dashicons dashicons-edit"></span>
+					</a>
+					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_publiceer_recept_' . $recept['id'] ) . '&action=publiceren&id=' . $recept['id'] ); ?>"
+					   title="<?php echo ( 'draft' === $recept['post_status'] ) ? 'publiceer recept' : 'concept'; ?>" class="ui-button ui-widget ui-corner-all" style="color:black;padding:.4em .8em;" name="publiceren" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
+						<span class="dashicons dashicons-<?php echo ( 'draft' === $recept['post_status'] ) ? 'external' : 'hammer'; ?>"></span>
+					</a>
+					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_verwijder_recept_' . $recept['id'] ) . '&action=verwijderen&id=' . $recept['id'] ); ?>"
+					   title="verwijder recept" class="ui-button ui-widget ui-corner-all" style="color:red;padding:.4em .8em;" name="verwijderen" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
+						<span class="dashicons dashicons-trash"></span>
+					</a>
+				</td>
+			</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+		<button id="kleistad_recept_toevoegen">Toevoegen</button>
+	</form>
+	<?php
+	endif;
+endif
+?>

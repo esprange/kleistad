@@ -16,7 +16,7 @@
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
-class Kleistad_Public_Registratie_Overzicht extends Kleistad_Public_Shortcode {
+class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 
 	/**
 	 *

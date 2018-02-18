@@ -100,8 +100,6 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		// prepare query params, as usual current page, order by and order direction.
 		$paged_val = filter_input( INPUT_GET, 'paged' );
 		$paged   = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val = filter_input( INPUT_GET, 'order' );
 		$order = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 

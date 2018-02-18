@@ -18,7 +18,7 @@ require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-c
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-abonnement.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-gebruiker.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-shortcode.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-shortcode.php';
 
 /**
  * The public-facing functionality of the plugin.
@@ -82,7 +82,7 @@ class Kleistad_Public {
 	public function register_styles() {
 		wp_register_style( 'jqueryui-css', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
 		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.15/css/jquery.dataTables.css' );
-		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui-css', 'datatables' ], $this->version, 'all' );
+		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui-css', 'datatables', 'dashicons' ], $this->version, 'all' );
 	}
 
 	/**
@@ -95,6 +95,8 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'cursus_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_inschrijving.js', [ 'jquery' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'cursus_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables' ], $this->version, false );
+		wp_register_script( $this->plugin_name . 'recept_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'datatables' ], $this->version, false );
+		wp_register_script( $this->plugin_name . 'recept', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept.js', [ 'jquery' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'saldo', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'saldo_overzicht', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo_overzicht.js', [ 'jquery', 'datatables' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'stookbestand', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-stookbestand.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
@@ -108,6 +110,14 @@ class Kleistad_Public {
 				'base_url' => rest_url( $this->url ),
 				'success_message' => 'de reservering is geslaagd!',
 				'error_message' => 'het was niet mogelijk om de reservering uit te voeren',
+			]
+		);
+		wp_localize_script(
+			$this->plugin_name . 'recept', 'kleistadData', [
+				'nonce' => wp_create_nonce( 'wp_rest' ),
+				'base_url' => rest_url( $this->url ),
+				'success_message' => 'de recepten konden worden opgevraagd!',
+				'error_message' => 'het was niet mogelijk om de recepten uit de database op te vragen',
 			]
 		);
 	}
@@ -180,6 +190,140 @@ class Kleistad_Public {
 				},
 			]
 		);
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-recept.php';
+		register_rest_route(
+			$this->url, '/recept', [
+				'methods' => 'POST',
+				'callback' => [ 'kleistad_public_recept', 'callback_recept' ],
+				'args' => [
+					'zoek' => [
+						'required' => false,
+					],
+				],
+				'permission_callback' => function() {
+						return true;
+				},
+			]
+		);
+	}
+
+	/**
+	 * Create the ceramics recept post type
+	 *
+	 * @since 4.1.0
+	 */
+	public function create_recept_type() {
+		register_post_type(
+			'kleistad_recept', [
+				'labels' => [
+					'name' => 'Keramiek recepten',
+					'singular_name' => 'Keramiek recept',
+					'add_new' => 'Toevoegen',
+					'add_new_item' => 'Recept toevoegen',
+					'edit' => 'Wijzigen',
+					'edit_item' => 'Recept wijzigen',
+					'view' => 'Inzien',
+					'view_item' => 'Recept inzien',
+					'search_items' => 'Recept zoeken',
+					'not_found' => 'Niet gevonden',
+					'not_found_in_trash' => 'Niet in prullenbak gevonden',
+				],
+				'public' => true,
+				'supports' => [
+					'title',
+					'comments',
+					'thumbnail',
+				],
+				'rewrite' => [
+					'slug' => 'recepten',
+				],
+				'show_ui' => true,
+				'show_in_admin_bar' => false,
+			]
+		);
+		register_taxonomy(
+			'kleistad_recept_cat', 'kleistad_recept', [
+				'hierarchical' => true,
+				'labels' => [
+					'name' => 'Recept categoriën',
+					'singular_name' => 'Recept categorie',
+					'search_items' => 'Zoek recept categorie',
+					'all_items' => 'Alle recept categoriën',
+					'edit_item' => 'Wijzig recept categorie',
+					'update_item' => 'Sla recept categorie op',
+					'add_new_item' => 'Voeg recept categorie toe',
+					'new_item_name' => 'Nieuwe recept recept categorie',
+					'menu_name' => 'Recept categoriën',
+				],
+				'query_var' => true,
+				'show_ui' => true,
+				'show_admin_column' => true,
+			]
+		);
+		register_taxonomy_for_object_type( 'kleistad_recept_cat', 'kleistad_recept' );
+	}
+
+	/**
+	 * Used by filter single_template, directs WP to template file.
+	 *
+	 * @param string $single_template the template path.
+	 * @return string
+	 */
+	public function recept_template( $single_template ) {
+		global $post;
+
+		if ( 'kleistad_recept' === $post->post_type ) {
+			$single_template = dirname( __FILE__ ) . '/partials/kleistad-public-single-recept.php';
+		}
+		return $single_template;
+	}
+
+	/**
+	 * Used by filter comments_template, directs WP to template file.
+	 *
+	 * @param string $comments_template the template path.
+	 * @return string
+	 */
+	public function comments_template( $comments_template ) {
+		global $post;
+
+		if ( 'kleistad_recept' === $post->post_type ) {
+			$comments_template = dirname( __FILE__ ) . '/partials/kleistad-public-comments-recept.php';
+		}
+		return $comments_template;
+	}
+
+	/**
+	 * Used by filter comment form default fields, om niet te vragen naar een website url.
+	 *
+	 * @param array $fields De commentaar velden.
+	 * @return array
+	 */
+	public function comment_fields( $fields ) {
+		if ( isset( $fields['url'] ) ) {
+			unset( $fields['url'] );
+		}
+		return $fields;
+	}
+
+	/**
+	 *  Configureer de TinyMCE editor, alleen voor de recepten
+	 *
+	 * @param array $in TinyMCE settings.
+	 */
+	public function configure_tinymce( $in ) {
+		if ( ! is_admin() ) { // Only in frontend mode.
+			$in['paste_remove_styles'] = true;
+			$in['paste_remove_spans'] = true;
+			$in['paste_as_text'] = true;
+			$in['paste_strip_class_attributes'] = 'all';
+			$in['formats']['underline'] = [
+				'inline' => 'u',
+				'exact' => true,
+			];
+		}
+		return $in;
 	}
 
 	/**
