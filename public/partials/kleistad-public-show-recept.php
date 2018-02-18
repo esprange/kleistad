@@ -100,7 +100,7 @@ if ( $count ) :
 	?>
 	</div>
 <?php
-	if ( $count > $index ) :
+if ( $count > $index ) :
 	?>
 	<div style="float:left;width:100%;position:relative;" class="kleistad_inform">
 	er zijn meer recepten dan er nu getoond worden, pas het filter aan.
