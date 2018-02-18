@@ -102,7 +102,7 @@ else :
 		<label for="kleistad_zoek" >Zoek een recept</label>
 	</div>
 	<div class="kleistad_col_4 kleistad_zoek" >
-		<span class="dashicons dashicons-search"></span>		
+		<span class="dashicons dashicons-search" style="cursor:pointer;" id="kleistad_zoek_icon"></span>		
 		<input type="search" id="kleistad_zoek" placeholder="zoeken..." value="" >
 	</div>
 	<div class="kleistad_col_2" style="text-align:right;">

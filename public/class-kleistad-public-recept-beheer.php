@@ -246,7 +246,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 					'flags' => FILTER_REQUIRE_ARRAY,
 				],
 				'basis_gewicht' => [
-					'filter' => FILTER_SANITIZE_NUMBER_INT,
+					'filter' => FILTER_SANITIZE_STRING,
 					'flags' => FILTER_REQUIRE_ARRAY,
 				],
 			]
@@ -258,7 +258,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 					'flags' => FILTER_REQUIRE_ARRAY,
 				],
 				'toevoeging_gewicht' => [
-					'filter' => FILTER_SANITIZE_NUMBER_INT,
+					'filter' => FILTER_SANITIZE_STRING,
 					'flags' => FILTER_REQUIRE_ARRAY,
 				],
 			]
@@ -269,7 +269,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			if ( ( '' !== $basis['basis_component'][ $i ] ) && ( 0 !== intval( $basis['basis_gewicht'][ $i ] ) ) ) {
 				$data['recept']['content']['basis'][ $i ] = [
 					'component' => $basis['basis_component'][ $i ],
-					'gewicht' => $basis['basis_gewicht'][ $i ],
+					'gewicht' => str_replace( ',', '.', $basis['basis_gewicht'][ $i ] ) * 1.0,
 				];
 			}
 		}
@@ -279,7 +279,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			if ( '' !== $toevoeging['toevoeging_component'][ $i ] && 0 !== intval( $toevoeging['toevoeging_gewicht'][ $i ] ) ) {
 				$data['recept']['content']['toevoeging'][ $i ] = [
 					'component' => $toevoeging['toevoeging_component'][ $i ],
-					'gewicht' => $toevoeging['toevoeging_gewicht'][ $i ],
+					'gewicht' => str_replace( ',', '.', $toevoeging['toevoeging_gewicht'][ $i ] ) * 1.0,
 				];
 			}
 		}

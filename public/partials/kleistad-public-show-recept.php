@@ -48,7 +48,7 @@ function filter( $titel, $naam, $termen ) {
 			$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad_filter" value="' . $id . '" style="display:none;" >';
 			$html .= esc_html( truncate_string( $term, 25 ) ); // Max. 30 karakters.
 			$html .= '<span style="visibility:hidden;float:right">&#9932;</span></label></li>';
-			if ( $toon === $index ) {
+			if ( ( $toon === $index ) && ( $index !== $count ) ) {
 				$html .= '<li class="kleistad_filter_term">';
 				$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad_meer" value="meer" style="display:none;" >+ meer ... </label></li>';
 			}
@@ -79,7 +79,7 @@ if ( $count ) :
 	$index = 0;
 	foreach ( $data['recepten'] as $recept ) :
 		$index++;
-		if ( $index > 24 ) :
+		if ( $index > 4 ) : // Meer dan 24 recepten getoond.
 			break;
 		endif;
 	?>
@@ -97,15 +97,21 @@ if ( $count ) :
 		</div>
 	<?php
 	endforeach;
+	?>
+	</div>
+<?php
 	if ( $count > $index ) :
 	?>
-	<p style="text-align:center;">er zijn meer recepten dan er nu getoond worden. Pas het filter aan</p>
+	<div style="float:left;width:100%;position:relative;" class="kleistad_inform">
+	er zijn meer recepten dan er nu getoond worden, pas het filter aan.
+	</div>
 	<?php
 	endif;
 else :
 	?>
-	<p style="text-align:center;">er zijn geen recepten gevonden...</p>
+<div style="float:left;width:100%;position:relative;" class="kleistad_inform">
+	er zijn geen recepten gevonden, pas het filter aan.
+</div>
 	<?php
 endif;
 ?>
-</div>

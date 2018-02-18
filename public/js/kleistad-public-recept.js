@@ -16,15 +16,44 @@
         sessionStorage.receptFilter = status;
     }
 
-    function zoekRecepten() {
-        var terms = [];
-        var auteurs = [];
-        $( '#kleistad_filters input[name="term"]:checked' ).each( function() {
-            terms.push( $( this ).val() );
-        });
-        $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
-            auteurs.push( $( this ).val() );
-        });
+    function zoekRecepten( refresh = false ) {
+        var terms = [], auteurs = [], zoeker, sorteer;
+        
+        if ( 'bewaard' === sessionStorage.bewaard && refresh ) {
+            $( '#kleistad_filters input[name="term"]').each( function() { // Zet alles op unchecked.
+                $( '#kleistad_filters input[name="term"]').prop('checked', false );
+            });
+            terms = sessionStorage.terms.split(',');
+            terms.forEach( function( item, index ) {
+                $( '#kleistad_filters input[name="term"][value="' + item + '"]').prop('checked');
+            });
+            
+            $( '#kleistad_filters input[name="auteur"]').each( function() { // Zet alles op unchecked.
+                $( '#kleistad_filters input[name="auteur"]').prop('checked', false );
+            });
+            auteurs = sessionStorage.auteurs.split(',');
+            auteurs.forEach( function( item, index ) {
+                $( '#kleistad_filters input[name="auteur"][value="' + item + '"]').prop('checked');
+            });
+            
+            $( '#kleistad_zoek' ).val( sessionStorage.zoeker );
+            $( '#kleistad_sorteer' ).val( sessionStorage.sorteeer );
+        } else {
+            $( '#kleistad_filters input[name="term"]:checked' ).each( function() {
+                terms.push( $( this ).val() );
+            });
+            sessionStorage.terms = terms.join(',');
+            
+            $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
+                auteurs.push( $( this ).val() );
+            });
+            sessionStorage.auteurs = auteurs.join(',');
+
+            zoeker  = $( '#kleistad_zoek' ).val();
+            sessionStorage.zoeker = zoeker;
+            sorteer = $( '#kleistad_sorteer' ).val( );
+            sessionStorage.sorteer = sorteer;
+        }
         $.ajax(
             {
                 url: kleistadData.base_url + '/recept/',
@@ -78,8 +107,7 @@
     $( document ).ready(
         function() {
             $( '#kleistad_recepten' ).ready( function() {
-                zoekRecepten();
-                return false;
+                zoekRecepten( true );
             });
 
             $( '#kleistad_filter_btn' ).click( function() {
@@ -95,22 +123,18 @@
                 if ( 13 === e.keyCode ) {
                     zoekRecepten();
                 }
-                return false;
+            });
+
+            $( '#kleistad_zoek_icon' ).click( function() {
+               zoekRecepten();
             });
 
             $( '#kleistad_sorteer' ).change( function() {
                 zoekRecepten();
-                return false;
             });
 
             $( 'body' ).on( 'click', '.kleistad_filter', function() {
-                if ( $( this ).is( ':checked' ) ) {
-                    $( this ).parent().css( { fontWeight: 'bold' } );
-                } else {
-                    $( this ).parent().css( { fontWeight: 'normal' } );
-                }
                 zoekRecepten();
-                return false;
             });
 
             $( 'body' ).on( 'click', '.kleistad_meer', function() {
@@ -124,7 +148,6 @@
                 }
                 filter.toggle();
                 filter.nextAll().toggle();
-                return false;
             });
         }
     );

@@ -221,11 +221,11 @@ else :
 			$count = count( $data['recept']['content']['basis'] );
 			do {
 				$component = $index < $count ? $data['recept']['content']['basis'][ $index ]['component'] : '';
-				$gewicht   = $index < $count ? $data['recept']['content']['basis'][ $index ]['gewicht'] : '';
+				$gewicht   = $index < $count ? $data['recept']['content']['basis'][ $index ]['gewicht'] * 1.0 : 0.0;
 			?>
 				<tr>
 					<td><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
-					<td><input type="number" name="basis_gewicht[]" min="0" max="999" maxlength="3" style="width:50%" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gram</td>
+					<td><input type="text" class="kleistad_gewicht" name="basis_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( number_format_i18n( $gewicht, 2 ) ); ?>" >&nbsp;gram</td>
 				</tr>
 			<?php
 			} while ( $index++ < $count );
@@ -242,11 +242,11 @@ else :
 			$count = count( $data['recept']['content']['toevoeging'] );
 			do {
 				$component = $index < $count ? $data['recept']['content']['toevoeging'][ $index ]['component'] : '';
-				$gewicht   = $index < $count ? $data['recept']['content']['toevoeging'][ $index ]['gewicht'] : '';
+				$gewicht   = $index < $count ? $data['recept']['content']['toevoeging'][ $index ]['gewicht'] * 1.0 : 0.0;
 			?>
 				<tr>
 					<td><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
-					<td><input type="number" name="toevoeging_gewicht[]" min="0" max="999" maxlength="3" style="width:50%" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gram</td>
+					<td><input type="text" class="kleistad_gewicht" name="toevoeging_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( number_format_i18n( $gewicht, 2 ) ); ?>" >&nbsp;gram</td>
 				</tr>
 			<?php
 			} while ( $index++ < $count );
@@ -259,6 +259,7 @@ else :
 		</div>
 		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p> 
 		<button id="kleistad_recept_opslaan" name="kleistad_submit_recept_beheer">Opslaan</button>
+		<button onClick="window.history.back();">Annuleren</button>
 	</form>
 	<?php
 		remove_filter( 'wp_dropdown_cats', 'wp_dropdown_categories_required' );

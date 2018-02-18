@@ -47,6 +47,10 @@ div.kleistad_succes {
     background-color: #A1D490;
     border-left: 6px solid #6CD650;
 }
+div.kleistad_inform {
+    background-color: #FFFACD;
+    border-left: 6px solid #FFD700;
+}
 div.kleistad_form_popup {
     display: none;
 }
@@ -230,6 +234,14 @@ table.kleistad_rapport tr:nth-child(even) {
     display: none;
 }
 
+.kleistad_filter_term input:checked {
+    font-weight: bold;
+}
+
+.kleistad_filter_term input:not(:checked) {
+    font-weight: normal;
+}
+
 .kleistad_filter_term {
     border-bottom:1px solid black;
     list-style-position:inside;
@@ -251,6 +263,7 @@ table.kleistad_rapport tr:nth-child(even) {
     white-space: nowrap;
     position: relative;
 }
+
 .kleistad_zoek input#search {
     width: 250px;
     height: 50px;
