@@ -16,7 +16,7 @@
         sessionStorage.receptFilter = status;
     }
 
-    function zoekRecepten( refresh = false ) {
+    function zoekRecepten( refresh ) {
         var terms = [], auteurs = [];
 
         if ( 'bewaard' === sessionStorage.bewaard && refresh ) {
@@ -24,6 +24,7 @@
                 $( '#kleistad_filters input[name="term"]' ).prop( 'checked', false );
             });
             terms = sessionStorage.terms.split( ',' );
+            /* jshint unused:vars */
             terms.forEach( function( item, index ) {
                 $( '#kleistad_filters input[name="term"][value="' + item + '"]' ).prop( 'checked' );
             });
@@ -32,6 +33,7 @@
                 $( '#kleistad_filters input[name="auteur"]' ).prop( 'checked', false );
             });
             auteurs = sessionStorage.auteurs.split( ',' );
+            /* jshint unused:vars */
             auteurs.forEach( function( item, index ) {
                 $( '#kleistad_filters input[name="auteur"][value="' + item + '"]' ).prop( 'checked' );
             });
@@ -120,20 +122,20 @@
 
             $( '#kleistad_zoek' ).on( 'keyup', function( e ) {
                 if ( 13 === e.keyCode ) {
-                    zoekRecepten();
+                    zoekRecepten( false );
                 }
             });
 
             $( '#kleistad_zoek_icon' ).click( function() {
-               zoekRecepten();
+               zoekRecepten( false );
             });
 
             $( '#kleistad_sorteer' ).change( function() {
-                zoekRecepten();
+                zoekRecepten( false );
             });
 
             $( 'body' ).on( 'click', '.kleistad_filter', function() {
-                zoekRecepten();
+                zoekRecepten( false );
             });
 
             $( 'body' ).on( 'click', '.kleistad_meer', function() {
