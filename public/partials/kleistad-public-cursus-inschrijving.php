@@ -19,14 +19,16 @@ else :
 	?>
 
 	<form class="kleistad_formulier" action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
-		<?php wp_nonce_field( 'kleistad_cursus_inschrijving' ); 
+		<?php
+		wp_nonce_field( 'kleistad_cursus_inschrijving' );
 			$count = 0;
-			foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-				if ( ! $cursus['vervallen'] && ! $cursus['vol'] ) :
-					$count++;
+		foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
+			if ( ! $cursus['vervallen'] && ! $cursus['vol'] ) :
+				$count++;
 				endif;
 			endforeach;
-			if ( $count < 1 ) : ?>
+		if ( $count < 1 ) :
+			?>
 			<div class="kleistad_row" >
 				<div class="kleistad_label kleistad_col_10" >
 					Helaas zijn er geen cursussen beschikbaar of zijn ze al volgeboekt
@@ -55,7 +57,7 @@ else :
 				<div class="kleistad_row kleistad_col_10" >
 					<input class="kleistad_input_cbr" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>" 
 						   data-technieken='<?php echo wp_json_encode( $cursus['technieken'] ); ?>' <?php checked( $data['input']['cursus_id'], $cursus_id ); ?><?php echo esc_attr( $disabled ); ?> 
-						   <?php checked( 1 === $count );?> />
+							<?php checked( 1 === $count ); ?> />
 					<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
 						<span style="<?php echo esc_attr( $cursus_kleur ); ?>"><?php echo esc_html( $cursus_naam ); ?></span></label>
 				</div>
