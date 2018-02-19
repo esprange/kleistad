@@ -182,6 +182,7 @@ table.kleistad_rapport tr:nth-child(even) {
 .kleistad_input_cbr:checked ~ .kleistad_label_cbr {
     color: green;
 }
+
 .kleistad_input_cbr:checked ~ .kleistad_label_cbr::before {
     margin-right: 20px;
     border: 7px solid green;
@@ -192,6 +193,7 @@ table.kleistad_rapport tr:nth-child(even) {
     border: 7px solid darkgray;
     background: whitesmoke;
 }
+
 .kleistad_label_cbr {
     display: flex;
     align-items: center;

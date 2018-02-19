@@ -106,10 +106,11 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 
 		if ( 0 === intval( $input['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
-		}
-		$cursus = new Kleistad_Cursus( $input['cursus_id'] );
-		if ( is_null( $cursus->id ) ) {
-			$error->add( 'onbekend', 'De gekozen cursus is niet bekend' );
+		} else {
+			$cursus = new Kleistad_Cursus( $input['cursus_id'] );
+			if ( is_null( $cursus->id ) ) {
+				$error->add( 'onbekend', 'De gekozen cursus is niet bekend' );
+			}
 		}
 		if ( 0 === intval( $input['gebruiker_id'] ) ) {
 			$input['EMAIL'] = strtolower( $input['EMAIL'] );
