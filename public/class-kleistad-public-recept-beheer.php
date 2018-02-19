@@ -35,7 +35,6 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 		$query = [
 			'post_type' => 'kleistad_recept',
 			'numberposts' => '-1',
-			'author' => get_current_user_id(),
 			'post_status' => [
 				'publish',
 				'pending',
@@ -44,6 +43,10 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			],
 			'orderby' => 'date',
 		];
+		if ( ! is_super_admin() ) {
+			$query['author'] = get_current_user_id();
+		}
+
 		$recepten = get_posts( $query );
 		$data['recept'] = [];
 

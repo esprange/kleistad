@@ -104,6 +104,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			]
 		);
 
+		$cursus = null;
 		if ( 0 === intval( $input['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 		} else {
