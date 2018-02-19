@@ -120,6 +120,16 @@ else :
 					<input class="kleistad_input" name="plaats" id="kleistad_plaats" type="text" required maxlength="50" placeholder="MijnWoonplaats" value="<?php echo esc_attr( $data['input']['plaats'] ); ?>" />
 				</div>
 			</div>
+		<?php endif ?>
+		<div class ="kleistad_row" title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad" >
+			<div class="kleistad_label kleistad_col_3">
+				<label for="kleistad_opmerking">Opmerking</label>
+			</div>
+			<div class="kleistad_input kleistad_col_7">
+				<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" rows="5" cols="50"><?php echo esc_textarea( $data['input']['opmerking'] ); ?></textarea>
+			</div>
+		</div>
+		<?php if ( ! is_super_admin() ) : ?>
 			<div class="kleistad_row">
 				<div class="kleistad_label kleistad_col_3">
 					 <label for="subscribe"></label>
@@ -139,16 +149,10 @@ else :
 						<?php echo $data['verklaring']; // WPCS: XSS ok. ?>
 					</div>
 				</div>
-			<?php endif ?>
-		<?php endif ?>
-		<div class ="kleistad_row" title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad" >
-			<div class="kleistad_label kleistad_col_3">
-				<label for="kleistad_opmerking">Opmerking</label>
-			</div>
-			<div class="kleistad_input kleistad_col_7">
-				<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" rows="5" cols="50"><?php echo esc_textarea( $data['input']['opmerking'] ); ?></textarea>
-			</div>
-		</div>
+			<?php
+			endif;
+			endif
+			?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_10">
 				<button name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit_abonnee_inschrijving" type="submit" <?php echo ( '' !== $data['verklaring'] ? 'disabled' : '' ); ?>>Verzenden</button>
