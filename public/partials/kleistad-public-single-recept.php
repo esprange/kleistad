@@ -114,7 +114,7 @@ get_header(); ?>
 			<div style="width:100%"> 
 				<div style="float:left;width:40%;padding-bottom:25px;">
 					<img src="<?php echo esc_url( $content['foto'] ); ?>" 
-						 style="max-width:100%;max-height:100%;border-radius:5px;cursor:pointer;transition: 0.3s;" 
+						 style="max-width:100%;max-height:100%;border-radius:5px;cursor:zoom-in;transition: 0.3s;" 
 						 id="kleistad_recept_foto" 
 						 onMouseOver="this.style.opacity='0.7'" >
 				</div>
