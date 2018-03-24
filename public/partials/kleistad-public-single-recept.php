@@ -69,11 +69,33 @@ get_header(); ?>
 					w.document.write( '</body></html>' );
 					w.document.close();
 				});
+				
+				$( '#kleistad_recept_foto' ).click( function() {
+					$( '#kleistad_recept_modal' ).show();
+				});
+				
+				$( '#kleistad_close_modal' ).click( function() {
+					$( '#kleistad_recept_modal').hide();
+				})
 			});
 		} )( jQuery );
 		</script>
 		<a style="cursor:pointer;" onClick="window.history.back()">&lt; recepten</a><br/><br/>
 		<button id="kleistad_recept_print">Afdrukken</button>
+		<div id="kleistad_recept_modal" class="modal" 
+			 style="display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgb(0,0,0);background-color:rgba(0,0,0,0.9);">
+
+		  <span id="kleistad_close_modal" style="position:absolute;top:15px;right:35px;color:#f1f1f1;font-size:40px;font-weight:bold;transition:0.3s;"
+				onMouseOver="this.style.color='#bbb';this.style.cursor='pointer';this.style.textDecoration='none'"
+				>&times;</span>
+
+		  <img style="margin:auto;display:block;width:80%;max-width:700px;" src="<?php echo esc_url( $content['foto'] ); ?>">
+
+		  <div style="margin:auto;display:block;width:80%;max-width:700px;text-align:center;color:#ccc;padding:10px 0;height:150px;animation-name:zoom;animation-duration:0.6s;">
+				<?php the_title(); ?>
+		  </div>
+		</div> 
+		
 		<div class="kleistad_recept" >
 			<style>
 			table, td, th {
@@ -91,7 +113,10 @@ get_header(); ?>
 			<h2><?php the_title(); ?></h2>
 			<div style="width:100%"> 
 				<div style="float:left;width:40%;padding-bottom:25px;">
-					<img src="<?php echo esc_url( $content['foto'] ); ?>" style="max-width:100%;max-height:100%;">
+					<img src="<?php echo esc_url( $content['foto'] ); ?>" 
+						 style="max-width:100%;max-height:100%;border-radius:5px;cursor:pointer;transition: 0.3s;" 
+						 id="kleistad_recept_foto" 
+						 onMouseOver="this.style.opacity='0.7'" >
 				</div>
 				<div style="float:left;width:60%;">
 					<table style="padding-left:25px;">
