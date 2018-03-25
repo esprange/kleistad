@@ -130,32 +130,10 @@ else :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_5">
-				<?php
-				wp_editor(
-					$data['recept']['content']['kenmerk'], 'kleistad_kenmerk', [
-						'textarea_name' => 'kenmerk',
-						'textarea_rows' => 5,
-						'media_buttons' => false,
-						'teeny' => true,
-						'quicktags' => false,
-						'tabindex' => 5,
-					]
-				);
-				?>
+				<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" rows="5"><?php echo esc_html( $data['recept']['content']['kenmerk'] ); ?></textarea>
 			</div>
 			<div class="kleistad_col_5">
-				<?php
-				wp_editor(
-					$data['recept']['content']['herkomst'], 'kleistad_herkomst', [
-						'textarea_name' => 'herkomst',
-						'textarea_rows' => 5,
-						'media_buttons' => false,
-						'teeny' => true,
-						'quicktags' => false,
-						'tabindex' => 6,
-					]
-				);
-				?>
+				<textarea name="herkomst" id="kleistad_herkomst" tabindex="6" rows="5"><?php echo esc_html( $data['recept']['content']['herkomst'] ); ?></textarea>
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -168,18 +146,7 @@ else :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_5">
-				<?php
-				wp_editor(
-					$data['recept']['content']['stookschema'], 'kleistad_stookschema', [
-						'textarea_name' => 'stookschema',
-						'textarea_rows' => 5,
-						'media_buttons' => false,
-						'teeny' => true,
-						'quicktags' => false,
-						'tabindex' => 7,
-					]
-				);
-				?>
+				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" rows="5"><?php echo esc_html( $data['recept']['content']['stookschema'] ); ?></textarea>
 			</div>
 			<div class="kleistad_col_5">
 				<input type="file" name="foto" id="kleistad_foto_input"  multiple="false" accept=".jpg" /><br />

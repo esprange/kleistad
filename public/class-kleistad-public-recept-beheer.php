@@ -200,32 +200,6 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 	 */
 	public function validate( &$data ) {
 		$error = new WP_Error();
-		$allowedhtml = [
-			'strong' => [],
-			'em' => [],
-			'blockquote' => [],
-			'del' => [],
-			'ul' => [],
-			'ol' => [],
-			'li' => [],
-			'p' => [
-				'style' => [
-					'text-align: center;',
-					'text-align: right;',
-				],
-			],
-			'br' => [],
-			'span' => [
-				'style' => [
-					'text-decoration: underline;',
-				],
-			],
-			'a' => [
-				'title' => [],
-				'href' => [],
-			],
-		];
-
 		$data['recept'] = filter_input_array(
 			INPUT_POST, [
 				'id' => FILTER_SANITIZE_NUMBER_INT,
@@ -237,9 +211,9 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 		);
 		$data['recept']['content'] = filter_input_array(
 			INPUT_POST, [
-				'kenmerk' => FILTER_DEFAULT,
-				'herkomst' => FILTER_DEFAULT,
-				'stookschema' => FILTER_DEFAULT,
+				'kenmerk' => FILTER_SANITIZE_STRING,
+				'herkomst' => FILTER_SANITIZE_STRING,
+				'stookschema' => FILTER_SANITIZE_STRING,
 			]
 		);
 		$basis = filter_input_array(
@@ -287,11 +261,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			}
 		}
 
-		$data['recept']['content']['kenmerk'] = wp_kses( $data['recept']['content']['kenmerk'], $allowedhtml );
-		$data['recept']['content']['herkomst'] = wp_kses( $data['recept']['content']['herkomst'], $allowedhtml );
-		$data['recept']['content']['stookschema'] = wp_kses( $data['recept']['content']['stookschema'], $allowedhtml );
 		$data['recept']['content']['foto'] = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
-
 		if ( UPLOAD_ERR_INI_SIZE === $_FILES['foto']['error'] ) {
 			$error->add( 'foto', 'De foto is te groot qua omvang !' );
 		} else {

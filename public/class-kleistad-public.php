@@ -308,25 +308,6 @@ class Kleistad_Public {
 	}
 
 	/**
-	 *  Configureer de TinyMCE editor, alleen voor de recepten
-	 *
-	 * @param array $in TinyMCE settings.
-	 */
-	public function configure_tinymce( $in ) {
-		if ( ! is_admin() ) { // Only in frontend mode.
-			$in['paste_remove_styles'] = true;
-			$in['paste_remove_spans'] = true;
-			$in['paste_as_text'] = true;
-			$in['paste_strip_class_attributes'] = 'all';
-			$in['formats']['underline'] = [
-				'inline' => 'u',
-				'exact' => true,
-			];
-		}
-		return $in;
-	}
-
-	/**
 	 * After login check to see if user account is disabled
 	 *
 	 * @since 4.0.87
