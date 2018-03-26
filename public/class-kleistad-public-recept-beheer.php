@@ -209,13 +209,9 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 				'uiterlijk' => FILTER_SANITIZE_NUMBER_INT,
 			]
 		);
-		$data['recept']['content'] = filter_input_array(
-			INPUT_POST, [
-				'kenmerk' => FILTER_SANITIZE_STRING,
-				'herkomst' => FILTER_SANITIZE_STRING,
-				'stookschema' => FILTER_SANITIZE_STRING,
-			]
-		);
+		$data['recept']['content']['kenmerk'] = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
+		$data['recept']['content']['herkomst'] = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
+		$data['recept']['content']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
 		$basis = filter_input_array(
 			INPUT_POST, [
 				'basis_component' => [
@@ -323,40 +319,42 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 						return $error;
 					}
 				}
-				if ( $data['recept']['id'] ) {
-					$recept = get_post( $data['recept']['id'] );
+				if ( ! $data['recept']['id'] ) {
+					$error = wp_insert_post(
+						[
+							'post_status' => 'draft', // Initiële publicatie status is prive.
+						'post_type' => 'kleistad_recept',
+						]
+					);
+					if ( ! is_wp_error( $error ) ) {
+						$data['recept']['id'] = $error;
+					} else {
+						return $error;
+					}
+				}
+				$recept = get_post( $data['recept']['id'] );
+				if ( ! is_null( $recept ) ) {
 					$recept->post_title = $data['recept']['titel'];
 					$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
-					$recept->post_content = wp_json_encode( $data['recept']['content'] );
+					$recept->post_content = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
 					$error = wp_update_post( $recept, true );
 					if ( ! is_wp_error( $error ) ) {
 						$recept_id = $error;
 					} else {
 						return $error;
 					}
-				} else {
-					$recept = [
-						'post_status' => 'draft', // Initiële publicatie status is prive.
-						'post_title' => $data['recept']['titel'],
-						'post_type' => 'kleistad_recept',
-						'post_content' => wp_json_encode( $data['recept']['content'] ),
-					];
-					$error = wp_insert_post( $recept );
-					if ( ! is_wp_error( $error ) ) {
-						$recept_id = $error;
-					} else {
-						return $error;
-					}
+					wp_set_object_terms(
+						$recept_id, [
+							intval( $data['recept']['glazuur'] ),
+							intval( $data['recept']['kleur'] ),
+							intval( $data['recept']['uiterlijk'] ),
+						],
+						'kleistad_recept_cat'
+					);
+					return 'Gegevens zijn opgeslagen';
 				}
-				wp_set_object_terms(
-					$recept_id, [
-						intval( $data['recept']['glazuur'] ),
-						intval( $data['recept']['kleur'] ),
-						intval( $data['recept']['uiterlijk'] ),
-					],
-					'kleistad_recept_cat'
-				);
-				return 'Gegevens zijn opgeslagen';
+				$error->add( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' );
+				return $error;
 			}
 		}
 	}

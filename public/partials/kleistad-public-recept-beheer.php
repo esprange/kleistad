@@ -130,10 +130,10 @@ else :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_5">
-				<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" rows="5"><?php echo esc_html( $data['recept']['content']['kenmerk'] ); ?></textarea>
+				<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" rows="5"><?php echo esc_textarea( $data['recept']['content']['kenmerk'] ); ?></textarea>
 			</div>
 			<div class="kleistad_col_5">
-				<textarea name="herkomst" id="kleistad_herkomst" tabindex="6" rows="5"><?php echo esc_html( $data['recept']['content']['herkomst'] ); ?></textarea>
+				<textarea name="herkomst" id="kleistad_herkomst" tabindex="6" rows="5"><?php echo esc_textarea( $data['recept']['content']['herkomst'] ); ?></textarea>
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -146,7 +146,7 @@ else :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_5">
-				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" rows="5"><?php echo esc_html( $data['recept']['content']['stookschema'] ); ?></textarea>
+				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" rows="5"><?php echo esc_textarea( $data['recept']['content']['stookschema'] ); ?></textarea>
 			</div>
 			<div class="kleistad_col_5">
 				<input type="file" name="foto" id="kleistad_foto_input"  multiple="false" accept=".jpg" /><br />
