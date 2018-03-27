@@ -323,7 +323,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 					$error = wp_insert_post(
 						[
 							'post_status' => 'draft', // Initiële publicatie status is prive.
-						'post_type' => 'kleistad_recept',
+							'post_type' => 'kleistad_recept',
 						]
 					);
 					if ( ! is_wp_error( $error ) ) {
