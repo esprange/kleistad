@@ -112,14 +112,14 @@ get_header(); ?>
 
 			<h2><?php the_title(); ?></h2>
 			<div style="width:100%"> 
-				<div style="float:left;width:40%;padding-bottom:25px;">
+				<div style="float:left;width:50%;padding-bottom:25px;">
 					<img src="<?php echo esc_url( $content['foto'] ); ?>" 
 						 style="max-width:100%;max-height:100%;border-radius:5px;cursor:zoom-in;transition: 0.3s;" 
 						 id="kleistad_recept_foto" 
 						 onMouseOver="this.style.opacity='0.7'" >
 				</div>
-				<div style="float:left;width:60%;">
-					<table style="padding-left:25px;">
+				<div style="float:left;width:50%;">
+					<table>
 					<tr>
 						<th>Type glazuur</th>
 						<td><?php echo esc_html( $glazuur_naam ); ?></td>
@@ -142,10 +142,10 @@ get_header(); ?>
 			<div style="clear:both;">
 				<table style="width:100%">
 					<tr>
-						<th>Auteur</th>
-						<td><?php the_author(); ?></td>
-						<th>Laatste wijziging</th>
-						<td><?php the_modified_date(); ?></td>
+						<th style="width:25%">Auteur</th>
+						<td style="width:25%"><?php the_author(); ?></td>
+						<th style="width:25%">Laatste wijziging</th>
+						<td style="width:25%"><?php the_modified_date(); ?></td>
 					</tr>
 					<tr>
 						<th colspan="2">Basis recept</th>
@@ -197,12 +197,24 @@ get_header(); ?>
 				</table>
 			</div>
 			<div>
-				<h3>Kenmerken</h3>
-				<?php echo $content['kenmerk']; // WPCS: XSS ok. ?>
+				<table>
+					<tr>
+						<th>Kenmerken</th>
+					</tr>
+					<tr>
+						<td><?php echo $content['kenmerk']; // WPCS: XSS ok. ?></td>
+					</tr>
+				</table>
 			</div>
 			<div>
-				<h3>Oorsprong</h3>
-				<?php echo $content['herkomst']; // WPCS: XSS ok. ?>
+				<table>
+					<tr>
+						<th>Oorsprong</th>
+					</tr>
+					<tr>
+						<td><?php echo $content['herkomst']; // WPCS: XSS ok. ?></td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<?php
