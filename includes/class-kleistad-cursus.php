@@ -166,7 +166,7 @@ class Kleistad_Cursussen extends Kleistad_EntityStore {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$cursussen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen ORDER BY id DESC", ARRAY_A ); // WPCS: unprepared SQL OK.
+		$cursussen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // WPCS: unprepared SQL OK.
 		foreach ( $cursussen as $cursus ) {
 			$this->_data[ $cursus['id'] ] = new Kleistad_Cursus( $cursus['id'] );
 		}

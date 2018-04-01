@@ -61,8 +61,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			}
 			$open_cursussen[ $cursus->id ] = [
 				'naam' => $cursus->naam .
-							', start ' . strftime( '%A %d-%m-%y', $cursus->start_datum ) .
-							' vanaf ' . strftime( '%H:%M', $cursus->start_tijd ),
+							', start ' . strftime( '%A %d-%m-%y', $cursus->start_datum ),
 				'vol' => $cursus->vol,
 				'vervallen' => $cursus->vervallen,
 				'technieken' => $cursus->technieken,
