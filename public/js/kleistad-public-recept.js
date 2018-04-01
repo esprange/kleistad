@@ -1,5 +1,4 @@
 /* global kleistadData */
-
 ( function( $ ) {
     'use strict';
 
@@ -44,7 +43,7 @@
         } else {
             $( '#kleistad_filters input[name="term"]:checked' ).each( function() {
                 value = $( this ).val();
-                if (! isNaN( value )) {
+                if ( ! isNaN( value ) ) {
                     terms.push( value );
                 }
             });
@@ -52,7 +51,7 @@
 
             $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
                 value = $( this ).val();
-                if (! isNaN( value )) {
+                if ( ! isNaN( value ) ) {
                     auteurs.push( value );
                 }
             });
