@@ -1,4 +1,5 @@
 /* global kleistadData */
+
 ( function( $ ) {
     'use strict';
 
