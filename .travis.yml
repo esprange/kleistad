@@ -92,7 +92,7 @@ script:
   # Run the theme through JSHint.
   - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then jshint . ; fi
   # Run the theme through CSSLint.
-  - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then csslint --ignore=box-model . ; fi
+  - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then csslint . ; fi
   # Run the theme through JavaScript Code Style checker.
   - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then jscs . ; fi
   # WordPress Coding Standards.

@@ -10,6 +10,8 @@ Description: stylesheet functions voor kleistad_plugin
   License: GPL2
 */
 
+/*csslint important: false, box-model: false*/
+
 .ui-widget{
     font-size:14px !important;
 }
@@ -77,7 +79,6 @@ table.kleistad_form input[type=text], select {
     width: 100%;
 }
 table.kleistad_form select {
-    -moz-appearance: menulist-button;
     -webkit-appearance: menulist-button;
     font-size:small;
 }
@@ -251,8 +252,8 @@ table.kleistad_rapport tr:nth-child(even) {
 }
 
 .kleistad_filter_term label:hover {
-    cursor:pointer;
     background:#eee;
+    cursor:pointer;
 }
 
 .kleistad_recept_overzicht {
