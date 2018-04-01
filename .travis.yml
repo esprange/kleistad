@@ -69,6 +69,9 @@ before_script:
       npm install -g jshint
       # Pull in the WP Core jshint rules.
       wget https://develop.svn.wordpress.org/trunk/.jshintrc
+      # Install CSS lint, a CSS Code Quality Tool.
+      # @link https://github.com/CSSLint/csslint/wiki/Command-line-interface
+      npm install -g csslint
     fi
   - |
   
@@ -88,6 +91,8 @@ script:
 
   # Run the theme through JSHint.
   - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then jshint . ; fi
+  # Run the theme through CSSLint.
+  - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then csslint --ignore=box-model . ; fi
   # Run the theme through JavaScript Code Style checker.
   - if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then jscs . ; fi
   # WordPress Coding Standards.
