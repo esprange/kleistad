@@ -18,6 +18,7 @@
 
     function zoekRecepten( refresh ) {
         var terms = [], auteurs = [];
+        var value;
 
         if ( 'bewaard' === sessionStorage.bewaard && refresh ) {
             $( '#kleistad_filters input[name="term"]' ).each( function() { // Zet alles op unchecked.
@@ -42,12 +43,16 @@
             $( '#kleistad_sorteer' ).val( sessionStorage.sorteer );
         } else {
             $( '#kleistad_filters input[name="term"]:checked' ).each( function() {
-                terms.push( $( this ).val() );
+                value = $( this ).val();
+                if (! isNaN( value )) {
+                    terms.push( value );
+                }
             });
             sessionStorage.terms = terms.join( ',' );
 
             $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
-                auteurs.push( $( this ).val() );
+                value = $( this ).val()
+                auteurs.push( value );
             });
             sessionStorage.auteurs = auteurs.join( ',' );
 
