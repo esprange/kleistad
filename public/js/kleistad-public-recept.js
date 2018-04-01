@@ -51,7 +51,7 @@
             sessionStorage.terms = terms.join( ',' );
 
             $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
-                value = $( this ).val()
+                value = $( this ).val();
                 if (! isNaN( value )) {
                     auteurs.push( value );
                 }
