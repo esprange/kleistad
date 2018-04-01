@@ -52,7 +52,9 @@
 
             $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
                 value = $( this ).val()
-                auteurs.push( value );
+                if (! isNaN( value )) {
+                    auteurs.push( value );
+                }
             });
             sessionStorage.auteurs = auteurs.join( ',' );
 
