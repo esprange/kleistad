@@ -108,7 +108,6 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 		$gebruikers = get_users(
 			[
 				'fields' => [ 'id', 'display_name' ],
-				'meta_key' => 'stooksaldo',
 				'orderby' => [ 'display_name' ],
 				'order' => $order,
 				'search' => '*' . $search . '*',
@@ -118,11 +117,17 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 		$stooksaldi = [];
 
 		foreach ( $gebruikers as $gebruiker ) {
-			$stooksaldi[] = [
-				'id' => $gebruiker->id,
-				'naam' => $gebruiker->display_name,
-				'saldo' => get_user_meta( $gebruiker->id, 'stooksaldo', true ),
-			];
+			if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
+				$saldo = get_user_meta( $gebruiker->id, 'stooksaldo', true );
+				if ( '' === $saldo ) {
+					$saldo = 0;
+				}
+				$stooksaldi[] = [
+					'id' => $gebruiker->id,
+					'naam' => $gebruiker->display_name,
+					'saldo' => $saldo,
+				];
+			}
 		}
 		if ( 'naam' !== $orderby ) {
 			$bedrag = [];
