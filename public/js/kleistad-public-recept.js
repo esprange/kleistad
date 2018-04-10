@@ -57,7 +57,6 @@
                 }
             });
             sessionStorage.auteurs = auteurs.join( ',' );
-
             sessionStorage.zoeker  = $( '#kleistad_zoek' ).val();
             sessionStorage.sorteer = $( '#kleistad_sorteer' ).val();
             sessionStorage.bewaard = 'bewaard';
