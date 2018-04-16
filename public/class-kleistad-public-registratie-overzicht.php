@@ -128,6 +128,9 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 		$bijlage_abonnee = $upload_dir['basedir'] . '/abonneeregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
 		$f_cursus = fopen( $bijlage_cursus, 'w' );
 		$f_abonnee = fopen( $bijlage_abonnee, 'w' );
+		
+		fwrite( $f_cursus, "\xEF\xBB\xBF" );
+		fwrite( $f_abonnee, "\xEF\xBB\xBF" );
 
 		$cursus_fields = [
 			'Achternaam',
@@ -158,6 +161,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 			'Postcode',
 			'Plaats',
 			'Telefoon',
+			'Lid',
 			'Inschrijf datum',
 			'Start_datum',
 			'Abonnee code',
@@ -179,16 +183,16 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 				$gebruiker->pcode,
 				$gebruiker->plaats,
 				$gebruiker->telnr,
+				$is_lid ? 'Ja' : 'Nee',
 			];
 
 			if ( array_key_exists( $gebruiker_id, $inschrijvingen ) ) {
 				foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
 					$gebruiker_cursus_gegevens = array_merge(
 						$gebruiker_gegevens, [
-							$is_lid ? 'Ja' : 'Nee',
 							$cursussen[ $cursus_id ]->naam,
 							$inschrijving->code,
-							date( 'm-d-Y', $inschrijving->datum ),
+							date( 'd-m-Y', $inschrijving->datum ),
 							$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : ( $inschrijving->i_betaald ? 'wachtlijst' : 'wacht op betaling' ) ),
 							implode( ' ', $inschrijving->technieken ),
 							$inschrijving->i_betaald ? 'Ja' : 'Nee',
@@ -202,8 +206,8 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 			if ( array_key_exists( $gebruiker_id, $abonnementen ) ) {
 				$gebruiker_abonnee_gegevens = array_merge(
 					$gebruiker_gegevens, [
-						date( 'm-d-Y', $abonnementen[ $gebruiker_id ]->datum ),
-						date( 'm-d-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
+						date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->datum ),
+						date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
 						$abonnementen[ $gebruiker_id ]->code,
 						$abonnementen[ $gebruiker_id ]->soort,
 						( 'beperkt' === $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
