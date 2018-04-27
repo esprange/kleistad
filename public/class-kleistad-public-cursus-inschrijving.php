@@ -39,7 +39,8 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				'pcode' => '',
 				'plaats' => '',
 				'telnr' => '',
-				'cursus_id' => '',
+				'cursus_id' => 0,
+				'aantal' => 1,
 				'opmerking' => '',
 			];
 		}
@@ -65,6 +66,9 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				'vol' => $cursus->vol,
 				'vervallen' => $cursus->vervallen,
 				'technieken' => $cursus->technieken,
+				'meer' => $cursus->meer,
+				'ruimte' => $cursus->ruimte,
+				'prijs' => ( 0 < $cursus->inschrijfkosten ? $cursus->inschrijfkosten : $cursus->cursuskosten ),
 			];
 		}
 		$data['open_cursussen'] = $open_cursussen;
@@ -100,6 +104,9 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 					'flags' => FILTER_FORCE_ARRAY,
 				],
 				'opmerking' => FILTER_SANITIZE_STRING,
+				'aantal' => FILTER_SANITIZE_NUMBER_INT,
+				'betaal' => FILTER_SANITIZE_STRING,
+				'bank' => FILTER_SANITIZE_STRING,
 			]
 		);
 
@@ -110,6 +117,13 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			$cursus = new Kleistad_Cursus( $input['cursus_id'] );
 			if ( is_null( $cursus->id ) ) {
 				$error->add( 'onbekend', 'De gekozen cursus is niet bekend' );
+			} elseif ( $cursus->vol ) {
+				$error->add( 'vol', 'De gekozen cursus is vol' );
+			} else {
+				$ruimte = $cursus->ruimte;
+				if ( $ruimte < $input['aantal'] ) {
+					$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar' );
+				}
 			}
 		}
 		if ( 0 === intval( $input['gebruiker_id'] ) ) {
@@ -169,33 +183,23 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );
 		$inschrijving->technieken = $data['input']['technieken'];
 		$inschrijving->opmerking = $data['input']['opmerking'];
+		$inschrijving->aantal = $data['input']['aantal'];
 		$inschrijving->datum = time();
 		$inschrijving->save();
-		if ( is_super_admin() ) {
-			return 'De inschrijving is verwerkt';
-		}
-		$to = "$gebruiker->voornaam $gebruiker->achternaam <$gebruiker->email>";
-		if ( self::compose_email(
-			$to, 'inschrijving bij Kleistad', $data['cursus']->inschrijfslug, [
-				'voornaam' => $gebruiker->voornaam,
-				'achternaam' => $gebruiker->achternaam,
-				'cursus_naam' => $data['cursus']->naam,
-				'cursus_docent' => $data['cursus']->docent,
-				'cursus_start_datum' => strftime( '%A %d-%m-%y', $data['cursus']->start_datum ),
-				'cursus_eind_datum' => strftime( '%A %d-%m-%y', $data['cursus']->eind_datum ),
-				'cursus_start_tijd' => strftime( '%H:%M', $data['cursus']->start_tijd ),
-				'cursus_eind_tijd' => strftime( '%H:%M', $data['cursus']->eind_tijd ),
-				'cursus_technieken' => implode( ', ', $inschrijving->technieken ),
-				'cursus_opmerking' => $inschrijving->opmerking,
-				'cursus_code' => $inschrijving->code,
-				'cursus_kosten' => $data['cursus']->cursuskosten,
-				'cursus_inschrijfkosten' => $data['cursus']->inschrijfkosten,
-			]
-		) ) {
-			return 'De inschrijving is verwerkt en er is een email verzonden met bevestiging';
+
+		if ( 'ideal' === $data['input']['betaal'] ) {
+			$inschrijving->betalen(
+				$data['input']['aantal'] * ( 0 < $data['cursus']->inschrijfkosten ? $data['cursus']->inschrijfkosten : $data['cursus']->cursuskosten ),
+				$data['input']['bank'],
+				'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
+			);
 		} else {
-			$error->add( '', 'De inschrijving is verwerkt maar een bevestigings email kon niet worden verzonden' );
-			return $error;
+			if ( $inschrijving->email( 'inschrijf' ) ) {
+				return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie over de betaling';
+			} else {
+				$error->add( '', 'De inschrijving is verwerkt maar een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
+				return $error;
+			}
 		}
 	}
 

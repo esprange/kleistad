@@ -161,7 +161,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 		$to          = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
 		$message     = '<p>Bijgaand het bestand in .CSV formaat met alle transacties tussen ' . date( 'd-m-Y', $data['vanaf_datum'] ) . ' en ' . date( 'd-m-Y', $data['tot_datum'] ) . '.</p>';
 		$attachments = [ $bijlage ];
-		if ( self::compose_email( $to, 'Kleistad stookbestand', $message, [], $attachments ) ) {
+		if ( Kleistad_Public::compose_email( $to, 'Kleistad stookbestand', $message, [], $attachments ) ) {
 			return 'Het bestand is per email verzonden.';
 		} else {
 			$error->add( '', 'Er is een fout opgetreden' );

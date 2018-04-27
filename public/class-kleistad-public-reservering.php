@@ -64,6 +64,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			$error->add( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
 			return $error;
 		}
+		return true;
 	}
 
 	/**

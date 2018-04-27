@@ -79,6 +79,8 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 					'cursuskosten'       => $cursus->cursuskosten,
 					'inschrijfslug'      => $cursus->inschrijfslug,
 					'indelingslug'       => $cursus->indelingslug,
+					'maximum'            => $cursus->maximum,
+					'meer'               => $cursus->meer,
 				],
 				'wachtlijst' => $wachtlijst,
 				'ingedeeld'  => $ingedeeld,
@@ -130,6 +132,8 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 						'filter' => FILTER_SANITIZE_STRING,
 						'flags'  => FILTER_REQUIRE_ARRAY,
 					],
+					'maximum'            => FILTER_SANITIZE_NUMBER_INT,
+					'meer'               => FILTER_SANITIZE_STRING,
 				]
 			);
 		} elseif ( 'indeling' === $tab ) {
@@ -179,6 +183,8 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 			$cursus->inschrijfslug   = $data['input']['inschrijfslug'];
 			$cursus->indelingslug    = $data['input']['indelingslug'];
 			$cursus->technieken      = $data['input']['technieken'];
+			$cursus->maximum         = $data['input']['maximum'];
+			$cursus->meer            = '' != $data['input']['meer']; // WPCS: loose comparison ok.
 			$cursus->save();
 			return 'Gegevens zijn opgeslagen';
 		} elseif ( 'indeling' === $data['input']['tab'] ) {
@@ -189,26 +195,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 					$aantal_ingedeeld++;
 					$inschrijving->ingedeeld = true;
 					$inschrijving->save();
-
-					$gebruiker   = get_userdata( $cursist );
-					$technieken  = $inschrijving->technieken;
-					$to          = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
-					self::compose_email(
-						$to, 'inschrijving cursus', $cursus->indelingslug, [
-							'voornaam'               => $gebruiker->first_name,
-							'achternaam'             => $gebruiker->last_name,
-							'cursus_naam'            => $cursus->naam,
-							'cursus_docent'          => $cursus->docent,
-							'cursus_start_datum'     => strftime( '%A %d-%m-%y', $cursus->start_datum ),
-							'cursus_eind_datum'      => strftime( '%A %d-%m-%y', $cursus->eind_datum ),
-							'cursus_start_tijd'      => strftime( '%H:%M', $cursus->start_tijd ),
-							'cursus_eind_tijd'       => strftime( '%H:%M', $cursus->eind_tijd ),
-							'cursus_technieken'      => is_array( $technieken ) ? implode( ', ', $technieken ) : '',
-							'cursus_code'            => $inschrijving->code,
-							'cursus_kosten'          => number_format( $cursus->cursuskosten, 2, ',', '' ),
-							'cursus_inschrijfkosten' => number_format( $cursus->inschrijfkosten, 2, ',', '' ),
-						]
-					);
+					$inschrijving->email( $data['input']['tab'] );
 				}
 			}
 			if ( $aantal_ingedeeld > 0 ) {

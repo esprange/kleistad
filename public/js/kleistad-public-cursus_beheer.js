@@ -100,7 +100,7 @@
             $( '#kleistad_cursus' ).dialog(
                 {
                     autoOpen: false,
-                    height: 550,
+                    height: 650,
                     width: 750,
                     modal: true,
                     /* jshint unused:vars */
@@ -140,11 +140,13 @@
                     $( '#kleistad_inschrijfkosten' ).val( cursus.inschrijfkosten );
                     $( '#kleistad_inschrijfslug' ).val( cursus.inschrijfslug );
                     $( '#kleistad_indelingslug' ).val( cursus.indelingslug );
+                    $( '#kleistad_maximum' ).val( cursus.maximum );
                     $( '#kleistad_draaien' ).prop( 'checked', String( cursus.technieken ).indexOf( 'Draaien' ) >= 0 );
                     $( '#kleistad_handvormen' ).prop( 'checked', String( cursus.technieken ).indexOf( 'Handvormen' ) >= 0 );
                     $( '#kleistad_boetseren' ).prop( 'checked', String( cursus.technieken ).indexOf( 'Boetseren' ) >= 0 );
                     $( '#kleistad_techniekkeuze' ).prop( 'checked', cursus.techniekkeuze > 0 );
                     $( '#kleistad_vol' ).prop( 'checked', cursus.vol > 0 );
+                    $( '#kleistad_meer' ).prop( 'checked', cursus.meer > 0 );
                     $( '#kleistad_vervallen' ).prop( 'checked', cursus.vervallen > 0 );
                     $( '#kleistad_wachtlijst' ).children().remove().end();
                     $.each(
@@ -181,11 +183,13 @@
                     $( '#kleistad_inschrijfkosten' ).prop( 'defaultValue' );
                     $( '#kleistad_inschrijfslug' ).prop( 'defaultValue' );
                     $( '#kleistad_indelingslug' ).prop( 'defaultValue' );
+                    $( '#kleistad_maximum' ).prop( 'defaultValue' );
                     $( '#kleistad_draaien' ).prop( 'checked', false );
                     $( '#kleistad_handvormen' ).prop( 'checked', false );
                     $( '#kleistad_boetseren' ).prop( 'checked', false );
                     $( '#kleistad_techniekkeuze' ).prop( 'checked', false );
                     $( '#kleistad_vol' ).prop( 'checked', false );
+                    $( '#kleistad_meer' ).prop( 'checked', false );
                     $( '#kleistad_vervallen' ).prop( 'checked', false );
                     $( '#kleistad_wachtlijst' ).children().remove().end();
                     $( '#kleistad_indeling' ).children().remove().end();

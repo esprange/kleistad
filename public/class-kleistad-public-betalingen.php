@@ -28,7 +28,7 @@ class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 	 */
 	public function prepare( &$data = null ) {
 		if ( ! Kleistad_Roles::override() ) {
-			return '';
+			return true;
 		}
 
 		$rows = [];

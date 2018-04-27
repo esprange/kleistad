@@ -33,12 +33,6 @@ class KleistadOvenTest extends WP_UnitTestCase {
 
 		$oven2->kosten = 12;
 		$this->assertEquals( 12, $oven2->kosten, 'kosten oven not equal' );
-
-		$upload_dir      = wp_upload_dir();
-		$transactie_log  = $upload_dir['basedir'] . '/stooksaldo.log';
-
-		Kleistad_Oven::log_saldo( 'test' );
-		$this->assertFileExists( $transactie_log, 'transactie_log not created' );
 	}
 
 	/**
@@ -163,6 +157,37 @@ class KleistadOvenTest extends WP_UnitTestCase {
 				$this->assertEquals( 'test reserveringen' . intval( $reservering->programma ), $reservering->opmerking, 'opmerking reserveringen not equal' );
 			}
 		}
+	}
+
+	/**
+	 * Test de stooksaldo.
+	 */
+	public function test_saldo() {
+		$user_id = $this->factory->user->create(
+			[
+				'role' => 'subscriber',
+			]
+		);
+		$bedrag = 123.45;
+
+		$saldo = new Kleistad_Saldo( $user_id );
+		$this->assertEquals( 0.0, $saldo->bedrag, 'saldo initieel not zero' );
+		$saldo->bedrag = $bedrag;
+		$saldo->save( 'test 1' );
+
+		$saldo2 = new Kleistad_Saldo( $user_id );
+		$this->assertEquals( $bedrag, $saldo2->bedrag, 'saldo not equal to ' . $bedrag );
+
+		$saldo2->bedrag = $saldo2->bedrag + $bedrag;
+		$saldo->save( 'test 2' );
+
+		$saldo3 = new Kleistad_Saldo( $user_id );
+		$this->assertEquals( $bedrag + $bedrag, $saldo3->bedrag, 'saldo not equal to ' . $bedrag + $bedrag );
+
+		$upload_dir      = wp_upload_dir();
+		$transactie_log  = $upload_dir['basedir'] . '/stooksaldo.log';
+
+		$this->assertFileExists( $transactie_log, 'transactie_log not created' );
 	}
 
 	/**

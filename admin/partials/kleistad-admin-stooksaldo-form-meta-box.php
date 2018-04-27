@@ -29,7 +29,7 @@
 				<label for="saldo">Saldo</label>
 			</th>
 			<td>
-				<input id="saldo" name="saldo" type="number" style="width: 95%" value="<?php echo esc_attr( $item['saldo'] ); ?>"
+				<input id="saldo" name="saldo" type="number" style="width: 95%" value="<?php echo esc_attr( sprintf( '%.2f', $item['saldo'] ) ); ?>"
 					   size="10" step="0.01" class="code" placeholder="99.99" required>
 			</td>
 		</tr>

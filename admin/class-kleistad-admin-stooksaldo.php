@@ -58,6 +58,18 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
+	 * Render the column saldo
+	 *
+	 * @param array $item - row (key, value array).
+	 * @return HTML
+	 */
+	public function column_saldo( $item ) {
+		return sprintf(
+			'%.2f', $item['saldo']
+		);
+	}
+
+	/**
 	 * Retrieve the column titles
 	 *
 	 * @return array
@@ -118,14 +130,11 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 
 		foreach ( $gebruikers as $gebruiker ) {
 			if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
-				$saldo = get_user_meta( $gebruiker->id, 'stooksaldo', true );
-				if ( '' === $saldo ) {
-					$saldo = 0;
-				}
+				$saldo = new Kleistad_Saldo( $gebruiker->id );
 				$stooksaldi[] = [
 					'id' => $gebruiker->id,
 					'naam' => $gebruiker->display_name,
-					'saldo' => $saldo,
+					'saldo' => $saldo->bedrag,
 				];
 			}
 		}

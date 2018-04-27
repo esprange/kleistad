@@ -237,9 +237,6 @@ class Kleistad_Admin {
 	public function validate_settings( $input ) {
 		foreach ( $input as &$element ) {
 			$element = sanitize_text_field( $element );
-			if ( ! is_numeric( $element ) ) {
-				$element = 0;
-			}
 		}
 		return $input;
 	}
@@ -542,16 +539,10 @@ class Kleistad_Admin {
 			$item_valid = $this->validate_stooksaldo( $item );
 
 			if ( true === $item_valid ) {
-				$huidig_saldo = get_user_meta( $item['id'], 'stooksaldo', true );
-				$gebruiker = get_userdata( $item['id'] );
+				$saldo = new Kleistad_Saldo( $item['id'] );
+				$saldo->bedrag = $item['saldo'];
 				$beheerder = wp_get_current_user();
-				Kleistad_Oven::log_saldo( "correctie saldo $gebruiker->display_name van $huidig_saldo naar {$item['saldo']}, door $beheerder->display_name." );
-				$result = update_user_meta( $item['id'], 'stooksaldo', $item['saldo'] );
-				if ( $result ) {
-					$message = 'Het saldo is gewijzigd';
-				} else {
-					$notice = 'Er was een probleem met het wijzigen van gegevens';
-				}
+				$saldo->save( 'correctie door ' . $beheerder->display_name );
 			} else {
 				// if $item_valid not true it contains error message(s).
 				$notice = $item_valid;
@@ -567,9 +558,10 @@ class Kleistad_Admin {
 				}
 				$item = [
 					'id' => $_REQUEST['id'],
-					'saldo' => get_user_meta( $_REQUEST['id'], 'stooksaldo', true ),
 					'naam' => $gebruiker->display_name,
 				];
+				$saldo = new Kleistad_saldo( $item['id'] );
+				$item['saldo'] = $saldo->bedrag;
 			}
 		}
 		// here we adding our custom meta box.

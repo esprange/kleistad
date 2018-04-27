@@ -4,19 +4,12 @@
     $( document ).ready(
         function() {
 
-            /**
-             * Definieer het datum veld.
-             */
-            $( '.kleistad_datum' ).each(
+            $( 'input[name=bedrag]:radio' ).change(
                 function() {
-                    $( this ).datepicker(
-                        {
-                            dateFormat: 'dd-mm-yy'
-                        }
-                    );
+                    var bedrag = $('input[name=bedrag]:radio:checked').val();
+                    $( '[name=bedrag_tekst]').html( bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) );
                 }
             );
-
         }
     );
 

@@ -36,9 +36,10 @@ class Kleistad_Public_Saldo_Overzicht extends Kleistad_Shortcode {
 		$stokers = [];
 		foreach ( $gebruikers as $gebruiker ) {
 			if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
+				$saldo = new Kleistad_Saldo( $gebruiker->id );
 				$stokers[] = [
 					'naam' => $gebruiker->display_name,
-					'saldo' => number_format( (float) get_user_meta( $gebruiker->id, 'stooksaldo', true ), 2, ',', '' ),
+					'saldo' => number_format( $saldo->bedrag, 2, ',', '' ),
 				];
 			}
 		}

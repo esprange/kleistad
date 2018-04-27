@@ -18,20 +18,24 @@ if ( is_user_logged_in() && ! is_super_admin() ) :
 else :
 	?>
 
-	<form class="kleistad_formuler" action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
+	<form class="kleistad_formulier" action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
 		<?php wp_nonce_field( 'kleistad_abonnee_inschrijving' ); ?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3">
 				<label class="kleistad_label">Keuze abonnement</label>
 			</div>
 			<div class="kleistad_col_3">
-				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required value="onbeperkt" <?php checked( 'onbeperkt', $data['input']['abonnement_keuze'] ); ?> />
+				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required 
+					   data-bedrag="<?php echo esc_attr( $data['bedrag_onbeperkt'] ); ?>"
+					   value="onbeperkt" <?php checked( 'onbeperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_onbeperkt" >Onbeperkt</label>
 			</div>
 			<div class="kleistad_col_1">
 			</div>
 			<div class="kleistad_col_3">
-				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_beperkt" type="radio" required value="beperkt" <?php checked( 'beperkt', $data['input']['abonnement_keuze'] ); ?> />
+				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_beperkt" type="radio" required
+					   data-bedrag="<?php echo esc_attr( $data['bedrag_beperkt'] ); ?>" 
+					   value="beperkt" <?php checked( 'beperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_beperkt">Beperkt</label>
 			</div>
 		</div>
@@ -130,32 +134,53 @@ else :
 			</div>
 		</div>
 		<?php if ( ! is_super_admin() ) : ?>
-			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3">
-					 <label for="subscribe"></label>
-				</div>
-				<div class="kleistad_col_7">
-					<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" checked />
-					Ik wil de Kleistad nieuwsbrief ontvangen.
-				</div>
-			</div>
-			<?php if ( '' !== $data['verklaring'] ) : ?>
-				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_3">
-						 <label for="verklaring"></label>
-					</div>
-					<div class="kleistad_col_7">
-						<input type="checkbox" id="verklaring" onchange="document.getElementById( 'kleistad_submit_abonnee_inschrijving' ).disabled = !this.checked;" />
-						<?php echo $data['verklaring']; // WPCS: XSS ok. ?>
-					</div>
-				</div>
-			<?php
-			endif;
-			endif
-			?>
 		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_3">
+				 <label for="subscribe"></label>
+			</div>
+			<div class="kleistad_col_7">
+				<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" checked />
+				Ik wil de Kleistad nieuwsbrief ontvangen.
+			</div>
+		</div>
+		<?php if ( '' !== $data['verklaring'] ) : ?>
+		<div class="kleistad_row">
+			<div class="kleistad_label kleistad_col_3">
+				 <label for="verklaring"></label>
+			</div>
+			<div class="kleistad_col_7">
+				<input type="checkbox" id="verklaring" onchange="document.getElementById( 'kleistad_submit_abonnee_inschrijving' ).disabled = !this.checked;" />
+				<?php echo $data['verklaring']; // WPCS: XSS ok. ?>
+			</div>
+		</div>
+		<?php
+			endif;
+		endif;
+		?>
+		<div class ="kleistad_row">
 			<div class="kleistad_col_10">
-				<button name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit_abonnee_inschrijving" type="submit" <?php echo ( '' !== $data['verklaring'] ? 'disabled' : '' ); ?>>Verzenden</button>
+				<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
+				<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">
+					<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" style="padding: 15px 3px 15px 3px;"/>
+					ik betaal €&nbsp;<span name="bedrag_tekst"><?php echo esc_html( number_format( $data['bedrag_onbeperkt'], 2, ',', '' ) ); ?></span>&nbsp;. Mijn bank:&nbsp;
+					<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
+						<?php Kleistad_Betalen::issuers(); ?>
+					</select>
+				</label>
+			</div>
+		</div>
+		<div class ="kleistad_row">
+			<div class="kleistad_col_10">
+				<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
+				<label class="kleistad_label_cbr" for="kleistad_betaal_stort">
+					ik betaal later door storting van €&nbsp;<span name="bedrag_tekst"><?php echo esc_html( number_format( $data['bedrag_onbeperkt'], 2, ',', '' ) ); ?></span>.
+				</label>
+			</div>
+		</div>
+
+		<div class="kleistad_row" style="padding-top: 20px;">
+			<div class="kleistad_col_10">
+				<button name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit_abonnee_inschrijving" type="submit" <?php echo ( ! is_super_admin() && '' !== $data['verklaring'] ? 'disabled' : '' ); ?>>Verzenden</button>
 			</div>
 		</div>
 	</form>

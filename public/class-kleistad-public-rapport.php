@@ -29,9 +29,9 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 	 */
 	public function prepare( &$data = null ) {
 		$huidige_gebruiker = wp_get_current_user();
-		$naam = $huidige_gebruiker->display_name;
-		$saldo = number_format( (float) get_user_meta( $huidige_gebruiker->ID, 'stooksaldo', true ), 2, ',', '' );
-		$items = [];
+		$naam   = $huidige_gebruiker->display_name;
+		$saldo  = new Kleistad_Saldo( $huidige_gebruiker->ID );
+		$items  = [];
 
 		$oven_store = new Kleistad_Ovens();
 		$ovens = $oven_store->get();
@@ -70,8 +70,8 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 			}
 		);
 		$data = [
-			'naam' => $naam,
-			'saldo' => $saldo,
+			'naam'  => $naam,
+			'saldo' => number_format( $saldo->bedrag, 2, ',', '' ),
 			'items' => $items,
 		];
 		return true;

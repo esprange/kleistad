@@ -114,6 +114,48 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		update_user_meta( $this->_abonnee_id, 'kleistad_abonnement', $this->_data );
 	}
 
+	/**
+	 * Verzenden van de welkomst email.
+	 *
+	 * @return boolean succes of falen van verzending email.
+	 */
+	public function email() {
+		$abonnee   = get_userdata( $this->_abonnee_id );
+		$to        = "$abonnee->first_name $abonnee->last_name <$abonnee->user_email>";
+		return Kleistad_public::compose_email(
+			$to, 'Welkom bij Kleistad', 'kleistad_email_abonnement', [
+				'voornaam'             => $abonnee->first_name,
+				'achternaam'           => $abonnee->last_name,
+				'start_datum'          => strftime( '%A %d-%m-%y', strtotime( $this->_data['start_datum'] ) ),
+				'abonnement'           => $this->_data['soort'],
+				'abonnement_code'      => $this->_data['code'],
+				'abonnement_dag'       => $this->_data['dag'],
+				'abonnement_opmerking' => $this->_data['opmerking'],
+				'abonnement_startgeld' => number_format( 3 * $this->options[ $this->_data['soort'] . '_abonnement' ], 2, ',', '' ),
+				'abonnement_maandgeld' => number_format( $this->options[ $this->_data['soort'] . '_abonnement' ], 2, ',', '' ),
+			]
+		);
+	}
+
+	/**
+	 * Betaal het abonnement met iDeal.
+	 *
+	 * @param float  $bedrag   Het te storten bedrag.
+	 * @param string $bank    De bank.
+	 * @param string $bericht Het succes bericht.
+	 */
+	public function betalen( $bedrag, $bank, $bericht ) {
+		$betaling = new Kleistad_Betalen();
+		$betaling->order(
+			$this->_abonnee_id,
+			$this->_data['code'],
+			$bedrag,
+			$bank,
+			'Kleistad abonnement ' . $this->_data['code'],
+			$bericht
+		);
+	}
+
 }
 
 /**
@@ -149,4 +191,6 @@ class Kleistad_Abonnementen extends Kleistad_EntityStore {
 			$this->_data[ $abonnee->ID ]->load( $abonnement );
 		}
 	}
+
+
 }

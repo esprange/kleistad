@@ -163,6 +163,8 @@ class Kleistad {
 		$this->loader->add_filter( 'single_template', $plugin_public, 'recept_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
+		$this->loader->add_filter( 'wp_mail_from', $plugin_public, 'mail_from' );
+		$this->loader->add_filter( 'wp_mail_from_name', $plugin_public, 'mail_from_name' );
 
 		$this->loader->add_shortcode( 'kleistad_reservering', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_stookbestand', $plugin_public, 'shortcode_handler' );

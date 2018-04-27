@@ -73,6 +73,12 @@ else :
 						  <td><input type="checkbox" name="vervallen" id="kleistad_vervallen" ></td>
 					  </tr>
 					  <tr>
+						  <th>Maximum cursisten</th>
+						  <td><input type="number" step="1" name="maximum" id="kleistad_maximum" min="1" max="99" value="<?php echo esc_attr( $this->options['cursusmaximum'] ); ?>" required></td>
+						  <th>Inschrijven meerdere cursisten mogelijk</th>
+						  <td><input type="checkbox" name="meer" id="kleistad_meer" ></td>
+					  </tr>
+					  <tr>
 						  <th>Inschrijf email</th>
 						  <td colspan="3"><input type="text" name="inschrijfslug" id="kleistad_inschrijfslug" value="kleistad_email_cursus_aanvraag" required /></td>
 					  </tr>

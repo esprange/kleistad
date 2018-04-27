@@ -5,8 +5,8 @@ Contributors: esprange
 Donate link: www.sprako.nl/wordpress/eric
 Tags: comments
 Requires at least: 4.8.0
-Tested up to: 4.9.4
-Stable tag: 4.1.4
+Tested up to: 4.9.5
+Stable tag: 4.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,8 @@ Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
 Berekening verdeling gewijzigd
 = 4.1.4 =
 Toevoeging keramiek recepten functionaliteit
+= 4.2.0 =
+Toevoeging betalingen via Mollie
 
 == Upgrade Notice ==
 

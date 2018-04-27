@@ -21,7 +21,6 @@
         $( '#kleistad_jaar' ).val( formData.jaar );
         $( '#kleistad_gebruiker_id' ).val( formData.gebruiker_id );
         $( '#kleistad_programma' ).val( formData.programma );
-        /* $('#kleistad_opmerking').val(formData.opmerking); */
         $( '#kleistad_stoker' ).html( formData.gebruiker );
         $( '#kleistad_1e_stoker' ).val( formData.gebruiker_id );
 

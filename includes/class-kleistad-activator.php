@@ -24,7 +24,7 @@ class Kleistad_Activator {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 6;
+	const DBVERSIE = 7;
 
 	/**
 	 * Short Description. (use period)
@@ -36,13 +36,18 @@ class Kleistad_Activator {
 	public static function activate() {
 		$default_options = [
 			'onbeperkt_abonnement' => 50,
-			'beperkt_abonnement' => 30,
-			'dagdelenkaart' => 60,
-			'cursusprijs' => 130,
+			'beperkt_abonnement'   => 30,
+			'borg_kast'            => 5,
+			'dagdelenkaart'        => 60,
+			'cursusprijs'          => 130,
 			'cursusinschrijfprijs' => 25,
-			'workshopprijs' => 110,
-			'kinderworkshopprijs' => 110,
-			'termijn' => 4,
+			'cursusmaximum'        => 12,
+			'workshopprijs'        => 110,
+			'kinderworkshopprijs'  => 110,
+			'termijn'              => 4,
+			'sleutel'              => '',
+			'sleutel_test'         => '',
+			'betalen'              => 0,
 		];
 		$options = shortcode_atts( $default_options, get_option( 'kleistad-opties' ) );
 		update_option( 'kleistad-opties', $options );
@@ -100,36 +105,11 @@ class Kleistad_Activator {
                 cursuskosten numeric(10,2),
                 inschrijfslug tinytext,
                 indelingslug tinytext,
+				maximum tinyint(2) DEFAULT 99,
+				meer tinyint(1) DEFAULT 0,
                 PRIMARY KEY (id)
               ) $charset_collate;"
 			);
-			/**
-			 * Prijs toevoegen aan reeds uitgevoerde transacties.
-			 */
-			$regelingen = new Kleistad_Regelingen();
-
-			$oven_store = new Kleistad_Ovens();
-			$ovens = $oven_store->get();
-
-			$reservering_store = new Kleistad_Reserveringen();
-			$reserveringen = $reservering_store->get();
-
-			foreach ( $reserveringen as &$reservering ) {
-				if ( $reservering->verwerkt ) {
-					$verdeling = $reservering->verdeling;
-					foreach ( $verdeling as &$stookdeel ) {
-						if ( 0 === intval( $stookdeel['id'] ) ) {
-							continue;
-						}
-						$regeling = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
-						$kosten = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
-						$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
-						$stookdeel['prijs'] = $prijs;
-					}
-					$reservering->verdeling = $verdeling;
-					$reservering->save();
-				}
-			}
 			update_option( 'kleistad-database-versie', self::DBVERSIE );
 
 		}
@@ -155,155 +135,6 @@ class Kleistad_Activator {
 		$roles->add_cap( 'contributor', Kleistad_Roles::RESERVEER );
 		$roles->add_cap( 'subscriber', Kleistad_Roles::RESERVEER );
 
-		/*
-		 * voeg de termen toe.
-		 */
-		$categories = [
-			'_glazuur' => [
-				'Hoge temperatuur',
-				'Midden temperatuur',
-				'Lage temperatuur',
-				'Slibs engobes',
-				'Terra sigillatas',
-				'Raku',
-				'Zout/soda hout',
-			],
-			'_kleur' => [
-				'Rood',
-				'Zwart',
-				'Grijs',
-				'Blauw',
-				'Groen',
-				'Geel',
-				'Wit/creme',
-			],
-			'_uiterlijk' => [
-				'Mat',
-				'Glanzend',
-				'Transparant',
-				'Effect',
-			],
-			'_grondstof' => [
-				'Albiet (sodaveldspaat)',
-				'Aluminiumoxide',
-				'Anorthosit',
-				'Antimoonoxide',
-				'Ball clay (porseleinaarde)',
-				'Bariumcarbonaat',
-				'Beenderas',
-				'Beendermeel',
-				'Bentoniet (bentone, porseleinaarde)',
-				'Bismuthoxide',
-				'Bismuth subnitraat',
-				'Booroxide',
-				'Borax (natriumboraat)',
-				'Cadmiumsulfide',
-				'Calciumboraat (colemaniet)',
-				'Calciumcarbonaat (krijt, whiting)',
-				'Calciumfluoride',
-				'Calciumfosfaat (beenderas)',
-				'Calciumsilicaat (wollastoniet)',
-				'Chinaclay (kaolien)',
-				'Chroomoxide',
-				'Cobaltsulfaat',
-				'Cobaltcarbonaat',
-				'Cobaltoxide',
-				'Colemaniet (calciumboraat)',
-				'Cornish stone',
-				'Cryoliet',
-				'Dolomiet (calciummagnesium)',
-				'Flint (Silex, kwarts)',
-				'Fritte F10.05 Lood-bi-silicaat',
-				'Fritte F10.01 Loodmonosilicaat',
-				'Fritte F14.51 Alkaliboorsilicaat',
-				'Fritte F15.10 Alkali',
-				'Fritte F15.11 Natrium Lood Boor',
-				'Fritte F 31.10 Natrium Silicaat',
-				'Fritte F32.21Calciumcarbonaat',
-				'Fritte F32.22 Zink',
-				'Calciumfluoride',
-				'Gerstleyboraat',
-				'Houtas',
-				'Ijzerchromaat',
-				'Ijzeroxide geel (gele oker)',
-				'Ijzeroxide rood',
-				'Ijzeroxide zwart/bruin',
-				'Ijzersulfaat',
-				'Ilmeniet',
-				'Kaliumcarboraat (Potas)',
-				'Kaliveldspaat (potasveldspaat)',
-				'Kaolien (China clay)',
-				'Kaolien gecalcineerd (porseleinaarde)',
-				'Kobaltsulfaat',
-				'Kopercarbonaat',
-				'Koperoxide',
-				'Kopersulfaat',
-				'Krijt (Calciumcarbonaat)',
-				'Kwarts (silex, flint)',
-				'Lepidoliet',
-				'Lithiumcarbonaat',
-				'Loodbiscilicaat',
-				'Loodcarbonaat',
-				'Loodoxide',
-				'Magnesiumcarbonaat',
-				'Magnesiumoxide',
-				'Magnesiumsilicaat (talk, steatite)',
-				'Magnesiumsulfaat',
-				'Mangaancarbonaat',
-				'Mangaandioxide',
-				'Molochiet',
-				'Natriumcarbonaat (borax)',
-				'Natriumbicarbonaat',
-				'Natriumcarbonaat (soda)',
-				'Natriumchloride (zout)',
-				'Natriumsilicaat (waterglas)',
-				'Natronveldspaat (sodaveldspaat)',
-				'Nepheline Syeniet',
-				'Nikkelcarbonaat',
-				'Nikkeloxide',
-				'Nikkelsilicaat',
-				'Petaliet (lithiumveldspaat)',
-				'Potas (kaliumcarbonaat)',
-				'Potasveldspaat (kaliveldspaat)',
-				'Rutiel',
-				'Selenium',
-				'Soda (natriumcarbonaat)',
-				'Sodaveldspaat (natronveldspaat)',
-				'Siliciumcarbide (carborundum)',
-				'Spodumeen (lithiumveldspaat)',
-				'Strontiumcarbonaat',
-				'Talk (steatite,magnesiumsilicaat)',
-				'Tinoxide',
-				'Titaandioxide',
-				'Uraniumoxide',
-				'Vanadiumoxide',
-				'Veldspaat kali (potas)',
-				'Veldspaat natron (soda)',
-				'Vulkanische as (lavameel)',
-				'Waterglas (natriumsilicaat)',
-				'Wollastoniet (calciumsilicaat)',
-				'Zilverzand',
-				'Zink boraat',
-				'Zinkoxide',
-				'Zirkoonsilicaat (zirkoniet)',
-				'Zirkoonoxide',
-				'Zout (natriumchloride)',
-			],
-		];
-
-		do_action( 'init' );
-		foreach ( $categories as $categorie_naam => $subcategories ) {
-			if ( ! get_term_by( 'name', $categorie_naam, 'kleistad_recept_cat' ) ) {
-				$parent = wp_insert_term( $categorie_naam, 'kleistad_recept_cat' );
-				foreach ( $subcategories as $subcategorie_naam ) {
-					wp_insert_term(
-						$subcategorie_naam, 'kleistad_recept_cat', [
-							'parent' => $parent['term_id'],
-						]
-					);
-				}
-			}
-		}
 		flush_rewrite_rules();
 	}
 

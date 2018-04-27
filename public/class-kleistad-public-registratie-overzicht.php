@@ -107,7 +107,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 	 */
 	public function save( $data ) {
 		if ( ! Kleistad_Roles::override() ) {
-			return '';
+			return true;
 		}
 		$error = new WP_Error();
 
@@ -128,7 +128,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 		$bijlage_abonnee = $upload_dir['basedir'] . '/abonneeregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
 		$f_cursus = fopen( $bijlage_cursus, 'w' );
 		$f_abonnee = fopen( $bijlage_abonnee, 'w' );
-		
+
 		fwrite( $f_cursus, "\xEF\xBB\xBF" );
 		fwrite( $f_abonnee, "\xEF\xBB\xBF" );
 
@@ -224,7 +224,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 		$to = "$gebruiker->user_firstname $gebruiker->user_lastname <$gebruiker->user_email>";
 		$message = '<p>Bijgaand de bestanden in .CSV formaat met alle registraties voor cursussen en abonnementen.</p>';
 		$attachments = [ $bijlage_cursus, $bijlage_abonnee ];
-		if ( ! self::compose_email( $to, 'Kleistad registratiebestanden', $message, [], $attachments ) ) {
+		if ( ! Kleistad_Public::compose_email( $to, 'Kleistad registratiebestanden', $message, [], $attachments ) ) {
 			$error->add( 'fout', 'Er is een fout opgetreden' );
 			return $error;
 		}

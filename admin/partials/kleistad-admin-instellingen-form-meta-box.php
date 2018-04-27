@@ -28,6 +28,12 @@
 		</tr>
 
 		<tr >
+			<th scope="row">Prijs borg kast</th>
+			<td><input type="text" name="kleistad-opties[borg_kast]" 
+					   value="<?php echo esc_attr( $this->options['borg_kast'] ); ?>" /></td>
+		</tr>
+
+		<tr >
 			<th scope="row">Prijs dagdelenkaart</th>
 			<td><input type="number" step="0.01" min="0"  name="kleistad-opties[dagdelenkaart]" 
 					   value="<?php echo esc_attr( $this->options['dagdelenkaart'] ); ?>" /></td>
@@ -58,9 +64,35 @@
 		</tr>
 
 		<tr >
+			<th scope="row">Maximum cursisten</th>
+			<td><input type="number" step="1" min="1"  max="99" name="kleistad-opties[cursusmaximum]" 
+					   value="<?php echo esc_attr( $this->options['cursusmaximum'] ); ?>" /></td>
+		</tr>
+
+		<tr >
 			<th scope="row">Termijn (dagen) dat correctie stook mogelijk is</th>
 			<td><input type="number" min="0"  name="kleistad-opties[termijn]" 
 					   value="<?php echo esc_attr( $this->options['termijn'] ); ?>" /></td>
+		</tr>
+
+		<tr >
+			<th scope="row">Mollie geheime sleutel</th>
+			<td><input type="text" name="kleistad-opties[sleutel]" 
+					   value="<?php echo esc_attr( $this->options['sleutel'] ); ?>" /></td>
+		</tr>
+
+		<tr >
+			<th scope="row">Mollie geheime sleutel voor testen</th>
+			<td><input type="text" name="kleistad-opties[sleutel_test]" 
+					   value="<?php echo esc_attr( $this->options['sleutel_test'] ); ?>" /></td>
+		</tr>
+
+		<tr >
+			<th scope="row">Mollie betalen actief</th>
+			<td><input type="radio" name="kleistad-opties[betalen]" 
+					   value="0" <?php checked( 0, $this->options['betalen'] ); ?>/>Uit<br/>
+				<input type="radio" name="kleistad-opties[betalen]" 
+					   value="1" <?php checked( 1, $this->options['betalen'] ); ?>/>Aan</td>
 		</tr>
 
 	</table>

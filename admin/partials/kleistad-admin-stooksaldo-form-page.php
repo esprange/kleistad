@@ -27,7 +27,7 @@
 
 	<form id="form" method="POST">
 		<input type="hidden" name="nonce" value="<?php echo esc_attr( wp_create_nonce( 'kleistad_stooksaldo' ) ); ?>"/>
-		<<div class="metabox-holder" id="poststuff">
+		<div class="metabox-holder" id="poststuff">
 			<div id="post-body">
 				<div id="post-body-content">
 					<?php do_meta_boxes( 'stooksaldo', 'normal', $item ); ?>

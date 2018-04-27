@@ -19,6 +19,7 @@ require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-a
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-gebruiker.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-shortcode.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-betalen.php';
 
 /**
  * The public-facing functionality of the plugin.
@@ -48,7 +49,7 @@ class Kleistad_Public {
 	 *
 	 * @var string url voor Ajax callbacks
 	 */
-	private $url;
+	private static $url;
 
 	/**
 	 * Array containing all plugin settings
@@ -56,6 +57,106 @@ class Kleistad_Public {
 	 * @var array kleistad plugin settings
 	 */
 	private $options;
+
+	/**
+	 * Geeft de basis url terug voor de endpoints.
+	 *
+	 * @return string url voor endpoints
+	 */
+	public static function base_url() {
+		return rest_url( self::$url );
+	}
+
+	/**
+	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
+	 *
+	 * @param string $to bestemming.
+	 * @param string $subject onderwerp.
+	 * @param string $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
+	 * @param array  $args de argumenten die in de slug pagina vervangen moeten worden.
+	 * @param string $attachment een eventuele bijlage.
+	 */
+	public static function compose_email( $to, $subject, $slug, $args = [], $attachment = [] ) {
+		$domein = substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
+		$emailadresses = [
+			'info' => 'info@' . $domein,
+			'from' => 'no-reply@' . $domein,
+			'copy' => 'stook@' . $domein,
+		];
+
+		$headers[] = 'Content-Type: text/html; charset=UTF-8';
+		$headers[] = "From: Kleistad <{$emailadresses['from']}>";
+
+		$page = get_page_by_title( $slug, OBJECT );
+		$text = ( ! is_null( $page ) ) ? apply_filters( 'the_content', $page->post_content ) : $slug;
+
+		foreach ( $args as $key => $value ) {
+			$text = str_replace( '[' . $key . ']', $value, $text );
+		}
+		$fields = [ 'cc', 'bcc' ];
+		foreach ( $fields as $field ) {
+			$gevonden = stripos( $text, '[' . $field . ':' );
+			if ( ! ( false === $gevonden ) ) {
+				$eind = stripos( $text, ']', $gevonden );
+				$headers[] = ucfirst( substr( $text, $gevonden + 1, $eind - $gevonden - 1 ) );
+				$text = substr( $text, 0, $gevonden ) . substr( $text, $eind + 1 );
+			}
+		}
+
+		ob_start();
+		?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title><?php echo esc_html( $subject ); ?></title>
+	</head>
+	<body>
+		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="left" style="font-family:helvetica; font-size:13pt" >
+					<?php echo preg_replace( '/\s+/', ' ', $text ); // WPCS: XSS ok. ?><br />
+					<p>Met vriendelijke groet,</p>
+					<p>Kleistad</p>
+					<p><a href="mailto:<?php echo esc_attr( $emailadresses['info'] ); ?>" target="_top"><?php echo esc_html( $emailadresses['info'] ); ?></a></p>
+				</td>                         
+			</tr>
+			<tr>
+				<td align="center" style="font-family:calibri; font-size:9pt" >
+					Deze e-mail is automatisch gegenereerd en kan niet beantwoord worden.
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
+		<?php
+		$html = ob_get_contents();
+		ob_clean();
+
+		return wp_mail( $to, $subject, $html, $headers, $attachment );
+	}
+
+	/**
+	 * Filter functie wijzigt afzender naar noreply adres
+	 *
+	 * @param type $old unused.
+	 * @return string
+	 */
+	public function mail_from( $old ) {
+		return 'noreply@' . substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
+	}
+
+	/**
+	 * Filter functie wijzigt afzender naam naar Kleistad
+	 *
+	 * @param type $old unused.
+	 * @return string
+	 */
+	public function mail_from_name( $old ) {
+		return 'Kleistad';
+	}
 
 	/**
 	 * Initialize the class and set its properties.
@@ -67,11 +168,10 @@ class Kleistad_Public {
 	public function __construct( $plugin_name, $version ) {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		$this->url = 'kleistad_reserveren/v' . $version;
+		self::$url = 'kleistad/v' . $version;
 		$this->options = get_option( 'kleistad-opties' );
 		date_default_timezone_set( 'Europe/Amsterdam' );
 
-		add_filter( 'widget_text', 'do_shortcode' );
 	}
 
 	/**
@@ -92,12 +192,12 @@ class Kleistad_Public {
 	 */
 	public function register_scripts() {
 		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.15/js/jquery.dataTables.js', [ 'jquery' ] );
-		wp_register_script( $this->plugin_name . 'cursus_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_inschrijving.js', [ 'jquery' ], $this->version, false );
-		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, true );
+		wp_register_script( $this->plugin_name . 'cursus_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_inschrijving.js', [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ], $this->version, false );
+		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'cursus_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'recept_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'datatables' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'recept', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept.js', [ 'jquery' ], $this->version, false );
-		wp_register_script( $this->plugin_name . 'saldo', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
+		wp_register_script( $this->plugin_name . 'saldo', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo.js', [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'saldo_overzicht', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo_overzicht.js', [ 'jquery', 'datatables' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'stookbestand', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-stookbestand.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'registratie_overzicht', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-registratie_overzicht.js', [ 'jquery', 'jquery-ui-dialog', 'datatables' ], $this->version, false );
@@ -107,7 +207,7 @@ class Kleistad_Public {
 		wp_localize_script(
 			$this->plugin_name . 'reservering', 'kleistadData', [
 				'nonce' => wp_create_nonce( 'wp_rest' ),
-				'base_url' => rest_url( $this->url ),
+				'base_url' => self::base_url(),
 				'success_message' => 'de reservering is geslaagd!',
 				'error_message' => 'het was niet mogelijk om de reservering uit te voeren',
 			]
@@ -115,7 +215,7 @@ class Kleistad_Public {
 		wp_localize_script(
 			$this->plugin_name . 'recept', 'kleistadData', [
 				'nonce' => wp_create_nonce( 'wp_rest' ),
-				'base_url' => rest_url( $this->url ),
+				'base_url' => self::base_url(),
 				'success_message' => 'de recepten konden worden opgevraagd!',
 				'error_message' => 'het was niet mogelijk om de recepten uit de database op te vragen',
 			]
@@ -130,7 +230,7 @@ class Kleistad_Public {
 	public function register_endpoints() {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-reservering.php';
 		register_rest_route(
-			$this->url, '/reserveer', [
+			self::$url, '/reserveer', [
 				'methods' => 'POST',
 				'callback' => [ 'kleistad_public_reservering', 'callback_muteer' ],
 				'args' => [
@@ -171,7 +271,7 @@ class Kleistad_Public {
 			]
 		);
 		register_rest_route(
-			$this->url, '/show', [
+			self::$url, '/show', [
 				'methods' => 'POST',
 				'callback' => [ 'kleistad_public_reservering', 'callback_show' ],
 				'args' => [
@@ -193,7 +293,7 @@ class Kleistad_Public {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-recept.php';
 		register_rest_route(
-			$this->url, '/recept', [
+			self::$url, '/recept', [
 				'methods' => 'POST',
 				'callback' => [ 'kleistad_public_recept', 'callback_recept' ],
 				'args' => [
@@ -206,6 +306,23 @@ class Kleistad_Public {
 				},
 			]
 		);
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-betalen.php';
+		register_rest_route(
+			self::$url, '/betaling', [
+				'methods' => 'POST',
+				'callback' => [ 'kleistad_betalen', 'callback_betaling_verwerkt' ],
+				'args' => [
+					'id' => [
+						'required' => true,
+					],
+				],
+				'permission_callback' => function() {
+						return true;
+				},
+			]
+		);
+
 	}
 
 	/**
@@ -214,6 +331,7 @@ class Kleistad_Public {
 	 * @since 4.1.0
 	 */
 	public function create_recept_type() {
+		ob_start();
 		register_post_type(
 			'kleistad_recept', [
 				'labels' => [
@@ -382,6 +500,18 @@ class Kleistad_Public {
 		$form_class = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
 		$form_object = new $form_class( $this->plugin_name, $atts );
 
+		$betaald = filter_input( INPUT_GET, 'betaald' );
+		if ( ! is_null( $betaald ) ) {
+			$gebruiker_id = filter_input( INPUT_GET, 'betaald' );
+			$betaling = new Kleistad_Betalen();
+			$result = $betaling->controleer( $gebruiker_id );
+			if ( ! is_wp_error( $result ) ) {
+				$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
+			} else {
+				$html .= '<div class="kleistad_fout"><p>' . $result->get_error_message() . '</p></div>';
+			}
+		}
+
 		if ( ! is_null( filter_input( INPUT_POST, 'kleistad_submit_' . $form ) ) ) {
 			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $form ) ) {
 				$result = $form_object->validate( $data );
@@ -419,11 +549,7 @@ class Kleistad_Public {
 	 * @since 4.0.87
 	 */
 	public function update_ovenkosten() {
-		// class included to enable usage of compose_email method.
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-saldo.php';
-
-		  Kleistad_Oven::log_saldo( 'verwerking stookkosten gestart.' );
-		$options = get_option( 'kleistad-opties' );
+		Kleistad_Saldo::log( 'verwerking stookkosten gestart.' );
 
 		$regelingen = new Kleistad_Regelingen();
 
@@ -437,7 +563,7 @@ class Kleistad_Public {
 		* saldering transacties uitvoeren
 		*/
 		foreach ( $reserveringen as &$reservering ) {
-			if ( ! $reservering->verwerkt && $reservering->datum <= strtotime( '- ' . $options['termijn'] . ' days 00:00' ) ) {
+			if ( ! $reservering->verwerkt && $reservering->datum <= strtotime( '- ' . $this->options['termijn'] . ' days 00:00' ) ) {
 				$gebruiker = get_userdata( $reservering->gebruiker_id );
 				$verdeling = $reservering->verdeling;
 				foreach ( $verdeling as &$stookdeel ) {
@@ -449,18 +575,13 @@ class Kleistad_Public {
 					$kosten = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
 					$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
 					$stookdeel['prijs'] = $prijs;
-					$huidig_saldo = (float) get_user_meta( $stookdeel['id'], 'stooksaldo', true );
-					$nieuw_saldo = ( '' === $huidig_saldo ) ? 0 - (float) $prijs : round( (float) $huidig_saldo - (float) $prijs, 2 );
 
-					if ( $nieuw_saldo != $huidig_saldo ) { // WPCS: loose comparison ok.
-						Kleistad_Oven::log_saldo(
-							"wijziging saldo $medestoker->display_name van $huidig_saldo naar $nieuw_saldo, stook op " .
-							date( 'd-m-Y', $reservering->datum )
-						);
-						update_user_meta( $stookdeel['id'], 'stooksaldo', $nieuw_saldo );
+					$saldo = new Kleistad_Saldo( $stookdeel['id'] );
+					$saldo->bedrag = $saldo->bedrag - $prijs;
+					if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $gebruiker->display_name ) ) {
 
 						$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
-						Kleistad_Public_Saldo::compose_email(
+						self::compose_email(
 							$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
 								'voornaam' => $medestoker->first_name,
 								'achternaam' => $medestoker->last_name,
@@ -490,13 +611,13 @@ class Kleistad_Public {
 
 				$gebruiker = get_userdata( $reservering->gebruiker_id );
 				$to = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
-				Kleistad_Public_Saldo::compose_email(
+				self::compose_email(
 					$to, 'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ), 'kleistad_email_stookmelding', [
 						'voornaam' => $gebruiker->first_name,
 						'achternaam' => $gebruiker->last_name,
 						'bedrag' => number_format( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling, 2, ',', '' ),
-						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
-						'datum_deadline' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
+						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $this->options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
+						'datum_deadline' => date( 'd-m-Y', strtotime( '+' . $this->options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
 						'stookoven' => $ovens[ $reservering->oven_id ]->naam,
 					]
 				);
@@ -505,7 +626,7 @@ class Kleistad_Public {
 			}
 		}
 
-		Kleistad_Oven::log_saldo( 'verwerking stookkosten gereed.' );
+		Kleistad_Saldo::log( 'verwerking stookkosten gereed.' );
 	}
 
 	/**

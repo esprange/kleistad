@@ -54,8 +54,10 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$data ['gebruikers'] = $gebruikers;
-		$data ['verklaring'] = htmlspecialchars_decode( $atts['verklaring'] );
+		$data['gebruikers'] = $gebruikers;
+		$data['verklaring'] = htmlspecialchars_decode( $atts['verklaring'] );
+		$data['bedrag_beperkt'] = 3 * $this->options['beperkt_abonnement'] + $this->options['borg_kast'];
+		$data['bedrag_onbeperkt'] = 3 * $this->options['onbeperkt_abonnement'] + $this->options['borg_kast'];
 
 		return true;
 	}
@@ -86,6 +88,8 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				'dag' => FILTER_SANITIZE_STRING,
 				'start_datum' => FILTER_SANITIZE_STRING,
 				'opmerking' => FILTER_SANITIZE_STRING,
+				'betaal' => FILTER_SANITIZE_STRING,
+				'bank' => FILTER_SANITIZE_STRING,
 			]
 		);
 
@@ -163,12 +167,24 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 		$abonnement->dag = $data['input']['dag'];
 		$abonnement->save();
 
-		if ( is_super_admin() ) {
-			return 'De inschrijving is verwerkt';
+		$prijs = 3 * $this->options[ $abonnement->soort . '_abonnement' ] + $this->options['borg_kast'];
+		if ( 'ideal' === $data['input']['betaal'] ) {
+			$abonnement->betalen(
+				$prijs,
+				$data['input']['bank'],
+				'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
+			);
+		} else {
+			if ( $inschrijving->email( 'inschrijf' ) ) {
+				return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie over de betaling';
+			} else {
+				$error->add( '', 'De inschrijving is verwerkt maar een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
+				return $error;
+			}
 		}
 
 		$to = "$gebruiker->voornaam $gebruiker->achternaam <$gebruiker->email>";
-		if ( self::compose_email(
+		if ( Kleistad_Public::compose_email(
 			$to, 'inschrijving abonnement', 'kleistad_email_abonnement', [
 				'voornaam' => $gebruiker->voornaam,
 				'achternaam' => $gebruiker->achternaam,
