@@ -1,11 +1,11 @@
 ( function( $ ) {
     'use strict';
 
-    function wijzig_teksten() {
-        var prijs  = $('input[name=cursus_id]:radio:checked').data( 'prijs' );
-        var aantal = $('#kleistad_aantal').spinner( 'value' );
+    function wijzigTeksten() {
+        var prijs  = $( 'input[name=cursus_id]:radio:checked' ).data( 'prijs' );
+        var aantal = $( '#kleistad_aantal' ).spinner( 'value' );
         var bedrag = aantal * prijs;
-        $( '[name=bedrag_tekst]').html( bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) );
+        $( '[name=bedrag_tekst]' ).html( bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) );
     }
 
     $( document ).ready(
@@ -40,15 +40,16 @@
                     $( '#kleistad_aantal' ).spinner( {
                         max:ruimte
                     });
-                    wijzig_teksten();
+                    wijzigTeksten();
                 }
             );
 
             $( '#kleistad_aantal' ).spinner({
                 min:1,
-                max:$('input[name=cursus_id]:radio:checked').data( 'ruimte' ),
-                stop: function ( event, ui ) {
-                    wijzig_teksten();
+                max:$( 'input[name=cursus_id]:radio:checked' ).data( 'ruimte' ),
+                /* jshint unused:vars */
+                stop: function( event, ui ) {
+                    wijzigTeksten();
                 }
             });
         }

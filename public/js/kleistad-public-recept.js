@@ -56,6 +56,7 @@
                     auteurs.push( value );
                 }
             });
+
             sessionStorage.auteurs = auteurs.join( ',' );
             sessionStorage.zoeker  = $( '#kleistad_zoek' ).val();
             sessionStorage.sorteer = $( '#kleistad_sorteer' ).val();

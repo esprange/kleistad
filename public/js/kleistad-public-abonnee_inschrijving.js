@@ -19,10 +19,10 @@
             $( 'input[name=abonnement_keuze]' ).change(
                 function() {
                     var bedrag = $( this ).data( 'bedrag' );
-                    $( '[name=bedrag_tekst]').html( bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) );
+                    $( '[name=bedrag_tekst]' ).html( bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) );
                     if (  'beperkt' === this.value ) {
                         $( '#kleistad_dag' ).css( 'visibility', 'visible' );
-                        
+
                     } else {
                         $( '#kleistad_dag' ).css( 'visibility', 'hidden' );
                     }
