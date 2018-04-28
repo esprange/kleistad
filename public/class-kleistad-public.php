@@ -307,7 +307,6 @@ class Kleistad_Public {
 			]
 		);
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-betalen.php';
 		register_rest_route(
 			self::$url, '/betaling', [
 				'methods' => 'POST',
