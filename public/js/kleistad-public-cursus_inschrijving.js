@@ -19,7 +19,6 @@
                 function() {
                     var technieken = $( this ).data( 'technieken' );
                     var meer = $( this ).data( 'meer' );
-                    var prijs = $( this ).data( 'prijs' );
                     var ruimte = $( this ).data( 'ruimte' );
                     $( '#kleistad_cursus_draaien' ).css( 'visibility', 'hidden' );
                     $( '#kleistad_cursus_boetseren' ).css( 'visibility', 'hidden' );

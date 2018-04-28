@@ -14,9 +14,9 @@
 if ( ! Kleistad_Roles::override() ) :
 	?>
   <p>Geen toegang tot dit formulier</p>
-<?php
+	<?php
 else :
-?>
+	?>
   <form id="kleistad_form_betalingen" action="#" method="post" >
 		<?php wp_nonce_field( 'kleistad_betalingen' ); ?>
 	  <table class="kleistad_rapport" >

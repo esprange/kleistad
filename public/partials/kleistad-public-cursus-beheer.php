@@ -14,9 +14,9 @@
 if ( ! Kleistad_Roles::override() ) :
 	?>
   <p>Geen toegang tot dit formulier</p>
-<?php
+	<?php
 else :
-?>
+	?>
 
   <div id="kleistad_cursus">
 	  <div id="kleistad_cursus_tabs">

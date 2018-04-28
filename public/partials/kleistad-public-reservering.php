@@ -14,9 +14,9 @@
 if ( ! Kleistad_Roles::reserveer() ) :
 	?>
   <p>Geen toegang tot dit formulier</p>
-<?php
+	<?php
 else :
-?>
+	?>
 
   <h1 id="<?php echo esc_attr( 'kleistad' . $data['oven']->id ); ?>">Reserveringen voor de <?php echo esc_html( $data['oven']->naam ); ?></h1>
   <table id="reserveringen<?php echo esc_attr( $data['oven']->id ); ?>" class="kleistad_reserveringen"
@@ -68,9 +68,9 @@ else :
 								<?php
 								foreach ( $data['gebruikers'] as $gebruiker ) :
 									if ( Kleistad_Roles::reserveer( $gebruiker->id ) && ( $gebruiker->id !== $data['huidige_gebruiker']->ID || Kleistad_Roles::override() ) ) :
-									?>
+										?>
 									  <option value="<?php echo esc_attr( $gebruiker->id ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
-									<?php
+										<?php
 								  endif;
 								endforeach;
 								?>

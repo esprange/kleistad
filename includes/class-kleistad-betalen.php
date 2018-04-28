@@ -168,7 +168,7 @@ class Kleistad_Betalen {
 						$saldo = new Kleistad_Saldo( $gebruiker_id );
 						$saldo->bedrag = $saldo->bedrag + $betaling->amount;
 						$saldo->save( 'betaling per iDeal' );
-						$saldo->email( 'ideal',  $betaling->amount );
+						$saldo->email( 'ideal', $betaling->amount );
 						break;
 					default:
 						break;

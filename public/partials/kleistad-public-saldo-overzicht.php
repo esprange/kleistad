@@ -13,9 +13,9 @@
 
 if ( ! Kleistad_Roles::override() ) : ?>
 <p>Geen toegang tot dit formulier</p>
-<?php
+	<?php
 else :
-?>
+	?>
 
 <table class="kleistad_rapport" id="kleistad_saldo_overzicht">
 	<thead>

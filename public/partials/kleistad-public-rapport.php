@@ -13,9 +13,9 @@
 
 if ( ! Kleistad_Roles::reserveer() ) : ?>
 <p>Geen toegang tot dit formulier</p>
-<?php
+	<?php
 else :
-?>
+	?>
 <p>Stookrapport voor <?php echo esc_html( $data['naam'] ); ?> (je huidig saldo is &euro; <?php echo esc_html( $data['saldo'] ); ?>)</p>
 
 <table class="kleistad_rapport" data-order='[[ 1, "asc" ]]' >

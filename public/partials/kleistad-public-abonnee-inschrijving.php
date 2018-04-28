@@ -143,7 +143,7 @@ else :
 				Ik wil de Kleistad nieuwsbrief ontvangen.
 			</div>
 		</div>
-		<?php if ( '' !== $data['verklaring'] ) : ?>
+			<?php if ( '' !== $data['verklaring'] ) : ?>
 		<div class="kleistad_row">
 			<div class="kleistad_label kleistad_col_3">
 				 <label for="verklaring"></label>
@@ -153,10 +153,10 @@ else :
 				<?php echo $data['verklaring']; // WPCS: XSS ok. ?>
 			</div>
 		</div>
-		<?php
+			<?php
 			endif;
 		endif;
-		?>
+?>
 		<div class ="kleistad_row">
 			<div class="kleistad_col_10">
 				<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
