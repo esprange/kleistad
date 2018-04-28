@@ -14,9 +14,9 @@
 if ( ! Kleistad_Roles::override() ) :
 	?>
   <p>Geen toegang tot dit formulier</p>
-<?php
+	<?php
 else :
-?>
+	?>
 
   <div id="kleistad_deelnemer_info">
 	  <table class="kleistad_tabel" id="kleistad_deelnemer_tabel" >

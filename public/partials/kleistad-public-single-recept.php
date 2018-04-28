@@ -36,7 +36,7 @@ get_header(); ?>
 			}
 			$content = json_decode( get_the_content(), true );
 
-		?>
+			?>
 		<script type="text/javascript">
 		( function ( $ ){
 			'use strict';
@@ -168,12 +168,12 @@ get_header(); ?>
 						foreach ( $content['basis'] as $basis ) :
 							$gewicht = round( $basis['gewicht'] * 100 / $normeren, 2 ) + $restant;
 							$restant = 0;
-						?>
+							?>
 								<tr>
 									<td><?php echo esc_html( $basis['component'] ); ?></td>
 									<td style="text-align:right;"><?php echo esc_html( number_format_i18n( $gewicht, 2 ) ); ?> gr.</td>
 								</tr>
-						<?php
+							<?php
 						endforeach;
 						?>
 							</table>
@@ -183,12 +183,12 @@ get_header(); ?>
 						<?php
 						foreach ( $content['toevoeging'] as $toevoeging ) :
 							$gewicht = round( $toevoeging['gewicht'] * 100 / $normeren, 2 );
-						?>
+							?>
 								<tr>
 									<td><?php echo esc_html( $toevoeging['component'] ); ?></td>
 									<td style="text-align:right;"><?php echo esc_html( number_format_i18n( $gewicht, 2 ) ); ?> gr.</td>
 								</tr>
-						<?php
+							<?php
 						endforeach;
 						?>
 							</table>
@@ -217,14 +217,14 @@ get_header(); ?>
 				</table>
 			</div>
 		</div>
-		<?php
+			<?php
 			// If comments are open or we have at least one comment, load up the comment template.
-		if ( function_exists( 'the_ratings' ) ) {
-			the_ratings();
-		}
-		if ( comments_open() || get_comments_number() ) {
-			comments_template();
-		}
+			if ( function_exists( 'the_ratings' ) ) {
+				the_ratings();
+			}
+			if ( comments_open() || get_comments_number() ) {
+				comments_template();
+			}
 
 			// End of the loop.
 		endwhile;

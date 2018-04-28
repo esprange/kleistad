@@ -153,7 +153,7 @@ else :
 				<?php echo $data['verklaring']; // WPCS: XSS ok. ?>
 			</div>
 		</div>
-			<?php
+				<?php
 			endif;
 		endif;
 ?>

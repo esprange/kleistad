@@ -58,12 +58,12 @@ if ( isset( $data['recept'] ) ) :
 					<table>
 				<?php
 				foreach ( $data['recept']['content']['basis'] as $basis ) :
-				?>
+					?>
 						<tr>
 							<td><?php echo esc_html( $basis['component'] ); ?></td>
 							<td><?php echo esc_html( $basis['gewicht'] ); ?> gr.</td>
 						</tr>
-				<?php
+					<?php
 				endforeach;
 				?>
 					</table>
@@ -72,12 +72,12 @@ if ( isset( $data['recept'] ) ) :
 					<table>
 				<?php
 				foreach ( $data['recept']['content']['toevoeging'] as $toevoeging ) :
-				?>
+					?>
 						<tr>
 							<td><?php echo esc_html( $toevoeging['component'] ); ?></td>
 							<td><?php echo esc_html( $toevoeging['gewicht'] ); ?> gr.</td>
 						</tr>
-				<?php
+					<?php
 				endforeach;
 				?>
 					</table>
@@ -96,7 +96,7 @@ if ( isset( $data['recept'] ) ) :
 </div>
 	<?php
 else :
-?>
+	?>
 <div class="kleistad_row" style="padding-bottom:15px;">
 	<div class="kleistad_col_2">
 		<label for="kleistad_zoek" >Zoek een recept</label>
@@ -124,5 +124,5 @@ else :
 <div class="kleistad_recepten" id="kleistad_recepten">
 	de recepten worden opgehaald...
 </div>	
-<?php
+	<?php
 endif;
