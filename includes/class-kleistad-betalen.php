@@ -12,7 +12,7 @@
 /**
  * Include de Mollie API
  */
-require plugin_dir_path( dirname( __FILE__ ) ) . 'mollie/API/autoloader.php';
+require plugin_dir_path( dirname( __FILE__ ) ) . 'mollie/API/Autoloader.php';
 
 /**
  * Interface naar Mollie betalen.
