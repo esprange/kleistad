@@ -16,6 +16,7 @@
 	<!-- Show sniff codes in all reports -->
 	<arg value="s"/>
 
+	<exclude-pattern>*/mollie/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/wpcs/*</exclude-pattern>
 	<exclude-pattern>*/tmp/*</exclude-pattern>
