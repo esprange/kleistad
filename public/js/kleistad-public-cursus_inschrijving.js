@@ -5,8 +5,8 @@
         var prijs  = $( 'input[name=cursus_id]:radio:checked' ).data( 'prijs' );
         var aantal = $( '#kleistad_aantal' ).spinner( 'value' );
         var bedrag = aantal * prijs;
-        $( 'label[for=kleistad_betaal_ideal]').text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en word meteen ingedeeld.' );
-        $( 'label[for=kleistad_betaal_stort]').text( 'ik betaal later door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + '. Indeling vindt daarna plaats.');
+        $( 'label[for=kleistad_betaal_ideal]' ).text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en word meteen ingedeeld.' );
+        $( 'label[for=kleistad_betaal_stort]' ).text( 'ik betaal later door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + '. Indeling vindt daarna plaats.' );
     }
 
     $( document ).ready(
@@ -49,6 +49,9 @@
                 max:$( 'input[name=cursus_id]:radio:checked' ).data( 'ruimte' ),
                 /* jshint unused:vars */
                 stop: function( event, ui ) {
+                    wijzigTeksten();
+                },
+                create: function( event, ui ) {
                     wijzigTeksten();
                 }
             });

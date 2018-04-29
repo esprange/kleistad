@@ -201,9 +201,7 @@ else :
 			<div class ="kleistad_row">
 				<div class="kleistad_col_10">
 					<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
-					<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">
-						ik betaal €&nbsp;<?php echo esc_html( number_format( $prijs, 2, ',', '' ) ); ?>&nbsp;en word meteen ingedeeld.
-					</label>
+					<label class="kleistad_label_cbr" for="kleistad_betaal_ideal"></label>
 				</div>
 			</div>
 			<div class ="kleistad_row">
@@ -220,9 +218,7 @@ else :
 			<div class ="kleistad_row">
 				<div class="kleistad_col_10">
 					<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
-					<label class="kleistad_label_cbr" for="kleistad_betaal_stort">
-						ik betaal later door storting van €&nbsp;<?php echo esc_html( number_format( $prijs, 2, ',', '' ) ); ?>. Indeling vindt daarna plaats.
-					</label>
+					<label class="kleistad_label_cbr" for="kleistad_betaal_stort"></label>
 				</div>
 			</div>
 		<?php endif ?>

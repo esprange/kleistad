@@ -1,8 +1,15 @@
 ( function( $ ) {
     'use strict';
 
+    function wijzigTeksten() {
+        var bedrag = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedrag' );
+        $( 'label[for=kleistad_betaal_ideal]' ).text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' = 3 termijnen en borg.' );
+        $( 'label[for=kleistad_betaal_stort]' ).text( 'ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' = 3 termijnen en borg.' );
+    }
+
     $( document ).ready(
         function() {
+            wijzigTeksten();
 
             /**
              * Definieer datum veld.
@@ -18,9 +25,7 @@
              */
             $( 'input[name=abonnement_keuze]' ).change(
                 function() {
-                    var bedrag = $( this ).data( 'bedrag' );
-                    $( 'label[for=kleistad_betaal_ideal]').text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' = 3 termijnen en borg.' );
-                    $( 'label[for=kleistad_betaal_stort]').text( 'ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' = 3 termijnen en borg.');
+                    wijzigTeksten();
                     if (  'beperkt' === this.value ) {
                         $( '#kleistad_dag' ).css( 'visibility', 'visible' );
 
