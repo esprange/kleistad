@@ -586,7 +586,7 @@ class Kleistad_Public {
 								'achternaam' => $medestoker->last_name,
 								'stoker' => $gebruiker->display_name,
 								'bedrag' => number_format( $prijs, 2, ',', '' ),
-								'saldo' => number_format( $nieuw_saldo, 2, ',', '' ),
+								'saldo' => number_format( $saldo->bedrag, 2, ',', '' ),
 								'stookdeel' => $stookdeel['perc'],
 								'stookdatum' => date( 'd-m-Y', $reservering->datum ),
 								'stookoven' => $ovens[ $reservering->oven_id ]->naam,
