@@ -14,18 +14,11 @@
 ?>
 <div class="card">
 	<ul style="list-style-type:none">
-		<li><h3>kleistad_email_saldo_wijziging</h3>
+		<li><h3>kleistad_email_saldo_wijziging / kleistad_email_saldo_wijziging_betaald</h3>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de stoker</li>
 				<li>[achternaam] : achternaam van de stoker</li>
-				<li>[bedrag] : bedrag dat overgemaakt zal worden door storting via de bank</li>
-			</ul>
-		</li>
-		<li><h3>kleistad_email_saldo_gewijzigd</h3>
-			<ul style="list-style-type:square">
-				<li>[voornaam] : voornaam van de stoker</li>
-				<li>[achternaam] : achternaam van de stoker</li>
-				<li>[bedrag] : bedrag dat via iDEAL is betaald</li>
+				<li>[bedrag] : bedrag dat overgemaakt wordt of via iDEAL is betaald</li>
 			</ul>
 		</li>
 		<li><h3>kleistad_email_stookmelding</h3>
@@ -50,7 +43,7 @@
 				<li>[saldo] : nieuw saldo van de medestoker</li>
 			</ul>						
 		</li>
-		<li><h3>kleistad_email_abonnement</h3>
+		<li><h3>kleistad_email_abonnement en kleistad_email_abonnement_betaald</h3>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de abonnee</li>
 				<li>[achternaam] : achternaam van de abonnee</li>

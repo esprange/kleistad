@@ -80,7 +80,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 				'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging'
 			);
 		} else {
-			if ( $saldo->email( $data['input']['betaal'], $data['input']['bedrag'] ) ) {
+			if ( $saldo->email( '', $data['input']['bedrag'] ) ) {
 				return 'Er is een email verzonden met nadere informatie over de betaling';
 			} else {
 				$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );

@@ -195,7 +195,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 					$aantal_ingedeeld++;
 					$inschrijving->ingedeeld = true;
 					$inschrijving->save();
-					$inschrijving->email( $data['input']['tab'] );
+					$inschrijving->email( 'indeling' );
 				}
 			}
 			if ( $aantal_ingedeeld > 0 ) {

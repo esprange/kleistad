@@ -175,7 +175,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
 			);
 		} else {
-			if ( $inschrijving->email( 'inschrijf' ) ) {
+			if ( $abonnement->email( '' ) ) {
 				return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie over de betaling';
 			} else {
 				$error->add( '', 'De inschrijving is verwerkt maar een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );

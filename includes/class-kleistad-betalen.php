@@ -12,7 +12,7 @@
 /**
  * Include de Mollie API
  */
-require plugin_dir_path( dirname( __FILE__ ) ) . 'mollie/API/Autoloader.php';
+require plugin_dir_path( dirname( __FILE__ ) ) . 'Mollie/API/Autoloader.php';
 
 /**
  * Interface naar Mollie betalen.
@@ -146,7 +146,7 @@ class Kleistad_Betalen {
 			if ( $betaling->isPaid() ) {
 				switch ( $order_id[0] ) {
 					case 'A': // Abonnement.
-						$abonnement = new Kleistad_Inschrijving( $gebruiker_id );
+						$abonnement = new Kleistad_Abonnement( $gebruiker_id );
 						if ( '' === $gebruiker->role ) {
 							wp_update_user(
 								[
@@ -155,7 +155,7 @@ class Kleistad_Betalen {
 								]
 							);
 						}
-						$abonnement->email();
+						$abonnement->email( '_betaald' );
 						break;
 					case 'C': // Een cursus.
 						$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus_id );
@@ -168,7 +168,7 @@ class Kleistad_Betalen {
 						$saldo = new Kleistad_Saldo( $gebruiker_id );
 						$saldo->bedrag = $saldo->bedrag + $betaling->amount;
 						$saldo->save( 'betaling per iDeal' );
-						$saldo->email( 'ideal', $betaling->amount );
+						$saldo->email( '_betaald', $betaling->amount );
 						break;
 					default:
 						break;

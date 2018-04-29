@@ -117,13 +117,15 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Verzenden van de welkomst email.
 	 *
+	 * @param string $type Welke email er verstuurd moet worden.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email() {
+	public function email( $type ) {
+		$options = get_option( 'kleistad-opties' );
 		$abonnee   = get_userdata( $this->_abonnee_id );
 		$to        = "$abonnee->first_name $abonnee->last_name <$abonnee->user_email>";
 		return Kleistad_public::compose_email(
-			$to, 'Welkom bij Kleistad', 'kleistad_email_abonnement', [
+			$to, 'Welkom bij Kleistad', 'kleistad_email_abonnement' . $type, [
 				'voornaam'             => $abonnee->first_name,
 				'achternaam'           => $abonnee->last_name,
 				'start_datum'          => strftime( '%A %d-%m-%y', strtotime( $this->_data['start_datum'] ) ),
@@ -131,8 +133,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'abonnement_code'      => $this->_data['code'],
 				'abonnement_dag'       => $this->_data['dag'],
 				'abonnement_opmerking' => $this->_data['opmerking'],
-				'abonnement_startgeld' => number_format( 3 * $this->options[ $this->_data['soort'] . '_abonnement' ], 2, ',', '' ),
-				'abonnement_maandgeld' => number_format( $this->options[ $this->_data['soort'] . '_abonnement' ], 2, ',', '' ),
+				'abonnement_startgeld' => number_format( 3 * $options[ $this->_data['soort'] . '_abonnement' ], 2, ',', '' ),
+				'abonnement_maandgeld' => number_format( $options[ $this->_data['soort'] . '_abonnement' ], 2, ',', '' ),
 			]
 		);
 	}
