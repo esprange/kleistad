@@ -108,8 +108,9 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'start_tijd':
 			case 'eind_tijd':
 				return strtotime( $this->_data[ $attribuut ] );
-			case 'vervallen':
 			case 'vol':
+				return 1 === intval( $this->_data['vol'] ) || 0 === $this->ruimte();
+			case 'vervallen':
 			case 'techniekkeuze':
 			case 'meer':
 				return 1 === intval( $this->_data[ $attribuut ] );
@@ -371,7 +372,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		$cursist   = get_userdata( $this->_cursist_id );
 		$to        = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
 		return Kleistad_public::compose_email(
-			$to, $type . ' cursus', ( 'inschrijf' === $type ) ? $this->_cursus->inschrijvingslug : $this->_cursus->indelingslug, [
+			$to, $type . ' cursus', ( 'inschrijf' === $type ) ? $this->_cursus->inschrijfslug : $this->_cursus->indelingslug, [
 				'voornaam'               => $cursist->first_name,
 				'achternaam'             => $cursist->last_name,
 				'cursus_naam'            => $this->_cursus->naam,

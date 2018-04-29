@@ -7,7 +7,9 @@
             $( 'input[name=bedrag]:radio' ).change(
                 function() {
                     var bedrag = $( 'input[name=bedrag]:radio:checked' ).val();
-                    $( '[name=bedrag_tekst]' ).html( bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) );
+                    $( 'label[for=kleistad_betaal_ideal]').text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en verhoog mijn saldo.' );
+                    $( 'label[for=kleistad_betaal_stort]').text( 'ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + '. Verhoging saldo vindt daarna plaats.');
+
                 }
             );
         }

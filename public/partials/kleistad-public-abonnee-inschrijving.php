@@ -161,8 +161,15 @@ else :
 			<div class="kleistad_col_10">
 				<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
 				<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">
-					<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" style="padding: 15px 3px 15px 3px;"/>
-					ik betaal €&nbsp;<span name="bedrag_tekst"><?php echo esc_html( number_format( $data['bedrag_onbeperkt'], 2, ',', '' ) ); ?></span>&nbsp;. Mijn bank:&nbsp;
+					ik betaal €&nbsp;<?php echo esc_html( number_format( $data['bedrag_onbeperkt'], 2, ',', '' ) ); ?>&nbsp; = 3 termijnen en borg.
+				</label>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_10">
+				<label class="kleistad_label" for="kleistad_bank">
+					<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left: 40px;"/>
+					Mijn bank:&nbsp;
 					<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
 						<?php Kleistad_Betalen::issuers(); ?>
 					</select>
@@ -173,7 +180,7 @@ else :
 			<div class="kleistad_col_10">
 				<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
 				<label class="kleistad_label_cbr" for="kleistad_betaal_stort">
-					ik betaal later door storting van €&nbsp;<span name="bedrag_tekst"><?php echo esc_html( number_format( $data['bedrag_onbeperkt'], 2, ',', '' ) ); ?></span>.
+					ik betaal door storting van €&nbsp;<?php echo esc_html( number_format( $data['bedrag_onbeperkt'], 2, ',', '' ) ); ?>&nbsp; = 3 termijnen en borg.
 				</label>
 			</div>
 		</div>

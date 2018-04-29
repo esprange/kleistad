@@ -48,8 +48,9 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 					if ( $inschrijving[ $cursus_id ]->geannuleerd ) {
 						continue;
 					}
+					$aantal = 1 === $inschrijving[ $cursus_id ]->aantal ? '' : ' (' . $inschrijving[ $cursus_id ]->aantal . ')';
 					$element = [
-						'naam'       => $gebruikers[ $cursist_id ]->voornaam . ' ' . $gebruikers[ $cursist_id ]->achternaam,
+						'naam'       => $gebruikers[ $cursist_id ]->voornaam . ' ' . $gebruikers[ $cursist_id ]->achternaam . $aantal,
 						'opmerking'  => $inschrijving[ $cursus_id ]->opmerking,
 						'technieken' => $inschrijving[ $cursus_id ]->technieken,
 						'ingedeeld'  => $inschrijving[ $cursus_id ]->ingedeeld,

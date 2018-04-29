@@ -5,7 +5,8 @@
         var prijs  = $( 'input[name=cursus_id]:radio:checked' ).data( 'prijs' );
         var aantal = $( '#kleistad_aantal' ).spinner( 'value' );
         var bedrag = aantal * prijs;
-        $( '[name=bedrag_tekst]' ).html( bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) );
+        $( 'label[for=kleistad_betaal_ideal]').text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en word meteen ingedeeld.' );
+        $( 'label[for=kleistad_betaal_stort]').text( 'ik betaal later door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + '. Indeling vindt daarna plaats.');
     }
 
     $( document ).ready(

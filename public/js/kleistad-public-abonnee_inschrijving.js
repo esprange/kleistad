@@ -19,7 +19,8 @@
             $( 'input[name=abonnement_keuze]' ).change(
                 function() {
                     var bedrag = $( this ).data( 'bedrag' );
-                    $( '[name=bedrag_tekst]' ).html( bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) );
+                    $( 'label[for=kleistad_betaal_ideal]').text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' = 3 termijnen en borg.' );
+                    $( 'label[for=kleistad_betaal_stort]').text( 'ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' = 3 termijnen en borg.');
                     if (  'beperkt' === this.value ) {
                         $( '#kleistad_dag' ).css( 'visibility', 'visible' );
 

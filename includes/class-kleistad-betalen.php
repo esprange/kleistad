@@ -159,7 +159,13 @@ class Kleistad_Betalen {
 						break;
 					case 'C': // Een cursus.
 						$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus_id );
-						$inschrijving->i_betaald = true;
+						$cursus = new Kleistad_Cursus( $cursus_id );
+						if ( 0 < $cursus->inschrijfkosten ) {
+							$inschrijving->i_betaald = true;
+						} else {
+							$inschrijving->i_betaald = true;
+							$inschrijving->c_betaald = true;
+						}
 						$inschrijving->ingedeeld = true;
 						$inschrijving->save();
 						$inschrijving->email( 'indeling' );

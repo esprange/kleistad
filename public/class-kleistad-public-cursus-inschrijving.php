@@ -62,9 +62,9 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			}
 			$open_cursussen[ $cursus->id ] = [
 				'naam' => $cursus->naam .
-							', start ' . strftime( '%A %d-%m-%y', $cursus->start_datum ),
-				'vol' => $cursus->vol,
-				'vervallen' => $cursus->vervallen,
+					', start ' . strftime( '%A %d-%m-%y', $cursus->start_datum ) .
+					( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
+				'selecteerbaar' => ! $cursus->vol && ! $cursus->vervallen,
 				'technieken' => $cursus->technieken,
 				'meer' => $cursus->meer,
 				'ruimte' => $cursus->ruimte,
@@ -72,7 +72,6 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			];
 		}
 		$data['open_cursussen'] = $open_cursussen;
-
 		return true;
 	}
 
@@ -104,7 +103,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 					'flags' => FILTER_FORCE_ARRAY,
 				],
 				'opmerking' => FILTER_SANITIZE_STRING,
-				'aantal' => FILTER_SANITIZE_NUMBER_INT,
+				'aantal' => FILTER_SANITIZE_STRING,
 				'betaal' => FILTER_SANITIZE_STRING,
 				'bank' => FILTER_SANITIZE_STRING,
 			]
@@ -118,13 +117,18 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			if ( is_null( $cursus->id ) ) {
 				$error->add( 'onbekend', 'De gekozen cursus is niet bekend' );
 			} elseif ( $cursus->vol ) {
-				$error->add( 'vol', 'De gekozen cursus is vol' );
+				$error->add( 'vol', 'De gekozen cursus is vol. Inschrijving is niet mogelijk.' );
 			} else {
 				$ruimte = $cursus->ruimte;
-				if ( $ruimte < $input['aantal'] ) {
-					$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar' );
+				if ( 0 === $ruimte ) {
+					$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
+				} elseif ( $ruimte < $input['aantal'] ) {
+					$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
 				}
 			}
+		}
+		if ( 1 > $input['aantal'] ) {
+			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
 		}
 		if ( 0 === intval( $input['gebruiker_id'] ) ) {
 			$input['EMAIL'] = strtolower( $input['EMAIL'] );
@@ -183,7 +187,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );
 		$inschrijving->technieken = $data['input']['technieken'];
 		$inschrijving->opmerking = $data['input']['opmerking'];
-		$inschrijving->aantal = $data['input']['aantal'];
+		$inschrijving->aantal = intval( $data['input']['aantal'] );
 		$inschrijving->datum = time();
 		$inschrijving->save();
 

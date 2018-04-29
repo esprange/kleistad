@@ -26,11 +26,11 @@ else :
 			<div class="kleistad_col_3">
 				<label class="kleistad_label">Bedrag</label>
 			</div>
-			<div class="kleistad_col_3">
+			<div class="kleistad_col_2">
 				<input class="kleistad_input_cbr" type="radio" name="bedrag" id="kleistad_b15" value="15" />
 				<label class="kleistad_label_cbr" for="kleistad_b15">&euro; 15</label>
 			</div>
-			<div class="kleistad_col_3">
+			<div class="kleistad_col_2">
 				<input class="kleistad_input_cbr" type="radio" name="bedrag" id="kleistad_b30" value="30" checked="checked" />
 				<label class="kleistad_label_cbr" for="kleistad_b30">&euro; 30</label>
 			</div>
@@ -39,8 +39,15 @@ else :
 			<div class="kleistad_col_10">
 				<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
 				<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">
-					<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" style="padding: 15px 3px 15px 3px;"/>
-					ik betaal €&nbsp;<span name="bedrag_tekst">30,00</span>&nbsp;en verhoog mijn saldo. Mijn bank:&nbsp;
+					ik betaal € 30,00 en verhoog mijn saldo.
+				</label>
+			</div>
+		</div>
+		<div class ="kleistad_row">
+			<div class="kleistad_col_10">
+				<label class="kleistad_label" for="kleistad_bank">
+					<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left:40px"/>
+					Mijn bank:&nbsp;
 					<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
 						<?php Kleistad_Betalen::issuers(); ?>
 					</select>
@@ -51,7 +58,7 @@ else :
 			<div class="kleistad_col_10">
 				<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
 				<label class="kleistad_label_cbr" for="kleistad_betaal_stort">
-					ik betaal door storting van €&nbsp;<span name="bedrag_tekst">30,00</span>. Verhoging saldo vindt daarna plaats.
+					ik betaal door storting van € 30,00. Verhoging saldo vindt daarna plaats.
 				</label>
 			</div>
 		</div>

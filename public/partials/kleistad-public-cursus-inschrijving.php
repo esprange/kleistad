@@ -24,7 +24,7 @@ else :
 
 		$count = 0;
 		foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-			if ( ! $cursus['vervallen'] && ! $cursus['vol'] ) :
+			if ( $cursus['selecteerbaar'] ) :
 				$count++;
 			endif;
 		endforeach;
@@ -43,19 +43,9 @@ else :
 			$meer   = false;
 			$ruimte = 1;
 			foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-				if ( $cursus['vervallen'] ) {
-					$disabled = true;
-					$cursus_naam = $cursus['naam'] . ': VERVALLEN';
-					$cursus_kleur = 'color: gray;';
-				} elseif ( $cursus['vol'] ) {
-					$disabled = true;
-					$cursus_naam = $cursus['naam'] . ': VOL';
-					$cursus_kleur = 'color: gray;';
-				} else {
-					$disabled = false;
-					$cursus_naam = $cursus['naam'];
-					$cursus_kleur = '';
-				}
+				$disabled = ( ! $cursus['selecteerbaar'] );
+				$cursus_kleur = $disabled ? 'color: gray;' : '';
+				$cursus_naam = $cursus['naam'];
 				$checked = false;
 				if ( ( 1 === $count && ! $disabled ) || // Er is maar één open cursus.
 					 ( 0 === $data['input']['cursus_id'] && ! $disabled ) || // De eerst mogelijke cursus wordt geselecteerd.
@@ -212,8 +202,15 @@ else :
 				<div class="kleistad_col_10">
 					<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
 					<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">
-						<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" style="padding: 15px 3px 15px 3px;"/>
-						ik betaal €&nbsp;<span name="bedrag_tekst"><?php echo esc_html( number_format( $prijs, 2, ',', '' ) ); ?></span>&nbsp;en word meteen ingedeeld. Mijn bank:&nbsp;
+						ik betaal €&nbsp;<?php echo esc_html( number_format( $prijs, 2, ',', '' ) ); ?>&nbsp;en word meteen ingedeeld.
+					</label>
+				</div>
+			</div>
+			<div class ="kleistad_row">
+				<div class="kleistad_col_10">
+					<label class="kleistad_label" for="kleistad_bank">
+						<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left: 40px;"/>
+						Mijn bank:&nbsp;
 						<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
 							<?php Kleistad_Betalen::issuers(); ?>
 						</select>
@@ -224,7 +221,7 @@ else :
 				<div class="kleistad_col_10">
 					<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
 					<label class="kleistad_label_cbr" for="kleistad_betaal_stort">
-						ik betaal later door storting van €&nbsp;<span name="bedrag_tekst"><?php echo esc_html( number_format( $prijs, 2, ',', '' ) ); ?></span>. Indeling vindt daarna plaats.
+						ik betaal later door storting van €&nbsp;<?php echo esc_html( number_format( $prijs, 2, ',', '' ) ); ?>. Indeling vindt daarna plaats.
 					</label>
 				</div>
 			</div>
