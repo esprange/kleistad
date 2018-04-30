@@ -90,10 +90,25 @@ class Kleistad_Public {
 		$page = get_page_by_title( $slug, OBJECT );
 		$text = ( ! is_null( $page ) ) ? apply_filters( 'the_content', $page->post_content ) : $slug;
 
+		// Controleer of er includes zijn d.m.v. [pagina:yxz].
+		do {
+			$gevonden = stripos( $text, '[pagina:' );
+			if ( ! ( false === $gevonden ) ) {
+				$eind = stripos( $text, ']', $gevonden );
+				$include_slug = substr( $text, $gevonden + 8, $eind - $gevonden - 8 );
+				$include_page = get_page_by_title( $include_slug, OBJECT );
+				$include_text = ( ! is_null( $include_page ) ) ? apply_filters( 'the_content', $include_page->post_content ) : $include_slug;
+				$text = substr_replace( $text, $include_text, $gevonden, $eind - $gevonden + 1 );
+			}
+		} while ( ! ( false === $gevonden ) );
+
+		// Vervang alle parameters.
 		foreach ( $args as $key => $value ) {
 			$text = str_replace( '[' . $key . ']', $value, $text );
 		}
 		$fields = [ 'cc', 'bcc' ];
+
+		// Vervang eventuele [cc:x] of [bcc:x] velden en stop die in de header.
 		foreach ( $fields as $field ) {
 			$gevonden = stripos( $text, '[' . $field . ':' );
 			if ( ! ( false === $gevonden ) ) {
@@ -103,6 +118,7 @@ class Kleistad_Public {
 			}
 		}
 
+		// Maak de email aan.
 		ob_start();
 		?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -121,7 +137,7 @@ class Kleistad_Public {
 					<p>Met vriendelijke groet,</p>
 					<p>Kleistad</p>
 					<p><a href="mailto:<?php echo esc_attr( $emailadresses['info'] ); ?>" target="_top"><?php echo esc_html( $emailadresses['info'] ); ?></a></p>
-				</td>                         
+				</td>
 			</tr>
 			<tr>
 				<td align="center" style="font-family:calibri; font-size:9pt" >
