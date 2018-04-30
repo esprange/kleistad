@@ -41,7 +41,7 @@ else :
 			<?php
 			$checked_done = false;
 			$meer   = false;
-			$ruimte = 1;
+			$lopend = false;
 			foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
 				$disabled = ( ! $cursus['selecteerbaar'] );
 				$cursus_kleur = $disabled ? 'color: gray;' : '';
@@ -55,8 +55,8 @@ else :
 						$checked = true;
 						$prijs = $cursus['prijs'];
 						$meer = $cursus['meer'];
+						$lopend = $cursus['lopend'];
 						$checked_done = true;
-						$ruimte = $cursus['ruimte'];
 					}
 				}
 
@@ -67,6 +67,7 @@ else :
 					data-meer="<?php echo esc_attr( $cursus['meer'] ); ?>"
 					data-prijs="<?php echo esc_attr( $cursus['prijs'] ); ?>"
 					data-ruimte="<?php echo esc_attr( $cursus['ruimte'] ); ?>"
+					data-lopend="<?php echo esc_attr( $cursus['lopend'] ); ?>"
 					<?php disabled( $disabled ); ?> 
 					<?php checked( $checked ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
@@ -198,27 +199,38 @@ else :
 					<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" rows="5" cols="50"><?php echo esc_textarea( $data['input']['opmerking'] ); ?></textarea>
 				</div>
 			</div>
-			<div class ="kleistad_row">
-				<div class="kleistad_col_10">
-					<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
-					<label class="kleistad_label_cbr" for="kleistad_betaal_ideal"></label>
+			<div id="kleistad_cursus_betalen" style="<?php echo esc_attr( $lopend ? 'visibility:hidden' : '' ); ?>" > 
+				<div class ="kleistad_row">
+					<div class="kleistad_col_10">
+						<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
+						<label class="kleistad_label_cbr" for="kleistad_betaal_ideal"></label>
+					</div>
+				</div>
+				<div class ="kleistad_row">
+					<div class="kleistad_col_10">
+						<label class="kleistad_label" for="kleistad_bank">
+							<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left: 40px;"/>
+							Mijn bank:&nbsp;
+							<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
+								<?php Kleistad_Betalen::issuers(); ?>
+							</select>
+						</label>
+					</div>
+				</div>
+				<div class ="kleistad_row">
+					<div class="kleistad_col_10">
+						<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
+						<label class="kleistad_label_cbr" for="kleistad_betaal_stort"></label>
+					</div>
 				</div>
 			</div>
-			<div class ="kleistad_row">
-				<div class="kleistad_col_10">
-					<label class="kleistad_label" for="kleistad_bank">
-						<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left: 40px;"/>
-						Mijn bank:&nbsp;
-						<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
-							<?php Kleistad_Betalen::issuers(); ?>
-						</select>
-					</label>
-				</div>
-			</div>
-			<div class ="kleistad_row">
-				<div class="kleistad_col_10">
-					<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
-					<label class="kleistad_label_cbr" for="kleistad_betaal_stort"></label>
+			<div id="kleistad_cursus_lopend" style="<?php echo esc_attr( ! $lopend ? 'visibility:hidden' : '' ); ?>" >
+				<div class="kleistad_row">
+					<div class="kleistad_col_10">
+						<label class="kleistad_label">
+						Deze cursus is reeds gestart. Bij inschrijving op deze cursus zal contact met je worden opgenomen en krijg je nadere instructie over de betaling.
+						</label>
+					</div>
 				</div>
 			</div>
 		<?php endif ?>

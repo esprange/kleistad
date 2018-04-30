@@ -69,6 +69,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				'meer' => $cursus->meer,
 				'ruimte' => $cursus->ruimte,
 				'prijs' => ( 0 < $cursus->inschrijfkosten ? $cursus->inschrijfkosten : $cursus->cursuskosten ),
+				'lopend' => $cursus->start_datum < strtotime( 'today' ),
 			];
 		}
 		$data['open_cursussen'] = $open_cursussen;
@@ -191,15 +192,17 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		$inschrijving->datum = time();
 		$inschrijving->save();
 
-		if ( 'ideal' === $data['input']['betaal'] ) {
+		$lopend = $data['cursus']->start_datum < strtotime( 'today' );
+
+		if ( ! $lopend && 'ideal' === $data['input']['betaal'] ) {
 			$inschrijving->betalen(
 				$data['input']['aantal'] * ( 0 < $data['cursus']->inschrijfkosten ? $data['cursus']->inschrijfkosten : $data['cursus']->cursuskosten ),
 				$data['input']['bank'],
 				'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
 			);
 		} else {
-			if ( $inschrijving->email( 'inschrijf' ) ) {
-				return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie over de betaling';
+			if ( $inschrijving->email( $lopend ? 'lopend' : 'inschrijf' ) ) {
+				return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie';
 			} else {
 				$error->add( '', 'De inschrijving is verwerkt maar een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
 				return $error;

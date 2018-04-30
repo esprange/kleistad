@@ -371,8 +371,22 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	public function email( $type ) {
 		$cursist   = get_userdata( $this->_cursist_id );
 		$to        = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
+
+		switch ( $type ) {
+			case 'inschrijf':
+				$slug = $this->_cursus->inschrijfslug;
+				break;
+			case 'indeling':
+				$slug = $this->_cursus->indelingslug;
+				break;
+			case 'lopend':
+				$slug = 'kleistad_email_lopende_cursus';
+				break;
+			default:
+				$slug = '';
+		}
 		return Kleistad_public::compose_email(
-			$to, $type . ' cursus', ( 'inschrijf' === $type ) ? $this->_cursus->inschrijfslug : $this->_cursus->indelingslug, [
+			$to, $type . ' cursus', $slug, [
 				'voornaam'               => $cursist->first_name,
 				'achternaam'             => $cursist->last_name,
 				'cursus_naam'            => $this->_cursus->naam,

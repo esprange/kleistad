@@ -21,6 +21,7 @@
                     var technieken = $( this ).data( 'technieken' );
                     var meer = $( this ).data( 'meer' );
                     var ruimte = $( this ).data( 'ruimte' );
+                    var lopend = $( this ).data( 'lopend' );
                     $( '#kleistad_cursus_draaien' ).css( 'visibility', 'hidden' );
                     $( '#kleistad_cursus_boetseren' ).css( 'visibility', 'hidden' );
                     $( '#kleistad_cursus_handvormen' ).css( 'visibility', 'hidden' );
@@ -36,6 +37,13 @@
                     } else {
                         $( '#kleistad_cursus_aantal' ).css( 'visibility', 'hidden' );
                         $( '#kleistad_aantal' ).spinner( 'value', '1' );
+                    }
+                    if ( lopend ) {
+                        $( '#kleistad_cursus_betalen').css( 'visibility', 'hidden' );
+                        $( '#kleistad_cursus_lopend').css( 'visibility', 'visible' );
+                    } else {
+                        $( '#kleistad_cursus_betalen').css( 'visibility', 'visible' );
+                        $( '#kleistad_cursus_lopend').css( 'visibility', 'hidden' );
                     }
                     $( '#kleistad_aantal' ).spinner( {
                         max:ruimte
