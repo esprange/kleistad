@@ -39,11 +39,11 @@
                         $( '#kleistad_aantal' ).spinner( 'value', '1' );
                     }
                     if ( lopend ) {
-                        $( '#kleistad_cursus_betalen').css( 'visibility', 'hidden' );
-                        $( '#kleistad_cursus_lopend').css( 'visibility', 'visible' );
+                        $( '#kleistad_cursus_betalen' ).css( 'visibility', 'hidden' );
+                        $( '#kleistad_cursus_lopend' ).css( 'visibility', 'visible' );
                     } else {
-                        $( '#kleistad_cursus_betalen').css( 'visibility', 'visible' );
-                        $( '#kleistad_cursus_lopend').css( 'visibility', 'hidden' );
+                        $( '#kleistad_cursus_betalen' ).css( 'visibility', 'visible' );
+                        $( '#kleistad_cursus_lopend' ).css( 'visibility', 'hidden' );
                     }
                     $( '#kleistad_aantal' ).spinner( {
                         max:ruimte
