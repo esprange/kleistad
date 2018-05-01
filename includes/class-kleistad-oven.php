@@ -576,7 +576,7 @@ class Kleistad_Saldo {
 		if ( $huidig_saldo !== $this->_data['bedrag'] ) {
 			update_user_meta( $this->_gebruiker_id, 'stooksaldo', $this->_data['bedrag'] );
 			$gebruiker = get_userdata( $this->_gebruiker_id );
-			self::write_log( "$gebruiker->display_name nu: € $huidig_saldo naar: € " . $this->_data['bedrag'] . " vanwege $reden\n" );
+			self::write_log( "$gebruiker->display_name nu: $huidig_saldo naar: " . $this->_data['bedrag'] . " vanwege $reden\n" );
 			return true;
 		}
 		return false;
