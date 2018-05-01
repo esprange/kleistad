@@ -127,6 +127,7 @@ else :
 			  <th>Periode</th>
 			  <th>Tijd</th>
 			  <th>Technieken</th>
+			  <th>Status</th>
 		  </tr>
 	  </thead>
 	  <tbody>
@@ -135,12 +136,12 @@ else :
 				data-cursus='<?php echo wp_json_encode( $row['cursus'] ); ?>'
 				data-wachtlijst='<?php echo wp_json_encode( $row['wachtlijst'] ); ?>' 
 				data-ingedeeld='<?php echo wp_json_encode( $row['ingedeeld'] ); ?>' >
-				<td><?php echo esc_attr( $row['cursus']['id'] ); ?></td>
-				<td>C<?php echo esc_attr( $row['cursus']['id'] ); ?></td>
-				<td><?php echo esc_attr( $row['cursus']['naam'] ); ?></td>
-				<td><?php echo esc_attr( $row['cursus']['docent'] ); ?></td>
-				<td><?php echo esc_attr( $row['cursus']['start_datum'] ); ?><br/><?php echo esc_attr( $row['cursus']['eind_datum'] ); ?></td>
-				<td><?php echo esc_attr( $row['cursus']['start_tijd'] ); ?><br/><?php echo esc_attr( $row['cursus']['eind_tijd'] ); ?></td>
+				<td><?php echo esc_html( $row['cursus']['id'] ); ?></td>
+				<td>C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
+				<td><?php echo esc_html( $row['cursus']['naam'] ); ?></td>
+				<td><?php echo esc_html( $row['cursus']['docent'] ); ?></td>
+				<td><?php echo esc_html( $row['cursus']['start_datum'] ); ?><br/><?php echo esc_html( $row['cursus']['eind_datum'] ); ?></td>
+				<td><?php echo esc_html( $row['cursus']['start_tijd'] ); ?><br/><?php echo esc_html( $row['cursus']['eind_tijd'] ); ?></td>
 				<td>
 					<?php
 					foreach ( $row['cursus']['technieken'] as $techniek ) {
@@ -148,6 +149,7 @@ else :
 					}
 					?>
 				</td>
+				<td><?php echo esc_html( $row['cursus']['status'] ); ?></td>
 			</tr>
 	<?php endforeach ?>
 	  </tbody>

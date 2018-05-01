@@ -37,7 +37,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 		$gebruiker_store = new Kleistad_Gebruikers();
 		$gebruikers      = $gebruiker_store->get();
 		$rows            = [];
-
+		$vandaag         = strtotime( 'today' );
 		foreach ( $cursussen as $cursus_id => $cursus ) {
 			$wachtlijst  = [];
 			$ingedeeld   = [];
@@ -82,6 +82,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 					'indelingslug'       => $cursus->indelingslug,
 					'maximum'            => $cursus->maximum,
 					'meer'               => $cursus->meer,
+					'status'             => ( $cursus->eind_datum < $vandaag ? 'voltooid' : ( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
 				],
 				'wachtlijst' => $wachtlijst,
 				'ingedeeld'  => $ingedeeld,
