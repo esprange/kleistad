@@ -208,7 +208,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->herstart_datum = $herstart_datum;
 		if ( '' !== $this->subscriptie_id ) {
 			$betalen = new Kleistad_Betalen();
-			$betalen->annuleer( $this->_abonnee_id , $this->subscriptie_id );
+			$betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
 		}
 		if ( ! $admin ) {
 			$this->email( '_gepauzeerd' );
@@ -424,7 +424,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 					if ( $this->incasso_datum > $datum ) {
 						// Alleen als er een mandaat is en de reguliere incasso al niet vandaag moet starten dan is er nog een overbrugging incasso nodig.
 						// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
-						$aantal_dagen = ( $this->incasso_datum - $datum ) / (60 * 60 * 24);
+						$aantal_dagen = ( $this->incasso_datum - $datum ) / ( 60 * 60 * 24 );
 						$fractie = $aantal_dagen / cal_days_in_month( CAL_GREGORIAN, date( 'n', $datum ), date( 'Y', $datum ) );
 						$bedrag = $options[ $this->soort . '_abonnement' ] * $fractie;
 						if ( $bedrag >= 1 ) {

@@ -49,10 +49,10 @@ else :
 					<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een onbeperkt naar een beperkt abonnement. Kies de dag waarop je van een beperkt abonnement gebruikt gaat maken</strong></p>
 					<?php
 					else :
-					?>
+						?>
 					<input name="soort" type="hidden" value="onbeperkt" >
 					<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een beperkt naar een onbeperkt abonnement.</strong></p>
-					<?php
+						<?php
 					endif;
 					?>
 				</div>
@@ -74,13 +74,13 @@ else :
 					</select>
 				</div>
 			</div>
-				<?php
+					<?php
 				endif;
-					?>
+				?>
 		</div>
-		<?php
+			<?php
 		if ( $data['input']['actief'] ) :
-			?>
+				?>
 		<div class="kleistad_row">
 			<div class="kleistad_label kleistad_col_4">
 				<label for="kleistad_abo_pauze">Abonnement pauzeren</label>
@@ -110,7 +110,7 @@ else :
 				</div>
 			</div>
 		</div>
-		<?php
+				<?php
 		else :
 			?>
 		<div class="kleistad_row">
@@ -134,16 +134,16 @@ else :
 			<?php
 			for ( $i = 1; $i <= 3; $i++ ) :
 				$datum = mktime( 0, 0, 0, date( 'n' ) + $i, 1, date( 'Y' ) );
-			?>
+				?>
 						<option value="<?php echo esc_attr( $datum ); ?>"><?php echo esc_html( strftime( '%B %Y', $datum ) ); ?></option>
-			<?php
+				<?php
 			endfor
 			?>
 					</select>
 				</div>
 			</div>
 		</div>
-		<?php
+			<?php
 		endif;
 		endif;
 		?>

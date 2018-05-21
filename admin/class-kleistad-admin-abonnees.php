@@ -130,7 +130,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 		}
 		usort(
 			$abonnees, function( $a, $b ) use ( $orderby, $order ) {
-				return ( 'asc' === $order) ? strcmp( $a[ $orderby ], $b[ $orderby ] ) : strcmp( $b[ $orderby ], $a[ $orderby ] );
+				return ( 'asc' === $order ) ? strcmp( $a[ $orderby ], $b[ $orderby ] ) : strcmp( $b[ $orderby ], $a[ $orderby ] );
 			}
 		);
 		$this->items = array_slice( $abonnees, $paged * $per_page, $per_page, true );
