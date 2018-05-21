@@ -33,16 +33,16 @@ class Kleistad_Cursus extends Kleistad_Entity {
 		$inschrijving_store  = new Kleistad_Inschrijvingen();
 		$inschrijvingen      = $inschrijving_store->get();
 
-		$aantal = $this->_data['maximum'];
+		$aantal = $this->maximum;
 
 		foreach ( $inschrijvingen as $inschrijving ) {
 
-			if ( array_key_exists( $this->_data['id'], $inschrijving ) ) {
-				if ( $inschrijving[ $this->_data['id'] ]->geannuleerd ) {
+			if ( array_key_exists( $this->id, $inschrijving ) ) {
+				if ( $inschrijving[ $this->id ]->geannuleerd ) {
 					continue;
 				}
-				if ( $inschrijving[ $this->_data['id'] ]->ingedeeld ) {
-					$aantal = $aantal - $inschrijving[ $this->_data['id'] ]->aantal;
+				if ( $inschrijving[ $this->id ]->ingedeeld ) {
+					$aantal = $aantal - $inschrijving[ $this->id ]->aantal;
 				}
 			}
 		}
@@ -170,8 +170,8 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->_data );
-		$this->_data['id'] = $wpdb->insert_id;
-		return $this->_data['id'];
+		$this->id = $wpdb->insert_id;
+		return $this->id;
 	}
 }
 
@@ -237,16 +237,24 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	private $_cursus;
 
 	/**
-	 * Migratie functie om backwards compatible te blijven.
+	 * De beginwaarden van een inschrijving
+	 *
+	 * @since 4.3.0
+	 * @access private
+	 * @var array $_default_data de standaard waarden bij het aanmaken van een inschrijving.
 	 */
-	private function migratie() {
-		if ( ! isset( $this->_data['geannuleerd'] ) ) {
-			$this->_data['geannuleerd'] = 0; // voor oude inschrijvingen.
-		}
-		if ( ! isset( $this->_data['aantal'] ) ) {
-			$this->_data['aantal'] = 1; // voor oude inschrijvingen.
-		}
-	}
+	private $_default_data = [
+		'code'        => '',
+		'datum'       => '',
+		'technieken'  => [],
+		'i_betaald'   => 0,
+		'c_betaald'   => 0,
+		'ingedeeld'   => 0,
+		'bericht'     => 0,
+		'geannuleerd' => 0,
+		'opmerking'   => '',
+		'aantal'      => 1,
+	];
 
 	/**
 	 * Constructor
@@ -261,26 +269,14 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	public function __construct( $cursist_id, $cursus_id ) {
 		$this->_cursus = new Kleistad_Cursus( $cursus_id );
 		$this->_cursist_id = $cursist_id;
-
-		$default_data = [
-			'code' => "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $this->_cursus->start_datum ),
-			'datum' => date( 'Y-m-d' ),
-			'technieken' => [],
-			'i_betaald' => 0,
-			'c_betaald' => 0,
-			'ingedeeld' => 0,
-			'bericht' => 0,
-			'geannuleerd' => 0,
-			'opmerking' => '',
-			'aantal' => 1,
-		];
+		$this->_default_data['code'] = "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $this->_cursus->start_datum );
+		$this->_default_data['datum'] = date( 'Y-m-d' );
 
 		$inschrijvingen = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
 		if ( is_array( $inschrijvingen ) && ( isset( $inschrijvingen[ $cursus_id ] ) ) ) {
-			$this->_data = $inschrijvingen[ $cursus_id ];
-			$this->migratie();
+			$this->_data = wp_parse_args( $inschrijvingen[ $cursus_id ], $this->_default_data );
 		} else {
-			$this->_data = $default_data;
+			$this->_data = $this->_default_data;
 		}
 	}
 
@@ -358,8 +354,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @param object $data het te laden object.
 	 */
 	public function load( $data ) {
-		parent::load( $data );
-		$this->migratie();
+		$this->_data = wp_parse_args( $data, $this->_default_data );
 	}
 
 	/**
@@ -382,6 +377,9 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'lopend':
 				$slug = 'kleistad_email_lopende_cursus';
 				break;
+			case 'betaling':
+				$slug = 'kleistad_email_betaling_cursus';
+				break;
 			default:
 				$slug = '';
 		}
@@ -395,11 +393,16 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				'cursus_eind_datum'      => strftime( '%A %d-%m-%y', $this->_cursus->eind_datum ),
 				'cursus_start_tijd'      => strftime( '%H:%M', $this->_cursus->start_tijd ),
 				'cursus_eind_tijd'       => strftime( '%H:%M', $this->_cursus->eind_tijd ),
-				'cursus_technieken'      => implode( ', ', $this->_data['technieken'] ),
-				'cursus_code'            => $this->_data['code'],
+				'cursus_technieken'      => implode( ', ', $this->technieken ),
+				'cursus_code'            => $this->code,
 				'cursus_kosten'          => number_format( $this->_cursus->cursuskosten, 2, ',', '' ),
 				'cursus_inschrijfkosten' => number_format( $this->_cursus->inschrijfkosten, 2, ',', '' ),
-				'cursus_aantal'          => $this->_data['aantal'],
+				'cursus_aantal'          => $this->aantal,
+				'cursus_opmerking'       => $this->opmerking,
+				'cursus_link'            => '<a href="' . home_url( '/kleistad_cursus_betaling' ) .
+												'?gid=' . $this->_cursist_id .
+												'&crss=' . $this->_cursus->id .
+												'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
 			]
 		);
 	}
@@ -407,22 +410,61 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	/**
 	 * Betaal de inschrijving met iDeal.
 	 *
-	 * @param float  $bedrag  Het te betalen bedrag.
-	 * @param string $bank    De bank.
-	 * @param string $bericht Het bericht bij succesvolle betaling.
+	 * @param string $bericht      Het bericht bij succesvolle betaling.
+	 * @param bool   $inschrijving Of het een inschrijving of cursuskosten betreft.
 	 */
-	public function betalen( $bedrag, $bank, $bericht ) {
+	public function betalen( $bericht, $inschrijving ) {
+
 		$betaling = new Kleistad_Betalen();
-		$betaling->order(
-			$this->_cursist_id,
-			$this->_data['code'],
-			$bedrag,
-			$bank,
-			'Kleistad cursus ' . $this->_data['code'],
-			$bericht
-		);
+		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
+		if ( $inschrijving && 0 < $this->_cursus->inschrijfkosten ) {
+			$betaling->order(
+				$this->_cursist_id,
+				$this->code . '-inschrijving',
+				$this->aantal * $this->_cursus->inschrijfkosten,
+				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
+				$bericht
+			);
+		} else {
+			$betaling->order(
+				$this->_cursist_id,
+				$this->code . '-cursus',
+				$this->aantal * $this->_cursus->cursuskosten,
+				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
+				$bericht
+			);
+		}
 	}
 
+	/**
+	 * Maak een controle string aan.
+	 *
+	 * @return string Hash string.
+	 */
+	public function controle() {
+		return hash( 'sha256', 'KlEiStAd' . $this->_cursist_id . 'C' . $this->_cursus->id . 'cOnTrOlE' );
+	}
+
+	/**
+	 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
+	 *
+	 * @param string $type Betaling, cursus of inschrijfkosten.
+	 */
+	public function callback( $type ) {
+		if ( 'inschrijving' === $type ) {
+			$this->i_betaald = true;
+		} elseif ( 'cursus' === $type ) {
+			$this->i_betaald = true;
+			$this->c_betaald = true;
+		} else {
+			return; // Dit zou niet mogen.
+		}
+		if ( ! $this->ingedeeld ) { // Voorkom dat de email dubbel verstuurd wordt.
+			$this->ingedeeld = true;
+			$this->email( 'indeling' );
+		}
+		$this->save();
+	}
 }
 
 /**

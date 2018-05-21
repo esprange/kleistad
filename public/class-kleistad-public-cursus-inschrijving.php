@@ -69,6 +69,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				'meer' => $cursus->meer,
 				'ruimte' => $cursus->ruimte,
 				'prijs' => ( 0 < $cursus->inschrijfkosten ? $cursus->inschrijfkosten : $cursus->cursuskosten ),
+				'inschrijfgeld' => ( 0 < $cursus->inschrijfkosten ),
 				'lopend' => $cursus->start_datum < strtotime( 'today' ),
 			];
 		}
@@ -106,7 +107,6 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				'opmerking' => FILTER_SANITIZE_STRING,
 				'aantal' => FILTER_SANITIZE_STRING,
 				'betaal' => FILTER_SANITIZE_STRING,
-				'bank' => FILTER_SANITIZE_STRING,
 			]
 		);
 
@@ -196,9 +196,8 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 
 		if ( ! $lopend && 'ideal' === $data['input']['betaal'] ) {
 			$inschrijving->betalen(
-				$data['input']['aantal'] * ( 0 < $data['cursus']->inschrijfkosten ? $data['cursus']->inschrijfkosten : $data['cursus']->cursuskosten ),
-				$data['input']['bank'],
-				'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
+				'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging',
+				true
 			);
 		} else {
 			if ( $inschrijving->email( $lopend ? 'lopend' : 'inschrijf' ) ) {

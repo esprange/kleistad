@@ -23,6 +23,7 @@ else :
 		  <ul>
 			  <li><a href="#kleistad_cursus_gegevens">Cursus informatie</a></li>
 			  <li><a href="#kleistad_cursus_indeling">Cursus indeling</a></li>
+			  <li><a href="#kleistad_cursus_email">Cursus email versturen</a></li>
 		  </ul>
 		  <div id="kleistad_cursus_gegevens" >
 			  <form id="kleistad_form_cursus_gegevens" action="#" method="post" >
@@ -115,6 +116,18 @@ else :
 				  <button type="submit" name="kleistad_submit_cursus_beheer" >Opslaan</button>
 			  </form>
 		  </div>
+		  
+		  <div id="kleistad_cursus_email" >
+			  <form id="kleistad_form_cursus_email" action="#" method="post" >
+				  <input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'kleistad_cursus_beheer' ) ); ?>" />
+					<?php wp_referer_field(); ?>
+				  <input type="hidden" name="cursus_id" value="0"/>
+				  <input type="hidden" name="tab" value="email"/>
+				  <p>Verstuur de email met betaalinstructie naar alle cursisten die ingedeeld zijn</p>
+				  <button type="submit" name="kleistad_submit_cursus_beheer" >Email versturen</button>
+			  </form>
+		  </div>
+
 	  </div>
   </div>
   <table class="kleistad_rapport">

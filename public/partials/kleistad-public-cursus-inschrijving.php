@@ -63,11 +63,7 @@ else :
 				?>
 			<div class="kleistad_row kleistad_col_10" >
 				<input class="kleistad_input_cbr" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>" 
-					data-technieken='<?php echo wp_json_encode( $cursus['technieken'] ); ?>' 
-					data-meer="<?php echo esc_attr( $cursus['meer'] ); ?>"
-					data-prijs="<?php echo esc_attr( $cursus['prijs'] ); ?>"
-					data-ruimte="<?php echo esc_attr( $cursus['ruimte'] ); ?>"
-					data-lopend="<?php echo esc_attr( $cursus['lopend'] ); ?>"
+					data-cursus='<?php echo wp_json_encode( $cursus ); ?>'
 					<?php disabled( $disabled ); ?> 
 					<?php checked( $checked ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
@@ -208,13 +204,7 @@ else :
 				</div>
 				<div class ="kleistad_row">
 					<div class="kleistad_col_10">
-						<label class="kleistad_label" for="kleistad_bank">
-							<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left: 40px;"/>
-							Mijn bank:&nbsp;
-							<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
-								<?php Kleistad_Betalen::issuers(); ?>
-							</select>
-						</label>
+						<?php Kleistad_Betalen::issuers(); ?>
 					</div>
 				</div>
 				<div class ="kleistad_row">

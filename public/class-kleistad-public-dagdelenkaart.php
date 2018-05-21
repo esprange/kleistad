@@ -16,11 +16,11 @@
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
-class Kleistad_Public_Saldo extends Kleistad_Shortcode {
+class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 
 	/**
 	 *
-	 * Prepareer 'saldo' form
+	 * Prepareer 'dagdelenkaart' form
 	 *
 	 * @param array $data the prepared data.
 	 * @return array
@@ -29,17 +29,14 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	 */
 	public function prepare( &$data = null ) {
 		$gebruiker_id = get_current_user_id();
-		$saldo = new Kleistad_Saldo( $gebruiker_id );
-
 		$data = [
 			'gebruiker_id' => $gebruiker_id,
-			'saldo'        => number_format( $saldo->bedrag, 2, ',', '' ),
 		];
 		return true;
 	}
 
 	/**
-	 * Valideer/sanitize 'saldo' form
+	 * Valideer/sanitize 'dagdelenkaart' form
 	 *
 	 * @param array $data Returned data.
 	 * @return array
@@ -51,8 +48,6 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 		$input = filter_input_array(
 			INPUT_POST, [
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
-				'bedrag'       => FILTER_SANITIZE_NUMBER_FLOAT,
-				'betaal'       => FILTER_SANITIZE_STRING,
 			]
 		);
 		$data['input'] = $input;
@@ -60,7 +55,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	}
 
 	/**
-	 * Bewaar 'saldo' form gegevens
+	 * Bewaar 'dagdelenkaart' form gegevens
 	 *
 	 * @param array $data the data to be saved.
 	 * @return string
@@ -70,15 +65,15 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	public function save( $data ) {
 		$error = new WP_Error();
 
-		$saldo = new Kleistad_Saldo( $data['input']['gebruiker_id'] );
+		$dagdelenkaart = new Kleistad_Dagdelenkaart( $data['input']['gebruiker_id'] );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$saldo->betalen(
-				'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging',
-				$data['input']['bedrag']
+			$dagdelenkaart->betalen(
+				$data['input']['bedrag'],
+				'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden'
 			);
 		} else {
-			if ( $saldo->email( '', $data['input']['bedrag'] ) ) {
+			if ( $dagdelenkaart->email( '', $data['input']['bedrag'] ) ) {
 				return 'Er is een email verzonden met nadere informatie over de betaling';
 			} else {
 				$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );

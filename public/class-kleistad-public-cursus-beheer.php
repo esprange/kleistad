@@ -147,6 +147,13 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 				]
 			);
 			$input['cursisten']  = ( '' === $input['indeling_lijst'] ) ? [] : json_decode( $input['indeling_lijst'], true );
+		} elseif ( 'email' === $tab ) {
+			$input               = filter_input_array(
+				INPUT_POST, [
+					'tab'            => FILTER_SANITIZE_STRING,
+					'cursus_id'      => FILTER_SANITIZE_NUMBER_INT,
+				]
+			);
 		}
 		$data = [
 			'input' => $input,
@@ -202,6 +209,27 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 			}
 			if ( $aantal_ingedeeld > 0 ) {
 				return "Emails zijn verstuurd naar $aantal_ingedeeld cursisten";
+			}
+		} elseif ( 'email' === $data['input']['tab'] ) {
+			$inschrijvingen_store = new Kleistad_Inschrijvingen();
+			$inschrijvingen = $inschrijvingen_store->get();
+			$aantal_verzonden_email = 0;
+			foreach ( $inschrijvingen as $inschrijving ) {
+				if ( array_key_exists( $cursus_id, $inschrijving ) ) {
+					if ( $inschrijving[ $cursus_id ]->geannuleerd ) {
+						continue;
+					}
+					if ( $inschrijving[ $cursus_id ]->c_betaald ) {
+						continue;
+					}
+					if ( $inschrijving[ $cursus_id ]->ingedeeld ) {
+						$aantal_verzonden_email++;
+						$inschrijving[ $cursus_id ]->email( 'betaling' );
+					}
+				}
+			}
+			if ( $aantal_verzonden_email > 0 ) {
+				return "Emails zijn verstuurd naar $aantal_verzonden_email cursisten";
 			}
 		}
 	}

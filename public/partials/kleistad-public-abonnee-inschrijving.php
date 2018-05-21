@@ -165,13 +165,7 @@ else :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_10">
-				<label class="kleistad_label" for="kleistad_bank">
-					<img src="<?php echo esc_url( plugins_url( '/../images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left: 40px;"/>
-					Mijn bank:&nbsp;
-					<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
-						<?php Kleistad_Betalen::issuers(); ?>
-					</select>
-				</label>
+				<?php Kleistad_Betalen::issuers(); ?>
 			</div>
 		</div>
 		<div class ="kleistad_row">

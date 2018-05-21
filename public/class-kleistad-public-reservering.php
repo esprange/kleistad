@@ -118,7 +118,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			$datum = mktime( 23, 59, 0, $maand, $dag, $jaar ); // 18:00 uur 's middags
 			$row_html = '';
 			$weekdag = date( 'N', $datum );
-			if ( $oven->$dagnamen[ $weekdag ] ) {
+			if ( $oven->{$dagnamen[ $weekdag ]} ) {
 				$kleur = 'white';
 				$verwerkt = false;
 				$datum_verstreken = $datum < time();

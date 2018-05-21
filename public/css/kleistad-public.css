@@ -28,7 +28,7 @@ Description: stylesheet functions voor kleistad_plugin
     border: 2px solid #DDD;
     font-size:12px;
 }
-
+  
 .kleistad_hover {
     color: blue;
 }
@@ -176,10 +176,12 @@ table.kleistad_rapport tr:nth-child(even) {
     content: "";
     display: table;
 }
+
 .kleistad_input_cbr {
     position: absolute;
     visibility: hidden;
 }
+
 .kleistad_input_cbr:checked ~ .kleistad_label_cbr {
     color: green;
 }
@@ -189,6 +191,7 @@ table.kleistad_rapport tr:nth-child(even) {
     border: 7px solid green;
     margin-right: 20px;
 }
+
 .kleistad_input_cbr:disabled ~ .kleistad_label_cbr::before {
     background: whitesmoke;
     border: 7px solid darkgray;

@@ -112,8 +112,8 @@ class Kleistad_Oven extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_ovens", $this->_data );
-		$this->_data['id'] = $wpdb->insert_id;
-		return $this->_data['id'];
+		$this->id = $wpdb->insert_id;
+		return $this->id;
 	}
 
 }
@@ -225,10 +225,10 @@ class Kleistad_Reservering extends Kleistad_Entity {
 		global $wpdb;
 		if ( $wpdb->delete(
 			"{$wpdb->prefix}kleistad_reserveringen", [
-				'id' => $this->_data['id'],
+				'id' => $this->id,
 			], [ '%d' ]
 		) ) {
-			$this->_data['id'] = null;
+			$this->id = null;
 		}
 	}
 
@@ -332,8 +332,8 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_reserveringen", $this->_data );
-		$this->_data['id'] = $wpdb->insert_id;
-		return $this->_data['id'];
+		$this->id = $wpdb->insert_id;
+		return $this->id;
 	}
 
 	/**
@@ -541,7 +541,7 @@ class Kleistad_Saldo {
 	 */
 	public function __construct( $gebruiker_id ) {
 		$this->_gebruiker_id   = $gebruiker_id;
-		$this->_data['bedrag'] = $this->huidig_saldo();
+		$this->bedrag = $this->huidig_saldo();
 	}
 
 	/**
@@ -573,10 +573,10 @@ class Kleistad_Saldo {
 	public function save( $reden ) {
 		$huidig_saldo = $this->huidig_saldo();
 
-		if ( $huidig_saldo !== $this->_data['bedrag'] ) {
-			update_user_meta( $this->_gebruiker_id, 'stooksaldo', $this->_data['bedrag'] );
+		if ( $huidig_saldo !== $this->bedrag ) {
+			update_user_meta( $this->_gebruiker_id, 'stooksaldo', $this->bedrag );
 			$gebruiker = get_userdata( $this->_gebruiker_id );
-			self::write_log( "$gebruiker->display_name nu: $huidig_saldo naar: " . $this->_data['bedrag'] . " vanwege $reden\n" );
+			self::write_log( "$gebruiker->display_name nu: $huidig_saldo naar: " . $this->bedrag . " vanwege $reden" );
 			return true;
 		}
 		return false;
@@ -585,18 +585,16 @@ class Kleistad_Saldo {
 	/**
 	 * Betaal de inschrijving met iDeal.
 	 *
-	 * @param float  $bedrag  Het te betalen bedrag.
-	 * @param string $bank    De bank.
 	 * @param string $bericht Het bericht bij succesvolle betaling.
+	 * @param float  $bedrag  Het te betalen bedrag.
 	 */
-	public function betalen( $bedrag, $bank, $bericht ) {
+	public function betalen( $bericht, $bedrag ) {
 		$betaling = new Kleistad_Betalen();
 		$code = "S$this->_gebruiker_id-" . strftime( '%y%m%d' );
 		$betaling->order(
 			$this->_gebruiker_id,
 			$code,
 			$bedrag,
-			$bank,
 			'Kleistad stooksaldo ' . $code,
 			$bericht
 		);
@@ -617,9 +615,19 @@ class Kleistad_Saldo {
 				'voornaam'   => $gebruiker->first_name,
 				'achternaam' => $gebruiker->last_name,
 				'bedrag'     => $bedrag,
-				'saldo'      => $this->_data['bedrag'],
+				'saldo'      => $this->bedrag,
 			]
 		);
 	}
 
+	/**
+	 * Verwerk een betaling. Wordt aangeroepen vanuit de betaal callback
+	 *
+	 * @param float $bedrag Het bedrag dat betaald is.
+	 */
+	public function callback( $bedrag ) {
+		$this->bedrag = $this->bedrag + $bedrag;
+		$this->save( 'betaling per iDeal' );
+		$this->email( '_betaald', $bedrag );
+	}
 }

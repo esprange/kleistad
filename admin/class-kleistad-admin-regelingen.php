@@ -139,7 +139,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		}
 		$total_items = count( $regelingen );
 
-		$this->items = array_slice( $regelingen, $paged, $per_page, true );
+		$this->items = array_slice( $regelingen, $paged * $per_page, $per_page, true );
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items, // total items defined above.

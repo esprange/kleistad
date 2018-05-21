@@ -32,13 +32,13 @@ class Kleistad_Public_Registratie extends Kleistad_Shortcode {
 
 		if ( is_null( $data ) ) {
 			$data['input'] = [
-				'voornaam' => $gebruiker->voornaam,
+				'voornaam'   => $gebruiker->voornaam,
 				'achternaam' => $gebruiker->achternaam,
-				'straat' => $gebruiker->straat,
-				'huisnr' => $gebruiker->huisnr,
-				'pcode' => $gebruiker->pcode,
-				'plaats' => $gebruiker->plaats,
-				'telnr' => $gebruiker->telnr,
+				'straat'     => $gebruiker->straat,
+				'huisnr'     => $gebruiker->huisnr,
+				'pcode'      => $gebruiker->pcode,
+				'plaats'     => $gebruiker->plaats,
+				'telnr'      => $gebruiker->telnr,
 			];
 		}
 		return true;
@@ -57,14 +57,14 @@ class Kleistad_Public_Registratie extends Kleistad_Shortcode {
 
 		$input = filter_input_array(
 			INPUT_POST, [
-				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
-				'voornaam' => FILTER_SANITIZE_STRING,
-				'achternaam' => FILTER_SANITIZE_STRING,
-				'straat' => FILTER_SANITIZE_STRING,
-				'huisnr' => FILTER_SANITIZE_STRING,
-				'pcode' => FILTER_SANITIZE_STRING,
-				'plaats' => FILTER_SANITIZE_STRING,
-				'telnr' => FILTER_SANITIZE_STRING,
+				'gebruiker_id'  => FILTER_SANITIZE_NUMBER_INT,
+				'voornaam'      => FILTER_SANITIZE_STRING,
+				'achternaam'    => FILTER_SANITIZE_STRING,
+				'straat'        => FILTER_SANITIZE_STRING,
+				'huisnr'        => FILTER_SANITIZE_STRING,
+				'pcode'         => FILTER_SANITIZE_STRING,
+				'plaats'        => FILTER_SANITIZE_STRING,
+				'telnr'         => FILTER_SANITIZE_STRING,
 			]
 		);
 

@@ -3,8 +3,8 @@
 
     function wijzigTeksten() {
         var bedrag = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedrag' );
-        $( 'label[for=kleistad_betaal_ideal]' ).text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' = 3 termijnen en borg.' );
-        $( 'label[for=kleistad_betaal_stort]' ).text( 'ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' = 3 termijnen en borg.' );
+        $( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' (= 3 termijnen en borg). Ik machtig Kleistad daarna tot periodieke incasso van de volgende termijnen' );
+        $( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' (= 3 termijnen en borg) volgens de betaalinstructie, zoals aangegeven in de bevestigingsemail.' );
     }
 
     $( document ).ready(

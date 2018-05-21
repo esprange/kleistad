@@ -47,28 +47,145 @@ class Kleistad_Betalen {
 	 * @param string $gebruiker_id de gebruiker die de betaling uitvoert.
 	 * @param string $order_id     de externe order referentie, maximaal 35 karakters.
 	 * @param real   $bedrag       het bedrag.
-	 * @param string $bank         de bank.
 	 * @param string $beschrijving de externe order referentie, maximaal 35 karakters.
 	 * @param string $bericht      het bericht bij succesvolle beraling.
+	 * @param bool   $mandateren   er wordt een herhaalde betaling voorbereid.
 	 */
-	public function order( $gebruiker_id, $order_id, $bedrag, $bank, $beschrijving, $bericht ) {
+	public function order( $gebruiker_id, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
+		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING );
+
+		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
+		$mollie_gebruiker_id = ( $mandateren ) ? get_user_meta( $gebruiker_id, 'mollie_customer_id', true ) : null;
+		if ( '' === $mollie_gebruiker_id ) {
+			$gebruiker = get_userdata( $gebruiker_id );
+			$mollie_gebruiker = $this->mollie->customers->create(
+				[
+					'name'  => $gebruiker->user_nicename,
+					'email' => $gebruiker->user_email,
+				]
+			);
+			$mollie_gebruiker_id = $mollie_gebruiker->id;
+			update_user_meta( $gebruiker_id, 'mollie_customer_id', $mollie_gebruiker_id );
+		}
 		$betaling = $this->mollie->payments->create(
 			[
-				'amount'      => $bedrag,
-				'description' => $beschrijving,
-				'redirectUrl' => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
-				'webhookUrl'  => Kleistad_Public::base_url() . '/betaling/',
-				'method'      => Mollie_API_Object_Method::IDEAL,
-				'issuer'      => ! empty( $bank ) ? $bank : null,
-				'metadata'    => [
-					'order_id' => $order_id,
-					'bericht'  => $bericht,
+				'amount'        => $bedrag,
+				'customerId'    => $mollie_gebruiker_id,
+				'description'   => $beschrijving,
+				'issuer'        => ! empty( $bank ) ? $bank : null,
+				'metadata'      => [
+					'order_id'  => $order_id,
+					'bericht'   => $bericht,
 				],
+				'method'        => Mollie_API_Object_Method::IDEAL,
+				'recurringType' => $mandateren ? Mollie_API_Object_Payment::RECURRINGTYPE_FIRST : '',
+				'redirectUrl'   => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
+				'webhookUrl'    => Kleistad_Public::base_url() . '/betaling/',
 			]
 		);
 		update_user_meta( $gebruiker_id, 'betaling', $betaling->id );
 		wp_redirect( $betaling->getPaymentUrl(), 303 );
 		exit;
+	}
+
+	/**
+	 * Eenmalige betaling, op basis van eerder verkregen mandaat.
+	 *
+	 * @param int    $gebruiker_id Het wp gebruiker_id.
+	 * @param float  $bedrag       Het te betalen bedrag.
+	 * @param string $beschrijving De beschrijving bij de betaling.
+	 */
+	public function on_demand_order( $gebruiker_id, $bedrag, $beschrijving ) {
+		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
+		if ( '' !== $mollie_gebruiker_id ) {
+			$betaling = $this->mollie->customers_payments->withParentId( $mollie_gebruiker_id )->create(
+				[
+					'amount'        => $bedrag,
+					'description'   => $beschrijving,
+					'recurringType' => Mollie_API_Object_Payment::RECURRINGTYPE_RECURRING,
+					'webhookUrl'    => Kleistad_Public::base_url() . '/ondemandbetaling/',
+				]
+			);
+		}
+	}
+
+	/**
+	 * Herhaal een order op basis van een mandaat, en herhaal deze maandelijks.
+	 *
+	 * @param string   $gebruiker_id de gebruiker die de betaling uitvoert.
+	 * @param real     $bedrag       het bedrag.
+	 * @param string   $beschrijving de externe order referentie, maximaal 35 karakters.
+	 * @param datetime $start        de startdatum voor de periodieke afgeschrijving.
+	 */
+	public function herhaalorder( $gebruiker_id, $bedrag, $beschrijving, $start ) {
+		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
+		if ( '' !== $mollie_gebruiker_id ) {
+			$subscriptie = $this->mollie->customers_subscriptions->withParentId( $mollie_gebruiker_id )->create(
+				[
+					'amount'      => $bedrag,
+					'description' => $beschrijving,
+					'interval'    => '1 month',
+					'startDate'   => strftime( '%Y-%m-%d', $start ),
+					'webhookUrl'    => Kleistad_Public::base_url() . '/herhaalbetaling/',
+				]
+			);
+			return $subscriptie->id;
+		} else {
+			return '';
+		}
+	}
+
+	/**
+	 * Annuleer de subscriptie.
+	 *
+	 * @param int    $gebruiker_id   De gebruiker waarvoor een subscription loopt.
+	 * @param string $subscriptie_id De subscriptie die geannuleerd moet worden.
+	 */
+	public function annuleer( $gebruiker_id, $subscriptie_id ) {
+		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
+
+		if ( '' === $mollie_gebruiker_id ) {
+			return false;
+		}
+		$this->mollie->customers_subscriptions->withParentId( $mollie_gebruiker_id )->cancel( $subscriptie_id );
+	}
+
+	/**
+	 * Test of de gebruiker een mandaat heeft afgegeven.
+	 *
+	 * @param int $gebruiker_id De gebruiker waarvoor getest wordt of deze mandaat heeft.
+	 */
+	public function heeft_mandaat( $gebruiker_id ) {
+		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
+
+		if ( '' === $mollie_gebruiker_id ) {
+			return false;
+		}
+		$mandaten = $this->mollie->customers_mandates->withParentId( $mollie_gebruiker_id )->all();
+
+		foreach ( $mandaten as $mandaat ) {
+			if ( Mollie_API_Object_Customer_Mandate::STATUS_VALID === $mandaat->status ) {
+				return $mandaat->id;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Verwijder gebruiker gegevens, inclusief mandaten e.d.
+	 *
+	 * @param int $gebruiker_id Te verwijderen gebruiker uit de database van Mollie.
+	 * @return boolean
+	 */
+	public function verwijder( $gebruiker_id ) {
+		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
+
+		if ( '' === $mollie_gebruiker_id ) {
+			return false;
+		}
+		$this->mollie->customers->delete( $mollie_gebruiker_id );
+		delete_user_meta( $gebruiker_id, 'mollie_customer_id' );
+		return true;
 	}
 
 	/**
@@ -82,7 +199,7 @@ class Kleistad_Betalen {
 		$mollie_id = get_user_meta( $gebruiker_id, 'betaling', true );
 
 		if ( '' === $mollie_id ) {
-			$error( 'betaling', 'Er is iets misgegaan met een betaling. Probeer het opnieuw.' );
+			$error->add( 'betaling', 'Er is iets misgegaan met een betaling. Probeer het opnieuw.' );
 			return $error;
 		}
 
@@ -99,14 +216,44 @@ class Kleistad_Betalen {
 	 */
 	public static function issuers() {
 		$object = new static();
+		?>
+	<img src="<?php echo esc_url( plugins_url( '../images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left:40px"/>
+	<strong>Mijn bank:&nbsp;</strong>
+	<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
+		<option value="" >&nbsp;</option>
+		<?php
+		foreach ( $object->mollie->issuers->all() as $issuer ) :
+			if ( Mollie_API_Object_Method::IDEAL === $issuer->method ) :
+				?>
+				<option value="<?php echo esc_attr( $issuer->id ); ?>"><?php echo esc_html( $issuer->name ); ?></option>
+				<?php
+			endif;
+		endforeach
+		?>
+	</select>
+		<?php
+	}
 
-		$issuers = $object->mollie->issuers->all();
-		echo '<option value="" >&nbsp;</option>';
-		foreach ( $issuers as $issuer ) {
-			if ( Mollie_API_Object_Method::IDEAL === $issuer->method ) {
-				echo '<option value=' . esc_attr( $issuer->id ) . '>' . esc_attr( $issuer->name ) . '</option>';
-			}
-		}
+	/**
+	 * Webhook functie om herhaalbetaling status te verwerken. Wordt aangeroepen door Mollie.
+	 *
+	 * @param WP_REST_Request $request het request.
+	 * @return \WP_REST_response de response.
+	 */
+	public static function callback_herhaalbetaling_verwerkt( WP_REST_Request $request ) {
+		// Voorlopig geen acties gedefinieerd.
+		return new WP_REST_response(); // Geeft default http status 200 terug.
+	}
+
+	/**
+	 * Webhook functie om ondemandbetaling status te verwerken. Wordt aangeroepen door Mollie.
+	 *
+	 * @param WP_REST_Request $request het request.
+	 * @return \WP_REST_response de response.
+	 */
+	public static function callback_ondemandbetaling_verwerkt( WP_REST_Request $request ) {
+		// Voorlopig geen acties gedefinieerd.
+		return new WP_REST_response(); // Geeft default http status 200 terug.
 	}
 
 	/**
@@ -120,65 +267,39 @@ class Kleistad_Betalen {
 
 		$object = new static();
 		$betaling = $object->mollie->payments->get( $mollie_id );
-		$order_id = $betaling->metadata->order_id;
-
-		/**
-		 * Cursus format : Cx-y-z waarbij x is cursus-id, y is gebruiker-id en z is startdatum in ymd.
-		 * Abonnee format : Ax waarbij x is gebruiker-id
-		 * Stooksaldo format : Sx waarbij x is gebruiker-id
-		 */
-		switch ( $order_id[0] ) {
-			case 'A': // Geen verdere acties.
-				list( $gebruiker_id ) = sscanf( $order_id, 'A%d' );
-				break;
-			case 'C': // Een cursus.
-				list( $cursus_id, $gebruiker_id ) = sscanf( $order_id, 'C%d-%d-%d' );
-				break;
-			case 'S': // Het stooksaldo.
-				list ( $gebruiker_id ) = sscanf( $order_id, 'S%d' );
-				break;
-			default:
-				break;
-		}
-
-		if ( isset( $gebruiker_id ) ) {
-			$gebruiker = get_userdata( $gebruiker_id );
-			if ( $betaling->isPaid() ) {
-				switch ( $order_id[0] ) {
-					case 'A': // Abonnement.
-						$abonnement = new Kleistad_Abonnement( $gebruiker_id );
-						if ( '' === $gebruiker->role ) {
-							wp_update_user(
-								[
-									'ID' => $gebruiker_id,
-									'role' => 'subscriber',
-								]
-							);
-						}
-						$abonnement->email( '_betaald' );
-						break;
-					case 'C': // Een cursus.
-						$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus_id );
-						$cursus = new Kleistad_Cursus( $cursus_id );
-						if ( 0 < $cursus->inschrijfkosten ) {
-							$inschrijving->i_betaald = true;
-						} else {
-							$inschrijving->i_betaald = true;
-							$inschrijving->c_betaald = true;
-						}
-						$inschrijving->ingedeeld = true;
-						$inschrijving->save();
-						$inschrijving->email( 'indeling' );
-						break;
-					case 'S': // Het stooksaldo.
-						$saldo = new Kleistad_Saldo( $gebruiker_id );
-						$saldo->bedrag = $saldo->bedrag + $betaling->amount;
-						$saldo->save( 'betaling per iDeal' );
-						$saldo->email( '_betaald', $betaling->amount );
-						break;
-					default:
-						break;
-				}
+		if ( $betaling->isPaid() && ! $betaling->isRefunded() && ! $betaling->isChargedBack() ) {
+			/**
+			 * Alleen actie als er daadwerkelijk betaald is, niet als er terugbetaald is o.i.d.
+			 *
+			 * Cursus        format : Cx-y-d-z waarbij x is cursus-id, y is gebruiker-id, d de startdatum en z type betaling.
+			 * Abonnee       format : Ax-y waarbij x is gebruiker-id en y geeft aan of het een (her)start betreft
+			 * Stooksaldo    format : Sx-d waarbij x is gebruiker-id en d de melddatum
+			 * Dagdelenkaart format : Kx-d waarbij x is gebruiker-id en d de aankoopdatum
+			 */
+			$order_id = $betaling->metadata->order_id;
+			switch ( $order_id[0] ) {
+				case 'A': // Een abonnement, de vervolg betalingen als subscriptie inplannen.
+					list( $gebruiker_id, $parameter ) = sscanf( $order_id, 'A%d-%s' );
+					$abonnement = new Kleistad_Abonnement( $gebruiker_id );
+					$abonnement->callback( $parameter );
+					break;
+				case 'C': // Een cursus.
+					list( $cursus_id, $gebruiker_id, $startdatum, $parameter ) = sscanf( $order_id, 'C%d-%d-%d-%s' );
+					$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus_id );
+					$inschrijving->callback( $parameter );
+					break;
+				case 'S': // Het stooksaldo.
+					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'S%d-%d' );
+					$saldo = new Kleistad_Saldo( $gebruiker_id );
+					$saldo->callback( $betaling->amount );
+					break;
+				case 'K': // Een dagdelenkaart.
+					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'K%d-%d' );
+					// Nog in te vullen.
+					break;
+				default:
+					// Zou niet mogen.
+					break;
 			}
 		}
 		return new WP_REST_response(); // Geeft default http status 200 terug.

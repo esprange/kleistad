@@ -17,6 +17,7 @@ require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-o
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-cursus.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-gebruiker.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-abonnement.php';
 
 /**
  * The admin-specific functionality of the plugin.
@@ -99,6 +100,10 @@ class Kleistad_Admin {
 
 		add_submenu_page( $this->plugin_name, 'Stooksaldo beheer', 'Stooksaldo beheer', 'manage_options', 'stooksaldo', [ $this, 'stooksaldo_page_handler' ] );
 		add_submenu_page( 'stooksaldo', 'Wijzigen stooksaldo', 'Wijzigen stooksaldo', 'manage_options', 'stooksaldo_form', [ $this, 'stooksaldo_form_page_handler' ] );
+
+		add_submenu_page( $this->plugin_name, 'Abonnees', 'Abonnees', 'manage_options', 'abonnees', [ $this, 'abonnees_page_handler' ] );
+		add_submenu_page( 'abonnees', 'Wijzigen abonnee', 'Wijzigen abonnee', 'manage_options', 'abonnees_form', [ $this, 'abonnees_form_page_handler' ] );
+
 	}
 
 	/**
@@ -344,6 +349,140 @@ class Kleistad_Admin {
 		if ( ! empty( $item['kosten'] ) && ! absint( intval( $item['kosten'] ) ) ) {
 			$messages[] = 'Kosten kunnen niet kleiner zijn dan 0';
 		}
+		if ( empty( $messages ) ) {
+			return true;
+		}
+		return implode( '<br />', $messages );
+	}
+
+	/**
+	 * List page handler
+	 *
+	 * @since    4.3.0
+	 */
+	public function abonnees_page_handler() {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-abonnees.php';
+
+		$table = new Kleistad_Admin_Abonnees();
+		$table->prepare_items();
+
+		$message = '';
+		require 'partials/kleistad-admin-abonnees-page.php';
+	}
+
+	/**
+	 * Form page handler checks is there some data posted and tries to save it
+	 * Also it renders basic wrapper in which we are callin meta box render
+	 *
+	 * @since    4.3.0
+	 */
+	public function abonnees_form_page_handler() {
+		$message = '';
+		$notice = '';
+		// here we are verifying does this request is post back and have correct nonce.
+		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
+			$item = filter_input_array(
+				INPUT_POST, [
+					'id'              => FILTER_SANITIZE_NUMBER_INT,
+					'naam'            => FILTER_SANITIZE_STRING,
+					'code'            => FILTER_SANITIZE_STRING,
+					'soort'           => FILTER_SANITIZE_STRING,
+					'dag'             => FILTER_SANITIZE_STRING,
+					'gestart'         => FILTER_SANITIZE_NUMBER_INT,
+					'geannuleerd'     => FILTER_SANITIZE_NUMBER_INT,
+					'gepauzeerd'      => FILTER_SANITIZE_NUMBER_INT,
+					'inschrijf_datum' => FILTER_SANITIZE_STRING,
+					'start_datum'     => FILTER_SANITIZE_STRING,
+					'pauze_datum'     => FILTER_SANITIZE_STRING,
+					'eind_datum'      => FILTER_SANITIZE_STRING,
+					'herstart_datum'  => FILTER_SANITIZE_STRING,
+					'incasso_datum'   => FILTER_SANITIZE_STRING,
+					'mandaat'         => FILTER_SANITIZE_NUMBER_INT,
+				]
+			);
+			// validate data, and if all ok save item to database.
+			// if id is zero insert otherwise update.
+			$item_valid = $this->validate_abonnee( $item );
+			if ( true === $item_valid ) {
+				$datum = mktime( 0, 0, 0, date( 'n' ) + 1, 1, date( 'Y' ) );
+
+				$abonnement = new Kleistad_Abonnement( $item['id'] );
+				if ( ( 1 === intval( $item['gepauzeerd'] ) ) !== $abonnement->gepauzeerd ) {
+					if ( $abonnement->gepauzeerd ) {
+						$abonnement->gepauzeerd = false;
+						$abonnement->save();
+					} else {
+						$abonnement->pauzeren( time(), $datum, true );
+					}
+				} elseif ( ( 1 === intval( $item['geannuleerd'] ) ) !== $abonnement->geannuleerd ) {
+					if ( $abonnement->geannuleerd ) {
+						$abonnement->geannuleerd = false;
+						$abonnement->save();
+					} else {
+						$abonnement->annuleren( time(), true );
+					}
+				} elseif ( ( 1 === intval( $item['gestart'] ) ) !== Kleistad_Roles::reserveer( $item['id'] ) ) {
+					$abonnement->start( $abonnement->start_datum, 'stort', true );
+				} elseif ( $abonnement->soort !== $item['soort'] ) {
+					$abonnement->wijzigen( time(), $item['soort'], $item['dag'], true );
+				} elseif ( $abonnement->dag !== $item['dag'] ) {
+					$abonnement->dag = $item['dag'];
+					$abonnement->save();
+				}
+				$message = 'De gegevens zijn opgeslagen';
+			} else {
+				// if $item_valid not true it contains error message(s).
+				$notice = $item_valid;
+			}
+		} else {
+			// if this is not post back we load item to edit.
+			if ( isset( $_REQUEST['id'] ) ) {
+				$abonnee_id = $_REQUEST['id'];
+				$abonnement = new Kleistad_Abonnement( $abonnee_id );
+				$abonnee = get_userdata( $abonnee_id );
+				$item = [
+					'id'              => $abonnee_id,
+					'naam'            => $abonnee->display_name,
+					'soort'           => $abonnement->soort,
+					'dag'             => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
+					'code'            => $abonnement->code,
+					'geannuleerd'     => $abonnement->geannuleerd,
+					'gepauzeerd'      => $abonnement->gepauzeerd,
+					'gestart'         => Kleistad_Roles::reserveer( $abonnee_id ),
+					'inschrijf_datum' => ( $abonnement->datum ? strftime( '%d-%m-%y', $abonnement->datum ) : '' ),
+					'start_datum'     => ( $abonnement->start_datum ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '' ),
+					'pauze_datum'     => ( $abonnement->pauze_datum ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '' ),
+					'eind_datum'      => ( $abonnement->eind_datum ? strftime( '%d-%m-%y', $abonnement->eind_datum ) : '' ),
+					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '' ),
+					'incasso_datum'   => ( $abonnement->incasso_datum ? strftime( '%d-%m-%y', $abonnement->incasso_datum ) : '' ),
+					'mandaat'         => ( '' !== $abonnement->subscriptie_id ),
+				];
+			}
+		}
+		// here we adding our custom meta box.
+		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default' );
+		require 'partials/kleistad-admin-abonnees-form-page.php';
+	}
+
+	/**
+	 * This function renders our custom meta box
+	 *
+	 * @param array $item the abonnee involved.
+	 */
+	public function abonnees_form_meta_box_handler( $item ) {
+		require 'partials/kleistad-admin-abonnees-form-meta-box.php';
+	}
+
+	/**
+	 * Simple function that validates data and retrieve bool on success
+	 * and error message(s) on error
+	 *
+	 * @param array $item the abonnee involved.
+	 * @return bool|string
+	 */
+	private function validate_abonnee( $item ) {
+		$messages = [];
+
 		if ( empty( $messages ) ) {
 			return true;
 		}

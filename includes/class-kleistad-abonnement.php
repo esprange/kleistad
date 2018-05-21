@@ -29,6 +29,29 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	private $_abonnee_id;
 
 	/**
+	 * De beginwaarden van een abonnement.
+	 *
+	 * @since 4.3.0
+	 * @access private
+	 * @var array $_default_data de standaard waarden bij het aanmaken van een abonnement.
+	 */
+	private $_default_data = [
+		'code'             => '',
+		'datum'            => '',
+		'start_datum'      => '',
+		'dag'              => '',
+		'geannuleerd'      => 0,
+		'opmerking'        => '',
+		'soort'            => 'onbeperkt',
+		'pauze_datum'      => '',
+		'eind_datum'       => '',
+		'herstart_datum'   => '',
+		'incasso_datum'    => '',
+		'gepauzeerd'       => 0,
+		'subscriptie_id'   => '',
+	];
+
+	/**
 	 * Constructor
 	 *
 	 * Create the abonnee object .
@@ -38,22 +61,15 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param int $abonnee_id id of the abonnee.
 	 */
 	public function __construct( $abonnee_id ) {
-		$default_data = [
-			'code' => "A$abonnee_id",
-			'datum' => date( 'Y-m-d' ),
-			'start_datum' => '',
-			'dag' => '',
-			'geannuleerd' => 0,
-			'opmerking' => '',
-			'soort' => 'onbeperkt',
-		];
-
 		$this->_abonnee_id = $abonnee_id;
+		$this->_default_data['code'] = "A$abonnee_id";
+		$this->_default_data['datum'] = date( 'Y-m-d' );
+
 		$abonnement = get_user_meta( $this->_abonnee_id, 'kleistad_abonnement', true );
 		if ( is_array( $abonnement ) ) {
-			$this->_data = $abonnement;
+			$this->_data = wp_parse_args( $abonnement, $this->_default_data );
 		} else {
-			$this->_data = $default_data;
+			$this->_data = $this->_default_data;
 		}
 	}
 
@@ -71,8 +87,13 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		switch ( $attribuut ) {
 			case 'datum':
 			case 'start_datum':
+			case 'pauze_datum':
+			case 'eind_datum':
+			case 'herstart_datum':
+			case 'incasso_datum':
 				return strtotime( $this->_data[ $attribuut ] );
 			case 'geannuleerd':
+			case 'gepauzeerd':
 				return 1 === intval( $this->_data[ $attribuut ] );
 			default:
 				return $this->_data[ $attribuut ];
@@ -93,9 +114,14 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		switch ( $attribuut ) {
 			case 'datum':
 			case 'start_datum':
+			case 'pauze_datum':
+			case 'eind_datum':
+			case 'herstart_datum':
+			case 'incasso_datum':
 				$this->_data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
 			case 'geannuleerd':
+			case 'gepauzeerd':
 				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:
@@ -115,6 +141,15 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
+	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
+	 *
+	 * @param object $data het te laden object.
+	 */
+	public function load( $data ) {
+		$this->_data = wp_parse_args( $data, $this->_default_data );
+	}
+
+	/**
 	 * Verzenden van de welkomst email.
 	 *
 	 * @param string $type Welke email er verstuurd moet worden.
@@ -125,39 +160,307 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$abonnee   = get_userdata( $this->_abonnee_id );
 		$to        = "$abonnee->first_name $abonnee->last_name <$abonnee->user_email>";
 		return Kleistad_public::compose_email(
-			$to, 'Welkom bij Kleistad', 'kleistad_email_abonnement' . $type, [
+			$to, ( strpos( $type, 'start' ) ) ? 'Welkom bij Kleistad' : 'Wijziging abonnement Kleistad', 'kleistad_email_abonnement' . $type, [
 				'voornaam'             => $abonnee->first_name,
 				'achternaam'           => $abonnee->last_name,
-				'start_datum'          => strftime( '%A %d-%m-%y', strtotime( $this->_data['start_datum'] ) ),
-				'abonnement'           => $this->_data['soort'],
-				'abonnement_code'      => $this->_data['code'],
-				'abonnement_dag'       => $this->_data['dag'],
-				'abonnement_opmerking' => $this->_data['opmerking'],
-				'abonnement_startgeld' => number_format( 3 * $options[ $this->_data['soort'] . '_abonnement' ], 2, ',', '' ),
-				'abonnement_maandgeld' => number_format( $options[ $this->_data['soort'] . '_abonnement' ], 2, ',', '' ),
+				'start_datum'          => strftime( '%d-%m-%y', $this->start_datum ),
+				'pauze_datum'          => strftime( '%d-%m-%y', $this->pauze_datum ),
+				'eind_datum'           => strftime( '%d-%m-%y', $this->eind_datum ),
+				'herstart_datum'       => strftime( '%d-%m-%y', $this->herstart_datum ),
+				'incasso_datum'        => strftime( '%d-%m-%y', $this->incasso_datum ),
+				'abonnement'           => $this->soort,
+				'abonnement_code'      => $this->code,
+				'abonnement_dag'       => $this->dag,
+				'abonnement_opmerking' => $this->opmerking,
+				'abonnement_startgeld' => number_format( 3 * $options[ $this->soort . '_abonnement' ], 2, ',', '' ),
+				'abonnement_maandgeld' => number_format( $options[ $this->soort . '_abonnement' ], 2, ',', '' ),
 			]
 		);
 	}
 
 	/**
-	 * Betaal het abonnement met iDeal.
+	 * Voer een uitgestelde actie eenmalig uit.
 	 *
-	 * @param float  $bedrag   Het te storten bedrag.
-	 * @param string $bank    De bank.
-	 * @param string $bericht Het succes bericht.
+	 * @param string    $actie De uit te voeren actie.
+	 * @param timestamp $datum Het moment waarop de actie moet worden uitgevoerd.
 	 */
-	public function betalen( $bedrag, $bank, $bericht ) {
-		$betaling = new Kleistad_Betalen();
-		$betaling->order(
-			$this->_abonnee_id,
-			$this->_data['code'],
-			$bedrag,
-			$bank,
-			'Kleistad abonnement ' . $this->_data['code'],
-			$bericht
+	private function schedule( $actie, $datum ) {
+		wp_schedule_single_event(
+			$datum, 'kleistad_abonnement', [
+				$this->_abonnee_id,
+				$actie,
+				$datum,
+			]
 		);
 	}
 
+	/**
+	 * Pauzeer het abonnement per pauze datum.
+	 *
+	 * @param timestamp $pauze_datum    Pauzedatum.
+	 * @param timestamp $herstart_datum Herstartdatum.
+	 * @param boolean   $admin          Als functie vanuit admin scherm wordt aangeroepen.
+	 */
+	public function pauzeren( $pauze_datum, $herstart_datum, $admin = false ) {
+		// Op de pauze_datum wordt de status gewijzigd naar gepauzeerd.
+		$this->schedule( 'pauze', $pauze_datum );
+		$this->pauze_datum    = $pauze_datum;
+		$this->herstart_datum = $herstart_datum;
+		if ( '' !== $this->subscriptie_id ) {
+			$betalen = new Kleistad_Betalen();
+			$betalen->annuleer( $this->_abonnee_id , $this->subscriptie_id );
+		}
+		if ( ! $admin ) {
+			$this->email( '_gepauzeerd' );
+		}
+		$this->save();
+		return true;
+	}
+
+	/**
+	 * Herstart het abonnement per datum.
+	 *
+	 * @param timestamp $herstart_datum Herstartdatum.
+	 */
+	public function herstarten( $herstart_datum ) {
+		// Op de herstart_datum wordt de gepauzeerd status verwijderd.
+		$this->schedule( 'herstart', $herstart_datum );
+		$this->herstart_datum = $herstart_datum;
+
+		$betalen = new Kleistad_Betalen();
+		if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+			$this->subscriptie_id = $this->herhaalbetalen( $herstart_datum );
+			$this->email( '_herstart_ideal' );
+		} else {
+			$this->email( '_herstart_bank' );
+		}
+		$this->save();
+		return true;
+	}
+
+	/**
+	 * Annuleer het abonnement per datum.
+	 *
+	 * @param timestamp $eind_datum Einddatum.
+	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 */
+	public function annuleren( $eind_datum, $admin = false ) {
+		// Op de einddatum wordt de subscriber rol van het abonnee account verwijderd.
+		$this->schedule( 'eind', $eind_datum );
+		$this->eind_datum = $eind_datum;
+
+		$betalen = new Kleistad_Betalen();
+		if ( '' !== $this->subscriptie_id ) {
+			$betalen->verwijder( $this->_abonnee_id );
+			$this->subscriptie_id = '';
+		}
+		if ( ! $admin ) {
+			$this->email( '_geannuleerd' );
+		}
+		$this->save();
+		return true;
+	}
+
+	/**
+	 * Wijzig het abonnement per datum.
+	 *
+	 * @param timestamp $wijzig_datum Wijzigdatum.
+	 * @param string    $soort        Beperkt/onbeperkt.
+	 * @param dag       $dag          Dag voor beperkt abonnement.
+	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 */
+	public function wijzigen( $wijzig_datum, $soort, $dag, $admin = false ) {
+		$this->soort = $soort;
+		$this->dag = $dag;
+		$this->wijzig_datum = $wijzig_datum;
+
+		$betalen = new Kleistad_Betalen();
+		if ( $admin ) {
+			if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+				$betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
+			}
+		} else {
+			if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+				$betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
+				$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
+			}
+			$this->email( '_gewijzigd' );
+		}
+		$this->save();
+		return true;
+	}
+
+	/**
+	 * Wijzig de betaalwijze van het abonnement per datum.
+	 *
+	 * @param timestamp $wijzig_datum Wijzigdatum.
+	 * @param string    $betaalwijze  Ideal of bankstorting.
+	 */
+	public function betaalwijze( $wijzig_datum, $betaalwijze ) {
+		$betalen = new Kleistad_Betalen();
+
+		if ( 'ideal' === $betaalwijze ) {
+			// Doe een proefbetaling om het mandaat te verkrijgen.
+			$this->incasso_datum = $wijzig_datum;
+			$this->save();
+			$betalen->order(
+				$this->_abonnee_id,
+				$this->code . '-_betaalwijze_ideal',
+				0.01,
+				'Kleistad abonnement ' . $this->code,
+				'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging',
+				true
+			);
+			// De email 'betaalwijze_ideal' moet via de callback verzonden worden.
+		} else {
+			$this->incasso_datum = null;
+			$betalen->verwijder( $this->_abonnee_id );
+			$this->email( '_betaalwijze_bank' );
+		}
+		$this->save();
+		return true;
+	}
+
+	/**
+	 * Start de betaling van een nieuw abonnement.
+	 *
+	 * @param timestamp $start_datum Datum waarop abonnement gestart wordt.
+	 * @param string    $betaalwijze Ideal of bank.
+	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 */
+	public function start( $start_datum, $betaalwijze, $admin = false ) {
+		$options = get_option( 'kleistad-opties' );
+		$driemaand_datum = mktime( 0, 0, 0, date( 'n', $start_datum ) + 3, date( 'j', $start_datum ), date( 'Y', $start_datum ) );
+
+		// Na drie maanden moet de overbrugging betaald worden voor de dagen tot de 1e van de volgende maand. We doen dit ongeacht of er nu al mandaat beschikbaar is.
+		$this->schedule( 'overbrugging', $driemaand_datum );
+		$this->start_datum = $start_datum;
+
+		if ( 'ideal' === $betaalwijze ) {
+			// Bepaal de datum vanaf wanneer de reguliere incasso gaat starten.
+			$this->incasso_datum = ( 1 === date( 'j', $start_datum ) ) ? $start_datum : mktime( 0, 0, 0, date( 'n', $start_datum ) + 4, 1, date( 'Y', $start_datum ) );
+			$this->save();
+
+			$betalen = new Kleistad_Betalen();
+			$betalen->order(
+				$this->_abonnee_id,
+				$this->code . '-_start',
+				$options[ $this->soort . '_abonnement' ] * 3 + $options['borg_kast'],
+				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $driemaand_datum ) . ' en borg',
+				'Bedankt voor de betaling! De abonnement inschrijving is verwerkt en er wordt een email verzonden met bevestiging',
+				true
+			);
+			// De email '_betaald' moet via de callback verzonden worden.
+		} else {
+			if ( $admin ) {
+				// Abonnement wordt door admin geactiveerd.
+				if ( ! Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
+					wp_update_user(
+						[
+							'ID' => $this->_abonnee_id,
+							'role' => 'subscriber',
+						]
+					);
+				}
+				$this->email( '_start' );
+			} else {
+				$this->email( '_start_bank' );
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Start automatisch betalen per incasso datum.
+	 */
+	public function herhaalbetalen() {
+		$betalen = new Kleistad_Betalen();
+		$options = get_option( 'kleistad-opties' );
+
+		return $betalen->herhaalorder(
+			$this->_abonnee_id,
+			$options[ $this->soort . '_abonnement' ],
+			'Kleistad abonnement ' . $this->code,
+			$this->incasso_datum
+		);
+	}
+
+	/**
+	 * Service functie voor update abonnee batch job.
+	 * Datum wordt apart meegegeven, ondanks dat het de datum heden is.
+	 * Omdat de uitvoeringstijd van de batchjob niet vastligt beter om de oorspronkelijke timestamp vast te leggen.
+	 *
+	 * @param string    $actie De actie die op datum uitgevoerd moet worden.
+	 * @param timestamp $datum De datum / tijdstip waarop de actie nodig is.
+	 */
+	public function event( $actie, $datum ) {
+
+		$options = get_option( 'kleistad-opties' );
+
+		switch ( $actie ) {
+			case 'pauze':
+				$this->pauze_datum = $datum;
+				$this->gepauzeerd  = true;
+				break;
+			case 'eind':
+				$this->eind_datum  = $datum;
+				$this->geannuleerd = true;
+				if ( ! is_super_admin( $this->_abonnee_id ) ) { // Voorkom dat de admin zijn rol kwijtraakt.
+					wp_update_user(
+						[
+							'ID' => $this->_abonnee_id,
+							'role' => '',
+						]
+					);
+				}
+				break;
+			case 'herstart':
+				$this->herstart_datum = $datum;
+				$this->gepauzeerd     = false;
+				break;
+			case 'overbrugging':
+				$betalen = new Kleistad_Betalen();
+				if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+					if ( $this->incasso_datum > $datum ) {
+						// Alleen als er een mandaat is en de reguliere incasso al niet vandaag moet starten dan is er nog een overbrugging incasso nodig.
+						// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
+						$aantal_dagen = ( $this->incasso_datum - $datum ) / (60 * 60 * 24);
+						$fractie = $aantal_dagen / cal_days_in_month( CAL_GREGORIAN, date( 'n', $datum ), date( 'Y', $datum ) );
+						$bedrag = $options[ $this->soort . '_abonnement' ] * $fractie;
+						if ( $bedrag >= 1 ) {
+							$betalen->on_demand_order(
+								$this->_abonnee_id,
+								$bedrag,
+								'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $datum ) . ' tot ' . strftime( '%d-%m-%y', $this->incasso_datum )
+							);
+						}
+					}
+				}
+				break;
+			default:
+				break;
+		}
+		$this->save();
+	}
+
+	/**
+	 * (Her)activeer een abonnement. Wordt aangeroepen vanuit de betaal callback.
+	 *
+	 * @param string $email Geeft aan of het een eerste start of een herstart betreft.
+	 */
+	public function callback( $email ) {
+		if ( ! Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
+			wp_update_user(
+				[
+					'ID' => $this->_abonnee_id,
+					'role' => 'subscriber',
+				]
+			);
+		}
+		$this->subscriptie_id = $this->herhaalbetalen();
+		$this->email( $email );
+		$this->save();
+	}
 }
 
 /**

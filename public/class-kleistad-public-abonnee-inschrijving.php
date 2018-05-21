@@ -89,7 +89,6 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				'start_datum' => FILTER_SANITIZE_STRING,
 				'opmerking' => FILTER_SANITIZE_STRING,
 				'betaal' => FILTER_SANITIZE_STRING,
-				'bank' => FILTER_SANITIZE_STRING,
 			]
 		);
 
@@ -142,14 +141,14 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				}
 			} else {
 				$gebruiker = new Kleistad_Gebruiker();
-				$gebruiker->voornaam = $data['input']['FNAME'];
+				$gebruiker->voornaam   = $data['input']['FNAME'];
 				$gebruiker->achternaam = $data['input']['LNAME'];
-				$gebruiker->straat = $data['input']['straat'];
-				$gebruiker->huisnr = $data['input']['huisnr'];
-				$gebruiker->pcode = $data['input']['pcode'];
-				$gebruiker->plaats = $data['input']['plaats'];
-				$gebruiker->email = $data['input']['EMAIL'];
-				$gebruiker->telnr = $data['input']['telnr'];
+				$gebruiker->straat     = $data['input']['straat'];
+				$gebruiker->huisnr     = $data['input']['huisnr'];
+				$gebruiker->pcode      = $data['input']['pcode'];
+				$gebruiker->plaats     = $data['input']['plaats'];
+				$gebruiker->email      = $data['input']['EMAIL'];
+				$gebruiker->telnr      = $data['input']['telnr'];
 				$gebruiker_id = $gebruiker->save();
 			}
 		} elseif ( is_super_admin() ) {
@@ -161,47 +160,19 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 		}
 
 		$abonnement = new Kleistad_Abonnement( $gebruiker_id );
-		$abonnement->soort = $data['input']['abonnement_keuze'];
-		$abonnement->opmerking = $data['input']['opmerking'];
+		$abonnement->soort       = $data['input']['abonnement_keuze'];
+		$abonnement->opmerking   = $data['input']['opmerking'];
 		$abonnement->start_datum = strtotime( $data['input']['start_datum'] );
-		$abonnement->dag = $data['input']['dag'];
+		$abonnement->dag         = $data['input']['dag'];
 		$abonnement->save();
 
-		$prijs = 3 * $this->options[ $abonnement->soort . '_abonnement' ] + $this->options['borg_kast'];
-		if ( 'ideal' === $data['input']['betaal'] ) {
-			$abonnement->betalen(
-				$prijs,
-				$data['input']['bank'],
-				'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
-			);
+		$status = $abonnement->start( $abonnement->start_datum, $data['input']['betaal'] );
+		if ( $status ) {
+			return 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging';
 		} else {
-			if ( $abonnement->email( '' ) ) {
-				return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie over de betaling';
-			} else {
-				$error->add( '', 'De inschrijving is verwerkt maar een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
-				return $error;
-			}
+			$error->add( '', 'De inschrijving van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' );
 		}
-
-		$to = "$gebruiker->voornaam $gebruiker->achternaam <$gebruiker->email>";
-		if ( Kleistad_Public::compose_email(
-			$to, 'inschrijving abonnement', 'kleistad_email_abonnement', [
-				'voornaam' => $gebruiker->voornaam,
-				'achternaam' => $gebruiker->achternaam,
-				'start_datum' => strftime( '%A %d-%m-%y', strtotime( $data['input']['start_datum'] ) ),
-				'abonnement' => $abonnement->soort,
-				'abonnement_code' => $abonnement->code,
-				'abonnement_dag' => $abonnement->dag,
-				'abonnement_opmerking' => $abonnement->opmerking,
-				'abonnement_startgeld' => number_format( 3 * $this->options[ $abonnement->soort . '_abonnement' ], 2, ',', '' ),
-				'abonnement_maandgeld' => number_format( $this->options[ $abonnement->soort . '_abonnement' ], 2, ',', '' ),
-			]
-		) ) {
-			return 'De inschrijving is verwerkt en er is een email verzonden met bevestiging';
-		} else {
-			$error->add( '', 'De inschrijving is verwerkt maar een bevestigings email kon niet worden verzonden' );
-			return $error;
-		}
+		return $error;
 	}
 
 }
