@@ -79,7 +79,7 @@ else :
 				?>
 		</div>
 			<?php
-		if ( $data['input']['actief'] ) :
+			if ( $data['input']['actief'] ) :
 				?>
 		<div class="kleistad_row">
 			<div class="kleistad_label kleistad_col_4">
