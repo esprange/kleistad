@@ -80,23 +80,19 @@ table.kleistad_form input[type=text], select {
 }
 table.kleistad_form select {
     -webkit-appearance: menulist-button;
-    font-size:small;
 }
 table.kleistad_form button {
-    font-size: small;
     height: 2.5em;
     padding: 0;
     width: 100%;
 }
 table.kleistad_form option, input {
-    font-size: small;
     height: 2.1em;
 }
 table.kleistad_form input[type=number] {
     width: 5em;
 }
 table.kleistad_form input[type=submit] {
-    font-size: small;
     height: 2.5em;
 }
 table.kleistad_reserveringen {
@@ -143,19 +139,12 @@ table.kleistad_reserveringen a:hover {
     text-decoration: none;
     width: 100%;
 }
-.kleistad_tabel {
-    font-size: small;
-    table-layout: auto;
-}
 table.kleistad_rapport {
     table-layout: auto;
+    font-size: small;
 }
 table.kleistad_rapport th {
-    font-size: small;
     font-weight: bold;
-}
-table.kleistad_rapport td {
-    font-size: small;
 }
 table.kleistad_rapport thead {
     background-color: #F2F2F2;
@@ -274,7 +263,7 @@ table.kleistad_rapport tr:nth-child(even) {
     width: 250px;
 }
 
-.kleistad_zoek input#search {
+.kleistad_zoek input#search { 
     background: #2b303b;
     border: none;
     color: #262626;
@@ -284,7 +273,7 @@ table.kleistad_rapport tr:nth-child(even) {
     width: 250px;
 }
 
-[class*="kleistad_col_"] {
+[class^="kleistad_col_"] {
     border: 0;
     float: left;
     padding: 0 15px;
@@ -332,7 +321,7 @@ table.kleistad_rapport tr:nth-child(even) {
     table.kleistad_rapport th, td {
         font-size: x-small;
     }
-    [class*="kleistad_col_"] {
+    [class^="kleistad_col_"] {
         width: 100%;
     }
 }

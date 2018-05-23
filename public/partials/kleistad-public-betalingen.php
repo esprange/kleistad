@@ -17,7 +17,7 @@ if ( ! Kleistad_Roles::override() ) :
 	<?php
 else :
 	?>
-  <form id="kleistad_form_betalingen" action="#" method="post" >
+  <form action="#" method="post" >
 		<?php wp_nonce_field( 'kleistad_betalingen' ); ?>
 	  <table class="kleistad_rapport" >
 		  <thead>

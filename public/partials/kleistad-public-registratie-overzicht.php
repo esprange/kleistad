@@ -19,7 +19,7 @@ else :
 	?>
 
   <div id="kleistad_deelnemer_info">
-	  <table class="kleistad_tabel" id="kleistad_deelnemer_tabel" >
+	  <table class="kleistad_form" id="kleistad_deelnemer_tabel" >
 	  </table>
   </div>
   <p><label for="kleistad_deelnemer_selectie">Selectie</label>
@@ -32,7 +32,7 @@ else :
 
 	  </select>
   </p>
-  <table class="kleistad_tabel, kleistad_rapport" id="kleistad_deelnemer_lijst">
+  <table class="kleistad_rapport" id="kleistad_deelnemer_lijst">
 	  <thead>
 		  <tr>
 			  <th>Lid</th>

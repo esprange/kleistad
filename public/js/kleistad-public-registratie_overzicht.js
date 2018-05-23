@@ -47,7 +47,7 @@
                 {
                     autoOpen: false,
                     height: 400,
-                    width: 750,
+                    width: 1000,
                     modal: true,
                     buttons: {
                         Ok: function() {
@@ -116,8 +116,8 @@
                                     ibetaald = ( value.i_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     cbetaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
-                                    html = header + '<tr><td>' + value.naam + '</td><td>' + value.code + '</td><td>' + status +
-                                    '</td><td>' + ibetaald + '</td><td>' + cbetaald + '</td><td>' + geannuleerd + '</td><td>',
+                                    html = header + '<tr><td>' + value.naam + '</td><th>' + value.code + '</th><th>' + status +
+                                    '</th><th>' + ibetaald + '</th><th>' + cbetaald + '</th><th>' + geannuleerd + '</th><th>',
                                     separator = '';
                                 $.each(
                                     value.technieken, function( key, value ) {
@@ -125,7 +125,7 @@
                                         separator = '<br/>';
                                     }
                                 );
-                                $( '#kleistad_deelnemer_tabel' ).append( html + '</td></tr>' );
+                                $( '#kleistad_deelnemer_tabel' ).append( html + '</th></tr>' );
                                 header = '';
                             }
                         );
@@ -135,10 +135,10 @@
                     if ( ( 'undefined' !== typeof abonnee ) && ( 0 !== abonnee.length ) ) {
                         $( '#kleistad_deelnemer_tabel' ).append(
                             '<tr><th>Abonnement</th><th>Code</th><th>Dag</th><th>Start Datum</th></tr>' +
-                            '<tr><td>' + abonnee.soort + '</td><td>' +
-                            abonnee.code + '</td><td>' +
-                            abonnee.dag + '</td><td>' +
-                            abonnee.start_datum + '</td></tr>'
+                            '<tr><th>' + abonnee.soort + '</th><th>' +
+                            abonnee.code + '</th><th>' +
+                            abonnee.dag + '</th><th>' +
+                            abonnee.start_datum + '</th></tr>'
                             );
                     }
                 }

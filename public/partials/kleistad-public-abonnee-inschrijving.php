@@ -18,7 +18,7 @@ if ( is_user_logged_in() && ! is_super_admin() ) :
 else :
 	?>
 
-	<form class="kleistad_formulier" action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
+	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
 		<?php wp_nonce_field( 'kleistad_abonnee_inschrijving' ); ?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3">
@@ -40,10 +40,10 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_row" id="kleistad_dag" style="visibility:hidden" title="kies de dag dat je van jouw beperkt abonnement gebruikt gaat maken" >
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_dag_keuze">Dag</label>
 			</div>
-			<div class ="kleistad_col_7">
+			<div class="kleistad_col_7">
 				<select class="kleistad_input" name="dag" id="kleistad_dag_keuze" >
 					<option value="maandag" <?php selected( $data['input']['dag'], 'maandag' ); ?> >Maandag</option>
 					<option value="dinsdag" <?php selected( $data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
@@ -54,16 +54,16 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_start_datum">Start per</label>
 			</div>
-			<div class="kleistad_input kleistad_col_7">
+			<div class="kleistad_col_7 kleistad_input">
 				<input class="kleistad_datum, kleistad_input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" />
 			</div>
 		</div>
 		<?php if ( is_super_admin() ) : ?>
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_gebruiker_id">Abonnee</label>
 				</div>
 				<div class="kleistad_col_7">
@@ -76,7 +76,7 @@ else :
 			</div>
 		<?php else : ?>
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					 <label for="kleistad_voornaam">Naam</label>
 				</div>
 				<div class="kleistad_col_3">
@@ -87,7 +87,7 @@ else :
 				</div>
 			</div>
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_emailadres">Email adres</label>
 				</div>
 				<div class="kleistad_col_7">
@@ -95,7 +95,7 @@ else :
 				</div>
 			</div>
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_emailadres_controle">Email adres (controle)</label>
 				</div>
 				<div class="kleistad_col_7">
@@ -103,7 +103,7 @@ else :
 				</div>
 			</div>
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_telnr">Telefoon</label>
 				</div>
 				<div class="kleistad_col_7">
@@ -111,7 +111,7 @@ else :
 				</div>
 			</div>
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_straat">Straat, nr</label>
 				</div>
 				<div class="kleistad_col_5">
@@ -122,7 +122,7 @@ else :
 				</div>
 			</div>
 			<div class="kleistad_row">
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_pcode">Postcode, Plaats</label>
 				</div>
 				<div class="kleistad_col_2">
@@ -134,16 +134,16 @@ else :
 			</div>
 		<?php endif ?>
 		<div class ="kleistad_row" title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad" >
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_opmerking">Opmerking</label>
 			</div>
-			<div class="kleistad_input kleistad_col_7">
+			<div class="kleistad_col_7 kleistad_input">
 				<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" rows="5" cols="50"><?php echo esc_textarea( $data['input']['opmerking'] ); ?></textarea>
 			</div>
 		</div>
 		<?php if ( ! is_super_admin() ) : ?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				 <label for="subscribe"></label>
 			</div>
 			<div class="kleistad_col_7">
@@ -153,7 +153,7 @@ else :
 		</div>
 			<?php if ( '' !== $data['verklaring'] ) : ?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				 <label for="verklaring"></label>
 			</div>
 			<div class="kleistad_col_7">

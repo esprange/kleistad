@@ -22,7 +22,7 @@ else :
 		<?php wp_nonce_field( 'kleistad_registratie' ); ?>
 		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				 <label for="kleistad_voornaam">Naam</label>
 			</div>
 			<div class="kleistad_col_3">
@@ -33,7 +33,7 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_telnr">Telefoon</label>
 			</div>
 			<div class="kleistad_col_7">
@@ -41,7 +41,7 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_straat">Straat, nr</label>
 			</div>
 			<div class="kleistad_col_5">
@@ -52,7 +52,7 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_pcode">Postcode, Plaats</label>
 			</div>
 			<div class="kleistad_col_2">

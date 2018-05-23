@@ -30,7 +30,7 @@ else :
   </table>
 
   <div id ="kleistad_oven" class="kleistad_form_popup">
-	  <form id="kleistad_form" action="#" method="post">
+	  <form action="#" method="post">
 		  <input id="kleistad_oven_id" type="hidden" >
 		  <input type ="hidden" id="kleistad_gebruiker_id" >
 		  <table class="kleistad_form">

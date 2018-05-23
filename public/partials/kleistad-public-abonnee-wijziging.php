@@ -29,7 +29,7 @@ else :
 		if ( ! $in_driemaandperiode ) :
 			?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_4">
+			<div class="kleistad_col_4 kleistad_label">
 				<label for="kleistad_abo_wijziging">Abonnement wijzigen</label>
 			</div>
 			<div class="kleistad_col_6">
@@ -61,10 +61,10 @@ else :
 				if ( 'onbeperkt' === $data['input']['soort'] ) :
 					?>
 			<div class="kleistad_row" >
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_dag_keuze">Dag</label>
 				</div>
-				<div class ="kleistad_col_7">
+				<div class="kleistad_col_7">
 					<select class="kleistad_input" name="dag" id="kleistad_dag_keuze" >
 						<option value="maandag" <?php selected( $data['input']['dag'], 'maandag' ); ?> >Maandag</option>
 						<option value="dinsdag" <?php selected( $data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
@@ -82,7 +82,7 @@ else :
 			if ( $data['input']['actief'] ) :
 				?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_4">
+			<div class="kleistad_col_4 kleistad_label">
 				<label for="kleistad_abo_pauze">Abonnement pauzeren</label>
 			</div>
 			<div class="kleistad_col_6">
@@ -94,7 +94,7 @@ else :
 				<div class="kleistad_col_3" >
 					&nbsp;
 				</div>
-				<div class="kleistad_label kleistad_col_7" >
+				<div class="kleistad_col_7 kleistad_label" >
 					<p><strong>Je wilt je abonnement per <?php echo esc_html( $per ); ?> tijdelijk pauzeren</strong></p>
 				</div>
 			</div>
@@ -102,7 +102,7 @@ else :
 				<div class="kleistad_col_3" >
 					&nbsp;
 				</div>
-				<div class="kleistad_label kleistad_col_4" >
+				<div class="kleistad_col_4 kleistad_label" >
 					<label for="kleistad_pauze_maanden">aantal maanden pauze</label>
 				</div>
 				<div class="kleistad_col_3">
@@ -114,7 +114,7 @@ else :
 		else :
 			?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_4">
+			<div class="kleistad_col_4 kleistad_label">
 				<label for ="kleistad_abo_start">Abonnement hervatten</label>
 			</div>
 		<div class="kleistad_col_6">
@@ -126,7 +126,7 @@ else :
 				<div class="kleistad_col_3" >
 					&nbsp;
 				</div>
-				<div class="kleistad_label kleistad_col_4" >
+				<div class="kleistad_col_4 kleistad_label" >
 					<label for="kleistad_startdatum">per</label>
 				</div>
 				<div class="kleistad_col_3">
@@ -148,7 +148,7 @@ else :
 		endif;
 		?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_4">
+			<div class="kleistad_col_4 kleistad_label">
 				<label for="kleistad_abo_einde">Abonnement beëindigen</label>
 			</div>
 			<div class="kleistad_col_6">
@@ -159,7 +159,7 @@ else :
 			<div class="kleistad_col_3" >
 				&nbsp;
 			</div>
-			<div class="kleistad_label kleistad_col_7" >
+			<div class="kleistad_col_7 kleistad_label" >
 				<p><strong>Je wilt je abonnement per <?php echo esc_html( $per ); ?> beëindigen</strong></p>
 			</div>
 		</div>
@@ -167,7 +167,7 @@ else :
 		if ( ! $in_driemaandperiode ) :
 			?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_4">
+			<div class="kleistad_col_4 kleistad_label">
 				<label for="kleistad_abo_betaalwijze">Abonnement betaalwijze</label>
 			</div>
 			<div class="kleistad_col_6">

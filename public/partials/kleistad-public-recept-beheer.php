@@ -33,7 +33,7 @@ else :
 		<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
 		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_titel">Recept naam</label>
 			</div>
 			<div class="kleistad_col_7">
@@ -42,13 +42,13 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_glazuur">Soort glazuur</label>
 			</div>
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_kleur">Kleur</label>
 			</div>
-			<div class="kleistad_label kleistad_col_3">
+			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_uiterlijk">Uiterlijk</label>
 			</div>
 		</div>
@@ -121,10 +121,10 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_5">
+			<div class="kleistad_col_5 kleistad_label">
 				<label for="kleistad_kenmerk">Kenmerken</label>
 			</div>
-			<div class="kleistad_label kleistad_col_5">
+			<div class="kleistad_col_5 kleistad_label">
 				<label for="kleistad_herkomst">Herkomst</label>
 			</div>
 		</div>
@@ -137,10 +137,10 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_row">
-			<div class="kleistad_label kleistad_col_5">
+			<div class="kleistad_col_5 kleistad_label">
 				<label for="kleistad_stookschema">Stookschema</label>
 			</div>
-			<div class="kleistad_label kleistad_col_5">
+			<div class="kleistad_col_5 kleistad_label">
 				<label for="kleistad_foto">Foto (max 2M bytes)</label>
 			</div>
 		</div>

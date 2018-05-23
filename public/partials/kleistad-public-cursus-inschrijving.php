@@ -18,7 +18,7 @@ if ( ! true ) :
 else :
 	?>
 
-	<form class="kleistad_formulier" action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
+	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
 		<?php
 		wp_nonce_field( 'kleistad_cursus_inschrijving' );
 
@@ -31,7 +31,7 @@ else :
 		if ( $count < 1 ) :
 			?>
 			<div class="kleistad_row" >
-				<div class="kleistad_label kleistad_col_10" >
+				<div class="kleistad_col_10 kleistad_label" >
 					Helaas zijn er geen cursussen beschikbaar of zijn ze al volgeboekt
 				</div>
 			</div>
@@ -60,7 +60,7 @@ else :
 			// Toon nu de cursussen en selecteer de cursus. De rest wordt met javascript gedaan.
 			foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
 				?>
-			<div class="kleistad_row kleistad_col_10" >
+			<div class="kleistad_col_10 kleistad_row" >
 				<input class="kleistad_input_cbr" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
 					data-cursus='<?php echo wp_json_encode( $cursus ); ?>' <?php disabled( ! $cursus['selecteerbaar'] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
@@ -76,15 +76,15 @@ else :
 				<div class="kleistad_row" >
 					<div class="kleistad_col_1" >
 					</div>
-					<div class="kleistad_label kleistad_col_3" id="kleistad_cursus_draaien" style="visibility: hidden" >
+					<div class="kleistad_col_3 kleistad_label" id="kleistad_cursus_draaien" style="visibility: hidden" >
 						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_draaien" type="checkbox" value="Draaien" <?php checked( in_array( 'Draaien', $data['input']['technieken'], true ) ); ?> >
 						<label class="kleistad_label_cbr" for="kleistad_draaien" >Draaien</label>
 					</div>
-					<div class="kleistad_label kleistad_col_3" id="kleistad_cursus_handvormen" style="visibility: hidden" >
+					<div class="kleistad_col_3 kleistad_label" id="kleistad_cursus_handvormen" style="visibility: hidden" >
 						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_handvormen" type="checkbox" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['input']['technieken'], true ) ); ?> >
 						<label class="kleistad_label_cbr" for="kleistad_handvormen" >Handvormen</label>
 					</div>
-					<div class="kleistad_label kleistad_col_3" id="kleistad_cursus_boetseren" style="visibility: hidden" >
+					<div class="kleistad_col_3 kleistad_label" id="kleistad_cursus_boetseren" style="visibility: hidden" >
 						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_boetseren" type="checkbox" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['input']['technieken'], true ) ); ?> >
 						<label class="kleistad_label_cbr" for="kleistad_boetseren" >Boetseren</label>
 					</div>
@@ -94,7 +94,7 @@ else :
 			</div>
 			<?php if ( is_super_admin() ) : ?>
 				<div class="kleistad_row" >
-					<div class="kleistad_label kleistad_col_3" >
+					<div class="kleistad_col_3 kleistad_label" >
 						<label for="kleistad_gebruiker_id">Cursist</label>
 					</div>
 					<div class="kleistad_col_7">
@@ -113,7 +113,7 @@ else :
 				<input type="hidden" name="aantal" id="kleistad_aantal" value="1" />
 			<?php else : ?>
 				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_3">
+					<div class="kleistad_col_3 kleistad_label">
 						 <label for="kleistad_voornaam">Naam</label>
 					</div>
 					<div class="kleistad_col_3">
@@ -124,7 +124,7 @@ else :
 					</div>
 				</div>
 				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_3">
+					<div class="kleistad_col_3 kleistad_label">
 						<label for="kleistad_emailadres">Email adres</label>
 					</div>
 					<div class="kleistad_col_7">
@@ -132,7 +132,7 @@ else :
 					</div>
 				</div>
 				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_3">
+					<div class="kleistad_col_3 kleistad_label">
 						<label for="kleistad_emailadres_controle">Email adres (controle)</label>
 					</div>
 					<div class="kleistad_col_7">
@@ -140,7 +140,7 @@ else :
 					</div>
 				</div>
 				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_3">
+					<div class="kleistad_col_3 kleistad_label">
 						<label for="kleistad_telnr">Telefoon</label>
 					</div>
 					<div class="kleistad_col_7">
@@ -148,7 +148,7 @@ else :
 					</div>
 				</div>
 				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_3">
+					<div class="kleistad_col_3 kleistad_label">
 						<label for="kleistad_straat">Straat, nr</label>
 					</div>
 					<div class="kleistad_col_5">
@@ -159,7 +159,7 @@ else :
 					</div>
 				</div>
 				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_3">
+					<div class="kleistad_col_3 kleistad_label">
 						<label for="kleistad_pcode">Postcode, Plaats</label>
 					</div>
 					<div class="kleistad_col_2">
@@ -171,19 +171,19 @@ else :
 				</div>
 				<div id="kleistad_cursus_aantal" style="visibility: hidden" >
 					<div class="kleistad_row">
-						<div class="kleistad_label kleistad_col_3">
+						<div class="kleistad_col_3 kleistad_label">
 							<label for="kleistad_aantal">Ik kom met </label>
 						</div>
 						<div class="kleistad_col_3">
 							<input class="kleistad_input" name="aantal" id="kleistad_aantal" value="<?php echo esc_attr( $data['input']['aantal'] ); ?>" />
 						</div>
-						<div class="kleistad_label kleistad_col_4">
+						<div class="kleistad_col_4 kleistad_label">
 							<label>deelnemers</label>
 						</div>
 					</div>
 				</div>
 				<div class="kleistad_row">
-					<div class="kleistad_label kleistad_col_5">
+					<div class="kleistad_col_5 kleistad_label">
 						 <label for="subscribe">Ik wil de Kleistad nieuwsbrief ontvangen.</label>
 					</div>
 					<div class="kleistad_col_5">
@@ -193,10 +193,10 @@ else :
 
 			<?php endif ?>
 			<div class ="kleistad_row" title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zijn voor de cursus indeling" >
-				<div class="kleistad_label kleistad_col_3">
+				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_opmerking">Opmerking</label>
 				</div>
-				<div class="kleistad_input kleistad_col_7">
+				<div class="kleistad_col_7 kleistad_input">
 					<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" rows="5" cols="50"><?php echo esc_textarea( $data['input']['opmerking'] ); ?></textarea>
 				</div>
 			</div>
