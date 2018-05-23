@@ -10,7 +10,7 @@ Description: stylesheet functions voor kleistad_plugin
   License: GPL2
 */
 
-/*csslint important: false, box-model: false*/
+/*csslint important: false, box-model: false, unqualified-attributes: false, overqualified-elements: false*/
 
 .ui-widget{
     font-size:14px !important;
