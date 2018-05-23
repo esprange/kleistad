@@ -28,11 +28,11 @@
             $( '#kleistad_cursus_aantal' ).css( 'visibility', 'hidden' );
         }
         if ( cursus.lopend ) {
-            $( '#kleistad_cursus_betalen' ).hide();//css( 'visibility', 'hidden' );
-            $( '#kleistad_cursus_lopend' ).show();//css( 'visibility', 'visible' );
+            $( '#kleistad_cursus_betalen' ).hide();
+            $( '#kleistad_cursus_lopend' ).show();
         } else {
-            $( '#kleistad_cursus_betalen' ).show();//css( 'visibility', 'visible' );
-            $( '#kleistad_cursus_lopend' ).hide();//css( 'visibility', 'hidden' );
+            $( '#kleistad_cursus_betalen' ).show();
+            $( '#kleistad_cursus_lopend' ).hide();
         }
     }
 
