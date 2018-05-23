@@ -60,7 +60,7 @@ class Kleistad_Betalen {
 			$gebruiker = get_userdata( $gebruiker_id );
 			$mollie_gebruiker = $this->mollie->customers->create(
 				[
-					'name'  => $gebruiker->user_nicename,
+					'name'  => $gebruiker->display_name,
 					'email' => $gebruiker->user_email,
 				]
 			);

@@ -32,6 +32,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		if ( is_null( $data ) ) {
 			$data['input'] = [
 				'EMAIL' => '',
+				'email_controle' => '',
 				'FNAME' => '',
 				'LNAME' => '',
 				'straat' => '',
@@ -40,8 +41,12 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				'plaats' => '',
 				'telnr' => '',
 				'cursus_id' => 0,
+				'gebruiker_id' => 0,
 				'aantal' => 1,
+				'technieken' => [],
 				'opmerking' => '',
+				'betaal' => 'ideal',
+				'mc4wp-subscribe' => '1',
 			];
 		}
 		$gebruikers = get_users(
@@ -91,6 +96,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		$input = filter_input_array(
 			INPUT_POST, [
 				'EMAIL' => FILTER_SANITIZE_EMAIL,
+				'email_controle' => FILTER_SANITIZE_EMAIL,
 				'FNAME' => FILTER_SANITIZE_STRING,
 				'LNAME' => FILTER_SANITIZE_STRING,
 				'straat' => FILTER_SANITIZE_STRING,
@@ -107,6 +113,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				'opmerking' => FILTER_SANITIZE_STRING,
 				'aantal' => FILTER_SANITIZE_STRING,
 				'betaal' => FILTER_SANITIZE_STRING,
+				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
 
@@ -117,31 +124,52 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			$cursus = new Kleistad_Cursus( $input['cursus_id'] );
 			if ( is_null( $cursus->id ) ) {
 				$error->add( 'onbekend', 'De gekozen cursus is niet bekend' );
+				$input['cursus_id'] = 0;
 			} elseif ( $cursus->vol ) {
 				$error->add( 'vol', 'De gekozen cursus is vol. Inschrijving is niet mogelijk.' );
+				$input['cursus_id'] = 0;
 			} else {
 				$ruimte = $cursus->ruimte;
 				if ( 0 === $ruimte ) {
 					$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
+					$input['cursus_id'] = 0;
 				} elseif ( $ruimte < $input['aantal'] ) {
 					$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
+					$input['aantal'] = $ruimte;
 				}
 			}
 		}
 		if ( 1 > $input['aantal'] ) {
 			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
+			$input['aantal'] = 1;
 		}
 		if ( 0 === intval( $input['gebruiker_id'] ) ) {
-			$input['EMAIL'] = strtolower( $input['EMAIL'] );
-			if ( ! filter_var( $input['EMAIL'], FILTER_VALIDATE_EMAIL ) ) {
-				$error->add( 'verplicht', 'Een geldig E-mail adres is verplicht' );
+			$email = strtolower( $input['EMAIL'] );
+			if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+				$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
+				$input['EMAIL'] = '';
+				$input['email_controle'] = '';
+			} else {
+				$input['EMAIL'] = $email;
+				if ( strtolower( $input['email_controle'] !== $email ) ) {
+					$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
+					$input['email_controle'] = '';
+				} else {
+					$input['email_controle'] = $email;
+				}
 			}
-			$input['pcode'] = strtoupper( $input['pcode'] );
-			if ( ! $input['FNAME'] ) {
-				$error->add( 'verplicht', 'Een voornaam is verplicht' );
+
+			$input['pcode'] = strtoupper( str_replace( ' ', '', $input['pcode'] ) );
+
+			$voornaam = preg_replace( '/[^a-zA-Z\s]/', '', $input['FNAME'] );
+			if ( '' === $voornaam ) {
+				$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
+				$input['FNAME'] = '';
 			}
-			if ( ! $input['LNAME'] ) {
-				$error->add( 'verplicht', 'Een achternaam is verplicht' );
+			$achternaam = preg_replace( '/[^a-zA-Z\s]/', '', $input['LNAME'] );
+			if ( '' === $achternaam ) {
+				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
+				$input['LNAME'] = '';
 			}
 		}
 		$data ['input'] = $input;

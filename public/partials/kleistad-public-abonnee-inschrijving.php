@@ -25,7 +25,7 @@ else :
 				<label class="kleistad_label">Keuze abonnement</label>
 			</div>
 			<div class="kleistad_col_3">
-				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required 
+				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required
 					   data-bedrag="<?php echo esc_attr( $data['bedrag_onbeperkt'] ); ?>"
 					   value="onbeperkt" <?php checked( 'onbeperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_onbeperkt" >Onbeperkt</label>
@@ -34,7 +34,7 @@ else :
 			</div>
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_beperkt" type="radio" required
-					   data-bedrag="<?php echo esc_attr( $data['bedrag_beperkt'] ); ?>" 
+					   data-bedrag="<?php echo esc_attr( $data['bedrag_beperkt'] ); ?>"
 					   value="beperkt" <?php checked( 'beperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_beperkt">Beperkt</label>
 			</div>
@@ -67,14 +67,14 @@ else :
 					<label for="kleistad_gebruiker_id">Abonnee</label>
 				</div>
 				<div class="kleistad_col_7">
-					<select class="kleistad_input" name="gebruiker_id" id="kleistad_gebruiker_id" >      
+					<select class="kleistad_input" name="gebruiker_id" id="kleistad_gebruiker_id" >
 						<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
 							<option value="<?php echo esc_attr( $gebruiker->id ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
 						<?php endforeach ?>
 					</select>
 				</div>
 			</div>
-		<?php else : ?> 
+		<?php else : ?>
 			<div class="kleistad_row">
 				<div class="kleistad_label kleistad_col_3">
 					 <label for="kleistad_voornaam">Naam</label>
@@ -92,6 +92,14 @@ else :
 				</div>
 				<div class="kleistad_col_7">
 					<input class="kleistad_input" name="EMAIL" id="kleistad_emailadres" type="email" required placeholder="mijnemailadres@voorbeeld.nl" value="<?php echo esc_attr( $data['input']['EMAIL'] ); ?>" />
+				</div>
+			</div>
+			<div class="kleistad_row">
+				<div class="kleistad_label kleistad_col_3">
+					<label for="kleistad_emailadres_controle">Email adres (controle)</label>
+				</div>
+				<div class="kleistad_col_7">
+					<input class="kleistad_input" name="email_controle" id="kleistad_emailadres_controle" type="email" required value="<?php echo esc_attr( $data['input']['email_controle'] ); ?>" />
 				</div>
 			</div>
 			<div class="kleistad_row">
@@ -139,7 +147,7 @@ else :
 				 <label for="subscribe"></label>
 			</div>
 			<div class="kleistad_col_7">
-				<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" checked />
+				<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $data['input']['mc4wp-subscribe'], '1' ); ?> />
 				Ik wil de Kleistad nieuwsbrief ontvangen.
 			</div>
 		</div>
@@ -159,7 +167,7 @@ else :
 ?>
 		<div class ="kleistad_row">
 			<div class="kleistad_col_10">
-				<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
+				<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" <?php checked( $data['input']['betaal'], 'ideal' ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_betaal_ideal"></label>
 			</div>
 		</div>
@@ -170,7 +178,7 @@ else :
 		</div>
 		<div class ="kleistad_row">
 			<div class="kleistad_col_10">
-				<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
+				<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" <?php checked( $data['input']['betaal'], 'stort' ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_betaal_stort"></label>
 			</div>
 		</div>

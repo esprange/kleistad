@@ -163,6 +163,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$to, ( strpos( $type, 'start' ) ) ? 'Welkom bij Kleistad' : 'Wijziging abonnement Kleistad', 'kleistad_email_abonnement' . $type, [
 				'voornaam'             => $abonnee->first_name,
 				'achternaam'           => $abonnee->last_name,
+				'loginnaam'            => $abonnee->user_login,
 				'start_datum'          => strftime( '%d-%m-%y', $this->start_datum ),
 				'pauze_datum'          => strftime( '%d-%m-%y', $this->pauze_datum ),
 				'eind_datum'           => strftime( '%d-%m-%y', $this->eind_datum ),
@@ -193,6 +194,24 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			]
 		);
 	}
+
+	/**
+	 * Autoriseer de abonnee zodat deze de oven reservering mag doen en toegang tot leden pagina's krijgt.
+	 *
+	 * @param boolean $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
+	 */
+	private function autoriseer( $valid ) {
+		$abonnee = new WP_User( $this->_abonnee_id );
+		if ( $valid ) {
+			$abonnee->add_cap( 'leden' );
+			$abonnee->add_cap( Kleistad_Roles::RESERVEER );
+			// Alternatief is wellicht abonnee add of remove role subscriber.
+		} else {
+			$abonnee->remove_cap( 'leden' );
+			$abonnee->remove_cap( Kleistad_Roles::RESERVEER );
+		}
+	}
+
 
 	/**
 	 * Pauzeer het abonnement per pauze datum.
@@ -355,12 +374,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			if ( $admin ) {
 				// Abonnement wordt door admin geactiveerd.
 				if ( ! Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
-					wp_update_user(
-						[
-							'ID' => $this->_abonnee_id,
-							'role' => 'subscriber',
-						]
-					);
+					$this->autoriseer( true );
 				}
 				$this->email( '_start' );
 			} else {
@@ -406,12 +420,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				$this->eind_datum  = $datum;
 				$this->geannuleerd = true;
 				if ( ! is_super_admin( $this->_abonnee_id ) ) { // Voorkom dat de admin zijn rol kwijtraakt.
-					wp_update_user(
-						[
-							'ID' => $this->_abonnee_id,
-							'role' => '',
-						]
-					);
+					$this->autoriseer( false );
 				}
 				break;
 			case 'herstart':
@@ -450,12 +459,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function callback( $email ) {
 		if ( ! Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
-			wp_update_user(
-				[
-					'ID' => $this->_abonnee_id,
-					'role' => 'subscriber',
-				]
-			);
+			$this->autoriseer( true );
 		}
 		$this->subscriptie_id = $this->herhaalbetalen();
 		$this->email( $email );

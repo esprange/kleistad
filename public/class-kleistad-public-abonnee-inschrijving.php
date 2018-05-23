@@ -29,7 +29,9 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 	public function prepare( &$data ) {
 		if ( is_null( $data ) ) {
 			$data['input'] = [
+				'gebruiker_id' => 0,
 				'EMAIL' => '',
+				'email_controle' => '',
 				'FNAME' => '',
 				'LNAME' => '',
 				'straat' => '',
@@ -41,6 +43,8 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				'dag' => '',
 				'start_datum' => '',
 				'opmerking' => '',
+				'betaal' => 'ideal',
+				'mc4wp-subscribe' => '1',
 			];
 		}
 		$atts = shortcode_atts(
@@ -75,8 +79,9 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 
 		$input = filter_input_array(
 			INPUT_POST, [
-				'gebruiker_id' => FILTER_SANITIZE_EMAIL,
+				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
 				'EMAIL' => FILTER_SANITIZE_EMAIL,
+				'email_controle' => FILTER_SANITIZE_EMAIL,
 				'FNAME' => FILTER_SANITIZE_STRING,
 				'LNAME' => FILTER_SANITIZE_STRING,
 				'straat' => FILTER_SANITIZE_STRING,
@@ -89,6 +94,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				'start_datum' => FILTER_SANITIZE_STRING,
 				'opmerking' => FILTER_SANITIZE_STRING,
 				'betaal' => FILTER_SANITIZE_STRING,
+				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
 
@@ -99,16 +105,32 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
 		}
 		if ( 0 === intval( $input['gebruiker_id'] ) ) {
-			$input['EMAIL'] = strtolower( $input['EMAIL'] );
-			if ( ! filter_var( $input['EMAIL'], FILTER_VALIDATE_EMAIL ) ) {
-				$error->add( 'verplicht', 'Een geldig E-mail adres is verplicht' );
+			$email = strtolower( $input['EMAIL'] );
+			if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+				$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
+				$input['EMAIL'] = '';
+				$input['email_controle'] = '';
+			} else {
+				$input['EMAIL'] = $email;
+				if ( strtolower( $input['email_controle'] !== $email ) ) {
+					$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
+					$input['email_controle'] = '';
+				} else {
+					$input['email_controle'] = $email;
+				}
 			}
-			$input['pcode'] = strtoupper( $input['pcode'] );
-			if ( ! $input['FNAME'] ) {
-				$error->add( 'verplicht', 'Een voornaam is verplicht' );
+
+			$input['pcode'] = strtoupper( str_replace( ' ', '', $input['pcode'] ) );
+
+			$voornaam = preg_replace( '/[^a-zA-Z\s]/', '', $input['FNAME'] );
+			if ( '' === $voornaam ) {
+				$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
+				$input['FNAME'] = '';
 			}
-			if ( ! $input['LNAME'] ) {
-				$error->add( 'verplicht', 'Een achternaam is verplicht' );
+			$achternaam = preg_replace( '/[^a-zA-Z\s]/', '', $input['LNAME'] );
+			if ( '' === $achternaam ) {
+				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
+				$input['LNAME'] = '';
 			}
 		}
 		$data['input'] = $input;

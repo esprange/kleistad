@@ -131,17 +131,23 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 			}
 		} elseif ( 0 === $this->_gebruiker_id ) { // New email, thus new user.
 			$uniek = '';
-			$startnaam = strtolower( $this->voornaam );
+			$nice_voornaam = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $this->voornaam ) ) );
+			$nice_achternaam = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $this->achternaam ) ) );
+
+			$startnaam = $nice_voornaam;
+			if ( 4 > mb_strlen( $startnaam ) ) {
+				$startnaam = substr( $startnaam . $nice_achternaam, 0, 4 );
+			}
 			while ( username_exists( $startnaam . $uniek ) ) {
 				$uniek = intval( $uniek ) + 1;
 			}
-			$this->gebruikersnaam = $this->voornaam . $uniek;
+			$this->gebruikersnaam = $startnaam . $uniek;
 
 			$userdata = [
 				'user_login'      => $this->gebruikersnaam,
 				'user_pass'       => wp_generate_password( 12, true ),
 				'user_email'      => $this->email,
-				'user_nicename'   => $this->voornaam . ' ' . $this->achternaam,
+				'user_nicename'   => $nice_voornaam . '-' . $nice_achternaam,
 				'display_name'    => $this->voornaam . ' ' . $this->achternaam,
 				'first_name'      => $this->voornaam,
 				'last_name'       => $this->achternaam,
