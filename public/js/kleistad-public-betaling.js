@@ -11,10 +11,10 @@
                     dateFormat: 'dd-mm-yy'
                 }
             );
-        
+
             $( 'input[name=betaal]:radio' ).change(
                 function() {
-                    $( '#kleistad_submit').html( ( 'ideal' === $(this).val() ) ? 'betalen' : 'opslaan' );
+                    $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'opslaan' );
                 }
             );
 
