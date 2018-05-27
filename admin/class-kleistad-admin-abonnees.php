@@ -94,9 +94,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	 * It will get rows from database and prepare them to be showed in table
 	 */
 	public function prepare_items() {
-		global $wpdb;
-
-		$per_page = 5; // constant, how much records will be shown per page.
+		$per_page = 25; // constant, how much records will be shown per page.
 
 		$columns  = $this->get_columns();
 		$hidden   = [];
