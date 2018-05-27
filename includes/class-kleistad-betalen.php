@@ -295,7 +295,8 @@ class Kleistad_Betalen {
 					break;
 				case 'K': // Een dagdelenkaart.
 					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'K%d-%d' );
-					// Nog in te vullen.
+					$dagdelenkaart = new Kleistad_Dagdelenkaart( $gebruiker_id );
+					$dagdelenkaart->callback( $betaling->amount );
 					break;
 				default:
 					// Zou niet mogen.

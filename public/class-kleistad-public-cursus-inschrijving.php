@@ -46,7 +46,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				'technieken' => [],
 				'opmerking' => '',
 				'betaal' => 'ideal',
-				'mc4wp-subscribe' => '1',
+				'mc4wp-subscribe' => '0',
 			];
 		}
 		$gebruikers = get_users(

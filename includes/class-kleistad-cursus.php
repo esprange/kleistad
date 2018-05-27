@@ -375,10 +375,10 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				$slug = $this->_cursus->indelingslug;
 				break;
 			case 'lopend':
-				$slug = 'kleistad_email_lopende_cursus';
+				$slug = 'kleistad_email_cursus_lopend';
 				break;
 			case 'betaling':
-				$slug = 'kleistad_email_betaling_cursus';
+				$slug = 'kleistad_email_cursus_betaling';
 				break;
 			default:
 				$slug = '';

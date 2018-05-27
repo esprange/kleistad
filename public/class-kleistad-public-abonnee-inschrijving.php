@@ -44,7 +44,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				'start_datum' => '',
 				'opmerking' => '',
 				'betaal' => 'ideal',
-				'mc4wp-subscribe' => '1',
+				'mc4wp-subscribe' => '0',
 			];
 		}
 		$atts = shortcode_atts(

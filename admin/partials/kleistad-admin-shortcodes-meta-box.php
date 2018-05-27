@@ -18,6 +18,7 @@
 		<li><h3>publiek toegankelijk (dus zonder ingelogd te zijn)</h3>
 			<ul style="list-style-type:square">
 				<li>[kleistad_abonnee_inschrijving verklaring=''] inschrijving als abonnee</li>
+				<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart</li>
 				<li>[kleistad_cursus_inschrijving] inschrijving voor cursus</li>
 				<li>[kleistad_recept] overzicht van keramiek recepten</li>
 			</ul>

@@ -64,7 +64,7 @@ else :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_10">
-				<button name="kleistad_submit_registratie" id="kleistad_submit_registratie" type="submit" >Opslaan</button>
+				<button name="kleistad_submit_registratie" type="submit" >Opslaan</button>
 			</div>
 		</div>
 	</form>

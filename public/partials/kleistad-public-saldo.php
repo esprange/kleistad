@@ -54,7 +54,7 @@ else :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_10" style="padding-top: 20px;">
-				<button type="submit" name="kleistad_submit_saldo" id="kleistad_submit_saldo">Saldo Aanpassen</button><br />
+				<button type="submit" name="kleistad_submit_saldo" id="kleistad_submit">Betalen</button><br />
 			</div>
 		</div>
 	</form>

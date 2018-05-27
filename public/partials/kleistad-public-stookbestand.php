@@ -36,6 +36,6 @@ else :
 			<input type="text" name="tot_datum" id="kleistad_tot_datum" class="kleistad_datum" value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" />
 		</div>
 	</div>
-	<button type="submit" name="kleistad_submit_stookbestand" id="kleistad_submit_stookbestand">Verzenden</button><br />
+	<button type="submit" name="kleistad_submit_stookbestand" >Verzenden</button><br />
 </form>
 <?php endif; ?>
