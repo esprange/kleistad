@@ -108,6 +108,8 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 				'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
 				false
 			);
+		} else {
+			$inschrijving->email( 'betaling_bank' );
 		}
 	}
 }

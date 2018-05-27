@@ -78,7 +78,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 				$data['input']['bedrag']
 			);
 		} else {
-			if ( $saldo->email( '', $data['input']['bedrag'] ) ) {
+			if ( $saldo->email( '_bank', $data['input']['bedrag'] ) ) {
 				return 'Er is een email verzonden met nadere informatie over de betaling';
 			} else {
 				$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );

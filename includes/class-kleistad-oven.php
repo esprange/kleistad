@@ -628,6 +628,6 @@ class Kleistad_Saldo {
 	public function callback( $bedrag ) {
 		$this->bedrag = $this->bedrag + $bedrag;
 		$this->save( 'betaling per iDeal' );
-		$this->email( '_betaald', $bedrag );
+		$this->email( '_ideal', $bedrag );
 	}
 }

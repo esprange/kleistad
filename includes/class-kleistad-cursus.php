@@ -368,17 +368,23 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		$to        = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
 
 		switch ( $type ) {
-			case 'inschrijf':
+			case 'inschrijving':
 				$slug = $this->_cursus->inschrijfslug;
 				break;
 			case 'indeling':
 				$slug = $this->_cursus->indelingslug;
 				break;
-			case 'lopend':
+			case 'lopende':
 				$slug = 'kleistad_email_cursus_lopend';
 				break;
 			case 'betaling':
 				$slug = 'kleistad_email_cursus_betaling';
+				break;
+			case 'betaling_ideal':
+				$slug = 'kleistad_email_cursus_betaling_ideal';
+				break;
+			case 'betaling_bank':
+				$slug = 'kleistad_email_cursus_betaling_bank';
 				break;
 			default:
 				$slug = '';
@@ -453,15 +459,15 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	public function callback( $type ) {
 		if ( 'inschrijving' === $type ) {
 			$this->i_betaald = true;
+			$this->ingedeeld = true;
+			$this->email( 'indeling' );
 		} elseif ( 'cursus' === $type ) {
 			$this->i_betaald = true;
 			$this->c_betaald = true;
+			$this->ingedeeld = true;
+			$this->email( 'betaling_ideal' );
 		} else {
 			return; // Dit zou niet mogen.
-		}
-		if ( ! $this->ingedeeld ) { // Voorkom dat de email dubbel verstuurd wordt.
-			$this->ingedeeld = true;
-			$this->email( 'indeling' );
 		}
 		$this->save();
 	}

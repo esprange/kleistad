@@ -330,7 +330,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging',
 				true
 			);
-			// De email 'betaalwijze_ideal' moet via de callback verzonden worden.
 		} else {
 			$this->incasso_datum = null;
 			$betalen->verwijder( $this->_abonnee_id );
@@ -363,20 +362,19 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$betalen = new Kleistad_Betalen();
 			$betalen->order(
 				$this->_abonnee_id,
-				$this->code . '-_start',
+				$this->code . '-_start_ideal',
 				$options[ $this->soort . '_abonnement' ] * 3 + $options['borg_kast'],
 				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $driemaand_datum ) . ' en borg',
 				'Bedankt voor de betaling! De abonnement inschrijving is verwerkt en er wordt een email verzonden met bevestiging',
 				true
 			);
-			// De email '_betaald' moet via de callback verzonden worden.
 		} else {
 			if ( $admin ) {
 				// Abonnement wordt door admin geactiveerd.
 				if ( ! Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
 					$this->autoriseer( true );
 				}
-				$this->email( '_start' );
+				$this->email( '_start_ideal' );
 			} else {
 				$this->email( '_start_bank' );
 			}
@@ -662,7 +660,6 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 				'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
 				false
 			);
-			// De email '_betaald' moet via de callback verzonden worden.
 		} else {
 			$this->email( '_bank' );
 		}
@@ -671,11 +668,9 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 
 	/**
 	 * Activeer een dagdelenkaart. Wordt aangeroepen vanuit de betaal callback.
-	 *
-	 * @param string $email Geeft aan of het een eerste start of een herstart betreft.
 	 */
-	public function callback( $email ) {
-		$this->email( $email );
+	public function callback() {
+		$this->email( '_ideal' );
 		$this->save();
 	}
 }

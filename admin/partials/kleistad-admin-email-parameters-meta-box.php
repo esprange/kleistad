@@ -14,11 +14,12 @@
 ?>
 <div class="card">
 	<ul style="list-style-type:none">
-		<li><h3>kleistad_email_saldo_wijziging / kleistad_email_saldo_wijziging_betaald</h3>
+		<li><h3>kleistad_email_saldo_wijziging_ideal / kleistad_email_saldo_wijziging_bank</h3>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de stoker</li>
 				<li>[achternaam] : achternaam van de stoker</li>
 				<li>[bedrag] : bedrag dat overgemaakt wordt of via iDEAL is betaald</li>
+				<li>[saldo] : huidig saldo</li>
 			</ul>
 		</li>
 		<li><h3>kleistad_email_stookmelding</h3>
@@ -45,11 +46,11 @@
 		</li>
 		<li><h3>kleistad_email_abonnement_* emails</h3>
 			<ol>
-				<li>start: start via ideal betaling</li>
+				<li>start_ideal: start via ideal betaling</li>
 				<li>start_bank: start via bank storting</li>
 				<li>gepauzeerd: gepauzeerd door de abonnee</li>
 				<li>geannuleerd: beëindigd door de abonnee</li>
-				<li>herstart_ideal: herstart na pauze via ideal</li>
+				<li>herstart_ideal: herstart na pauze via ideal betaling</li>
 				<li>herstart_bank: herstart na pauze via bank storting</li>
 				<li>gewijzigd: wijziging abonnementsvorm door gebruiker</li>
 				<li>betaalwijze_ideal: voortaan betalen per ideal</li>
@@ -60,6 +61,10 @@
 				<li>[achternaam] : achternaam van de abonnee</li>
 				<li>[loginnaam] : loginnaam van de abonnee</li>
 				<li>[start_datum] : datum waarop abonnement moet ingaan</li>
+				<li>[pauze_datum] : datum waarop abonnement gepauzeerd wordt</li>
+				<li>[herstart_datum] : datum waarop abonnement herstart wordt</li>
+				<li>[eind_datum] : datum waarop abonnement beëindigd wordt</li>
+				<li>[incasso_datum] : datum vanaf wanneer abonnement incasso automatisch plaatsvindt</li>
 				<li>[abonnement] : soort abonnement (beperkt of onbeperkt</li>
 				<li>[abonnement_code] : code te vermelden bij betaling</li>
 				<li>[abonnement_dag] : dag waarvoor beperkt abonnement geldt</li>
@@ -68,7 +73,7 @@
 				<li>[abonnement_maandgeld] : het maand abonnee bedrag</li>
 			</ul>
 		</li>
-		<li><h3>kleistad_email_dagdelenkaart en kleistad_email_dagdelenkaart_betaald</h3>
+		<li><h3>kleistad_email_dagdelenkaart_ideal en kleistad_email_dagdelenkaart_bank</h3>
 				<li>[voornaam] : voornaam van de gebruiker</li>
 				<li>[achternaam] : achternaam van de gebruiker</li>
 				<li>[dagdelenkaart_code] : code te vermelden bij betaling</li>
@@ -77,10 +82,12 @@
 		</lI>
 		<li><h3>kleistad_email_cursus_* emails</h3>
 			<ol>
-				<li>'cursus indeling email' : paginanaam in te stellen in cursus beheer scherm<li>
+				<li>'cursus indeling email' : paginanaam in te stellen in cursus beheer scherm</li>
 				<li>'cursus inschrijving email' : paginanaam in te stellen in cursus beheer scherm</li>
-				<li>kleistad_email_cursus_betaling : betalen resterend cursusgeld via email link</li>
 				<li>kleistad_email_cursus_lopend : instructie bij inschrijving op lopende cursus</li>
+				<li>kleistad_email_cursus_betaling : betalen resterend cursusgeld via email link</li>
+				<li>kleistad_email_cursus_betaling_ideal : bevestiging betaling restant bedrag</li>
+				<li>kleistad_email_cursus_betaling_bank : instructie bij betaling restant bedrag per bank</li>
 			</ol>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de cursist</li>
@@ -93,8 +100,11 @@
 				<li>[cursus_eind_tijd] : eind tijd van de cursus</li>
 				<li>[cursus_technieken] : gekozen technieken</li>
 				<li>[cursus_code] : code te vermelden bij betaling</li>
+				<li>[cursus_aantal] : aantal ingeschreven cursisten</li>
 				<li>[cursus_kosten] : kosten exclusief inschrijfgeld</li>
 				<li>[cursus_inschrijfkosten] : inschrijf kosten</li>
+				<li>[cursus_opmerking] : de gemaakte opmerking</li>
+				<li>[cursus_link] : link naar betaling restant cursus bedrag</li>
 			</ul>
 		</li>
 	</ul>
