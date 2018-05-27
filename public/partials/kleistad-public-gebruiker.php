@@ -88,10 +88,10 @@
 			Ik wil de Kleistad nieuwsbrief ontvangen.
 		</div>
 	</div>
-	<?php
+		<?php
 	endif;
 if ( ( isset( $data['verklaring'] ) && '' !== $data['verklaring'] ) ) :
-		?>
+	?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3 kleistad_label">
 				 <label for="verklaring"></label>

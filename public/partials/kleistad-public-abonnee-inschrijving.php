@@ -70,7 +70,7 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 					</select>
 				</div>
 			</div>
-		<?php
+			<?php
 		else :
 			require plugin_dir_path( dirname( __FILE__ ) ) . '/partials/kleistad-public-gebruiker.php';
 			?>
