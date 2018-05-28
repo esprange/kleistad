@@ -1,4 +1,14 @@
 {
+    "name": "kleistad",
+    "description": "WordPress plugin voor Kleistad",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Eric Sprangers",
+            "email": "eric.sprangers@gmail.com"
+        }
+    ],
     "require": {
         "mollie/mollie-api-php": "^2.0"
     }

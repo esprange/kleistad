@@ -10,11 +10,6 @@
  */
 
 /**
- * Include de Mollie API
- */
-require plugin_dir_path( dirname( __FILE__ ) ) . '/vendor/autoload.php';
-
-/**
  * Interface naar Mollie betalen.
  */
 class Kleistad_Betalen {
@@ -32,7 +27,7 @@ class Kleistad_Betalen {
 	public function __construct() {
 		$options = get_option( 'kleistad-opties' );
 
-		$this->mollie = new \Mollie\Api\MollieAPIClient();
+		$this->mollie = new \Mollie\Api\MollieApiClient();
 
 		if ( '1' === $options['betalen'] ) {
 			$this->mollie->setApiKey( $options['sleutel'] );
@@ -55,8 +50,8 @@ class Kleistad_Betalen {
 		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING );
 
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
-		$mollie_gebruiker_id = ( $mandateren ) ? get_user_meta( $gebruiker_id, 'mollie_customer_id', true ) : null;
-		if ( '' === $mollie_gebruiker_id ) {
+		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
+		if ( '' === $mollie_gebruiker_id || is_null( $mollie_gebruiker_id ) ) {
 			$gebruiker           = get_userdata( $gebruiker_id );
 			$mollie_gebruiker    = $this->mollie->customers->create(
 				[
@@ -73,9 +68,8 @@ class Kleistad_Betalen {
 				[
 					'amount'       => [
 						'currency' => 'EUR',
-						'value'    => format( $bedrag, 2, '.', '' ),
+						'value'    => number_format( $bedrag, 2, '.', '' ),
 					],
-					'customerId'   => $mollie_gebruiker_id,
 					'description'  => $beschrijving,
 					'issuer'       => ! empty( $bank ) ? $bank : null,
 					'metadata'     => [
@@ -93,9 +87,8 @@ class Kleistad_Betalen {
 				[
 					'amount'      => [
 						'currency' => 'EUR',
-						'value'    => format( $bedrag, 2, '.', '' ),
+						'value'    => number_format( $bedrag, 2, '.', '' ),
 					],
-					'customerId'  => $mollie_gebruiker_id,
 					'description' => $beschrijving,
 					'issuer'      => ! empty( $bank ) ? $bank : null,
 					'metadata'    => [
@@ -128,7 +121,7 @@ class Kleistad_Betalen {
 				[
 					'amount'       => [
 						'currency' => 'EUR',
-						'value'    => format( $bedrag, 2, '.', '' ),
+						'value'    => number_format( $bedrag, 2, '.', '' ),
 					],
 					'description'  => $beschrijving,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
@@ -154,7 +147,7 @@ class Kleistad_Betalen {
 				[
 					'amount'      => [
 						'currency' => 'EUR',
-						'value'    => format( $bedrag, 2, '.', '' ),
+						'value'    => number_format( $bedrag, 2, '.', '' ),
 					],
 					'description' => $beschrijving,
 					'interval'    => '1 month',
@@ -301,7 +294,7 @@ class Kleistad_Betalen {
 
 		$object   = new static();
 		$betaling = $object->mollie->payments->get( $mollie_id );
-		if ( $betaling->isPaid() && ! $betaling->hasRefunds() && ! $betaling->hasChargedBacks() ) {
+		if ( $betaling->isPaid() && ! $betaling->hasRefunds() && ! $betaling->hasChargeBacks() ) {
 			/**
 			 * Alleen actie als er daadwerkelijk betaald is, niet als er terugbetaald is o.i.d.
 			 *
@@ -325,12 +318,12 @@ class Kleistad_Betalen {
 				case 'S': // Het stooksaldo.
 					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'S%d-%d' );
 					$saldo                         = new Kleistad_Saldo( $gebruiker_id );
-					$saldo->callback( $betaling->amount );
+					$saldo->callback( $betaling->amount->value );
 					break;
 				case 'K': // Een dagdelenkaart.
 					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'K%d-%d' );
 					$dagdelenkaart                 = new Kleistad_Dagdelenkaart( $gebruiker_id );
-					$dagdelenkaart->callback( $betaling->amount );
+					$dagdelenkaart->callback();
 					break;
 				default:
 					// Zou niet mogen.

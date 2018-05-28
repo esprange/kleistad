@@ -56,6 +56,11 @@ register_deactivation_hook( __FILE__, 'deactivate_kleistad' );
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-kleistad.php';
 
 /**
+ * Include the external libraries.
+ */
+require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+
+/**
  * Begins execution of the plugin.
  *
  * Since everything within the plugin is registered via hooks,
