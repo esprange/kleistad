@@ -38,7 +38,7 @@ if ( ! Kleistad_Roles::reserveer() ) :
 		<div class ="kleistad_row">
 			<div class="kleistad_col_10">
 				<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
-				<label class="kleistad_label_cbr" for="kleistad_betaal_stort">Ik betaal door storting van € <?php echo esc_html( ( number_format( $this->options['dagdelenkaart'], 2, ',', '' ) ) ); ?> volgens de betaalinstructie, zoals aangegeven in de bevestigingsemail.</label>
+				<label class="kleistad_label_cbr" for="kleistad_betaal_stort">Ik betaal door storting van € <?php echo esc_html( ( number_format( $this->options['dagdelenkaart'], 2, ',', '' ) ) ); ?> volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail.</label>
 			</div>
 		</div>
 		<div class="kleistad_row">

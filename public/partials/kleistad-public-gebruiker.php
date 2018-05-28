@@ -80,12 +80,14 @@
 		</div>
 	</div>
 	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
+		<div class="kleistad_col_2 kleistad_label">
 			 <label for="subscribe"></label>
 		</div>
-		<div class="kleistad_col_7">
+		<div class="kleistad_col_1">
 			<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $data['input']['mc4wp-subscribe'], '1' ); ?> />
-			Ik wil de Kleistad nieuwsbrief ontvangen.
+		</div>
+		<div class="kleistad_col_7">
+			<strong>Ik wil de Kleistad nieuwsbrief ontvangen.</strong>
 		</div>
 	</div>
 		<?php
@@ -93,12 +95,22 @@
 if ( ( isset( $data['verklaring'] ) && '' !== $data['verklaring'] ) ) :
 	?>
 		<div class="kleistad_row">
-			<div class="kleistad_col_3 kleistad_label">
+			<div class="kleistad_col_2 kleistad_label">
 				 <label for="verklaring"></label>
 			</div>
-			<div class="kleistad_col_7">
+			<div class="kleistad_col_1">
 				<input type="checkbox" id="verklaring" onchange="document.getElementById( 'kleistad_submit' ).disabled = !this.checked;" />
-				<?php echo $data['verklaring']; // WPCS: XSS ok. ?>
+			</div>
+			<div class="kleistad_col_7">
+				<strong><?php echo $data['verklaring']; // WPCS: XSS ok. ?></strong>
 			</div>
 		</div>
+<!--		<div class="kleistad_row">
+			<div class="kleistad_col_3">
+				&nbsp;
+			</div>
+			<div class="kleistad_col_7">
+				<p><strong>Door aan te geven d</strong></p>
+			</div>
+		</div>-->
 	<?php endif ?>

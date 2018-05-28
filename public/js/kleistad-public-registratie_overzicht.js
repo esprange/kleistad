@@ -116,7 +116,8 @@
                                     ibetaald = ( value.i_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     cbetaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
-                                    html = header + '<tr><td>' + value.naam + '</td><th>' + value.code + '</th><th>' + status +
+                                    code = value.code + ( ( 1 < value.aantal ) ? '(' + value.aantal + ')' : '' ),
+                                    html = header + '<tr><td>' + value.naam + '</td><th>' + code + '</th><th>' + status +
                                     '</th><th>' + ibetaald + '</th><th>' + cbetaald + '</th><th>' + geannuleerd + '</th><th>',
                                     separator = '';
                                 $.each(

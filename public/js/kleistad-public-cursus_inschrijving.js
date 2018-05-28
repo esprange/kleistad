@@ -7,7 +7,7 @@
         $( '#kleistad_aantal' ).spinner( { max:cursus.ruimte } );
         bedrag = ( cursus.meer ? $( '#kleistad_aantal' ).spinner( 'value' ) : 1 ) * bedrag;
         $( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en word meteen ingedeeld.' );
-        $( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal later door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' volgens de betaalinstructie, zoals aangegeven in de bevestigingsemail. Indeling vindt daarna plaats.' );
+        $( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail. Indeling vindt daarna plaats.' );
     }
 
     function wijzigVelden() {

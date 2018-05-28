@@ -95,6 +95,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'geannuleerd':
 			case 'gepauzeerd':
 				return 1 === intval( $this->_data[ $attribuut ] );
+			case 'dag':
+				return 'beperkt' === $this->soort ? $this->_data[ $attribuut ] : '';
 			default:
 				return $this->_data[ $attribuut ];
 		}

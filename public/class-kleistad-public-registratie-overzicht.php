@@ -62,6 +62,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 						'c_betaald' => $inschrijving->c_betaald,
 						'geannuleerd' => $inschrijving->geannuleerd,
 						'code' => $inschrijving->code,
+						'aantal' => $inschrijving->aantal,
 						'naam' => $cursussen[ $cursus_id ]->naam,
 						'technieken' => $inschrijving->technieken,
 					];
