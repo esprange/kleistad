@@ -10,7 +10,7 @@
  */
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 /**
@@ -25,7 +25,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 		parent::__construct(
 			[
 				'singular' => 'stooksaldo',
-				'plural' => 'stooksaldi',
+				'plural'   => 'stooksaldi',
 			]
 		);
 	}
@@ -76,7 +76,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = [
-			'naam' => 'Naam gebruiker',
+			'naam'  => 'Naam gebruiker',
 			'saldo' => 'Saldo',
 		];
 		return $columns;
@@ -89,7 +89,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable_columns = [
-			'naam' => [ 'naam', true ],
+			'naam'  => [ 'naam', true ],
 			'saldo' => [ 'saldo', false ],
 		];
 		return $sortable_columns;
@@ -102,27 +102,27 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	public function prepare_items() {
 		$per_page = 5;
 
-		$columns = $this->get_columns();
-		$hidden = [];
+		$columns  = $this->get_columns();
+		$hidden   = [];
 		$sortable = $this->get_sortable_columns();
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$search_val = filter_input( INPUT_GET, 's' );
-		$search = ! is_null( $search_val ) ? $search_val : false;
-		$paged_val = filter_input( INPUT_GET, 'paged' );
-		$paged   = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$search_val  = filter_input( INPUT_GET, 's' );
+		$search      = ! is_null( $search_val ) ? $search_val : false;
+		$paged_val   = filter_input( INPUT_GET, 'paged' );
+		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val = filter_input( INPUT_GET, 'order' );
-		$order = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val   = filter_input( INPUT_GET, 'order' );
+		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 
 		$gebruikers = get_users(
 			[
-				'fields' => [ 'id', 'display_name' ],
+				'fields'  => [ 'id', 'display_name' ],
 				'orderby' => [ 'display_name' ],
-				'order' => $order,
-				'search' => '*' . $search . '*',
+				'order'   => $order,
+				'search'  => '*' . $search . '*',
 			]
 		);
 
@@ -130,10 +130,10 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 
 		foreach ( $gebruikers as $gebruiker ) {
 			if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
-				$saldo = new Kleistad_Saldo( $gebruiker->id );
+				$saldo        = new Kleistad_Saldo( $gebruiker->id );
 				$stooksaldi[] = [
-					'id' => $gebruiker->id,
-					'naam' => $gebruiker->display_name,
+					'id'    => $gebruiker->id,
+					'naam'  => $gebruiker->display_name,
 					'saldo' => $saldo->bedrag,
 				];
 			}
@@ -150,7 +150,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items,
-				'per_page' => $per_page,
+				'per_page'    => $per_page,
 				'total_pages' => ceil( $total_items / $per_page ),
 			]
 		);

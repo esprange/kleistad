@@ -72,9 +72,7 @@ $RECYCLE.BIN/
 .svn
 
 # Ignore folders
-/tmp/
-/wpcs/
-/vendor/
+vendor/
 
 # Build files
 *.zip

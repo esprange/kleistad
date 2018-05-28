@@ -56,8 +56,8 @@ class Kleistad_Loader {
 	 */
 	public function __construct() {
 
-		$this->actions = array();
-		$this->filters = array();
+		$this->actions    = array();
+		$this->filters    = array();
 		$this->shortcodes = array();
 	}
 
@@ -119,10 +119,10 @@ class Kleistad_Loader {
 	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
 
 		$hooks[] = array(
-			'hook' => $hook,
-			'component' => $component,
-			'callback' => $callback,
-			'priority' => $priority,
+			'hook'          => $hook,
+			'component'     => $component,
+			'callback'      => $callback,
+			'priority'      => $priority,
 			'accepted_args' => $accepted_args,
 		);
 

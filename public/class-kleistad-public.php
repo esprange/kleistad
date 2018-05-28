@@ -77,7 +77,7 @@ class Kleistad_Public {
 	 * @param string $attachment een eventuele bijlage.
 	 */
 	public static function compose_email( $to, $subject, $slug, $args = [], $attachment = [] ) {
-		$domein = substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
+		$domein        = substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
 		$emailadresses = [
 			'info' => 'info@' . $domein,
 			'from' => 'no-reply@' . $domein,
@@ -94,11 +94,11 @@ class Kleistad_Public {
 			do {
 				$gevonden = stripos( $text, '[pagina:' );
 				if ( ! ( false === $gevonden ) ) {
-					$eind = stripos( $text, ']', $gevonden );
+					$eind         = stripos( $text, ']', $gevonden );
 					$include_slug = substr( $text, $gevonden + 8, $eind - $gevonden - 8 );
 					$include_page = get_page_by_title( $include_slug, OBJECT );
 					$include_text = ( ! is_null( $include_page ) ) ? apply_filters( 'the_content', $include_page->post_content ) : $include_slug;
-					$text = substr_replace( $text, $include_text, $gevonden, $eind - $gevonden + 1 );
+					$text         = substr_replace( $text, $include_text, $gevonden, $eind - $gevonden + 1 );
 				}
 			} while ( ! ( false === $gevonden ) );
 
@@ -112,9 +112,9 @@ class Kleistad_Public {
 			foreach ( $fields as $field ) {
 				$gevonden = stripos( $text, '[' . $field . ':' );
 				if ( ! ( false === $gevonden ) ) {
-					$eind = stripos( $text, ']', $gevonden );
+					$eind      = stripos( $text, ']', $gevonden );
 					$headers[] = ucfirst( substr( $text, $gevonden + 1, $eind - $gevonden - 1 ) );
-					$text = substr( $text, 0, $gevonden ) . substr( $text, $eind + 1 );
+					$text      = substr( $text, 0, $gevonden ) . substr( $text, $eind + 1 );
 				}
 			}
 		} else {
@@ -196,9 +196,9 @@ class Kleistad_Public {
 	 */
 	public function __construct( $plugin_name, $version ) {
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-		self::$url = 'kleistad/v' . $version;
-		$this->options = get_option( 'kleistad-opties' );
+		$this->version     = $version;
+		self::$url         = 'kleistad/v' . $version;
+		$this->options     = get_option( 'kleistad-opties' );
 		date_default_timezone_set( 'Europe/Amsterdam' );
 
 	}
@@ -238,18 +238,18 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'reservering', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-reservering.js', [ 'jquery', 'jquery-ui-dialog' ], $this->version, false );
 		wp_localize_script(
 			$this->plugin_name . 'reservering', 'kleistadData', [
-				'nonce' => wp_create_nonce( 'wp_rest' ),
-				'base_url' => self::base_url(),
+				'nonce'           => wp_create_nonce( 'wp_rest' ),
+				'base_url'        => self::base_url(),
 				'success_message' => 'de reservering is geslaagd!',
-				'error_message' => 'het was niet mogelijk om de reservering uit te voeren',
+				'error_message'   => 'het was niet mogelijk om de reservering uit te voeren',
 			]
 		);
 		wp_localize_script(
 			$this->plugin_name . 'recept', 'kleistadData', [
-				'nonce' => wp_create_nonce( 'wp_rest' ),
-				'base_url' => self::base_url(),
+				'nonce'           => wp_create_nonce( 'wp_rest' ),
+				'base_url'        => self::base_url(),
 				'success_message' => 'de recepten konden worden opgevraagd!',
-				'error_message' => 'het was niet mogelijk om de recepten uit de database op te vragen',
+				'error_message'   => 'het was niet mogelijk om de recepten uit de database op te vragen',
 			]
 		);
 	}
@@ -263,34 +263,34 @@ class Kleistad_Public {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-reservering.php';
 		register_rest_route(
 			self::$url, '/reserveer', [
-				'methods' => 'POST',
-				'callback' => [ 'kleistad_public_reservering', 'callback_muteer' ],
-				'args' => [
-					'dag' => [
+				'methods'             => 'POST',
+				'callback'            => [ 'kleistad_public_reservering', 'callback_muteer' ],
+				'args'                => [
+					'dag'          => [
 						'required' => true,
 					],
-					'maand' => [
+					'maand'        => [
 						'required' => true,
 					],
-					'jaar' => [
+					'jaar'         => [
 						'required' => true,
 					],
-					'oven_id' => [
+					'oven_id'      => [
 						'required' => true,
 					],
-					'temperatuur' => [
+					'temperatuur'  => [
 						'required' => false,
 					],
-					'soortstook' => [
+					'soortstook'   => [
 						'required' => false,
 					],
-					'programma' => [
+					'programma'    => [
 						'required' => false,
 					],
-					'verdeling' => [
+					'verdeling'    => [
 						'required' => false,
 					],
-					'opmerking' => [
+					'opmerking'    => [
 						'required' => false,
 					],
 					'gebruiker_id' => [
@@ -304,13 +304,13 @@ class Kleistad_Public {
 		);
 		register_rest_route(
 			self::$url, '/show', [
-				'methods' => 'POST',
-				'callback' => [ 'kleistad_public_reservering', 'callback_show' ],
-				'args' => [
-					'maand' => [
+				'methods'             => 'POST',
+				'callback'            => [ 'kleistad_public_reservering', 'callback_show' ],
+				'args'                => [
+					'maand'   => [
 						'required' => true,
 					],
-					'jaar' => [
+					'jaar'    => [
 						'required' => true,
 					],
 					'oven_id' => [
@@ -326,9 +326,9 @@ class Kleistad_Public {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-recept.php';
 		register_rest_route(
 			self::$url, '/recept', [
-				'methods' => 'POST',
-				'callback' => [ 'kleistad_public_recept', 'callback_recept' ],
-				'args' => [
+				'methods'             => 'POST',
+				'callback'            => [ 'kleistad_public_recept', 'callback_recept' ],
+				'args'                => [
 					'zoek' => [
 						'required' => false,
 					],
@@ -341,9 +341,9 @@ class Kleistad_Public {
 
 		register_rest_route(
 			self::$url, '/betaling', [
-				'methods' => 'POST',
-				'callback' => [ 'kleistad_betalen', 'callback_betaling_verwerkt' ],
-				'args' => [
+				'methods'             => 'POST',
+				'callback'            => [ 'kleistad_betalen', 'callback_betaling_verwerkt' ],
+				'args'                => [
 					'id' => [
 						'required' => true,
 					],
@@ -356,9 +356,9 @@ class Kleistad_Public {
 
 		register_rest_route(
 			self::$url, '/herhaalbetaling', [
-				'methods' => 'POST',
-				'callback' => [ 'kleistad_betalen', 'callback_herhaalbetaling_verwerkt' ],
-				'args' => [
+				'methods'             => 'POST',
+				'callback'            => [ 'kleistad_betalen', 'callback_herhaalbetaling_verwerkt' ],
+				'args'                => [
 					'id' => [
 						'required' => true,
 					],
@@ -371,9 +371,9 @@ class Kleistad_Public {
 
 		register_rest_route(
 			self::$url, '/ondemandbetaling', [
-				'methods' => 'POST',
-				'callback' => [ 'kleistad_betalen', 'callback_ondemandbetaling_verwerkt' ],
-				'args' => [
+				'methods'             => 'POST',
+				'callback'            => [ 'kleistad_betalen', 'callback_ondemandbetaling_verwerkt' ],
+				'args'                => [
 					'id' => [
 						'required' => true,
 					],
@@ -394,48 +394,48 @@ class Kleistad_Public {
 		ob_start();
 		register_post_type(
 			'kleistad_recept', [
-				'labels' => [
-					'name' => 'Keramiek recepten',
-					'singular_name' => 'Keramiek recept',
-					'add_new' => 'Toevoegen',
-					'add_new_item' => 'Recept toevoegen',
-					'edit' => 'Wijzigen',
-					'edit_item' => 'Recept wijzigen',
-					'view' => 'Inzien',
-					'view_item' => 'Recept inzien',
-					'search_items' => 'Recept zoeken',
-					'not_found' => 'Niet gevonden',
+				'labels'            => [
+					'name'               => 'Keramiek recepten',
+					'singular_name'      => 'Keramiek recept',
+					'add_new'            => 'Toevoegen',
+					'add_new_item'       => 'Recept toevoegen',
+					'edit'               => 'Wijzigen',
+					'edit_item'          => 'Recept wijzigen',
+					'view'               => 'Inzien',
+					'view_item'          => 'Recept inzien',
+					'search_items'       => 'Recept zoeken',
+					'not_found'          => 'Niet gevonden',
 					'not_found_in_trash' => 'Niet in prullenbak gevonden',
 				],
-				'public' => true,
-				'supports' => [
+				'public'            => true,
+				'supports'          => [
 					'title',
 					'comments',
 					'thumbnail',
 				],
-				'rewrite' => [
+				'rewrite'           => [
 					'slug' => 'recepten',
 				],
-				'show_ui' => true,
+				'show_ui'           => true,
 				'show_in_admin_bar' => false,
 			]
 		);
 		register_taxonomy(
 			'kleistad_recept_cat', 'kleistad_recept', [
-				'hierarchical' => true,
-				'labels' => [
-					'name' => 'Recept categoriën',
+				'hierarchical'      => true,
+				'labels'            => [
+					'name'          => 'Recept categoriën',
 					'singular_name' => 'Recept categorie',
-					'search_items' => 'Zoek recept categorie',
-					'all_items' => 'Alle recept categoriën',
-					'edit_item' => 'Wijzig recept categorie',
-					'update_item' => 'Sla recept categorie op',
-					'add_new_item' => 'Voeg recept categorie toe',
+					'search_items'  => 'Zoek recept categorie',
+					'all_items'     => 'Alle recept categoriën',
+					'edit_item'     => 'Wijzig recept categorie',
+					'update_item'   => 'Sla recept categorie op',
+					'add_new_item'  => 'Voeg recept categorie toe',
 					'new_item_name' => 'Nieuwe recept recept categorie',
-					'menu_name' => 'Recept categoriën',
+					'menu_name'     => 'Recept categoriën',
 				],
-				'query_var' => true,
-				'show_ui' => true,
+				'query_var'         => true,
+				'show_ui'           => true,
 				'show_admin_column' => true,
 			]
 		);
@@ -565,7 +565,7 @@ class Kleistad_Public {
 		} else {
 			$link = '<a href="' . wp_login_url( $redirect ) . '" title="Inloggen">Inloggen</a>';
 		}
-		$is_active = true;
+		$is_active     = true;
 		return $items .= '<li id="log-in-out-link" class="menu-item menu-type-link">' . $link . '</li>';
 	}
 
@@ -593,14 +593,14 @@ class Kleistad_Public {
 			wp_enqueue_script( $this->plugin_name . $form );
 		}
 
-		$form_class = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
+		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
 		$form_object = new $form_class( $this->plugin_name, $atts );
 
 		$betaald = filter_input( INPUT_GET, 'betaald' );
 		if ( ! is_null( $betaald ) ) {
 			$gebruiker_id = filter_input( INPUT_GET, 'betaald' );
-			$betaling = new Kleistad_Betalen();
-			$result = $betaling->controleer( $gebruiker_id );
+			$betaling     = new Kleistad_Betalen();
+			$result       = $betaling->controleer( $gebruiker_id );
 			if ( ! is_wp_error( $result ) ) {
 				$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
 			} else {
@@ -616,7 +616,7 @@ class Kleistad_Public {
 				}
 				if ( ! is_wp_error( $result ) ) {
 					$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-					$data = null;
+					$data  = null;
 				} else {
 					foreach ( $result->get_error_messages() as $error ) {
 						$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
@@ -662,10 +662,10 @@ class Kleistad_Public {
 		$regelingen = new Kleistad_Regelingen();
 
 		$oven_store = new Kleistad_Ovens();
-		$ovens = $oven_store->get();
+		$ovens      = $oven_store->get();
 
 		$reservering_store = new Kleistad_Reserveringen();
-		$reserveringen = $reservering_store->get();
+		$reserveringen     = $reservering_store->get();
 
 		/*
 		* saldering transacties uitvoeren
@@ -678,33 +678,33 @@ class Kleistad_Public {
 					if ( 0 === intval( $stookdeel['id'] ) ) {
 						continue;
 					}
-					$medestoker = get_userdata( $stookdeel['id'] );
-					$regeling = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
-					$kosten = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
-					$prijs = round( $stookdeel['perc'] / 100 * $kosten, 2 );
+					$medestoker         = get_userdata( $stookdeel['id'] );
+					$regeling           = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
+					$kosten             = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
+					$prijs              = round( $stookdeel['perc'] / 100 * $kosten, 2 );
 					$stookdeel['prijs'] = $prijs;
 
-					$saldo = new Kleistad_Saldo( $stookdeel['id'] );
+					$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
 					$saldo->bedrag = $saldo->bedrag - $prijs;
 					if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $gebruiker->display_name ) ) {
 
 						$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
 						self::compose_email(
 							$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
-								'voornaam' => $medestoker->first_name,
+								'voornaam'   => $medestoker->first_name,
 								'achternaam' => $medestoker->last_name,
-								'stoker' => $gebruiker->display_name,
-								'bedrag' => number_format( $prijs, 2, ',', '' ),
-								'saldo' => number_format( $saldo->bedrag, 2, ',', '' ),
-								'stookdeel' => $stookdeel['perc'],
+								'stoker'     => $gebruiker->display_name,
+								'bedrag'     => number_format( $prijs, 2, ',', '' ),
+								'saldo'      => number_format( $saldo->bedrag, 2, ',', '' ),
+								'stookdeel'  => $stookdeel['perc'],
 								'stookdatum' => date( 'd-m-Y', $reservering->datum ),
-								'stookoven' => $ovens[ $reservering->oven_id ]->naam,
+								'stookoven'  => $ovens[ $reservering->oven_id ]->naam,
 							]
 						);
 					}
 				}
 				$reservering->verdeling = $verdeling;
-				$reservering->verwerkt = true;
+				$reservering->verwerkt  = true;
 				$reservering->save();
 			}
 		}
@@ -718,15 +718,15 @@ class Kleistad_Public {
 				$regeling = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
 
 				$gebruiker = get_userdata( $reservering->gebruiker_id );
-				$to = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
+				$to        = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
 				self::compose_email(
 					$to, 'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ), 'kleistad_email_stookmelding', [
-						'voornaam' => $gebruiker->first_name,
-						'achternaam' => $gebruiker->last_name,
-						'bedrag' => number_format( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling, 2, ',', '' ),
+						'voornaam'         => $gebruiker->first_name,
+						'achternaam'       => $gebruiker->last_name,
+						'bedrag'           => number_format( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling, 2, ',', '' ),
 						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $this->options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
-						'datum_deadline' => date( 'd-m-Y', strtotime( '+' . $this->options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
-						'stookoven' => $ovens[ $reservering->oven_id ]->naam,
+						'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $this->options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
+						'stookoven'        => $ovens[ $reservering->oven_id ]->naam,
 					]
 				);
 				$reservering->gemeld = true;

@@ -10,7 +10,7 @@
  */
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 /**
  * List table for regelingen.
@@ -24,7 +24,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		parent::__construct(
 			[
 				'singular' => 'regeling',
-				'plural' => 'regelingen',
+				'plural'   => 'regelingen',
 			]
 		);
 	}
@@ -48,7 +48,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 */
 	public function column_gebruiker_naam( $item ) {
 		$actions = [
-			'edit' => sprintf( '<a href="?page=regelingen_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
+			'edit'   => sprintf( '<a href="?page=regelingen_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 			'delete' => sprintf( '<a href="?page=%s&action=delete&id=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['id'], 'Verwijderen' ),
 		];
 
@@ -65,8 +65,8 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	public function get_columns() {
 		$columns = [
 			'gebruiker_naam' => 'Naam gebruiker',
-			'oven_naam' => 'Oven',
-			'kosten' => 'Regeling',
+			'oven_naam'      => 'Oven',
+			'kosten'         => 'Regeling',
 		];
 		return $columns;
 	}
@@ -90,8 +90,8 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	public function prepare_items() {
 		$per_page = 5; // constant, how much records will be shown per page.
 
-		$columns = $this->get_columns();
-		$hidden = [];
+		$columns  = $this->get_columns();
+		$hidden   = [];
 		$sortable = $this->get_sortable_columns();
 
 		// here we configure table headers, defined in our methods.
@@ -99,29 +99,29 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 		// prepare query params, as usual current page, order by and order direction.
 		$paged_val = filter_input( INPUT_GET, 'paged' );
-		$paged   = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$paged     = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$order_val = filter_input( INPUT_GET, 'order' );
-		$order = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$order     = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 
 		// will be used in pagination settings.
 		$gebruikers = get_users(
 			[
-				'fields' => [
+				'fields'  => [
 					'id',
 					'display_name',
 				],
 				'orderby' => [
 					'display_name',
 				],
-				'order' => $order,
+				'order'   => $order,
 			]
 		);
 
 		$gebruikers_regelingen = new Kleistad_Regelingen();
 
 		$ovens_store = new Kleistad_Ovens();
-		$ovens = $ovens_store->get();
-		$regelingen = [];
+		$ovens       = $ovens_store->get();
+		$regelingen  = [];
 
 		foreach ( $gebruikers as $gebruiker ) {
 			$kosten_ovens = $gebruikers_regelingen->get( $gebruiker->id );
@@ -130,10 +130,10 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 			}
 			foreach ( $kosten_ovens as $oven_id => $kosten_oven ) {
 				$regelingen[] = [
-					'id' => $gebruiker->id . ' ' . $oven_id,
+					'id'             => $gebruiker->id . ' ' . $oven_id,
 					'gebruiker_naam' => $gebruiker->display_name,
-					'oven_naam' => $ovens[ $oven_id ]->naam,
-					'kosten' => $kosten_oven,
+					'oven_naam'      => $ovens[ $oven_id ]->naam,
+					'kosten'         => $kosten_oven,
 				];
 			}
 		}
@@ -143,7 +143,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items, // total items defined above.
-				'per_page' => $per_page, // per page constant defined at top of method.
+				'per_page'    => $per_page, // per page constant defined at top of method.
 				'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
 			]
 		);

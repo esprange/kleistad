@@ -29,70 +29,70 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 	 */
 	public function prepare( &$data = null ) {
 		$cursus_store = new Kleistad_Cursussen();
-		$cursussen = $cursus_store->get();
+		$cursussen    = $cursus_store->get();
 		$registraties = [];
 
 		$inschrijving_store = new Kleistad_Inschrijvingen();
-		$inschrijvingen = $inschrijving_store->get();
-		$gebruiker_store = new Kleistad_Gebruikers();
-		$gebruikers = $gebruiker_store->get();
+		$inschrijvingen     = $inschrijving_store->get();
+		$gebruiker_store    = new Kleistad_Gebruikers();
+		$gebruikers         = $gebruiker_store->get();
 		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
-			$cursuslijst = '';
+			$cursuslijst       = '';
 			$inschrijvinglijst = [];
-			$is_lid = ( ! empty( $gebruiker->rol ) || ( is_array( $gebruiker->rol ) && ( count( $gebruiker->rol ) > 0 ) ) );
+			$is_lid            = ( ! empty( $gebruiker->rol ) || ( is_array( $gebruiker->rol ) && ( count( $gebruiker->rol ) > 0 ) ) );
 			if ( $is_lid ) {
-				$abonnement = new Kleistad_Abonnement( $gebruiker_id );
+				$abonnement   = new Kleistad_Abonnement( $gebruiker_id );
 				$abonnee_info = [
-					'code' => $abonnement->code,
+					'code'        => $abonnement->code,
 					'start_datum' => date( 'd-m-Y', $abonnement->start_datum ),
-					'dag' => ( 'beperkt' === $abonnement->soort ) ? $abonnement->dag : '',
-					'soort' => $abonnement->soort,
+					'dag'         => ( 'beperkt' === $abonnement->soort ) ? $abonnement->dag : '',
+					'soort'       => $abonnement->soort,
 					'geannuleerd' => $abonnement->geannuleerd,
-					'opmerking' => $abonnement->opmerking,
+					'opmerking'   => $abonnement->opmerking,
 				];
 			} else {
 				$abonnee_info = [];
 			}
 			if ( array_key_exists( $gebruiker_id, $inschrijvingen ) ) {
 				foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
-					$cursuslijst .= 'C' . $cursus_id . ';';
+					$cursuslijst        .= 'C' . $cursus_id . ';';
 					$inschrijvinglijst[] = [
-						'ingedeeld' => $inschrijving->ingedeeld,
-						'i_betaald' => $inschrijving->i_betaald,
-						'c_betaald' => $inschrijving->c_betaald,
+						'ingedeeld'   => $inschrijving->ingedeeld,
+						'i_betaald'   => $inschrijving->i_betaald,
+						'c_betaald'   => $inschrijving->c_betaald,
 						'geannuleerd' => $inschrijving->geannuleerd,
-						'code' => $inschrijving->code,
-						'aantal' => $inschrijving->aantal,
-						'naam' => $cursussen[ $cursus_id ]->naam,
-						'technieken' => $inschrijving->technieken,
+						'code'        => $inschrijving->code,
+						'aantal'      => $inschrijving->aantal,
+						'naam'        => $cursussen[ $cursus_id ]->naam,
+						'technieken'  => $inschrijving->technieken,
 					];
 				}
 			}
 			$deelnemer_info = [
-				'naam' => $gebruiker->voornaam . ' ' . $gebruiker->achternaam,
+				'naam'   => $gebruiker->voornaam . ' ' . $gebruiker->achternaam,
 				'straat' => $gebruiker->straat,
 				'huisnr' => $gebruiker->huisnr,
-				'pcode' => $gebruiker->pcode,
+				'pcode'  => $gebruiker->pcode,
 				'plaats' => $gebruiker->plaats,
-				'telnr' => $gebruiker->telnr,
-				'email' => $gebruiker->email,
+				'telnr'  => $gebruiker->telnr,
+				'email'  => $gebruiker->email,
 			];
 
 			$registraties[] = [
-				'is_lid' => $is_lid,
-				'cursuslijst' => $cursuslijst,
+				'is_lid'         => $is_lid,
+				'cursuslijst'    => $cursuslijst,
 				'deelnemer_info' => $deelnemer_info,
-				'abonnee_info' => $abonnee_info,
+				'abonnee_info'   => $abonnee_info,
 				'inschrijvingen' => $inschrijvinglijst,
-				'achternaam' => $gebruiker->achternaam,
-				'voornaam' => $gebruiker->voornaam,
-				'email' => $gebruiker->email,
-				'telnr' => $gebruiker->telnr,
+				'achternaam'     => $gebruiker->achternaam,
+				'voornaam'       => $gebruiker->voornaam,
+				'email'          => $gebruiker->email,
+				'telnr'          => $gebruiker->telnr,
 			];
 		}
 		$data = [
 			'registraties' => $registraties,
-			'cursussen' => $cursussen,
+			'cursussen'    => $cursussen,
 		];
 		return true;
 	}
@@ -113,22 +113,22 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 		$error = new WP_Error();
 
 		$cursus_store = new Kleistad_Cursussen();
-		$cursussen = $cursus_store->get();
+		$cursussen    = $cursus_store->get();
 
 		$gebruiker_store = new Kleistad_Gebruikers();
-		$gebruikers = $gebruiker_store->get();
+		$gebruikers      = $gebruiker_store->get();
 
 		$inschrijving_store = new Kleistad_Inschrijvingen();
-		$inschrijvingen = $inschrijving_store->get();
+		$inschrijvingen     = $inschrijving_store->get();
 
 		$abonnementen_store = new Kleistad_Abonnementen();
-		$abonnementen = $abonnementen_store->get();
+		$abonnementen       = $abonnementen_store->get();
 
-		$upload_dir = wp_upload_dir();
-		$bijlage_cursus = $upload_dir['basedir'] . '/cursusregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
+		$upload_dir      = wp_upload_dir();
+		$bijlage_cursus  = $upload_dir['basedir'] . '/cursusregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
 		$bijlage_abonnee = $upload_dir['basedir'] . '/abonneeregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
-		$f_cursus = fopen( $bijlage_cursus, 'w' );
-		$f_abonnee = fopen( $bijlage_abonnee, 'w' );
+		$f_cursus        = fopen( $bijlage_cursus, 'w' );
+		$f_abonnee       = fopen( $bijlage_abonnee, 'w' );
 
 		fwrite( $f_cursus, "\xEF\xBB\xBF" );
 		fwrite( $f_abonnee, "\xEF\xBB\xBF" );
@@ -221,9 +221,9 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 		fclose( $f_cursus );
 		fclose( $f_abonnee );
 
-		$gebruiker = wp_get_current_user();
-		$to = "$gebruiker->user_firstname $gebruiker->user_lastname <$gebruiker->user_email>";
-		$message = '<p>Bijgaand de bestanden in .CSV formaat met alle registraties voor cursussen en abonnementen.</p>';
+		$gebruiker   = wp_get_current_user();
+		$to          = "$gebruiker->user_firstname $gebruiker->user_lastname <$gebruiker->user_email>";
+		$message     = '<p>Bijgaand de bestanden in .CSV formaat met alle registraties voor cursussen en abonnementen.</p>';
 		$attachments = [ $bijlage_cursus, $bijlage_abonnee ];
 		if ( ! Kleistad_Public::compose_email( $to, 'Kleistad registratiebestanden', $message, [], $attachments ) ) {
 			$error->add( 'fout', 'Er is een fout opgetreden' );

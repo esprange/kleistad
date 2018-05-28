@@ -17,8 +17,8 @@ if ( ! is_user_logged_in() ) :
 	<?php
 else :
 	$in_driemaandperiode = time() < $data['driemaand_datum'];
-	$per_datum = $in_driemaandperiode ? $data['driemaand_datum'] : mktime( 0, 0, 0, date( 'n' ) + 1, 1, date( 'Y' ) );
-	$per = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
+	$per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : mktime( 0, 0, 0, date( 'n' ) + 1, 1, date( 'Y' ) );
+	$per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
 	?>
 
 	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST" id="kleistad_abonnee_wijziging">

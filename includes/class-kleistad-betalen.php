@@ -12,7 +12,7 @@
 /**
  * Include de Mollie API
  */
-require plugin_dir_path( dirname( __FILE__ ) ) . 'Mollie/API/Autoloader.php';
+require plugin_dir_path( dirname( __FILE__ ) ) . '/vendor/autoload.php';
 
 /**
  * Interface naar Mollie betalen.
@@ -32,7 +32,7 @@ class Kleistad_Betalen {
 	public function __construct() {
 		$options = get_option( 'kleistad-opties' );
 
-		$this->mollie = new Mollie_API_Client();
+		$this->mollie = new \Mollie\Api\MollieAPIClient();
 
 		if ( '1' === $options['betalen'] ) {
 			$this->mollie->setApiKey( $options['sleutel'] );
@@ -57,8 +57,8 @@ class Kleistad_Betalen {
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
 		$mollie_gebruiker_id = ( $mandateren ) ? get_user_meta( $gebruiker_id, 'mollie_customer_id', true ) : null;
 		if ( '' === $mollie_gebruiker_id ) {
-			$gebruiker = get_userdata( $gebruiker_id );
-			$mollie_gebruiker = $this->mollie->customers->create(
+			$gebruiker           = get_userdata( $gebruiker_id );
+			$mollie_gebruiker    = $this->mollie->customers->create(
 				[
 					'name'  => $gebruiker->display_name,
 					'email' => $gebruiker->user_email,
@@ -67,24 +67,49 @@ class Kleistad_Betalen {
 			$mollie_gebruiker_id = $mollie_gebruiker->id;
 			update_user_meta( $gebruiker_id, 'mollie_customer_id', $mollie_gebruiker_id );
 		}
-		$betaling = $this->mollie->payments->create(
-			[
-				'amount'        => $bedrag,
-				'customerId'    => $mollie_gebruiker_id,
-				'description'   => $beschrijving,
-				'issuer'        => ! empty( $bank ) ? $bank : null,
-				'metadata'      => [
-					'order_id'  => $order_id,
-					'bericht'   => $bericht,
-				],
-				'method'        => Mollie_API_Object_Method::IDEAL,
-				'recurringType' => $mandateren ? Mollie_API_Object_Payment::RECURRINGTYPE_FIRST : '',
-				'redirectUrl'   => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
-				'webhookUrl'    => Kleistad_Public::base_url() . '/betaling/',
-			]
-		);
+		$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+		if ( $mandateren ) {
+			$betaling = $mollie_gebruiker->createPayment(
+				[
+					'amount'       => [
+						'currency' => 'EUR',
+						'value'    => format( $bedrag, 2, '.', '' ),
+					],
+					'customerId'   => $mollie_gebruiker_id,
+					'description'  => $beschrijving,
+					'issuer'       => ! empty( $bank ) ? $bank : null,
+					'metadata'     => [
+						'order_id' => $order_id,
+						'bericht'  => $bericht,
+					],
+					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
+					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST,
+					'redirectUrl'  => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
+					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
+				]
+			);
+		} else {
+			$betaling = $this->mollie->payments->create(
+				[
+					'amount'      => [
+						'currency' => 'EUR',
+						'value'    => format( $bedrag, 2, '.', '' ),
+					],
+					'customerId'  => $mollie_gebruiker_id,
+					'description' => $beschrijving,
+					'issuer'      => ! empty( $bank ) ? $bank : null,
+					'metadata'    => [
+						'order_id' => $order_id,
+						'bericht'  => $bericht,
+					],
+					'method'      => \Mollie\Api\Types\PaymentMethod::IDEAL,
+					'redirectUrl' => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
+					'webhookUrl'  => Kleistad_Public::base_url() . '/betaling/',
+				]
+			);
+		}
 		update_user_meta( $gebruiker_id, 'betaling', $betaling->id );
-		wp_redirect( $betaling->getPaymentUrl(), 303 );
+		wp_redirect( $betaling->getCheckOutUrl(), 303 );
 		exit;
 	}
 
@@ -98,12 +123,16 @@ class Kleistad_Betalen {
 	public function on_demand_order( $gebruiker_id, $bedrag, $beschrijving ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
 		if ( '' !== $mollie_gebruiker_id ) {
-			$betaling = $this->mollie->customers_payments->withParentId( $mollie_gebruiker_id )->create(
+			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+			$mollie_gebruiker->createPayment(
 				[
-					'amount'        => $bedrag,
-					'description'   => $beschrijving,
-					'recurringType' => Mollie_API_Object_Payment::RECURRINGTYPE_RECURRING,
-					'webhookUrl'    => Kleistad_Public::base_url() . '/ondemandbetaling/',
+					'amount'       => [
+						'currency' => 'EUR',
+						'value'    => format( $bedrag, 2, '.', '' ),
+					],
+					'description'  => $beschrijving,
+					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
+					'webhookUrl'   => Kleistad_Public::base_url() . '/ondemandbetaling/',
 				]
 			);
 		}
@@ -120,13 +149,17 @@ class Kleistad_Betalen {
 	public function herhaalorder( $gebruiker_id, $bedrag, $beschrijving, $start ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
 		if ( '' !== $mollie_gebruiker_id ) {
-			$subscriptie = $this->mollie->customers_subscriptions->withParentId( $mollie_gebruiker_id )->create(
+			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+			$subscriptie      = $mollie_gebruiker->createSubscription(
 				[
-					'amount'      => $bedrag,
+					'amount'      => [
+						'currency' => 'EUR',
+						'value'    => format( $bedrag, 2, '.', '' ),
+					],
 					'description' => $beschrijving,
 					'interval'    => '1 month',
 					'startDate'   => strftime( '%Y-%m-%d', $start ),
-					'webhookUrl'    => Kleistad_Public::base_url() . '/herhaalbetaling/',
+					'webhookUrl'  => Kleistad_Public::base_url() . '/herhaalbetaling/',
 				]
 			);
 			return $subscriptie->id;
@@ -147,7 +180,8 @@ class Kleistad_Betalen {
 		if ( '' === $mollie_gebruiker_id ) {
 			return false;
 		}
-		$this->mollie->customers_subscriptions->withParentId( $mollie_gebruiker_id )->cancel( $subscriptie_id );
+		$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+		$mollie_gebruiker->cancelSubscription( $subscriptie_id );
 	}
 
 	/**
@@ -161,10 +195,11 @@ class Kleistad_Betalen {
 		if ( '' === $mollie_gebruiker_id ) {
 			return false;
 		}
-		$mandaten = $this->mollie->customers_mandates->withParentId( $mollie_gebruiker_id )->all();
+		$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+		$mandaten         = $mollie_gebruiker->customer_mandates->all();
 
 		foreach ( $mandaten as $mandaat ) {
-			if ( Mollie_API_Object_Customer_Mandate::STATUS_VALID === $mandaat->status ) {
+			if ( \Mollie\Api\Resources\MandateStatus::STATUS_VALID === $mandaat->status ) {
 				return $mandaat->id;
 			}
 		}
@@ -195,7 +230,7 @@ class Kleistad_Betalen {
 	 * @return mixed de status van de betaling als tekst of een error object.
 	 */
 	public function controleer( $gebruiker_id ) {
-		$error = new WP_Error();
+		$error     = new WP_Error();
 		$mollie_id = get_user_meta( $gebruiker_id, 'betaling', true );
 
 		if ( '' === $mollie_id ) {
@@ -222,12 +257,11 @@ class Kleistad_Betalen {
 	<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
 		<option value="" >&nbsp;</option>
 		<?php
-		foreach ( $object->mollie->issuers->all() as $issuer ) :
-			if ( Mollie_API_Object_Method::IDEAL === $issuer->method ) :
-				?>
-				<option value="<?php echo esc_attr( $issuer->id ); ?>"><?php echo esc_html( $issuer->name ); ?></option>
-				<?php
-			endif;
+		$method = $object->mollie->methods->get( \Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
+		foreach ( $method->issuers() as $issuer ) :
+			?>
+			<option value="<?php echo esc_attr( $issuer->id ); ?>"><?php echo esc_html( $issuer->name ); ?></option>
+			<?php
 		endforeach
 		?>
 	</select>
@@ -265,9 +299,9 @@ class Kleistad_Betalen {
 	public static function callback_betaling_verwerkt( WP_REST_Request $request ) {
 		$mollie_id = $request->get_param( 'id' );
 
-		$object = new static();
+		$object   = new static();
 		$betaling = $object->mollie->payments->get( $mollie_id );
-		if ( $betaling->isPaid() && ! $betaling->isRefunded() && ! $betaling->isChargedBack() ) {
+		if ( $betaling->isPaid() && ! $betaling->hasRefunds() && ! $betaling->hasChargedBacks() ) {
 			/**
 			 * Alleen actie als er daadwerkelijk betaald is, niet als er terugbetaald is o.i.d.
 			 *
@@ -280,7 +314,7 @@ class Kleistad_Betalen {
 			switch ( $order_id[0] ) {
 				case 'A': // Een abonnement, de vervolg betalingen als subscriptie inplannen.
 					list( $gebruiker_id, $parameter ) = sscanf( $order_id, 'A%d-%s' );
-					$abonnement = new Kleistad_Abonnement( $gebruiker_id );
+					$abonnement                       = new Kleistad_Abonnement( $gebruiker_id );
 					$abonnement->callback( $parameter );
 					break;
 				case 'C': // Een cursus.
@@ -290,12 +324,12 @@ class Kleistad_Betalen {
 					break;
 				case 'S': // Het stooksaldo.
 					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'S%d-%d' );
-					$saldo = new Kleistad_Saldo( $gebruiker_id );
+					$saldo                         = new Kleistad_Saldo( $gebruiker_id );
 					$saldo->callback( $betaling->amount );
 					break;
 				case 'K': // Een dagdelenkaart.
 					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'K%d-%d' );
-					$dagdelenkaart = new Kleistad_Dagdelenkaart( $gebruiker_id );
+					$dagdelenkaart                 = new Kleistad_Dagdelenkaart( $gebruiker_id );
 					$dagdelenkaart->callback( $betaling->amount );
 					break;
 				default:

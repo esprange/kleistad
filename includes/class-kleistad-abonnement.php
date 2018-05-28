@@ -36,19 +36,19 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @var array $_default_data de standaard waarden bij het aanmaken van een abonnement.
 	 */
 	private $_default_data = [
-		'code'             => '',
-		'datum'            => '',
-		'start_datum'      => '',
-		'dag'              => '',
-		'geannuleerd'      => 0,
-		'opmerking'        => '',
-		'soort'            => 'onbeperkt',
-		'pauze_datum'      => '',
-		'eind_datum'       => '',
-		'herstart_datum'   => '',
-		'incasso_datum'    => '',
-		'gepauzeerd'       => 0,
-		'subscriptie_id'   => '',
+		'code'           => '',
+		'datum'          => '',
+		'start_datum'    => '',
+		'dag'            => '',
+		'geannuleerd'    => 0,
+		'opmerking'      => '',
+		'soort'          => 'onbeperkt',
+		'pauze_datum'    => '',
+		'eind_datum'     => '',
+		'herstart_datum' => '',
+		'incasso_datum'  => '',
+		'gepauzeerd'     => 0,
+		'subscriptie_id' => '',
 	];
 
 	/**
@@ -61,8 +61,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param int $abonnee_id id of the abonnee.
 	 */
 	public function __construct( $abonnee_id ) {
-		$this->_abonnee_id = $abonnee_id;
-		$this->_default_data['code'] = "A$abonnee_id";
+		$this->_abonnee_id            = $abonnee_id;
+		$this->_default_data['code']  = "A$abonnee_id";
 		$this->_default_data['datum'] = date( 'Y-m-d' );
 
 		$abonnement = get_user_meta( $this->_abonnee_id, 'kleistad_abonnement', true );
@@ -159,8 +159,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function email( $type ) {
 		$options = get_option( 'kleistad-opties' );
-		$abonnee   = get_userdata( $this->_abonnee_id );
-		$to        = "$abonnee->first_name $abonnee->last_name <$abonnee->user_email>";
+		$abonnee = get_userdata( $this->_abonnee_id );
+		$to      = "$abonnee->first_name $abonnee->last_name <$abonnee->user_email>";
 		return Kleistad_public::compose_email(
 			$to, ( strpos( $type, 'start' ) ) ? 'Welkom bij Kleistad' : 'Wijziging abonnement Kleistad', 'kleistad_email_abonnement' . $type, [
 				'voornaam'             => $abonnee->first_name,
@@ -291,8 +291,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function wijzigen( $wijzig_datum, $soort, $dag, $admin = false ) {
-		$this->soort = $soort;
-		$this->dag = $dag;
+		$this->soort        = $soort;
+		$this->dag          = $dag;
 		$this->wijzig_datum = $wijzig_datum;
 
 		$betalen = new Kleistad_Betalen();
@@ -349,7 +349,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
-		$options = get_option( 'kleistad-opties' );
+		$options         = get_option( 'kleistad-opties' );
 		$driemaand_datum = mktime( 0, 0, 0, date( 'n', $start_datum ) + 3, date( 'j', $start_datum ), date( 'Y', $start_datum ) );
 
 		// Na drie maanden moet de overbrugging betaald worden voor de dagen tot de 1e van de volgende maand. We doen dit ongeacht of er nu al mandaat beschikbaar is.
@@ -434,8 +434,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 						// Alleen als er een mandaat is en de reguliere incasso al niet vandaag moet starten dan is er nog een overbrugging incasso nodig.
 						// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
 						$aantal_dagen = ( $this->incasso_datum - $datum ) / ( 60 * 60 * 24 );
-						$fractie = $aantal_dagen / cal_days_in_month( CAL_GREGORIAN, date( 'n', $datum ), date( 'Y', $datum ) );
-						$bedrag = $options[ $this->soort . '_abonnement' ] * $fractie;
+						$fractie      = $aantal_dagen / cal_days_in_month( CAL_GREGORIAN, date( 'n', $datum ), date( 'Y', $datum ) );
+						$bedrag       = $options[ $this->soort . '_abonnement' ] * $fractie;
 						if ( $bedrag >= 1 ) {
 							$betalen->on_demand_order(
 								$this->_abonnee_id,
@@ -495,7 +495,7 @@ class Kleistad_Abonnementen extends Kleistad_EntityStore {
 			]
 		);
 		foreach ( $abonnees as $abonnee ) {
-			$abonnement = get_user_meta( $abonnee->ID, 'kleistad_abonnement', true );
+			$abonnement                  = get_user_meta( $abonnee->ID, 'kleistad_abonnement', true );
 			$this->_data[ $abonnee->ID ] = new Kleistad_Abonnement( $abonnee->ID );
 			$this->_data[ $abonnee->ID ]->load( $abonnement );
 		}
@@ -526,10 +526,10 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @var array $_default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
 	 */
 	private $_default_data = [
-		'code'             => '',
-		'datum'            => '',
-		'start_datum'      => '',
-		'opmerking'        => '',
+		'code'        => '',
+		'datum'       => '',
+		'start_datum' => '',
+		'opmerking'   => '',
 	];
 
 	/**
@@ -542,7 +542,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @param int $gebruiker_id id of the gebruiker.
 	 */
 	public function __construct( $gebruiker_id ) {
-		$this->_gebruiker_id = $gebruiker_id;
+		$this->_gebruiker_id         = $gebruiker_id;
 		$this->_default_data['code'] = "K$gebruiker_id-" . strftime( '%y%m%d', time() );
 
 		$this->_default_data['datum'] = date( 'Y-m-d' );
@@ -623,8 +623,8 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
-		$options = get_option( 'kleistad-opties' );
-		$gebruiker   = get_userdata( $this->_gebruiker_id );
+		$options   = get_option( 'kleistad-opties' );
+		$gebruiker = get_userdata( $this->_gebruiker_id );
 		$to        = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
 		return Kleistad_public::compose_email(
 			$to, 'Welkom bij Kleistad', 'kleistad_email_dagdelenkaart' . $type, [
@@ -648,7 +648,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 */
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
 		$this->start_datum = $start_datum;
-		$options = get_option( 'kleistad-opties' );
+		$options           = get_option( 'kleistad-opties' );
 
 		if ( 'ideal' === $betaalwijze ) {
 			$this->save();
@@ -705,7 +705,7 @@ class Kleistad_Dagdelenkaarten extends Kleistad_EntityStore {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$dagdelenkaart = get_user_meta( $gebruiker->ID, 'kleistad_dagdelenkaart', true );
+			$dagdelenkaart                 = get_user_meta( $gebruiker->ID, 'kleistad_dagdelenkaart', true );
 			$this->_data[ $gebruiker->ID ] = new Kleistad_Dagdelenkaart( $gebruiker->ID );
 			$this->_data[ $gebruiker->ID ]->load( $dagdelenkaart );
 		}

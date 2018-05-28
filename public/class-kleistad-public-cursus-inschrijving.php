@@ -31,51 +31,51 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 
 		if ( is_null( $data ) ) {
 			$data['input'] = [
-				'EMAIL' => '',
-				'email_controle' => '',
-				'FNAME' => '',
-				'LNAME' => '',
-				'straat' => '',
-				'huisnr' => '',
-				'pcode' => '',
-				'plaats' => '',
-				'telnr' => '',
-				'cursus_id' => 0,
-				'gebruiker_id' => 0,
-				'aantal' => 1,
-				'technieken' => [],
-				'opmerking' => '',
-				'betaal' => 'ideal',
+				'EMAIL'           => '',
+				'email_controle'  => '',
+				'FNAME'           => '',
+				'LNAME'           => '',
+				'straat'          => '',
+				'huisnr'          => '',
+				'pcode'           => '',
+				'plaats'          => '',
+				'telnr'           => '',
+				'cursus_id'       => 0,
+				'gebruiker_id'    => 0,
+				'aantal'          => 1,
+				'technieken'      => [],
+				'opmerking'       => '',
+				'betaal'          => 'ideal',
 				'mc4wp-subscribe' => '0',
 			];
 		}
-		$gebruikers = get_users(
+		$gebruikers         = get_users(
 			[
-				'fields' => [ 'id', 'display_name' ],
+				'fields'  => [ 'id', 'display_name' ],
 				'orderby' => [ 'nicename' ],
 			]
 		);
 		$data['gebruikers'] = $gebruikers;
 
 		$open_cursussen = [];
-		$cursus_store = new Kleistad_Cursussen();
-		$cursussen = $cursus_store->get();
+		$cursus_store   = new Kleistad_Cursussen();
+		$cursussen      = $cursus_store->get();
 		foreach ( $cursussen as $cursus ) {
 
 			if ( $cursus->eind_datum < time() ) {
 				continue;
 			}
 			$open_cursussen[ $cursus->id ] = [
-				'naam' => $cursus->naam .
+				'naam'          => $cursus->naam .
 					', start ' . strftime( '%A %d-%m-%y', $cursus->start_datum ) .
 					( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
 				'selecteerbaar' => ! $cursus->vol && ! $cursus->vervallen,
-				'technieken' => $cursus->technieken,
-				'meer' => $cursus->meer,
-				'ruimte' => $cursus->ruimte,
-				'prijs' => ( 0 < $cursus->inschrijfkosten ? $cursus->inschrijfkosten : $cursus->cursuskosten ),
+				'technieken'    => $cursus->technieken,
+				'meer'          => $cursus->meer,
+				'ruimte'        => $cursus->ruimte,
+				'prijs'         => ( 0 < $cursus->inschrijfkosten ? $cursus->inschrijfkosten : $cursus->cursuskosten ),
 				'inschrijfgeld' => ( 0 < $cursus->inschrijfkosten ),
-				'lopend' => $cursus->start_datum < strtotime( 'today' ),
+				'lopend'        => $cursus->start_datum < strtotime( 'today' ),
 			];
 		}
 		$data['open_cursussen'] = $open_cursussen;
@@ -95,24 +95,24 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 
 		$input = filter_input_array(
 			INPUT_POST, [
-				'EMAIL' => FILTER_SANITIZE_EMAIL,
-				'email_controle' => FILTER_SANITIZE_EMAIL,
-				'FNAME' => FILTER_SANITIZE_STRING,
-				'LNAME' => FILTER_SANITIZE_STRING,
-				'straat' => FILTER_SANITIZE_STRING,
-				'huisnr' => FILTER_SANITIZE_STRING,
-				'pcode' => FILTER_SANITIZE_STRING,
-				'plaats' => FILTER_SANITIZE_STRING,
-				'telnr' => FILTER_SANITIZE_STRING,
-				'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
-				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
-				'technieken' => [
+				'EMAIL'           => FILTER_SANITIZE_EMAIL,
+				'email_controle'  => FILTER_SANITIZE_EMAIL,
+				'FNAME'           => FILTER_SANITIZE_STRING,
+				'LNAME'           => FILTER_SANITIZE_STRING,
+				'straat'          => FILTER_SANITIZE_STRING,
+				'huisnr'          => FILTER_SANITIZE_STRING,
+				'pcode'           => FILTER_SANITIZE_STRING,
+				'plaats'          => FILTER_SANITIZE_STRING,
+				'telnr'           => FILTER_SANITIZE_STRING,
+				'cursus_id'       => FILTER_SANITIZE_NUMBER_INT,
+				'gebruiker_id'    => FILTER_SANITIZE_NUMBER_INT,
+				'technieken'      => [
 					'filter' => FILTER_SANITIZE_STRING,
-					'flags' => FILTER_FORCE_ARRAY,
+					'flags'  => FILTER_FORCE_ARRAY,
 				],
-				'opmerking' => FILTER_SANITIZE_STRING,
-				'aantal' => FILTER_SANITIZE_STRING,
-				'betaal' => FILTER_SANITIZE_STRING,
+				'opmerking'       => FILTER_SANITIZE_STRING,
+				'aantal'          => FILTER_SANITIZE_STRING,
+				'betaal'          => FILTER_SANITIZE_STRING,
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
@@ -147,7 +147,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			$email = strtolower( $input['EMAIL'] );
 			if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
-				$input['EMAIL'] = '';
+				$input['EMAIL']          = '';
 				$input['email_controle'] = '';
 			} else {
 				$input['EMAIL'] = $email;
@@ -172,7 +172,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				$input['LNAME'] = '';
 			}
 		}
-		$data ['input'] = $input;
+		$data ['input']  = $input;
 		$data ['cursus'] = $cursus;
 
 		if ( ! empty( $error->get_error_codes() ) ) {
@@ -194,16 +194,16 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		$error = new WP_Error();
 
 		if ( ! is_user_logged_in() ) {
-			$gebruiker = new Kleistad_Gebruiker();
-			$gebruiker->voornaam = $data['input']['FNAME'];
+			$gebruiker             = new Kleistad_Gebruiker();
+			$gebruiker->voornaam   = $data['input']['FNAME'];
 			$gebruiker->achternaam = $data['input']['LNAME'];
-			$gebruiker->straat = $data['input']['straat'];
-			$gebruiker->huisnr = $data['input']['huisnr'];
-			$gebruiker->pcode = $data['input']['pcode'];
-			$gebruiker->plaats = $data['input']['plaats'];
-			$gebruiker->email = $data['input']['EMAIL'];
-			$gebruiker->telnr = $data['input']['telnr'];
-			$gebruiker_id = $gebruiker->save();
+			$gebruiker->straat     = $data['input']['straat'];
+			$gebruiker->huisnr     = $data['input']['huisnr'];
+			$gebruiker->pcode      = $data['input']['pcode'];
+			$gebruiker->plaats     = $data['input']['plaats'];
+			$gebruiker->email      = $data['input']['EMAIL'];
+			$gebruiker->telnr      = $data['input']['telnr'];
+			$gebruiker_id          = $gebruiker->save();
 		} else {
 			if ( is_super_admin() ) {
 				$gebruiker_id = $data['input']['gebruiker_id'];
@@ -213,11 +213,11 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 		}
 
-		$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );
+		$inschrijving             = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );
 		$inschrijving->technieken = $data['input']['technieken'];
-		$inschrijving->opmerking = $data['input']['opmerking'];
-		$inschrijving->aantal = intval( $data['input']['aantal'] );
-		$inschrijving->datum = time();
+		$inschrijving->opmerking  = $data['input']['opmerking'];
+		$inschrijving->aantal     = intval( $data['input']['aantal'] );
+		$inschrijving->datum      = time();
 		$inschrijving->save();
 
 		$lopend = $data['cursus']->start_datum < strtotime( 'today' );

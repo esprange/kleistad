@@ -21,10 +21,10 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	 * Test creation and modification of an oven.
 	 */
 	public function test_oven() {
-		$oven1 = new Kleistad_Oven();
-		$oven1->naam = 'test oven';
+		$oven1         = new Kleistad_Oven();
+		$oven1->naam   = 'test oven';
 		$oven1->kosten = 10;
-		$oven_id = $oven1->save();
+		$oven_id       = $oven1->save();
 		$this->assertTrue( $oven_id > 0, 'save oven no id' );
 
 		$oven2 = new Kleistad_Oven( $oven_id );
@@ -41,15 +41,15 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	public function test_ovens() {
 
 		$teststring = 'test ovens';
-		$ovens = [];
+		$ovens      = [];
 		for ( $i = 0; $i < 10; $i++ ) {
-			$ovens[ $i ] = new Kleistad_Oven();
-			$ovens[ $i ]->naam = "$teststring$i";
+			$ovens[ $i ]         = new Kleistad_Oven();
+			$ovens[ $i ]->naam   = "$teststring$i";
 			$ovens[ $i ]->kosten = $i;
 			$ovens[ $i ]->save();
 		}
 
-		$ovens_store = new Kleistad_Ovens();
+		$ovens_store      = new Kleistad_Ovens();
 		$ovens_from_store = $ovens_store->get();
 		foreach ( $ovens_from_store as $oven ) {
 			if ( substr( $oven->naam, 0, strlen( $teststring ) ) === $teststring ) {
@@ -63,51 +63,51 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	 * Test creation and modification of a reservering.
 	 */
 	public function test_reservering() {
-		$user_id = $this->factory->user->create(
+		$user_id     = $this->factory->user->create(
 			[
 				'role' => 'subscriber',
 			]
 		);
-		$now = time();
-		$datum = strtotime( date( 'Y', $now ) . '-' . date( 'm', $now ) . '-' . date( 'd', $now ) );
+		$now         = time();
+		$datum       = strtotime( date( 'Y', $now ) . '-' . date( 'm', $now ) . '-' . date( 'd', $now ) );
 		$temperatuur = 999;
-		$soortstook = 'test';
-		$programma = 1;
-		$verdeling = [
+		$soortstook  = 'test';
+		$programma   = 1;
+		$verdeling   = [
 			[
-				'id'     => $user_id,
-				'perc'   => 100,
+				'id'   => $user_id,
+				'perc' => 100,
 			],
 			[
-				'id'     => 0,
-				'perc'   => 0,
+				'id'   => 0,
+				'perc' => 0,
 			],
 			[
-				'id'     => 0,
-				'perc'   => 0,
+				'id'   => 0,
+				'perc' => 0,
 			],
 			[
-				'id'     => 0,
-				'perc'   => 0,
+				'id'   => 0,
+				'perc' => 0,
 			],
 			[
-				'id'     => 0,
-				'perc'   => 0,
+				'id'   => 0,
+				'perc' => 0,
 			],
 		];
-		$opmerking = 'test remark';
+		$opmerking   = 'test remark';
 
-		$oven = new Kleistad_Oven();
+		$oven    = new Kleistad_Oven();
 		$oven_id = $oven->save();
 
-		$reservering1 = new Kleistad_Reservering( $oven_id );
-		$reservering1->datum = $datum;
+		$reservering1               = new Kleistad_Reservering( $oven_id );
+		$reservering1->datum        = $datum;
 		$reservering1->gebruiker_id = $user_id;
-		$reservering1->temperatuur = $temperatuur;
-		$reservering1->soortstook = $soortstook;
-		$reservering1->programma = $programma;
-		$reservering1->verdeling = $verdeling;
-		$reservering1->opmerking = $opmerking;
+		$reservering1->temperatuur  = $temperatuur;
+		$reservering1->soortstook   = $soortstook;
+		$reservering1->programma    = $programma;
+		$reservering1->verdeling    = $verdeling;
+		$reservering1->opmerking    = $opmerking;
 		$reservering1->save();
 
 		$reservering2 = new Kleistad_Reservering( $oven_id );
@@ -130,7 +130,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	 */
 	public function test_reserveringen() {
 
-		$oven = new Kleistad_Oven();
+		$oven    = new Kleistad_Oven();
 		$oven_id = $oven->save();
 
 		$user_id = $this->factory->user->create(
@@ -139,18 +139,18 @@ class KleistadOvenTest extends WP_UnitTestCase {
 			]
 		);
 
-		$teststring = 'test reserveringen';
+		$teststring    = 'test reserveringen';
 		$reserveringen = [];
 		for ( $i = 0; $i < 10; $i++ ) {
-			$reserveringen[ $i ] = new Kleistad_Reservering( $oven_id );
-			$reserveringen[ $i ]->datum = date( strtotime( "+ $i day" ) );
+			$reserveringen[ $i ]               = new Kleistad_Reservering( $oven_id );
+			$reserveringen[ $i ]->datum        = date( strtotime( "+ $i day" ) );
 			$reserveringen[ $i ]->gebruiker_id = $user_id;
-			$reserveringen[ $i ]->programma = $i;
-			$reserveringen[ $i ]->opmerking = "$teststring$i";
+			$reserveringen[ $i ]->programma    = $i;
+			$reserveringen[ $i ]->opmerking    = "$teststring$i";
 			$reserveringen[ $i ]->save();
 		}
 
-		$reserveringen_store = new Kleistad_Reserveringen();
+		$reserveringen_store      = new Kleistad_Reserveringen();
 		$reserveringen_from_store = $reserveringen_store->get();
 		foreach ( $reserveringen_from_store as $reservering ) {
 			if ( substr( $reservering->opmerking, 0, strlen( $teststring ) ) === $teststring ) {
@@ -168,7 +168,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 				'role' => 'subscriber',
 			]
 		);
-		$bedrag = 123.45;
+		$bedrag  = 123.45;
 
 		$saldo = new Kleistad_Saldo( $user_id );
 		$this->assertEquals( 0.0, $saldo->bedrag, 'saldo initieel not zero' );
@@ -184,8 +184,8 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		$saldo3 = new Kleistad_Saldo( $user_id );
 		$this->assertEquals( $bedrag + $bedrag, $saldo3->bedrag, 'saldo not equal to ' . $bedrag + $bedrag );
 
-		$upload_dir      = wp_upload_dir();
-		$transactie_log  = $upload_dir['basedir'] . '/stooksaldo.log';
+		$upload_dir     = wp_upload_dir();
+		$transactie_log = $upload_dir['basedir'] . '/stooksaldo.log';
 
 		$this->assertFileExists( $transactie_log, 'transactie_log not created' );
 	}
@@ -194,7 +194,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	 * Test the regelingen class.
 	 */
 	public function test_regelingen() {
-		$oven = new Kleistad_Oven();
+		$oven    = new Kleistad_Oven();
 		$oven_id = $oven->save();
 
 		$user_id = $this->factory->user->create(
@@ -202,7 +202,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 				'role' => 'subscriber',
 			]
 		);
-		$kosten = 123;
+		$kosten  = 123;
 
 		$regelingen = new Kleistad_Regelingen();
 

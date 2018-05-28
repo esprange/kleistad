@@ -43,12 +43,12 @@ class KleistadRolesTest extends WP_UnitTestCase {
 				'role' => 'subscriber',
 			]
 		);
-		self::$editor_id = $factory->user->create(
+		self::$editor_id     = $factory->user->create(
 			[
 				'role' => 'editor',
 			]
 		);
-		self::$nonmember_id = $factory->user->create(
+		self::$nonmember_id  = $factory->user->create(
 			[
 				'role' => '',
 			]

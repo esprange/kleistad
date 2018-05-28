@@ -28,7 +28,7 @@ class Kleistad_Public_Registratie extends Kleistad_Shortcode {
 	 */
 	public function prepare( &$data = null ) {
 		$gebruiker_id = get_current_user_id();
-		$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
+		$gebruiker    = new Kleistad_Gebruiker( $gebruiker_id );
 
 		if ( is_null( $data ) ) {
 			$data['input'] = [
@@ -57,14 +57,14 @@ class Kleistad_Public_Registratie extends Kleistad_Shortcode {
 
 		$input = filter_input_array(
 			INPUT_POST, [
-				'gebruiker_id'  => FILTER_SANITIZE_NUMBER_INT,
-				'voornaam'      => FILTER_SANITIZE_STRING,
-				'achternaam'    => FILTER_SANITIZE_STRING,
-				'straat'        => FILTER_SANITIZE_STRING,
-				'huisnr'        => FILTER_SANITIZE_STRING,
-				'pcode'         => FILTER_SANITIZE_STRING,
-				'plaats'        => FILTER_SANITIZE_STRING,
-				'telnr'         => FILTER_SANITIZE_STRING,
+				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
+				'voornaam'     => FILTER_SANITIZE_STRING,
+				'achternaam'   => FILTER_SANITIZE_STRING,
+				'straat'       => FILTER_SANITIZE_STRING,
+				'huisnr'       => FILTER_SANITIZE_STRING,
+				'pcode'        => FILTER_SANITIZE_STRING,
+				'plaats'       => FILTER_SANITIZE_STRING,
+				'telnr'        => FILTER_SANITIZE_STRING,
 			]
 		);
 
@@ -102,15 +102,15 @@ class Kleistad_Public_Registratie extends Kleistad_Shortcode {
 			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
 			return $error;
 		} else {
-			$gebruiker = new Kleistad_Gebruiker( $data['input']['gebruiker_id'] );
-			$gebruiker->voornaam = $data['input']['voornaam'];
+			$gebruiker             = new Kleistad_Gebruiker( $data['input']['gebruiker_id'] );
+			$gebruiker->voornaam   = $data['input']['voornaam'];
 			$gebruiker->achternaam = $data['input']['achternaam'];
-			$gebruiker->straat = $data['input']['straat'];
-			$gebruiker->huisnr = $data['input']['huisnr'];
-			$gebruiker->pcode = $data['input']['pcode'];
-			$gebruiker->plaats = $data['input']['plaats'];
-			$gebruiker->telnr = $data['input']['telnr'];
-			$result = $gebruiker->save();
+			$gebruiker->straat     = $data['input']['straat'];
+			$gebruiker->huisnr     = $data['input']['huisnr'];
+			$gebruiker->pcode      = $data['input']['pcode'];
+			$gebruiker->plaats     = $data['input']['plaats'];
+			$gebruiker->telnr      = $data['input']['telnr'];
+			$result                = $gebruiker->save();
 			if ( false !== $result ) {
 				return 'Gegevens zijn opgeslagen';
 			} else {

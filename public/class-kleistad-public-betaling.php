@@ -28,10 +28,10 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 	 * @since   4.3.0
 	 */
 	public function prepare( &$data = null ) {
-		$error        = new WP_Error();
-		$cursist_id   = filter_input( INPUT_GET, 'gid', FILTER_SANITIZE_NUMBER_INT );
-		$cursus_id    = filter_input( INPUT_GET, 'crss', FILTER_SANITIZE_NUMBER_INT );
-		$hash         = filter_input( INPUT_GET, 'hsh', FILTER_SANITIZE_STRING );
+		$error      = new WP_Error();
+		$cursist_id = filter_input( INPUT_GET, 'gid', FILTER_SANITIZE_NUMBER_INT );
+		$cursus_id  = filter_input( INPUT_GET, 'crss', FILTER_SANITIZE_NUMBER_INT );
+		$hash       = filter_input( INPUT_GET, 'hsh', FILTER_SANITIZE_STRING );
 
 		$data['leeg'] = ( '' === $cursist_id || '' === $cursus_id );
 
@@ -73,11 +73,11 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 	public function validate( &$data ) {
 		$error = new WP_Error();
 
-		$input = filter_input_array(
+		$input        = filter_input_array(
 			INPUT_POST, [
 				'cursist_id' => FILTER_SANITIZE_NUMBER_INT,
-				'cursus_id'    => FILTER_SANITIZE_NUMBER_INT,
-				'betaal'       => FILTER_SANITIZE_STRING,
+				'cursus_id'  => FILTER_SANITIZE_NUMBER_INT,
+				'betaal'     => FILTER_SANITIZE_STRING,
 			]
 		);
 		$inschrijving = new Kleistad_Inschrijving( $input['cursist_id'], $input['cursus_id'] );

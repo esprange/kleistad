@@ -38,27 +38,27 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 */
 	public function __construct( $gebruiker_id = null ) {
 		$default_data = [
-			'telnr' => '',
-			'straat' => '',
-			'huisnr' => '',
-			'pcode' => '',
-			'plaats' => '',
-			'email' => '',
-			'voornaam' => '',
-			'achternaam' => '',
+			'telnr'          => '',
+			'straat'         => '',
+			'huisnr'         => '',
+			'pcode'          => '',
+			'plaats'         => '',
+			'email'          => '',
+			'voornaam'       => '',
+			'achternaam'     => '',
 			'gebruikersnaam' => '',
-			'rol' => '',
+			'rol'            => '',
 		];
 		if ( ! is_null( $gebruiker_id ) && $gebruiker_id ) {
-			$this->_gebruiker_id = $gebruiker_id;
-			$gebruiker = get_userdata( $gebruiker_id );
-			$contactinfo = get_user_meta( $gebruiker_id, 'contactinfo', true );
-			$this->_data = wp_parse_args( $contactinfo, $default_data );
-			$this->achternaam = $gebruiker->last_name;
-			$this->voornaam = $gebruiker->first_name;
-			$this->email = $gebruiker->user_email;
+			$this->_gebruiker_id  = $gebruiker_id;
+			$gebruiker            = get_userdata( $gebruiker_id );
+			$contactinfo          = get_user_meta( $gebruiker_id, 'contactinfo', true );
+			$this->_data          = wp_parse_args( $contactinfo, $default_data );
+			$this->achternaam     = $gebruiker->last_name;
+			$this->voornaam       = $gebruiker->first_name;
+			$this->email          = $gebruiker->user_email;
 			$this->gebruikersnaam = $gebruiker->user_login;
-			$this->rol = $gebruiker->roles;
+			$this->rol            = $gebruiker->roles;
 		} else {
 			$this->_data = $default_data;
 		}
@@ -118,20 +118,20 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 			if ( ( $this->_gebruiker_id == $user->ID ) // WPCS: loose comparison ok.
 				|| ( '' === $user->role ) ) { // Existing user with no role re-registered.
 				$this->_gebruiker_id = $user->ID;
-				$userdata = [
+				$userdata            = [
 					'ID'            => $user->ID,
 					'user_nicename' => $this->voornaam . ' ' . $this->achternaam,
 					'display_name'  => $this->voornaam . ' ' . $this->achternaam,
 					'first_name'    => $this->voornaam,
 					'last_name'     => $this->achternaam,
 				];
-				$result = wp_update_user( $userdata );
+				$result              = wp_update_user( $userdata );
 			} else {
 				return false; // Email exists, but entered as new user.
 			}
 		} elseif ( 0 === $this->_gebruiker_id ) { // New email, thus new user.
-			$uniek = '';
-			$nice_voornaam = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $this->voornaam ) ) );
+			$uniek           = '';
+			$nice_voornaam   = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $this->voornaam ) ) );
 			$nice_achternaam = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $this->achternaam ) ) );
 
 			$startnaam = $nice_voornaam;
@@ -152,9 +152,9 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 				'first_name'      => $this->voornaam,
 				'last_name'       => $this->achternaam,
 				'user_registered' => date( 'Y-m-d H:i:s' ),
-				'role' => '',
+				'role'            => '',
 			];
-			$result = wp_insert_user( $userdata );
+			$result   = wp_insert_user( $userdata );
 		} else { // This should not happen.
 			return false;
 		}
@@ -202,7 +202,7 @@ class Kleistad_Gebruikers extends Kleistad_EntityStore {
 	public function __construct() {
 		$gebruikers = get_users(
 			[
-				'fields' => [ 'id' ],
+				'fields'  => [ 'id' ],
 				'orderby' => [ 'nicename' ],
 			]
 		);

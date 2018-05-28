@@ -29,38 +29,38 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 	public function prepare( &$data ) {
 		if ( is_null( $data ) ) {
 			$data['input'] = [
-				'gebruiker_id' => 0,
-				'EMAIL' => '',
-				'email_controle' => '',
-				'FNAME' => '',
-				'LNAME' => '',
-				'straat' => '',
-				'huisnr' => '',
-				'pcode' => '',
-				'plaats' => '',
-				'telnr' => '',
+				'gebruiker_id'     => 0,
+				'EMAIL'            => '',
+				'email_controle'   => '',
+				'FNAME'            => '',
+				'LNAME'            => '',
+				'straat'           => '',
+				'huisnr'           => '',
+				'pcode'            => '',
+				'plaats'           => '',
+				'telnr'            => '',
 				'abonnement_keuze' => '',
-				'dag' => '',
-				'start_datum' => '',
-				'opmerking' => '',
-				'betaal' => 'ideal',
-				'mc4wp-subscribe' => '0',
+				'dag'              => '',
+				'start_datum'      => '',
+				'opmerking'        => '',
+				'betaal'           => 'ideal',
+				'mc4wp-subscribe'  => '0',
 			];
 		}
-		$atts = shortcode_atts(
+		$atts                     = shortcode_atts(
 			[
 				'verklaring' => '',
 			], $this->atts, 'kleistad_abonnee_inschrijving'
 		);
-		$gebruikers = get_users(
+		$gebruikers               = get_users(
 			[
-				'fields' => [ 'id', 'display_name' ],
+				'fields'  => [ 'id', 'display_name' ],
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$data['gebruikers'] = $gebruikers;
-		$data['verklaring'] = htmlspecialchars_decode( $atts['verklaring'] );
-		$data['bedrag_beperkt'] = 3 * $this->options['beperkt_abonnement'] + $this->options['borg_kast'];
+		$data['gebruikers']       = $gebruikers;
+		$data['verklaring']       = htmlspecialchars_decode( $atts['verklaring'] );
+		$data['bedrag_beperkt']   = 3 * $this->options['beperkt_abonnement'] + $this->options['borg_kast'];
 		$data['bedrag_onbeperkt'] = 3 * $this->options['onbeperkt_abonnement'] + $this->options['borg_kast'];
 
 		return true;
@@ -79,22 +79,22 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 
 		$input = filter_input_array(
 			INPUT_POST, [
-				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
-				'EMAIL' => FILTER_SANITIZE_EMAIL,
-				'email_controle' => FILTER_SANITIZE_EMAIL,
-				'FNAME' => FILTER_SANITIZE_STRING,
-				'LNAME' => FILTER_SANITIZE_STRING,
-				'straat' => FILTER_SANITIZE_STRING,
-				'huisnr' => FILTER_SANITIZE_STRING,
-				'pcode' => FILTER_SANITIZE_STRING,
-				'plaats' => FILTER_SANITIZE_STRING,
-				'telnr' => FILTER_SANITIZE_STRING,
+				'gebruiker_id'     => FILTER_SANITIZE_NUMBER_INT,
+				'EMAIL'            => FILTER_SANITIZE_EMAIL,
+				'email_controle'   => FILTER_SANITIZE_EMAIL,
+				'FNAME'            => FILTER_SANITIZE_STRING,
+				'LNAME'            => FILTER_SANITIZE_STRING,
+				'straat'           => FILTER_SANITIZE_STRING,
+				'huisnr'           => FILTER_SANITIZE_STRING,
+				'pcode'            => FILTER_SANITIZE_STRING,
+				'plaats'           => FILTER_SANITIZE_STRING,
+				'telnr'            => FILTER_SANITIZE_STRING,
 				'abonnement_keuze' => FILTER_SANITIZE_STRING,
-				'dag' => FILTER_SANITIZE_STRING,
-				'start_datum' => FILTER_SANITIZE_STRING,
-				'opmerking' => FILTER_SANITIZE_STRING,
-				'betaal' => FILTER_SANITIZE_STRING,
-				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
+				'dag'              => FILTER_SANITIZE_STRING,
+				'start_datum'      => FILTER_SANITIZE_STRING,
+				'opmerking'        => FILTER_SANITIZE_STRING,
+				'betaal'           => FILTER_SANITIZE_STRING,
+				'mc4wp-subscribe'  => FILTER_SANITIZE_STRING,
 			]
 		);
 
@@ -108,7 +108,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 			$email = strtolower( $input['EMAIL'] );
 			if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
-				$input['EMAIL'] = '';
+				$input['EMAIL']          = '';
 				$input['email_controle'] = '';
 			} else {
 				$input['EMAIL'] = $email;
@@ -162,7 +162,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 					return $error;
 				}
 			} else {
-				$gebruiker = new Kleistad_Gebruiker();
+				$gebruiker             = new Kleistad_Gebruiker();
 				$gebruiker->voornaam   = $data['input']['FNAME'];
 				$gebruiker->achternaam = $data['input']['LNAME'];
 				$gebruiker->straat     = $data['input']['straat'];
@@ -171,17 +171,17 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				$gebruiker->plaats     = $data['input']['plaats'];
 				$gebruiker->email      = $data['input']['EMAIL'];
 				$gebruiker->telnr      = $data['input']['telnr'];
-				$gebruiker_id = $gebruiker->save();
+				$gebruiker_id          = $gebruiker->save();
 			}
 		} elseif ( is_super_admin() ) {
 			$gebruiker_id = $data['input']['gebruiker_id'];
-			$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
+			$gebruiker    = new Kleistad_Gebruiker( $gebruiker_id );
 		} else {
 			$error->add( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' );
 			return $error;
 		}
 
-		$abonnement = new Kleistad_Abonnement( $gebruiker_id );
+		$abonnement              = new Kleistad_Abonnement( $gebruiker_id );
 		$abonnement->soort       = $data['input']['abonnement_keuze'];
 		$abonnement->opmerking   = $data['input']['opmerking'];
 		$abonnement->start_datum = strtotime( $data['input']['start_datum'] );

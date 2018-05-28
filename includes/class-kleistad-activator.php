@@ -49,7 +49,7 @@ class Kleistad_Activator {
 			'sleutel_test'         => '',
 			'betalen'              => 0,
 		];
-		$options = shortcode_atts( $default_options, get_option( 'kleistad-opties' ) );
+		$options         = shortcode_atts( $default_options, get_option( 'kleistad-opties' ) );
 		update_option( 'kleistad-opties', $options );
 
 		$database_version = intval( get_option( 'kleistad-database-versie', 0 ) );
@@ -58,7 +58,7 @@ class Kleistad_Activator {
 			$charset_collate = $wpdb->get_charset_collate();
 
 			// flush_rewrite_rules call removed.
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			dbDelta(
 				"CREATE TABLE {$wpdb->prefix}kleistad_reserveringen (
                 id int(10) NOT NULL AUTO_INCREMENT,

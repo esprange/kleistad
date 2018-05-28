@@ -102,28 +102,28 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$paged_val = filter_input( INPUT_GET, 'paged' );
-		$paged   = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$paged_val   = filter_input( INPUT_GET, 'paged' );
+		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val = filter_input( INPUT_GET, 'order' );
-		$order = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val   = filter_input( INPUT_GET, 'order' );
+		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 
 		$abonnementen_store = new Kleistad_Abonnementen();
-		$abonnementen = $abonnementen_store->get();
+		$abonnementen       = $abonnementen_store->get();
 
 		$abonnees = [];
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-			$abonnee = get_userdata( $abonnee_id );
+			$abonnee    = get_userdata( $abonnee_id );
 			$abonnees[] = [
-				'id'              => $abonnee_id,
-				'naam'            => $abonnee->display_name,
-				'status'          => ( $abonnement->geannuleerd ? 'geannuleerd' :
+				'id'     => $abonnee_id,
+				'naam'   => $abonnee->display_name,
+				'status' => ( $abonnement->geannuleerd ? 'geannuleerd' :
 										( $abonnement->gepauzeerd ? 'gepauzeerd' :
 											( Kleistad_Roles::reserveer( $abonnee_id ) ? 'actief' : 'aangemeld' ) ) ),
-				'soort'           => $abonnement->soort,
-				'dag'             => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
-				'code'            => $abonnement->code,
+				'soort'  => $abonnement->soort,
+				'dag'    => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
+				'code'   => $abonnement->code,
 			];
 		}
 		usort(
@@ -137,7 +137,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items, // total items defined above.
-				'per_page' => $per_page, // per page constant defined at top of method.
+				'per_page'    => $per_page, // per page constant defined at top of method.
 				'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
 			]
 		);

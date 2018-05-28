@@ -112,17 +112,17 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 
 		$total_items = $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}kleistad_ovens" ); // WPCS: db call ok, cache ok, unprepared SQL ok.
 
-		$paged_val = filter_input( INPUT_GET, 'paged' );
-		$paged   = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$paged_val   = filter_input( INPUT_GET, 'paged' );
+		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val = filter_input( INPUT_GET, 'order' );
-		$order = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val   = filter_input( INPUT_GET, 'order' );
+		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 		$this->items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens ORDER BY $orderby $order LIMIT $per_page OFFSET $paged", ARRAY_A ); // WPCS: db call ok, cache ok, unprepared SQL OK.
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items, // total items defined above.
-				'per_page' => $per_page, // per page constant defined at top of method.
+				'per_page'    => $per_page, // per page constant defined at top of method.
 				'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
 			]
 		);

@@ -61,8 +61,8 @@ class Kleistad_Admin {
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-		$this->options = get_option( 'kleistad-opties' );
+		$this->version     = $version;
+		$this->options     = get_option( 'kleistad-opties' );
 		date_default_timezone_set( 'Europe/Amsterdam' );
 	}
 
@@ -132,7 +132,7 @@ class Kleistad_Admin {
 			return;
 		}
 		$disabled_val = filter_input( INPUT_POST, 'kleistad_disable_user' );
-		$disabled = ! is_null( $disabled_val ) ? $disabled_val : 0;
+		$disabled     = ! is_null( $disabled_val ) ? $disabled_val : 0;
 		update_user_meta( $user_id, 'kleistad_disable_user', $disabled );
 	}
 
@@ -269,20 +269,20 @@ class Kleistad_Admin {
 	 */
 	public function ovens_form_page_handler() {
 		$message = '';
-		$notice = '';
+		$notice  = '';
 		// here we are verifying does this request is post back and have correct nonce.
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
 			$item = filter_input_array(
 				INPUT_POST, [
-					'id' => FILTER_SANITIZE_NUMBER_INT,
-					'naam' => FILTER_SANITIZE_STRING,
-					'kosten' => [
+					'id'              => FILTER_SANITIZE_NUMBER_INT,
+					'naam'            => FILTER_SANITIZE_STRING,
+					'kosten'          => [
 						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-						'flags' => FILTER_FLAG_ALLOW_FRACTION,
+						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 					],
 					'beschikbaarheid' => [
 						'filter' => FILTER_SANITIZE_STRING,
-						'flags' => FILTER_FORCE_ARRAY,
+						'flags'  => FILTER_FORCE_ARRAY,
 					],
 				]
 			);
@@ -295,8 +295,8 @@ class Kleistad_Admin {
 				} else {
 					$oven = new Kleistad_Oven();
 				}
-				$oven->naam = $item['naam'];
-				$oven->kosten = $item['kosten'];
+				$oven->naam            = $item['naam'];
+				$oven->kosten          = $item['kosten'];
 				$oven->beschikbaarheid = $item['beschikbaarheid'];
 				$oven->save();
 				$message = 'De gegevens zijn opgeslagen';
@@ -311,9 +311,9 @@ class Kleistad_Admin {
 			} else {
 				$oven = new Kleistad_Oven();
 			}
-			$item['id'] = $oven->id;
-			$item['naam'] = $oven->naam;
-			$item['kosten'] = $oven->kosten;
+			$item['id']              = $oven->id;
+			$item['naam']            = $oven->naam;
+			$item['kosten']          = $oven->kosten;
 			$item['beschikbaarheid'] = $oven->beschikbaarheid;
 		}
 		// here we adding our custom meta box.
@@ -378,7 +378,7 @@ class Kleistad_Admin {
 	 */
 	public function abonnees_form_page_handler() {
 		$message = '';
-		$notice = '';
+		$notice  = '';
 		// here we are verifying does this request is post back and have correct nonce.
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
 			$item = filter_input_array(
@@ -439,8 +439,8 @@ class Kleistad_Admin {
 			if ( isset( $_REQUEST['id'] ) ) {
 				$abonnee_id = $_REQUEST['id'];
 				$abonnement = new Kleistad_Abonnement( $abonnee_id );
-				$abonnee = get_userdata( $abonnee_id );
-				$item = [
+				$abonnee    = get_userdata( $abonnee_id );
+				$item       = [
 					'id'              => $abonnee_id,
 					'naam'            => $abonnee->display_name,
 					'soort'           => $abonnement->soort,
@@ -498,13 +498,13 @@ class Kleistad_Admin {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-regelingen.php';
 
 		$message = '';
-		$table = new Kleistad_Admin_Regelingen();
+		$table   = new Kleistad_Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
 			$id = filter_input( INPUT_GET, 'id' );
 
 			if ( ! is_null( $id ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $id, '%d %d' );
-				$regelingen = new Kleistad_Regelingen();
+				$regelingen                   = new Kleistad_Regelingen();
 				$regelingen->delete_and_save( $gebruiker_id, $oven_id );
 			}
 			$message = sprintf( 'Aantal verwijderd: %d', count( $id ) );
@@ -523,16 +523,16 @@ class Kleistad_Admin {
 	public function regelingen_form_page_handler() {
 
 		$message = '';
-		$notice = '';
+		$notice  = '';
 
 		// this is default $item which will be used for new records.
 		$default = [
-			'id' => '',
-			'gebruiker_id' => 0,
-			'oven_id' => 0,
-			'oven_naam' => '',
+			'id'             => '',
+			'gebruiker_id'   => 0,
+			'oven_id'        => 0,
+			'oven_naam'      => '',
 			'gebruiker_naam' => '',
-			'kosten' => 0,
+			'kosten'         => 0,
 		];
 
 		// here we are verifying does this request is post back and have correct nonce.
@@ -544,7 +544,7 @@ class Kleistad_Admin {
 			$item_valid = $this->validate_regeling( $item );
 			if ( true === $item_valid ) {
 				$regelingen = new Kleistad_Regelingen();
-				$result = $regelingen->set_and_save( $item['gebruiker_id'], $item['oven_id'], $item['kosten'] );
+				$result     = $regelingen->set_and_save( $item['gebruiker_id'], $item['oven_id'], $item['kosten'] );
 				if ( '' === $item['id'] ) {
 					if ( $result ) {
 						$message = 'De regeling is bewaard';
@@ -558,10 +558,10 @@ class Kleistad_Admin {
 						$notice = 'Er was een probleem met het wijzigen van gegevens';
 					}
 				}
-				$oven = new Kleistad_Oven( $item['oven_id'] );
-				$gebruiker = get_userdata( $item['gebruiker_id'] );
+				$oven                   = new Kleistad_Oven( $item['oven_id'] );
+				$gebruiker              = get_userdata( $item['gebruiker_id'] );
 				$item['gebruiker_naam'] = $gebruiker->display_name;
-				$item['oven_naam'] = $oven->naam;
+				$item['oven_naam']      = $oven->naam;
 			} else {
 				// if $item_valid not true it contains error message(s).
 				$notice = $item_valid;
@@ -571,18 +571,18 @@ class Kleistad_Admin {
 			$item = $default;
 			if ( isset( $_REQUEST['id'] ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d %d' );
-				$regelingen = new Kleistad_Regelingen();
-				$gebruiker_regeling = $regelingen->get( $gebruiker_id, $oven_id );
+				$regelingen                   = new Kleistad_Regelingen();
+				$gebruiker_regeling           = $regelingen->get( $gebruiker_id, $oven_id );
 
 				$gebruiker = get_userdata( $gebruiker_id );
-				$oven = new Kleistad_Oven( $oven_id );
-				$item = [
-					'id' => $_REQUEST['id'],
-					'gebruiker_id' => $gebruiker_id,
+				$oven      = new Kleistad_Oven( $oven_id );
+				$item      = [
+					'id'             => $_REQUEST['id'],
+					'gebruiker_id'   => $gebruiker_id,
 					'gebruiker_naam' => $gebruiker->display_name,
-					'oven_id' => $oven_id,
-					'oven_naam' => $oven->naam,
-					'kosten' => $gebruiker_regeling,
+					'oven_id'        => $oven_id,
+					'oven_naam'      => $oven->naam,
+					'kosten'         => $gebruiker_regeling,
 				];
 			}
 		}
@@ -600,12 +600,12 @@ class Kleistad_Admin {
 	public function regelingen_form_meta_box_handler( $item ) {
 		$gebruikers = get_users(
 			[
-				'fields' => [ 'id', 'display_name' ],
+				'fields'  => [ 'id', 'display_name' ],
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$ovenstore = new Kleistad_Ovens();
-		$ovens = $ovenstore->get();
+		$ovenstore  = new Kleistad_Ovens();
+		$ovens      = $ovenstore->get();
 
 		require 'partials/kleistad-admin-regelingen-form-meta-box.php';
 	}
@@ -661,12 +661,12 @@ class Kleistad_Admin {
 	public function stooksaldo_form_page_handler() {
 
 		$message = '';
-		$notice = '';
+		$notice  = '';
 
 		$default = [
-			'id' => 0,
+			'id'    => 0,
 			'saldo' => 0,
-			'naam' => '',
+			'naam'  => '',
 		];
 
 		// here we are verifying does this request is post back and have correct nonce.
@@ -678,9 +678,9 @@ class Kleistad_Admin {
 			$item_valid = $this->validate_stooksaldo( $item );
 
 			if ( true === $item_valid ) {
-				$saldo = new Kleistad_Saldo( $item['id'] );
+				$saldo         = new Kleistad_Saldo( $item['id'] );
 				$saldo->bedrag = $item['saldo'];
-				$beheerder = wp_get_current_user();
+				$beheerder     = wp_get_current_user();
 				$saldo->save( 'correctie door ' . $beheerder->display_name );
 			} else {
 				// if $item_valid not true it contains error message(s).
@@ -692,14 +692,14 @@ class Kleistad_Admin {
 			if ( isset( $_REQUEST['id'] ) ) {
 				$gebruiker = get_userdata( $_REQUEST['id'] );
 				if ( ! $gebruiker ) {
-					$item = $default;
+					$item   = $default;
 					$notice = 'De gebruiker is niet gevonden';
 				}
-				$item = [
-					'id' => $_REQUEST['id'],
+				$item          = [
+					'id'   => $_REQUEST['id'],
 					'naam' => $gebruiker->display_name,
 				];
-				$saldo = new Kleistad_saldo( $item['id'] );
+				$saldo         = new Kleistad_saldo( $item['id'] );
 				$item['saldo'] = $saldo->bedrag;
 			}
 		}

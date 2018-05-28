@@ -28,8 +28,8 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
-		$gebruiker_id    = get_current_user_id();
-		$data            = [
+		$gebruiker_id = get_current_user_id();
+		$data         = [
 			'gebruiker_id' => $gebruiker_id,
 		];
 		return true;
@@ -45,12 +45,12 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 	 * @since   4.0.87
 	 */
 	public function validate( &$data ) {
-		$vanaf_datum     = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
-		$tot_datum       = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
-		$gebruiker_id    = filter_input( INPUT_POST, 'kleistad_gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
-		$data            = [
-			'vanaf_datum' => $vanaf_datum,
-			'tot_datum' => $tot_datum,
+		$vanaf_datum  = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
+		$tot_datum    = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
+		$gebruiker_id = filter_input( INPUT_POST, 'kleistad_gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
+		$data         = [
+			'vanaf_datum'  => $vanaf_datum,
+			'tot_datum'    => $tot_datum,
 			'gebruiker_id' => $gebruiker_id,
 		];
 		return true;
@@ -70,15 +70,15 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 
 		$gebruiker = get_userdata( $data['gebruiker_id'] );
 
-		$upload_dir  = wp_upload_dir();
-		$bijlage     = $upload_dir['basedir'] . '/stookbestand_' . date( 'Y_m_d' ) . '.csv';
-		$f           = fopen( $bijlage, 'w' );
+		$upload_dir = wp_upload_dir();
+		$bijlage    = $upload_dir['basedir'] . '/stookbestand_' . date( 'Y_m_d' ) . '.csv';
+		$f          = fopen( $bijlage, 'w' );
 
-		$oven_store          = new Kleistad_Ovens();
-		$ovens               = $oven_store->get();
-		$reservering_store   = new Kleistad_Reserveringen();
-		$reserveringen       = $reservering_store->get();
-		$regeling_store      = new Kleistad_Regelingen();
+		$oven_store        = new Kleistad_Ovens();
+		$ovens             = $oven_store->get();
+		$reservering_store = new Kleistad_Reserveringen();
+		$reserveringen     = $reservering_store->get();
+		$regeling_store    = new Kleistad_Regelingen();
 
 		$medestokers = [];
 		foreach ( $reserveringen as $reservering ) {
@@ -136,7 +136,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 
 			$totaal = 0;
 			foreach ( $medestokers as $id => $medestoker ) {
-				$kosten = 0;
+				$kosten       = 0;
 				$kosten_tonen = false;
 				foreach ( $reservering->verdeling as $stookdeel ) {
 					if ( $stookdeel['id'] == $id ) { // WPCS: loose comparison ok.
@@ -144,9 +144,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 							$kosten += $stookdeel['prijs'];
 						} else { // Voorlopige berekening.
 							$regeling = $regeling_store->get( $id, $reservering->oven_id );
-							$kosten += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
+							$kosten  += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
 						}
-						$totaal += $kosten;
+						$totaal      += $kosten;
 						$kosten_tonen = true;
 					}
 				}

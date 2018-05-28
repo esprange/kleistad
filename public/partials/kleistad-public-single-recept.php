@@ -16,13 +16,13 @@ get_header(); ?>
 		while ( have_posts() ) :
 			the_post();
 
-			$glazuur_parent = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
-			$kleur_parent = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
+			$glazuur_parent   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
+			$kleur_parent     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
 			$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
-			$glazuur_naam = '';
-			$kleur_naam = '';
-			$uiterlijk_naam = '';
-			$terms = get_the_terms( get_the_ID(), 'kleistad_recept_cat' );
+			$glazuur_naam     = '';
+			$kleur_naam       = '';
+			$uiterlijk_naam   = '';
+			$terms            = get_the_terms( get_the_ID(), 'kleistad_recept_cat' );
 			foreach ( $terms as $term ) {
 				if ( intval( $term->parent ) === intval( $glazuur_parent->term_id ) ) {
 					$glazuur_naam = $term->name;

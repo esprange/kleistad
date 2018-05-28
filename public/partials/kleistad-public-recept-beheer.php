@@ -58,63 +58,63 @@ else :
 			$glazuur = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
 			wp_dropdown_categories(
 				[
-					'orderby' => 'name',
-					'hide_empty' => 0,
-					'show_count' => 0,
-					'show_option_none' => 'Kies soort glazuur',
+					'orderby'           => 'name',
+					'hide_empty'        => 0,
+					'show_count'        => 0,
+					'show_option_none'  => 'Kies soort glazuur',
 					'option_none_value' => '',
-					'class' => 'cat',
-					'taxonomy' => 'kleistad_recept_cat',
-					'hierarchical' => 1,
-					'id' => 'kleistad_glazuur',
-					'name' => 'glazuur',
-					'selected' => $data['recept']['glazuur'],
-					'child_of' => $glazuur->term_id,
-					'tabindex' => 2,
+					'class'             => 'cat',
+					'taxonomy'          => 'kleistad_recept_cat',
+					'hierarchical'      => 1,
+					'id'                => 'kleistad_glazuur',
+					'name'              => 'glazuur',
+					'selected'          => $data['recept']['glazuur'],
+					'child_of'          => $glazuur->term_id,
+					'tabindex'          => 2,
 				]
 			);
 			?>
 			</div>
 			<div class="kleistad_col_3">
 			<?php
-			$kleur = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
+			$kleur        = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
 			$cat_dropdown = wp_dropdown_categories(
 				[
-					'orderby' => 'name',
-					'hide_empty' => 0,
-					'show_count' => 0,
-					'show_option_none' => 'Kies kleur',
+					'orderby'           => 'name',
+					'hide_empty'        => 0,
+					'show_count'        => 0,
+					'show_option_none'  => 'Kies kleur',
 					'option_none_value' => '',
-					'class' => 'cat',
-					'taxonomy' => 'kleistad_recept_cat',
-					'hierarchical' => 1,
-					'id' => 'kleistad_kleur',
-					'name' => 'kleur',
-					'selected' => $data['recept']['kleur'],
-					'child_of' => $kleur->term_id,
-					'tabindex' => 3,
+					'class'             => 'cat',
+					'taxonomy'          => 'kleistad_recept_cat',
+					'hierarchical'      => 1,
+					'id'                => 'kleistad_kleur',
+					'name'              => 'kleur',
+					'selected'          => $data['recept']['kleur'],
+					'child_of'          => $kleur->term_id,
+					'tabindex'          => 3,
 				]
 			);
 			?>
 			</div>
 			<div class="kleistad_col_3">
 			<?php
-			$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
+			$uiterlijk    = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
 			wp_dropdown_categories(
 				[
-					'orderby' => 'name',
-					'hide_empty' => 0,
-					'show_count' => 0,
-					'show_option_none' => 'Kies uiterlijk',
+					'orderby'           => 'name',
+					'hide_empty'        => 0,
+					'show_count'        => 0,
+					'show_option_none'  => 'Kies uiterlijk',
 					'option_none_value' => '',
-					'class' => 'cat',
-					'taxonomy' => 'kleistad_recept_cat',
-					'hierarchical' => 1,
-					'id' => 'kleistad_uiterlijk',
-					'name' => 'uiterlijk',
-					'selected' => $data['recept']['uiterlijk'],
-					'child_of' => $uiterlijk->term_id,
-					'tabindex' => 4,
+					'class'             => 'cat',
+					'taxonomy'          => 'kleistad_recept_cat',
+					'hierarchical'      => 1,
+					'id'                => 'kleistad_uiterlijk',
+					'name'              => 'uiterlijk',
+					'selected'          => $data['recept']['uiterlijk'],
+					'child_of'          => $uiterlijk->term_id,
+					'tabindex'          => 4,
 				]
 			);
 			?>
@@ -165,7 +165,7 @@ else :
 		<datalist id="kleistad_recept_grondstof">
 			<?php
 			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
-			$terms = get_terms(
+			$terms            = get_terms(
 				[
 					'taxonomy'   => 'kleistad_recept_cat',
 					'hide_empty' => false,

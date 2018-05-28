@@ -35,9 +35,9 @@ function truncate_string( $string, $width ) {
  * @return string           Html tekst.
  */
 function filter( $titel, $naam, $termen ) {
-	$html = '';
+	$html  = '';
 	$count = count( $termen );
-	$toon = 4;
+	$toon  = 4;
 	if ( 0 < $count ) {
 		$html .= "<h3>$titel</h3><ul>";
 		$index = 0;

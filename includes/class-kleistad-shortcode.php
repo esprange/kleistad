@@ -43,8 +43,8 @@ abstract class Kleistad_Shortcode {
 	 */
 	public function __construct( $plugin_name, $atts ) {
 		$this->plugin_name = $plugin_name;
-		$this->atts = $atts;
-		$this->options = get_option( 'kleistad-opties' );
+		$this->atts        = $atts;
+		$this->options     = get_option( 'kleistad-opties' );
 		wp_localize_jquery_ui_datepicker();
 	}
 

@@ -36,13 +36,13 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 */
 	public function __construct( $oven_id = null ) {
 		global $wpdb;
-		$default_data    = [
-			'id'                 => null,
-			'naam'               => '',
-			'kosten'             => 0,
-			'beschikbaarheid'    => wp_json_encode( [] ),
+		$default_data = [
+			'id'              => null,
+			'naam'            => '',
+			'kosten'          => 0,
+			'beschikbaarheid' => wp_json_encode( [] ),
 		];
-		$this->_data     = $default_data;
+		$this->_data  = $default_data;
 		if ( ! is_null( $oven_id ) ) {
 			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_ovens WHERE id = %d", $oven_id ), ARRAY_A ); // WPCS: unprepared SQL OK.
 			if ( ! is_null( $result ) ) {
@@ -92,10 +92,10 @@ class Kleistad_Oven extends Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'beschikbaarheid':
-				$this->_data[ $attribuut ]     = wp_json_encode( $waarde );
+				$this->_data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
 			default:
-				$this->_data[ $attribuut ]     = $waarde;
+				$this->_data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -174,22 +174,22 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 * @return null.
 	 */
 	public function __construct( $oven_id ) {
-		$default_data    = [
-			'id'             => null,
-			'oven_id'        => $oven_id,
-			'jaar'           => 0,
-			'maand'          => 0,
-			'dag'            => 0,
-			'gebruiker_id'   => 0,
-			'temperatuur'    => 0,
-			'soortstook'     => '',
-			'programma'      => 0,
-			'gemeld'         => 0,
-			'verwerkt'       => 0,
-			'verdeling'      => wp_json_encode( [] ),
-			'opmerking'      => '',
+		$default_data = [
+			'id'           => null,
+			'oven_id'      => $oven_id,
+			'jaar'         => 0,
+			'maand'        => 0,
+			'dag'          => 0,
+			'gebruiker_id' => 0,
+			'temperatuur'  => 0,
+			'soortstook'   => '',
+			'programma'    => 0,
+			'gemeld'       => 0,
+			'verwerkt'     => 0,
+			'verdeling'    => wp_json_encode( [] ),
+			'opmerking'    => '',
 		];
-		$this->_data     = $default_data;
+		$this->_data  = $default_data;
 	}
 
 	/**
@@ -251,24 +251,24 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				} else {
 					return [
 						[
-							'id'     => $this->_data['gebruiker_id'],
-							'perc'   => 100,
+							'id'   => $this->_data['gebruiker_id'],
+							'perc' => 100,
 						],
 						[
-							'id'     => 0,
-							'perc'   => 0,
+							'id'   => 0,
+							'perc' => 0,
 						],
 						[
-							'id'     => 0,
-							'perc'   => 0,
+							'id'   => 0,
+							'perc' => 0,
 						],
 						[
-							'id'     => 0,
-							'perc'   => 0,
+							'id'   => 0,
+							'perc' => 0,
 						],
 						[
-							'id'     => 0,
-							'perc'   => 0,
+							'id'   => 0,
+							'perc' => 0,
 						],
 					];
 				}
@@ -306,16 +306,16 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				}
 				break;
 			case 'datum':
-				$this->_data['jaar']         = date( 'Y', $waarde );
-				$this->_data['maand']        = date( 'm', $waarde );
-				$this->_data['dag']          = date( 'd', $waarde );
+				$this->_data['jaar']  = date( 'Y', $waarde );
+				$this->_data['maand'] = date( 'm', $waarde );
+				$this->_data['dag']   = date( 'd', $waarde );
 				break;
 			case 'gemeld':
 			case 'verwerkt':
-				$this->_data[ $attribuut ]     = $waarde ? 1 : 0;
+				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:
-				$this->_data[ $attribuut ]     = $waarde;
+				$this->_data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -418,7 +418,7 @@ class Kleistad_Regelingen {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$regelingen = get_user_meta( $gebruiker->ID, 'kleistad_regeling', true );
+			$regelingen                    = get_user_meta( $gebruiker->ID, 'kleistad_regeling', true );
 			$this->_data[ $gebruiker->ID ] = $regelingen;
 		}
 	}
@@ -509,8 +509,8 @@ class Kleistad_Saldo {
 	 * @param string $tekst Toe te voegen tekst aan log.
 	 */
 	private static function write_log( $tekst ) {
-		$upload_dir      = wp_upload_dir();
-		$f               = fopen( $upload_dir['basedir'] . '/stooksaldo.log', 'a' );
+		$upload_dir = wp_upload_dir();
+		$f          = fopen( $upload_dir['basedir'] . '/stooksaldo.log', 'a' );
 		fwrite( $f, date( 'c' ) . " : $tekst\n" );
 		fclose( $f );
 	}
@@ -540,8 +540,8 @@ class Kleistad_Saldo {
 	 * @param int $gebruiker_id De gebruiker waarvoor het saldo wordt gemaakt.
 	 */
 	public function __construct( $gebruiker_id ) {
-		$this->_gebruiker_id   = $gebruiker_id;
-		$this->bedrag = $this->huidig_saldo();
+		$this->_gebruiker_id = $gebruiker_id;
+		$this->bedrag        = $this->huidig_saldo();
 	}
 
 	/**
@@ -590,7 +590,7 @@ class Kleistad_Saldo {
 	 */
 	public function betalen( $bericht, $bedrag ) {
 		$betaling = new Kleistad_Betalen();
-		$code = "S$this->_gebruiker_id-" . strftime( '%y%m%d' );
+		$code     = "S$this->_gebruiker_id-" . strftime( '%y%m%d' );
 		$betaling->order(
 			$this->_gebruiker_id,
 			$code,

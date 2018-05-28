@@ -33,7 +33,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 		$data['driemaand_datum'] = mktime( 0, 0, 0, date( 'n', $abonnement->start_datum ) + 3, date( 'j', $abonnement->start_datum ), date( 'Y', $abonnement->start_datum ) );
 		$data['input']['actief'] = ( ! $abonnement->geannuleerd ) && ( ! $abonnement->gepauzeerd );
 		$data['input']['soort']  = $abonnement->soort;
-		$data['input']['dag']  = $abonnement->dag;
+		$data['input']['dag']    = $abonnement->dag;
 		return true;
 	}
 
@@ -87,7 +87,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 		}
 
 		$herstart_maand = mktime( 0, 0, 0, date( 'n' ) + 1 + intval( $data['input']['pauze_maanden'] ), 1, date( 'Y' ) );
-		$abonnement = new Kleistad_Abonnement( $data['input']['abonnee_id'] );
+		$abonnement     = new Kleistad_Abonnement( $data['input']['abonnee_id'] );
 
 		switch ( $data['input']['actie'] ) {
 

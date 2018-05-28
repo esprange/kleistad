@@ -30,13 +30,13 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	 * Test creation and modification of a gebruiker.
 	 */
 	public function test_gebruiker() {
-		$gebruiker1 = new Kleistad_Gebruiker( $this->user_id );
-		$gebruiker1->telnr = 'telnr';
-		$gebruiker1->straat = 'straat';
-		$gebruiker1->huisnr = 'huisnr';
-		$gebruiker1->pcode = 'pcode';
-		$gebruiker1->plaats = 'plaats';
-		$gebruiker1->voornaam = 'voornaam';
+		$gebruiker1             = new Kleistad_Gebruiker( $this->user_id );
+		$gebruiker1->telnr      = 'telnr';
+		$gebruiker1->straat     = 'straat';
+		$gebruiker1->huisnr     = 'huisnr';
+		$gebruiker1->pcode      = 'pcode';
+		$gebruiker1->plaats     = 'plaats';
+		$gebruiker1->voornaam   = 'voornaam';
 		$gebruiker1->achternaam = 'achternaam';
 		$gebruiker1->save();
 
@@ -54,7 +54,7 @@ class KleistadGebruikerTest extends WP_UnitTestCase {
 	 * Test creation and modification of a gebruiker.
 	 */
 	public function test_gebruikers() {
-		$gebruikers_store = new Kleistad_Gebruikers();
+		$gebruikers_store      = new Kleistad_Gebruikers();
 		$gebruikers_from_store = $gebruikers_store->get();
 
 		$this->assertGreaterThan( 0, $gebruikers_store->count(), 'gebruikers count not greater than 0' );

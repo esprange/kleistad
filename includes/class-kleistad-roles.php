@@ -21,7 +21,7 @@ class Kleistad_Roles {
 	/**
    * Custom capabilities
    */
-	const OVERRIDE = 'kleistad_reserveer_voor_ander';
+	const OVERRIDE  = 'kleistad_reserveer_voor_ander';
 	const RESERVEER = 'kleistad_reservering_aanmaken';
 
 	/**

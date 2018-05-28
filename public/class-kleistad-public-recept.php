@@ -38,13 +38,13 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	 * @return \WP_REST_response
 	 */
 	public static function callback_recept( WP_REST_Request $request ) {
-		$glazuur_parent = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
-		$kleur_parent = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
+		$glazuur_parent   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
+		$kleur_parent     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
 		$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
 
-		$zoek = $request->get_param( 'zoek' );
+		$zoek  = $request->get_param( 'zoek' );
 		$query = [
-			'post_type' => 'kleistad_recept',
+			'post_type'   => 'kleistad_recept',
 			'numberposts' => '-1',
 			'post_status' => [
 				'publish',
@@ -53,20 +53,20 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 		switch ( $zoek['sorteer'] ) {
 			case 'nieuwste':
 				$query['orderby'] = 'date';
-				$query['order'] = 'DESC';
+				$query['order']   = 'DESC';
 				break;
 			case 'waardering':
-				$query['orderby'] = 'meta_key';
-				$query['order'] = 'DESC';
+				$query['orderby']    = 'meta_key';
+				$query['order']      = 'DESC';
 				$query['meta_query'] = [
 					'relation' => 'OR',
 					[
-						'key' => 'ratings_average',
+						'key'     => 'ratings_average',
 						'compare' => 'EXISTS',
 					],
 					[
-						'key' => 'ratings_average',
-						'value' => '',
+						'key'     => 'ratings_average',
+						'value'   => '',
 						'compare' => 'NOT EXISTS',
 					],
 				];
@@ -74,15 +74,15 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 			case 'titel':
 			default:
 				$query['orderby'] = 'title';
-				$query['order'] = 'ASC';
+				$query['order']   = 'ASC';
 				break;
 		}
 		if ( isset( $zoek['terms'] ) ) {
-			$query['tax_query']  = [
+			$query['tax_query'] = [
 				[
 					'taxonomy' => 'kleistad_recept_cat',
-					'field' => 'id',
-					'terms' => $zoek['terms'],
+					'field'    => 'id',
+					'terms'    => $zoek['terms'],
 					'operator' => 'AND',
 				],
 			];
@@ -95,9 +95,9 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 		}
 		$recepten = get_posts( $query );
 
-		$object_ids = wp_list_pluck( $recepten, 'ID' );
-		$auteur_ids = array_unique( wp_list_pluck( $recepten, 'post_author' ) );
-		$auteurs = get_users(
+		$object_ids     = wp_list_pluck( $recepten, 'ID' );
+		$auteur_ids     = array_unique( wp_list_pluck( $recepten, 'post_author' ) );
+		$auteurs        = get_users(
 			[
 				'include' => $auteur_ids,
 				'fields'  => [
@@ -110,17 +110,17 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 
 		$data['recepten'] = [];
 		foreach ( $recepten as $recept ) {
-			$content = json_decode( $recept->post_content, true );
+			$content            = json_decode( $recept->post_content, true );
 			$data['recepten'][] = [
-				'id' => $recept->ID,
+				'id'    => $recept->ID,
 				'titel' => $recept->post_title,
-				'foto' => $content['foto'],
+				'foto'  => $content['foto'],
 			];
 		}
 
-		$data['glazuur'] = get_terms(
+		$data['glazuur']   = get_terms(
 			[
-				'taxonomy' => 'kleistad_recept_cat',
+				'taxonomy'   => 'kleistad_recept_cat',
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
@@ -128,9 +128,9 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				'fields'     => 'id=>name',
 			]
 		);
-		$data['kleur'] = get_terms(
+		$data['kleur']     = get_terms(
 			[
-				'taxonomy' => 'kleistad_recept_cat',
+				'taxonomy'   => 'kleistad_recept_cat',
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
@@ -140,7 +140,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 		);
 		$data['uiterlijk'] = get_terms(
 			[
-				'taxonomy' => 'kleistad_recept_cat',
+				'taxonomy'   => 'kleistad_recept_cat',
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,

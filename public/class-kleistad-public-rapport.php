@@ -29,15 +29,15 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 	 */
 	public function prepare( &$data = null ) {
 		$huidige_gebruiker = wp_get_current_user();
-		$naam   = $huidige_gebruiker->display_name;
-		$saldo  = new Kleistad_Saldo( $huidige_gebruiker->ID );
-		$items  = [];
+		$naam              = $huidige_gebruiker->display_name;
+		$saldo             = new Kleistad_Saldo( $huidige_gebruiker->ID );
+		$items             = [];
 
-		$oven_store = new Kleistad_Ovens();
-		$ovens = $oven_store->get();
+		$oven_store        = new Kleistad_Ovens();
+		$ovens             = $oven_store->get();
 		$reservering_store = new Kleistad_Reserveringen();
-		$reserveringen = $reservering_store->get();
-		$regeling_store = new Kleistad_Regelingen();
+		$reserveringen     = $reservering_store->get();
+		$regeling_store    = new Kleistad_Regelingen();
 
 		foreach ( $reserveringen as $reservering ) {
 			foreach ( $reservering->verdeling as $stookdeel ) {
@@ -46,19 +46,19 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 						$kosten = $stookdeel['prijs'];
 					} else { // Voorlopige berekening.
 						$regeling = $regeling_store->get( $huidige_gebruiker->ID, $reservering->oven_id );
-						$kosten = round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
+						$kosten   = round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
 					}
-					$stoker = get_userdata( $reservering->gebruiker_id );
+					$stoker  = get_userdata( $reservering->gebruiker_id );
 					$items[] = [
-						'datum' => $reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
-						'sdatum' => $reservering->datum,
-						'oven' => $ovens[ $reservering->oven_id ]->naam,
-						'stoker' => ! $stoker ? 'onbekend' : $stoker->display_name,
-						'stook' => $reservering->soortstook,
-						'temp' => $reservering->temperatuur > 0 ? $reservering->temperatuur : '',
-						'prog' => $reservering->programma > 0 ? $reservering->programma : '',
-						'perc' => $stookdeel['perc'],
-						'kosten' => number_format( $kosten, 2, ',', '' ),
+						'datum'     => $reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
+						'sdatum'    => $reservering->datum,
+						'oven'      => $ovens[ $reservering->oven_id ]->naam,
+						'stoker'    => ! $stoker ? 'onbekend' : $stoker->display_name,
+						'stook'     => $reservering->soortstook,
+						'temp'      => $reservering->temperatuur > 0 ? $reservering->temperatuur : '',
+						'prog'      => $reservering->programma > 0 ? $reservering->programma : '',
+						'perc'      => $stookdeel['perc'],
+						'kosten'    => number_format( $kosten, 2, ',', '' ),
 						'voorlopig' => $reservering->verwerkt ? '' : 'genericon genericon-checkmark',
 					];
 				}

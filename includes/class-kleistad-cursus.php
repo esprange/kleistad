@@ -30,8 +30,8 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 * @return int nog beschikbare ruimte.
 	 */
 	private function ruimte() {
-		$inschrijving_store  = new Kleistad_Inschrijvingen();
-		$inschrijvingen      = $inschrijving_store->get();
+		$inschrijving_store = new Kleistad_Inschrijvingen();
+		$inschrijvingen     = $inschrijving_store->get();
 
 		$aantal = $this->maximum;
 
@@ -62,25 +62,25 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 */
 	public function __construct( $cursus_id = null ) {
 		global $wpdb;
-		$options = get_option( 'kleistad-opties' );
+		$options      = get_option( 'kleistad-opties' );
 		$default_data = [
-			'id' => null,
-			'naam' => 'nog te definiëren cursus',
-			'start_datum' => '',
-			'eind_datum' => '',
-			'start_tijd' => '',
-			'eind_tijd' => '',
-			'docent' => '',
-			'technieken' => wp_json_encode( [] ),
-			'vervallen' => 0,
-			'vol' => 0,
-			'techniekkeuze' => 0,
+			'id'              => null,
+			'naam'            => 'nog te definiëren cursus',
+			'start_datum'     => '',
+			'eind_datum'      => '',
+			'start_tijd'      => '',
+			'eind_tijd'       => '',
+			'docent'          => '',
+			'technieken'      => wp_json_encode( [] ),
+			'vervallen'       => 0,
+			'vol'             => 0,
+			'techniekkeuze'   => 0,
 			'inschrijfkosten' => $options['cursusinschrijfprijs'],
-			'cursuskosten' => $options['cursusprijs'],
-			'inschrijfslug' => 'kleistad_email_cursus_aanvraag',
-			'indelingslug' => 'kleistad_email_cursus_ingedeeld',
-			'maximum' => 12,
-			'meer' => 0,
+			'cursuskosten'    => $options['cursusprijs'],
+			'inschrijfslug'   => 'kleistad_email_cursus_aanvraag',
+			'indelingslug'    => 'kleistad_email_cursus_ingedeeld',
+			'maximum'         => 12,
+			'meer'            => 0,
 		];
 		if ( is_null( $cursus_id ) ) {
 			$this->_data = $default_data;
@@ -267,9 +267,9 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @param int $cursus_id id of the cursus.
 	 */
 	public function __construct( $cursist_id, $cursus_id ) {
-		$this->_cursus = new Kleistad_Cursus( $cursus_id );
-		$this->_cursist_id = $cursist_id;
-		$this->_default_data['code'] = "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $this->_cursus->start_datum );
+		$this->_cursus                = new Kleistad_Cursus( $cursus_id );
+		$this->_cursist_id            = $cursist_id;
+		$this->_default_data['code']  = "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $this->_cursus->start_datum );
 		$this->_default_data['datum'] = date( 'Y-m-d' );
 
 		$inschrijvingen = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
@@ -343,7 +343,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @since 4.0.87
 	 */
 	public function save() {
-		$inschrijvingen = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
+		$inschrijvingen                       = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
 		$inschrijvingen[ $this->_cursus->id ] = $this->_data;
 		update_user_meta( $this->_cursist_id, 'kleistad_cursus', $inschrijvingen );
 	}
@@ -364,8 +364,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
-		$cursist   = get_userdata( $this->_cursist_id );
-		$to        = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
+		$cursist = get_userdata( $this->_cursist_id );
+		$to      = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
 
 		switch ( $type ) {
 			case 'inschrijving':
@@ -421,7 +421,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 */
 	public function betalen( $bericht, $inschrijving ) {
 
-		$betaling = new Kleistad_Betalen();
+		$betaling   = new Kleistad_Betalen();
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
 		if ( $inschrijving && 0 < $this->_cursus->inschrijfkosten ) {
 			$betaling->order(

@@ -29,7 +29,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	 */
 	public function prepare( &$data = null ) {
 		$gebruiker_id = get_current_user_id();
-		$saldo = new Kleistad_Saldo( $gebruiker_id );
+		$saldo        = new Kleistad_Saldo( $gebruiker_id );
 
 		$data = [
 			'gebruiker_id' => $gebruiker_id,
@@ -48,7 +48,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	 */
 	public function validate( &$data ) {
 
-		$input = filter_input_array(
+		$input         = filter_input_array(
 			INPUT_POST, [
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
 				'bedrag'       => FILTER_SANITIZE_NUMBER_FLOAT,
