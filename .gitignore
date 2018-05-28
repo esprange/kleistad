@@ -78,3 +78,6 @@ $RECYCLE.BIN/
 
 # Build files
 *.zip
+
+# Composer lock file
+*.lock
