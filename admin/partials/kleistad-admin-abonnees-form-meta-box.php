@@ -31,7 +31,7 @@
 			</td>
 		</tr>
 		<tr class="form-field">
-			<th  scope="row">
+			<th scope="row">
 				<label for="soort">Soort</label>
 			</th>
 			<td>
@@ -43,7 +43,7 @@
 			</td>
 		</tr>
 		<tr class="form-field">
-			<th  scope="row">
+			<th scope="row">
 				<label for="dag">Dag</label>
 			</th>
 			<td>
@@ -57,7 +57,7 @@
 			</td>
 		</tr>
 		<tr class="form-field">
-			<th  scope="row">
+			<th scope="row">
 				<label for="gestart">Starten</label>
 			</th>
 			<td>
@@ -67,7 +67,7 @@
 			</td>
 		</tr>
 		<tr class="form-field">
-			<th  scope="row">
+			<th scope="row">
 				<label for="geannuleerd">Annuleren</label>
 			</th>
 			<td>
@@ -77,7 +77,7 @@
 			</td>
 		</tr>
 		<tr class="form-field">
-			<th  scope="row">
+			<th scope="row">
 				<label for="gepauzeerd">Pauzeren</label>
 			</th>
 			<td>

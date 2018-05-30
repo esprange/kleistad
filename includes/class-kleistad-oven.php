@@ -119,15 +119,15 @@ class Kleistad_Oven extends Kleistad_Entity {
 }
 
 /**
-   * Collection of Oven
-   *
-   * Collection of Oven, loaded from the database.
-   *
-   * @since 4.0.87
-   *
-   * @see class Kleistad_Oven
-   * @link URL
-    */
+ * Collection of Oven
+ *
+ * Collection of Oven, loaded from the database.
+ *
+ * @since 4.0.87
+ *
+ * @see class Kleistad_Oven
+ * @link URL
+ */
 class Kleistad_Ovens extends Kleistad_EntityStore {
 
 	/**
@@ -355,14 +355,14 @@ class Kleistad_Reservering extends Kleistad_Entity {
 }
 
 /**
-   * Collection of Reservering
-   *
-   * Collection of Oven, loaded from the database.
-   *
-   * @since 4.0.87
-   *
-   * @see class Kleistad_Reservering
-   * @link URL
+ * Collection of Reservering
+ *
+ * Collection of Oven, loaded from the database.
+ *
+ * @since 4.0.87
+ *
+ * @see class Kleistad_Reservering
+ * @link URL
  */
 class Kleistad_Reserveringen extends Kleistad_EntityStore {
 

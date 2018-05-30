@@ -468,15 +468,15 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 }
 
 /**
-   * Collection of Abonnement
-   *
-   * Collection of Abonnementen, loaded from the database.
-   *
-   * @since 4.0.87
-   *
-   * @see class Kleistad_Abonnement
-   * @link URL
-    */
+ * Collection of Abonnement
+ *
+ * Collection of Abonnementen, loaded from the database.
+ *
+ * @since 4.0.87
+ *
+ * @see class Kleistad_Abonnement
+ * @link URL
+ */
 class Kleistad_Abonnementen extends Kleistad_EntityStore {
 
 	/**
@@ -678,15 +678,15 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 }
 
 /**
-   * Collection of Dagdelenkaart
-   *
-   * Collection of Dagdelenkaarten, loaded from the database.
-   *
-   * @since 4.3.0
-   *
-   * @see class Kleistad_Dagdelenkaart
-   * @link URL
-    */
+ * Collection of Dagdelenkaart
+ *
+ * Collection of Dagdelenkaarten, loaded from the database.
+ *
+ * @since 4.3.0
+ *
+ * @see class Kleistad_Dagdelenkaart
+ * @link URL
+ */
 class Kleistad_Dagdelenkaarten extends Kleistad_EntityStore {
 
 	/**

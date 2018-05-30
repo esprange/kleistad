@@ -176,15 +176,15 @@ class Kleistad_Cursus extends Kleistad_Entity {
 }
 
 /**
-   * Collection of Cursus
-   *
-   * Collection of Cursus, loaded from the database.
-   *
-   * @since 4.0.87
-   *
-   * @see class Kleistad_Cursus
-   * @link URL
-    */
+ * Collection of Cursus
+ *
+ * Collection of Cursus, loaded from the database.
+ *
+ * @since 4.0.87
+ *
+ * @see class Kleistad_Cursus
+ * @link URL
+ */
 class Kleistad_Cursussen extends Kleistad_EntityStore {
 
 	/**
@@ -364,7 +364,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		$cursist   = get_userdata( $this->_cursist_id );
 		$to        = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
 		$onderwerp = ucfirst( $type ) . ' cursus';
-		
+
 		switch ( $type ) {
 			case 'inschrijving':
 				$slug = $this->_cursus->inschrijfslug;
@@ -380,11 +380,11 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				break;
 			case 'betaling_ideal':
 				$onderwerp = 'Betaling cursus';
-				$slug = 'kleistad_email_cursus_betaling_ideal';
+				$slug      = 'kleistad_email_cursus_betaling_ideal';
 				break;
 			case 'betaling_bank':
 				$onderwerp = 'Betaling cursus';
-				$slug = 'kleistad_email_cursus_betaling_bank';
+				$slug      = 'kleistad_email_cursus_betaling_bank';
 				break;
 			default:
 				$slug = '';
@@ -474,15 +474,15 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 }
 
 /**
-   * Collection of Inschrijving
-   *
-   * Collection of Inschrijvingen, loaded from the database.
-   *
-   * @since 4.0.87
-   *
-   * @see class Kleistad_Inschrijving
-   * @link URL
-    */
+ * Collection of Inschrijving
+ *
+ * Collection of Inschrijvingen, loaded from the database.
+ *
+ * @since 4.0.87
+ *
+ * @see class Kleistad_Inschrijving
+ * @link URL
+ */
 class Kleistad_Inschrijvingen extends Kleistad_EntityStore {
 
 	/**

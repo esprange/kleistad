@@ -23,7 +23,7 @@ else :
 		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 		<div class="kleistad_row">
 			<div class="kleistad_col_3 kleistad_label">
-				 <label for="kleistad_voornaam">Naam</label>
+				<label for="kleistad_voornaam">Naam</label>
 			</div>
 			<div class="kleistad_col_3">
 				<input class="kleistad_input" name="voornaam" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo esc_attr( $data['input']['voornaam'] ); ?>" />

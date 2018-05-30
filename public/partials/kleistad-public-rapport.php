@@ -35,18 +35,18 @@ else :
 	</thead>
 	<tbody>
 		<?php foreach ( $data['items'] as $item ) : ?>
-		  <tr>
-			  <td><?php echo esc_html( $item['datum'] ); ?></td>
-			  <td><?php echo esc_html( - $item['sdatum'] ); ?></td>
-			  <td><?php echo esc_html( $item['oven'] ); ?></td>
-			  <td><?php echo esc_html( $item['stoker'] ); ?></td>
-			  <td><?php echo esc_html( $item['stook'] ); ?></td>
-			  <td><?php echo esc_html( $item['temp'] ); ?></td>
-			  <td><?php echo esc_html( $item['prog'] ); ?></td>
-			  <td><?php echo esc_html( $item['perc'] ); ?></td>
-			  <td>&euro; <?php echo esc_html( $item['kosten'] ); ?></td>
-			  <td><span class="<?php echo esc_attr( $item['voorlopig'] ); ?>"></span></td>
-		  </tr>
+		<tr>
+			<td><?php echo esc_html( $item['datum'] ); ?></td>
+			<td><?php echo esc_html( - $item['sdatum'] ); ?></td>
+			<td><?php echo esc_html( $item['oven'] ); ?></td>
+			<td><?php echo esc_html( $item['stoker'] ); ?></td>
+			<td><?php echo esc_html( $item['stook'] ); ?></td>
+			<td><?php echo esc_html( $item['temp'] ); ?></td>
+			<td><?php echo esc_html( $item['prog'] ); ?></td>
+			<td><?php echo esc_html( $item['perc'] ); ?></td>
+			<td>&euro; <?php echo esc_html( $item['kosten'] ); ?></td>
+			<td><span class="<?php echo esc_attr( $item['voorlopig'] ); ?>"></span></td>
+		</tr>
 		<?php endforeach ?>
 	</tbody>
 </table>

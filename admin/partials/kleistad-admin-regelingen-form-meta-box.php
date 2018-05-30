@@ -47,7 +47,7 @@
 					foreach ( $ovens as $oven ) :
 						$selected = ( $item['oven_id'] == $oven->id ) ? 'selected' : ''; // WPCS: loose comparison ok.
 						?>
-					  <option value="<?php echo esc_attr( $oven->id ); ?>" <?php echo esc_attr( $selected ); ?> ><?php echo esc_html( $oven->naam ); ?></option>
+					<option value="<?php echo esc_attr( $oven->id ); ?>" <?php echo esc_attr( $selected ); ?> ><?php echo esc_html( $oven->naam ); ?></option>
 					<?php endforeach ?>
 				</select>
 				<?php else : ?>
@@ -63,7 +63,7 @@
 			</th>
 			<td>
 				<input id="kosten" name="kosten" type="number" style="width: 95%" value="<?php echo esc_attr( $item['kosten'] ); ?>"
-					   size="10" step="0.01" class="code" placeholder="99.99" required>
+					size="10" step="0.01" class="code" placeholder="99.99" required>
 			</td>
 		</tr>
 	</tbody>

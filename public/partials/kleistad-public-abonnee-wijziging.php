@@ -203,5 +203,4 @@ else :
 	</form>
 	<div id="kleistad_confirm" title="Abonnement wijziging">
 	</div>
-		
 <?php endif ?>

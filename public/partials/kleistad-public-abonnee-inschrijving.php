@@ -22,16 +22,16 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 			</div>
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required
-					   data-bedrag="<?php echo esc_attr( $data['bedrag_onbeperkt'] ); ?>"
-					   value="onbeperkt" <?php checked( 'onbeperkt', $data['input']['abonnement_keuze'] ); ?> />
+					data-bedrag="<?php echo esc_attr( $data['bedrag_onbeperkt'] ); ?>"
+					value="onbeperkt" <?php checked( 'onbeperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_onbeperkt" >Onbeperkt</label>
 			</div>
 			<div class="kleistad_col_1">
 			</div>
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_beperkt" type="radio" required
-					   data-bedrag="<?php echo esc_attr( $data['bedrag_beperkt'] ); ?>"
-					   value="beperkt" <?php checked( 'beperkt', $data['input']['abonnement_keuze'] ); ?> />
+					data-bedrag="<?php echo esc_attr( $data['bedrag_beperkt'] ); ?>"
+					value="beperkt" <?php checked( 'beperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_beperkt">Beperkt</label>
 			</div>
 		</div>

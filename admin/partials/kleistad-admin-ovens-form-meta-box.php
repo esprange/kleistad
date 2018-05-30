@@ -20,7 +20,7 @@
 			</th>
 			<td>
 				<input id="naam" name="naam" type="text" style="width: 95%" value="<?php echo esc_attr( $item['naam'] ); ?>"
-					   size="50" class="code" placeholder="De oven naam" required>
+					size="50" class="code" placeholder="De oven naam" required>
 			</td>
 		</tr>
 		<tr class="form-field">
@@ -29,7 +29,7 @@
 			</th>
 			<td>
 				<input id="kosten" name="kosten" type="number" style="width: 95%" value="<?php echo esc_attr( $item['kosten'] ); ?>"
-					   size="10" step="0.01" class="code" placeholder="99.99" required>
+					size="10" step="0.01" class="code" placeholder="99.99" required>
 			</td>
 		</tr>
 		<tr class="form-field">

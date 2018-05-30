@@ -85,20 +85,20 @@ class Kleistad_Betalen {
 		} else {
 			$betaling = $this->mollie->payments->create(
 				[
-					'amount'      => [
+					'amount'       => [
 						'currency' => 'EUR',
 						'value'    => number_format( $bedrag, 2, '.', '' ),
 					],
-					'description' => $beschrijving,
-					'issuer'      => ! empty( $bank ) ? $bank : null,
-					'metadata'    => [
+					'description'  => $beschrijving,
+					'issuer'       => ! empty( $bank ) ? $bank : null,
+					'metadata'     => [
 						'order_id' => $order_id,
 						'bericht'  => $bericht,
 					],
-					'method'      => \Mollie\Api\Types\PaymentMethod::IDEAL,
+					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-					'redirectUrl' => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
-					'webhookUrl'  => Kleistad_Public::base_url() . '/betaling/',
+					'redirectUrl'  => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
+					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
 				]
 			);
 		}

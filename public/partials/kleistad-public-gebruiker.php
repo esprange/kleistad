@@ -15,7 +15,7 @@
 
 	<div class="kleistad_row">
 		<div class="kleistad_col_3 kleistad_label">
-			 <label for="kleistad_voornaam">Naam</label>
+			<label for="kleistad_voornaam">Naam</label>
 		</div>
 		<div class="kleistad_col_3">
 			<input class="kleistad_input" name="FNAME" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo esc_attr( $data['input']['FNAME'] ); ?>" />
@@ -81,7 +81,7 @@
 	</div>
 	<div class="kleistad_row">
 		<div class="kleistad_col_2 kleistad_label">
-			 <label for="subscribe"></label>
+			<label for="subscribe"></label>
 		</div>
 		<div class="kleistad_col_1">
 			<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $data['input']['mc4wp-subscribe'], '1' ); ?> />
@@ -96,7 +96,7 @@ if ( ( isset( $data['verklaring'] ) && '' !== $data['verklaring'] ) ) :
 	?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_2 kleistad_label">
-				 <label for="verklaring"></label>
+				<label for="verklaring"></label>
 			</div>
 			<div class="kleistad_col_1">
 				<input type="checkbox" id="verklaring" onchange="document.getElementById( 'kleistad_submit' ).disabled = !this.checked;" />

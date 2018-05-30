@@ -4,12 +4,11 @@
 
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-Extra">
-            <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen"/>
-            <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose"/>
-            <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite"/>
-            <exclude name="WordPress.WhiteSpace.PrecisionAlignment"/>
-            <exclude name="Generic.Files.OneClassPerFile"/>
-        </rule>
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen"/>
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose"/>
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite"/>
+		<exclude name="Generic.Files.OneClassPerFile"/>
+	</rule>
         
 	<!-- Check all PHP files in directory tree by default. -->
 	<arg name="extensions" value="php"/>
@@ -19,8 +18,8 @@
 	<arg value="s"/>
 
 	<exclude-pattern>*/vendor/*</exclude-pattern>
-        
-      	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+ 
+ 	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
 		<exclude-pattern>*/tests/*</exclude-pattern>
 	</rule>
 

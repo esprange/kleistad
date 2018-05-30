@@ -110,25 +110,20 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 		if ( ! Kleistad_Roles::override() ) {
 			return true;
 		}
-		$error = new WP_Error();
-
-		$cursus_store = new Kleistad_Cursussen();
-		$cursussen    = $cursus_store->get();
-
-		$gebruiker_store = new Kleistad_Gebruikers();
-		$gebruikers      = $gebruiker_store->get();
-
+		$error              = new WP_Error();
+		$cursus_store       = new Kleistad_Cursussen();
+		$cursussen          = $cursus_store->get();
+		$gebruiker_store    = new Kleistad_Gebruikers();
+		$gebruikers         = $gebruiker_store->get();
 		$inschrijving_store = new Kleistad_Inschrijvingen();
 		$inschrijvingen     = $inschrijving_store->get();
-
 		$abonnementen_store = new Kleistad_Abonnementen();
 		$abonnementen       = $abonnementen_store->get();
-
-		$upload_dir      = wp_upload_dir();
-		$bijlage_cursus  = $upload_dir['basedir'] . '/cursusregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
-		$bijlage_abonnee = $upload_dir['basedir'] . '/abonneeregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
-		$f_cursus        = fopen( $bijlage_cursus, 'w' );
-		$f_abonnee       = fopen( $bijlage_abonnee, 'w' );
+		$upload_dir         = wp_upload_dir();
+		$bijlage_cursus     = $upload_dir['basedir'] . '/cursusregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
+		$bijlage_abonnee    = $upload_dir['basedir'] . '/abonneeregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
+		$f_cursus           = fopen( $bijlage_cursus, 'w' );
+		$f_abonnee          = fopen( $bijlage_abonnee, 'w' );
 
 		fwrite( $f_cursus, "\xEF\xBB\xBF" );
 		fwrite( $f_abonnee, "\xEF\xBB\xBF" );

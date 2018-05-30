@@ -91,15 +91,15 @@ abstract class Kleistad_Entity {
 }
 
 /**
-   * Collection of Oven
-   *
-   * Collection of Oven, loaded from the database.
-   *
-   * @since 4.0.87
-   *
-   * @see class Kleistad_Entity
-   * @link URL
-    */
+ * Collection of Oven
+ *
+ * Collection of Oven, loaded from the database.
+ *
+ * @since 4.0.87
+ *
+ * @see class Kleistad_Entity
+ * @link URL
+ */
 abstract class Kleistad_EntityStore {
 
 	/**

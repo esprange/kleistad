@@ -13,37 +13,37 @@
 
 if ( ! Kleistad_Roles::override() ) :
 	?>
-  <p>Geen toegang tot dit formulier</p>
+<p>Geen toegang tot dit formulier</p>
 	<?php
 else :
 	?>
 
-  <div id="kleistad_deelnemer_info">
-	  <table class="kleistad_form" id="kleistad_deelnemer_tabel" >
-	  </table>
-  </div>
-  <p><label for="kleistad_deelnemer_selectie">Selectie</label>
-	  <select id="kleistad_deelnemer_selectie" name="selectie" >
-		  <option value="*" >&nbsp;</option>
-		  <option value="0" >Leden</option>
+<div id="kleistad_deelnemer_info">
+	<table class="kleistad_form" id="kleistad_deelnemer_tabel" >
+	</table>
+</div>
+<p><label for="kleistad_deelnemer_selectie">Selectie</label>
+	<select id="kleistad_deelnemer_selectie" name="selectie" >
+		<option value="*" >&nbsp;</option>
+		<option value="0" >Leden</option>
 			<?php foreach ( $data['cursussen'] as $cursus ) : ?>
 			<option value="<?php echo esc_attr( 'C' . $cursus->id ); ?>;">C<?php echo esc_html( $cursus->id . ' ' . $cursus->naam ); ?></option>
 			<?php endforeach ?>
 
-	  </select>
-  </p>
-  <table class="kleistad_rapport" id="kleistad_deelnemer_lijst">
-	  <thead>
-		  <tr>
-			  <th>Lid</th>
-			  <th>Cursuslijst</th>
-			  <th>Achternaam</th>
-			  <th>Voornaam</th>
-			  <th>Email</th>
-			  <th>Telnr</th>
-		  </tr>
-	  </thead>
-	  <tbody>
+	</select>
+</p>
+<table class="kleistad_rapport" id="kleistad_deelnemer_lijst">
+	<thead>
+		<tr>
+			<th>Lid</th>
+			<th>Cursuslijst</th>
+			<th>Achternaam</th>
+			<th>Voornaam</th>
+			<th>Email</th>
+			<th>Telnr</th>
+		</tr>
+	</thead>
+	<tbody>
 			<?php foreach ( $data['registraties'] as $registratie ) : ?>
 			<tr class="kleistad_deelnemer_info" 
 				data-inschrijvingen='<?php echo wp_json_encode( $registratie['inschrijvingen'] ); ?>'
@@ -57,10 +57,10 @@ else :
 				<td><?php echo esc_html( $registratie['telnr'] ); ?></td>
 			</tr>
 			<?php endforeach ?>
-	  </tbody>
-  </table>
-  <form action="#" method="post" >
+	</tbody>
+</table>
+<form action="#" method="post" >
 		<?php wp_nonce_field( 'kleistad_registratie_overzicht' ); ?>
-	  <button type="submit" name="kleistad_submit_registratie_overzicht" >Bestanden aanmaken</button>
-  </form>
+	<button type="submit" name="kleistad_submit_registratie_overzicht" >Bestanden aanmaken</button>
+</form>
 <?php endif; ?>
