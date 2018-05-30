@@ -3,8 +3,8 @@ Contributors: esprange
 Donate link: www.sprako.nl/wordpress/eric
 Tags: comments
 Requires at least: 4.8.0
-Tested up to: 4.8.0
-Stable tag: 4.0.87
+Tested up to: 4.9.6
+Stable tag: 4.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,21 +16,8 @@ Deze plugin is specifiek ontwikkeld voor de site www.kleistad.nl en voegt een aa
 
 # Gebruik van de Kleistad plugin
 
-## De shortcodes zijn: 
-* publiek toegankelijk (dus zonder ingelogd te zijn)
-    + [kleistad_abonnee_inschrijving] inschrijving als abonnee
-    + [kleistad_cursus_inschrijving] inschrijving voor cursus
-* toegankelijk voor leden
-    + [kleistad_reservering oven=1] reserveren ovenstook
-    + [kleistad_rapport] overzicht stook activiteiten door lid
-    + [kleistad_saldo] wijzigen stooksaldo door lid
-    + [kleistad_registratie] wijzigen adresgegevens door lid
-* toegankelijk voor bestuur
-    + [kleistad_saldo_overzicht] overzicht stooksaldo leden
-    + [kleistad_stookbestand] opvragen stookbestand
-    + [kleistad_registratie_overzicht] overzicht van alle cursisten en leden
-    + [kleistad_cursus_beheer] formulier om cursussen te beheren
-    + [kleistad_betalingen] formulier om betalingen cursisten te registreren
+De plugin onderkent een groot aantal shortcodes. 
+De uitleg hiervan wordt getoond op de kleistad opties in het admin dashboard.
 
 == Installation ==
 
@@ -46,14 +33,21 @@ Plaats de shortcodes in de pagina's
 == Changelog ==
 
 = 4.0.87 =
-* None yet
+Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
+= 4.0.92 =
+Berekening verdeling gewijzigd
+= 4.1.4 =
+Toevoeging keramiek recepten functionaliteit
+= 4.2.0 =
+Toevoeging betalingen via Mollie
+= 4.3.0 =
+Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
 
 == Upgrade Notice ==
 
-= 4.0.87 =
-Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
+geen.
 
-== Arbitrary section ==
+== Additionele info ==
 
 Deze plugin voegt drie tabellen toe aan de database:
 
@@ -61,6 +55,6 @@ Deze plugin voegt drie tabellen toe aan de database:
 * kleistad_reserveringen
 * kleistad_cursussen
 
-Alle overige informatie wordt via user_meta informatie vastgelegd.
+Alle overige informatie wordt via user_meta en custom posts informatie vastgelegd.
 
 `<?php code(); // goes in backticks ?>`
