@@ -43,7 +43,7 @@ class Kleistad_Betalen {
 	 * @param string $order_id     de externe order referentie, maximaal 35 karakters.
 	 * @param real   $bedrag       het bedrag.
 	 * @param string $beschrijving de externe order referentie, maximaal 35 karakters.
-	 * @param string $bericht      het bericht bij succesvolle beraling.
+	 * @param string $bericht      het bericht bij succesvolle betaling.
 	 * @param bool   $mandateren   er wordt een herhaalde betaling voorbereid.
 	 */
 	public function order( $gebruiker_id, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
@@ -96,6 +96,7 @@ class Kleistad_Betalen {
 						'bericht'  => $bericht,
 					],
 					'method'      => \Mollie\Api\Types\PaymentMethod::IDEAL,
+					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
 					'redirectUrl' => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
 					'webhookUrl'  => Kleistad_Public::base_url() . '/betaling/',
 				]

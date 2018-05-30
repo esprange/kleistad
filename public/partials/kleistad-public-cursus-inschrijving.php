@@ -153,12 +153,12 @@ else :
 					</div>
 				</div>
 			</div>
-		<?php endif ?>
-		<div class="kleistad_row" style="padding-top:20px;">
-			<div class="kleistad_col_10">
-				<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" type="submit" >Betalen</button>
+			<div class="kleistad_row" style="padding-top:20px;">
+				<div class="kleistad_col_10">
+					<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" type="submit" >Betalen</button>
+				</div>
 			</div>
-		</div>
+		<?php endif ?>
 
 	</form>
 

@@ -250,7 +250,6 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		'i_betaald'   => 0,
 		'c_betaald'   => 0,
 		'ingedeeld'   => 0,
-		'bericht'     => 0,
 		'geannuleerd' => 0,
 		'opmerking'   => '',
 		'aantal'      => 1,
@@ -299,7 +298,6 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'i_betaald':
 			case 'c_betaald':
 			case 'geannuleerd':
-			case 'bericht':
 				return 1 === intval( $this->_data[ $attribuut ] );
 			default:
 				return $this->_data[ $attribuut ];
@@ -327,7 +325,6 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'i_betaald':
 			case 'c_betaald':
 			case 'geannuleerd':
-			case 'bericht':
 				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:
@@ -364,9 +361,10 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
-		$cursist = get_userdata( $this->_cursist_id );
-		$to      = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
-
+		$cursist   = get_userdata( $this->_cursist_id );
+		$to        = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
+		$onderwerp = ucfirst( $type ) . ' cursus';
+		
 		switch ( $type ) {
 			case 'inschrijving':
 				$slug = $this->_cursus->inschrijfslug;
@@ -381,16 +379,18 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				$slug = 'kleistad_email_cursus_betaling';
 				break;
 			case 'betaling_ideal':
+				$onderwerp = 'Betaling cursus';
 				$slug = 'kleistad_email_cursus_betaling_ideal';
 				break;
 			case 'betaling_bank':
+				$onderwerp = 'Betaling cursus';
 				$slug = 'kleistad_email_cursus_betaling_bank';
 				break;
 			default:
 				$slug = '';
 		}
 		return Kleistad_public::compose_email(
-			$to, $type . ' cursus', $slug, [
+			$to, $onderwerp, $slug, [
 				'voornaam'               => $cursist->first_name,
 				'achternaam'             => $cursist->last_name,
 				'cursus_naam'            => $this->_cursus->naam,
