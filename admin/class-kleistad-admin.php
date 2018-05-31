@@ -503,7 +503,7 @@ class Kleistad_Admin {
 			$id = filter_input( INPUT_GET, 'id' );
 
 			if ( ! is_null( $id ) ) {
-				list($gebruiker_id, $oven_id) = sscanf( $id, '%d-%d' );
+				list($gebruiker_id, $oven_id) = sscanf( $id, '%d %d' );
 				$regelingen                   = new Kleistad_Regelingen();
 				$regelingen->delete_and_save( $gebruiker_id, $oven_id );
 			}
@@ -570,7 +570,7 @@ class Kleistad_Admin {
 			// if this is not post back we load item to edit or give new one to create.
 			$item = $default;
 			if ( isset( $_REQUEST['id'] ) ) {
-				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d-%d' );
+				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d %d' );
 				$regelingen                   = new Kleistad_Regelingen();
 				$gebruiker_regeling           = $regelingen->get( $gebruiker_id, $oven_id );
 

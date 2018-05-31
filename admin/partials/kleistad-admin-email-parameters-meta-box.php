@@ -74,14 +74,12 @@
 			</ul>
 		</li>
 		<li><h3>kleistad_email_dagdelenkaart_ideal en kleistad_email_dagdelenkaart_bank</h3>
-			<ul>
 				<li>[voornaam] : voornaam van de gebruiker</li>
 				<li>[achternaam] : achternaam van de gebruiker</li>
 				<li>[dagdelenkaart_code] : code te vermelden bij betaling</li>
 				<li>[dagdelenkaart_opmerking] : door gebruiker geplaatste opmerking</li>
 				<li>[start_datum] : datum waarop de dagdelenkaart moet ingaan</li>
-			</ul>
-		</li>
+		</lI>
 		<li><h3>kleistad_email_cursus_* emails</h3>
 			<ol>
 				<li>'cursus indeling email' : paginanaam in te stellen in cursus beheer scherm</li>

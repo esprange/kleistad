@@ -89,7 +89,7 @@ get_header(); ?>
 				onMouseOver="this.style.color='#bbb';this.style.cursor='pointer';this.style.textDecoration='none'"
 				>&times;</span>
 
-			<img style="margin:auto;display:block;width:80%;max-width:700px;" src="<?php echo esc_url( $content['foto'] ); ?>" alt="<?php the_title(); ?>">
+			<img style="margin:auto;display:block;width:80%;max-width:700px;" src="<?php echo esc_url( $content['foto'] ); ?>">
 
 			<div style="margin:auto;display:block;width:80%;max-width:700px;text-align:center;color:#ccc;padding:10px 0;height:150px;animation-name:zoom;animation-duration:0.6s;">
 				<?php the_title(); ?>
@@ -116,8 +116,7 @@ get_header(); ?>
 					<img src="<?php echo esc_url( $content['foto'] ); ?>" 
 						style="max-width:100%;max-height:100%;border-radius:5px;cursor:zoom-in;transition: 0.3s;" 
 						id="kleistad_recept_foto" 
-						onMouseOver="this.style.opacity='0.7'"
-						alt="<?php the_title(); ?>" >
+						onMouseOver="this.style.opacity='0.7'" >
 				</div>
 				<div style="float:left;width:50%;">
 					<table>

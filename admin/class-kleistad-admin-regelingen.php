@@ -130,7 +130,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 			}
 			foreach ( $kosten_ovens as $oven_id => $kosten_oven ) {
 				$regelingen[] = [
-					'id'             => $gebruiker->id . '-' . $oven_id,
+					'id'             => $gebruiker->id . ' ' . $oven_id,
 					'gebruiker_naam' => $gebruiker->display_name,
 					'oven_naam'      => $ovens[ $oven_id ]->naam,
 					'kosten'         => $kosten_oven,

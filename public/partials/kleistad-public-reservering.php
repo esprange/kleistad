@@ -63,7 +63,7 @@ else :
 					<td><span id="kleistad_stoker"><?php echo esc_html( $data['huidige_gebruiker']->display_name ); ?></span><input type="hidden" name="kleistad_stoker_id" id="kleistad_1e_stoker" value="<?php echo esc_attr( $data['huidige_gebruiker']->ID ); ?>" /></td>
 					<td><input type="number" name="kleistad_stoker_perc" readonly /> %</td>
 				</tr>
-				<tr class="kleistad_medestoker_row" >
+				<tr name="kleistad_medestoker_row" >
 					<td><label>Stoker</label></td>
 					<td>
 						<select name="kleistad_stoker_id" class="kleistad_verdeel" >

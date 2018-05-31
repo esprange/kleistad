@@ -130,7 +130,7 @@ else :
 					<label for="kleistad_startdatum">per</label>
 				</div>
 				<div class="kleistad_col_3">
-					<select name="startdatum" id="kleistad_startdatum" >
+					<select naam="startdatum" >
 			<?php
 			for ( $i = 1; $i <= 3; $i++ ) :
 				$datum = mktime( 0, 0, 0, date( 'n' ) + $i, 1, date( 'Y' ) );
