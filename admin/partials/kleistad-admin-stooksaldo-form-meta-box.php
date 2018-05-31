@@ -12,11 +12,11 @@
  */
 
 ?>
-<table cellspacing="2" cellpadding="5" style="width: 100%;" class="form-table">
+<table style="width: 100%; border-spacing:2px; padding:5px" class="form-table">
 	<tbody>
 		<tr class="form-field">
 			<th  scope="row">
-				<label for="naam">Naam gebruiker</label>
+				<label>Naam gebruiker</label>
 			</th>
 			<td>
 				<?php echo esc_html( $item['naam'] ); ?>

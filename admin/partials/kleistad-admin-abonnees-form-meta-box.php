@@ -12,7 +12,7 @@
  */
 
 ?>
-<table cellspacing="2" cellpadding="5" style="width: 100%;" class="form-table">
+<table style="width: 100%; border-spacing:2px; padding:5px" class="form-table">
 	<tbody>
 		<tr class="form-field">
 			<th  scope="row">
@@ -35,7 +35,8 @@
 				<label for="soort">Soort</label>
 			</th>
 			<td>
-				<select id="soort" name="soort" required class="code" >
+				<select id="soort" name="soort" required class="code">
+					<option value="">Selecteer een abonnement soort</option>
 					<option value="onbeperkt" <?php selected( $item['soort'], 'onbeperkt' ); ?> >Onbeperkt</option>
 					<option value="beperkt" <?php selected( $item['soort'], 'beperkt' ); ?> >Beperkt</option>
 				</select>
@@ -48,6 +49,7 @@
 			</th>
 			<td>
 				<select id="dag" name="dag" required class="code" >
+					<option value="">Selecteer een dag</option>
 					<option value="maandag" <?php selected( $item['dag'], 'maandag' ); ?> >Maandag</option>
 					<option value="dinsdag" <?php selected( $item['dag'], 'dinsdag' ); ?>>Dinsdag</option>
 					<option value="woensdag" <?php selected( $item['dag'], 'woensdag' ); ?>>Woensdag</option>

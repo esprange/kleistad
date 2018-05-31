@@ -141,7 +141,7 @@ else :
 				<label for="kleistad_stookschema">Stookschema</label>
 			</div>
 			<div class="kleistad_col_5 kleistad_label">
-				<label for="kleistad_foto">Foto (max 2M bytes)</label>
+				<label for="kleistad_foto_input">Foto (max 2M bytes)</label>
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -149,8 +149,14 @@ else :
 				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" rows="5"><?php echo esc_textarea( $data['recept']['content']['stookschema'] ); ?></textarea>
 			</div>
 			<div class="kleistad_col_5">
-				<input type="file" name="foto" id="kleistad_foto_input"  multiple="false" accept=".jpg" /><br />
-				<img id="kleistad_foto" src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
+				<input type="file" name="foto" id="kleistad_foto_input"  accept=".jpg" /><br />
+				<?php
+				if ( '' !== $data['recept']['content']['foto'] ) :
+					?>
+				<img id="kleistad_foto" src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" alt="foto" >
+				<?php else : ?>
+				&nbsp;
+				<?php endif ?>
 				<input type="hidden" name="foto_url" value="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
 			</div>
 		</div>
@@ -198,7 +204,7 @@ else :
 			} while ( $index++ < $count );
 			?>
 				<tr>
-					<td col="2"><button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
+					<td colspan="2"><button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
 				</tr>
 				</table>
 			</div>
@@ -219,7 +225,7 @@ else :
 			} while ( $index++ < $count );
 			?>
 				<tr>
-					<td col="2"><button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
+					<td colspan="2"><button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
 				</tr>
 				</table>
 			</div>
@@ -254,7 +260,14 @@ else :
 			<tbody>
 			<?php foreach ( $data['recept'] as $recept ) : ?>
 			<tr>
-				<td><img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" >
+				<td>
+				<?php
+				if ( '' !== $recept['foto'] ) :
+				?>
+					<img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept['titel'] ); ?>" >
+					<?php else : ?>
+					&nbsp;
+				<?php endif; ?>
 				<td><?php echo esc_html( $recept['titel'] ); ?></td>
 				<td><?php echo esc_html( strtotime( $recept['modified'] ) ); ?></td>
 				<td><?php echo esc_html( date_i18n( 'd-m-Y H:i', strtotime( $recept['modified'] ) ) ); ?></td>
@@ -267,15 +280,15 @@ else :
 				</td>
 				<td>
 					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_wijzig_recept_' . $recept['id'] ) . '&action=wijzigen&id=' . $recept['id'] ); ?>"
-						title="wijzig recept" class="ui-button ui-widget ui-corner-all" style="color:green;padding:.4em .8em;" name="wijzigen" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
+						title="wijzig recept" class="ui-button ui-widget ui-corner-all" style="color:green;padding:.4em .8em;" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
 						<span class="dashicons dashicons-edit"></span>
 					</a>
 					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_publiceer_recept_' . $recept['id'] ) . '&action=publiceren&id=' . $recept['id'] ); ?>"
-						title="<?php echo ( 'draft' === $recept['post_status'] ) ? 'publiceer recept' : 'concept'; ?>" class="ui-button ui-widget ui-corner-all" style="color:black;padding:.4em .8em;" name="publiceren" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
+						title="<?php echo ( 'draft' === $recept['post_status'] ) ? 'publiceer recept' : 'concept'; ?>" class="ui-button ui-widget ui-corner-all" style="color:black;padding:.4em .8em;" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
 						<span class="dashicons dashicons-<?php echo ( 'draft' === $recept['post_status'] ) ? 'external' : 'hammer'; ?>"></span>
 					</a>
 					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_verwijder_recept_' . $recept['id'] ) . '&action=verwijderen&id=' . $recept['id'] ); ?>"
-						title="verwijder recept" class="ui-button ui-widget ui-corner-all" style="color:red;padding:.4em .8em;" name="verwijderen" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
+						title="verwijder recept" class="ui-button ui-widget ui-corner-all" style="color:red;padding:.4em .8em;" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
 						<span class="dashicons dashicons-trash"></span>
 					</a>
 				</td>

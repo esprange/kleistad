@@ -144,7 +144,7 @@ else :
 	</thead>
 	<tbody>
 			<?php foreach ( $data['rows'] as $row ) : ?>
-			<tr style="background-color:<?php echo esc_attr( $row['cursus']['vol'] ? 'lightblue' : ( $row['cursus']['vervallen'] ? 'lightgray' : '' ) ); ?>" class="kleistad_cursus_info" 
+			<tr style="background-color:<?php echo esc_attr( $row['cursus']['vol'] ? 'lightblue' : ( $row['cursus']['vervallen'] ? 'lightgray' : 'white' ) ); ?>" class="kleistad_cursus_info" 
 				data-cursus='<?php echo wp_json_encode( $row['cursus'] ); ?>'
 				data-wachtlijst='<?php echo wp_json_encode( $row['wachtlijst'] ); ?>' 
 				data-ingedeeld='<?php echo wp_json_encode( $row['ingedeeld'] ); ?>' >
