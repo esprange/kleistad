@@ -1,0 +1,11 @@
+{
+  "name": "kleistad",
+  "version": "4.3.0",
+  "main": "Gruntfile.js",
+  "author": "Eric Sprangers",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-wp-readme-to-markdown": "~1.0.0",
+    "grunt-checkwpversion": "~0.3.0"
+  }
+}

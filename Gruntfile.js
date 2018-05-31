@@ -15,10 +15,28 @@ module.exports = function( grunt ) {
 			},
 		},
 
-	} );
+		checkwpversion: {
+			options:{
+				readme: 'readme.txt',
+				plugin: 'kleistad.php',
+			},
+			check: { //Check plug-in version and stable tag match
+				version1: 'plugin',
+				version2: 'readme',
+				compare: '==',
+			},
+			check2: { //Check plug-in version and package.json match
+				version1: 'plugin',
+				version2: '<%= pkg.version %>',
+				compare: '==',
+			}
+		}
+	});
 
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
 	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
+	grunt.loadNpmTasks( 'grunt-checkwpversion' );
+	grunt.registerTask( 'checkversion', ['checkwpversion'] );
 
 	grunt.util.linefeed = '\n';
 

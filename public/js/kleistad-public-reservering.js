@@ -25,14 +25,14 @@
         $( '#kleistad_1e_stoker' ).val( formData.gebruiker_id );
 
         verdelingAantal = Math.max( formData.verdeling.length, 4 );
-        aantal = $( '[name=kleistad_medestoker_row]' ).length;
+        aantal = $( '.kleistad_medestoker_row' ).length;
         while ( aantal > verdelingAantal ) {
-            $( '[name=kleistad_medestoker_row]' ).last().remove();
+            $( '.kleistad_medestoker_row' ).last().remove();
             aantal--;
         }
         while ( aantal < verdelingAantal ) {
-            row = $( '[name=kleistad_medestoker_row]' ).first().clone( true );
-            $( '[name=kleistad_medestoker_row]' ).last().after( row );
+            row = $( '.kleistad_medestoker_row' ).first().clone( true );
+            $( '.kleistad_medestoker_row' ).last().after( row );
             aantal++;
         }
         $( '[name=kleistad_stoker_id]' ).val( '0' );
@@ -315,8 +315,8 @@
              */
             $( 'body' ).on(
                 'click', '#kleistad_stoker_toevoegen', function() {
-                    var row = $( '[name=kleistad_medestoker_row]' ).first().clone( true );
-                    $( '[name=kleistad_medestoker_row]' ).last().after( row );
+                    var row = $( '.kleistad_medestoker_row' ).first().clone( true );
+                    $( '.kleistad_medestoker_row' ).last().after( row );
                     $( '[name=kleistad_stoker_perc]' ).last().val( 0 );
                     return false;
                 }
