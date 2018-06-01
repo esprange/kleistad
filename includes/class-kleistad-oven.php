@@ -540,8 +540,8 @@ class Kleistad_Saldo {
 	 * @param int $gebruiker_id De gebruiker waarvoor het saldo wordt gemaakt.
 	 */
 	public function __construct( $gebruiker_id ) {
-		$this->_gebruiker_id = $gebruiker_id;
-		$this->bedrag        = $this->huidig_saldo();
+		$this->_gebruiker_id   = $gebruiker_id;
+		$this->_data['bedrag'] = $this->huidig_saldo();
 	}
 
 	/**
