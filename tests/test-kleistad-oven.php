@@ -182,7 +182,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		$saldo2->save( 'test 2' );
 
 		$saldo3 = new Kleistad_Saldo( $user_id );
-		$this->assertEquals( $bedrag + $bedrag, $saldo3->bedrag, 'saldo not equal to ' . $bedrag + $bedrag );
+		$this->assertEquals( $bedrag + $bedrag, $saldo3->bedrag, 'saldo not equal to ' . ( $bedrag + $bedrag ) );
 
 		$upload_dir     = wp_upload_dir();
 		$transactie_log = $upload_dir['basedir'] . '/stooksaldo.log';
