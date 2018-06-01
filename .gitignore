@@ -73,6 +73,7 @@ $RECYCLE.BIN/
 
 # Ignore folders
 vendor/
+node_modules/
 
 # Build files
 *.zip
