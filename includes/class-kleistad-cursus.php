@@ -340,7 +340,12 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @since 4.0.87
 	 */
 	public function save() {
-		$inschrijvingen                       = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
+		$bestaande_inschrijvingen = get_user_meta( $this->_cursist_id, 'kleistad_cursus', true );
+		if ( is_array( $bestaande_inschrijvingen ) ) {
+			$inschrijvingen = $bestaande_inschrijvingen;
+		} else {
+			$inschrijvingen = [];
+		}
 		$inschrijvingen[ $this->_cursus->id ] = $this->_data;
 		update_user_meta( $this->_cursist_id, 'kleistad_cursus', $inschrijvingen );
 	}
