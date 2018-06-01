@@ -29,14 +29,12 @@ else :
 		if ( ! $in_driemaandperiode ) :
 			?>
 		<div class="kleistad_row">
-			<div class="kleistad_col_4 kleistad_label">
-				<label for="kleistad_abo_wijziging">Abonnement wijzigen</label>
-			</div>
 			<div class="kleistad_col_6">
-				<input name="actie" id="kleistad_abo_wijziging" class="kleistad_abo_optie" type="checkbox" value="wijziging" >
+				<input type="radio" name="actie" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad_input_cbr" value="wijziging" >
+				<label class="kleistad_label_cbr" for="kleistad_abo_wijziging">Abonnement wijzigen</label>
 			</div>
 		</div>
-		<div class="kleistad_abo_wijziging" style="display:none" >
+		<div class="kleistad_abo_wijziging kleistad_abo_veld" style="display:none" >
 			<div class="kleistad_row">
 				<div class="kleistad_col_3" >
 					&nbsp;
@@ -61,10 +59,13 @@ else :
 				if ( 'onbeperkt' === $data['input']['soort'] ) :
 					?>
 			<div class="kleistad_row" >
+				<div class="kleistad_col_3">
+					&nbsp;
+				</div>
 				<div class="kleistad_col_3 kleistad_label">
 					<label for="kleistad_dag_keuze">Dag</label>
 				</div>
-				<div class="kleistad_col_7">
+				<div class="kleistad_col_4">
 					<select class="kleistad_input" name="dag" id="kleistad_dag_keuze" >
 						<option value="maandag" <?php selected( $data['input']['dag'], 'maandag' ); ?> >Maandag</option>
 						<option value="dinsdag" <?php selected( $data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
@@ -82,14 +83,12 @@ else :
 			if ( $data['input']['actief'] ) :
 				?>
 		<div class="kleistad_row">
-			<div class="kleistad_col_4 kleistad_label">
-				<label for="kleistad_abo_pauze">Abonnement pauzeren</label>
-			</div>
 			<div class="kleistad_col_6">
-				<input name="actie" id="kleistad_abo_pauze" class="kleistad_abo_optie" type="checkbox" value="pauze" >
+				<input type="radio" name="actie" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad_input_cbr" value="pauze" >
+				<label for="kleistad_abo_pauze" class="kleistad_label_cbr">Abonnement pauzeren</label>
 			</div>
 		</div>
-		<div class="kleistad_abo_pauze"  style="display:none" >
+		<div class="kleistad_abo_pauze kleistad_abo_veld"  style="display:none" >
 			<div class="kleistad_row" >
 				<div class="kleistad_col_3" >
 					&nbsp;
@@ -114,14 +113,20 @@ else :
 		else :
 			?>
 		<div class="kleistad_row">
-			<div class="kleistad_col_4 kleistad_label">
-				<label for ="kleistad_abo_start">Abonnement hervatten</label>
-			</div>
-		<div class="kleistad_col_6">
-				<input name="actie" id="kleistad_abo_start" class="kleistad_abo_optie" type="checkbox" value="herstart" >
+			<div class="kleistad_col_6">
+				<input type="radio" name="actie" id="kleistad_abo_start" class="kleistad_abo_optie kleistad_input_cbr" value="herstart" >
+				<label for ="kleistad_abo_start" class="kleistad_label_cbr">Abonnement hervatten</label>
 			</div>
 		</div>
-		<div class="kleistad_abo_start" style="display:none" >
+		<div class="kleistad_abo_start kleistad_abo_veld" style="display:none" >
+			<div class="kleistad_row" >
+				<div class="kleistad_col_3" >
+					&nbsp;
+				</div>
+				<div class="kleistad_col_7 kleistad_label" >
+					<p><strong>Je wilt je gepauzeerde abonnement hervatten</strong></p>
+				</div>
+			</div>
 			<div class="kleistad_row" >
 				<div class="kleistad_col_3" >
 					&nbsp;
@@ -148,14 +153,12 @@ else :
 		endif;
 		?>
 		<div class="kleistad_row">
-			<div class="kleistad_col_4 kleistad_label">
-				<label for="kleistad_abo_einde">Abonnement beëindigen</label>
-			</div>
 			<div class="kleistad_col_6">
-				<input name="actie" id="kleistad_abo_einde" class="kleistad_abo_optie" type="checkbox" value="einde" >
+				<input type="radio" name="actie" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad_input_cbr" value="einde" >
+				<label for="kleistad_abo_einde" class="kleistad_label_cbr">Abonnement beëindigen</label>
 			</div>
 		</div>
-		<div class="kleistad_row kleistad_abo_einde" style="display:none" >
+		<div class="kleistad_row kleistad_abo_einde kleistad_abo_veld" style="display:none" >
 			<div class="kleistad_col_3" >
 				&nbsp;
 			</div>
@@ -167,34 +170,49 @@ else :
 		if ( ! $in_driemaandperiode ) :
 			?>
 		<div class="kleistad_row">
-			<div class="kleistad_col_4 kleistad_label">
-				<label for="kleistad_abo_betaalwijze">Abonnement betaalwijze</label>
-			</div>
 			<div class="kleistad_col_6">
-				<input name="actie" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie" type="checkbox" value="betaalwijze" >
+				<input type="radio" name="actie" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad_input_cbr" value="betaalwijze" >
+				<label class="kleistad_label_cbr" for="kleistad_abo_betaalwijze" >Abonnement betaalwijze</label>
 			</div>
 		</div>
-		<div class="kleistad_abo_betaalwijze" style="display:none" >
+		<div class="kleistad_abo_betaalwijze kleistad_abo_veld" style="display:none" >
+			<div class="kleistad_row" >
+				<div class="kleistad_col_3" >
+					&nbsp;
+				</div>
+				<div class="kleistad_col_7 kleistad_label" >
+					<p><strong>Je wilt je huidige betaalwijze voor je abonnement wijzigen</strong></p>
+				</div>
+			</div>
 			<div class ="kleistad_row">
-				<div class="kleistad_col_10">
+				<div class="kleistad_col_3">
+					&nbsp;
+				</div>
+				<div class="kleistad_col_7">
 					<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
 					<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">Ik betaal € 0.01 en machtig daarmee Kleistad tot maandelijkse incasso van het abonnement.</label>
 				</div>
 			</div>
 			<div class="kleistad_row">
-				<div class="kleistad_col_10">
+				<div class="kleistad_col_3">
+					&nbsp;
+				</div>
+				<div class="kleistad_col_7">
 					<?php Kleistad_Betalen::issuers(); ?>
 				</div>
 			</div>
 			<div class ="kleistad_row">
-				<div class="kleistad_col_10">
+				<div class="kleistad_col_3">
+					&nbsp;
+				</div>
+				<div class="kleistad_col_7">
 					<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
 					<label class="kleistad_label_cbr" for="kleistad_betaal_stort">Ik ga voortaan via een bank storting betalen.</label>
 				</div>
 			</div>
 		</div>
 		<?php endif; ?>
-		<div class="kleistad_row">
+		<div class="kleistad_row" style="padding-top:20px;">
 			<div class="kleistad_col_10">
 				<input type="hidden" name="kleistad_submit_abonnee_wijziging" value="0" >
 				<button name="kleistad_check_abonnee_wijziging" id="kleistad_check_abonnee_wijziging" >Aanpassen</button>

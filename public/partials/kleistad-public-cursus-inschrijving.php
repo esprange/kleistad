@@ -69,7 +69,7 @@ else :
 			<?php endforeach ?>
 			<div id="kleistad_cursus_technieken" style="visibility: hidden;padding-bottom:20px;" >
 				<div class="kleistad_row" >
-					<div class="kleistad_col_10" style="text-align:center" >
+					<div class="kleistad_col_10">
 						<label class="kleistad_label">kies de techniek(en) die je wilt oefenen</label>
 					</div>
 				</div>
@@ -77,16 +77,16 @@ else :
 					<div class="kleistad_col_1" >
 					</div>
 					<div class="kleistad_col_3 kleistad_label" id="kleistad_cursus_draaien" style="visibility: hidden" >
-						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_draaien" type="checkbox" value="Draaien" <?php checked( in_array( 'Draaien', $data['input']['technieken'], true ) ); ?> >
-						<label class="kleistad_label_cbr" for="kleistad_draaien" >Draaien</label>
+						<input class="kleistad_input_cb" name="technieken[]" id="kleistad_draaien" type="checkbox" value="Draaien" <?php checked( in_array( 'Draaien', $data['input']['technieken'], true ) ); ?> >
+						<label class="kleistad_label_cb" for="kleistad_draaien" >Draaien</label>
 					</div>
 					<div class="kleistad_col_3 kleistad_label" id="kleistad_cursus_handvormen" style="visibility: hidden" >
-						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_handvormen" type="checkbox" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['input']['technieken'], true ) ); ?> >
-						<label class="kleistad_label_cbr" for="kleistad_handvormen" >Handvormen</label>
+						<input class="kleistad_input_cb" name="technieken[]" id="kleistad_handvormen" type="checkbox" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['input']['technieken'], true ) ); ?> >
+						<label class="kleistad_label_cb" for="kleistad_handvormen" >Handvormen</label>
 					</div>
 					<div class="kleistad_col_3 kleistad_label" id="kleistad_cursus_boetseren" style="visibility: hidden" >
-						<input class="kleistad_input_cbr" name="technieken[]" id="kleistad_boetseren" type="checkbox" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['input']['technieken'], true ) ); ?> >
-						<label class="kleistad_label_cbr" for="kleistad_boetseren" >Boetseren</label>
+						<input class="kleistad_input_cb" name="technieken[]" id="kleistad_boetseren" type="checkbox" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['input']['technieken'], true ) ); ?> >
+						<label class="kleistad_label_cb" for="kleistad_boetseren" >Boetseren</label>
 					</div>
 				</div>
 			</div>

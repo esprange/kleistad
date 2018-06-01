@@ -80,14 +80,9 @@
 		</div>
 	</div>
 	<div class="kleistad_row">
-		<div class="kleistad_col_2 kleistad_label">
-			<label for="subscribe"></label>
-		</div>
-		<div class="kleistad_col_1">
-			<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $data['input']['mc4wp-subscribe'], '1' ); ?> />
-		</div>
-		<div class="kleistad_col_7">
-			<strong>Ik wil de Kleistad nieuwsbrief ontvangen.</strong>
+		<div class="kleistad_col_10">
+			<input type="checkbox" class="kleistad_input_cb" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $data['input']['mc4wp-subscribe'], '1' ); ?> />
+			<label class="kleistad_label_cb" for="subscribe">Ik wil de Kleistad nieuwsbrief ontvangen.</label>
 		</div>
 	</div>
 		<?php
@@ -95,22 +90,9 @@
 if ( ( isset( $data['verklaring'] ) && '' !== $data['verklaring'] ) ) :
 	?>
 		<div class="kleistad_row">
-			<div class="kleistad_col_2 kleistad_label">
-				<label for="verklaring"></label>
-			</div>
-			<div class="kleistad_col_1">
-				<input type="checkbox" id="verklaring" onchange="document.getElementById( 'kleistad_submit' ).disabled = !this.checked;" />
-			</div>
-			<div class="kleistad_col_7">
-				<strong><?php echo $data['verklaring']; // WPCS: XSS ok. ?></strong>
+			<div class="kleistad_col_10">
+				<input type="checkbox" class="kleistad_input_cb" id="verklaring" onchange="document.getElementById( 'kleistad_submit' ).disabled = !this.checked;" />
+				<label class="kleistad_label_cb" for="verklaring"><?php echo $data['verklaring']; // WPCS: XSS ok. ?></label>
 			</div>
 		</div>
-<!--		<div class="kleistad_row">
-			<div class="kleistad_col_3">
-				&nbsp;
-			</div>
-			<div class="kleistad_col_7">
-				<p><strong>Door aan te geven d</strong></p>
-			</div>
-		</div>-->
 	<?php endif ?>

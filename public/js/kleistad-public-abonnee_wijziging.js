@@ -6,49 +6,36 @@
 
             $( '#kleistad_abo_pauze' ).click(
                 function() {
-                   $( '.kleistad_abo_pauze' ).toggle( this.checked );
-                   $( '#kleistad_abo_einde' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_wijziging' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_betaalwijze' ).prop( 'disabled', this.checked );
+					$( '.kleistad_abo_veld' ).hide();
+					$( '.kleistad_abo_pauze' ).toggle( this.checked );
                 }
             );
 
             $( '#kleistad_abo_einde' ).click(
                 function() {
-                   $( '.kleistad_abo_einde' ).toggle( this.checked );
-                   $( '#kleistad_abo_pauze' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_start' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_wijziging' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_betaalwijze' ).prop( 'disabled', this.checked );
+					$( '.kleistad_abo_veld' ).hide();
+					$( '.kleistad_abo_einde' ).toggle( this.checked );
                 }
             );
 
             $( '#kleistad_abo_start' ).click(
                 function() {
-                   $( '.kleistad_abo_start' ).toggle( this.checked );
-                   $( '#kleistad_abo_einde' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_wijziging' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_betaalwijze' ).prop( 'disabled', this.checked );
+					$( '.kleistad_abo_veld' ).hide();
+					$( '.kleistad_abo_start' ).toggle( this.checked );
                 }
             );
 
             $( '#kleistad_abo_wijziging' ).click(
                 function() {
-                   $( '.kleistad_abo_wijziging' ).toggle( this.checked );
-                   $( '#kleistad_abo_start' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_pauze' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_einde' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_betaalwijze' ).prop( 'disabled', this.checked );
+					$( '.kleistad_abo_veld' ).hide();
+					$( '.kleistad_abo_wijziging' ).toggle( this.checked );
                 }
             );
 
             $( '#kleistad_abo_betaalwijze' ).click(
                 function() {
-                   $( '.kleistad_abo_betaalwijze' ).toggle( this.checked );
-                   $( '#kleistad_abo_start' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_pauze' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_einde' ).prop( 'disabled', this.checked );
-                   $( '#kleistad_abo_wijziging' ).prop( 'disabled', this.checked );
+					$( '.kleistad_abo_veld' ).hide();
+					$( '.kleistad_abo_betaalwijze' ).toggle( this.checked );
                 }
             );
 
@@ -77,11 +64,7 @@
                         text: 'Nee',
                         click: function() {
                             $( '.kleistad_abo_optie' ).prop( { checked: false, disabled: false } );
-                            $( '.kleistad_abo_pauze' ).hide();
-                            $( '.kleistad_abo_einde' ).hide();
-                            $( '.kleistad_abo_start' ).hide();
-                            $( '.kleistad_abo_wijziging' ).hide();
-                            $( '.kleistad_abo_betaalwijze' ).hide();
+                            $( '.kleistad_abo_veld' ).hide();
                             $( this ).dialog( 'close' );
                         }
                     }
