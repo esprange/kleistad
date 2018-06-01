@@ -263,7 +263,7 @@ else :
 				<td>
 				<?php
 				if ( '' !== $recept['foto'] ) :
-				?>
+					?>
 					<img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept['titel'] ); ?>" >
 					<?php else : ?>
 					&nbsp;

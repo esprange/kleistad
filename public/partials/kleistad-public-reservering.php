@@ -71,12 +71,12 @@ else :
 							<?php
 							foreach ( $data['gebruikers'] as $gebruiker ) :
 								if ( Kleistad_Roles::reserveer( $gebruiker->id ) && ( $gebruiker->id !== $data['huidige_gebruiker']->ID || Kleistad_Roles::override() ) ) :
-										?>
+									?>
 							<option value="<?php echo esc_attr( $gebruiker->id ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
 										<?php
 									endif;
 								endforeach;
-								?>
+							?>
 						</select>
 					</td>
 					<td><input type="number" class="kleistad_verdeel" name="kleistad_stoker_perc" min="0" max="100" > %</td>
