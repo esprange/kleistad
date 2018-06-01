@@ -13,6 +13,9 @@ node_modules/
 # Composer lock file
 *.lock
 
+# NPM lock file
+package-lock.json
+
 .DS_Store
 Thumbs.db
 wp-cli.local.yml

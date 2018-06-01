@@ -1,7 +1,7 @@
 # Kleistad #
 **Contributors:** esprange  
 **Donate link:** www.sprako.nl/wordpress/eric  
-**Tags:** comments  
+**Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 4.9.6  
 **Stable tag:** 4.3.0  
@@ -16,7 +16,7 @@ Deze plugin is specifiek ontwikkeld voor de site www.kleistad.nl en voegt een aa
 
 # Gebruik van de Kleistad plugin
 
-De plugin onderkent een groot aantal shortcodes. 
+De plugin onderkent een groot aantal shortcodes.
 De uitleg hiervan wordt getoond op de kleistad opties in het admin dashboard.
 
 ## Installation ##
@@ -28,20 +28,20 @@ Reguliere Wordpress plugin installatie door:
 Plaats de shortcodes in de pagina's
 
 ## Screenshot ##
-* None yet
+* None yet *
 
 ## Changelog ##
 
 ### 4.0.87 ###
-Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
+* Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
 ### 4.0.92 ###
-Berekening verdeling gewijzigd
+* Berekening verdeling gewijzigd
 ### 4.1.4 ###
-Toevoeging keramiek recepten functionaliteit
+* Toevoeging keramiek recepten functionaliteit
 ### 4.2.0 ###
-Toevoeging betalingen via Mollie
+* Toevoeging betalingen via Mollie
 ### 4.3.0 ###
-Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
+* Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
 
 ## Upgrade Notice ##
 
@@ -56,5 +56,3 @@ Deze plugin voegt drie tabellen toe aan de database:
 * kleistad_cursussen
 
 Alle overige informatie wordt via user_meta en custom posts informatie vastgelegd.
-
-`<?php code(); // goes in backticks ?>`
