@@ -28,7 +28,7 @@ Description: stylesheet functions voor kleistad_plugin
     border: 2px solid #DDD;
     font-size:12px;
 }
-  
+
 .kleistad_hover {
     color: blue;
 }
@@ -79,7 +79,11 @@ table.kleistad_form input[type=text], select {
     width: 100%;
 }
 table.kleistad_form select {
-    -webkit-appearance: menulist-button;
+	/* csslint ignore:start */
+	-webkit-appearance:	menulist-button;
+	/* csslint ignore:end */
+	-moz-appearance: menulist-button;
+	appearance: none;
 }
 table.kleistad_form button {
     height: 2.5em;
@@ -140,8 +144,8 @@ table.kleistad_reserveringen a:hover {
     width: 100%;
 }
 table.kleistad_rapport {
-    table-layout: auto;
     font-size: small;
+    table-layout: auto;
 }
 table.kleistad_rapport th {
     font-weight: bold;
@@ -263,7 +267,7 @@ table.kleistad_rapport tr:nth-child(even) {
     width: 250px;
 }
 
-.kleistad_zoek input#search { 
+.kleistad_zoek input#search { /* csslint allow: ids */
     background: #2b303b;
     border: none;
     color: #262626;
@@ -273,12 +277,14 @@ table.kleistad_rapport tr:nth-child(even) {
     width: 250px;
 }
 
+/* csslint ignore:start */
 [class^="kleistad_col_"] {
     border: 0;
     float: left;
     padding: 0 15px;
     width: 100%;
 }
+/* csslint ignore:end */
 
 @media screen and (min-width: 768px) {
     .kleistad_col_1 {
@@ -320,8 +326,11 @@ table.kleistad_rapport tr:nth-child(even) {
     }
     table.kleistad_rapport th, td {
         font-size: x-small;
-    }
-    [class^="kleistad_col_"] {
+	}
+
+/* csslint ignore:start */
+[class^="kleistad_col_"] {
         width: 100%;
-    }
+	}
+/* csslint ignore:end */
 }

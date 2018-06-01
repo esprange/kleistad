@@ -30,6 +30,7 @@
         if ( cursus.lopend ) {
             $( '#kleistad_cursus_betalen' ).hide();
             $( '#kleistad_cursus_lopend' ).show();
+            $( '#kleistad_submit' ).html( 'opslaan' );
         } else {
             $( '#kleistad_cursus_betalen' ).show();
             $( '#kleistad_cursus_lopend' ).hide();
