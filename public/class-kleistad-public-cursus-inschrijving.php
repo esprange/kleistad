@@ -62,7 +62,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		$cursussen      = $cursus_store->get();
 		foreach ( $cursussen as $cursus ) {
 
-			if ( $cursus->eind_datum < time() ) {
+			if ( $cursus->eind_datum < strtotime( 'today' ) ) {
 				continue;
 			}
 			$open_cursussen[ $cursus->id ] = [
@@ -170,6 +170,9 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			if ( '' === $achternaam ) {
 				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
 				$input['LNAME'] = '';
+			}
+			if ( is_null( $input['technieken'] ) ) {
+				$input['technieken'] = [];
 			}
 		}
 		$data ['input']  = $input;

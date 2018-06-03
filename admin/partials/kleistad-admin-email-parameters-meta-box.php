@@ -42,7 +42,7 @@
 				<li>[stookoven] : naam van de oven</li>
 				<li>[bedrag] : bedrag van de stookkosten voor de medestoker</li>
 				<li>[saldo] : nieuw saldo van de medestoker</li>
-			</ul>						
+			</ul>
 		</li>
 		<li><h3>kleistad_email_abonnement_* emails</h3>
 			<ol>
@@ -84,12 +84,11 @@
 		</li>
 		<li><h3>kleistad_email_cursus_* emails</h3>
 			<ol>
-				<li>'cursus indeling email' : paginanaam in te stellen in cursus beheer scherm</li>
-				<li>'cursus inschrijving email' : paginanaam in te stellen in cursus beheer scherm</li>
+				<li>'Inschrijf email' : bij inschrijving via bank; paginanaam aanpassen in cursus beheer</li>
+				<li>'Indeling email' : bij indeling via cursus beheer of inschrijving via iDeal; paginanaam aanpassen cursus beheer</li>
 				<li>kleistad_email_cursus_lopend : instructie bij inschrijving op lopende cursus</li>
 				<li>kleistad_email_cursus_betaling : betalen resterend cursusgeld via email link</li>
 				<li>kleistad_email_cursus_betaling_ideal : bevestiging betaling restant bedrag</li>
-				<li>kleistad_email_cursus_betaling_bank : instructie bij betaling restant bedrag per bank</li>
 			</ol>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de cursist</li>

@@ -48,13 +48,13 @@ get_header(); ?>
 
 					var elem = document.createElement('textarea');
 					if ( c ) {
-						elem.innerHTML = '&lt;script type="text/javascript"&gt;' + 
+						elem.innerHTML = '&lt;script type="text/javascript"&gt;' +
 						'window.moveTo(0,0);window.resizeTo(640,480);window.print();setTimeout(function(){window.close();},500);' +
 						'&lt;/script&gt;';
 					} else {
-						elem.innerHTML = '&lt;script type="text/javascript"&gt;' + 
+						elem.innerHTML = '&lt;script type="text/javascript"&gt;' +
 						'window.print();window.close();' +
-						'&lt;/script&gt;';						
+						'&lt;/script&gt;';
 					}
 					//	function closeme(){window.close();}setTimeout(closeme,500);window.print();&lt;/script&gt;';
 					var decoded = elem.value;
@@ -82,7 +82,7 @@ get_header(); ?>
 		</script>
 		<a style="cursor:pointer;" onClick="window.history.back()">&lt; recepten</a><br/><br/>
 		<button id="kleistad_recept_print">Afdrukken</button>
-		<div id="kleistad_recept_modal" class="modal" 
+		<div id="kleistad_recept_modal" class="modal"
 			style="display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgb(0,0,0);background-color:rgba(0,0,0,0.9);">
 
 			<span id="kleistad_close_modal" style="position:absolute;top:35px;right:35px;color:#f1f1f1;font-size:40px;font-weight:bold;transition:0.3s;"
@@ -94,7 +94,7 @@ get_header(); ?>
 			<div style="margin:auto;display:block;width:80%;max-width:700px;text-align:center;color:#ccc;padding:10px 0;height:150px;animation-name:zoom;animation-duration:0.6s;">
 				<?php the_title(); ?>
 			</div>
-		</div> 
+		</div>
 
 		<div class="kleistad_recept" >
 			<style>
@@ -111,12 +111,13 @@ get_header(); ?>
 			</style>
 
 			<h2><?php the_title(); ?></h2>
-			<div style="width:100%"> 
+			<div style="width:100%">
 				<div style="float:left;width:50%;padding-bottom:25px;">
-					<img src="<?php echo esc_url( $content['foto'] ); ?>" 
-						style="max-width:100%;max-height:100%;border-radius:5px;cursor:zoom-in;transition: 0.3s;" 
-						id="kleistad_recept_foto" 
-						onMouseOver="this.style.opacity='0.7'"
+					<img src="<?php echo esc_url( $content['foto'] ); ?>"
+						style="max-width:100%;max-height:100%;border-radius:5px;cursor:zoom-in;transition: 0.3s;"
+						id="kleistad_recept_foto"
+						onMouseOver="this.style.opacity=0.7"
+						onMouseOut="this.style.opacity=1"
 						alt="<?php the_title(); ?>" >
 				</div>
 				<div style="float:left;width:50%;">

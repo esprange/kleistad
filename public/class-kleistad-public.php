@@ -225,7 +225,7 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'dagdelenkaart', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-dagdelenkaart.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'cursus_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables' ], $this->version, false );
-		wp_register_script( $this->plugin_name . 'recept_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'datatables' ], $this->version, false );
+		wp_register_script( $this->plugin_name . 'recept_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'recept', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept.js', [ 'jquery' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'saldo', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo.js', [ 'jquery' ], $this->version, false );
 		wp_register_script( $this->plugin_name . 'saldo_overzicht', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo_overzicht.js', [ 'jquery', 'datatables' ], $this->version, false );

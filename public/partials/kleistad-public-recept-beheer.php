@@ -52,7 +52,7 @@ else :
 				<label for="kleistad_uiterlijk">Uiterlijk</label>
 			</div>
 		</div>
-		<div class="kleistad_row">
+		<div class="kleistad_row" style="padding-top:15px">
 			<div class="kleistad_col_3">
 			<?php
 			$glazuur = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
@@ -128,7 +128,7 @@ else :
 				<label for="kleistad_herkomst">Herkomst</label>
 			</div>
 		</div>
-		<div class="kleistad_row">
+		<div class="kleistad_row" style="padding-top:15px">
 			<div class="kleistad_col_5">
 				<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" rows="5"><?php echo esc_textarea( $data['recept']['content']['kenmerk'] ); ?></textarea>
 			</div>
@@ -144,7 +144,7 @@ else :
 				<label for="kleistad_foto_input">Foto (max 2M bytes)</label>
 			</div>
 		</div>
-		<div class="kleistad_row">
+		<div class="kleistad_row" style="padding-top:15px">
 			<div class="kleistad_col_5">
 				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" rows="5"><?php echo esc_textarea( $data['recept']['content']['stookschema'] ); ?></textarea>
 			</div>
@@ -169,6 +169,7 @@ else :
 			</div>
 		</div>
 		<datalist id="kleistad_recept_grondstof">
+			<select style="display: none;">
 			<?php
 			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
 			$terms            = get_terms(
@@ -181,10 +182,11 @@ else :
 			);
 			foreach ( $terms as $term ) :
 				?>
-				<option value="<?php echo esc_attr( $term->name ); ?>">
+				<option value="<?php echo esc_attr( $term->name ); ?>" >&nbsp;
 				<?php
 			endforeach
 			?>
+			</select>
 		</datalist>
 		<div class="kleistad_row">
 			<div class="kleistad_col_5">
@@ -230,7 +232,7 @@ else :
 				</table>
 			</div>
 		</div>
-		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p> 
+		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
 		<button id="kleistad_recept_opslaan" name="kleistad_submit_recept_beheer">Opslaan</button>
 		<button onClick="window.history.back();">Annuleren</button>
 	</form>

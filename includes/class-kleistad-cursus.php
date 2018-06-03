@@ -387,10 +387,6 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				$onderwerp = 'Betaling cursus';
 				$slug      = 'kleistad_email_cursus_betaling_ideal';
 				break;
-			case 'betaling_bank':
-				$onderwerp = 'Betaling cursus';
-				$slug      = 'kleistad_email_cursus_betaling_bank';
-				break;
 			default:
 				$slug = '';
 		}
@@ -406,8 +402,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				'cursus_eind_tijd'       => strftime( '%H:%M', $this->_cursus->eind_tijd ),
 				'cursus_technieken'      => implode( ', ', $this->technieken ),
 				'cursus_code'            => $this->code,
-				'cursus_kosten'          => number_format( $this->_cursus->cursuskosten, 2, ',', '' ),
-				'cursus_inschrijfkosten' => number_format( $this->_cursus->inschrijfkosten, 2, ',', '' ),
+				'cursus_kosten'          => number_format( $this->aantal * $this->_cursus->cursuskosten, 2, ',', '' ),
+				'cursus_inschrijfkosten' => number_format( $this->aantal * $this->_cursus->inschrijfkosten, 2, ',', '' ),
 				'cursus_aantal'          => $this->aantal,
 				'cursus_opmerking'       => $this->opmerking,
 				'cursus_link'            => '<a href="' . home_url( '/kleistad_cursus_betaling' ) .

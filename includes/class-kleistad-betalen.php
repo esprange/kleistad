@@ -171,11 +171,12 @@ class Kleistad_Betalen {
 	public function annuleer( $gebruiker_id, $subscriptie_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
 
-		if ( '' === $mollie_gebruiker_id ) {
-			return false;
+		if ( '' !== $mollie_gebruiker_id ) {
+			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+			$mollie_gebruiker->cancelSubscription( $subscriptie_id );
+			return true;
 		}
-		$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-		$mollie_gebruiker->cancelSubscription( $subscriptie_id );
+		return false;
 	}
 
 	/**
@@ -185,16 +186,13 @@ class Kleistad_Betalen {
 	 */
 	public function heeft_mandaat( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
-
-		if ( '' === $mollie_gebruiker_id ) {
-			return false;
-		}
-		$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-		$mandaten         = $mollie_gebruiker->customer_mandates->all();
-
-		foreach ( $mandaten as $mandaat ) {
-			if ( \Mollie\Api\Resources\MandateStatus::STATUS_VALID === $mandaat->status ) {
-				return $mandaat->id;
+		if ( '' !== $mollie_gebruiker_id ) {
+			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+			$mandaten         = $mollie_gebruiker->mandates();
+			foreach ( $mandaten as $mandaat ) {
+				if ( $mandaat->isValid() ) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -208,13 +206,12 @@ class Kleistad_Betalen {
 	 */
 	public function verwijder( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
-
-		if ( '' === $mollie_gebruiker_id ) {
-			return false;
+		if ( '' !== $mollie_gebruiker_id ) {
+			delete_user_meta( $gebruiker_id, 'mollie_customer_id' );
+			$this->mollie->customers->delete( $mollie_gebruiker_id );
+			return true;
 		}
-		$this->mollie->customers->delete( $mollie_gebruiker_id );
-		delete_user_meta( $gebruiker_id, 'mollie_customer_id' );
-		return true;
+		return false;
 	}
 
 	/**
@@ -224,19 +221,16 @@ class Kleistad_Betalen {
 	 * @return mixed de status van de betaling als tekst of een error object.
 	 */
 	public function controleer( $gebruiker_id ) {
-		$error     = new WP_Error();
-		$mollie_id = get_user_meta( $gebruiker_id, 'betaling', true );
-
-		if ( '' === $mollie_id ) {
-			$error->add( 'betaling', 'Er is iets misgegaan met een betaling. Probeer het opnieuw.' );
-			return $error;
-		}
-
-		$betaling = $this->mollie->payments->get( $mollie_id );
-		if ( $betaling->isPaid() ) {
-			return $betaling->metadata->bericht;
-		}
+		$error = new WP_Error();
 		$error->add( 'betaling', 'De betaling via iDeal heeft niet plaatsgevonden. Probeer het opnieuw.' );
+
+		$mollie_betaling_id = get_user_meta( $gebruiker_id, 'betaling', true );
+		if ( '' !== $mollie_betaling_id ) {
+			$betaling = $this->mollie->payments->get( $mollie_betaling_id );
+			if ( $betaling->isPaid() ) {
+				return $betaling->metadata->bericht;
+			}
+		}
 		return $error;
 	}
 
@@ -291,10 +285,10 @@ class Kleistad_Betalen {
 	 * @return \WP_REST_response de response.
 	 */
 	public static function callback_betaling_verwerkt( WP_REST_Request $request ) {
-		$mollie_id = $request->get_param( 'id' );
+		$mollie_betaling_id = $request->get_param( 'id' );
 
 		$object   = new static();
-		$betaling = $object->mollie->payments->get( $mollie_id );
+		$betaling = $object->mollie->payments->get( $mollie_betaling_id );
 		if ( $betaling->isPaid() && ! $betaling->hasRefunds() && ! $betaling->hasChargeBacks() ) {
 			/**
 			 * Alleen actie als er daadwerkelijk betaald is, niet als er terugbetaald is o.i.d.

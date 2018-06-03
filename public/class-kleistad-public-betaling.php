@@ -33,7 +33,7 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 		$cursus_id  = filter_input( INPUT_GET, 'crss', FILTER_SANITIZE_NUMBER_INT );
 		$hash       = filter_input( INPUT_GET, 'hsh', FILTER_SANITIZE_STRING );
 
-		$data['leeg'] = ( '' === $cursist_id || '' === $cursus_id );
+		$data['leeg'] = is_null( $hash );
 
 		if ( $data['leeg'] ) {
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
@@ -108,8 +108,6 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 				'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
 				false
 			);
-		} else {
-			$inschrijving->email( 'betaling_bank' );
 		}
 	}
 }

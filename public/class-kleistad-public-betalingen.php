@@ -41,7 +41,7 @@ class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ( $cursussen[ $cursus_id ]->eind_datum > time() ) && ( ! $inschrijving->i_betaald || ! $inschrijving->c_betaald ) ) {
+				if ( ( $cursussen[ $cursus_id ]->eind_datum > strtotime( '-7 days' ) ) && ( ! $inschrijving->i_betaald || ! $inschrijving->c_betaald ) ) {
 					$rows[] = [
 						'inschrijver_id' => $cursist_id,
 						'naam'           => $cursisten[ $cursist_id ]->voornaam . ' ' . $cursisten[ $cursist_id ]->achternaam,
@@ -116,20 +116,6 @@ class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 	 */
 	public function save( $data ) {
 		foreach ( $data['cursisten'] as $cursist_id => $cursist ) {
-			if ( isset( $cursist['c_betaald'] ) ) {
-				foreach ( $cursist['c_betaald'] as $cursus_id => $value ) {
-					$inschrijving            = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
-					$inschrijving->c_betaald = true;
-					$inschrijving->save();
-				}
-			}
-			if ( isset( $cursist['i_betaald'] ) ) {
-				foreach ( $cursist['i_betaald'] as $cursus_id => $value ) {
-					$inschrijving            = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
-					$inschrijving->i_betaald = true;
-					$inschrijving->save();
-				}
-			}
 			if ( isset( $cursist['geannuleerd'] ) ) {
 				foreach ( $cursist['geannuleerd'] as $cursus_id => $value ) {
 					$inschrijving              = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
@@ -137,9 +123,33 @@ class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 					$inschrijving->save();
 				}
 			}
+			if ( isset( $cursist['c_betaald'] ) ) {
+				foreach ( $cursist['c_betaald'] as $cursus_id => $value ) {
+					$inschrijving = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
+					if ( ! $inschrijving->c_betaald ) {
+						$inschrijving->c_betaald = true;
+						if ( ! $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
+							$inschrijving->ingedeeld = true;
+							$inschrijving->email( 'indeling' );
+						}
+						$inschrijving->save();
+					}
+				}
+			}
+			if ( isset( $cursist['i_betaald'] ) ) {
+				foreach ( $cursist['i_betaald'] as $cursus_id => $value ) {
+					$inschrijving = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
+					if ( ! $inschrijving->i_betaald ) {
+						$inschrijving->i_betaald = true;
+						if ( ! $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
+							$inschrijving->ingedeeld = true;
+							$inschrijving->email( 'indeling' );
+						}
+						$inschrijving->save();
+					}
+				}
+			}
 		}
-
 		return 'Betaal informatie is geregistreerd.';
 	}
-
 }
