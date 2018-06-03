@@ -46,15 +46,11 @@
 		</li>
 		<li><h3>kleistad_email_abonnement_* emails</h3>
 			<ol>
-				<li>start_ideal: start via ideal betaling</li>
-				<li>start_bank: start via bank storting</li>
-				<li>gepauzeerd: gepauzeerd door de abonnee</li>
-				<li>geannuleerd: beëindigd door de abonnee</li>
-				<li>herstart_ideal: herstart na pauze via ideal betaling</li>
-				<li>herstart_bank: herstart na pauze via bank storting</li>
-				<li>gewijzigd: wijziging abonnementsvorm door gebruiker</li>
-				<li>betaalwijze_ideal: voortaan betalen per ideal</li>
-				<li>betaalwijze_bank: voortaan betalen per bank</li>
+				<li>start_ideal: bevesting start via ideal betaling</li>
+				<li>start_bank: start betalen per bank met instructie</li>
+				<li>gewijzigd: gepauzeerd, herstart of beëindigd door de abonnee</li>
+				<li>betaalwijze_ideal: bevestiging voortaan betalen per ideal</li>
+				<li>betaalwijze_bank: voortaan betalen per bank met instructie</li>
 			</ol>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de abonnee</li>
@@ -69,6 +65,8 @@
 				<li>[abonnement_code] : code te vermelden bij betaling</li>
 				<li>[abonnement_dag] : dag waarvoor beperkt abonnement geldt</li>
 				<li>[abonnement_opmerking] : door abonnee geplaatste opmerking</li>
+				<li>[abonnement_wijziging] : de wijziging (pauzeren, herstarten of beëindigen)</li>
+				<li>[abonnement_borg] : door abonnee te betalen borg</li>
 				<li>[abonnement_startgeld] : driemaal het maand abonnee bedrag</li>
 				<li>[abonnement_maandgeld] : het maand abonnee bedrag</li>
 			</ul>

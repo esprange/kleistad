@@ -154,10 +154,11 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Verzenden van de welkomst email.
 	 *
-	 * @param string $type Welke email er verstuurd moet worden.
+	 * @param  string $type      Welke email er verstuurd moet worden.
+	 * @param  string $wijziging Ingeval van een wijziging, de tekst die dit beschrijft.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email( $type ) {
+	public function email( $type, $wijziging = '' ) {
 		$options = get_option( 'kleistad-opties' );
 		$abonnee = get_userdata( $this->_abonnee_id );
 		$to      = "$abonnee->first_name $abonnee->last_name <$abonnee->user_email>";
@@ -175,6 +176,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'abonnement_code'      => $this->code,
 				'abonnement_dag'       => $this->dag,
 				'abonnement_opmerking' => $this->opmerking,
+				'abonnement_wijziging' => $wijziging,
+				'abonnement_borg'      => $options['borg_kast'],
 				'abonnement_startgeld' => number_format( 3 * $options[ $this->soort . '_abonnement' ], 2, ',', '' ),
 				'abonnement_maandgeld' => number_format( $options[ $this->soort . '_abonnement' ], 2, ',', '' ),
 			]
@@ -232,7 +235,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
 		}
 		if ( ! $admin ) {
-			$this->email( '_gepauzeerd' );
+			$this->email(
+				'_gewijzigd',
+				'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->pauze_datum ) . ' gepauzeerd.'
+			);
 		}
 		$this->save();
 		return true;
@@ -251,10 +257,11 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$betalen = new Kleistad_Betalen();
 		if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
 			$this->subscriptie_id = $this->herhaalbetalen( $herstart_datum );
-			$this->email( '_herstart_ideal' );
-		} else {
-			$this->email( '_herstart_bank' );
 		}
+		$this->email(
+			'_gewijzigd',
+			'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->herstart_datum ) . ' herstart.'
+		);
 		$this->save();
 		return true;
 	}
@@ -276,7 +283,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$this->subscriptie_id = '';
 		}
 		if ( ! $admin ) {
-			$this->email( '_geannuleerd' );
+			$this->email(
+				'_gewijzigd',
+				'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->eind_datum ) . ' beëindigd.'
+			);
 		}
 		$this->save();
 		return true;
@@ -305,7 +315,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				$betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
 				$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
 			}
-			$this->email( '_gewijzigd' );
+			$this->email(
+				'_gewijzigd',
+				'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->wijzig_datum ) . ' gewijzigd naar ' . $this->soort
+			);
 		}
 		$this->save();
 		return true;

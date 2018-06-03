@@ -12,16 +12,16 @@
  */
 
 if ( ! $data['leeg'] ) :
-	$inschrijvingkosten = $data['cursus']->inschrijfkosten * $data['inschrijving']->aantal;
-	$restantkosten      = $data['cursus']->cursuskosten * $data['inschrijving']->aantal;
-	$cursuskosten       = $restantkosten + $inschrijvingkosten;
+	$inschrijfkosten = $data['cursus']->inschrijfkosten * $data['inschrijving']->aantal;
+	$restantkosten   = $data['cursus']->cursuskosten * $data['inschrijving']->aantal;
+	$cursuskosten    = $restantkosten + $inschrijfkosten;
 	?>
 
 <form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
 	<?php wp_nonce_field( 'kleistad_betaling' ); ?>
 <input type="hidden" name="cursist_id" value="<?php echo esc_attr( $data['cursist']->ID ); ?>" />
 <input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']->id ); ?>" />
-<input type="hidden" name="betaal" class="kleistad_input_cbr" value="ideal" />
+<input type="hidden" name="betaal" value="ideal" />
 <h2>Overzicht betaling cursuskosten</h2>
 
 <div class="kleistad_row">
@@ -45,7 +45,7 @@ if ( ! $data['leeg'] ) :
 		<p>Reeds betaald</p>
 	</div>
 	<div class="kleistad_col_7">
-		<p>&euro; <?php echo esc_html( number_format_i18n( $inschrijvingkosten, 2 ) ); ?></p>
+		<p>&euro; <?php echo esc_html( number_format_i18n( $inschrijfkosten, 2 ) ); ?></p>
 	</div>
 </div>
 <div class="kleistad_row">
