@@ -185,6 +185,8 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 		$abonnement->soort       = $data['input']['abonnement_keuze'];
 		$abonnement->opmerking   = $data['input']['opmerking'];
 		$abonnement->start_datum = strtotime( $data['input']['start_datum'] );
+		$abonnement->geannuleerd = false;
+		$abonnement->gepauzeerd  = false;
 		$abonnement->dag         = $data['input']['dag'];
 		$abonnement->save();
 

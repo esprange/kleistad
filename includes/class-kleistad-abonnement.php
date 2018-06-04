@@ -168,10 +168,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'achternaam'           => $abonnee->last_name,
 				'loginnaam'            => $abonnee->user_login,
 				'start_datum'          => strftime( '%d-%m-%y', $this->start_datum ),
-				'pauze_datum'          => strftime( '%d-%m-%y', $this->pauze_datum ),
-				'eind_datum'           => strftime( '%d-%m-%y', $this->eind_datum ),
-				'herstart_datum'       => strftime( '%d-%m-%y', $this->herstart_datum ),
-				'incasso_datum'        => strftime( '%d-%m-%y', $this->incasso_datum ),
+				'pauze_datum'          => ( $this->pauze_datum > 0 ) ? strftime( '%d-%m-%y', $this->pauze_datum ) : '',
+				'eind_datum'           => ( $this->eind_datum > 0 ) ? strftime( '%d-%m-%y', $this->eind_datum ) : '',
+				'herstart_datum'       => ( $this->herstart_datum > 0 ) ? strftime( '%d-%m-%y', $this->herstart_datum ) : '',
+				'incasso_datum'        => ( $this->incasso_datum > 0 ) ? strftime( '%d-%m-%y', $this->incasso_datum ) : '',
 				'abonnement'           => $this->soort,
 				'abonnement_code'      => $this->code,
 				'abonnement_dag'       => $this->dag,
@@ -230,10 +230,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->schedule( 'pauze', $pauze_datum );
 		$this->pauze_datum    = $pauze_datum;
 		$this->herstart_datum = $herstart_datum;
-		if ( '' !== $this->subscriptie_id ) {
-			$betalen = new Kleistad_Betalen();
-			$betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
-		}
+		$betalen              = new Kleistad_Betalen();
+		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
 		if ( ! $admin ) {
 			$this->email(
 				'_gewijzigd',
@@ -253,15 +251,16 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		// Op de herstart_datum wordt de gepauzeerd status verwijderd.
 		$this->schedule( 'herstart', $herstart_datum );
 		$this->herstart_datum = $herstart_datum;
-
-		$betalen = new Kleistad_Betalen();
+		$betalen              = new Kleistad_Betalen();
 		if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
 			$this->subscriptie_id = $this->herhaalbetalen( $herstart_datum );
 		}
-		$this->email(
-			'_gewijzigd',
-			'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->herstart_datum ) . ' herstart.'
-		);
+		if ( ! $admin ) {
+			$this->email(
+				'_gewijzigd',
+				'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->herstart_datum ) . ' herstart.'
+			);
+		}
 		$this->save();
 		return true;
 	}
@@ -275,13 +274,12 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	public function annuleren( $eind_datum, $admin = false ) {
 		// Op de einddatum wordt de subscriber rol van het abonnee account verwijderd.
 		$this->schedule( 'eind', $eind_datum );
-		$this->eind_datum = $eind_datum;
 
-		$betalen = new Kleistad_Betalen();
-		if ( '' !== $this->subscriptie_id ) {
-			$betalen->verwijder( $this->_abonnee_id );
-			$this->subscriptie_id = '';
-		}
+		// Een eventuele subscriptie wordt geannuleerd en mandaten worden verwijderd.
+		$this->eind_datum     = $eind_datum;
+		$betalen              = new Kleistad_Betalen();
+		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
+		$betalen->verwijder_mandaat( $this->_abonnee_id );
 		if ( ! $admin ) {
 			$this->email(
 				'_gewijzigd',
@@ -301,18 +299,13 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function wijzigen( $wijzig_datum, $soort, $dag, $admin = false ) {
-		$this->soort        = $soort;
-		$this->dag          = $dag;
-		$this->wijzig_datum = $wijzig_datum;
-
-		$betalen = new Kleistad_Betalen();
-		if ( $admin ) {
+		$this->soort          = $soort;
+		$this->dag            = $dag;
+		$this->wijzig_datum   = $wijzig_datum;
+		$betalen              = new Kleistad_Betalen();
+		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
+		if ( ! $admin ) {
 			if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
-				$betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
-			}
-		} else {
-			if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
-				$betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
 				$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
 			}
 			$this->email(
@@ -346,8 +339,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				true
 			);
 		} else {
-			$this->incasso_datum = null;
-			$betalen->verwijder( $this->_abonnee_id );
+			$this->incasso_datum  = null;
+			$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
+			$betalen->verwijder_mandaat( $this->_abonnee_id );
 			$this->email( '_betaalwijze_bank' );
 		}
 		$this->save();

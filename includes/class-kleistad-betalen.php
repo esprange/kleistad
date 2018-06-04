@@ -83,7 +83,7 @@ class Kleistad_Betalen {
 				]
 			);
 		} else {
-			$betaling = $this->mollie->payments->create(
+			$betaling = $mollie_gebruiker->createPayment(
 				[
 					'amount'       => [
 						'currency' => 'EUR',
@@ -171,12 +171,14 @@ class Kleistad_Betalen {
 	public function annuleer( $gebruiker_id, $subscriptie_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
 
-		if ( '' !== $mollie_gebruiker_id ) {
+		if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
 			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			$mollie_gebruiker->cancelSubscription( $subscriptie_id );
-			return true;
+			$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
+			if ( $subscription->isActive() ) {
+				$mollie_gebruiker->cancelSubscription( $subscriptie_id );
+			}
 		}
-		return false;
+		return '';
 	}
 
 	/**
@@ -199,16 +201,26 @@ class Kleistad_Betalen {
 	}
 
 	/**
-	 * Verwijder gebruiker gegevens, inclusief mandaten e.d.
+	 * Verwijder mandaten.
 	 *
-	 * @param int $gebruiker_id Te verwijderen gebruiker uit de database van Mollie.
+	 * @param int $gebruiker_id De gebruiker waarvoor mandaten verwijderd moeten worden.
 	 * @return boolean
 	 */
-	public function verwijder( $gebruiker_id ) {
+	public function verwijder_mandaat( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, 'mollie_customer_id', true );
 		if ( '' !== $mollie_gebruiker_id ) {
-			delete_user_meta( $gebruiker_id, 'mollie_customer_id' );
-			$this->mollie->customers->delete( $mollie_gebruiker_id );
+			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+			$mandaten         = $mollie_gebruiker->mandates();
+			foreach ( $mandaten as $mandaat ) {
+				if ( $mandaat->isValid() ) {
+					try {
+						$mollie_gebruiker->revokeMandate( $mandaat->id );
+					} catch ( \Mollie\Api\Exceptions\ApiException $e ) {
+						// Do nothing (if successfull it returns a 204 message.
+						continue;
+					};
+				}
+			}
 			return true;
 		}
 		return false;
