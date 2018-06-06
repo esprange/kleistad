@@ -138,6 +138,8 @@ class Kleistad {
 
 		$this->loader->add_filter( 'manage_users_columns', $plugin_admin, 'manage_users_columns' );
 		$this->loader->add_filter( 'user_profile_update_errors', $plugin_admin, 'check_role', 10, 3 );
+		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_admin, 'register_exporter', 10 );
+		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_admin, 'register_eraser', 10 );
 	}
 
 	/**

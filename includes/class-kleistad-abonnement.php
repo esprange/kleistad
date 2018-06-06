@@ -74,6 +74,66 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
+	 * Export functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return array De persoonlijke data (abonnement info).
+	 */
+	public static function export( $gebruiker_id ) {
+		$abonnement = new static( $gebruiker_id );
+		$items[]    = [
+			'group_id'    => 'abonnementinfo',
+			'group_label' => 'abonnement informatie',
+			'item_id'     => 'abonnement-1',
+			'data'        => [
+				[
+					'name'  => 'aanmeld datum',
+					'value' => strftime( '%d-%m-%y', $abonnement->datum ),
+				],
+				[
+					'name'  => 'start datum',
+					'value' => $abonnement->start_datum > 0 ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '',
+				],
+				[
+					'name'  => 'eind datum',
+					'value' => $abonnement->eind_datum > 0 ? strftime( '%d-%m-%y', $abonnement->eind_datum ) : '',
+				],
+				[
+					'name'  => 'pauze datum',
+					'value' => $abonnement->pauze_datum > 0 ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '',
+				],
+				[
+					'name'  => 'herstart datum',
+					'value' => $abonnement->herstart_datum > 0 ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '',
+				],
+				[
+					'name'  => 'opmerking',
+					'value' => $abonnement->opmerking,
+				],
+				[
+					'name'  => 'soort abonnement',
+					'value' => $abonnement->soort,
+				],
+				[
+					'name'  => 'dag',
+					'value' => $abonnement->dag,
+				],
+			],
+		];
+		return $items;
+	}
+
+	/**
+	 * Erase functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return int aantal verwijderde gegevens.
+	 */
+	public static function erase( $gebruiker_id ) {
+		return 0;
+	}
+
+	/**
 	 * Getter, using the magic function
 	 *
 	 * Get attribuut from the object.

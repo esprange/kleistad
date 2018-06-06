@@ -137,5 +137,24 @@ abstract class Kleistad_EntityStore {
 		return count( $this->_data );
 	}
 
+	/**
+	 * Return privacy data
+	 *
+	 * @param int $gebruiker_id Het gebruiker_id.
+	 * @return array De persoonlijke data.
+	 */
+	public static function export( $gebruiker_id ) {
+		return [];
+	}
+
+	/**
+	 * Erase privacy data
+	 *
+	 * @param int $gebruiker_id Het gebruiker_id.
+	 * @return mixed De persoonlijke data.
+	 */
+	public static function erase( $gebruiker_id ) {
+		return 0;
+	}
 }
 

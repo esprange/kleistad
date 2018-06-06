@@ -280,6 +280,55 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	}
 
 	/**
+	 * Export functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return array De persoonlijke data (cursus info).
+	 */
+	public static function export( $gebruiker_id ) {
+		$inschrijvingen = get_user_meta( $gebruiker_id, 'kleistad_cursus', true );
+		$items          = [];
+		if ( is_array( $inschrijvingen ) ) {
+			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+				$items[] = [
+					'group_id'    => 'cursusinfo',
+					'group_label' => 'cursussen informatie',
+					'item_id'     => 'cursus-' . $cursus_id,
+					'data'        => [
+						[
+							'name'  => 'aanmeld datum',
+							'value' => strftime( '%d-%m-%y', strtotime( $inschrijving['datum'] ) ),
+						],
+						[
+							'name'  => 'opmerking',
+							'value' => $inschrijving['opmerking'],
+						],
+						[
+							'name'  => 'ingedeeld',
+							'value' => ( $inschrijving['ingedeeld'] ) ? 'ja' : 'nee',
+						],
+						[
+							'name'  => 'geannuleerd',
+							'value' => ( $inschrijving['geannuleerd'] ) ? 'ja' : 'nee',
+						],
+					],
+				];
+			}
+		}
+		return $items;
+	}
+
+	/**
+	 * Erase functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return int aantal verwijderde gegevens.
+	 */
+	public static function erase( $gebruiker_id ) {
+		return 0;
+	}
+
+	/**
 	 * Getter, using the magic function
 	 *
 	 * Get attribuut from the object.

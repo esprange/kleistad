@@ -190,6 +190,83 @@ class Kleistad_Admin {
 	}
 
 	/**
+	 * Registreer de exporter van privacy gevoelige data.
+	 *
+	 * @param array $exporters De exporters die WP aanroept bij het genereren van de zip file.
+	 */
+	public function register_exporter( $exporters ) {
+		$exporters['kleistad'] = [
+			'exporter_friendly_name' => 'plugin folder Kleistad',
+			'callback'               => [ get_class(), 'exporter' ],
+		];
+		return $exporters;
+	}
+
+	/**
+	 * Registreer de eraser van privacy gevoelige data.
+	 *
+	 * @param array $erasers De erasers die WP aanroept bij het verwijderen persoonlijke data.
+	 */
+	public function register_eraser( $erasers ) {
+		$erasers['kleistad'] = [
+			'eraser_friendly_name' => 'plugin folder Kleistad',
+			'callback'             => [ get_class(), 'eraser' ],
+		];
+		return $erasers;
+	}
+
+	/**
+	 * Exporteer persoonlijke data.
+	 *
+	 * @param string $email Het email adres van de te exporteren persoonlijke data.
+	 * @param int    $page  De pagina die opgevraagd wordt.
+	 */
+	public static function exporter( $email, $page = 1 ) {
+		$export_items = [];
+		$gebruiker_id = email_exists( $email );
+		if ( $gebruiker_id ) {
+			$export_items = array_merge(
+				Kleistad_Gebruiker::export( $gebruiker_id ),
+				Kleistad_Inschrijving::export( $gebruiker_id ),
+				Kleistad_Abonnement::export( $gebruiker_id ),
+				Kleistad_Saldo::export( $gebruiker_id ),
+				Kleistad_Reservering::export( $gebruiker_id )
+			);
+		}
+		// Geef aan of er nog meer te exporteren valt.
+		$done = true; // Criterium nog vast te stellen.
+		return [
+			'data' => $export_items,
+			'done' => $done,
+		];
+	}
+
+	/**
+	 * Erase / verwijder persoonlijke data.
+	 *
+	 * @param string $email Het email adres van de te verwijderen persoonlijke data.
+	 * @param int    $page  De pagina die opgevraagd wordt.
+	 */
+	public static function eraser( $email, $page = 1 ) {
+		$count        = 0;
+		$gebruiker_id = email_exists( $email );
+		if ( $gebruiker_id ) {
+			$count =
+				Kleistad_Abonnement::erase( $gebruiker_id ) +
+				Kleistad_Inschrijving::erase( $gebruiker_id ) +
+				Kleistad_Reservering::erase( $gebruiker_id ) +
+				Kleistad_Saldo::erase( $gebruiker_id ) +
+				Kleistad_Gebruiker::erase( $gebruiker_id );
+		}
+		return [
+			'items_removed'  => $count,
+			'items_retained' => false,
+			'messages'       => [],
+			'done'           => ( 0 < $count ),
+		];
+	}
+
+	/**
 	 * Register the settings
 	 *
 	 * @since   4.0.87

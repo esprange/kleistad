@@ -193,6 +193,55 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
+	 * Export functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return array De persoonlijke data (stooksaldo).
+	 */
+	public static function export( $gebruiker_id ) {
+		global $wpdb;
+
+		$items         = [];
+		$reserveringen = $wpdb->get_results( "SELECT dag as dag, maand, jaar, verdeling, naam, R.id as id FROM
+			{$wpdb->prefix}kleistad_reserveringen as R, {$wpdb->prefix}kleistad_ovens as O
+			WHERE R.oven_id = O.id
+			ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A ); // WPCS: unprepared SQL OK.
+
+		foreach ( $reserveringen as $reservering ) {
+			$verdeling = json_decode( $reservering['verdeling'], true );
+			$key       = array_search( $gebruiker_id, array_column( $verdeling, 'id' ), true );
+			if ( false !== $key ) {
+				$items[] = [
+					'group_id'    => 'stook',
+					'group_label' => 'stook informatie',
+					'item_id'     => 'stook-' . $reservering['id'],
+					'data'        => [
+						[
+							'name'  => 'datum',
+							'value' => $reservering['dag'] . '-' . $reservering['maand'] . '-' . $reservering['jaar'],
+						],
+						[
+							'name'  => 'oven',
+							'value' => $reservering['naam'],
+						],
+					],
+				];
+			}
+		}
+		return $items;
+	}
+
+	/**
+	 * Erase functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return int aantal verwijderde gegevens.
+	 */
+	public static function erase( $gebruiker_id ) {
+		return 0;
+	}
+
+	/**
 	 * Find the reservering
 	 *
 	 * @global object $wpdb wp database
@@ -542,6 +591,38 @@ class Kleistad_Saldo {
 	public function __construct( $gebruiker_id ) {
 		$this->_gebruiker_id   = $gebruiker_id;
 		$this->_data['bedrag'] = $this->huidig_saldo();
+	}
+
+	/**
+	 * Export functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return array De persoonlijke data (stooksaldo).
+	 */
+	public static function export( $gebruiker_id ) {
+		$saldo   = new static( $gebruiker_id );
+		$items[] = [
+			'group_id'    => 'stooksaldo',
+			'group_label' => 'stooksaldo informatie',
+			'item_id'     => 'stooksaldo-1',
+			'data'        => [
+				[
+					'name'  => 'stooksaldo',
+					'value' => $saldo->huidig_saldo(),
+				],
+			],
+		];
+		return $items;
+	}
+
+	/**
+	 * Erase functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return int Aantal verwijderd.
+	 */
+	public static function erase( $gebruiker_id ) {
+		return delete_user_meta( $gebruiker_id, 'stooksaldo' ) ? 1 : 0;
 	}
 
 	/**

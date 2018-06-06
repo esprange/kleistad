@@ -65,6 +65,61 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	}
 
 	/**
+	 * Export functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return array De persoonlijke data (contact info).
+	 */
+	public static function export( $gebruiker_id ) {
+		$gebruiker = new static( $gebruiker_id );
+		$items[]   = [
+			'group_id'    => 'contactinfo',
+			'group_label' => 'contact informatie',
+			'item_id'     => 'contactinfo-1',
+			'data'        => [
+				[
+					'name'  => 'telefoonnummer',
+					'value' => $gebruiker->telnr,
+				],
+				[
+					'name'  => 'straat',
+					'value' => $gebruiker->straat,
+				],
+				[
+					'name'  => 'nummer',
+					'value' => $gebruiker->huisnr,
+				],
+				[
+					'name'  => 'postcode',
+					'value' => $gebruiker->pcode,
+				],
+				[
+					'name'  => 'plaats',
+					'value' => $gebruiker->plaats,
+				],
+			],
+		];
+		return $items;
+	}
+
+	/**
+	 * Erase functie privacy gevoelige data.
+	 *
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return int Aantal persoonlijke data (contact info) verwijderd.
+	 */
+	public static function erase( $gebruiker_id ) {
+		$gebruiker = new static( $gebruiker_id );
+		$gebruiker->telnr  = '******';
+		$gebruiker->straat = '******';
+		$gebruiker->huisnr = '******';
+		$gebruiker->pcode  = '******';
+		$gebruiker->plaats = '******';
+		$gebruiker->save();
+		return 5;
+	}
+
+	/**
 	 * Getter, using the magic function
 	 *
 	 * Get attribuut from the object.
