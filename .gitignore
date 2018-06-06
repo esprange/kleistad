@@ -2,7 +2,6 @@
 .svn
 
 # Ignore folders
-vendor/
 node_modules/
 .vscode/
 
