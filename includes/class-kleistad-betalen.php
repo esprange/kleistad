@@ -213,12 +213,7 @@ class Kleistad_Betalen {
 			$mandaten         = $mollie_gebruiker->mandates();
 			foreach ( $mandaten as $mandaat ) {
 				if ( $mandaat->isValid() ) {
-					try {
-						$mollie_gebruiker->revokeMandate( $mandaat->id );
-					} catch ( \Mollie\Api\Exceptions\ApiException $e ) {
-						// Do nothing (if successfull it returns a 204 message.
-						continue;
-					};
+					$mollie_gebruiker->revokeMandate( $mandaat->id );
 				}
 			}
 			return true;
