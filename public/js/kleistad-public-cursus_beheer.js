@@ -55,6 +55,7 @@
                     _parse: function( value ) {
                         var hours, minutes;
                         if ( 'string' === typeof value ) {
+							/* jshint eqeqeq:false */
                             if ( Number( value ) == value ) {
                                 return Number( value );
                             }
