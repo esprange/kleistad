@@ -202,10 +202,12 @@ class Kleistad_Reservering extends Kleistad_Entity {
 		global $wpdb;
 
 		$items         = [];
-		$reserveringen = $wpdb->get_results( "SELECT dag as dag, maand, jaar, verdeling, naam, R.id as id FROM
+		$reserveringen = $wpdb->get_results(
+			"SELECT dag as dag, maand, jaar, verdeling, naam, R.id as id FROM
 			{$wpdb->prefix}kleistad_reserveringen as R, {$wpdb->prefix}kleistad_ovens as O
 			WHERE R.oven_id = O.id
-			ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A ); // WPCS: unprepared SQL OK.
+			ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A
+		); // WPCS: unprepared SQL OK.
 
 		foreach ( $reserveringen as $reservering ) {
 			$verdeling = json_decode( $reservering['verdeling'], true );

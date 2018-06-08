@@ -109,7 +109,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 * @return int Aantal persoonlijke data (contact info) verwijderd.
 	 */
 	public static function erase( $gebruiker_id ) {
-		$gebruiker = new static( $gebruiker_id );
+		$gebruiker         = new static( $gebruiker_id );
 		$gebruiker->telnr  = '******';
 		$gebruiker->straat = '******';
 		$gebruiker->huisnr = '******';

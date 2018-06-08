@@ -99,7 +99,7 @@ else :
 			</div>
 			<div class="kleistad_col_3">
 			<?php
-			$uiterlijk    = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
+			$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
 			wp_dropdown_categories(
 				[
 					'orderby'           => 'name',
