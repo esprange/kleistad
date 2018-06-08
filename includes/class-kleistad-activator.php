@@ -24,7 +24,7 @@ class Kleistad_Activator {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 7;
+	const DBVERSIE = 11;
 
 	/**
 	 * Short Description. (use period)
@@ -107,11 +107,13 @@ class Kleistad_Activator {
                 indelingslug tinytext,
 				maximum tinyint(2) DEFAULT 99,
 				meer tinyint(1) DEFAULT 0,
+				tonen tinyint(1) DEFAULT 0,
                 PRIMARY KEY (id)
               ) $charset_collate;"
 			);
 			update_option( 'kleistad-database-versie', self::DBVERSIE );
 
+			$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_cursussen SET tonen = %d", 1 ) );
 		}
 
 		if ( ! wp_next_scheduled( 'kleistad_kosten' ) ) {

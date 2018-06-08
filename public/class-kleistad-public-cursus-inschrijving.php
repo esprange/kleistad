@@ -62,7 +62,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		$cursussen      = $cursus_store->get();
 		foreach ( $cursussen as $cursus ) {
 
-			if ( $cursus->eind_datum < strtotime( 'today' ) ) {
+			if ( $cursus->eind_datum < strtotime( 'today' ) || ! $cursus->tonen ) {
 				continue;
 			}
 			$open_cursussen[ $cursus->id ] = [

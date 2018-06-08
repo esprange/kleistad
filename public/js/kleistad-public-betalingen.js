@@ -9,7 +9,7 @@
             $( '.kleistad_rapport' ).DataTable(
                 {
                     language: {
-                        sProcessing: 'Bezig...',
+						sProcessing: 'Bezig...',
                         sLengthMenu: '_MENU_ resultaten weergeven',
                         sZeroRecords: 'Geen resultaten gevonden',
                         sInfo: '_START_ tot _END_ van _TOTAL_ resultaten',

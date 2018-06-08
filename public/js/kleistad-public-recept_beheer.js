@@ -7,8 +7,7 @@
 			/**
 			 * Polyfill, kijk of de browser ondersteuning geeft voor een datalist element.
 			 */
-			var nativedatalist = !! ( 'list' in document.createElement( 'input' ) ) &&
-				!! ( document.createElement( 'datalist' ) && window.HTMLDataListElement );
+			var nativedatalist = !! ( 'list' in document.createElement( 'input' ) ) && !! ( document.createElement( 'datalist' ) && window.HTMLDataListElement );
 			if ( ! nativedatalist ) {
 				$( 'input[list]' ).each( function() {
 					var availableTags = $( '#' + $( this ).attr( 'list' ) ).find( 'option' ).map( function() {
@@ -24,8 +23,8 @@
              * Definieer de tabel.
              */
             $( '.kleistad_rapport' ).DataTable(
-                {
-                    language: {
+				{
+					language: {
                         sProcessing: 'Bezig...',
                         sLengthMenu: '_MENU_ resultaten weergeven',
                         sZeroRecords: 'Geen resultaten gevonden',
@@ -87,17 +86,18 @@
             });
 
             $( '#kleistad_foto_input' ).change( function() {
-                var reader = new FileReader();
+				var reader = new FileReader();
+
                 if ( this.files && this.files[0] ) {
-                    if ( this.files[0].size > 2000000 ) {
-                        window.alert( 'deze foto is te groot (' + this.files[0].size + ' bytes)' );
+					if ( this.files[0].size > 2000000 ) {
+					window.alert( 'deze foto is te groot (' + this.files[0].size + ' bytes)' );
                         $( this ).val( '' );
                         return false;
                     }
                     reader.onload = function( e ) {
                         $( '#kleistad_foto' ).attr( 'src', e.target.result );
                     };
-                    reader.readAsDataURL( this.files[0] );
+					reader.readAsDataURL( this.files[0] );
                 }
             });
 

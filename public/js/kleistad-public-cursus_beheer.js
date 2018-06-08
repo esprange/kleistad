@@ -10,7 +10,7 @@
             $( '.kleistad_rapport' ).DataTable(
                 {
                     language: {
-                        sProcessing: 'Bezig...',
+						sProcessing: 'Bezig...',
                         sLengthMenu: '_MENU_ resultaten weergeven',
                         sZeroRecords: 'Geen resultaten gevonden',
                         sInfo: '_START_ tot _END_ van _TOTAL_ resultaten',
@@ -55,12 +55,12 @@
                     _parse: function( value ) {
                         var hours, minutes;
                         if ( 'string' === typeof value ) {
-                            if ( Number( value ) === value ) {
+                            if ( Number( value ) == value ) {
                                 return Number( value );
                             }
                             hours = value.substring( 0, 2 );
                             minutes = value.substring( 3 );
-                            return Number( hours * 60 ) + Number( minutes );
+                            return Number( hours ) * 60 + Number( minutes );
                         }
                         return value;
                     },
@@ -147,6 +147,7 @@
                     $( '#kleistad_techniekkeuze' ).prop( 'checked', cursus.techniekkeuze > 0 );
                     $( '#kleistad_vol' ).prop( 'checked', cursus.vol > 0 );
                     $( '#kleistad_meer' ).prop( 'checked', cursus.meer > 0 );
+                    $( '#kleistad_tonen' ).prop( 'checked', cursus.tonen > 0 );
                     $( '#kleistad_vervallen' ).prop( 'checked', cursus.vervallen > 0 );
                     $( '#kleistad_wachtlijst' ).children().remove().end();
                     $.each(
@@ -159,7 +160,7 @@
                         ingedeeld, function( key, value ) {
                             var option = new Option( value.naam, JSON.stringify( value ), false, false );
                             option.style.backgroundColor = 'lightgreen';
-                            option.style.fontWeight = 700; // Bold
+                            option.style.fontWeight = '700'; // Bold
                             $( '#kleistad_indeling' ).append( option );
                         }
                     );
@@ -190,6 +191,7 @@
                     $( '#kleistad_techniekkeuze' ).prop( 'checked', false );
                     $( '#kleistad_vol' ).prop( 'checked', false );
                     $( '#kleistad_meer' ).prop( 'checked', false );
+                    $( '#kleistad_tonen' ).prop( 'checked', false );
                     $( '#kleistad_vervallen' ).prop( 'checked', false );
                     $( '#kleistad_wachtlijst' ).children().remove().end();
                     $( '#kleistad_indeling' ).children().remove().end();
@@ -271,7 +273,6 @@
      * Toon cursus en abonnee detail informatie.
      *
      * @param {object} cursist de geselecteerde cursist.
-     * @returns {undefined}
      */
     function kleistadToonCursist( cursist ) {
         var techniekTekst,

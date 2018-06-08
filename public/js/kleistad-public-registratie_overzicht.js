@@ -86,7 +86,7 @@
 
                         default:
                             kleistadDeelnemerLijst.search( '' ).columns().search( '' );
-                            kleistadDeelnemerLijst.columns( 1 ).search( selectie, false, false ).draw();
+							kleistadDeelnemerLijst.columns( 1 ).search( selectie, false, false ).draw();
                     }
                 }
             );

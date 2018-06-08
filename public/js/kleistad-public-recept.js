@@ -43,7 +43,7 @@
             $( '#kleistad_sorteer' ).val( sessionStorage.sorteer );
         } else {
             $( '#kleistad_filters input[name="term"]:checked' ).each( function() {
-                value = $( this ).val();
+				value = $( this ).val();
                 if ( ! isNaN( value ) ) {
                     terms.push( value );
                 }
@@ -67,7 +67,7 @@
                 url: kleistadData.base_url + '/recept/',
                 method: 'POST',
                 beforeSend: function( xhr ) {
-                    xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
+					xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
                 },
                 data: {
                     zoek: {
@@ -106,7 +106,7 @@
                 if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
                     window.alert( jqXHR.responseJSON.message );
                     return;
-                }
+				}
                 window.alert( kleistadData.error_message );
             }
         );

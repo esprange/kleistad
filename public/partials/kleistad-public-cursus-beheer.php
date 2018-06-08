@@ -80,6 +80,11 @@ else :
 						<td><input type="checkbox" name="meer" id="kleistad_meer" ></td>
 					</tr>
 					<tr>
+						<th>Publiceer de cursus</th>
+						<td><input type="checkbox" name="tonen" id="kleistad_tonen" ></td>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
 						<th>Inschrijf email</th>
 						<td colspan="3"><input type="text" name="inschrijfslug" id="kleistad_inschrijfslug" value="kleistad_email_cursus_aanvraag" required /></td>
 					</tr>
@@ -98,7 +103,7 @@ else :
 					<?php wp_referer_field(); ?>
 				<input type="hidden" name="cursus_id" value="0"/>
 				<input type="hidden" name="tab" value="indeling"/>
-				<input type="hidden" name="indeling_lijst" id="kleistad_indeling_lijst" /> 
+				<input type="hidden" name="indeling_lijst" id="kleistad_indeling_lijst" />
 				<table class="kleistad_form" >
 					<tr>
 						<th>Wachtlijst</th>
@@ -144,9 +149,9 @@ else :
 	</thead>
 	<tbody>
 			<?php foreach ( $data['rows'] as $row ) : ?>
-			<tr style="background-color:<?php echo esc_attr( $row['cursus']['vol'] ? 'lightblue' : ( $row['cursus']['vervallen'] ? 'lightgray' : 'white' ) ); ?>" class="kleistad_cursus_info" 
+			<tr style="background-color:<?php echo esc_attr( $row['cursus']['vol'] ? 'lightblue' : ( $row['cursus']['vervallen'] ? 'lightgray' : 'white' ) ); ?>" class="kleistad_cursus_info"
 				data-cursus='<?php echo wp_json_encode( $row['cursus'] ); ?>'
-				data-wachtlijst='<?php echo wp_json_encode( $row['wachtlijst'] ); ?>' 
+				data-wachtlijst='<?php echo wp_json_encode( $row['wachtlijst'] ); ?>'
 				data-ingedeeld='<?php echo wp_json_encode( $row['ingedeeld'] ); ?>' >
 				<td><?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td>C<?php echo esc_html( $row['cursus']['id'] ); ?></td>

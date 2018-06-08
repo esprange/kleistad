@@ -81,6 +81,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			'indelingslug'    => 'kleistad_email_cursus_ingedeeld',
 			'maximum'         => 12,
 			'meer'            => 0,
+			'tonen'           => 0,
 		];
 		if ( is_null( $cursus_id ) ) {
 			$this->_data = $default_data;
@@ -113,6 +114,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'vervallen':
 			case 'techniekkeuze':
 			case 'meer':
+			case 'tonen':
 				return 1 === intval( $this->_data[ $attribuut ] );
 			case 'array':
 				return $this->_data;
@@ -150,6 +152,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'vol':
 			case 'techniekkeuze':
 			case 'meer':
+			case 'tonen':
 				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:

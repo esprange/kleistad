@@ -25,7 +25,7 @@
              */
             $( 'input[name=abonnement_keuze]' ).change(
                 function() {
-                    wijzigTeksten();
+					wijzigTeksten();
                     if (  'beperkt' === this.value ) {
                         $( '#kleistad_dag' ).css( 'visibility', 'visible' );
 

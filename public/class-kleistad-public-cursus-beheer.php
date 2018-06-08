@@ -82,7 +82,8 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 					'indelingslug'    => $cursus->indelingslug,
 					'maximum'         => $cursus->maximum,
 					'meer'            => $cursus->meer,
-					'status'          => ( $cursus->eind_datum < $vandaag ? 'voltooid' : ( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
+					'tonen'           => $cursus->tonen,
+					'status'          => $cursus->vervallen ? 'vervallen' : ( $cursus->eind_datum < $vandaag ? 'voltooid' : ( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
 				],
 				'wachtlijst' => $wachtlijst,
 				'ingedeeld'  => $ingedeeld,
@@ -104,8 +105,8 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 	 * @since   4.0.87
 	 */
 	public function validate( &$data ) {
-
-		$tab = filter_input( INPUT_POST, 'tab', FILTER_SANITIZE_STRING );
+		$error = new WP_Error();
+		$tab   = filter_input( INPUT_POST, 'tab', FILTER_SANITIZE_STRING );
 		if ( 'info' === $tab ) {
 			$input = filter_input_array(
 				INPUT_POST, [
@@ -136,8 +137,30 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 					],
 					'maximum'         => FILTER_SANITIZE_NUMBER_INT,
 					'meer'            => FILTER_SANITIZE_STRING,
+					'tonen'           => FILTER_SANITIZE_STRING,
 				]
 			);
+			if ( is_null( $input['technieken'] ) ) {
+				$input['technieken'] = [];
+			}
+			/**
+			 * Controleer of de nieuwe cursus al niet bestaat.
+			 */
+			if ( ! ( 0 < $input['cursus_id'] ) ) {
+				$start_datum  = strftime( '%d-%m', strtotime( $input['start_datum'] ) );
+				$start_tijd   = strftime( '%H-%M', strtotime( $input['start_tijd'] ) );
+				$cursus_store = new Kleistad_Cursussen();
+				$cursussen    = $cursus_store->get();
+				foreach ( $cursussen as $cursus ) {
+					if ( ! $cursus->vervallen ) {
+						if ( strftime( '%d-%m', $cursus->start_datum ) === $start_datum &&
+							strftime( '%H-%M', $cursus->start_tijd ) === $start_tijd ) {
+							$error->add( 'dubbel', 'Er is al een cursus die op deze datum/tijd van start gaat' );
+							return $error;
+						}
+					}
+				}
+			}
 		} elseif ( 'indeling' === $tab ) {
 			$input              = filter_input_array(
 				INPUT_POST, [
@@ -194,6 +217,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 			$cursus->technieken      = $data['input']['technieken'];
 			$cursus->maximum         = $data['input']['maximum'];
 			$cursus->meer            = '' != $data['input']['meer']; // WPCS: loose comparison ok.
+			$cursus->tonen           = '' != $data['input']['tonen']; // WPCS: loose comparison ok.
 			$cursus->save();
 			return 'Gegevens zijn opgeslagen';
 		} elseif ( 'indeling' === $data['input']['tab'] ) {
