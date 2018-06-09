@@ -8,7 +8,6 @@
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen"/>
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose"/>
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite"/>
-		<exclude name="Generic.Files.OneClassPerFile"/>
 	</rule>
 
 	<!-- Check all PHP files in directory tree by default. -->
@@ -21,9 +20,6 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/tmp/*</exclude-pattern>
-
- 	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
-		<exclude-pattern>*/tests/*</exclude-pattern>
-	</rule>
+	<exclude-pattern>*/tests/*</exclude-pattern>
 
 </ruleset>
