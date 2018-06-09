@@ -31,13 +31,10 @@ class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 			return true;
 		}
 
-		$rows               = [];
-		$cursus_store       = new Kleistad_Cursussen();
-		$cursussen          = $cursus_store->get();
-		$inschrijving_store = new Kleistad_Inschrijvingen();
-		$inschrijvingen     = $inschrijving_store->get();
-		$cursist_store      = new Kleistad_Gebruikers();
-		$cursisten          = $cursist_store->get();
+		$rows           = [];
+		$cursussen      = Kleistad_Cursus::all();
+		$inschrijvingen = Kleistad_Inschrijving::all();
+		$cursisten      = Kleistad_Gebruiker::all();
 
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {

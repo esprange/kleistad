@@ -74,11 +74,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 		$bijlage    = $upload_dir['basedir'] . '/stookbestand_' . date( 'Y_m_d' ) . '.csv';
 		$f          = fopen( $bijlage, 'w' );
 
-		$oven_store        = new Kleistad_Ovens();
-		$ovens             = $oven_store->get();
-		$reservering_store = new Kleistad_Reserveringen();
-		$reserveringen     = $reservering_store->get();
-		$regeling_store    = new Kleistad_Regelingen();
+		$ovens          = Kleistad_Oven::all();
+		$reserveringen  = Kleistad_Reservering::all();
+		$regeling_store = new Kleistad_Regelingen();
 
 		$medestokers = [];
 		foreach ( $reserveringen as $reservering ) {

@@ -119,9 +119,8 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 		$gebruikers_regelingen = new Kleistad_Regelingen();
 
-		$ovens_store = new Kleistad_Ovens();
-		$ovens       = $ovens_store->get();
-		$regelingen  = [];
+		$ovens      = Kleistad_Oven::all();
+		$regelingen = [];
 
 		foreach ( $gebruikers as $gebruiker ) {
 			$kosten_ovens = $gebruikers_regelingen->get( $gebruiker->id );

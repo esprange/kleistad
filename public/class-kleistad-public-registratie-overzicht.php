@@ -28,14 +28,11 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
-		$cursus_store = new Kleistad_Cursussen();
-		$cursussen    = $cursus_store->get();
+		$cursussen    = Kleistad_Cursus::all();
 		$registraties = [];
 
-		$inschrijving_store = new Kleistad_Inschrijvingen();
-		$inschrijvingen     = $inschrijving_store->get();
-		$gebruiker_store    = new Kleistad_Gebruikers();
-		$gebruikers         = $gebruiker_store->get();
+		$inschrijvingen = Kleistad_Inschrijving::all();
+		$gebruikers     = Kleistad_Gebruiker::all();
 		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
 			$cursuslijst       = '';
 			$inschrijvinglijst = [];
@@ -110,20 +107,16 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 		if ( ! Kleistad_Roles::override() ) {
 			return true;
 		}
-		$error              = new WP_Error();
-		$cursus_store       = new Kleistad_Cursussen();
-		$cursussen          = $cursus_store->get();
-		$gebruiker_store    = new Kleistad_Gebruikers();
-		$gebruikers         = $gebruiker_store->get();
-		$inschrijving_store = new Kleistad_Inschrijvingen();
-		$inschrijvingen     = $inschrijving_store->get();
-		$abonnementen_store = new Kleistad_Abonnementen();
-		$abonnementen       = $abonnementen_store->get();
-		$upload_dir         = wp_upload_dir();
-		$bijlage_cursus     = $upload_dir['basedir'] . '/cursusregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
-		$bijlage_abonnee    = $upload_dir['basedir'] . '/abonneeregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
-		$f_cursus           = fopen( $bijlage_cursus, 'w' );
-		$f_abonnee          = fopen( $bijlage_abonnee, 'w' );
+		$error           = new WP_Error();
+		$cursussen       = Kleistad_Cursus::all();
+		$gebruikers      = Kleistad_Gebruiker::all();
+		$inschrijvingen  = Kleistad_Inschrijving::all();
+		$abonnementen    = Kleistad_Abonnement::all();
+		$upload_dir      = wp_upload_dir();
+		$bijlage_cursus  = $upload_dir['basedir'] . '/cursusregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
+		$bijlage_abonnee = $upload_dir['basedir'] . '/abonneeregistratiebestand_' . date( 'Y_m_d' ) . '.csv';
+		$f_cursus        = fopen( $bijlage_cursus, 'w' );
+		$f_abonnee       = fopen( $bijlage_abonnee, 'w' );
 
 		fwrite( $f_cursus, "\xEF\xBB\xBF" );
 		fwrite( $f_abonnee, "\xEF\xBB\xBF" );

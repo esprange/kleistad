@@ -128,7 +128,6 @@ class Kleistad_Loader {
 
 		return $hooks;
 	}
-
 	/**
 	 * Register the filters and actions with WordPress.
 	 *
