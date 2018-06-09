@@ -102,17 +102,15 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val   = filter_input( INPUT_GET, 'order' );
-		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$paged_val    = filter_input( INPUT_GET, 'paged' );
+		$paged        = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$orderby_val  = filter_input( INPUT_GET, 'orderby' );
+		$orderby      = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val    = filter_input( INPUT_GET, 'order' );
+		$order        = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$abonnementen = Kleistad_Abonnement::all();
+		$abonnees     = [];
 
-		$abonnementen_store = new Kleistad_Abonnementen();
-		$abonnementen       = $abonnementen_store->get();
-
-		$abonnees = [];
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
 			$abonnee    = get_userdata( $abonnee_id );
 			$abonnees[] = [

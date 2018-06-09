@@ -32,11 +32,8 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 		$naam              = $huidige_gebruiker->display_name;
 		$saldo             = new Kleistad_Saldo( $huidige_gebruiker->ID );
 		$items             = [];
-
-		$oven_store        = new Kleistad_Ovens();
-		$ovens             = $oven_store->get();
-		$reservering_store = new Kleistad_Reserveringen();
-		$reserveringen     = $reservering_store->get();
+		$ovens             = Kleistad_Oven::all();
+		$reserveringen     = Kleistad_Reservering::all();
 		$regeling_store    = new Kleistad_Regelingen();
 
 		foreach ( $reserveringen as $reservering ) {

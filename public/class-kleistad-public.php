@@ -10,18 +10,6 @@
  */
 
 /**
- * Include the classes
- */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-entity.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-oven.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-cursus.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-abonnement.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-gebruiker.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-shortcode.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-betalen.php';
-
-/**
  * The public-facing functionality of the plugin.
  */
 class Kleistad_Public {
@@ -260,7 +248,6 @@ class Kleistad_Public {
 	 * @since   4.0.87
 	 */
 	public function register_endpoints() {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-reservering.php';
 		register_rest_route(
 			self::$url, '/reserveer', [
 				'methods'             => 'POST',
@@ -323,7 +310,6 @@ class Kleistad_Public {
 			]
 		);
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-recept.php';
 		register_rest_route(
 			self::$url, '/recept', [
 				'methods'             => 'POST',
@@ -659,13 +645,9 @@ class Kleistad_Public {
 	public function update_ovenkosten() {
 		Kleistad_Saldo::log( 'verwerking stookkosten gestart.' );
 
-		$regelingen = new Kleistad_Regelingen();
-
-		$oven_store = new Kleistad_Ovens();
-		$ovens      = $oven_store->get();
-
-		$reservering_store = new Kleistad_Reserveringen();
-		$reserveringen     = $reservering_store->get();
+		$regelingen    = new Kleistad_Regelingen();
+		$ovens         = Kleistad_Oven::all();
+		$reserveringen = Kleistad_Reservering::all();
 
 		/*
 		* saldering transacties uitvoeren

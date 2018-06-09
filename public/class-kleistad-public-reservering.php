@@ -106,11 +106,16 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			7 => 'zondag',
 		];
 
-		$oven                 = new Kleistad_Oven( $oven_id );
-		$reservering_store    = new Kleistad_Reserveringen( $oven_id );
-		$reserveringen        = $reservering_store->get();
 		$huidige_gebruiker_id = get_current_user_id();
 		$huidige_gebruiker    = get_userdata( $huidige_gebruiker_id );
+		$oven                 = new Kleistad_Oven( $oven_id );
+		$reserveringen        = Kleistad_Reservering::all(
+			[
+				'jaar'    => $jaar,
+				'maand'   => $maand,
+				'oven_id' => $oven_id,
+			]
+		);
 
 		$aantaldagen = date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) );
 
@@ -163,7 +168,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				];
 
 				foreach ( $reserveringen as $reservering ) {
-					if ( ( $reservering->jaar === $jaar ) && ( $reservering->maand === $maand ) && ( $reservering->dag === $dag ) ) {
+					if ( $reservering->dag === $dag ) {
 						if ( $reservering->gebruiker_id == $huidige_gebruiker_id ) {  // WPCS: loose comparison ok.
 							$kleur         = ! $datum_verstreken ? 'lightgreen' : $kleur;
 							$wijzigbaar    = ! $verwerkt || is_super_admin();

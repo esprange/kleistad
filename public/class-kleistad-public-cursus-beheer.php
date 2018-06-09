@@ -28,16 +28,11 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
-		$cursus_store = new Kleistad_Cursussen();
-		$cursussen    = $cursus_store->get();
-
-		$inschrijving_store = new Kleistad_Inschrijvingen();
-		$inschrijvingen     = $inschrijving_store->get();
-
-		$gebruiker_store = new Kleistad_Gebruikers();
-		$gebruikers      = $gebruiker_store->get();
-		$rows            = [];
-		$vandaag         = strtotime( 'today' );
+		$cursussen      = Kleistad_Cursus::all();
+		$inschrijvingen = Kleistad_Inschrijving::all();
+		$gebruikers     = Kleistad_Gebruiker::all();
+		$rows           = [];
+		$vandaag        = strtotime( 'today' );
 		foreach ( $cursussen as $cursus_id => $cursus ) {
 			$wachtlijst = [];
 			$ingedeeld  = [];
@@ -147,10 +142,9 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 			 * Controleer of de nieuwe cursus al niet bestaat.
 			 */
 			if ( ! ( 0 < $input['cursus_id'] ) ) {
-				$start_datum  = strftime( '%d-%m', strtotime( $input['start_datum'] ) );
-				$start_tijd   = strftime( '%H-%M', strtotime( $input['start_tijd'] ) );
-				$cursus_store = new Kleistad_Cursussen();
-				$cursussen    = $cursus_store->get();
+				$start_datum = strftime( '%d-%m', strtotime( $input['start_datum'] ) );
+				$start_tijd  = strftime( '%H-%M', strtotime( $input['start_tijd'] ) );
+				$cursussen   = Kleistad_Cursus::all();
 				foreach ( $cursussen as $cursus ) {
 					if ( ! $cursus->vervallen ) {
 						if ( strftime( '%d-%m', $cursus->start_datum ) === $start_datum &&
@@ -235,8 +229,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 				return "Emails zijn verstuurd naar $aantal_ingedeeld cursisten";
 			}
 		} elseif ( 'email' === $data['input']['tab'] ) {
-			$inschrijvingen_store   = new Kleistad_Inschrijvingen();
-			$inschrijvingen         = $inschrijvingen_store->get();
+			$inschrijvingen         = Kleistad_Inschrijving::all();
 			$aantal_verzonden_email = 0;
 			foreach ( $inschrijvingen as $inschrijving ) {
 				if ( array_key_exists( $cursus_id, $inschrijving ) ) {

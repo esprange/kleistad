@@ -10,16 +10,6 @@
  */
 
 /**
- * Include the entities
- */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-entity.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-oven.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-cursus.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-gebruiker.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-abonnement.php';
-
-/**
  * The admin-specific functionality of the plugin.
  */
 class Kleistad_Admin {
@@ -329,8 +319,6 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function ovens_page_handler() {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-ovens.php';
-
 		$table = new Kleistad_Admin_Ovens();
 		$table->prepare_items();
 
@@ -438,8 +426,6 @@ class Kleistad_Admin {
 	 * @since    4.3.0
 	 */
 	public function abonnees_page_handler() {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-abonnees.php';
-
 		$table = new Kleistad_Admin_Abonnees();
 		$table->prepare_items();
 
@@ -572,8 +558,6 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function regelingen_page_handler() {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-regelingen.php';
-
 		$message = '';
 		$table   = new Kleistad_Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
@@ -681,8 +665,7 @@ class Kleistad_Admin {
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$ovenstore  = new Kleistad_Ovens();
-		$ovens      = $ovenstore->get();
+		$ovens      = Kleistad_Oven::all();
 
 		require 'partials/kleistad-admin-regelingen-form-meta-box.php';
 	}
@@ -720,8 +703,6 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function stooksaldo_page_handler() {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin-stooksaldo.php';
-
 		$table = new Kleistad_Admin_Stooksaldo();
 		$table->prepare_items();
 

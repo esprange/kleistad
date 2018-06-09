@@ -10,13 +10,6 @@
  */
 
 /**
- * Include the classes
- */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-entity.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-roles.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-oven.php';
-
-/**
  * The activator class
  */
 class Kleistad_Activator {

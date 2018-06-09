@@ -88,55 +88,6 @@ abstract class Kleistad_Entity {
 		$this->_data = $data;
 	}
 
-}
-
-/**
- * Collection of Oven
- *
- * Collection of Oven, loaded from the database.
- *
- * @since 4.0.87
- *
- * @see class Kleistad_Entity
- * @link URL
- */
-abstract class Kleistad_EntityStore {
-
-	/**
-	 * Store the entity data
-	 *
-	 * @since 4.0.87
-	 * @access private
-	 * @var array $_data contains oven objects.
-	 */
-	protected $_data = [];
-
-	/**
-	 * Get the loaded data
-	 *
-	 * Retrieve the data as an array.
-	 *
-	 * @since 4.0.87
-	 *
-	 * @return array Array of oven objects.
-	 */
-	public function get() {
-		return $this->_data;
-	}
-
-	/**
-	 * Return the count
-	 *
-	 * Return the number of loaded ovens.
-	 *
-	 * @since 4.0.87
-	 *
-	 * @return int The count of loaded ovens objects.
-	 */
-	public function count() {
-		return count( $this->_data );
-	}
-
 	/**
 	 * Return privacy data
 	 *
@@ -157,4 +108,3 @@ abstract class Kleistad_EntityStore {
 		return 0;
 	}
 }
-

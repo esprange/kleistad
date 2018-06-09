@@ -70,10 +70,30 @@ class Kleistad {
 		$this->plugin_name = 'kleistad';
 		$this->version     = '4.3.5';
 
+		self::register_autoloader();
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+	}
+
+	/**
+	 * Autoloader, laadt alle classes.
+	 */
+	public static function register_autoloader() {
+		spl_autoload_register(
+			function ( $class ) {
+				$file     = 'class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
+				$path     = plugin_dir_path( dirname( __FILE__ ) );
+				$dir      = ( false === strpos( $file, 'kleistad-public' ) ) ? ( ( false === strpos( $file, 'kleistad-admin' ) ) ? 'includes/' : 'admin/' ) : 'public/';
+				$filepath = $path . $dir . $file;
+				if ( file_exists( $filepath ) ) {
+					require $filepath;
+					return true;
+				}
+				return false;
+			}
+		);
 	}
 
 	/**
@@ -82,7 +102,6 @@ class Kleistad {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - Kleistad_Loader. Orchestrates the hooks of the plugin.
-	 * - Kleistad_i18n. Defines internationalization functionality.
 	 * - Kleistad_Admin. Defines all hooks for the admin area.
 	 * - Kleistad_Public. Defines all hooks for the public side of the site.
 	 *
@@ -93,24 +112,6 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function load_dependencies() {
-
-		/**
-	 * The class responsible for orchestrating the actions and filters of the
-	 * core plugin.
-	 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-kleistad-loader.php';
-
-		/**
-	 * The class responsible for defining all actions that occur in the admin area.
-	 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-kleistad-admin.php';
-
-		/**
-	 * The class responsible for defining all actions that occur in the public-facing
-	 * side of the site.
-	 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public.php';
-
 		$this->loader = new Kleistad_Loader();
 	}
 

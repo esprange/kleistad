@@ -231,30 +231,12 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 		}
 	}
 
-}
-
-/**
- * Collection of Gebruiker
- *
- * Collection of Gebruiker, loaded from the database.
- *
- * @since 4.0.87
- *
- * @see class Kleistad_Inschrijving
- * @link URL
- */
-class Kleistad_Gebruikers extends Kleistad_EntityStore {
-
 	/**
-	 * Constructor
+	 * Return alle gebruikers.
 	 *
-	 * Loads the data from the database.
-	 *
-	 * @since 4.0.87
-	 *
-	 * @return null.
+	 * @return array gebruikers.
 	 */
-	public function __construct() {
+	public static function all() {
 		$gebruikers = get_users(
 			[
 				'fields'  => [ 'id' ],
@@ -262,8 +244,8 @@ class Kleistad_Gebruikers extends Kleistad_EntityStore {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$this->_data[ $gebruiker->id ] = new Kleistad_Gebruiker( $gebruiker->id );
+			$arr[ $gebruiker->id ] = new Kleistad_Gebruiker( $gebruiker->id );
 		}
+		return $arr;
 	}
-
 }
