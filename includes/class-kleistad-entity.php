@@ -1,8 +1,8 @@
 <?php
 /**
- * The file that defines the oven class
+ * De abstract entity class.
  *
- * A class definition including the ovens, reserveringen and regelingen
+ * Een class definitie als basis voor de Kleistad entiteiten.
  *
  * @link       www.sprako.nl/wordpress/eric
  * @since      4.0.87
@@ -12,9 +12,9 @@
  */
 
 /**
- * Kleistad Oven class.
+ * Kleistad Entity class.
  *
- * A class definition that define the attributes of a single oven class.
+ * Een class definitie, basis voor overige classes.
  *
  * @since 4.0.87
  *
@@ -24,23 +24,23 @@
 abstract class Kleistad_Entity {
 
 	/**
-	 * Store the cursus data
+	 * De object data
 	 *
 	 * @since 4.0.87
 	 * @access private
-	 * @var array $_data contains cursus attributes.
+	 * @var array $_data welke de attributen van het object bevat.
 	 */
 	protected $_data = [];
 
 	/**
-	 * Getter, using the magic function
+	 * Getter, de PHP magic function.
 	 *
-	 * Get attribuut from the object.
+	 * Lees het attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @return mixed Attribute value.
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribute waarde.
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
@@ -50,14 +50,14 @@ abstract class Kleistad_Entity {
 	}
 
 	/**
-	 * Setter, using the magic function
+	 * Setter, maakt gebruik van de PHP magic function.
 	 *
-	 * Set attribuut from the object.
+	 * Wijzig het attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @param mixed  $waarde Attribuut value.
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
@@ -67,22 +67,20 @@ abstract class Kleistad_Entity {
 	}
 
 	/**
-	 * Save the data
-	 *
-	 * Saves the data to the database.
+	 * Sla de data op.
 	 *
 	 * @since 4.0.87
 	 */
 	abstract public function save();
 
 	/**
-	 * Load the data
+	 * Load de data
 	 *
-	 * Loads the data from the database.
+	 * Laad de data van de database.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param array $data oven attribute values.
+	 * @param array $data attribute waarden.
 	 */
 	public function load( $data ) {
 		$this->_data = $data;

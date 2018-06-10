@@ -10,6 +10,15 @@
                 }
             );
 
+			/**
+             * Definieer datum veld.
+             */
+            $( '#kleistad_start_datum' ).datepicker(
+                {
+                    dateFormat: 'dd-mm-yy'
+                }
+            );
+
         }
     );
 

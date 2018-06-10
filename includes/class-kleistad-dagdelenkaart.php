@@ -143,7 +143,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 				'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
 				'dagdelenkaart_code'      => $this->code,
 				'dagdelenkaart_opmerking' => $this->opmerking,
-				'dagdelenkaart_prijs'     => number_format( 3 * $options['dagdelenkaart'], 2, ',', '' ),
+				'dagdelenkaart_prijs'     => number_format_i18n( 3 * $options['dagdelenkaart'], 2 ),
 			]
 		);
 	}
@@ -155,7 +155,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @param string    $betaalwijze Ideal of bank.
 	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
-	public function start( $start_datum, $betaalwijze, $admin = false ) {
+	public function betalen( $start_datum, $betaalwijze, $admin = false ) {
 		$this->start_datum = $start_datum;
 		$options           = get_option( 'kleistad-opties' );
 

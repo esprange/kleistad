@@ -33,7 +33,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 
 		$data = [
 			'gebruiker_id' => $gebruiker_id,
-			'saldo'        => number_format( $saldo->bedrag, 2, ',', '' ),
+			'saldo'        => number_format_i18n( $saldo->bedrag, 2 ),
 		];
 		return true;
 	}

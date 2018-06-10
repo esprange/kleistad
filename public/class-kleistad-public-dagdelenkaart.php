@@ -132,22 +132,20 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 	public function save( $data ) {
 		$error = new WP_Error();
 
-		if ( ! is_user_logged_in() ) {
-			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
-			if ( $gebruiker_id ) {
-				$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
-			} else {
-				$gebruiker             = new Kleistad_Gebruiker();
-				$gebruiker->voornaam   = $data['input']['FNAME'];
-				$gebruiker->achternaam = $data['input']['LNAME'];
-				$gebruiker->straat     = $data['input']['straat'];
-				$gebruiker->huisnr     = $data['input']['huisnr'];
-				$gebruiker->pcode      = $data['input']['pcode'];
-				$gebruiker->plaats     = $data['input']['plaats'];
-				$gebruiker->email      = $data['input']['EMAIL'];
-				$gebruiker->telnr      = $data['input']['telnr'];
-				$gebruiker_id          = $gebruiker->save();
-			}
+		$gebruiker_id = email_exists( $data['input']['EMAIL'] );
+		if ( $gebruiker_id ) {
+			$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
+		} else {
+			$gebruiker             = new Kleistad_Gebruiker();
+			$gebruiker->voornaam   = $data['input']['FNAME'];
+			$gebruiker->achternaam = $data['input']['LNAME'];
+			$gebruiker->straat     = $data['input']['straat'];
+			$gebruiker->huisnr     = $data['input']['huisnr'];
+			$gebruiker->pcode      = $data['input']['pcode'];
+			$gebruiker->plaats     = $data['input']['plaats'];
+			$gebruiker->email      = $data['input']['EMAIL'];
+			$gebruiker->telnr      = $data['input']['telnr'];
+			$gebruiker_id          = $gebruiker->save();
 		}
 
 		$dagdelenkaart              = new Kleistad_Dagdelenkaart( $gebruiker_id );

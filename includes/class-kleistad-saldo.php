@@ -16,6 +16,8 @@
  */
 class Kleistad_Saldo {
 
+	const META_KEY = 'stooksaldo';
+
 	/**
 	 * De attributen van het saldo
 	 *
@@ -48,7 +50,7 @@ class Kleistad_Saldo {
 	 * @return float De huidige saldo stand.
 	 */
 	private function huidig_saldo() {
-		$huidig_saldo = get_user_meta( $this->_gebruiker_id, 'stooksaldo', true );
+		$huidig_saldo = get_user_meta( $this->_gebruiker_id, self::META_KEY, true );
 		return ( '' === $huidig_saldo ) ? 0.0 : (float) $huidig_saldo;
 	}
 
@@ -80,12 +82,12 @@ class Kleistad_Saldo {
 	public static function export( $gebruiker_id ) {
 		$saldo   = new static( $gebruiker_id );
 		$items[] = [
-			'group_id'    => 'stooksaldo',
+			'group_id'    => self::META_KEY,
 			'group_label' => 'stooksaldo informatie',
 			'item_id'     => 'stooksaldo-1',
 			'data'        => [
 				[
-					'name'  => 'stooksaldo',
+					'name'  => self::META_KEY,
 					'value' => $saldo->huidig_saldo(),
 				],
 			],
@@ -100,7 +102,7 @@ class Kleistad_Saldo {
 	 * @return int Aantal verwijderd.
 	 */
 	public static function erase( $gebruiker_id ) {
-		return delete_user_meta( $gebruiker_id, 'stooksaldo' ) ? 1 : 0;
+		return delete_user_meta( $gebruiker_id, self::META_KEY ) ? 1 : 0;
 	}
 
 	/**
@@ -133,7 +135,7 @@ class Kleistad_Saldo {
 		$huidig_saldo = $this->huidig_saldo();
 
 		if ( $huidig_saldo !== $this->bedrag ) {
-			update_user_meta( $this->_gebruiker_id, 'stooksaldo', $this->bedrag );
+			update_user_meta( $this->_gebruiker_id, self::META_KEY, $this->bedrag );
 			$gebruiker = get_userdata( $this->_gebruiker_id );
 			self::write_log( "$gebruiker->display_name nu: $huidig_saldo naar: " . $this->bedrag . " vanwege $reden" );
 			return true;

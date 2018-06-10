@@ -39,7 +39,7 @@ class Kleistad_Public_Saldo_Overzicht extends Kleistad_Shortcode {
 				$saldo     = new Kleistad_Saldo( $gebruiker->id );
 				$stokers[] = [
 					'naam'  => $gebruiker->display_name,
-					'saldo' => number_format( $saldo->bedrag, 2, ',', '' ),
+					'saldo' => number_format_i18n( $saldo->bedrag, 2 ),
 				];
 			}
 		}

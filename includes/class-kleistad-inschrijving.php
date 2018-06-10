@@ -256,8 +256,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				'cursus_eind_tijd'       => strftime( '%H:%M', $this->_cursus->eind_tijd ),
 				'cursus_technieken'      => implode( ', ', $this->technieken ),
 				'cursus_code'            => $this->code,
-				'cursus_kosten'          => number_format( $this->aantal * $this->_cursus->cursuskosten, 2, ',', '' ),
-				'cursus_inschrijfkosten' => number_format( $this->aantal * $this->_cursus->inschrijfkosten, 2, ',', '' ),
+				'cursus_kosten'          => number_format_i18n( $this->aantal * $this->_cursus->cursuskosten, 2 ),
+				'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->_cursus->inschrijfkosten, 2 ),
 				'cursus_aantal'          => $this->aantal,
 				'cursus_opmerking'       => $this->opmerking,
 				'cursus_link'            => '<a href="' . home_url( '/kleistad_cursus_betaling' ) .
@@ -303,7 +303,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @return string Hash string.
 	 */
 	public function controle() {
-		return hash( 'sha256', 'KlEiStAd' . $this->_cursist_id . 'C' . $this->_cursus->id . 'cOnTrOlE' );
+		return hash( 'sha256', "KlEiStAd{$this->_cursist_id}C{$this->_cursus->id}cOnTrOlE" );
 	}
 
 	/**

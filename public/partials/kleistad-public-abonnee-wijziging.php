@@ -16,7 +16,7 @@ if ( ! is_user_logged_in() ) :
 	<p>Geen toegang tot dit formulier</p>
 	<?php
 else :
-	$in_driemaandperiode = time() < $data['driemaand_datum'];
+	$in_driemaandperiode = strtotime( 'today' ) < $data['driemaand_datum'];
 	$per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : mktime( 0, 0, 0, date( 'n' ) + 1, 1, date( 'Y' ) );
 	$per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
 	?>
@@ -215,7 +215,7 @@ else :
 		<div class="kleistad_row" style="padding-top:20px;">
 			<div class="kleistad_col_10">
 				<input type="hidden" name="kleistad_submit_abonnee_wijziging" value="0" >
-				<button name="kleistad_check_abonnee_wijziging" id="kleistad_check_abonnee_wijziging" >Aanpassen</button>
+				<button name="kleistad_check_abonnee_wijziging" id="kleistad_check_abonnee_wijziging" >Bevestigen</button>
 			</div>
 		</div>
 	</form>

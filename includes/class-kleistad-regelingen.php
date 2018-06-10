@@ -16,6 +16,8 @@
  */
 class Kleistad_Regelingen {
 
+	const META_KEY = 'kleistad_regeling';
+
 	/**
 	 * Store the regeling data
 	 *
@@ -33,11 +35,11 @@ class Kleistad_Regelingen {
 	public function __construct() {
 		$gebruikers = get_users(
 			[
-				'meta_key' => 'kleistad_regeling',
+				'meta_key' => self::META_KEY,
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$regelingen                    = get_user_meta( $gebruiker->ID, 'kleistad_regeling', true );
+			$regelingen                    = get_user_meta( $gebruiker->ID, self::META_KEY, true );
 			$this->_data[ $gebruiker->ID ] = $regelingen;
 		}
 	}
@@ -79,7 +81,7 @@ class Kleistad_Regelingen {
 	 */
 	public function set_and_save( $gebruiker_id, $oven_id, $kosten ) {
 		$this->_data[ $gebruiker_id ][ $oven_id ] = $kosten;
-		return update_user_meta( $gebruiker_id, 'kleistad_regeling', $this->_data[ $gebruiker_id ] );
+		return update_user_meta( $gebruiker_id, self::META_KEY, $this->_data[ $gebruiker_id ] );
 	}
 
 	/**
@@ -95,9 +97,9 @@ class Kleistad_Regelingen {
 	public function delete_and_save( $gebruiker_id, $oven_id ) {
 		unset( $this->_data[ $gebruiker_id ][ $oven_id ] );
 		if ( 0 === count( $this->_data[ $gebruiker_id ] ) ) {
-			return delete_user_meta( $gebruiker_id, 'kleistad_regeling' );
+			return delete_user_meta( $gebruiker_id, self::META_KEY );
 		} else {
-			return update_user_meta( $gebruiker_id, 'kleistad_regeling', $this->_data[ $gebruiker_id ] );
+			return update_user_meta( $gebruiker_id, self::META_KEY, $this->_data[ $gebruiker_id ] );
 		}
 	}
 

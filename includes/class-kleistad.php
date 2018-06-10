@@ -68,7 +68,7 @@ class Kleistad {
 	public function __construct() {
 
 		$this->plugin_name = 'kleistad';
-		$this->version     = '4.3.5';
+		$this->version     = '4.3.6';
 
 		self::register_autoloader();
 		$this->load_dependencies();

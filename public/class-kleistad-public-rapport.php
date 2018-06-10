@@ -55,7 +55,7 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 						'temp'      => $reservering->temperatuur > 0 ? $reservering->temperatuur : '',
 						'prog'      => $reservering->programma > 0 ? $reservering->programma : '',
 						'perc'      => $stookdeel['perc'],
-						'kosten'    => number_format( $kosten, 2, ',', '' ),
+						'kosten'    => number_format_i18n( $kosten, 2 ),
 						'voorlopig' => $reservering->verwerkt ? '' : 'genericon genericon-checkmark',
 					];
 				}
@@ -68,7 +68,7 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 		);
 		$data = [
 			'naam'  => $naam,
-			'saldo' => number_format( $saldo->bedrag, 2, ',', '' ),
+			'saldo' => number_format_i18n( $saldo->bedrag, 2 ),
 			'items' => $items,
 		];
 		return true;

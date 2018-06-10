@@ -116,7 +116,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 				$stoker_naam,
 				$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
 				$ovens[ $reservering->oven_id ]->naam,
-				number_format( $ovens[ $reservering->oven_id ]->kosten, 2, ',', '' ),
+				number_format_i18n( $ovens[ $reservering->oven_id ]->kosten, 2 ),
 				$reservering->soortstook,
 				$reservering->temperatuur,
 				$reservering->programma,
@@ -148,9 +148,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 						$kosten_tonen = true;
 					}
 				}
-				$values [] = ( $kosten_tonen ) ? number_format( $kosten, 2, ',', '' ) : '';
+				$values [] = ( $kosten_tonen ) ? number_format_i18n( $kosten, 2 ) : '';
 			}
-			$values [] = number_format( $totaal, 2, ',', '' );
+			$values [] = number_format_i18n( $totaal, 2 );
 			fputcsv( $f, $values, ';', '"' );
 		}
 

@@ -48,8 +48,9 @@
 			<ol>
 				<li>start_ideal: bevesting start via ideal betaling</li>
 				<li>start_bank: start betalen per bank met instructie</li>
+				<li>vervolg: einde 3 maand period in zicht</li>
 				<li>gewijzigd: gepauzeerd, herstart of beëindigd door de abonnee</li>
-				<li>betaalwijze_ideal: bevestiging voortaan betalen per ideal</li>
+				<li>betaalwijze_ideal: bevestiging voortaan betalen per sepa incasso</li>
 				<li>betaalwijze_bank: voortaan betalen per bank met instructie</li>
 			</ol>
 			<ul style="list-style-type:square">

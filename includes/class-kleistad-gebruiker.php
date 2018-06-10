@@ -17,6 +17,8 @@
  */
 class Kleistad_Gebruiker extends Kleistad_Entity {
 
+	const META_KEY = 'contactinfo';
+
 	/**
 	 * Store the gebruiker id
 	 *
@@ -52,7 +54,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 		if ( ! is_null( $gebruiker_id ) && $gebruiker_id ) {
 			$this->_gebruiker_id  = $gebruiker_id;
 			$gebruiker            = get_userdata( $gebruiker_id );
-			$contactinfo          = get_user_meta( $gebruiker_id, 'contactinfo', true );
+			$contactinfo          = get_user_meta( $gebruiker_id, self::META_KEY, true );
 			$this->_data          = wp_parse_args( $contactinfo, $default_data );
 			$this->achternaam     = $gebruiker->last_name;
 			$this->voornaam       = $gebruiker->first_name;
@@ -73,7 +75,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	public static function export( $gebruiker_id ) {
 		$gebruiker = new static( $gebruiker_id );
 		$items[]   = [
-			'group_id'    => 'contactinfo',
+			'group_id'    => self::META_KEY,
 			'group_label' => 'contact informatie',
 			'item_id'     => 'contactinfo-1',
 			'data'        => [
@@ -219,7 +221,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 		} else {
 			$this->_gebruiker_id = $result;
 			update_user_meta(
-				$this->_gebruiker_id, 'contactinfo', [
+				$this->_gebruiker_id, self::META_KEY, [
 					'telnr'  => $this->telnr,
 					'straat' => $this->straat,
 					'huisnr' => $this->huisnr,

@@ -676,8 +676,8 @@ class Kleistad_Public {
 								'voornaam'   => $medestoker->first_name,
 								'achternaam' => $medestoker->last_name,
 								'stoker'     => $gebruiker->display_name,
-								'bedrag'     => number_format( $prijs, 2, ',', '' ),
-								'saldo'      => number_format( $saldo->bedrag, 2, ',', '' ),
+								'bedrag'     => number_format_i18n( $prijs, 2 ),
+								'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
 								'stookdeel'  => $stookdeel['perc'],
 								'stookdatum' => date( 'd-m-Y', $reservering->datum ),
 								'stookoven'  => $ovens[ $reservering->oven_id ]->naam,
@@ -705,7 +705,7 @@ class Kleistad_Public {
 					$to, 'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ), 'kleistad_email_stookmelding', [
 						'voornaam'         => $gebruiker->first_name,
 						'achternaam'       => $gebruiker->last_name,
-						'bedrag'           => number_format( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling, 2, ',', '' ),
+						'bedrag'           => number_format_i18n( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling, 2 ),
 						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $this->options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
 						'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $this->options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
 						'stookoven'        => $ovens[ $reservering->oven_id ]->naam,
