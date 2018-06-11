@@ -5,8 +5,10 @@
 **Requires at least:** 4.8.0  
 **Tested up to:** 4.9.6  
 **Stable tag:** 4.3.7  
-**License:** GPLv2 or later  
-**License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
+**License:** GPLv3 or later  
+**License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
+
+[![Build Status](https://travis-ci.org/esprange/kleistad.svg?branch=master)](https://travis-ci.org/esprange/kleistad)
 
 Wordpress plugin for Stichting Kleistad, Amersfoort (The Netherlands), see www.kleistad.nl.
 
