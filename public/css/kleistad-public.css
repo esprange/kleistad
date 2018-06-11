@@ -5,10 +5,10 @@
 
 /*
 Description: stylesheet functions voor kleistad_plugin
-  Version: 4.1.0
+  Version: 4.3.7
   Author: Eric Sprangers
   Author URI: http://www.sprako.nl/
-  License: GPL2
+  License: GPL3.0
 */
 
 /*csslint important: false, box-model: false, unqualified-attributes: false, overqualified-elements: false*/
@@ -159,11 +159,9 @@ table.kleistad_rapport tr:nth-child(even) {
 }
 .kleistad_label {
     font-weight: bold;
-    height: 18px;
 }
 .kleistad_label + span {
     font-weight: bold;
-    height: 18px;
 }
 .kleistad_row::after {
     clear: both;
@@ -189,19 +187,18 @@ input[type=checkbox].kleistad_input_cb + label.kleistad_label_cb {
 	background-repeat:no-repeat;
 	cursor:pointer;
 	display:inline-block;
-	height:25px;
 	line-height:25px;
 	padding-left:30px;
 	vertical-align:middle;
 }
 
 input[type=checkbox].kleistad_input_cb:checked + label.kleistad_label_cb {
-	background-position: 0 -25px;
+	background-image: url('../images/cb_check.png');
 }
 
 label.kleistad_label_cb {
-	background-image: url('../images/checkbox.png');
-    font-weight: bold;
+	background-image: url('../images/cb_nocheck.png');
+	font-weight: bold;
 	-webkit-touch-callout: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
@@ -259,9 +256,9 @@ label.kleistad_label_cb {
     background-repeat:   no-repeat;
     background-size:     contain;
     float: left;
-    height: 200px; /* 300px; */;
+    height: 200px;
     position: relative;
-    width:  100%; /* 300px */;
+    width:  100%;
 }
 .kleistad_recept_titel {
     float: left;
@@ -321,7 +318,7 @@ label.kleistad_label_cb {
 [class^="kleistad_col_"] {
     border: 0;
     float: left;
-    padding: 0 15px;
+    padding: 2px 15px;
     width: 100%;
 }
 /* csslint ignore:end */
