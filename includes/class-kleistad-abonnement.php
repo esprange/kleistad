@@ -503,7 +503,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$betalen = new Kleistad_Betalen();
 			$betalen->order(
 				$this->_abonnee_id,
-				$this->code . '-_start_ideal',
+				$this->code . '-start_ideal',
 				$options[ $this->soort . '_abonnement' ] * 3 + $options['borg_kast'],
 				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $driemaand_datum ) . ' en borg',
 				'Bedankt voor de betaling! De abonnement inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
@@ -533,7 +533,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	public function event( $actie, $datum ) {
 
 		$options = get_option( 'kleistad-opties' );
-
 		switch ( $actie ) {
 			case 'pauze':
 				$this->pauze_datum = $datum;
@@ -552,7 +551,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				break;
 			case 'vervolg':
 				if ( ! $this->geannuleerd ) {
-					$this->email( 'vervolg' );
+					$this->email( '_vervolg' );
 				}
 				break;
 			default:
@@ -588,11 +587,14 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return array abonnementen.
 	 */
 	public static function all() {
-		$abonnees = get_users( [ 'meta_key' => self::META_KEY ] );
-		foreach ( $abonnees as $abonnee ) {
-			$abonnement          = get_user_meta( $abonnee->ID, self::META_KEY, true );
-			$arr[ $abonnee->ID ] = new Kleistad_Abonnement( $abonnee->ID );
-			$arr[ $abonnee->ID ]->load( $abonnement );
+		static $arr = null;
+		if ( is_null( $arr ) ) {
+			$abonnees = get_users( [ 'meta_key' => self::META_KEY ] );
+			foreach ( $abonnees as $abonnee ) {
+				$abonnement          = get_user_meta( $abonnee->ID, self::META_KEY, true );
+				$arr[ $abonnee->ID ] = new Kleistad_Abonnement( $abonnee->ID );
+				$arr[ $abonnee->ID ]->load( $abonnement );
+			}
 		}
 		return $arr;
 	}

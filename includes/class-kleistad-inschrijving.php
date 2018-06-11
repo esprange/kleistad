@@ -333,12 +333,15 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @return array inschrijvingen.
 	 */
 	public static function all() {
-		$cursisten = get_users( [ 'meta_key' => self::META_KEY ] );
-		foreach ( $cursisten as $cursist ) {
-			$inschrijvingen = get_user_meta( $cursist->ID, self::META_KEY, true );
-			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
-				$arr[ $cursist->ID ][ $cursus_id ] = new Kleistad_Inschrijving( $cursist->ID, $cursus_id );
-				$arr[ $cursist->ID ][ $cursus_id ]->load( $inschrijving );
+		static $arr = null;
+		if ( is_null( $arr ) ) {
+			$cursisten = get_users( [ 'meta_key' => self::META_KEY ] );
+			foreach ( $cursisten as $cursist ) {
+				$inschrijvingen = get_user_meta( $cursist->ID, self::META_KEY, true );
+				foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+					$arr[ $cursist->ID ][ $cursus_id ] = new Kleistad_Inschrijving( $cursist->ID, $cursus_id );
+					$arr[ $cursist->ID ][ $cursus_id ]->load( $inschrijving );
+				}
 			}
 		}
 		return $arr;

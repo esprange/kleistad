@@ -58,12 +58,9 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 		$data['gebruikers'] = $gebruikers;
 
 		$open_cursussen = [];
-		$cursussen      = Kleistad_Cursus::all();
+		$cursussen      = Kleistad_Cursus::all( true );
 		foreach ( $cursussen as $cursus ) {
 
-			if ( $cursus->eind_datum < strtotime( 'today' ) || ! $cursus->tonen ) {
-				continue;
-			}
 			$open_cursussen[ $cursus->id ] = [
 				'naam'          => $cursus->naam .
 					', start ' . strftime( '%A %d-%m-%y', $cursus->start_datum ) .

@@ -42,7 +42,6 @@ class Kleistad_Cursus extends Kleistad_Entity {
 				}
 			}
 		}
-
 		return $aantal;
 	}
 
@@ -176,11 +175,13 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	/**
 	 * Return alle cursussen.
 	 *
+	 * @param bool $open Toon alleen de open cursussen if true.
 	 * @return array cursussen.
 	 */
-	public static function all() {
+	public static function all( $open = false ) {
 		global $wpdb;
-		$cursussen_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // WPCS: unprepared SQL OK.
+		$filter          = $open ? ' WHERE tonen = 1 AND eind_datum > CURRENT_DATE' : '';
+		$cursussen_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen $filter ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // WPCS: unprepared SQL OK.
 		foreach ( $cursussen_tabel as $cursus ) {
 			$arr[ $cursus['id'] ] = new Kleistad_Cursus( $cursus['id'] );
 		}
