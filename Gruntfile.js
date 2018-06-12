@@ -30,6 +30,13 @@ module.exports = function( grunt ) {
 				version2: '<%= pkg.version %>',
 				compare: '==',
 			}
+		},
+
+		zip: {
+			'long-format': {
+				src: [ 'public/**/*', 'admin/**/*', 'includes/**/*', 'vendor/**/*', '*.php', 'README.MD', 'LICENSE.txt' ],
+				dest: 'tmp/kleistad.zip'
+			}
 		}
 	});
 
@@ -37,7 +44,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
 	grunt.loadNpmTasks( 'grunt-checkwpversion' );
 	grunt.registerTask( 'checkversion', ['checkwpversion'] );
-
+	grunt.loadNpmTasks( 'grunt-zip' );
 	grunt.util.linefeed = '\n';
 
 };
