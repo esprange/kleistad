@@ -33,19 +33,20 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 
 		$inschrijvingen = Kleistad_Inschrijving::all();
 		$gebruikers     = Kleistad_Gebruiker::all();
+		$abonnementen   = Kleistad_Abonnement::all();
 		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
 			$cursuslijst       = '';
 			$inschrijvinglijst = [];
-			$is_lid            = ( ! empty( $gebruiker->rol ) || ( is_array( $gebruiker->rol ) && ( count( $gebruiker->rol ) > 0 ) ) );
-			if ( $is_lid ) {
-				$abonnement   = new Kleistad_Abonnement( $gebruiker_id );
+			$is_lid            = false;
+			if ( array_key_exists( $gebruiker_id, $abonnementen ) ) {
+				$is_lid       = true;
 				$abonnee_info = [
-					'code'        => $abonnement->code,
-					'start_datum' => date( 'd-m-Y', $abonnement->start_datum ),
-					'dag'         => ( 'beperkt' === $abonnement->soort ) ? $abonnement->dag : '',
-					'soort'       => $abonnement->soort,
-					'geannuleerd' => $abonnement->geannuleerd,
-					'opmerking'   => $abonnement->opmerking,
+					'code'        => $abonnementen[ $gebruiker_id ]->code,
+					'start_datum' => date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
+					'dag'         => ( 'beperkt' === $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
+					'soort'       => $abonnementen[ $gebruiker_id ]->soort,
+					'geannuleerd' => $abonnementen[ $gebruiker_id ]->geannuleerd,
+					'opmerking'   => $abonnementen[ $gebruiker_id ]->opmerking,
 				];
 			} else {
 				$abonnee_info = [];
