@@ -3,6 +3,7 @@
 
 # Ignore folders
 node_modules/
+vendor/
 .vscode/
 
 # Build files
