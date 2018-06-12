@@ -70,6 +70,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		} else {
 			$this->_data = $this->_default_data;
 		}
+		// Deze datum zit niet in de 'oude' abonnees.
+		if ( '' === $this->_data['incasso_datum'] ) {
+			$this->incasso_datum = mktime( 0, 0, 0, date( 'n', $this->start_datum ) + 4, 1, date( 'Y', $this->start_datum ) );
+		}
 	}
 
 	/**
