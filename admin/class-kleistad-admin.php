@@ -257,6 +257,68 @@ class Kleistad_Admin {
 	}
 
 	/**
+	 * Auto update van de plugin via het administrator board.
+	 *
+	 * @param  object $transient Het object waarin WP de updates deelt.
+	 * @return object De transient.
+	 */
+	public function check_update( $transient ) {
+		if ( empty( $transient->checked ) ) {
+			return $transient;
+		}
+		$remote_version = $this->get_remote( 'version' );
+		if ( version_compare( $this->version, $remote_version->new_version, '<' ) ) {
+			$obj              = new stdClass();
+			$obj->slug        = $this->plugin_name;
+			$obj->new_version = $remote_version->new_version;
+			$obj->url         = $remote_version->url;
+			$obj->plugin      = $this->plugin_name . '/' . $this->plugin_name . '.php';
+			$obj->package     = $remote_version->package;
+			$obj->tested      = $remote_version->tested;
+			// Geef het object als response aan de transient.
+			$transient->response[ $this->plugin_name ] = $obj;
+		}
+		return $transient;
+	}
+
+	/**
+	 * Haal informatie op, aangeroepen vanuit Add our self-hosted description to the filter
+	 *
+	 * @param  object $obj Wordt niet gebruikt.
+	 * @param  string $action De gevraagde actie.
+	 * @param  object $arg Argument door WP ingevuld.
+	 * @return bool|object
+	 */
+	public function check_info( $obj, $action, $arg ) {
+		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) &&
+			isset( $arg->slug ) && $arg->slug === $this->slug ) {
+			return $this->get_remote( 'info' );
+		}
+		return $obj;
+	}
+
+	/**
+	 * Haal de info bij de update server op.
+	 *
+	 * @param  string $action De gevraagde actie.
+	 * @return string remote info.
+	 */
+	public function get_remote( $action = '' ) {
+		$params  = [
+			'body' => [
+				'action' => $action,
+			],
+		];
+		$request = wp_remote_post( 'http://sprako.xs4all.nl/kleistad_plugin/update.php', $params );
+		if ( ! is_wp_error( $request ) || wp_remote_retrieve_response_code( $request ) === 200 ) {
+			// phpcs:disable
+			return @unserialize( $request['body'] );
+			// phpcs:enable
+		}
+		return false;
+	}
+
+	/**
 	 * Register the settings
 	 *
 	 * @since   4.0.87

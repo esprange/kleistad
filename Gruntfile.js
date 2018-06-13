@@ -2,6 +2,8 @@ module.exports = function( grunt ) {
 
 	'use strict';
 	var banner = '/**\n * <%= pkg.homepage %>\n * Copyright (c) <%= grunt.template.today("yyyy") %>\n * This file is generated automatically. Do not edit.\n */\n';
+	var path = require('path');
+
 	// Project configuration
 	grunt.initConfig( {
 
@@ -33,9 +35,27 @@ module.exports = function( grunt ) {
 		},
 
 		zip: {
-			'long-format': {
+			'using-router': {
+				router: function (filepath) {
+					return 'kleistad/' + filepath;
+				  },
 				src: [ 'public/**/*', 'admin/**/*', 'includes/**/*', 'vendor/**/*', '*.php', 'README.MD', 'LICENSE.txt' ],
-				dest: 'tmp/kleistad.zip'
+				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
+			}
+		},
+
+		version: {
+			plugin: {
+				options: {
+					prefix: 'Version\\s*'
+				},
+				src: [ 'kleistad.php' ]
+			},
+			readme: {
+				options: {
+					prefix: 'Stable tag\\s*'
+				},
+				src: [ 'README.txt' ]
 			}
 		}
 	});
@@ -45,6 +65,7 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-checkwpversion' );
 	grunt.registerTask( 'checkversion', ['checkwpversion'] );
 	grunt.loadNpmTasks( 'grunt-zip' );
+	grunt.loadNpmTasks( 'grunt-version' );
 	grunt.util.linefeed = '\n';
 
 };
