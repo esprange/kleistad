@@ -268,30 +268,37 @@ class Kleistad_Admin {
 		}
 		$remote_version = $this->get_remote( 'version' );
 		if ( version_compare( $this->version, $remote_version->new_version, '<' ) ) {
-			$obj              = new stdClass();
-			$obj->slug        = $this->plugin_name;
-			$obj->new_version = $remote_version->new_version;
-			$obj->url         = $remote_version->url;
-			$obj->plugin      = $this->plugin_name . '/' . $this->plugin_name . '.php';
-			$obj->package     = $remote_version->package;
-			$obj->tested      = $remote_version->tested;
+			$obj                 = new \stdClass();
+			$obj->id             = $this->plugin_name;
+			$obj->slug           = $this->plugin_name;
+			$obj->plugin         = $this->plugin_name . '/' . $this->plugin_name . '.php';
+			$obj->new_version    = $remote_version->new_version;
+			$obj->url            = $remote_version->url;
+			$obj->package        = $remote_version->package;
+			$obj->icons          = [ 'default' => plugin_dir_path( dirname( __FILE__ ) ) . 'admin/images/logo-kleistad-icon.jpg' ];
+			$obj->banners        = [];
+			$obj->banners_rtl    = [];
+			$obj->tested         = $remote_version->tested;
+			$obj->required_php   = $remote_version->required_php;
+			$obj->compatibility  = new \stdClass();
+			$obj->upgrade_notice = 'nieuwe versie Kleistad plugin beschikbaar!';
 			// Geef het object als response aan de transient.
-			$transient->response[ $this->plugin_name ] = $obj;
+			$transient->response[ $obj->plugin ] = $obj;
 		}
 		return $transient;
 	}
 
 	/**
-	 * Haal informatie op, aangeroepen vanuit Add our self-hosted description to the filter
+	 * Haal informatie op, aangeroepen vanuit API plugin hook.
 	 *
 	 * @param  object $obj Wordt niet gebruikt.
 	 * @param  string $action De gevraagde actie.
 	 * @param  object $arg Argument door WP ingevuld.
 	 * @return bool|object
 	 */
-	public function check_info( $obj, $action, $arg ) {
+	public function check_info( $obj, $action = '', $arg = null ) {
 		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) &&
-			isset( $arg->slug ) && $arg->slug === $this->slug ) {
+			isset( $arg->slug ) && $arg->slug === $this->plugin_name ) {
 			return $this->get_remote( 'info' );
 		}
 		return $obj;
