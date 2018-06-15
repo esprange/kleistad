@@ -257,6 +257,75 @@ class Kleistad_Admin {
 	}
 
 	/**
+	 * Auto update van de plugin via het administrator board.
+	 *
+	 * @param  object $transient Het object waarin WP de updates deelt.
+	 * @return object De transient.
+	 */
+	public function check_update( $transient ) {
+		if ( empty( $transient->checked ) ) {
+			return $transient;
+		}
+		$remote_version = $this->get_remote( 'version' );
+		if ( version_compare( $this->version, $remote_version->new_version, '<' ) ) {
+			$obj                 = new \stdClass();
+			$obj->id             = $this->plugin_name;
+			$obj->slug           = $this->plugin_name;
+			$obj->plugin         = $this->plugin_name . '/' . $this->plugin_name . '.php';
+			$obj->new_version    = $remote_version->new_version;
+			$obj->url            = $remote_version->url;
+			$obj->package        = $remote_version->package;
+			$obj->icons          = [ 'default' => plugin_dir_path( dirname( __FILE__ ) ) . 'admin/images/logo-kleistad-icon.jpg' ];
+			$obj->banners        = [];
+			$obj->banners_rtl    = [];
+			$obj->tested         = $remote_version->tested;
+			$obj->required_php   = $remote_version->required_php;
+			$obj->compatibility  = new \stdClass();
+			$obj->upgrade_notice = 'nieuwe versie Kleistad plugin beschikbaar!';
+			// Geef het object als response aan de transient.
+			$transient->response[ $obj->plugin ] = $obj;
+		}
+		return $transient;
+	}
+
+	/**
+	 * Haal informatie op, aangeroepen vanuit API plugin hook.
+	 *
+	 * @param  object $obj Wordt niet gebruikt.
+	 * @param  string $action De gevraagde actie.
+	 * @param  object $arg Argument door WP ingevuld.
+	 * @return bool|object
+	 */
+	public function check_info( $obj, $action = '', $arg = null ) {
+		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) &&
+			isset( $arg->slug ) && $arg->slug === $this->plugin_name ) {
+			return $this->get_remote( 'info' );
+		}
+		return $obj;
+	}
+
+	/**
+	 * Haal de info bij de update server op.
+	 *
+	 * @param  string $action De gevraagde actie.
+	 * @return string remote info.
+	 */
+	public function get_remote( $action = '' ) {
+		$params  = [
+			'body' => [
+				'action' => $action,
+			],
+		];
+		$request = wp_remote_post( 'http://sprako.xs4all.nl/kleistad_plugin/update.php', $params );
+		if ( ! is_wp_error( $request ) || wp_remote_retrieve_response_code( $request ) === 200 ) {
+			// phpcs:disable
+			return @unserialize( $request['body'] );
+			// phpcs:enable
+		}
+		return false;
+	}
+
+	/**
 	 * Register the settings
 	 *
 	 * @since   4.0.87

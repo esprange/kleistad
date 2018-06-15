@@ -13,6 +13,11 @@
  */
 
 /**
+ * Include this admin function to discover the plugin version.
+ */
+require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+/**
  * The core plugin class.
  *
  * This is used to define internationalization, admin-specific hooks, and
@@ -68,8 +73,8 @@ class Kleistad {
 	public function __construct() {
 
 		$this->plugin_name = 'kleistad';
-		$this->version     = '4.3.7';
-
+		$data              = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . $this->plugin_name . '.php', false, false );
+		$this->version     = $data['Version'];
 		self::register_autoloader();
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
@@ -141,6 +146,8 @@ class Kleistad {
 		$this->loader->add_filter( 'user_profile_update_errors', $plugin_admin, 'check_role', 10, 3 );
 		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_admin, 'register_exporter', 10 );
 		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_admin, 'register_eraser', 10 );
+		$this->loader->add_filter( 'pre_set_site_transient_update_plugins', $plugin_admin, 'check_update' );
+		$this->loader->add_filter( 'plugins_api', $plugin_admin, 'check_info', 10, 3 );
 	}
 
 	/**
