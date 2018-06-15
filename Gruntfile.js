@@ -39,7 +39,7 @@ module.exports = function( grunt ) {
 				router: function (filepath) {
 					return 'kleistad/' + filepath;
 				  },
-				src: [ 'public/**/*', 'admin/**/*', 'includes/**/*', 'vendor/**/*', '*.php', 'README.MD', 'LICENSE.txt' ],
+				src: [ 'public/**/*', 'admin/**/*', 'includes/**/*', 'vendor/**/*', '*.php', 'README.txt', 'README.MD', 'LICENSE.txt' ],
 				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
 			}
 		},
