@@ -275,7 +275,7 @@ class Kleistad_Admin {
 			$obj->new_version    = $remote_version->new_version;
 			$obj->url            = $remote_version->url;
 			$obj->package        = $remote_version->package;
-			$obj->icons          = [ 'default' => plugin_dir_path( dirname( __FILE__ ) ) . 'admin/images/logo-kleistad-icon.jpg' ];
+			$obj->icons          = [ 'default' => plugins_url( 'images/logo-kleistad.png', __FILE__ ) ];
 			$obj->banners        = [];
 			$obj->banners_rtl    = [];
 			$obj->tested         = $remote_version->tested;
