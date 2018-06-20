@@ -4,7 +4,7 @@ Donate link: www.sprako.nl/wordpress/eric
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 4.9.6
-Stable tag: 4.3.7
+Stable tag: 4.3.9
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -44,6 +44,10 @@ Plaats de shortcodes in de pagina's
 * Toevoeging betalingen via Mollie
 = 4.3.0 =
 * Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
+= 4.3.8 =
+* Toevoeging plugin update selfservice
+= 4.3.9 =
+* Bestanden voortaan te downloaden in plaats van verzending per email
 
 == Upgrade Notice ==
 
