@@ -263,27 +263,11 @@ class Kleistad_Admin {
 	 * @return object De transient.
 	 */
 	public function check_update( $transient ) {
-		if ( empty( $transient->checked ) ) {
-			return $transient;
-		}
-		$remote_version = $this->get_remote( 'version' );
-		if ( version_compare( $this->version, $remote_version->new_version, '<' ) ) {
-			$obj                 = new \stdClass();
-			$obj->id             = $this->plugin_name;
-			$obj->slug           = $this->plugin_name;
-			$obj->plugin         = $this->plugin_name . '/' . $this->plugin_name . '.php';
-			$obj->new_version    = $remote_version->new_version;
-			$obj->url            = $remote_version->url;
-			$obj->package        = $remote_version->package;
-			$obj->icons          = [ 'default' => plugins_url( 'images/logo-kleistad.png', __FILE__ ) ];
-			$obj->banners        = [];
-			$obj->banners_rtl    = [];
-			$obj->tested         = $remote_version->tested;
-			$obj->required_php   = $remote_version->required_php;
-			$obj->compatibility  = new \stdClass();
-			$obj->upgrade_notice = 'nieuwe versie Kleistad plugin beschikbaar!';
-			// Geef het object als response aan de transient.
-			$transient->response[ $obj->plugin ] = $obj;
+		if ( ! empty( $transient->checked ) ) {
+			$obj = $this->get_remote( 'version' );
+			if ( version_compare( $this->version, $obj->new_version, '<' ) ) {
+				$transient->response[ $obj->plugin ] = $obj;
+			}
 		}
 		return $transient;
 	}
@@ -299,6 +283,8 @@ class Kleistad_Admin {
 	public function check_info( $obj, $action = '', $arg = null ) {
 		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) &&
 			isset( $arg->slug ) && $arg->slug === $this->plugin_name ) {
+			$plugin_info   = get_site_transient( 'update_plugins' );
+			$args->version = $plugin_info->checked[ $this->plugin_name . '/' . $this->plugin_name . '.php' ];
 			return $this->get_remote( 'info' );
 		}
 		return $obj;
@@ -318,9 +304,7 @@ class Kleistad_Admin {
 		];
 		$request = wp_remote_post( 'http://sprako.xs4all.nl/kleistad_plugin/update.php', $params );
 		if ( ! is_wp_error( $request ) || wp_remote_retrieve_response_code( $request ) === 200 ) {
-			// phpcs:disable
-			return @unserialize( $request['body'] );
-			// phpcs:enable
+			return @unserialize( $request['body'] ); // phpcs:ignore.
 		}
 		return false;
 	}
