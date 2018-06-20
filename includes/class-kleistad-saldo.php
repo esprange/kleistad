@@ -39,9 +39,7 @@ class Kleistad_Saldo {
 	 */
 	private static function write_log( $tekst ) {
 		$upload_dir = wp_upload_dir();
-		$f          = fopen( $upload_dir['basedir'] . '/stooksaldo.log', 'a' );
-		fwrite( $f, date( 'c' ) . " : $tekst\n" );
-		fclose( $f );
+		file_put_contents( $upload_dir['basedir'] . '/stooksaldo.log', date( 'c' ) . " : $tekst\n", FILE_APPEND); // phpcs:ignore
 	}
 
 	/**
