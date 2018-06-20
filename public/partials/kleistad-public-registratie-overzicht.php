@@ -45,9 +45,9 @@ else :
 	</thead>
 	<tbody>
 			<?php foreach ( $data['registraties'] as $registratie ) : ?>
-			<tr class="kleistad_deelnemer_info" 
+			<tr class="kleistad_deelnemer_info"
 				data-inschrijvingen='<?php echo wp_json_encode( $registratie['inschrijvingen'] ); ?>'
-				data-deelnemer='<?php echo wp_json_encode( $registratie['deelnemer_info'] ); ?>' 
+				data-deelnemer='<?php echo wp_json_encode( $registratie['deelnemer_info'] ); ?>'
 				data-abonnee='<?php echo wp_json_encode( $registratie['abonnee_info'] ); ?>' >
 				<td><?php echo esc_html( $registratie['is_lid'] ); ?></td>
 				<td><?php echo esc_html( $registratie['cursuslijst'] ); ?></td>
@@ -60,7 +60,11 @@ else :
 	</tbody>
 </table>
 <form action="#" method="post" >
-		<?php wp_nonce_field( 'kleistad_registratie_overzicht' ); ?>
-	<button type="submit" name="kleistad_submit_registratie_overzicht" >Bestanden aanmaken</button>
+	<?php wp_nonce_field( 'kleistad_registratie_overzicht' ); ?>
+	<input type="hidden" name="download" id="kleistad_download" >
+	<div class="kleistad_row" style="padding-top:20px;" >
+		<button type="submit" name="kleistad_submit_registratie_overzicht" onclick="document.getElementById('kleistad_download').value='cursisten'" >Download Cursisten</button>
+		<button type="submit" name="kleistad_submit_registratie_overzicht" onclick="document.getElementById('kleistad_download').value='abonnees'" >Download Abonnees</button>
+	</div>
 </form>
 <?php endif; ?>

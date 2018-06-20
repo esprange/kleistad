@@ -61,7 +61,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 	 * Bewaar 'stookbestand' form gegevens
 	 *
 	 * @param array $data data to be saved.
-	 * @return string
 	 *
 	 * @since   4.0.87
 	 */
@@ -70,9 +69,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 
 		$gebruiker = get_userdata( $data['gebruiker_id'] );
 
-		$upload_dir = wp_upload_dir();
-		$bijlage    = $upload_dir['basedir'] . '/stookbestand_' . date( 'Y_m_d' ) . '.csv';
-		$f          = fopen( $bijlage, 'w' );
+		$csv   = tempnam( sys_get_temp_dir(), $data['download'] );
+		$f_csv = fopen( $csv, 'w' );
+		fwrite( $f_csv, "\xEF\xBB\xBF" );
 
 		$ovens          = Kleistad_Oven::all();
 		$reserveringen  = Kleistad_Reservering::all();
@@ -104,7 +103,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 			}
 		}
 		$fields[] = 'Totaal';
-		fputcsv( $f, $fields, ';', '"' );
+		fputcsv( $f_csv, $fields, ';', '"' );
 
 		foreach ( $reserveringen as $reservering ) {
 			if ( ( $reservering->datum < $data['vanaf_datum'] ) || ( $reservering->datum > $data['tot_datum'] ) ) {
@@ -151,20 +150,22 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 				$values [] = ( $kosten_tonen ) ? number_format_i18n( $kosten, 2 ) : '';
 			}
 			$values [] = number_format_i18n( $totaal, 2 );
-			fputcsv( $f, $values, ';', '"' );
+			fputcsv( $f_csv, $values, ';', '"' );
 		}
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Type: text/csv' );
+		header( 'Content-Disposition: attachment; filename=stookbestand_' . strftime( '%Y%m%d' ) . '.csv' );
+		header( 'Content-Transfer-Encoding: binary' );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate' );
+		header( 'Pragma: public' );
+		header( 'Content-Length: ' . filesize( $csv ) );
+		ob_clean();
+		flush();
+		readfile( $csv ); // phpcs:ignore
+		unlink( $csv );
+		exit;
 
-		fclose( $f );
-
-		$to          = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
-		$message     = '<p>Bijgaand het bestand in .CSV formaat met alle transacties tussen ' . date( 'd-m-Y', $data['vanaf_datum'] ) . ' en ' . date( 'd-m-Y', $data['tot_datum'] ) . '.</p>';
-		$attachments = [ $bijlage ];
-		if ( Kleistad_Public::compose_email( $to, 'Kleistad stookbestand', $message, [], $attachments ) ) {
-			return 'Het bestand is per email verzonden.';
-		} else {
-			$error->add( '', 'Er is een fout opgetreden' );
-			return $error;
-		}
 	}
 
 }
