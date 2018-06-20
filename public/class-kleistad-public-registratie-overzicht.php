@@ -239,6 +239,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 				unlink( $csv );
 				return true;
 		}
+		fclose( $f_csv );
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: text/csv' );
 		header( 'Content-Disposition: attachment; filename=' . $data['download'] . '_' . strftime( '%Y%m%d' ) . '.csv' );

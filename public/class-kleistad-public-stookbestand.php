@@ -69,7 +69,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 
 		$gebruiker = get_userdata( $data['gebruiker_id'] );
 
-		$csv   = tempnam( sys_get_temp_dir(), $data['download'] );
+		$csv   = tempnam( sys_get_temp_dir(), 'stookbestand' );
 		$f_csv = fopen( $csv, 'w' );
 		fwrite( $f_csv, "\xEF\xBB\xBF" );
 
@@ -152,6 +152,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 			$values [] = number_format_i18n( $totaal, 2 );
 			fputcsv( $f_csv, $values, ';', '"' );
 		}
+		fclose( $f_csv );
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: text/csv' );
 		header( 'Content-Disposition: attachment; filename=stookbestand_' . strftime( '%Y%m%d' ) . '.csv' );
