@@ -267,6 +267,8 @@ class Kleistad_Admin {
 			$obj = $this->get_remote( 'version' );
 			if ( version_compare( $this->version, $obj->new_version, '<' ) ) {
 				$transient->response[ $obj->plugin ] = $obj;
+			} else {
+				$transient->no_update[ $obj->plugin ] = $obj;
 			}
 		}
 		return $transient;
