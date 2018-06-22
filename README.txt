@@ -18,8 +18,8 @@ Deze plugin is specifiek ontwikkeld voor de site www.kleistad.nl en voegt een aa
 
 # Gebruik van de Kleistad plugin
 
-De plugin onderkent een groot aantal shortcodes.
-De uitleg hiervan wordt getoond op de kleistad opties in het admin dashboard.
+De plugin onderkent een groot aantal shortcodes. De uitleg hiervan wordt getoond op de kleistad opties in het admin dashboard.
+De plugin maakt gebruik van de Mollie betaal app voor de iDeal betalingen.
 
 == Installation ==
 
