@@ -304,7 +304,7 @@ class Kleistad_Admin {
 				'action' => $action,
 			],
 		];
-		$request = wp_remote_post( 'http://localhost/kleistad_update/Kleistad-update-server/update.php', $params );
+		$request = wp_remote_post( 'http://sprako.xs4all.nl/kleistad_plugin/update.php', $params );
 		if ( ! is_wp_error( $request ) || wp_remote_retrieve_response_code( $request ) === 200 ) {
 			return @unserialize( $request['body'] ); // phpcs:ignore.
 		}
