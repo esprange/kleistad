@@ -285,8 +285,8 @@ class Kleistad_Admin {
 	public function check_info( $obj, $action = '', $arg = null ) {
 		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) &&
 			isset( $arg->slug ) && $arg->slug === $this->plugin_name ) {
-			$plugin_info   = get_site_transient( 'update_plugins' );
-			$args->version = $plugin_info->checked[ $this->plugin_name . '/' . $this->plugin_name . '.php' ];
+			$plugin_info  = get_site_transient( 'update_plugins' );
+			$arg->version = $plugin_info->checked[ $this->plugin_name . '/' . $this->plugin_name . '.php' ];
 			return $this->get_remote( 'info' );
 		}
 		return $obj;
@@ -304,7 +304,7 @@ class Kleistad_Admin {
 				'action' => $action,
 			],
 		];
-		$request = wp_remote_post( 'http://sprako.xs4all.nl/kleistad_plugin/update.php', $params );
+		$request = wp_remote_post( 'http://localhost/kleistad_update/Kleistad-update-server/update.php', $params );
 		if ( ! is_wp_error( $request ) || wp_remote_retrieve_response_code( $request ) === 200 ) {
 			return @unserialize( $request['body'] ); // phpcs:ignore.
 		}

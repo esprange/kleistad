@@ -34,20 +34,20 @@ Plaats de shortcodes in de pagina's
 
 == Changelog ==
 
-= 4.0.87 =
-* Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
-= 4.0.92 =
-* Berekening verdeling gewijzigd
-= 4.1.4 =
-* Toevoeging keramiek recepten functionaliteit
-= 4.2.0 =
-* Toevoeging betalingen via Mollie
-= 4.3.0 =
-* Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
-= 4.3.8 =
-* Toevoeging plugin update selfservice
 = 4.3.9 =
 * Bestanden voortaan te downloaden in plaats van verzending per email
+= 4.3.8 =
+* Toevoeging plugin update selfservice
+= 4.3.0 =
+* Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
+= 4.2.0 =
+* Toevoeging betalingen via Mollie
+= 4.1.4 =
+* Toevoeging keramiek recepten functionaliteit
+= 4.0.92 =
+* Berekening verdeling gewijzigd
+= 4.0.87 =
+* Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
 
 == Upgrade Notice ==
 
