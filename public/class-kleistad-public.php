@@ -78,7 +78,7 @@ class Kleistad_Public {
 
 		$page = get_page_by_title( $slug, OBJECT );
 		if ( ! is_null( $page ) ) {
-			$text = apply_filters( 'the_content', $page->post_content );
+			$text = wpautop( $page->post_content );
 			// Controleer of er includes zijn d.m.v. [pagina:yxz].
 			do {
 				$gevonden = stripos( $text, '[pagina:' );
@@ -86,7 +86,7 @@ class Kleistad_Public {
 					$eind         = stripos( $text, ']', $gevonden );
 					$include_slug = substr( $text, $gevonden + 8, $eind - $gevonden - 8 );
 					$include_page = get_page_by_title( $include_slug, OBJECT );
-					$include_text = ( ! is_null( $include_page ) ) ? apply_filters( 'the_content', $include_page->post_content ) : $include_slug;
+					$include_text = ( ! is_null( $include_page ) ) ? wpautop( $include_page->post_content ) : $include_slug;
 					$text         = substr_replace( $text, $include_text, $gevonden, $eind - $gevonden + 1 );
 				}
 			} while ( ! ( false === $gevonden ) );
