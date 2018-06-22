@@ -320,7 +320,11 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			$this->i_betaald = true;
 			$this->c_betaald = true;
 			$this->ingedeeld = true;
-			$this->email( 'betaling_ideal' );
+			if ( 0 < $this->_cursus->inschrijfkosten ) {
+				$this->email( 'betaling_ideal' );
+			} else {
+				$this->email( 'indeling' );
+			}
 		} else {
 			return; // Dit zou niet mogen.
 		}
