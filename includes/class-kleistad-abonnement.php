@@ -372,10 +372,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$betalen              = new Kleistad_Betalen();
 		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
 		if ( ! $admin ) {
-			$this->email(
-				'_gewijzigd',
-				'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->pauze_datum ) . ' gepauzeerd.'
-			);
+			$this->email( '_gewijzigd', 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->pauze_datum ) . ' gepauzeerd en start weer per ' . strftime( '%d-%m-%y', $this->herstart_datum ) );
 		}
 		$this->save();
 		return true;

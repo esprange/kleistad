@@ -135,11 +135,14 @@
                     }
                     if ( ( 'undefined' !== typeof abonnee ) && ( 0 !== abonnee.length ) ) {
                         $( '#kleistad_deelnemer_tabel' ).append(
-                            '<tr><th>Abonnement</th><th>Code</th><th>Dag</th><th>Start Datum</th></tr>' +
-                            '<tr><th>' + abonnee.soort + '</th><th>' +
+							'<tr><th>Abonnement</th><th>Code</th><th>Dag</th><th>Start Datum</th><th>Pauze Datum</th><th>Herstart Datum</th><th>Eind Datum</th></tr><tr><th>' +
+							abonnee.soort + '</th><th>' +
                             abonnee.code + '</th><th>' +
                             abonnee.dag + '</th><th>' +
-                            abonnee.start_datum + '</th></tr>'
+							abonnee.start_datum + '</th><th>' +
+							abonnee.pauze_datum + '</th><th>' +
+							abonnee.herstart_datum + '</th><th>' +
+							abonnee.eind_datum + '</th></tr>'
                             );
                     }
                 }

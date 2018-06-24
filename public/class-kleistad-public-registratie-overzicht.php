@@ -41,12 +41,15 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 			if ( array_key_exists( $gebruiker_id, $abonnementen ) ) {
 				$is_lid       = true;
 				$abonnee_info = [
-					'code'        => $abonnementen[ $gebruiker_id ]->code,
-					'start_datum' => date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
-					'dag'         => ( 'beperkt' === $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
-					'soort'       => $abonnementen[ $gebruiker_id ]->soort,
-					'geannuleerd' => $abonnementen[ $gebruiker_id ]->geannuleerd,
-					'opmerking'   => $abonnementen[ $gebruiker_id ]->opmerking,
+					'code'           => $abonnementen[ $gebruiker_id ]->code,
+					'start_datum'    => date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
+					'pauze_datum'    => $abonnementen[ $gebruiker_id ]->pauze_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->pauze_datum ) : '',
+					'herstart_datum' => $abonnementen[ $gebruiker_id ]->herstart_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->herstart_datum ) : '',
+					'eind_datum'     => $abonnementen[ $gebruiker_id ]->eind_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->eind_datum ) : '',
+					'dag'            => ( 'beperkt' === $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
+					'soort'          => $abonnementen[ $gebruiker_id ]->soort,
+					'geannuleerd'    => $abonnementen[ $gebruiker_id ]->geannuleerd,
+					'opmerking'      => $abonnementen[ $gebruiker_id ]->opmerking,
 				];
 			} else {
 				$abonnee_info = [];
