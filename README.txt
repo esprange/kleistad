@@ -4,7 +4,7 @@ Donate link: www.sprako.nl/wordpress/eric
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 4.9.6
-Stable tag: 4.3.9
+Stable tag: 4.3.10
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,7 +33,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-
+= 4.3.10 =
+* In abonnement pauzeren email de door de gebruiker opgegeven herstart datum vermeldt
+* In inschrijvingen overzicht pauze datum, herstart datum en eind datum toegevoegd
 = 4.3.9 =
 * Bestanden voortaan te downloaden in plaats van verzending per email
 = 4.3.8 =

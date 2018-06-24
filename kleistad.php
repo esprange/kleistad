@@ -15,7 +15,7 @@
  * Plugin Name:       Kleistad
  * Plugin URI:        https://github.com/esprange/kleistad
  * Description:       Een plugin voor vereniging Kleistad. Overreserveringen, stooksaldo administratie, cursus adminstratie en keramiek recepten.
- * Version:           4.3.9
+ * Version:           4.3.10
  * Author:            Eric Sprangers
  * Author URI:        www.sprako.nl/wordpress/eric
  * License:           GPL-3.0+

@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 4.9.6  
-**Stable tag:** 4.3.9  
+**Stable tag:** 4.3.10  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -18,8 +18,8 @@ Deze plugin is specifiek ontwikkeld voor de site www.kleistad.nl en voegt een aa
 
 # Gebruik van de Kleistad plugin
 
-De plugin onderkent een groot aantal shortcodes.
-De uitleg hiervan wordt getoond op de kleistad opties in het admin dashboard.
+De plugin onderkent een groot aantal shortcodes. De uitleg hiervan wordt getoond op de kleistad opties in het admin dashboard.
+De plugin maakt gebruik van de Mollie betaal app voor de iDeal betalingen.
 
 ## Installation ##
 
@@ -33,21 +33,23 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-
-### 4.0.87 ###
-* Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
-### 4.0.92 ###
-* Berekening verdeling gewijzigd
-### 4.1.4 ###
-* Toevoeging keramiek recepten functionaliteit
-### 4.2.0 ###
-* Toevoeging betalingen via Mollie
-### 4.3.0 ###
-* Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
-### 4.3.8 ###
-* Toevoeging plugin update selfservice
+### 4.3.10 ###
+* In abonnement pauzeren email de door de gebruiker opgegeven herstart datum vermeldt
+* In inschrijvingen overzicht pauze datum, herstart datum en eind datum toegevoegd
 ### 4.3.9 ###
 * Bestanden voortaan te downloaden in plaats van verzending per email
+### 4.3.8 ###
+* Toevoeging plugin update selfservice
+### 4.3.0 ###
+* Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
+### 4.2.0 ###
+* Toevoeging betalingen via Mollie
+### 4.1.4 ###
+* Toevoeging keramiek recepten functionaliteit
+### 4.0.92 ###
+* Berekening verdeling gewijzigd
+### 4.0.87 ###
+* Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
 
 ## Upgrade Notice ##
 
