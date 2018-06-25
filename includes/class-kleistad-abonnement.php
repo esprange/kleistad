@@ -382,6 +382,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * Herstart het abonnement per datum.
 	 *
 	 * @param timestamp $herstart_datum Herstartdatum.
+	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function herstarten( $herstart_datum, $admin = false ) {
 		// Op de herstart_datum wordt de gepauzeerd status verwijderd.
