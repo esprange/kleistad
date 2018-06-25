@@ -383,7 +383,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @param timestamp $herstart_datum Herstartdatum.
 	 */
-	public function herstarten( $herstart_datum ) {
+	public function herstarten( $herstart_datum, $admin = false ) {
 		// Op de herstart_datum wordt de gepauzeerd status verwijderd.
 		$this->schedule( 'herstart', $herstart_datum );
 		$this->herstart_datum = $herstart_datum;
@@ -533,7 +533,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function event( $actie, $datum ) {
 
-		$options = get_option( 'kleistad-opties' );
 		switch ( $actie ) {
 			case 'pauze':
 				$this->pauze_datum = $datum;
