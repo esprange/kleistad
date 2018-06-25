@@ -461,7 +461,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param string    $betaalwijze  Ideal of bankstorting.
 	 */
 	public function betaalwijze( $wijzig_datum, $betaalwijze ) {
-		$betalen = new Kleistad_Betalen();
+		$betalen              = new Kleistad_Betalen();
+		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id ); // Verwijder een eventuele bestaande subscriptie.
 
 		if ( 'ideal' === $betaalwijze ) {
 			// Doe een proefbetaling om het mandaat te verkrijgen.
@@ -476,12 +477,11 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				true
 			);
 		} else {
-			$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
 			$betalen->verwijder_mandaat( $this->_abonnee_id );
 			$this->email( '_betaalwijze_bank' );
+			$this->save();
+			return true;
 		}
-		$this->save();
-		return true;
 	}
 
 	/**

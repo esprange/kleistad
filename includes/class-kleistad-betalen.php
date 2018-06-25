@@ -352,7 +352,10 @@ class Kleistad_Betalen {
 					break;
 			}
 		}
+		if ( $betaling->isExpired() || $betaling->isCanceled() || $betaling->isFailed() ) {
+			// Doe voorlopig niets maar hier zouden acties kunnen zijn om iets terug te rollen.
+			$niets = false;
+		}
 		return new WP_REST_response(); // Geeft default http status 200 terug.
 	}
 }
-
