@@ -4,7 +4,7 @@
  *
  * Een class definitie als basis voor de Kleistad entiteiten.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -17,9 +17,6 @@
  * Een class definitie, basis voor overige classes.
  *
  * @since 4.0.87
- *
- * @see n.a.
- * @link URL
  */
 abstract class Kleistad_Entity {
 

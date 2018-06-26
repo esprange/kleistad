@@ -1,41 +1,41 @@
 <?php
 /**
- * The abstract class for shortcodes.
+ * De  abstracte class voor shortcodes.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
- * @subpackage Kleistad/public
+ * @subpackage Kleistad/includes
  */
 
 /**
- * The abstract class for shortcodes
+ * De abstract class voor shortcodes
  */
 abstract class Kleistad_Shortcode {
 	/**
-	 * The plugin name.
+	 * De plugin naam.
 	 *
-	 * @var string  plugin_name
+	 * @var string  plugin_naam
 	 */
 	protected $plugin_name;
 
 	/**
-	 * The parameters used to call the shortcode.
+	 * De parameters welke gebruikt worden in de aanroep van de shortcode.
 	 *
 	 * @var array shortcode parameters
 	 */
 	protected $atts;
 
 	/**
-	 * The plugin options.
+	 * De plugin options.
 	 *
 	 * @var array plugin options
 	 */
 	protected $options;
 
 	/**
-	 * The constructor
+	 * De constructor
 	 *
 	 * @since   4.0.87
 	 * @param string $plugin_name plugin naam.
@@ -49,29 +49,29 @@ abstract class Kleistad_Shortcode {
 	}
 
 	/**
-	 * Abstract definition of prepare function
+	 * Abstract definitie van de prepare functie
 	 *
 	 * @since   4.0.87
 	 *
-	 * @param array $data the data to prepare.
+	 * @param array $data de data die voorbereid moet worden voor display.
 	 */
 	abstract public function prepare( &$data);
 
 	/**
-	 * Validate function, only used in case of forms
+	 * Validatie functie, wordt voor form validatie gebruikt
 	 *
 	 * @since   4.0.87
-	 * @param array $data the data validated.
+	 * @param array $data de gevalideerde data.
 	 */
 	public function validate( &$data ) {
 		return true;
 	}
 
 	/**
-	 * Save function, only used in case of forms
+	 * Save functie, wordt gebruikt bij formulieren
 	 *
 	 * @since   4.0.87
-	 * @param array $data the data to store.
+	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 */
 	public function save( $data ) {
 		return true;

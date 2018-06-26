@@ -1,11 +1,8 @@
 <?php
 /**
- * The file that defines the core plugin class
+ * Definitie van de core Kleistad plugin class
  *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -13,60 +10,50 @@
  */
 
 /**
- * Include this admin function to discover the plugin version.
+ * Include deze admin functie om de plugin versie te achterhalen uit de header van het hoofdplugin script.
  */
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 /**
- * The core plugin class.
- *
- * This is used to define internationalization, admin-specific hooks, and
- * public-facing site hooks.
- *
- * Also maintains the unique identifier of this plugin as well as the current
- * version of the plugin.
+ * De Kleistad plugin class.
  *
  * @since      4.0.87
+ *
  * @package    Kleistad
  * @subpackage Kleistad/includes
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad {
 
 	/**
-	 * The loader that's responsible for maintaining and registering all hooks that power
-	 * the plugin.
+	 * De loader waarmee alle hooks geregistreerd worden.
 	 *
 	 * @since    4.0.87
+	 *
 	 * @access   protected
-	 * @var      Kleistad_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Kleistad_Loader    $loader    Beheert en registreert alle hooks van de plugin.
 	 */
 	protected $loader;
 
 	/**
-	 * The unique identifier of this plugin.
+	 * De unieke id van de plugin.
 	 *
 	 * @since    4.0.87
 	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
+	 * @var      string    $plugin_name    De naam waarmee de plugin uniek geïdentificeerd wordt.
 	 */
 	protected $plugin_name;
 
 	/**
-	 * The current version of the plugin.
+	 * De huidige versie van de plugin.
 	 *
 	 * @since    4.0.87
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      string    $version    De versie.
 	 */
 	protected $version;
 
 	/**
-	 * Define the core functionality of the plugin.
-	 *
-	 * Set the plugin name and the plugin version that can be used throughout the plugin.
-	 * Load the dependencies, define the locale, and set the hooks for the admin area and
-	 * the public-facing side of the site.
+	 * Constructor
 	 *
 	 * @since    4.0.87
 	 */
@@ -102,16 +89,7 @@ class Kleistad {
 	}
 
 	/**
-	 * Load the required dependencies for this plugin.
-	 *
-	 * Include the following files that make up the plugin:
-	 *
-	 * - Kleistad_Loader. Orchestrates the hooks of the plugin.
-	 * - Kleistad_Admin. Defines all hooks for the admin area.
-	 * - Kleistad_Public. Defines all hooks for the public side of the site.
-	 *
-	 * Create an instance of the loader which will be used to register the hooks
-	 * with WordPress.
+	 * Laad de afhankelijkheden van de plugin.
 	 *
 	 * @since    4.0.87
 	 * @access   private
@@ -121,8 +99,7 @@ class Kleistad {
 	}
 
 	/**
-	 * Register all of the hooks related to the admin area functionality
-	 * of the plugin.
+	 * Registreer alle admin hooks.
 	 *
 	 * @since    4.0.87
 	 * @access   private
@@ -151,8 +128,7 @@ class Kleistad {
 	}
 
 	/**
-	 * Register all of the hooks related to the public-facing functionality
-	 * of the plugin.
+	 * Registreer alle public hooks.
 	 *
 	 * @since    4.0.87
 	 * @access   private
@@ -198,7 +174,7 @@ class Kleistad {
 	}
 
 	/**
-	 * Run the loader to execute all of the hooks with WordPress.
+	 * Run de loader zodat alle hooks worden uitgevoerd.
 	 *
 	 * @since    4.0.87
 	 */
@@ -207,31 +183,30 @@ class Kleistad {
 	}
 
 	/**
-	 * The name of the plugin used to uniquely identify it within the context of
-	 * WordPress and to define internationalization functionality.
+	 * Geef de naam van de plugin.
 	 *
 	 * @since     4.0.87
-	 * @return    string    The name of the plugin.
+	 * @return    string    De naam van de plugin.
 	 */
 	public function get_plugin_name() {
 		return $this->plugin_name;
 	}
 
 	/**
-	 * The reference to the class that orchestrates the hooks with the plugin.
+	 * Referentie naar de class die de hooks laadt.
 	 *
 	 * @since     4.0.87
-	 * @return    Kleistad_Loader    Orchestrates the hooks of the plugin.
+	 * @return    Kleistad_Loader    de loader.
 	 */
 	public function get_loader() {
 		return $this->loader;
 	}
 
 	/**
-	 * Retrieve the version number of the plugin.
+	 * De versie van de plugin.
 	 *
 	 * @since     4.0.87
-	 * @return    string    The version number of the plugin.
+	 * @return    string    De versie.
 	 */
 	public function get_version() {
 		return $this->version;

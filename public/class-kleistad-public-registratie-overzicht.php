@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode registratie overzicht.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,11 +10,10 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad registratie overzicht class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 
@@ -22,7 +21,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 	 *
 	 * Prepareer 'registratie_overzicht' form
 	 *
-	 * @param array $data data to be prepared.
+	 * @param array $data data voor display.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -101,7 +100,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 	/**
 	 * Valideer/sanitize 'registratie' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data Gevalideerde data.
 	 * @return array
 	 *
 	 * @since   4.3.8
@@ -115,7 +114,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 	 *
 	 * Bewaar 'registratie_overzicht' form gegevens
 	 *
-	 * @param array $data data to save.
+	 * @param array $data data te bewaren.
 	 * @return string
 	 *
 	 * @since   4.0.87

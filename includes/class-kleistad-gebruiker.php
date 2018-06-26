@@ -1,11 +1,8 @@
 <?php
 /**
- * The file that defines the gebruikers class
+ * Definieer de Kleistad gebruikers class
  *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -13,29 +10,28 @@
  */
 
 /**
- * The Kleistad_gebruiker class
+ * De Kleistad gebruiker class
  */
 class Kleistad_Gebruiker extends Kleistad_Entity {
 
 	const META_KEY = 'contactinfo';
 
 	/**
-	 * Store the gebruiker id
+	 * Het gebruiker id
 	 *
 	 * @since 4.0.87
+	 *
 	 * @access private
-	 * @var int $_gebruiker_id contains WP user id.
+	 * @var int $_gebruiker_id het WP user id.
 	 */
 	protected $_gebruiker_id = 0;
 
 	/**
 	 * Constructor
 	 *
-	 * Create the gebruiker.
-	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $gebruiker_id id of the gebruiker.
+	 * @param int $gebruiker_id wp user id van de gebruiker.
 	 * @return null.
 	 */
 	public function __construct( $gebruiker_id = null ) {
@@ -68,6 +64,8 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 
 	/**
 	 * Export functie privacy gevoelige data.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (contact info).
@@ -107,6 +105,8 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	/**
 	 * Erase functie privacy gevoelige data.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return int Aantal persoonlijke data (contact info) verwijderd.
 	 */
@@ -122,14 +122,12 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	}
 
 	/**
-	 * Getter, using the magic function
-	 *
-	 * Get attribuut from the object.
+	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @return mixed Attribute value.
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
@@ -141,14 +139,12 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	}
 
 	/**
-	 * Setter, using the magic function
-	 *
-	 * Set attribuut from the object.
+	 * Set attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @param mixed  $waarde Attribuut value.
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
@@ -158,9 +154,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	}
 
 	/**
-	 * Save the data
-	 *
-	 * Saves the data to the database.
+	 * Bewaar de gebruiker als meta data in de database.
 	 *
 	 * @since 4.0.87
 	 *
@@ -173,7 +167,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 			$user = get_userdata( $gebruiker_id );
 
 			if ( ( $this->_gebruiker_id == $user->ID ) // WPCS: loose comparison ok.
-				|| ( '' === $user->role ) ) { // Existing user with no role re-registered.
+				|| ( '' === $user->role ) ) { // Bestaande gebruiker zonder rol (een cursist).
 				$this->_gebruiker_id = $user->ID;
 				$userdata            = [
 					'ID'            => $user->ID,
@@ -184,9 +178,9 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 				];
 				$result              = wp_update_user( $userdata );
 			} else {
-				return false; // Email exists, but entered as new user.
+				return false; // Email adres bestaat al.
 			}
-		} elseif ( 0 === $this->_gebruiker_id ) { // New email, thus new user.
+		} elseif ( 0 === $this->_gebruiker_id ) { // Nieuw email adres, dus nieuwe gebruiker.
 			$uniek           = '';
 			$nice_voornaam   = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $this->voornaam ) ) );
 			$nice_achternaam = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $this->achternaam ) ) );
@@ -212,7 +206,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 				'role'            => '',
 			];
 			$result   = wp_insert_user( $userdata );
-		} else { // This should not happen.
+		} else { // Dit zou niet mogen gebeuren.
 			return false;
 		}
 

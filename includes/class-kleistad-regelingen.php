@@ -1,10 +1,8 @@
 <?php
 /**
- * The file that defines the regelingen class
+ * De definitie van de regelingen class
  *
- * A class definition regelingen
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -19,11 +17,11 @@ class Kleistad_Regelingen {
 	const META_KEY = 'kleistad_regeling';
 
 	/**
-	 * Store the regeling data
+	 * De regeling data (alle regelingen in één array).
 	 *
 	 * @since 4.0.87
 	 * @access private
-	 * @var array $_data contains regeling attributes.
+	 * @var array $_data de regelingen.
 	 */
 	private $_data = [];
 
@@ -45,15 +43,13 @@ class Kleistad_Regelingen {
 	}
 
 	/**
-	 * Getter,
-	 *
-	 * Get regeling from the object.
+	 * Get regeling van het object.
 	 *
 	 * @since 4.0.87
 	 *
 	 * @param int $gebruiker_id wp user id.
 	 * @param int $oven_id oven id.
-	 * @return float kosten or null if unknown regeling.
+	 * @return float kosten of null als de regeling onbekend is.
 	 */
 	public function get( $gebruiker_id, $oven_id = null ) {
 		if ( array_key_exists( $gebruiker_id, $this->_data ) ) {
@@ -69,9 +65,7 @@ class Kleistad_Regelingen {
 	}
 
 	/**
-	 * Setter
-	 *
-	 * Set the regeling and store it to the database.
+	 * Set en bewaar de regeling in de database.
 	 *
 	 * @since 4.0.87
 	 *
@@ -85,9 +79,7 @@ class Kleistad_Regelingen {
 	}
 
 	/**
-	 * Deleter
-	 *
-	 * Cancel the regeling and remove it from the database.
+	 * Cancel de regeling en verwijder die vanuit de database.
 	 *
 	 * @since 4.0.87
 	 *

@@ -1,20 +1,16 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode betaling van restant cursus of vervolg abonnement.
  *
- * @link       www.sprako.nl/wordpress/eric
- * @since      4.3.0
+ * @link       https://www.kleistad.nl
+ * @since      4.2.0
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
 
 /**
- * The public-facing functionality of the plugin.
- *
- * @package    Kleistad
- * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
+ * De class Betaling.
  */
 class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 
@@ -25,10 +21,10 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 	 *
 	 * Prepareer 'betaling' form
 	 *
-	 * @param array $data the prepared data.
+	 * @param array $data formulier data.
 	 * @return array
 	 *
-	 * @since   4.3.0
+	 * @since   4.2.0
 	 */
 	public function prepare( &$data = null ) {
 		$error = new WP_Error();
@@ -92,10 +88,10 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 	/**
 	 * Valideer/sanitize 'betaling' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data Gevalideerde data.
 	 * @return array
 	 *
-	 * @since   4.3.0
+	 * @since   4.2.0
 	 */
 	public function validate( &$data ) {
 		$error = new WP_Error();
@@ -132,9 +128,9 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 	/**
 	 * Bewaar 'betaling' form gegevens
 	 *
-	 * @param array $data the data to be saved.
+	 * @param array $data te bewaren data.
 	 *
-	 * @since   4.3.0
+	 * @since   4.2.0
 	 */
 	public function save( $data ) {
 		if ( self::ACTIE_RESTANT_CURSUS === $data['input']['actie'] ) {

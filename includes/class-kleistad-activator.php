@@ -1,8 +1,8 @@
 <?php
 /**
- * Fired during plugin activation
+ * Activering van de plugin.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,7 +10,7 @@
  */
 
 /**
- * The activator class
+ * De activator class
  */
 class Kleistad_Activator {
 
@@ -20,9 +20,9 @@ class Kleistad_Activator {
 	const DBVERSIE = 11;
 
 	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
+	 * Activeer de plugin.
+	 * Zorg dat alle opties van een initiële waarde voorzien zijn, maak de database tabellen aan.
+	 * Voeg de capaciteiten toe aan de rollen.
 	 *
 	 * @since    4.0.87
 	 */
@@ -50,7 +50,6 @@ class Kleistad_Activator {
 			global $wpdb;
 			$charset_collate = $wpdb->get_charset_collate();
 
-			// flush_rewrite_rules call removed.
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			dbDelta(
 				"CREATE TABLE {$wpdb->prefix}kleistad_reserveringen (

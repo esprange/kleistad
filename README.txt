@@ -1,10 +1,10 @@
 === Kleistad ===
-Contributors: esprange
-Donate link: www.sprako.nl/wordpress/eric
+Contributors: Eric Sprangers
+Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 4.9.6
-Stable tag: 4.3.10
+Stable tag: 4.3.11
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 4.3.11 =
+* Geen functionele wijzigingen, alleen volledige overhaul van code commentaar
 = 4.3.10 =
 * In abonnement pauzeren email de door de gebruiker opgegeven herstart datum vermeldt
 * In inschrijvingen overzicht pauze datum, herstart datum en eind datum toegevoegd
@@ -42,6 +44,8 @@ Plaats de shortcodes in de pagina's
 * Toevoeging plugin update selfservice
 = 4.3.0 =
 * Toevoeging selfservice functies voor abonnees, incasso betalingen van abonnementen
+* GDPR functies voor opvragen en verwijderen persoonlijke informatie
+* Toevoeging dagdelenkaart
 = 4.2.0 =
 * Toevoeging betalingen via Mollie
 = 4.1.4 =
@@ -50,6 +54,16 @@ Plaats de shortcodes in de pagina's
 * Berekening verdeling gewijzigd
 = 4.0.87 =
 * Versie na complete refactoring van oude 'kleistad_reserveren' plugin.
+* Nieuwe versie gebaseerd op boilerplate plugin template van Devin Vinson.
+* Abonnementen toegevoegd
+= 3.0 =
+* Cursus beheer en inschrijvingen toegevoegd
+= 2.0 =
+* Extra functionaliteiten (saldo beheer, rapporten, bestuur/beheerders functies) en meer gegevens vastleggen per reservering
+= 1.1 =
+* Code optimalisatie van de kleistad class en verbetering styling.
+= 1.0 =
+* Eerste versie welke de mogelijkheid biedt tot ovenreserveringen
 
 == Upgrade Notice ==
 

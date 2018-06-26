@@ -1,10 +1,8 @@
 <?php
 /**
- * Provide a admin area view for the plugin
+ * Tooe abonnee meta box
  *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.3.0
  *
  * @package    Kleistad
@@ -26,7 +24,7 @@
 		</tr>
 		<tr>
 			<th>Uitleg</th>
-			<td>Dit formulier toont in de checkboxes de huidige status van de abonnee. 
+			<td>Dit formulier toont in de checkboxes de huidige status van de abonnee.
 				Bij het opslaan wordt gecontroleerd of er soms een checkbox gewijzigd is. Alleen dan wordt een actie uitgevoerd!
 			</td>
 		</tr>
@@ -63,7 +61,7 @@
 				<label for="gestart">Starten</label>
 			</th>
 			<td>
-				<input type="checkbox" id="gestart" name="gestart" class="code" <?php checked( $item['gestart'] ); ?> value="1" 
+				<input type="checkbox" id="gestart" name="gestart" class="code" <?php checked( $item['gestart'] ); ?> value="1"
 						<?php disabled( $item['gepauzeerd'] ); ?> >
 				Let op: bij starten wordt de uitgebreide welkomst email verstuurd!
 			</td>
@@ -73,7 +71,7 @@
 				<label for="geannuleerd">Annuleren</label>
 			</th>
 			<td>
-				<input type="checkbox" id="geannuleerd" name="geannuleerd" class="code" <?php checked( $item['geannuleerd'] ); ?> value="1" 
+				<input type="checkbox" id="geannuleerd" name="geannuleerd" class="code" <?php checked( $item['geannuleerd'] ); ?> value="1"
 						<?php disabled( $item['gepauzeerd'] ); ?> >
 				Let op: bij annuleren wordt een eventuele automatische incasso gestopt!
 			</td>
@@ -93,7 +91,7 @@
 				<label for="mandaat">Mandaat verwijderen</label>
 			</th>
 			<td>
-				<input type="checkbox" id="mandaat" name="mandaat" class="code" <?php checked( $item['mandaat'] ); ?> value="1" 
+				<input type="checkbox" id="mandaat" name="mandaat" class="code" <?php checked( $item['mandaat'] ); ?> value="1"
 						<?php disabled( $item['mandaat'], false ); ?> >
 				Let op: bij verwijderen mandaat wordt een eventuele automatische incasso gestopt!
 			</td>

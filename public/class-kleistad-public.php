@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Definitie van de publieke class van de plugin.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,37 +10,39 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad class voor de publieke pagina's.
  */
 class Kleistad_Public {
 
 	/**
-	 * The ID of this plugin.
+	 * Het ID van de plugin.
 	 *
 	 * @since    4.0.87
+	 *
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string    $plugin_name    De ID van de plugin.
 	 */
 	private $plugin_name;
 
 	/**
-	 * The version of this plugin.
+	 * De versie van de plugin.
 	 *
 	 * @since    4.0.87
+	 *
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string    $version    De huidige versie van deze plugin.
 	 */
 	private $version;
 
 	/**
-	 * The url for Ajax callbacks.
+	 * De url voor Ajax callbacks.
 	 *
 	 * @var string url voor Ajax callbacks
 	 */
 	private static $url;
 
 	/**
-	 * Array containing all plugin settings
+	 * De kleistad plugin opties.
 	 *
 	 * @var array kleistad plugin settings
 	 */
@@ -163,6 +165,8 @@ class Kleistad_Public {
 	/**
 	 * Filter functie wijzigt afzender naar noreply adres
 	 *
+	 * @since    4.0.87
+	 *
 	 * @param type $old unused.
 	 * @return string
 	 */
@@ -172,6 +176,8 @@ class Kleistad_Public {
 
 	/**
 	 * Filter functie wijzigt afzender naam naar Kleistad
+	 *
+	 * @since    4.0.87
 	 *
 	 * @param type $old unused.
 	 * @return string
@@ -184,6 +190,7 @@ class Kleistad_Public {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    4.0.87
+	 *
 	 * @param      string $plugin_name       The name of the plugin.
 	 * @param      string $version    The version of this plugin.
 	 */
@@ -197,7 +204,7 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Register the stylesheets for the public-facing side of the site.
+	 * Registreer de stylesheets voor de publieke functies van de plugin.
 	 *
 	 * @since    4.0.87
 	 */
@@ -208,7 +215,7 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Register the JavaScripts for the public-facing side of the site.
+	 * Registreer de JavaScripts voor de publieke functies van de plugin.
 	 *
 	 * @since    4.0.87
 	 */
@@ -248,7 +255,7 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Register the AJAX endpoints
+	 * Registreer de AJAX endpoints
 	 *
 	 * @since   4.0.87
 	 */
@@ -377,7 +384,7 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Create the ceramics recept post type
+	 * Maak de ceramics recept post type en taxonomy
 	 *
 	 * @since 4.1.0
 	 */
@@ -434,9 +441,11 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Used by filter single_template, directs WP to template file.
+	 * Wordt aangeroepen door filter single_template, zorgt dat WP de juiste template file toont.
 	 *
-	 * @param string $single_template the template path.
+	 * @since 4.1.0
+	 *
+	 * @param string $single_template het template path.
 	 * @return string
 	 */
 	public function recept_template( $single_template ) {
@@ -449,9 +458,11 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Used by filter comments_template, directs WP to template file.
+	 * Wordt aangeroepen door filter comments_template, zorgt dat WP de juiste template file toont.
 	 *
-	 * @param string $comments_template the template path.
+	 * @since 4.1.0
+	 *
+	 * @param string $comments_template het template path.
 	 * @return string
 	 */
 	public function comments_template( $comments_template ) {
@@ -464,7 +475,9 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Used by filter comment form default fields, om niet te vragen naar een website url.
+	 * Wordt aangeroepen door filter comment form default fields, om niet te vragen naar een website url.
+	 *
+	 * @since 4.1.0
 	 *
 	 * @param array $fields De commentaar velden.
 	 * @return array
@@ -477,10 +490,10 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * After login check to see if user account is disabled
+	 * Kijk bij de login of een account geblokkeerd is
 	 *
 	 * @since 4.0.87
-	 * @param string $user_login unused.
+	 * @param string $user_login niet gebruikte parameter.
 	 * @param object $user wp user object.
 	 */
 	public function user_login( $user_login, $user = null ) {
@@ -489,18 +502,13 @@ class Kleistad_Public {
 			$user = get_user_by( 'login', $user_login );
 		}
 		if ( ! $user ) {
-			// not logged in - definitely not disabled.
 			return;
 		}
-		// Get user meta.
 		$disabled = get_user_meta( $user->ID, 'kleistad_disable_user', true );
 
-		// Is the use logging in disabled?
 		if ( '1' === $disabled ) {
-			// Clear cookies, a.k.a log user out.
 			wp_clear_auth_cookie();
 
-			// Build login URL and then redirect.
 			$login_url = add_query_arg( 'disabled', '1', site_url( 'wp-login.php', 'login' ) );
 			wp_redirect( $login_url );
 			exit;
@@ -508,15 +516,15 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Show a notice to users who try to login and are disabled
+	 * Toon een melding aan geblokkeerde gebruikers bij het inloggen.
 	 *
 	 * @since 4.0.87
+	 *
 	 * @param string $message the message shown to the user.
 	 * @return string
 	 */
 	public function user_login_message( $message ) {
 
-		// Show the error message if it seems to be a disabled user.
 		$disabled = filter_input( INPUT_GET, 'disabled' );
 		if ( ! is_null( $disabled ) && 1 === $disabled ) {
 			$message = '<div id="login_error">' . apply_filters( 'kleistad_disable_users_notice', 'Inloggen op dit account niet toegestaan' ) . '</div>';
@@ -525,7 +533,9 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Verberg de toolbar voor iedereen die geen edit toegang op pagina's heeft. Action op after setup theme.
+	 * Verberg de toolbar voor iedereen die geen edit toegang op pagina's heeft.
+	 *
+	 * @since 4.0.87
 	 */
 	public function verberg_toolbar() {
 		if ( ! current_user_can( 'edit_posts' ) ) {
@@ -537,6 +547,8 @@ class Kleistad_Public {
 
 	/**
 	 * Toont login en loguit menu opties.
+	 *
+	 * @since 4.0.87
 	 *
 	 * @staticvar boolean $is_active Bewaart de activeringsstatus, als true dan niets doen.
 	 * @param string $items De menu opties.
@@ -564,7 +576,8 @@ class Kleistad_Public {
 	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
 	 *
 	 * @since 4.0.87
-	 * @param array  $atts      the params of the shortcode.
+	 *
+	 * @param array  $atts      de meegegeven params van de shortcode.
 	 * @param string $content   wordt niet gebruikt.
 	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
 	 * @return string           html resultaat.
@@ -631,6 +644,8 @@ class Kleistad_Public {
 
 	/**
 	 * Update abonnement batch job.
+	 *
+	 * @since 4.0.87
 	 *
 	 * @param int       $id    De id van de abonnee.
 	 * @param string    $actie De uit te voeren actie.
@@ -728,6 +743,7 @@ class Kleistad_Public {
 	 * Verwijder gebruiker, geactiveerd als er een gebruiker verwijderd wordt.
 	 *
 	 * @since 4.0.87
+	 *
 	 * @param int $gebruiker_id gebruiker id.
 	 */
 	public function verwijder_gebruiker( $gebruiker_id ) {

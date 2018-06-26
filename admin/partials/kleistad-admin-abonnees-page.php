@@ -1,10 +1,8 @@
 <?php
 /**
- * Provide a admin area view for the plugin
+ * Toon abonnee overzicht page
  *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.3.0
  *
  * @package    Kleistad
@@ -24,4 +22,4 @@
 		<input type="hidden" name="page" value="<?php esc_attr( filter_input( INPUT_GET, 'page' ) ); ?>"/>
 		<?php $table->display(); ?>
 	</form>
-</div>    
+</div>

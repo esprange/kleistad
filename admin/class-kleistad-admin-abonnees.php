@@ -1,8 +1,8 @@
 <?php
 /**
- * The admin-specific functionality for management of abonnees of the plugin.
+ * De admin-specific functies voor beheer abonnees.
  *
- * @link www.sprako.nl/wordpress/eric
+ * @link https://www.kleistad.nl
  * @since 4.3.0
  *
  * @package Kleistad
@@ -31,7 +31,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	}
 
 	/**
-	 * Set the defaults for columns
+	 * Zet de defaults voor de kolommen
 	 *
 	 * @param array  $item row (key, value).
 	 * @param string $column_name key.
@@ -42,7 +42,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	}
 
 	/**
-	 * Render the column naam with the actions
+	 * Toon de kolom naam en acties
 	 *
 	 * @param array $item row (key, value).
 	 * @return HTML
@@ -58,7 +58,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	}
 
 	/**
-	 * Return the column titles
+	 * Geef de kolom titels
 	 *
 	 * @return array
 	 */
@@ -74,7 +74,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	}
 
 	/**
-	 * Define the sortable columns
+	 * Definieer de sorteerbare kolommen
 	 *
 	 * @return array
 	 */
@@ -90,12 +90,10 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	}
 
 	/**
-	 *
-	 * It will get rows from database and prepare them to be showed in table
+	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
-		$per_page = 25; // constant, how much records will be shown per page.
-
+		$per_page = 25;
 		$columns  = $this->get_columns();
 		$hidden   = [];
 		$sortable = $this->get_sortable_columns();
@@ -134,9 +132,9 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 
 		$this->set_pagination_args(
 			[
-				'total_items' => $total_items, // total items defined above.
-				'per_page'    => $per_page, // per page constant defined at top of method.
-				'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
+				'total_items' => $total_items,
+				'per_page'    => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
 			]
 		);
 	}

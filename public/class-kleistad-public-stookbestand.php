@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode stookbestand (voor bestuur).
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,7 +10,7 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad stookbestand class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
@@ -22,7 +22,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 	 *
 	 * Prepareer 'stookbestand' form
 	 *
-	 * @param array $data data to be prepared.
+	 * @param array $data data voor display.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -39,7 +39,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 	 *
 	 * Valideer/sanitize 'stookbestand' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data Gevalideerde data.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -60,7 +60,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 	 *
 	 * Bewaar 'stookbestand' form gegevens
 	 *
-	 * @param array $data data to be saved.
+	 * @param array $data data te bewaren.
 	 *
 	 * @since   4.0.87
 	 */

@@ -1,8 +1,8 @@
 <?php
 /**
- * The file that defines the abonnement class
+ * Definieer de abonnement class
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,20 +10,18 @@
  */
 
 /**
- * Description of class-kleistad-abonnement
- *
- * @author espra
+ * Class abonnement, alle acties voor het aanmaken en beheren van abonnementen
  */
 class Kleistad_Abonnement extends Kleistad_Entity {
 
 	const META_KEY = 'kleistad_abonnement';
 
 	/**
-	 * Store the cursist id
+	 * Het abonnee id
 	 *
 	 * @since 4.0.87
 	 * @access private
-	 * @var int $_cursist_id the wp user id the of cursist.
+	 * @var int $_abonnee_id Het wp user id van de abonnee.
 	 */
 	private $_abonnee_id;
 
@@ -53,11 +51,11 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Constructor
 	 *
-	 * Create the abonnee object .
+	 * Maak het abonnement object .
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $abonnee_id id of the abonnee.
+	 * @param int $abonnee_id wp user id van de abonnee.
 	 */
 	public function __construct( $abonnee_id ) {
 		$this->_abonnee_id            = $abonnee_id;
@@ -79,7 +77,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Export functie privacy gevoelige data.
 	 *
-	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @since 4.3.0
+	 *
+	 * @param  int $gebruiker_id Het wp user id van de abonnee.
 	 * @return array De persoonlijke data (abonnement info).
 	 */
 	public static function export( $gebruiker_id ) {
@@ -129,7 +129,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Erase functie privacy gevoelige data.
 	 *
-	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @since 4.3.0
+	 *
+	 * @param  int $gebruiker_id Het wp user_id van de abonnee.
 	 * @return int aantal verwijderde gegevens.
 	 */
 	public static function erase( $gebruiker_id ) {
@@ -137,14 +139,12 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
-	 * Getter, using the magic function
-	 *
-	 * Get attribuut from the object.
+	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @return mixed Attribute value.
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
@@ -166,14 +166,12 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
-	 * Setter, using the magic function
-	 *
-	 * Set attribuut from the object.
+	 * Set attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @param mixed  $waarde Attribuut value.
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
@@ -195,9 +193,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
-	 * Save the data
+	 * Bewaar de data
 	 *
-	 * Saves the data to the database.
+	 * Bewaar de data als user meta in de database.
 	 *
 	 * @since 4.0.87
 	 */
@@ -255,6 +253,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Maak een controle string aan.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @return string Hash string.
 	 */
 	public function controle() {
@@ -263,6 +263,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Controleer of er een incasso actief is
+	 *
+	 * @since 4.3.0
 	 *
 	 * @return bool Als true, dan is incasso actief.
 	 */
@@ -273,6 +275,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Maak de vervolgbetaling. In de callback wordt de automatische incasso gestart.
+	 *
+	 * @since 4.3.0
 	 */
 	public function betalen() {
 		$betalen = new Kleistad_Betalen();
@@ -290,6 +294,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Voer een uitgestelde actie eenmalig uit.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param string    $actie De uit te voeren actie.
 	 * @param timestamp $datum Het moment waarop de actie moet worden uitgevoerd.
 	 */
@@ -305,6 +311,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Start automatisch betalen per incasso datum.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int $datum Datum waarop abonnement incasso gestart moet worden.
 	 */
@@ -323,6 +331,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Autoriseer de abonnee zodat deze de oven reservering mag doen en toegang tot leden pagina's krijgt.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param boolean $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
 	 */
 	private function autoriseer( $valid ) {
@@ -339,6 +349,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Bereken het overbruggings bedrag.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @return float Het bedrag.
 	 */
@@ -360,6 +372,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Pauzeer het abonnement per pauze datum.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param timestamp $pauze_datum    Pauzedatum.
 	 * @param timestamp $herstart_datum Herstartdatum.
 	 * @param boolean   $admin          Als functie vanuit admin scherm wordt aangeroepen.
@@ -380,6 +394,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Herstart het abonnement per datum.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param timestamp $herstart_datum Herstartdatum.
 	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
@@ -404,6 +420,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Annuleer het abonnement per datum.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param timestamp $eind_datum Einddatum.
 	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
@@ -430,9 +448,11 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Wijzig het abonnement per datum.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param timestamp $wijzig_datum Wijzigdatum.
 	 * @param string    $soort        Beperkt/onbeperkt.
-	 * @param dag       $dag          Dag voor beperkt abonnement.
+	 * @param string    $dag          Dag voor beperkt abonnement.
 	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function wijzigen( $wijzig_datum, $soort, $dag, $admin = false ) {
@@ -456,6 +476,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Wijzig de betaalwijze van het abonnement per datum.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param timestamp $wijzig_datum Wijzigdatum.
 	 * @param string    $betaalwijze  Ideal of bankstorting.
@@ -486,6 +508,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Start de betaling van een nieuw abonnement.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param timestamp $start_datum Datum waarop abonnement gestart wordt.
 	 * @param string    $betaalwijze Ideal of bank.
@@ -529,6 +553,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * Datum wordt apart meegegeven, ondanks dat het de datum heden is.
 	 * Omdat de uitvoeringstijd van de batchjob niet vastligt beter om de oorspronkelijke timestamp vast te leggen.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param string    $actie De actie die op datum uitgevoerd moet worden.
 	 * @param timestamp $datum De datum / tijdstip waarop de actie nodig is.
 	 */
@@ -563,6 +589,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * (Her)activeer een abonnement. Wordt aangeroepen vanuit de betaal callback.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param string $type Geeft aan of het een eerste start of een herstart betreft.
 	 */

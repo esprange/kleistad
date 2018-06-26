@@ -1,8 +1,8 @@
 <?php
 /**
- * The file that defines the inschrijving class
+ * Definieer de inschrijving class
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -12,32 +12,29 @@
 /**
  * Kleistad Inschrijving class.
  *
- * A class definition that define the attributes of a inschrijving class.
- *
  * @since 4.0.87
- *
- * @see n.a.
- * @link URL
  */
 class Kleistad_Inschrijving extends Kleistad_Entity {
 
 	const META_KEY = 'kleistad_cursus';
 
 	/**
-	 * Store the cursist id
+	 * De cursist id
 	 *
 	 * @since 4.0.87
+	 *
 	 * @access private
-	 * @var int $_cursist_id the wp user id the of cursist.
+	 * @var int $_cursist_id de wp user id van de cursist.
 	 */
 	private $_cursist_id;
 
 	/**
-	 * Store the cursus
+	 * De cursus
 	 *
 	 * @since 4.0.87
+	 *
 	 * @access private
-	 * @var object $_cursus of the cursus in the database.
+	 * @var object $_cursus cursus object.
 	 */
 	private $_cursus;
 
@@ -45,6 +42,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * De beginwaarden van een inschrijving
 	 *
 	 * @since 4.3.0
+	 *
 	 * @access private
 	 * @var array $_default_data de standaard waarden bij het aanmaken van een inschrijving.
 	 */
@@ -63,12 +61,10 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	/**
 	 * Constructor
 	 *
-	 * Create the inschrijving object for cursus to be provided to cursist.
-	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $cursist_id id of the cursist.
-	 * @param int $cursus_id id of the cursus.
+	 * @param int $cursist_id wp user id van de cursist.
+	 * @param int $cursus_id id van de cursus.
 	 */
 	public function __construct( $cursist_id, $cursus_id ) {
 		$this->_cursus                = new Kleistad_Cursus( $cursus_id );
@@ -86,6 +82,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 
 	/**
 	 * Export functie privacy gevoelige data.
+	 *
+	 * @since      4.3.0
 	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (cursus info).
@@ -126,6 +124,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	/**
 	 * Erase functie privacy gevoelige data.
 	 *
+	 * @since      4.3.0
+	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return int aantal verwijderde gegevens.
 	 */
@@ -134,14 +134,12 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	}
 
 	/**
-	 * Getter, using the magic function
-	 *
-	 * Get attribuut from the object.
+	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @return mixed Attribute value.
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
@@ -159,14 +157,12 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	}
 
 	/**
-	 * Setter, using the magic function
-	 *
-	 * Set attribuut from the object.
+	 * Set attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @param mixed  $waarde Attribuut value.
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
@@ -187,9 +183,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	}
 
 	/**
-	 * Save the data
-	 *
-	 * Saves the data to the database.
+	 * Sla de inschrijving op als user metadata in de database.
 	 *
 	 * @since 4.0.87
 	 */
@@ -215,6 +209,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 
 	/**
 	 * Verzenden van de inschrijving of indeling email.
+	 *
+	 * @since      4.0.87
 	 *
 	 * @param string $type inschrijving of indeling.
 	 * @return boolean succes of falen van verzending email.
@@ -271,6 +267,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	/**
 	 * Betaal de inschrijving met iDeal.
 	 *
+	 * @since        4.2.0
+	 *
 	 * @param string $bericht      Het bericht bij succesvolle betaling.
 	 * @param bool   $inschrijving Of het een inschrijving of cursuskosten betreft.
 	 */
@@ -300,6 +298,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	/**
 	 * Maak een controle string aan.
 	 *
+	 * @since        4.2.0
+	 *
 	 * @return string Hash string.
 	 */
 	public function controle() {
@@ -308,6 +308,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 
 	/**
 	 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
+	 *
+	 * @since        4.2.0
 	 *
 	 * @param string $type Betaling, cursus of inschrijfkosten.
 	 */

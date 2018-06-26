@@ -1,10 +1,8 @@
 <?php
 /**
- * Provide a admin area view for the plugin
+ * Toon het stooksaldo overzicht pagina
  *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -28,4 +26,4 @@
 		$table->display();
 		?>
 	</form>
-</div>    
+</div>

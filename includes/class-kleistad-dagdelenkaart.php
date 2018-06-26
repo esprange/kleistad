@@ -1,29 +1,30 @@
 <?php
 /**
- * The file that defines the dagdelenkaart class
+ * Definieer de dagdelenkaart class
  *
- * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.87
+ * @link       https://www.kleistad.nl
+ * @since      4.3.0
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
  */
 
 /**
- * Description of class-kleistad-dagdelenkaart
+ * Kleistad dagdelenkaart.
  *
- * @author espra
+ * @since      4.3.0
  */
 class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 
 	const META_KEY = 'kleistad_dagdelenkaart';
 
 	/**
-	 * Store the cursist id
+	 * De gebruiker_id
 	 *
-	 * @since 4.0.87
+	 * @since 4.3.0
+	 *
 	 * @access private
-	 * @var int $_cursist_id the wp user id the of gebruiker.
+	 * @var int $_gebruiker_id het wp user id van de gebruiker.
 	 */
 	private $_gebruiker_id;
 
@@ -31,6 +32,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * De beginwaarden van een dagdelenkaart.
 	 *
 	 * @since 4.3.0
+	 *
 	 * @access private
 	 * @var array $_default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
 	 */
@@ -44,11 +46,9 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	/**
 	 * Constructor
 	 *
-	 * Create the dagdelenkaart object .
-	 *
 	 * @since 4.3.0
 	 *
-	 * @param int $gebruiker_id id of the gebruiker.
+	 * @param int $gebruiker_id wp id van de gebruiker.
 	 */
 	public function __construct( $gebruiker_id ) {
 		$this->_gebruiker_id         = $gebruiker_id;
@@ -65,14 +65,12 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	}
 
 	/**
-	 * Getter, using the magic function
-	 *
-	 * Get attribuut from the object.
+	 * Get attribuut van het object.
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @return mixed Attribute value.
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
@@ -85,14 +83,12 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	}
 
 	/**
-	 * Setter, using the magic function
-	 *
-	 * Set attribuut from the object.
+	 * Set attribuut van het object.
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @param mixed  $waarde Attribuut value.
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
@@ -106,9 +102,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	}
 
 	/**
-	 * Save the data
-	 *
-	 * Saves the data to the database.
+	 * Bewaar de dagdelenkaart als metadata in de database.
 	 *
 	 * @since 4.3.0
 	 */
@@ -119,6 +113,8 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	/**
 	 * Omdat een dagdelenkaart een meta data object betreft kan het niet omgezet worden naar de laatste versie.
 	 *
+	 * @since      4.3.0
+	 *
 	 * @param object $data het te laden object.
 	 */
 	public function load( $data ) {
@@ -127,6 +123,8 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 
 	/**
 	 * Verzenden van de welkomst email.
+	 *
+	 * @since      4.3.0
 	 *
 	 * @param string $type Welke email er verstuurd moet worden.
 	 * @return boolean succes of falen van verzending email.
@@ -150,6 +148,8 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 
 	/**
 	 * Start de betaling van een nieuw dagdelenkaart.
+	 *
+	 * @since      4.3.0
 	 *
 	 * @param timestamp $start_datum Datum waarop dagdelenkaart gestart wordt.
 	 * @param string    $betaalwijze Ideal of bank.
@@ -179,6 +179,8 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 
 	/**
 	 * Activeer een dagdelenkaart. Wordt aangeroepen vanuit de betaal callback.
+	 *
+	 * @since      4.3.0
 	 */
 	public function callback() {
 		$this->email( '_ideal' );
@@ -187,6 +189,8 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 
 	/**
 	 * Return alle dagdelenkaarten.
+	 *
+	 * @since      4.3.0
 	 *
 	 * @return array dagdelenkaarten.
 	 */

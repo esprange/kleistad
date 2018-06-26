@@ -1,17 +1,13 @@
 <?php
 /**
- * The template for displaying comments on kleistad_recepten
+ * De template voor het tonen van commentaar op kleistad_recepten
  *
- * @package WordPress
- * @subpackage Kleistad
+ * @package Kleistad
+ * @subpackage Kleistad/public/partials
+ *
  * @since Kleistad 4.1.0
  */
 
-/*
- * If the current post is protected by a password and
- * the visitor has not yet entered the password we will
- * return early without loading the comments.
- */
 if ( post_password_required() ) {
 	return;
 }
@@ -43,14 +39,13 @@ if ( post_password_required() ) {
 					)
 				);
 			?>
-		</ol><!-- .comment-list -->
+		</ol>
 
 		<?php the_comments_navigation(); ?>
 
-	<?php endif; // Check for have_comments(). ?>
+	<?php endif; ?>
 
 	<?php
-		// If comments are closed and there are comments, let's leave a little note, shall we?
 	if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) :
 		?>
 	<p class="no-comments"><?php echo 'Gesloten voor reacties'; ?></p>

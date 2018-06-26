@@ -1,20 +1,19 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode dagdelenkaart.
  *
- * @link       www.sprako.nl/wordpress/eric
- * @since      4.0.87
+ * @link       https://www.kleistad.nl
+ * @since      4.3.0
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad dagdelenkaart class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 
@@ -22,10 +21,10 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 	 *
 	 * Prepareer 'dagdelenkaart' form
 	 *
-	 * @param array $data the prepared data.
+	 * @param array $data data voor display.
 	 * @return array
 	 *
-	 * @since   4.0.87
+	 * @since   4.3.0
 	 */
 	public function prepare( &$data = null ) {
 		if ( is_null( $data ) ) {
@@ -57,10 +56,10 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 	/**
 	 * Valideer/sanitize 'dagdelenkaart' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data gevalideerde data.
 	 * @return array
 	 *
-	 * @since   4.0.87
+	 * @since   4.3.0
 	 */
 	public function validate( &$data ) {
 		$error = new WP_Error();
@@ -124,10 +123,10 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 	/**
 	 * Bewaar 'dagdelenkaart' form gegevens
 	 *
-	 * @param array $data the data to be saved.
+	 * @param array $data te bewaren saved.
 	 * @return string
 	 *
-	 * @since   4.0.87
+	 * @since   4.3.0
 	 */
 	public function save( $data ) {
 		$error = new WP_Error();

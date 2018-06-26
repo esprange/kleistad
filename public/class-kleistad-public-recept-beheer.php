@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode recept beheer.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.1.0
  *
  * @package    Kleistad
@@ -10,16 +10,15 @@
  */
 
 /**
- * Included for image file upload.
+ * Include voor image file upload.
  */
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad recept beheer class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 
@@ -66,7 +65,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 	/**
 	 * Prepareer 'recept' form
 	 *
-	 * @param array $data data to be prepared.
+	 * @param array $data data voor display.
 	 * @return array
 	 *
 	 * @since   4.1.0
@@ -193,7 +192,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 	/**
 	 * Valideer/sanitize 'recept' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data Gevalideerde data.
 	 * @return array
 	 *
 	 * @since   4.1.0
@@ -274,7 +273,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 	 *
 	 * Bewaar 'recept' form gegevens
 	 *
-	 * @param array $data data to be saved.
+	 * @param array $data data te bewaren.
 	 * @return string
 	 *
 	 * @since   4.1.0

@@ -1,8 +1,8 @@
 <?php
 /**
- * The admin-specific functionality for management of ovens of the plugin.
+ * De admin-specifieke functies voor het management van ovens.
  *
- * @link www.sprako.nl/wordpress/eric
+ * @link https://www.kleistad.nl
  * @since 4.0.87
  *
  * @package Kleistad
@@ -31,7 +31,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	}
 
 	/**
-	 * Set the defaults for columns
+	 * De defaults voor de kolommen
 	 *
 	 * @param array  $item row (key, value).
 	 * @param string $column_name key.
@@ -42,7 +42,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	}
 
 	/**
-	 * Render the column naam with the actions
+	 * Toon de kolom naam en de acties
 	 *
 	 * @param array $item row (key, value).
 	 * @return HTML
@@ -58,7 +58,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	}
 
 	/**
-	 * Render the column beschikbaarheid
+	 * Toon de kolom beschikbaarheid
 	 *
 	 * @param array $item   row (key, value array).
 	 * @return HTML
@@ -69,7 +69,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	}
 
 	/**
-	 * Return the column titles
+	 * Geef de kolom titels
 	 *
 	 * @return array
 	 */
@@ -84,7 +84,7 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	}
 
 	/**
-	 * Define the sortable columns
+	 * Definieer de sorteerbare kolommen
 	 *
 	 * @return array
 	 */
@@ -96,13 +96,12 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	}
 
 	/**
-	 *
-	 * It will get rows from database and prepare them to be showed in table
+	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
 		global $wpdb;
 
-		$per_page = 5; // constant, how much records will be shown per page.
+		$per_page = 5;
 
 		$columns  = $this->get_columns();
 		$hidden   = [];
@@ -121,9 +120,9 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 		$this->items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens ORDER BY $orderby $order LIMIT $per_page OFFSET $paged", ARRAY_A ); // WPCS: db call ok, cache ok, unprepared SQL OK.
 		$this->set_pagination_args(
 			[
-				'total_items' => $total_items, // total items defined above.
-				'per_page'    => $per_page, // per page constant defined at top of method.
-				'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
+				'total_items' => $total_items,
+				'per_page'    => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
 			]
 		);
 	}

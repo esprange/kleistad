@@ -1,8 +1,8 @@
 <?php
 /**
- * The admin-specific functionality of the plugin.
+ * De admin functies van de kleistad plugin.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,43 +10,43 @@
  */
 
 /**
- * The admin-specific functionality of the plugin.
+ * De admin-specifieke functies van de plugin.
  */
 class Kleistad_Admin {
 
 	/**
-	 * The ID of this plugin.
+	 * Het ID van de plugin.
 	 *
 	 * @since    4.0.87
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string    $plugin_name    Het ID van de plugin.
 	 */
 	private $plugin_name;
 
 	/**
-	 * The version of this plugin.
+	 * De versie van de plugin.
 	 *
 	 * @since    4.0.87
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string    $version    De huidige versie.
 	 */
 	private $version;
 
 	/**
-	 *  The plugin options
+	 *  De plugin opties
 	 *
 	 * @since     4.0.87
 	 * @access    private
-	 * @var       array     $options  the plugin options
+	 * @var       array     $options  De plugin options
 	 */
 	private $options;
 
 	/**
-	 * Initialize the class and set its properties.
+	 * Initializeer het object.
 	 *
 	 * @since    4.0.87
-	 * @param      string $plugin_name       The name of this plugin.
-	 * @param      string $version    The version of this plugin.
+	 * @param      string $plugin_name De naam van de plugin.
+	 * @param      string $version     De versie van de plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
@@ -57,7 +57,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Register the stylesheets for the admin area.
+	 * Registreer de stylesheets van de admin functies.
 	 *
 	 * @since    4.0.87
 	 */
@@ -66,7 +66,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Register the JavaScript for the admin area.
+	 * Registreer de JavaScript voor de admin functies.
 	 *
 	 * @since    4.0.87
 	 */
@@ -75,7 +75,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Define the admin panels
+	 * Definieer de admin panels
 	 *
 	 * @since    4.0.87
 	 */
@@ -97,13 +97,12 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Add the field to user profiles
+	 * Voeg extra veld toe aan user profiles
 	 *
 	 * @since 4.0.87
 	 * @param object $user unused.
 	 */
 	public function use_profile_field( $user ) {
-		// Only show this option to users who can delete other users.
 		if ( ! current_user_can( 'edit_users' ) ) {
 			return;
 		}
@@ -111,13 +110,12 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Saves the custom field to user meta
+	 * Bewaar dit custom field in user meta
 	 *
 	 * @since 4.0.87
 	 * @param int $user_id unused.
 	 */
 	public function user_profile_field_save( $user_id ) {
-		// Only worry about saving this field if the user has access.
 		if ( ! current_user_can( 'edit_users' ) ) {
 			return;
 		}
@@ -127,7 +125,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Saves the custom field to user meta
+	 * Controleer of de gebruiker geblokkeerd is
 	 *
 	 * @since 4.0.87
 	 * @param array  $errors unused.
@@ -141,10 +139,10 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Add custom disabled column to users list
+	 * Toon de disabled waarde in de users lijst
 	 *
 	 * @since 4.0.87
-	 * @param array $defaults default settings for user.
+	 * @param array $defaults default settings voor user.
 	 * @return array
 	 */
 	public function manage_users_columns( $defaults ) {
@@ -153,12 +151,12 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Set content of disabled users column
+	 * Inhoud van de disabled users kolom
 	 *
 	 * @since 4.0.87
-	 * @param empty  $empty unused.
-	 * @param string $column_name the column involved.
-	 * @param int    $user_id the user_id.
+	 * @param empty  $empty ongebruikt.
+	 * @param string $column_name de kolom.
+	 * @param int    $user_id het user_id.
 	 * @return string
 	 */
 	public function manage_users_column_content( $empty, $column_name, $user_id ) {
@@ -171,7 +169,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Specifiy the width of our custom column
+	 * De breedte van de column
 	 *
 	 * @since 4.0.87
 	 */
@@ -181,6 +179,8 @@ class Kleistad_Admin {
 
 	/**
 	 * Registreer de exporter van privacy gevoelige data.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param array $exporters De exporters die WP aanroept bij het genereren van de zip file.
 	 */
@@ -195,6 +195,8 @@ class Kleistad_Admin {
 	/**
 	 * Registreer de eraser van privacy gevoelige data.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param array $erasers De erasers die WP aanroept bij het verwijderen persoonlijke data.
 	 */
 	public function register_eraser( $erasers ) {
@@ -207,6 +209,8 @@ class Kleistad_Admin {
 
 	/**
 	 * Exporteer persoonlijke data.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param string $email Het email adres van de te exporteren persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
@@ -234,6 +238,8 @@ class Kleistad_Admin {
 	/**
 	 * Erase / verwijder persoonlijke data.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param string $email Het email adres van de te verwijderen persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
 	 */
@@ -259,6 +265,8 @@ class Kleistad_Admin {
 	/**
 	 * Auto update van de plugin via het administrator board.
 	 *
+	 * @since 4.3.8
+	 *
 	 * @param  object $transient Het object waarin WP de updates deelt.
 	 * @return object De transient.
 	 */
@@ -276,6 +284,8 @@ class Kleistad_Admin {
 
 	/**
 	 * Haal informatie op, aangeroepen vanuit API plugin hook.
+	 *
+	 * @since 4.3.8
 	 *
 	 * @param  object $obj Wordt niet gebruikt.
 	 * @param  string $action De gevraagde actie.
@@ -295,6 +305,8 @@ class Kleistad_Admin {
 	/**
 	 * Haal de info bij de update server op.
 	 *
+	 * @since 4.3.8
+	 *
 	 * @param  string $action De gevraagde actie.
 	 * @return string remote info.
 	 */
@@ -312,7 +324,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Register the settings
+	 * Registreer de kleistad settings
 	 *
 	 * @since   4.0.87
 	 */
@@ -321,7 +333,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Render the settings page for this plugin.
+	 * Toon de instellingen page van de plugin.
 	 *
 	 * @since    4.0.87
 	 */
@@ -334,21 +346,27 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * This function renders our custom meta box
+	 * Toon de custom meta box met de instellingen
+	 *
+	 * @since    4.0.87
 	 */
 	public function instellingen_form_meta_box_handler() {
 		require 'partials/kleistad-admin-instellingen-form-meta-box.php';
 	}
 
 	/**
-	 * This function renders our custom meta box
+	 * Toon het overzicht van de shortcodes in een meta box
+	 *
+	 * @since    4.0.87
 	 */
 	public function shortcodes_meta_box_handler() {
 		require 'partials/kleistad-admin-shortcodes-meta-box.php';
 	}
 
 	/**
-	 * This function renders our custom meta box
+	 * Toon de emails en hun parameters in een meta box
+	 *
+	 * @since    4.0.87
 	 */
 	public function email_parameters_meta_box_handler() {
 		require 'partials/kleistad-admin-email-parameters-meta-box.php';
@@ -356,9 +374,11 @@ class Kleistad_Admin {
 
 
 	/**
-	 * Validate the settings entered
+	 * Valideer de ingevoerde instellingen
 	 *
-	 * @param array $input the settings entered.
+	 * @since    4.0.87
+	 *
+	 * @param array $input de ingevoerde instellingen.
 	 * @return array  $input
 	 */
 	public function validate_settings( $input ) {
@@ -369,7 +389,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * List page handler
+	 * Ovens overzicht page handler
 	 *
 	 * @since    4.0.87
 	 */
@@ -382,17 +402,15 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Form page handler checks is there some data posted and tries to save it
-	 * Also it renders basic wrapper in which we are callin meta box render
+	 * Toon en verwerk oven gegevens
 	 *
 	 * @since    4.0.87
 	 */
 	public function ovens_form_page_handler() {
 		$message = '';
 		$notice  = '';
-		// here we are verifying does this request is post back and have correct nonce.
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
-			$item = filter_input_array(
+			$item       = filter_input_array(
 				INPUT_POST, [
 					'id'              => FILTER_SANITIZE_NUMBER_INT,
 					'naam'            => FILTER_SANITIZE_STRING,
@@ -406,8 +424,6 @@ class Kleistad_Admin {
 					],
 				]
 			);
-			// validate data, and if all ok save item to database.
-			// if id is zero insert otherwise update.
 			$item_valid = $this->validate_oven( $item );
 			if ( true === $item_valid ) {
 				if ( $item['id'] > 0 ) {
@@ -421,11 +437,9 @@ class Kleistad_Admin {
 				$oven->save();
 				$message = 'De gegevens zijn opgeslagen';
 			} else {
-				// if $item_valid not true it contains error message(s).
 				$notice = $item_valid;
 			}
 		} else {
-			// if this is not post back we load item to edit or give new one to create.
 			if ( isset( $_REQUEST['id'] ) ) {
 				$oven = new Kleistad_Oven( $_REQUEST['id'] );
 			} else {
@@ -436,25 +450,23 @@ class Kleistad_Admin {
 			$item['kosten']          = $oven->kosten;
 			$item['beschikbaarheid'] = $oven->beschikbaarheid;
 		}
-		// here we adding our custom meta box.
 		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this, 'ovens_form_meta_box_handler' ], 'oven', 'normal', 'default' );
 		require 'partials/kleistad-admin-ovens-form-page.php';
 	}
 
 	/**
-	 * This function renders our custom meta box
+	 * Toon het oven formulier in een meta box
 	 *
-	 * @param array $item the oven involved.
+	 * @param array $item de oven.
 	 */
 	public function ovens_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-ovens-form-meta-box.php';
 	}
 
 	/**
-	 * Simple function that validates data and retrieve bool on success
-	 * and error message(s) on error
+	 * Valideer de oven
 	 *
-	 * @param array $item the oven involved.
+	 * @param array $item de oven.
 	 * @return bool|string
 	 */
 	private function validate_oven( $item ) {
@@ -476,7 +488,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * List page handler
+	 * Abonnees overzicht page handler
 	 *
 	 * @since    4.3.0
 	 */
@@ -489,17 +501,15 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Form page handler checks is there some data posted and tries to save it
-	 * Also it renders basic wrapper in which we are callin meta box render
+	 * Toon en verwerk ingevoerde abonnee gegevens
 	 *
 	 * @since    4.3.0
 	 */
 	public function abonnees_form_page_handler() {
 		$message = '';
 		$notice  = '';
-		// here we are verifying does this request is post back and have correct nonce.
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
-			$item = filter_input_array(
+			$item       = filter_input_array(
 				INPUT_POST, [
 					'id'              => FILTER_SANITIZE_NUMBER_INT,
 					'naam'            => FILTER_SANITIZE_STRING,
@@ -518,8 +528,6 @@ class Kleistad_Admin {
 					'mandaat'         => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
-			// validate data, and if all ok save item to database.
-			// if id is zero insert otherwise update.
 			$item_valid = $this->validate_abonnee( $item );
 			if ( true === $item_valid ) {
 				$datum = mktime( 0, 0, 0, date( 'n' ) + 1, 1, date( 'Y' ) );
@@ -549,11 +557,9 @@ class Kleistad_Admin {
 				}
 				$message = 'De gegevens zijn opgeslagen';
 			} else {
-				// if $item_valid not true it contains error message(s).
 				$notice = $item_valid;
 			}
 		} else {
-			// if this is not post back we load item to edit.
 			if ( isset( $_REQUEST['id'] ) ) {
 				$abonnee_id = $_REQUEST['id'];
 				$abonnement = new Kleistad_Abonnement( $abonnee_id );
@@ -577,25 +583,27 @@ class Kleistad_Admin {
 				];
 			}
 		}
-		// here we adding our custom meta box.
 		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default' );
 		require 'partials/kleistad-admin-abonnees-form-page.php';
 	}
 
 	/**
-	 * This function renders our custom meta box
+	 * Toon de abonnees form meta box
 	 *
-	 * @param array $item the abonnee involved.
+	 * @since    4.3.0
+	 *
+	 * @param array $item de abonnee.
 	 */
 	public function abonnees_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-abonnees-form-meta-box.php';
 	}
 
 	/**
-	 * Simple function that validates data and retrieve bool on success
-	 * and error message(s) on error
+	 * Valideer de abonnee
 	 *
-	 * @param array $item the abonnee involved.
+	 * @since    4.3.0
+	 *
+	 * @param array $item de abonnee.
 	 * @return bool|string
 	 */
 	private function validate_abonnee( $item ) {
@@ -608,7 +616,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * List page handler
+	 * Overzicht regelingen page handler
 	 *
 	 * @since    4.0.87
 	 */
@@ -631,8 +639,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Form page handler checks is there some data posted and tries to save it
-	 * Also it renders basic wrapper in which we are callin meta box render
+	 * Toon en verwerk regelingen
 	 *
 	 * @since    4.0.87
 	 */
@@ -641,7 +648,6 @@ class Kleistad_Admin {
 		$message = '';
 		$notice  = '';
 
-		// this is default $item which will be used for new records.
 		$default = [
 			'id'             => '',
 			'gebruiker_id'   => 0,
@@ -651,12 +657,8 @@ class Kleistad_Admin {
 			'kosten'         => 0,
 		];
 
-		// here we are verifying does this request is post back and have correct nonce.
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_regeling' ) ) {
-			// combine our default item with request params.
-			$item = shortcode_atts( $default, $_REQUEST );
-			// validate data, and if all ok save item to database.
-			// if id is zero insert otherwise update.
+			$item       = shortcode_atts( $default, $_REQUEST );
 			$item_valid = $this->validate_regeling( $item );
 			if ( true === $item_valid ) {
 				$regelingen = new Kleistad_Regelingen();
@@ -679,11 +681,9 @@ class Kleistad_Admin {
 				$item['gebruiker_naam'] = $gebruiker->display_name;
 				$item['oven_naam']      = $oven->naam;
 			} else {
-				// if $item_valid not true it contains error message(s).
 				$notice = $item_valid;
 			}
 		} else {
-			// if this is not post back we load item to edit or give new one to create.
 			$item = $default;
 			if ( isset( $_REQUEST['id'] ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d-%d' );
@@ -702,16 +702,17 @@ class Kleistad_Admin {
 				];
 			}
 		}
-		// here we adding our custom meta box.
 		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this, 'regelingen_form_meta_box_handler' ], 'regeling', 'normal', 'default' );
 
 		require 'partials/kleistad-admin-regelingen-form-page.php';
 	}
 
 	/**
-	 * This function renders our custom meta box
+	 * Toon de regeling meta box
 	 *
-	 * @param arrray $item the regeling.
+	 * @since    4.0.87
+	 *
+	 * @param arrray $item de regeling.
 	 */
 	public function regelingen_form_meta_box_handler( $item ) {
 		$gebruikers = get_users(
@@ -726,8 +727,9 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Simple function that validates data and retrieve bool on success
-	 * and error message(s) on error
+	 * Valideer de regeling
+	 *
+	 * @since    4.0.87
 	 *
 	 * @param array $item the regeling.
 	 * @return bool|string
@@ -753,7 +755,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * List page handler
+	 * Overzicht stooksaldo page handler
 	 *
 	 * @since    4.0.87
 	 */
@@ -766,8 +768,7 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Form page handler checks is there some data posted and tries to save it
-	 * Also it renders basic wrapper in which we are callin meta box render
+	 * Toon en verwerk stooksaldo
 	 *
 	 * @since    4.0.87
 	 */
@@ -782,12 +783,8 @@ class Kleistad_Admin {
 			'naam'  => '',
 		];
 
-		// here we are verifying does this request is post back and have correct nonce.
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_stooksaldo' ) ) {
-			// combine our default item with request params.
-			$item = shortcode_atts( $default, $_REQUEST );
-			// validate data, and if all ok save item to database.
-			// if id is zero insert otherwise update.
+			$item       = shortcode_atts( $default, $_REQUEST );
 			$item_valid = $this->validate_stooksaldo( $item );
 
 			if ( true === $item_valid ) {
@@ -796,11 +793,9 @@ class Kleistad_Admin {
 				$beheerder     = wp_get_current_user();
 				$saldo->save( 'correctie door ' . $beheerder->display_name );
 			} else {
-				// if $item_valid not true it contains error message(s).
 				$notice = $item_valid;
 			}
 		} else {
-			// if this is not post back we load item to edit or give new one to create.
 			$item = $default;
 			if ( isset( $_REQUEST['id'] ) ) {
 				$gebruiker = get_userdata( $_REQUEST['id'] );
@@ -816,27 +811,28 @@ class Kleistad_Admin {
 				$item['saldo'] = $saldo->bedrag;
 			}
 		}
-		// here we adding our custom meta box.
 		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this, 'stooksaldo_form_meta_box_handler' ], 'stooksaldo', 'normal', 'default' );
 
 		require 'partials/kleistad-admin-stooksaldo-form-page.php';
 	}
 
 	/**
-	 * This function renders our custom meta box
-	 * $item is row
+	 * Toon de stooksaldo meta box
 	 *
-	 * @param array $item the stooksaldo.
+	 * @since    4.0.87
+	 *
+	 * @param array $item de stooksaldo.
 	 */
 	public function stooksaldo_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-stooksaldo-form-meta-box.php';
 	}
 
 	/**
-	 * Simple function that validates data and retrieve bool on success
-	 * and error message(s) on error
+	 * Valideer de stooksaldo
 	 *
-	 * @param array $item the stooksaldo.
+	 * @since    4.0.87
+	 *
+	 * @param array $item de stooksaldo.
 	 * @return bool|string
 	 */
 	private function validate_stooksaldo( $item ) {

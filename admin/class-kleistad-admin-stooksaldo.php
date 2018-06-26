@@ -1,8 +1,8 @@
 <?php
 /**
- * The admin-specific functionality for management of stooksaldo of the plugin.
+ * De admin-specifieke functies voor beheer van de stooksaldo.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -31,7 +31,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 * Default rendering for columns
+	 * Default tonen van de kolommen
 	 *
 	 * @param array  $item - row (key, value).
 	 * @param string $column_name - string (key).
@@ -42,7 +42,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 * Render the column naam
+	 * Toon de kolom naam inclusief acties
 	 *
 	 * @param array $item - row (key, value array).
 	 * @return HTML
@@ -58,7 +58,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 * Render the column saldo
+	 * Toon de kolom saldo
 	 *
 	 * @param array $item - row (key, value array).
 	 * @return HTML
@@ -70,7 +70,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 * Retrieve the column titles
+	 * Geef de kolom titels
 	 *
 	 * @return array
 	 */
@@ -83,7 +83,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 * Retrieve the sortable columns
+	 * Geef de sorteerbare kolommen
 	 *
 	 * @return array
 	 */
@@ -96,8 +96,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 *
-	 * It will get rows from database and prepare them to be showed in table
+	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
 		$per_page = 5;

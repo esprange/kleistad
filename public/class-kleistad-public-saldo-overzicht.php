@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode saldo overzicht (voor bestuur).
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,18 +10,17 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad saldo overzicht class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public_Saldo_Overzicht extends Kleistad_Shortcode {
 
 	/**
 	 * Prepareer 'saldo_overzicht' form
 	 *
-	 * @param array $data data to prepare.
+	 * @param array $data data voor display.
 	 * @return array
 	 *
 	 * @since   4.0.87

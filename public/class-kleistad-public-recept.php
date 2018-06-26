@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode recept (weergave).
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.1.0
  *
  * @package    Kleistad
@@ -10,18 +10,17 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad recept class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public_Recept extends Kleistad_Shortcode {
 
 	/**
 	 * Prepareer 'recept' form
 	 *
-	 * @param array $data data to be prepared.
+	 * @param array $data data voor display.
 	 * @return array
 	 *
 	 * @since   4.1.0

@@ -1,8 +1,8 @@
 <?php
 /**
- * The admin-specific functionality for management of regelingen of the plugin.
+ * De admin-specifieke functies voor beheer van regelingen.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -13,7 +13,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 /**
- * List table for regelingen.
+ * List table voor regelingen.
  */
 class Kleistad_Admin_Regelingen extends WP_List_Table {
 
@@ -30,7 +30,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	}
 
 	/**
-	 * Render default columns
+	 * Toon de default kolommen
 	 *
 	 * @param array  $item - row (key, value).
 	 * @param string $column_name - (key).
@@ -41,7 +41,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	}
 
 	/**
-	 * Render the gebruiker_naam column with action
+	 * Toon de gebruiker_naam kolom met acties
 	 *
 	 * @param array $item - row (key, value).
 	 * @return HTML
@@ -58,7 +58,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	}
 
 	/**
-	 * Get the column titles
+	 * Geef de kolom titels
 	 *
 	 * @return array
 	 */
@@ -72,7 +72,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	}
 
 	/**
-	 * Get the sortable columns
+	 * Geef de sorteerbare kolommen
 	 *
 	 * @return array
 	 */
@@ -84,8 +84,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	}
 
 	/**
-	 * Prepare the items
-	 * It will get rows from database and prepare them to be showed in table
+	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
 		$per_page = 5; // constant, how much records will be shown per page.
@@ -94,16 +93,13 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		$hidden   = [];
 		$sortable = $this->get_sortable_columns();
 
-		// here we configure table headers, defined in our methods.
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		// prepare query params, as usual current page, order by and order direction.
 		$paged_val = filter_input( INPUT_GET, 'paged' );
 		$paged     = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$order_val = filter_input( INPUT_GET, 'order' );
 		$order     = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 
-		// will be used in pagination settings.
 		$gebruikers = get_users(
 			[
 				'fields'  => [
@@ -141,9 +137,9 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		$this->items = array_slice( $regelingen, $paged * $per_page, $per_page, true );
 		$this->set_pagination_args(
 			[
-				'total_items' => $total_items, // total items defined above.
-				'per_page'    => $per_page, // per page constant defined at top of method.
-				'total_pages' => ceil( $total_items / $per_page ), // calculate pages count.
+				'total_items' => $total_items,
+				'per_page'    => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
 			]
 		);
 	}

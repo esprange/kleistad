@@ -1,10 +1,8 @@
 <?php
 /**
- * Provide a public-facing view for the plugin
+ * Toon een enkel recept.
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.1.0
  *
  * @package    Kleistad
@@ -16,7 +14,7 @@ if ( isset( $data['recept'] ) ) :
 <button id="kleistad_recept_print" data-css="<?php echo esc_url( $data['css'] ); ?>">Afdrukken</button>
 <div class="kleistad_recept" >
 	<h2><?php echo esc_html( $data['recept']['titel'] ); ?></h2>
-	<div style="width:100%"> 
+	<div style="width:100%">
 		<div style="float:left;width:30%;">
 			<img src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" width="100%" >
 		</div>
@@ -102,7 +100,7 @@ else :
 		<label for="kleistad_zoek" >Zoek een recept</label>
 	</div>
 	<div class="kleistad_col_4 kleistad_zoek" >
-		<span class="dashicons dashicons-search" style="cursor:pointer;" id="kleistad_zoek_icon"></span>		
+		<span class="dashicons dashicons-search" style="cursor:pointer;" id="kleistad_zoek_icon"></span>
 		<input type="search" id="kleistad_zoek" placeholder="zoeken..." value="" >
 	</div>
 	<div class="kleistad_col_2" style="text-align:right;">
@@ -123,6 +121,6 @@ else :
 </div>
 <div class="kleistad_recepten" id="kleistad_recepten">
 	de recepten worden opgehaald...
-</div>	
+</div>
 	<?php
 endif;

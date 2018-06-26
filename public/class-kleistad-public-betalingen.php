@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * De shortcode betalingen (overzicht en formulier).
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,18 +10,17 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad betalingen class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 
 	/**
 	 * Prepareer 'betalingen' form
 	 *
-	 * @param array $data data to be prepared.
+	 * @param array $data data voor display.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -62,7 +61,7 @@ class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 	 *
 	 * Valideer/sanitize 'betalingen' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data gevalideerde data.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -106,7 +105,7 @@ class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 	/**
 	 * Bewaar 'betalingen' form gegevens
 	 *
-	 * @param array $data data to be saved.
+	 * @param array $data te bewaren data.
 	 * @return string
 	 *
 	 * @since   4.0.87

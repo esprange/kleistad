@@ -1,10 +1,8 @@
 <?php
 /**
- * The file that defines the saldo class
+ * De definitie van de (stook) saldo class
  *
- * A class definition including the ovens, reserveringen and regelingen
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -21,6 +19,8 @@ class Kleistad_Saldo {
 	/**
 	 * De attributen van het saldo
 	 *
+	 * @since      4.0.87
+	 *
 	 * @var array De attributen van het saldo.
 	 */
 	private $_data;
@@ -28,12 +28,16 @@ class Kleistad_Saldo {
 	/**
 	 * De gebruiker identificatie
 	 *
+	 * @since      4.0.87
+	 *
 	 * @var int Het gebruiker_id.
 	 */
 	private $_gebruiker_id;
 
 	/**
 	 * Private functie welke de update van stooksaldo.log doet.
+	 *
+	 * @since      4.0.87
 	 *
 	 * @param string $tekst Toe te voegen tekst aan log.
 	 */
@@ -45,6 +49,8 @@ class Kleistad_Saldo {
 	/**
 	 * Private functie om de huidige saldo stand op te vragen
 	 *
+	 * @since      4.0.87
+	 *
 	 * @return float De huidige saldo stand.
 	 */
 	private function huidig_saldo() {
@@ -55,6 +61,8 @@ class Kleistad_Saldo {
 	/**
 	 * Functie om algemene teksten toe te voegen aan de log
 	 *
+	 * @since      4.0.87
+	 *
 	 * @param tekst $reden De te loggen tekst.
 	 */
 	public static function log( $reden ) {
@@ -63,6 +71,8 @@ class Kleistad_Saldo {
 
 	/**
 	 * De constructor
+	 *
+	 * @since      4.0.87
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvoor het saldo wordt gemaakt.
 	 */
@@ -73,6 +83,8 @@ class Kleistad_Saldo {
 
 	/**
 	 * Export functie privacy gevoelige data.
+	 *
+	 * @since      4.3.0
 	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
@@ -96,6 +108,8 @@ class Kleistad_Saldo {
 	/**
 	 * Erase functie privacy gevoelige data.
 	 *
+	 * @since      4.3.0
+	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return int Aantal verwijderd.
 	 */
@@ -105,6 +119,8 @@ class Kleistad_Saldo {
 
 	/**
 	 * Setter magic functie
+	 *
+	 * @since      4.0.87
 	 *
 	 * @param string $attribuut Het attribuut waarvan de waarde wordt aangepast.
 	 * @param mixed  $waarde De nieuwe waarde.
@@ -116,6 +132,8 @@ class Kleistad_Saldo {
 	/**
 	 * Getter magic functie
 	 *
+	 * @since      4.0.87
+	 *
 	 * @param string $attribuut Het attribuut waarvan de waarde wordt opgevraagd.
 	 * @return mixed De waarde.
 	 */
@@ -125,6 +143,8 @@ class Kleistad_Saldo {
 
 	/**
 	 * Bewaar het aangepaste saldo
+	 *
+	 * @since      4.0.87
 	 *
 	 * @param string $reden De reden waarom het saldo wordt aangepast.
 	 * @return bool True als saldo is aangepast.
@@ -142,7 +162,9 @@ class Kleistad_Saldo {
 	}
 
 	/**
-	 * Betaal de inschrijving met iDeal.
+	 * Betaal de bijstorting saldo met iDeal.
+	 *
+	 * @since      4.2.0
 	 *
 	 * @param string $bericht Het bericht bij succesvolle betaling.
 	 * @param float  $bedrag  Het te betalen bedrag.
@@ -161,6 +183,8 @@ class Kleistad_Saldo {
 
 	/**
 	 * Verzenden van de saldo verhoging email.
+	 *
+	 * @since      4.0.87
 	 *
 	 * @param string $type   direct betaald of melding van storting.
 	 * @param float  $bedrag het saldo dat toegevoegd is.
@@ -181,6 +205,8 @@ class Kleistad_Saldo {
 
 	/**
 	 * Verwerk een betaling. Wordt aangeroepen vanuit de betaal callback
+	 *
+	 * @since      4.2.0
 	 *
 	 * @param float $bedrag Het bedrag dat betaald is.
 	 */

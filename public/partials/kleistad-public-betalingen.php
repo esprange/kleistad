@@ -1,10 +1,8 @@
 <?php
 /**
- * Provide a public-facing view for the plugin
+ * Toon het betalingen overzicht
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link www.sprako.nl/wordpress/eric
+ * @link https://www.kleistad.nl
  * @since4.0.87
  *
  * @package Kleistad

@@ -1,10 +1,8 @@
 <?php
 /**
- * Provide a public-facing view for the plugin
+ * Toon het recepten overzicht, wordt vanuit AJAx call opgebouwd.
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.1.0
  *
  * @package    Kleistad

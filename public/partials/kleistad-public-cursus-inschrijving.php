@@ -1,22 +1,15 @@
 <?php
 /**
- * Provide a public-facing view for the plugin
+ * Toon het cursus inschrijving formulier
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
 
-if ( ! true ) :
-	?>
-	<p>Geen toegang tot dit formulier</p>
-	<?php
-else :
-	?>
+?>
 
 	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
 		<?php
@@ -161,5 +154,3 @@ else :
 		<?php endif ?>
 
 	</form>
-
-<?php endif ?>

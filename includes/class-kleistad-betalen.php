@@ -1,16 +1,16 @@
 <?php
 /**
- * The public-facing functionality of the plugin, betalen via Mollie.
+ * Interface class naar Mollie betalen.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.2.0
  *
  * @package    Kleistad
- * @subpackage Kleistad/public
+ * @subpackage Kleistad/includes
  */
 
 /**
- * Interface naar Mollie betalen.
+ * Definitie van de betalen class.
  */
 class Kleistad_Betalen {
 
@@ -20,12 +20,16 @@ class Kleistad_Betalen {
 	/**
 	 * Het mollie object.
 	 *
+	 * @since      4.2.0
+	 *
 	 * @var object het mollie service object.
 	 */
 	public $mollie;
 
 	/**
 	 * De constructor
+	 *
+	 * @since      4.2.0
 	 */
 	public function __construct() {
 		$options = get_option( 'kleistad-opties' );
@@ -42,9 +46,11 @@ class Kleistad_Betalen {
 	/**
 	 * Bereid de order informatie voor.
 	 *
+	 * @since      4.2.0
+	 *
 	 * @param string $gebruiker_id de gebruiker die de betaling uitvoert.
 	 * @param string $order_id     de externe order referentie, maximaal 35 karakters.
-	 * @param real   $bedrag       het bedrag.
+	 * @param float  $bedrag       het bedrag.
 	 * @param string $beschrijving de externe order referentie, maximaal 35 karakters.
 	 * @param string $bericht      het bericht bij succesvolle betaling.
 	 * @param bool   $mandateren   er wordt een herhaalde betaling voorbereid.
@@ -113,6 +119,8 @@ class Kleistad_Betalen {
 	/**
 	 * Eenmalige betaling, op basis van eerder verkregen mandaat.
 	 *
+	 * @since      4.2.0
+	 *
 	 * @param int    $gebruiker_id Het wp gebruiker_id.
 	 * @param float  $bedrag       Het te betalen bedrag.
 	 * @param string $beschrijving De beschrijving bij de betaling.
@@ -138,8 +146,10 @@ class Kleistad_Betalen {
 	/**
 	 * Herhaal een order op basis van een mandaat, en herhaal deze maandelijks.
 	 *
+	 * @since      4.2.0
+	 *
 	 * @param string   $gebruiker_id de gebruiker die de betaling uitvoert.
-	 * @param real     $bedrag       het bedrag.
+	 * @param float    $bedrag       het bedrag.
 	 * @param string   $beschrijving de externe order referentie, maximaal 35 karakters.
 	 * @param datetime $start        de startdatum voor de periodieke afgeschrijving.
 	 */
@@ -168,6 +178,8 @@ class Kleistad_Betalen {
 	/**
 	 * Annuleer de subscriptie.
 	 *
+	 * @since      4.2.0
+	 *
 	 * @param int    $gebruiker_id   De gebruiker waarvoor een subscription loopt.
 	 * @param string $subscriptie_id De subscriptie die geannuleerd moet worden.
 	 */
@@ -187,6 +199,8 @@ class Kleistad_Betalen {
 	/**
 	 * Controleer of actieve subscriptie bestaat.
 	 *
+	 * @since      4.2.0
+	 *
 	 * @param int    $gebruiker_id   De gebruiker waarvoor een subscription loopt.
 	 * @param string $subscriptie_id De subscriptie die gecheckt moet worden.
 	 */
@@ -203,6 +217,8 @@ class Kleistad_Betalen {
 
 	/**
 	 * Test of de gebruiker een mandaat heeft afgegeven.
+	 *
+	 * @since      4.2.0
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvoor getest wordt of deze mandaat heeft.
 	 */
@@ -222,6 +238,8 @@ class Kleistad_Betalen {
 
 	/**
 	 * Verwijder mandaten.
+	 *
+	 * @since      4.2.0
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvoor mandaten verwijderd moeten worden.
 	 * @return boolean
@@ -244,6 +262,8 @@ class Kleistad_Betalen {
 	/**
 	 * Controleer of de betaling gelukt is.
 	 *
+	 * @since      4.2.0
+	 *
 	 * @param  int $gebruiker_id de gebruiker die zojuist betaald heeft.
 	 * @return mixed de status van de betaling als tekst of een error object.
 	 */
@@ -263,6 +283,8 @@ class Kleistad_Betalen {
 
 	/**
 	 * Toon deelnemende banken.
+	 *
+	 * @since      4.2.0
 	 */
 	public static function issuers() {
 		$object = new static();
@@ -286,6 +308,8 @@ class Kleistad_Betalen {
 	/**
 	 * Webhook functie om herhaalbetaling status te verwerken. Wordt aangeroepen door Mollie.
 	 *
+	 * @since      4.2.0
+	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return \WP_REST_response de response.
 	 */
@@ -307,6 +331,8 @@ class Kleistad_Betalen {
 
 	/**
 	 * Webhook functie om betaling status te verwerken. Wordt aangeroepen door Mollie.
+	 *
+	 * @since      4.2.0
 	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return \WP_REST_response de response.

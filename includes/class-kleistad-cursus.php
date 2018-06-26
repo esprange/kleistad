@@ -1,8 +1,8 @@
 <?php
 /**
- * The file that defines the cursus class
+ * Definieer de cursus class
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -12,17 +12,12 @@
 /**
  * Kleistad Cursus class.
  *
- * A class definition that define the attributes of a single cursus class.
- *
  * @since 4.0.87
- *
- * @see n.a.
- * @link URL
  */
 class Kleistad_Cursus extends Kleistad_Entity {
 
 	/**
-	 * Berekent de nog beschikbare ruimte voor een cursus.
+	 * Berekent de nog beschikbare ruimte voor een cursus a.d.h.v. de inschrijvingen.
 	 *
 	 * @return int nog beschikbare ruimte.
 	 */
@@ -48,11 +43,10 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	/**
 	 * Constructor
 	 *
-	 * Constructor, Long description.
-	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $cursus_id (optional) cursus to load.
+	 * @global object $wpdb WordPress database.
+	 * @param int $cursus_id (optional) cursus welke geladen moet worden.
 	 * @return null.
 	 */
 	public function __construct( $cursus_id = null ) {
@@ -86,14 +80,12 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	}
 
 	/**
-	 * Getter, using the magic function
-	 *
-	 * Get attribuut from the object.
+	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @return mixed Attribute value.
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
@@ -121,14 +113,12 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	}
 
 	/**
-	 * Setter, using the magic function
-	 *
-	 * Set attribuut from the object.
+	 * Set attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @param mixed  $waarde Attribuut value.
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
@@ -156,14 +146,12 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	}
 
 	/**
-	 * Save the data
-	 *
-	 * Saves the data to the database.
+	 * Bewaarde de cursus in de database.
 	 *
 	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
-	 * @return int The id of the cursus.
+	 * @return int Het cursus id.
 	 */
 	public function save() {
 		global $wpdb;
@@ -175,6 +163,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	/**
 	 * Return alle cursussen.
 	 *
+	 * @global object $wpdb WordPress database.
 	 * @param bool $open Toon alleen de open cursussen if true.
 	 * @return array cursussen.
 	 */

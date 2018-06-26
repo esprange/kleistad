@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode cursus inschrijving.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,11 +10,10 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad cursus inschrijving class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 
@@ -22,7 +21,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 	 *
 	 * Prepareer 'cursus_inschrijving' form
 	 *
-	 * @param array $data data to be prepared.
+	 * @param array $data data voor display.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -81,7 +80,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 	/**
 	 * Valideer/sanitize 'cursus_inschrijving' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data Gevalideerde data.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -184,7 +183,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 	 *
 	 * Bewaar 'cursus_inschrijving' form gegevens
 	 *
-	 * @param array $data data to be saved.
+	 * @param array $data data te bewaren.
 	 * @return string
 	 *
 	 * @since   4.0.87

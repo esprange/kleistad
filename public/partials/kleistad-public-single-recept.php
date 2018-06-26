@@ -1,9 +1,9 @@
 <?php
 /**
- * The template for displaying all single kleistad_recepten
+ * De template voor het tonen van een enkel recepten
  *
- * @package WordPress
- * @subpackage Kleistad
+ * @package Kleistad
+ * @subpackage Kleistad/public/partials
  * @since Kleistad 4.1.0
  */
 

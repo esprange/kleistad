@@ -1,8 +1,8 @@
 <?php
 /**
- * The file that defines the oven class
+ * De definitie van de oven class
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -12,23 +12,16 @@
 /**
  * Kleistad Oven class.
  *
- * A class definition that define the attributes of a single oven class.
- *
  * @since 4.0.87
- *
- * @see n.a.
- * @link URL
  */
 class Kleistad_Oven extends Kleistad_Entity {
 
 	/**
 	 * Constructor
 	 *
-	 * Constructor, Long description.
-	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $oven_id (optional) oven to load.
+	 * @param int $oven_id (optioneel) oven te laden vanuit database.
 	 * @global object $wpdb WordPress database.
 	 * @return null.
 	 */
@@ -50,14 +43,12 @@ class Kleistad_Oven extends Kleistad_Entity {
 	}
 
 	/**
-	 * Getter, using the magic function
-	 *
-	 * Get attribuut from the object.
+	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @return mixed Attribute value.
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
@@ -77,14 +68,12 @@ class Kleistad_Oven extends Kleistad_Entity {
 	}
 
 	/**
-	 * Setter, using the magic function
-	 *
-	 * Set attribuut from the object.
+	 * Set attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @param mixed  $waarde Attribuut value.
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
 	 * @return void
 	 */
 	public function __set( $attribuut, $waarde ) {
@@ -98,14 +87,12 @@ class Kleistad_Oven extends Kleistad_Entity {
 	}
 
 	/**
-	 * Save the data
-	 *
-	 * Saves the data to the database.
+	 * Sla de oven op in de database.
 	 *
 	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
-	 * @return int The id of the oven.
+	 * @return int Het id van de oven.
 	 */
 	public function save() {
 		global $wpdb;

@@ -1,10 +1,8 @@
 <?php
 /**
- * Provide a public-facing view for the plugin
+ * Toon het (dynamische) oven reservering formulier
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.92
  *
  * @package    Kleistad
@@ -20,9 +18,9 @@ else :
 
 	<h1 id="<?php echo esc_attr( 'kleistad' . $data['oven']->id ); ?>">Reserveringen voor de <?php echo esc_html( $data['oven']->naam ); ?></h1>
 	<table id="reserveringen<?php echo esc_attr( $data['oven']->id ); ?>" class="kleistad_reserveringen"
-		data-oven_id="<?php echo esc_attr( $data['oven']->id ); ?>" 
-		data-oven-naam="<?php echo esc_attr( $data['oven']->naam ); ?>" 
-		data-maand="<?php echo esc_attr( date( 'n' ) ); ?>" 
+		data-oven_id="<?php echo esc_attr( $data['oven']->id ); ?>"
+		data-oven-naam="<?php echo esc_attr( $data['oven']->naam ); ?>"
+		data-maand="<?php echo esc_attr( date( 'n' ) ); ?>"
 		data-jaar="<?php echo esc_attr( date( 'Y' ) ); ?>" >
 		<tr>
 			<th>de reserveringen worden opgehaald...</th>

@@ -1,10 +1,8 @@
 <?php
 /**
- * The file that defines the reservering class
+ * Definieer de reservering class
  *
- * A class definition including the ovens, reserveringen and regelingen
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -14,24 +12,16 @@
 /**
  * Kleistad Reservering class.
  *
- * A class definition that define the attributes of a single reservering class.
- *
  * @since 4.0.87
- *
- * @see n.a.
- * @link URL
  */
 class Kleistad_Reservering extends Kleistad_Entity {
 
 	/**
 	 * Constructor
 	 *
-	 * Constructor, Long description.
-	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $oven_id (optional) reservering to load.
-	 * @return null.
+	 * @param int $oven_id oven waar de reservering op van toepassing is.
 	 */
 	public function __construct( $oven_id ) {
 		$default_data = [
@@ -55,6 +45,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	/**
 	 * Export functie privacy gevoelige data.
 	 *
+	 * @global object $wpdb wp database
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
@@ -104,12 +95,12 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Find the reservering
+	 * Vind de reservering
 	 *
 	 * @global object $wpdb wp database
-	 * @param int $jaar jaar.
-	 * @param int $maand maand.
-	 * @param int $dag dag.
+	 * @param  int $jaar jaar.
+	 * @param  int $maand maand.
+	 * @param  int $dag dag.
 	 * @return boolean
 	 */
 	public function find( $jaar, $maand, $dag ) {
@@ -128,7 +119,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Delete the current object
+	 * Verwijder de reservering.
 	 *
 	 * @global object $wpdb wp database.
 	 */
@@ -144,14 +135,12 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Getter, using the magic function
-	 *
-	 * Get attribuut from the object.
+	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @return mixed Attribute value.
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
@@ -199,14 +188,12 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Setter, using the magic function
-	 *
-	 * Set attribuut from the object.
+	 * Set attribuut van het object.
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param string $attribuut Attribuut name.
-	 * @param mixed  $waarde Attribuut value.
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
@@ -232,14 +219,12 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Save the data
-	 *
-	 * Saves the data to the database.
+	 * Bewaar de reservering in de database.
 	 *
 	 * @since 4.0.87
 	 *
 	 * @global object $wpdb WordPress database.
-	 * @return int The id of the oven.
+	 * @return int Het id van de reservering.
 	 */
 	public function save() {
 		global $wpdb;
@@ -249,19 +234,14 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Verwijder reservering van gebruiker
-	 *
-	 * Get attribuut from the object.
+	 * Verwijder reserveringen van gebruiker
 	 *
 	 * @since 4.0.87
 	 *
-	 * @global object $wpdb WordPress db
 	 * @param int $gebruiker_id Gebruiker id.
-	 * @return mixed Attribute value.
 	 */
 	public static function verwijder( $gebruiker_id ) {
 		// to do, alleen reserveringen in de toekomst verwijderen ?.
-		return $gebruiker_id;
 	}
 
 	/**

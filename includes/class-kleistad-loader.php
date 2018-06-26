@@ -1,8 +1,8 @@
 <?php
 /**
- * Register all actions and filters for the plugin
+ * Registreer alle actions en filters van de plugin
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,111 +10,101 @@
  */
 
 /**
- * Register all actions and filters for the plugin.
- *
- * Maintain a list of all hooks that are registered throughout
- * the plugin, and register them with the WordPress API. Call the
- * run function to execute the list of actions and filters.
- *
- * @package    Kleistad
- * @subpackage Kleistad/includes
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
+ * Houdt een lijst bij van alle hooks binnen de plugin en registreer deze via de WordPress API.
+ * Roep de run function aan om de lijst van actions en filters uit te voeren.
  */
 class Kleistad_Loader {
 
 	/**
-	 * The array of actions registered with WordPress.
+	 * Het array van plugin actions.
 	 *
 	 * @since    4.0.87
 	 * @access   protected
-	 * @var      array    $actions    The actions registered with WordPress to fire when the plugin loads.
+	 * @var      array    $actions    De geregistreerde acties.
 	 */
 	protected $actions;
 
 	/**
-	 * The array of filters registered with WordPress.
+	 * Het array van plugin filters.
 	 *
 	 * @since    4.0.87
 	 * @access   protected
-	 * @var      array    $filters    The filters registered with WordPress to fire when the plugin loads.
+	 * @var      array    $filters    De geregistreerde filters.
 	 */
 	protected $filters;
 
 	/**
-	 * The array of shortcodes registered with WordPress.
+	 * Het array van plugin shortcodes.
 	 *
 	 * @since    4.0.87
 	 * @access   protected
-	 * @var      array    $shortcodes    The shortcodes registered with WordPress to fire when the plugin loads.
+	 * @var      array    $shortcodes  De geregistreerde shortcodes.
 	 */
 	protected $shortcodes;
 
 	/**
-	 * Initialize the collections used to maintain the actions and filters.
+	 * De constructor, initializeer de collecties.
 	 *
 	 * @since    4.0.87
 	 */
 	public function __construct() {
 
-		$this->actions    = array();
-		$this->filters    = array();
-		$this->shortcodes = array();
+		$this->actions    = [];
+		$this->filters    = [];
+		$this->shortcodes = [];
 	}
 
 	/**
-	 * Add a new action to the collection to be registered with WordPress.
+	 * Voeg een actie toe aan de collectie.
 	 *
 	 * @since    4.0.87
-	 * @param    string $hook             The name of the WordPress action that is being registered.
-	 * @param    object $component        A reference to the instance of the object on which the action is defined.
-	 * @param    string $callback         The name of the function definition on the $component.
-	 * @param    int    $priority         Optional. he priority at which the function should be fired. Default is 10.
-	 * @param    int    $accepted_args    Optional. The number of arguments that should be passed to the $callback. Default is 1.
+	 * @param    string $hook             De actie naam.
+	 * @param    object $component        De class naam waar de actie gedefineerd is.
+	 * @param    string $callback         De naam van de functie.
+	 * @param    int    $priority         Optioneel. De prioriteit. Default is 10.
+	 * @param    int    $accepted_args    Optioneel. Het aantal argumenten dat door wordt gegeven aan de callback. Default is 1.
 	 */
 	public function add_action( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
 		$this->actions = $this->add( $this->actions, $hook, $component, $callback, $priority, $accepted_args );
 	}
 
 	/**
-	 * Add a new filter to the collection to be registered with WordPress.
+	 * Voeg een filter toe aan de collectie.
 	 *
 	 * @since    4.0.87
-	 * @param    string $hook             The name of the WordPress filter that is being registered.
-	 * @param    object $component        A reference to the instance of the object on which the filter is defined.
-	 * @param    string $callback         The name of the function definition on the $component.
-	 * @param    int    $priority         Optional. he priority at which the function should be fired. Default is 10.
-	 * @param    int    $accepted_args    Optional. The number of arguments that should be passed to the $callback. Default is 1.
+	 * @param    string $hook             De filter naam.
+	 * @param    object $component        De class naam waar het filter gedefinieerd is.
+	 * @param    string $callback         De naam van de functie.
+	 * @param    int    $priority         Optioneel. De prioriteit. Default is 10.
+	 * @param    int    $accepted_args    Optioneel. Het aantal argumenten dat door wordt gegeven aan de callback. Default is 1.
 	 */
 	public function add_filter( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
 		$this->filters = $this->add( $this->filters, $hook, $component, $callback, $priority, $accepted_args );
 	}
 
 	/**
-	 * Add a new shortcode to the collection to be registered with WordPress
+	 * Voeg een shortcode toe aan de collectie.
 	 *
 	 * @since     4.0.87
-	 * @param     string $tag           The name of the new shortcode.
-	 * @param     object $component      A reference to the instance of the object on which the shortcode is defined.
-	 * @param     string $callback       The name of the function that defines the shortcode.
-	 * @param     int    $priority       Optional. he priority at which the function should be fired. Default is 10.
-	 * @param     int    $accepted_args  Optional. The number of arguments that should be passed to the $callback. Default is 1.
+	 * @param     string $tag            De naam van de shortcode.
+	 * @param     object $component      De class naam waar de shortcode gedefinieerd is.
+	 * @param     string $callback       De naam van de functie.
 	 */
-	public function add_shortcode( $tag, $component, $callback, $priority = 10, $accepted_args = 2 ) {
-		$this->shortcodes = $this->add( $this->shortcodes, $tag, $component, $callback, $priority, $accepted_args );
+	public function add_shortcode( $tag, $component, $callback ) {
+		$this->shortcodes = $this->add( $this->shortcodes, $tag, $component, $callback, null, null );
 	}
 	/**
-	 * A utility function that is used to register the actions and hooks into a single
-	 * collection.
+	 * Een hulp functie voor de registratie van acties, filters en shortcodes.
 	 *
 	 * @since    4.0.87
 	 * @access   private
-	 * @param    array  $hooks            The collection of hooks that is being registered (that is, actions or filters).
-	 * @param    string $hook             The name of the WordPress filter that is being registered.
-	 * @param    object $component        A reference to the instance of the object on which the filter is defined.
-	 * @param    string $callback         The name of the function definition on the $component.
-	 * @param    int    $priority         The priority at which the function should be fired.
-	 * @param    int    $accepted_args    The number of arguments that should be passed to the $callback.
-	 * @return   array                                  The collection of actions and filters registered with WordPress.
+	 * @param    array  $hooks            De collectie hooks die geregistreerd moet worden.
+	 * @param    string $hook             De naam van de te registeren hook.
+	 * @param    object $component        De class naam waar de hook geregistreerd wordt.
+	 * @param    string $callback         De functie.
+	 * @param    int    $priority         De prioriteit.
+	 * @param    int    $accepted_args    Het aantal argumenten.
+	 * @return   array                    De collectie.
 	 */
 	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
 
@@ -129,7 +119,7 @@ class Kleistad_Loader {
 		return $hooks;
 	}
 	/**
-	 * Register the filters and actions with WordPress.
+	 * Registreer de filters, actions en shortcodes in WordPress.
 	 *
 	 * @since    4.0.87
 	 */

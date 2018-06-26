@@ -1,10 +1,8 @@
 <?php
 /**
- * Provide a public-facing view for the plugin
+ * Toon de reservering, wordt vanuit AJAX call opgebouwd.
  *
- * This file is used to markup the public-facing aspects of the plugin.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -15,17 +13,17 @@
 <thead>
 	<tr>
 		<th>
-			<button type="button" class="kleistad_periode" 
-					data-oven_id="<?php echo esc_attr( $oven_id ); ?>" 
-					data-maand="<?php echo esc_attr( $vorige_maand ); ?>" 
+			<button type="button" class="kleistad_periode"
+					data-oven_id="<?php echo esc_attr( $oven_id ); ?>"
+					data-maand="<?php echo esc_attr( $vorige_maand ); ?>"
 					data-jaar="<?php echo esc_attr( $vorige_maand_jaar ); ?>" >eerder
 				</button
 		></th>
 		<th colspan="2" ><strong><?php echo esc_html( $maandnaam[ $maand ] . '-' . $jaar ); ?></strong></th>
 		<th style="text-align:right" >
-			<button type="button" class="kleistad_periode" 
-					data-oven_id="<?php echo esc_attr( $oven_id ); ?>" 
-					data-maand="<?php echo esc_attr( $volgende_maand ); ?>" 
+			<button type="button" class="kleistad_periode"
+					data-oven_id="<?php echo esc_attr( $oven_id ); ?>"
+					data-maand="<?php echo esc_attr( $volgende_maand ); ?>"
 					data-jaar="<?php echo esc_attr( $volgende_maand_jaar ); ?>" >later
 			</button>
 		</th>
@@ -47,14 +45,14 @@
 </tbody>
 <tfoot>
 	<tr>
-		<th><button type="button" class="kleistad_periode" 
-					data-oven_id="<?php echo esc_attr( $oven_id ); ?>" 
-					data-maand="<?php echo esc_attr( $vorige_maand ); ?>" 
+		<th><button type="button" class="kleistad_periode"
+					data-oven_id="<?php echo esc_attr( $oven_id ); ?>"
+					data-maand="<?php echo esc_attr( $vorige_maand ); ?>"
 					data-jaar="<?php echo esc_attr( $vorige_maand_jaar ); ?>" >eerder</button></th>
 		<th colspan="2"><strong><?php echo esc_html( $maandnaam[ $maand ] . '-' . $jaar ); ?></strong></th>
-		<th style="text-align:right"><button type="button" class="kleistad_periode" 
-					data-oven_id="<?php echo esc_attr( $oven_id ); ?>" 
-					data-maand="<?php echo esc_attr( $volgende_maand ); ?>" 
+		<th style="text-align:right"><button type="button" class="kleistad_periode"
+					data-oven_id="<?php echo esc_attr( $oven_id ); ?>"
+					data-maand="<?php echo esc_attr( $volgende_maand ); ?>"
 					data-jaar="<?php echo esc_attr( $volgende_maand_jaar ); ?>" >later</button></th>
 	</tr>
 </tfoot>

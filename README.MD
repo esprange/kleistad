@@ -1,6 +1,6 @@
 # Kleistad #
 **Contributors:** esprange  
-**Donate link:** www.sprako.nl/wordpress/eric  
+**Donate link:** https://www.kleistad.nl  
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 4.9.6  

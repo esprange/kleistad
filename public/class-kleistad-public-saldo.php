@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode saldo (aanvullen saldo door lid).
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,11 +10,10 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
+ * De kleistad saldo class.
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 
@@ -22,7 +21,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	 *
 	 * Prepareer 'saldo' form
 	 *
-	 * @param array $data the prepared data.
+	 * @param array $data voor display.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -41,7 +40,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	/**
 	 * Valideer/sanitize 'saldo' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data Gevalideerde data.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -62,7 +61,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	/**
 	 * Bewaar 'saldo' form gegevens
 	 *
-	 * @param array $data the data to be saved.
+	 * @param array $data te bewaren data.
 	 * @return string
 	 *
 	 * @since   4.0.87

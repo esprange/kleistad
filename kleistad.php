@@ -1,13 +1,8 @@
 <?php
 /**
- * The plugin bootstrap file
+ * De Kleistad plugin bootstrap file
  *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
- *
- * @link              www.sprako.nl/wordpress/eric
+ * @link              https://www.kleistad.nl
  * @since             4.0.87
  * @package           Kleistad
  *
@@ -17,21 +12,19 @@
  * Description:       Een plugin voor vereniging Kleistad. Overreserveringen, stooksaldo administratie, cursus adminstratie en keramiek recepten.
  * Version:           4.3.10
  * Author:            Eric Sprangers
- * Author URI:        www.sprako.nl/wordpress/eric
+ * Author URI:        https://www.kleistad.nl
  * License:           GPL-3.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       kleistad
  * GitHub Plugin URI: https://github.com/esprange/kleistad
  */
 
-// If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
 /**
- * The code that runs during plugin activation.
- * This action is documented in includes/class-kleistad-activator.php
+ * Plugin activering.
  */
 function activate_kleistad() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-kleistad-activator.php';
@@ -39,8 +32,7 @@ function activate_kleistad() {
 }
 
 /**
- * The code that runs during plugin deactivation.
- * This action is documented in includes/class-kleistad-deactivator.php
+ * Plugin deactivering.
  */
 function deactivate_kleistad() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-kleistad-deactivator.php';
@@ -51,17 +43,17 @@ register_activation_hook( __FILE__, 'activate_kleistad' );
 register_deactivation_hook( __FILE__, 'deactivate_kleistad' );
 
 /**
- * The core plugin class that is used to define admin-specific hooks, and public-facing site hooks.
+ * De basis plugin class die de admin en public hooks definieert.
  */
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-kleistad.php';
 
 /**
- * Include the external libraries.
+ * Externe libraries toevoegen.
  */
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 /**
- * Begins execution of the plugin.
+ * Start uitvoering van de plugin.
  *
  * @since    4.0.87
  */

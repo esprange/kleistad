@@ -1,11 +1,8 @@
 <?php
 /**
- * The file that defines the x plugin class
+ * Definieer de Kleistad roles class
  *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
- *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -13,21 +10,21 @@
  */
 
 /**
- * Description of class-kleistad-roles
+ * De class-kleistad-roles
  *
- * @author espra
+ * @since      4.0.87
  */
 class Kleistad_Roles {
 	/**
-	 * Custom capabilities
+	 * Custom capabilities van kleistad gebruikers.
 	 */
 	const OVERRIDE  = 'kleistad_reserveer_voor_ander';
 	const RESERVEER = 'kleistad_reservering_aanmaken';
 
 	/**
-	 * Help functie, bestuursleden kunnen publiceren en mogen daarom aanpassen
+	 * Bepaal of de gebruiker eer reservering voor een ander mag maken of aanpassen
 	 *
-	 * @param int $id the user id.
+	 * @param int $id het wp user id, indien niet ingevuld, de huidige gebruiker.
 	 * @return bool
 	 */
 	public static function override( $id = 0 ) {
@@ -35,9 +32,9 @@ class Kleistad_Roles {
 	}
 
 	/**
-	 * Help functie, leden moeten kunnen reserveren en stooksaldo aanpassingen doen
+	 * Bepaal of de gebruiker een reservering mag maken of aanpassen
 	 *
-	 * @param int $id the user id.
+	 * @param int $id het wp user id, indiden niet ingevuld, de huidige gebruiker.
 	 * @return bool
 	 */
 	public static function reserveer( $id = 0 ) {

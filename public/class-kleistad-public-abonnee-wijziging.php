@@ -1,8 +1,8 @@
 <?php
 /**
- * The public-facing functionality of the plugin.
+ * Shortcode abonnement wijzigingen.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
@@ -10,18 +10,14 @@
  */
 
 /**
- * The public-facing functionality of the plugin.
- *
- * @package    Kleistad
- * @subpackage Kleistad/public
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
+ * De class Abonnee Wijziging.
  */
 class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 
 	/**
 	 * Prepareer 'abonnee_wijziging' form
 	 *
-	 * @param array $data data to be prepared.
+	 * @param array $data data voor formulier.
 	 * @return bool
 	 *
 	 * @since   4.0.87
@@ -40,7 +36,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 	/**
 	 * Valideer/sanitize 'abonnee_wijziging' form
 	 *
-	 * @param array $data Returned data.
+	 * @param array $data Gevalideerde data.
 	 * @return array
 	 *
 	 * @since   4.0.87
@@ -74,7 +70,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 	/**
 	 * Bewaar 'abonnee_wijziging' form gegevens
 	 *
-	 * @param array $data data to be saved.
+	 * @param array $data te bewaren data.
 	 * @return string
 	 *
 	 * @since   4.0.87

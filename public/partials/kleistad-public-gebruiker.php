@@ -1,10 +1,10 @@
 <?php
 /**
- * Provide a public-facing view for the plugin
+ * Subformulier voor registratie van gebruiker gegevens (wordt in andere formulieren ingevoegd)
  *
  * De specifieke velden voor het registreren van een gebruiker.
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.3.0
  *
  * @package    Kleistad

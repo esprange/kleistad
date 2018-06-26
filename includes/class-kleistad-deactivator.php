@@ -2,16 +2,15 @@
 /**
  * Fired during plugin deactivation
  *
- * @link       www.sprako.nl/wordpress/eric
+ * @link       https://www.kleistad.nl
  * @since      4.0.87
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
- * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
 
 /**
- * Fired during plugin deactivation.
+ * De deactivator class.
  */
 class Kleistad_Deactivator {
 
