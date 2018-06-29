@@ -519,7 +519,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
 		$options             = get_option( 'kleistad-opties' );
 		$vervolg_datum       = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ) - 7, intval( date( 'Y', $start_datum ) ) );
-		$driemaand_datum     = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) )+ 3, intval( date( 'j', $start_datum ) ), intval( date( 'Y', $start_datum ) ) );
+		$driemaand_datum     = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ), intval( date( 'Y', $start_datum ) ) );
 		$this->start_datum   = $start_datum;
 		$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 4, 1, intval( date( 'Y', $start_datum ) ) );
 		$this->save();

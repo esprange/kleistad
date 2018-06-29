@@ -32,7 +32,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	/**
 	 * Toon de default kolommen
 	 *
-	 * @param object  $item - row (key, value).
+	 * @param object $item - row (key, value).
 	 * @param string $column_name - (key).
 	 * @return string
 	 * @suppress PhanTypeArraySuspicious

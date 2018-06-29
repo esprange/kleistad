@@ -60,11 +60,11 @@ class Kleistad_Public {
 	/**
 	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
 	 *
-	 * @param string $to bestemming.
-	 * @param string $subject onderwerp.
-	 * @param string $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
-	 * @param array  $args de argumenten die in de slug pagina vervangen moeten worden.
-	 * @param string|array  $attachment een eventuele bijlage.
+	 * @param string       $to bestemming.
+	 * @param string       $subject onderwerp.
+	 * @param string       $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
+	 * @param array        $args de argumenten die in de slug pagina vervangen moeten worden.
+	 * @param string|array $attachment een eventuele bijlage.
 	 */
 	public static function compose_email( $to, $subject, $slug, $args = [], $attachment = [] ) {
 		$domein        = substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
@@ -74,7 +74,7 @@ class Kleistad_Public {
 			'copy' => 'stook@' . $domein,
 		];
 
-		$headers   = [
+		$headers = [
 			'Content-Type: text/html; charset=UTF-8',
 			"From: Kleistad <{$emailadresses['from']}>",
 			'bcc: kleistad@sprako.nl',
@@ -555,8 +555,8 @@ class Kleistad_Public {
 	 * @since 4.0.87
 	 *
 	 * @staticvar boolean $is_active Bewaart de activeringsstatus, als true dan niets doen.
-	 * @param string $items De menu opties.
-	 * @param stdClass  $args  De argumenten van het filter.
+	 * @param string   $items De menu opties.
+	 * @param stdClass $args  De argumenten van het filter.
 	 * @return string
 	 */
 	public function loginuit_menu( $items, $args ) {
@@ -585,7 +585,7 @@ class Kleistad_Public {
 	 * @param string $content   wordt niet gebruikt.
 	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
 	 * @return string           html resultaat.
- 	 * @suppress PhanUnusedPublicMethodParameter
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function shortcode_handler( $atts, $content, $tag ) {
 
@@ -652,9 +652,9 @@ class Kleistad_Public {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int       $id    De id van de abonnee.
-	 * @param string    $actie De uit te voeren actie.
-	 * @param int       $datum Datum waarop het moet worden uitgevoerd.
+	 * @param int    $id    De id van de abonnee.
+	 * @param string $actie De uit te voeren actie.
+	 * @param int    $datum Datum waarop het moet worden uitgevoerd.
 	 */
 	public function update_abonnement( $id, $actie, $datum ) {
 		$abonnement = new Kleistad_Abonnement( $id );

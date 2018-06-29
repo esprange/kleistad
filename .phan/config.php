@@ -36,12 +36,12 @@ return [
 		"\\xampp\\htdocs\\wordpress",
 		"\\xampp\\htdocs\\wordpress\\wp-content\\plugins\\kleistad\\vendor\\",
 		"\\xampp\\htdocs\\wordpress\\wp-content\\plugins\\kleistad\\tests\\",
-//		"\\xampp\\htdocs\\",
+	// "\\xampp\\htdocs\\",
 	],
 	'include_analysis_directory_list' => [
-	 	"\\xampp\\htdocs\\wordpress\\wp-content\\plugins\\kleistad",
+		"\\xampp\\htdocs\\wordpress\\wp-content\\plugins\\kleistad",
 	],
-	'exclude_file_list' => [
+	'exclude_file_list'               => [
 		'bin/',
 		'node_modules/',
 		'tests/',
@@ -52,14 +52,14 @@ return [
 	],
 
 	// Add any issue types (such as 'PhanUndeclaredMethod')
-    // to this black-list to inhibit them from being reported.
-    'suppress_issue_types' => [
-        // 'PhanUndeclaredMethod',
-        // 'PhanUndeclaredClassMethod',
-        // 'PhanUndeclaredClassConstant',
+	// to this black-list to inhibit them from being reported.
+	'suppress_issue_types'            => [
+		// 'PhanUndeclaredMethod',
+		// 'PhanUndeclaredClassMethod',
+		// 'PhanUndeclaredClassConstant',
 		// 'PhanUndeclaredFunction',
 		'PhanRedefinedExtendedClass',
-    ],
+	],
 
 
 

@@ -29,5 +29,5 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return \WP_ERROR|string
 	 */
-	abstract function save( $data );
+	abstract public function save( $data );
 }
