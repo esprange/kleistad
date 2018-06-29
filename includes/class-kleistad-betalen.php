@@ -48,7 +48,7 @@ class Kleistad_Betalen {
 	 *
 	 * @since      4.2.0
 	 *
-	 * @param string $gebruiker_id de gebruiker die de betaling uitvoert.
+	 * @param int    $gebruiker_id de gebruiker die de betaling uitvoert.
 	 * @param string $order_id     de externe order referentie, maximaal 35 karakters.
 	 * @param float  $bedrag       het bedrag.
 	 * @param string $beschrijving de externe order referentie, maximaal 35 karakters.
@@ -148,10 +148,10 @@ class Kleistad_Betalen {
 	 *
 	 * @since      4.2.0
 	 *
-	 * @param string   $gebruiker_id de gebruiker die de betaling uitvoert.
-	 * @param float    $bedrag       het bedrag.
-	 * @param string   $beschrijving de externe order referentie, maximaal 35 karakters.
-	 * @param datetime $start        de startdatum voor de periodieke afgeschrijving.
+	 * @param int    $gebruiker_id de gebruiker die de betaling uitvoert.
+	 * @param float  $bedrag       het bedrag.
+	 * @param string $beschrijving de externe order referentie, maximaal 35 karakters.
+	 * @param int    $start        de startdatum voor de periodieke afgeschrijving.
 	 */
 	public function herhaalorder( $gebruiker_id, $bedrag, $beschrijving, $start ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );

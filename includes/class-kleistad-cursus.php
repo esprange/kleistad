@@ -47,7 +47,6 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 *
 	 * @global object $wpdb WordPress database.
 	 * @param int $cursus_id (optional) cursus welke geladen moet worden.
-	 * @return null.
 	 */
 	public function __construct( $cursus_id = null ) {
 		global $wpdb;
@@ -169,6 +168,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 */
 	public static function all( $open = false ) {
 		global $wpdb;
+		$arr             = [];
 		$filter          = $open ? ' WHERE tonen = 1 AND eind_datum > CURRENT_DATE' : '';
 		$cursussen_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen $filter ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // WPCS: unprepared SQL OK.
 		foreach ( $cursussen_tabel as $cursus ) {

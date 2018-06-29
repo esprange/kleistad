@@ -23,7 +23,6 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 *
 	 * @param int $oven_id (optioneel) oven te laden vanuit database.
 	 * @global object $wpdb WordPress database.
-	 * @return null.
 	 */
 	public function __construct( $oven_id = null ) {
 		global $wpdb;
@@ -108,6 +107,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 */
 	public static function all() {
 		global $wpdb;
+		$arr   = [];
 		$ovens = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens", ARRAY_A ); // WPCS: unprepared SQL OK.
 		foreach ( $ovens as $oven ) {
 			$arr[ $oven['id'] ] = new Kleistad_Oven();

@@ -63,7 +63,7 @@ class Kleistad_Saldo {
 	 *
 	 * @since      4.0.87
 	 *
-	 * @param tekst $reden De te loggen tekst.
+	 * @param string $reden De te loggen tekst.
 	 */
 	public static function log( $reden ) {
 		self::write_log( $reden );
@@ -91,6 +91,7 @@ class Kleistad_Saldo {
 	 */
 	public static function export( $gebruiker_id ) {
 		$saldo   = new static( $gebruiker_id );
+		$items   = [];
 		$items[] = [
 			'group_id'    => self::META_KEY,
 			'group_label' => 'stooksaldo informatie',

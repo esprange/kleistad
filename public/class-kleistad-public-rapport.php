@@ -22,7 +22,7 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 	 * Prepareer 'rapport' form inhoud
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */

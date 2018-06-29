@@ -12,7 +12,7 @@
 /**
  * De class Abonnee Wijziging.
  */
-class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
+class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 
 	/**
 	 * Prepareer 'abonnee_wijziging' form
@@ -26,7 +26,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 		$abonnee_id = get_current_user_id();
 		$abonnement = new Kleistad_Abonnement( $abonnee_id );
 
-		$data['driemaand_datum'] = mktime( 0, 0, 0, date( 'n', $abonnement->start_datum ) + 3, date( 'j', $abonnement->start_datum ), date( 'Y', $abonnement->start_datum ) );
+		$data['driemaand_datum'] = mktime( 0, 0, 0, intval( date( 'n', $abonnement->start_datum ) ) + 3, intval( date( 'j', $abonnement->start_datum ) ), intval( date( 'Y', $abonnement->start_datum ) ) );
 		$data['input']['actief'] = ( ! $abonnement->geannuleerd ) && ( ! $abonnement->gepauzeerd );
 		$data['input']['soort']  = $abonnement->soort;
 		$data['input']['dag']    = $abonnement->dag;
@@ -37,7 +37,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'abonnee_wijziging' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return \WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -71,7 +71,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 	 * Bewaar 'abonnee_wijziging' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return string
+	 * @return \WP_Error|string
 	 *
 	 * @since   4.0.87
 	 */
@@ -82,7 +82,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_Shortcode {
 			return $error;
 		}
 
-		$herstart_maand = mktime( 0, 0, 0, date( 'n' ) + 1 + intval( $data['input']['pauze_maanden'] ), 1, date( 'Y' ) );
+		$herstart_maand = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1 + $data['input']['pauze_maanden'], 1, intval( date( 'Y' ) ) );
 		$abonnement     = new Kleistad_Abonnement( $data['input']['abonnee_id'] );
 
 		switch ( $data['input']['actie'] ) {

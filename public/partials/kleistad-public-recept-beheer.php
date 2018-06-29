@@ -7,6 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
+ * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 if ( ! is_user_logged_in() ) :
@@ -269,7 +270,7 @@ else :
 					&nbsp;
 				<?php endif; ?>
 				<td><?php echo esc_html( $recept['titel'] ); ?></td>
-				<td><?php echo esc_html( strtotime( $recept['modified'] ) ); ?></td>
+				<td><?php echo esc_html( strval( strtotime( $recept['modified'] ) ) ); ?></td>
 				<td><?php echo esc_html( date_i18n( 'd-m-Y H:i', strtotime( $recept['modified'] ) ) ); ?></td>
 				<td>
 				<?php

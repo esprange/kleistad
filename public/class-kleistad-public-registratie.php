@@ -15,13 +15,13 @@
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
-class Kleistad_Public_Registratie extends Kleistad_Shortcode {
+class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 
 	/**
 	 * Prepareer 'registratie' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -30,6 +30,7 @@ class Kleistad_Public_Registratie extends Kleistad_Shortcode {
 		$gebruiker    = new Kleistad_Gebruiker( $gebruiker_id );
 
 		if ( is_null( $data ) ) {
+			$data          = [];
 			$data['input'] = [
 				'voornaam'   => $gebruiker->voornaam,
 				'achternaam' => $gebruiker->achternaam,
@@ -47,7 +48,7 @@ class Kleistad_Public_Registratie extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'registratie' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return \WP_ERROR|bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -90,7 +91,7 @@ class Kleistad_Public_Registratie extends Kleistad_Shortcode {
 	 * Bewaar 'registratie' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return \WP_ERROR|string
 	 *
 	 * @since   4.0.87
 	 */

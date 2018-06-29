@@ -12,7 +12,7 @@
 /**
  * De class Betaling.
  */
-class Kleistad_Public_Betaling extends Kleistad_Shortcode {
+class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 
 	const ACTIE_RESTANT_CURSUS     = 'restant_cursus';
 	const ACTIE_VERVOLG_ABONNEMENT = 'vervolg_abonnement';
@@ -22,7 +22,7 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 	 * Prepareer 'betaling' form
 	 *
 	 * @param array $data formulier data.
-	 * @return array
+	 * @return \WP_Error|bool
 	 *
 	 * @since   4.2.0
 	 */
@@ -89,7 +89,7 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'betaling' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return \WP_ERROR|bool
 	 *
 	 * @since   4.2.0
 	 */
@@ -129,6 +129,7 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 	 * Bewaar 'betaling' form gegevens
 	 *
 	 * @param array $data te bewaren data.
+	 * @return string
 	 *
 	 * @since   4.2.0
 	 */
@@ -144,11 +145,9 @@ class Kleistad_Public_Betaling extends Kleistad_Shortcode {
 		} elseif ( self::ACTIE_VERVOLG_ABONNEMENT === $data['input']['actie'] ) {
 			$abonnement = new Kleistad_Abonnement( $data['input']['abonnee_id'] );
 			if ( 'ideal' === $data['input']['betaal'] ) {
-				$abonnement->betalen(
-					'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
-					false
-				);
+				$abonnement->betalen();
 			}
 		}
+		return '';
 	}
 }

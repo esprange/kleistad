@@ -7,6 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
+ * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 if ( ! is_user_logged_in() || is_super_admin() ) :

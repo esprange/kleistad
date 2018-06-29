@@ -154,7 +154,7 @@ class Kleistad_Admin {
 	 * Inhoud van de disabled users kolom
 	 *
 	 * @since 4.0.87
-	 * @param empty  $empty ongebruikt.
+	 * @param mixed  $empty ongebruikt.
 	 * @param string $column_name de kolom.
 	 * @param int    $user_id het user_id.
 	 * @return string
@@ -166,6 +166,7 @@ class Kleistad_Admin {
 				return 'Gedeactiveerd';
 			}
 		}
+		return '';
 	}
 
 	/**
@@ -308,7 +309,7 @@ class Kleistad_Admin {
 	 * @since 4.3.8
 	 *
 	 * @param  string $action De gevraagde actie.
-	 * @return string remote info.
+	 * @return bool|object remote info.
 	 */
 	public function get_remote( $action = '' ) {
 		$params  = [
@@ -394,10 +395,6 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function ovens_page_handler() {
-		$table = new Kleistad_Admin_Ovens();
-		$table->prepare_items();
-
-		$message = '';
 		require 'partials/kleistad-admin-ovens-page.php';
 	}
 
@@ -409,6 +406,7 @@ class Kleistad_Admin {
 	public function ovens_form_page_handler() {
 		$message = '';
 		$notice  = '';
+		$item    = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
 			$item       = filter_input_array(
 				INPUT_POST, [
@@ -493,10 +491,6 @@ class Kleistad_Admin {
 	 * @since    4.3.0
 	 */
 	public function abonnees_page_handler() {
-		$table = new Kleistad_Admin_Abonnees();
-		$table->prepare_items();
-
-		$message = '';
 		require 'partials/kleistad-admin-abonnees-page.php';
 	}
 
@@ -530,7 +524,7 @@ class Kleistad_Admin {
 			);
 			$item_valid = $this->validate_abonnee( $item );
 			if ( true === $item_valid ) {
-				$datum = mktime( 0, 0, 0, date( 'n' ) + 1, 1, date( 'Y' ) );
+				$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
 
 				$abonnement = new Kleistad_Abonnement( $item['id'] );
 				if ( ( 1 === intval( $item['gepauzeerd'] ) ) !== $abonnement->gepauzeerd ) {
@@ -712,7 +706,7 @@ class Kleistad_Admin {
 	 *
 	 * @since    4.0.87
 	 *
-	 * @param arrray $item de regeling.
+	 * @param array $item de regeling.
 	 */
 	public function regelingen_form_meta_box_handler( $item ) {
 		$gebruikers = get_users(

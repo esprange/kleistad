@@ -7,6 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
+ * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 if ( ! is_user_logged_in() ) :
@@ -15,7 +16,7 @@ if ( ! is_user_logged_in() ) :
 	<?php
 else :
 	$in_driemaandperiode = strtotime( 'today' ) < $data['driemaand_datum'];
-	$per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : mktime( 0, 0, 0, date( 'n' ) + 1, 1, date( 'Y' ) );
+	$per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
 	$per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
 	?>
 
@@ -136,7 +137,7 @@ else :
 					<select name="startdatum" id="kleistad_startdatum" >
 			<?php
 			for ( $i = 1; $i <= 3; $i++ ) :
-				$datum = mktime( 0, 0, 0, date( 'n' ) + $i, 1, date( 'Y' ) );
+				$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + $i, 1, intval( date( 'Y' ) ) );
 				?>
 						<option value="<?php echo esc_attr( $datum ); ?>"><?php echo esc_html( strftime( '%B %Y', $datum ) ); ?></option>
 				<?php

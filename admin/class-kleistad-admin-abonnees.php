@@ -33,9 +33,10 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	/**
 	 * Zet de defaults voor de kolommen
 	 *
-	 * @param array  $item row (key, value).
+	 * @param object $item row (key, value).
 	 * @param string $column_name key.
-	 * @return HTML
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
@@ -44,8 +45,9 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	/**
 	 * Toon de kolom naam en acties
 	 *
-	 * @param array $item row (key, value).
-	 * @return HTML
+	 * @param object $item row (key, value).
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_naam( $item ) {
 		$actions = [

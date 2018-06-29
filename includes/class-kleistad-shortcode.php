@@ -54,26 +54,7 @@ abstract class Kleistad_Shortcode {
 	 * @since   4.0.87
 	 *
 	 * @param array $data de data die voorbereid moet worden voor display.
+	 * @return \WP_ERROR|bool
 	 */
 	abstract public function prepare( &$data);
-
-	/**
-	 * Validatie functie, wordt voor form validatie gebruikt
-	 *
-	 * @since   4.0.87
-	 * @param array $data de gevalideerde data.
-	 */
-	public function validate( &$data ) {
-		return true;
-	}
-
-	/**
-	 * Save functie, wordt gebruikt bij formulieren
-	 *
-	 * @since   4.0.87
-	 * @param array $data de gevalideerde data die kan worden opgeslagen.
-	 */
-	public function save( $data ) {
-		return true;
-	}
 }

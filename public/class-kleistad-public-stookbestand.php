@@ -16,14 +16,14 @@
  * @subpackage Kleistad/public
  * @author     Eric Sprangers <e.sprangers@sprako.nl>
  */
-class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
+class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 
 	/**
 	 *
 	 * Prepareer 'stookbestand' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -40,7 +40,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'stookbestand' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -65,8 +65,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 	 * @since   4.0.87
 	 */
 	public function save( $data ) {
-		$error = new WP_Error();
-
 		$gebruiker = get_userdata( $data['gebruiker_id'] );
 
 		$csv   = tempnam( sys_get_temp_dir(), 'stookbestand' );
@@ -166,7 +164,5 @@ class Kleistad_Public_Stookbestand extends Kleistad_Shortcode {
 		readfile( $csv ); // phpcs:ignore
 		unlink( $csv );
 		exit;
-
 	}
-
 }

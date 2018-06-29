@@ -7,6 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/admin/partials
+ * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 ?>

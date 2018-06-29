@@ -20,7 +20,7 @@ require_once ABSPATH . 'wp-admin/includes/file.php';
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
-class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
+class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 
 	/**
 	 * Helpfunctie om overzicht lijst te maken.
@@ -66,7 +66,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 	 * Prepareer 'recept' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return \WP_ERROR|bool
 	 *
 	 * @since   4.1.0
 	 */
@@ -86,6 +86,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 			/*
 			 * Er is een recept gekozen om te wijzigen.
 			 */
+			$data      = [];
 			$recept_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_wijzig_recept_' . $recept_id ) ) {
 				$recept = get_post( $recept_id );
@@ -193,7 +194,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'recept' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return \WP_Error|bool
 	 *
 	 * @since   4.1.0
 	 */
@@ -274,7 +275,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_Shortcode {
 	 * Bewaar 'recept' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return \WP_Error|string
 	 *
 	 * @since   4.1.0
 	 */

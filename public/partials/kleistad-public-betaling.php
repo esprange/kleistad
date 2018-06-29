@@ -7,6 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
+ * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 if ( isset( $data['actie'] ) ) :
@@ -89,20 +90,19 @@ if ( isset( $data['actie'] ) ) :
 			$vervolg_datum            = strftime(
 				'%d-%m-%y', mktime(
 					0, 0, 0,
-					date( 'n', $data['abonnement']->start_datum ) + 3,
-					date( 'j', $data['abonnement']->start_datum ),
-					date( 'Y', $data['abonnement']->start_datum )
+					intval( date( 'n', $data['abonnement']->start_datum ) ) + 3,
+					intval( date( 'j', $data['abonnement']->start_datum ) ),
+					intval( date( 'Y', $data['abonnement']->start_datum ) )
 				)
 			);
 			$einde_overbrugging_datum = strftime(
 				'%d-%m-%y', mktime(
 					0, 0, 0,
-					date( 'n', $data['abonnement']->incasso_datum ),
-					date( 'j', $data['abonnement']->incasso_datum ) - 1,
-					date( 'Y', $data['abonnement']->incasso_datum )
+					intval( date( 'n', $data['abonnement']->incasso_datum ) ),
+					intval( date( 'j', $data['abonnement']->incasso_datum ) ) - 1,
+					intval( date( 'Y', $data['abonnement']->incasso_datum ) )
 				)
 			);
-			$options                  = get_option( 'kleistad-opties' );
 		?>
 
 		<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
@@ -133,7 +133,7 @@ if ( isset( $data['actie'] ) ) :
 				<p>Maand bedrag</p>
 			</div>
 			<div class="kleistad_col_6">
-				<p>&euro; <?php echo esc_html( number_format_i18n( $options[ $data['abonnement']->soort . '_abonnement' ], 2 ) ); ?> </p>
+				<p>&euro; <?php echo esc_html( number_format_i18n( $this->options[ $data['abonnement']->soort . '_abonnement' ], 2 ) ); ?> </p>
 			</div>
 		</div>
 		<div class="kleistad_row">

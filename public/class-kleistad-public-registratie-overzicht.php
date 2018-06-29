@@ -15,14 +15,14 @@
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
-class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
+class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 
 	/**
 	 *
 	 * Prepareer 'registratie_overzicht' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -101,7 +101,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'registratie' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.3.8
 	 */
@@ -121,7 +121,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 	 */
 	public function save( $data ) {
 		if ( ! Kleistad_Roles::override() ) {
-			return true;
+			return '';
 		}
 		$csv   = tempnam( sys_get_temp_dir(), $data['download'] );
 		$f_csv = fopen( $csv, 'w' );
@@ -239,7 +239,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_Shortcode {
 				break;
 			default:
 				unlink( $csv );
-				return true;
+				return '';
 		}
 		fclose( $f_csv );
 		header( 'Content-Description: File Transfer' );

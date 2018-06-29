@@ -70,7 +70,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		}
 		// Deze datum zit niet in de 'oude' abonnees.
 		if ( '' === $this->_data['incasso_datum'] ) {
-			$this->incasso_datum = mktime( 0, 0, 0, date( 'n', $this->start_datum ) + 4, 1, date( 'Y', $this->start_datum ) );
+			$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 1, intval( date( 'Y', $this->start_datum ) ) );
 		}
 	}
 
@@ -84,6 +84,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public static function export( $gebruiker_id ) {
 		$abonnement = new static( $gebruiker_id );
+		$items      = [];
 		$items[]    = [
 			'group_id'    => 'abonnementinfo',
 			'group_label' => 'abonnement informatie',
@@ -206,7 +207,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
 	 *
-	 * @param object $data het te laden object.
+	 * @param array $data het te laden object.
 	 */
 	public function load( $data ) {
 		$this->_data = wp_parse_args( $data, $this->_default_data );
@@ -296,8 +297,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param string    $actie De uit te voeren actie.
-	 * @param timestamp $datum Het moment waarop de actie moet worden uitgevoerd.
+	 * @param string $actie De uit te voeren actie.
+	 * @param int    $datum Het moment waarop de actie moet worden uitgevoerd.
 	 */
 	private function schedule( $actie, $datum ) {
 		wp_schedule_single_event(
@@ -361,7 +362,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		} else {
 			// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
 			$dag             = 60 * 60 * 24; // Aantal seconden in een dag.
-			$driemaand_datum = mktime( 0, 0, 0, date( 'n', $this->start_datum ) + 3, date( 'j', $this->start_datum ), date( 'Y', $this->start_datum ) );
+			$driemaand_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 3, intval( date( 'j', $this->start_datum ) ), intval( date( 'Y', $this->start_datum ) ) );
 			$aantal_dagen    = ( $this->incasso_datum - $driemaand_datum ) / $dag;
 			$dagen_in_maand  = intval( date( 'j', $this->incasso_datum - $dag ) );
 			$bedrag          = $options[ $this->soort . '_abonnement' ] * $aantal_dagen / $dagen_in_maand;
@@ -374,9 +375,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param timestamp $pauze_datum    Pauzedatum.
-	 * @param timestamp $herstart_datum Herstartdatum.
-	 * @param boolean   $admin          Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param int  $pauze_datum    Pauzedatum.
+	 * @param int  $herstart_datum Herstartdatum.
+	 * @param bool $admin          Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function pauzeren( $pauze_datum, $herstart_datum, $admin = false ) {
 		// Op de pauze_datum wordt de status gewijzigd naar gepauzeerd.
@@ -397,8 +398,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param timestamp $herstart_datum Herstartdatum.
-	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param int  $herstart_datum Herstartdatum.
+	 * @param bool $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function herstarten( $herstart_datum, $admin = false ) {
 		// Op de herstart_datum wordt de gepauzeerd status verwijderd.
@@ -423,8 +424,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param timestamp $eind_datum Einddatum.
-	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param int  $eind_datum Einddatum.
+	 * @param bool $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function annuleren( $eind_datum, $admin = false ) {
 		// Op de einddatum wordt de subscriber rol van het abonnee account verwijderd.
@@ -450,10 +451,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param timestamp $wijzig_datum Wijzigdatum.
-	 * @param string    $soort        Beperkt/onbeperkt.
-	 * @param string    $dag          Dag voor beperkt abonnement.
-	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param int    $wijzig_datum Wijzigdatum.
+	 * @param string $soort        Beperkt/onbeperkt.
+	 * @param string $dag          Dag voor beperkt abonnement.
+	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function wijzigen( $wijzig_datum, $soort, $dag, $admin = false ) {
 		$this->soort          = $soort;
@@ -479,8 +480,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param timestamp $wijzig_datum Wijzigdatum.
-	 * @param string    $betaalwijze  Ideal of bankstorting.
+	 * @param int    $wijzig_datum Wijzigdatum.
+	 * @param string $betaalwijze  Ideal of bankstorting.
 	 */
 	public function betaalwijze( $wijzig_datum, $betaalwijze ) {
 		$betalen              = new Kleistad_Betalen();
@@ -488,7 +489,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 		if ( 'ideal' === $betaalwijze ) {
 			// Doe een proefbetaling om het mandaat te verkrijgen.
-			$this->incasso_datum = mktime( 0, 0, 0, date( 'n', $wijzig_datum ), date( 'j', $wijzig_datum ), date( 'Y', $wijzig_datum ) );
+			$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $wijzig_datum ) ), intval( date( 'j', $wijzig_datum ) ), intval( date( 'Y', $wijzig_datum ) ) );
 			$this->save();
 			$betalen->order(
 				$this->_abonnee_id,
@@ -511,16 +512,16 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param timestamp $start_datum Datum waarop abonnement gestart wordt.
-	 * @param string    $betaalwijze Ideal of bank.
-	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param int    $start_datum Datum waarop abonnement gestart wordt.
+	 * @param string $betaalwijze Ideal of bank.
+	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
 		$options             = get_option( 'kleistad-opties' );
-		$vervolg_datum       = mktime( 0, 0, 0, date( 'n', $start_datum ) + 3, date( 'j', $start_datum ) - 7, date( 'Y', $start_datum ) );
-		$driemaand_datum     = mktime( 0, 0, 0, date( 'n', $start_datum ) + 3, date( 'j', $start_datum ), date( 'Y', $start_datum ) );
+		$vervolg_datum       = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ) - 7, intval( date( 'Y', $start_datum ) ) );
+		$driemaand_datum     = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) )+ 3, intval( date( 'j', $start_datum ) ), intval( date( 'Y', $start_datum ) ) );
 		$this->start_datum   = $start_datum;
-		$this->incasso_datum = mktime( 0, 0, 0, date( 'n', $start_datum ) + 4, 1, date( 'Y', $start_datum ) );
+		$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 4, 1, intval( date( 'Y', $start_datum ) ) );
 		$this->save();
 		// Verzend 1 week vooraf verstrijken drie maanden termijn de email voor het vervolg.
 		$this->schedule( 'vervolg', $vervolg_datum );
@@ -555,8 +556,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param string    $actie De actie die op datum uitgevoerd moet worden.
-	 * @param timestamp $datum De datum / tijdstip waarop de actie nodig is.
+	 * @param string $actie De actie die op datum uitgevoerd moet worden.
+	 * @param int    $datum De datum / tijdstip waarop de actie nodig is.
 	 */
 	public function event( $actie, $datum ) {
 
@@ -618,6 +619,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	public static function all() {
 		static $arr = null;
 		if ( is_null( $arr ) ) {
+			$arr      = [];
 			$abonnees = get_users( [ 'meta_key' => self::META_KEY ] );
 			foreach ( $abonnees as $abonnee ) {
 				$abonnement          = get_user_meta( $abonnee->ID, self::META_KEY, true );

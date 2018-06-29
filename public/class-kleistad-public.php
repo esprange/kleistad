@@ -64,7 +64,7 @@ class Kleistad_Public {
 	 * @param string $subject onderwerp.
 	 * @param string $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
 	 * @param array  $args de argumenten die in de slug pagina vervangen moeten worden.
-	 * @param string $attachment een eventuele bijlage.
+	 * @param string|array  $attachment een eventuele bijlage.
 	 */
 	public static function compose_email( $to, $subject, $slug, $args = [], $attachment = [] ) {
 		$domein        = substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
@@ -74,9 +74,11 @@ class Kleistad_Public {
 			'copy' => 'stook@' . $domein,
 		];
 
-		$headers[] = 'Content-Type: text/html; charset=UTF-8';
-		$headers[] = "From: Kleistad <{$emailadresses['from']}>";
-		$headers[] = 'bcc: kleistad@sprako.nl';
+		$headers   = [
+			'Content-Type: text/html; charset=UTF-8',
+			"From: Kleistad <{$emailadresses['from']}>",
+			'bcc: kleistad@sprako.nl',
+		];
 
 		$page = get_page_by_title( $slug, OBJECT );
 		if ( ! is_null( $page ) ) {
@@ -167,8 +169,9 @@ class Kleistad_Public {
 	 *
 	 * @since    4.0.87
 	 *
-	 * @param type $old unused.
+	 * @param  string $old unused.
 	 * @return string
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function mail_from( $old ) {
 		return 'no-reply@' . substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
@@ -179,8 +182,9 @@ class Kleistad_Public {
 	 *
 	 * @since    4.0.87
 	 *
-	 * @param type $old unused.
+	 * @param  string $old unused.
 	 * @return string
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function mail_from_name( $old ) {
 		return 'Kleistad';
@@ -552,7 +556,7 @@ class Kleistad_Public {
 	 *
 	 * @staticvar boolean $is_active Bewaart de activeringsstatus, als true dan niets doen.
 	 * @param string $items De menu opties.
-	 * @param array  $args  De argumenten van het filter.
+	 * @param stdClass  $args  De argumenten van het filter.
 	 * @return string
 	 */
 	public function loginuit_menu( $items, $args ) {
@@ -581,8 +585,9 @@ class Kleistad_Public {
 	 * @param string $content   wordt niet gebruikt.
 	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
 	 * @return string           html resultaat.
+ 	 * @suppress PhanUnusedPublicMethodParameter
 	 */
-	public function shortcode_handler( $atts, $content = '', $tag ) {
+	public function shortcode_handler( $atts, $content, $tag ) {
 
 		$html = '';
 		$data = null;
@@ -649,7 +654,7 @@ class Kleistad_Public {
 	 *
 	 * @param int       $id    De id van de abonnee.
 	 * @param string    $actie De uit te voeren actie.
-	 * @param timestamp $datum Datum waarop het moet worden uitgevoerd.
+	 * @param int       $datum Datum waarop het moet worden uitgevoerd.
 	 */
 	public function update_abonnement( $id, $actie, $datum ) {
 		$abonnement = new Kleistad_Abonnement( $id );

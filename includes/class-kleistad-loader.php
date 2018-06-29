@@ -91,7 +91,7 @@ class Kleistad_Loader {
 	 * @param     string $callback       De naam van de functie.
 	 */
 	public function add_shortcode( $tag, $component, $callback ) {
-		$this->shortcodes = $this->add( $this->shortcodes, $tag, $component, $callback, null, null );
+		$this->shortcodes = $this->add( $this->shortcodes, $tag, $component, $callback, 0, 0 );
 	}
 	/**
 	 * Een hulp functie voor de registratie van acties, filters en shortcodes.

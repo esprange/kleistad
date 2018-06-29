@@ -15,19 +15,20 @@
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
-class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
+class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 
 	/**
 	 *
 	 * Prepareer 'dagdelenkaart' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.3.0
 	 */
 	public function prepare( &$data = null ) {
 		if ( is_null( $data ) ) {
+			$data          = [];
 			$data['input'] = [
 				'EMAIL'           => '',
 				'email_controle'  => '',
@@ -57,7 +58,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'dagdelenkaart' form
 	 *
 	 * @param array $data gevalideerde data.
-	 * @return array
+	 * @return \WP_Error|bool
 	 *
 	 * @since   4.3.0
 	 */
@@ -92,7 +93,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 			$input['email_controle'] = '';
 		} else {
 			$input['EMAIL'] = $email;
-			if ( strtolower( $input['email_controle'] !== $email ) ) {
+			if ( strtolower( $input['email_controle'] ) !== $email ) {
 				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
 				$input['email_controle'] = '';
 			} else {
@@ -124,7 +125,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 	 * Bewaar 'dagdelenkaart' form gegevens
 	 *
 	 * @param array $data te bewaren saved.
-	 * @return string
+	 * @return \WP_Error|string
 	 *
 	 * @since   4.3.0
 	 */
@@ -132,9 +133,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_Shortcode {
 		$error = new WP_Error();
 
 		$gebruiker_id = email_exists( $data['input']['EMAIL'] );
-		if ( $gebruiker_id ) {
-			$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
-		} else {
+		if ( ! $gebruiker_id ) {
 			$gebruiker             = new Kleistad_Gebruiker();
 			$gebruiker->voornaam   = $data['input']['FNAME'];
 			$gebruiker->achternaam = $data['input']['LNAME'];

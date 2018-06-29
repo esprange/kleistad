@@ -15,14 +15,14 @@
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
-class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
+class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 
 	/**
 	 *
 	 * Prepareer 'cursus_beheer' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -94,7 +94,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'cursus_beheer' form
 	 *
 	 * @param array $data gevalideerde data.
-	 * @return array
+	 * @return \WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -181,6 +181,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_Shortcode {
 	 * Bewaar 'cursus_beheer' form gegevens
 	 *
 	 * @param array $data data te bewaren.
+	 * @return string
 	 *
 	 * @since   4.0.87
 	 */

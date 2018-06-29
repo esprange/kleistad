@@ -15,14 +15,14 @@
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
-class Kleistad_Public_Saldo extends Kleistad_Shortcode {
+class Kleistad_Public_Saldo extends Kleistad_ShortcodeForm {
 
 	/**
 	 *
 	 * Prepareer 'saldo' form
 	 *
 	 * @param array $data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -41,7 +41,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'saldo' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -62,7 +62,7 @@ class Kleistad_Public_Saldo extends Kleistad_Shortcode {
 	 * Bewaar 'saldo' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return string
+	 * @return \WP_ERROR|string
 	 *
 	 * @since   4.0.87
 	 */

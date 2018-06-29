@@ -7,6 +7,7 @@
  *
  * @package Kleistad
  * @subpackage Kleistad/public/partials
+ * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 if ( ! Kleistad_Roles::override() ) :
@@ -45,21 +46,21 @@ else :
 						<input type="checkbox" name="i_betaald[]" value="<?php echo esc_attr( $row['value'] ); ?>" >
 						<?php endif ?>
 					</td>
-					<td><?php echo esc_html( $row['i_betaald'] ? 1 : 0 ); ?></td>
+					<td><?php echo esc_html( $row['i_betaald'] ? '1' : '0' ); ?></td>
 					<td><?php if ( $row['c_betaald'] ) : ?>
 						<span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
 						<input type="checkbox" name="c_betaald[]" value="<?php echo esc_attr( $row['value'] ); ?>" >
 						<?php endif ?>
 					</td>
-					<td><?php echo esc_html( $row['c_betaald'] ? 1 : 0 ); ?></td>
+					<td><?php echo esc_html( $row['c_betaald'] ? '1' : '0' ); ?></td>
 					<td><?php if ( $row['geannuleerd'] ) : ?>
 						<span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
 						<input type="checkbox" name="geannuleerd[]" value="<?php echo esc_attr( $row['value'] ); ?>" >
 						<?php endif ?>
 					</td>
-					<td><?php echo esc_html( $row['geannuleerd'] ? 1 : 0 ); ?></td>
+					<td><?php echo esc_html( $row['geannuleerd'] ? '1' : '0' ); ?></td>
 				</tr>
 				<?php endforeach ?>
 		</tbody>

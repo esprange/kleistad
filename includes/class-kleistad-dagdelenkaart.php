@@ -115,7 +115,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 *
 	 * @since      4.3.0
 	 *
-	 * @param object $data het te laden object.
+	 * @param array $data het te laden object.
 	 */
 	public function load( $data ) {
 		$this->_data = wp_parse_args( $data, $this->_default_data );
@@ -151,9 +151,9 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 *
 	 * @since      4.3.0
 	 *
-	 * @param timestamp $start_datum Datum waarop dagdelenkaart gestart wordt.
-	 * @param string    $betaalwijze Ideal of bank.
-	 * @param boolean   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param int    $start_datum Datum waarop dagdelenkaart gestart wordt.
+	 * @param string $betaalwijze Ideal of bank.
+	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function betalen( $start_datum, $betaalwijze, $admin = false ) {
 		$this->start_datum = $start_datum;
@@ -195,6 +195,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @return array dagdelenkaarten.
 	 */
 	public static function all() {
+		$arr        = [];
 		$gebruikers = get_users( [ 'meta_key' => self::META_KEY ] );
 		foreach ( $gebruikers as $gebruiker ) {
 			$dagdelenkaart         = get_user_meta( $gebruiker->ID, self::META_KEY, true );

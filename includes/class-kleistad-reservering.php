@@ -85,16 +85,6 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Erase functie privacy gevoelige data.
-	 *
-	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return int aantal verwijderde gegevens.
-	 */
-	public static function erase( $gebruiker_id ) {
-		return 0;
-	}
-
-	/**
 	 * Vind de reservering
 	 *
 	 * @global object $wpdb wp database

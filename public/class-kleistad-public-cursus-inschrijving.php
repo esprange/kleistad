@@ -15,20 +15,21 @@
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
-class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
+class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 
 	/**
 	 *
 	 * Prepareer 'cursus_inschrijving' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
 
 		if ( is_null( $data ) ) {
+			$data          = [];
 			$data['input'] = [
 				'EMAIL'           => '',
 				'email_controle'  => '',
@@ -81,7 +82,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'cursus_inschrijving' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return \WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -146,7 +147,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 				$input['email_controle'] = '';
 			} else {
 				$input['EMAIL'] = $email;
-				if ( strtolower( $input['email_controle'] !== $email ) ) {
+				if ( strtolower( $input['email_controle'] ) !== $email ) {
 					$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
 					$input['email_controle'] = '';
 				} else {
@@ -184,7 +185,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 	 * Bewaar 'cursus_inschrijving' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return \WP_Error|string
 	 *
 	 * @since   4.0.87
 	 */
@@ -208,7 +209,6 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_Shortcode {
 			} else {
 				$gebruiker_id = get_current_user_id();
 			}
-			$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 		}
 
 		$inschrijving             = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );

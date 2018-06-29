@@ -20,9 +20,9 @@ if ( post_password_required() ) {
 			<?php
 				$comments_number = get_comments_number();
 			if ( '1' === $comments_number ) {
-				echo esc_html( sprintf( 'Een reactie op &ldquo;%s&rdquo;', get_the_title() ), true );
+				echo esc_html( sprintf( 'Een reactie op &ldquo;%s&rdquo;', get_the_title() ) );
 			} else {
-				echo esc_html( sprintf( '%1$s reacties op &ldquo;%2$s&rdquo;', number_format_i18n( $comments_number ), get_the_title() ), true );
+				echo esc_html( sprintf( '%1$s reacties op &ldquo;%2$s&rdquo;', number_format_i18n( $comments_number ), get_the_title() ) );
 			}
 			?>
 		</h2>
@@ -32,11 +32,11 @@ if ( post_password_required() ) {
 		<ol class="comment-list">
 			<?php
 				wp_list_comments(
-					array(
+					[
 						'style'       => 'ol',
 						'short_ping'  => true,
 						'avatar_size' => 42,
-					)
+					]
 				);
 			?>
 		</ol>
@@ -53,10 +53,10 @@ if ( post_password_required() ) {
 
 	<?php
 		comment_form(
-			array(
+			[
 				'title_reply_before' => '<h2 id="reply-title" class="comment-reply-title">',
 				'title_reply_after'  => '</h2>',
-			)
+			]
 		);
 		?>
 

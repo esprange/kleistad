@@ -15,13 +15,13 @@
  * @package    Kleistad
  * @subpackage Kleistad/public
  */
-class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
+class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 
 	/**
 	 * Prepareer 'betalingen' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -62,7 +62,7 @@ class Kleistad_Public_Betalingen extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'betalingen' form
 	 *
 	 * @param array $data gevalideerde data.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */

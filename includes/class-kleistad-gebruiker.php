@@ -32,7 +32,6 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 * @since 4.0.87
 	 *
 	 * @param int $gebruiker_id wp user id van de gebruiker.
-	 * @return null.
 	 */
 	public function __construct( $gebruiker_id = null ) {
 		$default_data = [
@@ -72,6 +71,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 */
 	public static function export( $gebruiker_id ) {
 		$gebruiker = new static( $gebruiker_id );
+		$items     = [];
 		$items[]   = [
 			'group_id'    => self::META_KEY,
 			'group_label' => 'contact informatie',
@@ -158,7 +158,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @return null.
+	 * @return bool|int gebruiker_id.
 	 */
 	public function save() {
 
@@ -176,7 +176,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 					'first_name'    => $this->voornaam,
 					'last_name'     => $this->achternaam,
 				];
-				$result              = wp_update_user( $userdata );
+				$result              = wp_update_user( $userdata ); // @phan-suppress-current-line PhanTypeMismatchArgument
 			} else {
 				return false; // Email adres bestaat al.
 			}
@@ -239,6 +239,7 @@ class Kleistad_Gebruiker extends Kleistad_Entity {
 				'orderby' => [ 'nicename' ],
 			]
 		);
+		$arr        = [];
 		foreach ( $gebruikers as $gebruiker ) {
 			$arr[ $gebruiker->id ] = new Kleistad_Gebruiker( $gebruiker->id );
 		}

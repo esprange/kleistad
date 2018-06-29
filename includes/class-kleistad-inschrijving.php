@@ -122,18 +122,6 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	}
 
 	/**
-	 * Erase functie privacy gevoelige data.
-	 *
-	 * @since      4.3.0
-	 *
-	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return int aantal verwijderde gegevens.
-	 */
-	public static function erase( $gebruiker_id ) {
-		return 0;
-	}
-
-	/**
 	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87
@@ -201,7 +189,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	/**
 	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
 	 *
-	 * @param object $data het te laden object.
+	 * @param array $data het te laden object.
 	 */
 	public function load( $data ) {
 		$this->_data = wp_parse_args( $data, $this->_default_data );
@@ -341,6 +329,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	public static function all() {
 		static $arr = null;
 		if ( is_null( $arr ) ) {
+			$arr       = [];
 			$cursisten = get_users( [ 'meta_key' => self::META_KEY ] );
 			foreach ( $cursisten as $cursist ) {
 				$inschrijvingen = get_user_meta( $cursist->ID, self::META_KEY, true );

@@ -7,6 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
+ * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 /**
@@ -28,7 +29,7 @@ function truncate_string( $string, $width ) {
  * Toont filter opties voor term met naam
  *
  * @param string $titel     De h3 titel.
- * @param array  $naam      Naam van de filtergroep.
+ * @param string $naam      Naam van de filtergroep.
  * @param array  $termen    Array van termen.
  * @return string           Html tekst.
  */

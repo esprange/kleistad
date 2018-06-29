@@ -23,7 +23,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * Prepareer 'saldo' form
 	 *
 	 * @param array $data data to be prepared.
-	 * @return array
+	 * @return \WP_ERROR|bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -64,7 +64,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			$error->add( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
 			return $error;
 		}
-		return true;
 	}
 
 	/**
@@ -75,14 +74,14 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 */
 	public static function callback_show( WP_REST_Request $request ) {
 
-		$oven_id             = intval( $request->get_param( 'oven_id' ) );
-		$maand               = intval( $request->get_param( 'maand' ) );
-		$jaar                = intval( $request->get_param( 'jaar' ) );
-		$volgende_maand      = $maand < 12 ? $maand + 1 : 1;
-		$vorige_maand        = $maand > 1 ? $maand - 1 : 12;
-		$volgende_maand_jaar = $maand < 12 ? $jaar : $jaar + 1;
-		$vorige_maand_jaar   = $maand > 1 ? $jaar : $jaar - 1;
-		$maandnaam           = [
+		$oven_id              = intval( $request->get_param( 'oven_id' ) );
+		$maand                = intval( $request->get_param( 'maand' ) );
+		$jaar                 = intval( $request->get_param( 'jaar' ) );
+		$volgende_maand       = $maand < 12 ? $maand + 1 : 1;
+		$vorige_maand         = $maand > 1 ? $maand - 1 : 12;
+		$volgende_maand_jaar  = $maand < 12 ? $jaar : $jaar + 1;
+		$vorige_maand_jaar    = $maand > 1 ? $jaar : $jaar - 1;
+		$maandnaam            = [
 			1  => 'januari',
 			2  => 'februari',
 			3  => 'maart',
@@ -96,7 +95,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			11 => 'november',
 			12 => 'december',
 		];
-		$dagnamen            = [
+		$dagnamen             = [
 			1 => 'maandag',
 			2 => 'dinsdag',
 			3 => 'woensdag',
@@ -105,7 +104,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			6 => 'zaterdag',
 			7 => 'zondag',
 		];
-
 		$huidige_gebruiker_id = get_current_user_id();
 		$huidige_gebruiker    = get_userdata( $huidige_gebruiker_id );
 		$oven                 = new Kleistad_Oven( $oven_id );
@@ -116,13 +114,13 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'oven_id' => $oven_id,
 			]
 		);
-
-		$aantaldagen = date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) );
+		$rows                 = [];
+		$aantaldagen          = date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) );
 
 		for ( $dag = 1; $dag <= $aantaldagen; $dag++ ) {
 			$datum    = mktime( 23, 59, 0, $maand, $dag, $jaar ); // 18:00 uur 's middags
 			$row_html = '';
-			$weekdag  = date( 'N', $datum );
+			$weekdag  = intval( date( 'N', $datum ) );
 			if ( $oven->{$dagnamen[ $weekdag ]} ) {
 				$kleur            = 'white';
 				$verwerkt         = false;

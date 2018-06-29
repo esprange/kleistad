@@ -12,7 +12,7 @@
 /**
  * De class Abonnee Inschrijving.
  */
-class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
+class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 
 	/**
 	 * Prepareer 'abonnee_inschrijving' form
@@ -24,6 +24,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 	 */
 	public function prepare( &$data ) {
 		if ( is_null( $data ) ) {
+			$data          = [];
 			$data['input'] = [
 				'gebruiker_id'     => 0,
 				'EMAIL'            => '',
@@ -66,7 +67,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 	 * Valideer/sanitize 'abonnee_inschrijving' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return array
+	 * @return \WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -108,7 +109,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 				$input['email_controle'] = '';
 			} else {
 				$input['EMAIL'] = $email;
-				if ( strtolower( $input['email_controle'] !== $email ) ) {
+				if ( strtolower( $input['email_controle'] ) !== $email ) {
 					$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
 					$input['email_controle'] = '';
 				} else {
@@ -141,7 +142,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 	 * Bewaar 'abonnee_inschrijving' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return string
+	 * @return \WP_Error|string
 	 *
 	 * @since   4.0.87
 	 */
@@ -152,7 +153,6 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 
 			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
 			if ( $gebruiker_id ) {
-				$gebruiker = new Kleistad_Gebruiker( $gebruiker_id );
 				if ( Kleistad_Roles::reserveer( $gebruiker_id ) ) {
 					$error->add( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' );
 					return $error;
@@ -171,7 +171,6 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_Shortcode {
 			}
 		} elseif ( is_super_admin() ) {
 			$gebruiker_id = $data['input']['gebruiker_id'];
-			$gebruiker    = new Kleistad_Gebruiker( $gebruiker_id );
 		} else {
 			$error->add( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' );
 			return $error;

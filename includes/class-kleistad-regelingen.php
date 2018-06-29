@@ -49,7 +49,7 @@ class Kleistad_Regelingen {
 	 *
 	 * @param int $gebruiker_id wp user id.
 	 * @param int $oven_id oven id.
-	 * @return float kosten of null als de regeling onbekend is.
+	 * @return null|float|array kosten van oven, kosten van ovens of null als de regeling onbekend is.
 	 */
 	public function get( $gebruiker_id, $oven_id = null ) {
 		if ( array_key_exists( $gebruiker_id, $this->_data ) ) {

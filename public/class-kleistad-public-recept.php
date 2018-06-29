@@ -21,12 +21,11 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	 * Prepareer 'recept' form
 	 *
 	 * @param array $data data voor display.
-	 * @return array
+	 * @return bool
 	 *
 	 * @since   4.1.0
 	 */
 	public function prepare( &$data = null ) {
-		// Geen acties nodig in deze functie.
 		return true;
 	}
 
@@ -37,6 +36,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	 * @return \WP_REST_response
 	 */
 	public static function callback_recept( WP_REST_Request $request ) {
+		$data             = [];
 		$glazuur_parent   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
 		$kleur_parent     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
 		$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );

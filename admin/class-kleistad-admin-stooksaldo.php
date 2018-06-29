@@ -33,9 +33,10 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	/**
 	 * Default tonen van de kolommen
 	 *
-	 * @param array  $item - row (key, value).
+	 * @param object $item - row (key, value).
 	 * @param string $column_name - string (key).
-	 * @return HTML
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
@@ -44,8 +45,9 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	/**
 	 * Toon de kolom naam inclusief acties
 	 *
-	 * @param array $item - row (key, value array).
-	 * @return HTML
+	 * @param object $item - row (key, value array).
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_naam( $item ) {
 		$actions = [
@@ -60,8 +62,9 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	/**
 	 * Toon de kolom saldo
 	 *
-	 * @param array $item - row (key, value array).
-	 * @return HTML
+	 * @param object $item - row (key, value array).
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_saldo( $item ) {
 		return sprintf(
