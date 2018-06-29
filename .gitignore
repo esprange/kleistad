@@ -4,6 +4,7 @@
 # Ignore folders
 node_modules/
 vendor/
+tmp/
 .vscode/
 
 # Build files
@@ -19,3 +20,6 @@ package-lock.json
 .DS_Store
 Thumbs.db
 wp-cli.local.yml
+
+# Phan analyse file
+analysis.txt
