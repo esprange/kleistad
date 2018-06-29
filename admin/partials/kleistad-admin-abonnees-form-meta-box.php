@@ -49,7 +49,7 @@
 			<td>
 				<select id="dag" name="dag" required class="code" >
 					<option value="">Selecteer een dag</option>
-					<option value="maandag" <?php selected( $item['dag'], 'maandag' ); ?> >Maandag</option>
+					<option value="maandag" <?php selected( $item['dag'], 'maandag' ); ?>>Maandag</option>
 					<option value="dinsdag" <?php selected( $item['dag'], 'dinsdag' ); ?>>Dinsdag</option>
 					<option value="woensdag" <?php selected( $item['dag'], 'woensdag' ); ?>>Woensdag</option>
 					<option value="donderdag" <?php selected( $item['dag'], 'donderdag' ); ?>>Donderdag</option>
@@ -87,6 +87,22 @@
 				Let op: bij pauzeren wordt een eventuele automatische incasso gestopt!
 			</td>
 		</tr>
+		<tr class="form-field">
+			<th scope="row">
+				<label for="eind_pauze_datum">Herstart datum</label>
+			</th>
+			<td>
+				<select name="eind_pauze_datum" id="eind_pauze_datum" >
+				<?php
+				for ( $month = 1; $month <= 3; $month++ ) :
+					$eind_pauze_datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + $month, 1, intval( date( 'Y' ) ) );
+					?>
+				<option value="<?php echo esc_attr( strval( $eind_pauze_datum ) ); ?>" ><?php echo esc_html( strftime( '%d-%m-%Y', $eind_pauze_datum ) ); ?></option>
+					<?php
+				endfor
+				?>
+				</select>
+			</td>
 		<tr>
 			<th scope="row">
 				<label for="mandaat">Mandaat verwijderen</label>

@@ -386,6 +386,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->herstart_datum = $herstart_datum;
 		$betalen              = new Kleistad_Betalen();
 		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
+		if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+			$this->subscriptie_id = $this->herhaalbetalen( $herstart_datum );
+		}
 		if ( ! $admin ) {
 			$this->email( '_gewijzigd', 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->pauze_datum ) . ' gepauzeerd en start weer per ' . strftime( '%d-%m-%y', $this->herstart_datum ) );
 		}
@@ -601,8 +604,12 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		}
 		if ( 'incasso' === $type ) {
 			// Een succesvolle betaling van een vervolg.
-			$this->subscriptie_id = $this->herhaalbetalen( $this->incasso_datum );
-			$email                = '_betaalwijze_ideal';
+			if ( $this->herstart_datum > $this->incasso_datum ) {
+				$this->subscriptie_id = $this->herhaalbetalen( $this->herstart_datum );
+			} else {
+				$this->subscriptie_id = $this->herhaalbetalen( $this->incasso_datum );
+			}
+			$email = '_betaalwijze_ideal';
 		} else {
 			$email = '_' . $type;
 		}

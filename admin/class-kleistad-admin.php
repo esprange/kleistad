@@ -506,21 +506,22 @@ class Kleistad_Admin {
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
 			$item       = filter_input_array(
 				INPUT_POST, [
-					'id'              => FILTER_SANITIZE_NUMBER_INT,
-					'naam'            => FILTER_SANITIZE_STRING,
-					'code'            => FILTER_SANITIZE_STRING,
-					'soort'           => FILTER_SANITIZE_STRING,
-					'dag'             => FILTER_SANITIZE_STRING,
-					'gestart'         => FILTER_SANITIZE_NUMBER_INT,
-					'geannuleerd'     => FILTER_SANITIZE_NUMBER_INT,
-					'gepauzeerd'      => FILTER_SANITIZE_NUMBER_INT,
-					'inschrijf_datum' => FILTER_SANITIZE_STRING,
-					'start_datum'     => FILTER_SANITIZE_STRING,
-					'pauze_datum'     => FILTER_SANITIZE_STRING,
-					'eind_datum'      => FILTER_SANITIZE_STRING,
-					'herstart_datum'  => FILTER_SANITIZE_STRING,
-					'incasso_datum'   => FILTER_SANITIZE_STRING,
-					'mandaat'         => FILTER_SANITIZE_NUMBER_INT,
+					'id'               => FILTER_SANITIZE_NUMBER_INT,
+					'naam'             => FILTER_SANITIZE_STRING,
+					'code'             => FILTER_SANITIZE_STRING,
+					'soort'            => FILTER_SANITIZE_STRING,
+					'dag'              => FILTER_SANITIZE_STRING,
+					'gestart'          => FILTER_SANITIZE_NUMBER_INT,
+					'geannuleerd'      => FILTER_SANITIZE_NUMBER_INT,
+					'gepauzeerd'       => FILTER_SANITIZE_NUMBER_INT,
+					'inschrijf_datum'  => FILTER_SANITIZE_STRING,
+					'start_datum'      => FILTER_SANITIZE_STRING,
+					'pauze_datum'      => FILTER_SANITIZE_STRING,
+					'eind_datum'       => FILTER_SANITIZE_STRING,
+					'herstart_datum'   => FILTER_SANITIZE_STRING,
+					'incasso_datum'    => FILTER_SANITIZE_STRING,
+					'mandaat'          => FILTER_SANITIZE_NUMBER_INT,
+					'eind_pauze_datum' => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
 			$item_valid = $this->validate_abonnee( $item );
@@ -533,7 +534,9 @@ class Kleistad_Admin {
 						$abonnement->gepauzeerd = false;
 						$abonnement->save();
 					} else {
-						$abonnement->pauzeren( time(), $datum, true );
+						$item['herstart_datum'] = strftime( '%d-%m-%y', $item['eind_pauze_datum'] );
+						$abonnement->pauzeren( time(), $item['eind_pauze_datum'], true );
+						$abonnement->save();
 					}
 				} elseif ( ( 1 === intval( $item['geannuleerd'] ) ) !== $abonnement->geannuleerd ) {
 					if ( $abonnement->geannuleerd ) {
