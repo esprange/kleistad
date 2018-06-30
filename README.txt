@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 4.9.6
-Stable tag: 4.3.12
+Stable tag: 4.4.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 4.4.0 =
+* In admin functie overzicht abonnees, nu informatie vanuit Mollie toegevoegd.
 = 4.3.12 =
 * Aanpassing ingeval betalingswijze wordt gewijzigd na pauzeren abonnement. Herstart incasso dan per herstartdatum ipv. eerste dag volgende maand.
 = 4.3.11 =

@@ -147,6 +147,11 @@
 						<input type="hidden" name="incasso_datum" value="<?php echo esc_attr( $item['incasso_datum'] ); ?>" >
 					</td>
 				</tr>
+				<tr>
+					<td colspan="6" >
+						<?php echo esc_html( $item['mollie_info'] ); ?>
+					</td>
+				</tr>
 				</table>
 			</td>
 		</tr>

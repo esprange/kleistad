@@ -306,6 +306,36 @@ class Kleistad_Betalen {
 	}
 
 	/**
+	 * Geef informatie terug van mollie over de klant
+	 *
+	 * @since      4.4.0
+	 *
+	 * @param int $gebruiker_id De gebruiker waarvan de informatie wordt opgevraagd.
+	 * @return bool|string false als de gebruiker onbekend is of string met opgemaakte HTML text.
+	 */
+	public function info( $gebruiker_id ) {
+		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
+		if ( '' !== $mollie_gebruiker_id ) {
+			$html             = 'Mollie info: ';
+			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+			$mandaten         = $mollie_gebruiker->mandates();
+			$subscripties     = $mollie_gebruiker->subscriptions();
+			foreach ( $mandaten as $mandaat ) {
+				if ( $mandaat->isValid() ) {
+					$html .= "Er is op {$mandaat->signatureDate} een geldig mandaat afgegeven om incasso te doen vanaf bankrekening {$mandaat->details->consumerAccount} op naam van {$mandaat->details->consumerName}. ";
+				}
+			}
+			foreach ( $subscripties as $subscriptie ) {
+				if ( $subscriptie->isActive() ) {
+					$html .= "Er is een actieve subscriptie om {$subscriptie->amount->currency} {$subscriptie->amount->value} met een interval van {$subscriptie->interval} af te schrijven startend vanaf {$subscriptie->startDate}. ";
+				}
+			}
+			return $html;
+		}
+		return false;
+	}
+
+	/**
 	 * Webhook functie om herhaalbetaling status te verwerken. Wordt aangeroepen door Mollie.
 	 *
 	 * @since      4.2.0

@@ -578,6 +578,7 @@ class Kleistad_Admin {
 					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '' ),
 					'incasso_datum'   => ( $abonnement->incasso_datum ? strftime( '%d-%m-%y', $abonnement->incasso_datum ) : '' ),
 					'mandaat'         => ( '' !== $abonnement->subscriptie_id ),
+					'mollie_info'     => $abonnement->info(),
 				];
 			}
 		}
