@@ -130,7 +130,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
-		$options   = get_option( 'kleistad-opties' );
+		$options   = Kleistad::get_options();
 		$gebruiker = get_userdata( $this->_gebruiker_id );
 		$to        = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
 		return Kleistad_public::compose_email(
@@ -157,7 +157,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 */
 	public function betalen( $start_datum, $betaalwijze, $admin = false ) {
 		$this->start_datum = $start_datum;
-		$options           = get_option( 'kleistad-opties' );
+		$options           = Kleistad::get_options();
 
 		if ( 'ideal' === $betaalwijze ) {
 			$this->save();

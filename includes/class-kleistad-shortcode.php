@@ -39,12 +39,13 @@ abstract class Kleistad_Shortcode {
 	 *
 	 * @since   4.0.87
 	 * @param string $plugin_name plugin naam.
-	 * @param array  $atts shortcode parameters.
+	 * @param array  $atts        shortcode parameters.
+	 * @param array  $options     plugin opties.
 	 */
-	public function __construct( $plugin_name, $atts ) {
+	public function __construct( $plugin_name, $atts, $options ) {
 		$this->plugin_name = $plugin_name;
 		$this->atts        = $atts;
-		$this->options     = get_option( 'kleistad-opties' );
+		$this->options     = $options;
 		wp_localize_jquery_ui_datepicker();
 	}
 

@@ -53,6 +53,15 @@ class Kleistad {
 	protected $version;
 
 	/**
+	 * De opties van de plugin.
+	 *
+	 * @since    4.4.0
+	 * @access   protected
+	 * @var      array     $options De opties.
+	 */
+	protected static $options = [];
+
+	/**
 	 * Constructor
 	 *
 	 * @since    4.0.87
@@ -62,6 +71,7 @@ class Kleistad {
 		$this->plugin_name = 'kleistad';
 		$data              = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . $this->plugin_name . '.php', false, false );
 		$this->version     = $data['Version'];
+		self::$options     = get_option( 'kleistad-opties' );
 		self::register_autoloader();
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
@@ -106,7 +116,7 @@ class Kleistad {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Kleistad_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Kleistad_Admin( $this->get_plugin_name(), $this->get_version(), self::get_options() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -134,8 +144,7 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-
-		$plugin_public = new Kleistad_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Kleistad_Public( $this->get_plugin_name(), $this->get_version(), self::get_options() );
 
 		$this->loader->add_action( 'wp_login', $plugin_public, 'user_login', 10, 2 );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles' );
@@ -210,6 +219,16 @@ class Kleistad {
 	 */
 	public function get_version() {
 		return $this->version;
+	}
+
+	/**
+	 * De opties van de plugin.
+	 *
+	 * @since     4.4.0
+	 * @return    array    De opties.
+	 */
+	public static function get_options() {
+		return self::$options;
 	}
 
 }

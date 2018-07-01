@@ -47,12 +47,13 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 * @param      string $plugin_name De naam van de plugin.
 	 * @param      string $version     De versie van de plugin.
+	 * @param      array  $options     De plugin options.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $options ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
-		$this->options     = get_option( 'kleistad-opties' );
+		$this->options     = $options;
 		date_default_timezone_set( 'Europe/Amsterdam' );
 	}
 

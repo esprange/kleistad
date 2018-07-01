@@ -50,7 +50,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 */
 	public function __construct( $cursus_id = null ) {
 		global $wpdb;
-		$options      = get_option( 'kleistad-opties' );
+		$options      = Kleistad::get_options();
 		$default_data = [
 			'id'              => null,
 			'naam'            => 'nog te definiëren cursus',

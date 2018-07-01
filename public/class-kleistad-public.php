@@ -39,7 +39,7 @@ class Kleistad_Public {
 	 *
 	 * @var string url voor Ajax callbacks
 	 */
-	private static $url;
+	private $url;
 
 	/**
 	 * De kleistad plugin opties.
@@ -53,8 +53,8 @@ class Kleistad_Public {
 	 *
 	 * @return string url voor endpoints
 	 */
-	public static function base_url() {
-		return rest_url( self::$url );
+	public function base_url() {
+		return rest_url( $this->url );
 	}
 
 	/**
@@ -195,14 +195,15 @@ class Kleistad_Public {
 	 *
 	 * @since    4.0.87
 	 *
-	 * @param      string $plugin_name       The name of the plugin.
-	 * @param      string $version    The version of this plugin.
+	 * @param      string $plugin_name   The name of the plugin.
+	 * @param      string $version       The version of this plugin.
+	 * @param      array  $options       De plugin options.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $options ) {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
-		self::$url         = 'kleistad/v' . $version;
-		$this->options     = get_option( 'kleistad-opties' );
+		$this->options     = $options;
+		$this->url         = 'kleistad/v' . $version;
 		date_default_timezone_set( 'Europe/Amsterdam' );
 
 	}
@@ -243,7 +244,7 @@ class Kleistad_Public {
 		wp_localize_script(
 			$this->plugin_name . 'reservering', 'kleistadData', [
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
-				'base_url'        => self::base_url(),
+				'base_url'        => $this->base_url(),
 				'success_message' => 'de reservering is geslaagd!',
 				'error_message'   => 'het was niet mogelijk om de reservering uit te voeren',
 			]
@@ -251,7 +252,7 @@ class Kleistad_Public {
 		wp_localize_script(
 			$this->plugin_name . 'recept', 'kleistadData', [
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
-				'base_url'        => self::base_url(),
+				'base_url'        => $this->base_url(),
 				'success_message' => 'de recepten konden worden opgevraagd!',
 				'error_message'   => 'het was niet mogelijk om de recepten uit de database op te vragen',
 			]
@@ -265,7 +266,7 @@ class Kleistad_Public {
 	 */
 	public function register_endpoints() {
 		register_rest_route(
-			self::$url, '/reserveer', [
+			$this->url, '/reserveer', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_public_reservering', 'callback_muteer' ],
 				'args'                => [
@@ -306,7 +307,7 @@ class Kleistad_Public {
 			]
 		);
 		register_rest_route(
-			self::$url, '/show', [
+			$this->url, '/show', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_public_reservering', 'callback_show' ],
 				'args'                => [
@@ -327,7 +328,7 @@ class Kleistad_Public {
 		);
 
 		register_rest_route(
-			self::$url, '/recept', [
+			$this->url, '/recept', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_public_recept', 'callback_recept' ],
 				'args'                => [
@@ -342,7 +343,7 @@ class Kleistad_Public {
 		);
 
 		register_rest_route(
-			self::$url, '/betaling', [
+			$this->url, '/betaling', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_betalen', 'callback_betaling_verwerkt' ],
 				'args'                => [
@@ -357,7 +358,7 @@ class Kleistad_Public {
 		);
 
 		register_rest_route(
-			self::$url, '/herhaalbetaling', [
+			$this->url, '/herhaalbetaling', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_betalen', 'callback_herhaalbetaling_verwerkt' ],
 				'args'                => [
@@ -372,7 +373,7 @@ class Kleistad_Public {
 		);
 
 		register_rest_route(
-			self::$url, '/ondemandbetaling', [
+			$this->url, '/ondemandbetaling', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_betalen', 'callback_ondemandbetaling_verwerkt' ],
 				'args'                => [
@@ -603,7 +604,7 @@ class Kleistad_Public {
 		}
 
 		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
-		$form_object = new $form_class( $this->plugin_name, $atts );
+		$form_object = new $form_class( $this->plugin_name, $atts, $this->options );
 
 		$betaald = filter_input( INPUT_GET, 'betaald' );
 		if ( ! is_null( $betaald ) ) {

@@ -221,7 +221,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $wijziging = '' ) {
-		$options = get_option( 'kleistad-opties' );
+		$options = Kleistad::get_options();
 		$abonnee = get_userdata( $this->_abonnee_id );
 		$to      = "$abonnee->first_name $abonnee->last_name <$abonnee->user_email>";
 		return Kleistad_public::compose_email(
@@ -319,7 +319,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	private function herhaalbetalen( $datum ) {
 		$betalen = new Kleistad_Betalen();
-		$options = get_option( 'kleistad-opties' );
+		$options = Kleistad::get_options();
 
 		return $betalen->herhaalorder(
 			$this->_abonnee_id,
@@ -356,7 +356,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return float Het bedrag.
 	 */
 	public function overbrugging() {
-		$options = get_option( 'kleistad-opties' );
+		$options = Kleistad::get_options();
 		if ( '1' === date( 'j', $this->start_datum ) ) {
 			$bedrag = $options[ $this->soort . '_abonnement' ];
 		} else {
@@ -487,7 +487,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function info() {
 		$betalen = new Kleistad_Betalen();
-		$info = $betalen->info( $this->_abonnee_id );
+		$info    = $betalen->info( $this->_abonnee_id );
 		return ( false !== $info ) ? $info : '';
 	}
 
@@ -533,7 +533,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
-		$options             = get_option( 'kleistad-opties' );
+		$options             = Kleistad::get_options();
 		$vervolg_datum       = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ) - 7, intval( date( 'Y', $start_datum ) ) );
 		$driemaand_datum     = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ), intval( date( 'Y', $start_datum ) ) );
 		$this->start_datum   = $start_datum;

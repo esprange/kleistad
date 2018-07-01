@@ -32,7 +32,7 @@ class Kleistad_Betalen {
 	 * @since      4.2.0
 	 */
 	public function __construct() {
-		$options = get_option( 'kleistad-opties' );
+		$options = Kleistad::get_options();
 
 		$this->mollie = new \Mollie\Api\MollieApiClient();
 
