@@ -189,7 +189,7 @@ else :
 				</div>
 				<div class="kleistad_col_7">
 					<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
-					<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">Ik betaal € 0.01 en machtig daarmee Kleistad tot maandelijkse incasso van het abonnement.</label>
+					<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">Ik betaal € 0.01 en machtig daarmee Kleistad om in het vervolg het abonnementsgeld maandelijks per SEPA incasso automatisch af te schrijven van mijn bankrekening.</label>
 				</div>
 			</div>
 			<div class="kleistad_row">

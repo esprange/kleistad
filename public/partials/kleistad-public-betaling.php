@@ -170,7 +170,7 @@ if ( isset( $data['actie'] ) ) :
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_10">
-				<p><strong>Hierbij machtig ik Kleistad om in het vervolg het abonnementsgeld maandelijks automatisch af te schrijven. Ik kan dit achteraf nog altijd aanpassen.</strong></p>
+				<p><strong>Tevens machtig ik hierbij Kleistad om in het vervolg het abonnementsgeld maandelijks per SEPA incasso automatisch af te schrijven van mijn bankrekening. Ik kan dit achteraf nog altijd aanpassen.</strong></p>
 			</div>
 		</div>
 		<div class ="kleistad_row">
