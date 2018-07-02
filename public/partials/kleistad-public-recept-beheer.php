@@ -171,7 +171,7 @@ else :
 			<select style="display: none;">
 			<?php
 			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
-			$terms            = get_terms(
+			$terms            = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
 				[
 					'taxonomy'   => 'kleistad_recept_cat',
 					'hide_empty' => false,

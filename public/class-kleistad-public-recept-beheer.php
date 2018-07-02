@@ -278,6 +278,8 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 	 * @return \WP_Error|string
 	 *
 	 * @since   4.1.0
+	 *
+	 * @suppress PhanTypeInvalidDimOffset
 	 */
 	public function save( $data ) {
 		$error = new WP_Error();
@@ -334,7 +336,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 				}
 				$recept = get_post( $data['recept']['id'] );
 				if ( ! is_null( $recept ) ) {
-					$recept->post_title   = $data['recept']['titel'];
+					$recept->post_title   = (string) $data['recept']['titel'];
 					$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
 					$recept->post_content = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
 					$error                = wp_update_post( $recept, true );
