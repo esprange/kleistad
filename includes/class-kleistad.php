@@ -94,7 +94,9 @@ class Kleistad {
 					return true;
 				}
 				return false;
-			}
+			},
+			true, // Throw error if registration fails.
+			false // Prepend this loader.
 		);
 	}
 
