@@ -102,6 +102,7 @@ class Kleistad_Admin {
 	 *
 	 * @since 4.0.87
 	 * @param object $user unused.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function use_profile_field( $user ) {
 		if ( ! current_user_can( 'edit_users' ) ) {
@@ -132,6 +133,7 @@ class Kleistad_Admin {
 	 * @param array  $errors unused.
 	 * @param int    $update unused.
 	 * @param object $user unused.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function check_role( &$errors, $update, &$user ) {
 		if ( ( get_the_author_meta( 'kleistad_disable_user', $user->ID ) === 1 ) ) {
@@ -159,6 +161,7 @@ class Kleistad_Admin {
 	 * @param string $column_name de kolom.
 	 * @param int    $user_id het user_id.
 	 * @return string
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function manage_users_column_content( $empty, $column_name, $user_id ) {
 
@@ -216,6 +219,7 @@ class Kleistad_Admin {
 	 *
 	 * @param string $email Het email adres van de te exporteren persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function exporter( $email, $page = 1 ) {
 		$export_items = [];
@@ -244,6 +248,7 @@ class Kleistad_Admin {
 	 *
 	 * @param string $email Het email adres van de te verwijderen persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function eraser( $email, $page = 1 ) {
 		$count        = 0;
@@ -404,6 +409,7 @@ class Kleistad_Admin {
 	 * Toon en verwerk oven gegevens
 	 *
 	 * @since    4.0.87
+	 * @suppress PhanUnusedVariable
 	 */
 	public function ovens_form_page_handler() {
 		$message = '';
@@ -458,6 +464,7 @@ class Kleistad_Admin {
 	 * Toon het oven formulier in een meta box
 	 *
 	 * @param array $item de oven.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function ovens_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-ovens-form-meta-box.php';
@@ -500,6 +507,7 @@ class Kleistad_Admin {
 	 * Toon en verwerk ingevoerde abonnee gegevens
 	 *
 	 * @since    4.3.0
+	 * @suppress PhanUnusedVariable
 	 */
 	public function abonnees_form_page_handler() {
 		$message = '';
@@ -593,6 +601,7 @@ class Kleistad_Admin {
 	 * @since    4.3.0
 	 *
 	 * @param array $item de abonnee.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function abonnees_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-abonnees-form-meta-box.php';
@@ -605,6 +614,7 @@ class Kleistad_Admin {
 	 *
 	 * @param array $item de abonnee.
 	 * @return bool|string
+	 * @suppress PhanUnusedPrivateMethodParameter
 	 */
 	private function validate_abonnee( $item ) {
 		$messages = [];
@@ -619,6 +629,7 @@ class Kleistad_Admin {
 	 * Overzicht regelingen page handler
 	 *
 	 * @since    4.0.87
+	 * @suppress PhanUnusedVariable
 	 */
 	public function regelingen_page_handler() {
 		$message = '';
@@ -642,6 +653,7 @@ class Kleistad_Admin {
 	 * Toon en verwerk regelingen
 	 *
 	 * @since    4.0.87
+	 * @suppress PhanUnusedVariable
 	 */
 	public function regelingen_form_page_handler() {
 
@@ -713,6 +725,7 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 *
 	 * @param array $item de regeling.
+	 * @suppress PhanUnusedPublicMethodParameter, PhanUnusedVariable
 	 */
 	public function regelingen_form_meta_box_handler( $item ) {
 		$gebruikers = get_users(
@@ -758,6 +771,7 @@ class Kleistad_Admin {
 	 * Overzicht stooksaldo page handler
 	 *
 	 * @since    4.0.87
+	 * @suppress PhanUnusedVariable
 	 */
 	public function stooksaldo_page_handler() {
 		$table = new Kleistad_Admin_Stooksaldo();
@@ -771,6 +785,7 @@ class Kleistad_Admin {
 	 * Toon en verwerk stooksaldo
 	 *
 	 * @since    4.0.87
+ 	 * @suppress PhanUnusedPublicMethodParameter, PhanUnusedVariable
 	 */
 	public function stooksaldo_form_page_handler() {
 
@@ -822,6 +837,7 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 *
 	 * @param array $item de stooksaldo.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function stooksaldo_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-stooksaldo-form-meta-box.php';
