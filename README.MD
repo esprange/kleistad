@@ -35,6 +35,9 @@ Plaats de shortcodes in de pagina's
 ## Changelog ##
 ### 4.4.0 ###
 * In admin functie overzicht abonnees, nu informatie vanuit Mollie toegevoegd.
+* Code optimalisatie zodat de kleistad opties maar eenmalig opgehaald worden uit de database.
+* Code optimalisatie van Mollie callback
+* Bugfixes, o.a. dagdelenkaart
 ### 4.3.12 ###
 * Aanpassing ingeval betalingswijze wordt gewijzigd na pauzeren abonnement. Herstart incasso dan per herstartdatum ipv. eerste dag volgende maand.
 ### 4.3.11 ###

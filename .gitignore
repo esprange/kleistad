@@ -21,5 +21,6 @@ package-lock.json
 Thumbs.db
 wp-cli.local.yml
 
-# Phan analyse file
+# Phan analyse file and files listing
 analysis.txt
+files.lst
