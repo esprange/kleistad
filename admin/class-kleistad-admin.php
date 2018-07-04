@@ -785,7 +785,7 @@ class Kleistad_Admin {
 	 * Toon en verwerk stooksaldo
 	 *
 	 * @since    4.0.87
- 	 * @suppress PhanUnusedPublicMethodParameter, PhanUnusedVariable
+	 * @suppress PhanUnusedPublicMethodParameter, PhanUnusedVariable
 	 */
 	public function stooksaldo_form_page_handler() {
 
