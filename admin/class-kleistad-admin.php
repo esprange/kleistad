@@ -280,10 +280,12 @@ class Kleistad_Admin {
 	public function check_update( $transient ) {
 		if ( ! empty( $transient->checked ) ) {
 			$obj = $this->get_remote( 'version' );
-			if ( version_compare( $this->version, $obj->new_version, '<' ) ) {
-				$transient->response[ $obj->plugin ] = $obj;
-			} else {
-				$transient->no_update[ $obj->plugin ] = $obj;
+			if ( false !== $obj ) {
+				if ( version_compare( $this->version, $obj->new_version, '<' ) ) {
+					$transient->response[ $obj->plugin ] = $obj;
+				} else {
+					$transient->no_update[ $obj->plugin ] = $obj;
+				}
 			}
 		}
 		return $transient;
@@ -304,7 +306,10 @@ class Kleistad_Admin {
 			isset( $arg->slug ) && $arg->slug === $this->plugin_name ) {
 			$plugin_info  = get_site_transient( 'update_plugins' );
 			$arg->version = $plugin_info->checked[ $this->plugin_name . '/' . $this->plugin_name . '.php' ];
-			return $this->get_remote( 'info' );
+			$info         = $this->get_remote( 'info' );
+			if ( false !== $info ) {
+				return $info;
+			}
 		}
 		return $obj;
 	}
