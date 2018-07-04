@@ -153,7 +153,6 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$dagdelenkaart->betalen(
-				$this->options['dagdelenkaart'],
 				'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden'
 			);
 		} else {
