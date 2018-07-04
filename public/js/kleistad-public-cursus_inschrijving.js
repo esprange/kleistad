@@ -41,6 +41,7 @@
         } else {
             $( '#kleistad_cursus_betalen' ).show();
             $( '#kleistad_cursus_lopend' ).hide();
+            $( '#kleistad_submit' ).html( 'betalen' );
         }
     }
 

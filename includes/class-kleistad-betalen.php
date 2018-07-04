@@ -24,7 +24,7 @@ class Kleistad_Betalen {
 	 *
 	 * @var object het mollie service object.
 	 */
-	public $mollie;
+	private $mollie;
 
 	/**
 	 * De constructor
@@ -225,6 +225,9 @@ class Kleistad_Betalen {
 	public function heeft_mandaat( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 		if ( '' !== $mollie_gebruiker_id ) {
+			/**
+			 * To do: onderstaand kan sinds mollie 2.05 vervangen worden door gebruiker..hasActiveMandate().
+			 */
 			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
 			$mandaten         = $mollie_gebruiker->mandates();
 			foreach ( $mandaten as $mandaat ) {
@@ -342,6 +345,7 @@ class Kleistad_Betalen {
 	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return \WP_REST_response de response.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function callback_herhaalbetaling_verwerkt( WP_REST_Request $request ) {
 		// Voorlopig geen acties gedefinieerd.
@@ -353,6 +357,7 @@ class Kleistad_Betalen {
 	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return \WP_REST_response de response.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function callback_ondemandbetaling_verwerkt( WP_REST_Request $request ) {
 		// Voorlopig geen acties gedefinieerd.
@@ -366,52 +371,20 @@ class Kleistad_Betalen {
 	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return \WP_REST_response de response.
+	 * @suppress PhanUnusedVariable
 	 */
 	public static function callback_betaling_verwerkt( WP_REST_Request $request ) {
 		$mollie_betaling_id = $request->get_param( 'id' );
 
 		$object   = new static();
 		$betaling = $object->mollie->payments->get( $mollie_betaling_id );
-		if ( $betaling->isPaid() && ! $betaling->hasRefunds() && ! $betaling->hasChargeBacks() ) {
-			/**
-			 * Alleen actie als er daadwerkelijk betaald is, niet als er terugbetaald is o.i.d.
-			 *
-			 * Cursus        format : Cx-y-d-z waarbij x is cursus-id, y is gebruiker-id, d de startdatum en z type betaling.
-			 * Abonnee       format : Ax-y waarbij x is gebruiker-id en y geeft aan of het een (her)start betreft
-			 * Stooksaldo    format : Sx-d waarbij x is gebruiker-id en d de melddatum
-			 * Dagdelenkaart format : Kx-d waarbij x is gebruiker-id en d de aankoopdatum
-			 */
-			$order_id = $betaling->metadata->order_id;
-			switch ( $order_id[0] ) {
-				case 'A': // Een abonnement, de vervolg betalingen als subscriptie inplannen.
-					list( $gebruiker_id, $parameter ) = sscanf( $order_id, 'A%d-%s' );
-					$abonnement                       = new Kleistad_Abonnement( $gebruiker_id );
-					$abonnement->callback( $parameter );
-					break;
-				case 'C': // Een cursus.
-					list( $cursus_id, $gebruiker_id, $startdatum, $parameter ) = sscanf( $order_id, 'C%d-%d-%d-%s' );
-					$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus_id );
-					$inschrijving->callback( $parameter );
-					break;
-				case 'S': // Het stooksaldo.
-					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'S%d-%d' );
-					$saldo                         = new Kleistad_Saldo( $gebruiker_id );
-					$saldo->callback( $betaling->amount->value );
-					break;
-				case 'K': // Een dagdelenkaart.
-					list ( $gebruiker_id, $datum ) = sscanf( $order_id, 'K%d-%d' );
-					$dagdelenkaart                 = new Kleistad_Dagdelenkaart( $gebruiker_id );
-					$dagdelenkaart->callback();
-					break;
-				default:
-					// Zou niet mogen.
-					break;
-			}
+		$status   = $betaling->isPaid() && ! $betaling->hasRefunds() && ! $betaling->hasChargeBacks();
+		$class    = strtok( $betaling->metadata->order_id, '-' );
+		if ( class_exists( $class ) ) {
+			$parameters = explode( '-', substr( $betaling->metadata->order_id, strlen( $class ) + 2 ) );
+			$class::callback( $parameters, $betaling->amount->value, $status );
 		}
-		if ( $betaling->isExpired() || $betaling->isCanceled() || $betaling->isFailed() ) {
-			// Doe voorlopig niets maar hier zouden acties kunnen zijn om iets terug te rollen.
-			$niets = false;
-		}
+		// Andere status mogelijk a.g.v. isExpired, isCanceled of isFailed.
 		return new WP_REST_response(); // Geeft default http status 200 terug.
 	}
 }

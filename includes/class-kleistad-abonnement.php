@@ -284,7 +284,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		// Doe de eerste betaling om het mandaat te verkrijgen.
 		$betalen->order(
 			$this->_abonnee_id,
-			$this->code . '-incasso',
+			__CLASS__ . '-' . $this->code . '-incasso',
 			$this->overbrugging(),
 			'Kleistad abonnement ' . $this->code . ' periode tot ' . strftime( '%d-%m-%y', $this->incasso_datum ),
 			'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
@@ -509,7 +509,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$this->save();
 			$betalen->order(
 				$this->_abonnee_id,
-				$this->code . '-incasso',
+				__CLASS__ . '-' . $this->code . '-incasso',
 				0.01,
 				'Kleistad abonnement ' . $this->code,
 				'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging',
@@ -546,7 +546,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$betalen = new Kleistad_Betalen();
 			$betalen->order(
 				$this->_abonnee_id,
-				$this->code . '-start_ideal',
+				__CLASS__ . '-' . $this->code . '-start_ideal',
 				$options[ $this->soort . '_abonnement' ] * 3 + $options['borg_kast'],
 				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $driemaand_datum ) . ' en borg',
 				'Bedankt voor de betaling! De abonnement inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
@@ -609,26 +609,30 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param string $type Geeft aan of het een eerste start of een herstart betreft.
+	 * @param array  $parameters De parameters 0: gebruiker-id, 1: de melddatum.
+	 * @param string $bedrag     Geeft aan of het een eerste start of een herstart betreft.
+	 * @param bool   $betaald    Of er werkelijk betaald is.
 	 */
-	public function callback( $type ) {
-		if ( ! Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
-			$this->autoriseer( true );
-		}
-		if ( 'incasso' === $type ) {
-			// Een succesvolle betaling van een vervolg.
-			if ( $this->herstart_datum > $this->incasso_datum ) {
-				$this->subscriptie_id = $this->herhaalbetalen( $this->herstart_datum );
-			} else {
-				$this->subscriptie_id = $this->herhaalbetalen( $this->incasso_datum );
+	public static function callback( $parameters, $bedrag, $betaald = true ) {
+		if ( $betaald ) {
+			$abonnement = new static( intval( $parameters[0] ) );
+			if ( ! Kleistad_Roles::reserveer( $parameters[0] ) ) {
+				$abonnement->autoriseer( true );
 			}
-			$email = '_betaalwijze_ideal';
-		} else {
-			$email = '_' . $type;
+			if ( 'incasso' === $parameters[1] ) {
+				// Een succesvolle betaling van een vervolg.
+				if ( $abonnement->herstart_datum > $abonnement->incasso_datum ) {
+					$abonnement->subscriptie_id = $abonnement->herhaalbetalen( $abonnement->herstart_datum );
+				} else {
+					$abonnement->subscriptie_id = $abonnement->herhaalbetalen( $abonnement->incasso_datum );
+				}
+				$email = '_betaalwijze_ideal';
+			} else {
+				$email = '_' . $parameters[1];
+			}
+			$abonnement->email( $email );
+			$abonnement->save();
 		}
-
-		$this->email( $email );
-		$this->save();
 	}
 
 	/**

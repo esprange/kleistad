@@ -175,7 +175,7 @@ class Kleistad_Saldo {
 		$code     = "S$this->_gebruiker_id-" . strftime( '%y%m%d' );
 		$betaling->order(
 			$this->_gebruiker_id,
-			$code,
+			__CLASS__ . '-' . $code,
 			$bedrag,
 			'Kleistad stooksaldo ' . $code,
 			$bericht
@@ -209,11 +209,16 @@ class Kleistad_Saldo {
 	 *
 	 * @since      4.2.0
 	 *
-	 * @param float $bedrag Het bedrag dat betaald is.
+	 * @param array $parameters De parameters 0: gebruiker-id, 1: of het een herstart betreft.
+	 * @param float $bedrag     Het bedrag dat betaald is.
+	 * @param bool  $betaald    Of er werkelijk betaald is.
 	 */
-	public function callback( $bedrag ) {
-		$this->bedrag = $this->bedrag + $bedrag;
-		$this->save( 'betaling per iDeal' );
-		$this->email( '_ideal', $bedrag );
+	public static function callback( $parameters, $bedrag, $betaald = true ) {
+		if ( $betaald ) {
+			$saldo         = new static( intval( $parameters[0] ) );
+			$saldo->bedrag = $saldo->bedrag + $bedrag;
+			$saldo->save( 'betaling per iDeal' );
+			$saldo->email( '_ideal', $bedrag );
+		}
 	}
 }

@@ -141,7 +141,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 				'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
 				'dagdelenkaart_code'      => $this->code,
 				'dagdelenkaart_opmerking' => $this->opmerking,
-				'dagdelenkaart_prijs'     => number_format_i18n( 3 * $options['dagdelenkaart'], 2 ),
+				'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
 			]
 		);
 	}
@@ -151,40 +151,36 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 *
 	 * @since      4.3.0
 	 *
-	 * @param int    $start_datum Datum waarop dagdelenkaart gestart wordt.
-	 * @param string $betaalwijze Ideal of bank.
-	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param string $bericht  Te tonen melding als betaling gelukt.
 	 */
-	public function betalen( $start_datum, $betaalwijze, $admin = false ) {
-		$this->start_datum = $start_datum;
-		$options           = Kleistad::get_options();
+	public function betalen( $bericht ) {
+		$options = Kleistad::get_options();
 
-		if ( 'ideal' === $betaalwijze ) {
-			$this->save();
-
-			$betalen = new Kleistad_Betalen();
-			$betalen->order(
-				$this->_gebruiker_id,
-				$this->code,
-				$options['dagdelenkaart'],
-				'Kleistad dagdelenkaart ' . $this->code,
-				'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
-				false
-			);
-		} else {
-			$this->email( '_bank' );
-		}
-		return true;
+		$betalen = new Kleistad_Betalen();
+		$betalen->order(
+			$this->_gebruiker_id,
+			__CLASS__ . '-' . $this->code,
+			$options['dagdelenkaart'],
+			'Kleistad dagdelenkaart ' . $this->code,
+			$bericht,
+			false
+		);
 	}
 
 	/**
 	 * Activeer een dagdelenkaart. Wordt aangeroepen vanuit de betaal callback.
 	 *
 	 * @since      4.3.0
+	 *
+	 * @param array $parameters De parameters 0: gebruiker-id, 1: de aankoopdatum.
+	 * @param float $bedrag     Het bedrag dat betaald is.
+	 * @param bool  $betaald    Of er werkelijk betaald is.
 	 */
-	public function callback() {
-		$this->email( '_ideal' );
-		$this->save();
+	public static function callback( $parameters, $bedrag, $betaald = true ) {
+		if ( $betaald ) {
+			$dagdelenkaart = new static( intval( $parameters[0] ) );
+			$dagdelenkaart->email( '_ideal' );
+		}
 	}
 
 	/**

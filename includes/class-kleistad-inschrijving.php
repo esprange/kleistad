@@ -139,6 +139,8 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'c_betaald':
 			case 'geannuleerd':
 				return 1 === intval( $this->_data[ $attribuut ] );
+			case 'gedeeld':
+				return 0 < $this->_cursus->inschrijfkosten;
 			default:
 				return $this->_data[ $attribuut ];
 		}
@@ -264,10 +266,10 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 
 		$betaling   = new Kleistad_Betalen();
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
-		if ( $inschrijving && 0 < $this->_cursus->inschrijfkosten ) {
+		if ( $inschrijving && $this->gedeeld ) {
 			$betaling->order(
 				$this->_cursist_id,
-				$this->code . '-inschrijving',
+				__CLASS__ . '-' . $this->code . '-inschrijving',
 				$this->aantal * $this->_cursus->inschrijfkosten,
 				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
 				$bericht
@@ -275,7 +277,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		} else {
 			$betaling->order(
 				$this->_cursist_id,
-				$this->code . '-cursus',
+				__CLASS__ . '-' . $this->code . '-cursus',
 				$this->aantal * $this->_cursus->cursuskosten,
 				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
 				$bericht
@@ -299,26 +301,37 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param string $type Betaling, cursus of inschrijfkosten.
+	 * @param array $parameters De parameters 0: cursus-id, 1: gebruiker-id, 2: startdatum, 3: type betaling.
+	 * @param float $bedrag     Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool  $betaald    Of er werkelijk betaald is.
 	 */
-	public function callback( $type ) {
-		if ( 'inschrijving' === $type ) {
-			$this->i_betaald = true;
-			$this->ingedeeld = true;
-			$this->email( 'indeling' );
-		} elseif ( 'cursus' === $type ) {
-			$this->i_betaald = true;
-			$this->c_betaald = true;
-			$this->ingedeeld = true;
-			if ( 0 < $this->_cursus->inschrijfkosten ) {
-				$this->email( 'betaling_ideal' );
-			} else {
-				$this->email( 'indeling' );
+	public static function callback( $parameters, $bedrag, $betaald = true ) {
+		if ( $betaald ) {
+			$inschrijving = new static( intval( $parameters[1] ), intval( $parameters[0] ) );
+			switch ( $parameters[3] ) {
+				case 'inschrijving':
+					$inschrijving->i_betaald = true;
+					$inschrijving->ingedeeld = true;
+					$inschrijving->email( 'indeling' );
+					$inschrijving->save();
+					break;
+
+				case 'cursus':
+					$inschrijving->i_betaald = true;
+					$inschrijving->c_betaald = true;
+					$inschrijving->ingedeeld = true;
+					if ( $inschrijving->gedeeld ) {
+						$inschrijving->email( 'betaling_ideal' );
+					} else {
+						$inschrijving->email( 'indeling' );
+					}
+					$inschrijving->save();
+					break;
+
+				default:
+					break;
 			}
-		} else {
-			return; // Dit zou niet mogen.
 		}
-		$this->save();
 	}
 
 	/**

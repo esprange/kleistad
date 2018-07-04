@@ -39,7 +39,7 @@ class Kleistad_Public {
 	 *
 	 * @var string url voor Ajax callbacks
 	 */
-	private $url;
+	private static $url;
 
 	/**
 	 * De kleistad plugin opties.
@@ -53,8 +53,8 @@ class Kleistad_Public {
 	 *
 	 * @return string url voor endpoints
 	 */
-	public function base_url() {
-		return rest_url( $this->url );
+	public static function base_url() {
+		return rest_url( self::$url );
 	}
 
 	/**
@@ -203,7 +203,7 @@ class Kleistad_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		$this->options     = $options;
-		$this->url         = 'kleistad/v' . $version;
+		self::$url         = 'kleistad/v' . $version;
 		date_default_timezone_set( 'Europe/Amsterdam' );
 
 	}
@@ -244,7 +244,7 @@ class Kleistad_Public {
 		wp_localize_script(
 			$this->plugin_name . 'reservering', 'kleistadData', [
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
-				'base_url'        => $this->base_url(),
+				'base_url'        => self::base_url(),
 				'success_message' => 'de reservering is geslaagd!',
 				'error_message'   => 'het was niet mogelijk om de reservering uit te voeren',
 			]
@@ -252,7 +252,7 @@ class Kleistad_Public {
 		wp_localize_script(
 			$this->plugin_name . 'recept', 'kleistadData', [
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
-				'base_url'        => $this->base_url(),
+				'base_url'        => self::base_url(),
 				'success_message' => 'de recepten konden worden opgevraagd!',
 				'error_message'   => 'het was niet mogelijk om de recepten uit de database op te vragen',
 			]
@@ -266,7 +266,7 @@ class Kleistad_Public {
 	 */
 	public function register_endpoints() {
 		register_rest_route(
-			$this->url, '/reserveer', [
+			self::$url, '/reserveer', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_public_reservering', 'callback_muteer' ],
 				'args'                => [
@@ -307,7 +307,7 @@ class Kleistad_Public {
 			]
 		);
 		register_rest_route(
-			$this->url, '/show', [
+			self::$url, '/show', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_public_reservering', 'callback_show' ],
 				'args'                => [
@@ -328,7 +328,7 @@ class Kleistad_Public {
 		);
 
 		register_rest_route(
-			$this->url, '/recept', [
+			self::$url, '/recept', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_public_recept', 'callback_recept' ],
 				'args'                => [
@@ -343,7 +343,7 @@ class Kleistad_Public {
 		);
 
 		register_rest_route(
-			$this->url, '/betaling', [
+			self::$url, '/betaling', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_betalen', 'callback_betaling_verwerkt' ],
 				'args'                => [
@@ -358,7 +358,7 @@ class Kleistad_Public {
 		);
 
 		register_rest_route(
-			$this->url, '/herhaalbetaling', [
+			self::$url, '/herhaalbetaling', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_betalen', 'callback_herhaalbetaling_verwerkt' ],
 				'args'                => [
@@ -373,7 +373,7 @@ class Kleistad_Public {
 		);
 
 		register_rest_route(
-			$this->url, '/ondemandbetaling', [
+			self::$url, '/ondemandbetaling', [
 				'methods'             => 'POST',
 				'callback'            => [ 'kleistad_betalen', 'callback_ondemandbetaling_verwerkt' ],
 				'args'                => [
