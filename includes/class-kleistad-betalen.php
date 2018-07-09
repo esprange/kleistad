@@ -225,16 +225,8 @@ class Kleistad_Betalen {
 	public function heeft_mandaat( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 		if ( '' !== $mollie_gebruiker_id ) {
-			/**
-			 * To do: onderstaand kan sinds mollie 2.05 vervangen worden door gebruiker..hasActiveMandate().
-			 */
 			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			$mandaten         = $mollie_gebruiker->mandates();
-			foreach ( $mandaten as $mandaat ) {
-				if ( $mandaat->isValid() ) {
-					return true;
-				}
-			}
+			return $mollie_gebruiker->hasValidMandate();
 		}
 		return false;
 	}
