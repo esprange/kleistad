@@ -16,7 +16,9 @@
              */
             $( '#kleistad_start_datum' ).datepicker(
                 {
-                    dateFormat: 'dd-mm-yy'
+					dateFormat: 'dd-mm-yy',
+					minDate: 0,
+					maxDate: '+3M'
                 }
             );
 
