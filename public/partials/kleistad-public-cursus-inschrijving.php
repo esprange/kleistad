@@ -37,18 +37,11 @@
 			// Check eerst welke cursus geselecteerd moet staan.
 			foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
 				if ( $cursus['selecteerbaar'] ) {
-					// De eerste die selecteerbaar is als er nog niets eerder geselecteerd was.
-					if ( 0 === intval( $data['input']['cursus_id'] ) ) {
-						$checked_id = $cursus_id;
-						break;
-					}
 					// De eerder geselecteerde als die nog steeds selecteerbaar is.
 					if ( intval( $data['input']['cursus_id'] ) === $cursus_id ) {
 						$checked_id = $cursus_id;
 						break;
 					}
-					// De eerste die selecteerbaar is.
-					$checked_id = $cursus_id;
 				}
 			endforeach;
 			// Toon nu de cursussen en selecteer de cursus. De rest wordt met javascript gedaan.
@@ -149,7 +142,8 @@
 			</div>
 			<div class="kleistad_row" style="padding-top:20px;">
 				<div class="kleistad_col_10">
-					<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" type="submit" >Betalen</button>
+					<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" <?php disabled( ! $checked_id ); ?>type="submit" >Betalen</button>
+					<span id="kleistad_submit_enabler" style="<?php echo esc_attr( ( ! $checked_id ) ? '' : 'display: none' ); ?>" ><strong>Er is nog geen cursus gekozen</strong></span>
 				</div>
 			</div>
 		<?php endif ?>

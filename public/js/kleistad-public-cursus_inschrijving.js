@@ -11,6 +11,8 @@
 		}
 		spin.spinner( { max: cursus.ruimte } );
 		spin.spinner( 'value', aantal );
+		$( '#kleistad_submit_enabler' ).hide();
+		$( '#kleistad_submit' ).prop( 'disabled', false );
 
         bedrag = ( cursus.meer ? aantal : 1 ) * bedrag;
         $( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en word meteen ingedeeld.' );
@@ -18,7 +20,7 @@
     }
 
     function wijzigVelden() {
-        var cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
+		var cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
         $( '#kleistad_cursus_draaien' ).css( 'visibility', 'hidden' );
         $( '#kleistad_cursus_boetseren' ).css( 'visibility', 'hidden' );
         $( '#kleistad_cursus_handvormen' ).css( 'visibility', 'hidden' );
@@ -47,17 +49,23 @@
 
     $( document ).ready(
         function() {
-            wijzigVelden();
+			if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
+				wijzigVelden();
+			}
 
             $( '#kleistad_aantal' ).spinner({
                 min:1,
-                max:$( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ).ruimte,
+                max: ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) ? $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ).ruimte : 1,
                 /* jshint unused:vars */
                 stop: function( event, ui ) {
-                    wijzigTeksten();
+					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
+						wijzigTeksten();
+					}
                 },
                 create: function( event, ui ) {
-                    wijzigTeksten();
+					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
+						wijzigTeksten();
+					}
                 }
             });
 
