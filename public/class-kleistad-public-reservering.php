@@ -177,6 +177,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 							$wijzigbaar    = ( ! $verwerkt && Kleistad_Roles::override() ) || is_super_admin();
 							$verwijderbaar = ! $verwerkt && Kleistad_Roles::override();
 						}
+						if ( 'Onderhoud' === $reservering->soortstook ) {
+							$kleur = 'gray';
+						}
 
 						$gebruiker_info = get_userdata( $reservering->gebruiker_id );
 
