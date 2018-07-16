@@ -48,17 +48,16 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 			$cursus_id    = $param['crss'];
 			$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus_id );
 			if ( $param['hsh'] === $inschrijving->controle() ) {
-				$cursus       = new Kleistad_Cursus( $cursus_id );
-				$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus_id );
-				$data         = [
-					'actie'        => self::ACTIE_RESTANT_CURSUS,
-					'cursist'      => $gebruiker,
-					'cursus'       => $cursus,
-					'inschrijving' => $inschrijving,
-				];
-
 				if ( $inschrijving->c_betaald ) {
 					$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald voor deze cursus. Neem eventueel contact op met Kleistad' );
+				} else {
+					$cursus = new Kleistad_Cursus( $cursus_id );
+					$data   = [
+						'actie'        => self::ACTIE_RESTANT_CURSUS,
+						'cursist'      => $gebruiker,
+						'cursus'       => $cursus,
+						'inschrijving' => $inschrijving,
+					];
 				}
 			} else {
 				$error->add( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
@@ -66,14 +65,14 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 		} elseif ( ! is_null( $param['abo'] ) ) {
 			$abonnement = new Kleistad_Abonnement( $gebruiker_id );
 			if ( $param['hsh'] === $abonnement->controle() ) {
-				$data = [
-					'actie'      => self::ACTIE_VERVOLG_ABONNEMENT,
-					'abonnee'    => $gebruiker,
-					'abonnement' => $abonnement,
-				];
-
 				if ( $abonnement->incasso_actief() ) {
 					$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald voor het vervolg van het abonnement. Neem eventueel contact op met Kleistad' );
+				} else {
+					$data = [
+						'actie'      => self::ACTIE_VERVOLG_ABONNEMENT,
+						'abonnee'    => $gebruiker,
+						'abonnement' => $abonnement,
+					];
 				}
 			} else {
 				$error->add( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
@@ -113,7 +112,7 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 			}
 		} elseif ( self::ACTIE_VERVOLG_ABONNEMENT === $input['actie'] ) {
 			$abonnement = new Kleistad_Abonnement( $input['abonnee_id'] );
-			if ( $abonnement->betalen() ) {
+			if ( $abonnement->incasso_actief() ) {
 				$error->add( 'betaald', 'Volgens onze informatie is er reeds betaald voor het vervolg van het abonnement. Neem eventueel contact op met Kleistad' );
 			}
 		}
