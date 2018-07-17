@@ -142,7 +142,7 @@
 			</div>
 			<div class="kleistad_row" style="padding-top:20px;">
 				<div class="kleistad_col_10">
-					<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" <?php disabled( ! $checked_id ); ?>type="submit" >Betalen</button>
+					<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" <?php disabled( ! $checked_id ); ?> type="submit" >Betalen</button>
 					<span id="kleistad_submit_enabler" style="<?php echo esc_attr( ( ! $checked_id ) ? '' : 'display: none' ); ?>" ><strong>Er is nog geen cursus gekozen</strong></span>
 				</div>
 			</div>
