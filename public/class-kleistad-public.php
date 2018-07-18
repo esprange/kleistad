@@ -680,39 +680,41 @@ class Kleistad_Public {
 		*/
 		foreach ( $reserveringen as &$reservering ) {
 			if ( ! $reservering->verwerkt && $reservering->datum <= strtotime( '- ' . $this->options['termijn'] . ' days 00:00' ) ) {
-				$gebruiker = get_userdata( $reservering->gebruiker_id );
-				$verdeling = $reservering->verdeling;
-				foreach ( $verdeling as &$stookdeel ) {
-					if ( 0 === intval( $stookdeel['id'] ) ) {
-						continue;
-					}
-					$medestoker         = get_userdata( $stookdeel['id'] );
-					$regeling           = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
-					$kosten             = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
-					$prijs              = round( $stookdeel['perc'] / 100 * $kosten, 2 );
-					$stookdeel['prijs'] = $prijs;
+				if ( 'Onderhoud' !== $reservering->soortstook ) {
+					$gebruiker = get_userdata( $reservering->gebruiker_id );
+					$verdeling = $reservering->verdeling;
+					foreach ( $verdeling as &$stookdeel ) {
+						if ( 0 === intval( $stookdeel['id'] ) ) {
+							continue;
+						}
+						$medestoker         = get_userdata( $stookdeel['id'] );
+						$regeling           = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
+						$kosten             = ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling;
+						$prijs              = round( $stookdeel['perc'] / 100 * $kosten, 2 );
+						$stookdeel['prijs'] = $prijs;
 
-					$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
-					$saldo->bedrag = $saldo->bedrag - $prijs;
-					if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $gebruiker->display_name ) ) {
+						$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
+						$saldo->bedrag = $saldo->bedrag - $prijs;
+						if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $gebruiker->display_name ) ) {
 
-						$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
-						self::compose_email(
-							$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
-								'voornaam'   => $medestoker->first_name,
-								'achternaam' => $medestoker->last_name,
-								'stoker'     => $gebruiker->display_name,
-								'bedrag'     => number_format_i18n( $prijs, 2 ),
-								'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
-								'stookdeel'  => $stookdeel['perc'],
-								'stookdatum' => date( 'd-m-Y', $reservering->datum ),
-								'stookoven'  => $ovens[ $reservering->oven_id ]->naam,
-							]
-						);
+							$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
+							self::compose_email(
+								$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
+									'voornaam'   => $medestoker->first_name,
+									'achternaam' => $medestoker->last_name,
+									'stoker'     => $gebruiker->display_name,
+									'bedrag'     => number_format_i18n( $prijs, 2 ),
+									'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
+									'stookdeel'  => $stookdeel['perc'],
+									'stookdatum' => date( 'd-m-Y', $reservering->datum ),
+									'stookoven'  => $ovens[ $reservering->oven_id ]->naam,
+								]
+							);
+						}
 					}
+					$reservering->verdeling = $verdeling;
 				}
-				$reservering->verdeling = $verdeling;
-				$reservering->verwerkt  = true;
+				$reservering->verwerkt = true;
 				$reservering->save();
 			}
 		}
@@ -721,7 +723,7 @@ class Kleistad_Public {
 		* de notificaties uitsturen voor stook die nog niet verwerkt is.
 		*/
 		foreach ( $reserveringen as &$reservering ) {
-			if ( ! $reservering->verwerkt && ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
+			if ( ! $reservering->verwerkt && 'Onderhoud' !== $reservering->soortstook && ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
 
 				$regeling = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
 
