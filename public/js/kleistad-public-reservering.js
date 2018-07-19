@@ -19,10 +19,9 @@
         $( '#kleistad_dag' ).val( formData.dag );
         $( '#kleistad_maand' ).val( formData.maand );
         $( '#kleistad_jaar' ).val( formData.jaar );
-        $( '#kleistad_gebruiker_id' ).val( formData.gebruiker_id );
+        $( '#kleistad_stoker_id' ).val( formData.gebruiker_id );
         $( '#kleistad_programma' ).val( formData.programma );
         $( '#kleistad_stoker' ).html( formData.gebruiker );
-        $( '#kleistad_1e_stoker' ).val( formData.gebruiker_id );
 
         verdelingAantal = Math.max( formData.verdeling.length, 4 );
         aantal = $( '.kleistad_medestoker_row' ).length;
@@ -200,7 +199,7 @@
                     oven_id: $( '#kleistad_oven_id' ).val() * wijzigen,
                     temperatuur: $( '#kleistad_temperatuur' ).val(),
                     soortstook: $( '#kleistad_soortstook' ).val(),
-                    gebruiker_id: $( '#kleistad_gebruiker_id' ).val(),
+                    gebruiker_id: $( '#kleistad_stoker_id' ).val(),
                     programma: $( '#kleistad_programma' ).val(),
                     verdeling: JSON.stringify( verdeling ) /* , opmerking: $('#kleistad_opmerking').val() */
                 }

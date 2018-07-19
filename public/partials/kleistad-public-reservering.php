@@ -31,7 +31,6 @@ else :
 	<div id ="kleistad_oven" class="kleistad_form_popup">
 	<form action="#" method="post">
 		<input id="kleistad_oven_id" type="hidden" >
-		<input type ="hidden" id="kleistad_gebruiker_id" >
 		<table class="kleistad_form">
 			<thead>
 				<tr>
@@ -60,7 +59,20 @@ else :
 				</tr>
 				<tr id="kleistad_stoker_row" >
 					<td><label>Stoker</label></td>
-					<td><span id="kleistad_stoker"><?php echo esc_html( $data['huidige_gebruiker']->display_name ); ?></span><input type="hidden" name="kleistad_stoker_id" id="kleistad_1e_stoker" value="<?php echo esc_attr( $data['huidige_gebruiker']->ID ); ?>" /></td>
+				<?php
+				if ( Kleistad_Roles::override() ) :
+					?>
+					<td><select id="kleistad_stoker_id" name="kleistad_stoker_id" >
+					<?php
+					foreach ( $data['stokers'] as $stoker ) :
+						?>
+						<option value="<?php echo esc_attr( $stoker->id ); ?>" <?php selected( $data['huidige_gebruiker']->ID === $stoker->id ); ?> ><?php echo esc_html( $stoker->display_name ); ?></option>
+					<?php endforeach ?>
+					</select></td>
+				<?php else : ?>
+					<td><input type ="hidden" id="kleistad_stoker_id" >
+						<span id="kleistad_stoker"><?php echo esc_html( $data['huidige_gebruiker']->display_name ); ?></span><input type="hidden" name="kleistad_stoker_id" id="kleistad_1e_stoker" value="<?php echo esc_attr( $data['huidige_gebruiker']->ID ); ?>" /></td>
+				<?php endif ?>
 					<td><input type="number" name="kleistad_stoker_perc" readonly /> %</td>
 				</tr>
 				<tr class="kleistad_medestoker_row" >
@@ -69,10 +81,10 @@ else :
 						<select name="kleistad_stoker_id" class="kleistad_verdeel" >
 							<option value="0" >&nbsp;</option>
 							<?php
-							foreach ( $data['gebruikers'] as $gebruiker ) :
-								if ( Kleistad_Roles::reserveer( $gebruiker->id ) && ( $gebruiker->id !== $data['huidige_gebruiker']->ID || Kleistad_Roles::override() ) ) :
+							foreach ( $data['stokers'] as $medestoker ) :
+								if ( $medestoker->id !== $data['huidige_gebruiker']->ID || Kleistad_Roles::override() ) :
 									?>
-							<option value="<?php echo esc_attr( $gebruiker->id ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
+							<option value="<?php echo esc_attr( $medestoker->id ); ?>"><?php echo esc_html( $medestoker->display_name ); ?></option>
 										<?php
 									endif;
 								endforeach;

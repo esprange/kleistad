@@ -47,15 +47,22 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				return $error;
 			}
 
-			$gebruikers        = get_users(
+			$gebruikers = get_users(
 				[
 					'fields'  => [ 'id', 'display_name' ],
 					'orderby' => [ 'nicename' ],
 				]
 			);
+
+			$stokers = [];
+			foreach ( $gebruikers as $gebruiker ) {
+				if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
+					$stokers[] = $gebruiker;
+				}
+			}
 			$huidige_gebruiker = wp_get_current_user();
 			$data              = [
-				'gebruikers'        => $gebruikers,
+				'stokers'           => $stokers,
 				'oven'              => $oven,
 				'huidige_gebruiker' => $huidige_gebruiker,
 			];
@@ -71,39 +78,21 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
 	 * @return WP_REST_Response Ajax response.
+	 * @suppress PhanUnusedVariable
 	 */
 	public static function callback_show( WP_REST_Request $request ) {
 
+		$maandnaam            = [];
+		$dagnaam              = [];
+		$rows                 = [];
 		$oven_id              = intval( $request->get_param( 'oven_id' ) );
 		$maand                = intval( $request->get_param( 'maand' ) );
 		$jaar                 = intval( $request->get_param( 'jaar' ) );
-		$volgende_maand       = $maand < 12 ? $maand + 1 : 1;
-		$vorige_maand         = $maand > 1 ? $maand - 1 : 12;
-		$volgende_maand_jaar  = $maand < 12 ? $jaar : $jaar + 1;
-		$vorige_maand_jaar    = $maand > 1 ? $jaar : $jaar - 1;
-		$maandnaam            = [
-			1  => 'januari',
-			2  => 'februari',
-			3  => 'maart',
-			4  => 'april',
-			5  => 'mei',
-			6  => 'juni',
-			7  => 'juli',
-			8  => 'augustus',
-			9  => 'september',
-			10 => 'oktober',
-			11 => 'november',
-			12 => 'december',
-		];
-		$dagnamen             = [
-			1 => 'maandag',
-			2 => 'dinsdag',
-			3 => 'woensdag',
-			4 => 'donderdag',
-			5 => 'vrijdag',
-			6 => 'zaterdag',
-			7 => 'zondag',
-		];
+		$volgende_maand       = intval( date( 'n', mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) );
+		$vorige_maand         = intval( date( 'n', mktime( 0, 0, 0, $maand - 1, 1, $jaar ) ) );
+		$volgende_maand_jaar  = intval( date( 'Y', mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) );
+		$vorige_maand_jaar    = intval( date( 'Y', mktime( 0, 0, 0, $maand - 1, 1, $jaar ) ) );
+		$aantaldagen          = intval( date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) ) );
 		$huidige_gebruiker_id = get_current_user_id();
 		$huidige_gebruiker    = get_userdata( $huidige_gebruiker_id );
 		$oven                 = new Kleistad_Oven( $oven_id );
@@ -114,20 +103,22 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'oven_id' => $oven_id,
 			]
 		);
-		$rows                 = [];
-		$aantaldagen          = date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) );
-
+		for ( $maandnummer = 1; $maandnummer <= 12; $maandnummer++ ) {
+			$maandnaam[ $maandnummer ] = strftime( '%B', mktime( 0, 0, 0, $maandnummer, 1, 2018 ) );
+		}
+		for ( $dagnummer = 1; $dagnummer <= 7; $dagnummer++ ) {
+			$dagnaam[ $dagnummer ] = strftime( '%A', mktime( 0, 0, 0, 1, $dagnummer, 2018 ) );
+		}
 		for ( $dag = 1; $dag <= $aantaldagen; $dag++ ) {
-			$datum    = mktime( 23, 59, 0, $maand, $dag, $jaar ); // 18:00 uur 's middags
+			$datum    = mktime( 23, 59, 0, $maand, $dag, $jaar );
 			$row_html = '';
 			$weekdag  = intval( date( 'N', $datum ) );
-			if ( $oven->{$dagnamen[ $weekdag ]} ) {
+			if ( $oven->{$dagnaam[ $weekdag ]} ) {
 				$kleur            = 'white';
 				$verwerkt         = false;
 				$datum_verstreken = $datum < time();
 				$wijzigbaar       = ! $datum_verstreken || is_super_admin();
-
-				$selectie = [
+				$selectie         = [
 					'oven_id'       => $oven_id,
 					'dag'           => $dag,
 					'maand'         => $maand,
@@ -204,9 +195,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				}
 				$row_html .= "<tr style=\"background-color: $kleur\">";
 				if ( $wijzigbaar ) {
-					$row_html .= "<td><a class=\"kleistad_box\" data-form='" . wp_json_encode( $selectie ) . "' >$dag $dagnamen[$weekdag]</a></td>";
+					$row_html .= "<td><a class=\"kleistad_box\" data-form='" . wp_json_encode( $selectie ) . "' >$dag $dagnaam[$weekdag]</a></td>";
 				} else {
-					$row_html .= "<td>$dag $dagnamen[$weekdag]</td>";
+					$row_html .= "<td>$dag $dagnaam[$weekdag]</td>";
 				}
 				$row_html .= "<td>{$selectie['wie']}</td>
                     <td>{$selectie['soortstook']}</td>
