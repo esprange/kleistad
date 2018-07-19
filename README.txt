@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 4.9.7
-Stable tag: 4.4.1
+Stable tag: 4.4.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 4.4.2 =
+* Onderhoud modus reserveringen oven, alleen door bestuur te gebruiken
+* Bestuursleden kunnen 1e stoker wijzigen
 = 4.4.1 =
 * Nieuwe versies van externe referenties, Mollie 2.0.6 en Datatables 1.10.19
 * Scripts voortaan in de footer
