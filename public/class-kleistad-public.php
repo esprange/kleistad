@@ -573,8 +573,9 @@ class Kleistad_Public {
 		} else {
 			$link = '<a href="' . wp_login_url( $redirect ) . '" title="Inloggen">Inloggen</a>';
 		}
-		$is_active     = true;
-		return $items .= '<li id="log-in-out-link" class="menu-item menu-type-link">' . $link . '</li>';
+		$is_active = true;
+		$items    .= '<li id="log-in-out-link" class="menu-item menu-type-link">' . $link . '</li>';
+		return $items;
 	}
 
 	/**
