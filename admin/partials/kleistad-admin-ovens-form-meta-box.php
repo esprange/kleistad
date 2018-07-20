@@ -33,16 +33,18 @@
 		</tr>
 		<tr class="form-field">
 			<th scope="row">
-				<label>Beschikbaarheid></label>
+				<label>Beschikbaarheid</label>
 			</th>
 			<td>
-				<input name="beschikbaarheid[]" value="zondag" type="checkbox" <?php echo array_search( 'zondag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Zondag
-				<input name="beschikbaarheid[]" value="maandag" type="checkbox" <?php echo array_search( 'maandag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Maandag
-				<input name="beschikbaarheid[]" value="dinsdag" type="checkbox" <?php echo array_search( 'dinsdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Dinsdag
-				<input name="beschikbaarheid[]" value="woensdag" type="checkbox" <?php echo array_search( 'woensdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Woensdag
-				<input name="beschikbaarheid[]" value="donderdag" type="checkbox" <?php echo array_search( 'donderdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Donderdag
-				<input name="beschikbaarheid[]" value="vrijdag" type="checkbox" <?php echo array_search( 'vrijdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Vrijdag
-				<input name="beschikbaarheid[]" value="zaterdag" type="checkbox" <?php echo array_search( 'zaterdag', $item['beschikbaarheid'], true ) !== false ? 'checked' : ''; ?> />Zaterdag
+				<?php
+				for ( $dagnummer = 1; $dagnummer <= 7; $dagnummer++ ) :
+					$dagnaam = strftime( '%A', mktime( 0, 0, 0, 1, $dagnummer, 2018 ) );
+					?>
+				<input name="beschikbaarheid[]" value="<?php echo esc_attr( $dagnaam ); ?>" type="checkbox" <?php checked( array_search( $dagnaam, $item['beschikbaarheid'], true ) !== false ); ?> />
+					<?php
+					echo esc_html( ucfirst( $dagnaam ) ) . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+					endfor
+				?>
 			</td>
 		</tr>
 
