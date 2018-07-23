@@ -198,8 +198,8 @@ class Kleistad_Saldo {
 			$to, 'Bijstorting stooksaldo', 'kleistad_email_saldo_wijziging' . $type, [
 				'voornaam'   => $gebruiker->first_name,
 				'achternaam' => $gebruiker->last_name,
-				'bedrag'     => $bedrag,
-				'saldo'      => $this->bedrag,
+				'bedrag'     => number_format_i18n( $bedrag, 2 ),
+				'saldo'      => number_format_i18n( $this->bedrag, 2 ),
 			]
 		);
 	}
