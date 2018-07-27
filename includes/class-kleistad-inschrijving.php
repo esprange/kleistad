@@ -245,7 +245,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				'cursus_kosten'          => number_format_i18n( $this->aantal * $this->_cursus->cursuskosten, 2 ),
 				'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->_cursus->inschrijfkosten, 2 ),
 				'cursus_aantal'          => $this->aantal,
-				'cursus_opmerking'       => $this->opmerking,
+				'cursus_opmerking'       => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
 				'cursus_link'            => '<a href="' . home_url( '/kleistad_cursus_betaling' ) .
 												'?gid=' . $this->_cursist_id .
 												'&crss=' . $this->_cursus->id .

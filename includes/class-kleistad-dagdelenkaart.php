@@ -140,7 +140,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 				'loginnaam'               => $gebruiker->user_login,
 				'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
 				'dagdelenkaart_code'      => $this->code,
-				'dagdelenkaart_opmerking' => $this->opmerking,
+				'dagdelenkaart_opmerking' => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
 				'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
 			]
 		);

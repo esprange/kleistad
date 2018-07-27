@@ -237,7 +237,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'abonnement'              => $this->soort,
 				'abonnement_code'         => $this->code,
 				'abonnement_dag'          => $this->dag,
-				'abonnement_opmerking'    => $this->opmerking,
+				'abonnement_opmerking'    => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
 				'abonnement_wijziging'    => $wijziging,
 				'abonnement_borg'         => number_format_i18n( $options['borg_kast'], 2 ),
 				'abonnement_startgeld'    => number_format_i18n( 3 * $options[ $this->soort . '_abonnement' ], 2 ),
