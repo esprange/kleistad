@@ -109,7 +109,6 @@ class Kleistad_Activator {
 		}
 
 		if ( ! wp_next_scheduled( 'kleistad_kosten' ) ) {
-			date_default_timezone_set( 'Europe/Amsterdam' );
 			wp_schedule_event( strtotime( 'midnight' ), 'daily', 'kleistad_kosten' );
 		}
 

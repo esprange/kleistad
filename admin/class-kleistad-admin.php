@@ -54,7 +54,6 @@ class Kleistad_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		$this->options     = $options;
-		date_default_timezone_set( 'Europe/Amsterdam' );
 	}
 
 	/**

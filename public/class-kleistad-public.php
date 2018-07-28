@@ -204,8 +204,6 @@ class Kleistad_Public {
 		$this->version     = $version;
 		$this->options     = $options;
 		self::$url         = 'kleistad/v' . $version;
-		date_default_timezone_set( 'Europe/Amsterdam' );
-
 	}
 
 	/**
@@ -214,8 +212,8 @@ class Kleistad_Public {
 	 * @since    4.0.87
 	 */
 	public function register_styles() {
-		wp_register_style( 'jqueryui-css', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
-		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css' );
+		wp_register_style( 'jqueryui-css', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
+		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css', [], '1.10.19' );
 		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui-css', 'datatables', 'dashicons' ], $this->version, 'all' );
 	}
 
@@ -225,7 +223,7 @@ class Kleistad_Public {
 	 * @since    4.0.87
 	 */
 	public function register_scripts() {
-		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js', [ 'jquery' ] );
+		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js', [ 'jquery' ], '1.10.19' );
 		wp_register_script( $this->plugin_name . 'cursus_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_inschrijving.js', [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'dagdelenkaart', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-dagdelenkaart.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, true );
