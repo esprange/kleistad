@@ -189,6 +189,29 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	}
 
 	/**
+	 * Corrigeer de inschrijving naar nieuwe cursus.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param int $cursus_id nieuw cursus_id.
+	 */
+	public function correct( $cursus_id ) {
+		$bestaande_inschrijvingen = get_user_meta( $this->_cursist_id, self::META_KEY, true );
+		if ( is_array( $bestaande_inschrijvingen ) ) {
+			$inschrijvingen = $bestaande_inschrijvingen;
+			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
+				$cursus                       = new Kleistad_Cursus( $cursus_id );
+				$this->_data['code']          = "C$cursus_id-$this->_cursist_id-" . strftime( '%y%m%d', $cursus->start_datum );
+				$inschrijvingen[ $cursus_id ] = $this->_data;
+				unset( $inschrijvingen[ $this->_cursus->id ] );
+				update_user_meta( $this->_cursist_id, self::META_KEY, $inschrijvingen );
+				return true;
+			}
+		}
+		return false; // zou niet mogen.
+	}
+
+	/**
 	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
 	 *
 	 * @param array $data het te laden object.
@@ -304,6 +327,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @param array $parameters De parameters 0: cursus-id, 1: gebruiker-id, 2: startdatum, 3: type betaling.
 	 * @param float $bedrag     Het betaalde bedrag, wordt hier niet gebruikt.
 	 * @param bool  $betaald    Of er werkelijk betaald is.
+	 * @phan-suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function callback( $parameters, $bedrag, $betaald = true ) {
 		if ( $betaald ) {
