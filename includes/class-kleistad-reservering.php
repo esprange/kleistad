@@ -16,6 +16,8 @@
  */
 class Kleistad_Reservering extends Kleistad_Entity {
 
+	const ONDERHOUD = 'Onderhoud';
+
 	/**
 	 * Constructor
 	 *
@@ -238,15 +240,19 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	/**
 	 * Return alle reserveringen.
 	 *
-	 * @param array $selecties Veld/value combinaties om de query nog te verfijnen (optioneel).
+	 * @param array|bool $selecties Veld/value combinaties om de query nog te verfijnen (optioneel) of true als alleen onverwerkte reserveringen.
 	 * @return array reserveringen.
 	 */
 	public static function all( $selecties = [] ) {
 		global $wpdb;
 		$arr   = [];
 		$where = 'WHERE 1 = 1';
-		foreach ( $selecties as $veld => $selectie ) {
-			$where .= " AND $veld = '$selectie'";
+		if ( is_array( $selecties ) ) {
+			foreach ( $selecties as $veld => $selectie ) {
+				$where .= " AND $veld = '$selectie'";
+			}
+		} else {
+			$where .= ( $selecties ) ? ' AND verwerkt = 0' : '';
 		}
 
 		$reserveringen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_reserveringen $where ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A ); // WPCS: unprepared SQL OK.
@@ -262,13 +268,13 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 *
 	 * @since 4.5.1
 	 */
-	public function verwerk() {
+	public function meld_en_verwerk() {
 		$options    = Kleistad::get_options();
 		$regelingen = new Kleistad_Regelingen();
 		$ovens      = Kleistad_Oven::all();
 
 		if ( $this->datum <= strtotime( '- ' . $options['termijn'] . ' days 00:00' ) ) {
-			if ( 'Onderhoud' !== $this->soortstook ) {
+			if ( self::ONDERHOUD !== $this->soortstook ) {
 				$gebruiker = get_userdata( $this->gebruiker_id );
 				$verdeling = $this->verdeling;
 				foreach ( $verdeling as &$stookdeel ) {
@@ -304,21 +310,8 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			}
 			$this->verwerkt = true;
 			$this->save();
-		}
-	}
-
-	/**
-	 * Meld de reservering.
-	 *
-	 * @since 4.5.1
-	 */
-	public function meld() {
-		$options    = Kleistad::get_options();
-		$regelingen = new Kleistad_Regelingen();
-		$ovens      = Kleistad_Oven::all();
-
-		if ( $this->datum < strtotime( 'today' ) ) {
-			if ( 'Onderhoud' !== $this->soortstook ) {
+		} elseif ( ! $this->gemeld && $this->datum < strtotime( 'today' ) ) {
+			if ( self::ONDERHOUD !== $this->soortstook ) {
 				$regeling = $regelingen->get( $this->gebruiker_id, $this->oven_id );
 
 				$gebruiker = get_userdata( $this->gebruiker_id );

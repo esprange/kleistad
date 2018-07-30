@@ -45,7 +45,7 @@ else :
 							<option value="Biscuit" selected>Biscuit</option>
 							<option value="Glazuur" >Glazuur</option>
 							<option value="Overig" >Overig</option>
-							<?php echo Kleistad_Roles::override() ? '<option value="Onderhoud" >Onderhoud</option>' : ''; ?>
+							<?php echo Kleistad_Roles::override() ? '<option value="' . Kleistad_Reservering::ONDERHOUD . '" >Onderhoud</option>' : ''; //phpcs:ignore ?>
 						</select>
 					</td>
 				</tr>
