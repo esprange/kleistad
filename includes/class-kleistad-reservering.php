@@ -229,6 +229,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 * @since 4.0.87
 	 *
 	 * @param int $gebruiker_id Gebruiker id.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function verwijder( $gebruiker_id ) {
 		// to do, alleen reserveringen in de toekomst verwijderen ?.
@@ -254,5 +255,87 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			$arr[ $reservering_id ]->load( $reservering );
 		}
 		return $arr;
+	}
+
+	/**
+	 * Verwerk de reservering. Afhankelijk van de status melden dat er een afboeking gaat plaats vinden of de werkelijke afboeking uitvoeren.
+	 *
+	 * @since 4.5.1
+	 */
+	public function verwerk() {
+		$options    = Kleistad::get_options();
+		$regelingen = new Kleistad_Regelingen();
+		$ovens      = Kleistad_Oven::all();
+
+		if ( $this->datum <= strtotime( '- ' . $options['termijn'] . ' days 00:00' ) ) {
+			if ( 'Onderhoud' !== $this->soortstook ) {
+				$gebruiker = get_userdata( $this->gebruiker_id );
+				$verdeling = $this->verdeling;
+				foreach ( $verdeling as &$stookdeel ) {
+					if ( 0 === intval( $stookdeel['id'] ) ) {
+						continue;
+					}
+					$medestoker         = get_userdata( $stookdeel['id'] );
+					$regeling           = $regelingen->get( $stookdeel['id'], $this->oven_id );
+					$kosten             = ( is_null( $regeling ) ) ? $ovens[ $this->oven_id ]->kosten : $regeling;
+					$prijs              = round( $stookdeel['perc'] / 100 * $kosten, 2 );
+					$stookdeel['prijs'] = $prijs;
+
+					$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
+					$saldo->bedrag = $saldo->bedrag - $prijs;
+					if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $this->datum ) . ' door ' . $gebruiker->display_name ) ) {
+
+						$to = "$medestoker->first_name $medestoker->last_name <$medestoker->user_email>";
+						Kleistad_public::compose_email(
+							$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
+								'voornaam'   => $medestoker->first_name,
+								'achternaam' => $medestoker->last_name,
+								'stoker'     => $gebruiker->display_name,
+								'bedrag'     => number_format_i18n( $prijs, 2 ),
+								'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
+								'stookdeel'  => $stookdeel['perc'],
+								'stookdatum' => date( 'd-m-Y', $this->datum ),
+								'stookoven'  => $ovens[ $this->oven_id ]->naam,
+							]
+						);
+					}
+				}
+				$this->verdeling = $verdeling;
+			}
+			$this->verwerkt = true;
+			$this->save();
+		}
+	}
+
+	/**
+	 * Meld de reservering.
+	 *
+	 * @since 4.5.1
+	 */
+	public function meld() {
+		$options    = Kleistad::get_options();
+		$regelingen = new Kleistad_Regelingen();
+		$ovens      = Kleistad_Oven::all();
+
+		if ( $this->datum < strtotime( 'today' ) ) {
+			if ( 'Onderhoud' !== $this->soortstook ) {
+				$regeling = $regelingen->get( $this->gebruiker_id, $this->oven_id );
+
+				$gebruiker = get_userdata( $this->gebruiker_id );
+				$to        = "$gebruiker->first_name $gebruiker->last_name <$gebruiker->user_email>";
+				Kleistad_public::compose_email(
+					$to, 'Kleistad oven gebruik op ' . date( 'd-m-Y', $this->datum ), 'kleistad_email_stookmelding', [
+						'voornaam'         => $gebruiker->first_name,
+						'achternaam'       => $gebruiker->last_name,
+						'bedrag'           => number_format_i18n( ( is_null( $regeling ) ) ? $ovens[ $this->oven_id ]->kosten : $regeling, 2 ),
+						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $this->datum ) ), // datum verwerking.
+						'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $this->datum ) ), // datum deadline.
+						'stookoven'        => $ovens[ $this->oven_id ]->naam,
+					]
+				);
+			}
+			$this->gemeld = true;
+			$this->save();
+		}
 	}
 }
