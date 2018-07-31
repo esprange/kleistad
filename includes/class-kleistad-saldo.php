@@ -156,7 +156,7 @@ class Kleistad_Saldo {
 		if ( $huidig_saldo !== $this->bedrag ) {
 			update_user_meta( $this->_gebruiker_id, self::META_KEY, $this->bedrag );
 			$gebruiker = get_userdata( $this->_gebruiker_id );
-			self::write_log( "$gebruiker->display_name nu: $huidig_saldo naar: " . $this->bedrag . " vanwege $reden" );
+			self::write_log( $gebruiker->display_name . ' nu: € ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: € ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $reden );
 			return true;
 		}
 		return false;
