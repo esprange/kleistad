@@ -557,12 +557,9 @@ class Kleistad_Public {
 	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function shortcode_handler( $atts, $content, $tag ) {
-
-		$html = '';
-		$data = null;
-		$form = substr( $tag, strlen( 'kleistad-' ) );
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-kleistad-public-' . str_replace( '_', '-', $form ) . '.php';
-
+		$form        = substr( $tag, strlen( 'kleistad-' ) );
+		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
+		$form_object = new $form_class( $this->plugin_name, $form, $atts, $this->options );
 		wp_enqueue_style( $this->plugin_name );
 		if ( wp_style_is( $this->plugin_name . $form, 'registered' ) ) {
 			wp_enqueue_style( $this->plugin_name . $form );
@@ -570,50 +567,7 @@ class Kleistad_Public {
 		if ( wp_script_is( $this->plugin_name . $form, 'registered' ) ) {
 			wp_enqueue_script( $this->plugin_name . $form );
 		}
-
-		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
-		$form_object = new $form_class( $this->plugin_name, $atts, $this->options );
-
-		$betaald = filter_input( INPUT_GET, 'betaald' );
-		if ( ! is_null( $betaald ) ) {
-			$gebruiker_id = filter_input( INPUT_GET, 'betaald' );
-			$betaling     = new Kleistad_Betalen();
-			$result       = $betaling->controleer( $gebruiker_id );
-			if ( ! is_wp_error( $result ) ) {
-				$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-			} else {
-				$html .= '<div class="kleistad_fout"><p>' . $result->get_error_message() . '</p></div>';
-			}
-		}
-
-		if ( ! is_null( filter_input( INPUT_POST, 'kleistad_submit_' . $form ) ) ) {
-			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $form ) ) {
-				$result = $form_object->validate( $data );
-				if ( ! is_wp_error( $result ) ) {
-					$result = $form_object->save( $data );
-				}
-				if ( ! is_wp_error( $result ) ) {
-					$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-					$data  = null;
-				} else {
-					foreach ( $result->get_error_messages() as $error ) {
-						$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
-					}
-				}
-			} else {
-				$html .= '<div class="kleistad_fout"><p>security fout</p></div>';
-			}
-		}
-		$result = $form_object->prepare( $data );
-		if ( is_wp_error( $result ) ) {
-			$html .= '<div class="kleistad_fout"><p>' . $result->get_error_message() . '</p></div>';
-			return $html;
-		}
-		ob_start();
-		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-' . str_replace( '_', '-', $form ) . '.php';
-		$html .= ob_get_contents();
-		ob_clean();
-		return $html;
+		return $form_object->run();
 	}
 
 	/**

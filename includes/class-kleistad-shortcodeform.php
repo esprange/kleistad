@@ -30,4 +30,51 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @return \WP_ERROR|string
 	 */
 	abstract public function save( $data );
+
+	/**
+	 * Verwerk de formulier invoer
+	 *
+	 * @since 4.5.1
+	 *
+	 * @param  array $data de uit te wisselen data.
+	 * @return string html tekst.
+	 */
+	protected function process( &$data ) {
+		$html = '';
+		if ( ! is_null( filter_input( INPUT_POST, 'kleistad_submit_' . $this->shortcode ) ) ) {
+			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $this->shortcode ) ) {
+				$result = $this->validate( $data );
+				if ( ! is_wp_error( $result ) ) {
+					$result = $this->save( $data );
+				}
+				if ( ! is_wp_error( $result ) ) {
+					$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
+					$data  = null;
+				} else {
+					foreach ( $result->get_error_messages() as $error ) {
+						$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
+					}
+				}
+			} else {
+				$html .= '<div class="kleistad_fout"><p>security fout</p></div>';
+			}
+		}
+		return $html;
+	}
+
+	/**
+	 * Voer het rapport van de shortcode uit.
+	 *
+	 * @since 4.5.1
+	 */
+	public function run() {
+		$html = $this->betaald();
+		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+			$html .= $this->process( $data );
+			$html .= $this->display( $data );
+		} else {
+			$html .= $this->display();
+		}
+		return $html;
+	}
 }
