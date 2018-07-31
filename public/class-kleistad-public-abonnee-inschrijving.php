@@ -22,7 +22,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data ) {
+	public function prepare( &$data = null ) {
 		if ( is_null( $data ) ) {
 			$data          = [];
 			$data['input'] = [

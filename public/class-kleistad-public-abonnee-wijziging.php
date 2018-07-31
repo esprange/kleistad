@@ -22,7 +22,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data ) {
+	public function prepare( &$data = null ) {
 		$abonnee_id = get_current_user_id();
 		$abonnement = new Kleistad_Abonnement( $abonnee_id );
 
