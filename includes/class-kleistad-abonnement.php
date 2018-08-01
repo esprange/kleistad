@@ -61,13 +61,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->_abonnee_id            = $abonnee_id;
 		$this->_default_data['code']  = "A$abonnee_id";
 		$this->_default_data['datum'] = date( 'Y-m-d' );
-
-		$abonnement = get_user_meta( $this->_abonnee_id, self::META_KEY, true );
-		if ( is_array( $abonnement ) ) {
-			$this->_data = wp_parse_args( $abonnement, $this->_default_data );
-		} else {
-			$this->_data = $this->_default_data;
-		}
+		$abonnement                   = get_user_meta( $this->_abonnee_id, self::META_KEY, true );
+		$this->_data                  = is_array( $abonnement ) ? wp_parse_args( $abonnement, $this->_default_data ) : $this->_default_data;
 		// Deze datum zit niet in de 'oude' abonnees.
 		if ( '' === $this->_data['incasso_datum'] ) {
 			$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 1, intval( date( 'Y', $this->start_datum ) ) );
@@ -134,6 +129,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @param  int $gebruiker_id Het wp user_id van de abonnee.
 	 * @return int aantal verwijderde gegevens.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function erase( $gebruiker_id ) {
 		return 0;
@@ -612,6 +608,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param array  $parameters De parameters 0: gebruiker-id, 1: de melddatum.
 	 * @param string $bedrag     Geeft aan of het een eerste start of een herstart betreft.
 	 * @param bool   $betaald    Of er werkelijk betaald is.
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function callback( $parameters, $bedrag, $betaald = true ) {
 		if ( $betaald ) {
