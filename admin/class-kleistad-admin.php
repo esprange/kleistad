@@ -784,7 +784,7 @@ class Kleistad_Admin {
 		];
 
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_regeling' ) ) {
-			$item       = shortcode_atts( $default, $_REQUEST );
+			$item       = wp_parse_args( $_REQUEST, $default );
 			$item_valid = $this->validate_regeling( $item );
 			if ( true === $item_valid ) {
 				$regelingen = new Kleistad_Regelingen();
@@ -913,7 +913,7 @@ class Kleistad_Admin {
 		];
 
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_stooksaldo' ) ) {
-			$item       = shortcode_atts( $default, $_REQUEST );
+			$item       = wp_parse_args( $_REQUEST, $default );
 			$item_valid = $this->validate_stooksaldo( $item );
 
 			if ( true === $item_valid ) {

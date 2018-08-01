@@ -42,7 +42,7 @@ class Kleistad_Activator {
 			'sleutel_test'         => '',
 			'betalen'              => 0,
 		];
-		$options         = shortcode_atts( $default_options, get_option( 'kleistad-opties' ) );
+		$options         = wp_parse_args( get_option( 'kleistad-opties' ), $default_options );
 		update_option( 'kleistad-opties', $options );
 
 		$database_version = intval( get_option( 'kleistad-database-versie', 0 ) );
