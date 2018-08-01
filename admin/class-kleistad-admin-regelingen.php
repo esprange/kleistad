@@ -60,6 +60,19 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	}
 
 	/**
+	 * Toon de kosten kolom
+	 *
+	 * @param object $item - row (key, value).
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
+	 */
+	public function column_kosten( $item ) {
+		return sprintf(
+			'%.2f', $item['kosten']
+		);
+	}
+
+	/**
 	 * Geef de kolom titels
 	 *
 	 * @return array
