@@ -507,7 +507,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				$this->_abonnee_id,
 				__CLASS__ . '-' . $this->code . '-incasso',
 				0.01,
-				'Kleistad abonnement ' . $this->code,
+				'Kleistad abonnement ' . $this->code . ' machtiging tot sepa-incasso',
 				'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging',
 				true
 			);
