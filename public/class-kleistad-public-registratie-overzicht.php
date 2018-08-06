@@ -84,8 +84,8 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				'deelnemer_info' => $deelnemer_info,
 				'abonnee_info'   => $abonnee_info,
 				'inschrijvingen' => $inschrijvinglijst,
-				'achternaam'     => $gebruiker->first_name,
-				'voornaam'       => $gebruiker->last_name,
+				'voornaam'       => $gebruiker->first_name,
+				'achternaam'     => $gebruiker->last_name,
 				'telnr'          => $gebruiker->telnr,
 				'email'          => $gebruiker->user_email,
 			];
