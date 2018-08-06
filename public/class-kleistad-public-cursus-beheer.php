@@ -29,7 +29,6 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	public function prepare( &$data = null ) {
 		$cursussen      = Kleistad_Cursus::all();
 		$inschrijvingen = Kleistad_Inschrijving::all();
-		$gebruikers     = Kleistad_Gebruiker::all();
 		$rows           = [];
 		$vandaag        = strtotime( 'today' );
 		foreach ( $cursussen as $cursus_id => $cursus ) {
@@ -42,9 +41,10 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					if ( $inschrijving[ $cursus_id ]->geannuleerd ) {
 						continue;
 					}
+					$cursist = get_userdata( $cursist_id );
 					$aantal  = 1 === $inschrijving[ $cursus_id ]->aantal ? '' : ' (' . $inschrijving[ $cursus_id ]->aantal . ')';
 					$element = [
-						'naam'       => $gebruikers[ $cursist_id ]->voornaam . ' ' . $gebruikers[ $cursist_id ]->achternaam . $aantal,
+						'naam'       => $cursist->first_name . ' ' . $cursist->last_name . $aantal,
 						'opmerking'  => $inschrijving[ $cursus_id ]->opmerking,
 						'technieken' => $inschrijving[ $cursus_id ]->technieken,
 						'ingedeeld'  => $inschrijving[ $cursus_id ]->ingedeeld,
@@ -84,8 +84,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			];
 		}
 		$data = [
-			'rows'       => $rows,
-			'gebruikers' => $gebruikers,
+			'rows' => $rows,
 		];
 		return true;
 	}

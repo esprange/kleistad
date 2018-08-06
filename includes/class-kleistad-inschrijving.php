@@ -95,23 +95,23 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
 				$items[] = [
 					'group_id'    => 'cursusinfo',
-					'group_label' => 'cursussen informatie',
+					'group_label' => 'Cursussen informatie',
 					'item_id'     => 'cursus-' . $cursus_id,
 					'data'        => [
 						[
-							'name'  => 'aanmeld datum',
+							'name'  => 'Aanmeld datum',
 							'value' => strftime( '%d-%m-%y', strtotime( $inschrijving['datum'] ) ),
 						],
 						[
-							'name'  => 'opmerking',
+							'name'  => 'Opmerking',
 							'value' => $inschrijving['opmerking'],
 						],
 						[
-							'name'  => 'ingedeeld',
+							'name'  => 'Ingedeeld',
 							'value' => ( $inschrijving['ingedeeld'] ) ? 'ja' : 'nee',
 						],
 						[
-							'name'  => 'geannuleerd',
+							'name'  => 'Geannuleerd',
 							'value' => ( $inschrijving['geannuleerd'] ) ? 'ja' : 'nee',
 						],
 					],

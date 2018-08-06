@@ -94,12 +94,12 @@ class Kleistad_Saldo {
 		$items   = [];
 		$items[] = [
 			'group_id'    => self::META_KEY,
-			'group_label' => 'stooksaldo informatie',
+			'group_label' => 'Stooksaldo informatie',
 			'item_id'     => 'stooksaldo-1',
 			'data'        => [
 				[
-					'name'  => self::META_KEY,
-					'value' => $saldo->huidig_saldo(),
+					'name'  => 'Saldo',
+					'value' => number_format_i18n( $saldo->huidig_saldo(), 2 ),
 				],
 			],
 		];

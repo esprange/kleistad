@@ -193,16 +193,18 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 
 		if ( ! is_user_logged_in() ) {
-			$gebruiker             = new Kleistad_Gebruiker();
-			$gebruiker->voornaam   = $data['input']['FNAME'];
-			$gebruiker->achternaam = $data['input']['LNAME'];
-			$gebruiker->straat     = $data['input']['straat'];
-			$gebruiker->huisnr     = $data['input']['huisnr'];
-			$gebruiker->pcode      = $data['input']['pcode'];
-			$gebruiker->plaats     = $data['input']['plaats'];
-			$gebruiker->email      = $data['input']['EMAIL'];
-			$gebruiker->telnr      = $data['input']['telnr'];
-			$gebruiker_id          = $gebruiker->save();
+			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
+			$gebruiker_id = Kleistad_Public::upsert_user( [
+				'ID'         => ( $gebruiker_id ) ? $gebruiker_id : null,
+				'first_name' => $data['input']['FNAME'],
+				'last_name'  => $data['input']['LNAME'],
+				'telnr'      => $data['input']['telnr'],
+				'user_email' => $data['input']['EMAIL'],
+				'straat'     => $data['input']['straat'],
+				'huisnr'     => $data['input']['huisnr'],
+				'pcode'      => $data['input']['pcode'],
+				'plaats'     => $data['input']['plaats'],
+			]);
 		} else {
 			if ( is_super_admin() ) {
 				$gebruiker_id = $data['input']['gebruiker_id'];

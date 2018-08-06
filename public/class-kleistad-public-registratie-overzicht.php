@@ -30,31 +30,31 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 		$cursussen    = Kleistad_Cursus::all();
 		$registraties = [];
 
+		$gebruikers     = get_users( [ 'orderby' => 'nicename' ] );
 		$inschrijvingen = Kleistad_Inschrijving::all();
-		$gebruikers     = Kleistad_Gebruiker::all();
 		$abonnementen   = Kleistad_Abonnement::all();
-		foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
+		foreach ( $gebruikers as $gebruiker ) {
 			$cursuslijst       = '';
 			$inschrijvinglijst = [];
 			$is_lid            = false;
-			if ( array_key_exists( $gebruiker_id, $abonnementen ) ) {
+			if ( array_key_exists( $gebruiker->ID, $abonnementen ) ) {
 				$is_lid       = true;
 				$abonnee_info = [
-					'code'           => $abonnementen[ $gebruiker_id ]->code,
-					'start_datum'    => date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
-					'pauze_datum'    => $abonnementen[ $gebruiker_id ]->pauze_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->pauze_datum ) : '',
-					'herstart_datum' => $abonnementen[ $gebruiker_id ]->herstart_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->herstart_datum ) : '',
-					'eind_datum'     => $abonnementen[ $gebruiker_id ]->eind_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->eind_datum ) : '',
-					'dag'            => ( 'beperkt' === $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
-					'soort'          => $abonnementen[ $gebruiker_id ]->soort,
-					'geannuleerd'    => $abonnementen[ $gebruiker_id ]->geannuleerd,
-					'opmerking'      => $abonnementen[ $gebruiker_id ]->opmerking,
+					'code'           => $abonnementen[ $gebruiker->ID ]->code,
+					'start_datum'    => date( 'd-m-Y', $abonnementen[ $gebruiker->ID ]->start_datum ),
+					'pauze_datum'    => $abonnementen[ $gebruiker->ID ]->pauze_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker->ID ]->pauze_datum ) : '',
+					'herstart_datum' => $abonnementen[ $gebruiker->ID ]->herstart_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker->ID ]->herstart_datum ) : '',
+					'eind_datum'     => $abonnementen[ $gebruiker->ID ]->eind_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker->ID ]->eind_datum ) : '',
+					'dag'            => ( 'beperkt' === $abonnementen[ $gebruiker->ID ]->soort ) ? $abonnementen[ $gebruiker->ID ]->dag : '',
+					'soort'          => $abonnementen[ $gebruiker->ID ]->soort,
+					'geannuleerd'    => $abonnementen[ $gebruiker->ID ]->geannuleerd,
+					'opmerking'      => $abonnementen[ $gebruiker->ID ]->opmerking,
 				];
 			} else {
 				$abonnee_info = [];
 			}
-			if ( array_key_exists( $gebruiker_id, $inschrijvingen ) ) {
-				foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
+			if ( array_key_exists( $gebruiker->ID, $inschrijvingen ) ) {
+				foreach ( $inschrijvingen[ $gebruiker->ID ] as $cursus_id => $inschrijving ) {
 					$cursuslijst        .= 'C' . $cursus_id . ';';
 					$inschrijvinglijst[] = [
 						'ingedeeld'   => $inschrijving->ingedeeld,
@@ -69,13 +69,13 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				}
 			}
 			$deelnemer_info = [
-				'naam'   => $gebruiker->voornaam . ' ' . $gebruiker->achternaam,
+				'naam'   => $gebruiker->first_name . ' ' . $gebruiker->last_name,
 				'straat' => $gebruiker->straat,
 				'huisnr' => $gebruiker->huisnr,
 				'pcode'  => $gebruiker->pcode,
 				'plaats' => $gebruiker->plaats,
 				'telnr'  => $gebruiker->telnr,
-				'email'  => $gebruiker->email,
+				'email'  => $gebruiker->user_email,
 			];
 
 			$registraties[] = [
@@ -84,10 +84,10 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				'deelnemer_info' => $deelnemer_info,
 				'abonnee_info'   => $abonnee_info,
 				'inschrijvingen' => $inschrijvinglijst,
-				'achternaam'     => $gebruiker->achternaam,
-				'voornaam'       => $gebruiker->voornaam,
-				'email'          => $gebruiker->email,
+				'achternaam'     => $gebruiker->first_name,
+				'voornaam'       => $gebruiker->last_name,
 				'telnr'          => $gebruiker->telnr,
+				'email'          => $gebruiker->user_email,
 			];
 		}
 		$data = [
@@ -129,8 +129,8 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 
 		switch ( $data['download'] ) {
 			case 'cursisten':
+				$cursisten      = get_users();
 				$cursussen      = Kleistad_Cursus::all();
-				$gebruikers     = Kleistad_Gebruiker::all();
 				$inschrijvingen = Kleistad_Inschrijving::all();
 				$cursus_fields  = [
 					'Achternaam',
@@ -152,25 +152,25 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 					'Opmerking',
 				];
 				fputcsv( $f_csv, $cursus_fields, ';', '"' );
-				foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
-					$is_lid = ( ! empty( $gebruiker->rol ) || ( is_array( $gebruiker->rol ) && ( count( $gebruiker->rol ) > 0 ) ) );
+				foreach ( $cursisten as $cursist ) {
+					$is_lid = ( ! empty( $cursist->role ) || ( is_array( $cursist->role ) && ( count( $cursist->role ) > 0 ) ) );
 
-					$gebruiker_gegevens = [
-						$gebruiker->achternaam,
-						$gebruiker->voornaam,
-						$gebruiker->email,
-						$gebruiker->straat,
-						$gebruiker->huisnr,
-						$gebruiker->pcode,
-						$gebruiker->plaats,
-						$gebruiker->telnr,
+					$cursist_gegevens = [
+						$cursist->first_name,
+						$cursist->last_name,
+						$cursist->user_email,
+						$cursist->straat,
+						$cursist->huisnr,
+						$cursist->pcode,
+						$cursist->plaats,
+						$cursist->telnr,
 						$is_lid ? 'Ja' : 'Nee',
 					];
 
-					if ( array_key_exists( $gebruiker_id, $inschrijvingen ) ) {
-						foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
-							$gebruiker_cursus_gegevens = array_merge(
-								$gebruiker_gegevens, [
+					if ( array_key_exists( $cursist->ID, $inschrijvingen ) ) {
+						foreach ( $inschrijvingen[ $cursist->ID ] as $cursus_id => $inschrijving ) {
+							$cursist_cursus_gegevens = array_merge(
+								$cursist_gegevens, [
 									'C' . $cursus_id . '-' . $cursussen[ $cursus_id ]->naam,
 									$inschrijving->code,
 									date( 'd-m-Y', $inschrijving->datum ),
@@ -181,13 +181,13 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 									$inschrijving->opmerking,
 								]
 							);
-							fputcsv( $f_csv, $gebruiker_cursus_gegevens, ';', '"' );
+							fputcsv( $f_csv, $cursist_cursus_gegevens, ';', '"' );
 						}
 					}
 				}
 				break;
 			case 'abonnees':
-				$gebruikers     = Kleistad_Gebruiker::all();
+				$abonnees       = get_users( [ 'orderby' => 'nicename' ] );
 				$abonnementen   = Kleistad_Abonnement::all();
 				$abonnee_fields = [
 					'Achternaam',
@@ -207,33 +207,33 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 					'Opmerking',
 				];
 				fputcsv( $f_csv, $abonnee_fields, ';', '"' );
-				foreach ( $gebruikers as $gebruiker_id => $gebruiker ) {
-					$is_lid = ( ! empty( $gebruiker->rol ) || ( is_array( $gebruiker->rol ) && ( count( $gebruiker->rol ) > 0 ) ) );
+				foreach ( $abonnees as $abonnee ) {
+					$is_lid = ( ! empty( $abonnee->role ) || ( is_array( $abonnee->role ) && ( count( $abonnee->role ) > 0 ) ) );
 
-					$gebruiker_gegevens = [
-						$gebruiker->achternaam,
-						$gebruiker->voornaam,
-						$gebruiker->email,
-						$gebruiker->straat,
-						$gebruiker->huisnr,
-						$gebruiker->pcode,
-						$gebruiker->plaats,
-						$gebruiker->telnr,
+					$abonnee_gegevens = [
+						$abonnee->last_name,
+						$abonnee->first_name,
+						$abonnee->user_email,
+						$abonnee->straat,
+						$abonnee->huisnr,
+						$abonnee->pcode,
+						$abonnee->plaats,
+						$abonnee->telnr,
 						$is_lid ? 'Ja' : 'Nee',
 					];
 
-					if ( array_key_exists( $gebruiker_id, $abonnementen ) ) {
-						$gebruiker_abonnee_gegevens = array_merge(
-							$gebruiker_gegevens, [
-								date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->datum ),
-								date( 'd-m-Y', $abonnementen[ $gebruiker_id ]->start_datum ),
-								$abonnementen[ $gebruiker_id ]->code,
-								$abonnementen[ $gebruiker_id ]->soort,
-								( 'beperkt' === $abonnementen[ $gebruiker_id ]->soort ) ? $abonnementen[ $gebruiker_id ]->dag : '',
-								$abonnementen[ $gebruiker_id ]->opmerking,
+					if ( array_key_exists( $abonnee->ID, $abonnementen ) ) {
+						$abonnee_abonnement_gegevens = array_merge(
+							$abonnee_gegevens, [
+								date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->datum ),
+								date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->start_datum ),
+								$abonnementen[ $abonnee->ID ]->code,
+								$abonnementen[ $abonnee->ID ]->soort,
+								( 'beperkt' === $abonnementen[ $abonnee->ID ]->soort ) ? $abonnementen[ $abonnee->ID ]->dag : '',
+								$abonnementen[ $abonnee->ID ]->opmerking,
 							]
 						);
-						fputcsv( $f_csv, $gebruiker_abonnee_gegevens, ';', '"' );
+						fputcsv( $f_csv, $abonnee_abonnement_gegevens, ';', '"' );
 					}
 				}
 				break;

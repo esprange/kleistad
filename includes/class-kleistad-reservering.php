@@ -68,15 +68,15 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			if ( false !== $key ) {
 				$items[] = [
 					'group_id'    => 'stook',
-					'group_label' => 'stook informatie',
+					'group_label' => 'Stook informatie',
 					'item_id'     => 'stook-' . $reservering['id'],
 					'data'        => [
 						[
-							'name'  => 'datum',
+							'name'  => 'Datum',
 							'value' => $reservering['dag'] . '-' . $reservering['maand'] . '-' . $reservering['jaar'],
 						],
 						[
-							'name'  => 'oven',
+							'name'  => 'Oven',
 							'value' => $reservering['naam'],
 						],
 					],

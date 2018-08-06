@@ -546,6 +546,26 @@ class Kleistad_Public {
 	}
 
 	/**
+	 * Uitbreiding WP_User object met adres gegevens
+	 *
+	 * @since 4.5.1
+	 *
+	 * @param array $user_contact_method De extra velden met adresgegevens.
+	 * @return array de extra velden.
+	 */
+	public function user_contact_methods( $user_contact_method ) {
+
+		$user_contact_method['telnr']  = 'Telefoon nummer';
+		$user_contact_method['straat'] = 'Straat';
+		$user_contact_method['huisnr'] = 'Nummer';
+		$user_contact_method['pcode']  = 'Postcode';
+		$user_contact_method['plaats'] = 'Plaats';
+
+		return $user_contact_method;
+	}
+
+
+	/**
 	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
 	 *
 	 * @since 4.0.87
@@ -606,6 +626,44 @@ class Kleistad_Public {
 	 */
 	public function verwijder_gebruiker( $gebruiker_id ) {
 		Kleistad_reservering::verwijder( $gebruiker_id );
+	}
+
+	/**
+	 * Insert of update de gebruiker.
+	 *
+	 * @since 4.5.1
+	 *
+	 * @param array $userdata De gebruiker gegevens, inclusief contact informatie.
+	 * @return int|WP_Error  De user_id of een error object.
+	 */
+	public static function upsert_user( $userdata ) {
+		$nice_voornaam   = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata['first_name'] ) ) );
+		$nice_achternaam = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata['last_name'] ) ) );
+
+		if ( is_null( $userdata['ID'] ) ) {
+			$uniek     = '';
+			$startnaam = $nice_voornaam;
+			if ( 4 > mb_strlen( $startnaam ) ) {
+				$startnaam = substr( $startnaam . $nice_achternaam, 0, 4 );
+			}
+			while ( username_exists( $startnaam . $uniek ) ) {
+				$uniek = intval( $uniek ) + 1;
+			}
+
+			$userdata['user_login']      = $startnaam . $uniek;
+			$userdata['user_pass']       = wp_generate_password( 12, true );
+			$userdata['user_registered'] = date( 'Y-m-d H:i:s' );
+			$userdata['user_nicename']   = $nice_voornaam . '-' . $nice_achternaam;
+			$userdata['display_name']    = $userdata['first_name'] . ' ' . $userdata['last_name'];
+			$userdata['role']            = '';
+			$result                      = wp_insert_user( $userdata );
+		} else {
+			$userdata['user_nicename'] = $nice_voornaam . '-' . $nice_achternaam;
+			$userdata['display_name']  = $userdata['first_name'] . ' ' . $userdata['last_name'];
+			$result                    = wp_update_user( $userdata );
+		}
+
+		return $result;
 	}
 
 }

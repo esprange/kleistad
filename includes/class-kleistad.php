@@ -165,6 +165,7 @@ class Kleistad {
 		$this->loader->add_filter( 'wp_mail_from', $plugin_public, 'mail_from' );
 		$this->loader->add_filter( 'wp_mail_from_name', $plugin_public, 'mail_from_name' );
 		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_public, 'loginuit_menu', 10, 2 );
+		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
 
 		$this->loader->add_shortcode( 'kleistad_reservering', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_stookbestand', $plugin_public, 'shortcode_handler' );

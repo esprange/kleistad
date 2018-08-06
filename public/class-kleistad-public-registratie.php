@@ -26,14 +26,14 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
-		$gebruiker_id = get_current_user_id();
-		$gebruiker    = new Kleistad_Gebruiker( $gebruiker_id );
+		$gebruiker = wp_get_current_user();
 
 		if ( is_null( $data ) ) {
 			$data          = [];
 			$data['input'] = [
-				'voornaam'   => $gebruiker->voornaam,
-				'achternaam' => $gebruiker->achternaam,
+				'id'         => $gebruiker->ID,
+				'voornaam'   => $gebruiker->first_name,
+				'achternaam' => $gebruiker->last_name,
 				'straat'     => $gebruiker->straat,
 				'huisnr'     => $gebruiker->huisnr,
 				'pcode'      => $gebruiker->pcode,
@@ -102,16 +102,18 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
 			return $error;
 		} else {
-			$gebruiker             = new Kleistad_Gebruiker( $data['input']['gebruiker_id'] );
-			$gebruiker->voornaam   = $data['input']['voornaam'];
-			$gebruiker->achternaam = $data['input']['achternaam'];
-			$gebruiker->straat     = $data['input']['straat'];
-			$gebruiker->huisnr     = $data['input']['huisnr'];
-			$gebruiker->pcode      = $data['input']['pcode'];
-			$gebruiker->plaats     = $data['input']['plaats'];
-			$gebruiker->telnr      = $data['input']['telnr'];
-			$result                = $gebruiker->save();
-			if ( false !== $result ) {
+			$gebruiker_id = Kleistad_Public::upsert_user( [
+				'ID'         => $data['input']['gebruiker_id'],
+				'first_name' => $data['input']['voornaam'],
+				'last_name'  => $data['input']['achternaam'],
+				'telnr'      => $data['input']['telnr'],
+				'straat'     => $data['input']['straat'],
+				'huisnr'     => $data['input']['huisnr'],
+				'pcode'      => $data['input']['pcode'],
+				'plaats'     => $data['input']['plaats'],
+			]);
+
+			if ( false !== $gebruiker_id ) {
 				return 'Gegevens zijn opgeslagen';
 			} else {
 				$error->add( 'security', 'De wijzigingen konden niet worden verwerkt' );

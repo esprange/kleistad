@@ -82,39 +82,39 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$items      = [];
 		$items[]    = [
 			'group_id'    => 'abonnementinfo',
-			'group_label' => 'abonnement informatie',
+			'group_label' => 'Abonnement informatie',
 			'item_id'     => 'abonnement-1',
 			'data'        => [
 				[
-					'name'  => 'aanmeld datum',
+					'name'  => 'Aanmeld datum',
 					'value' => strftime( '%d-%m-%y', $abonnement->datum ),
 				],
 				[
-					'name'  => 'start datum',
+					'name'  => 'Start datum',
 					'value' => $abonnement->start_datum > 0 ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '',
 				],
 				[
-					'name'  => 'eind datum',
+					'name'  => 'Eind datum',
 					'value' => $abonnement->eind_datum > 0 ? strftime( '%d-%m-%y', $abonnement->eind_datum ) : '',
 				],
 				[
-					'name'  => 'pauze datum',
+					'name'  => 'Pauze datum',
 					'value' => $abonnement->pauze_datum > 0 ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '',
 				],
 				[
-					'name'  => 'herstart datum',
+					'name'  => 'Herstart datum',
 					'value' => $abonnement->herstart_datum > 0 ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '',
 				],
 				[
-					'name'  => 'opmerking',
+					'name'  => 'Opmerking',
 					'value' => $abonnement->opmerking,
 				],
 				[
-					'name'  => 'soort abonnement',
+					'name'  => 'Soort abonnement',
 					'value' => $abonnement->soort,
 				],
 				[
-					'name'  => 'dag',
+					'name'  => 'Dag',
 					'value' => $abonnement->dag,
 				],
 			],

@@ -227,8 +227,37 @@ class Kleistad_Admin {
 		$export_items = [];
 		$gebruiker_id = email_exists( $email );
 		if ( $gebruiker_id ) {
+			$gebruiker    = get_userdata( $gebruiker_id );
 			$export_items = array_merge(
-				Kleistad_Gebruiker::export( $gebruiker_id ),
+				[
+					[
+						'group_id'    => 'contactinfo',
+						'group_label' => 'Contact informatie',
+						'item_id'     => 'contactinfo',
+						'data'        => [
+							[
+								'name'  => 'Telefoonnummer',
+								'value' => $gebruiker->telnr,
+							],
+							[
+								'name'  => 'Straat',
+								'value' => $gebruiker->straat,
+							],
+							[
+								'name'  => 'Nummer',
+								'value' => $gebruiker->huisnr,
+							],
+							[
+								'name'  => 'Postcode',
+								'value' => $gebruiker->pcode,
+							],
+							[
+								'name'  => 'Plaats',
+								'value' => $gebruiker->plaats,
+							],
+						],
+					],
+				],
 				Kleistad_Inschrijving::export( $gebruiker_id ),
 				Kleistad_Abonnement::export( $gebruiker_id ),
 				Kleistad_Saldo::export( $gebruiker_id ),
@@ -256,12 +285,16 @@ class Kleistad_Admin {
 		$count        = 0;
 		$gebruiker_id = email_exists( $email );
 		if ( $gebruiker_id ) {
-			$count =
+			update_user_meta( $gebruiker_id, 'telnr', '******' );
+			update_user_meta( $gebruiker_id, 'straat', '******' );
+			update_user_meta( $gebruiker_id, 'huisnr', '******' );
+			update_user_meta( $gebruiker_id, 'pcode', '******' );
+			update_user_meta( $gebruiker_id, 'plaats', '******' );
+			$count = 5 +
 				Kleistad_Abonnement::erase( $gebruiker_id ) +
 				Kleistad_Inschrijving::erase( $gebruiker_id ) +
 				Kleistad_Reservering::erase( $gebruiker_id ) +
-				Kleistad_Saldo::erase( $gebruiker_id ) +
-				Kleistad_Gebruiker::erase( $gebruiker_id );
+				Kleistad_Saldo::erase( $gebruiker_id );
 		}
 		return [
 			'items_removed'  => $count,

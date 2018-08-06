@@ -104,8 +104,6 @@ class Kleistad_Activator {
               ) $charset_collate;"
 			);
 			update_option( 'kleistad-database-versie', self::DBVERSIE );
-
-			$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_cursussen SET tonen = %d", 1 ) );
 		}
 
 		if ( ! wp_next_scheduled( 'kleistad_kosten' ) ) {
@@ -128,7 +126,21 @@ class Kleistad_Activator {
 		$roles->add_cap( 'contributor', Kleistad_Roles::RESERVEER );
 		$roles->add_cap( 'subscriber', Kleistad_Roles::RESERVEER );
 
+		/*
+		* conversie van oude gebruikers adres gegevens.
+		*/
+		$users = get_users( [ 'meta_key' => 'contactinfo' ] );
+		foreach ( $users as $user ) {
+			$contactinfo = get_user_meta( $user->ID, 'contactinfo', true );
+			if ( ! empty( $contactinfo ) ) {
+				update_user_meta( $user->ID, 'telnr', $contactinfo['telnr'] );
+				update_user_meta( $user->ID, 'straat', $contactinfo['straat'] );
+				update_user_meta( $user->ID, 'huisnr', $contactinfo['huisnr'] );
+				update_user_meta( $user->ID, 'pcode', $contactinfo['pcode'] );
+				update_user_meta( $user->ID, 'plaats', $contactinfo['plaats'] );
+				// @phpcs:ignore delete_user_meta( $user->ID, 'contactinfo' );
+			}
+		}
 		flush_rewrite_rules();
 	}
-
 }

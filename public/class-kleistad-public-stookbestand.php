@@ -47,7 +47,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	public function validate( &$data ) {
 		$vanaf_datum  = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
 		$tot_datum    = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
-		$gebruiker_id = filter_input( INPUT_POST, 'kleistad_gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
+		$gebruiker_id = filter_input( INPUT_POST, 'gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
 		$data         = [
 			'vanaf_datum'  => $vanaf_datum,
 			'tot_datum'    => $tot_datum,
@@ -65,8 +65,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	public function save( $data ) {
-		$gebruiker = get_userdata( $data['gebruiker_id'] );
-
 		$csv   = tempnam( sys_get_temp_dir(), 'stookbestand' );
 		$f_csv = fopen( $csv, 'w' );
 		fwrite( $f_csv, "\xEF\xBB\xBF" );

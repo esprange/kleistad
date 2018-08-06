@@ -38,8 +38,11 @@ else :
 						<th>Docent</th>
 						<td colspan="3"><input type="text" name="docent" id="kleistad_cursus_docent" list="kleistad_docenten" >
 						<datalist id="kleistad_docenten">
-									<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
-									<option value="<?php echo esc_attr( $gebruiker->voornaam . ' ' . $gebruiker->achternaam ); ?>">
+									<?php
+									$gebruikers = get_users( [ 'orderby' => 'nicename' ] );
+									foreach ( $gebruikers as $gebruiker ) :
+										?>
+									<option value="<?php echo esc_attr( $gebruiker->first_name . ' ' . $gebruiker->last_name ); ?>">
 										<?php endforeach ?>
 						</datalist></td>
 					</tr>
