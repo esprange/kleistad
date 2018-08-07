@@ -34,6 +34,7 @@ class Kleistad_Regelingen {
 		$gebruikers = get_users(
 			[
 				'meta_key' => self::META_KEY,
+				'fields'   => [ 'ID' ],
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {

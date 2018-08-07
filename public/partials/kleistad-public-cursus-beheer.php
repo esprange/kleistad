@@ -39,10 +39,13 @@ else :
 						<td colspan="3"><input type="text" name="docent" id="kleistad_cursus_docent" list="kleistad_docenten" >
 						<datalist id="kleistad_docenten">
 									<?php
-									$gebruikers = get_users( [ 'orderby' => 'nicename' ] );
+									$gebruikers = get_users( [
+										'orderby' => 'nicename',
+										'fields'  => [ 'display_name' ],
+									] );
 									foreach ( $gebruikers as $gebruiker ) :
 										?>
-									<option value="<?php echo esc_attr( $gebruiker->first_name . ' ' . $gebruiker->last_name ); ?>">
+									<option value="<?php echo esc_attr( $gebruiker->display_name ); ?>">
 										<?php endforeach ?>
 						</datalist></td>
 					</tr>

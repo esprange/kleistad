@@ -51,7 +51,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 		}
 		$gebruikers         = get_users(
 			[
-				'fields'  => [ 'id', 'display_name' ],
+				'fields'  => [ 'ID', 'display_name' ],
 				'orderby' => [ 'nicename' ],
 			]
 		);

@@ -129,7 +129,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 
 		switch ( $data['download'] ) {
 			case 'cursisten':
-				$cursisten      = get_users();
+				$cursisten      = get_users( [ 'orderby' => 'nicename' ] );
 				$cursussen      = Kleistad_Cursus::all();
 				$inschrijvingen = Kleistad_Inschrijving::all();
 				$cursus_fields  = [

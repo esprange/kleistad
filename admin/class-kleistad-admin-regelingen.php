@@ -117,13 +117,8 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 
 		$gebruikers = get_users(
 			[
-				'fields'  => [
-					'id',
-					'display_name',
-				],
-				'orderby' => [
-					'display_name',
-				],
+				'fields'  => [ 'ID', 'display_name' ],
+				'orderby' => [ 'display_name' ],
 				'order'   => $order,
 			]
 		);
@@ -134,13 +129,13 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 		$regelingen = [];
 
 		foreach ( $gebruikers as $gebruiker ) {
-			$kosten_ovens = $gebruikers_regelingen->get( $gebruiker->id );
+			$kosten_ovens = $gebruikers_regelingen->get( $gebruiker->ID );
 			if ( is_null( $kosten_ovens ) ) {
 				continue;
 			}
 			foreach ( $kosten_ovens as $oven_id => $kosten_oven ) {
 				$regelingen[] = [
-					'id'             => $gebruiker->id . '-' . $oven_id,
+					'id'             => $gebruiker->ID . '-' . $oven_id,
 					'gebruiker_naam' => $gebruiker->display_name,
 					'oven_naam'      => $ovens[ $oven_id ]->naam,
 					'kosten'         => $kosten_oven,

@@ -134,11 +134,11 @@ class Kleistad_Admin {
 	 * @since 4.0.87
 	 * @param array  $errors unused.
 	 * @param int    $update unused.
-	 * @param object $user unused.
+	 * @param object $user   de gebruiker.
 	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function check_role( &$errors, $update, &$user ) {
-		if ( ( get_the_author_meta( 'kleistad_disable_user', $user->ID ) === 1 ) ) {
+		if ( ( intval( get_the_author_meta( 'kleistad_disable_user', $user->ID ) ) === 1 ) ) {
 			$user->role = '';
 		}
 	}
@@ -168,7 +168,7 @@ class Kleistad_Admin {
 	public function manage_users_column_content( $empty, $column_name, $user_id ) {
 
 		if ( 'kleistad_user_disabled' === $column_name ) {
-			if ( get_the_author_meta( 'kleistad_disable_user', $user_id ) === 1 ) {
+			if ( intval( get_the_author_meta( 'kleistad_disable_user', $user_id ) ) === 1 ) {
 				return 'Gedeactiveerd';
 			}
 		}
@@ -877,8 +877,8 @@ class Kleistad_Admin {
 	public function regelingen_form_meta_box_handler( $item ) {
 		$gebruikers = get_users(
 			[
-				'fields'  => [ 'id', 'display_name' ],
-				'orderby' => [ 'nicename' ],
+				'fields'  => [ 'ID', 'display_name' ],
+				'orderby' => [ 'display_name' ],
 			]
 		);
 		$ovens      = Kleistad_Oven::all();

@@ -87,7 +87,7 @@
 					<div class="kleistad_col_7">
 						<select class="kleistad_input" name="gebruiker_id" id="kleistad_gebruiker_id" >
 							<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
-								<option value="<?php echo esc_attr( $gebruiker->id ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
+								<option value="<?php echo esc_attr( $gebruiker->ID ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
 							<?php endforeach ?>
 						</select>
 					</div>

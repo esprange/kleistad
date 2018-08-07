@@ -66,7 +66,7 @@ else :
 					<?php
 					foreach ( $data['stokers'] as $stoker ) :
 						?>
-						<option value="<?php echo esc_attr( $stoker->id ); ?>" <?php selected( $data['huidige_gebruiker']->ID === $stoker->id ); ?> ><?php echo esc_html( $stoker->display_name ); ?></option>
+						<option value="<?php echo esc_attr( $stoker->ID ); ?>" <?php selected( $data['huidige_gebruiker']->ID, $stoker->ID ); ?> ><?php echo esc_html( $stoker->display_name ); ?></option>
 					<?php endforeach ?>
 					</select></td>
 				<?php else : ?>
@@ -82,9 +82,9 @@ else :
 							<option value="0" >&nbsp;</option>
 							<?php
 							foreach ( $data['stokers'] as $medestoker ) :
-								if ( $medestoker->id !== $data['huidige_gebruiker']->ID || Kleistad_Roles::override() ) :
+								if ( $medestoker->ID !== $data['huidige_gebruiker']->ID || Kleistad_Roles::override() ) :
 									?>
-							<option value="<?php echo esc_attr( $medestoker->id ); ?>"><?php echo esc_html( $medestoker->display_name ); ?></option>
+							<option value="<?php echo esc_attr( $medestoker->ID ); ?>"><?php echo esc_html( $medestoker->display_name ); ?></option>
 										<?php
 									endif;
 								endforeach;

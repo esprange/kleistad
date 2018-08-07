@@ -192,7 +192,13 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 */
 	public static function all() {
 		$arr        = [];
-		$gebruikers = get_users( [ 'meta_key' => self::META_KEY ] );
+		$gebruikers = get_users(
+			[
+				'meta_key' => self::META_KEY,
+				'fields'   => [ 'ID' ],
+			]
+		);
+
 		foreach ( $gebruikers as $gebruiker ) {
 			$dagdelenkaart         = get_user_meta( $gebruiker->ID, self::META_KEY, true );
 			$arr[ $gebruiker->ID ] = new Kleistad_Dagdelenkaart( $gebruiker->ID );

@@ -7,7 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/admin/partials
- * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
+ * @phan-file-suppress   PhanUndeclaredVariable
  */
 
 ?>
@@ -19,7 +19,7 @@
 			</th>
 			<td>
 				<input type="checkbox" name="kleistad_disable_user" id="kleistad_disable_user" value="1" <?php checked( 1, get_the_author_meta( 'kleistad_disable_user', $user->ID ) ); ?> />
-				<span class="description"><?php echo 'bij aanvinken kan de gebruiker niet inloggen met dit account.'; ?></span>
+				<span class="description"><?php echo esc_html( 'bij aanvinken kan de gebruiker niet inloggen met dit account.' ); ?></span>
 			</td>
 		</tr>
 	<tbody>

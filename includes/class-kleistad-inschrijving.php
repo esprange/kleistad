@@ -367,7 +367,13 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		static $arr = null;
 		if ( is_null( $arr ) ) {
 			$arr       = [];
-			$cursisten = get_users( [ 'meta_key' => self::META_KEY ] );
+			$cursisten = get_users(
+				[
+					'meta_key' => self::META_KEY,
+					'fields'   => [ 'ID' ],
+				]
+			);
+
 			foreach ( $cursisten as $cursist ) {
 				$inschrijvingen = get_user_meta( $cursist->ID, self::META_KEY, true );
 				krsort( $inschrijvingen );

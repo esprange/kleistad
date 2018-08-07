@@ -49,14 +49,14 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 
 			$gebruikers = get_users(
 				[
-					'fields'  => [ 'id', 'display_name' ],
+					'fields'  => [ 'ID', 'display_name' ],
 					'orderby' => [ 'nicename' ],
 				]
 			);
 
 			$stokers = [];
 			foreach ( $gebruikers as $gebruiker ) {
-				if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
+				if ( Kleistad_Roles::reserveer( $gebruiker->ID ) ) {
 					$stokers[] = $gebruiker;
 				}
 			}

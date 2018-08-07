@@ -133,12 +133,13 @@ class Kleistad_Activator {
 		foreach ( $users as $user ) {
 			$contactinfo = get_user_meta( $user->ID, 'contactinfo', true );
 			if ( ! empty( $contactinfo ) ) {
-				update_user_meta( $user->ID, 'telnr', $contactinfo['telnr'] );
-				update_user_meta( $user->ID, 'straat', $contactinfo['straat'] );
-				update_user_meta( $user->ID, 'huisnr', $contactinfo['huisnr'] );
-				update_user_meta( $user->ID, 'pcode', $contactinfo['pcode'] );
-				update_user_meta( $user->ID, 'plaats', $contactinfo['plaats'] );
-				// @phpcs:ignore delete_user_meta( $user->ID, 'contactinfo' );
+				if ( add_user_meta( $user->ID, 'telnr', $contactinfo['telnr'], true ) &&
+					add_user_meta( $user->ID, 'straat', $contactinfo['straat'], true ) &&
+					add_user_meta( $user->ID, 'huisnr', $contactinfo['huisnr'], true ) &&
+					add_user_meta( $user->ID, 'pcode', $contactinfo['pcode'], true ) &&
+					add_user_meta( $user->ID, 'plaats', $contactinfo['plaats'], true ) ) {
+					delete_user_meta( $user->ID, 'contactinfo' );
+				}
 			}
 		}
 		flush_rewrite_rules();

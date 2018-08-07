@@ -22,10 +22,9 @@
 				<select name="gebruiker_id" id="gebruiker_id" style="width: 95%" required>
 					<?php
 					foreach ( $gebruikers as $gebruiker ) :
-						if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
-							$selected = ( $item['gebruiker_id'] == $gebruiker->id ) ? 'selected' : '';  // WPCS: loose comparison ok.
+						if ( Kleistad_Roles::reserveer( $gebruiker->ID ) ) {
 							?>
-						<option value="<?php echo esc_attr( $gebruiker->id ); ?>" <?php echo esc_attr( $selected ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
+						<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" <?php selected( $item['gebruiker_id'], $gebruiker->ID ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
 						<?php } endforeach ?>
 				</select>
 				<?php else : ?>

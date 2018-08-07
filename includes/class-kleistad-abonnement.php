@@ -641,7 +641,12 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		static $arr = null;
 		if ( is_null( $arr ) ) {
 			$arr      = [];
-			$abonnees = get_users( [ 'meta_key' => self::META_KEY ] );
+			$abonnees = get_users(
+				[
+					'meta_key' => self::META_KEY,
+					'fields'   => [ 'ID' ],
+				]
+			);
 			foreach ( $abonnees as $abonnee ) {
 				$abonnement          = get_user_meta( $abonnee->ID, self::META_KEY, true );
 				$arr[ $abonnee->ID ] = new Kleistad_Abonnement( $abonnee->ID );

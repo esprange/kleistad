@@ -121,7 +121,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 
 		$gebruikers = get_users(
 			[
-				'fields'  => [ 'id', 'display_name' ],
+				'fields'  => [ 'ID', 'display_name' ],
 				'orderby' => [ 'display_name' ],
 				'order'   => $order,
 				'search'  => '*' . $search . '*',
@@ -131,10 +131,10 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 		$stooksaldi = [];
 
 		foreach ( $gebruikers as $gebruiker ) {
-			if ( Kleistad_Roles::reserveer( $gebruiker->id ) ) {
-				$saldo        = new Kleistad_Saldo( $gebruiker->id );
+			if ( Kleistad_Roles::reserveer( $gebruiker->ID ) ) {
+				$saldo        = new Kleistad_Saldo( $gebruiker->ID );
 				$stooksaldi[] = [
-					'id'    => $gebruiker->id,
+					'id'    => $gebruiker->ID,
 					'naam'  => $gebruiker->display_name,
 					'saldo' => $saldo->bedrag,
 				];
