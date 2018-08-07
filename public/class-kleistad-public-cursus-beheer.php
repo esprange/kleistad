@@ -42,9 +42,8 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 						continue;
 					}
 					$cursist  = get_userdata( $cursist_id );
-					$meerdere = ( 1 === intval( $inschrijving[ $cursus_id ]->aantal ) ) ? '' : ' (' . $inschrijving[ $cursus_id ]->aantal . ')';
 					$element  = [
-						'naam'       => $cursist->display_name . $meerdere,
+						'naam'       => $cursist->display_name . ( 1 === intval( $inschrijving[ $cursus_id ]->aantal ) ? '' : ' (' . $inschrijving[ $cursus_id ]->aantal . ')' ),
 						'opmerking'  => $inschrijving[ $cursus_id ]->opmerking,
 						'technieken' => $inschrijving[ $cursus_id ]->technieken,
 						'ingedeeld'  => $inschrijving[ $cursus_id ]->ingedeeld,
