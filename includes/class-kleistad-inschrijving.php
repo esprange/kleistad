@@ -230,7 +230,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 */
 	public function email( $type ) {
 		$cursist   = get_userdata( $this->_cursist_id );
-		$to        = "$cursist->first_name $cursist->last_name <$cursist->user_email>";
+		$to        = "$cursist->display_name <$cursist->user_email>";
 		$onderwerp = ucfirst( $type ) . ' cursus';
 
 		switch ( $type ) {

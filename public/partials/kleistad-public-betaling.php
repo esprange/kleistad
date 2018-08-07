@@ -31,7 +31,7 @@ if ( isset( $data['actie'] ) ) :
 				<p>Cursist</p>
 			</div>
 			<div class="kleistad_col_7">
-				<p><?php echo esc_html( $data['cursist']->first_name . ' ' . $data['cursist']->last_name ); ?></p>
+				<p><?php echo esc_html( $data['cursist']->display_name ); ?></p>
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -117,7 +117,7 @@ if ( isset( $data['actie'] ) ) :
 				<p>Abonnee</p>
 			</div>
 			<div class="kleistad_col_6">
-				<p><?php echo esc_html( $data['abonnee']->first_name . ' ' . $data['abonnee']->last_name ); ?></p>
+				<p><?php echo esc_html( $data['abonnee']->display_name ); ?></p>
 			</div>
 		</div>
 		<div class="kleistad_row">

@@ -38,9 +38,9 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
 				if ( ( $cursussen[ $cursus_id ]->eind_datum > strtotime( '-7 days' ) ) && ( ! $inschrijving->i_betaald || ! $inschrijving->c_betaald ) ) {
 					$cursist = get_userdata( $cursist_id );
-					$rows[] = [
+					$rows[]  = [
 						'inschrijver_id' => $cursist_id,
-						'naam'           => $cursist->first_name . ' ' . $cursist->last_name,
+						'naam'           => $cursist->display_name,
 						'datum'          => $inschrijving->datum,
 						'code'           => $inschrijving->code,
 						'i_betaald'      => $inschrijving->i_betaald,

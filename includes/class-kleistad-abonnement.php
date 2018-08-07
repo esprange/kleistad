@@ -219,7 +219,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	public function email( $type, $wijziging = '' ) {
 		$options = Kleistad::get_options();
 		$abonnee = get_userdata( $this->_abonnee_id );
-		$to      = "$abonnee->first_name $abonnee->last_name <$abonnee->user_email>";
+		$to      = "$abonnee->display_name <$abonnee->user_email>";
 		return Kleistad_public::compose_email(
 			$to, ( false !== strpos( $type, '_start' ) ) ? 'Welkom bij Kleistad' : 'Abonnement Kleistad', 'kleistad_email_abonnement' . $type, [
 				'voornaam'                => $abonnee->first_name,

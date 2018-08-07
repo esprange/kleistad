@@ -69,7 +69,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				}
 			}
 			$deelnemer_info = [
-				'naam'   => $gebruiker->first_name . ' ' . $gebruiker->last_name,
+				'naam'   => $gebruiker->display_name,
 				'straat' => $gebruiker->straat,
 				'huisnr' => $gebruiker->huisnr,
 				'pcode'  => $gebruiker->pcode,
