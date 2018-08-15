@@ -2,10 +2,10 @@
     'use strict';
 
     function wijzigTeksten() {
-        var cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
-		var bedrag = cursus.prijs;
-		var spin   = $( '#kleistad_aantal' );
-		var aantal = spin.spinner( 'value' );
+        var cursus        = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
+		var bedrag        = cursus.prijs;
+		var spin          = $( '#kleistad_aantal' );
+		var aantal        = spin.spinner( 'value' );
 		if ( aantal > cursus.ruimte ) {
 			aantal = cursus.ruimte;
 		}
@@ -14,9 +14,14 @@
 		$( '#kleistad_submit_enabler' ).hide();
 		$( '#kleistad_submit' ).prop( 'disabled', false );
 
-        bedrag = ( cursus.meer ? aantal : 1 ) * bedrag;
-        $( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en word meteen ingedeeld.' );
-        $( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail. Indeling vindt daarna plaats.' );
+		bedrag = ( cursus.meer ? aantal : 1 ) * bedrag;
+		if ( cursus.inschrijfgeld ) {
+			$( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' voor de inschrijving en word meteen ingedeeld.' );
+			$( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal de inschrijving door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail. Indeling vindt daarna plaats.' );
+		} else {
+			$( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en word meteen ingedeeld.' );
+			$( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail. Indeling vindt daarna plaats.' );
+		}
     }
 
     function wijzigVelden() {
