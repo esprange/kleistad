@@ -21,17 +21,17 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 			</div>
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required
-					data-bedrag="<?php echo esc_attr( $data['bedrag_onbeperkt'] ); ?>"
+					data-bedrag="<?php echo esc_attr( 3 * $this->options['onbeperkt_abonnement'] + $this->options['borg_kast'] ); ?>"
 					value="onbeperkt" <?php checked( 'onbeperkt', $data['input']['abonnement_keuze'] ); ?> />
-				<label class="kleistad_label_cbr" for="kleistad_onbeperkt" >Onbeperkt</label>
+				<label class="kleistad_label_cbr" for="kleistad_onbeperkt" >Onbeperkt<br/>(€ <?php echo esc_html( number_format_i18n( $this->options['onbeperkt_abonnement'], 2 ) ); ?> p.m.)</label>
 			</div>
 			<div class="kleistad_col_1">
 			</div>
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_beperkt" type="radio" required
-					data-bedrag="<?php echo esc_attr( $data['bedrag_beperkt'] ); ?>"
+					data-bedrag="<?php echo esc_attr( 3 * $this->options['beperkt_abonnement'] + $this->options['borg_kast'] ); ?>"
 					value="beperkt" <?php checked( 'beperkt', $data['input']['abonnement_keuze'] ); ?> />
-				<label class="kleistad_label_cbr" for="kleistad_beperkt">Beperkt</label>
+				<label class="kleistad_label_cbr" for="kleistad_beperkt">Beperkt<br/>(€ <?php echo esc_html( number_format_i18n( $this->options['beperkt_abonnement'], 2 ) ); ?> p.m.)</label>
 			</div>
 		</div>
 		<div class="kleistad_row" id="kleistad_dag" style="visibility:hidden" title="kies de dag dat je van jouw beperkt abonnement gebruikt gaat maken" >
@@ -48,6 +48,34 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 				</select>
 			</div>
 		</div>
+		<?php
+		$i = 0;
+		foreach ( $this->options['extra'] as $extra ) :
+			if ( 0 < $extra['prijs'] ) :
+				$i++;
+				?>
+		<div class="kleistad_row">
+			<div class="kleistad_col_3">
+				<label class="kleistad_label"><?php echo 1 === $i ? 'Extra\'s' : ''; ?></label>
+			</div>
+				<?php
+				$label = false;
+				?>
+			<div class="kleistad_col_4">
+				<input class="kleistad_input_cbr" name="extras[]" id="extras_<?php echo esc_attr( $i ); ?>" type="checkbox"
+					data-bedrag="<?php echo esc_attr( 3 * $extra['prijs'] ); ?>"
+					<?php checked( false !== array_search( $extra['naam'], $data['input']['extras'], true ) ); ?>
+					value="<?php echo esc_attr( $extra['naam'] ); ?>" />
+				<label class="kleistad_label_cbr" for="extras_<?php echo esc_attr( $i ); ?>" ><?php echo esc_html( $extra['naam'] ); ?></label>
+			</div>
+			<div class="kleistad_col_3">
+				<label class="kleistad_label" ><?php echo esc_html( ' (€ ' . number_format_i18n( $extra['prijs'], 2 ) . ' p.m.)' ); ?></label>
+			</div>
+		</div>
+				<?php
+			endif;
+		endforeach;
+		?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_start_datum">Start per</label>

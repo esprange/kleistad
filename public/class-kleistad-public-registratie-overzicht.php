@@ -46,7 +46,8 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 					'herstart_datum' => $abonnementen[ $gebruiker->ID ]->herstart_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker->ID ]->herstart_datum ) : '',
 					'eind_datum'     => $abonnementen[ $gebruiker->ID ]->eind_datum ? date( 'd-m-Y', $abonnementen[ $gebruiker->ID ]->eind_datum ) : '',
 					'dag'            => ( 'beperkt' === $abonnementen[ $gebruiker->ID ]->soort ) ? $abonnementen[ $gebruiker->ID ]->dag : '',
-					'soort'          => $abonnementen[ $gebruiker->ID ]->soort,
+					'soort'          => ucfirst( $abonnementen[ $gebruiker->ID ]->soort ),
+					'extras'         => implode( ' ', $abonnementen[ $gebruiker->ID ]->extras ),
 					'geannuleerd'    => $abonnementen[ $gebruiker->ID ]->geannuleerd,
 					'opmerking'      => $abonnementen[ $gebruiker->ID ]->opmerking,
 				];

@@ -39,24 +39,24 @@ else :
 					&nbsp;
 				</div>
 				<div class="kleistad_col_7" >
-				<?php
-				if ( 'onbeperkt' === $data['input']['soort'] ) :
-					?>
+			<?php
+			if ( 'onbeperkt' === $data['input']['soort'] ) :
+				?>
 					<input name="soort" type="hidden" value="beperkt" >
 					<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een onbeperkt naar een beperkt abonnement. Kies de dag waarop je van een beperkt abonnement gebruikt gaat maken</strong></p>
-					<?php
-					else :
-						?>
+				<?php
+			else :
+				?>
 					<input name="soort" type="hidden" value="onbeperkt" >
 					<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een beperkt naar een onbeperkt abonnement.</strong></p>
-						<?php
-					endif;
-					?>
+				<?php
+			endif;
+			?>
 				</div>
 			</div>
-				<?php
-				if ( 'onbeperkt' === $data['input']['soort'] ) :
-					?>
+			<?php
+			if ( 'onbeperkt' === $data['input']['soort'] ) :
+				?>
 			<div class="kleistad_row" >
 				<div class="kleistad_col_3">
 					&nbsp;
@@ -74,11 +74,57 @@ else :
 					</select>
 				</div>
 			</div>
-					<?php
-				endif;
-				?>
+				<?php
+			endif;
+			?>
 		</div>
 			<?php
+			$extra_beschikbaar = false;
+			foreach ( $this->options['extra'] as $extra ) :
+				$extra_beschikbaar |= ( 0 < $extra['prijs'] );
+			endforeach;
+
+			if ( $extra_beschikbaar ) :
+				?>
+		<div class="kleistad_row">
+			<div class="kleistad_col_6">
+				<input type="radio" name="actie" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad_input_cbr" value="extras" >
+				<label class="kleistad_label_cbr" for="kleistad_abo_extras">Abonnement extras wijzigen</label>
+			</div>
+		</div>
+		<div class="kleistad_abo_extras kleistad_abo_veld" style="display:none" >
+				<?php
+				$i = 0;
+				foreach ( $this->options['extra'] as $extra ) :
+					if ( 0 < $extra['prijs'] ) :
+						$i++;
+						?>
+			<div class="kleistad_row">
+				<div class="kleistad_col_3">
+					<label class="kleistad_label"><?php echo 1 === $i ? 'Extra\'s' : ''; ?></label>
+				</div>
+						<?php
+						$label = false;
+						?>
+				<div class="kleistad_col_4">
+					<input class="kleistad_input_cbr" name="extras[]" id="extras_<?php echo esc_attr( $i ); ?>" type="checkbox"
+						<?php checked( false !== array_search( $extra['naam'], $data['input']['extras'], true ) ); ?>
+						data-bedrag="<?php echo esc_attr( 3 * $extra['prijs'] ); ?>"
+						value="<?php echo esc_attr( $extra['naam'] ); ?>" />
+					<label class="kleistad_label_cbr" for="extras_<?php echo esc_attr( $i ); ?>" ><?php echo esc_html( $extra['naam'] ); ?></label>
+				</div>
+				<div class="kleistad_col_3">
+					<label class="kleistad_label" ><?php echo esc_html( ' (€ ' . number_format_i18n( $extra['prijs'], 2 ) . ' p.m.)' ); ?></label>
+				</div>
+			</div>
+						<?php
+					endif;
+				endforeach;
+				?>
+		</div>
+				<?php
+			endif;
+
 			if ( $data['input']['actief'] ) :
 				?>
 		<div class="kleistad_row">
@@ -109,8 +155,8 @@ else :
 			</div>
 		</div>
 				<?php
-		else :
-			?>
+			else :
+				?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_start" class="kleistad_abo_optie kleistad_input_cbr" value="herstart" >
@@ -135,21 +181,21 @@ else :
 				</div>
 				<div class="kleistad_col_3">
 					<select name="startdatum" id="kleistad_startdatum" >
-			<?php
-			for ( $i = 1; $i <= 3; $i++ ) :
-				$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + $i, 1, intval( date( 'Y' ) ) );
-				?>
-						<option value="<?php echo esc_attr( $datum ); ?>"><?php echo esc_html( strftime( '%B %Y', $datum ) ); ?></option>
 				<?php
-			endfor
-			?>
+				for ( $i = 1; $i <= 3; $i++ ) :
+					$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + $i, 1, intval( date( 'Y' ) ) );
+					?>
+						<option value="<?php echo esc_attr( $datum ); ?>"><?php echo esc_html( strftime( '%B %Y', $datum ) ); ?></option>
+					<?php
+				endfor
+				?>
 					</select>
 				</div>
 			</div>
 		</div>
-			<?php
-		endif;
-		endif;
+				<?php
+			endif;
+		endif; // Niet in drie maand periode.
 		?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_6">

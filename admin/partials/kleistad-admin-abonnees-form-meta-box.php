@@ -57,6 +57,25 @@
 				</select>
 			</td>
 		</tr>
+		<?php
+		$options = get_option( 'kleistad-opties' );
+		$i       = 1;
+		foreach ( $options['extra'] as $extra ) :
+			if ( 0 < $extra['prijs'] ) :
+				?>
+		<tr class="form-field">
+			<th scope="row">
+				<label for="extra_<?php echo esc_attr( $i ); ?>"><?php echo esc_html( $extra['naam'] ); ?></label>
+			</th>
+			<td>
+				<input type="checkbox" id="extra_<?php echo esc_attr( $i ); ?>" name="extras[]" class="code" <?php checked( false !== array_search( $extra['naam'], $item['extras'], true ) ); ?>
+					value="<?php echo esc_attr( $extra['naam'] ); ?>" >
+			</td>
+		</tr>
+				<?php
+			endif;
+		endforeach;
+		?>
 		<tr class="form-field">
 			<th scope="row">
 				<label for="gestart">Starten</label>

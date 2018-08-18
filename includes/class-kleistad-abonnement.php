@@ -14,7 +14,13 @@
  */
 class Kleistad_Abonnement extends Kleistad_Entity {
 
-	const META_KEY = 'kleistad_abonnement';
+	const META_KEY             = 'kleistad_abonnement';
+	const BEDRAG_MAAND         = 1;
+	const BEDRAG_OVERBRUGGING  = 2;
+	const BEDRAG_START         = 3;
+	const BEDRAG_BORG          = 4;
+	const BEDRAG_START_EN_BORG = 5;
+	const BEDRAG_EXTRAS_TEKST  = 6;
 
 	/**
 	 * Het abonnee id
@@ -46,6 +52,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		'incasso_datum'  => '',
 		'gepauzeerd'     => 0,
 		'subscriptie_id' => '',
+		'extras'         => [],
 	];
 
 	/**
@@ -66,6 +73,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		// Deze datum zit niet in de 'oude' abonnees.
 		if ( '' === $this->_data['incasso_datum'] ) {
 			$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 1, intval( date( 'Y', $this->start_datum ) ) );
+		}
+		if ( ! isset( $this->_data['extras'] ) ) {
+			$this->_data['extras'] = [];
 		}
 	}
 
@@ -217,7 +227,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $wijziging = '' ) {
-		$options = Kleistad::get_options();
 		$abonnee = get_userdata( $this->_abonnee_id );
 		$to      = "$abonnee->display_name <$abonnee->user_email>";
 		return Kleistad_public::compose_email(
@@ -235,10 +244,11 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'abonnement_dag'          => $this->dag,
 				'abonnement_opmerking'    => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
 				'abonnement_wijziging'    => $wijziging,
-				'abonnement_borg'         => number_format_i18n( $options['borg_kast'], 2 ),
-				'abonnement_startgeld'    => number_format_i18n( 3 * $options[ $this->soort . '_abonnement' ], 2 ),
-				'abonnement_maandgeld'    => number_format_i18n( $options[ $this->soort . '_abonnement' ], 2 ),
-				'abonnement_overbrugging' => number_format_i18n( $this->overbrugging(), 2 ),
+				'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->bedrag( self::BEDRAG_EXTRAS_TEKST ) : '',
+				'abonnement_borg'         => number_format_i18n( $this->bedrag( self::BEDRAG_BORG ), 2 ),
+				'abonnement_startgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_START ), 2 ),
+				'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_MAAND ), 2 ),
+				'abonnement_overbrugging' => number_format_i18n( $this->bedrag( self::BEDRAG_OVERBRUGGING ), 2 ),
 				'abonnement_link'         => '<a href="' . home_url( '/kleistad_abonnement_betaling' ) .
 												'?gid=' . $this->_abonnee_id .
 												'&abo=1' .
@@ -281,7 +291,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$betalen->order(
 			$this->_abonnee_id,
 			__CLASS__ . '-' . $this->code . '-incasso',
-			$this->overbrugging(),
+			$this->bedrag( self::BEDRAG_OVERBRUGGING ),
 			'Kleistad abonnement ' . $this->code . ' periode tot ' . strftime( '%d-%m-%y', $this->incasso_datum ),
 			'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
 			true
@@ -315,11 +325,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	private function herhaalbetalen( $datum ) {
 		$betalen = new Kleistad_Betalen();
-		$options = Kleistad::get_options();
 
 		return $betalen->herhaalorder(
 			$this->_abonnee_id,
-			$options[ $this->soort . '_abonnement' ],
+			$this->bedrag( self::BEDRAG_MAAND ),
 			'Kleistad abonnement ' . $this->code,
 			$datum
 		);
@@ -345,25 +354,49 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
-	 * Bereken het overbruggings bedrag.
+	 * Bereken de maandelijkse kosten, de overbrugging, de borg of het startbedrag.
 	 *
-	 * @since 4.3.0
+	 * @since 4.5.2
 	 *
-	 * @return float Het bedrag.
+	 * @param  int $soort Welk bedrag gevraagd wordt, standaard het maandbedrag.
+	 * @return float|string  Het maandbedrag of een lijst van de extras.
 	 */
-	public function overbrugging() {
+	private function bedrag( $soort ) {
 		$options = Kleistad::get_options();
-		if ( '1' === date( 'j', $this->start_datum ) ) {
-			$bedrag = $options[ $this->soort . '_abonnement' ];
-		} else {
-			// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
-			$dag             = 60 * 60 * 24; // Aantal seconden in een dag.
-			$driemaand_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 3, intval( date( 'j', $this->start_datum ) ), intval( date( 'Y', $this->start_datum ) ) );
-			$aantal_dagen    = ( $this->incasso_datum - $driemaand_datum ) / $dag;
-			$dagen_in_maand  = intval( date( 'j', $this->incasso_datum - $dag ) );
-			$bedrag          = $options[ $this->soort . '_abonnement' ] * $aantal_dagen / $dagen_in_maand;
+		$bedrag  = (float) $options[ $this->soort . '_abonnement' ];
+		$extras  = '';
+		foreach ( $this->extras as $extra ) {
+			$key = array_search( $extra, $options, true );
+			if ( $key ) {
+				$extra_bedrag = (float) $options[ str_replace( 'naam', 'prijs', $key ) ];
+				$extras      .= $extra . ( ! empty( $extra ) ? ', ' : '' ) . '( € ' . number_format_i18n( $extra_bedrag, 2 ) . ' p.m.)';
+				$bedrag      += $extra_bedrag;
+			}
 		}
-		return $bedrag;
+
+		switch ( $soort ) {
+			case self::BEDRAG_MAAND:
+				return $bedrag;
+			case self::BEDRAG_BORG:
+				return (float) $options['borg_kast'];
+			case self::BEDRAG_START:
+				return 3 * $bedrag;
+			case self::BEDRAG_START_EN_BORG:
+				return 3 * $bedrag + (float) $options['borg_kast'];
+			case self::BEDRAG_OVERBRUGGING:
+				if ( '1' === date( 'j', $this->start_datum ) ) {
+					return $bedrag;
+				} else {
+					// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
+					$dag             = 60 * 60 * 24; // Aantal seconden in een dag.
+					$driemaand_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 3, intval( date( 'j', $this->start_datum ) ), intval( date( 'Y', $this->start_datum ) ) );
+					$aantal_dagen    = ( $this->incasso_datum - $driemaand_datum ) / $dag;
+					$dagen_in_maand  = intval( date( 'j', $this->incasso_datum - $dag ) );
+					return $bedrag * $aantal_dagen / $dagen_in_maand;
+				}
+			case self::BEDRAG_EXTRAS_TEKST:
+				return $extras;
+		}
 	}
 
 	/**
@@ -450,14 +483,24 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param int    $wijzig_datum Wijzigdatum.
-	 * @param string $soort        Beperkt/onbeperkt.
-	 * @param string $dag          Dag voor beperkt abonnement.
-	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param int          $wijzig_datum Wijzigdatum.
+	 * @param string|array $soort        Beperkt/onbeperkt wijziging of de extras.
+	 * @param string       $dag          Dag voor beperkt abonnement.
+	 * @param bool         $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
-	public function wijzigen( $wijzig_datum, $soort, $dag, $admin = false ) {
-		$this->soort          = $soort;
-		$this->dag            = $dag;
+	public function wijzigen( $wijzig_datum, $soort, $dag = '', $admin = false ) {
+		if ( is_array( $soort ) ) {
+			$this->extras = $soort;
+			if ( count( $soort ) ) {
+				$bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $this->wijzig_datum ) . ' gebruik maken van ' . implode( ', ', $soort );
+			} else {
+				$bericht = 'Je maakt voortaan per ' . strftime( '%d-%m-%y', $this->wijzig_datum ) . ' geen gebruik meer van extras';
+			}
+		} else {
+			$this->soort = $soort;
+			$this->dag   = $dag;
+			$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->wijzig_datum ) . ' gewijzigd naar ' . $this->soort;
+		}
 		$this->wijzig_datum   = $wijzig_datum;
 		$betalen              = new Kleistad_Betalen();
 		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
@@ -467,7 +510,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			}
 			$this->email(
 				'_gewijzigd',
-				'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->wijzig_datum ) . ' gewijzigd naar ' . $this->soort
+				$bericht
 			);
 		}
 		$this->save();
@@ -529,7 +572,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
-		$options             = Kleistad::get_options();
 		$vervolg_datum       = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ) - 7, intval( date( 'Y', $start_datum ) ) );
 		$driemaand_datum     = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ), intval( date( 'Y', $start_datum ) ) );
 		$this->start_datum   = $start_datum;
@@ -543,7 +585,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$betalen->order(
 				$this->_abonnee_id,
 				__CLASS__ . '-' . $this->code . '-start_ideal',
-				$options[ $this->soort . '_abonnement' ] * 3 + $options['borg_kast'],
+				$this->bedrag( self::BEDRAG_START ),
 				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $driemaand_datum ) . ' en borg',
 				'Bedankt voor de betaling! De abonnement inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
 			);

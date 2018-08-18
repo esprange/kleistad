@@ -38,9 +38,10 @@ class Kleistad_Activator {
 			'workshopprijs'        => 110,
 			'kinderworkshopprijs'  => 110,
 			'termijn'              => 4,
-			'sleutel'              => '',
-			'sleutel_test'         => '',
+			'sleutel'              => 'fout123456789012345678901234567890',
+			'sleutel_test'         => 'fout123456789012345678901234567890',
 			'betalen'              => 0,
+			'extras'               => [],
 		];
 		$options         = wp_parse_args( get_option( 'kleistad-opties' ), $default_options );
 		update_option( 'kleistad-opties', $options );

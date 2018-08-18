@@ -30,6 +30,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 		$data['input']['actief'] = ( ! $abonnement->geannuleerd ) && ( ! $abonnement->gepauzeerd );
 		$data['input']['soort']  = $abonnement->soort;
 		$data['input']['dag']    = $abonnement->dag;
+		$data['input']['extras'] = $abonnement->extras;
 		return true;
 	}
 
@@ -53,8 +54,15 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 				'betaal'        => FILTER_SANITIZE_STRING,
 				'pauze_maanden' => FILTER_SANITIZE_NUMBER_INT,
 				'per_datum'     => FILTER_SANITIZE_NUMBER_INT,
+				'extras'        => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_REQUIRE_ARRAY,
+				],
 			]
 		);
+		if ( ! is_array( $input['extras'] ) ) {
+			$input['extras'] = [];
+		};
 
 		$err = $error->get_error_codes();
 		if ( ! empty( $err ) ) {
@@ -98,6 +106,9 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 				break;
 			case 'wijziging':
 				$status = $abonnement->wijzigen( $data['input']['per_datum'], $data['input']['soort'], $data['input']['dag'] );
+				break;
+			case 'extras':
+				$status = $abonnement->wijzigen( $data['input']['per_datum'], $data['input']['extras'] );
 				break;
 			case 'betaalwijze':
 				$status = $abonnement->betaalwijze( $data['input']['per_datum'], $data['input']['betaal'] );

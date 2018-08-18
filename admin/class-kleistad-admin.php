@@ -431,7 +431,13 @@ class Kleistad_Admin {
 	 */
 	public function validate_settings( $input ) {
 		foreach ( $input as &$element ) {
-			$element = sanitize_text_field( $element );
+			if ( is_array( $element ) ) {
+				$element = $this->validate_settings( $element );
+			} else {
+				if ( is_string( $element ) ) {
+					$element = sanitize_text_field( $element );
+				}
+			}
 		}
 		return $input;
 	}
@@ -571,8 +577,15 @@ class Kleistad_Admin {
 					'incasso_datum'    => FILTER_SANITIZE_STRING,
 					'mandaat'          => FILTER_SANITIZE_NUMBER_INT,
 					'eind_pauze_datum' => FILTER_SANITIZE_NUMBER_INT,
+					'extras'           => [
+						'filter' => FILTER_SANITIZE_STRING,
+						'flags'  => FILTER_REQUIRE_ARRAY,
+					],
 				]
 			);
+			if ( ! is_array( $item['extras'] ) ) {
+				$item['extras'] = [];
+			}
 			$item_valid = $this->validate_abonnee( $item );
 			if ( true === $item_valid ) {
 				$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
@@ -596,6 +609,8 @@ class Kleistad_Admin {
 					}
 				} elseif ( ( 1 === intval( $item['gestart'] ) ) !== Kleistad_Roles::reserveer( $item['id'] ) ) {
 					$abonnement->start( $abonnement->start_datum, 'stort', true );
+				} elseif ( $abonnement->extras !== $item['extras'] ) {
+					$abonnement->wijzigen( time(), $item['extras'], '', true );
 				} elseif ( $abonnement->soort !== $item['soort'] ) {
 					$abonnement->wijzigen( time(), $item['soort'], $item['dag'], true );
 				} elseif ( $abonnement->dag !== $item['dag'] ) {
@@ -617,6 +632,7 @@ class Kleistad_Admin {
 					'soort'           => $abonnement->soort,
 					'dag'             => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
 					'code'            => $abonnement->code,
+					'extras'          => $abonnement->extras,
 					'geannuleerd'     => $abonnement->geannuleerd,
 					'gepauzeerd'      => $abonnement->gepauzeerd,
 					'gestart'         => Kleistad_Roles::reserveer( $abonnee_id ),

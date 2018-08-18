@@ -32,6 +32,13 @@
                 }
             );
 
+            $( '#kleistad_abo_extras' ).click(
+                function() {
+					$( '.kleistad_abo_veld' ).hide();
+					$( '.kleistad_abo_extras' ).toggle( this.checked );
+                }
+            );
+
             $( '#kleistad_abo_betaalwijze' ).click(
                 function() {
 					$( '.kleistad_abo_veld' ).hide();
@@ -88,6 +95,9 @@
                     }
                     if ( $( '#kleistad_abo_wijziging' ).prop( 'checked' ) ) {
                         $( '#kleistad_confirm' ).html( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Weet je zeker dat je jouw abonnement wilt wijzigen ?</p>' ).dialog( 'open' );
+                    }
+                    if ( $( '#kleistad_abo_extras' ).prop( 'checked' ) ) {
+                        $( '#kleistad_confirm' ).html( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Weet je zeker dat je de extras van jouw abonnement wilt wijzigen ?</p>' ).dialog( 'open' );
                     }
                     if ( $( '#kleistad_abo_betaalwijze' ).prop( 'checked' ) ) {
                         $( '#kleistad_confirm' ).html( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Weet je zeker dat je de betaalwijze van jouw abonnement wilt wijzigen ?</p>' ).dialog( 'open' );

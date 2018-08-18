@@ -25,7 +25,24 @@
                     $( '#saldo' ).val( saldo );
                     return false;
                 }
-            );
+			);
+
+			$( '#kleistad-extra' ).click(
+				function() {
+					/* jshint ignore:start */
+					var aantal   = $( '.kleistad-extra' ).length;
+					var sjabloon =
+						+ '<tr>'
+						+ 	'<th scope="row">Abonnement extra #</th>'
+						+ 	'<td><input type="text" class="kleistad-extra" name="kleistad-opties[extra][#][naam]" /></td>'
+						+ 	'<th scope="row">Prijs</th>'
+						+ 	'<td><input type="number" step="0.01" min="0" name="kleistad-opties[extra][#][prijs]" /></td>'
+						+ '</tr>';
+					var html     = sjabloon.replace( /#/g, ++aantal );
+					$( html ).insertBefore( '#kleistad-extra-toevoegen' );
+					/* jshint ignore:end */
+				}
+			);
         }
     );
 } )( jQuery );

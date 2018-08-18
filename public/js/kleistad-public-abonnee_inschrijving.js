@@ -2,7 +2,13 @@
     'use strict';
 
     function wijzigTeksten() {
-        var bedrag = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedrag' );
+		var bedrag = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedrag' );
+
+		$( 'input[name^=extras]:checkbox:checked' ).each(
+			function() {
+				bedrag += $( this ).data( 'bedrag' );
+			}
+		);
         $( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' (= 3 termijnen en borg).' );
         $( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' (= 3 termijnen en borg) volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail.' );
     }
@@ -25,7 +31,7 @@
             /**
              * Afhankelijk van keuze abonnement al dan niet tonen dag waarvoor beperkt abo geldig is.
              */
-            $( 'input[name=abonnement_keuze]' ).change(
+            $( 'input[name=abonnement_keuze]:radio' ).change(
                 function() {
 					wijzigTeksten();
                     if (  'beperkt' === this.value ) {
@@ -35,7 +41,13 @@
                         $( '#kleistad_dag' ).css( 'visibility', 'hidden' );
                     }
                 }
-            );
+			);
+
+			$( 'input[name^=extras]:checkbox' ).change(
+                function() {
+					wijzigTeksten();
+				}
+			);
 
             $( 'input[name=betaal]:radio' ).change(
                 function() {

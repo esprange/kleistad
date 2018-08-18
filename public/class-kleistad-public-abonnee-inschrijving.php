@@ -37,6 +37,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 				'plaats'           => '',
 				'telnr'            => '',
 				'abonnement_keuze' => '',
+				'extras'           => [],
 				'dag'              => '',
 				'start_datum'      => '',
 				'opmerking'        => '',
@@ -44,21 +45,19 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 				'mc4wp-subscribe'  => '0',
 			];
 		}
-		$atts                     = shortcode_atts(
+		$atts               = shortcode_atts(
 			[
 				'verklaring' => '',
 			], $this->atts, 'kleistad_abonnee_inschrijving'
 		);
-		$gebruikers               = get_users(
+		$gebruikers         = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$data['gebruikers']       = $gebruikers;
-		$data['verklaring']       = htmlspecialchars_decode( $atts['verklaring'] );
-		$data['bedrag_beperkt']   = 3 * $this->options['beperkt_abonnement'] + $this->options['borg_kast'];
-		$data['bedrag_onbeperkt'] = 3 * $this->options['onbeperkt_abonnement'] + $this->options['borg_kast'];
+		$data['gebruikers'] = $gebruikers;
+		$data['verklaring'] = htmlspecialchars_decode( $atts['verklaring'] );
 
 		return true;
 	}
@@ -87,6 +86,10 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 				'plaats'           => FILTER_SANITIZE_STRING,
 				'telnr'            => FILTER_SANITIZE_STRING,
 				'abonnement_keuze' => FILTER_SANITIZE_STRING,
+				'extras'           => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_REQUIRE_ARRAY,
+				],
 				'dag'              => FILTER_SANITIZE_STRING,
 				'start_datum'      => FILTER_SANITIZE_STRING,
 				'opmerking'        => FILTER_SANITIZE_STRING,
@@ -94,7 +97,6 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 				'mc4wp-subscribe'  => FILTER_SANITIZE_STRING,
 			]
 		);
-
 		if ( '' === $input['abonnement_keuze'] ) {
 			$error->add( 'verplicht', 'Er is nog geen type abonnement gekozen' );
 		}
@@ -130,6 +132,9 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 				$input['LNAME'] = '';
 			}
 		}
+		if ( ! is_array( $input['extras'] ) ) {
+			$input['extras'] = [];
+		};
 		$data['input'] = $input;
 
 		if ( ! empty( $error->get_error_codes() ) ) {
@@ -183,6 +188,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 		$abonnement->geannuleerd = false;
 		$abonnement->gepauzeerd  = false;
 		$abonnement->dag         = $data['input']['dag'];
+		$abonnement->extras      = $data['input']['extras'];
 		$abonnement->save();
 
 		$status = $abonnement->start( $abonnement->start_datum, $data['input']['betaal'] );

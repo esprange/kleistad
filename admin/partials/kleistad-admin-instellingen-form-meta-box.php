@@ -62,6 +62,27 @@
 					value="<?php echo esc_attr( $this->options['kinderworkshopprijs'] ); ?>" /></td>
 		</tr>
 
+		<?php
+		$i = 1;
+		while ( isset( $this->options['extra'][ $i ]['naam'] ) ) :
+			?>
+		<tr >
+			<th scope="row">Abonnement extra <?php echo esc_html( $i ); ?></th>
+			<td><input type="text" class="kleistad-extra" name="kleistad-opties[extra][<?php echo esc_attr( $i ); ?>][naam]"
+					value="<?php echo esc_attr( $this->options['extra'][ $i ]['naam'] ); ?>"  <?php echo ! empty( $this->options['extra'][ $i ]['naam'] ) ? 'readonly' : ''; ?> /></td>
+			<th scope="row">Prijs</th>
+			<td><input type="number" step="0.01" min="0"  name="kleistad-opties[extra][<?php echo esc_attr( $i ); ?>][prijs]"
+					value="<?php echo esc_attr( $this->options['extra'][ $i ]['prijs'] ); ?>" /></td>
+		</tr>
+			<?php
+			$i++;
+		endwhile;
+		?>
+
+		<tr id="kleistad-extra-toevoegen">
+			<th>Extra toevoegen</th>
+			<td colspan="3"><button type="button" id="kleistad-extra"><span class="dashicons dashicons-plus"></span></button></td>
+		</tr>
 		<tr >
 			<th scope="row">Maximum cursisten</th>
 			<td><input type="number" step="1" min="1"  max="99" name="kleistad-opties[cursusmaximum]"

@@ -70,6 +70,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 			'status' => 'Status',
 			'soort'  => 'Soort abonnement',
 			'dag'    => 'Dag',
+			'extras' => 'Extras',
 			'code'   => 'Code',
 		];
 		return $columns;
@@ -86,6 +87,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 			'status' => [ 'status', true ],
 			'soort'  => [ 'soort', true ],
 			'dag'    => [ 'dag', true ],
+			'extras' => [ 'extras', false ],
 			'code'   => [ 'code', true ],
 		];
 		return $sortable_columns;
@@ -117,10 +119,11 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 				'id'     => $abonnee_id,
 				'naam'   => $abonnee->display_name,
 				'status' => ( $abonnement->geannuleerd ? 'geannuleerd' :
-										( $abonnement->gepauzeerd ? 'gepauzeerd' :
-											( Kleistad_Roles::reserveer( $abonnee_id ) ? 'actief' : 'aangemeld' ) ) ),
+					( $abonnement->gepauzeerd ? 'gepauzeerd' :
+						( Kleistad_Roles::reserveer( $abonnee_id ) ? 'actief' : 'aangemeld' ) ) ),
 				'soort'  => $abonnement->soort,
 				'dag'    => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
+				'extras' => implode( ', ', $abonnement->extras ),
 				'code'   => $abonnement->code,
 			];
 		}
