@@ -156,17 +156,19 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 				$error->add( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' );
 				return $error;
 			};
-			$gebruiker_id = Kleistad_Public::upsert_user( [
-				'ID'         => ( $gebruiker_id ) ? $gebruiker_id : null,
-				'first_name' => $data['input']['FNAME'],
-				'last_name'  => $data['input']['LNAME'],
-				'telnr'      => $data['input']['telnr'],
-				'user_email' => $data['input']['EMAIL'],
-				'straat'     => $data['input']['straat'],
-				'huisnr'     => $data['input']['huisnr'],
-				'pcode'      => $data['input']['pcode'],
-				'plaats'     => $data['input']['plaats'],
-			]);
+			$gebruiker_id = Kleistad_Public::upsert_user(
+				[
+					'ID'         => ( $gebruiker_id ) ? $gebruiker_id : null,
+					'first_name' => $data['input']['FNAME'],
+					'last_name'  => $data['input']['LNAME'],
+					'telnr'      => $data['input']['telnr'],
+					'user_email' => $data['input']['EMAIL'],
+					'straat'     => $data['input']['straat'],
+					'huisnr'     => $data['input']['huisnr'],
+					'pcode'      => $data['input']['pcode'],
+					'plaats'     => $data['input']['plaats'],
+				]
+			);
 		} elseif ( is_super_admin() ) {
 			$gebruiker_id = $data['input']['gebruiker_id'];
 		} else {

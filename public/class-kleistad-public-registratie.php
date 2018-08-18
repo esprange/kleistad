@@ -102,16 +102,18 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
 			return $error;
 		} else {
-			$gebruiker_id = Kleistad_Public::upsert_user( [
-				'ID'         => $data['input']['gebruiker_id'],
-				'first_name' => $data['input']['voornaam'],
-				'last_name'  => $data['input']['achternaam'],
-				'telnr'      => $data['input']['telnr'],
-				'straat'     => $data['input']['straat'],
-				'huisnr'     => $data['input']['huisnr'],
-				'pcode'      => $data['input']['pcode'],
-				'plaats'     => $data['input']['plaats'],
-			]);
+			$gebruiker_id = Kleistad_Public::upsert_user(
+				[
+					'ID'         => $data['input']['gebruiker_id'],
+					'first_name' => $data['input']['voornaam'],
+					'last_name'  => $data['input']['achternaam'],
+					'telnr'      => $data['input']['telnr'],
+					'straat'     => $data['input']['straat'],
+					'huisnr'     => $data['input']['huisnr'],
+					'pcode'      => $data['input']['pcode'],
+					'plaats'     => $data['input']['plaats'],
+				]
+			);
 
 			if ( false !== $gebruiker_id ) {
 				return 'Gegevens zijn opgeslagen';
