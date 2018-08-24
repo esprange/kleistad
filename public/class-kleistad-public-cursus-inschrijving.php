@@ -49,6 +49,17 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				'mc4wp-subscribe' => '0',
 			];
 		}
+		$atts = shortcode_atts(
+			[
+				'cursus' => '',
+			], $this->atts, 'kleistad_cursus_inschrijving'
+		);
+		if ( 'C' === substr( $atts['cursus'], 0, 1 ) && is_numeric( substr( $atts['cursus'], 1 ) ) ) {
+			$data['input']['cursus_id'] = intval( substr( $atts['cursus'], 1 ) );
+			$data['cursus_selectie']    = false;
+		} else {
+			$data['cursus_selectie'] = true;
+		}
 		$gebruikers         = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],

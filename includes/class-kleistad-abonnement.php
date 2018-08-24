@@ -366,11 +366,11 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$bedrag  = (float) $options[ $this->soort . '_abonnement' ];
 		$extras  = '';
 		foreach ( $this->extras as $extra ) {
-			$key = array_search( $extra, $options, true );
-			if ( $key ) {
-				$extra_bedrag = (float) $options[ str_replace( 'naam', 'prijs', $key ) ];
-				$extras      .= $extra . ( ! empty( $extra ) ? ', ' : '' ) . '( € ' . number_format_i18n( $extra_bedrag, 2 ) . ' p.m.)';
-				$bedrag      += $extra_bedrag;
+			foreach ( $options['extra'] as $extra_option ) {
+				if ( $extra_option['naam'] === $extra ) {
+					$bedrag += is_numeric( $extra_option['prijs'] ) ? (float) $extra_option['prijs'] : 0;
+					$extras .= $extra . ' ( € ' . number_format_i18n( $extra_option['prijs'], 2 ) . ' p.m.)' . ( ! empty( $extra ) ? ', ' : '' );
+				}
 			}
 		}
 
@@ -390,8 +390,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 					// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
 					$dag             = 60 * 60 * 24; // Aantal seconden in een dag.
 					$driemaand_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 3, intval( date( 'j', $this->start_datum ) ), intval( date( 'Y', $this->start_datum ) ) );
-					$aantal_dagen    = ( $this->incasso_datum - $driemaand_datum ) / $dag;
-					$dagen_in_maand  = intval( date( 'j', $this->incasso_datum - $dag ) );
+					$reguliere_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 1, intval( date( 'Y', $this->start_datum ) ) );
+					$aantal_dagen    = ( $reguliere_datum - $driemaand_datum ) / $dag;
+					$dagen_in_maand  = intval( date( 'j', $reguliere_datum - $dag ) );
 					return $bedrag * $aantal_dagen / $dagen_in_maand;
 				}
 			case self::BEDRAG_EXTRAS_TEKST:
@@ -492,16 +493,15 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		if ( is_array( $soort ) ) {
 			$this->extras = $soort;
 			if ( count( $soort ) ) {
-				$bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $this->wijzig_datum ) . ' gebruik maken van ' . implode( ', ', $soort );
+				$bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gebruik maken van ' . implode( ', ', $soort );
 			} else {
-				$bericht = 'Je maakt voortaan per ' . strftime( '%d-%m-%y', $this->wijzig_datum ) . ' geen gebruik meer van extras';
+				$bericht = 'Je maakt voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' geen gebruik meer van extras';
 			}
 		} else {
 			$this->soort = $soort;
 			$this->dag   = $dag;
-			$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->wijzig_datum ) . ' gewijzigd naar ' . $this->soort;
+			$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort;
 		}
-		$this->wijzig_datum   = $wijzig_datum;
 		$betalen              = new Kleistad_Betalen();
 		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
 		if ( ! $admin ) {

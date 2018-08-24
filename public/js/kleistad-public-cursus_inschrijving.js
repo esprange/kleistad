@@ -1,8 +1,7 @@
 ( function( $ ) {
     'use strict';
 
-    function wijzigTeksten() {
-        var cursus        = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
+    function wijzigTeksten( cursus ) {
 		var bedrag        = cursus.prijs;
 		var spin          = $( '#kleistad_aantal' );
 		var aantal        = spin.spinner( 'value' );
@@ -24,8 +23,7 @@
 		}
     }
 
-    function wijzigVelden() {
-		var cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
+    function wijzigVelden( cursus ) {
         $( '#kleistad_cursus_draaien' ).css( 'visibility', 'hidden' );
         $( '#kleistad_cursus_boetseren' ).css( 'visibility', 'hidden' );
         $( '#kleistad_cursus_handvormen' ).css( 'visibility', 'hidden' );
@@ -55,7 +53,10 @@
     $( document ).ready(
         function() {
 			if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
-				wijzigVelden();
+				wijzigVelden( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
+			}
+			if ( 0 < $( '#cursus_id').val() ) {
+				wijzigVelden( $( '#cursus_id' ).data( 'cursus' ) );
 			}
 
             $( '#kleistad_aantal' ).spinner({
@@ -64,20 +65,24 @@
                 /* jshint unused:vars */
                 stop: function( event, ui ) {
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
-						wijzigTeksten();
+						wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 					}
                 },
                 create: function( event, ui ) {
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
-						wijzigTeksten();
+						wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 					}
-                }
+					if ( 0 < $( '#cursus_id').val() ) {
+						wijzigTeksten( $( '#cursus_id' ).data( 'cursus' ) );
+					}
+				}
             });
 
             $( 'input[name=cursus_id]:radio' ).change(
 			function() {
-                    wijzigTeksten();
-                    wijzigVelden();
+					var cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
+                    wijzigTeksten( cursus );
+                    wijzigVelden( cursus );
                 }
             );
 

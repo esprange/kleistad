@@ -583,9 +583,6 @@ class Kleistad_Admin {
 					],
 				]
 			);
-			if ( ! is_array( $item['extras'] ) ) {
-				$item['extras'] = [];
-			}
 			$item_valid = $this->validate_abonnee( $item );
 			if ( true === $item_valid ) {
 				$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
@@ -621,6 +618,10 @@ class Kleistad_Admin {
 			} else {
 				$notice = $item_valid;
 			}
+			if ( ! is_array( $item['extras'] ) ) {
+				$item['extras'] = [];
+			}
+			$item['mollie_info'] = $abonnement->info();
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
 				$abonnee_id = $_REQUEST['id'];

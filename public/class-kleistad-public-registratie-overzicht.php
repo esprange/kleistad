@@ -205,6 +205,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 					'Abonnee code',
 					'Abonnement_soort',
 					'Dag',
+					'Abonnement_extras',
 					'Opmerking',
 				];
 				fputcsv( $f_csv, $abonnee_fields, ';', '"' );
@@ -231,6 +232,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 								$abonnementen[ $abonnee->ID ]->code,
 								$abonnementen[ $abonnee->ID ]->soort,
 								( 'beperkt' === $abonnementen[ $abonnee->ID ]->soort ) ? $abonnementen[ $abonnee->ID ]->dag : '',
+								implode( ', ', $abonnementen[ $abonnee->ID ]->extras ),
 								$abonnementen[ $abonnee->ID ]->opmerking,
 							]
 						);
