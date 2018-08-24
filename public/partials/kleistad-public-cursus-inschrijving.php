@@ -55,15 +55,15 @@
 			endforeach;
 		endif;
 	else :
+		// Er moet een formulier getoond worden voor een specifieke cursus.
 		$checked_id = $data['input']['cursus_id'];
 		$cursus     = $data['open_cursussen'][ $checked_id ];
 		?>
-		<strong><?php echo esc_html( $cursus['naam'] ); ?></strong>
 		<input type="hidden" name="cursus_id" id="cursus_id" value="<?php echo esc_attr( $checked_id ); ?>" data-cursus='<?php echo wp_json_encode( $cursus ); ?>' >
 		<?php
 	endif;
 	?>
-		<div id="kleistad_cursus_technieken" style="visibility: hidden;padding-bottom:20px;" >
+		<div id="kleistad_cursus_technieken" style="visibility: hidden;padding-bottom: 20px;" >
 			<div class="kleistad_row" >
 				<div class="kleistad_col_10">
 					<label class="kleistad_label">kies de techniek(en) die je wilt oefenen</label>

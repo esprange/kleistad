@@ -15,15 +15,15 @@
 	<ul style="list-style-type:none">
 		<li><h3>publiek toegankelijk (dus zonder ingelogd te zijn)</h3>
 			<ul style="list-style-type:square">
-				<li>[kleistad_abonnee_inschrijving verklaring=''] inschrijving als abonnee</li>
-				<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart</li>
-				<li>[kleistad_cursus_inschrijving] inschrijving voor cursus</li>
+				<li>[kleistad_abonnee_inschrijving verklaring=''] inschrijving als abonnee (verklaring parameter is optioneel)</li>
+				<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart (verklaring parameter is optioneel)</li>
+				<li>[kleistad_cursus_inschrijving cursus=C99 ] inschrijving voor cursus< (cursus parameter is optioneel) /li>
 				<li>[kleistad_recept] overzicht van keramiek recepten</li>
 			</ul>
 		</li>
 		<li><h3>toegankelijk voor leden</h3>
 			<ul style="list-style-type:square">
-				<li>[kleistad_reservering oven=1] reserveren ovenstook</li>
+				<li>[kleistad_reservering oven=1] reserveren ovenstook (oven parameter is verplicht)</li>
 				<li>[kleistad_rapport] overzicht stook activiteiten door lid</li>
 				<li>[kleistad_saldo] wijzigen stooksaldo door lid</li>
 				<li>[kleistad_registratie] wijzigen adresgegevens door lid</li>
@@ -48,5 +48,5 @@
 	</ul>
 	<p>bij de optionele verklaring parameter bij <strong>kleistad_abonnee_inschrijving</strong> en <strong>kleistad_dagdelenkaart</strong> kan bijvoorbeeld ingevuld worden:</p>
 	<code><?php echo htmlspecialchars( 'ik heb de <a href="https://www.kleistad.nl/wp/wp-content/uploads/2017/08/Huisregels-inloop-atelier-KLEISTAD-aug2017.pdf" target="_blank" rel="noopener">Huisregels inloop atelier KLEISTAD -aug2017</a> gelezen' ); // WPCS: XSS ok. ?></code>
-
+	<p>bij de optionele cursus parameter bij <strong>kleistad_cursus_inschrijving</strong> moet een cursus code opgegeven worden, bijvoorbeeld <code>C29</code>. In dat geval wordt er overzicht van cursussen getoond maar alleen de cursus waar het om gaat.</p>
 </div>

@@ -33,6 +33,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 4.5.2 =
+* Mogelijkheid op cursus_id op te geven bij shortcode cursus_inschrijving
+* Mogelijkheid om extras op te geven bij abonnement
 = 4.5.1 =
 * Mollie version 2.0.10
 * Email layout verbeteringen
