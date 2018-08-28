@@ -55,7 +55,7 @@
 			if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
 				wijzigVelden( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 			}
-			if ( 0 < $( '#cursus_id').val() ) {
+			if ( 0 < $( '#cursus_id' ).val() ) {
 				wijzigVelden( $( '#cursus_id' ).data( 'cursus' ) );
 			}
 
@@ -72,7 +72,7 @@
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
 						wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 					}
-					if ( 0 < $( '#cursus_id').val() ) {
+					if ( 0 < $( '#cursus_id' ).val() ) {
 						wijzigTeksten( $( '#cursus_id' ).data( 'cursus' ) );
 					}
 				}
