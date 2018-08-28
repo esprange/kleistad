@@ -98,9 +98,17 @@ if ( isset( $data['actie'] ) ) :
 			$einde_overbrugging_datum = strftime(
 				'%d-%m-%y', mktime(
 					0, 0, 0,
-					intval( date( 'n', $data['abonnement']->incasso_datum ) ),
-					intval( date( 'j', $data['abonnement']->incasso_datum ) ) - 1,
-					intval( date( 'Y', $data['abonnement']->incasso_datum ) )
+					intval( date( 'n', $data['abonnement']->start_datum ) ) + 4,
+					0,
+					intval( date( 'Y', $data['abonnement']->start_datum ) )
+				)
+			);
+			$incasso_datum            = strftime(
+				'%d-%m-%y', mktime(
+					0, 0, 0,
+					intval( date( 'n', $data['abonnement']->start_datum ) ) + 4,
+					1,
+					intval( date( 'Y', $data['abonnement']->start_datum ) )
 				)
 			);
 		?>
@@ -133,7 +141,7 @@ if ( isset( $data['actie'] ) ) :
 				<p>Maand bedrag</p>
 			</div>
 			<div class="kleistad_col_6">
-				<p>&euro; <?php echo esc_html( number_format_i18n( $this->options[ $data['abonnement']->soort . '_abonnement' ], 2 ) ); ?> </p>
+				<p>&euro; <?php echo esc_html( number_format_i18n( $data['abonnement']->bedrag( Kleistad_Abonnement::BEDRAG_MAAND ), 2 ) ); ?> </p>
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -141,7 +149,7 @@ if ( isset( $data['actie'] ) ) :
 				<p>Automatische incasso vanaf</p>
 			</div>
 			<div class="kleistad_col_6">
-				<p><?php echo esc_html( strftime( '%d-%m-%y', $data['abonnement']->incasso_datum ) ); ?></p>
+				<p><?php echo esc_html( $incasso_datum ); ?></p>
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -165,7 +173,7 @@ if ( isset( $data['actie'] ) ) :
 				<p>Periode bedrag</p>
 			</div>
 			<div class="kleistad_col_6">
-				<p>&euro; <?php echo esc_html( number_format_i18n( $data['abonnement']->overbrugging(), 2 ) ); ?></p>
+				<p>&euro; <?php echo esc_html( number_format_i18n( $data['abonnement']->bedrag( Kleistad_Abonnement::BEDRAG_OVERBRUGGING ), 2 ) ); ?></p>
 			</div>
 		</div>
 		<div class="kleistad_row">

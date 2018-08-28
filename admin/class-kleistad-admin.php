@@ -574,7 +574,6 @@ class Kleistad_Admin {
 					'pauze_datum'      => FILTER_SANITIZE_STRING,
 					'eind_datum'       => FILTER_SANITIZE_STRING,
 					'herstart_datum'   => FILTER_SANITIZE_STRING,
-					'incasso_datum'    => FILTER_SANITIZE_STRING,
 					'mandaat'          => FILTER_SANITIZE_NUMBER_INT,
 					'eind_pauze_datum' => FILTER_SANITIZE_NUMBER_INT,
 					'extras'           => [
@@ -642,7 +641,6 @@ class Kleistad_Admin {
 					'pauze_datum'     => ( $abonnement->pauze_datum ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '' ),
 					'eind_datum'      => ( $abonnement->eind_datum ? strftime( '%d-%m-%y', $abonnement->eind_datum ) : '' ),
 					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '' ),
-					'incasso_datum'   => ( $abonnement->incasso_datum ? strftime( '%d-%m-%y', $abonnement->incasso_datum ) : '' ),
 					'mandaat'         => ( '' !== $abonnement->subscriptie_id ),
 					'mollie_info'     => $abonnement->info(),
 				];

@@ -42,7 +42,7 @@
         if ( cursus.lopend ) {
             $( '#kleistad_cursus_betalen' ).hide();
             $( '#kleistad_cursus_lopend' ).show();
-            $( '#kleistad_submit' ).html( 'opslaan' );
+            $( '#kleistad_submit' ).html( 'verzenden' );
         } else {
             $( '#kleistad_cursus_betalen' ).show();
             $( '#kleistad_cursus_lopend' ).hide();
@@ -88,7 +88,7 @@
 
             $( 'input[name=betaal]:radio' ).change(
                 function() {
-                    $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'opslaan' );
+                    $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
                 }
             );
 

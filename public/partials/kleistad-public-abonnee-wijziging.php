@@ -221,40 +221,45 @@ else :
 			</div>
 		</div>
 		<div class="kleistad_abo_betaalwijze kleistad_abo_veld" style="display:none" >
+			<?php
+			if ( ! $data['incasso_actief'] ) :
+				?>
 			<div class="kleistad_row" >
 				<div class="kleistad_col_3" >
 					&nbsp;
 				</div>
 				<div class="kleistad_col_7 kleistad_label" >
-					<p><strong>Je wilt je huidige betaalwijze voor je abonnement wijzigen</strong></p>
-				</div>
-			</div>
-			<div class ="kleistad_row">
-				<div class="kleistad_col_3">
-					&nbsp;
-				</div>
-				<div class="kleistad_col_7">
-					<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
-					<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">Ik betaal € 0.01 en machtig daarmee Kleistad om in het vervolg het abonnementsgeld maandelijks per SEPA incasso automatisch af te schrijven van mijn bankrekening.</label>
+					<p><strong>Je wilt je huidige betaalwijze (betaling per bank) voor je abonnement wijzigen naar automatische incasso.
+					Je betaalt per iDeal € 0.01 en machtigt daarmee Kleistad om in het vervolg het abonnementsgeld maandelijks per SEPA incasso automatisch af te schrijven van jouw bankrekening.</strong></p>
 				</div>
 			</div>
 			<div class="kleistad_row">
 				<div class="kleistad_col_3">
-					&nbsp;
+					&nbsp;<input type="hidden" name="betaal" value="ideal" />
 				</div>
 				<div class="kleistad_col_7">
 					<?php Kleistad_Betalen::issuers(); ?>
 				</div>
 			</div>
-			<div class ="kleistad_row">
-				<div class="kleistad_col_3">
+				<?php
+			else :
+				?>
+			<div class="kleistad_row" >
+				<div class="kleistad_col_3" >
 					&nbsp;
 				</div>
-				<div class="kleistad_col_7">
-					<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
-					<label class="kleistad_label_cbr" for="kleistad_betaal_stort">Ik ga voortaan via een bank storting betalen.</label>
+				<div class="kleistad_col_7 kleistad_label" >
+					<p><strong>Je wilt je huidige betaalwijze (automatische sepa-incasso) wijzigen naar overschrijving per bank.</strong></p>
 				</div>
 			</div>
+			<div class ="kleistad_row">
+				<div class="kleistad_col_3">
+					&nbsp;<input type="hidden" name="betaal" value="stort" />
+				</div>
+			</div>
+				<?php
+			endif;
+			?>
 		</div>
 		<?php endif; ?>
 		<div class="kleistad_row" style="padding-top:20px;">

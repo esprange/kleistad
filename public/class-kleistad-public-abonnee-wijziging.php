@@ -31,6 +31,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 		$data['input']['soort']  = $abonnement->soort;
 		$data['input']['dag']    = $abonnement->dag;
 		$data['input']['extras'] = $abonnement->extras;
+		$data['incasso_actief']  = $abonnement->incasso_actief();
 		return true;
 	}
 

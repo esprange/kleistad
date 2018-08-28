@@ -138,7 +138,7 @@
 			</th>
 			<td><table>
 				<tr>
-					<th>Inschrijving</th><th>Start</th><th>Pauze</th><th>Herstart</th><th>Eind</th><th>Incasso</th>
+					<th>Inschrijving</th><th>Start</th><th>Pauze</th><th>Herstart</th><th>Eind</th>
 				</tr>
 				<tr>
 					<td>
@@ -161,13 +161,9 @@
 						<?php echo esc_html( $item['eind_datum'] ); ?>
 						<input type="hidden" name="eind_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" >
 					</td>
-					<td>
-						<?php echo esc_html( $item['incasso_datum'] ); ?>
-						<input type="hidden" name="incasso_datum" value="<?php echo esc_attr( $item['incasso_datum'] ); ?>" >
-					</td>
 				</tr>
 				<tr>
-					<td colspan="6" >
+					<td colspan="5" >
 						<?php echo esc_html( $item['mollie_info'] ); ?>
 					</td>
 				</tr>

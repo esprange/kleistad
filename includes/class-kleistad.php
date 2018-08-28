@@ -159,6 +159,7 @@ class Kleistad {
 		$this->loader->add_action( 'after_setup_theme', $plugin_public, 'verberg_toolbar' );
 
 		$this->loader->add_filter( 'login_message', $plugin_public, 'user_login_message' );
+		$this->loader->add_filter( 'login_redirect', $plugin_public, 'login_redirect', 10, 3 );
 		$this->loader->add_filter( 'single_template', $plugin_public, 'recept_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );

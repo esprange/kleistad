@@ -59,7 +59,6 @@
 				<li>[pauze_datum] : datum waarop abonnement gepauzeerd wordt</li>
 				<li>[herstart_datum] : datum waarop abonnement herstart wordt</li>
 				<li>[eind_datum] : datum waarop abonnement beëindigd wordt</li>
-				<li>[incasso_datum] : datum vanaf wanneer abonnement incasso automatisch plaatsvindt</li>
 				<li>[abonnement] : soort abonnement (beperkt of onbeperkt</li>
 				<li>[abonnement_code] : code te vermelden bij betaling</li>
 				<li>[abonnement_dag] : dag waarvoor beperkt abonnement geldt</li>

@@ -49,6 +49,7 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 			</div>
 		</div>
 		<?php
+		/* // phpcs:ignore
 		$i = 0;
 		foreach ( $this->options['extra'] as $extra ) :
 			if ( 0 < $extra['prijs'] ) :
@@ -75,6 +76,7 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 				<?php
 			endif;
 		endforeach;
+		*/
 		?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3 kleistad_label">

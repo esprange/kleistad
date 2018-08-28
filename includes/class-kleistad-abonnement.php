@@ -238,7 +238,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'pauze_datum'             => ( $this->pauze_datum > 0 ) ? strftime( '%d-%m-%y', $this->pauze_datum ) : '',
 				'eind_datum'              => ( $this->eind_datum > 0 ) ? strftime( '%d-%m-%y', $this->eind_datum ) : '',
 				'herstart_datum'          => ( $this->herstart_datum > 0 ) ? strftime( '%d-%m-%y', $this->herstart_datum ) : '',
-				'incasso_datum'           => ( $this->incasso_datum > 0 ) ? strftime( '%d-%m-%y', $this->incasso_datum ) : '',
 				'abonnement'              => $this->soort,
 				'abonnement_code'         => $this->code,
 				'abonnement_dag'          => $this->dag,
@@ -288,11 +287,19 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	public function betalen() {
 		$betalen = new Kleistad_Betalen();
 		// Doe de eerste betaling om het mandaat te verkrijgen.
+		$einde_overbrugging_datum = strftime(
+			'%d-%m-%y', mktime(
+				0, 0, 0,
+				intval( date( 'n', $this->start_datum ) ) + 4,
+				0,
+				intval( date( 'Y', $this->start_datum ) )
+			)
+		);
 		$betalen->order(
 			$this->_abonnee_id,
 			__CLASS__ . '-' . $this->code . '-incasso',
 			$this->bedrag( self::BEDRAG_OVERBRUGGING ),
-			'Kleistad abonnement ' . $this->code . ' periode tot ' . strftime( '%d-%m-%y', $this->incasso_datum ),
+			'Kleistad abonnement ' . $this->code . ' periode tot ' . $einde_overbrugging_datum,
 			'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
 			true
 		);
@@ -361,7 +368,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param  int $soort Welk bedrag gevraagd wordt, standaard het maandbedrag.
 	 * @return float|string  Het maandbedrag of een lijst van de extras.
 	 */
-	private function bedrag( $soort ) {
+	public function bedrag( $soort ) {
 		$options = Kleistad::get_options();
 		$bedrag  = (float) $options[ $this->soort . '_abonnement' ];
 		$extras  = '';
@@ -543,8 +550,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id ); // Verwijder een eventuele bestaande subscriptie.
 
 		if ( 'ideal' === $betaalwijze ) {
-			// Doe een proefbetaling om het mandaat te verkrijgen.
-			$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $wijzig_datum ) ), intval( date( 'j', $wijzig_datum ) ), intval( date( 'Y', $wijzig_datum ) ) );
+			// Doe een proefbetaling om het mandaat te verkrijgen. De wijzig datum is de 1e van de volgende maand.
+			$this->incasso_datum = $wijzig_datum;
 			$this->save();
 			$betalen->order(
 				$this->_abonnee_id,

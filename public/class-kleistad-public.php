@@ -505,6 +505,24 @@ class Kleistad_Public {
 	}
 
 	/**
+	 * Redirect gebruikers naar de leden pagina.
+	 *
+	 * @since 4.5.2
+	 *
+	 * @param string  $url De bestaande url als er niets gewijzigd wordt.
+	 * @param object  $request Wordt niet gebruikt.
+	 * @param WP_User $user Het WordPress user object.
+	 * @return string De Url.
+	 *  @phan-suppress PhanUnusedPublicMethodParameter
+	 */
+	public function login_redirect( $url, $request, $user ) {
+		if ( $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) {
+			$url = ( $user->has_cap( 'administrator' ) ) ? admin_url() : home_url( '/leden/' );
+		}
+		return $url;
+	}
+
+	/**
 	 * Verberg de toolbar voor iedereen die geen edit toegang op pagina's heeft.
 	 *
 	 * @since 4.0.87
@@ -660,7 +678,7 @@ class Kleistad_Public {
 		} else {
 			$userdata['user_nicename'] = $nice_voornaam . '-' . $nice_achternaam;
 			$userdata['display_name']  = $userdata['first_name'] . ' ' . $userdata['last_name'];
-			$result                    = wp_update_user( $userdata );
+			$result                    = wp_update_user( $userdata ); // @phan-suppress-current-line PhanTypeMismatchArgument
 		}
 
 		return $result;
