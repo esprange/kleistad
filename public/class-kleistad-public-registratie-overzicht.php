@@ -175,7 +175,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 									'C' . $cursus_id . '-' . $cursussen[ $cursus_id ]->naam,
 									$inschrijving->code,
 									date( 'd-m-Y', $inschrijving->datum ),
-									$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : ( $inschrijving->i_betaald ? 'wachtlijst' : 'wacht op betaling' ) ),
+									$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : 'wacht op betaling' ),
 									implode( ' ', $inschrijving->technieken ),
 									$inschrijving->i_betaald ? 'Ja' : 'Nee',
 									$inschrijving->c_betaald ? 'Ja' : 'Nee',

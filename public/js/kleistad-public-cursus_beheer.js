@@ -121,22 +121,31 @@
                 }
             );
 
+           /**
+             * Verander de opmaak bij hovering.
+             */
+            $( 'body' ).on(
+                'hover', '.kleistad_cursist', function() {
+                    $( this ).css( 'cursor', 'pointer' );
+                    $( this ).toggleClass( 'kleistad_hover' );
+                }
+            );
+
             /**
              * Toon de details van de geselecteerde cursus.
              */
             $( 'body' ).on(
                 'click', '.kleistad_cursus_info', function() {
                     var cursus = $( this ).data( 'cursus' ),
-                        wachtlijst = $( this ).data( 'wachtlijst' ),
-                        ingedeeld = $( this ).data( 'ingedeeld' );
+						ingedeeld = $( this ).data( 'ingedeeld' );
                     $( '#kleistad_cursus' ).dialog( 'open' );
                     $( 'input[name="cursus_id"]' ).val( cursus.id );
                     $( '#kleistad_cursus_naam' ).val( cursus.naam );
                     $( '#kleistad_cursus_docent' ).val( cursus.docent );
                     $( '#kleistad_cursus_start_datum' ).val( cursus.start_datum );
                     $( '#kleistad_cursus_eind_datum' ).val( cursus.eind_datum );
-                    $( '#kleistad_cursus_start_tijd' ).val( cursus.start_tijd ); // .substr(0, 5)
-                    $( '#kleistad_cursus_eind_tijd' ).val( cursus.eind_tijd ); // .substr(0, 5)
+                    $( '#kleistad_cursus_start_tijd' ).val( cursus.start_tijd );
+                    $( '#kleistad_cursus_eind_tijd' ).val( cursus.eind_tijd );
                     $( '#kleistad_cursuskosten' ).val( cursus.cursuskosten );
                     $( '#kleistad_inschrijfkosten' ).val( cursus.inschrijfkosten );
                     $( '#kleistad_inschrijfslug' ).val( cursus.inschrijfslug );
@@ -150,21 +159,35 @@
                     $( '#kleistad_meer' ).prop( 'checked', cursus.meer > 0 );
                     $( '#kleistad_tonen' ).prop( 'checked', cursus.tonen > 0 );
                     $( '#kleistad_vervallen' ).prop( 'checked', cursus.vervallen > 0 );
-                    $( '#kleistad_wachtlijst' ).children().remove().end();
-                    $.each(
-                        wachtlijst, function( key, value ) {
-                            $( '#kleistad_wachtlijst' ).append( new Option( value.naam, JSON.stringify( value ), false, false ) );
-                        }
-                    );
-                    $( '#kleistad_indeling' ).children().remove().end();
+					$( '#kleistad_indeling' ).children().remove().end();
+					$( '#kleistad_restant_email' ).hide();
                     $.each(
                         ingedeeld, function( key, value ) {
-                            var option = new Option( value.naam, JSON.stringify( value ), false, false );
-                            option.style.backgroundColor = 'lightgreen';
-                            option.style.fontWeight = '700'; // Bold
-                            $( '#kleistad_indeling' ).append( option );
+							var cursisten = $( '#kleistad_indeling' );
+							if ( cursus.gedeeld ) {
+								if ( 0 ===  cursisten.children().length ) {
+									cursisten.append( '<tr><th>Naam</th><th>Cursusgeld betaald</th><th>Restant email is verstuurd</th></tr>' );
+									$( '#kleistad_restant_email' ).show();
+								}
+								cursisten.append( '<tr class="kleistad_cursist" ><td title="' + value.extra_info + '" >' +
+									value.naam + '</td><td style="text-align:center" >' +
+									( ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '' ) + '</td><td style="text-align:center" >' +
+									( ( value.restant_email ) ? '<span class="dashicons dashicons-yes"></span>' : '' ) + '</td></tr>'
+								);
+							} else {
+								if ( 0 === cursisten.children().length ) {
+									cursisten.append( '<tr><th>Naam</th></tr>' );
+								}
+								cursisten.append( '<tr class="kleistad_cursist" ><td  title="' + value.extra_info + '" >' + value.naam + '</td></tr>' );
+							}
                         }
-                    );
+					);
+					if ( -1 === ( 'nieuw actief' ).search( cursus.status ) ||
+					      0.0 === Number( cursus.inschrijfkosten ) ) {
+						$( '#kleistad_cursus_tabs' ).tabs( 'option', 'disabled', [ 2 ] );
+					} else {
+						$( '#kleistad_cursus_tabs' ).tabs( 'option', 'disabled', false );
+					}
                 }
             );
 
@@ -194,106 +217,11 @@
                     $( '#kleistad_meer' ).prop( 'checked', false );
                     $( '#kleistad_tonen' ).prop( 'checked', false );
                     $( '#kleistad_vervallen' ).prop( 'checked', false );
-                    $( '#kleistad_wachtlijst' ).children().remove().end();
                     $( '#kleistad_indeling' ).children().remove().end();
+					$( '#kleistad_cursus_tabs' ).tabs( 'option', 'disabled', [ 2 ] );
                 }
             );
-
-            /**
-             * Wijzig de cursus
-             */
-            $( 'body' ).on(
-                'click', '[name="kleistad_submit_cursus_beheer"]', function() {
-                    var element,
-                        options = $( '#kleistad_indeling option' ),
-                        cursisten = $.map(
-                            options, function( option ) {
-                                element = JSON.parse( option.value );
-                                return Number( element.id );
-                            }
-                        );
-                    $( '#kleistad_indeling_lijst' ).val( JSON.stringify( cursisten ) );
-                }
-            );
-
-            /**
-             * Wissel een cursist van wachtlijst naar indeling en v.v.
-             */
-            $( 'body' ).on(
-                'click', '#kleistad_wissel_indeling', function() {
-                    var element,
-                        ingedeeld = $( '#kleistad_indeling option:selected' ),
-                        wachtend = $( '#kleistad_wachtlijst option:selected' );
-                    if ( ingedeeld.length ) {
-                        element = JSON.parse( ingedeeld.val() );
-                        if ( 0 === element.ingedeeld ) {
-                            return ! ingedeeld.remove().appendTo( '#kleistad_wachtlijst' );
-                        }
-                    }
-                    if ( wachtend.length ) {
-                        return ! wachtend.remove().appendTo( '#kleistad_indeling' );
-                    }
-                    return false;
-                }
-            );
-
-            /**
-             * Toon de wachtende cursist info indien geselecteerd.
-             */
-            $( 'body' ).on(
-                'click', '#kleistad_wachtlijst', function() {
-                    var cursist = $( 'option:selected', this );
-                    $( '#kleistad_indeling option:selected' ).prop( 'selected', false );
-                    $( '#kleistad_cursist_technieken' ).empty();
-                    $( '#kleistad_cursist_opmerking' ).empty();
-                    if ( cursist.length ) {
-                        kleistadToonCursist( cursist );
-                    }
-                }
-            );
-
-            /**
-             * Toon de ingedeelde cursist info indien geselecteerd.
-             */
-            $( 'body' ).on(
-                'click', '#kleistad_indeling', function() {
-                    var cursist = $( 'option:selected', this );
-                    $( '#kleistad_wachtlijst option:selected' ).prop( 'selected', false );
-                    $( '#kleistad_cursist_technieken' ).empty();
-                    $( '#kleistad_cursist_opmerking' ).empty();
-                    if ( cursist.length ) {
-                        kleistadToonCursist( cursist );
-                    }
-                }
-            );
-
         }
     );
-
-    /**
-     * Toon cursus en abonnee detail informatie.
-     *
-     * @param {object} cursist de geselecteerde cursist.
-     */
-    function kleistadToonCursist( cursist ) {
-        var techniekTekst,
-            element = JSON.parse( cursist.val() ),
-            opmerking = element.opmerking,
-            technieken = element.technieken;
-
-        if ( null !== technieken ) {
-            techniekTekst = '<p>Gekozen technieken : ';
-            $.each(
-                technieken, function( key, value ) {
-                    techniekTekst += value + ' ';
-                }
-            );
-            techniekTekst += '</p>';
-            $( '#kleistad_cursist_technieken' ).html( techniekTekst );
-        }
-        if ( opmerking.length > 0 ) {
-            $( '#kleistad_cursist_opmerking' ).html( '<p>Opmerking : ' + opmerking + '</p>' );
-        }
-    }
 
 } )( jQuery );

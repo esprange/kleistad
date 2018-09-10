@@ -32,8 +32,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 		$rows           = [];
 		$vandaag        = strtotime( 'today' );
 		foreach ( $cursussen as $cursus_id => $cursus ) {
-			$wachtlijst = [];
-			$ingedeeld  = [];
+			$ingedeeld = [];
 
 			foreach ( $inschrijvingen as $cursist_id => $inschrijving ) {
 
@@ -41,23 +40,22 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					if ( $inschrijving[ $cursus_id ]->geannuleerd ) {
 						continue;
 					}
-					$cursist = get_userdata( $cursist_id );
-					$element = [
-						'naam'       => $cursist->display_name . ( 1 === intval( $inschrijving[ $cursus_id ]->aantal ) ? '' : ' (' . $inschrijving[ $cursus_id ]->aantal . ')' ),
-						'opmerking'  => $inschrijving[ $cursus_id ]->opmerking,
-						'technieken' => $inschrijving[ $cursus_id ]->technieken,
-						'ingedeeld'  => $inschrijving[ $cursus_id ]->ingedeeld,
-						'id'         => $cursist_id,
-					];
 					if ( $inschrijving[ $cursus->id ]->ingedeeld ) {
-						$ingedeeld[ $cursist_id ] = $element;
-					} elseif ( $inschrijving[ $cursus_id ]->i_betaald ) {
-						$wachtlijst[ $cursist_id ] = $element;
+						$cursist                  = get_userdata( $cursist_id );
+						$ingedeeld[ $cursist_id ] = [
+							'naam'          => $cursist->display_name . ( 1 === intval( $inschrijving[ $cursus_id ]->aantal ) ? '' : ' (' . $inschrijving[ $cursus_id ]->aantal . ')' ),
+							'extra_info'    => ( 0 < count( $inschrijving[ $cursus_id ]->technieken ) ?
+								'Technieken: ' . implode( ', ', $inschrijving[ $cursus_id ]->technieken ) . '; ' : '' ) . $inschrijving[ $cursus_id ]->opmerking,
+							'i_betaald'     => $inschrijving[ $cursus_id ]->i_betaald,
+							'c_betaald'     => $inschrijving[ $cursus_id ]->c_betaald,
+							'restant_email' => $inschrijving[ $cursus_id ]->restant_email,
+							'id'            => $cursist_id,
+						];
 					}
 				}
 			}
 			$rows[] = [
-				'cursus'     => [
+				'cursus'    => [
 					'id'              => $cursus->id,
 					'naam'            => $cursus->naam,
 					'start_datum'     => date( 'd-m-Y', $cursus->start_datum ),
@@ -76,10 +74,10 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					'maximum'         => $cursus->maximum,
 					'meer'            => $cursus->meer,
 					'tonen'           => $cursus->tonen,
+					'gedeeld'         => ( 0 < $cursus->inschrijfkosten ),
 					'status'          => $cursus->vervallen ? 'vervallen' : ( $cursus->eind_datum < $vandaag ? 'voltooid' : ( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
 				],
-				'wachtlijst' => $wachtlijst,
-				'ingedeeld'  => $ingedeeld,
+				'ingedeeld' => $ingedeeld,
 			];
 		}
 		$data = [
@@ -152,15 +150,10 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					}
 				}
 			}
-		} elseif ( 'indeling' === $tab ) {
-			$input              = filter_input_array(
-				INPUT_POST, [
-					'tab'            => FILTER_SANITIZE_STRING,
-					'cursus_id'      => FILTER_SANITIZE_NUMBER_INT,
-					'indeling_lijst' => FILTER_SANITIZE_STRING,
-				]
-			);
-			$input['cursisten'] = ( '' === $input['indeling_lijst'] ) ? [] : json_decode( $input['indeling_lijst'], true );
+		} elseif ( 'indeling' === $tab ) { // phpcs:ignore
+			/**
+			 * Voorlopig geen actie op dit tabblad.
+			 */
 		} elseif ( 'email' === $tab ) {
 			$input = filter_input_array(
 				INPUT_POST, [
@@ -212,39 +205,34 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			$cursus->tonen           = '' != $data['input']['tonen']; // WPCS: loose comparison ok.
 			$cursus->save();
 			return 'Gegevens zijn opgeslagen';
-		} elseif ( 'indeling' === $data['input']['tab'] ) {
-			$aantal_ingedeeld = 0;
-			foreach ( $data['input']['cursisten'] as $cursist ) {
-				$inschrijving = new Kleistad_Inschrijving( $cursist, $cursus_id );
-				if ( ! $inschrijving->ingedeeld ) {
-					$aantal_ingedeeld++;
-					$inschrijving->ingedeeld = true;
-					$inschrijving->save();
-					$inschrijving->email( 'indeling' );
-				}
-			}
-			if ( $aantal_ingedeeld > 0 ) {
-				return "Emails zijn verstuurd naar $aantal_ingedeeld cursisten";
-			}
+		} elseif ( 'indeling' === $data['input']['tab'] ) { // phpcs:ignore
+			/**
+			 * Geen actie voorlopig op dit tabblad.
+			 */
 		} elseif ( 'email' === $data['input']['tab'] ) {
 			$inschrijvingen         = Kleistad_Inschrijving::all();
 			$aantal_verzonden_email = 0;
 			foreach ( $inschrijvingen as $inschrijving ) {
 				if ( array_key_exists( $cursus_id, $inschrijving ) ) {
-					if ( $inschrijving[ $cursus_id ]->geannuleerd ) {
-						continue;
-					}
-					if ( $inschrijving[ $cursus_id ]->c_betaald ) {
+					if (
+						( $inschrijving[ $cursus_id ]->geannuleerd ) ||
+						( $inschrijving[ $cursus_id ]->c_betaald ) ||
+						( $inschrijving[ $cursus_id ]->restant_email )
+					) {
 						continue;
 					}
 					if ( $inschrijving[ $cursus_id ]->ingedeeld ) {
 						$aantal_verzonden_email++;
 						$inschrijving[ $cursus_id ]->email( 'betaling' );
+						$inschrijving[ $cursus_id ]->restant_email = true;
+						$inschrijving[ $cursus_id ]->save();
 					}
 				}
 			}
 			if ( $aantal_verzonden_email > 0 ) {
 				return "Emails zijn verstuurd naar $aantal_verzonden_email cursisten";
+			} else {
+				return 'Er zijn geen nieuwe emails verzonden';
 			}
 		}
 	}

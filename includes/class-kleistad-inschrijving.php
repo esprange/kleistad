@@ -47,15 +47,16 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @var array $_default_data de standaard waarden bij het aanmaken van een inschrijving.
 	 */
 	private $_default_data = [
-		'code'        => '',
-		'datum'       => '',
-		'technieken'  => [],
-		'i_betaald'   => 0,
-		'c_betaald'   => 0,
-		'ingedeeld'   => 0,
-		'geannuleerd' => 0,
-		'opmerking'   => '',
-		'aantal'      => 1,
+		'code'          => '',
+		'datum'         => '',
+		'technieken'    => [],
+		'i_betaald'     => 0,
+		'c_betaald'     => 0,
+		'ingedeeld'     => 0,
+		'geannuleerd'   => 0,
+		'opmerking'     => '',
+		'aantal'        => 1,
+		'restant_email' => 0,
 	];
 
 	/**
@@ -138,6 +139,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'i_betaald':
 			case 'c_betaald':
 			case 'geannuleerd':
+			case 'restant_email':
 				return 1 === intval( $this->_data[ $attribuut ] );
 			case 'gedeeld':
 				return 0 < $this->_cursus->inschrijfkosten;
@@ -165,6 +167,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'i_betaald':
 			case 'c_betaald':
 			case 'geannuleerd':
+			case 'restant_email':
 				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:

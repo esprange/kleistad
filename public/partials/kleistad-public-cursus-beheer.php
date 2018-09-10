@@ -21,8 +21,7 @@ else :
 	<div id="kleistad_cursus_tabs">
 		<ul>
 			<li><a href="#kleistad_cursus_gegevens">Cursus informatie</a></li>
-			<li><a href="#kleistad_cursus_indeling">Cursus indeling</a></li>
-			<li><a href="#kleistad_cursus_email">Cursus email versturen</a></li>
+			<li><a href="#kleistad_cursus_indeling">Cursisten</a></li>
 		</ul>
 		<div id="kleistad_cursus_gegevens" >
 			<form action="#" method="post" >
@@ -105,36 +104,15 @@ else :
 		</div>
 
 		<div id="kleistad_cursus_indeling" >
-			<form action="#" method="post" >
-				<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'kleistad_cursus_beheer' ) ); ?>" />
-					<?php wp_referer_field(); ?>
-				<input type="hidden" name="cursus_id" value="0"/>
-				<input type="hidden" name="tab" value="indeling"/>
-				<input type="hidden" name="indeling_lijst" id="kleistad_indeling_lijst" />
-				<table class="kleistad_form" >
-					<tr>
-						<th>Wachtlijst</th>
-						<td></td>
-						<th>Indeling</th>
-					</tr>
-					<tr>
-						<td><select style="height:200px" size="10" id="kleistad_wachtlijst" ></select></td>
-						<td><button id="kleistad_wissel_indeling">&lt;-&gt;</button></td>
-						<td><select style="height:200px" size="10" id="kleistad_indeling" ></select></td>
-					</tr>
-				</table>
-				<div id="kleistad_cursist_technieken"></div>
-				<div id="kleistad_cursist_opmerking"></div>
-				<button type="submit" name="kleistad_submit_cursus_beheer" >Opslaan</button>
-			</form>
-		</div>
-		<div id="kleistad_cursus_email" >
-			<form action="#" method="post" >
+			<input type="hidden" name="tab" value="indeling"/>
+			<table class="kleistad_form" id="kleistad_indeling" >
+			</table>
+			<form action="#" method="post" style="display: none;" id="kleistad_restant_email" >
 				<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'kleistad_cursus_beheer' ) ); ?>" />
 					<?php wp_referer_field(); ?>
 				<input type="hidden" name="cursus_id" value="0"/>
 				<input type="hidden" name="tab" value="email"/>
-				<p>Verstuur de email met betaalinstructie naar alle cursisten die ingedeeld zijn</p>
+				<p>Verstuur de email met betaalinstructie eenmalig naar cursisten die het restant cursusgeld nog niet betaald hebben.</p>
 				<button type="submit" name="kleistad_submit_cursus_beheer" >Email versturen</button>
 			</form>
 		</div>
@@ -158,7 +136,6 @@ else :
 			<?php foreach ( $data['rows'] as $row ) : ?>
 			<tr style="background-color:<?php echo esc_attr( $row['cursus']['vol'] ? 'lightblue' : ( $row['cursus']['vervallen'] ? 'lightgray' : 'white' ) ); ?>" class="kleistad_cursus_info"
 				data-cursus='<?php echo wp_json_encode( $row['cursus'] ); ?>'
-				data-wachtlijst='<?php echo wp_json_encode( $row['wachtlijst'] ); ?>'
 				data-ingedeeld='<?php echo wp_json_encode( $row['ingedeeld'] ); ?>' >
 				<td><?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td>C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
