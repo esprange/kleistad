@@ -80,7 +80,9 @@ abstract class Kleistad_Entity {
 	 * @param array $data attribute waarden.
 	 */
 	public function load( $data ) {
-		$this->_data = $data;
+		foreach ( $data as $key => $value ) {
+			$this->_data[ $key ] = $value;
+		}
 	}
 
 	/**
@@ -88,6 +90,7 @@ abstract class Kleistad_Entity {
 	 *
 	 * @param int $gebruiker_id Het gebruiker_id.
 	 * @return array De persoonlijke data.
+	 * @phan-suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function export( $gebruiker_id ) {
 		return [];
@@ -98,6 +101,7 @@ abstract class Kleistad_Entity {
 	 *
 	 * @param int $gebruiker_id Het gebruiker_id.
 	 * @return mixed De persoonlijke data.
+	 * @phan-suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function erase( $gebruiker_id ) {
 		return 0;
