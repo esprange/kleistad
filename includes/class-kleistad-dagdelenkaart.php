@@ -52,7 +52,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 */
 	public function __construct( $gebruiker_id ) {
 		$this->_gebruiker_id         = $gebruiker_id;
-		$this->_default_data['code'] = "K$gebruiker_id-" . strftime( '%y%m%d', time() );
+		$this->_default_data['code'] = "K$gebruiker_id-" . strftime( '%y%m%d', strtotime( 'today' ) );
 
 		$this->_default_data['datum'] = date( 'Y-m-d' );
 
