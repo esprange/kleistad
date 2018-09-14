@@ -584,16 +584,16 @@ class Kleistad_Admin {
 			);
 			$item_valid = $this->validate_abonnee( $item );
 			if ( true === $item_valid ) {
-				$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
-
+				$datum      = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
 				$abonnement = new Kleistad_Abonnement( $item['id'] );
+				$vandaag    = strtotime( 'today' );
 				if ( ( 1 === intval( $item['gepauzeerd'] ) ) !== $abonnement->gepauzeerd ) {
 					if ( $abonnement->gepauzeerd ) {
 						$abonnement->gepauzeerd = false;
 						$abonnement->save();
 					} else {
 						$item['herstart_datum'] = strftime( '%d-%m-%y', $item['eind_pauze_datum'] );
-						$abonnement->pauzeren( time(), $item['eind_pauze_datum'], true );
+						$abonnement->pauzeren( $vandaag, $item['eind_pauze_datum'], true );
 						$abonnement->save();
 					}
 				} elseif ( ( 1 === intval( $item['geannuleerd'] ) ) !== $abonnement->geannuleerd ) {
@@ -601,14 +601,14 @@ class Kleistad_Admin {
 						$abonnement->geannuleerd = false;
 						$abonnement->save();
 					} else {
-						$abonnement->annuleren( time(), true );
+						$abonnement->annuleren( $vandaag, true );
 					}
 				} elseif ( ( 1 === intval( $item['gestart'] ) ) !== Kleistad_Roles::reserveer( $item['id'] ) ) {
 					$abonnement->start( $abonnement->start_datum, 'stort', true );
 				} elseif ( $abonnement->extras !== $item['extras'] ) {
-					$abonnement->wijzigen( time(), $item['extras'], '', true );
+					$abonnement->wijzigen( $vandaag, $item['extras'], '', true );
 				} elseif ( $abonnement->soort !== $item['soort'] ) {
-					$abonnement->wijzigen( time(), $item['soort'], $item['dag'], true );
+					$abonnement->wijzigen( $vandaag, $item['soort'], $item['dag'], true );
 				} elseif ( $abonnement->dag !== $item['dag'] ) {
 					$abonnement->dag = $item['dag'];
 					$abonnement->save();
