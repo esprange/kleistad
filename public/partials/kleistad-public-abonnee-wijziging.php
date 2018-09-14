@@ -18,7 +18,62 @@ else :
 	$in_driemaandperiode = strtotime( 'today' ) < $data['driemaand_datum'];
 	$per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
 	$per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
+
+	$extra_beschikbaar = false;
+	foreach ( $this->options['extra'] as $extra ) :
+		$extra_beschikbaar |= ( 0 < $extra['prijs'] );
+	endforeach;
 	?>
+	<div>
+	<p>Huidige abonnement status:</P>
+	<table class="kleistad_form">
+		<tr><td>Abonnement soort</td><td><?php echo esc_html( $data['abonnement']->soort ); ?></td></tr>
+		<tr><td>Abonnement start</td><td><?php echo esc_html( strftime( '%x', $data['abonnement']->start_datum ) ); ?></td></tr>
+		<tr><td>Abonnement status</td><td>
+		<?php
+		$vandaag = strtotime( 'today' );
+		if ( ! $data['abonnement']->geannuleerd ) :
+			if ( $data['abonnement']->gepauzeerd ) :
+				if ( $data['abonnement']->eind_datum > $vandaag ) :
+					echo esc_html( 'gepauzeerd sinds ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
+					' beëindigen per ' . strftime( '%x', $data['abonnement']->eind_datum ) );
+				else :
+					echo esc_html( 'gepauzeerd sinds ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
+					' tot ' . strftime( '%x', $data['abonnement']->herstart_datum ) );
+				endif;
+			elseif ( $data['abonnement']->eind_datum > $vandaag ) :
+				echo esc_html( 'actief, beëindigen per ' . strftime( '%x', $data['abonnement']->eind_datum ) );
+			elseif ( $data['abonnement']->pauze_datum > $vandaag ) :
+				echo esc_html( 'actief, pauzeren per ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
+				' tot ' . strftime( '%x', $data['abonnement']->herstart_datum ) );
+			elseif ( $data['abonnement']->eind_datum > $vandaag ) :
+				echo esc_html( 'actief, beëindigen per ' . strftime( '%x', $data['abonnement']->eind_datum ) .
+				' tot ' . strftime( '%x', $data['abonnement']->herstart_datum ) );
+			elseif ( false !== $data['abonnement']->herstart_datum ) :
+				echo esc_html( 'actief, herstart sinds ' . strftime( '%x', $data['abonnement']->herstart_datum ) );
+			elseif ( $data['abonnement']->start_datum > $vandaag ) :
+				echo esc_html( 'nog niet actief' );
+			else :
+				echo esc_html( 'actief' );
+			endif;
+		else :
+			echo 'geannuleerd sinds ' . esc_html( strftime( '%x', $data['abonnement']->eind_datum ) );
+		endif;
+		?>
+		</td></tr>
+		<?php if ( $extra_beschikbaar ) : ?>
+		<tr><td>Extra's</td><td>
+			<?php
+			if ( 0 < count( $data['abonnement']->extras ) ) :
+				echo esc_html( implode( ', ', $data['abonnement']->extras ) );
+			else :
+				echo 'geen';
+			endif;
+			?>
+		</td></tr>
+		<?php endif; ?>
+	</table>
+	</div>
 
 	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST" id="kleistad_abonnee_wijziging">
 		<?php wp_nonce_field( 'kleistad_abonnee_wijziging' ); ?>
@@ -79,10 +134,6 @@ else :
 			?>
 		</div>
 			<?php
-			$extra_beschikbaar = false;
-			foreach ( $this->options['extra'] as $extra ) :
-				$extra_beschikbaar |= ( 0 < $extra['prijs'] );
-			endforeach;
 
 			if ( $extra_beschikbaar ) :
 				?>
