@@ -11,6 +11,8 @@ $GLOBALS['wp_tests_options'] = array(
 
 );
 
+update_option( 'kleistad_opties', [ 'betalen' => 0, 'sleutel_test' => 'fout123456789012345678901234567890' ] );
+
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
 	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
