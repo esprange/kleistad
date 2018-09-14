@@ -35,20 +35,28 @@ else :
 		if ( ! $data['abonnement']->geannuleerd ) :
 			if ( $data['abonnement']->gepauzeerd ) :
 				if ( $data['abonnement']->eind_datum > $vandaag ) :
-					echo esc_html( 'gepauzeerd sinds ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
-					' beëindigen per ' . strftime( '%x', $data['abonnement']->eind_datum ) );
+					echo esc_html(
+						'gepauzeerd sinds ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
+						' beëindigen per ' . strftime( '%x', $data['abonnement']->eind_datum )
+					);
 				else :
-					echo esc_html( 'gepauzeerd sinds ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
-					' tot ' . strftime( '%x', $data['abonnement']->herstart_datum ) );
+					echo esc_html(
+						'gepauzeerd sinds ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
+						' tot ' . strftime( '%x', $data['abonnement']->herstart_datum )
+					);
 				endif;
 			elseif ( $data['abonnement']->eind_datum > $vandaag ) :
 				echo esc_html( 'actief, beëindigen per ' . strftime( '%x', $data['abonnement']->eind_datum ) );
 			elseif ( $data['abonnement']->pauze_datum > $vandaag ) :
-				echo esc_html( 'actief, pauzeren per ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
-				' tot ' . strftime( '%x', $data['abonnement']->herstart_datum ) );
+				echo esc_html(
+					'actief, pauzeren per ' . strftime( '%x', $data['abonnement']->pauze_datum ) .
+					' tot ' . strftime( '%x', $data['abonnement']->herstart_datum )
+				);
 			elseif ( $data['abonnement']->eind_datum > $vandaag ) :
-				echo esc_html( 'actief, beëindigen per ' . strftime( '%x', $data['abonnement']->eind_datum ) .
-				' tot ' . strftime( '%x', $data['abonnement']->herstart_datum ) );
+				echo esc_html(
+					'actief, beëindigen per ' . strftime( '%x', $data['abonnement']->eind_datum ) .
+					' tot ' . strftime( '%x', $data['abonnement']->herstart_datum )
+				);
 			elseif ( false !== $data['abonnement']->herstart_datum ) :
 				echo esc_html( 'actief, herstart sinds ' . strftime( '%x', $data['abonnement']->herstart_datum ) );
 			elseif ( $data['abonnement']->start_datum > $vandaag ) :
