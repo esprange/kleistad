@@ -34,9 +34,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			return $error;
 		}
 		$atts = shortcode_atts(
-			[
-				'oven' => 'niet ingevuld',
-			], $this->atts, 'kleistad_reservering'
+			[ 'oven' => 'niet ingevuld' ],
+			$this->atts,
+			'kleistad_reservering'
 		);
 		if ( is_numeric( $atts['oven'] ) ) {
 			$oven_id = $atts['oven'];
@@ -80,7 +80,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Kleistad_Public::$url, '/reserveer', [
+			Kleistad_Public::$url,
+			'/reserveer',
+			[
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_muteer' ],
 				'args'                => [
@@ -121,7 +123,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			]
 		);
 		register_rest_route(
-			Kleistad_Public::$url, '/show', [
+			Kleistad_Public::$url,
+			'/show',
+			[
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_show' ],
 				'args'                => [
@@ -302,7 +306,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 
 		$reservering           = new Kleistad_Reservering( $oven_id );
 		$bestaande_reservering = $reservering->find(
-			intval( $request->get_param( 'jaar' ) ), intval( $request->get_param( 'maand' ) ), intval( $request->get_param( 'dag' ) )
+			intval( $request->get_param( 'jaar' ) ),
+			intval( $request->get_param( 'maand' ) ),
+			intval( $request->get_param( 'dag' ) )
 		);
 
 		if ( $request->get_param( 'oven_id' ) > 0 ) {

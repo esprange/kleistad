@@ -29,7 +29,8 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 	public function prepare( &$data = null ) {
 		$error = new WP_Error();
 		$param = filter_input_array(
-			INPUT_GET, [
+			INPUT_GET,
+			[
 				'gid'  => FILTER_SANITIZE_NUMBER_INT,
 				'crss' => FILTER_SANITIZE_NUMBER_INT,
 				'abo'  => FILTER_SANITIZE_NUMBER_INT,
@@ -96,7 +97,8 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'cursist_id' => FILTER_SANITIZE_NUMBER_INT,
 				'abonnee_id' => FILTER_SANITIZE_NUMBER_INT,
 				'cursus_id'  => FILTER_SANITIZE_NUMBER_INT,

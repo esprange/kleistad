@@ -56,7 +56,8 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
 				'voornaam'     => FILTER_SANITIZE_STRING,
 				'achternaam'   => FILTER_SANITIZE_STRING,

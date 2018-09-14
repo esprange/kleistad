@@ -257,7 +257,10 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 				$slug = '';
 		}
 		return Kleistad_public::compose_email(
-			$to, $onderwerp, $slug, [
+			$to,
+			$onderwerp,
+			$slug,
+			[
 				'voornaam'               => $cursist->first_name,
 				'achternaam'             => $cursist->last_name,
 				'cursus_naam'            => $this->_cursus->naam,

@@ -463,7 +463,8 @@ class Kleistad_Admin {
 		$item    = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
 			$item       = filter_input_array(
-				INPUT_POST, [
+				INPUT_POST,
+				[
 					'id'              => FILTER_SANITIZE_NUMBER_INT,
 					'naam'            => FILTER_SANITIZE_STRING,
 					'kosten'          => [
@@ -560,7 +561,8 @@ class Kleistad_Admin {
 		$notice  = '';
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
 			$item       = filter_input_array(
-				INPUT_POST, [
+				INPUT_POST,
+				[
 					'id'               => FILTER_SANITIZE_NUMBER_INT,
 					'naam'             => FILTER_SANITIZE_STRING,
 					'code'             => FILTER_SANITIZE_STRING,
@@ -700,7 +702,8 @@ class Kleistad_Admin {
 		$notice  = '';
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
 			$item       = filter_input_array(
-				INPUT_POST, [
+				INPUT_POST,
+				[
 					'id'          => FILTER_SANITIZE_STRING,
 					'naam'        => FILTER_SANITIZE_STRING,
 					'cursus_id'   => FILTER_SANITIZE_NUMBER_INT,

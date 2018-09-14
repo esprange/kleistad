@@ -195,7 +195,9 @@ class Kleistad_Saldo {
 		$gebruiker = get_userdata( $this->_gebruiker_id );
 		$to        = "$gebruiker->display_name <$gebruiker->user_email>";
 		return Kleistad_public::compose_email(
-			$to, 'Bijstorting stooksaldo', 'kleistad_email_saldo_wijziging' . $type, [
+			$to,
+			'Bijstorting stooksaldo', 'kleistad_email_saldo_wijziging' . $type,
+			[
 				'voornaam'   => $gebruiker->first_name,
 				'achternaam' => $gebruiker->last_name,
 				'bedrag'     => number_format_i18n( $bedrag, 2 ),

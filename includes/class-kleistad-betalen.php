@@ -62,7 +62,9 @@ class Kleistad_Betalen {
 			self::$url = rest_url( 'kleistad_mollie/v2' ); // Mollie versie_2.
 			// self::$url = 'http://www.example.com/kleistad_mollie/v2'.
 			register_rest_route(
-				self::$url, '/betaling', [
+				self::$url,
+				'/betaling',
+				[
 					'methods'             => 'POST',
 					'callback'            => [ __CLASS__, 'callback_betaling_verwerkt' ],
 					'args'                => [
@@ -77,7 +79,9 @@ class Kleistad_Betalen {
 			);
 
 			register_rest_route(
-				self::$url, '/herhaalbetaling', [
+				self::$url,
+				'/herhaalbetaling',
+				[
 					'methods'             => 'POST',
 					'callback'            => [ __CLASS__, 'callback_herhaalbetaling_verwerkt' ],
 					'args'                => [
@@ -92,7 +96,9 @@ class Kleistad_Betalen {
 			);
 
 			register_rest_route(
-				self::$url, '/ondemandbetaling', [
+				self::$url,
+				'/ondemandbetaling',
+				[
 					'methods'             => 'POST',
 					'callback'            => [ __CLASS__, 'callback_ondemandbetaling_verwerkt' ],
 					'args'                => [

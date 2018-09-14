@@ -230,7 +230,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$abonnee = get_userdata( $this->_abonnee_id );
 		$to      = "$abonnee->display_name <$abonnee->user_email>";
 		return Kleistad_public::compose_email(
-			$to, ( false !== strpos( $type, '_start' ) ) ? 'Welkom bij Kleistad' : 'Abonnement Kleistad', 'kleistad_email_abonnement' . $type, [
+			$to,
+			( false !== strpos( $type, '_start' ) ) ? 'Welkom bij Kleistad' : 'Abonnement Kleistad', 'kleistad_email_abonnement' . $type,
+			[
 				'voornaam'                => $abonnee->first_name,
 				'achternaam'              => $abonnee->last_name,
 				'loginnaam'               => $abonnee->user_login,
@@ -288,7 +290,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$betalen = new Kleistad_Betalen();
 		// Doe de eerste betaling om het mandaat te verkrijgen.
 		$einde_overbrugging_datum = strftime(
-			'%d-%m-%y', mktime(
+			'%d-%m-%y',
+			mktime(
 				0, 0, 0,
 				intval( date( 'n', $this->start_datum ) ) + 4,
 				0,
@@ -315,7 +318,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	private function schedule( $actie, $datum ) {
 		wp_schedule_single_event(
-			$datum, self::META_KEY, [
+			$datum, self::META_KEY,
+			[
 				$this->_abonnee_id,
 				$actie,
 				$datum,

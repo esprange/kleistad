@@ -48,7 +48,8 @@ class Kleistad_Public_Saldo extends Kleistad_ShortcodeForm {
 	public function validate( &$data ) {
 
 		$input         = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
 				'bedrag'       => FILTER_SANITIZE_NUMBER_FLOAT,
 				'betaal'       => FILTER_SANITIZE_STRING,

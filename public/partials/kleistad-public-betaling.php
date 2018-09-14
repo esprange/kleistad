@@ -88,28 +88,16 @@ if ( isset( $data['actie'] ) ) :
 			<?php
 	elseif ( Kleistad_Public_Betaling::ACTIE_VERVOLG_ABONNEMENT === $data['actie'] ) :
 			$vervolg_datum            = strftime(
-				'%d-%m-%y', mktime(
-					0, 0, 0,
-					intval( date( 'n', $data['abonnement']->start_datum ) ) + 3,
-					intval( date( 'j', $data['abonnement']->start_datum ) ),
-					intval( date( 'Y', $data['abonnement']->start_datum ) )
-				)
+				'%d-%m-%y',
+				mktime( 0, 0, 0, intval( date( 'n', $data['abonnement']->start_datum ) ) + 3, intval( date( 'j', $data['abonnement']->start_datum ) ), intval( date( 'Y', $data['abonnement']->start_datum ) ) )
 			);
 			$einde_overbrugging_datum = strftime(
-				'%d-%m-%y', mktime(
-					0, 0, 0,
-					intval( date( 'n', $data['abonnement']->start_datum ) ) + 4,
-					0,
-					intval( date( 'Y', $data['abonnement']->start_datum ) )
-				)
+				'%d-%m-%y',
+				mktime( 0, 0, 0, intval( date( 'n', $data['abonnement']->start_datum ) ) + 4, 0, intval( date( 'Y', $data['abonnement']->start_datum ) ) )
 			);
 			$incasso_datum            = strftime(
-				'%d-%m-%y', mktime(
-					0, 0, 0,
-					intval( date( 'n', $data['abonnement']->start_datum ) ) + 4,
-					1,
-					intval( date( 'Y', $data['abonnement']->start_datum ) )
-				)
+				'%d-%m-%y',
+				mktime( 0, 0, 0, intval( date( 'n', $data['abonnement']->start_datum ) ) + 4, 1, intval( date( 'Y', $data['abonnement']->start_datum ) ) )
 			);
 		?>
 

@@ -22,7 +22,7 @@ get_header(); ?>
 			$glazuur_naam     = '';
 			$kleur_naam       = '';
 			$uiterlijk_naam   = '';
-			$recept_terms            = get_the_terms( get_the_ID(), 'kleistad_recept_cat' );
+			$recept_terms     = get_the_terms( get_the_ID(), 'kleistad_recept_cat' );
 			foreach ( $recept_terms as $recept_term ) {
 				if ( intval( $recept_term->parent ) === intval( $glazuur_parent->term_id ) ) {
 					$glazuur_naam = $recept_term->name;

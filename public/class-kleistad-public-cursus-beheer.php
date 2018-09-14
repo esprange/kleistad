@@ -102,7 +102,8 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 		$tab   = filter_input( INPUT_POST, 'tab', FILTER_SANITIZE_STRING );
 		if ( 'info' === $tab ) {
 			$input = filter_input_array(
-				INPUT_POST, [
+				INPUT_POST,
+				[
 					'tab'             => FILTER_SANITIZE_STRING,
 					'cursus_id'       => FILTER_SANITIZE_NUMBER_INT,
 					'naam'            => FILTER_SANITIZE_STRING,
@@ -159,7 +160,8 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			 */
 		} elseif ( 'email' === $tab ) {
 			$input = filter_input_array(
-				INPUT_POST, [
+				INPUT_POST,
+				[
 					'tab'       => FILTER_SANITIZE_STRING,
 					'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
 				]

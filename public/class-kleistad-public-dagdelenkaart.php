@@ -46,9 +46,9 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 			];
 		}
 		$atts               = shortcode_atts(
-			[
-				'verklaring' => '',
-			], $this->atts, 'kleistad_dagdelenkaart'
+			[ 'verklaring' => '' ],
+			$this->atts,
+			'kleistad_dagdelenkaart'
 		);
 		$data['verklaring'] = htmlspecialchars_decode( $atts['verklaring'] );
 		return true;
@@ -66,7 +66,8 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'EMAIL'           => FILTER_SANITIZE_EMAIL,
 				'email_controle'  => FILTER_SANITIZE_EMAIL,
 				'FNAME'           => FILTER_SANITIZE_STRING,

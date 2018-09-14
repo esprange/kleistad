@@ -201,7 +201,8 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 	public function validate( &$data ) {
 		$error                                    = new WP_Error();
 		$data['recept']                           = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'id'        => FILTER_SANITIZE_NUMBER_INT,
 				'titel'     => FILTER_SANITIZE_STRING,
 				'glazuur'   => FILTER_SANITIZE_NUMBER_INT,
@@ -213,7 +214,8 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 		$data['recept']['content']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
 		$data['recept']['content']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
 		$basis                                    = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'basis_component' => [
 					'filter' => FILTER_SANITIZE_STRING,
 					'flags'  => FILTER_REQUIRE_ARRAY,
@@ -225,7 +227,8 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 			]
 		);
 		$toevoeging                               = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'toevoeging_component' => [
 					'filter' => FILTER_SANITIZE_STRING,
 					'flags'  => FILTER_REQUIRE_ARRAY,
@@ -291,9 +294,8 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 			if ( isset( $data['recept'] ) ) {
 				if ( ! empty( $data['foto']['name'] ) ) {
 					$file = wp_handle_upload(
-						$data['foto'], [
-							'test_form' => false,
-						]
+						$data['foto'],
+						[ 'test_form' => false ]
 					);
 					if ( $file && ! isset( $file['error'] ) ) {
 						$exif  = exif_read_data( $file['file'] );
@@ -346,7 +348,8 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 						return $error;
 					}
 					wp_set_object_terms(
-						$recept_id, [
+						$recept_id,
+						[
 							intval( $data['recept']['glazuur'] ),
 							intval( $data['recept']['kleur'] ),
 							intval( $data['recept']['uiterlijk'] ),

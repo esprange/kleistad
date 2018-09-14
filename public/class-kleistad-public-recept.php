@@ -36,7 +36,9 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Kleistad_Public::$url, '/recept', [
+			Kleistad_Public::$url,
+			'/recept',
+			[
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_recept' ],
 				'args'                => [

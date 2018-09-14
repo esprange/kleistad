@@ -134,7 +134,10 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 		$gebruiker = get_userdata( $this->_gebruiker_id );
 		$to        = "$gebruiker->display_name <$gebruiker->user_email>";
 		return Kleistad_public::compose_email(
-			$to, 'Welkom bij Kleistad', 'kleistad_email_dagdelenkaart' . $type, [
+			$to,
+			'Welkom bij Kleistad',
+			'kleistad_email_dagdelenkaart' . $type,
+			[
 				'voornaam'                => $gebruiker->first_name,
 				'achternaam'              => $gebruiker->last_name,
 				'loginnaam'               => $gebruiker->user_login,

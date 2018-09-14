@@ -54,9 +54,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
 
-		return sprintf(
-			'%s %s', $item['naam'], $this->row_actions( $actions )
-		);
+		return sprintf( '%s %s', $item['naam'], $this->row_actions( $actions ) );
 	}
 
 	/**
@@ -128,7 +126,8 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 			];
 		}
 		usort(
-			$abonnees, function( $a, $b ) use ( $orderby, $order ) {
+			$abonnees,
+			function( $a, $b ) use ( $orderby, $order ) {
 				return ( 'asc' === $order ) ? strcmp( $a[ $orderby ], $b[ $orderby ] ) : strcmp( $b[ $orderby ], $a[ $orderby ] );
 			}
 		);

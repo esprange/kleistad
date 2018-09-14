@@ -46,9 +46,9 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 			];
 		}
 		$atts               = shortcode_atts(
-			[
-				'verklaring' => '',
-			], $this->atts, 'kleistad_abonnee_inschrijving'
+			[ 'verklaring' => '' ],
+			$this->atts,
+			'kleistad_abonnee_inschrijving'
 		);
 		$gebruikers         = get_users(
 			[
@@ -74,7 +74,8 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'gebruiker_id'     => FILTER_SANITIZE_NUMBER_INT,
 				'EMAIL'            => FILTER_SANITIZE_EMAIL,
 				'email_controle'   => FILTER_SANITIZE_EMAIL,

@@ -54,9 +54,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 			'edit' => sprintf( '<a href="?page=stooksaldo_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
 
-		return sprintf(
-			'%s %s', $item['naam'], $this->row_actions( $actions )
-		);
+		return sprintf( '%s %s', $item['naam'], $this->row_actions( $actions ) );
 	}
 
 	/**
@@ -67,9 +65,7 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_saldo( $item ) {
-		return sprintf(
-			'%.2f', $item['saldo']
-		);
+		return sprintf( '%.2f', $item['saldo'] );
 	}
 
 	/**

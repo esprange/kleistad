@@ -171,7 +171,8 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 					if ( array_key_exists( $cursist->ID, $inschrijvingen ) ) {
 						foreach ( $inschrijvingen[ $cursist->ID ] as $cursus_id => $inschrijving ) {
 							$cursist_cursus_gegevens = array_merge(
-								$cursist_gegevens, [
+								$cursist_gegevens,
+								[
 									'C' . $cursus_id . '-' . $cursussen[ $cursus_id ]->naam,
 									$inschrijving->code,
 									date( 'd-m-Y', $inschrijving->datum ),
@@ -226,7 +227,8 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 
 					if ( array_key_exists( $abonnee->ID, $abonnementen ) ) {
 						$abonnee_abonnement_gegevens = array_merge(
-							$abonnee_gegevens, [
+							$abonnee_gegevens,
+							[
 								date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->datum ),
 								date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->start_datum ),
 								$abonnementen[ $abonnee->ID ]->code,

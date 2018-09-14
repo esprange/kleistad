@@ -54,9 +54,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 			'delete' => sprintf( '<a href="?page=%s&action=delete&id=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['id'], 'Verwijderen' ),
 		];
 
-		return sprintf(
-			'%s %s', $item['gebruiker_naam'], $this->row_actions( $actions )
-		);
+		return sprintf( '%s %s', $item['gebruiker_naam'], $this->row_actions( $actions ) );
 	}
 
 	/**
@@ -67,9 +65,7 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_kosten( $item ) {
-		return sprintf(
-			'%.2f', $item['kosten']
-		);
+		return sprintf( '%.2f', $item['kosten'] );
 	}
 
 	/**

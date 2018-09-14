@@ -57,9 +57,10 @@ class Kleistad_Reservering extends Kleistad_Entity {
 		$items         = [];
 		$reserveringen = $wpdb->get_results(
 			"SELECT dag as dag, maand, jaar, verdeling, naam, R.id as id FROM
-			{$wpdb->prefix}kleistad_reserveringen as R, {$wpdb->prefix}kleistad_ovens as O
-			WHERE R.oven_id = O.id
-			ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A
+				{$wpdb->prefix}kleistad_reserveringen as R, {$wpdb->prefix}kleistad_ovens as O
+				WHERE R.oven_id = O.id
+				ORDER BY jaar DESC, maand DESC, dag DESC",
+			ARRAY_A
 		); // WPCS: unprepared SQL OK.
 
 		foreach ( $reserveringen as $reservering ) {
@@ -100,8 +101,12 @@ class Kleistad_Reservering extends Kleistad_Entity {
 
 		$resultaat = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d", $this->_data['oven_id'], $jaar, $maand, $dag
-			), ARRAY_A
+				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d", $this->_data['oven_id'],
+				$jaar,
+				$maand,
+				$dag
+			),
+			ARRAY_A
 		); // WPCS: unprepared SQL OK.
 		if ( $resultaat ) {
 			$this->_data = $resultaat;
@@ -118,9 +123,9 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	public function delete() {
 		global $wpdb;
 		if ( $wpdb->delete(
-			"{$wpdb->prefix}kleistad_reserveringen", [
-				'id' => $this->id,
-			], [ '%d' ]
+			"{$wpdb->prefix}kleistad_reserveringen",
+			[ 'id' => $this->id ],
+			[ '%d' ]
 		) ) {
 			$this->id = null;
 		}
@@ -293,7 +298,10 @@ class Kleistad_Reservering extends Kleistad_Entity {
 
 						$to = "$medestoker->display_name <$medestoker->user_email>";
 						Kleistad_public::compose_email(
-							$to, 'Kleistad kosten zijn verwerkt op het stooksaldo', 'kleistad_email_stookkosten_verwerkt', [
+							$to,
+							'Kleistad kosten zijn verwerkt op het stooksaldo',
+							'kleistad_email_stookkosten_verwerkt',
+							[
 								'voornaam'   => $medestoker->first_name,
 								'achternaam' => $medestoker->last_name,
 								'stoker'     => $gebruiker->display_name,
@@ -317,7 +325,10 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				$gebruiker = get_userdata( $this->gebruiker_id );
 				$to        = "$gebruiker->display_name <$gebruiker->user_email>";
 				Kleistad_public::compose_email(
-					$to, 'Kleistad oven gebruik op ' . date( 'd-m-Y', $this->datum ), 'kleistad_email_stookmelding', [
+					$to,
+					'Kleistad oven gebruik op ' . date( 'd-m-Y', $this->datum ),
+					'kleistad_email_stookmelding',
+					[
 						'voornaam'         => $gebruiker->first_name,
 						'achternaam'       => $gebruiker->last_name,
 						'bedrag'           => number_format_i18n( ( is_null( $regeling ) ) ? $ovens[ $this->oven_id ]->kosten : $regeling, 2 ),

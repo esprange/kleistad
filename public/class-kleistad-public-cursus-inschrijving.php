@@ -50,9 +50,9 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			];
 		}
 		$atts = shortcode_atts(
-			[
-				'cursus' => '',
-			], $this->atts, 'kleistad_cursus_inschrijving'
+			[ 'cursus' => '' ],
+			$this->atts,
+			'kleistad_cursus_inschrijving'
 		);
 		if ( 'C' === substr( $atts['cursus'], 0, 1 ) && is_numeric( substr( $atts['cursus'], 1 ) ) ) {
 			$data['input']['cursus_id'] = intval( substr( $atts['cursus'], 1 ) );
@@ -101,7 +101,8 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'EMAIL'           => FILTER_SANITIZE_EMAIL,
 				'email_controle'  => FILTER_SANITIZE_EMAIL,
 				'FNAME'           => FILTER_SANITIZE_STRING,

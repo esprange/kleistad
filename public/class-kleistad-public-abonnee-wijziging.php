@@ -48,7 +48,8 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
-			INPUT_POST, [
+			INPUT_POST,
+			[
 				'abonnee_id'    => FILTER_SANITIZE_NUMBER_INT,
 				'actie'         => FILTER_SANITIZE_STRING,
 				'dag'           => FILTER_SANITIZE_STRING,

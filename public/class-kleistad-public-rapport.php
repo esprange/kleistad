@@ -61,7 +61,8 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 			}
 		}
 		usort(
-			$items, function ( $a, $b ) {
+			$items,
+			function ( $a, $b ) {
 				return $a['sdatum'] < $b['sdatum'] ? 1 : -1;
 			}
 		);
