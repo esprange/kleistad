@@ -1,6 +1,6 @@
 {
   "name": "kleistad",
-  "version": "4.5.2",
+  "version": "4.5.3",
   "main": "Gruntfile.js",
   "author": "Eric Sprangers",
   "license": "GPL-3.0",
@@ -20,6 +20,6 @@
     "@types/jqueryui": "^1.12.4",
     "grunt-version": "^1.2.1",
     "grunt-zip": "^0.17.1",
-    "npm": "^6.4.0"
+    "npm": "^6.4.1"
   }
 }

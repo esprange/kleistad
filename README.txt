@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 4.9.7
-Stable tag: 4.5.1
+Stable tag: 4.5.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 4.5.3 =
+* Indeling email wordt alleen verstuurd als cursus nog niet gestart is
+* Status huidig abonnement wordt getoond bij abonnement wijzigen
+* Wachtlijst functionaliteit verwijderd
 = 4.5.2 =
 * Mogelijkheid op cursus_id op te geven bij shortcode cursus_inschrijving
 * Mogelijkheid om extras op te geven bij abonnement
