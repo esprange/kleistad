@@ -31,8 +31,5 @@ function _manually_load_environment() {
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_environment' );
 
-
-update_option( 'kleistad_opties', [ 'betalen' => 0, 'sleutel_test' => 'test_12345678901234567890123456789' ] );
-
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';
