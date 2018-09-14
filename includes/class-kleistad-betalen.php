@@ -425,33 +425,37 @@ class Kleistad_Betalen {
 	 * @since 4.5.2
 	 */
 	public static function converteer_subscripties() {
-		$object    = new static();
-		$customers = $object->mollie->customers->page();
-		do {
-			foreach ( $customers as $customer ) {
-				$subscriptions = $customer->subscriptions();
-				foreach ( $subscriptions as $subscription ) {
-					if ( $subscription->isActive() ) {
-						// @codingStandardsIgnoreStart
-						if ( self::$url . '/herhaalbetaling/' !== $subscription->webhookUrl ) {
-							error_log(
-								'updating subscriptie : ' . $subscription->id .
-								' voor klant : ' . $customer->id .
-								' met startdate : ' .$subscription->startDate );
-							$startdate = strtotime( $subscription->startDate );
-							if ( $startdate < strtotime( 'today' ) ) {
-								$startdate = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
+		$object = new static();
+		try {
+			$customers = $object->mollie->customers->page();
+			do {
+				foreach ( $customers as $customer ) {
+					$subscriptions = $customer->subscriptions();
+					foreach ( $subscriptions as $subscription ) {
+						if ( $subscription->isActive() ) {
+							// @codingStandardsIgnoreStart
+							if ( self::$url . '/herhaalbetaling/' !== $subscription->webhookUrl ) {
+								error_log(
+									'updating subscriptie : ' . $subscription->id .
+									' voor klant : ' . $customer->id .
+									' met startdate : ' .$subscription->startDate );
+								$startdate = strtotime( $subscription->startDate );
+								if ( $startdate < strtotime( 'today' ) ) {
+									$startdate = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
+								}
+								$subscription->startDate  = strftime( '%Y-%m-%d', $startdate );
+								$subscription->webhookUrl = self::$url . '/herhaalbetaling/';
+								$subscription->update();
 							}
-							$subscription->startDate  = strftime( '%Y-%m-%d', $startdate );
-							$subscription->webhookUrl = self::$url . '/herhaalbetaling/';
-							$subscription->update();
+							// @codingStandardsIgnoreEnd
 						}
-						// @codingStandardsIgnoreEnd
 					}
 				}
-			}
-			$customers = $customers->next();
-		} while ( ! empty( $customers ) );
+				$customers = $customers->next();
+			} while ( ! empty( $customers ) );
+		} catch ( Exception $e ) {
+			error_log( $e->getMessage() ); // phpcs:ignore;
+		}
 	}
 
 	/**
