@@ -425,8 +425,8 @@ class Kleistad_Betalen {
 	 * @since 4.5.2
 	 */
 	public static function converteer_subscripties() {
-		$object = new static();
 		try {
+			$object    = new static();
 			$customers = $object->mollie->customers->page();
 			do {
 				foreach ( $customers as $customer ) {
