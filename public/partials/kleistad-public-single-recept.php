@@ -22,16 +22,16 @@ get_header(); ?>
 			$glazuur_naam     = '';
 			$kleur_naam       = '';
 			$uiterlijk_naam   = '';
-			$terms            = get_the_terms( get_the_ID(), 'kleistad_recept_cat' );
-			foreach ( $terms as $term ) {
-				if ( intval( $term->parent ) === intval( $glazuur_parent->term_id ) ) {
-					$glazuur_naam = $term->name;
+			$recept_terms            = get_the_terms( get_the_ID(), 'kleistad_recept_cat' );
+			foreach ( $recept_terms as $recept_term ) {
+				if ( intval( $recept_term->parent ) === intval( $glazuur_parent->term_id ) ) {
+					$glazuur_naam = $recept_term->name;
 				}
-				if ( intval( $term->parent ) === intval( $kleur_parent->term_id ) ) {
-					$kleur_naam = $term->name;
+				if ( intval( $recept_term->parent ) === intval( $kleur_parent->term_id ) ) {
+					$kleur_naam = $recept_term->name;
 				}
-				if ( intval( $term->parent ) === intval( $uiterlijk_parent->term_id ) ) {
-					$uiterlijk_naam = $term->name;
+				if ( intval( $recept_term->parent ) === intval( $uiterlijk_parent->term_id ) ) {
+					$uiterlijk_naam = $recept_term->name;
 				}
 			}
 			$content = json_decode( get_the_content(), true );
