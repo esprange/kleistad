@@ -209,7 +209,9 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'betaling', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-betaling.js', [ 'jquery' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'reservering', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-reservering.js', [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 		wp_localize_script(
-			$this->plugin_name . 'reservering', 'kleistadData', [
+			$this->plugin_name . 'reservering',
+			'kleistadData',
+			[
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
 				'base_url'        => self::base_url(),
 				'success_message' => 'de reservering is geslaagd!',
@@ -217,7 +219,9 @@ class Kleistad_Public {
 			]
 		);
 		wp_localize_script(
-			$this->plugin_name . 'recept', 'kleistadData', [
+			$this->plugin_name . 'recept',
+			'kleistadData',
+			[
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
 				'base_url'        => self::base_url(),
 				'success_message' => 'de recepten konden worden opgevraagd!',
@@ -245,7 +249,8 @@ class Kleistad_Public {
 	public function create_recept_type() {
 		ob_start();
 		register_post_type(
-			'kleistad_recept', [
+			'kleistad_recept',
+			[
 				'labels'            => [
 					'name'               => 'Keramiek recepten',
 					'singular_name'      => 'Keramiek recept',
@@ -273,7 +278,9 @@ class Kleistad_Public {
 			]
 		);
 		register_taxonomy(
-			'kleistad_recept_cat', 'kleistad_recept', [
+			'kleistad_recept_cat',
+			'kleistad_recept',
+			[
 				'hierarchical'      => true,
 				'labels'            => [
 					'name'          => 'Recept categoriën',

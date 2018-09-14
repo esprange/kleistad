@@ -101,7 +101,8 @@ class Kleistad_Reservering extends Kleistad_Entity {
 
 		$resultaat = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d", $this->_data['oven_id'],
+				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d",
+				$this->_data['oven_id'],
 				$jaar,
 				$maand,
 				$dag
