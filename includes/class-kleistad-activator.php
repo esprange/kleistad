@@ -38,8 +38,8 @@ class Kleistad_Activator {
 			'workshopprijs'        => 110,
 			'kinderworkshopprijs'  => 110,
 			'termijn'              => 4,
-			'sleutel'              => 'test_12345678901234567890123456789',
-			'sleutel_test'         => 'test_12345678901234567890123456789',
+			'sleutel'              => '',
+			'sleutel_test'         => '',
 			'betalen'              => 0,
 			'extras'               => [],
 		];

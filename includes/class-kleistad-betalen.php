@@ -46,9 +46,13 @@ class Kleistad_Betalen {
 		$this->mollie = new \Mollie\Api\MollieApiClient();
 
 		if ( '1' === $options['betalen'] ) {
-			$this->mollie->setApiKey( $options['sleutel'] );
+			if ( '' !== $options['sleutel'] ) {
+				$this->mollie->setApiKey( $options['sleutel'] );
+			}
 		} else {
-			$this->mollie->setApiKey( $options['sleutel_test'] );
+			if ( '' !== $options['sleutel_test'] ) {
+				$this->mollie->setApiKey( $options['sleutel_test'] );
+			}
 		}
 	}
 
