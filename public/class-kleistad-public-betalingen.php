@@ -126,7 +126,11 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 						$inschrijving->c_betaald = true;
 						if ( ! $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 							$inschrijving->ingedeeld = true;
-							$inschrijving->email( 'indeling' );
+							$cursus                  = new Kleistad_Cursus( $cursus_id );
+							if ( strtotime( 'today' ) < $cursus->start_datum ) {
+								// Alleen email versturen als de cursus nog niet gestart is.
+								$inschrijving->email( 'indeling' );
+							}
 						}
 						$inschrijving->save();
 					}

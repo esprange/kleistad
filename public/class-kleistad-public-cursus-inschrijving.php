@@ -230,7 +230,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 		$inschrijving->technieken = $data['input']['technieken'];
 		$inschrijving->opmerking  = $data['input']['opmerking'];
 		$inschrijving->aantal     = intval( $data['input']['aantal'] );
-		$inschrijving->datum      = time();
+		$inschrijving->datum      = strtotime( 'today' );
 		$inschrijving->save();
 
 		$lopend = $data['cursus']->start_datum < strtotime( 'today' );

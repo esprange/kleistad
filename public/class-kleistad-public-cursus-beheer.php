@@ -74,8 +74,11 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					'maximum'         => $cursus->maximum,
 					'meer'            => $cursus->meer,
 					'tonen'           => $cursus->tonen,
+					'lopend'          => ( $cursus->start_datum < strftime( 'today' ) ),
 					'gedeeld'         => ( 0 < $cursus->inschrijfkosten ),
-					'status'          => $cursus->vervallen ? 'vervallen' : ( $cursus->eind_datum < $vandaag ? 'voltooid' : ( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
+					'status'          => $cursus->vervallen ? 'vervallen' :
+						( $cursus->eind_datum < $vandaag ? 'voltooid' :
+						( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
 				],
 				'ingedeeld' => $ingedeeld,
 			];

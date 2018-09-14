@@ -167,7 +167,9 @@
 							if ( cursus.gedeeld ) {
 								if ( 0 ===  cursisten.children().length ) {
 									cursisten.append( '<tr><th>Naam</th><th>Cursusgeld betaald</th><th>Restant email is verstuurd</th></tr>' );
-									$( '#kleistad_restant_email' ).show();
+									if ( 'actief' !== cursus.status && 'voltooid' !== cursus.status ) {
+										$( '#kleistad_restant_email' ).show();
+									}
 								}
 								cursisten.append( '<tr class="kleistad_cursist" ><td title="' + value.extra_info + '" >' +
 									value.naam + '</td><td style="text-align:center" >' +
@@ -182,12 +184,6 @@
 							}
                         }
 					);
-					if ( -1 === ( 'nieuw actief' ).search( cursus.status ) ||
-					      0.0 === Number( cursus.inschrijfkosten ) ) {
-						$( '#kleistad_cursus_tabs' ).tabs( 'option', 'disabled', [ 2 ] );
-					} else {
-						$( '#kleistad_cursus_tabs' ).tabs( 'option', 'disabled', false );
-					}
                 }
             );
 
@@ -218,7 +214,6 @@
                     $( '#kleistad_tonen' ).prop( 'checked', false );
                     $( '#kleistad_vervallen' ).prop( 'checked', false );
                     $( '#kleistad_indeling' ).children().remove().end();
-					$( '#kleistad_cursus_tabs' ).tabs( 'option', 'disabled', [ 2 ] );
                 }
             );
         }
