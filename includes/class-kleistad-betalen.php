@@ -27,6 +27,15 @@ class Kleistad_Betalen {
 	private $mollie;
 
 	/**
+	 * De call back uri string.
+	 *
+	 * @since      4.5.3
+	 *
+	 * @var string de url voor callbacks.
+	 */
+	private static $url = '';
+
+	/**
 	 * De constructor
 	 *
 	 * @since      4.2.0
@@ -40,6 +49,62 @@ class Kleistad_Betalen {
 			$this->mollie->setApiKey( $options['sleutel'] );
 		} else {
 			$this->mollie->setApiKey( $options['sleutel_test'] );
+		}
+	}
+
+	/**
+	 * Register rest URI's.
+	 *
+	 * @since 4.5.3
+	 */
+	public static function register_rest_routes() {
+		if ( '' === self::$url ) {
+			self::$url = rest_url( 'kleistad_mollie/v2' ); // Mollie versie_2.
+			// self::$url = 'http://www.example.com/kleistad_mollie/v2'.
+			register_rest_route(
+				self::$url, '/betaling', [
+					'methods'             => 'POST',
+					'callback'            => [ __CLASS__, 'callback_betaling_verwerkt' ],
+					'args'                => [
+						'id' => [
+							'required' => true,
+						],
+					],
+					'permission_callback' => function() {
+							return true;
+					},
+				]
+			);
+
+			register_rest_route(
+				self::$url, '/herhaalbetaling', [
+					'methods'             => 'POST',
+					'callback'            => [ __CLASS__, 'callback_herhaalbetaling_verwerkt' ],
+					'args'                => [
+						'id' => [
+							'required' => true,
+						],
+					],
+					'permission_callback' => function() {
+							return true;
+					},
+				]
+			);
+
+			register_rest_route(
+				self::$url, '/ondemandbetaling', [
+					'methods'             => 'POST',
+					'callback'            => [ __CLASS__, 'callback_ondemandbetaling_verwerkt' ],
+					'args'                => [
+						'id' => [
+							'required' => true,
+						],
+					],
+					'permission_callback' => function() {
+							return true;
+					},
+				]
+			);
 		}
 	}
 
@@ -88,7 +153,7 @@ class Kleistad_Betalen {
 					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST,
 					'redirectUrl'  => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
-					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
+					'webhookUrl'   => self::$url . '/betaling/',
 				]
 			);
 		} else {
@@ -107,7 +172,7 @@ class Kleistad_Betalen {
 					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
 					'redirectUrl'  => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
-					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
+					'webhookUrl'   => self::$url . '/betaling/',
 				]
 			);
 		}
@@ -137,7 +202,7 @@ class Kleistad_Betalen {
 					],
 					'description'  => $beschrijving,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
-					'webhookUrl'   => Kleistad_Public::base_url() . '/ondemandbetaling/',
+					'webhookUrl'   => self::$url . '/ondemandbetaling/',
 				]
 			);
 		}
@@ -166,7 +231,7 @@ class Kleistad_Betalen {
 					'description' => $beschrijving,
 					'interval'    => '1 month',
 					'startDate'   => strftime( '%Y-%m-%d', $start ),
-					'webhookUrl'  => Kleistad_Public::base_url() . '/herhaalbetaling/',
+					'webhookUrl'  => self::$url . '/herhaalbetaling/',
 				]
 			);
 			return $subscriptie->id;
@@ -342,6 +407,41 @@ class Kleistad_Betalen {
 	public static function callback_herhaalbetaling_verwerkt( WP_REST_Request $request ) {
 		// Voorlopig geen acties gedefinieerd.
 		return new WP_REST_response(); // Geeft default http status 200 terug.
+	}
+
+	/**
+	 * Tijdelijke functie om bestaande subscripties aan te passen.
+	 *
+	 * @since 4.5.2
+	 */
+	public static function converteer_subscripties() {
+		$object    = new static();
+		$customers = $object->mollie->customers->page();
+		do {
+			foreach ( $customers as $customer ) {
+				$subscriptions = $customer->subscriptions();
+				foreach ( $subscriptions as $subscription ) {
+					if ( $subscription->isActive() ) {
+						// @codingStandardsIgnoreStart
+						if ( self::$url . '/herhaalbetaling/' !== $subscription->webhookUrl ) {
+							error_log(
+								'updating subscriptie : ' . $subscription->id .
+								' voor klant : ' . $customer->id .
+								' met startdate : ' .$subscription->startDate );
+							$startdate = strtotime( $subscription->startDate );
+							if ( $startdate < strtotime( 'today' ) ) {
+								$startdate = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
+							}
+							$subscription->startDate  = strftime( '%Y-%m-%d', $startdate );
+							$subscription->webhookUrl = self::$url . '/herhaalbetaling/';
+							$subscription->update();
+						}
+						// @codingStandardsIgnoreEnd
+					}
+				}
+			}
+			$customers = $customers->next();
+		} while ( ! empty( $customers ) );
 	}
 
 	/**

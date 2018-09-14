@@ -39,7 +39,7 @@ class Kleistad_Public {
 	 *
 	 * @var string url voor Ajax callbacks
 	 */
-	private static $url;
+	public static $url;
 
 	/**
 	 * De kleistad plugin opties.
@@ -232,127 +232,9 @@ class Kleistad_Public {
 	 * @since   4.0.87
 	 */
 	public function register_endpoints() {
-		register_rest_route(
-			self::$url, '/reserveer', [
-				'methods'             => 'POST',
-				'callback'            => [ 'kleistad_public_reservering', 'callback_muteer' ],
-				'args'                => [
-					'dag'          => [
-						'required' => true,
-					],
-					'maand'        => [
-						'required' => true,
-					],
-					'jaar'         => [
-						'required' => true,
-					],
-					'oven_id'      => [
-						'required' => true,
-					],
-					'temperatuur'  => [
-						'required' => false,
-					],
-					'soortstook'   => [
-						'required' => false,
-					],
-					'programma'    => [
-						'required' => false,
-					],
-					'verdeling'    => [
-						'required' => false,
-					],
-					'opmerking'    => [
-						'required' => false,
-					],
-					'gebruiker_id' => [
-						'required' => true,
-					],
-				],
-				'permission_callback' => function() {
-					return is_user_logged_in();
-				},
-			]
-		);
-		register_rest_route(
-			self::$url, '/show', [
-				'methods'             => 'POST',
-				'callback'            => [ 'kleistad_public_reservering', 'callback_show' ],
-				'args'                => [
-					'maand'   => [
-						'required' => true,
-					],
-					'jaar'    => [
-						'required' => true,
-					],
-					'oven_id' => [
-						'required' => true,
-					],
-				],
-				'permission_callback' => function() {
-					return is_user_logged_in();
-				},
-			]
-		);
-
-		register_rest_route(
-			self::$url, '/recept', [
-				'methods'             => 'POST',
-				'callback'            => [ 'kleistad_public_recept', 'callback_recept' ],
-				'args'                => [
-					'zoek' => [
-						'required' => false,
-					],
-				],
-				'permission_callback' => function() {
-						return true;
-				},
-			]
-		);
-
-		register_rest_route(
-			self::$url, '/betaling', [
-				'methods'             => 'POST',
-				'callback'            => [ 'kleistad_betalen', 'callback_betaling_verwerkt' ],
-				'args'                => [
-					'id' => [
-						'required' => true,
-					],
-				],
-				'permission_callback' => function() {
-						return true;
-				},
-			]
-		);
-
-		register_rest_route(
-			self::$url, '/herhaalbetaling', [
-				'methods'             => 'POST',
-				'callback'            => [ 'kleistad_betalen', 'callback_herhaalbetaling_verwerkt' ],
-				'args'                => [
-					'id' => [
-						'required' => true,
-					],
-				],
-				'permission_callback' => function() {
-						return true;
-				},
-			]
-		);
-
-		register_rest_route(
-			self::$url, '/ondemandbetaling', [
-				'methods'             => 'POST',
-				'callback'            => [ 'kleistad_betalen', 'callback_ondemandbetaling_verwerkt' ],
-				'args'                => [
-					'id' => [
-						'required' => true,
-					],
-				],
-				'permission_callback' => function() {
-						return true;
-				},
-			]
-		);
+		Kleistad_Public_Reservering::register_rest_routes();
+		Kleistad_Public_Recept::register_rest_routes();
+		Kleistad_Betalen::register_rest_routes();
 	}
 
 	/**

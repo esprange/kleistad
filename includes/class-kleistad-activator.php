@@ -143,6 +143,12 @@ class Kleistad_Activator {
 				}
 			}
 		}
+
+		/**
+		 * Conversie van mollie webhooks van abonnementen.
+		 */
+		Kleistad_Betalen::converteer_subscripties();
+
 		flush_rewrite_rules();
 	}
 }

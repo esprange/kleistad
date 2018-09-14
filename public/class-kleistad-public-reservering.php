@@ -74,6 +74,75 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	}
 
 	/**
+	 * Register rest URI's.
+	 *
+	 * @since 4.5.3
+	 */
+	public static function register_rest_routes() {
+		register_rest_route(
+			Kleistad_Public::$url, '/reserveer', [
+				'methods'             => 'POST',
+				'callback'            => [ __CLASS__, 'callback_muteer' ],
+				'args'                => [
+					'dag'          => [
+						'required' => true,
+					],
+					'maand'        => [
+						'required' => true,
+					],
+					'jaar'         => [
+						'required' => true,
+					],
+					'oven_id'      => [
+						'required' => true,
+					],
+					'temperatuur'  => [
+						'required' => false,
+					],
+					'soortstook'   => [
+						'required' => false,
+					],
+					'programma'    => [
+						'required' => false,
+					],
+					'verdeling'    => [
+						'required' => false,
+					],
+					'opmerking'    => [
+						'required' => false,
+					],
+					'gebruiker_id' => [
+						'required' => true,
+					],
+				],
+				'permission_callback' => function() {
+					return is_user_logged_in();
+				},
+			]
+		);
+		register_rest_route(
+			Kleistad_Public::$url, '/show', [
+				'methods'             => 'POST',
+				'callback'            => [ __CLASS__, 'callback_show' ],
+				'args'                => [
+					'maand'   => [
+						'required' => true,
+					],
+					'jaar'    => [
+						'required' => true,
+					],
+					'oven_id' => [
+						'required' => true,
+					],
+				],
+				'permission_callback' => function() {
+					return is_user_logged_in();
+				},
+			]
+		);
+	}
+
+	/**
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
@@ -116,7 +185,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			if ( $oven->{$dagnaam[ $weekdag ]} ) {
 				$kleur            = 'white';
 				$verwerkt         = false;
-				$datum_verstreken = $datum < time();
+				$datum_verstreken = $datum < strftime( 'today' );
 				$wijzigbaar       = ! $datum_verstreken || is_super_admin();
 				$selectie         = [
 					'oven_id'       => $oven_id,

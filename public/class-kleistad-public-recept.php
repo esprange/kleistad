@@ -30,6 +30,28 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	}
 
 	/**
+	 * Register rest URI's.
+	 *
+	 * @since 4.5.3
+	 */
+	public static function register_rest_routes() {
+		register_rest_route(
+			Kleistad_Public::$url, '/recept', [
+				'methods'             => 'POST',
+				'callback'            => [ __CLASS__, 'callback_recept' ],
+				'args'                => [
+					'zoek' => [
+						'required' => false,
+					],
+				],
+				'permission_callback' => function() {
+						return true;
+				},
+			]
+		);
+	}
+
+	/**
 	 * Ajax callback voor show recept functie.
 	 *
 	 * @param WP_REST_Request $request De parameters van de Ajax call.
