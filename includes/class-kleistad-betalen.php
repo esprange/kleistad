@@ -27,15 +27,6 @@ class Kleistad_Betalen {
 	private $mollie;
 
 	/**
-	 * De call back uri string.
-	 *
-	 * @since      4.5.3
-	 *
-	 * @var string de url voor callbacks.
-	 */
-	private static $url = '';
-
-	/**
 	 * De constructor
 	 *
 	 * @since      4.2.0
@@ -62,60 +53,55 @@ class Kleistad_Betalen {
 	 * @since 4.5.3
 	 */
 	public static function register_rest_routes() {
-		if ( '' === self::$url ) {
-			self::$url = rest_url( 'kleistad_mollie/v2' ); // Mollie versie_2.
-			// self::$url = 'http://www.example.com/kleistad_mollie/v2'.
-			register_rest_route(
-				self::$url,
-				'/betaling',
-				[
-					'methods'             => 'POST',
-					'callback'            => [ __CLASS__, 'callback_betaling_verwerkt' ],
-					'args'                => [
-						'id' => [
-							'required' => true,
-						],
+		register_rest_route(
+			Kleistad_Public::url(),
+			'/betaling',
+			[
+				'methods'             => 'POST',
+				'callback'            => [ __CLASS__, 'callback_betaling_verwerkt' ],
+				'args'                => [
+					'id' => [
+						'required' => true,
 					],
-					'permission_callback' => function() {
-							return true;
-					},
-				]
-			);
+				],
+				'permission_callback' => function() {
+						return true;
+				},
+			]
+		);
+		register_rest_route(
+			Kleistad_Public::url(),
+			'/herhaalbetaling',
+			[
+				'methods'             => 'POST',
+				'callback'            => [ __CLASS__, 'callback_herhaalbetaling_verwerkt' ],
+				'args'                => [
+					'id' => [
+						'required' => true,
+					],
+				],
+				'permission_callback' => function() {
+						return true;
+				},
+			]
+		);
 
-			register_rest_route(
-				self::$url,
-				'/herhaalbetaling',
-				[
-					'methods'             => 'POST',
-					'callback'            => [ __CLASS__, 'callback_herhaalbetaling_verwerkt' ],
-					'args'                => [
-						'id' => [
-							'required' => true,
-						],
+		register_rest_route(
+			Kleistad_Public::url(),
+			'/ondemandbetaling',
+			[
+				'methods'             => 'POST',
+				'callback'            => [ __CLASS__, 'callback_ondemandbetaling_verwerkt' ],
+				'args'                => [
+					'id' => [
+						'required' => true,
 					],
-					'permission_callback' => function() {
-							return true;
-					},
-				]
-			);
-
-			register_rest_route(
-				self::$url,
-				'/ondemandbetaling',
-				[
-					'methods'             => 'POST',
-					'callback'            => [ __CLASS__, 'callback_ondemandbetaling_verwerkt' ],
-					'args'                => [
-						'id' => [
-							'required' => true,
-						],
-					],
-					'permission_callback' => function() {
-							return true;
-					},
-				]
-			);
-		}
+				],
+				'permission_callback' => function() {
+						return true;
+				},
+			]
+		);
 	}
 
 	/**
@@ -163,7 +149,7 @@ class Kleistad_Betalen {
 					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST,
 					'redirectUrl'  => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
-					'webhookUrl'   => self::$url . '/betaling/',
+					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
 				]
 			);
 		} else {
@@ -182,7 +168,7 @@ class Kleistad_Betalen {
 					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
 					'redirectUrl'  => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
-					'webhookUrl'   => self::$url . '/betaling/',
+					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
 				]
 			);
 		}
@@ -212,7 +198,7 @@ class Kleistad_Betalen {
 					],
 					'description'  => $beschrijving,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
-					'webhookUrl'   => self::$url . '/ondemandbetaling/',
+					'webhookUrl'   => Kleistad_Public::base_url() . '/ondemandbetaling/',
 				]
 			);
 		}
@@ -241,7 +227,7 @@ class Kleistad_Betalen {
 					'description' => $beschrijving,
 					'interval'    => '1 month',
 					'startDate'   => strftime( '%Y-%m-%d', $start ),
-					'webhookUrl'  => self::$url . '/herhaalbetaling/',
+					'webhookUrl'  => Kleistad_Public::base_url() . '/herhaalbetaling/',
 				]
 			);
 			return $subscriptie->id;
@@ -425,6 +411,7 @@ class Kleistad_Betalen {
 	 * @since 4.5.2
 	 */
 	public static function converteer_subscripties() {
+		// @codingStandardsIgnoreStart
 		try {
 			$object    = new static();
 			$customers = $object->mollie->customers->page();
@@ -433,8 +420,7 @@ class Kleistad_Betalen {
 					$subscriptions = $customer->subscriptions();
 					foreach ( $subscriptions as $subscription ) {
 						if ( $subscription->isActive() ) {
-							// @codingStandardsIgnoreStart
-							if ( self::$url . '/herhaalbetaling/' !== $subscription->webhookUrl ) {
+							if ( Kleistad_Public::base_url() . '/herhaalbetaling/' !== $subscription->webhookUrl ) {
 								error_log(
 									'updating subscriptie : ' . $subscription->id .
 									' voor klant : ' . $customer->id .
@@ -444,18 +430,18 @@ class Kleistad_Betalen {
 									$startdate = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
 								}
 								$subscription->startDate  = strftime( '%Y-%m-%d', $startdate );
-								$subscription->webhookUrl = self::$url . '/herhaalbetaling/';
+								$subscription->webhookUrl = Kleistad_Public::base_url() . '/herhaalbetaling/';
 								$subscription->update();
 							}
-							// @codingStandardsIgnoreEnd
 						}
 					}
 				}
 				$customers = $customers->next();
 			} while ( ! empty( $customers ) );
 		} catch ( Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore;
+			error_log( $e->getMessage() );
 		}
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**

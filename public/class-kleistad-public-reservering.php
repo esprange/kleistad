@@ -80,7 +80,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Kleistad_Public::$url,
+			Kleistad_Public::url(),
 			'/reserveer',
 			[
 				'methods'             => 'POST',
@@ -123,7 +123,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			]
 		);
 		register_rest_route(
-			Kleistad_Public::$url,
+			Kleistad_Public::url(),
 			'/show',
 			[
 				'methods'             => 'POST',

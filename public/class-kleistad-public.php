@@ -35,13 +35,6 @@ class Kleistad_Public {
 	private $version;
 
 	/**
-	 * De url voor Ajax callbacks.
-	 *
-	 * @var string url voor Ajax callbacks
-	 */
-	public static $url;
-
-	/**
 	 * De kleistad plugin opties.
 	 *
 	 * @var array kleistad plugin settings
@@ -53,8 +46,17 @@ class Kleistad_Public {
 	 *
 	 * @return string url voor endpoints
 	 */
+	public static function url() {
+		return 'kleistad_api';
+	}
+
+	/**
+	 * Geeft de basis url terug voor de endpoints.
+	 *
+	 * @return string url voor endpoints
+	 */
 	public static function base_url() {
-		return rest_url( self::$url );
+		return rest_url( self::url() );
 	}
 
 	/**
@@ -172,7 +174,6 @@ class Kleistad_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		$this->options     = $options;
-		self::$url         = 'kleistad/v' . $version;
 	}
 
 	/**

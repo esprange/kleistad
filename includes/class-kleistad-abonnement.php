@@ -593,7 +593,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$betalen->order(
 				$this->_abonnee_id,
 				__CLASS__ . '-' . $this->code . '-start_ideal',
-				$this->bedrag( self::BEDRAG_START ),
+				$this->bedrag( self::BEDRAG_START_EN_BORG ),
 				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $driemaand_datum ) . ' en borg',
 				'Bedankt voor de betaling! De abonnement inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
 			);

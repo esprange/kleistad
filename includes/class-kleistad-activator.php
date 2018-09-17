@@ -147,6 +147,7 @@ class Kleistad_Activator {
 		/**
 		 * Conversie van mollie webhooks van abonnementen.
 		 */
+		Kleistad_Betalen::register_rest_routes();
 		Kleistad_Betalen::converteer_subscripties();
 
 		flush_rewrite_rules();
