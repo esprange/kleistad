@@ -124,9 +124,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		);
 		register_rest_route(
 			Kleistad_Public::url(),
-			'/show',
+			'/reserveer',
 			[
-				'methods'             => 'POST',
+				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_show' ],
 				'args'                => [
 					'maand'   => [

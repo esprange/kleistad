@@ -139,8 +139,8 @@
     function kleistadShow( ovenId, maand, jaar ) {
         $.ajax(
             {
-                url: kleistadData.base_url + '/show/',
-                method: 'POST',
+                url: kleistadData.base_url + '/reserveer/',
+                method: 'GET',
                 beforeSend: function( xhr ) {
                     xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
                 },

@@ -71,7 +71,7 @@ class Kleistad_Betalen {
 		);
 		register_rest_route(
 			Kleistad_Public::url(),
-			'/herhaalbetaling',
+			'/betaling/herhaal',
 			[
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_herhaalbetaling_verwerkt' ],
@@ -88,7 +88,7 @@ class Kleistad_Betalen {
 
 		register_rest_route(
 			Kleistad_Public::url(),
-			'/ondemandbetaling',
+			'/betaling/ondemand',
 			[
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_ondemandbetaling_verwerkt' ],
@@ -198,7 +198,7 @@ class Kleistad_Betalen {
 					],
 					'description'  => $beschrijving,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
-					'webhookUrl'   => Kleistad_Public::base_url() . '/ondemandbetaling/',
+					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/ondemand/',
 				]
 			);
 		}
@@ -227,7 +227,7 @@ class Kleistad_Betalen {
 					'description' => $beschrijving,
 					'interval'    => '1 month',
 					'startDate'   => strftime( '%Y-%m-%d', $start ),
-					'webhookUrl'  => Kleistad_Public::base_url() . '/herhaalbetaling/',
+					'webhookUrl'  => Kleistad_Public::base_url() . '/betaling/herhaal/',
 				]
 			);
 			return $subscriptie->id;
@@ -420,7 +420,7 @@ class Kleistad_Betalen {
 					$subscriptions = $customer->subscriptions();
 					foreach ( $subscriptions as $subscription ) {
 						if ( $subscription->isActive() ) {
-							if ( Kleistad_Public::base_url() . '/herhaalbetaling/' !== $subscription->webhookUrl ) {
+							if ( Kleistad_Public::base_url() . '/betaling/herhaal/' !== $subscription->webhookUrl ) {
 								error_log(
 									'updating subscriptie : ' . $subscription->id .
 									' voor klant : ' . $customer->id .
@@ -430,7 +430,7 @@ class Kleistad_Betalen {
 									$startdate = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
 								}
 								$subscription->startDate  = strftime( '%Y-%m-%d', $startdate );
-								$subscription->webhookUrl = Kleistad_Public::base_url() . '/herhaalbetaling/';
+								$subscription->webhookUrl = Kleistad_Public::base_url() . '/betaling/herhaal/';
 								$subscription->update();
 							}
 						}
