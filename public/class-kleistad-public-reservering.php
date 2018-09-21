@@ -188,9 +188,8 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			$weekdag  = intval( date( 'N', $datum ) );
 			if ( $oven->{$dagnaam[ $weekdag ]} ) {
 				$kleur            = 'white';
-				$verwerkt         = false;
-				$datum_verstreken = $datum < strftime( 'today' );
-				$wijzigbaar       = ! $datum_verstreken || is_super_admin();
+				$datum_verstreken = $datum < strtotime( 'today' );
+				$wijzigbaar       = ( ! $datum_verstreken ) || is_super_admin();
 				$selectie         = [
 					'oven_id'       => $oven_id,
 					'dag'           => $dag,
@@ -232,14 +231,14 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				foreach ( $reserveringen as $reservering ) {
 					if ( $reservering->dag === $dag ) {
 						if ( $reservering->gebruiker_id == $huidige_gebruiker_id ) {  // WPCS: loose comparison ok.
-							$kleur         = ! $datum_verstreken ? 'lightgreen' : $kleur;
-							$wijzigbaar    = ! $verwerkt || is_super_admin();
-							$verwijderbaar = Kleistad_Roles::override() ? ! $verwerkt : ! $datum_verstreken;
+							$kleur         = ( ! $datum_verstreken ) ? 'lightgreen' : $kleur;
+							$wijzigbaar    = ( ! $reservering->verwerkt ) || is_super_admin();
+							$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : ( ! $datum_verstreken );
 						} else {
 							$kleur = ! $datum_verstreken ? 'pink' : $kleur;
 							// als de huidige gebruiker geen bevoegdheid heeft, dan geen actie.
-							$wijzigbaar    = ( ! $verwerkt && Kleistad_Roles::override() ) || is_super_admin();
-							$verwijderbaar = ! $verwerkt && Kleistad_Roles::override();
+							$wijzigbaar    = ( ( ! $reservering->verwerkt ) && Kleistad_Roles::override() ) || is_super_admin();
+							$verwijderbaar = ( ! $reservering->verwerkt ) && Kleistad_Roles::override();
 						}
 						if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
 							$kleur = 'gray';
