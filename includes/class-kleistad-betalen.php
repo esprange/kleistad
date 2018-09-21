@@ -216,6 +216,7 @@ class Kleistad_Betalen {
 	 */
 	public function herhaalorder( $gebruiker_id, $bedrag, $beschrijving, $start ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
+
 		if ( '' !== $mollie_gebruiker_id ) {
 			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
 			$subscriptie      = $mollie_gebruiker->createSubscription(
@@ -231,9 +232,8 @@ class Kleistad_Betalen {
 				]
 			);
 			return $subscriptie->id;
-		} else {
-			return '';
 		}
+		return '';
 	}
 
 	/**
@@ -247,12 +247,16 @@ class Kleistad_Betalen {
 	public function annuleer( $gebruiker_id, $subscriptie_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 
-		if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
-			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
-			if ( $subscription->isActive() ) {
-				$mollie_gebruiker->cancelSubscription( $subscriptie_id );
+		try {
+			if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+				$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
+				if ( $subscription->isActive() ) {
+					$mollie_gebruiker->cancelSubscription( $subscriptie_id );
+				}
 			}
+		} catch ( Exception $e ) {
+			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return '';
 	}
@@ -268,10 +272,14 @@ class Kleistad_Betalen {
 	public function actief( $gebruiker_id, $subscriptie_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 
-		if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
-			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
-			return $subscription->isActive();
+		try {
+			if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+				$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
+				return $subscription->isActive();
+			}
+		} catch ( Exception $e ) {
+			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
 	}
@@ -285,9 +293,14 @@ class Kleistad_Betalen {
 	 */
 	public function heeft_mandaat( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-		if ( '' !== $mollie_gebruiker_id ) {
-			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			return $mollie_gebruiker->hasValidMandate();
+
+		try {
+			if ( '' !== $mollie_gebruiker_id ) {
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+				return $mollie_gebruiker->hasValidMandate();
+			}
+		} catch ( Exception $e ) {
+			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
 	}
@@ -302,15 +315,20 @@ class Kleistad_Betalen {
 	 */
 	public function verwijder_mandaat( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-		if ( '' !== $mollie_gebruiker_id ) {
-			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			$mandaten         = $mollie_gebruiker->mandates();
-			foreach ( $mandaten as $mandaat ) {
-				if ( $mandaat->isValid() ) {
-					$mollie_gebruiker->revokeMandate( $mandaat->id );
+
+		try {
+			if ( '' !== $mollie_gebruiker_id ) {
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+				$mandaten         = $mollie_gebruiker->mandates();
+				foreach ( $mandaten as $mandaat ) {
+					if ( $mandaat->isValid() ) {
+						$mollie_gebruiker->revokeMandate( $mandaat->id );
+					}
 				}
+				return true;
 			}
-			return true;
+		} catch ( Exception $e ) {
+			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
 	}
@@ -329,9 +347,14 @@ class Kleistad_Betalen {
 
 		$mollie_betaling_id = get_user_meta( $gebruiker_id, self::MOLLIE_BETALING, true );
 		if ( '' !== $mollie_betaling_id ) {
-			$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-			if ( $betaling->isPaid() ) {
-				return $betaling->metadata->bericht;
+
+			try {
+				$betaling = $this->mollie->payments->get( $mollie_betaling_id );
+				if ( $betaling->isPaid() ) {
+					return $betaling->metadata->bericht;
+				}
+			} catch ( Exception $e ) {
+				error_log( $e->getMessage() ); // phpcs:ignore
 			}
 		}
 		return $error;
