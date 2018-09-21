@@ -151,7 +151,7 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 					$cursist     = get_userdata( $cursist_id );
 					$cursisten[] = [
 						'id'          => $inschrijving[ $cursus_id ]->code,
-						'naam'        => $cursist->display_name,
+						'naam'        => $cursist->display_name . ( 1 < $inschrijving[ $cursus_id ]->aantal ? ' (' . $inschrijving[ $cursus_id ]->aantal . ')' : '' ),
 						'cursus'      => $cursus->naam,
 						'i_betaald'   => $inschrijving[ $cursus_id ]->i_betaald ? 'X' : '',
 						'c_betaald'   => $inschrijving[ $cursus_id ]->c_betaald ? 'X' : '',
