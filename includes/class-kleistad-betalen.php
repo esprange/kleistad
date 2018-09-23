@@ -395,21 +395,26 @@ class Kleistad_Betalen {
 	public function info( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 		if ( '' !== $mollie_gebruiker_id ) {
-			$html             = 'Mollie info: ';
-			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			$mandaten         = $mollie_gebruiker->mandates();
-			$subscripties     = $mollie_gebruiker->subscriptions();
-			foreach ( $mandaten as $mandaat ) {
-				if ( $mandaat->isValid() ) {
-					$html .= "Er is op {$mandaat->signatureDate} een geldig mandaat afgegeven om incasso te doen vanaf bankrekening {$mandaat->details->consumerAccount} op naam van {$mandaat->details->consumerName}. ";
+			try {
+				$html             = 'Mollie info: ';
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+				$mandaten         = $mollie_gebruiker->mandates();
+				$subscripties     = $mollie_gebruiker->subscriptions();
+				foreach ( $mandaten as $mandaat ) {
+					if ( $mandaat->isValid() ) {
+						$html .= "Er is op {$mandaat->signatureDate} een geldig mandaat afgegeven om incasso te doen vanaf bankrekening {$mandaat->details->consumerAccount} op naam van {$mandaat->details->consumerName}. ";
+					}
 				}
-			}
-			foreach ( $subscripties as $subscriptie ) {
-				if ( $subscriptie->isActive() ) {
-					$html .= "Er is een actieve subscriptie om {$subscriptie->amount->currency} {$subscriptie->amount->value} met een interval van {$subscriptie->interval} af te schrijven startend vanaf {$subscriptie->startDate}. ";
+				foreach ( $subscripties as $subscriptie ) {
+					if ( $subscriptie->isActive() ) {
+						$html .= "Er is een actieve subscriptie om {$subscriptie->amount->currency} {$subscriptie->amount->value} met een interval van {$subscriptie->interval} af te schrijven startend vanaf {$subscriptie->startDate}. ";
+					}
 				}
+				return $html;
+			} catch ( Exception $e ) {
+				error_log( $e->getMessage() ); // phpcs:ignore
+				return '';
 			}
-			return $html;
 		}
 		return false;
 	}
