@@ -104,5 +104,13 @@
 				<li>[cursus_link] : link naar betaling restant cursus bedrag</li>
 			</ul>
 		</li>
+		<li><h3>kleistad_email_incasso_mislukt</h3>
+			<ol>
+				<li>[voornaam] : voornaam van de betaler</li>
+				<li>[achternaam] : achternaam van de betaler</li>
+				<li>[bedrag] : te betalen bedrag</li>
+				<li>[reden] : door de bank aangegeven dat incasso mislukt is</li>
+			</ol>
+		</li>
 	</ul>
 </div>

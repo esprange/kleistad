@@ -429,47 +429,33 @@ class Kleistad_Betalen {
 	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function callback_herhaalbetaling_verwerkt( WP_REST_Request $request ) {
-		// Voorlopig geen acties gedefinieerd.
-		return new WP_REST_response(); // Geeft default http status 200 terug.
-	}
+		$mollie_betaling_id = $request->get_param( 'id' );
 
-	/**
-	 * Tijdelijke functie om bestaande subscripties aan te passen.
-	 *
-	 * @since 4.5.2
-	 */
-	public static function converteer_subscripties() {
-		// @codingStandardsIgnoreStart
-		try {
-			$object    = new static();
-			$customers = $object->mollie->customers->page();
-			do {
-				foreach ( $customers as $customer ) {
-					$subscriptions = $customer->subscriptions();
-					foreach ( $subscriptions as $subscription ) {
-						if ( $subscription->isActive() ) {
-							if ( Kleistad_Public::base_url() . '/betaling/herhaal/' !== $subscription->webhookUrl ) {
-								error_log(
-									'updating subscriptie : ' . $subscription->id .
-									' voor klant : ' . $customer->id .
-									' met startdate : ' .$subscription->startDate );
-								$startdate = strtotime( $subscription->startDate );
-								if ( $startdate < strtotime( 'today' ) ) {
-									$startdate = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
-								}
-								$subscription->startDate  = strftime( '%Y-%m-%d', $startdate );
-								$subscription->webhookUrl = Kleistad_Public::base_url() . '/betaling/herhaal/';
-								$subscription->update();
-							}
-						}
-					}
-				}
-				$customers = $customers->next();
-			} while ( ! empty( $customers ) );
-		} catch ( Exception $e ) {
-			error_log( $e->getMessage() );
+		$object   = new static();
+		$betaling = $object->mollie->payments->get( $mollie_betaling_id );
+		if ( $betaling->hasChargeBacks() ) {
+			$gebruiker_id = reset( get_users( [
+				'meta_key'   => self::MOLLIE_ID,
+				'meta_value' => $betaling->customerId, //phpcs:ignore
+				'fields'     => 'ids',
+				'number'     => 1,
+			] ) );
+			$gebruiker    = get_userdata( $gebruiker_id );
+			$to           = "$gebruiker->display_name <$gebruiker->user_email>";
+			return Kleistad_public::compose_email(
+				$to,
+				'Kleistad incasso mislukt',
+				'kleistad_email_incasso_mislukt',
+				[
+					'voornaam'   => $gebruiker->first_name,
+					'achternaam' => $gebruiker->last_name,
+					'bedrag'     => $betaling->amount->value,
+					'reden'      => $betaling->details->bankReason,
+				]
+			);
 		}
-		// @codingStandardsIgnoreEnd
+
+		return new WP_REST_response(); // Geeft default http status 200 terug.
 	}
 
 	/**
