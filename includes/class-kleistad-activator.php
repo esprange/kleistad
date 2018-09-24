@@ -41,7 +41,7 @@ class Kleistad_Activator {
 			'sleutel'              => '',
 			'sleutel_test'         => '',
 			'betalen'              => 0,
-			'extras'               => [],
+			'extra'                => [],
 		];
 		$options         = wp_parse_args( get_option( 'kleistad-opties' ), $default_options );
 		update_option( 'kleistad-opties', $options );
