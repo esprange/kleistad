@@ -87,9 +87,6 @@ else :
 		<?php wp_nonce_field( 'kleistad_abonnee_wijziging' ); ?>
 		<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 		<input type="hidden" name="per_datum" value="<?php echo esc_attr( $per_datum ); ?>" >
-		<?php
-		if ( ! $in_driemaandperiode ) :
-			?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad_input_cbr" value="wijziging" >
@@ -183,9 +180,9 @@ else :
 		</div>
 				<?php
 			endif;
-
-			if ( $data['input']['actief'] ) :
-				?>
+			if ( ! $in_driemaandperiode ) :
+				if ( $data['input']['actief'] ) :
+					?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad_input_cbr" value="pauze" >
@@ -213,9 +210,9 @@ else :
 				</div>
 			</div>
 		</div>
-				<?php
-			else :
-				?>
+					<?php
+				else : // Abonnement niet actief.
+					?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_start" class="kleistad_abo_optie kleistad_input_cbr" value="herstart" >
@@ -240,22 +237,22 @@ else :
 				</div>
 				<div class="kleistad_col_3">
 					<select name="startdatum" id="kleistad_startdatum" >
-				<?php
-				for ( $i = 1; $i <= 3; $i++ ) :
-					$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + $i, 1, intval( date( 'Y' ) ) );
-					?>
-						<option value="<?php echo esc_attr( $datum ); ?>"><?php echo esc_html( strftime( '%B %Y', $datum ) ); ?></option>
 					<?php
-				endfor
-				?>
+					for ( $i = 1; $i <= 3; $i++ ) :
+						$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + $i, 1, intval( date( 'Y' ) ) );
+						?>
+							<option value="<?php echo esc_attr( $datum ); ?>"><?php echo esc_html( strftime( '%B %Y', $datum ) ); ?></option>
+						<?php
+					endfor
+					?>
 					</select>
 				</div>
 			</div>
 		</div>
-				<?php
-			endif;
-		endif; // Niet in drie maand periode.
-		?>
+					<?php
+				endif; // Abonnement niet actief.
+			endif; // Niet in drie maand periode.
+			?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad_input_cbr" value="einde" >
@@ -301,7 +298,7 @@ else :
 				</div>
 			</div>
 				<?php
-			else :
+			else : // Incasso is actief.
 				?>
 			<div class="kleistad_row" >
 				<div class="kleistad_col_3" >
@@ -317,10 +314,12 @@ else :
 				</div>
 			</div>
 				<?php
-			endif;
+			endif; // Incasso is actief.
 			?>
 		</div>
-		<?php endif; ?>
+			<?php
+		endif; // Niet in 3 maanden periode.
+		?>
 		<div class="kleistad_row" style="padding-top:20px;">
 			<div class="kleistad_col_10">
 				<input type="hidden" name="kleistad_submit_abonnee_wijziging" value="0" >
