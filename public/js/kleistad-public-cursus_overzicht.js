@@ -77,7 +77,7 @@
 								selection = window.getSelection();
 								selection.removeAllRanges();
 								selection.addRange( range );
-								document.execCommand ( 'copy', false, null );
+								document.execCommand( 'copy', false, null );
 								$temp.remove();
 							}
 						},
@@ -109,14 +109,13 @@
 						emails = '';
 					$( '#kleistad_cursisten_info' ).dialog( 'open' );
 					$( '#kleistad_cursus_id' ).val( id );
-                   // $( '#kleistad_cursisten_lijst' ).empty();
 					$.each( lijst, function( key, value ) {
 						html += '<tr><td>' + value.naam + '</td><td>' + value.telnr + '</td><td>' + value.email +
 									'</td><td>' + value.technieken + '</td></tr>';
 						emails += value.email + ';';
 					} );
 					$( '#kleistad_cursisten_lijst' ).empty().append( html );
-					$( '#kleistad_email_lijst').val( emails );
+					$( '#kleistad_email_lijst' ).val( emails );
                 }
             );
         }

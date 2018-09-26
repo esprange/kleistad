@@ -434,14 +434,16 @@ class Kleistad_Betalen {
 		$object   = new static();
 		$betaling = $object->mollie->payments->get( $mollie_betaling_id );
 		if ( $betaling->hasChargeBacks() ) {
-			$gebruiker_id = reset( get_users( [
-				'meta_key'   => self::MOLLIE_ID,
-				'meta_value' => $betaling->customerId, //phpcs:ignore
-				'fields'     => 'ids',
-				'number'     => 1,
-			] ) );
-			$gebruiker    = get_userdata( $gebruiker_id );
-			$to           = "$gebruiker->display_name <$gebruiker->user_email>";
+			$gebruiker_ids = get_users(
+				[
+					'meta_key'   => self::MOLLIE_ID,
+					'meta_value' => $betaling->customerId, //phpcs:ignore
+					'fields'     => 'ids',
+					'number'     => 1,
+				]
+			);
+			$gebruiker     = get_userdata( reset( $gebruiker_ids ) );
+			$to            = "$gebruiker->display_name <$gebruiker->user_email>";
 			return Kleistad_public::compose_email(
 				$to,
 				'Kleistad incasso mislukt',
