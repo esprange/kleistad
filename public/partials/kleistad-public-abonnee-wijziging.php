@@ -32,7 +32,7 @@ else :
 		<tr><td>Abonnement soort</td><td>
 		<?php
 			echo esc_html( $data['abonnement']->soort .
-			( 'beperkt' === $data['abonnement']->soort ? ' (' . $data['abonnement']->dag . ')': '' ) );
+			( 'beperkt' === $data['abonnement']->soort ? ' (' . $data['abonnement']->dag . ')' : '' ) );
 		?>
 		</td></tr>
 		<tr><td>Abonnement start</td><td><?php echo esc_html( strftime( '%x', $data['abonnement']->start_datum ) ); ?></td></tr>
