@@ -27,9 +27,14 @@ else :
 	endif;
 	?>
 	<div>
-	<p>Huidige abonnement status:</P>
+	<p>Abonnement status per <?php echo esc_html( $per ); ?> :</p>
 	<table class="kleistad_form">
-		<tr><td>Abonnement soort</td><td><?php echo esc_html( $data['abonnement']->soort ); ?></td></tr>
+		<tr><td>Abonnement soort</td><td>
+		<?php
+			echo esc_html( $data['abonnement']->soort .
+			( 'beperkt' === $data['abonnement']->soort ? ' (' . $data['abonnement']->dag . ')': '' ) );
+		?>
+		</td></tr>
 		<tr><td>Abonnement start</td><td><?php echo esc_html( strftime( '%x', $data['abonnement']->start_datum ) ); ?></td></tr>
 		<tr><td>Abonnement status</td><td>
 		<?php
