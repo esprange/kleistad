@@ -560,7 +560,7 @@ class Kleistad_Admin {
 		$message = '';
 		$notice  = '';
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
-			$item       = filter_input_array(
+			$item = filter_input_array(
 				INPUT_POST,
 				[
 					'id'               => FILTER_SANITIZE_NUMBER_INT,
@@ -584,17 +584,16 @@ class Kleistad_Admin {
 					],
 				]
 			);
+			if ( ! is_array( $item['extras'] ) ) {
+				$item['extras'] = [];
+			}
 			$item_valid = $this->validate_abonnee( $item );
 			if ( true === $item_valid ) {
 				$datum      = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
 				$abonnement = new Kleistad_Abonnement( $item['id'] );
 				$vandaag    = strtotime( 'today' );
-				if ( $abonnement->soort !== $item['soort'] ) {
+				if ( ( $abonnement->soort !== $item['soort'] ) || ( $abonnement->dag !== $item['dag'] ) ) {
 					$abonnement->wijzigen( $vandaag, $item['soort'], $item['dag'], true );
-				}
-				if ( $abonnement->dag !== $item['dag'] ) {
-					$abonnement->dag = $item['dag'];
-					$abonnement->save();
 				}
 				if ( $abonnement->extras !== $item['extras'] ) {
 					$abonnement->wijzigen( $vandaag, $item['extras'], '', true );
@@ -620,9 +619,6 @@ class Kleistad_Admin {
 				$message = 'De gegevens zijn opgeslagen';
 			} else {
 				$notice = $item_valid;
-			}
-			if ( ! is_array( $item['extras'] ) ) {
-				$item['extras'] = [];
 			}
 			$item['mollie_info'] = $abonnement->info();
 		} else {
