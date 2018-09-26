@@ -20,9 +20,11 @@ else :
 	$per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
 
 	$extra_beschikbaar = false;
-	foreach ( $this->options['extra'] as $extra ) :
-		$extra_beschikbaar |= ( 0 < $extra['prijs'] );
-	endforeach;
+	if ( ! $in_driemaandperiode ) :
+		foreach ( $this->options['extra'] as $extra ) :
+			$extra_beschikbaar |= ( 0 < $extra['prijs'] );
+		endforeach;
+	endif;
 	?>
 	<div>
 	<p>Huidige abonnement status:</P>
