@@ -34,7 +34,7 @@
 				<label for="soort">Soort</label>
 			</th>
 			<td>
-				<select id="soort" name="soort" required class="code">
+				<select id="kleistad-soort" name="soort" required class="code">
 					<option value="">Selecteer een abonnement soort</option>
 					<option value="onbeperkt" <?php selected( $item['soort'], 'onbeperkt' ); ?> >Onbeperkt</option>
 					<option value="beperkt" <?php selected( $item['soort'], 'beperkt' ); ?> >Beperkt</option>
@@ -47,7 +47,7 @@
 				<label for="dag">Dag</label>
 			</th>
 			<td>
-				<select id="dag" name="dag" required class="code" >
+				<select id="kleistad-dag" name="dag" <?php echo ( 'beperkt' === $item['soort'] ? 'required' : '' ); ?> class="code" >
 					<option value="">Selecteer een dag</option>
 					<option value="maandag" <?php selected( $item['dag'], 'maandag' ); ?>>Maandag</option>
 					<option value="dinsdag" <?php selected( $item['dag'], 'dinsdag' ); ?>>Dinsdag</option>

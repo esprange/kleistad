@@ -41,6 +41,12 @@
 					$( html ).insertBefore( '#kleistad-extra-toevoegen' );
 				}
 			);
+
+			$( '#kleistad-soort' ).change(
+				function() {
+					$( '#kleistad-dag' ).prop( 'required', ( 'beperkt' === $( this ).val() ) );
+				}
+			);
         }
     );
 } )( jQuery );
