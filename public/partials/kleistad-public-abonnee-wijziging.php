@@ -96,10 +96,10 @@ else :
 		<?php wp_nonce_field( 'kleistad_abonnee_wijziging' ); ?>
 		<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 		<input type="hidden" name="per_datum" value="<?php echo esc_attr( $per_datum ); ?>" >
-		<div class="kleistad_row">
+		<div class="kleistad_row"> <!-- soort -->
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad_input_cbr" value="wijziging" >
-				<label class="kleistad_label_cbr" for="kleistad_abo_wijziging">Abonnement wijzigen</label>
+				<label class="kleistad_label_cbr" for="kleistad_abo_wijziging">Abonnement soort wijzigen</label>
 			</div>
 		</div>
 		<div class="kleistad_abo_wijziging kleistad_abo_veld" style="display:none" >
@@ -147,30 +147,29 @@ else :
 			endif;
 			?>
 		</div>
-			<?php
-
-			if ( $extra_beschikbaar ) :
-				?>
-		<div class="kleistad_row">
+		<?php
+		if ( $extra_beschikbaar ) :
+			?>
+		<div class="kleistad_row"> <!-- extras -->
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad_input_cbr" value="extras" >
 				<label class="kleistad_label_cbr" for="kleistad_abo_extras">Abonnement extras wijzigen</label>
 			</div>
 		</div>
 		<div class="kleistad_abo_extras kleistad_abo_veld" style="display:none" >
-				<?php
-				$i = 0;
-				foreach ( $this->options['extra'] as $extra ) :
-					if ( 0 < $extra['prijs'] ) :
-						$i++;
-						?>
+			<?php
+			$i = 0;
+			foreach ( $this->options['extra'] as $extra ) :
+				if ( 0 < $extra['prijs'] ) :
+					$i++;
+					?>
 			<div class="kleistad_row">
 				<div class="kleistad_col_3">
 					<label class="kleistad_label"><?php echo 1 === $i ? 'Extra\'s' : ''; ?></label>
 				</div>
-						<?php
-						$label = false;
-						?>
+					<?php
+					$label = false;
+					?>
 				<div class="kleistad_col_4">
 					<input class="kleistad_input_cbr" name="extras[]" id="extras_<?php echo esc_attr( $i ); ?>" type="checkbox"
 						<?php checked( false !== array_search( $extra['naam'], $data['input']['extras'], true ) ); ?>
@@ -182,17 +181,54 @@ else :
 					<label class="kleistad_label" ><?php echo esc_html( ' (€ ' . number_format_i18n( $extra['prijs'], 2 ) . ' p.m.)' ); ?></label>
 				</div>
 			</div>
-						<?php
-					endif;
-				endforeach;
-				?>
+					<?php
+				endif;
+			endforeach;
+			?>
 		</div>
-				<?php
-			endif;
-			if ( ! $in_driemaandperiode ) :
-				if ( $data['input']['actief'] ) :
-					?>
-		<div class="kleistad_row">
+			<?php
+		endif;
+		if ( 'beperkt' === $data['input']['soort'] ) :
+			?>
+		<div class="kleistad_row"> <!-- dag -->
+			<div class="kleistad_col_6">
+				<input type="radio" name="actie" id="kleistad_abo_dag" class="kleistad_abo_optie kleistad_input_cbr" value="dag" >
+				<label class="kleistad_label_cbr" for="kleistad_abo_dag">Abonnement werkdag wijzigen</label>
+			</div>
+		</div>
+		<div class="kleistad_abo_dag kleistad_abo_veld" style="display:none" >
+			<div class="kleistad_row">
+				<div class="kleistad_col_3" >
+					&nbsp;
+				</div>
+				<div class="kleistad_col_7" >
+					<p><strong>Je hebt een beperkt abonnement en gaat Kleistad voortaan op een andere dag bezoeken. De wijziging gaat per direct in.</strong></p>
+				</div>
+			</div>
+			<div class="kleistad_row" >
+				<div class="kleistad_col_3">
+					&nbsp;
+				</div>
+				<div class="kleistad_col_3 kleistad_label">
+					<label for="kleistad_dag_keuze2">Dag</label>
+				</div>
+				<div class="kleistad_col_4">
+					<select class="kleistad_input" name="dag" id="kleistad_dag_keuze2" >
+						<option value="maandag" <?php selected( $data['input']['dag'], 'maandag' ); ?> >Maandag</option>
+						<option value="dinsdag" <?php selected( $data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
+						<option value="woensdag" <?php selected( $data['input']['dag'], 'woensdag' ); ?>>Woensdag</option>
+						<option value="donderdag" <?php selected( $data['input']['dag'], 'donderdag' ); ?>>Donderdag</option>
+						<option value="vrijdag" <?php selected( $data['input']['dag'], 'vrijdag' ); ?>>Vrijdag</option>
+					</select>
+				</div>
+			</div>
+		</div>
+			<?php
+		endif;
+		if ( ! $in_driemaandperiode ) :
+			if ( $data['input']['actief'] ) :
+				?>
+		<div class="kleistad_row"> <!-- pauze -->
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad_input_cbr" value="pauze" >
 				<label for="kleistad_abo_pauze" class="kleistad_label_cbr">Abonnement pauzeren</label>
@@ -219,10 +255,10 @@ else :
 				</div>
 			</div>
 		</div>
-					<?php
-				else : // Abonnement niet actief.
-					?>
-		<div class="kleistad_row">
+				<?php
+			else : // Abonnement niet actief.
+				?>
+		<div class="kleistad_row"> <!-- start -->
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_start" class="kleistad_abo_optie kleistad_input_cbr" value="herstart" >
 				<label for ="kleistad_abo_start" class="kleistad_label_cbr">Abonnement hervatten</label>
@@ -258,11 +294,11 @@ else :
 				</div>
 			</div>
 		</div>
-					<?php
-				endif; // Abonnement niet actief.
-			endif; // Niet in drie maand periode.
-			?>
-		<div class="kleistad_row">
+				<?php
+			endif; // Abonnement niet actief.
+		endif; // Niet in drie maand periode.
+		?>
+		<div class="kleistad_row"> <!-- einde -->
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad_input_cbr" value="einde" >
 				<label for="kleistad_abo_einde" class="kleistad_label_cbr">Abonnement beëindigen</label>
@@ -279,7 +315,7 @@ else :
 		<?php
 		if ( ! $in_driemaandperiode ) :
 			?>
-		<div class="kleistad_row">
+		<div class="kleistad_row"> <!-- betaalwijze -->
 			<div class="kleistad_col_6">
 				<input type="radio" name="actie" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad_input_cbr" value="betaalwijze" >
 				<label class="kleistad_label_cbr" for="kleistad_abo_betaalwijze" >Abonnement betaalwijze</label>

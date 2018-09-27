@@ -95,6 +95,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 
 		$herstart_maand = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1 + $data['input']['pauze_maanden'], 1, intval( date( 'Y' ) ) );
 		$abonnement     = new Kleistad_Abonnement( $data['input']['abonnee_id'] );
+		$bericht        = 'De wijziging is verwerkt en er wordt een email verzonden met bevestiging';
 
 		switch ( $data['input']['actie'] ) {
 
@@ -113,6 +114,12 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 			case 'extras':
 				$status = $abonnement->wijzigen( $data['input']['per_datum'], $data['input']['extras'] );
 				break;
+			case 'dag':
+				$abonnement->dag = $data['input']['dag'];
+				$abonnement->save();
+				$status  = true;
+				$bericht = 'De wijziging is verwerkt';
+				break;
 			case 'betaalwijze':
 				$status = $abonnement->betaalwijze( $data['input']['per_datum'], $data['input']['betaal'] );
 				break;
@@ -121,7 +128,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 				break;
 		}
 		if ( $status ) {
-			return 'De wijziging is verwerkt en er wordt een email verzonden met bevestiging';
+			return $bericht;
 		} else {
 			$error->add( '', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' );
 		}
