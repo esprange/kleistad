@@ -498,6 +498,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param bool         $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function wijzigen( $wijzig_datum, $soort, $dag = '', $admin = false ) {
+		$wijzig_betaling = true;
 		if ( is_array( $soort ) ) {
 			$this->extras = $soort;
 			if ( count( $soort ) ) {
@@ -506,20 +507,27 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				$bericht = 'Je maakt voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' geen gebruik meer van extras';
 			}
 		} else {
-			$this->soort = $soort;
-			$this->dag   = $dag;
-			$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort;
-		}
-		$betalen              = new Kleistad_Betalen();
-		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
-		if ( ! $admin ) {
-			if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
-				$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
+			if ( $this->soort === $soort ) {
+				$this->dag       = $dag;
+				$wijzig_betaling = false;
+			} else {
+				$this->soort = $soort;
+				$this->dag   = $dag;
 			}
-			$this->email(
-				'_gewijzigd',
-				$bericht
-			);
+			$bericht = 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
+				( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
+		}
+		if ( $wijzig_betaling ) {
+			$betalen              = new Kleistad_Betalen();
+			$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
+			if ( ! $admin ) {
+				if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+					$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
+				}
+				$this->email( '_gewijzigd', $bericht );
+			}
+		} else {
+			$this->email( '_gewijzigd', $bericht );
 		}
 		$this->save();
 		return true;
