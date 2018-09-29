@@ -110,8 +110,11 @@
 					$( '#kleistad_cursisten_info' ).dialog( 'open' );
 					$( '#kleistad_cursus_id' ).val( id );
 					$.each( lijst, function( key, value ) {
-						html += '<tr><td>' + value.naam + '</td><td>' + value.telnr + '</td><td>' + value.email +
-									'</td><td>' + value.technieken + '</td></tr>';
+						html += '<tr><td>' + value.naam + ( 1 < value.aantal ? ' (' + value.aantal + ')' : '' ) +
+								'</td><td>' + value.telnr +
+								'</td><td>' + value.email +
+								'</td><td>' + value.technieken +
+								'</td></tr>';
 						emails += value.email + ';';
 					} );
 					$( '#kleistad_cursisten_lijst' ).empty().append( html );
