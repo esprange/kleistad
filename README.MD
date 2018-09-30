@@ -33,6 +33,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 4.5.5 ###
+* abonnement werkdag wijzigen toegevoegd
+* betalingen overzicht toont geen annuleringen als cursus gestart is
+* cursus overzicht toont aantal inschrijvingen
 ### 4.5.4 ###
 * nieuwe shortcode cursus_overzicht
 * incasso die niet lukt stuurt email naar klant
