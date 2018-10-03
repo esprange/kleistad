@@ -179,6 +179,7 @@ class Kleistad {
 		$this->loader->add_shortcode( 'kleistad_abonnee_wijziging', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_registratie_overzicht', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_cursus_overzicht', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_abonnement_overzicht', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_betalingen', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_cursus_beheer', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_recept_beheer', $plugin_public, 'shortcode_handler' );

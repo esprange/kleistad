@@ -39,6 +39,7 @@
 				<li>[kleistad_cursus_beheer] formulier om cursussen te beheren </li>
 				<li>[kleistad_betalingen] formulier om betalingen cursisten te registreren</li>
 				<li>[kleistad_cursus_overzicht] overzicht cursussen en cursist per cursus</li>
+				<li>[kleistad_abonnement_overzicht] overzicht abonnees</li>
 			</ul>
 		</li>
 		<li><h3>toegankelijk voor een cursist</h3>
