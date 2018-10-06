@@ -94,7 +94,8 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 		foreach ( $this->options['extra'] as $extra ) {
 			$abonnees_fields[] = ucfirst( $extra['naam'] );
 		}
-		$abonnees_fields = array_merge( $abonnees_fields,
+		$abonnees_fields = array_merge(
+			$abonnees_fields,
 			[
 				'Status',
 				'Start',
@@ -119,7 +120,8 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 				foreach ( $this->options['extra']  as $extra ) {
 					$abonnee_gegevens[] = array_search( $extra['naam'], $abonnement->extras, true ) ? 'ja' : '';
 				}
-				$abonnee_gegevens = array_merge( $abonnee_gegevens,
+				$abonnee_gegevens = array_merge(
+					$abonnee_gegevens,
 					[
 						$abonnement->status(),
 						$abonnement->start_datum ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '',
