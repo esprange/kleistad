@@ -116,9 +116,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 			$abonnees[] = [
 				'id'     => $abonnee_id,
 				'naam'   => $abonnee->display_name,
-				'status' => ( $abonnement->geannuleerd ? 'geannuleerd' :
-					( $abonnement->gepauzeerd ? 'gepauzeerd' :
-						( Kleistad_Roles::reserveer( $abonnee_id ) ? 'actief' : 'aangemeld' ) ) ),
+				'status' => $abonnement->status(),
 				'soort'  => $abonnement->soort,
 				'dag'    => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
 				'extras' => implode( ', ', $abonnement->extras ),

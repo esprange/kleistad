@@ -188,7 +188,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'eind_datum':
 			case 'herstart_datum':
 			case 'incasso_datum':
-				$this->_data[ $attribuut ] = date( 'Y-m-d', $waarde );
+				$this->_data[ $attribuut ] = ( ! is_null( $waarde ) ? date( 'Y-m-d', $waarde ) : 0 );
 				break;
 			case 'geannuleerd':
 			case 'gepauzeerd':
@@ -271,6 +271,29 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
+	 * Geef de status van het abonnement als een tekst terug.
+	 *
+	 * @since 4.5.7
+	 *
+	 * @return string De status tekst.
+	 */
+	public function status() {
+		if ( $this->geannuleerd ) {
+			return 'beëindigd';
+		}
+		if ( $this->start_datum > strtotime( 'today' ) ) {
+			return 'aangemeld';
+		}
+		if ( $this->gepauzeerd ) {
+			return 'gepauzeerd';
+		}
+		if ( Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
+			return 'actief';
+		}
+		return 'aangemeld';
+	}
+
+	/**
 	 * Controleer of er een incasso actief is
 	 *
 	 * @since 4.3.0
@@ -311,8 +334,20 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @param string $actie De uit te voeren actie.
 	 * @param int    $datum Het moment waarop de actie moet worden uitgevoerd.
+	 * @param int    $oude_datum Het moment van een eerdere gelijke actie die geannuleerd moet worden.
 	 */
-	private function schedule( $actie, $datum ) {
+	private function schedule( $actie, $datum, $oude_datum = null ) {
+		if ( ! is_null( $oude_datum ) ) {
+			wp_unschedule_event(
+				$oude_datum,
+				self::META_KEY,
+				[
+					$this->_abonnee_id,
+					$actie,
+					$oude_datum,
+				]
+			);
+		}
 		wp_schedule_single_event(
 			$datum,
 			self::META_KEY,
@@ -420,6 +455,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	public function pauzeren( $pauze_datum, $herstart_datum, $admin = false ) {
 		// Op de pauze_datum wordt de status gewijzigd naar gepauzeerd.
 		$this->schedule( 'pauze', $pauze_datum );
+		// Op de herstart_datum wordt de status weer gewijzigd naar niet-gepauzeerd.
+		$this->schedule( 'herstart', $herstart_datum );
 		$this->pauze_datum    = $pauze_datum;
 		$this->herstart_datum = $herstart_datum;
 		$betalen              = new Kleistad_Betalen();
@@ -444,7 +481,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function herstarten( $herstart_datum, $admin = false ) {
 		// Op de herstart_datum wordt de gepauzeerd status verwijderd.
-		$this->schedule( 'herstart', $herstart_datum );
+		$this->schedule( 'herstart', $herstart_datum, $this->herstart_datum );
 		$this->herstart_datum = $herstart_datum;
 		$betalen              = new Kleistad_Betalen();
 		if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
@@ -588,10 +625,15 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
-		$vervolg_datum       = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ) - 7, intval( date( 'Y', $start_datum ) ) );
-		$driemaand_datum     = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ), intval( date( 'Y', $start_datum ) ) );
-		$this->start_datum   = $start_datum;
-		$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 4, 1, intval( date( 'Y', $start_datum ) ) );
+		$vervolg_datum        = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ) - 7, intval( date( 'Y', $start_datum ) ) );
+		$driemaand_datum      = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ), intval( date( 'Y', $start_datum ) ) );
+		$this->start_datum    = $start_datum;
+		$this->incasso_datum  = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 4, 1, intval( date( 'Y', $start_datum ) ) );
+		$this->geannuleerd    = false; // Reset ingeval het een hervatting is van een oud abonnement.
+		$this->gepauzeeerd    = false; // Idem.
+		$this->pauze_datum    = null;
+		$this->herstart_datum = null;
+		$this->eind_datum     = null;
 		$this->save();
 		// Verzend 1 week vooraf verstrijken drie maanden termijn de email voor het vervolg.
 		$this->schedule( 'vervolg', $vervolg_datum );

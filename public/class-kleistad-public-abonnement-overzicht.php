@@ -38,7 +38,7 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 					'telnr'  => $abonnee->telnr,
 					'email'  => $abonnee->user_email,
 					'soort'  => $abonnement->soort . ( 'beperkt' === $abonnement->soort ? ' (' . $abonnement->dag . ')' : '' ),
-					'status' => $abonnement->start_datum > strtotime( 'today' ) ? 'nieuw' : ( $abonnement->gepauzeerd ? 'pauze' : 'actief' ),
+					'status' => $abonnement->status(),
 					'extras' => implode( ',<br/> ', $abonnement->extras ),
 				];
 				$email_lijst   .= $abonnee->user_email . ';';
@@ -71,6 +71,7 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 	 * @return string
 	 *
 	 * @since   4.5.6
+	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function save( $data ) {
 		if ( ! Kleistad_Roles::override() ) {
@@ -120,7 +121,7 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 				}
 				$abonnee_gegevens = array_merge( $abonnee_gegevens,
 					[
-						$abonnement->start_datum > strtotime( 'today' ) ? 'nieuw' : ( $abonnement->gepauzeerd ? 'pauze' : 'actief' ),
+						$abonnement->status(),
 						$abonnement->start_datum ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '',
 						$abonnement->pauze_datum ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '',
 						$abonnement->herstart_datum ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '',
