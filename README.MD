@@ -33,6 +33,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 4.5.7 ###
+* abonnement status tekst consistent gemaakt
+* bug fix abonnement pauze status
+* Mollie update 2.1.1
 ### 4.5.6 ###
 * abonnement overzicht toegevoegd
 ### 4.5.5 ###
