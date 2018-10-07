@@ -590,8 +590,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @param int    $wijzig_datum Wijzigdatum.
 	 * @param string $betaalwijze  Ideal of bankstorting.
+	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
-	public function betaalwijze( $wijzig_datum, $betaalwijze ) {
+	public function betaalwijze( $wijzig_datum, $betaalwijze, $admin = false ) {
 		$betalen              = new Kleistad_Betalen();
 		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id ); // Verwijder een eventuele bestaande subscriptie.
 
@@ -609,7 +610,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			);
 		} else {
 			$betalen->verwijder_mandaat( $this->_abonnee_id );
-			$this->email( '_betaalwijze_bank' );
+			if ( ! $admin ) {
+				$this->email( '_betaalwijze_bank' );
+			}
 			$this->save();
 			return true;
 		}
