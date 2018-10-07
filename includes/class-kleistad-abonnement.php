@@ -613,6 +613,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			if ( ! $admin ) {
 				$this->email( '_betaalwijze_bank' );
 			}
+			$this->subscriptie_id = '';
 			$this->save();
 			return true;
 		}
