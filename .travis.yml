@@ -16,8 +16,8 @@ cache:
 
 matrix:
   include:
-    - php: 7.2
-      env: WP_PROJECT_TYPE=plugin WP_VERSION=latest WP_MULTISITE=0
+#    - php: 7.2
+#      env: WP_PROJECT_TYPE=plugin WP_VERSION=latest WP_MULTISITE=0
     - php: 7.0
       env: WP_PROJECT_TYPE=plugin WP_VERSION=latest WP_MULTISITE=0
     - php: 7.2
