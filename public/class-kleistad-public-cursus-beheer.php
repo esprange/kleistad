@@ -137,23 +137,6 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			if ( is_null( $input['technieken'] ) ) {
 				$input['technieken'] = [];
 			}
-			/**
-			 * Controleer of de nieuwe cursus al niet bestaat.
-			 */
-			if ( ! ( 0 < $input['cursus_id'] ) ) {
-				$start_datum = strftime( '%d-%m', strtotime( $input['start_datum'] ) );
-				$start_tijd  = strftime( '%H-%M', strtotime( $input['start_tijd'] ) );
-				$cursussen   = Kleistad_Cursus::all();
-				foreach ( $cursussen as $cursus ) {
-					if ( ! $cursus->vervallen ) {
-						if ( strftime( '%d-%m', $cursus->start_datum ) === $start_datum &&
-							strftime( '%H-%M', $cursus->start_tijd ) === $start_tijd ) {
-							$error->add( 'dubbel', 'Er is al een cursus die op deze datum/tijd van start gaat' );
-							return $error;
-						}
-					}
-				}
-			}
 		} elseif ( 'indeling' === $tab ) { // phpcs:ignore
 			/**
 			 * Voorlopig geen actie op dit tabblad.
