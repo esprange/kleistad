@@ -634,7 +634,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->start_datum    = $start_datum;
 		$this->incasso_datum  = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 4, 1, intval( date( 'Y', $start_datum ) ) );
 		$this->geannuleerd    = false; // Reset ingeval het een hervatting is van een oud abonnement.
-		$this->gepauzeeerd    = false; // Idem.
+		$this->gepauzeerd     = false; // Idem.
 		$this->pauze_datum    = null;
 		$this->herstart_datum = null;
 		$this->eind_datum     = null;
