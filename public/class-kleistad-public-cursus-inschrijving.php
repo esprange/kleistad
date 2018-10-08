@@ -49,16 +49,25 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				'mc4wp-subscribe' => '0',
 			];
 		}
-		$atts = shortcode_atts(
+		$atts                    = shortcode_atts(
 			[ 'cursus' => '' ],
 			$this->atts,
 			'kleistad_cursus_inschrijving'
 		);
-		if ( 'C' === substr( $atts['cursus'], 0, 1 ) && is_numeric( substr( $atts['cursus'], 1 ) ) ) {
-			$data['input']['cursus_id'] = intval( substr( $atts['cursus'], 1 ) );
-			$data['cursus_selectie']    = false;
-		} else {
-			$data['cursus_selectie'] = true;
+		$data['cursus_selectie'] = true;
+		$cursus_selecties        = [];
+		if ( '' !== $atts['cursus'] ) {
+			$selecties = explode( ',', preg_replace( '/\s+/', '', $atts['cursus'] ) );
+			if ( $selecties ) {
+				if ( 1 === count( $selecties ) ) {
+					$data['cursus_selectie'] = false;
+					sscanf( $selecties[0], 'C%i', $data['input']['cursus_id'] );
+				} else {
+					foreach ( $selecties as $selectie ) {
+						sscanf( $selectie, 'C%i', $cursus_selecties[] );
+					}
+				}
+			}
 		}
 		$gebruikers         = get_users(
 			[
@@ -67,10 +76,14 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			]
 		);
 		$data['gebruikers'] = $gebruikers;
-
-		$open_cursussen = [];
-		$cursussen      = Kleistad_Cursus::all( true );
+		$open_cursussen     = [];
+		$cursussen          = Kleistad_Cursus::all( true );
 		foreach ( $cursussen as $cursus ) {
+			if ( count( $cursus_selecties ) ) {
+				if ( ! in_array( $cursus->id, $cursus_selecties, false ) ) { //phpcs:ignore
+					continue;
+				}
+			}
 
 			$open_cursussen[ $cursus->id ] = [
 				'naam'          => $cursus->naam .
