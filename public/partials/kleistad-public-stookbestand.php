@@ -24,7 +24,7 @@ else :
 			<label class="kleistad_label" for="kleistad_vanaf_datum" >Vanaf</label>
 		</div>
 		<div class="kleistad_col_7">
-			<input type="text" name="vanaf_datum" id="kleistad_vanaf_datum" class="kleistad_datum" value="<?php echo esc_attr( date( '01-01-Y' ) ); ?>" />
+			<input type="text" name="vanaf_datum" id="kleistad_vanaf_datum" class="kleistad_datum" value="<?php echo esc_attr( date( '01-01-Y' ) ); ?>"  autocomplete="off" />
 		</div>
 	</div>
 	<div class="kleistad_row" >
@@ -32,7 +32,7 @@ else :
 			<label class="kleistad_label" for="kleistad_tot_datum" >Tot</label>
 		</div>
 		<div class="kleistad_col_7">
-			<input type="text" name="tot_datum" id="kleistad_tot_datum" class="kleistad_datum" value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" />
+			<input type="text" name="tot_datum" id="kleistad_tot_datum" class="kleistad_datum" value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  autocomplete="off" />
 		</div>
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;" >

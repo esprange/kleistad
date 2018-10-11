@@ -52,9 +52,9 @@ else :
 					</tr>
 					<tr>
 						<th>Start</th>
-						<td><input type="text" name="start_datum" id="kleistad_cursus_start_datum" class="kleistad_datum" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" /></td>
+						<td><input type="text" name="start_datum" id="kleistad_cursus_start_datum" class="kleistad_datum" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" autocomplete="off" /></td>
 						<th>Eind</th>
-						<td><input type="text" name="eind_datum" id="kleistad_cursus_eind_datum" class="kleistad_datum" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" /></td>
+						<td><input type="text" name="eind_datum" id="kleistad_cursus_eind_datum" class="kleistad_datum" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  autocomplete="off" /></td>
 					</tr>
 					<tr>
 						<th>Begintijd</th>
