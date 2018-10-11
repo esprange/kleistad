@@ -32,9 +32,9 @@
 			<div id="post-body">
 				<div id="post-body-content">
 					<?php do_meta_boxes( 'abonnee', 'normal', $item ); ?>
-					<?php submit_button(); ?>
 				</div>
 			</div>
 		</div>
 	</form>
 </div>
+

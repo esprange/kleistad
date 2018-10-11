@@ -278,8 +278,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return string De status tekst.
 	 */
 	public function status() {
+		$vandaag = strtotime( 'today' );
 		if ( $this->geannuleerd ) {
-			return 'beëindigd';
+			return 'gestopt';
 		}
 		if ( $this->start_datum > strtotime( 'today' ) ) {
 			return 'aangemeld';
@@ -288,6 +289,12 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			return 'gepauzeerd';
 		}
 		if ( Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
+			if ( $vandaag < $this->pauze_datum ) {
+				return 'pauze gepland';
+			}
+			if ( $vandaag < $this->eind_datum ) {
+				return 'stop gepland';
+			}
 			return 'actief';
 		}
 		return 'aangemeld';

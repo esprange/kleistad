@@ -43,18 +43,64 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	}
 
 	/**
-	 * Toon de kolom naam en acties
+	 * Toon de kolom soort en actie
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
 	 * @suppress PhanTypeArraySuspicious
 	 */
-	public function column_naam( $item ) {
+	public function column_soort( $item ) {
 		$actions = [
-			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
+			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=soort">%s</a>', $item['id'], 'Wijzigen' ),
 		];
+		$soort   = $item['soort'] . ( 'beperkt' === $item['soort'] ? ' (' . $item['dag'] . ')' : '' );
+		return sprintf( '%s %s', $soort, $this->row_actions( $actions ) );
+	}
 
-		return sprintf( '%s %s', $item['naam'], $this->row_actions( $actions ) );
+	/**
+	 * Toon de kolom extras en actie
+	 *
+	 * @param object $item row (key, value).
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
+	 */
+	public function column_extras( $item ) {
+		$actions = [
+			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=extras">%s</a>', $item['id'], 'Wijzigen' ),
+		];
+		return sprintf( '%s %s', $item['extras'], $this->row_actions( $actions ) );
+	}
+
+	/**
+	 * Toon de kolom status en acties
+	 *
+	 * @param object $item row (key, value).
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
+	 */
+	public function column_status( $item ) {
+		$actions = [
+			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=status">%s</a>', $item['id'], 'Wijzigen' ),
+		];
+		return sprintf( '%s %s', $item['status'], $this->row_actions( $actions ) );
+	}
+
+	/**
+	 * Toon de kolom mollie en actie
+	 *
+	 * @param object $item row (key, value).
+	 * @return string
+	 * @suppress PhanTypeArraySuspicious
+	 */
+	public function column_mollie( $item ) {
+		if ( $item['mollie'] ) {
+			$actions = [
+				'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=mollie">%s</a>', $item['id'], 'Wijzigen' ),
+			];
+			return sprintf( 'ja %s', $this->row_actions( $actions ) );
+		} else {
+			return 'nee';
+		}
 	}
 
 	/**
@@ -64,12 +110,12 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = [
+			'code'   => 'Code',
 			'naam'   => 'Naam',
 			'status' => 'Status',
 			'soort'  => 'Soort abonnement',
-			'dag'    => 'Dag',
 			'extras' => 'Extras',
-			'code'   => 'Code',
+			'mollie' => 'Incasso',
 		];
 		return $columns;
 	}
@@ -84,9 +130,9 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 			'naam'   => [ 'naam', true ],
 			'status' => [ 'status', true ],
 			'soort'  => [ 'soort', true ],
-			'dag'    => [ 'dag', true ],
 			'extras' => [ 'extras', false ],
 			'code'   => [ 'code', true ],
+			'mollie' => [ 'mollie', true ],
 		];
 		return $sortable_columns;
 	}
@@ -121,6 +167,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 				'dag'    => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
 				'extras' => implode( ', ', $abonnement->extras ),
 				'code'   => $abonnement->code,
+				'mollie' => ( '' !== $abonnement->subscriptie_id ),
 			];
 		}
 		usort(

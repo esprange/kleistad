@@ -47,6 +47,32 @@
 					$( '#kleistad-dag' ).prop( 'required', ( 'beperkt' === $( this ).val() ) );
 				}
 			);
+
+            /**
+             * Definieer de datumpickers.
+             */
+            $( '.kleistad_datum' ).each(
+                function() {
+                    $( this ).datepicker(
+                        {
+							dateFormat: 'dd-mm-yy',
+							beforeShowDay: function( date ) {
+								var day = date.getDate();
+								if ( $( this ).hasClass( 'maand' ) ) {
+									return [ ( day === 1 ) ];
+								} else {
+									return [ true ];
+								}
+							},
+							beforeShow: function( input ) {
+								if ( $( input ).attr( 'readonly' ) ) {
+									return false;
+								}
+							}
+                        }
+                    );
+                }
+            );
         }
     );
 } )( jQuery );

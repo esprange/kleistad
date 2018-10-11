@@ -54,6 +54,7 @@ class Kleistad_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		$this->options     = $options;
+		wp_localize_jquery_ui_datepicker();
 	}
 
 	/**
@@ -63,6 +64,7 @@ class Kleistad_Admin {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-admin.css', [], $this->version, 'all' );
+		wp_enqueue_style( 'jqueryui-css', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
 	}
 
 	/**
@@ -71,7 +73,7 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/kleistad-admin.js', [ 'jquery' ], $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/kleistad-admin.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
 	}
 
 	/**
@@ -563,67 +565,87 @@ class Kleistad_Admin {
 			$item = filter_input_array(
 				INPUT_POST,
 				[
-					'id'               => FILTER_SANITIZE_NUMBER_INT,
-					'naam'             => FILTER_SANITIZE_STRING,
-					'code'             => FILTER_SANITIZE_STRING,
-					'soort'            => FILTER_SANITIZE_STRING,
-					'dag'              => FILTER_SANITIZE_STRING,
-					'gestart'          => FILTER_SANITIZE_NUMBER_INT,
-					'geannuleerd'      => FILTER_SANITIZE_NUMBER_INT,
-					'gepauzeerd'       => FILTER_SANITIZE_NUMBER_INT,
-					'inschrijf_datum'  => FILTER_SANITIZE_STRING,
-					'start_datum'      => FILTER_SANITIZE_STRING,
-					'pauze_datum'      => FILTER_SANITIZE_STRING,
-					'eind_datum'       => FILTER_SANITIZE_STRING,
-					'herstart_datum'   => FILTER_SANITIZE_STRING,
-					'mandaat'          => FILTER_SANITIZE_NUMBER_INT,
-					'eind_pauze_datum' => FILTER_SANITIZE_NUMBER_INT,
-					'extras'           => [
+					'id'              => FILTER_SANITIZE_NUMBER_INT,
+					'naam'            => FILTER_SANITIZE_STRING,
+					'code'            => FILTER_SANITIZE_STRING,
+					'soort'           => FILTER_SANITIZE_STRING,
+					'dag'             => FILTER_SANITIZE_STRING,
+					'gestart'         => FILTER_SANITIZE_NUMBER_INT,
+					'geannuleerd'     => FILTER_SANITIZE_NUMBER_INT,
+					'gepauzeerd'      => FILTER_SANITIZE_NUMBER_INT,
+					'inschrijf_datum' => FILTER_SANITIZE_STRING,
+					'start_datum'     => FILTER_SANITIZE_STRING,
+					'pauze_datum'     => FILTER_SANITIZE_STRING,
+					'eind_datum'      => FILTER_SANITIZE_STRING,
+					'herstart_datum'  => FILTER_SANITIZE_STRING,
+					'mandaat'         => FILTER_SANITIZE_NUMBER_INT,
+					'extras'          => [
 						'filter' => FILTER_SANITIZE_STRING,
 						'flags'  => FILTER_REQUIRE_ARRAY,
 					],
+					'actie'           => FILTER_SANITIZE_STRING,
+					'submit'          => FILTER_SANITIZE_STRING,
 				]
 			);
 			if ( ! is_array( $item['extras'] ) ) {
 				$item['extras'] = [];
 			}
-			$item_valid = $this->validate_abonnee( $item );
+			$actie      = $item['actie'];
+			$submit     = strtolower( $item['submit'] );
+			$item_valid = $this->validate_abonnee( $item, $actie, $submit );
 			if ( true === $item_valid ) {
-				$datum      = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
-				$abonnement = new Kleistad_Abonnement( $item['id'] );
-				$vandaag    = strtotime( 'today' );
-				if ( ( $abonnement->soort !== $item['soort'] ) || ( $abonnement->dag !== $item['dag'] ) ) {
-					$abonnement->wijzigen( $vandaag, $item['soort'], $item['dag'], true );
-				}
-				if ( $abonnement->extras !== $item['extras'] ) {
-					$abonnement->wijzigen( $vandaag, $item['extras'], '', true );
-				}
-				if ( ( 1 === intval( $item['gepauzeerd'] ) ) !== $abonnement->gepauzeerd ) {
-					if ( $abonnement->gepauzeerd ) {
-						$abonnement->gepauzeerd = false;
-						$abonnement->save();
-					} else {
-						$item['herstart_datum'] = strftime( '%d-%m-%y', $item['eind_pauze_datum'] );
-						$abonnement->pauzeren( $vandaag, $item['eind_pauze_datum'], true );
-					}
-				} elseif ( ( 1 === intval( $item['geannuleerd'] ) ) !== $abonnement->geannuleerd ) {
-					if ( $abonnement->geannuleerd ) {
-						$abonnement->geannuleerd = false;
-						$abonnement->save();
-					} else {
-						$abonnement->annuleren( $vandaag, true );
-					}
-				} elseif ( ( 1 === intval( $item['gestart'] ) ) !== Kleistad_Roles::reserveer( $item['id'] ) ) {
-					$abonnement->start( $abonnement->start_datum, 'stort', true );
+				$datum               = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
+				$abonnement          = new Kleistad_Abonnement( $item['id'] );
+				$vandaag             = strtotime( 'today' );
+				$item['mollie_info'] = $abonnement->info();
+				switch ( $actie ) {
+					case 'status':
+						switch ( $submit ) {
+							case 'pauzeren':
+								$abonnement->pauzeren( strtotime( $item['pauze_datum'] ), strtotime( $item['herstart_datum'] ), true );
+								$item['gepauzeerd'] = $vandaag >= $item['pauze_datum'];
+								break;
+							case 'herstarten':
+								$abonnement->herstarten( strtotime( $item['herstart_datum'] ), true );
+								$item['gepauzeerd'] = $vandaag < $item['herstart_datum'];
+								break;
+							case 'starten':
+								$abonnement->start( strtotime( $item['start_datum'] ), 'stort', true );
+								$item['gestart'] = $vandaag >= $item['start_datum'];
+								break;
+							case 'stoppen':
+								$abonnement->annuleren( strtotime( $item['eind_datum'] ), true );
+								$item['geannuleerd'] = $vandaag >= $item['eind_datum'];
+								break;
+						}
+						break;
+					case 'soort':
+						if ( ( $abonnement->soort !== $item['soort'] ) || ( $abonnement->dag !== $item['dag'] ) ) {
+							$abonnement->wijzigen( $vandaag, $item['soort'], $item['dag'], true );
+						}
+						break;
+					case 'extras':
+						if ( $abonnement->extras !== $item['extras'] ) {
+							$abonnement->wijzigen( $vandaag, $item['extras'], '', true );
+						}
+						break;
+					case 'mollie':
+						if ( $item['mandaat'] ) {
+							$abonnement->betaalwijze( $vandaag, 'stort', true );
+							$item['mandaat'] = false;
+						}
+						break;
+					default:
+						break;
 				}
 				$message = 'De gegevens zijn opgeslagen';
 			} else {
 				$notice = $item_valid;
 			}
-			$item['mollie_info'] = $abonnement->info();
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
 				$abonnee_id = $_REQUEST['id'];
+				$actie      = $_REQUEST['actie'];
 				$abonnement = new Kleistad_Abonnement( $abonnee_id );
 				$abonnee    = get_userdata( $abonnee_id );
 				$item       = [
@@ -636,17 +658,17 @@ class Kleistad_Admin {
 					'geannuleerd'     => $abonnement->geannuleerd,
 					'gepauzeerd'      => $abonnement->gepauzeerd,
 					'gestart'         => Kleistad_Roles::reserveer( $abonnee_id ),
-					'inschrijf_datum' => ( $abonnement->datum ? strftime( '%d-%m-%y', $abonnement->datum ) : '' ),
-					'start_datum'     => ( $abonnement->start_datum ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '' ),
-					'pauze_datum'     => ( $abonnement->pauze_datum ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '' ),
-					'eind_datum'      => ( $abonnement->eind_datum ? strftime( '%d-%m-%y', $abonnement->eind_datum ) : '' ),
-					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '' ),
+					'inschrijf_datum' => ( $abonnement->datum ? strftime( '%d-%m-%Y', $abonnement->datum ) : '' ),
+					'start_datum'     => ( $abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '' ),
+					'pauze_datum'     => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
+					'eind_datum'      => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
+					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
 					'mandaat'         => ( '' !== $abonnement->subscriptie_id ),
 					'mollie_info'     => $abonnement->info(),
 				];
 			}
 		}
-		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default' );
+		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default', [ $actie ] );
 		require 'partials/kleistad-admin-abonnees-form-page.php';
 	}
 
@@ -656,9 +678,12 @@ class Kleistad_Admin {
 	 * @since    4.3.0
 	 *
 	 * @param array $item de abonnee.
+	 * @param array $request de aanroep parameters.
 	 * @suppress PhanUnusedPublicMethodParameter
+	 * @suppress PhanUnusedVariable
 	 */
-	public function abonnees_form_meta_box_handler( $item ) {
+	public function abonnees_form_meta_box_handler( $item, $request ) {
+		$actie = $request['args'][0];
 		require 'partials/kleistad-admin-abonnees-form-meta-box.php';
 	}
 
@@ -667,12 +692,41 @@ class Kleistad_Admin {
 	 *
 	 * @since    4.3.0
 	 *
-	 * @param array $item de abonnee.
+	 * @param array  $item de abonnee.
+	 * @param string $actie de actie waar het om gaat.
+	 * @param string $submit de subactie.
 	 * @return bool|string
 	 * @suppress PhanUnusedPrivateMethodParameter
 	 */
-	private function validate_abonnee( $item ) {
+	private function validate_abonnee( $item, $actie, $submit ) {
 		$messages = [];
+
+		if ( 'status' === $actie ) {
+			switch ( $submit ) {
+				case 'pauzeren':
+					if ( false === strtotime( $item['pauze_datum'] ) ) {
+						$messages[] = 'Pauze datum ontbreekt of is ongeldig';
+					}
+					// Bij pauzeren moet herstart_datum ook getest worden.
+				case 'herstarten':
+					if ( false === strtotime( $item['herstart_datum'] ) ) {
+						$messages[] = 'Herstart datum ontbreekt of is ongeldig';
+					}
+					break;
+				case 'starten':
+					if ( false === strtotime( $item['start_datum'] ) ) {
+						$messages[] = 'Start datum ontbreekt of is ongeldig';
+					}
+					break;
+				case 'stoppen':
+					if ( false === strtotime( $item['eind_datum'] ) ) {
+						$messages[] = 'Eind datum ontbreekt of is ongeldig';
+					}
+					break;
+				default:
+					break;
+			}
+		}
 
 		if ( empty( $messages ) ) {
 			return true;

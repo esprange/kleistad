@@ -309,7 +309,7 @@ else :
 				&nbsp;
 			</div>
 			<div class="kleistad_col_7 kleistad_label" >
-				<p><strong>Je wilt je abonnement per <?php echo esc_html( $per ); ?> beëindigen</strong></p>
+				<p><strong>Je wilt je abonnement per <?php echo esc_html( $per ); ?> stoppen</strong></p>
 			</div>
 		</div>
 		<?php

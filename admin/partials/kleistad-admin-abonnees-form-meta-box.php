@@ -21,14 +21,15 @@
 				<?php echo esc_html( $item['naam'] ); ?> (<?php echo esc_html( $item['code'] ); ?>)
 				<input type="hidden" name="naam" value="<?php echo esc_attr( $item['naam'] ); ?>" >
 				<input type="hidden" name="code" value="<?php echo esc_attr( $item['code'] ); ?>" >
+				<input type="hidden" name="gestart" value="<?php echo esc_attr( $item['gestart'] ); ?>" >
+				<input type="hidden" name="gepauzeerd" value="<?php echo esc_attr( $item['gepauzeerd'] ); ?>" >
+				<input type="hidden" name="geannuleerd" value="<?php echo esc_attr( $item['geannuleerd'] ); ?>" >
+				<input type="hidden" name="actie" value="<?php echo esc_attr( $actie ); ?>" >
 			</td>
 		</tr>
-		<tr>
-			<th>Uitleg</th>
-			<td>Dit formulier toont in de checkboxes de huidige status van de abonnee.
-				Bij het opslaan wordt gecontroleerd of er soms een checkbox gewijzigd is. Alleen dan wordt een actie uitgevoerd!
-			</td>
-		</tr>
+<?php
+if ( 'soort' === $actie ) :
+	?>
 		<tr class="form-field">
 			<th scope="row">
 				<label for="soort">Soort</label>
@@ -57,13 +58,19 @@
 				</select>
 			</td>
 		</tr>
-		<?php
-		$options = get_option( 'kleistad-opties' );
-		$i       = 1;
-		foreach ( $options['extra'] as $extra ) :
-			if ( 0 < $extra['prijs'] ) :
-				?>
-		<tr class="form-field">
+		<tr>
+			<td>
+				<?php submit_button(); ?>
+			</td>
+		</tr>
+	<?php
+elseif ( 'extras' === $actie ) :
+	$options = get_option( 'kleistad-opties' );
+	$i       = 1;
+	foreach ( $options['extra'] as $extra ) :
+		if ( 0 < $extra['prijs'] ) :
+			?>
+	<tr class="form-field">
 			<th scope="row">
 				<label for="extra_<?php echo esc_attr( $i ); ?>"><?php echo esc_html( $extra['naam'] ); ?></label>
 			</th>
@@ -72,66 +79,60 @@
 					value="<?php echo esc_attr( $extra['naam'] ); ?>" >
 			</td>
 		</tr>
-				<?php
-			endif;
-		endforeach;
+			<?php
+		endif;
+	endforeach;
+	?>
+	<tr>
+		<td>
+			<?php submit_button(); ?>
+		</td>
+	</tr>
+	<?php
+elseif ( 'status' === $actie ) :
+	if ( ! $item['geannuleerd'] && ! $item['gestart'] ) :
 		?>
 		<tr class="form-field">
-			<th scope="row">
-				<label for="gestart">Starten</label>
-			</th>
 			<td>
-				<input type="checkbox" id="gestart" name="gestart" class="code" <?php checked( $item['gestart'] ); ?> value="1"
-						<?php disabled( $item['gepauzeerd'] ); ?> >
+				<?php submit_button( 'Starten', 'primary', 'submit', true, [ 'id' => 'starten' ] ); ?>
+			</td>
+			<td>
 				Let op: bij starten wordt de uitgebreide welkomst email verstuurd!
 			</td>
 		</tr>
+		<?php
+	endif;
+	if ( ! $item['geannuleerd'] ) :
+		?>
 		<tr class="form-field">
-			<th scope="row">
-				<label for="geannuleerd">Annuleren</label>
-			</th>
 			<td>
-				<input type="checkbox" id="geannuleerd" name="geannuleerd" class="code" <?php checked( $item['geannuleerd'] ); ?> value="1"
-						<?php disabled( $item['gepauzeerd'] ); ?> >
-				Let op: bij annuleren wordt een eventuele automatische incasso gestopt!
+				<?php submit_button( 'Stoppen', 'primary', 'submit', true, [ 'id' => 'stoppen' ] ); ?>
 			</td>
 		</tr>
+		<?php
+	endif;
+	if ( ! $item['geannuleerd'] && $item['gestart'] && ! $item['gepauzeerd'] ) :
+		?>
 		<tr class="form-field">
-			<th scope="row">
-				<label for="gepauzeerd">Pauzeren</label>
-			</th>
 			<td>
-				<input type="checkbox" id="gepauzeerd" name="gepauzeerd" class="code" <?php checked( $item['gepauzeerd'] ); ?> value="1"
-						<?php disabled( $item['geannuleerd'] ); ?> >
+				<?php submit_button( 'Pauzeren', 'primary', 'submit', true, [ 'id' => 'pauzeren' ] ); ?>
+			</td>
+			<td>
 				Let op: bij pauzeren wordt een eventuele automatische incasso gestopt!
 			</td>
 		</tr>
+		<?php
+	endif;
+	if ( ! $item['geannuleerd'] && $item['gepauzeerd'] ) :
+		?>
 		<tr class="form-field">
-			<th scope="row">
-				<label for="eind_pauze_datum">Herstart datum</label>
-			</th>
 			<td>
-				<select name="eind_pauze_datum" id="eind_pauze_datum" >
-				<?php
-				for ( $month = 1; $month <= 3; $month++ ) :
-					$eind_pauze_datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + $month, 1, intval( date( 'Y' ) ) );
-					?>
-				<option value="<?php echo esc_attr( strval( $eind_pauze_datum ) ); ?>" ><?php echo esc_html( strftime( '%d-%m-%Y', $eind_pauze_datum ) ); ?></option>
-					<?php
-				endfor
-				?>
-				</select>
-			</td>
-		<tr>
-			<th scope="row">
-				<label for="mandaat">Mandaat verwijderen</label>
-			</th>
-			<td>
-				<input type="checkbox" id="mandaat" name="mandaat" class="code" <?php checked( $item['mandaat'] ); ?> value="1"
-						<?php disabled( $item['mandaat'], false ); ?> >
-				Let op: bij verwijderen mandaat wordt een eventuele automatische incasso gestopt!
+				<?php submit_button( 'Herstarten', 'primary', 'submit', true, [ 'id' => 'herstarten' ] ); ?>
 			</td>
 		</tr>
+		<?php
+	endif
+	?>
 		<tr>
 			<th scope="row">
 				&nbsp;
@@ -142,34 +143,47 @@
 				</tr>
 				<tr>
 					<td>
-						<?php echo esc_html( $item['inschrijf_datum'] ); ?>
-						<input type="hidden" name="inschrijf_datum" value="<?php echo esc_attr( $item['inschrijf_datum'] ); ?>" >
+						<input type="text" name="inschrijf_datum" value="<?php echo esc_attr( $item['inschrijf_datum'] ); ?>"
+							readonly >
 					</td>
 					<td>
-						<?php echo esc_html( $item['start_datum'] ); ?>
-						<input type="hidden" name="start_datum" value="<?php echo esc_attr( $item['start_datum'] ); ?>" >
+						<input type="text" name="start_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off"
+							<?php readonly( $item['geannuleerd'] || $item['gestart'] ); ?> >
 					</td>
 					<td>
-						<?php echo esc_html( $item['pauze_datum'] ); ?>
-						<input type="hidden" name="pauze_datum" value="<?php echo esc_attr( $item['pauze_datum'] ); ?>" >
+						<input type="text" name="pauze_datum" class="kleistad_datum maand" value="<?php echo esc_attr( $item['pauze_datum'] ); ?>" autocomplete="off"
+							<?php readonly( $item['geannuleerd'] || ! $item['gestart'] || $item['gepauzeerd'] ); ?> >
 					</td>
 					<td>
-						<?php echo esc_html( $item['herstart_datum'] ); ?>
-						<input type="hidden" name="herstart_datum" value="<?php echo esc_attr( $item['herstart_datum'] ); ?>" >
+						<input type="text" name="herstart_datum" class="kleistad_datum maand" value="<?php echo esc_attr( $item['herstart_datum'] ); ?>" autocomplete="off"
+							<?php readonly( $item['geannuleerd'] || ! $item['gestart'] ); ?> >
 					</td>
 					<td>
-						<?php echo esc_html( $item['eind_datum'] ); ?>
-						<input type="hidden" name="eind_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" >
-					</td>
-				</tr>
-				<tr>
-					<td colspan="5" >
-						<?php echo esc_html( $item['mollie_info'] ); ?>
+						<input type="text" name="eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" autocomplete="off"
+							<?php readonly( $item['geannuleerd'] ); ?> >
 					</td>
 				</tr>
 				</table>
 			</td>
 		</tr>
+	<?php
+elseif ( 'mollie' === $actie ) :
+	?>
+		<tr>
+			<td>
+				<?php submit_button( 'verwijder mandaat' ); ?>
+			</td>
+			<td>
+				Let op: bij verwijderen mandaat wordt een eventuele automatische incasso gestopt!
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<?php echo esc_html( $item['mollie_info'] ); ?>
+			</td>
+		</tr>
+	<?php
+endif
+?>
 	</tbody>
 </table>
-
