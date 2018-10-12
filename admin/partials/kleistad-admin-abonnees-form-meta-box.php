@@ -117,9 +117,6 @@ elseif ( 'status' === $actie ) :
 			<td>
 				<?php submit_button( 'Pauzeren', 'primary', 'submit', true, [ 'id' => 'pauzeren' ] ); ?>
 			</td>
-			<td>
-				Let op: bij pauzeren wordt een eventuele automatische incasso gestopt!
-			</td>
 		</tr>
 		<?php
 	endif;

@@ -54,7 +54,6 @@ class Kleistad_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		$this->options     = $options;
-		wp_localize_jquery_ui_datepicker();
 	}
 
 	/**
@@ -74,6 +73,7 @@ class Kleistad_Admin {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/kleistad-admin.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
+		wp_localize_jquery_ui_datepicker();
 	}
 
 	/**

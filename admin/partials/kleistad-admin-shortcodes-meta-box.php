@@ -17,7 +17,7 @@
 			<ul style="list-style-type:square">
 				<li>[kleistad_abonnee_inschrijving verklaring=''] inschrijving als abonnee (verklaring parameter is optioneel)</li>
 				<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart (verklaring parameter is optioneel)</li>
-				<li>[kleistad_cursus_inschrijving cursus=C99 ] inschrijving voor cursus< (cursus parameter is optioneel) /li>
+				<li>[kleistad_cursus_inschrijving cursus=C11,C22,.. ] inschrijving voor cursus< (cursus parameter is optioneel) </li>
 				<li>[kleistad_recept] overzicht van keramiek recepten</li>
 			</ul>
 		</li>
