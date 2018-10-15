@@ -59,7 +59,7 @@
 							beforeShowDay: function( date ) {
 								var day = date.getDate();
 								if ( $( this ).hasClass( 'maand' ) ) {
-									return [ ( day === 1 ) ];
+									return [ ( 1 === day ) ];
 								} else {
 									return [ true ];
 								}
