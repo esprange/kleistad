@@ -975,7 +975,7 @@ class Kleistad_Admin {
 		if ( ! empty( $item['kosten'] ) && ! is_numeric( $item['kosten'] ) ) {
 			$messages[] = 'Kosten format is fout';
 		}
-		if ( ! empty( $item['kosten'] ) && ! absint( intval( $item['kosten'] ) ) ) {
+		if ( ! empty( $item['kosten'] ) && ! 0.0 <= (float) $item['kosten'] ) {
 			$messages[] = 'Kosten kunnen niet kleiner zijn dan 0';
 		}
 		if ( empty( $messages ) ) {
