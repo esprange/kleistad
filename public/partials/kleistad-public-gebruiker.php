@@ -86,10 +86,8 @@
 			<label class="kleistad_label_cb" for="subscribe">Ik wil de Kleistad nieuwsbrief ontvangen.</label>
 		</div>
 	</div>
-		<?php
-	endif;
-if ( ( isset( $data['verklaring'] ) && '' !== $data['verklaring'] ) ) :
-	?>
+	<?php endif ?>
+	<?php if ( ( isset( $data['verklaring'] ) && '' !== $data['verklaring'] ) ) : ?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_10">
 				<input type="checkbox" class="kleistad_input_cb" id="verklaring" onchange="document.getElementById( 'kleistad_submit' ).disabled = !this.checked;" />

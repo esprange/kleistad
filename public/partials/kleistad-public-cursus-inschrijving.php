@@ -119,7 +119,7 @@ endif;
 			</div>
 		</div>
 	</div>
-	<?php require plugin_dir_path( dirname( __FILE__ ) ) . '/partials/kleistad-public-gebruiker.php'; ?>
+		<?php require plugin_dir_path( dirname( __FILE__ ) ) . '/partials/kleistad-public-gebruiker.php'; ?>
 	<?php endif ?>
 	<div id="kleistad_cursus_betalen" style="display:none" >
 		<div class ="kleistad_row">

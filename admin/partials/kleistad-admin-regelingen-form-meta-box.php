@@ -14,20 +14,19 @@
 <table style="width: 100%;border-spacing: 2px; padding: 5px" class="form-table">
 	<tbody>
 		<tr class="form-field">
-				<?php if ( 0 === $item['gebruiker_id'] ) : ?>
+			<?php if ( 0 === $item['gebruiker_id'] ) : ?>
 			<th  scope="row">
 				<label for="gebruiker_id">Naam gebruiker</label>
 			</th>
 			<td>
 				<select name="gebruiker_id" id="gebruiker_id" style="width: 95%" required>
-					<?php
-					foreach ( $gebruikers as $gebruiker ) :
-						if ( Kleistad_Roles::reserveer( $gebruiker->ID ) ) {
-							?>
+					<?php foreach ( $gebruikers as $gebruiker ) : ?>
+						<?php if ( Kleistad_Roles::reserveer( $gebruiker->ID ) ) : ?>
 						<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" <?php selected( $item['gebruiker_id'], $gebruiker->ID ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
-						<?php } endforeach ?>
+						<?php endif ?>
+					<?php endforeach ?>
 				</select>
-				<?php else : ?>
+			<?php else : ?>
 			<th  scope="row">
 				<label>Naam gebruiker</label>
 			</th>
@@ -35,7 +34,7 @@
 				<input type ="hidden" id="gebruiker_id" name="gebruiker_id" value="<?php echo esc_attr( $item['gebruiker_id'] ); ?>" >
 				<input type ="hidden" id="gebruiker_naam" name="gebruiker_naam" value="<?php echo esc_attr( $item['gebruiker_naam'] ); ?>" >
 				<?php echo esc_html( $item['gebruiker_naam'] ); ?>
-				<?php endif ?>
+			<?php endif ?>
 			</td>
 		</tr>
 		<tr class="form-field">
@@ -45,14 +44,11 @@
 			</th>
 			<td>
 				<select name="oven_id" id="oven_id" style="width: 95%" required>
-					<?php
-					foreach ( $ovens as $oven ) :
-						$selected = ( $item['oven_id'] == $oven->id ) ? 'selected' : ''; // WPCS: loose comparison ok.
-						?>
-					<option value="<?php echo esc_attr( $oven->id ); ?>" <?php echo esc_attr( $selected ); ?> ><?php echo esc_html( $oven->naam ); ?></option>
-					<?php endforeach ?>
+				<?php foreach ( $ovens as $oven ) : ?>
+					<option value="<?php echo esc_attr( $oven->id ); ?>" <?php selected( $item['oven_id'] == $oven->id ); // WPCS: loose comparison ok. ?> ><?php echo esc_html( $oven->naam ); ?></option>
+				<?php endforeach ?>
 				</select>
-				<?php else : ?>
+		<?php else : ?>
 			<th  scope="row">
 				<label>Naam oven</label>
 			</th>
@@ -60,7 +56,7 @@
 				<input type ="hidden" id="oven_id" name="oven_id" value="<?php echo esc_attr( $item['oven_id'] ); ?>" >
 				<input type ="hidden" id="oven_naam" name="oven_naam" value="<?php echo esc_attr( $item['oven_naam'] ); ?>" >
 				<?php echo esc_html( $item['oven_naam'] ); ?>
-				<?php endif ?>
+		<?php endif ?>
 			</td>
 		</tr>
 		<tr class="form-field">
