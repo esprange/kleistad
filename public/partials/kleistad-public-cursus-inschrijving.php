@@ -27,7 +27,7 @@ if ( $data['cursus_selectie'] ) :
 		?>
 	<div class="kleistad_row" >
 		<div class="kleistad_col_10 kleistad_label" >
-			Helaas zijn er geen cursussen beschikbaar of zijn ze al volgeboekt
+			Helaas zijn er geen cursussen beschikbaar of ze zijn al volgeboekt
 		</div>
 	</div>
 		<?php
