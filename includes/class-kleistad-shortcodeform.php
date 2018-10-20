@@ -90,6 +90,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @since 4.5.1
 	 */
 	public function run() {
+		$data = [];
 		$html = $this->betaald();
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			$html .= $this->process( $data );
