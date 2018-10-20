@@ -67,6 +67,9 @@
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
 						wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 					}
+					if ( 0 < $( '#cursus_id' ).val() ) {
+						wijzigTeksten( $( '#cursus_id' ).data( 'cursus' ) );
+					}
                 },
                 create: function( event, ui ) {
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
