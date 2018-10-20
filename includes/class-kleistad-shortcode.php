@@ -42,28 +42,6 @@ abstract class Kleistad_Shortcode {
 	protected $options;
 
 	/**
-	 * Controleer of er betaald is en geef dan een melding.
-	 *
-	 * @since  4.5.1
-	 * @return string html tekst.
-	 */
-	protected function betaald() {
-		$html    = '';
-		$betaald = filter_input( INPUT_GET, 'betaald' );
-		if ( ! is_null( $betaald ) ) {
-			$gebruiker_id = filter_input( INPUT_GET, 'betaald' );
-			$betaling     = new Kleistad_Betalen();
-			$result       = $betaling->controleer( $gebruiker_id );
-			if ( ! is_wp_error( $result ) ) {
-				$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-			} else {
-				$html .= '<div class="kleistad_fout"><p>' . $result->get_error_message() . '</p></div>';
-			}
-		}
-		return $html;
-	}
-
-	/**
 	 * Maak de uit te voeren html aan
 	 *
 	 * @since 4.5.1
@@ -106,9 +84,7 @@ abstract class Kleistad_Shortcode {
 	 * @since 4.5.1
 	 */
 	public function run() {
-		$html  = $this->betaald();
-		$html .= $this->display();
-		return $html;
+		return $this->display();
 	}
 
 	/**
