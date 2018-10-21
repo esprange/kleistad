@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 4.9.8  
-**Stable tag:** 4.5.9  
+**Stable tag:** 4.5.10  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -33,8 +33,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 4.5.9 ###
-* bugfix versie
+### 4.5.9, 4.5.10 ###
+* bugfix en refactoring versie
 ### 4.5.8 ###
 * cursus inschrijving voor specifieke cursussen nu mogelijkheid
 * verbetering admin menu abonnees
