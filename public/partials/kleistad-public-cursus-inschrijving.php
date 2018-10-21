@@ -16,53 +16,47 @@
 <?php
 wp_nonce_field( 'kleistad_cursus_inschrijving' );
 $checked_id = 0;
-if ( $data['cursus_selectie'] ) :
-	$count = 0;
-	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-		if ( $cursus['selecteerbaar'] ) :
-			$count++;
-		endif;
-	endforeach;
-	if ( ! $count ) :
-		?>
+$count      = 0;
+foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
+	if ( $cursus['selecteerbaar'] ) :
+		$count++;
+	endif;
+endforeach;
+if ( ! $count ) :
+	?>
 	<div class="kleistad_row" >
 		<div class="kleistad_col_10 kleistad_label" >
-			Helaas zijn er geen cursussen beschikbaar of ze zijn al volgeboekt
+			<?php echo esc_html( $data['cursus_selectie'] ? 'Helaas zijn er geen cursussen beschikbaar of ze zijn al volgeboekt' : 'Helaas is deze cursus nu niet beschikbaar' ); ?>
 		</div>
 	</div>
-		<?php
-	else :
-		// Check eerst welke cursus geselecteerd moet staan.
-		foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-			if ( $cursus['selecteerbaar'] ) :
-				// De eerder geselecteerde als die nog steeds selecteerbaar is.
-				if ( intval( $data['input']['cursus_id'] ) === $cursus_id ) :
-					$checked_id = $cursus_id;
-					break;
-				endif;
-			endif;
-		endforeach;
-		// Toon nu de cursussen en selecteer de cursus. De rest wordt met javascript gedaan.
-		foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-			?>
-	<div class="kleistad_col_10 kleistad_row" >
-		<input class="kleistad_input_cbr" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
-			data-cursus='<?php echo wp_json_encode( $cursus ); ?>' <?php disabled( ! $cursus['selecteerbaar'] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
-		<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
-			<span style="<?php echo esc_attr( $cursus['selecteerbaar'] ? '' : 'color: gray;' ); ?>"><?php echo esc_html( $cursus['naam'] ); ?></span></label>
-	</div>
-			<?php
-		endforeach;
-	endif;
-else :
-	// Er moet een formulier getoond worden voor een specifieke cursus.
-	$checked_id = $data['input']['cursus_id'];
-	$cursus     = $data['open_cursussen'][ $checked_id ];
-	?>
-	<input type="hidden" name="cursus_id" id="cursus_id" value="<?php echo esc_attr( $checked_id ); ?>" data-cursus='<?php echo wp_json_encode( $cursus ); ?>' >
 	<?php
-endif;
-?>
+else :
+	?>
+	<div style="<?php echo esc_attr( $data['cursus_selectie'] ? '' : 'display: none' ); ?>" >
+	<?php
+	// Check eerst welke cursus geselecteerd moet staan.
+	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
+		if ( $cursus['selecteerbaar'] ) :
+			// De eerder geselecteerde als die nog steeds selecteerbaar is.
+			if ( intval( $data['input']['cursus_id'] ) === $cursus_id ) :
+				$checked_id = $cursus_id;
+				break;
+			endif;
+		endif;
+	endforeach;
+	// Toon nu de cursussen en selecteer de cursus. De rest wordt met javascript gedaan.
+	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
+		?>
+		<div class="kleistad_col_10 kleistad_row" >
+			<input class="kleistad_input_cbr" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
+				data-cursus='<?php echo wp_json_encode( $cursus ); ?>' <?php disabled( ! $cursus['selecteerbaar'] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
+			<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
+				<span style="<?php echo esc_attr( $cursus['selecteerbaar'] ? '' : 'color: gray;' ); ?>"><?php echo esc_html( $cursus['naam'] ); ?></span></label>
+		</div>
+		<?php
+	endforeach;
+	?>
+	</div>
 	<div id="kleistad_cursus_technieken" style="visibility: hidden;padding-bottom: 20px;" >
 		<div class="kleistad_row" >
 			<div class="kleistad_col_10">
@@ -84,9 +78,9 @@ endif;
 				<input class="kleistad_input_cb" name="technieken[]" id="kleistad_boetseren" type="checkbox" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['input']['technieken'], true ) ); ?> >
 				<label class="kleistad_label_cb" for="kleistad_boetseren" >Boetseren</label>
 			</div>
+			<div class="kleistad_row" >
+			</div>
 		</div>
-	</div>
-	<div class="kleistad_row" >
 	</div>
 	<?php if ( is_super_admin() ) : ?>
 	<div class="kleistad_row" >
@@ -155,4 +149,7 @@ endif;
 			<span id="kleistad_submit_enabler" style="<?php echo esc_attr( ( ! $checked_id ) ? '' : 'display: none' ); ?>" ><strong>Er is nog geen cursus gekozen</strong></span>
 		</div>
 	</div>
+	<?php
+	endif
+?>
 </form>

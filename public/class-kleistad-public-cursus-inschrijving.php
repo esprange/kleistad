@@ -54,29 +54,23 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			$this->atts,
 			'kleistad_cursus_inschrijving'
 		);
-		$data['cursus_selectie'] = true;
-		$cursus_selecties        = [];
-		if ( '' !== $atts['cursus'] ) {
-			$cursus_selecties = array_map( 'intval', explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) );
-			if ( 1 === count( $cursus_selecties ) ) {
-				$data['cursus_selectie']    = false;
-				$data['input']['cursus_id'] = $cursus_selecties[0];
-			}
-		}
-		$data['gebruikers'] = get_users(
+		$data['gebruikers']      = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$open_cursussen     = [];
-		$cursussen          = Kleistad_Cursus::all( true );
-
+		$data['cursus_selectie'] = true;
+		$open_cursussen          = [];
+		$cursussen               = Kleistad_Cursus::all( true );
+		$cursus_selecties        = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
+		if ( 1 === count( $cursus_selecties ) ) {
+			$data['cursus_selectie']    = false;
+			$data['input']['cursus_id'] = $cursus_selecties[0];
+		}
 		foreach ( $cursussen as $cursus ) {
-			if ( ! empty( $cursus_selecties ) ) {
-				if ( ! in_array( $cursus->id, $cursus_selecties, false ) ) { // phpcs:ignore
-					continue;
-				}
+			if ( ! empty( $cursus_selecties ) && ! in_array( $cursus->id, $cursus_selecties, false ) ) { // phpcs:ignore
+				continue;
 			}
 
 			$open_cursussen[ $cursus->id ] = [
