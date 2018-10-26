@@ -26,7 +26,6 @@ else :
 		endforeach;
 	endif;
 	?>
-	<div>
 	<p>Abonnement status per <?php echo esc_html( $per ); ?> :</p>
 	<table class="kleistad_form">
 		<tr><td>Abonnement soort</td><td>
@@ -75,22 +74,15 @@ else :
 			endif;
 		else :
 			echo 'geannuleerd sinds ' . esc_html( strftime( '%x', $data['abonnement']->eind_datum ) );
-		endif;
+		endif
 		?>
 		</td></tr>
 		<?php if ( $extra_beschikbaar ) : ?>
 		<tr><td>Extra's</td><td>
-			<?php
-			if ( 0 < count( $data['abonnement']->extras ) ) :
-				echo esc_html( implode( ', ', $data['abonnement']->extras ) );
-			else :
-				echo 'geen';
-			endif;
-			?>
+			<?php echo esc_html( 0 < count( $data['abonnement']->extras ) ? implode( ', ', $data['abonnement']->extras ) : 'geen' ); ?>
 		</td></tr>
-		<?php endif; ?>
+		<?php endif ?>
 	</table>
-	</div>
 
 	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST" id="kleistad_abonnee_wijziging">
 		<?php wp_nonce_field( 'kleistad_abonnee_wijziging' ); ?>
@@ -108,19 +100,13 @@ else :
 					&nbsp;
 				</div>
 				<div class="kleistad_col_7" >
-			<?php
-			if ( 'onbeperkt' === $data['input']['soort'] ) :
-				?>
+					<?php if ( 'onbeperkt' === $data['input']['soort'] ) : ?>
 					<input name="soort" type="hidden" value="beperkt" >
 					<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een onbeperkt naar een beperkt abonnement. Kies de dag waarop je van een beperkt abonnement gebruikt gaat maken</strong></p>
-				<?php
-			else :
-				?>
+					<?php else : ?>
 					<input name="soort" type="hidden" value="onbeperkt" >
 					<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een beperkt naar een onbeperkt abonnement.</strong></p>
-				<?php
-			endif;
-			?>
+					<?php endif ?>
 				</div>
 			</div>
 			<?php
@@ -296,7 +282,7 @@ else :
 		</div>
 				<?php
 			endif; // Abonnement niet actief.
-		endif; // Niet in drie maand periode.
+		endif // Niet in drie maand periode.
 		?>
 		<div class="kleistad_row"> <!-- einde -->
 			<div class="kleistad_col_6">

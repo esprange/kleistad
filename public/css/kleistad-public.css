@@ -16,9 +16,7 @@ Description: stylesheet functions voor kleistad_plugin
 .ui-widget{
     font-size:14px !important;
 }
-.ui-dialog-title{
-    display:none;
-}
+
 .ui-widget-content {
     border: none;
 }

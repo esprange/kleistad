@@ -13,7 +13,7 @@
         var row, aantal, stokerIds, stokerPercs, verdelingAantal;
 
         $( '#kleistad_oven_id' ).val( formData.oven_id );
-        $( '#kleistad_wanneer' ).text( formData.dag + '-' + formData.maand + '-' + formData.jaar );
+		$( '#kleistad_oven' ).dialog( 'option', 'title', 'Reserveer de oven op ' + formData.dag + '-' + formData.maand + '-' + formData.jaar );
         $( '#kleistad_temperatuur' ).val( formData.temperatuur );
         $( '#kleistad_soortstook' ).val( formData.soortstook );
         $( '#kleistad_dag' ).val( formData.dag );
@@ -236,7 +236,9 @@
                         }
                     );
                 }
-            );
+			);
+
+//			$( '.ui-dialog-title' ).css( 'display', 'none' );
 
             /**
              * Toon de tabel.

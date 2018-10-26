@@ -32,11 +32,6 @@ else :
 	<form action="#" method="post">
 		<input id="kleistad_oven_id" type="hidden" >
 		<table class="kleistad_form">
-			<thead>
-				<tr>
-					<th colspan="3">Reserveer de oven op <span id="kleistad_wanneer"></span></th>
-				</tr>
-			</thead>
 			<tbody>
 				<tr>
 					<td><label>Soort stook</label></td>

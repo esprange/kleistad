@@ -46,7 +46,7 @@
             $( '#kleistad_deelnemer_info' ).dialog(
                 {
                     autoOpen: false,
-                    height: 400,
+                    height: 'auto',
                     width: 1000,
                     modal: true,
                     buttons: {
@@ -100,11 +100,11 @@
                         inschrijvingen = $( this ).data( 'inschrijvingen' ),
                         deelnemer = $( this ).data( 'deelnemer' ),
                         abonnee = $( this ).data( 'abonnee' );
-                    $( '#kleistad_deelnemer_info' ).dialog( 'open' );
+                    $( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', deelnemer.naam ).dialog( 'open' );
                     $( '#kleistad_deelnemer_tabel' ).empty();
                     $( '#kleistad_deelnemer_tabel' )
                         .append(
-                            '<tr><th colspan="7">' + deelnemer.naam + '<br/>' +
+                            '<tr><th>Adres</<th><td colspan="6" style="text-align:left" >' +
                             deelnemer.straat + ' ' + deelnemer.huisnr + ' ' +
                             deelnemer.pcode + ' ' + deelnemer.plaats + '</td></tr>'
                             );

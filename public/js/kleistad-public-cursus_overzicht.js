@@ -49,7 +49,7 @@
             $( '#kleistad_cursisten_info' ).dialog(
                 {
                     autoOpen: false,
-                    height: 400,
+                    height: 'auto',
                     width: 1000,
                     modal: true,
                     buttons: {
@@ -106,8 +106,9 @@
                     var html   = '<tr><th>Naam</th><th>Telefoon</th><th>Email</th><th>Technieken</th></tr>',
 						lijst  = $( this ).data( 'lijst' ),
 						id     = $( this ).data( 'id' ),
+						naam   = $( this ).data( 'naam' ),
 						emails = '';
-					$( '#kleistad_cursisten_info' ).dialog( 'open' );
+					$( '#kleistad_cursisten_info' ).dialog( 'option', 'title', naam ).dialog( 'open' );
 					$( '#kleistad_cursus_id' ).val( id );
 					$.each( lijst, function( key, value ) {
 						html += '<tr><td>' + value.naam + ( 1 < value.aantal ? ' (' + value.aantal + ')' : '' ) +

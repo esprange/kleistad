@@ -101,7 +101,7 @@
             $( '#kleistad_cursus' ).dialog(
                 {
                     autoOpen: false,
-                    height: 650,
+                    height: 'auto',
                     width: 750,
                     modal: true,
                     /* jshint unused:vars */
@@ -138,7 +138,7 @@
                 'click', '.kleistad_cursus_info', function() {
                     var cursus = $( this ).data( 'cursus' ),
 						ingedeeld = $( this ).data( 'ingedeeld' );
-                    $( '#kleistad_cursus' ).dialog( 'open' );
+                    $( '#kleistad_cursus' ).dialog( 'option', 'title', cursus.naam ).dialog( 'open' );
                     $( 'input[name="cursus_id"]' ).val( cursus.id );
                     $( '#kleistad_cursus_naam' ).val( cursus.naam );
                     $( '#kleistad_cursus_docent' ).val( cursus.docent );
@@ -192,7 +192,7 @@
              */
             $( 'body' ).on(
                 'click', '#kleistad_cursus_toevoegen', function() {
-                    $( '#kleistad_cursus' ).dialog( 'open' );
+                    $( '#kleistad_cursus' ).dialog( 'option', 'title', ' ' ).dialog( 'open' );
                     $( 'input[name="cursus_id"]' ).removeAttr( 'value' );
                     $( '#kleistad_cursus_naam' ).removeAttr( 'value' );
                     $( '#kleistad_cursus_docent' ).removeAttr( 'value' );

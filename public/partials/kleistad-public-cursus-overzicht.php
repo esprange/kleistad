@@ -41,7 +41,10 @@ else :
 	</thead>
 	<tbody>
 	<?php foreach ( $data['cursus_info'] as $cursus_id => $cursus_info ) : ?>
-		<tr class="kleistad_cursus_info" data-lijst='<?php echo wp_json_encode( $cursus_info['lijst'] ); ?>' data-id='<?php echo esc_attr( $cursus_id ); ?>' >
+		<tr class="kleistad_cursus_info"
+			data-naam='<?php echo esc_attr( $cursus_info['naam'] ); ?>'
+			data-lijst='<?php echo wp_json_encode( $cursus_info['lijst'] ); ?>'
+			data-id='<?php echo esc_attr( $cursus_id ); ?>' >
 			<td><?php echo esc_html( $cursus_id ); ?></td>
 			<td><?php echo esc_html( $cursus_info['start_dt'] ); ?></td>
 			<td><?php echo esc_html( $cursus_info['code'] ); ?></td>
