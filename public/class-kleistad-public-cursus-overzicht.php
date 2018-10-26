@@ -51,7 +51,6 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 						'telnr'      => $cursist->telnr,
 						'email'      => $cursist->user_email,
 						'technieken' => implode( ', ', $inschrijving->technieken ),
-						'opmerking'  => $inschrijving->opmerking,
 					];
 
 				}
