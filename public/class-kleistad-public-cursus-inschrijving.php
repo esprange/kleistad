@@ -228,7 +228,11 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			}
 		}
 
-		$inschrijving             = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );
+		$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );
+		if ( $inschrijving->ingedeeld ) {
+			$error->add( 'dubbel', 'Volgens onze administraie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' );
+			return $error;
+		}
 		$inschrijving->technieken = $data['input']['technieken'];
 		$inschrijving->opmerking  = $data['input']['opmerking'];
 		$inschrijving->aantal     = intval( $data['input']['aantal'] );
