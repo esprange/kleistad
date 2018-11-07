@@ -202,9 +202,11 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 					'Postcode',
 					'Plaats',
 					'Telefoon',
-					'Lid',
+					'Status',
 					'Inschrijf datum',
 					'Start_datum',
+					'Pauze_datum',
+					'Eind_datum',
 					'Abonnee code',
 					'Abonnement_soort',
 					'Dag',
@@ -224,15 +226,17 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 						$abonnee->pcode,
 						$abonnee->plaats,
 						$abonnee->telnr,
-						$is_lid ? 'Ja' : 'Nee',
 					];
 
 					if ( array_key_exists( $abonnee->ID, $abonnementen ) ) {
 						$abonnee_abonnement_gegevens = array_merge(
 							$abonnee_gegevens,
 							[
+								$abonnementen[ $abonnee->ID ]->status(),
 								date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->datum ),
 								date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->start_datum ),
+								$abonnementen[ $abonnee->ID ]->pauze_datum ? date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->pauze_datum ) : '',
+								$abonnementen[ $abonnee->ID ]->eind_datum ? date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->eind_datum ) : '',
 								$abonnementen[ $abonnee->ID ]->code,
 								$abonnementen[ $abonnee->ID ]->soort,
 								( 'beperkt' === $abonnementen[ $abonnee->ID ]->soort ) ? $abonnementen[ $abonnee->ID ]->dag : '',
