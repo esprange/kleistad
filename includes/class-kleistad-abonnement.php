@@ -400,6 +400,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		} else {
 			$abonnee->remove_cap( 'leden' );
 			$abonnee->remove_cap( Kleistad_Roles::RESERVEER );
+			$abonnee->remove_role( 'subscriber' );
 		}
 	}
 
