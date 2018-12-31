@@ -14,6 +14,7 @@
 <div class="wrap">
 	<h2 class="nav-tab-wrapper">
 	    <a href="?page=kleistad&tab=instellingen" class="nav-tab <?php echo 'instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Instellingen</a>
+	    <a href="?page=kleistad&tab=google_connect" class="nav-tab <?php echo 'google_connect' === $active_tab ? 'nav-tab-active' : ''; ?>">Google kalender connectie</a>
 	    <a href="?page=kleistad&tab=shortcodes" class="nav-tab <?php echo 'shortcodes' === $active_tab ? 'nav-tab-active' : ''; ?>">Shortcodes</a>
 	    <a href="?page=kleistad&tab=email_parameters" class="nav-tab <?php echo 'email_parameters' === $active_tab ? 'nav-tab-active' : ''; ?>">Email parameters</a>
 	</h2>

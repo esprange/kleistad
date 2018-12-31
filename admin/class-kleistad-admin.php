@@ -374,7 +374,22 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Registreer de kleistad settings
+	 * Aangeroepen na update van de kleistad opties.
+	 *
+	 * @param array $oud Oude waarde.
+	 * @param array $nieuw Nieuwe waarde.
+	 * @since 5.0.0
+	 * @suppress PhanUnusedPublicMethodParameter
+	 */
+	public function opties_gewijzigd( $oud, $nieuw ) {
+		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
+			$oud['google_client_id'] !== $nieuw['google_client_id'] ) {
+			delete_option( Kleistad_Event::ACCESS_TOKEN );
+		}
+	}
+
+	/**
+	 * Registreer de kleistad settings, uitgevoerd tijdens admin init.
 	 *
 	 * @since   4.0.87
 	 */
@@ -389,6 +404,7 @@ class Kleistad_Admin {
 	 */
 	public function display_settings_page() {
 		add_meta_box( 'kleistad_instellingen_form_meta_box', 'Instellingen', [ $this, 'instellingen_form_meta_box_handler' ], 'instellingen', 'normal', 'default' );
+		add_meta_box( 'kleistad_google_connect_meta_box', 'Connect Google Kalender', [ $this, 'google_connect_meta_box_handler' ], 'google_connect', 'normal', 'default' );
 		add_meta_box( 'kleistad_shortcodes_meta_box', 'Gebruik van de plugin', [ $this, 'shortcodes_meta_box_handler' ], 'shortcodes', 'normal', 'default' );
 		add_meta_box( 'kleistad_email_parameters_meta_box', 'E-Mail Parameters', [ $this, 'email_parameters_meta_box_handler' ], 'email_parameters', 'normal', 'default' );
 
@@ -422,6 +438,22 @@ class Kleistad_Admin {
 		require 'partials/kleistad-admin-email-parameters-meta-box.php';
 	}
 
+	/**
+	 * Toon de emails en hun parameters in een meta box
+	 *
+	 * @since    5.0.0
+	 * @suppress PhanUnusedVariable
+	 */
+	public function google_connect_meta_box_handler() {
+		$result = true;
+		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
+			Kleistad_Event::vraag_google_service_aan( admin_url( 'admin.php?page=kleistad&tab=google_connect' ) );
+		}
+		if ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
+			$result = Kleistad_Event::koppel_google_service();
+		}
+		require 'partials/kleistad-admin-google-connect-meta-box.php';
+	}
 
 	/**
 	 * Valideer de ingevoerde instellingen
@@ -433,11 +465,11 @@ class Kleistad_Admin {
 	 */
 	public function validate_settings( $input ) {
 		foreach ( $input as &$element ) {
-			if ( is_array( $element ) ) {
-				$element = $this->validate_settings( $element );
+			if ( is_string( $element ) ) {
+				$element = sanitize_text_field( $element );
 			} else {
-				if ( is_string( $element ) ) {
-					$element = sanitize_text_field( $element );
+				if ( is_array( $element ) ) {
+					$element = $this->validate_settings( $element );
 				}
 			}
 		}

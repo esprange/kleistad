@@ -130,6 +130,7 @@ class Kleistad {
 		$this->loader->add_action( 'edit_user_profile_update', $plugin_admin, 'user_profile_field_save' );
 		$this->loader->add_action( 'manage_users_custom_column', $plugin_admin, 'manage_users_column_content', 10, 3 );
 		$this->loader->add_action( 'admin_footer-users.php', $plugin_admin, 'manage_users_css' );
+		$this->loader->add_action( 'update_option_kleistad-opties', $plugin_admin, 'opties_gewijzigd', 10, 2 );
 
 		$this->loader->add_filter( 'manage_users_columns', $plugin_admin, 'manage_users_columns' );
 		$this->loader->add_filter( 'user_profile_update_errors', $plugin_admin, 'check_role', 10, 3 );
@@ -156,6 +157,7 @@ class Kleistad {
 		$this->loader->add_action( 'init', $plugin_public, 'create_recept_type' );
 		$this->loader->add_action( 'kleistad_kosten', $plugin_public, 'update_ovenkosten' );
 		$this->loader->add_action( 'kleistad_abonnement', $plugin_public, 'update_abonnement', 10, 3 );
+		$this->loader->add_action( 'kleistad_workshop', $plugin_public, 'update_workshop', 10, 3 );
 		$this->loader->add_action( 'after_setup_theme', $plugin_public, 'verberg_toolbar' );
 
 		$this->loader->add_filter( 'login_message', $plugin_public, 'user_login_message' );
@@ -186,6 +188,8 @@ class Kleistad {
 		$this->loader->add_shortcode( 'kleistad_recept', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_dagdelenkaart', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_betaling', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_workshop_beheer', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_kalender', $plugin_public, 'shortcode_handler' );
 	}
 
 	/**

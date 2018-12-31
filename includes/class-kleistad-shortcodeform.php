@@ -62,8 +62,9 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @return string html tekst.
 	 */
 	protected function process( &$data ) {
-		$html = '';
-		if ( ! is_null( filter_input( INPUT_POST, 'kleistad_submit_' . $this->shortcode ) ) ) {
+		$html               = '';
+		$data['form_actie'] = filter_input( INPUT_POST, 'kleistad_submit_' . $this->shortcode );
+		if ( ! is_null( $data['form_actie'] ) ) {
 			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $this->shortcode ) ) {
 				$result = $this->validate( $data );
 				if ( ! is_wp_error( $result ) ) {

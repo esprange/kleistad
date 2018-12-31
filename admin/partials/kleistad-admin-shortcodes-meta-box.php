@@ -29,6 +29,7 @@
 				<li>[kleistad_registratie] wijzigen adresgegevens door lid</li>
 				<li>[kleistad_recept_beheer] wijzigen keramiek recepten door lid</li>
 				<li>[kleistad_abonnee_wijziging] wijzigen abonnement door lid</li>
+				<li>[kleistad_kalender] overzicht workshops en cursussen</li>
 			</ul>
 		</li>
 		<li><h3>toegankelijk voor bestuur</h3>
@@ -36,7 +37,8 @@
 				<li>[kleistad_saldo_overzicht] overzicht stooksaldo leden</li>
 				<li>[kleistad_stookbestand] opvragen stookbestand</li>
 				<li>[kleistad_registratie_overzicht] overzicht van alle cursisten en leden</li>
-				<li>[kleistad_cursus_beheer] formulier om cursussen te beheren </li>
+				<li>[kleistad_cursus_beheer] formulier om cursussen te beheren</li>
+				<li>[kleistad_workshop_beheer] formulier om workshops te beheren</li>
 				<li>[kleistad_betalingen] formulier om betalingen cursisten te registreren</li>
 				<li>[kleistad_cursus_overzicht] overzicht cursussen en cursist per cursus</li>
 				<li>[kleistad_abonnement_overzicht] overzicht abonnees</li>

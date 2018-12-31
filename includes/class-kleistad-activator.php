@@ -17,7 +17,7 @@ class Kleistad_Activator {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 11;
+	const DBVERSIE = 15;
 
 	/**
 	 * Activeer de plugin.
@@ -40,6 +40,9 @@ class Kleistad_Activator {
 			'termijn'              => 4,
 			'sleutel'              => '',
 			'sleutel_test'         => '',
+			'google_kalender_id'   => '',
+			'google_sleutel'       => '',
+			'google_client_id'     => '',
 			'betalen'              => 0,
 			'extra'                => [],
 		];
@@ -67,7 +70,7 @@ class Kleistad_Activator {
                 verwerkt tinyint(1) DEFAULT 0,
                 verdeling text,
                 opmerking tinytext,
-                PRIMARY KEY (id)
+                PRIMARY KEY  (id)
                 ) $charset_collate;"
 			);
 
@@ -77,7 +80,7 @@ class Kleistad_Activator {
                 naam tinytext,
                 kosten numeric(10,2),
                 beschikbaarheid tinytext,
-                PRIMARY KEY (id)
+                PRIMARY KEY  (id)
                 ) $charset_collate;"
 			);
 
@@ -101,7 +104,31 @@ class Kleistad_Activator {
 				maximum tinyint(2) DEFAULT 99,
 				meer tinyint(1) DEFAULT 0,
 				tonen tinyint(1) DEFAULT 0,
-                PRIMARY KEY (id)
+                PRIMARY KEY  (id)
+              ) $charset_collate;"
+			);
+			update_option( 'kleistad-database-versie', self::DBVERSIE );
+
+			dbDelta(
+				"CREATE TABLE {$wpdb->prefix}kleistad_workshops (
+                id int(10) NOT NULL AUTO_INCREMENT,
+                naam tinytext,
+                datum date,
+                start_tijd time,
+                eind_tijd time,
+                docent tinytext,
+                technieken tinytext,
+				organisatie tinytext,
+				contact tinytext,
+				email tinytext,
+				telefoon tinytext,
+				programma text,
+                vervallen tinyint(1) DEFAULT 0,
+                kosten numeric(10,2),
+                aantal tinyint(2) DEFAULT 99,
+				betaald tinyint(1) DEFAULT 0,
+				definitief tinyint(1) DEFAULT 0,
+                PRIMARY KEY  (id)
               ) $charset_collate;"
 			);
 			update_option( 'kleistad-database-versie', self::DBVERSIE );

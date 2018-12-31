@@ -104,6 +104,29 @@
 				<li>[cursus_link] : link naar betaling restant cursus bedrag</li>
 			</ul>
 		</li>
+		<li><h3>kleistad_email_workshop_* emails</h3>
+			<ol>
+				<li>kleistad_email_workshop_bevestiging : bevestiging van de gemaakte afspraken voor de workshop</li>
+				<li>kleistad_email_workshop_betaling : betalen workshop kosten via email link</li>
+				<li>kleistad_email_workshop_betaling_ideal : bevestiging betaling workshop kosten per ideal</li>
+				<li>kleistad_email_workshop_afzegging : afzegging van de workshop</li>
+			</ol>
+			<ul style="list-style-type:square">
+				<li>[contact] : contactpersoon van de workshop aanvraag</li>
+				<li>[organisatie] : organisatie welke de workshop aanvraagt</li>
+				<li>[naam] : titel van de cursus</li>
+				<li>[aantal] : aantal deelnemers</li>
+				<li>[workshop_docent] : naam van de docent</li>
+				<li>[workshop_datum] : datum van de workshop</li>
+				<li>[workshop_start_tijd] : start tijd van de workshop</li>
+				<li>[workshop_eind_tijd] : eind tijd van de workshop</li>
+				<li>[workshop_technieken] : gekozen technieken</li>
+				<li>[workshop_programma] : beschrijving van het programma van de workshop</li>
+				<li>[workshop_code] : code te vermelden bij betaling</li>
+				<li>[workshop_kosten] : kosten</li>
+				<li>[workshop_link] : link naar betaling workshop bedrag</li>
+			</ul>
+		</li>
 		<li><h3>kleistad_email_incasso_mislukt</h3>
 			<ol>
 				<li>[voornaam] : voornaam van de betaler</li>

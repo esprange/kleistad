@@ -29,35 +29,57 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 		if ( ! Kleistad_Roles::override() ) {
 			return true;
 		}
-
-		$rows           = [];
-		$cursussen      = Kleistad_Cursus::all();
-		$inschrijvingen = Kleistad_Inschrijving::all();
-
-		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ( $cursussen[ $cursus_id ]->eind_datum > strtotime( '-7 days' ) ) &&
-					( ! $inschrijving->i_betaald || ! $inschrijving->c_betaald ) &&
-					( ! ( $inschrijving->geannuleerd && $cursussen[ $cursus_id ]->start_datum < strtotime( 'today' ) ) )
-					) {
-					$cursist = get_userdata( $cursist_id );
-					$rows[]  = [
-						'inschrijver_id' => $cursist_id,
-						'naam'           => $cursist->display_name,
-						'datum'          => $inschrijving->datum,
-						'code'           => $inschrijving->code,
-						'i_betaald'      => $inschrijving->i_betaald,
-						'value'          => $cursist_id . ' ' . $cursus_id,
-						'c_betaald'      => $inschrijving->c_betaald,
-						'geannuleerd'    => $inschrijving->geannuleerd,
-					];
+		$atts = shortcode_atts(
+			[ 'type' => 'cursus' ],
+			$this->atts,
+			'kleistad_betalingen'
+		);
+		switch ( $atts['type'] ) {
+			case 'cursus':
+				$data['inschrijvingen'] = [];
+				$cursussen              = Kleistad_Cursus::all();
+				$inschrijvingen         = Kleistad_Inschrijving::all();
+				foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
+					foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
+						if ( ( $cursussen[ $cursus_id ]->eind_datum > strtotime( '-7 days' ) ) &&
+							( ! $inschrijving->i_betaald || ! $inschrijving->c_betaald ) &&
+							( ! ( $inschrijving->geannuleerd && $cursussen[ $cursus_id ]->start_datum < strtotime( 'today' ) ) )
+							) {
+							$cursist                  = get_userdata( $cursist_id );
+							$data['inschrijvingen'][] = [
+								'inschrijver_id' => $cursist_id,
+								'naam'           => $cursist->display_name,
+								'datum'          => $inschrijving->datum,
+								'code'           => $inschrijving->code,
+								'i_betaald'      => $inschrijving->i_betaald,
+								'value'          => $cursist_id . ' ' . $cursus_id,
+								'c_betaald'      => $inschrijving->c_betaald,
+								'geannuleerd'    => $inschrijving->geannuleerd,
+							];
+						}
+					}
 				}
-			}
+				return true;
+			case 'workshop':
+				$data['workshops'] = [];
+				$workshops         = Kleistad_Workshop::all();
+				foreach ( $workshops as $workshop_id => $workshop ) {
+					if ( ! $workshop->betaald && ! $workshop->vervallen ) {
+						$data['workshops'][] = [
+							'id'          => $workshop_id,
+							'datum'       => $workshop->start,
+							'code'        => $workshop->code,
+							'contact'     => $workshop->contact,
+							'organisatie' => $workshop->organisatie,
+							'betaald'     => $workshop->betaald,
+							'kosten'      => $workshop->kosten,
+						];
+					}
+				}
+				return true;
+			default:
+				return false;
 		}
-		$data = [
-			'rows' => $rows,
-		];
-		return true;
 	}
 
 	/**
@@ -70,7 +92,8 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	public function validate( &$data ) {
-		$cursisten = [];
+		$cursisten    = [];
+		$workshop_ids = [];
 
 		$i_betalingen = filter_input( INPUT_POST, 'i_betaald', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
 		if ( ! is_null( $i_betalingen ) ) {
@@ -90,6 +113,10 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 				$cursisten[ $cursist_id ]['c_betaald'][ $cursus_id ] = 1;
 			}
 		}
+		$w_betalingen = filter_input( INPUT_POST, 'w_betaald', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		if ( ! is_null( $w_betalingen ) ) {
+			$workshop_ids = $w_betalingen;
+		}
 		$annuleringen = filter_input( INPUT_POST, 'geannuleerd', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
 		if ( ! is_null( $annuleringen ) ) {
 			foreach ( $annuleringen as $geannuleerd ) {
@@ -100,7 +127,8 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 			}
 		}
 		$data = [
-			'cursisten' => $cursisten,
+			'cursisten'    => $cursisten,
+			'workshop_ids' => $workshop_ids,
 		];
 		return true;
 	}
@@ -110,7 +138,7 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 	 *
 	 * @param array $data te bewaren data.
 	 * @return string
-	 *
+	 * @suppress PhanUnusedVariableValueOfForeachWithKey
 	 * @since   4.0.87
 	 */
 	public function save( $data ) {
@@ -152,6 +180,11 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 					}
 				}
 			}
+		}
+		foreach ( $data['workshop_ids']  as $workshop_id ) {
+			$workshop          = new Kleistad_Workshop( $workshop_id );
+			$workshop->betaald = true;
+			$workshop->save();
 		}
 		return 'Betaal informatie is geregistreerd.';
 	}

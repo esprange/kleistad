@@ -115,7 +115,26 @@
 					value="1" <?php checked( 1, $this->options['betalen'] ); ?>/>Aan</td>
 		</tr>
 
-	</table>
+		<tr >
+			<th scope="row">Google kalender id</th>
+			<td><input type="text" name="kleistad-opties[google_kalender_id]"
+					value="<?php echo esc_attr( $this->options['google_kalender_id'] ); ?>" /></td>
+		</tr>
 
-	<?php submit_button(); ?>
+		<tr >
+			<th scope="row">Google client id</th>
+			<td><input type="text" name="kleistad-opties[google_client_id]"
+					value="<?php echo esc_attr( $this->options['google_client_id'] ); ?>" /></td>
+		</tr>
+
+		<tr >
+			<th scope="row">Google geheime sleutel</th>
+			<td><input type="text" name="kleistad-opties[google_sleutel]"
+					value="<?php echo esc_attr( $this->options['google_sleutel'] ); ?>" /></td>
+		</tr>
+
+	</table>
+	<p class="submit">
+		<?php submit_button(); ?>
+	</p>
 </form>

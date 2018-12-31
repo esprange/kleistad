@@ -84,6 +84,9 @@ class Kleistad_Public {
 		];
 
 		$page = get_page_by_title( $slug, OBJECT );
+		if ( is_null( $page ) ) {
+			$page = get_page_by_title( str_replace( '_', '-', $slug ), OBJECT );
+		}
 		if ( ! is_null( $page ) ) {
 			$text = wpautop( $page->post_content );
 			// Controleer of er includes zijn d.m.v. [pagina:yxz].
@@ -198,6 +201,7 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'dagdelenkaart', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-dagdelenkaart.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'cursus_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables' ], $this->version, true );
+		wp_register_script( $this->plugin_name . 'workshop_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-workshop_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'recept_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept_beheer.js', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'recept', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept.js', [ 'jquery' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'saldo', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo.js', [ 'jquery' ], $this->version, true );
@@ -211,6 +215,7 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'betalingen', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-betalingen.js', [ 'jquery', 'jquery-ui-dialog', 'datatables' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'betaling', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-betaling.js', [ 'jquery' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'reservering', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-reservering.js', [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
+		wp_register_script( $this->plugin_name . 'kalender', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-kalender.js', [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 		wp_localize_script(
 			$this->plugin_name . 'reservering',
 			'kleistadData',
@@ -231,6 +236,16 @@ class Kleistad_Public {
 				'error_message'   => 'het was niet mogelijk om de recepten uit de database op te vragen',
 			]
 		);
+		wp_localize_script(
+			$this->plugin_name . 'kalender',
+			'kleistadData',
+			[
+				'nonce'           => wp_create_nonce( 'wp_rest' ),
+				'base_url'        => self::base_url(),
+				'success_message' => 'de kalender kon worden opgevraagd!',
+				'error_message'   => 'het was niet mogelijk om de kalender op te vragen',
+			]
+		);
 	}
 
 	/**
@@ -241,6 +256,7 @@ class Kleistad_Public {
 	public function register_endpoints() {
 		Kleistad_Public_Reservering::register_rest_routes();
 		Kleistad_Public_Recept::register_rest_routes();
+		Kleistad_Public_Kalender::register_rest_routes();
 		Kleistad_Betalen::register_rest_routes();
 	}
 
@@ -512,6 +528,20 @@ class Kleistad_Public {
 	public function update_abonnement( $id, $actie, $datum ) {
 		$abonnement = new Kleistad_Abonnement( $id );
 		$abonnement->event( $actie, $datum );
+	}
+
+	/**
+	 * Update workshop batch job.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @param int    $id    De id van de workshop.
+	 * @param string $actie De uit te voeren actie.
+	 * @param int    $datum Datum waarop het moet worden uitgevoerd.
+	 */
+	public function update_workshop( $id, $actie, $datum ) {
+		$workshop = new Kleistad_Workshop( $id );
+		$workshop->event( $actie, $datum );
 	}
 
 	/**

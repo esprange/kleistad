@@ -181,6 +181,75 @@ if ( isset( $data['actie'] ) ) :
 		</div>
 		</form>
 		<?php
+	elseif ( Kleistad_Public_Betaling::ACTIE_WORKSHOP === $data['actie'] ) :
+		?>
+		<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
+			<?php wp_nonce_field( 'kleistad_betaling' ); ?>
+		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']->id ); ?>" />
+		<input type="hidden" name="betaal" value="ideal" />
+		<input type="hidden" name="actie" value="<?php echo esc_attr( $data['actie'] ); ?>" />
+		<h2>Betaling workshop</h2>
+
+		<div class="kleistad_row">
+			<div class="kleistad_col_4">
+				<p>Aanvrager</p>
+			</div>
+			<div class="kleistad_col_6">
+				<p><?php echo esc_html( $data['workshop']->contact . ( empty( $data['workshop']->organisatie ) ? '' : ' namens ' . $data['workshop']->organisatie ) ); ?></p>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_4">
+				<p>Datum</p>
+			</div>
+			<div class="kleistad_col_6">
+				<p><?php echo esc_html( $data['workshop']->datum ); ?></p>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_4">
+				<p>Beschrijving</p>
+			</div>
+			<div class="kleistad_col_6">
+				<p><?php echo esc_html( $data['workshop']->programma ); ?></p>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_4">
+				<p>Aantal deelnemers</p>
+			</div>
+			<div class="kleistad_col_6">
+				<p><?php echo esc_html( $data['workshop']->aantal ); ?></p>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_4">
+				<p>&nbsp;</p>
+			</div>
+			<div class="kleistad_col_6">
+				<hr>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_4">
+				<p>Te betalen</p>
+			</div>
+			<div class="kleistad_col_6">
+				<p>&euro; <?php echo esc_html( number_format_i18n( $data['workshop']->kosten, 2 ) ); ?></p>
+			</div>
+		</div>
+		<div class ="kleistad_row">
+			<div class="kleistad_col_10">
+				<?php Kleistad_Betalen::issuers(); ?>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_10" style="padding-top: 20px;">
+				<button type="submit" name="kleistad_submit_betaling" id="kleistad_submit">Betalen</button><br />
+			</div>
+		</div>
+		</form>
+		<?php
 	endif;
 endif
 ?>

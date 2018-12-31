@@ -37,7 +37,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 				}
 			}
 		}
-		return $aantal;
+		return max( $aantal, 0 );
 	}
 
 	/**
@@ -106,6 +106,10 @@ class Kleistad_Cursus extends Kleistad_Entity {
 				return $this->_data;
 			case 'ruimte':
 				return $this->ruimte();
+			case 'code':
+				return "C{$this->_data['id']}";
+			case 'event_id':
+				return sprintf( 'kleistadcursus%06d', $this->_data['id'] );
 			default:
 				return $this->_data[ $attribuut ];
 		}
@@ -156,6 +160,30 @@ class Kleistad_Cursus extends Kleistad_Entity {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->_data );
 		$this->id = $wpdb->insert_id;
+
+		try {
+			$event             = new Kleistad_Event( $this->event_id );
+			$event->properties = [
+				'docent'     => $this->docent,
+				'technieken' => $this->technieken,
+				'code'       => "C$this->id",
+				'id'         => $this->id,
+				'class'      => __CLASS__,
+			];
+			$event->titel      = 'cursus';
+			$event->definitief = $this->tonen;
+			$event->vervallen  = $this->vervallen;
+			$timezone          = new DateTimeZone( get_option( 'timezone_string' ) );
+			$event->start      = new DateTime( $this->_data['start_datum'] . ' ' . $this->_data['start_tijd'], $timezone );
+			$event->eind       = new DateTime( $this->_data['start_datum'] . ' ' . $this->_data['eind_tijd'], $timezone );
+			if ( $this->start_datum !== $this->eind_datum ) {
+				$event->herhalen( new DateTime( $this->_data['eind_datum'] . ' ' . $this->_data['eind_tijd'], $timezone ) );
+			}
+			$event->save();
+		} catch ( Exception $e ) {
+			error_log ( $e->getMessage() ); // phpcs:ignore
+		}
+
 		return $this->id;
 	}
 
