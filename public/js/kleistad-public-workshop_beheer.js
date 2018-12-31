@@ -140,7 +140,7 @@
 					$( '#kleistad_boetseren' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Boetseren' ) >= 0 );
 					$( '#kleistad_kosten,#kleistad_datum' ).attr( 'readonly', workshop.definitief );
 					$( '#kleistad_workshop_bevestigen,#kleistad_workshop_opslaan' ).prop( 'disabled', workshop.betaald || workshop.definitief || workshop.vervallen );
-					$( '#kleistad_workshop_afzeggen').prop( 'disabled', workshop.vervallen );
+					$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', workshop.vervallen );
                 }
             );
 
@@ -151,7 +151,7 @@
                 'click', '#kleistad_workshop_toevoegen', function() {
                     $( '#kleistad_workshop' ).dialog( 'option', 'title', ' ' ).dialog( 'open' );
 					$( 'input[name="id"],#kleistad_facilitator,#kleistad_email,#kleistad_contact,#kleistad_kosten,#kleistad_beschrijvng,#kleistad_overig' ).removeAttr( 'value' );
-					$( '#kleistad_titel,#kleistad_datum,#kleistad_start,#kleistad_eind').prop( 'defaultValue' );
+					$( '#kleistad_titel,#kleistad_datum,#kleistad_start,#kleistad_eind' ).prop( 'defaultValue' );
 					$( '#kleistad_draaien,#kleistad_handvormen,#kleistad_boetseren' ).prop( 'checked', false );
                 }
             );

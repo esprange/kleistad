@@ -11,9 +11,9 @@
  */
 
 if ( is_wp_error( $result ) ) {
-	foreach ( $result->get_error_messages() as $error ) {
+	foreach ( $result->get_error_messages() as $fout ) {
 		?>
-		<div class="error"><p><?php echo esc_html( $error ); ?></p></div>
+		<div class="error"><p><?php echo esc_html( $fout ); ?></p></div>
 		<?php
 	}
 }
