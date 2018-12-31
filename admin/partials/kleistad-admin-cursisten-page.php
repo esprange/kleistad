@@ -25,6 +25,9 @@ $message = '';
 	<?php endif; ?>
 	<form id="cursisten-table" method="GET">
 		<input type="hidden" name="page" value="<?php esc_attr( filter_input( INPUT_GET, 'page' ) ); ?>"/>
-		<?php $table->display(); ?>
+		<?php
+			/* Voorlopig niet $table->search_box( 'Zoek', 'search' ); . */
+			$table->display();
+		?>
 	</form>
 </div>
