@@ -126,8 +126,10 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 
 	/**
 	 * Prepareer de te tonen items
+	 *
+	 * @param string $search Optionele zoekterm.
 	 */
-	public function prepare_items() {
+	public function prepare_items( $search = '' ) {
 		$per_page = 25;
 		$columns  = $this->get_columns();
 		$hidden   = [ 'cursist_id' ];
@@ -148,7 +150,10 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 		foreach ( $inschrijvingen as $cursist_id => $inschrijving ) {
 			foreach ( $cursussen as $cursus_id => $cursus ) {
 				if ( array_key_exists( $cursus_id, $inschrijving ) ) {
-					$cursist     = get_userdata( $cursist_id );
+					$cursist = get_userdata( $cursist_id );
+					if ( ! empty( $search ) && false === strpos( $cursist->display_name, $search ) ) {
+						continue;
+					}
 					$cursisten[] = [
 						'id'          => $inschrijving[ $cursus_id ]->code,
 						'naam'        => $cursist->display_name . ( 1 < $inschrijving[ $cursus_id ]->aantal ? ' (' . $inschrijving[ $cursus_id ]->aantal . ')' : '' ),
