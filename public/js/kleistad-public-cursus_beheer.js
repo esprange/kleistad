@@ -71,34 +71,16 @@
                         page: 60,
                         max: 60 * 23 + 45,
                         min: 0,
-						spin: function () {
+						spin: function() {
 							$( this ).change();
 						 }
                     },
 					_parse: function( value ) {
 						return strtotime( value );
 					},
-					// function( value ) {
-                    //     var hours, minutes;
-                    //     if ( 'string' === typeof value ) {
-					// 		/* jshint eqeqeq:false */
-                    //         if ( Number( value ) == value ) {
-                    //             return Number( value );
-                    //         }
-                    //         hours = value.substring( 0, 2 );
-                    //         minutes = value.substring( 3 );
-                    //         return Number( hours ) * 60 + Number( minutes );
-                    //     }
-                    //     return value;
-                    // },
 					_format: function( value ) {
 						return timetostr( value );
 					}
-					// function( value ) {
-                    //     var hours = Math.floor( value / 60 );
-                    //     var minutes = value % 60;
-                    //     return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
-					// }
                 }
             );
 
