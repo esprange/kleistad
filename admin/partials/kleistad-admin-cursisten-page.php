@@ -9,11 +9,6 @@
  * @subpackage Kleistad/admin/partials
  */
 
-$table = new Kleistad_Admin_Cursisten();
-$table->prepare_items();
-
-$message = '';
-
 ?>
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
@@ -24,9 +19,10 @@ $message = '';
 	</p></div>
 	<?php endif; ?>
 	<form id="cursisten-table" method="GET">
-		<input type="hidden" name="page" value="<?php esc_attr( filter_input( INPUT_GET, 'page' ) ); ?>"/>
+		<input type="hidden" name="page" value="<?php echo filter_input( INPUT_GET, 'page' ); ?>"/>
 		<?php
-			/* Voorlopig niet $table->search_box( 'Zoek', 'search' ); . */
+			$table->prepare_items();
+			$table->search_box( 'zoek cursist', 'search' );
 			$table->display();
 		?>
 	</form>

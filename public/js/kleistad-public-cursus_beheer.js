@@ -1,6 +1,26 @@
 ( function( $ ) {
     'use strict';
 
+	function strtotime( value ) {
+		var hours, minutes;
+		if ( 'string' === typeof value ) {
+			/* jshint eqeqeq:false */
+			if ( Number( value ) == value ) {
+				return Number( value );
+			}
+			hours = value.substring( 0, 2 );
+			minutes = value.substring( 3 );
+			return Number( hours ) * 60 + Number( minutes );
+		}
+		return value;
+	}
+
+	function timetostr( value ) {
+		var hours = Math.floor( value / 60 );
+		var minutes = value % 60;
+		return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
+	}
+
     $( document ).ready(
         function() {
 
@@ -50,26 +70,35 @@
                         step: 15,
                         page: 60,
                         max: 60 * 23 + 45,
-                        min: 0
+                        min: 0,
+						spin: function () {
+							$( this ).change();
+						 }
                     },
-                    _parse: function( value ) {
-                        var hours, minutes;
-                        if ( 'string' === typeof value ) {
-							/* jshint eqeqeq:false */
-                            if ( Number( value ) == value ) {
-                                return Number( value );
-                            }
-                            hours = value.substring( 0, 2 );
-                            minutes = value.substring( 3 );
-                            return Number( hours ) * 60 + Number( minutes );
-                        }
-                        return value;
-                    },
-                    _format: function( value ) {
-                        var hours = Math.floor( value / 60 );
-                        var minutes = value % 60;
-                        return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
-                    }
+					_parse: function( value ) {
+						return strtotime( value );
+					},
+					// function( value ) {
+                    //     var hours, minutes;
+                    //     if ( 'string' === typeof value ) {
+					// 		/* jshint eqeqeq:false */
+                    //         if ( Number( value ) == value ) {
+                    //             return Number( value );
+                    //         }
+                    //         hours = value.substring( 0, 2 );
+                    //         minutes = value.substring( 3 );
+                    //         return Number( hours ) * 60 + Number( minutes );
+                    //     }
+                    //     return value;
+                    // },
+					_format: function( value ) {
+						return timetostr( value );
+					}
+					// function( value ) {
+                    //     var hours = Math.floor( value / 60 );
+                    //     var minutes = value % 60;
+                    //     return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
+					// }
                 }
             );
 
@@ -93,9 +122,42 @@
                         }
                     );
                 }
-            );
+			);
 
-            /**
+			// $( '#kleistad_cursus_start_tijd' ).change(
+			// 	function() {
+			// 		var start_tijd = strtotime( $( this ).val() );
+			// 		var eind_tijd  = strtotime( $( '#kleistad_cursus_eind_tijd' ).val() );
+			// 		if ( start_tijd + 60 > eind_tijd ) {
+			// 			$( '#kleistad_cursus_eind_tijd' ).val( timetostr( Math.min( start_tijd + 60, 24 * 60 ) ) );
+			// 		}
+			// 	}
+			// );
+
+			// $( '#kleistad_cursus_eind_tijd' ).change(
+			//  	function() {
+			// 		var start_tijd = strtotime( $( this ).val() );
+			// 		var eind_tijd  = strtotime( $( '#kleistad_cursus_eind_tijd' ).val() );
+			// 		if ( start_tijd > eind_tijd - 60 ) {
+			// 			$( '#kleistad_cursus_start_tijd' ).val( timetostr( Math.max( eind_tijd - 60, 0 ) ) );
+			// 		}
+			// 	}
+			// );
+
+			$( '#kleistad_cursus_start_datum' ).change(
+				function() {
+					$( '#kleistad_cursus_eind_datum' ).datepicker( 'option', 'minDate', $( this ).val() );
+
+				}
+			);
+
+			$( '#kleistad_cursus_eind_datum' ).change(
+				function() {
+					$( '#kleistad_cursus_start_datum' ).datepicker( 'option', 'maxDate', $( this ).val() );
+				}
+			);
+
+			/**
              * Definieer de popup dialoog
              */
             $( '#kleistad_cursus' ).dialog(
@@ -141,7 +203,7 @@
                     $( '#kleistad_cursus' ).dialog( 'option', 'title', cursus.naam ).dialog( 'open' );
                     $( 'input[name="cursus_id"]' ).val( cursus.id );
                     $( '#kleistad_cursus_naam' ).val( cursus.naam );
-                    $( '#kleistad_cursus_docent' ).val( cursus.docent );
+                    $( '#kleistad_docent' ).val( cursus.docent );
                     $( '#kleistad_cursus_start_datum' ).val( cursus.start_datum );
                     $( '#kleistad_cursus_eind_datum' ).val( cursus.eind_datum );
                     $( '#kleistad_cursus_start_tijd' ).val( cursus.start_tijd );
@@ -192,27 +254,8 @@
              */
             $( 'body' ).on(
                 'click', '#kleistad_cursus_toevoegen', function() {
-                    $( '#kleistad_cursus' ).dialog( 'option', 'title', ' ' ).dialog( 'open' );
-                    $( 'input[name="cursus_id"]' ).removeAttr( 'value' );
-                    $( '#kleistad_cursus_naam' ).removeAttr( 'value' );
-                    $( '#kleistad_cursus_docent' ).removeAttr( 'value' );
-                    $( '#kleistad_cursus_start_datum' ).removeAttr( 'value' );
-                    $( '#kleistad_cursus_eind_datum' ).removeAttr( 'value' );
-                    $( '#kleistad_cursus_start_tijd' ).removeAttr( 'value' );
-                    $( '#kleistad_cursus_eind_tijd' ).removeAttr( 'value' );
-                    $( '#kleistad_cursuskosten' ).prop( 'defaultValue' );
-                    $( '#kleistad_inschrijfkosten' ).prop( 'defaultValue' );
-                    $( '#kleistad_inschrijfslug' ).prop( 'defaultValue' );
-                    $( '#kleistad_indelingslug' ).prop( 'defaultValue' );
-                    $( '#kleistad_maximum' ).prop( 'defaultValue' );
-                    $( '#kleistad_draaien' ).prop( 'checked', false );
-                    $( '#kleistad_handvormen' ).prop( 'checked', false );
-                    $( '#kleistad_boetseren' ).prop( 'checked', false );
-                    $( '#kleistad_techniekkeuze' ).prop( 'checked', false );
-                    $( '#kleistad_vol' ).prop( 'checked', false );
-                    $( '#kleistad_meer' ).prop( 'checked', false );
-                    $( '#kleistad_tonen' ).prop( 'checked', false );
-                    $( '#kleistad_vervallen' ).prop( 'checked', false );
+					$( '#kleistad_cursus' ).dialog( 'option', 'title', ' ' ).dialog( 'open' );
+					$( '#kleistad_cursus_beheer_form' )[0].reset();
                     $( '#kleistad_indeling' ).children().remove().end();
                 }
             );

@@ -29,7 +29,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	public function prepare( &$data = null ) {
 		$cursussen      = Kleistad_Cursus::all();
 		$inschrijvingen = Kleistad_Inschrijving::all();
-		$rows           = [];
+		$data['rows']   = [];
 		$vandaag        = strtotime( 'today' );
 		foreach ( $cursussen as $cursus_id => $cursus ) {
 			$ingedeeld = [];
@@ -54,7 +54,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					}
 				}
 			}
-			$rows[] = [
+			$data['rows'][] = [
 				'cursus'    => [
 					'id'              => $cursus->id,
 					'naam'            => $cursus->naam,
@@ -83,9 +83,19 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 				'ingedeeld' => $ingedeeld,
 			];
 		}
-		$data = [
-			'rows' => $rows,
-		];
+		$gebruikers = get_users(
+			[
+				'fields'  => [ 'ID', 'display_name' ],
+				'orderby' => [ 'nicename' ],
+			]
+		);
+
+		$data['docenten'] = [];
+		foreach ( $gebruikers as $gebruiker ) {
+			if ( Kleistad_Roles::override( $gebruiker->ID ) ) {
+				$data['docenten'][] = $gebruiker;
+			}
+		}
 		return true;
 	}
 
@@ -101,7 +111,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 		$tab   = filter_input( INPUT_POST, 'tab', FILTER_SANITIZE_STRING );
 		if ( 'info' === $tab ) {
-			$input = filter_input_array(
+			$data['input'] = filter_input_array(
 				INPUT_POST,
 				[
 					'tab'             => FILTER_SANITIZE_STRING,
@@ -134,15 +144,33 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					'tonen'           => FILTER_SANITIZE_STRING,
 				]
 			);
-			if ( is_null( $input['technieken'] ) ) {
-				$input['technieken'] = [];
+			if ( is_null( $data['input']['technieken'] ) ) {
+				$data['input']['technieken'] = [];
+			}
+			if ( strtotime( $data['input']['start_tijd'] ) >= strtotime( $data['input']['eind_tijd'] ) ) {
+				$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
+			}
+			if ( strtotime( $data['input']['start_datum'] ) > strtotime( $data['input']['eind_datum'] ) ) {
+				$error->add( 'Invoerfout', 'De startdatum moet eerder of gelijk aan de einddatum zijn' );
+			}
+			if ( 0.0 === $data['input']['cursuskosten'] && 0.0 < $data['input']['inschrijfkosten'] ) {
+				$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
+			}
+			if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['inschrijfslug'], OBJECT ) ) ) { // WPCS: loose comparison ok.
+				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['inschrijfslug'] );
+			}
+			if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['indelingslug'], OBJECT ) ) ) { // WPCS: loose comparison ok.
+				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['indelingslug'] );
+			}
+			if ( ! empty( $error->get_error_codes() ) ) {
+				return $error;
 			}
 		} elseif ( 'indeling' === $tab ) { // phpcs:ignore
 			/**
 			 * Voorlopig geen actie op dit tabblad.
 			 */
 		} elseif ( 'email' === $tab ) {
-			$input = filter_input_array(
+			$data['input'] = filter_input_array(
 				INPUT_POST,
 				[
 					'tab'       => FILTER_SANITIZE_STRING,
@@ -150,9 +178,6 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 				]
 			);
 		}
-		$data = [
-			'input' => $input,
-		];
 		return true;
 	}
 

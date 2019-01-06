@@ -24,8 +24,8 @@ else :
 			<li><a href="#kleistad_cursus_indeling">Cursisten</a></li>
 		</ul>
 		<div id="kleistad_cursus_gegevens" >
-			<form action="#" method="post" >
-					<?php wp_nonce_field( 'kleistad_cursus_beheer' ); ?>
+			<form action="#" method="post" id="kleistad_cursus_beheer_form" >
+				<?php wp_nonce_field( 'kleistad_cursus_beheer' ); ?>
 				<input type="hidden" name="cursus_id" value="0"/>
 				<input type="hidden" name="tab" value="info"/>
 				<table class="kleistad_form" >
@@ -35,20 +35,13 @@ else :
 					</tr>
 					<tr>
 						<th>Docent</th>
-						<td colspan="3"><input type="text" name="docent" id="kleistad_cursus_docent" list="kleistad_docenten" >
+						<td colspan="3">
 						<datalist id="kleistad_docenten">
-									<?php
-									$gebruikers = get_users(
-										[
-											'orderby' => 'nicename',
-											'fields'  => [ 'display_name' ],
-										]
-									);
-									foreach ( $gebruikers as $gebruiker ) :
-										?>
-									<option value="<?php echo esc_attr( $gebruiker->display_name ); ?>">
-										<?php endforeach ?>
-						</datalist></td>
+						<?php foreach ( $data['docenten'] as $docent ) : ?>
+							<option value="<?php echo esc_attr( $docent->display_name ); ?>">
+						<?php endforeach ?>
+						</datalist>
+						<input type=text list="kleistad_docenten" name="docent" id="kleistad_docent" ></td>
 					</tr>
 					<tr>
 						<th>Start</th>
@@ -58,9 +51,9 @@ else :
 					</tr>
 					<tr>
 						<th>Begintijd</th>
-						<td><input type="text" name="start_tijd" id="kleistad_cursus_start_tijd" placeholder="00:00" class="kleistad_tijd" /></td>
+						<td><input type="text" name="start_tijd" id="kleistad_cursus_start_tijd" placeholder="00:00" class="kleistad_tijd" value="09:30" /></td>
 						<th>Eindtijd</th>
-						<td><input type="text" name="eind_tijd" id="kleistad_cursus_eind_tijd" placeholder="00:00" class="kleistad_tijd" /></td>
+						<td><input type="text" name="eind_tijd" id="kleistad_cursus_eind_tijd" placeholder="00:00" class="kleistad_tijd" value="12:00" /></td>
 					</tr>
 					<tr>
 						<th>Technieken</th>

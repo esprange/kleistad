@@ -9,11 +9,6 @@
  * @subpackage Kleistad/admin/partials
  */
 
-$table = new Kleistad_Admin_Ovens();
-$table->prepare_items();
-
-$message = '';
-
 ?>
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
@@ -27,6 +22,9 @@ $message = '';
 	<?php endif; ?>
 	<form id="ovens-table" method="GET">
 		<input type="hidden" name="page" value="<?php esc_attr( filter_input( INPUT_GET, 'page' ) ); ?>"/>
-		<?php $table->display(); ?>
+		<?php
+			$table->prepare_items();
+			$table->display();
+		?>
 	</form>
 </div>

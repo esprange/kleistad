@@ -480,8 +480,11 @@ class Kleistad_Admin {
 	 * Ovens overzicht page handler
 	 *
 	 * @since    4.0.87
+	 * @suppress PhanUnusedVariable
 	 */
 	public function ovens_page_handler() {
+		$message = '';
+		$table   = new Kleistad_Admin_Ovens();
 		require 'partials/kleistad-admin-ovens-page.php';
 	}
 
@@ -579,8 +582,11 @@ class Kleistad_Admin {
 	 * Abonnees overzicht page handler
 	 *
 	 * @since    4.3.0
+	 * @suppress PhanUnusedVariable
 	 */
 	public function abonnees_page_handler() {
+		$message = '';
+		$table   = new Kleistad_Admin_Abonnees();
 		require 'partials/kleistad-admin-abonnees-page.php';
 	}
 
@@ -770,8 +776,11 @@ class Kleistad_Admin {
 	 * Cursisten overzicht page handler
 	 *
 	 * @since    4.5.0
+	 * @suppress PhanUnusedVariable
 	 */
 	public function cursisten_page_handler() {
+		$message = '';
+		$table   = new Kleistad_Admin_Cursisten();
 		require 'partials/kleistad-admin-cursisten-page.php';
 	}
 
@@ -1023,10 +1032,8 @@ class Kleistad_Admin {
 	 * @suppress PhanUnusedVariable
 	 */
 	public function stooksaldo_page_handler() {
-		$table = new Kleistad_Admin_Stooksaldo();
-		$table->prepare_items();
-
 		$message = '';
+		$table   = new Kleistad_Admin_Stooksaldo();
 		require 'partials/kleistad-admin-stooksaldo-page.php';
 	}
 

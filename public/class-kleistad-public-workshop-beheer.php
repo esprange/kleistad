@@ -34,6 +34,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 				'code'        => $workshop->code,
 				'naam'        => $workshop->naam,
 				'datum'       => date( 'd-m-Y', $workshop->datum ),
+				'datum_td'    => $workshop->datum,
 				'start_tijd'  => date( 'H:i', $workshop->start_tijd ),
 				'eind_tijd'   => date( 'H:i', $workshop->eind_tijd ),
 				'docent'      => $workshop->docent,
@@ -48,8 +49,22 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 				'aantal'      => $workshop->aantal,
 				'betaald'     => $workshop->betaald,
 				'definitief'  => $workshop->definitief,
-				'status'      => $workshop->vervallen ? 'vervallen' : ( ( $workshop->definitief ? 'definitief ' : '' ) . ( $workshop->betaald ? 'betaald' : '' ) ),
+				'status'      => $workshop->vervallen ? 'vervallen' : ( ( $workshop->definitief ? 'definitief ' : 'concept' ) . ( $workshop->betaald ? 'betaald' : '' ) ),
 			];
+		}
+
+		$gebruikers = get_users(
+			[
+				'fields'  => [ 'ID', 'display_name' ],
+				'orderby' => [ 'nicename' ],
+			]
+		);
+
+		$data['docenten'] = [];
+		foreach ( $gebruikers as $gebruiker ) {
+			if ( Kleistad_Roles::override( $gebruiker->ID ) ) {
+				$data['docenten'][] = $gebruiker;
+			}
 		}
 		return true;
 	}
@@ -93,6 +108,9 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 		$data['workshop']['programma'] = sanitize_textarea_field( filter_input( INPUT_POST, 'programma' ) );
 		if ( empty( $data['workshop']['technieken'] ) ) {
 			$data['workshop']['technieken'] = [];
+		}
+		if ( strtotime( $data['workshop']['start_tijd'] ) >= strtotime( $data['workshop']['eind_tijd'] ) ) {
+			$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
 		}
 
 		if ( ! empty( $error->get_error_codes() ) ) {

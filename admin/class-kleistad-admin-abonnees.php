@@ -141,20 +141,22 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
-		$per_page = 25;
+		$per_page = 15;
 		$columns  = $this->get_columns();
 		$hidden   = [];
 		$sortable = $this->get_sortable_columns();
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
+		$search_val   = filter_input( INPUT_GET, 's' );
+		$search       = ! is_null( $search_val ) ? $search_val : false;
 		$paged_val    = filter_input( INPUT_GET, 'paged' );
 		$paged        = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$orderby_val  = filter_input( INPUT_GET, 'orderby' );
 		$orderby      = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val    = filter_input( INPUT_GET, 'order' );
 		$order        = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$abonnementen = Kleistad_Abonnement::all();
+		$abonnementen = Kleistad_Abonnement::all( $search );
 		$abonnees     = [];
 
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {

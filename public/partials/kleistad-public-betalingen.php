@@ -74,7 +74,7 @@ else :
 		<thead>
 			<tr>
 				<th>Datum</th>
-				<th>datum sorted (1)</th>
+				<th>datum sorted</th>
 				<th>Code</th>
 				<th>Contact</th>
 				<th>Organisatie</th>
@@ -94,7 +94,7 @@ else :
 				<td><?php if ( $workshop['betaald'] ) : ?>
 					<span class="genericon genericon-checkmark"></span>
 					<?php else : ?>
-					<input type="checkbox" name="e_betaald[]" value="<?php echo esc_attr( $workshop['id'] ); ?>" >
+					<input type="checkbox" name="w_betaald[]" value="<?php echo esc_attr( $workshop['id'] ); ?>" >
 					<?php endif ?>
 				</td>
 			<?php endforeach ?>

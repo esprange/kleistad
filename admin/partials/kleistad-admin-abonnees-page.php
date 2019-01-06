@@ -9,11 +9,6 @@
  * @subpackage Kleistad/admin/partials
  */
 
-$table = new Kleistad_Admin_Abonnees();
-$table->prepare_items();
-
-$message = '';
-
 ?>
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
@@ -24,7 +19,11 @@ $message = '';
 	</p></div>
 	<?php endif; ?>
 	<form id="abonnees-table" method="GET">
-		<input type="hidden" name="page" value="<?php esc_attr( filter_input( INPUT_GET, 'page' ) ); ?>"/>
-		<?php $table->display(); ?>
+		<input type="hidden" name="page" value="<?php echo filter_input( INPUT_GET, 'page' ); ?>"/>
+		<?php
+			$table->prepare_items();
+			$table->search_box( 'zoek abonnee', 'search' );
+			$table->display();
+		?>
 	</form>
 </div>

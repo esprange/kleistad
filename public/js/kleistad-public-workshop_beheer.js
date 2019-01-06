@@ -32,8 +32,12 @@
                             sSortDescending: ': activeer om kolom aflopend te sorteren'
                         }
                     },
-                    pageLength: 5,
-                    order: [ 0, 'desc' ]
+					pageLength: 10,
+					columnDefs: [
+						{ visible: false, targets: [ 2 ] },
+                        { orderData: [ 2 ], targets: [ 1 ] }
+					],
+                    order: [ 2, 'desc' ]
                 }
             );
 
@@ -120,8 +124,8 @@
                 'click', '.kleistad_workshop_info', function() {
 					var workshop = $( this ).data( 'workshop' );
                     $( '#kleistad_workshop' ).dialog( 'option', 'title', workshop.naam ).dialog( 'open' );
-                    $( 'input[name="id"]' ).val( workshop.id );
-                    $( '#kleistad_titel' ).val( workshop.naam );
+                    $( '#kleistad_id' ).val( workshop.id );
+                    $( '#kleistad_naam' ).val( workshop.naam );
 					$( '#kleistad_docent' ).val( workshop.docent );
                     $( '#kleistad_datum' ).val( workshop.datum );
                     $( '#kleistad_start_tijd' ).val( workshop.start_tijd );
@@ -149,10 +153,13 @@
              */
             $( 'body' ).on(
                 'click', '#kleistad_workshop_toevoegen', function() {
-                    $( '#kleistad_workshop' ).dialog( 'option', 'title', ' ' ).dialog( 'open' );
-					$( 'input[name="id"],#kleistad_facilitator,#kleistad_email,#kleistad_contact,#kleistad_kosten,#kleistad_beschrijvng,#kleistad_overig' ).removeAttr( 'value' );
-					$( '#kleistad_titel,#kleistad_datum,#kleistad_start,#kleistad_eind' ).prop( 'defaultValue' );
-					$( '#kleistad_draaien,#kleistad_handvormen,#kleistad_boetseren' ).prop( 'checked', false );
+					$( '#kleistad_workshop' ).dialog( 'option', 'title', '*** nieuw ***' ).dialog( 'open' );
+					$( '#kleistad_workshop_form' )[0].reset();
+					$( '#kleistad_id' ).val( 0 );
+					$( '#kleistad_workshop_bevestigen,#kleistad_workshop_opslaan' ).prop( 'disabled', false );
+					$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', true );
+					$( '#kleistad_definitief,#kleistad_betaald' ).removeAttr( 'class' );
+					$( '#kleistad_kosten,#kleistad_datum' ).attr( 'readonly', false );
                 }
             );
         }

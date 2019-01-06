@@ -18,9 +18,9 @@ else :
 	?>
 
 <div id="kleistad_workshop">
-	<form action="#" method="post" >
+	<form action="#" method="post" id="kleistad_workshop_form">
 		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
-		<input type="hidden" name="id" value=""/>
+		<input type="hidden" name="id" id="kleistad_id" value="0"/>
 		<table class="kleistad_form" >
 			<tr>
 				<th>Soort workshop</th>
@@ -49,7 +49,7 @@ else :
 			</tr>
 			<tr>
 				<th>Aantal deelnemers</th>
-				<td><input type="number" name="aantal" id="kleistad_aantal" min="1" ></td>
+				<td><input type="number" name="aantal" id="kleistad_aantal" min="1" value="1"></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
@@ -61,17 +61,15 @@ else :
 				<th>Begintijd</th>
 				<td><input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="10:00" class="kleistad_tijd" required /></td>
 				<th>Eindtijd</th>
-				<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="13:00" class="kleistad_tijd" required /></td>
+				<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="12:00" class="kleistad_tijd" required /></td>
 			</tr>
 			<tr>
 				<th>Docent</th>
 				<td colspan="3">
 				<datalist id="kleistad_docenten">
-					<option value="Daan Gunneweg">
-					<option value="Anne-France Monshouwer">
-					<option value="Annelies Kool">
-					<option value="Joke van Burgsteden">
-					<option value="Felicia Vlaanderen">
+				<?php foreach ( $data['docenten'] as $docent ) : ?>
+					<option value="<?php echo esc_attr( $docent->display_name ); ?>">
+				<?php endforeach ?>
 				</datalist>
 				<input type=text list="kleistad_docenten" name="docent" id="kleistad_docent" ></td>
 			</tr>
@@ -87,13 +85,13 @@ else :
 			</tr>
 			<tr>
 				<th>Kosten</th>
-				<td><input type="number" step="any" name="kosten" id="kleistad_kosten" min="0" ></td>
+				<td><input type="number" step="any" name="kosten" id="kleistad_kosten" min="0" value=<?php echo esc_attr( $this->options['workshopprijs'] ); ?> ></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
-				<th>Afspraak definitief ?</th>
+				<th>Afspraak definitief</th>
 				<td><span id="kleistad_definitief"></span></td>
-				<th>Betaald ?</th>
+				<th>Betaald</th>
 				<td><span id="kleistad_betaald"></span></td>
 			</tr>
 			<tr>
@@ -110,8 +108,9 @@ else :
 	<thead>
 		<tr>
 			<th>Code</th>
-			<th>Titel</th>
 			<th>Datum</th>
+			<th>datum_td</th>
+			<th>Titel</th>
 			<th>Aantal</th>
 			<th>Tijd</th>
 			<th>Technieken</th>
@@ -123,12 +122,13 @@ else :
 		<tr class="kleistad_workshop_info"
 			data-workshop='<?php echo wp_json_encode( $workshop ); ?>' >
 			<td><?php echo esc_html( $workshop['code'] ); ?></td>
-			<td><?php echo esc_html( $workshop['naam'] ); ?></td>
 			<td><?php echo esc_html( $workshop['datum'] ); ?></td>
+			<td><?php echo esc_html( $workshop['datum_td'] ); ?></td>
+			<td><?php echo esc_html( $workshop['naam'] ); ?></td>
 			<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
 			<td><?php echo esc_html( $workshop['start_tijd'] . ' - ' . $workshop['eind_tijd'] ); ?></td>
 			<td><?php echo esc_html( implode( ', ', $workshop['technieken'] ) ); ?></td>
-			<td><?php echo ( $workshop['betaald'] ? 'betaald ' : '' ) . ( $workshop['definitief'] ? 'definitief' : 'concept' ); ?></td>
+			<td><?php echo esc_html( $workshop['status'] ); ?></td>
 		</tr>
 	<?php endforeach ?>
 	</tbody>

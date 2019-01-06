@@ -154,7 +154,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 		header( 'Content-Disposition: attachment; filename=stookbestand_' . strftime( '%Y%m%d' ) . '.csv' );
 		header( 'Content-Transfer-Encoding: binary' );
 		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
+		header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
 		header( 'Pragma: public' );
 		header( 'Content-Length: ' . filesize( $csv ) );
 		ob_clean();

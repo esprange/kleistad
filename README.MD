@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 4.9.8  
-**Stable tag:** 4.5.11  
+**Stable tag:** 5.0.2  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -33,6 +33,15 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 5.0.0 ###
+* integratie met Google Calender voor individuele workshops en cursussen.
+* nadat ingedeeld is kan er niet opnieuw ingeschreven worden.
+* aanpassing downloadfile abonnees (shortcode registratie overzicht).
+* als er nog maar ruimte is voor 1 deelnemer dan wordt keuze aantal niet getoond.
+* in het dashboard kan er gezocht worden in het cursisten en abonnee overzicht.
+* verbeterde invoercontrole bij aanmaak nieuwe cursussen.
+* bugfix: verwijder subscriber rol als abonnee stopt
+* bugfix: ruimte kan niet kleiner worden dan 0
 ### 4.5.11 ###
 * titels in dialoog popups
 ### 4.5.9, 4.5.10 ###

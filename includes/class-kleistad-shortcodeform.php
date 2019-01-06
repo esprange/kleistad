@@ -38,12 +38,17 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @return string html tekst.
 	 */
 	protected function betaald() {
-		$html    = '';
-		$betaald = filter_input( INPUT_GET, 'betaald' );
-		if ( ! is_null( $betaald ) ) {
-			$gebruiker_id = filter_input( INPUT_GET, 'betaald' );
-			$betaling     = new Kleistad_Betalen();
-			$result       = $betaling->controleer( $gebruiker_id );
+		$html         = '';
+		$gebruiker_id = filter_input( INPUT_GET, 'gebruiker_id' );
+		$order_id     = filter_input( INPUT_GET, 'order_id' );
+		if ( ! is_null( $gebruiker_id ) || ! is_null( $order_id ) ) {
+			$betaling = new Kleistad_Betalen();
+			$result   = $betaling->controleer(
+				[
+					'gebruiker_id' => $gebruiker_id,
+					'order_id'     => $order_id,
+				]
+			);
 			if ( ! is_wp_error( $result ) ) {
 				$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
 			} else {

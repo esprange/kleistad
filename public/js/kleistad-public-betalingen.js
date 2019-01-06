@@ -47,7 +47,7 @@
 				}
 			);
 
-			$( '#kleistad_Workshops' ).DataTable(
+			$( '#kleistad_workshops' ).DataTable(
 				{
 					language: kleistadRapport,
 					columnDefs: [

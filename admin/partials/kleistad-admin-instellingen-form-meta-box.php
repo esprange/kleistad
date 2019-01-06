@@ -39,7 +39,7 @@
 		</tr>
 
 		<tr >
-			<th scope="row">Prijs standaaard cursus</th>
+			<th scope="row">Prijs standaaard cursus excl. inschrijving</th>
 			<td><input type="number" step="0.01" min="0" name="kleistad-opties[cursusprijs]"
 					value="<?php echo esc_attr( $this->options['cursusprijs'] ); ?>" /></td>
 		</tr>
@@ -54,12 +54,6 @@
 			<th scope="row">Prijs standaard workshop</th>
 			<td><input type="number" step="0.01" min="0"  name="kleistad-opties[workshopprijs]"
 					value="<?php echo esc_attr( $this->options['workshopprijs'] ); ?>" /></td>
-		</tr>
-
-		<tr >
-			<th scope="row">Prijs kinderworkshop</th>
-			<td><input type="number" step="0.01" min="0"  name="kleistad-opties[kinderworkshopprijs]"
-					value="<?php echo esc_attr( $this->options['kinderworkshopprijs'] ); ?>" /></td>
 		</tr>
 
 		<?php

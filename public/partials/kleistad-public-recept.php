@@ -108,11 +108,11 @@ else :
 	</div>
 	<div class="kleistad_col_2">
 		<select id="kleistad_sorteer" >
-			<option value="titel" selected>Titel</option>
+			<option value="titel">Titel</option>
 			<?php if ( function_exists( 'the_ratings' ) ) : ?>
 			<option value="waardering">Waardering</option>
 			<?php endif ?>
-			<option value="nieuwste">Nieuwste</option>
+			<option value="nieuwste" selected>Nieuwste</option>
 		</select>
 	</div>
 </div>

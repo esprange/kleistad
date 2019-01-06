@@ -16,7 +16,7 @@
  */
 class Kleistad_Workshop extends Kleistad_Entity {
 
-	const META_KEY = 'kleistad_abonnement';
+	const META_KEY = 'kleistad_workshop';
 
 	/**
 	 * Constructor
@@ -140,6 +140,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			];
 			$event->titel      = $this->naam;
 			$event->definitief = $this->definitief;
+			$event->vervallen  = $this->vervallen;
 			$timezone          = new DateTimeZone( get_option( 'timezone_string' ) );
 			$event->start      = new DateTime( $this->_data['datum'] . ' ' . $this->_data['start_tijd'], $timezone );
 			$event->eind       = new DateTime( $this->_data['datum'] . ' ' . $this->_data['eind_tijd'], $timezone );
@@ -159,6 +160,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	public function bevestig() {
 		if ( ! $this->definitief ) {
 			$this->definitief = true;
+			$this->save();
 			wp_schedule_single_event(
 				mktime( 0, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
 				self::META_KEY,
@@ -169,7 +171,6 @@ class Kleistad_Workshop extends Kleistad_Entity {
 				]
 			);
 			$this->email( 'bevestiging' );
-			$this->save();
 		}
 	}
 
@@ -179,21 +180,20 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * @since 5.0.0
 	 */
 	public function afzeggen() {
-		$event_id         = sprintf( 'kleistadevent%06d', $this->id );
-		$event            = new Kleistad_Event( $event_id );
-		$event->vervallen = $this->vervallen;
-		$event->save();
-
-		wp_unschedule_event(
-			mktime( 0, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
-			self::META_KEY,
-			[
-				$this->id,
-				'betaling',
-				$this->datum,
-			]
-		);
-		$this->email( 'afzegging' );
+		if ( ! $this->vervallen ) {
+			$this->vervallen = true;
+			wp_unschedule_event(
+				mktime( 0, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
+				self::META_KEY,
+				[
+					$this->id,
+					'betaling',
+					$this->datum,
+				]
+			);
+			$this->save();
+			$this->email( 'afzegging' );
+		}
 	}
 
 	/**
@@ -216,8 +216,8 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
-		$to        = "$this->contact <$this->email>";
-		$onderwerp = ucfirst( $type ) . ' cursus';
+		$to        = "{$this->contact} <{$this->email}>";
+		$onderwerp = ucfirst( $type ) . ' workshop';
 
 		switch ( $type ) {
 			case 'bevestiging':
@@ -268,7 +268,11 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	public function betalen( $bericht ) {
 		$betaling = new Kleistad_Betalen();
 		$betaling->order(
-			$this->id,
+			[
+				'naam'     => $this->contact,
+				'email'    => $this->email,
+				'order_id' => $this->code,
+			],
 			__CLASS__ . '-' . $this->code . '-workshop',
 			$this->kosten,
 			'Kleistad workshop ' . $this->code . ' op ' . strftime( '%d-%m-%y', $this->datum ),
@@ -312,6 +316,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			$workshop          = new static( intval( $parameters[0] ) );
 			$workshop->betaald = true;
 			$workshop->save();
+			$workshop->email( 'betaling_ideal' );
 		}
 	}
 
@@ -319,7 +324,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * Return alle workshops.
 	 *
 	 * @global object $wpdb WordPress database.
-	 * @param bool $open Toon alleen de open workshops if true.
+	 * @param bool $open Toon alles.
 	 * @return array workshops.
 	 */
 	public static function all( $open = false ) {

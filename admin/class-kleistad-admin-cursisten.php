@@ -126,10 +126,8 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 
 	/**
 	 * Prepareer de te tonen items
-	 *
-	 * @param string $search Optionele zoekterm.
 	 */
-	public function prepare_items( $search = '' ) {
+	public function prepare_items() {
 		$per_page = 25;
 		$columns  = $this->get_columns();
 		$hidden   = [ 'cursist_id' ];
@@ -137,6 +135,8 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
+		$search_val     = filter_input( INPUT_GET, 's' );
+		$search         = ! is_null( $search_val ) ? $search_val : false;
 		$paged_val      = filter_input( INPUT_GET, 'paged' );
 		$paged          = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$orderby_val    = filter_input( INPUT_GET, 'orderby' );

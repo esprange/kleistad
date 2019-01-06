@@ -68,13 +68,13 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 						$workshop = new Kleistad_Workshop( $event->properties['id'] );
 						$dagen[ intval( $event->start->format( 'd' ) ) ][] = [
 							'tekst' => strftime( '%H:%M', $workshop->start_tijd ) . ' ' . $workshop->naam,
-							'kleur' => $workshop->betaald ? 'green' : $workshop->definitief ? 'orange' : 'lightblue',
+							'kleur' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'orange' : 'lightblue' ),
 							'info'  => [
 								'naam'       => $workshop->naam,
 								'aantal'     => $workshop->aantal,
 								'code'       => $workshop->code,
 								'docent'     => $workshop->docent,
-								'technieken' => implode( '', $workshop->technieken ),
+								'technieken' => implode( ', ', $workshop->technieken ),
 								'start'      => strftime( '%H:%M', $workshop->start_tijd ),
 								'eind'       => strftime( '%H:%M', $workshop->eind_tijd ),
 							],
@@ -90,7 +90,7 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 								'aantal'     => $cursus->maximum - $cursus->ruimte,
 								'code'       => $cursus->code,
 								'docent'     => $cursus->docent,
-								'technieken' => implode( '', $cursus->technieken ),
+								'technieken' => implode( ', ', $cursus->technieken ),
 								'start'      => strftime( '%H:%M', $cursus->start_tijd ),
 								'eind'       => strftime( '%H:%M', $cursus->eind_tijd ),
 							],

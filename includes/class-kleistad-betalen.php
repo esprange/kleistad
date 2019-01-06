@@ -16,6 +16,7 @@ class Kleistad_Betalen {
 
 	const MOLLIE_ID       = 'mollie_customer_id';
 	const MOLLIE_BETALING = 'mollie_betaling';
+	const MOLLIE_AD_HOC   = 'mollie_ad_hoc';
 
 	/**
 	 * Het mollie object.
@@ -109,51 +110,80 @@ class Kleistad_Betalen {
 	 *
 	 * @since      4.2.0
 	 *
-	 * @param int    $gebruiker_id de gebruiker die de betaling uitvoert.
-	 * @param string $order_id     de externe order referentie, maximaal 35 karakters.
-	 * @param float  $bedrag       het bedrag.
-	 * @param string $beschrijving de externe order referentie, maximaal 35 karakters.
-	 * @param string $bericht      het bericht bij succesvolle betaling.
-	 * @param bool   $mandateren   er wordt een herhaalde betaling voorbereid.
+	 * @param int|array $referentie   referentie waarvoor de betaling wordt uitgevoerd (WordPress id of array order/naam/email).
+	 * @param string    $order_id     de externe order referentie, maximaal 35 karakters.
+	 * @param float     $bedrag       het bedrag.
+	 * @param string    $beschrijving de externe order referentie, maximaal 35 karakters.
+	 * @param string    $bericht      het bericht bij succesvolle betaling.
+	 * @param bool      $mandateren   er wordt een herhaalde betaling voorbereid.
 	 */
-	public function order( $gebruiker_id, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
+	public function order( $referentie, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
 		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING );
 
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-		if ( '' === $mollie_gebruiker_id || is_null( $mollie_gebruiker_id ) ) {
-			$gebruiker           = get_userdata( $gebruiker_id );
-			$mollie_gebruiker    = $this->mollie->customers->create(
-				[
-					'name'  => $gebruiker->display_name,
-					'email' => $gebruiker->user_email,
-				]
-			);
-			$mollie_gebruiker_id = $mollie_gebruiker->id;
-			update_user_meta( $gebruiker_id, self::MOLLIE_ID, $mollie_gebruiker_id );
-		}
-		$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-		if ( $mandateren ) {
-			$betaling = $mollie_gebruiker->createPayment(
-				[
-					'amount'       => [
-						'currency' => 'EUR',
-						'value'    => number_format( $bedrag, 2, '.', '' ),
-					],
-					'description'  => $beschrijving,
-					'issuer'       => ! empty( $bank ) ? $bank : null,
-					'metadata'     => [
-						'order_id' => $order_id,
-						'bericht'  => $bericht,
-					],
-					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
-					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST,
-					'redirectUrl'  => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
-					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
-				]
-			);
+		if ( ! is_array( $referentie ) ) {
+			$gebruiker_id        = $referentie;
+			$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
+			if ( '' === $mollie_gebruiker_id || is_null( $mollie_gebruiker_id ) ) {
+				$gebruiker           = get_userdata( $gebruiker_id );
+				$mollie_gebruiker    = $this->mollie->customers->create(
+					[
+						'name'  => $gebruiker->display_name,
+						'email' => $gebruiker->user_email,
+					]
+				);
+				$mollie_gebruiker_id = $mollie_gebruiker->id;
+				update_user_meta( $gebruiker_id, self::MOLLIE_ID, $mollie_gebruiker_id );
+			}
+			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+			if ( $mandateren ) {
+				$betaling = $mollie_gebruiker->createPayment(
+					[
+						'amount'       => [
+							'currency' => 'EUR',
+							'value'    => number_format( $bedrag, 2, '.', '' ),
+						],
+						'description'  => $beschrijving,
+						'issuer'       => ! empty( $bank ) ? $bank : null,
+						'metadata'     => [
+							'order_id' => $order_id,
+							'bericht'  => $bericht,
+						],
+						'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
+						'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST,
+						'redirectUrl'  => add_query_arg( 'gebruiker_id', $gebruiker_id, get_permalink() ),
+						'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
+					]
+				);
+			} else {
+				$betaling = $mollie_gebruiker->createPayment(
+					[
+						'amount'       => [
+							'currency' => 'EUR',
+							'value'    => number_format( $bedrag, 2, '.', '' ),
+						],
+						'description'  => $beschrijving,
+						'issuer'       => ! empty( $bank ) ? $bank : null,
+						'metadata'     => [
+							'order_id' => $order_id,
+							'bericht'  => $bericht,
+						],
+						'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
+						'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
+						'redirectUrl'  => add_query_arg( 'gebruiker_id', $gebruiker_id, get_permalink() ),
+						'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
+					]
+				);
+			}
+			update_user_meta( $gebruiker_id, self::MOLLIE_BETALING, $betaling->id );
 		} else {
-			$betaling = $mollie_gebruiker->createPayment(
+			$mollie_gebruiker = $this->mollie->customers->create(
+				[
+					'name'  => $referentie['naam'],
+					'email' => $referentie['email'],
+				]
+			);
+			$betaling         = $mollie_gebruiker->createPayment(
 				[
 					'amount'       => [
 						'currency' => 'EUR',
@@ -167,12 +197,17 @@ class Kleistad_Betalen {
 					],
 					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-					'redirectUrl'  => add_query_arg( 'betaald', $gebruiker_id, get_permalink() ),
+					'redirectUrl'  => add_query_arg( 'order_id', $referentie['order_id'], get_permalink() ),
 					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
 				]
 			);
+			$order_betalingen = get_option( self::MOLLIE_AD_HOC );
+			if ( false === $order_betalingen ) {
+				$order_betalingen = [];
+			}
+			$order_betalingen[ $referentie['order_id'] ] = $betaling->id;
+			update_option( self::MOLLIE_AD_HOC, $order_betalingen );
 		}
-		update_user_meta( $gebruiker_id, self::MOLLIE_BETALING, $betaling->id );
 		wp_redirect( $betaling->getCheckOutUrl(), 303 );
 		exit;
 	}
@@ -338,14 +373,23 @@ class Kleistad_Betalen {
 	 *
 	 * @since      4.2.0
 	 *
-	 * @param  int $gebruiker_id de gebruiker die zojuist betaald heeft.
+	 * @param  array $referentie de referentie wie of waarvoor er zojuist betaald heeft.
 	 * @return mixed de status van de betaling als tekst of een error object.
 	 */
-	public function controleer( $gebruiker_id ) {
-		$error = new WP_Error();
-		$error->add( 'betaling', 'De betaling via iDeal heeft niet plaatsgevonden. Probeer het opnieuw.' );
-
-		$mollie_betaling_id = get_user_meta( $gebruiker_id, self::MOLLIE_BETALING, true );
+	public function controleer( $referentie ) {
+		$mollie_betaling_id = '';
+		$error              = new WP_Error();
+		if ( ! is_null( $referentie['gebruiker_id'] ) ) {
+			$mollie_betaling_id = get_user_meta( $referentie['gebruiker_id'], self::MOLLIE_BETALING, true );
+		}
+		if ( ! is_null( $referentie['order_id'] ) ) {
+			$order_betalingen = get_option( self::MOLLIE_AD_HOC );
+			if ( isset( $order_betalingen[ $referentie['order_id'] ] ) ) {
+				$mollie_betaling_id = $order_betalingen[ $referentie['order_id'] ];
+			}
+			unset( $order_betalingen[ $referentie['order_id'] ] );
+			update_option( self::MOLLIE_AD_HOC, $order_betalingen );
+		}
 		if ( '' !== $mollie_betaling_id ) {
 
 			try {
@@ -357,6 +401,7 @@ class Kleistad_Betalen {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
 		}
+		$error->add( 'betaling', 'De betaling via iDeal heeft niet plaatsgevonden. Probeer het opnieuw.' );
 		return $error;
 	}
 
@@ -426,7 +471,7 @@ class Kleistad_Betalen {
 	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return \WP_REST_response de response.
-	 * @suppress PhanUnusedPublicMethodParameter
+	 * @suppress PhanUnusedPublicMethodParameter, PhanUndeclaredProperty
 	 */
 	public static function callback_herhaalbetaling_verwerkt( WP_REST_Request $request ) {
 		$mollie_betaling_id = $request->get_param( 'id' );

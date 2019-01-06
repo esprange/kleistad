@@ -78,12 +78,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 		if ( is_null( $action ) ) {
 			$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
 		}
-		if ( ! is_null( $data ) ) {
-			/*
-			 * Er is ergens iets fout gegaan bij het invullen van het formulier, toon het opnieuw
-			 */
-			$data['id'] = $data['recept']['id'];
-		} elseif ( 'wijzigen' === $action ) {
+		if ( 'wijzigen' === $action ) {
 			/*
 			 * Er is een recept gekozen om te wijzigen.
 			 */

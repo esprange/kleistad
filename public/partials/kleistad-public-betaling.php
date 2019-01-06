@@ -203,7 +203,7 @@ if ( isset( $data['actie'] ) ) :
 				<p>Datum</p>
 			</div>
 			<div class="kleistad_col_6">
-				<p><?php echo esc_html( $data['workshop']->datum ); ?></p>
+				<p><?php echo esc_html( strftime( '%d-%m-%y', $data['workshop']->datum ) ); ?></p>
 			</div>
 		</div>
 		<div class="kleistad_row">

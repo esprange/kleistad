@@ -747,9 +747,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	/**
 	 * Return alle abonnementen
 	 *
+	 * @param string $search Optionele zoekterm.
 	 * @return array abonnementen.
 	 */
-	public static function all() {
+	public static function all( $search = '' ) {
 		static $arr = null;
 		if ( is_null( $arr ) ) {
 			$arr      = [];
@@ -757,6 +758,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				[
 					'meta_key' => self::META_KEY,
 					'fields'   => [ 'ID' ],
+					'search'   => '*' . $search . '*',
 				]
 			);
 			foreach ( $abonnees as $abonnee ) {

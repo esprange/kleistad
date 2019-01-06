@@ -99,9 +99,9 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	public function validate( &$data ) {
-		$error = new WP_Error();
-
-		$input = filter_input_array(
+		$error          = new WP_Error();
+		$data['cursus'] = null;
+		$data['input']  = filter_input_array(
 			INPUT_POST,
 			[
 				'EMAIL'           => FILTER_SANITIZE_EMAIL,
@@ -125,68 +125,63 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
-
-		$cursus = null;
-		if ( 0 === intval( $input['cursus_id'] ) ) {
+		if ( 0 === intval( $data['input']['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 		} else {
-			$cursus = new Kleistad_Cursus( $input['cursus_id'] );
-			if ( is_null( $cursus->id ) ) {
+			$data['cursus'] = new Kleistad_Cursus( $data['input']['cursus_id'] );
+			if ( is_null( $data['cursus']->id ) ) {
 				$error->add( 'onbekend', 'De gekozen cursus is niet bekend' );
-				$input['cursus_id'] = 0;
-			} elseif ( $cursus->vol ) {
+				$data['input']['cursus_id'] = 0;
+			} elseif ( $data['cursus']->vol ) {
 				$error->add( 'vol', 'De gekozen cursus is vol. Inschrijving is niet mogelijk.' );
-				$input['cursus_id'] = 0;
+				$data['input']['cursus_id'] = 0;
 			} else {
-				$ruimte = $cursus->ruimte;
+				$ruimte = $data['cursus']->ruimte;
 				if ( 0 === $ruimte ) {
 					$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
-					$input['cursus_id'] = 0;
-				} elseif ( $ruimte < $input['aantal'] ) {
+					$data['input']['cursus_id'] = 0;
+				} elseif ( $ruimte < $data['input']['aantal'] ) {
 					$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
-					$input['aantal'] = $ruimte;
+					$data['input']['aantal'] = $ruimte;
 				}
 			}
 		}
-		if ( 1 > $input['aantal'] ) {
+		if ( 1 > $data['input']['aantal'] ) {
 			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
-			$input['aantal'] = 1;
+			$data['input']['aantal'] = 1;
 		}
-		if ( 0 === intval( $input['gebruiker_id'] ) ) {
-			$email = strtolower( $input['EMAIL'] );
+		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
+			$email = strtolower( $data['input']['EMAIL'] );
 			if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
-				$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
-				$input['EMAIL']          = '';
-				$input['email_controle'] = '';
+				$error->add( 'verplicht', 'De invoer ' . $data['input']['EMAIL'] . ' is geen geldig E-mail adres.' );
+				$data['input']['EMAIL']          = '';
+				$data['input']['email_controle'] = '';
 			} else {
-				$input['EMAIL'] = $email;
-				if ( strtolower( $input['email_controle'] ) !== $email ) {
-					$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
-					$input['email_controle'] = '';
+				$data['input']['EMAIL'] = $email;
+				if ( strtolower( $data['input']['email_controle'] ) !== $email ) {
+					$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $data['input']['EMAIL'] . ' en ' . $data['input']['email_controle'] . ' zijn niet identiek' );
+					$data['input']['email_controle'] = '';
 				} else {
-					$input['email_controle'] = $email;
+					$data['input']['email_controle'] = $email;
 				}
 			}
 
-			$input['pcode'] = strtoupper( str_replace( ' ', '', $input['pcode'] ) );
+			$data['input']['pcode'] = strtoupper( str_replace( ' ', '', $data['input']['pcode'] ) );
 
-			$voornaam = preg_replace( '/[^a-zA-Z\s]/', '', $input['FNAME'] );
+			$voornaam = preg_replace( '/[^a-zA-Z\s]/', '', $data['input']['FNAME'] );
 			if ( '' === $voornaam ) {
 				$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
-				$input['FNAME'] = '';
+				$data['input']['FNAME'] = '';
 			}
-			$achternaam = preg_replace( '/[^a-zA-Z\s]/', '', $input['LNAME'] );
+			$achternaam = preg_replace( '/[^a-zA-Z\s]/', '', $data['input']['LNAME'] );
 			if ( '' === $achternaam ) {
 				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
-				$input['LNAME'] = '';
-			}
-			if ( is_null( $input['technieken'] ) ) {
-				$input['technieken'] = [];
+				$data['input']['LNAME'] = '';
 			}
 		}
-		$data ['input']  = $input;
-		$data ['cursus'] = $cursus;
-
+		if ( is_null( $data['input']['technieken'] ) ) {
+			$data['input']['technieken'] = [];
+		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}

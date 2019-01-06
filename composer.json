@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "mollie/mollie-api-php": "^2.0"
+        "mollie/mollie-api-php": "^2.0",
+        "google/apiclient": "2.2"
     },
     "require-dev": {
     }
