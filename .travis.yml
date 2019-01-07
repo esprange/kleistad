@@ -1,4 +1,6 @@
-## YAML Template.
+sudo: false
+dist: trusty
+
 language: php
 
 notifications:
