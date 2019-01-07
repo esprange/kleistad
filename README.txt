@@ -142,5 +142,8 @@ Deze plugin voegt drie tabellen toe aan de database:
 * kleistad_ovens
 * kleistad_reserveringen
 * kleistad_cursussen
+* kleistad_workshops
+
+De plugin maakt gebruik van Mollie en de Google Calendar API
 
 Alle overige informatie wordt via user_meta en custom posts informatie vastgelegd.
