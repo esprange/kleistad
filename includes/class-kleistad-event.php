@@ -116,7 +116,7 @@ class Kleistad_Event {
 		} else {
 			$this->_event       = $event;
 			$extendedproperties = $this->_event->getExtendedProperties();
-			$this->_properties  = $extendedproperties->getPrivate();
+			$this->_properties  = ! is_null( $extendedproperties ) ? $extendedproperties->getPrivate() : [];
 		}
 	}
 
@@ -136,6 +136,7 @@ class Kleistad_Event {
 	 * Maak een Google API client aan.
 	 *
 	 * @return Google_Client $client.
+	 * @suppress PhanTypeArraySuspicious, PhanTypeMismatchArgument, PhanTypeVoidAssignment
 	 */
 	private static function maak_client() {
 		$options            = get_option( 'kleistad-opties' );
@@ -271,7 +272,11 @@ class Kleistad_Event {
 			case 'id':
 				return $this->_event->getId();
 			case 'properties':
-				return json_decode( $this->_properties['data'], true );
+				if ( isset( $this->_properties['data'] ) ) {
+					return json_decode( $this->_properties['data'], true );
+				} else {
+					return [];
+				}
 			default:
 				return null;
 		}
@@ -341,17 +346,19 @@ class Kleistad_Event {
 			return [];
 		};
 		$default_query = [
-			'calendarId'              => self::$_kalender_id,
-			'orderBy'                 => 'startTime',
-			'singleEvents'            => true,
-			'timeMin'                 => date( 'c', mktime( 0, 0, 0, 1, 1, 2018 ) ),
-			'privateExtendedProperty' => 'key=' . self::META_KEY,
+			'calendarId'   => self::$_kalender_id,
+			'orderBy'      => 'startTime',
+			'singleEvents' => true,
+			'timeMin'      => date( 'c', mktime( 0, 0, 0, 1, 1, 2018 ) ),
+			// phpcs:ignore 'privateExtendedProperty' => 'key=' . self::META_KEY,
 		];
-		$results       = self::$_service->events->listEvents( self::$_kalender_id, array_merge( $default_query, $query ) );
-		$events        = $results->getItems();
-		$arr           = [];
+		$results = self::$_service->events->listEvents( self::$_kalender_id, array_merge( $default_query, $query ) );
+		$events  = $results->getItems();
+		$arr     = [];
 		foreach ( $events as $event ) {
-			$arr[ $event->getId() ] = new Kleistad_Event( $event );
+			if ( ! empty( $event->start->dateTime ) ) { // Skip events die de hele dag duren, zoals verjaardagen en vakanties.
+				$arr[ $event->getId() ] = new Kleistad_Event( $event );
+			}
 		}
 		return $arr;
 	}

@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 4.9.8  
-**Stable tag:** 5.0.2  
+**Stable tag:** 5.0.3  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -33,7 +33,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 5.0.0 ###
+### 5.0.3 ###
+* ook overige afspraken zijn zichtbaar in de kalender, naast cursussen en workshops
+### 5.0.2 ###
 * integratie met Google Calender voor individuele workshops en cursussen.
 * nadat ingedeeld is kan er niet opnieuw ingeschreven worden.
 * aanpassing downloadfile abonnees (shortcode registratie overzicht).

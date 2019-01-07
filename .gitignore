@@ -1,6 +1,9 @@
 # Subversion
 .svn
 
+# Visual Studio
+.editorconfig
+
 # Ignore folders
 node_modules/
 vendor/
@@ -24,3 +27,8 @@ wp-cli.local.yml
 # Phan analyse file and files listing
 analysis.txt
 files.lst
+
+# Google test files
+credentials.json
+token.json
+quickstart.php

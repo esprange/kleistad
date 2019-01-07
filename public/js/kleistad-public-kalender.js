@@ -118,16 +118,23 @@
             $( 'body' ).on(
                 'click', '.kleistad_event_info', function() {
 					var event = $( this ).data( 'event' );
+					var tekst = '';
                     $( '#kleistad_event' ).dialog( 'option', 'title', event.naam ).dialog( 'open' );
-					$( '#kleistad_event' ).html(
-						'<table class="kleistad_form" >' +
-						'<tr><th>Code</th><td>' + event.code + '</td></tr>' +
-						'<tr><th>Docent</th><td>' + event.docent + '</td></tr>' +
-						'<tr><th>Start</th><td>' + event.start + '</td></tr>' +
-						'<tr><th>Eind</th><td>' + event.eind + '</td></tr>' +
-						'<tr><th>Aantal</th><td>' + event.aantal + '</td></tr>' +
-						'<tr><th>Technieken</th><td>' + event.technieken + '</td></tr>' +
-						'</table>' );
+					if ( 'undefined' !== typeof( event.code ) ) {
+						tekst += '<tr><th>Code</th><td>' + event.code + '</td></tr>';
+					}
+					if ( 'undefined' !== typeof( event.docent ) ) {
+						tekst += '<tr><th>Docent</th><td>' + event.docent + '</td></tr>';
+					}
+					tekst += '<tr><th>Start</th><td>' + event.start + '</td></tr>';
+					tekst += '<tr><th>Eind</th><td>' + event.eind + '</td></tr>';
+					if ( 'undefined' !== typeof( event.aantal ) ) {
+						tekst += '<tr><th>Aantal</th><td>' + event.aantal + '</td></tr>';
+					}
+					if ( 'undefined' !== typeof( event.technieken && '' !== event.technieken ) ) {
+						tekst += '<tr><th>Technieken</th><td>' + event.technieken + '</td></tr>';
+					}
+					$( '#kleistad_event' ).html( '<table class="kleistad_form" >' + tekst + '</table>' );
                 }
             );
         }
