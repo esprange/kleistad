@@ -240,7 +240,8 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			$onderwerp,
 			$slug,
 			[
-				'naam'                => $this->contact,
+				'contact'             => $this->contact,
+				'naam'                => ( 'workshop' === $this->naam ) ? 'de workshop' : ( 'kinderfeest' === $this->naam ? 'het kinderfeest' : $this->naam ),
 				'organisatie'         => $this->organisatie,
 				'aantal'              => $this->aantal,
 				'workshop_code'       => $this->code,

@@ -114,7 +114,7 @@
 			<ul style="list-style-type:square">
 				<li>[contact] : contactpersoon van de workshop aanvraag</li>
 				<li>[organisatie] : organisatie welke de workshop aanvraagt</li>
-				<li>[naam] : titel van de cursus</li>
+				<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest')</li>
 				<li>[aantal] : aantal deelnemers</li>
 				<li>[workshop_docent] : naam van de docent</li>
 				<li>[workshop_datum] : datum van de workshop</li>
