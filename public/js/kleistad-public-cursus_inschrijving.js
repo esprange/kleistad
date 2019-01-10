@@ -34,7 +34,7 @@
                 $( '#kleistad_cursus_technieken' ).css( 'visibility', 'visible' );
             }
         );
-        if ( 1 < cursus.ruimte ) {
+        if ( cursus.meer && ( 1 < cursus.ruimte ) ) {
             $( '#kleistad_cursus_aantal' ).css( 'visibility', 'visible' );
         } else {
             $( '#kleistad_cursus_aantal' ).css( 'visibility', 'hidden' );
