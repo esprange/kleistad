@@ -16,7 +16,8 @@
  */
 class Kleistad_Workshop extends Kleistad_Entity {
 
-	const META_KEY = 'kleistad_workshop';
+	const META_KEY   = 'kleistad_workshop';
+	const EMAIL_TIJD = 9; // 9:00 uur.
 
 	/**
 	 * Constructor
@@ -162,7 +163,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			$this->definitief = true;
 			$this->save();
 			wp_schedule_single_event(
-				mktime( 0, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
+				mktime( self::EMAIL_TIJD, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
 				self::META_KEY,
 				[
 					$this->id,
@@ -183,7 +184,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 		if ( ! $this->vervallen ) {
 			$this->vervallen = true;
 			wp_unschedule_event(
-				mktime( 0, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
+				mktime( self::EMAIL_TIJD, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
 				self::META_KEY,
 				[
 					$this->id,
