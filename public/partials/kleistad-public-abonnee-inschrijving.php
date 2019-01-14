@@ -22,6 +22,7 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required
 					data-bedrag="<?php echo esc_attr( 3 * $this->options['onbeperkt_abonnement'] + $this->options['borg_kast'] ); ?>"
+					data-bedragtekst="= 3 termijnen <?php echo esc_attr( 0.0 < $this->options['borg_kast'] ? '+ borg' : '' ); ?>"
 					value="onbeperkt" <?php checked( 'onbeperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_onbeperkt" >
 					Onbeperkt<br/>(€ <?php echo esc_html( number_format_i18n( $this->options['onbeperkt_abonnement'], 2 ) ); ?> p.m.)
@@ -32,6 +33,7 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 			<div class="kleistad_col_3">
 				<input class="kleistad_input_cbr" name="abonnement_keuze" id="kleistad_beperkt" type="radio" required
 					data-bedrag="<?php echo esc_attr( 3 * $this->options['beperkt_abonnement'] + $this->options['borg_kast'] ); ?>"
+					data-bedragtekst="= 3 termijnen <?php echo esc_attr( 0.0 < $this->options['borg_kast'] ? '+ borg' : '' ); ?>"
 					value="beperkt" <?php checked( 'beperkt', $data['input']['abonnement_keuze'] ); ?> />
 				<label class="kleistad_label_cbr" for="kleistad_beperkt">
 					Beperkt<br/>(€ <?php echo esc_html( number_format_i18n( $this->options['beperkt_abonnement'], 2 ) ); ?> p.m.)
