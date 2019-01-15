@@ -3,7 +3,7 @@
 ( function( $ ) {
     'use strict';
 
-	function kalender( dag, maand, jaar, modus ) {
+	function kalender( datum, modus ) {
 
 		$.ajax(
 			{
@@ -13,14 +13,20 @@
 					xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
 				},
 				data: {
-					dag:    dag,
-					maand:  maand,
-					jaar:   jaar,
-					modus:  modus
+					dag:   datum.dag,
+					maand: datum.maand,
+					jaar:  datum.jaar,
+					modus: modus,
 				}
 			}
 		).done(
 			function( data ) {
+				var table = $( '#kleistad_kalender' );
+				table.data( 'datum', {
+					dag :  data.dag,
+					maand: data.maand,
+					jaar:  data.jaar
+				});
 				$( '#kleistad_kalender' ).html( data.html );
 			}
 		).fail(
@@ -43,61 +49,87 @@
 			 */
 			( function() {
 				var table = $( '#kleistad_kalender' );
-				var dag   = table.data( 'dag' ),
-					maand = table.data( 'maand' ),
-					jaar  = table.data( 'jaar' ),
+				var datum = table.data( 'datum' ),
 					modus = table.data( 'modus' );
-				kalender( dag, maand, jaar, modus );
+				kalender( datum, modus );
 			})();
 
 			/**
-			 * Volgende maand.
+			 * Volgende maand of dag.
 			 */
             $( 'body' ).on(
                 'click', '#kleistad_next', function() {
 					var table = $( '#kleistad_kalender' );
-					var dag   = table.data( 'dag' ),
-						maand = table.data( 'maand' ) + 1,
-						jaar  = table.data( 'jaar' ),
+					var datum = table.data( 'datum' ),
 						modus = table.data( 'modus' );
-						if ( 12 < maand ) {
-						jaar++;
-						maand = 1;
+					if ( 'maand' === modus ) {
+						datum.maand++;
+					} else if ( 'dag' === modus ) {
+						datum.dag++;
 					}
-					table.data( 'maand', maand );
-					table.data( 'jaar', jaar );
+					table.data( 'datum', datum );
+					kalender( datum, modus );
+				}
+			);
+
+			/**
+			 * Vorige maand of dag.
+			 */
+            $( 'body' ).on(
+                'click', '#kleistad_prev', function() {
+					var table = $( '#kleistad_kalender' );
+					var datum = table.data( 'datum' ),
+						modus = table.data( 'modus' );
+					if ( 'maand' === modus ) {
+						datum.maand--;
+					} else if ( 'dag' === modus ) {
+						datum.dag--;
+					}
+					table.data( 'datum', datum );
+					kalender( datum, modus );
+				}
+			);
+
+			/**
+			 * Keuze dag.
+			 */
+			$( 'body' ).on(
+				'click', '.kleistad_dag', function() {
+					var table = $( '#kleistad_kalender' );
+					var dag   = $( this ).html(),
+					    maand = table.data( 'maand' ),
+					    jaar  = table.data( 'jaar' ),
+					    modus = 'dag';
+					table.data( 'dag', dag );
+					table.data( 'modus', modus );
 					kalender( dag, maand, jaar, modus );
 				}
 			);
 
 			/**
-			 * Vorige maand.
+			 * Keuze maand.
 			 */
-            $( 'body' ).on(
-                'click', '#kleistad_prev', function() {
+			$( 'body' ).on(
+				'click', '.kleistad_maand', function() {
 					var table = $( '#kleistad_kalender' );
-					var dag   = table.data( 'dag' ),
-						maand = table.data( 'maand' ) - 1,
-						jaar  = table.data( 'jaar' ),
-						modus = table.data( 'modus' );
-					if ( 1 > maand ) {
-						jaar--;
-						maand = 12;
-					}
-					table.data( 'maand', maand );
-					table.data( 'jaar', jaar );
+					var dag   = 1,
+					    maand = table.data( 'maand' ),
+					    jaar  = table.data( 'jaar' ),
+					    modus = 'maand';
+					table.data( 'dag', dag );
+					table.data( 'modus', modus );
 					kalender( dag, maand, jaar, modus );
 				}
 			);
 
-            /**
+			/**
              * Definieer de popup dialoog
              */
             $( '#kleistad_event' ).dialog(
                 {
                     autoOpen: false,
                     height: 'auto',
-                    width: 500,
+                    width: '300',
                     modal: true
                 }
             );
@@ -106,7 +138,7 @@
              * Verander de opmaak bij hover
              */
             $( 'body' ).on(
-                'hover', '.kleistad_event_info, .kleistad_maand', function() {
+                'hover', '.kleistad_event_info, .kleistad_maand, .kleistad_dag, #kleistad_prev, #kleistad_next', function() {
                     $( this ).css( 'cursor', 'pointer' );
                     $( this ).toggleClass( 'kleistad_hover' );
                 }

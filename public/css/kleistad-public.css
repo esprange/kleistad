@@ -329,6 +329,10 @@ label.kleistad_label_cb {
 	white-space: nowrap;
 }
 
+.kleistad_event_info {
+	cursor: pointer;
+}
+
 /* csslint ignore:start */
 [class^="kleistad_col_"] {
     border: 0;
