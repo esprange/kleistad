@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 4.9.8
-Stable tag: 5.0.4
+Stable tag: 5.1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 5.1.0 =
+* Agenda functie vervangen door FullCalendar object
 = 5.0.4 =
 * Kosten borg niet meer tonen als bedrag borg gelijk is aan 0
 * Bugfixes
