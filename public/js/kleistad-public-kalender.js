@@ -20,8 +20,9 @@
 				},
 				minTime: '08:00:00',
 				eventRender: function( info ) {
+					var tekst;
 					if ( 'agendaDay' === info.view.type ) {
-						var tekst = '<table class="kleistad_form">';
+						tekst = '<table class="kleistad_form">';
 						if ( 'undefined' !== typeof( info.event.extendedProps.code ) ) {
 							tekst += '<tr><td>Code</td><td>' + info.event.extendedProps.code + '</td></tr>';
 						}
