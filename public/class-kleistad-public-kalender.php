@@ -69,6 +69,7 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 							'start'           => $event->start->format( DateTime::ATOM ),
 							'end'             => $event->eind->format( DateTime::ATOM ),
 							'backgroundColor' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'orange' : 'lightblue' ),
+							'textColor'       => ( $workshop->betaald || $workshop->definitief ) ? 'white' : 'black',
 							'extendedProps'   => [
 								'naam'       => $workshop->naam,
 								'aantal'     => $workshop->aantal,
@@ -88,6 +89,7 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 							'start'           => $event->start->format( DateTime::ATOM ),
 							'end'             => $event->eind->format( DateTime::ATOM ),
 							'backgroundColor' => $cursus->tonen ? 'green' : 'lightblue',
+							'textColor'       => $cursus->tonen ? 'white' : 'black',
 							'extendedProps'   => [
 								'naam'       => $cursus->naam,
 								'aantal'     => $cursus->maximum - $cursus->ruimte,
