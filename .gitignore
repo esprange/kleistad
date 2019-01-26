@@ -1,6 +1,9 @@
 # Subversion
 .svn
 
+# Phan
+.phan/
+
 # Visual Studio
 .editorconfig
 

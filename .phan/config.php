@@ -33,7 +33,7 @@ return [
 	// files will be statically analyzed for errors.
 	'directory_list'                  => [
 		'.',
-		"\\referentie",
+//		"\\referentie",
 	],
 
 	// A directory list that defines files that will be excluded
@@ -42,7 +42,7 @@ return [
 	'exclude_analysis_directory_list' => [
 		'vendor',
 		'tests',
-		"\\referentie",
+//		"\\referentie",
 	],
 
 	// Add any issue types (such as 'PhanUndeclaredMethod')
