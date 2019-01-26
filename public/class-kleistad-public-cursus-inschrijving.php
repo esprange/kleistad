@@ -28,7 +28,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 	 */
 	public function prepare( &$data = null ) {
 
-		if ( is_null( $data ) ) {
+		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [
 				'EMAIL'           => '',
