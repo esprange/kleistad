@@ -20,22 +20,24 @@
 				},
 				minTime: '08:00:00',
 				eventRender: function( info ) {
-					var tekst;
+					var tekst = '';
 					if ( 'agendaDay' === info.view.type ) {
-						tekst = '<table class="kleistad_form">';
+						// if ( ( 'cursus' === info.event.title ) && ( 'undefined' !== typeof( info.event.extendedProps.naam ) ) && ( '' !== info.event.extendedProps.naam ) ) {
+						// 	tekst += '<div class="kleistad_row"><div class="kleistad_col_3">' + info.event.extendedProps.naam + '</div></div>';
+						// }
 						if ( 'undefined' !== typeof( info.event.extendedProps.code ) ) {
-							tekst += '<tr><td>Code</td><td>' + info.event.extendedProps.code + '</td></tr>';
+							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Code</div><div class="kleistad_col_2">' + info.event.extendedProps.code + '</div></div>';
 						}
 						if ( 'undefined' !== typeof( info.event.extendedProps.docent ) ) {
-							tekst += '<tr><td>Docent</td><td>' + info.event.extendedProps.docent + '</td></tr>';
+							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Docent</div><div class="kleistad_col_2">' + info.event.extendedProps.docent + '</div></div>';
 						}
 						if ( 'undefined' !== typeof( info.event.extendedProps.aantal ) ) {
-							tekst += '<tr><td>Aantal</td><td>' + info.event.extendedProps.aantal + '</td></tr>';
+							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Aantal</div><div class="kleistad_col_2">' + info.event.extendedProps.aantal + '</div></div>';
 						}
-						if ( 'undefined' !== typeof( info.event.extendedProps.technieken && '' !== info.event.extendedProps.technieken ) ) {
-							tekst += '<tr><td>Technieken</td><td>' + info.event.extendedProps.technieken + '</td></tr>';
+						if ( ( 'undefined' !== typeof( info.event.extendedProps.technieken ) ) && ( '' !== info.event.extendedProps.technieken ) ) {
+							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Techniek</div><div class="kleistad_col_2">' + info.event.extendedProps.technieken + '</div></div>';
 						}
-						info.el.innerHTML += tekst + '</table>';
+						info.el.innerHTML += tekst;
 					}
 				},
 				events: function( info, successCallback, failureCallback ) {
@@ -68,7 +70,18 @@
 				}
 			});
 			calendar.render();
-        }
+
+			/**
+			 * Verander de opmaak bij hovering.
+			 */
+			$( 'body' ).on(
+				'hover', '.fc-day-number', function() {
+					$( this ).css( 'cursor', 'pointer' );
+				}
+			);
+
+		}
+
     );
 
 } )( jQuery );
