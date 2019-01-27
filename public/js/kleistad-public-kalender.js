@@ -22,12 +22,6 @@
 				eventRender: function( info ) {
 					var tekst = '';
 					if ( 'agendaDay' === info.view.type ) {
-						// if ( ( 'cursus' === info.event.title ) && ( 'undefined' !== typeof( info.event.extendedProps.naam ) ) && ( '' !== info.event.extendedProps.naam ) ) {
-						// 	tekst += '<div class="kleistad_row"><div class="kleistad_col_3">' + info.event.extendedProps.naam + '</div></div>';
-						// }
-						if ( 'undefined' !== typeof( info.event.extendedProps.code ) ) {
-							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Code</div><div class="kleistad_col_2">' + info.event.extendedProps.code + '</div></div>';
-						}
 						if ( 'undefined' !== typeof( info.event.extendedProps.docent ) ) {
 							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Docent</div><div class="kleistad_col_2">' + info.event.extendedProps.docent + '</div></div>';
 						}

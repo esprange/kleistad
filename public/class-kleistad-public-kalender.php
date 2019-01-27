@@ -65,15 +65,14 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 						$workshop    = new Kleistad_Workshop( $id );
 						$fc_events[] = [
 							'id'              => $event->id,
-							'title'           => $workshop->naam,
+							'title'           => "$workshop->naam ($workshop->code)",
 							'start'           => $event->start->format( DateTime::ATOM ),
 							'end'             => $event->eind->format( DateTime::ATOM ),
 							'backgroundColor' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'orange' : 'lightblue' ),
-							'textColor'       => ( $workshop->betaald || $workshop->definitief ) ? 'white' : 'black',
+							'textColor'       => ( $workshop->betaald ) ? 'white' : 'black',
 							'extendedProps'   => [
 								'naam'       => $workshop->naam,
 								'aantal'     => $workshop->aantal,
-								'code'       => $workshop->code,
 								'docent'     => $workshop->docent,
 								'technieken' => implode( ', ', $workshop->technieken ),
 								'start'      => strftime( '%H:%M', $workshop->start_tijd ),
@@ -85,7 +84,7 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 						$cursus      = new Kleistad_Cursus( $id );
 						$fc_events[] = [
 							'id'              => $event->id,
-							'title'           => 'cursus',
+							'title'           => "cursus ($cursus->code)",
 							'start'           => $event->start->format( DateTime::ATOM ),
 							'end'             => $event->eind->format( DateTime::ATOM ),
 							'backgroundColor' => $cursus->tonen ? 'green' : 'lightblue',
@@ -93,7 +92,6 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 							'extendedProps'   => [
 								'naam'       => $cursus->naam,
 								'aantal'     => $cursus->maximum - $cursus->ruimte,
-								'code'       => $cursus->code,
 								'docent'     => $cursus->docent,
 								'technieken' => implode( ', ', $cursus->technieken ),
 								'start'      => strftime( '%H:%M', $cursus->start_tijd ),
