@@ -253,20 +253,30 @@ class Kleistad_Betalen {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 
 		if ( '' !== $mollie_gebruiker_id ) {
-			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			$subscriptie      = $mollie_gebruiker->createSubscription(
-				[
-					'amount'      => [
-						'currency' => 'EUR',
-						'value'    => number_format( $bedrag, 2, '.', '' ),
-					],
-					'description' => $beschrijving,
-					'interval'    => '1 month',
-					'startDate'   => strftime( '%Y-%m-%d', $start ),
-					'webhookUrl'  => Kleistad_Public::base_url() . '/betaling/herhaal/',
-				]
-			);
-			return $subscriptie->id;
+			try {
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+				$subscripties     = $mollie_gebruiker->subscriptions();
+				foreach ( $subscripties as $subscriptie ) {
+					if ( $subscriptie->isActive() && $beschrijving === $subscriptie->description ) {
+						$mollie_gebruiker->cancelSubscription( $subscriptie->id );
+					}
+				}
+				$subscriptie = $mollie_gebruiker->createSubscription(
+					[
+						'amount'      => [
+							'currency' => 'EUR',
+							'value'    => number_format( $bedrag, 2, '.', '' ),
+						],
+						'description' => $beschrijving,
+						'interval'    => '1 month',
+						'startDate'   => strftime( '%Y-%m-%d', $start ),
+						'webhookUrl'  => Kleistad_Public::base_url() . '/betaling/herhaal/',
+					]
+				);
+				return $subscriptie->id;
+			} catch ( Exception $e ) {
+				error_log( $e->getMessage() ); // phpcs:ignore
+			}
 		}
 		return '';
 	}
@@ -285,8 +295,8 @@ class Kleistad_Betalen {
 		try {
 			if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
 				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-				$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
-				if ( $subscription->isActive() ) {
+				$subscriptie      = $mollie_gebruiker->getSubscription( $subscriptie_id );
+				if ( $subscriptie->isActive() ) {
 					$mollie_gebruiker->cancelSubscription( $subscriptie_id );
 				}
 			}
