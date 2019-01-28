@@ -83,11 +83,11 @@ elseif ( 'extras' === $actie ) :
 		endif;
 	endforeach;
 	?>
-	<tr>
-		<td>
-			<?php submit_button(); ?>
-		</td>
-	</tr>
+		<tr>
+			<td>
+				<?php submit_button(); ?>
+			</td>
+		</tr>
 	<?php
 elseif ( 'status' === $actie ) :
 	if ( ! $item['geannuleerd'] && ! $item['gestart'] ) :
@@ -166,16 +166,16 @@ elseif ( 'status' === $actie ) :
 	<?php
 elseif ( 'mollie' === $actie ) :
 	?>
-		<tr>
+		<tr class="form-field">
 			<td>
 				<?php submit_button( 'verwijder mandaat' ); ?>
 			</td>
-			<td>
-				Let op: bij verwijderen mandaat wordt een eventuele automatische incasso gestopt!
-			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">Let op: bij verwijderen mandaat wordt een eventuele automatische incasso gestopt!</td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<?php echo esc_html( $item['mollie_info'] ); ?>
 			</td>
 		</tr>
