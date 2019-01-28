@@ -46,7 +46,7 @@ class Kleistad_Activator {
 			'extra'                => [],
 		];
 		$current_options = get_option( 'kleistad-opties' );
-		$options         = wp_parse_args( isempty( $current_options ) ? '' : $current_options, $default_options );
+		$options         = wp_parse_args( empty( $current_options ) ? '' : $current_options, $default_options );
 		update_option( 'kleistad-opties', $options );
 
 		$database_version = intval( get_option( 'kleistad-database-versie', 0 ) );
