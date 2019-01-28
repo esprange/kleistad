@@ -11,6 +11,21 @@
 
 /**
  * Class abonnement, alle acties voor het aanmaken en beheren van abonnementen
+ *
+ * @property string code
+ * @property int    datum
+ * @property int    start_datum
+ * @property string dag
+ * @property bool   geannuleerd
+ * @property string opmerking
+ * @property string soort
+ * @property int    pauze_datum
+ * @property int    eind_datum
+ * @property int    herstart_datum
+ * @property int    incasso_datum
+ * @property bool   gepauzeerd
+ * @property string subscriptie_id
+ * @property array  extras
  */
 class Kleistad_Abonnement extends Kleistad_Entity {
 

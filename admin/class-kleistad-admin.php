@@ -599,6 +599,7 @@ class Kleistad_Admin {
 	public function abonnees_form_page_handler() {
 		$message = '';
 		$notice  = '';
+		$actie   = null;
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
@@ -1073,13 +1074,14 @@ class Kleistad_Admin {
 				if ( ! $gebruiker ) {
 					$item   = $default;
 					$notice = 'De gebruiker is niet gevonden';
+				} else {
+					$saldo = new Kleistad_saldo( $_REQUEST['id'] );
+					$item  = [
+						'id'    => $_REQUEST['id'],
+						'naam'  => $gebruiker->display_name,
+						'saldo' => $saldo->bedrag,
+					];
 				}
-				$item          = [
-					'id'   => $_REQUEST['id'],
-					'naam' => $gebruiker->display_name,
-				];
-				$saldo         = new Kleistad_saldo( $item['id'] );
-				$item['saldo'] = $saldo->bedrag;
 			}
 		}
 		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this, 'stooksaldo_form_meta_box_handler' ], 'stooksaldo', 'normal', 'default' );

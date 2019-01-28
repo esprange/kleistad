@@ -13,6 +13,27 @@
  * Kleistad Cursus class.
  *
  * @since 4.0.87
+ *
+ * @property int    id
+ * @property string naam
+ * @property int    start_datum
+ * @property int    eind_datum
+ * @property int    start_tijd
+ * @property int    eind_tijd
+ * @property string docent
+ * @property array  technieken
+ * @property bool   vervallen
+ * @property bool   vol
+ * @property string techniekkeuze
+ * @property float  inschrijfkosten
+ * @property float  cursuskosten
+ * @property string inschrijfslug
+ * @property string indelingslug
+ * @property int    maximum
+ * @property int    ruimte
+ * @property bool   meer
+ * @property bool   tonen
+ * @property string event_id
  */
 class Kleistad_Cursus extends Kleistad_Entity {
 

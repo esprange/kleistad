@@ -13,6 +13,11 @@
  * Kleistad Oven class.
  *
  * @since 4.0.87
+ *
+ * @property int    id
+ * @property string naam
+ * @property float  kosten
+ * @property array  beschikbaarheid
  */
 class Kleistad_Oven extends Kleistad_Entity {
 

@@ -116,16 +116,23 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	 * Bewaar 'registratie_overzicht' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return \WP_Error|string
 	 *
 	 * @since   4.0.87
 	 */
 	public function save( $data ) {
+		$error = new WP_Error();
+
 		if ( ! Kleistad_Roles::override() ) {
-			return '';
+			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
+			return $error;
 		}
 		$csv   = tempnam( sys_get_temp_dir(), $data['download'] );
 		$f_csv = fopen( $csv, 'w' );
+		if ( false === $f_csv ) {
+			$error->add( 'fout', 'Er kan geen bestand worden aangemaakt' );
+			return $error;
+		}
 		fwrite( $f_csv, "\xEF\xBB\xBF" );
 
 		switch ( $data['download'] ) {
@@ -215,8 +222,6 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				];
 				fputcsv( $f_csv, $abonnee_fields, ';', '"' );
 				foreach ( $abonnees as $abonnee ) {
-					$is_lid = ( ! empty( $abonnee->role ) || ( is_array( $abonnee->role ) && ( count( $abonnee->role ) > 0 ) ) );
-
 					$abonnee_gegevens = [
 						$abonnee->last_name,
 						$abonnee->first_name,

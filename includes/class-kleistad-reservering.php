@@ -13,6 +13,20 @@
  * Kleistad Reservering class.
  *
  * @since 4.0.87
+ *
+ * @property int    id
+ * @property int    oven_id
+ * @property int    jaar
+ * @property int    maand
+ * @property int    dag
+ * @property int    gebruiker_id
+ * @property int    temperatuur
+ * @property string soortstook
+ * @property int    programma
+ * @property bool   gemeld
+ * @property bool   verwerkt
+ * @property array  verdeling
+ * @property string opmerking
  */
 class Kleistad_Reservering extends Kleistad_Entity {
 

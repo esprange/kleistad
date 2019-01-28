@@ -13,6 +13,17 @@
  * Kleistad Inschrijving class.
  *
  * @since 4.0.87
+ *
+ * @property string code
+ * @property int    datum
+ * @property array  technieken
+ * @property bool   i_betaald
+ * @property bool   c_betaald
+ * @property bool   ingedeeld
+ * @property bool   geannuleerd
+ * @property string opmerking
+ * @property int    aantal
+ * @property bool   restant_email
  */
 class Kleistad_Inschrijving extends Kleistad_Entity {
 

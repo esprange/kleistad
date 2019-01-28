@@ -13,6 +13,11 @@
  * Kleistad dagdelenkaart.
  *
  * @since      4.3.0
+ *
+ * @property string code
+ * @property int    datum
+ * @property int    start_datum
+ * @property string opmerking
  */
 class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 

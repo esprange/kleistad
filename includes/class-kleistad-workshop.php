@@ -13,6 +13,24 @@
  * Kleistad workshop class.
  *
  * @since 5.0.0
+ *
+ * @property int    id
+ * @property string naam
+ * @property int    datum
+ * @property int    start_tijd
+ * @property int    eind_tijd
+ * @property string docent
+ * @property array  technieken
+ * @property string organisatie
+ * @property string contact
+ * @property string email
+ * @property string telefoon
+ * @property string programma
+ * @property bool   vervallen
+ * @property float  kosten
+ * @property int    aantal
+ * @property bool   betaald
+ * @property bool   definitief
  */
 class Kleistad_Workshop extends Kleistad_Entity {
 

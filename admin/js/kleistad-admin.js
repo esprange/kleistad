@@ -60,14 +60,14 @@
 								var day = date.getDate();
 								if ( $( this ).hasClass( 'maand' ) ) {
 									return [ ( 1 === day ) ];
-								} else {
-									return [ true ];
 								}
+								return [ true ];
 							},
 							beforeShow: function( input ) {
 								if ( $( input ).attr( 'readonly' ) ) {
 									return false;
 								}
+								return;
 							}
                         }
                     );

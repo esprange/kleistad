@@ -149,7 +149,7 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
 		$search_val   = filter_input( INPUT_GET, 's' );
-		$search       = ! is_null( $search_val ) ? $search_val : false;
+		$search       = ! is_null( $search_val ) ? $search_val : '';
 		$paged_val    = filter_input( INPUT_GET, 'paged' );
 		$paged        = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$orderby_val  = filter_input( INPUT_GET, 'orderby' );

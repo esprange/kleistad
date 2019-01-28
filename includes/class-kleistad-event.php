@@ -13,6 +13,14 @@
  * Kleistad Event class.
  *
  * @since 5.0.0
+ *
+ * @property bool   vervallen
+ * @property bool   definitief
+ * @property int    start
+ * @property int    eind
+ * @property string titel
+ * @property string id
+ * @property array  properties
  */
 class Kleistad_Event {
 
