@@ -137,7 +137,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
 			$gebruiker_id = Kleistad_Public::upsert_user(
 				[
-					'ID'         => ( $gebruiker_id ) ? $gebruiker_id : null,
+					'ID'         => ( false !== $gebruiker_id ) ? $gebruiker_id : null,
 					'first_name' => $data['input']['FNAME'],
 					'last_name'  => $data['input']['LNAME'],
 					'telnr'      => $data['input']['telnr'],
@@ -150,6 +150,10 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 			);
 		} else {
 			$gebruiker_id = get_current_user_id();
+			if ( is_wp_error( $gebruiker_id ) ) {
+				$error->add( '', $gebruiker_id->get_error_message() );
+				return $error;
+			}
 		}
 
 		$dagdelenkaart              = new Kleistad_Dagdelenkaart( $gebruiker_id );

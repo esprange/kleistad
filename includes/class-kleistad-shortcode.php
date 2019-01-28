@@ -46,7 +46,7 @@ abstract class Kleistad_Shortcode {
 	 *
 	 * @since 4.5.1
 	 *
-	 * @param  array|bool $data de uit te wisselen data.
+	 * @param  array $data de uit te wisselen data.
 	 * @return string html tekst.
 	 */
 	protected function display( &$data = null ) {

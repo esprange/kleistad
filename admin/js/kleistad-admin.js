@@ -67,7 +67,7 @@
 								if ( $( input ).attr( 'readonly' ) ) {
 									return false;
 								}
-								return;
+								return true;
 							}
                         }
                     );

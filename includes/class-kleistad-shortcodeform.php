@@ -49,7 +49,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 					'order_id'     => $order_id,
 				]
 			);
-			if ( ! is_wp_error( $result ) ) {
+			if ( is_string( $result ) ) {
 				$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
 			} else {
 				$html .= '<div class="kleistad_fout"><p>' . $result->get_error_message() . '</p></div>';
@@ -75,7 +75,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 				if ( ! is_wp_error( $result ) ) {
 					$result = $this->save( $data );
 				}
-				if ( ! is_wp_error( $result ) ) {
+				if ( is_string( $result ) ) {
 					$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
 					$data  = null;
 				} else {

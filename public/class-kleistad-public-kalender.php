@@ -55,7 +55,6 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 				'timeMax' => $request->get_param( 'eind' ),
 			]
 		);
-		$cursussen = [];
 		$fc_events = [];
 		foreach ( $events as $event ) {
 			if ( isset( $event->properties['class'] ) ) {

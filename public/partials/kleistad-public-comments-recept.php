@@ -22,7 +22,7 @@ if ( post_password_required() ) {
 			if ( '1' === $comments_number ) {
 				echo esc_html( sprintf( 'Een reactie op &ldquo;%s&rdquo;', get_the_title() ) );
 			} else {
-				echo esc_html( sprintf( '%1$s reacties op &ldquo;%2$s&rdquo;', number_format_i18n( $comments_number ), get_the_title() ) );
+				echo esc_html( sprintf( '%1$s reacties op &ldquo;%2$s&rdquo;', $comments_number, get_the_title() ) );
 			}
 			?>
 		</h2>

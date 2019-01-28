@@ -19,6 +19,7 @@
  * @property int    jaar
  * @property int    maand
  * @property int    dag
+ * @property int    datum
  * @property int    gebruiker_id
  * @property int    temperatuur
  * @property string soortstook

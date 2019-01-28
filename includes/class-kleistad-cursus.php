@@ -24,7 +24,7 @@
  * @property array  technieken
  * @property bool   vervallen
  * @property bool   vol
- * @property string techniekkeuze
+ * @property bool   techniekkeuze
  * @property float  inschrijfkosten
  * @property float  cursuskosten
  * @property string inschrijfslug
@@ -34,6 +34,7 @@
  * @property bool   meer
  * @property bool   tonen
  * @property string event_id
+ * @property string code
  */
 class Kleistad_Cursus extends Kleistad_Entity {
 
@@ -92,10 +93,12 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			'meer'            => 0,
 			'tonen'           => 0,
 		];
-		if ( is_null( $cursus_id ) ) {
-			$this->_data = $default_data;
-		} else {
-			$this->_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
+		$this->_data  = $default_data;
+		if ( ! is_null( $cursus_id ) ) {
+			$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
+			if ( ! is_null( $data ) ) {
+				$this->_data = $data;
+			}
 		}
 	}
 

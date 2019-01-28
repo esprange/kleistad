@@ -384,7 +384,7 @@ class Kleistad_Betalen {
 	 * @since      4.2.0
 	 *
 	 * @param  array $referentie de referentie wie of waarvoor er zojuist betaald heeft.
-	 * @return mixed de status van de betaling als tekst of een error object.
+	 * @return WP_Error|string de status van de betaling als tekst of een error object.
 	 */
 	public function controleer( $referentie ) {
 		$mollie_betaling_id = '';
@@ -499,7 +499,7 @@ class Kleistad_Betalen {
 			);
 			$gebruiker     = get_userdata( reset( $gebruiker_ids ) );
 			$to            = "$gebruiker->display_name <$gebruiker->user_email>";
-			return Kleistad_public::compose_email(
+			Kleistad_public::compose_email(
 				$to,
 				'Kleistad incasso mislukt',
 				'kleistad_email_incasso_mislukt',

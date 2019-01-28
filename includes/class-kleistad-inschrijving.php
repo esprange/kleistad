@@ -24,6 +24,7 @@
  * @property string opmerking
  * @property int    aantal
  * @property bool   restant_email
+ * @property bool   gedeeld
  */
 class Kleistad_Inschrijving extends Kleistad_Entity {
 
@@ -393,10 +394,12 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 
 			foreach ( $cursisten as $cursist ) {
 				$inschrijvingen = get_user_meta( $cursist->ID, self::META_KEY, true );
-				krsort( $inschrijvingen );
-				foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
-					$arr[ $cursist->ID ][ $cursus_id ] = new Kleistad_Inschrijving( $cursist->ID, $cursus_id );
-					$arr[ $cursist->ID ][ $cursus_id ]->load( $inschrijving );
+				if ( is_array( $inschrijvingen ) ) {
+					krsort( $inschrijvingen );
+					foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+						$arr[ $cursist->ID ][ $cursus_id ] = new Kleistad_Inschrijving( $cursist->ID, $cursus_id );
+						$arr[ $cursist->ID ][ $cursus_id ]->load( $inschrijving );
+					}
 				}
 			}
 		}

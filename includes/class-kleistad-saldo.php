@@ -12,7 +12,7 @@
 /**
  * Klasse voor het beheren van de stook saldo.
  *
- * @property float saldo
+ * @property float bedrag
  */
 class Kleistad_Saldo {
 

@@ -228,7 +228,7 @@ class Kleistad_Admin {
 	public static function exporter( $email, $page = 1 ) {
 		$export_items = [];
 		$gebruiker_id = email_exists( $email );
-		if ( $gebruiker_id ) {
+		if ( false !== $gebruiker_id ) {
 			$gebruiker    = get_userdata( $gebruiker_id );
 			$export_items = array_merge(
 				[
@@ -286,7 +286,7 @@ class Kleistad_Admin {
 	public static function eraser( $email, $page = 1 ) {
 		$count        = 0;
 		$gebruiker_id = email_exists( $email );
-		if ( $gebruiker_id ) {
+		if ( false !== $gebruiker_id ) {
 			update_user_meta( $gebruiker_id, 'telnr', '******' );
 			update_user_meta( $gebruiker_id, 'straat', '******' );
 			update_user_meta( $gebruiker_id, 'huisnr', '******' );

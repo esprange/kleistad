@@ -31,6 +31,8 @@
  * @property int    aantal
  * @property bool   betaald
  * @property bool   definitief
+ * @property string event_id
+ * @property string code
  */
 class Kleistad_Workshop extends Kleistad_Entity {
 

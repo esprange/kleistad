@@ -14,13 +14,13 @@
  *
  * @since 5.0.0
  *
- * @property bool   vervallen
- * @property bool   definitief
- * @property int    start
- * @property int    eind
- * @property string titel
- * @property string id
- * @property array  properties
+ * @property bool     vervallen
+ * @property bool     definitief
+ * @property DateTime start
+ * @property DateTime eind
+ * @property string   titel
+ * @property string   id
+ * @property array    properties
  */
 class Kleistad_Event {
 
@@ -160,7 +160,7 @@ class Kleistad_Event {
 		$client->setRedirectUri( get_option( self::REDIRECT_URI ) );
 		$client->refreshToken( get_option( self::REFRESH_TOKEN ) );
 		$token = $client->getAccessToken();
-		if ( $token ) {
+		if ( ! empty( $token ) ) {
 			update_option( self::ACCESS_TOKEN, $token );
 			$client->setAccessToken( $token );
 		}
