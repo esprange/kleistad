@@ -101,7 +101,7 @@ class Kleistad_Event {
 
 		if ( is_string( $event ) ) {
 			try {
-				$this->event        = self::$_service->events->get( self::$_kalender_id, $event );
+				$this->event        = self::$service->events->get( self::$kalender_id, $event );
 				$extendedproperties = $this->event->getExtendedProperties();
 				$this->properties   = $extendedproperties->getPrivate();
 			} catch ( Google_Service_exception $e ) {
@@ -147,9 +147,9 @@ class Kleistad_Event {
 	 * @suppress PhanTypeArraySuspicious, PhanTypeMismatchArgument, PhanTypeVoidAssignment
 	 */
 	private static function maak_client() {
-		$options            = get_option( 'kleistad-opties' );
-		self::$_kalender_id = $options['google_kalender_id'];
-		$client             = new Google_Client();
+		$options           = get_option( 'kleistad-opties' );
+		self::$kalender_id = $options['google_kalender_id'];
+		$client            = new Google_Client();
 		$client->setApplicationName( 'Kleistad_Calendar' );
 		$client->setAccessType( 'offline' );
 		$client->setClientId( $options['google_client_id'] );
@@ -226,7 +226,7 @@ class Kleistad_Event {
 	 * @return bool succes of falen.
 	 */
 	public static function maak_service() {
-		if ( ! is_null( self::$_service ) ) {
+		if ( ! is_null( self::$service ) ) {
 			return true;
 		}
 		$client = self::maak_client();
@@ -240,7 +240,7 @@ class Kleistad_Event {
 				return false;
 			}
 		}
-		self::$_service = new Google_Service_Calendar( $client );
+		self::$service = new Google_Service_Calendar( $client );
 		return true;
 	}
 
@@ -337,9 +337,9 @@ class Kleistad_Event {
 		$extendedproperties->setPrivate( $this->properties );
 		$this->event->setExtendedProperties( $extendedproperties );
 		if ( is_null( $this->event->getCreated() ) ) {
-			$this->event = self::$_service->events->insert( self::$_kalender_id, $this->event );
+			$this->event = self::$service->events->insert( self::$kalender_id, $this->event );
 		} else {
-			$this->event = self::$_service->events->update( self::$_kalender_id, $this->event->getId(), $this->event );
+			$this->event = self::$service->events->update( self::$kalender_id, $this->event->getId(), $this->event );
 		}
 	}
 
@@ -354,13 +354,13 @@ class Kleistad_Event {
 			return [];
 		};
 		$default_query = [
-			'calendarId'   => self::$_kalender_id,
+			'calendarId'   => self::$kalender_id,
 			'orderBy'      => 'startTime',
 			'singleEvents' => true,
 			'timeMin'      => date( 'c', mktime( 0, 0, 0, 1, 1, 2018 ) ),
 			// phpcs:ignore 'privateExtendedProperty' => 'key=' . self::META_KEY,
 		];
-		$results = self::$_service->events->listEvents( self::$_kalender_id, array_merge( $default_query, $query ) );
+		$results = self::$service->events->listEvents( self::$kalender_id, array_merge( $default_query, $query ) );
 		$events  = $results->getItems();
 		$arr     = [];
 		foreach ( $events as $event ) {
