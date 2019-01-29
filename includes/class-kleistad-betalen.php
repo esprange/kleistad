@@ -208,7 +208,7 @@ class Kleistad_Betalen {
 			$order_betalingen[ $referentie['order_id'] ] = $betaling->id;
 			update_option( self::MOLLIE_AD_HOC, $order_betalingen );
 		}
-		wp_redirect( $betaling->getCheckOutUrl(), 303 );
+		wp_redirect( $betaling->getCheckOutUrl(), 303 ); // phpcs:ignore
 		exit;
 	}
 

@@ -93,11 +93,11 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			'meer'            => 0,
 			'tonen'           => 0,
 		];
-		$this->_data  = $default_data;
+		$this->data   = $default_data;
 		if ( ! is_null( $cursus_id ) ) {
 			$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
 			if ( ! is_null( $data ) ) {
-				$this->_data = $data;
+				$this->data = $data;
 			}
 		}
 	}
@@ -113,29 +113,29 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return ( 'null' === $this->_data['technieken'] ) ? [] : json_decode( $this->_data['technieken'], true );
+				return ( 'null' === $this->data['technieken'] ) ? [] : json_decode( $this->data['technieken'], true );
 			case 'start_datum':
 			case 'eind_datum':
 			case 'start_tijd':
 			case 'eind_tijd':
-				return strtotime( $this->_data[ $attribuut ] );
+				return strtotime( $this->data[ $attribuut ] );
 			case 'vol':
-				return 1 === intval( $this->_data['vol'] ) || 0 === $this->ruimte();
+				return 1 === intval( $this->data['vol'] ) || 0 === $this->ruimte();
 			case 'vervallen':
 			case 'techniekkeuze':
 			case 'meer':
 			case 'tonen':
-				return 1 === intval( $this->_data[ $attribuut ] );
+				return 1 === intval( $this->data[ $attribuut ] );
 			case 'array':
-				return $this->_data;
+				return $this->data;
 			case 'ruimte':
 				return $this->ruimte();
 			case 'code':
-				return "C{$this->_data['id']}";
+				return "C{$this->data['id']}";
 			case 'event_id':
-				return sprintf( 'kleistadcursus%06d', $this->_data['id'] );
+				return sprintf( 'kleistadcursus%06d', $this->data['id'] );
 			default:
-				return $this->_data[ $attribuut ];
+				return $this->data[ $attribuut ];
 		}
 	}
 
@@ -150,25 +150,25 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				$this->_data[ $attribuut ] = wp_json_encode( $waarde );
+				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
 			case 'start_datum':
 			case 'eind_datum':
-				$this->_data[ $attribuut ] = date( 'Y-m-d', $waarde );
+				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
 			case 'start_tijd':
 			case 'eind_tijd':
-				$this->_data[ $attribuut ] = date( 'H:i', $waarde );
+				$this->data[ $attribuut ] = date( 'H:i', $waarde );
 				break;
 			case 'vervallen':
 			case 'vol':
 			case 'techniekkeuze':
 			case 'meer':
 			case 'tonen':
-				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
+				$this->data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:
-				$this->_data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -182,7 +182,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 */
 	public function save() {
 		global $wpdb;
-		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->_data );
+		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->data );
 		$this->id = $wpdb->insert_id;
 
 		try {
@@ -198,10 +198,10 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			$event->definitief = $this->tonen;
 			$event->vervallen  = $this->vervallen;
 			$timezone          = new DateTimeZone( get_option( 'timezone_string' ) );
-			$event->start      = new DateTime( $this->_data['start_datum'] . ' ' . $this->_data['start_tijd'], $timezone );
-			$event->eind       = new DateTime( $this->_data['start_datum'] . ' ' . $this->_data['eind_tijd'], $timezone );
+			$event->start      = new DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
+			$event->eind       = new DateTime( $this->data['start_datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			if ( $this->start_datum !== $this->eind_datum ) {
-				$event->herhalen( new DateTime( $this->_data['eind_datum'] . ' ' . $this->_data['eind_tijd'], $timezone ) );
+				$event->herhalen( new DateTime( $this->data['eind_datum'] . ' ' . $this->data['eind_tijd'], $timezone ) );
 			}
 			$event->save();
 		} catch ( Exception $e ) {
@@ -222,7 +222,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 		global $wpdb;
 		$arr             = [];
 		$filter          = $open ? ' WHERE tonen = 1 AND eind_datum > CURRENT_DATE' : '';
-		$cursussen_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen $filter ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // WPCS: unprepared SQL OK.
+		$cursussen_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen $filter ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // phpcs:ignore
 		foreach ( $cursussen_tabel as $cursus ) {
 			$arr[ $cursus['id'] ] = new Kleistad_Cursus( $cursus['id'] );
 		}

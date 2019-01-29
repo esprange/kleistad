@@ -120,7 +120,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 			foreach ( $medestokers as $id => $medestoker ) {
 				$percentage = 0;
 				foreach ( $reservering->verdeling as $stookdeel ) {
-					if ( $stookdeel['id'] == $id ) { // WPCS: loose comparison ok.
+					if ( $stookdeel['id'] == $id ) { // phpcs:ignore
 						$percentage += $stookdeel['perc'];
 					}
 				}
@@ -132,7 +132,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 				$kosten       = 0;
 				$kosten_tonen = false;
 				foreach ( $reservering->verdeling as $stookdeel ) {
-					if ( $stookdeel['id'] == $id ) { // WPCS: loose comparison ok.
+					if ( $stookdeel['id'] == $id ) { // phpcs:ignore
 						if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
 							$kosten += $stookdeel['prijs'];
 						} else { // Voorlopige berekening.

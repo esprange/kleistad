@@ -45,7 +45,7 @@
 			<td>
 				<select name="oven_id" id="oven_id" style="width: 95%" required>
 				<?php foreach ( $ovens as $oven ) : ?>
-					<option value="<?php echo esc_attr( $oven->id ); ?>" <?php selected( $item['oven_id'] == $oven->id ); // WPCS: loose comparison ok. ?> ><?php echo esc_html( $oven->naam ); ?></option>
+					<option value="<?php echo esc_attr( $oven->id ); ?>" <?php selected( $item['oven_id'] == $oven->id ); // phpcs:ignore ?> ><?php echo esc_html( $oven->naam ); ?></option>
 				<?php endforeach ?>
 				</select>
 		<?php else : ?>

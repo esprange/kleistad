@@ -34,7 +34,7 @@ if ( isset( $data['recept'] ) ) :
 			</tr>
 			<tr>
 				<th>Stookschema</th>
-				<td><?php echo $data['recept']['content']['stookschema']; // WPCS: XSS ok. ?></td>
+				<td><?php echo $data['recept']['content']['stookschema']; // phpcs:ignore ?></td>
 			</tr>
 			</table>
 		</div>
@@ -85,11 +85,11 @@ if ( isset( $data['recept'] ) ) :
 	</div>
 	<div>
 		<h3>Kenmerken</h3>
-		<?php echo $data['recept']['content']['kenmerk']; // WPCS: XSS ok. ?>
+		<?php echo $data['recept']['content']['kenmerk']; // phpcs:ignore ?>
 	</div>
 	<div>
 		<h3>Oorsprong</h3>
-		<?php echo $data['recept']['content']['herkomst']; // WPCS: XSS ok. ?>
+		<?php echo $data['recept']['content']['herkomst']; // phpcs:ignore ?>
 	</div>
 </div>
 	<?php

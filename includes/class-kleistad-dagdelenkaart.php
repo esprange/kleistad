@@ -29,9 +29,9 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @since 4.3.0
 	 *
 	 * @access private
-	 * @var int $_gebruiker_id het wp user id van de gebruiker.
+	 * @var int $gebruiker_id het wp user id van de gebruiker.
 	 */
-	private $_gebruiker_id;
+	private $gebruiker_id;
 
 	/**
 	 * De beginwaarden van een dagdelenkaart.
@@ -39,9 +39,9 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @since 4.3.0
 	 *
 	 * @access private
-	 * @var array $_default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
+	 * @var array $default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
 	 */
-	private $_default_data = [
+	private $default_data = [
 		'code'        => '',
 		'datum'       => '',
 		'start_datum' => '',
@@ -56,16 +56,16 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @param int $gebruiker_id wp id van de gebruiker.
 	 */
 	public function __construct( $gebruiker_id ) {
-		$this->_gebruiker_id         = $gebruiker_id;
-		$this->_default_data['code'] = "K$gebruiker_id-" . strftime( '%y%m%d', strtotime( 'today' ) );
+		$this->gebruiker_id         = $gebruiker_id;
+		$this->default_data['code'] = "K$gebruiker_id-" . strftime( '%y%m%d', strtotime( 'today' ) );
 
-		$this->_default_data['datum'] = date( 'Y-m-d' );
+		$this->default_data['datum'] = date( 'Y-m-d' );
 
-		$dagdelenkaart = get_user_meta( $this->_gebruiker_id, self::META_KEY, true );
+		$dagdelenkaart = get_user_meta( $this->gebruiker_id, self::META_KEY, true );
 		if ( is_array( $dagdelenkaart ) ) {
-			$this->_data = wp_parse_args( $dagdelenkaart, $this->_default_data );
+			$this->data = wp_parse_args( $dagdelenkaart, $this->default_data );
 		} else {
-			$this->_data = $this->_default_data;
+			$this->data = $this->default_data;
 		}
 	}
 
@@ -81,9 +81,9 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 		switch ( $attribuut ) {
 			case 'datum':
 			case 'start_datum':
-				return strtotime( $this->_data[ $attribuut ] );
+				return strtotime( $this->data[ $attribuut ] );
 			default:
-				return $this->_data[ $attribuut ];
+				return $this->data[ $attribuut ];
 		}
 	}
 
@@ -99,10 +99,10 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 		switch ( $attribuut ) {
 			case 'datum':
 			case 'start_datum':
-				$this->_data[ $attribuut ] = date( 'Y-m-d', $waarde );
+				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
 			default:
-				$this->_data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -112,7 +112,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @since 4.3.0
 	 */
 	public function save() {
-		update_user_meta( $this->_gebruiker_id, self::META_KEY, $this->_data );
+		update_user_meta( $this->gebruiker_id, self::META_KEY, $this->data );
 	}
 
 	/**
@@ -123,7 +123,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @param array $data het te laden object.
 	 */
 	public function load( $data ) {
-		$this->_data = wp_parse_args( $data, $this->_default_data );
+		$this->data = wp_parse_args( $data, $this->default_data );
 	}
 
 	/**
@@ -136,7 +136,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 */
 	public function email( $type ) {
 		$options   = Kleistad::get_options();
-		$gebruiker = get_userdata( $this->_gebruiker_id );
+		$gebruiker = get_userdata( $this->gebruiker_id );
 		$to        = "$gebruiker->display_name <$gebruiker->user_email>";
 		return Kleistad_public::compose_email(
 			$to,
@@ -166,7 +166,7 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 
 		$betalen = new Kleistad_Betalen();
 		$betalen->order(
-			$this->_gebruiker_id,
+			$this->gebruiker_id,
 			__CLASS__ . '-' . $this->code,
 			$options['dagdelenkaart'],
 			'Kleistad dagdelenkaart ' . $this->code,

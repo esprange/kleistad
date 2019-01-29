@@ -69,9 +69,9 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			'definitief'  => 0,
 		];
 		if ( is_null( $workshop_id ) ) {
-			$this->_data = $default_data;
+			$this->data = $default_data;
 		} else {
-			$this->_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+			$this->data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
 		}
 	}
 
@@ -86,23 +86,23 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return ( 'null' === $this->_data['technieken'] ) ? [] : json_decode( $this->_data['technieken'], true );
+				return ( 'null' === $this->data['technieken'] ) ? [] : json_decode( $this->data['technieken'], true );
 			case 'datum':
 			case 'start_tijd':
 			case 'eind_tijd':
-				return strtotime( $this->_data[ $attribuut ] );
+				return strtotime( $this->data[ $attribuut ] );
 			case 'vervallen':
 			case 'betaald':
 			case 'definitief':
-				return 1 === intval( $this->_data[ $attribuut ] );
+				return 1 === intval( $this->data[ $attribuut ] );
 			case 'array':
-				return $this->_data;
+				return $this->data;
 			case 'code':
-				return "W{$this->_data['id']}";
+				return "W{$this->data['id']}";
 			case 'event_id':
-				return sprintf( 'kleistadevent%06d', $this->_data['id'] );
+				return sprintf( 'kleistadevent%06d', $this->data['id'] );
 			default:
-				return $this->_data[ $attribuut ];
+				return $this->data[ $attribuut ];
 		}
 	}
 
@@ -117,23 +117,23 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				$this->_data[ $attribuut ] = wp_json_encode( $waarde );
+				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
 			case 'datum':
 			case 'datum_betalen':
-				$this->_data[ $attribuut ] = date( 'Y-m-d', $waarde );
+				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
 			case 'start_tijd':
 			case 'eind_tijd':
-				$this->_data[ $attribuut ] = date( 'H:i', $waarde );
+				$this->data[ $attribuut ] = date( 'H:i', $waarde );
 				break;
 			case 'vervallen':
 			case 'betaald':
 			case 'definitief':
-				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
+				$this->data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:
-				$this->_data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -147,7 +147,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 */
 	public function save() {
 		global $wpdb;
-		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->_data );
+		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
 		$this->id = $wpdb->insert_id;
 
 		try {
@@ -163,8 +163,8 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			$event->definitief = $this->definitief;
 			$event->vervallen  = $this->vervallen;
 			$timezone          = new DateTimeZone( get_option( 'timezone_string' ) );
-			$event->start      = new DateTime( $this->_data['datum'] . ' ' . $this->_data['start_tijd'], $timezone );
-			$event->eind       = new DateTime( $this->_data['datum'] . ' ' . $this->_data['eind_tijd'], $timezone );
+			$event->start      = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
+			$event->eind       = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			$event->save();
 		} catch ( Exception $e ) {
 			error_log ( $e->getMessage() ); // phpcs:ignore
@@ -353,7 +353,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 		global $wpdb;
 		$arr             = [];
 		$filter          = $open ? ' WHERE datum > CURRENT_DATE' : '';
-		$workshops_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_workshops $filter ORDER BY datum DESC, start_tijd ASC", ARRAY_A ); // WPCS: unprepared SQL OK.
+		$workshops_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_workshops $filter ORDER BY datum DESC, start_tijd ASC", ARRAY_A ); // phpcs:ignore
 		foreach ( $workshops_tabel as $workshop ) {
 			$arr[ $workshop['id'] ] = new Kleistad_Workshop( $workshop['id'] );
 		}

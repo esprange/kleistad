@@ -91,7 +91,7 @@
 		<div class="kleistad_row">
 			<div class="kleistad_col_10">
 				<input type="checkbox" class="kleistad_input_cb" id="verklaring" onchange="document.getElementById( 'kleistad_submit' ).disabled = !this.checked;" />
-				<label class="kleistad_label_cb" for="verklaring"><?php echo $data['verklaring']; // WPCS: XSS ok. ?></label>
+				<label class="kleistad_label_cb" for="verklaring"><?php echo $data['verklaring']; // phpcs:ignore ?></label>
 			</div>
 		</div>
 	<?php endif ?>

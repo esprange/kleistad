@@ -66,10 +66,10 @@ if ( $count ) :
 	?>
 	<div id="kleistad_filters" class="kleistad_filters" >
 	<?php
-		echo filter( 'Type glazuur', 'term', $data['glazuur'] ); // WPCS: XSS ok.
-		echo filter( 'Uiterlijk', 'term', $data['uiterlijk'] ); // WPCS: XSS ok.
-		echo filter( 'Kleur', 'term', $data['kleur'] ); // WPCS: XSS ok.
-		echo filter( 'Auteur', 'auteur', $data['auteur'] ); // WPCS: XSS ok.
+		echo filter( 'Type glazuur', 'term', $data['glazuur'] ); // phpcs:ignore
+		echo filter( 'Uiterlijk', 'term', $data['uiterlijk'] ); // phpcs:ignore
+		echo filter( 'Kleur', 'term', $data['kleur'] ); // phpcs:ignore
+		echo filter( 'Auteur', 'auteur', $data['auteur'] ); // phpcs:ignore
 	?>
 	</div>
 

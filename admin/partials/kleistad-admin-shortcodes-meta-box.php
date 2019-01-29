@@ -51,6 +51,6 @@
 		</li>
 	</ul>
 	<p>bij de optionele verklaring parameter bij <strong>kleistad_abonnee_inschrijving</strong> en <strong>kleistad_dagdelenkaart</strong> kan bijvoorbeeld ingevuld worden:</p>
-	<code><?php echo htmlspecialchars( 'ik heb de <a href="https://www.kleistad.nl/wp/wp-content/uploads/2017/08/Huisregels-inloop-atelier-KLEISTAD-aug2017.pdf" target="_blank" rel="noopener">Huisregels inloop atelier KLEISTAD -aug2017</a> gelezen' ); // WPCS: XSS ok. ?></code>
+	<code><?php echo htmlspecialchars( 'ik heb de <a href="https://www.kleistad.nl/wp/wp-content/uploads/2017/08/Huisregels-inloop-atelier-KLEISTAD-aug2017.pdf" target="_blank" rel="noopener">Huisregels inloop atelier KLEISTAD -aug2017</a> gelezen' ); // phpcs:ignore ?></code>
 	<p>bij de optionele cursus parameter bij <strong>kleistad_cursus_inschrijving</strong> moet een cursus code opgegeven worden, bijvoorbeeld <code>C29</code>. In dat geval wordt er overzicht van cursussen getoond maar alleen de cursus waar het om gaat.</p>
 </div>

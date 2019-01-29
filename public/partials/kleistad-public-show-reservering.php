@@ -40,7 +40,7 @@
 <tbody>
 	<?php
 	foreach ( $rows as $row ) :
-		echo $row; // WPCS: XSS ok.
+		echo $row; // phpcs:ignore
 	endforeach;
 	?>
 </tbody>

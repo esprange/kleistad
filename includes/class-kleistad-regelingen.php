@@ -21,9 +21,9 @@ class Kleistad_Regelingen {
 	 *
 	 * @since 4.0.87
 	 * @access private
-	 * @var array $_data de regelingen.
+	 * @var array $data de regelingen.
 	 */
-	private $_data = [];
+	private $data = [];
 
 	/**
 	 * Constructor
@@ -38,8 +38,8 @@ class Kleistad_Regelingen {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$regelingen                    = get_user_meta( $gebruiker->ID, self::META_KEY, true );
-			$this->_data[ $gebruiker->ID ] = $regelingen;
+			$regelingen                   = get_user_meta( $gebruiker->ID, self::META_KEY, true );
+			$this->data[ $gebruiker->ID ] = $regelingen;
 		}
 	}
 
@@ -53,12 +53,12 @@ class Kleistad_Regelingen {
 	 * @return null|float|array kosten van oven, kosten van ovens of null als de regeling onbekend is.
 	 */
 	public function get( $gebruiker_id, $oven_id = null ) {
-		if ( array_key_exists( $gebruiker_id, $this->_data ) ) {
+		if ( array_key_exists( $gebruiker_id, $this->data ) ) {
 			if ( is_null( $oven_id ) ) {
-				return $this->_data[ $gebruiker_id ];
+				return $this->data[ $gebruiker_id ];
 			} else {
-				if ( array_key_exists( $oven_id, $this->_data[ $gebruiker_id ] ) ) {
-					return $this->_data[ $gebruiker_id ][ $oven_id ];
+				if ( array_key_exists( $oven_id, $this->data[ $gebruiker_id ] ) ) {
+					return $this->data[ $gebruiker_id ][ $oven_id ];
 				}
 			}
 		}
@@ -75,8 +75,8 @@ class Kleistad_Regelingen {
 	 * @param float $kosten kostenregeling.
 	 */
 	public function set_and_save( $gebruiker_id, $oven_id, $kosten ) {
-		$this->_data[ $gebruiker_id ][ $oven_id ] = $kosten;
-		return update_user_meta( $gebruiker_id, self::META_KEY, $this->_data[ $gebruiker_id ] );
+		$this->data[ $gebruiker_id ][ $oven_id ] = $kosten;
+		return update_user_meta( $gebruiker_id, self::META_KEY, $this->data[ $gebruiker_id ] );
 	}
 
 	/**
@@ -88,11 +88,11 @@ class Kleistad_Regelingen {
 	 * @param int $oven_id oven id.
 	 */
 	public function delete_and_save( $gebruiker_id, $oven_id ) {
-		unset( $this->_data[ $gebruiker_id ][ $oven_id ] );
-		if ( 0 === count( $this->_data[ $gebruiker_id ] ) ) {
+		unset( $this->data[ $gebruiker_id ][ $oven_id ] );
+		if ( 0 === count( $this->data[ $gebruiker_id ] ) ) {
 			return delete_user_meta( $gebruiker_id, self::META_KEY );
 		} else {
-			return update_user_meta( $gebruiker_id, self::META_KEY, $this->_data[ $gebruiker_id ] );
+			return update_user_meta( $gebruiker_id, self::META_KEY, $this->data[ $gebruiker_id ] );
 		}
 	}
 

@@ -32,30 +32,30 @@ class Kleistad_Event {
 	/**
 	 * Het Google event object.
 	 *
-	 * @var Google_Service_Calendar_Event $_event Het event.
+	 * @var Google_Service_Calendar_Event $event Het event.
 	 */
-	protected $_event;
+	protected $event;
 
 	/**
 	 * De private properties van het event.
 	 *
 	 * @var array $properties De properties.
 	 */
-	protected $_properties = [];
+	protected $properties = [];
 
 	/**
 	 * De Google kalender service.
 	 *
-	 * @var Google_Service $_service De google service.
+	 * @var Google_Service $service De google service.
 	 */
-	private static $_service = null;
+	private static $service = null;
 
 	/**
 	 * Het Google kalender id.
 	 *
-	 * @var string $_kalender_id De google kalender id.
+	 * @var string $kalender_id De google kalender id.
 	 */
-	private static $_kalender_id;
+	private static $kalender_id;
 
 	/**
 	 * Converteer DateTime object naar Google datetime format, zoals '2015-05-28T09:00:00-07:00'.
@@ -101,14 +101,14 @@ class Kleistad_Event {
 
 		if ( is_string( $event ) ) {
 			try {
-				$this->_event       = self::$_service->events->get( self::$_kalender_id, $event );
-				$extendedproperties = $this->_event->getExtendedProperties();
-				$this->_properties  = $extendedproperties->getPrivate();
+				$this->event        = self::$_service->events->get( self::$_kalender_id, $event );
+				$extendedproperties = $this->event->getExtendedProperties();
+				$this->properties   = $extendedproperties->getPrivate();
 			} catch ( Google_Service_exception $e ) {
 				$organizer = new Google_Service_Calendar_EventOrganizer();
 				$organizer->setDisplayName( wp_get_current_user()->display_name );
 				$organizer->setEmail( wp_get_current_user()->user_email );
-				$this->_event             = new Google_Service_Calendar_Event(
+				$this->event             = new Google_Service_Calendar_Event(
 					[
 						'Id'        => $event,
 						'location'  => get_option( 'kleistad_adres', 'Kleistad, Neonweg 12, 3812 RH Amersfoort' ),
@@ -116,15 +116,15 @@ class Kleistad_Event {
 						'status'    => 'tentative',
 					]
 				);
-				$this->_properties['key'] = self::META_KEY;
-				$extendedproperties       = new Google_Service_Calendar_EventExtendedProperties();
-				$extendedproperties->setPrivate( $this->_properties );
-				$this->_event->setExtendedProperties( $extendedproperties );
+				$this->properties['key'] = self::META_KEY;
+				$extendedproperties      = new Google_Service_Calendar_EventExtendedProperties();
+				$extendedproperties->setPrivate( $this->properties );
+				$this->event->setExtendedProperties( $extendedproperties );
 			}
 		} else {
-			$this->_event       = $event;
-			$extendedproperties = $this->_event->getExtendedProperties();
-			$this->_properties  = ! is_null( $extendedproperties ) ? $extendedproperties->getPrivate() : [];
+			$this->event        = $event;
+			$extendedproperties = $this->event->getExtendedProperties();
+			$this->properties   = ! is_null( $extendedproperties ) ? $extendedproperties->getPrivate() : [];
 		}
 	}
 
@@ -137,7 +137,7 @@ class Kleistad_Event {
 	public function herhalen( $eind, $wekelijks = true ) {
 		$freq  = $wekelijks ? 'WEEKLY' : 'DAILY';
 		$until = $eind->format( 'Ymd\THis\Z' );
-		$this->_event->setRecurrence( [ "RRULE:FREQ=$freq;UNTIL=$until" ] );
+		$this->event->setRecurrence( [ "RRULE:FREQ=$freq;UNTIL=$until" ] );
 	}
 
 	/**
@@ -176,7 +176,7 @@ class Kleistad_Event {
 	public static function vraag_google_service_aan( $redirect_url ) {
 		update_option( self::REDIRECT_URI, $redirect_url );
 		$client = self::maak_client();
-		wp_redirect( $client->createAuthUrl() );
+		wp_redirect( $client->createAuthUrl() ); // phpcs:ignore
 		exit;
 	}
 
@@ -268,20 +268,20 @@ class Kleistad_Event {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'vervallen':
-				return 'cancelled' === $this->_event->getStatus();
+				return 'cancelled' === $this->event->getStatus();
 			case 'definitief':
-				return 'confirmed' === $this->_event->getStatus();
+				return 'confirmed' === $this->event->getStatus();
 			case 'start':
-				return $this->from_google_dt( $this->_event->getStart() );
+				return $this->from_google_dt( $this->event->getStart() );
 			case 'eind':
-				return $this->from_google_dt( $this->_event->getEnd() );
+				return $this->from_google_dt( $this->event->getEnd() );
 			case 'titel':
-				return $this->_event->getSummary();
+				return $this->event->getSummary();
 			case 'id':
-				return $this->_event->getId();
+				return $this->event->getId();
 			case 'properties':
-				if ( isset( $this->_properties['data'] ) ) {
-					return json_decode( $this->_properties['data'], true );
+				if ( isset( $this->properties['data'] ) ) {
+					return json_decode( $this->properties['data'], true );
 				} else {
 					return [];
 				}
@@ -301,26 +301,26 @@ class Kleistad_Event {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'titel':
-				$this->_event->setSummary( $waarde );
+				$this->event->setSummary( $waarde );
 				break;
 			case 'start':
-				$this->_event->setStart( $this->to_google_dt( $waarde ) );
+				$this->event->setStart( $this->to_google_dt( $waarde ) );
 				break;
 			case 'eind':
-				$this->_event->setEnd( $this->to_google_dt( $waarde ) );
+				$this->event->setEnd( $this->to_google_dt( $waarde ) );
 				break;
 			case 'definitief':
 				if ( $waarde ) {
-					$this->_event->setStatus( 'confirmed' );
+					$this->event->setStatus( 'confirmed' );
 				}
 				break;
 			case 'vervallen':
 				if ( $waarde ) {
-					$this->_event->setStatus( 'cancelled' );
+					$this->event->setStatus( 'cancelled' );
 				}
 				break;
 			case 'properties':
-				$this->_properties['data'] = wp_json_encode( $waarde );
+				$this->properties['data'] = wp_json_encode( $waarde );
 				break;
 		}
 	}
@@ -333,13 +333,13 @@ class Kleistad_Event {
 	 * param string Het event id.
 	 */
 	public function save() {
-		$extendedproperties = $this->_event->getExtendedProperties();
-		$extendedproperties->setPrivate( $this->_properties );
-		$this->_event->setExtendedProperties( $extendedproperties );
-		if ( is_null( $this->_event->getCreated() ) ) {
-			$this->_event = self::$_service->events->insert( self::$_kalender_id, $this->_event );
+		$extendedproperties = $this->event->getExtendedProperties();
+		$extendedproperties->setPrivate( $this->properties );
+		$this->event->setExtendedProperties( $extendedproperties );
+		if ( is_null( $this->event->getCreated() ) ) {
+			$this->event = self::$_service->events->insert( self::$_kalender_id, $this->event );
 		} else {
-			$this->_event = self::$_service->events->update( self::$_kalender_id, $this->_event->getId(), $this->_event );
+			$this->event = self::$_service->events->update( self::$_kalender_id, $this->event->getId(), $this->event );
 		}
 	}
 

@@ -36,9 +36,9 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @since 4.0.87
 	 *
 	 * @access private
-	 * @var int $_cursist_id de wp user id van de cursist.
+	 * @var int $cursist_id de wp user id van de cursist.
 	 */
-	private $_cursist_id;
+	private $cursist_id;
 
 	/**
 	 * De cursus
@@ -46,9 +46,9 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @since 4.0.87
 	 *
 	 * @access private
-	 * @var object $_cursus cursus object.
+	 * @var object $cursus cursus object.
 	 */
-	private $_cursus;
+	private $cursus;
 
 	/**
 	 * De beginwaarden van een inschrijving
@@ -56,9 +56,9 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @since 4.3.0
 	 *
 	 * @access private
-	 * @var array $_default_data de standaard waarden bij het aanmaken van een inschrijving.
+	 * @var array $default_data de standaard waarden bij het aanmaken van een inschrijving.
 	 */
-	private $_default_data = [
+	private $default_data = [
 		'code'          => '',
 		'datum'         => '',
 		'technieken'    => [],
@@ -80,16 +80,16 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @param int $cursus_id id van de cursus.
 	 */
 	public function __construct( $cursist_id, $cursus_id ) {
-		$this->_cursus                = new Kleistad_Cursus( $cursus_id );
-		$this->_cursist_id            = $cursist_id;
-		$this->_default_data['code']  = "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $this->_cursus->start_datum );
-		$this->_default_data['datum'] = date( 'Y-m-d' );
+		$this->cursus                = new Kleistad_Cursus( $cursus_id );
+		$this->cursist_id            = $cursist_id;
+		$this->default_data['code']  = "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $this->cursus->start_datum );
+		$this->default_data['datum'] = date( 'Y-m-d' );
 
-		$inschrijvingen = get_user_meta( $this->_cursist_id, self::META_KEY, true );
+		$inschrijvingen = get_user_meta( $this->cursist_id, self::META_KEY, true );
 		if ( is_array( $inschrijvingen ) && ( isset( $inschrijvingen[ $cursus_id ] ) ) ) {
-			$this->_data = wp_parse_args( $inschrijvingen[ $cursus_id ], $this->_default_data );
+			$this->data = wp_parse_args( $inschrijvingen[ $cursus_id ], $this->default_data );
 		} else {
-			$this->_data = $this->_default_data;
+			$this->data = $this->default_data;
 		}
 	}
 
@@ -145,18 +145,18 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return ( is_array( $this->_data[ $attribuut ] ) ) ? $this->_data[ $attribuut ] : [];
+				return ( is_array( $this->data[ $attribuut ] ) ) ? $this->data[ $attribuut ] : [];
 			case 'datum':
-				return strtotime( $this->_data[ $attribuut ] );
+				return strtotime( $this->data[ $attribuut ] );
 			case 'i_betaald':
 			case 'c_betaald':
 			case 'geannuleerd':
 			case 'restant_email':
-				return 1 === intval( $this->_data[ $attribuut ] );
+				return 1 === intval( $this->data[ $attribuut ] );
 			case 'gedeeld':
-				return 0 < $this->_cursus->inschrijfkosten;
+				return 0 < $this->cursus->inschrijfkosten;
 			default:
-				return $this->_data[ $attribuut ];
+				return $this->data[ $attribuut ];
 		}
 	}
 
@@ -171,19 +171,19 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				$this->_data[ $attribuut ] = is_array( $waarde ) ? $waarde : [];
+				$this->data[ $attribuut ] = is_array( $waarde ) ? $waarde : [];
 				break;
 			case 'datum':
-				$this->_data[ $attribuut ] = date( 'Y-m-d', $waarde );
+				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
 			case 'i_betaald':
 			case 'c_betaald':
 			case 'geannuleerd':
 			case 'restant_email':
-				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
+				$this->data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:
-				$this->_data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -193,14 +193,14 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @since 4.0.87
 	 */
 	public function save() {
-		$bestaande_inschrijvingen = get_user_meta( $this->_cursist_id, self::META_KEY, true );
+		$bestaande_inschrijvingen = get_user_meta( $this->cursist_id, self::META_KEY, true );
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
 		} else {
 			$inschrijvingen = [];
 		}
-		$inschrijvingen[ $this->_cursus->id ] = $this->_data;
-		update_user_meta( $this->_cursist_id, self::META_KEY, $inschrijvingen );
+		$inschrijvingen[ $this->cursus->id ] = $this->data;
+		update_user_meta( $this->cursist_id, self::META_KEY, $inschrijvingen );
 	}
 
 	/**
@@ -211,15 +211,15 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @param int $cursus_id nieuw cursus_id.
 	 */
 	public function correct( $cursus_id ) {
-		$bestaande_inschrijvingen = get_user_meta( $this->_cursist_id, self::META_KEY, true );
+		$bestaande_inschrijvingen = get_user_meta( $this->cursist_id, self::META_KEY, true );
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
 			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
 				$cursus                       = new Kleistad_Cursus( $cursus_id );
-				$this->_data['code']          = "C$cursus_id-$this->_cursist_id-" . strftime( '%y%m%d', $cursus->start_datum );
-				$inschrijvingen[ $cursus_id ] = $this->_data;
-				unset( $inschrijvingen[ $this->_cursus->id ] );
-				update_user_meta( $this->_cursist_id, self::META_KEY, $inschrijvingen );
+				$this->data['code']           = "C$cursus_id-$this->cursist_id-" . strftime( '%y%m%d', $cursus->start_datum );
+				$inschrijvingen[ $cursus_id ] = $this->data;
+				unset( $inschrijvingen[ $this->cursus->id ] );
+				update_user_meta( $this->cursist_id, self::META_KEY, $inschrijvingen );
 				return true;
 			}
 		}
@@ -232,7 +232,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @param array $data het te laden object.
 	 */
 	public function load( $data ) {
-		$this->_data = wp_parse_args( $data, $this->_default_data );
+		$this->data = wp_parse_args( $data, $this->default_data );
 	}
 
 	/**
@@ -244,16 +244,16 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
-		$cursist   = get_userdata( $this->_cursist_id );
+		$cursist   = get_userdata( $this->cursist_id );
 		$to        = "$cursist->display_name <$cursist->user_email>";
 		$onderwerp = ucfirst( $type ) . ' cursus';
 
 		switch ( $type ) {
 			case 'inschrijving':
-				$slug = $this->_cursus->inschrijfslug;
+				$slug = $this->cursus->inschrijfslug;
 				break;
 			case 'indeling':
-				$slug = $this->_cursus->indelingslug;
+				$slug = $this->cursus->indelingslug;
 				break;
 			case 'lopende':
 				$slug = 'kleistad_email_cursus_lopend';
@@ -275,21 +275,21 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			[
 				'voornaam'               => $cursist->first_name,
 				'achternaam'             => $cursist->last_name,
-				'cursus_naam'            => $this->_cursus->naam,
-				'cursus_docent'          => $this->_cursus->docent,
-				'cursus_start_datum'     => strftime( '%A %d-%m-%y', $this->_cursus->start_datum ),
-				'cursus_eind_datum'      => strftime( '%A %d-%m-%y', $this->_cursus->eind_datum ),
-				'cursus_start_tijd'      => strftime( '%H:%M', $this->_cursus->start_tijd ),
-				'cursus_eind_tijd'       => strftime( '%H:%M', $this->_cursus->eind_tijd ),
+				'cursus_naam'            => $this->cursus->naam,
+				'cursus_docent'          => $this->cursus->docent,
+				'cursus_start_datum'     => strftime( '%A %d-%m-%y', $this->cursus->start_datum ),
+				'cursus_eind_datum'      => strftime( '%A %d-%m-%y', $this->cursus->eind_datum ),
+				'cursus_start_tijd'      => strftime( '%H:%M', $this->cursus->start_tijd ),
+				'cursus_eind_tijd'       => strftime( '%H:%M', $this->cursus->eind_tijd ),
 				'cursus_technieken'      => implode( ', ', $this->technieken ),
 				'cursus_code'            => $this->code,
-				'cursus_kosten'          => number_format_i18n( $this->aantal * $this->_cursus->cursuskosten, 2 ),
-				'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->_cursus->inschrijfkosten, 2 ),
+				'cursus_kosten'          => number_format_i18n( $this->aantal * $this->cursus->cursuskosten, 2 ),
+				'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->cursus->inschrijfkosten, 2 ),
 				'cursus_aantal'          => $this->aantal,
 				'cursus_opmerking'       => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
 				'cursus_link'            => '<a href="' . home_url( '/kleistad_cursus_betaling' ) .
-												'?gid=' . $this->_cursist_id .
-												'&crss=' . $this->_cursus->id .
+												'?gid=' . $this->cursist_id .
+												'&crss=' . $this->cursus->id .
 												'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
 			]
 		);
@@ -309,17 +309,17 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
 		if ( $inschrijving && $this->gedeeld ) {
 			$betaling->order(
-				$this->_cursist_id,
+				$this->cursist_id,
 				__CLASS__ . '-' . $this->code . '-inschrijving',
-				$this->aantal * $this->_cursus->inschrijfkosten,
+				$this->aantal * $this->cursus->inschrijfkosten,
 				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
 				$bericht
 			);
 		} else {
 			$betaling->order(
-				$this->_cursist_id,
+				$this->cursist_id,
 				__CLASS__ . '-' . $this->code . '-cursus',
-				$this->aantal * $this->_cursus->cursuskosten,
+				$this->aantal * $this->cursus->cursuskosten,
 				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
 				$bericht
 			);
@@ -334,7 +334,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @return string Hash string.
 	 */
 	public function controle() {
-		return hash( 'sha256', "KlEiStAd{$this->_cursist_id}C{$this->_cursus->id}cOnTrOlE" );
+		return hash( 'sha256', "KlEiStAd{$this->cursist_id}C{$this->cursus->id}cOnTrOlE" );
 	}
 
 	/**

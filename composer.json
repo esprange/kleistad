@@ -11,9 +11,7 @@
     ],
     "require": {
         "mollie/mollie-api-php": "^2.0",
-        "google/apiclient": "2.2",
-        "wp-coding-standards/wpcs": "^2.0",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
+        "google/apiclient": "2.2"
     },
     "require-dev": {
     }

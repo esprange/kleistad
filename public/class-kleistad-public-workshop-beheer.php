@@ -147,7 +147,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 		$workshop->email       = $data['workshop']['email'];
 		$workshop->telefoon    = $data['workshop']['telefoon'];
 		$workshop->programma   = $data['workshop']['programma'];
-		$workshop->vervallen   = '' != $data['workshop']['vervallen'];  // WPCS: loose comparison ok.
+		$workshop->vervallen   = '' != $data['workshop']['vervallen']; // phpcs:ignore
 		$workshop->kosten      = $data['workshop']['kosten'];
 		$workshop->aantal      = $data['workshop']['aantal'];
 

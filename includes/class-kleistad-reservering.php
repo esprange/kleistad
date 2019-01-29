@@ -56,7 +56,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			'verdeling'    => wp_json_encode( [] ),
 			'opmerking'    => '',
 		];
-		$this->_data  = $default_data;
+		$this->data   = $default_data;
 	}
 
 	/**
@@ -76,7 +76,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				WHERE R.oven_id = O.id
 				ORDER BY jaar DESC, maand DESC, dag DESC",
 			ARRAY_A
-		); // WPCS: unprepared SQL OK.
+		); // phpcs:ignore
 
 		foreach ( $reserveringen as $reservering ) {
 			$verdeling = json_decode( $reservering['verdeling'], true );
@@ -117,15 +117,15 @@ class Kleistad_Reservering extends Kleistad_Entity {
 		$resultaat = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d",
-				$this->_data['oven_id'],
+				$this->data['oven_id'],
 				$jaar,
 				$maand,
 				$dag
 			),
 			ARRAY_A
-		); // WPCS: unprepared SQL OK.
+		); // phpcs:ignore
 		if ( $resultaat ) {
-			$this->_data = $resultaat;
+			$this->data = $resultaat;
 			return true;
 		}
 		return false;
@@ -158,13 +158,13 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'verdeling':
-				$verdeling = json_decode( $this->_data['verdeling'], true );
+				$verdeling = json_decode( $this->data['verdeling'], true );
 				if ( is_array( $verdeling ) ) {
 					return $verdeling;
 				} else {
 					return [
 						[
-							'id'   => $this->_data['gebruiker_id'],
+							'id'   => $this->data['gebruiker_id'],
 							'perc' => 100,
 						],
 						[
@@ -186,17 +186,17 @@ class Kleistad_Reservering extends Kleistad_Entity {
 					];
 				}
 			case 'datum':
-				return strtotime( $this->_data['jaar'] . '-' . $this->_data['maand'] . '-' . $this->_data['dag'] . ' 00:00' );
+				return strtotime( $this->data['jaar'] . '-' . $this->data['maand'] . '-' . $this->data['dag'] . ' 00:00' );
 			case 'gemeld':
 			case 'verwerkt':
-				return 1 === intval( $this->_data[ $attribuut ] );
+				return 1 === intval( $this->data[ $attribuut ] );
 			case 'jaar':
 			case 'maand':
 			case 'dag':
 			case 'oven_id':
-				return intval( $this->_data[ $attribuut ] );
+				return intval( $this->data[ $attribuut ] );
 			default:
-				return $this->_data[ $attribuut ];
+				return $this->data[ $attribuut ];
 		}
 	}
 
@@ -212,22 +212,22 @@ class Kleistad_Reservering extends Kleistad_Entity {
 		switch ( $attribuut ) {
 			case 'verdeling':
 				if ( is_array( $waarde ) ) {
-					$this->_data[ $attribuut ] = wp_json_encode( $waarde );
+					$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				} else {
-					$this->_data[ $attribuut ] = $waarde;
+					$this->data[ $attribuut ] = $waarde;
 				}
 				break;
 			case 'datum':
-				$this->_data['jaar']  = date( 'Y', $waarde );
-				$this->_data['maand'] = date( 'm', $waarde );
-				$this->_data['dag']   = date( 'd', $waarde );
+				$this->data['jaar']  = date( 'Y', $waarde );
+				$this->data['maand'] = date( 'm', $waarde );
+				$this->data['dag']   = date( 'd', $waarde );
 				break;
 			case 'gemeld':
 			case 'verwerkt':
-				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
+				$this->data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:
-				$this->_data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -241,7 +241,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 */
 	public function save() {
 		global $wpdb;
-		$wpdb->replace( "{$wpdb->prefix}kleistad_reserveringen", $this->_data );
+		$wpdb->replace( "{$wpdb->prefix}kleistad_reserveringen", $this->data );
 		$this->id = $wpdb->insert_id;
 		return $this->id;
 	}
@@ -276,7 +276,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			$where .= ( $selecties ) ? ' AND verwerkt = 0' : '';
 		}
 
-		$reserveringen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_reserveringen $where ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A ); // WPCS: unprepared SQL OK.
+		$reserveringen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_reserveringen $where ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A ); // phpcs:ignore
 		foreach ( $reserveringen as $reservering_id => $reservering ) {
 			$arr[ $reservering_id ] = new Kleistad_Reservering( $reservering['oven_id'] );
 			$arr[ $reservering_id ]->load( $reservering );

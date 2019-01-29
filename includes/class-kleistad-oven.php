@@ -37,11 +37,11 @@ class Kleistad_Oven extends Kleistad_Entity {
 			'kosten'          => 0,
 			'beschikbaarheid' => wp_json_encode( [] ),
 		];
-		$this->_data  = $default_data;
+		$this->data   = $default_data;
 		if ( ! is_null( $oven_id ) ) {
-			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_ovens WHERE id = %d", $oven_id ), ARRAY_A ); // WPCS: unprepared SQL OK.
+			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_ovens WHERE id = %d", $oven_id ), ARRAY_A ); // phpcs:ignore
 			if ( ! is_null( $result ) ) {
-				$this->_data = $result;
+				$this->data = $result;
 			}
 		}
 	}
@@ -57,7 +57,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'beschikbaarheid':
-				return json_decode( $this->_data[ $attribuut ], true );
+				return json_decode( $this->data[ $attribuut ], true );
 			case 'zondag':
 			case 'maandag':
 			case 'dinsdag':
@@ -65,9 +65,9 @@ class Kleistad_Oven extends Kleistad_Entity {
 			case 'donderdag':
 			case 'vrijdag':
 			case 'zaterdag':
-				return ( array_search( $attribuut, json_decode( $this->_data['beschikbaarheid'], true ), true ) !== false );
+				return ( array_search( $attribuut, json_decode( $this->data['beschikbaarheid'], true ), true ) !== false );
 			default:
-				return $this->_data[ $attribuut ];
+				return $this->data[ $attribuut ];
 		}
 	}
 
@@ -83,10 +83,10 @@ class Kleistad_Oven extends Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'beschikbaarheid':
-				$this->_data[ $attribuut ] = wp_json_encode( $waarde );
+				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
 			default:
-				$this->_data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -100,7 +100,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	 */
 	public function save() {
 		global $wpdb;
-		$wpdb->replace( "{$wpdb->prefix}kleistad_ovens", $this->_data );
+		$wpdb->replace( "{$wpdb->prefix}kleistad_ovens", $this->data );
 		$this->id = $wpdb->insert_id;
 		return $this->id;
 	}
@@ -113,7 +113,7 @@ class Kleistad_Oven extends Kleistad_Entity {
 	public static function all() {
 		global $wpdb;
 		$arr   = [];
-		$ovens = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens", ARRAY_A ); // WPCS: unprepared SQL OK.
+		$ovens = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens", ARRAY_A ); // phpcs:ignore
 		foreach ( $ovens as $oven ) {
 			$arr[ $oven['id'] ] = new Kleistad_Oven();
 			$arr[ $oven['id'] ]->load( $oven );

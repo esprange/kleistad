@@ -24,7 +24,7 @@ else :
 		 * @return string
 		 */
 		function wp_dropdown_categories_required( $output ) {
-			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output );
+			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
 		}
 		?>
 	<form method="post" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data" >
@@ -274,9 +274,9 @@ else :
 				<td><?php echo esc_html( date_i18n( 'd-m-Y H:i', strtotime( $recept['modified'] ) ) ); ?></td>
 				<td>
 				<?php
-						echo ( 'private' === $recept['post_status'] ? ' prive' : // WPCS: XSS ok.
-							( 'publish' === $recept['post_status'] ? ' gepubliceerd' :
-							( 'draft' === $recept['post_status'] ? ' concept' : '' ) ) );
+						echo ( 'private' === $recept['post_status'] ? ' prive' : // phpcs:ignore
+							( 'publish' === $recept['post_status'] ? ' gepubliceerd' : // phpcs:ignore
+							( 'draft' === $recept['post_status'] ? ' concept' : '' ) ) ); // phpcs:ignore
 				?>
 				</td>
 				<td>

@@ -25,7 +25,7 @@ class Kleistad_Saldo {
 	 *
 	 * @var array De attributen van het saldo.
 	 */
-	private $_data;
+	private $data;
 
 	/**
 	 * De gebruiker identificatie
@@ -34,7 +34,7 @@ class Kleistad_Saldo {
 	 *
 	 * @var int Het gebruiker_id.
 	 */
-	private $_gebruiker_id;
+	private $gebruiker_id;
 
 	/**
 	 * Private functie welke de update van stooksaldo.log doet.
@@ -56,7 +56,7 @@ class Kleistad_Saldo {
 	 * @return float De huidige saldo stand.
 	 */
 	private function huidig_saldo() {
-		$huidig_saldo = get_user_meta( $this->_gebruiker_id, self::META_KEY, true );
+		$huidig_saldo = get_user_meta( $this->gebruiker_id, self::META_KEY, true );
 		return ( '' === $huidig_saldo ) ? 0.0 : (float) $huidig_saldo;
 	}
 
@@ -79,8 +79,8 @@ class Kleistad_Saldo {
 	 * @param int $gebruiker_id De gebruiker waarvoor het saldo wordt gemaakt.
 	 */
 	public function __construct( $gebruiker_id ) {
-		$this->_gebruiker_id   = $gebruiker_id;
-		$this->_data['bedrag'] = $this->huidig_saldo();
+		$this->gebruiker_id   = $gebruiker_id;
+		$this->data['bedrag'] = $this->huidig_saldo();
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Kleistad_Saldo {
 	 * @param mixed  $waarde De nieuwe waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
-		$this->_data[ $attribuut ] = $waarde;
+		$this->data[ $attribuut ] = $waarde;
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Kleistad_Saldo {
 	 * @return mixed De waarde.
 	 */
 	public function __get( $attribuut ) {
-		return $this->_data[ $attribuut ];
+		return $this->data[ $attribuut ];
 	}
 
 	/**
@@ -156,8 +156,8 @@ class Kleistad_Saldo {
 		$huidig_saldo = $this->huidig_saldo();
 
 		if ( 0.0099 < abs( $huidig_saldo - $this->bedrag ) ) {
-			update_user_meta( $this->_gebruiker_id, self::META_KEY, $this->bedrag );
-			$gebruiker = get_userdata( $this->_gebruiker_id );
+			update_user_meta( $this->gebruiker_id, self::META_KEY, $this->bedrag );
+			$gebruiker = get_userdata( $this->gebruiker_id );
 			self::write_log( $gebruiker->display_name . ' nu: € ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: € ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $reden );
 			return true;
 		}
@@ -174,9 +174,9 @@ class Kleistad_Saldo {
 	 */
 	public function betalen( $bericht, $bedrag ) {
 		$betaling = new Kleistad_Betalen();
-		$code     = "S$this->_gebruiker_id-" . strftime( '%y%m%d' );
+		$code     = "S$this->gebruiker_id-" . strftime( '%y%m%d' );
 		$betaling->order(
-			$this->_gebruiker_id,
+			$this->gebruiker_id,
 			__CLASS__ . '-' . $code,
 			$bedrag,
 			'Kleistad stooksaldo ' . $code,
@@ -194,7 +194,7 @@ class Kleistad_Saldo {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $bedrag ) {
-		$gebruiker = get_userdata( $this->_gebruiker_id );
+		$gebruiker = get_userdata( $this->gebruiker_id );
 		$to        = "$gebruiker->display_name <$gebruiker->user_email>";
 		return Kleistad_public::compose_email(
 			$to,

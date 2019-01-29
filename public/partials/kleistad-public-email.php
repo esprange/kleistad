@@ -132,7 +132,7 @@ if ( ! function_exists( 'esc_html' ) ) {
 					<table width="100%">
 						<tr>
 							<td class="inner">
-								<?php echo preg_replace( '/\s+/', ' ', $text ); // WPCS: XSS ok. ?><br />
+								<?php echo preg_replace( '/\s+/', ' ', $text ); // phpcs:ignore ?><br />
 								<p>Met vriendelijke groet,</p>
 								<p>Kleistad</p>
 								<p><a href="mailto:<?php echo esc_attr( $emailadresses['info'] ); ?>" target="_top" ><?php echo esc_html( $emailadresses['info'] ); ?></a></p>

@@ -230,7 +230,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 
 				foreach ( $reserveringen as $reservering ) {
 					if ( $reservering->dag === $dag ) {
-						if ( $reservering->gebruiker_id == $huidige_gebruiker_id ) {  // WPCS: loose comparison ok.
+						if ( $reservering->gebruiker_id == $huidige_gebruiker_id ) {  // phpcs:ignore
 							$kleur         = ( ! $datum_verstreken ) ? 'lightgreen' : $kleur;
 							$wijzigbaar    = ( ! $reservering->verwerkt ) || is_super_admin();
 							$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : ( ! $datum_verstreken );
@@ -312,7 +312,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 
 		if ( $request->get_param( 'oven_id' ) > 0 ) {
 			// het betreft een toevoeging of wijziging, check of er al niet een bestaande reservering is.
-			if ( ! $bestaande_reservering || ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) { // WPCS: loose comparison ok.
+			if ( ! $bestaande_reservering || ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) { // phpcs:ignore
 				$reservering->gebruiker_id = $gebruiker_id;
 				$reservering->dag          = intval( $request->get_param( 'dag' ) );
 				$reservering->maand        = intval( $request->get_param( 'maand' ) );
@@ -325,7 +325,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			}
 		} else {
 			// het betreft een annulering, mag alleen verwijderd worden door de gebruiker of een bevoegde.
-			if ( $bestaande_reservering && ( ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) ) { // WPCS: loose comparison ok.
+			if ( $bestaande_reservering && ( ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) ) { // phpcs:ignore
 				$reservering->delete();
 			}
 		}

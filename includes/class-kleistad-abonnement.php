@@ -42,9 +42,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.0.87
 	 * @access private
-	 * @var int $_abonnee_id Het wp user id van de abonnee.
+	 * @var int $abonnee_id Het wp user id van de abonnee.
 	 */
-	private $_abonnee_id;
+	private $abonnee_id;
 
 	/**
 	 * De beginwaarden van een abonnement.
@@ -53,7 +53,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @access private
 	 * @var array $_default_data de standaard waarden bij het aanmaken van een abonnement.
 	 */
-	private $_default_data = [
+	private $default_data = [
 		'code'           => '',
 		'datum'          => '',
 		'start_datum'    => '',
@@ -80,17 +80,17 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param int $abonnee_id wp user id van de abonnee.
 	 */
 	public function __construct( $abonnee_id ) {
-		$this->_abonnee_id            = $abonnee_id;
-		$this->_default_data['code']  = "A$abonnee_id";
-		$this->_default_data['datum'] = date( 'Y-m-d' );
-		$abonnement                   = get_user_meta( $this->_abonnee_id, self::META_KEY, true );
-		$this->_data                  = is_array( $abonnement ) ? wp_parse_args( $abonnement, $this->_default_data ) : $this->_default_data;
+		$this->abonnee_id            = $abonnee_id;
+		$this->default_data['code']  = "A$abonnee_id";
+		$this->default_data['datum'] = date( 'Y-m-d' );
+		$abonnement                  = get_user_meta( $this->abonnee_id, self::META_KEY, true );
+		$this->data                  = is_array( $abonnement ) ? wp_parse_args( $abonnement, $this->default_data ) : $this->default_data;
 		// Deze datum zit niet in de 'oude' abonnees.
-		if ( '' === $this->_data['incasso_datum'] ) {
+		if ( '' === $this->data['incasso_datum'] ) {
 			$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 1, intval( date( 'Y', $this->start_datum ) ) );
 		}
-		if ( ! isset( $this->_data['extras'] ) ) {
-			$this->_data['extras'] = [];
+		if ( ! isset( $this->data['extras'] ) ) {
+			$this->data['extras'] = [];
 		}
 	}
 
@@ -176,14 +176,14 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'eind_datum':
 			case 'herstart_datum':
 			case 'incasso_datum':
-				return strtotime( $this->_data[ $attribuut ] );
+				return strtotime( $this->data[ $attribuut ] );
 			case 'geannuleerd':
 			case 'gepauzeerd':
-				return 1 === intval( $this->_data[ $attribuut ] );
+				return 1 === intval( $this->data[ $attribuut ] );
 			case 'dag':
-				return 'beperkt' === $this->soort ? $this->_data[ $attribuut ] : '';
+				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
 			default:
-				return $this->_data[ $attribuut ];
+				return $this->data[ $attribuut ];
 		}
 	}
 
@@ -203,14 +203,14 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'eind_datum':
 			case 'herstart_datum':
 			case 'incasso_datum':
-				$this->_data[ $attribuut ] = ( ! is_null( $waarde ) ? date( 'Y-m-d', $waarde ) : 0 );
+				$this->data[ $attribuut ] = ( ! is_null( $waarde ) ? date( 'Y-m-d', $waarde ) : 0 );
 				break;
 			case 'geannuleerd':
 			case 'gepauzeerd':
-				$this->_data[ $attribuut ] = $waarde ? 1 : 0;
+				$this->data[ $attribuut ] = $waarde ? 1 : 0;
 				break;
 			default:
-				$this->_data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -222,7 +222,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @since 4.0.87
 	 */
 	public function save() {
-		update_user_meta( $this->_abonnee_id, self::META_KEY, $this->_data );
+		update_user_meta( $this->abonnee_id, self::META_KEY, $this->data );
 	}
 
 	/**
@@ -231,7 +231,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param array $data het te laden object.
 	 */
 	public function load( $data ) {
-		$this->_data = wp_parse_args( $data, $this->_default_data );
+		$this->data = wp_parse_args( $data, $this->default_data );
 	}
 
 	/**
@@ -242,7 +242,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $wijziging = '' ) {
-		$abonnee = get_userdata( $this->_abonnee_id );
+		$abonnee = get_userdata( $this->abonnee_id );
 		$to      = "$abonnee->display_name <$abonnee->user_email>";
 		return Kleistad_public::compose_email(
 			$to,
@@ -267,7 +267,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_MAAND ), 2 ),
 				'abonnement_overbrugging' => number_format_i18n( $this->bedrag( self::BEDRAG_OVERBRUGGING ), 2 ),
 				'abonnement_link'         => '<a href="' . home_url( '/kleistad_abonnement_betaling' ) .
-												'?gid=' . $this->_abonnee_id .
+												'?gid=' . $this->abonnee_id .
 												'&abo=1' .
 												'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
 			]
@@ -282,7 +282,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return string Hash string.
 	 */
 	public function controle() {
-		return hash( 'sha256', "KlEiStAd{$this->_abonnee_id}AcOnTrOlE" );
+		return hash( 'sha256', "KlEiStAd{$this->abonnee_id}AcOnTrOlE" );
 	}
 
 	/**
@@ -303,7 +303,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		if ( $this->gepauzeerd ) {
 			return 'gepauzeerd';
 		}
-		if ( Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
+		if ( Kleistad_Roles::reserveer( $this->abonnee_id ) ) {
 			if ( $vandaag < $this->pauze_datum ) {
 				return 'pauze gepland';
 			}
@@ -324,7 +324,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function incasso_actief() {
 		$betalen = new Kleistad_Betalen();
-		return $betalen->actief( $this->_abonnee_id, $this->subscriptie_id );
+		return $betalen->actief( $this->abonnee_id, $this->subscriptie_id );
 	}
 
 	/**
@@ -340,7 +340,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 0, intval( date( 'Y', $this->start_datum ) ) )
 		);
 		$betalen->order(
-			$this->_abonnee_id,
+			$this->abonnee_id,
 			__CLASS__ . '-' . $this->code . '-incasso',
 			$this->bedrag( self::BEDRAG_OVERBRUGGING ),
 			'Kleistad abonnement ' . $this->code . ' periode tot ' . $einde_overbrugging_datum,
@@ -364,7 +364,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				$oude_datum,
 				self::META_KEY,
 				[
-					$this->_abonnee_id,
+					$this->abonnee_id,
 					$actie,
 					$oude_datum,
 				]
@@ -374,7 +374,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			$datum,
 			self::META_KEY,
 			[
-				$this->_abonnee_id,
+				$this->abonnee_id,
 				$actie,
 				$datum,
 			]
@@ -392,7 +392,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$betalen = new Kleistad_Betalen();
 
 		return $betalen->herhaalorder(
-			$this->_abonnee_id,
+			$this->abonnee_id,
 			$this->bedrag( self::BEDRAG_MAAND ),
 			'Kleistad abonnement ' . $this->code,
 			$datum
@@ -407,7 +407,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param boolean $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
 	 */
 	private function autoriseer( $valid ) {
-		$abonnee = new WP_User( $this->_abonnee_id );
+		$abonnee = new WP_User( $this->abonnee_id );
 		if ( $valid ) {
 			$abonnee->add_cap( 'leden' );
 			$abonnee->add_cap( Kleistad_Roles::RESERVEER );
@@ -483,8 +483,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->pauze_datum    = $pauze_datum;
 		$this->herstart_datum = $herstart_datum;
 		$betalen              = new Kleistad_Betalen();
-		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
-		if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+		$this->subscriptie_id = $betalen->annuleer( $this->abonnee_id, $this->subscriptie_id );
+		if ( $betalen->heeft_mandaat( $this->abonnee_id ) ) {
 			$this->subscriptie_id = $this->herhaalbetalen( $herstart_datum );
 		}
 		if ( ! $admin ) {
@@ -507,7 +507,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->schedule( 'herstart', $herstart_datum, $this->herstart_datum );
 		$this->herstart_datum = $herstart_datum;
 		$betalen              = new Kleistad_Betalen();
-		if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+		if ( $betalen->heeft_mandaat( $this->abonnee_id ) ) {
 			$this->subscriptie_id = $this->herhaalbetalen( $herstart_datum );
 		}
 		if ( ! $admin ) {
@@ -535,8 +535,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		// Een eventuele subscriptie wordt geannuleerd en mandaten worden verwijderd.
 		$this->eind_datum     = $eind_datum;
 		$betalen              = new Kleistad_Betalen();
-		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
-		$betalen->verwijder_mandaat( $this->_abonnee_id );
+		$this->subscriptie_id = $betalen->annuleer( $this->abonnee_id, $this->subscriptie_id );
+		$betalen->verwijder_mandaat( $this->abonnee_id );
 		if ( ! $admin ) {
 			$this->email(
 				'_gewijzigd',
@@ -579,9 +579,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		}
 		if ( $wijzig_betaling ) {
 			$betalen              = new Kleistad_Betalen();
-			$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id );
+			$this->subscriptie_id = $betalen->annuleer( $this->abonnee_id, $this->subscriptie_id );
 			if ( ! $admin ) {
-				if ( $betalen->heeft_mandaat( $this->_abonnee_id ) ) {
+				if ( $betalen->heeft_mandaat( $this->abonnee_id ) ) {
 					$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
 				}
 				$this->email( '_gewijzigd', $bericht );
@@ -602,7 +602,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function info() {
 		$betalen = new Kleistad_Betalen();
-		$info    = $betalen->info( $this->_abonnee_id );
+		$info    = $betalen->info( $this->abonnee_id );
 		return ( false !== $info ) ? $info : '';
 	}
 
@@ -617,14 +617,14 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function betaalwijze( $wijzig_datum, $betaalwijze, $admin = false ) {
 		$betalen              = new Kleistad_Betalen();
-		$this->subscriptie_id = $betalen->annuleer( $this->_abonnee_id, $this->subscriptie_id ); // Verwijder een eventuele bestaande subscriptie.
+		$this->subscriptie_id = $betalen->annuleer( $this->abonnee_id, $this->subscriptie_id ); // Verwijder een eventuele bestaande subscriptie.
 
 		if ( 'ideal' === $betaalwijze ) {
 			// Doe een proefbetaling om het mandaat te verkrijgen. De wijzig datum is de 1e van de volgende maand.
 			$this->incasso_datum = $wijzig_datum;
 			$this->save();
 			$betalen->order(
-				$this->_abonnee_id,
+				$this->abonnee_id,
 				__CLASS__ . '-' . $this->code . '-incasso',
 				0.01,
 				'Kleistad abonnement ' . $this->code . ' machtiging tot sepa-incasso',
@@ -632,7 +632,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				true
 			);
 		} else {
-			$betalen->verwijder_mandaat( $this->_abonnee_id );
+			$betalen->verwijder_mandaat( $this->abonnee_id );
 			if ( ! $admin ) {
 				$this->email( '_betaalwijze_bank' );
 			}
@@ -668,7 +668,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		if ( 'ideal' === $betaalwijze ) {
 			$betalen = new Kleistad_Betalen();
 			$betalen->order(
-				$this->_abonnee_id,
+				$this->abonnee_id,
 				__CLASS__ . '-' . $this->code . '-start_ideal',
 				$this->bedrag( self::BEDRAG_START_EN_BORG ),
 				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $driemaand_datum ) . ' en borg',
@@ -677,7 +677,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		} else {
 			if ( $admin ) {
 				// Abonnement wordt door admin geactiveerd.
-				if ( ! Kleistad_Roles::reserveer( $this->_abonnee_id ) ) {
+				if ( ! Kleistad_Roles::reserveer( $this->abonnee_id ) ) {
 					$this->autoriseer( true );
 				}
 				$this->email( '_start_ideal' );
@@ -708,7 +708,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'eind':
 				$this->eind_datum  = $datum;
 				$this->geannuleerd = true;
-				if ( ! is_super_admin( $this->_abonnee_id ) ) { // Voorkom dat de admin zijn rol kwijtraakt.
+				if ( ! is_super_admin( $this->abonnee_id ) ) { // Voorkom dat de admin zijn rol kwijtraakt.
 					$this->autoriseer( false );
 				}
 				break;

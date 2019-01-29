@@ -136,7 +136,7 @@ get_header(); ?>
 					</tr>
 					<tr>
 						<th>Stookschema</th>
-						<td><?php echo $content['stookschema']; // WPCS: XSS ok. ?></td>
+						<td><?php echo $content['stookschema']; // phpcs:ignore ?></td>
 					</tr>
 					</table>
 				</div>
@@ -204,7 +204,7 @@ get_header(); ?>
 						<th>Kenmerken</th>
 					</tr>
 					<tr>
-						<td><?php echo $content['kenmerk']; // WPCS: XSS ok. ?></td>
+						<td><?php echo $content['kenmerk']; //  phpcs:ignore ?></td>
 					</tr>
 				</table>
 			</div>
@@ -214,7 +214,7 @@ get_header(); ?>
 						<th>Oorsprong</th>
 					</tr>
 					<tr>
-						<td><?php echo $content['herkomst']; // WPCS: XSS ok. ?></td>
+						<td><?php echo $content['herkomst']; //  phpcs:ignore ?></td>
 					</tr>
 				</table>
 			</div>

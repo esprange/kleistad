@@ -156,10 +156,10 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			if ( 0.0 === $data['input']['cursuskosten'] && 0.0 < $data['input']['inschrijfkosten'] ) {
 				$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
 			}
-			if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['inschrijfslug'], OBJECT ) ) ) { // WPCS: loose comparison ok.
+			if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['inschrijfslug'], OBJECT ) ) ) { // phpcs:ignore
 				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['inschrijfslug'] );
 			}
-			if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['indelingslug'], OBJECT ) ) ) { // WPCS: loose comparison ok.
+			if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['indelingslug'], OBJECT ) ) ) { // phpcs:ignore
 				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['indelingslug'] );
 			}
 			if ( ! empty( $error->get_error_codes() ) ) {
@@ -205,17 +205,17 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			$cursus->eind_datum      = strtotime( $data['input']['eind_datum'] );
 			$cursus->start_tijd      = strtotime( $data['input']['start_tijd'] );
 			$cursus->eind_tijd       = strtotime( $data['input']['eind_tijd'] );
-			$cursus->techniekkeuze   = '' != $data['input']['techniekkeuze']; // WPCS: loose comparison ok.
-			$cursus->vol             = '' != $data['input']['vol']; // WPCS: loose comparison ok.
-			$cursus->vervallen       = '' != $data['input']['vervallen']; // WPCS: loose comparison ok.
+			$cursus->techniekkeuze   = '' != $data['input']['techniekkeuze']; // phpcs:ignore
+			$cursus->vol             = '' != $data['input']['vol']; // phpcs:ignore
+			$cursus->vervallen       = '' != $data['input']['vervallen']; // phpcs:ignore
 			$cursus->inschrijfkosten = $data['input']['inschrijfkosten'];
 			$cursus->cursuskosten    = $data['input']['cursuskosten'];
 			$cursus->inschrijfslug   = $data['input']['inschrijfslug'];
 			$cursus->indelingslug    = $data['input']['indelingslug'];
 			$cursus->technieken      = $data['input']['technieken'];
 			$cursus->maximum         = $data['input']['maximum'];
-			$cursus->meer            = '' != $data['input']['meer']; // WPCS: loose comparison ok.
-			$cursus->tonen           = '' != $data['input']['tonen']; // WPCS: loose comparison ok.
+			$cursus->meer            = '' != $data['input']['meer']; // phpcs:ignore
+			$cursus->tonen           = '' != $data['input']['tonen']; // phpcs:ignore
 			$cursus->save();
 			return 'Gegevens zijn opgeslagen';
 		} elseif ( 'indeling' === $data['input']['tab'] ) { // phpcs:ignore

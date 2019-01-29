@@ -25,9 +25,9 @@ abstract class Kleistad_Entity {
 	 *
 	 * @since 4.0.87
 	 * @access private
-	 * @var array $_data welke de attributen van het object bevat.
+	 * @var array $data welke de attributen van het object bevat.
 	 */
-	protected $_data = [];
+	protected $data = [];
 
 	/**
 	 * Getter, de PHP magic function.
@@ -42,7 +42,7 @@ abstract class Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			default:
-				return $this->_data[ $attribuut ];
+				return $this->data[ $attribuut ];
 		}
 	}
 
@@ -59,7 +59,7 @@ abstract class Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			default:
-				$this->_data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = $waarde;
 		}
 	}
 
@@ -81,7 +81,7 @@ abstract class Kleistad_Entity {
 	 */
 	public function load( $data ) {
 		foreach ( $data as $key => $value ) {
-			$this->_data[ $key ] = $value;
+			$this->data[ $key ] = $value;
 		}
 	}
 
