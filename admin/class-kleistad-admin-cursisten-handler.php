@@ -15,24 +15,6 @@
 class Kleistad_Admin_Cursisten_Handler {
 
 	/**
-	 * Valideer de cursist
-	 *
-	 * @since    5.2.0
-	 *
-	 * @param array $item de cursist.
-	 * @return bool|string
-	 * @suppress PhanUnusedPrivateMethodParameter
-	 */
-	private function validate_cursist( $item ) {
-		$messages = [];
-
-		if ( empty( $messages ) ) {
-			return true;
-		}
-		return implode( '<br />', $messages );
-	}
-
-	/**
 	 * Definieer de panels
 	 *
 	 * @since    5.2.0
@@ -65,7 +47,7 @@ class Kleistad_Admin_Cursisten_Handler {
 		$message = '';
 		$notice  = '';
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
-			$item       = filter_input_array(
+			$item                      = filter_input_array(
 				INPUT_POST,
 				[
 					'id'          => FILTER_SANITIZE_STRING,
@@ -77,28 +59,23 @@ class Kleistad_Admin_Cursisten_Handler {
 					'geannuleerd' => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
-			$item_valid = $this->validate_cursist( $item );
-			if ( true === $item_valid ) {
-				$code                      = $item['id'];
-				$parameters                = explode( '-', substr( $code, 1 ) );
-				$cursus_id                 = intval( $parameters[0] );
-				$cursist_id                = intval( $parameters[1] );
-				$inschrijving              = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
-				$inschrijving->i_betaald   = ( 0 !== intval( $item['i_betaald'] ) );
-				$inschrijving->c_betaald   = ( 0 !== intval( $item['c_betaald'] ) );
-				$inschrijving->geannuleerd = ( 0 !== intval( $item['geannuleerd'] ) );
-				$inschrijving->aantal      = $item['aantal'];
-				if ( intval( $item['cursus_id'] ) !== $cursus_id ) {
-					// cursus gewijzigd.
-					$inschrijving->correct( $item['cursus_id'] );
-				} else {
-					// attributen inschrijving gewijzigd.
-					$inschrijving->save();
-				}
-				$message = 'De gegevens zijn opgeslagen';
+			$code                      = $item['id'];
+			$parameters                = explode( '-', substr( $code, 1 ) );
+			$cursus_id                 = intval( $parameters[0] );
+			$cursist_id                = intval( $parameters[1] );
+			$inschrijving              = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
+			$inschrijving->i_betaald   = ( 0 !== intval( $item['i_betaald'] ) );
+			$inschrijving->c_betaald   = ( 0 !== intval( $item['c_betaald'] ) );
+			$inschrijving->geannuleerd = ( 0 !== intval( $item['geannuleerd'] ) );
+			$inschrijving->aantal      = $item['aantal'];
+			if ( intval( $item['cursus_id'] ) !== $cursus_id ) {
+				// cursus gewijzigd.
+				$inschrijving->correct( $item['cursus_id'] );
 			} else {
-				$notice = $item_valid;
+				// attributen inschrijving gewijzigd.
+				$inschrijving->save();
 			}
+			$message = 'De gegevens zijn opgeslagen';
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
 				$code         = $_REQUEST['id'];
