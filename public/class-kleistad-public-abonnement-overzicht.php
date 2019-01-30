@@ -68,17 +68,24 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 	 * Bewaar 'abonnement_overzicht' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return string|WP_Error
 	 *
 	 * @since   4.5.6
 	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function save( $data ) {
+		$error = new WP_Error();
+
 		if ( ! Kleistad_Roles::override() ) {
-			return '';
+			$error->add( 'security', 'Geen toegang tot deze functie.' );
+			return $error;
 		}
 		$csv   = tempnam( sys_get_temp_dir(), 'abonnees' );
 		$f_csv = fopen( $csv, 'w' );
+		if ( false === $f_csv ) {
+			$error->add( 'security', 'Bestand kon niet aangemaakt worden.' );
+			return $error;
+		}
 		fwrite( $f_csv, "\xEF\xBB\xBF" );
 
 		$betalen         = new Kleistad_Betalen();

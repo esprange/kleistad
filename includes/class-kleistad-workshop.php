@@ -148,7 +148,11 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
-		$this->id = $wpdb->insert_id;
+		$this->id        = $wpdb->insert_id;
+		$timezone_string = get_option( 'timezone_string' );
+		if ( false === $timezone_string ) {
+			$timezone_string = 'Europe/Amsterdam';
+		}
 
 		try {
 			$event             = new Kleistad_Event( $this->event_id );
@@ -162,7 +166,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			$event->titel      = $this->naam;
 			$event->definitief = $this->definitief;
 			$event->vervallen  = $this->vervallen;
-			$timezone          = new DateTimeZone( get_option( 'timezone_string' ) );
+			$timezone          = new DateTimeZone( $timezone_string );
 			$event->start      = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
 			$event->eind       = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			$event->save();

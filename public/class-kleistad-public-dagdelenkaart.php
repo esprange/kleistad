@@ -148,12 +148,11 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 					'plaats'     => $data['input']['plaats'],
 				]
 			);
+			if ( is_wp_error( $gebruiker_id ) ) {
+				$error->add( '', 'Gegevens konden niet worden opgeslagen. Neem s.v.p. contact op met Kleistad.' );
+			}
 		} else {
 			$gebruiker_id = get_current_user_id();
-			if ( is_wp_error( $gebruiker_id ) ) {
-				$error->add( '', $gebruiker_id->get_error_message() );
-				return $error;
-			}
 		}
 
 		$dagdelenkaart              = new Kleistad_Dagdelenkaart( $gebruiker_id );

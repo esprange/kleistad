@@ -336,8 +336,8 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			$this->save();
 		} elseif ( ! $this->gemeld && $this->datum < strtotime( 'today' ) ) {
 			if ( self::ONDERHOUD !== $this->soortstook ) {
-				$regeling = $regelingen->get( $this->gebruiker_id, $this->oven_id );
-
+				$regeling  = $regelingen->get( $this->gebruiker_id, $this->oven_id );
+				$prijs     = is_null( $regeling ) ? $ovens[ $this->oven_id ]->kosten : $regeling;
 				$gebruiker = get_userdata( $this->gebruiker_id );
 				$to        = "$gebruiker->display_name <$gebruiker->user_email>";
 				Kleistad_public::compose_email(
@@ -347,7 +347,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 					[
 						'voornaam'         => $gebruiker->first_name,
 						'achternaam'       => $gebruiker->last_name,
-						'bedrag'           => number_format_i18n( ( is_null( $regeling ) ) ? $ovens[ $this->oven_id ]->kosten : $regeling, 2 ),
+						'bedrag'           => number_format_i18n( $prijs, 2 ),
 						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $this->datum ) ), // datum verwerking.
 						'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $this->datum ) ), // datum deadline.
 						'stookoven'        => $ovens[ $this->oven_id ]->naam,

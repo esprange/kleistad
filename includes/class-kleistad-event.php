@@ -143,10 +143,18 @@ class Kleistad_Event {
 	/**
 	 * Maak een Google API client aan.
 	 *
-	 * @return Google_Client $client.
+	 * @return Google_Client|bool $client of false.
 	 * @suppress PhanTypeArraySuspicious, PhanTypeMismatchArgument, PhanTypeVoidAssignment
 	 */
 	private static function maak_client() {
+		$redirect_uri = get_option( self::REDIRECT_URI );
+		if ( false === $redirect_uri ) {
+			return false;
+		}
+		$refresh_token = get_option( self::REFRESH_TOKEN );
+		if ( false === $refresh_token ) {
+			return false;
+		}
 		$options           = get_option( 'kleistad-opties' );
 		self::$kalender_id = $options['google_kalender_id'];
 		$client            = new Google_Client();
@@ -157,8 +165,8 @@ class Kleistad_Event {
 		$client->setIncludeGrantedScopes( true );
 		$client->addScope( 'email' );
 		$client->addScope( Google_Service_Calendar::CALENDAR_EVENTS );
-		$client->setRedirectUri( get_option( self::REDIRECT_URI ) );
-		$client->refreshToken( get_option( self::REFRESH_TOKEN ) );
+		$client->setRedirectUri( $redirect_uri );
+		$client->refreshToken( $refresh_token );
 		$token = $client->getAccessToken();
 		if ( ! empty( $token ) ) {
 			update_option( self::ACCESS_TOKEN, $token );
@@ -176,6 +184,9 @@ class Kleistad_Event {
 	public static function vraag_google_service_aan( $redirect_url ) {
 		update_option( self::REDIRECT_URI, $redirect_url );
 		$client = self::maak_client();
+		if ( false === $client ) {
+			return;
+		}
 		wp_redirect( $client->createAuthUrl() ); // phpcs:ignore
 		exit;
 	}
@@ -195,7 +206,10 @@ class Kleistad_Event {
 			delete_option( self::ACCESS_TOKEN );
 
 			$client = self::maak_client();
-			$token  = $client->fetchAccessTokenWithAuthCode( $authorization_code );
+			if ( false === $client ) {
+				$error->add( 'google', 'Client service is niet aangemaakt' );
+			}
+			$token = $client->fetchAccessTokenWithAuthCode( $authorization_code );
 			if ( isset( $token['error'] ) && ! empty( $token['error'] ) ) {
 				$error->add( 'google', 'Authenticatie fout, Google meldt ' . $token['error_description'] . ' : ' . $token['error'] );
 				return $error;
@@ -230,6 +244,10 @@ class Kleistad_Event {
 			return true;
 		}
 		$client = self::maak_client();
+		if ( false === $client ) {
+			error_log( '!!! Google maak client failure' ); //phpcs:ignore
+			return false;
+		}
 		if ( $client->isAccessTokenExpired() ) {
 			if ( $client->getRefreshToken() ) {
 				$client->fetchAccessTokenWithRefreshToken( $client->getRefreshToken() );

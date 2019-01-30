@@ -85,11 +85,18 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	 * @since   4.5.4
 	 */
 	public function save( $data ) {
+		$error = new WP_Error();
+
 		if ( ! Kleistad_Roles::override() ) {
-			return '';
+			$error->add( 'security', 'Geen toegang tot deze functie.' );
+			return $error;
 		}
 		$csv   = tempnam( sys_get_temp_dir(), 'cursisten_C' . $data['id'] );
 		$f_csv = fopen( $csv, 'w' );
+		if ( false === $f_csv ) {
+			$error->add( 'security', 'Bestand kon niet aangemaakt worden.' );
+			return $error;
+		}
 		fwrite( $f_csv, "\xEF\xBB\xBF" );
 
 		$inschrijvingen   = Kleistad_Inschrijving::all();

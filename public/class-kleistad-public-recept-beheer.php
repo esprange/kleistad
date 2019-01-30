@@ -148,8 +148,9 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 					$recept->post_status = ( 'pending' === $recept->post_status ) ? 'draft' :
 						( 'publish' === $recept->post_status ) ? 'draft' : 'publish';
 				}
-				$error = wp_update_post( $recept, true );
-				if ( is_wp_error( $error ) ) {
+				$result = wp_update_post( $recept, true );
+				if ( is_wp_error( $result ) ) {
+					$error->add( 'fout', 'recept kan niet worden opgeslagen' );
 					return $error;
 				}
 			} else {
@@ -293,7 +294,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 						$data['foto'],
 						[ 'test_form' => false ]
 					);
-					if ( $file && ! isset( $file['error'] ) ) {
+					if ( is_array( $file ) && ! isset( $file['error'] ) ) {
 						$exif  = exif_read_data( $file['file'] );
 						$image = imagecreatefromjpeg( $file['file'] );
 						if ( ! empty( $exif['Orientation'] ) ) {
@@ -337,11 +338,9 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 					$recept->post_title   = (string) $data['recept']['titel'];
 					$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
 					$recept->post_content = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
-					$error                = wp_update_post( $recept, true );
-					if ( ! is_wp_error( $error ) ) {
-						$recept_id = $error;
-					} else {
-						return $error;
+					$recept_id            = wp_update_post( $recept, true );
+					if ( is_wp_error( $recept_id ) ) {
+						return $recept_id;
 					}
 					wp_set_object_terms(
 						$recept_id,
