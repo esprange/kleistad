@@ -232,13 +232,13 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 					if ( $reservering->dag === $dag ) {
 						if ( $reservering->gebruiker_id == $huidige_gebruiker_id ) {  // phpcs:ignore
 							$kleur         = ( ! $datum_verstreken ) ? 'lightgreen' : $kleur;
-							$wijzigbaar    = ( ! $reservering->verwerkt ) || is_super_admin();
 							$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : ( ! $datum_verstreken );
+							$wijzigbaar    = ( ! $reservering->verwerkt ) || is_super_admin();
 						} else {
 							$kleur = ! $datum_verstreken ? 'pink' : $kleur;
 							// als de huidige gebruiker geen bevoegdheid heeft, dan geen actie.
-							$wijzigbaar    = ( ( ! $reservering->verwerkt ) && Kleistad_Roles::override() ) || is_super_admin();
 							$verwijderbaar = ( ! $reservering->verwerkt ) && Kleistad_Roles::override();
+							$wijzigbaar    = $verwijderbaar || is_super_admin();
 						}
 						if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
 							$kleur = 'gray';

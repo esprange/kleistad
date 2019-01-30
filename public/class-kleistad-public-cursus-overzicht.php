@@ -80,7 +80,7 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	 * Bewaar 'registratie_overzicht' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return string|WP_Error
 	 *
 	 * @since   4.5.4
 	 */

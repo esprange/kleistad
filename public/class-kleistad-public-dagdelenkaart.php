@@ -150,6 +150,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 			);
 			if ( is_wp_error( $gebruiker_id ) ) {
 				$error->add( '', 'Gegevens konden niet worden opgeslagen. Neem s.v.p. contact op met Kleistad.' );
+				return $error;
 			}
 		} else {
 			$gebruiker_id = get_current_user_id();

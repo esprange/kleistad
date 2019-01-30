@@ -70,7 +70,11 @@ class Kleistad_Public {
 	 * @suppress PhanUnusedVariable
 	 */
 	public static function compose_email( $to, $subject, $slug, $args = [], $attachment = [] ) {
-		$domein        = substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
+		$admin_email = get_option( 'admin_email' );
+		if ( false === $admin_email ) {
+			return false; // Zal waarschijnlijk nooit voorkomen.
+		}
+		$domein        = substr( strrchr( $admin_email, '@' ), 1 );
 		$emailadresses = [
 			'info' => 'info@' . $domein,
 			'from' => 'no-reply@' . $domein,
@@ -148,7 +152,11 @@ class Kleistad_Public {
 	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function mail_from( $old ) {
-		return 'no-reply@' . substr( strrchr( get_option( 'admin_email' ), '@' ), 1 );
+		$admin_email = get_option( 'admin_email' );
+		if ( false === $admin_email ) {
+			return ''; // Zal waarschijnlijk nooit voorkomen.
+		}
+		return 'no-reply@' . substr( strrchr( $admin_email, '@' ), 1 );
 	}
 
 	/**
@@ -464,7 +472,7 @@ class Kleistad_Public {
 			return $items;
 		}
 
-		$redirect = ( is_home() ) ? false : get_permalink();
+		$redirect = ( is_home() ) ? '' : get_permalink();
 		if ( is_user_logged_in() ) {
 			$link = '<a href="' . wp_logout_url( home_url() ) . '" title="Uitloggen">Uitloggen</a>';
 		} else {

@@ -61,12 +61,23 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 * Bewaar 'stookbestand' form gegevens
 	 *
 	 * @param array $data data te bewaren.
+	 * @return string|WP_Error
 	 *
 	 * @since   4.0.87
 	 */
 	public function save( $data ) {
+		$error = new WP_Error();
+
+		if ( ! Kleistad_Roles::override() ) {
+			$error->add( 'security', 'Geen toegang tot deze functie.' );
+			return $error;
+		}
 		$csv   = tempnam( sys_get_temp_dir(), 'stookbestand' );
 		$f_csv = fopen( $csv, 'w' );
+		if ( false === $f_csv ) {
+			$error->add( 'security', 'Bestand kon niet aangemaakt worden.' );
+			return $error;
+		}
 		fwrite( $f_csv, "\xEF\xBB\xBF" );
 
 		$ovens          = Kleistad_Oven::all();

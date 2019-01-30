@@ -315,43 +315,49 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 						imagedestroy( $image );
 						$data['recept']['content']['foto'] = $file['url'];
 					} else {
-						$error = new WP_Error();
 						$error->add( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] );
 						return $error;
 					}
 				}
 				if ( ! $data['recept']['id'] ) {
-					$error = wp_insert_post(
+					$result = wp_insert_post(
 						[
 							'post_status' => 'draft', // Initiële publicatie status is prive.
 							'post_type'   => 'kleistad_recept',
 						]
 					);
-					if ( ! is_wp_error( $error ) ) {
-						$data['recept']['id'] = $error;
+					if ( ! is_wp_error( $result ) ) {
+						$data['recept']['id'] = $result;
 					} else {
-						return $error;
+						return $result;
 					}
 				}
 				$recept = get_post( $data['recept']['id'] );
 				if ( ! is_null( $recept ) ) {
 					$recept->post_title   = (string) $data['recept']['titel'];
 					$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
-					$recept->post_content = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
-					$recept_id            = wp_update_post( $recept, true );
-					if ( is_wp_error( $recept_id ) ) {
+					$json_content         = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
+					if ( is_string( $json_content ) ) {
+						$recept->post_content = $json_content;
+					} else {
+						$error->add( '', 'interne fout' );
+						return $error;
+					}
+					$recept_id = wp_update_post( $recept, true );
+					if ( is_int( $recept_id ) ) {
+						wp_set_object_terms(
+							$recept_id,
+							[
+								intval( $data['recept']['glazuur'] ),
+								intval( $data['recept']['kleur'] ),
+								intval( $data['recept']['uiterlijk'] ),
+							],
+							'kleistad_recept_cat'
+						);
+						return 'Gegevens zijn opgeslagen';
+					} else {
 						return $recept_id;
 					}
-					wp_set_object_terms(
-						$recept_id,
-						[
-							intval( $data['recept']['glazuur'] ),
-							intval( $data['recept']['kleur'] ),
-							intval( $data['recept']['uiterlijk'] ),
-						],
-						'kleistad_recept_cat'
-					);
-					return 'Gegevens zijn opgeslagen';
 				}
 				$error->add( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' );
 				return $error;
