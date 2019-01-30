@@ -42,6 +42,51 @@ class Kleistad_Admin {
 	private $options;
 
 	/**
+	 *  Oven beheer
+	 *
+	 * @since     5.0.2
+	 * @access    private
+	 * @var       object    $ovens_handler  De handler voor ovens beheer
+	 */
+	private $ovens_handler;
+
+	/**
+	 *  Cursisten beheer
+	 *
+	 * @since     5.0.2
+	 * @access    private
+	 * @var       object    $cursisten_handler  De handler voor cursisten beheer
+	 */
+	private $cursisten_handler;
+
+	/**
+	 *  Abonnees beheer
+	 *
+	 * @since     5.0.2
+	 * @access    private
+	 * @var       object    $abonnees_handler  De handler voor abonnees beheer
+	 */
+	private $abonnees_handler;
+
+	/**
+	 *  Stooksaldo beheer
+	 *
+	 * @since     5.0.2
+	 * @access    private
+	 * @var       object    $stooksaldo_handler  De handler voor stooksaldo beheer
+	 */
+	private $stooksaldo_handler;
+
+	/**
+	 *  Regeling stookkosten beheer
+	 *
+	 * @since     5.0.2
+	 * @access    private
+	 * @var       object    $regelingen_handler  De handler voor regeling stookkosten beheer
+	 */
+	private $regelingen_handler;
+
+	/**
 	 * Initializeer het object.
 	 *
 	 * @since    4.0.87
@@ -50,10 +95,14 @@ class Kleistad_Admin {
 	 * @param      array  $options     De plugin options.
 	 */
 	public function __construct( $plugin_name, $version, $options ) {
-
-		$this->plugin_name = $plugin_name;
-		$this->version     = $version;
-		$this->options     = $options;
+		$this->plugin_name        = $plugin_name;
+		$this->version            = $version;
+		$this->options            = $options;
+		$this->ovens_handler      = new Kleistad_Admin_Ovens_Handler();
+		$this->cursisten_handler  = new Kleistad_Admin_Cursisten_Handler();
+		$this->abonnees_handler   = new Kleistad_Admin_Abonnees_Handler();
+		$this->stooksaldo_handler = new Kleistad_Admin_Stooksaldo_Handler();
+		$this->regelingen_handler = new Kleistad_Admin_Regelingen_Handler();
 	}
 
 	/**
@@ -83,22 +132,11 @@ class Kleistad_Admin {
 	 */
 	public function add_plugin_admin_menu() {
 		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', $this->plugin_name, [ $this, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), ++$GLOBALS['_wp_last_object_menu'] );
-
-		add_submenu_page( $this->plugin_name, 'Ovens', 'Ovens', 'manage_options', 'ovens', [ $this, 'ovens_page_handler' ] );
-		add_submenu_page( 'ovens', 'Toevoegen oven', 'Toevoegen oven', 'manage_options', 'ovens_form', [ $this, 'ovens_form_page_handler' ] );
-
-		add_submenu_page( $this->plugin_name, 'Regeling stookkosten', 'Regeling stookkosten', 'manage_options', 'regelingen', [ $this, 'regelingen_page_handler' ] );
-		add_submenu_page( 'regelingen', 'Toevoegen regeling', 'Toevoegen regeling', 'manage_options', 'regelingen_form', [ $this, 'regelingen_form_page_handler' ] );
-
-		add_submenu_page( $this->plugin_name, 'Stooksaldo beheer', 'Stooksaldo beheer', 'manage_options', 'stooksaldo', [ $this, 'stooksaldo_page_handler' ] );
-		add_submenu_page( 'stooksaldo', 'Wijzigen stooksaldo', 'Wijzigen stooksaldo', 'manage_options', 'stooksaldo_form', [ $this, 'stooksaldo_form_page_handler' ] );
-
-		add_submenu_page( $this->plugin_name, 'Abonnees', 'Abonnees', 'manage_options', 'abonnees', [ $this, 'abonnees_page_handler' ] );
-		add_submenu_page( 'abonnees', 'Wijzigen abonnee', 'Wijzigen abonnee', 'manage_options', 'abonnees_form', [ $this, 'abonnees_form_page_handler' ] );
-
-		add_submenu_page( $this->plugin_name, 'Cursisten', 'Cursisten', 'manage_options', 'cursisten', [ $this, 'cursisten_page_handler' ] );
-		add_submenu_page( 'cursisten', 'Wijzigen cursist', 'Wijzigen cursist', 'manage_options', 'cursisten_form', [ $this, 'cursisten_form_page_handler' ] );
-
+		$this->ovens_handler->add_pages( $this->plugin_name );
+		$this->abonnees_handler->add_pages( $this->plugin_name );
+		$this->cursisten_handler->add_pages( $this->plugin_name );
+		$this->stooksaldo_handler->add_pages( $this->plugin_name );
+		$this->regelingen_handler->add_pages( $this->plugin_name );
 	}
 
 	/**
@@ -475,651 +513,4 @@ class Kleistad_Admin {
 		}
 		return $input;
 	}
-
-	/**
-	 * Ovens overzicht page handler
-	 *
-	 * @since    4.0.87
-	 * @suppress PhanUnusedVariable
-	 */
-	public function ovens_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Ovens();
-		require 'partials/kleistad-admin-ovens-page.php';
-	}
-
-	/**
-	 * Toon en verwerk oven gegevens
-	 *
-	 * @since    4.0.87
-	 * @suppress PhanUnusedVariable
-	 */
-	public function ovens_form_page_handler() {
-		$message = '';
-		$notice  = '';
-		$item    = [];
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
-			$item       = filter_input_array(
-				INPUT_POST,
-				[
-					'id'              => FILTER_SANITIZE_NUMBER_INT,
-					'naam'            => FILTER_SANITIZE_STRING,
-					'kosten'          => [
-						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
-					],
-					'beschikbaarheid' => [
-						'filter' => FILTER_SANITIZE_STRING,
-						'flags'  => FILTER_FORCE_ARRAY,
-					],
-				]
-			);
-			$item_valid = $this->validate_oven( $item );
-			if ( true === $item_valid ) {
-				if ( $item['id'] > 0 ) {
-					$oven = new Kleistad_Oven( $item['id'] );
-				} else {
-					$oven = new Kleistad_Oven();
-				}
-				$oven->naam            = $item['naam'];
-				$oven->kosten          = $item['kosten'];
-				$oven->beschikbaarheid = $item['beschikbaarheid'];
-				$oven->save();
-				$message = 'De gegevens zijn opgeslagen';
-			} else {
-				$notice = $item_valid;
-			}
-		} else {
-			if ( isset( $_REQUEST['id'] ) ) {
-				$oven = new Kleistad_Oven( $_REQUEST['id'] );
-			} else {
-				$oven = new Kleistad_Oven();
-			}
-			$item['id']              = $oven->id;
-			$item['naam']            = $oven->naam;
-			$item['kosten']          = $oven->kosten;
-			$item['beschikbaarheid'] = $oven->beschikbaarheid;
-		}
-		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this, 'ovens_form_meta_box_handler' ], 'oven', 'normal', 'default' );
-		require 'partials/kleistad-admin-ovens-form-page.php';
-	}
-
-	/**
-	 * Toon het oven formulier in een meta box
-	 *
-	 * @param array $item de oven.
-	 * @suppress PhanUnusedPublicMethodParameter
-	 */
-	public function ovens_form_meta_box_handler( $item ) {
-		require 'partials/kleistad-admin-ovens-form-meta-box.php';
-	}
-
-	/**
-	 * Valideer de oven
-	 *
-	 * @param array $item de oven.
-	 * @return bool|string
-	 */
-	private function validate_oven( $item ) {
-		$messages = [];
-
-		if ( empty( $item['naam'] ) ) {
-			$messages[] = 'Naam is verplicht';
-		}
-		if ( ! empty( $item['kosten'] ) && ! is_numeric( $item['kosten'] ) ) {
-			$messages[] = 'Kosten format is fout';
-		}
-		if ( ! empty( $item['kosten'] ) && ! absint( intval( $item['kosten'] ) ) ) {
-			$messages[] = 'Kosten kunnen niet kleiner zijn dan 0';
-		}
-		if ( empty( $messages ) ) {
-			return true;
-		}
-		return implode( '<br />', $messages );
-	}
-
-	/**
-	 * Abonnees overzicht page handler
-	 *
-	 * @since    4.3.0
-	 * @suppress PhanUnusedVariable
-	 */
-	public function abonnees_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Abonnees();
-		require 'partials/kleistad-admin-abonnees-page.php';
-	}
-
-	/**
-	 * Toon en verwerk ingevoerde abonnee gegevens
-	 *
-	 * @since    4.3.0
-	 * @suppress PhanUnusedVariable
-	 */
-	public function abonnees_form_page_handler() {
-		$message = '';
-		$notice  = '';
-		$actie   = null;
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
-			$item = filter_input_array(
-				INPUT_POST,
-				[
-					'id'              => FILTER_SANITIZE_NUMBER_INT,
-					'naam'            => FILTER_SANITIZE_STRING,
-					'code'            => FILTER_SANITIZE_STRING,
-					'soort'           => FILTER_SANITIZE_STRING,
-					'dag'             => FILTER_SANITIZE_STRING,
-					'gestart'         => FILTER_SANITIZE_NUMBER_INT,
-					'geannuleerd'     => FILTER_SANITIZE_NUMBER_INT,
-					'gepauzeerd'      => FILTER_SANITIZE_NUMBER_INT,
-					'inschrijf_datum' => FILTER_SANITIZE_STRING,
-					'start_datum'     => FILTER_SANITIZE_STRING,
-					'pauze_datum'     => FILTER_SANITIZE_STRING,
-					'eind_datum'      => FILTER_SANITIZE_STRING,
-					'herstart_datum'  => FILTER_SANITIZE_STRING,
-					'mandaat'         => FILTER_SANITIZE_NUMBER_INT,
-					'extras'          => [
-						'filter' => FILTER_SANITIZE_STRING,
-						'flags'  => FILTER_REQUIRE_ARRAY,
-					],
-					'actie'           => FILTER_SANITIZE_STRING,
-					'submit'          => FILTER_SANITIZE_STRING,
-				]
-			);
-			if ( ! is_array( $item['extras'] ) ) {
-				$item['extras'] = [];
-			}
-			$actie      = $item['actie'];
-			$submit     = strtolower( $item['submit'] );
-			$item_valid = $this->validate_abonnee( $item, $actie, $submit );
-			if ( true === $item_valid ) {
-				$datum               = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
-				$abonnement          = new Kleistad_Abonnement( $item['id'] );
-				$vandaag             = strtotime( 'today' );
-				$item['mollie_info'] = $abonnement->info();
-				switch ( $actie ) {
-					case 'status':
-						switch ( $submit ) {
-							case 'pauzeren':
-								$abonnement->pauzeren( strtotime( $item['pauze_datum'] ), strtotime( $item['herstart_datum'] ), true );
-								$item['gepauzeerd'] = $vandaag >= $item['pauze_datum'];
-								break;
-							case 'herstarten':
-								$abonnement->herstarten( strtotime( $item['herstart_datum'] ), true );
-								$item['gepauzeerd'] = $vandaag < $item['herstart_datum'];
-								break;
-							case 'starten':
-								$abonnement->start( strtotime( $item['start_datum'] ), 'stort', true );
-								$item['gestart'] = $vandaag >= $item['start_datum'];
-								break;
-							case 'stoppen':
-								$abonnement->annuleren( strtotime( $item['eind_datum'] ), true );
-								$item['geannuleerd'] = $vandaag >= $item['eind_datum'];
-								break;
-						}
-						break;
-					case 'soort':
-						if ( ( $abonnement->soort !== $item['soort'] ) || ( $abonnement->dag !== $item['dag'] ) ) {
-							$abonnement->wijzigen( $vandaag, $item['soort'], $item['dag'], true );
-						}
-						break;
-					case 'extras':
-						if ( $abonnement->extras !== $item['extras'] ) {
-							$abonnement->wijzigen( $vandaag, $item['extras'], '', true );
-						}
-						break;
-					case 'mollie':
-						if ( $item['mandaat'] ) {
-							$abonnement->betaalwijze( $vandaag, 'stort', true );
-							$item['mandaat'] = false;
-						}
-						break;
-					default:
-						break;
-				}
-				$message = 'De gegevens zijn opgeslagen';
-			} else {
-				$notice = $item_valid;
-			}
-		} else {
-			if ( isset( $_REQUEST['id'] ) ) {
-				$abonnee_id = $_REQUEST['id'];
-				$actie      = $_REQUEST['actie'];
-				$abonnement = new Kleistad_Abonnement( $abonnee_id );
-				$abonnee    = get_userdata( $abonnee_id );
-				$item       = [
-					'id'              => $abonnee_id,
-					'naam'            => $abonnee->display_name,
-					'soort'           => $abonnement->soort,
-					'dag'             => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
-					'code'            => $abonnement->code,
-					'extras'          => $abonnement->extras,
-					'geannuleerd'     => $abonnement->geannuleerd,
-					'gepauzeerd'      => $abonnement->gepauzeerd,
-					'gestart'         => Kleistad_Roles::reserveer( $abonnee_id ),
-					'inschrijf_datum' => ( $abonnement->datum ? strftime( '%d-%m-%Y', $abonnement->datum ) : '' ),
-					'start_datum'     => ( $abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '' ),
-					'pauze_datum'     => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
-					'eind_datum'      => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
-					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
-					'mandaat'         => ( '' !== $abonnement->subscriptie_id ),
-					'mollie_info'     => $abonnement->info(),
-				];
-			}
-		}
-		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default', [ $actie ] );
-		require 'partials/kleistad-admin-abonnees-form-page.php';
-	}
-
-	/**
-	 * Toon de abonnees form meta box
-	 *
-	 * @since    4.3.0
-	 *
-	 * @param array $item de abonnee.
-	 * @param array $request de aanroep parameters.
-	 * @suppress PhanUnusedPublicMethodParameter
-	 * @suppress PhanUnusedVariable
-	 */
-	public function abonnees_form_meta_box_handler( $item, $request ) {
-		$actie = $request['args'][0];
-		require 'partials/kleistad-admin-abonnees-form-meta-box.php';
-	}
-
-	/**
-	 * Valideer de abonnee
-	 *
-	 * @since    4.3.0
-	 *
-	 * @param array  $item de abonnee.
-	 * @param string $actie de actie waar het om gaat.
-	 * @param string $submit de subactie.
-	 * @return bool|string
-	 * @suppress PhanUnusedPrivateMethodParameter
-	 */
-	private function validate_abonnee( $item, $actie, $submit ) {
-		$messages = [];
-
-		if ( 'status' === $actie ) {
-			switch ( $submit ) {
-				case 'pauzeren':
-					if ( false === strtotime( $item['pauze_datum'] ) ) {
-						$messages[] = 'Pauze datum ontbreekt of is ongeldig';
-					}
-					// Bij pauzeren moet herstart_datum ook getest worden.
-				case 'herstarten':
-					if ( false === strtotime( $item['herstart_datum'] ) ) {
-						$messages[] = 'Herstart datum ontbreekt of is ongeldig';
-					}
-					break;
-				case 'starten':
-					if ( false === strtotime( $item['start_datum'] ) ) {
-						$messages[] = 'Start datum ontbreekt of is ongeldig';
-					}
-					break;
-				case 'stoppen':
-					if ( false === strtotime( $item['eind_datum'] ) ) {
-						$messages[] = 'Eind datum ontbreekt of is ongeldig';
-					}
-					break;
-				default:
-					break;
-			}
-		}
-
-		if ( empty( $messages ) ) {
-			return true;
-		}
-		return implode( '<br />', $messages );
-	}
-
-	/**
-	 * Cursisten overzicht page handler
-	 *
-	 * @since    4.5.0
-	 * @suppress PhanUnusedVariable
-	 */
-	public function cursisten_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Cursisten();
-		require 'partials/kleistad-admin-cursisten-page.php';
-	}
-
-	/**
-	 * Toon en verwerk ingevoerde cursist gegevens
-	 *
-	 * @since    4.5.0
-	 * @suppress PhanUnusedVariable
-	 */
-	public function cursisten_form_page_handler() {
-		$message = '';
-		$notice  = '';
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
-			$item       = filter_input_array(
-				INPUT_POST,
-				[
-					'id'          => FILTER_SANITIZE_STRING,
-					'naam'        => FILTER_SANITIZE_STRING,
-					'cursus_id'   => FILTER_SANITIZE_NUMBER_INT,
-					'i_betaald'   => FILTER_SANITIZE_NUMBER_INT,
-					'c_betaald'   => FILTER_SANITIZE_NUMBER_INT,
-					'aantal'      => FILTER_SANITIZE_NUMBER_INT,
-					'geannuleerd' => FILTER_SANITIZE_NUMBER_INT,
-				]
-			);
-			$item_valid = $this->validate_cursist( $item );
-			if ( true === $item_valid ) {
-				$code                      = $item['id'];
-				$parameters                = explode( '-', substr( $code, 1 ) );
-				$cursus_id                 = intval( $parameters[0] );
-				$cursist_id                = intval( $parameters[1] );
-				$inschrijving              = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
-				$inschrijving->i_betaald   = ( 0 !== intval( $item['i_betaald'] ) );
-				$inschrijving->c_betaald   = ( 0 !== intval( $item['c_betaald'] ) );
-				$inschrijving->geannuleerd = ( 0 !== intval( $item['geannuleerd'] ) );
-				$inschrijving->aantal      = $item['aantal'];
-				if ( intval( $item['cursus_id'] ) !== $cursus_id ) {
-					// cursus gewijzigd.
-					$inschrijving->correct( $item['cursus_id'] );
-				} else {
-					// attributen inschrijving gewijzigd.
-					$inschrijving->save();
-				}
-				$message = 'De gegevens zijn opgeslagen';
-			} else {
-				$notice = $item_valid;
-			}
-		} else {
-			if ( isset( $_REQUEST['id'] ) ) {
-				$code         = $_REQUEST['id'];
-				$parameters   = explode( '-', substr( $code, 1 ) );
-				$cursus_id    = intval( $parameters[0] );
-				$cursist_id   = intval( $parameters[1] );
-				$cursist      = get_userdata( $cursist_id );
-				$inschrijving = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
-				$cursus       = new Kleistad_Cursus( $cursus_id );
-				$item         = [
-					'id'          => $code,
-					'naam'        => $cursist->display_name,
-					'aantal'      => $inschrijving->aantal,
-					'i_betaald'   => $inschrijving->i_betaald,
-					'c_betaald'   => $inschrijving->c_betaald,
-					'geannuleerd' => $inschrijving->geannuleerd,
-					'cursist_id'  => $cursist_id,
-					'cursus_id'   => $cursus_id,
-				];
-			}
-		}
-		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this, 'cursisten_form_meta_box_handler' ], 'cursist', 'normal', 'default' );
-		require 'partials/kleistad-admin-cursisten-form-page.php';
-	}
-
-	/**
-	 * Toon de cursisten form meta box
-	 *
-	 * @since    4.5.0
-	 *
-	 * @param array $item de cursist.
-	 * @suppress PhanUnusedPublicMethodParameter
-	 */
-	public function cursisten_form_meta_box_handler( $item ) {
-		require 'partials/kleistad-admin-cursisten-form-meta-box.php';
-	}
-
-	/**
-	 * Valideer de cursist
-	 *
-	 * @since    4.5.0
-	 *
-	 * @param array $item de cursist.
-	 * @return bool|string
-	 * @suppress PhanUnusedPrivateMethodParameter
-	 */
-	private function validate_cursist( $item ) {
-		$messages = [];
-
-		if ( empty( $messages ) ) {
-			return true;
-		}
-		return implode( '<br />', $messages );
-	}
-
-	/**
-	 * Overzicht regelingen page handler
-	 *
-	 * @since    4.0.87
-	 * @suppress PhanUnusedVariable
-	 */
-	public function regelingen_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Regelingen();
-		if ( 'delete' === $table->current_action() ) {
-			$id = filter_input( INPUT_GET, 'id' );
-
-			if ( ! is_null( $id ) ) {
-				list($gebruiker_id, $oven_id) = sscanf( $id, '%d-%d' );
-				$regelingen                   = new Kleistad_Regelingen();
-				$regelingen->delete_and_save( $gebruiker_id, $oven_id );
-			}
-			$message = sprintf( 'Aantal verwijderd: %d', count( $id ) );
-		}
-		$table->prepare_items();
-
-		require 'partials/kleistad-admin-regelingen-page.php';
-	}
-
-	/**
-	 * Toon en verwerk regelingen
-	 *
-	 * @since    4.0.87
-	 * @suppress PhanUnusedVariable
-	 */
-	public function regelingen_form_page_handler() {
-
-		$message = '';
-		$notice  = '';
-
-		$default = [
-			'id'             => '',
-			'gebruiker_id'   => 0,
-			'oven_id'        => 0,
-			'oven_naam'      => '',
-			'gebruiker_naam' => '',
-			'kosten'         => 0,
-		];
-
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_regeling' ) ) {
-			$item       = wp_parse_args( $_REQUEST, $default );
-			$item_valid = $this->validate_regeling( $item );
-			if ( true === $item_valid ) {
-				$regelingen = new Kleistad_Regelingen();
-				$result     = $regelingen->set_and_save( $item['gebruiker_id'], $item['oven_id'], $item['kosten'] );
-				if ( '' === $item['id'] ) {
-					if ( $result ) {
-						$message = 'De regeling is bewaard';
-					} else {
-						$notice = 'Er was een probleem met het opslaan van gegevens';
-					}
-				} else {
-					if ( $result ) {
-						$message = 'De regeling is gewijzigd';
-					} else {
-						$notice = 'Er was een probleem met het wijzigen van gegevens';
-					}
-				}
-				$oven                   = new Kleistad_Oven( $item['oven_id'] );
-				$gebruiker              = get_userdata( $item['gebruiker_id'] );
-				$item['gebruiker_naam'] = $gebruiker->display_name;
-				$item['oven_naam']      = $oven->naam;
-			} else {
-				$notice = $item_valid;
-			}
-		} else {
-			$item = $default;
-			if ( isset( $_REQUEST['id'] ) ) {
-				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d-%d' );
-				$regelingen                   = new Kleistad_Regelingen();
-				$gebruiker_regeling           = $regelingen->get( $gebruiker_id, $oven_id );
-
-				$gebruiker = get_userdata( $gebruiker_id );
-				$oven      = new Kleistad_Oven( $oven_id );
-				$item      = [
-					'id'             => $_REQUEST['id'],
-					'gebruiker_id'   => $gebruiker_id,
-					'gebruiker_naam' => $gebruiker->display_name,
-					'oven_id'        => $oven_id,
-					'oven_naam'      => $oven->naam,
-					'kosten'         => $gebruiker_regeling,
-				];
-			}
-		}
-		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this, 'regelingen_form_meta_box_handler' ], 'regeling', 'normal', 'default' );
-
-		require 'partials/kleistad-admin-regelingen-form-page.php';
-	}
-
-	/**
-	 * Toon de regeling meta box
-	 *
-	 * @since    4.0.87
-	 *
-	 * @param array $item de regeling.
-	 * @suppress PhanUnusedPublicMethodParameter, PhanUnusedVariable
-	 */
-	public function regelingen_form_meta_box_handler( $item ) {
-		$gebruikers = get_users(
-			[
-				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => [ 'display_name' ],
-			]
-		);
-		$ovens      = Kleistad_Oven::all();
-
-		require 'partials/kleistad-admin-regelingen-form-meta-box.php';
-	}
-
-	/**
-	 * Valideer de regeling
-	 *
-	 * @since    4.0.87
-	 *
-	 * @param array $item the regeling.
-	 * @return bool|string
-	 */
-	private function validate_regeling( $item ) {
-		$messages = [];
-		if ( ! empty( $item['gebruiker_id'] ) && ! is_numeric( $item['gebruiker_id'] ) ) {
-			$messages[] = 'Geen gebruiker gekozen';
-		}
-		if ( ! empty( $item['oven_id'] ) && ! is_numeric( $item['oven_id'] ) ) {
-			$messages[] = 'Geen oven gekozen';
-		}
-		if ( ! empty( $item['kosten'] ) && ! is_numeric( $item['kosten'] ) ) {
-			$messages[] = 'Kosten format is fout';
-		}
-		if ( ! empty( $item['kosten'] ) && ! 0.0 <= (float) $item['kosten'] ) {
-			$messages[] = 'Kosten kunnen niet kleiner zijn dan 0';
-		}
-		if ( empty( $messages ) ) {
-			return true;
-		}
-		return implode( '<br />', $messages );
-	}
-
-	/**
-	 * Overzicht stooksaldo page handler
-	 *
-	 * @since    4.0.87
-	 * @suppress PhanUnusedVariable
-	 */
-	public function stooksaldo_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Stooksaldo();
-		require 'partials/kleistad-admin-stooksaldo-page.php';
-	}
-
-	/**
-	 * Toon en verwerk stooksaldo
-	 *
-	 * @since    4.0.87
-	 * @suppress PhanUnusedPublicMethodParameter, PhanUnusedVariable
-	 */
-	public function stooksaldo_form_page_handler() {
-
-		$message = '';
-		$notice  = '';
-
-		$default = [
-			'id'    => 0,
-			'saldo' => 0,
-			'naam'  => '',
-		];
-
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_stooksaldo' ) ) {
-			$item       = wp_parse_args( $_REQUEST, $default );
-			$item_valid = $this->validate_stooksaldo( $item );
-
-			if ( true === $item_valid ) {
-				$saldo         = new Kleistad_Saldo( $item['id'] );
-				$saldo->bedrag = $item['saldo'];
-				$beheerder     = wp_get_current_user();
-				$saldo->save( 'correctie door ' . $beheerder->display_name );
-			} else {
-				$notice = $item_valid;
-			}
-		} else {
-			$item = $default;
-			if ( isset( $_REQUEST['id'] ) ) {
-				$gebruiker = get_userdata( $_REQUEST['id'] );
-				if ( ! $gebruiker ) {
-					$item   = $default;
-					$notice = 'De gebruiker is niet gevonden';
-				} else {
-					$saldo = new Kleistad_saldo( $_REQUEST['id'] );
-					$item  = [
-						'id'    => $_REQUEST['id'],
-						'naam'  => $gebruiker->display_name,
-						'saldo' => $saldo->bedrag,
-					];
-				}
-			}
-		}
-		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this, 'stooksaldo_form_meta_box_handler' ], 'stooksaldo', 'normal', 'default' );
-
-		require 'partials/kleistad-admin-stooksaldo-form-page.php';
-	}
-
-	/**
-	 * Toon de stooksaldo meta box
-	 *
-	 * @since    4.0.87
-	 *
-	 * @param array $item de stooksaldo.
-	 * @suppress PhanUnusedPublicMethodParameter
-	 */
-	public function stooksaldo_form_meta_box_handler( $item ) {
-		require 'partials/kleistad-admin-stooksaldo-form-meta-box.php';
-	}
-
-	/**
-	 * Valideer de stooksaldo
-	 *
-	 * @since    4.0.87
-	 *
-	 * @param array $item de stooksaldo.
-	 * @return bool|string
-	 */
-	private function validate_stooksaldo( $item ) {
-		$messages = [];
-
-		if ( ! empty( $item['saldo'] ) && ! is_numeric( $item['saldo'] ) ) {
-			$messages[] = 'Kosten format is fout';
-		}
-
-		if ( empty( $messages ) ) {
-			return true;
-		}
-		return implode( '<br />', $messages );
-	}
-
 }
