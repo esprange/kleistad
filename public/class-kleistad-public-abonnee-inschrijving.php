@@ -193,12 +193,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 		$abonnement->save();
 
 		$status = $abonnement->start( $abonnement->start_datum, $data['input']['betaal'] );
-		if ( $status ) {
-			return 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging';
-		} else {
-			$error->add( '', 'De inschrijving van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' );
-		}
-		return $error;
+		return 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging';
 	}
 
 }

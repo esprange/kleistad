@@ -685,7 +685,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				$this->email( '_start_bank' );
 			}
 		}
-		return true;
 	}
 
 	/**

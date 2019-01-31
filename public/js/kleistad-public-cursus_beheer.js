@@ -148,8 +148,7 @@
                     height: 'auto',
                     width: 750,
                     modal: true,
-                    /* jshint unused:vars */
-                    open: function( event, ui ) {
+                    open: function() {
                         $( '#kleistad_cursus_tabs' ).tabs( { active: 0 } );
                     }
                 }

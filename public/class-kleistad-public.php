@@ -615,7 +615,7 @@ class Kleistad_Public {
 		} else {
 			$userdata['user_nicename'] = $nice_voornaam . '-' . $nice_achternaam;
 			$userdata['display_name']  = $userdata['first_name'] . ' ' . $userdata['last_name'];
-			$result                    = wp_update_user( $userdata ); // @phan-suppress-current-line PhanTypeMismatchArgument
+			$result                    = wp_update_user( $userdata ); // @phan-suppress-current-line PhanTypeMismatchArgument @scrutinizer ignore-type
 		}
 
 		return $result;

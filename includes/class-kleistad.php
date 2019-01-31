@@ -71,7 +71,10 @@ class Kleistad {
 		$this->plugin_name = 'kleistad';
 		$data              = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . $this->plugin_name . '.php', false, false );
 		$this->version     = $data['Version'];
-		self::$options     = get_option( 'kleistad-opties' );
+		$options           = get_option( 'kleistad-opties' );
+		if ( is_array( $options ) ) {
+			self::$options = $options; // zou altijd zo moeten zijn.
+		}
 		self::register_autoloader();
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );

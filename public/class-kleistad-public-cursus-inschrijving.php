@@ -128,11 +128,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 		if ( 0 === intval( $data['input']['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 		} else {
-			$data['cursus'] = new Kleistad_Cursus( $data['input']['cursus_id'] );
-			if ( is_null( $data['cursus']->id ) ) {
-				$error->add( 'onbekend', 'De gekozen cursus is niet bekend' );
-				$data['input']['cursus_id'] = 0;
-			} elseif ( $data['cursus']->vol ) {
+			if ( $data['cursus']->vol ) {
 				$error->add( 'vol', 'De gekozen cursus is vol. Inschrijving is niet mogelijk.' );
 				$data['input']['cursus_id'] = 0;
 			} else {
