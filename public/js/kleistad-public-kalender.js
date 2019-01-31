@@ -52,8 +52,7 @@
 							successCallback( data.events );
 						}
 					).fail(
-						/* jshint unused:vars */
-						function( jqXHR, textStatus, errorThrown ) {
+						function( jqXHR ) {
 							if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 								failureCallback( jqXHR.responseJSON.message );
 								return;

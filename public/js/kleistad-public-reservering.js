@@ -155,16 +155,15 @@
                 $( '#reserveringen' + data.oven_id ).html( data.html );
             }
         ).fail(
-            /* jshint unused:vars */
-                function( jqXHR, textStatus, errorThrown ) {
-                    if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-                        window.alert( jqXHR.responseJSON.message );
-                        return;
-                    }
-                    window.alert( kleistadData.error_message );
-                }
-            );
-        }
+			function( jqXHR ) {
+				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
+					window.alert( jqXHR.responseJSON.message );
+					return;
+				}
+				window.alert( kleistadData.error_message );
+			}
+		);
+	}
 
     /**
      * Wijzig of verwijder de reservering in de server.
@@ -209,16 +208,15 @@
                 $( '#reserveringen' + data.oven_id ).html( data.html );
             }
         ).fail(
-            /* jshint unused:vars */
-                function( jqXHR, textStatus, errorThrown ) {
-                    if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-                        window.alert( jqXHR.responseJSON.message );
-                        return;
-                    }
-                    window.alert( kleistadData.error_message );
-                }
-            );
-        }
+			function( jqXHR ) {
+				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
+					window.alert( jqXHR.responseJSON.message );
+					return;
+				}
+				window.alert( kleistadData.error_message );
+			}
+		);
+	}
 
     $( document ).ready(
         function() {

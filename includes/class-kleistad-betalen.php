@@ -213,33 +213,6 @@ class Kleistad_Betalen {
 	}
 
 	/**
-	 * Eenmalige betaling, op basis van eerder verkregen mandaat.
-	 *
-	 * @since      4.2.0
-	 *
-	 * @param int    $gebruiker_id Het wp gebruiker_id.
-	 * @param float  $bedrag       Het te betalen bedrag.
-	 * @param string $beschrijving De beschrijving bij de betaling.
-	 */
-	public function on_demand_order( $gebruiker_id, $bedrag, $beschrijving ) {
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-		if ( '' !== $mollie_gebruiker_id ) {
-			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			$mollie_gebruiker->createPayment(
-				[
-					'amount'       => [
-						'currency' => 'EUR',
-						'value'    => number_format( $bedrag, 2, '.', '' ),
-					],
-					'description'  => $beschrijving,
-					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
-					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/ondemand/',
-				]
-			);
-		}
-	}
-
-	/**
 	 * Herhaal een order op basis van een mandaat, en herhaal deze maandelijks.
 	 *
 	 * @since      4.2.0

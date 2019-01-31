@@ -460,9 +460,9 @@ class Kleistad_Public {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @staticvar boolean $is_active Bewaart de activeringsstatus, als true dan niets doen.
-	 * @param string   $items De menu opties.
-	 * @param stdClass $args  De argumenten van het filter.
+	 * @staticvar bool $is_active Bewaart de activeringsstatus, als true dan niets doen.
+	 * @param string   $items     De menu opties.
+	 * @param stdClass $args      De argumenten van het filter.
 	 * @return string
 	 */
 	public function loginuit_menu( $items, $args ) {
@@ -472,7 +472,10 @@ class Kleistad_Public {
 			return $items;
 		}
 
-		$redirect = ( is_home() ) ? '' : get_permalink();
+		$redirect = get_permalink();
+		if ( false === $redirect || is_home() ) {
+			$redirect = home_url();
+		}
 		if ( is_user_logged_in() ) {
 			$link = '<a href="' . wp_logout_url( home_url() ) . '" title="Uitloggen">Uitloggen</a>';
 		} else {

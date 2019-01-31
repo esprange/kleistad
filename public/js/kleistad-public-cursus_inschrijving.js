@@ -59,13 +59,12 @@
             $( '#kleistad_aantal' ).spinner({
                 min:1,
                 max: ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) ? $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ).ruimte : 1,
-                /* jshint unused:vars */
-                stop: function( event, ui ) {
+                stop: function() {
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
 						wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 					}
                 },
-                create: function( event, ui ) {
+                create: function() {
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
 						wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 					}

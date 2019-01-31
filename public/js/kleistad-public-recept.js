@@ -1,4 +1,4 @@
-/* global kleistadData */
+/* global kleistadData, sessionStorage */
 
 ( function( $ ) {
     'use strict';
@@ -25,8 +25,7 @@
                 $( '#kleistad_filters input[name="term"]' ).prop( 'checked', false );
             });
             terms = sessionStorage.terms.split( ',' );
-            /* jshint unused:vars */
-            terms.forEach( function( item, index ) {
+            terms.forEach( function( item ) {
                 $( '#kleistad_filters input[name="term"][value="' + item + '"]' ).prop( 'checked' );
             });
 
@@ -34,8 +33,7 @@
                 $( '#kleistad_filters input[name="auteur"]' ).prop( 'checked', false );
             });
             auteurs = sessionStorage.auteurs.split( ',' );
-            /* jshint unused:vars */
-            auteurs.forEach( function( item, index ) {
+            auteurs.forEach( function( item ) {
                 $( '#kleistad_filters input[name="auteur"][value="' + item + '"]' ).prop( 'checked' );
             });
 
@@ -101,8 +99,7 @@
                 displayFilters( sessionStorage.receptFilter );
             }
         ).fail(
-            /* jshint unused:vars */
-            function( jqXHR, textStatus, errorThrown ) {
+            function( jqXHR ) {
                 if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
                     window.alert( jqXHR.responseJSON.message );
                     return;

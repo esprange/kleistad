@@ -1,3 +1,5 @@
+/* global FileReader */
+
 ( function( $ ) {
     'use strict';
 
@@ -90,15 +92,17 @@
 
                 if ( this.files && this.files[0] ) {
 					if ( this.files[0].size > 2000000 ) {
-					window.alert( 'deze foto is te groot (' + this.files[0].size + ' bytes)' );
+						window.alert( 'deze foto is te groot (' + this.files[0].size + ' bytes)' );
                         $( this ).val( '' );
                         return false;
-                    }
-                    reader.onload = function( e ) {
-                        $( '#kleistad_foto' ).attr( 'src', e.target.result );
-                    };
-					reader.readAsDataURL( this.files[0] );
-                }
+                    } else {
+						reader.onload = function( e ) {
+							$( '#kleistad_foto' ).attr( 'src', e.target.result );
+						};
+						reader.readAsDataURL( this.files[0] );
+					}
+				}
+				return undefined;
             });
 
             $( '[name="wijzigen"]' ).click( function() {
