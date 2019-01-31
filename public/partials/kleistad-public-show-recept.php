@@ -82,23 +82,22 @@ if ( $count ) :
 			break;
 		endif;
 		$permalink = get_post_permalink( $recept['id'] );
-		if ( is_wp_error( $permalink ) ) :
-			continue;
-		endif;
-		?>
+		if ( is_string( $permalink ) ) :
+			?>
 		<div style="width:250px;float:left;padding:15px;border:0px;">
 			<a href="<?php echo esc_url( $permalink ); ?>" >
 			<div class="kleistad_recept_img" style="background-image:url('<?php echo esc_url( $recept['foto'] ); ?>');" >
 			</div>
 			<div class="kleistad_recept_titel" >
-		<?php
-			// De titel wordt afgekapt op de eerste 30 karakters...
-			echo esc_html( truncate_string( $recept['titel'], 25 ) );
-		?>
+			<?php
+				// De titel wordt afgekapt op de eerste 30 karakters...
+				echo esc_html( truncate_string( $recept['titel'], 25 ) );
+			?>
 			</div>
 			</a>
 		</div>
-		<?php
+			<?php
+		endif;
 	endforeach;
 	?>
 	</div>
