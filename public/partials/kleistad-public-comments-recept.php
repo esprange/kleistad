@@ -46,7 +46,8 @@ if ( post_password_required() ) {
 	<?php endif; ?>
 
 	<?php
-	if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) :
+	$the_post_type = get_post_type();
+	if ( false !== $the_post_type && ! comments_open() && get_comments_number() && post_type_supports( $the_post_type, 'comments' ) ) :
 		?>
 	<p class="no-comments"><?php echo 'Gesloten voor reacties'; ?></p>
 	<?php endif; ?>

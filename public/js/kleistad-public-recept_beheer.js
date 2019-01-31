@@ -95,12 +95,11 @@
 						window.alert( 'deze foto is te groot (' + this.files[0].size + ' bytes)' );
                         $( this ).val( '' );
                         return false;
-                    } else {
-						reader.onload = function( e ) {
-							$( '#kleistad_foto' ).attr( 'src', e.target.result );
-						};
-						reader.readAsDataURL( this.files[0] );
 					}
+					reader.onload = function( e ) {
+						$( '#kleistad_foto' ).attr( 'src', e.target.result );
+					};
+					reader.readAsDataURL( this.files[0] );
 				}
 				return undefined;
             });

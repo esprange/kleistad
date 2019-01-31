@@ -126,10 +126,17 @@ else :
 		</tr>
 	</thead>
 	<tbody>
-			<?php foreach ( $data['rows'] as $row ) : ?>
+		<?php
+		foreach ( $data['rows'] as $row ) :
+			$json_cursus    = wp_json_encode( $row['cursus'] );
+			$json_ingedeeld = wp_json_encode( $row['ingedeeld'] );
+			if ( false === $json_cursus || false === $json_ingedeeld ) :
+				continue;
+			endif
+			?>
 			<tr style="background-color:<?php echo esc_attr( $row['cursus']['vol'] ? 'lightblue' : ( $row['cursus']['vervallen'] ? 'lightgray' : 'white' ) ); ?>" class="kleistad_cursus_info"
-				data-cursus='<?php echo wp_json_encode( $row['cursus'] ); ?>'
-				data-ingedeeld='<?php echo wp_json_encode( $row['ingedeeld'] ); ?>' >
+				data-cursus='<?php echo $json_cursus; // phpcs:ignore ?>'
+				data-ingedeeld='<?php echo $json_ingedeeld;  // phpcs:ignore ?>' >
 				<td><?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td>C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['naam'] ); ?></td>

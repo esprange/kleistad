@@ -43,11 +43,19 @@ else :
 		</tr>
 	</thead>
 	<tbody>
-			<?php foreach ( $data['registraties'] as $registratie ) : ?>
+		<?php
+		foreach ( $data['registraties'] as $registratie ) :
+			$json_inschrijvingen = wp_json_encode( $registratie['inschrijvingen'] );
+			$json_deelnemer      = wp_json_encode( $registratie['deelnemer_info'] );
+			$json_abonnee        = wp_json_encode( $registratie['abonnee_info'] );
+			if ( false === $json_inschrijvingen || false === $json_deelnemer || false === $json_abonnee ) :
+				continue;
+			endif;
+			?>
 			<tr class="kleistad_deelnemer_info"
-				data-inschrijvingen='<?php echo wp_json_encode( $registratie['inschrijvingen'] ); ?>'
-				data-deelnemer='<?php echo wp_json_encode( $registratie['deelnemer_info'] ); ?>'
-				data-abonnee='<?php echo wp_json_encode( $registratie['abonnee_info'] ); ?>' >
+				data-inschrijvingen='<?php echo $json_inschrijvingen; // phpcs:ignore ?>'
+				data-deelnemer='<?php echo $json_deelnemer; // phpcs:ignore ?>'
+				data-abonnee='<?php echo $json_abonnee; // phpcs:ignore ?>' >
 				<td><?php echo esc_html( $registratie['is_lid'] ); ?></td>
 				<td><?php echo esc_html( $registratie['cursuslijst'] ); ?></td>
 				<td><?php echo esc_html( $registratie['achternaam'] ); ?></td>

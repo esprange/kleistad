@@ -22,7 +22,7 @@ else :
 	$extra_beschikbaar = false;
 	if ( ! $in_driemaandperiode ) :
 		foreach ( $this->options['extra'] as $extra ) :
-			$extra_beschikbaar |= ( 0 < $extra['prijs'] );
+			$extra_beschikbaar = $extra_beschikbaar || ( 0 < $extra['prijs'] );
 		endforeach;
 	endif;
 	?>
@@ -77,7 +77,7 @@ else :
 		endif
 		?>
 		</td></tr>
-		<?php if ( $extra_beschikbaar ) : ?>
+		<?php if ( false !== $extra_beschikbaar ) : ?>
 		<tr><td>Extra's</td><td>
 			<?php echo esc_html( 0 < count( $data['abonnement']->extras ) ? implode( ', ', $data['abonnement']->extras ) : 'geen' ); ?>
 		</td></tr>

@@ -118,9 +118,15 @@ else :
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach ( $data['workshop'] as $workshop ) : ?>
+		<?php
+		foreach ( $data['workshop'] as $workshop ) :
+			$json_workshop = wp_json_encode( $workshop );
+			if ( false === $json_workshop ) :
+				continue;
+			endif;
+			?>
 		<tr class="kleistad_workshop_info"
-			data-workshop='<?php echo wp_json_encode( $workshop ); ?>' >
+			data-workshop='<?php echo $json_workshop; // phpcs:ignore ?>' >
 			<td><?php echo esc_html( $workshop['code'] ); ?></td>
 			<td><?php echo esc_html( $workshop['datum'] ); ?></td>
 			<td><?php echo esc_html( $workshop['datum_td'] ); ?></td>

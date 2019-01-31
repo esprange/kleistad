@@ -46,10 +46,14 @@ else :
 	endforeach;
 	// Toon nu de cursussen en selecteer de cursus. De rest wordt met javascript gedaan.
 	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
+		$json_cursus = wp_json_encode( $cursus );
+		if ( false === $json_cursus ) :
+			continue;
+		endif;
 		?>
 		<div class="kleistad_col_10 kleistad_row" >
 			<input class="kleistad_input_cbr" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
-				data-cursus='<?php echo wp_json_encode( $cursus ); ?>' <?php disabled( ! $cursus['selecteerbaar'] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
+				data-cursus='<?php echo $json_cursus; // phpcs:ignore ?>' <?php disabled( ! $cursus['selecteerbaar'] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
 			<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
 				<span style="<?php echo esc_attr( $cursus['selecteerbaar'] ? '' : 'color: gray;' ); ?>"><?php echo esc_html( $cursus['naam'] ); ?></span></label>
 		</div>

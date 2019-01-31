@@ -81,9 +81,13 @@ if ( $count ) :
 		if ( $index > 24 ) :
 			break;
 		endif;
+		$permalink = get_post_permalink( $recept['id'] );
+		if ( is_wp_error( $permalink ) ) :
+			continue;
+		endif;
 		?>
 		<div style="width:250px;float:left;padding:15px;border:0px;">
-			<a href="<?php echo esc_url( get_post_permalink( $recept['id'] ) ); ?>" >
+			<a href="<?php echo esc_url( $permalink ); ?>" >
 			<div class="kleistad_recept_img" style="background-image:url('<?php echo esc_url( $recept['foto'] ); ?>');" >
 			</div>
 			<div class="kleistad_recept_titel" >
