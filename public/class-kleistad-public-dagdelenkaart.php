@@ -148,30 +148,31 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 					'plaats'     => $data['input']['plaats'],
 				]
 			);
-			if ( is_wp_error( $gebruiker_id ) ) {
-				$error->add( '', 'Gegevens konden niet worden opgeslagen. Neem s.v.p. contact op met Kleistad.' );
-				return $error;
-			}
 		} else {
 			$gebruiker_id = get_current_user_id();
 		}
 
-		$dagdelenkaart              = new Kleistad_Dagdelenkaart( $gebruiker_id );
-		$dagdelenkaart->opmerking   = $data['input']['opmerking'];
-		$dagdelenkaart->start_datum = strtotime( $data['input']['start_datum'] );
-		$dagdelenkaart->save();
+		if ( is_int( $gebruiker_id ) && 0 < $gebruiker_id ) {
+			$dagdelenkaart              = new Kleistad_Dagdelenkaart( $gebruiker_id );
+			$dagdelenkaart->opmerking   = $data['input']['opmerking'];
+			$dagdelenkaart->start_datum = strtotime( $data['input']['start_datum'] );
+			$dagdelenkaart->save();
 
-		if ( 'ideal' === $data['input']['betaal'] ) {
-			$dagdelenkaart->betalen(
-				'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden'
-			);
-		} else {
-			if ( $dagdelenkaart->email( '_bank' ) ) {
-				return 'Er is een email verzonden met nadere informatie over de betaling';
+			if ( 'ideal' === $data['input']['betaal'] ) {
+				$dagdelenkaart->betalen(
+					'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden'
+				);
 			} else {
-				$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
-				return $error;
+				if ( $dagdelenkaart->email( '_bank' ) ) {
+					return 'Er is een email verzonden met nadere informatie over de betaling';
+				} else {
+					$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
+					return $error;
+				}
 			}
+		} else {
+			$error->add( '', 'Gegevens konden niet worden opgeslagen. Neem s.v.p. contact op met Kleistad.' );
+			return $error;
 		}
 	}
 }
