@@ -268,7 +268,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				$row_html     .= "<tr style=\"background-color: $kleur\">";
 				$json_selectie = wp_json_encode( $selectie );
 				if ( false !== $json_selectie && $wijzigbaar ) {
-					$row_html .= "<td><a class=\"kleistad_box\" data-form='" . wp_json_encode( $selectie ) . "' >$dag $dagnaam[$weekdag]</a></td>";
+					$row_html .= "<td><a class=\"kleistad_box\" data-form='$json_selectie' >$dag $dagnaam[$weekdag]</a></td>";
 				} else {
 					$row_html .= "<td>$dag $dagnaam[$weekdag]</td>";
 				}
