@@ -20,7 +20,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	/**
 	 * File handle voor download bestanden
 	 *
-	 * @var file $file_handle De file pointer
+	 * @var resource $file_handle De file pointer
 	 */
 	private $file_handle;
 
@@ -271,10 +271,10 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 
 		switch ( $data['download'] ) {
 			case 'cursisten':
-				$this->cursisten( $this->file_handle );
+				$this->cursisten();
 				break;
 			case 'abonnees':
-				$this->abonnees( $this->file_handle );
+				$this->abonnees();
 				break;
 			default:
 				unlink( $csv );
