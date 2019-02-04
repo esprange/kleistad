@@ -26,6 +26,41 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	private $file_handle;
 
 	/**
+	 * Array dat alle medestokers weergeeft in periode
+	 *
+	 * @var array $medestokers De stokers inclusief hun naam.
+	 */
+	private $medestokers = [];
+
+	/**
+	 * Array dat alle ovens bevat
+	 *
+	 * @var array $ovens De ovens met o.a. hun kosten.
+	 */
+	private $ovens = [];
+
+	/**
+	 * Array dat alle regelingen bevat
+	 *
+	 * @var array $regelingen_store De regelingen met o.a. hun kosten.
+	 */
+	private $regelingen_store = [];
+
+	/**
+	 * De vanaf datum van het stookbestand
+	 *
+	 * @var int $vanaf_datum de begindatum van het stookbestand.
+	 */
+	private $vanaf_datum;
+
+	/**
+	 * De tot datum van het stookbestand
+	 *
+	 * @var int $tot_datum de einddatum van het stookbestand.
+	 */
+	private $tot_datum;
+
+	/**
 	 *
 	 * Prepareer 'stookbestand' form
 	 *
@@ -35,10 +70,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
-		$gebruiker_id = get_current_user_id();
-		$data         = [
-			'gebruiker_id' => $gebruiker_id,
-		];
 		return true;
 	}
 
@@ -52,73 +83,52 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	public function validate( &$data ) {
-		$vanaf_datum  = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
-		$tot_datum    = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
-		$gebruiker_id = filter_input( INPUT_POST, 'gebruiker_id', FILTER_SANITIZE_NUMBER_INT );
-		$data         = [
-			'vanaf_datum'  => $vanaf_datum,
-			'tot_datum'    => $tot_datum,
-			'gebruiker_id' => $gebruiker_id,
-		];
+		$this->vanaf_datum = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
+		$this->tot_datum   = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
 		return true;
 	}
 
 	/**
-	 * Schrijf abonnees informatie naar het bestand.
+	 * Array walk functie, bepaal de medestokers van alle reserveringen in de tijdrange.
 	 *
-	 * @param int $vanaf_datum timestamp begin stoken.
-	 * @param int $tot_datum   timestamp eind stoken.
+	 * @param Kleistad_Reservering $reservering Het reservering object.
+	 * @param int                  $key  Het reservering id (niet gebruikt).
 	 */
-	private function stook( $vanaf_datum, $tot_datum ) {
-		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
-
-		$ovens          = Kleistad_Oven::all();
-		$reserveringen  = Kleistad_Reservering::all();
-		$regeling_store = new Kleistad_Regelingen();
-
-		$medestokers = [];
-		foreach ( $reserveringen as $reservering ) {
-			if ( ( $reservering->datum < $vanaf_datum ) || ( $reservering->datum > $tot_datum ) ) {
-				continue;
-			}
+	private function bepaal_medestokers( $reservering, $key ) {
+		if ( $reservering->datum >= $this->vanaf_datum && $reservering->datum <= $this->tot_datum ) {
 			foreach ( $reservering->verdeling as $verdeling ) {
 				$medestoker_id = $verdeling['id'];
-				if ( $medestoker_id > 0 && ! array_key_exists( $medestoker_id, $medestokers ) ) {
+				if ( $medestoker_id > 0 && ! array_key_exists( $medestoker_id, $this->medestokers ) ) {
 					$medestoker = get_userdata( $medestoker_id );
 					if ( false !== $medestoker ) {
-						$medestokers[ $medestoker_id ] = $medestoker->display_name;
+						$this->medestokers[ $medestoker_id ] = $medestoker->display_name;
 					}
 				}
 			}
 		}
+	}
 
-		asort( $medestokers );
-		$fields = [ 'Stoker', 'Datum', 'Oven', 'Kosten', 'Soort Stook', 'Temperatuur', 'Programma' ];
-		for ( $i = 1; $i <= 2; $i ++ ) {
-			foreach ( $medestokers as $medestoker ) {
-				$fields[] = $medestoker;
-			}
-		}
-		$fields[] = 'Totaal';
-		fputcsv( $this->file_handle, $fields, ';', '"' );
-
-		foreach ( $reserveringen as $reservering ) {
-			if ( ( $reservering->datum < $vanaf_datum ) || ( $reservering->datum > $tot_datum ) ) {
-				continue;
-			}
+	/**
+	 * Array walk functie, bepaal de percentages en kosten van alle reserveringen in de tijdrange.
+	 *
+	 * @param Kleistad_Reservering $reservering Het reservering object.
+	 * @param int                  $key  Het reservering id (niet gebruikt).
+	 */
+	private function bepaal_stookgegevens( $reservering, $key ) {
+		if ( $reservering->datum >= $this->vanaf_datum && $reservering->datum <= $this->tot_datum ) {
 			$stoker      = get_userdata( $reservering->gebruiker_id );
 			$stoker_naam = ( ! $stoker ) ? 'onbekend' : $stoker->display_name;
 			$values      = [
 				$stoker_naam,
 				$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
-				$ovens[ $reservering->oven_id ]->naam,
-				number_format_i18n( $ovens[ $reservering->oven_id ]->kosten, 2 ),
+				$this->ovens[ $reservering->oven_id ]->naam,
+				number_format_i18n( $this->ovens[ $reservering->oven_id ]->kosten, 2 ),
 				$reservering->soortstook,
 				$reservering->temperatuur,
 				$reservering->programma,
 			];
 
-			foreach ( $medestokers as $id => $medestoker ) {
+			foreach ( $this->medestokers as $id => $medestoker ) {
 				$percentage = 0;
 				foreach ( $reservering->verdeling as $stookdeel ) {
 					if ( $stookdeel['id'] == $id ) { // phpcs:ignore
@@ -129,7 +139,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 			}
 
 			$totaal = 0;
-			foreach ( $medestokers as $id => $medestoker ) {
+			foreach ( $this->medestokers as $id => $medestoker ) {
 				$kosten       = 0;
 				$kosten_tonen = false;
 				foreach ( $reservering->verdeling as $stookdeel ) {
@@ -137,8 +147,8 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 						if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
 							$kosten += $stookdeel['prijs'];
 						} else { // Voorlopige berekening.
-							$regeling = $regeling_store->get( $id, $reservering->oven_id );
-							$kosten  += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
+							$regeling = $this->regeling_store->get( $id, $reservering->oven_id );
+							$kosten  += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $this->ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
 						}
 						$totaal      += $kosten;
 						$kosten_tonen = true;
@@ -149,6 +159,32 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 			$values [] = number_format_i18n( $totaal, 2 );
 			fputcsv( $this->file_handle, $values, ';', '"' );
 		}
+	}
+
+	/**
+	 * Schrijf abonnees informatie naar het bestand.
+	 */
+	private function stook() {
+		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
+
+		$this->ovens          = Kleistad_Oven::all();
+		$reserveringen        = Kleistad_Reservering::all();
+		$this->regeling_store = new Kleistad_Regelingen();
+
+		array_walk( $reserveringen, [ $this, 'bepaal_medestokers' ] );
+		asort( $this->medestokers );
+
+		$fields = [ 'Stoker', 'Datum', 'Oven', 'Kosten', 'Soort Stook', 'Temperatuur', 'Programma' ];
+		for ( $i = 1; $i <= 2; $i ++ ) {
+			foreach ( $this->medestokers as $medestoker ) {
+				$fields[] = $medestoker;
+			}
+		}
+		$fields[] = 'Totaal';
+		fputcsv( $this->file_handle, $fields, ';', '"' );
+
+		array_walk( $reserveringen, [ $this, 'bepaal_stookgegevens' ] );
+
 		fclose( $this->file_handle );
 	}
 
@@ -176,7 +212,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 		} else {
 			$this->file_handle = $result;
 		}
-		$this->stook( $data['vanaf_datum'], $data['tot_datum'] );
+		$this->stook();
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: text/csv' );
 		header( 'Content-Disposition: attachment; filename=stookbestand_' . strftime( '%Y%m%d' ) . '.csv' );

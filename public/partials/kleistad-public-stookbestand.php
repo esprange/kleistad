@@ -18,7 +18,6 @@ else :
 
 <form action="<?php echo esc_url( get_permalink() ); ?>" method="POST" >
 	<?php wp_nonce_field( 'kleistad_stookbestand' ); ?>
-	<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['gebruiker_id'] ); ?>" />
 	<div class="kleistad_row">
 		<div class="kleistad_col_3">
 			<label class="kleistad_label" for="kleistad_vanaf_datum" >Vanaf</label>

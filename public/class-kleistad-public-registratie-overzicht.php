@@ -271,7 +271,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 		} else {
 			$this->file_handle = $result;
 		}
-		call_user_func( [ __CLASS__, $data['download'] ] );
+		call_user_func( [ $this, $data['download'] ] );
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: text/csv' );
 		header( 'Content-Disposition: attachment; filename=' . $data['download'] . '_' . strftime( '%Y%m%d' ) . '.csv' );
