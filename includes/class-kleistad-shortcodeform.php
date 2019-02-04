@@ -32,33 +32,6 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	abstract public function save( $data );
 
 	/**
-	 * Controleer of er betaald is en geef dan een melding.
-	 *
-	 * @since  4.5.1
-	 * @return string html tekst.
-	 */
-	protected function betaald() {
-		$html         = '';
-		$gebruiker_id = filter_input( INPUT_GET, 'gebruiker_id' );
-		$order_id     = filter_input( INPUT_GET, 'order_id' );
-		if ( ! is_null( $gebruiker_id ) || ! is_null( $order_id ) ) {
-			$betaling = new Kleistad_Betalen();
-			$result   = $betaling->controleer(
-				[
-					'gebruiker_id' => $gebruiker_id,
-					'order_id'     => $order_id,
-				]
-			);
-			if ( is_string( $result ) ) {
-				$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-			} else {
-				$html .= '<div class="kleistad_fout"><p>' . $result->get_error_message() . '</p></div>';
-			}
-		}
-		return $html;
-	}
-
-	/**
 	 * Verwerk de formulier invoer
 	 *
 	 * @since 4.5.1
@@ -97,7 +70,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 */
 	public function run() {
 		$data = [];
-		$html = $this->betaald();
+		$html = Kleistad_Betalen::controleer();
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			$html .= $this->process( $data );
 			$html .= $this->display( $data );

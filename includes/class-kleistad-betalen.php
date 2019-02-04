@@ -14,9 +14,8 @@
  */
 class Kleistad_Betalen {
 
-	const MOLLIE_ID       = 'mollie_customer_id';
-	const MOLLIE_BETALING = 'mollie_betaling';
-	const MOLLIE_AD_HOC   = 'mollie_ad_hoc';
+	const MOLLIE_ID     = 'mollie_customer_id';
+	const MOLLIE_COOKIE = 'kleistad_mollie';
 
 	/**
 	 * Het mollie object.
@@ -118,8 +117,7 @@ class Kleistad_Betalen {
 	 * @param bool      $mandateren   er wordt een herhaalde betaling voorbereid.
 	 */
 	public function order( $referentie, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
-		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING );
-
+		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
 		if ( ! is_array( $referentie ) ) {
 			$gebruiker_id        = $referentie;
@@ -136,46 +134,6 @@ class Kleistad_Betalen {
 				update_user_meta( $gebruiker_id, self::MOLLIE_ID, $mollie_gebruiker_id );
 			}
 			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			if ( $mandateren ) {
-				$betaling = $mollie_gebruiker->createPayment(
-					[
-						'amount'       => [
-							'currency' => 'EUR',
-							'value'    => number_format( $bedrag, 2, '.', '' ),
-						],
-						'description'  => $beschrijving,
-						'issuer'       => ! empty( $bank ) ? $bank : null,
-						'metadata'     => [
-							'order_id' => $order_id,
-							'bericht'  => $bericht,
-						],
-						'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
-						'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST,
-						'redirectUrl'  => add_query_arg( 'gebruiker_id', $gebruiker_id, get_permalink() ),
-						'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
-					]
-				);
-			} else {
-				$betaling = $mollie_gebruiker->createPayment(
-					[
-						'amount'       => [
-							'currency' => 'EUR',
-							'value'    => number_format( $bedrag, 2, '.', '' ),
-						],
-						'description'  => $beschrijving,
-						'issuer'       => ! empty( $bank ) ? $bank : null,
-						'metadata'     => [
-							'order_id' => $order_id,
-							'bericht'  => $bericht,
-						],
-						'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
-						'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-						'redirectUrl'  => add_query_arg( 'gebruiker_id', $gebruiker_id, get_permalink() ),
-						'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
-					]
-				);
-			}
-			update_user_meta( $gebruiker_id, self::MOLLIE_BETALING, $betaling->id );
 		} else {
 			$mollie_gebruiker = $this->mollie->customers->create(
 				[
@@ -183,33 +141,65 @@ class Kleistad_Betalen {
 					'email' => $referentie['email'],
 				]
 			);
-			$betaling         = $mollie_gebruiker->createPayment(
-				[
-					'amount'       => [
-						'currency' => 'EUR',
-						'value'    => number_format( $bedrag, 2, '.', '' ),
-					],
-					'description'  => $beschrijving,
-					'issuer'       => ! empty( $bank ) ? $bank : null,
-					'metadata'     => [
-						'order_id' => $order_id,
-						'bericht'  => $bericht,
-					],
-					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
-					'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-					'redirectUrl'  => add_query_arg( 'order_id', $referentie['order_id'], get_permalink() ),
-					'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
-				]
-			);
-			$order_betalingen = get_option( self::MOLLIE_AD_HOC );
-			if ( false === $order_betalingen ) {
-				$order_betalingen = [];
-			}
-			$order_betalingen[ $referentie['order_id'] ] = $betaling->id;
-			update_option( self::MOLLIE_AD_HOC, $order_betalingen );
 		}
+		$betaling = $mollie_gebruiker->createPayment(
+			[
+				'amount'       => [
+					'currency' => 'EUR',
+					'value'    => number_format( $bedrag, 2, '.', '' ),
+				],
+				'description'  => $beschrijving,
+				'issuer'       => $bank,
+				'metadata'     => [
+					'order_id' => $order_id,
+					'bericht'  => $bericht,
+				],
+				'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
+				'sequenceType' => $mandateren ? \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
+				'redirectUrl'  => add_query_arg( 'mollie_betaling', '', get_permalink() ),
+				'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
+			]
+		);
+		setcookie( self::MOLLIE_COOKIE, $betaling->id );
 		wp_redirect( $betaling->getCheckOutUrl(), 303 ); // phpcs:ignore
 		exit;
+	}
+
+	/**
+	 * Controleer of de order gelukt is.
+	 *
+	 * @since      4.2.0
+	 *
+	 * @return string de status van de betaling als tekst of leeg als er geen betaling is.
+	 */
+	public static function controleer() {
+		if ( is_null( filter_input( INPUT_GET, 'mollie_betaling' ) ) ) {
+			return '';
+		}
+		if ( isset( $_COOKIE[ self::MOLLIE_COOKIE ] ) ) {
+			$mollie_betaling_id = $_COOKIE[ self::MOLLIE_COOKIE ];
+			unset( $_COOKIE[ self::MOLLIE_COOKIE ] );
+		} else {
+			return ''; // Blijkbaar was er geen cookie gezet. Dan valt de status niet op te vragen.
+		}
+		$object = new static();
+		try {
+			$betaling = $object->mollie->payments->get( $mollie_betaling_id );
+			if ( $betaling->isPaid() ) {
+				return '<div class="kleistad_succes"><p>' . $betaling->metadata->bericht . '</p></div>';
+			} elseif ( $betaling->isFailed() ) {
+				return '<div class="kleistad_fout"><p>De betaling heeft niet kunnen plaatsvinden. Probeer het opnieuw.</p></div>';
+			} elseif ( $betaling->isExpired() ) {
+				return '<div class="kleistad_fout"><p>De betaling is verlopen. Probeer het opnieuw.</p></div>';
+			} elseif ( $betaling->isCanceled() ) {
+				return '<div class="kleistad_fout"><p>De betaling is geannuleerd. Probeer het opnieuw.</p></div>';
+			} else {
+				return '<div class="kleistad_fout"><p>De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.</p></div>';
+			}
+		} catch ( Exception $e ) {
+			error_log( $e->getMessage() ); // phpcs:ignore
+			return '<div class="kleistad_fout"><p>Interne fout: ' . $e->getMessage() . '</p></div>';
+		}
 	}
 
 	/**
@@ -349,43 +339,6 @@ class Kleistad_Betalen {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
-	}
-
-	/**
-	 * Controleer of de betaling gelukt is.
-	 *
-	 * @since      4.2.0
-	 *
-	 * @param  array $referentie de referentie wie of waarvoor er zojuist betaald heeft.
-	 * @return WP_Error|string de status van de betaling als tekst of een error object.
-	 */
-	public function controleer( $referentie ) {
-		$mollie_betaling_id = '';
-		$error              = new WP_Error();
-		if ( ! is_null( $referentie['gebruiker_id'] ) ) {
-			$mollie_betaling_id = get_user_meta( $referentie['gebruiker_id'], self::MOLLIE_BETALING, true );
-		}
-		if ( ! is_null( $referentie['order_id'] ) ) {
-			$order_betalingen = get_option( self::MOLLIE_AD_HOC );
-			if ( isset( $order_betalingen[ $referentie['order_id'] ] ) ) {
-				$mollie_betaling_id = $order_betalingen[ $referentie['order_id'] ];
-			}
-			unset( $order_betalingen[ $referentie['order_id'] ] );
-			update_option( self::MOLLIE_AD_HOC, $order_betalingen );
-		}
-		if ( '' !== $mollie_betaling_id ) {
-
-			try {
-				$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-				if ( $betaling->isPaid() ) {
-					return $betaling->metadata->bericht;
-				}
-			} catch ( Exception $e ) {
-				error_log( $e->getMessage() ); // phpcs:ignore
-			}
-		}
-		$error->add( 'betaling', 'De betaling via iDeal heeft niet plaatsgevonden. Probeer het opnieuw.' );
-		return $error;
 	}
 
 	/**
