@@ -42,9 +42,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	/**
 	 * Array dat alle regelingen bevat
 	 *
-	 * @var array $regelingen_store De regelingen met o.a. hun kosten.
+	 * @var array $regeling_store De regelingen met o.a. hun kosten.
 	 */
-	private $regelingen_store = [];
+	private $regeling_store = [];
 
 	/**
 	 * De vanaf datum van het stookbestand
@@ -92,9 +92,8 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 * Array walk functie, bepaal de medestokers van alle reserveringen in de tijdrange.
 	 *
 	 * @param Kleistad_Reservering $reservering Het reservering object.
-	 * @param int                  $key  Het reservering id (niet gebruikt).
 	 */
-	private function bepaal_medestokers( $reservering, $key ) {
+	private function bepaal_medestokers( $reservering ) {
 		if ( $reservering->datum >= $this->vanaf_datum && $reservering->datum <= $this->tot_datum ) {
 			foreach ( $reservering->verdeling as $verdeling ) {
 				$medestoker_id = $verdeling['id'];
@@ -112,9 +111,8 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 * Array walk functie, bepaal de percentages en kosten van alle reserveringen in de tijdrange.
 	 *
 	 * @param Kleistad_Reservering $reservering Het reservering object.
-	 * @param int                  $key  Het reservering id (niet gebruikt).
 	 */
-	private function bepaal_stookgegevens( $reservering, $key ) {
+	private function bepaal_stookgegevens( $reservering ) {
 		if ( $reservering->datum >= $this->vanaf_datum && $reservering->datum <= $this->tot_datum ) {
 			$stoker      = get_userdata( $reservering->gebruiker_id );
 			$stoker_naam = ( ! $stoker ) ? 'onbekend' : $stoker->display_name;
