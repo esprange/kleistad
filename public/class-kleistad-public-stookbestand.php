@@ -19,6 +19,13 @@
 class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 
 	/**
+	 * File handle voor download bestanden
+	 *
+	 * @var resource $file_handle De file pointer
+	 */
+	private $file_handle;
+
+	/**
 	 *
 	 * Prepareer 'stookbestand' form
 	 *
@@ -57,28 +64,13 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	}
 
 	/**
+	 * Schrijf abonnees informatie naar het bestand.
 	 *
-	 * Bewaar 'stookbestand' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return string|WP_Error
-	 *
-	 * @since   4.0.87
+	 * @param int $vanaf_datum timestamp begin stoken.
+	 * @param int $tot_datum   timestamp eind stoken.
 	 */
-	public function save( $data ) {
-		$error = new WP_Error();
-
-		if ( ! Kleistad_Roles::override() ) {
-			$error->add( 'security', 'Geen toegang tot deze functie.' );
-			return $error;
-		}
-		$csv   = tempnam( sys_get_temp_dir(), 'stookbestand' );
-		$f_csv = fopen( $csv, 'w' );
-		if ( false === $f_csv ) {
-			$error->add( 'security', 'Bestand kon niet aangemaakt worden.' );
-			return $error;
-		}
-		fwrite( $f_csv, "\xEF\xBB\xBF" );
+	private function stook( $vanaf_datum, $tot_datum ) {
+		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 
 		$ovens          = Kleistad_Oven::all();
 		$reserveringen  = Kleistad_Reservering::all();
@@ -86,17 +78,15 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 
 		$medestokers = [];
 		foreach ( $reserveringen as $reservering ) {
-			if ( ( $reservering->datum < $data['vanaf_datum'] ) || ( $reservering->datum > $data['tot_datum'] ) ) {
+			if ( ( $reservering->datum < $vanaf_datum ) || ( $reservering->datum > $tot_datum ) ) {
 				continue;
 			}
 			foreach ( $reservering->verdeling as $verdeling ) {
 				$medestoker_id = $verdeling['id'];
-				if ( $medestoker_id > 0 ) {
-					if ( ! array_key_exists( $medestoker_id, $medestokers ) ) {
-						$medestoker = get_userdata( $medestoker_id );
-						if ( $medestoker ) {
-							$medestokers[ $medestoker_id ] = $medestoker->display_name;
-						}
+				if ( $medestoker_id > 0 && ! array_key_exists( $medestoker_id, $medestokers ) ) {
+					$medestoker = get_userdata( $medestoker_id );
+					if ( false !== $medestoker ) {
+						$medestokers[ $medestoker_id ] = $medestoker->display_name;
 					}
 				}
 			}
@@ -110,10 +100,10 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 			}
 		}
 		$fields[] = 'Totaal';
-		fputcsv( $f_csv, $fields, ';', '"' );
+		fputcsv( $this->file_handle, $fields, ';', '"' );
 
 		foreach ( $reserveringen as $reservering ) {
-			if ( ( $reservering->datum < $data['vanaf_datum'] ) || ( $reservering->datum > $data['tot_datum'] ) ) {
+			if ( ( $reservering->datum < $vanaf_datum ) || ( $reservering->datum > $tot_datum ) ) {
 				continue;
 			}
 			$stoker      = get_userdata( $reservering->gebruiker_id );
@@ -157,9 +147,36 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 				$values [] = ( $kosten_tonen ) ? number_format_i18n( $kosten, 2 ) : '';
 			}
 			$values [] = number_format_i18n( $totaal, 2 );
-			fputcsv( $f_csv, $values, ';', '"' );
+			fputcsv( $this->file_handle, $values, ';', '"' );
 		}
-		fclose( $f_csv );
+		fclose( $this->file_handle );
+	}
+
+	/**
+	 *
+	 * Bewaar 'stookbestand' form gegevens
+	 *
+	 * @param array $data data te bewaren.
+	 * @return string|WP_Error
+	 *
+	 * @since   4.0.87
+	 */
+	public function save( $data ) {
+		$error = new WP_Error();
+
+		if ( ! Kleistad_Roles::override() ) {
+			$error->add( 'security', 'Geen toegang tot deze functie.' );
+			return $error;
+		}
+		$csv    = tempnam( sys_get_temp_dir(), 'stookbestand' );
+		$result = fopen( $csv, 'w' );
+		if ( false === $result ) {
+			$error->add( 'fout', 'Er kan geen bestand worden aangemaakt' );
+			return $error;
+		} else {
+			$this->file_handle = $result;
+		}
+		$this->stook( $data['vanaf_datum'], $data['tot_datum'] );
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: text/csv' );
 		header( 'Content-Disposition: attachment; filename=stookbestand_' . strftime( '%Y%m%d' ) . '.csv' );
