@@ -18,6 +18,13 @@
 class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 
 	/**
+	 * File handle voor download bestanden
+	 *
+	 * @var file $file_handle De file pointer
+	 */
+	private $file_handle;
+
+	/**
 	 *
 	 * Prepareer 'registratie_overzicht' form
 	 *
@@ -112,6 +119,133 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	}
 
 	/**
+	 * Schrijf cursisten informatie naar het bestand.
+	 */
+	private function cursisten() {
+		$cursisten      = get_users( [ 'orderby' => 'nicename' ] );
+		$cursussen      = Kleistad_Cursus::all();
+		$inschrijvingen = Kleistad_Inschrijving::all();
+		$cursus_fields  = [
+			'Achternaam',
+			'Voornaam',
+			'Email',
+			'Straat',
+			'Huisnr',
+			'Postcode',
+			'Plaats',
+			'Telefoon',
+			'Lid',
+			'Cursus',
+			'Cursus code',
+			'Inschrijf datum',
+			'Inschrijf status',
+			'Aantal',
+			'Technieken',
+			'Inschrijfgeld',
+			'Cursusgeld',
+			'Opmerking',
+		];
+		fputcsv( $this->file_handle, $cursus_fields, ';', '"' );
+		foreach ( $cursisten as $cursist ) {
+			$is_lid = ( ! empty( $cursist->role ) || ( is_array( $cursist->role ) && ( count( $cursist->role ) > 0 ) ) );
+
+			$cursist_gegevens = [
+				$cursist->first_name,
+				$cursist->last_name,
+				$cursist->user_email,
+				$cursist->straat,
+				$cursist->huisnr,
+				$cursist->pcode,
+				$cursist->plaats,
+				$cursist->telnr,
+				$is_lid ? 'Ja' : 'Nee',
+			];
+
+			if ( array_key_exists( $cursist->ID, $inschrijvingen ) ) {
+				foreach ( $inschrijvingen[ $cursist->ID ] as $cursus_id => $inschrijving ) {
+					$cursist_cursus_gegevens = array_merge(
+						$cursist_gegevens,
+						[
+							'C' . $cursus_id . '-' . $cursussen[ $cursus_id ]->naam,
+							$inschrijving->code,
+							date( 'd-m-Y', $inschrijving->datum ),
+							$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : 'wacht op betaling' ),
+							$inschrijving->aantal,
+							implode( ' ', $inschrijving->technieken ),
+							$inschrijving->i_betaald ? 'Ja' : 'Nee',
+							$inschrijving->c_betaald ? 'Ja' : 'Nee',
+							$inschrijving->opmerking,
+						]
+					);
+					fputcsv( $this->file_handle, $cursist_cursus_gegevens, ';', '"' );
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Schrijf abonnees informatie naar het bestand.
+	 */
+	private function abonnees() {
+		$abonnees       = get_users( [ 'orderby' => 'nicename' ] );
+		$abonnementen   = Kleistad_Abonnement::all();
+		$abonnee_fields = [
+			'Achternaam',
+			'Voornaam',
+			'Email',
+			'Straat',
+			'Huisnr',
+			'Postcode',
+			'Plaats',
+			'Telefoon',
+			'Status',
+			'Inschrijf datum',
+			'Start_datum',
+			'Pauze_datum',
+			'Eind_datum',
+			'Abonnee code',
+			'Abonnement_soort',
+			'Dag',
+			'Abonnement_extras',
+			'Opmerking',
+		];
+		fputcsv( $this->file_handle, $abonnee_fields, ';', '"' );
+		foreach ( $abonnees as $abonnee ) {
+			$abonnee_gegevens = [
+				$abonnee->last_name,
+				$abonnee->first_name,
+				$abonnee->user_email,
+				$abonnee->straat,
+				$abonnee->huisnr,
+				$abonnee->pcode,
+				$abonnee->plaats,
+				$abonnee->telnr,
+			];
+
+			if ( array_key_exists( $abonnee->ID, $abonnementen ) ) {
+				$abonnee_abonnement_gegevens = array_merge(
+					$abonnee_gegevens,
+					[
+						$abonnementen[ $abonnee->ID ]->status(),
+						date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->datum ),
+						date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->start_datum ),
+						$abonnementen[ $abonnee->ID ]->pauze_datum ? date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->pauze_datum ) : '',
+						$abonnementen[ $abonnee->ID ]->eind_datum ? date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->eind_datum ) : '',
+						$abonnementen[ $abonnee->ID ]->code,
+						$abonnementen[ $abonnee->ID ]->soort,
+						( 'beperkt' === $abonnementen[ $abonnee->ID ]->soort ) ? $abonnementen[ $abonnee->ID ]->dag : '',
+						implode( ', ', $abonnementen[ $abonnee->ID ]->extras ),
+						$abonnementen[ $abonnee->ID ]->opmerking,
+					]
+				);
+				fputcsv( $this->file_handle, $abonnee_abonnement_gegevens, ';', '"' );
+			}
+		}
+
+	}
+
+	/**
 	 *
 	 * Bewaar 'registratie_overzicht' form gegevens
 	 *
@@ -127,137 +261,26 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
 			return $error;
 		}
-		$csv   = tempnam( sys_get_temp_dir(), $data['download'] );
-		$f_csv = fopen( $csv, 'w' );
-		if ( false === $f_csv ) {
+		$csv               = tempnam( sys_get_temp_dir(), $data['download'] );
+		$this->file_handle = fopen( $csv, 'w' );
+		if ( false === $this->file_handle ) {
 			$error->add( 'fout', 'Er kan geen bestand worden aangemaakt' );
 			return $error;
 		}
-		fwrite( $f_csv, "\xEF\xBB\xBF" );
+		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 
 		switch ( $data['download'] ) {
 			case 'cursisten':
-				$cursisten      = get_users( [ 'orderby' => 'nicename' ] );
-				$cursussen      = Kleistad_Cursus::all();
-				$inschrijvingen = Kleistad_Inschrijving::all();
-				$cursus_fields  = [
-					'Achternaam',
-					'Voornaam',
-					'Email',
-					'Straat',
-					'Huisnr',
-					'Postcode',
-					'Plaats',
-					'Telefoon',
-					'Lid',
-					'Cursus',
-					'Cursus code',
-					'Inschrijf datum',
-					'Inschrijf status',
-					'Aantal',
-					'Technieken',
-					'Inschrijfgeld',
-					'Cursusgeld',
-					'Opmerking',
-				];
-				fputcsv( $f_csv, $cursus_fields, ';', '"' );
-				foreach ( $cursisten as $cursist ) {
-					$is_lid = ( ! empty( $cursist->role ) || ( is_array( $cursist->role ) && ( count( $cursist->role ) > 0 ) ) );
-
-					$cursist_gegevens = [
-						$cursist->first_name,
-						$cursist->last_name,
-						$cursist->user_email,
-						$cursist->straat,
-						$cursist->huisnr,
-						$cursist->pcode,
-						$cursist->plaats,
-						$cursist->telnr,
-						$is_lid ? 'Ja' : 'Nee',
-					];
-
-					if ( array_key_exists( $cursist->ID, $inschrijvingen ) ) {
-						foreach ( $inschrijvingen[ $cursist->ID ] as $cursus_id => $inschrijving ) {
-							$cursist_cursus_gegevens = array_merge(
-								$cursist_gegevens,
-								[
-									'C' . $cursus_id . '-' . $cursussen[ $cursus_id ]->naam,
-									$inschrijving->code,
-									date( 'd-m-Y', $inschrijving->datum ),
-									$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : 'wacht op betaling' ),
-									$inschrijving->aantal,
-									implode( ' ', $inschrijving->technieken ),
-									$inschrijving->i_betaald ? 'Ja' : 'Nee',
-									$inschrijving->c_betaald ? 'Ja' : 'Nee',
-									$inschrijving->opmerking,
-								]
-							);
-							fputcsv( $f_csv, $cursist_cursus_gegevens, ';', '"' );
-						}
-					}
-				}
+				$this->cursisten( $this->file_handle );
 				break;
 			case 'abonnees':
-				$abonnees       = get_users( [ 'orderby' => 'nicename' ] );
-				$abonnementen   = Kleistad_Abonnement::all();
-				$abonnee_fields = [
-					'Achternaam',
-					'Voornaam',
-					'Email',
-					'Straat',
-					'Huisnr',
-					'Postcode',
-					'Plaats',
-					'Telefoon',
-					'Status',
-					'Inschrijf datum',
-					'Start_datum',
-					'Pauze_datum',
-					'Eind_datum',
-					'Abonnee code',
-					'Abonnement_soort',
-					'Dag',
-					'Abonnement_extras',
-					'Opmerking',
-				];
-				fputcsv( $f_csv, $abonnee_fields, ';', '"' );
-				foreach ( $abonnees as $abonnee ) {
-					$abonnee_gegevens = [
-						$abonnee->last_name,
-						$abonnee->first_name,
-						$abonnee->user_email,
-						$abonnee->straat,
-						$abonnee->huisnr,
-						$abonnee->pcode,
-						$abonnee->plaats,
-						$abonnee->telnr,
-					];
-
-					if ( array_key_exists( $abonnee->ID, $abonnementen ) ) {
-						$abonnee_abonnement_gegevens = array_merge(
-							$abonnee_gegevens,
-							[
-								$abonnementen[ $abonnee->ID ]->status(),
-								date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->datum ),
-								date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->start_datum ),
-								$abonnementen[ $abonnee->ID ]->pauze_datum ? date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->pauze_datum ) : '',
-								$abonnementen[ $abonnee->ID ]->eind_datum ? date( 'd-m-Y', $abonnementen[ $abonnee->ID ]->eind_datum ) : '',
-								$abonnementen[ $abonnee->ID ]->code,
-								$abonnementen[ $abonnee->ID ]->soort,
-								( 'beperkt' === $abonnementen[ $abonnee->ID ]->soort ) ? $abonnementen[ $abonnee->ID ]->dag : '',
-								implode( ', ', $abonnementen[ $abonnee->ID ]->extras ),
-								$abonnementen[ $abonnee->ID ]->opmerking,
-							]
-						);
-						fputcsv( $f_csv, $abonnee_abonnement_gegevens, ';', '"' );
-					}
-				}
+				$this->abonnees( $this->file_handle );
 				break;
 			default:
 				unlink( $csv );
 				return '';
 		}
-		fclose( $f_csv );
+		fclose( $this->file_handle );
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: text/csv' );
 		header( 'Content-Disposition: attachment; filename=' . $data['download'] . '_' . strftime( '%Y%m%d' ) . '.csv' );
