@@ -145,6 +145,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			'Cursusgeld',
 			'Opmerking',
 		];
+		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 		fputcsv( $this->file_handle, $cursus_fields, ';', '"' );
 		foreach ( $cursisten as $cursist ) {
 			$is_lid = ( ! empty( $cursist->role ) || ( is_array( $cursist->role ) && ( count( $cursist->role ) > 0 ) ) );
@@ -181,7 +182,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				}
 			}
 		}
-
+		fclose( $this->file_handle );
 	}
 
 	/**
@@ -210,6 +211,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			'Abonnement_extras',
 			'Opmerking',
 		];
+		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 		fputcsv( $this->file_handle, $abonnee_fields, ';', '"' );
 		foreach ( $abonnees as $abonnee ) {
 			$abonnee_gegevens = [
@@ -242,7 +244,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				fputcsv( $this->file_handle, $abonnee_abonnement_gegevens, ';', '"' );
 			}
 		}
-
+		fclose( $this->file_handle );
 	}
 
 	/**
@@ -261,26 +263,15 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
 			return $error;
 		}
-		$csv               = tempnam( sys_get_temp_dir(), $data['download'] );
-		$this->file_handle = fopen( $csv, 'w' );
-		if ( false === $this->file_handle ) {
+		$csv    = tempnam( sys_get_temp_dir(), $data['download'] );
+		$result = fopen( $csv, 'w' );
+		if ( false === $result ) {
 			$error->add( 'fout', 'Er kan geen bestand worden aangemaakt' );
 			return $error;
+		} else {
+			$this->file_handle = $result;
 		}
-		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
-
-		switch ( $data['download'] ) {
-			case 'cursisten':
-				$this->cursisten();
-				break;
-			case 'abonnees':
-				$this->abonnees();
-				break;
-			default:
-				unlink( $csv );
-				return '';
-		}
-		fclose( $this->file_handle );
+		call_user_func( [ __CLASS__, $data['download'] ] );
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: text/csv' );
 		header( 'Content-Disposition: attachment; filename=' . $data['download'] . '_' . strftime( '%Y%m%d' ) . '.csv' );
