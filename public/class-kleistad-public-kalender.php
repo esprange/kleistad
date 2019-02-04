@@ -67,7 +67,7 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 							'title'           => "$workshop->naam ($workshop->code)",
 							'start'           => $event->start->format( DateTime::ATOM ),
 							'end'             => $event->eind->format( DateTime::ATOM ),
-							'backgroundColor' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'orange' : 'lightblue' ),
+							'backgroundColor' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
 							'textColor'       => ( $workshop->betaald ) ? 'white' : 'black',
 							'extendedProps'   => [
 								'naam'       => $workshop->naam,
@@ -86,7 +86,7 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 							'title'           => "cursus ($cursus->code)",
 							'start'           => $event->start->format( DateTime::ATOM ),
 							'end'             => $event->eind->format( DateTime::ATOM ),
-							'backgroundColor' => $cursus->tonen ? 'green' : 'lightblue',
+							'backgroundColor' => $cursus->tonen ? 'slateblue' : 'lightblue',
 							'textColor'       => $cursus->tonen ? 'white' : 'black',
 							'extendedProps'   => [
 								'naam'       => $cursus->naam,
@@ -103,12 +103,14 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 				}
 			} else {
 				$fc_events[] = [
-					'id'            => $event->id,
-					'title'         => $event->titel,
-					'start'         => $event->start->format( DateTime::ATOM ),
-					'end'           => $event->eind->format( DateTime::ATOM ),
-					'editable'      => false,
-					'extendedProps' => [
+					'id'              => $event->id,
+					'title'           => $event->titel,
+					'start'           => $event->start->format( DateTime::ATOM ),
+					'end'             => $event->eind->format( DateTime::ATOM ),
+					'backgroundColor' => 'violet',
+					'textColor'       => 'black',
+					'editable'        => false,
+					'extendedProps'   => [
 						'naam'  => $event->titel,
 						'start' => $event->start->format( 'H:i' ),
 						'eind'  => $event->eind->format( 'H:i' ),
