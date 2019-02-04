@@ -21,7 +21,6 @@
 				minTime: '08:00:00',
 				eventRender: function( info ) {
 					var tekst = '';
-					// var start = new Date( info.event.start);
 					if ( 'agendaDay' === info.view.type ) {
 						if ( 'undefined' !== typeof( info.event.extendedProps.docent ) ) {
 							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Docent</div><div class="kleistad_col_2">' + info.event.extendedProps.docent + '</div></div>';
@@ -33,9 +32,6 @@
 							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Techniek</div><div class="kleistad_col_2">' + info.event.extendedProps.technieken + '</div></div>';
 						}
 						info.el.innerHTML += tekst;
-					}
-					if ( 'month' === info.view.type ) {
-					//	info.el.text = start.getHours() + ':' + ( 10 > start.getMinutes() ? '0' : '' ) + start.getMinutes() + ' ' + info.event.title;
 					}
 				},
 				events: function( info, successCallback, failureCallback ) {
