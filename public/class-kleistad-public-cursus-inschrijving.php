@@ -116,8 +116,9 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				'cursus_id'       => FILTER_SANITIZE_NUMBER_INT,
 				'gebruiker_id'    => FILTER_SANITIZE_NUMBER_INT,
 				'technieken'      => [
-					'filter' => FILTER_SANITIZE_STRING,
-					'flags'  => FILTER_FORCE_ARRAY,
+					'filter'  => FILTER_SANITIZE_STRING,
+					'flags'   => FILTER_FORCE_ARRAY,
+					'options' => [ 'default' => [] ],
 				],
 				'opmerking'       => FILTER_SANITIZE_STRING,
 				'aantal'          => FILTER_SANITIZE_STRING,
@@ -127,19 +128,20 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 		);
 		if ( 0 === intval( $data['input']['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
+			return $error;
+		}
+		$data['cursus'] = new Kleistad_Cursus( $data['input']['cursus_id'] );
+		if ( $data['cursus']->vol ) {
+			$error->add( 'vol', 'De gekozen cursus is vol. Inschrijving is niet mogelijk.' );
+			$data['input']['cursus_id'] = 0;
 		} else {
-			if ( $data['cursus']->vol ) {
-				$error->add( 'vol', 'De gekozen cursus is vol. Inschrijving is niet mogelijk.' );
+			$ruimte = $data['cursus']->ruimte;
+			if ( 0 === $ruimte ) {
+				$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
 				$data['input']['cursus_id'] = 0;
-			} else {
-				$ruimte = $data['cursus']->ruimte;
-				if ( 0 === $ruimte ) {
-					$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
-					$data['input']['cursus_id'] = 0;
-				} elseif ( $ruimte < $data['input']['aantal'] ) {
-					$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
-					$data['input']['aantal'] = $ruimte;
-				}
+			} elseif ( $ruimte < $data['input']['aantal'] ) {
+				$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
+				$data['input']['aantal'] = $ruimte;
 			}
 		}
 		if ( 1 > $data['input']['aantal'] ) {
@@ -174,9 +176,6 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
 				$data['input']['LNAME'] = '';
 			}
-		}
-		if ( is_null( $data['input']['technieken'] ) ) {
-			$data['input']['technieken'] = [];
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
