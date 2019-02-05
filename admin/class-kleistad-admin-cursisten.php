@@ -19,9 +19,24 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Kleistad_Admin_Cursisten extends WP_List_Table {
 
 	/**
+	 * De mogelijke cursussen.
+	 *
+	 * @var array $cursussen De cursussen.
+	 */
+	private $cursussen = [];
+
+	/**
+	 * De te tonen cursisten.
+	 *
+	 * @var array $cursisten De cursisten.
+	 */
+	private $cursisten = [];
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
+		$this->cursussen = Kleistad_Cursus::all( true );
 		parent::__construct(
 			[
 				'singular' => 'cursist',
@@ -125,6 +140,32 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 	}
 
 	/**
+	 * Bepaal de cursisten die getoond moeten worden
+	 *
+	 * @param Kleistad_Inschrijving $inschrijving De inschrijving.
+	 * @param int                   $cursist_id   De id van de cursist.
+	 * @param string                $search       De eventuele search filter op de naam van de cursist.
+	 */
+	private function bepaal_cursisten( $inschrijving, $cursist_id, $search ) {
+		foreach ( $this->cursussen as $cursus_id => $cursus ) {
+			if ( array_key_exists( $cursus_id, $inschrijving ) ) {
+				$cursist = get_userdata( $cursist_id );
+				if ( ! empty( $search ) && false === stripos( $cursist->display_name, $search ) ) {
+					continue;
+				}
+				$this->cursisten[] = [
+					'id'          => $inschrijving[ $cursus_id ]->code,
+					'naam'        => $cursist->display_name . ( 1 < $inschrijving[ $cursus_id ]->aantal ? ' (' . $inschrijving[ $cursus_id ]->aantal . ')' : '' ),
+					'cursus'      => $cursus->naam,
+					'i_betaald'   => $inschrijving[ $cursus_id ]->i_betaald ? 'X' : '',
+					'c_betaald'   => $inschrijving[ $cursus_id ]->c_betaald ? 'X' : '',
+					'geannuleerd' => $inschrijving[ $cursus_id ]->geannuleerd ? 'X' : '',
+				];
+			}
+		}
+	}
+
+	/**
 	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
@@ -144,35 +185,16 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 		$order_val      = filter_input( INPUT_GET, 'order' );
 		$order          = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 		$inschrijvingen = Kleistad_Inschrijving::all();
-		$cursussen      = Kleistad_Cursus::all( true );
-		$cursisten      = [];
 
-		foreach ( $inschrijvingen as $cursist_id => $inschrijving ) {
-			foreach ( $cursussen as $cursus_id => $cursus ) {
-				if ( array_key_exists( $cursus_id, $inschrijving ) ) {
-					$cursist = get_userdata( $cursist_id );
-					if ( ! empty( $search ) && false === strpos( $cursist->display_name, $search ) ) {
-						continue;
-					}
-					$cursisten[] = [
-						'id'          => $inschrijving[ $cursus_id ]->code,
-						'naam'        => $cursist->display_name . ( 1 < $inschrijving[ $cursus_id ]->aantal ? ' (' . $inschrijving[ $cursus_id ]->aantal . ')' : '' ),
-						'cursus'      => $cursus->naam,
-						'i_betaald'   => $inschrijving[ $cursus_id ]->i_betaald ? 'X' : '',
-						'c_betaald'   => $inschrijving[ $cursus_id ]->c_betaald ? 'X' : '',
-						'geannuleerd' => $inschrijving[ $cursus_id ]->geannuleerd ? 'X' : '',
-					];
-				}
-			}
-		}
+		array_walk( $inschrijvingen, [ $this, 'bepaal_cursisten' ], $search );
 		usort(
-			$cursisten,
+			$this->cursisten,
 			function( $a, $b ) use ( $orderby, $order ) {
 				return ( 'asc' === $order ) ? strcmp( $a[ $orderby ], $b[ $orderby ] ) : strcmp( $b[ $orderby ], $a[ $orderby ] );
 			}
 		);
-		$this->items = array_slice( $cursisten, $paged * $per_page, $per_page, true );
-		$total_items = count( $cursisten );
+		$this->items = array_slice( $this->cursisten, $paged * $per_page, $per_page, true );
+		$total_items = count( $this->cursisten );
 
 		$this->set_pagination_args(
 			[

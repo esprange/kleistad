@@ -42,9 +42,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	/**
 	 * Array dat alle regelingen bevat
 	 *
-	 * @var array $regeling_store De regelingen met o.a. hun kosten.
+	 * @var Kleistad_Regelingen $regeling De regelingen met o.a. hun kosten.
 	 */
-	private $regeling_store = [];
+	private $regelingen;
 
 	/**
 	 * De vanaf datum van het stookbestand
@@ -136,16 +136,16 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 				$values [] = ( 0 === $percentage ) ? '' : $percentage;
 			}
 
-			$totaal = 0;
+			$totaal = 0.0;
 			foreach ( $this->medestokers as $id => $medestoker ) {
-				$kosten       = 0;
+				$kosten       = 0.0;
 				$kosten_tonen = false;
 				foreach ( $reservering->verdeling as $stookdeel ) {
 					if ( $stookdeel['id'] == $id ) { // phpcs:ignore
 						if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
 							$kosten += $stookdeel['prijs'];
 						} else { // Voorlopige berekening.
-							$regeling = $this->regeling_store->get( $id, $reservering->oven_id );
+							$regeling = $this->regelingen->get( $id, $reservering->oven_id );
 							$kosten  += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $this->ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
 						}
 						$totaal      += $kosten;
@@ -165,10 +165,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	private function stook() {
 		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 
-		$this->ovens          = Kleistad_Oven::all();
-		$reserveringen        = Kleistad_Reservering::all();
-		$this->regeling_store = new Kleistad_Regelingen();
-
+		$this->ovens      = Kleistad_Oven::all();
+		$this->regelingen = new Kleistad_Regelingen();
+		$reserveringen    = Kleistad_Reservering::all();
 		array_walk( $reserveringen, [ $this, 'bepaal_medestokers' ] );
 		asort( $this->medestokers );
 
