@@ -140,11 +140,11 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 	}
 
 	/**
-	 * Bepaal de cursisten die getoond moeten worden
+	 * Bepaal of de cursist getoond moeten worden en verzamel de weer te geven informatie.
 	 *
-	 * @param Kleistad_Inschrijving $inschrijving De inschrijving.
-	 * @param int                   $cursist_id   De id van de cursist.
-	 * @param string                $search       De eventuele search filter op de naam van de cursist.
+	 * @param array  $inschrijving De inschrijvingen van de cursist.
+	 * @param int    $cursist_id   De id van de cursist.
+	 * @param string $search       De eventuele search filter op de naam van de cursist.
 	 */
 	private function bepaal_cursisten( $inschrijving, $cursist_id, $search ) {
 		foreach ( $this->cursussen as $cursus_id => $cursus ) {
