@@ -176,7 +176,6 @@ class Kleistad_Admin {
 	 *
 	 * @param string $email Het email adres van de te exporteren persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function exporter( $email, $page = 1 ) {
 		$export_items = [];
@@ -219,8 +218,10 @@ class Kleistad_Admin {
 				Kleistad_Reservering::export( $gebruiker_id )
 			);
 		}
-		// Geef aan of er nog meer te exporteren valt.
-		$done = true; // Criterium nog vast te stellen.
+		// Geef aan of er nog meer te exporteren valt, de controle op page nummer is een dummy.
+		if ( 1 === $page ) {
+			$done = true; // Criterium nog vast te stellen.
+		}
 		return [
 			'data' => $export_items,
 			'done' => $done,
@@ -234,7 +235,6 @@ class Kleistad_Admin {
 	 *
 	 * @param string $email Het email adres van de te verwijderen persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function eraser( $email, $page = 1 ) {
 		$count        = 0;
@@ -255,7 +255,7 @@ class Kleistad_Admin {
 			'items_removed'  => $count,
 			'items_retained' => false,
 			'messages'       => [],
-			'done'           => ( 0 < $count ),
+			'done'           => ( 0 < $count && 1 === $page ), // Controle op page is een dummy.
 		];
 	}
 

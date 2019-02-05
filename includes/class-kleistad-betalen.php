@@ -85,23 +85,6 @@ class Kleistad_Betalen {
 				},
 			]
 		);
-
-		register_rest_route(
-			Kleistad_Public::url(),
-			'/betaling/ondemand',
-			[
-				'methods'             => 'POST',
-				'callback'            => [ __CLASS__, 'callback_ondemandbetaling_verwerkt' ],
-				'args'                => [
-					'id' => [
-						'required' => true,
-					],
-				],
-				'permission_callback' => function() {
-						return true;
-				},
-			]
-		);
 	}
 
 	/**
@@ -438,18 +421,6 @@ class Kleistad_Betalen {
 			);
 		}
 
-		return new WP_REST_response(); // Geeft default http status 200 terug.
-	}
-
-	/**
-	 * Webhook functie om ondemandbetaling status te verwerken. Wordt aangeroepen door Mollie.
-	 *
-	 * @param WP_REST_Request $request het request.
-	 * @return \WP_REST_response de response.
-	 * @suppress PhanUnusedPublicMethodParameter
-	 */
-	public static function callback_ondemandbetaling_verwerkt( WP_REST_Request $request ) {
-		// Voorlopig geen acties gedefinieerd.
 		return new WP_REST_response(); // Geeft default http status 200 terug.
 	}
 

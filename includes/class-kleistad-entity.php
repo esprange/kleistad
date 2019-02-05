@@ -84,26 +84,4 @@ abstract class Kleistad_Entity {
 			$this->data[ $key ] = $value;
 		}
 	}
-
-	/**
-	 * Return privacy data
-	 *
-	 * @param int $gebruiker_id Het gebruiker_id.
-	 * @return array De persoonlijke data.
-	 * @phan-suppress PhanUnusedPublicMethodParameter
-	 */
-	public static function export( $gebruiker_id ) {
-		return [];
-	}
-
-	/**
-	 * Erase privacy data
-	 *
-	 * @param int $gebruiker_id Het gebruiker_id.
-	 * @return mixed De persoonlijke data.
-	 * @phan-suppress PhanUnusedPublicMethodParameter
-	 */
-	public static function erase( $gebruiker_id ) {
-		return 0;
-	}
 }

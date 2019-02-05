@@ -147,14 +147,13 @@ class Kleistad_Public {
 	 *
 	 * @since    4.0.87
 	 *
-	 * @param  string $old unused.
+	 * @param  string $old oude reply adres.
 	 * @return string
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function mail_from( $old ) {
 		$admin_email = get_option( 'admin_email' );
 		if ( false === $admin_email ) {
-			return ''; // Zal waarschijnlijk nooit voorkomen.
+			return $old; // Zal waarschijnlijk nooit voorkomen.
 		}
 		return 'no-reply@' . substr( strrchr( $admin_email, '@' ), 1 );
 	}
@@ -570,17 +569,6 @@ class Kleistad_Public {
 		foreach ( $reserveringen as $reservering ) {
 			$reservering->meld_en_verwerk();
 		}
-	}
-
-	/**
-	 * Verwijder gebruiker, geactiveerd als er een gebruiker verwijderd wordt.
-	 *
-	 * @since 4.0.87
-	 *
-	 * @param int $gebruiker_id gebruiker id.
-	 */
-	public function verwijder_gebruiker( $gebruiker_id ) {
-		Kleistad_reservering::verwijder( $gebruiker_id );
 	}
 
 	/**

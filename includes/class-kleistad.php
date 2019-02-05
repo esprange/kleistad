@@ -146,7 +146,6 @@ class Kleistad {
 		$this->loader->add_action( 'wp_login', $plugin_public, 'user_login', 10, 2 );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_scripts' );
-		$this->loader->add_action( 'delete_user', $plugin_public, 'verwijder_gebruiker' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_public, 'create_recept_type' );
 		$this->loader->add_action( 'kleistad_kosten', $plugin_public, 'update_ovenkosten' );

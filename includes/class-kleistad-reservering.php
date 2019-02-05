@@ -247,18 +247,6 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Verwijder reserveringen van gebruiker
-	 *
-	 * @since 4.0.87
-	 *
-	 * @param int $gebruiker_id Gebruiker id.
-	 * @suppress PhanUnusedPublicMethodParameter
-	 */
-	public static function verwijder( $gebruiker_id ) {
-		// to do, alleen reserveringen in de toekomst verwijderen ?.
-	}
-
-	/**
 	 * Return alle reserveringen.
 	 *
 	 * @param array|bool $selecties Veld/value combinaties om de query nog te verfijnen (optioneel) of true als alleen onverwerkte reserveringen.
