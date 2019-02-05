@@ -219,9 +219,7 @@ class Kleistad_Admin {
 			);
 		}
 		// Geef aan of er nog meer te exporteren valt, de controle op page nummer is een dummy.
-		if ( 1 === $page ) {
-			$done = true; // Criterium nog vast te stellen.
-		}
+		$done = ( 1 === $page ); // Dummy actie.
 		return [
 			'data' => $export_items,
 			'done' => $done,
@@ -245,11 +243,7 @@ class Kleistad_Admin {
 			update_user_meta( $gebruiker_id, 'huisnr', '******' );
 			update_user_meta( $gebruiker_id, 'pcode', '******' );
 			update_user_meta( $gebruiker_id, 'plaats', '******' );
-			$count = 5 +
-				Kleistad_Abonnement::erase( $gebruiker_id ) +
-				Kleistad_Inschrijving::erase( $gebruiker_id ) +
-				Kleistad_Reservering::erase( $gebruiker_id ) +
-				Kleistad_Saldo::erase( $gebruiker_id );
+			$count = 5 + Kleistad_Abonnement::erase( $gebruiker_id ) + Kleistad_Saldo::erase( $gebruiker_id );
 		}
 		return [
 			'items_removed'  => $count,
