@@ -47,10 +47,10 @@
             }
         );
 
-        if ( 1 === formData.gereserveerd ) {
+        if ( /* 1 === */ formData.gereserveerd ) {
 			$( '#kleistad_muteer' ).show();
 			$( '#kleistad_voegtoe' ).hide();
-			if ( 1 === formData.verwijderbaar ) {
+			if ( /* 1 === */ formData.verwijderbaar ) {
                 $( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen of verwijderen ?' );
 				$( '#kleistad_verwijder' ).show();
 	        } else {

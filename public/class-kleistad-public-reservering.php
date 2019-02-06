@@ -20,7 +20,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 
 	/**
 	 *
-	 * Prepareer 'saldo' form
+	 * Prepareer 'reservering' form
 	 *
 	 * @param array $data data to be prepared.
 	 * @return \WP_ERROR|bool
@@ -142,19 +142,38 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		$stoker_id        = $reservering->actief ? $reservering->gebruiker_id : $gebruiker_id;
 		$stoker_naam      = get_userdata( $stoker_id )->display_name;
 		$datum_verstreken = strtotime( "$jaar-$maand-$dag 23:59" ) < strtotime( 'today' );
-		if ( $stoker_id === $gebruiker_id ) {
-			$kleur         = $reservering->actief && ! $datum_verstreken ? 'lightgreen' : 'white';
-			$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : ( ! $datum_verstreken );
-			$wijzigbaar    = ( ! $reservering->verwerkt ) || is_super_admin();
+		if ( $reservering->gebruiker_id === $gebruiker_id ) {
+			/**
+			 * Er is een bestaande reservering van de ingelogde stoker.
+			 */
+			$kleur = ! $datum_verstreken ? 'lightgreen' : 'white';
+			/**
+			 * Zolang de reservering nog niet financieel verwerkt is mag deze gewijzigd of verwijderd worden.
+			 */
+			$verwijderbaar = ! $reservering->verwerkt;
+			$wijzigbaar    = ! $reservering->verwerkt;
 		} else {
-			$kleur         = $reservering->actief && ! $datum_verstreken ? 'pink' : 'white';
-			$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : false;
-			$wijzigbaar    = $verwijderbaar || is_super_admin();
+			/**
+			 * Reservering aangemaakt door een andere stoker of de datum staat nog open voor een nieuwe reservering.
+			 */
+			$kleur = $reservering->actief && ! $datum_verstreken ? 'pink' : 'white';
+			/**
+			 * Als er al een reservering is en die is nog niet verwerkt dan mag een bestuurslid ie verwijderen.
+			 */
+			$verwijderbaar = $reservering->actief && ! $reservering->verwerkt && Kleistad_Roles::override();
+			/**
+			 * Als er geen reservering actief is en de reservering ligt niet in het verleden dan mag er een reservering aangemaakt worden.
+			 * Alleen de beheerder kan ook in het verleden een reservering aanmaken.
+			 *
+			 * Als er wel een reservering actief is en deze is nog niet verwerkt dan mag deze gewijzigd worden door een bestuurslid.
+			 */
+			$wijzigbaar = ( ! $reservering->actief && ( ! $datum_verstreken || is_super_admin() ) ) ||
+				( ! $reservering->verwerkt && Kleistad_Roles::override() );
 		}
-		if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
-			$kleur = 'gray';
-		}
-		$selectie = [
+		$kleur       = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook && ! $datum_verstreken ? 'gray' : $kleur;
+		$wie         = $reservering->actief ? $stoker_naam : ( ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '' );
+		$temperatuur = 0 !== $reservering->temperatuur ? $reservering->temperatuur : '';
+		$selectie    = [
 			'oven_id'       => $oven_id,
 			'dag'           => $dag,
 			'maand'         => $maand,
@@ -168,10 +187,8 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 					'perc' => 100,
 				],
 			],
-			'gereserveerd'  => $reservering->actief ? 1 : 0,
-			'verwijderbaar' => $verwijderbaar ? 1 : 0,
-			'wijzigbaar'    => $wijzigbaar ? 1 : 0,
-			'wie'           => $reservering->actief ? $stoker_naam : ( ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '' ),
+			'gereserveerd'  => $reservering->actief,
+			'verwijderbaar' => $verwijderbaar,
 			'gebruiker_id'  => $stoker_id,
 			'gebruiker'     => $stoker_naam,
 		];
@@ -183,7 +200,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		} else {
 			$html .= "<td>$dag $dagnaam</td>";
 		}
-		$html .= "<td>{$selectie['wie']}</td><td>{$selectie['soortstook']}</td><td>{$selectie['temperatuur']}</td></tr>";
+		$html .= "<td>$wie</td><td>$reservering->soortstook</td><td>$temperatuur</td></tr>";
 		return $html;
 	}
 
