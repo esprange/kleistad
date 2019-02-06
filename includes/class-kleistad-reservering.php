@@ -38,10 +38,13 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $oven_id oven waar de reservering op van toepassing is.
+	 * @param int   $oven_id Oven waar de reservering op van toepassing is.
+	 * @param array $datum   De datum van de reservering (jaar, maand, dag).
 	 */
-	public function __construct( $oven_id ) {
-		$default_data = [
+	public function __construct( $oven_id, $datum = null ) {
+		global $wpdb;
+
+		$this->data = [
 			'id'           => null,
 			'oven_id'      => $oven_id,
 			'jaar'         => 0,
@@ -56,7 +59,21 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			'verdeling'    => wp_json_encode( [] ),
 			'opmerking'    => '',
 		];
-		$this->data   = $default_data;
+		if ( ! is_null( $datum ) ) {
+			$resultaat = $wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d",
+					$oven_id,
+					$datum['jaar'],
+					$datum['maand'],
+					$datum['dag']
+				),
+				ARRAY_A
+			); // phpcs:ignore
+			if ( $resultaat ) {
+				$this->data = $resultaat;
+			}
+		}
 	}
 
 	/**
@@ -100,35 +117,6 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			}
 		}
 		return $items;
-	}
-
-	/**
-	 * Vind de reservering
-	 *
-	 * @global object $wpdb wp database
-	 * @param  int $jaar jaar.
-	 * @param  int $maand maand.
-	 * @param  int $dag dag.
-	 * @return boolean
-	 */
-	public function find( $jaar, $maand, $dag ) {
-		global $wpdb;
-
-		$resultaat = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d",
-				$this->data['oven_id'],
-				$jaar,
-				$maand,
-				$dag
-			),
-			ARRAY_A
-		); // phpcs:ignore
-		if ( $resultaat ) {
-			$this->data = $resultaat;
-			return true;
-		}
-		return false;
 	}
 
 	/**

@@ -48,7 +48,6 @@
         );
 
         if ( 1 === formData.gereserveerd ) {
-            // $( '#kleistad_muteer' ).text( 'Wijzig' );
 			$( '#kleistad_muteer' ).show();
 			$( '#kleistad_voegtoe' ).hide();
 			if ( 1 === formData.verwijderbaar ) {
@@ -60,7 +59,6 @@
             }
         } else {
             $( '#kleistad_tekst' ).text( 'Wil je de reservering toevoegen ?' );
-            // $( '#kleistad_muteer' ).text( 'Voeg toe' );
 			$( '#kleistad_voegtoe' ).show();
 			$( '#kleistad_muteer' ).hide();
             $( '#kleistad_verwijder' ).hide();
@@ -196,15 +194,17 @@
                     xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
                 },
                 data: {
-                    dag: $( '#kleistad_dag' ).val(),
-                    maand: $( '#kleistad_maand' ).val(),
-                    jaar: $( '#kleistad_jaar' ).val(),
-                    oven_id: $( '#kleistad_oven_id' ).val(),
-                    temperatuur: $( '#kleistad_temperatuur' ).val(),
-                    soortstook: $( '#kleistad_soortstook' ).val(),
-                    gebruiker_id: $( '#kleistad_stoker_id' ).val(),
-                    programma: $( '#kleistad_programma' ).val(),
-                    verdeling: JSON.stringify( verdeling ) /* , opmerking: $('#kleistad_opmerking').val() */
+					reservering: {
+						dag:          $( '#kleistad_dag' ).val(),
+						maand:        $( '#kleistad_maand' ).val(),
+						jaar:         $( '#kleistad_jaar' ).val(),
+						temperatuur:  $( '#kleistad_temperatuur' ).val(),
+						soortstook:   $( '#kleistad_soortstook' ).val(),
+						gebruiker_id: $( '#kleistad_stoker_id' ).val(),
+						programma:    $( '#kleistad_programma' ).val(),
+						verdeling:    verdeling
+					},
+					oven_id: $( '#kleistad_oven_id' ).val()
                 }
             }
         ).done(
@@ -239,8 +239,6 @@
                     );
                 }
 			);
-
-//			$( '.ui-dialog-title' ).css( 'display', 'none' );
 
             /**
              * Toon de tabel.

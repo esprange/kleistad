@@ -86,35 +86,12 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'methods'             => 'POST,PUT,DELETE',
 				'callback'            => [ __CLASS__, 'callback_muteer' ],
 				'args'                => [
-					'dag'          => [
+					'reservering' => [
 						'required' => true,
 					],
-					'maand'        => [
+					'oven_id'     => [
 						'required' => true,
-					],
-					'jaar'         => [
-						'required' => true,
-					],
-					'oven_id'      => [
-						'required' => true,
-					],
-					'temperatuur'  => [
-						'required' => false,
-					],
-					'soortstook'   => [
-						'required' => false,
-					],
-					'programma'    => [
-						'required' => false,
-					],
-					'verdeling'    => [
-						'required' => false,
-					],
-					'opmerking'    => [
-						'required' => false,
-					],
-					'gebruiker_id' => [
-						'required' => true,
+						'type'     => 'int',
 					],
 				],
 				'permission_callback' => function() {
@@ -150,19 +127,17 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	}
 
 	/**
-	 * Callback from Ajax request
+	 * Toon de reserveringen voor bepaalde maand
 	 *
-	 * @param WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response Ajax response.
-	 * @suppress PhanUnusedVariable
+	 * @param int $oven_id Het id van de oven.
+	 * @param int $maand   De maand.
+	 * @param int $jaar    Het jaar.
+	 * @return string De Html code.
 	 */
-	public static function callback_show( WP_REST_Request $request ) {
+	private static function toon_reserveringen( $oven_id, $maand, $jaar ) {
 		$maandnaam            = [];
 		$dagnaam              = [];
 		$rows                 = [];
-		$oven_id              = intval( $request->get_param( 'oven_id' ) );
-		$maand                = intval( $request->get_param( 'maand' ) );
-		$jaar                 = intval( $request->get_param( 'jaar' ) );
 		$volgende_maand       = intval( date( 'n', mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) );
 		$vorige_maand         = intval( date( 'n', mktime( 0, 0, 0, $maand - 1, 1, $jaar ) ) );
 		$volgende_maand_jaar  = intval( date( 'Y', mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) );
@@ -286,10 +261,23 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-show-reservering.php';
 		$html = ob_get_contents();
 		ob_clean();
+		return $html;
+	}
 
+
+	/**
+	 * Callback from Ajax request
+	 *
+	 * @param WP_REST_Request $request Ajax request params.
+	 * @return WP_REST_Response Ajax response.
+	 */
+	public static function callback_show( WP_REST_Request $request ) {
+		$oven_id = intval( $request->get_param( 'oven_id' ) );
+		$maand   = intval( $request->get_param( 'maand' ) );
+		$jaar    = intval( $request->get_param( 'jaar' ) );
 		return new WP_REST_response(
 			[
-				'html'    => $html,
+				'html'    => self::toon_reserveringen( $oven_id, $maand, $jaar ),
 				'oven_id' => $oven_id,
 			]
 		);
@@ -303,38 +291,48 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @return WP_REST_Response Ajax response.
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) {
-		$gebruiker_id = intval( $request->get_param( 'gebruiker_id' ) );
-		$oven_id      = absint( intval( $request->get_param( 'oven_id' ) ) );
-		$method       = $request->get_method();
-
-		$reservering           = new Kleistad_Reservering( $oven_id );
-		$bestaande_reservering = $reservering->find(
-			intval( $request->get_param( 'jaar' ) ),
-			intval( $request->get_param( 'maand' ) ),
-			intval( $request->get_param( 'dag' ) )
+		$method          = $request->get_method();
+		$input           = $request->get_param( 'reservering' );
+		$oven_id         = $request->get_param( 'oven_id' );
+		$gebruiker_id    = intval( $input['gebruiker_id'] );
+		$jaar            = intval( $input['jaar'] );
+		$maand           = intval( $input['maand'] );
+		$dag             = intval( $input['dag'] );
+		$reservering     = new Kleistad_Reservering(
+			$oven_id,
+			[
+				'jaar'  => $jaar,
+				'maand' => $maand,
+				'dag'   => $dag,
+			]
 		);
+		$is_gereserveerd = 0 === $reservering->id;
 
 		if ( 'PUT' === $method || 'POST' === $method ) {
 			// het betreft een toevoeging of wijziging, check of er al niet een bestaande reservering is.
-			if ( ! $bestaande_reservering || ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) { // phpcs:ignore
+			if ( ! $is_gereserveerd || ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) { // phpcs:ignore
 				$reservering->gebruiker_id = $gebruiker_id;
-				$reservering->dag          = intval( $request->get_param( 'dag' ) );
-				$reservering->maand        = intval( $request->get_param( 'maand' ) );
-				$reservering->jaar         = intval( $request->get_param( 'jaar' ) );
-				$reservering->temperatuur  = intval( $request->get_param( 'temperatuur' ) );
-				$reservering->soortstook   = sanitize_text_field( $request->get_param( 'soortstook' ) );
-				$reservering->programma    = intval( $request->get_param( 'programma' ) );
-				$reservering->verdeling    = $request->get_param( 'verdeling' );
+				$reservering->dag          = $dag;
+				$reservering->maand        = $maand;
+				$reservering->jaar         = $jaar;
+				$reservering->temperatuur  = intval( $input['temperatuur'] );
+				$reservering->soortstook   = sanitize_text_field( $input['soortstook'] );
+				$reservering->programma    = intval( $input['programma'] );
+				$reservering->verdeling    = $input['verdeling'];
 				$reservering->save();
 			}
 		} elseif ( 'DELETE' === $method ) {
 			// het betreft een annulering, mag alleen verwijderd worden door de gebruiker of een bevoegde.
-			if ( $bestaande_reservering && ( ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) ) { // phpcs:ignore
+			if ( $is_gereserveerd && ( ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) ) { // phpcs:ignore
 				$reservering->delete();
 			}
 		}
-		$request->set_param( 'oven_id', $oven_id ); // zorg dat het over_id correct is.
-		return self::callback_show( $request );
+		return new WP_REST_response(
+			[
+				'html'    => self::toon_reserveringen( $oven_id, $maand, $jaar ),
+				'oven_id' => $oven_id,
+			]
+		);
 	}
 
 }
