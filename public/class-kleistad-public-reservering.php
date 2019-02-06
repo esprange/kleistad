@@ -136,10 +136,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 */
 	private static function toon_reserveringen( $oven_id, $maand, $jaar ) {
 		$rows                 = [];
-		$volgende_maand       = intval( date( 'n', mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) );
-		$vorige_maand         = intval( date( 'n', mktime( 0, 0, 0, $maand - 1, 1, $jaar ) ) );
-		$volgende_maand_jaar  = intval( date( 'Y', mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) );
-		$vorige_maand_jaar    = intval( date( 'Y', mktime( 0, 0, 0, $maand - 1, 1, $jaar ) ) );
 		$aantaldagen          = intval( date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) ) );
 		$huidige_gebruiker_id = get_current_user_id();
 		$oven                 = new Kleistad_Oven( $oven_id );
@@ -163,6 +159,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : false;
 				$wijzigbaar    = $verwijderbaar || is_super_admin();
 			}
+			if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
+				$kleur = 'gray';
+			}
 			$selectie = [
 				'oven_id'       => $oven_id,
 				'dag'           => $dag,
@@ -185,9 +184,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'gebruiker'     => $stoker_naam,
 			];
 
-			if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
-				$kleur = 'gray';
-			}
 			$row_html      = "<tr style=\"background-color: $kleur\">";
 			$json_selectie = wp_json_encode( $selectie );
 			if ( false !== $json_selectie && $wijzigbaar ) {

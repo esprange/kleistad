@@ -11,6 +11,10 @@
  */
 
 $titel = strftime( '%B', mktime( 0, 0, 0, $maand, 1, $jaar ) ) . '-' . $jaar;
+
+list( $volgende_maand, $volgende_maand_jaar ) = explode( ',', date( 'n,Y', mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) );
+list( $vorige_maand, $vorige_maand_jaar )     = explode( ',', date( 'n,Y', mktime( 0, 0, 0, $maand - 1, 1, $jaar ) ) );
+
 ?>
 <thead>
 	<tr>

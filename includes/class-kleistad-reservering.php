@@ -26,6 +26,7 @@
  * @property int    programma
  * @property bool   gemeld
  * @property bool   verwerkt
+ * @property bool   actief
  * @property array  verdeling
  * @property string opmerking
  */
