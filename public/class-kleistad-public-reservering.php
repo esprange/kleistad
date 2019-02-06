@@ -127,6 +127,67 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	}
 
 	/**
+	 * Maak een regel op van de reserveringen tabel
+	 *
+	 * @param int    $oven_id het id van de oven.
+	 * @param string $dagnaam naam van de dag.
+	 * @param int    $maand   maand van de reservering.
+	 * @param int    $dag     dag van de reservering.
+	 * @param int    $jaar    jaar van de reservering.
+	 * @return string html opgemaakte tekstregel.
+	 */
+	private static function maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar ) {
+		$reservering      = new Kleistad_Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
+		$gebruiker_id     = get_current_user_id();
+		$stoker_id        = $reservering->actief ? $reservering->gebruiker_id : $gebruiker_id;
+		$stoker_naam      = get_userdata( $stoker_id )->display_name;
+		$datum_verstreken = strtotime( "$jaar-$maand-$dag 23:59" ) < strtotime( 'today' );
+		if ( $stoker_id === $gebruiker_id ) {
+			$kleur         = $reservering->actief && ! $datum_verstreken ? 'lightgreen' : 'white';
+			$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : ( ! $datum_verstreken );
+			$wijzigbaar    = ( ! $reservering->verwerkt ) || is_super_admin();
+		} else {
+			$kleur         = $reservering->actief && ! $datum_verstreken ? 'pink' : 'white';
+			$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : false;
+			$wijzigbaar    = $verwijderbaar || is_super_admin();
+		}
+		if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
+			$kleur = 'gray';
+		}
+		$selectie = [
+			'oven_id'       => $oven_id,
+			'dag'           => $dag,
+			'maand'         => $maand,
+			'jaar'          => $jaar,
+			'soortstook'    => $reservering->soortstook,
+			'temperatuur'   => $reservering->actief ? $reservering->temperatuur : '',
+			'programma'     => $reservering->actief ? $reservering->programma : '',
+			'verdeling'     => $reservering->actief ? $reservering->verdeling : [
+				[
+					'id'   => $stoker_id,
+					'perc' => 100,
+				],
+			],
+			'gereserveerd'  => $reservering->actief ? 1 : 0,
+			'verwijderbaar' => $verwijderbaar ? 1 : 0,
+			'wijzigbaar'    => $wijzigbaar ? 1 : 0,
+			'wie'           => $reservering->actief ? $stoker_naam : ( ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '' ),
+			'gebruiker_id'  => $stoker_id,
+			'gebruiker'     => $stoker_naam,
+		];
+
+		$html          = "<tr style=\"background-color: $kleur\">";
+		$json_selectie = wp_json_encode( $selectie );
+		if ( false !== $json_selectie && $wijzigbaar ) {
+			$html .= "<td><a class=\"kleistad_box\" data-form='$json_selectie' >$dag $dagnaam</a></td>";
+		} else {
+			$html .= "<td>$dag $dagnaam</td>";
+		}
+		$html .= "<td>{$selectie['wie']}</td><td>{$selectie['soortstook']}</td><td>{$selectie['temperatuur']}</td></tr>";
+		return $html;
+	}
+
+	/**
 	 * Toon de reserveringen voor bepaalde maand
 	 *
 	 * @param int $oven_id Het id van de oven.
@@ -135,73 +196,22 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @return string De Html code.
 	 */
 	private static function toon_reserveringen( $oven_id, $maand, $jaar ) {
-		$rows                 = [];
-		$aantaldagen          = intval( date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) ) );
-		$huidige_gebruiker_id = get_current_user_id();
-		$oven                 = new Kleistad_Oven( $oven_id );
+		$tabelinhoud = '';
+		$aantaldagen = intval( date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) ) );
+		$oven        = new Kleistad_Oven( $oven_id );
 		for ( $dag = 1; $dag <= $aantaldagen; $dag++ ) {
-			$datum   = mktime( 23, 59, 0, $maand, $dag, $jaar );
-			$dagnaam = strftime( '%A', $datum );
+			$dagnaam = strftime( '%A', mktime( 0, 0, 0, $maand, $dag, $jaar ) );
 			if ( ! $oven->{$dagnaam} ) {
 				continue;
 			}
-			$reservering      = new Kleistad_Reservering( $oven_id, $datum );
-			$stoker_id        = $reservering->actief ? $reservering->gebruiker_id : $huidige_gebruiker_id;
-			$stoker_naam      = get_userdata( $stoker_id )->display_name;
-			$datum_verstreken = $datum < strtotime( 'today' );
-
-			if ( $stoker_id === $huidige_gebruiker_id ) {
-				$kleur         = $reservering->actief && ! $datum_verstreken ? 'lightgreen' : 'white';
-				$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : ( ! $datum_verstreken );
-				$wijzigbaar    = ( ! $reservering->verwerkt ) || is_super_admin();
-			} else {
-				$kleur         = $reservering->actief && ! $datum_verstreken ? 'pink' : 'white';
-				$verwijderbaar = Kleistad_Roles::override() ? ( ! $reservering->verwerkt ) : false;
-				$wijzigbaar    = $verwijderbaar || is_super_admin();
-			}
-			if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
-				$kleur = 'gray';
-			}
-			$selectie = [
-				'oven_id'       => $oven_id,
-				'dag'           => $dag,
-				'maand'         => $maand,
-				'jaar'          => $jaar,
-				'soortstook'    => $reservering->soortstook,
-				'temperatuur'   => $reservering->temperatuur,
-				'programma'     => $reservering->programma,
-				'verdeling'     => $reservering->actief ? $reservering->verdeling : [
-					[
-						'id'   => $stoker_id,
-						'perc' => 100,
-					],
-				],
-				'gereserveerd'  => $reservering->actief ? 1 : 0,
-				'verwijderbaar' => $verwijderbaar ? 1 : 0,
-				'wijzigbaar'    => $wijzigbaar ? 1 : 0,
-				'wie'           => $reservering->actief ? $stoker_naam : ( ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '' ),
-				'gebruiker_id'  => $stoker_id,
-				'gebruiker'     => $stoker_naam,
-			];
-
-			$row_html      = "<tr style=\"background-color: $kleur\">";
-			$json_selectie = wp_json_encode( $selectie );
-			if ( false !== $json_selectie && $wijzigbaar ) {
-				$row_html .= "<td><a class=\"kleistad_box\" data-form='$json_selectie' >$dag $dagnaam</a></td>";
-			} else {
-				$row_html .= "<td>$dag $dagnaam</td>";
-			}
-			$row_html .= "<td>{$selectie['wie']}</td><td>{$selectie['soortstook']}</td><td>{$selectie['temperatuur']}</td></tr>";
-			$rows[]    = $row_html;
+			$tabelinhoud .= self::maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar );
 		}
-
 		ob_start();
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-show-reservering.php';
 		$html = ob_get_contents();
 		ob_clean();
 		return $html;
 	}
-
 
 	/**
 	 * Callback from Ajax request

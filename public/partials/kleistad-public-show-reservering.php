@@ -38,16 +38,11 @@ list( $vorige_maand, $vorige_maand_jaar )     = explode( ',', date( 'n,Y', mktim
 		<th>Dag</th>
 		<th>Wie?</th>
 		<th>Soort stook</th>
-		<th data-align="right">Temp</th>
-		<!-- <th>Tijdstip stoken</th> -->
+		<th style="text-align:right">Temp</th>
 	</tr>
 </thead>
 <tbody>
-	<?php
-	foreach ( $rows as $row ) :
-		echo $row; // phpcs:ignore
-	endforeach;
-	?>
+	<?php echo $tabelinhoud; // phpcs:ignore ?>
 </tbody>
 <tfoot>
 	<tr>
