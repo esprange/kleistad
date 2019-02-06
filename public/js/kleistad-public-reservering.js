@@ -48,17 +48,21 @@
         );
 
         if ( 1 === formData.gereserveerd ) {
-            $( '#kleistad_muteer' ).text( 'Wijzig' );
-            if ( 1 === formData.verwijderbaar ) {
+            // $( '#kleistad_muteer' ).text( 'Wijzig' );
+			$( '#kleistad_muteer' ).show();
+			$( '#kleistad_voegtoe' ).hide();
+			if ( 1 === formData.verwijderbaar ) {
                 $( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen of verwijderen ?' );
-                $( '#kleistad_verwijder' ).show();
-            } else {
+				$( '#kleistad_verwijder' ).show();
+	        } else {
                 $( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen ?' );
                 $( '#kleistad_verwijder' ).hide();
             }
         } else {
             $( '#kleistad_tekst' ).text( 'Wil je de reservering toevoegen ?' );
-            $( '#kleistad_muteer' ).text( 'Voeg toe' );
+            // $( '#kleistad_muteer' ).text( 'Voeg toe' );
+			$( '#kleistad_voegtoe' ).show();
+			$( '#kleistad_muteer' ).hide();
             $( '#kleistad_verwijder' ).hide();
         }
     }
@@ -168,10 +172,10 @@
     /**
      * Wijzig of verwijder de reservering in de server.
      *
-     * @param {int} wijzigen als 1 dan wijzigen en -1 dan verwijderen.
+     * @param {string} method post, put of delete.
      * @returns {undefined}
      */
-    function kleistadMuteer( wijzigen ) {
+    function kleistadMuteer( method ) {
         var stokerPercs = $( '[name=kleistad_stoker_perc]' ).toArray(),
             stokerIds = $( '[name=kleistad_stoker_id]' ).toArray(),
             verdeling = [ ];
@@ -187,7 +191,7 @@
         $.ajax(
             {
                 url: kleistadData.base_url + '/reserveer/',
-                method: 'POST',
+                method: method,
                 beforeSend: function( xhr ) {
                     xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
                 },
@@ -195,7 +199,7 @@
                     dag: $( '#kleistad_dag' ).val(),
                     maand: $( '#kleistad_maand' ).val(),
                     jaar: $( '#kleistad_jaar' ).val(),
-                    oven_id: $( '#kleistad_oven_id' ).val() * wijzigen,
+                    oven_id: $( '#kleistad_oven_id' ).val(),
                     temperatuur: $( '#kleistad_temperatuur' ).val(),
                     soortstook: $( '#kleistad_soortstook' ).val(),
                     gebruiker_id: $( '#kleistad_stoker_id' ).val(),
@@ -283,11 +287,20 @@
             );
 
             /**
+             * Voeg een reservering toe.
+             */
+            $( 'body' ).on(
+                'click', '.kleistad_voegtoe', function() {
+                    kleistadMuteer( 'POST' );
+                }
+            );
+
+            /**
              * Wijzig een reservering.
              */
             $( 'body' ).on(
                 'click', '.kleistad_muteer', function() {
-                    kleistadMuteer( 1 );
+                    kleistadMuteer( 'PUT' );
                 }
             );
 
@@ -296,7 +309,7 @@
              */
             $( 'body' ).on(
                 'click', '.kleistad_verwijder', function() {
-                    kleistadMuteer( -1 );
+                    kleistadMuteer( 'DELETE' );
                 }
             );
 

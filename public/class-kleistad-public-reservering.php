@@ -83,7 +83,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			Kleistad_Public::url(),
 			'/reserveer',
 			[
-				'methods'             => 'POST',
+				'methods'             => 'POST,PUT,DELETE',
 				'callback'            => [ __CLASS__, 'callback_muteer' ],
 				'args'                => [
 					'dag'          => [
@@ -131,12 +131,15 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'args'                => [
 					'maand'   => [
 						'required' => true,
+						'type'     => 'int',
 					],
 					'jaar'    => [
 						'required' => true,
+						'type'     => 'int',
 					],
 					'oven_id' => [
 						'required' => true,
+						'type'     => 'int',
 					],
 				],
 				'permission_callback' => function() {
@@ -154,7 +157,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @suppress PhanUnusedVariable
 	 */
 	public static function callback_show( WP_REST_Request $request ) {
-
 		$maandnaam            = [];
 		$dagnaam              = [];
 		$rows                 = [];
@@ -303,6 +305,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	public static function callback_muteer( WP_REST_Request $request ) {
 		$gebruiker_id = intval( $request->get_param( 'gebruiker_id' ) );
 		$oven_id      = absint( intval( $request->get_param( 'oven_id' ) ) );
+		$method       = $request->get_method();
 
 		$reservering           = new Kleistad_Reservering( $oven_id );
 		$bestaande_reservering = $reservering->find(
@@ -311,7 +314,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			intval( $request->get_param( 'dag' ) )
 		);
 
-		if ( $request->get_param( 'oven_id' ) > 0 ) {
+		if ( 'PUT' === $method || 'POST' === $method ) {
 			// het betreft een toevoeging of wijziging, check of er al niet een bestaande reservering is.
 			if ( ! $bestaande_reservering || ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) { // phpcs:ignore
 				$reservering->gebruiker_id = $gebruiker_id;
@@ -324,7 +327,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				$reservering->verdeling    = $request->get_param( 'verdeling' );
 				$reservering->save();
 			}
-		} else {
+		} elseif ( 'DELETE' === $method ) {
 			// het betreft een annulering, mag alleen verwijderd worden door de gebruiker of een bevoegde.
 			if ( $bestaande_reservering && ( ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) ) { // phpcs:ignore
 				$reservering->delete();

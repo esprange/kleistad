@@ -103,7 +103,7 @@ else :
 					</th>
 				</tr>
 				<tr>
-					<th><button type="button" id="kleistad_muteer" class="kleistad_muteer" >Wijzig</button></th>
+					<th><button type="button" id="kleistad_voegtoe" class="kleistad_voegtoe" >Voeg toe</button><button type="button" id="kleistad_muteer" class="kleistad_muteer" >Wijzig</button></th>
 					<th><button type="button" id="kleistad_verwijder" class="kleistad_verwijder" >Verwijder</button></th>
 					<th><button type="button" id="kleistad_sluit" class="kleistad_sluit" >Sluit</button></th>
 				</tr>
