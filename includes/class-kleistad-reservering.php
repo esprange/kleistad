@@ -38,8 +38,8 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int   $oven_id Oven waar de reservering op van toepassing is.
-	 * @param array $datum   De datum van de reservering (jaar, maand, dag).
+	 * @param int $oven_id Oven waar de reservering op van toepassing is.
+	 * @param int $datum   De unix datum van de reservering.
 	 */
 	public function __construct( $oven_id, $datum = null ) {
 		global $wpdb;
@@ -64,9 +64,9 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				$wpdb->prepare(
 					"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND jaar= %d AND maand = %d AND dag = %d",
 					$oven_id,
-					$datum['jaar'],
-					$datum['maand'],
-					$datum['dag']
+					date( 'Y', $datum ),
+					date( 'm', $datum ),
+					date( 'd', $datum )
 				),
 				ARRAY_A
 			); // phpcs:ignore
@@ -178,10 +178,15 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			case 'gemeld':
 			case 'verwerkt':
 				return 1 === intval( $this->data[ $attribuut ] );
+			case 'actief':
+				return ( ! is_null( $this->data['id'] ) );
 			case 'jaar':
 			case 'maand':
 			case 'dag':
 			case 'oven_id':
+			case 'gebruiker_id':
+			case 'temperatuur':
+			case 'programma':
 				return intval( $this->data[ $attribuut ] );
 			default:
 				return $this->data[ $attribuut ];
@@ -200,7 +205,18 @@ class Kleistad_Reservering extends Kleistad_Entity {
 		switch ( $attribuut ) {
 			case 'verdeling':
 				if ( is_array( $waarde ) ) {
-					$this->data[ $attribuut ] = wp_json_encode( $waarde );
+					$verdeling = [];
+					array_walk(
+						$waarde,
+						function( $item, $key ) use ( &$verdeling ) {
+							$verdeling[ $key ] = [
+								'id'    => intval( $item['id'] ),
+								'perc'  => intval( $item['perc'] ),
+								'prijs' => isset( $item['prijs'] ) ? $item['prijs'] : 0.0,
+							];
+						}
+					);
+					$this->data[ $attribuut ] = wp_json_encode( $verdeling );
 				} else {
 					$this->data[ $attribuut ] = $waarde;
 				}
