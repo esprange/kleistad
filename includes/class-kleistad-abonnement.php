@@ -297,9 +297,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		if ( $this->geannuleerd ) {
 			return 'gestopt';
 		}
-		if ( $this->start_datum > strtotime( 'today' ) ) {
-			return 'aangemeld';
-		}
 		if ( $this->gepauzeerd ) {
 			return 'gepauzeerd';
 		}
@@ -553,43 +550,45 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @since 4.3.0
 	 *
 	 * @param int          $wijzig_datum Wijzigdatum.
+	 * @param string       $type         Soort wijziging: soort abonnement of de extras.
 	 * @param string|array $soort        Beperkt/onbeperkt wijziging of de extras.
 	 * @param string       $dag          Dag voor beperkt abonnement.
 	 * @param bool         $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
-	public function wijzigen( $wijzig_datum, $soort, $dag = '', $admin = false ) {
-		$wijzig_betaling = true;
-		if ( is_array( $soort ) ) {
-			$this->extras = $soort;
-			if ( count( $soort ) ) {
-				$bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gebruik maken van ' . implode( ', ', $soort );
-			} else {
-				$bericht = 'Je maakt voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' geen gebruik meer van extras';
-			}
-		} else {
-			if ( $this->soort === $soort ) {
-				$this->dag       = $dag;
-				$wijzig_betaling = false;
-			} else {
+	public function wijzigen( $wijzig_datum, $type, $soort, $dag = '', $admin = false ) {
+		$huidig_bedrag = $this->bedrag( self::BEDRAG_MAAND );
+		switch ( $type ) {
+			case 'soort':
 				$this->soort = $soort;
 				$this->dag   = $dag;
-			}
-			$bericht = 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
-				( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
+				$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
+					( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
+				break;
+			case 'extras':
+				$this->extras = $soort;
+				if ( count( $soort ) ) {
+					$bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gebruik maken van ' . implode( ', ', $soort );
+				} else {
+					$bericht = 'Je maakt voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' geen gebruik meer van extras';
+				}
+				break;
+			default:
+				$bericht = '';
 		}
-		if ( $wijzig_betaling ) {
+		if ( $this->bedrag( self::BEDRAG_MAAND !== $huidig_bedrag ) ) {
 			$betalen              = new Kleistad_Betalen();
 			$this->subscriptie_id = $betalen->annuleer( $this->abonnee_id, $this->subscriptie_id );
-			if ( ! $admin ) {
-				if ( $betalen->heeft_mandaat( $this->abonnee_id ) ) {
-					$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
-				}
-				$this->email( '_gewijzigd', $bericht );
+			/**
+			 * Een automatische incasso wordt alleen gewijzigd als de abonnee zelf de wijziging doet.
+			 */
+			if ( ! $admin && $betalen->heeft_mandaat( $this->abonnee_id ) ) {
+				$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
 			}
-		} else {
-			$this->email( '_gewijzigd', $bericht );
 		}
 		$this->save();
+		if ( ! $admin ) {
+			$this->email( '_gewijzigd', $bericht );
+		}
 		return true;
 	}
 

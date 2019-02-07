@@ -154,12 +154,12 @@ class Kleistad_Admin_Abonnees_Handler {
 						break;
 					case 'soort':
 						if ( ( $abonnement->soort !== $item['soort'] ) || ( $abonnement->dag !== $item['dag'] ) ) {
-							$abonnement->wijzigen( $vandaag, $item['soort'], $item['dag'], true );
+							$abonnement->wijzigen( $vandaag, 'soort', $item['soort'], $item['dag'], true );
 						}
 						break;
 					case 'extras':
 						if ( $abonnement->extras !== $item['extras'] ) {
-							$abonnement->wijzigen( $vandaag, $item['extras'], '', true );
+							$abonnement->wijzigen( $vandaag, 'extras', $item['extras'], '', true );
 						}
 						break;
 					case 'mollie':

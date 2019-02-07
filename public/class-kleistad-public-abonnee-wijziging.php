@@ -108,13 +108,13 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 				$status = $abonnement->annuleren( $data['input']['per_datum'] );
 				break;
 			case 'wijziging':
-				$status = $abonnement->wijzigen( $data['input']['per_datum'], $data['input']['soort'], $data['input']['dag'] );
+				$status = $abonnement->wijzigen( $data['input']['per_datum'], 'soort', $data['input']['soort'], $data['input']['dag'] );
 				break;
 			case 'extras':
-				$status = $abonnement->wijzigen( $data['input']['per_datum'], $data['input']['extras'] );
+				$status = $abonnement->wijzigen( $data['input']['per_datum'], 'extras', $data['input']['extras'] );
 				break;
 			case 'dag':
-				$status = $abonnement->wijzigen( strtotime( 'today' ), 'beperkt', $data['input']['dag'] );
+				$status = $abonnement->wijzigen( strtotime( 'today' ), 'soort', 'beperkt', $data['input']['dag'] );
 				break;
 			case 'betaalwijze':
 				$status = $abonnement->betaalwijze( $data['input']['per_datum'], $data['input']['betaal'] );
