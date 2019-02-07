@@ -147,6 +147,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			 * Er is een bestaande reservering van de ingelogde stoker.
 			 */
 			$kleur = 'lightgreen';
+			$wie   = $stoker_naam;
 			/**
 			 * Zolang de datum van de reservering nog niet in het verleden ligt mag deze verwijderd worden.
 			 */
@@ -160,8 +161,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			 * Reservering aangemaakt door een andere stoker.
 			 */
 			$kleur = 'pink';
+			$wie   = $stoker_naam;
 			/**
-			 * Als er al een reservering is en die is nog niet verwerkt dan mag een bestuurslid ie verwijderen.
+			 * Als er al een reservering is en die is nog niet verwerkt dan mag een bestuurslid die verwijderen.
 			 */
 			$verwijderbaar = ! $reservering->verwerkt && Kleistad_Roles::override();
 			/**
@@ -169,15 +171,16 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			 */
 			$wijzigbaar = $verwijderbaar;
 		} else {
+			$kleur = 'white';
+			$wie   = ! $datum_verstreken ? '-beschikbaar-' : '';
 			/**
-			 * Als er geen reservering actief is en de reservering ligt niet in het verleden dan mag er een reservering aangemaakt worden.
+			 * Als er geen reservering actief is en de datum ligt niet in het verleden dan mag er een reservering aangemaakt worden.
 			 * Alleen de beheerder kan ook in het verleden een reservering aanmaken.
 			 */
-			$wijzigbaar    = ! $datum_verstreken || is_super_admin();
 			$verwijderbaar = false;
+			$wijzigbaar    = ! $datum_verstreken || is_super_admin();
 		}
-		$kleur         = ! $datum_verstreken ? ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook && ! $datum_verstreken ? 'gray' : $kleur ) : 'white';
-		$wie           = $reservering->actief ? $stoker_naam : ( ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '' );
+		$kleur         = ! $datum_verstreken ? ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'gray' : $kleur ) : 'white';
 		$temperatuur   = 0 !== $reservering->temperatuur ? $reservering->temperatuur : '';
 		$json_selectie = wp_json_encode(
 			[
