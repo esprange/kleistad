@@ -164,11 +164,12 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			/**
 			 * Als er geen reservering actief is en de reservering ligt niet in het verleden dan mag er een reservering aangemaakt worden.
 			 * Alleen de beheerder kan ook in het verleden een reservering aanmaken.
-			 *
+			 */
+			$reserveerbaar = ! $reservering->actief && ( ! $datum_verstreken || is_super_admin() );
+			/**
 			 * Als er wel een reservering actief is en deze is nog niet verwerkt dan mag deze gewijzigd worden door een bestuurslid.
 			 */
-			$wijzigbaar = ( ! $reservering->actief && ( ! $datum_verstreken || is_super_admin() ) ) ||
-				( ! $reservering->verwerkt && Kleistad_Roles::override() );
+			$wijzigbaar = $reserveerbaar || $verwijderbaar;
 		}
 		$kleur       = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook && ! $datum_verstreken ? 'gray' : $kleur;
 		$wie         = $reservering->actief ? $stoker_naam : ( ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '' );
