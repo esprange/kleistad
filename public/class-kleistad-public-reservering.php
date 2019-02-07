@@ -146,56 +146,62 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			/**
 			 * Er is een bestaande reservering van de ingelogde stoker.
 			 */
-			$kleur = ! $datum_verstreken ? 'lightgreen' : 'white';
+			$kleur = 'lightgreen';
 			/**
-			 * Zolang de reservering nog niet financieel verwerkt is mag deze gewijzigd of verwijderd worden.
+			 * Zolang de datum van de reservering nog niet in het verleden ligt mag deze verwijderd worden.
 			 */
-			$verwijderbaar = ! $reservering->verwerkt;
-			$wijzigbaar    = ! $reservering->verwerkt;
-		} else {
+			$verwijderbaar = ! $datum_verstreken && ! $reservering->verwerkt;
 			/**
-			 * Reservering aangemaakt door een andere stoker of de datum staat nog open voor een nieuwe reservering.
+			 * Zolang de reservering nog niet financieel verwerkt is mag deze gewijzigd worden.
 			 */
-			$kleur = $reservering->actief && ! $datum_verstreken ? 'pink' : 'white';
+			$wijzigbaar = ! $reservering->verwerkt;
+		} elseif ( $reservering->actief ) {
+			/**
+			 * Reservering aangemaakt door een andere stoker.
+			 */
+			$kleur = 'pink';
 			/**
 			 * Als er al een reservering is en die is nog niet verwerkt dan mag een bestuurslid ie verwijderen.
 			 */
-			$verwijderbaar = $reservering->actief && ! $reservering->verwerkt && Kleistad_Roles::override();
+			$verwijderbaar = ! $reservering->verwerkt && Kleistad_Roles::override();
+			/**
+			 * Als er wel een reservering actief is en deze is nog niet verwerkt dan mag deze gewijzigd worden door een bestuurslid.
+			 */
+			$wijzigbaar = $verwijderbaar;
+		} else {
 			/**
 			 * Als er geen reservering actief is en de reservering ligt niet in het verleden dan mag er een reservering aangemaakt worden.
 			 * Alleen de beheerder kan ook in het verleden een reservering aanmaken.
 			 */
-			$reserveerbaar = ! $reservering->actief && ( ! $datum_verstreken || is_super_admin() );
-			/**
-			 * Als er wel een reservering actief is en deze is nog niet verwerkt dan mag deze gewijzigd worden door een bestuurslid.
-			 */
-			$wijzigbaar = $reserveerbaar || $verwijderbaar;
+			$wijzigbaar    = ! $datum_verstreken || is_super_admin();
+			$verwijderbaar = false;
 		}
-		$kleur       = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook && ! $datum_verstreken ? 'gray' : $kleur;
-		$wie         = $reservering->actief ? $stoker_naam : ( ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '' );
-		$temperatuur = 0 !== $reservering->temperatuur ? $reservering->temperatuur : '';
-		$selectie    = [
-			'oven_id'       => $oven_id,
-			'dag'           => $dag,
-			'maand'         => $maand,
-			'jaar'          => $jaar,
-			'soortstook'    => $reservering->soortstook,
-			'temperatuur'   => $reservering->actief ? $reservering->temperatuur : '',
-			'programma'     => $reservering->actief ? $reservering->programma : '',
-			'verdeling'     => $reservering->actief ? $reservering->verdeling : [
-				[
-					'id'   => $stoker_id,
-					'perc' => 100,
+		$kleur         = ! $datum_verstreken ? ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook && ! $datum_verstreken ? 'gray' : $kleur ) : 'white';
+		$wie           = $reservering->actief ? $stoker_naam : ( ( $wijzigbaar && ! $datum_verstreken ) ? '-beschikbaar-' : '' );
+		$temperatuur   = 0 !== $reservering->temperatuur ? $reservering->temperatuur : '';
+		$json_selectie = wp_json_encode(
+			[
+				'oven_id'       => $oven_id,
+				'dag'           => $dag,
+				'maand'         => $maand,
+				'jaar'          => $jaar,
+				'soortstook'    => $reservering->soortstook,
+				'temperatuur'   => $reservering->actief ? $reservering->temperatuur : '',
+				'programma'     => $reservering->actief ? $reservering->programma : '',
+				'verdeling'     => $reservering->actief ? $reservering->verdeling : [
+					[
+						'id'   => $stoker_id,
+						'perc' => 100,
+					],
 				],
-			],
-			'gereserveerd'  => $reservering->actief,
-			'verwijderbaar' => $verwijderbaar,
-			'gebruiker_id'  => $stoker_id,
-			'gebruiker'     => $stoker_naam,
-		];
+				'gereserveerd'  => $reservering->actief,
+				'verwijderbaar' => $verwijderbaar,
+				'gebruiker_id'  => $stoker_id,
+				'gebruiker'     => $stoker_naam,
+			]
+		);
 
-		$html          = "<tr style=\"background-color: $kleur\">";
-		$json_selectie = wp_json_encode( $selectie );
+		$html = "<tr style=\"background-color: $kleur\">";
 		if ( false !== $json_selectie && $wijzigbaar ) {
 			$html .= "<td><a class=\"kleistad_box\" data-form='$json_selectie' >$dag $dagnaam</a></td>";
 		} else {
