@@ -549,11 +549,11 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param int          $wijzig_datum Wijzigdatum.
-	 * @param string       $type         Soort wijziging: soort abonnement of de extras.
-	 * @param string|array $soort        Beperkt/onbeperkt wijziging of de extras.
-	 * @param string       $dag          Dag voor beperkt abonnement.
-	 * @param bool         $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param int    $wijzig_datum Wijzigdatum.
+	 * @param string $type         Soort wijziging: soort abonnement of de extras.
+	 * @param mixed  $soort        Beperkt/onbeperkt wijziging of de extras.
+	 * @param string $dag          Dag voor beperkt abonnement.
+	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function wijzigen( $wijzig_datum, $type, $soort, $dag = '', $admin = false ) {
 		$huidig_bedrag = $this->bedrag( self::BEDRAG_MAAND );
@@ -575,7 +575,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			default:
 				$bericht = '';
 		}
-		if ( $this->bedrag( self::BEDRAG_MAAND !== $huidig_bedrag ) ) {
+		if ( $this->bedrag( self::BEDRAG_MAAND ) !== $huidig_bedrag ) {
 			$betalen              = new Kleistad_Betalen();
 			$this->subscriptie_id = $betalen->annuleer( $this->abonnee_id, $this->subscriptie_id );
 			/**
