@@ -408,7 +408,7 @@ class Kleistad_Betalen {
 			);
 			$gebruiker     = get_userdata( reset( $gebruiker_ids ) );
 			$to            = "$gebruiker->display_name <$gebruiker->user_email>";
-			Kleistad_public::compose_email(
+			Kleistad_email::compose(
 				$to,
 				'Kleistad incasso mislukt',
 				'kleistad_email_incasso_mislukt',

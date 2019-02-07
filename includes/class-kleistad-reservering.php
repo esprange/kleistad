@@ -306,7 +306,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 					if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $this->datum ) . ' door ' . $gebruiker->display_name ) ) {
 
 						$to = "$medestoker->display_name <$medestoker->user_email>";
-						Kleistad_public::compose_email(
+						Kleistad_email::compose(
 							$to,
 							'Kleistad kosten zijn verwerkt op het stooksaldo',
 							'kleistad_email_stookkosten_verwerkt',
@@ -333,7 +333,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				$bedrag    = is_float( $regeling ) ? $regeling : $ovens[ $this->oven_id ]->kosten;
 				$gebruiker = get_userdata( $this->gebruiker_id );
 				$to        = "$gebruiker->display_name <$gebruiker->user_email>";
-				Kleistad_public::compose_email(
+				Kleistad_email::compose(
 					$to,
 					'Kleistad oven gebruik op ' . date( 'd-m-Y', $this->datum ),
 					'kleistad_email_stookmelding',

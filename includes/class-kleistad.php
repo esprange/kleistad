@@ -158,8 +158,6 @@ class Kleistad {
 		$this->loader->add_filter( 'single_template', $plugin_public, 'recept_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
-		$this->loader->add_filter( 'wp_mail_from', $plugin_public, 'mail_from' );
-		$this->loader->add_filter( 'wp_mail_from_name', $plugin_public, 'mail_from_name' );
 		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_public, 'loginuit_menu', 10, 2 );
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
 

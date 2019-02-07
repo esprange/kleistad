@@ -260,7 +260,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			default:
 				return false;
 		}
-		return Kleistad_public::compose_email(
+		return Kleistad_email::compose(
 			$to,
 			$onderwerp,
 			$slug,

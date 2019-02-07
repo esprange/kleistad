@@ -22,7 +22,6 @@ class Kleistad_Email {
 	 * @param string       $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
 	 * @param array        $args de argumenten die in de slug pagina vervangen moeten worden.
 	 * @param string|array $attachment een eventuele bijlage.
-	 * @suppress PhanUnusedVariable
 	 */
 	public static function compose( $to, $subject, $slug, $args = [], $attachment = [] ) {
 		$admin_email = get_option( 'admin_email' );
@@ -35,6 +34,18 @@ class Kleistad_Email {
 			'from' => 'no-reply@' . $domein,
 			'copy' => 'stook@' . $domein,
 		];
+		add_filter(
+			'wp_mail_from',
+			function() use ( $emailadresses ) {
+				return $emailadresses['from'];
+			}
+		);
+		add_filter(
+			'wp_mail_from_name',
+			function() {
+				return 'Kleistad';
+			}
+		);
 
 		$headers = [
 			'Content-Type: text/html; charset=UTF-8',
