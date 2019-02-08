@@ -26,7 +26,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 		$abonnee_id = get_current_user_id();
 		$abonnement = new Kleistad_Abonnement( $abonnee_id );
 
-		$data['driemaand_datum'] = mktime( 0, 0, 0, intval( date( 'n', $abonnement->start_datum ) ) + 3, intval( date( 'j', $abonnement->start_datum ) ), intval( date( 'Y', $abonnement->start_datum ) ) );
+		$data['driemaand_datum'] = $abonnement->driemaand_datum;
 		$data['abonnement']      = $abonnement;
 		$data['input']['actief'] = ( ! $abonnement->geannuleerd ) && ( ! $abonnement->gepauzeerd );
 		$data['input']['soort']  = $abonnement->soort;

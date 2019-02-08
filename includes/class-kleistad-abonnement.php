@@ -22,6 +22,8 @@
  * @property int    pauze_datum
  * @property int    eind_datum
  * @property int    herstart_datum
+ * @property int    driemaand_datum
+ * @property int    reguliere_datum
  * @property int    incasso_datum
  * @property bool   gepauzeerd
  * @property string subscriptie_id
@@ -85,13 +87,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->default_data['datum'] = date( 'Y-m-d' );
 		$abonnement                  = get_user_meta( $this->abonnee_id, self::META_KEY, true );
 		$this->data                  = is_array( $abonnement ) ? wp_parse_args( $abonnement, $this->default_data ) : $this->default_data;
-		// Deze datum zit niet in de 'oude' abonnees.
-		if ( '' === $this->data['incasso_datum'] ) {
-			$this->incasso_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 1, intval( date( 'Y', $this->start_datum ) ) );
-		}
-		if ( ! isset( $this->data['extras'] ) ) {
-			$this->data['extras'] = [];
-		}
 	}
 
 	/**
@@ -175,13 +170,25 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'pauze_datum':
 			case 'eind_datum':
 			case 'herstart_datum':
-			case 'incasso_datum':
 				return strtotime( $this->data[ $attribuut ] );
+			case 'driemaand_datum':
+				return mktime( 0, 0, 0, intval( date( 'n', $this->data['start_datum'] ) ) + 3, intval( date( 'j', $this->data['start_datum'] ) ), intval( date( 'Y', $this->data['start_datum'] ) ) );
+			case 'incasso_datum':
+				return ( '' === $this->data[ $attribuut ] ) ?
+					mktime( 0, 0, 0, intval( date( 'n', $this->data['start_datum'] ) ) + 4, 1, intval( date( 'Y', $this->data['start_datum'] ) ) ) :
+					strtotime( $this->data[ $attribuut ] );
+			case 'reguliere_datum':
+				return mktime( 0, 0, 0, intval( date( 'n', $this->data['start_datuum'] ) ) + 4, 1, intval( date( 'Y', $this->data['start_datum'] ) ) );
 			case 'geannuleerd':
 			case 'gepauzeerd':
 				return 1 === intval( $this->data[ $attribuut ] );
 			case 'dag':
 				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
+			case 'extras':
+				if ( ! isset( $this->data['extras'] ) ) {
+					$this->data['extras'] = [];
+				}
+				return $this->data['extras'];
 			default:
 				return $this->data[ $attribuut ];
 		}
@@ -293,18 +300,15 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return string De status tekst.
 	 */
 	public function status() {
-		$vandaag = strtotime( 'today' );
 		if ( $this->geannuleerd ) {
 			return 'gestopt';
-		}
-		if ( $this->gepauzeerd ) {
+		} elseif ( $this->gepauzeerd ) {
 			return 'gepauzeerd';
-		}
-		if ( Kleistad_Roles::reserveer( $this->abonnee_id ) ) {
+		} elseif ( Kleistad_Roles::reserveer( $this->abonnee_id ) ) {
+			$vandaag = strtotime( 'today' );
 			if ( $vandaag < $this->pauze_datum ) {
 				return 'pauze gepland';
-			}
-			if ( $vandaag < $this->eind_datum ) {
+			} elseif ( $vandaag < $this->eind_datum ) {
 				return 'stop gepland';
 			}
 			return 'actief';
@@ -320,8 +324,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return bool Als true, dan is incasso actief.
 	 */
 	public function incasso_actief() {
-		$betalen = new Kleistad_Betalen();
-		return $betalen->actief( $this->abonnee_id, $this->subscriptie_id );
+		return Kleistad_Betalen::actief( $this->abonnee_id, $this->subscriptie_id );
 	}
 
 	/**
@@ -330,17 +333,14 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @since 4.3.0
 	 */
 	public function betalen() {
-		$betalen = new Kleistad_Betalen();
 		// Doe de eerste betaling om het mandaat te verkrijgen.
-		$einde_overbrugging_datum = strftime(
-			'%d-%m-%y',
-			mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 0, intval( date( 'Y', $this->start_datum ) ) )
-		);
+		$betalen = new Kleistad_Betalen();
+		$dag     = 60 * 60 * 24; // Aantal seconden in een dag.
 		$betalen->order(
 			$this->abonnee_id,
 			__CLASS__ . '-' . $this->code . '-incasso',
 			$this->bedrag( self::BEDRAG_OVERBRUGGING ),
-			'Kleistad abonnement ' . $this->code . ' periode tot ' . $einde_overbrugging_datum,
+			'Kleistad abonnement ' . $this->code . ' periode tot ' . strftime( '%d-%m-%y', $this->reguliere_datum - $dag ),
 			'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
 			true
 		);
@@ -451,11 +451,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 					return $bedrag;
 				} else {
 					// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
-					$dag             = 60 * 60 * 24; // Aantal seconden in een dag.
-					$driemaand_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 3, intval( date( 'j', $this->start_datum ) ), intval( date( 'Y', $this->start_datum ) ) );
-					$reguliere_datum = mktime( 0, 0, 0, intval( date( 'n', $this->start_datum ) ) + 4, 1, intval( date( 'Y', $this->start_datum ) ) );
-					$aantal_dagen    = ( $reguliere_datum - $driemaand_datum ) / $dag;
-					$dagen_in_maand  = intval( date( 'j', $reguliere_datum - $dag ) );
+					$dag            = 60 * 60 * 24; // Aantal seconden in een dag.
+					$aantal_dagen   = ( $this->reguliere_datum - $this->driemaand_datum ) / $dag;
+					$dagen_in_maand = intval( date( 'j', $this->reguliere_datum - $dag ) );
 					return $bedrag * $aantal_dagen / $dagen_in_maand;
 				}
 			case self::BEDRAG_EXTRAS_TEKST:
@@ -651,10 +649,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
-		$vervolg_datum        = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ) - 7, intval( date( 'Y', $start_datum ) ) );
-		$driemaand_datum      = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 3, intval( date( 'j', $start_datum ) ), intval( date( 'Y', $start_datum ) ) );
+		$dag                  = 60 * 60 * 24; // Aantal seconden in een dag.
 		$this->start_datum    = $start_datum;
-		$this->incasso_datum  = mktime( 0, 0, 0, intval( date( 'n', $start_datum ) ) + 4, 1, intval( date( 'Y', $start_datum ) ) );
 		$this->geannuleerd    = false; // Reset ingeval het een hervatting is van een oud abonnement.
 		$this->gepauzeerd     = false; // Idem.
 		$this->pauze_datum    = null;
@@ -662,7 +658,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 		$this->eind_datum     = null;
 		$this->save();
 		// Verzend 1 week vooraf verstrijken drie maanden termijn de email voor het vervolg.
-		$this->schedule( 'vervolg', $vervolg_datum );
+		$this->schedule( 'vervolg', $this->driemaand_datum - 7 * $dag );
 
 		if ( 'ideal' === $betaalwijze ) {
 			$betalen = new Kleistad_Betalen();
@@ -670,7 +666,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				$this->abonnee_id,
 				__CLASS__ . '-' . $this->code . '-start_ideal',
 				$this->bedrag( self::BEDRAG_START_EN_BORG ),
-				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $driemaand_datum ) . ' en borg',
+				'Kleistad abonnement ' . $this->code . ' periode ' . strftime( '%d-%m-%y', $this->start_datum ) . ' tot ' . strftime( '%d-%m-%y', $this->driemaand_datum ) . ' en borg',
 				'Bedankt voor de betaling! De abonnement inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
 			);
 		} else {

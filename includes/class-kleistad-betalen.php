@@ -260,12 +260,13 @@ class Kleistad_Betalen {
 	 * @param int    $gebruiker_id   De gebruiker waarvoor een subscription loopt.
 	 * @param string $subscriptie_id De subscriptie die gecheckt moet worden.
 	 */
-	public function actief( $gebruiker_id, $subscriptie_id ) {
+	public static function actief( $gebruiker_id, $subscriptie_id ) {
+		$object              = new static();
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 
 		try {
 			if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+				$mollie_gebruiker = $object->mollie->customers->get( $mollie_gebruiker_id );
 				$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
 				return $subscription->isActive();
 			}
