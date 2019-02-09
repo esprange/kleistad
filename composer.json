@@ -1,5 +1,5 @@
 {
-    "name": "kleistad",
+    "name": "kleistad/kleistad",
     "description": "WordPress plugin voor Kleistad",
     "type": "wordpress-plugin",
     "license": "GPL-3.0",

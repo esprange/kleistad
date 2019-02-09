@@ -3,12 +3,13 @@
 **Donate link:** https://www.kleistad.nl  
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
-**Tested up to:** 4.9.8  
+**Tested up to:** 5.0.3  
 **Stable tag:** 5.1.0  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
 [![Build Status](https://travis-ci.org/esprange/kleistad.svg?branch=master)](https://travis-ci.org/esprange/kleistad)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
 
 Wordpress plugin for Stichting Kleistad, Amersfoort (The Netherlands), see www.kleistad.nl.
 
@@ -33,6 +34,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 5.2.0 ###
+* Kleuren agenda aangepast
+* Externe libraries geactualiseerd
+* Code refactoring a.g.v. controles door scrutinizer
 ### 5.1.0 ###
 * Agenda functie vervangen door FullCalendar object
 ### 5.0.4 ###

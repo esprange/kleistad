@@ -164,6 +164,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
+		$start = getdate( strtotime( $this->data['start_datum'] ) );
 		switch ( $attribuut ) {
 			case 'datum':
 			case 'start_datum':
@@ -172,23 +173,18 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'herstart_datum':
 				return strtotime( $this->data[ $attribuut ] );
 			case 'driemaand_datum':
-				return mktime( 0, 0, 0, intval( date( 'n', $this->data['start_datum'] ) ) + 3, intval( date( 'j', $this->data['start_datum'] ) ), intval( date( 'Y', $this->data['start_datum'] ) ) );
+				return mktime( 0, 0, 0, $start['mon'] + 3, $start['mday'], $start['year'] );
 			case 'incasso_datum':
-				return ( '' === $this->data[ $attribuut ] ) ?
-					mktime( 0, 0, 0, intval( date( 'n', $this->data['start_datum'] ) ) + 4, 1, intval( date( 'Y', $this->data['start_datum'] ) ) ) :
-					strtotime( $this->data[ $attribuut ] );
+				return ( '' === $this->data[ $attribuut ] ) ? mktime( 0, 0, 0, $start['mon'] + 4, 1, $start['year'] ) : strtotime( $this->data[ $attribuut ] );
 			case 'reguliere_datum':
-				return mktime( 0, 0, 0, intval( date( 'n', $this->data['start_datuum'] ) ) + 4, 1, intval( date( 'Y', $this->data['start_datum'] ) ) );
+				return mktime( 0, 0, 0, $start['mon'] + 4, 1, $start['year'] );
 			case 'geannuleerd':
 			case 'gepauzeerd':
 				return 1 === intval( $this->data[ $attribuut ] );
 			case 'dag':
 				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
 			case 'extras':
-				if ( ! isset( $this->data['extras'] ) ) {
-					$this->data['extras'] = [];
-				}
-				return $this->data['extras'];
+				return isset( $this->data['extras'] ) ? $this->data['extras'] : [];
 			default:
 				return $this->data[ $attribuut ];
 		}
