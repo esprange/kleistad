@@ -106,48 +106,36 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$search_val  = filter_input( INPUT_GET, 's' );
-		$search      = ! is_null( $search_val ) ? $search_val : '';
-		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val   = filter_input( INPUT_GET, 'order' );
-		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-
-		$gebruikers = get_users(
+		$search_val      = filter_input( INPUT_GET, 's' );
+		$search          = ! is_null( $search_val ) ? $search_val : '';
+		$paged_val       = filter_input( INPUT_GET, 'paged' );
+		$paged           = ! is_null( $paged_val ) ? max( 1, intval( $paged_val ) ) : 1;
+		$orderby_val     = filter_input( INPUT_GET, 'orderby' );
+		$orderby         = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val       = filter_input( INPUT_GET, 'order' );
+		$order           = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$gebruiker_query = new WP_User_Query(
 			[
-				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => [ 'display_name' ],
-				'order'   => $order,
-				'search'  => '*' . $search . '*',
+				'fields'   => [ 'ID', 'display_name' ],
+				'orderby'  => [ 'naam' === $orderby ? 'display_name' : 'meta_value_num' ],
+				'order'    => $order,
+				'search'   => '*' . $search . '*',
+				'meta_key' => Kleistad_Saldo::META_KEY,
+				'paged'    => $paged,
+				'number'   => $per_page,
 			]
 		);
-
-		$stooksaldi = [];
-
-		foreach ( $gebruikers as $gebruiker ) {
-			if ( Kleistad_Roles::reserveer( $gebruiker->ID ) ) {
-				$saldo        = new Kleistad_Saldo( $gebruiker->ID );
-				$stooksaldi[] = [
-					'id'    => $gebruiker->ID,
-					'naam'  => $gebruiker->display_name,
-					'saldo' => $saldo->bedrag,
-				];
-			}
+		foreach ( $gebruiker_query->get_results() as $gebruiker ) {
+			$saldo         = new Kleistad_Saldo( $gebruiker->ID );
+			$this->items[] = [
+				'id'    => $gebruiker->ID,
+				'naam'  => $gebruiker->display_name,
+				'saldo' => $saldo->bedrag,
+			];
 		}
-		if ( 'naam' !== $orderby ) {
-			$bedrag = [];
-			foreach ( $stooksaldi as $key => $saldo ) {
-				$bedrag[ $key ] = $saldo['saldo'];
-			}
-			array_multisort( $bedrag, constant( 'SORT_' . strtoupper( $order ) ), $stooksaldi );
-		}
-		$total_items = count( $stooksaldi );
-		$this->items = array_slice( $stooksaldi, $paged * $per_page, $per_page, true );
 		$this->set_pagination_args(
 			[
-				'total_items' => $total_items,
+				'total_items' => $gebruiker_query->get_total(),
 				'per_page'    => $per_page,
 				'total_pages' => ceil( $total_items / $per_page ),
 			]

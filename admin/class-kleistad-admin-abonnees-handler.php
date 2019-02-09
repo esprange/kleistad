@@ -17,12 +17,67 @@ class Kleistad_Admin_Abonnees_Handler {
 	/**
 	 * Definieer de panels
 	 *
-	 * @since    5.2.0
+	 * @since 5.2.0
 	 * @param string $plugin_name de naam.
 	 */
 	public function add_pages( $plugin_name ) {
 		add_submenu_page( $plugin_name, 'Abonnees', 'Abonnees', 'manage_options', 'abonnees', [ $this, 'abonnees_page_handler' ] );
 		add_submenu_page( 'abonnees', 'Wijzigen abonnee', 'Wijzigen abonnee', 'manage_options', 'abonnees_form', [ $this, 'abonnees_form_page_handler' ] );
+	}
+
+	/**
+	 * Wijzig het abonnement.
+	 *
+	 * @since 5.2.0
+	 * @param array $item De informatie vanuit het formulier.
+	 * @return string De status van de wijziging.
+	 */
+	private function wijzig_abonnee( $item ) {
+		$datum               = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
+		$abonnement          = new Kleistad_Abonnement( $item['id'] );
+		$vandaag             = strtotime( 'today' );
+		$item['mollie_info'] = $abonnement->info();
+		switch ( $actie ) {
+			case 'status':
+				switch ( $submit ) {
+					case 'pauzeren':
+						$abonnement->pauzeren( strtotime( $item['pauze_datum'] ), strtotime( $item['herstart_datum'] ), true );
+						$item['gepauzeerd'] = $vandaag >= $item['pauze_datum'];
+						break;
+					case 'herstarten':
+						$abonnement->herstarten( strtotime( $item['herstart_datum'] ), true );
+						$item['gepauzeerd'] = $vandaag < $item['herstart_datum'];
+						break;
+					case 'starten':
+						$abonnement->start( strtotime( $item['start_datum'] ), 'stort', true );
+						$item['gestart'] = $vandaag >= $item['start_datum'];
+						break;
+					case 'stoppen':
+						$abonnement->annuleren( strtotime( $item['eind_datum'] ), true );
+						$item['geannuleerd'] = $vandaag >= $item['eind_datum'];
+						break;
+				}
+				break;
+			case 'soort':
+				if ( ( $abonnement->soort !== $item['soort'] ) || ( $abonnement->dag !== $item['dag'] ) ) {
+					$abonnement->wijzigen( $vandaag, 'soort', $item['soort'], $item['dag'], true );
+				}
+				break;
+			case 'extras':
+				if ( $abonnement->extras !== $item['extras'] ) {
+					$abonnement->wijzigen( $vandaag, 'extras', $item['extras'], '', true );
+				}
+				break;
+			case 'mollie':
+				if ( $item['mandaat'] ) {
+					$abonnement->betaalwijze( $vandaag, 'stort', true );
+					$item['mandaat'] = false;
+				}
+				break;
+			default:
+				break;
+		}
+		return 'De gegevens zijn opgeslagen';
 	}
 
 	/**
@@ -123,51 +178,7 @@ class Kleistad_Admin_Abonnees_Handler {
 			$submit     = strtolower( $item['submit'] );
 			$item_valid = $this->validate_abonnee( $item, $actie, $submit );
 			if ( true === $item_valid ) {
-				$datum               = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
-				$abonnement          = new Kleistad_Abonnement( $item['id'] );
-				$vandaag             = strtotime( 'today' );
-				$item['mollie_info'] = $abonnement->info();
-				switch ( $actie ) {
-					case 'status':
-						switch ( $submit ) {
-							case 'pauzeren':
-								$abonnement->pauzeren( strtotime( $item['pauze_datum'] ), strtotime( $item['herstart_datum'] ), true );
-								$item['gepauzeerd'] = $vandaag >= $item['pauze_datum'];
-								break;
-							case 'herstarten':
-								$abonnement->herstarten( strtotime( $item['herstart_datum'] ), true );
-								$item['gepauzeerd'] = $vandaag < $item['herstart_datum'];
-								break;
-							case 'starten':
-								$abonnement->start( strtotime( $item['start_datum'] ), 'stort', true );
-								$item['gestart'] = $vandaag >= $item['start_datum'];
-								break;
-							case 'stoppen':
-								$abonnement->annuleren( strtotime( $item['eind_datum'] ), true );
-								$item['geannuleerd'] = $vandaag >= $item['eind_datum'];
-								break;
-						}
-						break;
-					case 'soort':
-						if ( ( $abonnement->soort !== $item['soort'] ) || ( $abonnement->dag !== $item['dag'] ) ) {
-							$abonnement->wijzigen( $vandaag, 'soort', $item['soort'], $item['dag'], true );
-						}
-						break;
-					case 'extras':
-						if ( $abonnement->extras !== $item['extras'] ) {
-							$abonnement->wijzigen( $vandaag, 'extras', $item['extras'], '', true );
-						}
-						break;
-					case 'mollie':
-						if ( $item['mandaat'] ) {
-							$abonnement->betaalwijze( $vandaag, 'stort', true );
-							$item['mandaat'] = false;
-						}
-						break;
-					default:
-						break;
-				}
-				$message = 'De gegevens zijn opgeslagen';
+				$message = $this->wijzig_abonnee( $item );
 			} else {
 				$notice = $item_valid;
 			}
