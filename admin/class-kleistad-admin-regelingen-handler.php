@@ -56,11 +56,9 @@ class Kleistad_Admin_Regelingen_Handler {
 	 * Overzicht regelingen page handler
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function regelingen_page_handler() {
 		$message = '';
-		$table   = new Kleistad_Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
 			$id = filter_input( INPUT_GET, 'id' );
 
@@ -71,8 +69,6 @@ class Kleistad_Admin_Regelingen_Handler {
 			}
 			$message = sprintf( 'Aantal verwijderd: %d', count( $id ) );
 		}
-		$table->prepare_items();
-
 		require 'partials/kleistad-admin-regelingen-page.php';
 	}
 

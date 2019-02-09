@@ -9,6 +9,7 @@
  * @subpackage Kleistad/admin/partials
  */
 
+$table = new Kleistad_Admin_Regelingen();
 ?>
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
@@ -22,6 +23,9 @@
 	<?php endif; ?>
 	<form id="regelingen-table" method="GET">
 		<input type="hidden" name="page" value="<?php echo filter_input( INPUT_GET, 'page' ); ?>"/>
-		<?php $table->display(); ?>
+		<?php
+			$table->prepare_items();
+			$table->display();
+		?>
 	</form>
 </div>

@@ -54,11 +54,8 @@ class Kleistad_Admin_Ovens_Handler {
 	 * Ovens overzicht page handler
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function ovens_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Ovens();
 		require 'partials/kleistad-admin-ovens-page.php';
 	}
 

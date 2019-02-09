@@ -34,7 +34,6 @@ class Kleistad_Admin_Abonnees_Handler {
 	 * @param string $actie de actie waar het om gaat.
 	 * @param string $submit de subactie.
 	 * @return bool|string
-	 * @suppress PhanUnusedPrivateMethodParameter
 	 */
 	private function validate_abonnee( $item, $actie, $submit ) {
 		$messages = [];
@@ -76,11 +75,8 @@ class Kleistad_Admin_Abonnees_Handler {
 	 * Abonnees overzicht page handler
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function abonnees_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Abonnees();
 		require 'partials/kleistad-admin-abonnees-page.php';
 	}
 

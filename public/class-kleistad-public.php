@@ -320,10 +320,9 @@ class Kleistad_Public {
 	 * @param object  $request Wordt niet gebruikt.
 	 * @param WP_User $user Het WordPress user object.
 	 * @return string De Url.
-	 *  @phan-suppress PhanUnusedPublicMethodParameter
 	 */
 	public function login_redirect( $url, $request, $user ) {
-		if ( $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) {
+		if ( isset( $request ) && $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) { // De test van request is dummy statement, altijd true.
 			$url = ( $user->has_cap( 'administrator' ) ) ? admin_url() : home_url( '/leden/' );
 		}
 		return $url;
@@ -402,13 +401,14 @@ class Kleistad_Public {
 	 * @param string $content   wordt niet gebruikt.
 	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
 	 * @return string           html resultaat.
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function shortcode_handler( $atts, $content, $tag ) {
 		$form        = substr( $tag, strlen( 'kleistad-' ) );
 		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
 		$form_object = new $form_class( $this->plugin_name, $form, $atts, $this->options );
-		wp_enqueue_style( $this->plugin_name );
+		if ( isset( $content ) ) { // Een dummy statement, altijd true.
+			wp_enqueue_style( $this->plugin_name );
+		}
 		if ( wp_style_is( $this->plugin_name . $form, 'registered' ) ) {
 			wp_enqueue_style( $this->plugin_name . $form );
 		}

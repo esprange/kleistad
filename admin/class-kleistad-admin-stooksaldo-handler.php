@@ -50,11 +50,8 @@ class Kleistad_Admin_Stooksaldo_Handler {
 	 * Overzicht stooksaldo page handler
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function stooksaldo_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Stooksaldo();
 		require 'partials/kleistad-admin-stooksaldo-page.php';
 	}
 

@@ -140,6 +140,5 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 		flush();
 		readfile( $csv ); // phpcs:ignore
 		unlink( $csv );
-		die();
 	}
 }

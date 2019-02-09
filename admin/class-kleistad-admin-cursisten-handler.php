@@ -29,11 +29,8 @@ class Kleistad_Admin_Cursisten_Handler {
 	 * Cursisten overzicht page handler
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function cursisten_page_handler() {
-		$message = '';
-		$table   = new Kleistad_Admin_Cursisten();
 		require 'partials/kleistad-admin-cursisten-page.php';
 	}
 
