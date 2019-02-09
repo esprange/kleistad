@@ -27,7 +27,7 @@ else :
 			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
 		}
 		?>
-	<form method="post" action="<?php echo esc_url( get_permalink() ); ?>" enctype="multipart/form-data" >
+	<form method="POST" action="#" enctype="multipart/form-data" >
 		<input type="hidden" name="action" value="" />
 		<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
 		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
@@ -242,7 +242,7 @@ else :
 	<div id="kleistad_verwijder_recept" title="Recept verwijderen ?">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Dit recept wordt verwijderd</p>
 	</div>
-	<form method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
+	<form method="POST" action="#">
 
 		<input id="kleistad_recept_action" type="hidden" name="action" value="recept_overzicht" />
 		<input id="kleistad_recept_id" type="hidden" name="recept_id" value="0" />

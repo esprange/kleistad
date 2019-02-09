@@ -13,7 +13,7 @@
 if ( ! is_user_logged_in() || is_super_admin() ) :
 	?>
 
-	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
+	<form action="#" method="POST">
 		<?php wp_nonce_field( 'kleistad_abonnee_inschrijving' ); ?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3">

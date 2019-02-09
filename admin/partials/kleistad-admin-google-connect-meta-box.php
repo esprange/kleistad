@@ -19,7 +19,7 @@ if ( is_wp_error( $result ) ) {
 }
 ?>
 
-<form method="post" >
+<form method="POST" >
 	<p>Huidige status: <strong><?php echo Kleistad_Event::is_authorized() ? 'gekoppeld' : 'niet gekoppeld'; ?></strong></p>
 	<hr/>
 	<p>Om gekoppeld te zijn aan de Google Kalender moet zowel kalender id, client id en client sleutel in het instellingen scherm ingevuld worden.

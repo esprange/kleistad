@@ -16,7 +16,7 @@ if ( ! Kleistad_Roles::override() ) : ?>
 else :
 	?>
 
-<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST" >
+<form action="#" method="POST" >
 	<?php wp_nonce_field( 'kleistad_stookbestand' ); ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_3">

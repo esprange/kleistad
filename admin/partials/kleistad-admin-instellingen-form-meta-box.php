@@ -11,7 +11,7 @@
  */
 
 ?>
-<form method="post" action="options.php" >
+<form method="POST" action="options.php" >
 	<?php settings_fields( 'kleistad-opties' ); ?>
 	<table class="form-table" >
 		<tr >

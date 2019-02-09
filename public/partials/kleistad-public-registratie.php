@@ -17,7 +17,7 @@ if ( ! is_user_logged_in() ) :
 else :
 	?>
 
-	<form action="<?php echo esc_url( get_permalink() ); ?>" method="POST">
+	<form action="#" method="POST">
 		<?php wp_nonce_field( 'kleistad_registratie' ); ?>
 		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['input']['id'] ); ?>" >
 		<div class="kleistad_row">
