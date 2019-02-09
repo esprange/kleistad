@@ -290,7 +290,7 @@ class Kleistad_Public {
 
 			$login_url = add_query_arg( 'disabled', '1', site_url( 'wp-login.php', 'login' ) );
 			wp_safe_redirect( $login_url );
-			exit;
+			die();
 		}
 	}
 
@@ -439,11 +439,10 @@ class Kleistad_Public {
 	 *
 	 * @param int    $id    De id van de workshop.
 	 * @param string $actie De uit te voeren actie.
-	 * @param int    $datum Datum waarop het moet worden uitgevoerd.
 	 */
-	public function update_workshop( $id, $actie, $datum ) {
+	public function update_workshop( $id, $actie ) {
 		$workshop = new Kleistad_Workshop( $id );
-		$workshop->event( $actie, $datum );
+		$workshop->event( $actie );
 	}
 
 	/**
@@ -487,11 +486,11 @@ class Kleistad_Public {
 			$userdata['user_nicename']   = $nice_voornaam . '-' . $nice_achternaam;
 			$userdata['display_name']    = $userdata['first_name'] . ' ' . $userdata['last_name'];
 			$userdata['role']            = '';
-			$result                      = wp_insert_user( $userdata );
+			$result                      = wp_insert_user( (object) $userdata );
 		} else {
 			$userdata['user_nicename'] = $nice_voornaam . '-' . $nice_achternaam;
 			$userdata['display_name']  = $userdata['first_name'] . ' ' . $userdata['last_name'];
-			$result                    = wp_update_user( $userdata ); /* @scrutinizer ignore-type */ // @phan-suppress-current-line PhanTypeMismatchArgument
+			$result                    = wp_update_user( (object) $userdata );
 		}
 
 		return $result;

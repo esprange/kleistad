@@ -20,7 +20,7 @@ else :
 	?>
 
 	<p>Je huidige stooksaldo is <strong>&euro; <?php echo esc_html( $data['saldo'] ); ?></strong></p>
-	<form action="#" method="POST">
+	<form method="POST">
 		<?php wp_nonce_field( 'kleistad_saldo' ); ?>
 		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['gebruiker_id'] ); ?>" />
 		<div class="kleistad_row">

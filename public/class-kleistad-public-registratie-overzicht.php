@@ -284,6 +284,6 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 		flush();
 		readfile( $csv ); // phpcs:ignore
 		unlink( $csv );
-		exit;
+		die();
 	}
 }

@@ -188,7 +188,7 @@ class Kleistad_Event {
 			return;
 		}
 		wp_redirect( $client->createAuthUrl() ); // phpcs:ignore
-		exit;
+		die();
 	}
 
 	/**

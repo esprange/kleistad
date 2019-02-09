@@ -18,7 +18,7 @@ else :
 	?>
 
 <div id="kleistad_workshop">
-	<form action="#" method="POST" id="kleistad_workshop_form">
+	<form method="POST" id="kleistad_workshop_form">
 		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
 		<input type="hidden" name="id" id="kleistad_id" value="0"/>
 		<table class="kleistad_form" >

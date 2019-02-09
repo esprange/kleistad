@@ -12,7 +12,7 @@
 
 ?>
 
-<form action="#" method="POST">
+<form method="POST">
 <?php
 wp_nonce_field( 'kleistad_cursus_inschrijving' );
 $checked_id = 0;

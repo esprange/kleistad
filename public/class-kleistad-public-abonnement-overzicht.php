@@ -153,6 +153,6 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 		flush();
 		readfile( $csv ); // phpcs:ignore
 		unlink( $csv );
-		exit;
+		die();
 	}
 }

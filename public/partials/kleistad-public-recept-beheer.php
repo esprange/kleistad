@@ -27,7 +27,7 @@ else :
 			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
 		}
 		?>
-	<form method="POST" action="#" enctype="multipart/form-data" >
+	<form method="POST" enctype="multipart/form-data" >
 		<input type="hidden" name="action" value="" />
 		<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
 		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
@@ -242,7 +242,7 @@ else :
 	<div id="kleistad_verwijder_recept" title="Recept verwijderen ?">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Dit recept wordt verwijderd</p>
 	</div>
-	<form method="POST" action="#">
+	<form method="POST" >
 
 		<input id="kleistad_recept_action" type="hidden" name="action" value="recept_overzicht" />
 		<input id="kleistad_recept_id" type="hidden" name="recept_id" value="0" />
@@ -280,15 +280,15 @@ else :
 				?>
 				</td>
 				<td>
-					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_wijzig_recept_' . $recept['id'] ) . '&action=wijzigen&id=' . $recept['id'] ); ?>"
+					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_recept_' . $recept['id'] ) . '&action=wijzigen&id=' . $recept['id'] ); ?>"
 						title="wijzig recept" class="ui-button ui-widget ui-corner-all" style="color:green;padding:.4em .8em;" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
 						<span class="dashicons dashicons-edit"></span>
 					</a>
-					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_publiceer_recept_' . $recept['id'] ) . '&action=publiceren&id=' . $recept['id'] ); ?>"
+					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_publiceer_recept_' . $recept['id'] ) . '&action=publiceren&id=' . $recept['id'] ); ?>"
 						title="<?php echo ( 'draft' === $recept['post_status'] ) ? 'publiceer recept' : 'concept'; ?>" class="ui-button ui-widget ui-corner-all" style="color:black;padding:.4em .8em;" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
 						<span class="dashicons dashicons-<?php echo ( 'draft' === $recept['post_status'] ) ? 'external' : 'hammer'; ?>"></span>
 					</a>
-					<a href="<?php echo esc_url( wp_nonce_url( get_permalink(), 'kleistad_verwijder_recept_' . $recept['id'] ) . '&action=verwijderen&id=' . $recept['id'] ); ?>"
+					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_verwijder_recept_' . $recept['id'] ) . '&action=verwijderen&id=' . $recept['id'] ); ?>"
 						title="verwijder recept" class="ui-button ui-widget ui-corner-all" style="color:red;padding:.4em .8em;" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">
 						<span class="dashicons dashicons-trash"></span>
 					</a>

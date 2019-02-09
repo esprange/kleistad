@@ -16,7 +16,7 @@ if ( ! Kleistad_Roles::override() ) :
 	<?php
 else :
 	?>
-<form action="#" method="POST" >
+<form method="POST" >
 	<?php wp_nonce_field( 'kleistad_betalingen' ); ?>
 	<?php if ( isset( $data['inschrijvingen'] ) ) : ?>
 	<h2>Inschrijvingen</h2>

@@ -16,7 +16,7 @@ if ( ! Kleistad_Roles::override() ) : ?>
 else :
 	?>
 
-<form action="#" method="POST" >
+<form method="POST" >
 	<?php wp_nonce_field( 'kleistad_stookbestand' ); ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_3">

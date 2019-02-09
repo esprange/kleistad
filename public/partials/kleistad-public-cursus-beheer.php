@@ -24,7 +24,7 @@ else :
 			<li><a href="#kleistad_cursus_indeling">Cursisten</a></li>
 		</ul>
 		<div id="kleistad_cursus_gegevens" >
-			<form action="#" method="POST" id="kleistad_cursus_beheer_form" >
+			<form method="POST" id="kleistad_cursus_beheer_form" >
 				<?php wp_nonce_field( 'kleistad_cursus_beheer' ); ?>
 				<input type="hidden" name="cursus_id" value="0"/>
 				<input type="hidden" name="tab" value="info"/>
@@ -100,7 +100,7 @@ else :
 			<input type="hidden" name="tab" value="indeling"/>
 			<table class="kleistad_form" id="kleistad_indeling" >
 			</table>
-			<form action="#" method="POST" style="display: none;" id="kleistad_restant_email" >
+			<form method="POST" style="display: none;" id="kleistad_restant_email" >
 				<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'kleistad_cursus_beheer' ) ); ?>" />
 					<?php wp_referer_field(); ?>
 				<input type="hidden" name="cursus_id" value="0"/>

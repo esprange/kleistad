@@ -150,7 +150,7 @@ class Kleistad {
 		$this->loader->add_action( 'init', $plugin_public, 'create_recept_type' );
 		$this->loader->add_action( 'kleistad_kosten', $plugin_public, 'update_ovenkosten' );
 		$this->loader->add_action( 'kleistad_abonnement', $plugin_public, 'update_abonnement', 10, 3 );
-		$this->loader->add_action( 'kleistad_workshop', $plugin_public, 'update_workshop', 10, 3 );
+		$this->loader->add_action( 'kleistad_workshop', $plugin_public, 'update_workshop', 10, 2 );
 		$this->loader->add_action( 'after_setup_theme', $plugin_public, 'verberg_toolbar' );
 
 		$this->loader->add_filter( 'login_message', $plugin_public, 'user_login_message' );

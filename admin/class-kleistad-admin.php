@@ -243,7 +243,7 @@ class Kleistad_Admin {
 			update_user_meta( $gebruiker_id, 'huisnr', '******' );
 			update_user_meta( $gebruiker_id, 'pcode', '******' );
 			update_user_meta( $gebruiker_id, 'plaats', '******' );
-			$count = 5 + Kleistad_Abonnement::erase( $gebruiker_id ) + Kleistad_Saldo::erase( $gebruiker_id );
+			$count = 5 + Kleistad_Saldo::erase( $gebruiker_id );
 		}
 		return [
 			'items_removed'  => $count,

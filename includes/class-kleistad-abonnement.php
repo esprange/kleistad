@@ -143,19 +143,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
-	 * Erase functie privacy gevoelige data.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param  int $gebruiker_id Het wp user_id van de abonnee.
-	 * @return int aantal verwijderde gegevens.
-	 * @suppress PhanUnusedPublicMethodParameter
-	 */
-	public static function erase( $gebruiker_id ) {
-		return 0;
-	}
-
-	/**
 	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87

@@ -84,7 +84,7 @@ else :
 		<?php endif ?>
 	</table>
 
-	<form action="#" method="POST" id="kleistad_abonnee_wijziging">
+	<form method="POST" id="kleistad_abonnee_wijziging">
 		<?php wp_nonce_field( 'kleistad_abonnee_wijziging' ); ?>
 		<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 		<input type="hidden" name="per_datum" value="<?php echo esc_attr( $per_datum ); ?>" >

@@ -18,7 +18,7 @@ else :
 	?>
 
 <div id="kleistad_abonnees_info">
-	<form id="kleistad_download_abonnees" action="#" method="POST" >
+	<form id="kleistad_download_abonnees" method="POST" >
 		<?php wp_nonce_field( 'kleistad_abonnement_overzicht' ); ?>
 		<input type="hidden" name="kleistad_submit_abonnement_overzicht" >
 		<input type="hidden" id="kleistad_email_lijst" value="<?php echo $data['email_lijst']; // phpcs:ignore ?>">

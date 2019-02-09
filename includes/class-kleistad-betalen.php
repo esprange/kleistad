@@ -145,7 +145,7 @@ class Kleistad_Betalen {
 		);
 		setcookie( self::MOLLIE_COOKIE, $betaling->id );
 		wp_redirect( $betaling->getCheckOutUrl(), 303 ); // phpcs:ignore
-		exit;
+		die();
 	}
 
 	/**

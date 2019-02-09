@@ -314,16 +314,10 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * @since 5.0.0
 	 *
 	 * @param string $actie De actie die op datum uitgevoerd moet worden.
-	 * @param int    $datum De datum / tijdstip waarop de actie nodig is.
-	 * @phan-suppress PhanUnusedPublicMethodParameter
 	 */
-	public function event( $actie, $datum ) {
-		switch ( $actie ) {
-			case 'betaling':
-				$this->email( $actie );
-				break;
-			default:
-				break;
+	public function event( $actie ) {
+		if ( 'betaling' === $actie ) {
+			$this->email( $actie );
 		}
 	}
 

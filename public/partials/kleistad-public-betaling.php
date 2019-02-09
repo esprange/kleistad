@@ -18,7 +18,7 @@ if ( isset( $data['actie'] ) ) :
 		$cursuskosten    = $restantkosten + $inschrijfkosten;
 		?>
 
-		<form action="#" method="POST">
+		<form method="POST">
 			<?php wp_nonce_field( 'kleistad_betaling' ); ?>
 		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $data['cursist']->ID ); ?>" />
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']->id ); ?>" />
@@ -101,7 +101,7 @@ if ( isset( $data['actie'] ) ) :
 			);
 		?>
 
-		<form action="#" method="POST">
+		<form method="POST">
 			<?php wp_nonce_field( 'kleistad_betaling' ); ?>
 		<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( $data['abonnee']->ID ); ?>" />
 		<input type="hidden" name="betaal" value="ideal" />
@@ -183,7 +183,7 @@ if ( isset( $data['actie'] ) ) :
 		<?php
 	elseif ( Kleistad_Public_Betaling::ACTIE_WORKSHOP === $data['actie'] ) :
 		?>
-		<form action="#" method="POST">
+		<form method="POST">
 			<?php wp_nonce_field( 'kleistad_betaling' ); ?>
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']->id ); ?>" />
 		<input type="hidden" name="betaal" value="ideal" />
