@@ -29,11 +29,12 @@ class Kleistad_Admin_Abonnees_Handler {
 	 * Wijzig het abonnement.
 	 *
 	 * @since 5.2.0
-	 * @param array $item De informatie vanuit het formulier.
+	 * @param array  $item De informatie vanuit het formulier.
+	 * @param string $actie de actie waar het om gaat.
+	 * @param string $submit de subactie.
 	 * @return string De status van de wijziging.
 	 */
-	private function wijzig_abonnee( $item ) {
-		$datum               = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
+	private function wijzig_abonnee( $item, $actie, $submit ) {
 		$abonnement          = new Kleistad_Abonnement( $item['id'] );
 		$vandaag             = strtotime( 'today' );
 		$item['mollie_info'] = $abonnement->info();
@@ -178,7 +179,7 @@ class Kleistad_Admin_Abonnees_Handler {
 			$submit     = strtolower( $item['submit'] );
 			$item_valid = $this->validate_abonnee( $item, $actie, $submit );
 			if ( true === $item_valid ) {
-				$message = $this->wijzig_abonnee( $item );
+				$message = $this->wijzig_abonnee( $item, $actie, $submit );
 			} else {
 				$notice = $item_valid;
 			}
