@@ -133,9 +133,10 @@ class Kleistad_Admin_Stooksaldo extends WP_List_Table {
 				'saldo' => $saldo->bedrag,
 			];
 		}
+		$total_items = $gebruiker_query->get_total();
 		$this->set_pagination_args(
 			[
-				'total_items' => $gebruiker_query->get_total(),
+				'total_items' => $total_items,
 				'per_page'    => $per_page,
 				'total_pages' => ceil( $total_items / $per_page ),
 			]
