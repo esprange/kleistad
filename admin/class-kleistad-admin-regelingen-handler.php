@@ -59,6 +59,7 @@ class Kleistad_Admin_Regelingen_Handler {
 	 */
 	public function regelingen_page_handler() {
 		$message = '';
+		$table   = new Kleistad_Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
 			$id = filter_input( INPUT_GET, 'id' );
 
