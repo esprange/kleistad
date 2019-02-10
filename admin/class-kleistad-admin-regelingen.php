@@ -98,37 +98,29 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
-		$per_page = 5; // constant, how much records will be shown per page.
-
-		$columns  = $this->get_columns();
-		$hidden   = [];
-		$sortable = $this->get_sortable_columns();
-
+		$per_page              = 5; // constant, how much records will be shown per page.
+		$columns               = $this->get_columns();
+		$hidden                = [];
+		$sortable              = $this->get_sortable_columns();
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
-
-		$paged_val = filter_input( INPUT_GET, 'paged' );
-		$paged     = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$order_val = filter_input( INPUT_GET, 'order' );
-		$order     = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-
-		$gebruikers = get_users(
+		$paged_val             = filter_input( INPUT_GET, 'paged' );
+		$paged                 = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$order_val             = filter_input( INPUT_GET, 'order' );
+		$order                 = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$gebruiker_query       = new WP_User_Query(
 			[
-				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => [ 'display_name' ],
-				'order'   => $order,
+				'fields'   => [ 'ID', 'display_name' ],
+				'orderby'  => [ 'display_name' ],
+				'order'    => $order,
+				'meta_key' => Kleistad_Regelingen::META_KEY,
 			]
 		);
-
 		$gebruikers_regelingen = new Kleistad_Regelingen();
+		$ovens                 = Kleistad_Oven::all();
+		$regelingen            = [];
 
-		$ovens      = Kleistad_Oven::all();
-		$regelingen = [];
-
-		foreach ( $gebruikers as $gebruiker ) {
+		foreach ( $gebruiker_query->get_results() as $gebruiker ) {
 			$kosten_ovens = $gebruikers_regelingen->get( $gebruiker->ID );
-			if ( is_null( $kosten_ovens ) ) {
-				continue;
-			}
 			foreach ( $kosten_ovens as $oven_id => $kosten_oven ) {
 				$regelingen[] = [
 					'id'             => $gebruiker->ID . '-' . $oven_id,
@@ -139,7 +131,6 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 			}
 		}
 		$total_items = count( $regelingen );
-
 		$this->items = array_slice( $regelingen, $paged * $per_page, $per_page, true );
 		$this->set_pagination_args(
 			[

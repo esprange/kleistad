@@ -27,7 +27,7 @@ else :
 			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
 		}
 		?>
-	<form method="POST" enctype="multipart/form-data" >
+	<form method="POST" enctype="multipart/form-data" autocomplete="off">
 		<input type="hidden" name="action" value="" />
 		<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
 		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>

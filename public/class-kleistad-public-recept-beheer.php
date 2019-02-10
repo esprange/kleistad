@@ -63,6 +63,47 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 	}
 
 	/**
+	 * Bereid een recept wijziging voor.
+	 *
+	 * @param int $recept_id Het recept.
+	 * @return array De recept data.
+	 */
+	private function prepare_wijzig( $recept_id ) {
+		$recept = get_post( $recept_id );
+
+		$glazuur   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
+		$kleur     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
+		$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
+
+		$glazuur_id   = 0;
+		$kleur_id     = 0;
+		$uiterlijk_id = 0;
+		$terms        = get_the_terms( $recept->ID, 'kleistad_recept_cat' );
+		foreach ( $terms as $term ) {
+			if ( intval( $term->parent ) === intval( $glazuur->term_id ) ) {
+				$glazuur_id = $term->term_id;
+			}
+			if ( intval( $term->parent ) === intval( $kleur->term_id ) ) {
+				$kleur_id = $term->term_id;
+			}
+			if ( intval( $term->parent ) === intval( $uiterlijk->term_id ) ) {
+				$uiterlijk_id = $term->term_id;
+			}
+		}
+		return [
+			'id'          => $recept->ID,
+			'titel'       => $recept->post_title,
+			'post_status' => $recept->post_status,
+			'created'     => $recept->post_date,
+			'modified'    => $recept->post_modified,
+			'content'     => json_decode( $recept->post_content, true ),
+			'glazuur'     => $glazuur_id,
+			'kleur'       => $kleur_id,
+			'uiterlijk'   => $uiterlijk_id,
+		];
+	}
+
+	/**
 	 * Prepareer 'recept' form
 	 *
 	 * @param array $data data voor display.
@@ -85,40 +126,8 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 			$data      = [];
 			$recept_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_wijzig_recept_' . $recept_id ) ) {
-				$recept = get_post( $recept_id );
-
-				$glazuur   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
-				$kleur     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
-				$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
-
-				$glazuur_id   = 0;
-				$kleur_id     = 0;
-				$uiterlijk_id = 0;
-				$terms        = get_the_terms( $recept->ID, 'kleistad_recept_cat' );
-				foreach ( $terms as $term ) {
-					if ( intval( $term->parent ) === intval( $glazuur->term_id ) ) {
-						$glazuur_id = $term->term_id;
-					}
-					if ( intval( $term->parent ) === intval( $kleur->term_id ) ) {
-						$kleur_id = $term->term_id;
-					}
-					if ( intval( $term->parent ) === intval( $uiterlijk->term_id ) ) {
-						$uiterlijk_id = $term->term_id;
-					}
-				}
-
 				$data['id']     = $recept_id;
-				$data['recept'] = [
-					'id'          => $recept->ID,
-					'titel'       => $recept->post_title,
-					'post_status' => $recept->post_status,
-					'created'     => $recept->post_date,
-					'modified'    => $recept->post_modified,
-					'content'     => json_decode( $recept->post_content, true ),
-					'glazuur'     => $glazuur_id,
-					'kleur'       => $kleur_id,
-					'uiterlijk'   => $uiterlijk_id,
-				];
+				$data['recept'] = $this->prepare_wijzig( $recept_id );
 			} else {
 				$error->add( 'security', 'Security fout! !' );
 				return $error;
