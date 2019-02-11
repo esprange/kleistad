@@ -30,33 +30,33 @@ class Kleistad_Admin_GDPR {
 	 */
 	private static function export_inschrijving( $gebruiker_id ) {
 		$inschrijvingen = Kleistad_Inschrijving::all();
-		if ( ! isset( $inschrijvingen[ $gebruiker_id ] ) ) {
-			return [];
-		}
-		foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
-			$items[] = [
-				'group_id'    => 'cursusinfo',
-				'group_label' => 'Cursussen informatie',
-				'item_id'     => 'cursus-' . $cursus_id,
-				'data'        => [
-					[
-						'name'  => 'Aanmeld datum',
-						'value' => strftime( '%d-%m-%y', $inschrijving->datum ),
+		$items          = [];
+		if ( isset( $inschrijvingen[ $gebruiker_id ] ) ) {
+			foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
+				$items[] = [
+					'group_id'    => 'cursusinfo',
+					'group_label' => 'Cursussen informatie',
+					'item_id'     => 'cursus-' . $cursus_id,
+					'data'        => [
+						[
+							'name'  => 'Aanmeld datum',
+							'value' => strftime( '%d-%m-%y', $inschrijving->datum ),
+						],
+						[
+							'name'  => 'Opmerking',
+							'value' => $inschrijving->opmerking,
+						],
+						[
+							'name'  => 'Ingedeeld',
+							'value' => $inschrijving->ingedeeld ? 'ja' : 'nee',
+						],
+						[
+							'name'  => 'Geannuleerd',
+							'value' => $inschrijving->geannuleerd ? 'ja' : 'nee',
+						],
 					],
-					[
-						'name'  => 'Opmerking',
-						'value' => $inschrijving->opmerking,
-					],
-					[
-						'name'  => 'Ingedeeld',
-						'value' => $inschrijving->ingedeeld ? 'ja' : 'nee',
-					],
-					[
-						'name'  => 'Geannuleerd',
-						'value' => $inschrijving->geannuleerd ? 'ja' : 'nee',
-					],
-				],
-			];
+				];
+			}
 		}
 		return $items;
 	}
@@ -248,7 +248,7 @@ class Kleistad_Admin_GDPR {
 		if ( false !== $gebruiker_id ) {
 			$stub = "- verwijderd$gebruiker_id -";
 			wp_update_user(
-				[
+				(object) [
 					'user_nicename' => $stub,
 					'role'          => '',
 					'display_name'  => $stub,
