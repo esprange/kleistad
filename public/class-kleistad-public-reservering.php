@@ -193,7 +193,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'soortstook'    => $reservering->soortstook,
 				'temperatuur'   => $reservering->actief ? $reservering->temperatuur : '',
 				'programma'     => $reservering->actief ? $reservering->programma : '',
-				'verdeling'     => $reservering->actief ? $reservering->verdeling : [ [ 'id' => $stoker_id, 'perc' => 100 ] ],
+				'verdeling'     => $reservering->actief ? $reservering->verdeling : [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
 				'gereserveerd'  => $reservering->actief,
 				'verwijderbaar' => $verwijderbaar,
 				'gebruiker_id'  => $stoker_id,
