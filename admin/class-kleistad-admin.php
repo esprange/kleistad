@@ -149,7 +149,7 @@ class Kleistad_Admin {
 	public function register_exporter( $exporters ) {
 		$exporters['kleistad'] = [
 			'exporter_friendly_name' => 'plugin folder Kleistad',
-			'callback'               => [ get_class(), 'exporter' ],
+			'callback'               => [ 'Kleistad_Admin_GDPR', 'exporter' ],
 		];
 		return $exporters;
 	}
@@ -164,93 +164,9 @@ class Kleistad_Admin {
 	public function register_eraser( $erasers ) {
 		$erasers['kleistad'] = [
 			'eraser_friendly_name' => 'plugin folder Kleistad',
-			'callback'             => [ get_class(), 'eraser' ],
+			'callback'             => [ 'Kleistad_Admin_GDPR', 'eraser' ],
 		];
 		return $erasers;
-	}
-
-	/**
-	 * Exporteer persoonlijke data.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param string $email Het email adres van de te exporteren persoonlijke data.
-	 * @param int    $page  De pagina die opgevraagd wordt.
-	 */
-	public static function exporter( $email, $page = 1 ) {
-		$export_items = [];
-		$gebruiker_id = email_exists( $email );
-		if ( false !== $gebruiker_id ) {
-			$gebruiker    = get_userdata( $gebruiker_id );
-			$export_items = array_merge(
-				[
-					[
-						'group_id'    => 'contactinfo',
-						'group_label' => 'Contact informatie',
-						'item_id'     => 'contactinfo',
-						'data'        => [
-							[
-								'name'  => 'Telefoonnummer',
-								'value' => $gebruiker->telnr,
-							],
-							[
-								'name'  => 'Straat',
-								'value' => $gebruiker->straat,
-							],
-							[
-								'name'  => 'Nummer',
-								'value' => $gebruiker->huisnr,
-							],
-							[
-								'name'  => 'Postcode',
-								'value' => $gebruiker->pcode,
-							],
-							[
-								'name'  => 'Plaats',
-								'value' => $gebruiker->plaats,
-							],
-						],
-					],
-				],
-				Kleistad_Inschrijving::export( $gebruiker_id ),
-				Kleistad_Abonnement::export( $gebruiker_id ),
-				Kleistad_Saldo::export( $gebruiker_id ),
-				Kleistad_Reservering::export( $gebruiker_id )
-			);
-		}
-		// Geef aan of er nog meer te exporteren valt, de controle op page nummer is een dummy.
-		$done = ( 1 === $page ); // Dummy actie.
-		return [
-			'data' => $export_items,
-			'done' => $done,
-		];
-	}
-
-	/**
-	 * Erase / verwijder persoonlijke data.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param string $email Het email adres van de te verwijderen persoonlijke data.
-	 * @param int    $page  De pagina die opgevraagd wordt.
-	 */
-	public static function eraser( $email, $page = 1 ) {
-		$count        = 0;
-		$gebruiker_id = email_exists( $email );
-		if ( false !== $gebruiker_id ) {
-			update_user_meta( $gebruiker_id, 'telnr', '******' );
-			update_user_meta( $gebruiker_id, 'straat', '******' );
-			update_user_meta( $gebruiker_id, 'huisnr', '******' );
-			update_user_meta( $gebruiker_id, 'pcode', '******' );
-			update_user_meta( $gebruiker_id, 'plaats', '******' );
-			$count = 5 + Kleistad_Saldo::erase( $gebruiker_id );
-		}
-		return [
-			'items_removed'  => $count,
-			'items_retained' => false,
-			'messages'       => [],
-			'done'           => ( 0 < $count && 1 === $page ), // Controle op page is een dummy.
-		];
 	}
 
 	/**

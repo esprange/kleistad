@@ -94,47 +94,6 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	}
 
 	/**
-	 * Export functie privacy gevoelige data.
-	 *
-	 * @since      4.3.0
-	 *
-	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return array De persoonlijke data (cursus info).
-	 */
-	public static function export( $gebruiker_id ) {
-		$inschrijvingen = get_user_meta( $gebruiker_id, self::META_KEY, true );
-		$items          = [];
-		if ( is_array( $inschrijvingen ) ) {
-			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
-				$items[] = [
-					'group_id'    => 'cursusinfo',
-					'group_label' => 'Cursussen informatie',
-					'item_id'     => 'cursus-' . $cursus_id,
-					'data'        => [
-						[
-							'name'  => 'Aanmeld datum',
-							'value' => strftime( '%d-%m-%y', strtotime( $inschrijving['datum'] ) ),
-						],
-						[
-							'name'  => 'Opmerking',
-							'value' => $inschrijving['opmerking'],
-						],
-						[
-							'name'  => 'Ingedeeld',
-							'value' => ( $inschrijving['ingedeeld'] ) ? 'ja' : 'nee',
-						],
-						[
-							'name'  => 'Geannuleerd',
-							'value' => ( $inschrijving['geannuleerd'] ) ? 'ja' : 'nee',
-						],
-					],
-				];
-			}
-		}
-		return $items;
-	}
-
-	/**
 	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87

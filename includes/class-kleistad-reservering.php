@@ -78,65 +78,6 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
-	 * Export functie privacy gevoelige data.
-	 *
-	 * @global object $wpdb wp database
-	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return array De persoonlijke data (stooksaldo).
-	 */
-	public static function export( $gebruiker_id ) {
-		global $wpdb;
-
-		$items         = [];
-		$reserveringen = $wpdb->get_results(
-			"SELECT dag as dag, maand, jaar, verdeling, naam, R.id as id FROM
-				{$wpdb->prefix}kleistad_reserveringen as R, {$wpdb->prefix}kleistad_ovens as O
-				WHERE R.oven_id = O.id
-				ORDER BY jaar DESC, maand DESC, dag DESC",
-			ARRAY_A
-		); // phpcs:ignore
-
-		foreach ( $reserveringen as $reservering ) {
-			$verdeling = json_decode( $reservering['verdeling'], true );
-			$key       = array_search( $gebruiker_id, array_column( $verdeling, 'id' ), true );
-			if ( false !== $key ) {
-				$items[] = [
-					'group_id'    => 'stook',
-					'group_label' => 'Stook informatie',
-					'item_id'     => 'stook-' . $reservering['id'],
-					'data'        => [
-						[
-							'name'  => 'Datum',
-							'value' => $reservering['dag'] . '-' . $reservering['maand'] . '-' . $reservering['jaar'],
-						],
-						[
-							'name'  => 'Oven',
-							'value' => $reservering['naam'],
-						],
-					],
-				];
-			}
-		}
-		return $items;
-	}
-
-	/**
-	 * Verwijder de reservering.
-	 *
-	 * @global object $wpdb wp database.
-	 */
-	public function delete() {
-		global $wpdb;
-		if ( $wpdb->delete(
-			"{$wpdb->prefix}kleistad_reserveringen",
-			[ 'id' => $this->id ],
-			[ '%d' ]
-		) ) {
-			$this->id = null;
-		}
-	}
-
-	/**
 	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87
@@ -249,6 +190,22 @@ class Kleistad_Reservering extends Kleistad_Entity {
 		$wpdb->replace( "{$wpdb->prefix}kleistad_reserveringen", $this->data );
 		$this->id = $wpdb->insert_id;
 		return $this->id;
+	}
+
+	/**
+	 * Verwijder de reservering.
+	 *
+	 * @global object $wpdb wp database.
+	 */
+	public function delete() {
+		global $wpdb;
+		if ( $wpdb->delete(
+			"{$wpdb->prefix}kleistad_reserveringen",
+			[ 'id' => $this->id ],
+			[ '%d' ]
+		) ) {
+			$this->id = null;
+		}
 	}
 
 	/**

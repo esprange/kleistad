@@ -15,6 +15,19 @@
 class Kleistad_Email {
 
 	/**
+	 * Helper functie, haalt het domein op van het email adres.
+	 *
+	 * @return string|bool
+	 */
+	public static function domein() {
+		$admin_email = get_option( 'admin_email' );
+		if ( false === $admin_email ) {
+			return false; // Zal waarschijnlijk nooit voorkomen.
+		}
+		return substr( strrchr( $admin_email, '@' ), 1 );
+	}
+
+	/**
 	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
 	 *
 	 * @param string       $to bestemming.
@@ -24,11 +37,10 @@ class Kleistad_Email {
 	 * @param string|array $attachment een eventuele bijlage.
 	 */
 	public static function compose( $to, $subject, $slug, $args = [], $attachment = [] ) {
-		$admin_email = get_option( 'admin_email' );
-		if ( false === $admin_email ) {
+		$domein = self::domein();
+		if ( false === $domein ) {
 			return false; // Zal waarschijnlijk nooit voorkomen.
 		}
-		$domein        = substr( strrchr( $admin_email, '@' ), 1 );
 		$emailadresses = [
 			'info' => 'info@' . $domein,
 			'from' => 'no-reply@' . $domein,

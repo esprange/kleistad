@@ -90,59 +90,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
-	 * Export functie privacy gevoelige data.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param  int $gebruiker_id Het wp user id van de abonnee.
-	 * @return array De persoonlijke data (abonnement info).
-	 */
-	public static function export( $gebruiker_id ) {
-		$abonnement = new static( $gebruiker_id );
-		$items      = [];
-		$items[]    = [
-			'group_id'    => 'abonnementinfo',
-			'group_label' => 'Abonnement informatie',
-			'item_id'     => 'abonnement-1',
-			'data'        => [
-				[
-					'name'  => 'Aanmeld datum',
-					'value' => strftime( '%d-%m-%y', $abonnement->datum ),
-				],
-				[
-					'name'  => 'Start datum',
-					'value' => $abonnement->start_datum > 0 ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '',
-				],
-				[
-					'name'  => 'Eind datum',
-					'value' => $abonnement->eind_datum > 0 ? strftime( '%d-%m-%y', $abonnement->eind_datum ) : '',
-				],
-				[
-					'name'  => 'Pauze datum',
-					'value' => $abonnement->pauze_datum > 0 ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '',
-				],
-				[
-					'name'  => 'Herstart datum',
-					'value' => $abonnement->herstart_datum > 0 ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '',
-				],
-				[
-					'name'  => 'Opmerking',
-					'value' => $abonnement->opmerking,
-				],
-				[
-					'name'  => 'Soort abonnement',
-					'value' => $abonnement->soort,
-				],
-				[
-					'name'  => 'Dag',
-					'value' => $abonnement->dag,
-				],
-			],
-		];
-		return $items;
-	}
-
-	/**
 	 * Get attribuut van het object.
 	 *
 	 * @since 4.0.87

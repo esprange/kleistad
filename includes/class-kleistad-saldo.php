@@ -84,43 +84,6 @@ class Kleistad_Saldo {
 	}
 
 	/**
-	 * Export functie privacy gevoelige data.
-	 *
-	 * @since      4.3.0
-	 *
-	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return array De persoonlijke data (stooksaldo).
-	 */
-	public static function export( $gebruiker_id ) {
-		$saldo   = new static( $gebruiker_id );
-		$items   = [];
-		$items[] = [
-			'group_id'    => self::META_KEY,
-			'group_label' => 'Stooksaldo informatie',
-			'item_id'     => 'stooksaldo-1',
-			'data'        => [
-				[
-					'name'  => 'Saldo',
-					'value' => number_format_i18n( $saldo->huidig_saldo(), 2 ),
-				],
-			],
-		];
-		return $items;
-	}
-
-	/**
-	 * Erase functie privacy gevoelige data.
-	 *
-	 * @since      4.3.0
-	 *
-	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return int Aantal verwijderd.
-	 */
-	public static function erase( $gebruiker_id ) {
-		return delete_user_meta( $gebruiker_id, self::META_KEY ) ? 1 : 0;
-	}
-
-	/**
 	 * Setter magic functie
 	 *
 	 * @since      4.0.87
