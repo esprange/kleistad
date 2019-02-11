@@ -37,7 +37,7 @@ class Kleistad_Admin_Abonnees_Handler {
 	private function wijzig_abonnee( $item, $actie, $submit ) {
 		$abonnement          = new Kleistad_Abonnement( $item['id'] );
 		$vandaag             = strtotime( 'today' );
-		$item['mollie_info'] = $abonnement->info();
+		$item['mollie_info'] = Kleistad_betalen::info( $item['id'] );
 		switch ( $actie ) {
 			case 'status':
 				switch ( $submit ) {
@@ -205,7 +205,7 @@ class Kleistad_Admin_Abonnees_Handler {
 					'eind_datum'      => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
 					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
 					'mandaat'         => ( '' !== $abonnement->subscriptie_id ),
-					'mollie_info'     => $abonnement->info(),
+					'mollie_info'     => Kleistad_betalen::info( $abonnee_id ),
 				];
 			}
 		}

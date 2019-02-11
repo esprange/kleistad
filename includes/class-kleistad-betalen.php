@@ -355,14 +355,15 @@ class Kleistad_Betalen {
 	 * @since      4.4.0
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvan de informatie wordt opgevraagd.
-	 * @return bool|string false als de gebruiker onbekend is of string met opgemaakte HTML text.
+	 * @return string leeg als de gebruiker onbekend is of string met opgemaakte HTML text.
 	 */
-	public function info( $gebruiker_id ) {
+	public static function info( $gebruiker_id ) {
+		$object              = new static();
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 		if ( '' !== $mollie_gebruiker_id ) {
 			try {
 				$html             = 'Mollie info: ';
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+				$mollie_gebruiker = $object->mollie->customers->get( $mollie_gebruiker_id );
 				$mandaten         = $mollie_gebruiker->mandates();
 				$subscripties     = $mollie_gebruiker->subscriptions();
 				foreach ( $mandaten as $mandaat ) {
@@ -381,7 +382,7 @@ class Kleistad_Betalen {
 				return '';
 			}
 		}
-		return false;
+		return '';
 	}
 
 	/**

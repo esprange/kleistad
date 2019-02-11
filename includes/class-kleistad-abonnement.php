@@ -521,19 +521,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
-	 * Geef informatie over Mollie van de abonnee terug.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @return string opgemaakte HTML.
-	 */
-	public function info() {
-		$betalen = new Kleistad_Betalen();
-		$info    = $betalen->info( $this->abonnee_id );
-		return ( false !== $info ) ? $info : '';
-	}
-
-	/**
 	 * Wijzig de betaalwijze van het abonnement per datum.
 	 *
 	 * @since 4.3.0
