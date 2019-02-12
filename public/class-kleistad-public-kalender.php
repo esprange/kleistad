@@ -61,7 +61,10 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 				$id = $event->properties['id'];
 				switch ( $event->properties['class'] ) {
 					case 'Kleistad_Workshop':
-						$workshop    = new Kleistad_Workshop( $id );
+						$workshop = new Kleistad_Workshop( $id );
+						if ( $workshop->vervallen ) {
+							continue;
+						}
 						$fc_events[] = [
 							'id'              => $event->id,
 							'title'           => "$workshop->naam ($workshop->code)",
@@ -80,14 +83,18 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 						];
 						break;
 					case 'Kleistad_Cursus':
-						$cursus      = new Kleistad_Cursus( $id );
+						$cursus = new Kleistad_Cursus( $id );
+						if ( $cursus->vervallen ) {
+							continue;
+						}
+						$lopend      = $cursus->start_datum < strtotime( 'today' );
 						$fc_events[] = [
 							'id'              => $event->id,
 							'title'           => "cursus ($cursus->code)",
 							'start'           => $event->start->format( DateTime::ATOM ),
 							'end'             => $event->eind->format( DateTime::ATOM ),
-							'backgroundColor' => $cursus->tonen ? 'slateblue' : 'lightblue',
-							'textColor'       => $cursus->tonen ? 'white' : 'black',
+							'backgroundColor' => $cursus->tonen || $lopend ? 'slateblue' : 'lightblue',
+							'textColor'       => $cursus->tonen || $lopend ? 'white' : 'black',
 							'extendedProps'   => [
 								'naam'       => $cursus->naam,
 								'aantal'     => $cursus->maximum - $cursus->ruimte,
