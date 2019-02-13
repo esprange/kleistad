@@ -14,5 +14,8 @@
         "google/apiclient": "2.2"
     },
     "require-dev": {
+    },
+    "config": {
+      "optimize-autoloader" : true
     }
 }

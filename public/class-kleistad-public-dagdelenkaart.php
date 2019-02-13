@@ -63,9 +63,8 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 	 * @since   4.3.0
 	 */
 	public function validate( &$data ) {
-		$error = new WP_Error();
-
-		$input = filter_input_array(
+		$error         = new WP_Error();
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'EMAIL'           => FILTER_SANITIZE_EMAIL,
@@ -84,45 +83,34 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 			]
 		);
 
-		if ( '' === $input['start_datum'] ) {
+		if ( '' === $data['input']['start_datum'] ) {
 			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' );
 		}
-		$email = strtolower( $input['EMAIL'] );
-		if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
-			$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
-			$input['EMAIL']          = '';
-			$input['email_controle'] = '';
+		if ( ! $this->sanitize_email( $data['input']['EMAIL'] ) ) {
+			$error->add( 'verplicht', 'De invoer ' . $data['input']['EMAIL'] . ' is geen geldig E-mail adres.' );
+			$data['input']['EMAIL']          = '';
+			$data['input']['email_controle'] = '';
 		} else {
-			$input['EMAIL'] = $email;
-			if ( strtolower( $input['email_controle'] ) !== $email ) {
-				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
-				$input['email_controle'] = '';
-			} else {
-				$input['email_controle'] = $email;
+			$this->sanitize_email( $data['input']['email_controle'] );
+			if ( $data['input']['email_controle'] !== $data['input']['email'] ) {
+				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $data['input']['EMAIL'] . ' en ' . $data['input']['email_controle'] . ' zijn niet identiek' );
+				$data['input']['email_controle'] = '';
 			}
 		}
-		if ( ! empty( $input['telnr'] ) ) {
-			$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $input['telnr'] );
-			if ( ! ( preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
-				preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr ) ) ) {
-				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
-			}
+		if ( ! empty( $data['input']['telnr'] ) && ! $this->sanitize_telnr( $data['input']['telnr'] ) ) {
+			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
 		}
-
-		$input['pcode'] = strtoupper( str_replace( ' ', '', $input['pcode'] ) );
-
-		$voornaam = preg_replace( '/[^a-zA-Z\s]/', '', $input['FNAME'] );
-		if ( '' === $voornaam ) {
+		if ( ! empty( $data['input']['pcode'] ) && ! $this->sanitize_pcode( $data['input']['pcode'] ) ) {
+			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
+		}
+		if ( ! $this->sanitize_naam( $data['input']['FNAME'] ) ) {
 			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
-			$input['FNAME'] = '';
+			$data['input']['FNAME'] = '';
 		}
-		$achternaam = preg_replace( '/[^a-zA-Z\s]/', '', $input['LNAME'] );
-		if ( '' === $achternaam ) {
+		if ( ! $this->sanitize_naam( $data['input']['LNAME'] ) ) {
 			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
-			$input['LNAME'] = '';
+			$data['input']['LNAME'] = '';
 		}
-		$data['input'] = $input;
-
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}
