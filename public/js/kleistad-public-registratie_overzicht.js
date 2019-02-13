@@ -1,3 +1,4 @@
+/* global: DOMParser */
 ( function( $ ) {
     'use strict';
 
@@ -10,7 +11,7 @@
 		var parser = new DOMParser();
 		var dom = parser.parseFromString(
 			'<!doctype html><body>' + value,
-			'text/html');
+			'text/html' );
 		return dom.body.textContent;
 	}
 

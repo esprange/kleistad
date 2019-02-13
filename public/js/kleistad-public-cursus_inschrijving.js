@@ -1,18 +1,5 @@
 ( function( $ ) {
-    'use strict';
-
- 	/**
-	 * Converteer eventuele html special karakters
-	 *
-	 * @param {String} value
-	 */
-	function decode( value ) {
-		var parser = new DOMParser();
-		var dom = parser.parseFromString(
-			'<!doctype html><body>' + value,
-			'text/html');
-		return dom.body.textContent;
-	}
+	'use strict';
 
 	function wijzigTeksten( cursus ) {
 		var bedrag        = cursus.prijs;
