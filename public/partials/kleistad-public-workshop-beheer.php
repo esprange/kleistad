@@ -126,7 +126,7 @@ else :
 			endif;
 			?>
 		<tr class="kleistad_workshop_info"
-			data-workshop='<?php echo $json_workshop; // phpcs:ignore ?>' >
+			data-workshop='<?php echo htmlspecialchars( $json_workshop, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>' >
 			<td><?php echo esc_html( $workshop['code'] ); ?></td>
 			<td><?php echo esc_html( $workshop['datum'] ); ?></td>
 			<td><?php echo esc_html( $workshop['datum_td'] ); ?></td>

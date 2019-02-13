@@ -1,6 +1,19 @@
 ( function( $ ) {
     'use strict';
 
+	/**
+	 * Converteer eventuele html special karakters
+	 *
+	 * @param {String} value
+	 */
+	function decode( value ) {
+		var parser = new DOMParser();
+		var dom = parser.parseFromString(
+			'<!doctype html><body>' + value,
+			'text/html');
+		return dom.body.textContent;
+	}
+
     $( document ).ready(
         function() {
             /**
@@ -100,14 +113,14 @@
                         inschrijvingen = $( this ).data( 'inschrijvingen' ),
                         deelnemer = $( this ).data( 'deelnemer' ),
                         abonnee = $( this ).data( 'abonnee' );
-                    $( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', deelnemer.naam ).dialog( 'open' );
+                    $( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', decode( deelnemer.naam ) ).dialog( 'open' );
                     $( '#kleistad_deelnemer_tabel' ).empty();
                     $( '#kleistad_deelnemer_tabel' )
                         .append(
                             '<tr><th>Adres</<th><td colspan="6" style="text-align:left" >' +
-                            deelnemer.straat + ' ' + deelnemer.huisnr + ' ' +
-                            deelnemer.pcode + ' ' + deelnemer.plaats + '</td></tr>'
-                            );
+							decode( deelnemer.straat + ' ' + deelnemer.huisnr + ' ' + deelnemer.pcode + ' ' + deelnemer.plaats ) +
+							'</td></tr>'
+                        );
 
                     if ( 'undefined' !== typeof inschrijvingen ) {
                         $.each(
@@ -117,7 +130,7 @@
                                     cbetaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     code = value.code + ( ( 1 < value.aantal ) ? '(' + value.aantal + ')' : '' ),
-                                    html = header + '<tr><td>' + value.naam + '</td><th>' + code + '</th><th>' + status +
+                                    html = header + '<tr><td>' + decode( value.naam ) + '</td><th>' + code + '</th><th>' + status +
                                     '</th><th>' + ibetaald + '</th><th>' + cbetaald + '</th><th>' + geannuleerd + '</th><th>',
                                     separator = '';
                                 $.each(

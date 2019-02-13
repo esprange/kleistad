@@ -19,7 +19,7 @@ else :
 
 	<form method="POST">
 		<?php wp_nonce_field( 'kleistad_registratie' ); ?>
-		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['input']['id'] ); ?>" >
+		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['input']['gebruiker_id'] ); ?>" >
 		<div class="kleistad_row">
 			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_voornaam">Naam</label>

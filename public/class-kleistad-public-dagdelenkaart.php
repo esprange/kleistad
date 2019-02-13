@@ -101,6 +101,13 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 				$input['email_controle'] = $email;
 			}
 		}
+		if ( ! empty( $input['telnr'] ) ) {
+			$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $input['telnr'] );
+			if ( ! ( preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
+				preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr ) ) ) {
+				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
+			}
+		}
 
 		$input['pcode'] = strtoupper( str_replace( ' ', '', $input['pcode'] ) );
 

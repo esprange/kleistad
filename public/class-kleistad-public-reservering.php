@@ -203,7 +203,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 
 		$html = "<tr style=\"background-color: $kleur\">";
 		if ( false !== $json_selectie && $wijzigbaar ) {
-			$html .= "<td><a class=\"kleistad_box\" data-form='$json_selectie' >$dag $dagnaam</a></td>";
+			$html .= "<td><a class=\"kleistad_box\" data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' >$dag $dagnaam</a></td>";
 		} else {
 			$html .= "<td>$dag $dagnaam</td>";
 		}

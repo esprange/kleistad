@@ -31,14 +31,14 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 		if ( is_null( $data ) ) {
 			$data          = [];
 			$data['input'] = [
-				'id'         => $gebruiker->ID,
-				'voornaam'   => $gebruiker->first_name,
-				'achternaam' => $gebruiker->last_name,
-				'straat'     => $gebruiker->straat,
-				'huisnr'     => $gebruiker->huisnr,
-				'pcode'      => $gebruiker->pcode,
-				'plaats'     => $gebruiker->plaats,
-				'telnr'      => $gebruiker->telnr,
+				'gebruiker_id' => $gebruiker->ID,
+				'voornaam'     => $gebruiker->first_name,
+				'achternaam'   => $gebruiker->last_name,
+				'straat'       => $gebruiker->straat,
+				'huisnr'       => $gebruiker->huisnr,
+				'pcode'        => $gebruiker->pcode,
+				'plaats'       => $gebruiker->plaats,
+				'telnr'        => $gebruiker->telnr,
 			];
 		}
 		return true;
@@ -55,7 +55,7 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 	public function validate( &$data ) {
 		$error = new WP_Error();
 
-		$input = filter_input_array(
+		$data['input']          = filter_input_array(
 			INPUT_POST,
 			[
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
@@ -68,22 +68,26 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 				'telnr'        => FILTER_SANITIZE_STRING,
 			]
 		);
-
-		$input['pcode'] = strtoupper( $input['pcode'] );
-		if ( ! $input['voornaam'] ) {
+		$data['input']['pcode'] = strtoupper( $data['input']['pcode'] );
+		if ( ! $data['input']['voornaam'] ) {
 			$error->add( 'verplicht', 'Een voornaam is verplicht' );
 		}
-		if ( ! $input['achternaam'] ) {
+		if ( ! $data['input']['achternaam'] ) {
 			$error->add( 'verplicht', 'Een achternaam is verplicht' );
 		}
+		if ( ! empty( $data['input']['telnr'] ) ) {
+			$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $data['input']['telnr'] );
+			if ( ! ( preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
+				preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr ) ) ) {
+				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
+			}
+		}
+		$data['input']['pcode'] = strtoupper( str_replace( ' ', '', $data['input']['pcode'] ) );
+
 		$err = $error->get_error_codes();
 		if ( ! empty( $err ) ) {
 			return $error;
 		}
-
-		$data = [
-			'input' => $input,
-		];
 		return true;
 	}
 

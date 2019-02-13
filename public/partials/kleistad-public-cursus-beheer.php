@@ -135,8 +135,8 @@ else :
 			endif
 			?>
 			<tr style="background-color:<?php echo esc_attr( $row['cursus']['vol'] ? 'lightblue' : ( $row['cursus']['vervallen'] ? 'lightgray' : 'white' ) ); ?>" class="kleistad_cursus_info"
-				data-cursus='<?php echo $json_cursus; // phpcs:ignore ?>'
-				data-ingedeeld='<?php echo $json_ingedeeld;  // phpcs:ignore ?>' >
+				data-cursus='<?php echo htmlspecialchars( $json_cursus, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
+				data-ingedeeld='<?php echo htmlspecialchars( $json_ingedeeld, ENT_QUOTES, 'UTF-8' );  // phpcs:ignore ?>' >
 				<td><?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td>C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['naam'] ); ?></td>

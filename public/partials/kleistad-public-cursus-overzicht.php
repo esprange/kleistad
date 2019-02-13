@@ -49,7 +49,7 @@ else :
 		?>
 		<tr class="kleistad_cursus_info"
 			data-naam='<?php echo esc_attr( $cursus_info['naam'] ); ?>'
-			data-lijst='<?php echo $json_cursus_info; // phpcs:ignore ?>'
+			data-lijst='<?php echo htmlspecialchars( $json_cursus_info, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 			data-id='<?php echo esc_attr( $cursus_id ); ?>' >
 			<td><?php echo esc_html( $cursus_id ); ?></td>
 			<td><?php echo esc_html( $cursus_info['start_dt'] ); ?></td>

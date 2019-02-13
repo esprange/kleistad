@@ -163,6 +163,13 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 					$data['input']['email_controle'] = $email;
 				}
 			}
+			if ( ! empty( $data['input']['telnr'] ) ) {
+				$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $data['input']['telnr'] );
+				if ( ! ( preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
+					preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr ) ) ) {
+					$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
+				}
+			}
 
 			$data['input']['pcode'] = strtoupper( str_replace( ' ', '', $data['input']['pcode'] ) );
 

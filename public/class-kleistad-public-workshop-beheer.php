@@ -112,6 +112,13 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 		if ( strtotime( $data['workshop']['start_tijd'] ) >= strtotime( $data['workshop']['eind_tijd'] ) ) {
 			$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
 		}
+		if ( ! empty( $data['workshop']['telefoon'] ) ) {
+			$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $data['workshop']['telefoon'] );
+			if ( ! ( preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
+				preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr ) ) ) {
+				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
+			}
+		}
 
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;

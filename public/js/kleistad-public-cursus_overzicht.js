@@ -1,5 +1,18 @@
 ( function( $ ) {
-    'use strict';
+	'use strict';
+
+	/**
+	 * Converteer eventuele html special karakters
+	 *
+	 * @param {String} value
+	 */
+	function decode( value ) {
+		var parser = new DOMParser();
+		var dom = parser.parseFromString(
+			'<!doctype html><body>' + value,
+			'text/html');
+		return dom.body.textContent;
+	}
 
     $( document ).ready(
         function() {
@@ -108,10 +121,10 @@
 						id     = $( this ).data( 'id' ),
 						naam   = $( this ).data( 'naam' ),
 						emails = '';
-					$( '#kleistad_cursisten_info' ).dialog( 'option', 'title', naam ).dialog( 'open' );
+					$( '#kleistad_cursisten_info' ).dialog( 'option', 'title', decode( naam ) ).dialog( 'open' );
 					$( '#kleistad_cursus_id' ).val( id );
 					$.each( lijst, function( key, value ) {
-						html += '<tr><td>' + value.naam + ( 1 < value.aantal ? ' (' + value.aantal + ')' : '' ) +
+						html += '<tr><td>' + decode( value.naam ) + ( 1 < value.aantal ? ' (' + value.aantal + ')' : '' ) +
 								'</td><td>' + value.telnr +
 								'</td><td>' + value.email +
 								'</td><td>' + value.technieken +

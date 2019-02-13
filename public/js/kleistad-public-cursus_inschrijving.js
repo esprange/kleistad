@@ -1,7 +1,20 @@
 ( function( $ ) {
     'use strict';
 
-    function wijzigTeksten( cursus ) {
+ 	/**
+	 * Converteer eventuele html special karakters
+	 *
+	 * @param {String} value
+	 */
+	function decode( value ) {
+		var parser = new DOMParser();
+		var dom = parser.parseFromString(
+			'<!doctype html><body>' + value,
+			'text/html');
+		return dom.body.textContent;
+	}
+
+	function wijzigTeksten( cursus ) {
 		var bedrag        = cursus.prijs;
 		var spin          = $( '#kleistad_aantal' );
 		var aantal        = spin.spinner( 'value' );

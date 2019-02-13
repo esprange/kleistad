@@ -46,7 +46,15 @@ else :
 	endforeach;
 	// Toon nu de cursussen en selecteer de cursus. De rest wordt met javascript gedaan.
 	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-		$json_cursus = wp_json_encode( $cursus );
+		$json_cursus = wp_json_encode(
+			[
+				'technieken' => $cursus['technieken'],
+				'meer'       => $cursus['meer'],
+				'ruimte'     => $cursus['ruimte'],
+				'prijs'      => $cursus['prijs'],
+				'lopend'     => $cursus['lopend'],
+			]
+		);
 		if ( false === $json_cursus ) :
 			continue;
 		endif;
