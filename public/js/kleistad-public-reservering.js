@@ -1,4 +1,4 @@
-/* global kleistadData, DOMParser */
+/* global kleistadData,DOMParser */
 
 ( function( $ ) {
     'use strict';

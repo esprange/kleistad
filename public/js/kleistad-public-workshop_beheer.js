@@ -1,4 +1,5 @@
-/* global: DOMParser */
+/* global DOMParser */
+
 ( function( $ ) {
     'use strict';
 
