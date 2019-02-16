@@ -87,8 +87,9 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 				'telnr'            => FILTER_SANITIZE_STRING,
 				'abonnement_keuze' => FILTER_SANITIZE_STRING,
 				'extras'           => [
-					'filter' => FILTER_SANITIZE_STRING,
-					'flags'  => FILTER_REQUIRE_ARRAY,
+					'filter'  => FILTER_SANITIZE_STRING,
+					'flags'   => FILTER_REQUIRE_ARRAY,
+					'options' => [ 'default' => [] ],
 				],
 				'dag'              => FILTER_SANITIZE_STRING,
 				'start_datum'      => FILTER_SANITIZE_STRING,
@@ -130,9 +131,6 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 				$data['input']['LNAME'] = '';
 			}
 		}
-		if ( ! is_array( $data['input']['extras'] ) ) {
-			$data['input']['extras'] = [];
-		};
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}
