@@ -8,18 +8,20 @@
 
 			var calendarEl = document.getElementById( 'kleistad_fullcalendar' );
 			var calendar = new FullCalendar.Calendar( calendarEl, {
-				// volgens beta 4.0 toevoegen
-				// plugins: [ 'dayGrid', 'timeGrid' ],
-				// defaultView: 'dayGridMonth',
+				/**
+				 * Volgens beta 4.0 toevoegen
+				 * plugins: [ 'dayGrid', 'timeGrid' ],
+				 * defaultView: 'dayGridMonth',
+				 */
 				locale: 'nl',
 				header: {
-					left: 'month,agendaWeek,agendaDay', // volgens beta 4.0 dayGridMonth, timeGridWeek, timeGridDay.
+					left: 'month,agendaWeek,agendaDay', // Volgens beta 4.0 dayGridMonth, timeGridWeek, timeGridDay.
 					center: 'title',
 					right: 'today prev,next'
 				  },
 				eventLimit: true,
 				dateClick: function( info ) {
-					this.changeView( 'agendaDay', info.dateStr ); // volgens beta 4.0 timeGridDay.
+					this.changeView( 'agendaDay', info.dateStr ); // Volgens beta 4.0 timeGridDay.
 				},
 				minTime: '08:00:00',
 				eventRender: function( info ) {
