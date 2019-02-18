@@ -269,7 +269,7 @@ else :
 					&nbsp;
 				<?php endif; ?>
 				<td><?php echo esc_html( $recept['titel'] ); ?></td>
-				<td data-sort="<?php echo esc_attr( $recept['modified'] );?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
+				<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
 				<td><?php echo esc_html( $recept['post_status'] ); ?></td>
 				<td>
 					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_recept_' . $recept['id'] ) . '&action=wijzigen&id=' . $recept['id'] ); ?>"

@@ -137,7 +137,7 @@ else :
 				class="kleistad_cursus_info"
 				data-cursus='<?php echo htmlspecialchars( $json_cursus, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 				data-ingedeeld='<?php echo htmlspecialchars( $json_ingedeeld, ENT_QUOTES, 'UTF-8' );  // phpcs:ignore ?>' >
-				<td data-sort="<?php echo esc_attr( $row['cursus']['id'] );?>">C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
+				<td data-sort="<?php echo esc_attr( $row['cursus']['id'] ); ?>">C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['naam'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['docent'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['start_datum'] ); ?><br/><?php echo esc_html( $row['cursus']['eind_datum'] ); ?></td>

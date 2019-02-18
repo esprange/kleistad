@@ -103,7 +103,7 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ $this->plugin_name, 'jquery-ui-selectmenu' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'dagdelenkaart', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-dagdelenkaart.js', [ $this->plugin_name ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'cursus_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_beheer.js', [ $this->plugin_name, 'jquery-ui-dialog', 'jquery-ui-tabs' ], $this->version, true );
-		wp_register_script( $this->plugin_name . 'workshop_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-workshop_beheer.js', [ $this->plugin_name, 'jquery-ui-dialog', ], $this->version, true );
+		wp_register_script( $this->plugin_name . 'workshop_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-workshop_beheer.js', [ $this->plugin_name, 'jquery-ui-dialog' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'recept_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept_beheer.js', [ $this->plugin_name, 'jquery-ui-dialog', 'jquery-ui-autocomplete' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'recept', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-recept.js', [ $this->plugin_name ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'saldo', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-saldo.js', [ $this->plugin_name ], $this->version, true );

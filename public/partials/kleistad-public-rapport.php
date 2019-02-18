@@ -34,7 +34,7 @@ else :
 	<tbody>
 		<?php foreach ( $data['items'] as $item ) : ?>
 		<tr>
-			<td data-sort=<?php echo esc_attr( $item['datum'] );?> ><?php echo esc_html( date( 'd-m-Y', $item['datum'] ) ); ?></td>
+			<td data-sort=<?php echo esc_attr( $item['datum'] ); ?> ><?php echo esc_html( date( 'd-m-Y', $item['datum'] ) ); ?></td>
 			<td><?php echo esc_html( $item['oven'] ); ?></td>
 			<td><?php echo esc_html( $item['stoker'] ); ?></td>
 			<td><?php echo esc_html( $item['stook'] ); ?></td>

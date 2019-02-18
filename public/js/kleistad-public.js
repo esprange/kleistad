@@ -6,7 +6,7 @@
 	 *
 	 * @param {String} value
 	 */
-	$.fn.valDecoded = function ( value ) {
+	$.fn.valDecoded = function( value ) {
 		var html = $.parseHTML( value );
 		this[0].value = html[0].wholeText;
 		return this;
