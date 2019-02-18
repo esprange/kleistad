@@ -28,11 +28,9 @@ else :
 	</form>
 </div>
 
-<table class="kleistad_rapport" id="kleistad_cursus_lijst">
+<table class="kleistad_datatable display" data-order='[[ 0, "desc" ]]'>
 	<thead>
 		<tr>
-			<th>Id</th>
-			<th>Start_dt</th>
 			<th>Code</th>
 			<th>Naam</th>
 			<th>Docent</th>
@@ -51,12 +49,10 @@ else :
 			data-naam='<?php echo esc_attr( $cursus_info['naam'] ); ?>'
 			data-lijst='<?php echo htmlspecialchars( $json_cursus_info, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 			data-id='<?php echo esc_attr( $cursus_id ); ?>' >
-			<td><?php echo esc_html( $cursus_id ); ?></td>
-			<td><?php echo esc_html( $cursus_info['start_dt'] ); ?></td>
-			<td><?php echo esc_html( $cursus_info['code'] ); ?></td>
+			<td data-sort="<?php echo esc_attr( $cursus_id ); ?>"><?php echo esc_html( $cursus_info['code'] ); ?></td>
 			<td><?php echo esc_html( $cursus_info['naam'] ); ?></td>
 			<td><?php echo esc_html( $cursus_info['docent'] ); ?></td>
-			<td><?php echo esc_html( $cursus_info['start_datum'] ); ?></td>
+			<td data-sort="<?php echo esc_attr( $cursus_info['start_dt'] ); ?>"><?php echo esc_html( $cursus_info['start_datum'] ); ?></td>
 		</tr>
 	<?php endforeach ?>
 	</tbody>

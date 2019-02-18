@@ -18,7 +18,7 @@
 class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 
 	/**
-	 * Prepareer 'workshop' form
+	 * Prepareer 'input' form
 	 *
 	 * @param array $data data voor display.
 	 * @return \WP_ERROR|bool
@@ -33,8 +33,8 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 				'id'          => $workshop->id,
 				'code'        => $workshop->code,
 				'naam'        => $workshop->naam,
+				'datum_ux'    => $workshop->datum,
 				'datum'       => date( 'd-m-Y', $workshop->datum ),
-				'datum_td'    => $workshop->datum,
 				'start_tijd'  => date( 'H:i', $workshop->start_tijd ),
 				'eind_tijd'   => date( 'H:i', $workshop->eind_tijd ),
 				'docent'      => $workshop->docent,
@@ -70,7 +70,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	}
 
 	/**
-	 * Valideer/sanitize 'workshop' form
+	 * Valideer/sanitize 'input' form
 	 *
 	 * @param array $data Gevalideerde data.
 	 * @return \WP_Error|bool
@@ -78,8 +78,8 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	public function validate( &$data ) {
-		$error            = new WP_Error();
-		$data['workshop'] = filter_input_array(
+		$error         = new WP_Error();
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'id'          => FILTER_SANITIZE_NUMBER_INT,
@@ -89,8 +89,9 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 				'eind_tijd'   => FILTER_SANITIZE_STRING,
 				'docent'      => FILTER_SANITIZE_STRING,
 				'technieken'  => [
-					'filter' => FILTER_SANITIZE_STRING,
-					'flags'  => FILTER_REQUIRE_ARRAY,
+					'filter'  => FILTER_SANITIZE_STRING,
+					'flags'   => FILTER_REQUIRE_ARRAY,
+					'options' => [ 'default' => [] ],
 				],
 				'organisatie' => FILTER_SANITIZE_STRING,
 				'contact'     => FILTER_SANITIZE_STRING,
@@ -105,21 +106,16 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			]
 		);
 
-		$data['workshop']['programma'] = sanitize_textarea_field( filter_input( INPUT_POST, 'programma' ) );
-		if ( empty( $data['workshop']['technieken'] ) ) {
-			$data['workshop']['technieken'] = [];
+		$data['input']['programma'] = sanitize_textarea_field( filter_input( INPUT_POST, 'programma' ) );
+		if ( ! $this->sanitize_email( $data['input']['email'] ) ) {
+			$error->add( 'verplicht', 'De invoer ' . $data['input']['email'] . ' is geen geldig E-mail adres.' );
 		}
-		if ( strtotime( $data['workshop']['start_tijd'] ) >= strtotime( $data['workshop']['eind_tijd'] ) ) {
+		if ( ! empty( $data['input']['telefoon'] ) && ! $this->sanitize_telnr( $data['input']['telefoon'] ) ) {
+			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
+		}
+		if ( strtotime( $data['input']['start_tijd'] ) >= strtotime( $data['input']['eind_tijd'] ) ) {
 			$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
 		}
-		if ( ! empty( $data['workshop']['telefoon'] ) ) {
-			$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $data['workshop']['telefoon'] );
-			if ( ! ( preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
-				preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr ) ) ) {
-				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
-			}
-		}
-
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}
@@ -128,7 +124,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 
 	/**
 	 *
-	 * Bewaar 'workshop' form gegevens
+	 * Bewaar 'input' form gegevens
 	 *
 	 * @param array $data data te bewaren.
 	 * @return \WP_Error|string
@@ -136,27 +132,27 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	public function save( $data ) {
-		$workshop_id = $data['workshop']['id'];
+		$workshop_id = $data['input']['id'];
 
 		if ( $workshop_id > 0 ) {
 			$workshop = new Kleistad_Workshop( $workshop_id );
 		} else {
 			$workshop = new Kleistad_Workshop();
 		}
-		$workshop->naam        = $data['workshop']['naam'];
-		$workshop->datum       = strtotime( $data['workshop']['datum'] );
-		$workshop->start_tijd  = strtotime( $data['workshop']['start_tijd'] );
-		$workshop->eind_tijd   = strtotime( $data['workshop']['eind_tijd'] );
-		$workshop->docent      = $data['workshop']['docent'];
-		$workshop->technieken  = $data['workshop']['technieken'];
-		$workshop->organisatie = $data['workshop']['organisatie'];
-		$workshop->contact     = $data['workshop']['contact'];
-		$workshop->email       = $data['workshop']['email'];
-		$workshop->telefoon    = $data['workshop']['telefoon'];
-		$workshop->programma   = $data['workshop']['programma'];
-		$workshop->vervallen   = '' != $data['workshop']['vervallen']; // phpcs:ignore
-		$workshop->kosten      = $data['workshop']['kosten'];
-		$workshop->aantal      = $data['workshop']['aantal'];
+		$workshop->naam        = $data['input']['naam'];
+		$workshop->datum       = strtotime( $data['input']['datum'] );
+		$workshop->start_tijd  = strtotime( $data['input']['start_tijd'] );
+		$workshop->eind_tijd   = strtotime( $data['input']['eind_tijd'] );
+		$workshop->docent      = $data['input']['docent'];
+		$workshop->technieken  = $data['input']['technieken'];
+		$workshop->organisatie = $data['input']['organisatie'];
+		$workshop->contact     = $data['input']['contact'];
+		$workshop->email       = $data['input']['email'];
+		$workshop->telefoon    = $data['input']['telefoon'];
+		$workshop->programma   = $data['input']['programma'];
+		$workshop->vervallen   = '' != $data['input']['vervallen']; // phpcs:ignore
+		$workshop->kosten      = $data['input']['kosten'];
+		$workshop->aantal      = $data['input']['aantal'];
 
 		switch ( $data['form_actie'] ) {
 			case 'opslaan':

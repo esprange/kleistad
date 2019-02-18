@@ -1,60 +1,10 @@
-/* global DOMParser */
+/* global jdecode */
 
 ( function( $ ) {
     'use strict';
 
-	/**
-	 * Converteer eventuele html special karakters
-	 *
-	 * @param {String} value
-	 */
-	function decode( value ) {
-		var parser = new DOMParser();
-		var dom = parser.parseFromString(
-			'<!doctype html><body>' + value,
-			'text/html' );
-		return dom.body.textContent;
-	}
-
     $( document ).ready(
         function() {
-            /**
-             * Definieer de tabel
-             *
-             * @type array kleistadDeelnemerLijst array van deelnemers
-             */
-            var kleistadDeelnemerLijst = $( '#kleistad_deelnemer_lijst' ).DataTable(
-                {
-                    language: {
-                        sProcessing: 'Bezig...',
-                        sLengthMenu: '_MENU_ resultaten weergeven',
-                        sZeroRecords: 'Geen resultaten gevonden',
-                        sInfo: '_START_ tot _END_ van _TOTAL_ resultaten',
-                        sInfoEmpty: 'Geen resultaten om weer te geven',
-                        sInfoFiltered: ' (gefilterd uit _MAX_ resultaten)',
-                        sInfoPostFix: '',
-                        sSearch: 'Zoeken:',
-                        sEmptyTable: 'Geen resultaten aanwezig in de tabel',
-                        sInfoThousands: '.',
-                        sLoadingRecords: 'Een moment geduld aub - bezig met laden...',
-                        oPaginate: {
-                            sFirst: 'Eerste',
-                            sLast: 'Laatste',
-                            sNext: 'Volgende',
-                            sPrevious: 'Vorige'
-                        },
-                        oAria: {
-                            sSortAscending: ': activeer om kolom oplopend te sorteren',
-                            sSortDescending: ': activeer om kolom aflopend te sorteren'
-                        }
-                    },
-                    columnDefs: [
-                        { visible: false, targets: [ 0, 1 ] }
-                    ]
-
-                }
-            );
-
             /**
              * Definieer de popup dialoog
              */
@@ -87,7 +37,8 @@
              */
             $( 'body' ).on(
                 'click', '#kleistad_deelnemer_selectie', function() {
-                    var selectie = $( this ).val();
+					var selectie = $( this ).val();
+					var kleistadDeelnemerLijst = $( '#kleistad_deelnemer_lijst' ).DataTable();
                     switch ( selectie ) {
                         case '*':
                             kleistadDeelnemerLijst.search( '' ).columns().search( '' );
@@ -115,12 +66,12 @@
                         inschrijvingen = $( this ).data( 'inschrijvingen' ),
                         deelnemer = $( this ).data( 'deelnemer' ),
                         abonnee = $( this ).data( 'abonnee' );
-                    $( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', decode( deelnemer.naam ) ).dialog( 'open' );
+                    $( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', jdecode( deelnemer.naam ) ).dialog( 'open' );
                     $( '#kleistad_deelnemer_tabel' ).empty();
                     $( '#kleistad_deelnemer_tabel' )
                         .append(
                             '<tr><th>Adres</<th><td colspan="6" style="text-align:left" >' +
-							decode( deelnemer.straat + ' ' + deelnemer.huisnr + ' ' + deelnemer.pcode + ' ' + deelnemer.plaats ) +
+							jdecode( deelnemer.straat + ' ' + deelnemer.huisnr + ' ' + deelnemer.pcode + ' ' + deelnemer.plaats ) +
 							'</td></tr>'
                         );
 
@@ -132,7 +83,7 @@
                                     cbetaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     code = value.code + ( ( 1 < value.aantal ) ? '(' + value.aantal + ')' : '' ),
-                                    html = header + '<tr><td>' + decode( value.naam ) + '</td><th>' + code + '</th><th>' + status +
+                                    html = header + '<tr><td>' + jdecode( value.naam ) + '</td><th>' + code + '</th><th>' + status +
                                     '</th><th>' + ibetaald + '</th><th>' + cbetaald + '</th><th>' + geannuleerd + '</th><th>',
                                     separator = '';
                                 $.each(

@@ -112,10 +112,9 @@ else :
 
 	</div>
 </div>
-<table class="kleistad_rapport">
+<table class="kleistad_datatable display" data-page-length="10", data-order='[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
-			<th>Id</th>
 			<th>Code</th>
 			<th>Naam</th>
 			<th>Docent</th>
@@ -134,22 +133,16 @@ else :
 				continue;
 			endif
 			?>
-			<tr style="background-color:<?php echo esc_attr( $row['cursus']['vol'] ? 'lightblue' : ( $row['cursus']['vervallen'] ? 'lightgray' : 'white' ) ); ?>" class="kleistad_cursus_info"
+			<tr <?php echo $row['cursus']['vol'] ? 'style="background-color:lightblue"' : ( $row['cursus']['vervallen'] ? 'style="background-color:lightgray"' : '' ); ?>
+				class="kleistad_cursus_info"
 				data-cursus='<?php echo htmlspecialchars( $json_cursus, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 				data-ingedeeld='<?php echo htmlspecialchars( $json_ingedeeld, ENT_QUOTES, 'UTF-8' );  // phpcs:ignore ?>' >
-				<td><?php echo esc_html( $row['cursus']['id'] ); ?></td>
-				<td>C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
+				<td data-sort="<?php echo esc_attr( $row['cursus']['id'] );?>">C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['naam'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['docent'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['start_datum'] ); ?><br/><?php echo esc_html( $row['cursus']['eind_datum'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['start_tijd'] ); ?><br/><?php echo esc_html( $row['cursus']['eind_tijd'] ); ?></td>
-				<td>
-					<?php
-					foreach ( $row['cursus']['technieken'] as $techniek ) {
-						echo esc_html( $techniek ) . '<br/>';
-					}
-					?>
-				</td>
+				<td><?php echo implode( '<br/>' , $row['cursus']['technieken'] ); // phpcs:ignore ?></td>
 				<td><?php echo esc_html( $row['cursus']['status'] ); ?></td>
 			</tr>
 	<?php endforeach ?>

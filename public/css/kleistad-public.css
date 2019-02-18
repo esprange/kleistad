@@ -27,6 +27,10 @@ Description: stylesheet functions voor kleistad_plugin
     border: 2px solid #DDD;
     font-size:12px;
 }
+table.display {
+    font-size: small;
+    table-layout: auto;
+}
 
 .kleistad_hover {
     color: blue;
@@ -142,19 +146,7 @@ table.kleistad_reserveringen a:hover {
     text-decoration: none;
     width: 100%;
 }
-table.kleistad_rapport {
-    font-size: small;
-    table-layout: auto;
-}
-table.kleistad_rapport th {
-    font-weight: bold;
-}
-table.kleistad_rapport thead {
-    background-color: #F2F2F2;
-}
-table.kleistad_rapport tr:nth-child(even) {
-    background-color: #F2F2F2;
-}
+
 .kleistad_label {
     font-weight: bold;
 }
@@ -359,9 +351,6 @@ label.kleistad_label_cb {
     table.kleistad_reserveringen th, td, button {
         font-size: x-small;
     }
-    table.kleistad_rapport th, td {
-        font-size: x-small;
-	}
 
 /* csslint ignore:start */
 [class^="kleistad_col_"] {

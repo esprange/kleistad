@@ -31,11 +31,11 @@ else :
 
 	</select>
 </p>
-<table class="kleistad_rapport" id="kleistad_deelnemer_lijst">
+<table class="kleistad_datatable display" id="kleistad_deelnemer_lijst">
 	<thead>
 		<tr>
-			<th>Lid</th>
-			<th>Cursuslijst</th>
+			<th data-visible="false">Lid</th>
+			<th data-visible="false">Cursuslijst</th>
 			<th>Achternaam</th>
 			<th>Voornaam</th>
 			<th>Email</th>

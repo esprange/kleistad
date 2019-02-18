@@ -81,7 +81,7 @@ else :
 			</tr>
 			<tr>
 				<th>Programma</th>
-				<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="5" maxlength="500" ></textarea>
+				<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="3" maxlength="500" ></textarea>
 			</tr>
 			<tr>
 				<th>Kosten</th>
@@ -104,12 +104,11 @@ else :
 	</form>
 </div>
 
-<table class="kleistad_rapport">
+<table class="kleistad_datatable display" data-page-length="10" data-order='[[ 1, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Code</th>
 			<th>Datum</th>
-			<th>datum_td</th>
 			<th>Titel</th>
 			<th>Aantal</th>
 			<th>Tijd</th>
@@ -128,8 +127,7 @@ else :
 		<tr class="kleistad_workshop_info"
 			data-workshop='<?php echo htmlspecialchars( $json_workshop, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>' >
 			<td><?php echo esc_html( $workshop['code'] ); ?></td>
-			<td><?php echo esc_html( $workshop['datum'] ); ?></td>
-			<td><?php echo esc_html( $workshop['datum_td'] ); ?></td>
+			<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
 			<td><?php echo esc_html( $workshop['naam'] ); ?></td>
 			<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
 			<td><?php echo esc_html( $workshop['start_tijd'] . ' - ' . $workshop['eind_tijd'] ); ?></td>

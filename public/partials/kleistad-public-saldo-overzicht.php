@@ -16,9 +16,12 @@ if ( ! Kleistad_Roles::override() ) : ?>
 else :
 	?>
 
-<table class="kleistad_rapport" id="kleistad_saldo_overzicht">
+<table class="kleistad_datatable display" data-order= '[[ 0, "asc" ]]'>
 	<thead>
-		<tr><th>Naam</th><th>Saldo</th></tr>
+		<tr>
+			<th>Naam</th>
+			<th data-class-name="dt-body-right">Saldo</th>
+		</tr>
 	</thead>
 	<tbody>
 	<?php foreach ( $data['stokers'] as $stoker ) : ?>

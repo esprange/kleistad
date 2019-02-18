@@ -13,9 +13,8 @@
 			/**
              * Definieer datum veld.
              */
-            $( '#kleistad_start_datum' ).datepicker(
+            $( '#kleistad_start_datum' ).datepicker( 'option',
                 {
-                    dateFormat: 'dd-mm-yy',
 					minDate: 0,
 					maxDate: '+3M'
                 }

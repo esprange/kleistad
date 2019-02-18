@@ -54,9 +54,11 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 			$data['recept'][] = [
 				'id'          => $recept->ID,
 				'titel'       => $recept->post_title,
-				'post_status' => $recept->post_status,
-				'created'     => $recept->post_date,
-				'modified'    => $recept->post_modified,
+				'post_status' => 'private' === $recept->post_status ? ' prive' :
+								( 'publish' === $recept->post_status ? ' gepubliceerd' :
+								( 'draft' === $recept->post_status ? ' concept' : '' ) ),
+				'created'     => strtotime( $recept->post_date ),
+				'modified'    => strtotime( $recept->post_modified ),
 				'foto'        => $content['foto'],
 			];
 		}

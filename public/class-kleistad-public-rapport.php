@@ -46,8 +46,7 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 					}
 					$stoker  = get_userdata( $reservering->gebruiker_id );
 					$items[] = [
-						'datum'     => $reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
-						'sdatum'    => $reservering->datum,
+						'datum'     => $reservering->datum,
 						'oven'      => $ovens[ $reservering->oven_id ]->naam,
 						'stoker'    => ! $stoker ? 'onbekend' : $stoker->display_name,
 						'stook'     => $reservering->soortstook,
@@ -60,12 +59,6 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 				}
 			}
 		}
-		usort(
-			$items,
-			function ( $a, $b ) {
-				return $a['sdatum'] < $b['sdatum'] ? 1 : -1;
-			}
-		);
 		$data = [
 			'naam'  => $naam,
 			'saldo' => number_format_i18n( $saldo->bedrag, 2 ),

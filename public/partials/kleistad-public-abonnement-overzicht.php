@@ -22,7 +22,7 @@ else :
 		<?php wp_nonce_field( 'kleistad_abonnement_overzicht' ); ?>
 		<input type="hidden" name="kleistad_submit_abonnement_overzicht" >
 		<input type="hidden" id="kleistad_email_lijst" value="<?php echo $data['email_lijst']; // phpcs:ignore ?>">
-		<table class="kleistad_rapport" id="kleistad_abonnement_lijst">
+		<table class="kleistad_datatable display" data-sort='[[ 0, "asc" ]]'>
 			<thead>
 				<tr>
 					<th>Naam</th>

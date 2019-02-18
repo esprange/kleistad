@@ -247,12 +247,11 @@ else :
 		<input id="kleistad_recept_action" type="hidden" name="action" value="recept_overzicht" />
 		<input id="kleistad_recept_id" type="hidden" name="recept_id" value="0" />
 		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
-		<table class="kleistad_rapport">
+		<table class="kleistad_datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
 			<thead>
 			<tr>
-				<th>Glazuur</th>
+				<th data-orderable="false">Glazuur</th>
 				<th>Titel</th>
-				<th>xDatum</th>
 				<th>Datum</th>
 				<th>Status</th>
 				<th>&nbsp;</th>
@@ -270,15 +269,8 @@ else :
 					&nbsp;
 				<?php endif; ?>
 				<td><?php echo esc_html( $recept['titel'] ); ?></td>
-				<td><?php echo esc_html( strval( strtotime( $recept['modified'] ) ) ); ?></td>
-				<td><?php echo esc_html( date_i18n( 'd-m-Y H:i', strtotime( $recept['modified'] ) ) ); ?></td>
-				<td>
-				<?php
-						echo ( 'private' === $recept['post_status'] ? ' prive' : // phpcs:ignore
-							( 'publish' === $recept['post_status'] ? ' gepubliceerd' : // phpcs:ignore
-							( 'draft' === $recept['post_status'] ? ' concept' : '' ) ) ); // phpcs:ignore
-				?>
-				</td>
+				<td data-sort="<?php echo esc_attr( $recept['modified'] );?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
+				<td><?php echo esc_html( $recept['post_status'] ); ?></td>
 				<td>
 					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_recept_' . $recept['id'] ) . '&action=wijzigen&id=' . $recept['id'] ); ?>"
 						title="wijzig recept" class="ui-button ui-widget ui-corner-all" style="color:green;padding:.4em .8em;" data-recept_id="<?php echo esc_html( $recept['id'] ); ?>">

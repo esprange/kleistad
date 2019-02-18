@@ -1,20 +1,7 @@
-/* global kleistadData,DOMParser */
+/* global kleistadData, jdecode */
 
 ( function( $ ) {
     'use strict';
-
-	/**
-	 * Converteer eventuele html special karakters
-	 *
-	 * @param {String} value
-	 */
-	function decode( value ) {
-		var parser = new DOMParser();
-		var dom = parser.parseFromString(
-			'<!doctype html><body>' + value,
-			'text/html' );
-		return dom.body.textContent;
-	}
 
     /**
      * Toon het formulier om een reservering te maken, wijzigen of verwijderen.
@@ -34,7 +21,7 @@
         $( '#kleistad_jaar' ).val( formData.jaar );
         $( '#kleistad_stoker_id' ).val( formData.gebruiker_id );
         $( '#kleistad_programma' ).val( formData.programma );
-        $( '#kleistad_stoker' ).html( decode( formData.gebruiker ) );
+        $( '#kleistad_stoker' ).html( jdecode( formData.gebruiker ) );
 
         verdelingAantal = Math.max( formData.verdeling.length, 4 );
         aantal = $( '.kleistad_medestoker_row' ).length;

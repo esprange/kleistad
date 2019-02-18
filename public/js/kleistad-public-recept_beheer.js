@@ -21,46 +21,6 @@
 				);
 			}
 
-			/**
-             * Definieer de tabel.
-             */
-            $( '.kleistad_rapport' ).DataTable(
-				{
-					language: {
-                        sProcessing: 'Bezig...',
-                        sLengthMenu: '_MENU_ resultaten weergeven',
-                        sZeroRecords: 'Geen resultaten gevonden',
-                        sInfo: '_START_ tot _END_ van _TOTAL_ resultaten',
-                        sInfoEmpty: 'Geen resultaten om weer te geven',
-                        sInfoFiltered: ' (gefilterd uit _MAX_ resultaten)',
-                        sInfoPostFix: '',
-                        sSearch: 'Zoeken:',
-                        sEmptyTable: 'Geen resultaten aanwezig in de tabel',
-                        sInfoThousands: '.',
-                        sLoadingRecords: 'Een moment geduld aub - bezig met laden...',
-                        oPaginate: {
-                            sFirst: 'Eerste',
-                            sLast: 'Laatste',
-                            sNext: 'Volgende',
-                            sPrevious: 'Vorige'
-                        },
-                        oAria: {
-                            sSortAscending: ': activeer om kolom oplopend te sorteren',
-                            sSortDescending: ': activeer om kolom aflopend te sorteren'
-                        }
-                    },
-                    pageLength: 5,
-                    order: [ 2, 'desc' ],
-                    columnDefs: [
-                        { width: 100, targets: [ 0 ] },
-                        { orderable: false, targets: [ 0, 5 ] },
-                        { orderData: [ 2 ], targets: [ 3 ] },
-                        { visible: false, searchable: false, targets: [ 2 ] }
-                    ]
-
-                }
-            );
-
             $( '.kleistad_gewicht' ).on( 'keydown', function( e ) {
                 if (
 

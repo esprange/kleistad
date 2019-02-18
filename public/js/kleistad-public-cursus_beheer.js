@@ -1,125 +1,9 @@
-/* global DOMParser */
-
+/* global jdecode */
 ( function( $ ) {
     'use strict';
 
-	/**
-	 * Converteer eventuele html special karakters
-	 *
-	 * @param {String} value
-	 */
-	function decode( value ) {
-		var parser = new DOMParser();
-		var dom = parser.parseFromString(
-			'<!doctype html><body>' + value,
-			'text/html' );
-		return dom.body.textContent;
-	}
-
-	function strtotime( value ) {
-		var hours, minutes;
-		if ( 'string' === typeof value ) {
-			/* jshint eqeqeq:false */
-			if ( Number( value ) == value ) {
-				return Number( value );
-			}
-			hours = value.substring( 0, 2 );
-			minutes = value.substring( 3 );
-			return Number( hours ) * 60 + Number( minutes );
-		}
-		return value;
-	}
-
-	function timetostr( value ) {
-		var hours = Math.floor( value / 60 );
-		var minutes = value % 60;
-		return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
-	}
-
     $( document ).ready(
         function() {
-
-            /**
-             * Definieer de tabel.
-             */
-            $( '.kleistad_rapport' ).DataTable(
-                {
-                    language: {
-						sProcessing: 'Bezig...',
-                        sLengthMenu: '_MENU_ resultaten weergeven',
-                        sZeroRecords: 'Geen resultaten gevonden',
-                        sInfo: '_START_ tot _END_ van _TOTAL_ resultaten',
-                        sInfoEmpty: 'Geen resultaten om weer te geven',
-                        sInfoFiltered: ' (gefilterd uit _MAX_ resultaten)',
-                        sInfoPostFix: '',
-                        sSearch: 'Zoeken:',
-                        sEmptyTable: 'Geen resultaten aanwezig in de tabel',
-                        sInfoThousands: '.',
-                        sLoadingRecords: 'Een moment geduld aub - bezig met laden...',
-                        oPaginate: {
-                            sFirst: 'Eerste',
-                            sLast: 'Laatste',
-                            sNext: 'Volgende',
-                            sPrevious: 'Vorige'
-                        },
-                        oAria: {
-                            sSortAscending: ': activeer om kolom oplopend te sorteren',
-                            sSortDescending: ': activeer om kolom aflopend te sorteren'
-                        }
-                    },
-                    pageLength: 5,
-                    order: [ 0, 'desc' ],
-                    columnDefs: [
-                        { visible: false, targets: [ 0 ] }
-                    ]
-
-                }
-            );
-
-            /**
-             * Maak een timespinner van de spinner.
-             */
-            $.widget(
-                'ui.timespinner', $.ui.spinner, {
-                    options: {
-                        step: 15,
-                        page: 60,
-                        max: 60 * 23 + 45,
-                        min: 0,
-						spin: function() {
-							$( this ).change();
-						 }
-                    },
-					_parse: function( value ) {
-						return strtotime( value );
-					},
-					_format: function( value ) {
-						return timetostr( value );
-					}
-                }
-            );
-
-            /**
-             * Definieer de timespinners.
-             */
-            $( '.kleistad_tijd' ).each(
-                function() {
-                    $( this ).timespinner();
-                }
-            );
-
-            /**
-             * Definieer de datumpickers.
-             */
-            $( '.kleistad_datum' ).each(
-                function() {
-                    $( this ).datepicker(
-                        {
-                            dateFormat: 'dd-mm-yy'
-                        }
-                    );
-                }
-			);
 
 			// $( '#kleistad_cursus_start_tijd' ).change(
 			// 	function() {
@@ -196,10 +80,10 @@
                 'click', '.kleistad_cursus_info', function() {
                     var cursus = $( this ).data( 'cursus' ),
 						ingedeeld = $( this ).data( 'ingedeeld' );
-                    $( '#kleistad_cursus' ).dialog( 'option', 'title', decode( cursus.naam ) ).dialog( 'open' );
+                    $( '#kleistad_cursus' ).dialog( 'option', 'title', jdecode( cursus.naam ) ).dialog( 'open' );
                     $( 'input[name="cursus_id"]' ).val( cursus.id );
-                    $( '#kleistad_cursus_naam' ).val( decode( cursus.naam ) );
-                    $( '#kleistad_docent' ).val( decode( cursus.docent ) );
+                    $( '#kleistad_cursus_naam' ).val( jdecode( cursus.naam ) );
+                    $( '#kleistad_docent' ).val( jdecode( cursus.docent ) );
                     $( '#kleistad_cursus_start_datum' ).val( cursus.start_datum );
                     $( '#kleistad_cursus_eind_datum' ).val( cursus.eind_datum );
                     $( '#kleistad_cursus_start_tijd' ).val( cursus.start_tijd );
@@ -230,7 +114,7 @@
 									}
 								}
 								cursisten.append( '<tr class="kleistad_cursist" ><td title="' + value.extra_info + '" >' +
-									decode( value.naam ) + '</td><td style="text-align:center" >' +
+									jdecode( value.naam ) + '</td><td style="text-align:center" >' +
 									( ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '' ) + '</td><td style="text-align:center" >' +
 									( ( value.restant_email ) ? '<span class="dashicons dashicons-yes"></span>' : '' ) + '</td></tr>'
 								);
@@ -238,7 +122,7 @@
 								if ( 0 === cursisten.children().length ) {
 									cursisten.append( '<tr><th>Naam</th></tr>' );
 								}
-								cursisten.append( '<tr class="kleistad_cursist" ><td  title="' + value.extra_info + '" >' + decode( value.naam ) + '</td></tr>' );
+								cursisten.append( '<tr class="kleistad_cursist" ><td  title="' + value.extra_info + '" >' + jdecode( value.naam ) + '</td></tr>' );
 							}
                         }
 					);
