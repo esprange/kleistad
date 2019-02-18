@@ -1,20 +1,16 @@
-/* global DOMParser */
-
-/**
- * Converteer eventuele html special karakters
- *
- * @param {String} value
- */
-function jdecode( value ) {
-	var parser = new DOMParser();
-	var dom = parser.parseFromString(
-		'<!doctype html><body>' + value,
-		'text/html' );
-	return dom.body.textContent;
-}
-
 ( function( $ ) {
     'use strict';
+
+	/**
+	 * Toegevoegde functie aan jquery: Converteer eventuele html special karakters
+	 *
+	 * @param {String} value
+	 */
+	$.fn.valDecoded = function ( value ) {
+		var html = $.parseHTML( value );
+		this[0].value = html[0].wholeText;
+		return this;
+	};
 
 	/**
 	 * Converteer string naar tijd in minuten

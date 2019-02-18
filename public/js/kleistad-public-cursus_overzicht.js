@@ -1,5 +1,3 @@
-/* global jdecode */
-
 ( function( $ ) {
 	'use strict';
 
@@ -71,10 +69,10 @@
 						id     = $( this ).data( 'id' ),
 						naam   = $( this ).data( 'naam' ),
 						emails = '';
-					$( '#kleistad_cursisten_info' ).dialog( 'option', 'title', jdecode( naam ) ).dialog( 'open' );
+					$( '#kleistad_cursisten_info' ).dialog( 'option', 'title', naam ).dialog( 'open' );
 					$( '#kleistad_cursus_id' ).val( id );
 					$.each( lijst, function( key, value ) {
-						html += '<tr><td>' + jdecode( value.naam ) + ( 1 < value.aantal ? ' (' + value.aantal + ')' : '' ) +
+						html += '<tr><td>' + value.naam + ( 1 < value.aantal ? ' (' + value.aantal + ')' : '' ) +
 								'</td><td>' + value.telnr +
 								'</td><td>' + value.email +
 								'</td><td>' + value.technieken +

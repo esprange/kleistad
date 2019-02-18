@@ -31,20 +31,20 @@
             $( 'body' ).on(
                 'click', '.kleistad_workshop_info', function() {
 					var workshop = $( this ).data( 'workshop' );
-                    $( '#kleistad_workshop' ).dialog( 'option', 'title', decode( workshop.naam ) ).dialog( 'open' );
+                    $( '#kleistad_workshop' ).dialog( 'option', 'title', workshop.naam ).dialog( 'open' );
                     $( '#kleistad_id' ).val( workshop.id );
-                    $( '#kleistad_naam' ).val( decode( workshop.naam ) );
-					$( '#kleistad_docent' ).val( decode( workshop.docent ) );
+                    $( '#kleistad_naam' ).valDecoded( workshop.naam );
+					$( '#kleistad_docent' ).valDecoded( workshop.docent );
                     $( '#kleistad_datum' ).val( workshop.datum );
                     $( '#kleistad_start_tijd' ).val( workshop.start_tijd );
                     $( '#kleistad_eind_tijd' ).val( workshop.eind_tijd );
                     $( '#kleistad_aantal' ).val( workshop.aantal );
                     $( '#kleistad_kosten' ).val( workshop.kosten );
                     $( '#kleistad_email' ).val( workshop.email );
-                    $( '#kleistad_contact' ).val( decode( workshop.contact ) );
-                    $( '#kleistad_telefoon' ).val( decode( workshop.telefoon ) );
-                    $( '#kleistad_organisatie' ).val( decode( workshop.organisatie ) );
-					$( '#kleistad_programma' ).val( decode( workshop.programma ) );
+                    $( '#kleistad_contact' ).valDecoded( workshop.contact );
+                    $( '#kleistad_telefoon' ).valDecoded( workshop.telefoon );
+                    $( '#kleistad_organisatie' ).valDecoded( workshop.organisatie );
+					$( '#kleistad_programma' ).valDecoded( workshop.programma );
 					$( '#kleistad_definitief' ).attr( 'class', ( workshop.definitief > 0 ) ? 'genericon genericon-checkmark' : '' );
 					$( '#kleistad_betaald' ).attr( 'class', ( workshop.betaald > 0 ) ? 'genericon genericon-checkmark' : '' );
                     $( '#kleistad_draaien' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Draaien' ) >= 0 );

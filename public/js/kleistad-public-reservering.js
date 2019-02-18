@@ -1,4 +1,4 @@
-/* global kleistadData, jdecode */
+/* global kleistadData */
 
 ( function( $ ) {
     'use strict';
@@ -21,7 +21,7 @@
         $( '#kleistad_jaar' ).val( formData.jaar );
         $( '#kleistad_stoker_id' ).val( formData.gebruiker_id );
         $( '#kleistad_programma' ).val( formData.programma );
-        $( '#kleistad_stoker' ).html( jdecode( formData.gebruiker ) );
+        $( '#kleistad_stoker' ).html( formData.gebruiker );
 
         verdelingAantal = Math.max( formData.verdeling.length, 4 );
         aantal = $( '.kleistad_medestoker_row' ).length;

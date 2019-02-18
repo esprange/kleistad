@@ -1,4 +1,3 @@
-/* global jdecode */
 ( function( $ ) {
     'use strict';
 
@@ -80,10 +79,10 @@
                 'click', '.kleistad_cursus_info', function() {
                     var cursus = $( this ).data( 'cursus' ),
 						ingedeeld = $( this ).data( 'ingedeeld' );
-                    $( '#kleistad_cursus' ).dialog( 'option', 'title', jdecode( cursus.naam ) ).dialog( 'open' );
+                    $( '#kleistad_cursus' ).dialog( 'option', 'title', cursus.naam ).dialog( 'open' );
                     $( 'input[name="cursus_id"]' ).val( cursus.id );
-                    $( '#kleistad_cursus_naam' ).val( jdecode( cursus.naam ) );
-                    $( '#kleistad_docent' ).val( jdecode( cursus.docent ) );
+                    $( '#kleistad_cursus_naam' ).valDecoded( cursus.naam );
+                    $( '#kleistad_docent' ).valDecoded( cursus.docent );
                     $( '#kleistad_cursus_start_datum' ).val( cursus.start_datum );
                     $( '#kleistad_cursus_eind_datum' ).val( cursus.eind_datum );
                     $( '#kleistad_cursus_start_tijd' ).val( cursus.start_tijd );
@@ -114,7 +113,7 @@
 									}
 								}
 								cursisten.append( '<tr class="kleistad_cursist" ><td title="' + value.extra_info + '" >' +
-									jdecode( value.naam ) + '</td><td style="text-align:center" >' +
+									value.naam + '</td><td style="text-align:center" >' +
 									( ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '' ) + '</td><td style="text-align:center" >' +
 									( ( value.restant_email ) ? '<span class="dashicons dashicons-yes"></span>' : '' ) + '</td></tr>'
 								);
@@ -122,7 +121,7 @@
 								if ( 0 === cursisten.children().length ) {
 									cursisten.append( '<tr><th>Naam</th></tr>' );
 								}
-								cursisten.append( '<tr class="kleistad_cursist" ><td  title="' + value.extra_info + '" >' + jdecode( value.naam ) + '</td></tr>' );
+								cursisten.append( '<tr class="kleistad_cursist" ><td  title="' + value.extra_info + '" >' + value.naam + '</td></tr>' );
 							}
                         }
 					);

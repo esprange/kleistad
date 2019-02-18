@@ -1,5 +1,3 @@
-/* global jdecode */
-
 ( function( $ ) {
     'use strict';
 
@@ -66,12 +64,12 @@
                         inschrijvingen = $( this ).data( 'inschrijvingen' ),
                         deelnemer = $( this ).data( 'deelnemer' ),
                         abonnee = $( this ).data( 'abonnee' );
-                    $( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', jdecode( deelnemer.naam ) ).dialog( 'open' );
+                    $( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', deelnemer.naam ).dialog( 'open' );
                     $( '#kleistad_deelnemer_tabel' ).empty();
                     $( '#kleistad_deelnemer_tabel' )
                         .append(
                             '<tr><th>Adres</<th><td colspan="6" style="text-align:left" >' +
-							jdecode( deelnemer.straat + ' ' + deelnemer.huisnr + ' ' + deelnemer.pcode + ' ' + deelnemer.plaats ) +
+							deelnemer.straat + ' ' + deelnemer.huisnr + ' ' + deelnemer.pcode + ' ' + deelnemer.plaats +
 							'</td></tr>'
                         );
 
@@ -83,7 +81,7 @@
                                     cbetaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
                                     code = value.code + ( ( 1 < value.aantal ) ? '(' + value.aantal + ')' : '' ),
-                                    html = header + '<tr><td>' + jdecode( value.naam ) + '</td><th>' + code + '</th><th>' + status +
+                                    html = header + '<tr><td>' + value.naam + '</td><th>' + code + '</th><th>' + status +
                                     '</th><th>' + ibetaald + '</th><th>' + cbetaald + '</th><th>' + geannuleerd + '</th><th>',
                                     separator = '';
                                 $.each(
