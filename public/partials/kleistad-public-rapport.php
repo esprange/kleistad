@@ -42,7 +42,7 @@ else :
 			<td><?php echo esc_html( $item['prog'] ); ?></td>
 			<td><?php echo esc_html( $item['perc'] ); ?></td>
 			<td>&euro; <?php echo esc_html( $item['kosten'] ); ?></td>
-			<td><span class="<?php echo esc_attr( $item['voorlopig'] ); ?>"></span></td>
+			<td data-sort="<?php echo $item['voorlopig'] ? 1 : 0; ?>"><span <?php echo  $item['voorlopig'] ? 'class="genericon genericon-checkmark"' : ''; ?> ></span></td>
 		</tr>
 		<?php endforeach ?>
 	</tbody>

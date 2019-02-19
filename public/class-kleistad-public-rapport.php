@@ -54,7 +54,7 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 						'prog'      => $reservering->programma > 0 ? $reservering->programma : '',
 						'perc'      => $stookdeel['perc'],
 						'kosten'    => number_format_i18n( $kosten, 2 ),
-						'voorlopig' => $reservering->verwerkt ? '' : 'genericon genericon-checkmark',
+						'voorlopig' => ! $reservering->verwerkt,
 					];
 				}
 			}
