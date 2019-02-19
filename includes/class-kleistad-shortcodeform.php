@@ -113,8 +113,10 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 					wp_safe_redirect( $url, 303 );
 					die();
 				} else {
-					foreach ( $result->get_error_messages() as $error ) {
-						$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
+					if ( is_wp_error( $result ) ) {
+						foreach ( $result->get_error_messages() as $error ) {
+							$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
+						}
 					}
 				}
 			} else {
