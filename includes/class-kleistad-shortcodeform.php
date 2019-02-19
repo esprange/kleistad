@@ -108,9 +108,10 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 				if ( ! is_wp_error( $result ) ) {
 					$result = $this->save( $data );
 				}
-				if ( is_string( $result ) ) {
-					$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-					$data  = null;
+				if ( is_string( $result ) ) { // De save operatie heeft geen error opgeleverd, dus doe een redirect zodat het formulier niet opnieuw gesubmit kan worden.
+					$url = add_query_arg( 'kleistad_succes', rawurlencode( $result ), get_permalink() );
+					wp_safe_redirect( $url, 303 );
+					die();
 				} else {
 					foreach ( $result->get_error_messages() as $error ) {
 						$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
@@ -129,9 +130,11 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @since 4.5.1
 	 */
 	public function run() {
-		$data = [];
-		$html = Kleistad_Betalen::controleer();
+		$succes = filter_input( INPUT_GET, 'kleistad_succes' );
+		$html   = ! empty( $succes ) ? '<div class="kleistad_succes"><p>' . $succes . '</p></div>' : '';
+		$html  .= Kleistad_Betalen::controleer();
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+			$data  = [];
 			$html .= $this->process( $data );
 			$html .= $this->display( $data );
 		} else {
