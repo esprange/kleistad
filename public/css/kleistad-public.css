@@ -33,7 +33,7 @@ table.display {
 }
 
 .kleistad_hover {
-    color: blue;
+	color: blue;
 }
 .kleistad_tijd {
     width: 4em;
@@ -102,6 +102,7 @@ table.kleistad_form input[type=number] {
 table.kleistad_form input[type=submit] {
     height: 2.5em;
 }
+
 table.kleistad_reserveringen {
     border-collapse: collapse;
     border-spacing: 0;
@@ -134,17 +135,6 @@ table.kleistad_reserveringen td:nth-child(4n) {
 }
 table.kleistad_reserveringen th[data-align='right'] {
     text-align: right;
-}
-table.kleistad_reserveringen a {
-    color: black;
-    text-decoration: none;
-    width: 100%;
-}
-table.kleistad_reserveringen a:hover {
-    color: blue;
-    cursor: pointer;
-    text-decoration: none;
-    width: 100%;
 }
 
 .kleistad_label {

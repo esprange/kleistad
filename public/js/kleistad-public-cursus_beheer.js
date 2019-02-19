@@ -81,8 +81,8 @@
 						ingedeeld = $( this ).data( 'ingedeeld' );
                     $( '#kleistad_cursus' ).dialog( 'option', 'title', cursus.naam ).dialog( 'open' );
                     $( 'input[name="cursus_id"]' ).val( cursus.id );
-                    $( '#kleistad_cursus_naam' ).valDecoded( cursus.naam );
-                    $( '#kleistad_docent' ).valDecoded( cursus.docent );
+                    $( '#kleistad_cursus_naam' ).val( cursus.naam );
+                    $( '#kleistad_docent' ).val( cursus.docent );
                     $( '#kleistad_cursus_start_datum' ).val( cursus.start_datum );
                     $( '#kleistad_cursus_eind_datum' ).val( cursus.eind_datum );
                     $( '#kleistad_cursus_start_tijd' ).val( cursus.start_tijd );

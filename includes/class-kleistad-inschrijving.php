@@ -115,6 +115,9 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'gedeeld':
 				return 0 < $this->cursus->inschrijfkosten;
 			default:
+				if ( is_string( $this->data[ $attribuut ] ) ) {
+					return htmlspecialchars_decode( $this->data[ $attribuut ] );
+				}
 				return $this->data[ $attribuut ];
 		}
 	}

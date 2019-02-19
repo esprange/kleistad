@@ -83,6 +83,9 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 			case 'start_datum':
 				return strtotime( $this->data[ $attribuut ] );
 			default:
+				if ( is_string( $this->data[ $attribuut ] ) ) {
+					return htmlspecialchars_decode( $this->data[ $attribuut ] );
+				}
 				return $this->data[ $attribuut ];
 		}
 	}

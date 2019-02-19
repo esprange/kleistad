@@ -37,7 +37,7 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 
 		foreach ( $reserveringen as $reservering ) {
 			foreach ( $reservering->verdeling as $stookdeel ) {
-				if ( $stookdeel['id'] == $huidige_gebruiker->ID ) {  // phpcs:ignore
+				if ( $stookdeel['id'] === $huidige_gebruiker->ID ) {
 					if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
 						$kosten = $stookdeel['prijs'];
 					} else { // Voorlopige berekening.
@@ -48,7 +48,7 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 					$items[] = [
 						'datum'     => $reservering->datum,
 						'oven'      => $ovens[ $reservering->oven_id ]->naam,
-						'stoker'    => ! $stoker ? 'onbekend' : $stoker->display_name,
+						'stoker'    => false === $stoker ? 'onbekend' : $stoker->display_name,
 						'stook'     => $reservering->soortstook,
 						'temp'      => $reservering->temperatuur > 0 ? $reservering->temperatuur : '',
 						'prog'      => $reservering->programma > 0 ? $reservering->programma : '',

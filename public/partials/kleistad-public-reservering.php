@@ -16,7 +16,7 @@ if ( ! Kleistad_Roles::reserveer() ) :
 	<?php
 else :
 	?>
-
+<!-- kleistad_reserveringen" -->
 	<h1 id="<?php echo esc_attr( 'kleistad' . $data['oven']->id ); ?>">Reserveringen voor de <?php echo esc_html( $data['oven']->naam ); ?></h1>
 	<table id="reserveringen<?php echo esc_attr( $data['oven']->id ); ?>" class="kleistad_reserveringen"
 		data-oven_id="<?php echo esc_attr( $data['oven']->id ); ?>"

@@ -200,14 +200,12 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'gebruiker'     => $stoker_naam,
 			]
 		);
-
-		$html = "<tr style=\"background-color: $kleur\">";
 		if ( false !== $json_selectie && $wijzigbaar ) {
-			$html .= "<td><a class=\"kleistad_box\" data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' >$dag $dagnaam</a></td>";
+			$html = "<tr style=\"background-color: $kleur;\" class=\"kleistad_box\" data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' >";
 		} else {
-			$html .= "<td>$dag $dagnaam</td>";
+			$html = "<tr style=\"background-color: $kleur;\" >";
 		}
-		$html .= "<td>$wie</td><td>$reservering->soortstook</td><td>$temperatuur</td></tr>";
+		$html .= "<td>$dag $dagnaam</td><td>$wie</td><td>$reservering->soortstook</td><td>$temperatuur</td></tr>";
 		return $html;
 	}
 

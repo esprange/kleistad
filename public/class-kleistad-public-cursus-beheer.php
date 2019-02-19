@@ -54,33 +54,36 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					}
 				}
 			}
+			$cursus_info    = [
+				'id'              => $cursus->id,
+				'naam'            => $cursus->naam,
+				'start_datum'     => date( 'd-m-Y', $cursus->start_datum ),
+				'eind_datum'      => date( 'd-m-Y', $cursus->eind_datum ),
+				'start_tijd'      => date( 'H:i', $cursus->start_tijd ),
+				'eind_tijd'       => date( 'H:i', $cursus->eind_tijd ),
+				'docent'          => $cursus->docent,
+				'docent'          => $cursus->docent,
+				'technieken'      => $cursus->technieken,
+				'vervallen'       => $cursus->vervallen,
+				'vol'             => $cursus->vol,
+				'techniekkeuze'   => $cursus->techniekkeuze,
+				'inschrijfkosten' => $cursus->inschrijfkosten,
+				'cursuskosten'    => $cursus->cursuskosten,
+				'inschrijfslug'   => $cursus->inschrijfslug,
+				'indelingslug'    => $cursus->indelingslug,
+				'maximum'         => $cursus->maximum,
+				'meer'            => $cursus->meer,
+				'tonen'           => $cursus->tonen,
+				'lopend'          => ( $cursus->start_datum < strtotime( 'today' ) ),
+				'gedeeld'         => ( 0 < $cursus->inschrijfkosten ),
+				'status'          => $cursus->vervallen ? 'vervallen' :
+					( $cursus->eind_datum < $vandaag ? 'voltooid' :
+					( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
+			];
 			$data['rows'][] = [
-				'cursus'    => [
-					'id'              => $cursus->id,
-					'naam'            => $cursus->naam,
-					'start_datum'     => date( 'd-m-Y', $cursus->start_datum ),
-					'eind_datum'      => date( 'd-m-Y', $cursus->eind_datum ),
-					'start_tijd'      => date( 'H:i', $cursus->start_tijd ),
-					'eind_tijd'       => date( 'H:i', $cursus->eind_tijd ),
-					'docent'          => $cursus->docent,
-					'technieken'      => $cursus->technieken,
-					'vervallen'       => $cursus->vervallen,
-					'vol'             => $cursus->vol,
-					'techniekkeuze'   => $cursus->techniekkeuze,
-					'inschrijfkosten' => $cursus->inschrijfkosten,
-					'cursuskosten'    => $cursus->cursuskosten,
-					'inschrijfslug'   => $cursus->inschrijfslug,
-					'indelingslug'    => $cursus->indelingslug,
-					'maximum'         => $cursus->maximum,
-					'meer'            => $cursus->meer,
-					'tonen'           => $cursus->tonen,
-					'lopend'          => ( $cursus->start_datum < strtotime( 'today' ) ),
-					'gedeeld'         => ( 0 < $cursus->inschrijfkosten ),
-					'status'          => $cursus->vervallen ? 'vervallen' :
-						( $cursus->eind_datum < $vandaag ? 'voltooid' :
-						( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
-				],
-				'ingedeeld' => $ingedeeld,
+				'cursus'         => $cursus_info,
+				'json_ingedeeld' => wp_json_encode( $ingedeeld ),
+				'json_cursus'    => wp_json_encode( $cursus_info ),
 			];
 		}
 		$gebruikers = get_users(

@@ -112,7 +112,7 @@ else :
 
 	</div>
 </div>
-<table class="kleistad_datatable display" data-page-length="10", data-order='[[ 0, "desc" ]]' >
+<table class="kleistad_datatable display" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -127,16 +127,12 @@ else :
 	<tbody>
 		<?php
 		foreach ( $data['rows'] as $row ) :
-			$json_cursus    = wp_json_encode( $row['cursus'] );
-			$json_ingedeeld = wp_json_encode( $row['ingedeeld'] );
-			if ( false === $json_cursus || false === $json_ingedeeld ) :
-				continue;
-			endif
+			$json_cursus = wp_json_encode( $row['cursus'] );
 			?>
 			<tr <?php echo $row['cursus']['vol'] ? 'style="background-color:lightblue"' : ( $row['cursus']['vervallen'] ? 'style="background-color:lightgray"' : '' ); ?>
 				class="kleistad_cursus_info"
-				data-cursus='<?php echo htmlspecialchars( $json_cursus, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
-				data-ingedeeld='<?php echo htmlspecialchars( $json_ingedeeld, ENT_QUOTES, 'UTF-8' );  // phpcs:ignore ?>' >
+				data-cursus='<?php echo $row['json_cursus'];  //phpcs:ignore ?>'
+				data-ingedeeld='<?php echo $row['json_ingedeeld']; //phpcs:ignore ?>' >
 				<td data-sort="<?php echo esc_attr( $row['cursus']['id'] ); ?>">C<?php echo esc_html( $row['cursus']['id'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['naam'] ); ?></td>
 				<td><?php echo esc_html( $row['cursus']['docent'] ); ?></td>

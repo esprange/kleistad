@@ -274,6 +274,15 @@
             );
 
             /**
+             * Verander de opmaak bij hovering.
+             */
+            $( 'body' ).on(
+                'hover', '.kleistad_box', function() {
+                    $( this ).css( 'cursor', 'pointer' );
+					$( this ).toggleClass( 'kleistad_hover' );                }
+            );
+
+			/**
              * Open een reservering (nieuw of bestaand).
              */
             $( 'body' ).on(

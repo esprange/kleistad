@@ -2,17 +2,6 @@
     'use strict';
 
 	/**
-	 * Toegevoegde functie aan jquery: Converteer eventuele html special karakters
-	 *
-	 * @param {String} value
-	 */
-	$.fn.valDecoded = function( value ) {
-		var html = $.parseHTML( value );
-		this[0].value = html[0].wholeText;
-		return this;
-	};
-
-	/**
 	 * Converteer string naar tijd in minuten
 	 *
 	 * @param {String} value

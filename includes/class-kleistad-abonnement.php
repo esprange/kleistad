@@ -120,6 +120,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'extras':
 				return isset( $this->data['extras'] ) ? $this->data['extras'] : [];
 			default:
+				if ( is_string( $this->data[ $attribuut ] ) ) {
+					return htmlspecialchars_decode( $this->data[ $attribuut ] );
+				}
 				return $this->data[ $attribuut ];
 		}
 	}

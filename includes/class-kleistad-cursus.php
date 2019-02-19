@@ -135,6 +135,9 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'event_id':
 				return sprintf( 'kleistadcursus%06d', $this->data['id'] );
 			default:
+				if ( is_string( $this->data[ $attribuut ] ) ) {
+					return htmlspecialchars_decode( $this->data[ $attribuut ] );
+				}
 				return $this->data[ $attribuut ];
 		}
 	}
