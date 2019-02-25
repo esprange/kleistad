@@ -33,21 +33,19 @@
 	 */
 	$.fn.selectStoker = function( empty, id ) {
 		var i;
-		this.each( function() {
-			$( this ).append(
-				$( '<select>' ).attr( 'name', 'kleistad_stoker_id' )
+		$( this ).append(
+			$( '<select>' ).attr( 'name', 'kleistad_stoker_id' )
+		);
+		if ( empty ) {
+			$( 'select', this ).append(
+				$( '<option>' ).val( 0 )
 			);
-			if ( empty ) {
-				$( 'select', this ).append(
-					$( '<option>' ).val( 0 )
-				);
-			}
-			for ( i = 0; i < stokers.length; i++ ) {
-				$( 'select', this ).append(
-					$( '<option>' ).val( stokers[i].id ).prop( 'selected',  stokers[i].id === id ).text( stokers[i].naam ).change()
-				);
-			}
-		} );
+		}
+		for ( i = 0; i < stokers.length; i++ ) {
+			$( 'select', this ).append(
+				$( '<option>' ).val( stokers[i].id ).prop( 'selected',  stokers[i].id === id ).text( stokers[i].naam ).change()
+			);
+		}
 		return this;
 	};
 
@@ -397,27 +395,6 @@
 				jaar   = $( '#kleistad_reserveringen' ).data( 'jaar' );
 			kleistadShow( maand, jaar );
 
-            /**
-             * Definieer het formulier.
-             */
-            $( '#kleistad_reservering' ).dialog(
-				{
-					autoOpen: false,
-					height: 550,
-					width: 360,
-					modal: true
-				}
-			);
-
-			/**
-             * Verdeel de percentages als de gebruiker een percentage wijzigt.
-             */
-            $( '#kleistad_reservering' ).on(
-				'change', '.kleistad_verdeling', function() {
-                    kleistadVerdeel( this );
-                }
-            );
-
 			/**
              * Wijzig de periode als de gebruiker op eerder of later klikt.
              */
@@ -447,6 +424,27 @@
                     $( '#kleistad_reservering' ).dialog( 'open' );
                     kleistadForm( $( this ).data( 'form' ) );
                     return false;
+                }
+            );
+
+            /**
+             * Definieer het formulier.
+             */
+            $( '#kleistad_reservering' ).dialog(
+				{
+					autoOpen: false,
+					height: 550,
+					width: 360,
+					modal: true
+				}
+			);
+
+			/**
+             * Verdeel de percentages als de gebruiker een percentage wijzigt.
+             */
+            $( '#kleistad_reservering' ).on(
+				'change', '.kleistad_verdeling', function() {
+                    kleistadVerdeel( this );
                 }
             );
 

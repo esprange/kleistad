@@ -279,7 +279,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @return WP_REST_Response Ajax response.
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) {
-		$method      = $request->get_method();
 		$input       = $request->get_param( 'reservering' );
 		$oven_id     = $request->get_param( 'oven_id' );
 		$jaar        = intval( $input['jaar'] );
@@ -287,9 +286,12 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		$dag         = intval( $input['dag'] );
 		$reservering = new Kleistad_Reservering( $oven_id, mktime( 23, 59, 0, $maand, $dag, $jaar ) );
 
-		if ( 'PUT' === $method || 'POST' === $method ) {
-			// het betreft een toevoeging of wijziging, in het eerste geval controleren of er niet snel door een ander een reservering is gedaan.
-			if ( ! $reservering->gereserveerd || Kleistad_Roles::override() ) {
+		switch ( $request->get_method() ) {
+			case 'POST':
+				// Het betreft een toevoeging, in dit geval controleren of er niet snel door een ander een reservering is gedaan.
+				if ( $reservering->gereserveerd ) {
+					break;
+				}
 				$reservering->gebruiker_id = get_current_user_id();
 				$reservering->dag          = $dag;
 				$reservering->maand        = $maand;
@@ -299,12 +301,27 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				$reservering->programma    = intval( $input['programma'] );
 				$reservering->verdeling    = $input['verdeling'];
 				$reservering->save();
-			}
-		} elseif ( 'DELETE' === $method ) {
-			// het betreft een annulering, controleer of deze al niet verwijderd is.
-			if ( $reservering->gereserveerd ) {
+				break;
+			case 'PUT':
+				// Het betreft een wijziging bestaande reservering. Controleer of deze al niet verwijderd is.
+				if ( ! $reservering->gereserveerd ) {
+					break;
+				}
+				$reservering->temperatuur = intval( $input['temperatuur'] );
+				$reservering->soortstook  = sanitize_text_field( $input['soortstook'] );
+				$reservering->programma   = intval( $input['programma'] );
+				$reservering->verdeling   = $input['verdeling'];
+				$reservering->save();
+				break;
+			case 'DELETE':
+				// het betreft een annulering, controleer of deze al niet verwijderd is.
+				if ( ! $reservering->gereserveerd ) {
+					break;
+				}
 				$reservering->delete();
-			}
+				break;
+			default:
+				break;
 		}
 		return new WP_REST_response(
 			[
