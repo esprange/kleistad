@@ -25,9 +25,6 @@ get_header(); ?>
 			$the_id           = get_the_ID();
 			if ( false !== $the_id ) :
 				$recept_terms = get_the_terms( $the_id, 'kleistad_recept_cat' );
-				if ( false === $recept_terms ) {
-					continue;
-				}
 				foreach ( $recept_terms as $recept_term ) {
 					if ( intval( $recept_term->parent ) === intval( $glazuur_parent->term_id ) ) {
 						$glazuur_naam = $recept_term->name;
