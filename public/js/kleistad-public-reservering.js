@@ -220,12 +220,16 @@
 						append( $( '<tr>' ).
 							append( $( '<td>' ).
 								append( '<label>' ).text( 0 === index ? 'Stoker' : 'Medestoker' ) ).
-							append( $( '<td>' ).text( vindStokerNaam( item.id ) ) ).
-							append( $( '<td>' ).text( item.perc ) )
+							append( $( '<td>' ).text( vindStokerNaam( item.id ) ) ).css( { 'white-space':'nowrap', 'text-overflow':'ellipsis', overflow:'hidden' } ).
+							append( $( '<td>' ).css( { 'text-align':'right' } ).text( item.perc ) )
 						);
 				}
 			);
-			$( '#kleistad_tekst' ).text( 'Deze reservering is definitief' );
+			if ( formData.verwerkt ) {
+				$( '#kleistad_tekst' ).text( 'Deze reservering is definitief' );
+			} else {
+				$( '#kleistad_tekst' ).text( 'Deze reservering is niet door u te wijzigen' );
+			}
 			$( '#kleistad_sluit' ).focus();
 		}
     }
@@ -417,7 +421,7 @@
              */
             $( '#kleistad_reserveringen' ).on(
                 'click', '.kleistad_periode', function() {
-					maand  = $( this ).data( 'maand' ),
+					maand  = $( this ).data( 'maand' );
 					jaar   = $( this ).data( 'jaar' );
                     kleistadShow( maand, jaar );
                 }

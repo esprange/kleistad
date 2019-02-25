@@ -27,6 +27,7 @@
  * @property bool   gemeld
  * @property bool   verwerkt
  * @property bool   actief
+ * @property bool   gereserveerd
  * @property array  verdeling
  * @property string opmerking
  */
@@ -121,6 +122,8 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			case 'verwerkt':
 				return 1 === intval( $this->data[ $attribuut ] );
 			case 'actief':
+				return strtotime( $this->data['jaar'] . '-' . $this->data['maand'] . '-' . $this->data['dag'] . ' 00:00' ) < time();
+			case 'gereserveerd':
 				return ( ! is_null( $this->data['id'] ) );
 			case 'jaar':
 			case 'maand':

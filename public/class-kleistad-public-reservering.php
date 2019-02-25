@@ -55,12 +55,12 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		);
 		if ( is_numeric( $atts['oven'] ) ) {
 			$oven_id = $atts['oven'];
-
-			$oven = new Kleistad_Oven( $oven_id );
+			$oven    = new Kleistad_Oven( $oven_id );
 			if ( ! intval( $oven->id ) ) {
 				$error->add( 'fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !' );
 				return $error;
 			}
+			$stokers    = [];
 			$gebruikers = get_users(
 				[
 					'fields'  => [ 'ID', 'display_name' ],
@@ -156,9 +156,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	private static function maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar ) {
 		$reservering  = new Kleistad_Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
 		$gebruiker_id = get_current_user_id();
-		$stoker_id    = $reservering->actief ? $reservering->verdeling[0]['id'] : $gebruiker_id;
+		$stoker_id    = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
 		$stoker_naam  = get_userdata( $stoker_id )->display_name;
-		if ( $reservering->actief ) {
+		if ( $reservering->gereserveerd ) {
 			$reserveerbaar = false;
 			if ( $reservering->verdeling[0]['id'] === $gebruiker_id ) {
 				/**
@@ -167,11 +167,11 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				$kleur = 'lightgreen';
 				$wie   = $stoker_naam;
 				/**
-				 * Zolang de datum van de reservering nog niet in het verleden ligt mag deze verwijderd worden.
+				 * Zolang de datum van de reservering nog niet in het verleden of de gebruiker bestuurdlid is dan mag deze verwijderd worden.
 				 */
-				$verwijderbaar = $reserveerbaar && ! $reservering->verwerkt;
+				$verwijderbaar = ! $reservering->actief || ( ! $reservering->verwerkt && Kleistad_Roles::override() );
 				/**
-				 * Zolang de reservering nog niet financieel verwerkt is mag deze gewijzigd worden.
+				 * Zolang de reservering nog in de toekomst ligt en niet financieel verwerkt is mag deze gewijzigd worden.
 				 */
 				$wijzigbaar = ! $reservering->verwerkt;
 			} else {
@@ -200,7 +200,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			$verwijderbaar = false;
 			$wijzigbaar    = $reserveerbaar || is_super_admin();
 		}
-		$kleur         = $wijzigbaar ? ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'gray' : $kleur ) : 'white';
+		$kleur         = ! $reservering->verwerkt ? ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'gray' : $kleur ) : 'white';
 		$temperatuur   = 0 !== $reservering->temperatuur ? $reservering->temperatuur : '';
 		$json_selectie = wp_json_encode(
 			[
@@ -208,17 +208,17 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'maand'         => $maand,
 				'jaar'          => $jaar,
 				'soortstook'    => $reservering->soortstook,
-				'temperatuur'   => $reservering->actief ? $reservering->temperatuur : '',
-				'programma'     => $reservering->actief ? $reservering->programma : '',
-				'verdeling'     => $reservering->actief ? $reservering->verdeling : [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
+				'temperatuur'   => $reservering->gereserveerd ? $reservering->temperatuur : '',
+				'programma'     => $reservering->gereserveerd ? $reservering->programma : '',
+				'verdeling'     => $reservering->gereserveerd ? $reservering->verdeling : [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
 				'verwijderbaar' => $verwijderbaar,
 				'wijzigbaar'    => $wijzigbaar,
 				'reserveerbaar' => $reserveerbaar,
-				'gebruiker_id'  => $stoker_id,
-				'gebruiker'     => $stoker_naam,
+				'verwerkt'      => $reservering->verwerkt,
+				'gebruiker_id'  => $gebruiker_id,
 			]
 		);
-		if ( false !== $json_selectie && ( $reserveerbaar || $reservering->actief ) ) {
+		if ( false !== $json_selectie && ( $reserveerbaar || $reservering->gereserveerd ) ) {
 			$html = "<tr style=\"background-color: $kleur;\" class=\"kleistad_box\" data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' >";
 		} else {
 			$html = "<tr style=\"background-color: $kleur;\" >";
@@ -289,7 +289,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 
 		if ( 'PUT' === $method || 'POST' === $method ) {
 			// het betreft een toevoeging of wijziging, in het eerste geval controleren of er niet snel door een ander een reservering is gedaan.
-			if ( ! $reservering->actief || Kleistad_Roles::override() ) {
+			if ( ! $reservering->gereserveerd || Kleistad_Roles::override() ) {
 				$reservering->gebruiker_id = get_current_user_id();
 				$reservering->dag          = $dag;
 				$reservering->maand        = $maand;
@@ -302,7 +302,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			}
 		} elseif ( 'DELETE' === $method ) {
 			// het betreft een annulering, controleer of deze al niet verwijderd is.
-			if ( $reservering->actief ) {
+			if ( $reservering->gereserveerd ) {
 				$reservering->delete();
 			}
 		}

@@ -15,13 +15,17 @@ if ( ! Kleistad_Roles::reserveer() ) :
 	<p>Geen toegang tot dit formulier</p>
 	<?php
 else :
+	$stokers_json = wp_json_encode( $data['stokers'] );
+	if ( false === $stokers_json ) {
+		return;
+	}
 	?>
 	<h1>Reserveringen voor de <?php echo esc_html( $data['oven']['naam'] ); ?></h1>
 	<table id="kleistad_reserveringen" class="kleistad_reserveringen"
 		data-maand="<?php echo esc_attr( date( 'n' ) ); ?>"
 		data-jaar="<?php echo esc_attr( date( 'Y' ) ); ?>"
 		data-oven-naam="<?php echo esc_attr( $data['oven']['naam'] ); ?>"
-		data-stokers='<?php echo wp_json_encode( $data['stokers'] ); ?>'
+		data-stokers='<?php echo $stokers_json; // phpcs:ignore ?>'
 		data-override="<?php echo Kleistad_Roles::override() ? 1 : 0; ?>" >
 		<tr>
 			<th>de reserveringen worden opgehaald...</th>
