@@ -1,5 +1,26 @@
+/**
+ * Generieke Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ */
 ( function( $ ) {
     'use strict';
+
+	/**
+	 * Polyfill, kijk of de browser ondersteuning geeft voor een datalist element.
+	 */
+	var nativedatalist = !! ( 'list' in document.createElement( 'input' ) ) && !! ( document.createElement( 'datalist' ) && window.HTMLDataListElement );
+	if ( ! nativedatalist ) {
+		$( 'input[list]' ).each( function() {
+			var availableTags = $( '#' + $( this ).attr( 'list' ) ).find( 'option' ).map( function() {
+				return this.value;
+				}
+			).get();
+			$( this ).autocomplete( { source: availableTags } );
+			}
+		);
+	}
 
 	/**
 	 * Converteer string naar tijd in minuten
@@ -61,15 +82,6 @@
 	});
 
 	/**
-	 * Default settings voor datapicker.
-	 */
-	$.datepicker.setDefaults(
-		{
-			dateFormat: 'dd-mm-yy'
-		}
-	);
-
-	/**
 	 * Maak een timespinner van de spinner.
 	 */
 	$.widget(
@@ -92,17 +104,51 @@
 		}
 	);
 
+	/**
+	 * Kopieer value naar klembord.
+	 */
+	$.fn.kleistad_klembord = function() {
+		var range     = document.createRange(),
+			lijst     = $( this ).val(),
+			selection, $temp;
+
+		// For IE.
+		if ( window.clipboardData ) {
+			window.clipboardData.setData( 'Text', lijst );
+		} else {
+			$temp = $( '<div>' );
+			$temp.css( {
+				position: 'absolute',
+				left:     '-1000px',
+				top:      '-1000px'
+			} );
+			$temp.text( lijst );
+			$( 'body' ).append( $temp );
+			range.selectNodeContents( $temp.get( 0 ) );
+			selection = window.getSelection();
+			selection.removeAllRanges();
+			selection.addRange( range );
+			document.execCommand( 'copy', false, null );
+			$temp.remove();
+		}
+		return this;
+	};
+
 	$( document ).ready(
         function() {
             /**
-             * Definieer de tabel.
+             * Definieer de tabellen.
              */
 			$( '.kleistad_datatable' ).DataTable();
 
 			/**
              * Definieer de datum velden.
              */
-            $( '.kleistad_datum' ).datepicker();
+            $( '.kleistad_datum' ).datepicker(
+				{
+					dateFormat: 'dd-mm-yy'
+				}
+			);
 
             /**
              * Definieer de timespinners.

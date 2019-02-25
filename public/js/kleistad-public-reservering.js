@@ -3,6 +3,164 @@
 ( function( $ ) {
     'use strict';
 
+	/**
+	 * De lijst van stokers.
+	 */
+	var stokers  = $( '#kleistad_reserveringen' ).data( 'stokers' ),
+		override = $( '#kleistad_reserveringen' ).data( 'override' ),
+		ovenNaam = $( '#kleistad_reserveringen' ).data( 'oven-naam' );
+
+	/**
+	 * Vind de stoker's naam op basis van het wordpress id in de lijst van stokers.
+	 *
+	 * @param {int} id Het Wordpress id van de stoker
+	 */
+	function vindStokerNaam( id ) {
+		for ( var i = 0; i < stokers.length; i++ ) {
+			if ( stokers[i].id === id ) {
+				return stokers[i].naam;
+        	}
+    	}
+    	return '';
+	}
+
+	/**
+	 * Maak een selectie lijst van de mogelijke stokers.
+	 *
+	 * @param {bool} empty Als waar, dan bevat de selectie lijst ook een lege optie.
+	 * @param {int} id Het wordpress id van de thans geselecteerde stoker.
+	 */
+	$.fn.selectStoker = function( empty, id ) {
+		this.each( function() {
+			$( this ).append(
+				$( '<select>' ).attr( 'name', 'kleistad_stoker_id' )
+			);
+			if ( empty ) {
+				$( 'select', this ).append(
+					$( '<option>' ).val( 0 )
+				);
+			}
+			for ( var i = 0; i < stokers.length; i++ ) {
+				$( 'select', this ).append(
+					$( '<option>' ).val( stokers[i].id ).prop( 'selected',  stokers[i].id === id ).text( stokers[i].naam ).change()
+				);
+			}
+		} );
+		return this;
+	};
+
+	/**
+	 * Voeg een regel aan de tabel toe voor de hoofdstoker.
+	 *
+	 * @param {array} verdeling De verdeling: het wordpress id van de hoofdstoker en het percentage dat deze stookt.
+	 */
+	function stook( verdeling ) {
+		if ( override ) {
+			$( '#kleistad_reservering table > tbody' ).append(
+				$( '<tr>' ).append(
+					$( '<td>' ).append(
+						$( '<label>' ).text( 'Stoker' )
+					)
+				).append(
+					$( '<td>' ).selectStoker( false, verdeling.id )
+				).append(
+					$( '<td>').append(
+						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'3' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
+					)
+				)
+			);
+
+		} else {
+			$( '#kleistad_reservering table > tbody' ).append(
+				$( '<tr>' ).append(
+					$( '<td>' ).append(
+						$( '<label>' ).text( 'Stoker' )
+					)
+				).append(
+					$( '<td>' ).append(
+						$( '<input> ' ).attr( { name:'kleistad_stoker_id', type:'hidden' } ).val( verdeling.id )
+					).append( vindStokerNaam( verdeling.id ) ).css( { 'white-space':'nowrap', 'text-overflow':'ellipsis', overflow:'hidden' } )
+				).append(
+					$( '<td>' ).append(
+						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'3', tabindex:'-1' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
+					)
+				)
+			);
+		}
+	}
+
+	/**
+	 * Voeg een regel aan de tabel toe voor een medestoker.
+	 *
+	 * @param {array} verdeling De verdeling: het wordpress id van de meestoker en het percentage dat deze stookt.
+	 */
+	function medestook( verdeling ) {
+		$( '#kleistad_reservering table > tbody > tr:last' ).after(
+			$( '<tr>' ).append(
+				$( '<td>' ).append(
+					$( '<label>' ).text( 'Medestoker' )
+				)
+			).append(
+				$( '<td>' ).selectStoker( true, verdeling.id )
+			).append(
+				$( '<td>' ).append(
+					$( '<input>' ).attr( { type:'number', 'class':'kleistad_verdeling', name:'kleistad_stoker_perc', min:'0', max:'100', size:'3' } ).val( verdeling.perc )
+				)
+			)
+		);
+	}
+
+	/**
+	 * Voeg de regels voor de stookparameters toe.
+	 *
+	 * @param {array} data De door de form meegegeven data, waaronder de stookparameters.
+	 */
+	function parameters( data ) {
+		$( '#kleistad_reservering table > thead' ).append(
+			$( '<tr>' ).append(
+				$( '<td>' ).append(
+					$( '<label>' ).text( 'Soort stook' )
+				)
+			).append(
+				$( '<td>' ).attr( 'colspan', '2' ).append(
+					$( '<select>' ).attr( 'id', 'kleistad_soortstook' ).append(
+						$( '<option>' ).val( 'Biscuit' ).text( 'Biscuit' ).prop( 'selected', data.soortstook === 'Biscuit' )
+					).append(
+						$( '<option>' ).val( 'Glazuur' ).text( 'Glazuur' ).prop( 'selected', data.soortstook === 'Glazuur' )
+					).append(
+						$( '<option>' ).val( 'Overig' ).text( 'Overig' ).prop( 'selected', data.soortstook === 'Overig' )
+					)
+				)
+			)
+		).append(
+			$( '<tr>' ).append(
+				$( '<td>' ).attr( 'colspan', '2' ).append(
+					$( '<label>' ).html( 'Temperatuur &nbsp; &deg;C' )
+				)
+			).
+			append(
+				$( '<td>' ).append(
+					$( '<input>' ).attr( { id: 'kleistad_temperatuur', type: 'number', min:'0', max:'1400' } ).val( data.temperatuur )
+				)
+			)
+		).append(
+			$( '<tr>' ).append(
+				$( '<td>' ).attr( 'colspan', '2' ).append(
+					$( '<label>' ).text( 'Programma' )
+				)
+			).append(
+				$( '<td>' ).append(
+					$( '<input>' ).attr( { id: 'kleistad_programma', type: 'number', min:'0', max:'99' } ).val( data.programma )
+				)
+			)
+		);
+		if ( override ) {
+			$( '#kleistad_soortstook' ).append(
+				$( '<option>' ).val( 'Onderhoud' ).text( 'Onderhoud' ).prop( 'selected', data.soortstook === 'Onderhoud' )
+			);
+		}
+	}
+
     /**
      * Toon het formulier om een reservering te maken, wijzigen of verwijderen.
      *
@@ -10,59 +168,66 @@
      * @returns {undefined}
      */
     function kleistadForm( formData ) {
-        var row, aantal, stokerIds, stokerPercs, verdelingAantal;
+		var row;
 
-        $( '#kleistad_oven_id' ).val( formData.oven_id );
-		$( '#kleistad_oven' ).dialog( 'option', 'title', 'Reserveer de oven op ' + formData.dag + '-' + formData.maand + '-' + formData.jaar );
-        $( '#kleistad_temperatuur' ).val( formData.temperatuur );
-        $( '#kleistad_soortstook' ).val( formData.soortstook );
-        $( '#kleistad_dag' ).val( formData.dag );
+		$( '.kleistad_button' ).hide();
+		$( '#kleistad_reservering table > tbody' ).empty();
+		$( '#kleistad_reservering table > thead' ).empty();
+
+		$( '#kleistad_reservering' ).dialog( 'option', 'title', ovenNaam + ' op ' + formData.dag + '-' + formData.maand + '-' + formData.jaar );
+
+		$( '#kleistad_dag' ).val( formData.dag );
         $( '#kleistad_maand' ).val( formData.maand );
         $( '#kleistad_jaar' ).val( formData.jaar );
         $( '#kleistad_stoker_id' ).val( formData.gebruiker_id );
-        $( '#kleistad_programma' ).val( formData.programma );
-        $( '#kleistad_stoker' ).html( formData.gebruiker );
 
-        verdelingAantal = Math.max( formData.verdeling.length, 4 );
-        aantal = $( '.kleistad_medestoker_row' ).length;
-        while ( aantal > verdelingAantal ) {
-            $( '.kleistad_medestoker_row' ).last().remove();
-            aantal--;
-        }
-        while ( aantal < verdelingAantal ) {
-            row = $( '.kleistad_medestoker_row' ).first().clone( true );
-            $( '.kleistad_medestoker_row' ).last().after( row );
-            aantal++;
-        }
-        $( '[name=kleistad_stoker_id]' ).val( '0' );
-        $( '[name=kleistad_stoker_perc]' ).val( '0' );
-
-        stokerIds = $( '[name=kleistad_stoker_id]' ).toArray();
-        stokerPercs = $( '[name=kleistad_stoker_perc]' ).toArray();
-
-        formData.verdeling.forEach(
-            function( item, index ) {
-                stokerIds[index].value = item.id;
-                stokerPercs[index].value = item.perc;
-            }
-        );
-
-        if ( /* 1 === */ formData.gereserveerd ) {
-			$( '#kleistad_muteer' ).show();
-			$( '#kleistad_voegtoe' ).hide();
-			if ( /* 1 === */ formData.verwijderbaar ) {
-                $( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen of verwijderen ?' );
-				$( '#kleistad_verwijder' ).show();
-	        } else {
-                $( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen ?' );
-                $( '#kleistad_verwijder' ).hide();
-            }
-        } else {
+		if ( formData.reserveerbaar ) {
+			parameters( formData );
+			stook( formData.verdeling[0] );
+			medestook( { id:0, perc:0 } );
             $( '#kleistad_tekst' ).text( 'Wil je de reservering toevoegen ?' );
-			$( '#kleistad_voegtoe' ).show();
-			$( '#kleistad_muteer' ).hide();
-            $( '#kleistad_verwijder' ).hide();
-        }
+			$( '#kleistad_voegtoe,#kleistad_stoker_toevoegen' ).show();
+			$( '#kleistad_soortstook' ).focus();
+		} else if ( formData.wijzigbaar ) {
+			parameters( formData );
+			stook( formData.verdeling[0] );
+			for ( row = 1; row < formData.verdeling.length; row++ ) {
+				medestook( formData.verdeling[row] );
+			}
+			medestook( { id:0, perc:0 } );
+			if ( formData.verwijderbaar ) {
+				$( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen of verwijderen ?' );
+				$( '#kleistad_muteer,#kleistad_verwijder,#kleistad_stoker_toevoegen' ).show();
+			} else {
+				$( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen ?' );
+				$( '#kleistad_muteer' ).show();
+			}
+			$( '#kleistad_soortstook' ).focus();
+		} else {
+			$( '#kleistad_reservering table > thead' ).
+				append( $( '<tr>' ).
+					append( $( '<td>' ).text( 'Soort stook' ) ).
+					append( $( '<td>' ).text( formData.soortstook ) ) ).
+				append( $( '<tr>' ).
+					append( $( '<td>' ).text( 'Temperatuur' ) ).
+					append( $( '<td>' ).text( formData.temperatuur ) ) ).
+				append( $( '<tr>' ).
+					append( $( '<td>' ).text( 'Programma' ) ).
+					append( $( '<td>' ).text( formData.programma ) ) );
+			formData.verdeling.forEach(
+				function( item, index ) {
+					$( '#kleistad_reservering table > tbody' ).
+						append( $( '<tr>' ).
+							append( $( '<td>' ).
+								append( '<label>' ).text( 0 === index ? 'Stoker' : 'Medestoker' ) ).
+							append( $( '<td>' ).text( vindStokerNaam( item.id ) ) ).
+							append( $( '<td>' ).text( item.perc ) )
+						);
+				}
+			);
+			$( '#kleistad_tekst' ).text( 'Deze reservering is definitief' );
+			$( '#kleistad_sluit' ).focus();
+		}
     }
 
     /**
@@ -132,13 +297,8 @@
 
     /**
      * Haal de inhoud van de tabel met reserveringen bij de server op.
-     *
-     * @param {int} ovenId oven waarvan de gegevens worden opgevraagd.
-     * @param {int} maand maandnummer van de opgevraagde periode.
-     * @param {int} jaar jaarnummer van de opgevraagde periode.
-     * @returns {undefined}
      */
-    function kleistadShow( ovenId, maand, jaar ) {
+    function kleistadShow( maand, jaar ) {
         $.ajax(
             {
                 url: kleistadData.base_url + '/reserveer/',
@@ -147,14 +307,14 @@
                     xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
                 },
                 data: {
-                    maand: maand,
-                    jaar: jaar,
-                    oven_id: ovenId
+                    maand:   maand,
+                    jaar:    jaar,
+                    oven_id: $( '#kleistad_oven_id' ).val()
                 }
             }
         ).done(
             function( data ) {
-                $( '#reserveringen' + data.oven_id ).html( data.html );
+                $( '#kleistad_reserveringen' ).html( data.html );
             }
         ).fail(
 			function( jqXHR ) {
@@ -184,7 +344,7 @@
                 }
             }
         );
-        $( '#kleistad_oven' ).dialog( 'close' );
+        $( '#kleistad_reservering' ).dialog( 'close' );
 
         $.ajax(
             {
@@ -209,7 +369,7 @@
             }
         ).done(
             function( data ) {
-                $( '#reserveringen' + data.oven_id ).html( data.html );
+                $( '#kleistad_reserveringen' ).html( data.html );
             }
         ).fail(
 			function( jqXHR ) {
@@ -227,67 +387,58 @@
             /**
              * Definieer het formulier.
              */
-            $( '.kleistad_form_popup' ).each(
-                function() {
-                    $( this ).dialog(
-                        {
-                            autoOpen: false,
-                            height: 550,
-                            width: 360,
-                            modal: true
-                        }
-                    );
-                }
+            $( '#kleistad_reservering' ).dialog(
+				{
+					autoOpen: false,
+					height: 550,
+					width: 360,
+					modal: true
+				}
 			);
 
             /**
              * Toon de tabel.
              */
-            $( '.kleistad_reserveringen' ).each(
-                function() {
-                    var ovenId = $( this ).data( 'oven_id' ),
-                        maand = $( this ).data( 'maand' ),
-                        jaar = $( this ).data( 'jaar' );
-                    kleistadShow( ovenId, maand, jaar );
-                }
-            );
+			var maand  = $( '#kleistad_reserveringen' ).data( 'maand' ),
+			    jaar   = $( '#kleistad_reserveringen' ).data( 'jaar' );
+  			kleistadShow( maand, jaar );
 
-            /**
+			/**
              * Verdeel de percentages als de gebruiker een percentage wijzigt.
              */
-            $( '.kleistad_verdeel' ).change(
-                function() {
+            $( '#kleistad_reservering' ).on(
+				'change', '.kleistad_verdeling', function() {
                     kleistadVerdeel( this );
                 }
             );
 
-            /**
+			/**
              * Wijzig de periode als de gebruiker op eerder of later klikt.
              */
-            $( 'body' ).on(
+            $( '#kleistad_reserveringen' ).on(
                 'click', '.kleistad_periode', function() {
-                    var ovenId = $( this ).data( 'oven_id' ),
-                        maand = $( this ).data( 'maand' ),
-                        jaar = $( this ).data( 'jaar' );
-                    kleistadShow( ovenId, maand, jaar );
+					maand  = $( this ).data( 'maand' ),
+					jaar   = $( this ).data( 'jaar' );
+                    kleistadShow( maand, jaar );
                 }
             );
 
             /**
              * Verander de opmaak bij hovering.
              */
-            $( 'body' ).on(
+            $( '#kleistad_reserveringen' ).on(
                 'hover', '.kleistad_box', function() {
                     $( this ).css( 'cursor', 'pointer' );
-					$( this ).toggleClass( 'kleistad_hover' );                }
+					$( this ).toggleClass( 'kleistad_hover' );
+				}
             );
 
 			/**
              * Open een reservering (nieuw of bestaand).
              */
-            $( 'body' ).on(
+            $( '#kleistad_reserveringen' ).on(
                 'click', '.kleistad_box', function() {
-                    $( '#kleistad_oven' ).dialog( 'open' );
+                    $( '#kleistad_reservering' ).dialog( 'open' );
                     kleistadForm( $( this ).data( 'form' ) );
                     return false;
                 }
@@ -296,8 +447,8 @@
             /**
              * Voeg een reservering toe.
              */
-            $( 'body' ).on(
-                'click', '.kleistad_voegtoe', function() {
+            $( '#kleistad_reservering' ).on(
+                'click', '#kleistad_voegtoe', function() {
                     kleistadMuteer( 'POST' );
                 }
             );
@@ -305,8 +456,8 @@
             /**
              * Wijzig een reservering.
              */
-            $( 'body' ).on(
-                'click', '.kleistad_muteer', function() {
+            $( '#kleistad_reservering' ).on(
+                'click', '#kleistad_muteer', function() {
                     kleistadMuteer( 'PUT' );
                 }
             );
@@ -314,8 +465,8 @@
             /**
              * Verwijder een reservering
              */
-            $( 'body' ).on(
-                'click', '.kleistad_verwijder', function() {
+            $( '#kleistad_reservering' ).on(
+                'click', '#kleistad_verwijder', function() {
                     kleistadMuteer( 'DELETE' );
                 }
             );
@@ -323,20 +474,18 @@
             /**
              * Sluit het formulier
              */
-            $( 'body' ).on(
-                'click', '.kleistad_sluit', function() {
-                    $( '#kleistad_oven' ).dialog( 'close' );
+            $( '#kleistad_reservering' ).on(
+                'click', '#kleistad_sluit', function() {
+                    $( '#kleistad_reservering' ).dialog( 'close' );
                 }
             );
 
             /**
              * Voeg een medestoker toe
              */
-            $( 'body' ).on(
+            $( '#kleistad_reservering' ).on(
                 'click', '#kleistad_stoker_toevoegen', function() {
-                    var row = $( '.kleistad_medestoker_row' ).first().clone( true );
-                    $( '.kleistad_medestoker_row' ).last().after( row );
-                    $( '[name=kleistad_stoker_perc]' ).last().val( 0 );
+					medestook( { id:0, perc:0 } );
                     return false;
                 }
             );

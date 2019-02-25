@@ -20,7 +20,6 @@ list( $vorige_maand, $vorige_maand_jaar )     = explode( ',', date( 'n,Y', mktim
 	<tr>
 		<th>
 			<button type="button" class="kleistad_periode"
-					data-oven_id="<?php echo esc_attr( $oven_id ); ?>"
 					data-maand="<?php echo esc_attr( $vorige_maand ); ?>"
 					data-jaar="<?php echo esc_attr( $vorige_maand_jaar ); ?>" >eerder
 				</button
@@ -28,7 +27,6 @@ list( $vorige_maand, $vorige_maand_jaar )     = explode( ',', date( 'n,Y', mktim
 		<th colspan="2" ><strong><?php echo esc_html( $titel ); ?></strong></th>
 		<th style="text-align:right" >
 			<button type="button" class="kleistad_periode"
-					data-oven_id="<?php echo esc_attr( $oven_id ); ?>"
 					data-maand="<?php echo esc_attr( $volgende_maand ); ?>"
 					data-jaar="<?php echo esc_attr( $volgende_maand_jaar ); ?>" >later
 			</button>
@@ -47,12 +45,10 @@ list( $vorige_maand, $vorige_maand_jaar )     = explode( ',', date( 'n,Y', mktim
 <tfoot>
 	<tr>
 		<th><button type="button" class="kleistad_periode"
-					data-oven_id="<?php echo esc_attr( $oven_id ); ?>"
 					data-maand="<?php echo esc_attr( $vorige_maand ); ?>"
 					data-jaar="<?php echo esc_attr( $vorige_maand_jaar ); ?>" >eerder</button></th>
 		<th colspan="2"><strong><?php echo esc_html( $titel ); ?></strong></th>
 		<th style="text-align:right"><button type="button" class="kleistad_periode"
-					data-oven_id="<?php echo esc_attr( $oven_id ); ?>"
 					data-maand="<?php echo esc_attr( $volgende_maand ); ?>"
 					data-jaar="<?php echo esc_attr( $volgende_maand_jaar ); ?>" >later</button></th>
 	</tr>

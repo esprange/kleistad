@@ -19,6 +19,13 @@
 class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 
 	/**
+	 * Shortcode actief vlag.
+	 *
+	 * @var bool $actief Vlag om te voorkomen dat er meer dan 1 reserveringstabel getoond wordt.
+	 */
+	private static $actief = false;
+
+	/**
 	 *
 	 * Prepareer 'reservering' form
 	 *
@@ -28,10 +35,18 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @since   4.0.87
 	 */
 	public function prepare( &$data = null ) {
+		global $wpdb;
 		$error = new WP_Error();
+
 		if ( ! Kleistad_Roles::reserveer() ) {
 			$error->add( 'security', 'hiervoor moet je ingelogd zijn' );
 			return $error;
+		}
+		if ( self::$actief ) {
+			$error->add( 'fout', 'er kan maar één tabel met oven reserveringen tegelijk getoond worden' );
+			return $error;
+		} else {
+			self::$actief = true; // Voorkomen dat twee reserveringstabellen op één pagina getoond worden.
 		}
 		$atts = shortcode_atts(
 			[ 'oven' => 'niet ingevuld' ],
@@ -46,25 +61,27 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				$error->add( 'fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !' );
 				return $error;
 			}
-
 			$gebruikers = get_users(
 				[
 					'fields'  => [ 'ID', 'display_name' ],
 					'orderby' => [ 'nicename' ],
 				]
 			);
-
-			$stokers = [];
 			foreach ( $gebruikers as $gebruiker ) {
 				if ( Kleistad_Roles::reserveer( $gebruiker->ID ) ) {
-					$stokers[] = $gebruiker;
+					$stokers[] = [
+						'id'   => intval( $gebruiker->ID ),
+						'naam' => $gebruiker->display_name,
+					];
 				}
 			}
-			$huidige_gebruiker = wp_get_current_user();
-			$data              = [
-				'stokers'           => $stokers,
-				'oven'              => $oven,
-				'huidige_gebruiker' => $huidige_gebruiker,
+			$data = [
+				'stokers'  => $stokers,
+				'oven'     => [
+					'id'   => $oven->id,
+					'naam' => $oven->naam,
+				],
+				'override' => Kleistad_Roles::override(),
 			];
 			return true;
 		} else {
@@ -137,13 +154,13 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @return string html opgemaakte tekstregel.
 	 */
 	private static function maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar ) {
-		$reservering   = new Kleistad_Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
-		$gebruiker_id  = get_current_user_id();
-		$stoker_id     = $reservering->actief ? $reservering->gebruiker_id : $gebruiker_id;
-		$stoker_naam   = get_userdata( $stoker_id )->display_name;
-		$reserveerbaar = strtotime( "$jaar-$maand-$dag 23:59" ) >= strtotime( 'today' );
+		$reservering  = new Kleistad_Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
+		$gebruiker_id = get_current_user_id();
+		$stoker_id    = $reservering->actief ? $reservering->verdeling[0]['id'] : $gebruiker_id;
+		$stoker_naam  = get_userdata( $stoker_id )->display_name;
 		if ( $reservering->actief ) {
-			if ( $reservering->gebruiker_id === $gebruiker_id ) {
+			$reserveerbaar = false;
+			if ( $reservering->verdeling[0]['id'] === $gebruiker_id ) {
 				/**
 				 * Er is een bestaande reservering van de ingelogde stoker.
 				 */
@@ -173,8 +190,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				$wijzigbaar = $verwijderbaar;
 			}
 		} else {
-			$kleur = 'white';
-			$wie   = $reserveerbaar ? '-beschikbaar-' : '';
+			$reserveerbaar = strtotime( "$jaar-$maand-$dag 23:59" ) >= strtotime( 'today' );
+			$kleur         = 'white';
+			$wie           = $reserveerbaar ? '-beschikbaar-' : '';
 			/**
 			 * Als er geen reservering actief is en de datum ligt niet in het verleden dan mag er een reservering aangemaakt worden.
 			 * Alleen de beheerder kan ook in het verleden een reservering aanmaken.
@@ -182,11 +200,10 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			$verwijderbaar = false;
 			$wijzigbaar    = $reserveerbaar || is_super_admin();
 		}
-		$kleur         = $reserveerbaar ? ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'gray' : $kleur ) : 'white';
+		$kleur         = $wijzigbaar ? ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'gray' : $kleur ) : 'white';
 		$temperatuur   = 0 !== $reservering->temperatuur ? $reservering->temperatuur : '';
 		$json_selectie = wp_json_encode(
 			[
-				'oven_id'       => $oven_id,
 				'dag'           => $dag,
 				'maand'         => $maand,
 				'jaar'          => $jaar,
@@ -194,13 +211,14 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'temperatuur'   => $reservering->actief ? $reservering->temperatuur : '',
 				'programma'     => $reservering->actief ? $reservering->programma : '',
 				'verdeling'     => $reservering->actief ? $reservering->verdeling : [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
-				'gereserveerd'  => $reservering->actief,
 				'verwijderbaar' => $verwijderbaar,
+				'wijzigbaar'    => $wijzigbaar,
+				'reserveerbaar' => $reserveerbaar,
 				'gebruiker_id'  => $stoker_id,
 				'gebruiker'     => $stoker_naam,
 			]
 		);
-		if ( false !== $json_selectie && $wijzigbaar ) {
+		if ( false !== $json_selectie && ( $reserveerbaar || $reservering->actief ) ) {
 			$html = "<tr style=\"background-color: $kleur;\" class=\"kleistad_box\" data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' >";
 		} else {
 			$html = "<tr style=\"background-color: $kleur;\" >";
@@ -261,19 +279,18 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @return WP_REST_Response Ajax response.
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) {
-		$method       = $request->get_method();
-		$input        = $request->get_param( 'reservering' );
-		$oven_id      = $request->get_param( 'oven_id' );
-		$gebruiker_id = intval( $input['gebruiker_id'] );
-		$jaar         = intval( $input['jaar'] );
-		$maand        = intval( $input['maand'] );
-		$dag          = intval( $input['dag'] );
-		$reservering  = new Kleistad_Reservering( $oven_id, mktime( 23, 59, 0, $maand, $dag, $jaar ) );
+		$method      = $request->get_method();
+		$input       = $request->get_param( 'reservering' );
+		$oven_id     = $request->get_param( 'oven_id' );
+		$jaar        = intval( $input['jaar'] );
+		$maand       = intval( $input['maand'] );
+		$dag         = intval( $input['dag'] );
+		$reservering = new Kleistad_Reservering( $oven_id, mktime( 23, 59, 0, $maand, $dag, $jaar ) );
 
 		if ( 'PUT' === $method || 'POST' === $method ) {
 			// het betreft een toevoeging of wijziging, in het eerste geval controleren of er niet snel door een ander een reservering is gedaan.
-			if ( ! $reservering->actief || ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) { // phpcs:ignore
-				$reservering->gebruiker_id = $gebruiker_id;
+			if ( ! $reservering->actief || Kleistad_Roles::override() ) {
+				$reservering->gebruiker_id = get_current_user_id();
 				$reservering->dag          = $dag;
 				$reservering->maand        = $maand;
 				$reservering->jaar         = $jaar;
@@ -285,7 +302,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			}
 		} elseif ( 'DELETE' === $method ) {
 			// het betreft een annulering, controleer of deze al niet verwijderd is.
-			if ( $reservering->actief && ( ( $reservering->gebruiker_id == $gebruiker_id ) || Kleistad_Roles::override() ) ) { // phpcs:ignore
+			if ( $reservering->actief ) {
 				$reservering->delete();
 			}
 		}

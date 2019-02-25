@@ -28,7 +28,7 @@ else :
 				<th>Naam</th>
 				<th data-class-name="dt-body-center">Inschrijving<br/>betaald</th>
 				<th data-class-name="dt-body-center">Cursus<br/>betaald</th>
-				<th data-class-name="dt-body-center" >Geannuleerd</th>
+				<th data-class-name="dt-body-center">Geannuleerd</th>
 			</tr>
 		</thead>
 		<tbody>

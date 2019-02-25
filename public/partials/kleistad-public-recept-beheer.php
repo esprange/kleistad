@@ -254,7 +254,7 @@ else :
 				<th>Titel</th>
 				<th>Datum</th>
 				<th>Status</th>
-				<th>&nbsp;</th>
+				<th data-orderable="false">&nbsp;</th>
 			</tr>
 			</thead>
 			<tbody>

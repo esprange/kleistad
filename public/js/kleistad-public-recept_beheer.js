@@ -6,22 +6,7 @@
     $( document ).ready(
         function() {
 
-			/**
-			 * Polyfill, kijk of de browser ondersteuning geeft voor een datalist element.
-			 */
-			var nativedatalist = !! ( 'list' in document.createElement( 'input' ) ) && !! ( document.createElement( 'datalist' ) && window.HTMLDataListElement );
-			if ( ! nativedatalist ) {
-				$( 'input[list]' ).each( function() {
-					var availableTags = $( '#' + $( this ).attr( 'list' ) ).find( 'option' ).map( function() {
-						return this.value;
-						}
-					).get();
-					$( this ).autocomplete( { source: availableTags } );
-					}
-				);
-			}
-
-            $( '.kleistad_gewicht' ).on( 'keydown', function( e ) {
+			$( '.kleistad_gewicht' ).on( 'keydown', function( e ) {
                 if (
 
                     // Backspace, delete, tab, escape, enter, comma and .
