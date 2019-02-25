@@ -16,12 +16,13 @@
 	 * @param {int} id Het Wordpress id van de stoker
 	 */
 	function vindStokerNaam( id ) {
-		for ( var i = 0; i < stokers.length; i++ ) {
+		var i;
+		for ( i = 0; i < stokers.length; i++ ) {
 			if ( stokers[i].id === id ) {
 				return stokers[i].naam;
-        	}
-    	}
-    	return '';
+			}
+		}
+		return '';
 	}
 
 	/**
@@ -31,6 +32,7 @@
 	 * @param {int} id Het wordpress id van de thans geselecteerde stoker.
 	 */
 	$.fn.selectStoker = function( empty, id ) {
+		var i;
 		this.each( function() {
 			$( this ).append(
 				$( '<select>' ).attr( 'name', 'kleistad_stoker_id' )
@@ -40,7 +42,7 @@
 					$( '<option>' ).val( 0 )
 				);
 			}
-			for ( var i = 0; i < stokers.length; i++ ) {
+			for ( i = 0; i < stokers.length; i++ ) {
 				$( 'select', this ).append(
 					$( '<option>' ).val( stokers[i].id ).prop( 'selected',  stokers[i].id === id ).text( stokers[i].naam ).change()
 				);
@@ -64,7 +66,7 @@
 				).append(
 					$( '<td>' ).selectStoker( false, verdeling.id )
 				).append(
-					$( '<td>').append(
+					$( '<td>' ).append(
 						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'3' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
 					)
 				)
@@ -124,11 +126,11 @@
 			).append(
 				$( '<td>' ).attr( 'colspan', '2' ).append(
 					$( '<select>' ).attr( 'id', 'kleistad_soortstook' ).append(
-						$( '<option>' ).val( 'Biscuit' ).text( 'Biscuit' ).prop( 'selected', data.soortstook === 'Biscuit' )
+						$( '<option>' ).val( 'Biscuit' ).text( 'Biscuit' ).prop( 'selected', 'Biscuit' === data.soortstook )
 					).append(
-						$( '<option>' ).val( 'Glazuur' ).text( 'Glazuur' ).prop( 'selected', data.soortstook === 'Glazuur' )
+						$( '<option>' ).val( 'Glazuur' ).text( 'Glazuur' ).prop( 'selected', 'Glazuur' === data.soortstook )
 					).append(
-						$( '<option>' ).val( 'Overig' ).text( 'Overig' ).prop( 'selected', data.soortstook === 'Overig' )
+						$( '<option>' ).val( 'Overig' ).text( 'Overig' ).prop( 'selected', 'Overig' === data.soortstook )
 					)
 				)
 			)
@@ -156,7 +158,7 @@
 		);
 		if ( override ) {
 			$( '#kleistad_soortstook' ).append(
-				$( '<option>' ).val( 'Onderhoud' ).text( 'Onderhoud' ).prop( 'selected', data.soortstook === 'Onderhoud' )
+				$( '<option>' ).val( 'Onderhoud' ).text( 'Onderhoud' ).prop( 'selected', 'Onderhoud' === data.soortstook )
 			);
 		}
 	}
@@ -389,6 +391,13 @@
     $( document ).ready(
         function() {
             /**
+             * Toon de tabel.
+             */
+			var maand  = $( '#kleistad_reserveringen' ).data( 'maand' ),
+				jaar   = $( '#kleistad_reserveringen' ).data( 'jaar' );
+  			kleistadShow( maand, jaar );
+
+            /**
              * Definieer het formulier.
              */
             $( '#kleistad_reservering' ).dialog(
@@ -399,13 +408,6 @@
 					modal: true
 				}
 			);
-
-            /**
-             * Toon de tabel.
-             */
-			var maand  = $( '#kleistad_reserveringen' ).data( 'maand' ),
-			    jaar   = $( '#kleistad_reserveringen' ).data( 'jaar' );
-  			kleistadShow( maand, jaar );
 
 			/**
              * Verdeel de percentages als de gebruiker een percentage wijzigt.
