@@ -395,7 +395,7 @@
              */
 			var maand  = $( '#kleistad_reserveringen' ).data( 'maand' ),
 				jaar   = $( '#kleistad_reserveringen' ).data( 'jaar' );
-  			kleistadShow( maand, jaar );
+			kleistadShow( maand, jaar );
 
             /**
              * Definieer het formulier.
