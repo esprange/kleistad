@@ -212,10 +212,10 @@
 
 		switch ( formData.status ) {
 			case 0:
-				/* ongebruikt, geen actie */
+				/* Ongebruikt, geen actie */
 				break;
 			case 1:
-				/* reserveerbaar */
+				/* Reserveerbaar */
 				parameters( formData );
 				stook( formData.verdeling[0] );
 				medestook( { id:0, perc:0 } );
@@ -224,7 +224,7 @@
 				$( '#kleistad_soortstook' ).focus();
 				break;
 			case 2:
-				/* verwijderbaar */
+				/* Verwijderbaar */
 				if ( formData.update ) {
 					parameters( formData );
 					stook( formData.verdeling[0] );
@@ -242,7 +242,7 @@
 				}
 				break;
 			case 3:
-				/* wijzigbaar */
+				/* Wijzigbaar */
 				if ( formData.update ) {
 					parameters( formData );
 					stook( formData.verdeling[0] );
@@ -251,7 +251,7 @@
 					}
 					medestook( { id:0, perc:0 } );
 					$( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen ?' );
-					$( '#kleistad_muteer','#kleistad_stoker_toevoegen' ).show();
+					$( '#kleistad_muteer,#kleistad_stoker_toevoegen' ).show();
 					$( '#kleistad_soortstook' ).focus();
 				} else {
 					alleenLezen( formData );
@@ -260,7 +260,7 @@
 				}
 				break;
 			case 4:
-				/* definitief */
+				/* Definitief */
 				alleenLezen( formData );
 				$( '#kleistad_tekst' ).text( 'Deze reservering is definitief' );
 				$( '#kleistad_sluit' ).focus();
