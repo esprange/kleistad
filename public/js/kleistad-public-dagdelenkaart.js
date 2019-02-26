@@ -30,7 +30,7 @@
 						$( '#kleistad_plaats' ).val( data.plaats );
 					} );
 				}
-			)
+			);
         }
     );
 
