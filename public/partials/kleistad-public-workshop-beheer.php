@@ -85,7 +85,7 @@ else :
 			</tr>
 			<tr>
 				<th>Kosten</th>
-				<td><input type="number" step="any" name="kosten" id="kleistad_kosten" min="0" value=<?php echo esc_attr( $this->options['workshopprijs'] ); ?> ></td>
+				<td><input type="number" lang="nl" step="0.01" name="kosten" id="kleistad_kosten" min="0" value=<?php echo esc_attr( $this->options['workshopprijs'] ); ?> ></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>

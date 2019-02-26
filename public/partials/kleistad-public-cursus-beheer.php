@@ -62,9 +62,9 @@ else :
 						<td><input type="checkbox" name="technieken[]" id="kleistad_boetseren" value="Boetseren">Boetseren</td></tr>
 					<tr>
 						<th>Inschrijf kosten</th>
-						<td><input type="number" step="any" name="inschrijfkosten" id="kleistad_inschrijfkosten" value="<?php echo esc_attr( $this->options['cursusinschrijfprijs'] ); ?>" min="0" required ></td>
+						<td><input type="number" lang="nl" step="0.01" name="inschrijfkosten" id="kleistad_inschrijfkosten" value="<?php echo esc_attr( $this->options['cursusinschrijfprijs'] ); ?>" min="0" required ></td>
 						<th>Cursus kosten, excl. inschrijf kosten</th>
-						<td><input type="number" step="any" name="cursuskosten" id="kleistad_cursuskosten" value="<?php echo esc_attr( $this->options['cursusprijs'] ); ?>" min="0" required ></td>
+						<td><input type="number" lang="nl" step="0.01" name="cursuskosten" id="kleistad_cursuskosten" value="<?php echo esc_attr( $this->options['cursusprijs'] ); ?>" min="0" required ></td>
 					</tr>
 					<tr>
 						<th>Cursus vol</th>

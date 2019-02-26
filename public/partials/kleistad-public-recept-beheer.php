@@ -199,7 +199,7 @@ else :
 				?>
 				<tr>
 					<td><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
-					<td><input type="text" class="kleistad_gewicht" name="basis_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( number_format_i18n( $gewicht, 2 ) ); ?>" >&nbsp;gr.</td>
+					<td><input type="number" lang="nl" step="any" name="basis_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gr.</td>
 				</tr>
 				<?php
 			} while ( $index++ < $count );
@@ -220,7 +220,7 @@ else :
 				?>
 				<tr>
 					<td><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
-					<td><input type="text" class="kleistad_gewicht" name="toevoeging_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( number_format_i18n( $gewicht, 2 ) ); ?>" >&nbsp;gr.</td>
+					<td><input type="number" lang="nl" step="0.01" name="toevoeging_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gr.</td>
 				</tr>
 				<?php
 			} while ( $index++ < $count );

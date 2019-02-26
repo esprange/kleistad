@@ -6,27 +6,6 @@
     $( document ).ready(
         function() {
 
-			$( '.kleistad_gewicht' ).on( 'keydown', function( e ) {
-                if (
-
-                    // Backspace, delete, tab, escape, enter, comma and .
-                    $.inArray( e.keyCode, [46, 8, 9, 27, 13, 110, 188, 190] ) !== -1 ||
-
-                    // Ctrl/cmd+A, Ctrl/cmd+C, Ctrl/cmd+X
-                    ( $.inArray( e.keyCode, [65, 67, 88] ) !== -1 && ( true === e.ctrlKey || true === e.metaKey ) ) ||
-
-                    // Home, end, left, right
-                    ( e.keyCode >= 35 && e.keyCode <= 39 ) ) {
-
-                    return;
-                }
-
-                // Block any non-number
-                if ( ( e.shiftKey || ( e.keyCode < 48 || e.keyCode > 57 ) ) && ( e.keyCode < 96 || e.keyCode > 105 ) ) {
-                    e.preventDefault();
-                }
-            });
-
             $( '#kleistad_recept_toevoegen' ).click( function() {
                 $( '#kleistad_recept_action' ).val( 'toevoegen' );
                 $( '#kleistad_recept_id' ).val( 0 );
