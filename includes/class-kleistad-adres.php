@@ -58,19 +58,26 @@ class Kleistad_Adres {
 	 * @return \WP_REST_response de response.
 	 */
 	public static function callback_adres_zoeken( WP_REST_Request $request ) {
-		$postcode     = $request->get_param( 'postcode' );
-		$huisnr       = $request->get_param( 'huisnr' );
-		$url          = 'https://geodata.nationaalgeoregister.nl/locatieserver/free?fq=' .
+		$postcode = $request->get_param( 'postcode' );
+		$huisnr   = $request->get_param( 'huisnr' );
+		$url      = 'https://geodata.nationaalgeoregister.nl/locatieserver/free?fq=' .
 			rawurlencode( 'postcode:' . $postcode ) . '&fq=' . rawurlencode( 'huisnummer~' . $huisnr . '*' );
-		$response     = wp_remote_get( $url );
+		$response = wp_remote_get( $url );
+		if ( is_wp_error( $response ) ) {
+			return new WP_Error(
+				'rest_custom_error',
+				'Geen geldig antwoord van geodata service.',
+				[ 'status' => 503 ]
+			);
+		}
 		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( false === $api_response || 0 === count( $api_response['response']['docs'] ) ) {
 			return new WP_Error(
 				'rest_custom_error',
 				'Niet gevonden.',
-				[ 'status' => 404 ]
-			); // 404 is niet gevonden.
+				[ 'status' => 204 ]
+			); // 204 is niet gevonden, antwoord leeg.
 		} else {
 			$doc = $api_response['response']['docs'][0];
 			return new WP_REST_response(

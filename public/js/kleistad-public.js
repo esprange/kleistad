@@ -137,6 +137,9 @@
 		return this;
 	};
 
+	/**
+	 * Zoek de postcode op via de server.
+	 */
 	$.fn.lookupPostcode = function( postcode, huisnr, callback ) {
 		if ( '' !== postcode && '' !== huisnr ) {
 			$.ajax(
@@ -149,13 +152,14 @@
 					}
 				}
 			).done(
-				function( data ) {
-					callback( data );
+				function( data ) { // Als er niets gevonden kan worden dan code 204, data is dan undefined.
+					if ( 'undefined' !== typeof data ) {
+						callback( data );
+					}
 				}
 			).fail(); // Geen verdere actie ingeval van falen.
 		}
-	}
-
+	};
 
 	$( document ).ready(
         function() {
