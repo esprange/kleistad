@@ -38,7 +38,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $telnr het telefoonnummer, inclusief spaties, streepjes etc.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function sanitize_telnr( &$telnr ) {
+	public function validate_telnr( &$telnr ) {
 		$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $telnr );
 		return 1 === preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
 				1 === preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr );
@@ -51,7 +51,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $pcode de postcode, inclusief spaties, streepjes etc.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function sanitize_pcode( &$pcode ) {
+	public function validate_pcode( &$pcode ) {
 		$pcode = strtoupper( str_replace( ' ', '', $pcode ) );
 		return 1 === preg_match( '/^[1-9][0-9]{3} ?[a-zA-Z]{2}$/', $pcode );
 	}
@@ -63,7 +63,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $adres het adres.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function sanitize_adres( $adres ) {
+	public function validate_adres( $adres ) {
 		return 1 === preg_match( '/^([1-9][e][\s])*([a-zA-Z]+(([\.][\s])|([\s]))?)+[1-9][0-9]*(([-][1-9][0-9]*)|([\s]?[a-zA-Z]+))?$/i', $adres );
 	}
 
@@ -74,7 +74,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $naam de naam.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function sanitize_naam( $naam ) {
+	public function validate_naam( $naam ) {
 		$naam = preg_replace( '/[^a-zA-Z\s]/', '', $naam );
 		return ! empty( $naam );
 	}
@@ -86,7 +86,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $email het email adres.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function sanitize_email( &$email ) {
+	public function validate_email( &$email ) {
 		$email = strtolower( $email );
 		return filter_var( $email, FILTER_VALIDATE_EMAIL );
 	}

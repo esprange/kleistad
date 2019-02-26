@@ -65,7 +65,7 @@
 					$( '<td>' ).selectStoker( false, verdeling.id )
 				).append(
 					$( '<td>' ).append(
-						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'3' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
+						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'3', tabindex:'-1' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
 					)
 				)
 			);

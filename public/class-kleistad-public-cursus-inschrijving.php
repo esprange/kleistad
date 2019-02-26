@@ -131,46 +131,41 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			return $error;
 		}
 		$data['cursus'] = new Kleistad_Cursus( $data['input']['cursus_id'] );
-		if ( $data['cursus']->vol ) {
-			$error->add( 'vol', 'De gekozen cursus is vol. Inschrijving is niet mogelijk.' );
+		$ruimte         = $data['cursus']->ruimte;
+		if ( $data['cursus']->vol || 0 === $ruimte ) {
+			$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
 			$data['input']['cursus_id'] = 0;
-		} else {
-			$ruimte = $data['cursus']->ruimte;
-			if ( 0 === $ruimte ) {
-				$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
-				$data['input']['cursus_id'] = 0;
-			} elseif ( $ruimte < $data['input']['aantal'] ) {
-				$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
-				$data['input']['aantal'] = $ruimte;
-			}
+		} elseif ( $ruimte < $data['input']['aantal'] ) {
+			$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
+			$data['input']['aantal'] = $ruimte;
 		}
 		if ( 1 > $data['input']['aantal'] ) {
 			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
 			$data['input']['aantal'] = 1;
 		}
 		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-			if ( ! $this->sanitize_email( $data['input']['EMAIL'] ) ) {
+			if ( ! $this->validate_email( $data['input']['EMAIL'] ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $data['input']['EMAIL'] . ' is geen geldig E-mail adres.' );
 				$data['input']['EMAIL']          = '';
 				$data['input']['email_controle'] = '';
 			} else {
-				$this->sanitize_email( $data['input']['email_controle'] );
+				$this->validate_email( $data['input']['email_controle'] );
 				if ( $data['input']['email_controle'] !== $data['input']['email'] ) {
 					$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $data['input']['EMAIL'] . ' en ' . $data['input']['email_controle'] . ' zijn niet identiek' );
 					$data['input']['email_controle'] = '';
 				}
 			}
-			if ( ! empty( $data['input']['telnr'] ) && ! $this->sanitize_telnr( $data['input']['telnr'] ) ) {
+			if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
 				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
 			}
-			if ( ! empty( $data['input']['pcode'] ) && ! $this->sanitize_pcode( $data['input']['pcode'] ) ) {
+			if ( ! empty( $data['input']['pcode'] ) && ! $this->validate_pcode( $data['input']['pcode'] ) ) {
 				$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
 			}
-			if ( ! $this->sanitize_naam( $data['input']['FNAME'] ) ) {
+			if ( ! $this->validate_naam( $data['input']['FNAME'] ) ) {
 				$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
 				$data['input']['FNAME'] = '';
 			}
-			if ( ! $this->sanitize_naam( $data['input']['LNAME'] ) ) {
+			if ( ! $this->validate_naam( $data['input']['LNAME'] ) ) {
 				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
 				$data['input']['LNAME'] = '';
 			}

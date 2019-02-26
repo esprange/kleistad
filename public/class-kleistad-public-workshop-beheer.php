@@ -107,10 +107,10 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 		);
 
 		$data['input']['programma'] = sanitize_textarea_field( filter_input( INPUT_POST, 'programma' ) );
-		if ( ! $this->sanitize_email( $data['input']['email'] ) ) {
+		if ( ! $this->validate_email( $data['input']['email'] ) ) {
 			$error->add( 'verplicht', 'De invoer ' . $data['input']['email'] . ' is geen geldig E-mail adres.' );
 		}
-		if ( ! empty( $data['input']['telefoon'] ) && ! $this->sanitize_telnr( $data['input']['telefoon'] ) ) {
+		if ( ! empty( $data['input']['telefoon'] ) && ! $this->validate_telnr( $data['input']['telefoon'] ) ) {
 			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
 		}
 		if ( strtotime( $data['input']['start_tijd'] ) >= strtotime( $data['input']['eind_tijd'] ) ) {

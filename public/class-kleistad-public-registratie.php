@@ -67,17 +67,17 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 				'telnr'        => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( ! empty( $data['input']['telnr'] ) && ! $this->sanitize_telnr( $data['input']['telnr'] ) ) {
+		if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
 			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
 		}
-		if ( ! empty( $data['input']['pcode'] ) && ! $this->sanitize_pcode( $data['input']['pcode'] ) ) {
+		if ( ! empty( $data['input']['pcode'] ) && ! $this->validate_pcode( $data['input']['pcode'] ) ) {
 			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
 		}
-		if ( ! $this->sanitize_naam( $data['input']['voornaam'] ) ) {
+		if ( ! $this->validate_naam( $data['input']['voornaam'] ) ) {
 			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
 			$data['input']['voornaam'] = '';
 		}
-		if ( ! $this->sanitize_naam( $data['input']['achternaam'] ) ) {
+		if ( ! $this->validate_naam( $data['input']['achternaam'] ) ) {
 			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
 			$data['input']['achternaam'] = '';
 		}

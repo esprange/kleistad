@@ -67,7 +67,7 @@
 	</div>
 	<div class="kleistad_col_2">
 		<input class="kleistad_input" name="telnr" id="kleistad_telnr" type="text"
-		maxlength="15" placeholder="0123456789" title="Vul s.v.p. een Nederlands telefoonnummer in van 10 cijfers"
+		maxlength="15" placeholder="0123456789" title="Vul s.v.p. een geldig telefoonnummer in"
 		value="<?php echo esc_attr( $data['input']['telnr'] ); ?>" />
 	</div>
 </div>
@@ -77,12 +77,12 @@
 	</div>
 	<div class="kleistad_col_2">
 		<input class="kleistad_input" name="pcode" id="kleistad_pcode" type="text" style="text-transform: uppercase;"
-			maxlength="10" required placeholder="1234AB" pattern="^[1-9][0-9]{3} ?[a-zA-Z]{2}$" title="Vul s.v.p. een geldige Nederlandse postcode in"
+			maxlength="10" placeholder="1234AB" pattern="^[1-9][0-9]{3} ?[a-zA-Z]{2}$" title="Vul s.v.p. een geldige Nederlandse postcode in"
 			value="<?php echo esc_attr( $data['input']['pcode'] ); ?>" />
 	</div>
 	<div class="kleistad_col_2">
 		<input class="kleistad_input" name="huisnr" id="kleistad_huisnr" type="text"
-			maxlength="10" required placeholder="nr" title="Vul s.v.p. een huisnummer in"
+			maxlength="10" placeholder="nr" title="Vul s.v.p. een huisnummer in"
 			value="<?php echo esc_attr( $data['input']['huisnr'] ); ?>" />
 	</div>
 </div>
@@ -92,12 +92,12 @@
 	</div>
 	<div class="kleistad_col_3">
 		<input class="kleistad_input" name="straat" id="kleistad_straat" type="text" tabindex="-1"
-		maxlength="50" required placeholder="straat" title="Vul s.v.p. een straatnaam in"
+		maxlength="50" placeholder="straat" title="Vul s.v.p. een straatnaam in"
 		value="<?php echo esc_attr( $data['input']['straat'] ); ?>" />
 	</div>
 	<div class="kleistad_col_4">
 		<input class="kleistad_input" name="plaats" id="kleistad_plaats" type="text" tabindex="-1"
-		maxlength="50" required placeholder="MijnWoonplaats" title="Vul s.v.p. de woonplaats in"
+		maxlength="50" placeholder="MijnWoonplaats" title="Vul s.v.p. de woonplaats in"
 		value="<?php echo esc_attr( $data['input']['plaats'] ); ?>" />
 	</div>
 </div>
