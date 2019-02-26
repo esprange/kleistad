@@ -28,12 +28,28 @@
  * @property bool   verwerkt
  * @property bool   actief
  * @property bool   gereserveerd
+ * @property int    status
  * @property array  verdeling
  * @property string opmerking
  */
 class Kleistad_Reservering extends Kleistad_Entity {
 
+	/**
+	 * Soorten stook
+	 */
 	const ONDERHOUD = 'Onderhoud';
+	const GLAZUUR   = 'Glazuur';
+	const BISCUIT   = 'Biscuit';
+	const OVERIG    = 'Overig';
+
+	/**
+	 * Opklimmende status
+	 */
+	const ONGEBRUIKT    = 0;
+	const RESERVEERBAAR = 1;
+	const VERWIJDERBAAR = 2;
+	const WIJZIGBAAR    = 3;
+	const DEFINITIEF    = 4;
 
 	/**
 	 * Constructor
@@ -58,7 +74,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			'programma'    => 0,
 			'gemeld'       => 0,
 			'verwerkt'     => 0,
-			'verdeling'    => wp_json_encode( [] ),
+			'verdeling'    => wp_json_encode( [ [ 'id' => 0, 'perc' => 100 ] ] ), // phpcs:ignore
 			'opmerking'    => '',
 		];
 		if ( ! is_null( $datum ) ) {
@@ -74,7 +90,33 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			); // phpcs:ignore
 			if ( $resultaat ) {
 				$this->data = $resultaat;
+			} else {
+				$this->data['jaar']  = date( 'Y', $datum );
+				$this->data['maand'] = date( 'm', $datum );
+				$this->data['dag']   = date( 'd', $datum );
 			}
+		}
+	}
+
+	/**
+	 * Geef de status terug van de reservering.
+	 */
+	public function status() {
+		if ( ! $this->gereserveerd ) {
+			if ( strtotime( "$this->jaar-$this->maand-$this->dag 23:59" ) >= strtotime( 'today' ) ) {
+				return self::RESERVEERBAAR;
+			} else {
+				return self::ONGEBRUIKT;
+			}
+		} else {
+			if ( ! $this->verwerkt ) {
+				if ( ! $this->datum < strtotime( 'today midnight' ) ) {
+					return self::VERWIJDERBAAR;
+				} else {
+					return self::WIJZIGBAAR;
+				}
+			}
+			return self::DEFINITIEF;
 		}
 	}
 
@@ -92,30 +134,13 @@ class Kleistad_Reservering extends Kleistad_Entity {
 				$verdeling = json_decode( $this->data['verdeling'], true );
 				if ( is_array( $verdeling ) ) {
 					return $verdeling;
-				} else {
-					return [
-						[
-							'id'   => $this->data['gebruiker_id'],
-							'perc' => 100,
-						],
-						[
-							'id'   => 0,
-							'perc' => 0,
-						],
-						[
-							'id'   => 0,
-							'perc' => 0,
-						],
-						[
-							'id'   => 0,
-							'perc' => 0,
-						],
-						[
-							'id'   => 0,
-							'perc' => 0,
-						],
-					];
 				}
+				return [
+					[
+						'id'   => $this->data['gebruiker_id'],
+						'perc' => 100,
+					],
+				];
 			case 'datum':
 				return strtotime( $this->data['jaar'] . '-' . $this->data['maand'] . '-' . $this->data['dag'] . ' 00:00' );
 			case 'gemeld':

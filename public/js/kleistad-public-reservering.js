@@ -161,6 +161,35 @@
 		}
 	}
 
+	/**
+	 * Toon de stookgegevens, ze zijn niet te wijzigen
+	 *
+	 * @param {array} formData
+	 */
+	function alleenLezen( formData ) {
+		$( '#kleistad_reservering table > thead' ).
+		append( $( '<tr>' ).
+			append( $( '<td>' ).text( 'Soort stook' ) ).
+			append( $( '<td>' ).text( formData.soortstook ) ) ).
+		append( $( '<tr>' ).
+			append( $( '<td>' ).text( 'Temperatuur' ) ).
+			append( $( '<td>' ).text( formData.temperatuur ) ) ).
+		append( $( '<tr>' ).
+			append( $( '<td>' ).text( 'Programma' ) ).
+			append( $( '<td>' ).text( formData.programma ) ) );
+		formData.verdeling.forEach(
+			function( item, index ) {
+				$( '#kleistad_reservering table > tbody' ).
+					append( $( '<tr>' ).
+						append( $( '<td>' ).
+							append( '<label>' ).text( 0 === index ? 'Stoker' : 'Medestoker' ) ).
+						append( $( '<td>' ).text( vindStokerNaam( item.id ) ) ).css( { 'white-space':'nowrap', 'text-overflow':'ellipsis', overflow:'hidden' } ).
+						append( $( '<td>' ).css( { 'text-align':'right' } ).text( item.perc ) )
+					);
+			}
+		);
+	}
+
     /**
      * Toon het formulier om een reservering te maken, wijzigen of verwijderen.
      *
@@ -181,56 +210,61 @@
         $( '#kleistad_jaar' ).val( formData.jaar );
         $( '#kleistad_stoker_id' ).val( formData.gebruiker_id );
 
-		if ( formData.reserveerbaar ) {
-			parameters( formData );
-			stook( formData.verdeling[0] );
-			medestook( { id:0, perc:0 } );
-            $( '#kleistad_tekst' ).text( 'Wil je de reservering toevoegen ?' );
-			$( '#kleistad_voegtoe,#kleistad_stoker_toevoegen' ).show();
-			$( '#kleistad_soortstook' ).focus();
-		} else if ( formData.wijzigbaar ) {
-			parameters( formData );
-			stook( formData.verdeling[0] );
-			for ( row = 1; row < formData.verdeling.length; row++ ) {
-				medestook( formData.verdeling[row] );
-			}
-			medestook( { id:0, perc:0 } );
-			if ( formData.verwijderbaar ) {
-				$( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen of verwijderen ?' );
-				$( '#kleistad_muteer,#kleistad_verwijder,#kleistad_stoker_toevoegen' ).show();
-			} else {
-				$( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen ?' );
-				$( '#kleistad_muteer' ).show();
-			}
-			$( '#kleistad_soortstook' ).focus();
-		} else {
-			$( '#kleistad_reservering table > thead' ).
-				append( $( '<tr>' ).
-					append( $( '<td>' ).text( 'Soort stook' ) ).
-					append( $( '<td>' ).text( formData.soortstook ) ) ).
-				append( $( '<tr>' ).
-					append( $( '<td>' ).text( 'Temperatuur' ) ).
-					append( $( '<td>' ).text( formData.temperatuur ) ) ).
-				append( $( '<tr>' ).
-					append( $( '<td>' ).text( 'Programma' ) ).
-					append( $( '<td>' ).text( formData.programma ) ) );
-			formData.verdeling.forEach(
-				function( item, index ) {
-					$( '#kleistad_reservering table > tbody' ).
-						append( $( '<tr>' ).
-							append( $( '<td>' ).
-								append( '<label>' ).text( 0 === index ? 'Stoker' : 'Medestoker' ) ).
-							append( $( '<td>' ).text( vindStokerNaam( item.id ) ) ).css( { 'white-space':'nowrap', 'text-overflow':'ellipsis', overflow:'hidden' } ).
-							append( $( '<td>' ).css( { 'text-align':'right' } ).text( item.perc ) )
-						);
+		switch ( formData.status ) {
+			case 0:
+				/* ongebruikt, geen actie */
+				break;
+			case 1:
+				/* reserveerbaar */
+				parameters( formData );
+				stook( formData.verdeling[0] );
+				medestook( { id:0, perc:0 } );
+				$( '#kleistad_tekst' ).text( 'Wil je de reservering toevoegen ?' );
+				$( '#kleistad_voegtoe,#kleistad_stoker_toevoegen' ).show();
+				$( '#kleistad_soortstook' ).focus();
+				break;
+			case 2:
+				/* verwijderbaar */
+				if ( formData.update ) {
+					parameters( formData );
+					stook( formData.verdeling[0] );
+					for ( row = 1; row < formData.verdeling.length; row++ ) {
+						medestook( formData.verdeling[row] );
+					}
+					medestook( { id:0, perc:0 } );
+					$( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen of verwijderen ?' );
+					$( '#kleistad_muteer,#kleistad_verwijder,#kleistad_stoker_toevoegen' ).show();
+					$( '#kleistad_soortstook' ).focus();
+				} else {
+					alleenLezen( formData );
+					$( '#kleistad_tekst' ).text( 'Deze reservering is niet door u te wijzigen' );
+					$( '#kleistad_sluit' ).focus();
 				}
-			);
-			if ( formData.verwerkt ) {
+				break;
+			case 3:
+				/* wijzigbaar */
+				if ( formData.update ) {
+					parameters( formData );
+					stook( formData.verdeling[0] );
+					for ( row = 1; row < formData.verdeling.length; row++ ) {
+						medestook( formData.verdeling[row] );
+					}
+					medestook( { id:0, perc:0 } );
+					$( '#kleistad_tekst' ).text( 'Wil je de reservering wijzigen ?' );
+					$( '#kleistad_muteer','#kleistad_stoker_toevoegen' ).show();
+					$( '#kleistad_soortstook' ).focus();
+				} else {
+					alleenLezen( formData );
+					$( '#kleistad_tekst' ).text( 'Deze reservering is niet door u te wijzigen' );
+					$( '#kleistad_sluit' ).focus();
+				}
+				break;
+			case 4:
+				/* definitief */
+				alleenLezen( formData );
 				$( '#kleistad_tekst' ).text( 'Deze reservering is definitief' );
-			} else {
-				$( '#kleistad_tekst' ).text( 'Deze reservering is niet door u te wijzigen' );
-			}
-			$( '#kleistad_sluit' ).focus();
+				$( '#kleistad_sluit' ).focus();
+				break;
 		}
     }
 

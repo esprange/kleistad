@@ -154,76 +154,71 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @return string html opgemaakte tekstregel.
 	 */
 	private static function maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar ) {
-		$reservering  = new Kleistad_Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
-		$gebruiker_id = get_current_user_id();
-		$stoker_id    = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
-		$stoker_naam  = get_userdata( $stoker_id )->display_name;
-		if ( $reservering->gereserveerd ) {
-			$reserveerbaar = false;
-			if ( $reservering->verdeling[0]['id'] === $gebruiker_id ) {
-				/**
-				 * Er is een bestaande reservering van de ingelogde stoker.
-				 */
-				$kleur = 'lightgreen';
-				$wie   = $stoker_naam;
-				/**
-				 * Zolang de datum van de reservering nog niet in het verleden of de gebruiker bestuurdlid is dan mag deze verwijderd worden.
-				 */
-				$verwijderbaar = ! $reservering->actief || ( ! $reservering->verwerkt && Kleistad_Roles::override() );
-				/**
-				 * Zolang de reservering nog in de toekomst ligt en niet financieel verwerkt is mag deze gewijzigd worden.
-				 */
-				$wijzigbaar = ! $reservering->verwerkt;
-			} else {
-				/**
-				 * Reservering aangemaakt door een andere stoker.
-				 */
-				$kleur = 'pink';
-				$wie   = $stoker_naam;
-				/**
-				 * Als er al een reservering is en die is nog niet verwerkt dan mag een bestuurslid die verwijderen.
-				 */
-				$verwijderbaar = ! $reservering->verwerkt && Kleistad_Roles::override();
-				/**
-				 * Als er wel een reservering actief is en deze is nog niet verwerkt dan mag deze gewijzigd worden door een bestuurslid.
-				 */
-				$wijzigbaar = $verwijderbaar;
-			}
-		} else {
-			$reserveerbaar = strtotime( "$jaar-$maand-$dag 23:59" ) >= strtotime( 'today' );
-			$kleur         = 'white';
-			$wie           = $reserveerbaar ? '-beschikbaar-' : '';
-			/**
-			 * Als er geen reservering actief is en de datum ligt niet in het verleden dan mag er een reservering aangemaakt worden.
-			 * Alleen de beheerder kan ook in het verleden een reservering aanmaken.
-			 */
-			$verwijderbaar = false;
-			$wijzigbaar    = $reserveerbaar || is_super_admin();
-		}
-		$kleur         = ! $reservering->verwerkt ? ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'gray' : $kleur ) : 'white';
-		$temperatuur   = 0 !== $reservering->temperatuur ? $reservering->temperatuur : '';
+		$reservering   = new Kleistad_Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
+		$gebruiker_id  = get_current_user_id();
+		$stoker_id     = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
+		$stoker_naam   = get_userdata( $stoker_id )->display_name;
+		$eigendom      = $reservering->verdeling[0]['id'] === $gebruiker_id;
+		$logica        = [
+			Kleistad_Reservering::ONGEBRUIKT    => [
+				'wie'         => '',
+				'temperatuur' => '',
+				'kleur'       => 'white',
+				'select'      => false,
+				'update'      => false,
+			],
+			Kleistad_Reservering::RESERVEERBAAR => [
+				'wie'         => '- beschikbaar -',
+				'temperatuur' => '',
+				'kleur'       => 'white',
+				'select'      => true,
+				'update'      => true,
+			],
+			Kleistad_Reservering::WIJZIGBAAR    => [
+				'wie'         => $stoker_naam,
+				'temperatuur' => $reservering->temperatuur,
+				'kleur'       => Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'lightgray' : ( $eigendom ? 'lightgreen' : 'pink' ),
+				'select'      => true,
+				'update'      => $eigendom || Kleistad_Roles::override(),
+			],
+			Kleistad_Reservering::VERWIJDERBAAR => [
+				'wie'         => $stoker_naam,
+				'temperatuur' => $reservering->temperatuur,
+				'kleur'       => Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'lightgray' : ( $eigendom ? 'lightgreen' : 'pink' ),
+				'select'      => true,
+				'update'      => $eigendom || Kleistad_Roles::override(),
+			],
+			Kleistad_Reservering::DEFINITIEF    => [
+				'wie'         => $stoker_naam,
+				'temperatuur' => $reservering->temperatuur,
+				'kleur'       => 'white',
+				'select'      => true,
+				'update'      => false,
+			],
+		];
+		$status        = $logica[ $reservering->status() ];
 		$json_selectie = wp_json_encode(
 			[
-				'dag'           => $dag,
-				'maand'         => $maand,
-				'jaar'          => $jaar,
-				'soortstook'    => $reservering->soortstook,
-				'temperatuur'   => $reservering->gereserveerd ? $reservering->temperatuur : '',
-				'programma'     => $reservering->gereserveerd ? $reservering->programma : '',
-				'verdeling'     => $reservering->gereserveerd ? $reservering->verdeling : [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
-				'verwijderbaar' => $verwijderbaar,
-				'wijzigbaar'    => $wijzigbaar,
-				'reserveerbaar' => $reserveerbaar,
-				'verwerkt'      => $reservering->verwerkt,
-				'gebruiker_id'  => $gebruiker_id,
+				'dag'          => $dag,
+				'maand'        => $maand,
+				'jaar'         => $jaar,
+				'soortstook'   => $reservering->soortstook,
+				'temperatuur'  => $reservering->gereserveerd ? $reservering->temperatuur : '',
+				'programma'    => $reservering->gereserveerd ? $reservering->programma : '',
+				'verdeling'    => $reservering->gereserveerd ? $reservering->verdeling : [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
+				'status'       => $reservering->status(),
+				'update'       => $status['update'],
+				'gebruiker_id' => $gebruiker_id,
 			]
 		);
-		if ( false !== $json_selectie && ( $reserveerbaar || $reservering->gereserveerd ) ) {
-			$html = "<tr style=\"background-color: $kleur;\" class=\"kleistad_box\" data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' >";
-		} else {
-			$html = "<tr style=\"background-color: $kleur;\" >";
+		if ( false === $json_selectie ) {
+			$json_selectie = '{}';
 		}
-		$html .= "<td>$dag $dagnaam</td><td>$wie</td><td>$reservering->soortstook</td><td>$temperatuur</td></tr>";
+		$html = '<tr style="background-color:' . $status['kleur'] . ';"';
+		if ( $status['select'] ) {
+			$html .= 'class="kleistad_box" data-form=' . "'" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' ";
+		}
+		$html .= "><td>$dag $dagnaam</td><td>" . $status['wie'] . "</td><td>$reservering->soortstook</td><td>" . $status['temperatuur'] . '</td></tr>';
 		return $html;
 	}
 
