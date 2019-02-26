@@ -63,7 +63,7 @@ class Kleistad_Adres {
 		$url      = 'https://geodata.nationaalgeoregister.nl/locatieserver/free?fq=' .
 			rawurlencode( 'postcode:' . $postcode ) . '&fq=' . rawurlencode( 'huisnummer~' . $huisnr . '*' );
 		$response = wp_remote_get( $url );
-		if ( is_wp_error( $response ) ) {
+		if ( ! is_array( $response ) ) {
 			return new WP_Error(
 				'rest_custom_error',
 				'Geen geldig antwoord van geodata service.',
