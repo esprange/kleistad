@@ -116,33 +116,13 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'kalender', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-kalender.js', [ $this->plugin_name, 'jquery-ui-dialog', 'fullcalendar-nl' ], $this->version, true );
 
 		wp_localize_script(
-			$this->plugin_name . 'reservering',
+			$this->plugin_name,
 			'kleistadData',
 			[
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
+				'success_message' => 'de bewerking is geslaagd!',
+				'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
 				'base_url'        => self::base_url(),
-				'success_message' => 'de reservering is geslaagd!',
-				'error_message'   => 'het was niet mogelijk om de reservering uit te voeren',
-			]
-		);
-		wp_localize_script(
-			$this->plugin_name . 'recept',
-			'kleistadData',
-			[
-				'nonce'           => wp_create_nonce( 'wp_rest' ),
-				'base_url'        => self::base_url(),
-				'success_message' => 'de recepten konden worden opgevraagd!',
-				'error_message'   => 'het was niet mogelijk om de recepten uit de database op te vragen',
-			]
-		);
-		wp_localize_script(
-			$this->plugin_name . 'kalender',
-			'kleistadData',
-			[
-				'nonce'           => wp_create_nonce( 'wp_rest' ),
-				'base_url'        => self::base_url(),
-				'success_message' => 'de kalender kon worden opgevraagd!',
-				'error_message'   => 'het was niet mogelijk om de kalender op te vragen',
 			]
 		);
 	}
@@ -157,6 +137,7 @@ class Kleistad_Public {
 		Kleistad_Public_Recept::register_rest_routes();
 		Kleistad_Public_Kalender::register_rest_routes();
 		Kleistad_Betalen::register_rest_routes();
+		Kleistad_Adres::register_rest_routes();
 	}
 
 	/**

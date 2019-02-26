@@ -13,7 +13,7 @@
 if ( ! is_user_logged_in() || is_super_admin() ) :
 	?>
 
-	<form method="POST">
+	<form method="POST" autocomplete="off">
 		<?php wp_nonce_field( 'kleistad_abonnee_inschrijving' ); ?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3">
@@ -58,7 +58,7 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_start_datum">Start per</label>
 			</div>
-			<div class="kleistad_col_7 kleistad_input">
+			<div class="kleistad_col_2 kleistad_input">
 				<input class="kleistad_datum kleistad_input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  autocomplete="off" />
 			</div>
 		</div>

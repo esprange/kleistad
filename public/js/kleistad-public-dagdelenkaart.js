@@ -20,6 +20,17 @@
                 }
             );
 
+			/**
+			 * Vul adresvelden in
+			 */
+			$( '#kleistad_huisnr, #kleistad_pcode' ).change(
+				function() {
+					$().lookupPostcode( $( '#kleistad_pcode' ).val(), $( '#kleistad_huisnr' ).val(), function( data ) {
+						$( '#kleistad_straat' ).val( data.straat );
+						$( '#kleistad_plaats' ).val( data.plaats );
+					} );
+				}
+			)
         }
     );
 

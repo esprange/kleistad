@@ -4,6 +4,9 @@
  * @author Eric Sprangers.
  * @since  5.2.0
  */
+
+ /* global kleistadData */
+
 ( function( $ ) {
     'use strict';
 
@@ -133,6 +136,26 @@
 		}
 		return this;
 	};
+
+	$.fn.lookupPostcode = function( postcode, huisnr, callback ) {
+		if ( '' !== postcode && '' !== huisnr ) {
+			$.ajax(
+				{
+					url: kleistadData.base_url + '/adres/',
+					method: 'GET',
+					data: {
+						postcode: postcode,
+						huisnr:   huisnr
+					}
+				}
+			).done(
+				function( data ) {
+					callback( data );
+				}
+			).fail(); // Geen verdere actie ingeval van falen.
+		}
+	}
+
 
 	$( document ).ready(
         function() {

@@ -143,6 +143,16 @@ table.kleistad_reserveringen th[data-align='right'] {
 .kleistad_label + span {
     font-weight: bold;
 }
+.kleistad_input:required:invalid{
+	background-image: url('../images/invalid.png');
+    background-position: right top;
+    background-repeat: no-repeat;
+}
+.kleistad_input:required:valid{
+    background-image: url('../images/valid.png');
+    background-position: right top;
+    background-repeat: no-repeat;
+}
 .kleistad_row::after {
     clear: both;
     content: "";

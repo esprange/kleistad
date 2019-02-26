@@ -12,7 +12,7 @@
 
 ?>
 
-<form method="POST">
+<form method="POST" autocomplete="off">
 <?php
 wp_nonce_field( 'kleistad_cursus_inschrijving' );
 $checked_id = 0;
@@ -117,10 +117,10 @@ else :
 			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_aantal">Ik kom met </label>
 			</div>
-			<div class="kleistad_col_3">
-				<input class="kleistad_input" name="aantal" id="kleistad_aantal" value="<?php echo esc_attr( $data['input']['aantal'] ); ?>" />
+			<div class="kleistad_col_2">
+				<input class="kleistad_input" name="aantal" id="kleistad_aantal" size="3" value="<?php echo esc_attr( $data['input']['aantal'] ); ?>" />
 			</div>
-			<div class="kleistad_col_4 kleistad_label">
+			<div class="kleistad_col_2 kleistad_label">
 				<label>deelnemers</label>
 			</div>
 		</div>
