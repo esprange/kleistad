@@ -159,10 +159,14 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		$stoker_id     = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
 		$stoker_naam   = get_userdata( $stoker_id )->display_name;
 		$eigendom      = $reservering->verdeling[0]['id'] === $gebruiker_id;
+		$kleur         = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'lightgray' : ( $eigendom ? 'lightgreen' : 'pink' );
 		$logica        = [
 			Kleistad_Reservering::ONGEBRUIKT    => [
 				'wie'         => '',
 				'temperatuur' => '',
+				'programma'   => '',
+				'verdeling'   => [],
+				'soortstook'  => '',
 				'kleur'       => 'white',
 				'select'      => false,
 				'update'      => false,
@@ -170,6 +174,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			Kleistad_Reservering::RESERVEERBAAR => [
 				'wie'         => '- beschikbaar -',
 				'temperatuur' => '',
+				'programma'   => '',
+				'verdeling'   => [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
+				'soortstook'  => '',
 				'kleur'       => 'white',
 				'select'      => true,
 				'update'      => true,
@@ -177,20 +184,29 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			Kleistad_Reservering::WIJZIGBAAR    => [
 				'wie'         => $stoker_naam,
 				'temperatuur' => $reservering->temperatuur,
-				'kleur'       => Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'lightgray' : ( $eigendom ? 'lightgreen' : 'pink' ),
+				'programma'   => $reservering->programma,
+				'verdeling'   => $reservering->verdeling,
+				'soortstook'  => $reservering->soortstook,
+				'kleur'       => $kleur,
 				'select'      => true,
 				'update'      => $eigendom || Kleistad_Roles::override(),
 			],
 			Kleistad_Reservering::VERWIJDERBAAR => [
 				'wie'         => $stoker_naam,
 				'temperatuur' => $reservering->temperatuur,
-				'kleur'       => Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'lightgray' : ( $eigendom ? 'lightgreen' : 'pink' ),
+				'programma'   => $reservering->programma,
+				'verdeling'   => $reservering->verdeling,
+				'soortstook'  => $reservering->soortstook,
+				'kleur'       => $kleur,
 				'select'      => true,
 				'update'      => $eigendom || Kleistad_Roles::override(),
 			],
 			Kleistad_Reservering::DEFINITIEF    => [
 				'wie'         => $stoker_naam,
 				'temperatuur' => $reservering->temperatuur,
+				'programma'   => $reservering->programma,
+				'verdeling'   => $reservering->verdeling,
+				'soortstook'  => $reservering->soortstook,
 				'kleur'       => 'white',
 				'select'      => true,
 				'update'      => false,
@@ -202,10 +218,10 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'dag'          => $dag,
 				'maand'        => $maand,
 				'jaar'         => $jaar,
-				'soortstook'   => $reservering->soortstook,
-				'temperatuur'  => $reservering->gereserveerd ? $reservering->temperatuur : '',
-				'programma'    => $reservering->gereserveerd ? $reservering->programma : '',
-				'verdeling'    => $reservering->gereserveerd ? $reservering->verdeling : [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
+				'soortstook'   => $status['soortstook'],
+				'temperatuur'  => $status['temperatuur'],
+				'programma'    => $status['programma'],
+				'verdeling'    => $status['verdeling'],
 				'status'       => $reservering->status(),
 				'update'       => $status['update'],
 				'gebruiker_id' => $gebruiker_id,
@@ -214,11 +230,11 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		if ( false === $json_selectie ) {
 			$json_selectie = '{}';
 		}
-		$html = '<tr style="background-color:' . $status['kleur'] . ';"';
+		$html = "<tr style=\"background-color:{$status['kleur']};\"";
 		if ( $status['select'] ) {
-			$html .= 'class="kleistad_box" data-form=' . "'" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' ";
+			$html .= "class=\"kleistad_box\" data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' ";
 		}
-		$html .= "><td>$dag $dagnaam</td><td>" . $status['wie'] . "</td><td>$reservering->soortstook</td><td>" . $status['temperatuur'] . '</td></tr>';
+		$html .= "><td>$dag $dagnaam</td><td> {$status['wie']}</td><td>{$status['soortstook']}</td><td>{$status['temperatuur']}</td></tr>";
 		return $html;
 	}
 
