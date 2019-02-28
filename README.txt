@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.1.0
-Stable tag: 5.2.0
+Stable tag: 5.2.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,11 +34,13 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+* 5.2.1 =
+* Code refactoring a.g.v. controles door scrutinizer
+* Oven reservering fors gewijzigd
+* Op basis van postcode, huisnr de straatnaam en plaats opzoeken
 = 5.2.0 =
 * Kleuren agenda aangepast
 * Externe libraries geactualiseerd
-* Code refactoring a.g.v. controles door scrutinizer
-* Oven reservering fors gewijzigd
 = 5.1.0 =
 * Agenda functie vervangen door FullCalendar object
 = 5.0.4 =
