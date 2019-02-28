@@ -3,8 +3,8 @@ Contributors: Eric Sprangers
 Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
-Tested up to: 5.0.3
-Stable tag: 5.1.0
+Tested up to: 5.1.0
+Stable tag: 5.2.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -20,13 +20,13 @@ Deze plugin is specifiek ontwikkeld voor de site www.kleistad.nl en voegt een aa
 # Gebruik van de Kleistad plugin
 
 De plugin onderkent een groot aantal shortcodes. De uitleg hiervan wordt getoond op de kleistad opties in het admin dashboard.
-De plugin maakt gebruik van de Mollie betaal app voor de iDeal betalingen.
 
 == Installation ==
 
 Reguliere Wordpress plugin installatie door:
 1. Upload van de plugin naar de '/wp-content/plugins/ directory
 2. Activering plugin in het Wordpress 'plugins' menu.
+3. Plugin updates via reguliere wordpress functies.
 
 Plaats de shortcodes in de pagina's
 
@@ -38,6 +38,7 @@ Plaats de shortcodes in de pagina's
 * Kleuren agenda aangepast
 * Externe libraries geactualiseerd
 * Code refactoring a.g.v. controles door scrutinizer
+* Oven reservering fors gewijzigd
 = 5.1.0 =
 * Agenda functie vervangen door FullCalendar object
 = 5.0.4 =
@@ -147,7 +148,7 @@ geen.
 
 == Additionele info ==
 
-Deze plugin voegt drie tabellen toe aan de database:
+Deze plugin voegt vier tabellen toe aan de database:
 
 * kleistad_ovens
 * kleistad_reserveringen
