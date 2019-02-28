@@ -524,6 +524,7 @@
             $( '#kleistad_reservering' ).on(
                 'click', '#kleistad_stoker_toevoegen', function() {
 					medestook( { id:0, perc:0 } );
+					$( '[name=kleistad_stoker_id]:last' ).focus();
                     return false;
                 }
             );
