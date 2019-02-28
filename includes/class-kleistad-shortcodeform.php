@@ -35,8 +35,8 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * Valideer opvoeren nieuwe gebruiker
 	 *
 	 * @since 5.2.1
-	 * @param \WP_ERROR $error bestaand wp error object waar nieuwe fouten aan toegevoegd kunnen worden
-	 * @param array $input de ingevoerde data
+	 * @param \WP_ERROR $error bestaand wp error object waar nieuwe fouten aan toegevoegd kunnen worden.
+	 * @param array     $input de ingevoerde data.
 	 */
 	public function validate_gebruiker( &$error, $input ) {
 		if ( ! $this->validate_email( $input['EMAIL'] ) ) {
