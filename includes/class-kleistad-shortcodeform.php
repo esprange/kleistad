@@ -32,6 +32,45 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	abstract public function save( $data );
 
 	/**
+	 * Valideer opvoeren nieuwe gebruiker
+	 *
+	 * @since 5.2.1
+	 * @param \WP_ERROR $error bestaand wp error object waar nieuwe fouten aan toegevoegd kunnen worden
+	 * @param array $input de ingevoerde data
+	 */
+	public function validate_gebruiker( &$error, $input ) {
+		if ( ! $this->validate_email( $input['EMAIL'] ) ) {
+			$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
+			$input['EMAIL']          = '';
+			$input['email_controle'] = '';
+		} else {
+			$this->validate_email( $input['email_controle'] );
+			if ( $input['email_controle'] !== $input['EMAIL'] ) {
+				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
+				$input['email_controle'] = '';
+			}
+		}
+		if ( ! empty( $input['telnr'] ) && ! $this->validate_telnr( $input['telnr'] ) ) {
+			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
+		}
+		if ( ! empty( $input['pcode'] ) && ! $this->validate_pcode( $input['pcode'] ) ) {
+			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
+		}
+		if ( ! $this->validate_naam( $input['FNAME'] ) ) {
+			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
+			$input['FNAME'] = '';
+		}
+		if ( ! $this->validate_naam( $input['LNAME'] ) ) {
+			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
+			$input['LNAME'] = '';
+		}
+
+		return $error;
+	}
+
+
+
+	/**
 	 * Hulp functie, om een telefoonnr te valideren
 	 *
 	 * @since 5.2.0
