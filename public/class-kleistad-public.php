@@ -459,8 +459,11 @@ class Kleistad_Public {
 		if ( is_null( $userdata['ID'] ) ) {
 			$uniek     = '';
 			$startnaam = $nice_voornaam;
-			if ( 4 > mb_strlen( $startnaam ) ) {
-				$startnaam = substr( $startnaam . $nice_achternaam, 0, 4 );
+			if ( 8 > mb_strlen( $startnaam ) ) { // Gebruikersnaam moet minimaal 8 karakters hebben.
+				$startnaam = substr( $startnaam . $nice_achternaam, 0, 8 );
+				while ( 8 > mb_strlen( $startnaam ) ) {
+					$startnaam .= chr( wp_rand( ord( '0' ), ord( '9' ) ) ); // Aanvullen met een cijfer.
+				}
 			}
 			while ( username_exists( $startnaam . $uniek ) ) {
 				$uniek = intval( $uniek ) + 1;

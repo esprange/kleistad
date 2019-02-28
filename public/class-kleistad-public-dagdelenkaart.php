@@ -92,7 +92,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 			$data['input']['email_controle'] = '';
 		} else {
 			$this->validate_email( $data['input']['email_controle'] );
-			if ( $data['input']['email_controle'] !== $data['input']['email'] ) {
+			if ( $data['input']['email_controle'] !== $data['input']['EMAIL'] ) {
 				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $data['input']['EMAIL'] . ' en ' . $data['input']['email_controle'] . ' zijn niet identiek' );
 				$data['input']['email_controle'] = '';
 			}

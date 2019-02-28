@@ -113,20 +113,26 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				'pcode'           => FILTER_SANITIZE_STRING,
 				'plaats'          => FILTER_SANITIZE_STRING,
 				'telnr'           => FILTER_SANITIZE_STRING,
-				'cursus_id'       => FILTER_SANITIZE_NUMBER_INT,
+				'cursus_id'       => [
+					'filter'    => FILTER_SANITIZE_NUMBER_INT,
+					'min-range' => 1,
+				],
 				'gebruiker_id'    => FILTER_SANITIZE_NUMBER_INT,
 				'technieken'      => [
 					'filter'  => FILTER_SANITIZE_STRING,
 					'flags'   => FILTER_FORCE_ARRAY,
 					'options' => [ 'default' => [] ],
 				],
+				'aantal'          => [
+					'filter'    => FILTER_SANITIZE_NUMBER_INT,
+					'min-range' => 1,
+				],
 				'opmerking'       => FILTER_SANITIZE_STRING,
-				'aantal'          => FILTER_SANITIZE_STRING,
 				'betaal'          => FILTER_SANITIZE_STRING,
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( 0 === intval( $data['input']['cursus_id'] ) ) {
+		if ( false === intval( $data['input']['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 			return $error;
 		}
@@ -139,7 +145,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
 			$data['input']['aantal'] = $ruimte;
 		}
-		if ( 1 > $data['input']['aantal'] ) {
+		if ( false === $data['input']['aantal'] ) {
 			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
 			$data['input']['aantal'] = 1;
 		}
@@ -150,7 +156,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				$data['input']['email_controle'] = '';
 			} else {
 				$this->validate_email( $data['input']['email_controle'] );
-				if ( $data['input']['email_controle'] !== $data['input']['email'] ) {
+				if ( $data['input']['email_controle'] !== $data['input']['EMAIL'] ) {
 					$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $data['input']['EMAIL'] . ' en ' . $data['input']['email_controle'] . ' zijn niet identiek' );
 					$data['input']['email_controle'] = '';
 				}
