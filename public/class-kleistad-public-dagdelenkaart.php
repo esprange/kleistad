@@ -67,6 +67,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
+				'gebruiker_id'    => FILTER_SANITIZE_NUMBER_INT,
 				'EMAIL'           => FILTER_SANITIZE_EMAIL,
 				'email_controle'  => FILTER_SANITIZE_EMAIL,
 				'FNAME'           => FILTER_SANITIZE_STRING,
@@ -86,7 +87,9 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 		if ( '' === $data['input']['start_datum'] ) {
 			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' );
 		}
-		$this->validate_gebruiker( $error, $data['input'] );
+		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
+			$this->validate_gebruiker( $error, $data['input'] );
+		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
 		}

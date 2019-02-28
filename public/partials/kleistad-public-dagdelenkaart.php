@@ -21,7 +21,11 @@
 			<input class="kleistad_datum, kleistad_input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  autocomplete="off" />
 		</div>
 	</div>
+	<?php if ( is_user_logged_in() ) : ?>
+	<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" />
+	<?php else : ?>
 	<?php require plugin_dir_path( dirname( __FILE__ ) ) . '/partials/kleistad-public-gebruiker.php'; ?>
+	<?php endif ?>
 	<div class ="kleistad_row">
 		<div class="kleistad_col_10">
 			<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
