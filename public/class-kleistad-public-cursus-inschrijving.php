@@ -138,7 +138,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 		}
 		$data['cursus'] = new Kleistad_Cursus( $data['input']['cursus_id'] );
 		$ruimte         = $data['cursus']->ruimte;
-		if ( $data['cursus']->vol || 0 === $ruimte ) {
+		if ( $data['cursus']->vol ) {
 			$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
 			$data['input']['cursus_id'] = 0;
 		} elseif ( $ruimte < $data['input']['aantal'] ) {
