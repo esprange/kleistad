@@ -29,7 +29,7 @@
              * Toon de details van het geselecteerde workshop.
              */
             $( 'body' ).on(
-                'click', '.kleistad_workshop_info', function() {
+                'click touchstart', '.kleistad_workshop_info', function() {
 					var workshop = $( this ).data( 'workshop' );
                     $( '#kleistad_workshop' ).dialog( 'option', 'title', 'W' + workshop.id + ' ' + workshop.naam ).dialog( 'open' );
                     $( '#kleistad_id' ).val( workshop.id );

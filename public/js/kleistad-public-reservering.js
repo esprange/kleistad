@@ -454,7 +454,7 @@
              * Open een reservering (nieuw of bestaand).
              */
             $( '#kleistad_reserveringen' ).on(
-                'click', '.kleistad_box', function() {
+                'click touchstart', '.kleistad_box', function() {
                     $( '#kleistad_reservering' ).dialog( 'open' );
                     kleistadForm( $( this ).data( 'form' ) );
                     return false;

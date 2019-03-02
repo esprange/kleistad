@@ -59,7 +59,7 @@
              * Toon de detailinformatie van de deelnemer
              */
             $( 'body' ).on(
-                'click', '.kleistad_deelnemer_info', function() {
+                'click touchstart', '.kleistad_deelnemer_info', function() {
                     var header = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Inschrijfgeld</th><th>Cursusgeld</th><th>Geannuleerd</th><th>Technieken</th></tr>',
                         inschrijvingen = $( this ).data( 'inschrijvingen' ),
                         deelnemer = $( this ).data( 'deelnemer' ),

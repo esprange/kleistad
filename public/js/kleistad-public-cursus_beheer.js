@@ -76,7 +76,7 @@
              * Toon de details van de geselecteerde cursus.
              */
             $( 'body' ).on(
-                'click', '.kleistad_cursus_info', function() {
+                'click touchstart', '.kleistad_cursus_info', function() {
                     var cursus = $( this ).data( 'cursus' ),
 						ingedeeld = $( this ).data( 'ingedeeld' );
                     $( '#kleistad_cursus' ).dialog( 'option', 'title', cursus.naam ).dialog( 'open' );

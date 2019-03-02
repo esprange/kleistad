@@ -41,7 +41,7 @@
              * Toon de detailinformatie van de deelnemer
              */
             $( 'body' ).on(
-                'click', '.kleistad_cursus_info', function() {
+                'click touchstart', '.kleistad_cursus_info', function() {
                     var html   = '<tr><th>Naam</th><th>Telefoon</th><th>Email</th><th>Technieken</th></tr>',
 						lijst  = $( this ).data( 'lijst' ),
 						id     = $( this ).data( 'id' ),
