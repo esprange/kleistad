@@ -201,12 +201,12 @@
 			/**
 			 * Voor de ondersteuning van touch events
 			 */
-			$(document).on('touchstart', function() {
-				detectTap = true; //detects all touch events
+			$( document ).on( 'touchstart', function() {
+				detectTap = true;
 			});
 
-			$(document).on('touchmove', function() {
-				detectTap = false; //Excludes the scroll events from touch events
+			$( document ).on( 'touchmove', function() {
+				detectTap = false;
 			});
 
 		}

@@ -75,7 +75,7 @@
                 }
 			);
 
-			$( '#kleistad_sluit' ).click( function(){
+			$( '#kleistad_sluit' ).click( function() {
 				$( '#kleistad_workshop' ).dialog( 'close' );
 			});
         }
