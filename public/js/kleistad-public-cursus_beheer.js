@@ -81,7 +81,7 @@
                 'click touchend', '.kleistad_cursus_info', function( event ) {
 					var cursus, ingedeeld;
 					if ( 'click' === event.type || detectTap ) {
-						cursus    = $( this ).data( 'cursus' ),
+						cursus    = $( this ).data( 'cursus' );
 						ingedeeld = $( this ).data( 'ingedeeld' );
 						$( '#kleistad_cursus' ).dialog( 'option', 'title', cursus.naam ).dialog( 'open' );
 						$( 'input[name="cursus_id"]' ).val( cursus.id );

@@ -64,10 +64,10 @@
                 'click touchend', '.kleistad_deelnemer_info', function( event ) {
 					var header, inschrijvingen, deelnemer, abonnee;
 					if ( 'click' === event.type || detectTap ) {
-						inschrijvingen = $( this ).data( 'inschrijvingen' ),
-						deelnemer      = $( this ).data( 'deelnemer' ),
+						inschrijvingen = $( this ).data( 'inschrijvingen' );
+						deelnemer      = $( this ).data( 'deelnemer' );
 						abonnee        = $( this ).data( 'abonnee' );
-						header         = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Inschrijfgeld</th><th>Cursusgeld</th><th>Geannuleerd</th><th>Technieken</th></tr>',
+						header         = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Inschrijfgeld</th><th>Cursusgeld</th><th>Geannuleerd</th><th>Technieken</th></tr>';
 						$( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', deelnemer.naam ).dialog( 'open' );
 						$( '#kleistad_deelnemer_tabel' ).empty();
 						$( '#kleistad_deelnemer_tabel' )
