@@ -16,13 +16,9 @@
 	 * @param {int} id Het Wordpress id van de stoker
 	 */
 	function vindStokerNaam( id ) {
-		var i;
-		for ( i = 0; i < stokers.length; i++ ) {
-			if ( stokers[i].id === id ) {
-				return stokers[i].naam;
-			}
-		}
-		return '';
+		return stokers.filter( function( stoker ) {
+			return ( stoker.id === id );
+		})[0].naam;
 	}
 
 	/**
@@ -34,7 +30,7 @@
 	$.fn.selectStoker = function( empty, id ) {
 		var i;
 		$( this ).append(
-			$( '<select>' ).attr( 'name', 'kleistad_stoker_id' )
+			$( '<select>' ).attr( { 'name':'kleistad_stoker_id', 'class':'kleistad_verdeling' } )
 		);
 		if ( empty ) {
 			$( 'select', this ).append(
@@ -43,7 +39,7 @@
 		}
 		for ( i = 0; i < stokers.length; i++ ) {
 			$( 'select', this ).append(
-				$( '<option>' ).val( stokers[i].id ).prop( 'selected',  stokers[i].id === id ).text( stokers[i].naam ).change()
+				$( '<option>' ).val( stokers[i].id ).prop( 'selected',  stokers[i].id === id ).text( stokers[i].naam )
 			);
 		}
 		return this;
@@ -286,38 +282,34 @@
          */
         switch ( element.name ) {
             case 'kleistad_stoker_id':
-                stokerIds.forEach(
-                    function( item, index ) {
-                        if ( item === element ) {
-                            selectedRow = index;
+                stokerIds.forEach( function( item, index ) {
+					if ( item === element ) {
+						selectedRow = index;
 
-                            // Sanitize, als geen id, dan ook geen percentage.
-                            if ( 0 === Number( item.value ) ) {
-                                stokerPercs[index] = 0;
-                            }
-                        }
-                        sum += Number( stokerPercs[index].value );
-                    }
-                );
+						// Sanitize, als geen id, dan ook geen percentage.
+						if ( 0 === Number( item.value ) ) {
+							stokerPercs[index].value = 0;
+						}
+					}
+					sum += Number( stokerPercs[index].value );
+				});
                 break;
             case 'kleistad_stoker_perc':
-                stokerPercs.forEach(
-                    function( item, index ) {
-                        if ( item === element ) {
-                            selectedRow = index;
+                stokerPercs.forEach( function( item, index ) {
+					if ( item === element ) {
+						selectedRow = index;
 
-                            // Sanitize, als geen id, dan ook geen percentage.
-                            if ( 0 === Number( stokerIds[index].value ) ) {
-                                item.value = 0;
-                            } else {
+						// Sanitize, als geen id, dan ook geen percentage.
+						if ( 0 === Number( stokerIds[index].value ) ) {
+							item.value = 0;
+						} else {
 
-                                // Sanitize, value moet tussen 0 en 100 liggen (html moet dit al afvangen).
-                                item.value = Math.min( Math.max( +item.value, 0 ), 100 );
-                            }
-                        }
-                        sum += Number( item.value );
-                    }
-                );
+							// Sanitize, value moet tussen 0 en 100 liggen (html moet dit al afvangen).
+							item.value = Math.min( Math.max( +item.value, 0 ), 100 );
+						}
+					}
+					sum += Number( item.value );
+				});
                 break;
             default:
         }
