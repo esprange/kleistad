@@ -20,7 +20,7 @@ else :
 	<?php wp_nonce_field( 'kleistad_betalingen' ); ?>
 	<?php if ( isset( $data['inschrijvingen'] ) ) : ?>
 	<h2>Inschrijvingen</h2>
-	<table class="kleistad_datatable display">
+	<table class="kleistad_datatable display nowrap">
 		<thead>
 			<tr>
 				<th>Datum<br/>inschrijving</th>
@@ -62,7 +62,7 @@ else :
 	<?php endif ?>
 	<?php if ( isset( $data['workshops'] ) ) : ?>
 	<h2>workshops</h2>
-	<table class="kleistad_datatable display">
+	<table class="kleistad_datatable display nowrap">
 		<thead>
 			<tr>
 				<th>Datum</th>

@@ -1,3 +1,5 @@
+/* global detectTap */
+
 ( function( $ ) {
     'use strict';
 
@@ -29,31 +31,33 @@
              * Toon de details van het geselecteerde workshop.
              */
             $( 'body' ).on(
-                'click touchstart', '.kleistad_workshop_info', function() {
+                'click touchend', '.kleistad_workshop_info', function( event ) {
 					var workshop = $( this ).data( 'workshop' );
-                    $( '#kleistad_workshop' ).dialog( 'option', 'title', 'W' + workshop.id + ' ' + workshop.naam ).dialog( 'open' );
-                    $( '#kleistad_id' ).val( workshop.id );
-                    $( '#kleistad_naam' ).val( workshop.naam );
-					$( '#kleistad_docent' ).val( workshop.docent );
-                    $( '#kleistad_datum' ).val( workshop.datum );
-                    $( '#kleistad_start_tijd' ).val( workshop.start_tijd );
-                    $( '#kleistad_eind_tijd' ).val( workshop.eind_tijd );
-                    $( '#kleistad_aantal' ).val( workshop.aantal );
-                    $( '#kleistad_kosten' ).val( workshop.kosten );
-                    $( '#kleistad_email' ).val( workshop.email );
-                    $( '#kleistad_contact' ).val( workshop.contact );
-                    $( '#kleistad_telefoon' ).val( workshop.telefoon );
-                    $( '#kleistad_organisatie' ).val( workshop.organisatie );
-					$( '#kleistad_programma' ).val( workshop.programma );
-					$( '#kleistad_definitief' ).attr( 'class', ( workshop.definitief > 0 ) ? 'genericon genericon-checkmark' : '' );
-					$( '#kleistad_betaald' ).attr( 'class', ( workshop.betaald > 0 ) ? 'genericon genericon-checkmark' : '' );
-                    $( '#kleistad_draaien' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Draaien' ) >= 0 );
-                    $( '#kleistad_handvormen' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Handvormen' ) >= 0 );
-					$( '#kleistad_boetseren' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Boetseren' ) >= 0 );
-					$( '#kleistad_kosten,#kleistad_datum' ).attr( 'readonly', workshop.definitief );
-					$( '#kleistad_workshop_bevestigen,#kleistad_workshop_opslaan' ).prop( 'disabled', workshop.betaald || workshop.definitief || workshop.vervallen );
-					$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', workshop.vervallen );
-                }
+					if ( 'click' === event.type || detectTap ) {
+						$( '#kleistad_workshop' ).dialog( 'option', 'title', 'W' + workshop.id + ' ' + workshop.naam ).dialog( 'open' );
+						$( '#kleistad_id' ).val( workshop.id );
+						$( '#kleistad_naam' ).val( workshop.naam );
+						$( '#kleistad_docent' ).val( workshop.docent );
+						$( '#kleistad_datum' ).val( workshop.datum );
+						$( '#kleistad_start_tijd' ).val( workshop.start_tijd );
+						$( '#kleistad_eind_tijd' ).val( workshop.eind_tijd );
+						$( '#kleistad_aantal' ).val( workshop.aantal );
+						$( '#kleistad_kosten' ).val( workshop.kosten );
+						$( '#kleistad_email' ).val( workshop.email );
+						$( '#kleistad_contact' ).val( workshop.contact );
+						$( '#kleistad_telefoon' ).val( workshop.telefoon );
+						$( '#kleistad_organisatie' ).val( workshop.organisatie );
+						$( '#kleistad_programma' ).val( workshop.programma );
+						$( '#kleistad_definitief' ).attr( 'class', ( workshop.definitief > 0 ) ? 'genericon genericon-checkmark' : '' );
+						$( '#kleistad_betaald' ).attr( 'class', ( workshop.betaald > 0 ) ? 'genericon genericon-checkmark' : '' );
+						$( '#kleistad_draaien' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Draaien' ) >= 0 );
+						$( '#kleistad_handvormen' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Handvormen' ) >= 0 );
+						$( '#kleistad_boetseren' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Boetseren' ) >= 0 );
+						$( '#kleistad_kosten,#kleistad_datum' ).attr( 'readonly', workshop.definitief );
+						$( '#kleistad_workshop_bevestigen,#kleistad_workshop_opslaan' ).prop( 'disabled', workshop.betaald || workshop.definitief || workshop.vervallen );
+						$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', workshop.vervallen );
+					}
+				}
             );
 
             /**
@@ -69,7 +73,11 @@
 					$( '#kleistad_definitief,#kleistad_betaald' ).removeAttr( 'class' );
 					$( '#kleistad_kosten,#kleistad_datum' ).attr( 'readonly', false );
                 }
-            );
+			);
+
+			$( '#kleistad_sluit' ).click( function(){
+				$( '#kleistad_workshop' ).dialog( 'close' );
+			});
         }
     );
 

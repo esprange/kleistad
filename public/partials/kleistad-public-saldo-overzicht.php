@@ -16,7 +16,7 @@ if ( ! Kleistad_Roles::override() ) : ?>
 else :
 	?>
 
-<table class="kleistad_datatable display" data-order= '[[ 0, "asc" ]]'>
+<table class="kleistad_datatable display compact" data-order= '[[ 0, "asc" ]]'>
 	<thead>
 		<tr>
 			<th>Naam</th>

@@ -7,6 +7,8 @@
 
  /* global kleistadData */
 
+ var detectTap;
+
 ( function( $ ) {
     'use strict';
 
@@ -194,7 +196,19 @@
             /**
              * Definieer de timespinners.
              */
-            $( '.kleistad_tijd' ).timespinner();
+			$( '.kleistad_tijd' ).timespinner();
+
+			/**
+			 * Voor de ondersteuning van touch events
+			 */
+			$(document).on('touchstart', function() {
+				detectTap = true; //detects all touch events
+			});
+
+			$(document).on('touchmove', function() {
+				detectTap = false; //Excludes the scroll events from touch events
+			});
+
 		}
 	);
 

@@ -1,4 +1,4 @@
-/* global kleistadData */
+/* global kleistadData, detectTap */
 
 ( function( $ ) {
     'use strict';
@@ -65,7 +65,7 @@
 					$( '<td>' ).selectStoker( false, verdeling.id )
 				).append(
 					$( '<td>' ).append(
-						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'3', tabindex:'-1' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
+						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'5', tabindex:'-1' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
 					)
 				)
 			);
@@ -82,7 +82,7 @@
 					).append( vindStokerNaam( verdeling.id ) ).css( { 'white-space':'nowrap', 'text-overflow':'ellipsis', overflow:'hidden' } )
 				).append(
 					$( '<td>' ).append(
-						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'3', tabindex:'-1' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
+						$( '<input>' ).attr( { name:'kleistad_stoker_perc', size:'5', tabindex:'-1' } ).prop( 'readonly', true ).val( verdeling.perc ).css( { border:0, outline:0 } )
 					)
 				)
 			);
@@ -454,9 +454,11 @@
              * Open een reservering (nieuw of bestaand).
              */
             $( '#kleistad_reserveringen' ).on(
-                'click touchstart', '.kleistad_box', function() {
-                    $( '#kleistad_reservering' ).dialog( 'open' );
-                    kleistadForm( $( this ).data( 'form' ) );
+                'click touchend', '.kleistad_box', function( event ) {
+					if ( 'click' === event.type || detectTap ) {
+						$( '#kleistad_reservering' ).dialog( 'open' );
+						kleistadForm( $( this ).data( 'form' ) );
+					}
                     return false;
                 }
             );
@@ -467,7 +469,7 @@
             $( '#kleistad_reservering' ).dialog(
 				{
 					autoOpen: false,
-					height: 550,
+					height: 'auto',
 					width: 360,
 					modal: true
 				}

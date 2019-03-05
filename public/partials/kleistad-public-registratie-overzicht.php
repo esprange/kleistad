@@ -31,7 +31,7 @@ else :
 
 	</select>
 </p>
-<table class="kleistad_datatable display" id="kleistad_deelnemer_lijst">
+<table class="kleistad_datatable display compact nowrap" id="kleistad_deelnemer_lijst">
 	<thead>
 		<tr>
 			<th data-visible="false">Lid</th>

@@ -81,7 +81,7 @@ else :
 			</tr>
 			<tr>
 				<th>Programma</th>
-				<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="3" maxlength="500" ></textarea>
+				<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="2" maxlength="500" ></textarea>
 			</tr>
 			<tr>
 				<th>Kosten</th>
@@ -96,15 +96,17 @@ else :
 			</tr>
 			<tr>
 				<td><button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_opslaan" value="opslaan" >Opslaan</button></td>
-				<td><button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" >Bevestigen</button></td>
-				<td></td>
-				<td><button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" >Afzeggen</button></td>
+				<td><button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen"
+					onclick="return confirm( 'weet je zeker dat je nu de bevesting wilt versturen' )" >Bevestigen</button></td>
+				<td><button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen"
+					onclick="return confirm( 'weet je zeker dat je de workshop wilt afzeggen' )" >Afzeggen</button></td>
+				<td><button type="button" id="kleistad_sluit">Sluiten</button></td>
 			</tr>
 		</table>
 	</form>
 </div>
 
-<table class="kleistad_datatable display" data-page-length="10" data-order='[[ 1, "desc" ]]' >
+<table id="kleistad_workshops" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Code</th>

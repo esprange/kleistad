@@ -1,3 +1,5 @@
+/* global detectTap */
+
 ( function( $ ) {
 	'use strict';
 
@@ -41,24 +43,26 @@
              * Toon de detailinformatie van de deelnemer
              */
             $( 'body' ).on(
-                'click touchstart', '.kleistad_cursus_info', function() {
+                'click touchend', '.kleistad_cursus_info', function( event ) {
                     var html   = '<tr><th>Naam</th><th>Telefoon</th><th>Email</th><th>Technieken</th></tr>',
 						lijst  = $( this ).data( 'lijst' ),
 						id     = $( this ).data( 'id' ),
 						naam   = $( this ).data( 'naam' ),
 						emails = '';
-					$( '#kleistad_cursisten_info' ).dialog( 'option', 'title', naam ).dialog( 'open' );
-					$( '#kleistad_cursus_id' ).val( id );
-					$.each( lijst, function( key, value ) {
-						html += '<tr><td>' + value.naam + ( 1 < value.aantal ? ' (' + value.aantal + ')' : '' ) +
-								'</td><td>' + value.telnr +
-								'</td><td>' + value.email +
-								'</td><td>' + value.technieken +
-								'</td></tr>';
-						emails += value.email + ';';
-					} );
-					$( '#kleistad_cursisten_lijst' ).empty().append( html );
-					$( '#kleistad_email_lijst' ).val( emails );
+					if ( 'click' === event.type || detectTap ) {
+						$( '#kleistad_cursisten_info' ).dialog( 'option', 'title', naam ).dialog( 'open' );
+						$( '#kleistad_cursus_id' ).val( id );
+						$.each( lijst, function( key, value ) {
+							html += '<tr><td>' + value.naam + ( 1 < value.aantal ? ' (' + value.aantal + ')' : '' ) +
+									'</td><td>' + value.telnr +
+									'</td><td>' + value.email +
+									'</td><td>' + value.technieken +
+									'</td></tr>';
+							emails += value.email + ';';
+						} );
+						$( '#kleistad_cursisten_lijst' ).empty().append( html );
+						$( '#kleistad_email_lijst' ).val( emails );
+					}
                 }
             );
         }

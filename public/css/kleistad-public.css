@@ -29,7 +29,7 @@ Description: stylesheet functions voor kleistad_plugin
 }
 table.display {
     font-size: small;
-    table-layout: auto;
+	table-layout: auto;
 }
 
 .kleistad_hover {
@@ -135,6 +135,10 @@ table.kleistad_reserveringen td:nth-child(4n) {
 }
 table.kleistad_reserveringen th[data-align='right'] {
     text-align: right;
+}
+
+table.kleistad_datatable th, td {
+	font-size: small;
 }
 
 .kleistad_label {

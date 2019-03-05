@@ -17,7 +17,7 @@ else :
 	?>
 <p>Stookrapport voor <?php echo esc_html( $data['naam'] ); ?> (je huidig saldo is &euro; <?php echo esc_html( $data['saldo'] ); ?>)</p>
 
-<table class="kleistad_datatable display" data-order= '[[ 0, "desc" ]]' >
+<table class="kleistad_datatable display compact" data-order= '[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Datum</th>

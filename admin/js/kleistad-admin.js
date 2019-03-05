@@ -51,27 +51,23 @@
             /**
              * Definieer de datumpickers.
              */
-            $( '.kleistad_datum' ).each(
-                function() {
-                    $( this ).datepicker(
-                        {
-							dateFormat: 'dd-mm-yy',
-							beforeShowDay: function( date ) {
-								var day = date.getDate();
-								if ( $( this ).hasClass( 'maand' ) ) {
-									return [ ( 1 === day ) ];
-								}
-								return [ true ];
-							},
-							beforeShow: function( input ) {
-								if ( $( input ).attr( 'readonly' ) ) {
-									return false;
-								}
-								return true;
-							}
-                        }
-                    );
-                }
+            $( '.kleistad_datum' ).datepicker(
+				{
+					dateFormat: 'dd-mm-yy',
+					beforeShowDay: function( date ) {
+						var day = date.getDate();
+						if ( $( this ).hasClass( 'maand' ) ) {
+							return [ ( 1 === day ) ];
+						}
+						return [ true ];
+					},
+					beforeShow: function( input ) {
+						if ( $( input ).attr( 'readonly' ) ) {
+							return false;
+						}
+						return true;
+					}
+				}
             );
         }
     );
