@@ -44,12 +44,13 @@
              */
             $( 'body' ).on(
                 'click touchend', '.kleistad_cursus_info', function( event ) {
-                    var html   = '<tr><th>Naam</th><th>Telefoon</th><th>Email</th><th>Technieken</th></tr>',
+					var html, lijst, id, naam, emails;
+					if ( 'click' === event.type || detectTap ) {
+						html   = '<tr><th>Naam</th><th>Telefoon</th><th>Email</th><th>Technieken</th></tr>',
 						lijst  = $( this ).data( 'lijst' ),
 						id     = $( this ).data( 'id' ),
 						naam   = $( this ).data( 'naam' ),
 						emails = '';
-					if ( 'click' === event.type || detectTap ) {
 						$( '#kleistad_cursisten_info' ).dialog( 'option', 'title', naam ).dialog( 'open' );
 						$( '#kleistad_cursus_id' ).val( id );
 						$.each( lijst, function( key, value ) {
