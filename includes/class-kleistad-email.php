@@ -91,7 +91,8 @@ class Kleistad_Email {
 		if ( ! self::initialiseer() ) {
 			return false;
 		};
-		$page = get_page_by_title( $slug, OBJECT );
+		$headers = self::$header_basis;
+		$page    = get_page_by_title( $slug, OBJECT );
 		if ( is_null( $page ) ) {
 			$page = get_page_by_title( str_replace( '_', '-', $slug ), OBJECT );
 		}
@@ -116,7 +117,6 @@ class Kleistad_Email {
 			$fields = [ 'cc', 'bcc' ];
 
 			// Vervang eventuele [cc:x] of [bcc:x] velden en stop die in de header.
-			$headers = self::$header_basis;
 			foreach ( $fields as $field ) {
 				$gevonden = stripos( $text, '[' . $field . ':' );
 				if ( ! ( false === $gevonden ) ) {
