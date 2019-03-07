@@ -35,6 +35,15 @@ table.display {
 .kleistad_hover {
 	color: blue;
 }
+
+.kleistad_hover_reservering {
+	color: blue;
+	border-color: gray;
+	border-width: 1px;
+	border-style: solid;
+	cursor: pointer;
+}
+
 .kleistad_tijd {
     width: 4em;
 }

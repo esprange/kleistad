@@ -15,6 +15,20 @@
 class Kleistad_Email {
 
 	/**
+	 * Email header
+	 *
+	 * @var array $header_basis Begin header voor te verzenden email.
+	 */
+	private static $header_basis = [];
+
+	/**
+	 * Info email adres
+	 *
+	 * @var string $info Het info email adres.
+	 */
+	private static $info = '';
+
+	/**
 	 * Helper functie, haalt het domein op van het email adres.
 	 *
 	 * @return string|bool
@@ -28,6 +42,43 @@ class Kleistad_Email {
 	}
 
 	/**
+	 * Initialisatie functie zodat filters e.d. maar eenmalig gerealiseerd worden.
+	 *
+	 * @return bool
+	 */
+	private static function initialiseer() {
+		static $init = false;
+		if ( ! $init ) {
+			$domein = self::domein();
+			if ( false === $domein ) {
+				return false; // Zal waarschijnlijk nooit voorkomen.
+			}
+			$from               = 'no-reply@' . $domein;
+			self::$info         = 'info@' . $domein;
+			self::$header_basis = [
+				'Content-Type: text/html; charset=UTF-8',
+				"From: Kleistad <$from>",
+				'bcc: kleistad@sprako.nl',
+			];
+			add_filter(
+				'wp_mail_from',
+				function() use ( $from ) {
+					return $from;
+				}
+			);
+			add_filter(
+				'wp_mail_from_name',
+				function() {
+					return 'Kleistad';
+				}
+			);
+
+			$init = true;
+		}
+		return $init;
+	}
+
+	/**
 	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
 	 *
 	 * @param string       $to bestemming.
@@ -37,34 +88,9 @@ class Kleistad_Email {
 	 * @param string|array $attachment een eventuele bijlage.
 	 */
 	public static function compose( $to, $subject, $slug, $args = [], $attachment = [] ) {
-		$domein = self::domein();
-		if ( false === $domein ) {
-			return false; // Zal waarschijnlijk nooit voorkomen.
-		}
-		$emailadresses = [
-			'info' => 'info@' . $domein,
-			'from' => 'no-reply@' . $domein,
-			'copy' => 'stook@' . $domein,
-		];
-		add_filter(
-			'wp_mail_from',
-			function() use ( $emailadresses ) {
-				return $emailadresses['from'];
-			}
-		);
-		add_filter(
-			'wp_mail_from_name',
-			function() {
-				return 'Kleistad';
-			}
-		);
-
-		$headers = [
-			'Content-Type: text/html; charset=UTF-8',
-			"From: Kleistad <{$emailadresses['from']}>",
-			'bcc: kleistad@sprako.nl',
-		];
-
+		if ( ! self::initialiseer() ) {
+			return false;
+		};
 		$page = get_page_by_title( $slug, OBJECT );
 		if ( is_null( $page ) ) {
 			$page = get_page_by_title( str_replace( '_', '-', $slug ), OBJECT );
@@ -90,6 +116,7 @@ class Kleistad_Email {
 			$fields = [ 'cc', 'bcc' ];
 
 			// Vervang eventuele [cc:x] of [bcc:x] velden en stop die in de header.
+			$headers = self::$header_basis;
 			foreach ( $fields as $field ) {
 				$gevonden = stripos( $text, '[' . $field . ':' );
 				if ( ! ( false === $gevonden ) ) {
@@ -213,7 +240,7 @@ class Kleistad_Email {
 								<?php echo preg_replace( '/\s+/', ' ', $text ); // phpcs:ignore ?><br />
 								<p>Met vriendelijke groet,</p>
 								<p>Kleistad</p>
-								<p><a href="mailto:<?php echo esc_attr( $emailadresses['info'] ); ?>" target="_top" ><?php echo esc_html( $emailadresses['info'] ); ?></a></p>
+								<p><a href="mailto:<?php echo esc_attr( self::$info ); ?>" target="_top" ><?php echo esc_html( self::$info ); ?></a></p>
 							</td>
 						</tr>
 					</table>

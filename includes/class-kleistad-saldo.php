@@ -117,9 +117,7 @@ class Kleistad_Saldo {
 	 */
 	public function save( $reden ) {
 		$huidig_saldo = $this->huidig_saldo();
-
-		if ( 0.0099 < abs( $huidig_saldo - $this->bedrag ) ) {
-			update_user_meta( $this->gebruiker_id, self::META_KEY, $this->bedrag );
+		if ( update_user_meta( $this->gebruiker_id, self::META_KEY, $this->bedrag ) ) {
 			$gebruiker = get_userdata( $this->gebruiker_id );
 			self::write_log( $gebruiker->display_name . ' nu: € ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: € ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $reden );
 			return true;

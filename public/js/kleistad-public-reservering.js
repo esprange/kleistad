@@ -435,10 +435,8 @@
             /**
              * Verander de opmaak bij hovering.
              */
-            $( '#kleistad_reserveringen' ).on(
-                'hover', '.kleistad_box', function() {
-                    $( this ).css( 'cursor', 'pointer' );
-					$( this ).toggleClass( 'kleistad_hover' );
+            $( '#kleistad_reserveringen' ).on( 'hover', '.kleistad_box', function() {
+					$( this ).toggleClass( 'kleistad_hover_reservering' );
 				}
             );
 

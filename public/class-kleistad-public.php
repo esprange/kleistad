@@ -438,10 +438,8 @@ class Kleistad_Public {
 	 * @since 4.0.87
 	 */
 	public function update_ovenkosten() {
-		$reserveringen = Kleistad_Reservering::all( true );
-		foreach ( $reserveringen as $reservering ) {
-			$reservering->meld_en_verwerk();
-		}
+		set_time_limit( 0 ); // Voorkom dat deze job er door een execution time out crasht.
+		Kleistad_Reservering::meld_en_verwerk();
 	}
 
 	/**
