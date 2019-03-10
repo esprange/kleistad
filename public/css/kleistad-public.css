@@ -38,10 +38,10 @@ table.display {
 
 .kleistad_hover_reservering {
 	color: blue;
-	border-color: gray;
-	border-width: 1px;
-	border-style: solid;
 	cursor: pointer;
+	border-color: gray;
+	border-style: solid;
+	border-width: 1px;
 }
 
 .kleistad_tijd {
