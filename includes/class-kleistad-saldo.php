@@ -228,7 +228,8 @@ class Kleistad_Saldo {
 						$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
 						$saldo->bedrag = $saldo->bedrag - $bedrag;
 						if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $gebruiker->display_name ) ) {
-							Kleistad_email::compose( "$medestoker->display_name <$medestoker->user_email>",
+							Kleistad_email::compose(
+								"$medestoker->display_name <$medestoker->user_email>",
 								'Kleistad kosten zijn verwerkt op het stooksaldo',
 								'kleistad_email_stookkosten_verwerkt',
 								[
