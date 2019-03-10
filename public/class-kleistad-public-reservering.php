@@ -158,8 +158,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		$gebruiker_id  = get_current_user_id();
 		$stoker_id     = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
 		$stoker_naam   = get_userdata( $stoker_id )->display_name;
-		$eigendom      = $reservering->verdeling[0]['id'] === $gebruiker_id;
-		$kleur         = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'lightgray' : ( $eigendom ? 'lightgreen' : 'pink' );
+		$kleur         = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'lightgray' : ( $reservering->verdeling[0]['id'] === $gebruiker_id ? 'lightgreen' : 'pink' );
 		$logica        = [
 			Kleistad_Reservering::ONGEBRUIKT    => [
 				'wie'         => '',
@@ -169,7 +168,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'soortstook'  => '',
 				'kleur'       => 'white',
 				'select'      => false,
-				'update'      => false,
 			],
 			Kleistad_Reservering::RESERVEERBAAR => [
 				'wie'         => '- beschikbaar -',
@@ -179,7 +177,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'soortstook'  => '',
 				'kleur'       => 'white',
 				'select'      => true,
-				'update'      => true,
 			],
 			Kleistad_Reservering::WIJZIGBAAR    => [
 				'wie'         => $stoker_naam,
@@ -189,7 +186,15 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'soortstook'  => $reservering->soortstook,
 				'kleur'       => $kleur,
 				'select'      => true,
-				'update'      => $eigendom || Kleistad_Roles::override(),
+			],
+			Kleistad_Reservering::ALLEENLEZEN   => [
+				'wie'         => $stoker_naam,
+				'temperatuur' => $reservering->temperatuur,
+				'programma'   => $reservering->programma,
+				'verdeling'   => $reservering->verdeling,
+				'soortstook'  => $reservering->soortstook,
+				'kleur'       => $kleur,
+				'select'      => true,
 			],
 			Kleistad_Reservering::VERWIJDERBAAR => [
 				'wie'         => $stoker_naam,
@@ -199,7 +204,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'soortstook'  => $reservering->soortstook,
 				'kleur'       => $kleur,
 				'select'      => true,
-				'update'      => $eigendom || Kleistad_Roles::override(),
 			],
 			Kleistad_Reservering::DEFINITIEF    => [
 				'wie'         => $stoker_naam,
@@ -209,7 +213,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'soortstook'  => $reservering->soortstook,
 				'kleur'       => 'white',
 				'select'      => true,
-				'update'      => false,
 			],
 		];
 		$status        = $logica[ $reservering->status() ];
@@ -223,7 +226,6 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'programma'    => $status['programma'],
 				'verdeling'    => $status['verdeling'],
 				'status'       => $reservering->status(),
-				'update'       => $status['update'],
 				'gebruiker_id' => $gebruiker_id,
 			]
 		);

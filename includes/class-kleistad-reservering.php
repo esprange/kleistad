@@ -45,11 +45,12 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	/**
 	 * Opklimmende status
 	 */
-	const ONGEBRUIKT    = 0;
-	const RESERVEERBAAR = 1;
-	const VERWIJDERBAAR = 2;
-	const WIJZIGBAAR    = 3;
-	const DEFINITIEF    = 4;
+	const ONGEBRUIKT    = 'ongebruikt';
+	const RESERVEERBAAR = 'reserveerbaar';
+	const VERWIJDERBAAR = 'verwijderbaar';
+	const ALLEENLEZEN   = 'alleenlezen';
+	const WIJZIGBAAR    = 'wijzigbaar';
+	const DEFINITIEF    = 'definitief';
 
 	/**
 	 * Constructor
@@ -110,10 +111,14 @@ class Kleistad_Reservering extends Kleistad_Entity {
 			}
 		} else {
 			if ( ! $this->verwerkt ) {
-				if ( ! $this->datum < strtotime( 'today midnight' ) ) {
-					return self::VERWIJDERBAAR;
+				if ( $this->verdeling[0]['id'] === get_current_user_id() || Kleistad_Roles::override() ) {
+					if ( ! $this->datum < strtotime( 'today midnight' ) ) {
+						return self::VERWIJDERBAAR;
+					} else {
+						return self::WIJZIGBAAR;
+					}
 				} else {
-					return self::WIJZIGBAAR;
+					return self::ALLEENLEZEN;
 				}
 			}
 			return self::DEFINITIEF;
@@ -283,10 +288,10 @@ class Kleistad_Reservering extends Kleistad_Entity {
 					/**
 					 * Het onderstaande wordt als een transactie uitgevoerd omdat zowel het saldo als de reservering in de database gemuteerd worden.
 					 */
-					$wpdb->query( 'START TRANSACTION' );
 					if ( self::ONDERHOUD === $reservering->soortstook ) {
 						continue;
 					}
+					$wpdb->query( 'START TRANSACTION' );
 					$emails     = [];
 					$stookdelen = $reservering->verdeling;
 					$gebruiker  = get_userdata( $reservering->gebruiker_id );
