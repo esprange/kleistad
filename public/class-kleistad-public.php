@@ -439,7 +439,7 @@ class Kleistad_Public {
 	 */
 	public function update_ovenkosten() {
 		set_time_limit( 300 ); // Voorkom dat deze job er door een execution time out crasht, dus 300 sec = 5 minuten.
-		Kleistad_Reservering::meld_en_verwerk();
+		Kleistad_Saldo::meld_en_verwerk();
 	}
 
 	/**

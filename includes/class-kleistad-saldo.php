@@ -156,9 +156,8 @@ class Kleistad_Saldo {
 	 */
 	public function email( $type, $bedrag ) {
 		$gebruiker = get_userdata( $this->gebruiker_id );
-		$to        = "$gebruiker->display_name <$gebruiker->user_email>";
 		return Kleistad_Email::compose(
-			$to,
+			"$gebruiker->display_name <$gebruiker->user_email>",
 			'Bijstorting stooksaldo',
 			'kleistad_email_saldo_wijziging' . $type,
 			[
@@ -187,4 +186,100 @@ class Kleistad_Saldo {
 			$saldo->email( '_ideal', $bedrag );
 		}
 	}
+
+	/**
+	 * Verwerk de reservering. Afhankelijk van de status melden dat er een afboeking gaat plaats vinden of de werkelijke afboeking uitvoeren.
+	 * Verplaatst vanuit class reservering.
+	 *
+	 * @since 4.5.1
+	 * @throws Exception Als het saldo of de reservering niet opgeslagen kan worden.
+	 */
+	public static function meld_en_verwerk() {
+		global $wpdb;
+		$reserveringen = Kleistad_reservering::all( true );
+		$regelingen    = new Kleistad_Regelingen();
+		$ovens         = Kleistad_Oven::all();
+		$options       = Kleistad::get_options();
+
+		foreach ( $reserveringen as $reservering ) {
+			if ( $reservering->datum <= strtotime( '- ' . $options['termijn'] . ' days 00:00' ) ) {
+				try {
+					/**
+					 * Het onderstaande wordt als een transactie uitgevoerd omdat zowel het saldo als de reservering in de database gemuteerd worden.
+					 */
+					if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
+						continue;
+					}
+					$wpdb->query( 'START TRANSACTION' );
+					$stookdelen = $reservering->verdeling;
+					$gebruiker  = get_userdata( $reservering->gebruiker_id );
+					foreach ( $stookdelen as &$stookdeel ) {
+						if ( 0 === intval( $stookdeel['id'] ) ) {
+							continue; // Volgende verdeling.
+						}
+						$medestoker         = get_userdata( $stookdeel['id'] );
+						$regeling           = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
+						$kosten             = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
+						$bedrag             = round( $stookdeel['perc'] / 100 * $kosten, 2 );
+						$stookdeel['prijs'] = $bedrag;
+						if ( $bedrag < 0.01 ) {
+							continue; // Volgende verdeling.
+						}
+						$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
+						$saldo->bedrag = $saldo->bedrag - $bedrag;
+						if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $gebruiker->display_name ) ) {
+							Kleistad_email::compose( "$medestoker->display_name <$medestoker->user_email>",
+								'Kleistad kosten zijn verwerkt op het stooksaldo',
+								'kleistad_email_stookkosten_verwerkt',
+								[
+									'voornaam'   => $medestoker->first_name,
+									'achternaam' => $medestoker->last_name,
+									'stoker'     => $gebruiker->display_name,
+									'bedrag'     => number_format_i18n( $bedrag, 2 ),
+									'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
+									'stookdeel'  => $stookdeel['perc'],
+									'stookdatum' => date( 'd-m-Y', $reservering->datum ),
+									'stookoven'  => $ovens[ $reservering->oven_id ]->naam,
+								]
+							);
+						} else {
+							throw new Exception( 'stooksaldo van gebruiker ' . $gebruiker->display_name . ' kon niet aangepast worden met kosten ' . $bedrag );
+						}
+					}
+					$reservering->verdeling = $stookdelen;
+					$reservering->verwerkt  = true;
+					$result                 = $reservering->save();
+					if ( 0 === $result ) {
+						throw new Exception( 'reservering met id ' . $reservering->id . ' kon niet aangepast worden' );
+					}
+					$wpdb->query( 'COMMIT' );
+				} catch ( Exception $e ) {
+					$wpdb->query( 'ROLLBACK' );
+					error_log( 'stooksaldo verwerking: ' . $e->getMessage() ); // phpcs:ignore
+				}
+			} elseif ( ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
+				if ( Kleistad_Reservering::ONDERHOUD !== $reservering->soortstook ) {
+					$regeling  = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
+					$bedrag    = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
+					$gebruiker = get_userdata( $reservering->gebruiker_id );
+					Kleistad_email::compose(
+						"$gebruiker->display_name <$gebruiker->user_email>",
+						'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ),
+						'kleistad_email_stookmelding',
+						[
+							'voornaam'         => $gebruiker->first_name,
+							'achternaam'       => $gebruiker->last_name,
+							'bedrag'           => number_format_i18n( $bedrag, 2 ),
+							'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
+							'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
+							'stookoven'        => $ovens[ $reservering->oven_id ]->naam,
+						]
+					);
+				}
+				$reservering->gemeld = true;
+				$reservering->save();
+			}
+		}
+	}
+
 }
