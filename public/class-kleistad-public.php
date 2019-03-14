@@ -141,78 +141,28 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Maak de ceramics recept post type en taxonomy
-	 *
-	 * @since 4.1.0
+	 * Initialiseer de Kleistad specifieke entititeiten.
 	 */
-	public function create_recept_type() {
-		ob_start();
-		register_post_type(
-			'kleistad_recept',
-			[
-				'labels'            => [
-					'name'               => 'Keramiek recepten',
-					'singular_name'      => 'Keramiek recept',
-					'add_new'            => 'Toevoegen',
-					'add_new_item'       => 'Recept toevoegen',
-					'edit'               => 'Wijzigen',
-					'edit_item'          => 'Recept wijzigen',
-					'view'               => 'Inzien',
-					'view_item'          => 'Recept inzien',
-					'search_items'       => 'Recept zoeken',
-					'not_found'          => 'Niet gevonden',
-					'not_found_in_trash' => 'Niet in prullenbak gevonden',
-				],
-				'public'            => true,
-				'supports'          => [
-					'title',
-					'comments',
-					'thumbnail',
-				],
-				'rewrite'           => [
-					'slug' => 'recepten',
-				],
-				'show_ui'           => true,
-				'show_in_admin_bar' => false,
-			]
-		);
-		register_taxonomy(
-			'kleistad_recept_cat',
-			'kleistad_recept',
-			[
-				'hierarchical'      => true,
-				'labels'            => [
-					'name'          => 'Recept categoriën',
-					'singular_name' => 'Recept categorie',
-					'search_items'  => 'Zoek recept categorie',
-					'all_items'     => 'Alle recept categoriën',
-					'edit_item'     => 'Wijzig recept categorie',
-					'update_item'   => 'Sla recept categorie op',
-					'add_new_item'  => 'Voeg recept categorie toe',
-					'new_item_name' => 'Nieuwe recept recept categorie',
-					'menu_name'     => 'Recept categoriën',
-				],
-				'query_var'         => true,
-				'show_ui'           => true,
-				'show_admin_column' => true,
-			]
-		);
-		register_taxonomy_for_object_type( 'kleistad_recept_cat', 'kleistad_recept' );
+	public function init() {
+		Kleistad_Recept::create_type();
 	}
 
 	/**
 	 * Wordt aangeroepen door filter single_template, zorgt dat WP de juiste template file toont.
 	 *
-	 * @since 4.1.0
+	 * @since 5.3.0
 	 *
 	 * @param string $single_template het template path.
 	 * @return string
 	 */
-	public function recept_template( $single_template ) {
+	public function single_template( $single_template ) {
 		global $post;
-
-		if ( 'kleistad_recept' === $post->post_type ) {
-			$single_template = dirname( __FILE__ ) . '/partials/kleistad-public-single-recept.php';
+		if ( 0 === strpos( $post->post_type, 'kleistad_' ) ) {
+			$entiteit = substr( $post->post_type, strlen( 'kleistad_') );
+			$file     = dirname( __FILE__ ) . "/partials/kleistad-public-single-$entiteit.php";
+			if ( file_exists( $file ) ) {
+				return $file;
+			}
 		}
 		return $single_template;
 	}
@@ -220,16 +170,19 @@ class Kleistad_Public {
 	/**
 	 * Wordt aangeroepen door filter comments_template, zorgt dat WP de juiste template file toont.
 	 *
-	 * @since 4.1.0
+	 * @since 5.3.0
 	 *
 	 * @param string $comments_template het template path.
 	 * @return string
 	 */
 	public function comments_template( $comments_template ) {
 		global $post;
-
-		if ( 'kleistad_recept' === $post->post_type ) {
-			$comments_template = dirname( __FILE__ ) . '/partials/kleistad-public-comments-recept.php';
+		if ( 0 === strpos( $post->post_type, 'kleistad_' ) ) {
+			$entiteit = substr( $post->post_type, strlen( 'kleistad_') );
+			$file     = dirname( __FILE__ ) . "/partials/kleistad-public-comments-$entiteit.php";
+			if ( file_exists( $file ) ) {
+				return $file;
+			}
 		}
 		return $comments_template;
 	}

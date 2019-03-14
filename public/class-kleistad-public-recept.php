@@ -62,13 +62,13 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	 */
 	public static function callback_recept( WP_REST_Request $request ) {
 		$data             = [];
-		$glazuur_parent   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
-		$kleur_parent     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
-		$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
+		$glazuur_parent   = get_term_by( 'name', '_glazuur', Kleistad_Recept::CATEGORY );
+		$kleur_parent     = get_term_by( 'name', '_kleur', Kleistad_Recept::CATEGORY );
+		$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', Kleistad_Recept::CATEGORY );
 
 		$zoek  = (array) $request->get_param( 'zoek' );
 		$query = [
-			'post_type'   => 'kleistad_recept',
+			'post_type'   => Kleistad_Recept::POST_TYPE,
 			'numberposts' => '-1',
 			'post_status' => [
 				'publish',
@@ -104,7 +104,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 		if ( isset( $zoek['terms'] ) ) {
 			$query['tax_query'] = [
 				[
-					'taxonomy' => 'kleistad_recept_cat',
+					'taxonomy' => Kleistad_Recept::CATEGORY,
 					'field'    => 'id',
 					'terms'    => $zoek['terms'],
 					'operator' => 'AND',
@@ -144,7 +144,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 
 		$data['glazuur']   = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
 			[
-				'taxonomy'   => 'kleistad_recept_cat',
+				'taxonomy'   => Kleistad_Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
@@ -154,7 +154,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 		);
 		$data['kleur']     = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
 			[
-				'taxonomy'   => 'kleistad_recept_cat',
+				'taxonomy'   => Kleistad_Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
@@ -164,7 +164,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 		);
 		$data['uiterlijk'] = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
 			[
-				'taxonomy'   => 'kleistad_recept_cat',
+				'taxonomy'   => Kleistad_Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,

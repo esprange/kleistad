@@ -16,15 +16,15 @@ get_header(); ?>
 		while ( have_posts() ) :
 			the_post();
 
-			$glazuur_parent   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
-			$kleur_parent     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
-			$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
+			$glazuur_parent   = get_term_by( 'name', '_glazuur', Kleistad_Recept::CATEGORY );
+			$kleur_parent     = get_term_by( 'name', '_kleur', Kleistad_Recept::CATEGORY );
+			$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', Kleistad_Recept::CATEGORY );
 			$glazuur_naam     = '';
 			$kleur_naam       = '';
 			$uiterlijk_naam   = '';
 			$the_id           = get_the_ID();
 			if ( false !== $the_id ) :
-				$recept_terms = get_the_terms( $the_id, 'kleistad_recept_cat' );
+				$recept_terms = get_the_terms( $the_id, Kleistad_Recept::CATEGORY );
 				foreach ( $recept_terms as $recept_term ) {
 					if ( intval( $recept_term->parent ) === intval( $glazuur_parent->term_id ) ) {
 						$glazuur_naam = $recept_term->name;
