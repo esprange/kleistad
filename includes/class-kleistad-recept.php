@@ -49,8 +49,9 @@ class Kleistad_Recept {
 				'rewrite'           => [
 					'slug' => 'recepten',
 				],
-				'show_ui'           => true,
+				'show_ui'           => false,
 				'show_in_admin_bar' => false,
+				'show_in_nav_menus' => false,
 			]
 		);
 		register_taxonomy(
