@@ -92,7 +92,6 @@ class Kleistad_Event {
 	 *
 	 * @param string|Google_Service_Calendar_Event $event event welke geladen moet worden.
 	 * @throws Exception Er is geen connectie.
-	 * @phan-suppress PhanUnusedVariableCaughtException, PhanUndeclaredProperty
 	 */
 	public function __construct( $event ) {
 		if ( ! self::maak_service() ) {

@@ -307,7 +307,6 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @param array $parameters De parameters 0: cursus-id, 1: gebruiker-id, 2: startdatum, 3: type betaling.
 	 * @param float $bedrag     Het betaalde bedrag, wordt hier niet gebruikt.
 	 * @param bool  $betaald    Of er werkelijk betaald is.
-	 * @phan-suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function callback( $parameters, $bedrag, $betaald = true ) {
 		if ( $betaald ) {

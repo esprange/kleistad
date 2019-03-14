@@ -332,7 +332,6 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * @param array $parameters De parameters 0: workshop-id.
 	 * @param float $bedrag     Het betaalde bedrag, wordt hier niet gebruikt.
 	 * @param bool  $betaald    Of er werkelijk betaald is.
-	 * @phan-suppress PhanUnusedPublicMethodParameter
 	 * @scrutinizer ignore-unused
 	 */
 	public static function callback( $parameters, $bedrag, $betaald = true ) {
