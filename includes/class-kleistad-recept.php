@@ -13,7 +13,6 @@
  * Kleistad Recept class.
  *
  * @since 5.3.0
- *
  */
 class Kleistad_Recept {
 

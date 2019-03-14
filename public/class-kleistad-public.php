@@ -158,7 +158,7 @@ class Kleistad_Public {
 	public function single_template( $single_template ) {
 		global $post;
 		if ( 0 === strpos( $post->post_type, 'kleistad_' ) ) {
-			$entiteit = substr( $post->post_type, strlen( 'kleistad_') );
+			$entiteit = substr( $post->post_type, strlen( 'kleistad_' ) );
 			$file     = dirname( __FILE__ ) . "/partials/kleistad-public-single-$entiteit.php";
 			if ( file_exists( $file ) ) {
 				return $file;
@@ -178,7 +178,7 @@ class Kleistad_Public {
 	public function comments_template( $comments_template ) {
 		global $post;
 		if ( 0 === strpos( $post->post_type, 'kleistad_' ) ) {
-			$entiteit = substr( $post->post_type, strlen( 'kleistad_') );
+			$entiteit = substr( $post->post_type, strlen( 'kleistad_' ) );
 			$file     = dirname( __FILE__ ) . "/partials/kleistad-public-comments-$entiteit.php";
 			if ( file_exists( $file ) ) {
 				return $file;
