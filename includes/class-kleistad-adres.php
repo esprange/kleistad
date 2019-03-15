@@ -82,8 +82,8 @@ class Kleistad_Adres {
 			$doc = $api_response['response']['docs'][0];
 			return new WP_REST_response(
 				[
-					'straat' => $doc['straatnaam'],
-					'plaats' => $doc['woonplaatsnaam'],
+					'straat' => isset( $doc['straatnaam'] ) ? $doc['straatnaam'] : '',
+					'plaats' => isset( $doc['woonplaatsnaam'] ) ? $doc['woonplaatsnaam'] : '',
 				]
 			); // Geeft default http status 200 terug.
 		}
