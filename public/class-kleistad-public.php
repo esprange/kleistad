@@ -99,7 +99,7 @@ class Kleistad_Public {
 		wp_register_script( 'fullcalendar', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.0.0-alpha.4/fullcalendar.min.js', [], '4.0.0-alpha.4', true );
 		wp_register_script( 'fullcalendar-nl', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.0.0-alpha.4/locales/nl.js', [ 'fullcalendar' ], '4.0.0-alpha.4', true );
 		wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/kleistad-public.js', [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables' ], $this->version, true );
-		wp_register_script( $this->plugin_name . 'cursus_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_inschrijving.js', [ $this->plugin_name, 'jquery-ui-selectmenu', 'jquery-ui-spinner' ], $this->version, true );
+		wp_register_script( $this->plugin_name . 'cursus_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_inschrijving.js', [ $this->plugin_name, 'jquery-ui-selectmenu' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ $this->plugin_name, 'jquery-ui-selectmenu' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'dagdelenkaart', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-dagdelenkaart.js', [ $this->plugin_name ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'cursus_beheer', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_beheer.js', [ $this->plugin_name, 'jquery-ui-dialog', 'jquery-ui-tabs' ], $this->version, true );
