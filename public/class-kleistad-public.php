@@ -82,11 +82,11 @@ class Kleistad_Public {
 	public function register_styles() {
 		wp_register_style( 'jqueryui', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
 		wp_register_style( 'datatables', 'https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css', [], '1.10.19' );
-		wp_register_style( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/core/main.min.css', [] );
-		wp_register_style( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/daygrid/main.min.css', [ 'fullcalendar-core' ] );
-		wp_register_style( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/timegrid/main.min.css', [ 'fullcalendar-core' ] );
-		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui', 'datatables', 'dashicons' ], $this->version, 'all' );
-		wp_register_style( $this->plugin_name . 'kalender', plugin_dir_url( __FILE__ ) . 'css/kleistad-public-kalender.css', [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ], $this->version, 'all' );
+		wp_register_style( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/core/main.min.css', [], '4.0.1' );
+		wp_register_style( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/daygrid/main.min.css', [ 'fullcalendar-core' ], '4.0.1' );
+		wp_register_style( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/timegrid/main.min.css', [ 'fullcalendar-core' ], '4.0.1' );
+		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui', 'datatables', 'dashicons' ], $this->version );
+		wp_register_style( $this->plugin_name . 'kalender', plugin_dir_url( __FILE__ ) . 'css/kleistad-public-kalender.css', [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ], $this->version );
 	}
 
 	/**
