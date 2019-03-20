@@ -32,7 +32,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 		 * maak een lijst van recepten
 		 */
 		$query = [
-			'post_type'   => Kleistad_Recept::POST_TYPE,
+			'post_type'   => 'kleistad_recept',
 			'numberposts' => '-1',
 			'post_status' => [
 				'publish',
@@ -73,14 +73,14 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 	private function prepare_wijzig( $recept_id ) {
 		$recept = get_post( $recept_id );
 
-		$glazuur   = get_term_by( 'name', '_glazuur', Kleistad_Recept::CATEGORY );
-		$kleur     = get_term_by( 'name', '_kleur', Kleistad_Recept::CATEGORY );
-		$uiterlijk = get_term_by( 'name', '_uiterlijk', Kleistad_Recept::CATEGORY );
+		$glazuur   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
+		$kleur     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
+		$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
 
 		$glazuur_id   = 0;
 		$kleur_id     = 0;
 		$uiterlijk_id = 0;
-		$terms        = get_the_terms( $recept->ID, Kleistad_Recept::CATEGORY );
+		$terms        = get_the_terms( $recept->ID, 'kleistad_recept_cat' );
 		foreach ( $terms as $term ) {
 			if ( intval( $term->parent ) === intval( $glazuur->term_id ) ) {
 				$glazuur_id = $term->term_id;
@@ -334,7 +334,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 					$result = wp_insert_post(
 						[
 							'post_status' => 'draft', // Initiële publicatie status is prive.
-							'post_type'   => Kleistad_Recept::POST_TYPE,
+							'post_type'   => 'kleistad_recept',
 						]
 					);
 					if ( ! is_wp_error( $result ) ) {
@@ -363,7 +363,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 								intval( $data['recept']['kleur'] ),
 								intval( $data['recept']['uiterlijk'] ),
 							],
-							Kleistad_Recept::CATEGORY
+							'kleistad_recept_cat'
 						);
 						return 'Gegevens zijn opgeslagen';
 					} else {

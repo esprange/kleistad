@@ -87,8 +87,8 @@ if ( isset( $data['actie'] ) ) :
 		</form>
 			<?php
 	elseif ( Kleistad_Public_Betaling::ACTIE_VERVOLG_ABONNEMENT === $data['actie'] ) :
-			$vervolg_datum            = strftime( '%d-%m-%y', $data['abonnement']->driemaand_datum() );
-			$einde_overbrugging_datum = strftime( '%d-%m-%y', $data['abonnement']->reguliere_datum() - 24 * 60 * 60 );
+			$vervolg_datum            = strftime( '%d-%m-%y', $data['abonnement']->driemaand_datum );
+			$einde_overbrugging_datum = strftime( '%d-%m-%y', $data['abonnement']->reguliere_datum - 24 * 60 * 60 );
 			$incasso_datum            = strftime( '%d-%m-%y', $data['abonnement']->incasso_datum );
 		?>
 

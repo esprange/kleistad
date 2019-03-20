@@ -222,5 +222,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 		flush();
 		readfile( $csv ); // phpcs:ignore
 		unlink( $csv );
+		exit;
 	}
 }

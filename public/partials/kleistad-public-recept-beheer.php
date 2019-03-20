@@ -54,7 +54,7 @@ else :
 		<div class="kleistad_row" style="padding-top:15px">
 			<div class="kleistad_col_3">
 			<?php
-			$glazuur = get_term_by( 'name', '_glazuur', Kleistad_Recept::CATEGORY );
+			$glazuur = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
 			wp_dropdown_categories(
 				[
 					'orderby'           => 'name',
@@ -63,7 +63,7 @@ else :
 					'show_option_none'  => 'Kies soort glazuur',
 					'option_none_value' => '',
 					'class'             => 'cat',
-					'taxonomy'          => Kleistad_Recept::CATEGORY,
+					'taxonomy'          => 'kleistad_recept_cat',
 					'hierarchical'      => 1,
 					'id'                => 'kleistad_glazuur',
 					'name'              => 'glazuur',
@@ -76,7 +76,7 @@ else :
 			</div>
 			<div class="kleistad_col_3">
 			<?php
-			$kleur        = get_term_by( 'name', '_kleur', Kleistad_Recept::CATEGORY );
+			$kleur        = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
 			$cat_dropdown = wp_dropdown_categories(
 				[
 					'orderby'           => 'name',
@@ -85,7 +85,7 @@ else :
 					'show_option_none'  => 'Kies kleur',
 					'option_none_value' => '',
 					'class'             => 'cat',
-					'taxonomy'          => Kleistad_Recept::CATEGORY,
+					'taxonomy'          => 'kleistad_recept_cat',
 					'hierarchical'      => 1,
 					'id'                => 'kleistad_kleur',
 					'name'              => 'kleur',
@@ -98,7 +98,7 @@ else :
 			</div>
 			<div class="kleistad_col_3">
 			<?php
-			$uiterlijk = get_term_by( 'name', '_uiterlijk', Kleistad_Recept::CATEGORY );
+			$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
 			wp_dropdown_categories(
 				[
 					'orderby'           => 'name',
@@ -107,7 +107,7 @@ else :
 					'show_option_none'  => 'Kies uiterlijk',
 					'option_none_value' => '',
 					'class'             => 'cat',
-					'taxonomy'          => Kleistad_Recept::CATEGORY,
+					'taxonomy'          => 'kleistad_recept_cat',
 					'hierarchical'      => 1,
 					'id'                => 'kleistad_uiterlijk',
 					'name'              => 'uiterlijk',
@@ -170,10 +170,10 @@ else :
 		<datalist id="kleistad_recept_grondstof">
 			<select style="display: none;">
 			<?php
-			$grondstof_parent = get_term_by( 'name', '_grondstof', Kleistad_Recept::CATEGORY );
+			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
 			$recept_terms     = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
 				[
-					'taxonomy'   => Kleistad_Recept::CATEGORY,
+					'taxonomy'   => 'kleistad_recept_cat',
 					'hide_empty' => false,
 					'orderby'    => 'name',
 					'parent'     => $grondstof_parent->term_id,
