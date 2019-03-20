@@ -10,6 +10,7 @@
 # Ignore folders
 node_modules/
 vendor/
+fullcalendar*/
 tmp/
 wpcs/
 .vscode/
