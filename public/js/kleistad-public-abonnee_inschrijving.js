@@ -1,5 +1,5 @@
 ( function( $ ) {
-    'use strict';
+	'use strict';
 
     function wijzigTeksten() {
 		var bedrag      = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedrag' );

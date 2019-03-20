@@ -1,5 +1,5 @@
 ( function( $ ) {
-    'use strict';
+	'use strict';
 
     function wijzigTeksten() {
         var bedrag = $( 'input[name=bedrag]:radio:checked' ).val();
