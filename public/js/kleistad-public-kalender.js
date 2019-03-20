@@ -8,25 +8,24 @@
 
 			var calendarEl = document.getElementById( 'kleistad_fullcalendar' );
 			var calendar = new FullCalendar.Calendar( calendarEl, {
-				/**
-				 * Volgens beta 4.0 toevoegen
-				 * plugins: [ 'dayGrid', 'timeGrid' ],
-				 * defaultView: 'dayGridMonth',
-				 */
+				plugins: [ 'dayGrid', 'timeGrid' ],
+				defaultView: 'dayGridMonth',
+				locales: [ 'nl' ],
 				locale: 'nl',
 				header: {
-					left: 'month,agendaWeek,agendaDay', // Volgens beta 4.0 dayGridMonth, timeGridWeek, timeGridDay.
+					left: 'dayGridMonth, timeGridWeek, timeGridDay',
 					center: 'title',
 					right: 'today prev,next'
 				  },
 				eventLimit: true,
-				dateClick: function( info ) {
-					this.changeView( 'agendaDay', info.dateStr ); // Volgens beta 4.0 timeGridDay.
-				},
+				navLinks: true,
+				buttonIcons: true,
+				weekNumbers: true,
+				allDaySlot: false,
 				minTime: '08:00:00',
 				eventRender: function( info ) {
 					var tekst = '';
-					if ( 'agendaDay' === info.view.type ) {
+					if ( 'timeGridDay' === info.view.type ) {
 						if ( 'undefined' !== typeof( info.event.extendedProps.docent ) ) {
 							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Docent</div><div class="kleistad_col_2">' + info.event.extendedProps.docent + '</div></div>';
 						}
@@ -68,18 +67,7 @@
 				}
 			});
 			calendar.render();
-
-			/**
-			 * Verander de opmaak bij hovering.
-			 */
-			$( 'body' ).on(
-				'hover', '.fc-day-number', function() {
-					$( this ).css( 'cursor', 'pointer' );
-				}
-			);
-
 		}
-
     );
 
 } )( jQuery );

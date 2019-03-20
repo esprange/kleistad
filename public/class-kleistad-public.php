@@ -82,11 +82,11 @@ class Kleistad_Public {
 	public function register_styles() {
 		wp_register_style( 'jqueryui', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
 		wp_register_style( 'datatables', 'https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css', [], '1.10.19' );
-		wp_register_style( 'fullcalendar', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.0.0-alpha.4/fullcalendar.min.css', [], '4.0.0-alpha.4' );
-		// bij beta 4.0 ../core/main.css.
-		// bij beta 4.0 ../daygrid/main.css.
-		// bij beta 4.0 ../timegrid/main.css.
-		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui', 'datatables', 'dashicons', 'fullcalendar' ], $this->version, 'all' );
+		wp_register_style( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/core/main.min.css', [] );
+		wp_register_style( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/daygrid/main.min.css', [ 'fullcalendar-core' ] );
+		wp_register_style( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/timegrid/main.min.css', [ 'fullcalendar-core' ] );
+		wp_register_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'jqueryui', 'datatables', 'dashicons' ], $this->version, 'all' );
+		wp_register_style( $this->plugin_name . 'kalender', plugin_dir_url( __FILE__ ) . 'css/kleistad-public-kalender.css', [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ], $this->version, 'all' );
 	}
 
 	/**
@@ -96,8 +96,10 @@ class Kleistad_Public {
 	 */
 	public function register_scripts() {
 		wp_register_script( 'datatables', 'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js', [ 'jquery' ], '1.10.19', true );
-		wp_register_script( 'fullcalendar', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.0.0-alpha.4/fullcalendar.min.js', [], '4.0.0-alpha.4', true );
-		wp_register_script( 'fullcalendar-nl', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.0.0-alpha.4/locales/nl.js', [ 'fullcalendar' ], '4.0.0-alpha.4', true );
+		wp_register_script( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/core/main.min.js', [], '4.0.1', true );
+		wp_register_script( 'fullcalendar-nl', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/core/locales/nl.js', [ 'fullcalendar-core' ], '4.0.1', true );
+		wp_register_script( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/daygrid/main.min.js', [ 'fullcalendar-core' ], '4.0.1', true );
+		wp_register_script( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.1/packages/timegrid/main.min.js', [ 'fullcalendar-core' ], '4.0.1', true );
 		wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/kleistad-public.js', [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-spinner', 'datatables' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'cursus_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-cursus_inschrijving.js', [ $this->plugin_name, 'jquery-ui-selectmenu' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'abonnee_inschrijving', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_inschrijving.js', [ $this->plugin_name, 'jquery-ui-selectmenu' ], $this->version, true );
@@ -113,7 +115,7 @@ class Kleistad_Public {
 		wp_register_script( $this->plugin_name . 'abonnee_wijziging', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-abonnee_wijziging.js', [ $this->plugin_name, 'jquery-ui-dialog' ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'betaling', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-betaling.js', [ $this->plugin_name ], $this->version, true );
 		wp_register_script( $this->plugin_name . 'reservering', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-reservering.js', [ $this->plugin_name, 'jquery-ui-dialog' ], $this->version, true );
-		wp_register_script( $this->plugin_name . 'kalender', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-kalender.js', [ $this->plugin_name, 'jquery-ui-dialog', 'fullcalendar-nl' ], $this->version, true );
+		wp_register_script( $this->plugin_name . 'kalender', plugin_dir_url( __FILE__ ) . 'js/kleistad-public-kalender.js', [ $this->plugin_name, 'jquery-ui-dialog', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ], $this->version, true );
 
 		wp_localize_script(
 			$this->plugin_name,

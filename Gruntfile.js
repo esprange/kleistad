@@ -12,29 +12,29 @@ module.exports = function( grunt ) {
 				files: {
 					'README.md': 'readme.txt'
 				}
-			},
+			}
 		},
 
 		checkwpversion: {
 			options:{
 				readme: 'readme.txt',
-				plugin: 'kleistad.php',
+				plugin: 'kleistad.php'
 			},
 			check: { //Check plug-in version and stable tag match
 				version1: 'plugin',
 				version2: 'readme',
-				compare: '==',
+				compare: '=='
 			},
 			check2: { //Check plug-in version and package.json match
 				version1: 'plugin',
 				version2: '<%= pkg.version %>',
-				compare: '==',
+				compare: '=='
 			}
 		},
 
 		zip: {
 			'using-router': {
-				router: function (filepath) {
+				router: function( filepath ) {
 					return 'kleistad/' + filepath;
 				  },
 				src: [
@@ -46,6 +46,7 @@ module.exports = function( grunt ) {
 					'admin/**/*',
 					'includes/**/*',
 					'vendor/**/*',
+					'fullcalendar*/**/*'
 				],
 				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
 			}
@@ -67,6 +68,7 @@ module.exports = function( grunt ) {
 		}
 	});
 
+	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
 	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
 	grunt.loadNpmTasks( 'grunt-checkwpversion' );
