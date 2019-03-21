@@ -126,8 +126,8 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 		$cursussen      = Kleistad_Cursus::all();
 		$inschrijvingen = Kleistad_Inschrijving::all();
 		$cursus_fields  = [
-			'Achternaam',
 			'Voornaam',
+			'Achternaam',
 			'Email',
 			'Straat',
 			'Huisnr',
