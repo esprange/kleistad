@@ -59,7 +59,6 @@ class Kleistad_Admin_Stooksaldo_Handler {
 	 * Toon en verwerk stooksaldo
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedPublicMethodParameter, PhanUnusedVariable
 	 */
 	public function stooksaldo_form_page_handler() {
 
@@ -112,7 +111,6 @@ class Kleistad_Admin_Stooksaldo_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item de stooksaldo.
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function stooksaldo_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-stooksaldo-form-meta-box.php';

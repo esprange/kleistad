@@ -51,7 +51,6 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 	 * @param object $item row (key, value).
 	 * @param string $column_name key.
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
@@ -62,7 +61,6 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_naam( $item ) {
 		$actions = [
@@ -77,7 +75,6 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_i_betaald( $item ) {
 		return $item['i_betaald'];
@@ -88,7 +85,6 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_c_betaald( $item ) {
 		return $item['c_betaald'];
@@ -99,7 +95,6 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_geannuleerd( $item ) {
 		return $item['geannuleerd'];

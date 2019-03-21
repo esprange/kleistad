@@ -649,7 +649,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * @param array  $parameters De parameters 0: gebruiker-id, 1: de melddatum.
 	 * @param string $bedrag     Geeft aan of het een eerste start of een herstart betreft.
 	 * @param bool   $betaald    Of er werkelijk betaald is.
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public static function callback( $parameters, $bedrag, $betaald = true ) {
 		if ( $betaald ) {

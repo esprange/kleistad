@@ -60,7 +60,6 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_extras( $item ) {
 		$actions = [
@@ -74,7 +73,6 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_status( $item ) {
 		$actions = [
@@ -88,7 +86,6 @@ class Kleistad_Admin_Abonnees extends WP_List_Table {
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_mollie( $item ) {
 		if ( $item['mollie'] ) {

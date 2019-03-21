@@ -225,7 +225,6 @@ get_header(); ?>
 			<?php
 			// If comments are open or we have at least one comment, load up the comment template.
 			if ( function_exists( 'the_ratings' ) ) {
-				// @phan-suppress-next-line PhanUndeclaredFunction
 				the_ratings();
 			}
 			if ( comments_open() || get_comments_number() ) {

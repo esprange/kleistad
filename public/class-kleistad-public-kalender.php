@@ -45,8 +45,6 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 	 *
 	 * @param WP_REST_Request $request De parameters van de Ajax call.
 	 * @return \WP_REST_response
-	 * @suppress PhanPluginMixedKeyNoKey
-	 * PhanUnusedVariable
 	 */
 	public static function callback_kalender( WP_REST_Request $request ) {
 		$events    = Kleistad_Event::query(

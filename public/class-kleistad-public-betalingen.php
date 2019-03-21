@@ -138,7 +138,6 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 	 *
 	 * @param array $data te bewaren data.
 	 * @return string
-	 * @suppress PhanUnusedVariableValueOfForeachWithKey
 	 * @since   4.0.87
 	 */
 	public function save( $data ) {

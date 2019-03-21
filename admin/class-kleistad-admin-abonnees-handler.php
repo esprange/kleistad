@@ -140,7 +140,6 @@ class Kleistad_Admin_Abonnees_Handler {
 	 * Toon en verwerk ingevoerde abonnee gegevens
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function abonnees_form_page_handler() {
 		$message = '';
@@ -220,8 +219,6 @@ class Kleistad_Admin_Abonnees_Handler {
 	 *
 	 * @param array $item de abonnee.
 	 * @param array $request de aanroep parameters.
-	 * @suppress PhanUnusedPublicMethodParameter
-	 * @suppress PhanUnusedVariable
 	 */
 	public function abonnees_form_meta_box_handler( $item, $request ) {
 		$actie = $request['args'][0];

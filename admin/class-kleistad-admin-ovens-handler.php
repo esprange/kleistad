@@ -63,7 +63,6 @@ class Kleistad_Admin_Ovens_Handler {
 	 * Toon en verwerk oven gegevens
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function ovens_form_page_handler() {
 		$message = '';
@@ -119,7 +118,6 @@ class Kleistad_Admin_Ovens_Handler {
 	 * Toon het oven formulier in een meta box
 	 *
 	 * @param array $item de oven.
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function ovens_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-ovens-form-meta-box.php';

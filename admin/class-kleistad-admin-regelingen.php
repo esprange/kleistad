@@ -35,7 +35,6 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 * @param object $item - row (key, value).
 	 * @param string $column_name - (key).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
@@ -46,7 +45,6 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 *
 	 * @param object $item - row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_gebruiker_naam( $item ) {
 		$actions = [
@@ -62,7 +60,6 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 	 *
 	 * @param object $item - row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_kosten( $item ) {
 		return sprintf( '%.2f', $item['kosten'] );

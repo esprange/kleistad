@@ -36,7 +36,6 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 * @param object $item row (key, value).
 	 * @param string $column_name key.
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
@@ -47,7 +46,6 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 *
 	 * @param object $item row (key, value).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_naam( $item ) {
 		$actions = [
@@ -62,7 +60,6 @@ class Kleistad_Admin_Ovens extends WP_List_Table {
 	 *
 	 * @param object $item   row (key, value array).
 	 * @return string
-	 * @suppress PhanTypeArraySuspicious
 	 */
 	public function column_beschikbaarheid( $item ) {
 		$beschikbaarheid = json_decode( $item['beschikbaarheid'], true );

@@ -112,7 +112,6 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 	 * @return \WP_ERROR|bool
 	 *
 	 * @since   4.1.0
-	 * @suppress PhanTypeSuspiciousNonTraversableForeach
 	 */
 	public function prepare( &$data = null ) {
 		$error = new WP_Error();
@@ -289,8 +288,6 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 	 * @return \WP_Error|string
 	 *
 	 * @since   4.1.0
-	 *
-	 * @suppress PhanTypeInvalidDimOffset
 	 */
 	public function save( $data ) {
 		$error = new WP_Error();

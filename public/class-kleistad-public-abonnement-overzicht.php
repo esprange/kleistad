@@ -71,7 +71,6 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 	 * @return string|WP_Error
 	 *
 	 * @since   4.5.6
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function save( $data ) {
 		$error = new WP_Error();

@@ -58,7 +58,6 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	 *
 	 * @param WP_REST_Request $request De parameters van de Ajax call.
 	 * @return \WP_REST_response
-	 * @suppress PhanPluginMixedKeyNoKey
 	 */
 	public static function callback_recept( WP_REST_Request $request ) {
 		$data             = [];
@@ -142,7 +141,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 			];
 		}
 
-		$data['glazuur']   = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
+		$data['glazuur']   = get_terms(
 			[
 				'taxonomy'   => 'kleistad_recept_cat',
 				'hide_empty' => true,
@@ -152,7 +151,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				'fields'     => 'id=>name',
 			]
 		);
-		$data['kleur']     = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
+		$data['kleur']     = get_terms(
 			[
 				'taxonomy'   => 'kleistad_recept_cat',
 				'hide_empty' => true,
@@ -162,7 +161,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 				'fields'     => 'id=>name',
 			]
 		);
-		$data['uiterlijk'] = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
+		$data['uiterlijk'] = get_terms(
 			[
 				'taxonomy'   => 'kleistad_recept_cat',
 				'hide_empty' => true,

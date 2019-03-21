@@ -38,7 +38,6 @@ class Kleistad_Admin_Cursisten_Handler {
 	 * Toon en verwerk ingevoerde cursist gegevens
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function cursisten_form_page_handler() {
 		$message = '';
@@ -104,7 +103,6 @@ class Kleistad_Admin_Cursisten_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item de cursist.
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function cursisten_form_meta_box_handler( $item ) {
 		require 'partials/kleistad-admin-cursisten-form-meta-box.php';

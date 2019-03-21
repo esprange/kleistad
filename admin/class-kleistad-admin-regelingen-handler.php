@@ -77,7 +77,6 @@ class Kleistad_Admin_Regelingen_Handler {
 	 * Toon en verwerk regelingen
 	 *
 	 * @since    5.2.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function regelingen_form_page_handler() {
 
@@ -149,7 +148,6 @@ class Kleistad_Admin_Regelingen_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item de regeling.
-	 * @suppress PhanUnusedPublicMethodParameter, PhanUnusedVariable
 	 */
 	public function regelingen_form_meta_box_handler( $item ) {
 		$gebruikers = get_users(

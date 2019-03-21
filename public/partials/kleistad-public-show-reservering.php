@@ -7,7 +7,6 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
- * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 $titel = strftime( '%B', mktime( 0, 0, 0, $maand, 1, $jaar ) ) . '-' . $jaar;

@@ -392,7 +392,6 @@ class Kleistad_Betalen {
 	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return \WP_REST_response de response.
-	 * @suppress PhanUnusedPublicMethodParameter, PhanUndeclaredProperty
 	 */
 	public static function callback_herhaalbetaling_verwerkt( WP_REST_Request $request ) {
 		$mollie_betaling_id = $request->get_param( 'id' );
@@ -433,7 +432,6 @@ class Kleistad_Betalen {
 	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return \WP_REST_response de response.
-	 * @suppress PhanUnusedVariable
 	 */
 	public static function callback_betaling_verwerkt( WP_REST_Request $request ) {
 		$mollie_betaling_id = $request->get_param( 'id' );

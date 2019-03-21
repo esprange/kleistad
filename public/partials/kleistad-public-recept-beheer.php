@@ -7,7 +7,6 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
- * @phan-file-suppress   PhanUndeclaredVariable, PhanTypeSuspiciousEcho
  */
 
 if ( ! is_user_logged_in() ) :
@@ -171,7 +170,7 @@ else :
 			<select style="display: none;">
 			<?php
 			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
-			$recept_terms     = get_terms( // @phan-suppress-current-line PhanAccessMethodInternal
+			$recept_terms     = get_terms(
 				[
 					'taxonomy'   => 'kleistad_recept_cat',
 					'hide_empty' => false,

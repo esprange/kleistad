@@ -242,7 +242,6 @@ class Kleistad_Admin {
 	 * @param array $oud Oude waarde.
 	 * @param array $nieuw Nieuwe waarde.
 	 * @since 5.0.0
-	 * @suppress PhanUnusedPublicMethodParameter
 	 */
 	public function opties_gewijzigd( $oud, $nieuw ) {
 		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
@@ -305,7 +304,6 @@ class Kleistad_Admin {
 	 * Toon de emails en hun parameters in een meta box
 	 *
 	 * @since    5.0.0
-	 * @suppress PhanUnusedVariable
 	 */
 	public function google_connect_meta_box_handler() {
 		$result = true;

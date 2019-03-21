@@ -143,7 +143,6 @@ class Kleistad_Event {
 	 * Maak een Google API client aan.
 	 *
 	 * @return Google_Client|bool $client of false.
-	 * @suppress PhanTypeArraySuspicious, PhanTypeMismatchArgument, PhanTypeVoidAssignment
 	 */
 	private static function maak_client() {
 		$redirect_uri = get_option( self::REDIRECT_URI );
