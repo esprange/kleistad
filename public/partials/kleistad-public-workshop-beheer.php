@@ -114,7 +114,7 @@ else :
 			<th>Titel</th>
 			<th>Aantal</th>
 			<th>Tijd</th>
-			<th>Technieken</th>
+			<th>Docent</th>
 			<th>Status</th>
 		</tr>
 	</thead>
@@ -133,7 +133,7 @@ else :
 			<td><?php echo esc_html( $workshop['naam'] ); ?></td>
 			<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
 			<td><?php echo esc_html( $workshop['start_tijd'] . ' - ' . $workshop['eind_tijd'] ); ?></td>
-			<td><?php echo esc_html( implode( ', ', $workshop['technieken'] ) ); ?></td>
+			<td><?php echo esc_html( $workshop['docent'] ); ?></td>
 			<td><?php echo esc_html( $workshop['status'] ); ?></td>
 		</tr>
 	<?php endforeach ?>
