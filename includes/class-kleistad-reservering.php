@@ -104,7 +104,7 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	 */
 	public function status() {
 		if ( ! $this->gereserveerd ) {
-			if ( strtotime( "$this->jaar-$this->maand-$this->dag 23:59" ) >= strtotime( 'today' ) ) {
+			if ( strtotime( "$this->jaar-$this->maand-$this->dag 23:59" ) >= strtotime( 'today' ) || is_super_admin() ) {
 				return self::RESERVEERBAAR;
 			} else {
 				return self::ONGEBRUIKT;
