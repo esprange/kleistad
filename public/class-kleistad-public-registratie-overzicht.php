@@ -122,10 +122,11 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	 * Schrijf cursisten informatie naar het bestand.
 	 */
 	private function cursisten() {
-		$cursisten      = get_users( [ 'orderby' => 'nicename' ] );
-		$cursussen      = Kleistad_Cursus::all();
-		$inschrijvingen = Kleistad_Inschrijving::all();
-		$cursus_fields  = [
+		$cursisten               = get_users( [ 'orderby' => 'nicename' ] );
+		$cursussen               = Kleistad_Cursus::all();
+		$inschrijvingen          = Kleistad_Inschrijving::all();
+		$cursist_cursus_gegevens = [];
+		$cursus_fields           = [
 			'Voornaam',
 			'Achternaam',
 			'Email',
@@ -164,23 +165,37 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 
 			if ( array_key_exists( $cursist->ID, $inschrijvingen ) ) {
 				foreach ( $inschrijvingen[ $cursist->ID ] as $cursus_id => $inschrijving ) {
-					$cursist_cursus_gegevens = array_merge(
-						$cursist_gegevens,
-						[
-							'C' . $cursus_id . '-' . $cursussen[ $cursus_id ]->naam,
-							$inschrijving->code,
-							date( 'd-m-Y', $inschrijving->datum ),
-							$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : 'wacht op betaling' ),
-							$inschrijving->aantal,
-							implode( ' ', $inschrijving->technieken ),
-							$inschrijving->i_betaald ? 'Ja' : 'Nee',
-							$inschrijving->c_betaald ? 'Ja' : 'Nee',
-							$inschrijving->opmerking,
-						]
-					);
-					fputcsv( $this->file_handle, $cursist_cursus_gegevens, ';', '"' );
+					$cursist_cursus_gegevens[] = [
+						'inschrijfdatum' => $inschrijving->datum,
+						'data'           => array_merge(
+							$cursist_gegevens,
+							[
+								'C' . $cursus_id . '-' . $cursussen[ $cursus_id ]->naam,
+								$inschrijving->code,
+								date( 'd-m-Y', $inschrijving->datum ),
+								$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : 'wacht op betaling' ),
+								$inschrijving->aantal,
+								implode( ' ', $inschrijving->technieken ),
+								$inschrijving->i_betaald ? 'Ja' : 'Nee',
+								$inschrijving->c_betaald ? 'Ja' : 'Nee',
+								$inschrijving->opmerking,
+							]
+						),
+					];
 				}
 			}
+		}
+		usort(
+			$cursist_cursus_gegevens,
+			function( $a, $b ) {
+				if ( $a['inschrijfdatum'] === $b['inschrijfdatum'] ) {
+					return 0;
+				}
+				return $a['inschrijfdatum'] > $b['inschrijfdatum'] ? 1 : -1;
+			}
+		);
+		foreach ( $cursist_cursus_gegevens as $cursus_gegevens ) {
+			fputcsv( $this->file_handle, $cursus_gegevens['data'], ';', '"' );
 		}
 		fclose( $this->file_handle );
 	}
