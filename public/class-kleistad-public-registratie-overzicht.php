@@ -18,13 +18,6 @@
 class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 
 	/**
-	 * File handle voor download bestanden
-	 *
-	 * @var resource $file_handle De file pointer
-	 */
-	private $file_handle;
-
-	/**
 	 *
 	 * Prepareer 'registratie_overzicht' form
 	 *
@@ -120,7 +113,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	/**
 	 * Schrijf cursisten informatie naar het bestand.
 	 */
-	private function cursisten() {
+	public function cursisten() {
 		$cursisten               = get_users( [ 'orderby' => 'nicename' ] );
 		$cursussen               = Kleistad_Cursus::all();
 		$inschrijvingen          = Kleistad_Inschrijving::all();
@@ -196,13 +189,12 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 		foreach ( $cursist_cursus_gegevens as $cursus_gegevens ) {
 			fputcsv( $this->file_handle, $cursus_gegevens['data'], ';', '"' );
 		}
-		fclose( $this->file_handle );
 	}
 
 	/**
 	 * Schrijf abonnees informatie naar het bestand.
 	 */
-	private function abonnees() {
+	public function abonnees() {
 		$abonnees       = get_users( [ 'orderby' => 'nicename' ] );
 		$abonnementen   = Kleistad_Abonnement::all();
 		$abonnee_fields = [
@@ -258,7 +250,6 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				fputcsv( $this->file_handle, $abonnee_abonnement_gegevens, ';', '"' );
 			}
 		}
-		fclose( $this->file_handle );
 	}
 
 	/**
@@ -266,38 +257,11 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	 * Bewaar 'registratie_overzicht' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|string
+	 * @return string
 	 *
 	 * @since   4.0.87
 	 */
 	public function save( $data ) {
-		$error = new WP_Error();
-
-		if ( ! Kleistad_Roles::override() ) {
-			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
-			return $error;
-		}
-		$csv    = tempnam( sys_get_temp_dir(), $data['form_actie'] );
-		$result = fopen( $csv, 'w' );
-		if ( false === $result ) {
-			$error->add( 'fout', 'Er kan geen bestand worden aangemaakt' );
-			return $error;
-		} else {
-			$this->file_handle = $result;
-		}
-		call_user_func( [ $this, $data['form_actie'] ] );
-		header( 'Content-Description: File Transfer' );
-		header( 'Content-Type: text/csv' );
-		header( 'Content-Disposition: attachment; filename=' . $data['form_actie'] . '_' . strftime( '%Y%m%d' ) . '.csv' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . filesize( $csv ) );
-		ob_clean();
-		flush();
-		readfile( $csv ); // phpcs:ignore
-		unlink( $csv );
-		exit;
+		return '';
 	}
 }

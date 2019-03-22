@@ -68,8 +68,8 @@ else :
 <form method="POST" >
 	<?php wp_nonce_field( 'kleistad_registratie_overzicht' ); ?>
 	<div class="kleistad_row" style="padding-top:20px;" >
-		<button type="submit" name="kleistad_submit_registratie_overzicht" value="cursisten" >Download Cursisten</button>
-		<button type="submit" name="kleistad_submit_registratie_overzicht" value="abonnees" >Download Abonnees</button>
+		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_cursisten" >Download Cursisten</button>
+		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_abonnees" >Download Abonnees</button>
 	</div>
 </form>
 <?php endif; ?>
