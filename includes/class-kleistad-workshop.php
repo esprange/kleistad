@@ -76,6 +76,13 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	}
 
 	/**
+	 * Geef de workshop status in tekstvorm terug.
+	 */
+	public function status() {
+		return $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->betaald ? 'betaald' : '' ) );
+	}
+
+	/**
 	 * Get attribuut van het object.
 	 *
 	 * @since 5.0.0
