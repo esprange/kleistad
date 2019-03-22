@@ -114,7 +114,6 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	 * @since   4.3.8
 	 */
 	public function validate( &$data ) {
-		$data['download'] = filter_input( INPUT_POST, 'download', FILTER_SANITIZE_STRING );
 		return true;
 	}
 
@@ -278,7 +277,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
 			return $error;
 		}
-		$csv    = tempnam( sys_get_temp_dir(), $data['download'] );
+		$csv    = tempnam( sys_get_temp_dir(), $data['form_actie'] );
 		$result = fopen( $csv, 'w' );
 		if ( false === $result ) {
 			$error->add( 'fout', 'Er kan geen bestand worden aangemaakt' );
@@ -286,10 +285,10 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 		} else {
 			$this->file_handle = $result;
 		}
-		call_user_func( [ $this, $data['download'] ] );
+		call_user_func( [ $this, $data['form_actie'] ] );
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: text/csv' );
-		header( 'Content-Disposition: attachment; filename=' . $data['download'] . '_' . strftime( '%Y%m%d' ) . '.csv' );
+		header( 'Content-Disposition: attachment; filename=' . $data['form_actie'] . '_' . strftime( '%Y%m%d' ) . '.csv' );
 		header( 'Content-Transfer-Encoding: binary' );
 		header( 'Expires: 0' );
 		header( 'Cache-Control: must-revalidate' );

@@ -67,10 +67,9 @@ else :
 </table>
 <form method="POST" >
 	<?php wp_nonce_field( 'kleistad_registratie_overzicht' ); ?>
-	<input type="hidden" name="download" id="kleistad_download" >
 	<div class="kleistad_row" style="padding-top:20px;" >
-		<button type="submit" name="kleistad_submit_registratie_overzicht" onclick="document.getElementById('kleistad_download').value='cursisten'" >Download Cursisten</button>
-		<button type="submit" name="kleistad_submit_registratie_overzicht" onclick="document.getElementById('kleistad_download').value='abonnees'" >Download Abonnees</button>
+		<button type="submit" name="kleistad_submit_registratie_overzicht" value="cursisten" >Download Cursisten</button>
+		<button type="submit" name="kleistad_submit_registratie_overzicht" value="abonnees" >Download Abonnees</button>
 	</div>
 </form>
 <?php endif; ?>
