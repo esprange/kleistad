@@ -212,7 +212,7 @@ class Kleistad_Saldo {
 					}
 					$wpdb->query( 'START TRANSACTION' );
 					$stookdelen = $reservering->verdeling;
-					$gebruiker  = get_userdata( $reservering->gebruiker_id );
+					$stoker     = get_userdata( $reservering->verdeling[0]['id'] );
 					foreach ( $stookdelen as &$stookdeel ) {
 						if ( 0 === intval( $stookdeel['id'] ) ) {
 							continue; // Volgende verdeling.
@@ -227,7 +227,7 @@ class Kleistad_Saldo {
 						}
 						$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
 						$saldo->bedrag = $saldo->bedrag - $bedrag;
-						if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $gebruiker->display_name ) ) {
+						if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $stoker->display_name ) ) {
 							Kleistad_email::compose(
 								"$medestoker->display_name <$medestoker->user_email>",
 								'Kleistad kosten zijn verwerkt op het stooksaldo',
@@ -235,7 +235,7 @@ class Kleistad_Saldo {
 								[
 									'voornaam'   => $medestoker->first_name,
 									'achternaam' => $medestoker->last_name,
-									'stoker'     => $gebruiker->display_name,
+									'stoker'     => $stoker->display_name,
 									'bedrag'     => number_format_i18n( $bedrag, 2 ),
 									'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
 									'stookdeel'  => $stookdeel['perc'],
@@ -244,7 +244,7 @@ class Kleistad_Saldo {
 								]
 							);
 						} else {
-							throw new Exception( 'stooksaldo van gebruiker ' . $gebruiker->display_name . ' kon niet aangepast worden met kosten ' . $bedrag );
+							throw new Exception( 'stooksaldo van gebruiker ' . $medestoker->display_name . ' kon niet aangepast worden met kosten ' . $bedrag );
 						}
 					}
 					$reservering->verdeling = $stookdelen;
