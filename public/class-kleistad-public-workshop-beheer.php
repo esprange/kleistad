@@ -49,7 +49,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 				'aantal'      => $workshop->aantal,
 				'betaald'     => $workshop->betaald,
 				'definitief'  => $workshop->definitief,
-				'status'      => $workshop->vervallen ? 'vervallen' : ( ( $workshop->definitief ? 'definitief ' : 'concept' ) . ( $workshop->betaald ? 'betaald' : '' ) ),
+				'status'      => $workshop->status(),
 			];
 		}
 
@@ -78,6 +78,9 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	public function validate( &$data ) {
+		if ( 'workshops' === $data['form_actie'] ) {
+			return true;
+		}
 		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
@@ -120,6 +123,58 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			return $error;
 		}
 		return true;
+	}
+
+	/**
+	 * Schrijf workshop informatie naar het bestand.
+	 */
+	public function workshops() {
+		$workshops = Kleistad_Workshop::all();
+		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
+		fputcsv(
+			$this->file_handle,
+			[
+				'code',
+				'naam',
+				'datum',
+				'tijd',
+				'docent',
+				'technieken',
+				'aantal',
+				'kosten',
+				'status',
+				'organisatie',
+				'contact',
+				'email',
+				'telefoon',
+				'programma',
+			],
+			';',
+			'"'
+		);
+		foreach ( $workshops as $workshop ) {
+			fputcsv(
+				$this->file_handle,
+				[
+					$workshop->code,
+					$workshop->naam,
+					date( 'd-m-Y', $workshop->datum ),
+					date( 'H:i', $workshop->start_tijd ) . '-' . date( 'H:i', $workshop->eind_tijd ),
+					$workshop->docent,
+					implode( ',', $workshop->technieken ),
+					$workshop->aantal,
+					$workshop->kosten,
+					$workshop->status(),
+					$workshop->organisatie,
+					$workshop->contact,
+					$workshop->email,
+					$workshop->telefoon,
+					$workshop->programma,
+				],
+				';',
+				'"'
+			);
+		}
 	}
 
 	/**

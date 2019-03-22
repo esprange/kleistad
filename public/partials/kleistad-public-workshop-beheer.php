@@ -138,6 +138,11 @@ else :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<button id="kleistad_workshop_toevoegen" >Toevoegen</button>
-
+<form method="POST" id="kleistad_workshop_form">
+	<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
+	<div class="kleistad_row" style="padding-top:20px;" >
+		<button id="kleistad_workshop_toevoegen" >Toevoegen</button>
+		<button type="submit" name="kleistad_submit_workshop_beheer" value="download_workshops" >Download</button>
+	</div>
+</form>
 <?php endif ?>
