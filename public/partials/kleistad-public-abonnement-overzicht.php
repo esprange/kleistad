@@ -46,7 +46,7 @@ else :
 			</tbody>
 		</table>
 		<button type="button" id="kleistad_klembord" >Kopie naar klembord</button>
-		<button type="submit" name="kleistad_submit_abonnement_overzicht" >Download</button>
+		<button type="submit" name="kleistad_submit_abonnement_overzicht" value="download_abonnementen" >Download</button>
 	</form>
 </div>
 

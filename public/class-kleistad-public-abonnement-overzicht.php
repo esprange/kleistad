@@ -64,29 +64,9 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 	}
 
 	/**
-	 *
-	 * Bewaar 'abonnement_overzicht' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return string|WP_Error
-	 *
-	 * @since   4.5.6
+	 * Schrijf abonnementen naar het bestand.
 	 */
-	public function save( $data ) {
-		$error = new WP_Error();
-
-		if ( ! Kleistad_Roles::override() ) {
-			$error->add( 'security', 'Geen toegang tot deze functie.' );
-			return $error;
-		}
-		$csv   = tempnam( sys_get_temp_dir(), 'abonnees' );
-		$f_csv = fopen( $csv, 'w' );
-		if ( false === $f_csv ) {
-			$error->add( 'security', 'Bestand kon niet aangemaakt worden.' );
-			return $error;
-		}
-		fwrite( $f_csv, "\xEF\xBB\xBF" );
-
+	public function abonnementen() {
 		$betalen         = new Kleistad_Betalen();
 		$abonnementen    = Kleistad_Abonnement::all();
 		$abonnees_fields = [
@@ -110,7 +90,7 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 				'Incasso',
 			]
 		);
-		fputcsv( $f_csv, $abonnees_fields, ';', '"' );
+		fputcsv( $this->file_handle, $abonnees_fields, ';', '"' );
 
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
 			if ( ! $abonnement->geannuleerd ) {
@@ -136,21 +116,21 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 						$betalen->heeft_mandaat( $abonnee_id ) ? 'ja' : 'nee',
 					]
 				);
-				fputcsv( $f_csv, $abonnee_gegevens, ';', '"' );
+				fputcsv( $this->file_handle, $abonnee_gegevens, ';', '"' );
 			}
 		}
-		fclose( $f_csv );
-		header( 'Content-Description: File Transfer' );
-		header( 'Content-Type: text/csv' );
-		header( 'Content-Disposition: attachment; filename=abonnementen.csv' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . filesize( $csv ) );
-		ob_clean();
-		flush();
-		readfile( $csv ); // phpcs:ignore
-		unlink( $csv );
+	}
+
+	/**
+	 *
+	 * Bewaar 'abonnement_overzicht' form gegevens
+	 *
+	 * @param array $data data te bewaren.
+	 * @return string
+	 *
+	 * @since   4.5.6
+	 */
+	public function save( $data ) {
+		return '';
 	}
 }
