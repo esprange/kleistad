@@ -13,6 +13,14 @@
  * De abstract class voor shortcodes
  */
 abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
+
+	/**
+	 * File handle voor download bestanden
+	 *
+	 * @var resource de file pointer
+	 */
+	protected $file_handle;
+
 	/**
 	 * Validatie functie, wordt voor form validatie gebruikt
 	 *
@@ -67,8 +75,6 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 
 		return $error;
 	}
-
-
 
 	/**
 	 * Hulp functie, om een telefoonnr te valideren
@@ -143,19 +149,22 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 		$data['form_actie'] = filter_input( INPUT_POST, 'kleistad_submit_' . $this->shortcode );
 		if ( ! is_null( $data['form_actie'] ) ) {
 			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $this->shortcode ) ) {
-				$result = $this->validate( $data );
-				if ( ! is_wp_error( $result ) ) {
-					$result = $this->save( $data );
-				}
-				if ( is_string( $result ) ) { // De save operatie heeft geen error opgeleverd, dus doe een redirect zodat het formulier niet opnieuw gesubmit kan worden.
-					$url = add_query_arg( 'kleistad_succes', rawurlencode( $result ), get_permalink() );
-					wp_safe_redirect( $url, 303 );
-					die();
+				if ( 0 === strpos( $data['form_actie'], 'download_' ) ) {
+					$result = $this->download( substr( $data['form_actie'], strlen( 'download_' ) ) );
 				} else {
-					if ( is_wp_error( $result ) ) {
-						foreach ( $result->get_error_messages() as $error ) {
-							$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
-						}
+					$result = $this->validate( $data );
+					if ( ! is_wp_error( $result ) ) {
+						$result = $this->save( $data );
+					}
+					if ( is_string( $result ) ) { // De save operatie heeft geen error opgeleverd, dus doe een redirect zodat het formulier niet opnieuw gesubmit kan worden.
+						$url = add_query_arg( 'kleistad_succes', rawurlencode( $result ), get_permalink() );
+						wp_safe_redirect( $url, 303 );
+						die();
+					}
+				}
+				if ( is_wp_error( $result ) ) {
+					foreach ( $result->get_error_messages() as $error ) {
+						$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
 					}
 				}
 			} else {
@@ -182,5 +191,40 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 			$html .= $this->display();
 		}
 		return $html;
+	}
+
+	/**
+	 * Download een rapport
+	 *
+	 * @param string $download Naam van de functie voor het aanmaken van de bestandsinhoud.
+	 *
+	 * @since 5.3.1
+	 */
+	public function download( $download ) {
+		$error = new WP_Error();
+
+		$result = tmpfile();
+		if ( false === $result ) {
+			$error->add( 'fout', 'Er kan geen bestand worden aangemaakt' );
+			return $error;
+		} else {
+			$this->file_handle = $result;
+		}
+		call_user_func( [ $this, $download ] );
+
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Type: text/csv' );
+		header( 'Content-Disposition: attachment; filename=' . $download . '_' . strftime( '%Y%m%d' ) . '.csv' );
+		header( 'Content-Transfer-Encoding: binary' );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+		header( 'Pragma: public' );
+		header( 'Content-Length: ' . fstat( $this->file_handle )['size'] );
+		ob_clean();
+		flush();
+		rewind( $this->file_handle );
+		fpassthru( $this->file_handle );
+		fclose( $this->file_handle );
+		exit;
 	}
 }
