@@ -305,6 +305,10 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 					if ( is_array( $file ) && ! isset( $file['error'] ) ) {
 						$exif  = exif_read_data( $file['file'] );
 						$image = imagecreatefromjpeg( $file['file'] );
+						if ( false === $image ) {
+							$error->add( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
+							return $error;
+						}
 						if ( ! empty( $exif['Orientation'] ) ) {
 							switch ( $exif['Orientation'] ) {
 								case 3:
@@ -316,6 +320,10 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 								case 8:
 									$image = imagerotate( $image, 90, 0 );
 									break;
+							}
+							if ( false === $image ) {
+								$error->add( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
+								return $error;
 							}
 						}
 						$quality = intval( min( 75000 / filesize( $file['file'] ) * 100, 100 ) );
