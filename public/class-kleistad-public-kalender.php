@@ -139,7 +139,6 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 	 * @since   5.0.0
 	 */
 	protected function prepare( &$data = null ) {
-
 		return true;
 	}
 
