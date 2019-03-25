@@ -67,21 +67,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	}
 
 	/**
-	 *
-	 * Valideer/sanitize 'stookbestand' form
-	 *
-	 * @param array $data Gevalideerde data.
-	 * @return bool
-	 *
-	 * @since   4.0.87
-	 */
-	protected function validate( &$data ) {
-		$this->vanaf_datum = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
-		$this->tot_datum   = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
-		return true;
-	}
-
-	/**
 	 * Array walk functie, bepaal de medestokers van alle reserveringen in de tijdrange.
 	 *
 	 * @param Kleistad_Reservering $reservering Het reservering object.
@@ -156,6 +141,9 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 * Schrijf abonnees informatie naar het bestand.
 	 */
 	protected function stook() {
+		$this->vanaf_datum = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
+		$this->tot_datum   = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
+
 		$this->ovens      = Kleistad_Oven::all();
 		$this->regelingen = new Kleistad_Regelingen();
 		$reserveringen    = Kleistad_Reservering::all();
@@ -174,16 +162,4 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 		array_walk( $reserveringen, [ $this, 'bepaal_stookgegevens' ] );
 	}
 
-	/**
-	 *
-	 * Bewaar 'stookbestand' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return string|WP_Error
-	 *
-	 * @since   4.0.87
-	 */
-	protected function save( $data ) {
-		return $this->download( 'stook' );
-	}
 }

@@ -34,7 +34,7 @@ else :
 		</div>
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;" >
-		<button type="submit" name="kleistad_submit_stookbestand" >Download stookbestand</button>
+		<button type="submit" name="kleistad_submit_stookbestand" value="download_stook" >Download stookbestand</button>
 	</div>
 </form>
 <?php endif; ?>
