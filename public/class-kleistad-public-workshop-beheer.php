@@ -25,7 +25,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   5.0.0
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$data['workshop'] = [];
 		$workshops        = Kleistad_Workshop::all();
 		foreach ( $workshops as $workshop ) {
@@ -77,7 +77,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   5.0.0
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		if ( 'workshops' === $data['form_actie'] ) {
 			return true;
 		}
@@ -128,7 +128,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	/**
 	 * Schrijf workshop informatie naar het bestand.
 	 */
-	public function workshops() {
+	protected function workshops() {
 		$workshops = Kleistad_Workshop::all();
 		fputcsv(
 			$this->file_handle,
@@ -185,7 +185,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   5.0.0
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		$workshop_id = $data['input']['id'];
 
 		if ( $workshop_id > 0 ) {

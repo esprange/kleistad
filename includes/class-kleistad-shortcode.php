@@ -95,5 +95,5 @@ abstract class Kleistad_Shortcode {
 	 * @param array $data de data die voorbereid moet worden voor display.
 	 * @return \WP_ERROR|bool
 	 */
-	abstract public function prepare( &$data);
+	abstract protected function prepare( &$data);
 }

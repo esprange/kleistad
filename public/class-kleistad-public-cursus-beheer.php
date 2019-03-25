@@ -26,7 +26,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$cursussen      = Kleistad_Cursus::all();
 		$inschrijvingen = Kleistad_Inschrijving::all();
 		$data['rows']   = [];
@@ -110,7 +110,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		$error = new WP_Error();
 		$tab   = filter_input( INPUT_POST, 'tab', FILTER_SANITIZE_STRING );
 		if ( 'info' === $tab ) {
@@ -192,7 +192,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		$cursus_id = $data['input']['cursus_id'];
 
 		if ( $cursus_id > 0 ) {

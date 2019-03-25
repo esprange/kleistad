@@ -26,7 +26,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$cursussen    = Kleistad_Cursus::all();
 		$registraties = [];
 
@@ -101,7 +101,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	/**
 	 * Schrijf cursisten informatie naar het bestand.
 	 */
-	public function cursisten() {
+	protected function cursisten() {
 		$cursisten               = get_users( [ 'orderby' => 'nicename' ] );
 		$cursussen               = Kleistad_Cursus::all();
 		$inschrijvingen          = Kleistad_Inschrijving::all();
@@ -181,7 +181,7 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	/**
 	 * Schrijf abonnees informatie naar het bestand.
 	 */
-	public function abonnees() {
+	protected function abonnees() {
 		$abonnees       = get_users( [ 'orderby' => 'nicename' ] );
 		$abonnementen   = Kleistad_Abonnement::all();
 		$abonnee_fields = [

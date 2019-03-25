@@ -62,7 +62,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		return true;
 	}
 
@@ -75,7 +75,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		$this->vanaf_datum = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
 		$this->tot_datum   = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
 		return true;
@@ -155,7 +155,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	/**
 	 * Schrijf abonnees informatie naar het bestand.
 	 */
-	public function stook() {
+	protected function stook() {
 		$this->ovens      = Kleistad_Oven::all();
 		$this->regelingen = new Kleistad_Regelingen();
 		$reserveringen    = Kleistad_Reservering::all();
@@ -183,7 +183,7 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		return $this->download( 'stook' );
 	}
 }

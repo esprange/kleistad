@@ -26,7 +26,7 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.5.4
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$cursussen      = Kleistad_Cursus::all();
 		$inschrijvingen = Kleistad_Inschrijving::all();
 		$cursus_info    = [];
@@ -65,7 +65,7 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	/**
 	 * Schrijf cursisten informatie naar het bestand.
 	 */
-	public function cursisten() {
+	protected function cursisten() {
 		$cursus_id        = filter_input( INPUT_POST, 'cursus_id', FILTER_SANITIZE_STRING );
 		$inschrijvingen   = Kleistad_Inschrijving::all();
 		$cursisten_fields = [

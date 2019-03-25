@@ -26,7 +26,7 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$huidige_gebruiker = wp_get_current_user();
 		$naam              = $huidige_gebruiker->display_name;
 		$saldo             = new Kleistad_Saldo( $huidige_gebruiker->ID );

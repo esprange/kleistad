@@ -28,7 +28,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param array $data de gevalideerde data.
 	 * @return \WP_ERROR|bool
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		return true;
 	}
 
@@ -39,7 +39,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return \WP_ERROR|string
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		return '';
 	}
 

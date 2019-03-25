@@ -34,7 +34,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		global $wpdb;
 		$error = new WP_Error();
 

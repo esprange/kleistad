@@ -27,7 +27,7 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$error = new WP_Error();
 		$param = filter_input_array(
 			INPUT_GET,
@@ -109,7 +109,7 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
@@ -155,7 +155,7 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		if ( self::ACTIE_RESTANT_CURSUS === $data['input']['actie'] ) {
 			$inschrijving = new Kleistad_Inschrijving( $data['input']['cursist_id'], $data['input']['cursus_id'] );
 			if ( 'ideal' === $data['input']['betaal'] ) {

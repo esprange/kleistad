@@ -25,7 +25,7 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		if ( ! Kleistad_Roles::override() ) {
 			return true;
 		}
@@ -91,7 +91,7 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		$cursisten    = [];
 		$workshop_ids = [];
 
@@ -140,7 +140,7 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 	 * @return string
 	 * @since   4.0.87
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		foreach ( $data['cursisten'] as $cursist_id => $cursist ) {
 			if ( isset( $cursist['geannuleerd'] ) ) {
 				foreach ( $cursist['geannuleerd'] as $cursus_id => $value ) {

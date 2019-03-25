@@ -25,7 +25,7 @@ class Kleistad_Public_Saldo_Overzicht extends Kleistad_Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$gebruikers = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],

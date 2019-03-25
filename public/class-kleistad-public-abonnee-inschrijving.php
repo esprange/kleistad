@@ -22,7 +22,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		if ( is_null( $data ) ) {
 			$data          = [];
 			$data['input'] = [
@@ -70,7 +70,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
@@ -121,7 +121,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		$error = new WP_Error();
 
 		if ( ! is_user_logged_in() ) {

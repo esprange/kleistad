@@ -25,7 +25,7 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$gebruiker = wp_get_current_user();
 
 		if ( is_null( $data ) ) {
@@ -52,7 +52,7 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
@@ -96,7 +96,7 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		$error = new WP_Error();
 
 		if ( ! is_user_logged_in() ) {

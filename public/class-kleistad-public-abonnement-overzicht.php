@@ -26,7 +26,7 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.5.4
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$abonnementen = Kleistad_Abonnement::all();
 		$abonnee_info = [];
 		$email_lijst  = '';
@@ -54,7 +54,7 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 	/**
 	 * Schrijf abonnementen naar het bestand.
 	 */
-	public function abonnementen() {
+	protected function abonnementen() {
 		$betalen         = new Kleistad_Betalen();
 		$abonnementen    = Kleistad_Abonnement::all();
 		$abonnees_fields = [

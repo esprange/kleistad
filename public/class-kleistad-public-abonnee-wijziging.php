@@ -22,7 +22,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		$abonnee_id = get_current_user_id();
 		$abonnement = new Kleistad_Abonnement( $abonnee_id );
 
@@ -44,7 +44,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function validate( &$data ) {
+	protected function validate( &$data ) {
 		$error = new WP_Error();
 
 		$input = filter_input_array(
@@ -86,7 +86,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	public function save( $data ) {
+	protected function save( $data ) {
 		$error = new WP_Error();
 		if ( ! is_user_logged_in() ) {
 			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );

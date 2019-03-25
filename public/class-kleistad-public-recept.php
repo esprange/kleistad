@@ -25,7 +25,7 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 	 *
 	 * @since   4.1.0
 	 */
-	public function prepare( &$data = null ) {
+	protected function prepare( &$data = null ) {
 		return true;
 	}
 
