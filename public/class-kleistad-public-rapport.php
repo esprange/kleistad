@@ -28,9 +28,10 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 	 */
 	protected function prepare( &$data = null ) {
 		$huidige_gebruiker = wp_get_current_user();
-		$naam              = $huidige_gebruiker->display_name;
 		$saldo             = new Kleistad_Saldo( $huidige_gebruiker->ID );
-		$items             = [];
+		$data['naam']      = $huidige_gebruiker->display_name;
+		$data['saldo']     = number_format_i18n( $saldo->bedrag, 2 );
+		$data['items']     = [];
 		$ovens             = Kleistad_Oven::all();
 		$reserveringen     = Kleistad_Reservering::all();
 		$regeling_store    = new Kleistad_Regelingen();
@@ -44,8 +45,8 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 						$regeling = $regeling_store->get( $huidige_gebruiker->ID, $reservering->oven_id );
 						$kosten   = round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
 					}
-					$stoker  = get_userdata( $reservering->gebruiker_id );
-					$items[] = [
+					$stoker          = get_userdata( $reservering->gebruiker_id );
+					$data['items'][] = [
 						'datum'     => $reservering->datum,
 						'oven'      => $ovens[ $reservering->oven_id ]->naam,
 						'stoker'    => false === $stoker ? 'onbekend' : $stoker->display_name,
@@ -59,11 +60,6 @@ class Kleistad_Public_Rapport extends Kleistad_Shortcode {
 				}
 			}
 		}
-		$data = [
-			'naam'  => $naam,
-			'saldo' => number_format_i18n( $saldo->bedrag, 2 ),
-			'items' => $items,
-		];
 		return true;
 	}
 
