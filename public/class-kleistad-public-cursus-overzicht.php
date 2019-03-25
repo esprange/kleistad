@@ -63,42 +63,10 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	}
 
 	/**
-	 * Valideer/sanitize 'registratie' form
-	 *
-	 * @param array $data Gevalideerde data.
-	 * @return bool
-	 *
-	 * @since   4.5.4
+	 * Schrijf cursisten informatie naar het bestand.
 	 */
-	public function validate( &$data ) {
-		$data['id'] = filter_input( INPUT_POST, 'cursus_id', FILTER_SANITIZE_STRING );
-		return true;
-	}
-
-	/**
-	 *
-	 * Bewaar 'registratie_overzicht' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return string|WP_Error
-	 *
-	 * @since   4.5.4
-	 */
-	public function save( $data ) {
-		$error = new WP_Error();
-
-		if ( ! Kleistad_Roles::override() ) {
-			$error->add( 'security', 'Geen toegang tot deze functie.' );
-			return $error;
-		}
-		$csv   = tempnam( sys_get_temp_dir(), 'cursisten_C' . $data['id'] );
-		$f_csv = fopen( $csv, 'w' );
-		if ( false === $f_csv ) {
-			$error->add( 'security', 'Bestand kon niet aangemaakt worden.' );
-			return $error;
-		}
-		fwrite( $f_csv, "\xEF\xBB\xBF" );
-
+	public function cursisten() {
+		$cursus_id        = filter_input( INPUT_POST, 'cursus_id', FILTER_SANITIZE_STRING );
 		$inschrijvingen   = Kleistad_Inschrijving::all();
 		$cursisten_fields = [
 			'Achternaam',
@@ -109,36 +77,23 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 			'Technieken',
 			'Opmerking',
 		];
-		fputcsv( $f_csv, $cursisten_fields, ';', '"' );
+		fputcsv( $this->file_handle, $cursisten_fields, ';', '"' );
 
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-			if ( array_key_exists( $data['id'], $cursist_inschrijvingen ) ) {
-				if ( $cursist_inschrijvingen[ $data['id'] ]->ingedeeld && ! $cursist_inschrijvingen[ $data['id'] ]->geannuleerd ) {
+			if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) ) {
+				if ( $cursist_inschrijvingen[ $cursus_id ]->ingedeeld && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
 					$cursist          = get_userdata( $cursist_id );
 					$cursist_gegevens = [
 						$cursist->first_name,
 						$cursist->last_name,
 						$cursist->telnr,
 						$cursist->user_email,
-						$cursist_inschrijvingen[ $data['id'] ]->aantal,
-						implode( ' ', $cursist_inschrijvingen[ $data['id'] ]->technieken ),
+						$cursist_inschrijvingen[ $cursus_id ]->aantal,
+						implode( ' ', $cursist_inschrijvingen[ $cursus_id ]->technieken ),
 					];
-					fputcsv( $f_csv, $cursist_gegevens, ';', '"' );
+					fputcsv( $this->file_handle, $cursist_gegevens, ';', '"' );
 				}
 			}
 		}
-		fclose( $f_csv );
-		header( 'Content-Description: File Transfer' );
-		header( 'Content-Type: text/csv' );
-		header( 'Content-Disposition: attachment; filename=cursisten_C' . $data['id'] . '.csv' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . filesize( $csv ) );
-		ob_clean();
-		flush();
-		readfile( $csv ); // phpcs:ignore
-		unlink( $csv );
 	}
 }

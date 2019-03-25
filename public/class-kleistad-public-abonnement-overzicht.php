@@ -52,18 +52,6 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 	}
 
 	/**
-	 * Valideer/sanitize 'registratie' form
-	 *
-	 * @param array $data Gevalideerde data.
-	 * @return bool
-	 *
-	 * @since   4.5.6
-	 */
-	public function validate( &$data ) {
-		return true;
-	}
-
-	/**
 	 * Schrijf abonnementen naar het bestand.
 	 */
 	public function abonnementen() {
@@ -121,16 +109,4 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 		}
 	}
 
-	/**
-	 *
-	 * Bewaar 'abonnement_overzicht' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return string
-	 *
-	 * @since   4.5.6
-	 */
-	public function save( $data ) {
-		return '';
-	}
 }

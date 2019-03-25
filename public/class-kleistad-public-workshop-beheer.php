@@ -130,7 +130,6 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 */
 	public function workshops() {
 		$workshops = Kleistad_Workshop::all();
-		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 		fputcsv(
 			$this->file_handle,
 			[

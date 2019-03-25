@@ -156,8 +156,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	 * Schrijf abonnees informatie naar het bestand.
 	 */
 	public function stook() {
-		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
-
 		$this->ovens      = Kleistad_Oven::all();
 		$this->regelingen = new Kleistad_Regelingen();
 		$reserveringen    = Kleistad_Reservering::all();

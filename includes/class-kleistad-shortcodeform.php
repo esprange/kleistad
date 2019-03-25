@@ -28,7 +28,9 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param array $data de gevalideerde data.
 	 * @return \WP_ERROR|bool
 	 */
-	abstract public function validate( &$data );
+	public function validate( &$data ) {
+		return true;
+	}
 
 	/**
 	 * Save functie, wordt gebruikt bij formulieren
@@ -37,7 +39,9 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return \WP_ERROR|string
 	 */
-	abstract public function save( $data );
+	public function save( $data ) {
+		return '';
+	}
 
 	/**
 	 * Valideer opvoeren nieuwe gebruiker
@@ -207,9 +211,9 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 		if ( false === $result ) {
 			$error->add( 'fout', 'Er kan geen bestand worden aangemaakt' );
 			return $error;
-		} else {
-			$this->file_handle = $result;
 		}
+		$this->file_handle = $result;
+		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 		call_user_func( [ $this, $download ] );
 
 		header( 'Content-Description: File Transfer' );

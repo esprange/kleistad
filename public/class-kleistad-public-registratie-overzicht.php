@@ -99,18 +99,6 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 	}
 
 	/**
-	 * Valideer/sanitize 'registratie' form
-	 *
-	 * @param array $data Gevalideerde data.
-	 * @return bool
-	 *
-	 * @since   4.3.8
-	 */
-	public function validate( &$data ) {
-		return true;
-	}
-
-	/**
 	 * Schrijf cursisten informatie naar het bestand.
 	 */
 	public function cursisten() {
@@ -138,7 +126,6 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			'Cursusgeld',
 			'Opmerking',
 		];
-		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 		fputcsv( $this->file_handle, $cursus_fields, ';', '"' );
 		foreach ( $cursisten as $cursist ) {
 			$is_lid = ( ! empty( $cursist->role ) || ( is_array( $cursist->role ) && ( count( $cursist->role ) > 0 ) ) );
@@ -217,7 +204,6 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			'Abonnement_extras',
 			'Opmerking',
 		];
-		fwrite( $this->file_handle, "\xEF\xBB\xBF" );
 		fputcsv( $this->file_handle, $abonnee_fields, ';', '"' );
 		foreach ( $abonnees as $abonnee ) {
 			$abonnee_gegevens = [
@@ -250,18 +236,5 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				fputcsv( $this->file_handle, $abonnee_abonnement_gegevens, ';', '"' );
 			}
 		}
-	}
-
-	/**
-	 *
-	 * Bewaar 'registratie_overzicht' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return string
-	 *
-	 * @since   4.0.87
-	 */
-	public function save( $data ) {
-		return '';
 	}
 }
