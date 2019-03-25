@@ -29,8 +29,7 @@ class Kleistad_Public_Saldo extends Kleistad_ShortcodeForm {
 	protected function prepare( &$data = null ) {
 		$gebruiker_id = get_current_user_id();
 		$saldo        = new Kleistad_Saldo( $gebruiker_id );
-
-		$data = [
+		$data         = [
 			'gebruiker_id' => $gebruiker_id,
 			'saldo'        => number_format_i18n( $saldo->bedrag, 2 ),
 		];
@@ -47,7 +46,7 @@ class Kleistad_Public_Saldo extends Kleistad_ShortcodeForm {
 	 */
 	protected function validate( &$data ) {
 
-		$input         = filter_input_array(
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
@@ -55,7 +54,6 @@ class Kleistad_Public_Saldo extends Kleistad_ShortcodeForm {
 				'betaal'       => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['input'] = $input;
 		return true;
 	}
 
@@ -69,7 +67,6 @@ class Kleistad_Public_Saldo extends Kleistad_ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$error = new WP_Error();
-
 		$saldo = new Kleistad_Saldo( $data['input']['gebruiker_id'] );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
