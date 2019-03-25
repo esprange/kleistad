@@ -27,12 +27,12 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	 * @since   4.5.4
 	 */
 	protected function prepare( &$data = null ) {
-		$cursussen      = Kleistad_Cursus::all();
-		$inschrijvingen = Kleistad_Inschrijving::all();
-		$cursus_info    = [];
+		$cursussen           = Kleistad_Cursus::all();
+		$inschrijvingen      = Kleistad_Inschrijving::all();
+		$data['cursus_info'] = [];
 
 		foreach ( $cursussen as $cursus_id => $cursus ) {
-			$cursus_info[ $cursus_id ] = [
+			$data['cursus_info'][ $cursus_id ] = [
 				'start_dt'    => $cursus->start_datum,
 				'code'        => 'C' . $cursus_id,
 				'naam'        => $cursus->naam,
@@ -45,7 +45,7 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 			$cursist = get_userdata( $cursist_id );
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
 				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
-					$cursus_info[ $cursus_id ]['lijst'][] = [
+					$data['cursus_info'][ $cursus_id ]['lijst'][] = [
 						'aantal'     => $inschrijving->aantal,
 						'naam'       => $cursist->display_name,
 						'telnr'      => $cursist->telnr,
@@ -56,9 +56,6 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 				}
 			}
 		}
-		$data = [
-			'cursus_info' => $cursus_info,
-		];
 		return true;
 	}
 
