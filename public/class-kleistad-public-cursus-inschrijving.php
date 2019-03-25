@@ -61,7 +61,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			]
 		);
 		$data['cursus_selectie'] = true;
-		$open_cursussen          = [];
+		$data['open_cursussen']  = [];
 		$cursussen               = Kleistad_Cursus::all( true );
 		$cursus_selecties        = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
 		if ( 1 === count( $cursus_selecties ) ) {
@@ -73,7 +73,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				continue;
 			}
 
-			$open_cursussen[ $cursus->id ] = [
+			$data['open_cursussen'][ $cursus->id ] = [
 				'naam'          => $cursus->naam .
 					', start ' . strftime( '%A %d-%m-%y', $cursus->start_datum ) .
 					( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
@@ -86,7 +86,6 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				'lopend'        => $cursus->start_datum < strtotime( 'today' ),
 			];
 		}
-		$data['open_cursussen'] = $open_cursussen;
 		return true;
 	}
 
@@ -195,7 +194,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 
 		$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $data['cursus']->id );
 		if ( $inschrijving->ingedeeld ) {
-			$error->add( 'dubbel', 'Volgens onze administraie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' );
+			$error->add( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' );
 			return $error;
 		}
 		$inschrijving->technieken = $data['input']['technieken'];
