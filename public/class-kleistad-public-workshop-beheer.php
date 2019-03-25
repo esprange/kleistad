@@ -78,9 +78,6 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	protected function validate( &$data ) {
-		if ( 'workshops' === $data['form_actie'] ) {
-			return true;
-		}
 		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
@@ -106,10 +103,11 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
 				'aantal'      => FILTER_SANITIZE_NUMBER_INT,
+				'programma'   => FILTER_DEFAULT,
 			]
 		);
 
-		$data['input']['programma'] = sanitize_textarea_field( filter_input( INPUT_POST, 'programma' ) );
+		$data['input']['programma'] = sanitize_textarea_field( $data['input']['programma'] );
 		if ( ! $this->validate_email( $data['input']['email'] ) ) {
 			$error->add( 'verplicht', 'De invoer ' . $data['input']['email'] . ' is geen geldig E-mail adres.' );
 		}
@@ -186,10 +184,8 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	protected function save( $data ) {
-		$workshop_id = $data['input']['id'];
-
-		if ( $workshop_id > 0 ) {
-			$workshop = new Kleistad_Workshop( $workshop_id );
+		if ( $data['input']['id'] > 0 ) {
+			$workshop = new Kleistad_Workshop( $data['input']['id'] );
 		} else {
 			$workshop = new Kleistad_Workshop();
 		}
