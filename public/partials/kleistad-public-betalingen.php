@@ -39,19 +39,19 @@ else :
 					<td data-sort="<?php echo $inschrijving['i_betaald'] ? 1 : 0; ?>"><?php if ( $inschrijving['i_betaald'] ) : ?>
 						<span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
-						<input type="checkbox" name="i_betaald[]" value="<?php echo esc_attr( $inschrijving['value'] ); ?>" >
+						<input type="checkbox" name="<?php echo "cursist[{$inschrijving['cursist_id']}][i_betaald][{$inschrijving['cursus_id']}]"; //phpcs:ignore ?>" value="1" >
 						<?php endif ?>
 					</td>
 					<td data-sort="<?php echo $inschrijving['c_betaald'] ? 1 : 0; ?>"><?php if ( $inschrijving['c_betaald'] ) : ?>
 						<span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
-						<input type="checkbox" name="c_betaald[]" value="<?php echo esc_attr( $inschrijving['value'] ); ?>" >
+						<input type="checkbox" name="<?php echo "cursist[{$inschrijving['cursist_id']}][c_betaald][{$inschrijving['cursus_id']}]"; //phpcs:ignore ?>" value="1" >
 						<?php endif ?>
 					</td>
 					<td data-sort="<?php echo $inschrijving['geannuleerd'] ? 1 : 0; ?>"><?php if ( $inschrijving['geannuleerd'] ) : ?>
 						<span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
-						<input type="checkbox" name="geannuleerd[]" value="<?php echo esc_attr( $inschrijving['value'] ); ?>" >
+						<input type="checkbox" name="<?php echo "cursist[{$inschrijving['cursist_id']}][geannuleerd][{$inschrijving['cursus_id']}]"; //phpcs:ignore ?>" value="1" >
 						<?php endif ?>
 					</td>
 				</tr>
@@ -83,7 +83,7 @@ else :
 				<td data-sort="<?php echo $workshop['betaald'] ? 1 : 0; ?>"><?php if ( $workshop['betaald'] ) : ?>
 					<span class="genericon genericon-checkmark"></span>
 					<?php else : ?>
-					<input type="checkbox" name="w_betaald[]" value="<?php echo esc_attr( $workshop['id'] ); ?>" >
+					<input type="checkbox" name="<?php echo "workshop[{$workshop['id']}]"; //phpcs:ignore ?>" value="1" >
 					<?php endif ?>
 				</td>
 			<?php endforeach ?>
