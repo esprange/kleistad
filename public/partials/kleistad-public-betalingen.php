@@ -72,7 +72,7 @@ else :
 				<th data-class-name="dt-body-center">Betaald</th>
 			</tr>
 		</thead>
-		<body>
+		<tbody>
 		<?php foreach ( $data['workshops'] as $workshop ) : ?>
 			<tr >
 				<td data-sort="<?php echo esc_attr( $workshop['datum'] ); ?>"><?php echo esc_html( date( 'd-m-y', $workshop['datum'] ) ); ?></td>
