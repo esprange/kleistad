@@ -44,12 +44,8 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
 
-		$gebruiker_id = $param['gid'];
-		$gebruiker    = get_userdata( $gebruiker_id );
-
 		if ( ! is_null( $param['crss'] ) ) {
-			$cursus_id    = $param['crss'];
-			$inschrijving = new Kleistad_Inschrijving( $gebruiker_id, $cursus_id );
+			$inschrijving = new Kleistad_Inschrijving( $param['gid'], $param['crss'] );
 			if ( $param['hsh'] === $inschrijving->controle() ) {
 				if ( $inschrijving->c_betaald ) {
 					$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald voor deze cursus. Neem eventueel contact op met Kleistad' );
@@ -57,7 +53,7 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 					$cursus = new Kleistad_Cursus( $cursus_id );
 					$data   = [
 						'actie'        => self::ACTIE_RESTANT_CURSUS,
-						'cursist'      => $gebruiker,
+						'cursist'      => get_userdata( $param['gid'] ),
 						'cursus'       => $cursus,
 						'inschrijving' => $inschrijving,
 					];
@@ -66,14 +62,14 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 				$error->add( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 			}
 		} elseif ( ! is_null( $param['abo'] ) ) {
-			$abonnement = new Kleistad_Abonnement( $gebruiker_id );
+			$abonnement = new Kleistad_Abonnement( $param['gid'] );
 			if ( $param['hsh'] === $abonnement->controle() ) {
 				if ( $abonnement->incasso_actief() ) {
 					$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald voor het vervolg van het abonnement. Neem eventueel contact op met Kleistad' );
 				} else {
 					$data = [
 						'actie'      => self::ACTIE_VERVOLG_ABONNEMENT,
-						'abonnee'    => $gebruiker,
+						'abonnee'    => get_userdata( $param['gid'] ),
 						'abonnement' => $abonnement,
 					];
 				}
