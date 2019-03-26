@@ -403,9 +403,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function pauzeren( $pauze_datum, $herstart_datum, $admin = false ) {
 		// Op de pauze_datum wordt de status gewijzigd naar gepauzeerd.
-		$this->schedule( 'pauze', $pauze_datum );
+		$this->schedule( 'pauze', $pauze_datum, $this->pauze_datum );
 		// Op de herstart_datum wordt de status weer gewijzigd naar niet-gepauzeerd.
-		$this->schedule( 'herstart', $herstart_datum );
+		$this->schedule( 'herstart', $herstart_datum, $this->herstart_datum );
 		$this->pauze_datum    = $pauze_datum;
 		$this->herstart_datum = $herstart_datum;
 		$betalen              = new Kleistad_Betalen();
@@ -456,7 +456,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function annuleren( $eind_datum, $admin = false ) {
 		// Op de einddatum wordt de subscriber rol van het abonnee account verwijderd.
-		$this->schedule( 'eind', $eind_datum );
+		$this->schedule( 'eind', $eind_datum, $this->eind_datum );
 
 		// Een eventuele subscriptie wordt geannuleerd en mandaten worden verwijderd.
 		$this->eind_datum     = $eind_datum;
@@ -495,11 +495,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				break;
 			case 'extras':
 				$this->extras = $soort;
-				if ( count( $soort ) ) {
-					$bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gebruik maken van ' . implode( ', ', $soort );
-				} else {
-					$bericht = 'Je maakt voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' geen gebruik meer van extras';
-				}
+				$bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) .
+					( count( $soort ) ? ' gebruik maken van ' . implode( ', ', $soort ) : ' geen gebruik meer van extras' );
 				break;
 			default:
 				$bericht = '';
