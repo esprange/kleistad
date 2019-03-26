@@ -138,9 +138,9 @@ else :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<form method="POST" id="kleistad_workshop_form">
+<form method="POST">
 	<div class="kleistad_row" style="padding-top:20px;" >
-		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
+		<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'kleistad_workshop_beheer' ); ?>" />
 		<button type="button" id="kleistad_workshop_toevoegen" >Toevoegen</button>
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="download_workshops" >Download</button>
 	</div>
