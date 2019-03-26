@@ -306,7 +306,7 @@ class Kleistad_Public {
 	 */
 	public function login_redirect( $url, $request, $user ) {
 		if ( isset( $request ) && $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) { // De test van request is dummy statement, altijd true.
-			$url = ( $user->has_cap( 'administrator' ) ) ? admin_url() : home_url( '/leden/' );
+			$url = ( $user->has_cap( 'bestuur' ) ) ? home_url( '/bestuur' ) : home_url( '/leden/' );
 		}
 		return $url;
 	}
