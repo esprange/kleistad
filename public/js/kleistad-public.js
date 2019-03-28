@@ -189,14 +189,27 @@
 					firstDay: 1,
 					isRTL: false,
 					showMonthAfterYear: false,
-					yearSuffix: ''
+					yearSuffix: '',
+					beforeShow: function( i ) {
+						if ( $( i ).attr( 'readonly' ) ) {
+							return false;
+						}
+					}
 				}
 			);
 
             /**
              * Definieer de timespinners.
              */
-			$( '.kleistad_tijd' ).timespinner();
+			$( '.kleistad_tijd' ).timespinner(
+				{
+					start: function() {
+						if ( $( this ).attr( 'readonly' ) ) {
+							return false;
+						}
+					}
+				}
+			);
 
 			/**
 			 * Voor de ondersteuning van touch events

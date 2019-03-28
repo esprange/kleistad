@@ -44,11 +44,12 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 				'email'       => $workshop->email,
 				'telefoon'    => $workshop->telefoon,
 				'programma'   => $workshop->programma,
-				'vervallen'   => $workshop->vervallen,
 				'kosten'      => $workshop->kosten,
 				'aantal'      => $workshop->aantal,
 				'betaald'     => $workshop->betaald,
 				'definitief'  => $workshop->definitief,
+				'voltooid'    => $workshop->datum < strtotime( 'today' ),
+				'vervallen'   => $workshop->vervallen,
 				'status'      => $workshop->status(),
 			];
 		}

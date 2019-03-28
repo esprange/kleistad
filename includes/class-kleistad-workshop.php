@@ -193,9 +193,10 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * @since 5.0.0
 	 */
 	public function bevestig() {
-		if ( ! $this->definitief ) {
-			$this->definitief = true;
-			$this->save();
+		$herbevestiging   = $this->definitief;
+		$this->definitief = true;
+		$this->save();
+		if ( ! $herbevestiging ) {
 			wp_schedule_single_event(
 				mktime( self::EMAIL_TIJD, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
 				self::META_KEY,
@@ -206,6 +207,8 @@ class Kleistad_Workshop extends Kleistad_Entity {
 				]
 			);
 			$this->email( 'bevestiging' );
+		} else {
+			$this->email( 'correctie bevestiging' );
 		}
 	}
 
@@ -256,6 +259,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 
 		switch ( $type ) {
 			case 'bevestiging':
+			case 'correctie bevestiging':
 				$slug = 'kleistad_email_workshop_bevestiging';
 				break;
 			case 'betaling':

@@ -64,7 +64,7 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 				$data['workshops'] = [];
 				$workshops         = Kleistad_Workshop::all();
 				foreach ( $workshops as $workshop_id => $workshop ) {
-					if ( ! $workshop->betaald && ! $workshop->vervallen ) {
+					if ( ! $workshop->betaald && ! $workshop->vervallen && $workshop->definitief ) {
 						$data['workshops'][] = [
 							'id'          => $workshop_id,
 							'datum'       => $workshop->datum,
