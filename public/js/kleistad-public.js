@@ -191,9 +191,7 @@
 					showMonthAfterYear: false,
 					yearSuffix: '',
 					beforeShow: function( i ) {
-						if ( $( i ).attr( 'readonly' ) ) {
-							return false;
-						}
+						return ( ! $( i ).attr( 'readonly' ) );
 					}
 				}
 			);
@@ -204,9 +202,7 @@
 			$( '.kleistad_tijd' ).timespinner(
 				{
 					start: function() {
-						if ( $( this ).attr( 'readonly' ) ) {
-							return false;
-						}
+						return ( ! $( this ).attr( 'readonly' ) );
 					}
 				}
 			);

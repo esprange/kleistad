@@ -220,17 +220,19 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	public function afzeggen() {
 		if ( ! $this->vervallen ) {
 			$this->vervallen = true;
-			wp_unschedule_event(
-				mktime( self::EMAIL_TIJD, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
-				self::META_KEY,
-				[
-					$this->id,
-					'betaling',
-					$this->datum,
-				]
-			);
+			if ( $this->definitief ) {
+				wp_unschedule_event(
+					mktime( self::EMAIL_TIJD, 0, 0, intval( date( 'n', $this->datum ) ), intval( date( 'j', $this->datum ) ) - 7, intval( date( 'Y', $this->datum ) ) ),
+					self::META_KEY,
+					[
+						$this->id,
+						'betaling',
+						$this->datum,
+					]
+				);
+				$this->email( 'afzegging' );
+			}
 			$this->save();
-			$this->email( 'afzegging' );
 		}
 	}
 

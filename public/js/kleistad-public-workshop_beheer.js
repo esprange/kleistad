@@ -60,7 +60,7 @@
 						$( 'input' ).attr( 'readonly', alleenlezen );
 						$( '#kleistad_datum' ).attr( 'readonly', workshop.definitief || alleenlezen );
 						$( '#kleistad_workshop_opslaan' ).prop( 'disabled', workshop.definitief || alleenlezen );
-						$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', ! workshop.definitief && ! workshop.voltooid );
+						$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', workshop.voltooid );
 					}
 				}
             );
