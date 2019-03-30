@@ -13,7 +13,11 @@
                     autoOpen: false,
                     height: 'auto',
                     width: 750,
-                    modal: true
+					modal: true,
+					close: function()
+					{
+						$( this ).css( 'body', 'default' );
+					}
                 }
             );
 
@@ -32,7 +36,7 @@
              */
             $( 'body' ).on(
                 'click touchend', '.kleistad_workshop_info', function( event ) {
-					var workshop, alleenlezen;
+					var workshop, alleenlezen, background, color;
 					if ( 'click' === event.type || detectTap ) {
 						workshop    = $( this ).data( 'workshop' );
 						alleenlezen = workshop.betaald || workshop.vervallen || workshop.voltooid;
@@ -56,11 +60,14 @@
 						$( '#kleistad_handvormen' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Handvormen' ) >= 0 );
 						$( '#kleistad_boetseren' ).prop( 'checked', String( workshop.technieken ).indexOf( 'Boetseren' ) >= 0 );
 
-						$( 'select,button[type=submit]' ).prop( 'disabled', alleenlezen );
-						$( 'input' ).attr( 'readonly', alleenlezen );
+						$( '#kleistad_workshop_form' ).find( 'select,button[type=submit]' ).prop( 'disabled', alleenlezen );
+						$( '#kleistad_workshop_form' ).find( 'textarea,input' ).attr( 'readonly', alleenlezen );
 						$( '#kleistad_datum' ).attr( 'readonly', workshop.definitief || alleenlezen );
 						$( '#kleistad_workshop_opslaan' ).prop( 'disabled', workshop.definitief || alleenlezen );
 						$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', workshop.voltooid );
+						background = workshop.vervallen ? '' : ( workshop.betaald ? 'green' : ( workshop.definitief ? 'springgreen' : 'orange' ) );
+						color      = workshop.vervallen ? '' : ( workshop.betaald ? 'white' : 'black' );
+						$( '#kleistad_workshop_form' ).find( '.ui-dialog-titlebar' ).css( { background: background, color: color } );
 					}
 				}
             );
@@ -73,8 +80,8 @@
 					$( '#kleistad_workshop' ).dialog( 'option', 'title', '*** nieuw ***' ).dialog( 'open' );
 					$( '#kleistad_workshop_form' )[0].reset();
 					$( '#kleistad_id' ).val( 0 );
-					$( 'input' ).attr( 'readonly', false );
-					$( 'select,#kleistad_workshop_bevestigen,#kleistad_workshop_opslaan' ).prop( 'disabled', false );
+					$( '#kleistad_workshop_form' ).find( 'input' ).attr( 'readonly', false );
+					$( '#kleistad_workshop_form' ).find( 'select,#kleistad_workshop_bevestigen,#kleistad_workshop_opslaan' ).prop( 'disabled', false );
 					$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', true );
 					$( '#kleistad_definitief,#kleistad_betaald' ).html( '' );
                 }
@@ -82,6 +89,14 @@
 
 			$( '#kleistad_sluit' ).click( function() {
 				$( '#kleistad_workshop' ).dialog( 'close' );
+			});
+
+			$( '#kleistad_workshop_form button[type=submit]' ).click( function() {
+				$( 'body' ).css( 'cursor', 'waiting' );
+			});
+
+			$( '#kleistad_workshop_form input[type=checkbox]' ).click( function() {
+				return ! $( this ).attr( 'readonly' );
 			});
         }
     );
