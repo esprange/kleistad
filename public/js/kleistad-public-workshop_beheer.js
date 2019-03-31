@@ -16,7 +16,7 @@
 					modal: true,
 					close: function()
 					{
-						$( this ).css( 'body', 'default' );
+						$( 'body' ).css( { cursor: 'default' } );
 					}
                 }
             );
@@ -67,7 +67,7 @@
 						$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', workshop.voltooid );
 						background = workshop.vervallen ? '' : ( workshop.betaald ? 'green' : ( workshop.definitief ? 'springgreen' : 'orange' ) );
 						color      = workshop.vervallen ? '' : ( workshop.betaald ? 'white' : 'black' );
-						$( '#kleistad_workshop_form' ).find( '.ui-dialog-titlebar' ).css( { background: background, color: color } );
+						$( '.ui-dialog-titlebar' ).css( { background: background, color: color } );
 					}
 				}
             );
@@ -91,8 +91,8 @@
 				$( '#kleistad_workshop' ).dialog( 'close' );
 			});
 
-			$( '#kleistad_workshop_form button[type=submit]' ).click( function() {
-				$( 'body' ).css( 'cursor', 'waiting' );
+			$( '#kleistad_workshop_form' ).submit( function() {
+				$( 'body' ).css( { cursor: 'wait !important' } );
 			});
 
 			$( '#kleistad_workshop_form input[type=checkbox]' ).click( function() {
