@@ -263,7 +263,7 @@ class Kleistad_Email {
 </html>
 		<?php
 		$html = ob_get_contents();
-		ob_clean();
+		ob_end_clean();
 
 		$status = wp_mail( $to, $subject, $html, $headers, $attachment );
 		if ( ! $status ) {

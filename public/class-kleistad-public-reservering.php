@@ -262,7 +262,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		ob_start();
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-show-reservering.php';
 		$html = ob_get_contents();
-		ob_clean();
+		ob_end_clean();
 		return $html;
 	}
 

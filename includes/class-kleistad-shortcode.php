@@ -57,7 +57,7 @@ abstract class Kleistad_Shortcode {
 		ob_start();
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
 		$html = ob_get_contents();
-		ob_clean();
+		ob_end_clean();
 		return $html;
 	}
 
@@ -75,7 +75,6 @@ abstract class Kleistad_Shortcode {
 		$this->atts        = $atts;
 		$this->options     = $options;
 		$this->shortcode   = $shortcode;
-		wp_localize_jquery_ui_datepicker();
 	}
 
 	/**

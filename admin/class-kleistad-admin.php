@@ -110,19 +110,10 @@ class Kleistad_Admin {
 	 *
 	 * @since    4.0.87
 	 */
-	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/kleistad-admin.css', [], $this->version, 'all' );
+	public function enqueue_scripts_and_styles() {
+		wp_enqueue_style( $this->plugin_name . 'admin', plugin_dir_url( __FILE__ ) . 'css/kleistad-admin.css', [], $this->version, 'all' );
 		wp_enqueue_style( 'jqueryui', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
-	}
-
-	/**
-	 * Registreer de JavaScript voor de admin functies.
-	 *
-	 * @since    4.0.87
-	 */
-	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/kleistad-admin.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
-		wp_localize_jquery_ui_datepicker();
+		wp_enqueue_script( $this->plugin_name . 'admin', plugin_dir_url( __FILE__ ) . 'js/kleistad-admin.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
 	}
 
 	/**
