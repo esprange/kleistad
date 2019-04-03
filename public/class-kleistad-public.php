@@ -106,7 +106,7 @@ class Kleistad_Public {
 				}
 			}
 			if ( ! wp_script_is( 'kleistad', 'enqueued' ) ) {
-				wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . 'js/kleistad-public.js', [ 'jquery' ], $this->version, false );
+				wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . 'js/kleistad-public.js', [], $this->version, true );
 				wp_localize_script(
 					'kleistad',
 					'kleistadData',
@@ -139,26 +139,26 @@ class Kleistad_Public {
 		wp_register_script( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/daygrid/main.min.js', [ 'fullcalendar-core' ], '4.0.2', false );
 		wp_register_script( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/timegrid/main.min.js', [ 'fullcalendar-core' ], '4.0.2', false );
 
-		$this->enqueue( 'abonnee_inschrijving',[ 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ] );
-		$this->enqueue( 'abonnee_wijziging', [ 'jquery-ui-dialog', 'jquery-ui-spinner' ] );
-		$this->enqueue( 'abonnement_overzicht', [ 'datatables' ] );
-		$this->enqueue( 'betaling', [] );
-		$this->enqueue( 'betalingen', [ 'datatables' ] );
-		$this->enqueue( 'cursus_beheer', [ 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ] );
-		$this->enqueue( 'cursus_inschrijving', [ 'jquery-ui-selectmenu', 'jquery-ui-spinner' ] );
-		$this->enqueue( 'cursus_overzicht', [ 'jquery-ui-dialog', 'datatables' ] );
-		$this->enqueue( 'dagdelenkaart', [ 'jquery-ui-datepicker' ] );
-		$this->enqueue( 'kalender', [ 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ] );
-		$this->enqueue( 'rapport', [ 'datatables' ] );
-		$this->enqueue( 'recept_beheer', [ 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ] );
-		$this->enqueue( 'recept', [] );
-		$this->enqueue( 'registratie_overzicht', [ 'jquery-ui-dialog' ] );
-		$this->enqueue( 'registratie', [] );
-		$this->enqueue( 'reservering', [ 'jquery-ui-dialog' ] );
-		$this->enqueue( 'saldo_overzicht', [ 'datatables' ] );
-		$this->enqueue( 'saldo', [] );
-		$this->enqueue( 'stookbestand', [ 'jquery-ui-datepicker' ] );
-		$this->enqueue( 'workshop_beheer', [ 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ] );
+		$this->enqueue( 'abonnee_inschrijving',[ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ] );
+		$this->enqueue( 'abonnee_wijziging', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner' ] );
+		$this->enqueue( 'abonnement_overzicht', [ 'jquery', 'datatables' ] );
+		$this->enqueue( 'betaling', [ 'jquery' ] );
+		$this->enqueue( 'betalingen', [ 'jquery', 'datatables' ] );
+		$this->enqueue( 'cursus_beheer', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ] );
+		$this->enqueue( 'cursus_inschrijving', [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ] );
+		$this->enqueue( 'cursus_overzicht', [ 'jquery', 'jquery-ui-dialog', 'datatables' ] );
+		$this->enqueue( 'dagdelenkaart', [ 'jquery', 'jquery-ui-datepicker' ] );
+		$this->enqueue( 'kalender', [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ] );
+		$this->enqueue( 'rapport', [ 'jquery', 'datatables' ] );
+		$this->enqueue( 'recept_beheer', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ] );
+		$this->enqueue( 'recept', [ 'jquery' ] );
+		$this->enqueue( 'registratie_overzicht', [ 'jquery', 'jquery-ui-dialog' ] );
+		$this->enqueue( 'registratie', [ 'jquery' ] );
+		$this->enqueue( 'reservering', [ 'jquery', 'jquery-ui-dialog' ] );
+		$this->enqueue( 'saldo_overzicht', [ 'jquery', 'datatables' ] );
+		$this->enqueue( 'saldo', [ 'jquery' ] );
+		$this->enqueue( 'stookbestand', [ 'jquery', 'jquery-ui-datepicker' ] );
+		$this->enqueue( 'workshop_beheer', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ] );
 	}
 
 	/**
