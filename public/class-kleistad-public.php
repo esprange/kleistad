@@ -152,7 +152,7 @@ class Kleistad_Public {
 		$this->enqueue( 'rapport', [ 'jquery', 'datatables' ] );
 		$this->enqueue( 'recept_beheer', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ] );
 		$this->enqueue( 'recept', [ 'jquery' ] );
-		$this->enqueue( 'registratie_overzicht', [ 'jquery', 'jquery-ui-dialog' ] );
+		$this->enqueue( 'registratie_overzicht', [ 'jquery', 'jquery-ui-dialog', 'datatables' ] );
 		$this->enqueue( 'registratie', [ 'jquery' ] );
 		$this->enqueue( 'reservering', [ 'jquery', 'jquery-ui-dialog' ] );
 		$this->enqueue( 'saldo_overzicht', [ 'jquery', 'datatables' ] );
