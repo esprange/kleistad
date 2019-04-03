@@ -18,10 +18,9 @@ class Kleistad_Admin_Cursisten_Handler {
 	 * Definieer de panels
 	 *
 	 * @since    5.2.0
-	 * @param string $plugin_name de naam.
 	 */
-	public function add_pages( $plugin_name ) {
-		add_submenu_page( $plugin_name, 'Cursisten', 'Cursisten', 'manage_options', 'cursisten', [ $this, 'cursisten_page_handler' ] );
+	public function add_pages() {
+		add_submenu_page( 'kleistad', 'Cursisten', 'Cursisten', 'manage_options', 'cursisten', [ $this, 'cursisten_page_handler' ] );
 		add_submenu_page( 'cursisten', 'Wijzigen cursist', 'Wijzigen cursist', 'manage_options', 'cursisten_form', [ $this, 'cursisten_form_page_handler' ] );
 	}
 

@@ -18,10 +18,9 @@ class Kleistad_Admin_Stooksaldo_Handler {
 	 * Definieer de panels
 	 *
 	 * @since    5.2.0
-	 * @param string $plugin_name de naam.
 	 */
-	public function add_pages( $plugin_name ) {
-		add_submenu_page( $plugin_name, 'Stooksaldo beheer', 'Stooksaldo beheer', 'manage_options', 'stooksaldo', [ $this, 'stooksaldo_page_handler' ] );
+	public function add_pages() {
+		add_submenu_page( 'kleistad', 'Stooksaldo beheer', 'Stooksaldo beheer', 'manage_options', 'stooksaldo', [ $this, 'stooksaldo_page_handler' ] );
 		add_submenu_page( 'stooksaldo', 'Wijzigen stooksaldo', 'Wijzigen stooksaldo', 'manage_options', 'stooksaldo_form', [ $this, 'stooksaldo_form_page_handler' ] );
 	}
 

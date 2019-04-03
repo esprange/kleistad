@@ -21,6 +21,7 @@
 				navLinks: true,
 				buttonIcons: true,
 				weekNumbers: true,
+				fixedWeekCount: false,
 				allDaySlot: false,
 				minTime: '08:00:00',
 				eventRender: function( info ) {

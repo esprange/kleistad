@@ -43,10 +43,9 @@ class Kleistad_Admin_Ovens_Handler {
 	 * Definieer de panels
 	 *
 	 * @since    5.2.0
-	 * @param string $plugin_name de naam.
 	 */
-	public function add_pages( $plugin_name ) {
-		add_submenu_page( $plugin_name, 'Ovens', 'Ovens', 'manage_options', 'ovens', [ $this, 'ovens_page_handler' ] );
+	public function add_pages() {
+		add_submenu_page( 'kleistad', 'Ovens', 'Ovens', 'manage_options', 'ovens', [ $this, 'ovens_page_handler' ] );
 		add_submenu_page( 'ovens', 'Toevoegen oven', 'Toevoegen oven', 'manage_options', 'ovens_form', [ $this, 'ovens_form_page_handler' ] );
 	}
 

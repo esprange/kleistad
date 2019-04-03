@@ -18,10 +18,9 @@ class Kleistad_Admin_Abonnees_Handler {
 	 * Definieer de panels
 	 *
 	 * @since 5.2.0
-	 * @param string $plugin_name de naam.
 	 */
-	public function add_pages( $plugin_name ) {
-		add_submenu_page( $plugin_name, 'Abonnees', 'Abonnees', 'manage_options', 'abonnees', [ $this, 'abonnees_page_handler' ] );
+	public function add_pages() {
+		add_submenu_page( 'kleistad', 'Abonnees', 'Abonnees', 'manage_options', 'abonnees', [ $this, 'abonnees_page_handler' ] );
 		add_submenu_page( 'abonnees', 'Wijzigen abonnee', 'Wijzigen abonnee', 'manage_options', 'abonnees_form', [ $this, 'abonnees_form_page_handler' ] );
 	}
 

@@ -35,15 +35,6 @@ class Kleistad {
 	protected $loader;
 
 	/**
-	 * De unieke id van de plugin.
-	 *
-	 * @since    4.0.87
-	 * @access   protected
-	 * @var      string    $plugin_name    De naam waarmee de plugin uniek geïdentificeerd wordt.
-	 */
-	protected $plugin_name;
-
-	/**
 	 * De huidige versie van de plugin.
 	 *
 	 * @since    4.0.87
@@ -68,8 +59,7 @@ class Kleistad {
 	 */
 	public function __construct() {
 
-		$this->plugin_name = 'kleistad';
-		$data              = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . $this->plugin_name . '.php', false, false );
+		$data              = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'kleistad.php', false, false );
 		$this->version     = $data['Version'];
 		$options           = get_option( 'kleistad-opties' );
 		if ( is_array( $options ) ) {
@@ -121,7 +111,7 @@ class Kleistad {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Kleistad_Admin( $this->get_plugin_name(), $this->get_version(), self::get_options() );
+		$plugin_admin = new Kleistad_Admin( $this->get_version(), self::get_options() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts_and_styles' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
@@ -140,11 +130,10 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		$plugin_public = new Kleistad_Public( $this->get_plugin_name(), $this->get_version(), self::get_options() );
+		$plugin_public = new Kleistad_Public( $this->get_version(), self::get_options() );
 
 		$this->loader->add_action( 'wp_login', $plugin_public, 'user_login', 10, 2 );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_public, 'create_recept_type' );
 		$this->loader->add_action( 'kleistad_kosten', $plugin_public, 'update_ovenkosten' );
@@ -160,26 +149,26 @@ class Kleistad {
 		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_public, 'loginuit_menu', 10, 2 );
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
 
-		$this->loader->add_shortcode( 'kleistad_reservering', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_stookbestand', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_saldo_overzicht', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_rapport', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_saldo', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_cursus_inschrijving', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_registratie', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_abonnee_inschrijving', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_abonnee_wijziging', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_registratie_overzicht', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_cursus_overzicht', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_abonnement_overzicht', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_betaling', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_betalingen', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_cursus_beheer', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_cursus_inschrijving', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_cursus_overzicht', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_dagdelenkaart', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_kalender', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_rapport', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_recept_beheer', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_recept', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_dagdelenkaart', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_betaling', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_registratie_overzicht', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_registratie', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_reservering', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_saldo_overzicht', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_saldo', $plugin_public, 'shortcode_handler' );
+		$this->loader->add_shortcode( 'kleistad_stookbestand', $plugin_public, 'shortcode_handler' );
 		$this->loader->add_shortcode( 'kleistad_workshop_beheer', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_kalender', $plugin_public, 'shortcode_handler' );
 	}
 
 	/**
@@ -189,16 +178,6 @@ class Kleistad {
 	 */
 	public function run() {
 		$this->loader->run();
-	}
-
-	/**
-	 * Geef de naam van de plugin.
-	 *
-	 * @since     4.0.87
-	 * @return    string    De naam van de plugin.
-	 */
-	public function get_plugin_name() {
-		return $this->plugin_name;
 	}
 
 	/**

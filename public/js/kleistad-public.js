@@ -60,54 +60,58 @@
 	/**
 	 * Nederlandse versie van datatable
 	 */
-	$.extend( $.fn.dataTable.defaults, {
-		language: {
-			sProcessing: 'Bezig...',
-			sLengthMenu: '_MENU_ resultaten weergeven',
-			sZeroRecords: 'Geen resultaten gevonden',
-			sInfo: '_START_ tot _END_ van _TOTAL_ resultaten',
-			sInfoEmpty: 'Geen resultaten om weer te geven',
-			sInfoFiltered: ' (gefilterd uit _MAX_ resultaten)',
-			sInfoPostFix: '',
-			sSearch: 'Zoeken:',
-			sEmptyTable: 'Geen resultaten aanwezig in de tabel',
-			sInfoThousands: '.',
-			sLoadingRecords: 'Een moment geduld aub - bezig met laden...',
-			oPaginate: {
-				sFirst: 'Eerste',
-				sLast: 'Laatste',
-				sNext: 'Volgende',
-				sPrevious: 'Vorige'
-			},
-			oAria: {
-				sSortAscending: ': activeer om kolom oplopend te sorteren',
-				sSortDescending: ': activeer om kolom aflopend te sorteren'
+	if ( null !== document.querySelector( '.kleistad_datatable' ) ) {
+		$.extend( $.fn.dataTable.defaults, {
+			language: {
+				sProcessing: 'Bezig...',
+				sLengthMenu: '_MENU_ resultaten weergeven',
+				sZeroRecords: 'Geen resultaten gevonden',
+				sInfo: '_START_ tot _END_ van _TOTAL_ resultaten',
+				sInfoEmpty: 'Geen resultaten om weer te geven',
+				sInfoFiltered: ' (gefilterd uit _MAX_ resultaten)',
+				sInfoPostFix: '',
+				sSearch: 'Zoeken:',
+				sEmptyTable: 'Geen resultaten aanwezig in de tabel',
+				sInfoThousands: '.',
+				sLoadingRecords: 'Een moment geduld aub - bezig met laden...',
+				oPaginate: {
+					sFirst: 'Eerste',
+					sLast: 'Laatste',
+					sNext: 'Volgende',
+					sPrevious: 'Vorige'
+				},
+				oAria: {
+					sSortAscending: ': activeer om kolom oplopend te sorteren',
+					sSortDescending: ': activeer om kolom aflopend te sorteren'
+				}
 			}
-		}
-	});
+		});
+	}
 
 	/**
 	 * Maak een timespinner van de spinner.
 	 */
-	$.widget(
-		'ui.timespinner', $.ui.spinner, {
-			options: {
-				step: 15,
-				page: 60,
-				max: 60 * 23 + 45,
-				min: 0,
-				spin: function() {
-					$( this ).change();
-					}
-			},
-			_parse: function( value ) {
-				return strtotime( value );
-			},
-			_format: function( value ) {
-				return timetostr( value );
+	if ( null !== document.querySelector( '.kleistad_tijd' ) ) {
+		$.widget(
+			'ui.timespinner', $.ui.spinner, {
+				options: {
+					step: 15,
+					page: 60,
+					max: 60 * 23 + 45,
+					min: 0,
+					spin: function() {
+						$( this ).change();
+						}
+				},
+				_parse: function( value ) {
+					return strtotime( value );
+				},
+				_format: function( value ) {
+					return timetostr( value );
+				}
 			}
-		}
-	);
+		);
+	}
 
 	/**
 	 * Kopieer value naar klembord.
@@ -168,44 +172,50 @@
             /**
              * Definieer de tabellen.
              */
-			$( '.kleistad_datatable' ).DataTable();
+			if ( null !== document.querySelector( '.kleistad_datatable' ) ) {
+				$( '.kleistad_datatable' ).DataTable();
+			}
 
 			/**
              * Definieer de datum velden.
              */
-            $( '.kleistad_datum' ).datepicker(
-				{
-					dateFormat: 'dd-mm-yy',
-					monthNames: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
-					monthNamesShort: [ 'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
-					dayNames: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
-					dayNamesShort: [ 'zon', 'maa', 'din', 'woe', 'don', 'vri', 'zat' ],
-					dayNamesMin: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
-					closeText: 'Sluiten',
-					prevText: '←',
-					nextText: '→',
-					currentText: 'Vandaag',
-					weekHeader: 'Wk',
-					firstDay: 1,
-					isRTL: false,
-					showMonthAfterYear: false,
-					yearSuffix: '',
-					beforeShow: function( i ) {
-						return ( ! $( i ).attr( 'readonly' ) );
+			if ( null !== document.querySelector( '.kleistad_datum' ) ) {
+				$( '.kleistad_datum' ).datepicker(
+					{
+						dateFormat: 'dd-mm-yy',
+						monthNames: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
+						monthNamesShort: [ 'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
+						dayNames: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
+						dayNamesShort: [ 'zon', 'maa', 'din', 'woe', 'don', 'vri', 'zat' ],
+						dayNamesMin: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
+						closeText: 'Sluiten',
+						prevText: '←',
+						nextText: '→',
+						currentText: 'Vandaag',
+						weekHeader: 'Wk',
+						firstDay: 1,
+						isRTL: false,
+						showMonthAfterYear: false,
+						yearSuffix: '',
+						beforeShow: function( i ) {
+							return ( ! $( i ).attr( 'readonly' ) );
+						}
 					}
-				}
-			);
+				);
+			}
 
             /**
              * Definieer de timespinners.
              */
-			$( '.kleistad_tijd' ).timespinner(
-				{
-					start: function() {
-						return ( ! $( this ).attr( 'readonly' ) );
+			if ( null !== document.querySelector( '.kleistad_tijd' ) ) {
+				$( '.kleistad_tijd' ).timespinner(
+					{
+						start: function() {
+							return ( ! $( this ).attr( 'readonly' ) );
+						}
 					}
-				}
-			);
+				);
+			}
 
 			/**
 			 * Voor de ondersteuning van touch events

@@ -13,12 +13,6 @@
  * De abstract class voor shortcodes
  */
 abstract class Kleistad_Shortcode {
-	/**
-	 * De plugin naam.
-	 *
-	 * @var string  plugin_naam
-	 */
-	protected $plugin_name;
 
 	/**
 	 * De shortcode.
@@ -65,13 +59,11 @@ abstract class Kleistad_Shortcode {
 	 * De constructor
 	 *
 	 * @since   4.0.87
-	 * @param string $plugin_name plugin naam.
 	 * @param string $shortcode   shortcode (zonder kleistad- ).
 	 * @param array  $atts        shortcode parameters.
 	 * @param array  $options     plugin opties.
 	 */
-	public function __construct( $plugin_name, $shortcode, $atts, $options ) {
-		$this->plugin_name = $plugin_name;
+	public function __construct( $shortcode, $atts, $options ) {
 		$this->atts        = $atts;
 		$this->options     = $options;
 		$this->shortcode   = $shortcode;

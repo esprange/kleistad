@@ -15,15 +15,6 @@
 class Kleistad_Admin {
 
 	/**
-	 * Het ID van de plugin.
-	 *
-	 * @since    4.0.87
-	 * @access   private
-	 * @var      string    $plugin_name    Het ID van de plugin.
-	 */
-	private $plugin_name;
-
-	/**
 	 * De versie van de plugin.
 	 *
 	 * @since    4.0.87
@@ -90,12 +81,10 @@ class Kleistad_Admin {
 	 * Initializeer het object.
 	 *
 	 * @since    4.0.87
-	 * @param      string $plugin_name De naam van de plugin.
 	 * @param      string $version     De versie van de plugin.
 	 * @param      array  $options     De plugin options.
 	 */
-	public function __construct( $plugin_name, $version, $options ) {
-		$this->plugin_name        = $plugin_name;
+	public function __construct( $version, $options ) {
 		$this->version            = $version;
 		$this->options            = $options;
 		$this->ovens_handler      = new Kleistad_Admin_Ovens_Handler();
@@ -111,9 +100,9 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function enqueue_scripts_and_styles() {
-		wp_enqueue_style( $this->plugin_name . 'admin', plugin_dir_url( __FILE__ ) . 'css/kleistad-admin.css', [], $this->version, 'all' );
+		wp_enqueue_style( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'css/kleistad-admin.css', [], $this->version, 'all' );
 		wp_enqueue_style( 'jqueryui', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
-		wp_enqueue_script( $this->plugin_name . 'admin', plugin_dir_url( __FILE__ ) . 'js/kleistad-admin.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
+		wp_enqueue_script( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'js/kleistad-admin.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
 	}
 
 	/**
@@ -122,12 +111,12 @@ class Kleistad_Admin {
 	 * @since    4.0.87
 	 */
 	public function add_plugin_admin_menu() {
-		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', $this->plugin_name, [ $this, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), ++$GLOBALS['_wp_last_object_menu'] );
-		$this->ovens_handler->add_pages( $this->plugin_name );
-		$this->abonnees_handler->add_pages( $this->plugin_name );
-		$this->cursisten_handler->add_pages( $this->plugin_name );
-		$this->stooksaldo_handler->add_pages( $this->plugin_name );
-		$this->regelingen_handler->add_pages( $this->plugin_name );
+		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', 'kleistad', [ $this, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), ++$GLOBALS['_wp_last_object_menu'] );
+		$this->ovens_handler->add_pages();
+		$this->abonnees_handler->add_pages();
+		$this->cursisten_handler->add_pages();
+		$this->stooksaldo_handler->add_pages();
+		$this->regelingen_handler->add_pages();
 	}
 
 	/**
@@ -194,9 +183,9 @@ class Kleistad_Admin {
 	 */
 	public function check_info( $obj, $action = '', $arg = null ) {
 		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) &&
-			isset( $arg->slug ) && $arg->slug === $this->plugin_name ) {
+			isset( $arg->slug ) && $arg->slug === 'kleistad' ) {
 			$plugin_info  = get_site_transient( 'update_plugins' );
-			$arg->version = $plugin_info->checked[ $this->plugin_name . '/' . $this->plugin_name . '.php' ];
+			$arg->version = $plugin_info->checked[ 'kleistad/kleistad.php' ];
 			$info         = $this->get_remote( 'info' );
 			if ( false !== $info ) {
 				return $info;
