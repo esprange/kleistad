@@ -508,7 +508,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			 * Een automatische incasso wordt alleen gewijzigd als de abonnee zelf de wijziging doet.
 			 */
 			if ( ! $admin && $betalen->heeft_mandaat( $this->abonnee_id ) ) {
-				$this->subscriptie_id = $this->herhaalbetalen( $wijzig_datum );
+				$this->subscriptie_id = $this->herhaalbetalen(
+					( $wijzig_datum >= $this->pauze_datum && $wijzig_datum <= $this->herstart_datum ) ? $this->herstart_datum : $wijzig_datum
+				);
 			}
 		}
 		$this->save();
