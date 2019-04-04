@@ -4,18 +4,12 @@
     'use strict';
 
 	/**
-	 * De lijst van stokers.
-	 */
-	var stokers  = $( '#kleistad_reserveringen' ).data( 'stokers' ),
-		override = $( '#kleistad_reserveringen' ).data( 'override' ),
-		ovenNaam = $( '#kleistad_reserveringen' ).data( 'oven-naam' );
-
-	/**
 	 * Vind de stoker's naam op basis van het wordpress id in de lijst van stokers.
 	 *
 	 * @param {int} id Het Wordpress id van de stoker
 	 */
 	function vindStokerNaam( id ) {
+		var stokers  = $( '#kleistad_reserveringen' ).data( 'stokers' );
 		return stokers.filter( function( stoker ) {
 			return ( stoker.id === id );
 		})[0].naam;
@@ -28,7 +22,7 @@
 	 * @param {int} id Het wordpress id van de thans geselecteerde stoker.
 	 */
 	$.fn.selectStoker = function( empty, id ) {
-		var i;
+		var i, stokers  = $( '#kleistad_reserveringen' ).data( 'stokers' );
 		$( this ).append(
 			$( '<select>' ).attr( { 'name':'kleistad_stoker_id', 'class':'kleistad_verdeling' } )
 		);
@@ -51,7 +45,7 @@
 	 * @param {array} verdeling De verdeling: het wordpress id van de hoofdstoker en het percentage dat deze stookt.
 	 */
 	function stook( verdeling ) {
-		if ( override ) {
+		if ( $( '#kleistad_reserveringen' ).data( 'override' ) ) {
 			$( '#kleistad_reservering table > tbody' ).append(
 				$( '<tr>' ).append(
 					$( '<td>' ).append(
@@ -150,7 +144,7 @@
 				)
 			)
 		);
-		if ( override ) {
+		if ( $( '#kleistad_reserveringen' ).data( 'override' ) ) {
 			$( '#kleistad_soortstook' ).append(
 				$( '<option>' ).val( 'Onderhoud' ).text( 'Onderhoud' ).prop( 'selected', 'Onderhoud' === data.soortstook )
 			);
@@ -198,7 +192,7 @@
 		$( '#kleistad_reservering table > tbody' ).empty();
 		$( '#kleistad_reservering table > thead' ).empty();
 
-		$( '#kleistad_reservering' ).dialog( 'option', 'title', ovenNaam + ' op ' + formData.dag + '-' + formData.maand + '-' + formData.jaar );
+		$( '#kleistad_reservering' ).dialog( 'option', 'title', $( '#kleistad_reserveringen' ).data( 'oven-naam' ) + ' op ' + formData.dag + '-' + formData.maand + '-' + formData.jaar );
 
 		$( '#kleistad_dag' ).val( formData.dag );
         $( '#kleistad_maand' ).val( formData.maand );
