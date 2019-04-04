@@ -182,10 +182,9 @@ class Kleistad_Admin {
 	 * @return bool|object
 	 */
 	public function check_info( $obj, $action = '', $arg = null ) {
-		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) &&
-			isset( $arg->slug ) && $arg->slug === 'kleistad' ) {
+		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) && isset( $arg->slug ) && 'kleistad' === $arg->slug ) {
 			$plugin_info  = get_site_transient( 'update_plugins' );
-			$arg->version = $plugin_info->checked[ 'kleistad/kleistad.php' ];
+			$arg->version = $plugin_info->checked['kleistad/kleistad.php'];
 			$info         = $this->get_remote( 'info' );
 			if ( false !== $info ) {
 				return $info;

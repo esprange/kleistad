@@ -20,7 +20,7 @@ wpcs/
 *.lock
 
 # NPM lock file
-package-lock.json
+*-lock.json
 
 .DS_Store
 Thumbs.db

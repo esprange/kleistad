@@ -62,9 +62,9 @@ abstract class Kleistad_Shortcode {
 	 * @param array  $options     plugin opties.
 	 */
 	public function __construct( $shortcode, $atts, $options ) {
-		$this->atts        = $atts;
-		$this->options     = $options;
-		$this->shortcode   = $shortcode;
+		$this->atts      = $atts;
+		$this->options   = $options;
+		$this->shortcode = $shortcode;
 	}
 
 	/**

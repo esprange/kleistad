@@ -58,8 +58,8 @@ class Kleistad_Public {
 	 * @param      array  $options       De plugin options.
 	 */
 	public function __construct( $version, $options ) {
-		$this->version     = $version;
-		$this->options     = $options;
+		$this->version = $version;
+		$this->options = $options;
 	}
 
 	/**
@@ -67,18 +67,18 @@ class Kleistad_Public {
 	 *
 	 * @param array $shortcodes Array met informatie of de shortcodes.
 	 */
-	private function register_shortcodes ( $shortcodes ) {
+	private function register_shortcodes( $shortcodes ) {
 		global $post;
 
 		foreach ( $shortcodes as $shortcode => $dependencies ) {
 			add_shortcode( "kleistad_$shortcode", [ $this, 'shortcode_handler' ] );
 			if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, "kleistad_$shortcode" ) ) {
 				$file = str_replace( '_', '-', $shortcode );
- 				wp_enqueue_style(
-					 "kleistad$shortcode",
-					 plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css',
-					 $dependencies['css'],
-					 $this->version
+				wp_enqueue_style(
+					"kleistad$shortcode",
+					plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css',
+					$dependencies['css'],
+					$this->version
 				);
 				wp_enqueue_script(
 					"kleistad$shortcode",
@@ -123,55 +123,55 @@ class Kleistad_Public {
 
 		$this->register_shortcodes(
 			[
-				'abonnee_inschrijving' => [
+				'abonnee_inschrijving'  => [
 					'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
 					'css' => [ 'jquery-ui' ],
 				],
-				'abonnee_wijziging' => [
+				'abonnee_wijziging'     => [
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner' ],
-					'css' => [ 'jquery-ui'],
+					'css' => [ 'jquery-ui' ],
 				],
-				'abonnement_overzicht' => [
+				'abonnement_overzicht'  => [
 					'js'  => [ 'jquery', 'datatables' ],
 					'css' => [ 'datatables' ],
 				],
-				'betaling' => [
+				'betaling'              => [
 					'js'  => [ 'jquery' ],
 					'css' => [],
 				],
-				'betalingen' => [
+				'betalingen'            => [
 					'js'  => [ 'jquery', 'datatables' ],
 					'css' => [ 'datatables' ],
 				],
-				'cursus_beheer' => [
+				'cursus_beheer'         => [
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
-				'cursus_inschrijving' => [
+				'cursus_inschrijving'   => [
 					'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
-					'css' => [ 'jquery-ui'],
+					'css' => [ 'jquery-ui' ],
 				],
-				'cursus_overzicht' => [
+				'cursus_overzicht'      => [
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables' ],
 				],
-				'dagdelenkaart' => [
+				'dagdelenkaart'         => [
 					'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
 					'css' => [ 'jquery-ui' ],
 				],
-				'kalender' => [
+				'kalender'              => [
 					'js'  => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
 					'css' => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
 				],
-				'rapport' => [
+				'rapport'               => [
 					'js'  => [ 'jquery', 'datatables' ],
 					'css' => [ 'datatables' ],
 				],
-				'recept_beheer' => [
+				'recept_beheer'         => [
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
-				'recept' => [
+				'recept'                => [
 					'js'  => [ 'jquery' ],
 					'css' => [ 'dascicons' ],
 				],
@@ -179,27 +179,27 @@ class Kleistad_Public {
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
-				'registratie' => [
+				'registratie'           => [
 					'js'  => [ 'jquery' ],
 					'css' => [],
 				],
-				'reservering' => [
+				'reservering'           => [
 					'js'  => [ 'jquery', 'jquery-ui-dialog' ],
 					'css' => [ 'jquery-ui' ],
 				],
-				'saldo_overzicht' => [
+				'saldo_overzicht'       => [
 					'js'  => [ 'jquery', 'datatables' ],
-					'css' => [ 'datatables'],
+					'css' => [ 'datatables' ],
 				],
-				'saldo' => [
+				'saldo'                 => [
 					'js'  => [ 'jquery' ],
 					'css' => [],
 				],
-				'stookbestand' => [
+				'stookbestand'          => [
 					'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
 					'css' => [ 'jquery-ui' ],
 				],
-				'workshop_beheer' => [
+				'workshop_beheer'       => [
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables' ],
 				],

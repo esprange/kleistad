@@ -495,7 +495,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				break;
 			case 'extras':
 				$this->extras = $soort;
-				$bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) .
+				$bericht      = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) .
 					( count( $soort ) ? ' gebruik maken van ' . implode( ', ', $soort ) : ' geen gebruik meer van extras' );
 				break;
 			default:

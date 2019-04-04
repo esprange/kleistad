@@ -50,7 +50,7 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 				if ( $inschrijving->c_betaald ) {
 					$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald voor deze cursus. Neem eventueel contact op met Kleistad' );
 				} else {
-					$data   = [
+					$data = [
 						'actie'        => self::ACTIE_RESTANT_CURSUS,
 						'cursist'      => get_userdata( $param['gid'] ),
 						'cursus'       => new Kleistad_Cursus( $param['crss'] ),

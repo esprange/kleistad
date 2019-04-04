@@ -39,8 +39,8 @@ class Kleistad_Loader {
 	 * @since    4.0.87
 	 */
 	public function __construct() {
-		$this->actions    = [];
-		$this->filters    = [];
+		$this->actions = [];
+		$this->filters = [];
 	}
 
 	/**
