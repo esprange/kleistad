@@ -64,13 +64,13 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 							continue;
 						}
 						$fc_events[] = [
-							'id'              => $event->id,
-							'title'           => "$workshop->naam ($workshop->code)",
-							'start'           => $event->start->format( DateTime::ATOM ),
-							'end'             => $event->eind->format( DateTime::ATOM ),
-							'backgroundColor' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
-							'textColor'       => ( $workshop->betaald ) ? 'white' : 'black',
-							'extendedProps'   => [
+							'id'            => $event->id,
+							'title'         => "$workshop->naam ($workshop->code)",
+							'start'         => $event->start->format( DateTime::ATOM ),
+							'end'           => $event->eind->format( DateTime::ATOM ),
+							'className'     => $workshop->betaald ? 'kleistad_workshop_betaald' :
+								( $workshop->definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ),
+							'extendedProps' => [
 								'naam'       => $workshop->naam,
 								'aantal'     => $workshop->aantal,
 								'docent'     => $workshop->docent,
@@ -87,13 +87,12 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 						}
 						$lopend      = $cursus->start_datum < strtotime( 'today' );
 						$fc_events[] = [
-							'id'              => $event->id,
-							'title'           => "cursus ($cursus->code)",
-							'start'           => $event->start->format( DateTime::ATOM ),
-							'end'             => $event->eind->format( DateTime::ATOM ),
-							'backgroundColor' => $cursus->tonen || $lopend ? 'slateblue' : 'lightblue',
-							'textColor'       => $cursus->tonen || $lopend ? 'white' : 'black',
-							'extendedProps'   => [
+							'id'            => $event->id,
+							'title'         => "cursus ($cursus->code)",
+							'start'         => $event->start->format( DateTime::ATOM ),
+							'end'           => $event->eind->format( DateTime::ATOM ),
+							'className'     => $cursus->tonen || $lopend ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
+							'extendedProps' => [
 								'naam'       => $cursus->naam,
 								'aantal'     => $cursus->maximum - $cursus->ruimte,
 								'docent'     => $cursus->docent,
