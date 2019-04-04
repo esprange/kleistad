@@ -63,59 +63,29 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Conditioneel enqueue een style en of script als de shortcode in het bericht voorkomt.
+	 * Voeg de shortcodes toe en enqueue scripts en style sheets waar nodig.
 	 *
-	 * @param string $shortcode    De shortcode, zonder prefix.
-	 * @param array  $dependencies De eventuele afhankelijkheden.
+	 * @param array $shortcodes Array met informatie of de shortcodes.
 	 */
-	private function enqueue( $shortcode, $dependencies ) {
+	private function register_shortcodes ( $shortcodes ) {
 		global $post;
-		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, "kleistad_$shortcode" ) ) {
-			if ( ! wp_style_is( 'kleistad', 'enqueued' ) ) {
-				wp_enqueue_style( 'kleistad', plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css', [ 'dashicons' ], $this->version );
-			}
-			if ( ! wp_style_is( "kleistad$shortcode", 'enqueued' ) ) {
-				$file = 'kleistad-public-' . str_replace( '_', '-', $shortcode ) . '.css';
-				$style_dependencies = [];
-				foreach ( $dependencies as $dependency ) {
-					if ( wp_style_is( $dependency, 'registered' ) ) {
-						$style_dependencies[] = $dependency;
-					} elseif ( 0 === strpos( $dependency, 'jquery-ui' ) ) {
-						$style_dependencies[] = 'jquery-ui';
-					}
-				}
-				if ( file_exists( plugin_dir_path( __FILE__ ) . "css/$file" ) ) {
-					wp_enqueue_style( "kleistad$shortcode", plugin_dir_url( __FILE__ ) . "css/$file", $style_dependencies, $this->version );
-				} else {
-					foreach( $style_dependencies as $dependency ) {
-						wp_enqueue_style( $dependency );
-					}
-				}
-			}
 
-			if ( ! wp_script_is( "kleistad$shortcode", 'enqueued' ) ) {
-				$file = 'kleistad-public-' . str_replace( '_', '-', $shortcode ) . '.js';
-				if ( file_exists( plugin_dir_path( __FILE__ ) . "js/$file" ) ) {
-					wp_enqueue_script( "kleistad$shortcode", plugin_dir_url( __FILE__ ) . "js/$file", $dependencies, $this->version, false );
-				} else {
-					foreach ( $dependencies as $dependency ) {
-						if ( wp_script_is( $dependency, 'registered' ) ) {
-							wp_enqueue_script( $dependency );
-						}
-					}
-				}
-			}
-			if ( ! wp_script_is( 'kleistad', 'enqueued' ) ) {
-				wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . 'js/kleistad-public.js', [], $this->version, true );
-				wp_localize_script(
-					'kleistad',
-					'kleistadData',
-					[
-						'nonce'           => wp_create_nonce( 'wp_rest' ),
-						'success_message' => 'de bewerking is geslaagd!',
-						'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
-						'base_url'        => self::base_url(),
-					]
+		foreach ( $shortcodes as $shortcode => $dependencies ) {
+			add_shortcode( "kleistad_$shortcode", [ $this, 'shortcode_handler' ] );
+			if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, "kleistad_$shortcode" ) ) {
+				$file = str_replace( '_', '-', $shortcode );
+ 				wp_enqueue_style(
+					 "kleistad$shortcode",
+					 plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css',
+					 $dependencies['css'],
+					 $this->version
+				);
+				wp_enqueue_script(
+					"kleistad$shortcode",
+					plugin_dir_url( __FILE__ ) . "js/kleistad-public-$file.js",
+					$dependencies['js'],
+					$this->version,
+					false
 				);
 			}
 		}
@@ -139,26 +109,102 @@ class Kleistad_Public {
 		wp_register_script( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/daygrid/main.min.js', [ 'fullcalendar-core' ], '4.0.2', false );
 		wp_register_script( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/timegrid/main.min.js', [ 'fullcalendar-core' ], '4.0.2', false );
 
-		$this->enqueue( 'abonnee_inschrijving',[ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ] );
-		$this->enqueue( 'abonnee_wijziging', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner' ] );
-		$this->enqueue( 'abonnement_overzicht', [ 'jquery', 'datatables' ] );
-		$this->enqueue( 'betaling', [ 'jquery' ] );
-		$this->enqueue( 'betalingen', [ 'jquery', 'datatables' ] );
-		$this->enqueue( 'cursus_beheer', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ] );
-		$this->enqueue( 'cursus_inschrijving', [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ] );
-		$this->enqueue( 'cursus_overzicht', [ 'jquery', 'jquery-ui-dialog', 'datatables' ] );
-		$this->enqueue( 'dagdelenkaart', [ 'jquery', 'jquery-ui-datepicker' ] );
-		$this->enqueue( 'kalender', [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ] );
-		$this->enqueue( 'rapport', [ 'jquery', 'datatables' ] );
-		$this->enqueue( 'recept_beheer', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ] );
-		$this->enqueue( 'recept', [ 'jquery' ] );
-		$this->enqueue( 'registratie_overzicht', [ 'jquery', 'jquery-ui-dialog', 'datatables' ] );
-		$this->enqueue( 'registratie', [ 'jquery' ] );
-		$this->enqueue( 'reservering', [ 'jquery', 'jquery-ui-dialog' ] );
-		$this->enqueue( 'saldo_overzicht', [ 'jquery', 'datatables' ] );
-		$this->enqueue( 'saldo', [ 'jquery' ] );
-		$this->enqueue( 'stookbestand', [ 'jquery', 'jquery-ui-datepicker' ] );
-		$this->enqueue( 'workshop_beheer', [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ] );
+		wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . 'js/kleistad-public.js', [ 'jquery' ], $this->version, true );
+		wp_localize_script(
+			'kleistad',
+			'kleistadData',
+			[
+				'nonce'           => wp_create_nonce( 'wp_rest' ),
+				'success_message' => 'de bewerking is geslaagd!',
+				'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
+				'base_url'        => self::base_url(),
+			]
+		);
+
+		$this->register_shortcodes(
+			[
+				'abonnee_inschrijving' => [
+					'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
+					'css' => [ 'jquery-ui' ],
+				],
+				'abonnee_wijziging' => [
+					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner' ],
+					'css' => [ 'jquery-ui'],
+				],
+				'abonnement_overzicht' => [
+					'js'  => [ 'jquery', 'datatables' ],
+					'css' => [ 'datatables' ],
+				],
+				'betaling' => [
+					'js'  => [ 'jquery' ],
+					'css' => [],
+				],
+				'betalingen' => [
+					'js'  => [ 'jquery', 'datatables' ],
+					'css' => [ 'datatables' ],
+				],
+				'cursus_beheer' => [
+					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+				],
+				'cursus_inschrijving' => [
+					'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
+					'css' => [ 'jquery-ui'],
+				],
+				'cursus_overzicht' => [
+					'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+					'css' => [ 'jquery-ui', 'datatables' ],
+				],
+				'dagdelenkaart' => [
+					'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
+					'css' => [ 'jquery-ui' ],
+				],
+				'kalender' => [
+					'js'  => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
+					'css' => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
+				],
+				'rapport' => [
+					'js'  => [ 'jquery', 'datatables' ],
+					'css' => [ 'datatables' ],
+				],
+				'recept_beheer' => [
+					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
+					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+				],
+				'recept' => [
+					'js'  => [ 'jquery' ],
+					'css' => [ 'dascicons' ],
+				],
+				'registratie_overzicht' => [
+					'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+				],
+				'registratie' => [
+					'js'  => [ 'jquery' ],
+					'css' => [],
+				],
+				'reservering' => [
+					'js'  => [ 'jquery', 'jquery-ui-dialog' ],
+					'css' => [ 'jquery-ui' ],
+				],
+				'saldo_overzicht' => [
+					'js'  => [ 'jquery', 'datatables' ],
+					'css' => [ 'datatables'],
+				],
+				'saldo' => [
+					'js'  => [ 'jquery' ],
+					'css' => [],
+				],
+				'stookbestand' => [
+					'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
+					'css' => [ 'jquery-ui' ],
+				],
+				'workshop_beheer' => [
+					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+					'css' => [ 'jquery-ui', 'datatables' ],
+				],
+			]
+		);
 	}
 
 	/**

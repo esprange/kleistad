@@ -34,24 +34,13 @@ class Kleistad_Loader {
 	protected $filters;
 
 	/**
-	 * Het array van plugin shortcodes.
-	 *
-	 * @since    4.0.87
-	 * @access   protected
-	 * @var      array    $shortcodes  De geregistreerde shortcodes.
-	 */
-	protected $shortcodes;
-
-	/**
 	 * De constructor, initializeer de collecties.
 	 *
 	 * @since    4.0.87
 	 */
 	public function __construct() {
-
 		$this->actions    = [];
 		$this->filters    = [];
-		$this->shortcodes = [];
 	}
 
 	/**
@@ -83,18 +72,7 @@ class Kleistad_Loader {
 	}
 
 	/**
-	 * Voeg een shortcode toe aan de collectie.
-	 *
-	 * @since     4.0.87
-	 * @param     string $tag            De naam van de shortcode.
-	 * @param     object $component      De class naam waar de shortcode gedefinieerd is.
-	 * @param     string $callback       De naam van de functie.
-	 */
-	public function add_shortcode( $tag, $component, $callback ) {
-		$this->shortcodes = $this->add( $this->shortcodes, $tag, $component, $callback, 0, 0 );
-	}
-	/**
-	 * Een hulp functie voor de registratie van acties, filters en shortcodes.
+	 * Een hulp functie voor de registratie van acties en filters.
 	 *
 	 * @since    4.0.87
 	 * @access   private
@@ -107,7 +85,6 @@ class Kleistad_Loader {
 	 * @return   array                    De collectie.
 	 */
 	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
-
 		$hooks[] = array(
 			'hook'          => $hook,
 			'component'     => $component,
@@ -115,7 +92,6 @@ class Kleistad_Loader {
 			'priority'      => $priority,
 			'accepted_args' => $accepted_args,
 		);
-
 		return $hooks;
 	}
 	/**
@@ -124,17 +100,11 @@ class Kleistad_Loader {
 	 * @since    4.0.87
 	 */
 	public function run() {
-
 		foreach ( $this->filters as $hook ) {
 			add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}
-
 		foreach ( $this->actions as $hook ) {
 			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
-		}
-
-		foreach ( $this->shortcodes as $hook ) {
-			add_shortcode( $hook['hook'], array( $hook['component'], $hook['callback'] ) );
 		}
 	}
 

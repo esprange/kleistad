@@ -174,12 +174,9 @@ class Kleistad_Public_Recept extends Kleistad_Shortcode {
 
 		ob_start();
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-show-recept.php';
-		$html = ob_get_contents();
-		ob_end_clean();
-
 		return new WP_REST_response(
 			[
-				'html' => $html,
+				'html' => ob_get_clean(),
 				'zoek' => $zoek,
 			]
 		);

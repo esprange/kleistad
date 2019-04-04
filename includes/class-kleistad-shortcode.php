@@ -50,9 +50,7 @@ abstract class Kleistad_Shortcode {
 		}
 		ob_start();
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
-		$html = ob_get_contents();
-		ob_end_clean();
-		return $html;
+		return ob_get_clean();
 	}
 
 	/**

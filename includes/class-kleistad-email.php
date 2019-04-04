@@ -262,10 +262,7 @@ class Kleistad_Email {
 </body>
 </html>
 		<?php
-		$html = ob_get_contents();
-		ob_end_clean();
-
-		$status = wp_mail( $to, $subject, $html, $headers, $attachment );
+		$status = wp_mail( $to, $subject, ob_get_clean(), $headers, $attachment );
 		if ( ! $status ) {
 			error_log( "$subject $slug " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
 		}

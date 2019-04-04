@@ -148,27 +148,6 @@ class Kleistad {
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
 		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_public, 'loginuit_menu', 10, 2 );
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
-
-		$this->loader->add_shortcode( 'kleistad_abonnee_inschrijving', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_abonnee_wijziging', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_abonnement_overzicht', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_betaling', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_betalingen', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_cursus_beheer', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_cursus_inschrijving', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_cursus_overzicht', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_dagdelenkaart', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_kalender', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_rapport', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_recept_beheer', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_recept', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_registratie_overzicht', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_registratie', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_reservering', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_saldo_overzicht', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_saldo', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_stookbestand', $plugin_public, 'shortcode_handler' );
-		$this->loader->add_shortcode( 'kleistad_workshop_beheer', $plugin_public, 'shortcode_handler' );
 	}
 
 	/**
