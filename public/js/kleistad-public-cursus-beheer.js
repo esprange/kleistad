@@ -79,7 +79,7 @@
              */
             $( 'body' ).on(
                 'click touchend', '.kleistad_cursus_info', function( event ) {
-					var cursus, ingedeeld;
+					var cursus, ingedeeld, cursusClass;
 					if ( 'click' === event.type || detectTap ) {
 						cursus    = $( this ).data( 'cursus' );
 						ingedeeld = $( this ).data( 'ingedeeld' );
@@ -106,6 +106,11 @@
 						$( '#kleistad_vervallen' ).prop( 'checked', cursus.vervallen > 0 );
 						$( '#kleistad_indeling' ).children().remove().end();
 						$( '#kleistad_restant_email' ).hide();
+						cursusClass = cursus.tonen ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept';
+						$( '.ui-dialog-titlebar' ).removeClass( function( index, className ) {
+							return ( className.match( /(^|\s)kleistad_cursus_\S+/g ) || [] ).join( ' ' );
+						});
+						$( '.ui-dialog-titlebar' ).addClass( cursusClass );
 						$.each(
 							ingedeeld, function( key, value ) {
 								var cursisten = $( '#kleistad_indeling' );
@@ -138,10 +143,13 @@
              */
             $( 'body' ).on(
                 'click', '#kleistad_cursus_toevoegen', function() {
-					$( '#kleistad_cursus' ).dialog( 'option', 'title', ' ' ).dialog( 'open' );
+					$( '#kleistad_cursus' ).dialog( 'option', 'title', '*** nieuw ***' ).dialog( 'open' );
 					$( '#kleistad_cursus_beheer_form' )[0].reset();
                     $( '#kleistad_indeling' ).children().remove().end();
-                }
+					$( '.ui-dialog-titlebar' ).removeClass( function( index, className ) {
+						return ( className.match( /(^|\s)kleistad_cursus_\S+/g ) || [] ).join( ' ' );
+					});
+				}
             );
         }
     );

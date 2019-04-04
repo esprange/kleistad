@@ -36,7 +36,7 @@
              */
             $( 'body' ).on(
                 'click touchend', '.kleistad_workshop_info', function( event ) {
-					var workshop, alleenlezen, background, color;
+					var workshop, alleenlezen, workshopClass;
 					if ( 'click' === event.type || detectTap ) {
 						workshop    = $( this ).data( 'workshop' );
 						alleenlezen = workshop.betaald || workshop.vervallen || workshop.voltooid;
@@ -65,9 +65,13 @@
 						$( '#kleistad_datum' ).attr( 'readonly', workshop.definitief || alleenlezen );
 						$( '#kleistad_workshop_opslaan' ).prop( 'disabled', workshop.definitief || alleenlezen );
 						$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', workshop.voltooid );
-						background = workshop.vervallen ? '' : ( workshop.betaald ? 'green' : ( workshop.definitief ? 'springgreen' : 'orange' ) );
-						color      = workshop.vervallen ? '' : ( workshop.betaald ? 'white' : 'black' );
-						$( '.ui-dialog-titlebar' ).css( { background: background, color: color } );
+						workshopClass = workshop.vervallen ? '' :
+							( workshop.betaald ? 'kleistad_workshop_betaald' :
+							( workshop.definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ) );
+						$( '.ui-dialog-titlebar' ).removeClass( function( index, className ) {
+							return ( className.match( /(^|\s)kleistad_workshop_\S+/g ) || [] ).join( ' ' );
+						});
+						$( '.ui-dialog-titlebar' ).addClass( workshopClass );
 					}
 				}
             );
@@ -84,7 +88,10 @@
 					$( '#kleistad_workshop_form' ).find( 'select,#kleistad_workshop_bevestigen,#kleistad_workshop_opslaan' ).prop( 'disabled', false );
 					$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', true );
 					$( '#kleistad_definitief,#kleistad_betaald' ).html( '' );
-                }
+					$( '.ui-dialog-titlebar' ).removeClass( function( index, className ) {
+						return ( className.match( /(^|\s)kleistad_workshop_\S+/g ) || [] ).join( ' ' );
+					});
+				}
 			);
 
 			$( '#kleistad_sluit' ).click( function() {
