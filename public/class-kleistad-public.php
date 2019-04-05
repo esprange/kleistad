@@ -98,7 +98,7 @@ class Kleistad_Public {
 	 * @since    4.0.87
 	 */
 	public function styles_and_scripts() {
-		if ( defined( KLEISTAD_DEV ) ) {
+		if ( defined( 'KLEISTAD_DEV' ) ) {
 			$dev = KLEISTAD_DEV ? '' : '.min';
 		} else {
 			$dev = '.min';
