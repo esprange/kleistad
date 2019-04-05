@@ -271,8 +271,8 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	public static function callback_show( WP_REST_Request $request ) {
 		$oven_id = intval( $request->get_param( 'oven_id' ) );
 		$periode = mktime( 0, 0, 0, intval( $request->get_param( 'maand' ) ), 1, intval( $request->get_param( 'jaar' ) ) );
-		$maand   = date( 'n', $periode );
-		$jaar    = date( 'Y', $periode );
+		$maand   = intval( date( 'n', $periode ) );
+		$jaar    = intval( date( 'Y', $periode ) );
 		return new WP_REST_response(
 			[
 				'html'    => self::toon_reserveringen( $oven_id, $maand, $jaar ),
