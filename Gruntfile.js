@@ -1,4 +1,4 @@
-module.exports = function( grunt ) {
+module.exports = function( grunt ) { // jshint ignore:line
 
 	'use strict';
 
@@ -83,14 +83,12 @@ module.exports = function( grunt ) {
 				router: function( filepath ) {
 					if ( -1 === filepath.search( 'vendor/google/apiclient-services/src/Google/Service' ) ) {
 						return 'kleistad/' + filepath;
-					} else {
-						if ( -1 === filepath.search( 'Calendar' ) ) {
-							return null;
-						} else {
-							return 'kleistad/' + filepath;
-						}
 					}
-				  },
+					if ( -1 === filepath.search( 'Calendar' ) ) {
+						return null;
+					}
+					return 'kleistad/' + filepath;
+				},
 				src: [
 					'*.php',
 					'README.txt',
@@ -103,7 +101,6 @@ module.exports = function( grunt ) {
 					'fullcalendar*/**/*'
 				],
 				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
-				//dest: 'kleistad.zip'
 			}
 		}
 	});
