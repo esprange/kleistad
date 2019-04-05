@@ -7,14 +7,6 @@ module.exports = function( grunt ) {
 
 		pkg: grunt.file.readJSON( 'package.json' ),
 
-		wp_readme_to_markdown: {
-			your_target: {
-				files: {
-					'README.md': 'readme.txt'
-				}
-			}
-		},
-
 		checkwpversion: {
 			options:{
 				readme: 'readme.txt',
@@ -32,23 +24,11 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		zip: {
-			'using-router': {
-				router: function( filepath ) {
-					return 'kleistad/' + filepath;
-				  },
-				src: [
-					'*.php',
-					'README.txt',
-					'README.MD',
-					'LICENSE.txt',
-					'public/**/*',
-					'admin/**/*',
-					'includes/**/*',
-					'vendor/**/*',
-					'fullcalendar*/**/*'
-				],
-				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
+		wp_readme_to_markdown: {
+			your_target: {
+				files: {
+					'README.md': 'readme.txt'
+				}
 			}
 		},
 
@@ -65,9 +45,71 @@ module.exports = function( grunt ) {
 				},
 				src: [ 'README.txt' ]
 			}
+		},
+
+		uglify: {
+			dev: {
+				options: {
+					mangle: {
+						reserved: ['jQuery']
+					}
+				},
+				files: [{
+					expand: true,
+					src: [ '*.js', '!*.min.js' ],
+					dest: 'public/js',
+					cwd: 'public/js',
+					rename: function( dst, src ) {
+						return dst + '/' + src.replace( '.js', '.min.js' );
+					}
+				}]
+			}
+		},
+
+		cssmin: {
+			target: {
+				files: [{
+					expand: true,
+					cwd: 'public/css',
+					src: [ '*.css', '!*.min.css' ],
+					dest: 'public/css',
+					ext: '.min.css'
+				}]
+			}
+		},
+
+		zip: {
+			'using-router': {
+				router: function( filepath ) {
+					if ( -1 === filepath.search( 'vendor/google/apiclient-services/src/Google/Service' ) ) {
+						return 'kleistad/' + filepath;
+					} else {
+						if ( -1 === filepath.search( 'Calendar' ) ) {
+							return null;
+						} else {
+							return 'kleistad/' + filepath;
+						}
+					}
+				  },
+				src: [
+					'*.php',
+					'README.txt',
+					'README.MD',
+					'LICENSE.txt',
+					'public/**/*',
+					'admin/**/*',
+					'includes/**/*',
+					'vendor/**/*',
+					'fullcalendar*/**/*'
+				],
+				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
+				//dest: 'kleistad.zip'
+			}
 		}
 	});
 
+	grunt.loadNpmTasks( 'grunt-rewrite' );
+	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
 	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
@@ -75,6 +117,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'checkversion', ['checkwpversion'] );
 	grunt.loadNpmTasks( 'grunt-zip' );
 	grunt.loadNpmTasks( 'grunt-version' );
+	grunt.registerTask( 'oplevering', [ 'checkversion', 'readme', 'uglify', 'cssmin', 'zip' ] );
 	grunt.util.linefeed = '\n';
 
 };
