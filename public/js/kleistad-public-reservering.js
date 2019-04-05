@@ -325,7 +325,9 @@
             }
         ).done(
             function( data ) {
-                $( '#kleistad_reserveringen' ).html( data.html );
+				$( '#kleistad_reserveringen tbody' ).html( data.html );
+				$( '#kleistad_reserveringen' ).data( 'maand', data.maand ).data( 'jaar', data.jaar );
+				$( '#kleistad_periode' ).html( data.periode );
             }
         ).fail(
 			function( jqXHR ) {
@@ -380,7 +382,9 @@
             }
         ).done(
             function( data ) {
-                $( '#kleistad_reserveringen' ).html( data.html );
+				$( '#kleistad_reserveringen tbody' ).html( data.html );
+				$( '#kleistad_reserveringen' ).data( 'maand', data.maand ).data( 'jaar', data.jaar );
+				$( '#kleistad_periode' ).html( data.periode );
             }
         ).fail(
 			function( jqXHR ) {
@@ -398,18 +402,20 @@
             /**
              * Toon de tabel.
              */
-			var maand  = $( '#kleistad_reserveringen' ).data( 'maand' ),
-				jaar   = $( '#kleistad_reserveringen' ).data( 'jaar' );
-			kleistadShow( maand, jaar );
+			kleistadShow(
+				$( '#kleistad_reserveringen' ).data( 'maand' ),
+				$( '#kleistad_reserveringen' ).data( 'jaar' )
+			);
 
 			/**
              * Wijzig de periode als de gebruiker op eerder of later klikt.
              */
             $( '#kleistad_reserveringen' ).on(
                 'click', '.kleistad_periode', function() {
-					maand  = $( this ).data( 'maand' );
-					jaar   = $( this ).data( 'jaar' );
-                    kleistadShow( maand, jaar );
+					kleistadShow(
+						parseInt( $( '#kleistad_reserveringen' ).data( 'maand' ), 10 ) + parseInt( $( this ).val(), 10 ),
+						$( '#kleistad_reserveringen' ).data( 'jaar' )
+					);
                 }
             );
 
@@ -425,7 +431,7 @@
              * Open een reservering (nieuw of bestaand).
              */
             $( '#kleistad_reserveringen' ).on(
-                'click touchend', '.kleistad_box', function( event ) {
+                'click touchend', 'tbody tr', function( event ) {
 					if ( 'click' === event.type || detectTap ) {
 						$( '#kleistad_reservering' ).dialog( 'open' );
 						kleistadForm( $( this ).data( 'form' ) );

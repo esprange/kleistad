@@ -22,20 +22,10 @@
             );
 
             /**
-             * Verander de opmaak bij hover
-             */
-            $( 'body' ).on(
-                'hover', '.kleistad_workshop_info', function() {
-                    $( this ).css( 'cursor', 'pointer' );
-                    $( this ).toggleClass( 'kleistad_hover' );
-                }
-            );
-
-            /**
              * Toon de details van het geselecteerde workshop.
              */
-            $( 'body' ).on(
-                'click touchend', '.kleistad_workshop_info', function( event ) {
+            $( '#kleistad_workshops tbody' ).on(
+                'click touchend', 'tr', function( event ) {
 					var workshop, alleenlezen, workshopClass;
 					if ( 'click' === event.type || detectTap ) {
 						workshop    = $( this ).data( 'workshop' );
@@ -68,9 +58,7 @@
 						workshopClass = workshop.vervallen ? '' :
 							( workshop.betaald ? 'kleistad_workshop_betaald' :
 							( workshop.definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ) );
-						$( '.ui-dialog-titlebar' ).removeClass( function( index, className ) {
-							return ( className.match( /(^|\s)kleistad_workshop_\S+/g ) || [] ).join( ' ' );
-						});
+						$( '.ui-dialog-titlebar' ).removeClassWildcard( 'kleistad_workshop' );
 						$( '.ui-dialog-titlebar' ).addClass( workshopClass );
 					}
 				}
@@ -79,8 +67,8 @@
             /**
              * Toon een lege popup dialoog voor een nieuwe workshop
              */
-            $( 'body' ).on(
-                'click', '#kleistad_workshop_toevoegen', function() {
+            $( '#kleistad_workshop_toevoegen' ).click(
+				function() {
 					$( '#kleistad_workshop' ).dialog( 'option', 'title', '*** nieuw ***' ).dialog( 'open' );
 					$( '#kleistad_workshop_form' )[0].reset();
 					$( '#kleistad_id' ).val( 0 );
@@ -88,9 +76,7 @@
 					$( '#kleistad_workshop_form' ).find( 'select,#kleistad_workshop_bevestigen,#kleistad_workshop_opslaan' ).prop( 'disabled', false );
 					$( '#kleistad_workshop_afzeggen' ).prop( 'disabled', true );
 					$( '#kleistad_definitief,#kleistad_betaald' ).html( '' );
-					$( '.ui-dialog-titlebar' ).removeClass( function( index, className ) {
-						return ( className.match( /(^|\s)kleistad_workshop_\S+/g ) || [] ).join( ' ' );
-					});
+					$( '.ui-dialog-titlebar' ).removeClassWildcard( 'kleistad_workshop' );
 				}
 			);
 

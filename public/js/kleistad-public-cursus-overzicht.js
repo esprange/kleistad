@@ -30,20 +30,10 @@
             );
 
             /**
-             * Verander de opmaak bij hovering.
-             */
-            $( 'body' ).on(
-                'hover', '.kleistad_cursus_info', function() {
-                    $( this ).css( 'cursor', 'pointer' );
-                    $( this ).toggleClass( 'kleistad_hover' );
-                }
-            );
-
-            /**
              * Toon de detailinformatie van de deelnemer
              */
-            $( 'body' ).on(
-                'click touchend', '.kleistad_cursus_info', function( event ) {
+            $( '#kleistad_cursussen tbody' ).on(
+                'click touchend', 'tr', function( event ) {
 					var html, lijst, id, naam, emails;
 					if ( 'click' === event.type || detectTap ) {
 						html   = '<tr><th>Naam</th><th>Telefoon</th><th>Email</th><th>Technieken</th></tr>';

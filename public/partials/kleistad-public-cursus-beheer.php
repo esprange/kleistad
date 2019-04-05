@@ -111,7 +111,7 @@ else :
 
 	</div>
 </div>
-<table class="kleistad_datatable display" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+<table id="kleistad_cursussen" class="kleistad_datatable display" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -129,7 +129,6 @@ else :
 			$json_cursus = wp_json_encode( $row['cursus'] );
 			?>
 			<tr <?php echo $row['cursus']['vol'] ? 'style="background-color:lightblue"' : ( $row['cursus']['vervallen'] ? 'style="background-color:lightgray"' : '' ); ?>
-				class="kleistad_cursus_info"
 				data-cursus='<?php echo $row['json_cursus'];  //phpcs:ignore ?>'
 				data-ingedeeld='<?php echo $row['json_ingedeeld']; //phpcs:ignore ?>' >
 				<td data-sort="<?php echo esc_attr( $row['cursus']['id'] ); ?>">C<?php echo esc_html( $row['cursus']['id'] ); ?></td>

@@ -167,6 +167,12 @@
 		}
 	};
 
+	$.fn.removeClassWildcard = function( pattern ) {
+		$( this ).removeClass( function( index, className ) {
+			return ( className.match( new RegExp( '(^|\\s)' + pattern + '\\S+', 'g' ) ) || [] ).join( ' ' );
+		});
+	};
+
 	$( document ).ready(
         function() {
             /**

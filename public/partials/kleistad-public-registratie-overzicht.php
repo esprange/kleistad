@@ -51,8 +51,7 @@ else :
 				continue;
 			endif;
 			?>
-			<tr class="kleistad_deelnemer_info"
-				data-inschrijvingen='<?php echo htmlspecialchars( $json_inschrijvingen, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
+			<tr data-inschrijvingen='<?php echo htmlspecialchars( $json_inschrijvingen, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 				data-deelnemer='<?php echo htmlspecialchars( $json_deelnemer, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 				data-abonnee='<?php echo htmlspecialchars( $json_abonnee, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>' >
 				<td><?php echo esc_html( $registratie['is_lid'] ); ?></td>

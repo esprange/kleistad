@@ -23,20 +23,9 @@
             );
 
             /**
-             * Verander de opmaak bij hovering.
-             */
-            $( 'body' ).on(
-                'hover', '.kleistad_deelnemer_info', function() {
-                    $( this ).css( 'cursor', 'pointer' );
-                    $( this ).toggleClass( 'kleistad_hover' );
-                }
-            );
-
-            /**
              * Filter de abonnees/cursisten.
              */
-            $( 'body' ).on(
-                'click', '#kleistad_deelnemer_selectie', function() {
+            $( '#kleistad_deelnemer_selectie' ).click( function() {
 					var selectie = $( this ).val();
 					var kleistadDeelnemerLijst = $( '#kleistad_deelnemer_lijst' ).DataTable();
                     switch ( selectie ) {
@@ -60,8 +49,8 @@
             /**
              * Toon de detailinformatie van de deelnemer
              */
-            $( 'body' ).on(
-                'click touchend', '.kleistad_deelnemer_info', function( event ) {
+            $( '#kleistad_deelnemer_lijst tbody' ).on(
+                'click touchend', 'tr', function( event ) {
 					var header, inschrijvingen, deelnemer, abonnee;
 					if ( 'click' === event.type || detectTap ) {
 						inschrijvingen = $( this ).data( 'inschrijvingen' );

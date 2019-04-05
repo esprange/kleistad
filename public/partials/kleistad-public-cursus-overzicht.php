@@ -27,7 +27,7 @@ else :
 	</form>
 </div>
 
-<table class="kleistad_datatable display" data-order='[[ 0, "desc" ]]'>
+<table id="kleistad_cursussen" class="kleistad_datatable display" data-order='[[ 0, "desc" ]]'>
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -44,8 +44,7 @@ else :
 			continue;
 		endif;
 		?>
-		<tr class="kleistad_cursus_info"
-			data-naam='<?php echo esc_attr( $cursus_info['naam'] ); ?>'
+		<tr data-naam='<?php echo esc_attr( $cursus_info['naam'] ); ?>'
 			data-lijst='<?php echo htmlspecialchars( $json_cursus_info, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 			data-id='<?php echo esc_attr( $cursus_id ); ?>' >
 			<td data-sort="<?php echo esc_attr( $cursus_id ); ?>"><?php echo esc_html( $cursus_info['code'] ); ?></td>

@@ -259,9 +259,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			}
 			$tabelinhoud .= self::maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar );
 		}
-		ob_start();
-		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/kleistad-public-show-reservering.php';
-		return ob_get_clean();
+		return $tabelinhoud;
 	}
 
 	/**
@@ -272,12 +270,16 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 */
 	public static function callback_show( WP_REST_Request $request ) {
 		$oven_id = intval( $request->get_param( 'oven_id' ) );
-		$maand   = intval( $request->get_param( 'maand' ) );
-		$jaar    = intval( $request->get_param( 'jaar' ) );
+		$periode = mktime( 0, 0, 0, intval( $request->get_param( 'maand' ) ), 1, intval( $request->get_param( 'jaar' ) ) );
+		$maand   = date( 'n', $periode );
+		$jaar    = date( 'Y', $periode );
 		return new WP_REST_response(
 			[
 				'html'    => self::toon_reserveringen( $oven_id, $maand, $jaar ),
 				'oven_id' => $oven_id,
+				'maand'   => $maand,
+				'jaar'    => $jaar,
+				'periode' => strftime( '%B-%Y', $periode ),
 			]
 		);
 	}
@@ -338,6 +340,9 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			[
 				'html'    => self::toon_reserveringen( $oven_id, $maand, $jaar ),
 				'oven_id' => $oven_id,
+				'maand'   => $maand,
+				'jaar'    => $jaar,
+				'periode' => strftime( '%B-%Y', mktime( 0, 0, 0, $maand, 1, $jaar ) ),
 			]
 		);
 	}

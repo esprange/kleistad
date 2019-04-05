@@ -26,10 +26,30 @@ else :
 		data-oven-naam="<?php echo esc_attr( $data['oven']['naam'] ); ?>"
 		data-stokers='<?php echo $stokers_json; // phpcs:ignore ?>'
 		data-override="<?php echo Kleistad_Roles::override() ? 1 : 0; ?>" >
-		<tr>
-			<th>de reserveringen worden opgehaald...</th>
-		</tr>
+		<thead>
+			<tr>
+				<th>
+					<button type="button" class="kleistad_periode" value="-1" >eerder</button
+				></th>
+				<th colspan="2" ><strong><span id="kleistad_periode"><?php echo esc_html( strftime( '%B-%Y' ) ); ?></span></strong></th>
+				<th style="text-align:right" >
+					<button type="button" class="kleistad_periode" value="1" >later</button>
+				</th>
+			</tr>
+			<tr>
+				<th>Dag</th>
+				<th>Wie?</th>
+				<th>Soort stook</th>
+				<th style="text-align:right">Temp</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th>de reserveringen worden opgehaald...</th>
+			</tr>
+		</tbody>
 	</table>
+
 	<div id ="kleistad_reservering" class="kleistad_form_popup">
 	<form method="POST" autocomplete="off" >
 		<input id="kleistad_oven_id" type="hidden" value="<?php echo esc_attr( $data['oven']['id'] ); ?>" >

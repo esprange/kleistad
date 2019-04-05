@@ -54,16 +54,6 @@
                 }
             );
 
-            /**
-             * Verander de opmaak bij hover
-             */
-            $( 'body' ).on(
-                'hover', '.kleistad_cursus_info', function() {
-                    $( this ).css( 'cursor', 'pointer' );
-                    $( this ).toggleClass( 'kleistad_hover' );
-                }
-            );
-
            /**
              * Verander de opmaak bij hovering.
              */
@@ -77,8 +67,8 @@
             /**
              * Toon de details van de geselecteerde cursus.
              */
-            $( 'body' ).on(
-                'click touchend', '.kleistad_cursus_info', function( event ) {
+            $( '#kleistad_cursussen tbody' ).on(
+                'click touchend', 'tr', function( event ) {
 					var cursus, ingedeeld, cursusClass;
 					if ( 'click' === event.type || detectTap ) {
 						cursus    = $( this ).data( 'cursus' );
@@ -107,9 +97,7 @@
 						$( '#kleistad_indeling' ).children().remove().end();
 						$( '#kleistad_restant_email' ).hide();
 						cursusClass = cursus.tonen ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept';
-						$( '.ui-dialog-titlebar' ).removeClass( function( index, className ) {
-							return ( className.match( /(^|\s)kleistad_cursus_\S+/g ) || [] ).join( ' ' );
-						});
+						$( '.ui-dialog-titlebar' ).removeClassWildcard( 'kleistad_cursus' );
 						$( '.ui-dialog-titlebar' ).addClass( cursusClass );
 						$.each(
 							ingedeeld, function( key, value ) {
@@ -141,14 +129,11 @@
             /**
              * Toon een lege popup dialoog voor een nieuwe cursus
              */
-            $( 'body' ).on(
-                'click', '#kleistad_cursus_toevoegen', function() {
+            $( '#kleistad_cursus_toevoegen' ).click( function() {
 					$( '#kleistad_cursus' ).dialog( 'option', 'title', '*** nieuw ***' ).dialog( 'open' );
 					$( '#kleistad_cursus_beheer_form' )[0].reset();
                     $( '#kleistad_indeling' ).children().remove().end();
-					$( '.ui-dialog-titlebar' ).removeClass( function( index, className ) {
-						return ( className.match( /(^|\s)kleistad_cursus_\S+/g ) || [] ).join( ' ' );
-					});
+					$( '.ui-dialog-titlebar' ).removeClassWildcard( 'kleistad_cursus' );
 				}
             );
         }
