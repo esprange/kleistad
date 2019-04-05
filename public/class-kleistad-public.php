@@ -65,9 +65,10 @@ class Kleistad_Public {
 	/**
 	 * Voeg de shortcodes toe en enqueue scripts en style sheets waar nodig.
 	 *
-	 * @param array $shortcodes Array met informatie of de shortcodes.
+	 * @param array  $shortcodes Array met informatie of de shortcodes.
+	 * @param string $dev        Eventuele prefix voor de bestanden.
 	 */
-	private function register_shortcodes( $shortcodes ) {
+	private function register_shortcodes( $shortcodes, $dev ) {
 		global $post;
 
 		foreach ( $shortcodes as $shortcode => $dependencies ) {
@@ -76,13 +77,13 @@ class Kleistad_Public {
 				$file = str_replace( '_', '-', $shortcode );
 				wp_enqueue_style(
 					"kleistad$shortcode",
-					plugin_dir_url( __FILE__ ) . 'css/kleistad-public.css',
+					plugin_dir_url( __FILE__ ) . "css/kleistad-public$dev.css",
 					$dependencies['css'],
 					$this->version
 				);
 				wp_enqueue_script(
 					"kleistad$shortcode",
-					plugin_dir_url( __FILE__ ) . "js/kleistad-public-$file.js",
+					plugin_dir_url( __FILE__ ) . "js/kleistad-public-$file$dev.js",
 					$dependencies['js'],
 					$this->version,
 					false
@@ -97,6 +98,11 @@ class Kleistad_Public {
 	 * @since    4.0.87
 	 */
 	public function styles_and_scripts() {
+		if ( defined( KLEISTAD_DEV ) ) {
+			$dev = KLEISTAD_DEV ? '' : '.min';
+		} else {
+			$dev = '.min';
+		}
 		wp_register_style( 'jquery-ui', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
 		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css', [], '1.10.19' );
 		wp_register_style( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/core/main.min.css', [], '4.0.2' );
@@ -109,7 +115,7 @@ class Kleistad_Public {
 		wp_register_script( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/daygrid/main.min.js', [ 'fullcalendar-core' ], '4.0.2', false );
 		wp_register_script( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/timegrid/main.min.js', [ 'fullcalendar-core' ], '4.0.2', false );
 
-		wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . 'js/kleistad-public.js', [ 'jquery' ], $this->version, true );
+		wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/kleistad-public$dev.js", [ 'jquery' ], $this->version, true );
 		wp_localize_script(
 			'kleistad',
 			'kleistadData',
@@ -203,7 +209,8 @@ class Kleistad_Public {
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables' ],
 				],
-			]
+			],
+			$dev
 		);
 	}
 
