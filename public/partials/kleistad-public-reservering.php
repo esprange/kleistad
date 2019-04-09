@@ -31,7 +31,7 @@ else :
 				<th>
 					<button type="button" class="kleistad_periode" value="-1" >eerder</button
 				></th>
-				<th colspan="2" ><strong><span id="kleistad_periode"><?php echo esc_html( strftime( '%B-%Y' ) ); ?></span></strong></th>
+				<th colspan="2" ><strong><span id="kleistad_periode"></span></strong></th>
 				<th style="text-align:right" >
 					<button type="button" class="kleistad_periode" value="1" >later</button>
 				</th>
@@ -50,9 +50,12 @@ else :
 		</tbody>
 	</table>
 
-	<div id ="kleistad_reservering" class="kleistad_form_popup">
+	<div id ="kleistad_reservering" >
 	<form method="POST" autocomplete="off" >
 		<input id="kleistad_oven_id" type="hidden" value="<?php echo esc_attr( $data['oven']['id'] ); ?>" >
+		<input id="kleistad_dag" type="hidden" >
+		<input id="kleistad_maand" type="hidden" >
+		<input id="kleistad_jaar" type="hidden" >
 		<table class="kleistad_form">
 			<thead>
 			</thead>
@@ -65,9 +68,6 @@ else :
 				</tr>
 				<tr>
 					<th colspan="3">
-						<input type ="hidden" id="kleistad_dag">
-						<input type ="hidden" id="kleistad_maand">
-						<input type ="hidden" id="kleistad_jaar">
 						<span id="kleistad_tekst"></span>
 					</th>
 				</tr>

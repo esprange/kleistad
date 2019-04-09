@@ -215,26 +215,26 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'select'      => true,
 			],
 		];
-		$status        = $logica[ $reservering->status() ];
-		$json_selectie = wp_json_encode(
-			[
-				'dag'          => $dag,
-				'maand'        => $maand,
-				'jaar'         => $jaar,
-				'soortstook'   => $status['soortstook'],
-				'temperatuur'  => $status['temperatuur'],
-				'programma'    => $status['programma'],
-				'verdeling'    => $status['verdeling'],
-				'status'       => $reservering->status(),
-				'gebruiker_id' => $gebruiker_id,
-			]
-		);
-		if ( false === $json_selectie ) {
-			$json_selectie = '{}';
-		}
-		$html = "<tr style=\"background-color:{$status['kleur']};\"";
+		$status  = $logica[ $reservering->status() ];
+		$html    = "<tr style=\"background-color:{$status['kleur']};\"";
 		if ( $status['select'] ) {
-			$html .= "class=\"kleistad_box\" data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' ";
+			$json_selectie = wp_json_encode(
+				[
+					'dag'          => $dag,
+					'maand'        => $maand,
+					'jaar'         => $jaar,
+					'soortstook'   => $status['soortstook'],
+					'temperatuur'  => $status['temperatuur'],
+					'programma'    => $status['programma'],
+					'verdeling'    => $status['verdeling'],
+					'status'       => $reservering->status(),
+					'gebruiker_id' => $gebruiker_id,
+				]
+			);
+			if ( false === $json_selectie ) {
+				$json_selectie = '{}';
+			}
+			$html .= "data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' ";
 		}
 		$html .= "><td>$dag $dagnaam</td><td> {$status['wie']}</td><td>{$status['soortstook']}</td><td>{$status['temperatuur']}</td></tr>";
 		return $html;

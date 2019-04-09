@@ -62,9 +62,6 @@ table.display {
     background-color: #FFFACD;
     border-left: 6px solid #FFD700;
 }
-.kleistad_form_popup {
-    display: none;
-}
 table.kleistad_form {
     border: none;
     border-collapse: collapse;
@@ -103,6 +100,7 @@ table.kleistad_form button {
     width: 100%;
 }
 table.kleistad_form option, input {
+	text-align: right;
     height: 2.1em;
 }
 table.kleistad_form input[type=number] {
@@ -111,6 +109,7 @@ table.kleistad_form input[type=number] {
 table.kleistad_form input[type=submit] {
     height: 2.5em;
 }
+
 
 table.kleistad_reserveringen {
     border-collapse: collapse;
