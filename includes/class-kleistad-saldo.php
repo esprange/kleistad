@@ -208,11 +208,13 @@ class Kleistad_Saldo {
 					 * Het onderstaande wordt als een transactie uitgevoerd omdat zowel het saldo als de reservering in de database gemuteerd worden.
 					 */
 					if ( Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ) {
+						$reservering->verwerkt = true;
+						$reservering->save();
 						continue;
 					}
 					$wpdb->query( 'START TRANSACTION' );
 					$stookdelen = $reservering->verdeling;
-					$stoker     = get_userdata( $reservering->verdeling[0]['id'] );
+					$stoker     = get_userdata( $reservering->gebruiker_id );
 					foreach ( $stookdelen as &$stookdeel ) {
 						if ( 0 === intval( $stookdeel['id'] ) ) {
 							continue; // Volgende verdeling.
@@ -262,14 +264,14 @@ class Kleistad_Saldo {
 				if ( Kleistad_Reservering::ONDERHOUD !== $reservering->soortstook ) {
 					$regeling  = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
 					$bedrag    = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
-					$gebruiker = get_userdata( $reservering->gebruiker_id );
+					$stoker    = get_userdata( $reservering->gebruiker_id );
 					Kleistad_email::compose(
-						"$gebruiker->display_name <$gebruiker->user_email>",
+						"$stoker->display_name <$stoker->user_email>",
 						'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ),
 						'kleistad_email_stookmelding',
 						[
-							'voornaam'         => $gebruiker->first_name,
-							'achternaam'       => $gebruiker->last_name,
+							'voornaam'         => $stoker->first_name,
+							'achternaam'       => $stoker->last_name,
 							'bedrag'           => number_format_i18n( $bedrag, 2 ),
 							'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
 							'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
