@@ -267,26 +267,37 @@ label.kleistad_label_cb {
     position: relative;
 }
 
+.kleistad_reservering_ongebruikt, .kleistad_reservering_definitief {
+	background: white;
+}
+.kleistad_reservering_reserveerbaar {
+
+}
+.kleistad_reservering_onderhoud {
+	background: lightgray;
+}
+.kleistad_reservering_zelf {
+	background: lightgreen;
+}
+.kleistad_reservering_ander {
+	background: pink;
+}
 .kleistad_workshop_betaald {
 	background: green;
 	color: white;
 }
-
 .kleistad_workshop_definitief {
 	background: springgreen;
 	color: black;
 }
-
 .kleistad_workshop_concept {
 	background: orange;
 	color: black;
 }
-
 .kleistad_cursus_tonen {
 	background: slateblue;
 	color: white;
 }
-
 .kleistad_cursus_concept {
 	background: lightblue;
 	color: black;

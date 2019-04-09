@@ -158,7 +158,8 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 		$gebruiker_id  = get_current_user_id();
 		$stoker_id     = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
 		$stoker_naam   = get_userdata( $stoker_id )->display_name;
-		$kleur         = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'lightgray' : ( $reservering->verdeling[0]['id'] === $gebruiker_id ? 'lightgreen' : 'pink' );
+		$kleur         = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'kleistad_reservering_onderhoud' :
+			( $reservering->verdeling[0]['id'] === $gebruiker_id ? 'kleistad_reservering_zelf' : 'kleistad_reservering_ander' );
 		$logica        = [
 			Kleistad_Reservering::ONGEBRUIKT    => [
 				'wie'         => '',
@@ -166,7 +167,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'programma'   => '',
 				'verdeling'   => [],
 				'soortstook'  => '',
-				'kleur'       => 'white',
+				'kleur'       => 'kleistad_reservering_ongebruikt',
 				'select'      => false,
 			],
 			Kleistad_Reservering::RESERVEERBAAR => [
@@ -175,7 +176,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'programma'   => '',
 				'verdeling'   => [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
 				'soortstook'  => '',
-				'kleur'       => 'white',
+				'kleur'       => 'kleistad_reservering_reserveerbaar',
 				'select'      => true,
 			],
 			Kleistad_Reservering::WIJZIGBAAR    => [
@@ -211,12 +212,12 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'programma'   => $reservering->programma,
 				'verdeling'   => $reservering->verdeling,
 				'soortstook'  => $reservering->soortstook,
-				'kleur'       => 'white',
+				'kleur'       => 'kleistad_reservering_definitief',
 				'select'      => true,
 			],
 		];
 		$status  = $logica[ $reservering->status() ];
-		$html    = "<tr style=\"background-color:{$status['kleur']};\"";
+		$html    = "<tr class=\"{$status['kleur']}\"";
 		if ( $status['select'] ) {
 			$json_selectie = wp_json_encode(
 				[
@@ -228,6 +229,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 					'programma'    => $status['programma'],
 					'verdeling'    => $status['verdeling'],
 					'status'       => $reservering->status(),
+					'kleur'        => $status['kleur'],
 					'gebruiker_id' => $gebruiker_id,
 				]
 			);
