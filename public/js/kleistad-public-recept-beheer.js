@@ -29,9 +29,8 @@
             });
 
             $( '[name="wijzigen"]' ).click( function() {
-                var id = $( this ).data( 'recept_id' );
                 $( '#kleistad_recept_action' ).val( 'wijzigen' );
-                $( '#kleistad_recept_id' ).val( id );
+                $( '#kleistad_recept_id' ).val( $( this ).data( 'recept_id' ) );
             });
 
             $( '#kleistad_verwijder_recept' ).dialog( {
@@ -43,16 +42,14 @@
             });
 
             $( '[name="verwijderen"]' ).click( function( event ) {
-                var targetUrl = $( this ).attr( 'href' );
-                var id = $( this ).data( 'recept_id' );
 
                 event.preventDefault();
                 $( '#kleistad_recept_action' ).val( 'verwijderen' );
-                $( '#kleistad_recept_id' ).val( id );
+                $( '#kleistad_recept_id' ).val( $( this ).data( 'recept_id' ) );
                 $( '#kleistad_verwijder_recept' ).dialog( {
                     buttons: {
                         Ok: function() {
-                            window.location.href = targetUrl;
+                            window.location.href = $( this ).attr( 'href' );
                         },
                         Annuleren: function() {
                             $( this ).dialog( 'close' );
@@ -63,10 +60,10 @@
             });
 
             $( '.extra_regel' ).click( function() {
-                var oldRow, newRow;
-                oldRow = $( this ).closest( 'tr' ).prev();
-                newRow = oldRow.clone().find( 'input' ).val( '' ).end();
-                oldRow.after( newRow );
+                var $oldRow, $newRow;
+                $oldRow = $( this ).closest( 'tr' ).prev();
+                $newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
+                $oldRow.after( $newRow );
                 return false;
             });
         }
