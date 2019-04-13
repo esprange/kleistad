@@ -365,7 +365,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * Maak een tekst met de extras inclusief vermelding van de prijs per maand.
 	 */
 	private function extras_lijst() {
-		$options = Kleistad::get_options();
 		$lijst   = [];
 		foreach ( $this->extras as $extra ) {
 			$lijst[] = $extra . ' ( € ' . number_format_i18n( $this->extra_bedrag( $extra ), 2 ) . ' p.m.)';

@@ -44,15 +44,6 @@ class Kleistad {
 	protected $version;
 
 	/**
-	 * De opties van de plugin.
-	 *
-	 * @since    4.4.0
-	 * @access   protected
-	 * @var      array     $options De opties.
-	 */
-	protected static $options = [];
-
-	/**
 	 * Constructor
 	 *
 	 * @since    4.0.87
