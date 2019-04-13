@@ -45,7 +45,7 @@ class Kleistad_Activator {
 			'betalen'              => 0,
 			'extra'                => [],
 		];
-		$current_options = get_option( 'kleistad-opties' );
+		$current_options = Kleistad::get_options();
 		$options         = wp_parse_args( empty( $current_options ) ? '' : $current_options, $default_options );
 		update_option( 'kleistad-opties', $options );
 

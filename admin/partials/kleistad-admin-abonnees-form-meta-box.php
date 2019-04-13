@@ -64,7 +64,7 @@ if ( 'soort' === $actie ) :
 		</tr>
 	<?php
 elseif ( 'extras' === $actie ) :
-	$options = get_option( 'kleistad-opties' );
+	$options = Kleistad::get_options();
 	$i       = 1;
 	foreach ( $options['extra'] as $extra ) :
 		if ( 0 < $extra['prijs'] ) :

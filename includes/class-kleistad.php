@@ -61,10 +61,6 @@ class Kleistad {
 
 		$data          = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'kleistad.php', false, false );
 		$this->version = $data['Version'];
-		$options       = get_option( 'kleistad-opties' );
-		if ( is_array( $options ) ) {
-			self::$options = $options; // zou altijd zo moeten zijn.
-		}
 		self::register_autoloader();
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
@@ -186,7 +182,11 @@ class Kleistad {
 	 * @return    array    De opties.
 	 */
 	public static function get_options() {
-		return self::$options;
+		static $options = [];
+		if ( empty( $options ) ) {
+			$options = get_option( 'kleistad-opties', [] );
+		}
+		return $options;
 	}
 
 }

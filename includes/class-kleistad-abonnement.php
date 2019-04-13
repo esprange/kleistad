@@ -37,7 +37,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	const BEDRAG_START         = 3;
 	const BEDRAG_BORG          = 4;
 	const BEDRAG_START_EN_BORG = 5;
-	const BEDRAG_EXTRAS_TEKST  = 6;
 
 	/**
 	 * Het abonnee id
@@ -201,7 +200,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				'abonnement_dag'          => $this->dag,
 				'abonnement_opmerking'    => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
 				'abonnement_wijziging'    => $wijziging,
-				'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->bedrag( self::BEDRAG_EXTRAS_TEKST ) : '',
+				'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->extras_lijst() : '',
 				'abonnement_borg'         => number_format_i18n( $this->bedrag( self::BEDRAG_BORG ), 2 ),
 				'abonnement_startgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_START ), 2 ),
 				'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_MAAND ), 2 ),
@@ -348,24 +347,45 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	}
 
 	/**
+	 * Geef de prijs van een extra.
+	 * @param string $extra De extra abonnements functie.
+	 * @return float Het bedrag.
+	 */
+	private function extra_bedrag( $extra ) {
+		$options = Kleistad::get_options();
+		foreach ( $options['extra'] as $extra_option ) {
+			if ( $extra === $extra_option['naam'] ) {
+				return (float) $extra_option['prijs'];
+			}
+		}
+		return 0.0;
+	}
+
+	/**
+	 * Maak een tekst met de extras inclusief vermelding van de prijs per maand.
+	 */
+	private function extras_lijst() {
+		$options = Kleistad::get_options();
+		$lijst   = [];
+		foreach ( $this->extras as $extra ) {
+			$lijst[] = $extra . ' ( € ' . number_format_i18n( $this->extra_bedrag( $extra ), 2 ) . ' p.m.)';
+		}
+		return implode( ', ', $lijst );
+	}
+
+	/**
 	 * Bereken de maandelijkse kosten, de overbrugging, de borg of het startbedrag.
 	 *
 	 * @since 4.5.2
 	 *
 	 * @param  int $soort Welk bedrag gevraagd wordt, standaard het maandbedrag.
-	 * @return float|string  Het maandbedrag of een lijst van de extras.
+	 * @return float Het maandbedrag.
 	 */
 	public function bedrag( $soort ) {
 		$options = Kleistad::get_options();
 		$bedrag  = (float) $options[ $this->soort . '_abonnement' ];
-		$extras  = '';
 		foreach ( $this->extras as $extra ) {
-			foreach ( $options['extra'] as $extra_option ) {
-				if ( $extra_option['naam'] === $extra ) {
-					$bedrag += is_numeric( $extra_option['prijs'] ) ? (float) $extra_option['prijs'] : 0;
-					$extras .= $extra . ' ( € ' . number_format_i18n( $extra_option['prijs'], 2 ) . ' p.m.)' . ( ! empty( $extra ) ? ', ' : '' );
-				}
-			}
+			$bedrag += $this->extra_bedrag( $extra );
 		}
 
 		switch ( $soort ) {
@@ -387,8 +407,6 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 					$dagen_in_maand = intval( date( 'j', $this->reguliere_datum - $dag ) );
 					return $bedrag * $aantal_dagen / $dagen_in_maand;
 				}
-			case self::BEDRAG_EXTRAS_TEKST:
-				return $extras;
 		}
 	}
 

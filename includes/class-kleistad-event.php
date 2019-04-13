@@ -153,7 +153,7 @@ class Kleistad_Event {
 		if ( false === $refresh_token ) {
 			return false;
 		}
-		$options           = get_option( 'kleistad-opties' );
+		$options           = Kleistad::get_options();
 		self::$kalender_id = $options['google_kalender_id'];
 		$client            = new Google_Client();
 		$client->setApplicationName( 'Kleistad_Calendar' );
