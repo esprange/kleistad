@@ -392,7 +392,9 @@
              * Voeg een medestoker toe
              */
             $( '#kleistad_reservering' ).on( 'click', '#kleistad_stoker_toevoegen', function() {
-					medestook( { id:0, perc:0 } );
+				$( '#kleistad_reservering table > tbody > tr:last' ).
+					after( '<tr><td><label>Medestoker</label></td><td>' +  selectStoker( true, 0 ) +
+						'<td><input name="kleistad_stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" size="3" value="0" ></td></tr>' );
 					$( '[name=kleistad_stoker_id]:last' ).focus();
                     return false;
                 }

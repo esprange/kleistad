@@ -100,7 +100,6 @@ table.kleistad_form button {
     width: 100%;
 }
 table.kleistad_form option, input {
-	text-align: right;
     height: 2.1em;
 }
 table.kleistad_form input[type=number] {
@@ -109,7 +108,9 @@ table.kleistad_form input[type=number] {
 table.kleistad_form input[type=submit] {
     height: 2.5em;
 }
-
+table.kleistad_reservering_form input {
+	text-align: right;
+}
 
 table.kleistad_reserveringen {
     border-collapse: collapse;

@@ -56,7 +56,7 @@ else :
 		<input id="kleistad_dag" type="hidden" >
 		<input id="kleistad_maand" type="hidden" >
 		<input id="kleistad_jaar" type="hidden" >
-		<table class="kleistad_form">
+		<table class="kleistad_form kleistad_reservering_form">
 			<thead>
 			</thead>
 			<tbody>
