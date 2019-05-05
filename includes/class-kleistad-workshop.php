@@ -257,21 +257,21 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 */
 	public function email( $type ) {
 		$to        = "{$this->contact} <{$this->email}>";
-		$onderwerp = ucfirst( $type ) . ' workshop';
 
 		switch ( $type ) {
 			case 'bevestiging':
 			case 'correctie bevestiging':
-				$slug = 'kleistad_email_workshop_bevestiging';
+				$onderwerp = 'Bevestiging ' . $this->naam;
+				$slug      = 'kleistad_email_workshop_bevestiging';
 				break;
 			case 'betaling':
-				$slug = 'kleistad_email_workshop_betaling';
-				break;
 			case 'betaling_ideal':
-				$slug = 'kleistad_email_workshop_betaling_ideal';
+				$onderwerp = 'Betaling ' . $this->naam;
+				$slug      = "kleistad_email_workshop_$type";
 				break;
 			case 'afzegging':
-				$slug = 'kleistad_email_workshop_afzegging';
+				$onderwerp = 'Annulering ' . $this->naam;
+				$slug      = 'kleistad_email_workshop_afzegging';
 				break;
 			default:
 				return false;
