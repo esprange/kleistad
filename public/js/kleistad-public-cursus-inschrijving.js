@@ -90,7 +90,9 @@
 			 */
 			$( '#kleistad_huisnr, #kleistad_pcode' ).change(
 				function() {
-					$().lookupPostcode( $( '#kleistad_pcode' ).val(), $( '#kleistad_huisnr' ).val(), function( data ) {
+					var pcode = $( '#kleistad_pcode' );
+					pcode.val( pcode.val().toUpperCase() );
+					$().lookupPostcode( pcode.val(), $( '#kleistad_huisnr' ).val(), function( data ) {
 						$( '#kleistad_straat' ).val( data.straat );
 						$( '#kleistad_plaats' ).val( data.plaats );
 					} );
