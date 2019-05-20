@@ -256,7 +256,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
-		$to        = "{$this->contact} <{$this->email}>";
+		$to = "{$this->contact} <{$this->email}>";
 
 		switch ( $type ) {
 			case 'bevestiging':

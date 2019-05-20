@@ -154,13 +154,13 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 * @return string html opgemaakte tekstregel.
 	 */
 	private static function maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar ) {
-		$reservering   = new Kleistad_Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
-		$gebruiker_id  = get_current_user_id();
-		$stoker_id     = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
-		$stoker_naam   = get_userdata( $stoker_id )->display_name;
-		$kleur         = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'kleistad_reservering_onderhoud' :
+		$reservering  = new Kleistad_Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
+		$gebruiker_id = get_current_user_id();
+		$stoker_id    = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
+		$stoker_naam  = get_userdata( $stoker_id )->display_name;
+		$kleur        = Kleistad_Reservering::ONDERHOUD === $reservering->soortstook ? 'kleistad_reservering_onderhoud' :
 			( $reservering->verdeling[0]['id'] === $gebruiker_id ? 'kleistad_reservering_zelf' : 'kleistad_reservering_ander' );
-		$logica        = [
+		$logica       = [
 			Kleistad_Reservering::ONGEBRUIKT    => [
 				'wie'         => '',
 				'temperatuur' => '',
@@ -216,8 +216,8 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 				'select'      => true,
 			],
 		];
-		$status  = $logica[ $reservering->status() ];
-		$html    = "<tr class=\"{$status['kleur']}\"";
+		$status       = $logica[ $reservering->status() ];
+		$html         = "<tr class=\"{$status['kleur']}\"";
 		if ( $status['select'] ) {
 			$json_selectie = wp_json_encode(
 				[

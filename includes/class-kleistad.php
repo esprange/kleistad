@@ -122,7 +122,7 @@ class Kleistad {
 		$this->loader->add_action( 'wp_login', $plugin_public, 'user_login', 10, 2 );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
-		$this->loader->add_action( 'init', $plugin_public, 'create_recept_type' );
+		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );
 		$this->loader->add_action( 'kleistad_kosten', $plugin_public, 'update_ovenkosten' );
 		$this->loader->add_action( 'kleistad_abonnement', $plugin_public, 'update_abonnement', 10, 3 );
 		$this->loader->add_action( 'kleistad_workshop', $plugin_public, 'update_workshop', 10, 2 );
@@ -130,7 +130,7 @@ class Kleistad {
 
 		$this->loader->add_filter( 'login_message', $plugin_public, 'user_login_message' );
 		$this->loader->add_filter( 'login_redirect', $plugin_public, 'login_redirect', 10, 3 );
-		$this->loader->add_filter( 'single_template', $plugin_public, 'recept_template' );
+		$this->loader->add_filter( 'single_template', $plugin_public, 'single_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
 		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_public, 'loginuit_menu', 10, 2 );

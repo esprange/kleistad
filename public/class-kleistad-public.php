@@ -105,15 +105,15 @@ class Kleistad_Public {
 		}
 		wp_register_style( 'jquery-ui', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
 		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css', [], '1.10.19' );
-		wp_register_style( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/core/main.min.css', [], '4.0.2' );
-		wp_register_style( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/daygrid/main.min.css', [ 'fullcalendar-core' ], '4.0.2' );
-		wp_register_style( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/timegrid/main.min.css', [ 'fullcalendar-core' ], '4.0.2' );
+		wp_register_style( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/core/main.min.css', [], '4.1.0' );
+		wp_register_style( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/daygrid/main.min.css', [ 'fullcalendar-core' ], '4.1.0' );
+		wp_register_style( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/timegrid/main.min.css', [ 'fullcalendar-core' ], '4.1.0' );
 
 		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js', [ 'jquery' ], '1.10.19', false );
-		wp_register_script( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/core/main.min.js', [], '4.0.2', false );
-		wp_register_script( 'fullcalendar-nl', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/core/locales/nl.js', [ 'fullcalendar-core' ], '4.0.2', false );
-		wp_register_script( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/daygrid/main.min.js', [ 'fullcalendar-core' ], '4.0.2', false );
-		wp_register_script( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.0.2/packages/timegrid/main.min.js', [ 'fullcalendar-core' ], '4.0.2', false );
+		wp_register_script( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/core/main.min.js', [], '4.1.0', false );
+		wp_register_script( 'fullcalendar-nl', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/core/locales/nl.js', [ 'fullcalendar-core' ], '4.1.0', false );
+		wp_register_script( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/daygrid/main.min.js', [ 'fullcalendar-core' ], '4.1.0', false );
+		wp_register_script( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/timegrid/main.min.js', [ 'fullcalendar-core' ], '4.1.0', false );
 
 		wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/kleistad-public$dev.js", [ 'jquery' ], $this->version, true );
 		wp_localize_script(
@@ -179,7 +179,7 @@ class Kleistad_Public {
 				],
 				'recept'                => [
 					'js'  => [ 'jquery' ],
-					'css' => [ 'dascicons' ],
+					'css' => [ 'dashicons' ],
 				],
 				'registratie_overzicht' => [
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
@@ -228,63 +228,13 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Maak de ceramics recept post type en taxonomy
+	 * Maak de custom post types en taxonomy
 	 *
 	 * @since 4.1.0
 	 */
-	public function create_recept_type() {
-		ob_start();
-		register_post_type(
-			'kleistad_recept',
-			[
-				'labels'            => [
-					'name'               => 'Keramiek recepten',
-					'singular_name'      => 'Keramiek recept',
-					'add_new'            => 'Toevoegen',
-					'add_new_item'       => 'Recept toevoegen',
-					'edit'               => 'Wijzigen',
-					'edit_item'          => 'Recept wijzigen',
-					'view'               => 'Inzien',
-					'view_item'          => 'Recept inzien',
-					'search_items'       => 'Recept zoeken',
-					'not_found'          => 'Niet gevonden',
-					'not_found_in_trash' => 'Niet in prullenbak gevonden',
-				],
-				'public'            => true,
-				'supports'          => [
-					'title',
-					'comments',
-					'thumbnail',
-				],
-				'rewrite'           => [
-					'slug' => 'recepten',
-				],
-				'show_ui'           => true,
-				'show_in_admin_bar' => false,
-			]
-		);
-		register_taxonomy(
-			'kleistad_recept_cat',
-			'kleistad_recept',
-			[
-				'hierarchical'      => true,
-				'labels'            => [
-					'name'          => 'Recept categoriën',
-					'singular_name' => 'Recept categorie',
-					'search_items'  => 'Zoek recept categorie',
-					'all_items'     => 'Alle recept categoriën',
-					'edit_item'     => 'Wijzig recept categorie',
-					'update_item'   => 'Sla recept categorie op',
-					'add_new_item'  => 'Voeg recept categorie toe',
-					'new_item_name' => 'Nieuwe recept recept categorie',
-					'menu_name'     => 'Recept categoriën',
-				],
-				'query_var'         => true,
-				'show_ui'           => true,
-				'show_admin_column' => true,
-			]
-		);
-		register_taxonomy_for_object_type( 'kleistad_recept_cat', 'kleistad_recept' );
+	public function register_post_types() {
+		Kleistad_Recept::create_type();
+		ob_start(); // Dit heeft niets van doen met registreren post types maar omdat dit vanuit de init wordt aangeroepen lost dit een headers problem op.
 	}
 
 	/**
@@ -295,11 +245,12 @@ class Kleistad_Public {
 	 * @param string $single_template het template path.
 	 * @return string
 	 */
-	public function recept_template( $single_template ) {
+	public function single_template( $single_template ) {
 		global $post;
 
-		if ( 'kleistad_recept' === $post->post_type ) {
-			$single_template = dirname( __FILE__ ) . '/partials/kleistad-public-single-recept.php';
+		if ( false !== strpos( $post->post_type, 'kleistad_' ) ) {
+			$object          = substr( $post->post_type, strlen( 'kleistad_' ) );
+			$single_template = dirname( __FILE__ ) . "/partials/kleistad-public-single-$object.php";
 		}
 		return $single_template;
 	}
@@ -315,8 +266,9 @@ class Kleistad_Public {
 	public function comments_template( $comments_template ) {
 		global $post;
 
-		if ( 'kleistad_recept' === $post->post_type ) {
-			$comments_template = dirname( __FILE__ ) . '/partials/kleistad-public-comments-recept.php';
+		if ( false !== strpos( $post->post_type, 'kleistad_' ) ) {
+			$object            = substr( $post->post_type, strlen( 'kleistad_' ) );
+			$comments_template = dirname( __FILE__ ) . "/partials/kleistad-public-comments-$object.php";
 		}
 		return $comments_template;
 	}

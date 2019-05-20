@@ -13,7 +13,7 @@
 			/**
              * Definieer datum veld.
              */
-            $( '#kleistad_start_datum' ).datepicker( 'option',
+            $( '#kleistad_start_datum' ).datepicker(
                 {
 					minDate: 0,
 					maxDate: '+3M'

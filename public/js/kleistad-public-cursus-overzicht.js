@@ -23,7 +23,12 @@
 							$( '#kleistad_email_lijst' ).kleistad_klembord();
 						},
 						'Download': function() {
-                            $( '#kleistad_download_cursisten' ).submit();
+                            $( '#kleistad_submit_cursus_overzicht' ).val( 'download_cursisten' );
+							$( '#kleistad_cursisten_info_form' ).submit();
+						},
+						'Restant email versturen': function() {
+                            $( '#kleistad_submit_cursus_overzicht' ).val( 'restant_email' );
+							$( '#kleistad_cursisten_info_form' ).submit();
 						}
                     }
                 }
@@ -36,7 +41,7 @@
                 'click touchend', 'tr', function( event ) {
 					var html, lijst, id, naam, emails;
 					if ( 'click' === event.type || detectTap ) {
-						html   = '<tr><th>Naam</th><th>Telefoon</th><th>Email</th><th>Technieken</th></tr>';
+						html   = '<tr><td>Naam</td><td>Telefoon</td><td>Email</td><td>Technieken</td><td>Betaald</td><td>Restant Email</td></tr>';
 						lijst  = $( this ).data( 'lijst' );
 						id     = $( this ).data( 'id' );
 						naam   = $( this ).data( 'naam' );
@@ -48,6 +53,8 @@
 									'</td><td>' + value.telnr +
 									'</td><td>' + value.email +
 									'</td><td>' + value.technieken +
+									'</td><td>' + ( ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '' ) +
+									'</td><td>' + ( ( value.restant_email ) ? '<span class="dashicons dashicons-yes"></span>' : '' ) +
 									'</td></tr>';
 							emails += value.email + ';';
 						} );

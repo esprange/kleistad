@@ -130,13 +130,32 @@ class Kleistad_Event {
 	/**
 	 * Wijzig het event naar een herhalend event
 	 *
-	 * @param DateTime $eind      Einddatum in unix timestamp.
+	 * @param DateTime $eind      Einddatum.
 	 * @param bool     $wekelijks Wekelijks herhalen indien waar.
 	 */
 	public function herhalen( $eind, $wekelijks = true ) {
 		$freq  = $wekelijks ? 'WEEKLY' : 'DAILY';
 		$until = $eind->format( 'Ymd\THis\Z' );
 		$this->event->setRecurrence( [ "RRULE:FREQ=$freq;UNTIL=$until" ] );
+	}
+
+	/**
+	 * Wijzig het event naar een herhalend event
+	 *
+	 * @param array $datums Datums als DateTime object.
+	 */
+	public function patroon( $datums ) {
+		$datumteksten = [];
+		$eerste_datum = true;
+		foreach ( $datums as $datum ) {
+			if ( $eerste_datum ) {
+				$eerste_datum = false;
+				continue;
+			}
+			$datumteksten[] = $datum->format( 'Ymd\THis' );
+		}
+		$rrule = 'RDATE;VALUE=DATE-TIME:' . implode( ',', $datumteksten );
+		$this->event->setRecurrence( [ $rrule ] );
 	}
 
 	/**

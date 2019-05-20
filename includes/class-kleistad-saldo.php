@@ -262,9 +262,9 @@ class Kleistad_Saldo {
 				}
 			} elseif ( ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
 				if ( Kleistad_Reservering::ONDERHOUD !== $reservering->soortstook ) {
-					$regeling  = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
-					$bedrag    = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
-					$stoker    = get_userdata( $reservering->gebruiker_id );
+					$regeling = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
+					$bedrag   = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
+					$stoker   = get_userdata( $reservering->gebruiker_id );
 					Kleistad_email::compose(
 						"$stoker->display_name <$stoker->user_email>",
 						'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ),

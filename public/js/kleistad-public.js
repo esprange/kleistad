@@ -7,7 +7,47 @@
 
  /* global kleistadData */
 
- var detectTap;
+var detectTap;
+
+/**
+ * Converteer string naar tijd in minuten
+ *
+ * @param {String} value
+ */
+function strtotime( value ) {
+	var hours, minutes;
+	if ( 'string' === typeof value ) {
+		/* jshint eqeqeq:false */
+		if ( Number( value ) == value ) {
+			return Number( value );
+		}
+		hours = value.substring( 0, 2 );
+		minutes = value.substring( 3 );
+		return Number( hours ) * 60 + Number( minutes );
+	}
+	return value;
+}
+
+/**
+ * Converteer tijd in minuten naar tijd text.
+ *
+ * @param {int} value
+ */
+function timetostr( value ) {
+	var hours = Math.floor( value / 60 );
+	var minutes = value % 60;
+	return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
+}
+
+/**
+ * Converteer lokale datum in format 'd-m-Y' naar Date.
+ *
+ * @param (String) datum
+ */
+function strtodate( value ) {
+	var veld = value.split( '-' );
+	return new Date( veld[2], veld[1] - 1, veld[0] );
+}
 
 ( function( $ ) {
     'use strict';
@@ -25,36 +65,6 @@
 			$( this ).autocomplete( { source: availableTags } );
 			}
 		);
-	}
-
-	/**
-	 * Converteer string naar tijd in minuten
-	 *
-	 * @param {String} value
-	 */
-	function strtotime( value ) {
-		var hours, minutes;
-		if ( 'string' === typeof value ) {
-			/* jshint eqeqeq:false */
-			if ( Number( value ) == value ) {
-				return Number( value );
-			}
-			hours = value.substring( 0, 2 );
-			minutes = value.substring( 3 );
-			return Number( hours ) * 60 + Number( minutes );
-		}
-		return value;
-	}
-
-	/**
-	 * Converteer tijd in minuten naar tijd text.
-	 *
-	 * @param {int} value
-	 */
-	function timetostr( value ) {
-		var hours = Math.floor( value / 60 );
-		var minutes = value % 60;
-		return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
 	}
 
 	/**
@@ -186,23 +196,9 @@
              * Definieer de datum velden.
              */
 			if ( null !== document.querySelector( '.kleistad_datum' ) ) {
-				$( '.kleistad_datum' ).datepicker(
+				$.datepicker.setDefaults(
 					{
 						dateFormat: 'dd-mm-yy',
-						monthNames: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
-						monthNamesShort: [ 'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
-						dayNames: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
-						dayNamesShort: [ 'zon', 'maa', 'din', 'woe', 'don', 'vri', 'zat' ],
-						dayNamesMin: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
-						closeText: 'Sluiten',
-						prevText: '←',
-						nextText: '→',
-						currentText: 'Vandaag',
-						weekHeader: 'Wk',
-						firstDay: 1,
-						isRTL: false,
-						showMonthAfterYear: false,
-						yearSuffix: '',
 						beforeShow: function( i ) {
 							return ( ! $( i ).attr( 'readonly' ) );
 						}

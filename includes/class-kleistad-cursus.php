@@ -18,6 +18,7 @@
  * @property string naam
  * @property int    start_datum
  * @property int    eind_datum
+ * @property array  lesdatums
  * @property int    start_tijd
  * @property int    eind_tijd
  * @property string docent
@@ -76,10 +77,11 @@ class Kleistad_Cursus extends Kleistad_Entity {
 		$default_data = [
 			'id'              => null,
 			'naam'            => 'nog te definiëren cursus',
-			'start_datum'     => '',
-			'eind_datum'      => '',
-			'start_tijd'      => '',
-			'eind_tijd'       => '',
+			'start_datum'     => date( 'Y-m-d' ),
+			'eind_datum'      => date( 'Y-m-d' ),
+			'lesdatums'       => wp_json_encode( [] ),
+			'start_tijd'      => '09:30',
+			'eind_tijd'       => '12:00',
 			'docent'          => '',
 			'technieken'      => wp_json_encode( [] ),
 			'vervallen'       => 0,
@@ -113,14 +115,21 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return ( 'null' === $this->data['technieken'] ) ? [] : json_decode( $this->data['technieken'], true );
+				return empty( $this->data[ $attribuut ] ) ? [] : json_decode( $this->data[ $attribuut ], true );
+			case 'lesdatums':
+				return empty( $this->data[ $attribuut ] ) ? [] : array_map(
+					function( $item ) {
+						return strtotime( $item );
+					},
+					json_decode( $this->data[ $attribuut ], true )
+				);
 			case 'start_datum':
 			case 'eind_datum':
 			case 'start_tijd':
 			case 'eind_tijd':
 				return strtotime( $this->data[ $attribuut ] );
 			case 'vol':
-				return 1 === intval( $this->data['vol'] ) || 0 === $this->ruimte();
+				return 1 === intval( $this->data[ $attribuut ] ) || 0 === $this->ruimte();
 			case 'vervallen':
 			case 'techniekkeuze':
 			case 'meer':
@@ -155,6 +164,16 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'technieken':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
+			case 'lesdatums':
+				$this->data[ $attribuut ] = wp_json_encode(
+					array_map(
+						function( $item ) {
+							return date( 'Y-m-d', $item );
+						},
+						$waarde
+					)
+				);
+				break;
 			case 'start_datum':
 			case 'eind_datum':
 				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
@@ -188,9 +207,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->data );
 		$this->id        = $wpdb->insert_id;
 		$timezone_string = get_option( 'timezone_string' );
-		if ( false === $timezone_string ) {
-			$timezone_string = 'Europe/Amsterdam';
-		}
+		$timezone        = new DateTimeZone( $timezone_string ?: 'Europe/Amsterdam' );
 
 		try {
 			$event             = new Kleistad_Event( $this->event_id );
@@ -204,11 +221,18 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			$event->titel      = 'cursus';
 			$event->definitief = $this->tonen;
 			$event->vervallen  = $this->vervallen;
-			$timezone          = new DateTimeZone( $timezone_string );
 			$event->start      = new DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
 			$event->eind       = new DateTime( $this->data['start_datum'] . ' ' . $this->data['eind_tijd'], $timezone );
-			if ( $this->start_datum !== $this->eind_datum ) {
-				$event->herhalen( new DateTime( $this->data['eind_datum'] . ' ' . $this->data['eind_tijd'], $timezone ) );
+			if ( 0 === count( $this->lesdatums ) ) {
+				if ( $this->start_datum !== $this->eind_datum ) {
+					$event->herhalen( new DateTime( $this->data['eind_datum'] . ' ' . $this->data['eind_tijd'], $timezone ) );
+				}
+			} else {
+				$datums = [];
+				foreach ( $this->lesdatums as $lesdatum ) {
+					$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
+				}
+				$event->patroon( $datums );
 			}
 			$event->save();
 		} catch ( Exception $e ) {

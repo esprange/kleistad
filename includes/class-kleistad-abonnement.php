@@ -348,6 +348,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 
 	/**
 	 * Geef de prijs van een extra.
+	 *
 	 * @param string $extra De extra abonnements functie.
 	 * @return float Het bedrag.
 	 */
@@ -365,7 +366,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * Maak een tekst met de extras inclusief vermelding van de prijs per maand.
 	 */
 	private function extras_lijst() {
-		$lijst   = [];
+		$lijst = [];
 		foreach ( $this->extras as $extra ) {
 			$lijst[] = $extra . ' ( € ' . number_format_i18n( $this->extra_bedrag( $extra ), 2 ) . ' p.m.)';
 		}

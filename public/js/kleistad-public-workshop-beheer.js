@@ -19,7 +19,12 @@
 						$( 'body' ).css( { cursor: 'default' } );
 					}
                 }
-            );
+			);
+
+			/**
+			 * Initieer de datepicker.
+			 */
+			$( '#kleistad_datum' ).datepicker();
 
             /**
              * Toon de details van het geselecteerde workshop.

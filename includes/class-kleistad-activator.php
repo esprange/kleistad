@@ -17,7 +17,7 @@ class Kleistad_Activator {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 15;
+	const DBVERSIE = 17;
 
 	/**
 	 * Activeer de plugin.
@@ -90,6 +90,7 @@ class Kleistad_Activator {
                 naam tinytext,
                 start_datum date,
                 eind_datum date,
+				lesdatums varchar(2000),
                 start_tijd time,
                 eind_tijd time,
                 docent tinytext,
@@ -107,7 +108,6 @@ class Kleistad_Activator {
                 PRIMARY KEY  (id)
               ) $charset_collate;"
 			);
-			update_option( 'kleistad-database-versie', self::DBVERSIE );
 
 			dbDelta(
 				"CREATE TABLE {$wpdb->prefix}kleistad_workshops (

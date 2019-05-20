@@ -20,7 +20,7 @@
 	<div class="kleistad_col_4">
 		<input class="kleistad_input" name="FNAME" id="kleistad_voornaam" type="text"
 		required maxlength="25" placeholder="voornaam" title="Vul s.v.p. de voornaam in"
-		value="<?php echo esc_attr( $data['input']['FNAME'] ); ?>" />
+		value="<?php echo esc_attr( $data['input']['FNAME'] ); ?>" autocomplete="given-name" />
 	</div>
 </div>
 <div class="kleistad_row">
@@ -30,7 +30,7 @@
 	<div class="kleistad_col_4">
 		<input class="kleistad_input" name="LNAME" id="kleistad_achternaam" type="text"
 		required maxlength="25" placeholder="achternaam" title="Vul s.v.p. de achternaam in"
-		value="<?php echo esc_attr( $data['input']['LNAME'] ); ?>" />
+		value="<?php echo esc_attr( $data['input']['LNAME'] ); ?>" autocomplete="family-name" />
 	</div>
 </div>
 <div class="kleistad_row">
@@ -41,7 +41,7 @@
 		<input class="kleistad_input" name="EMAIL" id="kleistad_emailadres" type="email"
 		required placeholder="mijnemailadres@voorbeeld.nl" pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$"
 		title="Vul s.v.p. een geldig email adres in"
-		value="<?php echo esc_attr( $data['input']['EMAIL'] ); ?>" />
+		value="<?php echo esc_attr( $data['input']['EMAIL'] ); ?>" autocomplete="home mail" />
 	</div>
 </div>
 <div class="kleistad_row">
@@ -67,7 +67,7 @@
 	<div class="kleistad_col_2">
 		<input class="kleistad_input" name="telnr" id="kleistad_telnr" type="text"
 		maxlength="15" placeholder="0123456789" title="Vul s.v.p. een geldig telefoonnummer in"
-		value="<?php echo esc_attr( $data['input']['telnr'] ); ?>" />
+		value="<?php echo esc_attr( $data['input']['telnr'] ); ?>" autocomplete="tel" />
 	</div>
 </div>
 <div class="kleistad_row">
@@ -77,7 +77,7 @@
 	<div class="kleistad_col_2">
 		<input class="kleistad_input" name="pcode" id="kleistad_pcode" type="text"
 			maxlength="10" placeholder="1234AB" pattern="^[1-9][0-9]{3}?[A-Z]{2}$" title="Vul s.v.p. een geldige Nederlandse postcode in"
-			value="<?php echo esc_attr( $data['input']['pcode'] ); ?>" />
+			value="<?php echo esc_attr( $data['input']['pcode'] ); ?>" autocomplete="home postal-code" />
 	</div>
 	<div class="kleistad_col_2">
 		<input class="kleistad_input" name="huisnr" id="kleistad_huisnr" type="text"
@@ -92,12 +92,12 @@
 	<div class="kleistad_col_3">
 		<input class="kleistad_input" name="straat" id="kleistad_straat" type="text" tabindex="-1"
 		maxlength="50" placeholder="straat" title="Vul s.v.p. een straatnaam in"
-		value="<?php echo esc_attr( $data['input']['straat'] ); ?>" />
+		value="<?php echo esc_attr( $data['input']['straat'] ); ?>" autocomplete="home street-address" />
 	</div>
 	<div class="kleistad_col_4">
 		<input class="kleistad_input" name="plaats" id="kleistad_plaats" type="text" tabindex="-1"
 		maxlength="50" placeholder="MijnWoonplaats" title="Vul s.v.p. de woonplaats in"
-		value="<?php echo esc_attr( $data['input']['plaats'] ); ?>" />
+		value="<?php echo esc_attr( $data['input']['plaats'] ); ?>" autocomplete="home address-line2" />
 	</div>
 </div>
 <?php if ( ! is_super_admin() ) : ?>
