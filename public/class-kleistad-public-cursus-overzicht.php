@@ -90,7 +90,6 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$cursus_id              = $data['input']['cursus_id'];
-		$cursus                 = new Kleistad_Cursus( $cursus_id );
 		$inschrijvingen         = Kleistad_Inschrijving::all();
 		$aantal_verzonden_email = 0;
 		foreach ( $inschrijvingen as $inschrijving ) {

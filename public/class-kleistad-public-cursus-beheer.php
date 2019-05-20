@@ -53,7 +53,6 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	 */
 	private function formulier( $cursus_id = null ) {
 		$cursus    = new Kleistad_Cursus( $cursus_id );
-		$vandaag   = strtotime( 'today' );
 		$lesdatums = array_map(
 			function( $lesdatum ) {
 				return date( 'd-m-Y', $lesdatum );
