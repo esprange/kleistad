@@ -53,12 +53,6 @@
                 }
             );
 
-            $( '#kleistad_pauze_maanden' ).spinner({
-                min:1,
-                max:3
-                }
-            );
-
             $( '#kleistad_confirm' ).dialog({
                 resizable: false,
                 height: 190,

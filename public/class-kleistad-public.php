@@ -134,7 +134,7 @@ class Kleistad_Public {
 					'css' => [ 'jquery-ui' ],
 				],
 				'abonnee_wijziging'     => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner' ],
+					'js'  => [ 'jquery', 'jquery-ui-dialog' ],
 					'css' => [ 'jquery-ui' ],
 				],
 				'abonnement_overzicht'  => [

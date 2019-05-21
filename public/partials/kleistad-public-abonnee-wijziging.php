@@ -236,7 +236,11 @@ else :
 					<label for="kleistad_pauze_maanden">aantal maanden pauze</label>
 				</div>
 				<div class="kleistad_col_3">
-					<input name="pauze_maanden" id="kleistad_pauze_maanden" value="1" />
+					<select name="pauze_maanden">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+					</select>
 				</div>
 			</div>
 		</div>
