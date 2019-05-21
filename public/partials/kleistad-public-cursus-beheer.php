@@ -21,7 +21,7 @@ else :
 		<?php wp_nonce_field( 'kleistad_cursus_beheer' ); ?>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>"/>
 		<input type="hidden" name="lesdatums" id="kleistad_lesdatums" value="<?php echo esc_attr( $data['cursus']['lesdatums'] ); ?>" >
-		<table class="xkleistad_form" >
+		<table class="kleistad_form" >
 			<tr>
 				<th>Naam</th>
 				<td colspan="3">
