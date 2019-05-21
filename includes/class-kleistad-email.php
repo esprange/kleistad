@@ -161,7 +161,7 @@ class Kleistad_Email {
 		table {
 			border-spacing: 0;
 			font-family: Helvetica;
-			font-size: 13pt;
+			font-size: 11pt;
 			color: #333333;
 		}
 		td {

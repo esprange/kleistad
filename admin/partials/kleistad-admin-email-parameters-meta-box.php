@@ -25,6 +25,7 @@
 				<li>[voornaam] : voornaam van de hoofdstoker</li>
 				<li>[achternaam] : achternaam van de hoofdstoker</li>
 				<li>[bedrag] : bruto bedrag van de stook</li>
+				<li>[verdeling] : verdeling van de stook zoals op moment van verzending van de email</li>
 				<li>[datum_verwerking] : datum waarop kosten afgeboekt worden</li>
 				<li>[datum_deadline] : laatste datum waarop verdeling aangepast kan worden</lI>
 				<li>[stookoven] : naam van de oven</li>

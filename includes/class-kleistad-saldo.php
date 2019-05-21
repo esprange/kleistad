@@ -262,9 +262,20 @@ class Kleistad_Saldo {
 				}
 			} elseif ( ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
 				if ( Kleistad_Reservering::ONDERHOUD !== $reservering->soortstook ) {
-					$regeling = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
-					$bedrag   = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
-					$stoker   = get_userdata( $reservering->gebruiker_id );
+					$regeling   = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
+					$bedrag     = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
+					$stoker     = get_userdata( $reservering->gebruiker_id );
+					$stookdelen = $reservering->verdeling;
+					$tabel      = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
+					foreach ( $stookdelen as $stookdeel ) {
+						if ( 0 === intval( $stookdeel['id'] ) ) {
+							continue; // Volgende verdeling.
+						}
+						$medestoker = get_userdata( $stookdeel['id'] );
+						$tabel     .= "<tr><td>{$medestoker->first_name} {$medestoker->last_name}</td><td style=\"text-align:right;\" >{$stookdeel['perc']} %</td></tr>";
+					}
+					$tabel .= '<tr><td colspan="2" style="text-align:center;" >verdeling op ' . current_time( 'd-m-Y H:i' ) . '</td></table>';
+
 					Kleistad_email::compose(
 						"$stoker->display_name <$stoker->user_email>",
 						'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ),
@@ -275,6 +286,7 @@ class Kleistad_Saldo {
 							'bedrag'           => number_format_i18n( $bedrag, 2 ),
 							'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
 							'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
+							'verdeling'        => $tabel,
 							'stookoven'        => $ovens[ $reservering->oven_id ]->naam,
 						]
 					);

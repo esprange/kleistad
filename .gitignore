@@ -32,3 +32,4 @@ wp-cli.local.yml
 credentials.json
 token.json
 quickstart.php
+includes/class-kleistad-workshop.php

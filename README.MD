@@ -3,8 +3,8 @@
 **Donate link:** https://www.kleistad.nl  
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
-**Tested up to:** 5.1.1  
-**Stable tag:** 5.3.4  
+**Tested up to:** 5.2.0  
+**Stable tag:** 5.4.0  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -34,6 +34,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 5.4.0 ###
+* Cursus beheer verbeterd, o.a. lesrooster invoeren en verwijdering cursus mogelijk
+* Verbetering van de stookmelding, nu met verdeling
+* Diverse kleine layout aanpassingen
 ### 5.3.4 ###
 * Plugin grootte verkleind
 ### 5.3.3 ###
