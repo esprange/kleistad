@@ -150,7 +150,7 @@ class Kleistad_Public {
 					'css' => [ 'datatables' ],
 				],
 				'cursus_beheer'         => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+					'js'  => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
 				'cursus_inschrijving'   => [
