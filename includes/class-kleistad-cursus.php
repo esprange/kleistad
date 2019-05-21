@@ -238,8 +238,33 @@ class Kleistad_Cursus extends Kleistad_Entity {
 		} catch ( Exception $e ) {
 			error_log ( $e->getMessage() ); // phpcs:ignore
 		}
-
 		return $this->id;
+	}
+
+	/**
+	 * Verwijder de cursus.
+	 *
+	 * @return bool True als de cursus verwijderd kan worden.
+	 */
+	public function verwijder() {
+		global $wpdb;
+		$inschrijvingen = Kleistad_Inschrijving::all();
+		foreach ( $inschrijvingen as $inschrijving ) {
+			if ( array_key_exists( $this->id, $inschrijving ) ) {
+				return false; // Er is al een inschrijving dus verwijderen is niet meer mogelijk.
+			}
+		}
+		if ( $wpdb->delete( "{$wpdb->prefix}kleistad_cursussen", [ 'id' => $this->id ] ) ) {
+			try {
+				$event = new Kleistad_Event( $this->event_id );
+				$event->delete();
+			} catch ( Exception $e ) {
+				error_log ( $e->getMessage() ); // phpcs:ignore
+			}
+		} else {
+			return false;
+		};
+		return true;
 	}
 
 	/**

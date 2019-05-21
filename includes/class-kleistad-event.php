@@ -379,6 +379,13 @@ class Kleistad_Event {
 	}
 
 	/**
+	 * Delete het event.
+	 */
+	public function delete() {
+		self::$service->events->delete( self::$kalender_id, $this->event->getId() );
+	}
+
+	/**
 	 * Return alle events.
 	 *
 	 * @param array $query De query.

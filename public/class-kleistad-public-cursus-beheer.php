@@ -87,24 +87,6 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	}
 
 	/**
-	 * Bereid een cursus verwijdering voor.
-	 *
-	 * @param int $cursus_id De cursus.
-	 * @return bool True als de cursus verwijderd kan worden.
-	 */
-	private function verwijder( $cursus_id ) {
-		$inschrijvingen = Kleistad_Inschrijving::all();
-		foreach ( $inschrijvingen as $inschrijving ) {
-			if ( array_key_exists( $cursus_id, $inschrijving ) ) {
-				if ( ! $inschrijving[ $cursus_id ]->geannuleerd ) {
-					return false; // Er is al een inschrijving dus verwijderen is niet meer mogelijk.
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
 	 *
 	 * Prepareer 'cursus_beheer' form
 	 *
@@ -154,9 +136,9 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			 */
 			$cursus_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_verwijder_cursus_' . $cursus_id ) ) {
-				if ( $this->verwijder( $cursus_id ) ) {
+				$cursus = new Kleistad_Cursus( $cursus_id );
+				if ( $cursus->verwijder() ) {
 					$data['cursussen'] = $this->lijst();
-					return true;
 				} else {
 					$error->add( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
 					return $error;
