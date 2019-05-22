@@ -52,22 +52,21 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	 * @return array De cursus data.
 	 */
 	private function formulier( $cursus_id = null ) {
-		$cursus    = new Kleistad_Cursus( $cursus_id );
-		$lesdatums = array_map(
-			function( $lesdatum ) {
-				return date( 'd-m-Y', $lesdatum );
-			},
-			$cursus->lesdatums
-		);
-		if ( 0 === count( $lesdatums ) ) {
-			$lesdatums = [ date( 'd-m-Y', $cursus->start_datum ) ];
-		}
+		$cursus = new Kleistad_Cursus( $cursus_id );
 		return [
 			'id'              => $cursus->id,
 			'naam'            => $cursus->naam,
 			'start_datum'     => $cursus->start_datum,
 			'eind_datum'      => $cursus->eind_datum,
-			'lesdatums'       => implode( ';', $lesdatums ),
+			'lesdatums'       => implode(
+				';',
+				array_map(
+					function( $lesdatum ) {
+						return date( 'd-m-Y', $lesdatum );
+					},
+					$cursus->lesdatums
+				)
+			),
 			'start_tijd'      => $cursus->start_tijd,
 			'eind_tijd'       => $cursus->eind_tijd,
 			'docent'          => $cursus->docent,

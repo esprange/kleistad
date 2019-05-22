@@ -73,13 +73,13 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 */
 	public function __construct( $cursus_id = null ) {
 		global $wpdb;
-		$options      = Kleistad::get_options();
-		$default_data = [
+		$options    = Kleistad::get_options();
+		$this->data = [
 			'id'              => null,
-			'naam'            => 'nog te definiëren cursus',
+			'naam'            => '',
 			'start_datum'     => date( 'Y-m-d' ),
 			'eind_datum'      => date( 'Y-m-d' ),
-			'lesdatums'       => wp_json_encode( [] ),
+			'lesdatums'       => wp_json_encode( [ date( 'Y-m-d' ) ] ),
 			'start_tijd'      => '09:30',
 			'eind_tijd'       => '12:00',
 			'docent'          => '',
@@ -95,7 +95,6 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			'meer'            => 0,
 			'tonen'           => 0,
 		];
-		$this->data   = $default_data;
 		if ( ! is_null( $cursus_id ) ) {
 			$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
 			if ( ! is_null( $data ) ) {
@@ -117,12 +116,18 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'technieken':
 				return empty( $this->data[ $attribuut ] ) ? [] : json_decode( $this->data[ $attribuut ], true );
 			case 'lesdatums':
-				return empty( $this->data[ $attribuut ] ) ? [] : array_map(
-					function( $item ) {
-						return strtotime( $item );
-					},
-					json_decode( $this->data[ $attribuut ], true )
-				);
+				if ( empty( $this->data[ $attribuut ] ) ) {
+					return ( $this->data['start_datum'] === $this->data['eind_datum'] ) ?
+						[ strtotime( $this->data['start_datum'] ) ] :
+						[ strtotime( $this->data['start_datum'] ), strtotime( $this->data['eind_datum'] ) ];
+				} else {
+					return array_map(
+						function( $item ) {
+							return strtotime( $item );
+						},
+						json_decode( $this->data[ $attribuut ], true )
+					);
+				}
 			case 'start_datum':
 			case 'eind_datum':
 			case 'start_tijd':
@@ -223,16 +228,21 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			$event->vervallen  = $this->vervallen;
 			$event->start      = new DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
 			$event->eind       = new DateTime( $this->data['start_datum'] . ' ' . $this->data['eind_tijd'], $timezone );
-			if ( 0 === count( $this->lesdatums ) ) {
-				if ( $this->start_datum !== $this->eind_datum ) {
-					$event->herhalen( new DateTime( $this->data['eind_datum'] . ' ' . $this->data['eind_tijd'], $timezone ) );
-				}
-			} else {
-				$datums = [];
-				foreach ( $this->lesdatums as $lesdatum ) {
-					$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
-				}
-				$event->patroon( $datums );
+			switch ( count( $this->lesdatums ) ) {
+				case 0: // Oude cursus, er zijn nog geen lesdatums toegevoegd.
+					if ( $this->start_datum !== $this->eind_datum ) {
+						$event->herhalen( new DateTime( $this->data['eind_datum'] . ' ' . $this->data['eind_tijd'], $timezone ) );
+					}
+					break;
+				case 1: // Geen recurrence, er is maar één lesdatum.
+					break;
+				default:
+					$datums = [];
+					foreach ( $this->lesdatums as $lesdatum ) {
+						$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
+					}
+					$event->patroon( $datums );
+					break;
 			}
 			$event->save();
 		} catch ( Exception $e ) {
