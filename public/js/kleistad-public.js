@@ -6,6 +6,7 @@
  */
 
  /* global kleistadData */
+ /* exported strtodate, strtotime, timetostr */
 
 var detectTap;
 

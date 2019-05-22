@@ -271,9 +271,6 @@ label.kleistad_label_cb {
 .kleistad_reservering_ongebruikt, .kleistad_reservering_definitief {
 	background: white;
 }
-.kleistad_reservering_reserveerbaar {
-
-}
 .kleistad_reservering_onderhoud {
 	background: lightgray;
 }
