@@ -105,15 +105,15 @@ class Kleistad_Public {
 		}
 		wp_register_style( 'jquery-ui', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
 		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css', [], '1.10.19' );
-		wp_register_style( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/core/main.min.css', [], '4.1.0' );
-		wp_register_style( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/daygrid/main.min.css', [ 'fullcalendar-core' ], '4.1.0' );
-		wp_register_style( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/timegrid/main.min.css', [ 'fullcalendar-core' ], '4.1.0' );
+		wp_register_style( 'fullcalendar-core', '//cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.css', [], '4.1.0' );
+		wp_register_style( 'fullcalendar-day', '//cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.css', [ 'fullcalendar-core' ], '4.1.0' );
+		wp_register_style( 'fullcalendar-week', '//cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.css', [ 'fullcalendar-core' ], '4.1.0' );
 
 		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js', [ 'jquery' ], '1.10.19', false );
-		wp_register_script( 'fullcalendar-core', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/core/main.min.js', [], '4.1.0', false );
-		wp_register_script( 'fullcalendar-nl', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/core/locales/nl.js', [ 'fullcalendar-core' ], '4.1.0', false );
-		wp_register_script( 'fullcalendar-day', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/daygrid/main.min.js', [ 'fullcalendar-core' ], '4.1.0', false );
-		wp_register_script( 'fullcalendar-week', plugin_dir_url( __FILE__ ) . '../fullcalendar-4.1.0/packages/timegrid/main.min.js', [ 'fullcalendar-core' ], '4.1.0', false );
+		wp_register_script( 'fullcalendar-core', '//cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.js', [], '4.1.0', false );
+		wp_register_script( 'fullcalendar-nl', '//cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/locales/nl.min.js', [ 'fullcalendar-core' ], '4.1.0', false );
+		wp_register_script( 'fullcalendar-day', '//cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.js', [ 'fullcalendar-core' ], '4.1.0', false );
+		wp_register_script( 'fullcalendar-week', '//cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.js', [ 'fullcalendar-core' ], '4.1.0', false );
 
 		wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/kleistad-public$dev.js", [ 'jquery' ], $this->version, true );
 		wp_localize_script(
