@@ -226,7 +226,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			* Cursus moet verwijderd worden.
 			*/
 			if ( $cursus->verwijder() ) {
-				return "De cursus informatie is verwijderd";
+				return 'De cursus informatie is verwijderd';
 			} else {
 				$error->add( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
 				return $error;
