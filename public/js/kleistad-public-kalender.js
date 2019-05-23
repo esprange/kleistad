@@ -27,12 +27,11 @@
 				eventRender: function( info ) {
 					var tekst = '';
 					if ( 'timeGridDay' === info.view.type ) {
+						tekst += '<div class="kleistad_row"><div class="kleistad_col_3">' + info.event.extendedProps.naam + '</div></div>';
 						if ( 'undefined' !== typeof( info.event.extendedProps.docent ) ) {
 							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Docent</div><div class="kleistad_col_2">' + info.event.extendedProps.docent + '</div></div>';
 						}
-						if ( 'undefined' !== typeof( info.event.extendedProps.aantal ) ) {
-							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Aantal</div><div class="kleistad_col_2">' + info.event.extendedProps.aantal + '</div></div>';
-						}
+						tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Aantal</div><div class="kleistad_col_2">' + info.event.extendedProps.aantal + '</div></div>';
 						if ( ( 'undefined' !== typeof( info.event.extendedProps.technieken ) ) && ( '' !== info.event.extendedProps.technieken ) ) {
 							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Techniek</div><div class="kleistad_col_2">' + info.event.extendedProps.technieken + '</div></div>';
 						}

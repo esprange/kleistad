@@ -88,12 +88,12 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 						$lopend      = $cursus->start_datum < strtotime( 'today' );
 						$fc_events[] = [
 							'id'            => $event->id,
-							'title'         => "cursus ($cursus->code)",
+							'title'         => $cursus->naam,
 							'start'         => $event->start->format( DateTime::ATOM ),
 							'end'           => $event->eind->format( DateTime::ATOM ),
 							'className'     => $cursus->tonen || $lopend ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
 							'extendedProps' => [
-								'naam'       => $cursus->naam,
+								'naam'       => "cursus $cursus->code",
 								'aantal'     => $cursus->maximum - $cursus->ruimte,
 								'docent'     => $cursus->docent,
 								'technieken' => implode( ', ', $cursus->technieken ),

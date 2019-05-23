@@ -15,7 +15,7 @@ if ( ! Kleistad_Roles::override() ) :
 	<?php
 else :
 	global $wp;
-	if ( false !== strpos( 'toevoegen, wijzigen', $data['action'] ) ) :
+	if ( false !== strpos( 'toevoegen, wijzigen', $data['actie'] ) ) :
 		?>
 	<form method="POST" id="kleistad_cursus_beheer_form" >
 		<?php wp_nonce_field( 'kleistad_cursus_beheer' ); ?>
@@ -118,7 +118,8 @@ else :
 				<td colspan="3"><input type="text" name="indelingslug" id="kleistad_indelingslug" value="<?php echo esc_attr( $data['cursus']['indelingslug'] ); ?>" required /></td>
 			</tr>
 		</table>
-		<button type="submit" name="kleistad_submit_cursus_beheer">Opslaan</button>
+		<button type="submit" name="kleistad_submit_cursus_beheer" value="bewaren">Opslaan</button>
+		<button type="submit" name="kleistad_submit_cursus_beheer" value="verwijderen">Verwijderen</button>
 		<button type="button" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Annuleren</button>
 	</form>
 	<?php else : ?>
@@ -146,20 +147,16 @@ else :
 					<td><?php echo esc_html( $cursus['start_tijd'] ); ?><br/><?php echo esc_html( $cursus['eind_tijd'] ); ?></td>
 					<td><?php echo esc_html( $cursus['status'] ); ?></td>
 					<td>
-						<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_cursus_' . $cursus['id'] ) . '&action=wijzigen&id=' . $cursus['id'] ); ?>"
-							title="wijzig cursus" class="ui-button ui-widget ui-corner-all" style="color:green;padding:.4em .8em;" >
-						<span class="dashicons dashicons-edit"></span>
-						</a>
-						<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_verwijder_cursus_' . $cursus['id'] ) . '&action=verwijderen&id=' . $cursus['id'] ); ?>"
-							title="verwijder cursus" class="ui-button ui-widget ui-corner-all" style="color:red;padding:.4em .8em;" >
-						<span class="dashicons dashicons-trash"></span>
+						<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_cursus_' . $cursus['id'] ) . '&actie=wijzigen&id=' . $cursus['id'] ); ?>"
+							title="wijzig cursus" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
+						<!--span class="dashicons dashicons-edit" ></span-->&nbsp;
 						</a>
 					</td>
 				</tr>
 		<?php endforeach ?>
 		</tbody>
 	</table>
-	<button id="kleistad_cursus_toevoegen" value="<?php echo esc_url( wp_nonce_url( home_url( $wp->request ), 'kleistad_toevoegen_cursus' ) . '&action=toevoegen' ); ?>">Toevoegen</button>
+	<button id="kleistad_cursus_toevoegen" value="<?php echo esc_url( wp_nonce_url( home_url( $wp->request ), 'kleistad_toevoegen_cursus' ) . '&actie=toevoegen' ); ?>">Toevoegen</button>
 		<?php
 	endif;
 endif

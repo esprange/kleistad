@@ -44,6 +44,12 @@ table.display {
 	cursor: pointer;
 }
 
+a.kleistad_edit_link {
+	background-image: url('../images/icon-edit.png');
+    background-repeat: no-repeat;
+	text-decoration: none !important;
+}
+
 .kleistad_tijd {
     width: 4em;
 }
@@ -79,7 +85,6 @@ table.kleistad_form td {
 }
 table.kleistad_form th {
     border-style: none;
-    text-align: center;
 }
 table.kleistad_form>tfoot>tr:last-child th {
     padding: 2px;

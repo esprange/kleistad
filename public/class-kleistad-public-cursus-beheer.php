@@ -97,9 +97,9 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	protected function prepare( &$data = null ) {
 		$error = new WP_Error();
 
-		$data['action'] = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_STRING );
-		if ( is_null( $data['action'] ) ) {
-			$data['action'] = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING );
+		if ( is_null( $data['actie'] ) ) {
+			$data['actie'] = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
 		}
 		$gebruikers       = get_users(
 			[
@@ -113,35 +113,18 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 				$data['docenten'][] = $gebruiker;
 			}
 		}
-		if ( 'toevoegen' === $data['action'] ) {
+		if ( 'toevoegen' === $data['actie'] ) {
 			/*
 			* Er moet een nieuwe cursus opgevoerd worden
 			*/
 			$data['cursus'] = $this->formulier();
-		} elseif ( 'wijzigen' === $data['action'] ) {
+		} elseif ( 'wijzigen' === $data['actie'] ) {
 			/*
 			 * Er is een cursus gekozen om te wijzigen.
 			 */
 			$cursus_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_wijzig_cursus_' . $cursus_id ) ) {
 				$data['cursus'] = $this->formulier( $cursus_id );
-			} else {
-				$error->add( 'security', 'Security fout! !' );
-				return $error;
-			}
-		} elseif ( 'verwijderen' === $data['action'] ) {
-			/*
-			 * Cursus moet verwijderd worden.
-			 */
-			$cursus_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_verwijder_cursus_' . $cursus_id ) ) {
-				$cursus = new Kleistad_Cursus( $cursus_id );
-				if ( $cursus->verwijder() ) {
-					$data['cursussen'] = $this->lijst();
-				} else {
-					$error->add( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
-					return $error;
-				}
 			} else {
 				$error->add( 'security', 'Security fout! !' );
 				return $error;
@@ -199,23 +182,25 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 		if ( is_null( $data['input']['technieken'] ) ) {
 			$data['input']['technieken'] = [];
 		}
-		if ( strtotime( $data['input']['start_tijd'] ) >= strtotime( $data['input']['eind_tijd'] ) ) {
-			$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
-		}
-		if ( strtotime( $data['input']['start_datum'] ) > strtotime( $data['input']['eind_datum'] ) ) {
-			$error->add( 'Invoerfout', 'De startdatum moet eerder of gelijk aan de einddatum zijn' );
-		}
-		if ( 0.0 === $data['input']['cursuskosten'] && 0.0 < $data['input']['inschrijfkosten'] ) {
-			$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
-		}
-		if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['inschrijfslug'], OBJECT ) ) ) { // phpcs:ignore
-			$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['inschrijfslug'] );
-		}
-		if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['indelingslug'], OBJECT ) ) ) { // phpcs:ignore
-			$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['indelingslug'] );
-		}
-		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+		if ( 'bewaren' === $data['form_actie'] ) {
+			if ( strtotime( $data['input']['start_tijd'] ) >= strtotime( $data['input']['eind_tijd'] ) ) {
+				$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
+			}
+			if ( strtotime( $data['input']['start_datum'] ) > strtotime( $data['input']['eind_datum'] ) ) {
+				$error->add( 'Invoerfout', 'De startdatum moet eerder of gelijk aan de einddatum zijn' );
+			}
+			if ( 0.0 === $data['input']['cursuskosten'] && 0.0 < $data['input']['inschrijfkosten'] ) {
+				$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
+			}
+			if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['inschrijfslug'], OBJECT ) ) ) { // phpcs:ignore
+				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['inschrijfslug'] );
+			}
+			if ( '' != $data['input']['tonen'] && is_null( get_page_by_title( $data['input']['indelingslug'], OBJECT ) ) ) { // phpcs:ignore
+				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['indelingslug'] );
+			}
+			if ( ! empty( $error->get_error_codes() ) ) {
+				return $error;
+			}
 		}
 		return true;
 	}
@@ -236,32 +221,43 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 		} else {
 			$cursus = new Kleistad_Cursus();
 		}
-
-		$cursus->naam            = $data['input']['naam'];
-		$cursus->docent          = $data['input']['docent'];
-		$cursus->start_datum     = strtotime( $data['input']['start_datum'] );
-		$cursus->eind_datum      = strtotime( $data['input']['eind_datum'] );
-		$cursus->lesdatums       = array_map(
-			function( $lesdatum ) {
-				return strtotime( $lesdatum );
-			},
-			explode( ';', $data['input']['lesdatums'] )
-		);
-		$cursus->start_tijd      = strtotime( $data['input']['start_tijd'] );
-		$cursus->eind_tijd       = strtotime( $data['input']['eind_tijd'] );
-		$cursus->techniekkeuze   = '' != $data['input']['techniekkeuze']; // phpcs:ignore
-		$cursus->vol             = '' != $data['input']['vol']; // phpcs:ignore
-		$cursus->vervallen       = '' != $data['input']['vervallen']; // phpcs:ignore
-		$cursus->inschrijfkosten = $data['input']['inschrijfkosten'];
-		$cursus->cursuskosten    = $data['input']['cursuskosten'];
-		$cursus->inschrijfslug   = $data['input']['inschrijfslug'];
-		$cursus->indelingslug    = $data['input']['indelingslug'];
-		$cursus->technieken      = $data['input']['technieken'];
-		$cursus->maximum         = $data['input']['maximum'];
-		$cursus->meer            = '' != $data['input']['meer']; // phpcs:ignore
-		$cursus->tonen           = '' != $data['input']['tonen']; // phpcs:ignore
-		$cursus->save();
-		return 'Gegevens zijn opgeslagen';
+		if ( 'verwijderen' === $data['form_actie'] ) {
+			/*
+			* Cursus moet verwijderd worden.
+			*/
+			if ( $cursus->verwijder() ) {
+				return "De cursus informatie is verwijderd";
+			} else {
+				$error->add( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
+				return $error;
+			}
+		} elseif ( 'bewaren' === $data['form_actie'] ) {
+			$cursus->naam            = $data['input']['naam'];
+			$cursus->docent          = $data['input']['docent'];
+			$cursus->start_datum     = strtotime( $data['input']['start_datum'] );
+			$cursus->eind_datum      = strtotime( $data['input']['eind_datum'] );
+			$cursus->lesdatums       = array_map(
+				function( $lesdatum ) {
+					return strtotime( $lesdatum );
+				},
+				explode( ';', $data['input']['lesdatums'] )
+			);
+			$cursus->start_tijd      = strtotime( $data['input']['start_tijd'] );
+			$cursus->eind_tijd       = strtotime( $data['input']['eind_tijd'] );
+			$cursus->techniekkeuze   = '' != $data['input']['techniekkeuze']; // phpcs:ignore
+			$cursus->vol             = '' != $data['input']['vol']; // phpcs:ignore
+			$cursus->vervallen       = '' != $data['input']['vervallen']; // phpcs:ignore
+			$cursus->inschrijfkosten = $data['input']['inschrijfkosten'];
+			$cursus->cursuskosten    = $data['input']['cursuskosten'];
+			$cursus->inschrijfslug   = $data['input']['inschrijfslug'];
+			$cursus->indelingslug    = $data['input']['indelingslug'];
+			$cursus->technieken      = $data['input']['technieken'];
+			$cursus->maximum         = $data['input']['maximum'];
+			$cursus->meer            = '' != $data['input']['meer']; // phpcs:ignore
+			$cursus->tonen           = '' != $data['input']['tonen']; // phpcs:ignore
+			$cursus->save();
+			return 'De cursus informatie is opgeslagen';
+		}
 	}
 
 }
