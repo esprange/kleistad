@@ -104,7 +104,7 @@ class Kleistad_Public {
 			$dev = '.min';
 		}
 		$wp_scripts = wp_scripts();
-		// phpcs:disable
+		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		// Volgens stricte wp rules zou de versie toegevoegd moeten worden als parameter.
 		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $wp_scripts->registered['jquery-ui-core']->ver ), [], null );
 		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css', [], null );
