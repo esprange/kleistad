@@ -53,7 +53,7 @@ else :
 			</tr>
 			<tr>
 				<th>Datum</th>
-				<td><input type="text" name="datum" id="kleistad_datum" class="kleistad_datum" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" autocomplete="off" /></td>
+				<td><input type="text" name="datum" id="kleistad_datum" class="kleistad_datum" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" readonly="readonly" /></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>

@@ -46,7 +46,7 @@ else :
 				<td>
 					<input type="text" name="start_datum" id="kleistad_start_datum" class="kleistad_datum" required
 						value="<?php echo esc_attr( date( 'd-m-Y', $data['cursus']['start_datum'] ) ); ?>"
-						autocomplete="off" />
+						readonly="readonly" />
 				</td>
 				<th></th>
 				<th><input type="hidden" id="kleistad_lesdatum" class="kleistad_datum" ></th>
@@ -56,7 +56,7 @@ else :
 				<td>
 					<input type="text" name="eind_datum" id="kleistad_eind_datum" class="kleistad_datum" required
 						value="<?php echo esc_attr( date( 'd-m-Y', $data['cursus']['eind_datum'] ) ); ?>"
-						autocomplete="off" />
+						readonly="readonly" />
 				</td>
 				<td>
 				</td>

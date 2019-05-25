@@ -58,7 +58,7 @@ if ( ! is_user_logged_in() || is_super_admin() ) :
 				<label for="kleistad_start_datum">Start per</label>
 			</div>
 			<div class="kleistad_col_2 kleistad_input">
-				<input class="kleistad_datum kleistad_input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  autocomplete="off" />
+				<input class="kleistad_datum kleistad_input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
 			</div>
 		</div>
 		<?php
