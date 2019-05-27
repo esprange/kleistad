@@ -145,17 +145,14 @@ class Kleistad_Event {
 	 * @param array $datums Datums als DateTime object.
 	 */
 	public function patroon( $datums ) {
-		$datumteksten = [];
-		$eerste_datum = true;
-		foreach ( $datums as $datum ) {
-			if ( $eerste_datum ) {
-				$eerste_datum = false;
-				continue;
-			}
-			$datumteksten[] = $datum->format( 'Ymd\THis' );
-		}
-		$rrule = 'RDATE;VALUE=DATE-TIME:' . implode( ',', $datumteksten );
-		$this->event->setRecurrence( [ $rrule ] );
+		unset( $datums[0] );
+		$datumteksten = array_map(
+			function( $datum ) {
+				return $datum->format( 'Ymd\THis' );
+			},
+			$datums
+		);
+		$this->event->setRecurrence( [ 'RDATE;VALUE=DATE-TIME:' . implode( ',', $datumteksten ) ] );
 	}
 
 	/**
