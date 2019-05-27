@@ -194,6 +194,18 @@ function strtodate( value ) {
 			}
 
 			/**
+			 * Alle forms krijgen een processing box.
+			 */
+			if ( null !== document.querySelector( 'button[name^="kleistad_submit"]' ) ) {
+				$( 'body' ).append( '<div id="kleistad_processing" ></div>' );
+				$( 'form' ).on( 'submit',
+					function() {
+						$( '#kleistad_processing' ).addClass( 'kleistad_processing' );
+					}
+				);
+			}
+
+			/**
              * Definieer de datum velden.
              */
 			if ( null !== document.querySelector( '.kleistad_datum' ) ) {
