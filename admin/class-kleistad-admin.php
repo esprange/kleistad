@@ -230,7 +230,7 @@ class Kleistad_Admin {
 	public function opties_gewijzigd( $oud, $nieuw ) {
 		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
 			$oud['google_client_id'] !== $nieuw['google_client_id'] ) {
-			delete_option( Kleistad_Event::ACCESS_TOKEN );
+			delete_option( Kleistad_Google::ACCESS_TOKEN );
 		}
 	}
 
@@ -407,10 +407,10 @@ class Kleistad_Admin {
 	public function google_connect_meta_box_handler() {
 		$result = true;
 		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
-			Kleistad_Event::vraag_google_service_aan( admin_url( 'admin.php?page=kleistad&tab=google_connect' ) );
+			Kleistad_Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=google_connect' ) );
 		}
 		if ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
-			$result = Kleistad_Event::koppel_google_service();
+			$result = Kleistad_Google::koppel_service();
 		}
 		require 'partials/kleistad-admin-google-connect-meta-box.php';
 	}
