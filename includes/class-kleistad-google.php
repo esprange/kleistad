@@ -130,7 +130,7 @@ class Kleistad_Google {
 	 * Maak de Google Calendar service aan.
 	 *
 	 * @since 5.0.0
-	 * @return de service.
+	 * @return Google_Service_Calendar de service.
 	 */
 	public static function service() {
 		if ( ! is_null( self::$service ) ) {
@@ -162,10 +162,8 @@ class Kleistad_Google {
 	 * @return string Kalender id.
 	 */
 	public static function kalender_id() {
-		if ( is_null( self::$kalender_id ) ) {
-			$options           = Kleistad::get_options();
-			self::$kalender_id = $options['google_kalender_id'];
-		}
+		$options           = Kleistad::get_options();
+		self::$kalender_id = $options['google_kalender_id'];
 		return self::$kalender_id;
 	}
 
@@ -177,7 +175,7 @@ class Kleistad_Google {
 	 */
 	public static function is_authorized() {
 		if ( false !== get_option( self::ACCESS_TOKEN ) ) {
-			return self::maak_service();
+			return self::service();
 		}
 		return false;
 	}
