@@ -209,11 +209,12 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	 * Bewaar 'cursus_beheer' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return string | WP_Error
 	 *
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
+		$error     = new WP_Error();
 		$cursus_id = $data['input']['cursus_id'];
 
 		if ( $cursus_id > 0 ) {
