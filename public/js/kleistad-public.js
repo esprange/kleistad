@@ -5,8 +5,8 @@
  * @since  5.2.0
  */
 
- /* global kleistadData */
- /* exported strtodate, strtotime, timetostr */
+/* global kleistadData, console */
+/* exported strtodate, strtotime, timetostr */
 
 var detectTap;
 
@@ -194,13 +194,51 @@ function strtodate( value ) {
 			}
 
 			/**
-			 * Alle forms krijgen een processing box.
+			 * Alle forms krijgen een processing box en als jquery form geladen is dan wordt het formulier via ajax gesubmit.
 			 */
-			if ( null !== document.querySelector( 'button[name^="kleistad_submit"]' ) ) {
-				$( 'body' ).append( '<div id="kleistad_processing" ></div>' );
-				$( 'form' ).on( 'submit',
-					function() {
-						$( '#kleistad_processing' ).addClass( 'kleistad_processing' );
+			if ( null !== document.querySelector( '#kleistad_shortcode' ) ) {
+				$( '#kleistad_shortcode' ).on( 'click', 'button[type="submit"]',
+					function( event ) {
+						$( '#kleistad_shortcode' ).data( 'clicked', $( event.target ).val() );
+					}
+				);
+
+				$( '#kleistad_shortcode' ).on( 'submit', 'form',
+					function( event ) {
+						var data, options,
+							shortcode = $( 'button[name^="kleistad_submit_"]' ).first().attr( 'name' ),
+							val       = $( '#kleistad_shortcode' ).data( 'clicked' );
+						data = {
+							_wpnonce: kleistadData.nonce,
+							atts: $( '#kleistad_shortcode' ).data( 'atts' ),
+							submit: shortcode,
+							ajax: 1
+						};
+						data[ shortcode ] = val;
+						options = {
+							url: kleistadData.base_url + '/shortcodeform/',
+							target: '#kleistad_shortcode',
+							data: data,
+							beforeSubmit: function() {
+								$( '#kleistad_processing' ).addClass( 'kleistad_processing' );
+							},
+							success: function() {
+								$( '.kleistad_datatable' ).DataTable();
+								$( '#kleistad_processing' ).removeClass( 'kleistad_processing' );
+							},
+							error: function( jqXHR ) {
+								$( '#kleistad_processing' ).removeClass( 'kleistad_processing' );
+								if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
+									console.log( jqXHR.responseJSON.message );
+								}
+								window.alert( kleistadData.error_message );
+							}
+						};
+
+						if ( jQuery().ajaxSubmit ) {
+							$( this ).ajaxSubmit( options );
+							event.preventDefault();
+						}
 					}
 				);
 			}

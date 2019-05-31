@@ -154,7 +154,7 @@ class Kleistad_Public {
 					'css' => [ 'datatables' ],
 				],
 				'cursus_beheer'         => [
-					'js'  => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+					'js'  => [ 'jquery', 'jquery-form', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
 				'cursus_inschrijving'   => [
@@ -178,7 +178,7 @@ class Kleistad_Public {
 					'css' => [ 'datatables' ],
 				],
 				'recept_beheer'         => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
+					'js'  => [ 'jquery', 'jquery-form', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
 				'recept'                => [
@@ -190,7 +190,7 @@ class Kleistad_Public {
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
 				'registratie'           => [
-					'js'  => [ 'jquery' ],
+					'js'  => [ 'jquery', 'jquery-form' ],
 					'css' => [],
 				],
 				'reservering'           => [
@@ -202,7 +202,7 @@ class Kleistad_Public {
 					'css' => [ 'datatables' ],
 				],
 				'saldo'                 => [
-					'js'  => [ 'jquery' ],
+					'js'  => [ 'jquery', 'jquery-form' ],
 					'css' => [],
 				],
 				'stookbestand'          => [
@@ -210,7 +210,7 @@ class Kleistad_Public {
 					'css' => [ 'jquery-ui' ],
 				],
 				'workshop_beheer'       => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+					'js'  => [ 'jquery', 'jquery-form', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables' ],
 				],
 			],
@@ -229,6 +229,7 @@ class Kleistad_Public {
 		Kleistad_Public_Kalender::register_rest_routes();
 		Kleistad_Betalen::register_rest_routes();
 		Kleistad_Adres::register_rest_routes();
+		Kleistad_ShortcodeForm::register_rest_routes();
 	}
 
 	/**
@@ -430,7 +431,11 @@ class Kleistad_Public {
 		$form        = substr( $tag, strlen( 'kleistad-' ) );
 		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
 		$form_object = new $form_class( $form, $atts, $this->options );
-		return $form_object->run();
+		if ( ! empty( $atts ) ) {
+			$atts = wp_json_encode( $atts );
+		}
+		$html = $form_object->run();
+		return "<div id=\"kleistad_shortcode\" data-atts='$atts' ><p><!-- placeholder -->&nbsp;</p>$html</div><div id=\"kleistad_processing\" ></div>";
 	}
 
 	/**

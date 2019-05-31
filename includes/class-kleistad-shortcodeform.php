@@ -152,7 +152,8 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 		$html               = '';
 		$data['form_actie'] = filter_input( INPUT_POST, 'kleistad_submit_' . $this->shortcode );
 		if ( ! is_null( $data['form_actie'] ) ) {
-			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $this->shortcode ) ) {
+			$ajax = filter_input( INPUT_POST, 'ajax', FILTER_DEFAULT, [ 'options' => [ 'default' => false ] ] );
+			if ( $ajax || wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $this->shortcode ) ) {
 				if ( 0 === strpos( $data['form_actie'], 'download_' ) ) {
 					$result = $this->download( substr( $data['form_actie'], strlen( 'download_' ) ) );
 				} else {
@@ -160,10 +161,14 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 					if ( ! is_wp_error( $result ) ) {
 						$result = $this->save( $data );
 					}
-					if ( is_string( $result ) ) { // De save operatie heeft geen error opgeleverd, dus doe een redirect zodat het formulier niet opnieuw gesubmit kan worden.
-						$url = add_query_arg( 'kleistad_succes', rawurlencode( $result ), get_permalink() );
-						wp_safe_redirect( $url, 303 );
-						die();
+					if ( is_string( $result ) ) {
+						if ( $ajax ) {
+							$html .= ! empty( $result ) ? '<div class="kleistad_succes"><p>' . $result . '</p></div>' : '';
+						} else { // De save operatie heeft geen error opgeleverd, dus doe een redirect zodat het formulier niet opnieuw gesubmit kan worden.
+							$url = add_query_arg( 'kleistad_succes', rawurlencode( $result ), get_permalink() );
+							wp_safe_redirect( $url, 303 );
+							die();
+						}
 					}
 				}
 				if ( is_wp_error( $result ) ) {
@@ -176,6 +181,40 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 			}
 		}
 		return $html;
+	}
+
+	/**
+	 * Register rest URI's.
+	 *
+	 * @since 5.5.0
+	 */
+	public static function register_rest_routes() {
+		register_rest_route(
+			Kleistad_Public::url(),
+			'/shortcodeform',
+			[
+				'methods'             => 'POST',
+				'callback'            => [ __CLASS__, 'callback_form' ],
+				'permission_callback' => function() {
+					return true;
+				},
+			]
+		);
+	}
+
+	/**
+	 * Webhook functie om ajax form request te verwerken. Wordt aangeroepen vanuit client.
+	 *
+	 * @since      5.5.0
+	 * @ return \WP_REST_response de response.
+	 */
+	public static function callback_form() {
+		$submit      = filter_input( INPUT_POST, 'submit', FILTER_SANITIZE_STRING );
+		$atts        = filter_input( INPUT_POST, 'atts', FILTER_SANITIZE_STRING );
+		$form        = substr( $submit, strlen( 'kleistad_submit_' ) );
+		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
+		$form_object = new $form_class( $form, $atts, Kleistad::get_options() );
+		return new WP_REST_response( [ $form_object->run() ] );
 	}
 
 	/**
