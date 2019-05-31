@@ -69,8 +69,12 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			$data['input']['cursus_id'] = $cursus_selecties[0];
 		}
 		foreach ( $cursussen as $cursus ) {
-			if ( ! empty( $cursus_selecties ) && ! in_array( $cursus->id, $cursus_selecties, false ) ) { // phpcs:ignore
-				continue;
+			if ( ! empty( $cursus_selecties ) ) {
+				if ( ! in_array( $cursus->id, $cursus_selecties, false ) ) { // phpcs:ignore
+					continue; // Er moeten specifieke cursussen worden getoond en deze cursus hoort daar niet bij.
+				}
+			} elseif ( ! $cursus->tonen ) {
+				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
 
 			$data['open_cursussen'][ $cursus->id ] = [
