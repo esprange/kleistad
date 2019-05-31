@@ -287,7 +287,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public static function all( $open = false ) {
 		global $wpdb;
 		$arr             = [];
-		$filter          = $open ? ' WHERE tonen = 1 AND eind_datum > CURRENT_DATE' : '';
+		$filter          = $open ? ' WHERE eind_datum > CURRENT_DATE' : '';
 		$cursussen_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen $filter ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // phpcs:ignore
 		foreach ( $cursussen_tabel as $cursus ) {
 			$arr[ $cursus['id'] ] = new Kleistad_Cursus( $cursus['id'] );
