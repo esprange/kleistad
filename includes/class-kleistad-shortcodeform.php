@@ -203,7 +203,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	}
 
 	/**
-	 * Webhook functie om ajax form request te verwerken. Wordt aangeroepen vanuit client.
+	 * Webhook functie om ajax form request te verwerken. Wordt aangeroepen vanuit client. Voorlopig nog nauwelijks gebruikt.
 	 *
 	 * @since      5.5.0
 	 * @ return \WP_REST_response de response.

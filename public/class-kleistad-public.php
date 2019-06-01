@@ -202,7 +202,7 @@ class Kleistad_Public {
 					'css' => [ 'datatables' ],
 				],
 				'saldo'                 => [
-					'js'  => [ 'jquery', 'jquery-form' ],
+					'js'  => [ 'jquery' ],
 					'css' => [],
 				],
 				'stookbestand'          => [

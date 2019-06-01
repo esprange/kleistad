@@ -250,9 +250,6 @@ function strtodate( value ) {
 				$.datepicker.setDefaults(
 					{
 						dateFormat: 'dd-mm-yy',
-						beforeShow: function( i ) {
-							return ( ! $( i ).attr( 'readonly' ) );
-						}
 					}
 				);
 			}
