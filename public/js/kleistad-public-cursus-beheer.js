@@ -46,7 +46,7 @@
 			return datum <= eindDatum && datum >= startDatum;
 		} );
 		expandLesDatums( $.datepicker.formatDate( 'dd-mm-yy', startDatum ) );
-		if ( eindDatum !== startDatum ) {
+		if ( eindDatum.getDate() !== startDatum.getDate() ) {
 			expandLesDatums( $.datepicker.formatDate( 'dd-mm-yy', eindDatum ) );
 		}
 		$( '#kleistad_lesdatums' ).val( lesDatums.join( ';' ) );
@@ -55,7 +55,9 @@
 	function setLimits() {
 		var dag   = 24 * 60 * 60 * 1000;
 		$( '#kleistad_eind_datum' ).datepicker( 'option', { minDate: startDatum } );
-		$( '#kleistad_start_datum' ).datepicker( 'option', { maxDate: eindDatum } );
+		if ( eindDatum.getDate() !== startDatum.getDate() ) {
+			$( '#kleistad_start_datum' ).datepicker( 'option', { maxDate: eindDatum } );
+		}
 		$( '#kleistad_lesdatum' ).datepicker( 'option', { minDate: new Date( startDatum.getTime() + dag ), maxDate: new Date( eindDatum.getTime() - dag ) } );
 	}
 
@@ -92,6 +94,10 @@
 					{
 						onSelect: function( datum ) {
 							startDatum = strtodate( datum );
+							if ( startDatum > eindDatum ) {
+								eindDatum = startDatum;
+								$( '#kleistad_eind_datum' ).datepicker( 'setDate', eindDatum );
+							}
 							setLimits();
 							updateLesDatums();
 							listLesDatums();
