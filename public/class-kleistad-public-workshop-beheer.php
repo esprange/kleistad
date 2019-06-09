@@ -25,7 +25,6 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	private function lijst() {
 		$workshops = Kleistad_Workshop::all();
 		$lijst     = [];
-		$vandaag   = strtotime( 'today' );
 		foreach ( $workshops as $workshop_id => $workshop ) {
 			$lijst[] = [
 				'id'         => $workshop->id,
