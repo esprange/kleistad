@@ -230,7 +230,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			default:
 				$slug = '';
 		}
-		return Kleistad_email::compose(
+		return Kleistad_Email::compose(
 			$to,
 			$onderwerp,
 			$slug,

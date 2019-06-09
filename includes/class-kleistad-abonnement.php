@@ -183,7 +183,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	public function email( $type, $wijziging = '' ) {
 		$abonnee = get_userdata( $this->abonnee_id );
 		$to      = "$abonnee->display_name <$abonnee->user_email>";
-		return Kleistad_email::compose(
+		return Kleistad_Email::compose(
 			$to,
 			( false !== strpos( $type, '_start' ) ) ? 'Welkom bij Kleistad' : 'Abonnement Kleistad',
 			'kleistad_email_abonnement' . $type,

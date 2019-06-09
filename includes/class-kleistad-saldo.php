@@ -230,7 +230,7 @@ class Kleistad_Saldo {
 						$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
 						$saldo->bedrag = $saldo->bedrag - $bedrag;
 						if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $stoker->display_name ) ) {
-							Kleistad_email::compose(
+							Kleistad_Email::compose(
 								"$medestoker->display_name <$medestoker->user_email>",
 								'Kleistad kosten zijn verwerkt op het stooksaldo',
 								'kleistad_email_stookkosten_verwerkt',
@@ -276,7 +276,7 @@ class Kleistad_Saldo {
 					}
 					$tabel .= '<tr><td colspan="2" style="text-align:center;" >verdeling op ' . current_time( 'd-m-Y H:i' ) . '</td></table>';
 
-					Kleistad_email::compose(
+					Kleistad_Email::compose(
 						"$stoker->display_name <$stoker->user_email>",
 						'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ),
 						'kleistad_email_stookmelding',
