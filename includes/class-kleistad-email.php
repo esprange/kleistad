@@ -58,7 +58,7 @@ class Kleistad_Email {
 	/**
 	 * Initialisatie functie zodat filters e.d. maar eenmalig gerealiseerd worden.
 	 *
-	 * @param  bool $from_name Eventuele naam van gebruiker die de email verzend.
+	 * @param  string $from_name Eventuele naam van gebruiker die de email verzendt.
 	 * @return bool
 	 */
 	private static function initialiseer( $from_name = null ) {
@@ -265,7 +265,7 @@ class Kleistad_Email {
 	 * @param string $tekst mail inhoud.
 	 */
 	public static function create( $to, $from_name, $subject, $tekst ) {
-		if ( ! self::initialiseer( $from ) ) {
+		if ( ! self::initialiseer( $from_name ) ) {
 			return false;
 		};
 		$headers   = self::$headers;
