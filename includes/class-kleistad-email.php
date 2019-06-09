@@ -17,9 +17,9 @@ class Kleistad_Email {
 	/**
 	 * Email header
 	 *
-	 * @var array $header_basis Begin header voor te verzenden email.
+	 * @var array $header Begin header voor te verzenden email.
 	 */
-	private static $header_basis = [];
+	private static $headers = [];
 
 	/**
 	 * Info email adres
@@ -27,6 +27,20 @@ class Kleistad_Email {
 	 * @var string $info Het info email adres.
 	 */
 	private static $info = '';
+
+	/**
+	 * From email adres
+	 *
+	 * @var string $from Het from email adres.
+	 */
+	private static $from = '';
+
+	/**
+	 * From name email adres
+	 *
+	 * @var string $from_name Het from_name email adres.
+	 */
+	private static $from_name = '';
 
 	/**
 	 * Helper functie, haalt het domein op van het email adres.
@@ -44,49 +58,72 @@ class Kleistad_Email {
 	/**
 	 * Initialisatie functie zodat filters e.d. maar eenmalig gerealiseerd worden.
 	 *
+	 * @param  bool $from_name Eventuele naam van gebruiker die de email verzend.
 	 * @return bool
 	 */
-	private static function initialiseer() {
-		static $init = false;
-		if ( ! $init ) {
-			$domein = self::domein();
-			if ( false === $domein ) {
-				return false; // Zal waarschijnlijk nooit voorkomen.
-			}
-			$from               = 'no-reply@' . $domein;
-			self::$info         = 'info@' . $domein;
-			self::$header_basis = [
-				'Content-Type: text/html; charset=UTF-8',
-				"From: Kleistad <$from>",
-				'bcc: kleistad@sprako.nl',
-			];
-			add_filter(
-				'wp_mail_from',
-				function() use ( $from ) {
-					return $from;
-				}
-			);
-			add_filter(
-				'wp_mail_from_name',
-				function() {
-					return 'Kleistad';
-				}
-			);
-
-			$init = true;
+	private static function initialiseer( $from_name = null ) {
+		$domein = self::domein();
+		if ( false === $domein ) {
+			return false; // Zal waarschijnlijk nooit voorkomen.
 		}
-		return $init;
+		self::$from      = ( is_null( $from_name ) ? 'no-reply@' : 'info@' ) . $domein;
+		self::$from_name = is_null( $from_name ) ? 'Kleistad' : $from_name;
+		self::$info      = 'info@' . $domein;
+		self::$headers   = [
+			'From: ' . self::$from_name . ' <' . self::$from . '>',
+			'bcc: kleistad@sprako.nl',
+		];
+		if ( false === has_filter( 'wp_mail_from', [ __CLASS__, 'wp_mail_from' ] ) ) {
+			add_filter( 'wp_mail_from', [ __CLASS__, 'wp_mail_from' ] );
+		}
+		if ( false === has_filter( 'wp_mail_from_name', [ __CLASS__, 'wp_mail_from_name' ] ) ) {
+			add_filter( 'wp_mail_from_nam', [ __CLASS__, 'wp_mail_from_name' ] );
+		}
+		if ( false === has_filter( 'wp_mail_content_type', [ __CLASS__, 'wp_mail_content_type' ] ) ) {
+			add_filter( 'wp_mail_content_type', [ __CLASS__, 'wp_mail_content_type' ] );
+		};
+		return true;
+	}
+
+	/**
+	 * Verwijder de filters.
+	 */
+	private static function cleanup() {
+		remove_filter( 'wp_mail_from', [ __CLASS__, 'wp_mail_from' ] );
+		remove_filter( 'wp_mail_from', [ __CLASS__, 'wp_mail_from_name' ] );
+		remove_filter( 'wp_mail_from', [ __CLASS__, 'wp_mail_content_type' ] );
+	}
+
+	/**
+	 * Filter functie, maak html email.
+	 */
+	public static function wp_mail_content_type() {
+		return 'text/html';
+	}
+
+	/**
+	 * Filter functie, zet from adres correct.
+	 */
+	public static function wp_mail_from() {
+		return self::$from;
+	}
+
+	/**
+	 * Filter functie, zet from naam correct.
+	 */
+	public static function wp_mail_from_name() {
+		return self::$from_name;
 	}
 
 	/**
 	 * Maak de email tekst aan.
 	 *
-	 * @param string $tekst  De content.
-	 * @param string $namens De ondertekenaar.
+	 * @param string  $tekst  De content.
+	 * @param string  $namens De ondertekenaar.
+	 * @param boolean $automatisch Of het een automatische email betreft.
 	 * @return string De opgemaakte tekst.
 	 */
-	private static function inhoud( $tekst, $namens ) {
-		// Maak de email aan.
+	private static function inhoud( $tekst, $namens, $automatisch = true ) {
 		ob_start();
 		?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -198,11 +235,13 @@ class Kleistad_Email {
 					</table>
 				</td>
 			</tr>
+			<?php if ( $automatisch ) : ?>
 			<tr>
 				<td align="center" style="font-family: Calibri; font-size: 9pt;" >
 					Deze e-mail is automatisch gegenereerd en kan niet beantwoord worden.
 				</td>
 			</tr>
+			<?php endif ?>
 		</table>
 		<!--[if (gte mso 9)|(IE)]>
 		</td>
@@ -221,20 +260,21 @@ class Kleistad_Email {
 	 * Helper functie, maakt email tekst op en verzendt de mail
 	 *
 	 * @param string $to bestemming.
-	 * @param string $from afzender.
+	 * @param string $from_name afzender.
 	 * @param string $subject onderwerp.
 	 * @param string $tekst mail inhoud.
 	 */
-	public static function create( $to, $from, $subject, $tekst ) {
-		if ( ! self::initialiseer() ) {
+	public static function create( $to, $from_name, $subject, $tekst ) {
+		if ( ! self::initialiseer( $from ) ) {
 			return false;
 		};
-		$headers   = self::$header_basis;
+		$headers   = self::$headers;
 		$headers[] = 'bcc:' . self::$info;
-		$status    = wp_mail( $to, $subject, self::inhoud( $tekst, "$from namens Kleistad" ), $headers );
+		$status    = wp_mail( $to, $subject, self::inhoud( $tekst, "$from_name namens Kleistad", false ), $headers );
 		if ( ! $status ) {
-			error_log( "$subject $from " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
+			error_log( "$subject $from_name " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
 		}
+		self::cleanup();
 		return $status;
 	}
 
@@ -251,7 +291,7 @@ class Kleistad_Email {
 		if ( ! self::initialiseer() ) {
 			return false;
 		};
-		$headers = self::$header_basis;
+		$headers = self::$headers;
 		$page    = get_page_by_title( $slug, OBJECT );
 		if ( is_null( $page ) ) {
 			$page = get_page_by_title( str_replace( '_', '-', $slug ), OBJECT );
@@ -297,6 +337,7 @@ class Kleistad_Email {
 		if ( ! $status ) {
 			error_log( "$subject $slug " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
 		}
+		self::cleanup();
 		return $status;
 	}
 
