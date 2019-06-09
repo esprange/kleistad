@@ -82,8 +82,8 @@
 
 				$( '#kleistad_eind_tijd' ).change(
 					function() {
-						var startTijd = strtotime( $( this ).val() );
-						var eindTijd  = strtotime( $( '#kleistad_eind_tijd' ).val() );
+						var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
+						var eindTijd  = strtotime( $( this ).val() );
 						if ( startTijd > eindTijd - 60 ) {
 							$( '#kleistad_start_tijd' ).val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
 						}

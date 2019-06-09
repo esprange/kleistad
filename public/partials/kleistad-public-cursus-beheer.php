@@ -17,7 +17,7 @@ else :
 	global $wp;
 	if ( false !== strpos( 'toevoegen, wijzigen', $data['actie'] ) ) :
 		?>
-	<form method="POST" id="kleistad_cursus_beheer_form" >
+	<form method="POST" id="kleistad_cursus_beheer_form" autocomplete="off" >
 		<?php wp_nonce_field( 'kleistad_cursus_beheer' ); ?>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>"/>
 		<input type="hidden" name="lesdatums" id="kleistad_lesdatums" value="<?php echo esc_attr( $data['cursus']['lesdatums'] ); ?>" >
@@ -118,12 +118,12 @@ else :
 				<td colspan="3"><input type="text" name="indelingslug" id="kleistad_indelingslug" value="<?php echo esc_attr( $data['cursus']['indelingslug'] ); ?>" required /></td>
 			</tr>
 		</table>
-		<button type="submit" name="kleistad_submit_cursus_beheer" value="bewaren">Opslaan</button>
+		<button type="submit" name="kleistad_submit_cursus_beheer" value="bewaren" >Opslaan</button>
 		<button type="submit" name="kleistad_submit_cursus_beheer" value="verwijderen">Verwijderen</button>
-		<button type="button" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Annuleren</button>
+		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Annuleren</button>
 	</form>
 	<?php else : ?>
-	<table id="kleistad_cursussen" class="kleistad_datatable display" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+	<table id="kleistad_cursussen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 		<thead>
 			<tr>
 				<th>Code</th>
@@ -149,7 +149,7 @@ else :
 					<td>
 						<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_cursus_' . $cursus['id'] ) . '&actie=wijzigen&id=' . $cursus['id'] ); ?>"
 							title="wijzig cursus" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
-						<!--span class="dashicons dashicons-edit" ></span-->&nbsp;
+							&nbsp;
 						</a>
 					</td>
 				</tr>

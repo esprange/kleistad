@@ -356,11 +356,8 @@ else :
 		?>
 		<div class="kleistad_row" style="padding-top:20px;">
 			<div class="kleistad_col_10">
-				<input type="hidden" name="kleistad_submit_abonnee_wijziging" value="0" >
-				<button name="kleistad_check_abonnee_wijziging" id="kleistad_check_abonnee_wijziging" >Bevestigen</button>
+				<button name="kleistad_submit_abonnee_wijziging" type="submit" id="kleistad_submit_abonnee_wijziging" >Bevestigen</button>
 			</div>
 		</div>
 	</form>
-	<div id="kleistad_confirm" title="Abonnement wijziging">
-	</div>
 <?php endif ?>

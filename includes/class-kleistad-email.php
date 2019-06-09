@@ -79,61 +79,13 @@ class Kleistad_Email {
 	}
 
 	/**
-	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
+	 * Maak de email tekst aan.
 	 *
-	 * @param string       $to bestemming.
-	 * @param string       $subject onderwerp.
-	 * @param string       $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
-	 * @param array        $args de argumenten die in de slug pagina vervangen moeten worden.
-	 * @param string|array $attachment een eventuele bijlage.
+	 * @param string $tekst  De content.
+	 * @param string $namens De ondertekenaar.
+	 * @return string De opgemaakte tekst.
 	 */
-	public static function compose( $to, $subject, $slug, $args = [], $attachment = [] ) {
-		if ( ! self::initialiseer() ) {
-			return false;
-		};
-		$headers = self::$header_basis;
-		$page    = get_page_by_title( $slug, OBJECT );
-		if ( is_null( $page ) ) {
-			$page = get_page_by_title( str_replace( '_', '-', $slug ), OBJECT );
-		}
-		if ( ! is_null( $page ) ) {
-			$text = wpautop( $page->post_content );
-			// Controleer of er includes zijn d.m.v. [pagina:yxz].
-			do {
-				$gevonden = stripos( $text, '[pagina:' );
-				if ( ! ( false === $gevonden ) ) {
-					$eind         = stripos( $text, ']', $gevonden );
-					$include_slug = substr( $text, $gevonden + 8, $eind - $gevonden - 8 );
-					$include_page = get_page_by_title( $include_slug, OBJECT );
-					$include_text = ( ! is_null( $include_page ) ) ? wpautop( $include_page->post_content ) : $include_slug;
-					$text         = substr_replace( $text, $include_text, $gevonden, $eind - $gevonden + 1 );
-				}
-			} while ( ! ( false === $gevonden ) );
-
-			// Vervang alle parameters.
-			foreach ( $args as $key => $value ) {
-				$text = str_replace( '[' . $key . ']', $value, $text );
-			}
-			$fields = [ 'cc', 'bcc' ];
-
-			// Vervang eventuele [cc:x] of [bcc:x] velden en stop die in de header.
-			foreach ( $fields as $field ) {
-				$gevonden = stripos( $text, '[' . $field . ':' );
-				if ( ! ( false === $gevonden ) ) {
-					$eind      = stripos( $text, ']', $gevonden );
-					$headers[] = ucfirst( substr( $text, $gevonden + 1, $eind - $gevonden - 1 ) );
-					$text      = substr( $text, 0, $gevonden ) . substr( $text, $eind + 1 );
-				}
-			}
-		} else {
-			// Pagina niet gevonden. Maak de test versie aan.
-			$text = '<p>' . $slug . '</p><table>';
-			foreach ( $args as $key => $arg ) {
-				$text .= '<tr><th align="left" >' . $key . '</th><td align="left" >' . $arg . '</td></tr>';
-			}
-			$text .= '</table>';
-		}
-
+	private static function inhoud( $tekst, $namens ) {
 		// Maak de email aan.
 		ob_start();
 		?>
@@ -237,9 +189,9 @@ class Kleistad_Email {
 					<table width="100%">
 						<tr>
 							<td class="inner">
-								<?php echo preg_replace( '/\s+/', ' ', $text ); // phpcs:ignore ?><br />
+								<?php echo preg_replace( '/\s+/', ' ', $tekst ); // phpcs:ignore ?><br />
 								<p>Met vriendelijke groet,</p>
-								<p>Kleistad</p>
+								<p><?php echo $namens; // phpcs:ignore ?></p>
 								<p><a href="mailto:<?php echo esc_attr( self::$info ); ?>" target="_top" ><?php echo esc_html( self::$info ); ?></a></p>
 							</td>
 						</tr>
@@ -262,7 +214,86 @@ class Kleistad_Email {
 </body>
 </html>
 		<?php
-		$status = wp_mail( $to, $subject, ob_get_clean(), $headers, $attachment );
+		return ob_get_clean();
+	}
+
+	/**
+	 * Helper functie, maakt email tekst op en verzendt de mail
+	 *
+	 * @param string $to bestemming.
+	 * @param string $from afzender.
+	 * @param string $subject onderwerp.
+	 * @param string $tekst mail inhoud.
+	 */
+	public static function create( $to, $from, $subject, $tekst ) {
+		if ( ! self::initialiseer() ) {
+			return false;
+		};
+		$headers   = self::$header_basis;
+		$headers[] = 'bcc:' . self::$info;
+		$status    = wp_mail( $to, $subject, self::inhoud( $tekst, "$from namens Kleistad" ), $headers );
+		if ( ! $status ) {
+			error_log( "$subject $from " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
+		}
+		return $status;
+	}
+
+	/**
+	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
+	 *
+	 * @param string       $to bestemming.
+	 * @param string       $subject onderwerp.
+	 * @param string       $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
+	 * @param array        $args de argumenten die in de slug pagina vervangen moeten worden.
+	 * @param string|array $attachment een eventuele bijlage.
+	 */
+	public static function compose( $to, $subject, $slug, $args = [], $attachment = [] ) {
+		if ( ! self::initialiseer() ) {
+			return false;
+		};
+		$headers = self::$header_basis;
+		$page    = get_page_by_title( $slug, OBJECT );
+		if ( is_null( $page ) ) {
+			$page = get_page_by_title( str_replace( '_', '-', $slug ), OBJECT );
+		}
+		if ( ! is_null( $page ) ) {
+			$tekst = wpautop( $page->post_content );
+			// Controleer of er includes zijn d.m.v. [pagina:yxz].
+			do {
+				$gevonden = stripos( $tekst, '[pagina:' );
+				if ( ! ( false === $gevonden ) ) {
+					$eind         = stripos( $tekst, ']', $gevonden );
+					$include_slug = substr( $tekst, $gevonden + 8, $eind - $gevonden - 8 );
+					$include_page = get_page_by_title( $include_slug, OBJECT );
+					$include_text = ( ! is_null( $include_page ) ) ? wpautop( $include_page->post_content ) : $include_slug;
+					$tekst        = substr_replace( $tekst, $include_text, $gevonden, $eind - $gevonden + 1 );
+				}
+			} while ( ! ( false === $gevonden ) );
+
+			// Vervang alle parameters.
+			foreach ( $args as $key => $value ) {
+				$tekst = str_replace( '[' . $key . ']', $value, $tekst );
+			}
+			$fields = [ 'cc', 'bcc' ];
+
+			// Vervang eventuele [cc:x] of [bcc:x] velden en stop die in de header.
+			foreach ( $fields as $field ) {
+				$gevonden = stripos( $tekst, '[' . $field . ':' );
+				if ( ! ( false === $gevonden ) ) {
+					$eind      = stripos( $tekst, ']', $gevonden );
+					$headers[] = ucfirst( substr( $tekst, $gevonden + 1, $eind - $gevonden - 1 ) );
+					$tekst     = substr( $tekst, 0, $gevonden ) . substr( $tekst, $eind + 1 );
+				}
+			}
+		} else {
+			// Pagina niet gevonden. Maak de test versie aan.
+			$tekst = '<p>' . $slug . '</p><table>';
+			foreach ( $args as $key => $arg ) {
+				$tekst .= '<tr><th align="left" >' . $key . '</th><td align="left" >' . $arg . '</td></tr>';
+			}
+			$tekst .= '</table>';
+		}
+		$status = wp_mail( $to, $subject, self::inhoud( $tekst, 'Kleistad' ), $headers, $attachment );
 		if ( ! $status ) {
 			error_log( "$subject $slug " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
 		}

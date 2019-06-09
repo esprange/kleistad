@@ -49,12 +49,13 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 */
 	public function __construct( $workshop_id = null ) {
 		global $wpdb;
+		$options      = Kleistad::get_options();
 		$default_data = [
 			'id'          => null,
-			'naam'        => 'nog te definiëren workshop',
-			'datum'       => '',
-			'start_tijd'  => '',
-			'eind_tijd'   => '',
+			'naam'        => '',
+			'datum'       => date( 'Y-m-d' ),
+			'start_tijd'  => '10:00',
+			'eind_tijd'   => '12:00',
 			'docent'      => '',
 			'technieken'  => wp_json_encode( [] ),
 			'organisatie' => '',
@@ -63,8 +64,8 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			'telefoon'    => '',
 			'programma'   => '',
 			'vervallen'   => 0,
-			'kosten'      => 0.0,
-			'aantal'      => 0,
+			'kosten'      => $options['workshopprijs'],
+			'aantal'      => 6,
 			'betaald'     => 0,
 			'definitief'  => 0,
 		];
@@ -188,6 +189,29 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	}
 
 	/**
+	 * Verwijder de workshop.
+	 *
+	 * @return bool True als de workshop verwijderd kan worden.
+	 */
+	public function verwijder() {
+		global $wpdb;
+		if ( $this->definitief || $this->betaald ) {
+			return false; // Er is al betaald of de workshop is definitief bevestigd.
+		}
+		if ( $wpdb->delete( "{$wpdb->prefix}kleistad_workshops", [ 'id' => $this->id ] ) ) {
+			try {
+				$event = new Kleistad_Event( $this->event_id );
+				$event->delete();
+			} catch ( Exception $e ) {
+				error_log ( $e->getMessage() ); // phpcs:ignore
+			}
+		} else {
+			return false;
+		};
+		return true;
+	}
+
+	/**
 	 * Bevestig de workshop.
 	 *
 	 * @since 5.0.0
@@ -233,6 +257,12 @@ class Kleistad_Workshop extends Kleistad_Entity {
 				$this->email( 'afzegging' );
 			}
 			$this->save();
+			try {
+				$event = new Kleistad_Event( $this->event_id );
+				$event->delete();
+			} catch ( Exception $e ) {
+				error_log ( $e->getMessage() ); // phpcs:ignore
+			}
 		}
 	}
 

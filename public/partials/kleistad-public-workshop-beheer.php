@@ -14,53 +14,57 @@ if ( ! Kleistad_Roles::override() ) :
 <p>Geen toegang tot dit formulier</p>
 	<?php
 else :
-	?>
+	global $wp;
+	if ( false !== strpos( 'toevoegen, wijzigen', $data['actie'] ) ) :
+		$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
+		$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
+		?>
 
-<div id="kleistad_workshop">
-	<form method="POST" id="kleistad_workshop_form">
+	<form method="POST" id="kleistad_workshop_beheer_form" autocomplete="off">
 		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
-		<input type="hidden" name="id" id="kleistad_id" value="0"/>
+		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']['workshop_id'] ); ?>"/>
+		<input type="hidden" name="vervallen" value="<?php echo $data['workshop']['vervallen'] ? 1 : 0; ?>" >
 		<table class="kleistad_form" >
 			<tr>
 				<th>Soort workshop</th>
 				<td colspan="3">
-					<select name="naam" id="kleistad_naam">
-						<option value="kinderfeest">kinderfeest</option>
-						<option value="workshop">workshop</option>
+					<select name="naam" id="kleistad_naam" <?php readonly( $alleen_lezen ); ?> >
+						<option value="kinderfeest" <?php checked( $data['workshop']['naam'], 'kinderfeest' ); ?> >kinderfeest</option>
+						<option value="workshop"  <?php checked( $data['workshop']['naam'], 'workshop' ); ?>>workshop</option>
 					</select>
 				</td>
 			</tr>
 			<tr>
 				<th>Naam contact</th>
-				<td colspan="3"><input type="text" name="contact" required id="kleistad_contact" /></td>
+				<td colspan="3"><input type="text" name="contact" required value="<?php echo esc_attr( $data['workshop']['contact'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
 			</tr>
 			<tr>
 				<th>Email contact</th>
-				<td colspan="3"><input type="email" name="email" required id="kleistad_email" /></td>
+				<td colspan="3"><input type="email" name="email" required value="<?php echo esc_attr( $data['workshop']['email'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
 			</tr>
 			<tr>
 				<th>Telefoon contact</th>
-				<td colspan="3"><input type="text" name="telefoon" id="kleistad_telefoon" /></td>
+				<td colspan="3"><input type="text" name="telefoon" value="<?php echo esc_attr( $data['workshop']['telefoon'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
 			</tr>
 			<tr>
 				<th>Organisatie</th>
-				<td colspan="3"><input type="text" name="organisatie" id="kleistad_organisatie" /></td>
+				<td colspan="3"><input type="text" name="organisatie" value="<?php echo esc_attr( $data['workshop']['organisatie'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
 			</tr>
 			<tr>
 				<th>Aantal deelnemers</th>
-				<td><input type="number" name="aantal" id="kleistad_aantal" min="1" value="1"></td>
+				<td><input type="number" name="aantal" id="kleistad_aantal" min="1" value="<?php echo esc_attr( $data['workshop']['aantal'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
 				<th>Datum</th>
-				<td><input type="text" name="datum" id="kleistad_datum" class="kleistad_datum" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>" readonly="readonly" /></td>
+				<td><input type="text" name="datum" id="kleistad_datum" class="kleistad_datum" required value="<?php echo esc_attr( $data['workshop']['datum'] ); ?>" readonly="readonly" /></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
 				<th>Begintijd</th>
-				<td><input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="10:00" class="kleistad_tijd" required /></td>
+				<td><input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['start_tijd'] ); ?>" class="kleistad_tijd" required <?php readonly( $alleen_lezen ); ?> /></td>
 				<th>Eindtijd</th>
-				<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="12:00" class="kleistad_tijd" required /></td>
+				<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['eind_tijd'] ); ?>" class="kleistad_tijd" required <?php readonly( $alleen_lezen ); ?> /></td>
 			</tr>
 			<tr>
 				<th>Docent</th>
@@ -70,78 +74,80 @@ else :
 					<option value="<?php echo esc_attr( $docent->display_name ); ?>">
 				<?php endforeach ?>
 				</datalist>
-				<input type=text list="kleistad_docenten" name="docent" id="kleistad_docent" ></td>
+				<input type=text list="kleistad_docenten" name="docent" value="<?php echo esc_attr( $data['workshop']['docent'] ); ?>" <?php readonly( $alleen_lezen ); ?> ></td>
 			</tr>
 			<tr>
 				<th>Technieken</th>
-				<td><input type="checkbox" name="technieken[]" id="kleistad_draaien" value="Draaien">Draaien</td>
-				<td><input type="checkbox" name="technieken[]" id="kleistad_handvormen" value="Handvormen">Handvormen</td>
-				<td><input type="checkbox" name="technieken[]" id="kleistad_boetseren" value="Boetseren">Boetseren</td>
+				<td><input type="checkbox" name="technieken[]" value="Draaien" <?php checked( in_array( 'Draaien', $data['workshop']['technieken'], true ) ); ?> <?php readonly( $alleen_lezen ); ?> >Draaien</td>
+				<td><input type="checkbox" name="technieken[]" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['workshop']['technieken'], true ) ); ?> <?php readonly( $alleen_lezen ); ?> >Handvormen</td>
+				<td><input type="checkbox" name="technieken[]" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['workshop']['technieken'], true ) ); ?> <?php readonly( $alleen_lezen ); ?> >Boetseren</td>
 			</tr>
 			<tr>
 				<th>Programma</th>
-				<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="2" maxlength="500" ></textarea>
+				<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="2" maxlength="500" <?php readonly( $alleen_lezen ); ?> ><?php echo esc_textarea( $data['workshop']['programma'] ); ?></textarea>
 			</tr>
 			<tr>
 				<th>Kosten</th>
-				<td><input type="number" lang="nl" step="0.01" name="kosten" id="kleistad_kosten" min="0" value=<?php echo esc_attr( $this->options['workshopprijs'] ); ?> ></td>
+				<td><input type="number" lang="nl" step="0.01" name="kosten" id="kleistad_kosten" min="0" value=<?php echo esc_attr( $data['workshop']['kosten'] ); ?> <?php readonly( $alleen_lezen ); ?> ></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
 				<th>Afspraak definitief</th>
-				<td><span id="kleistad_definitief"></span></td>
+				<td><input type="hidden" name="definitief" value="<?php echo $data['workshop']['definitief'] ? 1 : 0; ?>" ><?php echo $data['workshop']['definitief'] ? '&#10004;' : '&#10060;'; ?></td>
 				<th>Betaald</th>
-				<td><span id="kleistad_betaald"></span></td>
-			</tr>
-			<tr>
-				<td><button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_opslaan" value="opslaan" >Opslaan</button></td>
-				<td><button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen"
-					onclick="return confirm( 'weet je zeker dat je nu de bevesting wilt versturen' )" >Bevestigen</button></td>
-				<td><button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen"
-					onclick="return confirm( 'weet je zeker dat je de workshop wilt afzeggen' )" >Afzeggen</button></td>
-				<td><button type="button" id="kleistad_sluit">Sluiten</button></td>
+				<td><input type="hidden" name="betaald" value="<?php echo $data['workshop']['betaald'] ? 1 : 0; ?>" ><?php echo $data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?></td>
 			</tr>
 		</table>
+		<button type="submit" name="kleistad_submit_workshop_beheer" value="bewaren" <?php disabled( $alleen_lezen || $data['workshop']['definitief'] ); ?> >Opslaan</button>
+		<button type="submit" name="kleistad_submit_workshop_beheer" value="bevestigen"
+			data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
+		<button type="submit" name="kleistad_submit_workshop_beheer" value="afzeggen" <?php disabled( $voltooid || 'toevoegen' === $data['actie'] ); ?>
+			data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
+		<button type="submit" name="kleistad_submit_workshop_beheer" value="verwijderen" <?php disabled( $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
+		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Annuleren</button>
 	</form>
-</div>
-
-<table id="kleistad_workshops" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
-	<thead>
-		<tr>
-			<th>Code</th>
-			<th>Datum</th>
-			<th>Titel</th>
-			<th>Aantal</th>
-			<th>Tijd</th>
-			<th>Docent</th>
-			<th>Status</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php
-		foreach ( $data['workshop'] as $workshop ) :
-			$json_workshop = wp_json_encode( $workshop );
-			if ( false === $json_workshop ) :
-				continue;
-			endif;
-			?>
-		<tr data-workshop='<?php echo htmlspecialchars( $json_workshop, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>' >
-			<td><?php echo esc_html( $workshop['code'] ); ?></td>
-			<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
-			<td><?php echo esc_html( $workshop['naam'] ); ?></td>
-			<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
-			<td><?php echo esc_html( $workshop['start_tijd'] . ' - ' . $workshop['eind_tijd'] ); ?></td>
-			<td><?php echo esc_html( $workshop['docent'] ); ?></td>
-			<td><?php echo esc_html( $workshop['status'] ); ?></td>
-		</tr>
-	<?php endforeach ?>
-	</tbody>
-</table>
-<form method="POST">
-	<div class="kleistad_row" style="padding-top:20px;" >
+	<?php else : ?>
+	<table id="kleistad_workshops" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
+		<thead>
+			<tr>
+				<th>Code</th>
+				<th>Datum</th>
+				<th>Titel</th>
+				<th>Docent</th>
+				<th>Aantal</th>
+				<th>Tijd</th>
+				<th>Status</th>
+				<th data-orderable="false"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			foreach ( $data['workshops'] as $workshop ) :
+				?>
+			<tr>
+				<td><?php echo esc_html( $workshop['code'] ); ?></td>
+				<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
+				<td><?php echo esc_html( $workshop['naam'] ); ?></td>
+				<td><?php echo esc_html( $workshop['docent'] ); ?></td>
+				<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
+				<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
+				<td><?php echo esc_html( $workshop['status'] ); ?></td>
+				<td>
+						<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_workshop_' . $workshop['id'] ) . '&actie=wijzigen&id=' . $workshop['id'] ); ?>"
+							title="wijzig workshop" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
+							&nbsp;
+						</a>
+				</td>
+			</tr>
+		<?php endforeach ?>
+		</tbody>
+	</table>
+	<form method="POST">
 		<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'kleistad_workshop_beheer' ) ); ?>" />
-		<button type="button" id="kleistad_workshop_toevoegen" >Toevoegen</button>
+		<button type="button" id="kleistad_workshop_toevoegen" value="<?php echo esc_url( wp_nonce_url( home_url( $wp->request ), 'kleistad_toevoegen_workshop' ) . '&actie=toevoegen' ); ?>">Toevoegen</button>
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="download_workshops" >Download</button>
-	</div>
-</form>
-<?php endif ?>
+	</form>
+		<?php
+	endif;
+endif
+?>

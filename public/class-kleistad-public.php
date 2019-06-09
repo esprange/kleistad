@@ -119,7 +119,7 @@ class Kleistad_Public {
 		wp_register_script( 'fullcalendar-week', '//cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.js', [ 'fullcalendar-core' ], null, false );
 		// phpcs:enable
 
-		wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/kleistad-public$dev.js", [ 'jquery' ], $this->version, true );
+		wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/kleistad-public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 		wp_localize_script(
 			'kleistad',
 			'kleistadData',
@@ -154,7 +154,7 @@ class Kleistad_Public {
 					'css' => [ 'datatables' ],
 				],
 				'cursus_beheer'         => [
-					'js'  => [ 'jquery', 'jquery-form', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+					'js'  => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
 				'cursus_inschrijving'   => [
@@ -169,6 +169,10 @@ class Kleistad_Public {
 					'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
 					'css' => [ 'jquery-ui' ],
 				],
+				'email'                 => [
+					'js'  => [ 'jquery', 'tiny_mce' ],
+					'css' => [ 'jquery-ui' ],
+				],
 				'kalender'              => [
 					'js'  => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
 					'css' => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
@@ -178,7 +182,7 @@ class Kleistad_Public {
 					'css' => [ 'datatables' ],
 				],
 				'recept_beheer'         => [
-					'js'  => [ 'jquery', 'jquery-form', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
+					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
 				'recept'                => [
@@ -190,7 +194,7 @@ class Kleistad_Public {
 					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				],
 				'registratie'           => [
-					'js'  => [ 'jquery', 'jquery-form' ],
+					'js'  => [ 'jquery' ],
 					'css' => [],
 				],
 				'reservering'           => [
@@ -210,7 +214,7 @@ class Kleistad_Public {
 					'css' => [ 'jquery-ui' ],
 				],
 				'workshop_beheer'       => [
-					'js'  => [ 'jquery', 'jquery-form', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables' ],
 				],
 			],
@@ -229,7 +233,6 @@ class Kleistad_Public {
 		Kleistad_Public_Kalender::register_rest_routes();
 		Kleistad_Betalen::register_rest_routes();
 		Kleistad_Adres::register_rest_routes();
-		Kleistad_ShortcodeForm::register_rest_routes();
 	}
 
 	/**
@@ -434,8 +437,10 @@ class Kleistad_Public {
 		if ( ! empty( $atts ) ) {
 			$atts = wp_json_encode( $atts );
 		}
-		$html = $form_object->run();
-		return "<div id=\"kleistad_shortcode\" data-atts='$atts' ><p><!-- placeholder -->&nbsp;</p>$html</div><div id=\"kleistad_processing\" ></div>";
+		$html  = '<div id="kleistad_shortcode" data-atts=' . "'$atts' >" . $form_object->run() . '</div>';
+		$html .= '<div id="kleistad_bevestigen" data-ok="" ></div>';
+		$html .= '<div id="kleistad_wachten" ></div>';
+		return $html;
 	}
 
 	/**

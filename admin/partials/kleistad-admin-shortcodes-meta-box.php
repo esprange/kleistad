@@ -16,32 +16,33 @@
 		<li><h3>publiek toegankelijk (dus zonder ingelogd te zijn)</h3>
 			<ul style="list-style-type:square">
 				<li>[kleistad_abonnee_inschrijving verklaring=''] inschrijving als abonnee (verklaring parameter is optioneel)</li>
-				<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart (verklaring parameter is optioneel)</li>
 				<li>[kleistad_cursus_inschrijving cursus=C11,C22,.. ] inschrijving voor cursus< (cursus parameter is optioneel) </li>
+				<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart (verklaring parameter is optioneel)</li>
 				<li>[kleistad_recept] overzicht van keramiek recepten</li>
 			</ul>
 		</li>
 		<li><h3>toegankelijk voor leden</h3>
 			<ul style="list-style-type:square">
-				<li>[kleistad_reservering oven=1] reserveren ovenstook (oven parameter is verplicht)</li>
-				<li>[kleistad_rapport] overzicht stook activiteiten door lid</li>
-				<li>[kleistad_saldo] wijzigen stooksaldo door lid</li>
-				<li>[kleistad_registratie] wijzigen adresgegevens door lid</li>
-				<li>[kleistad_recept_beheer] wijzigen keramiek recepten door lid</li>
 				<li>[kleistad_abonnee_wijziging] wijzigen abonnement door lid</li>
 				<li>[kleistad_kalender] overzicht workshops en cursussen</li>
+				<li>[kleistad_rapport] overzicht stook activiteiten door lid</li>
+				<li>[kleistad_recept_beheer] wijzigen keramiek recepten door lid</li>
+				<li>[kleistad_registratie] wijzigen adresgegevens door lid</li>
+				<li>[kleistad_reservering oven=1] reserveren ovenstook (oven parameter is verplicht)</li>
+				<li>[kleistad_saldo] wijzigen stooksaldo door lid</li>
 			</ul>
 		</li>
 		<li><h3>toegankelijk voor bestuur</h3>
 			<ul style="list-style-type:square">
+				<li>[kleistad_abonnement_overzicht] overzicht abonnees</li>
+				<li>[kleistad_betalingen] formulier om betalingen cursisten te registreren</li>
+				<li>[kleistad_cursus_beheer] formulier om cursussen te beheren</li>
+				<li>[kleistad_cursus_overzicht] overzicht cursussen en cursist per cursus</li>
+				<li>[kleistad_email] formulier om emails naar abonnees en/of cursisten te sturen</li>
+				<li>[kleistad_registratie_overzicht] overzicht van alle cursisten en leden</li>
 				<li>[kleistad_saldo_overzicht] overzicht stooksaldo leden</li>
 				<li>[kleistad_stookbestand] opvragen stookbestand</li>
-				<li>[kleistad_registratie_overzicht] overzicht van alle cursisten en leden</li>
-				<li>[kleistad_cursus_beheer] formulier om cursussen te beheren</li>
 				<li>[kleistad_workshop_beheer] formulier om workshops te beheren</li>
-				<li>[kleistad_betalingen] formulier om betalingen cursisten te registreren</li>
-				<li>[kleistad_cursus_overzicht] overzicht cursussen en cursist per cursus</li>
-				<li>[kleistad_abonnement_overzicht] overzicht abonnees</li>
 			</ul>
 		</li>
 		<li><h3>toegankelijk voor een cursist</h3>

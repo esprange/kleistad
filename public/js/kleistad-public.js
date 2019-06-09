@@ -5,7 +5,7 @@
  * @since  5.2.0
  */
 
-/* global kleistadData, console */
+/* global kleistadData */
 /* exported strtodate, strtotime, timetostr */
 
 var detectTap;
@@ -74,7 +74,7 @@ function strtodate( value ) {
 	if ( null !== document.querySelector( '.kleistad_datatable' ) ) {
 		$.extend( $.fn.dataTable.defaults, {
 			language: {
-				sProcessing: 'Bezig...',
+				swachten: 'Bezig...',
 				sLengthMenu: '_MENU_ resultaten weergeven',
 				sZeroRecords: 'Geen resultaten gevonden',
 				sInfo: '_START_ tot _END_ van _TOTAL_ resultaten',
@@ -110,7 +110,7 @@ function strtodate( value ) {
 					page: 60,
 					max: 60 * 23 + 45,
 					min: 0,
-					spin: function() {
+					stop: function() {
 						$( this ).change();
 						}
 				},
@@ -186,7 +186,28 @@ function strtodate( value ) {
 
 	$( document ).ready(
         function() {
-            /**
+
+			$( '#kleistad_bevestigen' ).dialog(
+				{
+					modal: true,
+					zIndex: 10000,
+					autoOpen: false,
+					width: 'auto',
+					resizable: false,
+					buttons: {
+						Ja: function() {
+							$( this ).data( 'ok', 'ok' ).dialog( 'close' );
+							$( '#kleistad_shortcode form' ).first().submit();
+						},
+						Nee: function() {
+							$( this ).dialog( 'close' );
+							return false;
+						}
+					}
+				}
+			);
+
+			/**
              * Definieer de tabellen.
              */
 			if ( null !== document.querySelector( '.kleistad_datatable' ) ) {
@@ -194,51 +215,53 @@ function strtodate( value ) {
 			}
 
 			/**
-			 * Alle forms krijgen een processing box en als jquery form geladen is dan wordt het formulier via ajax gesubmit.
+			 * Alle forms krijgen een wachten box.
 			 */
 			if ( null !== document.querySelector( '#kleistad_shortcode' ) ) {
+
+				/**
+				 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
+				 */
 				$( '#kleistad_shortcode' ).on( 'click', 'button[type="submit"]',
 					function( event ) {
-						$( '#kleistad_shortcode' ).data( 'clicked', $( event.target ).val() );
+						$( '#kleistad_shortcode' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
 					}
 				);
 
+				/**
+				 * Submit het formulier, als er een formulier is.
+				 */
 				$( '#kleistad_shortcode' ).on( 'submit', 'form',
 					function( event ) {
-						var data, options,
-							shortcode = $( 'button[name^="kleistad_submit_"]' ).first().attr( 'name' ),
-							val       = $( '#kleistad_shortcode' ).data( 'clicked' );
-						data = {
-							_wpnonce: kleistadData.nonce,
-							atts: $( '#kleistad_shortcode' ).data( 'atts' ),
-							submit: shortcode,
-							ajax: 1
-						};
-						data[ shortcode ] = val;
-						options = {
-							url: kleistadData.base_url + '/shortcodeform/',
-							target: '#kleistad_shortcode',
-							data: data,
-							beforeSubmit: function() {
-								$( '#kleistad_processing' ).addClass( 'kleistad_processing' );
-							},
-							success: function() {
-								$( '.kleistad_datatable' ).DataTable();
-								$( '#kleistad_processing' ).removeClass( 'kleistad_processing' );
-							},
-							error: function( jqXHR ) {
-								$( '#kleistad_processing' ).removeClass( 'kleistad_processing' );
-								if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-									console.log( jqXHR.responseJSON.message );
+						var button  = $( '#kleistad_shortcode' ).data( 'clicked' );
+						var confirm = $( '#' + button.id ).data( 'confirm' );
+						var tekst   = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
+						/**
+						 * Sluit eventuele openstaande dialogs.
+						 */
+						$( '.ui-dialog' ).each(
+							function( item ) {
+								if ( $( item ).dialog( 'isOpen' ) ) {
+									$( item ).dialog( 'close' );
 								}
-								window.alert( kleistadData.error_message );
 							}
-						};
-
-						if ( jQuery().ajaxSubmit ) {
-							$( this ).ajaxSubmit( options );
-							event.preventDefault();
+						);
+						/**
+						 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
+						 */
+						if ( tekst.length ) {
+							if ( '' === $( '#kleistad_bevestigen' ).data( 'ok' ) ) {
+								$( '#kleistad_bevestigen' ).html( tekst[1] ).dialog( 'option', 'title', tekst[0] ).dialog( 'open' );
+								event.preventDefault();
+							}
 						}
+						/**
+						 *  Bij een submit de spinner tonen behalve als er sprake is van een download.
+						 */
+						if ( ( 'undefined' !== typeof button.value  ) && ( button.value.startsWith( 'download' ) ) ) {
+							return;
+						}
+						$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
 					}
 				);
 			}
@@ -249,7 +272,7 @@ function strtodate( value ) {
 			if ( null !== document.querySelector( '.kleistad_datum' ) ) {
 				$.datepicker.setDefaults(
 					{
-						dateFormat: 'dd-mm-yy',
+						dateFormat: 'dd-mm-yy'
 					}
 				);
 			}
