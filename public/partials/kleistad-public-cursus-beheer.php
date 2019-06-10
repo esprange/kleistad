@@ -119,7 +119,7 @@ else :
 			</tr>
 		</table>
 		<button type="submit" name="kleistad_submit_cursus_beheer" value="bewaren" >Opslaan</button>
-		<button type="submit" name="kleistad_submit_cursus_beheer" value="verwijderen">Verwijderen</button>
+		<button type="submit" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
 		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Annuleren</button>
 	</form>
 	<?php else : ?>
