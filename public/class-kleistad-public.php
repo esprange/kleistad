@@ -323,6 +323,45 @@ class Kleistad_Public {
 	}
 
 	/**
+	 * Toont het Kleistad logo op de login.
+	 */
+	public function login_enqueue_scripts() {
+		?>
+		<style type="text/css">
+			#login h1 a, .login h1 a {
+				background-image: url(https://www.kleistad.nl/wp/wp-content/uploads/2016/03/cropped-logo-kleistad.jpg);
+			height:150px;
+			width:150px;
+			background-size: 150px 150px;
+			background-repeat: no-repeat;
+			padding-bottom: 10px;
+			}
+			body.login {
+				background-color: #fcfcfc;
+			}
+			.login form {
+				border-radius: 10px;
+				border: 4px solid #080007;
+			}
+		</style>
+		<?php
+	}
+
+	/**
+	 * Wijzig de url naar de home url.
+	 */
+	public function login_headerurl() {
+		return home_url();
+	}
+
+	/**
+	 * Toon de juiste text bij hovering over het login logo.
+	 */
+	public function login_headertext() {
+		return 'Kleistad';
+	}
+
+	/**
 	 * Toon een melding aan geblokkeerde gebruikers bij het inloggen.
 	 *
 	 * @since 4.0.87

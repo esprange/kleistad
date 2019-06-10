@@ -120,6 +120,9 @@ class Kleistad {
 		$plugin_public = new Kleistad_Public( $this->get_version(), self::get_options() );
 
 		$this->loader->add_action( 'wp_login', $plugin_public, 'user_login', 10, 2 );
+		$this->loader->add_action( 'login_enqueue_scripts', $plugin_public, 'login_enqueue_scripts' );
+		$this->loader->add_action( 'login_headerurl', $plugin_public, 'login_headerurl' );
+		$this->loader->add_action( 'login_headertext', $plugin_public, 'login_headertext' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );
