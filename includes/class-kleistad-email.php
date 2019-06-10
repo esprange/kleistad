@@ -45,13 +45,10 @@ class Kleistad_Email {
 	/**
 	 * Helper functie, haalt het domein op van het email adres.
 	 *
-	 * @return string|bool
+	 * @return string
 	 */
 	public static function domein() {
-		$admin_email = get_option( 'admin_email' );
-		if ( false === $admin_email ) {
-			return false; // Zal waarschijnlijk nooit voorkomen.
-		}
+		$admin_email = get_bloginfo( 'admin_email' );
 		return substr( strrchr( $admin_email, '@' ), 1 );
 	}
 
@@ -59,13 +56,9 @@ class Kleistad_Email {
 	 * Initialisatie functie zodat filters e.d. maar eenmalig gerealiseerd worden.
 	 *
 	 * @param  string $from_name Eventuele naam van gebruiker die de email verzendt.
-	 * @return bool
 	 */
 	private static function initialiseer( $from_name = null ) {
 		$domein = self::domein();
-		if ( false === $domein ) {
-			return false; // Zal waarschijnlijk nooit voorkomen.
-		}
 		self::$from      = ( is_null( $from_name ) ? 'no-reply@' : 'info@' ) . $domein;
 		self::$from_name = is_null( $from_name ) ? 'Kleistad' : $from_name;
 		self::$info      = 'info@' . $domein;
@@ -82,7 +75,6 @@ class Kleistad_Email {
 		if ( false === has_filter( 'wp_mail_content_type', [ __CLASS__, 'wp_mail_content_type' ] ) ) {
 			add_filter( 'wp_mail_content_type', [ __CLASS__, 'wp_mail_content_type' ] );
 		};
-		return true;
 	}
 
 	/**
@@ -265,9 +257,7 @@ class Kleistad_Email {
 	 * @param string $tekst mail inhoud.
 	 */
 	public static function create( $to, $from_name, $subject, $tekst ) {
-		if ( ! self::initialiseer( $from_name ) ) {
-			return false;
-		};
+		self::initialiseer( $from_name );
 		$headers   = self::$headers;
 		$headers[] = 'bcc:' . self::$info;
 		$status    = wp_mail( $to, $subject, self::inhoud( $tekst, "$from_name namens Kleistad", false ), $headers );
@@ -288,9 +278,7 @@ class Kleistad_Email {
 	 * @param string|array $attachment een eventuele bijlage.
 	 */
 	public static function compose( $to, $subject, $slug, $args = [], $attachment = [] ) {
-		if ( ! self::initialiseer() ) {
-			return false;
-		};
+		self::initialiseer();
 		$headers = self::$headers;
 		$page    = get_page_by_title( $slug, OBJECT );
 		if ( is_null( $page ) ) {
