@@ -438,7 +438,7 @@ class Kleistad_Public {
 			$atts = wp_json_encode( $atts );
 		}
 		$html  = '<div id="kleistad_shortcode" data-atts=' . "'$atts' >" . $form_object->run() . '</div>';
-		$html .= '<div id="kleistad_bevestigen" data-ok="" ></div>';
+		$html .= '<div id="kleistad_bevestigen" ></div>';
 		$html .= '<div id="kleistad_wachten" ></div>';
 		return $html;
 	}

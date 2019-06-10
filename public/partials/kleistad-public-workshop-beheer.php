@@ -99,9 +99,9 @@ else :
 			</tr>
 		</table>
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="bewaren" <?php disabled( $alleen_lezen || $data['workshop']['definitief'] ); ?> >Opslaan</button>
-		<button type="submit" name="kleistad_submit_workshop_beheer" value="bevestigen"
+		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen"
 			data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
-		<button type="submit" name="kleistad_submit_workshop_beheer" value="afzeggen" <?php disabled( $voltooid || 'toevoegen' === $data['actie'] ); ?>
+		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $voltooid || ! $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?>
 			data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="verwijderen" <?php disabled( $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
 		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Annuleren</button>

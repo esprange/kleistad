@@ -187,26 +187,6 @@ function strtodate( value ) {
 	$( document ).ready(
         function() {
 
-			$( '#kleistad_bevestigen' ).dialog(
-				{
-					modal: true,
-					zIndex: 10000,
-					autoOpen: false,
-					width: 'auto',
-					resizable: false,
-					buttons: {
-						Ja: function() {
-							$( this ).data( 'ok', 'ok' ).dialog( 'close' );
-							$( '#kleistad_shortcode form' ).first().submit();
-						},
-						Nee: function() {
-							$( this ).dialog( 'close' );
-							return false;
-						}
-					}
-				}
-			);
-
 			/**
              * Definieer de tabellen.
              */
@@ -250,18 +230,39 @@ function strtodate( value ) {
 						 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
 						 */
 						if ( tekst.length ) {
-							if ( '' === $( '#kleistad_bevestigen' ).data( 'ok' ) ) {
-								$( '#kleistad_bevestigen' ).html( tekst[1] ).dialog( 'option', 'title', tekst[0] ).dialog( 'open' );
-								event.preventDefault();
+							$( '#kleistad_bevestigen' ).text( tekst[1] ).dialog(
+								{
+									modal: true,
+									zIndex: 10000,
+									autoOpen: true,
+									width: 'auto',
+									resizable: false,
+									title: tekst[0],
+									buttons: {
+										Ja: function() {
+											$( this ).dialog( 'close' );
+											$( '#kleistad_shortcode' ).off( 'submit', 'form' );
+											$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+											$( '#' + button.id ).click();
+										},
+										Nee: function() {
+											$( this ).dialog( 'close' );
+											return false;
+										}
+									}
+								}
+							);
+							event.preventDefault();
+						} else {
+							/**
+							 *  Bij een submit de spinner tonen behalve als er sprake is van een download.
+							 */
+							if ( ( 'undefined' !== typeof button.value  ) && ( button.value.startsWith( 'download' ) ) ) {
+								return true;
 							}
+							$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+							return true;
 						}
-						/**
-						 *  Bij een submit de spinner tonen behalve als er sprake is van een download.
-						 */
-						if ( ( 'undefined' !== typeof button.value  ) && ( button.value.startsWith( 'download' ) ) ) {
-							return;
-						}
-						$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
 					}
 				);
 			}

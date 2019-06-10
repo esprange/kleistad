@@ -203,7 +203,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 				$event = new Kleistad_Event( $this->event_id );
 				$event->delete();
 			} catch ( Exception $e ) {
-				error_log ( $e->getMessage() ); // phpcs:ignore
+				unset( $e ); // phpcs:ignore
 			}
 		} else {
 			return false;
@@ -261,7 +261,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 				$event = new Kleistad_Event( $this->event_id );
 				$event->delete();
 			} catch ( Exception $e ) {
-				error_log ( $e->getMessage() ); // phpcs:ignore
+				unset( $e ); // phpcs:ignore
 			}
 		}
 	}
