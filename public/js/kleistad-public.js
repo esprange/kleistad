@@ -257,11 +257,9 @@ function strtodate( value ) {
 							/**
 							 *  Bij een submit de spinner tonen behalve als er sprake is van een download.
 							 */
-							if ( ( 'undefined' !== typeof button.value  ) && ( button.value.startsWith( 'download' ) ) ) {
-								return true;
+							if ( ! ( ( 'undefined' !== typeof button.value  ) && ( button.value.startsWith( 'download' ) ) ) ) {
+								$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
 							}
-							$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
-							return true;
 						}
 					}
 				);
