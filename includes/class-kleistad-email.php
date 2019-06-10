@@ -58,7 +58,7 @@ class Kleistad_Email {
 	 * @param  string $from_name Eventuele naam van gebruiker die de email verzendt.
 	 */
 	private static function initialiseer( $from_name = null ) {
-		$domein = self::domein();
+		$domein          = self::domein();
 		self::$from      = ( is_null( $from_name ) ? 'no-reply@' : 'info@' ) . $domein;
 		self::$from_name = is_null( $from_name ) ? 'Kleistad' : $from_name;
 		self::$info      = 'info@' . $domein;

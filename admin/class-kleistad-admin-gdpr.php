@@ -242,9 +242,6 @@ class Kleistad_Admin_GDPR {
 		$count        = 0;
 		$gebruiker_id = email_exists( $email );
 		$domein       = Kleistad_Email::domein();
-		if ( false === $domein ) {
-			$domein = 'example.com';
-		}
 		if ( false !== $gebruiker_id ) {
 			$stub = "- verwijderd$gebruiker_id -";
 			wp_update_user(

@@ -99,6 +99,14 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
 			if ( ! is_null( $data ) ) {
 				$this->data = $data;
+				if ( empty( $this->data['lesdatums'] ) ) {
+					$this->data['lesdatums'] = wp_json_encode(
+						( $this->data['start_datum'] === $this->data['eind_datum'] ) ?
+						[ $this->data['start_datum'] ] :
+						[ $this->data['start_datum'], $this->data['eind_datum'] ]
+					);
+
+				}
 			}
 		}
 	}
@@ -116,18 +124,12 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'technieken':
 				return empty( $this->data[ $attribuut ] ) ? [] : json_decode( $this->data[ $attribuut ], true );
 			case 'lesdatums':
-				if ( empty( $this->data[ $attribuut ] ) ) {
-					return ( $this->data['start_datum'] === $this->data['eind_datum'] ) ?
-						[ strtotime( $this->data['start_datum'] ) ] :
-						[ strtotime( $this->data['start_datum'] ), strtotime( $this->data['eind_datum'] ) ];
-				} else {
-					return array_map(
-						function( $item ) {
-							return strtotime( $item );
-						},
-						json_decode( $this->data[ $attribuut ], true )
-					);
-				}
+				return array_map(
+					function( $item ) {
+						return strtotime( $item );
+					},
+					json_decode( $this->data[ $attribuut ], true )
+				);
 			case 'start_datum':
 			case 'eind_datum':
 			case 'start_tijd':

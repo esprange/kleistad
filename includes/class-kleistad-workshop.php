@@ -353,9 +353,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	}
 
 	/**
-	 * Service functie voor update abonnee batch job.
-	 * Datum wordt apart meegegeven, ondanks dat het de datum heden is.
-	 * Omdat de uitvoeringstijd van de batchjob niet vastligt beter om de oorspronkelijke timestamp vast te leggen.
+	 * Service functie voor update workshop batch job.
 	 *
 	 * @since 5.0.0
 	 *
