@@ -56,6 +56,7 @@ class Kleistad {
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
 		$this->define_admin_hooks();
+		$this->define_common_hooks();
 		$this->define_public_hooks();
 	}
 
@@ -111,6 +112,26 @@ class Kleistad {
 	}
 
 	/**
+	 * Registreer all common hooks.
+	 *
+	 * @since   5.5.1
+	 * @access  private
+	 */
+	private function define_common_hooks() {
+		$plugin_common = new Kleistad_Common();
+
+		$this->loader->add_action( 'wp_login', $plugin_common, 'user_login', 10, 2 );
+		$this->loader->add_action( 'login_enqueue_scripts', $plugin_common, 'login_enqueue_scripts' );
+		$this->loader->add_action( 'login_headerurl', $plugin_common, 'login_headerurl' );
+		$this->loader->add_action( 'login_headertext', $plugin_common, 'login_headertext' );
+		$this->loader->add_action( 'after_setup_theme', $plugin_common, 'verberg_toolbar' );
+
+		$this->loader->add_filter( 'login_message', $plugin_common, 'user_login_message' );
+		$this->loader->add_filter( 'login_redirect', $plugin_common, 'login_redirect', 10, 3 );
+		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_common, 'loginuit_menu', 10, 2 );
+	}
+
+	/**
 	 * Registreer alle public hooks.
 	 *
 	 * @since    4.0.87
@@ -119,24 +140,16 @@ class Kleistad {
 	private function define_public_hooks() {
 		$plugin_public = new Kleistad_Public( $this->get_version(), self::get_options() );
 
-		$this->loader->add_action( 'wp_login', $plugin_public, 'user_login', 10, 2 );
-		$this->loader->add_action( 'login_enqueue_scripts', $plugin_public, 'login_enqueue_scripts' );
-		$this->loader->add_action( 'login_headerurl', $plugin_public, 'login_headerurl' );
-		$this->loader->add_action( 'login_headertext', $plugin_public, 'login_headertext' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );
 		$this->loader->add_action( 'kleistad_kosten', $plugin_public, 'update_ovenkosten' );
 		$this->loader->add_action( 'kleistad_abonnement', $plugin_public, 'update_abonnement', 10, 3 );
 		$this->loader->add_action( 'kleistad_workshop', $plugin_public, 'update_workshop', 10, 2 );
-		$this->loader->add_action( 'after_setup_theme', $plugin_public, 'verberg_toolbar' );
 
-		$this->loader->add_filter( 'login_message', $plugin_public, 'user_login_message' );
-		$this->loader->add_filter( 'login_redirect', $plugin_public, 'login_redirect', 10, 3 );
 		$this->loader->add_filter( 'single_template', $plugin_public, 'single_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
-		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_public, 'loginuit_menu', 10, 2 );
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
 	}
 
