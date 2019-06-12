@@ -111,7 +111,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			case 'c_betaald':
 			case 'geannuleerd':
 			case 'restant_email':
-				return 1 === intval( $this->data[ $attribuut ] );
+				return boolval( $this->data[ $attribuut ] );
 			case 'gedeeld':
 				return 0 < $this->cursus->inschrijfkosten;
 			default:

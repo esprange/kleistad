@@ -113,7 +113,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				return mktime( 0, 0, 0, $start['mon'] + 4, 1, $start['year'] );
 			case 'geannuleerd':
 			case 'gepauzeerd':
-				return 1 === intval( $this->data[ $attribuut ] );
+				return boolval( $this->data[ $attribuut ] );
 			case 'dag':
 				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
 			case 'extras':

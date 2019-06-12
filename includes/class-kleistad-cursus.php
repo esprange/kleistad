@@ -135,12 +135,12 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'eind_tijd':
 				return strtotime( $this->data[ $attribuut ] );
 			case 'vol':
-				return 1 === intval( $this->data[ $attribuut ] ) || 0 === $this->ruimte();
+				return boolval( $this->data[ $attribuut ] ) || 0 === $this->ruimte();
 			case 'vervallen':
 			case 'techniekkeuze':
 			case 'meer':
 			case 'tonen':
-				return 1 === intval( $this->data[ $attribuut ] );
+				return boolval( $this->data[ $attribuut ] );
 			case 'array':
 				return $this->data;
 			case 'code':

@@ -102,7 +102,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			case 'vervallen':
 			case 'betaald':
 			case 'definitief':
-				return 1 === intval( $this->data[ $attribuut ] );
+				return boolval( $this->data[ $attribuut ] );
 			case 'array':
 				return $this->data;
 			case 'code':
