@@ -94,7 +94,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return ( 'null' === $this->data['technieken'] ) ? [] : json_decode( $this->data['technieken'], true );
+				return json_decode( $this->data['technieken'], true );
 			case 'datum':
 			case 'start_tijd':
 			case 'eind_tijd':
@@ -103,8 +103,6 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			case 'betaald':
 			case 'definitief':
 				return boolval( $this->data[ $attribuut ] );
-			case 'array':
-				return $this->data;
 			case 'code':
 				return "W{$this->data['id']}";
 			case 'event_id':

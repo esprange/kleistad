@@ -121,7 +121,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
-				return empty( $this->data[ $attribuut ] ) ? [] : json_decode( $this->data[ $attribuut ], true );
+				return json_decode( $this->data[ $attribuut ], true );
 			case 'lesdatums':
 				return array_map(
 					function( $item ) {
@@ -141,17 +141,12 @@ class Kleistad_Cursus extends Kleistad_Entity {
 			case 'meer':
 			case 'tonen':
 				return boolval( $this->data[ $attribuut ] );
-			case 'array':
-				return $this->data;
 			case 'code':
 				return "C{$this->data['id']}";
 			case 'event_id':
 				return sprintf( 'kleistadcursus%06d', $this->data['id'] );
 			default:
-				if ( is_string( $this->data[ $attribuut ] ) ) {
-					return htmlspecialchars_decode( $this->data[ $attribuut ] );
-				}
-				return $this->data[ $attribuut ];
+				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
 	}
 
