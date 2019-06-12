@@ -39,7 +39,7 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 		$data['groepen'][0] = 'Abonnees';
 		$cursussen          = Kleistad_Cursus::all();
 		foreach ( $cursussen as $cursus_id => $cursus ) {
-			if ( $cursus->ruimte === $cursus->maximum ) {
+			if ( $cursus->ruimte() === $cursus->maximum ) {
 				continue;
 			}
 			$data['groepen'][ $cursus_id ] = 'Cursus ' . $cursus->code . ' ' . $cursus->naam;

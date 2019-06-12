@@ -31,7 +31,6 @@
  * @property string inschrijfslug
  * @property string indelingslug
  * @property int    maximum
- * @property int    ruimte
  * @property bool   meer
  * @property bool   tonen
  * @property string event_id
@@ -44,7 +43,7 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	 *
 	 * @return int nog beschikbare ruimte.
 	 */
-	private function ruimte() {
+	public function ruimte() {
 		$inschrijvingen = Kleistad_Inschrijving::all();
 
 		$aantal = $this->maximum;
@@ -144,8 +143,6 @@ class Kleistad_Cursus extends Kleistad_Entity {
 				return 1 === intval( $this->data[ $attribuut ] );
 			case 'array':
 				return $this->data;
-			case 'ruimte':
-				return $this->ruimte();
 			case 'code':
 				return "C{$this->data['id']}";
 			case 'event_id':

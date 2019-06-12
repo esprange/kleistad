@@ -94,7 +94,7 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 							'className'     => $cursus->tonen || $lopend ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
 							'extendedProps' => [
 								'naam'       => "cursus $cursus->code",
-								'aantal'     => $cursus->maximum - $cursus->ruimte,
+								'aantal'     => $cursus->maximum - $cursus->ruimte(),
 								'docent'     => $cursus->docent,
 								'technieken' => implode( ', ', $cursus->technieken ),
 								'start'      => strftime( '%H:%M', $cursus->start_tijd ),

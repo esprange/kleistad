@@ -83,7 +83,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				'selecteerbaar' => ! $cursus->vol && ! $cursus->vervallen,
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
-				'ruimte'        => $cursus->ruimte,
+				'ruimte'        => $cursus->ruimte(),
 				'prijs'         => ( 0 < $cursus->inschrijfkosten ? $cursus->inschrijfkosten : $cursus->cursuskosten ),
 				'inschrijfgeld' => ( 0 < $cursus->inschrijfkosten ),
 				'lopend'        => $cursus->start_datum < strtotime( 'today' ),
@@ -139,7 +139,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 			return $error;
 		}
 		$data['cursus'] = new Kleistad_Cursus( $data['input']['cursus_id'] );
-		$ruimte         = $data['cursus']->ruimte;
+		$ruimte         = $data['cursus']->ruimte();
 		if ( $data['cursus']->vol ) {
 			$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
 			$data['input']['cursus_id'] = 0;
