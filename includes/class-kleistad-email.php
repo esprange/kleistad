@@ -249,18 +249,20 @@ class Kleistad_Email {
 	}
 
 	/**
-	 * Helper functie, maakt email tekst op en verzendt de mail
+	 * Helper functie, maakt email tekst op en verzendt de mail anoniem
 	 *
-	 * @param string $to bestemming.
+	 * @param array  $to        bestemmingen.
 	 * @param string $from_name afzender.
-	 * @param string $subject onderwerp.
-	 * @param string $tekst mail inhoud.
+	 * @param string $subject   onderwerp.
+	 * @param string $tekst     mail inhoud.
 	 */
 	public static function create( $to, $from_name, $subject, $tekst ) {
 		self::initialiseer( $from_name );
 		$headers   = self::$headers;
-		$headers[] = 'bcc:' . self::$info;
-		$status    = wp_mail( $to, $subject, self::inhoud( $tekst, "$from_name<br/>Kleistad", false ), $headers );
+		foreach( $to as $bcc ) {
+			$headers[] = 'bcc:' . $bcc;
+		}
+		$status    = wp_mail( self::$info, $subject, self::inhoud( $tekst, "$from_name<br/>Kleistad", false ), $headers );
 		if ( ! $status ) {
 			error_log( "$subject $from_name " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
 		}
@@ -271,7 +273,7 @@ class Kleistad_Email {
 	/**
 	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
 	 *
-	 * @param string       $to bestemming.
+	 * @param string|array $to bestemming.
 	 * @param string       $subject onderwerp.
 	 * @param string       $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
 	 * @param array        $args de argumenten die in de slug pagina vervangen moeten worden.
