@@ -258,11 +258,11 @@ class Kleistad_Email {
 	 */
 	public static function create( $to, $from_name, $subject, $tekst ) {
 		self::initialiseer( $from_name );
-		$headers   = self::$headers;
-		foreach( $to as $bcc ) {
+		$headers = self::$headers;
+		foreach ( $to as $bcc ) {
 			$headers[] = 'bcc:' . $bcc;
 		}
-		$status    = wp_mail( self::$info, $subject, self::inhoud( $tekst, "$from_name<br/>Kleistad", false ), $headers );
+		$status = wp_mail( self::$info, $subject, self::inhoud( $tekst, "$from_name<br/>Kleistad", false ), $headers );
 		if ( ! $status ) {
 			error_log( "$subject $from_name " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
 		}
