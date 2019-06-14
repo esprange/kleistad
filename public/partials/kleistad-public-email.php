@@ -52,7 +52,6 @@
 				'textarea_name' => 'email_content',
 				'textarea_rows' => 6,
 				'quicktags'     => false,
-				'media_buttons' => false,
 			]
 		);
 		?>

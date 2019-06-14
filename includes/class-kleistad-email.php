@@ -260,7 +260,7 @@ class Kleistad_Email {
 		self::initialiseer( $from_name );
 		$headers   = self::$headers;
 		$headers[] = 'bcc:' . self::$info;
-		$status    = wp_mail( $to, $subject, self::inhoud( $tekst, "$from_name namens Kleistad", false ), $headers );
+		$status    = wp_mail( $to, $subject, self::inhoud( $tekst, "$from_name<br/>Kleistad", false ), $headers );
 		if ( ! $status ) {
 			error_log( "$subject $from_name " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
 		}
