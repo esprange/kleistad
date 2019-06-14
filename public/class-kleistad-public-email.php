@@ -68,7 +68,7 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 			]
 		);
 		$data['input']['onderwerp']     = filter_input( INPUT_POST, 'onderwerp', FILTER_SANITIZE_STRING );
-		$data['input']['email_content'] = sanitize_textarea_field( filter_input( INPUT_POST, 'email_content' ) );
+		$data['input']['email_content'] = filter_input( INPUT_POST, 'email_content' );
 
 		if ( empty( $data['input']['email_content'] ) ) {
 			$error->add( 'email', 'Er is geen email content' );
