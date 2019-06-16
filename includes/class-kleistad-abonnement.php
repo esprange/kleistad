@@ -52,7 +52,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 *
 	 * @since 5.5.1
 	 * @access private
-	 * @var Kleistad_Betalen $betalen Het betalen object.
+	 * @var Kleistad_AbonnementBetalen $betalen Het betalen object.
 	 */
 	private $betalen;
 
