@@ -12,12 +12,12 @@
 /**
  * De class voor email
  * Het principe is dat alle email vanuit het info@ adres verzonden wordt. De emails zijn in twee groepen te verdelen
- * 		- automatische emails zoals bevestigingen.
- * 			from adres 		: Kleistad <info@sender_domein>
- * 			reply-to adres 	: no-reply@domein
- * 		- handmatige emails waarbij een gebruiker de tekst invoert.
- * 			from adres		: X namens Kleistad <info@sender_domein>
- * 			reply-to adres	: Kleistad <info@domein>
+ *      - automatische emails zoals bevestigingen.
+ *          from adres      : Kleistad <info@sender_domein>
+ *          reply-to adres  : no-reply@domein
+ *      - handmatige emails waarbij een gebruiker de tekst invoert.
+ *          from adres      : X namens Kleistad <info@sender_domein>
+ *          reply-to adres  : Kleistad <info@domein>
  */
 class Kleistad_Email {
 
@@ -58,22 +58,28 @@ class Kleistad_Email {
 		$from           = "info@$verzend_domein";
 		self::$info     = "info@$domein";
 		self::$noreply  = "no-reply@$domein";
-		add_filter( 'wp_mail_from', function() use ( $from ) {
+		add_filter(
+			'wp_mail_from',
+			function() use ( $from ) {
 				return $from;
 			}
 		);
-		add_filter( 'wp_mail_from_name', function() use ( $from_name ) {
+		add_filter(
+			'wp_mail_from_name',
+			function() use ( $from_name ) {
 				return $from_name;
 			}
 		);
-		add_filter( 'wp_mail_content_type', function() {
+		add_filter(
+			'wp_mail_content_type',
+			function() {
 				return 'text/html';
 			}
 		);
 		/**
 		 * Voorlopig nog steeds email copy verzenden vanwege email issues.
 		 */
- 		return [
+		return [
 			'Bcc: kleistad@sprako.nl',
 		];
 	}
