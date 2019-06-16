@@ -229,7 +229,7 @@ class Kleistad_Email {
 	 */
 	public static function create( $to, $from_name, $subject, $tekst ) {
 		$headers   = self::initialiseer( "$from_name namens Kleistad" );
-		$headers[] = "Reply-To: Kleistad <{self::$info}>";
+		$headers[] = 'Reply-To: Kleistad <' . self::$info . '>';
 		foreach ( $to as $bcc ) {
 			$headers[] = 'Bcc: ' . $bcc;
 		}
@@ -251,7 +251,7 @@ class Kleistad_Email {
 	 */
 	public static function compose( $to, $subject, $slug, $args = [], $attachment = [] ) {
 		$headers   = self::initialiseer();
-		$headers[] = "Reply-To: Kleistad <{self::$noreply}";
+		$headers[] = 'Reply-To: Kleistad <' . self::$noreply . '>';
 		$page      = get_page_by_title( $slug, OBJECT );
 		if ( is_null( $page ) ) {
 			$page = get_page_by_title( str_replace( '_', '-', $slug ), OBJECT );
