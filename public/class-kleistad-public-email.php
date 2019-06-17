@@ -107,6 +107,7 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 			return $error;
 		}
 		foreach ( $data['input']['groepen'] as $groep_id ) {
+			$groep_id = intval( $groep_id );
 			if ( 0 === $groep_id ) {
 				$geadresseerde[0][''] = 'abonnee';
 				foreach ( $abonnementen as $abonnee_id => $abonnement ) {
