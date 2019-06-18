@@ -181,7 +181,7 @@ class Kleistad_MollieSimulatie {
 								/**
 								 * De details van het mandaat.
 								 *
-								 * @var string $details
+								 * @var object $details
 								 */
 								public $details;
 
@@ -241,10 +241,8 @@ class Kleistad_MollieSimulatie {
 
 					/**
 					 * Maak een subscriptie aan.
-					 *
-					 * @param array $data De herhaalorder info.
 					 */
-					public function createSubscription( $data ) {
+					public function createSubscription() {
 						return new class() {
 							/**
 							 * Het subscriptie id
