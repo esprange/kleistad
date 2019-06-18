@@ -32,6 +32,10 @@ class Kleistad_Betalen {
 	 * @since      4.2.0
 	 */
 	public function __construct() {
+		if ( defined( 'KLEISTAD_MOLLIE_SIM' ) ) {
+			$this->mollie = new Kleistad_MollieSimulatie();
+			return;
+		}
 		$options = Kleistad::get_options();
 
 		$this->mollie = new \Mollie\Api\MollieApiClient();
