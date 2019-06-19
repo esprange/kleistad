@@ -12,19 +12,28 @@
 ?>
 	<form method="POST">
 		<?php wp_nonce_field( 'kleistad_email' ); ?>
-
+		<input id="kleistad_selectie" name="gebruikers" type="hidden">
 		<div class="kleistad_row">
 			<div class="kleistad_label">
 				<label for="kleistad_groep" >Selecteer de groep(en) waarvoor de email verzonden moet worden</label>
 			</div>
 		</div>
 		<div class="kleistad_row">
-			<div class="kleistad_col_5">
-				<select name="groepen[]" required multiple>
-				<?php foreach ( $data['groepen'] as $groep_id => $groep ) : ?>
-					<option value='<?php echo esc_attr( $groep_id ); ?>' <?php selected( array_key_exists( $groep_id, $data['input']['groepen'] ) ); ?> ><?php echo esc_html( $groep ); ?></option>
+			<div id="kleistad_gebruikers" class="kleistad_col_10">
+				<ul>
+				<?php foreach ( $data['input']['tree'] as $groep_id => $groep ) : ?>
+					<li>
+						<?php echo esc_html( $groep['naam'] ); ?>
+						<ul>
+						<?php foreach ( $groep['leden'] as $gebruiker_id => $gebruiker ) : ?>
+							<li title="<?php echo esc_attr( $gebruiker_id ); ?>">
+							<?php echo esc_html( $gebruiker ); ?>
+							</li>
+						<?php endforeach ?>
+						</ul>
+					</li>
 				<?php endforeach ?>
-				</select>
+				</ul>
 			</div>
 		</div>
 		<div class="kleistad_row">

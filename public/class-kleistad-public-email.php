@@ -30,19 +30,28 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 		if ( is_null( $data ) ) {
 			$data          = [];
 			$data['input'] = [
-				'groepen'       => [],
+				'tree'          => [],
 				'email_content' => '',
 				'onderwerp'     => '',
 			];
 		}
 
-		$data['groepen'][0] = 'Abonnees';
-		$cursussen          = Kleistad_Cursus::all();
-		foreach ( $cursussen as $cursus_id => $cursus ) {
-			if ( $cursus->ruimte() === $cursus->maximum ) {
-				continue;
+		$data['input']['tree'][0]['naam'] = 'Abonnees';
+		$abonnementen                     = Kleistad_Abonnement::all();
+		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
+			if ( ! $abonnement->geannuleerd ) {
+				$data['input']['tree'][0]['leden'][ $abonnee_id ] = get_userdata( $abonnee_id )->display_name;
 			}
-			$data['groepen'][ $cursus_id ] = 'Cursus ' . $cursus->code . ' ' . $cursus->naam;
+		}
+		$inschrijvingen = Kleistad_Inschrijving::all();
+		$cursussen      = Kleistad_Cursus::all();
+		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
+			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
+				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && strtotime( '-6 months' ) < $cursussen[ $cursus_id ]->eind_datum ) {
+					$data['input']['tree'][ $cursus_id ]['naam']                 = $cursussen[ $cursus_id ]->code . ' - ' . $cursussen[ $cursus_id ]->naam;
+					$data['input']['tree'][ $cursus_id ]['leden'][ $cursist_id ] = get_userdata( $cursist_id )->display_name;
+				}
+			}
 		}
 
 		return true;
@@ -58,23 +67,21 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	 */
 	protected function validate( &$data ) {
 		$error                          = new WP_Error();
-		$data['input']['groepen']       = filter_input(
+		$data['input']                  = filter_input_array(
 			INPUT_POST,
-			'groepen',
-			FILTER_SANITIZE_NUMBER_INT,
 			[
-				'flags'   => FILTER_REQUIRE_ARRAY,
-				'options' => [ 'default' => [] ],
+				'gebruikers'    => FILTER_SANITIZE_STRING,
+				'onderwerp'     => FILTER_SANITIZE_STRING,
+				'email_content' => FILTER_DEFAULT,
 			]
 		);
-		$data['input']['onderwerp']     = filter_input( INPUT_POST, 'onderwerp', FILTER_SANITIZE_STRING );
-		$data['input']['email_content'] = wp_kses_post( filter_input( INPUT_POST, 'email_content' ) );
+		$data['input']['email_content'] = wp_kses_post( $data['input']['email_content'] );
 
 		if ( empty( $data['input']['email_content'] ) ) {
 			$error->add( 'email', 'Er is geen email content' );
 		}
-		if ( empty( $data['input']['groepen'] ) ) {
-			$error->add( 'email', 'Er is geen enkele groep geselecteerd' );
+		if ( empty( $data['input']['gebruikers'] ) ) {
+			$error->add( 'email', 'Er is geen enkele ontvanger geselecteerd' );
 		}
 		if ( empty( $data['input']['onderwerp'] ) ) {
 			$error->add( 'email', 'Er is geen onderwerp opgegeven' );
@@ -97,43 +104,17 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	protected function save( $data ) {
 		$error             = new WP_Error();
 		$huidige_gebruiker = wp_get_current_user();
-		$verzonden         = [];
-		$geadresseerde     = [];
+		$gebruiker_ids     = array_unique( explode( ',', $data['input']['gebruikers'] ) );
 		$adressen          = [];
-		$inschrijvingen    = Kleistad_Inschrijving::all();
-		$abonnementen      = Kleistad_Abonnement::all();
-		if ( ! is_user_logged_in() ) {
-			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
-			return $error;
-		}
-		foreach ( $data['input']['groepen'] as $groep_id ) {
-			$groep_id = intval( $groep_id );
-			if ( 0 === $groep_id ) {
-				$geadresseerde[0][''] = 'abonnee';
-				foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-					if ( ! in_array( $abonnee_id, $verzonden, true ) && ! $abonnement->geannuleerd ) {
-						$adressen[]  = get_userdata( $abonnee_id )->user_email;
-						$verzonden[] = $abonnee_id;
-					}
-				}
-			} else {
-				$geadresseerde[1] = 'cursist';
-				foreach ( $inschrijvingen as $cursist_id => $inschrijving ) {
-					if ( ! in_array( $cursist_id, $verzonden, true ) && array_key_exists( $groep_id, $inschrijving ) ) {
-						if ( $inschrijving[ $groep_id ]->ingedeeld && ! $inschrijving[ $groep_id ]->geannuleerd ) {
-							$adressen[]  = get_userdata( $cursist_id )->user_email;
-							$verzonden[] = $cursist_id;
-						}
-					}
-				}
-			}
+		foreach ( $gebruiker_ids as $gebruiker_id ) {
+			$adressen[] = get_userdata( $gebruiker_id )->email_address;
 		}
 		Kleistad_Email::create(
 			$adressen,
 			$huidige_gebruiker->display_name,
 			$data['input']['onderwerp'],
-			'<p>Beste ' . implode( ' / ', $geadresseerde ) . ',</p>' . $data['input']['email_content'] . '<br/>'
+			'<p>Beste Kleistad gebruiker,</p>' . $data['input']['email_content'] . '<br/>'
 		);
-		return 'De email is naar ' . count( $verzonden ) . ' personen verzonden';
+		return 'De email is naar ' . count( $adressen ) . ' personen verzonden';
 	}
 }
