@@ -12,7 +12,7 @@
 ?>
 	<form method="POST">
 		<?php wp_nonce_field( 'kleistad_email' ); ?>
-		<input id="kleistad_selectie" name="gebruikers" type="hidden">
+		<input id="kleistad_selectie" name="adressen" type="hidden">
 		<div class="kleistad_row">
 			<div class="kleistad_label">
 				<label for="kleistad_groep" >Selecteer de groep(en) waarvoor de email verzonden moet worden</label>
@@ -52,7 +52,7 @@
 			</div>
 		</div>
 		<div style="background:lightgray;" >
-		<p>Beste X,</p>
+		<p>Beste Kleistad gebruiker,</p>
 	<?php
 		wp_editor(
 			$data['input']['email_content'],
