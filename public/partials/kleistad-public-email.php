@@ -68,7 +68,8 @@
 		<p><?php echo esc_html( wp_get_current_user()->display_name ); ?> namens Kleistad</p>
 		</div>
 		<div class="kleistad_row" >
-			<button type="submit" name="kleistad_submit_email" >Verzenden</button>
+			<button type="submit" name="kleistad_submit_email" value="verzenden" >Verzenden</button>
+			<button type="submit" name="kleistad_submit_email" value="test_email" >Test Email verzenden</button>
 		</div>
 	</form>
 <?php

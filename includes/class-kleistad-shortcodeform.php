@@ -158,12 +158,17 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 				} else {
 					$result = $this->validate( $data );
 					if ( ! is_wp_error( $result ) ) {
-						$result = $this->save( $data );
-					}
-					if ( is_string( $result ) ) {
-						$url = add_query_arg( 'kleistad_succes', rawurlencode( $result ), get_permalink() );
-						wp_safe_redirect( $url, 303 );
-						die();
+						if ( 0 === strpos( $data['form_actie'], 'test_' ) ) {
+							$result = $this->test( substr( $data['form_actie'], strlen( 'test_' ) ), $data );
+							$html  .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
+						} else {
+							$result = $this->save( $data );
+							if ( is_string( $result ) ) {
+								$url = add_query_arg( 'kleistad_succes', rawurlencode( $result ), get_permalink() );
+								wp_safe_redirect( $url, 303 );
+								die();
+							}
+						}
 					}
 				}
 				if ( is_wp_error( $result ) ) {
@@ -231,4 +236,17 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 		fclose( $this->file_handle );
 		exit;
 	}
+
+	/**
+	 * Voer een testrun uit
+	 *
+	 * @param string $test Naam van de functie voor het uitvoeren van de test.
+	 * @param array  $data De uit te wisselen data.
+	 *
+	 * @since 5.5.1
+	 */
+	public function test( $test, $data ) {
+		return call_user_func( [ $this, $test ], $data );
+	}
+
 }

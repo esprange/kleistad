@@ -236,7 +236,7 @@ class Kleistad_Email {
 	public static function create( $to, $from_name, $subject, $tekst ) {
 		$headers   = self::initialiseer( "$from_name namens Kleistad" );
 		$headers[] = 'Reply-To: Kleistad <' . self::$info . '>';
-		foreach ( $to as $bcc ) {
+		foreach ( (array) $to as $bcc ) {
 			$headers[] = 'Bcc: ' . $bcc;
 		}
 		$status = wp_mail( self::$info, $subject, self::inhoud( $tekst, "$from_name<br/>Kleistad", false ), $headers );

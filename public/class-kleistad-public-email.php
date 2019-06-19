@@ -82,7 +82,7 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 		if ( empty( $data['input']['email_content'] ) ) {
 			$error->add( 'email', 'Er is geen email content' );
 		}
-		if ( empty( $data['input']['adressen'] ) ) {
+		if ( 'verzenden' === $data['form_actie'] && empty( $data['input']['adressen'] ) ) {
 			$error->add( 'email', 'Er is geen enkele ontvanger geselecteerd' );
 		}
 		if ( empty( $data['input']['onderwerp'] ) ) {
@@ -113,5 +113,22 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 			'<p>Beste Kleistad gebruiker,</p>' . $data['input']['email_content'] . '<br/>'
 		);
 		return 'De email is naar ' . count( $adressen ) . ' personen verzonden';
+	}
+
+	/**
+	 * Verzend een testemail
+	 *
+	 * @param array $data data te verzenden.
+	 * @return string
+	 */
+	protected function email( $data ) {
+		$huidige_gebruiker = wp_get_current_user();
+		Kleistad_Email::create(
+			$huidige_gebruiker->user_email,
+			$huidige_gebruiker->display_name,
+			$data['input']['onderwerp'],
+			'<p>Beste Kleistad gebruiker,</p>' . $data['input']['email_content'] . '<br/>'
+		);
+		return 'De test email is verzonden';
 	}
 }
