@@ -228,10 +228,10 @@ class Kleistad_Email {
 	/**
 	 * Helper functie, maakt email tekst op en verzendt de mail anoniem
 	 *
-	 * @param array  $to        bestemmingen.
-	 * @param string $from_name afzender.
-	 * @param string $subject   onderwerp.
-	 * @param string $tekst     mail inhoud.
+	 * @param string|array $to        bestemmingen.
+	 * @param string       $from_name afzender.
+	 * @param string       $subject   onderwerp.
+	 * @param string       $tekst     mail inhoud.
 	 */
 	public static function create( $to, $from_name, $subject, $tekst ) {
 		$headers   = self::initialiseer( "$from_name namens Kleistad" );
