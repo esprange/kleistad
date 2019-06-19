@@ -36,26 +36,26 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 			];
 		}
 
-		$data['input']['tree'][0]['naam'] = 'Abonnees';
-		$abonnementen                     = Kleistad_Abonnement::all();
+		$abonnementen = Kleistad_Abonnement::all();
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
 			if ( ! $abonnement->geannuleerd ) {
-				$gebruiker                                                   = get_userdata( $abonnee_id );
-				$data['input']['tree'][0]['leden'][ $gebruiker->user_email ] = $gebruiker->display_name;
+				$abonnee                          = get_userdata( $abonnee_id );
+				$data['input']['tree'][0]['naam'] = 'Abonnees';
+				$data['input']['tree'][0]['leden'][ $abonnee->user_email ] = $abonnee->display_name;
 			}
 		}
-		$inschrijvingen = Kleistad_Inschrijving::all();
-		$cursussen      = Kleistad_Cursus::all();
+		$cursus_criterium = strtotime( '-6 months' ); // Cursussen die langer dan een half jaar gelden zijn geëindigd worden niet getoond.
+		$inschrijvingen   = Kleistad_Inschrijving::all();
+		$cursussen        = Kleistad_Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
+			$cursist = get_userdata( $cursist_id );
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && strtotime( '-6 months' ) < $cursussen[ $cursus_id ]->eind_datum ) {
-					$gebruiker                                                              = get_userdata( $cursist_id );
-					$data['input']['tree'][ $cursus_id ]['naam']                            = $cursussen[ $cursus_id ]->code . ' - ' . $cursussen[ $cursus_id ]->naam;
-					$data['input']['tree'][ $cursus_id ]['leden'][ $gebruiker->user_email ] = $gebruiker->display_name;
+				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
+					$data['input']['tree'][ $cursus_id ]['naam']                          = $cursussen[ $cursus_id ]->code . ' - ' . $cursussen[ $cursus_id ]->naam;
+					$data['input']['tree'][ $cursus_id ]['leden'][ $cursist->user_email ] = $cursist->display_name;
 				}
 			}
 		}
-
 		return true;
 	}
 
