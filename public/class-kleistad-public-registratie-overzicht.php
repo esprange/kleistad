@@ -237,4 +237,29 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			}
 		}
 	}
+
+	/**
+	 * Valideer/sanitize form (dummy)
+	 *
+	 * @param array $data Gevalideerde data.
+	 * @return bool
+	 *
+	 * @since   5.5.2
+	 */
+	protected function validate( &$data ) {
+		return true;
+	}
+
+	/**
+	 * Bewaar form gegevens (dummy)
+	 *
+	 * @param array $data te bewaren data.
+	 * @return string
+	 *
+	 * @since   5.5.2
+	 */
+	protected function save( $data ) {
+		return '';
+	}
+
 }
