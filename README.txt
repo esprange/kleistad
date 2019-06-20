@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.2.1
-Stable tag: 5.5.0
+Stable tag: 5.5.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,6 +34,12 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 5.5.1 =
+* Nieuwe versie van FullCalendar (4.2.0)
+* Nieuwe versie google/apiclient (0.103)
+* Refactoring om bestanden te verkleinen
+* Email shortcode verbetering, inclusief test email mogelijkheid
+* Kleine verbeter acties
 = 5.5.0 =
 * Als cursusinschrijving op cursus selectie wordt gebruikt worden alle cursussen getoond.
 * Diverse kleine verbeteringen, o.a. kalender layout, cursus beheer layout
