@@ -28,9 +28,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param array $data de gevalideerde data.
 	 * @return \WP_ERROR|bool
 	 */
-	protected function validate( &$data ) {
-		return true;
-	}
+	abstract protected function validate( &$data );
 
 	/**
 	 * Save functie, wordt gebruikt bij formulieren
@@ -39,9 +37,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return \WP_ERROR|string
 	 */
-	protected function save( $data ) {
-		return '';
-	}
+	abstract protected function save( $data );
 
 	/**
 	 * Valideer opvoeren nieuwe gebruiker
@@ -148,7 +144,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param  array $data de uit te wisselen data.
 	 * @return string html tekst.
 	 */
-	protected function process( &$data ) {
+	private function process( &$data ) {
 		$html               = '';
 		$data['form_actie'] = filter_input( INPUT_POST, 'kleistad_submit_' . $this->shortcode );
 		if ( ! is_null( $data['form_actie'] ) ) {
@@ -209,7 +205,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 *
 	 * @since 5.3.1
 	 */
-	public function download( $download ) {
+	private function download( $download ) {
 		$error = new WP_Error();
 
 		$result = tmpfile();
@@ -245,7 +241,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 *
 	 * @since 5.5.1
 	 */
-	public function test( $test, $data ) {
+	private function test( $test, $data ) {
 		return call_user_func( [ $this, $test ], $data );
 	}
 
