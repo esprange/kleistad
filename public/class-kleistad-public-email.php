@@ -56,6 +56,7 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 				}
 			}
 		}
+		krsort( $data['input']['tree'] );
 		return true;
 	}
 
