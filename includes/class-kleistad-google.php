@@ -139,7 +139,7 @@ class Kleistad_Google {
 		$client = self::maak_client();
 		if ( false === $client ) {
 			error_log( '!!! Google maak client failure' ); //phpcs:ignore
-			return false;
+			die;
 		}
 		if ( $client->isAccessTokenExpired() ) {
 			if ( $client->getRefreshToken() ) {
@@ -148,7 +148,7 @@ class Kleistad_Google {
 			} else {
 				error_log( '!!! Google refresh token failure' ); //phpcs:ignore
 				delete_option( self::ACCESS_TOKEN );
-				return false;
+				die;
 			}
 		}
 		self::$service = new Google_Service_Calendar( $client );
