@@ -15,7 +15,7 @@
 		<input id="kleistad_selectie" name="adressen" type="hidden">
 		<div class="kleistad_row">
 			<div class="kleistad_label">
-				<label for="kleistad_groep" >Selecteer de groep(en) waarvoor de email verzonden moet worden</label>
+				<label>Selecteer de groep(en) waarvoor de email verzonden moet worden</label>
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -43,7 +43,7 @@
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_col_5">
-				<input type="text" name="onderwerp" required value="<?php echo esc_attr( $data['input']['onderwerp'] ); ?>" >
+				<input type="text" name="onderwerp" id="kleistad_onderwerp" required value="<?php echo esc_attr( $data['input']['onderwerp'] ); ?>" >
 			</div>
 		</div>
 		<div class="kleistad_row">
