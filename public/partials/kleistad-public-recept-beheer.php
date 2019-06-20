@@ -178,11 +178,13 @@ else :
 					'parent'     => $grondstof_parent->term_id,
 				]
 			);
-			foreach ( $recept_terms as $recept_term ) :
-				?>
-				<option value="<?php echo esc_attr( $recept_term->name ); ?>" >&nbsp;
-				<?php
-			endforeach
+			if ( is_array( $recept_terms ) ) :
+				foreach ( $recept_terms as $recept_term ) :
+					?>
+					<option value="<?php echo esc_attr( $recept_term->name ); ?>" >&nbsp;
+					<?php
+				endforeach;
+			endif
 			?>
 			</select>
 		</datalist>

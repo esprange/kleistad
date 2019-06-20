@@ -98,11 +98,7 @@ class Kleistad_Public {
 	 * @since    4.0.87
 	 */
 	public function styles_and_scripts() {
-		if ( defined( 'KLEISTAD_DEV' ) ) {
-			$dev = KLEISTAD_DEV ? '' : '.min';
-		} else {
-			$dev = '.min';
-		}
+		$dev        = defined( 'KLEISTAD_DEV' ) ? '' : '.min';
 		$wp_scripts = wp_scripts();
 		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		// Volgens stricte wp rules zou de versie toegevoegd moeten worden als parameter.
