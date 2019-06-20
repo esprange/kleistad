@@ -29,8 +29,8 @@ else :
 				<th>Soort workshop</th>
 				<td colspan="3">
 					<select name="naam" id="kleistad_naam" <?php readonly( $alleen_lezen ); ?> >
-						<option value="kinderfeest" <?php checked( $data['workshop']['naam'], 'kinderfeest' ); ?> >kinderfeest</option>
-						<option value="workshop"  <?php checked( $data['workshop']['naam'], 'workshop' ); ?>>workshop</option>
+						<option value="kinderfeest" <?php selected( $data['workshop']['naam'], 'kinderfeest' ); ?> >kinderfeest</option>
+						<option value="workshop"  <?php selected( $data['workshop']['naam'], 'workshop' ); ?>>workshop</option>
 					</select>
 				</td>
 			</tr>
