@@ -175,7 +175,7 @@ class Kleistad_Google {
 	 */
 	public static function is_authorized() {
 		if ( false !== get_option( self::ACCESS_TOKEN ) ) {
-			return self::service();
+			return is_object( self::service() );
 		}
 		return false;
 	}
