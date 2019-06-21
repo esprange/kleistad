@@ -36,6 +36,12 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 			];
 		}
 
+		$bestuur = get_users( [ 'role' => 'bestuur' ] );
+		foreach ( $bestuur as $bestuurslid ) {
+			$data['input']['tree'][-1]['naam']                              = 'Bestuur';
+			$data['input']['tree'][-1]['leden'][ $bestuurslid->user_email ] = $bestuurslid->display_name;
+		}
+
 		$abonnementen = Kleistad_Abonnement::all();
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
 			if ( ! $abonnement->geannuleerd ) {
