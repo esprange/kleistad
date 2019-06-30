@@ -42,10 +42,9 @@ class Kleistad_Email {
 
 	/**
 	 * Initialisatie functie zodat filters e.d. maar eenmalig gerealiseerd worden.
-	 *
-	 * @param  array $headers De bestaande headers die aangevuld moeten worden.
 	 */
-	private function headers( &$headers ) {
+	private function headers() {
+		$headers   = [];
 		$from      = $this->mailparams['from'];
 		$from_name = $this->mailparams['from_name'];
 		foreach ( $this->mailparams['cc'] as $copy ) {
@@ -88,6 +87,7 @@ class Kleistad_Email {
 				}
 			}
 		);
+		return $headers;
 	}
 
 	/**
@@ -96,7 +96,6 @@ class Kleistad_Email {
 	 * @param array $args parameters voor verzending.
 	 */
 	public function send( $args ) {
-		$headers          = [];
 		$this->mailparams = wp_parse_args(
 			$args,
 			[
@@ -138,18 +137,17 @@ class Kleistad_Email {
 				'#\[\s*(cc|bcc)\s*:\s*(.+?)\s*\]#i'       => function( $match ) {
 					// Bcc of Cc parameters.
 					$this->mailparams[ $match[1] ][] = $match[2];
-					return '';// <span class="replaced"></span>';
+					return '';
 				},
 			],
 			$this->mailparams['content']
 		);
 
-		$this->headers( $headers, $this->mailparams );
 		return wp_mail(
 			$this->mailparams['to'],
 			$this->mailparams['subject'],
 			$this->inhoud( $tekst, $this->mailparams['sign'], $this->mailparams['auto'] ),
-			$headers
+			$this->headers()
 		);
 	}
 

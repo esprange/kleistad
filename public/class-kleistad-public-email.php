@@ -121,9 +121,8 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	 * @since   5.5.0
 	 */
 	protected function save( $data ) {
-		$huidige_gebruiker = wp_get_current_user();
-		$adressen          = array_unique( explode( ',', $data['input']['adressen'] ) );
-		$emailer           = new Kleistad_Email();
+		$adressen = array_unique( explode( ',', $data['input']['adressen'] ) );
+		$emailer  = new Kleistad_Email();
 		$emailer->send(
 			[
 				'to'        => 'Kleistad gebruiker <info@' . Kleistad_Email::domein() . '>',

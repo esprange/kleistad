@@ -128,7 +128,7 @@ class Kleistad_Public_Workshop_Aanvraag extends Kleistad_ShortcodeForm {
 				),
 			]
 		);
-		if ( ! is_wp_error( $result ) ) {
+		if ( is_int( $result ) ) {
 			$emailer->send(
 				[
 					'to'         => "{$data['input']['contact']} <{$data['input']['email']}>",

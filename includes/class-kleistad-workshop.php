@@ -24,7 +24,7 @@
  * @property string organisatie
  * @property string contact
  * @property string email
- * @property string telefoon
+ * @property string telnr
  * @property string programma
  * @property bool   vervallen
  * @property float  kosten
@@ -62,7 +62,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			'organisatie' => '',
 			'contact'     => '',
 			'email'       => '',
-			'telnr'       => '',
+			'telefoon'    => '',
 			'programma'   => '',
 			'vervallen'   => 0,
 			'kosten'      => $options['workshopprijs'],

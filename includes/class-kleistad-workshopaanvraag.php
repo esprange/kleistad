@@ -126,10 +126,11 @@ class Kleistad_WorkshopAanvraag {
 	 * @param WP_REST_Request $request Callback request params.
 	 */
 	public static function callback_email( WP_REST_Request $request ) {
+		$casus   = null;
 		$emailer = new Kleistad_Email();
 		$params  = $request->get_params();
 		$iparams = array_change_key_case( $params, CASE_LOWER );
-		$tekst   = wk_kses_post( 'text/html' === $iparams['content-type'] ? $iparams['stripped-html'] : $iparams['stripped-text'] );
+		$tekst   = wp_kses_post( 'text/html' === $iparams['content-type'] ? $iparams['stripped-html'] : $iparams['stripped-text'] );
 
 		/**
 		 * Zoek eerst op basis van het case nummer in subject.
@@ -144,14 +145,15 @@ class Kleistad_WorkshopAanvraag {
 		 * Als niet gevonden probeer dan te zoeken op het email adres van de afzender.
 		 */
 		if ( ! $casus_id ) {
-			$query    = [
-				'post_type'   => self::POST_TYPE,
-				'post_name'   => $iparams['from'],
-				'numberposts' => '1',
-				'orderby'     => 'date',
-				'order'       => 'DESC',
-			];
-			$casussen = get_recent_posts( $query );
+			$casussen = get_posts(
+				[
+					'post_type'   => self::POST_TYPE,
+					'post_name'   => $iparams['from'],
+					'numberposts' => '1',
+					'orderby'     => 'date',
+					'order'       => 'DESC',
+				]
+			);
 			if ( count( $casussen ) ) {
 				$casus    = $casussen[0];
 				$casus_id = $casus->ID;

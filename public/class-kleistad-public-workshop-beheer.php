@@ -160,7 +160,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_toon_aanvraag_' . $casus_id ) ) {
 				$casus         = get_post( $casus_id );
 				$data['casus'] = array_merge(
-					maybe_unserialize( $casus->post_excerpt ),
+					unserialize( $casus->post_excerpt ), // phpcs:ignore
 					[
 						'casus_id' => $casus_id,
 						'content'  => $casus->post_content,
