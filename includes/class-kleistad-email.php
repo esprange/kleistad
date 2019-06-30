@@ -11,53 +11,51 @@
 
 /**
  * De class voor email
- * Het principe is dat alle email vanuit het info@ adres verzonden wordt. De emails zijn in twee groepen te verdelen
- *      - automatische emails zoals bevestigingen.
- *          from adres      : Kleistad <info@sender_domein>
- *          reply-to adres  : no-reply@domein
- *      - handmatige emails waarbij een gebruiker de tekst invoert.
- *          from adres      : X namens Kleistad <info@sender_domein>
- *          reply-to adres  : Kleistad <info@domein>
  */
 class Kleistad_Email {
 
 	/**
-	 * Info email adres
+	 * De mail parameters.
 	 *
-	 * @var string $info Het info email adres.
+	 * @var array $mailparams
 	 */
-	private static $info = '';
+	private $mailparams;
 
 	/**
-	 * No-reply email adres
-	 *
-	 * @var string $info Het no-reply email adres.
-	 */
-	private static $noreply = '';
-
-	/**
-	 * Helper functie, haalt het domein op van het email adres.
+	 * Helper functie, haalt het domein op van de website.
 	 *
 	 * @return string
 	 */
 	public static function domein() {
-		$admin_email = get_bloginfo( 'admin_email' );
-		return substr( strrchr( $admin_email, '@' ), 1 );
+		return substr( strrchr( get_bloginfo( 'admin_email' ), '@' ), 1 );
+	}
+
+	/**
+	 * Helper functie, haalt het domein op van de verzender.
+	 *
+	 * @return string
+	 */
+	public static function verzend_domein() {
+		$mailgun_opties = get_option( 'wp_mail_smtp' );
+		return false === $mailgun_opties ? self::domein() : $mailgun_opties['mailgun']['domain'];
 	}
 
 	/**
 	 * Initialisatie functie zodat filters e.d. maar eenmalig gerealiseerd worden.
 	 *
-	 * @param  string $from_name Eventuele naam van gebruiker die de email verzendt.
-	 * @return array  De email header
+	 * @param  array $headers De bestaande headers die aangevuld moeten worden.
 	 */
-	private static function initialiseer( $from_name = 'Kleistad' ) {
-		$domein         = self::domein();
-		$wp_smtp        = get_option( 'wp_mail_smtp' );
-		$verzend_domein = false === $wp_smtp ? $domein : $wp_smtp['mailgun']['domain'];
-		$from           = "info@$verzend_domein";
-		self::$info     = "info@$domein";
-		self::$noreply  = "no-reply@$domein";
+	private function headers( &$headers ) {
+		$from      = $this->mailparams['from'];
+		$from_name = $this->mailparams['from_name'];
+		foreach ( $this->mailparams['cc'] as $copy ) {
+			$headers[] = "Cc:$copy";
+		}
+		foreach ( $this->mailparams['bcc'] as $copy ) {
+			$headers[] = "Bcc:$copy";
+		}
+		$headers[] = "Reply-to:{$this->mailparams['reply-to']}";
+
 		add_filter(
 			'wp_mail_from',
 			function() use ( $from ) {
@@ -76,12 +74,83 @@ class Kleistad_Email {
 				return 'text/html';
 			}
 		);
+		add_action(
+			'wp_mail_failed',
+			function( $wp_error ) {
+				return error_log( "mail fout: " . $wp_error->get_error_message() ); // phpcs:ignore
+			}
+		);
+		add_action(
+			'phpmailer_init',
+			function( &$phpmailer ) {
+				if ( ! empty( $this->mailparams['message-id'] ) ) {
+					$phpmailer->MessageID = '<' . $this->mailparams['message-id'] . '@'->$this->domein() . '>'; // phpcs:ignore
+				}
+			}
+		);
+	}
+
+	/**
+	 * Helper functie, maakt email tekst op en verzendt de mail
+	 *
+	 * @param array $args parameters voor verzending.
+	 */
+	public function send( $args ) {
+		$headers          = [];
+		$this->mailparams = wp_parse_args(
+			$args,
+			[
+				'auto'       => true,
+				'bcc'        => [],
+				'cc'         => [],
+				'content'    => '',
+				'from'       => 'no_reply@' . self::verzend_domein(),
+				'from_name'  => 'Kleistad',
+				'parameters' => [],
+				'reply-to'   => 'no_reply@' . self::domein(),
+				'sign'       => 'Kleistad',
+				'slug'       => '',
+				'to'         => 'Kleistad <info@' . self::domein() . '>',
+				'message-id' => '',
+			]
+		);
+
+		if ( ! empty( $this->mailparams['slug'] ) ) {
+			$page = get_page_by_title( $this->mailparams['slug'], OBJECT );
+			if ( ! is_null( $page ) ) {
+				$this->mailparams['content'] = $page->post_content;
+			}
+		}
 		/**
-		 * Voorlopig nog steeds email copy verzenden vanwege email issues.
+		 * Via regexp de tekst bewerken. De match variable bevat resp. de match, een sleutel en eventueel een waarde.
 		 */
-		return [
-			'Bcc: kleistad@sprako.nl',
-		];
+		$tekst = preg_replace_callback_array(
+			[
+				'#\[\s*pagina\s*:\s*([a-z,_,-]+?)\s*\]#i' => function( $match ) {
+					// Include pagina.
+					$page = get_page_by_title( $match[1], OBJECT );
+					return ! is_null( $page ) ? $page->post_content : '';
+				},
+				'#\[\s*([a-z,_]+)\s*\]#i'                 => function( $match ) {
+					// Include parameters.
+					return isset( $this->mailparams['parameters'] ) ? $this->mailparams['parameters'][ $match[1] ] : '';
+				},
+				'#\[\s*(cc|bcc)\s*:\s*(.+?)\s*\]#i'       => function( $match ) {
+					// Bcc of Cc parameters.
+					$this->mailparams[ $match[1] ][] = $match[2];
+					return '';// <span class="replaced"></span>';
+				},
+			],
+			$this->mailparams['content']
+		);
+
+		$this->headers( $headers, $this->mailparams );
+		return wp_mail(
+			$this->mailparams['to'],
+			$this->mailparams['subject'],
+			$this->inhoud( $tekst, $this->mailparams['sign'], $this->mailparams['auto'] ),
+			$headers
+		);
 	}
 
 	/**
@@ -92,7 +161,7 @@ class Kleistad_Email {
 	 * @param boolean $automatisch Of het een automatische email betreft.
 	 * @return string De opgemaakte tekst.
 	 */
-	private static function inhoud( $tekst, $namens, $automatisch = true ) {
+	private function inhoud( $tekst, $namens, $automatisch = true ) {
 		ob_start();
 		?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -198,7 +267,7 @@ class Kleistad_Email {
 								<?php echo preg_replace( '/\s+/', ' ', $tekst ); // phpcs:ignore ?><br />
 								<p>Met vriendelijke groet,</p>
 								<p><?php echo $namens; // phpcs:ignore ?></p>
-								<p><a href="mailto:<?php echo esc_attr( self::$info ); ?>" target="_top" ><?php echo esc_html( self::$info ); ?></a></p>
+								<p><a href="mailto:<?php echo esc_attr( 'info@' . self::domein() ); ?>" target="_top" ><?php echo esc_html( 'info@' . self::domein() ); ?></a></p>
 							</td>
 						</tr>
 					</table>
@@ -223,87 +292,6 @@ class Kleistad_Email {
 </html>
 		<?php
 		return ob_get_clean();
-	}
-
-	/**
-	 * Helper functie, maakt email tekst op en verzendt de mail anoniem
-	 *
-	 * @param string|array $to        bestemmingen.
-	 * @param string       $from_name afzender.
-	 * @param string       $subject   onderwerp.
-	 * @param string       $tekst     mail inhoud.
-	 */
-	public static function create( $to, $from_name, $subject, $tekst ) {
-		$headers   = self::initialiseer( "$from_name namens Kleistad" );
-		$headers[] = 'Reply-To: Kleistad <' . self::$info . '>';
-		foreach ( (array) $to as $bcc ) {
-			$headers[] = 'Bcc: ' . $bcc;
-		}
-		$status = wp_mail( self::$info, $subject, self::inhoud( $tekst, "$from_name<br/>Kleistad", false ), $headers );
-		if ( ! $status ) {
-			error_log( "$subject $from_name " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
-		}
-		return $status;
-	}
-
-	/**
-	 * Helper functie, haalt email tekst vanuit pagina en vervangt alle placeholders en verzendt de mail
-	 *
-	 * @param string|array $to bestemming.
-	 * @param string       $subject onderwerp.
-	 * @param string       $slug (pagina titel, als die niet bestaat wordt verondersteld dat de slug de bericht tekst bevat).
-	 * @param array        $args de argumenten die in de slug pagina vervangen moeten worden.
-	 * @param string|array $attachment een eventuele bijlage.
-	 */
-	public static function compose( $to, $subject, $slug, $args = [], $attachment = [] ) {
-		$headers   = self::initialiseer();
-		$headers[] = 'Reply-To: Kleistad <' . self::$noreply . '>';
-		$page      = get_page_by_title( $slug, OBJECT );
-		if ( is_null( $page ) ) {
-			$page = get_page_by_title( str_replace( '_', '-', $slug ), OBJECT );
-		}
-		if ( ! is_null( $page ) ) {
-			$tekst = wpautop( $page->post_content );
-			// Controleer of er includes zijn d.m.v. [pagina:yxz].
-			do {
-				$gevonden = stripos( $tekst, '[pagina:' );
-				if ( ! ( false === $gevonden ) ) {
-					$eind         = stripos( $tekst, ']', $gevonden );
-					$include_slug = substr( $tekst, $gevonden + 8, $eind - $gevonden - 8 );
-					$include_page = get_page_by_title( $include_slug, OBJECT );
-					$include_text = ( ! is_null( $include_page ) ) ? wpautop( $include_page->post_content ) : $include_slug;
-					$tekst        = substr_replace( $tekst, $include_text, $gevonden, $eind - $gevonden + 1 );
-				}
-			} while ( ! ( false === $gevonden ) );
-
-			// Vervang alle parameters.
-			foreach ( $args as $key => $value ) {
-				$tekst = str_replace( '[' . $key . ']', $value, $tekst );
-			}
-			$fields = [ 'cc', 'bcc' ];
-
-			// Vervang eventuele [cc:x] of [bcc:x] velden en stop die in de header.
-			foreach ( $fields as $field ) {
-				$gevonden = stripos( $tekst, '[' . $field . ':' );
-				if ( ! ( false === $gevonden ) ) {
-					$eind      = stripos( $tekst, ']', $gevonden );
-					$headers[] = ucfirst( substr( $tekst, $gevonden + 1, $eind - $gevonden - 1 ) );
-					$tekst     = substr( $tekst, 0, $gevonden ) . substr( $tekst, $eind + 1 );
-				}
-			}
-		} else {
-			// Pagina niet gevonden. Maak de test versie aan.
-			$tekst = '<p>' . $slug . '</p><table>';
-			foreach ( $args as $key => $arg ) {
-				$tekst .= '<tr><th align="left" >' . $key . '</th><td align="left" >' . $arg . '</td></tr>';
-			}
-			$tekst .= '</table>';
-		}
-		$status = wp_mail( $to, $subject, self::inhoud( $tekst, 'Kleistad' ), $headers, $attachment );
-		if ( ! $status ) {
-			error_log( "$subject $slug " . print_r( $headers, true ), 3, 'kleistad@sprako.nl' ); // phpcs:ignore
-		}
-		return $status;
 	}
 
 }

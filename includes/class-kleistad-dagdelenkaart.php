@@ -140,19 +140,20 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	public function email( $type ) {
 		$options   = Kleistad::get_options();
 		$gebruiker = get_userdata( $this->gebruiker_id );
-		$to        = "$gebruiker->display_name <$gebruiker->user_email>";
-		return Kleistad_Email::compose(
-			$to,
-			'Welkom bij Kleistad',
-			'kleistad_email_dagdelenkaart' . $type,
+		return $this->emailer->send(
 			[
-				'voornaam'                => $gebruiker->first_name,
-				'achternaam'              => $gebruiker->last_name,
-				'loginnaam'               => $gebruiker->user_login,
-				'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
-				'dagdelenkaart_code'      => $this->code,
-				'dagdelenkaart_opmerking' => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
-				'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
+				'to'         => "$gebruiker->display_name <$gebruiker->user_email>",
+				'subject'    => 'Welkom bij Kleistad',
+				'slug'       => 'kleistad_email_dagdelenkaart' . $type,
+				'parameters' => [
+					'voornaam'                => $gebruiker->first_name,
+					'achternaam'              => $gebruiker->last_name,
+					'loginnaam'               => $gebruiker->user_login,
+					'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
+					'dagdelenkaart_code'      => $this->code,
+					'dagdelenkaart_opmerking' => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
+					'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
+				],
 			]
 		);
 	}

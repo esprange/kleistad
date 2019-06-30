@@ -61,7 +61,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			'organisatie' => '',
 			'contact'     => '',
 			'email'       => '',
-			'telefoon'    => '',
+			'telnr'       => '',
 			'programma'   => '',
 			'vervallen'   => 0,
 			'kosten'      => $options['workshopprijs'],
@@ -105,6 +105,8 @@ class Kleistad_Workshop extends Kleistad_Entity {
 				return boolval( $this->data[ $attribuut ] );
 			case 'code':
 				return "W{$this->data['id']}";
+			case 'telnr':
+				return $this->data['telefoon'];
 			case 'event_id':
 				return sprintf( 'kleistadevent%06d', $this->data['id'] );
 			default:
@@ -140,6 +142,9 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			case 'betaald':
 			case 'definitief':
 				$this->data[ $attribuut ] = $waarde ? 1 : 0;
+				break;
+			case 'telnr':
+				$this->data['telefoon'] = $waarde;
 				break;
 			default:
 				$this->data[ $attribuut ] = $waarde;
@@ -284,7 +289,6 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
-		$to = "{$this->contact} <{$this->email}>";
 
 		switch ( $type ) {
 			case 'bevestiging':
@@ -304,26 +308,28 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			default:
 				return false;
 		}
-		return Kleistad_Email::compose(
-			$to,
-			$onderwerp,
-			$slug,
+		return $this->emailer->send(
 			[
-				'contact'             => $this->contact,
-				'naam'                => ( 'workshop' === $this->naam ) ? 'de workshop' : ( 'kinderfeest' === $this->naam ? 'het kinderfeest' : $this->naam ),
-				'organisatie'         => $this->organisatie,
-				'aantal'              => $this->aantal,
-				'workshop_code'       => $this->code,
-				'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
-				'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
-				'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
-				'workshop_docent'     => $this->docent,
-				'workshop_technieken' => implode( ', ', $this->technieken ),
-				'workshop_programma'  => $this->programma,
-				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
-				'workshop_link'       => '<a href="' . home_url( '/kleistad_workshop_betaling' ) .
-										'?wrk=' . $this->id .
-										'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
+				'to'         => "{$this->contact} <{$this->email}>",
+				'subject'    => $onderwerp,
+				'slug'       => $slug,
+				'parameters' => [
+					'contact'             => $this->contact,
+					'naam'                => ( 'workshop' === $this->naam ) ? 'de workshop' : ( 'kinderfeest' === $this->naam ? 'het kinderfeest' : $this->naam ),
+					'organisatie'         => $this->organisatie,
+					'aantal'              => $this->aantal,
+					'workshop_code'       => $this->code,
+					'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
+					'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
+					'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
+					'workshop_docent'     => $this->docent,
+					'workshop_technieken' => implode( ', ', $this->technieken ),
+					'workshop_programma'  => $this->programma,
+					'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
+					'workshop_link'       => '<a href="' . home_url( '/kleistad_workshop_betaling' ) .
+											'?wrk=' . $this->id .
+											'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
+				],
 			]
 		);
 	}

@@ -136,5 +136,20 @@
 				<li>[reden] : door de bank aangegeven dat incasso mislukt is</li>
 			</ol>
 		</li>
+		<li><h3>kleistad_email_bevestiging_workshop_aanvraag</h3>
+			<ol>
+				<li>[contact] : naam van de aanvrager</li>
+				<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest' )</li>
+				<li>[periode] : aangegeven periode</li>
+				<li>[omvang] : aangegeven aantal deelnemers</li>
+				<li>[email] : opgegeven email adres</li>
+				<li>[telefoon] : opgegeven telefoon nummer</li>
+			</ol>
+		</li>
+		<li><h3>kleistad_email_reactie_workshop_aanvraag</h3>
+			<ol>
+				<li>[reactie] : de reactie op de vraag van de aanvrager</li>
+			</ol>
+		</li>
 	</ul>
 </div>

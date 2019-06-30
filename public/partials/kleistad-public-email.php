@@ -8,7 +8,11 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
-
+if ( ! Kleistad_Roles::override() ) :
+	?>
+<p>Geen toegang tot dit formulier</p>
+	<?php
+else :
 ?>
 	<form method="POST">
 		<?php wp_nonce_field( 'kleistad_email' ); ?>
@@ -48,11 +52,20 @@
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_label">
+				<label for="kleistad_aanhef" >Aan wie is de email gericht</label>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_5">
+				<input type="text" name="aanhef" id="kleistad_aanhef" required value="<?php echo esc_attr( $data['input']['aanhef'] ); ?>" >
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_label">
 				<label for="kleistad_email" >Voer de tekst in van de email</label>
 			</div>
 		</div>
 		<div style="background:lightgray;" >
-		<p>Beste Kleistad gebruiker,</p>
 	<?php
 		wp_editor(
 			$data['input']['email_content'],
@@ -64,8 +77,16 @@
 			]
 		);
 		?>
-		<p>Met vriendelijke groet</p>
-		<p><?php echo esc_html( wp_get_current_user()->display_name ); ?> namens Kleistad</p>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_label">
+				<label for="kleistad_namens" >Wie verstuurt de email</label>
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_5">
+				<input type="text" name="namens" id="kleistad_namens" required value="<?php echo esc_attr( $data['input']['namens'] ); ?>" >,
+			</div>
 		</div>
 		<div class="kleistad_row" >
 			<button type="submit" name="kleistad_submit_email" value="verzenden" >Verzenden</button>
@@ -73,3 +94,4 @@
 		</div>
 	</form>
 <?php
+endif;

@@ -211,6 +211,10 @@ class Kleistad_Public {
 					'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
 					'css' => [ 'jquery-ui' ],
 				],
+				'workshop_aanvraag'     => [
+					'js'  => [ 'jquery' ],
+					'css' => [],
+				],
 				'workshop_beheer'       => [
 					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 					'css' => [ 'jquery-ui', 'datatables' ],
@@ -231,6 +235,7 @@ class Kleistad_Public {
 		Kleistad_Public_Kalender::register_rest_routes();
 		Kleistad_Betalen::register_rest_routes();
 		Kleistad_Adres::register_rest_routes();
+		Kleistad_WorkshopAanvraag::register_rest_routes();
 	}
 
 	/**
@@ -240,6 +245,7 @@ class Kleistad_Public {
 	 */
 	public function register_post_types() {
 		Kleistad_Recept::create_type();
+		Kleistad_WorkshopAanvraag::create_type();
 		ob_start(); // Dit heeft niets van doen met registreren post types maar omdat dit vanuit de init wordt aangeroepen lost dit een headers problem op.
 	}
 
@@ -312,7 +318,6 @@ class Kleistad_Public {
 
 		return $user_contact_method;
 	}
-
 
 	/**
 	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat

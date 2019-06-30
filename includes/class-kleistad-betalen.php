@@ -401,6 +401,7 @@ class Kleistad_Betalen {
 		$mollie_betaling_id = $request->get_param( 'id' );
 
 		$object   = new static();
+		$emailer  = new Kleistad_Email();
 		$betaling = $object->mollie->payments->get( $mollie_betaling_id );
 		if ( $betaling->hasChargeBacks() ) {
 			$gebruiker_ids = get_users(
@@ -412,16 +413,18 @@ class Kleistad_Betalen {
 				]
 			);
 			$gebruiker     = get_userdata( reset( $gebruiker_ids ) );
-			$to            = "$gebruiker->display_name <$gebruiker->user_email>";
-			Kleistad_Email::compose(
-				$to,
-				'Kleistad incasso mislukt',
-				'kleistad_email_incasso_mislukt',
+			$emailer->send(
 				[
-					'voornaam'   => $gebruiker->first_name,
-					'achternaam' => $gebruiker->last_name,
-					'bedrag'     => $betaling->amount->value,
-					'reden'      => $betaling->details->bankReason,
+					'to'         => "$gebruiker->display_name <$gebruiker->user_email>",
+					'subject'    => 'Kleistad incasso mislukt',
+					'slug'       => 'kleistad_email_incasso_mislukt',
+					'parameters' =>
+					[
+						'voornaam'   => $gebruiker->first_name,
+						'achternaam' => $gebruiker->last_name,
+						'bedrag'     => $betaling->amount->value,
+						'reden'      => $betaling->details->bankReason,
+					],
 				]
 			);
 		}

@@ -207,7 +207,6 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 */
 	public function email( $type ) {
 		$cursist   = get_userdata( $this->cursist_id );
-		$to        = "$cursist->display_name <$cursist->user_email>";
 		$onderwerp = ucfirst( $type ) . ' cursus';
 
 		switch ( $type ) {
@@ -230,29 +229,32 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 			default:
 				$slug = '';
 		}
-		return Kleistad_Email::compose(
-			$to,
-			$onderwerp,
-			$slug,
+		return $this->emailer->send(
 			[
-				'voornaam'               => $cursist->first_name,
-				'achternaam'             => $cursist->last_name,
-				'cursus_naam'            => $this->cursus->naam,
-				'cursus_docent'          => $this->cursus->docent,
-				'cursus_start_datum'     => strftime( '%A %d-%m-%y', $this->cursus->start_datum ),
-				'cursus_eind_datum'      => strftime( '%A %d-%m-%y', $this->cursus->eind_datum ),
-				'cursus_start_tijd'      => strftime( '%H:%M', $this->cursus->start_tijd ),
-				'cursus_eind_tijd'       => strftime( '%H:%M', $this->cursus->eind_tijd ),
-				'cursus_technieken'      => implode( ', ', $this->technieken ),
-				'cursus_code'            => $this->code,
-				'cursus_kosten'          => number_format_i18n( $this->aantal * $this->cursus->cursuskosten, 2 ),
-				'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->cursus->inschrijfkosten, 2 ),
-				'cursus_aantal'          => $this->aantal,
-				'cursus_opmerking'       => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
-				'cursus_link'            => '<a href="' . home_url( '/kleistad_cursus_betaling' ) .
-												'?gid=' . $this->cursist_id .
-												'&crss=' . $this->cursus->id .
-												'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
+				'to'         => "$cursist->display_name <$cursist->user_email>",
+				'subject'    => $onderwerp,
+				'slug'       => $slug,
+				'parameters' =>
+				[
+					'voornaam'               => $cursist->first_name,
+					'achternaam'             => $cursist->last_name,
+					'cursus_naam'            => $this->cursus->naam,
+					'cursus_docent'          => $this->cursus->docent,
+					'cursus_start_datum'     => strftime( '%A %d-%m-%y', $this->cursus->start_datum ),
+					'cursus_eind_datum'      => strftime( '%A %d-%m-%y', $this->cursus->eind_datum ),
+					'cursus_start_tijd'      => strftime( '%H:%M', $this->cursus->start_tijd ),
+					'cursus_eind_tijd'       => strftime( '%H:%M', $this->cursus->eind_tijd ),
+					'cursus_technieken'      => implode( ', ', $this->technieken ),
+					'cursus_code'            => $this->code,
+					'cursus_kosten'          => number_format_i18n( $this->aantal * $this->cursus->cursuskosten, 2 ),
+					'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->cursus->inschrijfkosten, 2 ),
+					'cursus_aantal'          => $this->aantal,
+					'cursus_opmerking'       => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
+					'cursus_link'            => '<a href="' . home_url( '/kleistad_cursus_betaling' ) .
+													'?gid=' . $this->cursist_id .
+													'&crss=' . $this->cursus->id .
+													'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
+				],
 			]
 		);
 	}

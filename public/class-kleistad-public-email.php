@@ -33,6 +33,8 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 				'tree'          => [],
 				'email_content' => '',
 				'onderwerp'     => '',
+				'aanhef'        => 'Beste Kleistad gebruiker',
+				'namens'        => wp_get_current_user()->display_name,
 			];
 		}
 
@@ -82,6 +84,8 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 				'adressen'      => FILTER_SANITIZE_STRING,
 				'onderwerp'     => FILTER_SANITIZE_STRING,
 				'email_content' => FILTER_DEFAULT,
+				'aanhef'        => FILTER_SANITIZE_STRING,
+				'namens'        => FILTER_SANITIZE_STRING,
 			]
 		);
 		$data['input']['email_content'] = wp_kses_post( $data['input']['email_content'] );
@@ -94,6 +98,12 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 		}
 		if ( empty( $data['input']['onderwerp'] ) ) {
 			$error->add( 'email', 'Er is geen onderwerp opgegeven' );
+		}
+		if ( empty( $data['input']['aanhef'] ) ) {
+			$error->add( 'email', 'Er is niet aangegeven aan wie de email gericht is' );
+		}
+		if ( empty( $data['input']['namens'] ) ) {
+			$error->add( 'email', 'Er is niet aangegeven wie de email verstuurt' );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
@@ -113,11 +123,19 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	protected function save( $data ) {
 		$huidige_gebruiker = wp_get_current_user();
 		$adressen          = array_unique( explode( ',', $data['input']['adressen'] ) );
-		Kleistad_Email::create(
-			$adressen,
-			$huidige_gebruiker->display_name,
-			$data['input']['onderwerp'],
-			'<p>Beste Kleistad gebruiker,</p>' . $data['input']['email_content'] . '<br/>'
+		$this->emailer->send(
+			[
+				'to'        => 'Kleistad gebruiker <info@' . $this->emailer->domein() . '>',
+				'bcc'       => $adressen,
+				'from_name' => "{$data['input']['namens']} namens Kleistad",
+				'from'      => 'info@' . $this->emailer->verzend_domein(),
+				'reply-to'  => 'info@' . $this->emailer->domein(),
+				'subject'   => $data['input']['onderwerp'],
+				'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
+				'sign'      => "{$data['input']['namens']},<br/>Kleistad",
+				'auto'      => false,
+
+			]
 		);
 		return 'De email is naar ' . count( $adressen ) . ' personen verzonden';
 	}
@@ -130,11 +148,15 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	 */
 	protected function email( $data ) {
 		$huidige_gebruiker = wp_get_current_user();
-		Kleistad_Email::create(
-			$huidige_gebruiker->user_email,
-			$huidige_gebruiker->display_name,
-			$data['input']['onderwerp'],
-			'<p>Beste Kleistad gebruiker,</p>' . $data['input']['email_content'] . '<br/>'
+		$this->emailer->send(
+			[
+				'to'        => "{$huidige_gebruiker->display_name} <{$huidige_gebruiker->user_email}>",
+				'from_name' => "{$huidige_gebruiker->display_name} namens Kleistad",
+				'subject'   => "TEST: {$data['input']['onderwerp']}",
+				'content'   => "<p>Beste Kleistad gebruiker,</p>{$data['input']['email_content']}<br/>",
+				'sign'      => "{$huidige_gebruiker->display_name},<br/>Kleistad",
+				'auto'      => false,
+			]
 		);
 		return 'De test email is verzonden';
 	}

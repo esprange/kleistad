@@ -56,8 +56,32 @@ a.jstree-anchor {
 	cursor: pointer;
 }
 
+div.kleistad_workshop_aanvraag {
+	border-color: gray;
+	border-style: solid;
+	border-width: 1px;
+	background-color: lightblue;
+}
+div.kleistad_workshop_vraag {
+	border-color: gray;
+	border-style: solid;
+	border-width: 1px;
+	background-color: lightgoldenrodyellow;
+}
+div.kleistad_workshop_reactie {
+	border-color: gray;
+	border-style: solid;
+	border-width: 1px;
+	background-color: lightgray
+}
+
 a.kleistad_edit_link {
 	background-image: url('../images/icon-edit.png');
+    background-repeat: no-repeat;
+	text-decoration: none !important;
+}
+a.kleistad_schedule_link {
+	background-image: url('../images/icon-calendar.png');
     background-repeat: no-repeat;
 	text-decoration: none !important;
 }

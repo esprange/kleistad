@@ -240,8 +240,9 @@ class Kleistad_Admin_GDPR {
 	 */
 	public static function eraser( $email, $page = 1 ) {
 		$count        = 0;
+		$emailer      = new Kleistad_Email();
 		$gebruiker_id = email_exists( $email );
-		$domein       = Kleistad_Email::domein();
+		$domein       = $emailer->domein();
 		if ( false !== $gebruiker_id ) {
 			$stub = "- verwijderd$gebruiker_id -";
 			wp_update_user(

@@ -126,6 +126,12 @@
 					value="<?php echo esc_attr( $this->options['google_sleutel'] ); ?>" /></td>
 		</tr>
 
+		<tr >
+			<th scope="row">Mailgun geheime sleutel</th>
+			<td><input type="text" name="kleistad-opties[mailgun_sleutel]"
+					value="<?php echo esc_attr( $this->options['mailgun_sleutel'] ); ?>" /></td>
+		</tr>
+
 	</table>
 	<p class="submit">
 		<?php submit_button(); ?>

@@ -182,33 +182,35 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function email( $type, $wijziging = '' ) {
 		$abonnee = get_userdata( $this->abonnee_id );
-		$to      = "$abonnee->display_name <$abonnee->user_email>";
-		return Kleistad_Email::compose(
-			$to,
-			( false !== strpos( $type, '_start' ) ) ? 'Welkom bij Kleistad' : 'Abonnement Kleistad',
-			'kleistad_email_abonnement' . $type,
+		return $this->emailer->send(
 			[
-				'voornaam'                => $abonnee->first_name,
-				'achternaam'              => $abonnee->last_name,
-				'loginnaam'               => $abonnee->user_login,
-				'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
-				'pauze_datum'             => ( $this->pauze_datum > 0 ) ? strftime( '%d-%m-%y', $this->pauze_datum ) : '',
-				'eind_datum'              => ( $this->eind_datum > 0 ) ? strftime( '%d-%m-%y', $this->eind_datum ) : '',
-				'herstart_datum'          => ( $this->herstart_datum > 0 ) ? strftime( '%d-%m-%y', $this->herstart_datum ) : '',
-				'abonnement'              => $this->soort,
-				'abonnement_code'         => $this->code,
-				'abonnement_dag'          => $this->dag,
-				'abonnement_opmerking'    => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
-				'abonnement_wijziging'    => $wijziging,
-				'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->extras_lijst() : '',
-				'abonnement_borg'         => number_format_i18n( $this->bedrag( self::BEDRAG_BORG ), 2 ),
-				'abonnement_startgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_START ), 2 ),
-				'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_MAAND ), 2 ),
-				'abonnement_overbrugging' => number_format_i18n( $this->bedrag( self::BEDRAG_OVERBRUGGING ), 2 ),
-				'abonnement_link'         => '<a href="' . home_url( '/kleistad_abonnement_betaling' ) .
-												'?gid=' . $this->abonnee_id .
-												'&abo=1' .
-												'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
+				'to'         => "$abonnee->display_name <$abonnee->user_email>",
+				'subject'    => false !== strpos( $type, '_start' ) ? 'Welkom bij Kleistad' : 'Abonnement Kleistad',
+				'slug'       => 'kleistad_email_abonnement' . $type,
+				'parameters' =>
+				[
+					'voornaam'                => $abonnee->first_name,
+					'achternaam'              => $abonnee->last_name,
+					'loginnaam'               => $abonnee->user_login,
+					'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
+					'pauze_datum'             => ( $this->pauze_datum > 0 ) ? strftime( '%d-%m-%y', $this->pauze_datum ) : '',
+					'eind_datum'              => ( $this->eind_datum > 0 ) ? strftime( '%d-%m-%y', $this->eind_datum ) : '',
+					'herstart_datum'          => ( $this->herstart_datum > 0 ) ? strftime( '%d-%m-%y', $this->herstart_datum ) : '',
+					'abonnement'              => $this->soort,
+					'abonnement_code'         => $this->code,
+					'abonnement_dag'          => $this->dag,
+					'abonnement_opmerking'    => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
+					'abonnement_wijziging'    => $wijziging,
+					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->extras_lijst() : '',
+					'abonnement_borg'         => number_format_i18n( $this->bedrag( self::BEDRAG_BORG ), 2 ),
+					'abonnement_startgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_START ), 2 ),
+					'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_MAAND ), 2 ),
+					'abonnement_overbrugging' => number_format_i18n( $this->bedrag( self::BEDRAG_OVERBRUGGING ), 2 ),
+					'abonnement_link'         => '<a href="' . home_url( '/kleistad_abonnement_betaling' ) .
+													'?gid=' . $this->abonnee_id .
+													'&abo=1' .
+													'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
+				],
 			]
 		);
 	}

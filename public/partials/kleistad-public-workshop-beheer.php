@@ -15,7 +15,7 @@ if ( ! Kleistad_Roles::override() ) :
 	<?php
 else :
 	global $wp;
-	if ( false !== strpos( 'toevoegen, wijzigen', $data['actie'] ) ) :
+	if ( false !== strpos( 'toevoegen, wijzigen, inplannen', $data['actie'] ) ) :
 		$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
 		$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
 		?>
@@ -44,7 +44,7 @@ else :
 			</tr>
 			<tr>
 				<th>Telefoon contact</th>
-				<td colspan="3"><input type="text" name="telefoon" value="<?php echo esc_attr( $data['workshop']['telefoon'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
+				<td colspan="3"><input type="text" name="telnr" value="<?php echo esc_attr( $data['workshop']['telnr'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
 			</tr>
 			<tr>
 				<th>Organisatie</th>
@@ -106,7 +106,76 @@ else :
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="verwijderen" <?php disabled( $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
 		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Annuleren</button>
 	</form>
+	<?php elseif ( false !== strpos( 'tonen', $data['actie'] ) ) : ?>
+	<form method="POST" id="kleistad_casussen_beheer_form" autocomplete="off">
+		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
+		<input type="hidden" name="casus_id" value="<?php echo esc_attr( $data['casus']['casus_id'] ); ?>"/>
+		<table class="kleistad_form" >
+			<tr>
+				<th>Soort workshop</th>
+				<td><?php echo esc_html( $data['casus']['naam'] ); ?></td>
+			</tr>
+			<tr>
+				<th>Contact</th>
+				<td><?php echo esc_html( $data['casus']['contact'] ); ?></td>
+			</tr>
+			<tr>
+				<td><?php echo esc_html( $data['casus']['email'] ); ?></td>
+				<td><?php echo esc_html( $data['casus']['telnr'] ); ?></td>
+			</tr>
+			<tr>
+				<th>Omvang</th>
+				<td><?php echo esc_html( $data['casus']['omvang'] ); ?></td>
+			</tr>
+			<tr>
+				<th>Periode</th>
+				<td><?php echo esc_html( $data['casus']['periode'] ); ?></td>
+			</tr>
+			<tr>
+				<td colspan="2" ><label for="kleistad_reactie">Reactie</label></td>
+			</tr>
+			<tr>
+				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" ></textarea></td>
+			</tr>
+			<tr>
+				<td colspan="2" ><div><?php echo $data['casus']['content']; // phpcs:ignore ?></div></td>
+			</tr>
+		</table>
+		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
+	</form>
 	<?php else : ?>
+	<table id="kleistad_aanvragen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
+		<thead>
+			<tr>
+				<th>Datum</th>
+				<th>Beschrijving</th>
+				<th>Status</th>
+				<th data-orderable="false"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			foreach ( $data['aanvragen'] as $aanvraag ) :
+				?>
+			<tr>
+				<td data-sort="<?php echo esc_attr( $aanvraag['datum_ux'] ); ?>"><?php echo esc_html( $aanvraag['datum'] ); ?></td>
+				<td><?php echo esc_html( $aanvraag['titel'] ); ?></td>
+				<td><?php echo esc_html( $aanvraag['status'] ); ?></td>
+				<td>
+					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_toon_aanvraag_' . $aanvraag['id'] ) . '&actie=tonen&id=' . $aanvraag['id'] ); ?>"
+						title="toon_aanvraag" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
+						&nbsp;
+					</a>&nbsp;&nbsp;
+					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_plan_workshop_' . $aanvraag['id'] ) . '&actie=inplannen&id=' . $aanvraag['id'] ); ?>"
+						title="plan_workshop" class="kleistad_schedule_link" style="text-decoration:none !important;color:blue;padding:.4em .8em;" >
+						&nbsp;
+					</a>
+				</td>
+			</tr>
+			<?php endforeach ?>
+		</tbody>
+	</table>
+	<br/>
 	<table id="kleistad_workshops" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
 		<thead>
 			<tr>
@@ -133,10 +202,10 @@ else :
 				<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
 				<td><?php echo esc_html( $workshop['status'] ); ?></td>
 				<td>
-						<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_workshop_' . $workshop['id'] ) . '&actie=wijzigen&id=' . $workshop['id'] ); ?>"
-							title="wijzig workshop" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
-							&nbsp;
-						</a>
+					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_workshop_' . $workshop['id'] ) . '&actie=wijzigen&id=' . $workshop['id'] ); ?>"
+						title="wijzig workshop" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
+						&nbsp;
+					</a>
 				</td>
 			</tr>
 		<?php endforeach ?>

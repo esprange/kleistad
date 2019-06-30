@@ -19,6 +19,7 @@
 				<li>[kleistad_cursus_inschrijving cursus=C11,C22,.. ] inschrijving voor cursus< (cursus parameter is optioneel) </li>
 				<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart (verklaring parameter is optioneel)</li>
 				<li>[kleistad_recept] overzicht van keramiek recepten</li>
+				<li>[kleistad_workshop_aanvraag] aanvraag voor workshops en kinderfeestjes</li>
 			</ul>
 		</li>
 		<li><h3>toegankelijk voor leden</h3>

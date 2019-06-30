@@ -156,15 +156,17 @@ class Kleistad_Saldo {
 	 */
 	public function email( $type, $bedrag ) {
 		$gebruiker = get_userdata( $this->gebruiker_id );
-		return Kleistad_Email::compose(
-			"$gebruiker->display_name <$gebruiker->user_email>",
-			'Bijstorting stooksaldo',
-			'kleistad_email_saldo_wijziging' . $type,
+		return $this->emailer->send(
 			[
-				'voornaam'   => $gebruiker->first_name,
-				'achternaam' => $gebruiker->last_name,
-				'bedrag'     => number_format_i18n( $bedrag, 2 ),
-				'saldo'      => number_format_i18n( $this->bedrag, 2 ),
+				'to'         => "$gebruiker->display_name <$gebruiker->user_email>",
+				'subject'    => 'Bijstorting stooksaldo',
+				'slug'       => 'kleistad_email_saldo_wijziging' . $type,
+				'parameters' => [
+					'voornaam'   => $gebruiker->first_name,
+					'achternaam' => $gebruiker->last_name,
+					'bedrag'     => number_format_i18n( $bedrag, 2 ),
+					'saldo'      => number_format_i18n( $this->bedrag, 2 ),
+				],
 			]
 		);
 	}
@@ -196,6 +198,7 @@ class Kleistad_Saldo {
 	 */
 	public static function meld_en_verwerk() {
 		global $wpdb;
+		$emailer       = new Kleistad_Email();
 		$reserveringen = Kleistad_reservering::all( true );
 		$regelingen    = new Kleistad_Regelingen();
 		$ovens         = Kleistad_Oven::all();
@@ -230,19 +233,21 @@ class Kleistad_Saldo {
 						$saldo         = new Kleistad_Saldo( $stookdeel['id'] );
 						$saldo->bedrag = $saldo->bedrag - $bedrag;
 						if ( $saldo->save( 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $stoker->display_name ) ) {
-							Kleistad_Email::compose(
-								"$medestoker->display_name <$medestoker->user_email>",
-								'Kleistad kosten zijn verwerkt op het stooksaldo',
-								'kleistad_email_stookkosten_verwerkt',
+							$emailer->send(
 								[
-									'voornaam'   => $medestoker->first_name,
-									'achternaam' => $medestoker->last_name,
-									'stoker'     => $stoker->display_name,
-									'bedrag'     => number_format_i18n( $bedrag, 2 ),
-									'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
-									'stookdeel'  => $stookdeel['perc'],
-									'stookdatum' => date( 'd-m-Y', $reservering->datum ),
-									'stookoven'  => $ovens[ $reservering->oven_id ]->naam,
+									'to'         => "$medestoker->display_name <$medestoker->user_email>",
+									'subject'    => 'Kleistad kosten zijn verwerkt op het stooksaldo',
+									'slug'       => 'kleistad_email_stookkosten_verwerkt',
+									'parameters' => [
+										'voornaam'   => $medestoker->first_name,
+										'achternaam' => $medestoker->last_name,
+										'stoker'     => $stoker->display_name,
+										'bedrag'     => number_format_i18n( $bedrag, 2 ),
+										'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
+										'stookdeel'  => $stookdeel['perc'],
+										'stookdatum' => date( 'd-m-Y', $reservering->datum ),
+										'stookoven'  => $ovens[ $reservering->oven_id ]->naam,
+									],
 								]
 							);
 						} else {
@@ -276,18 +281,20 @@ class Kleistad_Saldo {
 					}
 					$tabel .= '<tr><td colspan="2" style="text-align:center;" >verdeling op ' . current_time( 'd-m-Y H:i' ) . '</td></table>';
 
-					Kleistad_Email::compose(
-						"$stoker->display_name <$stoker->user_email>",
-						'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ),
-						'kleistad_email_stookmelding',
+					$emailer->send(
 						[
-							'voornaam'         => $stoker->first_name,
-							'achternaam'       => $stoker->last_name,
-							'bedrag'           => number_format_i18n( $bedrag, 2 ),
-							'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
-							'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
-							'verdeling'        => $tabel,
-							'stookoven'        => $ovens[ $reservering->oven_id ]->naam,
+							'to'         => "$stoker->display_name <$stoker->user_email>",
+							'subject'    => 'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ),
+							'slug'       => 'kleistad_email_stookmelding',
+							'parameters' => [
+								'voornaam'         => $stoker->first_name,
+								'achternaam'       => $stoker->last_name,
+								'bedrag'           => number_format_i18n( $bedrag, 2 ),
+								'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
+								'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
+								'verdeling'        => $tabel,
+								'stookoven'        => $ovens[ $reservering->oven_id ]->naam,
+							],
 						]
 					);
 				}
