@@ -270,8 +270,8 @@ class Kleistad_Admin {
 		if ( ! is_array( $response ) ) {
 			return;
 		}
-		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
-		$id       = '';
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		$id   = '';
 		foreach ( $body['items'] as $item ) {
 			if ( "match_recipient(\"$email\")" === $item['expression'] ) {
 				$id = $item['id'];

@@ -49,9 +49,9 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 */
 	public function __construct( $workshop_id = null ) {
 		global $wpdb;
-		$options      = Kleistad::get_options();
+		$options       = Kleistad::get_options();
 		$this->emailer = new Kleistad_Email();
-		$default_data = [
+		$default_data  = [
 			'id'          => null,
 			'naam'        => '',
 			'datum'       => date( 'Y-m-d' ),

@@ -80,7 +80,7 @@ class Kleistad_Inschrijving extends Kleistad_Entity {
 	 * @param int $cursus_id id van de cursus.
 	 */
 	public function __construct( $cursist_id, $cursus_id ) {
-		$this->emailer = new Kleistad_Email();
+		$this->emailer               = new Kleistad_Email();
 		$this->cursus                = new Kleistad_Cursus( $cursus_id );
 		$this->cursist_id            = $cursist_id;
 		$this->default_data['code']  = "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $this->cursus->start_datum );

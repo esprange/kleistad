@@ -38,6 +38,7 @@ class Kleistad_Saldo {
 
 	/**
 	 * Email object
+	 *
 	 * @var object Het emailer object
 	 */
 	private $emailer;
@@ -85,7 +86,7 @@ class Kleistad_Saldo {
 	 * @param int $gebruiker_id De gebruiker waarvoor het saldo wordt gemaakt.
 	 */
 	public function __construct( $gebruiker_id ) {
-		$this->emailer = new Kleistad_Email();
+		$this->emailer        = new Kleistad_Email();
 		$this->gebruiker_id   = $gebruiker_id;
 		$this->data['bedrag'] = $this->huidig_saldo();
 	}

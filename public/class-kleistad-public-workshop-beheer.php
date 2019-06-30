@@ -314,7 +314,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	protected function save( $data ) {
-		$error = new WP_Error();
+		$error   = new WP_Error();
 		$emailer = new Kleistad_Email();
 		if ( 'reageren' === $data['form_actie'] ) {
 			$casus         = get_post( $data['casus']['casus_id'] );

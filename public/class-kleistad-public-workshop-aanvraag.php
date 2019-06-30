@@ -101,9 +101,9 @@ class Kleistad_Public_Workshop_Aanvraag extends Kleistad_ShortcodeForm {
 	 * @since   5.6.0
 	 */
 	protected function save( $data ) {
-		$error  = new WP_Error();
+		$error   = new WP_Error();
 		$emailer = new Kleistad_Email();
-		$result = wp_insert_post(
+		$result  = wp_insert_post(
 			[
 				'post_type'      => Kleistad_WorkshopAanvraag::POST_TYPE,
 				'post_title'     => $data['input']['contact'] . ' met vraag over ' . $data['input']['naam'],

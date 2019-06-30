@@ -56,11 +56,11 @@ class Kleistad_Dagdelenkaart extends Kleistad_Entity {
 	 * @param int $gebruiker_id wp id van de gebruiker.
 	 */
 	public function __construct( $gebruiker_id ) {
-		$this->emailer = new Kleistad_Email();
-		$this->gebruiker_id         = $gebruiker_id;
-		$this->default_data['code'] = "K$gebruiker_id-" . strftime( '%y%m%d', strtotime( 'today' ) );
+		$this->emailer               = new Kleistad_Email();
+		$this->gebruiker_id          = $gebruiker_id;
+		$this->default_data['code']  = "K$gebruiker_id-" . strftime( '%y%m%d', strtotime( 'today' ) );
 		$this->default_data['datum'] = date( 'Y-m-d' );
-		$dagdelenkaart = get_user_meta( $this->gebruiker_id, self::META_KEY, true );
+		$dagdelenkaart               = get_user_meta( $this->gebruiker_id, self::META_KEY, true );
 		if ( is_array( $dagdelenkaart ) ) {
 			$this->data = wp_parse_args( $dagdelenkaart, $this->default_data );
 		} else {
