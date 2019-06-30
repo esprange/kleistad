@@ -260,13 +260,16 @@ class Kleistad_Admin {
 	private function maak_mailgun_route( $sleutel ) {
 		$mailgun  = 'https://api.eu.mailgun.net/v3/routes';
 		$endpoint = Kleistad_WorkshopAanvraag::endpoint();
-		$email    = Kleistad_WorkshopAanvraag::MBX . '@' . $this->emailer->verzend_domein();
+		$email    = Kleistad_WorkshopAanvraag::MBX . '@' . Kleistad_Email::verzend_domein();
 		$response = wp_remote_get(
 			$mailgun,
 			[
 				'headers' => [ 'Authorization' => 'Basic ' . base64_encode( "api:$sleutel" ) ], // phpcs:ignore
 			]
 		);
+		if ( ! is_array( $response ) ) {
+			return;
+		}
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 		$id       = '';
 		foreach ( $body['items'] as $item ) {
@@ -275,7 +278,7 @@ class Kleistad_Admin {
 			}
 		}
 		if ( empty( $id ) ) {
-			$response = wp_remote_post(
+			wp_remote_post(
 				$mailgun,
 				[
 					'headers' => [
@@ -291,7 +294,7 @@ class Kleistad_Admin {
 				]
 			);
 		} else {
-			$response = wp_remote_request(
+			wp_remote_request(
 				$mailgun,
 				[
 					'headers' => [

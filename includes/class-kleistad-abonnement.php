@@ -82,6 +82,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 */
 	public function __construct( $abonnee_id ) {
 		$this->abonnee_id            = $abonnee_id;
+		$this->emailer               = new Kleistad_Email();
 		$this->default_data['code']  = "A$abonnee_id";
 		$this->default_data['datum'] = date( 'Y-m-d' );
 		$abonnement                  = get_user_meta( $this->abonnee_id, self::META_KEY, true );

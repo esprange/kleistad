@@ -102,6 +102,7 @@ class Kleistad_Public_Workshop_Aanvraag extends Kleistad_ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$error  = new WP_Error();
+		$emailer = new Kleistad_Email();
 		$result = wp_insert_post(
 			[
 				'post_type'      => Kleistad_WorkshopAanvraag::POST_TYPE,
@@ -128,12 +129,12 @@ class Kleistad_Public_Workshop_Aanvraag extends Kleistad_ShortcodeForm {
 			]
 		);
 		if ( ! is_wp_error( $result ) ) {
-			$this->emailer->send(
+			$emailer->send(
 				[
 					'to'         => "{$data['input']['contact']} <{$data['input']['email']}>",
 					'subject'    => sprintf( "[WA#%08d] Bevestiging {$data['input']['naam']} aanvraag", $result ),
-					'from'       => Kleistad_WorkshopAanvraag::MBX . '@' . $this->emailer->verzend_domein(),
-					'reply-to'   => Kleistad_WorkshopAanvraag::MBX . '@' . $this->emailer->verzend_domein(),
+					'from'       => Kleistad_WorkshopAanvraag::MBX . '@' . Kleistad_Email::verzend_domein(),
+					'reply-to'   => Kleistad_WorkshopAanvraag::MBX . '@' . Kleistad_Email::verzend_domein(),
 					'slug'       => 'kleistad_email_bevestiging_workshop_aanvraag',
 					'message-id' => sprintf( 'workshop_aanvraag_%08d', $result ),
 					'parameters' => $data['input'],

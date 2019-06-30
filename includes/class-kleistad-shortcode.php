@@ -22,13 +22,6 @@ abstract class Kleistad_Shortcode {
 	protected $shortcode;
 
 	/**
-	 * Het email object.
-	 *
-	 * @var object Kleistad_Email object
-	 */
-	protected $emailer;
-
-	/**
 	 * De parameters welke gebruikt worden in de aanroep van de shortcode.
 	 *
 	 * @var array shortcode parameters
@@ -72,7 +65,6 @@ abstract class Kleistad_Shortcode {
 		$this->atts      = $atts;
 		$this->options   = $options;
 		$this->shortcode = $shortcode;
-		$this->emailer   = new Kleistad_Email();
 	}
 
 	/**

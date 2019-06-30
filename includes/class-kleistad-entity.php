@@ -30,6 +30,13 @@ abstract class Kleistad_Entity {
 	protected $data = [];
 
 	/**
+	 * Het email object.
+	 *
+	 * @var object Kleistad_Email object
+	 */
+	protected $emailer;
+
+	/**
 	 * Getter, de PHP magic function.
 	 *
 	 * Lees het attribuut van het object.

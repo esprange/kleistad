@@ -37,6 +37,12 @@ class Kleistad_Saldo {
 	private $gebruiker_id;
 
 	/**
+	 * Email object
+	 * @var object Het emailer object
+	 */
+	private $emailer;
+
+	/**
 	 * Private functie welke de update van stooksaldo.log doet.
 	 *
 	 * @since      4.0.87
@@ -79,6 +85,7 @@ class Kleistad_Saldo {
 	 * @param int $gebruiker_id De gebruiker waarvoor het saldo wordt gemaakt.
 	 */
 	public function __construct( $gebruiker_id ) {
+		$this->emailer = new Kleistad_Email();
 		$this->gebruiker_id   = $gebruiker_id;
 		$this->data['bedrag'] = $this->huidig_saldo();
 	}

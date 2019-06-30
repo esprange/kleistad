@@ -123,13 +123,14 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	protected function save( $data ) {
 		$huidige_gebruiker = wp_get_current_user();
 		$adressen          = array_unique( explode( ',', $data['input']['adressen'] ) );
-		$this->emailer->send(
+		$emailer = new Kleistad_Email();
+		$emailer->send(
 			[
-				'to'        => 'Kleistad gebruiker <info@' . $this->emailer->domein() . '>',
+				'to'        => 'Kleistad gebruiker <info@' . Kleistad_Email::domein() . '>',
 				'bcc'       => $adressen,
 				'from_name' => "{$data['input']['namens']} namens Kleistad",
-				'from'      => 'info@' . $this->emailer->verzend_domein(),
-				'reply-to'  => 'info@' . $this->emailer->domein(),
+				'from'      => 'info@' . Kleistad_Email::verzend_domein(),
+				'reply-to'  => 'info@' . Kleistad_Email::domein(),
 				'subject'   => $data['input']['onderwerp'],
 				'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
 				'sign'      => "{$data['input']['namens']},<br/>Kleistad",

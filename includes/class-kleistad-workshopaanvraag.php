@@ -132,10 +132,6 @@ class Kleistad_WorkshopAanvraag {
 		$tekst   = wk_kses_post( 'text/html' === $iparams['content-type'] ? $iparams['stripped-html'] : $iparams['stripped-text'] );
 
 		/**
-		 * Zoek eerst op basis van het message-id
-		 */
-		// if ( 2 !== sscanf( $iparams['in-reply-to'], '%*[^workshopaanvraag]workshopaanvraag%u', $casus_id ) )
-		/**
 		 * Zoek eerst op basis van het case nummer in subject.
 		 */
 		if ( 2 !== sscanf( $iparams['subject'], '%*[^[WA#][WA#%u]', $casus_id ) ) {

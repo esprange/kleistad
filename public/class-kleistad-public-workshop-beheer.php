@@ -315,6 +315,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$error = new WP_Error();
+		$emailer = new Kleistad_Email();
 		if ( 'reageren' === $data['form_actie'] ) {
 			$casus         = get_post( $data['casus']['casus_id'] );
 			$casus_details = maybe_unserialize( $casus->post_excerpt );
@@ -332,13 +333,13 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 					'post_content' => $casus_content,
 				]
 			);
-			$this->emailer->send(
+			$emailer->send(
 				[
 					'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
 					'from'       => Kleistad_WorkshopAanvraag::MBX . '@',
-					$this->emailer->verzend_domein(),
+					Kleistad_Email::verzend_domein(),
 					'reply-to'   => Kleistad_WorkshopAanvraag::MBX . '@',
-					$this->emailer->verzend_domein(),
+					Kleistad_Email::verzend_domein(),
 					'subject'    => "[WA#{$data['casus']['casus_id']}] Reactie op {$casus_details['naam']} aanvraag",
 					'slug'       => 'kleistad_email_reactie_workshop_aanvraag',
 					'parameters' => [

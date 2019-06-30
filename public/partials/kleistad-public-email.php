@@ -8,12 +8,13 @@
  * @package    Kleistad
  * @subpackage Kleistad/public/partials
  */
+
 if ( ! Kleistad_Roles::override() ) :
 	?>
 <p>Geen toegang tot dit formulier</p>
 	<?php
 else :
-?>
+	?>
 	<form method="POST">
 		<?php wp_nonce_field( 'kleistad_email' ); ?>
 		<input id="kleistad_selectie" name="adressen" type="hidden">
@@ -76,7 +77,7 @@ else :
 				'quicktags'     => false,
 			]
 		);
-		?>
+	?>
 		</div>
 		<div class="kleistad_row">
 			<div class="kleistad_label">
@@ -93,5 +94,5 @@ else :
 			<button type="submit" name="kleistad_submit_email" value="test_email" >Test Email verzenden</button>
 		</div>
 	</form>
-<?php
+	<?php
 endif;

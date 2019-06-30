@@ -37,7 +37,7 @@ class Kleistad_Betalen {
 			return;
 		}
 		$options = Kleistad::get_options();
-
+		$this->emailer = new Kleistad_Email();
 		$this->mollie = new \Mollie\Api\MollieApiClient();
 
 		if ( '1' === $options['betalen'] ) {
