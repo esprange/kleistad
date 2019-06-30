@@ -150,7 +150,7 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	protected function email( $data ) {
 		$huidige_gebruiker = wp_get_current_user();
 		$emailer           = new Kleistad_Email();
-		$this->emailer->send(
+		$emailer->send(
 			[
 				'to'        => "{$huidige_gebruiker->display_name} <{$huidige_gebruiker->user_email}>",
 				'from_name' => "{$huidige_gebruiker->display_name} namens Kleistad",
