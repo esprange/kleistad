@@ -21,16 +21,12 @@
         var value;
 
         if ( 'bewaard' === sessionStorage.bewaard && refresh ) {
-            $( '#kleistad_filters input[name="term"]' ).each( function() { // Zet alles op unchecked.
-                $( '#kleistad_filters input[name="term"]' ).prop( 'checked', false );
+            $( '#kleistad_filters input[name="term"], #kleistad_filters input[name="auteur"]' ).each( function() { // Zet alles op unchecked.
+                $( this ).prop( 'checked', false );
             });
             terms = sessionStorage.terms.split( ',' );
             terms.forEach( function( item ) {
                 $( '#kleistad_filters input[name="term"][value="' + item + '"]' ).prop( 'checked' );
-            });
-
-            $( '#kleistad_filters input[name="auteur"]' ).each( function() { // Zet alles op unchecked.
-                $( '#kleistad_filters input[name="auteur"]' ).prop( 'checked', false );
             });
             auteurs = sessionStorage.auteurs.split( ',' );
             auteurs.forEach( function( item ) {
