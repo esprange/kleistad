@@ -101,45 +101,9 @@ class Kleistad_Public_Workshop_Aanvraag extends Kleistad_ShortcodeForm {
 	 * @since   5.6.0
 	 */
 	protected function save( $data ) {
-		$error   = new WP_Error();
-		$emailer = new Kleistad_Email();
-		$result  = wp_insert_post(
-			[
-				'post_type'      => Kleistad_WorkshopAanvraag::POST_TYPE,
-				'post_title'     => $data['input']['contact'] . ' met vraag over ' . $data['input']['naam'],
-				'post_name'      => $data['input']['email'],
-				'post_excerpt'   => maybe_serialize(
-					[
-						'email'   => $data['input']['email'],
-						'naam'    => $data['input']['naam'],
-						'contact' => $data['input']['contact'],
-						'omvang'  => $data['input']['omvang'],
-						'periode' => $data['input']['periode'],
-						'telnr'   => $data['input']['telnr'],
-					]
-				),
-				'post_status'    => 'nieuw',
-				'comment_status' => 'closed',
-				'post_content'   => Kleistad_WorkshopAanvraag::communicatie(
-					[
-						'tekst' => $data['input']['vraag'],
-						'type'  => 'aanvraag',
-					]
-				),
-			]
-		);
-		if ( is_int( $result ) ) {
-			$emailer->send(
-				[
-					'to'         => "{$data['input']['contact']} <{$data['input']['email']}>",
-					'subject'    => sprintf( "[WA#%08d] Bevestiging {$data['input']['naam']} aanvraag", $result ),
-					'from'       => Kleistad_WorkshopAanvraag::MBX . '@' . Kleistad_Email::verzend_domein(),
-					'reply-to'   => Kleistad_WorkshopAanvraag::MBX . '@' . Kleistad_Email::verzend_domein(),
-					'slug'       => 'kleistad_email_bevestiging_workshop_aanvraag',
-					'message-id' => sprintf( 'workshop_aanvraag_%08d', $result ),
-					'parameters' => $data['input'],
-				]
-			);
+		$error  = new WP_Error();
+		$result = Kleistad_WorkshopAanvraag::start( $data['input'] );
+		if ( $result ) {
 			return 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen';
 		} else {
 			$error->add( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' );

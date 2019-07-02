@@ -79,14 +79,6 @@ class Kleistad_Email {
 				return error_log( "mail fout: " . $wp_error->get_error_message() ); // phpcs:ignore
 			}
 		);
-		add_action(
-			'phpmailer_init',
-			function( &$phpmailer ) {
-				if ( ! empty( $this->mailparams['message-id'] ) ) {
-					$phpmailer->MessageID = '<' . $this->mailparams['message-id'] . '@'->$this->domein() . '>'; // phpcs:ignore
-				}
-			}
-		);
 		return $headers;
 	}
 
@@ -110,7 +102,6 @@ class Kleistad_Email {
 				'sign'       => 'Kleistad',
 				'slug'       => '',
 				'to'         => 'Kleistad <info@' . self::domein() . '>',
-				'message-id' => '',
 			]
 		);
 
@@ -171,7 +162,7 @@ class Kleistad_Email {
 	<!--<![endif]-->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta name="format-detection" content="telephone=no" />
-	<title></title>
+	<title>Kleistad Email</title>
 	<!--[if (gte mso 9)|(IE)]>
 	<style type="text/css">
 		table {border-collapse: collapse;}
@@ -182,6 +173,8 @@ class Kleistad_Email {
 			margin: 0 !important;
 			padding: 0;
 			background-color: #ffffff;
+			-webkit-font-smoothing: antialiased;
+			-webkit-text-size-adjust: none;
 		}
 		table {
 			border-spacing: 0;
@@ -243,7 +236,7 @@ class Kleistad_Email {
 		}
 	</style>
 </head>
-<body>
+<body itemscope itemtype="http://schema.org/EmailMessage">
 	<center class="wrapper">
 		<div class="webkit">
 		<!--[if (gte mso 9)|(IE)]>

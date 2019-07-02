@@ -29,7 +29,6 @@
 			<input class="kleistad_input_cbr" name="naam" id="kleistad_workshop" type="radio" required value="workshop" <?php checked( $data['input']['naam'], 'workshop' ); ?> >
 			<label class="kleistad_label_cbr" for="kleistad_workshop" >Workshop</label>
 		</div>
-		<div class="kleistad_row" >
 	</div>
 	<div class="kleistad_row">
 		<div class="kleistad_col_3 kleistad_label">
@@ -106,7 +105,6 @@
 			<input class="kleistad_input_cbr" name="omvang" id="kleistad_groot" type="radio" required value="meer dan 12" <?php checked( $data['input']['omvang'], 'meer dan 12' ); ?> >
 			<label class="kleistad_label_cbr" for="kleistad_groot" >meer dan 12</label>
 		</div>
-		<div class="kleistad_row" >
 	</div>
 	<div class="kleistad_row" >
 		<div class="kleistad_col_10">

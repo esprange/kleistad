@@ -314,39 +314,9 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	protected function save( $data ) {
-		$error   = new WP_Error();
-		$emailer = new Kleistad_Email();
+		$error = new WP_Error();
 		if ( 'reageren' === $data['form_actie'] ) {
-			$casus         = get_post( $data['casus']['casus_id'] );
-			$casus_details = maybe_unserialize( $casus->post_excerpt );
-			$casus_content = Kleistad_WorkshopAanvraag::communicatie(
-				[
-					'type'  => 'reactie',
-					'from'  => wp_get_current_user()->display_name,
-					'tekst' => $data['casus']['reactie'],
-				]
-			) . $casus->post_content;
-			wp_update_post(
-				[
-					'ID'           => $data['casus']['casus_id'],
-					'post_status'  => 'gereageerd',
-					'post_content' => $casus_content,
-				]
-			);
-			$emailer->send(
-				[
-					'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
-					'from'       => Kleistad_WorkshopAanvraag::MBX . '@',
-					Kleistad_Email::verzend_domein(),
-					'reply-to'   => Kleistad_WorkshopAanvraag::MBX . '@',
-					Kleistad_Email::verzend_domein(),
-					'subject'    => "[WA#{$data['casus']['casus_id']}] Reactie op {$casus_details['naam']} aanvraag",
-					'slug'       => 'kleistad_email_reactie_workshop_aanvraag',
-					'parameters' => [
-						'reactie' => $casus_content,
-					],
-				]
-			);
+			Kleistad_WorkshopAanvraag::reactie( $data['casus']['casus_id'], $data['casus']['reactie'] );
 			return 'Er is een email verzonden naar de aanvrager';
 		}
 

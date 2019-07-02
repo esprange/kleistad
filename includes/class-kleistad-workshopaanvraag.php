@@ -210,4 +210,92 @@ class Kleistad_WorkshopAanvraag {
 		}
 	}
 
+	/**
+	 * Start een nieuwe casus en email de aanvrager
+	 *
+	 * @param array $casus_data De gegevens behorende bij de casus.
+	 */
+	public static function start_case( $casus_data ) {
+		$emailer = new Kleistad_Email();
+		$result  = wp_insert_post(
+			[
+				'post_type'      => self::POST_TYPE,
+				'post_title'     => $casus_data['contact'] . ' met vraag over ' . $casus_data['naam'],
+				'post_name'      => $casus_data['email'],
+				'post_excerpt'   => maybe_serialize(
+					[
+						'email'   => $casus_data['email'],
+						'naam'    => $casus_data['naam'],
+						'contact' => $casus_data['contact'],
+						'omvang'  => $casus_data['omvang'],
+						'periode' => $casus_data['periode'],
+						'telnr'   => $casus_data['telnr'],
+					]
+				),
+				'post_status'    => 'nieuw',
+				'comment_status' => 'closed',
+				'post_content'   => self::communicatie(
+					[
+						'tekst' => $casus_data['vraag'],
+						'type'  => 'aanvraag',
+					]
+				),
+			]
+		);
+		if ( is_int( $result ) ) {
+			$emailer->send(
+				[
+					'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
+					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} aanvraag", $result ),
+					'from'       => self::MBX . '@' . Kleistad_Email::verzend_domein(),
+					'reply-to'   => self::MBX . '@' . Kleistad_Email::verzend_domein(),
+					'slug'       => 'kleistad_email_bevestiging_workshop_aanvraag',
+					'parameters' => $casus_data,
+				]
+			);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Voeg een reactie toe en email de aanvrager.
+	 *
+	 * @param int    $id Id van de aanvraag.
+	 * @param string $reactie De reactie op de vraag.
+	 */
+	public static function reactie( $id, $reactie ) {
+		$emailer       = new Kleistad_Email();
+		$casus         = get_post( $id );
+		$casus_details = maybe_unserialize( $casus->post_excerpt );
+		$casus_content = self::communicatie(
+			[
+				'type'  => 'reactie',
+				'from'  => wp_get_current_user()->display_name,
+				'tekst' => $reactie,
+			]
+		) . $casus->post_content;
+		wp_update_post(
+			[
+				'ID'           => $id,
+				'post_status'  => 'gereageerd',
+				'post_content' => $casus_content,
+			]
+		);
+		$emailer->send(
+			[
+				'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
+				'from'       => self::MBX . '@',
+				Kleistad_Email::verzend_domein(),
+				'reply-to'   => self::MBX . '@',
+				Kleistad_Email::verzend_domein(),
+				'subject'    => "[WA#$id] Reactie op {$casus_details['naam']} aanvraag",
+				'slug'       => 'kleistad_email_reactie_workshop_aanvraag',
+				'parameters' => [
+					'reactie' => $casus_content,
+				],
+			]
+		);
+
+	}
 }
