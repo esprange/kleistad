@@ -215,7 +215,7 @@ class Kleistad_WorkshopAanvraag {
 	 *
 	 * @param array $casus_data De gegevens behorende bij de casus.
 	 */
-	public static function start_case( $casus_data ) {
+	public static function start( $casus_data ) {
 		$emailer = new Kleistad_Email();
 		$result  = wp_insert_post(
 			[
