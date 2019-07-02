@@ -41,7 +41,7 @@
 		<input class="kleistad_input" name="EMAIL" id="kleistad_emailadres" type="email"
 		required placeholder="mijnemailadres@voorbeeld.nl" pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$"
 		title="Vul s.v.p. een geldig email adres in"
-		value="<?php echo esc_attr( $data['input']['EMAIL'] ); ?>" autocomplete="home mail" />
+		value="<?php echo esc_attr( $data['input']['EMAIL'] ); ?>" autocomplete="email" />
 	</div>
 </div>
 <div class="kleistad_row">
