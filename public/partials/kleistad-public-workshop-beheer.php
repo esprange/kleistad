@@ -89,7 +89,7 @@ else :
 			<tr>
 				<th>Kosten</th>
 				<td><input type="number" lang="nl" step="0.01" name="kosten" id="kleistad_kosten" min="0" value="<?php echo esc_attr( $data['workshop']['kosten'] ); ?>" <?php readonly( $alleen_lezen ); ?> > incl. BTW</td>
-				<td><input type="number" lang="nl" step="0.01" id="kleistad_kosten_ex_btw" min="0" value="<?php echo esc_attr( number_format( $data['workshop']['kosten']/1.21, 2 ) ); ?>" <?php readonly( $alleen_lezen ); ?> > excl. BTW</td>
+				<td><input type="number" lang="nl" step="0.01" id="kleistad_kosten_ex_btw" min="0" value="<?php echo esc_attr( number_format( $data['workshop']['kosten'] / 1.21, 2 ) ); ?>" <?php readonly( $alleen_lezen ); ?> > excl. BTW</td>
 				<td colspan="1"></td>
 			</tr>
 			<tr>

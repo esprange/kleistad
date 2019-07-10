@@ -32,7 +32,7 @@ table.display {
 	table-layout: auto;
 }
 a.jstree-anchor {
-	box-shadow: 0px 0px 0px 0px #FFFFFF !important;
+	box-shadow: 0 0 0 0 #FFFFFF !important;
 }
 .kleistad_wachten {
 	background: url('../images/plswait.gif') no-repeat;
@@ -57,22 +57,22 @@ a.jstree-anchor {
 }
 
 div.kleistad_workshop_aanvraag {
+	background-color: lightblue;
 	border-color: gray;
 	border-style: solid;
 	border-width: 1px;
-	background-color: lightblue;
 }
 div.kleistad_workshop_vraag {
+	background-color: lightgoldenrodyellow;
 	border-color: gray;
 	border-style: solid;
 	border-width: 1px;
-	background-color: lightgoldenrodyellow;
 }
 div.kleistad_workshop_reactie {
+	background-color: lightgray;
 	border-color: gray;
 	border-style: solid;
 	border-width: 1px;
-	background-color: lightgray
 }
 
 a.kleistad_edit_link {
