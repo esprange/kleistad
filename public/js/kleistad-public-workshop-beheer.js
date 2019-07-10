@@ -36,6 +36,18 @@
 					}
 				);
 
+				$( '#kleistad_kosten' ).on( 'change paste keyup',
+					function() {
+						$( '#kleistad_kosten_ex_btw' ).val( ( $( this ).val() / 1.21 ).toFixed( 2 ) );
+					}
+				);
+
+				$( '#kleistad_kosten_ex_btw' ).on( 'change paste keyup',
+					function() {
+						$( '#kleistad_kosten' ).val( ( $( this ).val() * 1.21 ).toFixed( 2 ) );
+					}
+				);
+
 			} else {
 				$( '#kleistad_workshop_toevoegen' ).click(
 					function() {
