@@ -67,16 +67,18 @@ class Kleistad_Email {
 				return $from_name;
 			}
 		);
-		add_filter(
-			'wp_mail_content_type',
-			function() {
-				return 'text/html';
-			}
-		);
 		add_action(
 			'wp_mail_failed',
 			function( $wp_error ) {
 				return error_log( "mail fout: " . $wp_error->get_error_message() ); // phpcs:ignore
+			}
+		);
+		add_action(
+			'phpmailer_init',
+			function( $phpmailer ) {
+				if ( empty( $phpmailer->AltBody ) ) { // phpcs:ignore
+					$phpmailer->AltBody = wp_strip_all_tags( $phpmailer->Body ); // phpcs:ignore
+				}
 			}
 		);
 		return $headers;
@@ -282,7 +284,7 @@ class Kleistad_Email {
 </body>
 </html>
 		<?php
-		return ob_get_clean();
+		return preg_replace('/>\s+</m', '><', ob_get_clean() );
 	}
 
 }
