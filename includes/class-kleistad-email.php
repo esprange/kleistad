@@ -110,7 +110,7 @@ class Kleistad_Email {
 		if ( ! empty( $this->mailparams['slug'] ) ) {
 			$page = get_page_by_title( $this->mailparams['slug'], OBJECT );
 			if ( ! is_null( $page ) ) {
-				$this->mailparams['content'] = $page->post_content;
+				$this->mailparams['content'] = apply_filters( 'the_content', $page->post_content );
 			}
 		}
 		/**
@@ -121,7 +121,7 @@ class Kleistad_Email {
 				'#\[\s*pagina\s*:\s*([a-z,_,-]+?)\s*\]#i' => function( $match ) {
 					// Include pagina.
 					$page = get_page_by_title( $match[1], OBJECT );
-					return ! is_null( $page ) ? $page->post_content : '';
+					return ! is_null( $page ) ? apply_filters( 'the_content', $page->post_content ) : '';
 				},
 				'#\[\s*([a-z,_]+)\s*\]#i'                 => function( $match ) {
 					// Include parameters.
@@ -238,7 +238,7 @@ class Kleistad_Email {
 		}
 	</style>
 </head>
-<body itemscope itemtype="http://schema.org/EmailMessage">
+<body itemscope itemtype="https://schema.org/EmailMessage">
 	<center class="wrapper">
 		<div class="webkit">
 		<!--[if (gte mso 9)|(IE)]>
@@ -284,7 +284,7 @@ class Kleistad_Email {
 </body>
 </html>
 		<?php
-		return preg_replace('/>\s+</m', '><', ob_get_clean() );
+		return preg_replace( '/>\s+</m', '><', ob_get_clean() );
 	}
 
 }
