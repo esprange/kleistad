@@ -129,6 +129,7 @@ class Kleistad {
 		$this->loader->add_filter( 'login_message', $plugin_common, 'user_login_message' );
 		$this->loader->add_filter( 'login_redirect', $plugin_common, 'login_redirect', 10, 3 );
 		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_common, 'loginuit_menu', 10, 2 );
+		$this->loader->add_filter( 'cron_schedules', $plugin_common, 'cron_schedules' ); // phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
 	}
 
 	/**
@@ -144,6 +145,7 @@ class Kleistad {
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );
 		$this->loader->add_action( 'kleistad_kosten', $plugin_public, 'update_ovenkosten' );
+		$this->loader->add_action( 'kleistad_rcv_email', $plugin_public, 'rcv_email' );
 		$this->loader->add_action( 'kleistad_abonnement', $plugin_public, 'update_abonnement', 10, 3 );
 		$this->loader->add_action( 'kleistad_workshop', $plugin_public, 'update_workshop', 10, 2 );
 

@@ -235,7 +235,6 @@ class Kleistad_Public {
 		Kleistad_Public_Kalender::register_rest_routes();
 		Kleistad_Betalen::register_rest_routes();
 		Kleistad_Adres::register_rest_routes();
-		Kleistad_WorkshopAanvraag::register_rest_routes();
 	}
 
 	/**
@@ -370,7 +369,6 @@ class Kleistad_Public {
 	}
 
 	/**
-	 *
 	 * Update ovenkosten batch job
 	 *
 	 * @since 4.0.87
@@ -378,6 +376,15 @@ class Kleistad_Public {
 	public function update_ovenkosten() {
 		set_time_limit( 300 ); // Voorkom dat deze job er door een execution time out crasht, dus 300 sec = 5 minuten.
 		Kleistad_Saldo::meld_en_verwerk();
+	}
+
+	/**
+	 * Ontvang en verwerk email
+	 *
+	 * @since 5.6.0
+	 */
+	public function rcv_email() {
+		Kleistad_WorkshopAanvraag::ontvang_en_verwerk();
 	}
 
 	/**

@@ -21,6 +21,7 @@ class Kleistad_Deactivator {
 	 */
 	public static function deactivate() {
 		wp_clear_scheduled_hook( 'kleistad_kosten' );
+		wp_clear_scheduled_hook( 'kleistad_rcv_email' );
 	}
 
 }

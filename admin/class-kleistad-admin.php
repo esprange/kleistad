@@ -232,9 +232,6 @@ class Kleistad_Admin {
 			$oud['google_client_id'] !== $nieuw['google_client_id'] ) {
 			delete_option( Kleistad_Google::ACCESS_TOKEN );
 		}
-		if ( $oud['mailgun_sleutel'] !== $nieuw['mailgun_sleutel'] && ! empty( $nieuw['mailgun_sleutel'] ) ) {
-				$this->maak_mailgun_route( $nieuw['mailgun_sleutel'] );
-		}
 	}
 
 	/**
@@ -250,68 +247,6 @@ class Kleistad_Admin {
 		}
 		$text .= '--#$#--';
 		return $text;
-	}
-
-	/**
-	 * Maak een route in mailgun om de emails te ontvangen.
-	 *
-	 * @param string $sleutel De API sleutel.
-	 */
-	private function maak_mailgun_route( $sleutel ) {
-		$mailgun  = 'https://api.eu.mailgun.net/v3/routes';
-		$endpoint = Kleistad_WorkshopAanvraag::endpoint();
-		$email    = Kleistad_WorkshopAanvraag::MBX . '@' . Kleistad_Email::verzend_domein();
-		$response = wp_remote_get(
-			$mailgun,
-			[
-				'headers' => [ 'Authorization' => 'Basic ' . base64_encode( "api:$sleutel" ) ], // phpcs:ignore
-			]
-		);
-		if ( ! is_array( $response ) ) {
-			return;
-		}
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
-		$id   = '';
-		foreach ( $body['items'] as $item ) {
-			if ( "match_recipient(\"$email\")" === $item['expression'] ) {
-				$id = $item['id'];
-			}
-		}
-		if ( empty( $id ) ) {
-			wp_remote_post(
-				$mailgun,
-				[
-					'headers' => [
-						'Authorization' => 'Basic ' . base64_encode( "api:$sleutel" ),  // phpcs:ignore
-						'content-type'  => 'multipart/form-data;boundary=#$#',
-					],
-					'body'    => $this->maak_body(
-						[
-							'expression' => "match_recipient('$email')",
-							'action'     => "forward('$endpoint')",
-						]
-					),
-				]
-			);
-		} else {
-			wp_remote_request(
-				$mailgun,
-				[
-					'headers' => [
-						'Authorization' => 'Basic ' . base64_encode( "api:$sleutel" ),  // phpcs:ignore
-						'content-type'  => 'multipart/form-data;boundary=#$#',
-					],
-					'method'  => 'PUT',
-					'body'    => $this->maak_body(
-						[
-							'expression' => "match_recipient('$email')",
-							'action'     => "forward('$endpoint')",
-							'id'         => $id,
-						]
-					),
-				]
-			);
-		}
 	}
 
 	/**
@@ -350,8 +285,8 @@ class Kleistad_Admin {
 				'google_kalender_id'   => '',
 				'google_sleutel'       => '',
 				'google_client_id'     => '',
-				'mailgun_sleutel'      => '',
-				'email_workshop'       => '',
+				'imap_server'          => '',
+				'imap_pwd'             => '',
 				'betalen'              => 0,
 				'extra'                => [],
 			];

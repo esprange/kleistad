@@ -127,9 +127,15 @@
 		</tr>
 
 		<tr >
-			<th scope="row">Mailgun geheime sleutel</th>
-			<td><input type="text" name="kleistad-opties[mailgun_sleutel]"
-					value="<?php echo esc_attr( $this->options['mailgun_sleutel'] ); ?>" /></td>
+			<th scope="row">Email IMAP server ( als imap.example.com:poortnr/ssl )</th>
+			<td><input type="text" name="kleistad-opties[imap_server]"
+					value="<?php echo esc_attr( $this->options['imap_server'] ); ?>" /></td>
+		</tr>
+
+		<tr >
+			<th scope="row">Email IMAP paswoord</th>
+			<td><input type="text" name="kleistad-opties[imap_pwd]"
+					value="<?php echo esc_attr( $this->options['imap_pwd'] ); ?>" /></td>
 		</tr>
 
 	</table>

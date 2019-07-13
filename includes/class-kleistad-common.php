@@ -157,4 +157,18 @@ class Kleistad_Common {
 		return $items;
 	}
 
+	/**
+	 * Voeg 15 minuten schedule toe aan bestaande set van schedules.
+	 *
+	 * @param array $schedules De set van schedules.
+	 */
+	public function cron_schedules( $schedules ) {
+		if ( ! isset( $schedules['15_mins'] ) ) {
+			$schedules['15_mins'] = [
+				'interval' => 900,
+				'display'  => 'Elke 15 minuten',
+			];
+		}
+		return $schedules;
+	}
 }
