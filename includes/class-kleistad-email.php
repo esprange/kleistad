@@ -76,9 +76,12 @@ class Kleistad_Email {
 		add_action(
 			'phpmailer_init',
 			function( $phpmailer ) {
-				if ( empty( $phpmailer->AltBody ) ) { // phpcs:ignore
-					$phpmailer->AltBody = wp_strip_all_tags( $phpmailer->Body ); // phpcs:ignore
+				// phpcs:disable
+				if ( empty( $phpmailer->AltBody ) ) {
+					$html = new \Html2Text\Html2Text( $phpmailer->Body );
+					$phpmailer->AltBody = $html->getText();
 				}
+				// phpcs:enable
 			}
 		);
 		return $headers;

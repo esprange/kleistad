@@ -11,7 +11,8 @@
     ],
     "require": {
         "mollie/mollie-api-php": "^2.0",
-        "google/apiclient": "^2.2"
+        "google/apiclient": "^2.2",
+        "html2text/html2text": "^4.2"
     },
     "require-dev": {
     },
