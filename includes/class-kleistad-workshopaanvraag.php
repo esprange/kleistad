@@ -98,6 +98,7 @@ class Kleistad_WorkshopAanvraag {
 	 * Verwerk een ontvangen email.
 	 *
 	 * @param array $email De ontvangen email.
+	 * @return bool True als verwerkt.
 	 */
 	public function verwerk( $email ) {
 		$casus   = null;
@@ -148,6 +149,7 @@ class Kleistad_WorkshopAanvraag {
 					) . $casus->post_content,
 				]
 			);
+			return true;
 		} else {
 			return false;
 		}
@@ -170,7 +172,7 @@ class Kleistad_WorkshopAanvraag {
 			error_log( "IMAP connection failed: $ex" ); // phpcs:ignore
 			return;
 		}
-		if ( ! $email_ids ) {
+		if ( empty( $email_ids ) ) {
 			error_log( 'geen berichten' );
 			return; // Geen berichten.
 		}
