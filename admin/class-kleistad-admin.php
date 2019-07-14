@@ -235,21 +235,6 @@ class Kleistad_Admin {
 	}
 
 	/**
-	 * Maak de body op.
-	 *
-	 * @param array $arr Key/value parameters.
-	 */
-	private function maak_body( $arr ) {
-		$text = '';
-		foreach ( $arr as $key => $value ) {
-			$length = strlen( $value );
-			$text  .= "--#$#\r\nContent-Disposition: form-data; name=\"$key\"\r\nContent-Length: $length\r\n\r\n$value\r\n";
-		}
-		$text .= '--#$#--';
-		return $text;
-	}
-
-	/**
 	 * Registreer de kleistad settings, uitgevoerd tijdens admin init.
 	 *
 	 * @since   4.0.87
