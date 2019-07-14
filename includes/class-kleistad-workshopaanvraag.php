@@ -108,14 +108,10 @@ class Kleistad_WorkshopAanvraag {
 		*/
 		if ( 2 !== sscanf( $email['subject'], '%*[^[WA#][WA#%u]', $casus_id ) ) {
 			$casus = get_post( $casus_id );
-			if ( is_null( $casus ) || self::POST_TYPE !== $casus->post_type ) {
-				$casus_id = 0;
-			}
-		}
-		/**
-		* Als niet gevonden probeer dan te zoeken op het email adres van de afzender.
-		*/
-		if ( ! $casus_id ) {
+		} else {
+			/**
+			* Als niet gevonden probeer dan te zoeken op het email adres van de afzender.
+			*/
 			$casussen = get_posts(
 				[
 					'post_type'   => self::POST_TYPE,
@@ -130,7 +126,7 @@ class Kleistad_WorkshopAanvraag {
 				$casus_id = $casus->ID;
 			}
 		}
-		if ( $casus_id ) {
+		if ( is_object( $casus ) && self::POST_TYPE === $casus->post_type ) {
 			$emailer->send(
 				[
 					'to'      => 'Workshop mailbox <info@' . Kleistad_Email::domein() . '>',
@@ -175,6 +171,7 @@ class Kleistad_WorkshopAanvraag {
 			return;
 		}
 		if ( ! $email_ids ) {
+			error_log( 'geen berichten' );
 			return; // Geen berichten.
 		}
 
