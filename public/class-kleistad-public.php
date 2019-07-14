@@ -384,7 +384,8 @@ class Kleistad_Public {
 	 * @since 5.6.0
 	 */
 	public function rcv_email() {
-		Kleistad_WorkshopAanvraag::ontvang_en_verwerk();
+		$aanvraag = new Kleistad_WorkshopAanvraag();
+		$aanvraag->ontvang_en_verwerk();
 	}
 
 	/**

@@ -95,60 +95,31 @@ class Kleistad_WorkshopAanvraag {
 	}
 
 	/**
-	 * Register endpoint.
+	 * Verwerk een ontvangen email.
 	 *
-	 * @since 5.6.0
+	 * @param array $email De ontvangen email.
 	 */
-	public static function register_rest_routes() {
-		register_rest_route(
-			Kleistad_Public::url(),
-			'/email_workshop',
-			[
-				'methods'             => 'POST',
-				'callback'            => [ __CLASS__, 'callback_email' ],
-				'permission_callback' => function() {
-					return true;
-				},
-			]
-		);
-	}
-
-	/**
-	 * Helper, geeft de url voor het endpoint terug.
-	 */
-	public static function endpoint() {
-		return Kleistad_Public::base_url() . '/email_workshop';
-	}
-
-	/**
-	 * Callback vanuit mailgun.
-	 *
-	 * @param WP_REST_Request $request Callback request params.
-	 */
-	public static function callback_email( WP_REST_Request $request ) {
+	public function verwerk( $email ) {
 		$casus   = null;
 		$emailer = new Kleistad_Email();
-		$params  = $request->get_params();
-		$iparams = array_change_key_case( $params, CASE_LOWER );
-		$tekst   = wp_kses_post( 'text/html' === $iparams['content-type'] ? $iparams['stripped-html'] : $iparams['stripped-text'] );
 
 		/**
-		 * Zoek eerst op basis van het case nummer in subject.
-		 */
-		if ( 2 !== sscanf( $iparams['subject'], '%*[^[WA#][WA#%u]', $casus_id ) ) {
+		* Zoek eerst op basis van het case nummer in subject.
+		*/
+		if ( 2 !== sscanf( $email['subject'], '%*[^[WA#][WA#%u]', $casus_id ) ) {
 			$casus = get_post( $casus_id );
 			if ( is_null( $casus ) || self::POST_TYPE !== $casus->post_type ) {
 				$casus_id = 0;
 			}
 		}
 		/**
-		 * Als niet gevonden probeer dan te zoeken op het email adres van de afzender.
-		 */
+		* Als niet gevonden probeer dan te zoeken op het email adres van de afzender.
+		*/
 		if ( ! $casus_id ) {
 			$casussen = get_posts(
 				[
 					'post_type'   => self::POST_TYPE,
-					'post_name'   => $iparams['from'],
+					'post_name'   => $email['from-email'],
 					'numberposts' => '1',
 					'orderby'     => 'date',
 					'order'       => 'DESC',
@@ -164,7 +135,7 @@ class Kleistad_WorkshopAanvraag {
 				[
 					'to'      => 'Workshop mailbox <info@' . Kleistad_Email::domein() . '>',
 					'subject' => 'aanvraag workshop/kinderfeest',
-					'content' => "<p>Er is een reactie ontvangen van {$iparams['from']}</p>",
+					'content' => "<p>Er is een reactie ontvangen van {$email['from-name']}</p>",
 				]
 			);
 			wp_update_post(
@@ -174,23 +145,61 @@ class Kleistad_WorkshopAanvraag {
 					'post_content' => self::communicatie(
 						[
 							'type'    => 'vraag',
-							'from'    => $iparams['from'],
-							'subject' => $iparams['subject'],
-							'tekst'   => $tekst,
+							'from'    => $email['from-name'],
+							'subject' => $email['subject'],
+							'tekst'   => $email['body'],
 						]
 					) . $casus->post_content,
 				]
 			);
 		} else {
-			$emailer->send(
-				[
-					'to'      => 'Workshop mailbox <info@' . Kleistad_Email::domein() . '>',
-					'subject' => 'onbekende email',
-					'content' => "<p>Er is een onbekende reactie ontvangen van {$iparams['from']}</p><p>{$iparams['stripped-text']}</p>",
-				]
-			);
+			return false;
 		}
-		exit(); // phpcs:ignore
+	}
+
+	/**
+	 * Ontvang en verwerk emails.
+	 */
+	public function ontvang_en_verwerk() {
+		$options = Kleistad::get_options();
+		$mailbox = new PhpImap\Mailbox(
+			'{' . $options['imap_server'] . '}INBOX',
+			'workshops@' . Kleistad_Email::domein(),
+			$options['imap_pwd']
+		);
+		$emailer = new Kleistad_Email();
+		try {
+			$email_ids = $mailbox->searchMailbox( 'UNSEEN' );
+		} catch ( PhpImap\Exceptions\ConnectionException $ex ) {
+			error_log( "IMAP connection failed: $ex" ); // phpcs:ignore
+			return;
+		}
+		if ( ! $email_ids ) {
+			return; // Geen berichten.
+		}
+
+		foreach ( $email_ids as $email_id ) {
+			$email = $mailbox->getMail( $email_id );
+			if ( ! $this->verwerk(
+				// phpcs:disable
+				[
+					'from-name'  => isset( $email->fromName ) ? $email->fromName : $email->fromAddress,
+					'from-email' => $email->fromAddress,
+					'subject'    => $email->subject,
+					'body'       => $email->textHtml ? $email->textHtml : $email->textPlain,
+				]
+				// phpcs:enable
+			)
+				) {
+				$emailer->send(
+					[
+						'to'      => 'Workshop mailbox <info@' . Kleistad_Email::domein() . '>',
+						'subject' => "niet te verwerken email over: {$email->subject}",
+						'content' => '<p>Er is een onbekende reactie ontvangen op workshops@' . Kleistad_Email::domein() . ' van ' . $email->fromAddress, // phpcs:ignore
+					]
+				);
+			};
+		}
 	}
 
 	/**
