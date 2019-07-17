@@ -56,6 +56,22 @@
 				);
 			}
 
+			$( 'a.kleistad_workshop_unfold' ).click(
+				function() {
+					$( this ).closest( 'div' ).toggleClass( 'kleistad_workshop_compact' );
+					$( this ).hide().closest( 'div' ).find( 'a.kleistad_workshop_fold' ).show();
+					return false;
+				}
+			);
+
+			$( 'a.kleistad_workshop_fold' ).click(
+				function() {
+					$( this ).closest( 'div' ).toggleClass( 'kleistad_workshop_compact' );
+					$( this ).hide().closest( 'div' ).find( 'a.kleistad_workshop_unfold' ).show();
+					return false;
+				}
+			);
+
         }
     );
 

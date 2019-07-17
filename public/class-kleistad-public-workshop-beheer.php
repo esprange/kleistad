@@ -150,7 +150,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			$casus_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_plan_workshop_' . $casus_id ) ) {
 				$casus            = get_post( $casus_id );
-				$data['workshop'] = wp_parse_args( maybe_unserialize( $casus->post_excerpt ), $this->formulier() );
+				$data['workshop'] = wp_parse_args( unserialize( $casus->post_excerpt ), $this->formulier() ); // phpcs:ignore
 			} else {
 				$error->add( 'security', 'Security fout! !' );
 				return $error;
@@ -162,9 +162,9 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 				$data['casus'] = array_merge(
 					unserialize( $casus->post_excerpt ), // phpcs:ignore
 					[
-						'casus_id' => $casus_id,
-						'content'  => $casus->post_content,
-						'datum'    => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
+						'casus_id'        => $casus_id,
+						'correspondentie' => unserialize( base64_decode( $casus->post_content ) ), // phpcs:ignore
+						'datum'           => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
 					]
 				);
 			} else {

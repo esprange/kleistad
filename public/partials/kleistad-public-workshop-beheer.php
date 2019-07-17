@@ -138,10 +138,25 @@ else :
 			<tr>
 				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" ></textarea></td>
 			</tr>
-			<tr>
-				<td colspan="2" ><div><?php echo $data['casus']['content']; // phpcs:ignore ?></div></td>
-			</tr>
 		</table>
+		<div>
+		<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>
+			<div class="kleistad_workshop_correspondentie kleistad_workshop_<?php echo esc_attr( $correspondentie['type'] ); ?> kleistad_workshop_compact" >
+				<strong><?php echo esc_html( ucfirst( $correspondentie['type'] ) . ' van ' . $correspondentie['from'] . ' op ' . $correspondentie['tijd'] ); ?></strong>
+				<p><?php echo esc_html( $correspondentie['subject'] ); ?></p>
+				<?php echo $correspondentie['tekst']; // phpcs:ignore ?>
+				<p style="text-align:center;">
+				<span class="kleistad_workshop_unfold">
+					<a class="kleistad_workshop_unfold" href="#">Uitklappen</a>
+				</span>
+				<span class="kleistad_workshop_fold">
+					<a class="kleistad_workshop_fold" href="#">Inklappen</a>
+				</span>
+				</p>
+			</div>
+			<hr>
+		<?php endforeach ?>
+		</div>
 		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
 	</form>
 	<?php else : ?>

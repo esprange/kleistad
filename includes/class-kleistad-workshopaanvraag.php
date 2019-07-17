@@ -24,7 +24,7 @@ class Kleistad_WorkshopAanvraag {
 	/**
 	 * Dit is de prefix van de verzender van emails
 	 */
-	const MBX = 'workshop';
+	const MBX = 'workshops';
 
 	/**
 	 * Initialiseer de aanvragen als custom post type.
@@ -103,11 +103,10 @@ class Kleistad_WorkshopAanvraag {
 	public function verwerk( $email ) {
 		$casus   = null;
 		$emailer = new Kleistad_Email();
-
 		/**
 		* Zoek eerst op basis van het case nummer in subject.
 		*/
-		if ( 2 !== sscanf( $email['subject'], '%*[^[WA#][WA#%u]', $casus_id ) ) {
+		if ( 2 === sscanf( $email['subject'], '%*[^[WA#][WA#%u]', $casus_id ) ) {
 			$casus = get_post( $casus_id );
 		} else {
 			/**
@@ -132,7 +131,8 @@ class Kleistad_WorkshopAanvraag {
 				[
 					'to'      => 'Workshop mailbox <info@' . Kleistad_Email::domein() . '>',
 					'subject' => 'aanvraag workshop/kinderfeest',
-					'content' => "<p>Er is een reactie ontvangen van {$email['from-name']}</p>",
+					'content' => '<p>Er is een reactie ontvangen van ' . $email['from-name'] . '</p>',
+					'sign'    => 'Workshop mailbox',
 				]
 			);
 			wp_update_post(
@@ -140,13 +140,14 @@ class Kleistad_WorkshopAanvraag {
 					'ID'           => $casus_id,
 					'post_status'  => 'vraag',
 					'post_content' => self::communicatie(
+						$casus->post_content,
 						[
 							'type'    => 'vraag',
 							'from'    => $email['from-name'],
 							'subject' => $email['subject'],
 							'tekst'   => $email['body'],
 						]
-					) . $casus->post_content,
+					),
 				]
 			);
 			return true;
@@ -162,30 +163,38 @@ class Kleistad_WorkshopAanvraag {
 		$options = Kleistad::get_options();
 		$mailbox = new PhpImap\Mailbox(
 			'{' . $options['imap_server'] . '}INBOX',
-			'workshops@' . Kleistad_Email::domein(),
+			self::MBX . '@' . Kleistad_Email::domein(),
 			$options['imap_pwd']
 		);
 		$emailer = new Kleistad_Email();
 		try {
-			$email_ids = $mailbox->searchMailbox( 'UNSEEN' );
+			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
 		} catch ( PhpImap\Exceptions\ConnectionException $ex ) {
 			error_log( "IMAP connection failed: $ex" ); // phpcs:ignore
 			return;
 		}
 		if ( empty( $email_ids ) ) {
-			error_log( 'geen berichten' );
 			return; // Geen berichten.
 		}
-
 		foreach ( $email_ids as $email_id ) {
 			$email = $mailbox->getMail( $email_id );
+			// phpcs:disable
+			if ( $email->textHtml ) {
+				$html = new \Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
+				$body = nl2br( $html->getText() );
+			} elseif ( $email->textPlain ) {
+				$body = nl2br( $email->textPlain );
+			} else {
+				$body = '<p>bericht tekst kan niet worden weergegeven</p>';
+			}
+			// phpcs:enable
 			if ( ! $this->verwerk(
 				// phpcs:disable
 				[
-					'from-name'  => isset( $email->fromName ) ? $email->fromName : $email->fromAddress,
-					'from-email' => $email->fromAddress,
-					'subject'    => $email->subject,
-					'body'       => $email->textHtml ? $email->textHtml : $email->textPlain,
+					'from-name'  => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
+					'from-email' => sanitize_email( $email->fromAddress ),
+					'subject'    => sanitize_text_field( $email->subject ),
+					'body'       => $body,
 				]
 				// phpcs:enable
 			)
@@ -194,9 +203,11 @@ class Kleistad_WorkshopAanvraag {
 					[
 						'to'      => 'Workshop mailbox <info@' . Kleistad_Email::domein() . '>',
 						'subject' => "niet te verwerken email over: {$email->subject}",
-						'content' => '<p>Er is een onbekende reactie ontvangen op workshops@' . Kleistad_Email::domein() . ' van ' . $email->fromAddress, // phpcs:ignore
+						'content' => '<p>Er is een onbekende reactie ontvangen op ' . self::MBX . '@' . Kleistad_Email::domein() . ' van ' . $email->fromAddress, // phpcs:ignore
 					]
 				);
+			} else {
+				$mailbox->setFlag( [ $email_id ], '\\Answered' );
 			};
 		}
 	}
@@ -204,18 +215,28 @@ class Kleistad_WorkshopAanvraag {
 	/**
 	 * Voeg de communicatie toe aan de ticket.
 	 *
-	 * @param array $parameters De parameters van de communicatie.
+	 * @param string $content    Huidige content van de ticket.
+	 * @param array  $parameters De parameters van de communicatie.
 	 */
-	public static function communicatie( $parameters ) {
-		$nu = date( 'd-m-Y H:i' );
-		switch ( $parameters['type'] ) {
-			case 'aanvraag':
-				return "<div class=\"kleistad_workshop_aanvraag\"><p>ontvangen op : $nu </p><p>{$parameters['tekst']}</p></div>";
-			case 'vraag':
-				return "<div class=\"kleistad_workshop_vraag\"><p>ontvangen van: {$parameters['from']} op: $nu met onderwerp:{$parameters['subject']}</p><p>{$parameters['tekst']}</p><hr></div>";
-			case 'reactie':
-				return "<div class=\"kleistad_workshop_reactie\"><p>verzonden door: {$parameters['from']} op: $nu</p><p>{$parameters['tekst']}</p><hr></div>";
+	private static function communicatie( $content, $parameters ) {
+		if ( empty( $content ) ) {
+			$correspondentie = [];
+		} else {
+			$correspondentie = unserialize( base64_decode( $content ) ); // phpcs:ignore
 		}
+
+		array_unshift(
+			$correspondentie,
+			array_merge(
+				str_replace(
+					[ '{', '}' ],
+					[ '&#123', '&#125' ],
+					$parameters
+				),
+				[ 'tijd' => date( 'd-m-Y H:i' ) ]
+			)
+		);
+		return base64_encode( serialize( $correspondentie ) ); // phpcs:ignore
 	}
 
 	/**
@@ -243,9 +264,12 @@ class Kleistad_WorkshopAanvraag {
 				'post_status'    => 'nieuw',
 				'comment_status' => 'closed',
 				'post_content'   => self::communicatie(
+					'',
 					[
-						'tekst' => $casus_data['vraag'],
-						'type'  => 'aanvraag',
+						'tekst'   => $casus_data['vraag'],
+						'type'    => 'aanvraag',
+						'from'    => $casus_data['naam'],
+						'subject' => '',
 					]
 				),
 			]
@@ -256,7 +280,7 @@ class Kleistad_WorkshopAanvraag {
 					'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
 					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} aanvraag", $result ),
 					'from'       => self::MBX . '@' . Kleistad_Email::verzend_domein(),
-					'reply-to'   => self::MBX . '@' . Kleistad_Email::verzend_domein(),
+					'reply-to'   => self::MBX . '@' . Kleistad_Email::domein(),
 					'slug'       => 'kleistad_email_bevestiging_workshop_aanvraag',
 					'parameters' => $casus_data,
 				]
@@ -276,31 +300,34 @@ class Kleistad_WorkshopAanvraag {
 		$emailer       = new Kleistad_Email();
 		$casus         = get_post( $id );
 		$casus_details = maybe_unserialize( $casus->post_excerpt );
-		$casus_content = self::communicatie(
-			[
-				'type'  => 'reactie',
-				'from'  => wp_get_current_user()->display_name,
-				'tekst' => $reactie,
-			]
-		) . $casus->post_content;
+		$subject       = "[WA#$id] Reactie op {$casus_details['naam']} aanvraag";
 		wp_update_post(
 			[
 				'ID'           => $id,
 				'post_status'  => 'gereageerd',
-				'post_content' => $casus_content,
+				'post_content' => self::communicatie(
+					$casus->post_content,
+					[
+						'type'    => 'reactie',
+						'from'    => wp_get_current_user()->display_name,
+						'tekst'   => $reactie,
+						'subject' => $subject,
+					]
+				),
 			]
 		);
 		$emailer->send(
 			[
 				'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
-				'from'       => self::MBX . '@',
-				Kleistad_Email::verzend_domein(),
-				'reply-to'   => self::MBX . '@',
-				Kleistad_Email::verzend_domein(),
-				'subject'    => "[WA#$id] Reactie op {$casus_details['naam']} aanvraag",
+				'from'       => self::MBX . '@' . Kleistad_Email::verzend_domein(),
+				'reply-to'   => self::MBX . '@' . Kleistad_Email::domein(),
+				'subject'    => $subject,
 				'slug'       => 'kleistad_email_reactie_workshop_aanvraag',
+				'auto'       => false,
 				'parameters' => [
-					'reactie' => $casus_content,
+					'reactie' => $reactie,
+					'contact' => $casus_details['contact'],
+					'naam'    => $casus_details['naam'],
 				],
 			]
 		);
