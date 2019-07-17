@@ -168,13 +168,6 @@ table.kleistad_form>tfoot>tr:last-child th {
 table.kleistad_form input[type=text], select {
     width: 100%;
 }
-table.kleistad_form select {
-	/* csslint ignore:start */
-	-webkit-appearance:	menulist-button;
-	/* csslint ignore:end */
-	-moz-appearance: menulist-button;
-	appearance: none;
-}
 table.kleistad_form button {
     height: 2.5em;
     padding: 0;

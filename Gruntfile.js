@@ -98,7 +98,6 @@ module.exports = function( grunt ) { // jshint ignore:line
 					'admin/**/*',
 					'includes/**/*',
 					'vendor/**/*',
-					'fullcalendar*/**/*'
 				],
 				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
 			}
