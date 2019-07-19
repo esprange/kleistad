@@ -96,6 +96,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			'betaald'     => $workshop->betaald,
 			'definitief'  => $workshop->definitief,
 			'vervallen'   => $workshop->vervallen,
+			'aanvraag_id' => $workshop->aanvraag_id,
 		];
 	}
 
@@ -149,8 +150,14 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 		} elseif ( 'inplannen' === $data['actie'] ) {
 			$casus_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_plan_workshop_' . $casus_id ) ) {
-				$casus            = get_post( $casus_id );
-				$data['workshop'] = wp_parse_args( unserialize( $casus->post_excerpt ), $this->formulier() ); // phpcs:ignore
+				$casus         = get_post( $casus_id );
+				$casus_details = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+				if ( $casus_details['workshop_id'] ) {
+					$data['workshop'] = $this->formulier( $casus_details['workshop_id'] );
+				} else {
+					$data['workshop']                = wp_parse_args( $casus_details, $this->formulier() );
+					$data['workshop']['aanvraag_id'] = $casus_id;
+				}
 			} else {
 				$error->add( 'security', 'Security fout! !' );
 				return $error;
@@ -160,10 +167,10 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_toon_aanvraag_' . $casus_id ) ) {
 				$casus         = get_post( $casus_id );
 				$data['casus'] = array_merge(
-					unserialize( $casus->post_excerpt ), // phpcs:ignore
+					unserialize( $casus->post_excerpt ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 					[
 						'casus_id'        => $casus_id,
-						'correspondentie' => unserialize( base64_decode( $casus->post_content ) ), // phpcs:ignore
+						'correspondentie' => unserialize( base64_decode( $casus->post_content ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 						'datum'           => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
 					]
 				);
@@ -227,6 +234,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 					'definitief'  => FILTER_VALIDATE_BOOLEAN,
 					'betaald'     => FILTER_VALIDATE_BOOLEAN,
 					'programma'   => FILTER_DEFAULT,
+					'aanvraag_id' => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
 			$data['workshop']['programma'] = sanitize_textarea_field( $data['workshop']['programma'] );
@@ -351,6 +359,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			$workshop->programma   = $data['workshop']['programma'];
 			$workshop->kosten      = $data['workshop']['kosten'];
 			$workshop->aantal      = $data['workshop']['aantal'];
+			$workshop->aanvraag_id = $data['workshop']['aanvraag_id'];
 			if ( 'bewaren' === $data['form_actie'] ) {
 				$workshop->save();
 				return 'De workshop informatie is opgeslagen';

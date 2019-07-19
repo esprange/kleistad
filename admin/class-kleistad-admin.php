@@ -17,7 +17,7 @@ class Kleistad_Admin {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 17;
+	const DBVERSIE = 19;
 
 	/**
 	 * De versie van de plugin.
@@ -241,6 +241,15 @@ class Kleistad_Admin {
 	 */
 	public function initialize() {
 		$this->database_version();
+
+		if ( ! wp_next_scheduled( 'kleistad_kosten' ) ) {
+			wp_schedule_event( strtotime( 'midnight' ), 'daily', 'kleistad_kosten' );
+		}
+		if ( ! wp_next_scheduled( 'kleistad_rcv_email' ) ) {
+			$time = time();
+			wp_schedule_event( $time + ( 900 - ( $time % 900 ) ), '15_mins', 'kleistad_rcv_email' );
+		}
+
 		register_setting( 'kleistad-opties', 'kleistad-opties', [ $this, 'validate_settings' ] );
 	}
 
@@ -353,6 +362,7 @@ class Kleistad_Admin {
                 aantal tinyint(2) DEFAULT 99,
 				betaald tinyint(1) DEFAULT 0,
 				definitief tinyint(1) DEFAULT 0,
+				aanvraag_id int(10) DEFAULT 0,
                 PRIMARY KEY  (id)
               ) $charset_collate;"
 			);

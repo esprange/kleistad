@@ -32,6 +32,7 @@
  * @property bool   betaald
  * @property bool   definitief
  * @property string event_id
+ * @property int    aanvraag_id
  * @property string code
  */
 class Kleistad_Workshop extends Kleistad_Entity {
@@ -69,6 +70,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			'aantal'      => 6,
 			'betaald'     => 0,
 			'definitief'  => 0,
+			'aanvraag_id' => 0,
 		];
 		if ( is_null( $workshop_id ) ) {
 			$this->data = $default_data;
@@ -163,7 +165,10 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
-		$this->id        = $wpdb->insert_id;
+		$this->id = $wpdb->insert_id;
+		if ( $this->aanvraag_id ) {
+			Kleistad_WorkshopAanvraag::gepland( $this->aanvraag_id, $this->id );
+		}
 		$timezone_string = get_option( 'timezone_string' );
 		if ( false === $timezone_string ) {
 			$timezone_string = 'Europe/Amsterdam';
@@ -212,6 +217,9 @@ class Kleistad_Workshop extends Kleistad_Entity {
 		} else {
 			return false;
 		};
+		if ( $this->aanvraag_id ) {
+			Kleistad_WorkshopAanvraag::gepland( $this->aanvraag_id, 0 );
+		}
 		return true;
 	}
 

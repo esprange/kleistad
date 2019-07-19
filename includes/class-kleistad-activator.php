@@ -20,13 +20,6 @@ class Kleistad_Activator {
 	 * @since    4.0.87
 	 */
 	public static function activate() {
-		if ( ! wp_next_scheduled( 'kleistad_kosten' ) ) {
-			wp_schedule_event( strtotime( 'midnight' ), 'daily', 'kleistad_kosten' );
-		}
-		if ( ! wp_next_scheduled( 'kleistad_rcv_email' ) ) {
-			wp_schedule_event( time(), '15_mins', 'kleistad_rcv_email' );
-		}
-
 		/*
 		* n.b. in principe heeft de (toekomstige) rol bestuur de override capability en de (toekomstige) rol lid de reserve capability
 		* zolang die rollen nog niet gedefinieerd zijn hanteren we de onderstaande toekenning

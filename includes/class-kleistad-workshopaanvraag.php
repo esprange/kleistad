@@ -160,6 +160,7 @@ class Kleistad_WorkshopAanvraag {
 	 * Ontvang en verwerk emails.
 	 */
 	public function ontvang_en_verwerk() {
+		// phpcs:disable WordPress.NamingConventions
 		$options = Kleistad::get_options();
 		$mailbox = new PhpImap\Mailbox(
 			'{' . $options['imap_server'] . '}INBOX',
@@ -178,38 +179,35 @@ class Kleistad_WorkshopAanvraag {
 		}
 		foreach ( $email_ids as $email_id ) {
 			$email = $mailbox->getMail( $email_id );
-			// phpcs:disable
 			if ( $email->textHtml ) {
 				$html = new \Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
-				$body = nl2br( $html->getText() );
+				$body = $html->getText();
 			} elseif ( $email->textPlain ) {
-				$body = nl2br( $email->textPlain );
+				$body = $email->textPlain;
 			} else {
 				$body = '<p>bericht tekst kan niet worden weergegeven</p>';
 			}
-			// phpcs:enable
 			if ( ! $this->verwerk(
-				// phpcs:disable
 				[
 					'from-name'  => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
 					'from-email' => sanitize_email( $email->fromAddress ),
 					'subject'    => sanitize_text_field( $email->subject ),
-					'body'       => $body,
+					'body'       => sanitize_textarea_field( $body ),
 				]
-				// phpcs:enable
 			)
 				) {
 				$emailer->send(
 					[
 						'to'      => 'Workshop mailbox <info@' . Kleistad_Email::domein() . '>',
 						'subject' => "niet te verwerken email over: {$email->subject}",
-						'content' => '<p>Er is een onbekende reactie ontvangen op ' . self::MBX . '@' . Kleistad_Email::domein() . ' van ' . $email->fromAddress, // phpcs:ignore
+						'content' => '<p>Er is een onbekende reactie ontvangen op ' . self::MBX . '@' . Kleistad_Email::domein() . ' van ' . $email->fromAddress,
 					]
 				);
 			} else {
 				$mailbox->setFlag( [ $email_id ], '\\Answered' );
 			};
 		}
+		// phpcs:enable
 	}
 
 	/**
@@ -222,7 +220,7 @@ class Kleistad_WorkshopAanvraag {
 		if ( empty( $content ) ) {
 			$correspondentie = [];
 		} else {
-			$correspondentie = unserialize( base64_decode( $content ) ); // phpcs:ignore
+			$correspondentie = unserialize( base64_decode( $content ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 		}
 
 		array_unshift(
@@ -233,10 +231,10 @@ class Kleistad_WorkshopAanvraag {
 					[ '&#123', '&#125' ],
 					$parameters
 				),
-				[ 'tijd' => date( 'd-m-Y H:i' ) ]
+				[ 'tijd' => current_time( 'd-m-Y H:i' ) ]
 			)
 		);
-		return base64_encode( serialize( $correspondentie ) ); // phpcs:ignore
+		return base64_encode( serialize( $correspondentie ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 	}
 
 	/**
@@ -253,12 +251,13 @@ class Kleistad_WorkshopAanvraag {
 				'post_name'      => $casus_data['email'],
 				'post_excerpt'   => maybe_serialize(
 					[
-						'email'   => $casus_data['email'],
-						'naam'    => $casus_data['naam'],
-						'contact' => $casus_data['contact'],
-						'omvang'  => $casus_data['omvang'],
-						'periode' => $casus_data['periode'],
-						'telnr'   => $casus_data['telnr'],
+						'email'       => $casus_data['email'],
+						'naam'        => $casus_data['naam'],
+						'contact'     => $casus_data['contact'],
+						'omvang'      => $casus_data['omvang'],
+						'periode'     => $casus_data['periode'],
+						'telnr'       => $casus_data['telnr'],
+						'workshop_id' => 0,
 					]
 				),
 				'post_status'    => 'nieuw',
@@ -288,6 +287,25 @@ class Kleistad_WorkshopAanvraag {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Verander de status van de casus naar gepland.
+	 *
+	 * @param int $casus_id    De id van de casus.
+	 * @param int $workshop_id De id van de workshop.
+	 */
+	public static function gepland( $casus_id, $workshop_id ) {
+		$casus                        = get_post( $casus_id );
+		$casus_details                = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+		$casus_details['workshop_id'] = $workshop_id;
+		wp_update_post(
+			[
+				'ID'           => $casus_id,
+				'post_status'  => $workshop_id ? 'gepland' : 'gereageerd',
+				'post_excerpt' => maybe_serialize( $casus_details ),
+			]
+		);
 	}
 
 	/**

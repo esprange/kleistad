@@ -23,6 +23,7 @@ else :
 	<form method="POST" id="kleistad_workshop_beheer_form" autocomplete="off">
 		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']['workshop_id'] ); ?>"/>
+		<input type="hidden" name="aanvraag_id" value="<?php echo esc_attr( $data['workshop']['aanvraag_id'] ); ?>"/>
 		<input type="hidden" name="vervallen" value="<?php echo $data['workshop']['vervallen'] ? 1 : 0; ?>" >
 		<table class="kleistad_form" >
 			<tr>
@@ -105,7 +106,7 @@ else :
 		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $voltooid || ! $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?>
 			data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="verwijderen" <?php disabled( $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
-		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Annuleren</button>
+		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Sluiten</button>
 	</form>
 	<?php elseif ( false !== strpos( 'tonen', $data['actie'] ) ) : ?>
 	<form method="POST" id="kleistad_casussen_beheer_form" autocomplete="off">
@@ -139,26 +140,26 @@ else :
 				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" ></textarea></td>
 			</tr>
 		</table>
-		<div>
-		<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>
-			<div class="kleistad_workshop_correspondentie kleistad_workshop_<?php echo esc_attr( $correspondentie['type'] ); ?> kleistad_workshop_compact" >
-				<strong><?php echo esc_html( ucfirst( $correspondentie['type'] ) . ' van ' . $correspondentie['from'] . ' op ' . $correspondentie['tijd'] ); ?></strong>
-				<p><?php echo esc_html( $correspondentie['subject'] ); ?></p>
-				<?php echo $correspondentie['tekst']; // phpcs:ignore ?>
-				<p style="text-align:center;">
-				<span class="kleistad_workshop_unfold">
-					<a class="kleistad_workshop_unfold" href="#">Uitklappen</a>
-				</span>
-				<span class="kleistad_workshop_fold">
-					<a class="kleistad_workshop_fold" href="#">Inklappen</a>
-				</span>
-				</p>
-			</div>
-			<hr>
-		<?php endforeach ?>
-		</div>
 		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
+		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Sluiten</button>
 	</form>
+	<div>
+		<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>
+		<div class="kleistad_workshop_correspondentie kleistad_workshop_<?php echo esc_attr( $correspondentie['type'] ); ?> kleistad_workshop_compact" >
+			<strong><?php echo esc_html( ucfirst( $correspondentie['type'] ) . ' van ' . $correspondentie['from'] . ' op ' . $correspondentie['tijd'] ); ?></strong>
+			<p><?php echo esc_html( $correspondentie['subject'] ); ?></p>
+			<?php echo nl2br( $correspondentie['tekst'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<p style="text-align:center;">
+			<span class="kleistad_workshop_unfold">
+				<a class="kleistad_workshop_unfold" href="#">Uitklappen</a>
+			</span>
+			<span class="kleistad_workshop_fold">
+				<a class="kleistad_workshop_fold" href="#">Inklappen</a>
+			</span>
+			</p>
+		</div>
+	<?php endforeach ?>
+	</div>
 	<?php else : ?>
 	<table id="kleistad_aanvragen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
 		<thead>
