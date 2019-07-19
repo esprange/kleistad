@@ -105,9 +105,7 @@
 
     $( document ).ready(
         function() {
-            $( '#kleistad_recepten' ).ready( function() {
-                zoekRecepten( true );
-            });
+			zoekRecepten( true );
 
             $( '#kleistad_filter_btn' ).click( function() {
                 if ( 'show' === $( this ).val() ) {
