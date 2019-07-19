@@ -301,8 +301,11 @@ class Kleistad_Workshop extends Kleistad_Entity {
 
 		switch ( $type ) {
 			case 'bevestiging':
-			case 'correctie bevestiging':
 				$onderwerp = 'Bevestiging ' . $this->naam;
+				$slug      = 'kleistad_email_workshop_bevestiging';
+				break;
+			case 'correctie bevestiging':
+				$onderwerp = 'Bevestiging ' . $this->naam . ' (correctie)';
 				$slug      = 'kleistad_email_workshop_bevestiging';
 				break;
 			case 'betaling':
