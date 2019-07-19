@@ -60,47 +60,45 @@ class Kleistad_Public_Kalender extends Kleistad_Shortcode {
 				switch ( $event->properties['class'] ) {
 					case 'Kleistad_Workshop':
 						$workshop = new Kleistad_Workshop( $id );
-						if ( $workshop->vervallen ) {
-							continue;
+						if ( ! $workshop->vervallen ) {
+							$fc_events[] = [
+								'id'            => $event->id,
+								'title'         => "$workshop->naam ($workshop->code)",
+								'start'         => $event->start->format( DateTime::ATOM ),
+								'end'           => $event->eind->format( DateTime::ATOM ),
+								'className'     => $workshop->betaald ? 'kleistad_workshop_betaald' :
+									( $workshop->definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ),
+								'extendedProps' => [
+									'naam'       => $workshop->naam,
+									'aantal'     => $workshop->aantal,
+									'docent'     => $workshop->docent,
+									'technieken' => implode( ', ', $workshop->technieken ),
+									'start'      => strftime( '%H:%M', $workshop->start_tijd ),
+									'eind'       => strftime( '%H:%M', $workshop->eind_tijd ),
+								],
+							];
 						}
-						$fc_events[] = [
-							'id'            => $event->id,
-							'title'         => "$workshop->naam ($workshop->code)",
-							'start'         => $event->start->format( DateTime::ATOM ),
-							'end'           => $event->eind->format( DateTime::ATOM ),
-							'className'     => $workshop->betaald ? 'kleistad_workshop_betaald' :
-								( $workshop->definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ),
-							'extendedProps' => [
-								'naam'       => $workshop->naam,
-								'aantal'     => $workshop->aantal,
-								'docent'     => $workshop->docent,
-								'technieken' => implode( ', ', $workshop->technieken ),
-								'start'      => strftime( '%H:%M', $workshop->start_tijd ),
-								'eind'       => strftime( '%H:%M', $workshop->eind_tijd ),
-							],
-						];
 						break;
 					case 'Kleistad_Cursus':
 						$cursus = new Kleistad_Cursus( $id );
-						if ( $cursus->vervallen ) {
-							continue;
+						if ( ! $cursus->vervallen ) {
+							$lopend      = $cursus->start_datum < strtotime( 'today' );
+							$fc_events[] = [
+								'id'            => $event->id,
+								'title'         => $cursus->naam,
+								'start'         => $event->start->format( DateTime::ATOM ),
+								'end'           => $event->eind->format( DateTime::ATOM ),
+								'className'     => $cursus->tonen || $lopend ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
+								'extendedProps' => [
+									'naam'       => "cursus $cursus->code",
+									'aantal'     => $cursus->maximum - $cursus->ruimte(),
+									'docent'     => $cursus->docent,
+									'technieken' => implode( ', ', $cursus->technieken ),
+									'start'      => strftime( '%H:%M', $cursus->start_tijd ),
+									'eind'       => strftime( '%H:%M', $cursus->eind_tijd ),
+								],
+							];
 						}
-						$lopend      = $cursus->start_datum < strtotime( 'today' );
-						$fc_events[] = [
-							'id'            => $event->id,
-							'title'         => $cursus->naam,
-							'start'         => $event->start->format( DateTime::ATOM ),
-							'end'           => $event->eind->format( DateTime::ATOM ),
-							'className'     => $cursus->tonen || $lopend ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
-							'extendedProps' => [
-								'naam'       => "cursus $cursus->code",
-								'aantal'     => $cursus->maximum - $cursus->ruimte(),
-								'docent'     => $cursus->docent,
-								'technieken' => implode( ', ', $cursus->technieken ),
-								'start'      => strftime( '%H:%M', $cursus->start_tijd ),
-								'eind'       => strftime( '%H:%M', $cursus->eind_tijd ),
-							],
-						];
 						break;
 					default:
 						break;
