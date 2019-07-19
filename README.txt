@@ -36,7 +36,7 @@ Plaats de shortcodes in de pagina's
 == Changelog ==
 = 5.6.0 =
 * Toevoeging workshop aanvraag shortcode en aanpassing workshop beheer
-* Verbetering email (naast html ook plain text)
+* Verbetering email (naast html ook plain text), om valse spam indicatie te voorkomen
 = 5.5.1 =
 * Nieuwe versie van FullCalendar (4.2.0)
 * Nieuwe versie google/apiclient (0.103)
