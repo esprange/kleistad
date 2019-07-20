@@ -92,12 +92,11 @@ module.exports = function( grunt ) { // jshint ignore:line
 				src: [
 					'*.php',
 					'README.txt',
-					'README.MD',
 					'LICENSE.txt',
 					'public/**/*',
 					'admin/**/*',
 					'includes/**/*',
-					'vendor/**/*',
+					'vendor/**/*'
 				],
 				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
 			}
