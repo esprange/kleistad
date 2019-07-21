@@ -151,7 +151,7 @@ class Kleistad_Email {
 	/**
 	 * Maak de email tekst aan.
 	 *
-	 * @param string $tekst          De content.
+	 * @param string $tekst De content.
 	 * @return string De opgemaakte tekst.
 	 */
 	private function inhoud( $tekst ) {
