@@ -277,7 +277,7 @@ class Kleistad_WorkshopAanvraag {
 			$emailer->send(
 				[
 					'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
-					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} aanvraag", $result ),
+					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $result ),
 					'from'       => self::MBX . '@' . Kleistad_Email::verzend_domein(),
 					'reply-to'   => self::MBX . '@' . Kleistad_Email::domein(),
 					'slug'       => 'kleistad_email_bevestiging_workshop_aanvraag',
@@ -320,7 +320,7 @@ class Kleistad_WorkshopAanvraag {
 		$emailer       = new Kleistad_Email();
 		$casus         = get_post( $id );
 		$casus_details = maybe_unserialize( $casus->post_excerpt );
-		$subject       = "[WA#$id] Reactie op {$casus_details['naam']} aanvraag";
+		$subject       = sprintf( "[WA#%08d] Reactie op {$casus_details['naam']} vraag", $id );
 		wp_update_post(
 			[
 				'ID'           => $id,
