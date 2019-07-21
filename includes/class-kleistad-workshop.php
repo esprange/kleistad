@@ -298,52 +298,49 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type ) {
+		$email_parameters = [
+			'to'         => "{$this->contact} <{$this->email}>",
+			'parameters' => [
+				'contact'             => $this->contact,
+				'naam'                => ( 'workshop' === $this->naam ) ? 'de workshop' : ( 'kinderfeest' === $this->naam ? 'het kinderfeest' : $this->naam ),
+				'organisatie'         => $this->organisatie,
+				'aantal'              => $this->aantal,
+				'workshop_code'       => $this->code,
+				'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
+				'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
+				'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
+				'workshop_docent'     => $this->docent,
+				'workshop_technieken' => implode( ', ', $this->technieken ),
+				'workshop_programma'  => $this->programma,
+				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
+				'workshop_link'       => '<a href="' . home_url( '/kleistad_workshop_betaling' ) .
+										'?wrk=' . $this->id .
+										'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
+			],
+		];
 
 		switch ( $type ) {
 			case 'bevestiging':
-				$onderwerp = 'Bevestiging ' . $this->naam;
-				$slug      = 'kleistad_email_workshop_bevestiging';
-				break;
 			case 'correctie bevestiging':
-				$onderwerp = 'Bevestiging ' . $this->naam . ' (correctie)';
-				$slug      = 'kleistad_email_workshop_bevestiging';
+				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( 'bevestiging' === $type ? '' : ' (correctie)' );
+				$email_parameters['auto']     = false;
+				$email_parameters['slug']     = 'kleistad_email_workshop_bevestiging';
+				$email_parameters['from']     = 'info@' . Kleistad_Email::verzend_domein();
+				$email_parameters['reply-to'] = 'info@' . Kleistad_Email::domein();
 				break;
 			case 'betaling':
 			case 'betaling_ideal':
-				$onderwerp = 'Betaling ' . $this->naam;
-				$slug      = "kleistad_email_workshop_$type";
+				$email_parameters['subject'] = 'Betaling ' . $this->naam;
+				$email_parameters['slug']    = "kleistad_email_workshop_$type";
 				break;
 			case 'afzegging':
-				$onderwerp = 'Annulering ' . $this->naam;
-				$slug      = 'kleistad_email_workshop_afzegging';
+				$email_parameters['subject'] = 'Annulering ' . $this->naam;
+				$email_parameters['slug']    = 'kleistad_email_workshop_afzegging';
 				break;
 			default:
 				return false;
 		}
-		return $this->emailer->send(
-			[
-				'to'         => "{$this->contact} <{$this->email}>",
-				'subject'    => $onderwerp,
-				'slug'       => $slug,
-				'parameters' => [
-					'contact'             => $this->contact,
-					'naam'                => ( 'workshop' === $this->naam ) ? 'de workshop' : ( 'kinderfeest' === $this->naam ? 'het kinderfeest' : $this->naam ),
-					'organisatie'         => $this->organisatie,
-					'aantal'              => $this->aantal,
-					'workshop_code'       => $this->code,
-					'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
-					'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
-					'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
-					'workshop_docent'     => $this->docent,
-					'workshop_technieken' => implode( ', ', $this->technieken ),
-					'workshop_programma'  => $this->programma,
-					'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
-					'workshop_link'       => '<a href="' . home_url( '/kleistad_workshop_betaling' ) .
-											'?wrk=' . $this->id .
-											'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
-				],
-			]
-		);
+		return $this->emailer->send( $email_parameters );
 	}
 
 	/**

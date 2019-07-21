@@ -96,7 +96,7 @@ class Kleistad_Email {
 		$this->mailparams = wp_parse_args(
 			$args,
 			[
-				'auto'       => true,
+				'auto'       => 'noreply',
 				'bcc'        => [],
 				'cc'         => [],
 				'content'    => '',
@@ -105,6 +105,7 @@ class Kleistad_Email {
 				'parameters' => [],
 				'reply-to'   => 'no_reply@' . self::domein(),
 				'sign'       => 'Kleistad',
+				'sign_email' => true,
 				'slug'       => '',
 				'to'         => 'Kleistad <info@' . self::domein() . '>',
 			]
@@ -142,7 +143,7 @@ class Kleistad_Email {
 		return wp_mail(
 			$this->mailparams['to'],
 			$this->mailparams['subject'],
-			$this->inhoud( $tekst, $this->mailparams['sign'], $this->mailparams['auto'] ),
+			$this->inhoud( $tekst, $this->mailparams ),
 			$this->headers()
 		);
 	}
@@ -150,12 +151,10 @@ class Kleistad_Email {
 	/**
 	 * Maak de email tekst aan.
 	 *
-	 * @param string  $tekst  De content.
-	 * @param string  $namens De ondertekenaar.
-	 * @param boolean $automatisch Of het een automatische email betreft.
+	 * @param string $tekst          De content.
 	 * @return string De opgemaakte tekst.
 	 */
-	private function inhoud( $tekst, $namens, $automatisch = true ) {
+	private function inhoud( $tekst ) {
 		ob_start();
 		?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -262,20 +261,24 @@ class Kleistad_Email {
 							<td class="inner">
 								<?php echo preg_replace( '/\s+/', ' ', $tekst ); // phpcs:ignore ?><br />
 								<p>Met vriendelijke groet,</p>
-								<p><?php echo $namens; // phpcs:ignore ?></p>
+								<p><?php echo $this->mailparams['sign']; // phpcs:ignore ?></p>
+								<?php if ( $this->mailparams['sign_email'] ) : ?>
 								<p><a href="mailto:<?php echo esc_attr( 'info@' . self::domein() ); ?>" target="_top" ><?php echo esc_html( 'info@' . self::domein() ); ?></a></p>
+								<?php endif ?>
 							</td>
 						</tr>
 					</table>
 				</td>
 			</tr>
-			<?php if ( $automatisch ) : ?>
 			<tr>
 				<td align="center" style="font-family: Calibri; font-size: 9pt;" >
-					Deze e-mail is automatisch gegenereerd en kan niet beantwoord worden.
+					<?php if ( 'noreply' === $this->mailparams['auto'] ) : ?>
+						Deze e-mail is automatisch gegenereerd en kan niet beantwoord worden.
+					<?php elseif ( 'reply' === $this->mailparams['auto'] ) : ?>
+						Deze e-mail is automatisch gegenereerd.
+					<?php endif ?>
 				</td>
 			</tr>
-			<?php endif ?>
 		</table>
 		<!--[if (gte mso 9)|(IE)]>
 		</td>

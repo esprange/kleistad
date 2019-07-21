@@ -282,6 +282,8 @@ class Kleistad_WorkshopAanvraag {
 					'reply-to'   => self::MBX . '@' . Kleistad_Email::domein(),
 					'slug'       => 'kleistad_email_bevestiging_workshop_aanvraag',
 					'parameters' => $casus_data,
+					'sign_email' => false,
+					'auto'       => 'reply',
 				]
 			);
 			return true;
@@ -347,6 +349,7 @@ class Kleistad_WorkshopAanvraag {
 					'contact' => $casus_details['contact'],
 					'naam'    => $casus_details['naam'],
 				],
+				'sign_email' => false,
 			]
 		);
 

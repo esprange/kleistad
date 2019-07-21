@@ -59,9 +59,10 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 		);
 		$lijst    = [];
 		foreach ( $casussen as $casus ) {
-			$lijst[] = [
+			$casus_details = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+			$lijst[]       = [
 				'titel'    => $casus->post_title,
-				'status'   => $casus->post_status,
+				'status'   => $casus_details['workshop_id'] ? $casus->post_status . ' (W' . $casus_details['workshop_id'] . ')' : $casus->post_status,
 				'id'       => $casus->ID,
 				'datum_ux' => strtotime( $casus->post_modified ),
 				'datum'    => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
@@ -111,9 +112,9 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	protected function prepare( &$data = null ) {
 		$error = new WP_Error();
 
-		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING );
+		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING ) ?? filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
 		if ( is_null( $data['actie'] ) ) {
-			$data['actie'] = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
+			$data['actie'] = '-';
 		}
 		$gebruikers       = get_users(
 			[

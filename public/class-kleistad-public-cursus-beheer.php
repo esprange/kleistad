@@ -97,9 +97,9 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	protected function prepare( &$data = null ) {
 		$error = new WP_Error();
 
-		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING );
+		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING ) ?? filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
 		if ( is_null( $data['actie'] ) ) {
-			$data['actie'] = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
+			$data['actie'] = '-';
 		}
 		$gebruikers       = get_users(
 			[

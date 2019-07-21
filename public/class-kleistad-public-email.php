@@ -134,7 +134,6 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 				'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
 				'sign'      => "{$data['input']['namens']},<br/>Kleistad",
 				'auto'      => false,
-
 			]
 		);
 		return 'De email is naar ' . count( $adressen ) . ' personen verzonden';
@@ -152,9 +151,9 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 		$emailer->send(
 			[
 				'to'        => "{$huidige_gebruiker->display_name} <{$huidige_gebruiker->user_email}>",
-				'from_name' => "{$huidige_gebruiker->display_name} namens Kleistad",
+				'from_name' => "{$data['input']['namens']} namens Kleistad",
 				'subject'   => "TEST: {$data['input']['onderwerp']}",
-				'content'   => "<p>Beste Kleistad gebruiker,</p>{$data['input']['email_content']}<br/>",
+				'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
 				'sign'      => "{$huidige_gebruiker->display_name},<br/>Kleistad",
 				'auto'      => false,
 			]

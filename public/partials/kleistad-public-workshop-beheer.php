@@ -29,7 +29,7 @@ else :
 			<tr>
 				<th>Soort workshop</th>
 				<td colspan="3">
-					<select name="naam" id="kleistad_naam" <?php readonly( $alleen_lezen ); ?> >
+					<select name="naam" required id="kleistad_naam" <?php readonly( $alleen_lezen ); ?> >
 						<option value="kinderfeest" <?php selected( $data['workshop']['naam'], 'kinderfeest' ); ?> >kinderfeest</option>
 						<option value="workshop"  <?php selected( $data['workshop']['naam'], 'workshop' ); ?>>workshop</option>
 					</select>
@@ -137,7 +137,7 @@ else :
 				<td colspan="2" ><label for="kleistad_reactie">Reactie</label></td>
 			</tr>
 			<tr>
-				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" ></textarea></td>
+				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" required ></textarea></td>
 			</tr>
 		</table>
 		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
@@ -161,6 +161,7 @@ else :
 	<?php endforeach ?>
 	</div>
 	<?php else : ?>
+	<strong>Vraag en Antwoord</strong>
 	<table id="kleistad_aanvragen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
 		<thead>
 			<tr>
@@ -193,6 +194,7 @@ else :
 		</tbody>
 	</table>
 	<br/>
+	<strong>Plannen</strong>
 	<table id="kleistad_workshops" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
 		<thead>
 			<tr>
