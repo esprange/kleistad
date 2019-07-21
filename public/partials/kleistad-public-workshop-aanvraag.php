@@ -135,7 +135,7 @@
 			<label class="kleistad_label_cbr" for="kleistad_lt" >over 3 maanden of later</label>
 		</div>
 	</div>
-	<div class ="kleistad_row" title="Heb je nadere vragen, stel ze gerust. Of laat hier hier vraagen achter die van belang zouden kunnen zijn voor Kleistad" >
+	<div class ="kleistad_row" title="Heb je nadere vragen, stel ze gerust. Of laat hier opmerkingen achter die van belang zouden kunnen zijn voor Kleistad" >
 		<div class="kleistad_col_3 kleistad_label">
 			<label for="kleistad_vraag">Wil je iets vragen of wil je iets delen ?</label>
 		</div>
@@ -145,7 +145,7 @@
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_10">
-			<button name="kleistad_submit_workshop_aanvraag" id="kleistad_submit" type="submit" >Aanvragen</button>
+			<button name="kleistad_submit_workshop_aanvraag" id="kleistad_submit" type="submit" >Verzenden</button>
 		</div>
 	</div>
 </form>
