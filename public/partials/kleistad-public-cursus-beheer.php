@@ -15,7 +15,7 @@ if ( ! Kleistad_Roles::override() ) :
 	<?php
 else :
 	global $wp;
-	if ( false !== strpos( 'toevoegen, wijzigen', $data['actie'] ) ) :
+	if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		?>
 	<form method="POST" id="kleistad_cursus_beheer_form" autocomplete="off" >
 		<?php wp_nonce_field( 'kleistad_cursus_beheer' ); ?>

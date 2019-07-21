@@ -145,7 +145,7 @@ class Kleistad_Admin_Cursisten extends WP_List_Table {
 		foreach ( $this->cursussen as $cursus_id => $cursus ) {
 			if ( array_key_exists( $cursus_id, $inschrijving ) ) {
 				$cursist = get_userdata( $cursist_id );
-				if ( ! empty( $search ) && false === stripos( $cursist->display_name, $search ) ) {
+				if ( ! empty( $search ) && false === stripos( $cursist->display_name, (string) $search ) ) {
 					continue;
 				}
 				$this->cursisten[] = [

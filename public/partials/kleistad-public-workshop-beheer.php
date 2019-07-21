@@ -15,7 +15,7 @@ if ( ! Kleistad_Roles::override() ) :
 	<?php
 else :
 	global $wp;
-	if ( false !== strpos( 'toevoegen, wijzigen, inplannen', $data['actie'] ) ) :
+	if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie'] ) ) :
 		$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
 		$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
 		?>
@@ -108,7 +108,7 @@ else :
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="verwijderen" <?php disabled( $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
 		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Sluiten</button>
 	</form>
-	<?php elseif ( false !== strpos( 'tonen', $data['actie'] ) ) : ?>
+	<?php elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) : ?>
 	<form method="POST" id="kleistad_casussen_beheer_form" autocomplete="off">
 		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
 		<input type="hidden" name="casus_id" value="<?php echo esc_attr( $data['casus']['casus_id'] ); ?>"/>
