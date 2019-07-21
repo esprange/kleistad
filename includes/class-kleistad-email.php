@@ -143,7 +143,7 @@ class Kleistad_Email {
 		return wp_mail(
 			$this->mailparams['to'],
 			$this->mailparams['subject'],
-			$this->inhoud( $tekst, $this->mailparams ),
+			$this->inhoud( $tekst ),
 			$this->headers()
 		);
 	}
