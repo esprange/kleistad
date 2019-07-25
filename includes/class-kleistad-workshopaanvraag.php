@@ -340,6 +340,7 @@ class Kleistad_WorkshopAanvraag {
 			[
 				'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
 				'from'       => self::MBX . '@' . Kleistad_Email::verzend_domein(),
+				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
 				'reply-to'   => self::MBX . '@' . Kleistad_Email::domein(),
 				'subject'    => $subject,
 				'slug'       => 'kleistad_email_reactie_workshop_aanvraag',
