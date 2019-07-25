@@ -345,7 +345,7 @@ class Kleistad_WorkshopAanvraag {
 				'slug'       => 'kleistad_email_reactie_workshop_aanvraag',
 				'auto'       => false,
 				'parameters' => [
-					'reactie' => $reactie,
+					'reactie' => nl2br( $reactie ),
 					'contact' => $casus_details['contact'],
 					'naam'    => $casus_details['naam'],
 				],
