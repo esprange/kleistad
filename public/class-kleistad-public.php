@@ -242,7 +242,7 @@ class Kleistad_Public {
 	 *
 	 * @since 4.1.0
 	 */
-	public function register_post_types() {
+	public static function register_post_types() {
 		Kleistad_Recept::create_type();
 		Kleistad_WorkshopAanvraag::create_type();
 		ob_start(); // Dit heeft niets van doen met registreren post types maar omdat dit vanuit de init wordt aangeroepen lost dit een headers problem op.

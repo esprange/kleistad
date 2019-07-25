@@ -36,6 +36,7 @@ class Kleistad_Activator {
 		$roles->add_cap( 'contributor', Kleistad_Roles::RESERVEER );
 		$roles->add_cap( 'subscriber', Kleistad_Roles::RESERVEER );
 
+		Kleistad_Public::register_post_types();
 		flush_rewrite_rules();
 	}
 }
