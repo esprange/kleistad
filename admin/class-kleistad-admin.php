@@ -250,7 +250,7 @@ class Kleistad_Admin {
 			wp_schedule_event( $time + ( 900 - ( $time % 900 ) ), '15_mins', 'kleistad_rcv_email' );
 		}
 
-		register_setting( 'kleistad-opties', 'kleistad-opties', [ $this, 'validate_settings' ] );
+		register_setting( 'kleistad-opties', 'kleistad-opties',  [ 'sanitize_callback' => [ $this, 'validate_settings' ] ] );
 	}
 
 	/**
