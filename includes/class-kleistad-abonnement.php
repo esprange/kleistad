@@ -114,16 +114,13 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				return mktime( 0, 0, 0, $start['mon'] + 4, 1, $start['year'] );
 			case 'geannuleerd':
 			case 'gepauzeerd':
-				return 1 === intval( $this->data[ $attribuut ] );
+				return boolval( $this->data[ $attribuut ] );
 			case 'dag':
 				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
 			case 'extras':
-				return isset( $this->data['extras'] ) ? $this->data['extras'] : [];
+				return $this->data['extras'] ?? [];
 			default:
-				if ( is_string( $this->data[ $attribuut ] ) ) {
-					return htmlspecialchars_decode( $this->data[ $attribuut ] );
-				}
-				return $this->data[ $attribuut ];
+				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
 	}
 
@@ -143,7 +140,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			case 'eind_datum':
 			case 'herstart_datum':
 			case 'incasso_datum':
-				$this->data[ $attribuut ] = ( ! is_null( $waarde ) ? date( 'Y-m-d', $waarde ) : 0 );
+				$this->data[ $attribuut ] = is_null( $waarde ) ? 0 : date( 'Y-m-d', $waarde );
 				break;
 			case 'geannuleerd':
 			case 'gepauzeerd':
@@ -194,9 +191,9 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 					'achternaam'              => $abonnee->last_name,
 					'loginnaam'               => $abonnee->user_login,
 					'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
-					'pauze_datum'             => ( $this->pauze_datum > 0 ) ? strftime( '%d-%m-%y', $this->pauze_datum ) : '',
-					'eind_datum'              => ( $this->eind_datum > 0 ) ? strftime( '%d-%m-%y', $this->eind_datum ) : '',
-					'herstart_datum'          => ( $this->herstart_datum > 0 ) ? strftime( '%d-%m-%y', $this->herstart_datum ) : '',
+					'pauze_datum'             => $this->pauze_datum ? strftime( '%d-%m-%y', $this->pauze_datum ) : '',
+					'eind_datum'              => $this->eind_datum ? strftime( '%d-%m-%y', $this->eind_datum ) : '',
+					'herstart_datum'          => $this->herstart_datum ? strftime( '%d-%m-%y', $this->herstart_datum ) : '',
 					'abonnement'              => $this->soort,
 					'abonnement_code'         => $this->code,
 					'abonnement_dag'          => $this->dag,

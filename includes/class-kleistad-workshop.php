@@ -113,10 +113,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			case 'event_id':
 				return sprintf( 'kleistadevent%06d', $this->data['id'] );
 			default:
-				if ( is_string( $this->data[ $attribuut ] ) ) {
-					return htmlspecialchars_decode( $this->data[ $attribuut ] );
-				}
-				return $this->data[ $attribuut ];
+				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
 	}
 
@@ -166,13 +163,8 @@ class Kleistad_Workshop extends Kleistad_Entity {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
 		$this->id = $wpdb->insert_id;
-		if ( $this->aanvraag_id ) {
-			Kleistad_WorkshopAanvraag::gepland( $this->aanvraag_id, $this->id );
-		}
-		$timezone_string = get_option( 'timezone_string' );
-		if ( false === $timezone_string ) {
-			$timezone_string = 'Europe/Amsterdam';
-		}
+		Kleistad_WorkshopAanvraag::gepland( $this->aanvraag_id, $this->id );
+		$timezone = new DateTimeZone( get_option( 'timezone_string', 'Europe/Amsterdam' ) );
 
 		try {
 			$event             = new Kleistad_Event( $this->event_id );
@@ -186,7 +178,6 @@ class Kleistad_Workshop extends Kleistad_Entity {
 			$event->titel      = $this->naam;
 			$event->definitief = $this->definitief;
 			$event->vervallen  = $this->vervallen;
-			$timezone          = new DateTimeZone( $timezone_string );
 			$event->start      = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
 			$event->eind       = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			$event->save();
@@ -217,9 +208,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 		} else {
 			return false;
 		};
-		if ( $this->aanvraag_id ) {
-			Kleistad_WorkshopAanvraag::gepland( $this->aanvraag_id, 0 );
-		}
+		Kleistad_WorkshopAanvraag::gepland( $this->aanvraag_id, 0 );
 		return true;
 	}
 

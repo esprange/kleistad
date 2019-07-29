@@ -298,16 +298,18 @@ class Kleistad_WorkshopAanvraag {
 	 * @param int $workshop_id De id van de workshop.
 	 */
 	public static function gepland( $casus_id, $workshop_id ) {
-		$casus                        = get_post( $casus_id );
-		$casus_details                = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-		$casus_details['workshop_id'] = $workshop_id;
-		wp_update_post(
-			[
-				'ID'           => $casus_id,
-				'post_status'  => $workshop_id ? 'gepland' : 'gereageerd',
-				'post_excerpt' => maybe_serialize( $casus_details ),
-			]
-		);
+		if ( $casus_id ) {
+			$casus                        = get_post( $casus_id );
+			$casus_details                = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+			$casus_details['workshop_id'] = $workshop_id;
+			wp_update_post(
+				[
+					'ID'           => $casus_id,
+					'post_status'  => $workshop_id ? 'gepland' : 'gereageerd',
+					'post_excerpt' => maybe_serialize( $casus_details ),
+				]
+			);
+		}
 	}
 
 	/**
