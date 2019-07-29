@@ -158,6 +158,7 @@ class Kleistad_Workshop extends Kleistad_Entity {
 	 *
 	 * @global object $wpdb     WordPress database.
 	 * @return int Het workshop id.
+	 * @scrutinizer ignore-type
 	 */
 	public function save() {
 		global $wpdb;
