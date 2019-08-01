@@ -200,6 +200,42 @@ function strtodate( value ) {
 			if ( null !== document.querySelector( '#kleistad_shortcode' ) ) {
 
 				/**
+				 * Als er een voor downloads is, dan dit via een Ajax call afhandelen.
+				 */
+				$( '#kleistad_shortcode' ).on( 'click', 'button[value^="download"]',
+					function( event ) {
+						var $button = $( event.target );
+						event.preventDefault();
+						$.ajax(
+						{
+							url: kleistadData.base_url + '/download/',
+							method: 'POST',
+							beforeSend: function( xhr ) {
+								xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
+							},
+							data: {
+								naam:   $button.attr( 'name' ),
+								waarde: $button.val(),
+								inputs: $button.parents( 'form:first' ).serialize()
+							}
+						}
+						).done(
+							function( data ) {
+								window.location.href = data.file_uri;
+							}
+						).fail(
+							function( jqXHR ) {
+								if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
+									window.alert( jqXHR.responseJSON.message );
+									return;
+								}
+								window.alert( kleistadData.error_message );
+							}
+						);
+					}
+				);
+
+				/**
 				 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
 				 */
 				$( '#kleistad_shortcode' ).on( 'click', 'button[type="submit"]',

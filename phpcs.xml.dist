@@ -8,8 +8,9 @@
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fopen"/>
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fclose"/>
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_fwrite"/>
+		<!-- Since codesniffer 3.4.2 and wp coding standards 2.1.1 indentation falsely flagged -->
+		<exclude name="Generic.WhiteSpace.ScopeIndent"/>
 	</rule>
-
 	<!-- Check all PHP files in directory tree by default. -->
 	<arg name="extensions" value="php"/>
 	<file>.</file>

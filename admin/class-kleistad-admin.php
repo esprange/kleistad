@@ -250,6 +250,10 @@ class Kleistad_Admin {
 			wp_schedule_event( $time + ( 900 - ( $time % 900 ) ), '15_mins', 'kleistad_rcv_email' );
 		}
 
+		if ( ! wp_next_scheduled( 'kleistad_daily_cleanup' ) ) {
+			wp_schedule_event( strtotime( 'midnight' ), 'daily', 'kleistad_daily_cleanup' );
+		}
+
 		register_setting( 'kleistad-opties', 'kleistad-opties', [ 'sanitize_callback' => [ $this, 'validate_settings' ] ] );
 	}
 

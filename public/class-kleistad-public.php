@@ -32,6 +32,102 @@ class Kleistad_Public {
 	private $options;
 
 	/**
+	 * De shortcodes van kleistad
+	 *
+	 * @var array shortcodes met hun style en jscript afhankelijkheden.
+	 */
+	const SHORTCODES = [
+		'abonnee_inschrijving'  => [
+			'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
+			'css' => [ 'jquery-ui' ],
+		],
+		'abonnee_wijziging'     => [
+			'js'  => [ 'jquery', 'jquery-ui-dialog' ],
+			'css' => [ 'jquery-ui' ],
+		],
+		'abonnement_overzicht'  => [
+			'js'  => [ 'jquery', 'datatables' ],
+			'css' => [ 'datatables' ],
+		],
+		'betaling'              => [
+			'js'  => [ 'jquery' ],
+			'css' => [],
+		],
+		'betalingen'            => [
+			'js'  => [ 'jquery', 'datatables' ],
+			'css' => [ 'datatables' ],
+		],
+		'cursus_beheer'         => [
+			'js'  => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+			'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+		],
+		'cursus_inschrijving'   => [
+			'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
+			'css' => [ 'jquery-ui' ],
+		],
+		'cursus_overzicht'      => [
+			'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+			'css' => [ 'jquery-ui', 'datatables' ],
+		],
+		'dagdelenkaart'         => [
+			'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
+			'css' => [ 'jquery-ui' ],
+		],
+		'email'                 => [
+			'js'  => [ 'jquery', 'jstree' ],
+			'css' => [ 'jquery-ui', 'jstree' ],
+		],
+		'kalender'              => [
+			'js'  => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
+			'css' => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
+		],
+		'rapport'               => [
+			'js'  => [ 'jquery', 'datatables' ],
+			'css' => [ 'datatables' ],
+		],
+		'recept_beheer'         => [
+			'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
+			'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+		],
+		'recept'                => [
+			'js'  => [ 'jquery' ],
+			'css' => [ 'dashicons' ],
+		],
+		'registratie_overzicht' => [
+			'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+			'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+		],
+		'registratie'           => [
+			'js'  => [ 'jquery' ],
+			'css' => [],
+		],
+		'reservering'           => [
+			'js'  => [ 'jquery', 'jquery-ui-dialog' ],
+			'css' => [ 'jquery-ui' ],
+		],
+		'saldo_overzicht'       => [
+			'js'  => [ 'jquery', 'datatables' ],
+			'css' => [ 'datatables' ],
+		],
+		'saldo'                 => [
+			'js'  => [ 'jquery' ],
+			'css' => [],
+		],
+		'stookbestand'          => [
+			'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
+			'css' => [ 'jquery-ui' ],
+		],
+		'workshop_aanvraag'     => [
+			'js'  => [ 'jquery' ],
+			'css' => [],
+		],
+		'workshop_beheer'       => [
+			'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+			'css' => [ 'jquery-ui', 'datatables' ],
+		],
+	];
+
+	/**
 	 * Geeft de basis url terug voor de endpoints.
 	 *
 	 * @return string url voor endpoints
@@ -63,32 +159,11 @@ class Kleistad_Public {
 	}
 
 	/**
-	 * Voeg de shortcodes toe en enqueue scripts en style sheets waar nodig.
-	 *
-	 * @param array  $shortcodes Array met informatie of de shortcodes.
-	 * @param string $dev        Eventuele prefix voor de bestanden.
+	 * Voeg de shortcodes toe.
 	 */
-	private function register_shortcodes( $shortcodes, $dev ) {
-		global $post;
-
-		foreach ( $shortcodes as $shortcode => $dependencies ) {
+	public function register_shortcodes() {
+		foreach ( array_keys( self::SHORTCODES ) as $shortcode ) {
 			add_shortcode( "kleistad_$shortcode", [ $this, 'shortcode_handler' ] );
-			if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, "kleistad_$shortcode" ) ) {
-				$file = str_replace( '_', '-', $shortcode );
-				wp_enqueue_style(
-					"kleistad$shortcode",
-					plugin_dir_url( __FILE__ ) . "css/kleistad-public$dev.css",
-					$dependencies['css'],
-					$this->version
-				);
-				wp_enqueue_script(
-					"kleistad$shortcode",
-					plugin_dir_url( __FILE__ ) . "js/kleistad-public-$file$dev.js",
-					$dependencies['js'],
-					$this->version,
-					false
-				);
-			}
 		}
 	}
 
@@ -117,111 +192,41 @@ class Kleistad_Public {
 		wp_register_script( 'jstree', '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.8/jstree.min.js', [ 'jquery' ], null, false );
 		// phpcs:enable
 
-		wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/kleistad-public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
-		wp_localize_script(
-			'kleistad',
-			'kleistadData',
-			[
-				'nonce'           => wp_create_nonce( 'wp_rest' ),
-				'success_message' => 'de bewerking is geslaagd!',
-				'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
-				'base_url'        => self::base_url(),
-			]
-		);
+		global $post;
+		$kleistad_toegevoegd = false;
+		foreach ( self::SHORTCODES as $shortcode => $dependencies ) {
+			if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, "kleistad_$shortcode" ) ) {
+				if ( ! $kleistad_toegevoegd ) {
+					wp_enqueue_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/kleistad-public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
+					wp_localize_script(
+						'kleistad',
+						'kleistadData',
+						[
+							'nonce'           => wp_create_nonce( 'wp_rest' ),
+							'success_message' => 'de bewerking is geslaagd!',
+							'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
+							'base_url'        => self::base_url(),
+						]
+					);
+					$kleistad_toegevoegd = true;
+				}
 
-		$this->register_shortcodes(
-			[
-				'abonnee_inschrijving'  => [
-					'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
-					'css' => [ 'jquery-ui' ],
-				],
-				'abonnee_wijziging'     => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog' ],
-					'css' => [ 'jquery-ui' ],
-				],
-				'abonnement_overzicht'  => [
-					'js'  => [ 'jquery', 'datatables' ],
-					'css' => [ 'datatables' ],
-				],
-				'betaling'              => [
-					'js'  => [ 'jquery' ],
-					'css' => [],
-				],
-				'betalingen'            => [
-					'js'  => [ 'jquery', 'datatables' ],
-					'css' => [ 'datatables' ],
-				],
-				'cursus_beheer'         => [
-					'js'  => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
-					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
-				],
-				'cursus_inschrijving'   => [
-					'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
-					'css' => [ 'jquery-ui' ],
-				],
-				'cursus_overzicht'      => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-					'css' => [ 'jquery-ui', 'datatables' ],
-				],
-				'dagdelenkaart'         => [
-					'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
-					'css' => [ 'jquery-ui' ],
-				],
-				'email'                 => [
-					'js'  => [ 'jquery', 'jstree' ],
-					'css' => [ 'jquery-ui', 'jstree' ],
-				],
-				'kalender'              => [
-					'js'  => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
-					'css' => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
-				],
-				'rapport'               => [
-					'js'  => [ 'jquery', 'datatables' ],
-					'css' => [ 'datatables' ],
-				],
-				'recept_beheer'         => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
-					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
-				],
-				'recept'                => [
-					'js'  => [ 'jquery' ],
-					'css' => [ 'dashicons' ],
-				],
-				'registratie_overzicht' => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-					'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
-				],
-				'registratie'           => [
-					'js'  => [ 'jquery' ],
-					'css' => [],
-				],
-				'reservering'           => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog' ],
-					'css' => [ 'jquery-ui' ],
-				],
-				'saldo_overzicht'       => [
-					'js'  => [ 'jquery', 'datatables' ],
-					'css' => [ 'datatables' ],
-				],
-				'saldo'                 => [
-					'js'  => [ 'jquery' ],
-					'css' => [],
-				],
-				'stookbestand'          => [
-					'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
-					'css' => [ 'jquery-ui' ],
-				],
-				'workshop_aanvraag'     => [
-					'js'  => [ 'jquery' ],
-					'css' => [],
-				],
-				'workshop_beheer'       => [
-					'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
-					'css' => [ 'jquery-ui', 'datatables' ],
-				],
-			],
-			$dev
-		);
+				$file = str_replace( '_', '-', $shortcode );
+				wp_enqueue_style(
+					"kleistad$shortcode",
+					plugin_dir_url( __FILE__ ) . "css/kleistad-public$dev.css",
+					$dependencies['css'],
+					$this->version
+				);
+				wp_enqueue_script(
+					"kleistad$shortcode",
+					plugin_dir_url( __FILE__ ) . "js/kleistad-public-$file$dev.js",
+					$dependencies['js'],
+					$this->version,
+					false
+				);
+			}
+		}
 	}
 
 	/**
@@ -230,11 +235,12 @@ class Kleistad_Public {
 	 * @since   4.0.87
 	 */
 	public function register_endpoints() {
-		Kleistad_Public_Reservering::register_rest_routes();
-		Kleistad_Public_Recept::register_rest_routes();
-		Kleistad_Public_Kalender::register_rest_routes();
-		Kleistad_Betalen::register_rest_routes();
 		Kleistad_Adres::register_rest_routes();
+		Kleistad_Betalen::register_rest_routes();
+		Kleistad_Public_Kalender::register_rest_routes();
+		Kleistad_Public_Recept::register_rest_routes();
+		Kleistad_Public_Reservering::register_rest_routes();
+		Kleistad_ShortcodeForm::register_rest_routes();
 	}
 
 	/**
@@ -245,7 +251,6 @@ class Kleistad_Public {
 	public static function register_post_types() {
 		Kleistad_Recept::create_type();
 		Kleistad_WorkshopAanvraag::create_type();
-		ob_start(); // Dit heeft niets van doen met registreren post types maar omdat dit vanuit de init wordt aangeroepen lost dit een headers problem op.
 	}
 
 	/**
@@ -386,6 +391,15 @@ class Kleistad_Public {
 	public function rcv_email() {
 		$aanvraag = new Kleistad_WorkshopAanvraag();
 		$aanvraag->ontvang_en_verwerk();
+	}
+
+	/**
+	 * Doe de dagelijkse cleanup
+	 *
+	 * @since 6.0.0
+	 */
+	public function daily_cleanup() {
+		Kleistad_ShortcodeForm::cleanup_downloads();
 	}
 
 	/**
