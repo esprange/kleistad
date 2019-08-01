@@ -204,9 +204,8 @@ class Kleistad_Cursus extends Kleistad_Entity {
 	public function save() {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->data );
-		$this->id        = $wpdb->insert_id;
-		$timezone_string = get_option( 'timezone_string' );
-		$timezone        = new DateTimeZone( $timezone_string ?: 'Europe/Amsterdam' );
+		$this->id = $wpdb->insert_id;
+		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 
 		try {
 			$event             = new Kleistad_Event( $this->event_id );
