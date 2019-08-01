@@ -240,10 +240,13 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 		$filename               = 'kleistad_' . uniqid() . '.csv';
 		$shortcode              = new $class( null, null, Kleistad::get_options() );
 		$shortcode->file_handle = fopen( $upload_dir['basedir'] . "/$filename", 'w' );
-		fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
-		call_user_func( [ $shortcode, $functie ], $inputs );
-		fclose( $shortcode->file_handle );
-		return new WP_REST_response( [ 'file_uri' => $upload_dir['baseurl'] . "/$filename" ] );
+		if ( false !== $shortcode->file_handle ) {
+			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
+			call_user_func( [ $shortcode, $functie ], $inputs );
+			fclose( $shortcode->file_handle );
+			return new WP_REST_response( [ 'file_uri' => $upload_dir['baseurl'] . "/$filename" ] );
+		}
+		return new WP_Error( 'file_error', 'Interne fout bij aanmaken download file, probeer het opnieuw', [ 'status' => 503 ] );
 	}
 
 	/**
