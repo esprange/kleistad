@@ -230,7 +230,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @since 6.0.0
 	 *
 	 * @param WP_REST_Request $request het request.
-	 * @return \WP_REST_response de response.
+	 * @return WP_REST_response|WP_Error de response.
 	 */
 	public static function callback_download( WP_REST_Request $request ) {
 		parse_str( $request->get_param( 'inputs' ), $inputs );
