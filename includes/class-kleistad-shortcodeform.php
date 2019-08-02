@@ -197,7 +197,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	/**
 	 * Register rest URI's.
 	 *
-	 * @since 6.0.0
+	 * @since 5.7.0
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
@@ -227,7 +227,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	/**
 	 * Download callback
 	 *
-	 * @since 6.0.0
+	 * @since 5.7.0
 	 *
 	 * @param WP_REST_Request $request het request.
 	 * @return WP_REST_response|WP_Error de response.
@@ -237,7 +237,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 		$class                  = 'Kleistad_Public_' . ucfirst( str_replace( 'kleistad_submit_', '', $request->get_param( 'naam' ) ) );
 		$functie                = str_replace( 'download_', '', $request->get_param( 'waarde' ) );
 		$upload_dir             = wp_upload_dir();
-		$filename               = 'kleistad_' . uniqid() . '.csv';
+		$filename               = 'kleistad_tmp_' . uniqid() . '.csv';
 		$shortcode              = new $class( null, null, Kleistad::get_options() );
 		$shortcode->file_handle = fopen( $upload_dir['basedir'] . "/$filename", 'w' );
 		if ( false !== $shortcode->file_handle ) {
@@ -263,10 +263,12 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 
 	/**
 	 * Ruim eventuele download files op.
+	 *
+	 * @since 5.7.0
 	 */
 	public static function cleanup_downloads() {
 		$upload_dir = wp_upload_dir();
-		$files      = glob( $upload_dir['basedir'] . 'kleistad_*.csv' );
+		$files      = glob( $upload_dir['basedir'] . '/kleistad_tmp_*.csv' );
 		$now        = time();
 
 		foreach ( $files as $file ) {

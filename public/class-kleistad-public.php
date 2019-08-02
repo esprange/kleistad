@@ -396,7 +396,7 @@ class Kleistad_Public {
 	/**
 	 * Doe de dagelijkse cleanup
 	 *
-	 * @since 6.0.0
+	 * @since 5.7.0
 	 */
 	public function daily_cleanup() {
 		Kleistad_ShortcodeForm::cleanup_downloads();
