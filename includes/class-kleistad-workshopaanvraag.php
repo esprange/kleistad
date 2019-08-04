@@ -171,7 +171,7 @@ class Kleistad_WorkshopAanvraag {
 		try {
 			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
 		} catch ( PhpImap\Exceptions\ConnectionException $ex ) {
-			error_log( "IMAP connection failed: $ex" ); // phpcs:ignore
+			error_log( "IMAP connection failed" ); // phpcs:ignore
 			return;
 		}
 		if ( empty( $email_ids ) ) {
