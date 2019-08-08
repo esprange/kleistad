@@ -256,7 +256,6 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 			$shortcode          = new $info['class']( $info['shortcode'], $info['atts'], Kleistad::get_options() );
 			$data['form_actie'] = filter_input( INPUT_POST, 'form_actie' );
 			self::$form_url     = filter_input( INPUT_POST, 'form_url' );
-			$betaal             = filter_input( INPUT_POST, 'betaal' );
 			$result             = $shortcode->validate( $data );
 			if ( ! is_wp_error( $result ) ) {
 				if ( 0 === strpos( $data['form_actie'], 'test_' ) ) {
