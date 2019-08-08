@@ -68,12 +68,12 @@ abstract class Kleistad_Shortcode {
 	}
 
 	/**
-	 * Voer het rapport van de shortcode uit.
+	 * Toon de uitvoer van de shortcode, eventueel voorafgegaan door een melding van een betaalactie.
 	 *
 	 * @since 4.5.1
 	 */
 	public function run() {
-		return $this->display();
+		return apply_filters( 'kleistad_display', $this->display() );
 	}
 
 	/**

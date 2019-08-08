@@ -9,10 +9,9 @@
  * @subpackage Kleistad/public/partials
  */
 
+$this->form();
 ?>
 
-<form method="POST" autocomplete="off">
-	<?php wp_nonce_field( 'kleistad_workshop_aanvraag' ); ?>
 	<div class="kleistad_row" >
 		<div class="kleistad_col_5">
 			<label class="kleistad_label">Wil je een vraag stellen over een</label>

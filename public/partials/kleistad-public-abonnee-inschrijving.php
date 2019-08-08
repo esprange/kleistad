@@ -10,10 +10,9 @@
  */
 
 if ( ! is_user_logged_in() || is_super_admin() ) :
-	?>
+	$this->form();
 
-	<form method="POST" autocomplete="off">
-		<?php wp_nonce_field( 'kleistad_abonnee_inschrijving' ); ?>
+	?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3">
 				<label class="kleistad_label">Keuze abonnement</label>

@@ -9,9 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+$this->form();
 ?>
-<form method="POST" autocomplete="off">
-	<?php wp_nonce_field( 'kleistad_dagdelenkaart' ); ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_3 kleistad_label">
 			<label for="kleistad_start_datum">Start per</label>

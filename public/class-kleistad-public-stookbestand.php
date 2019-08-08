@@ -139,12 +139,10 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 
 	/**
 	 * Schrijf abonnees informatie naar het bestand.
-	 *
-	 * @param array $params Input parameters.
 	 */
-	protected function stook( $params ) {
-		$this->vanaf_datum = strtotime( $params['vanaf_datum'] );
-		$this->tot_datum   = strtotime( $params['tot_datum'] );
+	protected function stook() {
+		$this->vanaf_datum = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
+		$this->tot_datum   = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
 		$this->ovens       = Kleistad_Oven::all();
 		$this->regelingen  = new Kleistad_Regelingen();
 		$reserveringen     = Kleistad_Reservering::all();

@@ -25,11 +25,10 @@ else :
 		function wp_dropdown_categories_required( $output ) {
 			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
 		}
+		$this->form( 'enctype="multipart/form-data" autocomplete="off"' );
 		?>
-	<form method="POST" enctype="multipart/form-data" autocomplete="off">
 		<input type="hidden" name="action" value="" />
 		<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
-		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
 		<div class="kleistad_row">
 			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_titel">Recept naam</label>
@@ -243,11 +242,9 @@ else :
 	<div id="kleistad_verwijder_recept" title="Recept verwijderen ?">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Dit recept wordt verwijderd</p>
 	</div>
-	<form method="POST" >
-
+	<?php $this->form(); ?>
 		<input id="kleistad_recept_action" type="hidden" name="action" value="recept_overzicht" />
 		<input id="kleistad_recept_id" type="hidden" name="recept_id" value="0" />
-		<?php wp_nonce_field( 'kleistad_recept_beheer' ); ?>
 		<table class="kleistad_datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
 			<thead>
 			<tr>

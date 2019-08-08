@@ -11,9 +11,8 @@
 
 ?>
 
-<form method="POST" autocomplete="off">
 <?php
-wp_nonce_field( 'kleistad_cursus_inschrijving' );
+$this->form();
 $checked_id = 0;
 $count      = 0;
 foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :

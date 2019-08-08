@@ -292,7 +292,7 @@ class Kleistad_MollieSimulatie {
 							 */
 							public function getCheckOutUrl() {
 								$data = get_option( 'mollie_simulatie' );
-								return $data['redirectUrl'];
+								return 'http://localhost/molliesimulator.html?' . $data['redirectUrl'];
 							}
 
 						};

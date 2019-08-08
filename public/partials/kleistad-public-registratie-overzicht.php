@@ -64,8 +64,7 @@ else :
 			<?php endforeach ?>
 	</tbody>
 </table>
-<form method="POST" >
-	<?php wp_nonce_field( 'kleistad_registratie_overzicht' ); ?>
+<?php $this->form(); ?>
 	<div class="kleistad_row" style="padding-top:20px;" >
 		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_cursisten" >Download Cursisten</button>
 		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_abonnees" >Download Abonnees</button>

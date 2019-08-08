@@ -52,28 +52,27 @@ class Kleistad_Workshop extends Kleistad_Entity {
 		global $wpdb;
 		$options       = Kleistad::get_options();
 		$this->emailer = new Kleistad_Email();
-		$default_data  = [
-			'id'          => null,
-			'naam'        => '',
-			'datum'       => date( 'Y-m-d' ),
-			'start_tijd'  => '10:00',
-			'eind_tijd'   => '12:00',
-			'docent'      => '',
-			'technieken'  => wp_json_encode( [] ),
-			'organisatie' => '',
-			'contact'     => '',
-			'email'       => '',
-			'telefoon'    => '',
-			'programma'   => '',
-			'vervallen'   => 0,
-			'kosten'      => $options['workshopprijs'],
-			'aantal'      => 6,
-			'betaald'     => 0,
-			'definitief'  => 0,
-			'aanvraag_id' => 0,
-		];
 		if ( is_null( $workshop_id ) ) {
-			$this->data = $default_data;
+			$this->data = [
+				'id'          => null,
+				'naam'        => '',
+				'datum'       => date( 'Y-m-d' ),
+				'start_tijd'  => '10:00',
+				'eind_tijd'   => '12:00',
+				'docent'      => '',
+				'technieken'  => wp_json_encode( [] ),
+				'organisatie' => '',
+				'contact'     => '',
+				'email'       => '',
+				'telefoon'    => '',
+				'programma'   => '',
+				'vervallen'   => 0,
+				'kosten'      => $options['workshopprijs'],
+				'aantal'      => 6,
+				'betaald'     => 0,
+				'definitief'  => 0,
+				'aanvraag_id' => 0,
+			];
 		} else {
 			$this->data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
 		}

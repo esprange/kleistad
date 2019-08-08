@@ -197,61 +197,29 @@ function strtodate( value ) {
 			/**
 			 * Alle forms krijgen een wachten box.
 			 */
-			if ( null !== document.querySelector( '#kleistad_shortcode' ) ) {
-
-				/**
-				 * Als er een voor downloads is, dan dit via een Ajax call afhandelen.
-				 */
-				$( '#kleistad_shortcode' ).on( 'click', 'button[value^="download"]',
-					function( event ) {
-						var $button = $( event.target );
-						event.preventDefault();
-						$.ajax(
-						{
-							url: kleistadData.base_url + '/download/',
-							method: 'POST',
-							beforeSend: function( xhr ) {
-								xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
-							},
-							data: {
-								naam:   $button.attr( 'name' ),
-								waarde: $button.val(),
-								inputs: $button.parents( 'form:first' ).serialize()
-							}
-						}
-						).done(
-							function( data ) {
-								window.location.href = data.file_uri;
-							}
-						).fail(
-							function( jqXHR ) {
-								if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-									window.alert( jqXHR.responseJSON.message );
-									return;
-								}
-								window.alert( kleistadData.error_message );
-							}
-						);
-					}
-				);
+			if ( null !== document.querySelector( '.kleistad_shortcode' ) ) {
 
 				/**
 				 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
 				 */
-				$( '#kleistad_shortcode' ).on( 'click', 'button[type="submit"]',
+				$( '.kleistad_shortcode' ).on( 'click', 'button[type="submit"]',
 					function( event ) {
-						$( '#kleistad_shortcode' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
+						$( this ).closest( 'form' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
 					}
 				);
 
 				/**
 				 * Submit het formulier, als er een formulier is.
 				 */
-				$( '#kleistad_shortcode' ).on( 'submit', 'form',
+				$( '.kleistad_shortcode' ).on( 'submit', 'form',
 					function( event ) {
-						var button  = $( '#kleistad_shortcode' ).data( 'clicked' );
-						var confirm = $( '#' + button.id ).data( 'confirm' );
-						var tekst   = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
+						var clicked    = $( this ).data( 'clicked' );
+						var confirm    = $( '#' + clicked.id ).data( 'confirm' );
+						var tekst      = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
+						var formData   = $( this ).serializeArray();
+						var $shortcode = $( this ).closest( '.kleistad_shortcode' );
+						formData.push( { name: 'form_actie', value: clicked.value } );
+						formData.push( { name: 'form_url', value: window.location.href } );
 						/**
 						 * Sluit eventuele openstaande dialogs.
 						 */
@@ -277,9 +245,9 @@ function strtodate( value ) {
 									buttons: {
 										Ja: function() {
 											$( this ).dialog( 'close' );
-											$( '#kleistad_shortcode' ).off( 'submit', 'form' );
+											$shortcode.off( 'submit', 'form' );
 											$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
-											$( '#' + button.id ).click();
+											$( '#' + clicked.id ).click();
 										},
 										Nee: function() {
 											$( this ).dialog( 'close' );
@@ -291,11 +259,41 @@ function strtodate( value ) {
 							event.preventDefault();
 						} else {
 							/**
-							 *  Bij een submit de spinner tonen behalve als er sprake is van een download.
+							 *  Bij een submit de spinner tonen.
 							 */
-							if ( ! ( ( 'undefined' !== typeof button.value  ) && ( button.value.startsWith( 'download' ) ) ) ) {
-								$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
-							}
+							$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+							event.preventDefault();
+							$.ajax(
+								{
+									url: kleistadData.base_url + '/formsubmit/',
+									method: 'POST',
+									cache: false,
+									beforeSend: function( xhr ) {
+										xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
+									},
+									data: formData
+								}
+							).done(
+								function( data ) {
+									$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+									if ( 'undefined' !== typeof data.html ) {
+										$shortcode.html( data.html );
+									} else if ( 'undefined' !== typeof data.file_uri ) {
+										window.location.href = data.file_uri;
+									} else if ( 'undefined' !== typeof data.redirect_uri ) {
+										window.location.replace( data.redirect_uri );
+									}
+								}
+							).fail(
+								function( jqXHR ) {
+									$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+									if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
+										window.alert( jqXHR.responseJSON.message );
+										return;
+									}
+									window.alert( kleistadData.error_message );
+								}
+							);
 						}
 					}
 				);

@@ -18,10 +18,9 @@ else :
 	if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie'] ) ) :
 		$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
 		$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
+		$this->form( 'id="kleistad_workshop_beheer_form" autocomplete="off"' );
 		?>
 
-	<form method="POST" id="kleistad_workshop_beheer_form" autocomplete="off">
-		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']['workshop_id'] ); ?>"/>
 		<input type="hidden" name="aanvraag_id" value="<?php echo esc_attr( $data['workshop']['aanvraag_id'] ); ?>"/>
 		<input type="hidden" name="vervallen" value="<?php echo $data['workshop']['vervallen'] ? 1 : 0; ?>" >
@@ -108,9 +107,10 @@ else :
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="verwijderen" <?php disabled( $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
 		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Sluiten</button>
 	</form>
-	<?php elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) : ?>
-	<form method="POST" id="kleistad_casussen_beheer_form" autocomplete="off">
-		<?php wp_nonce_field( 'kleistad_workshop_beheer' ); ?>
+	<?php
+	elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
+		$this->form( 'id="kleistad_casussen_beheer_form" autocomplete="off"' );
+		?>
 		<input type="hidden" name="casus_id" value="<?php echo esc_attr( $data['casus']['casus_id'] ); ?>"/>
 		<table class="kleistad_form" >
 			<tr>
@@ -230,8 +230,7 @@ else :
 		<?php endforeach ?>
 		</tbody>
 	</table>
-	<form method="POST">
-		<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'kleistad_workshop_beheer' ) ); ?>" />
+	<?php $this->form(); ?>
 		<button type="button" id="kleistad_workshop_toevoegen" value="<?php echo esc_url( wp_nonce_url( home_url( $wp->request ), 'kleistad_toevoegen_workshop' ) . '&actie=toevoegen' ); ?>">Toevoegen</button>
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="download_workshops" >Download</button>
 	</form>

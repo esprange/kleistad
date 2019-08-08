@@ -13,10 +13,9 @@ if ( ! Kleistad_Roles::override() ) : ?>
 <p>Geen toegang tot dit formulier</p>
 	<?php
 else :
+	$this->form();
 	?>
 
-<form method="POST" >
-	<?php wp_nonce_field( 'kleistad_stookbestand' ); ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_3">
 			<label class="kleistad_label" for="kleistad_vanaf_datum" >Vanaf</label>

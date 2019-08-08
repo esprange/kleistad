@@ -14,8 +14,8 @@
  */
 class Kleistad_Betalen {
 
-	const MOLLIE_ID     = 'mollie_customer_id';
-	const MOLLIE_COOKIE = 'kleistad_mollie';
+	const MOLLIE_ID   = 'mollie_customer_id';
+	const QUERY_PARAM = 'betaling';
 
 	/**
 	 * Het mollie object.
@@ -128,6 +128,7 @@ class Kleistad_Betalen {
 				]
 			);
 		}
+		$uniqid   = uniqid();
 		$betaling = $mollie_gebruiker->createPayment(
 			[
 				'amount'       => [
@@ -142,13 +143,12 @@ class Kleistad_Betalen {
 				],
 				'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 				'sequenceType' => $mandateren ? \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-				'redirectUrl'  => add_query_arg( 'mollie_betaling', '', get_permalink() ),
+				'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, Kleistad_ShortcodeForm::url() ),
 				'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
 			]
 		);
-		setcookie( self::MOLLIE_COOKIE, $betaling->id );
-		wp_redirect( $betaling->getCheckOutUrl(), 303 ); // phpcs:ignore
-		die();
+		set_transient( $uniqid, $betaling->id );
+		Kleistad_ShortcodeForm::redirect( $betaling->getCheckOutUrl() ); // Dit is alleen de registratie van de redirect, niet de werkelijke uitvoering.
 	}
 
 	/**
@@ -159,14 +159,14 @@ class Kleistad_Betalen {
 	 * @return string de status van de betaling als tekst of leeg als er geen betaling is.
 	 */
 	public static function controleer() {
-		if ( is_null( filter_input( INPUT_GET, 'mollie_betaling' ) ) ) {
-			return '';
+		$mollie_betaling_id = false;
+		$uniqid             = filter_input( INPUT_GET, self::QUERY_PARAM );
+		if ( ! is_null( $uniqid ) ) {
+			$mollie_betaling_id = get_transient( $uniqid );
+			delete_transient( $uniqid );
 		}
-		if ( isset( $_COOKIE[ self::MOLLIE_COOKIE ] ) ) {
-			$mollie_betaling_id = $_COOKIE[ self::MOLLIE_COOKIE ];
-			unset( $_COOKIE[ self::MOLLIE_COOKIE ] );
-		} else {
-			return ''; // Blijkbaar was er geen cookie gezet. Dan valt de status niet op te vragen.
+		if ( false === $mollie_betaling_id ) {
+			return '';
 		}
 		$object = new static();
 		try {

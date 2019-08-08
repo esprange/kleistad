@@ -145,7 +145,7 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	 * @param array $data data te verzenden.
 	 * @return string
 	 */
-	protected function email( $data ) {
+	protected function test( $data ) {
 		$huidige_gebruiker = wp_get_current_user();
 		$emailer           = new Kleistad_Email();
 		$emailer->send(

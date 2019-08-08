@@ -17,8 +17,7 @@ else :
 	?>
 
 <div id="kleistad_cursisten_info">
-	<form id="kleistad_cursisten_info_form" method="POST" >
-		<?php wp_nonce_field( 'kleistad_cursus_overzicht' ); ?>
+	<?php $this->form( 'id="kleistad_cursisten_info_form"' ); ?>
 		<input type="hidden" id="kleistad_submit_cursus_overzicht" name="kleistad_submit_cursus_overzicht" value="download_cursisten" >
 		<input type="hidden" name="cursus_id" id="kleistad_cursus_id" >
 		<input type="hidden" id="kleistad_email_lijst" value="">

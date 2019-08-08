@@ -14,10 +14,9 @@ if ( ! Kleistad_Roles::override() ) :
 <p>Geen toegang tot dit formulier</p>
 	<?php
 else :
+	$this->form();
+	if ( isset( $data['inschrijvingen'] ) ) :
 	?>
-<form method="POST" >
-	<?php wp_nonce_field( 'kleistad_betalingen' ); ?>
-	<?php if ( isset( $data['inschrijvingen'] ) ) : ?>
 	<h2>Inschrijvingen</h2>
 	<table class="kleistad_datatable display nowrap">
 		<thead>

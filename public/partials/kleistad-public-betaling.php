@@ -15,10 +15,9 @@ if ( isset( $data['actie'] ) ) :
 		$inschrijfkosten = $data['cursus']->inschrijfkosten * $data['inschrijving']->aantal;
 		$restantkosten   = $data['cursus']->cursuskosten * $data['inschrijving']->aantal;
 		$cursuskosten    = $restantkosten + $inschrijfkosten;
+		$this->form();
 		?>
 
-		<form method="POST">
-			<?php wp_nonce_field( 'kleistad_betaling' ); ?>
 		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $data['cursist']->ID ); ?>" />
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']->id ); ?>" />
 		<input type="hidden" name="betaal" value="ideal" />
@@ -89,10 +88,8 @@ if ( isset( $data['actie'] ) ) :
 			$vervolg_datum            = strftime( '%d-%m-%y', $data['abonnement']->driemaand_datum );
 			$einde_overbrugging_datum = strftime( '%d-%m-%y', $data['abonnement']->reguliere_datum - 24 * 60 * 60 );
 			$incasso_datum            = strftime( '%d-%m-%y', $data['abonnement']->incasso_datum );
+			$this->form();
 		?>
-
-		<form method="POST">
-			<?php wp_nonce_field( 'kleistad_betaling' ); ?>
 		<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( $data['abonnee']->ID ); ?>" />
 		<input type="hidden" name="betaal" value="ideal" />
 		<input type="hidden" name="actie" value="<?php echo esc_attr( $data['actie'] ); ?>" />
@@ -172,9 +169,8 @@ if ( isset( $data['actie'] ) ) :
 		</form>
 		<?php
 	elseif ( Kleistad_Public_Betaling::ACTIE_WORKSHOP === $data['actie'] ) :
+		$this->form();
 		?>
-		<form method="POST">
-			<?php wp_nonce_field( 'kleistad_betaling' ); ?>
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']->id ); ?>" />
 		<input type="hidden" name="betaal" value="ideal" />
 		<input type="hidden" name="actie" value="<?php echo esc_attr( $data['actie'] ); ?>" />

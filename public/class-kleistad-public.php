@@ -254,6 +254,17 @@ class Kleistad_Public {
 	}
 
 	/**
+	 * Controleer of er een betaling is gedaan
+	 *
+	 * @since 5.7.0
+	 *
+	 * @param string $html De tekst waar een tekst eventueel aan toegevoegd wordt.
+	 */
+	public static function controleer_betaling( $html ) {
+		return Kleistad_Betalen::controleer() . $html;
+	}
+
+	/**
 	 * Wordt aangeroepen door filter single_template, zorgt dat WP de juiste template file toont.
 	 *
 	 * @since 4.1.0
@@ -337,12 +348,9 @@ class Kleistad_Public {
 		$form        = substr( $tag, strlen( 'kleistad-' ) );
 		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
 		$form_object = new $form_class( $form, $atts, $this->options );
-		if ( ! empty( $atts ) ) {
-			$atts = wp_json_encode( $atts );
-		}
-		$html  = '<div id="kleistad_shortcode" data-atts=' . "'$atts' >" . $form_object->run() . '</div>';
-		$html .= '<div id="kleistad_bevestigen" ></div>';
-		$html .= '<div id="kleistad_wachten" ></div>';
+		$html        = '<div class="kleistad_shortcode" >' . $form_object->run() . '</div>';
+		$html       .= '<div id="kleistad_bevestigen" ></div>';
+		$html       .= '<div id="kleistad_wachten" ></div>';
 		return $html;
 	}
 

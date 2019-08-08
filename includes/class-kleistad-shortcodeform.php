@@ -17,9 +17,42 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	/**
 	 * File handle voor download bestanden
 	 *
-	 * @var resource de file pointer
+	 * @var resource de file pointer.
 	 */
 	public $file_handle;
+
+	/**
+	 * Redirect voor o.a. ideal betalingen
+	 *
+	 * @var string de url voor een redirect terug naar de site.
+	 */
+	private static $form_url = null;
+
+	/**
+	 * Redirect naar Mollie voor ideal betaling
+	 *
+	 * @var string de url voor een redirect naar Mollie.
+	 */
+	private static $redirect_url = null;
+
+	/**
+	 * De constructor
+	 *
+	 * @since   5.7.0
+	 * @param string $shortcode   shortcode (zonder kleistad- ).
+	 * @param array  $atts        shortcode parameters.
+	 * @param array  $options     plugin opties.
+	 * @throws Exception Als de shortcode dubbel gebruikt wordt op de pagina.
+	 */
+	public function __construct( $shortcode, $atts, $options ) {
+		static $active_shortcodeforms = [];
+		if ( in_array( $shortcode, $active_shortcodeforms, true ) ) {
+			throw new Exception( "Pagina bevat meer dan een $shortcode formulier" );
+		} else {
+			$active_shortcodeforms[] = $shortcode;
+			parent::__construct( $shortcode, $atts, $options );
+		}
+	}
 
 	/**
 	 * Validatie functie, wordt voor form validatie gebruikt
@@ -46,7 +79,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param \WP_ERROR $error bestaand wp error object waar nieuwe fouten aan toegevoegd kunnen worden.
 	 * @param array     $input de ingevoerde data.
 	 */
-	public function validate_gebruiker( &$error, $input ) {
+	protected function validate_gebruiker( &$error, $input ) {
 		if ( ! $this->validate_email( $input['EMAIL'] ) ) {
 			$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
 			$input['EMAIL']          = '';
@@ -83,7 +116,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $telnr het telefoonnummer, inclusief spaties, streepjes etc.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function validate_telnr( &$telnr ) {
+	protected function validate_telnr( &$telnr ) {
 		$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $telnr );
 		return 1 === preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
 				1 === preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr );
@@ -96,7 +129,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $pcode de postcode, inclusief spaties, streepjes etc.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function validate_pcode( &$pcode ) {
+	protected function validate_pcode( &$pcode ) {
 		$pcode = strtoupper( str_replace( ' ', '', $pcode ) );
 		return 1 === preg_match( '/^[1-9][0-9]{3} ?[a-zA-Z]{2}$/', $pcode );
 	}
@@ -108,7 +141,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $adres het adres.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function validate_adres( $adres ) {
+	protected function validate_adres( $adres ) {
 		return 1 === preg_match( '/^([1-9][e][\s])*([a-zA-Z]+(([\.][\s])|([\s]))?)+[1-9][0-9]*(([-][1-9][0-9]*)|([\s]?[a-zA-Z]+))?$/i', $adres );
 	}
 
@@ -119,7 +152,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $naam de naam.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function validate_naam( $naam ) {
+	protected function validate_naam( $naam ) {
 		$naam = preg_replace( '/[^a-zA-Z\s]/', '', $naam );
 		return ! empty( $naam );
 	}
@@ -131,67 +164,28 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @param string $email het email adres.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	public function validate_email( &$email ) {
+	protected function validate_email( &$email ) {
 		$email = strtolower( $email );
 		return filter_var( $email, FILTER_VALIDATE_EMAIL );
 	}
 
 	/**
-	 * Verwerk de formulier invoer
+	 * Helper functie voor een formulier
 	 *
-	 * @since 4.5.1
+	 * @since 5.7.0
 	 *
-	 * @param  array $data de uit te wisselen data.
-	 * @return string html tekst.
+	 * @param string $extra De eventuele extra toe te voegen attributen.
 	 */
-	private function process( &$data ) {
-		$html               = '';
-		$data['form_actie'] = filter_input( INPUT_POST, 'kleistad_submit_' . $this->shortcode );
-		if ( ! is_null( $data['form_actie'] ) ) {
-			if ( wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce' ), 'kleistad_' . $this->shortcode ) ) {
-				$result = $this->validate( $data );
-				if ( ! is_wp_error( $result ) ) {
-					if ( 0 === strpos( $data['form_actie'], 'test_' ) ) {
-						$result = $this->test( substr( $data['form_actie'], strlen( 'test_' ) ), $data );
-						$html  .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-					} else {
-						$result = $this->save( $data );
-						if ( is_string( $result ) ) {
-							$url = add_query_arg( 'kleistad_succes', rawurlencode( $result ), get_permalink() );
-							wp_safe_redirect( $url, 303 );
-							die();
-						}
-					}
-				}
-				if ( is_wp_error( $result ) ) {
-					foreach ( $result->get_error_messages() as $error ) {
-						$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
-					}
-				}
-			} else {
-				$html .= '<div class="kleistad_fout"><p>security fout</p></div>';
-			}
-		}
-		return $html;
-	}
-
-	/**
-	 * Voer het rapport van de shortcode uit.
-	 *
-	 * @since 4.5.1
-	 */
-	public function run() {
-		$succes = filter_input( INPUT_GET, 'kleistad_succes' );
-		$html   = ! empty( $succes ) ? '<div class="kleistad_succes"><p>' . $succes . '</p></div>' : '';
-		$html  .= Kleistad_Betalen::controleer();
-		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
-			$data  = [];
-			$html .= $this->process( $data );
-			$html .= $this->display( $data );
-		} else {
-			$html .= $this->display();
-		}
-		return $html;
+	protected function form( $extra = null ) {
+		$info = [
+			'shortcode' => $this->shortcode,
+			'atts'      => $this->atts,
+			'class'     => get_class( $this ),
+		];
+		?>
+		<form class="kleistad_shortcodeform" action="#" method="POST" <?php echo esc_attr( $extra ?: '' ); ?> >
+		<input type="hidden" name="shortcodeform_info" value="<?php echo esc_attr( maybe_serialize( $info ) ); ?>" />
+		<?php
 	}
 
 	/**
@@ -202,63 +196,102 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	public static function register_rest_routes() {
 		register_rest_route(
 			Kleistad_Public::url(),
-			'/download',
+			'/formsubmit',
 			[
 				'methods'             => 'POST',
-				'callback'            => [ __CLASS__, 'callback_download' ],
-				'args'                => [
-					'inputs' => [
-						'required' => true,
-					],
-					'naam'   => [
-						'required' => true,
-					],
-					'waarde' => [
-						'required' => true,
-					],
-				],
+				'callback'            => [ __CLASS__, 'callback_formsubmit' ],
 				'permission_callback' => function() {
-					return is_user_logged_in();
+					return true;
 				},
 			]
 		);
 	}
 
 	/**
-	 * Download callback
-	 *
-	 * @since 5.7.0
-	 *
-	 * @param WP_REST_Request $request het request.
-	 * @return WP_REST_response|WP_Error de response.
+	 * Geef de url terug, zoals gera
 	 */
-	public static function callback_download( WP_REST_Request $request ) {
-		parse_str( $request->get_param( 'inputs' ), $inputs );
-		$class                  = 'Kleistad_Public_' . ucfirst( str_replace( 'kleistad_submit_', '', $request->get_param( 'naam' ) ) );
-		$functie                = str_replace( 'download_', '', $request->get_param( 'waarde' ) );
-		$upload_dir             = wp_upload_dir();
-		$filename               = 'kleistad_tmp_' . uniqid() . '.csv';
-		$shortcode              = new $class( null, null, Kleistad::get_options() );
-		$shortcode->file_handle = fopen( $upload_dir['basedir'] . "/$filename", 'w' );
-		if ( false !== $shortcode->file_handle ) {
-			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
-			call_user_func( [ $shortcode, $functie ], $inputs );
-			fclose( $shortcode->file_handle );
-			return new WP_REST_response( [ 'file_uri' => $upload_dir['baseurl'] . "/$filename" ] );
-		}
-		return new WP_Error( 'file_error', 'Interne fout bij aanmaken download file, probeer het opnieuw', [ 'status' => 503 ] );
+	public static function url() {
+		return self::$form_url;
 	}
 
 	/**
-	 * Voer een testrun uit
+	 * Registreer de url waar naar toe de redirect moet plaatsvinden.
 	 *
-	 * @param string $test Naam van de functie voor het uitvoeren van de test.
-	 * @param array  $data De uit te wisselen data.
-	 *
-	 * @since 5.5.1
+	 * @param string $url Het url adres.
 	 */
-	private function test( $test, $data ) {
-		return call_user_func( [ $this, $test ], $data );
+	public static function redirect( $url ) {
+		self::$redirect_url = $url;
+	}
+
+	/**
+	 * Toon de status van de het resultaat
+	 *
+	 * @since 5.7.0
+	 *
+	 * @param string | WP_Error $result Het resultaat dat getoond moet worden.
+	 */
+	private static function status( $result ) {
+		$html = '';
+		if ( is_string( $result ) ) {
+			$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
+		} elseif ( is_wp_error( $result ) ) {
+			foreach ( $result->get_error_messages() as $error ) {
+				$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
+			}
+		}
+		return $html;
+	}
+
+	/**
+	 * Verwerk een form submit via ajax call
+	 *
+	 * @since 5.7.0
+	 * @return WP_REST_response de response.
+	 */
+	public static function callback_formsubmit() {
+		$data = [];
+		$html = '';
+		$info  = unserialize( filter_input( INPUT_POST, 'shortcodeform_info' ) ); //phpcs:ignore
+		if ( class_exists( $info['class'] ) ) {
+			$shortcode          = new $info['class']( $info['shortcode'], $info['atts'], Kleistad::get_options() );
+			$data['form_actie'] = filter_input( INPUT_POST, 'form_actie' );
+			self::$form_url     = filter_input( INPUT_POST, 'form_url' );
+			$betaal             = filter_input( INPUT_POST, 'betaal' );
+			$result             = $shortcode->validate( $data );
+			if ( ! is_wp_error( $result ) ) {
+				if ( 0 === strpos( $data['form_actie'], 'test_' ) ) {
+					$html .= self::status( $shortcode->test( $data ) );
+					$html .= $shortcode->display( $data );
+				} elseif ( 0 === strpos( $data['form_actie'], 'download_' ) ) {
+					$upload_dir             = wp_upload_dir();
+					$filename               = 'kleistad_tmp_' . uniqid() . '.csv';
+					$functie                = str_replace( 'download_', '', $data['form_actie'] );
+					$shortcode->file_handle = fopen( $upload_dir['basedir'] . "/$filename", 'w' );
+					if ( false !== $shortcode->file_handle ) {
+						fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
+						call_user_func( [ $shortcode, $functie ] );
+						fclose( $shortcode->file_handle );
+						return new WP_REST_response( [ 'file_uri' => $upload_dir['baseurl'] . "/$filename" ] );
+					} else {
+						$html .= '<div class="kleistad_fout"><p>bestand kon niet aangemaakt worden</p></div>';
+					}
+				} else {
+					$result = $shortcode->save( $data );
+					if ( ! is_wp_error( $result ) && ! empty( self::$redirect_url ) ) {
+						return new WP_REST_response( [ 'redirect_uri' => self::$redirect_url ] );
+					} else {
+						$html .= self::status( $result );
+						$html .= $shortcode->display();
+					}
+				}
+			} else {
+				$html .= self::status( $result );
+				$html .= $shortcode->display( $data );
+			}
+		} else {
+			$html .= '<div class="kleistad_fout"><p>interne fout</p></div>';
+		}
+		return new WP_REST_Response( [ 'html' => $html ] );
 	}
 
 	/**

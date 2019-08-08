@@ -14,9 +14,8 @@ if ( ! Kleistad_Roles::override() ) :
 <p>Geen toegang tot dit formulier</p>
 	<?php
 else :
+	$this->form();
 	?>
-	<form method="POST">
-		<?php wp_nonce_field( 'kleistad_email' ); ?>
 		<input id="kleistad_selectie" name="adressen" type="hidden">
 		<div class="kleistad_row">
 			<div class="kleistad_label">

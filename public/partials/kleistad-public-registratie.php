@@ -14,10 +14,8 @@ if ( ! is_user_logged_in() ) :
 	<p>Geen toegang tot dit formulier</p>
 	<?php
 else :
+	$this->form();
 	?>
-
-	<form method="POST">
-		<?php wp_nonce_field( 'kleistad_registratie' ); ?>
 		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['input']['gebruiker_id'] ); ?>" >
 		<div class="kleistad_row">
 			<div class="kleistad_col_3 kleistad_label">
