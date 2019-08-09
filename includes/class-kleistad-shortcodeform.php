@@ -218,15 +218,16 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @return string | WP_Error
 	 */
 	private static function download( Kleistad_ShortcodeForm $shortcode, $functie ) {
-		$error                  = new WP_Error();
-		$upload_dir             = wp_upload_dir();
-		$filename               = 'kleistad_tmp_' . uniqid() . '.csv';
-		$shortcode->file_handle = fopen( $upload_dir['basedir'] . "/$filename", 'w' );
-		if ( false !== $shortcode->file_handle ) {
+		$error      = new WP_Error();
+		$upload_dir = wp_upload_dir();
+		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
+		$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
+		if ( false !== $result ) {
+			$shortcode->file_handle = $result;
 			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
 			call_user_func( [ $shortcode, $functie ] );
 			fclose( $shortcode->file_handle );
-			return $upload_dir['baseurl'] . "/$filename";
+			return $upload_dir['baseurl'] . $file;
 		} else {
 			$error->add( 'file', 'bestand kon niet aangemaakt worden' );
 			return $error;
