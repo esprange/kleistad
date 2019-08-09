@@ -36,25 +36,6 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	private static $redirect_url = null;
 
 	/**
-	 * De constructor
-	 *
-	 * @since   5.7.0
-	 * @param string $shortcode   shortcode (zonder kleistad- ).
-	 * @param array  $atts        shortcode parameters.
-	 * @param array  $options     plugin opties.
-	 * @throws Exception Als de shortcode dubbel gebruikt wordt op de pagina.
-	 */
-	public function __construct( $shortcode, $atts, $options ) {
-		static $active_shortcodeforms = [];
-		if ( in_array( $shortcode, $active_shortcodeforms, true ) ) {
-			throw new Exception( "Pagina bevat meer dan een $shortcode formulier" );
-		} else {
-			$active_shortcodeforms[] = $shortcode;
-			parent::__construct( $shortcode, $atts, $options );
-		}
-	}
-
-	/**
 	 * Validatie functie, wordt voor form validatie gebruikt
 	 *
 	 * @since   4.0.87
@@ -208,7 +189,9 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	}
 
 	/**
-	 * Geef de url terug, zoals gera
+	 * Geef de url terug, zoals eerder vanuit de client doorgegeven. Dit omdat permalink niet werkt in een Ajax call.
+	 *
+	 * @since 5.7.0
 	 */
 	public static function url() {
 		return self::$form_url;
@@ -216,6 +199,8 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 
 	/**
 	 * Registreer de url waar naar toe de redirect moet plaatsvinden.
+	 *
+	 * @since 5.7.0
 	 *
 	 * @param string $url Het url adres.
 	 */
@@ -250,7 +235,6 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 */
 	public static function callback_formsubmit() {
 		$data = [];
-		$html = '';
 		$info  = unserialize( filter_input( INPUT_POST, 'shortcodeform_info' ) ); //phpcs:ignore
 		if ( class_exists( $info['class'] ) ) {
 			$shortcode          = new $info['class']( $info['shortcode'], $info['atts'], Kleistad::get_options() );
@@ -259,8 +243,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 			$result             = $shortcode->validate( $data );
 			if ( ! is_wp_error( $result ) ) {
 				if ( 0 === strpos( $data['form_actie'], 'test_' ) ) {
-					$html .= self::status( $shortcode->test( $data ) );
-					$html .= $shortcode->display( $data );
+					return new WP_REST_Response( [ 'html' => self::status( $shortcode->test( $data ) ) . $shortcode->display( $data ) ] );
 				} elseif ( 0 === strpos( $data['form_actie'], 'download_' ) ) {
 					$upload_dir             = wp_upload_dir();
 					$filename               = 'kleistad_tmp_' . uniqid() . '.csv';
@@ -272,25 +255,22 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 						fclose( $shortcode->file_handle );
 						return new WP_REST_response( [ 'file_uri' => $upload_dir['baseurl'] . "/$filename" ] );
 					} else {
-						$html .= '<div class="kleistad_fout"><p>bestand kon niet aangemaakt worden</p></div>';
+						return new WP_REST_Response( [ 'html' => '<div class="kleistad_fout"><p>bestand kon niet aangemaakt worden</p></div>' ] );
 					}
 				} else {
 					$result = $shortcode->save( $data );
 					if ( ! is_wp_error( $result ) && ! empty( self::$redirect_url ) ) {
 						return new WP_REST_response( [ 'redirect_uri' => self::$redirect_url ] );
 					} else {
-						$html .= self::status( $result );
-						$html .= $shortcode->display();
+						return new WP_REST_Response( [ 'html' => self::status( $result ) . $shortcode->display() ] );
 					}
 				}
 			} else {
-				$html .= self::status( $result );
-				$html .= $shortcode->display( $data );
+				return new WP_REST_Response( [ 'html' => self::status( $result ) . $shortcode->display( $data ) ] );
 			}
 		} else {
-			$html .= '<div class="kleistad_fout"><p>interne fout</p></div>';
+			return new WP_REST_Response( [ 'html' => '<div class="kleistad_fout"><p>interne fout</p></div>' ] );
 		}
-		return new WP_REST_Response( [ 'html' => $html ] );
 	}
 
 	/**

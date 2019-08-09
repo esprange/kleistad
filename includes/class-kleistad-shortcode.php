@@ -62,9 +62,15 @@ abstract class Kleistad_Shortcode {
 	 * @param array  $options     plugin opties.
 	 */
 	public function __construct( $shortcode, $atts, $options ) {
-		$this->atts      = $atts;
-		$this->options   = $options;
-		$this->shortcode = $shortcode;
+		static $active_shortcodeforms = [];
+		if ( in_array( $shortcode, $active_shortcodeforms, true ) ) {
+			throw new Exception( "Pagina bevat meer dan een $shortcode aanroep" );
+		} else {
+			$active_shortcodeforms[] = $shortcode;
+			$this->atts      = $atts;
+			$this->options   = $options;
+			$this->shortcode = $shortcode;
+		}
 	}
 
 	/**
