@@ -209,6 +209,31 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	}
 
 	/**
+	 * Maak een tijdelijk bestand aan voor download.
+	 *
+	 * @since 5.7.0
+	 *
+	 * @param Kleistad_ShortcodeForm $shortcode De shortcode waarvoor de download plaatsvindt.
+	 * @return string | WP_Error
+	 */
+	private static function download( Kleistad_ShortcodeForm $shortcode ) {
+		$error                  = new WP_Error();
+		$upload_dir             = wp_upload_dir();
+		$filename               = 'kleistad_tmp_' . uniqid() . '.csv';
+		$functie                = str_replace( 'download_', '', $data['form_actie'] );
+		$shortcode->file_handle = fopen( $upload_dir['basedir'] . "/$filename", 'w' );
+		if ( false !== $shortcode->file_handle ) {
+			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
+			call_user_func( [ $shortcode, $functie ] );
+			fclose( $shortcode->file_handle );
+			return $upload_dir['baseurl'] . "/$filename";
+		} else {
+			$error->add( 'file', 'bestand kon niet aangemaakt worden' );
+			return $error;
+		}
+	}
+
+	/**
 	 * Toon de status van de het resultaat
 	 *
 	 * @since 5.7.0
@@ -236,40 +261,35 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	public static function callback_formsubmit() {
 		$data = [];
 		$info  = unserialize( filter_input( INPUT_POST, 'shortcodeform_info' ) ); //phpcs:ignore
-		if ( class_exists( $info['class'] ) ) {
+		if ( ! class_exists( $info['class'] ) ) {
+			return new WP_REST_Response( [ 'html' => '<div class="kleistad_fout"><p>interne fout</p></div>' ] );
+		} else {
 			$shortcode          = new $info['class']( $info['shortcode'], $info['atts'], Kleistad::get_options() );
 			$data['form_actie'] = filter_input( INPUT_POST, 'form_actie' );
 			self::$form_url     = filter_input( INPUT_POST, 'form_url' );
 			$result             = $shortcode->validate( $data );
-			if ( ! is_wp_error( $result ) ) {
-				if ( 0 === strpos( $data['form_actie'], 'test_' ) ) {
-					return new WP_REST_Response( [ 'html' => self::status( $shortcode->test( $data ) ) . $shortcode->display( $data ) ] );
-				} elseif ( 0 === strpos( $data['form_actie'], 'download_' ) ) {
-					$upload_dir             = wp_upload_dir();
-					$filename               = 'kleistad_tmp_' . uniqid() . '.csv';
-					$functie                = str_replace( 'download_', '', $data['form_actie'] );
-					$shortcode->file_handle = fopen( $upload_dir['basedir'] . "/$filename", 'w' );
-					if ( false !== $shortcode->file_handle ) {
-						fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
-						call_user_func( [ $shortcode, $functie ] );
-						fclose( $shortcode->file_handle );
-						return new WP_REST_response( [ 'file_uri' => $upload_dir['baseurl'] . "/$filename" ] );
-					} else {
-						return new WP_REST_Response( [ 'html' => '<div class="kleistad_fout"><p>bestand kon niet aangemaakt worden</p></div>' ] );
-					}
-				} else {
-					$result = $shortcode->save( $data );
-					if ( ! is_wp_error( $result ) && ! empty( self::$redirect_url ) ) {
-						return new WP_REST_response( [ 'redirect_uri' => self::$redirect_url ] );
-					} else {
-						return new WP_REST_Response( [ 'html' => self::status( $result ) . $shortcode->display() ] );
-					}
-				}
-			} else {
+			if ( is_wp_error( $result ) ) {
 				return new WP_REST_Response( [ 'html' => self::status( $result ) . $shortcode->display( $data ) ] );
+			} else {
+				switch ( strtok( $data['form_actie'], '_' ) ) {
+					case 'test':
+						return new WP_REST_Response( [ 'html' => self::status( $shortcode->test( $data ) ) . $shortcode->display( $data ) ] );
+					case 'download':
+						$result = self::download( $shortcode );
+						if ( is_wp_error( $result ) ) {
+							return new WP_REST_response( [ 'html' => self::status( $result ) ] );
+						} else {
+							return new WP_REST_response( [ 'file_uri' => $upload_dir['baseurl'] . "/$filename" ] );
+						}
+					default:
+						$result = $shortcode->save( $data );
+						if ( is_wp_error( $result ) && ! empty( self::$redirect_url ) ) {
+							return new WP_REST_Response( [ 'html' => self::status( $result ) . $shortcode->display() ] );
+						} else {
+							return new WP_REST_response( [ 'redirect_uri' => self::$redirect_url ] );
+						}
+				}
 			}
-		} else {
-			return new WP_REST_Response( [ 'html' => '<div class="kleistad_fout"><p>interne fout</p></div>' ] );
 		}
 	}
 

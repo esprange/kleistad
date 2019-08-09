@@ -57,9 +57,11 @@ abstract class Kleistad_Shortcode {
 	 * De constructor
 	 *
 	 * @since   4.0.87
-	 * @param string $shortcode   shortcode (zonder kleistad- ).
-	 * @param array  $atts        shortcode parameters.
-	 * @param array  $options     plugin opties.
+	 *
+	 * @param string $shortcode   Shortcode (zonder kleistad- ).
+	 * @param array  $atts        Shortcode parameters.
+	 * @param array  $options     Plugin opties.
+	 * @throws Exception          Foutmelding ingeval de shortcode meerdere keren op de pagina voorkomt.
 	 */
 	public function __construct( $shortcode, $atts, $options ) {
 		static $active_shortcodeforms = [];
@@ -67,9 +69,9 @@ abstract class Kleistad_Shortcode {
 			throw new Exception( "Pagina bevat meer dan een $shortcode aanroep" );
 		} else {
 			$active_shortcodeforms[] = $shortcode;
-			$this->atts      = $atts;
-			$this->options   = $options;
-			$this->shortcode = $shortcode;
+			$this->atts              = $atts;
+			$this->options           = $options;
+			$this->shortcode         = $shortcode;
 		}
 	}
 
