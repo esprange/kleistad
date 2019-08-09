@@ -214,13 +214,13 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @since 5.7.0
 	 *
 	 * @param Kleistad_ShortcodeForm $shortcode De shortcode waarvoor de download plaatsvindt.
+	 * @param string                 $functie   De shortcode functie die aangeroepen moet worden.
 	 * @return string | WP_Error
 	 */
-	private static function download( Kleistad_ShortcodeForm $shortcode ) {
+	private static function download( Kleistad_ShortcodeForm $shortcode, $functie ) {
 		$error                  = new WP_Error();
 		$upload_dir             = wp_upload_dir();
 		$filename               = 'kleistad_tmp_' . uniqid() . '.csv';
-		$functie                = str_replace( 'download_', '', $data['form_actie'] );
 		$shortcode->file_handle = fopen( $upload_dir['basedir'] . "/$filename", 'w' );
 		if ( false !== $shortcode->file_handle ) {
 			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
@@ -275,11 +275,11 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 					case 'test':
 						return new WP_REST_Response( [ 'html' => self::status( $shortcode->test( $data ) ) . $shortcode->display( $data ) ] );
 					case 'download':
-						$result = self::download( $shortcode );
+						$result = self::download( $shortcode, str_replace( 'download_', '', $data['form_actie'] ) );
 						if ( is_wp_error( $result ) ) {
 							return new WP_REST_response( [ 'html' => self::status( $result ) ] );
 						} else {
-							return new WP_REST_response( [ 'file_uri' => $upload_dir['baseurl'] . "/$filename" ] );
+							return new WP_REST_response( [ 'file_uri' => $result ] );
 						}
 					default:
 						$result = $shortcode->save( $data );
