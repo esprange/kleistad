@@ -16,7 +16,7 @@ if ( ! Kleistad_Roles::override() ) :
 else :
 	global $wp;
 	if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
-		$this->form( 'id="kleistad_cursus_beheer_form"' );
+		$this->form();
 		?>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>"/>
 		<input type="hidden" name="lesdatums" id="kleistad_lesdatums" value="<?php echo esc_attr( $data['cursus']['lesdatums'] ); ?>" >

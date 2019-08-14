@@ -25,7 +25,7 @@ else :
 		function wp_dropdown_categories_required( $output ) {
 			return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
 		}
-		$this->form( 'enctype="multipart/form-data" autocomplete="off"' );
+		$this->form();
 		?>
 		<input type="hidden" name="action" value="" />
 		<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
@@ -146,7 +146,7 @@ else :
 				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" rows="5"><?php echo esc_textarea( $data['recept']['content']['stookschema'] ); ?></textarea>
 			</div>
 			<div class="kleistad_col_5">
-				<input type="file" name="foto" id="kleistad_foto_input"  accept=".jpg" /><br />
+				<input type="file" name="foto" id="kleistad_foto_input" accept=".jpeg,.jpg,.tiff,.tif" /><br />
 				<?php
 				if ( '' !== $data['recept']['content']['foto'] ) :
 					?>
@@ -232,7 +232,7 @@ else :
 			</div>
 		</div>
 		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
-		<button id="kleistad_recept_opslaan" name="kleistad_submit_recept_beheer">Opslaan</button>
+		<button type="submit" name="kleistad_submit_recept_beheer">Opslaan</button>
 		<button onClick="window.history.back();">Annuleren</button>
 	</form>
 		<?php

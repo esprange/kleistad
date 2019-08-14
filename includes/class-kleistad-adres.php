@@ -29,7 +29,7 @@ class Kleistad_Adres {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Kleistad_Public::url(),
+			Kleistad_Public::api(),
 			'/adres',
 			[
 				'methods'             => 'GET',

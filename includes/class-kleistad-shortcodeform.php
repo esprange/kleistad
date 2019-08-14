@@ -19,7 +19,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 *
 	 * @var resource de file pointer.
 	 */
-	public $file_handle;
+	protected $file_handle;
 
 	/**
 	 * Redirect voor o.a. ideal betalingen
@@ -49,7 +49,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 *
 	 * @since   4.0.87
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
-	 * @return \WP_ERROR|string
+	 * @return \WP_ERROR|array
 	 */
 	abstract protected function save( $data );
 
@@ -164,8 +164,8 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 			'class'     => get_class( $this ),
 		];
 		?>
-		<form class="kleistad_shortcodeform" action="#" method="POST" <?php echo esc_attr( $extra ?: '' ); ?> >
-		<input type="hidden" name="shortcodeform_info" value="<?php echo esc_attr( maybe_serialize( $info ) ); ?>" />
+		<form class="kleistad_shortcodeform" action="#" autocomplete="off" enctype="multipart/form-data" <?php echo ( $extra ?: '' ); // phpcs:ignore ?> >
+		<input type="hidden" name="shortcodeform_info" value='<?php echo wp_json_encode( $info, JSON_HEX_QUOT | JSON_HEX_TAG ); ?>' />
 		<?php
 	}
 
@@ -176,7 +176,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Kleistad_Public::url(),
+			Kleistad_Public::api(),
 			'/formsubmit',
 			[
 				'methods'             => 'POST',
@@ -193,7 +193,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 *
 	 * @since 5.7.0
 	 */
-	public static function url() {
+	public static function get_url() {
 		return self::$form_url;
 	}
 
@@ -204,7 +204,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 *
 	 * @param string $url Het url adres.
 	 */
-	public static function redirect( $url ) {
+	public static function set_redirect( $url ) {
 		self::$redirect_url = $url;
 	}
 
@@ -227,7 +227,10 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
 			call_user_func( [ $shortcode, $functie ] );
 			fclose( $shortcode->file_handle );
-			return $upload_dir['baseurl'] . $file;
+			return [
+				'actie'    => 'download',
+				'file_uri' => $upload_dir['baseurl'] . $file,
+			];
 		} else {
 			$error->add( 'file', 'bestand kon niet aangemaakt worden' );
 			return $error;
@@ -239,18 +242,40 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 *
 	 * @since 5.7.0
 	 *
-	 * @param string | WP_Error $result Het resultaat dat getoond moet worden.
+	 * @param string | array | WP_Error $result Het resultaat dat getoond moet worden.
 	 */
-	private static function status( $result ) {
+	public static function status( $result ) {
 		$html = '';
-		if ( is_string( $result ) ) {
-			$html .= '<div class="kleistad_succes"><p>' . $result . '</p></div>';
-		} elseif ( is_wp_error( $result ) ) {
+		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
 				$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
 			}
+		} else {
+			$succes = $result['status'] ?? ( is_string( $result ) ? $result : '' );
+			if ( ! empty( $succes ) ) {
+				$html = '<div class="kleistad_succes"><p>' . $succes . '</p></div>';
+			}
 		}
 		return $html;
+	}
+
+	/**
+	 * Toon een OK button in het midden van het scherm
+	 *
+	 * @since 5.7.0
+	 * @return string
+	 */
+	public static function goto_home() {
+		ob_start();
+		?>
+		</br></br>
+		<div style="text-align:center;" >
+			<button onclick="location.href='<?php echo esc_url( home_url() ); ?>';" >
+				&nbsp;OK&nbsp;
+			</button>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
@@ -261,36 +286,52 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 */
 	public static function callback_formsubmit() {
 		$data = [];
-		$info  = unserialize( filter_input( INPUT_POST, 'shortcodeform_info' ) ); //phpcs:ignore
+		$info  = json_decode( filter_input( INPUT_POST, 'shortcodeform_info' ), true ); //phpcs:ignore
 		if ( ! class_exists( $info['class'] ) ) {
-			return new WP_REST_Response( [ 'html' => '<div class="kleistad_fout"><p>interne fout</p></div>' ] );
+			return new WP_REST_Response( [ 'html' => '<div class="kleistad_fout"><p>interne fout</p></div>' . self::goto_home() ] );
 		} else {
 			$shortcode          = new $info['class']( $info['shortcode'], $info['atts'], Kleistad::get_options() );
 			$data['form_actie'] = filter_input( INPUT_POST, 'form_actie' );
 			self::$form_url     = filter_input( INPUT_POST, 'form_url' );
 			$result             = $shortcode->validate( $data );
-			if ( is_wp_error( $result ) ) {
-				return new WP_REST_Response( [ 'html' => self::status( $result ) . $shortcode->display( $data ) ] );
-			} else {
+			if ( ! is_wp_error( $result ) ) {
 				switch ( strtok( $data['form_actie'], '_' ) ) {
 					case 'test':
-						return new WP_REST_Response( [ 'html' => self::status( $shortcode->test( $data ) ) . $shortcode->display( $data ) ] );
+						$result = $shortcode->test( $data );
+						break;
 					case 'download':
 						$result = self::download( $shortcode, str_replace( 'download_', '', $data['form_actie'] ) );
-						if ( is_wp_error( $result ) ) {
-							return new WP_REST_response( [ 'html' => self::status( $result ) ] );
-						} else {
-							return new WP_REST_response( [ 'file_uri' => $result ] );
-						}
+						break;
 					default:
 						$result = $shortcode->save( $data );
-						if ( is_wp_error( $result ) && ! empty( self::$redirect_url ) ) {
-							return new WP_REST_Response( [ 'html' => self::status( $result ) . $shortcode->display() ] );
-						} else {
-							return new WP_REST_response( [ 'redirect_uri' => self::$redirect_url ] );
+						if ( ! is_wp_error( $result ) ) {
+							if ( ! empty( self::$redirect_url ) ) {
+								$result['actie']    = 'redirect';
+								$result['redirect'] = self::$redirect_url;
+							} elseif ( 'home' === $result['actie'] ) {
+								$result['html'] = self::goto_home();
+							}
 						}
+						break;
 				}
 			}
+			if ( is_wp_error( $result ) ) {
+				return new WP_REST_response(
+					[
+						'actie'  => 'none',
+						'status' => self::status( $result ),
+					]
+				);
+			}
+			return new WP_REST_response(
+				[
+					'actie'        => $result['actie'],
+					'html'         => $result['html'] ?? '',
+					'status'       => self::status( $result ),
+					'redirect_uri' => self::$redirect_url,
+					'file_uri'     => $result['file_uri'] ?? '',
+				]
+			);
 		}
 	}
 

@@ -9,7 +9,7 @@
 				}
 			);
 
-			$( '#kleistad_gebruikers' ).on( 'changed.jstree', //'select_node.jstree',
+			$( '#kleistad_gebruikers' ).on( 'changed.jstree',
 				function() {
 					var gebruikerIds = [],
 						selectIndexes = $( '#kleistad_gebruikers' ).jstree( 'get_selected', true );

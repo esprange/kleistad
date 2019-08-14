@@ -116,7 +116,7 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 	 * Verzend emails
 	 *
 	 * @param array $data data te verzenden.
-	 * @return \WP_ERROR|string
+	 * @return \WP_ERROR|array
 	 *
 	 * @since   5.5.0
 	 */
@@ -136,7 +136,10 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 				'auto'      => false,
 			]
 		);
-		return 'De email is naar ' . count( $adressen ) . ' personen verzonden';
+		return [
+			'status' => 'De email is naar ' . count( $adressen ) . ' personen verzonden',
+			'actie'  => 'reset',
+		];
 	}
 
 	/**
@@ -158,6 +161,9 @@ class Kleistad_Public_Email extends Kleistad_ShortcodeForm {
 				'auto'      => false,
 			]
 		);
-		return 'De test email is verzonden';
+		return [
+			'status' => 'De test email is verzonden',
+			'actie'  => 'none',
+		];
 	}
 }

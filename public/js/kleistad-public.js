@@ -184,15 +184,54 @@ function strtodate( value ) {
 		});
 	};
 
+	function onLoad() {
+		/**
+		 * Definieer de tabellen.
+		 */
+		if ( null !== document.querySelector( '.kleistad_datatable' ) ) {
+			$( '.kleistad_datatable' ).DataTable();
+		}
+
+		/**
+		 * Definieer de datum velden.
+		 */
+		if ( null !== document.querySelector( '.kleistad_datum' ) ) {
+			$.datepicker.setDefaults(
+				{
+					dateFormat: 'dd-mm-yy'
+				}
+			);
+		}
+
+		/**
+		 * Definieer de timespinners.
+		 */
+		if ( null !== document.querySelector( '.kleistad_tijd' ) ) {
+			$( '.kleistad_tijd' ).timespinner(
+				{
+					start: function() {
+						return ( ! $( this ).attr( 'readonly' ) );
+					}
+				}
+			);
+		}
+
+		/**
+		 * Definieer fadeout op berichten
+		 */
+
+		// $( '.kleistad_succes,.kleistad_fout' ).fadeOut( 10000 );
+	}
+
+	$( document ).ajaxComplete(
+        function() {
+			onLoad();
+		}
+	);
+
 	$( document ).ready(
         function() {
-
-			/**
-             * Definieer de tabellen.
-             */
-			if ( null !== document.querySelector( '.kleistad_datatable' ) ) {
-				$( '.kleistad_datatable' ).DataTable();
-			}
+			onLoad();
 
 			/**
 			 * Alle forms krijgen een wachten box.
@@ -213,13 +252,15 @@ function strtodate( value ) {
 				 */
 				$( '.kleistad_shortcode' ).on( 'submit', 'form',
 					function( event ) {
-						var clicked    = $( this ).data( 'clicked' );
-						var confirm    = $( '#' + clicked.id ).data( 'confirm' );
-						var tekst      = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
-						var formData   = $( this ).serializeArray();
-						var $shortcode = $( this ).closest( '.kleistad_shortcode' );
-						formData.push( { name: 'form_actie', value: clicked.value } );
-						formData.push( { name: 'form_url', value: window.location.href } );
+						var $form          = $( this );
+						var $shortcode     = $form.closest( '.kleistad_shortcode' );
+						var data           = new FormData( this );
+						var clicked        = $form.data( 'clicked' );
+						var confirm        = $( '#' + clicked.id ).data( 'confirm' );
+						var tekst          = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
+						data.append( 'form_actie', clicked.value );
+						data.append( 'form_url', window.location.href );
+
 						/**
 						 * Sluit eventuele openstaande dialogs.
 						 */
@@ -265,24 +306,36 @@ function strtodate( value ) {
 							event.preventDefault();
 							$.ajax(
 								{
-									url: kleistadData.base_url + '/formsubmit/',
-									method: 'POST',
-									cache: false,
 									beforeSend: function( xhr ) {
 										xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
 									},
-									data: formData
+									cache: false,
+									contentType: false,
+									data: data,
+									method: 'POST',
+									processData: false,
+									url: kleistadData.base_url + '/formsubmit/'
 								}
 							).done(
 								function( data ) {
 									$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-									if ( 'undefined' !== typeof data.html ) {
-										$shortcode.html( data.html );
-									} else if ( 'undefined' !== typeof data.file_uri ) {
-										window.location.href = data.file_uri;
-									} else if ( 'undefined' !== typeof data.redirect_uri ) {
-										window.location.replace( data.redirect_uri );
+									switch ( data.actie ) {
+										case 'refresh':
+										case 'home':
+											$shortcode.html( data.html );
+											break;
+										case 'reset':
+											$form[0].reset();
+											break;
+										case 'download':
+											window.location.href = data.file_uri;
+											break;
+										case 'redirect':
+											window.location.replace( data.redirect_uri );
+											break;
+										default: // Is ook case none.
 									}
+									$( '#kleistad_berichten' ).html( data.status );
 								}
 							).fail(
 								function( jqXHR ) {
@@ -294,30 +347,6 @@ function strtodate( value ) {
 									window.alert( kleistadData.error_message );
 								}
 							);
-						}
-					}
-				);
-			}
-
-			/**
-             * Definieer de datum velden.
-             */
-			if ( null !== document.querySelector( '.kleistad_datum' ) ) {
-				$.datepicker.setDefaults(
-					{
-						dateFormat: 'dd-mm-yy'
-					}
-				);
-			}
-
-            /**
-             * Definieer de timespinners.
-             */
-			if ( null !== document.querySelector( '.kleistad_tijd' ) ) {
-				$( '.kleistad_tijd' ).timespinner(
-					{
-						start: function() {
-							return ( ! $( this ).attr( 'readonly' ) );
 						}
 					}
 				);

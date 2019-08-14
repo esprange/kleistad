@@ -132,7 +132,7 @@ class Kleistad_Public {
 	 *
 	 * @return string url voor endpoints
 	 */
-	public static function url() {
+	public static function api() {
 		return 'kleistad_api';
 	}
 
@@ -142,7 +142,7 @@ class Kleistad_Public {
 	 * @return string url voor endpoints
 	 */
 	public static function base_url() {
-		return rest_url( self::url() );
+		return rest_url( self::api() );
 	}
 
 	/**
@@ -261,7 +261,12 @@ class Kleistad_Public {
 	 * @param string $html De tekst waar een tekst eventueel aan toegevoegd wordt.
 	 */
 	public static function controleer_betaling( $html ) {
-		return Kleistad_Betalen::controleer() . $html;
+		$result = Kleistad_Betalen::controleer();
+		if ( is_string( $result ) && ! empty( $result ) ) {
+			return Kleistad_ShortcodeForm::status( $result ) . Kleistad_ShortcodeForm::goto_home();
+		} else {
+			return Kleistad_ShortcodeForm::status( $result ) . $html;
+		}
 	}
 
 	/**
@@ -345,12 +350,19 @@ class Kleistad_Public {
 	 * @return string           html resultaat.
 	 */
 	public function shortcode_handler( $atts, $content, $tag ) {
-		$form        = substr( $tag, strlen( 'kleistad-' ) );
-		$form_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $form ) ) );
-		$form_object = new $form_class( $form, $atts, $this->options );
-		$html        = '<div class="kleistad_shortcode" >' . $form_object->run() . '</div>';
-		$html       .= '<div id="kleistad_bevestigen" ></div>';
-		$html       .= '<div id="kleistad_wachten" ></div>';
+		static $divs      = false; // De ondersteunende divs zijn maar eenmalig nodig.
+		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
+		$shortcode_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode ) ) );
+		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options );
+		$html             = '';
+		if ( ! $divs ) {
+			$html .= '<div id="kleistad_berichten" ></div>';
+		}
+		$html .= '<div class="kleistad_shortcode" >' . $shortcode_object->run() . '</div>';
+		if ( ! $divs ) {
+			$html .= '<div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
+			$divs  = true;
+		}
 		return $html;
 	}
 

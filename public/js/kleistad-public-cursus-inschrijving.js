@@ -48,7 +48,7 @@
             $( '#kleistad_cursus_lopend' ).hide();
             $( '#kleistad_submit' ).html( 'betalen' );
         }
-    }
+	}
 
     $( document ).ready(
         function() {
@@ -56,22 +56,22 @@
 				wijzigVelden( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 			}
 
-            $( '#kleistad_aantal' ).spinner({
-                min:1,
-                max: ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) ? $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ).ruimte : 1,
-                stop: function() {
+			$( '#kleistad_aantal' ).spinner({
+				min:1,
+				max: ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) ? $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ).ruimte : 1,
+				stop: function() {
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
 						wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 					}
-                },
-                create: function() {
+				},
+				create: function() {
 					if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
 						wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 					}
 				}
-            });
+			});
 
-            $( 'input[name=cursus_id]:radio' ).change(
+			$( 'input[name=cursus_id]:radio' ).change(
 			function() {
 					var cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
                     wijzigTeksten( cursus );

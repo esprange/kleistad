@@ -117,7 +117,10 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 			);
 
 			if ( ! is_wp_error( $gebruiker_id ) ) {
-				return 'Gegevens zijn opgeslagen';
+				return [
+					'status' => 'Gegevens zijn opgeslagen',
+					'actie'  => 'home',
+				];
 			} else {
 				$error->add( '', $gebruiker_id->get_error_message() );
 				return $error;

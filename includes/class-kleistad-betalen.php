@@ -57,7 +57,7 @@ class Kleistad_Betalen {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Kleistad_Public::url(),
+			Kleistad_Public::api(),
 			'/betaling',
 			[
 				'methods'             => 'POST',
@@ -73,7 +73,7 @@ class Kleistad_Betalen {
 			]
 		);
 		register_rest_route(
-			Kleistad_Public::url(),
+			Kleistad_Public::api(),
 			'/betaling/herhaal',
 			[
 				'methods'             => 'POST',
@@ -143,12 +143,12 @@ class Kleistad_Betalen {
 				],
 				'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 				'sequenceType' => $mandateren ? \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-				'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, Kleistad_ShortcodeForm::url() ),
+				'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, Kleistad_ShortcodeForm::get_url() ),
 				'webhookUrl'   => Kleistad_Public::base_url() . '/betaling/',
 			]
 		);
 		set_transient( $uniqid, $betaling->id );
-		Kleistad_ShortcodeForm::redirect( $betaling->getCheckOutUrl() ); // Dit is alleen de registratie van de redirect, niet de werkelijke uitvoering.
+		Kleistad_ShortcodeForm::set_redirect( $betaling->getCheckOutUrl() ); // Dit is alleen de registratie van de redirect, niet de werkelijke uitvoering.
 	}
 
 	/**
@@ -156,9 +156,10 @@ class Kleistad_Betalen {
 	 *
 	 * @since      4.2.0
 	 *
-	 * @return string de status van de betaling als tekst of leeg als er geen betaling is.
+	 * @return WP_ERROR | string de status van de betaling als tekst of leeg als er geen betaling is.
 	 */
 	public static function controleer() {
+		$error              = new WP_Error();
 		$mollie_betaling_id = false;
 		$uniqid             = filter_input( INPUT_GET, self::QUERY_PARAM );
 		if ( ! is_null( $uniqid ) ) {
@@ -172,16 +173,17 @@ class Kleistad_Betalen {
 		try {
 			$betaling = $object->mollie->payments->get( $mollie_betaling_id );
 			if ( $betaling->isPaid() ) {
-				return '<div class="kleistad_succes"><p>' . $betaling->metadata->bericht . '</p></div>';
+				return $betaling->metadata->bericht;
 			} elseif ( $betaling->isFailed() ) {
-				return '<div class="kleistad_fout"><p>De betaling heeft niet kunnen plaatsvinden. Probeer het opnieuw.</p></div>';
+				$error->add( 'betalen', 'De betaling heeft niet kunnen plaatsvinden. Probeer het opnieuw.' );
 			} elseif ( $betaling->isExpired() ) {
-				return '<div class="kleistad_fout"><p>De betaling is verlopen. Probeer het opnieuw.</p></div>';
+				$error->add( 'betalen', 'De betaling is verlopen. Probeer het opnieuw.' );
 			} elseif ( $betaling->isCanceled() ) {
-				return '<div class="kleistad_fout"><p>De betaling is geannuleerd. Probeer het opnieuw.</p></div>';
+				$error->add( 'betalen', 'De betaling is geannuleerd. Probeer het opnieuw.' );
 			} else {
-				return '<div class="kleistad_fout"><p>De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.</p></div>';
+				$error->add( 'betalen', 'De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.' );
 			}
+			return $error;
 		} catch ( Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 			return '<div class="kleistad_fout"><p>Interne fout: ' . $e->getMessage() . '</p></div>';

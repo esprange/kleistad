@@ -124,10 +124,13 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 				break;
 		}
 		if ( $status ) {
-			return 'De wijziging is verwerkt en er wordt een email verzonden met bevestiging';
-		} else {
-			$error->add( '', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' );
+			return [
+				'status' => 'De wijziging is verwerkt en er wordt een email verzonden met bevestiging',
+				'actie'  => 'refresh',
+				'html'   => $this->display(),
+			];
 		}
+		$error->add( '', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' );
 		return $error;
 	}
 }

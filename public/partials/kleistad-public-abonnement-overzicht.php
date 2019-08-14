@@ -17,7 +17,7 @@ else :
 	?>
 
 <div id="kleistad_abonnees_info">
-	<?php $this->form( 'id="kleistad_download_abonnees"' ); ?>
+	<?php $this->form(); ?>
 		<input type="hidden" name="kleistad_submit_abonnement_overzicht" >
 		<input type="hidden" id="kleistad_email_lijst" value="<?php echo $data['email_lijst']; // phpcs:ignore ?>">
 		<table class="kleistad_datatable display compact nowrap" data-sort='[[ 0, "asc" ]]'>

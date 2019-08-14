@@ -119,7 +119,7 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 	 * Bewaar 'betalingen' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return string
+	 * @return array
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
@@ -167,6 +167,10 @@ class Kleistad_Public_Betalingen extends Kleistad_ShortcodeForm {
 			$workshop->betaald = true;
 			$workshop->save();
 		}
-		return 'Betaal informatie is geregistreerd.';
+		return [
+			'status' => 'Betaal informatie is geregistreerd.',
+			'actie'  => 'refresh',
+			'html'   => $this->display(),
+		];
 	}
 }

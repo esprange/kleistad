@@ -24,7 +24,7 @@
 						},
 						'Download': function() {
                             $( '#kleistad_submit_cursus_overzicht' ).val( 'download_cursisten' );
-							$( '#kleistad_cursisten_info_form' ).submit();
+							$( this ).find( 'form' ).submit();
 						},
 						'Restant email versturen': function() {
                             $( '#kleistad_submit_cursus_overzicht' ).val( 'restant_email' );

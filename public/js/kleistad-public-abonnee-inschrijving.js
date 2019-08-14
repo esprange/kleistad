@@ -12,21 +12,21 @@
 		);
         $( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' ' + bedragtekst );
         $( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' ' + bedragtekst + ' volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail.' );
-    }
+	}
 
     $( document ).ready(
         function() {
-            wijzigTeksten();
+			wijzigTeksten();
 
-            /**
-             * Initieer het start datum veld.
-             */
-            $( '#kleistad_start_datum' ).datepicker(
+			/**
+			 * Initieer het start datum veld.
+			 */
+			$( '#kleistad_start_datum' ).datepicker(
 				{
 					minDate: 0,
 					maxDate: '+3M'
-                }
-            );
+				}
+			);
 
             /**
              * Afhankelijk van keuze abonnement al dan niet tonen dag waarvoor beperkt abo geldig is.

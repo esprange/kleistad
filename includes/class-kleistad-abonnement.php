@@ -263,8 +263,10 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 	 * Maak de vervolgbetaling. In de callback wordt de automatische incasso gestart.
 	 *
 	 * @since 4.3.0
+	 *
+	 * @param string $bericht  Te tonen melding als betaling gelukt.
 	 */
-	public function betalen() {
+	public function betalen( $bericht ) {
 		// Doe de eerste betaling om het mandaat te verkrijgen.
 		$betalen = new Kleistad_Betalen();
 		$betalen->order(
@@ -272,7 +274,7 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 			__CLASS__ . '-' . $this->code . '-incasso',
 			$this->bedrag( self::BEDRAG_OVERBRUGGING ),
 			'Kleistad abonnement ' . $this->code . ' periode tot ' . strftime( '%d-%m-%y', $this->reguliere_datum - 60 * 60 * 24 ),
-			'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
+			$bericht,
 			true
 		);
 	}

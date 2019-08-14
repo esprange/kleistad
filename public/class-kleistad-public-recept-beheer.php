@@ -305,7 +305,11 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 						[ 'test_form' => false ]
 					);
 					if ( is_array( $file ) && ! isset( $file['error'] ) ) {
-						$exif  = exif_read_data( $file['file'] );
+						$exif = @exif_read_data( $file['file'] ); // phpcs:ignore
+						if ( false === $exif ) {
+							$error->add( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
+							return $error;
+						}
 						$image = imagecreatefromjpeg( $file['file'] );
 						if ( false === $image ) {
 							$error->add( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
@@ -372,9 +376,11 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 							],
 							'kleistad_recept_cat'
 						);
-						return 'Gegevens zijn opgeslagen';
-					} else {
-						return $recept_id;
+						return [
+							'status' => 'Gegevens zijn opgeslagen',
+							'actie'  => 'refresh',
+							'html'   => $this->display(),
+						];
 					}
 				}
 				$error->add( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' );

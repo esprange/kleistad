@@ -117,7 +117,7 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 	 * Bewaar 'abonnee_inschrijving' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return \WP_Error|string
+	 * @return \WP_Error|array
 	 *
 	 * @since   4.0.87
 	 */
@@ -162,7 +162,10 @@ class Kleistad_Public_Abonnee_Inschrijving extends Kleistad_ShortcodeForm {
 		$abonnement->save();
 
 		$abonnement->start( $abonnement->start_datum, $data['input']['betaal'] );
-		return 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging';
+		return [
+			'status' => 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging',
+			'actie'  => 'home',
+		];
 	}
 
 }

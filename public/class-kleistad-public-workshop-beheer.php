@@ -318,7 +318,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 	 * Bewaar 'input' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|string
+	 * @return \WP_Error|array
 	 *
 	 * @since   5.0.0
 	 */
@@ -326,11 +326,15 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 		$error = new WP_Error();
 		if ( 'reageren' === $data['form_actie'] ) {
 			Kleistad_WorkshopAanvraag::reactie( $data['casus']['casus_id'], $data['casus']['reactie'] );
-			return 'Er is een email verzonden naar de aanvrager';
+			return [
+				'status' => 'Er is een email verzonden naar de aanvrager',
+				'actie'  => 'refresh',
+				'html'   => $this->display(),
+			];
 		}
 
 		$workshop_id = $data['workshop']['workshop_id'];
-
+		$bericht     = '';
 		if ( $workshop_id > 0 ) {
 			$workshop = new Kleistad_Workshop( $workshop_id );
 		} else {
@@ -341,7 +345,7 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			* Cursus moet verwijderd worden.
 			*/
 			if ( $workshop->verwijder() ) {
-				return 'De workshop informatie is verwijderd';
+				$bericht = 'De workshop informatie is verwijderd';
 			} else {
 				$error->add( 'bevestigd', 'Een workshop die bevestigd is kan niet verwijderd worden' );
 				return $error;
@@ -363,14 +367,19 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			$workshop->aanvraag_id = $data['workshop']['aanvraag_id'];
 			if ( 'bewaren' === $data['form_actie'] ) {
 				$workshop->save();
-				return 'De workshop informatie is opgeslagen';
+				$bericht = 'De workshop informatie is opgeslagen';
 			} elseif ( 'bevestigen' === $data['form_actie'] ) {
 				$workshop->bevestig();
-				return 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
+				$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
 			} elseif ( 'afzeggen' === $data['form_actie'] ) {
 				$workshop->afzeggen();
-				return 'De afspraak voor de workshop is per email afgezegd';
+				$bericht = 'De afspraak voor de workshop is per email afgezegd';
 			}
 		}
+		return [
+			'status' => $bericht,
+			'actie'  => 'refresh',
+			'html'   => $this->display(),
+		];
 	}
 }

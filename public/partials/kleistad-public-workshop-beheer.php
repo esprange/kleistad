@@ -18,7 +18,7 @@ else :
 	if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie'] ) ) :
 		$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
 		$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
-		$this->form( 'id="kleistad_workshop_beheer_form" autocomplete="off"' );
+		$this->form();
 		?>
 
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']['workshop_id'] ); ?>"/>
@@ -109,7 +109,7 @@ else :
 	</form>
 	<?php
 	elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
-		$this->form( 'id="kleistad_casussen_beheer_form" autocomplete="off"' );
+		$this->form();
 		?>
 		<input type="hidden" name="casus_id" value="<?php echo esc_attr( $data['casus']['casus_id'] ); ?>"/>
 		<table class="kleistad_form" >

@@ -61,102 +61,110 @@
 		$( '#kleistad_lesdatum' ).datepicker( 'option', { minDate: new Date( startDatum.getTime() + dag ), maxDate: new Date( eindDatum.getTime() - dag ) } );
 	}
 
+	function onLoad() {
+		if ( $( '#kleistad_start_datum' ).length ) {  // Een willekeurig element om te bepalen of het formulier getoond wordt.
+			startDatum = strtodate( $( '#kleistad_start_datum' ).val() );
+			eindDatum  = strtodate( $( '#kleistad_eind_datum' ).val() );
+			lesDatums  = $( '#kleistad_lesdatums' ).val().split( ';' );
+			setLimits();
+			listLesDatums();
+
+			$( '#kleistad_start_datum' ).datepicker(
+				{
+					onSelect: function( datum ) {
+						startDatum = strtodate( datum );
+						if ( startDatum > eindDatum ) {
+							eindDatum = startDatum;
+							$( '#kleistad_eind_datum' ).datepicker( 'setDate', eindDatum );
+						}
+						setLimits();
+						updateLesDatums();
+						listLesDatums();
+					},
+					beforeShow: function() {
+						setLimits();
+					}
+				}
+			);
+
+			$( '#kleistad_eind_datum' ).datepicker(
+				{
+					onSelect: function( datum ) {
+						eindDatum = strtodate( datum );
+						setLimits();
+						updateLesDatums();
+						listLesDatums();
+					},
+					beforeShow: function() {
+						setLimits();
+					}
+				}
+			);
+
+			$( '#kleistad_lesdatum' ).datepicker(
+				{
+					onSelect: function( datum ) {
+						var index = $.inArray( datum, lesDatums );
+						if ( index >= 0 ) {
+							lesDatums.splice( index, 1 );
+						} else {
+							lesDatums.push( datum );
+						}
+						$( '#kleistad_lesdatums' ).val( lesDatums.join( ';' ) );
+						listLesDatums();
+					},
+					beforeShowDay: function( datumTekst ) {
+						var gotDate = $.inArray( $.datepicker.formatDate( 'dd-mm-yy', datumTekst ), lesDatums );
+						if ( gotDate >= 0 ) {
+							return [ true, 'ui-state-highlight' ];
+						}
+						return [ true, '' ];
+					},
+					beforeShow: function() {
+						setLimits();
+					},
+					showOn: 'button',
+					buttonText: 'Lesdatum + / -'
+				}
+			);
+		}
+	}
+
+	$( document ).ajaxComplete(
+        function() {
+			onLoad();
+		}
+	);
+
     $( document ).ready(
         function() {
-			if ( $( '#kleistad_cursus_beheer_form' ).length ) {
-				startDatum = strtodate( $( '#kleistad_start_datum' ).val() );
-				eindDatum  = strtodate( $( '#kleistad_eind_datum' ).val() );
-				lesDatums  = $( '#kleistad_lesdatums' ).val().split( ';' );
-				setLimits();
-				listLesDatums();
+			onLoad();
 
-				$( '#kleistad_start_tijd' ).change(
-					function() {
-						var startTijd = strtotime( $( this ).val() );
-						var eindTijd  = strtotime( $( '#kleistad_eind_tijd' ).val() );
-						if ( startTijd + 60 > eindTijd ) {
-							$( '#kleistad_eind_tijd' ).val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
-						}
+			$( '#kleistad_start_tijd' ).change(
+				function() {
+					var startTijd = strtotime( $( this ).val() );
+					var eindTijd  = strtotime( $( '#kleistad_eind_tijd' ).val() );
+					if ( startTijd + 60 > eindTijd ) {
+						$( '#kleistad_eind_tijd' ).val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
 					}
-				);
+				}
+			);
 
-				$( '#kleistad_eind_tijd' ).change(
-					function() {
-						var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
-						var eindTijd  = strtotime( $( this ).val() );
-						if ( startTijd > eindTijd - 60 ) {
-							$( '#kleistad_start_tijd' ).val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
-						}
+			$( '#kleistad_eind_tijd' ).change(
+				function() {
+					var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
+					var eindTijd  = strtotime( $( this ).val() );
+					if ( startTijd > eindTijd - 60 ) {
+						$( '#kleistad_start_tijd' ).val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
 					}
-				);
+				}
+			);
 
-				$( '#kleistad_start_datum' ).datepicker(
-					{
-						onSelect: function( datum ) {
-							startDatum = strtodate( datum );
-							if ( startDatum > eindDatum ) {
-								eindDatum = startDatum;
-								$( '#kleistad_eind_datum' ).datepicker( 'setDate', eindDatum );
-							}
-							setLimits();
-							updateLesDatums();
-							listLesDatums();
-						},
-						beforeShow: function() {
-							setLimits();
-						}
-					}
-				);
-
-				$( '#kleistad_eind_datum' ).datepicker(
-					{
-						onSelect: function( datum ) {
-							eindDatum = strtodate( datum );
-							setLimits();
-							updateLesDatums();
-							listLesDatums();
-						},
-						beforeShow: function() {
-							setLimits();
-						}
-					}
-				);
-
-				$( '#kleistad_lesdatum' ).datepicker(
-					{
-						onSelect: function( datum ) {
-							var index = $.inArray( datum, lesDatums );
-							if ( index >= 0 ) {
-								lesDatums.splice( index, 1 );
-							} else {
-								lesDatums.push( datum );
-							}
-							$( '#kleistad_lesdatums' ).val( lesDatums.join( ';' ) );
-							listLesDatums();
-						},
-						beforeShowDay: function( datumTekst ) {
-							var gotDate = $.inArray( $.datepicker.formatDate( 'dd-mm-yy', datumTekst ), lesDatums );
-							if ( gotDate >= 0 ) {
-								return [ true, 'ui-state-highlight' ];
-							}
-							return [ true, '' ];
-						},
-						beforeShow: function() {
-							setLimits();
-						},
-						showOn: 'button',
-						buttonText: 'Lesdatum + / -'
-					}
-				);
-
-			} else {
-				$( '#kleistad_cursus_toevoegen' ).click(
-					function() {
-						window.location.href = $( this ).val();
-					}
-				);
-			}
-
+			$( '#kleistad_cursus_toevoegen' ).click(
+				function() {
+					window.location.href = $( this ).val();
+				}
+			);
 		}
     );
 

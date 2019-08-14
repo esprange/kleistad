@@ -100,7 +100,7 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 	 * Bewaar 'dagdelenkaart' form gegevens
 	 *
 	 * @param array $data te bewaren saved.
-	 * @return \WP_Error|string
+	 * @return \WP_Error|array
 	 *
 	 * @since   4.3.0
 	 */
@@ -138,7 +138,10 @@ class Kleistad_Public_Dagdelenkaart extends Kleistad_ShortcodeForm {
 				);
 			} else {
 				if ( $dagdelenkaart->email( '_bank' ) ) {
-					return 'Er is een email verzonden met nadere informatie over de betaling';
+					return [
+						'status' => 'Er is een email verzonden met nadere informatie over de betaling',
+						'actie'  => 'home',
+					];
 				} else {
 					$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
 					return $error;

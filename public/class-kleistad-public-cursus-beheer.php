@@ -212,7 +212,7 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 	 * Bewaar 'cursus_beheer' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string | WP_Error
+	 * @return WP_Error | array
 	 *
 	 * @since   4.0.87
 	 */
@@ -230,7 +230,11 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			* Cursus moet verwijderd worden.
 			*/
 			if ( $cursus->verwijder() ) {
-				return 'De cursus informatie is verwijderd';
+				return [
+					'status' => 'De cursus informatie is verwijderd',
+					'actie'  => 'refresh',
+					'html'   => $this->display(),
+				];
 			} else {
 				$error->add( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
 				return $error;
@@ -260,7 +264,11 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 			$cursus->meer            = '' != $data['cursus']['meer']; // phpcs:ignore
 			$cursus->tonen           = '' != $data['cursus']['tonen']; // phpcs:ignore
 			$cursus->save();
-			return 'De cursus informatie is opgeslagen';
+			return [
+				'status' => 'De cursus informatie is opgeslagen',
+				'actie'  => 'refresh',
+				'html'   => $this->display(),
+			];
 		}
 	}
 

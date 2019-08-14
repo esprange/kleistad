@@ -96,7 +96,7 @@ class Kleistad_Public_Workshop_Aanvraag extends Kleistad_ShortcodeForm {
 	 * Bewaar 'workshop_aanvraag' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return array
 	 *
 	 * @since   5.6.0
 	 */
@@ -104,7 +104,10 @@ class Kleistad_Public_Workshop_Aanvraag extends Kleistad_ShortcodeForm {
 		$error  = new WP_Error();
 		$result = Kleistad_WorkshopAanvraag::start( $data['input'] );
 		if ( $result ) {
-			return 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen';
+			return [
+				'status' => 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen',
+				'actie'  => 'home',
+			];
 		} else {
 			$error->add( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' );
 		}

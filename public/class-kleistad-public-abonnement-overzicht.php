@@ -125,12 +125,12 @@ class Kleistad_Public_Abonnement_Overzicht extends Kleistad_ShortcodeForm {
 	 * Bewaar form gegevens (dummy)
 	 *
 	 * @param array $data te bewaren data.
-	 * @return string
+	 * @return array
 	 *
 	 * @since   5.5.2
 	 */
 	protected function save( $data ) {
-		return '';
+		return [];
 	}
 
 }

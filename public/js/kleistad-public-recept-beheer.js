@@ -3,8 +3,25 @@
 ( function( $ ) {
     'use strict';
 
-    $( document ).ready(
+function onLoad() {
+	$( '#kleistad_verwijder_recept' ).dialog( {
+		autoOpen: false,
+		resizable: false,
+		height: 'auto',
+		width: 400,
+		modal: true
+	});
+}
+
+$( document ).ajaxComplete(
+	function() {
+		onLoad();
+	}
+);
+
+$( document ).ready(
         function() {
+			onLoad();
 
             $( '#kleistad_recept_toevoegen' ).click( function() {
                 $( '#kleistad_recept_action' ).val( 'toevoegen' );
@@ -31,14 +48,6 @@
             $( '[name="wijzigen"]' ).click( function() {
                 $( '#kleistad_recept_action' ).val( 'wijzigen' );
                 $( '#kleistad_recept_id' ).val( $( this ).data( 'recept_id' ) );
-            });
-
-            $( '#kleistad_verwijder_recept' ).dialog( {
-                autoOpen: false,
-                resizable: false,
-                height: 'auto',
-                width: 400,
-                modal: true
             });
 
             $( '[name="verwijderen"]' ).click( function( event ) {

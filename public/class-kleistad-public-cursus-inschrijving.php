@@ -214,12 +214,11 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 				true
 			);
 		} else {
-			if ( $inschrijving->email( $lopend ? 'lopende' : 'inschrijving' ) ) {
-				return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie';
-			} else {
-				$error->add( '', 'De inschrijving is verwerkt maar een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
-				return $error;
-			}
+			$inschrijving->email( $lopend ? 'lopende' : 'inschrijving' );
+			return [
+				'status' => 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie',
+				'actie'  => 'home',
+			];
 		}
 	}
 

@@ -61,7 +61,7 @@ class Kleistad_Public_Saldo extends Kleistad_ShortcodeForm {
 	 * Bewaar 'saldo' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return \WP_ERROR|string
+	 * @return \WP_ERROR|array
 	 *
 	 * @since   4.0.87
 	 */
@@ -76,7 +76,10 @@ class Kleistad_Public_Saldo extends Kleistad_ShortcodeForm {
 			);
 		} else {
 			if ( $saldo->email( '_bank', $data['input']['bedrag'] ) ) {
-				return 'Er is een email verzonden met nadere informatie over de betaling';
+				return [
+					'status' => 'Er is een email verzonden met nadere informatie over de betaling',
+					'actie'  => 'home',
+				];
 			} else {
 				$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
 				return $error;

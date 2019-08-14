@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.2.1
-Stable tag: 5.7.0
+Stable tag: 5.7.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,6 +34,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 5.7.1 =
+* Verdere refactoring, volledige aanpassing van formulier verwerking, nu in Ajax
 = 5.7.0 =
 * Geen functionele verbeteringen, wel aanpassing file downloads waardoor versnelling plugin
 * Updates van meest recente bibliotheken

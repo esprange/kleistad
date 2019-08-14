@@ -40,8 +40,6 @@
                     terms.push( value );
                 }
             });
-            sessionStorage.terms = terms.join( ',' );
-
             $( '#kleistad_filters input[name="auteur"]:checked' ).each( function() {
                 value = $( this ).val();
                 if ( ! isNaN( value ) ) {
@@ -49,6 +47,7 @@
                 }
             });
 
+            sessionStorage.terms   = terms.join( ',' );
             sessionStorage.auteurs = auteurs.join( ',' );
             sessionStorage.zoeker  = $( '#kleistad_zoek' ).val();
             sessionStorage.sorteer = $( '#kleistad_sorteer' ).val();

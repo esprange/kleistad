@@ -83,7 +83,7 @@ else :
 		<?php endif ?>
 	</table>
 
-	<?php $this->form( 'id="kleistad_abonnee_wijziging"' ); ?>
+	<?php $this->form(); ?>
 		<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 		<input type="hidden" name="per_datum" value="<?php echo esc_attr( $per_datum ); ?>" >
 		<div class="kleistad_row"> <!-- soort -->

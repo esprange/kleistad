@@ -7,9 +7,9 @@
         $( 'label[for=kleistad_betaal_stort]' ).text( 'ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + '. Verhoging saldo vindt daarna plaats.' );
     }
 
-    $( document ).ready(
+	$( document ).ready(
         function() {
-            wijzigTeksten();
+			wijzigTeksten();
 
             $( 'input[name=bedrag]:radio' ).change(
                 function() {
@@ -24,6 +24,6 @@
             );
 
         }
-);
+	);
 
 } )( jQuery );

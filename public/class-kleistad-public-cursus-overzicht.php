@@ -84,7 +84,7 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	 * Bewaar 'cursus_overzicht' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return string
+	 * @return array
 	 *
 	 * @since   5.4.0
 	 */
@@ -109,11 +109,11 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 				}
 			}
 		}
-		if ( $aantal_verzonden_email > 0 ) {
-			return "Emails zijn verstuurd naar $aantal_verzonden_email cursisten";
-		} else {
-			return 'Er zijn geen nieuwe emails verzonden';
-		}
+		return [
+			'status' => ( $aantal_verzonden_email > 0 ) ? "Emails zijn verstuurd naar $aantal_verzonden_email cursisten" : 'Er zijn geen nieuwe emails verzonden',
+			'actie'  => 'refresh',
+			'html'   => $this->display(),
+		];
 	}
 
 	/**

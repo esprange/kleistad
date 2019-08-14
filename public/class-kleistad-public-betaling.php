@@ -146,7 +146,7 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 	 * Bewaar 'betaling' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return string
+	 * @return array
 	 *
 	 * @since   4.2.0
 	 */
@@ -162,7 +162,9 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 		} elseif ( self::ACTIE_VERVOLG_ABONNEMENT === $data['input']['actie'] ) {
 			$abonnement = new Kleistad_Abonnement( $data['input']['abonnee_id'] );
 			if ( 'ideal' === $data['input']['betaal'] ) {
-				$abonnement->betalen();
+				$abonnement->betalen(
+					'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging'
+				);
 			}
 		} elseif ( self::ACTIE_WORKSHOP === $data['input']['actie'] ) {
 			$workshop = new Kleistad_Workshop( $data['input']['workshop_id'] );
@@ -172,6 +174,6 @@ class Kleistad_Public_Betaling extends Kleistad_ShortcodeForm {
 				);
 			}
 		}
-		return '';
+		return []; // Alle acties leiden tot een redirect dus deze return zal nooit bereikt worden.
 	}
 }

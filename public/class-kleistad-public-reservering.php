@@ -97,7 +97,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Kleistad_Public::url(),
+			Kleistad_Public::api(),
 			'/reserveer',
 			[
 				'methods'             => 'POST,PUT,DELETE',
@@ -117,7 +117,7 @@ class Kleistad_Public_Reservering extends Kleistad_Shortcode {
 			]
 		);
 		register_rest_route(
-			Kleistad_Public::url(),
+			Kleistad_Public::api(),
 			'/reserveer',
 			[
 				'methods'             => 'GET',
