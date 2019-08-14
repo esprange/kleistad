@@ -235,10 +235,9 @@ class Kleistad_Public_Cursus_Beheer extends Kleistad_ShortcodeForm {
 					'actie'  => 'refresh',
 					'html'   => $this->display(),
 				];
-			} else {
-				$error->add( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
-				return $error;
 			}
+			$error->add( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
+			return $error;
 		} elseif ( 'bewaren' === $data['form_actie'] ) {
 			$cursus->naam            = $data['cursus']['naam'];
 			$cursus->docent          = $data['cursus']['docent'];
