@@ -72,12 +72,12 @@
 </div>
 <div class="kleistad_row">
 	<div class="kleistad_col_3 kleistad_label">
-		<label for="kleistad_postode">Postcode, huisnummer</label>
+		<label for="kleistad_pcode">Postcode, huisnummer</label>
 	</div>
 	<div class="kleistad_col_2">
 		<input class="kleistad_input" name="pcode" id="kleistad_pcode" type="text"
 			maxlength="10" placeholder="1234AB" pattern="^[1-9][0-9]{3}?[A-Z]{2}$" title="Vul s.v.p. een geldige Nederlandse postcode in"
-			value="<?php echo esc_attr( $data['input']['pcode'] ); ?>" autocomplete="home postal-code" />
+			value="<?php echo esc_attr( $data['input']['pcode'] ); ?>" autocomplete="postal-code" />
 	</div>
 	<div class="kleistad_col_2">
 		<input class="kleistad_input" name="huisnr" id="kleistad_huisnr" type="text"
@@ -87,17 +87,17 @@
 </div>
 <div class="kleistad_row">
 	<div class="kleistad_col_3 kleistad_label">
-		<label for="kleistad_pcode">Straat, Plaats</label>
+		<label for="kleistad_straat">Straat, Plaats</label>
 	</div>
 	<div class="kleistad_col_3">
 		<input class="kleistad_input" name="straat" id="kleistad_straat" type="text" tabindex="-1"
 		maxlength="50" placeholder="straat" title="Vul s.v.p. een straatnaam in"
-		value="<?php echo esc_attr( $data['input']['straat'] ); ?>" autocomplete="home street-address" />
+		value="<?php echo esc_attr( $data['input']['straat'] ); ?>" />
 	</div>
 	<div class="kleistad_col_4">
 		<input class="kleistad_input" name="plaats" id="kleistad_plaats" type="text" tabindex="-1"
 		maxlength="50" placeholder="MijnWoonplaats" title="Vul s.v.p. de woonplaats in"
-		value="<?php echo esc_attr( $data['input']['plaats'] ); ?>" autocomplete="home address-line2" />
+		value="<?php echo esc_attr( $data['input']['plaats'] ); ?>" />
 	</div>
 </div>
 <?php if ( ! is_super_admin() ) : ?>
