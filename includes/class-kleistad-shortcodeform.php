@@ -156,16 +156,21 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 * @since 5.7.0
 	 *
 	 * @param string $extra De eventuele extra toe te voegen attributen.
+	 * @throws Exception    Als de json encode faalt.
 	 */
 	protected function form( $extra = null ) {
-		$info = [
+		$info      = [
 			'shortcode' => $this->shortcode,
 			'atts'      => $this->atts,
 			'class'     => get_class( $this ),
 		];
+		$info_json = wp_json_encode( $info, JSON_HEX_QUOT | JSON_HEX_TAG );
+		if ( false === $info_json ) {
+			throw new Exception( 'Interne fout, formulier kan niet aangemaakt worden.' );
+		}
 		?>
 		<form class="kleistad_shortcodeform" action="#" autocomplete="off" enctype="multipart/form-data" <?php echo ( $extra ?: '' ); // phpcs:ignore ?> >
-		<input type="hidden" name="shortcodeform_info" value='<?php echo wp_json_encode( $info, JSON_HEX_QUOT | JSON_HEX_TAG ); ?>' />
+		<input type="hidden" name="shortcodeform_info" value='<?php echo $info_json; // phpcs:ignore ?>' />
 		<?php
 	}
 
@@ -215,7 +220,7 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 	 *
 	 * @param Kleistad_ShortcodeForm $shortcode De shortcode waarvoor de download plaatsvindt.
 	 * @param string                 $functie   De shortcode functie die aangeroepen moet worden.
-	 * @return string | WP_Error
+	 * @return WP_Error | array
 	 */
 	private static function download( Kleistad_ShortcodeForm $shortcode, $functie ) {
 		$error      = new WP_Error();

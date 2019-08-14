@@ -165,7 +165,7 @@ class Kleistad_Public_Cursus_Inschrijving extends Kleistad_ShortcodeForm {
 	 * Bewaar 'cursus_inschrijving' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|string
+	 * @return \WP_Error|array
 	 *
 	 * @since   4.0.87
 	 */

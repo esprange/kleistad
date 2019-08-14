@@ -82,7 +82,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 	 * Bewaar 'abonnee_wijziging' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return \WP_Error|string
+	 * @return \WP_Error|array
 	 *
 	 * @since   4.0.87
 	 */

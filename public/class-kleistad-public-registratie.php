@@ -92,7 +92,7 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 	 * Bewaar 'registratie' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_ERROR|string
+	 * @return \WP_ERROR|array
 	 *
 	 * @since   4.0.87
 	 */

@@ -287,7 +287,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 	 * Bewaar 'recept' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|string
+	 * @return \WP_Error|array
 	 *
 	 * @since   4.1.0
 	 */
@@ -348,7 +348,7 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 							'post_type'   => 'kleistad_recept',
 						]
 					);
-					if ( ! is_wp_error( $result ) ) {
+					if ( is_int( $result ) ) {
 						$data['recept']['id'] = $result;
 					} else {
 						return $result;
