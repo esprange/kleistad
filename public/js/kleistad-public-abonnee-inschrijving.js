@@ -61,7 +61,7 @@
 			$( '#kleistad_huisnr, #kleistad_pcode' ).change(
 				function() {
 					var pcode = $( '#kleistad_pcode' );
-					pcode.val( pcode.val().toUpperCase() );
+					pcode.val( pcode.val().toUpperCase().replace( /\s/g, '' ) );
 					$().lookupPostcode( pcode.val(), $( '#kleistad_huisnr' ).val(), function( data ) {
 						$( '#kleistad_straat' ).val( data.straat );
 						$( '#kleistad_plaats' ).val( data.plaats );
