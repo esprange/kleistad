@@ -72,9 +72,7 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 			return $error;
 		}
 
-		$data = [
-			'input' => $input,
-		];
+		$data['input'] = $input;
 		return true;
 	}
 
