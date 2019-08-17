@@ -4,7 +4,7 @@
     $( document ).ready(
         function() {
 
-            $( '#kleistad_abo_pauze' ).click(
+            $( '.kleistad_shortcode' ).on( 'click', '#kleistad_abo_pauze',
                 function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_pauze' ).toggle( this.checked );
@@ -12,7 +12,7 @@
                 }
             );
 
-            $( '#kleistad_abo_einde' ).click(
+            $( '.kleistad_shortcode' ).on( 'click', '#kleistad_abo_einde',
                 function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_einde' ).toggle( this.checked );
@@ -20,7 +20,7 @@
                 }
             );
 
-            $( '#kleistad_abo_start' ).click(
+            $( '.kleistad_shortcode' ).on( 'click', '#kleistad_abo_start',
                 function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_start' ).toggle( this.checked );
@@ -28,7 +28,7 @@
                 }
             );
 
-            $( '#kleistad_abo_wijziging' ).click(
+            $( '.kleistad_shortcode' ).on( 'click', '#kleistad_abo_wijziging',
                 function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_wijziging' ).toggle( this.checked );
@@ -36,7 +36,7 @@
                 }
             );
 
-            $( '#kleistad_abo_extras' ).click(
+            $( '.kleistad_shortcode' ).on( 'click', '#kleistad_abo_extras',
                 function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_extras' ).toggle( this.checked );
@@ -44,7 +44,7 @@
                 }
             );
 
-            $( '#kleistad_abo_dag' ).click(
+            $( '.kleistad_shortcode' ).on( 'click', '#kleistad_abo_dag',
                 function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_dag' ).toggle( this.checked );
@@ -52,7 +52,7 @@
                 }
             );
 
-			$( '#kleistad_abo_betaalwijze' ).click(
+			$( '.kleistad_shortcode' ).on( 'click', '#kleistad_abo_betaalwijze',
                 function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_betaalwijze' ).toggle( this.checked );
