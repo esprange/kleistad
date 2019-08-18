@@ -105,7 +105,7 @@ else :
 		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $voltooid || ! $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?>
 			data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
 		<button type="submit" name="kleistad_submit_workshop_beheer" value="verwijderen" <?php disabled( $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
-		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Sluiten</button>
+		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Terug</button>
 	</form>
 	<?php
 	elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
@@ -141,7 +141,7 @@ else :
 			</tr>
 		</table>
 		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
-		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Sluiten</button>
+		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Terug</button>
 	</form>
 	<div>
 		<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>
