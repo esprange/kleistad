@@ -106,45 +106,57 @@
         function() {
 			zoekRecepten( true );
 
-            $( '#kleistad_filter_btn' ).click( function() {
-                if ( 'show' === $( this ).val() ) {
-                    $( this ).val( 'hide' );
-                } else {
-                    $( this ).val( 'show' );
-                }
-                displayFilters( $( this ).val() );
-            });
+			$( '#kleistad_filter_btn' ).on( 'click',
+				function() {
+					if ( 'show' === $( this ).val() ) {
+						$( this ).val( 'hide' );
+					} else {
+						$( this ).val( 'show' );
+					}
+					displayFilters( $( this ).val() );
+				}
+			);
 
-            $( '#kleistad_zoek' ).on( 'keyup', function( e ) {
-                if ( 13 === e.keyCode ) {
-                    zoekRecepten( false );
-                }
-            });
+			$( '#kleistad_zoek' ).on( 'keyup',
+				function( e ) {
+					if ( 13 === e.keyCode ) {
+						zoekRecepten( false );
+					}
+				}
+			);
 
-            $( '#kleistad_zoek_icon' ).click( function() {
-               zoekRecepten( false );
-            });
+			$( '#kleistad_zoek_icon' ).on( 'click',
+				function() {
+            		zoekRecepten( false );
+				}
+			);
 
-            $( '#kleistad_sorteer' ).change( function() {
-                zoekRecepten( false );
-            });
+			$( '#kleistad_sorteer' ).on( 'change',
+				function() {
+                	zoekRecepten( false );
+				}
+			);
 
-            $( 'body' ).on( 'click', '.kleistad_filter', function() {
-                zoekRecepten( false );
-            });
+			$( 'body' ).on( 'click', '.kleistad_filter',
+				function() {
+                	zoekRecepten( false );
+				}
+			);
 
-            $( 'body' ).on( 'click', '.kleistad_meer', function() {
-                var filter;
-                var name = $( this ).attr( 'name' );
+			$( 'body' ).on( 'click', '.kleistad_meer',
+				function() {
+                	var filter;
+                	var name = $( this ).attr( 'name' );
 
-                if ( 'meer' === $( this ).val() ) {
-                    filter = $( this ).parent().parent(); // Checkbox -> Label -> List element.
-                } else {
-                    filter = $( 'input[name=' + name + '][value=meer]' ).parent().parent();
-                }
-                filter.toggle();
-                filter.nextAll().toggle();
-            });
+					if ( 'meer' === $( this ).val() ) {
+						filter = $( this ).parent().parent(); // Checkbox -> Label -> List element.
+					} else {
+						filter = $( 'input[name=' + name + '][value=meer]' ).parent().parent();
+					}
+					filter.toggle();
+					filter.nextAll().toggle();
+				}
+			);
         }
     );
 

@@ -11,13 +11,13 @@
         function() {
 			wijzigTeksten();
 
-            $( 'input[name=bedrag]:radio' ).change(
+            $( 'input[name=bedrag]:radio' ).on( 'change',
                 function() {
                     wijzigTeksten();
                 }
             );
 
-            $( 'input[name=betaal]:radio' ).change(
+            $( 'input[name=betaal]:radio' ).on( 'change',
                 function() {
                     $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
                 }

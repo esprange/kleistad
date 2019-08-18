@@ -31,7 +31,7 @@
             /**
              * Afhankelijk van keuze abonnement al dan niet tonen dag waarvoor beperkt abo geldig is.
              */
-            $( 'input[name=abonnement_keuze]:radio' ).change(
+            $( 'input[name=abonnement_keuze]:radio' ).on( 'change',
                 function() {
 					wijzigTeksten();
                     if (  'beperkt' === this.value ) {
@@ -43,13 +43,13 @@
                 }
 			);
 
-			$( 'input[name^=extras]:checkbox' ).change(
+			$( 'input[name^=extras]:checkbox' ).on( 'change',
                 function() {
 					wijzigTeksten();
 				}
 			);
 
-            $( 'input[name=betaal]:radio' ).change(
+            $( 'input[name=betaal]:radio' ).on( 'change',
                 function() {
                     $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
                 }
@@ -58,7 +58,7 @@
 			/**
 			 * Vul adresvelden in
 			 */
-			$( '#kleistad_huisnr, #kleistad_pcode' ).change(
+			$( '#kleistad_huisnr, #kleistad_pcode' ).on( 'change',
 				function() {
 					var pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase().replace( /\s/g, '' ) );

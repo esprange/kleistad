@@ -71,15 +71,15 @@
 				}
 			});
 
-			$( 'input[name=cursus_id]:radio' ).change(
-			function() {
+			$( 'input[name=cursus_id]:radio' ).on( 'change',
+				function() {
 					var cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
                     wijzigTeksten( cursus );
                     wijzigVelden( cursus );
                 }
             );
 
-            $( 'input[name=betaal]:radio' ).change(
+            $( 'input[name=betaal]:radio' ).on( 'change',
                 function() {
                     $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
                 }
@@ -88,7 +88,7 @@
 			/**
 			 * Vul adresvelden in
 			 */
-			$( '#kleistad_huisnr, #kleistad_pcode' ).change(
+			$( '#kleistad_huisnr, #kleistad_pcode' ).on( 'change',
 				function() {
 					var pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase() );

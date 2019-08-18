@@ -140,7 +140,7 @@
         function() {
 			onLoad();
 
-			$( '#kleistad_start_tijd' ).change(
+			$( '#kleistad_start_tijd' ).on( 'change',
 				function() {
 					var startTijd = strtotime( $( this ).val() );
 					var eindTijd  = strtotime( $( '#kleistad_eind_tijd' ).val() );
@@ -150,7 +150,7 @@
 				}
 			);
 
-			$( '#kleistad_eind_tijd' ).change(
+			$( '#kleistad_eind_tijd' ).on( 'change',
 				function() {
 					var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
 					var eindTijd  = strtotime( $( this ).val() );
@@ -160,7 +160,7 @@
 				}
 			);
 
-			$( '#kleistad_cursus_toevoegen' ).click(
+			$( '#kleistad_cursus_toevoegen' ).on( 'click',
 				function() {
 					window.location.href = $( this ).val();
 				}
