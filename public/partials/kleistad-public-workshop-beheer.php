@@ -162,7 +162,7 @@ else :
 	</div>
 	<?php else : ?>
 	<strong>Vraag en Antwoord</strong>
-	<table id="kleistad_aanvragen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
+	<table id="kleistad_aanvragen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 		<thead>
 			<tr>
 				<th>Datum</th>

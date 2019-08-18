@@ -52,8 +52,6 @@ class Kleistad_Public_Workshop_Beheer extends Kleistad_ShortcodeForm {
 			[
 				'post_type'      => Kleistad_WorkshopAanvraag::POST_TYPE,
 				'posts_per_page' => -1,
-				'orderby'        => 'date',
-				'order'          => 'DESC',
 				'post_status'    => [ 'nieuw', 'gereageerd', 'vraag', 'gepland' ],
 			]
 		);
