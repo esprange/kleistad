@@ -25,7 +25,7 @@ $( document ).ready(
 
 			$( '#kleistad_recept_toevoegen' ).on( 'click',
 				function() {
-                	$( '#kleistad_recept_action' ).val( 'toevoegen' );
+					$( '#kleistad_recept_action' ).val( 'toevoegen' );
 					$( '#kleistad_recept_id' ).val( 0 );
 				}
 			);

@@ -127,26 +127,26 @@
 
 			$( '#kleistad_zoek_icon' ).on( 'click',
 				function() {
-            		zoekRecepten( false );
+					zoekRecepten( false );
 				}
 			);
 
 			$( '#kleistad_sorteer' ).on( 'change',
 				function() {
-                	zoekRecepten( false );
+					zoekRecepten( false );
 				}
 			);
 
 			$( 'body' ).on( 'click', '.kleistad_filter',
 				function() {
-                	zoekRecepten( false );
+					zoekRecepten( false );
 				}
 			);
 
 			$( 'body' ).on( 'click', '.kleistad_meer',
 				function() {
-                	var filter;
-                	var name = $( this ).attr( 'name' );
+					var filter;
+					var name = $( this ).attr( 'name' );
 
 					if ( 'meer' === $( this ).val() ) {
 						filter = $( this ).parent().parent(); // Checkbox -> Label -> List element.
