@@ -27,35 +27,49 @@ class Kleistad_Public_Cursus_Overzicht extends Kleistad_ShortcodeForm {
 	 * @since   4.5.4
 	 */
 	protected function prepare( &$data = null ) {
-		$cursussen           = Kleistad_Cursus::all();
-		$inschrijvingen      = Kleistad_Inschrijving::all();
-		$data['cursus_info'] = [];
-
-		foreach ( $cursussen as $cursus_id => $cursus ) {
-			$data['cursus_info'][ $cursus_id ] = [
-				'start_dt'    => $cursus->start_datum,
-				'code'        => 'C' . $cursus_id,
-				'naam'        => $cursus->naam,
-				'docent'      => $cursus->docent,
-				'start_datum' => strftime( '%d-%m-%y', $cursus->start_datum ),
-				'lijst'       => [],
-			];
+		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING ) ?? filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
+		if ( is_null( $data['actie'] ) ) {
+			$data['actie'] = '-';
 		}
-		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-			$cursist = get_userdata( $cursist_id );
-			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
-					$data['cursus_info'][ $cursus_id ]['lijst'][] = [
-						'aantal'        => $inschrijving->aantal,
-						'naam'          => $cursist->display_name,
+
+		if ( 'cursisten' === $data['actie'] ) {
+			$cursus_id         = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+			$cursus            = new Kleistad_Cursus( $cursus_id );
+			$data['cursus']    = [
+				'naam'      => $cursus->naam,
+				'code'      => "C$cursus_id",
+				'cursus_id' => $cursus_id,
+			];
+			$data['cursisten'] = [];
+			$inschrijvingen    = Kleistad_Inschrijving::all();
+			foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
+				if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) && $cursist_inschrijvingen[ $cursus_id ]->ingedeeld && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
+					$cursist             = get_userdata( $cursist_id );
+					$data['cursisten'][] = [
+						'naam'          => $cursist->display_name . ( 1 < $cursist_inschrijvingen[ $cursus_id ]->aantal ? ' (' . $cursist_inschrijvingen[ $cursus_id ]->aantal . ')' : '' ),
 						'telnr'         => $cursist->telnr,
 						'email'         => $cursist->user_email,
-						'i_betaald'     => $inschrijving->i_betaald,
-						'c_betaald'     => $inschrijving->c_betaald,
-						'restant_email' => $inschrijving->restant_email,
-						'technieken'    => implode( ', ', $inschrijving->technieken ),
+						'i_betaald'     => $cursist_inschrijvingen[ $cursus_id ]->i_betaald,
+						'c_betaald'     => $cursist_inschrijvingen[ $cursus_id ]->c_betaald,
+						'restant_email' => $cursist_inschrijvingen[ $cursus_id ]->restant_email,
+						'technieken'    => implode( ', ', $cursist_inschrijvingen[ $cursus_id ]->technieken ),
 					];
+				}
+			}
+		} else {
+			$cursussen           = Kleistad_Cursus::all();
+			$data['cursus_info'] = [];
 
+			foreach ( $cursussen as $cursus_id => $cursus ) {
+				if ( ! $cursus->vervallen ) {
+					$data['cursus_info'][ $cursus_id ] = [
+						'start_dt'       => $cursus->start_datum,
+						'code'           => "C$cursus_id",
+						'naam'           => $cursus->naam,
+						'docent'         => $cursus->docent,
+						'start_datum'    => strftime( '%d-%m-%y', $cursus->start_datum ),
+						'inschrijvingen' => $cursus->ruimte() !== $cursus->maximum,
+					];
 				}
 			}
 		}

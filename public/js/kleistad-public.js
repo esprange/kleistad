@@ -125,36 +125,6 @@ function strtodate( value ) {
 	}
 
 	/**
-	 * Kopieer value naar klembord.
-	 */
-	$.fn.kleistad_klembord = function() {
-		var range     = document.createRange(),
-			lijst     = $( this ).val(),
-			selection, $temp;
-
-		// For IE.
-		if ( window.clipboardData ) {
-			window.clipboardData.setData( 'Text', lijst );
-		} else {
-			$temp = $( '<div>' );
-			$temp.css( {
-				position: 'absolute',
-				left:     '-1000px',
-				top:      '-1000px'
-			} );
-			$temp.text( lijst );
-			$( 'body' ).append( $temp );
-			range.selectNodeContents( $temp.get( 0 ) );
-			selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange( range );
-			document.execCommand( 'copy', false, null );
-			$temp.remove();
-		}
-		return this;
-	};
-
-	/**
 	 * Zoek de postcode op via de server.
 	 */
 	$.fn.lookupPostcode = function( postcode, huisnr, callback ) {
@@ -216,11 +186,57 @@ function strtodate( value ) {
 			);
 		}
 
-		/**
-		 * Definieer fadeout op berichten
-		 */
+	}
 
-		// $( '.kleistad_succes,.kleistad_fout' ).fadeOut( 10000 );
+	function submitForm( $form, data ) {
+		var $shortcode = $form.closest( '.kleistad_shortcode' );
+		/**
+		 *  Bij een submit de spinner tonen.
+		 */
+		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+		$.ajax(
+			{
+				beforeSend: function( xhr ) {
+					xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
+				},
+				cache: false,
+				contentType: false,
+				data: data,
+				method: 'POST',
+				processData: false,
+				url: kleistadData.base_url + '/formsubmit/'
+			}
+		).done(
+			function( data ) {
+				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				switch ( data.actie ) {
+					case 'refresh':
+					case 'home':
+						$shortcode.html( data.html );
+						break;
+					case 'reset':
+						$form[0].reset();
+						break;
+					case 'download':
+						window.location.href = data.file_uri;
+						break;
+					case 'redirect':
+						window.location.replace( data.redirect_uri );
+						break;
+					default: // Is ook case none.
+				}
+				$( '#kleistad_berichten' ).html( data.status );
+			}
+		).fail(
+			function( jqXHR ) {
+				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
+					window.alert( jqXHR.responseJSON.message );
+					return;
+				}
+				window.alert( kleistadData.error_message );
+			}
+		);
 	}
 
 	$( document ).ajaxComplete(
@@ -253,24 +269,19 @@ function strtodate( value ) {
 				$( '.kleistad_shortcode' ).on( 'submit', 'form',
 					function( event ) {
 						var $form          = $( this );
-						var $shortcode     = $form.closest( '.kleistad_shortcode' );
 						var data           = new FormData( this );
 						var clicked        = $form.data( 'clicked' );
 						var confirm        = $( '#' + clicked.id ).data( 'confirm' );
 						var tekst          = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
 						data.append( 'form_actie', clicked.value );
 						data.append( 'form_url', window.location.href );
+						event.preventDefault();
 
 						/**
 						 * Sluit eventuele openstaande dialogs.
 						 */
-						$( '.ui-dialog' ).each(
-							function( item ) {
-								if ( $( item ).dialog( 'isOpen' ) ) {
-									$( item ).dialog( 'close' );
-								}
-							}
-						);
+						$( 'ui-dialog' ).dialog( 'close' );
+
 						/**
 						 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
 						 */
@@ -286,9 +297,7 @@ function strtodate( value ) {
 									buttons: {
 										Ja: function() {
 											$( this ).dialog( 'close' );
-											$shortcode.off( 'submit', 'form' );
-											$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
-											$( '#' + clicked.id ).click();
+											submitForm( $form, data );
 										},
 										Nee: function() {
 											$( this ).dialog( 'close' );
@@ -297,56 +306,8 @@ function strtodate( value ) {
 									}
 								}
 							);
-							event.preventDefault();
 						} else {
-							/**
-							 *  Bij een submit de spinner tonen.
-							 */
-							$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
-							event.preventDefault();
-							$.ajax(
-								{
-									beforeSend: function( xhr ) {
-										xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
-									},
-									cache: false,
-									contentType: false,
-									data: data,
-									method: 'POST',
-									processData: false,
-									url: kleistadData.base_url + '/formsubmit/'
-								}
-							).done(
-								function( data ) {
-									$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-									switch ( data.actie ) {
-										case 'refresh':
-										case 'home':
-											$shortcode.html( data.html );
-											break;
-										case 'reset':
-											$form[0].reset();
-											break;
-										case 'download':
-											window.location.href = data.file_uri;
-											break;
-										case 'redirect':
-											window.location.replace( data.redirect_uri );
-											break;
-										default: // Is ook case none.
-									}
-									$( '#kleistad_berichten' ).html( data.status );
-								}
-							).fail(
-								function( jqXHR ) {
-									$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-									if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-										window.alert( jqXHR.responseJSON.message );
-										return;
-									}
-									window.alert( kleistadData.error_message );
-								}
-							);
+							submitForm( $form, data );
 						}
 					}
 				);

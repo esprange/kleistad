@@ -66,8 +66,8 @@ class Kleistad_Public {
 			'css' => [ 'jquery-ui' ],
 		],
 		'cursus_overzicht'      => [
-			'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-			'css' => [ 'jquery-ui', 'datatables' ],
+			'js'  => [ 'jquery', 'datatables' ],
+			'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
 		],
 		'dagdelenkaart'         => [
 			'js'  => [ 'jquery', 'jquery-ui-datepicker' ],

@@ -120,6 +120,11 @@ a.kleistad_edit_link {
     background-repeat: no-repeat;
 	text-decoration: none !important;
 }
+a.kleistad_view_link {
+	background-image: url('../images/icon-view.png');
+    background-repeat: no-repeat;
+	text-decoration: none !important;
+}
 a.kleistad_schedule_link {
 	background-image: url('../images/icon-calendar.png');
     background-repeat: no-repeat;
