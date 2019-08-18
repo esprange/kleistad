@@ -47,13 +47,15 @@ else :
 			$json_inschrijvingen = wp_json_encode( $registratie['inschrijvingen'] );
 			$json_deelnemer      = wp_json_encode( $registratie['deelnemer_info'] );
 			$json_abonnee        = wp_json_encode( $registratie['abonnee_info'] );
-			if ( false === $json_inschrijvingen || false === $json_deelnemer || false === $json_abonnee ) :
+			$json_dagdelenkaart  = wp_json_encode( $registratie['dagdelenkaart_info'] );
+			if ( false === $json_inschrijvingen || false === $json_deelnemer || false === $json_abonnee || false === $json_dagdelenkaart ) :
 				continue;
 			endif;
 			?>
 			<tr data-inschrijvingen='<?php echo htmlspecialchars( $json_inschrijvingen, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 				data-deelnemer='<?php echo htmlspecialchars( $json_deelnemer, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
-				data-abonnee='<?php echo htmlspecialchars( $json_abonnee, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>' >
+				data-abonnee='<?php echo htmlspecialchars( $json_abonnee, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
+				data-dagdelenkaart='<?php echo htmlspecialchars( $json_dagdelenkaart, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>' >
 				<td><?php echo esc_html( $registratie['is_lid'] ); ?></td>
 				<td><?php echo esc_html( $registratie['cursuslijst'] ); ?></td>
 				<td><?php echo esc_html( $registratie['achternaam'] ); ?></td>
@@ -68,6 +70,7 @@ else :
 	<div class="kleistad_row" style="padding-top:20px;" >
 		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_cursisten" >Download Cursisten</button>
 		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_abonnees" >Download Abonnees</button>
+		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_dagdelenkaarten" >Download Dagdelenkaarten</button>
 	</div>
 </form>
 <?php endif; ?>

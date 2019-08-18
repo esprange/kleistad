@@ -52,11 +52,12 @@
              */
 			$( '#kleistad_deelnemer_lijst tbody' ).on( 'click touchend', 'tr',
 				function( event ) {
-					var header, inschrijvingen, deelnemer, abonnee;
+					var header, inschrijvingen, deelnemer, abonnee, dagdelenkaart;
 					if ( 'click' === event.type || detectTap ) {
 						inschrijvingen = $( this ).data( 'inschrijvingen' );
 						deelnemer      = $( this ).data( 'deelnemer' );
 						abonnee        = $( this ).data( 'abonnee' );
+						dagdelenkaart  = $( this ).data( 'dagdelenkaart' );
 						header         = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Inschrijfgeld</th><th>Cursusgeld</th><th>Geannuleerd</th><th>Technieken</th></tr>';
 						$( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', deelnemer.naam ).dialog( 'open' );
 						$( '#kleistad_deelnemer_tabel' ).empty();
@@ -101,6 +102,14 @@
 								abonnee.pauze_datum + '</th><th>' +
 								abonnee.herstart_datum + '</th><th>' +
 								abonnee.eind_datum + '</th></tr>'
+							);
+						}
+						if ( ( 'undefined' !== typeof dagdelenkaart ) && ( 0 !== dagdelenkaart.length ) ) {
+							$( '#kleistad_deelnemer_tabel' ).append(
+								'<tr><th>Dagdelenkaart</th><th>Code</th><th>Start Datum</th></tr><tr><th>' +
+								'' + '</th><th>' +
+								dagdelenkaart.code + '</th><th>' +
+								dagdelenkaart.start_datum + '</th></tr>'
 							);
 						}
                     }

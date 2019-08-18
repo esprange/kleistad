@@ -30,9 +30,10 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 		$cursussen    = Kleistad_Cursus::all();
 		$registraties = [];
 
-		$gebruikers     = get_users( [ 'orderby' => 'nicename' ] );
-		$inschrijvingen = Kleistad_Inschrijving::all();
-		$abonnementen   = Kleistad_Abonnement::all();
+		$gebruikers      = get_users( [ 'orderby' => 'nicename' ] );
+		$inschrijvingen  = Kleistad_Inschrijving::all();
+		$abonnementen    = Kleistad_Abonnement::all();
+		$dagdelenkaarten = Kleistad_Dagdelenkaart::all();
 		foreach ( $gebruikers as $gebruiker ) {
 			$cursuslijst       = '';
 			$inschrijvinglijst = [];
@@ -53,6 +54,14 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 				];
 			} else {
 				$abonnee_info = [];
+			}
+			if ( array_key_exists( $gebruiker->ID, $dagdelenkaarten ) ) {
+				$dagdelenkaart_info = [
+					'code'        => $dagdelenkaarten[ $gebruiker->ID ]->code,
+					'start_datum' => date( 'd-m-Y', $dagdelenkaarten[ $gebruiker->ID ]->start_datum ),
+				];
+			} else {
+				$dagdelenkaart_info = [];
 			}
 			if ( array_key_exists( $gebruiker->ID, $inschrijvingen ) ) {
 				foreach ( $inschrijvingen[ $gebruiker->ID ] as $cursus_id => $inschrijving ) {
@@ -80,15 +89,16 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 			];
 
 			$registraties[] = [
-				'is_lid'         => $is_lid,
-				'cursuslijst'    => $cursuslijst,
-				'deelnemer_info' => $deelnemer_info,
-				'abonnee_info'   => $abonnee_info,
-				'inschrijvingen' => $inschrijvinglijst,
-				'voornaam'       => $gebruiker->first_name,
-				'achternaam'     => $gebruiker->last_name,
-				'telnr'          => $gebruiker->telnr,
-				'email'          => $gebruiker->user_email,
+				'is_lid'             => $is_lid,
+				'cursuslijst'        => $cursuslijst,
+				'deelnemer_info'     => $deelnemer_info,
+				'abonnee_info'       => $abonnee_info,
+				'dagdelenkaart_info' => $dagdelenkaart_info,
+				'inschrijvingen'     => $inschrijvinglijst,
+				'voornaam'           => $gebruiker->first_name,
+				'achternaam'         => $gebruiker->last_name,
+				'telnr'              => $gebruiker->telnr,
+				'email'              => $gebruiker->user_email,
 			];
 		}
 		$data = [
@@ -234,6 +244,52 @@ class Kleistad_Public_Registratie_Overzicht extends Kleistad_ShortcodeForm {
 					]
 				);
 				fputcsv( $this->file_handle, $abonnee_abonnement_gegevens, ';', '"' );
+			}
+		}
+	}
+
+	/**
+	 * Schrijf dagdelenkaart informatie naar het bestand.
+	 */
+	protected function dagdelenkaarten() {
+		$gebruikers           = get_users( [ 'orderby' => 'nicename' ] );
+		$dagdelenkaarten      = Kleistad_Dagdelenkaart::all();
+		$dagdelenkaart_fields = [
+			'Achternaam',
+			'Voornaam',
+			'Email',
+			'Straat',
+			'Huisnr',
+			'Postcode',
+			'Plaats',
+			'Telefoon',
+			'Start_datum',
+			'Dagdelenkaart code',
+			'Opmerking',
+		];
+		fputcsv( $this->file_handle, $dagdelenkaart_fields, ';', '"' );
+		foreach ( $gebruikers as $gebruiker ) {
+			$gebruiker_gegevens = [
+				$gebruiker->last_name,
+				$gebruiker->first_name,
+				$gebruiker->user_email,
+				$gebruiker->straat,
+				$gebruiker->huisnr,
+				$gebruiker->pcode,
+				$gebruiker->plaats,
+				$gebruiker->telnr,
+			];
+
+			if ( array_key_exists( $gebruiker->ID, $dagdelenkaarten ) ) {
+				$gebruiker_dagdelenkaart_gegevens = array_merge(
+					$gebruiker_gegevens,
+					[
+						$dagdelenkaarten[ $gebruiker->ID ]->code,
+						date( 'd-m-Y', $dagdelenkaarten[ $gebruiker->ID ]->start_datum ),
+						$dagdelenkaarten[ $gebruiker->ID ]->opmerking,
+					]
+				);
+				fputcsv( $this->file_handle, $gebruiker_dagdelenkaart_gegevens, ';', '"' );
 			}
 		}
 	}
