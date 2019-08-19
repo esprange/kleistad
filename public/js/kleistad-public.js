@@ -71,7 +71,7 @@ function strtodate( value ) {
 	/**
 	 * Nederlandse versie van datatable
 	 */
-	if ( null !== document.querySelector( '.kleistad_datatable' ) ) {
+	if ( $( '.kleistad_datatable' )[0] ) {
 		$.extend( $.fn.dataTable.defaults, {
 			language: {
 				swachten: 'Bezig...',
@@ -102,7 +102,7 @@ function strtodate( value ) {
 	/**
 	 * Maak een timespinner van de spinner.
 	 */
-	if ( null !== document.querySelector( '.kleistad_tijd' ) ) {
+	if ( $( '.kleistad_tijd' )[0] ) {
 		$.widget(
 			'ui.timespinner', $.ui.spinner, {
 				options: {
@@ -158,14 +158,14 @@ function strtodate( value ) {
 		/**
 		 * Definieer de tabellen.
 		 */
-		if ( null !== document.querySelector( '.kleistad_datatable' ) ) {
+		if ( $( '.kleistad_datatable' )[0] ) {
 			$( '.kleistad_datatable' ).DataTable();
 		}
 
 		/**
 		 * Definieer de datum velden.
 		 */
-		if ( null !== document.querySelector( '.kleistad_datum' ) ) {
+		if ( $( '.kleistad_datum' )[0] ) {
 			$.datepicker.setDefaults(
 				{
 					dateFormat: 'dd-mm-yy'
@@ -176,7 +176,7 @@ function strtodate( value ) {
 		/**
 		 * Definieer de timespinners.
 		 */
-		if ( null !== document.querySelector( '.kleistad_tijd' ) ) {
+		if ( $( '.kleistad_tijd' )[0] ) {
 			$( '.kleistad_tijd' ).timespinner(
 				{
 					start: function() {
@@ -252,7 +252,7 @@ function strtodate( value ) {
 			/**
 			 * Alle forms krijgen een wachten box.
 			 */
-			if ( null !== document.querySelector( '.kleistad_shortcode' ) ) {
+			if ( $( '.kleistad_shortcode' )[0] ) {
 
 				/**
 				 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
