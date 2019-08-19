@@ -161,7 +161,6 @@ function strtodate( value ) {
 		if ( $( '.kleistad_datatable' )[0] ) {
 			$( '.kleistad_datatable' ).DataTable();
 		}
-
 		/**
 		 * Definieer de datum velden.
 		 */
@@ -172,7 +171,6 @@ function strtodate( value ) {
 				}
 			);
 		}
-
 		/**
 		 * Definieer de timespinners.
 		 */
@@ -185,7 +183,6 @@ function strtodate( value ) {
 				}
 			);
 		}
-
 	}
 
 	function submitForm( $form, data ) {
@@ -249,81 +246,76 @@ function strtodate( value ) {
         function() {
 			onLoad();
 
+			$( '.kleistad_shortcode' )
 			/**
-			 * Alle forms krijgen een wachten box.
+			 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
 			 */
-			if ( $( '.kleistad_shortcode' )[0] ) {
+			.on( 'click', 'button[type="submit"]',
+				function( event ) {
+					$( this ).closest( 'form' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
+				}
+			)
+			/**
+			 * Submit het formulier, als er een formulier is.
+			 */
+			.on( 'submit', 'form',
+				function( event ) {
+					var $form          = $( this );
+					var data           = new FormData( this );
+					var clicked        = $form.data( 'clicked' );
+					var confirm        = $( '#' + clicked.id ).data( 'confirm' );
+					var tekst          = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
+					data.append( 'form_actie', clicked.value );
+					data.append( 'form_url', window.location.href );
+					event.preventDefault();
 
-				/**
-				 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
-				 */
-				$( '.kleistad_shortcode' ).on( 'click', 'button[type="submit"]',
-					function( event ) {
-						$( this ).closest( 'form' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
-					}
-				);
+					/**
+					 * Sluit eventuele openstaande dialogs.
+					 */
+					$( 'ui-dialog' ).dialog( 'close' );
 
-				/**
-				 * Submit het formulier, als er een formulier is.
-				 */
-				$( '.kleistad_shortcode' ).on( 'submit', 'form',
-					function( event ) {
-						var $form          = $( this );
-						var data           = new FormData( this );
-						var clicked        = $form.data( 'clicked' );
-						var confirm        = $( '#' + clicked.id ).data( 'confirm' );
-						var tekst          = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
-						data.append( 'form_actie', clicked.value );
-						data.append( 'form_url', window.location.href );
-						event.preventDefault();
-
-						/**
-						 * Sluit eventuele openstaande dialogs.
-						 */
-						$( 'ui-dialog' ).dialog( 'close' );
-
-						/**
-						 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
-						 */
-						if ( tekst.length ) {
-							$( '#kleistad_bevestigen' ).text( tekst[1] ).dialog(
-								{
-									modal: true,
-									zIndex: 10000,
-									autoOpen: true,
-									width: 'auto',
-									resizable: false,
-									title: tekst[0],
-									buttons: {
-										Ja: function() {
-											$( this ).dialog( 'close' );
-											submitForm( $form, data );
-										},
-										Nee: function() {
-											$( this ).dialog( 'close' );
-											return false;
-										}
+					/**
+					 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
+					 */
+					if ( tekst.length ) {
+						$( '#kleistad_bevestigen' ).text( tekst[1] ).dialog(
+							{
+								modal: true,
+								zIndex: 10000,
+								autoOpen: true,
+								width: 'auto',
+								resizable: false,
+								title: tekst[0],
+								buttons: {
+									Ja: function() {
+										$( this ).dialog( 'close' );
+										submitForm( $form, data );
+									},
+									Nee: function() {
+										$( this ).dialog( 'close' );
+										return false;
 									}
 								}
-							);
-						} else {
-							submitForm( $form, data );
-						}
+							}
+						);
+					} else {
+						submitForm( $form, data );
 					}
-				);
-			}
-
+				}
+			)
 			/**
 			 * Voor de ondersteuning van touch events
 			 */
-			$( document ).on( 'touchstart', function() {
-				detectTap = true;
-			});
-
-			$( document ).on( 'touchmove', function() {
-				detectTap = false;
-			});
-
+			.on( 'touchstart',
+				function() {
+					detectTap = true;
+				}
+			)
+			.on( 'touchmove',
+				function() {
+					detectTap = false;
+				}
+			);
 		}
 	);
 
