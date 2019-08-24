@@ -86,10 +86,6 @@ class Kleistad_Public_Abonnee_Wijziging extends Kleistad_ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$error = new WP_Error();
-		if ( ! is_user_logged_in() ) {
-			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
-			return $error;
-		}
 
 		$herstart_maand = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1 + $data['input']['pauze_maanden'], 1, intval( date( 'Y' ) ) );
 		$abonnement     = new Kleistad_Abonnement( $data['input']['abonnee_id'] );

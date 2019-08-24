@@ -99,32 +99,27 @@ class Kleistad_Public_Registratie extends Kleistad_ShortcodeForm {
 	protected function save( $data ) {
 		$error = new WP_Error();
 
-		if ( ! is_user_logged_in() ) {
-			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
-			return $error;
-		} else {
-			$gebruiker_id = Kleistad_Public::upsert_user(
-				[
-					'ID'         => $data['input']['gebruiker_id'],
-					'first_name' => $data['input']['voornaam'],
-					'last_name'  => $data['input']['achternaam'],
-					'telnr'      => $data['input']['telnr'],
-					'straat'     => $data['input']['straat'],
-					'huisnr'     => $data['input']['huisnr'],
-					'pcode'      => $data['input']['pcode'],
-					'plaats'     => $data['input']['plaats'],
-				]
-			);
+		$gebruiker_id = Kleistad_Public::upsert_user(
+			[
+				'ID'         => $data['input']['gebruiker_id'],
+				'first_name' => $data['input']['voornaam'],
+				'last_name'  => $data['input']['achternaam'],
+				'telnr'      => $data['input']['telnr'],
+				'straat'     => $data['input']['straat'],
+				'huisnr'     => $data['input']['huisnr'],
+				'pcode'      => $data['input']['pcode'],
+				'plaats'     => $data['input']['plaats'],
+			]
+		);
 
-			if ( ! is_wp_error( $gebruiker_id ) ) {
-				return [
-					'status' => 'Gegevens zijn opgeslagen',
-					'actie'  => 'home',
-				];
-			} else {
-				$error->add( '', $gebruiker_id->get_error_message() );
-				return $error;
-			}
+		if ( ! is_wp_error( $gebruiker_id ) ) {
+			return [
+				'status' => 'Gegevens zijn opgeslagen',
+				'actie'  => 'home',
+			];
+		} else {
+			$error->add( '', $gebruiker_id->get_error_message() );
+			return $error;
 		}
 	}
 }

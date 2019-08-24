@@ -100,7 +100,7 @@ class Kleistad_WorkshopAanvraag {
 	 * @param array $email De ontvangen email.
 	 * @return bool True als verwerkt.
 	 */
-	public function verwerk( $email ) {
+	private static function verwerk( $email ) {
 		$casus   = null;
 		$emailer = new Kleistad_Email();
 		/**
@@ -159,7 +159,7 @@ class Kleistad_WorkshopAanvraag {
 	/**
 	 * Ontvang en verwerk emails.
 	 */
-	public function ontvang_en_verwerk() {
+	public static function ontvang_en_verwerk() {
 		// phpcs:disable WordPress.NamingConventions
 		$options = Kleistad::get_options();
 		$mailbox = new PhpImap\Mailbox(
@@ -187,7 +187,7 @@ class Kleistad_WorkshopAanvraag {
 			} else {
 				$body = '<p>bericht tekst kan niet worden weergegeven</p>';
 			}
-			if ( ! $this->verwerk(
+			if ( ! self::verwerk(
 				[
 					'from-name'  => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
 					'from-email' => sanitize_email( $email->fromAddress ),

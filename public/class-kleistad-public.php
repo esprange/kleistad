@@ -38,92 +38,114 @@ class Kleistad_Public {
 	 */
 	const SHORTCODES = [
 		'abonnee_inschrijving'  => [
-			'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
-			'css' => [ 'jquery-ui' ],
+			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
+			'css'    => [ 'jquery-ui' ],
+			'access' => [],
 		],
 		'abonnee_wijziging'     => [
-			'js'  => [ 'jquery', 'jquery-ui-dialog' ],
-			'css' => [ 'jquery-ui' ],
+			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
+			'css'    => [ 'jquery-ui' ],
+			'access' => [ 'leden', 'bestuur' ],
 		],
 		'abonnement_overzicht'  => [
-			'js'  => [ 'jquery', 'datatables' ],
-			'css' => [ 'datatables' ],
+			'js'     => [ 'jquery', 'datatables' ],
+			'css'    => [ 'datatables' ],
+			'access' => [ 'bestuur' ],
 		],
 		'betaling'              => [
-			'js'  => [ 'jquery' ],
-			'css' => [],
+			'js'     => [ 'jquery' ],
+			'css'    => [],
+			'access' => [],
 		],
 		'betalingen'            => [
-			'js'  => [ 'jquery', 'datatables' ],
-			'css' => [ 'datatables' ],
+			'js'     => [ 'jquery', 'datatables' ],
+			'css'    => [ 'datatables' ],
+			'access' => [ 'bestuur' ],
 		],
 		'cursus_beheer'         => [
-			'js'  => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
-			'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
+			'access' => [ 'bestuur' ],
 		],
 		'cursus_inschrijving'   => [
-			'js'  => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
-			'css' => [ 'jquery-ui' ],
+			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
+			'css'    => [ 'jquery-ui' ],
+			'access' => [],
 		],
 		'cursus_overzicht'      => [
-			'js'  => [ 'jquery', 'datatables' ],
-			'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+			'js'     => [ 'jquery', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
+			'access' => [ 'leden', 'bestuur' ],
 		],
 		'dagdelenkaart'         => [
-			'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
-			'css' => [ 'jquery-ui' ],
+			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
+			'css'    => [ 'jquery-ui' ],
+			'access' => [],
 		],
 		'email'                 => [
-			'js'  => [ 'jquery', 'jstree' ],
-			'css' => [ 'jquery-ui', 'jstree' ],
+			'js'     => [ 'jquery', 'jstree' ],
+			'css'    => [ 'jquery-ui', 'jstree' ],
+			'access' => [ 'bestuur' ],
 		],
 		'kalender'              => [
-			'js'  => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
-			'css' => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
+			'js'     => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
+			'css'    => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
+			'access' => [ 'leden', 'bestuur' ],
 		],
 		'rapport'               => [
-			'js'  => [ 'jquery', 'datatables' ],
-			'css' => [ 'datatables' ],
+			'js'     => [ 'jquery', 'datatables' ],
+			'css'    => [ 'datatables' ],
+			'access' => [ 'leden', 'bestuur' ],
 		],
 		'recept_beheer'         => [
-			'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
-			'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
+			'access' => [ 'leden', 'bestuur' ],
 		],
 		'recept'                => [
-			'js'  => [ 'jquery' ],
-			'css' => [ 'dashicons' ],
+			'js'     => [ 'jquery' ],
+			'css'    => [ 'dashicons' ],
+			'access' => [],
 		],
 		'registratie_overzicht' => [
-			'js'  => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-			'css' => [ 'jquery-ui', 'datatables', 'dashicons' ],
+			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
+			'access' => [ 'bestuur' ],
 		],
 		'registratie'           => [
-			'js'  => [ 'jquery' ],
-			'css' => [],
+			'js'     => [ 'jquery' ],
+			'css'    => [],
+			'access' => [ 'leden', 'bestuur' ],
 		],
 		'reservering'           => [
-			'js'  => [ 'jquery', 'jquery-ui-dialog' ],
-			'css' => [ 'jquery-ui' ],
+			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
+			'css'    => [ 'jquery-ui' ],
+			'access' => [ 'leden', 'bestuur' ],
 		],
 		'saldo_overzicht'       => [
-			'js'  => [ 'jquery', 'datatables' ],
-			'css' => [ 'datatables' ],
+			'js'     => [ 'jquery', 'datatables' ],
+			'css'    => [ 'datatables' ],
+			'access' => [ 'bestuur' ],
 		],
 		'saldo'                 => [
-			'js'  => [ 'jquery' ],
-			'css' => [],
+			'js'     => [ 'jquery' ],
+			'css'    => [],
+			'access' => [ 'leden', 'bestuur' ],
 		],
 		'stookbestand'          => [
-			'js'  => [ 'jquery', 'jquery-ui-datepicker' ],
-			'css' => [ 'jquery-ui' ],
+			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
+			'css'    => [ 'jquery-ui' ],
+			'access' => [ 'bestuur' ],
 		],
 		'workshop_aanvraag'     => [
-			'js'  => [ 'jquery' ],
-			'css' => [],
+			'js'     => [ 'jquery' ],
+			'css'    => [],
+			'access' => [],
 		],
 		'workshop_beheer'       => [
-			'js'  => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
-			'css' => [ 'jquery-ui', 'datatables' ],
+			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables' ],
+			'access' => [ 'bestuur' ],
 		],
 	];
 
@@ -235,12 +257,12 @@ class Kleistad_Public {
 	 * @since   4.0.87
 	 */
 	public function register_endpoints() {
-		Kleistad_Adres::register_rest_routes();
-		Kleistad_Betalen::register_rest_routes();
-		Kleistad_Public_Kalender::register_rest_routes();
-		Kleistad_Public_Recept::register_rest_routes();
-		Kleistad_Public_Reservering::register_rest_routes();
-		Kleistad_ShortcodeForm::register_rest_routes();
+		Kleistad_Adres::register_rest_routes(); // Postcode.
+		Kleistad_Betalen::register_rest_routes(); // Mollie.
+		Kleistad_Public_Kalender::register_rest_routes(); // Google API.
+		Kleistad_Public_Recept::register_rest_routes(); // Recept zoeker.
+		Kleistad_Public_Reservering::register_rest_routes(); // Oven reserveringen.
+		Kleistad_ShortcodeForm::register_rest_routes(); // Shortcode formulieren.
 	}
 
 	/**
@@ -262,10 +284,14 @@ class Kleistad_Public {
 	 */
 	public static function controleer_betaling( $html ) {
 		$result = Kleistad_Betalen::controleer();
-		if ( is_string( $result ) && ! empty( $result ) ) {
-			return Kleistad_ShortcodeForm::status( $result ) . Kleistad_ShortcodeForm::goto_home();
+		if ( is_string( $result ) ) {
+			if ( ! empty( $result ) ) {
+				return Kleistad_Shortcode::status( $result ) . Kleistad_Shortcode::goto_home();
+			} else {
+				return( $html );
+			}
 		} else {
-			return Kleistad_ShortcodeForm::status( $result ) . $html;
+			return Kleistad_Shortcode::status( $result ) . $html;
 		}
 	}
 
@@ -353,16 +379,13 @@ class Kleistad_Public {
 		static $divs      = false; // De ondersteunende divs zijn maar eenmalig nodig.
 		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
 		$shortcode_class  = 'Kleistad_Public_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode ) ) );
-		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options );
+		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options, self::SHORTCODES[ $shortcode ]['access'] );
 		$html             = '';
 		if ( ! $divs ) {
-			$html .= '<div id="kleistad_berichten" ></div>';
-		}
-		$html .= '<div class="kleistad_shortcode" >' . $shortcode_object->run() . '</div>';
-		if ( ! $divs ) {
-			$html .= '<div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
+			$html .= '<div id="kleistad_berichten" ></div><div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
 			$divs  = true;
 		}
+		$html .= '<div class="kleistad_shortcode" >' . $shortcode_object->run() . '</div>';
 		return $html;
 	}
 
@@ -409,8 +432,7 @@ class Kleistad_Public {
 	 * @since 5.6.0
 	 */
 	public function rcv_email() {
-		$aanvraag = new Kleistad_WorkshopAanvraag();
-		$aanvraag->ontvang_en_verwerk();
+		Kleistad_WorkshopAanvraag::ontvang_en_verwerk();
 	}
 
 	/**

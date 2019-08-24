@@ -294,98 +294,93 @@ class Kleistad_Public_Recept_Beheer extends Kleistad_ShortcodeForm {
 	protected function save( $data ) {
 		$error = new WP_Error();
 
-		if ( ! is_user_logged_in() ) {
-			$error->add( 'security', 'Dit formulier mag alleen ingevuld worden door ingelogde gebruikers' );
-			return $error;
-		} else {
-			if ( isset( $data['recept'] ) ) {
-				if ( ! empty( $data['foto']['name'] ) ) {
-					$file = wp_handle_upload(
-						$data['foto'],
-						[ 'test_form' => false ]
-					);
-					if ( is_array( $file ) && ! isset( $file['error'] ) ) {
-						$exif = @exif_read_data( $file['file'] ); // phpcs:ignore
-						if ( false === $exif ) {
-							$error->add( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
-							return $error;
+		if ( isset( $data['recept'] ) ) {
+			if ( ! empty( $data['foto']['name'] ) ) {
+				$file = wp_handle_upload(
+					$data['foto'],
+					[ 'test_form' => false ]
+				);
+				if ( is_array( $file ) && ! isset( $file['error'] ) ) {
+					$exif = @exif_read_data( $file['file'] ); // phpcs:ignore
+					if ( false === $exif ) {
+						$error->add( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
+						return $error;
+					}
+					$image = imagecreatefromjpeg( $file['file'] );
+					if ( false === $image ) {
+						$error->add( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
+						return $error;
+					}
+					if ( ! empty( $exif['Orientation'] ) ) {
+						switch ( $exif['Orientation'] ) {
+							case 3:
+								$image = imagerotate( $image, 180, 0 );
+								break;
+							case 6:
+								$image = imagerotate( $image, -90, 0 );
+								break;
+							case 8:
+								$image = imagerotate( $image, 90, 0 );
+								break;
 						}
-						$image = imagecreatefromjpeg( $file['file'] );
 						if ( false === $image ) {
-							$error->add( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
+							$error->add( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
 							return $error;
 						}
-						if ( ! empty( $exif['Orientation'] ) ) {
-							switch ( $exif['Orientation'] ) {
-								case 3:
-									$image = imagerotate( $image, 180, 0 );
-									break;
-								case 6:
-									$image = imagerotate( $image, -90, 0 );
-									break;
-								case 8:
-									$image = imagerotate( $image, 90, 0 );
-									break;
-							}
-							if ( false === $image ) {
-								$error->add( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
-								return $error;
-							}
-						}
-						$quality = intval( min( 75000 / filesize( $file['file'] ) * 100, 100 ) );
-						imagejpeg( $image, $file['file'], $quality );
-						imagedestroy( $image );
-						$data['recept']['content']['foto'] = $file['url'];
-					} else {
-						$error->add( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] );
-						return $error;
 					}
+					$quality = intval( min( 75000 / filesize( $file['file'] ) * 100, 100 ) );
+					imagejpeg( $image, $file['file'], $quality );
+					imagedestroy( $image );
+					$data['recept']['content']['foto'] = $file['url'];
+				} else {
+					$error->add( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] );
+					return $error;
 				}
-				if ( ! $data['recept']['id'] ) {
-					$result = wp_insert_post(
-						[
-							'post_status' => 'draft', // Initiële publicatie status is prive.
-							'post_type'   => 'kleistad_recept',
-						]
-					);
-					if ( is_int( $result ) ) {
-						$data['recept']['id'] = $result;
-					} else {
-						return $result;
-					}
-				}
-				$recept = get_post( $data['recept']['id'] );
-				if ( ! is_null( $recept ) ) {
-					$recept->post_title   = (string) $data['recept']['titel'];
-					$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
-					$json_content         = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
-					if ( is_string( $json_content ) ) {
-						$recept->post_content = $json_content;
-					} else {
-						$error->add( '', 'interne fout' );
-						return $error;
-					}
-					$recept_id = wp_update_post( $recept, true );
-					if ( is_int( $recept_id ) ) {
-						wp_set_object_terms(
-							$recept_id,
-							[
-								intval( $data['recept']['glazuur'] ),
-								intval( $data['recept']['kleur'] ),
-								intval( $data['recept']['uiterlijk'] ),
-							],
-							'kleistad_recept_cat'
-						);
-						return [
-							'status' => 'Gegevens zijn opgeslagen',
-							'actie'  => 'refresh',
-							'html'   => $this->display(),
-						];
-					}
-				}
-				$error->add( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' );
-				return $error;
 			}
+			if ( ! $data['recept']['id'] ) {
+				$result = wp_insert_post(
+					[
+						'post_status' => 'draft', // Initiële publicatie status is prive.
+						'post_type'   => 'kleistad_recept',
+					]
+				);
+				if ( is_int( $result ) ) {
+					$data['recept']['id'] = $result;
+				} else {
+					return $result;
+				}
+			}
+			$recept = get_post( $data['recept']['id'] );
+			if ( ! is_null( $recept ) ) {
+				$recept->post_title   = (string) $data['recept']['titel'];
+				$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
+				$json_content         = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
+				if ( is_string( $json_content ) ) {
+					$recept->post_content = $json_content;
+				} else {
+					$error->add( '', 'interne fout' );
+					return $error;
+				}
+				$recept_id = wp_update_post( $recept, true );
+				if ( is_int( $recept_id ) ) {
+					wp_set_object_terms(
+						$recept_id,
+						[
+							intval( $data['recept']['glazuur'] ),
+							intval( $data['recept']['kleur'] ),
+							intval( $data['recept']['uiterlijk'] ),
+						],
+						'kleistad_recept_cat'
+					);
+					return [
+						'status' => 'Gegevens zijn opgeslagen',
+						'actie'  => 'refresh',
+						'html'   => $this->display(),
+					];
+				}
+			}
+			$error->add( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' );
+			return $error;
 		}
 	}
 }

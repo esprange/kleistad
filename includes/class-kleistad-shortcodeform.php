@@ -187,7 +187,8 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_formsubmit' ],
 				'permission_callback' => function() {
-					return true;
+					$info  = json_decode( filter_input( INPUT_POST, 'shortcodeform_info' ), true ); //phpcs:ignore
+					return self::check_access( Kleistad_Public::SHORTCODES[ $info['shortcode'] ]['access'] );
 				},
 			]
 		);
@@ -240,47 +241,6 @@ abstract class Kleistad_ShortcodeForm extends Kleistad_ShortCode {
 			$error->add( 'file', 'bestand kon niet aangemaakt worden' );
 			return $error;
 		}
-	}
-
-	/**
-	 * Toon de status van de het resultaat
-	 *
-	 * @since 5.7.0
-	 *
-	 * @param string | array | WP_Error $result Het resultaat dat getoond moet worden.
-	 */
-	public static function status( $result ) {
-		$html = '';
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
-			}
-		} else {
-			$succes = $result['status'] ?? ( is_string( $result ) ? $result : '' );
-			if ( ! empty( $succes ) ) {
-				$html = '<div class="kleistad_succes"><p>' . $succes . '</p></div>';
-			}
-		}
-		return $html;
-	}
-
-	/**
-	 * Toon een OK button in het midden van het scherm
-	 *
-	 * @since 5.7.0
-	 * @return string
-	 */
-	public static function goto_home() {
-		ob_start();
-		?>
-		</br></br>
-		<div style="text-align:center;" >
-			<button onclick="location.href='<?php echo esc_url( home_url() ); ?>';" >
-				&nbsp;OK&nbsp;
-			</button>
-		</div>
-		<?php
-		return ob_get_clean();
 	}
 
 	/**

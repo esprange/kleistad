@@ -301,10 +301,13 @@ class Kleistad_MollieSimulatie {
 			}
 
 			/**
-			 * Geef een unieke string terug.
+			 * Maak een customer aan.
+			 *
+			 * @param array $arr wordt niet gebruikt.
 			 */
-			public function create() {
-				return '_sim' . wp_generate_password( 6, false, false );
+			public function create( $arr ) {
+				$customer = $this->get();
+				return $customer;
 			}
 		};
 
