@@ -185,8 +185,8 @@ class Kleistad_Betalen {
 			}
 			return $error;
 		} catch ( Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
-			return '<div class="kleistad_fout"><p>Interne fout: ' . $e->getMessage() . '</p></div>';
+			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
+			return '';
 		}
 	}
 

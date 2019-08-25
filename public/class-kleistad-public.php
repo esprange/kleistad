@@ -284,15 +284,10 @@ class Kleistad_Public {
 	 */
 	public static function controleer_betaling( $html ) {
 		$result = Kleistad_Betalen::controleer();
-		if ( is_string( $result ) ) {
-			if ( ! empty( $result ) ) {
-				return Kleistad_Shortcode::status( $result ) . Kleistad_Shortcode::goto_home();
-			} else {
-				return( $html );
-			}
-		} else {
-			return Kleistad_Shortcode::status( $result ) . $html;
+		if ( is_string( $result ) && ! empty( $result ) ) {
+			return Kleistad_Shortcode::status( $result ) . Kleistad_Shortcode::goto_home();
 		}
+		return Kleistad_Shortcode::status( $result ) . $html;
 	}
 
 	/**
