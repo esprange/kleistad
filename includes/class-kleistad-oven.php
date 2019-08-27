@@ -21,6 +21,8 @@
  */
 class Kleistad_Oven extends Kleistad_Entity {
 
+	const REGELING = 'kleistad_regeling';
+
 	/**
 	 * Constructor
 	 *
@@ -88,6 +90,19 @@ class Kleistad_Oven extends Kleistad_Entity {
 			default:
 				$this->data[ $attribuut ] = $waarde;
 		}
+	}
+
+	/**
+	 * Bepaal de kosten van het stoken van de oven en pas een eventuele regeling toe.
+	 *
+	 * @param  int   $stoker_id   De stoker.
+	 * @param  float $percentage  Het percentage van de stook.
+	 * @return float De kosten.
+	 */
+	public function stookkosten( $stoker_id, $percentage ) {
+		$regelingen = get_user_meta( $stoker_id, self::REGELING, true );
+		$kosten     = $percentage * ( $regelingen[ $this->data['id'] ] ?? $this->data['kosten'] ) / 100;
+		return round( $kosten, 2 );
 	}
 
 	/**

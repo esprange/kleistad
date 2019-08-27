@@ -208,7 +208,6 @@ class Kleistad_Saldo {
 		global $wpdb;
 		$emailer       = new Kleistad_Email();
 		$reserveringen = Kleistad_reservering::all( true );
-		$regelingen    = new Kleistad_Regelingen();
 		$ovens         = Kleistad_Oven::all();
 		$options       = Kleistad::get_options();
 
@@ -224,17 +223,15 @@ class Kleistad_Saldo {
 						continue;
 					}
 					$wpdb->query( 'START TRANSACTION' );
-					$stookdelen = $reservering->verdeling;
-					$stoker     = get_userdata( $reservering->gebruiker_id );
-					foreach ( $stookdelen as &$stookdeel ) {
+					$stoker = get_userdata( $reservering->gebruiker_id );
+					foreach ( $reservering->verdeling as $stookdeel ) {
 						if ( 0 === intval( $stookdeel['id'] ) ) {
 							continue; // Volgende verdeling.
 						}
 						$medestoker         = get_userdata( $stookdeel['id'] );
-						$regeling           = $regelingen->get( $stookdeel['id'], $reservering->oven_id );
-						$kosten             = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
-						$bedrag             = round( $stookdeel['perc'] / 100 * $kosten, 2 );
+						$bedrag             = $ovens[ $reservering->oven_id ]->stookkosten( $stookdeel['id'], $stookdeel['perc'] );
 						$stookdeel['prijs'] = $bedrag;
+						$reservering->prijs( $stookdeel['id'], $bedrag );
 						if ( $bedrag < 0.01 ) {
 							continue; // Volgende verdeling.
 						}
@@ -262,9 +259,8 @@ class Kleistad_Saldo {
 							throw new Exception( 'stooksaldo van gebruiker ' . $medestoker->display_name . ' kon niet aangepast worden met kosten ' . $bedrag );
 						}
 					}
-					$reservering->verdeling = $stookdelen;
-					$reservering->verwerkt  = true;
-					$result                 = $reservering->save();
+					$reservering->verwerkt = true;
+					$result                = $reservering->save();
 					if ( 0 === $result ) {
 						throw new Exception( 'reservering met id ' . $reservering->id . ' kon niet aangepast worden' );
 					}
@@ -275,8 +271,7 @@ class Kleistad_Saldo {
 				}
 			} elseif ( ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
 				if ( Kleistad_Reservering::ONDERHOUD !== $reservering->soortstook ) {
-					$regeling   = $regelingen->get( $reservering->gebruiker_id, $reservering->oven_id );
-					$bedrag     = is_float( $regeling ) ? $regeling : $ovens[ $reservering->oven_id ]->kosten;
+					$bedrag     = $ovens[ $reservering->oven_id ]->stookkosten( $reservering->gebruiker_id, 100 );
 					$stoker     = get_userdata( $reservering->gebruiker_id );
 					$stookdelen = $reservering->verdeling;
 					$tabel      = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';

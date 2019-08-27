@@ -109,16 +109,15 @@ class Kleistad_Admin_Regelingen extends WP_List_Table {
 				'fields'   => [ 'ID', 'display_name' ],
 				'orderby'  => [ 'display_name' ],
 				'order'    => $order,
-				'meta_key' => Kleistad_Regelingen::META_KEY,
+				'meta_key' => Kleistad_Oven::REGELING,
 			]
 		);
-		$gebruikers_regelingen = new Kleistad_Regelingen();
 		$ovens                 = Kleistad_Oven::all();
 		$regelingen            = [];
 
 		foreach ( $gebruiker_query->get_results() as $gebruiker ) {
-			$kosten_ovens = $gebruikers_regelingen->get( $gebruiker->ID );
-			foreach ( $kosten_ovens as $oven_id => $kosten_oven ) {
+			$gebruiker_regelingen = get_user_meta( $gebruiker->ID, Kleistad_Oven::REGELING, true );
+			foreach ( $gebruiker_regelingen as $oven_id => $kosten_oven ) {
 				$regelingen[] = [
 					'id'             => $gebruiker->ID . '-' . $oven_id,
 					'gebruiker_naam' => $gebruiker->display_name,

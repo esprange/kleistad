@@ -33,13 +33,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 	private $ovens = [];
 
 	/**
-	 * Array dat alle regelingen bevat
-	 *
-	 * @var Kleistad_Regelingen $regeling De regelingen met o.a. hun kosten.
-	 */
-	private $regelingen;
-
-	/**
 	 * De vanaf datum van het stookbestand
 	 *
 	 * @var int $vanaf_datum de begindatum van het stookbestand.
@@ -119,13 +112,8 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 				$kosten       = 0.0;
 				$kosten_tonen = false;
 				foreach ( $reservering->verdeling as $stookdeel ) {
-					if ( $stookdeel['id'] == $id ) { // phpcs:ignore
-						if ( isset( $stookdeel['prijs'] ) ) { // Berekening als vastgelegd in transactie.
-							$kosten += $stookdeel['prijs'];
-						} else { // Voorlopige berekening.
-							$regeling = $this->regelingen->get( $id, $reservering->oven_id );
-							$kosten  += round( $stookdeel['perc'] / 100 * ( ( is_null( $regeling ) ) ? $this->ovens[ $reservering->oven_id ]->kosten : $regeling ), 2 );
-						}
+					if ( $stookdeel['id'] === $id ) {
+						$kosten      += $stookdeel['prijs'] ?? $this->ovens[ $reservering->oven_id ]->stookkosten( $id, $stookdeel['perc'] );
 						$totaal      += $kosten;
 						$kosten_tonen = true;
 					}
@@ -144,7 +132,6 @@ class Kleistad_Public_Stookbestand extends Kleistad_ShortcodeForm {
 		$this->vanaf_datum = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
 		$this->tot_datum   = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
 		$this->ovens       = Kleistad_Oven::all();
-		$this->regelingen  = new Kleistad_Regelingen();
 		$reserveringen     = Kleistad_Reservering::all();
 		array_walk( $reserveringen, [ $this, 'bepaal_medestokers' ] );
 		asort( $this->medestokers );

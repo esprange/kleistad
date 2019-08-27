@@ -166,6 +166,21 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	}
 
 	/**
+	 * Registreer de prijs van de stook op een stookdeel.
+	 *
+	 * @param int $medestoker_id Het id van de medestoker.
+	 */
+	public function prijs( $medestoker_id, $prijs ) {
+		$verdeling = json_decode( $this->data['verdeling'], true );
+		foreach ( $verdeling as &$stookdeel ) {
+			if ( $medestoker_id === $stookdeel['id'] ) {
+				$stookdeel['prijs'] = $prijs;
+			}
+		};
+		$this->data['verdeling'] = wp_json_encode( $verdeling );
+	}
+
+	/**
 	 * Set attribuut van het object.
 	 *
 	 * @since 4.0.87
@@ -176,22 +191,19 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'verdeling':
-				if ( is_array( $waarde ) ) {
-					$verdeling = [];
-					array_walk(
-						$waarde,
-						function( $item, $key ) use ( &$verdeling ) {
-							$verdeling[ $key ] = [
-								'id'    => intval( $item['id'] ),
-								'perc'  => intval( $item['perc'] ),
-								'prijs' => isset( $item['prijs'] ) ? $item['prijs'] : 0.0,
-							];
-						}
-					);
-					$this->data[ $attribuut ] = wp_json_encode( $verdeling );
-				} else {
-					$this->data[ $attribuut ] = $waarde;
+				$verdeling = [];
+				foreach ( $waarde as $stookdeel ) {
+					$index = array_search( intval( $stookdeel['id'] ), array_column( $verdeling, 'id' ), true );
+					if ( false === $index ) {
+						$verdeling[] = [
+							'id'   => intval( $stookdeel['id'] ),
+							'perc' => intval( $stookdeel['perc'] ),
+						];
+					} else {
+						$verdeling[ $index ]['perc'] += intval( $stookdeel['perc'] );
+					}
 				}
+				$this->data[ $attribuut ] = wp_json_encode( $verdeling );
 				break;
 			case 'datum':
 				$this->data['jaar']  = date( 'Y', $waarde );

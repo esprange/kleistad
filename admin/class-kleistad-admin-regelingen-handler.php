@@ -64,10 +64,15 @@ class Kleistad_Admin_Regelingen_Handler {
 
 			if ( ! is_null( $id ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $id, '%d-%d' );
-				$regelingen                   = new Kleistad_Regelingen();
-				$regelingen->delete_and_save( $gebruiker_id, $oven_id );
+				$regelingen                   = get_user_meta( $gebruiker_id, Kleistad_Oven::REGELING, true );
+				unset( $regelingen[ $oven_id ] );
+				if ( 0 === count( $regelingen ) ) {
+					delete_user_meta( $gebruiker_id, Kleistad_Oven::REGELING );
+				} else {
+					update_user_meta( $gebruiker_id, Kleistad_Oven::REGELING, $regelingen );
+				}
+				$message = 'Regeling verwijderd';
 			}
-			$message = sprintf( 'Aantal verwijderd: %d', count( $id ) );
 		}
 		require 'partials/kleistad-admin-regelingen-page.php';
 	}
@@ -95,20 +100,16 @@ class Kleistad_Admin_Regelingen_Handler {
 			$item       = wp_parse_args( $_REQUEST, $default );
 			$item_valid = $this->validate_regeling( $item );
 			if ( true === $item_valid ) {
-				$regelingen = new Kleistad_Regelingen();
-				$result     = $regelingen->set_and_save( $item['gebruiker_id'], $item['oven_id'], $item['kosten'] );
+				$gebruiker_regelingen = get_user_meta( $item['gebruiker_id'], Kleistad_Oven::REGELING, true );
+				if ( empty( $gebruiker_regelingen ) ) {
+					$gebruiker_regelingen = [];
+				}
+				$gebruiker_regelingen[ $item['oven_id'] ] = $item['kosten'];
+				update_user_meta( $item['gebruiker_id'], Kleistad_Oven::REGELING, $gebruiker_regelingen );
 				if ( '' === $item['id'] ) {
-					if ( $result ) {
-						$message = 'De regeling is bewaard';
-					} else {
-						$notice = 'Er was een probleem met het opslaan van gegevens';
-					}
+					$message = 'De regeling is bewaard';
 				} else {
-					if ( $result ) {
-						$message = 'De regeling is gewijzigd';
-					} else {
-						$notice = 'Er was een probleem met het wijzigen van gegevens';
-					}
+					$message = 'De regeling is gewijzigd';
 				}
 				$oven                   = new Kleistad_Oven( $item['oven_id'] );
 				$gebruiker              = get_userdata( $item['gebruiker_id'] );
@@ -121,8 +122,7 @@ class Kleistad_Admin_Regelingen_Handler {
 			$item = $default;
 			if ( isset( $_REQUEST['id'] ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d-%d' );
-				$regelingen                   = new Kleistad_Regelingen();
-				$gebruiker_regeling           = $regelingen->get( $gebruiker_id, $oven_id );
+				$gebruiker_regelingen         = get_user_meta( $gebruiker_id, Kleistad_Oven::REGELING, true );
 
 				$gebruiker = get_userdata( $gebruiker_id );
 				$oven      = new Kleistad_Oven( $oven_id );
@@ -132,7 +132,7 @@ class Kleistad_Admin_Regelingen_Handler {
 					'gebruiker_naam' => $gebruiker->display_name,
 					'oven_id'        => $oven_id,
 					'oven_naam'      => $oven->naam,
-					'kosten'         => $gebruiker_regeling,
+					'kosten'         => $gebruiker_regelingen[ $oven_id ],
 				];
 			}
 		}
