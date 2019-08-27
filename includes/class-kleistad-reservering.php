@@ -168,7 +168,8 @@ class Kleistad_Reservering extends Kleistad_Entity {
 	/**
 	 * Registreer de prijs van de stook op een stookdeel.
 	 *
-	 * @param int $medestoker_id Het id van de medestoker.
+	 * @param int   $medestoker_id Het id van de medestoker.
+	 * @param float $prijs         De prijs van het stoken.
 	 */
 	public function prijs( $medestoker_id, $prijs ) {
 		$verdeling = json_decode( $this->data['verdeling'], true );
