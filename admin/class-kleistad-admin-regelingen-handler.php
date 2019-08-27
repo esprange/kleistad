@@ -65,15 +65,13 @@ class Kleistad_Admin_Regelingen_Handler {
 			if ( ! is_null( $id ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $id, '%d-%d' );
 				$regelingen                   = get_user_meta( $gebruiker_id, Kleistad_Oven::REGELING, true );
-				if ( ! empty( $regelingen ) ) {
-					unset( $regelingen[ $oven_id ] );
-					if ( 0 === count( $regelingen ) ) {
-						delete_user_meta( $gebruiker_id, Kleistad_Oven::REGELING );
-					} else {
-						update_user_meta( $gebruiker_id, Kleistad_Oven::REGELING, $regelingen );
-					}
-					$message = 'Regeling verwijderd';
+				unset( $regelingen[ $oven_id ] );
+				if ( empty( $regelingen ) ) {
+					delete_user_meta( $gebruiker_id, Kleistad_Oven::REGELING );
+				} else {
+					update_user_meta( $gebruiker_id, Kleistad_Oven::REGELING, $regelingen );
 				}
+				$message = 'Regeling verwijderd';
 			}
 		}
 		require 'partials/kleistad-admin-regelingen-page.php';
