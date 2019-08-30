@@ -155,27 +155,26 @@ function strtodate( value ) {
 	};
 
 	function onLoad() {
+		var $datatable = $( '.kleistad_datatable' ),
+			$datum     = $( '.kleistad_datum' ),
+			$tijd      = $( '.kleistad_tijd' );
 		/**
 		 * Definieer de tabellen.
 		 */
-		if ( $( '.kleistad_datatable' )[0] ) {
-			$( '.kleistad_datatable' ).DataTable();
+		if ( $datatable[0] ) {
+			$datatable.DataTable();
 		}
 		/**
 		 * Definieer de datum velden.
 		 */
-		if ( $( '.kleistad_datum' )[0] ) {
-			$.datepicker.setDefaults(
-				{
-					dateFormat: 'dd-mm-yy'
-				}
-			);
+		if ( $datum[0] ) {
+			$.datepicker.setDefaults( { dateFormat: 'dd-mm-yy' } );
 		}
 		/**
 		 * Definieer de timespinners.
 		 */
-		if ( $( '.kleistad_tijd' )[0] ) {
-			$( '.kleistad_tijd' ).timespinner(
+		if ( $tijd[0] ) {
+			$tijd.timespinner(
 				{
 					start: function() {
 						return ( ! $( this ).attr( 'readonly' ) );
