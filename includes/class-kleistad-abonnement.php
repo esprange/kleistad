@@ -242,6 +242,8 @@ class Kleistad_Abonnement extends Kleistad_Entity {
 				return 'pauze gepland';
 			} elseif ( $vandaag < $this->eind_datum ) {
 				return 'stop gepland';
+			} elseif ( $vandaag < $this->start_datum ) {
+				return 'start gepland';
 			}
 			return 'actief';
 		}
