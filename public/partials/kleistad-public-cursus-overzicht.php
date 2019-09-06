@@ -49,7 +49,7 @@ else :
 		<br/>
 		<button type="submit" name="kleistad_submit_cursus_overzicht" value="download_cursisten" >Download</button>
 		<button type="submit" name="kleistad_submit_cursus_overzicht" value="restant_email" >Restant email versturen</button>
-		<button style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Terug</button>
+		<button type="button" style="position:absolute;right:0px;" onclick="window.location.href='<?php echo esc_url( home_url( $wp->request ) ); ?>'" >Terug</button>
 	</form>
 </div>
 <?php else : ?>
