@@ -32,7 +32,7 @@
 			foreach ( $cursussen as $cursus_id => $cursus ) :
 				?>
 					<option value="<?php echo esc_attr( $cursus_id ); ?>" <?php selected( $item['cursus_id'], $cursus_id ); ?>>
-						<?php echo esc_html( $cursus->naam ); ?>
+						<?php echo esc_html( "$cursus->code $cursus->naam" ); ?>
 					</option>
 				<?php
 			endforeach;
