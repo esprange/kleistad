@@ -271,7 +271,7 @@ abstract class Shortcode {
 	 *
 	 * @param \Kleistad\Shortcode $shortcode De shortcode waarvoor de download plaatsvindt.
 	 * @param string              $functie   De shortcode functie die aangeroepen moet worden.
-	 * @return \WP_Error | array
+	 * @return \WP_REST_Response
 	 */
 	protected static function download( \Kleistad\Shortcode $shortcode, $functie ) {
 		$upload_dir = wp_upload_dir();
@@ -282,11 +282,13 @@ abstract class Shortcode {
 			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
 			call_user_func( [ $shortcode, $functie ] );
 			fclose( $shortcode->file_handle );
-			return [
-				'vervolg'  => 'download',
-				'status'   => '',
-				'file_uri' => $upload_dir['baseurl'] . $file,
-			];
+			return new \WP_REST_Response(
+				[
+					'vervolg'  => 'download',
+					'status'   => '',
+					'file_uri' => $upload_dir['baseurl'] . $file,
+				]
+			);
 		} else {
 			return new \WP_REST_Response(
 				[
