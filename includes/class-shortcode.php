@@ -267,6 +267,55 @@ abstract class Shortcode {
 	}
 
 	/**
+	 * Maak een tijdelijk bestand aan voor download.
+	 *
+	 * @param \Kleistad\Shortcode $shortcode De shortcode waarvoor de download plaatsvindt.
+	 * @param string              $functie   De shortcode functie die aangeroepen moet worden.
+	 * @return \WP_Error | array
+	 */
+	protected static function download( \Kleistad\Shortcode $shortcode, $functie ) {
+		$upload_dir = wp_upload_dir();
+		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
+		$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
+		if ( false !== $result ) {
+			$shortcode->file_handle = $result;
+			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
+			call_user_func( [ $shortcode, $functie ] );
+			fclose( $shortcode->file_handle );
+			return [
+				'vervolg'  => 'download',
+				'status'   => '',
+				'file_uri' => $upload_dir['baseurl'] . $file,
+			];
+		} else {
+			return new \WP_REST_Response(
+				[
+					'vervolg' => 'home',
+					'status'  => self::status( new \WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
+					'html'    => self::goto_home(),
+				]
+			);
+		}
+	}
+
+	/**
+	 * Ruim eventuele download files op.
+	 */
+	public static function cleanup_downloads() {
+		$upload_dir = wp_upload_dir();
+		$files      = glob( $upload_dir['basedir'] . '/kleistad_tmp_*.csv' );
+		$now        = time();
+
+		foreach ( $files as $file ) {
+			if ( is_file( $file ) ) {
+				if ( $now - filemtime( $file ) >= 60 * 60 * 24 ) {
+					unlink( $file );
+				}
+			}
+		}
+	}
+
+	/**
 	 * Get an item and display it.
 	 *
 	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
@@ -277,31 +326,7 @@ abstract class Shortcode {
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
 			return $shortcode_object;
 		}
-		$functie    = $request->get_param( 'actie' );
-		$upload_dir = wp_upload_dir();
-		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
-		$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
-		if ( false !== $result ) {
-			$shortcode_object->file_handle = $result;
-			fwrite( $shortcode_object->file_handle, "\xEF\xBB\xBF" );
-			call_user_func( [ $shortcode_object, $functie ] );
-			fclose( $shortcode_object->file_handle );
-			return new \WP_REST_Response(
-				[
-					'vervolg'  => 'download',
-					'status'   => '',
-					'file_uri' => $upload_dir['baseurl'] . $file,
-				]
-			);
-		} else {
-			return new \WP_REST_Response(
-				[
-					'vervolg' => 'home',
-					'status'  => self::status( new \WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
-					'html'    => self::goto_home(),
-				]
-			);
-		}
+		return self::download( $shortcode_object, $request->get_param( 'actie' ) );
 	}
 
 	/**

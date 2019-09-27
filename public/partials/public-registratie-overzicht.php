@@ -66,11 +66,9 @@ else :
 			<?php endforeach ?>
 	</tbody>
 </table>
-	<?php $this->form(); ?>
-	<div class="kleistad_row" style="padding-top:20px;" >
-		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_cursisten" >Download Cursisten</button>
-		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_abonnees" >Download Abonnees</button>
-		<button type="submit" name="kleistad_submit_registratie_overzicht" value="download_dagdelenkaarten" >Download Dagdelenkaarten</button>
-	</div>
-</form>
+<div class="kleistad_row" style="padding-top:20px;" >
+	<button type="button" class="kleistad_download_link" data-actie="cursisten" >Download Cursisten</button>
+	<button type="button" class="kleistad_download_link" data-actie="abonnees" >Download Abonnees</button>
+	<button type="button" class="kleistad_download_link" data-actie="dagdelenkaarten" >Download Dagdelenkaarten</button>
+</div>
 <?php endif; ?>

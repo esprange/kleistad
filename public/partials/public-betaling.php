@@ -11,7 +11,7 @@
 
 if ( isset( $data['actie'] ) ) :
 
-	if ( Public_Betaling::ACTIE_RESTANT_CURSUS === $data['actie'] ) :
+	if ( \Kleistad\Public_Betaling::ACTIE_RESTANT_CURSUS === $data['actie'] ) :
 		$inschrijfkosten = $data['cursus']->inschrijfkosten * $data['inschrijving']->aantal;
 		$restantkosten   = $data['cursus']->cursuskosten * $data['inschrijving']->aantal;
 		$cursuskosten    = $restantkosten + $inschrijfkosten;
@@ -84,7 +84,7 @@ if ( isset( $data['actie'] ) ) :
 		</div>
 		</form>
 			<?php
-	elseif ( Public_Betaling::ACTIE_VERVOLG_ABONNEMENT === $data['actie'] ) :
+	elseif ( \Kleistad\Public_Betaling::ACTIE_VERVOLG_ABONNEMENT === $data['actie'] ) :
 			$vervolg_datum            = strftime( '%d-%m-%y', $data['abonnement']->driemaand_datum );
 			$einde_overbrugging_datum = strftime( '%d-%m-%y', $data['abonnement']->reguliere_datum - 24 * 60 * 60 );
 			$incasso_datum            = strftime( '%d-%m-%y', $data['abonnement']->incasso_datum );
@@ -168,7 +168,7 @@ if ( isset( $data['actie'] ) ) :
 		</div>
 		</form>
 		<?php
-	elseif ( Public_Betaling::ACTIE_WORKSHOP === $data['actie'] ) :
+	elseif ( \Kleistad\Public_Betaling::ACTIE_WORKSHOP === $data['actie'] ) :
 		$this->form();
 		?>
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']->id ); ?>" />

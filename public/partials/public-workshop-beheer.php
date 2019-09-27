@@ -230,10 +230,8 @@ else :
 		<?php endforeach ?>
 		</tbody>
 	</table>
-		<?php $this->form(); ?>
-		<button type="button" class="kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
-		<button type="submit" name="kleistad_submit_workshop_beheer" value="download_workshops" >Download</button>
-	</form>
+	<button type="button" class="kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+	<button type="button" class="kleistad_download_link" data-actie="workshops" >Download</button>
 		<?php
 	endif;
 endif

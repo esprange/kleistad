@@ -215,35 +215,6 @@ abstract class ShortcodeForm extends Shortcode {
 	}
 
 	/**
-	 * Maak een tijdelijk bestand aan voor download.
-	 *
-	 * @since 5.7.0
-	 *
-	 * @param ShortcodeForm $shortcode De shortcode waarvoor de download plaatsvindt.
-	 * @param string        $functie   De shortcode functie die aangeroepen moet worden.
-	 * @return \WP_Error | array
-	 */
-	// private static function download( ShortcodeForm $shortcode, $functie ) {
-	// 	$error      = new \WP_Error();
-	// 	$upload_dir = wp_upload_dir();
-	// 	$file       = '/kleistad_tmp_' . uniqid() . '.csv';
-	// 	$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
-	// 	if ( false !== $result ) {
-	// 		$shortcode->file_handle = $result;
-	// 		fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
-	// 		call_user_func( [ $shortcode, $functie ] );
-	// 		fclose( $shortcode->file_handle );
-	// 		return [
-	// 			'vervolg'  => 'download',
-	// 			'file_uri' => $upload_dir['baseurl'] . $file,
-	// 		];
-	// 	} else {
-	// 		$error->add( 'file', 'bestand kon niet aangemaakt worden' );
-	// 		return $error;
-	// 	}
-	// }
-
-	/**
 	 * Verwerk een form submit via ajax call
 	 *
 	 * @since 5.7.0
@@ -265,9 +236,8 @@ abstract class ShortcodeForm extends Shortcode {
 				case 'test':
 					$result = $shortcode_object->test( $data );
 					break;
-				// case 'download':
-				// 	$result = self::download( $shortcode_object, str_replace( 'download_', '', $data['form_actie'] ) );
-				// 	break;
+				case 'download':
+					return self::download( $shortcode_object, str_replace( 'download_', '', $data['form_actie'] ) );
 				default:
 					$result = $shortcode_object->save( $data );
 					if ( ! is_wp_error( $result ) ) {
@@ -300,22 +270,4 @@ abstract class ShortcodeForm extends Shortcode {
 		);
 	}
 
-	/**
-	 * Ruim eventuele download files op.
-	 *
-	 * @since 5.7.0
-	 */
-	public static function cleanup_downloads() {
-		$upload_dir = wp_upload_dir();
-		$files      = glob( $upload_dir['basedir'] . '/kleistad_tmp_*.csv' );
-		$now        = time();
-
-		foreach ( $files as $file ) {
-			if ( is_file( $file ) ) {
-				if ( $now - filemtime( $file ) >= 60 * 60 * 24 ) {
-					unlink( $file );
-				}
-			}
-		}
-	}
 }

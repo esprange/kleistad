@@ -33,7 +33,6 @@ class Public_Betalingen extends ShortcodeForm {
 			$this->atts,
 			'kleistad_betalingen'
 		);
-		error_log( '$this->atts' . print_r( $this->atts, true ) );
 		switch ( $atts['type'] ) {
 			case 'cursus':
 				$data['inschrijvingen'] = [];

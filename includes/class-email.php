@@ -142,9 +142,6 @@ class Email {
 			$this->mailparams['content']
 		);
 
-		error_log( print_r( $this->mailparams, true ) );
-		error_log( print_r( $this->headers(), true ) );
-
 		return wp_mail(
 			$this->mailparams['to'],
 			$this->mailparams['subject'],

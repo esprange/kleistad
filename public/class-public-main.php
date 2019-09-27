@@ -405,7 +405,7 @@ class Public_Main {
 	 * Doe de dagelijkse cleanup
 	 */
 	public function daily_cleanup() {
-		\Kleistad\ShortcodeForm::cleanup_downloads();
+		\Kleistad\Shortcode::cleanup_downloads();
 	}
 
 	/**

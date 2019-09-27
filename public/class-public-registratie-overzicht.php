@@ -14,7 +14,7 @@ namespace Kleistad;
 /**
  * De kleistad registratie overzicht class.
  */
-class Public_Registratie_Overzicht extends ShortcodeForm {
+class Public_Registratie_Overzicht extends Shortcode {
 
 	/**
 	 *
@@ -291,30 +291,6 @@ class Public_Registratie_Overzicht extends ShortcodeForm {
 				fputcsv( $this->file_handle, $gebruiker_dagdelenkaart_gegevens, ';', '"' );
 			}
 		}
-	}
-
-	/**
-	 * Valideer/sanitize form (dummy)
-	 *
-	 * @param array $data Gevalideerde data.
-	 * @return bool
-	 *
-	 * @since   5.5.2
-	 */
-	protected function validate( &$data ) {
-		return true;
-	}
-
-	/**
-	 * Bewaar form gegevens (dummy)
-	 *
-	 * @param array $data te bewaren data.
-	 * @return array
-	 *
-	 * @since   5.5.2
-	 */
-	protected function save( $data ) {
-		return [];
 	}
 
 }

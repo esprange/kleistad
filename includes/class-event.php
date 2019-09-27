@@ -85,7 +85,6 @@ class Event {
 				$extendedproperties = $this->event->getExtendedProperties();
 				$this->properties   = $extendedproperties->getPrivate();
 			} catch ( \Google_Service_exception $e ) {
-				error_log( 'construct catch event' );
 				$organizer = new \Google_Service_Calendar_EventOrganizer();
 				$organizer->setDisplayName( wp_get_current_user()->display_name );
 				$organizer->setEmail( wp_get_current_user()->user_email );
@@ -113,7 +112,7 @@ class Event {
 	 * Wijzig het event naar een herhalend event
 	 *
 	 * @param \DateTime $eind      Einddatum.
-	 * @param bool     $wekelijks Wekelijks herhalen indien waar.
+	 * @param bool      $wekelijks Wekelijks herhalen indien waar.
 	 */
 	public function herhalen( $eind, $wekelijks = true ) {
 		$freq  = $wekelijks ? 'WEEKLY' : 'DAILY';
@@ -213,7 +212,6 @@ class Event {
 	 * param string Het event id.
 	 */
 	public function save() {
-		error_log( 'save event' );
 		$extendedproperties = $this->event->getExtendedProperties();
 		$extendedproperties->setPrivate( $this->properties );
 		$this->event->setExtendedProperties( $extendedproperties );
