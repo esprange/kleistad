@@ -89,13 +89,11 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * Prepareer 'cursus_beheer' form
 	 *
 	 * @param array $data data voor display.
-	 * @return \WP_Error|bool
+	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data = null ) {
-		$error = new \WP_Error();
-
 		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING ) ?? filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
 		if ( is_null( $data['actie'] ) ) {
 			$data['actie'] = '-';

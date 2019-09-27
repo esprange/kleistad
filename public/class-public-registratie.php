@@ -96,8 +96,6 @@ class Public_Registratie extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$error = new \WP_Error();
-
 		$gebruiker_id = Public_Main::upsert_user(
 			[
 				'ID'         => $data['input']['gebruiker_id'],
@@ -117,8 +115,7 @@ class Public_Registratie extends ShortcodeForm {
 				'vervolg' => 'home',
 			];
 		} else {
-			$error->add( '', $gebruiker_id->get_error_message() );
-			return $error;
+			return new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' );
 		}
 	}
 }

@@ -1,3 +1,5 @@
+/* global: FileReader */
+
 ( function( $ ) {
     'use strict';
 

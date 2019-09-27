@@ -75,7 +75,7 @@ class Event {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param string|Google_Service_Calendar_Event $event event welke geladen moet worden.
+	 * @param string|\Google_Service_Calendar_Event $event event welke geladen moet worden.
 	 * @throws \Exception Er is geen connectie.
 	 */
 	public function __construct( $event ) {

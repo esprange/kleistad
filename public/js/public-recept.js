@@ -1,4 +1,5 @@
 /* global kleistadData */
+/* global: sessionStorage */
 
 ( function( $ ) {
     'use strict';

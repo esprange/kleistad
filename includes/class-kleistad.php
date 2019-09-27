@@ -148,7 +148,7 @@ class Kleistad {
 	 * Referentie naar de class die de hooks laadt.
 	 *
 	 * @since     4.0.87
-	 * @return    Kleistad_Loader    de loader.
+	 * @return    \Kleistad\Loader    de loader.
 	 */
 	public function get_loader() {
 		return $this->loader;

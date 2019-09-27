@@ -359,6 +359,7 @@ function strtodate( value ) {
 			.on( 'click', 'button[type="submit"]',
 				function( event ) {
 					$( this ).closest( 'form' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
+					return true;
 				}
 			)
 			/**
@@ -370,6 +371,7 @@ function strtodate( value ) {
 					var shortcodeData = shortcode( $anchor );
 					event.preventDefault();
 					getItem( getShortcode( $anchor ), shortcodeData );
+					return true;
 				}
 			)
 			/**
@@ -389,6 +391,7 @@ function strtodate( value ) {
 					}
 					event.preventDefault();
 					getItem( getShortcode( $anchor ), shortcodeData );
+					return true;
 				}
 			)
 			/**
@@ -401,6 +404,7 @@ function strtodate( value ) {
 					var formData      = new FormData( $button.closest( 'form' ) );
 					formData.append( 'form_actie', 'none' );
 					getItems( getShortcode( $button ), shortcodeData );
+					return true;
 				}
 			)
 			/**
@@ -413,6 +417,7 @@ function strtodate( value ) {
 					var formData      = new FormData( $button.closest( 'form' ) );
 					formData.append( 'form_actie', 'download' );
 					download( getShortcode( $button ), shortcodeData );
+					return true;
 				}
 			)
 			/**
@@ -439,6 +444,7 @@ function strtodate( value ) {
 						return false;
 					}
 					submitForm( getShortcode( $form ), formData );
+					return true;
 				}
 			)
 			/**

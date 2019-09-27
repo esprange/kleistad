@@ -412,7 +412,7 @@ class Public_Main {
 	 * Insert of update de gebruiker.
 	 *
 	 * @param array $userdata De gebruiker gegevens, inclusief contact informatie.
-	 * @return int|WP_Error  De user_id of een error object.
+	 * @return int|\WP_Error  De user_id of een error object.
 	 */
 	public static function upsert_user( $userdata ) {
 		$nice_voornaam   = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata['first_name'] ) ) );

@@ -40,13 +40,28 @@ abstract class ShortcodeForm extends Shortcode {
 	abstract protected function validate( &$data );
 
 	/**
-	 * Save functie, wordt gebruikt bij formulieren
+	 * Save functie, wordt gebruikt bij formulieren.
 	 *
 	 * @since   4.0.87
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return \WP_ERROR|array
 	 */
 	abstract protected function save( $data );
+
+	/**
+	 * Test functie, eventueel te overschrijven in child class.
+	 *
+	 * @param array $data de te gebruiken testdata.
+	 * @return array
+	 */
+	protected function test( $data ) {
+		if ( isset( $data ) ) {
+			return [
+				'status'  => '',
+				'vervolg' => 'none',
+			];
+		};
+	}
 
 	/**
 	 * Valideer opvoeren nieuwe gebruiker

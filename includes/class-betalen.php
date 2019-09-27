@@ -148,7 +148,7 @@ class Betalen {
 	/**
 	 * Controleer of de order gelukt is.
 	 *
-	 * @return WP_ERROR | string de status van de betaling als tekst of leeg als er geen betaling is.
+	 * @return \WP_ERROR | string de status van de betaling als tekst of leeg als er geen betaling is.
 	 */
 	public static function controleer() {
 		$error              = new \WP_Error();

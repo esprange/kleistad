@@ -227,7 +227,7 @@ abstract class Shortcode {
 	 * Helper functie, geef het object terug of een foutboodschap.
 	 *
 	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return \WP_REST_Response || \Kleistad\Shortcode de response.
+	 * @return \WP_REST_Response|\Kleistad\Shortcode de response.
 	 */
 	protected static function get_shortcode_object( \WP_REST_Request $request ) {
 		$tag   = $request->get_param( 'tag' );
