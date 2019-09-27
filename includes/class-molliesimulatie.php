@@ -311,10 +311,8 @@ class MollieSimulatie {
 
 			/**
 			 * Maak een customer aan.
-			 *
-			 * @param array $arr wordt niet gebruikt.
 			 */
-			public function create( $arr ) {
+			public function create() {
 				$customer = $this->get();
 				return $customer;
 			}

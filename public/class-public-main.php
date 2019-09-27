@@ -316,7 +316,7 @@ class Public_Main {
 	}
 
 	/**
-	 * Uitbreiding WP_User object met adres gegevens
+	 * Uitbreiding \WP_User object met adres gegevens
 	 *
 	 * @since 4.5.1
 	 *

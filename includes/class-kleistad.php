@@ -29,7 +29,7 @@ class Kleistad {
 	 * @since    4.0.87
 	 *
 	 * @access   protected
-	 * @var      Kleistad_Loader    $loader    Beheert en registreert alle hooks van de plugin.
+	 * @var      \Kleistad\Loader    $loader    Beheert en registreert alle hooks van de plugin.
 	 */
 	protected $loader;
 

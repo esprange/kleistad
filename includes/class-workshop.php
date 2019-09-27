@@ -182,7 +182,7 @@ class Workshop extends Entity {
 			$event->start      = new \DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
 			$event->eind       = new \DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			$event->save();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			error_log ( $e->getMessage() ); // phpcs:ignore
 		}
 
@@ -203,7 +203,7 @@ class Workshop extends Entity {
 			try {
 				$event = new \Kleistad\Event( $this->event_id );
 				$event->delete();
-			} catch ( Exception $e ) {
+			} catch ( \Exception $e ) {
 				unset( $e ); // phpcs:ignore
 			}
 		} else {
@@ -262,7 +262,7 @@ class Workshop extends Entity {
 			try {
 				$event = new \Kleistad\Event( $this->event_id );
 				$event->delete();
-			} catch ( Exception $e ) {
+			} catch ( \Exception $e ) {
 				unset( $e ); // phpcs:ignore
 			}
 		}

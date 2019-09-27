@@ -38,6 +38,13 @@ abstract class Shortcode {
 	protected $options;
 
 	/**
+	 * File handle voor download bestanden
+	 *
+	 * @var resource de file pointer.
+	 */
+	protected $file_handle;
+
+	/**
 	 * Controleer toegang tot deze shortcode.
 	 *
 	 * @since 5.7.2
@@ -108,7 +115,7 @@ abstract class Shortcode {
 	 *
 	 * @since 5.7.0
 	 *
-	 * @param string | array | WP_Error $result Het resultaat dat getoond moet worden.
+	 * @param string | array | \WP_Error $result Het resultaat dat getoond moet worden.
 	 */
 	public static function status( $result ) {
 		$html = '';
@@ -154,20 +161,20 @@ abstract class Shortcode {
 	 * @param array  $options     Plugin opties.
 	 * @param array  $access      Roles voor shortcode toegang.
 	 *
-	 * @throws Exception          Foutmelding ingeval de shortcode meerdere keren op de pagina voorkomt.
+	 * @throws \Exception          Foutmelding ingeval de shortcode meerdere keren op de pagina voorkomt.
 	 */
 	public function __construct( $shortcode, $atts, $options, $access = [] ) {
 		static $active_shortcodeforms = [];
 		try {
 			if ( in_array( $shortcode, $active_shortcodeforms, true ) ) {
-				throw new Exception( "Pagina bevat meer dan een identieke $shortcode aanroep" );
+				throw new \Exception( "Pagina bevat meer dan een identieke $shortcode aanroep" );
 			} else {
 				$active_shortcodeforms[] = $shortcode;
 				$this->atts              = $atts;
 				$this->options           = $options;
 				$this->shortcode         = $shortcode;
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 	}
@@ -218,6 +225,9 @@ abstract class Shortcode {
 
 	/**
 	 * Helper functie, geef het object terug of een foutboodschap.
+	 *
+	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
+	 * @return \WP_REST_Response || \Kleistad\Shortcode de response.
 	 */
 	protected static function get_shortcode_object( \WP_REST_Request $request ) {
 		$tag   = $request->get_param( 'tag' );
@@ -240,7 +250,7 @@ abstract class Shortcode {
 	 * Get an item and display it.
 	 *
 	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return WP_REST_Response de response.
+	 * @return \WP_REST_Response de response.
 	 */
 	public static function callback_getitem( \WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
@@ -260,7 +270,7 @@ abstract class Shortcode {
 	 * Get an item and display it.
 	 *
 	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return WP_REST_Response de response.
+	 * @return \WP_REST_Response de response.
 	 */
 	public static function callback_download( \WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );

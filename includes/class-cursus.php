@@ -230,7 +230,7 @@ class Cursus extends Entity {
 					break;
 			}
 			$event->save();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			error_log ( $e->getMessage() ); // phpcs:ignore
 		}
 		return $this->id;
@@ -253,7 +253,7 @@ class Cursus extends Entity {
 			try {
 				$event = new \Kleistad\Event( $this->event_id );
 				$event->delete();
-			} catch ( Exception $e ) {
+			} catch ( \Exception $e ) {
 				unset( $e ); // phpcs:ignore
 			}
 		} else {

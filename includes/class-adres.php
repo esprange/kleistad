@@ -57,7 +57,7 @@ class Adres {
 	 * @since      5.2.0
 	 *
 	 * @param \WP_REST_Request $request het request.
-	 * @return WP_REST_Response|WP_Error de response of de error.
+	 * @return \WP_REST_Response|\WP_Error de response of de error.
 	 */
 	public static function callback_adres_zoeken( \WP_REST_Request $request ) {
 		$postcode = $request->get_param( 'postcode' );

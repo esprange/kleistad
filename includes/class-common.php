@@ -100,7 +100,7 @@ class Common {
 	 *
 	 * @param string  $url De bestaande url als er niets gewijzigd wordt.
 	 * @param object  $request Wordt niet gebruikt.
-	 * @param WP_User $user Het WordPress user object.
+	 * @param \WP_User $user Het WordPress user object.
 	 * @return string De Url.
 	 */
 	public function login_redirect( $url, $request, $user ) {
@@ -126,7 +126,7 @@ class Common {
 	 *
 	 * @staticvar bool $is_active Bewaart de activeringsstatus, als true dan niets doen.
 	 * @param string   $items     De menu opties.
-	 * @param stdClass $args      De argumenten van het filter.
+	 * @param \stdClass $args      De argumenten van het filter.
 	 * @return string
 	 */
 	public function loginuit_menu( $items, $args ) {

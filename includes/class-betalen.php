@@ -176,7 +176,7 @@ class Betalen {
 				$error->add( 'betalen', 'De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.' );
 			}
 			return $error;
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
 			return '';
 		}
@@ -215,7 +215,7 @@ class Betalen {
 					]
 				);
 				return $subscriptie->id;
-			} catch ( Exception $e ) {
+			} catch ( \Exception $e ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
 		}
@@ -239,7 +239,7 @@ class Betalen {
 					$mollie_gebruiker->cancelSubscription( $subscriptie_id );
 				}
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return '';
@@ -261,7 +261,7 @@ class Betalen {
 				$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
 				return $subscription->isActive();
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
@@ -280,7 +280,7 @@ class Betalen {
 				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
 				return $mollie_gebruiker->hasValidMandate();
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
@@ -306,7 +306,7 @@ class Betalen {
 				}
 				return true;
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
@@ -360,7 +360,7 @@ class Betalen {
 					}
 				}
 				return $html;
-			} catch ( Exception $e ) {
+			} catch ( \Exception $e ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
 				return '';
 			}

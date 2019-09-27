@@ -204,7 +204,7 @@ class Saldo {
 	 * Verplaatst vanuit class reservering.
 	 *
 	 * @since 4.5.1
-	 * @throws Exception Als het saldo of de reservering niet opgeslagen kan worden.
+	 * @throws \Exception Als het saldo of de reservering niet opgeslagen kan worden.
 	 */
 	public static function meld_en_verwerk() {
 		global $wpdb;
@@ -258,16 +258,16 @@ class Saldo {
 								]
 							);
 						} else {
-							throw new Exception( 'stooksaldo van gebruiker ' . $medestoker->display_name . ' kon niet aangepast worden met kosten ' . $bedrag );
+							throw new \Exception( 'stooksaldo van gebruiker ' . $medestoker->display_name . ' kon niet aangepast worden met kosten ' . $bedrag );
 						}
 					}
 					$reservering->verwerkt = true;
 					$result                = $reservering->save();
 					if ( 0 === $result ) {
-						throw new Exception( 'reservering met id ' . $reservering->id . ' kon niet aangepast worden' );
+						throw new \Exception( 'reservering met id ' . $reservering->id . ' kon niet aangepast worden' );
 					}
 					$wpdb->query( 'COMMIT' );
-				} catch ( Exception $e ) {
+				} catch ( \Exception $e ) {
 					$wpdb->query( 'ROLLBACK' );
 					error_log( 'stooksaldo verwerking: ' . $e->getMessage() ); // phpcs:ignore
 				}

@@ -206,7 +206,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * Bewaar 'cursus_beheer' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return WP_Error | array
+	 * @return \WP_Error | array
 	 *
 	 * @since   4.0.87
 	 */

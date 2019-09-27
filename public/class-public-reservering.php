@@ -272,7 +272,7 @@ class Public_Reservering extends Shortcode {
 	 * Callback from Ajax request
 	 *
 	 * @param \WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response Ajax response.
+	 * @return \WP_REST_Response Ajax response.
 	 */
 	public static function callback_show( \WP_REST_Request $request ) {
 		$oven_id = intval( $request->get_param( 'oven_id' ) );
@@ -295,7 +295,7 @@ class Public_Reservering extends Shortcode {
 	 * Callback from Ajax request
 	 *
 	 * @param \WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response Ajax response.
+	 * @return \WP_REST_Response Ajax response.
 	 */
 	public static function callback_muteer( \WP_REST_Request $request ) {
 		$input       = $request->get_param( 'reservering' );

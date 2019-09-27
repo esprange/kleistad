@@ -18,8 +18,8 @@ namespace Kleistad;
  *
  * @property bool     vervallen
  * @property bool     definitief
- * @property DateTime start
- * @property DateTime eind
+ * @property \DateTime start
+ * @property \DateTime eind
  * @property string   titel
  * @property string   id
  * @property array    properties
@@ -31,7 +31,7 @@ class Event {
 	/**
 	 * Het Google event object.
 	 *
-	 * @var Google_Service_Calendar_Event $event Het event.
+	 * @var \Google_Service_Calendar_Event $event Het event.
 	 */
 	protected $event;
 
@@ -43,10 +43,10 @@ class Event {
 	protected $properties = [];
 
 	/**
-	 * Converteer DateTime object naar Google datetime format, zoals '2015-05-28T09:00:00-07:00'.
+	 * Converteer \DateTime object naar Google datetime format, zoals '2015-05-28T09:00:00-07:00'.
 	 *
 	 * @param \DateTime $datetime Het datetime object.
-	 * @return Google_Service_Calendar_EventDateTime De tijd in Google datetime format.
+	 * @return \Google_Service_Calendar_EventDateTime De tijd in Google datetime format.
 	 */
 	private function to_google_dt( \DateTime $datetime ) {
 		$google_datetime = new \Google_Service_Calendar_EventDateTime();
@@ -56,10 +56,10 @@ class Event {
 	}
 
 	/**
-	 * Converteer Google datetime object, zoals '2015-05-28T09:00:00-07:00' naar DateTime object.
+	 * Converteer Google datetime object, zoals '2015-05-28T09:00:00-07:00' naar \DateTime object.
 	 *
-	 * @param Google_Service_Calendar_EventDateTime $google_datetime Het datetime object.
-	 * @return DateTime Het php DateTime object.
+	 * @param \Google_Service_Calendar_EventDateTime $google_datetime Het datetime object.
+	 * @return \DateTime Het php \DateTime object.
 	 */
 	private function from_google_dt( $google_datetime ) {
 		if ( ! empty( $google_datetime->getTimeZone() ) ) {
@@ -76,7 +76,7 @@ class Event {
 	 * @since 5.0.0
 	 *
 	 * @param string|Google_Service_Calendar_Event $event event welke geladen moet worden.
-	 * @throws Exception Er is geen connectie.
+	 * @throws \Exception Er is geen connectie.
 	 */
 	public function __construct( $event ) {
 		if ( is_string( $event ) ) {
@@ -112,7 +112,7 @@ class Event {
 	/**
 	 * Wijzig het event naar een herhalend event
 	 *
-	 * @param DateTime $eind      Einddatum.
+	 * @param \DateTime $eind      Einddatum.
 	 * @param bool     $wekelijks Wekelijks herhalen indien waar.
 	 */
 	public function herhalen( $eind, $wekelijks = true ) {
@@ -124,7 +124,7 @@ class Event {
 	/**
 	 * Wijzig het event naar een herhalend event
 	 *
-	 * @param array $datums Datums als DateTime object.
+	 * @param array $datums Datums als \DateTime object.
 	 */
 	public function patroon( $datums ) {
 		unset( $datums[0] );

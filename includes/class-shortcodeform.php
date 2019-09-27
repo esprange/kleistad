@@ -17,13 +17,6 @@ namespace Kleistad;
 abstract class ShortcodeForm extends Shortcode {
 
 	/**
-	 * File handle voor download bestanden
-	 *
-	 * @var resource de file pointer.
-	 */
-	protected $file_handle;
-
-	/**
 	 * Redirect voor o.a. ideal betalingen
 	 *
 	 * @var string de url voor een redirect terug naar de site.
@@ -158,7 +151,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @since 5.7.0
 	 *
 	 * @param string $extra De eventuele extra toe te voegen attributen.
-	 * @throws Exception    Als de json encode faalt.
+	 * @throws \Exception    Als de json encode faalt.
 	 */
 	protected function form( $extra = null ) {
 		?>
@@ -213,34 +206,34 @@ abstract class ShortcodeForm extends Shortcode {
 	 *
 	 * @param ShortcodeForm $shortcode De shortcode waarvoor de download plaatsvindt.
 	 * @param string        $functie   De shortcode functie die aangeroepen moet worden.
-	 * @return WP_Error | array
+	 * @return \WP_Error | array
 	 */
-	private static function download( ShortcodeForm $shortcode, $functie ) {
-		$error      = new \WP_Error();
-		$upload_dir = wp_upload_dir();
-		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
-		$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
-		if ( false !== $result ) {
-			$shortcode->file_handle = $result;
-			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
-			call_user_func( [ $shortcode, $functie ] );
-			fclose( $shortcode->file_handle );
-			return [
-				'vervolg'  => 'download',
-				'file_uri' => $upload_dir['baseurl'] . $file,
-			];
-		} else {
-			$error->add( 'file', 'bestand kon niet aangemaakt worden' );
-			return $error;
-		}
-	}
+	// private static function download( ShortcodeForm $shortcode, $functie ) {
+	// 	$error      = new \WP_Error();
+	// 	$upload_dir = wp_upload_dir();
+	// 	$file       = '/kleistad_tmp_' . uniqid() . '.csv';
+	// 	$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
+	// 	if ( false !== $result ) {
+	// 		$shortcode->file_handle = $result;
+	// 		fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
+	// 		call_user_func( [ $shortcode, $functie ] );
+	// 		fclose( $shortcode->file_handle );
+	// 		return [
+	// 			'vervolg'  => 'download',
+	// 			'file_uri' => $upload_dir['baseurl'] . $file,
+	// 		];
+	// 	} else {
+	// 		$error->add( 'file', 'bestand kon niet aangemaakt worden' );
+	// 		return $error;
+	// 	}
+	// }
 
 	/**
 	 * Verwerk een form submit via ajax call
 	 *
 	 * @since 5.7.0
 	 * @param  \WP_REST_Request $request De callback parameters.
-	 * @return WP_REST_Response de response.
+	 * @return \WP_REST_Response de response.
 	 */
 	public static function callback_formsubmit( \WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
@@ -257,9 +250,9 @@ abstract class ShortcodeForm extends Shortcode {
 				case 'test':
 					$result = $shortcode_object->test( $data );
 					break;
-				case 'download':
-					$result = self::download( $shortcode_object, str_replace( 'download_', '', $data['form_actie'] ) );
-					break;
+				// case 'download':
+				// 	$result = self::download( $shortcode_object, str_replace( 'download_', '', $data['form_actie'] ) );
+				// 	break;
 				default:
 					$result = $shortcode_object->save( $data );
 					if ( ! is_wp_error( $result ) ) {
