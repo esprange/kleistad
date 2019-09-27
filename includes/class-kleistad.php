@@ -9,6 +9,8 @@
  * @subpackage Kleistad/includes
  */
 
+namespace Kleistad;
+
 /**
  * Include deze admin functie om de plugin versie te achterhalen uit de header van het hoofdplugin script.
  */
@@ -18,9 +20,6 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
  * De Kleistad plugin class.
  *
  * @since      4.0.87
- *
- * @package    Kleistad
- * @subpackage Kleistad/includes
  */
 class Kleistad {
 
@@ -52,33 +51,11 @@ class Kleistad {
 
 		$data          = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'kleistad.php', false, false );
 		$this->version = $data['Version'];
-		self::register_autoloader();
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
 		$this->define_admin_hooks();
 		$this->define_common_hooks();
 		$this->define_public_hooks();
-	}
-
-	/**
-	 * Autoloader, laadt alle classes.
-	 */
-	public static function register_autoloader() {
-		spl_autoload_register(
-			function ( $class ) {
-				$file     = 'class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
-				$path     = plugin_dir_path( dirname( __FILE__ ) );
-				$dir      = ( false === strpos( $file, 'kleistad-public' ) ) ? ( ( false === strpos( $file, 'kleistad-admin' ) ) ? 'includes/' : 'admin/' ) : 'public/';
-				$filepath = $path . $dir . $file;
-				if ( file_exists( $filepath ) ) {
-					require $filepath;
-					return true;
-				}
-				return false;
-			},
-			true, // Throw error if registration fails.
-			true // Prepend this loader.
-		);
 	}
 
 	/**
@@ -88,7 +65,7 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function load_dependencies() {
-		$this->loader = new Kleistad_Loader();
+		$this->loader = new \Kleistad\Loader();
 	}
 
 	/**
@@ -99,7 +76,7 @@ class Kleistad {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Kleistad_Admin( $this->get_version(), self::get_options() );
+		$plugin_admin = new \Kleistad\Admin_Main( $this->get_version(), self::get_options() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts_and_styles' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
@@ -118,7 +95,7 @@ class Kleistad {
 	 * @access  private
 	 */
 	private function define_common_hooks() {
-		$plugin_common = new Kleistad_Common();
+		$plugin_common = new \Kleistad\Common();
 
 		$this->loader->add_action( 'wp_login', $plugin_common, 'user_login', 10, 2 );
 		$this->loader->add_action( 'login_enqueue_scripts', $plugin_common, 'login_enqueue_scripts' );
@@ -139,7 +116,7 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		$plugin_public = new Kleistad_Public( $this->get_version(), self::get_options() );
+		$plugin_public = new \Kleistad\Public_Main( $this->get_version(), self::get_options() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );

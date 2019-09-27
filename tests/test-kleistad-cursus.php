@@ -21,12 +21,12 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	 * Test creation and modification of a cursus.
 	 */
 	public function test_cursus() {
-		$cursus1       = new Kleistad_Cursus();
+		$cursus1       = new  \Kleistad\Cursus();
 		$cursus1->naam = 'test cursus';
 		$cursus_id     = $cursus1->save();
 		$this->assertTrue( $cursus_id > 0, 'save cursus no id' );
 
-		$cursus2 = new Kleistad_Cursus( $cursus_id );
+		$cursus2 = new  \Kleistad\Cursus( $cursus_id );
 		$this->assertEquals( 'test cursus', $cursus2->naam, 'naam cursus not equal' );
 
 		$cursus2->technieken = [ 'techniek1', 'techniek2' ];
@@ -42,13 +42,13 @@ class KleistadCursusTest extends WP_UnitTestCase {
 		$teststring = 'test cursussen';
 		$cursussen  = [];
 		for ( $i = 0; $i < 10; $i++ ) {
-			$cursussen[ $i ]         = new Kleistad_Cursus();
+			$cursussen[ $i ]         = new  \Kleistad\Cursus();
 			$cursussen[ $i ]->naam   = "$teststring$i";
 			$cursussen[ $i ]->docent = $i;
 			$cursussen[ $i ]->save();
 		}
 
-		$cursussen = Kleistad_Cursus::all();
+		$cursussen =  \Kleistad\Cursus::all();
 		foreach ( $cursussen as $cursus ) {
 			if ( substr( $cursus->naam, 0, strlen( $teststring ) ) === $teststring ) {
 				$this->assertEquals( $teststring . $cursus->docent, $cursus->naam, 'naam cursussen not equal' );
@@ -62,15 +62,15 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	 */
 	public function test_inschrijving() {
 		$cursist_id          = $this->factory->user->create();
-		$cursus              = new Kleistad_Cursus();
+		$cursus              = new  \Kleistad\Cursus();
 		$cursus->start_datum = strtotime( 'now' );
 		$cursus_id           = $cursus->save();
 
-		$inschrijving1            = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
+		$inschrijving1            = new \Kleistad\Inschrijving( $cursist_id, $cursus_id );
 		$inschrijving1->opmerking = 'test inschrijving';
 		$inschrijving1->save();
 
-		$inschrijving2 = new Kleistad_Inschrijving( $cursist_id, $cursus_id );
+		$inschrijving2 = new \Kleistad\Inschrijving( $cursist_id, $cursus_id );
 		$this->assertEquals( 'test inschrijving', $inschrijving2->opmerking, 'opmerking inschrijving not equal' );
 
 		$inschrijving2->technieken = [ 'techniek1', 'techniek2' ];
@@ -83,18 +83,18 @@ class KleistadCursusTest extends WP_UnitTestCase {
 	 */
 	public function test_inschrijvingen() {
 		$cursist_ids = $this->factory->user->create_many( 10 );
-		$cursus      = new Kleistad_Cursus();
+		$cursus      = new  \Kleistad\Cursus();
 		$cursus->save();
 
 		$teststring     = 'test inschrijvingen';
 		$inschrijvingen = [];
 		for ( $i = 0; $i < 3; $i++ ) {
-			$inschrijvingen[ $i ]            = new Kleistad_Inschrijving( $cursist_ids[ $i ], $cursus->id );
+			$inschrijvingen[ $i ]            = new \Kleistad\Inschrijving( $cursist_ids[ $i ], $cursus->id );
 			$inschrijvingen[ $i ]->opmerking = "$teststring{$cursist_ids[$i]}";
 			$inschrijvingen[ $i ]->save();
 		}
 
-		$inschrijvingen = Kleistad_Inschrijving::all();
+		$inschrijvingen = \Kleistad\Inschrijving::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $cursist_inschrijving ) {
 				if ( substr( $cursist_inschrijving->opmerking, 0, strlen( $teststring ) ) === $teststring ) {

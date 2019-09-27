@@ -1,12 +1,12 @@
 # Kleistad #
-**Contributors:** [Eric Sprangers](https://profiles.wordpress.org/Eric Sprangers)  
-**Donate link:** https://www.kleistad.nl  
-**Tags:** kleistad, ceramics  
-**Requires at least:** 4.8.0  
-**Tested up to:** 5.2.2  
-**Stable tag:** 5.7.2  
-**License:** GPLv3 or later  
-**License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
+**Contributors:** [Eric Sprangers](https://profiles.wordpress.org/Eric Sprangers)
+**Donate link:** https://www.kleistad.nl
+**Tags:** kleistad, ceramics
+**Requires at least:** 4.8.0
+**Tested up to:** 5.2.2
+**Stable tag:** 5.7.2
+**License:** GPLv3 or later
+**License URI:** http://www.gnu.org/licenses/gpl-3.0.html
 
 [![Build Status](https://travis-ci.org/esprange/kleistad.svg?branch=master)](https://travis-ci.org/esprange/kleistad)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
@@ -193,10 +193,10 @@ geen.
 
 Deze plugin voegt vier tabellen toe aan de database:
 
-* kleistad_ovens
-* kleistad_reserveringen
-* kleistad_cursussen
-* kleistad_workshops
+*  \Kleistad\Ovens
+*  \Kleistad\Reserveringen
+*  \Kleistad\Cursussen
+*  \Kleistad\Workshops
 
 De plugin maakt gebruik van Mollie en de Google Calendar API
 

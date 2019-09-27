@@ -21,13 +21,13 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	 * Test creation and modification of an oven.
 	 */
 	public function test_oven() {
-		$oven1         = new Kleistad_Oven();
+		$oven1         = new  \Kleistad\Oven();
 		$oven1->naam   = 'test oven';
 		$oven1->kosten = 10;
 		$oven_id       = $oven1->save();
 		$this->assertTrue( $oven_id > 0, 'save oven no id' );
 
-		$oven2 = new Kleistad_Oven( $oven_id );
+		$oven2 = new  \Kleistad\Oven( $oven_id );
 		$this->assertEquals( 10, $oven2->kosten, 'kosten oven not equal' );
 		$this->assertEquals( 'test oven', $oven2->naam, 'naam oven not equal' );
 
@@ -43,13 +43,13 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		$teststring = 'test ovens';
 		$ovens      = [];
 		for ( $i = 0; $i < 10; $i++ ) {
-			$ovens[ $i ]         = new Kleistad_Oven();
+			$ovens[ $i ]         = new  \Kleistad\Oven();
 			$ovens[ $i ]->naam   = "$teststring$i";
 			$ovens[ $i ]->kosten = $i;
 			$ovens[ $i ]->save();
 		}
 
-		$ovens = Kleistad_Oven::all();
+		$ovens =  \Kleistad\Oven::all();
 		foreach ( $ovens as $oven ) {
 			if ( substr( $oven->naam, 0, strlen( $teststring ) ) === $teststring ) {
 				$this->assertEquals( $teststring . intval( $oven->kosten ), $oven->naam, 'naam ovens not equal' );
@@ -96,10 +96,10 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		];
 		$opmerking   = 'test remark';
 
-		$oven    = new Kleistad_Oven();
+		$oven    = new  \Kleistad\Oven();
 		$oven_id = $oven->save();
 
-		$reservering1               = new Kleistad_Reservering( $oven_id );
+		$reservering1               = new  \Kleistad\Reservering( $oven_id );
 		$reservering1->datum        = $datum;
 		$reservering1->gebruiker_id = $user_id;
 		$reservering1->temperatuur  = $temperatuur;
@@ -109,7 +109,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		$reservering1->opmerking    = $opmerking;
 		$reservering1->save();
 
-		$reservering2 = new Kleistad_Reservering( $oven_id );
+		$reservering2 = new  \Kleistad\Reservering( $oven_id );
 		// $this->assertTrue( $reservering2->find( date( 'Y', $datum ), date( 'm', $datum ), date( 'd', $datum ) ), 'existing reservering not found' );
 		$this->assertEquals( $datum, $reservering2->datum, 'datum reservering not equal' );
 		$this->assertEquals( $temperatuur, $reservering2->temperatuur, 'temperatuut reservering not equal' );
@@ -129,7 +129,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	 */
 	public function test_reserveringen() {
 
-		$oven    = new Kleistad_Oven();
+		$oven    = new  \Kleistad\Oven();
 		$oven_id = $oven->save();
 
 		$user_id = $this->factory->user->create(
@@ -141,7 +141,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		$teststring    = 'test reserveringen';
 		$reserveringen = [];
 		for ( $i = 0; $i < 10; $i++ ) {
-			$reserveringen[ $i ]               = new Kleistad_Reservering( $oven_id );
+			$reserveringen[ $i ]               = new  \Kleistad\Reservering( $oven_id );
 			$reserveringen[ $i ]->datum        = date( strtotime( "+ $i day" ) );
 			$reserveringen[ $i ]->gebruiker_id = $user_id;
 			$reserveringen[ $i ]->programma    = $i;
@@ -149,7 +149,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 			$reserveringen[ $i ]->save();
 		}
 
-		$reserveringen = Kleistad_Reservering::all();
+		$reserveringen =  \Kleistad\Reservering::all();
 		foreach ( $reserveringen as $reservering ) {
 			if ( substr( $reservering->opmerking, 0, strlen( $teststring ) ) === $teststring ) {
 				$this->assertEquals( 'test reserveringen' . intval( $reservering->programma ), $reservering->opmerking, 'opmerking reserveringen not equal' );
@@ -168,18 +168,18 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		);
 		$bedrag  = 123.45;
 
-		$saldo = new Kleistad_Saldo( $user_id );
+		$saldo = new  \Kleistad\Saldo( $user_id );
 		$this->assertEquals( 0.0, $saldo->bedrag, 'saldo initieel not zero' );
 		$saldo->bedrag = $bedrag;
 		$saldo->save( 'test 1' );
 
-		$saldo2 = new Kleistad_Saldo( $user_id );
+		$saldo2 = new  \Kleistad\Saldo( $user_id );
 		$this->assertEquals( $bedrag, $saldo2->bedrag, 'saldo not equal to ' . $bedrag );
 
 		$saldo2->bedrag = $saldo2->bedrag + $bedrag;
 		$saldo2->save( 'test 2' );
 
-		$saldo3 = new Kleistad_Saldo( $user_id );
+		$saldo3 = new  \Kleistad\Saldo( $user_id );
 		$this->assertEquals( $bedrag + $bedrag, $saldo3->bedrag, 'saldo not equal to ' . ( $bedrag + $bedrag ) );
 
 		$upload_dir     = wp_upload_dir();
@@ -192,7 +192,7 @@ class KleistadOvenTest extends WP_UnitTestCase {
 	 * Test the regelingen class.
 	 */
 	public function test_regelingen() {
-		$oven    = new Kleistad_Oven();
+		$oven    = new  \Kleistad\Oven();
 		$oven_id = $oven->save();
 
 		$user_id = $this->factory->user->create(

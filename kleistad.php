@@ -10,7 +10,7 @@
  * Plugin Name:       Kleistad
  * Plugin URI:        https://github.com/esprange/kleistad
  * Description:       Een plugin voor vereniging Kleistad. Oven reserveringen, stooksaldo administratie, cursus adminstratie en keramiek recepten.
- * Version:           5.7.2
+ * Version:           6.0.0
  * Author:            Eric Sprangers
  * Author URI:        https://www.kleistad.nl
  * License:           GPL-3.0+
@@ -24,43 +24,32 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
- * Plugin activering.
- */
-function activate_kleistad() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-kleistad-activator.php';
-	Kleistad_Activator::activate();
-}
-
-/**
- * Plugin deactivering.
- */
-function deactivate_kleistad() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-kleistad-deactivator.php';
-	Kleistad_Deactivator::deactivate();
-}
-
-register_activation_hook( __FILE__, 'activate_kleistad' );
-register_deactivation_hook( __FILE__, 'deactivate_kleistad' );
-
-/**
- * De basis plugin class die de admin en public hooks definieert.
- */
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-kleistad.php';
-
-/**
- * Externe libraries toevoegen.
+ * De autoloader toevoegen.
  */
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 /**
- * Start uitvoering van de plugin.
- *
- * @since    4.0.87
+ * Plugin activering.
  */
-function run_kleistad() {
+register_activation_hook(
+	__FILE__,
+	function() {
+		\Kleistad\Activator::activate();
+	}
+);
 
-	$plugin = new Kleistad();
-	$plugin->run();
+/**
+ * Plugin deactivering.
+ */
+register_deactivation_hook(
+	__FILE__,
+	function() {
+		\Kleistad\Deactivator::deactivate();
+	}
+);
 
-}
-run_kleistad();
+/**
+ * Start uitvoering van de plugin.
+ */
+$plugin = new \Kleistad\Kleistad();
+$plugin->run();

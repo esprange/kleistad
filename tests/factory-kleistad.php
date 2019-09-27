@@ -32,7 +32,7 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 * @return boolean
 	 */
 	public function create_object( $args ) {
-		$oven                  = new Kleistad_Oven();
+		$oven                  = new  \Kleistad\Oven();
 		$oven->naam            = $args['naam'];
 		$oven->kosten          = $args['kosten'];
 		$oven->beschikbaarheid = $args['beschikbaarheid'];
@@ -51,7 +51,7 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 * @return boolean
 	 */
 	public function update_object( $id, $args ) {
-		$oven                  = new Kleistad_Oven( $id );
+		$oven                  = new  \Kleistad\Oven( $id );
 		$oven->naam            = $args['naam'];
 		$oven->kosten          = $args['kosten'];
 		$oven->beschikbaarheid = $args['beschikbaarheid'];
@@ -68,7 +68,7 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 * @return \Kleistad_Oven the object.
 	 */
 	public function get_object_by_id( $id ) {
-		$oven = new Kleistad_Oven( $id );
+		$oven = new  \Kleistad\Oven( $id );
 		return $oven;
 	}
 
@@ -100,7 +100,7 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 * @return boolean
 	 */
 	public function create_object( $args ) {
-		$cursus             = new Kleistad_Cursus();
+		$cursus             = new  \Kleistad\Cursus();
 		$cursus->naam       = $args['naam'];
 		$cursus->docent     = $args['docent'];
 		$cursus->technieken = $args['technieken'];
@@ -119,7 +119,7 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 * @return boolean
 	 */
 	public function update_object( $id, $args ) {
-		$cursus             = new Kleistad_Cursus( $id );
+		$cursus             = new  \Kleistad\Cursus( $id );
 		$cursus->naam       = $args['naam'];
 		$cursus->docent     = $args['docent'];
 		$cursus->technieken = $args['technieken'];
@@ -136,7 +136,7 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 * @return \Kleistad_Oven the object.
 	 */
 	public function get_object_by_id( $id ) {
-		$cursus = new Kleistad_Cursus( $id );
+		$cursus = new  \Kleistad\Cursus( $id );
 		return $cursus;
 	}
 

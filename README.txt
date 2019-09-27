@@ -193,10 +193,10 @@ geen.
 
 Deze plugin voegt vier tabellen toe aan de database:
 
-* kleistad_ovens
-* kleistad_reserveringen
-* kleistad_cursussen
-* kleistad_workshops
+*  \Kleistad\Ovens
+*  \Kleistad\Reserveringen
+*  \Kleistad\Cursussen
+*  \Kleistad\Workshops
 
 De plugin maakt gebruik van Mollie en de Google Calendar API
 
