@@ -5,18 +5,20 @@
 
     $( document ).ready(
         function() {
-			/**
-			 * Initieer de datepicker.
-			 */
-			$( '#kleistad_datum' ).datepicker();
 
-			$( '#kleistad_workshop_beheer_form input[type=checkbox]' ).on( 'click',
+			$( '.kleistad_shortcode' )
+			/**
+			 * Voorkom dat checkboxes gewijzigd kunnen worden als readonly form.
+			 */
+			.on( 'click', '#kleistad_workshop_beheer_form input[type=checkbox]',
 				function() {
 					return ! $( this ).attr( 'readonly' );
 				}
-			);
-
-			$( '#kleistad_start_tijd' ).on( 'change',
+			)
+			/**
+			 * Bepaal de limieten van het start tijd invoerveld.
+			 */
+			.on( 'change', '#kleistad_start_tijd',
 				function() {
 					var startTijd = strtotime( $( this ).val() );
 					var eindTijd  = strtotime( $( '#kleistad_eind_tijd' ).val() );
@@ -24,9 +26,11 @@
 						$( '#kleistad_eind_tijd' ).val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
 					}
 				}
-			);
-
-			$( '#kleistad_eind_tijd' ).on( 'change',
+			)
+			/**
+			 * Bepaal de limieten voor het eind tijd invoerveld.
+			 */
+			.on( 'change', '#kleistad_eind_tijd',
 				function() {
 					var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
 					var eindTijd  = strtotime( $( this ).val() );
@@ -34,32 +38,40 @@
 						$( '#kleistad_start_tijd' ).val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
 					}
 				}
-			);
-
-			$( '#kleistad_kosten' ).on( 'change paste keyup',
+			)
+			/**
+			 * Pas de ex btw kosten aan als het incl btw kosten veld wijzigt.
+			 */
+			.on( 'change paste keyup', '#kleistad_kosten',
 				function() {
 					$( '#kleistad_kosten_ex_btw' ).val( ( $( this ).val() / 1.21 ).toFixed( 2 ) );
 				}
-			);
-
-			$( '#kleistad_kosten_ex_btw' ).on( 'change paste keyup',
+			)
+			/**
+			 * Pas de incl btw kosten aan als het excl btw kosten veld wijzigt.
+			 */
+			.on( 'change paste keyup', '#kleistad_kosten_ex_btw',
 				function() {
 					$( '#kleistad_kosten' ).val( ( $( this ).val() * 1.21 ).toFixed( 2 ) );
 				}
-			);
-
-			$( 'a.kleistad_workshop_unfold' ).on( 'click',
+			)
+			/**
+			 * Klap het veld uit.
+			 */
+			.on( 'click', 'a.kleistad_workshop_unfold',
 				function() {
-					$( this ).closest( 'div' ).toggleClass( 'kleistad_workshop_compact' );
-					$( this ).hide().closest( 'div' ).find( 'a.kleistad_workshop_fold' ).show();
+					$( this ).closest( '.kleistad_workshop_correspondentie' ).toggleClass( 'kleistad_workshop_compact' );
+					$( this ).hide().closest( '.kleistad_workshop_correspondentie' ).find( 'a.kleistad_workshop_fold' ).show();
 					return false;
 				}
-			);
-
-			$( 'a.kleistad_workshop_fold' ).on( 'click',
+			)
+			/**
+			 * Klap het veld in.
+			 */
+			.on( 'click', 'a.kleistad_workshop_fold',
 				function() {
-					$( this ).closest( 'div' ).toggleClass( 'kleistad_workshop_compact' );
-					$( this ).hide().closest( 'div' ).find( 'a.kleistad_workshop_unfold' ).show();
+					$( this ).closest( '.kleistad_workshop_correspondentie' ).toggleClass( 'kleistad_workshop_compact' );
+					$( this ).hide().closest( '.kleistad_workshop_correspondentie' ).find( 'a.kleistad_workshop_unfold' ).show();
 					return false;
 				}
 			);

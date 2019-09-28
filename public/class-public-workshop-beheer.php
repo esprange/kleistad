@@ -107,12 +107,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	protected function prepare( &$data = null ) {
-		$error = new \WP_Error();
-
-		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING ) ?? filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
-		if ( is_null( $data['actie'] ) ) {
-			$data['actie'] = '-';
-		}
 		$gebruikers       = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
@@ -136,46 +130,28 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			/*
 			 * Er is een workshop gekozen om te wijzigen.
 			 */
-			$workshop_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_wijzig_workshop_' . $workshop_id ) ) {
-				if ( ! isset( $data['workshop'] ) ) {
-					$data['workshop'] = $this->formulier( $workshop_id );
-				}
-			} else {
-				$error->add( 'security', 'Security fout! !' );
-				return $error;
+			if ( ! isset( $data['workshop'] ) ) {
+				$data['workshop'] = $this->formulier( $data['id'] );
 			}
 		} elseif ( 'inplannen' === $data['actie'] ) {
-			$casus_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_plan_workshop_' . $casus_id ) ) {
-				$casus         = get_post( $casus_id );
-				$casus_details = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-				if ( $casus_details['workshop_id'] ) {
-					$data['workshop'] = $this->formulier( $casus_details['workshop_id'] );
-				} else {
-					$data['workshop']                = wp_parse_args( $casus_details, $this->formulier() );
-					$data['workshop']['aanvraag_id'] = $casus_id;
-				}
+			$casus         = get_post( $data['id'] );
+			$casus_details = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+			if ( $casus_details['workshop_id'] ) {
+				$data['workshop'] = $this->formulier( $casus_details['workshop_id'] );
 			} else {
-				$error->add( 'security', 'Security fout! !' );
-				return $error;
+				$data['workshop']                = wp_parse_args( $casus_details, $this->formulier() );
+				$data['workshop']['aanvraag_id'] = $data['id'];
 			}
 		} elseif ( 'tonen' === $data['actie'] ) {
-			$casus_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-			if ( wp_verify_nonce( filter_input( INPUT_GET, '_wpnonce' ), 'kleistad_toon_aanvraag_' . $casus_id ) ) {
-				$casus         = get_post( $casus_id );
-				$data['casus'] = array_merge(
-					unserialize( $casus->post_excerpt ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-					[
-						'casus_id'        => $casus_id,
-						'correspondentie' => unserialize( base64_decode( $casus->post_content ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-						'datum'           => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
-					]
-				);
-			} else {
-				$error->add( 'security', 'Security fout! !' );
-				return $error;
-			}
+			$casus         = get_post( $data['id'] );
+			$data['casus'] = array_merge(
+				unserialize( $casus->post_excerpt ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+				[
+					'casus_id'        => $data['id'],
+					'correspondentie' => unserialize( base64_decode( $casus->post_content ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+					'datum'           => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
+				]
+			);
 		} else {
 			$data['workshops'] = $this->planning();
 			$data['aanvragen'] = $this->aanvragen();

@@ -1,12 +1,12 @@
 # Kleistad #
-**Contributors:** [Eric Sprangers](https://profiles.wordpress.org/Eric Sprangers)
-**Donate link:** https://www.kleistad.nl
-**Tags:** kleistad, ceramics
-**Requires at least:** 4.8.0
-**Tested up to:** 5.2.2
-**Stable tag:** 5.7.2
-**License:** GPLv3 or later
-**License URI:** http://www.gnu.org/licenses/gpl-3.0.html
+**Contributors:** [Eric Sprangers](https://profiles.wordpress.org/Eric Sprangers)  
+**Donate link:** https://www.kleistad.nl  
+**Tags:** kleistad, ceramics  
+**Requires at least:** 4.8.0  
+**Tested up to:** 5.2.2  
+**Stable tag:** 6.0.0  
+**License:** GPLv3 or later  
+**License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
 [![Build Status](https://travis-ci.org/esprange/kleistad.svg?branch=master)](https://travis-ci.org/esprange/kleistad)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
@@ -34,6 +34,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.0.0 ###
+* Alle functionaliteit nu volledig Ajax, geen page refresh noodzaak meer.
+* Code volledig herzien, gebruikt namespaces
+* Geen functionele aanpassingen.
 ### 5.7.2 ###
 * Registratie overzicht uitgebreid met info over dagdelenkaarten.
 ### 5.7.1 ###

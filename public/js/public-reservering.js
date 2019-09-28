@@ -306,29 +306,28 @@
 				kleistadShow( $( '#kleistad_reserveringen' ).data( 'maand' ), $( '#kleistad_reserveringen' ).data( 'jaar' )	);
 			}
 
+			$( '#kleistad_reserveringen' )
 			/**
              * Wijzig de periode als de gebruiker op eerder of later klikt.
              */
-            $( '#kleistad_reserveringen' ).on( 'click', '.kleistad_periode', function() {
+			.on( 'click', '.kleistad_periode', function() {
 					kleistadShow(
 						parseInt( $( '#kleistad_reserveringen' ).data( 'maand' ), 10 ) + parseInt( $( this ).val(), 10 ),
 						$( '#kleistad_reserveringen' ).data( 'jaar' )
 					);
                 }
-            );
-
+            )
             /**
              * Verander de opmaak bij hovering.
              */
-            $( '#kleistad_reserveringen tbody' ).on( 'hover', 'tr[data-form]', function() {
+            .on( 'hover', 'tr[data-form]', function() {
 					$( this ).toggleClass( 'kleistad_hover_reservering' );
 				}
-            );
-
+            )
 			/**
              * Open een reservering (nieuw of bestaand).
              */
-            $( '#kleistad_reserveringen tbody' ).on( 'click touchend', 'tr[data-form]', function( event ) {
+            .on( 'click touchend', 'tr[data-form]', function( event ) {
 					if ( 'click' === event.type || detectTap ) {
 						$( '#kleistad_reservering' ).dialog( 'open' );
 						kleistadForm( $( this ).data( 'form' ) );
@@ -346,52 +345,46 @@
 					width: 360,
 					modal: true
 				}
-			);
-
+			)
 			/**
              * Verdeel de percentages als de gebruiker een percentage wijzigt.
              */
-            $( '#kleistad_reservering' ).on( 'change', '.kleistad_verdeling', function() {
+            .on( 'change', '.kleistad_verdeling', function() {
                     kleistadVerdeel( this );
                 }
-            );
-
+            )
             /**
              * Voeg een reservering toe.
              */
-            $( '#kleistad_reservering' ).on( 'click', '#kleistad_voegtoe', function() {
+            .on( 'click', '#kleistad_voegtoe', function() {
                     kleistadMuteer( 'POST' );
                 }
-            );
-
+            )
             /**
              * Wijzig een reservering.
              */
-            $( '#kleistad_reservering' ).on( 'click', '#kleistad_muteer', function() {
+            .on( 'click', '#kleistad_muteer', function() {
                     kleistadMuteer( 'PUT' );
                 }
-            );
-
+            )
             /**
              * Verwijder een reservering
              */
-            $( '#kleistad_reservering' ).on( 'click', '#kleistad_verwijder', function() {
+            .on( 'click', '#kleistad_verwijder', function() {
                     kleistadMuteer( 'DELETE' );
                 }
-            );
-
-            /**
+			)
+			/**
              * Sluit het formulier
              */
-            $( '#kleistad_reservering' ).on( 'click', '#kleistad_sluit', function() {
+            .on( 'click', '#kleistad_sluit', function() {
                     $( '#kleistad_reservering' ).dialog( 'close' );
                 }
-            );
-
-            /**
+			)
+			/**
              * Voeg een medestoker toe
              */
-            $( '#kleistad_reservering' ).on( 'click', '#kleistad_stoker_toevoegen', function() {
+            .on( 'click', '#kleistad_stoker_toevoegen', function() {
 				$( '#kleistad_reservering table > tbody > tr:last' ).
 					after( '<tr><td><label>Medestoker</label></td><td>' +  selectStoker( true, 0 ) +
 						'<td><input name="kleistad_stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" size="3" value="0" ></td></tr>' );

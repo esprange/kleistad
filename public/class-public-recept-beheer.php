@@ -24,9 +24,9 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	/**
 	 * Helpfunctie om overzicht lijst te maken.
 	 *
-	 * @param array $data recept data.
+	 * @return array De recepten data.
 	 */
-	private function overzicht( &$data ) {
+	private function lijst() {
 		/*
 		 * maak een lijst van recepten
 		 */
@@ -45,12 +45,11 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			$query['author'] = get_current_user_id();
 		}
 
-		$recepten       = get_posts( $query );
-		$data['recept'] = [];
-
+		$recepten = get_posts( $query );
+		$lijst    = [];
 		foreach ( $recepten as $recept ) {
-			$content          = json_decode( $recept->post_content, true );
-			$data['recept'][] = [
+			$content = json_decode( $recept->post_content, true );
+			$lijst[] = [
 				'id'       => $recept->ID,
 				'titel'    => $recept->post_title,
 				'status'   => $recept->post_status,
@@ -59,6 +58,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				'foto'     => $content['foto'],
 			];
 		}
+		return $lijst;
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @param int $recept_id Het recept.
 	 * @return array De recept data.
 	 */
-	private function prepare_wijzig( $recept_id ) {
+	private function formulier( $recept_id ) {
 		$recept = get_post( $recept_id );
 
 		$glazuur   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
@@ -92,15 +92,15 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			}
 		}
 		return [
-			'id'          => $recept->ID,
-			'titel'       => $recept->post_title,
-			'post_status' => $recept->post_status,
-			'created'     => $recept->post_date,
-			'modified'    => $recept->post_modified,
-			'content'     => json_decode( $recept->post_content, true ),
-			'glazuur'     => $glazuur_id,
-			'kleur'       => $kleur_id,
-			'uiterlijk'   => $uiterlijk_id,
+			'id'        => $recept->ID,
+			'titel'     => $recept->post_title,
+			'status'    => $recept->post_status,
+			'created'   => $recept->post_date,
+			'modified'  => $recept->post_modified,
+			'content'   => json_decode( $recept->post_content, true ),
+			'glazuur'   => $glazuur_id,
+			'kleur'     => $kleur_id,
+			'uiterlijk' => $uiterlijk_id,
 		];
 	}
 
@@ -113,52 +113,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @since   4.1.0
 	 */
 	protected function prepare( &$data = null ) {
-		$error = new \WP_Error();
 
-		$actie = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING );
-		if ( is_null( $actie ) ) {
-			$actie = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
-		}
-		$recept_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-		if ( 'wijzigen' === $actie ) {
-			/*
-			 * Er is een recept gekozen om te wijzigen.
-			 */
-			$data           = [];
-			$data['id']     = $recept_id;
-			$data['recept'] = $this->prepare_wijzig( $data['id'] );
-		} elseif ( 'verwijderen' === $actie ) {
-			/*
-			 * Recept moet verwijderd worden.
-			 */
-			wp_delete_post( $recept_id );
-			$this->overzicht( $data );
-		} elseif ( 'publiceren' === $actie ) {
-			/*
-			 * Recept publicatie status moet aangepast worden
-			 */
-			$recept              = get_post( $recept_id );
-			$recept->post_status = 'publish';
-			$result              = wp_update_post( $recept, true );
-			if ( is_wp_error( $result ) ) {
-				$error->add( 'fout', 'recept kan niet worden opgeslagen' );
-				return $error;
-			}
-			$this->overzicht( $data );
-		} elseif ( 'verbergen' === $actie ) {
-			/*
-			 * Recept publicatie status moet aangepast worden
-			 */
-			$recept              = get_post( $recept_id );
-			$recept->post_status = 'private';
-			$result              = wp_update_post( $recept, true );
-			if ( is_wp_error( $result ) ) {
-				$error->add( 'fout', 'recept kan niet worden opgeslagen' );
-				return $error;
-			}
-			$this->overzicht( $data );
-
-		} elseif ( 'toevoegen' === $actie ) {
+		if ( 'toevoegen' === $data['actie'] ) {
 			/*
 			 * Er moet een nieuw recept opgevoerd worden
 			 */
@@ -181,8 +137,13 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				'kleur'       => 0,
 				'uiterlijk'   => 0,
 			];
+		} elseif ( 'wijzigen' === $data['actie'] ) {
+			/*
+			 * Er is een recept gekozen om te wijzigen.
+			 */
+			$data['recept'] = $this->formulier( $data['id'] );
 		} else {
-			$this->overzicht( $data );
+			$data['recepten'] = $this->lijst();
 		}
 		return true;
 	}
@@ -256,16 +217,17 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				];
 			}
 		}
-
 		$data['recept']['content']['foto'] = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
-		if ( UPLOAD_ERR_INI_SIZE === $_FILES['foto']['error'] ) {
-			$error->add( 'foto', 'De foto is te groot qua omvang !' );
-		} else {
-			$data['foto'] = $_FILES ['foto'];
-		}
 
-		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+		if ( 'bewaren' === $data['form_actie'] ) {
+			if ( UPLOAD_ERR_INI_SIZE === $_FILES['foto']['error'] ) {
+				$error->add( 'foto', 'De foto is te groot qua omvang !' );
+			} else {
+				$data['foto'] = $_FILES ['foto'];
+			}
+			if ( ! empty( $error->get_error_codes() ) ) {
+				return $error;
+			}
 		}
 		return true;
 	}
@@ -282,7 +244,41 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	protected function save( $data ) {
 		$error = new \WP_Error();
 
-		if ( isset( $data['recept'] ) ) {
+		if ( 'verwijderen' === $data['form_actie'] ) {
+			/*
+			 * Recept moet verwijderd worden.
+			 */
+			wp_delete_post( $data['recept']['id'] );
+			return [
+				'status'  => 'Het recept is verwijderd',
+				'vervolg' => 'refresh',
+				'html'    => $this->display(),
+			];
+		} elseif ( 'publiceren' === $data['form_actie'] ) {
+			/*
+			 * Recept publicatie status moet aangepast worden
+			 */
+			$recept              = get_post( $data['recept']['id'] );
+			$recept->post_status = 'publish';
+			wp_update_post( $recept, true );
+			return [
+				'status'  => 'Het recept is aangepast',
+				'vervolg' => 'refresh',
+				'html'    => $this->display(),
+			];
+		} elseif ( 'verbergen' === $data['form_actie'] ) {
+			/*
+			 * Recept publicatie status moet aangepast worden
+			 */
+			$recept              = get_post( $data['recept']['id'] );
+			$recept->post_status = 'private';
+			wp_update_post( $recept, true );
+			return [
+				'status'  => 'Het recept is aangepast',
+				'vervolg' => 'refresh',
+				'html'    => $this->display(),
+			];
+		} elseif ( 'bewaren' === $data['form_actie'] ) {
 			if ( ! empty( $data['foto']['name'] ) ) {
 				$file = wp_handle_upload(
 					$data['foto'],

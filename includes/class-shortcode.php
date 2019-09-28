@@ -257,11 +257,15 @@ abstract class Shortcode {
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
 			return $shortcode_object;
 		}
+		$data = [
+			'actie' => sanitize_text_field( $request->get_param( 'actie' ) ),
+			'id'    => absint( $request->get_param( 'id' ) ),
+		];
 		return new \WP_REST_Response(
 			[
 				'vervolg' => 'html',
 				'status'  => '',
-				'html'    => $shortcode_object->display(),
+				'html'    => $shortcode_object->display( $data ),
 			]
 		);
 	}

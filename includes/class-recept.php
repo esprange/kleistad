@@ -75,6 +75,27 @@ class Recept {
 			]
 		);
 		register_taxonomy_for_object_type( self::CATEGORY, self::POST_TYPE );
+
+		add_filter(
+			'wp_dropdown_cats',
+			/**
+			 * Voegt 'required' toe aan dropdown list.
+			 *
+			 * @param string $output Door wp_dropdown_categories aangemaakte select list.
+			 * @param array  $arr
+			 * @return string
+			 */
+			function( $output, $arr ) {
+				if ( self::CATEGORY === $arr['taxonomy'] ) {
+					return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
+				} else {
+					return output;
+				}
+			},
+			10,
+			2
+		);
+
 	}
 
 }

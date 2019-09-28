@@ -145,7 +145,7 @@ else :
 	</form>
 	<div>
 		<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>
-		<div class="kleistad_workshop_correspondentie  \Kleistad\Workshop_<?php echo esc_attr( $correspondentie['type'] ); ?>  \Kleistad\Workshop_compact" >
+		<div class="kleistad_workshop_correspondentie  kleistad_workshop_<?php echo esc_attr( $correspondentie['type'] ); ?>  kleistad_workshop_compact" >
 			<strong><?php echo esc_html( ucfirst( $correspondentie['type'] ) . ' van ' . $correspondentie['from'] . ' op ' . $correspondentie['tijd'] ); ?></strong>
 			<p><?php echo esc_html( $correspondentie['subject'] ); ?></p>
 			<?php echo nl2br( $correspondentie['tekst'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -180,11 +180,11 @@ else :
 				<td><?php echo esc_html( $aanvraag['titel'] ); ?></td>
 				<td><?php echo esc_html( $aanvraag['status'] ); ?></td>
 				<td>
-					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_toon_aanvraag_' . $aanvraag['id'] ) . '&actie=tonen&id=' . $aanvraag['id'] ); ?>"
+					<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="tonen"
 						title="toon_aanvraag" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
 						&nbsp;
 					</a>&nbsp;&nbsp;
-					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_plan_workshop_' . $aanvraag['id'] ) . '&actie=inplannen&id=' . $aanvraag['id'] ); ?>"
+					<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="inplannen"
 						title="plan_workshop" class="kleistad_schedule_link" style="text-decoration:none !important;color:blue;padding:.4em .8em;" >
 						&nbsp;
 					</a>
@@ -221,7 +221,7 @@ else :
 				<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
 				<td><?php echo esc_html( $workshop['status'] ); ?></td>
 				<td>
-					<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_wijzig_workshop_' . $workshop['id'] ) . '&actie=wijzigen&id=' . $workshop['id'] ); ?>"
+					<a href="#" data-id="<?php echo esc_attr( $workshop['id'] ); ?>" data-actie="wijzigen"
 						title="wijzig workshop" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
 						&nbsp;
 					</a>

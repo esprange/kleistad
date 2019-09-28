@@ -94,10 +94,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data = null ) {
-		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING ) ?? filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
-		if ( is_null( $data['actie'] ) ) {
-			$data['actie'] = '-';
-		}
 		$gebruikers       = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
@@ -110,6 +106,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				$data['docenten'][] = $gebruiker;
 			}
 		}
+
 		if ( 'toevoegen' === $data['actie'] ) {
 			/*
 			* Er moet een nieuwe cursus opgevoerd worden
@@ -121,9 +118,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			/*
 			 * Er is een cursus gekozen om te wijzigen.
 			 */
-			$cursus_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 			if ( ! isset( $data['cursus'] ) ) {
-				$data['cursus'] = $this->formulier( $cursus_id );
+				$data['cursus'] = $this->formulier( $data['id'] );
 			}
 		} else {
 			$data['cursussen'] = $this->lijst();

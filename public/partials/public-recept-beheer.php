@@ -9,20 +9,9 @@
  * @subpackage Kleistad/public/partials
  */
 
-if ( isset( $data['id'] ) ) :
-	add_filter( 'wp_dropdown_cats', 'wp_dropdown_categories_required' );
-	/**
-	 * Voegt 'required' toe aan dropdown list.
-	 *
-	 * @param string $output Door wp_dropdown_categories aangemaakte select list.
-	 * @return string
-	 */
-	function wp_dropdown_categories_required( $output ) {
-		return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
-	}
+if ( isset( $data['recept'] ) ) :
 	$this->form();
 	?>
-	<input type="hidden" name="action" value="" />
 	<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
 	<div class="kleistad_row">
 		<div class="kleistad_col_3 kleistad_label">
@@ -227,19 +216,25 @@ if ( isset( $data['id'] ) ) :
 		</div>
 	</div>
 	<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
-	<button type="submit" name="kleistad_submit_recept_beheer">Opslaan</button>
-	<button onClick="window.history.back();">Annuleren</button>
+	<button type="submit" name="kleistad_submit_recept_beheer" value="bewaren">Opslaan</button>
+	<?php
+	if ( 0 < $data['recept']['id'] ) :
+		if ( 'publish' !== $data['recept']['status'] ) :
+			?>
+	<button type="submit" name="kleistad_submit_recept_beheer" value="publiceren" >Publiceren</button>
+	<?php else : ?>
+	<button type="submit" name="kleistad_submit_recept_beheer" value="verbergen" >Verbergen</button>
+		<?php
+		endif;
+	?>
+	<button type="submit" name="kleistad_submit_recept_beheer" data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" value="verwijderen">Verwijderen</button>
+	<?php endif ?>
+	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link" >Terug</button>
 </form>
 	<?php
-	remove_filter( 'wp_dropdown_cats', 'wp_dropdown_categories_required' );
 	else :
 		?>
-<div id="kleistad_verwijder_recept" title="Recept verwijderen ?">
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Dit recept wordt verwijderd</p>
-</div>
 		<?php $this->form(); ?>
-	<input id="kleistad_recept_action" type="hidden" name="action" value="recept_overzicht" />
-	<input id="kleistad_recept_id" type="hidden" name="recept_id" value="0" />
 	<table class="kleistad_datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
 		<thead>
 		<tr>
@@ -251,7 +246,7 @@ if ( isset( $data['id'] ) ) :
 		</tr>
 		</thead>
 		<tbody>
-		<?php foreach ( $data['recept'] as $recept ) : ?>
+		<?php foreach ( $data['recepten'] as $recept ) : ?>
 		<tr>
 			<td>
 			<?php
@@ -266,13 +261,6 @@ if ( isset( $data['id'] ) ) :
 			<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
 			<td>
 				<a href="" title="wijzig recept" class="kleistad_edit_link" style="padding:.4em .8em;" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
-				<?php if ( 'publish' !== $recept['status'] ) : ?>
-				<a href="" title="publiceer recept" class="kleistad_publiceer_link" style="padding:.4em .8em;" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="publiceren" >&nbsp;</a>
-				<?php else : ?>
-				<a href="" title="verberg recept" class="kleistad_verberg_link" style="padding:.4em .8em;" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="verbergen" >&nbsp;</a>
-				<?php endif ?>
-				<a href="" title="verwijder recept" class="kleistad_verwijder_link" style="padding:.4em .8em;"
-				data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="verwijderen">&nbsp;</a>
 			</td>
 		</tr>
 		<?php endforeach ?>

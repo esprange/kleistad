@@ -119,6 +119,7 @@ function strtodate( value ) {
 		 */
 		if ( $datum[0] ) {
 			$.datepicker.setDefaults( { dateFormat: 'dd-mm-yy' } );
+			$datum.datepicker();
 		}
 		/**
 		 * Definieer de timespinners.
@@ -151,6 +152,14 @@ function strtodate( value ) {
 			);
 			$tijd.timespinner();
 		}
+
+		$( '#kleistad_bevestigen' ).dialog(
+			{
+				autoOpen: false,
+				modal: true
+			}
+		);
+
 	}
 
 	/**
@@ -218,6 +227,7 @@ function strtodate( value ) {
 	 * @param { String } path naar het endpoint
 	 */
 	function getContent( $shortcode, data, path ) {
+		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
 		$.ajax(
 			{
 				beforeSend: function( xhr ) {
@@ -229,6 +239,7 @@ function strtodate( value ) {
 			}
 		).done(
 			function( data ) {
+				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
 				vervolg( $shortcode, data );
 			}
 		).fail(
@@ -296,12 +307,16 @@ function strtodate( value ) {
 	 */
 	function shortcode( $element ) {
 		var $shortcode    = getShortcode( $element );
-		var shortcodeData = {
-			'tag':   $shortcode.data( 'tag' ),
-			'atts':  JSON.stringify( $shortcode.data( 'atts' ) ),
-			'id':    $element.data( 'id' ),
-			'actie': $element.data( 'actie' )
-		};
+		var shortcodeData = { tag:   $shortcode.data( 'tag' ) };
+		if ( 'undefined' !== typeof $shortcode.data( 'atts') ) {
+			shortcodeData.atts = JSON.stringify( $shortcode.data( 'atts' ) );
+		}
+		if ( 'undefined' !== typeof $element.data( 'id' ) ) {
+			shortcodeData.id = $element.data( 'id' );
+		}
+		if ( 'undefined' !== typeof $element.data( 'actie' ) ) {
+			shortcodeData.actie = $element.data( 'actie' );
+		}
 		return shortcodeData;
 	}
 
@@ -309,8 +324,9 @@ function strtodate( value ) {
 	 * Toon een confirmatie popup dialoog.
 	 *
 	 * @param {String} tekst Te tonen tekst. Als leeg dan wordt er geen popup getoond.
+	 * @param (function) Uit te voeren actie indien ok.
 	 */
-	function askConfirm( tekst ) {
+	function askConfirm( tekst, callback ) {
 		if ( tekst.length ) {
 			$( '#kleistad_bevestigen' ).text( tekst[1] ).dialog(
 				{
@@ -323,6 +339,7 @@ function strtodate( value ) {
 					buttons: {
 						Ja: function() {
 							$( this ).dialog( 'close' );
+							callback();
 							return true;
 						},
 						Nee: function() {
@@ -332,7 +349,9 @@ function strtodate( value ) {
 					}
 				}
 			);
+			return false;
 		}
+		callback();
 		return true;
 	}
 
@@ -375,7 +394,7 @@ function strtodate( value ) {
 				}
 			)
 			/**
-			 * Als er op een edit anchor is geklikt, doe dan eerst een eventuele prompt voor deze actie.
+			 * Als er op een verwijder anchor is geklikt, doe dan eerst een eventuele prompt voor deze actie.
 			 */
 			.on( 'click', '.kleistad_verwijder_link',
 				function( event ) {
@@ -383,19 +402,19 @@ function strtodate( value ) {
 					var shortcodeData = shortcode( $anchor );
 					var confirm       = $anchor.data( 'confirm' );
 					var tekst         = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
+					event.preventDefault();
 					/**
 					 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
 					 */
-					if ( ! askConfirm( tekst ) ) {
-						return false;
-					}
-					event.preventDefault();
-					getItem( getShortcode( $anchor ), shortcodeData );
-					return true;
+					return askConfirm( tekst,
+						function() {
+							getItem( getShortcode( $anchor ), shortcodeData );
+						}
+					);
 				}
 			)
 			/**
-			 * Als er op een verwijder anchor is geklikt
+			 * Als er op een terug anchor is geklikt
 			 */
 			.on( 'click', '.kleistad_terug_link',
 				function() {
@@ -436,15 +455,14 @@ function strtodate( value ) {
 						formData.append( item, shortcodeData[item] );
 					} );
 					event.preventDefault();
-
 					/**
 					 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
 					 */
-					if ( ! askConfirm( tekst ) ) {
-						return false;
-					}
-					submitForm( getShortcode( $form ), formData );
-					return true;
+					return askConfirm( tekst,
+						function() {
+							submitForm( getShortcode( $form ), formData );
+						}
+					);
 				}
 			)
 			/**

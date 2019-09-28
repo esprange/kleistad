@@ -11,13 +11,19 @@
         function() {
 			wijzigTeksten();
 
-            $( 'input[name=bedrag]:radio' ).on( 'change',
+			$( '.kleistad_shortcode' )
+			/**
+			 * Als er een change is van het te betalen stooksalde.
+			 */
+			.on( 'change', 'input[name=bedrag]:radio',
                 function() {
                     wijzigTeksten();
                 }
-            );
-
-            $( 'input[name=betaal]:radio' ).on( 'change',
+            )
+			/**
+			 * Als er een change is van de betaalwijze.
+			 */
+            .on( 'change', 'input[name=betaal]:radio',
                 function() {
                     $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
                 }

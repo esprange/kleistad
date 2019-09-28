@@ -3,27 +3,14 @@
 ( function( $ ) {
     'use strict';
 
-function onLoad() {
-	$( '#kleistad_verwijder_recept' ).dialog( {
-		autoOpen: false,
-		resizable: false,
-		height: 'auto',
-		width: 400,
-		modal: true
-	});
-}
-
-$( document ).ajaxComplete(
-	function() {
-		onLoad();
-	}
-);
-
-$( document ).ready(
+	$( document ).ready(
         function() {
-			onLoad();
 
-			$( '#kleistad_foto_input' ).on( 'change',
+			$( '.kleistad_shortcode' )
+			/**
+			 * Als er een andere foto gekozen wordt.
+			 */
+			.on( 'change', '#kleistad_foto_input',
 				function() {
 					var reader = new FileReader();
 
@@ -40,36 +27,11 @@ $( document ).ready(
 					}
 					return undefined;
 				}
-			);
-
-			$( '[name="wijzigen"]' ).on( 'click',
-				function() {
-					$( '#kleistad_recept_action' ).val( 'wijzigen' );
-					$( '#kleistad_recept_id' ).val( $( this ).data( 'recept_id' ) );
-				}
-			);
-
-			$( '[name="verwijderen"]' ).on( 'click',
-				function( event ) {
-
-					event.preventDefault();
-					$( '#kleistad_recept_action' ).val( 'verwijderen' );
-					$( '#kleistad_recept_id' ).val( $( this ).data( 'recept_id' ) );
-					$( '#kleistad_verwijder_recept' ).dialog( {
-						buttons: {
-							Ok: function() {
-								window.location.href = $( this ).attr( 'href' );
-							},
-							Annuleren: function() {
-								$( this ).dialog( 'close' );
-							}
-						}
-					});
-					$( '#kleistad_verwijder_recept' ).dialog( 'open' );
-				}
-			);
-
-			$( '.extra_regel' ).on( 'click',
+			)
+			/**
+			 * Extra regel toevoegen.
+			 */
+			.on( 'click', '.extra_regel',
 				function() {
 					var $oldRow, $newRow;
 					$oldRow = $( this ).closest( 'tr' ).prev();
