@@ -114,7 +114,9 @@ class Public_Registratie extends ShortcodeForm {
 				'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
 			];
 		} else {
-			return new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' );
+			return [
+				'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' ) ),
+			];
 		}
 	}
 }

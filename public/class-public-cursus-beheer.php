@@ -222,7 +222,9 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 					'content' => $this->display(),
 				];
 			}
-			return new \WP_Error( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
+			return [
+				'status' => $this->status( new \WP_Error( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' ) ),
+			];
 		} elseif ( 'bewaren' === $data['form_actie'] ) {
 			$cursus->naam            = $data['cursus']['naam'];
 			$cursus->docent          = $data['cursus']['docent'];

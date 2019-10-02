@@ -127,6 +127,8 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 				'content' => $this->display(),
 			];
 		}
-		return new \WP_Error( 'intern', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' );
+		return [
+			'status' => $this->status( new \WP_Error( 'intern', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' ) ),
+		];
 	}
 }

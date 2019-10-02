@@ -169,8 +169,6 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$error = new \WP_Error();
-
 		if ( ! is_user_logged_in() ) {
 			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
 			$gebruiker_id = Public_Main::upsert_user(
@@ -196,8 +194,9 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 
 		$inschrijving = new \Kleistad\Inschrijving( $gebruiker_id, $data['cursus']->id );
 		if ( $inschrijving->ingedeeld ) {
-			$error->add( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' );
-			return $error;
+			return [
+				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
+			];
 		}
 		$inschrijving->technieken = $data['input']['technieken'];
 		$inschrijving->opmerking  = $data['input']['opmerking'];

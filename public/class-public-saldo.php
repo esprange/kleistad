@@ -81,7 +81,9 @@ class Public_Saldo extends ShortcodeForm {
 					'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
 				];
 			} else {
-				return new \WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
+				return [
+					'status' => $this->status( new \WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' ) ),
+				];
 			}
 		}
 	}

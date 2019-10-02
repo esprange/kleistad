@@ -364,10 +364,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 							'content' => $this->display(),
 						];
 					}
-			}
-			return [
-				'status' => $this->status( new \WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' ) ),
-			];
+				}
+				return [
+					'status' => $this->status( new \WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' ) ),
+				];
 		}
 	}
 }

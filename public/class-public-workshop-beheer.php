@@ -318,7 +318,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			if ( $workshop->verwijder() ) {
 				$bericht = 'De workshop informatie is verwijderd';
 			} else {
-				return new \WP_Error( 'bevestigd', 'Een workshop die bevestigd is kan niet verwijderd worden' );
+				return [
+					'status' => $this->status( new \WP_Error( 'bevestigd', 'Een workshop die bevestigd is kan niet verwijderd worden' ) ),
+				];
 			}
 		} else {
 			$workshop->naam        = $data['workshop']['naam'];

@@ -128,7 +128,9 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		} else {
 			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
 			if ( false !== $gebruiker_id && \Kleistad\Roles::reserveer( $gebruiker_id ) ) {
-				return new \WP_Error( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' );
+				return [
+					'status' => $this->status( new \WP_Error( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' ) ),
+				];
 			};
 			$gebruiker_id = Public_Main::upsert_user(
 				[
