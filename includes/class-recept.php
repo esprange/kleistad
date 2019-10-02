@@ -89,7 +89,7 @@ class Recept {
 				if ( self::CATEGORY === $arr['taxonomy'] ) {
 					return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
 				} else {
-					return output;
+					return $output;
 				}
 			},
 			10,

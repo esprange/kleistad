@@ -107,7 +107,9 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				'status'  => $this->status( 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen' ),
 			];
 		} else {
-			return new \WP_Error( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' );
+			return [
+				'status' => $this->status( new \WP_Error( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' ) ),
+			];
 		}
 	}
 
