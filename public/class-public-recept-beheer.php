@@ -237,126 +237,137 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * Bewaar 'recept' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|array
+	 * @return array
 	 *
 	 * @since   4.1.0
 	 */
 	protected function save( $data ) {
-		if ( 'verwijderen' === $data['form_actie'] ) {
-			/*
-			 * Recept moet verwijderd worden.
-			 */
-			wp_delete_post( $data['recept']['id'] );
-			return [
-				'status'  => $this->status( 'Het recept is verwijderd' ),
-				'content' => $this->display(),
-			];
-		} elseif ( 'publiceren' === $data['form_actie'] ) {
-			/*
-			 * Recept publicatie status moet aangepast worden
-			 */
-			$recept              = get_post( $data['recept']['id'] );
-			$recept->post_status = 'publish';
-			wp_update_post( $recept, true );
-			return [
-				'status'  => $this->status( 'Het recept is aangepast' ),
-				'content' => $this->display(),
-			];
-		} elseif ( 'verbergen' === $data['form_actie'] ) {
-			/*
-			 * Recept publicatie status moet aangepast worden
-			 */
-			$recept              = get_post( $data['recept']['id'] );
-			$recept->post_status = 'private';
-			wp_update_post( $recept, true );
-			return [
-				'status'  => $this->status( 'Het recept is aangepast' ),
-				'content' => $this->display(),
-			];
-		} elseif ( 'bewaren' === $data['form_actie'] ) {
-			if ( ! empty( $data['foto']['name'] ) ) {
-				$file = wp_handle_upload(
-					$data['foto'],
-					[ 'test_form' => false ]
-				);
-				if ( is_array( $file ) && ! isset( $file['error'] ) ) {
-					$exif = @exif_read_data( $file['file'] ); // phpcs:ignore
-					if ( false === $exif ) {
-						return [
-							'status' => $this->status( new \WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' ) ),
-						];
-					}
-					$image = imagecreatefromjpeg( $file['file'] );
-					if ( false === $image ) {
-						return [
-							'status' => $this->status( new \WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' ) ),
-						];
-					}
-					if ( ! empty( $exif['Orientation'] ) ) {
-						switch ( $exif['Orientation'] ) {
-							case 3:
-								$image = imagerotate( $image, 180, 0 );
-								break;
-							case 6:
-								$image = imagerotate( $image, -90, 0 );
-								break;
-							case 8:
-								$image = imagerotate( $image, 90, 0 );
-								break;
-						}
-						if ( false === $image ) {
-							return new \WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
-						}
-					}
-					$quality = intval( min( 75000 / filesize( $file['file'] ) * 100, 100 ) );
-					imagejpeg( $image, $file['file'], $quality );
-					imagedestroy( $image );
-					$data['recept']['content']['foto'] = $file['url'];
-				} else {
-					return new \WP_Error( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] );
-				}
-			}
-			if ( ! $data['recept']['id'] ) {
-				$result = wp_insert_post(
-					[
-						'post_status' => 'draft', // Initiële publicatie status is prive.
-						'post_type'   => 'kleistad_recept',
-					]
-				);
-				if ( is_int( $result ) ) {
-					$data['recept']['id'] = $result;
-				} else {
-					return $result;
-				}
-			}
-			$recept = get_post( $data['recept']['id'] );
-			if ( ! is_null( $recept ) ) {
-				$recept->post_title   = (string) $data['recept']['titel'];
-				$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
-				$json_content         = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
-				if ( is_string( $json_content ) ) {
-					$recept->post_content = $json_content;
-				} else {
-					return new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' );
-				}
-				$recept_id = wp_update_post( $recept, true );
-				if ( is_int( $recept_id ) ) {
-					wp_set_object_terms(
-						$recept_id,
-						[
-							intval( $data['recept']['glazuur'] ),
-							intval( $data['recept']['kleur'] ),
-							intval( $data['recept']['uiterlijk'] ),
-						],
-						'kleistad_recept_cat'
+		switch ( $data['form_actie'] ) {
+			case 'verwijderen':
+				/*
+				* Recept moet verwijderd worden.
+				*/
+				wp_delete_post( $data['recept']['id'] );
+				return [
+					'status'  => $this->status( 'Het recept is verwijderd' ),
+					'content' => $this->display(),
+				];
+			case 'publiceren':
+				/*
+				* Recept publicatie status moet aangepast worden
+				*/
+				$recept              = get_post( $data['recept']['id'] );
+				$recept->post_status = 'publish';
+				wp_update_post( $recept, true );
+				return [
+					'status'  => $this->status( 'Het recept is aangepast' ),
+					'content' => $this->display(),
+				];
+			case 'verbergen':
+				/*
+				* Recept publicatie status moet aangepast worden
+				*/
+				$recept              = get_post( $data['recept']['id'] );
+				$recept->post_status = 'private';
+				wp_update_post( $recept, true );
+				return [
+					'status'  => $this->status( 'Het recept is aangepast' ),
+					'content' => $this->display(),
+				];
+			case 'bewaren':
+				if ( ! empty( $data['foto']['name'] ) ) {
+					$file = wp_handle_upload(
+						$data['foto'],
+						[ 'test_form' => false ]
 					);
-					return [
-						'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
-						'content' => $this->display(),
-					];
+					if ( is_array( $file ) && ! isset( $file['error'] ) ) {
+						$exif = @exif_read_data( $file['file'] ); // phpcs:ignore
+						if ( false === $exif ) {
+							return [
+								'status' => $this->status( new \WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' ) ),
+							];
+						}
+						$image = imagecreatefromjpeg( $file['file'] );
+						if ( false === $image ) {
+							return [
+								'status' => $this->status( new \WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' ) ),
+							];
+						}
+						if ( ! empty( $exif['Orientation'] ) ) {
+							switch ( $exif['Orientation'] ) {
+								case 3:
+									$image = imagerotate( $image, 180, 0 );
+									break;
+								case 6:
+									$image = imagerotate( $image, -90, 0 );
+									break;
+								case 8:
+									$image = imagerotate( $image, 90, 0 );
+									break;
+							}
+							if ( false === $image ) {
+								return [
+									'status' => $this->status( new \WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' ) ),
+								];
+							}
+						}
+						$quality = intval( min( 75000 / filesize( $file['file'] ) * 100, 100 ) );
+						imagejpeg( $image, $file['file'], $quality );
+						imagedestroy( $image );
+						$data['recept']['content']['foto'] = $file['url'];
+					} else {
+						return [
+							'status' => $this->status( new \WP_Error( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] ) ),
+						];
+					}
 				}
+				if ( ! $data['recept']['id'] ) {
+					$result = wp_insert_post(
+						[
+							'post_status' => 'draft', // Initiële publicatie status is prive.
+							'post_type'   => 'kleistad_recept',
+						]
+					);
+					if ( $result ) {
+						$data['recept']['id'] = $result;
+					} else {
+						return [
+							'status' => $this->status( new \WP_Error( 'fout', 'Recept kon niet worden toegevoegd' ) ),
+						];
+					}
+				}
+				$recept = get_post( $data['recept']['id'] );
+				if ( ! is_null( $recept ) ) {
+					$recept->post_title   = (string) $data['recept']['titel'];
+					$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
+					$json_content         = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
+					if ( is_string( $json_content ) ) {
+						$recept->post_content = $json_content;
+					} else {
+						return [
+							'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ),
+						];
+					}
+					$recept_id = wp_update_post( $recept, true );
+					if ( is_int( $recept_id ) ) {
+						wp_set_object_terms(
+							$recept_id,
+							[
+								intval( $data['recept']['glazuur'] ),
+								intval( $data['recept']['kleur'] ),
+								intval( $data['recept']['uiterlijk'] ),
+							],
+							'kleistad_recept_cat'
+						);
+						return [
+							'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
+							'content' => $this->display(),
+						];
+					}
 			}
-			return new \WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' );
+			return [
+				'status' => $this->status( new \WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' ) ),
+			];
 		}
 	}
 }

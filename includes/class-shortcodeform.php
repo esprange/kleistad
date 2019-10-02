@@ -37,7 +37,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
-	 * @return \WP_ERROR|array
+	 * @return array
 	 */
 	abstract protected function save( $data );
 
