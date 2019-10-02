@@ -22,7 +22,7 @@ matrix:
 #      env: WP_PROJECT_TYPE=plugin WP_VERSION=latest WP_MULTISITE=0
 #    - php: 7.0
 #      env: WP_PROJECT_TYPE=plugin WP_VERSION=latest WP_MULTISITE=0
-    - php: 7.2
+    - php: 7.3
       env: WP_TRAVISCI=phpcs
 
 before_script:
