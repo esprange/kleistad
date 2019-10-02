@@ -49,10 +49,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 */
 	protected function test( $data ) {
 		if ( isset( $data ) ) {
-			return [
-				'status'  => '',
-				'vervolg' => 'none',
-			];
+			return [];
 		};
 	}
 
@@ -214,21 +211,11 @@ abstract class ShortcodeForm extends Shortcode {
 		self::$form_url     = $referer['scheme'] . '://' . $referer['host'] . $referer['path'] ?? '';
 		$result             = $shortcode_object->validate( $data );
 		if ( ! is_wp_error( $result ) ) {
-			switch ( strtok( $data['form_actie'], '_' ) ) {
-				case 'test':
-					$result = $shortcode_object->test( $data );
-					break;
-				default:
-					$result = $shortcode_object->save( $data );
-					break;
+			if ( 'test' === strtok( $data['form_actie'], '_' ) ) {
+				$result = $shortcode_object->test( $data );
+			} else {
+				$result = $shortcode_object->save( $data );
 			}
-		}
-		if ( is_wp_error( $result ) ) {
-			return new \WP_REST_Response(
-				[
-					'status' => $shortcode_object->status( $result ),
-				]
-			);
 		}
 		return new \WP_REST_Response( $result );
 	}
