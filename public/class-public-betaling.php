@@ -156,26 +156,32 @@ class Public_Betaling extends ShortcodeForm {
 		if ( self::ACTIE_RESTANT_CURSUS === $data['input']['actie'] ) {
 			$inschrijving = new \Kleistad\Inschrijving( $data['input']['cursist_id'], $data['input']['cursus_id'] );
 			if ( 'ideal' === $data['input']['betaal'] ) {
-				$inschrijving->betalen(
-					'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
-					false
-				);
+				return [
+					'redirect_uri' => $inschrijving->betalen(
+						'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
+						false
+					),
+				];
 			}
 		} elseif ( self::ACTIE_VERVOLG_ABONNEMENT === $data['input']['actie'] ) {
 			$abonnement = new \Kleistad\Abonnement( $data['input']['abonnee_id'] );
 			if ( 'ideal' === $data['input']['betaal'] ) {
-				$abonnement->betalen(
-					'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging'
-				);
+				return [
+					'redirect_uri' => $abonnement->betalen(
+						'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging'
+					),
+				];
 			}
 		} elseif ( self::ACTIE_WORKSHOP === $data['input']['actie'] ) {
 			$workshop = new \Kleistad\Workshop( $data['input']['workshop_id'] );
 			if ( 'ideal' === $data['input']['betaal'] ) {
-				$workshop->betalen(
-					'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging'
-				);
+				return [
+					'redirect_uri' => $workshop->betalen(
+						'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging'
+					),
+				];
 			}
 		}
-		return []; // Alle acties leiden tot een redirect dus deze return zal nooit bereikt worden.
+		return new \WP_Error( 'intern', 'Er is blijkbaar iets fout gegaan, probeer het opnieuw' );
 	}
 }

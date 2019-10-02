@@ -26,7 +26,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 * @since   4.3.0
 	 */
 	protected function prepare( &$data = null ) {
-		if ( is_null( $data ) ) {
+		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [
 				'EMAIL'           => '',
@@ -104,8 +104,6 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 * @since   4.3.0
 	 */
 	protected function save( $data ) {
-		$error = new \WP_Error();
-
 		if ( ! is_user_logged_in() ) {
 			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
 			$gebruiker_id = Public_Main::upsert_user(
@@ -132,23 +130,23 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 			$dagdelenkaart->save();
 
 			if ( 'ideal' === $data['input']['betaal'] ) {
-				$dagdelenkaart->betalen(
-					'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden'
-				);
+				return [
+					'redirect_uri' => $dagdelenkaart->betalen(
+						'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden'
+					),
+				];
 			} else {
 				if ( $dagdelenkaart->email( '_bank' ) ) {
 					return [
-						'status'  => 'Er is een email verzonden met nadere informatie over de betaling',
-						'vervolg' => 'home',
+						'content' => $this->goto_home(),
+						'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
 					];
 				} else {
-					$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
-					return $error;
+					return new \WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
 				}
 			}
 		} else {
-			$error->add( '', 'Gegevens konden niet worden opgeslagen. Neem s.v.p. contact op met Kleistad.' );
-			return $error;
+			return new \WP_Error( '', 'Gegevens konden niet worden opgeslagen. Neem s.v.p. contact op met Kleistad.' );
 		}
 	}
 }

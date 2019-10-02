@@ -24,13 +24,6 @@ abstract class ShortcodeForm extends Shortcode {
 	private static $form_url = null;
 
 	/**
-	 * Redirect naar Mollie voor ideal betaling
-	 *
-	 * @var string de url voor een redirect naar Mollie.
-	 */
-	private static $redirect_url = null;
-
-	/**
 	 * Validatie functie, wordt voor form validatie gebruikt
 	 *
 	 * @since   4.0.87
@@ -204,17 +197,6 @@ abstract class ShortcodeForm extends Shortcode {
 	}
 
 	/**
-	 * Registreer de url waar naar toe de redirect moet plaatsvinden.
-	 *
-	 * @since 5.7.0
-	 *
-	 * @param string $url Het url adres.
-	 */
-	public static function set_redirect( $url ) {
-		self::$redirect_url = $url;
-	}
-
-	/**
 	 * Verwerk een form submit via ajax call
 	 *
 	 * @since 5.7.0
@@ -236,38 +218,19 @@ abstract class ShortcodeForm extends Shortcode {
 				case 'test':
 					$result = $shortcode_object->test( $data );
 					break;
-				case 'download':
-					return self::download( $shortcode_object, str_replace( 'download_', '', $data['form_actie'] ) );
 				default:
 					$result = $shortcode_object->save( $data );
-					if ( ! is_wp_error( $result ) ) {
-						if ( ! empty( self::$redirect_url ) ) {
-							$result['vervolg']  = 'redirect';
-							$result['redirect'] = self::$redirect_url;
-						} elseif ( 'home' === $result['vervolg'] ) {
-							$result['html'] = self::goto_home();
-						}
-					}
 					break;
 			}
 		}
 		if ( is_wp_error( $result ) ) {
 			return new \WP_REST_Response(
 				[
-					'vervolg' => 'none',
-					'status'  => self::status( $result ),
+					'status' => $shortcode_object->status( $result ),
 				]
 			);
 		}
-		return new \WP_REST_Response(
-			[
-				'vervolg'      => $result['vervolg'],
-				'html'         => $result['html'] ?? '',
-				'status'       => self::status( $result ),
-				'redirect_uri' => self::$redirect_url,
-				'file_uri'     => $result['file_uri'] ?? '',
-			]
-		);
+		return new \WP_REST_Response( $result );
 	}
 
 }

@@ -9,6 +9,7 @@
  * @subpackage Kleistad/public/partials
  */
 
+$this->form();
 ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_3">

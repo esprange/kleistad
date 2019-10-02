@@ -87,8 +87,6 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$error = new \WP_Error();
-
 		$herstart_maand = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1 + $data['input']['pauze_maanden'], 1, intval( date( 'Y' ) ) );
 		$abonnement     = new \Kleistad\Abonnement( $data['input']['abonnee_id'] );
 		switch ( $data['input']['wijziging'] ) {
@@ -113,6 +111,11 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 				break;
 			case 'betaalwijze':
 				$status = $abonnement->betaalwijze( $data['input']['per_datum'], $data['input']['betaal'] );
+				if ( is_string( $status ) ) { // In dit geval is $status een redirect url.
+					return [
+						'redirect_uri' => $status,
+					];
+				}
 				break;
 			default:
 				$status = false;
@@ -120,12 +123,10 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		}
 		if ( $status ) {
 			return [
-				'status'  => 'De wijziging is verwerkt en er wordt een email verzonden met bevestiging',
-				'vervolg' => 'refresh',
-				'html'    => $this->display(),
+				'status'  => $this->status( 'De wijziging is verwerkt en er wordt een email verzonden met bevestiging' ),
+				'content' => $this->display(),
 			];
 		}
-		$error->add( '', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' );
-		return $error;
+		return new \WP_Error( 'intern', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' );
 	}
 }

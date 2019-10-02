@@ -100,15 +100,14 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 * @since   5.6.0
 	 */
 	protected function save( $data ) {
-		$error  = new \WP_Error();
 		$result = \Kleistad\WorkshopAanvraag::start( $data['input'] );
 		if ( $result ) {
 			return [
-				'status'  => 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen',
-				'vervolg' => 'home',
+				'content' => $this->goto_home(),
+				'status'  => $this->status( 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen' ),
 			];
 		} else {
-			$error->add( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' );
+			return new \WP_Error( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' );
 		}
 	}
 

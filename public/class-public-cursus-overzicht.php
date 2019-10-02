@@ -26,32 +26,26 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @since   4.5.4
 	 */
 	protected function prepare( &$data = null ) {
-		$data['actie'] = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING ) ?? filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
-		if ( is_null( $data['actie'] ) ) {
-			$data['actie'] = '-';
-		}
-
 		if ( 'cursisten' === $data['actie'] ) {
-			$cursus_id         = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-			$cursus            = new \Kleistad\Cursus( $cursus_id );
+			$cursus            = new \Kleistad\Cursus( $data['id'] );
 			$data['cursus']    = [
 				'naam'      => $cursus->naam,
-				'code'      => "C$cursus_id",
-				'cursus_id' => $cursus_id,
+				'code'      => $cursus->code,
+				'cursus_id' => $cursus->id,
 			];
 			$data['cursisten'] = [];
 			$inschrijvingen    = \Kleistad\Inschrijving::all();
 			foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-				if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) && $cursist_inschrijvingen[ $cursus_id ]->ingedeeld && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
+				if ( array_key_exists( $data['id'], $cursist_inschrijvingen ) && $cursist_inschrijvingen[ $data['id'] ]->ingedeeld && ! $cursist_inschrijvingen[ $data['id'] ]->geannuleerd ) {
 					$cursist             = get_userdata( $cursist_id );
 					$data['cursisten'][] = [
-						'naam'          => $cursist->display_name . ( 1 < $cursist_inschrijvingen[ $cursus_id ]->aantal ? ' (' . $cursist_inschrijvingen[ $cursus_id ]->aantal . ')' : '' ),
+						'naam'          => $cursist->display_name . ( 1 < $cursist_inschrijvingen[ $data['id'] ]->aantal ? ' (' . $cursist_inschrijvingen[ $data['id'] ]->aantal . ')' : '' ),
 						'telnr'         => $cursist->telnr,
 						'email'         => $cursist->user_email,
-						'i_betaald'     => $cursist_inschrijvingen[ $cursus_id ]->i_betaald,
-						'c_betaald'     => $cursist_inschrijvingen[ $cursus_id ]->c_betaald,
-						'restant_email' => $cursist_inschrijvingen[ $cursus_id ]->restant_email,
-						'technieken'    => implode( ', ', $cursist_inschrijvingen[ $cursus_id ]->technieken ),
+						'i_betaald'     => $cursist_inschrijvingen[ $data['id'] ]->i_betaald,
+						'c_betaald'     => $cursist_inschrijvingen[ $data['id'] ]->c_betaald,
+						'restant_email' => $cursist_inschrijvingen[ $data['id'] ]->restant_email,
+						'technieken'    => implode( ', ', $cursist_inschrijvingen[ $data['id'] ]->technieken ),
 					];
 				}
 			}
@@ -123,9 +117,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			}
 		}
 		return [
-			'status'  => ( $aantal_verzonden_email > 0 ) ? "Emails zijn verstuurd naar $aantal_verzonden_email cursisten" : 'Er zijn geen nieuwe emails verzonden',
-			'vervolg' => 'refresh',
-			'html'    => $this->display(),
+			'status'  => $this->status( ( $aantal_verzonden_email > 0 ) ? "Emails zijn verstuurd naar $aantal_verzonden_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
+			'content' => $this->display(),
 		];
 	}
 

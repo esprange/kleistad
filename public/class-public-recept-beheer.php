@@ -250,9 +250,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			 */
 			wp_delete_post( $data['recept']['id'] );
 			return [
-				'status'  => 'Het recept is verwijderd',
-				'vervolg' => 'refresh',
-				'html'    => $this->display(),
+				'status'  => $this->status( 'Het recept is verwijderd' ),
+				'content' => $this->display(),
 			];
 		} elseif ( 'publiceren' === $data['form_actie'] ) {
 			/*
@@ -262,9 +261,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			$recept->post_status = 'publish';
 			wp_update_post( $recept, true );
 			return [
-				'status'  => 'Het recept is aangepast',
-				'vervolg' => 'refresh',
-				'html'    => $this->display(),
+				'status'  => $this->status( 'Het recept is aangepast' ),
+				'content' => $this->display(),
 			];
 		} elseif ( 'verbergen' === $data['form_actie'] ) {
 			/*
@@ -274,9 +272,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			$recept->post_status = 'private';
 			wp_update_post( $recept, true );
 			return [
-				'status'  => 'Het recept is aangepast',
-				'vervolg' => 'refresh',
-				'html'    => $this->display(),
+				'status'  => $this->status( 'Het recept is aangepast' ),
+				'content' => $this->display(),
 			];
 		} elseif ( 'bewaren' === $data['form_actie'] ) {
 			if ( ! empty( $data['foto']['name'] ) ) {
@@ -287,13 +284,11 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				if ( is_array( $file ) && ! isset( $file['error'] ) ) {
 					$exif = @exif_read_data( $file['file'] ); // phpcs:ignore
 					if ( false === $exif ) {
-						$error->add( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
-						return $error;
+						return new \WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
 					}
 					$image = imagecreatefromjpeg( $file['file'] );
 					if ( false === $image ) {
-						$error->add( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
-						return $error;
+						return new \WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
 					}
 					if ( ! empty( $exif['Orientation'] ) ) {
 						switch ( $exif['Orientation'] ) {
@@ -308,8 +303,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 								break;
 						}
 						if ( false === $image ) {
-							$error->add( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
-							return $error;
+							return new \WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
 						}
 					}
 					$quality = intval( min( 75000 / filesize( $file['file'] ) * 100, 100 ) );
@@ -317,8 +311,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 					imagedestroy( $image );
 					$data['recept']['content']['foto'] = $file['url'];
 				} else {
-					$error->add( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] );
-					return $error;
+					return new \WP_Error( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] );
 				}
 			}
 			if ( ! $data['recept']['id'] ) {
@@ -342,8 +335,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				if ( is_string( $json_content ) ) {
 					$recept->post_content = $json_content;
 				} else {
-					$error->add( '', 'interne fout' );
-					return $error;
+					return new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' );
 				}
 				$recept_id = wp_update_post( $recept, true );
 				if ( is_int( $recept_id ) ) {
@@ -357,14 +349,12 @@ class Public_Recept_Beheer extends ShortcodeForm {
 						'kleistad_recept_cat'
 					);
 					return [
-						'status'  => 'Gegevens zijn opgeslagen',
-						'vervolg' => 'refresh',
-						'html'    => $this->display(),
+						'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
+						'content' => $this->display(),
 					];
 				}
 			}
-			$error->add( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' );
-			return $error;
+			return new \WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' );
 		}
 	}
 }

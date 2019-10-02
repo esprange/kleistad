@@ -281,7 +281,7 @@ class Public_Reservering extends Shortcode {
 		$jaar    = intval( date( 'Y', $periode ) );
 		return new \WP_REST_Response(
 			[
-				'html'    => self::toon_reserveringen( $oven_id, $maand, $jaar ),
+				'content' => self::toon_reserveringen( $oven_id, $maand, $jaar ),
 				'oven_id' => $oven_id,
 				'maand'   => $maand,
 				'jaar'    => $jaar,
@@ -344,7 +344,7 @@ class Public_Reservering extends Shortcode {
 		}
 		return new \WP_REST_Response(
 			[
-				'html'    => self::toon_reserveringen( $oven_id, $maand, $jaar ),
+				'content' => self::toon_reserveringen( $oven_id, $maand, $jaar ),
 				'oven_id' => $oven_id,
 				'maand'   => $maand,
 				'jaar'    => $jaar,

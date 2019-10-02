@@ -142,11 +142,12 @@ class Saldo {
 	 *
 	 * @param string $bericht Het bericht bij succesvolle betaling.
 	 * @param float  $bedrag  Het te betalen bedrag.
+	 * @return string De redirect url ingeval van een ideal betaling.
 	 */
 	public function betalen( $bericht, $bedrag ) {
 		$betaling = new \Kleistad\Betalen();
 		$code     = "S$this->gebruiker_id-" . strftime( '%y%m%d' );
-		$betaling->order(
+		return $betaling->order(
 			$this->gebruiker_id,
 			__CLASS__ . '-' . $code,
 			$bedrag,

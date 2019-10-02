@@ -250,21 +250,6 @@ class Public_Main {
 	}
 
 	/**
-	 * Controleer of er een betaling is gedaan
-	 *
-	 * @since 5.7.0
-	 *
-	 * @param string $html De tekst waar een tekst eventueel aan toegevoegd wordt.
-	 */
-	public static function controleer_betaling( $html ) {
-		$result = \Kleistad\Betalen::controleer();
-		if ( is_string( $result ) && ! empty( $result ) ) {
-			return \Kleistad\Shortcode::status( $result ) . \Kleistad\Shortcode::goto_home();
-		}
-		return \Kleistad\Shortcode::status( $result ) . $html;
-	}
-
-	/**
 	 * Wordt aangeroepen door filter single_template, zorgt dat WP de juiste template file toont.
 	 *
 	 * @since 4.1.0

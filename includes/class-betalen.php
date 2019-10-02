@@ -95,6 +95,7 @@ class Betalen {
 	 * @param string    $beschrijving de externe order referentie, maximaal 35 karakters.
 	 * @param string    $bericht      het bericht bij succesvolle betaling.
 	 * @param bool      $mandateren   er wordt een herhaalde betaling voorbereid.
+	 * @return string   De redirect bestemming
 	 */
 	public function order( $referentie, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
 		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
@@ -142,7 +143,7 @@ class Betalen {
 			]
 		);
 		set_transient( $uniqid, $betaling->id );
-		\Kleistad\ShortcodeForm::set_redirect( $betaling->getCheckOutUrl() ); // Dit is alleen de registratie van de redirect, niet de werkelijke uitvoering.
+		return $betaling->getCheckOutUrl();
 	}
 
 	/**

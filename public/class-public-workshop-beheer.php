@@ -296,13 +296,11 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @since   5.0.0
 	 */
 	protected function save( $data ) {
-		$error = new \WP_Error();
 		if ( 'reageren' === $data['form_actie'] ) {
 			\Kleistad\WorkshopAanvraag::reactie( $data['casus']['casus_id'], $data['casus']['reactie'] );
 			return [
-				'status' => 'Er is een email verzonden naar de aanvrager',
-				'actie'  => 'refresh',
-				'html'   => $this->display(),
+				'status'  => $this->status( 'Er is een email verzonden naar de aanvrager' ),
+				'content' => $this->display(),
 			];
 		}
 
@@ -320,8 +318,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			if ( $workshop->verwijder() ) {
 				$bericht = 'De workshop informatie is verwijderd';
 			} else {
-				$error->add( 'bevestigd', 'Een workshop die bevestigd is kan niet verwijderd worden' );
-				return $error;
+				return new \WP_Error( 'bevestigd', 'Een workshop die bevestigd is kan niet verwijderd worden' );
 			}
 		} else {
 			$workshop->naam        = $data['workshop']['naam'];
@@ -350,9 +347,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			}
 		}
 		return [
-			'status' => $bericht,
-			'actie'  => 'refresh',
-			'html'   => $this->display(),
+			'status'  => $this->status( $bericht ),
+			'content' => $this->display(),
 		];
 	}
 }

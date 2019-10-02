@@ -339,10 +339,11 @@ class Workshop extends Entity {
 	 * @since        5.0.0
 	 *
 	 * @param string $bericht      Het bericht bij succesvolle betaling.
+	 * @return string De redirect url ingeval van een ideal betaling.
 	 */
 	public function betalen( $bericht ) {
 		$betaling = new \Kleistad\Betalen();
-		$betaling->order(
+		return $betaling->order(
 			[
 				'naam'     => $this->contact,
 				'email'    => $this->email,

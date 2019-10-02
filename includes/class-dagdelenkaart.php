@@ -145,12 +145,13 @@ class Dagdelenkaart extends Entity {
 	 * Start de betaling van een nieuw dagdelenkaart.
 	 *
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
+	 * @return string De redirect url van een ideal betaling.
 	 */
 	public function betalen( $bericht ) {
 		$options = \Kleistad\Kleistad::get_options();
 
 		$betalen = new \Kleistad\Betalen();
-		$betalen->order(
+		return $betalen->order(
 			$this->gebruiker_id,
 			__CLASS__ . '-' . $this->code,
 			$options['dagdelenkaart'],

@@ -269,13 +269,14 @@ class Inschrijving extends Entity {
 	 *
 	 * @param string $bericht      Het bericht bij succesvolle betaling.
 	 * @param bool   $inschrijving Of het een inschrijving of cursuskosten betreft.
+	 * @return string De redirect url ingeval van een ideal betaling.
 	 */
 	public function betalen( $bericht, $inschrijving ) {
 
 		$betaling   = new \Kleistad\Betalen();
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
 		if ( $inschrijving && $this->gedeeld ) {
-			$betaling->order(
+			return $betaling->order(
 				$this->cursist_id,
 				__CLASS__ . '-' . $this->code . '-inschrijving',
 				$this->aantal * $this->cursus->inschrijfkosten,
@@ -283,7 +284,7 @@ class Inschrijving extends Entity {
 				$bericht
 			);
 		} else {
-			$betaling->order(
+			return $betaling->order(
 				$this->cursist_id,
 				__CLASS__ . '-' . $this->code . '-cursus',
 				$this->aantal * $this->cursus->cursuskosten,

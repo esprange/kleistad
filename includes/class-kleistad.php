@@ -132,7 +132,6 @@ class Kleistad {
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
-		$this->loader->add_filter( 'kleistad_display', $plugin_public, 'controleer_betaling' );
 	}
 
 	/**

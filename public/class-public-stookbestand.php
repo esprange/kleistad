@@ -14,7 +14,7 @@ namespace Kleistad;
 /**
  * De kleistad stookbestand class.
  */
-class Public_Stookbestand extends ShortcodeForm {
+class Public_Stookbestand extends Shortcode {
 
 	/**
 	 * Array dat alle medestokers weergeeft in periode
@@ -127,8 +127,8 @@ class Public_Stookbestand extends ShortcodeForm {
 	 * Schrijf abonnees informatie naar het bestand.
 	 */
 	protected function stook() {
-		$this->vanaf_datum = strtotime( filter_input( INPUT_POST, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
-		$this->tot_datum   = strtotime( filter_input( INPUT_POST, 'tot_datum', FILTER_SANITIZE_STRING ) );
+		$this->vanaf_datum = strtotime( filter_input( INPUT_GET, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
+		$this->tot_datum   = strtotime( filter_input( INPUT_GET, 'tot_datum', FILTER_SANITIZE_STRING ) );
 		$this->ovens       = \Kleistad\Oven::all();
 		$reserveringen     = \Kleistad\Reservering::all();
 		array_walk( $reserveringen, [ $this, 'bepaal_medestokers' ] );
@@ -146,27 +146,4 @@ class Public_Stookbestand extends ShortcodeForm {
 		array_walk( $reserveringen, [ $this, 'bepaal_stookgegevens' ] );
 	}
 
-	/**
-	 * Valideer/sanitize form (dummy)
-	 *
-	 * @param array $data Gevalideerde data.
-	 * @return bool
-	 *
-	 * @since   5.5.2
-	 */
-	protected function validate( &$data ) {
-		return true;
-	}
-
-	/**
-	 * Bewaar form gegevens (dummy)
-	 *
-	 * @param array $data te bewaren data.
-	 * @return array
-	 *
-	 * @since   5.5.2
-	 */
-	protected function save( $data ) {
-		return [];
-	}
 }

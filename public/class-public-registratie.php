@@ -27,8 +27,7 @@ class Public_Registratie extends ShortcodeForm {
 	protected function prepare( &$data = null ) {
 		$gebruiker = wp_get_current_user();
 
-		if ( is_null( $data ) ) {
-			$data          = [];
+		if ( ! isset( $data['input'] ) ) {
 			$data['input'] = [
 				'gebruiker_id' => $gebruiker->ID,
 				'voornaam'     => $gebruiker->first_name,
@@ -111,8 +110,8 @@ class Public_Registratie extends ShortcodeForm {
 
 		if ( ! is_wp_error( $gebruiker_id ) ) {
 			return [
-				'status'  => 'Gegevens zijn opgeslagen',
-				'vervolg' => 'home',
+				'content' => $this->goto_home(),
+				'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
 			];
 		} else {
 			return new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' );

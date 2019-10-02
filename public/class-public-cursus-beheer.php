@@ -205,7 +205,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$error     = new \WP_Error();
 		$cursus_id = $data['cursus']['cursus_id'];
 
 		if ( $cursus_id > 0 ) {
@@ -219,13 +218,11 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			*/
 			if ( $cursus->verwijder() ) {
 				return [
-					'status'  => 'De cursus informatie is verwijderd',
-					'vervolg' => 'refresh',
-					'html'    => $this->display(),
+					'status'  => $this->status( 'De cursus informatie is verwijderd' ),
+					'content' => $this->display(),
 				];
 			}
-			$error->add( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
-			return $error;
+			return new \WP_Error( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' );
 		} elseif ( 'bewaren' === $data['form_actie'] ) {
 			$cursus->naam            = $data['cursus']['naam'];
 			$cursus->docent          = $data['cursus']['docent'];
@@ -252,9 +249,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			$cursus->tonen           = '' != $data['cursus']['tonen']; // phpcs:ignore
 			$cursus->save();
 			return [
-				'status'  => 'De cursus informatie is opgeslagen',
-				'vervolg' => 'refresh',
-				'html'    => $this->display(),
+				'status'  => $this->status( 'De cursus informatie is opgeslagen' ),
+				'content' => $this->display(),
 			];
 		}
 	}

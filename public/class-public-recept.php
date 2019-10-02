@@ -175,8 +175,8 @@ class Public_Recept extends Shortcode {
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-show-recept.php';
 		return new \WP_REST_Response(
 			[
-				'html' => ob_get_clean(),
-				'zoek' => $zoek,
+				'content' => ob_get_clean(),
+				'zoek'    => $zoek,
 			]
 		);
 

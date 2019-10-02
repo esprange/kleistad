@@ -25,8 +25,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data = null ) {
-		if ( is_null( $data ) ) {
-			$data          = [];
+		if ( ! isset( $data['input'] ) ) {
 			$data['input'] = [
 				'gebruiker_id'     => 0,
 				'EMAIL'            => '',
@@ -155,10 +154,15 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		$abonnement->extras      = $data['input']['extras'];
 		$abonnement->save();
 
-		$abonnement->start( $abonnement->start_datum, $data['input']['betaal'] );
+		$status = $abonnement->start( $abonnement->start_datum, $data['input']['betaal'] );
+		if ( is_string( $status ) ) { // Er is gekozen voor een ideal betaling, dus redirect uitvoeren.
+			return [
+				'redirect_uri' => $status,
+			];
+		}
 		return [
-			'status'  => 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging',
-			'vervolg' => 'home',
+			'content' => $this->goto_home(),
+			'status'  => $this->status( 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging' ),
 		];
 	}
 

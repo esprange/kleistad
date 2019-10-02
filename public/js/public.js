@@ -199,24 +199,20 @@ function strtodate( value ) {
 	 * @param { array } data
 	 */
 	function vervolg( $shortcode, data ) {
-		switch ( data.vervolg ) {
-			case 'refresh':
-			case 'home':
-			case 'html':
-				$shortcode.html( data.html );
-				break;
-			case 'reset':
-				$shortcode.find( 'form' ).trigger( 'reset' );
-				break;
-			case 'download':
-				window.location.href = data.file_uri;
-				break;
-			case 'redirect':
-				window.location.replace( data.redirect_uri );
-				break;
-			default: // Is ook case none.
+		if ( 'content' in data ) {
+			$shortcode.html( data.content );
 		}
-		$( '#kleistad_berichten' ).html( data.status );
+		if ( 'status' in data ) {
+			$( '#kleistad_berichten' ).html( data.status );
+		} else {
+			$( '#kleistad_berichten' ).html( '' );
+		}
+		if ( 'file_uri' in data ) {
+			window.location.href = data.file_uri;
+		}
+		if ( 'redirect_uri' in data ) {
+			window.location.replace( data.redirect_uri );
+		}
 	}
 
 	/**
@@ -384,33 +380,12 @@ function strtodate( value ) {
 			/**
 			 * Als er op een edit anchor is geklikt, doe dan een edit actie.
 			 */
-			.on( 'click', '.kleistad_edit_link, .kleistad_view_link, .kleistad_publiceer_link',
-				function( event ) {
+			.on( 'click', '.kleistad_edit_link, .kleistad_view_link',
+				function() {
 					var $anchor       = $( this );
 					var shortcodeData = shortcode( $anchor );
-					event.preventDefault();
 					getItem( getShortcode( $anchor ), shortcodeData );
 					return true;
-				}
-			)
-			/**
-			 * Als er op een verwijder anchor is geklikt, doe dan eerst een eventuele prompt voor deze actie.
-			 */
-			.on( 'click', '.kleistad_verwijder_link',
-				function( event ) {
-					var $anchor       = $( this );
-					var shortcodeData = shortcode( $anchor );
-					var confirm       = $anchor.data( 'confirm' );
-					var tekst         = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
-					event.preventDefault();
-					/**
-					 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
-					 */
-					return askConfirm( tekst,
-						function() {
-							getItem( getShortcode( $anchor ), shortcodeData );
-						}
-					);
 				}
 			)
 			/**
@@ -420,8 +395,6 @@ function strtodate( value ) {
 				function() {
 					var $button       = $( this );
 					var shortcodeData = shortcode( $button );
-					var formData      = new FormData( $button.closest( 'form' ) );
-					formData.append( 'form_actie', 'none' );
 					getItems( getShortcode( $button ), shortcodeData );
 					return true;
 				}
@@ -433,8 +406,11 @@ function strtodate( value ) {
 				function() {
 					var $button       = $( this );
 					var shortcodeData = shortcode( $button );
-					var formData      = new FormData( $button.closest( 'form' ) );
-					formData.append( 'form_actie', 'download' );
+					$( 'input' ).each(
+						function() {
+							shortcodeData[ $( this ).attr( 'name') ] = $( this ).val();
+						}
+					);
 					download( getShortcode( $button ), shortcodeData );
 					return true;
 				}

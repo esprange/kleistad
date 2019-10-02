@@ -246,11 +246,12 @@ class Abonnement extends Entity {
 	 * Maak de vervolgbetaling. In de callback wordt de automatische incasso gestart.
 	 *
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
+	 * @return string De redirect url.
 	 */
 	public function betalen( $bericht ) {
 		// Doe de eerste betaling om het mandaat te verkrijgen.
 		$betalen = new \Kleistad\Betalen();
-		$betalen->order(
+		return $betalen->order(
 			$this->abonnee_id,
 			__CLASS__ . '-' . $this->code . '-incasso',
 			$this->bedrag( self::BEDRAG_OVERBRUGGING ),
@@ -511,6 +512,7 @@ class Abonnement extends Entity {
 	 * @param int    $wijzig_datum Wijzigdatum.
 	 * @param string $betaalwijze  Ideal of bankstorting.
 	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @return string|bool De redirect url ingeval van een ideal betaling.
 	 */
 	public function betaalwijze( $wijzig_datum, $betaalwijze, $admin = false ) {
 		$betalen              = new \Kleistad\Betalen();
@@ -520,7 +522,7 @@ class Abonnement extends Entity {
 			// Doe een proefbetaling om het mandaat te verkrijgen. De wijzig datum is de 1e van de volgende maand.
 			$this->incasso_datum = $wijzig_datum;
 			$this->save();
-			$betalen->order(
+			return $betalen->order(
 				$this->abonnee_id,
 				__CLASS__ . '-' . $this->code . '-incasso',
 				0.01,
@@ -545,6 +547,7 @@ class Abonnement extends Entity {
 	 * @param int    $start_datum Datum waarop abonnement gestart wordt.
 	 * @param string $betaalwijze Ideal of bank.
 	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @return string|bool De redirect url ingeval van een ideal betaling.
 	 */
 	public function start( $start_datum, $betaalwijze, $admin = false ) {
 		$dag                  = 60 * 60 * 24; // Aantal seconden in een dag.
@@ -560,7 +563,7 @@ class Abonnement extends Entity {
 
 		if ( 'ideal' === $betaalwijze ) {
 			$betalen = new \Kleistad\Betalen();
-			$betalen->order(
+			return $betalen->order(
 				$this->abonnee_id,
 				__CLASS__ . '-' . $this->code . '-start_ideal',
 				$this->bedrag( self::BEDRAG_START_EN_BORG ),
@@ -575,6 +578,7 @@ class Abonnement extends Entity {
 			} else {
 				$this->email( '_start_bank' );
 			}
+			return true;
 		}
 	}
 

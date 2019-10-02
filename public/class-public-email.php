@@ -138,8 +138,8 @@ class Public_Email extends ShortcodeForm {
 			);
 		}
 		return [
-			'status'  => 'De email is naar ' . count( $adressen ) . ' personen verzonden',
-			'vervolg' => 'reset',
+			'status'  => $this->status( 'De email is naar ' . count( $adressen ) . ' personen verzonden' ),
+			'content' => $this->display(),
 		];
 	}
 
@@ -163,8 +163,7 @@ class Public_Email extends ShortcodeForm {
 			]
 		);
 		return [
-			'status'  => 'De test email is verzonden',
-			'vervolg' => 'none',
+			'status' => $this->status( 'De test email is verzonden' ),
 		];
 	}
 }

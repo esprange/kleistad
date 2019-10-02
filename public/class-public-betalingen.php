@@ -167,9 +167,8 @@ class Public_Betalingen extends ShortcodeForm {
 			$workshop->save();
 		}
 		return [
-			'status'  => 'Betaal informatie is geregistreerd.',
-			'vervolg' => 'refresh',
-			'html'    => $this->display(),
+			'status'  => $this->status( 'Betaal informatie is geregistreerd.' ),
+			'content' => $this->display(),
 		];
 	}
 }

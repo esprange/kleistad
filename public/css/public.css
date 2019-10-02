@@ -133,21 +133,21 @@ a.kleistad_schedule_link {
     background-repeat: no-repeat;
 	text-decoration: none !important;
 }
-a.kleistad_verwijder_link {
+/* a.kleistad_verwijder_link {
 	background-image: url('../images/icon-verwijder.png');
     background-repeat: no-repeat;
 	text-decoration: none !important;
-}
-a.kleistad_publiceer_link {
+} */
+/* a.kleistad_publiceer_link {
 	background-image: url('../images/icon-www.png');
     background-repeat: no-repeat;
 	text-decoration: none !important;
-}
-a.kleistad_verberg_link {
+} */
+/* a.kleistad_verberg_link {
 	background-image: url('../images/icon-verberg.png');
     background-repeat: no-repeat;
 	text-decoration: none !important;
-}
+} */
 
 .kleistad_tijd {
     width: 4em;

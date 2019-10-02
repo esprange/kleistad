@@ -51,15 +51,9 @@
 	<div class="kleistad_col_4">
 		<input class="kleistad_input" name="email_controle" id="kleistad_emailadres_controle" type="email"
 		required title="Vul ter controle s.v.p. opnieuw het email adres in"
-		value="<?php echo esc_attr( $data['input']['email_controle'] ); ?>"
-		oninput="validate_email(this, kleistad_emailadres);"/>
+		value="<?php echo esc_attr( $data['input']['email_controle'] ); ?>" />
 	</div>
 </div>
-<script type="text/javascript">
-	function validate_email( input, compare ) {
-		input.setCustomValidity( ( input.value === compare.value ) ? '' : 'E-mailadressen zijn niet gelijk' );
-	}
-</script>
 <div class="kleistad_row">
 	<div class="kleistad_col_3 kleistad_label">
 		<label for="kleistad_telnr">Telefoon</label>

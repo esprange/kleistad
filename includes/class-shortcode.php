@@ -97,17 +97,27 @@ abstract class Shortcode {
 		wp_enqueue_script( "kleistad{$this->shortcode}" );
 
 		if ( ! self::check_access( $this->shortcode ) ) {
-			$error = new \WP_Error();
-			$error->add( 'toegang', 'Je hebt geen toegang tot deze functie' );
-			return ( self::status( $error ) );
+			$result = $this->status( new \WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
+		} else {
+			$result = $this->prepare( $data );
+			if ( is_wp_error( $result ) ) {
+				$result = $this->status( $result );
+			} else {
+				ob_start();
+				require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
+				$result = ob_get_clean();
+			}
 		}
-		$result = $this->prepare( $data );
-		if ( is_wp_error( $result ) ) {
-			return self::status( $result );
+
+		$betaal_result = \Kleistad\Betalen::controleer();
+		if ( is_string( $betaal_result ) ) {
+			if ( ! empty( $betaal_result ) ) { // Er is een succesvolle betaling.
+				return $this->status( $betaal_result ) . $this->goto_home();
+			}
+		} else { // Er is een betaling maar niet succesvol.
+			return $this->status( $betaal_result ) . $result;
 		}
-		ob_start();
-		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
-		return ob_get_clean();
+		return $result;
 	}
 
 	/**
@@ -117,7 +127,7 @@ abstract class Shortcode {
 	 *
 	 * @param string | array | \WP_Error $result Het resultaat dat getoond moet worden.
 	 */
-	public static function status( $result ) {
+	public function status( $result ) {
 		$html = '';
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
@@ -138,12 +148,20 @@ abstract class Shortcode {
 	 * @since 5.7.0
 	 * @return string
 	 */
-	public static function goto_home() {
+	public function goto_home() {
+		$user = wp_get_current_user();
+		if ( 0 === $user->ID ) {
+			$url = home_url();
+		} elseif ( $user->has_cap( 'bestuur' ) ) {
+			$url = home_url( '/bestuur/' );
+		} else {
+			$url = home_url( '/leden/' );
+		}
 		ob_start();
 		?>
-		</br></br>
+		<br/><br/>
 		<div style="text-align:center;" >
-			<button onclick="location.href='<?php echo esc_url( home_url() ); ?>';" >
+			<button onclick="location.href='<?php echo esc_url( $url ); ?>';" >
 				&nbsp;OK&nbsp;
 			</button>
 		</div>
@@ -227,35 +245,28 @@ abstract class Shortcode {
 	 * Helper functie, geef het object terug of een foutboodschap.
 	 *
 	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return \WP_REST_Response|\Kleistad\Shortcode de response.
+	 * @return \WP_REST_Response| bool  De response of false.
 	 */
 	protected static function get_shortcode_object( \WP_REST_Request $request ) {
 		$tag   = $request->get_param( 'tag' );
 		$class = '\Kleistad\Public_' . ucwords( $tag, '_' );
-		if ( ! class_exists( $class ) ) {
-			return new \WP_REST_Response(
-				[
-					'vervolg' => 'home',
-					'status'  => self::status( new \WP_Error( 'intern', 'interne fout' ) ),
-					'html'    => self::goto_home(),
-				]
-			);
-		} else {
+		if ( class_exists( $class ) ) {
 			$atts = json_decode( $request->get_param( 'atts' ), true );
 			return new $class( $tag, $atts, \Kleistad\Kleistad::get_options() );
 		}
+		return false;
 	}
 
 	/**
 	 * Get an item and display it.
 	 *
 	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return \WP_REST_Response de response.
+	 * @return \WP_REST_Response|\WP_Error de response.
 	 */
 	public static function callback_getitem( \WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return $shortcode_object;
+			return new \WP_Error( 'intern', 'interne fout' );
 		}
 		$data = [
 			'actie' => sanitize_text_field( $request->get_param( 'actie' ) ),
@@ -263,9 +274,7 @@ abstract class Shortcode {
 		];
 		return new \WP_REST_Response(
 			[
-				'vervolg' => 'html',
-				'status'  => '',
-				'html'    => $shortcode_object->display( $data ),
+				'content' => $shortcode_object->display( $data ),
 			]
 		);
 	}
@@ -273,32 +282,29 @@ abstract class Shortcode {
 	/**
 	 * Maak een tijdelijk bestand aan voor download.
 	 *
-	 * @param \Kleistad\Shortcode $shortcode De shortcode waarvoor de download plaatsvindt.
-	 * @param string              $functie   De shortcode functie die aangeroepen moet worden.
+	 * @param \Kleistad\Shortcode $shortcode_object De shortcode waarvoor de download plaatsvindt.
+	 * @param string              $functie          De shortcode functie die aangeroepen moet worden.
 	 * @return \WP_REST_Response
 	 */
-	protected static function download( \Kleistad\Shortcode $shortcode, $functie ) {
+	protected static function download( \Kleistad\Shortcode $shortcode_object, $functie ) {
 		$upload_dir = wp_upload_dir();
 		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
 		$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
 		if ( false !== $result ) {
-			$shortcode->file_handle = $result;
-			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
-			call_user_func( [ $shortcode, $functie ] );
-			fclose( $shortcode->file_handle );
+			$shortcode_object->file_handle = $result;
+			fwrite( $shortcode_object->file_handle, "\xEF\xBB\xBF" );
+			call_user_func( [ $shortcode_object, $functie ] );
+			fclose( $shortcode_object->file_handle );
 			return new \WP_REST_Response(
 				[
-					'vervolg'  => 'download',
-					'status'   => '',
 					'file_uri' => $upload_dir['baseurl'] . $file,
 				]
 			);
 		} else {
 			return new \WP_REST_Response(
 				[
-					'vervolg' => 'home',
-					'status'  => self::status( new \WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
-					'html'    => self::goto_home(),
+					'status'  => $shortcode_object->status( new \WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
+					'content' => $shortcode_object->goto_home(),
 				]
 			);
 		}
@@ -341,7 +347,10 @@ abstract class Shortcode {
 	 * @since 4.5.1
 	 */
 	public function run() {
-		return apply_filters( 'kleistad_display', $this->display() );
+		$data = [
+			'actie' => '-',
+		];
+		return $this->display( $data );
 	}
 
 	/**

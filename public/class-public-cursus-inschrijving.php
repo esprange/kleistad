@@ -208,15 +208,17 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		$lopend = $data['cursus']->start_datum < strtotime( 'today' );
 
 		if ( ! $lopend && 'ideal' === $data['input']['betaal'] ) {
-			$inschrijving->betalen(
-				'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging',
-				true
-			);
+			return [
+				'redirect_uri' => $inschrijving->betalen(
+					'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging',
+					true
+				),
+			];
 		} else {
 			$inschrijving->email( $lopend ? 'lopende' : 'inschrijving' );
 			return [
-				'status'  => 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie',
-				'vervolg' => 'home',
+				'content' => $this->goto_home(),
+				'status'  => $this->status( 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie' ),
 			];
 		}
 	}

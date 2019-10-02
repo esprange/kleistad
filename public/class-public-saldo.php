@@ -65,23 +65,23 @@ class Public_Saldo extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$error = new \WP_Error();
 		$saldo = new \Kleistad\Saldo( $data['input']['gebruiker_id'] );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$saldo->betalen(
-				'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging',
-				$data['input']['bedrag']
-			);
+			return [
+				'redirect_uri' => $saldo->betalen(
+					'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging',
+					$data['input']['bedrag']
+				),
+			];
 		} else {
 			if ( $saldo->email( '_bank', $data['input']['bedrag'] ) ) {
 				return [
-					'status'  => 'Er is een email verzonden met nadere informatie over de betaling',
-					'vervolg' => 'home',
+					'content' => $this->goto_home(),
+					'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
 				];
 			} else {
-				$error->add( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
-				return $error;
+				return new \WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' );
 			}
 		}
 	}
