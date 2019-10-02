@@ -242,8 +242,6 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @since   4.1.0
 	 */
 	protected function save( $data ) {
-		$error = new \WP_Error();
-
 		if ( 'verwijderen' === $data['form_actie'] ) {
 			/*
 			 * Recept moet verwijderd worden.
@@ -284,11 +282,15 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				if ( is_array( $file ) && ! isset( $file['error'] ) ) {
 					$exif = @exif_read_data( $file['file'] ); // phpcs:ignore
 					if ( false === $exif ) {
-						return new \WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
+						return [
+							'status' => $this->status( new \WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' ) ),
+						];
 					}
 					$image = imagecreatefromjpeg( $file['file'] );
 					if ( false === $image ) {
-						return new \WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
+						return [
+							'status' => $this->status( new \WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' ) ),
+						];
 					}
 					if ( ! empty( $exif['Orientation'] ) ) {
 						switch ( $exif['Orientation'] ) {

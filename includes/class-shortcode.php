@@ -331,12 +331,12 @@ abstract class Shortcode {
 	 * Get an item and display it.
 	 *
 	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return \WP_REST_Response de response.
+	 * @return \WP_REST_Response|\WP_Error de response.
 	 */
 	public static function callback_download( \WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return $shortcode_object;
+			return new \WP_Error( 'intern', 'interne fout' );
 		}
 		return self::download( $shortcode_object, $request->get_param( 'actie' ) );
 	}

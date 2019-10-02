@@ -201,12 +201,12 @@ abstract class ShortcodeForm extends Shortcode {
 	 *
 	 * @since 5.7.0
 	 * @param  \WP_REST_Request $request De callback parameters.
-	 * @return \WP_REST_Response de response.
+	 * @return \WP_REST_Response|\WP_Error de response.
 	 */
 	public static function callback_formsubmit( \WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return $shortcode_object;
+			return new \WP_Error( 'intern', 'interne fout' );
 		}
 		$data               = [];
 		$data['form_actie'] = $request->get_param( 'form_actie' );

@@ -182,6 +182,8 @@ class Public_Betaling extends ShortcodeForm {
 				];
 			}
 		}
-		return new \WP_Error( 'intern', 'Er is blijkbaar iets fout gegaan, probeer het opnieuw' );
+		return [
+			'status' => $this->status( new \WP_Error( 'intern', 'Er is blijkbaar iets fout gegaan, probeer het opnieuw' ) ),
+		];
 	}
 }
