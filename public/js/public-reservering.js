@@ -225,7 +225,7 @@
             }
         ).done(
             function( data ) {
-				$( '#kleistad_reserveringen tbody' ).html( data.html );
+				$( '#kleistad_reserveringen tbody' ).html( data.content );
 				$( '#kleistad_reserveringen' ).data( 'maand', data.maand ).data( 'jaar', data.jaar );
 				$( '#kleistad_periode' ).html( data.periode );
             }
@@ -282,7 +282,7 @@
             }
         ).done(
             function( data ) {
-				$( '#kleistad_reserveringen tbody' ).html( data.html );
+				$( '#kleistad_reserveringen tbody' ).html( data.content );
 				$( '#kleistad_reserveringen' ).data( 'maand', data.maand ).data( 'jaar', data.jaar );
 				$( '#kleistad_periode' ).html( data.periode );
             }

@@ -72,7 +72,7 @@
             }
         ).done(
             function( data ) {
-                $( '#kleistad_recepten' ).html( data.html );
+                $( '#kleistad_recepten' ).html( data.content );
                 $( '#kleistad_filters input[name="term"]' ).each( function() {
                     if ( -1 !== $.inArray( $( this ).val(), data.zoek.terms ) ) {
                         $( this ).prop( 'checked', true );

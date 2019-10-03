@@ -9,7 +9,7 @@
     "url": "https://github.com/esprange/kleistad.git"
   },
   "devDependencies": {
-    "eslint": "^6.4.0",
+    "eslint": "^6.5.1",
     "grunt-checkwpversion": "^0.3.0",
     "grunt-contrib-cssmin": "^3.0.0",
     "grunt-contrib-uglify": "^4.0.1",
