@@ -81,7 +81,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$data['docenten'] = [];
 		foreach ( $gebruikers as $gebruiker ) {
 			if ( \Kleistad\Roles::override( $gebruiker->ID ) ) {
 				$docenten[] = $gebruiker;
