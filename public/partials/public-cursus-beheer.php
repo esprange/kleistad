@@ -141,7 +141,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 				<td><?php echo esc_html( $cursus['start_tijd'] ); ?><br/><?php echo esc_html( $cursus['eind_tijd'] ); ?></td>
 				<td><?php echo esc_html( $cursus['status'] ); ?></td>
 				<td>
-					<a href="#" title="wijzig cursus" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+					<a href="#" title="wijzig cursus" class="kleistad_edit kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 						data-id="<?php echo esc_attr( $cursus['id'] ); ?>" data-actie="wijzigen" >
 						&nbsp;
 					</a>
@@ -150,7 +150,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<button class="kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+<button class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 	<?php
 endif;
 ?>

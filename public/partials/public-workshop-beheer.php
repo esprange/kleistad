@@ -176,11 +176,11 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 			<td><?php echo esc_html( $aanvraag['status'] ); ?></td>
 			<td>
 				<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="tonen"
-					title="toon_aanvraag" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
+					title="toon_aanvraag" class="kleistad_edit kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
 					&nbsp;
 				</a>&nbsp;&nbsp;
 				<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="inplannen"
-					title="plan_workshop" class="kleistad_schedule_link" style="text-decoration:none !important;color:blue;padding:.4em .8em;" >
+					title="plan_workshop" class="kleistad_schedule kleistad_edit_link" style="text-decoration:none !important;color:blue;padding:.4em .8em;" >
 					&nbsp;
 				</a>
 			</td>
@@ -217,7 +217,7 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 			<td><?php echo esc_html( $workshop['status'] ); ?></td>
 			<td>
 				<a href="#" data-id="<?php echo esc_attr( $workshop['id'] ); ?>" data-actie="wijzigen"
-					title="wijzig workshop" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
+					title="wijzig workshop" class="kleistad_edit kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
 					&nbsp;
 				</a>
 			</td>
@@ -225,7 +225,7 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<button type="button" class="kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+<button type="button" class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 <button type="button" class="kleistad_download_link" data-actie="workshops" >Download</button>
 	<?php
 endif;

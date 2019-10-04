@@ -174,7 +174,7 @@ class Workshop extends Entity {
 				'technieken' => $this->technieken,
 				'code'       => $this->code,
 				'id'         => $this->id,
-				'class'      => 'Kleistad_' . __CLASS__,
+				'class'      => __CLASS__,
 			];
 			$event->titel      = $this->naam;
 			$event->definitief = $this->definitief;

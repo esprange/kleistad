@@ -56,51 +56,46 @@ class Public_Kalender extends Shortcode {
 		foreach ( $events as $event ) {
 			if ( isset( $event->properties['class'] ) ) {
 				$id = $event->properties['id'];
-				switch ( $event->properties['class'] ) {
-					case 'Kleistad_Workshop':
-						$workshop = new \Kleistad\Workshop( $id );
-						if ( ! $workshop->vervallen ) {
-							$fc_events[] = [
-								'id'            => $event->id,
-								'title'         => "$workshop->naam ($workshop->code)",
-								'start'         => $event->start->format( \DateTime::ATOM ),
-								'end'           => $event->eind->format( \DateTime::ATOM ),
-								'className'     => $workshop->betaald ? 'kleistad_workshop_betaald' :
-									( $workshop->definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ),
-								'extendedProps' => [
-									'naam'       => $workshop->naam,
-									'aantal'     => $workshop->aantal,
-									'docent'     => $workshop->docent,
-									'technieken' => implode( ', ', $workshop->technieken ),
-									'start'      => strftime( '%H:%M', $workshop->start_tijd ),
-									'eind'       => strftime( '%H:%M', $workshop->eind_tijd ),
-								],
-							];
-						}
-						break;
-					case 'Kleistad_Cursus':
-						$cursus = new \Kleistad\Cursus( $id );
-						if ( ! $cursus->vervallen ) {
-							$lopend      = $cursus->start_datum < strtotime( 'today' );
-							$fc_events[] = [
-								'id'            => $event->id,
-								'title'         => $cursus->naam,
-								'start'         => $event->start->format( \DateTime::ATOM ),
-								'end'           => $event->eind->format( \DateTime::ATOM ),
-								'className'     => $cursus->tonen || $lopend ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
-								'extendedProps' => [
-									'naam'       => "cursus $cursus->code",
-									'aantal'     => $cursus->maximum - $cursus->ruimte(),
-									'docent'     => $cursus->docent,
-									'technieken' => implode( ', ', $cursus->technieken ),
-									'start'      => strftime( '%H:%M', $cursus->start_tijd ),
-									'eind'       => strftime( '%H:%M', $cursus->eind_tijd ),
-								],
-							];
-						}
-						break;
-					default:
-						break;
+				if ( strpos( $event->properties['class'], 'Workshop' ) ) {
+					$workshop = new \Kleistad\Workshop( $id );
+					if ( ! $workshop->vervallen ) {
+						$fc_events[] = [
+							'id'            => $event->id,
+							'title'         => "$workshop->naam ($workshop->code)",
+							'start'         => $event->start->format( \DateTime::ATOM ),
+							'end'           => $event->eind->format( \DateTime::ATOM ),
+							'className'     => $workshop->betaald ? 'kleistad_workshop_betaald' :
+								( $workshop->definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ),
+							'extendedProps' => [
+								'naam'       => $workshop->naam,
+								'aantal'     => $workshop->aantal,
+								'docent'     => $workshop->docent,
+								'technieken' => implode( ', ', $workshop->technieken ),
+								'start'      => strftime( '%H:%M', $workshop->start_tijd ),
+								'eind'       => strftime( '%H:%M', $workshop->eind_tijd ),
+							],
+						];
+					}
+				} elseif ( strpos( $event->properties['class'], 'Cursus' ) ) {
+					$cursus = new \Kleistad\Cursus( $id );
+					if ( ! $cursus->vervallen ) {
+						$lopend      = $cursus->start_datum < strtotime( 'today' );
+						$fc_events[] = [
+							'id'            => $event->id,
+							'title'         => $cursus->naam,
+							'start'         => $event->start->format( \DateTime::ATOM ),
+							'end'           => $event->eind->format( \DateTime::ATOM ),
+							'className'     => $cursus->tonen || $lopend ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
+							'extendedProps' => [
+								'naam'       => "cursus $cursus->code",
+								'aantal'     => $cursus->maximum - $cursus->ruimte(),
+								'docent'     => $cursus->docent,
+								'technieken' => implode( ', ', $cursus->technieken ),
+								'start'      => strftime( '%H:%M', $cursus->start_tijd ),
+								'eind'       => strftime( '%H:%M', $cursus->eind_tijd ),
+							],
+						];
+					}
 				}
 			} else {
 				$fc_events[] = [

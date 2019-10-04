@@ -313,6 +313,8 @@ function strtodate( value ) {
 		}
 		if ( 'undefined' !== typeof $element.data( 'actie' ) ) {
 			shortcodeData.actie = $element.data( 'actie' );
+		} else {
+			shortcodeData.actie = '-';
 		}
 		return shortcodeData;
 	}
@@ -381,7 +383,7 @@ function strtodate( value ) {
 			/**
 			 * Als er op een edit anchor is geklikt, doe dan een edit actie.
 			 */
-			.on( 'click', '.kleistad_edit_link, .kleistad_view_link',
+			.on( 'click', '.kleistad_edit_link',
 				function() {
 					var $anchor       = $( this );
 					var shortcodeData = shortcode( $anchor );

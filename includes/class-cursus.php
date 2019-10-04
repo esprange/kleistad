@@ -206,7 +206,7 @@ class Cursus extends Entity {
 				'technieken' => $this->technieken,
 				'code'       => "C$this->id",
 				'id'         => $this->id,
-				'class'      => 'Kleistad_' . __CLASS__,
+				'class'      => __CLASS__,
 			];
 			$event->titel      = 'cursus';
 			$event->definitief = $this->tonen;

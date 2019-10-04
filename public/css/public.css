@@ -118,17 +118,17 @@ div.kleistad_workshop_reactie {
 	background-color: lightgray;
 }
 
-a.kleistad_edit_link {
+a.kleistad_edit {
 	background-image: url('../images/icon-edit.png');
     background-repeat: no-repeat;
 	text-decoration: none !important;
 }
-a.kleistad_view_link {
+a.kleistad_view {
 	background-image: url('../images/icon-view.png');
     background-repeat: no-repeat;
 	text-decoration: none !important;
 }
-a.kleistad_schedule_link {
+a.kleistad_schedule {
 	background-image: url('../images/icon-calendar.png');
     background-repeat: no-repeat;
 	text-decoration: none !important;

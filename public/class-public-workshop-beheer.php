@@ -74,8 +74,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array De docenten.
 	 */
 	private function docenten() {
-		$docenten         = [];
-		$gebruikers       = get_users(
+		$docenten   = [];
+		$gebruikers = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
 				'orderby' => [ 'nicename' ],
