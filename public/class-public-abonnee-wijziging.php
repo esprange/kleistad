@@ -24,7 +24,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		$abonnee_id = get_current_user_id();
 		$abonnement = new \Kleistad\Abonnement( $abonnee_id );
 

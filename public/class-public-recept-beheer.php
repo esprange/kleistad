@@ -112,7 +112,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.1.0
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 
 		if ( 'toevoegen' === $data['actie'] ) {
 			/*

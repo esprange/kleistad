@@ -205,11 +205,10 @@ abstract class ShortcodeForm extends Shortcode {
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
 			return new \WP_Error( 'intern', 'interne fout' );
 		}
-		$data               = [];
-		$data['form_actie'] = $request->get_param( 'form_actie' );
-		$referer            = wp_parse_url( $request->get_header( 'referer' ) );
-		self::$form_url     = $referer['scheme'] . '://' . $referer['host'] . $referer['path'] ?? '';
-		$result             = $shortcode_object->validate( $data );
+		$data           = [ 'form_actie' => $request->get_param( 'form_actie' ) ];
+		$referer        = wp_parse_url( $request->get_header( 'referer' ) );
+		self::$form_url = $referer['scheme'] . '://' . $referer['host'] . $referer['path'] ?? '';
+		$result         = $shortcode_object->validate( $data );
 		if ( ! is_wp_error( $result ) ) {
 			if ( 'test' === strtok( $data['form_actie'], '_' ) ) {
 				$result = $shortcode_object->test( $data );

@@ -53,7 +53,7 @@ class Public_Stookbestand extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		return true;
 	}
 

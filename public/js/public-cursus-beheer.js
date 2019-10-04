@@ -69,7 +69,7 @@
 			setLimits();
 			listLesDatums();
 
-			$( '#kleistad_start_datum' ).datepicker(
+			$( '#kleistad_start_datum' ).datepicker( 'option',
 				{
 					onSelect: function( datum ) {
 						startDatum = strtodate( datum );
@@ -87,7 +87,7 @@
 				}
 			);
 
-			$( '#kleistad_eind_datum' ).datepicker(
+			$( '#kleistad_eind_datum' ).datepicker( 'option',
 				{
 					onSelect: function( datum ) {
 						eindDatum = strtodate( datum );
@@ -101,7 +101,7 @@
 				}
 			);
 
-			$( '#kleistad_lesdatum' ).datepicker(
+			$( '#kleistad_lesdatum' ).datepicker( 'option',
 				{
 					onSelect: function( datum ) {
 						var index = $.inArray( datum, lesDatums );
@@ -116,7 +116,7 @@
 					beforeShowDay: function( datumTekst ) {
 						var gotDate = $.inArray( $.datepicker.formatDate( 'dd-mm-yy', datumTekst ), lesDatums );
 						if ( gotDate >= 0 ) {
-							return [ true, 'ui-state-highlight' ];
+							return [ true, 'kleistad-state-highlight' ];
 						}
 						return [ true, '' ];
 					},

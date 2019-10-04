@@ -25,7 +25,7 @@ class Public_Saldo extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		$gebruiker_id = get_current_user_id();
 		$saldo        = new \Kleistad\Saldo( $gebruiker_id );
 		$data         = [

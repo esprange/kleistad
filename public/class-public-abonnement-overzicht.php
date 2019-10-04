@@ -25,7 +25,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 	 *
 	 * @since   4.5.4
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		$abonnementen = \Kleistad\Abonnement::all();
 		$abonnee_info = [];
 		$email_lijst  = '';

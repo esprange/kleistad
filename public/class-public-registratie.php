@@ -24,7 +24,7 @@ class Public_Registratie extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		$gebruiker = wp_get_current_user();
 
 		if ( ! isset( $data['input'] ) ) {

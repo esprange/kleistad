@@ -29,7 +29,7 @@ class Public_Betaling extends ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		$error = new \WP_Error();
 		$param = filter_input_array(
 			INPUT_GET,

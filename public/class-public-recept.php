@@ -24,7 +24,7 @@ class Public_Recept extends Shortcode {
 	 *
 	 * @since   4.1.0
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		return true;
 	}
 

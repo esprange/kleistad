@@ -93,7 +93,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		$gebruikers       = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],

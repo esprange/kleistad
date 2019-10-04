@@ -24,7 +24,7 @@ class Public_Betalingen extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		if ( ! \Kleistad\Roles::override() ) {
 			return true;
 		}

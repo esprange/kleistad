@@ -199,13 +199,14 @@ function strtodate( value ) {
 	 * @param { array } data
 	 */
 	function vervolg( $shortcode, data ) {
-		if ( 'content' in data ) {
-			$shortcode.html( data.content );
-		}
 		if ( 'status' in data ) {
 			$( '#kleistad_berichten' ).html( data.status );
 		} else {
 			$( '#kleistad_berichten' ).html( '' );
+		}
+		if ( 'content' in data ) {
+			$shortcode.html( data.content );
+			window.scrollTo( 0, 0 );
 		}
 		if ( 'file_uri' in data ) {
 			window.location.href = data.file_uri;

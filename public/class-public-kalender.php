@@ -134,7 +134,7 @@ class Public_Kalender extends Shortcode {
 	 *
 	 * @since   5.0.0
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		return true;
 	}
 

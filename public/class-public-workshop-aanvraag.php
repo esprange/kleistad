@@ -25,7 +25,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 *
 	 * @since   5.6.0
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [

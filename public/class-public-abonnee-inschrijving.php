@@ -24,7 +24,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data['input'] = [
 				'gebruiker_id'     => 0,

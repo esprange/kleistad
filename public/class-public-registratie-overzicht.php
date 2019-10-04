@@ -25,7 +25,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		$cursussen    = \Kleistad\Cursus::all();
 		$registraties = [];
 

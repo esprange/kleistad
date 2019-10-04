@@ -25,7 +25,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 *
 	 * @since   4.5.4
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		if ( 'cursisten' === $data['actie'] ) {
 			$cursus            = new \Kleistad\Cursus( $data['id'] );
 			$data['cursus']    = [

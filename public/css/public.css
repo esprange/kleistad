@@ -27,15 +27,15 @@ Description: stylesheet functions voor kleistad_plugin
     border: 2px solid #DDD;
     font-size:12px;
 }
-.ui-state-highlight{
-	border: 2px solid blue !important;
-}
 table.display {
     font-size: small;
 	table-layout: auto;
 }
 a.jstree-anchor {
 	box-shadow: 0 0 0 0 #FFFFFF !important;
+}
+.kleistad-state-highlight{
+	border: 2px solid #F60083 !important;
 }
 .kleistad_wachten {
 	background: url('../images/plswait.gif') no-repeat;
@@ -133,22 +133,6 @@ a.kleistad_schedule_link {
     background-repeat: no-repeat;
 	text-decoration: none !important;
 }
-/* a.kleistad_verwijder_link {
-	background-image: url('../images/icon-verwijder.png');
-    background-repeat: no-repeat;
-	text-decoration: none !important;
-} */
-/* a.kleistad_publiceer_link {
-	background-image: url('../images/icon-www.png');
-    background-repeat: no-repeat;
-	text-decoration: none !important;
-} */
-/* a.kleistad_verberg_link {
-	background-image: url('../images/icon-verberg.png');
-    background-repeat: no-repeat;
-	text-decoration: none !important;
-} */
-
 .kleistad_tijd {
     width: 4em;
 }

@@ -25,7 +25,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 *
 	 * @since   4.3.0
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [

@@ -43,7 +43,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 					readonly="readonly" />
 			</td>
 			<th></th>
-			<th><input type="hidden" id="kleistad_lesdatum" class="kleistad_datum" ></th>
+			<th><input type="hidden" id="kleistad_lesdatum" class="kleistad_datum" /></th>
 		</tr>
 		<tr>
 			<th>Eind</th>

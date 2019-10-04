@@ -311,7 +311,7 @@ endif;
 	?>
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_10">
-			<button name="kleistad_submit_abonnee_wijziging" type="submit" id="kleistad_submit_abonnee_wijziging" >Bevestigen</button>
+			<button name="kleistad_submit_abonnee_wijziging" type="submit" id="kleistad_submit_abonnee_wijziging" disabled >Bevestigen</button>
 		</div>
 	</div>
 </form>

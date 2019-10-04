@@ -32,7 +32,7 @@ class Public_Reservering extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data = null ) {
+	protected function prepare( &$data ) {
 		global $wpdb;
 		$error = new \WP_Error();
 

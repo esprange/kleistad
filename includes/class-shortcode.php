@@ -73,7 +73,7 @@ abstract class Shortcode {
 	 * @param  array $data de uit te wisselen data.
 	 * @return string html tekst.
 	 */
-	protected function display( &$data = null ) {
+	protected function display( &$data = [ 'actie' => '-' ] ) {
 		foreach ( \Kleistad\Public_Main::SHORTCODES[ $this->shortcode ]['css'] as $dependency ) {
 			wp_enqueue_style( $dependency );
 		}
@@ -347,10 +347,7 @@ abstract class Shortcode {
 	 * @since 4.5.1
 	 */
 	public function run() {
-		$data = [
-			'actie' => '-',
-		];
-		return $this->display( $data );
+		return $this->display();
 	}
 
 	/**

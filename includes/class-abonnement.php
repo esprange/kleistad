@@ -136,7 +136,7 @@ class Abonnement extends Entity {
 				break;
 			case 'geannuleerd':
 			case 'gepauzeerd':
-				$this->data[ $attribuut ] = $waarde ? 1 : 0;
+				$this->data[ $attribuut ] = (int) $waarde;
 				break;
 			default:
 				$this->data[ $attribuut ] = $waarde;

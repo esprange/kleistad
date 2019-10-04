@@ -74,8 +74,7 @@ else :
 			<td data-sort="<?php echo esc_attr( $cursus_info['start_dt'] ); ?>"><?php echo esc_html( $cursus_info['start_datum'] ); ?></td>
 			<td>
 				<?php if ( $cursus_info['inschrijvingen'] ) : ?>
-				<a href="<?php echo esc_url( wp_nonce_url( '', 'kleistad_toon_cursisten_' . $cursus_id ) . '&actie=cursisten&id=' . $cursus_id ); ?>"
-					title="toon cursisten" class="kleistad_view_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+				<a href="#" title="toon cursisten" class="kleistad_view_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 					data-id="<?php echo esc_attr( $cursus_id ); ?>" data-actie="cursisten" >
 					&nbsp;
 				</a>

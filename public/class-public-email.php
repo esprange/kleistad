@@ -25,9 +25,8 @@ class Public_Email extends ShortcodeForm {
 	 *
 	 * @since   5.5.0
 	 */
-	protected function prepare( &$data = null ) {
-		if ( is_null( $data ) ) {
-			$data          = [];
+	protected function prepare( &$data ) {
+		if ( ! isset( $data['input'] ) ) {
 			$data['input'] = [
 				'tree'          => [],
 				'email_content' => '',

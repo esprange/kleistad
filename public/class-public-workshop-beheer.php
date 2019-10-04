@@ -69,6 +69,28 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	}
 
 	/**
+	 * Bepaal de mogelijke docenten, zou beter kunnen als er een role docenten is...
+	 *
+	 * @return array De docenten.
+	 */
+	private function docenten() {
+		$docenten         = [];
+		$gebruikers       = get_users(
+			[
+				'fields'  => [ 'ID', 'display_name' ],
+				'orderby' => [ 'nicename' ],
+			]
+		);
+		$data['docenten'] = [];
+		foreach ( $gebruikers as $gebruiker ) {
+			if ( \Kleistad\Roles::override( $gebruiker->ID ) ) {
+				$docenten[] = $gebruiker;
+			}
+		}
+		return $docenten;
+	}
+
+	/**
 	 * Bereid een workshop wijziging voor.
 	 *
 	 * @param int $workshop_id De workshop.
@@ -106,36 +128,30 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @since   5.0.0
 	 */
-	protected function prepare( &$data = null ) {
-		$gebruikers       = get_users(
-			[
-				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => [ 'nicename' ],
-			]
-		);
-		$data['docenten'] = [];
-		foreach ( $gebruikers as $gebruiker ) {
-			if ( \Kleistad\Roles::override( $gebruiker->ID ) ) {
-				$data['docenten'][] = $gebruiker;
-			}
-		}
+	protected function prepare( &$data ) {
 		if ( 'toevoegen' === $data['actie'] ) {
 			/*
 			* Er moet een nieuwe workshop opgevoerd worden
 			*/
+			$data['docenten'] = $this->docenten();
 			if ( ! isset( $data['workshop'] ) ) {
 				$data['workshop'] = $this->formulier();
 			}
 		} elseif ( 'wijzigen' === $data['actie'] ) {
 			/*
-			 * Er is een workshop gekozen om te wijzigen.
-			 */
+			* Er is een workshop gekozen om te wijzigen.
+			*/
+			$data['docenten'] = $this->docenten();
 			if ( ! isset( $data['workshop'] ) ) {
 				$data['workshop'] = $this->formulier( $data['id'] );
 			}
 		} elseif ( 'inplannen' === $data['actie'] ) {
-			$casus         = get_post( $data['id'] );
-			$casus_details = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+			/**
+			 * Een workshop aanvraag gaat gepland worden.
+			 */
+			$casus            = get_post( $data['id'] );
+			$casus_details    = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+			$data['docenten'] = $this->docenten();
 			if ( $casus_details['workshop_id'] ) {
 				$data['workshop'] = $this->formulier( $casus_details['workshop_id'] );
 			} else {
@@ -143,6 +159,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				$data['workshop']['aanvraag_id'] = $data['id'];
 			}
 		} elseif ( 'tonen' === $data['actie'] ) {
+			/**
+			 * Een workshop aanvraag moet getoond worden.
+			 */
 			$casus         = get_post( $data['id'] );
 			$data['casus'] = array_merge(
 				unserialize( $casus->post_excerpt ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
@@ -153,6 +172,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				]
 			);
 		} else {
+			/**
+			 * De workshopaanvragen en de geplande workshops moeten worden getoond.
+			 */
 			$data['workshops'] = $this->planning();
 			$data['aanvragen'] = $this->aanvragen();
 		}
