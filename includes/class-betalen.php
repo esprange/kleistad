@@ -149,7 +149,7 @@ class Betalen {
 	/**
 	 * Controleer of de order gelukt is.
 	 *
-	 * @return \WP_ERROR | string de status van de betaling als tekst of leeg als er geen betaling is.
+	 * @return \WP_ERROR | string | bool De status van de betaling als tekst, WP_error of mislukts of false als er geen betaling is.
 	 */
 	public static function controleer() {
 		$error              = new \WP_Error();
@@ -160,7 +160,7 @@ class Betalen {
 			delete_transient( $uniqid );
 		}
 		if ( false === $mollie_betaling_id ) {
-			return '';
+			return false;
 		}
 		$object = new static();
 		try {
@@ -168,18 +168,17 @@ class Betalen {
 			if ( $betaling->isPaid() ) {
 				return $betaling->metadata->bericht;
 			} elseif ( $betaling->isFailed() ) {
-				$error->add( 'betalen', 'De betaling heeft niet kunnen plaatsvinden. Probeer het opnieuw.' );
+				return new \WP_Error( 'betalen', 'De betaling heeft niet kunnen plaatsvinden. Probeer het opnieuw.' );
 			} elseif ( $betaling->isExpired() ) {
-				$error->add( 'betalen', 'De betaling is verlopen. Probeer het opnieuw.' );
+				return new \WP_Error( 'betalen', 'De betaling is verlopen. Probeer het opnieuw.' );
 			} elseif ( $betaling->isCanceled() ) {
-				$error->add( 'betalen', 'De betaling is geannuleerd. Probeer het opnieuw.' );
+				return new \WP_Error( 'betalen', 'De betaling is geannuleerd. Probeer het opnieuw.' );
 			} else {
-				$error->add( 'betalen', 'De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.' );
+				return new \WP_Error( 'betalen', 'De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.' );
 			}
-			return $error;
 		} catch ( \Exception $e ) {
 			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
-			return '';
+			return false;
 		}
 	}
 

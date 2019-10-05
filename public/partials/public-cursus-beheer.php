@@ -9,7 +9,6 @@
  * @subpackage Kleistad/public/partials
  */
 
-global $wp;
 if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	$this->form();
 	?>
@@ -151,6 +150,4 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	</tbody>
 </table>
 <button class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
-	<?php
-endif;
-?>
+<?php endif ?>

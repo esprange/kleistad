@@ -268,5 +268,4 @@ if ( isset( $data['recept'] ) ) :
 	</table>
 	<button class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 </form>
-		<?php
-endif;
+<?php endif ?>

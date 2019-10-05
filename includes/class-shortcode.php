@@ -52,7 +52,7 @@ abstract class Shortcode {
 	 * @param string $shortcode De shortcode.
 	 * @return bool Of er toegang is.
 	 */
-	protected static function check_access( $shortcode ) {
+	public static function check_access( $shortcode ) {
 		$access = Public_Main::SHORTCODES[ $shortcode ]['access'];
 		if ( ! empty( $access ) ) {
 			$gebruiker = wp_get_current_user();
@@ -95,29 +95,22 @@ abstract class Shortcode {
 			);
 		}
 		wp_enqueue_script( "kleistad{$this->shortcode}" );
-
-		if ( ! self::check_access( $this->shortcode ) ) {
-			$result = $this->status( new \WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
+		$result = $this->prepare( $data );
+		if ( is_wp_error( $result ) ) {
+			$html = $this->status( $result );
 		} else {
-			$result = $this->prepare( $data );
-			if ( is_wp_error( $result ) ) {
-				$result = $this->status( $result );
-			} else {
-				ob_start();
-				require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
-				$result = ob_get_clean();
-			}
+			ob_start();
+			require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
+			$html = ob_get_clean();
 		}
 
 		$betaal_result = \Kleistad\Betalen::controleer();
-		if ( is_string( $betaal_result ) ) {
-			if ( ! empty( $betaal_result ) ) { // Er is een succesvolle betaling.
-				return $this->status( $betaal_result ) . $this->goto_home();
-			}
-		} else { // Er is een betaling maar niet succesvol.
-			return $this->status( $betaal_result ) . $result;
+		if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
+			return $this->status( $betaal_result ) . $this->goto_home();
+		} elseif ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
+			return $this->status( $betaal_result ) . $html;
 		}
-		return $result;
+		return $html; // Er is geen betaling, toon de reguliere inhoud van de shortcode.
 	}
 
 	/**
@@ -177,11 +170,10 @@ abstract class Shortcode {
 	 * @param string $shortcode   Shortcode (zonder kleistad- ).
 	 * @param array  $atts        Shortcode parameters.
 	 * @param array  $options     Plugin opties.
-	 * @param array  $access      Roles voor shortcode toegang.
 	 *
 	 * @throws \Exception          Foutmelding ingeval de shortcode meerdere keren op de pagina voorkomt.
 	 */
-	public function __construct( $shortcode, $atts, $options, $access = [] ) {
+	public function __construct( $shortcode, $atts, $options ) {
 		static $active_shortcodeforms = [];
 		try {
 			if ( in_array( $shortcode, $active_shortcodeforms, true ) ) {

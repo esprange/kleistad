@@ -9,11 +9,7 @@
  * @subpackage Kleistad/public/partials
  */
 
-if ( ! \Kleistad\Roles::reserveer() ) : ?>
-<p>Geen toegang tot dit formulier</p>
-	<?php
-else :
-	?>
+?>
 <p>Stookrapport voor <?php echo esc_html( $data['naam'] ); ?> (je huidig saldo is &euro; <?php echo esc_html( $data['saldo'] ); ?>)</p>
 
 <table class="kleistad_datatable display compact" data-order= '[[ 0, "desc" ]]' >
@@ -46,5 +42,3 @@ else :
 		<?php endforeach ?>
 	</tbody>
 </table>
-
-<?php endif ?>

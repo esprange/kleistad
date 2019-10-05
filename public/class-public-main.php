@@ -333,11 +333,34 @@ class Public_Main {
 		static $divs      = false; // De ondersteunende divs zijn maar eenmalig nodig.
 		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
 		$shortcode_class  = '\Kleistad\Public_' . ucwords( $shortcode, '_' );
-		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options, self::SHORTCODES[ $shortcode ]['access'] );
-		$html             = '';
+		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options );
+		foreach ( self::SHORTCODES[ $shortcode ]['css'] as $dependency ) {
+			wp_enqueue_style( $dependency );
+		}
+		if ( ! wp_style_is( 'kleistad' ) ) {
+			wp_enqueue_style( 'kleistad' );
+		}
+		if ( ! wp_script_is( 'kleistad' ) ) {
+			wp_enqueue_script( 'kleistad' );
+			wp_localize_script(
+				'kleistad',
+				'kleistadData',
+				[
+					'nonce'           => wp_create_nonce( 'wp_rest' ),
+					'success_message' => 'de bewerking is geslaagd!',
+					'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
+					'base_url'        => self::base_url(),
+				]
+			);
+		}
+		wp_enqueue_script( "kleistad{$shortcode}" );
+		if ( ! \Kleistad\Shortcode::check_access( $shortcode ) ) {
+			return $shortcode_object->status( new \WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
+		}
+		$html = '';
 		if ( ! $divs ) {
-			$html .= '<div id="kleistad_berichten" ></div><div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
 			$divs  = true;
+			$html .= '<div id="kleistad_berichten" ></div><div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
 		}
 		$html .= '<div class="kleistad_shortcode" data-tag="' . $shortcode . '" ';
 		if ( ! empty( $atts ) ) {

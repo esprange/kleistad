@@ -11,7 +11,6 @@
 
 $this->form();
 ?>
-
 	<div class="kleistad_row" >
 		<div class="kleistad_col_5">
 			<label class="kleistad_label">Wil je een vraag stellen over een</label>

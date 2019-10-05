@@ -9,12 +9,7 @@
  * @subpackage Kleistad/public/partials
  */
 
-if ( ! \Kleistad\Roles::override() ) :
-	?>
-<p>Geen toegang tot dit formulier</p>
-	<?php
-else :
-	?>
+?>
 
 <div id="kleistad_deelnemer_info">
 	<table class="kleistad_form" id="kleistad_deelnemer_tabel" >
@@ -71,4 +66,3 @@ else :
 	<button type="button" class="kleistad_download_link" data-actie="abonnees" >Download Abonnees</button>
 	<button type="button" class="kleistad_download_link" data-actie="dagdelenkaarten" >Download Dagdelenkaarten</button>
 </div>
-<?php endif; ?>

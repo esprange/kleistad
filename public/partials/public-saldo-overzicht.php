@@ -9,12 +9,7 @@
  * @subpackage Kleistad/public/partials
  */
 
-if ( ! \Kleistad\Roles::override() ) : ?>
-<p>Geen toegang tot dit formulier</p>
-	<?php
-else :
-	?>
-
+?>
 <table class="kleistad_datatable display compact" data-order= '[[ 0, "asc" ]]'>
 	<thead>
 		<tr>
@@ -31,4 +26,3 @@ else :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<?php endif ?>

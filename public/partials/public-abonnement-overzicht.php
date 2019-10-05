@@ -10,7 +10,6 @@
  */
 
 ?>
-
 <div id="kleistad_abonnees_info">
 	<table class="kleistad_datatable display compact nowrap" data-sort='[[ 0, "asc" ]]'>
 		<thead>
