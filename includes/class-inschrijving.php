@@ -222,8 +222,11 @@ class Inschrijving extends Entity {
 			case 'lopende':
 				$slug = 'kleistad_email_cursus_lopend';
 				break;
-			case 'betaling':
+			case 'restant_email':
 				$slug = 'kleistad_email_cursus_betaling';
+				break;
+			case 'herinner_email':
+				$slug = 'kleistad_email_cursus_herinnering';
 				break;
 			case 'betaling_ideal':
 				$onderwerp = 'Betaling cursus';

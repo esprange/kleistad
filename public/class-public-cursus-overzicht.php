@@ -103,15 +103,27 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			if ( array_key_exists( $cursus_id, $inschrijving ) ) {
 				if (
 					( $inschrijving[ $cursus_id ]->geannuleerd ) ||
-					( $inschrijving[ $cursus_id ]->c_betaald ) ||
-					( $inschrijving[ $cursus_id ]->restant_email )
+					( $inschrijving[ $cursus_id ]->c_betaald )
 				) {
 					continue;
 				}
 				if ( $inschrijving[ $cursus_id ]->ingedeeld ) {
-					$aantal_verzonden_email++;
-					$inschrijving[ $cursus_id ]->email( 'betaling' );
-					$inschrijving[ $cursus_id ]->restant_email = true;
+					if ( 'herinner_email' === $data['form_actie'] ) {
+						if ( $inschrijving[ $cursus_id ]->restant_email ) {
+							$aantal_verzonden_email++;
+							$inschrijving[ $cursus_id ]->herinner_email = true;
+						} else {
+							continue;
+						}
+					} elseif ( 'restant_email' === $data ['form_actie '] ) {
+						if ( ! $inschrijving[ $cursus_id ]->restant_email ) {
+							$aantal_verzonden_email++;
+							$inschrijving[ $cursus_id ]->restant_email = true;
+						} else {
+							continue;
+						}
+					}
+					$inschrijving[ $cursus_id ]->email( $data['form_actie'] );
 					$inschrijving[ $cursus_id ]->save();
 				}
 			}

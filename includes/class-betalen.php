@@ -152,7 +152,6 @@ class Betalen {
 	 * @return \WP_ERROR | string | bool De status van de betaling als tekst, WP_error of mislukts of false als er geen betaling is.
 	 */
 	public static function controleer() {
-		$error              = new \WP_Error();
 		$mollie_betaling_id = false;
 		$uniqid             = filter_input( INPUT_GET, self::QUERY_PARAM );
 		if ( ! is_null( $uniqid ) ) {

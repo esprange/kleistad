@@ -118,7 +118,7 @@ class Kleistad {
 	private function define_public_hooks() {
 		$plugin_public = new \Kleistad\Public_Main( $this->get_version(), self::get_options() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'styles_and_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );

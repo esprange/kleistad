@@ -40,111 +40,133 @@ class Public_Main {
 	 */
 	const SHORTCODES = [
 		'abonnee_inschrijving'  => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [ 'administrator', '#' ],
 		],
 		'abonnee_wijziging'     => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [ 'leden' ],
 		],
 		'abonnement_overzicht'  => [
+			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'datatables' ],
 			'access' => [ 'bestuur' ],
 		],
 		'betaling'              => [
+			'script' => true,
 			'js'     => [ 'jquery' ],
 			'css'    => [],
 			'access' => [],
 		],
 		'betalingen'            => [
+			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'datatables' ],
 			'access' => [ 'bestuur' ],
 		],
 		'cursus_beheer'         => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 			'access' => [ 'bestuur' ],
 		],
 		'cursus_inschrijving'   => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [],
 		],
 		'cursus_overzicht'      => [
+			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 			'access' => [ 'leden', 'bestuur' ],
 		],
 		'dagdelenkaart'         => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [],
 		],
 		'email'                 => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jstree' ],
 			'css'    => [ 'jquery-ui', 'jstree' ],
 			'access' => [ 'bestuur' ],
 		],
 		'kalender'              => [
+			'script' => true,
 			'js'     => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
 			'css'    => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
 			'access' => [ 'leden', 'bestuur' ],
 		],
 		'rapport'               => [
+			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'datatables' ],
 			'access' => [ 'leden', 'bestuur' ],
 		],
 		'recept_beheer'         => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 			'access' => [ 'leden', 'bestuur' ],
 		],
 		'recept'                => [
+			'script' => true,
 			'js'     => [ 'jquery' ],
 			'css'    => [ 'dashicons' ],
 			'access' => [],
 		],
 		'registratie_overzicht' => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 			'access' => [ 'bestuur' ],
 		],
 		'registratie'           => [
+			'script' => false,
 			'js'     => [ 'jquery' ],
 			'css'    => [],
 			'access' => [ 'leden', 'bestuur' ],
 		],
 		'reservering'           => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [ 'leden', 'bestuur' ],
 		],
 		'saldo_overzicht'       => [
+			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'datatables' ],
 			'access' => [ 'bestuur' ],
 		],
 		'saldo'                 => [
+			'script' => true,
 			'js'     => [ 'jquery' ],
 			'css'    => [],
 			'access' => [ 'leden', 'bestuur' ],
 		],
 		'stookbestand'          => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [ 'bestuur' ],
 		],
 		'workshop_aanvraag'     => [
+			'script' => false,
 			'js'     => [ 'jquery' ],
 			'css'    => [],
 			'access' => [],
 		],
 		'workshop_beheer'       => [
+			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables' ],
 			'access' => [ 'bestuur' ],
@@ -196,7 +218,7 @@ class Public_Main {
 	 *
 	 * @since    4.0.87
 	 */
-	public function styles_and_scripts() {
+	public function register_styles_and_scripts() {
 		$dev        = defined( 'KLEISTAD_DEV' ) ? '' : '.min';
 		$wp_scripts = wp_scripts();
 		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
@@ -218,8 +240,10 @@ class Public_Main {
 		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 
 		foreach ( self::SHORTCODES as $shortcode => $dependencies ) {
-			$file = str_replace( '_', '-', $shortcode );
-			wp_register_script( "kleistad$shortcode", plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", $dependencies['js'], $this->version, false );
+			if ( $dependencies['script'] ) {
+				$file = str_replace( '_', '-', $shortcode );
+				wp_register_script( "kleistad$shortcode", plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", $dependencies['js'], $this->version, false );
+			}
 		}
 		// phpcs:enable
 	}
@@ -320,26 +344,25 @@ class Public_Main {
 	}
 
 	/**
-	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
+	 * Enqueue de styles voor de shortcode.
 	 *
-	 * @since 4.0.87
-	 *
-	 * @param array  $atts      de meegegeven params van de shortcode.
-	 * @param string $content   wordt niet gebruikt.
-	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
-	 * @return string           html resultaat.
+	 * @param string $shortcode De shortcode tag.
 	 */
-	public function shortcode_handler( $atts, $content, $tag ) {
-		static $divs      = false; // De ondersteunende divs zijn maar eenmalig nodig.
-		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
-		$shortcode_class  = '\Kleistad\Public_' . ucwords( $shortcode, '_' );
-		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options );
+	private function enqueue_styles( $shortcode ) {
 		foreach ( self::SHORTCODES[ $shortcode ]['css'] as $dependency ) {
 			wp_enqueue_style( $dependency );
 		}
 		if ( ! wp_style_is( 'kleistad' ) ) {
 			wp_enqueue_style( 'kleistad' );
 		}
+	}
+
+	/**
+	 * Enqueue de scripts voor de shortcode.
+	 *
+	 * @param string $shortcode De shortcode tag.
+	 */
+	private function enqueue_scripts( $shortcode ) {
 		if ( ! wp_script_is( 'kleistad' ) ) {
 			wp_enqueue_script( 'kleistad' );
 			wp_localize_script(
@@ -353,11 +376,38 @@ class Public_Main {
 				]
 			);
 		}
-		wp_enqueue_script( "kleistad{$shortcode}" );
+		if ( wp_script_is( "kleistad{$shortcode}", 'registered' ) ) {
+			wp_enqueue_script( "kleistad{$shortcode}" );
+		} else {
+			foreach ( self::SHORTCODES[ $shortcode ]['js'] as $dependency ) {
+				wp_enqueue_script( $dependency );
+			}
+		}
+	}
+
+	/**
+	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
+	 *
+	 * @since 4.0.87
+	 *
+	 * @param array  $atts      de meegegeven params van de shortcode.
+	 * @param string $content   wordt niet gebruikt.
+	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
+	 * @return string           html resultaat.
+	 */
+	public function shortcode_handler( $atts, $content, $tag ) {
+		$shortcode = substr( $tag, strlen( 'kleistad-' ) );
+		$this->enqueue_styles( $shortcode );
+		$this->enqueue_scripts( $shortcode );
+
+		$shortcode_class  = '\Kleistad\Public_' . ucwords( $shortcode, '_' );
+		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options );
 		if ( ! \Kleistad\Shortcode::check_access( $shortcode ) ) {
 			return $shortcode_object->status( new \WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
 		}
-		$html = '';
+
+		$html        = '';
+		static $divs = false; // De ondersteunende divs zijn maar eenmalig nodig.
 		if ( ! $divs ) {
 			$divs  = true;
 			$html .= '<div id="kleistad_berichten" ></div><div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
