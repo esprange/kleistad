@@ -20,7 +20,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * Bepaal de actieve cursisten in een cursus.
 	 *
 	 * @param  int $cursus_id Het id van de cursus.
-	 * @return \Kleistad\Inschrijving De inschrijving van de cursist.
+	 * @return array De inschrijving van cursisten voor de cursus. Cursist_id is de index.
 	 */
 	private function inschrijvingen( $cursus_id ) {
 		$cursist_inschrijving = [];
