@@ -26,7 +26,7 @@ namespace Kleistad;
  * @property string opmerking
  * @property int    aantal
  * @property bool   restant_email
- * @property bool   gedeeld
+ * @property bool   herinner_email
  */
 class Inschrijving extends Entity {
 
@@ -61,16 +61,17 @@ class Inschrijving extends Entity {
 	 * @var array $default_data de standaard waarden bij het aanmaken van een inschrijving.
 	 */
 	private $default_data = [
-		'code'          => '',
-		'datum'         => '',
-		'technieken'    => [],
-		'i_betaald'     => 0,
-		'c_betaald'     => 0,
-		'ingedeeld'     => 0,
-		'geannuleerd'   => 0,
-		'opmerking'     => '',
-		'aantal'        => 1,
-		'restant_email' => 0,
+		'code'           => '',
+		'datum'          => '',
+		'technieken'     => [],
+		'i_betaald'      => 0,
+		'c_betaald'      => 0,
+		'ingedeeld'      => 0,
+		'geannuleerd'    => 0,
+		'opmerking'      => '',
+		'aantal'         => 1,
+		'restant_email'  => 0,
+		'herinner_email' => 0,
 	];
 
 	/**
@@ -114,9 +115,8 @@ class Inschrijving extends Entity {
 			case 'c_betaald':
 			case 'geannuleerd':
 			case 'restant_email':
-				return boolval( $this->data[ $attribuut ] );
-			case 'gedeeld':
-				return 0 < $this->cursus->inschrijfkosten;
+			case 'herinner_email':
+				return boolval( $this->data[ $attribuut ] ?? false );
 			default:
 				if ( is_string( $this->data[ $attribuut ] ) ) {
 					return htmlspecialchars_decode( $this->data[ $attribuut ] );
@@ -145,7 +145,8 @@ class Inschrijving extends Entity {
 			case 'c_betaald':
 			case 'geannuleerd':
 			case 'restant_email':
-				$this->data[ $attribuut ] = $waarde ? 1 : 0;
+			case 'herinner_email':
+				$this->data[ $attribuut ] = (int) $waarde;
 				break;
 			default:
 				$this->data[ $attribuut ] = $waarde;
@@ -278,7 +279,7 @@ class Inschrijving extends Entity {
 
 		$betaling   = new \Kleistad\Betalen();
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
-		if ( $inschrijving && $this->gedeeld ) {
+		if ( $inschrijving && 0 < $this->cursus->inschrijfkosten ) {
 			return $betaling->order(
 				$this->cursist_id,
 				__CLASS__ . '-' . $this->code . '-inschrijving',
@@ -332,7 +333,7 @@ class Inschrijving extends Entity {
 					$inschrijving->i_betaald = true;
 					$inschrijving->c_betaald = true;
 					$inschrijving->ingedeeld = true;
-					if ( $inschrijving->gedeeld ) {
+					if ( 0 < $inschrijving->cursus->inschrijfkosten ) {
 						$inschrijving->email( 'betaling_ideal' );
 					} else {
 						$inschrijving->email( 'indeling' );

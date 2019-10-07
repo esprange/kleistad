@@ -17,6 +17,23 @@ namespace Kleistad;
 class Public_Cursus_Overzicht extends ShortcodeForm {
 
 	/**
+	 * Bepaal de actieve cursisten in een cursus.
+	 *
+	 * @param  int $cursus_id Het id van de cursus.
+	 * @return \Kleistad\Inschrijving De inschrijving van de cursist.
+	 */
+	private function inschrijvingen( $cursus_id ) {
+		$cursist_inschrijving = [];
+		$inschrijvingen       = \Kleistad\Inschrijving::all();
+		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
+			if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) && $cursist_inschrijvingen[ $cursus_id ]->ingedeeld && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
+				$cursist_inschrijving[ $cursist_id ] = $cursist_inschrijvingen[ $cursus_id ];
+			}
+		}
+		return $cursist_inschrijving;
+	}
+
+	/**
 	 *
 	 * Prepareer 'cursus_overzicht' form
 	 *
@@ -31,23 +48,21 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$data['cursus']    = [
 				'naam'      => $cursus->naam,
 				'code'      => $cursus->code,
-				'cursus_id' => $cursus->id,
+				'cursus_id' => $data['id'],
 			];
 			$data['cursisten'] = [];
-			$inschrijvingen    = \Kleistad\Inschrijving::all();
-			foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-				if ( array_key_exists( $data['id'], $cursist_inschrijvingen ) && $cursist_inschrijvingen[ $data['id'] ]->ingedeeld && ! $cursist_inschrijvingen[ $data['id'] ]->geannuleerd ) {
-					$cursist             = get_userdata( $cursist_id );
-					$data['cursisten'][] = [
-						'naam'          => $cursist->display_name . ( 1 < $cursist_inschrijvingen[ $data['id'] ]->aantal ? ' (' . $cursist_inschrijvingen[ $data['id'] ]->aantal . ')' : '' ),
-						'telnr'         => $cursist->telnr,
-						'email'         => $cursist->user_email,
-						'i_betaald'     => $cursist_inschrijvingen[ $data['id'] ]->i_betaald,
-						'c_betaald'     => $cursist_inschrijvingen[ $data['id'] ]->c_betaald,
-						'restant_email' => $cursist_inschrijvingen[ $data['id'] ]->restant_email,
-						'technieken'    => implode( ', ', $cursist_inschrijvingen[ $data['id'] ]->technieken ),
-					];
-				}
+			foreach ( $this->inschrijvingen( $data['id'] ) as $cursist_id => $inschrijving ) {
+				$cursist             = get_userdata( $cursist_id );
+				$data['cursisten'][] = [
+					'naam'           => $cursist->display_name . ( $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+					'telnr'          => $cursist->telnr,
+					'email'          => $cursist->user_email,
+					'i_betaald'      => $inschrijving->i_betaald,
+					'c_betaald'      => $inschrijving->c_betaald,
+					'restant_email'  => $inschrijving->restant_email,
+					'herinner_email' => $inschrijving->herinner_email,
+					'technieken'     => implode( ', ', $inschrijving->technieken ),
+				];
 			}
 		} else {
 			$cursussen           = \Kleistad\Cursus::all();
@@ -97,36 +112,34 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$cursus_id              = $data['input']['cursus_id'];
-		$inschrijvingen         = \Kleistad\Inschrijving::all();
 		$aantal_verzonden_email = 0;
-		foreach ( $inschrijvingen as $inschrijving ) {
-			if ( array_key_exists( $cursus_id, $inschrijving ) ) {
-				if (
-					( $inschrijving[ $cursus_id ]->geannuleerd ) ||
-					( $inschrijving[ $cursus_id ]->c_betaald )
-				) {
-					continue;
-				}
-				if ( $inschrijving[ $cursus_id ]->ingedeeld ) {
-					if ( 'herinner_email' === $data['form_actie'] ) {
-						if ( $inschrijving[ $cursus_id ]->restant_email ) {
-							$aantal_verzonden_email++;
-							$inschrijving[ $cursus_id ]->herinner_email = true;
-						} else {
-							continue;
-						}
-					} elseif ( 'restant_email' === $data ['form_actie '] ) {
-						if ( ! $inschrijving[ $cursus_id ]->restant_email ) {
-							$aantal_verzonden_email++;
-							$inschrijving[ $cursus_id ]->restant_email = true;
-						} else {
-							continue;
-						}
-					}
-					$inschrijving[ $cursus_id ]->email( $data['form_actie'] );
-					$inschrijving[ $cursus_id ]->save();
-				}
+		foreach ( $this->inschrijvingen( $cursus_id ) as $inschrijving ) {
+			if ( $inschrijving->c_betaald ) {
+				/**
+				 * Als de cursist al betaald heeft, geen actie.
+				 */
+				continue;
 			}
+			if ( 'herinner_email' === $data['form_actie'] &&
+				$inschrijving->restant_email &&
+				! $inschrijving->herinner_email ) {
+					/**
+					 * Stuur herinnerings emails als de cursist eerder een restant email heeft gehad en nog niet de cursus volledig betaald heeft.
+					 */
+					$aantal_verzonden_email++;
+					$inschrijving->herinner_email = true;
+			} elseif ( 'restant_email' === $data ['form_actie'] &&
+				! $inschrijving->restant_email ) {
+					/**
+					 * Stuur restant emails als de cursist nog niet de cursus volledig betaald heeft.
+					 */
+					$aantal_verzonden_email++;
+					$inschrijving->restant_email = true;
+			} else {
+				continue;
+			}
+			$inschrijving->email( $data['form_actie'] );
+			$inschrijving->save();
 		}
 		return [
 			'status'  => $this->status( ( $aantal_verzonden_email > 0 ) ? "Emails zijn verstuurd naar $aantal_verzonden_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
@@ -138,8 +151,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * Schrijf cursisten informatie naar het bestand.
 	 */
 	protected function cursisten() {
-		$cursus_id        = filter_input( INPUT_POST, 'cursus_id', FILTER_SANITIZE_STRING );
-		$inschrijvingen   = \Kleistad\Inschrijving::all();
+		$cursus_id        = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );
 		$cursisten_fields = [
 			'Achternaam',
 			'Voornaam',
@@ -148,24 +160,24 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			'Aantal',
 			'Technieken',
 			'Opmerking',
+			'Datum',
+			'Betaald',
 		];
 		fputcsv( $this->file_handle, $cursisten_fields, ';', '"' );
-
-		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-			if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) ) {
-				if ( $cursist_inschrijvingen[ $cursus_id ]->ingedeeld && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
-					$cursist          = get_userdata( $cursist_id );
-					$cursist_gegevens = [
-						$cursist->first_name,
-						$cursist->last_name,
-						$cursist->telnr,
-						$cursist->user_email,
-						$cursist_inschrijvingen[ $cursus_id ]->aantal,
-						implode( ' ', $cursist_inschrijvingen[ $cursus_id ]->technieken ),
-					];
-					fputcsv( $this->file_handle, $cursist_gegevens, ';', '"' );
-				}
-			}
+		foreach ( $this->inschrijvingen( $cursus_id ) as $cursist_id => $inschrijving ) {
+			$cursist          = get_userdata( $cursist_id );
+			$cursist_gegevens = [
+				$cursist->first_name,
+				$cursist->last_name,
+				$cursist->telnr,
+				$cursist->user_email,
+				$inschrijving->aantal,
+				implode( ' ', $inschrijving->technieken ),
+				$inschrijving->opmerking,
+				date( 'd-m-Y', $inschrijving->datum ),
+				$inschrijving->c_betaald ? 'Ja' : 'Nee',
+			];
+			fputcsv( $this->file_handle, $cursist_gegevens, ';', '"' );
 		}
 	}
 }

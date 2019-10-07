@@ -24,6 +24,7 @@ if ( 'cursisten' === $data['actie'] ) :
 			<th>Technieken</th>
 			<th>Betaald</th>
 			<th>Restant Email</th>
+			<th>Herinner Email</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -35,14 +36,15 @@ if ( 'cursisten' === $data['actie'] ) :
 				<td><?php echo esc_html( $cursist['technieken'] ); ?></td>
 				<td><?php echo ( ( $cursist['c_betaald'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 				<td><?php echo ( ( $cursist['restant_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
+				<td><?php echo ( ( $cursist['herinner_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 			</tr>
 		<?php endforeach ?>
 		</tbody>
 	</table>
 	<br/>
 	<button type="button" class="kleistad_download_link" name="kleistad_submit_cursus_overzicht" data-actie="cursisten" >Download</button>
-	<button type="submit" name="kleistad_submit_cursus_overzicht" value="restant_email" >Restant email versturen</button>
-	<button type="submit" name="kleistad_submit_cursus_overzicht" value="herinnner_email" >Herinnerings email versturen</button>
+	<button type="submit" name="kleistad_submit_cursus_overzicht" value="restant_email" >Verstuur restant email</button>
+	<button type="submit" name="kleistad_submit_cursus_overzicht" value="herinner_email" >Verstuur herinner email</button>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 	</form>
 </div>

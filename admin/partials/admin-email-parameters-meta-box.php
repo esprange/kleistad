@@ -85,6 +85,7 @@
 				<li>'Indeling email' : bij indeling via cursus beheer of inschrijving via iDeal; paginanaam aanpassen cursus beheer</li>
 				<li>kleistad_email_cursus_lopend : instructie bij inschrijving op lopende cursus</li>
 				<li>kleistad_email_cursus_betaling : betalen resterend cursusgeld via email link</li>
+				<li>kleistad_email_cursus_herinnering : herinnering betaling resterend cursusgeld via email link</li>
 				<li>kleistad_email_cursus_betaling_ideal : bevestiging betaling restant bedrag</li>
 			</ol>
 			<ul style="list-style-type:square">
