@@ -105,6 +105,43 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	}
 
 	/**
+	 * Verwerk foto.
+	 *
+	 * @param string $image_file Path naar een image file.
+	 * @return \WP_Error|bool True als verwerkt of error als er iets fout is gegaan.
+	 */
+	private function foto( $image_file ) {
+		$exif = @exif_read_data( $image_file ); // phpcs:ignore
+		if ( false === $exif ) {
+			return new \WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
+		}
+		$image = imagecreatefromjpeg( $image_file );
+		if ( false === $image ) {
+			return new \WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
+		}
+		if ( ! empty( $exif['Orientation'] ) ) {
+			switch ( $exif['Orientation'] ) {
+				case 3:
+					$image = imagerotate( $image, 180, 0 );
+					break;
+				case 6:
+					$image = imagerotate( $image, -90, 0 );
+					break;
+				case 8:
+					$image = imagerotate( $image, 90, 0 );
+					break;
+			}
+			if ( false === $image ) {
+				return new \WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
+			}
+		}
+		$quality = intval( min( 75000 / filesize( $image_file ) * 100, 100 ) );
+		imagejpeg( $image, $image_file, $quality );
+		imagedestroy( $image );
+		return true;
+	}
+
+	/**
 	 * Prepareer 'recept' form
 	 *
 	 * @param array $data data voor display.
@@ -281,40 +318,12 @@ class Public_Recept_Beheer extends ShortcodeForm {
 						[ 'test_form' => false ]
 					);
 					if ( is_array( $file ) && ! isset( $file['error'] ) ) {
-						$exif = @exif_read_data( $file['file'] ); // phpcs:ignore
-						if ( false === $exif ) {
-							return [
-								'status' => $this->status( new \WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' ) ),
-							];
+						$result = $this->foto( $file['file'] );
+						if ( is_wp_error( $result ) ) {
+							return [ 'status' => $this->status( $result ) ];
+						} else {
+							$data['recept']['content']['foto'] = $file['url'];
 						}
-						$image = imagecreatefromjpeg( $file['file'] );
-						if ( false === $image ) {
-							return [
-								'status' => $this->status( new \WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' ) ),
-							];
-						}
-						if ( ! empty( $exif['Orientation'] ) ) {
-							switch ( $exif['Orientation'] ) {
-								case 3:
-									$image = imagerotate( $image, 180, 0 );
-									break;
-								case 6:
-									$image = imagerotate( $image, -90, 0 );
-									break;
-								case 8:
-									$image = imagerotate( $image, 90, 0 );
-									break;
-							}
-							if ( false === $image ) {
-								return [
-									'status' => $this->status( new \WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' ) ),
-								];
-							}
-						}
-						$quality = intval( min( 75000 / filesize( $file['file'] ) * 100, 100 ) );
-						imagejpeg( $image, $file['file'], $quality );
-						imagedestroy( $image );
-						$data['recept']['content']['foto'] = $file['url'];
 					} else {
 						return [
 							'status' => $this->status( new \WP_Error( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] ) ),
