@@ -38,13 +38,8 @@ class Public_Recept extends Shortcode {
 			Public_Main::api(),
 			'/recept',
 			[
-				'methods'             => 'POST',
+				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_recept' ],
-				'args'                => [
-					'zoek' => [
-						'required' => false,
-					],
-				],
 				'permission_callback' => function() {
 						return true;
 				},
@@ -60,19 +55,18 @@ class Public_Recept extends Shortcode {
 	 */
 	public static function callback_recept( \WP_REST_Request $request ) {
 		$data             = [];
-		$glazuur_parent   = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
-		$kleur_parent     = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
-		$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
+		$glazuur_parent   = get_term_by( 'name', '_glazuur', \Kleistad\Recept::CATEGORY );
+		$kleur_parent     = get_term_by( 'name', '_kleur', \Kleistad\Recept::CATEGORY );
+		$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', \Kleistad\Recept::CATEGORY );
 
-		$zoek  = (array) $request->get_param( 'zoek' );
 		$query = [
-			'post_type'   => 'kleistad_recept',
+			'post_type'   => \Kleistad\Recept::POST_TYPE,
 			'numberposts' => '-1',
 			'post_status' => [
 				'publish',
 			],
 		];
-		switch ( $zoek['sorteer'] ) {
+		switch ( $request->get_param( 'sorteer' ) ) {
 			case 'nieuwste':
 				$query['orderby'] = 'date';
 				$query['order']   = 'DESC';
@@ -99,21 +93,21 @@ class Public_Recept extends Shortcode {
 				$query['order']   = 'ASC';
 				break;
 		}
-		if ( isset( $zoek['terms'] ) ) {
+		if ( ! empty( $request->get_param( 'terms' ) ) ) {
 			$query['tax_query'] = [
 				[
-					'taxonomy' => 'kleistad_recept_cat',
+					'taxonomy' => \Kleistad\Recept::CATEGORY,
 					'field'    => 'id',
-					'terms'    => $zoek['terms'],
+					'terms'    => $request->get_param( 'terms' ),
 					'operator' => 'AND',
 				],
 			];
 		}
-		if ( '' !== $zoek['zoeker'] ) {
-			$query['s'] = $zoek['zoeker'];
+		if ( ! empty( $request->get_param( 'zoek' ) ) ) {
+			$query['s'] = $request->get_param( 'zoek' );
 		}
-		if ( isset( $zoek['auteurs'] ) ) {
-			$query['author'] = implode( ',', $zoek['auteurs'] );
+		if ( ! empty( $request->get_param( 'auteurs' ) ) ) {
+			$query['author'] = implode( ',', $request->get_param( 'auteurs' ) );
 		}
 		$recepten = get_posts( $query );
 
@@ -142,7 +136,7 @@ class Public_Recept extends Shortcode {
 
 		$data['glazuur']   = get_terms(
 			[
-				'taxonomy'   => 'kleistad_recept_cat',
+				'taxonomy'   => \Kleistad\Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
@@ -152,7 +146,7 @@ class Public_Recept extends Shortcode {
 		);
 		$data['kleur']     = get_terms(
 			[
-				'taxonomy'   => 'kleistad_recept_cat',
+				'taxonomy'   => \Kleistad\Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
@@ -162,7 +156,7 @@ class Public_Recept extends Shortcode {
 		);
 		$data['uiterlijk'] = get_terms(
 			[
-				'taxonomy'   => 'kleistad_recept_cat',
+				'taxonomy'   => \Kleistad\Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
@@ -176,7 +170,8 @@ class Public_Recept extends Shortcode {
 		return new \WP_REST_Response(
 			[
 				'content' => ob_get_clean(),
-				'zoek'    => $zoek,
+				'terms'   => $request->get_param( 'terms' ),
+				'auteurs' => $request->get_param( 'auteurs' ),
 			]
 		);
 
