@@ -65,6 +65,16 @@ class Public_Recept extends Shortcode {
 			'post_status' => [
 				'publish',
 			],
+			's'           => $request->get_param( 'zoeker' ),
+			'author__in'  => $request->get_param( 'auteurs' ),
+			'tax_query'   => [
+				[
+					'taxonomy' => \Kleistad\Recept::CATEGORY,
+					'field'    => 'id',
+					'terms'    => $request->get_param( 'terms' ),
+					'operator' => 'AND',
+				],
+			],
 		];
 		switch ( $request->get_param( 'sorteer' ) ) {
 			case 'nieuwste':
@@ -92,22 +102,6 @@ class Public_Recept extends Shortcode {
 				$query['orderby'] = 'title';
 				$query['order']   = 'ASC';
 				break;
-		}
-		if ( ! empty( $request->get_param( 'terms' ) ) ) {
-			$query['tax_query'] = [
-				[
-					'taxonomy' => \Kleistad\Recept::CATEGORY,
-					'field'    => 'id',
-					'terms'    => $request->get_param( 'terms' ),
-					'operator' => 'AND',
-				],
-			];
-		}
-		if ( ! empty( $request->get_param( 'zoek' ) ) ) {
-			$query['s'] = $request->get_param( 'zoek' );
-		}
-		if ( ! empty( $request->get_param( 'auteurs' ) ) ) {
-			$query['author'] = implode( ',', $request->get_param( 'auteurs' ) );
 		}
 		$recepten = get_posts( $query );
 
