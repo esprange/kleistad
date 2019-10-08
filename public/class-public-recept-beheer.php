@@ -319,10 +319,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 					);
 					if ( is_array( $file ) && ! isset( $file['error'] ) ) {
 						$result = $this->foto( $file['file'] );
-						if ( is_wp_error( $result ) ) {
-							return [ 'status' => $this->status( $result ) ];
-						} else {
+						if ( true === $result ) {
 							$data['recept']['content']['foto'] = $file['url'];
+						} else {
+							return [ 'status' => $this->status( $result ) ];
 						}
 					} else {
 						return [
