@@ -121,21 +121,19 @@ class Public_Email extends ShortcodeForm {
 	protected function save( $data ) {
 		$adressen = array_unique( explode( ',', $data['input']['adressen'] ) );
 		$emailer  = new \Kleistad\Email();
-		foreach ( array_chunk( $adressen, 5 ) as $adressen_deel ) { // Maximaal 5 adressen per keer.
-			$emailer->send(
-				[
-					'to'        => 'Kleistad gebruiker <info@' . \Kleistad\Email::domein() . '>',
-					'bcc'       => $adressen_deel,
-					'from_name' => "{$data['input']['namens']} namens Kleistad",
-					'from'      => 'info@' . \Kleistad\Email::verzend_domein(),
-					'reply-to'  => 'info@' . \Kleistad\Email::domein(),
-					'subject'   => $data['input']['onderwerp'],
-					'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
-					'sign'      => "{$data['input']['namens']},<br/>Kleistad",
-					'auto'      => false,
-				]
-			);
-		}
+		$emailer->send(
+			[
+				'to'        => 'Kleistad gebruiker <info@' . \Kleistad\Email::domein() . '>',
+				'bcc'       => $adressen,
+				'from_name' => "{$data['input']['namens']} namens Kleistad",
+				'from'      => 'info@' . \Kleistad\Email::verzend_domein(),
+				'reply-to'  => 'info@' . \Kleistad\Email::domein(),
+				'subject'   => $data['input']['onderwerp'],
+				'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
+				'sign'      => "{$data['input']['namens']},<br/>Kleistad",
+				'auto'      => false,
+			]
+		);
 		return [
 			'status'  => $this->status( 'De email is naar ' . count( $adressen ) . ' personen verzonden' ),
 			'content' => $this->display(),
