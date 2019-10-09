@@ -55,6 +55,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		return [
 			'id'              => $cursus->id,
 			'naam'            => $cursus->naam,
+			'code'            => empty( $cursus_id ) ? '' : $cursus->code,
 			'start_datum'     => $cursus->start_datum,
 			'eind_datum'      => $cursus->eind_datum,
 			'lesdatums'       => implode(

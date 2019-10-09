@@ -15,6 +15,9 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>"/>
 	<input type="hidden" name="lesdatums" id="kleistad_lesdatums" value="<?php echo esc_attr( $data['cursus']['lesdatums'] ); ?>" >
 	<table class="kleistad_form" >
+	<?php if ( ! empty( $data['cursus']['code'] ) ) : ?>
+		<tr><th>Cursuscode</th><td colspan="3"><?php echo esc_html( $data['cursus']['code'] ); ?></td></tr>
+	<?php endif ?>
 		<tr>
 			<th>Naam</th>
 			<td colspan="3">
