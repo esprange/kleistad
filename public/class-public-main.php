@@ -269,8 +269,10 @@ class Public_Main {
 	 * @since 4.1.0
 	 */
 	public static function register_post_types() {
+		global $wp_post_types;
 		\Kleistad\Recept::create_type();
 		\Kleistad\WorkshopAanvraag::create_type();
+        $wp_post_types[ \Kleistad\WorkshopAanvraag::POST_TYPE ]->exclude_from_search = true;
 	}
 
 	/**
