@@ -77,10 +77,9 @@
         ).fail(
             function( jqXHR ) {
                 if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-                    window.alert( jqXHR.responseJSON.message );
-                    return;
+                    window.console.log( jqXHR.responseJSON.message );
 				}
-                window.alert( kleistadData.error_message );
+				$( '#kleistad_berichten' ).html( kleistadData.error_message );
             }
         );
     }

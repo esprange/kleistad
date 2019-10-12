@@ -92,6 +92,9 @@ function strtodate( value ) {
 		}
 	};
 
+	/**
+	 * Verwijder een class mbv een wildcard pattern.
+	 */
 	$.fn.removeClassWildcard = function( pattern ) {
 		$( this ).removeClass( function( index, className ) {
 			return ( className.match( new RegExp( '(^|\\s)' + pattern + '\\S+', 'g' ) ) || [] ).join( ' ' );
@@ -164,36 +167,6 @@ function strtodate( value ) {
 		defineDatatables();
 		defineDatums();
 		defineTimespinners();
-	}
-
-	/**
-	 * Get a single item.
-	 *
-	 * @param { jQuery } $shortcode
-	 * @param { array} data
-	 */
-	function getItem( $shortcode, data ) {
-		getContent( $shortcode, data, 'getitem' );
-	}
-
-	/**
-	 * Get multiple items.
-	 *
-	 * @param { jQuery } $shortcode
-	 * @param { array} data
-	 */
-	function getItems( $shortcode, data ) {
-		getContent( $shortcode, data, 'getitems' );
-	}
-
-	/**
-	 * Request a download file.
-	 *
-	 * @param { jQuery } $shortcode
-	 * @param { array} data
-	 */
-	function download( $shortcode, data ) {
-		getContent( $shortcode, data, 'download' );
 	}
 
 	/**
@@ -401,7 +374,7 @@ function strtodate( value ) {
 				function() {
 					var $anchor       = $( this );
 					var shortcodeData = shortcode( $anchor );
-					getItem( getShortcode( $anchor ), shortcodeData );
+					getContent( getShortcode( $anchor ), shortcodeData, 'getitem' );
 					return true;
 				}
 			)
@@ -412,7 +385,7 @@ function strtodate( value ) {
 				function() {
 					var $button       = $( this );
 					var shortcodeData = shortcode( $button );
-					getItems( getShortcode( $button ), shortcodeData );
+					getContent( getShortcode( $button ), shortcodeData, 'getitems' );
 					return true;
 				}
 			)
@@ -428,7 +401,7 @@ function strtodate( value ) {
 							shortcodeData[ $( this ).attr( 'name') ] = $( this ).val();
 						}
 					);
-					download( getShortcode( $button ), shortcodeData );
+					getContent( getShortcode( $button ), shortcodeData, 'download' );
 					return true;
 				}
 			)
