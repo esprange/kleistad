@@ -98,13 +98,11 @@ function strtodate( value ) {
 		});
 	};
 
-	function onLoad() {
-		var $datatable = $( '.kleistad_datatable' ),
-			$datum     = $( '.kleistad_datum' ),
-			$tijd      = $( '.kleistad_tijd' );
-		/**
-		 * Definieer de tabellen.
-		 */
+	/**
+	 * Definieer de tabellen.
+	 */
+	function defineDatatables() {
+		var $datatable = $( '.kleistad_datatable' );
 		if ( $datatable[0] ) {
 			$.extend( $.fn.dataTable.defaults, {
 				language: {
@@ -114,20 +112,25 @@ function strtodate( value ) {
 			);
 			$datatable.dataTable();
 		}
-		/**
-		 * Definieer de datum velden.
-		 */
+	}
+
+	/**
+	 * Definieer de datum velden.
+	 */
+	function defineDatums() {
+		var $datum = $( '.kleistad_datum' );
 		if ( $datum[0] ) {
 			$.datepicker.setDefaults( { dateFormat: 'dd-mm-yy' } );
 			$datum.datepicker();
 		}
-		/**
-		 * Definieer de timespinners.
-		 */
+	}
+
+	/**
+	 * Definieer de timespinners.
+	 */
+	function defineTimespinners() {
+		var $tijd = $( '.kleistad_tijd' );
 		if ( $tijd[0] ) {
-			/**
-			 * Maak een timespinner van de spinner.
-			 */
 			$.widget(
 				'ui.timespinner', $.ui.spinner, {
 					options: {
@@ -152,14 +155,15 @@ function strtodate( value ) {
 			);
 			$tijd.timespinner();
 		}
+	}
 
-		$( '#kleistad_bevestigen' ).dialog(
-			{
-				autoOpen: false,
-				modal: true
-			}
-		);
-
+	/**
+	 * Initieer de dynamische velden.
+	 */
+	function onLoad() {
+		defineDatatables();
+		defineDatums();
+		defineTimespinners();
 	}
 
 	/**
@@ -369,6 +373,16 @@ function strtodate( value ) {
 	$( document ).ready(
         function() {
 			onLoad();
+
+			/**
+			 * Definieer de bevestig dialoog.
+			 */
+			$( '#kleistad_bevestigen' ).dialog(
+				{
+					autoOpen: false,
+					modal: true
+				}
+			);
 
 			$( '.kleistad_shortcode' )
 			/**
