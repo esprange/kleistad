@@ -208,7 +208,7 @@ class Cursus extends Entity {
 				'id'         => $this->id,
 				'class'      => __CLASS__,
 			];
-			$event->titel      = 'cursus';
+			$event->titel      = $this->naam;
 			$event->definitief = $this->tonen;
 			$event->vervallen  = $this->vervallen;
 			$event->start      = new \DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
