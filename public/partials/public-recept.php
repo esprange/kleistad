@@ -11,7 +11,7 @@
 
 if ( isset( $data['recept'] ) ) :
 	?>
-<button id="kleistad_recept_print" data-css="<?php echo esc_url( $data['css'] ); ?>">Afdrukken</button>
+<button id="kleistad_recept_print" >Afdrukken</button>
 <div class="kleistad_recept" >
 	<h2><?php echo esc_html( $data['recept']['titel'] ); ?></h2>
 	<div style="width:100%">
@@ -117,7 +117,7 @@ if ( isset( $data['recept'] ) ) :
 	</div>
 </div>
 <div class="kleistad_row">
-	<button type="button" id="kleistad_filter_btn" value="show" ></button>
+	<button type="button" id="kleistad_filter_btn"></button>
 </div>
 <div class="kleistad_recepten" id="kleistad_recepten">
 	de recepten worden opgehaald...
