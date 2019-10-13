@@ -81,9 +81,7 @@
 						updateLesDatums();
 						listLesDatums();
 					},
-					beforeShow: function() {
-						setLimits();
-					}
+					beforeShow: setLimits()
 				}
 			);
 
@@ -95,9 +93,7 @@
 						updateLesDatums();
 						listLesDatums();
 					},
-					beforeShow: function() {
-						setLimits();
-					}
+					beforeShow: setLimits()
 				}
 			);
 
@@ -120,9 +116,7 @@
 						}
 						return [ true, '' ];
 					},
-					beforeShow: function() {
-						setLimits();
-					},
+					beforeShow: setLimits(),
 					showOn: 'button',
 					buttonText: 'Lesdatum + / -'
 				}
