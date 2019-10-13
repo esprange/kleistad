@@ -49,7 +49,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			];
 		}
 		$atts                    = shortcode_atts(
-			[ 'cursus' => '', 'verbergen' => '' ],
+			[
+				'cursus'    => '',
+				'verbergen' => '',
+			],
 			$this->atts,
 			'kleistad_cursus_inschrijving'
 		);

@@ -10,12 +10,12 @@
  */
 
 if ( ! empty( $data['verbergen'] ) ) :
-?>
+	?>
 	<a href="#kleistad_inschrijven" onclick="document.getElementById('kleistad_inschrijven').style.display='inline';"><?php echo esc_html( $data['verbergen'] ); ?></a>
 	<div id="kleistad_inschrijven" style="display:none;">
-<?php
+	<?php
 else :
-?>
+	?>
 	<div>
 	<?php
 endif;
