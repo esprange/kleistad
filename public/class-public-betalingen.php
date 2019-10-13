@@ -55,7 +55,7 @@ class Public_Betalingen extends ShortcodeForm {
 								'i_betaald'   => $inschrijving->i_betaald,
 								'c_betaald'   => $inschrijving->c_betaald,
 								'geannuleerd' => $inschrijving->geannuleerd,
-								'gestart'     => $cursus->start_datum < $vandaag,
+								'gestart'     => $cursussen[ $cursus_id ]->start_datum < $vandaag,
 							];
 						}
 					}
