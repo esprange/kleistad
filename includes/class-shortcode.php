@@ -170,23 +170,11 @@ abstract class Shortcode {
 	 * @param string $shortcode   Shortcode (zonder kleistad- ).
 	 * @param array  $atts        Shortcode parameters.
 	 * @param array  $options     Plugin opties.
-	 *
-	 * @throws \Exception          Foutmelding ingeval de shortcode meerdere keren op de pagina voorkomt.
 	 */
 	public function __construct( $shortcode, $atts, $options ) {
-		static $active_shortcodeforms = [];
-		try {
-			if ( in_array( $shortcode, $active_shortcodeforms, true ) ) {
-				throw new \Exception( "Pagina bevat meer dan een identieke $shortcode aanroep" );
-			} else {
-				$active_shortcodeforms[] = $shortcode;
-				$this->atts              = $atts;
-				$this->options           = $options;
-				$this->shortcode         = $shortcode;
-			}
-		} catch ( \Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
-		}
+		$this->atts              = $atts;
+		$this->options           = $options;
+		$this->shortcode         = $shortcode;
 	}
 
 	/**
