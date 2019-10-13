@@ -228,7 +228,7 @@ class Public_Main {
 		wp_register_style( 'fullcalendar-core', '//cdn.jsdelivr.net/npm/@fullcalendar/core@4.3.1/main.min.css', [], null );
 		wp_register_style( 'fullcalendar-day', '//cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.css', [ 'fullcalendar-core' ], null );
 		wp_register_style( 'fullcalendar-week', '//cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.3.0/main.min.css', [ 'fullcalendar-core' ], null );
-		wp_register_style( 'jstree', '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.8/themes/default/style.min.css', [], null );
+		wp_register_style( 'jstree', '//cdn.jsdelivr.net/npm/jstree@3.3.8/dist/themes/default/style.min.css', [], null );
 		wp_register_style( 'kleistad', plugin_dir_url( __FILE__ ) . "css/public$dev.css", [], $this->version );
 
 		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js', [ 'jquery' ], null, false );
@@ -236,7 +236,7 @@ class Public_Main {
 		wp_register_script( 'fullcalendar-nl', '//cdn.jsdelivr.net/npm/@fullcalendar/core@4.3.0/locales/nl.min.js', [ 'fullcalendar-core' ], null, false );
 		wp_register_script( 'fullcalendar-day', '//cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.3.0/main.min.js', [ 'fullcalendar-core' ], null, false );
 		wp_register_script( 'fullcalendar-week', '//cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.3.0/main.min.js', [ 'fullcalendar-core' ], null, false );
-		wp_register_script( 'jstree', '//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.8/jstree.min.js', [ 'jquery' ], null, false );
+		wp_register_script( 'jstree', '//cdn.jsdelivr.net/npm/jstree@3.3.8/dist/jstree.min.js', [ 'jquery' ], null, false );
 		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 
 		foreach ( self::SHORTCODES as $shortcode => $dependencies ) {
