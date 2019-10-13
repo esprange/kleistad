@@ -26,7 +26,7 @@ if ( isset( $data['inschrijvingen'] ) ) :
 		</thead>
 		<tbody>
 			<?php foreach ( $data['inschrijvingen'] as $inschrijving ) : ?>
-				<tr style="<?php echo esc_attr( $inschrijving['geannuleerd'] ? 'color:grey' : '' ); ?>" >
+				<tr style="<?php echo esc_attr( $inschrijving['geannuleerd'] ? 'color:grey' : ( $inschrijving['gestart'] ? 'color:red' : '' ) ); ?>" >
 					<td data-sort="<?php echo esc_attr( $inschrijving['datum'] ); ?>"><?php echo esc_html( date( 'd-m-y', $inschrijving['datum'] ) ); ?></td>
 					<td><?php echo esc_html( $inschrijving['code'] ); ?></td>
 					<td><?php echo esc_html( $inschrijving['naam'] ); ?></td>
@@ -68,7 +68,7 @@ if ( isset( $data['inschrijvingen'] ) ) :
 		</thead>
 		<tbody>
 		<?php foreach ( $data['workshops'] as $workshop ) : ?>
-			<tr >
+			<tr style="<?php echo esc_attr( $workshop['gestart'] ? 'color:red' : '' ); ?>" >
 				<td data-sort="<?php echo esc_attr( $workshop['datum'] ); ?>"><?php echo esc_html( date( 'd-m-y', $workshop['datum'] ) ); ?></td>
 				<td data-sort="<?php echo esc_attr( $workshop['id'] ); ?>"><?php echo esc_html( $workshop['code'] ); ?></td>
 				<td><?php echo esc_html( $workshop['contact'] ); ?></td>

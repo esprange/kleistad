@@ -33,6 +33,7 @@ class Public_Betalingen extends ShortcodeForm {
 			$this->atts,
 			'kleistad_betalingen'
 		);
+		$vandaag = strtotime('today');
 		switch ( $atts['type'] ) {
 			case 'cursus':
 				$data['inschrijvingen'] = [];
@@ -54,6 +55,7 @@ class Public_Betalingen extends ShortcodeForm {
 								'i_betaald'   => $inschrijving->i_betaald,
 								'c_betaald'   => $inschrijving->c_betaald,
 								'geannuleerd' => $inschrijving->geannuleerd,
+								'gestart'     => $cursus->start_datum < $vandaag,
 							];
 						}
 					}
@@ -72,6 +74,7 @@ class Public_Betalingen extends ShortcodeForm {
 							'organisatie' => $workshop->organisatie,
 							'betaald'     => $workshop->betaald,
 							'kosten'      => $workshop->kosten,
+							'gestart'     => $workshop->datum < $vandaag,
 						];
 					}
 				}
