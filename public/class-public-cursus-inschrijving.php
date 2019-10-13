@@ -49,7 +49,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			];
 		}
 		$atts                    = shortcode_atts(
-			[ 'cursus' => '' ],
+			[ 'cursus' => '', 'verbergen' => '' ],
 			$this->atts,
 			'kleistad_cursus_inschrijving'
 		);
@@ -60,6 +60,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			]
 		);
 		$data['cursus_selectie'] = true;
+		$data['verbergen']       = $atts['verbergen'];
 		$data['open_cursussen']  = [];
 		$cursussen               = \Kleistad\Cursus::all( true );
 		$cursus_selecties        = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];

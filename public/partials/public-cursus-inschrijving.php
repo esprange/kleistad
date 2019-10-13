@@ -9,9 +9,16 @@
  * @subpackage Kleistad/public/partials
  */
 
+if ( ! empty( $data['verbergen'] ) ) :
 ?>
-
+	<a href="#kleistad_inschrijven" onclick="document.getElementById('kleistad_inschrijven').style.display='inline';"><?php echo esc_html( $data['verbergen'] ); ?></a>
+	<div id="kleistad_inschrijven" style="display:none;">
 <?php
+else :
+?>
+	<div>
+	<?php
+endif;
 $this->form();
 $checked_id = 0;
 $count      = 0;
@@ -163,3 +170,4 @@ else :
 	endif
 ?>
 </form>
+</div>

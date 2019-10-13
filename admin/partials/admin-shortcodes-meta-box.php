@@ -16,7 +16,7 @@
 		<li><h3>publiek toegankelijk (dus zonder ingelogd te zijn)</h3>
 			<ul style="list-style-type:square">
 				<li>[kleistad_abonnee_inschrijving verklaring=''] inschrijving als abonnee (verklaring parameter is optioneel)</li>
-				<li>[kleistad_cursus_inschrijving cursus=C11,C22,.. ] inschrijving voor cursus< (cursus parameter is optioneel) </li>
+				<li>[kleistad_cursus_inschrijving cursus=C11,C22,.. verbergen="tekst"] inschrijving voor cursus (cursus parameter is optioneel). Met de optionele parameterverbergen wordt het formulier verborgen en de tekst getoond.</li>
 				<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart (verklaring parameter is optioneel)</li>
 				<li>[kleistad_recept] overzicht van keramiek recepten</li>
 				<li>[kleistad_workshop_aanvraag] aanvraag voor workshops en kinderfeestjes</li>
