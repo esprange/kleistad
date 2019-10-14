@@ -106,14 +106,13 @@ function strtodate( value ) {
 	 */
 	function defineDatatables() {
 		var $datatable = $( '.kleistad_datatable' );
-		if ( $datatable[0] ) {
-			$.extend( $.fn.dataTable.defaults, {
+		if ( $datatable[0] && ! $.fn.DataTable.isDataTable( '.kleistad_datatable' ) ) {
+			$datatable.dataTable( {
 				language: {
 					url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Dutch.json'
 					}
 				}
 			);
-			$datatable.dataTable();
 		}
 	}
 
@@ -122,9 +121,25 @@ function strtodate( value ) {
 	 */
 	function defineDatums() {
 		var $datum = $( '.kleistad_datum' );
-		if ( $datum[0] ) {
-			$.datepicker.setDefaults( { dateFormat: 'dd-mm-yy' } );
-			$datum.datepicker();
+		if ( $datum[0] && ! $datum.is( ':data("ui-datepicker")' ) ) {
+			$datum.datepicker( {
+				closeText: 'Sluiten',
+				prevText: '←',
+				nextText: '→',
+				currentText: 'Vandaag',
+				monthNames: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
+				monthNamesShort: [ 'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
+				dayNames: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
+				dayNamesShort: [ 'zon', 'maa', 'din', 'woe', 'don', 'vri', 'zat' ],
+				dayNamesMin: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
+				weekHeader: 'Wk',
+				dateFormat: 'dd-mm-yy',
+				firstDay: 1,
+				isRTL: false,
+				showMonthAfterYear: false,
+				yearSuffix: ''
+				}
+			);
 		}
 	}
 
