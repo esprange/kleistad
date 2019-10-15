@@ -28,12 +28,12 @@ class Public_Betalingen extends ShortcodeForm {
 		if ( ! \Kleistad\Roles::override() ) {
 			return true;
 		}
-		$atts = shortcode_atts(
+		$atts    = shortcode_atts(
 			[ 'type' => 'cursus' ],
 			$this->atts,
 			'kleistad_betalingen'
 		);
-		$vandaag = strtotime('today');
+		$vandaag = strtotime( 'today' );
 		switch ( $atts['type'] ) {
 			case 'cursus':
 				$data['inschrijvingen'] = [];
