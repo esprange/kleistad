@@ -372,6 +372,24 @@ function strtodate( value ) {
 				}
 			);
 
+			$( '.kleistad_input_cbr' )
+			/**
+			 * Als er geen radio button is ingevoerd dat wordt deze invalid. Toon dan de rode omtrek.
+			 */
+			.on( 'invalid',
+				function() {
+					$( this ).next( '.kleistad_label_cbr' ).css( 'border', '3px solid red' );
+				}
+			)
+			/**
+			 * En verwijder voor alle radiobuttons van die groep zo gauw er één button ingedrukt is.
+			 */
+			.on( 'change',
+				function() {
+					$( '[name=' + $( this ).attr( 'name' ) + ']' ).next( '.kleistad_label_cbr' ).css( 'border', 'none' );
+				}
+			);
+
 			$( '.kleistad_shortcode' )
 			/**
 			 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
