@@ -23,7 +23,7 @@
 	 */
 	function selectStoker( empty, id ) {
 		var i, t, stokers =  $( '#kleistad_reserveringen' ).data( 'stokers' );
-		t = '<select name="kleistad_stoker_id" class="kleistad_verdeling" >' + ( empty ? '<option value="0"></option>' : '' );
+		t = '<select name="stoker_id" class="kleistad_verdeling" >' + ( empty ? '<option value="0"></option>' : '' );
 		for ( i = 0; i < stokers.length; i++ ) {
 			t += '<option value="' + stokers[i].id + '" ' + ( stokers[i].id === id ? 'selected >' : '>' ) + stokers[i].naam + '</option>';
 		}
@@ -52,15 +52,15 @@
 
 		stokerVeld = $( '#kleistad_reserveringen' ).data( 'override' ) ?
 			'<td>' + selectStoker( false, formData.verdeling[0].id ) + '</td>' :
-			'<td style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;"><input name="kleistad_stoker_id" type="hidden" value="' + formData.verdeling[0].id + '" >' + vindStokerNaam( formData.verdeling[0].id ) + '</td>';
-		percVeld = '<td><input name="kleistad_stoker_perc" size="5" tabindex="-1" readonly style="border:0px;outline:0px;" value="' + formData.verdeling[0].perc + '" ></td>';
+			'<td style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;"><input name="stoker_id" type="hidden" value="' + formData.verdeling[0].id + '" >' + vindStokerNaam( formData.verdeling[0].id ) + '</td>';
+		percVeld = '<td><input name="stoker_perc" size="5" tabindex="-1" readonly style="border:0px;outline:0px;" value="' + formData.verdeling[0].perc + '" ></td>';
 
 		$( '#kleistad_reservering table > tbody' ).append( '<tr><td><label>Stoker</label></td>' + stokerVeld + percVeld + '</tr>' );
 
 		for ( row = 1; row < formData.verdeling.length; row++ ) {
 			$( '#kleistad_reservering table > tbody > tr:last' ).
 			after( '<tr><td><label>Medestoker</label></td><td>' +  selectStoker( true, formData.verdeling[row].id ) +
-				'<td><input name="kleistad_stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" size="3" value="' + formData.verdeling[row].perc + '" ></td></tr>' );
+				'<td><input name="stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" size="3" value="' + formData.verdeling[row].perc + '" ></td></tr>' );
 		}
 
 	}
@@ -131,7 +131,7 @@
 		$( '#kleistad_dag' ).val( formData.dag );
         $( '#kleistad_maand' ).val( formData.maand );
         $( '#kleistad_jaar' ).val( formData.jaar );
-        $( '#kleistad_stoker_id' ).val( formData.gebruiker_id );
+        $( '#stoker_id' ).val( formData.gebruiker_id );
 		if ( logica[formData.status].readonly ) {
 			lezen( formData );
 		} else {
@@ -152,58 +152,33 @@
      * @returns {undefined}
      */
     function kleistadVerdeel( element ) {
-        var stokerPercs = $( '[name=kleistad_stoker_perc]' ).toArray(),
-            stokerIds = $( '[name=kleistad_stoker_id]' ).toArray(),
-            sum = 0,
-            selectedRow = 0;
+		var sum       = 0,
+			vervallen = false,
+			$stokers, $medestoker, hoofdstokerPerc, medestokerPerc;
 
-        /*
-         * Vind de geselecteerde row en bepaal de som. Het element kan zowel het select field als het percentage zijn
-         * Voer tevens sanitizing uit.
-         */
-        switch ( element.name ) {
-            case 'kleistad_stoker_id':
-                stokerIds.forEach( function( item, index ) {
-					if ( item === element ) {
-						selectedRow = index;
+		if ( 0 === parseInt( $( element ).val(), 10 ) ) { // Als het percentage of het id gelijk wordt aan 0, dan is vervalt de medestoker.
+			$( element ).parents( 'tr' ).remove();
+			vervallen = true;
+		}
 
-						// Sanitize, als geen id, dan ook geen percentage.
-						if ( 0 === Number( item.value ) ) {
-							stokerPercs[index].value = 0;
-						}
-					}
-					sum += Number( stokerPercs[index].value );
-				});
-                break;
-            case 'kleistad_stoker_perc':
-                stokerPercs.forEach( function( item, index ) {
-					if ( item === element ) {
-						selectedRow = index;
+		$stokers = $( '[name=stoker_perc]' );
+		$stokers.each( function() {
+			sum += parseInt( $( this ).val(), 10 );
+		} );
 
-						// Sanitize, als geen id, dan ook geen percentage.
-						if ( 0 === Number( stokerIds[index].value ) ) {
-							item.value = 0;
-						} else {
+		hoofdstokerPerc = parseInt( $stokers.first().val(), 10 ) - ( sum - 100 );
 
-							// Sanitize, value moet tussen 0 en 100 liggen (html moet dit al afvangen).
-							item.value = Math.min( Math.max( +item.value, 0 ), 100 );
-						}
-					}
-					sum += Number( item.value );
-				});
-                break;
-            default:
-        }
-
-        // Pas het percentage aan
-        if ( 100 !== sum ) {
-            stokerPercs[0].value = Number( stokerPercs[0].value ) - ( sum - 100 );
-            if ( Number( stokerPercs[0].value ) < 0 ) {
-                stokerPercs[selectedRow].value = Number( stokerPercs[selectedRow].value ) + Number( stokerPercs[0].value );
-                stokerPercs[0].value = 0;
-                window.alert( 'De hoofdstoker heeft niets meer te verdelen.' );
-            }
-        }
+		if ( ! vervallen ) {
+			$medestoker     = ( 'stoker_id' === element.name ) ? $( element ).parents( 'tr' ).find( '[name=stoker_perc]' ) : $( element );
+			medestokerPerc  = parseInt( $medestoker.val(), 10 );
+			if ( hoofdstokerPerc < 0 ) {
+				medestokerPerc  = medestokerPerc + hoofdstokerPerc;
+				hoofdstokerPerc = 0;
+				window.alert( 'De hoofdstoker heeft niets meer te verdelen.' );
+			}
+			$medestoker.val( medestokerPerc );
+		}
+		$stokers.first().val( hoofdstokerPerc );
     }
 
     /**
@@ -247,8 +222,8 @@
      * @returns {undefined}
      */
     function kleistadMuteer( method ) {
-        var stokerPercs = $( '[name=kleistad_stoker_perc]' ).toArray(),
-            stokerIds = $( '[name=kleistad_stoker_id]' ).toArray(),
+        var stokerPercs = $( '[name=stoker_perc]' ).toArray(),
+            stokerIds = $( '[name=stoker_id]' ).toArray(),
             verdeling = [ ];
         stokerIds.forEach(
             function( item, index ) {
@@ -273,7 +248,7 @@
 						jaar:         $( '#kleistad_jaar' ).val(),
 						temperatuur:  $( '#kleistad_temperatuur' ).val(),
 						soortstook:   $( '#kleistad_soortstook' ).val(),
-						gebruiker_id: $( '#kleistad_stoker_id' ).val(),
+						gebruiker_id: $( '#stoker_id' ).val(),
 						programma:    $( '#kleistad_programma' ).val(),
 						verdeling:    verdeling
 					},
@@ -387,8 +362,8 @@
             .on( 'click', '#kleistad_stoker_toevoegen', function() {
 				$( '#kleistad_reservering table > tbody > tr:last' ).
 					after( '<tr><td><label>Medestoker</label></td><td>' +  selectStoker( true, 0 ) +
-						'<td><input name="kleistad_stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" size="3" value="0" ></td></tr>' );
-					$( '[name=kleistad_stoker_id]:last' ).focus();
+						'<td><input name="stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" size="3" value="0" ></td></tr>' );
+					$( '[name=stoker_id]:last' ).focus();
                     return false;
                 }
             );
