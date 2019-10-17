@@ -106,7 +106,10 @@ function strtodate( value ) {
 	 */
 	function defineDatatables() {
 		var $datatable = $( '.kleistad_datatable' );
-		if ( $datatable[0] && ! $.fn.DataTable.isDataTable( '.kleistad_datatable' ) ) {
+		if ( ! $datatable[0] ) {
+			return;
+		}
+		if ( ! $.fn.DataTable.isDataTable( '.kleistad_datatable' ) ) {
 			$datatable.dataTable( {
 				language: {
 					url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Dutch.json'
