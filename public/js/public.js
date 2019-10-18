@@ -269,21 +269,12 @@ function strtodate( value ) {
 	}
 
 	/**
-	 * Bepaal het jQuery div element.
-	 *
-	 * @param { jQuery } $element
-	 */
-	function getShortcode( $element ) {
-		return $element.closest( '.kleistad_shortcode' );
-	}
-
-	/**
 	 * Verzamel de relevante gegevens van de shortcode.
 	 *
 	 * @param { jQuery} $element
 	 */
 	function shortcode( $element ) {
-		var $shortcode    = getShortcode( $element );
+		var $shortcode    = $element.closest( '.kleistad_shortcode' );
 		var shortcodeData = { tag:   $shortcode.data( 'tag' ) };
 		if ( 'undefined' !== typeof $shortcode.data( 'atts') ) {
 			shortcodeData.atts = JSON.stringify( $shortcode.data( 'atts' ) );
@@ -395,7 +386,7 @@ function strtodate( value ) {
 				function() {
 					var $anchor       = $( this );
 					var shortcodeData = shortcode( $anchor );
-					getContent( getShortcode( $anchor ), shortcodeData, 'getitem' );
+					getContent( $anchor.closest( '.kleistad_shortcode' ), shortcodeData, 'getitem' );
 					return true;
 				}
 			)
@@ -406,7 +397,7 @@ function strtodate( value ) {
 				function() {
 					var $button       = $( this );
 					var shortcodeData = shortcode( $button );
-					getContent( getShortcode( $button ), shortcodeData, 'getitems' );
+					getContent( $button.closest( '.kleistad_shortcode' ), shortcodeData, 'getitems' );
 					return true;
 				}
 			)
@@ -422,7 +413,7 @@ function strtodate( value ) {
 							shortcodeData[ $( this ).attr( 'name') ] = $( this ).val();
 						}
 					);
-					getContent( getShortcode( $button ), shortcodeData, 'download' );
+					getContent( $button.closest( '.kleistad_shortcode' ), shortcodeData, 'download' );
 					return true;
 				}
 			)
@@ -447,7 +438,7 @@ function strtodate( value ) {
 					 */
 					return askConfirm( tekst,
 						function() {
-							submitForm( getShortcode( $form ), formData );
+							submitForm( $form.closest( '.kleistad_shortcode' ), formData );
 						}
 					);
 				}
