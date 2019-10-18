@@ -66,14 +66,9 @@ abstract class Shortcode {
 	}
 
 	/**
-	 * Maak de uit te voeren html aan
-	 *
-	 * @since 4.5.1
-	 *
-	 * @param  array $data de uit te wisselen data.
-	 * @return string html tekst.
+	 * Enqueue the scripts and styles for the shortcode.
 	 */
-	protected function display( &$data = [ 'actie' => '-' ] ) {
+	protected function enqueue() {
 		foreach ( \Kleistad\Public_Main::SHORTCODES[ $this->shortcode ]['css'] as $dependency ) {
 			wp_enqueue_style( $dependency );
 		}
@@ -95,6 +90,18 @@ abstract class Shortcode {
 			);
 		}
 		wp_enqueue_script( "kleistad{$this->shortcode}" );
+	}
+
+	/**
+	 * Maak de uit te voeren html aan
+	 *
+	 * @since 4.5.1
+	 *
+	 * @param  array $data de uit te wisselen data.
+	 * @return string html tekst.
+	 */
+	protected function display( &$data = [ 'actie' => '-' ] ) {
+		$this->enqueue();
 		$result = $this->prepare( $data );
 		if ( is_wp_error( $result ) ) {
 			$html = $this->status( $result );

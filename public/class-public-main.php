@@ -238,6 +238,7 @@ class Public_Main {
 		wp_register_script( 'fullcalendar-week', '//cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.3.0/main.min.js', [ 'fullcalendar-core' ], null, false );
 		wp_register_script( 'jstree', '//cdn.jsdelivr.net/npm/jstree@3.3.8/dist/jstree.min.js', [ 'jquery' ], null, false );
 		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
+		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad' ], $this->version, true );
 
 		foreach ( self::SHORTCODES as $shortcode => $dependencies ) {
 			if ( $dependencies['script'] ) {

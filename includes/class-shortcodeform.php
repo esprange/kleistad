@@ -54,6 +54,16 @@ abstract class ShortcodeForm extends Shortcode {
 	}
 
 	/**
+	 * Enqueue nu ook de form specieke javascript.
+	 */
+	protected function enqueue() {
+		if ( ! wp_script_is( 'kleistad-form' ) ) {
+			wp_enqueue_script( 'kleistad-form' );
+		}
+		parent::enqueue();
+	}
+
+	/**
 	 * Valideer opvoeren nieuwe gebruiker
 	 *
 	 * @since 5.2.1

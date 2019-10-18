@@ -5,77 +5,13 @@
  * @since  5.2.0
  */
 
-/* global kleistadData */
-/* exported strtodate, strtotime, timetostr, detectTap */
+/* global kleistadData, strtotime, timetostr */
+/* exported detectTap */
 
 var detectTap;
 
-/**
- * Converteer string naar tijd in minuten
- *
- * @param {String} value
- */
-function strtotime( value ) {
-	var hours, minutes;
-	if ( 'string' === typeof value ) {
-		/* jshint eqeqeq:false */
-		if ( Number( value ) == value ) {
-			return Number( value );
-		}
-		hours = value.substring( 0, 2 );
-		minutes = value.substring( 3 );
-		return Number( hours ) * 60 + Number( minutes );
-	}
-	return value;
-}
-
-/**
- * Converteer tijd in minuten naar tijd text.
- *
- * @param {int} value
- */
-function timetostr( value ) {
-	var hours = Math.floor( value / 60 );
-	var minutes = value % 60;
-	return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
-}
-
-/**
- * Converteer lokale datum in format 'd-m-Y' naar Date.
- *
- * @param (String) datum
- */
-function strtodate( value ) {
-	var veld = value.split( '-' );
-	return new Date( veld[2], veld[1] - 1, veld[0] );
-}
-
 ( function( $ ) {
     'use strict';
-
-	/**
-	 * Zoek de postcode op via de server.
-	 */
-	$.fn.lookupPostcode = function( postcode, huisnr, callback ) {
-		if ( '' !== postcode && '' !== huisnr ) {
-			$.ajax(
-				{
-					url: kleistadData.base_url + '/adres/',
-					method: 'GET',
-					data: {
-						postcode: postcode,
-						huisnr:   huisnr
-					}
-				}
-			).done(
-				function( data ) { // Als er niets gevonden kan worden dan code 204, data is dan undefined.
-					if ( 'undefined' !== typeof data ) {
-						callback( data );
-					}
-				}
-			).fail(); // Geen verdere actie ingeval van falen.
-		}
-	};
 
 	/**
 	 * Verwijder een class mbv een wildcard pattern.
@@ -178,7 +114,7 @@ function strtodate( value ) {
 	 * @param { jQuery } $shortcode
 	 * @param { array } data
 	 */
-	function vervolg( $shortcode, data ) {
+	$.fn.vervolg = function vervolg( $shortcode, data ) {
 		if ( 'status' in data ) {
 			$( '#kleistad_berichten' ).html( data.status );
 		} else {
@@ -194,7 +130,7 @@ function strtodate( value ) {
 		if ( 'redirect_uri' in data ) {
 			window.location.replace( data.redirect_uri );
 		}
-	}
+	};
 
 	/**
 	 * Get the selected item using Ajax.
@@ -217,45 +153,7 @@ function strtodate( value ) {
 		).done(
 			function( data ) {
 				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-				vervolg( $shortcode, data );
-			}
-		).fail(
-			function( jqXHR ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
-					window.console.log( jqXHR.responseJSON.message );
-				}
-				$( '#kleistad_berichten' ).html( kleistadData.error_message );
-			}
-		);
-	}
-
-	/**
-	 * Submit een Kleistad formulier via Ajax call
-	 *
-	 * @param { jQuery } $shortcode
-	 * @param { array} data
-	 */
-	function submitForm( $shortcode, data ) {
-		/**
-		 *  Bij een submit de spinner tonen.
-		 */
-		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
-		$.ajax(
-			{
-				beforeSend: function( xhr ) {
-					xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
-				},
-				contentType: false,
-				data:        data,
-				method:      'POST',
-				processData: false,
-				url:         kleistadData.base_url + '/formsubmit/'
-			}
-		).done(
-			function( data ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-				vervolg( $shortcode, data );
+				$.fn.vervolg( $shortcode, data );
 			}
 		).fail(
 			function( jqXHR ) {
@@ -273,7 +171,7 @@ function strtodate( value ) {
 	 *
 	 * @param { jQuery} $element
 	 */
-	function shortcode( $element ) {
+	$.fn.shortcode = function shortcode( $element ) {
 		var $shortcode    = $element.closest( '.kleistad_shortcode' );
 		var shortcodeData = { tag:   $shortcode.data( 'tag' ) };
 		if ( 'undefined' !== typeof $shortcode.data( 'atts') ) {
@@ -288,42 +186,7 @@ function strtodate( value ) {
 			shortcodeData.actie = '-';
 		}
 		return shortcodeData;
-	}
-
-	/**
-	 * Toon een confirmatie popup dialoog.
-	 *
-	 * @param {String} tekst Te tonen tekst. Als leeg dan wordt er geen popup getoond.
-	 * @param (function) Uit te voeren actie indien ok.
-	 */
-	function askConfirm( tekst, callback ) {
-		if ( tekst.length ) {
-			$( '#kleistad_bevestigen' ).text( tekst[1] ).dialog(
-				{
-					modal: true,
-					zIndex: 10000,
-					autoOpen: true,
-					width: 'auto',
-					resizable: false,
-					title: tekst[0],
-					buttons: {
-						Ja: function() {
-							$( this ).dialog( 'close' );
-							callback();
-							return true;
-						},
-						Nee: function() {
-							$( this ).dialog( 'close' );
-							return false;
-						}
-					}
-				}
-			);
-			return false;
-		}
-		callback();
-		return true;
-	}
+	};
 
 	/**
 	 * Wordt aangeroepen na elke ajax call.
@@ -341,51 +204,14 @@ function strtodate( value ) {
         function() {
 			onLoad();
 
-			/**
-			 * Definieer de bevestig dialoog.
-			 */
-			$( '#kleistad_bevestigen' ).dialog(
-				{
-					autoOpen: false,
-					modal: true
-				}
-			);
-
-			$( '.kleistad_input_cbr' )
-			/**
-			 * Als er geen radio button is ingevoerd dat wordt deze invalid. Toon dan de rode omtrek.
-			 */
-			.on( 'invalid',
-				function() {
-					$( this ).next( '.kleistad_label_cbr' ).css( 'border', '3px solid red' );
-				}
-			)
-			/**
-			 * En verwijder voor alle radiobuttons van die groep zo gauw er één button ingedrukt is.
-			 */
-			.on( 'change',
-				function() {
-					$( '[name=' + $( this ).attr( 'name' ) + ']' ).next( '.kleistad_label_cbr' ).css( 'border', 'none' );
-				}
-			);
-
 			$( '.kleistad_shortcode' )
-			/**
-			 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
-			 */
-			.on( 'click', 'button[type="submit"]',
-				function( event ) {
-					$( this ).closest( 'form' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
-					return true;
-				}
-			)
 			/**
 			 * Als er op een edit anchor is geklikt, doe dan een edit actie.
 			 */
 			.on( 'click', '.kleistad_edit_link',
 				function() {
 					var $anchor       = $( this );
-					var shortcodeData = shortcode( $anchor );
+					var shortcodeData = $.fn.shortcode( $anchor );
 					getContent( $anchor.closest( '.kleistad_shortcode' ), shortcodeData, 'getitem' );
 					return true;
 				}
@@ -396,7 +222,7 @@ function strtodate( value ) {
 			.on( 'click', '.kleistad_terug_link',
 				function() {
 					var $button       = $( this );
-					var shortcodeData = shortcode( $button );
+					var shortcodeData = $.fn.shortcode( $button );
 					getContent( $button.closest( '.kleistad_shortcode' ), shortcodeData, 'getitems' );
 					return true;
 				}
@@ -407,7 +233,7 @@ function strtodate( value ) {
 			.on( 'click', '.kleistad_download_link',
 				function() {
 					var $button       = $( this );
-					var shortcodeData = shortcode( $button );
+					var shortcodeData = $.fn.shortcode( $button );
 					$( 'input' ).each(
 						function() {
 							shortcodeData[ $( this ).attr( 'name') ] = $( this ).val();
@@ -415,32 +241,6 @@ function strtodate( value ) {
 					);
 					getContent( $button.closest( '.kleistad_shortcode' ), shortcodeData, 'download' );
 					return true;
-				}
-			)
-			/**
-			 * Submit het formulier, als er een formulier is.
-			 */
-			.on( 'submit', 'form',
-				function( event ) {
-					var $form         = $( this );
-					var shortcodeData = shortcode( $form );
-					var formData      = new FormData( this );
-					var clicked       = $form.data( 'clicked' );
-					var confirm       = $( '#' + clicked.id ).data( 'confirm' );
-					var tekst         = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
-					formData.append( 'form_actie', clicked.value );
-					Object.keys( shortcodeData ).forEach( function( item ) {
-						formData.append( item, shortcodeData[item] );
-					} );
-					event.preventDefault();
-					/**
-					 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
-					 */
-					return askConfirm( tekst,
-						function() {
-							submitForm( $form.closest( '.kleistad_shortcode' ), formData );
-						}
-					);
 				}
 			)
 			/**
