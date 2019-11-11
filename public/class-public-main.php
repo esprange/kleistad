@@ -93,6 +93,12 @@ class Public_Main {
 			'css'    => [ 'jquery-ui' ],
 			'access' => [],
 		],
+		'debiteuren'            => [
+			'script' => true,
+			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables' ],
+			'access' => [ 'bestuur' ],
+		],
 		'email'                 => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jstree' ],
@@ -425,48 +431,10 @@ class Public_Main {
 	}
 
 	/**
-	 * Update abonnement batch job.
-	 *
-	 * @param int    $id    De id van de abonnee.
-	 * @param string $actie De uit te voeren actie.
-	 * @param int    $datum Datum waarop het moet worden uitgevoerd.
-	 */
-	public function update_abonnement( $id, $actie, $datum ) {
-		$abonnement = new \Kleistad\Abonnement( $id );
-		$abonnement->event( $actie, $datum );
-	}
-
-	/**
-	 * Update workshop batch job.
-	 *
-	 * @param int    $id    De id van de workshop.
-	 * @param string $actie De uit te voeren actie.
-	 */
-	public function update_workshop( $id, $actie ) {
-		$workshop = new \Kleistad\Workshop( $id );
-		$workshop->event( $actie );
-	}
-
-	/**
-	 * Update ovenkosten batch job
-	 */
-	public function update_ovenkosten() {
-		set_time_limit( 300 ); // Voorkom dat deze job er door een execution time out crasht, dus 300 sec = 5 minuten.
-		\Kleistad\Saldo::meld_en_verwerk();
-	}
-
-	/**
 	 * Ontvang en verwerk email
 	 */
 	public function rcv_email() {
 		\Kleistad\WorkshopAanvraag::ontvang_en_verwerk();
-	}
-
-	/**
-	 * Doe de dagelijkse cleanup
-	 */
-	public function daily_cleanup() {
-		\Kleistad\Shortcode::cleanup_downloads();
 	}
 
 	/**

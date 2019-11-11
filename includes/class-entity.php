@@ -32,13 +32,6 @@ abstract class Entity {
 	protected $data = [];
 
 	/**
-	 * Het email object.
-	 *
-	 * @var object \Kleistad\Email object
-	 */
-	protected $emailer;
-
-	/**
 	 * Getter, de PHP magic function.
 	 *
 	 * Lees het attribuut van het object.

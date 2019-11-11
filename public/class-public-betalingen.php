@@ -25,9 +25,6 @@ class Public_Betalingen extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data ) {
-		if ( ! \Kleistad\Roles::override() ) {
-			return true;
-		}
 		$atts    = shortcode_atts(
 			[ 'type' => 'cursus' ],
 			$this->atts,

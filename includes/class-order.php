@@ -1,0 +1,210 @@
+<?php
+/**
+ * De definitie van de order class.
+ *
+ * @link       https://www.kleistad.nl
+ * @since      6.1.0
+ *
+ * @package    Kleistad
+ * @subpackage Kleistad/includes
+ */
+
+namespace Kleistad;
+
+/**
+ * Kleistad Order class.
+ *
+ * @property int    id
+ * @property float  betaald
+ * @property int    datum
+ * @property int    gecrediteerd
+ * @property bool   gesloten
+ * @property string historie
+ * @property array  klant
+ * @property int    mutatie_datum
+ * @property string referentie
+ * @property array  regels
+ * @property string opmerking
+ *
+ * @since 6.1.0
+ */
+class Order extends \Kleistad\Entity {
+
+	/**
+	 * Maak het object aan.
+	 *
+	 * @param int $order_id Het order id of 0.
+	 */
+	public function __construct( $order_id = 0 ) {
+		global $wpdb;
+		if ( $order_id ) {
+			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", $order_id ), ARRAY_A ); // phpcs:ignore
+			if ( ! is_null( $result ) ) {
+				$this->data = $result;
+			}
+		} else {
+			$this->data = [
+				'id'            => 0,
+				'betaald'       => 0.0,
+				'datum'         => date( 'Y-m-d H:i:s' ),
+				'gecrediteerd'  => 0,
+				'gesloten'      => false,
+				'historie'      => wp_json_encode( [] ),
+				'klant'         => wp_json_encode(
+					[
+						'naam'  => '',
+						'adres' => '',
+					]
+				),
+				'mutatie_datum' => null,
+				'referentie'    => '',
+				'regels'        => wp_json_encode( [] ),
+				'opmerking'     => '',
+			];
+		}
+	}
+
+	/**
+	 * Get attribuut van het object.
+	 *
+	 * @since 6.1.0
+	 *
+	 * @param string $attribuut Attribuut naam.
+	 * @return mixed Attribuut waarde.
+	 */
+	public function __get( $attribuut ) {
+		switch ( $attribuut ) {
+			case 'regels':
+			case 'klant':
+			case 'historie':
+				return json_decode( $this->data[ $attribuut ], true );
+			case 'datum':
+			case 'mutatie_datum':
+				return strtotime( $this->data[ $attribuut ] );
+			case 'gesloten':
+				return boolval( $this->data[ $attribuut ] );
+			case 'betaald':
+				return (float) $this->data[ $attribuut ];
+			default:
+				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
+		}
+	}
+
+	/**
+	 * Set attribuut van het object.
+	 *
+	 * @since 6.1.0
+	 *
+	 * @param string $attribuut Attribuut naam.
+	 * @param mixed  $waarde Attribuut waarde.
+	 */
+	public function __set( $attribuut, $waarde ) {
+		switch ( $attribuut ) {
+			case 'regels':
+			case 'klant':
+				$this->data[ $attribuut ] = wp_json_encode( $waarde );
+				break;
+			case 'historie':
+				$nu = new \DateTime();
+				$nu->setTimezone( new \DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
+				$historie                 = json_decode( $this->data[ $attribuut ], true );
+				$historie[]               = $nu->format( 'd-m-Y H:i' ) . ": $waarde";
+				$this->data[ $attribuut ] = wp_json_encode( $historie );
+				break;
+			case 'datum':
+			case 'mutatie_datum':
+				$this->data[ $attribuut ] = date( 'Y-m-d h:m:s', $waarde );
+				break;
+			case 'gesloten':
+				$this->data[ $attribuut ] = (int) $waarde;
+				break;
+			default:
+				$this->data[ $attribuut ] = $waarde;
+		}
+	}
+
+	/**
+	 * Bepaal het totaal bedrag van de order.
+	 *
+	 * @return float
+	 */
+	public function bruto() {
+		$bruto = 0.0;
+		foreach ( $this->regels as $regel ) {
+			$bruto += $regel['prijs'] * $regel['aantal'];
+		}
+		return $bruto;
+	}
+
+	/**
+	 * Maak het factuurnr van de order als het nog niet bestaat.
+	 *
+	 * @return string Het factuur nummer.
+	 */
+	public function factuurnr() {
+		return sprintf( '%s-%06d', date( 'Y', $this->datum ), $this->id );
+	}
+
+	/**
+	 * Bepaal wat er nog open staat op de order. Ingeval van een cursus, als deze gestart is dan
+	 */
+	public function openstaand() {
+		switch ( $this->referentie[0] ) {
+			case 'C':
+				break;
+			default:
+				break;
+		}
+	}
+
+	/**
+	 * Bewaar de order in de database.
+	 *
+	 * @since 6.1.0
+	 *
+	 * @global object $wpdb     WordPress database.
+	 * @return int De order id.
+	 */
+	public function save() {
+		global $wpdb;
+		// Als er al een id is, dan betreft het een mutatie.
+		if ( $this->id ) {
+			$this->mutatie_datum = time();
+		}
+		$this->gesloten = $this->gesloten || ( 0.01 >= abs( $this->betaald - $this->bruto() ) );
+		$wpdb->replace( "{$wpdb->prefix}kleistad_orders", $this->data );
+		$this->id = $wpdb->insert_id;
+		return $this->id;
+	}
+
+	/**
+	 * Zoek de meest recente bestelling o.b.v. de referentie (dus een credit factuur wordt dan eerder gevonden dan de gewone factuur).
+	 *
+	 * @since 6.1.0
+	 *
+	 * @param  string $referentie De referentie.
+	 * @return int|bool Het id van de bestelling of false.
+	 */
+	public static function zoek_order( $referentie ) {
+		global $wpdb;
+		return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE 'referentie' = %s ORDER BY id DESC LIMIT 1", $referentie ) );
+	}
+
+	/**
+	 * Return alle orders.
+	 *
+	 * @param bool $openstaand Toon alleen orders die nog een betaling behoeven.
+	 * @return array orders.
+	 */
+	public static function all( $openstaand = true ) {
+		global $wpdb;
+		$arr    = [];
+		$where  = $openstaand ? 'WHERE gesloten = 0' : '';
+		$orders = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders $where", ARRAY_A ); // phpcs:ignore
+		foreach ( $orders as $order ) {
+			$arr[ $order['id'] ] = new \Kleistad\Order();
+			$arr[ $order['id'] ]->load( $order );
+		}
+		return $arr;
+	}
+}

@@ -18,7 +18,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 
 	<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']['workshop_id'] ); ?>"/>
 	<input type="hidden" name="aanvraag_id" value="<?php echo esc_attr( $data['workshop']['aanvraag_id'] ); ?>"/>
-	<input type="hidden" name="vervallen" value="<?php echo $data['workshop']['vervallen'] ? 1 : 0; ?>" >
+	<input type="hidden" name="vervallen" value="<?php echo (int) $data['workshop']['vervallen']; ?>" >
 	<table class="kleistad_form" >
 		<tr>
 			<th>Soort workshop</th>
@@ -89,9 +89,9 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		</tr>
 		<tr>
 			<th>Afspraak definitief</th>
-			<td><input type="hidden" name="definitief" value="<?php echo $data['workshop']['definitief'] ? 1 : 0; ?>" ><?php echo $data['workshop']['definitief'] ? '&#10004;' : '&#10060;'; ?></td>
+			<td><input type="hidden" name="definitief" value="<?php echo (int) $data['workshop']['definitief']; ?>" ><?php echo $data['workshop']['definitief'] ? '&#10004;' : '&#10060;'; ?></td>
 			<th>Betaald</th>
-			<td><input type="hidden" name="betaald" value="<?php echo $data['workshop']['betaald'] ? 1 : 0; ?>" ><?php echo $data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?></td>
+			<td><input type="hidden" name="betaald" value="<?php echo (int) $data['workshop']['betaald']; ?>" ><?php echo $data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?></td>
 		</tr>
 	</table>
 	<button type="submit" name="kleistad_submit_workshop_beheer" value="bewaren" <?php disabled( $alleen_lezen || $data['workshop']['definitief'] ); ?> >Opslaan</button>

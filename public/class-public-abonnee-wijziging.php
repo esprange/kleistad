@@ -98,7 +98,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 				$status = $abonnement->herstarten( $data['input']['per_datum'] );
 				break;
 			case 'einde':
-				$status = $abonnement->annuleren( $data['input']['per_datum'] );
+				$status = $abonnement->stoppen( $data['input']['per_datum'] );
 				break;
 			case 'soort':
 				$status = $abonnement->wijzigen( $data['input']['per_datum'], 'soort', $data['input']['soort'], $data['input']['dag'] );
@@ -110,11 +110,12 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 				$status = $abonnement->wijzigen( strtotime( 'today' ), 'soort', 'beperkt', $data['input']['dag'] );
 				break;
 			case 'betaalwijze':
-				$status = $abonnement->betaalwijze( $data['input']['per_datum'], $data['input']['betaal'] );
-				if ( is_string( $status ) ) { // In dit geval is $status een redirect url.
-					return [
-						'redirect_uri' => $status,
-					];
+				$ideal_uri = $abonnement->betaalwijze( $data['input']['per_datum'], $data['input']['betaal'] );
+				if ( is_string( $ideal_uri ) ) { // In dit geval is $status een redirect url.
+					if ( ! empty( $ideal_uri ) ) {
+						return [ 'redirect_uri' => $ideal_uri ];
+					}
+					return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 				}
 				break;
 			default:

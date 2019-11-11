@@ -32,3 +32,6 @@ wp-cli.local.yml
 credentials.json
 token.json
 quickstart.php
+
+# pdf's
+*.pdf

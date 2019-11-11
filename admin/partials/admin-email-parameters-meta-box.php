@@ -51,6 +51,7 @@
 				<li>gewijzigd: gepauzeerd, herstart of beëindigd door de abonnee</li>
 				<li>betaalwijze_ideal: bevestiging voortaan betalen per sepa incasso</li>
 				<li>betaalwijze_bank: voortaan betalen per bank met instructie</li>
+				<li>reason: reden waarom incasso mislukt</li>
 			</ol>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de abonnee</li>
@@ -86,6 +87,7 @@
 				<li>kleistad_email_cursus_lopend : instructie bij inschrijving op lopende cursus</li>
 				<li>kleistad_email_cursus_betaling : betalen resterend cursusgeld via email link</li>
 				<li>kleistad_email_cursus_herinnering : herinnering betaling resterend cursusgeld via email link</li>
+				<li>kleistad_email_cursus_annulering : bevestiging annulering van de inschrijving<li>
 				<li>kleistad_email_cursus_betaling_ideal : bevestiging betaling restant bedrag</li>
 			</ol>
 			<ul style="list-style-type:square">

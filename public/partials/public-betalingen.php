@@ -30,19 +30,19 @@ if ( isset( $data['inschrijvingen'] ) ) :
 					<td data-sort="<?php echo esc_attr( $inschrijving['datum'] ); ?>"><?php echo esc_html( date( 'd-m-y', $inschrijving['datum'] ) ); ?></td>
 					<td><?php echo esc_html( $inschrijving['code'] ); ?></td>
 					<td><?php echo esc_html( $inschrijving['naam'] ); ?></td>
-					<td data-sort="<?php echo $inschrijving['i_betaald'] ? 1 : 0; ?>"><?php if ( $inschrijving['i_betaald'] ) : ?>
+					<td data-sort="<?php echo (int) $inschrijving['i_betaald']; ?>"><?php if ( $inschrijving['i_betaald'] ) : ?>
 						<span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
 						<input type="checkbox" name="<?php echo "cursist[{$inschrijving['cursist_id']}][i_betaald][{$inschrijving['cursus_id']}]"; //phpcs:ignore ?>" value="1" >
 						<?php endif ?>
 					</td>
-					<td data-sort="<?php echo $inschrijving['c_betaald'] ? 1 : 0; ?>"><?php if ( $inschrijving['c_betaald'] ) : ?>
+					<td data-sort="<?php echo (int) $inschrijving['c_betaald']; ?>"><?php if ( $inschrijving['c_betaald'] ) : ?>
 						<span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
 						<input type="checkbox" name="<?php echo "cursist[{$inschrijving['cursist_id']}][c_betaald][{$inschrijving['cursus_id']}]"; //phpcs:ignore ?>" value="1" >
 						<?php endif ?>
 					</td>
-					<td data-sort="<?php echo $inschrijving['geannuleerd'] ? 1 : 0; ?>"><?php if ( $inschrijving['geannuleerd'] ) : ?>
+					<td data-sort="<?php echo (int) $inschrijving['geannuleerd']; ?>"><?php if ( $inschrijving['geannuleerd'] ) : ?>
 						<span class="genericon genericon-checkmark"></span>
 						<?php else : ?>
 						<input type="checkbox" name="<?php echo "cursist[{$inschrijving['cursist_id']}][geannuleerd][{$inschrijving['cursus_id']}]"; //phpcs:ignore ?>" value="1" >
@@ -74,7 +74,7 @@ if ( isset( $data['inschrijvingen'] ) ) :
 				<td><?php echo esc_html( $workshop['contact'] ); ?></td>
 				<td><?php echo esc_html( $workshop['organisatie'] ); ?></td>
 				<td><?php echo esc_html( $workshop['kosten'] ); ?></td>
-				<td data-sort="<?php echo $workshop['betaald'] ? 1 : 0; ?>"><?php if ( $workshop['betaald'] ) : ?>
+				<td data-sort="<?php echo (int) $workshop['betaald']; ?>"><?php if ( $workshop['betaald'] ) : ?>
 					<span class="genericon genericon-checkmark"></span>
 					<?php else : ?>
 					<input type="checkbox" name="<?php echo "workshop[{$workshop['id']}]"; //phpcs:ignore ?>" value="1" >

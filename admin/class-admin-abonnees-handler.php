@@ -51,11 +51,12 @@ class Admin_Abonnees_Handler {
 						$item['gepauzeerd'] = $vandaag < $item['herstart_datum'];
 						break;
 					case 'starten':
-						$abonnement->start( strtotime( $item['start_datum'] ), 'stort', true );
+						$abonnement->start_datum = strtotime( $item['start_datum'] );
+						$abonnement->save();
 						$item['gestart'] = $vandaag >= $item['start_datum'];
 						break;
 					case 'stoppen':
-						$abonnement->annuleren( strtotime( $item['eind_datum'] ), true );
+						$abonnement->stoppen( strtotime( $item['eind_datum'] ), true );
 						$item['geannuleerd'] = $vandaag >= $item['eind_datum'];
 						break;
 				}

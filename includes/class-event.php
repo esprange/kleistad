@@ -81,7 +81,7 @@ class Event {
 	public function __construct( $event ) {
 		if ( is_string( $event ) ) {
 			try {
-				$this->event        = \Kleistad\Google::service()->events->get( \Kleistad\Google::kalender_id(), $event );
+				$this->event        = \Kleistad\Google::calendar_service()->events->get( \Kleistad\Google::kalender_id(), $event );
 				$extendedproperties = $this->event->getExtendedProperties();
 				$this->properties   = $extendedproperties->getPrivate();
 			} catch ( \Google_Service_exception $e ) {
@@ -216,9 +216,9 @@ class Event {
 		$extendedproperties->setPrivate( $this->properties );
 		$this->event->setExtendedProperties( $extendedproperties );
 		if ( is_null( $this->event->getCreated() ) ) {
-			$this->event = \Kleistad\Google::service()->events->insert( \Kleistad\Google::kalender_id(), $this->event );
+			$this->event = \Kleistad\Google::calendar_service()->events->insert( \Kleistad\Google::kalender_id(), $this->event );
 		} else {
-			$this->event = \Kleistad\Google::service()->events->update( \Kleistad\Google::kalender_id(), $this->event->getId(), $this->event );
+			$this->event = \Kleistad\Google::calendar_service()->events->update( \Kleistad\Google::kalender_id(), $this->event->getId(), $this->event );
 		}
 	}
 
@@ -226,7 +226,7 @@ class Event {
 	 * Delete het event.
 	 */
 	public function delete() {
-		\Kleistad\Google::service()->events->delete( \Kleistad\Google::kalender_id(), $this->event->getId() );
+		\Kleistad\Google::calendar_service()->events->delete( \Kleistad\Google::kalender_id(), $this->event->getId() );
 	}
 
 	/**
@@ -243,7 +243,7 @@ class Event {
 			'timeMin'      => date( 'c', mktime( 0, 0, 0, 1, 1, 2018 ) ),
 			// phpcs:ignore 'privateExtendedProperty' => 'key=' . self::META_KEY,
 		];
-		$results = \Kleistad\Google::service()->events->listEvents( \Kleistad\Google::kalender_id(), array_merge( $default_query, $query ) );
+		$results = \Kleistad\Google::calendar_service()->events->listEvents( \Kleistad\Google::kalender_id(), array_merge( $default_query, $query ) );
 		$events  = $results->getItems();
 		$arr     = [];
 		foreach ( $events as $event ) {

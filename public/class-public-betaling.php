@@ -16,10 +16,6 @@ namespace Kleistad;
  */
 class Public_Betaling extends ShortcodeForm {
 
-	const ACTIE_RESTANT_CURSUS     = 'restant_cursus';
-	const ACTIE_VERVOLG_ABONNEMENT = 'vervolg_abonnement';
-	const ACTIE_WORKSHOP           = 'workshop';
-
 	/**
 	 *
 	 * Prepareer 'betaling' form
@@ -34,62 +30,34 @@ class Public_Betaling extends ShortcodeForm {
 		$param = filter_input_array(
 			INPUT_GET,
 			[
-				'gid'  => FILTER_SANITIZE_NUMBER_INT,
-				'crss' => FILTER_SANITIZE_NUMBER_INT,
-				'abo'  => FILTER_SANITIZE_NUMBER_INT,
-				'wrk'  => FILTER_SANITIZE_STRING,
-				'hsh'  => FILTER_SANITIZE_STRING,
+				'order' => FILTER_SANITIZE_NUMBER_INT,
+				'hsh'   => FILTER_SANITIZE_STRING,
+				'art'   => FILTER_SANITIZE_STRING,
 			]
 		);
 
 		if ( is_null( $param['hsh'] ) ) {
+			$data['actie'] = '';
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
-
-		if ( ! is_null( $param['crss'] ) ) {
-			$inschrijving = new \Kleistad\Inschrijving( $param['gid'], $param['crss'] );
-			if ( $param['hsh'] === $inschrijving->controle() ) {
-				if ( $inschrijving->c_betaald ) {
-					$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald voor deze cursus. Neem eventueel contact op met Kleistad' );
-				} else {
-					$data = [
-						'actie'        => self::ACTIE_RESTANT_CURSUS,
-						'cursist'      => get_userdata( $param['gid'] ),
-						'cursus'       => new \Kleistad\Cursus( $param['crss'] ),
-						'inschrijving' => $inschrijving,
-					];
-				}
+		if ( ! is_null( $param['order'] ) ) {
+			$order = new \Kleistad\Order( $param['order'] );
+			if ( $order->gesloten ) {
+				$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 			} else {
-				$error->add( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
-			}
-		} elseif ( ! is_null( $param['abo'] ) ) {
-			$abonnement = new \Kleistad\Abonnement( $param['gid'] );
-			if ( $param['hsh'] === $abonnement->controle() ) {
-				if ( $abonnement->incasso_actief() ) {
-					$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald voor het vervolg van het abonnement. Neem eventueel contact op met Kleistad' );
-				} else {
+				if ( $param['hsh'] === $order->controle() ) {
 					$data = [
-						'actie'      => self::ACTIE_VERVOLG_ABONNEMENT,
-						'abonnee'    => get_userdata( $param['gid'] ),
-						'abonnement' => $abonnement,
+						'actie'         => 'betalen',
+						'klant'         => $order->klant['naam'],
+						'openstaand'    => $order->te_betalen(),
+						'reeds_betaald' => $order->betaald,
+						'regels'        => $order->regels,
+						'betreft'       => \Kleistad\Artikel\get_artikel_naam( $order->referentie ),
+						'artikel_type'  => $param['art'],
 					];
-				}
-			} else {
-				$error->add( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
-			}
-		} elseif ( ! is_null( $param['wrk'] ) ) {
-			$workshop = new \Kleistad\Workshop( $param['wrk'] );
-			if ( $param['hsh'] === $workshop->controle() ) {
-				if ( $workshop->betaald ) {
-					$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald voor deze workshop' );
 				} else {
-					$data = [
-						'actie'    => self::ACTIE_WORKSHOP,
-						'workshop' => $workshop,
-					];
+					$error->add( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 				}
-			} else {
-				$error->add( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 			}
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
@@ -107,39 +75,17 @@ class Public_Betaling extends ShortcodeForm {
 	 * @since   4.2.0
 	 */
 	protected function validate( &$data ) {
-		$error = new \WP_Error();
-
-		$input = filter_input_array(
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'cursist_id'  => FILTER_SANITIZE_NUMBER_INT,
-				'abonnee_id'  => FILTER_SANITIZE_NUMBER_INT,
-				'cursus_id'   => FILTER_SANITIZE_NUMBER_INT,
-				'workshop_id' => FILTER_SANITIZE_NUMBER_INT,
-				'betaal'      => FILTER_SANITIZE_STRING,
-				'actie'       => FILTER_SANITIZE_STRING,
+				'order_id'     => FILTER_SANITIZE_NUMBER_INT,
+				'betaal'       => FILTER_SANITIZE_STRING,
+				'artikel_type' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( self::ACTIE_RESTANT_CURSUS === $input['actie'] ) {
-			$inschrijving = new \Kleistad\Inschrijving( $input['cursist_id'], $input['cursus_id'] );
-			if ( $inschrijving->c_betaald ) {
-				$error->add( 'betaald', 'Volgens onze informatie is er reeds betaald voor deze cursus. Neem eventueel contact op met Kleistad' );
-			}
-		} elseif ( self::ACTIE_VERVOLG_ABONNEMENT === $input['actie'] ) {
-			$abonnement = new \Kleistad\Abonnement( $input['abonnee_id'] );
-			if ( $abonnement->incasso_actief() ) {
-				$error->add( 'betaald', 'Volgens onze informatie is er reeds betaald voor het vervolg van het abonnement. Neem eventueel contact op met Kleistad' );
-			}
-		} elseif ( self::ACTIE_WORKSHOP === $input['actie'] ) {
-			$workshop = new \Kleistad\Workshop( $input['workshop_id'] );
-			if ( $workshop->betaald ) {
-				$error->add( 'betaald', 'Volgens onze informatie is er reeds betaald voor deze workshop. Neem eventueel contact op met Kleistad' );
-			}
-		}
-		$data['input'] = $input;
-
-		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+		$data['order'] = new \Kleistad\Order( $input['order_id'] );
+		if ( $data['order']->gesloten ) {
+			return new \WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
 		return true;
 	}
@@ -153,37 +99,15 @@ class Public_Betaling extends ShortcodeForm {
 	 * @since   4.2.0
 	 */
 	protected function save( $data ) {
-		if ( self::ACTIE_RESTANT_CURSUS === $data['input']['actie'] ) {
-			$inschrijving = new \Kleistad\Inschrijving( $data['input']['cursist_id'], $data['input']['cursus_id'] );
-			if ( 'ideal' === $data['input']['betaal'] ) {
-				return [
-					'redirect_uri' => $inschrijving->betalen(
-						'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging',
-						false
-					),
-				];
-			}
-		} elseif ( self::ACTIE_VERVOLG_ABONNEMENT === $data['input']['actie'] ) {
-			$abonnement = new \Kleistad\Abonnement( $data['input']['abonnee_id'] );
-			if ( 'ideal' === $data['input']['betaal'] ) {
-				return [
-					'redirect_uri' => $abonnement->betalen(
-						'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging'
-					),
-				];
-			}
-		} elseif ( self::ACTIE_WORKSHOP === $data['input']['actie'] ) {
-			$workshop = new \Kleistad\Workshop( $data['input']['workshop_id'] );
-			if ( 'ideal' === $data['input']['betaal'] ) {
-				return [
-					'redirect_uri' => $workshop->betalen(
-						'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging'
-					),
-				];
-			}
+		$ideal_uri = '';
+		if ( 'ideal' === $data['input']['betaal'] ) {
+			$artikel       = \Kleistad\Artikel\get_artikel( $data['order']->referentie );
+			$artikel->type = $data['input']['artikel_type'];
+			$ideal_uri     = $artikel->betalen( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
 		}
-		return [
-			'status' => $this->status( new \WP_Error( 'intern', 'Er is blijkbaar iets fout gegaan, probeer het opnieuw' ) ),
-		];
+		if ( ! empty( $ideal_uri ) ) {
+			return [ 'redirect_uri' => $ideal_uri ];
+		}
+		return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 	}
 }

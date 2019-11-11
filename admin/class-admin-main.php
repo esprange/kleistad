@@ -19,7 +19,7 @@ class Admin_Main {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 19;
+	const DBVERSIE = 26;
 
 	/**
 	 * De versie van de plugin.
@@ -237,23 +237,31 @@ class Admin_Main {
 	}
 
 	/**
+	 * Doe de dagelijkse jobs
+	 */
+	public function daily_jobs() {
+		$proces = new \Kleistad\Background();
+		$proces->push_to_queue( '\Kleistad\Shortcode::cleanup_downloads' );
+		$proces->push_to_queue( '\Kleistad\Workshop::dagelijks' );
+		$proces->push_to_queue( '\Kleistad\Abonnement::dagelijks' );
+		$proces->push_to_queue( '\Kleistad\Saldo::dagelijks' );
+		$proces->save()->dispatch();
+	}
+
+	/**
 	 * Registreer de kleistad settings, uitgevoerd tijdens admin init.
 	 *
 	 * @since   4.0.87
 	 */
 	public function initialize() {
 		$this->database_version();
-
-		if ( ! wp_next_scheduled( 'kleistad_kosten' ) ) {
-			wp_schedule_event( strtotime( 'midnight' ), 'daily', 'kleistad_kosten' );
-		}
+		ob_start();
 		if ( ! wp_next_scheduled( 'kleistad_rcv_email' ) ) {
 			$time = time();
 			wp_schedule_event( $time + ( 900 - ( $time % 900 ) ), '15_mins', 'kleistad_rcv_email' );
 		}
-
-		if ( ! wp_next_scheduled( 'kleistad_daily_cleanup' ) ) {
-			wp_schedule_event( strtotime( 'midnight' ), 'daily', 'kleistad_daily_cleanup' );
+		if ( ! wp_next_scheduled( 'kleistad_daily_jobs' ) ) {
+			wp_schedule_event( strtotime( '08:00' ), 'daily', 'kleistad_daily_jobs' );
 		}
 
 		register_setting( 'kleistad-opties', 'kleistad-opties', [ 'sanitize_callback' => [ $this, 'validate_settings' ] ] );
@@ -288,11 +296,13 @@ class Admin_Main {
 				'imap_server'          => '',
 				'imap_pwd'             => '',
 				'betalen'              => 0,
+				'factureren'           => 0,
+				'google_folder_id'     => '',
 				'extra'                => [],
 			];
-			$current_options = \Kleistad\Kleistad::get_options();
-			$options         = wp_parse_args( empty( $current_options ) ? '' : $current_options, $default_options );
-			update_option( 'kleistad-opties', $options );
+			$current_options = $this->options;
+			$this->options   = wp_parse_args( empty( $current_options ) ? '' : $current_options, $default_options );
+			update_option( 'kleistad-opties', $this->options );
 
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			dbDelta(
@@ -368,10 +378,39 @@ class Admin_Main {
                 aantal tinyint(2) DEFAULT 99,
 				betaald tinyint(1) DEFAULT 0,
 				definitief tinyint(1) DEFAULT 0,
+				betaling_email tinyint(1) DEFAULT 0,
 				aanvraag_id int(10) DEFAULT 0,
                 PRIMARY KEY  (id)
               ) $charset_collate;"
 			);
+
+			dbDelta(
+				"CREATE TABLE {$wpdb->prefix}kleistad_orders (
+                id int(10) NOT NULL AUTO_INCREMENT,
+				betaald numeric(10,2) DEFAULT 0,
+				datum datetime,
+				gecrediteerd int(10) DEFAULT 0,
+				gesloten tinyint(1) DEFAULT 0,
+				historie varchar(2000),
+				klant tinytext,
+				mutatie_datum datetime,
+				referentie tinytext,
+				regels varchar(2000),
+				opmerking varchar(200),
+                PRIMARY KEY  (id)
+              ) $charset_collate;"
+			);
+
+			if ( ! $wpdb->get_var( "SHOW INDEX FROM {$wpdb->prefix}kleistad_orders WHERE Key_name = 'referenties' " ) ) {
+				$wpdb->query( "CREATE INDEX referenties ON {$wpdb->prefix}kleistad_orders (referentie)" );
+			}
+
+			/**
+			 * Conversie naar 6.1.0
+			 * Alle Cron jobs moeten vervallen. Dat zou handmatig kunnen, voordat de plugin geactiveerd wordt.
+			 * Vervolgens moeten alle workshops die nog niet betaald zijn maar waarvan er al wel het verzoek is gedaan om te betalen,
+			 * de betaling_email bool op true gezet. Ook dit zou handmatig kunnen.
+			 */
 			update_option( 'kleistad-database-versie', self::DBVERSIE );
 		}
 	}

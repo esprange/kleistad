@@ -365,7 +365,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				$workshop->bevestig();
 				$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
 			} elseif ( 'afzeggen' === $data['form_actie'] ) {
-				$workshop->afzeggen();
+				if ( $this->definitief ) {
+					$this->email( 'annulering', $this->annuleer_order( $this->zoek( $this->code ), 0.0 ) );
+				}
 				$bericht = 'De afspraak voor de workshop is per email afgezegd';
 			}
 		}

@@ -25,9 +25,9 @@ class Google {
 	/**
 	 * De Google kalender service.
 	 *
-	 * @var \Google_Service $service De google service.
+	 * @var \Google_Service $calendar_service De google service.
 	 */
-	private static $service = null;
+	private static $calendar_service = null;
 
 	/**
 	 * Het Google kalender id.
@@ -58,7 +58,6 @@ class Google {
 		$client->setClientId( $options['google_client_id'] );
 		$client->setClientSecret( $options['google_sleutel'] );
 		$client->setIncludeGrantedScopes( true );
-		$client->addScope( 'email' );
 		$client->addScope( \Google_Service_Calendar::CALENDAR_EVENTS );
 		$client->setRedirectUri( $redirect_uri );
 		$client->refreshToken( $refresh_token );
@@ -129,15 +128,11 @@ class Google {
 	}
 
 	/**
-	 * Maak de Google Calendar service aan.
+	 * Maak de Google services aan.
 	 *
-	 * @since 5.0.0
-	 * @return \Google_Service_Calendar de service.
+	 * @since 6.1.0
 	 */
-	public static function service() {
-		if ( ! is_null( self::$service ) ) {
-			return self::$service;
-		}
+	private static function create_services() {
 		$client = self::maak_client();
 		if ( false === $client ) {
 			error_log( '!!! Google maak client failure' ); //phpcs:ignore
@@ -153,8 +148,20 @@ class Google {
 				die;
 			}
 		}
-		self::$service = new \Google_Service_Calendar( $client );
-		return self::$service;
+		self::$calendar_service = new \Google_Service_Calendar( $client );
+	}
+
+	/**
+	 * Maak de Google Calendar service aan.
+	 *
+	 * @since 5.0.0
+	 * @return \Google_Service_Calendar de service.
+	 */
+	public static function calendar_service() {
+		if ( is_null( self::$calendar_service ) ) {
+			self::create_services();
+		}
+		return self::$calendar_service;
 	}
 
 	/**
@@ -177,7 +184,7 @@ class Google {
 	 */
 	public static function is_authorized() {
 		if ( false !== get_option( self::ACCESS_TOKEN ) ) {
-			return is_object( self::service() );
+			return is_object( self::calendar_service() );
 		}
 		return false;
 	}

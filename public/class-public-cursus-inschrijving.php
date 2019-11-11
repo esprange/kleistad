@@ -211,14 +211,18 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		$lopend = $data['cursus']->start_datum < strtotime( 'today' );
 
 		if ( ! $lopend && 'ideal' === $data['input']['betaal'] ) {
-			return [
-				'redirect_uri' => $inschrijving->betalen(
-					'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging',
-					true
-				),
-			];
+			$ideal_uri = $inschrijving->betalen( 'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging' );
+			if ( ! empty( $ideal_uri ) ) {
+				return [ 'redirect_uri' => $ideal_uri ];
+			}
+			return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		} else {
-			$inschrijving->email( $lopend ? 'lopende' : 'inschrijving' );
+			if ( ! $lopend ) {
+				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order() );
+			} else {
+				$inschrijving->email( 'lopende' );
+			}
+
 			return [
 				'content' => $this->goto_home(),
 				'status'  => $this->status( 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie' ),

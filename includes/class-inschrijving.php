@@ -28,19 +28,9 @@ namespace Kleistad;
  * @property bool   restant_email
  * @property bool   herinner_email
  */
-class Inschrijving extends Entity {
+class Inschrijving extends Artikel {
 
 	const META_KEY = 'kleistad_cursus';
-
-	/**
-	 * De cursist id
-	 *
-	 * @since 4.0.87
-	 *
-	 * @access private
-	 * @var int $cursist_id de wp user id van de cursist.
-	 */
-	private $cursist_id;
 
 	/**
 	 * De cursus
@@ -79,17 +69,16 @@ class Inschrijving extends Entity {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $cursist_id wp user id van de cursist.
+	 * @param int $klant_id wp user id van de cursist.
 	 * @param int $cursus_id id van de cursus.
 	 */
-	public function __construct( $cursist_id, $cursus_id ) {
-		$this->emailer               = new \Kleistad\Email();
+	public function __construct( $klant_id, $cursus_id ) {
 		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
-		$this->cursist_id            = $cursist_id;
-		$this->default_data['code']  = "C$cursus_id-$cursist_id-" . strftime( '%y%m%d', $this->cursus->start_datum );
+		$this->klant_id              = $klant_id;
+		$this->default_data['code']  = "C$cursus_id-$klant_id-" . strftime( '%y%m%d', $this->cursus->start_datum );
 		$this->default_data['datum'] = date( 'Y-m-d' );
 
-		$inschrijvingen = get_user_meta( $this->cursist_id, self::META_KEY, true );
+		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $inschrijvingen ) && ( isset( $inschrijvingen[ $cursus_id ] ) ) ) {
 			$this->data = wp_parse_args( $inschrijvingen[ $cursus_id ], $this->default_data );
 		} else {
@@ -154,19 +143,46 @@ class Inschrijving extends Entity {
 	}
 
 	/**
-	 * Sla de inschrijving op als user metadata in de database.
+	 * Zeg de gemaakte afspraak voor de cursus af.
 	 *
-	 * @since 4.0.87
+	 * @since 6.1.0
 	 */
-	public function save() {
-		$bestaande_inschrijvingen = get_user_meta( $this->cursist_id, self::META_KEY, true );
-		if ( is_array( $bestaande_inschrijvingen ) ) {
-			$inschrijvingen = $bestaande_inschrijvingen;
-		} else {
-			$inschrijvingen = [];
+	public function afzeggen() {
+		if ( ! $this->geannuleerd ) {
+			$this->geannuleerd = true;
+			$this->save();
 		}
-		$inschrijvingen[ $this->cursus->id ] = $this->data;
-		update_user_meta( $this->cursist_id, self::META_KEY, $inschrijvingen );
+	}
+
+	/**
+	 * Betaal de inschrijving met iDeal.
+	 *
+	 * @since        4.2.0
+	 *
+	 * @param string $bericht      Het bericht bij succesvolle betaling.
+	 * @return string De redirect url ingeval van een ideal betaling.
+	 */
+	public function betalen( $bericht ) {
+
+		$betalen    = new \Kleistad\Betalen();
+		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
+		if ( ! $this->i_betaald && 0 < $this->cursus->inschrijfkosten ) {
+			return $betalen->order(
+				$this->klant_id,
+				__CLASS__ . '-' . $this->code . '-inschrijving',
+				$this->aantal * $this->cursus->inschrijfkosten,
+				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
+				$bericht
+			);
+		} else {
+			return $betalen->order(
+				$this->klant_id,
+				__CLASS__ . '-' . $this->code . '-cursus',
+				$this->aantal * $this->cursus->cursuskosten,
+				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
+				$bericht
+			);
+		}
 	}
 
 	/**
@@ -177,15 +193,16 @@ class Inschrijving extends Entity {
 	 * @param int $cursus_id nieuw cursus_id.
 	 */
 	public function correct( $cursus_id ) {
-		$bestaande_inschrijvingen = get_user_meta( $this->cursist_id, self::META_KEY, true );
+		$bestaande_inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
 			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
 				$cursus                       = new \Kleistad\Cursus( $cursus_id );
-				$this->data['code']           = "C$cursus_id-$this->cursist_id-" . strftime( '%y%m%d', $cursus->start_datum );
+				$this->data['code']           = "C$cursus_id-$this->klant_id-" . strftime( '%y%m%d', $cursus->start_datum );
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
-				update_user_meta( $this->cursist_id, self::META_KEY, $inschrijvingen );
+				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
+				$this->email( 'wijziging', $this->wijzig_order( $this->zoek_order( $this->code ) ) );
 				return true;
 			}
 		}
@@ -193,24 +210,17 @@ class Inschrijving extends Entity {
 	}
 
 	/**
-	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
-	 *
-	 * @param array $data het te laden object.
-	 */
-	public function load( $data ) {
-		$this->data = wp_parse_args( $data, $this->default_data );
-	}
-
-	/**
 	 * Verzenden van de inschrijving of indeling email.
 	 *
 	 * @since      4.0.87
 	 *
-	 * @param string $type inschrijving of indeling.
+	 * @param string $type    Inschrijving of indeling.
+	 * @param string $factuur Een bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email( $type ) {
-		$cursist   = get_userdata( $this->cursist_id );
+	public function email( $type, $factuur = '' ) {
+		$emailer   = new \Kleistad\Email();
+		$cursist   = get_userdata( $this->klant_id );
 		$onderwerp = ucfirst( $type ) . ' cursus';
 
 		switch ( $type ) {
@@ -221,13 +231,24 @@ class Inschrijving extends Entity {
 				$slug = $this->cursus->indelingslug;
 				break;
 			case 'lopende':
-				$slug = 'kleistad_email_cursus_lopend';
+				$onderwerp = 'Inschrijving lopende cursus';
+				$slug      = 'kleistad_email_cursus_lopend';
+				break;
+			case 'wijziging':
+				$onderwerp = 'Wijziging inschrijving cursus';
+				$slug      = 'kleistad_email_cursus_wijziging';
+				break;
+			case 'annulering':
+				$onderwerp = 'Annulering inschrijving';
+				$slug      = 'kleistad_email_cursus_annulering';
 				break;
 			case 'restant_email':
-				$slug = 'kleistad_email_cursus_betaling';
+				$onderwerp = 'Betaling restant bedrag cursus';
+				$slug      = 'kleistad_email_cursus_betaling';
 				break;
 			case 'herinner_email':
-				$slug = 'kleistad_email_cursus_herinnering';
+				$onderwerp = 'Herinnering betaling cursus';
+				$slug      = 'kleistad_email_cursus_herinnering';
 				break;
 			case 'betaling_ideal':
 				$onderwerp = 'Betaling cursus';
@@ -236,12 +257,13 @@ class Inschrijving extends Entity {
 			default:
 				$slug = '';
 		}
-		return $this->emailer->send(
+		return $emailer->send(
 			[
-				'to'         => "$cursist->display_name <$cursist->user_email>",
-				'subject'    => $onderwerp,
-				'slug'       => $slug,
-				'parameters' =>
+				'to'          => "$cursist->display_name <$cursist->user_email>",
+				'subject'     => $onderwerp,
+				'slug'        => $slug,
+				'attachments' => $factuur,
+				'parameters'  =>
 				[
 					'voornaam'               => $cursist->first_name,
 					'achternaam'             => $cursist->last_name,
@@ -257,56 +279,85 @@ class Inschrijving extends Entity {
 					'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->cursus->inschrijfkosten, 2 ),
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
-					'cursus_link'            => '<a href="' . home_url( '/kleistad_cursus_betaling' ) .
-													'?gid=' . $this->cursist_id .
-													'&crss=' . $this->cursus->id .
-													'&hsh=' . $this->controle() . '" >Kleistad pagina</a>',
+					'cursus_link'            => $this->betaal_link(),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Betaal de inschrijving met iDeal.
+	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
 	 *
-	 * @since        4.2.0
-	 *
-	 * @param string $bericht      Het bericht bij succesvolle betaling.
-	 * @param bool   $inschrijving Of het een inschrijving of cursuskosten betreft.
-	 * @return string De redirect url ingeval van een ideal betaling.
+	 * @param array $data het te laden object.
 	 */
-	public function betalen( $bericht, $inschrijving ) {
-
-		$betaling   = new \Kleistad\Betalen();
-		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
-		if ( $inschrijving && 0 < $this->cursus->inschrijfkosten ) {
-			return $betaling->order(
-				$this->cursist_id,
-				__CLASS__ . '-' . $this->code . '-inschrijving',
-				$this->aantal * $this->cursus->inschrijfkosten,
-				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
-				$bericht
-			);
-		} else {
-			return $betaling->order(
-				$this->cursist_id,
-				__CLASS__ . '-' . $this->code . '-cursus',
-				$this->aantal * $this->cursus->cursuskosten,
-				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
-				$bericht
-			);
-		}
+	public function load( $data ) {
+		$this->data = wp_parse_args( $data, $this->default_data );
 	}
 
 	/**
-	 * Maak een controle string aan.
+	 * Sla de inschrijving op als user metadata in de database.
 	 *
-	 * @since        4.2.0
-	 *
-	 * @return string Hash string.
+	 * @since 4.0.87
 	 */
-	public function controle() {
-		return hash( 'sha256', "KlEiStAd{$this->cursist_id}C{$this->cursus->id}cOnTrOlE" );
+	public function save() {
+		$bestaande_inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
+		if ( is_array( $bestaande_inschrijvingen ) ) {
+			$inschrijvingen = $bestaande_inschrijvingen;
+		} else {
+			$inschrijvingen = [];
+		}
+		$inschrijvingen[ $this->cursus->id ] = $this->data;
+		update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
+	}
+
+
+	/**
+	 * Geef de status van het artikel als een tekst terug.
+	 *
+	 * @param  boolean $uitgebreid Uitgebreide tekst of korte tekst.
+	 * @return string De status tekst.
+	 */
+	public function status( $uitgebreid = false ) {
+		return $this->geannuleerd ? 'geannuleerd' : ( ( $this->ingedeeld ? 'ingedeeld' : 'ingeschreven' ) );
+	}
+
+	/**
+	 * De regels voor de factuur.
+	 *
+	 * @return array De regels.
+	 */
+	protected function factuurregels() {
+		$regels  = [];
+		$meetdag = strtotime( '+7 days' );
+		if ( 0 < $this->speciale_kosten ) {
+			$regels[] = [
+				'artikel' => "cursus {$this->cursus->code} (reeds gestart)",
+				'aantal'  => $this->aantal,
+				'prijs'   => $this->speciale_kosten,
+			];
+		} else {
+			if ( $meetdag <= $this->cursus->start_datum ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten.
+				$regels[] = [
+					'artikel' => "cursus {$this->cursus->code}",
+					'aantal'  => $this->aantal,
+					'prijs'   => $this->cursus->inschrijfkosten + $this->cursus->cursuskosten,
+				];
+			} else {
+				if ( 0 < $this->cursus->inschrijfkosten ) {
+					$regels[] = [
+						'artikel' => "inschrijfkosten cursus {$this->cursus->code}",
+						'aantal'  => $this->aantal,
+						'prijs'   => $this->cursus->inschrijfkosten,
+					];
+				}
+				$regels[] = [
+					'artikel' => "cursus {$this->cursus->code}",
+					'aantal'  => $this->aantal,
+					'prijs'   => $this->cursus->cursuskosten,
+				];
+			}
+		}
+		return $regels;
 	}
 
 	/**
@@ -318,14 +369,15 @@ class Inschrijving extends Entity {
 	 * @param float $bedrag     Het betaalde bedrag, wordt hier niet gebruikt.
 	 * @param bool  $betaald    Of er werkelijk betaald is.
 	 */
-	public static function callback( $parameters, $bedrag, $betaald = true ) {
+	public static function callback( $parameters, $bedrag, $betaald ) {
 		if ( $betaald ) {
 			$inschrijving = new static( intval( $parameters[1] ), intval( $parameters[0] ) );
+
 			switch ( $parameters[3] ) {
 				case 'inschrijving':
 					$inschrijving->i_betaald = true;
 					$inschrijving->ingedeeld = true;
-					$inschrijving->email( 'indeling' );
+					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag ) );
 					$inschrijving->save();
 					break;
 
@@ -336,13 +388,33 @@ class Inschrijving extends Entity {
 					if ( 0 < $inschrijving->cursus->inschrijfkosten ) {
 						$inschrijving->email( 'betaling_ideal' );
 					} else {
-						$inschrijving->email( 'indeling' );
+						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag ) );
 					}
 					$inschrijving->save();
 					break;
 
 				default:
 					break;
+			}
+		}
+	}
+
+	/**
+	 * Controleer of er betalingsverzoeken verzonden moeten worden.
+	 *
+	 * @since 6.1.0
+	 */
+	public static function dagelijks() {
+		$inschrijvingen = self::all();
+		$cursussen      = \Kleistad\Cursus::all();
+		$meetdag        = strtotime( '+7 days' );
+		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
+			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
+				if ( ! $inschrijving->c_betaald && ! $cursussen[ $cursus_id ]->vervallen && ! $inschrijving->restant_email && $meetdag >= $cursussen[ $cursus_id ]->start_datum ) {
+					$inschrijving->restant_email = true;
+					$inschrijving->save();
+					$inschrijving->email( 'restant_email' );
+				}
 			}
 		}
 	}

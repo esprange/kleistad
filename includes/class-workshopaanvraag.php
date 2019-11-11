@@ -184,6 +184,9 @@ class WorkshopAanvraag {
 			if ( $email->textHtml ) {
 				$html = new \Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
 				$body = $html->getText();
+				if ( '' === $body ) {
+					$body = $email->textPlain;
+				}
 			} elseif ( $email->textPlain ) {
 				$body = $email->textPlain;
 			} else {

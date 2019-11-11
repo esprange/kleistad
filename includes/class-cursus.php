@@ -180,7 +180,7 @@ class Cursus extends Entity {
 			case 'techniekkeuze':
 			case 'meer':
 			case 'tonen':
-				$this->data[ $attribuut ] = $waarde ? 1 : 0;
+				$this->data[ $attribuut ] = (int) $waarde;
 				break;
 			default:
 				$this->data[ $attribuut ] = $waarde;

@@ -171,13 +171,15 @@ class KleistadOvenTest extends WP_UnitTestCase {
 		$saldo = new  \Kleistad\Saldo( $user_id );
 		$this->assertEquals( 0.0, $saldo->bedrag, 'saldo initieel not zero' );
 		$saldo->bedrag = $bedrag;
-		$saldo->save( 'test 1' );
+		$saldo->reden  = 'test 1';
+		$saldo->save();
 
 		$saldo2 = new  \Kleistad\Saldo( $user_id );
 		$this->assertEquals( $bedrag, $saldo2->bedrag, 'saldo not equal to ' . $bedrag );
 
 		$saldo2->bedrag = $saldo2->bedrag + $bedrag;
-		$saldo2->save( 'test 2' );
+		$saldo2->reden  = 'test 2';
+		$saldo2->save();
 
 		$saldo3 = new  \Kleistad\Saldo( $user_id );
 		$this->assertEquals( $bedrag + $bedrag, $saldo3->bedrag, 'saldo not equal to ' . ( $bedrag + $bedrag ) );

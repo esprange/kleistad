@@ -100,50 +100,55 @@ class Betalen {
 	public function order( $referentie, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
 		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
-		if ( ! is_array( $referentie ) ) {
-			$gebruiker_id        = $referentie;
-			$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-			if ( '' === $mollie_gebruiker_id || is_null( $mollie_gebruiker_id ) ) {
-				$gebruiker           = get_userdata( $gebruiker_id );
-				$mollie_gebruiker    = $this->mollie->customers->create(
+		try {
+			if ( ! is_array( $referentie ) ) {
+				$gebruiker_id        = $referentie;
+				$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
+				if ( '' === $mollie_gebruiker_id || is_null( $mollie_gebruiker_id ) ) {
+					$gebruiker           = get_userdata( $gebruiker_id );
+					$mollie_gebruiker    = $this->mollie->customers->create(
+						[
+							'name'  => $gebruiker->display_name,
+							'email' => $gebruiker->user_email,
+						]
+					);
+					$mollie_gebruiker_id = $mollie_gebruiker->id;
+					update_user_meta( $gebruiker_id, self::MOLLIE_ID, $mollie_gebruiker_id );
+				}
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+			} else {
+				$mollie_gebruiker = $this->mollie->customers->create(
 					[
-						'name'  => $gebruiker->display_name,
-						'email' => $gebruiker->user_email,
+						'name'  => $referentie['naam'],
+						'email' => $referentie['email'],
 					]
 				);
-				$mollie_gebruiker_id = $mollie_gebruiker->id;
-				update_user_meta( $gebruiker_id, self::MOLLIE_ID, $mollie_gebruiker_id );
 			}
-			$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-		} else {
-			$mollie_gebruiker = $this->mollie->customers->create(
+			$uniqid   = uniqid();
+			$betaling = $mollie_gebruiker->createPayment(
 				[
-					'name'  => $referentie['naam'],
-					'email' => $referentie['email'],
+					'amount'       => [
+						'currency' => 'EUR',
+						'value'    => number_format( $bedrag, 2, '.', '' ),
+					],
+					'description'  => $beschrijving,
+					'issuer'       => $bank,
+					'metadata'     => [
+						'order_id' => $order_id,
+						'bericht'  => $bericht,
+					],
+					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
+					'sequenceType' => $mandateren ? \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
+					'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, \Kleistad\ShortcodeForm::get_url() ),
+					'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
 				]
 			);
+			set_transient( $uniqid, $betaling->id );
+			return $betaling->getCheckOutUrl();
+		} catch ( \Exception $e ) {
+			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
+			return false;
 		}
-		$uniqid   = uniqid();
-		$betaling = $mollie_gebruiker->createPayment(
-			[
-				'amount'       => [
-					'currency' => 'EUR',
-					'value'    => number_format( $bedrag, 2, '.', '' ),
-				],
-				'description'  => $beschrijving,
-				'issuer'       => $bank,
-				'metadata'     => [
-					'order_id' => $order_id,
-					'bericht'  => $bericht,
-				],
-				'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
-				'sequenceType' => $mandateren ? \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-				'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, \Kleistad\ShortcodeForm::get_url() ),
-				'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
-			]
-		);
-		set_transient( $uniqid, $betaling->id );
-		return $betaling->getCheckOutUrl();
 	}
 
 	/**
@@ -376,35 +381,19 @@ class Betalen {
 	public static function callback_herhaalbetaling_verwerkt( \WP_REST_Request $request ) {
 		$mollie_betaling_id = $request->get_param( 'id' );
 
-		$object   = new static();
-		$emailer  = new \Kleistad\Email();
-		$betaling = $object->mollie->payments->get( $mollie_betaling_id );
-		if ( $betaling->hasChargeBacks() ) {
-			$gebruiker_ids = get_users(
+		$object       = new static();
+		$betaling     = $object->mollie->payments->get( $mollie_betaling_id );
+		$gebruiker_id = reset(
+			get_users(
 				[
-					'meta_key'   => self::MOLLIE_ID,
-					'meta_value' => $betaling->customerId, //phpcs:ignore
-					'fields'     => 'ids',
-					'number'     => 1,
+					'meta_key' => self::MOLLIE_ID,
+				'meta_value' => $betaling->customerId, //phpcs:ignore
+				'fields'       => 'ids',
+				'number'       => 1,
 				]
-			);
-			$gebruiker     = get_userdata( reset( $gebruiker_ids ) );
-			$emailer->send(
-				[
-					'to'         => "$gebruiker->display_name <$gebruiker->user_email>",
-					'subject'    => 'Kleistad incasso mislukt',
-					'slug'       => 'kleistad_email_incasso_mislukt',
-					'parameters' =>
-					[
-						'voornaam'   => $gebruiker->first_name,
-						'achternaam' => $gebruiker->last_name,
-						'bedrag'     => $betaling->amount->value,
-						'reden'      => $betaling->details->bankReason,
-					],
-				]
-			);
-		}
-
+			)
+		);
+		\Kleistad\Abonnement::callback( $betaling->amount->value, [ $gebruiker_id, 'regulier' ], ! $betaling->hasChargeBacks(), $betaling->details->bankReason );
 		return new \WP_REST_Response(); // Geeft default http status 200 terug.
 	}
 

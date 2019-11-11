@@ -37,7 +37,7 @@
 			<td><?php echo esc_html( $item['prog'] ); ?></td>
 			<td><?php echo esc_html( $item['perc'] ); ?></td>
 			<td>&euro; <?php echo esc_html( $item['kosten'] ); ?></td>
-			<td data-sort="<?php echo $item['voorlopig'] ? 1 : 0; ?>"><span <?php echo $item['voorlopig'] ? 'class="genericon genericon-checkmark"' : ''; ?> ></span></td>
+			<td data-sort="<?php echo (int) $item['voorlopig']; ?>"><span <?php echo $item['voorlopig'] ? 'class="genericon genericon-checkmark"' : ''; ?> ></span></td>
 		</tr>
 		<?php endforeach ?>
 	</tbody>

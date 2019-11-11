@@ -80,7 +80,8 @@ class Admin_Stooksaldo_Handler {
 				$saldo         = new \Kleistad\Saldo( $item['id'] );
 				$saldo->bedrag = $item['saldo'];
 				$beheerder     = wp_get_current_user();
-				$saldo->save( 'correctie door ' . $beheerder->display_name );
+				$saldo->reden  = 'correctie door ' . $beheerder->display_name;
+				$saldo->save();
 			} else {
 				$notice = $item_valid;
 			}

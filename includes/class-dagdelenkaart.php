@@ -19,17 +19,9 @@ namespace Kleistad;
  * @property int    start_datum
  * @property string opmerking
  */
-class Dagdelenkaart extends Entity {
+class Dagdelenkaart extends Artikel {
 
 	const META_KEY = 'kleistad_dagdelenkaart';
-
-	/**
-	 * De gebruiker_id
-	 *
-	 * @access private
-	 * @var int $gebruiker_id het wp user id van de gebruiker.
-	 */
-	private $gebruiker_id;
 
 	/**
 	 * De beginwaarden van een dagdelenkaart.
@@ -47,14 +39,13 @@ class Dagdelenkaart extends Entity {
 	/**
 	 * Constructor
 	 *
-	 * @param int $gebruiker_id wp id van de gebruiker.
+	 * @param int $klant_id wp id van de gebruiker.
 	 */
-	public function __construct( $gebruiker_id ) {
-		$this->emailer               = new \Kleistad\Email();
-		$this->gebruiker_id          = $gebruiker_id;
-		$this->default_data['code']  = "K$gebruiker_id-" . strftime( '%y%m%d', strtotime( 'today' ) );
+	public function __construct( $klant_id ) {
+		$this->klant_id              = $klant_id;
+		$this->default_data['code']  = "K$klant_id-" . strftime( '%y%m%d', strtotime( 'today' ) );
 		$this->default_data['datum'] = date( 'Y-m-d' );
-		$dagdelenkaart               = get_user_meta( $this->gebruiker_id, self::META_KEY, true );
+		$dagdelenkaart               = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $dagdelenkaart ) ) {
 			$this->data = wp_parse_args( $dagdelenkaart, $this->default_data );
 		} else {
@@ -99,36 +90,43 @@ class Dagdelenkaart extends Entity {
 	}
 
 	/**
-	 * Bewaar de dagdelenkaart als metadata in de database.
-	 */
-	public function save() {
-		update_user_meta( $this->gebruiker_id, self::META_KEY, $this->data );
-	}
-
-	/**
-	 * Omdat een dagdelenkaart een meta data object betreft kan het niet omgezet worden naar de laatste versie.
+	 * Start de betaling van een nieuw dagdelenkaart.
 	 *
-	 * @param array $data het te laden object.
+	 * @param string $bericht  Te tonen melding als betaling gelukt.
+	 * @return string De redirect url van een ideal betaling.
 	 */
-	public function load( $data ) {
-		$this->data = wp_parse_args( $data, $this->default_data );
+	public function betalen( $bericht ) {
+		$options = \Kleistad\Kleistad::get_options();
+
+		$betalen = new \Kleistad\Betalen();
+		return $betalen->order(
+			$this->klant_id,
+			__CLASS__ . '-' . $this->code,
+			$options['dagdelenkaart'],
+			'Kleistad dagdelenkaart ' . $this->code,
+			$bericht,
+			false
+		);
 	}
 
 	/**
 	 * Verzenden van de welkomst email.
 	 *
-	 * @param string $type Welke email er verstuurd moet worden.
+	 * @param string $type    Welke email er verstuurd moet worden.
+	 * @param string $factuur Bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email( $type ) {
+	public function email( $type, $factuur = '' ) {
+		$emailer   = new \Kleistad\Email();
 		$options   = \Kleistad\Kleistad::get_options();
-		$gebruiker = get_userdata( $this->gebruiker_id );
-		return $this->emailer->send(
+		$gebruiker = get_userdata( $this->klant_id );
+		return $emailer->send(
 			[
-				'to'         => "$gebruiker->display_name <$gebruiker->user_email>",
-				'subject'    => 'Welkom bij Kleistad',
-				'slug'       => 'kleistad_email_dagdelenkaart' . $type,
-				'parameters' => [
+				'to'          => "$gebruiker->display_name <$gebruiker->user_email>",
+				'subject'     => 'Welkom bij Kleistad',
+				'slug'        => 'kleistad_email_dagdelenkaart' . $type,
+				'attachments' => $factuur,
+				'parameters'  => [
 					'voornaam'                => $gebruiker->first_name,
 					'achternaam'              => $gebruiker->last_name,
 					'loginnaam'               => $gebruiker->user_login,
@@ -142,23 +140,52 @@ class Dagdelenkaart extends Entity {
 	}
 
 	/**
-	 * Start de betaling van een nieuw dagdelenkaart.
+	 * Geef de factuur regels.
 	 *
-	 * @param string $bericht  Te tonen melding als betaling gelukt.
-	 * @return string De redirect url van een ideal betaling.
+	 * @return array De regels.
 	 */
-	public function betalen( $bericht ) {
+	protected function factuurregels() {
 		$options = \Kleistad\Kleistad::get_options();
+		return [
+			[
+				'artikel' => 'dagdelenkaart, start datum ' . strftime( '%d-%m-%y', $this->start_datum ),
+				'aantal'  => 1,
+				'prijs'   => $options['dagdelenkaart'],
+			],
+		];
+	}
 
-		$betalen = new \Kleistad\Betalen();
-		return $betalen->order(
-			$this->gebruiker_id,
-			__CLASS__ . '-' . $this->code,
-			$options['dagdelenkaart'],
-			'Kleistad dagdelenkaart ' . $this->code,
-			$bericht,
-			false
-		);
+	/**
+	 * Omdat een dagdelenkaart een meta data object betreft kan het niet omgezet worden naar de laatste versie.
+	 *
+	 * @param array $data het te laden object.
+	 */
+	public function load( $data ) {
+		$this->data = wp_parse_args( $data, $this->default_data );
+	}
+
+	/**
+	 * Bewaar de dagdelenkaart als metadata in de database.
+	 */
+	public function save() {
+		update_user_meta( $this->klant_id, self::META_KEY, $this->data );
+	}
+
+	/**
+	 * Geef de status van het abonnement als een tekst terug.
+	 *
+	 * @param  boolean $uitgebreid Uitgebreide tekst of korte tekst.
+	 * @return string De status tekst.
+	 */
+	public function status( $uitgebreid = false ) {
+		$vandaag = strtotime( 'today' );
+		if ( $this->start_datum > $vandaag ) {
+			return $uitgebreid ? 'gaat starten per ' . strftime( '%d-%m-%y', $this->start_datum ) : 'nieuw';
+		} elseif ( strtotime( '+3 month', $this->start_datum ) <= $vandaag ) {
+			return $uitgebreid ? 'actief tot ' . strftime( '%d-%m-%y', strtotime( '+3 month', $this->start_datum ) ) : 'actief';
+		} else {
+			return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%y', strtotime( '+3 month', $this->start_datum ) ) : 'voltooid';
+		}
 	}
 
 	/**
@@ -168,11 +195,18 @@ class Dagdelenkaart extends Entity {
 	 * @param float $bedrag     Het bedrag dat betaald is.
 	 * @param bool  $betaald    Of er werkelijk betaald is.
 	 */
-	public static function callback( $parameters, $bedrag, $betaald = true ) {
+	public static function callback( $parameters, $bedrag, $betaald ) {
 		if ( $betaald ) {
 			$dagdelenkaart = new static( intval( $parameters[0] ) );
-			$dagdelenkaart->email( '_ideal' );
+			$dagdelenkaart->email( '_ideal', $dagdelenkaart->bestel_order( $bedrag ) );
 		}
+	}
+
+	/**
+	 * Dagelijkse handelingen.
+	 */
+	public static function dagelijks() {
+		// Geen functionaliteit vooralsnog.
 	}
 
 	/**
@@ -188,7 +222,6 @@ class Dagdelenkaart extends Entity {
 				'fields'   => [ 'ID' ],
 			]
 		);
-
 		foreach ( $gebruikers as $gebruiker ) {
 			$dagdelenkaart         = get_user_meta( $gebruiker->ID, self::META_KEY, true );
 			$arr[ $gebruiker->ID ] = new \Kleistad\Dagdelenkaart( $gebruiker->ID );

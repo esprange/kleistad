@@ -81,6 +81,7 @@ class Kleistad {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts_and_styles' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'initialize' );
+		$this->loader->add_action( 'kleistad_daily_jobs', $plugin_admin, 'daily_jobs' );
 		$this->loader->add_action( 'update_option_kleistad-opties', $plugin_admin, 'opties_gewijzigd', 10, 2 );
 		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_admin, 'register_exporter', 10 );
 		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_admin, 'register_eraser', 10 );
@@ -122,11 +123,7 @@ class Kleistad {
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );
-		$this->loader->add_action( 'kleistad_kosten', $plugin_public, 'update_ovenkosten' );
 		$this->loader->add_action( 'kleistad_rcv_email', $plugin_public, 'rcv_email' );
-		$this->loader->add_action( 'kleistad_abonnement', $plugin_public, 'update_abonnement', 10, 3 );
-		$this->loader->add_action( 'kleistad_workshop', $plugin_public, 'update_workshop', 10, 2 );
-		$this->loader->add_action( 'kleistad_daily_cleanup', $plugin_public, 'daily_cleanup' );
 
 		$this->loader->add_filter( 'single_template', $plugin_public, 'single_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );

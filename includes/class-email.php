@@ -98,18 +98,19 @@ class Email {
 		$this->mailparams = wp_parse_args(
 			$args,
 			[
-				'auto'       => 'noreply',
-				'bcc'        => [],
-				'cc'         => [],
-				'content'    => '',
-				'from'       => 'no_reply@' . self::verzend_domein(),
-				'from_name'  => 'Kleistad',
-				'parameters' => [],
-				'reply-to'   => 'no_reply@' . self::domein(),
-				'sign'       => 'Kleistad',
-				'sign_email' => true,
-				'slug'       => '',
-				'to'         => 'Kleistad <info@' . self::domein() . '>',
+				'auto'        => 'noreply',
+				'bcc'         => [],
+				'cc'          => [],
+				'content'     => '',
+				'from'        => 'no_reply@' . self::verzend_domein(),
+				'from_name'   => 'Kleistad',
+				'parameters'  => [],
+				'reply-to'    => 'no_reply@' . self::domein(),
+				'sign'        => 'Kleistad',
+				'sign_email'  => true,
+				'slug'        => '',
+				'to'          => 'Kleistad <info@' . self::domein() . '>',
+				'attachments' => [],
 			]
 		);
 
@@ -146,7 +147,8 @@ class Email {
 			$this->mailparams['to'],
 			$this->mailparams['subject'],
 			$this->inhoud( $tekst ),
-			$this->headers()
+			$this->headers(),
+			$this->mailparams['attachments']
 		);
 	}
 

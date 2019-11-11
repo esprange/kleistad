@@ -130,13 +130,13 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 			$dagdelenkaart->save();
 
 			if ( 'ideal' === $data['input']['betaal'] ) {
-				return [
-					'redirect_uri' => $dagdelenkaart->betalen(
-						'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden'
-					),
-				];
+				$ideal_uri = $dagdelenkaart->betalen( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden' );
+				if ( ! empty( $ideal_uri ) ) {
+					return [ 'redirect_uri' => $ideal_uri ];
+				}
+				return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			} else {
-				if ( $dagdelenkaart->email( '_bank' ) ) {
+				if ( $dagdelenkaart->email( '_bank', $dagdelenkaart->bestel_order() ) ) {
 					return [
 						'content' => $this->goto_home(),
 						'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),

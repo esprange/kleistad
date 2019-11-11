@@ -65,17 +65,19 @@ class Public_Saldo extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$saldo = new \Kleistad\Saldo( $data['input']['gebruiker_id'] );
+		$saldo           = new \Kleistad\Saldo( $data['input']['gebruiker_id'] );
+		$saldo->storting = $data['input']['bedrag'];
+		$saldo->volgnr++;
+		$saldo->save();
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			return [
-				'redirect_uri' => $saldo->betalen(
-					'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging',
-					$data['input']['bedrag']
-				),
-			];
+			$ideal_uri = $saldo->betalen( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging' );
+			if ( ! empty( $ideal_uri ) ) {
+				return [ 'redirect_uri' => $ideal_uri ];
+			}
+			return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		} else {
-			if ( $saldo->email( '_bank', $data['input']['bedrag'] ) ) {
+			if ( $saldo->email( '_bank', $saldo->bestel_order( 0.0 ) ) ) {
 				return [
 					'content' => $this->goto_home(),
 					'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
