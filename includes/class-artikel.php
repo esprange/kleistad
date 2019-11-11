@@ -43,7 +43,7 @@ abstract class Artikel extends Entity {
 	 * Betaal het artikel per ideal.
 	 *
 	 * @param  string $bericht Het bericht na succesvolle betaling.
-	 * @return string De redirect uri.
+	 * @return string|bool De redirect uri of het is fout gegaan.
 	 */
 	abstract public function betalen( $bericht );
 
@@ -96,15 +96,15 @@ abstract class Artikel extends Entity {
 	 *
 	 * @param int   $id        Het id van de order.
 	 * @param float $restant   Het eventueel te betalen bedrag bij annulering.
-	 * @return bool|string Fout of de url van de creditfactuur.
+	 * @return string De url van de creditfactuur of lege string.
 	 */
 	final public function annuleer_order( $id, $restant = 0.0 ) {
 		if ( ! $this->afzeggen() ) {
-			return false;
+			return '';
 		}
 		$order = new \Kleistad\Order( $id );
 		if ( $order->gecrediteerd ) {
-			return false;
+			return '';
 		}
 		$credit_order             = new \Kleistad\Order();
 		$credit_order->referentie = $order->referentie;
@@ -142,7 +142,7 @@ abstract class Artikel extends Entity {
 	 * @param float  $bedrag       Het betaalde bedrag.
 	 * @param string $artikel_type De optionele parameter voor de factuur regels.
 	 * @param string $opmerking    De optionele opmerking in de factuur.
-	 * @return bool|string Fout of de url van de factuur.
+	 * @return string De url van de factuur.
 	 */
 	final public function bestel_order( $bedrag = 0.0, $artikel_type = '', $opmerking = '' ) {
 		$this->artikel_type = $artikel_type;
@@ -163,7 +163,7 @@ abstract class Artikel extends Entity {
 	 * @param int    $id        Het id van de order.
 	 * @param float  $korting   De te geven korting.
 	 * @param string $opmerking De optionele opmerking in de factuur.
-	 * @return bool|string Fout of de url van de factuur.
+	 * @return string De url van de factuur.
 	 */
 	final public function korting_order( $id, $korting, $opmerking = '' ) {
 		$order            = new \Kleistad\Order( $id );
@@ -199,7 +199,7 @@ abstract class Artikel extends Entity {
 	 *
 	 * @param int    $id        Het id van de order.
 	 * @param string $opmerking De optionele opmerking in de factuur.
-	 * @return bool|string Fout of de url van de factuur.
+	 * @return string De url van de factuur.
 	 */
 	final public function wijzig_order( $id, $opmerking = '' ) {
 		$order            = new \Kleistad\Order( $id );
@@ -297,12 +297,12 @@ abstract class Artikel extends Entity {
 	 * @return float
 	 */
 	protected function te_betalen() {
-		$order_id = \Kleistad\Order::zoek_order( $this->code );
-		if ( $order_id ) {
-			$order = new \Kleistad\Order( $order_id );
-			return $order->bruto() - $order->betaald;
+		$order_id = \Kleistad\Order::zoek_order( $this->code() );
+		if ( false === $order_id ) {
+			return 0;
 		}
-		return 0;
+		$order = new \Kleistad\Order( $order_id );
+		return $order->bruto() - $order->betaald;
 	}
 
 	/**

@@ -181,7 +181,7 @@ class Workshop extends Artikel {
 	 * @since        5.0.0
 	 *
 	 * @param string $bericht      Het bericht bij succesvolle betaling.
-	 * @return string De redirect url ingeval van een ideal betaling.
+	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
 	public function betalen( $bericht ) {
 		$betalen = new \Kleistad\Betalen();
@@ -211,7 +211,7 @@ class Workshop extends Artikel {
 			$this->email( 'bevestiging' );
 		} else {
 			if ( \Kleistad\Order::zoek_order( $this->code ) ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-				$this->email( 'betaling', $this->wijzig_order( $this->zoek_order( $this->code ) ) );
+				$this->email( 'betaling', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
 			} else {
 				$this->email( 'correctie bevestiging' );
 			}

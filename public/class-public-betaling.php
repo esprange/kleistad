@@ -102,9 +102,9 @@ class Public_Betaling extends ShortcodeForm {
 	protected function save( $data ) {
 		$ideal_uri = '';
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$artikel       = \Kleistad\Artikel::get_artikel( $data['order']->referentie );
-			$artikel->type = $data['input']['artikel_type'];
-			$ideal_uri     = $artikel->betalen( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
+			$artikel               = \Kleistad\Artikel::get_artikel( $data['order']->referentie );
+			$artikel->artikel_type = $data['input']['artikel_type'];
+			$ideal_uri             = $artikel->betalen( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
 		}
 		if ( ! empty( $ideal_uri ) ) {
 			return [ 'redirect_uri' => $ideal_uri ];

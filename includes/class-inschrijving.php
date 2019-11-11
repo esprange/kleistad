@@ -169,7 +169,7 @@ class Inschrijving extends Artikel {
 	 * @since        4.2.0
 	 *
 	 * @param string $bericht      Het bericht bij succesvolle betaling.
-	 * @return string De redirect url ingeval van een ideal betaling.
+	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
 	public function betalen( $bericht ) {
 

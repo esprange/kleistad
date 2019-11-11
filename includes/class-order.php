@@ -183,11 +183,11 @@ class Order extends \Kleistad\Entity {
 	 * @since 6.1.0
 	 *
 	 * @param  string $referentie De referentie.
-	 * @return int|bool Het id van de bestelling of false.
+	 * @return int Het id van de bestelling of 0.
 	 */
 	public static function zoek_order( $referentie ) {
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE 'referentie' = %s ORDER BY id DESC LIMIT 1", $referentie ) );
+		return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE 'referentie' = %s ORDER BY id DESC LIMIT 1", $referentie ) ) ?? 0;
 	}
 
 	/**

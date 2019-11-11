@@ -196,7 +196,7 @@ class Abonnement extends Artikel {
 	 * Maak de ideal betalingen.
 	 *
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
-	 * @return string De redirect url.
+	 * @return string|bool De redirect url of het is fout gegaan.
 	 */
 	public function betalen( $bericht ) {
 		$betalen = new \Kleistad\Betalen();

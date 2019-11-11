@@ -102,7 +102,7 @@ class Dagdelenkaart extends Artikel {
 	 * Start de betaling van een nieuw dagdelenkaart.
 	 *
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
-	 * @return string De redirect url van een ideal betaling.
+	 * @return string|bool De redirect url van een ideal betaling of false als het niet lukt.
 	 */
 	public function betalen( $bericht ) {
 		$options = \Kleistad\Kleistad::get_options();
