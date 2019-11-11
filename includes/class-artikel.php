@@ -298,10 +298,7 @@ abstract class Artikel extends Entity {
 	 */
 	protected function te_betalen() {
 		$order_id = \Kleistad\Order::zoek_order( $this->code() );
-		if ( false === $order_id ) {
-			return 0;
-		}
-		$order = new \Kleistad\Order( $order_id );
+		$order    = new \Kleistad\Order( $order_id );
 		return $order->bruto() - $order->betaald;
 	}
 
