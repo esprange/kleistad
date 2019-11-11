@@ -45,14 +45,15 @@ class Public_Betaling extends ShortcodeForm {
 			if ( $order->gesloten ) {
 				$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 			} else {
-				if ( $param['hsh'] === $order->controle() ) {
+				$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
+				if ( $param['hsh'] === $artikel->controle() ) {
 					$data = [
 						'actie'         => 'betalen',
 						'klant'         => $order->klant['naam'],
-						'openstaand'    => $order->te_betalen(),
+						'openstaand'    => $artikel->te_betalen(),
 						'reeds_betaald' => $order->betaald,
 						'regels'        => $order->regels,
-						'betreft'       => \Kleistad\Artikel\get_artikel_naam( $order->referentie ),
+						'betreft'       => $artikel->artikel_naam(),
 						'artikel_type'  => $param['art'],
 					];
 				} else {
@@ -83,7 +84,7 @@ class Public_Betaling extends ShortcodeForm {
 				'artikel_type' => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['order'] = new \Kleistad\Order( $input['order_id'] );
+		$data['order'] = new \Kleistad\Order( $data['input']['order_id'] );
 		if ( $data['order']->gesloten ) {
 			return new \WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
@@ -101,7 +102,7 @@ class Public_Betaling extends ShortcodeForm {
 	protected function save( $data ) {
 		$ideal_uri = '';
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$artikel       = \Kleistad\Artikel\get_artikel( $data['order']->referentie );
+			$artikel       = \Kleistad\Artikel::get_artikel( $data['order']->referentie );
 			$artikel->type = $data['input']['artikel_type'];
 			$ideal_uri     = $artikel->betalen( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
 		}

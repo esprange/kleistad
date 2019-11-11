@@ -95,7 +95,7 @@ class Betalen {
 	 * @param string    $beschrijving de externe order referentie, maximaal 35 karakters.
 	 * @param string    $bericht      het bericht bij succesvolle betaling.
 	 * @param bool      $mandateren   er wordt een herhaalde betaling voorbereid.
-	 * @return string   De redirect bestemming
+	 * @return bool|string De redirect bestemming of false.
 	 */
 	public function order( $referentie, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
 		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
@@ -386,14 +386,14 @@ class Betalen {
 		$gebruiker_id = reset(
 			get_users(
 				[
-					'meta_key' => self::MOLLIE_ID,
-				'meta_value' => $betaling->customerId, //phpcs:ignore
-				'fields'       => 'ids',
-				'number'       => 1,
+					'meta_key'   => self::MOLLIE_ID,
+					'meta_value' => $betaling->customerId, //phpcs:ignore
+					'fields'     => 'ids',
+					'number'     => 1,
 				]
 			)
 		);
-		\Kleistad\Abonnement::callback( $betaling->amount->value, [ $gebruiker_id, 'regulier' ], ! $betaling->hasChargeBacks(), $betaling->details->bankReason );
+		\Kleistad\Abonnement::callback( [ $gebruiker_id, 'regulier' ], $betaling->amount->value, ! $betaling->hasChargeBacks(), $betaling->details->bankReason );
 		return new \WP_REST_Response(); // Geeft default http status 200 terug.
 	}
 

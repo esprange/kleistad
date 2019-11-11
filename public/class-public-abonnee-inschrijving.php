@@ -157,7 +157,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		$abonnement->save();
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $abonnement->betalen();
+			$ideal_uri = $abonnement->betalen( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
 			if ( is_string( $ideal_uri ) ) { // Er is gekozen voor een ideal betaling, dus redirect uitvoeren.
 				if ( ! empty( $ideal_uri ) ) {
 					return [ 'redirect_uri' => $ideal_uri ];
@@ -165,7 +165,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}
 		} else {
-			$abonnement->email( '_start_bank', '', $this->bestel_order( 0.0, 'start' ) );
+			$abonnement->email( '_start_bank', '', $abonnement->bestel_order( 0.0, 'start' ) );
 			return [
 				'content' => $this->goto_home(),
 				'status'  => $this->status( 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging' ),

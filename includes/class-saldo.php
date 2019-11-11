@@ -16,6 +16,7 @@ namespace Kleistad;
  *
  * @property string reden
  * @property float  bedrag
+ * @property float  ontvangst
  * @property float  storting
  * @property int    volgnr
  */
@@ -82,6 +83,15 @@ class Saldo extends Artikel {
 	}
 
 	/**
+	 * Geef de artikel naam.
+	 *
+	 * @return string
+	 */
+	public function artikel_naam() {
+		return 'stooksaldo';
+	}
+
+	/**
 	 * Betaal de bijstorting saldo met iDeal.
 	 *
 	 * @since      4.2.0
@@ -98,6 +108,15 @@ class Saldo extends Artikel {
 			'Kleistad stooksaldo ' . $this->code,
 			$bericht
 		);
+	}
+
+	/**
+	 * Geef de code terug.
+	 *
+	 * @return string
+	 */
+	public function code() {
+		return $this->code;
 	}
 
 	/**

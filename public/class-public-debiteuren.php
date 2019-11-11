@@ -25,10 +25,11 @@ class Public_Debiteuren extends ShortcodeForm {
 		$debiteuren = [];
 		$orders     = \Kleistad\Order::all();
 		foreach ( $orders as $order ) {
+			$artikel      = \Kleistad\Artikel::get_artikel( $order->referentie );
 			$debiteuren[] = [
 				'id'         => $order->id,
 				'naam'       => $order->klant['naam'],
-				'betreft'    => \Kleistad\Artikel::get_artikel_naam( $order->referentie ),
+				'betreft'    => $artikel->artikel_naam(),
 				'referentie' => $order->referentie,
 				'openstaand' => $order->bruto() - $order->betaald,
 				'sinds'      => $order->datum,
@@ -44,11 +45,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array De informatie.
 	 */
 	private function debiteur( $id ) {
-		$order = new \Kleistad\Order( $id );
+		$order   = new \Kleistad\Order( $id );
+		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
 		return [
 			'id'         => $order->id,
 			'naam'       => $order->klant['naam'],
-			'betreft'    => \Kleistad\Artikel::get_artikel_naam( $order->referentie ),
+			'betreft'    => $artikel->artikel_naam(),
 			'referentie' => $order->referentie,
 			'factuur'    => $order->factuurnr(),
 			'betaald'    => $order->betaald,
@@ -83,7 +85,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * Valideer/sanitize 'debiteuren' form
 	 *
 	 * @param array $data gevalideerde data.
-	 * @return bool
+	 * @return bool|\WP_Error
 	 *
 	 * @since   6.1.0
 	 */

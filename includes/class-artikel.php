@@ -33,6 +33,13 @@ abstract class Artikel extends Entity {
 	public $artikel_type = '';
 
 	/**
+	 * Geef de naam van het artikel.
+	 *
+	 * @return string
+	 */
+	abstract public function artikel_naam();
+
+	/**
 	 * Betaal het artikel per ideal.
 	 *
 	 * @param  string $bericht Het bericht na succesvolle betaling.
@@ -48,6 +55,13 @@ abstract class Artikel extends Entity {
 	 * @param bool  $betaald    Of er werkelijk betaald is.
 	 */
 	abstract public static function callback( $parameters, $bedrag, $betaald );
+
+	/**
+	 * Geef de code van het artikel
+	 *
+	 * @return string De referentie.
+	 */
+	abstract public function code();
 
 	/**
 	 * Dagelijks uit te voeren handelingen, in te vullen door het artikel.
@@ -138,7 +152,7 @@ abstract class Artikel extends Entity {
 		$order->historie    = 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
 		$order->klant       = $this->naw_klant();
 		$order->opmerking   = $opmerking;
-		$order->referentie  = $this->code;
+		$order->referentie  = $this->code();
 		$order->save();
 		return $this->maak_factuur( $order );
 	}
@@ -207,7 +221,7 @@ abstract class Artikel extends Entity {
 	 */
 	final public function controle( $order_id = 0 ) {
 		if ( ! $order_id ) {
-			$order_id = \Kleistad\Order::zoek_order( $this->code );
+			$order_id = \Kleistad\Order::zoek_order( $this->code() );
 		}
 		return hash( 'sha256', "KlEiStAd{$order_id}cOnTrOlE3812LE" );
 	}
@@ -233,43 +247,17 @@ abstract class Artikel extends Entity {
 		$parameters = explode( '-', substr( $referentie, 1 ) );
 		switch ( $referentie[0] ) {
 			case 'A':
-				return new \Kleistad\Abonnement( $parameters[0] );
+				return new \Kleistad\Abonnement( (int) $parameters[0] );
 			case 'C':
-				return new \Kleistad\Inschrijving( $parameters[1], $parameters[0] );
+				return new \Kleistad\Inschrijving( (int) $parameters[1], (int) $parameters[0] );
 			case 'K':
-				return new \Kleistad\Dagdelenkaart( $parameters[0] );
+				return new \Kleistad\Dagdelenkaart( (int) $parameters[0] );
 			case 'S':
-				return new \Kleistad\Saldo( $parameters[0] );
+				return new \Kleistad\Saldo( (int) $parameters[0] );
 			case 'W':
-				return new \Kleistad\Workshop( $parameters[0] );
+				return new \Kleistad\Workshop( (int) $parameters[0] );
 			default:
 				return null;
-		}
-	}
-
-	/**
-	 * Bepaal de naam van het Kleistad artikel a.d.h.v. de referentie.
-	 *
-	 * @param string $referentie De artikel referentie.
-	 * @return string Een van de kleistad Artikel namen.
-	 */
-	public static function get_artikel_naam( $referentie ) {
-		$parameters = explode( '-', substr( $referentie, 1 ) );
-		switch ( $referentie[0] ) {
-			case 'A':
-				return 'abonnement';
-			case 'C':
-				$cursus = new \Kleistad\Cursus( $parameters[0] );
-				return $cursus->naam;
-			case 'K':
-				return 'dagdelenkaart';
-			case 'S':
-				return 'stooksaldo';
-			case 'W':
-				$workshop = new \Kleistad\Workshop( $parameters[0] );
-				return $workshop->naam;
-			default:
-				return '';
 		}
 	}
 
@@ -281,7 +269,7 @@ abstract class Artikel extends Entity {
 	protected function betaal_link() {
 		$url = add_query_arg(
 			[
-				'order' => \Kleistad\Order::zoek_order( $this->code ),
+				'order' => \Kleistad\Order::zoek_order( $this->code() ),
 				'hsh'   => $this->controle(),
 				'art'   => $this->artikel_type,
 			],
@@ -306,19 +294,22 @@ abstract class Artikel extends Entity {
 	/**
 	 * Te betalen bedrag, kan eventueel aangepast worden zoals bijvoorbeeld voor de inschrijfkosten van de cursus.
 	 *
-	 * @return array
+	 * @return float
 	 */
 	protected function te_betalen() {
 		$order_id = \Kleistad\Order::zoek_order( $this->code );
-		$order    = new \Kleistad\Order( $order_id );
-		return $order->bruto() - $order->betaald;
+		if ( $order_id ) {
+			$order = new \Kleistad\Order( $order_id );
+			return $order->bruto() - $order->betaald;
+		}
+		return 0;
 	}
 
 	/**
 	 * Maak een factuur aan.
 	 *
-	 * @param array $order De order.
-	 * @param bool  $credit Of het een normale factuur betreft of een credit factuur.
+	 * @param \Kleistad\Order $order De order.
+	 * @param bool            $credit Of het een normale factuur betreft of een credit factuur.
 	 * @return string Het pad naar de factuur.
 	 */
 	private function maak_factuur( $order, $credit = false ) {

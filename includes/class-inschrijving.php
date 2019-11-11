@@ -155,6 +155,15 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Geef de artikel naam.
+	 *
+	 * @return string
+	 */
+	public function artikel_naam() {
+		return $this->cursus->naam;
+	}
+
+	/**
 	 * Betaal de inschrijving met iDeal.
 	 *
 	 * @since        4.2.0
@@ -186,6 +195,15 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Geef de code terug.
+	 *
+	 * @return string
+	 */
+	public function code() {
+		return $this->code;
+	}
+
+	/**
 	 * Corrigeer de inschrijving naar nieuwe cursus.
 	 *
 	 * @since 4.5.0
@@ -202,7 +220,7 @@ class Inschrijving extends Artikel {
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
 				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-				$this->email( 'wijziging', $this->wijzig_order( $this->zoek_order( $this->code ) ) );
+				$this->email( 'wijziging', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
 				return true;
 			}
 		}

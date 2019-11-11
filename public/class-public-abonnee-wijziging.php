@@ -117,7 +117,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 					}
 					return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 				}
-				break;
+				// Blijkbaar dus een foute uri.
 			default:
 				$status = false;
 				break;

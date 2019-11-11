@@ -167,6 +167,15 @@ class Workshop extends Artikel {
 	}
 
 	/**
+	 * Geef de artikel naam.
+	 *
+	 * @return string
+	 */
+	public function artikel_naam() {
+		return $this->naam;
+	}
+
+	/**
 	 * Betaal de workshop met iDeal.
 	 *
 	 * @since        5.0.0
@@ -207,6 +216,15 @@ class Workshop extends Artikel {
 				$this->email( 'correctie bevestiging' );
 			}
 		}
+	}
+
+	/**
+	 * Geef de code terug.
+	 *
+	 * @return string
+	 */
+	public function code() {
+		return $this->code;
 	}
 
 	/**
@@ -373,7 +391,7 @@ class Workshop extends Artikel {
 		$workshops = self::all();
 		$meetdag   = strtotime( '+7 days' );
 		foreach ( $workshops as $workshop ) {
-			if ( $workhop->definitief && ! $workshop->betaald && ! $workshop->vervallen && ! $workshop->betaling_email && $meetdag >= $workshop->datum ) {
+			if ( $workshop->definitief && ! $workshop->betaald && ! $workshop->vervallen && ! $workshop->betaling_email && $meetdag >= $workshop->datum ) {
 				$workshop->betaling_email = true;
 				$workshop->save();
 				$workshop->email( 'betaling', $workshop->bestel_order( 0.0 ) );
@@ -396,7 +414,7 @@ class Workshop extends Artikel {
 			$workshop          = new static( intval( $parameters[0] ) );
 			$workshop->betaald = true;
 			$workshop->save();
-			$workshop->ontvang_order( $workshop->zoek_order( $workshop->code ), $bedrag );
+			$workshop->ontvang_order( \Kleistad\Order::zoek_order( $workshop->code ), $bedrag );
 			$workshop->email( 'betaling_ideal' );
 		}
 	}

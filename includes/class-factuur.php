@@ -51,7 +51,7 @@ class Factuur extends \FPDF {
 	/**
 	 * Toon het info veld over factuurnr, datum en Kleistad info.
 	 *
-	 * @param int    $factuurnr  Het nummer van de factuur.
+	 * @param string $factuurnr  Het nummer van de factuur.
 	 * @param string $referentie De referentie.
 	 */
 	private function info( $factuurnr, $referentie ) {

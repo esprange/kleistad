@@ -51,5 +51,5 @@ register_deactivation_hook(
 /**
  * Start uitvoering van de plugin.
  */
-$plugin = new \Kleistad\Kleistad();
-$plugin->run();
+$kleistad_plugin = new \Kleistad\Kleistad();
+$kleistad_plugin->run();

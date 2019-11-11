@@ -140,6 +140,24 @@ class Abonnement extends Artikel {
 	}
 
 	/**
+	 * Geef de artikel naam.
+	 *
+	 * @return string
+	 */
+	public function artikel_naam() {
+		return 'abonnement';
+	}
+
+	/**
+	 * Geef de code terug.
+	 *
+	 * @return string
+	 */
+	public function code() {
+		return $this->code;
+	}
+
+	/**
 	 * Wijzig de betaalwijze van het abonnement per datum.
 	 *
 	 * @param int    $wijzig_datum Wijzigdatum.
@@ -422,7 +440,6 @@ class Abonnement extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$options = \Kleistad\Kleistad::get_options();
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf = strftime( '%d-%m-%y', $this->start_datum );
@@ -569,7 +586,7 @@ class Abonnement extends Artikel {
 	 * Doe acties na betaling van abonnementen. Wordt aangeroepen vanuit de betaal callback.
 	 *
 	 * @param array  $parameters De parameters 0: gebruiker-id, 1: de melddatum.
-	 * @param string $bedrag     Geeft aan of het een eerste start of een herstart betreft.
+	 * @param float  $bedrag     Geeft aan of het een eerste start of een herstart betreft.
 	 * @param bool   $betaald    Of er werkelijk betaald is.
 	 * @param string $reason     Eventuele tekst van de bank over het falen van een incasso.
 	 */
@@ -603,13 +620,13 @@ class Abonnement extends Artikel {
 	 * Dagelijkse job
 	 */
 	public static function dagelijks() {
-		$vandaag       = strftime( 'today' );
+		$vandaag       = strtotime( 'today' );
 		$dag           = 60 * 60 * 24; // Aantal seconden in een dag.
 		$factuur_maand = (int) date( 'Ym', $vandaag );
 		$factuur_vorig = get_option( 'kleistad_factuur' );
 		$factureren    = ( false === $factuur_vorig || (int) $factuur_vorig < (int) $factuur_maand );
 
-		$abonnementen = self::all( $search );
+		$abonnementen = self::all();
 		foreach ( $abonnementen as $klant_id => $abonnement ) {
 			// Abonnementen die al gestopt zijn of nog niet gestart hoeven te worden, hoeven geen actie.
 			if ( $abonnement->geannuleerd || $vandaag < $abonnement->start_datum ) {
@@ -623,7 +640,7 @@ class Abonnement extends Artikel {
 				continue;
 			}
 			// Abonnementen waarvan de start_datum verstreken is, dan zijn de gebruikers geautoriseerd.
-			if ( $vandaag <= $abonnement_start_datum ) {
+			if ( $vandaag <= $abonnement->start_datum ) {
 				$abonnement->autoriseer( true );
 			}
 			// Abonnementen waarvan de pauzedatum verstreken is, en nog niet herstart zijn, worden gepauzeerd zonder verdere acties.
