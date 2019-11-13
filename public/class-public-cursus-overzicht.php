@@ -26,7 +26,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$cursist_inschrijving = [];
 		$inschrijvingen       = \Kleistad\Inschrijving::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-			if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) && $cursist_inschrijvingen[ $cursus_id ]->ingedeeld && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
+			if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
 				$cursist_inschrijving[ $cursist_id ] = $cursist_inschrijvingen[ $cursus_id ];
 			}
 		}
@@ -46,15 +46,20 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		if ( 'cursisten' === $data['actie'] ) {
 			$cursus            = new \Kleistad\Cursus( $data['id'] );
 			$data['cursus']    = [
-				'naam'      => $cursus->naam,
-				'code'      => $cursus->code,
-				'cursus_id' => $data['id'],
+				'id'    => $data['id'],
+				'naam'  => $cursus->naam,
+				'code'  => $cursus->code,
+				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
 			$data['cursisten'] = [];
 			foreach ( $this->inschrijvingen( $data['id'] ) as $cursist_id => $inschrijving ) {
+				if ( $cursus->vol && ! $inschrijving->ingedeeld ) {
+					continue; // Het heeft geen zin om wachtende inschrijvingen te tonen als de cursus geen plaats meer heeft.
+				}
 				$cursist             = get_userdata( $cursist_id );
 				$data['cursisten'][] = [
-					'naam'           => $cursist->display_name . ( $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+					'id'             => $cursist_id,
+					'naam'           => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
 					'telnr'          => $cursist->telnr,
 					'email'          => $cursist->user_email,
 					'i_betaald'      => $inschrijving->i_betaald,
@@ -62,8 +67,29 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 					'restant_email'  => $inschrijving->restant_email,
 					'herinner_email' => $inschrijving->herinner_email,
 					'technieken'     => implode( ', ', $inschrijving->technieken ),
+					'wacht'          => ( ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! \Kleistad\Order::zoek_order( $inschrijving->code ) ),
 				];
 			}
+		} elseif ( 'indelen' === $data['actie'] ) {
+			list( $cursist_id, $cursus_id ) = array_map( 'intval', explode( '-', $data['id'] ) );
+			$cursus                         = new \Kleistad\Cursus( $cursus_id );
+			$inschrijving                   = new \Kleistad\Inschrijving( $cursist_id, $cursus_id );
+			$cursist                        = get_userdata( $cursist_id );
+			$lopend                         = $cursus->lopend( $inschrijving->datum );
+			$data['cursus']                 = [
+				'id'          => $cursus_id,
+				'lessen'      => $lopend['lessen'],
+				'lessen_rest' => $lopend['lessen_rest'],
+				'bedrag'      => $lopend['bedrag'],
+				'max'         => $cursus->inschrijfkosten + $cursus->cursuskosten,
+			];
+			$data['cursist']                = [
+				'id'     => $cursist_id,
+				'naam'   => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+				'datum'  => $inschrijving->datum,
+				'aantal' => $inschrijving->aantal,
+			];
+
 		} else {
 			$cursussen           = \Kleistad\Cursus::all();
 			$data['cursus_info'] = [];
@@ -96,7 +122,9 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
+				'cursist_id' => FILTER_SANITIZE_NUMBER_INT,
+				'cursus_id'  => FILTER_SANITIZE_NUMBER_INT,
+				'bedrag'     => FILTER_SANITIZE_NUMBER_FLOAT,
 			]
 		);
 		return true;
@@ -111,40 +139,41 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @since   5.4.0
 	 */
 	protected function save( $data ) {
-		$cursus_id              = $data['input']['cursus_id'];
-		$aantal_verzonden_email = 0;
-		foreach ( $this->inschrijvingen( $cursus_id ) as $inschrijving ) {
-			if ( $inschrijving->c_betaald ) {
-				/**
-				 * Als de cursist al betaald heeft, geen actie.
-				 */
-				continue;
-			}
-			if ( 'herinner_email' === $data['form_actie'] &&
-				$inschrijving->restant_email &&
-				! $inschrijving->herinner_email ) {
-					/**
-					 * Stuur herinnerings emails als de cursist eerder een restant email heeft gehad en nog niet de cursus volledig betaald heeft.
-					 */
-					$aantal_verzonden_email++;
-					$inschrijving->herinner_email = true;
-			} elseif ( 'restant_email' === $data ['form_actie'] &&
-				! $inschrijving->restant_email ) {
-					/**
-					 * Stuur restant emails als de cursist nog niet de cursus volledig betaald heeft.
-					 */
-					$aantal_verzonden_email++;
-					$inschrijving->restant_email = true;
-			} else {
-				continue;
-			}
-			$inschrijving->email( $data['form_actie'] );
+		if ( 'indelen' === $data['form_actie'] ) {
+			$inschrijving                 = new \Kleistad\Inschrijving( $data['input']['cursist_id'], $data['input']['cursus_id'] );
+			$inschrijving->lopende_cursus = (float) $data['input']['bedrag'];
 			$inschrijving->save();
+			$inschrijving->email( 'inschrijving', $inschrijving->bestel_order() );
+			return [
+				'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
+				'content' => $this->display(),
+			];
+		} else {
+			$aantal_verzonden_email = 0;
+			foreach ( $this->inschrijvingen( $data['input']['cursus_id'] ) as $inschrijving ) {
+				if ( $inschrijving->c_betaald ) {
+					/**
+					 * Als de cursist al betaald heeft, geen actie.
+					 */
+					continue;
+				}
+				if ( 'herinner_email' === $data['form_actie'] &&
+					$inschrijving->restant_email &&
+					! $inschrijving->herinner_email ) {
+						/**
+						 * Stuur herinnerings emails als de cursist eerder een restant email heeft gehad en nog niet de cursus volledig betaald heeft.
+						 */
+						$aantal_verzonden_email++;
+						$inschrijving->herinner_email = true;
+						$inschrijving->email( 'herinner_email' );
+						$inschrijving->save();
+				}
+			}
+			return [
+				'status'  => $this->status( ( $aantal_verzonden_email > 0 ) ? "Emails zijn verstuurd naar $aantal_verzonden_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
+				'content' => $this->display(),
+			];
 		}
-		return [
-			'status'  => $this->status( ( $aantal_verzonden_email > 0 ) ? "Emails zijn verstuurd naar $aantal_verzonden_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
-			'content' => $this->display(),
-		];
 	}
 
 	/**

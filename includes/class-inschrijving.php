@@ -33,6 +33,13 @@ class Inschrijving extends Artikel {
 	const META_KEY = 'kleistad_cursus';
 
 	/**
+	 * De kosten van een lopende cursus
+	 *
+	 * @var float $lopende_cursus De kosten.
+	 */
+	public $lopende_cursus = 0;
+
+	/**
 	 * De cursus
 	 *
 	 * @since 4.0.87
@@ -347,11 +354,11 @@ class Inschrijving extends Artikel {
 	protected function factuurregels() {
 		$regels  = [];
 		$meetdag = strtotime( '+7 days' );
-		if ( 0 < $this->speciale_kosten ) {
+		if ( 0 < $this->lopende_cursus ) {
 			$regels[] = [
 				'artikel' => "cursus {$this->cursus->code} (reeds gestart)",
 				'aantal'  => $this->aantal,
-				'prijs'   => $this->speciale_kosten,
+				'prijs'   => $this->lopende_cursus,
 			];
 		} else {
 			if ( $meetdag <= $this->cursus->start_datum ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten.

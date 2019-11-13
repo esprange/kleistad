@@ -106,11 +106,12 @@ abstract class Artikel extends Entity {
 		if ( $order->gecrediteerd ) {
 			return '';
 		}
-		$credit_order             = new \Kleistad\Order();
-		$credit_order->referentie = $order->referentie;
-		$credit_order->betaald    = $order->betaald;
-		$credit_order->klant      = $order->klant;
-		$regels                   = [];
+		$credit_order               = new \Kleistad\Order();
+		$credit_order->referentie   = $order->referentie;
+		$credit_order->betaald      = $order->betaald;
+		$credit_order->klant        = $order->klant;
+		$credit_order->gecrediteerd = 'creditfactuur';
+		$regels                     = [];
 		foreach ( $order->regels as $regel ) {
 			$regels[] = [
 				'artikel' => 'annulering ' . $regel['artikel'],

@@ -45,7 +45,7 @@ if ( 'debiteur' === $data['actie'] ) :
 					&nbsp;
 				</div>
 				<div class="kleistad_col_4 kleistad_label">
-					<label for="kleistad_ontvangst">Ontvangen bedrag</label>
+					<label for="kleistad_ontvangst"><?php echo esc_html( 0 < $data['debiteur']['openstaand'] ? 'Ontvangen bedrag' : 'Teruggestort bedrag' ); ?></label>
 				</div>
 				<div class="kleistad_col_3" >
 				<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">

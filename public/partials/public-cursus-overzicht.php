@@ -11,43 +11,100 @@
 
 if ( 'cursisten' === $data['actie'] ) :
 	?>
-<div id="kleistad_cursisten_info">
 	<?php $this->form(); ?>
 	<strong><?php echo esc_html( $data['cursus']['code'] . ' ' . $data['cursus']['naam'] ); ?></strong>
-	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['cursus_id'] ); ?>">
+	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>">
 	<table class="kleistad_datatable display" data-paging="false" data-searching="false">
 		<thead>
 		<tr>
 			<th>Naam</th>
-			<th>Telefoon</th>
-			<th>Email</th>
 			<th>Technieken</th>
 			<th>Betaald</th>
-			<th>Restant Email</th>
 			<th>Herinner Email</th>
+			<th>Nog niet ingedeeld</th>
 		</tr>
 		</thead>
 		<tbody>
 		<?php foreach ( $data['cursisten'] as $cursist ) : ?>
 			<tr>
 				<td><?php echo esc_html( $cursist['naam'] ); ?></td>
-				<td><?php echo esc_html( $cursist['telnr'] ); ?></td>
-				<td><?php echo esc_html( $cursist['email'] ); ?></td>
 				<td><?php echo esc_html( $cursist['technieken'] ); ?></td>
 				<td><?php echo ( ( $cursist['c_betaald'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
-				<td><?php echo ( ( $cursist['restant_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 				<td><?php echo ( ( $cursist['herinner_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
+				<td>
+				<?php
+				if ( ! $cursist['i_betaald'] ) :
+					if ( $data['cursus']['loopt'] && $cursist['wacht'] ) :
+						?>
+						<a href="#" title="indelen" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+							data-id="<?php echo esc_attr( $cursist['id'] . '-' . $data['cursus']['id'] ); ?>" data-actie="indelen" >wacht op factuur</a>
+					<?php else : ?>
+						nog niet betaald !
+						<?php
+					endif;
+					endif
+				?>
+				</td>
 			</tr>
 		<?php endforeach ?>
 		</tbody>
 	</table>
 	<br/>
 	<button type="button" class="kleistad_download_link" name="kleistad_submit_cursus_overzicht" data-actie="cursisten" >Download</button>
-	<button type="submit" name="kleistad_submit_cursus_overzicht" value="restant_email" >Verstuur restant email</button>
 	<button type="submit" name="kleistad_submit_cursus_overzicht" value="herinner_email" >Verstuur herinner email</button>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 	</form>
-</div>
+<?php elseif ( 'indelen' === $data['actie'] ) : ?>
+	<?php $this->form(); ?>
+	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>">
+	<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $data['cursist']['id'] ); ?>">
+	<h2>Indeling op lopende cursus</h2>
+	<div class="kleistad_row">
+		<div class="kleistad_col_3">
+			<label>Cursist</label>
+		</div>
+		<div class="kleistad_col_5">
+			<?php echo esc_html( $data['cursist']['naam'] ); ?>
+		</div>
+	</div>
+	<div class="kleistad_row">
+		<div class="kleistad_col_3">
+			<label>Inschrijfdatum</label>
+		</div>
+		<div class="kleistad_col_5">
+			<?php echo esc_html( date( 'd-m-Y', $data['cursist']['datum'] ) ); ?>
+		</div>
+	</div>
+	<div class="kleistad_row">
+		<div class="kleistad_col_3">
+			<label>Prijs advies</label>
+		</div>
+		<div class="kleistad_col_5">
+			<?php echo esc_html( "totaal {$data['cursus']['lessen']} lessen, resterend {$data['cursus']['lessen_rest']}" ); ?>
+			<br/>
+			<strong>advies prijs &euro; <?php echo esc_html( number_format_i18n( $data['cursus']['bedrag'] * $data['cursist']['aantal'], 2 ) ); ?></strong>
+		</div>
+	</div>
+	<div class="kleistad_row">
+		<div class="kleistad_col_3">
+			<label for="bedrag">Vastgestelde prijs</label>
+		</div>
+		<div class="kleistad_col_5">
+			<input type=number name="bedrag" step="0.01" min="0" max="<?php echo esc_attr( $data['cursus']['max'] * $data['cursist']['aantal'] ); ?>"
+				value="<?php echo esc_attr( number_format( $data['cursus']['bedrag'] * $data['cursist']['aantal'], 2 ) ); ?>" >
+		</div>
+	</div>
+	<div class="kleistad_row" style="padding-top:20px;">
+		<div class="kleistad_col_3">
+			<button name="kleistad_submit_cursus_overzicht" type="submit" value="indelen" >Bevestigen</button>
+		</div>
+		<div class="kleistad_col_4">
+		</div>
+		<div class="kleistad_col_3">
+			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+		</div>
+	</div>
+	</form>
 <?php else : ?>
 <table id="kleistad_cursussen" class="kleistad_datatable display" data-order='[[ 0, "desc" ]]'>
 	<thead>

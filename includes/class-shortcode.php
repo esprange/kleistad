@@ -257,7 +257,7 @@ abstract class Shortcode {
 		}
 		$data = [
 			'actie' => sanitize_text_field( $request->get_param( 'actie' ) ),
-			'id'    => absint( $request->get_param( 'id' ) ),
+			'id'    => is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) ),
 		];
 		return new \WP_REST_Response(
 			[

@@ -127,7 +127,11 @@ class Public_Debiteuren extends ShortcodeForm {
 
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
-				$artikel->ontvang_order( $data['input']['id'], (float) $data['input']['ontvangst'] );
+				if ( 0 < $order->bruto() - $order->betaald ) {
+					$artikel->ontvang_order( $data['input']['id'], (float) $data['input']['ontvangst'] );
+				} else {
+					$artikel->ontvang_order( $data['input']['id'], - (float) $data['input']['ontvangst'] );
+				}
 				$status = 'De betaling is verwerkt';
 				break;
 			case 'annulering':

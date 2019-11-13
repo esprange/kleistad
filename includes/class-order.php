@@ -187,7 +187,7 @@ class Order extends \Kleistad\Entity {
 	 */
 	public static function zoek_order( $referentie ) {
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE 'referentie' = %s ORDER BY id DESC LIMIT 1", $referentie ) ) ?? 0;
+		return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s ORDER BY id DESC LIMIT 1", $referentie ) ) ?? 0;
 	}
 
 	/**

@@ -188,6 +188,28 @@ class Cursus extends Entity {
 	}
 
 	/**
+	 * Bereken het bedrag van een lopende cursus.
+	 *
+	 * @param int $vanafdatum De datum vanaf dat de les gevolgd gaat worden.
+	 * @return array Het bedrag en het aantal resterende lessen.
+	 */
+	public function lopend( $vanafdatum ) {
+		$aantal_lessen           = count( $this->lesdatums );
+		$totaal_bedrag           = $this->inschrijfkosten + $this->cursuskosten;
+		$aantal_lessen_resterend = 0;
+		foreach ( $this->lesdatums as $lesdatum ) {
+			if ( $lesdatum >= $vanafdatum ) {
+				$aantal_lessen_resterend++;
+			}
+		}
+		return [
+			'lessen'      => $aantal_lessen,
+			'lessen_rest' => $aantal_lessen_resterend,
+			'bedrag'      => $totaal_bedrag * $aantal_lessen_resterend / $aantal_lessen,
+		];
+	}
+
+	/**
 	 * Bewaarde de cursus in de database.
 	 *
 	 * @global object $wpdb WordPress database.
