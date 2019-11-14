@@ -377,6 +377,7 @@ class Inschrijving extends Artikel {
 					],
 				];
 			} else {
+				$regels = [];
 				if ( 0 < $this->cursus->inschrijfkosten ) {
 					$prijs    = round( $this->cursus->inschrijfkosten / ( 1 + self::BTW ), 2 );
 					$btw      = round( $this->cursus->inschrijfkosten - $prijs, 2 );

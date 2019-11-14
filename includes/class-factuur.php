@@ -94,9 +94,8 @@ class Factuur extends \FPDF {
 	 *
 	 * @param array $regels  De factuur regels behorende bij de bestelling.
 	 * @param float $betaald Wat er al betaald is.
-	 * @param bool  $credit  Of het al dan niet een credit factuur is.
 	 */
-	private function order( $regels, $betaald, $credit ) {
+	private function order( $regels, $betaald ) {
 		$this->SetY( 120 );
 		$this->SetLeftMargin( 25 );
 		$w = [
@@ -200,7 +199,7 @@ class Factuur extends \FPDF {
 		$this->start( $credit ? 'CREDIT FACTUUR' : ( $correctie ? 'CORRECTIE FACTUUR' : 'FACTUUR' ) );
 		$this->klant( $klant );
 		$this->info( $factuurnr, $referentie );
-		$this->order( $regels, $betaald, $credit );
+		$this->order( $regels, $betaald );
 		$this->opmerking( $opmerking );
 		$this->Output( 'F', $file );
 		return $file;

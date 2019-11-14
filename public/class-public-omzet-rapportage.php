@@ -17,20 +17,6 @@ namespace Kleistad;
 class Public_Omzet_Rapportage extends Shortcode {
 
 	/**
-	 * De vanaf datum van het stookbestand
-	 *
-	 * @var int $vanaf_datum de begindatum van het stookbestand.
-	 */
-	private $vanaf_datum;
-
-	/**
-	 * De tot datum van het stookbestand
-	 *
-	 * @var int $tot_datum de einddatum van het stookbestand.
-	 */
-	private $tot_datum;
-
-	/**
 	 *
 	 * Prepareer 'omzet_rapportage' form
 	 *
