@@ -182,11 +182,14 @@ class Saldo extends Artikel {
 	 * @return array
 	 */
 	protected function factuurregels() {
+		$prijs = round( $this->storting / ( 1 + self::BTW ), 2 );
+		$btw   = round( $this->storting - $prijs, 2 );
 		return [
 			[
 				'artikel' => 'stooksaldo',
 				'aantal'  => 1,
-				'prijs'   => $this->storting,
+				'prijs'   => $prijs,
+				'btw'     => $btw,
 			],
 		];
 	}

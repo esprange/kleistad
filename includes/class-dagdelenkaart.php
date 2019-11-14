@@ -164,11 +164,14 @@ class Dagdelenkaart extends Artikel {
 	 */
 	protected function factuurregels() {
 		$options = \Kleistad\Kleistad::get_options();
+		$prijs   = round( $options['dagdelenkaart'] / ( 1 + self::BTW ), 2 );
+		$btw     = round( $options['dagdelenkaart'] - $prijs, 2 );
 		return [
 			[
 				'artikel' => 'dagdelenkaart, start datum ' . strftime( '%d-%m-%y', $this->start_datum ),
 				'aantal'  => 1,
-				'prijs'   => $options['dagdelenkaart'],
+				'prijs'   => $prijs,
+				'btw'     => $btw,
 			],
 		];
 	}

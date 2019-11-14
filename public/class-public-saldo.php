@@ -49,7 +49,10 @@ class Public_Saldo extends ShortcodeForm {
 			INPUT_POST,
 			[
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
-				'bedrag'       => FILTER_SANITIZE_NUMBER_FLOAT,
+				'bedrag'       => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
 				'betaal'       => FILTER_SANITIZE_STRING,
 			]
 		);

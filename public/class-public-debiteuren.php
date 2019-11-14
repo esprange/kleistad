@@ -95,9 +95,18 @@ class Public_Debiteuren extends ShortcodeForm {
 			INPUT_POST,
 			[
 				'id'             => FILTER_SANITIZE_NUMBER_INT,
-				'ontvangst'      => FILTER_SANITIZE_NUMBER_FLOAT,
-				'korting'        => FILTER_SANITIZE_NUMBER_FLOAT,
-				'restant'        => FILTER_SANITIZE_NUMBER_FLOAT,
+				'ontvangst'      => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
+				'korting'        => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
+				'restant'        => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
 				'debiteur_actie' => FILTER_SANITIZE_STRING,
 			]
 		);

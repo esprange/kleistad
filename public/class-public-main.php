@@ -111,6 +111,12 @@ class Public_Main {
 			'css'    => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
 			'access' => [ 'leden', 'bestuur' ],
 		],
+		'omzet_rapportage'      => [
+			'script' => true,
+			'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables' ],
+			'access' => [ 'bestuur' ],
+		],
 		'rapport'               => [
 			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],

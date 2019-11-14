@@ -440,41 +440,56 @@ class Abonnement extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
+		$prijs = round( $this->bedrag( $this->artikel_type ) / ( 1 + self::BTW ), 2 );
+		$btw   = round( $this->bedrag( $this->artikel_type ) - $prijs, 2 );
+		$regel = [
+			'prijs' => $prijs,
+			'btw'   => $btw,
+		];
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf = strftime( '%d-%m-%y', $this->start_datum );
 				$tot   = strftime( '%d-%m-%y', $this->driemaand_datum );
 				return [
-					[
-						'artikel' => "abonnement {$this->code} vanaf $vanaf tot $tot",
-						'aantal'  => 3,
-						'prijs'   => $this->bedrag( self::BEDRAG_MAAND ),
-					],
+					array_merge(
+						$regel,
+						[
+							'artikel' => "abonnement {$this->code} vanaf $vanaf tot $tot",
+							'aantal'  => 3,
+						]
+					),
 				];
 			case 'overbrugging':
 				$vanaf = strftime( '%d-%m-%y', $this->driemaand_datum );
 				$tot   = strftime( '%d-%m-%y', $this->reguliere_datum - 60 * 60 * 24 );
 				return [
-					[
-						'artikel' => "abonnement {$this->code} vanaf $vanaf tot $tot",
-						'aantal'  => 1,
-						'prijs'   => $this->bedrag( self::BEDRAG_OVERBRUGGING ),
-					],
+					array_merge(
+						$regel,
+						[
+							'artikel' => "abonnement {$this->code} vanaf $vanaf tot $tot",
+							'aantal'  => 1,
+						]
+					),
 				];
 			case 'regulier':
 				$periode = strftime( '%B %Y', strtotime( 'today' ) );
 				$regels  = [
-					[
-						'artikel' => "abonnement {$this->code} periode $periode",
-						'aantal'  => 1,
-						'prijs'   => $this->bedrag( self::BEDRAG_BASIS ),
-					],
+					array_merge(
+						$regel,
+						[
+							'artikel' => "abonnement {$this->code} periode $periode",
+							'aantal'  => 1,
+						]
+					),
 				];
 				foreach ( $this->extras as $extra ) {
+					$prijs    = round( $this->extra_bedrag( $extra ) / ( 1 + self::BTW ), 2 );
+					$btw      = round( $this->extra_bedrag( $extra ) - $prijs, 2 );
 					$regels[] = [
 						'artikel' => 'gebruik $extra',
 						'aantal'  => 1,
-						'prijs'   => $this->extra_bedrag( $extra ),
+						'prijs'   => $prijs,
+						'btw'     => $btw,
 					];
 				}
 				return $regels;
@@ -506,7 +521,7 @@ class Abonnement extends Artikel {
 	/**
 	 * Bereken de maandelijkse kosten, de overbrugging, de borg of het startbedrag.
 	 *
-	 * @param  int $soort Welk bedrag gevraagd wordt, standaard het maandbedrag.
+	 * @param  mixed $soort Welk bedrag gevraagd wordt, standaard het maandbedrag.
 	 * @return float Het maandbedrag.
 	 */
 	private function bedrag( $soort ) {
@@ -518,8 +533,10 @@ class Abonnement extends Artikel {
 
 		switch ( $soort ) {
 			case self::BEDRAG_BASIS:
+			case 'regulier':
 				return (float) $options[ $this->soort . '_abonnement' ];
 			case self::BEDRAG_MAAND:
+			case 'start':
 				return $bedrag;
 			case self::BEDRAG_BORG:
 				return (float) $options['borg_kast'];
@@ -528,6 +545,7 @@ class Abonnement extends Artikel {
 			case self::BEDRAG_START_EN_BORG:
 				return 3 * $bedrag + (float) $options['borg_kast'];
 			case self::BEDRAG_OVERBRUGGING:
+			case 'overbrugging':
 				if ( '1' === date( 'j', $this->start_datum ) ) {
 					return $bedrag;
 				} else {

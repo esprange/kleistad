@@ -18,6 +18,8 @@ namespace Kleistad;
  */
 abstract class Artikel extends Entity {
 
+	const BTW = 0.21; // 21 procent.
+
 	/**
 	 * De klant.
 	 *
@@ -110,20 +112,20 @@ abstract class Artikel extends Entity {
 		$credit_order->referentie   = $order->referentie;
 		$credit_order->betaald      = $order->betaald;
 		$credit_order->klant        = $order->klant;
-		$credit_order->gecrediteerd = 'creditfactuur';
-		$regels                     = [];
-		foreach ( $order->regels as $regel ) {
-			$regels[] = [
-				'artikel' => 'annulering ' . $regel['artikel'],
-				'aantal'  => $regel['aantal'],
-				'prijs'   => - $regel['prijs'],
-			];
+		$credit_order->gecrediteerd = -1;
+		$regels                     = $order->regels;
+		foreach ( $regels as $regel ) {
+			$regel['artikel'] = 'annulering ' . $regel['artikel'];
+			$regel['aantal']  = - $regel['aantal'];
 		}
 		if ( 0.0 < $restant ) {
+			$prijs    = round( $restant / ( 1 + self::BTW ), 2 );
+			$btw      = round( $restant - $prijs, 2 );
 			$regels[] = [
-				'artikel' => 'administratie en overige kosten i.v.m. annulering',
+				'artikel' => 'kosten i.v.m. annulering',
 				'aantal'  => 1,
-				'prijs'   => $restant,
+				'prijs'   => $prijs,
+				'btw'     => $btw,
 			];
 		}
 		$credit_order->regels    = $regels;
@@ -169,10 +171,13 @@ abstract class Artikel extends Entity {
 	final public function korting_order( $id, $korting, $opmerking = '' ) {
 		$order            = new \Kleistad\Order( $id );
 		$regels           = $order->regels;
+		$prijs            = round( $korting / ( 1 + self::BTW ), 2 );
+		$btw              = round( $korting - $prijs, 2 );
 		$regels[]         = [
 			'artikel' => 'korting',
 			'aantal'  => 1,
-			'prijs'   => - $korting,
+			'prijs'   => - $prijs,
+			'btw'     => - $btw,
 		];
 		$order->regels    = $regels;
 		$order->klant     = $this->naw_klant();

@@ -356,11 +356,14 @@ class Workshop extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
+		$prijs = round( $this->kosten / ( 1 + self::BTW ), 2 );
+		$btw   = round( $this->kosten - $prijs, 2 );
 		return [
 			[
 				'artikel' => "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ),
 				'aantal'  => 1,
-				'prijs'   => $this->kosten,
+				'prijs'   => $prijs,
+				'btw'     => $btw,
 			],
 		];
 	}

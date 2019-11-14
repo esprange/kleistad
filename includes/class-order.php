@@ -129,11 +129,33 @@ class Order extends \Kleistad\Entity {
 	 * @return float
 	 */
 	public function bruto() {
-		$bruto = 0.0;
+		return $this->netto() + $this->btw();
+	}
+
+	/**
+	 * Bepaal het totaal bedrag exclusief BTW van de order.
+	 *
+	 * @return float
+	 */
+	public function netto() {
+		$netto = 0.0;
 		foreach ( $this->regels as $regel ) {
-			$bruto += $regel['prijs'] * $regel['aantal'];
+			$netto += ( $regel['prijs'] ) * $regel['aantal'];
 		}
-		return $bruto;
+		return $netto;
+	}
+
+	/**
+	 * Bepaal het totaal bedrag aan BTW van de order.
+	 *
+	 * @return float
+	 */
+	public function btw() {
+		$btw = 0.0;
+		foreach ( $this->regels as $regel ) {
+			$btw += ( $regel['btw'] ) * $regel['aantal'];
+		}
+		return $btw;
 	}
 
 	/**
@@ -149,12 +171,7 @@ class Order extends \Kleistad\Entity {
 	 * Bepaal wat er nog open staat op de order. Ingeval van een cursus, als deze gestart is dan
 	 */
 	public function openstaand() {
-		switch ( $this->referentie[0] ) {
-			case 'C':
-				break;
-			default:
-				break;
-		}
+		$this->bruto() - $this->betaald;
 	}
 
 	/**

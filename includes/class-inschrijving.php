@@ -352,37 +352,52 @@ class Inschrijving extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$regels  = [];
 		$meetdag = strtotime( '+7 days' );
 		if ( 0 < $this->lopende_cursus ) {
-			$regels[] = [
-				'artikel' => "cursus {$this->cursus->code} (reeds gestart)",
-				'aantal'  => $this->aantal,
-				'prijs'   => $this->lopende_cursus,
+			$prijs = round( $this->lopende_cursus / ( 1 + self::BTW ), 2 );
+			$btw   = round( $this->lopende_cursus - $prijs, 2 );
+			return [
+				[
+					'artikel' => "cursus {$this->cursus->code} (reeds gestart)",
+					'aantal'  => $this->aantal,
+					'prijs'   => $prijs,
+					'btw'     => $btw,
+				],
 			];
 		} else {
 			if ( $meetdag <= $this->cursus->start_datum ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten.
-				$regels[] = [
-					'artikel' => "cursus {$this->cursus->code}",
-					'aantal'  => $this->aantal,
-					'prijs'   => $this->cursus->inschrijfkosten + $this->cursus->cursuskosten,
+				$prijs = round( ( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ) / ( 1 + self::BTW ), 2 );
+				$btw   = round( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten - $prijs, 2 );
+				return [
+					[
+						'artikel' => "cursus {$this->cursus->code}",
+						'aantal'  => $this->aantal,
+						'prijs'   => $prijs,
+						'btw'     => $btw,
+					],
 				];
 			} else {
 				if ( 0 < $this->cursus->inschrijfkosten ) {
+					$prijs    = round( $this->cursus->inschrijfkosten / ( 1 + self::BTW ), 2 );
+					$btw      = round( $this->cursus->inschrijfkosten - $prijs, 2 );
 					$regels[] = [
 						'artikel' => "inschrijfkosten cursus {$this->cursus->code}",
 						'aantal'  => $this->aantal,
-						'prijs'   => $this->cursus->inschrijfkosten,
+						'prijs'   => $prijs,
+						'btw'     => $btw,
 					];
 				}
+				$prijs    = round( $this->cursus->cursuskosten / ( 1 + self::BTW ), 2 );
+				$btw      = round( $this->cursus->cursuskosten - $prijs, 2 );
 				$regels[] = [
 					'artikel' => "cursus {$this->cursus->code}",
 					'aantal'  => $this->aantal,
-					'prijs'   => $this->cursus->cursuskosten,
+					'prijs'   => $prijs,
+					'btw'     => $btw,
 				];
+				return $regels;
 			}
 		}
-		return $regels;
 	}
 
 	/**
