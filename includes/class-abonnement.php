@@ -202,8 +202,8 @@ class Abonnement extends Artikel {
 		$betalen = new \Kleistad\Betalen();
 		switch ( $this->artikel_type ) {
 			case 'start':
-				$vanaf = strftime( '%d-%m-%y', $this->start_datum );
-				$tot   = strftime( '%d-%m-%y', $this->driemaand_datum );
+				$vanaf = strftime( '%d-%m-%Y', $this->start_datum );
+				$tot   = strftime( '%d-%m-%Y', $this->driemaand_datum );
 				return $betalen->order(
 					$this->klant_id,
 					__CLASS__ . "-{$this->code}-start_ideal",
@@ -213,7 +213,7 @@ class Abonnement extends Artikel {
 				);
 			case 'overbrugging':
 				// Doe de overbruggingsbetaling om ook het mandaat te verkrijgen.
-				$tot = strftime( '%d-%m-%y', $this->reguliere_datum - 60 * 60 * 24 );
+				$tot = strftime( '%d-%m-%Y', $this->reguliere_datum - 60 * 60 * 24 );
 				return $betalen->order(
 					$this->klant_id,
 					__CLASS__ . "-{$this->code}-overbrugging",
@@ -255,10 +255,10 @@ class Abonnement extends Artikel {
 					'voornaam'                => $abonnee->first_name,
 					'achternaam'              => $abonnee->last_name,
 					'loginnaam'               => $abonnee->user_login,
-					'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
-					'pauze_datum'             => $this->pauze_datum ? strftime( '%d-%m-%y', $this->pauze_datum ) : '',
-					'eind_datum'              => $this->eind_datum ? strftime( '%d-%m-%y', $this->eind_datum ) : '',
-					'herstart_datum'          => $this->herstart_datum ? strftime( '%d-%m-%y', $this->herstart_datum ) : '',
+					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
+					'pauze_datum'             => $this->pauze_datum ? strftime( '%d-%m-%Y', $this->pauze_datum ) : '',
+					'eind_datum'              => $this->eind_datum ? strftime( '%d-%m-%Y', $this->eind_datum ) : '',
+					'herstart_datum'          => $this->herstart_datum ? strftime( '%d-%m-%Y', $this->herstart_datum ) : '',
 					'abonnement'              => $this->soort,
 					'abonnement_code'         => $this->code,
 					'abonnement_dag'          => $this->dag,
@@ -292,7 +292,7 @@ class Abonnement extends Artikel {
 		if ( ! $admin ) {
 			$this->email(
 				'_gewijzigd',
-				'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->herstart_datum ) . ' herstart.'
+				'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $this->herstart_datum ) . ' herstart.'
 			);
 		}
 		return true;
@@ -333,7 +333,7 @@ class Abonnement extends Artikel {
 		}
 		$this->save();
 		if ( ! $admin ) {
-			$this->email( '_gewijzigd', 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->pauze_datum ) . ' gepauzeerd en start weer per ' . strftime( '%d-%m-%y', $this->herstart_datum ) );
+			$this->email( '_gewijzigd', 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $this->pauze_datum ) . ' gepauzeerd en start weer per ' . strftime( '%d-%m-%Y', $this->herstart_datum ) );
 		}
 		return true;
 	}
@@ -383,7 +383,7 @@ class Abonnement extends Artikel {
 		if ( ! $admin ) {
 			$this->email(
 				'_gewijzigd',
-				'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $this->eind_datum ) . ' beëindigd.'
+				'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $this->eind_datum ) . ' beëindigd.'
 			);
 		}
 		return true;
@@ -404,12 +404,12 @@ class Abonnement extends Artikel {
 			case 'soort':
 				$this->soort = $soort;
 				$this->dag   = $dag;
-				$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
+				$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
 					( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
 				break;
 			case 'extras':
 				$this->extras = $soort;
-				$bericht      = 'Je gaat voortaan per ' . strftime( '%d-%m-%y', $wijzig_datum ) .
+				$bericht      = 'Je gaat voortaan per ' . strftime( '%d-%m-%Y', $wijzig_datum ) .
 					( count( $soort ) ? ' gebruik maken van ' . implode( ', ', $soort ) : ' geen gebruik meer van extras' );
 				break;
 			default:
@@ -448,25 +448,25 @@ class Abonnement extends Artikel {
 		];
 		switch ( $this->artikel_type ) {
 			case 'start':
-				$vanaf = strftime( '%d-%m-%y', $this->start_datum );
-				$tot   = strftime( '%d-%m-%y', $this->driemaand_datum );
+				$vanaf = strftime( '%d-%m-%Y', $this->start_datum );
+				$tot   = strftime( '%d-%m-%Y', $this->driemaand_datum );
 				return [
 					array_merge(
 						$regel,
 						[
-							'artikel' => "abonnement {$this->code} vanaf $vanaf tot $tot",
+							'artikel' => "{$this->soort} abonnement {$this->code} vanaf $vanaf tot $tot",
 							'aantal'  => 3,
 						]
 					),
 				];
 			case 'overbrugging':
-				$vanaf = strftime( '%d-%m-%y', $this->driemaand_datum );
-				$tot   = strftime( '%d-%m-%y', $this->reguliere_datum - 60 * 60 * 24 );
+				$vanaf = strftime( '%d-%m-%Y', $this->driemaand_datum );
+				$tot   = strftime( '%d-%m-%Y', $this->reguliere_datum - 60 * 60 * 24 );
 				return [
 					array_merge(
 						$regel,
 						[
-							'artikel' => "abonnement {$this->code} vanaf $vanaf tot $tot",
+							'artikel' => "{$this->soort} abonnement {$this->code} vanaf $vanaf tot $tot",
 							'aantal'  => 1,
 						]
 					),
@@ -477,7 +477,7 @@ class Abonnement extends Artikel {
 					array_merge(
 						$regel,
 						[
-							'artikel' => "abonnement {$this->code} periode $periode",
+							'artikel' => "{$this->soort} abonnement {$this->code} periode $periode",
 							'aantal'  => 1,
 						]
 					),

@@ -22,7 +22,7 @@ class Factuur extends \FPDF {
 	 * @param float $bedrag Het bedrag.
 	 */
 	private function euro( $bedrag ) {
-		return chr( 128 ) . number_format_i18n( $bedrag, 2 );
+		return chr( 128 ) . ' ' . number_format_i18n( $bedrag, 2 );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Factuur extends \FPDF {
 		$this->setFont( 'Arial', 'B', 10 );
 		$this->Cell( 0, $h, 'Factuurdatum', 0, 1, 'R' );
 		$this->setFont( 'Arial' );
-		$this->Cell( 0, $h, strftime( '%d-%m-%y' ), 0, 1, 'R' );
+		$this->Cell( 0, $h, strftime( '%d-%m-%Y' ), 0, 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
 		$this->Cell( 0, $h, 'Factuurnummer', 0, 1, 'R' );
 		$this->setFont( 'Arial' );

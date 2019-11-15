@@ -53,7 +53,7 @@ $select_jaar  = (int) date( 'Y', $data['periode'] );
 <button type="button" id="kleistad_rapport" class="kleistad_edit_link" style="display:none" data-id="<?php echo esc_attr( "$select_jaar-$select_maand" ); ?>" data-actie="rapport" >Toon omzet</button>
 <br/><br/>
 <div>
-	<table class="kleistad_datatable display compact nowrap" data-paging="false" data-searching="false" >
+	<table class="kleistad_datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
 		<thead>
 			<tr>
 				<th>Omzet</th>

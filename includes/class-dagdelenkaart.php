@@ -148,7 +148,7 @@ class Dagdelenkaart extends Artikel {
 					'voornaam'                => $gebruiker->first_name,
 					'achternaam'              => $gebruiker->last_name,
 					'loginnaam'               => $gebruiker->user_login,
-					'start_datum'             => strftime( '%d-%m-%y', $this->start_datum ),
+					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
 					'dagdelenkaart_code'      => $this->code,
 					'dagdelenkaart_opmerking' => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
 					'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
@@ -168,7 +168,7 @@ class Dagdelenkaart extends Artikel {
 		$btw     = round( $options['dagdelenkaart'] - $prijs, 2 );
 		return [
 			[
-				'artikel' => 'dagdelenkaart, start datum ' . strftime( '%d-%m-%y', $this->start_datum ),
+				'artikel' => 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ),
 				'aantal'  => 1,
 				'prijs'   => $prijs,
 				'btw'     => $btw,
@@ -201,11 +201,11 @@ class Dagdelenkaart extends Artikel {
 	public function status( $uitgebreid = false ) {
 		$vandaag = strtotime( 'today' );
 		if ( $this->start_datum > $vandaag ) {
-			return $uitgebreid ? 'gaat starten per ' . strftime( '%d-%m-%y', $this->start_datum ) : 'nieuw';
+			return $uitgebreid ? 'gaat starten per ' . strftime( '%d-%m-%Y', $this->start_datum ) : 'nieuw';
 		} elseif ( strtotime( '+3 month', $this->start_datum ) <= $vandaag ) {
-			return $uitgebreid ? 'actief tot ' . strftime( '%d-%m-%y', strtotime( '+3 month', $this->start_datum ) ) : 'actief';
+			return $uitgebreid ? 'actief tot ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'actief';
 		} else {
-			return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%y', strtotime( '+3 month', $this->start_datum ) ) : 'voltooid';
+			return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'voltooid';
 		}
 	}
 

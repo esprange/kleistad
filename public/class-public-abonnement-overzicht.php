@@ -97,9 +97,9 @@ class Public_Abonnement_Overzicht extends Shortcode {
 					$abonnee_gegevens,
 					[
 						$abonnement->status(),
-						$abonnement->start_datum ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '',
-						$abonnement->pauze_datum ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '',
-						$abonnement->herstart_datum ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '',
+						$abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '',
+						$abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '',
+						$abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '',
 						$betalen->heeft_mandaat( $abonnee_id ) ? 'ja' : 'nee',
 					]
 				);

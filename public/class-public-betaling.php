@@ -1,6 +1,6 @@
 <?php
 /**
- * Shortcode betaling van restant cursus of vervolg abonnement.
+ * Shortcode betaling van willekeurig welk artikel.
  *
  * @link       https://www.kleistad.nl
  * @since      4.2.0

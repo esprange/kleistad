@@ -347,6 +347,28 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Check of er een indeling moet plaatsvinden ivm betaling inschrijfgeld.
+	 *
+	 * @param float $bedrag Het betaalde bedrag.
+	 */
+	protected function betaalactie( $bedrag ) {
+		if ( ! $this->i_betaald && $bedrag >= $this->cursus->inschrijfkosten ) {
+			$this->i_betaald = true;
+		}
+		if ( ! $this->c_betaald && $bedrag === $this->cursus->cursuskosten ) {
+			$this->c_betaald = true;
+		}
+		if ( ! $this->ingedeeld && ( $this->i_betaald || $this->c_betaald ) ) {
+			$this->ingedeeld = true;
+			if ( strtotime( 'today' ) < $this->cursus->start_datum ) {
+				// Alleen email versturen als de cursus nog niet gestart is.
+				$this->email( 'indeling' );
+			}
+		}
+		$this->save();
+	}
+
+	/**
 	 * De regels voor de factuur.
 	 *
 	 * @return array De regels.

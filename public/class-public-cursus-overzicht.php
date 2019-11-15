@@ -101,7 +101,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						'code'           => "C$cursus_id",
 						'naam'           => $cursus->naam,
 						'docent'         => $cursus->docent,
-						'start_datum'    => strftime( '%d-%m-%y', $cursus->start_datum ),
+						'start_datum'    => strftime( '%d-%m-%Y', $cursus->start_datum ),
 						'inschrijvingen' => $cursus->ruimte() !== $cursus->maximum,
 					];
 				}

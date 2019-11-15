@@ -146,14 +146,15 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				]
 			);
 		}
-		$abonnement              = new \Kleistad\Abonnement( $gebruiker_id );
-		$abonnement->soort       = $data['input']['abonnement_keuze'];
-		$abonnement->opmerking   = $data['input']['opmerking'];
-		$abonnement->start_datum = strtotime( $data['input']['start_datum'] );
-		$abonnement->geannuleerd = false;
-		$abonnement->gepauzeerd  = false;
-		$abonnement->dag         = $data['input']['dag'];
-		$abonnement->extras      = $data['input']['extras'];
+		$abonnement               = new \Kleistad\Abonnement( $gebruiker_id );
+		$abonnement->soort        = $data['input']['abonnement_keuze'];
+		$abonnement->opmerking    = $data['input']['opmerking'];
+		$abonnement->start_datum  = strtotime( $data['input']['start_datum'] );
+		$abonnement->geannuleerd  = false;
+		$abonnement->gepauzeerd   = false;
+		$abonnement->dag          = $data['input']['dag'];
+		$abonnement->extras       = $data['input']['extras'];
+		$abonnement->artikel_type = 'start';
 		$abonnement->save();
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
@@ -165,7 +166,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}
 		} else {
-			$abonnement->email( '_start_bank', '', $abonnement->bestel_order( 0.0, 'start' ) );
+			$abonnement->email( '_start_bank', '', $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
 			return [
 				'content' => $this->goto_home(),
 				'status'  => $this->status( 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging' ),

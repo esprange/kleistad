@@ -193,7 +193,7 @@ class Workshop extends Artikel {
 			],
 			__CLASS__ . '-' . $this->code . '-workshop',
 			$this->kosten,
-			'Kleistad workshop ' . $this->code . ' op ' . strftime( '%d-%m-%y', $this->datum ),
+			'Kleistad workshop ' . $this->code . ' op ' . strftime( '%d-%m-%Y', $this->datum ),
 			$bericht
 		);
 	}
@@ -348,6 +348,18 @@ class Workshop extends Artikel {
 		};
 		\Kleistad\WorkshopAanvraag::gepland( $this->aanvraag_id, 0 );
 		return true;
+	}
+
+	/**
+	 * Check of er een indeling moet plaatsvinden ivm betaling inschrijfgeld.
+	 *
+	 * @param float $bedrag Het betaalde bedrag.
+	 */
+	protected function betaalactie( $bedrag ) {
+		if ( ! $this->betaald && 0.1 < abs( $bedrag - $this->kosten ) ) {
+			$this->betaald = true;
+		}
+		$this->save();
 	}
 
 	/**

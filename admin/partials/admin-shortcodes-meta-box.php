@@ -36,19 +36,24 @@
 		<li><h3>toegankelijk voor bestuur</h3>
 			<ul style="list-style-type:square">
 				<li>[kleistad_abonnement_overzicht] overzicht abonnees</li>
-				<li>[kleistad_betalingen] formulier om betalingen cursisten en workshops te registreren</li>
 				<li>[kleistad_cursus_beheer] formulier om cursussen te beheren</li>
 				<li>[kleistad_cursus_overzicht] overzicht cursussen en cursist per cursus</li>
 				<li>[kleistad_email] formulier om emails naar abonnees en/of cursisten te sturen</li>
+				<li>[kleistad_omzet_rapportage] overzicht omzet op maandbasis</li>
 				<li>[kleistad_registratie_overzicht] overzicht van alle cursisten en leden</li>
 				<li>[kleistad_saldo_overzicht] overzicht stooksaldo leden</li>
 				<li>[kleistad_stookbestand] opvragen stookbestand</li>
 				<li>[kleistad_workshop_beheer] formulier om workshops te beheren</li>
 			</ul>
 		</li>
-		<li><h3>toegankelijk voor een cursist</h3>
+		<li><h3>toegankelijk voor administrator</h3>
 			<ul style="list-style-type:square">
-				<li>[kleistad_betaling] het betalen van de restant betaling (vanuit email)</li>
+				<li>[debiteuren] overzicht openstaande orders</li>
+			</ul>
+		</li>
+		<li><h3>toegankelijk voor klanten (cursisten, abonnees, workshops, etc.)</h3>
+			<ul style="list-style-type:square">
+				<li>[kleistad_betaling] het betalen van een uitstaand bedrag per iDeal (via link vanuit email)</li>
 			</ul>
 		</li>
 	</ul>

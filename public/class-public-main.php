@@ -63,12 +63,6 @@ class Public_Main {
 			'css'    => [],
 			'access' => [],
 		],
-		'betalingen'            => [
-			'script' => false,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [ 'bestuur' ],
-		],
 		'cursus_beheer'         => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
@@ -97,7 +91,7 @@ class Public_Main {
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ 'bestuur' ],
+			'access' => [ 'administrator' ],
 		],
 		'email'                 => [
 			'script' => true,
