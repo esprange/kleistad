@@ -41,8 +41,8 @@ class Saldo extends Artikel {
 			'ontvangst' => 0.0,
 			'volgnr'    => 1,
 		];
-		$huidig_saldo = get_user_meta( $this->klant_id, self::META_KEY, true );
-		$this->data   = wp_parse_args( $huidig_saldo, $default_data );
+		$huidig_saldo   = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $default_data;
+		$this->data     = wp_parse_args( $huidig_saldo, $default_data );
 	}
 
 	/**

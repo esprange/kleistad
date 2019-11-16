@@ -175,6 +175,9 @@ class Admin_Upgrade {
 		}
 	}
 
+	/**
+	 * Converteer data
+	 */
 	private function convert_data() {
 		/**
 		 * Conversie naar 6.1.0
@@ -184,12 +187,13 @@ class Admin_Upgrade {
 		 * Verwijder alle cron jobs van Kleistad, behalve de dagelijkse cron job.
 		 */
 		$cron_jobs = get_option( 'cron' );
-		foreach( $cron_jobs as $time => $cron_job ) {
+		foreach ( $cron_jobs as $time => $cron_job ) {
 			if ( is_array( $cron_job ) ) {
 				foreach ( $cron_job as $key => $job_params ) {
-					foreach ( $job_params as $param )
-					if ( in_array( $key, [ 'kleistad_abonnement', 'kleistad_kosten', 'kleistad_workshop', 'kleistad_daily_cleanup' ] ) ) {
-						wp_unschedule_event( (int) $time, $key, $param['args'] );
+					foreach ( $job_params as $param ) {
+						if ( in_array( $key, [ 'kleistad_abonnement', 'kleistad_kosten', 'kleistad_workshop', 'kleistad_daily_cleanup' ], true ) ) {
+							wp_unschedule_event( (int) $time, $key, $param['args'] );
+						}
 					}
 				}
 			}
@@ -211,7 +215,6 @@ class Admin_Upgrade {
 		 * Nog te controleren:
 		 *    Zijn er al facturen verstuurd voor workshops die nog buiten het '7 dagen' venster liggen ? Die krijgen namelijk een nieuwe factuur.
 		 *    Dat kan ondervangen worden door betaling_email op true te zetten voor die workshop (via phpmyadmin).
-		 *
 		 */
 
 	}
