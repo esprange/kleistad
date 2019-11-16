@@ -23,7 +23,7 @@ namespace Kleistad;
  */
 class Saldo extends Artikel {
 
-	const META_KEY = 'stooksaldo';
+	const META_KEY = 'kleistad_stooksaldo';
 
 	/**
 	 * De constructor
@@ -41,13 +41,8 @@ class Saldo extends Artikel {
 			'ontvangst' => 0.0,
 			'volgnr'    => 1,
 		];
-		$huidig_saldo   = get_user_meta( $this->klant_id, self::META_KEY, true );
-		if ( is_array( $huidig_saldo ) ) {
-			$this->data = wp_parse_args( $huidig_saldo, $default_data );
-		} else {
-			$this->data   = $default_data;
-			$this->bedrag = (float) $huidig_saldo ?: 0.0;
-		}
+		$huidig_saldo = get_user_meta( $this->klant_id, self::META_KEY, true );
+		$this->data   = wp_parse_args( $huidig_saldo, $default_data );
 	}
 
 	/**
