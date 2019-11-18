@@ -181,7 +181,7 @@ class Factuur extends \FPDF {
 	 * @param float  $nog_te_betalen Het nog te betalen bedrag bij een credit factuur.
 	 * @return string Pad naar de factuur.
 	 */
-	public function run( $factuurnr, $klant, $referentie, $regels, $betaald, $opmerking, $correctie, $nog_te_betalen ) {
+	public function run( $factuurnr, $klant, $referentie, $regels, $betaald, $opmerking, $correctie, $nog_te_betalen = null ) {
 		$credit      = ! is_null( $nog_te_betalen );
 		$upload_dir  = wp_get_upload_dir();
 		$factuur_dir = sprintf( '%s/facturen', $upload_dir['basedir'] );
