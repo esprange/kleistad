@@ -153,12 +153,16 @@ class Inschrijving extends Artikel {
 	 * Zeg de gemaakte afspraak voor de cursus af.
 	 *
 	 * @since 6.1.0
+	 *
+	 * @return bool
 	 */
 	public function afzeggen() {
 		if ( ! $this->geannuleerd ) {
 			$this->geannuleerd = true;
 			$this->save();
+			return true;
 		}
+		return false;
 	}
 
 	/**

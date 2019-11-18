@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 29;
+	const DBVERSIE = 31;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -158,7 +158,8 @@ class Admin_Upgrade {
 			id int(10) NOT NULL AUTO_INCREMENT,
 			betaald numeric(10,2) DEFAULT 0,
 			datum datetime,
-			gecrediteerd int(10) DEFAULT 0,
+			credit_id int(10) DEFAULT 0,
+			origineel_id int(10) DEFAULT 0,
 			gesloten tinyint(1) DEFAULT 0,
 			historie varchar(2000),
 			klant tinytext,
@@ -200,7 +201,7 @@ class Admin_Upgrade {
 		}
 
 		/**
-		 * Convert saldo
+		 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
 		 */
 		$saldo_users = get_users( [ 'meta_key' => 'stooksaldo' ] );
 		foreach ( $saldo_users as $saldo_user ) {
@@ -209,6 +210,18 @@ class Admin_Upgrade {
 			$saldo->bedrag = (float) $huidig_saldo;
 			$saldo->save();
 			delete_user_meta( $saldo_user->ID, 'stooksaldo' );
+		}
+
+		/**
+		 * Convert dagdelenkaart, er wordt gecontroleerd of er een enkel record bestaat.
+		 */
+		$dagdelenkaart_users = get_users( [ 'meta_key' => \Kleistad\Dagdelenkaart::META_KEY ] );
+		foreach ( $dagdelenkaart_users as $dagdelenkaart_user ) {
+			$huidig_dagdelenkaart = get_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, true );
+			if ( isset( $huidig_dagdelenkaart['code'] ) ) {
+				$dagdelenkaart[1] = $huidig_dagdelenkaart;
+				update_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, $dagdelenkaart );
+			}
 		}
 
 		/**

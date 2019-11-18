@@ -16,14 +16,34 @@ namespace Kleistad;
  *
  * @property string code
  * @property float  bedrag
- * @property float  ontvangst
  * @property string reden
- * @property float  storting
- * @property int    volgnr
+ * @property array  storting
+ * @property float  prijs
  */
 class Saldo extends Artikel {
 
 	const META_KEY = 'kleistad_stooksaldo';
+
+	/**
+	 * De beginwaarden van een dagdelenkaart.
+	 *
+	 * @access private
+	 * @var array $default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
+	 */
+	private $default_data = [
+		'storting' => [
+			[],
+		],
+		'bedrag'   => 0.0,
+	];
+
+	/**
+	 * Het volgnummer van de dagdelenkaart.
+	 *
+	 * @access private
+	 * @var int $volgnr Het volgnummer.
+	 */
+	private $volgnr;
 
 	/**
 	 * De constructor
@@ -34,15 +54,9 @@ class Saldo extends Artikel {
 	 */
 	public function __construct( $klant_id ) {
 		$this->klant_id = $klant_id;
-		$default_data   = [
-			'bedrag'    => 0.0,
-			'reden'     => '',
-			'storting'  => 0.0,
-			'ontvangst' => 0.0,
-			'volgnr'    => 1,
-		];
-		$huidig_saldo   = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $default_data;
-		$this->data     = wp_parse_args( $huidig_saldo, $default_data );
+		$saldo          = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
+		$this->data     = wp_parse_args( $saldo, $this->default_data );
+		$this->volgnr   = count( $this->storting );
 	}
 
 	/**
@@ -54,15 +68,18 @@ class Saldo extends Artikel {
 	 * @return mixed De waarde.
 	 */
 	public function __get( $attribuut ) {
+		$laatste_storting = array_key_last( $this->data['storting'] );
 		switch ( $attribuut ) {
-			case 'code':
-				return "S$this->klant_id-" . strftime( '%y%m%d' ) . "-$this->volgnr";
-			case 'bedrag':
-			case 'ontvangst':
 			case 'storting':
-				return (float) $this->data[ $attribuut ];
-			default:
 				return $this->data[ $attribuut ];
+			case 'bedrag':
+				return (float) $this->data[ $attribuut ];
+			case 'datum':
+				return strtotime( $this->data['storting'][ $laatste_storting ][ $attribuut ] );
+			case 'prijs':
+				return (float) $this->data['storting'][ $laatste_storting ][ $attribuut ];
+			default:
+				return $this->data['storting'][ $laatste_storting ][ $attribuut ];
 		}
 	}
 
@@ -75,7 +92,18 @@ class Saldo extends Artikel {
 	 * @param mixed  $waarde De nieuwe waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
-		$this->data[ $attribuut ] = $waarde;
+		$laatste_storting = array_key_last( $this->data['storting'] );
+		switch ( $attribuut ) {
+			case 'bedrag':
+			case 'storting':
+				$this->data[ $attribuut ] = $waarde;
+				break;
+			case 'datum':
+				$this->data['storting'][ $laatste_storting ][ $attribuut ] = date( 'Y-m-d', $waarde );
+				break;
+			default:
+				$this->data['storting'][ $laatste_storting ][ $attribuut ] = $waarde;
+		}
 	}
 
 	/**
@@ -100,7 +128,7 @@ class Saldo extends Artikel {
 		return $betalen->order(
 			$this->klant_id,
 			__CLASS__ . '-' . $this->code,
-			$this->storting,
+			$this->prijs,
 			'Kleistad stooksaldo ' . $this->code,
 			$bericht
 		);
@@ -136,13 +164,29 @@ class Saldo extends Artikel {
 				'parameters'  => [
 					'voornaam'   => $gebruiker->first_name,
 					'achternaam' => $gebruiker->last_name,
-					'bedrag'     => number_format_i18n( $this->ontvangst, 2 ),
-					'storting'   => number_format_i18n( $this->storting, 2 ),
+					'bedrag'     => number_format_i18n( $this->prijs, 2 ),
 					'saldo'      => number_format_i18n( $this->bedrag, 2 ),
 					'saldo_link' => $this->betaal_link(),
 				],
 			]
 		);
+	}
+
+	/**
+	 * Voeg een nieuw saldo toe.
+	 *
+	 * @param float $prijs Het toe te voegen saldo na betaling.
+	 */
+	public function nieuw( $prijs ) {
+		$this->volgnr++;
+		$datum                                   = strftime( '%y%m%d', strtotime( 'today' ) );
+		$this->data['storting'][ $this->volgnr ] = [
+			'code'  => "S$this->klant_id-$datum-$this->volgnr",
+			'datum' => date( 'Y-m-d', strtotime( 'today' ) ),
+			'prijs' => $prijs,
+			'reden' => '',
+		];
+		$this->save();
 	}
 
 	/**
@@ -153,8 +197,9 @@ class Saldo extends Artikel {
 	 * @return bool True als saldo is aangepast.
 	 */
 	public function save() {
-		$huidig_saldo = $this->huidig_saldo();
-		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) ) {
+		$saldo        = get_user_meta( $this->klant_id, self::META_KEY, true );
+		$huidig_saldo = $saldo ? (float) $saldo['bedrag'] : 0.0;
+		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) && $huidig_saldo !== $this->bedrag ) {
 			self::write_log( get_userdata( $this->klant_id )->display_name . ' nu: € ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: € ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden );
 			return true;
 		}
@@ -172,13 +217,23 @@ class Saldo extends Artikel {
 	}
 
 	/**
+	 * Check of er een indeling moet plaatsvinden ivm betaling inschrijfgeld.
+	 *
+	 * @param float $bedrag Het betaalde bedrag.
+	 */
+	protected function betaalactie( $bedrag ) {
+		$this->reden   = 'betaling per bank';
+		$this->bedrag += $bedrag;
+	}
+
+	/**
 	 * De factuur regels.
 	 *
 	 * @return array
 	 */
 	protected function factuurregels() {
-		$prijs = round( $this->storting / ( 1 + self::BTW ), 2 );
-		$btw   = round( $this->storting - $prijs, 2 );
+		$prijs = round( $this->prijs / ( 1 + self::BTW ), 2 );
+		$btw   = round( $this->prijs - $prijs, 2 );
 		return [
 			[
 				'artikel' => 'stooksaldo',
@@ -187,18 +242,6 @@ class Saldo extends Artikel {
 				'btw'     => $btw,
 			],
 		];
-	}
-
-	/**
-	 * Private functie om de huidige saldo stand op te vragen
-	 *
-	 * @since      4.0.87
-	 *
-	 * @return float De huidige saldo stand.
-	 */
-	private function huidig_saldo() {
-		$huidig_saldo = get_user_meta( $this->klant_id, self::META_KEY, true );
-		return ( '' === $huidig_saldo ) ? 0.0 : (float) $huidig_saldo;
 	}
 
 	/**
@@ -212,10 +255,9 @@ class Saldo extends Artikel {
 	 */
 	public static function callback( $parameters, $bedrag, $betaald ) {
 		if ( $betaald ) {
-			$saldo            = new static( intval( $parameters[0] ) );
-			$saldo->bedrag   += $bedrag;
-			$saldo->ontvangst = $bedrag;
-			$saldo->reden     = 'betaling per iDeal';
+			$saldo          = new static( intval( $parameters[0] ) );
+			$saldo->bedrag += $bedrag;
+			$saldo->reden   = 'betaling per iDeal';
 			$saldo->save();
 			$saldo->email( '_ideal', $saldo->bestel_order( $bedrag ) );
 		}

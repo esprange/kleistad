@@ -33,8 +33,17 @@ class Dagdelenkaart extends Artikel {
 		'code'        => '',
 		'datum'       => '',
 		'start_datum' => '',
+		'geannuleerd' => false,
 		'opmerking'   => '',
 	];
+
+	/**
+	 * Het volgnummer van de dagdelenkaart.
+	 *
+	 * @access private
+	 * @var int $volgnr Het volgnummer.
+	 */
+	private $volgnr;
 
 	/**
 	 * Constructor
@@ -42,15 +51,10 @@ class Dagdelenkaart extends Artikel {
 	 * @param int $klant_id wp id van de gebruiker.
 	 */
 	public function __construct( $klant_id ) {
-		$this->klant_id              = $klant_id;
-		$this->default_data['code']  = "K$klant_id-" . strftime( '%y%m%d', strtotime( 'today' ) );
-		$this->default_data['datum'] = date( 'Y-m-d' );
-		$dagdelenkaart               = get_user_meta( $this->klant_id, self::META_KEY, true );
-		if ( is_array( $dagdelenkaart ) ) {
-			$this->data = wp_parse_args( $dagdelenkaart, $this->default_data );
-		} else {
-			$this->data = $this->default_data;
-		}
+		$this->klant_id  = $klant_id;
+		$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data ?: [];
+		$this->volgnr    = count( $dagdelenkaarten );
+		$this->data      = wp_parse_args( end( $dagdelenkaarten ), $this->default_data );
 	}
 
 	/**
@@ -87,6 +91,22 @@ class Dagdelenkaart extends Artikel {
 			default:
 				$this->data[ $attribuut ] = $waarde;
 		}
+	}
+
+	/**
+	 * Zeg de gemaakte afspraak voor de cursus af.
+	 *
+	 * @since 6.1.0
+	 *
+	 * @return bool
+	 */
+	public function afzeggen() {
+		if ( ! $this->geannuleerd ) {
+			$this->geannuleerd = true;
+			$this->save();
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -189,7 +209,25 @@ class Dagdelenkaart extends Artikel {
 	 * Bewaar de dagdelenkaart als metadata in de database.
 	 */
 	public function save() {
-		update_user_meta( $this->klant_id, self::META_KEY, $this->data );
+		$dagdelenkaarten                  = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: [];
+		$dagdelenkaarten[ $this->volgnr ] = $this->data;
+		update_user_meta( $this->klant_id, self::META_KEY, $dagdelenkaarten );
+	}
+
+	/**
+	 * Voeg een nieuwe dagdelenkaart toe.
+	 *
+	 * @param int    $start_datum De datum waarop de kaart in gaat.
+	 * @param string $opmerking Een eventuele opmerking.
+	 */
+	public function nieuw( $start_datum, $opmerking ) {
+		$this->volgnr++;
+		$this->datum       = strtotime( 'today' );
+		$this->start_datum = $start_datum;
+		$this->opmerking   = $opmerking;
+		$datum             = strftime( '%y%m%d', $this->datum );
+		$this->code        = "K$klant_id-$datum-$this->volgnr";
+		$this->save();
 	}
 
 	/**

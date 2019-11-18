@@ -17,7 +17,8 @@ namespace Kleistad;
  * @property int    id
  * @property float  betaald
  * @property int    datum
- * @property int    gecrediteerd
+ * @property int    credit_id
+ * @property int    origineel_id
  * @property bool   gesloten
  * @property string historie
  * @property array  klant
@@ -47,7 +48,8 @@ class Order extends \Kleistad\Entity {
 				'id'            => 0,
 				'betaald'       => 0.0,
 				'datum'         => date( 'Y-m-d H:i:s' ),
-				'gecrediteerd'  => 0,
+				'credit_id'     => 0,
+				'origineel_id'  => 0,
 				'gesloten'      => false,
 				'historie'      => wp_json_encode( [] ),
 				'klant'         => wp_json_encode(
@@ -74,6 +76,10 @@ class Order extends \Kleistad\Entity {
 	 */
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
+			case 'id':
+			case 'credit_id':
+			case 'origineel_id':
+				return intval( $this->data[ $attribuut ] );
 			case 'regels':
 			case 'klant':
 			case 'historie':
@@ -188,7 +194,13 @@ class Order extends \Kleistad\Entity {
 		if ( $this->id ) {
 			$this->mutatie_datum = time();
 		}
-		$this->gesloten = $this->gesloten || ( 0.01 >= abs( $this->betaald - $this->bruto() ) );
+		if ( $this->origineel_id ) {
+			$origineel_order = new \Kleistad\Order( $this->origineel_id );
+			$openstaand      = $origineel_order->bruto() + $this->bruto() - $this->betaald;
+		} else {
+			$openstaand = $this->bruto() - $this->betaald;
+		}
+		$this->gesloten = $this->gesloten || ( 0.01 >= abs( $openstaand ) );
 		$wpdb->replace( "{$wpdb->prefix}kleistad_orders", $this->data );
 		$this->id = $wpdb->insert_id;
 		return $this->id;

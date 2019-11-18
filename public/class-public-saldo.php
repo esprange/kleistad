@@ -68,10 +68,8 @@ class Public_Saldo extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$saldo           = new \Kleistad\Saldo( $data['input']['gebruiker_id'] );
-		$saldo->storting = $data['input']['bedrag'];
-		$saldo->volgnr++;
-		$saldo->save();
+		$saldo = new \Kleistad\Saldo( $data['input']['gebruiker_id'] );
+		$saldo->nieuw( $data['input']['bedrag'] );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$ideal_uri = $saldo->betalen( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging' );

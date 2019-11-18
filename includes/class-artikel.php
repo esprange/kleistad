@@ -105,16 +105,16 @@ abstract class Artikel extends Entity {
 			return '';
 		}
 		$order = new \Kleistad\Order( $id );
-		if ( $order->gecrediteerd ) {
-			return '';
+		if ( $order->credit_id || $order->origineel_id ) {
+			return '';  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
 		}
 		$credit_order               = new \Kleistad\Order();
 		$credit_order->referentie   = $order->referentie;
 		$credit_order->betaald      = $order->betaald;
 		$credit_order->klant        = $order->klant;
-		$credit_order->gecrediteerd = -1;
+		$credit_order->origineel_id = $order->id;
 		$regels                     = $order->regels;
-		foreach ( $regels as $regel ) {
+		foreach ( $regels as &$regel ) {
 			$regel['artikel'] = 'annulering ' . $regel['artikel'];
 			$regel['aantal']  = - $regel['aantal'];
 		}
@@ -128,15 +128,19 @@ abstract class Artikel extends Entity {
 				'btw'     => $btw,
 			];
 		}
+
+		// Nog te betalen is negatief als er meer betaald is dan het restant.
+		$nog_te_betalen          = $restant - $credit_order->betaald;
+		$credit_order->gesloten  = ( 0.01 >= abs( $nog_te_betalen ) );
 		$credit_order->regels    = $regels;
 		$credit_order->opmerking = 'Vanwege annulering';
 		$credit_order->historie  = 'order en credit factuur aangemaakt';
-		$order->gecrediteerd     = $credit_order->save();
+		$order->credit_id        = $credit_order->save();
 		$order->betaald          = 0;
 		$order->gesloten         = true;
 		$order->historie         = 'geannuleerd, credit factuur ' . $credit_order->factuurnr() . ' aangemaakt';
 		$order->save();
-		return $this->maak_factuur( $credit_order, true );
+		return $this->maak_factuur( $credit_order, $nog_te_betalen );
 	}
 
 	/**
@@ -323,10 +327,10 @@ abstract class Artikel extends Entity {
 	 * Maak een factuur aan.
 	 *
 	 * @param \Kleistad\Order $order De order.
-	 * @param bool            $credit Of het een normale factuur betreft of een credit factuur.
+	 * @param float           $nog_te_betalen Het nog te betalen bedrag ingeval van een credit factuur.
 	 * @return string Het pad naar de factuur.
 	 */
-	private function maak_factuur( $order, $credit = false ) {
+	private function maak_factuur( $order, $nog_te_betalen = null ) {
 		$options = \Kleistad\Kleistad::get_options();
 		if ( ! $options['factureren'] ) {
 			return '';
@@ -340,7 +344,7 @@ abstract class Artikel extends Entity {
 			$order->betaald,
 			$order->opmerking,
 			boolval( $order->mutatie_datum ),
-			$credit
+			$nog_te_betalen
 		);
 	}
 

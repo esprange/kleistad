@@ -45,7 +45,7 @@ if ( 'debiteur' === $data['actie'] ) :
 					&nbsp;
 				</div>
 				<div class="kleistad_col_4 kleistad_label">
-					<label for="kleistad_ontvangst"><?php echo esc_html( 0 < $data['debiteur']['openstaand'] ? 'Ontvangen bedrag' : 'Teruggestort bedrag' ); ?></label>
+					<label for="kleistad_ontvangst"><?php echo esc_html( $data['debiteur']['credit'] ? 'Teruggestort bedrag' : 'Ontvangen bedrag' ); ?></label>
 				</div>
 				<div class="kleistad_col_3" >
 				<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
@@ -127,13 +127,13 @@ if ( 'debiteur' === $data['actie'] ) :
 			$datum->setTimestamp( $debiteur['sinds'] );
 			?>
 			<tr>
-				<td><?php echo esc_html( $debiteur['referentie'] ); ?></td>
+				<td><?php echo esc_html( $debiteur['referentie'] . ( $debiteur['credit'] ? '(C)' : '' ) ); ?></td>
 				<td><?php echo esc_html( $debiteur['naam'] ); ?></td>
 				<td><?php echo esc_html( $debiteur['betreft'] ); ?></td>
 				<td style="text-align:right;" data-sort="<?php echo esc_attr( $debiteur['openstaand'] ); ?>">&euro; <?php echo esc_html( number_format_i18n( $debiteur['openstaand'], 2 ) ); ?></td>
 				<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
 				<td>
-					<a href="#" title="wijzig order" class="kleistad_edit kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+					<a href="#" title="wijzig order" class="kleistad_view kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 						data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="debiteur" >
 						&nbsp;
 					</a>

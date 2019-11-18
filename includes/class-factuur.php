@@ -92,10 +92,11 @@ class Factuur extends \FPDF {
 	/**
 	 * Toon de bestelling.
 	 *
-	 * @param array $regels  De factuur regels behorende bij de bestelling.
-	 * @param float $betaald Wat er al betaald is.
+	 * @param array $regels         De factuur regels behorende bij de bestelling.
+	 * @param float $betaald        Wat er al betaald is.
+	 * @param float $nog_te_betalen Wat er nog betaald moet worden ingeval van een credit_factuur.
 	 */
-	private function order( $regels, $betaald ) {
+	private function order( $regels, $betaald, $nog_te_betalen ) {
 		$this->SetY( 120 );
 		$this->SetLeftMargin( 25 );
 		$w = [
@@ -136,13 +137,17 @@ class Factuur extends \FPDF {
 		$this->Cell( $w['samenvatting'], $h, 'Reeds betaald ', 0, 0, 'R' );
 		$this->Cell( $w['prijs'], $h, $this->euro( $betaald ), 'B', 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
-		$verschil = $totaal + $btw - $betaald;
+		if ( ! is_null( $nog_te_betalen ) ) {
+			$verschil = $nog_te_betalen;
+		} else {
+			$verschil = $totaal + $btw - $betaald;
+		}
 		if ( $verschil >= 0 ) {
 			$verschuldigd = $verschil;
 			$this->Cell( $w['samenvatting'], $h, 'Verschuldigd saldo', 0, 0, 'R' );
 			$this->Cell( $w['prijs'], $h, $this->euro( $verschuldigd ), 0, 1, 'R' );
 		} elseif ( $verschil < 0 ) {
-			$ontvangen = $verschil;
+			$ontvangen = - $verschil;
 			$this->Cell( $w['samenvatting'], $h, 'Te ontvangen', 0, 0, 'R' );
 			$this->Cell( $w['prijs'], $h, $this->euro( $ontvangen ), 0, 1, 'R' );
 		}
@@ -166,17 +171,18 @@ class Factuur extends \FPDF {
 	/**
 	 * Maak de factuur aan.
 	 *
-	 * @param string $factuurnr  Het factuur nummer.
-	 * @param array  $klant      De klant.
-	 * @param string $referentie De referentie.
-	 * @param array  $regels     De factuur regels.
-	 * @param float  $betaald    Wat er al betaald is.
-	 * @param string $opmerking  De eventuele opmerking op de factuur.
-	 * @param bool   $correctie  Of het een correctie factuur betreft.
-	 * @param bool   $credit     Of het een credit factuur betreft.
+	 * @param string $factuurnr      Het factuur nummer.
+	 * @param array  $klant          De klant.
+	 * @param string $referentie     De referentie.
+	 * @param array  $regels         De factuur regels.
+	 * @param float  $betaald        Wat er al betaald is.
+	 * @param string $opmerking      De eventuele opmerking op de factuur.
+	 * @param bool   $correctie      Of het een correctie factuur betreft.
+	 * @param float  $nog_te_betalen Het nog te betalen bedrag bij een credit factuur.
 	 * @return string Pad naar de factuur.
 	 */
-	public function run( $factuurnr, $klant, $referentie, $regels, $betaald, $opmerking, $correctie, $credit ) {
+	public function run( $factuurnr, $klant, $referentie, $regels, $betaald, $opmerking, $correctie, $nog_te_betalen ) {
+		$credit      = ! is_null( $nog_te_betalen );
 		$upload_dir  = wp_get_upload_dir();
 		$factuur_dir = sprintf( '%s/facturen', $upload_dir['basedir'] );
 		if ( ! is_dir( $factuur_dir ) ) {
@@ -199,7 +205,7 @@ class Factuur extends \FPDF {
 		$this->start( $credit ? 'CREDIT FACTUUR' : ( $correctie ? 'CORRECTIE FACTUUR' : 'FACTUUR' ) );
 		$this->klant( $klant );
 		$this->info( $factuurnr, $referentie );
-		$this->order( $regels, $betaald );
+		$this->order( $regels, $betaald, $nog_te_betalen );
 		$this->opmerking( $opmerking );
 		$this->Output( 'F', $file );
 		return $file;

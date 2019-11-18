@@ -25,13 +25,20 @@ class Public_Debiteuren extends ShortcodeForm {
 		$debiteuren = [];
 		$orders     = \Kleistad\Order::all();
 		foreach ( $orders as $order ) {
-			$artikel      = \Kleistad\Artikel::get_artikel( $order->referentie );
+			$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
+			if ( $order->origineel_id ) {
+				$origineel_order = new \Kleistad\Order( $order->origineel_id );
+				$openstaand      = $origineel_order->bruto() + $order->bruto() - $order->betaald;
+			} else {
+				$openstaand = $order->bruto() - $order->betaald;
+			}
 			$debiteuren[] = [
 				'id'         => $order->id,
 				'naam'       => $order->klant['naam'],
 				'betreft'    => $artikel->artikel_naam(),
 				'referentie' => $order->referentie,
-				'openstaand' => $order->bruto() - $order->betaald,
+				'openstaand' => $openstaand,
+				'credit'     => boolval( $order->origineel_id ),
 				'sinds'      => $order->datum,
 			];
 		}
@@ -47,6 +54,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	private function debiteur( $id ) {
 		$order   = new \Kleistad\Order( $id );
 		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
+		if ( $order->origineel_id ) {
+			$origineel_order = new \Kleistad\Order( $order->origineel_id );
+			$openstaand      = $origineel_order->bruto() + $order->bruto() - $order->betaald;
+		} else {
+			$openstaand = $order->bruto() - $order->betaald;
+		}
 		return [
 			'id'         => $order->id,
 			'naam'       => $order->klant['naam'],
@@ -54,12 +67,13 @@ class Public_Debiteuren extends ShortcodeForm {
 			'referentie' => $order->referentie,
 			'factuur'    => $order->factuurnr(),
 			'betaald'    => $order->betaald,
-			'openstaand' => $order->bruto() - $order->betaald,
+			'openstaand' => $openstaand,
 			'sinds'      => $order->datum,
 			'historie'   => $order->historie,
 			'ontvangst'  => 0.0,
 			'korting'    => 0.0,
 			'restant'    => 0.0,
+			'credit'     => boolval( $order->origineel_id ),
 		];
 	}
 
@@ -136,7 +150,7 @@ class Public_Debiteuren extends ShortcodeForm {
 
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
-				if ( 0 < $order->bruto() - $order->betaald ) {
+				if ( $order->origineel_id ) {
 					$artikel->ontvang_order( $data['input']['id'], (float) $data['input']['ontvangst'] );
 				} else {
 					$artikel->ontvang_order( $data['input']['id'], - (float) $data['input']['ontvangst'] );
