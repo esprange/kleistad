@@ -128,10 +128,6 @@ abstract class Artikel extends Entity {
 				'btw'     => $btw,
 			];
 		}
-
-		// Nog te betalen is negatief als er meer betaald is dan het restant.
-		$nog_te_betalen          = $restant - $credit_order->betaald;
-		$credit_order->gesloten  = ( 0.01 >= abs( $nog_te_betalen ) );
 		$credit_order->regels    = $regels;
 		$credit_order->opmerking = 'Vanwege annulering';
 		$credit_order->historie  = 'order en credit factuur aangemaakt';
@@ -140,7 +136,7 @@ abstract class Artikel extends Entity {
 		$order->gesloten         = true;
 		$order->historie         = 'geannuleerd, credit factuur ' . $credit_order->factuurnr() . ' aangemaakt';
 		$order->save();
-		return $this->maak_factuur( $credit_order, $nog_te_betalen );
+		return $this->maak_factuur( $credit_order, 'credit' );
 	}
 
 	/**
@@ -161,7 +157,7 @@ abstract class Artikel extends Entity {
 		$order->opmerking   = $opmerking;
 		$order->referentie  = $this->code();
 		$order->save();
-		return $this->maak_factuur( $order );
+		return $this->maak_factuur( $order, '' );
 	}
 
 	/**
@@ -188,7 +184,7 @@ abstract class Artikel extends Entity {
 		$order->historie  = 'Correctie factuur i.v.m. korting € ' . number_format_i18n( $korting, 2 );
 		$order->opmerking = $opmerking;
 		$order->save();
-		return $this->maak_factuur( $order );
+		return $this->maak_factuur( $order, 'correctie' );
 	}
 
 	/**
@@ -219,7 +215,7 @@ abstract class Artikel extends Entity {
 		$order->historie  = 'Order gewijzigd';
 		$order->opmerking = $opmerking;
 		$order->save();
-		return $this->maak_factuur( $order );
+		return $this->maak_factuur( $order, 'correctie' );
 	}
 
 	/**
@@ -313,24 +309,13 @@ abstract class Artikel extends Entity {
 	}
 
 	/**
-	 * Te betalen bedrag, kan eventueel aangepast worden zoals bijvoorbeeld voor de inschrijfkosten van de cursus.
-	 *
-	 * @return float
-	 */
-	protected function te_betalen() {
-		$order_id = \Kleistad\Order::zoek_order( $this->code() );
-		$order    = new \Kleistad\Order( $order_id );
-		return $order->bruto() - $order->betaald;
-	}
-
-	/**
 	 * Maak een factuur aan.
 	 *
-	 * @param \Kleistad\Order $order De order.
-	 * @param float           $nog_te_betalen Het nog te betalen bedrag ingeval van een credit factuur.
+	 * @param \Kleistad\Order $order          De order.
+	 * @param string          $type           Het type factuur.
 	 * @return string Het pad naar de factuur.
 	 */
-	private function maak_factuur( $order, $nog_te_betalen = null ) {
+	private function maak_factuur( $order, $type ) {
 		$options = \Kleistad\Kleistad::get_options();
 		if ( ! $options['factureren'] ) {
 			return '';
@@ -343,8 +328,8 @@ abstract class Artikel extends Entity {
 			$order->regels,
 			$order->betaald,
 			$order->opmerking,
-			boolval( $order->mutatie_datum ),
-			$nog_te_betalen
+			$type,
+			$order->te_betalen()
 		);
 	}
 

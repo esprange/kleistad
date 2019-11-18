@@ -174,10 +174,17 @@ class Order extends \Kleistad\Entity {
 	}
 
 	/**
-	 * Bepaal wat er nog open staat op de order. Ingeval van een cursus, als deze gestart is dan
+	 * Te betalen bedrag, kan eventueel aangepast worden zoals bijvoorbeeld voor de inschrijfkosten van de cursus.
+	 *
+	 * @return float
 	 */
-	public function openstaand() {
-		$this->bruto() - $this->betaald;
+	public function te_betalen() {
+		if ( $this->origineel_id ) {
+			$origineel_order = new \Kleistad\Order( $this->origineel_id );
+			return $origineel_order->bruto() + $this->bruto() - $this->betaald;
+		} else {
+			return $this->bruto() - $this->betaald;
+		}
 	}
 
 	/**

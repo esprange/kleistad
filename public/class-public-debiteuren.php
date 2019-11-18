@@ -25,19 +25,13 @@ class Public_Debiteuren extends ShortcodeForm {
 		$debiteuren = [];
 		$orders     = \Kleistad\Order::all();
 		foreach ( $orders as $order ) {
-			$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
-			if ( $order->origineel_id ) {
-				$origineel_order = new \Kleistad\Order( $order->origineel_id );
-				$openstaand      = $origineel_order->bruto() + $order->bruto() - $order->betaald;
-			} else {
-				$openstaand = $order->bruto() - $order->betaald;
-			}
+			$artikel      = \Kleistad\Artikel::get_artikel( $order->referentie );
 			$debiteuren[] = [
 				'id'         => $order->id,
 				'naam'       => $order->klant['naam'],
 				'betreft'    => $artikel->artikel_naam(),
 				'referentie' => $order->referentie,
-				'openstaand' => $openstaand,
+				'openstaand' => $order->te_betalen(),
 				'credit'     => boolval( $order->origineel_id ),
 				'sinds'      => $order->datum,
 			];
@@ -151,9 +145,9 @@ class Public_Debiteuren extends ShortcodeForm {
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
 				if ( $order->origineel_id ) {
-					$artikel->ontvang_order( $data['input']['id'], (float) $data['input']['ontvangst'] );
-				} else {
 					$artikel->ontvang_order( $data['input']['id'], - (float) $data['input']['ontvangst'] );
+				} else {
+					$artikel->ontvang_order( $data['input']['id'], (float) $data['input']['ontvangst'] );
 				}
 				$status = 'De betaling is verwerkt';
 				break;

@@ -137,19 +137,12 @@ class Factuur extends \FPDF {
 		$this->Cell( $w['samenvatting'], $h, 'Reeds betaald ', 0, 0, 'R' );
 		$this->Cell( $w['prijs'], $h, $this->euro( $betaald ), 'B', 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
-		if ( ! is_null( $nog_te_betalen ) ) {
-			$verschil = $nog_te_betalen;
-		} else {
-			$verschil = $totaal + $btw - $betaald;
-		}
-		if ( $verschil >= 0 ) {
-			$verschuldigd = $verschil;
+		if ( 0 <= $nog_te_betalen ) {
 			$this->Cell( $w['samenvatting'], $h, 'Verschuldigd saldo', 0, 0, 'R' );
-			$this->Cell( $w['prijs'], $h, $this->euro( $verschuldigd ), 0, 1, 'R' );
-		} elseif ( $verschil < 0 ) {
-			$ontvangen = - $verschil;
-			$this->Cell( $w['samenvatting'], $h, 'Te ontvangen', 0, 0, 'R' );
-			$this->Cell( $w['prijs'], $h, $this->euro( $ontvangen ), 0, 1, 'R' );
+			$this->Cell( $w['prijs'], $h, $this->euro( $nog_te_betalen ), 0, 1, 'R' );
+		} else {
+			$this->Cell( $w['samenvatting'], $h, 'Na verrekening te ontvangen', 0, 0, 'R' );
+			$this->Cell( $w['prijs'], $h, $this->euro( - $nog_te_betalen ), 0, 1, 'R' );
 		}
 	}
 
@@ -177,18 +170,17 @@ class Factuur extends \FPDF {
 	 * @param array  $regels         De factuur regels.
 	 * @param float  $betaald        Wat er al betaald is.
 	 * @param string $opmerking      De eventuele opmerking op de factuur.
-	 * @param bool   $correctie      Of het een correctie factuur betreft.
+	 * @param string $type           Het type factuur: gewoon, correctie of credit.
 	 * @param float  $nog_te_betalen Het nog te betalen bedrag bij een credit factuur.
 	 * @return string Pad naar de factuur.
 	 */
-	public function run( $factuurnr, $klant, $referentie, $regels, $betaald, $opmerking, $correctie, $nog_te_betalen = null ) {
-		$credit      = ! is_null( $nog_te_betalen );
+	public function run( $factuurnr, $klant, $referentie, $regels, $betaald, $opmerking, $type, $nog_te_betalen ) {
 		$upload_dir  = wp_get_upload_dir();
 		$factuur_dir = sprintf( '%s/facturen', $upload_dir['basedir'] );
 		if ( ! is_dir( $factuur_dir ) ) {
 			mkdir( $factuur_dir, 0644, true );
 		}
-		$file   = sprintf( '%s/%s-%s', $factuur_dir, $credit ? 'creditfactuur' : 'factuur', $factuurnr );
+		$file   = sprintf( '%s/%s-%s', $factuur_dir, empty( $type ) ? 'factuur' : 'creditfactuur', $factuurnr );
 		$versie = '';
 		if ( file_exists( "$file.pdf" ) ) {
 			$versie = 0;
@@ -201,8 +193,8 @@ class Factuur extends \FPDF {
 		}
 		$this->SetCreator( get_site_url() );
 		$this->SetAuthor( 'Kleistad' );
-		$this->SetTitle( ( $credit ? 'Credit factuur ' : 'Factuur ' ) . $factuurnr . '.' . $versie );
-		$this->start( $credit ? 'CREDIT FACTUUR' : ( $correctie ? 'CORRECTIE FACTUUR' : 'FACTUUR' ) );
+		$this->SetTitle( ucwords( $type ) . " Factuur $factuurnr.$versie" );
+		$this->start( strtoupper( $type ) . ' FACTUUR' );
 		$this->klant( $klant );
 		$this->info( $factuurnr, $referentie );
 		$this->order( $regels, $betaald, $nog_te_betalen );

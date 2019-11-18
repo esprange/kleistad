@@ -50,7 +50,7 @@ class Public_Betaling extends ShortcodeForm {
 					$data = [
 						'actie'         => 'betalen',
 						'klant'         => $order->klant['naam'],
-						'openstaand'    => $artikel->te_betalen(),
+						'openstaand'    => $order->te_betalen(),
 						'reeds_betaald' => $order->betaald,
 						'regels'        => $order->regels,
 						'betreft'       => $artikel->artikel_naam(),
