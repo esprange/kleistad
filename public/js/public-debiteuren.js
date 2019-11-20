@@ -1,8 +1,27 @@
 ( function( $ ) {
 	'use strict';
 
+	function leesFilters() {
+		if ( window.sessionStorage.getItem( 'debiteur_filter' ) ) {
+			$( '#kleistad_zoek' ).val( window.sessionStorage.getItem( 'debiteur_filter' ) );
+			$( '#kleistad_zoek_knop' ).data( 'id', $( '#kleistad_zoek' ).val() );
+		}
+	}
+
+	function onLoad() {
+		leesFilters( true );
+	}
+
+	$( document ).ajaxComplete(
+		function() {
+			onLoad();
+		}
+	);
+
     $( document ).ready(
         function() {
+
+			onLoad();
 
 			$( '.kleistad_shortcode' )
 			.on( 'click', '#kleistad_deb_bankbetaling',
@@ -25,6 +44,12 @@
 					$( '.kleistad_deb_annulering' ).toggle( this.checked );
 					$( '#kleistad_submit_debiteuren' ).prop( 'disabled', false ).data( 'confirm', 'Debiteuren|Klopt het bedrag van het restant te betalen ?' );
                 }
+			)
+			.on( 'change', '#kleistad_zoek',
+				function() {
+					window.sessionStorage.setItem( 'debiteur_filter', $( this ).val() );
+					$( '#kleistad_zoek_knop' ).data( 'id', $( this ).val() );
+				}
 			);
         }
     );

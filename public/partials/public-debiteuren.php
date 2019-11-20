@@ -30,8 +30,9 @@ if ( 'debiteur' === $data['actie'] ) :
 		</tr>
 	</table>
 	<?php
-	$this->form();
-	?>
+	if ( $data['bewerken'] ) :
+		$this->form();
+		?>
 	<input type="hidden" name="id" value="<?php echo esc_attr( $data['debiteur']['id'] ); ?>"/>
 	<div class="kleistad_row">
 		<div class="kleistad_col_6">
@@ -106,8 +107,33 @@ if ( 'debiteur' === $data['actie'] ) :
 		</div>
 	</div>
 </form>
-<?php else : ?>
-<table id="kleistad_debiteuren" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+	<?php else : ?>
+	<div class="kleistad_row" style="padding-top:20px;">
+		<div class="kleistad_col_7">
+		</div>
+		<div class="kleistad_col_3">
+			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+		</div>
+	</div>
+	<?php endif ?>
+	<?php
+	elseif ( false !== strpos( 'openstaand zoek', $data['actie'] ) ) :
+		if ( 'zoek' === $data['actie'] ) :
+			?>
+<div class="kleistad_row">
+	<div class="kleistad_col_2">
+		<label for="kleistad_zoek">Zoek naar</label>
+	</div>
+	<div class="kleistad_col_3">
+		<input id="kleistad_zoek" name="zoek" type="text" />
+	</div>
+	<div class="kleistad_col3">
+		<button type="button" id="kleistad_zoek_knop" class="kleistad_edit_link" data-id="" data-action="zoek">Zoek</button>
+	</div>
+</div>
+<br/><hr><br/>
+<?php endif ?>
+<table class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -134,7 +160,7 @@ if ( 'debiteur' === $data['actie'] ) :
 				<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
 				<td>
 					<a href="#" title="wijzig order" class="kleistad_view kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
-						data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="debiteur" >
+						data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="<?php echo 'zoek' === $data['actie'] ? 'toon_debiteur' : 'debiteur'; ?>" >
 						&nbsp;
 					</a>
 				</td>

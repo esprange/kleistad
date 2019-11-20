@@ -229,13 +229,14 @@ class Order extends \Kleistad\Entity {
 	/**
 	 * Return alle orders.
 	 *
-	 * @param bool $openstaand Toon alleen orders die nog een betaling behoeven.
+	 * @param bool $zoek Toon alleen orders die voldoen aan de zoekterm, anders toon alleen openstaande ordes.
 	 * @return array orders.
 	 */
-	public static function all( $openstaand = true ) {
+	public static function all( $zoek = '' ) {
 		global $wpdb;
 		$arr    = [];
-		$where  = $openstaand ? 'WHERE gesloten = 0' : '';
+		$zoek   = strtolower( $zoek );
+		$where  = empty( $zoek ) ? 'WHERE gesloten = 0' : "WHERE lower( concat ( klant, ' ', referentie ) ) LIKE '%$zoek%'";
 		$orders = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders $where", ARRAY_A ); // phpcs:ignore
 		foreach ( $orders as $order ) {
 			$arr[ $order['id'] ] = new \Kleistad\Order();

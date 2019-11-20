@@ -209,7 +209,7 @@ class Abonnement extends Artikel {
 					__CLASS__ . "-{$this->code}-start_ideal",
 					$this->bedrag( self::BEDRAG_START_EN_BORG ),
 					"Kleistad abonnement {$this->code} vanaf $vanaf tot $tot",
-					'Bedankt voor de betaling! De abonnement inschrijving is verwerkt en er wordt een email verzonden met bevestiging'
+					$bericht
 				);
 			case 'overbrugging':
 				// Doe de overbruggingsbetaling om ook het mandaat te verkrijgen.

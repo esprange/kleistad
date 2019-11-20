@@ -82,7 +82,7 @@ class Inschrijving extends Artikel {
 	public function __construct( $klant_id, $cursus_id ) {
 		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
 		$this->klant_id              = $klant_id;
-		$this->default_data['code']  = "C$cursus_id-$klant_id-" . strftime( '%y%m%d', $this->cursus->start_datum );
+		$this->default_data['code']  = "C$cursus_id-$klant_id";
 		$this->default_data['datum'] = date( 'Y-m-d' );
 
 		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
@@ -226,8 +226,7 @@ class Inschrijving extends Artikel {
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
 			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
-				$cursus                       = new \Kleistad\Cursus( $cursus_id );
-				$this->data['code']           = "C$cursus_id-$this->klant_id-" . strftime( '%y%m%d', $cursus->start_datum );
+				$this->data['code']           = "C$cursus_id-$this->klant_id";
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
 				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
@@ -384,7 +383,7 @@ class Inschrijving extends Artikel {
 			$btw   = round( $this->lopende_cursus - $prijs, 2 );
 			return [
 				[
-					'artikel' => "cursus {$this->cursus->code} (reeds gestart)",
+					'artikel' => "cursus: {$this->cursus->naam} (reeds gestart)",
 					'aantal'  => $this->aantal,
 					'prijs'   => $prijs,
 					'btw'     => $btw,
@@ -396,7 +395,7 @@ class Inschrijving extends Artikel {
 				$btw   = round( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten - $prijs, 2 );
 				return [
 					[
-						'artikel' => "cursus {$this->cursus->code}",
+						'artikel' => "cursus: {$this->cursus->naam}",
 						'aantal'  => $this->aantal,
 						'prijs'   => $prijs,
 						'btw'     => $btw,
@@ -408,7 +407,7 @@ class Inschrijving extends Artikel {
 					$prijs    = round( $this->cursus->inschrijfkosten / ( 1 + self::BTW ), 2 );
 					$btw      = round( $this->cursus->inschrijfkosten - $prijs, 2 );
 					$regels[] = [
-						'artikel' => "inschrijfkosten cursus {$this->cursus->code}",
+						'artikel' => "inschrijfkosten cursus: {$this->cursus->naam}",
 						'aantal'  => $this->aantal,
 						'prijs'   => $prijs,
 						'btw'     => $btw,
@@ -417,7 +416,7 @@ class Inschrijving extends Artikel {
 				$prijs    = round( $this->cursus->cursuskosten / ( 1 + self::BTW ), 2 );
 				$btw      = round( $this->cursus->cursuskosten - $prijs, 2 );
 				$regels[] = [
-					'artikel' => "cursus {$this->cursus->code}",
+					'artikel' => "cursus: {$this->cursus->code}",
 					'aantal'  => $this->aantal,
 					'prijs'   => $prijs,
 					'btw'     => $btw,
@@ -440,7 +439,7 @@ class Inschrijving extends Artikel {
 		if ( $betaald ) {
 			$inschrijving = new static( intval( $parameters[1] ), intval( $parameters[0] ) );
 
-			switch ( $parameters[3] ) {
+			switch ( $parameters[2] ) {
 				case 'inschrijving':
 					$inschrijving->i_betaald = true;
 					$inschrijving->ingedeeld = true;

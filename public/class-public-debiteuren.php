@@ -19,11 +19,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	/**
 	 * Maak de lijst van openstaande betalingen.
 	 *
+	 * @param string $zoek De eventuele zoek term.
 	 * @return array De info.
 	 */
-	private function debiteuren() {
+	private function debiteuren( $zoek = '' ) {
 		$debiteuren = [];
-		$orders     = \Kleistad\Order::all();
+		$orders     = \Kleistad\Order::all( $zoek );
 		foreach ( $orders as $order ) {
 			$artikel      = \Kleistad\Artikel::get_artikel( $order->referentie );
 			$debiteuren[] = [
@@ -48,12 +49,6 @@ class Public_Debiteuren extends ShortcodeForm {
 	private function debiteur( $id ) {
 		$order   = new \Kleistad\Order( $id );
 		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
-		if ( $order->origineel_id ) {
-			$origineel_order = new \Kleistad\Order( $order->origineel_id );
-			$openstaand      = $origineel_order->bruto() + $order->bruto() - $order->betaald;
-		} else {
-			$openstaand = $order->bruto() - $order->betaald;
-		}
 		return [
 			'id'         => $order->id,
 			'naam'       => $order->klant['naam'],
@@ -61,7 +56,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			'referentie' => $order->referentie,
 			'factuur'    => $order->factuurnr(),
 			'betaald'    => $order->betaald,
-			'openstaand' => $openstaand,
+			'openstaand' => $order->te_betalen(),
 			'sinds'      => $order->datum,
 			'historie'   => $order->historie,
 			'ontvangst'  => 0.0,
@@ -80,9 +75,23 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @since   6.1.0
 	 */
 	protected function prepare( &$data ) {
+		$atts = shortcode_atts(
+			[ 'actie' => '' ],
+			$this->atts,
+			'kleistad_debiteuren'
+		);
 		if ( 'debiteur' === $data['actie'] ) {
 			$data['debiteur'] = $this->debiteur( $data['id'] );
+			$data['bewerken'] = true;
+		} elseif ( 'toon_debiteur' === $data['actie'] ) {
+			$data['actie']    = 'debiteur';
+			$data['debiteur'] = $this->debiteur( $data['id'] );
+			$data['bewerken'] = false;
+		} elseif ( 'zoek' === $atts['actie'] ) {
+			$data['actie']      = 'zoek';
+			$data['debiteuren'] = ! empty( $data['id'] ) ? $this->debiteuren( $data['id'] ) : [];
 		} else {
+			$data['actie']      = 'openstaand';
 			$data['debiteuren'] = $this->debiteuren();
 		}
 		return true;

@@ -21,7 +21,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		<tr>
 			<th>Naam</th>
 			<td colspan="3">
-				<input type="text" name="naam" id="kleistad_cursus_naam" placeholder="Bijv. cursus draaitechnieken" value="<?php echo esc_attr( $data['cursus']['naam'] ); ?>" required />
+				<input type="text" name="naam" id="kleistad_cursus_naam" maxlenght="40" placeholder="Bijv. cursus draaitechnieken" value="<?php echo esc_attr( $data['cursus']['naam'] ); ?>" required />
 			</td>
 		</tr>
 		<tr>
