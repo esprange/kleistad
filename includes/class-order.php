@@ -229,7 +229,7 @@ class Order extends \Kleistad\Entity {
 	/**
 	 * Return alle orders.
 	 *
-	 * @param bool $zoek Toon alleen orders die voldoen aan de zoekterm, anders toon alleen openstaande ordes.
+	 * @param string $zoek Toon alleen orders die voldoen aan de zoekterm, anders toon alleen openstaande ordes.
 	 * @return array orders.
 	 */
 	public static function all( $zoek = '' ) {

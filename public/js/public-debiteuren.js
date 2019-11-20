@@ -9,7 +9,7 @@
 	}
 
 	function onLoad() {
-		leesFilters( true );
+		leesFilters();
 	}
 
 	$( document ).ajaxComplete(
