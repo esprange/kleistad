@@ -156,6 +156,7 @@ class Dagdelenkaart extends Artikel {
 					'dagdelenkaart_code'      => $this->code,
 					'dagdelenkaart_opmerking' => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
 					'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
+					'dagdelenkaart_link'      => $this->betaal_link(),
 				],
 			]
 		);
@@ -168,15 +169,14 @@ class Dagdelenkaart extends Artikel {
 	 */
 	protected function factuurregels() {
 		$options = \Kleistad\Kleistad::get_options();
-		$prijs   = round( $options['dagdelenkaart'] / ( 1 + self::BTW ), 2 );
-		$btw     = round( $options['dagdelenkaart'] - $prijs, 2 );
 		return [
-			[
-				'artikel' => 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ),
-				'aantal'  => 1,
-				'prijs'   => $prijs,
-				'btw'     => $btw,
-			],
+			array_merge(
+				$this->split_bedrag( $options['dagdelenkaart'] ),
+				[
+					'artikel' => 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ),
+					'aantal'  => 1,
+				]
+			),
 		];
 	}
 

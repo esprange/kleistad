@@ -119,13 +119,14 @@ abstract class Artikel extends Entity {
 			$regel['aantal']  = - $regel['aantal'];
 		}
 		if ( 0.0 < $restant ) {
-			$prijs    = round( $restant / ( 1 + self::BTW ), 2 );
-			$btw      = round( $restant - $prijs, 2 );
 			$regels[] = [
-				'artikel' => 'kosten i.v.m. annulering',
-				'aantal'  => 1,
-				'prijs'   => $prijs,
-				'btw'     => $btw,
+				array_merge(
+					$this->split_bedrag( $restant ),
+					[
+						'artikel' => 'kosten i.v.m. annulering',
+						'aantal'  => 1,
+					]
+				),
 			];
 		}
 		$credit_order->regels    = $regels;
@@ -171,14 +172,13 @@ abstract class Artikel extends Entity {
 	final public function korting_order( $id, $korting, $opmerking = '' ) {
 		$order            = new \Kleistad\Order( $id );
 		$regels           = $order->regels;
-		$prijs            = round( $korting / ( 1 + self::BTW ), 2 );
-		$btw              = round( $korting - $prijs, 2 );
-		$regels[]         = [
-			'artikel' => 'korting',
-			'aantal'  => 1,
-			'prijs'   => - $prijs,
-			'btw'     => - $btw,
-		];
+		$regels[]         = array_merge(
+			$this->split_bedrag( $korting ),
+			[
+				'artikel' => 'korting',
+				'aantal'  => 1,
+			]
+		);
 		$order->regels    = $regels;
 		$order->klant     = $this->naw_klant();
 		$order->historie  = 'Correctie factuur i.v.m. korting € ' . number_format_i18n( $korting, 2 );
@@ -305,6 +305,21 @@ abstract class Artikel extends Entity {
 		return [
 			'naam'  => "{$klant->first_name}  {$klant->last_name}",
 			'adres' => "{$klant->straat} {$klant->huisnr}\n{$klant->pcode} {$klant->plaats}",
+		];
+	}
+
+	/**
+	 * Splits een bruto bedrag op in het netto bedrag en de btw.
+	 *
+	 * @param  float $bedrag Het bruto bedrag.
+	 * @return array
+	 */
+	protected function split_bedrag( $bedrag ) {
+		$prijs = round( $bruto / ( 1 + self::BTW ), 2 );
+		$btw   = round( $bruto - $prijs, 2 );
+		return [
+			'prijs' => $prijs,
+			'btw'   => $btw,
 		];
 	}
 

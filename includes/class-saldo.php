@@ -232,15 +232,14 @@ class Saldo extends Artikel {
 	 * @return array
 	 */
 	protected function factuurregels() {
-		$prijs = round( $this->prijs / ( 1 + self::BTW ), 2 );
-		$btw   = round( $this->prijs - $prijs, 2 );
 		return [
-			[
-				'artikel' => 'stooksaldo',
-				'aantal'  => 1,
-				'prijs'   => $prijs,
-				'btw'     => $btw,
-			],
+			array_merge(
+				$this->split_bedrag( $this->prijs ),
+				[
+					'artikel' => 'stooksaldo',
+					'aantal'  => 1,
+				]
+			),
 		];
 	}
 

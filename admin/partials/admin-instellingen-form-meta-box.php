@@ -26,12 +26,6 @@
 		</tr>
 
 		<tr >
-			<th scope="row">Prijs borg kast</th>
-			<td><input type="text" name="kleistad-opties[borg_kast]"
-					value="<?php echo esc_attr( $this->options['borg_kast'] ); ?>" /></td>
-		</tr>
-
-		<tr >
 			<th scope="row">Prijs dagdelenkaart</th>
 			<td><input type="number" step="0.01" min="0"  name="kleistad-opties[dagdelenkaart]"
 					value="<?php echo esc_attr( $this->options['dagdelenkaart'] ); ?>" /></td>

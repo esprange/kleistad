@@ -19,7 +19,7 @@ class Admin_Main {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 26;
+	const DBVERSIE = 27;
 
 	/**
 	 * De versie van de plugin.
@@ -35,7 +35,7 @@ class Admin_Main {
 	 *
 	 * @since     4.0.87
 	 * @access    private
-	 * @var       array     $options  De plugin options
+	 * @var       array     $options  De plugin options.
 	 */
 	private $options;
 
@@ -44,7 +44,7 @@ class Admin_Main {
 	 *
 	 * @since     5.0.2
 	 * @access    private
-	 * @var       object    $ovens_handler  De handler voor ovens beheer
+	 * @var       object    $ovens_handler  De handler voor ovens beheer.
 	 */
 	private $ovens_handler;
 
@@ -53,7 +53,7 @@ class Admin_Main {
 	 *
 	 * @since     5.0.2
 	 * @access    private
-	 * @var       object    $cursisten_handler  De handler voor cursisten beheer
+	 * @var       object    $cursisten_handler  De handler voor cursisten beheer.
 	 */
 	private $cursisten_handler;
 
@@ -62,7 +62,7 @@ class Admin_Main {
 	 *
 	 * @since     5.0.2
 	 * @access    private
-	 * @var       object    $abonnees_handler  De handler voor abonnees beheer
+	 * @var       object    $abonnees_handler  De handler voor abonnees beheer.
 	 */
 	private $abonnees_handler;
 
@@ -71,7 +71,7 @@ class Admin_Main {
 	 *
 	 * @since     5.0.2
 	 * @access    private
-	 * @var       object    $stooksaldo_handler  De handler voor stooksaldo beheer
+	 * @var       object    $stooksaldo_handler  De handler voor stooksaldo beheer.
 	 */
 	private $stooksaldo_handler;
 
@@ -80,9 +80,18 @@ class Admin_Main {
 	 *
 	 * @since     5.0.2
 	 * @access    private
-	 * @var       object    $regelingen_handler  De handler voor regeling stookkosten beheer
+	 * @var       object    $regelingen_handler  De handler voor regeling stookkosten beheer.
 	 */
 	private $regelingen_handler;
+
+	/**
+	 * Background object
+	 *
+	 * @since   6.1.0
+	 * @access  private
+	 * @var     object   $background Het background object.
+	 */
+	private static $background;
 
 	/**
 	 * Initializeer het object.
@@ -236,16 +245,19 @@ class Admin_Main {
 		}
 	}
 
+	public function instantiate_background() {
+		self::$background = new \Kleistad\Background();
+	}
+
 	/**
 	 * Doe de dagelijkse jobs
 	 */
 	public function daily_jobs() {
-		$proces = new \Kleistad\Background();
-		$proces->push_to_queue( '\Kleistad\Shortcode::cleanup_downloads' );
-		$proces->push_to_queue( '\Kleistad\Workshop::dagelijks' );
-		$proces->push_to_queue( '\Kleistad\Abonnement::dagelijks' );
-		$proces->push_to_queue( '\Kleistad\Saldo::dagelijks' );
-		$proces->save()->dispatch();
+		self::$background->push_to_queue( '\Kleistad\Shortcode::cleanup_downloads' );
+		self::$background->push_to_queue( '\Kleistad\Workshop::dagelijks' );
+		self::$background->push_to_queue( '\Kleistad\Abonnement::dagelijks' );
+		self::$background->push_to_queue( '\Kleistad\Saldo::dagelijks' );
+		self::$background->save()->dispatch();
 	}
 
 	/**

@@ -393,7 +393,7 @@ class Betalen {
 				]
 			)
 		);
-		\Kleistad\Abonnement::callback( [ $gebruiker_id, 'regulier' ], $betaling->amount->value, ! $betaling->hasChargeBacks(), $betaling->details->bankReason );
+		\Kleistad\Abonnement::callback( [ $gebruiker_id, 'incasso' ], $betaling->amount->value, ! $betaling->hasChargeBacks(), $betaling->details->bankReason );
 		return new \WP_REST_Response(); // Geeft default http status 200 terug.
 	}
 

@@ -153,7 +153,7 @@ class Workshop extends Artikel {
 	 *
 	 * @since 5.0.0
 	 */
-	public function annuleren() {
+	public function afzeggen() {
 		if ( ! $this->vervallen ) {
 			$this->vervallen = true;
 			$this->save();
@@ -321,9 +321,12 @@ class Workshop extends Artikel {
 
 	/**
 	 * Geef de workshop status in tekstvorm terug.
+	 *
+	 * @param bool $uitgebreid Of er een uitgebreide versie geleverd moet worden.
 	 */
-	public function status() {
-		return $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->betaald ? 'betaald' : '' ) );
+	public function status( $uitgebreid = false ) {
+		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->betaald ? 'betaald' : '' ) );
+		return $uitgebreid ? 'workshop ' . $status : $status;
 	}
 
 	/**
@@ -368,15 +371,14 @@ class Workshop extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$prijs = round( $this->kosten / ( 1 + self::BTW ), 2 );
-		$btw   = round( $this->kosten - $prijs, 2 );
 		return [
-			[
-				'artikel' => "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ),
-				'aantal'  => 1,
-				'prijs'   => $prijs,
-				'btw'     => $btw,
-			],
+			array_merge(
+				$this->split_bedrag( $this->kosten ),
+				[
+					'artikel' => "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ),
+					'aantal'  => 1,
+				]
+			),
 		];
 	}
 

@@ -28,19 +28,13 @@ namespace Kleistad;
  * @property int    reguliere_datum
  * @property int    incasso_datum
  * @property bool   gepauzeerd
- * @property bool   _email
+ * @property bool   overbrugging_email
  * @property string subscriptie_id
  * @property array  extras
  */
 class Abonnement extends Artikel {
 
-	const META_KEY             = 'kleistad_abonnement';
-	const BEDRAG_BASIS         = 0;
-	const BEDRAG_MAAND         = 1;
-	const BEDRAG_OVERBRUGGING  = 2;
-	const BEDRAG_START         = 3;
-	const BEDRAG_BORG          = 4;
-	const BEDRAG_START_EN_BORG = 5;
+	const META_KEY = 'kleistad_abonnement';
 
 	/**
 	 * De beginwaarden van een abonnement.
@@ -49,21 +43,21 @@ class Abonnement extends Artikel {
 	 * @var array $default_data De standaard waarden bij het aanmaken van een abonnement.
 	 */
 	private $default_data = [
-		'code'           => '',
-		'datum'          => '',
-		'start_datum'    => '',
-		'dag'            => '',
-		'geannuleerd'    => 0,
-		'opmerking'      => '',
-		'soort'          => 'onbeperkt',
-		'pauze_datum'    => '',
-		'eind_datum'     => '',
-		'herstart_datum' => '',
-		'incasso_datum'  => '',
-		'gepauzeerd'     => 0,
-		'_email'         => 0,
-		'subscriptie_id' => '',
-		'extras'         => [],
+		'code'               => '',
+		'datum'              => '',
+		'start_datum'        => '',
+		'dag'                => '',
+		'geannuleerd'        => 0,
+		'opmerking'          => '',
+		'soort'              => 'onbeperkt',
+		'pauze_datum'        => '',
+		'eind_datum'         => '',
+		'herstart_datum'     => '',
+		'incasso_datum'      => '',
+		'gepauzeerd'         => 0,
+		'overbrugging_email' => 0,
+		'subscriptie_id'     => '',
+		'extras'             => [],
 	];
 
 	/**
@@ -102,7 +96,7 @@ class Abonnement extends Artikel {
 				return mktime( 0, 0, 0, $start['mon'] + 4, 1, $start['year'] );
 			case 'geannuleerd':
 			case 'gepauzeerd':
-			case '_email':
+			case 'overbrugging_email':
 				return boolval( $this->data[ $attribuut ] );
 			case 'dag':
 				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
@@ -131,7 +125,7 @@ class Abonnement extends Artikel {
 				break;
 			case 'geannuleerd':
 			case 'gepauzeerd':
-			case '_email':
+			case 'overbrugging_email':
 				$this->data[ $attribuut ] = (int) $waarde;
 				break;
 			default:
@@ -202,35 +196,29 @@ class Abonnement extends Artikel {
 		$betalen = new \Kleistad\Betalen();
 		switch ( $this->artikel_type ) {
 			case 'start':
-				$vanaf = strftime( '%d-%m-%Y', $this->start_datum );
-				$tot   = strftime( '%d-%m-%Y', $this->driemaand_datum );
-				return $betalen->order(
-					$this->klant_id,
-					__CLASS__ . "-{$this->code}-start_ideal",
-					$this->bedrag( self::BEDRAG_START_EN_BORG ),
-					"Kleistad abonnement {$this->code} vanaf $vanaf tot $tot",
-					$bericht
-				);
+				$vanaf      = strftime( '%d-%m-%Y', $this->start_datum );
+				$tot        = strftime( '%d-%m-%Y', $this->driemaand_datum );
+				$vermelding = " vanaf $vanaf tot $tot";
+				$mandaat    = false;
+				break;
 			case 'overbrugging':
-				// Doe de overbruggingsbetaling om ook het mandaat te verkrijgen.
-				$tot = strftime( '%d-%m-%Y', $this->reguliere_datum - 60 * 60 * 24 );
-				return $betalen->order(
-					$this->klant_id,
-					__CLASS__ . "-{$this->code}-overbrugging",
-					$this->bedrag( self::BEDRAG_OVERBRUGGING ),
-					"Kleistad abonnement {$this->code} periode tot $tot",
-					$bericht,
-					true
-				);
-			case 'regulier':
-				return $betalen->order(
-					$this->klant_id,
-					__CLASS__ . "-{$this->code}-regulier",
-					$this->bedrag( self::BEDRAG_MAAND ),
-					"Kleistad abonnement {$this->code}",
-					$bericht
-				);
+				$vanaf      = strftime( '%d-%m-%Y', strtotime( '+1 day', $this->driemaand_datum ) );
+				$tot        = strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) );
+				$vermelding = " vanaf $vanaf tot $tot";
+				$mandaat    = true;
+				break;
+			default:
+				$vermelding = '';
+				$mandaat    = false;
 		}
+		return $betalen->order(
+			$this->klant_id,
+			__CLASS__ . "-{$this->code}-{$this->artikel_type}",
+			$this->bedrag( $this->artikel_type ),
+			"Kleistad abonnement {$this->code}$vermelding",
+			$bericht,
+			$mandaat
+		);
 	}
 
 	/**
@@ -266,10 +254,9 @@ class Abonnement extends Artikel {
 					'abonnement_wijziging'    => $wijziging,
 					'abonnement_reason'       => $wijziging,
 					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->extras_lijst() : '',
-					'abonnement_borg'         => number_format_i18n( $this->bedrag( self::BEDRAG_BORG ), 2 ),
-					'abonnement_startgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_START ), 2 ),
-					'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( self::BEDRAG_MAAND ), 2 ),
-					'abonnement_overbrugging' => number_format_i18n( $this->bedrag( self::BEDRAG_OVERBRUGGING ), 2 ),
+					'abonnement_startgeld'    => number_format_i18n( $this->bedrag( 'start' ), 2 ),
+					'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( 'regulier' ), 2 ),
+					'abonnement_overbrugging' => number_format_i18n( $this->bedrag( 'overbrugging' ), 2 ),
 					'abonnement_link'         => $this->betaal_link(),
 				],
 			]
@@ -399,15 +386,17 @@ class Abonnement extends Artikel {
 	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function wijzigen( $wijzig_datum, $type, $soort, $dag = '', $admin = false ) {
-		$huidig_bedrag = $this->bedrag( self::BEDRAG_MAAND );
+		$ongewijzigd = true;
 		switch ( $type ) {
 			case 'soort':
+				$ongewijzigd = $this->soort == $soort || $this->dag == $dag; // phpcs:ignore
 				$this->soort = $soort;
 				$this->dag   = $dag;
 				$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
 					( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
 				break;
 			case 'extras':
+				$ongewijzigd  = $this->extras == $soort; // phpcs:ignore
 				$this->extras = $soort;
 				$bericht      = 'Je gaat voortaan per ' . strftime( '%d-%m-%Y', $wijzig_datum ) .
 					( count( $soort ) ? ' gebruik maken van ' . implode( ', ', $soort ) : ' geen gebruik meer van extras' );
@@ -415,7 +404,7 @@ class Abonnement extends Artikel {
 			default:
 				$bericht = '';
 		}
-		if ( $this->bedrag( self::BEDRAG_MAAND ) !== $huidig_bedrag ) {
+		if ( ! $ongewijzigd ) {
 			$betalen              = new \Kleistad\Betalen();
 			$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id );
 			/**
@@ -440,19 +429,13 @@ class Abonnement extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$prijs = round( $this->bedrag( $this->artikel_type ) / ( 1 + self::BTW ), 2 );
-		$btw   = round( $this->bedrag( $this->artikel_type ) - $prijs, 2 );
-		$regel = [
-			'prijs' => $prijs,
-			'btw'   => $btw,
-		];
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf = strftime( '%d-%m-%Y', $this->start_datum );
 				$tot   = strftime( '%d-%m-%Y', $this->driemaand_datum );
 				return [
 					array_merge(
-						$regel,
+						$this->split_bedrag( $options[ $this->soort . '_abonnement' ] ),
 						[
 							'artikel' => "{$this->soort} abonnement {$this->code} vanaf $vanaf tot $tot",
 							'aantal'  => 3,
@@ -460,11 +443,11 @@ class Abonnement extends Artikel {
 					),
 				];
 			case 'overbrugging':
-				$vanaf = strftime( '%d-%m-%Y', $this->driemaand_datum );
-				$tot   = strftime( '%d-%m-%Y', $this->reguliere_datum - 60 * 60 * 24 );
+				$vanaf = strftime( '%d-%m-%Y', strtotime( '+1 day', $this->driemaand_datum ) );
+				$tot   = strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) );
 				return [
 					array_merge(
-						$regel,
+						$this->split_bedrag( $this->bedrag( $this->artikel_type ) ),
 						[
 							'artikel' => "{$this->soort} abonnement {$this->code} vanaf $vanaf tot $tot",
 							'aantal'  => 1,
@@ -475,7 +458,7 @@ class Abonnement extends Artikel {
 				$periode = strftime( '%B %Y', strtotime( 'today' ) );
 				$regels  = [
 					array_merge(
-						$regel,
+						$this->split_bedrag( $options[ $this->soort . '_abonnement' ] ),
 						[
 							'artikel' => "{$this->soort} abonnement {$this->code} periode $periode",
 							'aantal'  => 1,
@@ -483,14 +466,14 @@ class Abonnement extends Artikel {
 					),
 				];
 				foreach ( $this->extras as $extra ) {
-					$prijs    = round( $this->extra_bedrag( $extra ) / ( 1 + self::BTW ), 2 );
-					$btw      = round( $this->extra_bedrag( $extra ) - $prijs, 2 );
-					$regels[] = [
-						'artikel' => 'gebruik $extra',
-						'aantal'  => 1,
-						'prijs'   => $prijs,
-						'btw'     => $btw,
-					];
+					$regels[] =
+						array_merge(
+							$this->split_bedrag( $this->extra_bedrag( $extra ) ),
+							[
+								'artikel' => 'gebruik $extra',
+								'aantal'  => 1,
+							]
+						);
 				}
 				return $regels;
 		}
@@ -519,7 +502,7 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Bereken de maandelijkse kosten, de overbrugging, de borg of het startbedrag.
+	 * Bereken de maandelijkse kosten, de overbrugging, of het startbedrag.
 	 *
 	 * @param  mixed $soort Welk bedrag gevraagd wordt, standaard het maandbedrag.
 	 * @return float Het maandbedrag.
@@ -530,30 +513,20 @@ class Abonnement extends Artikel {
 		foreach ( $this->extras as $extra ) {
 			$bedrag += $this->extra_bedrag( $extra );
 		}
-
 		switch ( $soort ) {
-			case self::BEDRAG_BASIS:
 			case 'regulier':
-				return (float) $options[ $this->soort . '_abonnement' ];
-			case self::BEDRAG_MAAND:
-			case 'start':
 				return $bedrag;
-			case self::BEDRAG_BORG:
-				return (float) $options['borg_kast'];
-			case self::BEDRAG_START:
-				return 3 * $bedrag;
-			case self::BEDRAG_START_EN_BORG:
-				return 3 * $bedrag + (float) $options['borg_kast'];
-			case self::BEDRAG_OVERBRUGGING:
+			case 'start':
+				return 3 * (float) $options[ $this->soort . '_abonnement' ];
 			case 'overbrugging':
-				if ( '1' === date( 'j', $this->start_datum ) ) {
-					return $bedrag;
-				} else {
+				$overbrugging_datum = strtotime( '+1 day', $this->driemaand_datum );
+				$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / 60 * 60 * 24 );
+				if ( 0 < $aantal_dagen ) {
 					// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
-					$dag            = 60 * 60 * 24; // Aantal seconden in een dag.
-					$aantal_dagen   = ( $this->reguliere_datum - $this->driemaand_datum ) / $dag;
-					$dagen_in_maand = intval( date( 'j', $this->reguliere_datum - $dag ) );
-					return $bedrag * $aantal_dagen / $dagen_in_maand;
+					$fractie = $aantal_dagen / intval( date( 't', $this->driemaand_datum ) );
+					return (float) $options[ $this->soort . '_abonnement' ] * $fractie;
+				} else {
+					return 0.0;
 				}
 		}
 	}
@@ -562,7 +535,7 @@ class Abonnement extends Artikel {
 	 * Geef de prijs van een extra.
 	 *
 	 * @param string $extra De extra abonnements functie.
-	 * @return float Het bedrag.
+	 * @return array Het bedrag.
 	 */
 	private function extra_bedrag( $extra ) {
 		$options = \Kleistad\Kleistad::get_options();
@@ -594,7 +567,7 @@ class Abonnement extends Artikel {
 		$betalen = new \Kleistad\Betalen();
 		return $betalen->herhaalorder(
 			$this->klant_id,
-			$this->bedrag( self::BEDRAG_MAAND ),
+			$this->bedrag( 'regulier' ),
 			"Kleistad abonnement {$this->code}",
 			$datum
 		);
@@ -618,17 +591,17 @@ class Abonnement extends Artikel {
 					$abonnement->save();
 					$abonnement->email( '_betaalwijze_ideal' );
 					break;
-				case 'start_ideal':
+				case 'start':
 					$abonnement->email( '_start_ideal', '', $abonnement->bestel_order( $bedrag, 'start' ) );
 					break;
-				case 'regulier':
+				case 'incasso':
 					$abonnement->email( '_regulier', '', $abonnement->bestel_order( $bedrag, 'regulier' ) );
 					break;
 				case 'overbrugging':
 					$abonnement->email( '_vervolg' );
 			}
 		} else {
-			if ( 'regulier' === $parameters[1] ) {
+			if ( 'incasso' === $parameters[1] ) {
 				$abonnement->email( '_incasso_mislukt', $reason, $abonnement->bestel_order( 0.0, 'regulier' ) );
 			}
 		}
@@ -639,54 +612,37 @@ class Abonnement extends Artikel {
 	 */
 	public static function dagelijks() {
 		$vandaag       = strtotime( 'today' );
-		$dag           = 60 * 60 * 24; // Aantal seconden in een dag.
 		$factuur_maand = (int) date( 'Ym', $vandaag );
 		$factuur_vorig = get_option( 'kleistad_factuur' );
 		$factureren    = ( false === $factuur_vorig || (int) $factuur_vorig < (int) $factuur_maand );
 
 		$abonnementen = self::all();
 		foreach ( $abonnementen as $klant_id => $abonnement ) {
-			// Abonnementen die al gestopt zijn of nog niet gestart hoeven te worden, hoeven geen actie.
-			if ( $abonnement->geannuleerd || $vandaag < $abonnement->start_datum ) {
-				continue;
-			}
 			// Abonnementen waarvan de einddatum verstreken is worden gestopt, zonder verdere acties.
-			if ( $abonnement->eind_datum && $vandaag >= $abonnement->eind_datum ) {
+			$abonnement->geannuleerd = ( $abonnement->eind_datum && $vandaag >= $abonnement->eind_datum );
+			$abonnement->save();
+			if ( $abonnement->geannuleerd ) {
 				$abonnement->autoriseer( false );
-				$abonnement->geannuleerd = true;
-				$abonnement->save();
-				continue;
+				continue; // Als geannuleerd, geen verdere actie nodig.
 			}
-			// Abonnementen waarvan de start_datum verstreken is, dan zijn de gebruikers geautoriseerd.
-			if ( $vandaag <= $abonnement->start_datum ) {
-				$abonnement->autoriseer( true );
+
+			// Abonnementen zijn gepauzeerd als er het vandaag tussen de pauze en herstart datum is.
+			$abonnement->gepauzeerd = ( $abonnement->pauze_datum && $vandaag >= $abonnement->pauze_datum && $vandaag < $abonnement->herstart_datum );
+			$abonnement->save();
+			if ( $vandaag < $abonnement->start_datum || $abonnement->gepauzeerd ) {
+				continue; // Geen acties als nog niet gestart of gepauzeerd.
 			}
-			// Abonnementen waarvan de pauzedatum verstreken is, en nog niet herstart zijn, worden gepauzeerd zonder verdere acties.
-			// Ook als het abonnement al de gepauzeerd status had wordt geen verdere actie gedaan.
-			if ( $abonnement->pauze_datum && $vandaag >= $abonnement->pauze_datum && $vandaag < $abonnement->herstart_datum ) {
-				$abonnement->gepauzeerd = true;
-				$abonnement->save();
-				continue;
-			}
-			// Abonnementen waarvan de driemaanden termijn verstreken is krijgen de overbrugging email en factuur, zonder verdere acties.
-			if ( ! $abonnement->overbrugging_email && $vandaag >= $abonnement->driemaand_datum - 7 * $dag ) {
+
+			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er iets te betalen is, zonder verdere acties.
+			if ( ! $abonnement->overbrugging_email && $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) ) {
 				$abonnement->overbrugging_email = true;
 				$abonnement->save();
-				$abonnement->email( '_vervolg', '', $abonnement->bestel_order( 0.0, 'overbrugging' ) );
-				continue;
+				if ( 0.0 < $abonnement->bedrag( 'overbrugging' ) ) {
+					$abonnement->email( '_vervolg', '', $abonnement->bestel_order( 0.0, 'overbrugging' ) ); // Alleen versturen als er werkelijk iets te betalen is.
+				}
 			}
-			// Abonnementen die nog niet in de reguliere termijn zitten hebben geen verdere actie nodig.
-			if ( $vandaag < $abonnement->reguliere_datum ) {
-				continue;
-			}
-			// Als dit punt bereikt is, hebben we alleen nog actieve, reguliere abonnementen.
-			// Abonnementen waarvan de herstartdatum verstreken is, kunnen van pauze status afgehaald worden.
-			if ( $abonnement->herstart_datum && $vandaag >= $abonnement->herstart_datum ) {
-				$abonnement->gepauzeerd = false;
-				$abonnement->save();
-			}
-			// Abonnementen die via de bank betaald worden krijgen een maand factuur.
-			if ( $factureren && ! $abonnement->incasso_actief() ) {
+			// Abonnementen die via de bank betaald worden krijgen een maand factuur als er gefactureerd moet worden.
+			if ( $factureren && $vandaag >= $abonnement->reguliere_datum && ! $abonnement->incasso_actief() ) {
 				$abonnement->email( '_regulier', $abonnement->bestel_order( 0.0, 'regulier' ) );
 			}
 		}

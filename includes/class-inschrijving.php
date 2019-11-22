@@ -379,47 +379,47 @@ class Inschrijving extends Artikel {
 	protected function factuurregels() {
 		$meetdag = strtotime( '+7 days' );
 		if ( 0 < $this->lopende_cursus ) {
-			$prijs = round( $this->lopende_cursus / ( 1 + self::BTW ), 2 );
-			$btw   = round( $this->lopende_cursus - $prijs, 2 );
 			return [
-				[
-					'artikel' => "cursus: {$this->cursus->naam} (reeds gestart)",
-					'aantal'  => $this->aantal,
-					'prijs'   => $prijs,
-					'btw'     => $btw,
-				],
+				array_merge(
+					$this->split_bedrag( $this->lopende_cursus ),
+					[
+						'artikel' => "cursus: {$this->cursus->naam} (reeds gestart)",
+						'aantal'  => $this->aantal,
+					]
+				),
 			];
 		} else {
 			if ( $meetdag <= $this->cursus->start_datum ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten.
-				$prijs = round( ( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ) / ( 1 + self::BTW ), 2 );
-				$btw   = round( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten - $prijs, 2 );
 				return [
-					[
-						'artikel' => "cursus: {$this->cursus->naam}",
-						'aantal'  => $this->aantal,
-						'prijs'   => $prijs,
-						'btw'     => $btw,
-					],
+					array_merge(
+						$this->split_bedrag( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ),
+						[
+							'artikel' => "cursus: {$this->cursus->naam}",
+							'aantal'  => $this->aantal,
+						]
+					),
 				];
 			} else {
 				$regels = [];
 				if ( 0 < $this->cursus->inschrijfkosten ) {
-					$prijs    = round( $this->cursus->inschrijfkosten / ( 1 + self::BTW ), 2 );
-					$btw      = round( $this->cursus->inschrijfkosten - $prijs, 2 );
 					$regels[] = [
-						'artikel' => "inschrijfkosten cursus: {$this->cursus->naam}",
-						'aantal'  => $this->aantal,
-						'prijs'   => $prijs,
-						'btw'     => $btw,
+						array_merge(
+							$this->split_bedrag( $this->cursus->inschrijfkosten ),
+							[
+								'artikel' => "inschrijfkosten cursus: {$this->cursus->naam}",
+								'aantal'  => $this->aantal,
+							]
+						),
 					];
 				}
-				$prijs    = round( $this->cursus->cursuskosten / ( 1 + self::BTW ), 2 );
-				$btw      = round( $this->cursus->cursuskosten - $prijs, 2 );
 				$regels[] = [
-					'artikel' => "cursus: {$this->cursus->code}",
-					'aantal'  => $this->aantal,
-					'prijs'   => $prijs,
-					'btw'     => $btw,
+					array_merge(
+						$this->split_bedrag( $this->cursus->cursuskosten ),
+						[
+							'artikel' => "cursus: {$this->cursus->naam}",
+							'aantal'  => $this->aantal,
+						]
+					),
 				];
 				return $regels;
 			}

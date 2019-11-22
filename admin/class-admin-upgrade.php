@@ -43,7 +43,6 @@ class Admin_Upgrade {
 		$default_options = [
 			'onbeperkt_abonnement' => 50,
 			'beperkt_abonnement'   => 30,
-			'borg_kast'            => 5,
 			'dagdelenkaart'        => 60,
 			'cursusprijs'          => 130,
 			'cursusinschrijfprijs' => 25,
@@ -222,6 +221,16 @@ class Admin_Upgrade {
 				$dagdelenkaart[1] = $huidig_dagdelenkaart;
 				update_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, $dagdelenkaart );
 			}
+		}
+
+		$vandaag          = strtotime( 'today' );
+		$abonnement_users = get_users( [ 'meta_key' => \Kleistad\Abonnement::META_KEY ] );
+		foreach ( $abonnement_users as $abonnement_user ) {
+			$abonnement = new \Kleistad\Abonnement( $abonnement_user->ID );
+			if ( $vandaag >= $abonnement->reguliere_datum ) {
+				$abonnement->email_overbrugging = true;
+			}
+			$abonnement->save();
 		}
 
 		/**
