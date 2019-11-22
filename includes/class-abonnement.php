@@ -410,7 +410,8 @@ class Abonnement extends Artikel {
 			$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id );
 			if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
 				$this->subscriptie_id = $this->herhaalbetalen(
-					( $wijzig_datum >= $this->pauze_datum && $wijzig_datum <= $this->herstart_datum ) ? $this->herstart_datum : $wijzig_datum );
+					( $wijzig_datum >= $this->pauze_datum && $wijzig_datum <= $this->herstart_datum ) ? $this->herstart_datum : $wijzig_datum
+				);
 			}
 			$this->email( '_gewijzigd', $bericht );
 		}
