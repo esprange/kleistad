@@ -315,8 +315,8 @@ abstract class Artikel extends Entity {
 	 * @return array
 	 */
 	protected function split_bedrag( $bedrag ) {
-		$prijs = round( $bruto / ( 1 + self::BTW ), 2 );
-		$btw   = round( $bruto - $prijs, 2 );
+		$prijs = round( $bedrag / ( 1 + self::BTW ), 2 );
+		$btw   = round( $bedrag - $prijs, 2 );
 		return [
 			'prijs' => $prijs,
 			'btw'   => $btw,

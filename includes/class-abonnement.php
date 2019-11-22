@@ -429,6 +429,7 @@ class Abonnement extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
+		$options = \Kleistad\Kleistad::get_options();
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf = strftime( '%d-%m-%Y', $this->start_datum );
@@ -535,7 +536,7 @@ class Abonnement extends Artikel {
 	 * Geef de prijs van een extra.
 	 *
 	 * @param string $extra De extra abonnements functie.
-	 * @return array Het bedrag.
+	 * @return float Het bedrag.
 	 */
 	private function extra_bedrag( $extra ) {
 		$options = \Kleistad\Kleistad::get_options();

@@ -245,8 +245,13 @@ class Admin_Main {
 		}
 	}
 
+	/**
+	 * Bereid het background proces voor.
+	 */
 	public function instantiate_background() {
-		self::$background = new \Kleistad\Background();
+		if ( is_null( self::$background ) ) {
+			self::$background = new \Kleistad\Background();
+		}
 	}
 
 	/**

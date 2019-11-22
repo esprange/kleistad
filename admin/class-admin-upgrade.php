@@ -228,7 +228,7 @@ class Admin_Upgrade {
 		foreach ( $abonnement_users as $abonnement_user ) {
 			$abonnement = new \Kleistad\Abonnement( $abonnement_user->ID );
 			if ( $vandaag >= $abonnement->reguliere_datum ) {
-				$abonnement->email_overbrugging = true;
+				$abonnement->overbrugging_email = true;
 			}
 			$abonnement->save();
 		}
