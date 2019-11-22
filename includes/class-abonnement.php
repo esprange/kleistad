@@ -405,19 +405,13 @@ class Abonnement extends Artikel {
 				$bericht = '';
 		}
 		if ( ! $ongewijzigd ) {
+			$this->save();
 			$betalen              = new \Kleistad\Betalen();
 			$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id );
-			/**
-			 * Een automatische incasso wordt alleen gewijzigd als de abonnee zelf de wijziging doet.
-			 */
-			if ( ! $admin && $betalen->heeft_mandaat( $this->klant_id ) ) {
+			if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
 				$this->subscriptie_id = $this->herhaalbetalen(
-					( $wijzig_datum >= $this->pauze_datum && $wijzig_datum <= $this->herstart_datum ) ? $this->herstart_datum : $wijzig_datum
-				);
+					( $wijzig_datum >= $this->pauze_datum && $wijzig_datum <= $this->herstart_datum ) ? $this->herstart_datum : $wijzig_datum );
 			}
-		}
-		$this->save();
-		if ( ! $admin ) {
 			$this->email( '_gewijzigd', $bericht );
 		}
 		return true;
