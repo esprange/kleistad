@@ -288,7 +288,7 @@ class Saldo extends Artikel {
 						continue;
 					}
 					$wpdb->query( 'START TRANSACTION' );
-					$stoker = get_userdata( $reservering->klant_id );
+					$stoker = get_userdata( $reservering->gebruiker_id );
 					foreach ( $reservering->verdeling as $stookdeel ) {
 						if ( 0 === intval( $stookdeel['id'] ) ) {
 							continue; // Volgende verdeling.
@@ -337,8 +337,8 @@ class Saldo extends Artikel {
 				}
 			} elseif ( ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
 				if ( \Kleistad\Reservering::ONDERHOUD !== $reservering->soortstook ) {
-					$bedrag     = $ovens[ $reservering->oven_id ]->stookkosten( $reservering->klant_id, 100 );
-					$stoker     = get_userdata( $reservering->klant_id );
+					$bedrag     = $ovens[ $reservering->oven_id ]->stookkosten( $reservering->gebruiker_id, 100 );
+					$stoker     = get_userdata( $reservering->gebruiker_id );
 					$stookdelen = $reservering->verdeling;
 					$tabel      = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
 					foreach ( $stookdelen as $stookdeel ) {
