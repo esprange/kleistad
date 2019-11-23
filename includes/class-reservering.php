@@ -144,7 +144,7 @@ class Reservering extends Entity {
 					],
 				];
 			case 'datum':
-				return strtotime( $this->data['jaar'] . '-' . $this->data['maand'] . '-' . $this->data['dag'] . ' 00:00' ) ;
+				return strtotime( $this->data['jaar'] . '-' . $this->data['maand'] . '-' . $this->data['dag'] . ' 00:00' );
 			case 'gemeld':
 			case 'verwerkt':
 				return boolval( $this->data[ $attribuut ] );
