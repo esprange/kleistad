@@ -330,30 +330,6 @@ class Workshop extends Artikel {
 	}
 
 	/**
-	 * Verwijder de workshop.
-	 *
-	 * @return bool True als de workshop verwijderd kan worden.
-	 */
-	public function verwijder() {
-		global $wpdb;
-		if ( $this->definitief || $this->betaald ) {
-			return false; // Er is al betaald of de workshop is definitief bevestigd.
-		}
-		if ( $wpdb->delete( "{$wpdb->prefix}kleistad_workshops", [ 'id' => $this->id ] ) ) {
-			try {
-				$event = new \Kleistad\Event( $this->event_id );
-				$event->delete();
-			} catch ( \Exception $e ) {
-				unset( $e ); // phpcs:ignore
-			}
-		} else {
-			return false;
-		};
-		\Kleistad\WorkshopAanvraag::gepland( $this->aanvraag_id, 0 );
-		return true;
-	}
-
-	/**
 	 * Check of er een indeling moet plaatsvinden ivm betaling inschrijfgeld.
 	 *
 	 * @param float $bedrag Het betaalde bedrag.

@@ -332,44 +332,31 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		} else {
 			$workshop = new \Kleistad\Workshop();
 		}
-		if ( 'verwijderen' === $data['form_actie'] ) {
-			/*
-			* Cursus moet verwijderd worden.
-			*/
-			if ( $workshop->verwijder() ) {
-				$bericht = 'De workshop informatie is verwijderd';
-			} else {
-				return [
-					'status' => $this->status( new \WP_Error( 'bevestigd', 'Een workshop die bevestigd is kan niet verwijderd worden' ) ),
-				];
+		$workshop->naam        = $data['workshop']['naam'];
+		$workshop->datum       = strtotime( $data['workshop']['datum'] );
+		$workshop->start_tijd  = strtotime( $data['workshop']['start_tijd'] );
+		$workshop->eind_tijd   = strtotime( $data['workshop']['eind_tijd'] );
+		$workshop->docent      = $data['workshop']['docent'];
+		$workshop->technieken  = $data['workshop']['technieken'];
+		$workshop->organisatie = $data['workshop']['organisatie'];
+		$workshop->contact     = $data['workshop']['contact'];
+		$workshop->email       = $data['workshop']['email'];
+		$workshop->telnr       = $data['workshop']['telnr'];
+		$workshop->programma   = $data['workshop']['programma'];
+		$workshop->kosten      = $data['workshop']['kosten'];
+		$workshop->aantal      = $data['workshop']['aantal'];
+		$workshop->aanvraag_id = $data['workshop']['aanvraag_id'];
+		if ( 'bewaren' === $data['form_actie'] ) {
+			$workshop->save();
+			$bericht = 'De workshop informatie is opgeslagen';
+		} elseif ( 'bevestigen' === $data['form_actie'] ) {
+			$workshop->bevestig();
+			$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
+		} elseif ( 'afzeggen' === $data['form_actie'] ) {
+			if ( $workshop->definitief ) {
+				$workshop->email( 'annulering', $workshop->annuleer_order( \Kleistad\Order::zoek_order( $workshop->code ), 0.0 ) );
 			}
-		} else {
-			$workshop->naam        = $data['workshop']['naam'];
-			$workshop->datum       = strtotime( $data['workshop']['datum'] );
-			$workshop->start_tijd  = strtotime( $data['workshop']['start_tijd'] );
-			$workshop->eind_tijd   = strtotime( $data['workshop']['eind_tijd'] );
-			$workshop->docent      = $data['workshop']['docent'];
-			$workshop->technieken  = $data['workshop']['technieken'];
-			$workshop->organisatie = $data['workshop']['organisatie'];
-			$workshop->contact     = $data['workshop']['contact'];
-			$workshop->email       = $data['workshop']['email'];
-			$workshop->telnr       = $data['workshop']['telnr'];
-			$workshop->programma   = $data['workshop']['programma'];
-			$workshop->kosten      = $data['workshop']['kosten'];
-			$workshop->aantal      = $data['workshop']['aantal'];
-			$workshop->aanvraag_id = $data['workshop']['aanvraag_id'];
-			if ( 'bewaren' === $data['form_actie'] ) {
-				$workshop->save();
-				$bericht = 'De workshop informatie is opgeslagen';
-			} elseif ( 'bevestigen' === $data['form_actie'] ) {
-				$workshop->bevestig();
-				$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
-			} elseif ( 'afzeggen' === $data['form_actie'] ) {
-				if ( $workshop->definitief ) {
-					$workshop->email( 'annulering', $workshop->annuleer_order( \Kleistad\Order::zoek_order( $workshop->code ), 0.0 ) );
-				}
-				$bericht = 'De afspraak voor de workshop is per email afgezegd';
-			}
+			$bericht = 'De afspraak voor de workshop is per email afgezegd';
 		}
 		return [
 			'status'  => $this->status( $bericht ),

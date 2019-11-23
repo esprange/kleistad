@@ -290,7 +290,7 @@ abstract class Artikel extends Entity {
 				'hsh'   => $this->controle(),
 				'art'   => $this->artikel_type,
 			],
-			home_url( '/kleistad_betaling' )
+			home_url( '/kleistad-betaling' )
 		);
 		return "<a href=\"$url\" >Kleistad pagina</a>";
 	}

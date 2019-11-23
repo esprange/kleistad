@@ -48,6 +48,7 @@ class Public_Betaling extends ShortcodeForm {
 				$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
 				if ( $param['hsh'] === $artikel->controle() ) {
 					$data = [
+						'order_id'      => $param['order'],
 						'actie'         => 'betalen',
 						'klant'         => $order->klant['naam'],
 						'openstaand'    => $order->te_betalen(),

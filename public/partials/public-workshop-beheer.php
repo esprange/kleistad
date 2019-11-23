@@ -99,7 +99,6 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $voltooid || ! $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?>
 		data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
-	<button type="submit" name="kleistad_submit_workshop_beheer" value="verwijderen" <?php disabled( $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 </form>
 	<?php

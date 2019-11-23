@@ -26,55 +26,39 @@ if ( 'betalen' === $data['actie'] ) :
 			<p><?php echo esc_html( $data['klant'] ); ?></p>
 		</div>
 	</div>
+	<table class="kleistad_datatable  display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false" >
+		<thead>
+			<tr><th>Aantal</th><th>Omschrijving</th><th>Stuksprijs</th><th>Prijs</th>
+		</thead>
+		<tbody>
 	<?php
-	foreach ( $data['regels']  as $regels ) :
+	foreach ( $data['regels']  as $regel ) :
 		?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_5">
-			<p><?php echo esc_html( $regel['artikel'] ); ?></p>
-		</div>
-		<div class="kleistad_col_2">
-			<p><?php echo esc_html( $regel['aantal'] ); ?></p>
-		</div>
-		<div class="kleistad_col_3">
-			<p>&euro; <?php echo esc_html( number_format_i18n( $regel['aantal'] * $regel['prijs'], 2 ) ); ?></p>
-		</div>
-	</div>
+		<tr>
+			<td style="text-align:right" ><?php echo esc_html( $regel['aantal'] ); ?></td>
+			<td><?php echo esc_html( $regel['artikel'] ); ?></td>
+			<td style="text-align:right" >&euro; <?php echo esc_html( number_format_i18n( $regel['prijs'] + $regel['btw'], 2 ) ); ?></td>
+			<td style="text-align:right" >&euro; <?php echo esc_html( number_format_i18n( $regel['aantal'] * ( $regel['prijs'] + $regel['btw'] ), 2 ) ); ?></td>
+		</tr>
 		<?php
 		endforeach
 	?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_7">
-			<p style="text-align:right">Reeds betaald</p>
-		</div>
-		<div class="kleistad_col_3">
-			<p>&euro; <?php echo esc_html( number_format_i18n( $data['reeds_betaald'], 2 ) ); ?></p>
-		</div>
-	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_7">
-			<p style="text-align:right">Totale kosten</p>
-		</div>
-		<div class="kleistad_col_3">
-			<p>&euro; <?php echo esc_html( number_format_i18n( $data['reeds_betaald'] + $data['openstaand'], 2 ) ); ?></p>
-		</div>
-	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_7">
-			<p>&nbsp;</p>
-		</div>
-		<div class="kleistad_col_3">
-			<hr>
-		</div>
-	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_7">
-			<p style="text-align:right">Nog te betalen</p>
-		</div>
-		<div class="kleistad_col_3">
-			<p>&euro; <?php echo esc_html( number_format_i18n( $data['openstaand'], 2 ) ); ?></p>
-		</div>
-	</div>
+		</tbody>
+		<tfoot>
+		<tr>
+			<td colspan="3" style="text-align:right">Reeds betaald</td>
+			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $data['reeds_betaald'], 2 ) ); ?></td>
+		</tr>
+		<tr>
+			<td colspan="3" style="text-align:right">Totale kosten</td>
+			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $data['reeds_betaald'] + $data['openstaand'], 2 ) ); ?></td>
+		</tr>
+		<tr>
+			<td colspan="3" style="text-align:right">Nog te betalen</td>
+			<td style="text-align:right"><strong>&euro; <?php echo esc_html( number_format_i18n( $data['openstaand'], 2 ) ); ?></strong></td>
+		</tr>
+		</tfoot>
+	</table>
 	<div class ="kleistad_row">
 		<div class="kleistad_col_10">
 			<?php \Kleistad\Betalen::issuers(); ?>

@@ -59,8 +59,8 @@ class Public_Main {
 		],
 		'betaling'              => [
 			'script' => true,
-			'js'     => [ 'jquery' ],
-			'css'    => [],
+			'js'     => [ 'jquery', 'datatables' ],
+			'css'    => [ 'datatables' ],
 			'access' => [],
 		],
 		'cursus_beheer'         => [
