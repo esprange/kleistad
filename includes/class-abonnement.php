@@ -516,7 +516,7 @@ class Abonnement extends Artikel {
 				return 3 * (float) $options[ $this->soort . '_abonnement' ];
 			case 'overbrugging':
 				$overbrugging_datum = strtotime( '+1 day', $this->driemaand_datum );
-				$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / 60 * 60 * 24 );
+				$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / ( 60 * 60 * 24 ) );
 				if ( 0 < $aantal_dagen ) {
 					// De fractie is het aantal dagen tussen vandaag en reguliere betaling, gedeeld door het aantal dagen in de maand.
 					$fractie = $aantal_dagen / intval( date( 't', $this->driemaand_datum ) );
@@ -609,8 +609,8 @@ class Abonnement extends Artikel {
 	public static function dagelijks() {
 		$vandaag       = strtotime( 'today' );
 		$factuur_maand = (int) date( 'Ym', $vandaag );
-		$factuur_vorig = get_option( 'kleistad_factuur' );
-		$factureren    = ( false === $factuur_vorig || (int) $factuur_vorig < (int) $factuur_maand );
+		$factuur_vorig = get_option( 'kleistad_factuur' ) ?: 0;
+		$factureren    = \Kleistad\Artikel::factureren_actief() && (int) $factuur_vorig < (int) $factuur_maand;
 
 		$abonnementen = self::all();
 		foreach ( $abonnementen as $klant_id => $abonnement ) {

@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 34;
+	const DBVERSIE = 35;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -58,11 +58,10 @@ class Admin_Upgrade {
 			'imap_pwd'             => '',
 			'betalen'              => 0,
 			'factureren'           => '',
-			'google_folder_id'     => '',
 			'extra'                => [],
 		];
 		$current_options = \Kleistad\Kleistad::get_options();
-		$options         = wp_parse_args( empty( $current_options ) ? '' : $current_options, $default_options );
+		$options         = wp_parse_args( empty( $current_options ) ? [] : $current_options, $default_options );
 		update_option( 'kleistad-opties', $options );
 	}
 
@@ -163,7 +162,7 @@ class Admin_Upgrade {
 			historie varchar(2000),
 			klant tinytext,
 			mutatie_datum datetime,
-			referentie tinytext,
+			referentie varchar(20),
 			regels varchar(2000),
 			opmerking varchar(200),
 			PRIMARY KEY  (id)

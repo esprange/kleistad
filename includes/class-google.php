@@ -46,10 +46,6 @@ class Google {
 		if ( false === $redirect_uri ) {
 			return false;
 		}
-		$refresh_token = get_option( self::REFRESH_TOKEN );
-		if ( false === $refresh_token ) {
-			return false;
-		}
 		$options           = \Kleistad\Kleistad::get_options();
 		self::$kalender_id = $options['google_kalender_id'];
 		$client            = new \Google_Client();
@@ -60,7 +56,10 @@ class Google {
 		$client->setIncludeGrantedScopes( true );
 		$client->addScope( \Google_Service_Calendar::CALENDAR_EVENTS );
 		$client->setRedirectUri( $redirect_uri );
-		$client->refreshToken( $refresh_token );
+		$refresh_token = get_option( self::REFRESH_TOKEN );
+		if ( false !== $refresh_token ) {
+			$client->refreshToken( $refresh_token );
+		}
 		$token = $client->getAccessToken();
 		if ( ! empty( $token ) ) {
 			update_option( self::ACCESS_TOKEN, $token );
@@ -77,6 +76,7 @@ class Google {
 	 */
 	public static function vraag_service_aan( $redirect_url ) {
 		update_option( self::REDIRECT_URI, $redirect_url );
+		update_option( self::REFRESH_TOKEN, '' );
 		$client = self::maak_client();
 		if ( false === $client ) {
 			return;

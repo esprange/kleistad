@@ -109,12 +109,6 @@
 		</tr>
 
 		<tr >
-			<th scope="row">Google drive folder id voor opslag facturen</th>
-			<td><input type="text" name="kleistad-opties[google_folder_id]"
-					value="<?php echo esc_attr( $this->options['google_folder_id'] ); ?>" /></td>
-		</tr>
-
-		<tr >
 			<th scope="row">Google kalender id</th>
 			<td><input type="text" name="kleistad-opties[google_kalender_id]"
 					value="<?php echo esc_attr( $this->options['google_kalender_id'] ); ?>" /></td>

@@ -35,6 +35,7 @@ class Saldo extends Artikel {
 			[],
 		],
 		'bedrag'   => 0.0,
+		'reden'    => '',
 	];
 
 	/**

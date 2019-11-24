@@ -118,6 +118,12 @@ class Email {
 			$page = get_page_by_title( $this->mailparams['slug'], OBJECT );
 			if ( ! is_null( $page ) ) {
 				$this->mailparams['content'] = apply_filters( 'the_content', $page->post_content );
+			} else {
+				$this->mailparams['content'] = '<table>';
+				foreach ( $this->mailparams['parameters'] as $key => $parameter ) {
+					$this->mailparams['content'] .= "<tr><td>$key</td><td>$parameter</td></tr>";
+				}
+				$this->mailparams['content'] .= '</table>';
 			}
 		}
 		/**

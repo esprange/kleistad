@@ -296,6 +296,14 @@ abstract class Artikel extends Entity {
 	}
 
 	/**
+	 * Test of factureren actief is.
+	 */
+	protected static function factureren_actief() {
+		$options = \Kleistad\Kleistad::get_options();
+		return ! empty( $options['factureren'] ) && strtotime( $options['factureren'] ) < strtotime( 'today' );
+	}
+
+	/**
 	 * Klant gegevens voor op de factuur, kan eventueel aangepast worden zoals bijvoorbeeld voor de contact van een workshop.
 	 *
 	 * @return array De naw gegevens.
@@ -331,8 +339,7 @@ abstract class Artikel extends Entity {
 	 * @return string Het pad naar de factuur.
 	 */
 	private function maak_factuur( $order, $type ) {
-		$options = \Kleistad\Kleistad::get_options();
-		if ( empty( $options['factureren'] || strtotime( $options['factureren'] ) > strtotime( 'today' ) ) ) {
+		if ( ! self::factureren_actief() ) {
 			return '';
 		}
 		$factuur = new \Kleistad\Factuur();
