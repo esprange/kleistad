@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 31;
+	const DBVERSIE = 34;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -57,7 +57,7 @@ class Admin_Upgrade {
 			'imap_server'          => '',
 			'imap_pwd'             => '',
 			'betalen'              => 0,
-			'factureren'           => 0,
+			'factureren'           => '',
 			'google_folder_id'     => '',
 			'extra'                => [],
 		];
@@ -231,6 +231,23 @@ class Admin_Upgrade {
 				$abonnement->overbrugging_email = true;
 			}
 			$abonnement->save();
+		}
+
+		$inschrijvingen = \Kleistad\Inschrijving::all();
+		$cursussen      = \Kleistad\Cursus::all();
+		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
+			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
+				if ( ! $inschrijving->geannuleerd && ! $cursussen[ $cursus_id ]->vervallen ) {
+					$inschrijving->bestel_order();
+					$order_id = \Kleistad\Order::zoek_order( $inschrijving->code() );
+					if ( $inschrijving->i_betaald ) {
+						$inschrijving->ontvang_order( $order_id, (float) $cursussen[ $cursus_id ]->inschrijfkosten );
+					}
+					if ( $inschrijving->c_betaald ) {
+						$inschrijving->ontvang_order( $order_id, (float) $cursussen[ $cursus_id ]->cursuskosten );
+					}
+				}
+			}
 		}
 
 		/**

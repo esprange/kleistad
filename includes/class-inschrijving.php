@@ -402,25 +402,21 @@ class Inschrijving extends Artikel {
 			} else {
 				$regels = [];
 				if ( 0 < $this->cursus->inschrijfkosten ) {
-					$regels[] = [
-						array_merge(
-							$this->split_bedrag( $this->cursus->inschrijfkosten ),
-							[
-								'artikel' => "inschrijfkosten cursus: {$this->cursus->naam}",
-								'aantal'  => $this->aantal,
-							]
-						),
-					];
-				}
-				$regels[] = [
-					array_merge(
-						$this->split_bedrag( $this->cursus->cursuskosten ),
+					$regels[] = array_merge(
+						$this->split_bedrag( $this->cursus->inschrijfkosten ),
 						[
-							'artikel' => "cursus: {$this->cursus->naam}",
+							'artikel' => "inschrijfkosten cursus: {$this->cursus->naam}",
 							'aantal'  => $this->aantal,
 						]
-					),
-				];
+					);
+				}
+				$regels[] = array_merge(
+					$this->split_bedrag( $this->cursus->cursuskosten ),
+					[
+						'artikel' => "cursus: {$this->cursus->naam}",
+						'aantal'  => $this->aantal,
+					]
+				);
 				return $regels;
 			}
 		}

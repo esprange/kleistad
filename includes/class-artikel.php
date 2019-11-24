@@ -332,7 +332,7 @@ abstract class Artikel extends Entity {
 	 */
 	private function maak_factuur( $order, $type ) {
 		$options = \Kleistad\Kleistad::get_options();
-		if ( ! $options['factureren'] ) {
+		if ( empty( $options['factureren'] || strtotime( $options['factureren'] ) > strtotime( 'today' ) ) ) {
 			return '';
 		}
 		$factuur = new \Kleistad\Factuur();

@@ -103,11 +103,9 @@
 		</tr>
 
 		<tr >
-			<th scope="row">Factureren actief</th>
-			<td><input type="radio" name="kleistad-opties[factureren]"
-					value="0" <?php checked( 0, $this->options['factureren'] ); ?>/>Uit<br/>
-				<input type="radio" name="kleistad-opties[factureren]"
-					value="1" <?php checked( 1, $this->options['factureren'] ); ?>/>Aan</td>
+			<th scope="row">Factureren actief per</th>
+			<td><input type="text" class="kleistad_datum" name="kleistad-opties[factureren]"
+					value="<?php echo esc_attr( $this->options['factureren'] ); ?>" /></td>
 		</tr>
 
 		<tr >

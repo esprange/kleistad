@@ -41,11 +41,14 @@ class Orderrapportage {
 				'btw'   => 0.0,
 			];
 		}
-		$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand ORDER BY datum", ARRAY_A ); // phpcs:ignore
-		foreach ( $order_ids as $order_id ) {
-			$order = new \Kleistad\Order( $order_id );
-			$omzet[ $omzetnamen[ $order->referentie[0] ] ]['netto'] += $order->netto();
-			$omzet[ $omzetnamen[ $order->referentie[0] ] ]['btw']   += $order->btw();
+		$options = \Kleistad\Kleistad::get_options();
+		if ( strtotime( $options['factureren'] ) < mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) {
+			$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand ORDER BY datum", ARRAY_A ); // phpcs:ignore
+			foreach ( $order_ids as $order_id ) {
+				$order = new \Kleistad\Order( $order_id );
+				$omzet[ $omzetnamen[ $order->referentie[0] ] ]['netto'] += $order->netto();
+				$omzet[ $omzetnamen[ $order->referentie[0] ] ]['btw']   += $order->btw();
+			}
 		}
 		return $omzet;
 	}
