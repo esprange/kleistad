@@ -382,13 +382,19 @@ class Workshop extends Artikel {
 	 */
 	public static function dagelijks() {
 		$workshops = self::all();
-		$meetdag   = strtotime( '+7 days' );
 		foreach ( $workshops as $workshop ) {
-			if ( $workshop->definitief && ! $workshop->betaald && ! $workshop->vervallen && ! $workshop->betaling_email && $meetdag >= $workshop->datum ) {
-				$workshop->betaling_email = true;
-				$workshop->save();
-				$workshop->email( 'betaling', $workshop->bestel_order( 0.0 ) );
+			if (
+				! $workshop->definitief ||
+				$workshop->betaald ||
+				$workshop->vervallen ||
+				$workshop->betaling_email ||
+				strtotime( '+7 days' ) < $workshop->datum
+				) {
+				continue;
 			}
+			$workshop->betaling_email = true;
+			$workshop->save();
+			$workshop->email( 'betaling', $workshop->bestel_order( 0.0 ) );
 		}
 	}
 

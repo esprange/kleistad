@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 35;
+	const DBVERSIE = 36;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -236,15 +236,14 @@ class Admin_Upgrade {
 		$cursussen      = \Kleistad\Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! $inschrijving->geannuleerd && ! $cursussen[ $cursus_id ]->vervallen ) {
-					$inschrijving->bestel_order();
+				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen || \Kleistad\Order::zoek_order( $inschrijving->code() ) ) {
+					continue;
+				}
+				$inschrijving->bestel_order();
+				$betaald = intval( $inschrijving->i_betaald ) * (float) $cursussen[ $cursus_id ]->inschrijfkosten + intval( $inschrijving->c_betaald ) * (float) $cursussen[ $cursus_id ]->cursuskosten;
+				if ( 0 < $betaald ) {
 					$order_id = \Kleistad\Order::zoek_order( $inschrijving->code() );
-					if ( $inschrijving->i_betaald ) {
-						$inschrijving->ontvang_order( $order_id, (float) $cursussen[ $cursus_id ]->inschrijfkosten );
-					}
-					if ( $inschrijving->c_betaald ) {
-						$inschrijving->ontvang_order( $order_id, (float) $cursussen[ $cursus_id ]->cursuskosten );
-					}
+					$inschrijving->ontvang_order( $order_id, $betaald );
 				}
 			}
 		}

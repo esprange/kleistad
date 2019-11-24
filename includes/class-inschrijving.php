@@ -469,14 +469,20 @@ class Inschrijving extends Artikel {
 	public static function dagelijks() {
 		$inschrijvingen = self::all();
 		$cursussen      = \Kleistad\Cursus::all();
-		$meetdag        = strtotime( '+7 days' );
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! $inschrijving->c_betaald && ! $cursussen[ $cursus_id ]->vervallen && ! $inschrijving->restant_email && $meetdag >= $cursussen[ $cursus_id ]->start_datum ) {
-					$inschrijving->restant_email = true;
-					$inschrijving->save();
-					$inschrijving->email( 'restant_email' );
+				if (
+					$inschrijving->geannuleerd ||
+					$inschrijving->c_betaald ||
+					$cursussen[ $cursus_id ]->vervallen ||
+					$inschrijving->restant_email ||
+					strtotime( '+7 days' ) < $cursussen[ $cursus_id ]->start_datum
+					) {
+					continue;
 				}
+				$inschrijving->restant_email = true;
+				$inschrijving->save();
+				$inschrijving->email( 'restant_email' );
 			}
 		}
 	}
