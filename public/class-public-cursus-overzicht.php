@@ -165,7 +165,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						 */
 						$aantal_verzonden_email++;
 						$inschrijving->herinner_email = true;
-						$inschrijving->email( 'herinner_email' );
+						$inschrijving->email( '_herinnering' );
 						$inschrijving->save();
 				}
 			}

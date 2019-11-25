@@ -205,7 +205,7 @@ class Cursus extends Entity {
 		return [
 			'lessen'      => $aantal_lessen,
 			'lessen_rest' => $aantal_lessen_resterend,
-			'bedrag'      => $totaal_bedrag * $aantal_lessen_resterend / $aantal_lessen,
+			'bedrag'      => round( $totaal_bedrag * $aantal_lessen_resterend / $aantal_lessen * 2 ) / 2,
 		];
 	}
 

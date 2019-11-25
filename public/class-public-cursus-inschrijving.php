@@ -220,7 +220,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			if ( ! $lopend ) {
 				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order() );
 			} else {
-				$inschrijving->email( 'lopende' );
+				$inschrijving->email( '_lopend' );
 			}
 
 			return [

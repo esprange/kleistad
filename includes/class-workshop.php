@@ -208,12 +208,12 @@ class Workshop extends Artikel {
 		$this->definitief = true;
 		$this->save();
 		if ( ! $herbevestiging ) {
-			$this->email( 'bevestiging' );
+			$this->email( '_bevestiging' );
 		} else {
 			if ( \Kleistad\Order::zoek_order( $this->code ) ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-				$this->email( 'betaling', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
+				$this->email( '_betaling', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
 			} else {
-				$this->email( 'correctie bevestiging' );
+				$this->email( '_correctie' );
 			}
 		}
 	}
@@ -258,23 +258,22 @@ class Workshop extends Artikel {
 			],
 		];
 
+		$email_parameters['slug'] = "kleistad_email_workshop$type";
 		switch ( $type ) {
-			case 'bevestiging':
-			case 'correctie bevestiging':
-				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( 'bevestiging' === $type ? '' : ' (correctie)' );
+			case '_bevestiging':
+			case '_correctie':
+				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( '_correctie' === $type ? ' (correctie)' : '' );
 				$email_parameters['auto']     = false;
 				$email_parameters['slug']     = 'kleistad_email_workshop_bevestiging';
 				$email_parameters['from']     = 'info@' . \Kleistad\Email::verzend_domein();
 				$email_parameters['reply-to'] = 'info@' . \Kleistad\Email::domein();
 				break;
-			case 'betaling':
-			case 'betaling_ideal':
+			case '_betaling':
+			case '_betaling_ideal':
 				$email_parameters['subject'] = 'Betaling ' . $this->naam;
-				$email_parameters['slug']    = "kleistad_email_workshop_$type";
 				break;
-			case 'afzegging':
+			case '_annulering':
 				$email_parameters['subject'] = 'Annulering ' . $this->naam;
-				$email_parameters['slug']    = 'kleistad_email_workshop_afzegging';
 				break;
 			default:
 				return false;
@@ -394,7 +393,7 @@ class Workshop extends Artikel {
 			}
 			$workshop->betaling_email = true;
 			$workshop->save();
-			$workshop->email( 'betaling', $workshop->bestel_order( 0.0 ) );
+			$workshop->email( '_betaling', $workshop->bestel_order( 0.0 ) );
 		}
 	}
 
@@ -414,7 +413,7 @@ class Workshop extends Artikel {
 			$workshop->betaald = true;
 			$workshop->save();
 			$workshop->ontvang_order( \Kleistad\Order::zoek_order( $workshop->code ), $bedrag );
-			$workshop->email( 'betaling_ideal' );
+			$workshop->email( '_betaling_ideal' );
 		}
 	}
 

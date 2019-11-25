@@ -160,7 +160,7 @@ class Saldo extends Artikel {
 			[
 				'to'          => "$gebruiker->display_name <$gebruiker->user_email>",
 				'subject'     => 'Bijstorting stooksaldo',
-				'slug'        => 'kleistad_email_saldo_wijziging' . $type,
+				'slug'        => 'kleistad_email_saldo' . $type,
 				'attachments' => $factuur,
 				'parameters'  => [
 					'voornaam'   => $gebruiker->first_name,

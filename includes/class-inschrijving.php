@@ -230,7 +230,7 @@ class Inschrijving extends Artikel {
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
 				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-				$this->email( 'wijziging', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
+				$this->email( '_correctie', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
 				return true;
 			}
 		}
@@ -250,6 +250,7 @@ class Inschrijving extends Artikel {
 		$emailer   = new \Kleistad\Email();
 		$cursist   = get_userdata( $this->klant_id );
 		$onderwerp = ucfirst( $type ) . ' cursus';
+		$slug      = "kleistad_email_cursus$type";
 
 		switch ( $type ) {
 			case 'inschrijving':
@@ -258,29 +259,23 @@ class Inschrijving extends Artikel {
 			case 'indeling':
 				$slug = $this->cursus->indelingslug;
 				break;
-			case 'lopende':
+			case '_lopend':
 				$onderwerp = 'Inschrijving lopende cursus';
-				$slug      = 'kleistad_email_cursus_lopend';
 				break;
-			case 'wijziging':
-				$onderwerp = 'Wijziging inschrijving cursus';
-				$slug      = 'kleistad_email_cursus_wijziging';
+			case '_correctie':
+				$onderwerp = 'Correctie inschrijving cursus';
 				break;
-			case 'annulering':
+			case '_annulering':
 				$onderwerp = 'Annulering inschrijving';
-				$slug      = 'kleistad_email_cursus_annulering';
 				break;
-			case 'restant_email':
+			case '_betaling':
 				$onderwerp = 'Betaling restant bedrag cursus';
-				$slug      = 'kleistad_email_cursus_betaling';
 				break;
-			case 'herinner_email':
+			case '_herinnering':
 				$onderwerp = 'Herinnering betaling cursus';
-				$slug      = 'kleistad_email_cursus_herinnering';
 				break;
-			case 'betaling_ideal':
+			case '_betaling_ideal':
 				$onderwerp = 'Betaling cursus';
-				$slug      = 'kleistad_email_cursus_betaling_ideal';
 				break;
 			default:
 				$slug = '';
@@ -448,7 +443,7 @@ class Inschrijving extends Artikel {
 					$inschrijving->c_betaald = true;
 					$inschrijving->ingedeeld = true;
 					if ( 0 < $inschrijving->cursus->inschrijfkosten ) {
-						$inschrijving->email( 'betaling_ideal' );
+						$inschrijving->email( '_betaling_ideal' );
 					} else {
 						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag ) );
 					}
@@ -482,7 +477,7 @@ class Inschrijving extends Artikel {
 				}
 				$inschrijving->restant_email = true;
 				$inschrijving->save();
-				$inschrijving->email( 'restant_email' );
+				$inschrijving->email( '_betaling' );
 			}
 		}
 	}

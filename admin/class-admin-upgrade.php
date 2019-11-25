@@ -162,7 +162,7 @@ class Admin_Upgrade {
 			historie varchar(2000),
 			klant tinytext,
 			mutatie_datum datetime,
-			referentie varchar(20),
+			referentie varchar(20) NOT NULL,
 			regels varchar(2000),
 			opmerking varchar(200),
 			PRIMARY KEY  (id)
