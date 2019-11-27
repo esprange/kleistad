@@ -26,7 +26,6 @@ namespace Kleistad;
  * @property int    herstart_datum
  * @property int    driemaand_datum
  * @property int    reguliere_datum
- * @property int    incasso_datum
  * @property bool   gepauzeerd
  * @property bool   overbrugging_email
  * @property string subscriptie_id
@@ -53,7 +52,6 @@ class Abonnement extends Artikel {
 		'pauze_datum'        => '',
 		'eind_datum'         => '',
 		'herstart_datum'     => '',
-		'incasso_datum'      => '',
 		'gepauzeerd'         => 0,
 		'overbrugging_email' => 0,
 		'subscriptie_id'     => '',
@@ -90,8 +88,6 @@ class Abonnement extends Artikel {
 				return strtotime( $this->data[ $attribuut ] );
 			case 'driemaand_datum':
 				return mktime( 0, 0, 0, $start['mon'] + 3, $start['mday'], $start['year'] );
-			case 'incasso_datum':
-				return ( '' === $this->data[ $attribuut ] ) ? mktime( 0, 0, 0, $start['mon'] + 4, 1, $start['year'] ) : strtotime( $this->data[ $attribuut ] );
 			case 'reguliere_datum':
 				return mktime( 0, 0, 0, $start['mon'] + 4, 1, $start['year'] );
 			case 'geannuleerd':
@@ -120,7 +116,6 @@ class Abonnement extends Artikel {
 			case 'pauze_datum':
 			case 'eind_datum':
 			case 'herstart_datum':
-			case 'incasso_datum':
 				$this->data[ $attribuut ] = is_null( $waarde ) ? 0 : date( 'Y-m-d', $waarde );
 				break;
 			case 'geannuleerd':
@@ -162,11 +157,10 @@ class Abonnement extends Artikel {
 	public function betaalwijze( $wijzig_datum, $betaalwijze, $admin = false ) {
 		$betalen              = new \Kleistad\Betalen();
 		$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id ); // Verwijder een eventuele bestaande subscriptie.
+		$this->save();
 
 		if ( 'ideal' === $betaalwijze ) {
 			// Doe een proefbetaling om het mandaat te verkrijgen. De wijzig datum is de 1e van de volgende maand.
-			$this->incasso_datum = $wijzig_datum;
-			$this->save();
 			return $betalen->order(
 				$this->klant_id,
 				__CLASS__ . "-{$this->code}-betaalwijze_ideal",
@@ -177,8 +171,6 @@ class Abonnement extends Artikel {
 			);
 		} else {
 			$betalen->verwijder_mandaat( $this->klant_id );
-			$this->subscriptie_id = '';
-			$this->save();
 			if ( ! $admin ) {
 				$this->email( '_betaalwijze_bank' );
 			}
@@ -273,7 +265,7 @@ class Abonnement extends Artikel {
 		$this->herstart_datum = $herstart_datum;
 		$betalen              = new \Kleistad\Betalen();
 		if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
-			$this->subscriptie_id = $this->herhaalbetalen( $herstart_datum );
+			$this->herhaalbetalen();
 		}
 		$this->save();
 		if ( ! $admin ) {
@@ -316,7 +308,7 @@ class Abonnement extends Artikel {
 		$betalen              = new \Kleistad\Betalen();
 		$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id );
 		if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
-			$this->subscriptie_id = $this->herhaalbetalen( $herstart_datum );
+			$this->subscriptie_id = $this->herhaalbetalen();
 		}
 		$this->save();
 		if ( ! $admin ) {
@@ -405,14 +397,12 @@ class Abonnement extends Artikel {
 				$bericht = '';
 		}
 		if ( ! $ongewijzigd ) {
-			$this->save();
 			$betalen              = new \Kleistad\Betalen();
 			$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id );
 			if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
-				$this->subscriptie_id = $this->herhaalbetalen(
-					( $wijzig_datum >= $this->pauze_datum && $wijzig_datum <= $this->herstart_datum ) ? $this->herstart_datum : $wijzig_datum
-				);
+				$this->herhaalbetalen();
 			}
+			$this->save();
 			$this->email( '_gewijzigd', $bericht );
 		}
 		return true;
@@ -556,16 +546,18 @@ class Abonnement extends Artikel {
 
 	/**
 	 * Start automatisch betalen per incasso datum.
-	 *
-	 * @param int $datum Datum waarop abonnement incasso gestart moet worden.
 	 */
-	private function herhaalbetalen( $datum ) {
-		$betalen = new \Kleistad\Betalen();
-		return $betalen->herhaalorder(
+	private function herhaalbetalen() {
+		$incasso_datum = strtotime( 'first day of next month 00:00' );
+		if ( $this->gepauzeerd || $this->pauze_datum === $incasso_datum ) {
+			$incasso_datum = $this->herstart_datum;
+		}
+		$betalen              = new \Kleistad\Betalen();
+		$this->subscriptie_id = $betalen->herhaalorder(
 			$this->klant_id,
 			$this->bedrag( 'regulier' ),
 			"Kleistad abonnement {$this->code}",
-			$datum
+			$incasso_datum
 		);
 	}
 
@@ -582,8 +574,7 @@ class Abonnement extends Artikel {
 		if ( $betaald ) {
 			switch ( $parameters[1] ) {
 				case 'betaalwijze_ideal':
-					// Een succesvolle betaling van een overbrugging.
-					$abonnement->subscriptie_id = $abonnement->herhaalbetalen( max( $abonnement->herstart_datum, $abonnement->incasso_datum ) );
+					$abonnement->herhaalbetalen();
 					$abonnement->save();
 					$abonnement->email( '_betaalwijze_ideal' );
 					break;

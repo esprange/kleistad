@@ -56,6 +56,7 @@ class Kleistad {
 		$this->define_admin_hooks();
 		$this->define_common_hooks();
 		$this->define_public_hooks();
+		$this->register_artikelen();
 	}
 
 	/**
@@ -130,6 +131,52 @@ class Kleistad {
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
+	}
+
+	/**
+	 * Registreer de artikelen voor later gebruik.
+	 */
+	private function register_artikelen() {
+		\Kleistad\Artikel::register(
+			'A',
+			[
+				'naam'   => 'abonnement',
+				'class'  => '\Kleistad\Abonnement',
+				'pcount' => 1,
+			]
+		);
+		\Kleistad\Artikel::register(
+			'C',
+			[
+				'naam'   => 'cursus',
+				'class'  => '\Kleistad\Inschrijving',
+				'pcount' => 2,
+			]
+		);
+		\Kleistad\Artikel::register(
+			'K',
+			[
+				'naam'   => 'dagdelenkaart',
+				'class'  => '\Kleistad\Dagdelenkaart',
+				'pcount' => 1,
+			]
+		);
+		\Kleistad\Artikel::register(
+			'S',
+			[
+				'naam'   => 'stooksaldo',
+				'class'  => '\Kleistad\Saldo',
+				'pcount' => 1,
+			]
+		);
+		\Kleistad\Artikel::register(
+			'W',
+			[
+				'naam'   => 'workshop',
+				'class'  => '\Kleistad\Workshop',
+				'pcount' => 1,
+			]
+		);
 	}
 
 	/**

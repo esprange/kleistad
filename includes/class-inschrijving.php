@@ -76,10 +76,10 @@ class Inschrijving extends Artikel {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $klant_id wp user id van de cursist.
 	 * @param int $cursus_id id van de cursus.
+	 * @param int $klant_id wp user id van de cursist.
 	 */
-	public function __construct( $klant_id, $cursus_id ) {
+	public function __construct( $cursus_id, $klant_id ) {
 		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
 		$this->klant_id              = $klant_id;
 		$this->default_data['code']  = "C$cursus_id-$klant_id";
@@ -372,7 +372,7 @@ class Inschrijving extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$meetdag = strtotime( '+7 days' );
+		$meetdag = strtotime( '+7 days 00:00' );
 		if ( 0 < $this->lopende_cursus ) {
 			return [
 				array_merge(
@@ -503,7 +503,7 @@ class Inschrijving extends Artikel {
 				if ( is_array( $inschrijvingen ) ) {
 					krsort( $inschrijvingen );
 					foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
-						$arr[ $cursist->ID ][ $cursus_id ] = new \Kleistad\Inschrijving( $cursist->ID, $cursus_id );
+						$arr[ $cursist->ID ][ $cursus_id ] = new \Kleistad\Inschrijving( $cursus_id, $cursist->ID );
 						$arr[ $cursist->ID ][ $cursus_id ]->load( $inschrijving );
 					}
 				}

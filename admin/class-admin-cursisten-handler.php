@@ -60,7 +60,7 @@ class Admin_Cursisten_Handler {
 			$parameters                = explode( '-', substr( $code, 1 ) );
 			$cursus_id                 = intval( $parameters[0] );
 			$cursist_id                = intval( $parameters[1] );
-			$inschrijving              = new \Kleistad\Inschrijving( $cursist_id, $cursus_id );
+			$inschrijving              = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
 			$inschrijving->i_betaald   = ( 0 !== intval( $item['i_betaald'] ) );
 			$inschrijving->c_betaald   = ( 0 !== intval( $item['c_betaald'] ) );
 			$inschrijving->geannuleerd = ( 0 !== intval( $item['geannuleerd'] ) );
@@ -80,7 +80,7 @@ class Admin_Cursisten_Handler {
 				$cursus_id    = intval( $parameters[0] );
 				$cursist_id   = intval( $parameters[1] );
 				$cursist      = get_userdata( $cursist_id );
-				$inschrijving = new \Kleistad\Inschrijving( $cursist_id, $cursus_id );
+				$inschrijving = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
 				$cursus       = new \Kleistad\Cursus( $cursus_id );
 				$item         = [
 					'id'          => $code,

@@ -27,7 +27,7 @@ class Public_Omzet_Rapportage extends Shortcode {
 	 */
 	protected function prepare( &$data ) {
 		if ( empty( $data['id'] ) ) {
-			$data['periode'] = strtotime( 'first day of last month' );
+			$data['periode'] = strtotime( 'first day of last month 00:00' );
 			$data['jaar']    = date( 'Y', $data['periode'] );
 			$data['maand']   = date( 'm', $data['periode'] );
 		} else {

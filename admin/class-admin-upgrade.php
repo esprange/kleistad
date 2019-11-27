@@ -240,7 +240,8 @@ class Admin_Upgrade {
 					continue;
 				}
 				$inschrijving->bestel_order();
-				$betaald = intval( $inschrijving->i_betaald ) * (float) $cursussen[ $cursus_id ]->inschrijfkosten + intval( $inschrijving->c_betaald ) * (float) $cursussen[ $cursus_id ]->cursuskosten;
+				$betaald = $inschrijving->aantal *
+					( intval( $inschrijving->i_betaald ) * (float) $cursussen[ $cursus_id ]->inschrijfkosten + intval( $inschrijving->c_betaald ) * (float) $cursussen[ $cursus_id ]->cursuskosten );
 				if ( 0 < $betaald ) {
 					$order_id = \Kleistad\Order::zoek_order( $inschrijving->code() );
 					$inschrijving->ontvang_order( $order_id, $betaald );

@@ -387,7 +387,7 @@ class Workshop extends Artikel {
 				$workshop->betaald ||
 				$workshop->vervallen ||
 				$workshop->betaling_email ||
-				strtotime( '+7 days' ) < $workshop->datum
+				strtotime( '+7 days 00:00' ) < $workshop->datum
 				) {
 				continue;
 			}

@@ -73,7 +73,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		} elseif ( 'indelen' === $data['actie'] ) {
 			list( $cursist_id, $cursus_id ) = array_map( 'intval', explode( '-', $data['id'] ) );
 			$cursus                         = new \Kleistad\Cursus( $cursus_id );
-			$inschrijving                   = new \Kleistad\Inschrijving( $cursist_id, $cursus_id );
+			$inschrijving                   = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
 			$cursist                        = get_userdata( $cursist_id );
 			$lopend                         = $cursus->lopend( $inschrijving->datum );
 			$data['cursus']                 = [
@@ -140,7 +140,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( 'indelen' === $data['form_actie'] ) {
-			$inschrijving                 = new \Kleistad\Inschrijving( $data['input']['cursist_id'], $data['input']['cursus_id'] );
+			$inschrijving                 = new \Kleistad\Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
 			$inschrijving->lopende_cursus = (float) $data['input']['bedrag'];
 			$inschrijving->save();
 			$inschrijving->email( 'inschrijving', $inschrijving->bestel_order() );

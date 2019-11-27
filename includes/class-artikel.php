@@ -35,6 +35,13 @@ abstract class Artikel extends Entity {
 	public $artikel_type = '';
 
 	/**
+	 * De artikelen.
+	 *
+	 * @var array $artikelen De parameters behorende bij de artikelen.
+	 */
+	public static $artikelen = [];
+
+	/**
 	 * Geef de naam van het artikel.
 	 *
 	 * @return string
@@ -255,6 +262,19 @@ abstract class Artikel extends Entity {
 	}
 
 	/**
+	 * Registreer het artikel
+	 *
+	 * @param string $key  De sleutelletter van het artikel.
+	 * @param array  $args De parameters.
+	 */
+	public static function register( $key, $args ) {
+		if ( array_key_exists( $key, self::$artikelen ) ) {
+			return;
+		}
+		self::$artikelen[ $key ] = $args;
+	}
+
+	/**
 	 * Bepaal het Kleistad artikel a.d.h.v. de referentie.
 	 *
 	 * @param string $referentie De artikel referentie.
@@ -262,19 +282,14 @@ abstract class Artikel extends Entity {
 	 */
 	public static function get_artikel( $referentie ) {
 		$parameters = explode( '-', substr( $referentie, 1 ) );
-		switch ( $referentie[0] ) {
-			case 'A':
-				return new \Kleistad\Abonnement( (int) $parameters[0] );
-			case 'C':
-				return new \Kleistad\Inschrijving( (int) $parameters[1], (int) $parameters[0] );
-			case 'K':
-				return new \Kleistad\Dagdelenkaart( (int) $parameters[0] );
-			case 'S':
-				return new \Kleistad\Saldo( (int) $parameters[0] );
-			case 'W':
-				return new \Kleistad\Workshop( (int) $parameters[0] );
-			default:
-				return null;
+		if ( array_key_exists( $referentie[0], self::$artikelen ) ) {
+			$class = self::$artikelen[ $referentie[0] ]['class'];
+			if ( 1 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
+				return new $class( (int) $parameters[0] );
+			} elseif ( 2 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
+				return new $class( (int) $parameters[0], (int) $parameters[1] );
+			}
+			return null;
 		}
 	}
 

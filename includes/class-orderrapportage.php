@@ -27,16 +27,9 @@ class Orderrapportage {
 	 */
 	public static function maandrapportage( $maand, $jaar ) {
 		global $wpdb;
-		$omzet      = [];
-		$omzetnamen = [
-			'A' => 'abonnement',
-			'C' => 'cursus',
-			'K' => 'dagdelenkaart',
-			'S' => 'stook',
-			'W' => 'workshop',
-		];
-		foreach ( array_keys( $omzetnamen ) as $key ) {
-			$omzet[ $omzetnamen[ $key ] ] = [
+		$omzet = [];
+		foreach ( \Kleistad\Artikel::$artikelen as $artikel ) {
+			$omzet[ $artikel['naam'] ] = [
 				'netto' => 0.0,
 				'btw'   => 0.0,
 			];
@@ -46,8 +39,8 @@ class Orderrapportage {
 			$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand ORDER BY datum", ARRAY_A ); // phpcs:ignore
 			foreach ( $order_ids as $order_id ) {
 				$order = new \Kleistad\Order( $order_id );
-				$omzet[ $omzetnamen[ $order->referentie[0] ] ]['netto'] += $order->netto();
-				$omzet[ $omzetnamen[ $order->referentie[0] ] ]['btw']   += $order->btw();
+				$omzet[ \Kleistad\Artikel::$artikelen[ $order->referentie[0] ]['naam'] ]['netto'] += $order->netto();
+				$omzet[ \Kleistad\Artikel::$artikelen[ $order->referentie[0] ]['naam'] ]['btw']   += $order->btw();
 			}
 		}
 		return $omzet;
