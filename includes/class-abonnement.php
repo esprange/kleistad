@@ -308,7 +308,7 @@ class Abonnement extends Artikel {
 		$betalen              = new \Kleistad\Betalen();
 		$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id );
 		if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
-			$this->subscriptie_id = $this->herhaalbetalen();
+			$this->herhaalbetalen();
 		}
 		$this->save();
 		if ( ! $admin ) {
