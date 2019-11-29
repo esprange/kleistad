@@ -16,6 +16,7 @@ namespace Kleistad;
  *
  * @property int    id
  * @property string naam
+ * @property string code
  * @property int    start_datum
  * @property int    eind_datum
  * @property array  lesdatums
