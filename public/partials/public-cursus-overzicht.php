@@ -82,16 +82,16 @@ if ( 'cursisten' === $data['actie'] ) :
 		<div class="kleistad_col_5">
 			<?php echo esc_html( "totaal {$data['cursus']['lessen']} lessen, resterend {$data['cursus']['lessen_rest']}" ); ?>
 			<br/>
-			<strong>advies prijs &euro; <?php echo esc_html( number_format_i18n( $data['cursus']['bedrag'] * $data['cursist']['aantal'], 2 ) ); ?></strong>
+			<strong>advies prijs &euro; <?php echo esc_html( number_format_i18n( $data['cursus']['kosten'] * $data['cursist']['aantal'], 2 ) ); ?></strong>
 		</div>
 	</div>
 	<div class="kleistad_row">
 		<div class="kleistad_col_3">
-			<label for="bedrag">Vastgestelde prijs</label>
+			<label for="kleistad_kosten">Vastgestelde prijs</label>
 		</div>
 		<div class="kleistad_col_5">
-			<input type=number name="bedrag" step="0.01" min="0" max="<?php echo esc_attr( $data['cursus']['max'] * $data['cursist']['aantal'] ); ?>"
-				value="<?php echo esc_attr( number_format( $data['cursus']['bedrag'] * $data['cursist']['aantal'], 2 ) ); ?>" >
+			<input type=number name="kosten" id="kleistad_kosten" step="0.01" min="0" max="<?php echo esc_attr( $data['cursus']['max'] * $data['cursist']['aantal'] ); ?>"
+				value="<?php echo esc_attr( number_format( $data['cursus']['kosten'] * $data['cursist']['aantal'], 2 ) ); ?>" >
 		</div>
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;">

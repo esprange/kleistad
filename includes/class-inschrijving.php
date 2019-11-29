@@ -210,7 +210,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function code() {
+	public function referentie() {
 		return $this->code;
 	}
 
@@ -428,7 +428,7 @@ class Inschrijving extends Artikel {
 	 */
 	public static function callback( $parameters, $bedrag, $betaald ) {
 		if ( $betaald ) {
-			$inschrijving = new static( intval( $parameters[1] ), intval( $parameters[0] ) );
+			$inschrijving = new static( intval( $parameters[0] ), intval( $parameters[1] ) );
 
 			switch ( $parameters[2] ) {
 				case 'inschrijving':

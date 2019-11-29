@@ -142,8 +142,12 @@ class Abonnement extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function code() {
-		return $this->code;
+	public function referentie() {
+		if ( 'regulier' === $this->artikel_type ) {
+			return "$this->code-" . date( 'Ym' );
+		} else {
+			return "$this->code-$this->artikel_type";
+		}
 	}
 
 	/**

@@ -140,7 +140,7 @@ class Saldo extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function code() {
+	public function referentie() {
 		return $this->code;
 	}
 

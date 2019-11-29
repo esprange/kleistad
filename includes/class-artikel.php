@@ -70,7 +70,7 @@ abstract class Artikel extends Entity {
 	 *
 	 * @return string De referentie.
 	 */
-	abstract public function code();
+	abstract public function referentie();
 
 	/**
 	 * Dagelijks uit te voeren handelingen, in te vullen door het artikel.
@@ -156,14 +156,15 @@ abstract class Artikel extends Entity {
 	 * @return string De url van de factuur.
 	 */
 	final public function bestel_order( $bedrag = 0.0, $artikel_type = '', $opmerking = '' ) {
+		$order_id           = \Kleistad\Order::zoek_order( $this->referentie() );
 		$this->artikel_type = $artikel_type;
-		$order              = new \Kleistad\Order();
+		$order              = new \Kleistad\Order( $order_id );
 		$order->betaald     = $bedrag;
 		$order->regels      = $this->factuurregels();
-		$order->historie    = 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
+		$order->historie    = ( $order_id ? 'factuur opnieuw ' : 'order en factuur ' ) . 'aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
 		$order->klant       = $this->naw_klant();
 		$order->opmerking   = $opmerking;
-		$order->referentie  = $this->code();
+		$order->referentie  = $this->referentie();
 		$order->save();
 		return $this->maak_factuur( $order, '' );
 	}
@@ -230,14 +231,10 @@ abstract class Artikel extends Entity {
 	 *
 	 * @since  6.1.0
 	 *
-	 * @param  int $order_id Het id van de order.
 	 * @return string Hash string.
 	 */
-	final public function controle( $order_id = 0 ) {
-		if ( ! $order_id ) {
-			$order_id = \Kleistad\Order::zoek_order( $this->code() );
-		}
-		return hash( 'sha256', "KlEiStAd{$order_id}cOnTrOlE3812LE" );
+	final public function controle() {
+		return hash( 'sha256', "KlEiStAd{$this->code}cOnTrOlE3812LE" );
 	}
 
 	/**
@@ -301,7 +298,7 @@ abstract class Artikel extends Entity {
 	protected function betaal_link() {
 		$url = add_query_arg(
 			[
-				'order' => \Kleistad\Order::zoek_order( $this->code() ),
+				'order' => \Kleistad\Order::zoek_order( $this->referentie() ),
 				'hsh'   => $this->controle(),
 				'art'   => $this->artikel_type,
 			],
@@ -358,16 +355,7 @@ abstract class Artikel extends Entity {
 			return '';
 		}
 		$factuur = new \Kleistad\Factuur();
-		return $factuur->run(
-			$order->factuurnr(),
-			$order->klant,
-			$order->referentie,
-			$order->regels,
-			$order->betaald,
-			$order->opmerking,
-			$type,
-			$order->te_betalen()
-		);
+		return $factuur->run( $order, $type );
 	}
 
 }

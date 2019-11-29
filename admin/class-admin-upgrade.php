@@ -236,19 +236,24 @@ class Admin_Upgrade {
 		$cursussen      = \Kleistad\Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen || \Kleistad\Order::zoek_order( $inschrijving->code() ) ) {
+				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen || \Kleistad\Order::zoek_order( $inschrijving->referentie() ) ) {
 					continue;
 				}
 				$inschrijving->bestel_order();
 				$betaald = $inschrijving->aantal *
 					( intval( $inschrijving->i_betaald ) * (float) $cursussen[ $cursus_id ]->inschrijfkosten + intval( $inschrijving->c_betaald ) * (float) $cursussen[ $cursus_id ]->cursuskosten );
 				if ( 0 < $betaald ) {
-					$order_id = \Kleistad\Order::zoek_order( $inschrijving->code() );
+					$order_id = \Kleistad\Order::zoek_order( $inschrijving->referentie() );
 					$inschrijving->ontvang_order( $order_id, $betaald );
 				}
 			}
 		}
 
+		$upload_dir  = wp_get_upload_dir();
+		$factuur_dir = sprintf( '%s/facturen', $upload_dir['basedir'] );
+		if ( ! is_dir( $factuur_dir ) ) {
+			mkdir( $factuur_dir, 0644, true );
+		}
 		/**
 		 * Nog te controleren:
 		 *    Zijn er al facturen verstuurd voor workshops die nog buiten het '7 dagen' venster liggen ? Die krijgen namelijk een nieuwe factuur.

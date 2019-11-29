@@ -188,14 +188,14 @@ class Cursus extends Entity {
 	}
 
 	/**
-	 * Bereken het bedrag van een lopende cursus.
+	 * Bereken de kosten van een lopende cursus.
 	 *
 	 * @param int $vanafdatum De datum vanaf dat de les gevolgd gaat worden.
-	 * @return array Het bedrag en het aantal resterende lessen.
+	 * @return array De advies kosten en het aantal resterende lessen.
 	 */
 	public function lopend( $vanafdatum ) {
 		$aantal_lessen           = count( $this->lesdatums );
-		$totaal_bedrag           = $this->inschrijfkosten + $this->cursuskosten;
+		$totaal_kosten           = $this->inschrijfkosten + $this->cursuskosten;
 		$aantal_lessen_resterend = 0;
 		foreach ( $this->lesdatums as $lesdatum ) {
 			if ( $lesdatum >= $vanafdatum ) {
@@ -205,7 +205,7 @@ class Cursus extends Entity {
 		return [
 			'lessen'      => $aantal_lessen,
 			'lessen_rest' => $aantal_lessen_resterend,
-			'bedrag'      => round( $totaal_bedrag * $aantal_lessen_resterend / $aantal_lessen * 2 ) / 2,
+			'kosten'      => round( $totaal_kosten * $aantal_lessen_resterend / $aantal_lessen * 2 ) / 2,
 		];
 	}
 

@@ -80,7 +80,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'id'          => $cursus_id,
 				'lessen'      => $lopend['lessen'],
 				'lessen_rest' => $lopend['lessen_rest'],
-				'bedrag'      => $lopend['bedrag'],
+				'kosten'      => $lopend['kosten'],
 				'max'         => $cursus->inschrijfkosten + $cursus->cursuskosten,
 			];
 			$data['cursist']                = [
@@ -124,7 +124,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			[
 				'cursist_id' => FILTER_SANITIZE_NUMBER_INT,
 				'cursus_id'  => FILTER_SANITIZE_NUMBER_INT,
-				'bedrag'     => FILTER_SANITIZE_NUMBER_FLOAT,
+				'kosten'     => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
 			]
 		);
 		return true;
@@ -141,7 +144,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	protected function save( $data ) {
 		if ( 'indelen' === $data['form_actie'] ) {
 			$inschrijving                 = new \Kleistad\Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
-			$inschrijving->lopende_cursus = (float) $data['input']['bedrag'];
+			$inschrijving->lopende_cursus = (float) $data['input']['kosten'];
 			$inschrijving->save();
 			$inschrijving->email( 'inschrijving', $inschrijving->bestel_order() );
 			return [

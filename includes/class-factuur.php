@@ -59,16 +59,17 @@ class Factuur extends \FPDF {
 	 * Toon het info veld over factuurnr, datum en Kleistad info.
 	 *
 	 * @param string $factuurnr  Het nummer van de factuur.
+	 * @param int    $datum      De factuur datum.
 	 * @param string $referentie De referentie.
 	 */
-	private function info( $factuurnr, $referentie ) {
+	private function info( $factuurnr, $datum, $referentie ) {
 		$h = 6;
 		$this->setY( 65 );
 		$this->SetRightMargin( 75 );
 		$this->setFont( 'Arial', 'B', 10 );
 		$this->Cell( 0, $h, 'Factuurdatum', 0, 1, 'R' );
 		$this->setFont( 'Arial' );
-		$this->Cell( 0, $h, strftime( '%d-%m-%Y' ), 0, 1, 'R' );
+		$this->Cell( 0, $h, strftime( '%d-%m-%Y', $datum ), 0, 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
 		$this->Cell( 0, $h, 'Factuurnummer', 0, 1, 'R' );
 		$this->setFont( 'Arial' );
@@ -164,24 +165,15 @@ class Factuur extends \FPDF {
 	/**
 	 * Maak de factuur aan.
 	 *
-	 * @param string $factuurnr      Het factuur nummer.
-	 * @param array  $klant          De klant.
-	 * @param string $referentie     De referentie.
-	 * @param array  $regels         De factuur regels.
-	 * @param float  $betaald        Wat er al betaald is.
-	 * @param string $opmerking      De eventuele opmerking op de factuur.
-	 * @param string $type           Het type factuur: gewoon, correctie of credit.
-	 * @param float  $nog_te_betalen Het nog te betalen bedrag bij een credit factuur.
+	 * @param \Kleistad\Order $order De order.
+	 * @param string          $type  Het type factuur: gewoon, correctie of credit.
 	 * @return string Pad naar de factuur.
 	 */
-	public function run( $factuurnr, $klant, $referentie, $regels, $betaald, $opmerking, $type, $nog_te_betalen ) {
-		$upload_dir  = wp_get_upload_dir();
-		$factuur_dir = sprintf( '%s/facturen', $upload_dir['basedir'] );
-		if ( ! is_dir( $factuur_dir ) ) {
-			mkdir( $factuur_dir, 0644, true );
-		}
-		$file   = sprintf( '%s/%s-%s', $factuur_dir, empty( $type ) ? 'factuur' : 'creditfactuur', $factuurnr );
-		$versie = '';
+	public function run( $order, $type ) {
+		$factuurnr  = $order->factuurnr();
+		$upload_dir = wp_get_upload_dir();
+		$file       = sprintf( '%s/facturen/%s-%s', $upload_dir['basedir'], empty( $type ) ? 'factuur' : 'creditfactuur', $factuurnr );
+		$versie     = '';
 		if ( file_exists( "$file.pdf" ) ) {
 			$versie = 0;
 			do {
@@ -195,10 +187,10 @@ class Factuur extends \FPDF {
 		$this->SetAuthor( 'Kleistad' );
 		$this->SetTitle( ucwords( $type ) . " Factuur $factuurnr.$versie" );
 		$this->start( strtoupper( $type ) . ' FACTUUR' );
-		$this->klant( $klant );
-		$this->info( $factuurnr, $referentie );
-		$this->order( $regels, $betaald, $nog_te_betalen );
-		$this->opmerking( $opmerking );
+		$this->klant( $order->klant );
+		$this->info( $factuurnr, $order->datum, $order->referentie );
+		$this->order( $order->regels, $order->betaald, $order->te_betalen() );
+		$this->opmerking( $order->opmerking );
 		$this->Output( 'F', $file );
 		return $file;
 	}
