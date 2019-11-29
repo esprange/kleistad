@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 36;
+	const DBVERSIE = 37;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -175,16 +175,9 @@ class Admin_Upgrade {
 	}
 
 	/**
-	 * Converteer data
+	 * Verwijder alle cron jobs van Kleistad, behalve de dagelijkse cron job.
 	 */
-	private function convert_data() {
-		/**
-		 * Conversie naar 6.1.0
-		 */
-
-		/**
-		 * Verwijder alle cron jobs van Kleistad, behalve de dagelijkse cron job.
-		 */
+	private function convert_jobs() {
 		$cron_jobs = get_option( 'cron' );
 		foreach ( $cron_jobs as $time => $cron_job ) {
 			if ( is_array( $cron_job ) ) {
@@ -197,10 +190,12 @@ class Admin_Upgrade {
 				}
 			}
 		}
+	}
 
-		/**
-		 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
-		 */
+	/**
+	 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
+	 */
+	private function convert_saldo() {
 		$saldo_users = get_users( [ 'meta_key' => 'stooksaldo' ] );
 		foreach ( $saldo_users as $saldo_user ) {
 			$huidig_saldo  = get_user_meta( $saldo_user->ID, 'stooksaldo', true );
@@ -209,10 +204,12 @@ class Admin_Upgrade {
 			$saldo->save();
 			delete_user_meta( $saldo_user->ID, 'stooksaldo' );
 		}
+	}
 
-		/**
-		 * Convert dagdelenkaart, er wordt gecontroleerd of er een enkel record bestaat.
-		 */
+	/**
+	 * Convert dagdelenkaart, er wordt gecontroleerd of er een enkel record bestaat.
+	 */
+	private function convert_dagdelenkaart() {
 		$dagdelenkaart_users = get_users( [ 'meta_key' => \Kleistad\Dagdelenkaart::META_KEY ] );
 		foreach ( $dagdelenkaart_users as $dagdelenkaart_user ) {
 			$huidig_dagdelenkaart = get_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, true );
@@ -221,7 +218,12 @@ class Admin_Upgrade {
 				update_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, $dagdelenkaart );
 			}
 		}
+	}
 
+	/**
+	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
+	 */
+	private function convert_abonnement() {
 		$vandaag          = strtotime( 'today' );
 		$abonnement_users = get_users( [ 'meta_key' => \Kleistad\Abonnement::META_KEY ] );
 		foreach ( $abonnement_users as $abonnement_user ) {
@@ -231,7 +233,12 @@ class Admin_Upgrade {
 			}
 			$abonnement->save();
 		}
+	}
 
+	/**
+	 * Converteer inschrijving, maak de orders aan.
+	 */
+	private function convert_inschrijving() {
 		$inschrijvingen = \Kleistad\Inschrijving::all();
 		$cursussen      = \Kleistad\Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
@@ -249,6 +256,24 @@ class Admin_Upgrade {
 			}
 		}
 
+	}
+
+	/**
+	 * Converteer data
+	 */
+	private function convert_data() {
+		/**
+		 * Conversie naar 6.1.0
+		 */
+		$this->convert_jobs();
+		$this->convert_saldo();
+		$this->convert_dagdelenkaart();
+		$this->convert_abonnement();
+		$this->convert_inschrijving();
+
+		/**
+		 * Maak facturen dir aan.
+		 */
 		$upload_dir  = wp_get_upload_dir();
 		$factuur_dir = sprintf( '%s/facturen', $upload_dir['basedir'] );
 		if ( ! is_dir( $factuur_dir ) ) {
