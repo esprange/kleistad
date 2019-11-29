@@ -292,6 +292,9 @@ class Admin_Main {
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
+		if ( is_string( filter_input( INPUT_GET, 'dagelijks' ) ) ) {
+			self::daily_jobs();
+		}
 		add_meta_box( 'kleistad_instellingen_form_meta_box', 'Instellingen', [ $this, 'instellingen_form_meta_box_handler' ], 'instellingen', 'normal', 'default' );
 		add_meta_box( 'kleistad_google_connect_meta_box', 'Connect Google Kalender', [ $this, 'google_connect_meta_box_handler' ], 'google_connect', 'normal', 'default' );
 		add_meta_box( 'kleistad_shortcodes_meta_box', 'Gebruik van de plugin', [ $this, 'shortcodes_meta_box_handler' ], 'shortcodes', 'normal', 'default' );
