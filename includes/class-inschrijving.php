@@ -16,8 +16,6 @@ namespace Kleistad;
  *
  * @since 4.0.87
  *
- * @property string code
- * @property int    datum
  * @property array  technieken
  * @property bool   i_betaald
  * @property bool   c_betaald

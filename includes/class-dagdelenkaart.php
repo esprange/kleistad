@@ -14,8 +14,6 @@ namespace Kleistad;
 /**
  * Kleistad dagdelenkaart.
  *
- * @property string code
- * @property int    datum
  * @property int    start_datum
  * @property string opmerking
  */

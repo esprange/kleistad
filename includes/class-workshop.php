@@ -18,7 +18,6 @@ namespace Kleistad;
  *
  * @property int    id
  * @property string naam
- * @property int    datum
  * @property int    start_tijd
  * @property int    eind_tijd
  * @property string docent
@@ -36,7 +35,6 @@ namespace Kleistad;
  * @property bool   betaling_email
  * @property string event_id
  * @property int    aanvraag_id
- * @property string code
  */
 class Workshop extends Artikel {
 

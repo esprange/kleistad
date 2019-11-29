@@ -34,7 +34,6 @@ namespace Kleistad;
  * @property bool   meer
  * @property bool   tonen
  * @property string event_id
- * @property string code
  */
 class Cursus extends Entity {
 

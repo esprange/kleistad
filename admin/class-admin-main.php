@@ -89,9 +89,9 @@ class Admin_Main {
 	 *
 	 * @since   6.1.0
 	 * @access  private
-	 * @var     object   $background Het background object.
+	 * @var     object $background Het background object.
 	 */
-	private static $background;
+	private $background;
 
 	/**
 	 * Initializeer het object.
@@ -249,8 +249,8 @@ class Admin_Main {
 	 * Bereid het background proces voor.
 	 */
 	public function instantiate_background() {
-		if ( is_null( self::$background ) ) {
-			self::$background = new \Kleistad\Background();
+		if ( is_null( $this->background ) ) {
+			$this->background = new \Kleistad\Background();
 		}
 	}
 
@@ -258,11 +258,11 @@ class Admin_Main {
 	 * Doe de dagelijkse jobs
 	 */
 	public function daily_jobs() {
-		self::$background->push_to_queue( '\Kleistad\Shortcode::cleanup_downloads' );
-		self::$background->push_to_queue( '\Kleistad\Workshop::dagelijks' );
-		self::$background->push_to_queue( '\Kleistad\Abonnement::dagelijks' );
-		self::$background->push_to_queue( '\Kleistad\Saldo::dagelijks' );
-		self::$background->save()->dispatch();
+		$this->background->push_to_queue( '\Kleistad\Shortcode::cleanup_downloads' );
+		$this->background->push_to_queue( '\Kleistad\Workshop::dagelijks' );
+		$this->background->push_to_queue( '\Kleistad\Abonnement::dagelijks' );
+		$this->background->push_to_queue( '\Kleistad\Saldo::dagelijks' );
+		$this->background->save()->dispatch();
 	}
 
 	/**
@@ -293,7 +293,7 @@ class Admin_Main {
 	 */
 	public function display_settings_page() {
 		if ( is_string( filter_input( INPUT_GET, 'dagelijks' ) ) ) {
-			self::daily_jobs();
+			$this->daily_jobs();
 		}
 		add_meta_box( 'kleistad_instellingen_form_meta_box', 'Instellingen', [ $this, 'instellingen_form_meta_box_handler' ], 'instellingen', 'normal', 'default' );
 		add_meta_box( 'kleistad_google_connect_meta_box', 'Connect Google Kalender', [ $this, 'google_connect_meta_box_handler' ], 'google_connect', 'normal', 'default' );

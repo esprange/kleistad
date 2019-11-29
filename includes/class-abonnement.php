@@ -14,8 +14,6 @@ namespace Kleistad;
 /**
  * Class abonnement, alle acties voor het aanmaken en beheren van abonnementen
  *
- * @property string code
- * @property int    datum
  * @property int    start_datum
  * @property string dag
  * @property bool   geannuleerd
@@ -138,7 +136,7 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Geef de code terug.
+	 * Geef de referentie terug.
 	 *
 	 * @return string
 	 */
