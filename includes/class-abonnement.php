@@ -66,6 +66,7 @@ class Abonnement extends Artikel {
 	 */
 	public function __construct( $klant_id ) {
 		$this->klant_id              = $klant_id;
+		$this->betalen               = new \Kleistad\Betalen();
 		$this->default_data['code']  = "A$klant_id";
 		$this->default_data['datum'] = date( 'Y-m-d' );
 		$abonnement                  = get_user_meta( $this->klant_id, self::META_KEY, true );
@@ -160,13 +161,11 @@ class Abonnement extends Artikel {
 	 * @return string|bool De redirect url ingeval van een ideal betaling.
 	 */
 	public function betaalwijze( $wijzig_datum, $betaalwijze, $admin = false ) {
-		$betalen              = new \Kleistad\Betalen();
-		$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id ); // Verwijder een eventuele bestaande subscriptie.
-		$this->save();
+		$this->stop_incasso();
 
 		if ( 'ideal' === $betaalwijze ) {
 			// Doe een proefbetaling om het mandaat te verkrijgen. De wijzig datum is de 1e van de volgende maand.
-			return $betalen->order(
+			return $this->betalen->order(
 				$this->klant_id,
 				__CLASS__ . "-{$this->code}-betaalwijze_ideal",
 				0.01,
@@ -175,7 +174,7 @@ class Abonnement extends Artikel {
 				true
 			);
 		} else {
-			$betalen->verwijder_mandaat( $this->klant_id );
+			$this->betalen->verwijder_mandaat( $this->klant_id );
 			if ( ! $admin ) {
 				$this->email( '_betaalwijze_bank' );
 			}
@@ -190,7 +189,6 @@ class Abonnement extends Artikel {
 	 * @return string|bool De redirect url of het is fout gegaan.
 	 */
 	public function betalen( $bericht ) {
-		$betalen = new \Kleistad\Betalen();
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf      = strftime( '%d-%m-%Y', $this->start_datum );
@@ -208,7 +206,7 @@ class Abonnement extends Artikel {
 				$vermelding = '';
 				$mandaat    = false;
 		}
-		return $betalen->order(
+		return $this->betalen->order(
 			$this->klant_id,
 			__CLASS__ . "-{$this->code}-{$this->artikel_type}",
 			$this->bedrag( "#{$this->artikel_type}" ),
@@ -291,10 +289,8 @@ class Abonnement extends Artikel {
 
 		// Als het abonnement in de komende maand stopt dan kan een incasso gestopt worden.
 		if ( $this->pauze_datum <= strtotime( 'last day of next month 00:00' ) ) {
-			$betalen              = new \Kleistad\Betalen();
-			$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id );
+			$this->stop_incasso();
 		}
-		$this->save();
 		if ( ! $admin ) {
 			$this->email( '_gewijzigd', 'Je pauzeert het abonnement per ' . strftime( '%d-%m-%Y', $this->pauze_datum ) . ' en hervat het per ' . strftime( '%d-%m-%Y', $this->herstart_datum ) );
 		}
@@ -338,10 +334,9 @@ class Abonnement extends Artikel {
 	 * @param bool $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function stoppen( $eind_datum, $admin = false ) {
-		$this->eind_datum     = $eind_datum;
-		$betalen              = new \Kleistad\Betalen();
-		$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id ); // Verwijder een eventuele bestaande subscriptie.
-		$betalen->verwijder_mandaat( $this->klant_id );
+		$this->eind_datum = $eind_datum;
+		$this->stop_incasso();
+		$this->betalen->verwijder_mandaat( $this->klant_id );
 		$this->save();
 		if ( ! $admin ) {
 			$this->email(
@@ -381,10 +376,9 @@ class Abonnement extends Artikel {
 				$bericht = '';
 		}
 		if ( ! $ongewijzigd ) {
-			$betalen              = new \Kleistad\Betalen();
-			$this->subscriptie_id = $betalen->annuleer( $this->klant_id, $this->subscriptie_id );
-			if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
-				$this->herhaalbetalen();
+			$this->stop_incasso();
+			if ( $this->betalen->heeft_mandaat( $this->klant_id ) ) {
+				$this->start_incasso();
 			}
 			$this->save();
 			$this->email( '_gewijzigd', $bericht );
@@ -541,11 +535,18 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Start automatisch betalen per incasso datum.
+	 * Stop automatisch betalen per incasso.
 	 */
-	private function herhaalbetalen() {
-		$betalen              = new \Kleistad\Betalen();
-		$this->subscriptie_id = $betalen->herhaalorder(
+	private function stop_incasso() {
+		$this->subscriptie_id = $this->betalen->annuleer( $this->klant_id, $this->subscriptie_id );
+		save();
+	}
+
+	/**
+	 * Start automatisch betalen per incasso.
+	 */
+	private function start_incasso() {
+		$this->subscriptie_id = $this->betalen->herhaalorder(
 			$this->klant_id,
 			$this->bedrag( '#regulier' ),
 			"Kleistad abonnement {$this->code}",
@@ -566,7 +567,7 @@ class Abonnement extends Artikel {
 		if ( $betaald ) {
 			switch ( $parameters[1] ) {
 				case 'betaalwijze_ideal':
-					$abonnement->herhaalbetalen();
+					$abonnement->start_incasso();
 					$abonnement->save();
 					$abonnement->email( '_betaalwijze_ideal' );
 					break;
@@ -617,13 +618,13 @@ class Abonnement extends Artikel {
 				$abonnement->gepauzeerd = true;
 				// Als het abonnement na deze maand herstart wordt en er een mandaat is, dan weer de reguliere incasso uitvoeren.
 				if ( $abonnement->herstart_datum <= $volgende_maand && $betalen->heeft_mandaat( $abonnement->klant_id ) && empty( $abonnement->subscriptie_id ) ) {
-					$abonnement->herhaalbetalen();
+					$abonnement->start_incasso();
 				}
 			} else {
 				$abonnement->gepauzeerd = false;
 				// Kijk of het abonnement de komende maand gepauzeerd gaat worden. In dat geval de eventuele reguliere incasso stoppen.
 				if ( $abonnement->pauze_datum >= $volgende_maand && ! empty( $abonnement->subscriptie_id ) ) {
-					$abonnement->subscriptie_id = $betalen->annuleer( $abonnement->klant_id, $abonnement->subscriptie_id );
+					$abonnement->subscriptie_id = $abonnement->stop_incasso();
 				}
 			}
 

@@ -31,6 +31,13 @@ abstract class Artikel extends Entity {
 	protected $klant_id;
 
 	/**
+	 * Het betaal object.
+	 *
+	 * @var \Kleistad\Betalen $betalen
+	 */
+	protected $betalen;
+
+	/**
 	 * Bij artikelen kan aangegeven worden welk type order afgehandeld moet worden.
 	 *
 	 * @var string $artikel_type Bijvoorbeeld bij abonnementen het type start, overbrugging of regulier.

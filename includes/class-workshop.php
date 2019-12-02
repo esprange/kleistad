@@ -51,7 +51,8 @@ class Workshop extends Artikel {
 	 */
 	public function __construct( $workshop_id = null ) {
 		global $wpdb;
-		$options = \Kleistad\Kleistad::get_options();
+		$this->betalen = new \Kleistad\Betalen();
+		$options       = \Kleistad\Kleistad::get_options();
 		if ( is_null( $workshop_id ) ) {
 			$this->data = [
 				'id'             => null,
@@ -182,8 +183,7 @@ class Workshop extends Artikel {
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
 	public function betalen( $bericht ) {
-		$betalen = new \Kleistad\Betalen();
-		return $betalen->order(
+		return $this->betalen->order(
 			[
 				'naam'     => $this->contact,
 				'email'    => $this->email,

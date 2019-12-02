@@ -62,14 +62,12 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 				'herstart_datum' => FILTER_SANITIZE_STRING,
 				'per_datum'      => FILTER_SANITIZE_NUMBER_INT,
 				'extras'         => [
-					'filter' => FILTER_SANITIZE_STRING,
-					'flags'  => FILTER_REQUIRE_ARRAY,
+					'filter'  => FILTER_SANITIZE_STRING,
+					'flags'   => FILTER_REQUIRE_ARRAY,
+					'options' => [ 'default' => [] ],
 				],
 			]
 		);
-		if ( ! is_array( $data['input']['extras'] ) ) {
-			$data['input']['extras'] = [];
-		};
 
 		if ( 'pauze' === $data['input']['wijziging'] ) {
 			$data['input']['pauze_datum']    = strtotime( $data['input']['pauze_datum'] );
@@ -77,7 +75,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 			if ( $data['input']['pauze_datum'] < strtotime( 'first day of next month 00:00' ) ) {
 				$error->add( 'pauze', 'Het abonnement mag niet eerder dan komende maand gepauzeerd worden' );
 			}
-			if ( $data['input']['herstart_datum'] - strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
+			if ( $data['input']['herstart_datum'] < strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
 				$error->add( 'pauze', 'Het abonnement moet minimaal ' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weken dagen gepauzeerd worden' );
 			}
 			if ( $data['input']['herstart_datum'] > strtotime( '+' . \Kleistad\Abonnement::MAX_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
@@ -100,7 +98,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$abonnement     = new \Kleistad\Abonnement( $data['input']['abonnee_id'] );
+		$abonnement = new \Kleistad\Abonnement( $data['input']['abonnee_id'] );
 		switch ( $data['input']['wijziging'] ) {
 			case 'pauze':
 				$status = $abonnement->pauzeren( $data['input']['pauze_datum'], $data['input']['herstart_datum'] );

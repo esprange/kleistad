@@ -50,6 +50,7 @@ class Dagdelenkaart extends Artikel {
 	 */
 	public function __construct( $klant_id ) {
 		$this->klant_id  = $klant_id;
+		$this->betalen   = new \Kleistad\Betalen();
 		$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->volgnr    = count( /* @scrutinizer ignore-type */ $dagdelenkaarten );
 		$this->data      = wp_parse_args( end( /* @scrutinizer ignore-type */ $dagdelenkaarten ), $this->default_data );
@@ -109,8 +110,7 @@ class Dagdelenkaart extends Artikel {
 	public function betalen( $bericht ) {
 		$options = \Kleistad\Kleistad::get_options();
 
-		$betalen = new \Kleistad\Betalen();
-		return $betalen->order(
+		return $this->betalen->order(
 			$this->klant_id,
 			__CLASS__ . '-' . $this->code,
 			$options['dagdelenkaart'],

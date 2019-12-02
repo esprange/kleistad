@@ -80,6 +80,7 @@ class Inschrijving extends Artikel {
 	public function __construct( $cursus_id, $klant_id ) {
 		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
 		$this->klant_id              = $klant_id;
+		$this->betalen               = new \Kleistad\Betalen();
 		$this->default_data['code']  = "C$cursus_id-$klant_id";
 		$this->default_data['datum'] = date( 'Y-m-d' );
 
@@ -181,11 +182,9 @@ class Inschrijving extends Artikel {
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
 	public function betalen( $bericht ) {
-
-		$betalen    = new \Kleistad\Betalen();
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
 		if ( ! $this->i_betaald && 0 < $this->cursus->inschrijfkosten ) {
-			return $betalen->order(
+			return $this->betalen->order(
 				$this->klant_id,
 				__CLASS__ . '-' . $this->code . '-inschrijving',
 				$this->aantal * $this->cursus->inschrijfkosten,
@@ -193,7 +192,7 @@ class Inschrijving extends Artikel {
 				$bericht
 			);
 		} else {
-			return $betalen->order(
+			return $this->betalen->order(
 				$this->klant_id,
 				__CLASS__ . '-' . $this->code . '-cursus',
 				$this->aantal * $this->cursus->cursuskosten,
