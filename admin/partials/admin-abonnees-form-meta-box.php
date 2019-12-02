@@ -117,18 +117,7 @@ elseif ( 'extras' === $actie ) :
 				<?php submit_button( 'Pauzeren', 'primary', 'submit', true, [ 'id' => 'pauzeren' ] ); ?>
 			</td>
 		</tr>
-			<?php
-		endif;
-		if ( ! $item['geannuleerd'] && $item['gepauzeerd'] ) :
-			?>
-		<tr class="form-field">
-			<td>
-				<?php submit_button( 'Herstarten', 'primary', 'submit', true, [ 'id' => 'herstarten' ] ); ?>
-			</td>
-		</tr>
-			<?php
-		endif
-		?>
+		<?php endif ?>
 		<tr>
 			<th scope="row">
 				&nbsp;

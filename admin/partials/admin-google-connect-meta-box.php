@@ -26,8 +26,6 @@ if ( is_wp_error( $result ) ) {
 	Nadat de koppeling gemaakt is kunnen bestaande workshops en cursussen die nog niet in de kalender zijn opgenomen wel worden toegevoegd.
 	Open daarvoor de cursus of workshop en sla deze op (er hoeven geen parameters gewijzigd te worden).</p>
 	<p>Met onderstaande knop wordt gelinkt naar Google. Zorg dan dat je ingelogd bent op het juiste Google account en geef dan toestemming tot de toegang van Kleistad tot de kalender</p>
-	<p class="submit" >
-		<?php submit_button( 'Google Kalender koppelen', 'primary', 'connect' ); ?>
-	</p>
+	<?php submit_button( 'Google Kalender koppelen', 'primary', 'connect' ); ?>
 	<p>&nbsp;</p>
 </form>

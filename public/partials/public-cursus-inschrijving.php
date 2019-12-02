@@ -123,7 +123,7 @@ else :
 				<label for="kleistad_aantal">Ik kom met </label>
 			</div>
 			<div class="kleistad_col_2">
-				<input class="kleistad_input" name="aantal" id="kleistad_aantal" size="3" value="<?php echo esc_attr( $data['input']['aantal'] ); ?>" />
+				<input class="kleistad_input" type="number" name="aantal" id="kleistad_aantal" value="<?php echo esc_attr( $data['input']['aantal'] ); ?>" />
 			</div>
 			<div class="kleistad_col_2 kleistad_label">
 				<label>deelnemers</label>

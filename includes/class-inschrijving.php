@@ -374,7 +374,7 @@ class Inschrijving extends Artikel {
 		if ( 0 < $this->lopende_cursus ) {
 			return [
 				array_merge(
-					$this->split_bedrag( $this->lopende_cursus ),
+					self::split_bedrag( $this->lopende_cursus ),
 					[
 						'artikel' => "cursus: {$this->cursus->naam} (reeds gestart)",
 						'aantal'  => $this->aantal,
@@ -385,7 +385,7 @@ class Inschrijving extends Artikel {
 			if ( $meetdag <= $this->cursus->start_datum ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten.
 				return [
 					array_merge(
-						$this->split_bedrag( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ),
+						self::split_bedrag( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ),
 						[
 							'artikel' => "cursus: {$this->cursus->naam}",
 							'aantal'  => $this->aantal,
@@ -396,7 +396,7 @@ class Inschrijving extends Artikel {
 				$regels = [];
 				if ( 0 < $this->cursus->inschrijfkosten ) {
 					$regels[] = array_merge(
-						$this->split_bedrag( $this->cursus->inschrijfkosten ),
+						self::split_bedrag( $this->cursus->inschrijfkosten ),
 						[
 							'artikel' => "inschrijfkosten cursus: {$this->cursus->naam}",
 							'aantal'  => $this->aantal,
@@ -404,7 +404,7 @@ class Inschrijving extends Artikel {
 					);
 				}
 				$regels[] = array_merge(
-					$this->split_bedrag( $this->cursus->cursuskosten ),
+					self::split_bedrag( $this->cursus->cursuskosten ),
 					[
 						'artikel' => "cursus: {$this->cursus->naam}",
 						'aantal'  => $this->aantal,

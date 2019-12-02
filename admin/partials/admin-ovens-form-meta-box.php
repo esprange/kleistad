@@ -27,7 +27,7 @@
 			</th>
 			<td>
 				<input id="kosten" name="kosten" type="number" style="width: 95%" value="<?php echo esc_attr( $item['kosten'] ); ?>"
-					size="10" step="0.01" class="code" placeholder="99.99" required>
+					step="0.01" class="code" placeholder="99.99" required>
 			</td>
 		</tr>
 		<tr class="form-field">

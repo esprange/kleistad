@@ -65,7 +65,7 @@
 				<li>[abonnement_code] : code te vermelden bij betaling</li>
 				<li>[abonnement_dag] : dag waarvoor beperkt abonnement geldt</li>
 				<li>[abonnement_opmerking] : door abonnee geplaatste opmerking</li>
-				<li>[abonnement_wijziging] : de wijziging (pauzeren, herstarten of beëindigen)</li>
+				<li>[abonnement_wijziging] : de wijziging (pauzeren of beëindigen)</li>
 				<li>[abonnement_startgeld] : driemaal het maand abonnee bedrag</li>
 				<li>[abonnement_maandgeld] : het maand abonnee bedrag</li>
 			</ul>

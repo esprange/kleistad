@@ -10,7 +10,7 @@
  */
 
 $in_driemaandperiode = strtotime( 'today' ) < $data['driemaand_datum'];
-$per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : mktime( 0, 0, 0, intval( date( 'n' ) ) + 1, 1, intval( date( 'Y' ) ) );
+$per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : strtotime( 'first day of next month 00:00' );
 $per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
 
 $extra_beschikbaar = false;
@@ -166,8 +166,7 @@ endif;
 		<?php
 	endif;
 	if ( ! $in_driemaandperiode ) :
-		if ( $data['input']['actief'] ) :
-			?>
+		?>
 	<div class="kleistad_row"> <!-- pauze -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad_input_cbr" value="pauze" >
@@ -179,8 +178,28 @@ endif;
 			<div class="kleistad_col_3" >
 				&nbsp;
 			</div>
-			<div class="kleistad_col_7 kleistad_label" >
-				<p><strong>Je wilt je abonnement per <?php echo esc_html( $per ); ?> tijdelijk pauzeren</strong></p>
+			<div class="kleistad_col_7" >
+				<p><strong>Je wilt het abonnement pauzeren</strong></p>
+				<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( \Kleistad\Abonnement::MIN_PAUZE_WEKEN ); ?> weken, maximaal <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken.</p>
+			</div>
+		</div>
+		<?php if ( $data['gepauzeerd'] ) : ?>
+		<div class="kleistad_row">
+			<p>Je abonnement staat al gepauzeerd, pas nadat het weer actief is kan je een nieuwe periode inplannen</p>
+		</div>
+		<?Php else : // Pauze is nog wel mogelijk. ?>
+		<div class="kleistad_row" >
+			<div class="kleistad_col_3" >
+				&nbsp;
+			</div>
+			<div class="kleistad_col_4 kleistad_label" >
+				<label for="kleistad_pauze_datum">Vanaf</label>
+			</div>
+			<div class="kleistad_col_3">
+				<input name="pauze_datum" id="kleistad_pauze_datum" class="kleistad_datum" type="text"
+					value="<?php echo esc_attr( date( 'd-m-Y', $per_datum ) ); ?>"
+					data-min_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MIN_PAUZE_WEKEN ); ?>"
+					data-max_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?>">
 			</div>
 		</div>
 		<div class="kleistad_row" >
@@ -188,58 +207,16 @@ endif;
 				&nbsp;
 			</div>
 			<div class="kleistad_col_4 kleistad_label" >
-				<label for="kleistad_pauze_maanden">aantal maanden pauze</label>
+				<label for="kleistad_herstart_datum">Tot</label>
 			</div>
 			<div class="kleistad_col_3">
-				<select name="pauze_maanden">
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-				</select>
+				<input name="herstart_datum" id="kleistad_herstart_datum" class="kleistad_datum" type="text"
+					value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . 'weeks', $per_datum ) ) ); ?>">
 			</div>
 		</div>
+		<?php endif // Pauze is nog wel mogelijk. ?>
 	</div>
-			<?php
-		else : // Abonnement niet actief.
-			?>
-	<div class="kleistad_row"> <!-- start -->
-		<div class="kleistad_col_6">
-			<input type="radio" name="wijziging" id="kleistad_abo_start" class="kleistad_abo_optie kleistad_input_cbr" value="herstart" >
-			<label for ="kleistad_abo_start" class="kleistad_label_cbr">Abonnement hervatten</label>
-		</div>
-	</div>
-	<div class="kleistad_abo_start kleistad_abo_veld" style="display:none" >
-		<div class="kleistad_row" >
-			<div class="kleistad_col_3" >
-				&nbsp;
-			</div>
-			<div class="kleistad_col_7 kleistad_label" >
-				<p><strong>Je wilt je gepauzeerde abonnement hervatten</strong></p>
-			</div>
-		</div>
-		<div class="kleistad_row" >
-			<div class="kleistad_col_3" >
-				&nbsp;
-			</div>
-			<div class="kleistad_col_4 kleistad_label" >
-				<label for="kleistad_startdatum">per</label>
-			</div>
-			<div class="kleistad_col_3">
-				<select name="startdatum" id="kleistad_startdatum" >
-				<?php
-				for ( $i = 1; $i <= 3; $i++ ) :
-					$datum = mktime( 0, 0, 0, intval( date( 'n' ) ) + $i, 1, intval( date( 'Y' ) ) );
-					?>
-						<option value="<?php echo esc_attr( $datum ); ?>"><?php echo esc_html( strftime( '%B %Y', $datum ) ); ?></option>
-					<?php
-				endfor
-				?>
-				</select>
-			</div>
-		</div>
-	</div>
-			<?php
-		endif; // Abonnement niet actief.
+		<?php
 	endif // Niet in drie maand periode.
 	?>
 	<div class="kleistad_row"> <!-- einde -->

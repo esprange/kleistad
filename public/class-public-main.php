@@ -47,7 +47,7 @@ class Public_Main {
 		],
 		'abonnee_wijziging'     => [
 			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
+			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [ 'leden' ],
 		],

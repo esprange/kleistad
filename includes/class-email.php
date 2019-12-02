@@ -250,7 +250,7 @@ class Email {
 		}
 	</style>
 </head>
-<body itemscope itemtype="https://schema.org/EmailMessage">
+<body>
 	<center class="wrapper">
 		<div class="webkit">
 		<!--[if (gte mso 9)|(IE)]>

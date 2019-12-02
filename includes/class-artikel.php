@@ -169,7 +169,11 @@ abstract class Artikel extends Entity {
 		$order->opmerking   = $opmerking;
 		$order->referentie  = $this->referentie();
 		$order->save();
-		return $this->maak_factuur( $order, '' );
+		if ( $order_id ) {
+			return ''; // Als er eerder al een factuur is gemaakt dan hoeft er niet opnieuw een factuur verstuurd te worden.
+		} else {
+			return $this->maak_factuur( $order, '' );
+		}
 	}
 
 	/**
@@ -294,6 +298,21 @@ abstract class Artikel extends Entity {
 	}
 
 	/**
+	 * Splits een bruto bedrag op in het netto bedrag en de btw.
+	 *
+	 * @param  float $bedrag Het bruto bedrag.
+	 * @return array
+	 */
+	public static function split_bedrag( $bedrag ) {
+		$prijs = round( $bedrag / ( 1 + self::BTW ), 2 );
+		$btw   = round( $bedrag - $prijs, 2 );
+		return [
+			'prijs' => $prijs,
+			'btw'   => $btw,
+		];
+	}
+
+	/**
 	 * De link die in een email als parameter meegegeven kan worden.
 	 *
 	 * @return string De html link.
@@ -328,21 +347,6 @@ abstract class Artikel extends Entity {
 		return [
 			'naam'  => "{$klant->first_name}  {$klant->last_name}",
 			'adres' => "{$klant->straat} {$klant->huisnr}\n{$klant->pcode} {$klant->plaats}",
-		];
-	}
-
-	/**
-	 * Splits een bruto bedrag op in het netto bedrag en de btw.
-	 *
-	 * @param  float $bedrag Het bruto bedrag.
-	 * @return array
-	 */
-	protected function split_bedrag( $bedrag ) {
-		$prijs = round( $bedrag / ( 1 + self::BTW ), 2 );
-		$btw   = round( $bedrag - $prijs, 2 );
-		return [
-			'prijs' => $prijs,
-			'btw'   => $btw,
 		];
 	}
 

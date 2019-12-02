@@ -346,7 +346,7 @@ class Workshop extends Artikel {
 	protected function factuurregels() {
 		return [
 			array_merge(
-				$this->split_bedrag( $this->kosten ),
+				self::split_bedrag( $this->kosten ),
 				[
 					'artikel' => "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ),
 					'aantal'  => 1,

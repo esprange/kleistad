@@ -169,7 +169,7 @@ class Dagdelenkaart extends Artikel {
 		$options = \Kleistad\Kleistad::get_options();
 		return [
 			array_merge(
-				$this->split_bedrag( $options['dagdelenkaart'] ),
+				self::split_bedrag( $options['dagdelenkaart'] ),
 				[
 					'artikel' => 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ),
 					'aantal'  => 1,

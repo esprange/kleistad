@@ -35,6 +35,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		$data['input']['dag']    = $abonnement->dag;
 		$data['input']['extras'] = $abonnement->extras;
 		$data['incasso_actief']  = $abonnement->incasso_actief();
+		$data['gepauzeerd']      = $abonnement->gepauzeerd;
 		return true;
 	}
 
@@ -49,32 +50,44 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	protected function validate( &$data ) {
 		$error = new \WP_Error();
 
-		$input = filter_input_array(
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'abonnee_id'    => FILTER_SANITIZE_NUMBER_INT,
-				'wijziging'     => FILTER_SANITIZE_STRING,
-				'dag'           => FILTER_SANITIZE_STRING,
-				'soort'         => FILTER_SANITIZE_STRING,
-				'betaal'        => FILTER_SANITIZE_STRING,
-				'pauze_maanden' => FILTER_SANITIZE_NUMBER_INT,
-				'per_datum'     => FILTER_SANITIZE_NUMBER_INT,
-				'extras'        => [
+				'abonnee_id'     => FILTER_SANITIZE_NUMBER_INT,
+				'wijziging'      => FILTER_SANITIZE_STRING,
+				'dag'            => FILTER_SANITIZE_STRING,
+				'soort'          => FILTER_SANITIZE_STRING,
+				'betaal'         => FILTER_SANITIZE_STRING,
+				'pauze_datum'    => FILTER_SANITIZE_STRING,
+				'herstart_datum' => FILTER_SANITIZE_STRING,
+				'per_datum'      => FILTER_SANITIZE_NUMBER_INT,
+				'extras'         => [
 					'filter' => FILTER_SANITIZE_STRING,
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				],
 			]
 		);
-		if ( ! is_array( $input['extras'] ) ) {
-			$input['extras'] = [];
+		if ( ! is_array( $data['input']['extras'] ) ) {
+			$data['input']['extras'] = [];
 		};
 
-		$err = $error->get_error_codes();
-		if ( ! empty( $err ) ) {
-			return $error;
+		if ( 'pauze' === $data['input']['wijziging'] ) {
+			$data['input']['pauze_datum']    = strtotime( $data['input']['pauze_datum'] );
+			$data['input']['herstart_datum'] = strtotime( $data['input']['herstart_datum'] );
+			if ( $data['input']['pauze_datum'] < strtotime( 'first day of next month 00:00' ) ) {
+				$error->add( 'pauze', 'Het abonnement mag niet eerder dan komende maand gepauzeerd worden' );
+			}
+			if ( $data['input']['herstart_datum'] - strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
+				$error->add( 'pauze', 'Het abonnement moet minimaal ' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weken dagen gepauzeerd worden' );
+			}
+			if ( $data['input']['herstart_datum'] > strtotime( '+' . \Kleistad\Abonnement::MAX_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
+				$error->add( 'pauze', 'Het abonnement mag maximaal ' . \Kleistad\Abonnement::MAX_PAUZE_WEKEN . ' weken per keer gepauzeerd worden' );
+			}
 		}
 
-		$data['input'] = $input;
+		if ( ! empty( $error->get_error_codes() ) ) {
+			return $error;
+		}
 		return true;
 	}
 
@@ -92,10 +105,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		switch ( $data['input']['wijziging'] ) {
 
 			case 'pauze':
-				$status = $abonnement->pauzeren( $data['input']['per_datum'], $herstart_maand );
-				break;
-			case 'herstart':
-				$status = $abonnement->herstarten( $data['input']['per_datum'] );
+				$status = $abonnement->pauzeren( $data['input']['pauze_datum'], $data['input']['herstart_datum'] );
 				break;
 			case 'einde':
 				$status = $abonnement->stoppen( $data['input']['per_datum'] );

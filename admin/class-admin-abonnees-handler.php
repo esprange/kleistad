@@ -46,10 +46,6 @@ class Admin_Abonnees_Handler {
 						$abonnement->pauzeren( strtotime( $item['pauze_datum'] ), strtotime( $item['herstart_datum'] ), true );
 						$item['gepauzeerd'] = $vandaag >= $item['pauze_datum'];
 						break;
-					case 'herstarten':
-						$abonnement->herstarten( strtotime( $item['herstart_datum'] ), true );
-						$item['gepauzeerd'] = $vandaag < $item['herstart_datum'];
-						break;
 					case 'starten':
 						$abonnement->start_datum = strtotime( $item['start_datum'] );
 						$abonnement->save();
@@ -101,11 +97,6 @@ class Admin_Abonnees_Handler {
 				case 'pauzeren':
 					if ( false === strtotime( $item['pauze_datum'] ) ) {
 						$messages[] = 'Pauze datum ontbreekt of is ongeldig';
-					}
-					// Bij pauzeren moet herstart_datum ook getest worden.
-				case 'herstarten':
-					if ( false === strtotime( $item['herstart_datum'] ) ) {
-						$messages[] = 'Herstart datum ontbreekt of is ongeldig';
 					}
 					break;
 				case 'starten':

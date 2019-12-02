@@ -139,7 +139,6 @@
 		</tr>
 
 	</table>
-	<p class="submit">
-		<?php submit_button(); ?>
-	</p>
+	<?php submit_button(); ?>
+	<p>&nbsp;</p>
 </form>

@@ -1,8 +1,42 @@
+/* global strtodate */
+
 ( function( $ ) {
 	'use strict';
 
-    $( document ).ready(
+	$( document ).ready(
         function() {
+			var nuDatum  = new Date(),
+				week     = 24 * 60 * 60 * 1000 * 7,
+				minPauze = $( '#kleistad_pauze_datum' ).data( 'min_pauze' ),
+				maxPauze = $( '#kleistad_pauze_datum' ).data( 'max_pauze' );
+
+			$( '#kleistad_pauze_datum' ).datepicker( 'option',
+				{
+					minDate: new Date( nuDatum.getFullYear(), nuDatum.getMonth() + 1, 1 ),
+					onSelect: function( datum ) {
+						var pauzeDatum    = strtodate( datum ),
+							herstartDatum = strtodate( $( '#kleistad_herstart_datum' ).val() );
+
+						if ( herstartDatum.getTime() < ( pauzeDatum.getTime() + minPauze * week ) ) {
+							herstartDatum.setDate( pauzeDatum.getTime() + minPauze * week );
+							$( '#kleistad_herstart_datum' ).datepicker( 'setDate', herstartDatum );
+						}
+						$( '#kleistad_herstart_datum' ).datepicker( 'option',
+							{
+								minDate: new Date( pauzeDatum.getTime() + minPauze * week ),
+								maxDate: new Date( pauzeDatum.getTime() + maxPauze * week )
+							}
+						);
+					}
+				}
+			);
+
+			$( '#kleistad_herstart_datum' ).datepicker( 'option',
+				{
+					minDate: new Date( nuDatum.getFullYear(), nuDatum.getMonth() + 1, minPauze * 7 + 1 ),
+					maxDate: new Date( nuDatum.getFullYear(), nuDatum.getMonth() + 1, maxPauze * 7 )
+				}
+			);
 
 			$( '.kleistad_shortcode' )
 			.on( 'click', '#kleistad_abo_pauze',

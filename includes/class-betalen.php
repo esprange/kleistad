@@ -187,6 +187,40 @@ class Betalen {
 	}
 
 	/**
+	 * Doe een eenmalige order bij een gebruiker waarvan al een mandaat bestaat.
+	 *
+	 * @param int    $gebruiker_id Het wp gebruiker_id.
+	 * @param string $order_id     de externe order referentie, maximaal 35 karakters.
+	 * @param float  $bedrag       Het te betalen bedrag.
+	 * @param string $beschrijving De beschrijving bij de betaling.
+	 */
+	public function eenmalig( $gebruiker_id, $order_id, $bedrag, $beschrijving ) {
+		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
+		if ( '' !== $mollie_gebruiker_id ) {
+			try {
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
+
+				$betaling = $this->mollie_gebruiker->createPayment(
+					[
+						'amount'       => [
+							'currency' => 'EUR',
+							'value'    => number_format( $bedrag, 2, '.', '' ),
+						],
+						'metadata'     => [
+							'order_id' => $order_id,
+						],
+						'description'  => $beschrijving,
+						'sequenceType' => \Mollie\API\Types\SequenceType::SEQUENCYTYPE_RECURRING,
+						'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
+					]
+				);
+			} catch ( \Exception $e ) {
+				error_log( $e->getMessage() ); // phpcs:ignore
+			}
+		}
+	}
+
+	/**
 	 * Herhaal een order op basis van een mandaat, en herhaal deze maandelijks.
 	 *
 	 * @param int    $gebruiker_id de gebruiker die de betaling uitvoert.
