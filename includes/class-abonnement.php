@@ -398,7 +398,6 @@ class Abonnement extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$options = \Kleistad\Kleistad::get_options();
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf  = strftime( '%d-%m-%Y', $this->start_datum );
@@ -422,6 +421,9 @@ class Abonnement extends Artikel {
 				$basis   = "{$this->soort} abonnement {$this->code} periode $periode (deels gepauzeerd)";
 				$aantal  = $this->pauze_fractie();
 				break;
+			default:
+				$basis  = '';
+				$aantal = 0;
 		}
 		if ( 0 < $aantal ) {
 			$regels = [
@@ -493,7 +495,7 @@ class Abonnement extends Artikel {
 			case '#regulier':
 				return $basis_bedrag + $extras_bedrag;
 			case '#pauze':
-				return $this->pauze_fractie( $vandaag ) * ( $basis_bedrag + $extras_bedrag );
+				return $this->pauze_fractie() * ( $basis_bedrag + $extras_bedrag );
 			default:
 				foreach ( $options['extra'] as $extra_option ) {
 					if ( $type === $extra_option['naam'] ) {
@@ -516,16 +518,15 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Geef de fractie terug wat er betaald moet worden in de pauzemaand.
+	 * Geef de fractie terug wat er betaald moet worden in de huidige pauzemaand.
 	 *
-	 * @param  int $datum Datum in de pauzemaand.
 	 * @return float De fractie.
 	 */
-	private function pauze_fractie( $datum ) {
-		$tot_pauze      = min( 0, $this->pauze_datum - strtotime( 'first day of month 00:00', $datum ) );
-		$vanaf_herstart = min( 0, strtotime( 'last day of month 00:00', $datum ) - $this->herstart_datum );
+	private function pauze_fractie() {
+		$tot_pauze      = min( 0, $this->pauze_datum - strtotime( 'first day of month 00:00' ) );
+		$vanaf_herstart = min( 0, strtotime( 'last day of month 00:00' ) - $this->herstart_datum );
 		$aantal_dagen   = intval( ( $tot_pauze + $vanaf_herstart ) / ( 60 * 60 * 24 ) );
-		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't', $datum ) ), 2 ) : 0.00;
+		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't' ) ), 2 ) : 0.00;
 	}
 
 	/**
@@ -615,7 +616,7 @@ class Abonnement extends Artikel {
 			if ( $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum ) {
 				$abonnement->gepauzeerd = true;
 				// Als het abonnement na deze maand herstart wordt en er een mandaat is, dan weer de reguliere incasso uitvoeren.
-				if ( $abonnement->herstart_datum <= $volgende_maand && $betalen->heeft_mandaat( $abonnement->klant_id && empty( $abonnement->subscriptie_id ) ) ) {
+				if ( $abonnement->herstart_datum <= $volgende_maand && $betalen->heeft_mandaat( $abonnement->klant_id ) && empty( $abonnement->subscriptie_id ) ) {
 					$abonnement->herhaalbetalen();
 				}
 			} else {

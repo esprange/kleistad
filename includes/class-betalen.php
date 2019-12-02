@@ -199,8 +199,7 @@ class Betalen {
 		if ( '' !== $mollie_gebruiker_id ) {
 			try {
 				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-
-				$betaling = $this->mollie_gebruiker->createPayment(
+				$mollie_gebruiker->createPayment(
 					[
 						'amount'       => [
 							'currency' => 'EUR',
@@ -210,7 +209,7 @@ class Betalen {
 							'order_id' => $order_id,
 						],
 						'description'  => $beschrijving,
-						'sequenceType' => \Mollie\API\Types\SequenceType::SEQUENCYTYPE_RECURRING,
+						'sequenceType' => \Mollie\API\Types\SequenceType::SEQUENCETYPE_RECURRING,
 						'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
 					]
 				);

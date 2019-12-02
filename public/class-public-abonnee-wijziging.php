@@ -100,10 +100,8 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$herstart_maand = mktime( 0, 0, 0, intval( date( 'n' ) ) + 1 + $data['input']['pauze_maanden'], 1, intval( date( 'Y' ) ) );
 		$abonnement     = new \Kleistad\Abonnement( $data['input']['abonnee_id'] );
 		switch ( $data['input']['wijziging'] ) {
-
 			case 'pauze':
 				$status = $abonnement->pauzeren( $data['input']['pauze_datum'], $data['input']['herstart_datum'] );
 				break;
