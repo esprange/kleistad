@@ -539,7 +539,7 @@ class Abonnement extends Artikel {
 	 */
 	private function stop_incasso() {
 		$this->subscriptie_id = $this->betalen->annuleer( $this->klant_id, $this->subscriptie_id );
-		save();
+		$this->save();
 	}
 
 	/**
@@ -552,6 +552,7 @@ class Abonnement extends Artikel {
 			"Kleistad abonnement {$this->code}",
 			strtotime( 'first day of next month 00:00' )
 		);
+		$this->save();
 	}
 
 	/**
@@ -624,7 +625,7 @@ class Abonnement extends Artikel {
 				$abonnement->gepauzeerd = false;
 				// Kijk of het abonnement de komende maand gepauzeerd gaat worden. In dat geval de eventuele reguliere incasso stoppen.
 				if ( $abonnement->pauze_datum >= $volgende_maand && ! empty( $abonnement->subscriptie_id ) ) {
-					$abonnement->subscriptie_id = $abonnement->stop_incasso();
+					$abonnement->stop_incasso();
 				}
 			}
 
