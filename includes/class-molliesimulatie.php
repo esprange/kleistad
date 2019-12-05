@@ -154,6 +154,9 @@ class MollieSimulatie {
 									return true;
 								}
 
+								/**
+								 * Het id van de subscriptie.
+								 */
 								public $id = 'subscriptie_id';
 
 								/**

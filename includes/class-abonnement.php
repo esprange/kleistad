@@ -569,23 +569,19 @@ class Abonnement extends Artikel {
 		$volgende_maand = strtotime( 'first day of next month 00:00' );
 		$deze_maand     = strtotime( 'first day of this month 00:00' );
 		$factuur_maand  = (int) date( 'Ym', $vandaag );
-		$factuur_vorig  = get_option( 'kleistad_factuur' ) ?: 0;
-		$factureren     = \Kleistad\Artikel::factureren_actief() && (int) $factuur_vorig < $factuur_maand;
+		$factuur_vorig  = (int) get_option( 'kleistad_factuur' ) ?: 0;
 		$betalen        = new \Kleistad\Betalen();
 
 		$abonnementen = self::all();
 		foreach ( $abonnementen as $klant_id => $abonnement ) {
-			// Abonnementen waarvan de einddatum verstreken is worden gestopt, zonder verdere acties.
-			// En abonnementen die nog moeten starten hebben ook nog geen actie nodig.
+			// Abonnementen waarvan de einddatum verstreken is worden gestopt.
 			$abonnement->geannuleerd = ( $abonnement->eind_datum && $vandaag > $abonnement->eind_datum );
+			// Gestopte abonnementen en abonnementen die nog moeten starten hebben geen actie nodig.
 			if ( $abonnement->geannuleerd || $vandaag < $abonnement->start_datum ) {
 				$abonnement->autoriseer( false );
 				$abonnement->save();
 				continue;
 			}
-			// Abonnementen zijn gepauzeerd als het vandaag tussen de pauze en herstart datum is.
-			$abonnement->gepauzeerd = $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum;
-
 			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er iets te betalen is, zonder verdere acties.
 			if ( ! $abonnement->overbrugging_email && $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) ) {
 				$abonnement->overbrugging_email = true;
@@ -593,11 +589,13 @@ class Abonnement extends Artikel {
 					$abonnement->email( '_vervolg', '', $abonnement->bestel_order( 0.0, 'overbrugging' ) ); // Alleen versturen als er werkelijk iets te betalen is.
 				}
 			}
-			$abonnement->save(); // Hierna wordt er niets meer aan het abonnement aangepast en als er niet gefactureerd hoeft de worden dan geen verdere actie.
-			if ( ! $factureren || $vandaag < $abonnement->reguliere_datum ) {
+			// Abonnementen zijn gepauzeerd als het vandaag tussen de pauze en herstart datum is.
+			$abonnement->gepauzeerd = $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum;
+			$abonnement->save();
+			// Hierna wordt er niets meer aan het abonnement aangepast en als er niet gefactureerd hoeft te worden dan geen verdere actie.
+			if ( $factuur_vorig >= $factuur_maand || $vandaag < $abonnement->reguliere_datum ) {
 				continue;
 			}
-
 			// Abonnementen die via de bank betaald worden krijgen een maand factuur als er gefactureerd moet worden.
 			$abonnement->artikel_type = $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand && 0.0 < $abonnement->bedrag( '#pauze' ) ? 'pauze' : 'regulier';
 			if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
