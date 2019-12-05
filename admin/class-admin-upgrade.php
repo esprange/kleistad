@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 37;
+	const DBVERSIE = 38;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -224,10 +224,14 @@ class Admin_Upgrade {
 	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
 	 */
 	private function convert_abonnement() {
+		$betalen          = new \Kleistad\Betalen();
 		$vandaag          = strtotime( 'today' );
 		$abonnement_users = get_users( [ 'meta_key' => \Kleistad\Abonnement::META_KEY ] );
 		foreach ( $abonnement_users as $abonnement_user ) {
 			$abonnement = new \Kleistad\Abonnement( $abonnement_user->ID );
+			if ( $betalen->heeft_mandaat( $abonnement_user->ID ) ) {
+				$betalen->annuleer( $abonnement_user->ID, $abonnement->subscriptie_id );
+			}
 			if ( $vandaag >= $abonnement->reguliere_datum ) {
 				$abonnement->overbrugging_email = true;
 			}

@@ -161,18 +161,10 @@ class Abonnement extends Artikel {
 	 * @return string|bool De redirect url ingeval van een ideal betaling.
 	 */
 	public function betaalwijze( $wijzig_datum, $betaalwijze, $admin = false ) {
-		$this->stop_incasso();
 
 		if ( 'ideal' === $betaalwijze ) {
-			// Doe een proefbetaling om het mandaat te verkrijgen. De wijzig datum is de 1e van de volgende maand.
-			return $this->betalen->order(
-				$this->klant_id,
-				__CLASS__ . "-{$this->code}-betaalwijze_ideal",
-				0.01,
-				"Kleistad abonnement {$this->code} machtiging tot sepa-incasso",
-				'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging',
-				true
-			);
+			$this->artikel_type = 'mandaat';
+			return $this->betalen( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
 		} else {
 			$this->betalen->verwijder_mandaat( $this->klant_id );
 			if ( ! $admin ) {
@@ -202,6 +194,10 @@ class Abonnement extends Artikel {
 				$vermelding = " vanaf $vanaf tot $tot";
 				$mandaat    = true;
 				break;
+			case 'mandaat':
+				$vermelding = ' machtiging tot sepa-incasso';
+				$mandaat    = true;
+				break;
 			default:
 				$vermelding = '';
 				$mandaat    = false;
@@ -214,6 +210,21 @@ class Abonnement extends Artikel {
 			$bericht,
 			$mandaat
 		);
+	}
+
+	/**
+	 * Maak de sepa incasso betalingen.
+	 */
+	public function betalen_per_incasso() {
+		$bedrag = $this->bedrag( "#{$this->artikel_type}" );
+		if ( 0.0 < $bedrag ) {
+			$this->betalen->eenmalig(
+				$this->klant_id,
+				__CLASS__ . "-{$this->code}-{$this->artikel_type}",
+				$bedrag,
+				"Kleistad abonnement {$this->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
+			);
+		}
 	}
 
 	/**
@@ -259,15 +270,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Controleer of er een incasso actief is
-	 *
-	 * @return bool Als true, dan is incasso actief.
-	 */
-	public function incasso_actief() {
-		return \Kleistad\Betalen::actief( $this->klant_id, $this->subscriptie_id );
-	}
-
-	/**
 	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
 	 *
 	 * @param array $data het te laden object.
@@ -286,11 +288,7 @@ class Abonnement extends Artikel {
 	public function pauzeren( $pauze_datum, $herstart_datum, $admin = false ) {
 		$this->pauze_datum    = $pauze_datum;
 		$this->herstart_datum = $herstart_datum;
-
-		// Als het abonnement in de komende maand stopt dan kan een incasso gestopt worden.
-		if ( $this->pauze_datum <= strtotime( 'last day of next month 00:00' ) ) {
-			$this->stop_incasso();
-		}
+		$this->save();
 		if ( ! $admin ) {
 			$this->email( '_gewijzigd', 'Je pauzeert het abonnement per ' . strftime( '%d-%m-%Y', $this->pauze_datum ) . ' en hervat het per ' . strftime( '%d-%m-%Y', $this->herstart_datum ) );
 		}
@@ -335,7 +333,6 @@ class Abonnement extends Artikel {
 	 */
 	public function stoppen( $eind_datum, $admin = false ) {
 		$this->eind_datum = $eind_datum;
-		$this->stop_incasso();
 		$this->betalen->verwijder_mandaat( $this->klant_id );
 		$this->save();
 		if ( ! $admin ) {
@@ -376,10 +373,6 @@ class Abonnement extends Artikel {
 				$bericht = '';
 		}
 		if ( ! $ongewijzigd ) {
-			$this->stop_incasso();
-			if ( $this->betalen->heeft_mandaat( $this->klant_id ) ) {
-				$this->start_incasso();
-			}
 			$this->save();
 			$this->email( '_gewijzigd', $bericht );
 		}
@@ -482,6 +475,8 @@ class Abonnement extends Artikel {
 		switch ( $type ) {
 			case '':
 				return $basis_bedrag;
+			case '#mandaat':
+				return 0.01;
 			case '#start':
 				return 3 * $basis_bedrag;
 			case '#overbrugging':
@@ -535,27 +530,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Stop automatisch betalen per incasso.
-	 */
-	private function stop_incasso() {
-		$this->subscriptie_id = $this->betalen->annuleer( $this->klant_id, $this->subscriptie_id );
-		$this->save();
-	}
-
-	/**
-	 * Start automatisch betalen per incasso.
-	 */
-	private function start_incasso() {
-		$this->subscriptie_id = $this->betalen->herhaalorder(
-			$this->klant_id,
-			$this->bedrag( '#regulier' ),
-			"Kleistad abonnement {$this->code}",
-			strtotime( 'first day of next month 00:00' )
-		);
-		$this->save();
-	}
-
-	/**
 	 * Doe acties na betaling van abonnementen. Wordt aangeroepen vanuit de betaal callback.
 	 *
 	 * @param array  $parameters De parameters 0: gebruiker-id, 1: de melddatum.
@@ -567,8 +541,7 @@ class Abonnement extends Artikel {
 		$abonnement = new static( intval( $parameters[0] ) );
 		if ( $betaald ) {
 			switch ( $parameters[1] ) {
-				case 'betaalwijze_ideal':
-					$abonnement->start_incasso();
+				case 'mandaat':
 					$abonnement->save();
 					$abonnement->email( '_betaalwijze_ideal' );
 					break;
@@ -613,21 +586,8 @@ class Abonnement extends Artikel {
 				$abonnement->save();
 				continue;
 			}
-
 			// Abonnementen zijn gepauzeerd als het vandaag tussen de pauze en herstart datum is.
-			if ( $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum ) {
-				$abonnement->gepauzeerd = true;
-				// Als het abonnement na deze maand herstart wordt en er een mandaat is, dan weer de reguliere incasso uitvoeren.
-				if ( $abonnement->herstart_datum <= $volgende_maand && $betalen->heeft_mandaat( $abonnement->klant_id ) && empty( $abonnement->subscriptie_id ) ) {
-					$abonnement->start_incasso();
-				}
-			} else {
-				$abonnement->gepauzeerd = false;
-				// Kijk of het abonnement de komende maand gepauzeerd gaat worden. In dat geval de eventuele reguliere incasso stoppen.
-				if ( $abonnement->pauze_datum >= $volgende_maand && ! empty( $abonnement->subscriptie_id ) ) {
-					$abonnement->stop_incasso();
-				}
-			}
+			$abonnement->gepauzeerd = $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum;
 
 			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er iets te betalen is, zonder verdere acties.
 			if ( ! $abonnement->overbrugging_email && $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) ) {
@@ -640,22 +600,11 @@ class Abonnement extends Artikel {
 
 			// Abonnementen die via de bank betaald worden krijgen een maand factuur als er gefactureerd moet worden.
 			if ( $factureren && $vandaag >= $abonnement->reguliere_datum ) {
-				if ( $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand && 0.0 < $abonnement->bedrag( '#pauze' ) ) {
-					// Als het een pauze maand is voor de klant dan een eenmalige incasso, mits het bedrag natuurlijk groter is dan 0.
-					if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
-						$betalen->eenmalig(
-							$abonnement->klant_id,
-							__CLASS__ . "-{$abonnement->code}-pauze",
-							$abonnement->bedrag( '#pauze' ),
-							"Kleistad abonnement {$abonnement->code}"
-						);
-					} else {
-						$abonnement->email( '_pauze', $abonnement->bestel_order( 0.0, 'pauze' ) );
-					}
+				$abonnement->artikel_type = $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand && 0.0 < $abonnement->bedrag( '#pauze' ) ? 'pauze' : 'regulier';
+				if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
+					$abonnement->betalen_per_incasso();
 				} else {
-					if ( ! $abonnement->incasso_actief() ) {
-						$abonnement->email( '_regulier', $abonnement->bestel_order( 0.0, 'regulier' ) );
-					}
+					$abonnement->email( "_{$abonnement->artikel_type}", $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
 				}
 			}
 		}

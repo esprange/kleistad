@@ -27,6 +27,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	protected function prepare( &$data ) {
 		$abonnee_id = get_current_user_id();
 		$abonnement = new \Kleistad\Abonnement( $abonnee_id );
+		$betalen    = new \Kleistad\Betalen();
 
 		$data['driemaand_datum'] = $abonnement->driemaand_datum;
 		$data['abonnement']      = $abonnement;
@@ -34,7 +35,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		$data['input']['soort']  = $abonnement->soort;
 		$data['input']['dag']    = $abonnement->dag;
 		$data['input']['extras'] = $abonnement->extras;
-		$data['incasso_actief']  = $abonnement->incasso_actief();
+		$data['incasso_actief']  = $betalen->heeft_mandaat( $abonnee_id );
 		$data['gepauzeerd']      = $abonnement->gepauzeerd;
 		return true;
 	}
