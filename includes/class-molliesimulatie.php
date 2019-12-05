@@ -148,16 +148,18 @@ class MollieSimulatie {
 								public $startDate = '01-02-2019';
 
 								/**
+								 * Het id van de subscriptie.
+								 *
+								 * @var string $id Het id.
+								 */
+								public $id = 'subscriptie_id';
+
+								/**
 								 * Is de subscriptie actief.
 								 */
 								public function isActive() {
 									return true;
 								}
-
-								/**
-								 * Het id van de subscriptie.
-								 */
-								public $id = 'subscriptie_id';
 
 								/**
 								 * De constructor.
