@@ -155,6 +155,7 @@ class Admin_Abonnees extends \WP_List_Table {
 		$order        = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 		$abonnementen = \Kleistad\Abonnement::all( $search );
 		$abonnees     = [];
+		$betalen      = new \Kleistad\Betalen();
 
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
 			$abonnee    = get_userdata( $abonnee_id );
@@ -166,7 +167,7 @@ class Admin_Abonnees extends \WP_List_Table {
 				'dag'    => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
 				'extras' => implode( ', ', $abonnement->extras ),
 				'code'   => $abonnement->code,
-				'mollie' => ( '' !== $abonnement->subscriptie_id ),
+				'mollie' => $betalen->heeft_mandaat( $abonnee_id ),
 			];
 		}
 		usort(

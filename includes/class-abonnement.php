@@ -26,7 +26,6 @@ namespace Kleistad;
  * @property int    reguliere_datum
  * @property bool   gepauzeerd
  * @property bool   overbrugging_email
- * @property string subscriptie_id
  * @property array  extras
  */
 class Abonnement extends Artikel {
@@ -55,7 +54,6 @@ class Abonnement extends Artikel {
 		'herstart_datum'     => '',
 		'gepauzeerd'         => 0,
 		'overbrugging_email' => 0,
-		'subscriptie_id'     => '',
 		'extras'             => [],
 	];
 
@@ -542,7 +540,6 @@ class Abonnement extends Artikel {
 		if ( $betaald ) {
 			switch ( $parameters[1] ) {
 				case 'mandaat':
-					$abonnement->save();
 					$abonnement->email( '_betaalwijze_ideal' );
 					break;
 				case 'start':
@@ -596,16 +593,17 @@ class Abonnement extends Artikel {
 					$abonnement->email( '_vervolg', '', $abonnement->bestel_order( 0.0, 'overbrugging' ) ); // Alleen versturen als er werkelijk iets te betalen is.
 				}
 			}
-			$abonnement->save(); // Hierna wordt er niets meer aan het abonnement aangepast.
+			$abonnement->save(); // Hierna wordt er niets meer aan het abonnement aangepast en als er niet gefactureerd hoeft de worden dan geen verdere actie.
+			if ( ! $factureren || $vandaag < $abonnement->reguliere_datum ) {
+				continue;
+			}
 
 			// Abonnementen die via de bank betaald worden krijgen een maand factuur als er gefactureerd moet worden.
-			if ( $factureren && $vandaag >= $abonnement->reguliere_datum ) {
-				$abonnement->artikel_type = $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand && 0.0 < $abonnement->bedrag( '#pauze' ) ? 'pauze' : 'regulier';
-				if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
-					$abonnement->betalen_per_incasso();
-				} else {
-					$abonnement->email( "_{$abonnement->artikel_type}", $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
-				}
+			$abonnement->artikel_type = $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand && 0.0 < $abonnement->bedrag( '#pauze' ) ? 'pauze' : 'regulier';
+			if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
+				$abonnement->betalen_per_incasso();
+			} else {
+				$abonnement->email( "_{$abonnement->artikel_type}", $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
 			}
 		}
 		// Verhoog het maandnummer van de facturatie.

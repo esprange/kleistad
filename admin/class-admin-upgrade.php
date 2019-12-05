@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 38;
+	const DBVERSIE = 40;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -230,7 +230,7 @@ class Admin_Upgrade {
 		foreach ( $abonnement_users as $abonnement_user ) {
 			$abonnement = new \Kleistad\Abonnement( $abonnement_user->ID );
 			if ( $betalen->heeft_mandaat( $abonnement_user->ID ) ) {
-				$betalen->annuleer( $abonnement_user->ID, $abonnement->subscriptie_id );
+				$betalen->annuleer( $abonnement_user->ID );
 			}
 			if ( $vandaag >= $abonnement->reguliere_datum ) {
 				$abonnement->overbrugging_email = true;

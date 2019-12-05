@@ -68,22 +68,6 @@ class Betalen {
 				},
 			]
 		);
-		register_rest_route(
-			Public_Main::api(),
-			'/betaling/herhaal',
-			[
-				'methods'             => 'POST',
-				'callback'            => [ __CLASS__, 'callback_herhaalbetaling_verwerkt' ],
-				'args'                => [
-					'id' => [
-						'required' => true,
-					],
-				],
-				'permission_callback' => function() {
-						return true;
-				},
-			]
-		);
 	}
 
 	/**
@@ -220,88 +204,27 @@ class Betalen {
 	}
 
 	/**
-	 * Herhaal een order op basis van een mandaat, en herhaal deze maandelijks.
+	 * Annuleer subscripties. Deze functie wordt obsoleet na upgrade naar versie 6.1.
 	 *
-	 * @param int    $gebruiker_id de gebruiker die de betaling uitvoert.
-	 * @param float  $bedrag       het bedrag.
-	 * @param string $beschrijving de externe order referentie, maximaal 35 karakters.
-	 * @param int    $start        de startdatum voor de periodieke afgeschrijving.
+	 * @param int $gebruiker_id   De gebruiker waarvoor een subscription loopt.
 	 */
-	public function herhaalorder( $gebruiker_id, $bedrag, $beschrijving, $start ) {
+	public function annuleer( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 
-		if ( '' !== $mollie_gebruiker_id ) {
-			try {
+		try {
+			if ( '' !== $mollie_gebruiker_id ) {
 				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
 				$subscripties     = $mollie_gebruiker->subscriptions();
 				foreach ( $subscripties as $subscriptie ) {
-					if ( $subscriptie->isActive() && $beschrijving === $subscriptie->description ) {
+					if ( $subscriptie->isActive() ) {
 						$mollie_gebruiker->cancelSubscription( $subscriptie->id );
 					}
 				}
-				$subscriptie = $mollie_gebruiker->createSubscription(
-					[
-						'amount'      => [
-							'currency' => 'EUR',
-							'value'    => number_format( $bedrag, 2, '.', '' ),
-						],
-						'description' => $beschrijving,
-						'interval'    => '1 month',
-						'startDate'   => strftime( '%Y-%m-%d', $start ),
-						'webhookUrl'  => \Kleistad\Public_Main::base_url() . '/betaling/herhaal/',
-					]
-				);
-				return $subscriptie->id;
-			} catch ( \Exception $e ) {
-				error_log( $e->getMessage() ); // phpcs:ignore
-			}
-		}
-		return '';
-	}
-
-	/**
-	 * Annuleer de subscriptie.
-	 *
-	 * @param int    $gebruiker_id   De gebruiker waarvoor een subscription loopt.
-	 * @param string $subscriptie_id De subscriptie die geannuleerd moet worden.
-	 */
-	public function annuleer( $gebruiker_id, $subscriptie_id ) {
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-
-		try {
-			if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-				$subscriptie      = $mollie_gebruiker->getSubscription( $subscriptie_id );
-				if ( $subscriptie->isActive() ) {
-					$mollie_gebruiker->cancelSubscription( $subscriptie_id );
-				}
 			}
 		} catch ( \Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return '';
-	}
-
-	/**
-	 * Controleer of actieve subscriptie bestaat.
-	 *
-	 * @param int    $gebruiker_id   De gebruiker waarvoor een subscription loopt.
-	 * @param string $subscriptie_id De subscriptie die gecheckt moet worden.
-	 */
-	public static function actief( $gebruiker_id, $subscriptie_id ) {
-		$object              = new static();
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-
-		try {
-			if ( '' !== $mollie_gebruiker_id && '' !== $subscriptie_id ) {
-				$mollie_gebruiker = $object->mollie->customers->get( $mollie_gebruiker_id );
-				$subscription     = $mollie_gebruiker->getSubscription( $subscriptie_id );
-				return $subscription->isActive();
-			}
-		} catch ( \Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
-		}
-		return false;
 	}
 
 	/**
@@ -385,15 +308,9 @@ class Betalen {
 				$html             = 'Mollie info: ';
 				$mollie_gebruiker = $object->mollie->customers->get( $mollie_gebruiker_id );
 				$mandaten         = $mollie_gebruiker->mandates();
-				$subscripties     = $mollie_gebruiker->subscriptions();
 				foreach ( $mandaten as $mandaat ) {
 					if ( $mandaat->isValid() ) {
 						$html .= "Er is op {$mandaat->signatureDate} een geldig mandaat afgegeven om incasso te doen vanaf bankrekening {$mandaat->details->consumerAccount} op naam van {$mandaat->details->consumerName}. ";
-					}
-				}
-				foreach ( $subscripties as $subscriptie ) {
-					if ( $subscriptie->isActive() ) {
-						$html .= "Er is een actieve subscriptie om {$subscriptie->amount->currency} {$subscriptie->amount->value} met een interval van {$subscriptie->interval} af te schrijven startend vanaf {$subscriptie->startDate}. ";
 					}
 				}
 				return $html;
@@ -403,31 +320,6 @@ class Betalen {
 			}
 		}
 		return '';
-	}
-
-	/**
-	 * Webhook functie om herhaalbetaling status te verwerken. Wordt aangeroepen door Mollie.
-	 *
-	 * @param \WP_REST_Request $request het request.
-	 * @return \WP_REST_Response de response.
-	 */
-	public static function callback_herhaalbetaling_verwerkt( \WP_REST_Request $request ) {
-		$mollie_betaling_id = $request->get_param( 'id' );
-
-		$object       = new static();
-		$betaling     = $object->mollie->payments->get( $mollie_betaling_id );
-		$gebruiker_id = reset(
-			get_users(
-				[
-					'meta_key'   => self::MOLLIE_ID,
-					'meta_value' => $betaling->customerId, //phpcs:ignore
-					'fields'     => 'ids',
-					'number'     => 1,
-				]
-			)
-		);
-		\Kleistad\Abonnement::callback( [ $gebruiker_id, 'incasso' ], $betaling->amount->value, ! $betaling->hasChargeBacks(), $betaling->details->bankReason );
-		return new \WP_REST_Response(); // Geeft default http status 200 terug.
 	}
 
 	/**

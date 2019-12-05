@@ -181,6 +181,7 @@ class Admin_Abonnees_Handler {
 				$actie      = $_REQUEST['actie'];
 				$abonnement = new \Kleistad\Abonnement( $abonnee_id );
 				$abonnee    = get_userdata( $abonnee_id );
+				$betalen    = new \Kleistad\Betalen();
 				$item       = [
 					'id'              => $abonnee_id,
 					'naam'            => $abonnee->display_name,
@@ -196,7 +197,7 @@ class Admin_Abonnees_Handler {
 					'pauze_datum'     => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
 					'eind_datum'      => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
 					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
-					'mandaat'         => ( '' !== $abonnement->subscriptie_id ),
+					'mandaat'         => $betalen->heeft_mandaat( $abonnee_id ),
 					'mollie_info'     => \Kleistad\Betalen::info( $abonnee_id ),
 				];
 			}

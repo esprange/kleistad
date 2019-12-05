@@ -154,6 +154,8 @@ class MollieSimulatie {
 									return true;
 								}
 
+								public $id = 'subscriptie_id';
+
 								/**
 								 * De constructor.
 								 */
