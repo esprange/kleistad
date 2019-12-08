@@ -152,7 +152,7 @@ class Abonnement extends Artikel {
 	/**
 	 * Wijzig de betaalwijze van het abonnement naar sepa incasso.
 	 *
-	 * @return string De redirect uri.
+	 * @return string|boo De redirect uri of false als de betaling niet lukt.
 	 */
 	public function start_incasso() {
 		$this->artikel_type = 'mandaat';
