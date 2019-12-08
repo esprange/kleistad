@@ -58,8 +58,6 @@ abstract class Shortcode {
 			$gebruiker = wp_get_current_user();
 			if ( $gebruiker->ID ) {
 				return 0 !== count( array_intersect( $access, (array) $gebruiker->roles ) );
-			} else {
-				return in_array( '#', $access, true );
 			}
 		}
 		return true;
@@ -280,13 +278,22 @@ abstract class Shortcode {
 		if ( false !== $result ) {
 			$shortcode_object->file_handle = $result;
 			fwrite( $shortcode_object->file_handle, "\xEF\xBB\xBF" );
-			call_user_func( [ $shortcode_object, $functie ] );
+			$result = call_user_func( [ $shortcode_object, $functie ] );
 			fclose( $shortcode_object->file_handle );
-			return new \WP_REST_Response(
-				[
-					'file_uri' => $upload_dir['baseurl'] . $file,
-				]
-			);
+			if ( empty( $result ) ) {
+				return new \WP_REST_Response(
+					[
+						'file_uri' => $upload_dir['baseurl'] . $file,
+					]
+				);
+			} else {
+				unlink( $upload_dir['basedir'] . $file );
+				return new \WP_REST_Response(
+					[
+						'file_uri' => $result,
+					]
+				);
+			}
 		} else {
 			return new \WP_REST_Response(
 				[

@@ -33,7 +33,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'eind_datum'  => date( 'd-m-Y', $cursus->eind_datum ),
 				'start_tijd'  => date( 'H:i', $cursus->start_tijd ),
 				'eind_tijd'   => date( 'H:i', $cursus->eind_tijd ),
-				'docent'      => $cursus->docent,
+				'docent'      => $cursus->docent_naam(),
 				'vervallen'   => $cursus->vervallen,
 				'vol'         => $cursus->vol,
 				'status'      => $cursus->vervallen ? 'vervallen' :
@@ -95,18 +95,13 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data ) {
-		$gebruikers       = get_users(
+		$data['docenten'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
+				'role'    => [ 'docenten' ],
 				'orderby' => [ 'nicename' ],
 			]
 		);
-		$data['docenten'] = [];
-		foreach ( $gebruikers as $gebruiker ) {
-			if ( \Kleistad\Roles::override( $gebruiker->ID ) ) {
-				$data['docenten'][] = $gebruiker;
-			}
-		}
 
 		if ( 'toevoegen' === $data['actie'] ) {
 			/*

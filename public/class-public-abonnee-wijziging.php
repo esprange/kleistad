@@ -117,14 +117,15 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 				$status = $abonnement->wijzigen( strtotime( 'today' ), 'soort', 'beperkt', $data['input']['dag'] );
 				break;
 			case 'betaalwijze':
-				$ideal_uri = $abonnement->betaalwijze( $data['input']['per_datum'], $data['input']['betaal'] );
-				if ( is_string( $ideal_uri ) ) { // In dit geval is $status een redirect url.
+				if ( 'ideal' === $data['input']['betaal'] ) {
+					$ideal_uri = $abonnement->start_incasso();
 					if ( ! empty( $ideal_uri ) ) {
 						return [ 'redirect_uri' => $ideal_uri ];
 					}
 					return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 				}
-				// Blijkbaar dus een foute uri.
+				$status = $abonnement->stop_incasso();
+				break;
 			default:
 				$status = false;
 				break;

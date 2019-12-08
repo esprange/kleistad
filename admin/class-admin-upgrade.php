@@ -32,6 +32,7 @@ class Admin_Upgrade {
 			$this->convert_opties();
 			$this->convert_database();
 			$this->convert_data();
+			$this->convert_roles();
 			update_option( 'kleistad-database-versie', self::DBVERSIE );
 		}
 	}
@@ -289,5 +290,22 @@ class Admin_Upgrade {
 		 *    Dat kan ondervangen worden door betaling_email op true te zetten voor die workshop (via phpmyadmin).
 		 */
 
+	}
+
+	/**
+	 * Verbeter de roles en capacities.
+	 */
+	private function convert_roles() {
+		$roles = wp_roles();
+
+		$roles->add_cap( 'administrator', \Kleistad\Roles::OVERRIDE );
+		$roles->add_cap( 'editor', \Kleistad\Roles::OVERRIDE );
+		$roles->add_cap( 'author', \Kleistad\Roles::OVERRIDE );
+
+		$roles->add_cap( 'administrator', \Kleistad\Roles::RESERVEER );
+		$roles->add_cap( 'editor', \Kleistad\Roles::RESERVEER );
+		$roles->add_cap( 'author', \Kleistad\Roles::RESERVEER );
+		$roles->add_cap( 'contributor', \Kleistad\Roles::RESERVEER );
+		$roles->add_cap( 'subscriber', \Kleistad\Roles::RESERVEER );
 	}
 }

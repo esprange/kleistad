@@ -78,7 +78,6 @@ class Abonnement extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
-		$start = getdate( strtotime( $this->data['start_datum'] ) );
 		switch ( $attribuut ) {
 			case 'datum':
 			case 'start_datum':
@@ -87,9 +86,9 @@ class Abonnement extends Artikel {
 			case 'herstart_datum':
 				return strtotime( $this->data[ $attribuut ] );
 			case 'driemaand_datum':
-				return mktime( 0, 0, 0, $start['mon'] + 3, $start['mday'], $start['year'] );
+				return strtotime( '+3 month ' . $this->data['start_datum'] );
 			case 'reguliere_datum':
-				return mktime( 0, 0, 0, $start['mon'] + 4, 1, $start['year'] );
+				return strtotime( 'first day of +4 month ' . $this->data['start_datum'] );
 			case 'geannuleerd':
 			case 'gepauzeerd':
 			case 'overbrugging_email':
@@ -116,7 +115,7 @@ class Abonnement extends Artikel {
 			case 'pauze_datum':
 			case 'eind_datum':
 			case 'herstart_datum':
-				$this->data[ $attribuut ] = is_null( $waarde ) ? 0 : date( 'Y-m-d', $waarde );
+				$this->data[ $attribuut ] = $waarde ? date( 'Y-m-d', $waarde ) : '';
 				break;
 			case 'geannuleerd':
 			case 'gepauzeerd':
@@ -143,7 +142,7 @@ class Abonnement extends Artikel {
 	 * @return string
 	 */
 	public function referentie() {
-		if ( 'regulier' === $this->artikel_type ) {
+		if ( strpos( ' regulier pauze', $this->artikel_type ) ) {
 			return "$this->code-" . date( 'Ym' );
 		} else {
 			return "$this->code-$this->artikel_type";
@@ -151,25 +150,27 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Wijzig de betaalwijze van het abonnement per datum.
+	 * Wijzig de betaalwijze van het abonnement naar sepa incasso.
 	 *
-	 * @param int    $wijzig_datum Wijzigdatum.
-	 * @param string $betaalwijze  Ideal of bankstorting.
-	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
-	 * @return string|bool De redirect url ingeval van een ideal betaling.
+	 * @return string De redirect uri.
 	 */
-	public function betaalwijze( $wijzig_datum, $betaalwijze, $admin = false ) {
+	public function start_incasso() {
+		$this->artikel_type = 'mandaat';
+		return $this->betalen( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
+	}
 
-		if ( 'ideal' === $betaalwijze ) {
-			$this->artikel_type = 'mandaat';
-			return $this->betalen( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
-		} else {
-			$this->betalen->verwijder_mandaat( $this->klant_id );
-			if ( ! $admin ) {
-				$this->email( '_betaalwijze_bank' );
-			}
-			return true;
+	/**
+	 * Wijzig de betaalwijze van het abonnement naar bank.
+	 *
+	 * @param bool $admin Als functie vanuit admin scherm wordt aangeroepen.
+	 * @return bool In dit geval altijd true.
+	 */
+	public function stop_incasso( $admin = false ) {
+		$this->betalen->verwijder_mandaat( $this->klant_id );
+		if ( ! $admin ) {
+			$this->email( '_betaalwijze_bank' );
 		}
+		return true;
 	}
 
 	/**
@@ -226,7 +227,7 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Verzenden van de welkomst email.
+	 * Verzenden van de email.
 	 *
 	 * @param  string $type      Welke email er verstuurd moet worden.
 	 * @param  string $wijziging Ingeval van een wijziging, de tekst die dit beschrijft.

@@ -188,6 +188,19 @@ class Cursus extends Entity {
 	}
 
 	/**
+	 * Hulp functie voor de oudere cursussen (voor 6.1.1 werd de naam ingevuld, nu het nummer ).
+	 *
+	 * @return string De naam van de docent.
+	 */
+	public function docent_naam() {
+		if ( is_numeric( $this->docent ) ) {
+			return get_user_by( 'id', intval( $this->docent ) )->display_name;
+		} else {
+			return $this->docent;
+		}
+	}
+
+	/**
 	 * Bereken de kosten van een lopende cursus.
 	 *
 	 * @param int $vanafdatum De datum vanaf dat de les gevolgd gaat worden.
@@ -224,7 +237,7 @@ class Cursus extends Entity {
 		try {
 			$event             = new \Kleistad\Event( $this->event_id );
 			$event->properties = [
-				'docent'     => $this->docent,
+				'docent'     => $this->docent_naam(),
 				'technieken' => $this->technieken,
 				'code'       => "C$this->id",
 				'id'         => $this->id,

@@ -69,7 +69,7 @@ class Admin_Abonnees_Handler {
 				break;
 			case 'mollie':
 				if ( $item['mandaat'] ) {
-					$abonnement->betaalwijze( $vandaag, 'stort', true );
+					$abonnement->stop_incasso( true );
 					$item['mandaat'] = false;
 				}
 				break;

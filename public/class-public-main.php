@@ -43,7 +43,7 @@ class Public_Main {
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
 			'css'    => [ 'jquery-ui' ],
-			'access' => [ 'administrator', '#' ],
+			'access' => [],
 		],
 		'abonnee_wijziging'     => [
 			'script' => true,
@@ -79,7 +79,7 @@ class Public_Main {
 			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ 'leden', 'bestuur' ],
+			'access' => [ 'docenten', 'bestuur' ],
 		],
 		'dagdelenkaart'         => [
 			'script' => true,
@@ -91,19 +91,19 @@ class Public_Main {
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ 'administrator' ],
+			'access' => [ 'boekhouding' ],
 		],
 		'email'                 => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jstree' ],
 			'css'    => [ 'jquery-ui', 'jstree' ],
-			'access' => [ 'bestuur' ],
+			'access' => [ 'docenten', 'bestuur' ],
 		],
 		'kalender'              => [
 			'script' => true,
 			'js'     => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
 			'css'    => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
-			'access' => [ 'leden', 'bestuur' ],
+			'access' => [ 'docenten', 'leden', 'bestuur' ],
 		],
 		'omzet_rapportage'      => [
 			'script' => true,
@@ -115,13 +115,13 @@ class Public_Main {
 			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'datatables' ],
-			'access' => [ 'leden', 'bestuur' ],
+			'access' => [ 'docenten', 'leden', 'bestuur' ],
 		],
 		'recept_beheer'         => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ 'leden', 'bestuur' ],
+			'access' => [ 'docenten', 'leden', 'bestuur' ],
 		],
 		'recept'                => [
 			'script' => true,
@@ -139,13 +139,13 @@ class Public_Main {
 			'script' => false,
 			'js'     => [ 'jquery' ],
 			'css'    => [],
-			'access' => [ 'leden', 'bestuur' ],
+			'access' => [ 'docenten', 'leden', 'bestuur' ],
 		],
 		'reservering'           => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
 			'css'    => [ 'jquery-ui' ],
-			'access' => [ 'leden', 'bestuur' ],
+			'access' => [ 'docenten', 'leden', 'bestuur' ],
 		],
 		'saldo_overzicht'       => [
 			'script' => false,
@@ -157,7 +157,7 @@ class Public_Main {
 			'script' => true,
 			'js'     => [ 'jquery' ],
 			'css'    => [],
-			'access' => [ 'leden', 'bestuur' ],
+			'access' => [ 'docenten', 'leden', 'bestuur' ],
 		],
 		'stookbestand'          => [
 			'script' => true,

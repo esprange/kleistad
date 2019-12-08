@@ -51,6 +51,7 @@ if ( 'cursisten' === $data['actie'] ) :
 	</table>
 	<br/>
 	<button type="button" class="kleistad_download_link" name="kleistad_submit_cursus_overzicht" data-actie="cursisten" >Download</button>
+	<button type="button" class="kleistad_download_link" name="kleistad_submit_cursus_overzicht" data-actie="presentielijst" >Presentielijst</button>
 	<button type="submit" name="kleistad_submit_cursus_overzicht" value="herinner_email" >Verstuur herinner email</button>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 	</form>

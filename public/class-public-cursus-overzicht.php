@@ -100,7 +100,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						'start_dt'       => $cursus->start_datum,
 						'code'           => "C$cursus_id",
 						'naam'           => $cursus->naam,
-						'docent'         => $cursus->docent,
+						'docent'         => $cursus->docent_naam(),
 						'start_datum'    => strftime( '%d-%m-%Y', $cursus->start_datum ),
 						'inschrijvingen' => $cursus->ruimte() !== $cursus->maximum,
 					];
@@ -211,5 +211,19 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			];
 			fputcsv( $this->file_handle, $cursist_gegevens, ';', '"' );
 		}
+	}
+
+	/**
+	 * Maak een presentielijst aan.
+	 */
+	protected function presentielijst() {
+		$cursus_id = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );
+		$cursus    = new \Kleistad\Cursus( $cursus_id );
+		$cursisten = [];
+		foreach ( $this->inschrijvingen( $cursus_id ) as $cursist_id => $inschrijving ) {
+			$cursisten[] = get_user_by( 'id', $cursist_id )->display_name;
+		}
+		$presentielijst = new \Kleistad\Presentielijst( 'L' );
+		return $presentielijst->run( $cursus, $cursisten );
 	}
 }

@@ -288,7 +288,7 @@ class Inschrijving extends Artikel {
 					'voornaam'               => $cursist->first_name,
 					'achternaam'             => $cursist->last_name,
 					'cursus_naam'            => $this->cursus->naam,
-					'cursus_docent'          => $this->cursus->docent,
+					'cursus_docent'          => $this->cursus->docent_naam(),
 					'cursus_start_datum'     => strftime( '%A %d-%m-%y', $this->cursus->start_datum ),
 					'cursus_eind_datum'      => strftime( '%A %d-%m-%y', $this->cursus->eind_datum ),
 					'cursus_start_tijd'      => strftime( '%H:%M', $this->cursus->start_tijd ),

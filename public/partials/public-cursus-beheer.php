@@ -11,6 +11,8 @@
 
 if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	$this->form();
+	$voltooid = $data['cursus']['eind_datum'] < strtotime( 'today' );
+	$readonly = $voltooid ? 'readonly="readyonly"' : '';
 	?>
 	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>"/>
 	<input type="hidden" name="lesdatums" id="kleistad_lesdatums" value="<?php echo esc_attr( $data['cursus']['lesdatums'] ); ?>" >
@@ -21,7 +23,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		<tr>
 			<th>Naam</th>
 			<td colspan="3">
-				<input type="text" name="naam" id="kleistad_cursus_naam" maxlenght="40" placeholder="Bijv. cursus draaitechnieken" value="<?php echo esc_attr( $data['cursus']['naam'] ); ?>" required />
+				<input type="text" name="naam" <?php echo esc_attr( $readonly ); ?> id="kleistad_cursus_naam" maxlenght="40" placeholder="Bijv. cursus draaitechnieken" value="<?php echo esc_attr( $data['cursus']['naam'] ); ?>" required />
 			</td>
 		</tr>
 		<tr>
@@ -29,12 +31,21 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 				Docent
 			</th>
 			<td colspan="3">
-				<datalist id="kleistad_docenten">
-			<?php foreach ( $data['docenten'] as $docent ) : ?>
-					<option value="<?php echo esc_attr( $docent->display_name ); ?>">
+			<?php
+			if ( $voltooid ) :
+				if ( is_numeric( $data['cursus']['docent'] ) ) :
+					echo esc_html( get_user_by( 'id', $data['cursus']['docent'] )->display_name );
+				else :
+					echo esc_html( $data['cursus']['docent'] );
+				endif;
+			else :
+				?>
+				<select name="docent" id="kleistad_docent" required >
+				<?php foreach ( $data['docenten'] as $docent ) : ?>
+					<option value="<?php echo esc_attr( $docent->ID ); ?>" <?php selected( $docent->ID, $data['cursus']['docent'] ); ?> ><?php echo esc_html( $docent->display_name ); ?></option>
 				<?php endforeach ?>
-				</datalist>
-				<input type=text list="kleistad_docenten" name="docent" id="kleistad_docent" value="<?php echo esc_attr( $data['cursus']['docent'] ); ?>" >
+				</select>
+			<?php endif ?>
 			</td>
 		</tr>
 		<tr>
@@ -65,7 +76,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 			<th>Begintijd</th>
 			<td>
 				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" class="kleistad_tijd"
-					value="<?php echo esc_attr( date( 'H:i', $data['cursus']['start_tijd'] ) ); ?>" />
+					value="<?php echo esc_attr( date( 'H:i', $data['cursus']['start_tijd'] ) ); ?>" <?php echo esc_attr( $readonly ); ?> />
 			</td>
 			<td>
 			</td>
@@ -73,48 +84,48 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		<tr>
 			<th>Eindtijd</th>
 			<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" class="kleistad_tijd"
-					value="<?php echo esc_attr( date( 'H:i', $data['cursus']['eind_tijd'] ) ); ?>" /></td>
+					value="<?php echo esc_attr( date( 'H:i', $data['cursus']['eind_tijd'] ) ); ?>" <?php echo esc_attr( $readonly ); ?> /></td>
 			<td>
 			</td>
 		</tr>
 		<tr>
 			<th>Technieken</th>
-			<td><input type="checkbox" name="technieken[]" id="kleistad_draaien" value="Draaien" <?php checked( in_array( 'Draaien', $data['cursus']['technieken'], true ) ); ?> >Draaien</td>
-			<td><input type="checkbox" name="technieken[]" id="kleistad_handvormen" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['cursus']['technieken'], true ) ); ?>>Handvormen</td>
-			<td><input type="checkbox" name="technieken[]" id="kleistad_boetseren" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['cursus']['technieken'], true ) ); ?> >Boetseren</td></tr>
+			<td><input type="checkbox" name="technieken[]" <?php echo esc_attr( $readonly ); ?> id="kleistad_draaien" value="Draaien" <?php checked( in_array( 'Draaien', $data['cursus']['technieken'], true ) ); ?> >Draaien</td>
+			<td><input type="checkbox" name="technieken[]" <?php echo esc_attr( $readonly ); ?> id="kleistad_handvormen" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['cursus']['technieken'], true ) ); ?>>Handvormen</td>
+			<td><input type="checkbox" name="technieken[]" <?php echo esc_attr( $readonly ); ?> id="kleistad_boetseren" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['cursus']['technieken'], true ) ); ?> >Boetseren</td></tr>
 		<tr>
 			<th>Inschrijf kosten</th>
-			<td><input type="number" lang="nl" step="0.01" name="inschrijfkosten" id="kleistad_inschrijfkosten" value="<?php echo esc_attr( $data['cursus']['inschrijfkosten'] ); ?>" min="0" required ></td>
+			<td><input type="number" lang="nl" step="0.01" name="inschrijfkosten" id="kleistad_inschrijfkosten" <?php echo esc_attr( $readonly ); ?> value="<?php echo esc_attr( $data['cursus']['inschrijfkosten'] ); ?>" min="0" required ></td>
 			<th>Cursus kosten, excl. inschrijf kosten</th>
-			<td><input type="number" lang="nl" step="0.01" name="cursuskosten" id="kleistad_cursuskosten" value="<?php echo esc_attr( $data['cursus']['cursuskosten'] ); ?>" min="0" required ></td>
+			<td><input type="number" lang="nl" step="0.01" name="cursuskosten" id="kleistad_cursuskosten" <?php echo esc_attr( $readonly ); ?> value="<?php echo esc_attr( $data['cursus']['cursuskosten'] ); ?>" min="0" required ></td>
 		</tr>
 		<tr>
 			<th>Cursus vol</th>
-			<td><input type="checkbox" name="vol" id="kleistad_vol" <?php checked( $data['cursus']['vol'] ); ?> ></td>
+			<td><input type="checkbox" name="vol" <?php echo esc_attr( $readonly ); ?> id="kleistad_vol" <?php checked( $data['cursus']['vol'] ); ?> ></td>
 			<th>Cursus vervallen</th>
-			<td><input type="checkbox" name="vervallen" id="kleistad_vervallen" <?php checked( $data['cursus']['vervallen'] ); ?> ></td>
+			<td><input type="checkbox" name="vervallen" <?php echo esc_attr( $readonly ); ?> id="kleistad_vervallen" <?php checked( $data['cursus']['vervallen'] ); ?> ></td>
 		</tr>
 		<tr>
 			<th>Maximum cursisten</th>
-			<td><input type="number" step="1" name="maximum" id="kleistad_maximum" min="1" max="99" value="<?php echo esc_attr( $data['cursus']['maximum'] ); ?>" required></td>
+			<td><input type="number" step="1" name="maximum" <?php echo esc_attr( $readonly ); ?> id="kleistad_maximum" min="1" max="99" value="<?php echo esc_attr( $data['cursus']['maximum'] ); ?>" required></td>
 			<th>Inschrijven meerdere cursisten mogelijk</th>
-			<td><input type="checkbox" name="meer" id="kleistad_meer" <?php checked( $data['cursus']['meer'] ); ?> ></td>
+			<td><input type="checkbox" name="meer" <?php echo esc_attr( $readonly ); ?> id="kleistad_meer" <?php checked( $data['cursus']['meer'] ); ?> ></td>
 		</tr>
 		<tr>
 			<th>Publiceer de cursus</th>
-			<td><input type="checkbox" name="tonen" id="kleistad_tonen" <?php checked( $data['cursus']['tonen'] ); ?> ></td>
+			<td><input type="checkbox" name="tonen" <?php echo esc_attr( $readonly ); ?> id="kleistad_tonen" <?php checked( $data['cursus']['tonen'] ); ?> ></td>
 			<td colspan="2"></td>
 		</tr>
 		<tr>
 			<th>Inschrijf email</th>
-			<td colspan="3"><input type="text" name="inschrijfslug" id="kleistad_inschrijfslug" value="<?php echo esc_attr( $data['cursus']['inschrijfslug'] ); ?>" required /></td>
+			<td colspan="3"><input type="text" name="inschrijfslug" <?php echo esc_attr( $readonly ); ?> id="kleistad_inschrijfslug" value="<?php echo esc_attr( $data['cursus']['inschrijfslug'] ); ?>" required /></td>
 		</tr>
 		<tr>
 			<th>Indeling email</th>
-			<td colspan="3"><input type="text" name="indelingslug" id="kleistad_indelingslug" value="<?php echo esc_attr( $data['cursus']['indelingslug'] ); ?>" required /></td>
+			<td colspan="3"><input type="text" name="indelingslug" <?php echo esc_attr( $readonly ); ?> id="kleistad_indelingslug" value="<?php echo esc_attr( $data['cursus']['indelingslug'] ); ?>" required /></td>
 		</tr>
 	</table>
-	<button type="submit" name="kleistad_submit_cursus_beheer" value="bewaren" >Opslaan</button>
+	<button type="submit" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $voltooid ); ?> >Opslaan</button>
 	<button type="submit" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 </form>
