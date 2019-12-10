@@ -45,6 +45,12 @@ class Public_Email extends ShortcodeForm {
 				$data['input']['tree'][-1]['leden'][ $bestuurslid->user_email ] = $bestuurslid->display_name;
 			}
 
+			$docenten = get_users( [ 'role' => 'docenten' ] );
+			foreach ( $docenten as $docent ) {
+				$data['input']['tree'][-2]['naam']                         = 'Docenten';
+				$data['input']['tree'][-2]['leden'][ $docent->user_email ] = $docent->display_name;
+			}
+
 			$abonnementen = \Kleistad\Abonnement::all();
 			foreach ( $abonnementen as $abonnee_id => $abonnement ) {
 				if ( ! $abonnement->geannuleerd ) {
@@ -61,7 +67,7 @@ class Public_Email extends ShortcodeForm {
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			$cursist = get_userdata( $cursist_id );
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! $bestuur_rechten && $cursussen[ $cursus_id ]->docent !== $user->ID ) {
+				if ( ! $bestuur_rechten && intval( $cursussen[ $cursus_id ]->docent ) !== $user->ID ) {
 					continue;
 				}
 				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
