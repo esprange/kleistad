@@ -34,6 +34,30 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
+	 * Geef de cursus info mee.
+	 *
+	 * @param int $docent_id Nul (ingeval van bestuur) of het id van de docent.
+	 * @return array De cursus informatie.
+	 */
+	private function cursussen( $docent_id = 0 ) {
+		$cursussen   = \Kleistad\Cursus::all();
+		$cursus_info = [];
+		foreach ( $cursussen as $cursus_id => $cursus ) {
+			if ( ! $cursus->vervallen && ( 0 === $docent_id || $docent_id === $cursus->docent ) ) {
+				$cursus_info[ $cursus_id ] = [
+					'start_dt'       => $cursus->start_datum,
+					'code'           => "C$cursus_id",
+					'naam'           => $cursus->naam,
+					'docent'         => $cursus->docent_naam(),
+					'start_datum'    => strftime( '%d-%m-%Y', $cursus->start_datum ),
+					'inschrijvingen' => $cursus->ruimte() !== $cursus->maximum,
+				];
+			}
+		}
+		return $cursus_info;
+	}
+
+	/**
 	 *
 	 * Prepareer 'cursus_overzicht' form
 	 *
@@ -44,14 +68,16 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 */
 	protected function prepare( &$data ) {
 		if ( 'cursisten' === $data['actie'] ) {
-			$cursus            = new \Kleistad\Cursus( $data['id'] );
-			$data['cursus']    = [
+			$cursus                  = new \Kleistad\Cursus( $data['id'] );
+			$user                    = wp_get_current_user();
+			$data['bestuur_rechten'] = in_array( 'bestuur', (array) $user->roles, true );
+			$data['cursus']          = [
 				'id'    => $data['id'],
 				'naam'  => $cursus->naam,
 				'code'  => $cursus->code,
 				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
-			$data['cursisten'] = [];
+			$data['cursisten']       = [];
 			foreach ( $this->inschrijvingen( $data['id'] ) as $cursist_id => $inschrijving ) {
 				if ( $cursus->vol && ! $inschrijving->ingedeeld ) {
 					continue; // Het heeft geen zin om wachtende inschrijvingen te tonen als de cursus geen plaats meer heeft.
@@ -91,20 +117,13 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			];
 
 		} else {
-			$cursussen           = \Kleistad\Cursus::all();
-			$data['cursus_info'] = [];
-
-			foreach ( $cursussen as $cursus_id => $cursus ) {
-				if ( ! $cursus->vervallen ) {
-					$data['cursus_info'][ $cursus_id ] = [
-						'start_dt'       => $cursus->start_datum,
-						'code'           => "C$cursus_id",
-						'naam'           => $cursus->naam,
-						'docent'         => $cursus->docent_naam(),
-						'start_datum'    => strftime( '%d-%m-%Y', $cursus->start_datum ),
-						'inschrijvingen' => $cursus->ruimte() !== $cursus->maximum,
-					];
-				}
+			$user = wp_get_current_user();
+			if ( in_array( 'bestuur', (array) $user->roles, true ) ) {
+				$data['bestuur_rechten'] = true;
+				$data['cursus_info']     = $this->cursussen();
+			} else {
+				$data['bestuur_rechten'] = false;
+				$data['cursus_info']     = $this->cursussen( $user->ID );
 			}
 		}
 		return true;

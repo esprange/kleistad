@@ -20,8 +20,10 @@ if ( 'cursisten' === $data['actie'] ) :
 			<th>Naam</th>
 			<th>Technieken</th>
 			<th>Betaald</th>
+			<?php if ( $data['bestuur_rechten'] ) : ?>
 			<th>Herinner Email</th>
 			<th>Nog niet ingedeeld</th>
+			<?php endif ?>
 		</tr>
 		</thead>
 		<tbody>
@@ -30,29 +32,35 @@ if ( 'cursisten' === $data['actie'] ) :
 				<td><?php echo esc_html( $cursist['naam'] ); ?></td>
 				<td><?php echo esc_html( $cursist['technieken'] ); ?></td>
 				<td><?php echo ( ( $cursist['c_betaald'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
+				<?php if ( $data['bestuur_rechten'] ) : ?>
 				<td><?php echo ( ( $cursist['herinner_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 				<td>
-				<?php
-				if ( ! $cursist['i_betaald'] ) :
-					if ( $data['cursus']['loopt'] && $cursist['wacht'] ) :
-						?>
+					<?php
+					if ( ! $cursist['i_betaald'] ) :
+						if ( $data['cursus']['loopt'] && $cursist['wacht'] ) :
+							?>
 						<a href="#" title="indelen" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 							data-id="<?php echo esc_attr( $cursist['id'] . '-' . $data['cursus']['id'] ); ?>" data-actie="indelen" >wacht op factuur</a>
-					<?php else : ?>
+						<?php else : ?>
 						nog niet betaald !
-						<?php
-					endif;
+							<?php
+						endif;
 					endif
-				?>
+					?>
 				</td>
+				<?php endif ?>
 			</tr>
 		<?php endforeach ?>
 		</tbody>
 	</table>
 	<br/>
+	<?php if ( $data['bestuur_rechten'] ) : ?>
 	<button type="button" class="kleistad_download_link" name="kleistad_submit_cursus_overzicht" data-actie="cursisten" >Download</button>
+	<?php endif ?>
 	<button type="button" class="kleistad_download_link" name="kleistad_submit_cursus_overzicht" data-actie="presentielijst" >Presentielijst</button>
+	<?php if ( $data['bestuur_rechten'] ) : ?>
 	<button type="submit" name="kleistad_submit_cursus_overzicht" value="herinner_email" >Verstuur herinner email</button>
+	<?php endif ?>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 	</form>
 <?php elseif ( 'indelen' === $data['actie'] ) : ?>

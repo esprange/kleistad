@@ -36,26 +36,34 @@ class Public_Email extends ShortcodeForm {
 			];
 		}
 
-		$bestuur = get_users( [ 'role' => 'bestuur' ] );
-		foreach ( $bestuur as $bestuurslid ) {
-			$data['input']['tree'][-1]['naam']                              = 'Bestuur';
-			$data['input']['tree'][-1]['leden'][ $bestuurslid->user_email ] = $bestuurslid->display_name;
-		}
+		$user            = wp_get_current_user();
+		$bestuur_rechten = in_array( 'bestuur', (array) $user->roles, true );
+		if ( $bestuur_rechten ) {
+			$bestuur = get_users( [ 'role' => 'bestuur' ] );
+			foreach ( $bestuur as $bestuurslid ) {
+				$data['input']['tree'][-1]['naam']                              = 'Bestuur';
+				$data['input']['tree'][-1]['leden'][ $bestuurslid->user_email ] = $bestuurslid->display_name;
+			}
 
-		$abonnementen = \Kleistad\Abonnement::all();
-		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-			if ( ! $abonnement->geannuleerd ) {
-				$abonnee                          = get_userdata( $abonnee_id );
-				$data['input']['tree'][0]['naam'] = 'Abonnees';
-				$data['input']['tree'][0]['leden'][ $abonnee->user_email ] = $abonnee->display_name;
+			$abonnementen = \Kleistad\Abonnement::all();
+			foreach ( $abonnementen as $abonnee_id => $abonnement ) {
+				if ( ! $abonnement->geannuleerd ) {
+					$abonnee                          = get_userdata( $abonnee_id );
+					$data['input']['tree'][0]['naam'] = 'Abonnees';
+					$data['input']['tree'][0]['leden'][ $abonnee->user_email ] = $abonnee->display_name;
+				}
 			}
 		}
+
 		$cursus_criterium = strtotime( '-6 months' ); // Cursussen die langer dan een half jaar gelden zijn geëindigd worden niet getoond.
 		$inschrijvingen   = \Kleistad\Inschrijving::all();
 		$cursussen        = \Kleistad\Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			$cursist = get_userdata( $cursist_id );
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
+				if ( ! $bestuur_rechten && $cursussen[ $cursus_id ]->docent !== $user->ID ) {
+					continue;
+				}
 				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
 					$data['input']['tree'][ $cursus_id ]['naam']                          = $cursussen[ $cursus_id ]->code . ' - ' . $cursussen[ $cursus_id ]->naam;
 					$data['input']['tree'][ $cursus_id ]['leden'][ $cursist->user_email ] = $cursist->display_name;
