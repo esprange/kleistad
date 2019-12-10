@@ -43,7 +43,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$cursussen   = \Kleistad\Cursus::all();
 		$cursus_info = [];
 		foreach ( $cursussen as $cursus_id => $cursus ) {
-			if ( ! $cursus->vervallen && ( 0 === $docent_id || $docent_id === intval( $cursus->docent ) ) ) {
+			if ( ! $cursus->vervallen && ( 0 === $docent_id || intval( $cursus->docent ) === $docent_id ) ) {
 				$cursus_info[ $cursus_id ] = [
 					'start_dt'       => $cursus->start_datum,
 					'code'           => "C$cursus_id",
