@@ -121,6 +121,30 @@
 					buttonText: 'Lesdatum + / -'
 				}
 			);
+
+			$( '#kleistad_start_tijd' ).timespinner( 'option',
+				{
+					stop: function() {
+						var startTijd = strtotime( $( this ).val() );
+						var eindTijd  = strtotime( $( '#kleistad_eind_tijd' ).val() );
+						if ( startTijd + 60 > eindTijd ) {
+							$( '#kleistad_eind_tijd' ).val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
+						}
+					}
+				}
+			);
+
+			$( '#kleistad_eind_tijd' ).timespinner( 'option',
+				{
+					stop: function() {
+						var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
+						var eindTijd  = strtotime( $( this ).val() );
+						if ( startTijd > eindTijd - 60 ) {
+							$( '#kleistad_start_tijd' ).val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
+						}
+					}
+				}
+			);
 		}
 	}
 
@@ -133,26 +157,6 @@
     $( document ).ready(
         function() {
 			onLoad();
-
-			$( '#kleistad_start_tijd' ).on( 'change',
-				function() {
-					var startTijd = strtotime( $( this ).val() );
-					var eindTijd  = strtotime( $( '#kleistad_eind_tijd' ).val() );
-					if ( startTijd + 60 > eindTijd ) {
-						$( '#kleistad_eind_tijd' ).val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
-					}
-				}
-			);
-
-			$( '#kleistad_eind_tijd' ).on( 'change',
-				function() {
-					var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
-					var eindTijd  = strtotime( $( this ).val() );
-					if ( startTijd > eindTijd - 60 ) {
-						$( '#kleistad_start_tijd' ).val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
-					}
-				}
-			);
 		}
     );
 

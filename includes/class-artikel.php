@@ -136,15 +136,13 @@ abstract class Artikel extends Entity {
 			$regel['aantal']  = - $regel['aantal'];
 		}
 		if ( 0.0 < $restant ) {
-			$regels[] = [
-				array_merge(
-					$this->split_bedrag( $restant ),
-					[
-						'artikel' => 'kosten i.v.m. annulering',
-						'aantal'  => 1,
-					]
-				),
-			];
+			$regels[] = array_merge(
+				$this->split_bedrag( $restant ),
+				[
+					'artikel' => 'kosten i.v.m. annulering',
+					'aantal'  => 1,
+				]
+			);
 		}
 		$credit_order->regels    = $regels;
 		$credit_order->opmerking = 'Vanwege annulering';
@@ -195,7 +193,7 @@ abstract class Artikel extends Entity {
 		$order            = new \Kleistad\Order( $id );
 		$regels           = $order->regels;
 		$regels[]         = array_merge(
-			$this->split_bedrag( $korting ),
+			$this->split_bedrag( - $korting ),
 			[
 				'artikel' => 'korting',
 				'aantal'  => 1,

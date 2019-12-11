@@ -172,7 +172,7 @@ class Factuur extends \FPDF {
 	public function run( $order, $type ) {
 		$factuurnr  = $order->factuurnr();
 		$upload_dir = wp_get_upload_dir();
-		$file       = sprintf( '%s/facturen/%s-%s', $upload_dir['basedir'], empty( $type ) ? 'factuur' : 'creditfactuur', $factuurnr );
+		$file       = sprintf( '%s/facturen/%s-%s', $upload_dir['basedir'], "{$type}factuur", $factuurnr );
 		$versie     = '';
 		if ( file_exists( "$file.pdf" ) ) {
 			$versie = 0;

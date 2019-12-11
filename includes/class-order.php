@@ -183,7 +183,7 @@ class Order extends \Kleistad\Entity {
 			$origineel_order = new \Kleistad\Order( $this->origineel_id );
 			return $origineel_order->bruto() + $this->bruto() - $this->betaald;
 		} else {
-			return $this->bruto() - $this->betaald;
+			return $this->credit_id ? 0.0 : $this->bruto() - $this->betaald;
 		}
 	}
 
