@@ -279,7 +279,9 @@ class Public_Main {
 		global $wp_post_types;
 		\Kleistad\Recept::create_type();
 		\Kleistad\WorkshopAanvraag::create_type();
+		\Kleistad\Email::create_type();
 		$wp_post_types[ \Kleistad\WorkshopAanvraag::POST_TYPE ]->exclude_from_search = true;
+		$wp_post_types[ \Kleistad\Email::POST_TYPE ]->exclude_from_search            = true;
 	}
 
 	/**

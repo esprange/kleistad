@@ -144,7 +144,7 @@ class Dagdelenkaart extends Artikel {
 			[
 				'to'          => "$gebruiker->display_name <$gebruiker->user_email>",
 				'subject'     => 'Welkom bij Kleistad',
-				'slug'        => 'kleistad_email_dagdelenkaart' . $type,
+				'slug'        => 'dagdelenkaart' . $type,
 				'attachments' => $factuur,
 				'parameters'  => [
 					'voornaam'                => $gebruiker->first_name,

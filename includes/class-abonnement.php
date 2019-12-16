@@ -241,7 +241,7 @@ class Abonnement extends Artikel {
 			[
 				'to'          => "$abonnee->display_name <$abonnee->user_email>",
 				'subject'     => false !== strpos( $type, '_start' ) ? 'Welkom bij Kleistad' : 'Abonnement Kleistad',
-				'slug'        => 'kleistad_email_abonnement' . $type,
+				'slug'        => 'abonnement' . $type,
 				'attachments' => $factuur,
 				'parameters'  =>
 				[

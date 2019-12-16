@@ -24,6 +24,47 @@ class Email {
 	private $mailparams;
 
 	/**
+	 * We maken gebruik van een custom post object
+	 */
+	const POST_TYPE = 'kleistad_email';
+
+	/**
+	 * Initialiseer de aanvragen als custom post type.
+	 */
+	public static function create_type() {
+		register_post_type(
+			self::POST_TYPE,
+			[
+				'labels'            => [
+					'name'               => 'Email templates',
+					'singular_name'      => 'Email template',
+					'add_new'            => 'Toevoegen',
+					'add_new_item'       => 'Template toevoegen',
+					'edit'               => 'Wijzigen',
+					'edit_item'          => 'Template wijzigen',
+					'view'               => 'Inzien',
+					'view_item'          => 'Template inzien',
+					'search_items'       => 'Template zoeken',
+					'not_found'          => 'Niet gevonden',
+					'not_found_in_trash' => 'Niet in prullenbak gevonden',
+				],
+				'public'            => true,
+				'supports'          => [
+					'title',
+					'editor',
+					'revisions',
+				],
+				'rewrite'           => false,
+				'show_ui'           => true,
+				'show_in_menu'      => 'kleistad',
+				'show_in_admin_bar' => false,
+				'show_in_nav_menus' => false,
+				'delete_with_user'  => false,
+			]
+		);
+	}
+
+	/**
 	 * Helper functie, haalt het domein op van de website.
 	 *
 	 * @return string

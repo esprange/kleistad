@@ -127,7 +127,9 @@ class Admin_Main {
 	 * @since    4.0.87
 	 */
 	public function add_plugin_admin_menu() {
+		global $submenu;
 		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', 'kleistad', [ $this, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), ++$GLOBALS['_wp_last_object_menu'] );
+		add_submenu_page( 'kleistad', 'Instellingen', 'Instellingen', 'manage_options', 'kleistad', null );
 		$this->ovens_handler->add_pages();
 		$this->abonnees_handler->add_pages();
 		$this->cursisten_handler->add_pages();

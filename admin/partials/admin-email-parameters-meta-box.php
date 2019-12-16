@@ -12,7 +12,7 @@
 ?>
 <div class="card">
 	<ul style="list-style-type:none">
-		<li><h3>kleistad_email_saldo_wijziging_ideal / kleistad_email_saldo_wijziging_bank</h3>
+		<li><h3>saldo_wijziging_ideal / saldo_wijziging_bank</h3>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de stoker</li>
 				<li>[achternaam] : achternaam van de stoker</li>
@@ -20,7 +20,7 @@
 				<li>[saldo] : huidig saldo</li>
 			</ul>
 		</li>
-		<li><h3>kleistad_email_stookmelding</h3>
+		<li><h3>stookmelding</h3>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de hoofdstoker</li>
 				<li>[achternaam] : achternaam van de hoofdstoker</li>
@@ -31,7 +31,7 @@
 				<li>[stookoven] : naam van de oven</li>
 			</ul>
 		</li>
-		<li><h3>kleistad_email_stookkosten_verwerkt</h3>
+		<li><h3>stookkosten_verwerkt</h3>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de medestoker</li>
 				<li>[achternaam] : achternaam van de medestoker</li>
@@ -43,7 +43,7 @@
 				<li>[saldo] : nieuw saldo van de medestoker</li>
 			</ul>
 		</li>
-		<li><h3>kleistad_email_abonnement_* emails</h3>
+		<li><h3>abonnement_* emails</h3>
 			<ol>
 				<li>start_ideal: bevesting start via ideal betaling</li>
 				<li>start_bank: start betalen per bank met instructie</li>
@@ -70,7 +70,7 @@
 				<li>[abonnement_maandgeld] : het maand abonnee bedrag</li>
 			</ul>
 		</li>
-		<li><h3>kleistad_email_dagdelenkaart_ideal en kleistad_email_dagdelenkaart_bank</h3>
+		<li><h3>dagdelenkaart_ideal en dagdelenkaart_bank</h3>
 			<ul>
 				<li>[voornaam] : voornaam van de gebruiker</li>
 				<li>[achternaam] : achternaam van de gebruiker</li>
@@ -79,15 +79,15 @@
 				<li>[start_datum] : datum waarop de dagdelenkaart moet ingaan</li>
 			</ul>
 		</li>
-		<li><h3>kleistad_email_cursus_* emails</h3>
+		<li><h3>cursus_* emails</h3>
 			<ol>
 				<li>'Inschrijf email' : bij inschrijving via bank; paginanaam aanpassen in cursus beheer</li>
 				<li>'Indeling email' : bij indeling via cursus beheer of inschrijving via iDeal; paginanaam aanpassen cursus beheer</li>
-				<li>kleistad_email_cursus_lopend : instructie bij inschrijving op lopende cursus</li>
-				<li>kleistad_email_cursus_betaling : betalen resterend cursusgeld via email link</li>
-				<li>kleistad_email_cursus_herinnering : herinnering betaling resterend cursusgeld via email link</li>
-				<li>kleistad_email_cursus_annulering : bevestiging annulering van de inschrijving<li>
-				<li>kleistad_email_cursus_betaling_ideal : bevestiging betaling restant bedrag</li>
+				<li>cursus_lopend : instructie bij inschrijving op lopende cursus</li>
+				<li>cursus_betaling : betalen resterend cursusgeld via email link</li>
+				<li>cursus_herinnering : herinnering betaling resterend cursusgeld via email link</li>
+				<li>cursus_annulering : bevestiging annulering van de inschrijving<li>
+				<li>cursus_betaling_ideal : bevestiging betaling restant bedrag</li>
 			</ol>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de cursist</li>
@@ -107,12 +107,12 @@
 				<li>[cursus_link] : link naar betaling restant cursus bedrag</li>
 			</ul>
 		</li>
-		<li><h3>kleistad_email_workshop_* emails</h3>
+		<li><h3>workshop_* emails</h3>
 			<ol>
-				<li>kleistad_email_workshop_bevestiging : bevestiging van de gemaakte afspraken voor de workshop</li>
-				<li>kleistad_email_workshop_betaling : betalen workshop kosten via email link</li>
-				<li>kleistad_email_workshop_betaling_ideal : bevestiging betaling workshop kosten per ideal</li>
-				<li>kleistad_email_workshop_afzegging : afzegging van de workshop</li>
+				<li>workshop_bevestiging : bevestiging van de gemaakte afspraken voor de workshop</li>
+				<li>workshop_betaling : betalen workshop kosten via email link</li>
+				<li>workshop_betaling_ideal : bevestiging betaling workshop kosten per ideal</li>
+				<li>workshop_afzegging : afzegging van de workshop</li>
 			</ol>
 			<ul style="list-style-type:square">
 				<li>[contact] : contactpersoon van de workshop aanvraag</li>
@@ -130,7 +130,7 @@
 				<li>[workshop_link] : link naar betaling workshop bedrag</li>
 			</ul>
 		</li>
-		<li><h3>kleistad_email_incasso_mislukt</h3>
+		<li><h3>incasso_mislukt</h3>
 			<ol>
 				<li>[voornaam] : voornaam van de betaler</li>
 				<li>[achternaam] : achternaam van de betaler</li>
@@ -138,7 +138,7 @@
 				<li>[reden] : door de bank aangegeven dat incasso mislukt is</li>
 			</ol>
 		</li>
-		<li><h3>kleistad_email_bevestiging_workshop_aanvraag</h3>
+		<li><h3>bevestiging_workshop_aanvraag</h3>
 			<ol>
 				<li>[contact] : naam van de aanvrager</li>
 				<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest' )</li>
@@ -148,7 +148,7 @@
 				<li>[telefoon] : opgegeven telefoon nummer</li>
 			</ol>
 		</li>
-		<li><h3>kleistad_email_reactie_workshop_aanvraag</h3>
+		<li><h3>reactie_workshop_aanvraag</h3>
 			<ol>
 				<li>[reactie] : de reactie op de vraag van de aanvrager</li>
 			</ol>

@@ -256,13 +256,13 @@ class Workshop extends Artikel {
 			],
 		];
 
-		$email_parameters['slug'] = "kleistad_email_workshop$type";
+		$email_parameters['slug'] = "workshop$type";
 		switch ( $type ) {
 			case '_bevestiging':
 			case '_correctie':
 				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( '_correctie' === $type ? ' (correctie)' : '' );
 				$email_parameters['auto']     = false;
-				$email_parameters['slug']     = 'kleistad_email_workshop_bevestiging';
+				$email_parameters['slug']     = 'workshop_bevestiging';
 				$email_parameters['from']     = 'info@' . \Kleistad\Email::verzend_domein();
 				$email_parameters['reply-to'] = 'info@' . \Kleistad\Email::domein();
 				break;

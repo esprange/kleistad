@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 40;
+	const DBVERSIE = 43;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -260,7 +260,23 @@ class Admin_Upgrade {
 				}
 			}
 		}
+	}
 
+	/**
+	 * Converteer emails
+	 */
+	private function convert_email() {
+		global $wpdb;
+		$wpdb->query( "UPDATE {$wpdb->prefix}posts SET post_type='kleistad_email', post_title=SUBSTRING( post_title, 16 ) WHERE post_title LIKE 'kleistad_email_%'" );
+	}
+
+	/**
+	 * Converteer cursussen
+	 */
+	private function convert_cursus() {
+		global $wpdb;
+		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_cursussen SET inschrijfslug=SUBSTRING( inschrijfslug, 16 ) WHERE inschrijfslug LIKE 'kleistad_email_%'" );
+		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_cursussen SET indelingslug=SUBSTRING( indelingslug, 16 ) WHERE indelingslug LIKE 'kleistad_email_%'" );
 	}
 
 	/**
@@ -275,6 +291,8 @@ class Admin_Upgrade {
 		$this->convert_dagdelenkaart();
 		$this->convert_abonnement();
 		$this->convert_inschrijving();
+		$this->convert_email();
+		$this->convert_cursus();
 
 		/**
 		 * Maak facturen dir aan.

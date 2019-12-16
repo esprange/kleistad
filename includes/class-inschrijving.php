@@ -247,7 +247,7 @@ class Inschrijving extends Artikel {
 		$emailer   = new \Kleistad\Email();
 		$cursist   = get_userdata( $this->klant_id );
 		$onderwerp = ucfirst( $type ) . ' cursus';
-		$slug      = "kleistad_email_cursus$type";
+		$slug      = "cursus$type";
 
 		switch ( $type ) {
 			case 'inschrijving':

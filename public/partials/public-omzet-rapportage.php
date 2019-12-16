@@ -11,8 +11,35 @@
 
 $select_maand = (int) date( 'm', $data['periode'] );
 $select_jaar  = (int) date( 'Y', $data['periode'] );
-?>
-
+if ( 'details' === $data['actie'] ) :
+	?>
+<input type="hidden" name="maand" value="<?php echo esc_attr( $select_maand ); ?>">
+<input type="hidden" name="jaar" value="<?php echo esc_attr( $select_jaar ); ?>">
+<p>Omzet in <?php echo esc_html( strftime( '%B %Y', mktime( 0, 0, 0, $select_maand, 1, $select_jaar ) ) ); ?> voor <?php echo esc_html( $data['artikel'] ); ?>.
+<table class="kleistad_datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
+	<thead>
+		<tr>
+			<th>Code</th>
+			<th>Klant</th>
+			<th>Datum</th>
+			<th>Bedrag</th>
+			<th>BTW</th>
+		</tr>
+	</thead>
+	<tbody>
+	<?php foreach ( $data['omzetdetails'] as $detail ) : ?>
+		<tr>
+			<td><?php echo esc_html( $detail['code'] ); ?></td>
+			<td><?php echo esc_html( $detail['klant'] ); ?></td>
+			<td><?php echo esc_html( $detail['datum'] ); ?></td>
+			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['netto'], 2 ) ); ?></td>
+			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['btw'], 2 ) ); ?></td>
+		</tr>
+	<?php endforeach ?>
+	</tbody>
+</table>
+<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+<?php else : ?>
 <div class="kleistad_row">
 	<div class="kleistad_col_3">
 		<label class="kleistad_label" for="kleistad_maand" >Maand</label>
@@ -59,6 +86,7 @@ $select_jaar  = (int) date( 'Y', $data['periode'] );
 				<th>Omzet</th>
 				<th>Bedrag</th>
 				<th>BTW</th>
+				<th data-orderable="false"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -67,8 +95,15 @@ $select_jaar  = (int) date( 'Y', $data['periode'] );
 			<td><?php echo esc_html( $naam ); ?></td>
 			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['netto'], 2 ) ); ?></td>
 			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['btw'], 2 ) ); ?></td>
+			<td>
+				<a href="#" title="details" class="kleistad_view kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+					data-id="<?php echo esc_attr( $select_jaar . '-' . $select_maand . '-' . $omzet['key'] ); ?>" data-actie="details" >
+					&nbsp;
+				</a>
+			</td>
 		</tr>
 	<?php endforeach ?>
 		</tbody>
 	</table>
 </div>
+<?php endif ?>

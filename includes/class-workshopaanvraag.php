@@ -203,14 +203,15 @@ class WorkshopAanvraag {
 				) {
 				$emailer->send(
 					[
-						'to'      => 'Workshop mailbox <info@' . \Kleistad\Email::domein() . '>',
-						'subject' => "niet te verwerken email over: {$email->subject}",
-						'content' => '<p>Er is een onbekende reactie ontvangen op ' . self::MBX . '@' . \Kleistad\Email::domein() . ' van ' . $email->fromAddress,
+						'to'        => 'Kleistad <info@' . \Kleistad\Email::domein() . '>',
+						'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
+						'from'      => sanitize_email( $email->fromAddress ),
+						'subject'   => 'FW:' . sanitize_text_field( $email->subject ),
+						'content'   => sanitize_textarea_field( $body ),
 					]
 				);
-			} else {
-				$mailbox->setFlag( [ $email_id ], '\\Answered' );
-			};
+			}
+			$mailbox->setFlag( [ $email_id ], '\\Answered' );
 		}
 		// phpcs:enable
 	}
@@ -285,7 +286,7 @@ class WorkshopAanvraag {
 					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $result ),
 					'from'       => self::MBX . '@' . \Kleistad\Email::verzend_domein(),
 					'reply-to'   => self::MBX . '@' . \Kleistad\Email::domein(),
-					'slug'       => 'kleistad_email_bevestiging_workshop_aanvraag',
+					'slug'       => 'bevestiging_workshop_aanvraag',
 					'parameters' => $casus_data,
 					'sign_email' => false,
 					'auto'       => 'reply',
@@ -350,7 +351,7 @@ class WorkshopAanvraag {
 				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
 				'reply-to'   => self::MBX . '@' . \Kleistad\Email::domein(),
 				'subject'    => $subject,
-				'slug'       => 'kleistad_email_reactie_workshop_aanvraag',
+				'slug'       => 'reactie_workshop_aanvraag',
 				'auto'       => false,
 				'parameters' => [
 					'reactie' => nl2br( $reactie ),

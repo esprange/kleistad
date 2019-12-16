@@ -159,7 +159,7 @@ if ( 'debiteur' === $data['actie'] ) :
 				<td style="text-align:right;" data-sort="<?php echo esc_attr( $debiteur['openstaand'] ); ?>">&euro; <?php echo esc_html( number_format_i18n( $debiteur['openstaand'], 2 ) ); ?></td>
 				<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
 				<td>
-					<a href="#" title="wijzig order" class="kleistad_view kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+					<a href="#" title="wijzig order" class="kleistad_edit kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 						data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="<?php echo 'zoek' === $data['actie'] ? 'toon_debiteur' : 'debiteur'; ?>" >
 						&nbsp;
 					</a>

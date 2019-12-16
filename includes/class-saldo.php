@@ -159,7 +159,7 @@ class Saldo extends Artikel {
 			[
 				'to'          => "$gebruiker->display_name <$gebruiker->user_email>",
 				'subject'     => 'Bijstorting stooksaldo',
-				'slug'        => 'kleistad_email_saldo' . $type,
+				'slug'        => 'saldo' . $type,
 				'attachments' => $factuur,
 				'parameters'  => [
 					'voornaam'   => $gebruiker->first_name,
@@ -308,7 +308,7 @@ class Saldo extends Artikel {
 								[
 									'to'         => "$medestoker->display_name <$medestoker->user_email>",
 									'subject'    => 'Kleistad kosten zijn verwerkt op het stooksaldo',
-									'slug'       => 'kleistad_email_stookkosten_verwerkt',
+									'slug'       => 'stookkosten_verwerkt',
 									'parameters' => [
 										'voornaam'   => $medestoker->first_name,
 										'achternaam' => $medestoker->last_name,
@@ -354,7 +354,7 @@ class Saldo extends Artikel {
 						[
 							'to'         => "$stoker->display_name <$stoker->user_email>",
 							'subject'    => 'Kleistad oven gebruik op ' . date( 'd-m-Y', $reservering->datum ),
-							'slug'       => 'kleistad_email_stookmelding',
+							'slug'       => 'stookmelding',
 							'parameters' => [
 								'voornaam'         => $stoker->first_name,
 								'achternaam'       => $stoker->last_name,
