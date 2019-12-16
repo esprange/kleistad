@@ -179,10 +179,10 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			if ( 0.0 === $data['cursus']['cursuskosten'] && 0.0 < $data['cursus']['inschrijfkosten'] ) {
 				$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
 			}
-			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['inschrijfslug'], OBJECT ) ) ) { // phpcs:ignore
+			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['inschrijfslug'], OBJECT, \Kleistad\Email::POST_TYPE ) ) ) { // phpcs:ignore
 				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['inschrijfslug'] );
 			}
-			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['indelingslug'], OBJECT ) ) ) { // phpcs:ignore
+			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['indelingslug'], OBJECT, \Kleistad\Email::POST_TYPE ) ) ) { // phpcs:ignore
 				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['indelingslug'] );
 			}
 			if ( ! empty( $error->get_error_codes() ) ) {

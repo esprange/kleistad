@@ -225,6 +225,8 @@ abstract class ShortcodeForm extends Shortcode {
 			} else {
 				$result = $shortcode_object->save( $data );
 			}
+		} else {
+			return new \WP_REST_Response( [ 'status' => $shortcode_object->status( $result ) ] );
 		}
 		return new \WP_REST_Response( $result );
 	}

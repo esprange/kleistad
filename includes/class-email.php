@@ -156,7 +156,7 @@ class Email {
 		);
 
 		if ( ! empty( $this->mailparams['slug'] ) ) {
-			$page = get_page_by_title( $this->mailparams['slug'], OBJECT );
+			$page = get_page_by_title( $this->mailparams['slug'], OBJECT, self::POST_TYPE );
 			if ( ! is_null( $page ) ) {
 				$this->mailparams['content'] = apply_filters( 'the_content', $page->post_content );
 			} else {
@@ -174,7 +174,7 @@ class Email {
 			[
 				'#\[\s*pagina\s*:\s*([a-z,_,-]+?)\s*\]#i' => function( $match ) {
 					// Include pagina.
-					$page = get_page_by_title( $match[1], OBJECT );
+					$page = get_page_by_title( $match[1], OBJECT, self::POST_TYPE );
 					return ! is_null( $page ) ? apply_filters( 'the_content', $page->post_content ) : '';
 				},
 				'#\[\s*([a-z,_]+)\s*\]#i'                 => function( $match ) {
