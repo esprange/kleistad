@@ -16,7 +16,7 @@ if ( 'details' === $data['actie'] ) :
 <input type="hidden" name="maand" value="<?php echo esc_attr( $select_maand ); ?>">
 <input type="hidden" name="jaar" value="<?php echo esc_attr( $select_jaar ); ?>">
 <p>Omzet in <?php echo esc_html( strftime( '%B %Y', mktime( 0, 0, 0, $select_maand, 1, $select_jaar ) ) ); ?> voor <?php echo esc_html( $data['artikel'] ); ?>.
-<table class="kleistad_datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
+<table class="kleistad_datatable display compact nowrap" >
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -31,7 +31,7 @@ if ( 'details' === $data['actie'] ) :
 		<tr>
 			<td><?php echo esc_html( $detail['code'] ); ?></td>
 			<td><?php echo esc_html( $detail['klant'] ); ?></td>
-			<td><?php echo esc_html( $detail['datum'] ); ?></td>
+			<td data-sort="<?php echo esc_attr( $detail['datum'] ); ?>" ><?php echo esc_html( strftime( '%d-%m-%Y', $detail['datum'] ) ); ?></td>
 			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['netto'], 2 ) ); ?></td>
 			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['btw'], 2 ) ); ?></td>
 		</tr>

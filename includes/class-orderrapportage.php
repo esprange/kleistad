@@ -62,7 +62,7 @@ class Orderrapportage {
 		foreach ( $order_ids as $order_id ) {
 			$order     = new \Kleistad\Order( $order_id );
 			$details[] = [
-				'datum' => strftime( '%d-%m-%Y', $order->datum ),
+				'datum' => $order->datum,
 				'netto' => $order->netto(),
 				'btw'   => $order->btw(),
 				'klant' => $order->klant['naam'],

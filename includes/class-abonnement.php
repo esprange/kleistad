@@ -353,17 +353,17 @@ class Abonnement extends Artikel {
 	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function wijzigen( $wijzig_datum, $type, $soort, $dag = '', $admin = false ) {
-		$ongewijzigd = true;
+		$gewijzigd = false;
 		switch ( $type ) {
 			case 'soort':
-				$ongewijzigd = $this->soort == $soort || $this->dag == $dag; // phpcs:ignore
+				$gewijzigd   = $this->soort != $soort || $this->dag != $dag; // phpcs:ignore
 				$this->soort = $soort;
 				$this->dag   = $dag;
 				$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
 					( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
 				break;
 			case 'extras':
-				$ongewijzigd  = $this->extras == $soort; // phpcs:ignore
+				$gewijzigd    = $this->extras != $soort; // phpcs:ignore
 				$this->extras = $soort;
 				$bericht      = 'Je gaat voortaan per ' . strftime( '%d-%m-%Y', $wijzig_datum ) .
 					( count( $soort ) ? ' gebruik maken van ' . implode( ', ', $soort ) : ' geen gebruik meer van extras' );
@@ -371,7 +371,7 @@ class Abonnement extends Artikel {
 			default:
 				$bericht = '';
 		}
-		if ( ! $ongewijzigd ) {
+		if ( $gewijzigd ) {
 			$this->save();
 			$this->email( '_gewijzigd', $bericht );
 		}
@@ -469,7 +469,11 @@ class Abonnement extends Artikel {
 		$basis_bedrag  = (float) $options[ $this->soort . '_abonnement' ];
 		$extras_bedrag = 0.0;
 		foreach ( $this->extras as $extra ) {
-			$extras_bedrag += $this->bedrag( $extra );
+			foreach ( $options['extra'] as $extra_optie ) {
+				if ( $extra_optie['naam'] === $extra ) {
+					$extras_bedrag += $extra_optie['prijs'];
+				}
+			}
 		}
 		switch ( $type ) {
 			case '':

@@ -164,7 +164,7 @@ elseif ( 'extras' === $actie ) :
 		</tr>
 		<tr>
 			<td colspan="2">
-				<?php echo esc_html( $item['mollie_info'] ); ?>
+				<?php echo esc_html( $item['mollie_info'] ?? '' ); ?>
 			</td>
 		</tr>
 			<?php

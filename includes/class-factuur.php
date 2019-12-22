@@ -119,22 +119,20 @@ class Factuur extends \FPDF {
 		$totaal = 0.0;
 		$btw    = 0.0;
 		foreach ( $regels as $regel ) {
-			$prijs   = $regel['aantal'] * $regel['prijs'];
+			$prijs   = $regel['aantal'] * ( $regel['prijs'] + $regel['btw'] );
 			$totaal += $prijs;
 			$btw    += $regel['aantal'] * $regel['btw'];
 			$this->Cell( $w['aantal'], $h, $regel['aantal'], 0, 0, 'C' );
 			$this->Cell( $w['artikel'], $h, $regel['artikel'], 0, 0, 'L' );
-			$this->Cell( $w['stuksprijs'], $h, $this->euro( $regel['prijs'] ), 0, 0, 'R' );
+			$this->Cell( $w['stuksprijs'], $h, $this->euro( $regel['prijs'] + $regel['btw'] ), 0, 0, 'R' );
 			$this->Cell( $w['prijs'], $h, $this->euro( $prijs ), 0, 1, 'R' );
 		}
 		$this->Ln( $h * 2 );
 		$this->Cell( $w['volledig'], 0, '', 'T', 1 );
-		$this->Cell( $w['samenvatting'], $h, 'Totaal exclusief BTW', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( $totaal ), 0, 1, 'R' );
-		$this->Cell( $w['samenvatting'], $h, 'BTW 21%', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( $btw ), 'B', 1, 'R' );
 		$this->Cell( $w['samenvatting'], $h, 'Totaal', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( $totaal + $btw ), 'B', 1, 'R' );
+		$this->Cell( $w['prijs'], $h, $this->euro( $totaal ), 0, 1, 'R' );
+		$this->Cell( $w['samenvatting'], $h, 'Inclusief BTW 21%', 0, 0, 'R' );
+		$this->Cell( $w['prijs'], $h, $this->euro( $btw ), 'B', 1, 'R' );
 		$this->Cell( $w['samenvatting'], $h, 'Reeds betaald ', 0, 0, 'R' );
 		$this->Cell( $w['prijs'], $h, $this->euro( $betaald ), 'B', 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
@@ -153,13 +151,15 @@ class Factuur extends \FPDF {
 	 * @param string $arg De te tonen tekst.
 	 */
 	private function opmerking( $arg ) {
-		$h = 6;
-		$this->SetLeftMargin( 25 );
-		$this->Ln( 2 * $h );
-		$this->setFont( 'Arial', 'B', 10 );
-		$this->Cell( 0, $h, 'Opmerkingen', 0, 1 );
-		$this->setFont( 'Arial' );
-		$this->MultiCell( 0, $h, $arg );
+		if ( ! empty( $arg ) ) {
+			$h = 6;
+			$this->SetLeftMargin( 25 );
+			$this->Ln( 2 * $h );
+			$this->setFont( 'Arial', 'B', 10 );
+			$this->Cell( 0, $h, 'Opmerkingen', 0, 1 );
+			$this->setFont( 'Arial' );
+			$this->MultiCell( 0, $h, $arg );
+		}
 	}
 
 	/**

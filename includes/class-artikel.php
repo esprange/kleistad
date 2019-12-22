@@ -164,8 +164,8 @@ abstract class Artikel extends Entity {
 	 * @return string De url van de factuur.
 	 */
 	final public function bestel_order( $bedrag = 0.0, $artikel_type = '', $opmerking = '' ) {
-		$order_id           = \Kleistad\Order::zoek_order( $this->referentie() );
 		$this->artikel_type = $artikel_type;
+		$order_id           = \Kleistad\Order::zoek_order( $this->referentie() );
 		$order              = new \Kleistad\Order( $order_id );
 		$order->betaald     = $bedrag;
 		$order->regels      = $this->factuurregels();
@@ -323,15 +323,19 @@ abstract class Artikel extends Entity {
 	 * @return string De html link.
 	 */
 	protected function betaal_link() {
-		$url = add_query_arg(
-			[
-				'order' => \Kleistad\Order::zoek_order( $this->referentie() ),
-				'hsh'   => $this->controle(),
-				'art'   => $this->artikel_type,
-			],
-			home_url( '/kleistad-betaling' )
-		);
-		return "<a href=\"$url\" >Kleistad pagina</a>";
+		if ( $this->artikel_type ) {
+			$url = add_query_arg(
+				[
+					'order' => \Kleistad\Order::zoek_order( $this->referentie() ),
+					'hsh'   => $this->controle(),
+					'art'   => $this->artikel_type,
+				],
+				home_url( '/kleistad-betaling' )
+			);
+			return "<a href=\"$url\" >Kleistad pagina</a>";
+		} else {
+			return '';
+		}
 	}
 
 	/**

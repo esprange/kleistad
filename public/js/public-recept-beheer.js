@@ -20,8 +20,8 @@
 							$( this ).val( '' );
 							return false;
 						}
-						reader.onload = function( e ) {
-							$( '#kleistad_foto' ).attr( 'src', e.target.result );
+						reader.onload = function() {
+							$( '#kleistad_foto' ).attr( 'src', reader.result );
 						};
 						reader.readAsDataURL( this.files[0] );
 					}

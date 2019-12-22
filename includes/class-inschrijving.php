@@ -28,7 +28,8 @@ namespace Kleistad;
  */
 class Inschrijving extends Artikel {
 
-	const META_KEY = 'kleistad_cursus';
+	const META_KEY         = 'kleistad_cursus';
+	const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
 
 	/**
 	 * De kosten van een lopende cursus
@@ -431,7 +432,7 @@ class Inschrijving extends Artikel {
 				case 'inschrijving':
 					$inschrijving->i_betaald = true;
 					$inschrijving->ingedeeld = true;
-					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag ) );
+					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, 'inschrijving', self::OPM_INSCHRIJVING ) );
 					$inschrijving->save();
 					break;
 
@@ -442,7 +443,7 @@ class Inschrijving extends Artikel {
 					if ( 0 < $inschrijving->cursus->inschrijfkosten ) {
 						$inschrijving->email( '_betaling_ideal' );
 					} else {
-						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag ) );
+						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, 'cursus', '' ) );
 					}
 					$inschrijving->save();
 					break;

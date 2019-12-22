@@ -203,7 +203,8 @@ Deze plugin voegt vier tabellen toe aan de database:
 *  \Kleistad\Reserveringen
 *  \Kleistad\Cursussen
 *  \Kleistad\Workshops
+*  \Kleistad\Orders
 
-De plugin maakt gebruik van Mollie en de Google Calendar API
+De plugin maakt gebruik van Mollie, de Google Calendar API en de geodata locatieserver.
 
 Alle overige informatie wordt via user_meta en custom posts informatie vastgelegd.

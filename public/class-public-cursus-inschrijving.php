@@ -218,7 +218,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		} else {
 			if ( ! $lopend ) {
-				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order() );
+				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, 'inschrijving', \Kleistad\Inschrijving::OPM_INSCHRIJVING ) );
 			} else {
 				$inschrijving->email( '_lopend' );
 			}

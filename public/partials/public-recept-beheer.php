@@ -131,13 +131,7 @@ if ( isset( $data['recept'] ) ) :
 		</div>
 		<div class="kleistad_col_5">
 			<input type="file" name="foto" id="kleistad_foto_input" accept=".jpeg,.jpg,.tiff,.tif" /><br />
-			<?php
-			if ( '' !== $data['recept']['content']['foto'] ) :
-				?>
-			<img id="kleistad_foto" src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" alt="foto" >
-			<?php else : ?>
-			&nbsp;
-			<?php endif ?>
+			<img id="kleistad_foto" src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" alt=" " >
 			<input type="hidden" name="foto_url" value="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
 		</div>
 	</div>
@@ -249,13 +243,11 @@ if ( isset( $data['recept'] ) ) :
 		<?php foreach ( $data['recepten'] as $recept ) : ?>
 		<tr>
 			<td>
-			<?php
-			if ( '' !== $recept['foto'] ) :
-				?>
+			<?php if ( '' !== $recept['foto'] ) : ?>
 				<img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept['titel'] ); ?>" >
 				<?php else : ?>
 				&nbsp;
-			<?php endif; ?>
+			<?php endif; ?></td>
 			<td><?php echo esc_html( $recept['titel'] ); ?></td>
 			<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
 			<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
@@ -266,6 +258,6 @@ if ( isset( $data['recept'] ) ) :
 		<?php endforeach ?>
 		</tbody>
 	</table>
-	<button class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+	<button type="button" class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 </form>
 <?php endif ?>

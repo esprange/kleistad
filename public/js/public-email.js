@@ -1,13 +1,23 @@
 ( function( $ ) {
 	'use strict';
 
+	function onLoad() {
+		$( '#kleistad_gebruikers' ).jstree(
+			{
+				'plugins': [ 'checkbox' ]
+			}
+		);
+	}
+
+	$( document ).ajaxComplete(
+        function() {
+			onLoad();
+		}
+	);
+
     $( document ).ready(
 		function()  {
-			$( '#kleistad_gebruikers' ).jstree(
-				{
-					'plugins': [ 'checkbox' ]
-				}
-			);
+			onLoad();
 
 			$( '#kleistad_gebruikers' ).on( 'changed.jstree',
 				function() {
