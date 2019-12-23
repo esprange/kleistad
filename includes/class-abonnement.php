@@ -58,6 +58,14 @@ class Abonnement extends Artikel {
 	];
 
 	/**
+	 * De tekst voor een eventueel bericht in de email
+	 *
+	 * @access private
+	 * @var string $bericht De tekst.
+	 */
+	private $bericht = '';
+
+	/**
 	 * Constructor, maak het abonnement object .
 	 *
 	 * @param int $klant_id wp user id van de abonnee.
@@ -230,11 +238,10 @@ class Abonnement extends Artikel {
 	 * Verzenden van de email.
 	 *
 	 * @param  string $type      Welke email er verstuurd moet worden.
-	 * @param  string $wijziging Ingeval van een wijziging, de tekst die dit beschrijft.
 	 * @param  string $factuur   Bij de sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email( $type, $wijziging = '', $factuur = '' ) {
+	public function email( $type, $factuur = '' ) {
 		$abonnee = get_userdata( $this->klant_id );
 		$emailer = new \Kleistad\Email();
 		return $emailer->send(
@@ -256,8 +263,7 @@ class Abonnement extends Artikel {
 					'abonnement_code'         => $this->code,
 					'abonnement_dag'          => $this->dag,
 					'abonnement_opmerking'    => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
-					'abonnement_wijziging'    => $wijziging,
-					'abonnement_reason'       => $wijziging,
+					'abonnement_wijziging'    => $this->bericht,
 					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->extras_lijst() : '',
 					'abonnement_startgeld'    => number_format_i18n( $this->bedrag( '#start' ), 2 ),
 					'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( '#regulier' ), 2 ),
@@ -289,7 +295,8 @@ class Abonnement extends Artikel {
 		$this->herstart_datum = $herstart_datum;
 		$this->save();
 		if ( ! $admin ) {
-			$this->email( '_gewijzigd', 'Je pauzeert het abonnement per ' . strftime( '%d-%m-%Y', $this->pauze_datum ) . ' en hervat het per ' . strftime( '%d-%m-%Y', $this->herstart_datum ) );
+			$this->bericht = 'Je pauzeert het abonnement per ' . strftime( '%d-%m-%Y', $this->pauze_datum ) . ' en hervat het per ' . strftime( '%d-%m-%Y', $this->herstart_datum );
+			$this->email( '_gewijzigd' );
 		}
 		return true;
 	}
@@ -335,10 +342,8 @@ class Abonnement extends Artikel {
 		$this->betalen->verwijder_mandaat( $this->klant_id );
 		$this->save();
 		if ( ! $admin ) {
-			$this->email(
-				'_gewijzigd',
-				'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $this->eind_datum ) . ' beëindigd.'
-			);
+			$this->bericht = 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $this->eind_datum ) . ' beëindigd.';
+			$this->email( '_gewijzigd' );
 		}
 		return true;
 	}
@@ -357,23 +362,23 @@ class Abonnement extends Artikel {
 		switch ( $type ) {
 			case 'soort':
 				$gewijzigd   = $this->soort != $soort || $this->dag != $dag; // phpcs:ignore
-				$this->soort = $soort;
-				$this->dag   = $dag;
-				$bericht     = 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
+				$this->soort   = $soort;
+				$this->dag     = $dag;
+				$this->bericht = 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
 					( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
 				break;
 			case 'extras':
 				$gewijzigd    = $this->extras != $soort; // phpcs:ignore
-				$this->extras = $soort;
-				$bericht      = 'Je gaat voortaan per ' . strftime( '%d-%m-%Y', $wijzig_datum ) .
+				$this->extras  = $soort;
+				$this->bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%Y', $wijzig_datum ) .
 					( count( $soort ) ? ' gebruik maken van ' . implode( ', ', $soort ) : ' geen gebruik meer van extras' );
 				break;
 			default:
-				$bericht = '';
+				$this->bericht = '';
 		}
 		if ( $gewijzigd ) {
 			$this->save();
-			$this->email( '_gewijzigd', $bericht );
+			$this->email( '_gewijzigd' );
 		}
 		return true;
 	}
@@ -425,7 +430,7 @@ class Abonnement extends Artikel {
 				$regels[] = array_merge(
 					self::split_bedrag( $this->bedrag( $extra ) ),
 					[
-						'artikel' => 'gebruik $extra',
+						'artikel' => "gebruik $extra",
 						'aantal'  => $aantal,
 					]
 				);
@@ -535,12 +540,11 @@ class Abonnement extends Artikel {
 	/**
 	 * Doe acties na betaling van abonnementen. Wordt aangeroepen vanuit de betaal callback.
 	 *
-	 * @param array  $parameters De parameters 0: gebruiker-id, 1: de melddatum.
-	 * @param float  $bedrag     Geeft aan of het een eerste start of een herstart betreft.
-	 * @param bool   $betaald    Of er werkelijk betaald is.
-	 * @param string $reason     Eventuele tekst van de bank over het falen van een incasso.
+	 * @param array $parameters De parameters 0: gebruiker-id, 1: de melddatum.
+	 * @param float $bedrag     Geeft aan of het een eerste start of een herstart betreft.
+	 * @param bool  $betaald    Of er werkelijk betaald is.
 	 */
-	public static function callback( $parameters, $bedrag, $betaald, $reason = '' ) {
+	public static function callback( $parameters, $bedrag, $betaald ) {
 		$abonnement = new static( intval( $parameters[0] ) );
 		if ( $betaald ) {
 			switch ( $parameters[1] ) {
@@ -548,20 +552,20 @@ class Abonnement extends Artikel {
 					$abonnement->email( '_betaalwijze_ideal' );
 					break;
 				case 'start':
-					$abonnement->email( '_start_ideal', '', $abonnement->bestel_order( $bedrag, 'start' ) );
+					$abonnement->email( '_start_ideal', $abonnement->bestel_order( $bedrag, 'start' ) );
 					break;
 				case 'incasso':
-					$abonnement->email( '_regulier', '', $abonnement->bestel_order( $bedrag, 'regulier' ) );
+					$abonnement->email( '_regulier_incasso', $abonnement->bestel_order( $bedrag, 'regulier' ) );
 					break;
 				case 'pauze':
-					$abonnement->email( '_pauze', '', $abonnement->bestel_order( $bedrag, 'pauze' ) );
+					$abonnement->email( '_regulier_incasso', $abonnement->bestel_order( $bedrag, 'pauze' ) );
 					break;
 				case 'overbrugging':
 					$abonnement->email( '_vervolg' );
 			}
 		} else {
 			if ( 'incasso' === $parameters[1] ) {
-				$abonnement->email( '_incasso_mislukt', $reason, $abonnement->bestel_order( 0.0, 'regulier' ) );
+				$abonnement->email( '_regulier_mislukt', $abonnement->bestel_order( 0.0, 'regulier' ) );
 			}
 		}
 	}
@@ -588,25 +592,35 @@ class Abonnement extends Artikel {
 				continue;
 			}
 			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er iets te betalen is, zonder verdere acties.
-			if ( ! $abonnement->overbrugging_email && $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) ) {
-				$abonnement->overbrugging_email = true;
-				if ( 0.0 < $abonnement->bedrag( '#overbrugging' ) ) {
-					$abonnement->email( '_vervolg', '', $abonnement->bestel_order( 0.0, 'overbrugging' ) ); // Alleen versturen als er werkelijk iets te betalen is.
+			if ( $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) && $vandaag < $abonnement->reguliere_datum ) {
+				if ( ! $abonnement->overbrugging_email && 0.0 < $abonnement->bedrag( '#overbrugging' ) ) {
+					$abonnement->email( '_vervolg', $abonnement->bestel_order( 0.0, 'overbrugging' ) ); // Alleen versturen als er werkelijk iets te betalen is.
+					$abonnement->overbrugging_email = true;
+					$abonnement->save();
 				}
+				continue; // Meer actie is niet nodig.
 			}
 			// Abonnementen zijn gepauzeerd als het vandaag tussen de pauze en herstart datum is.
 			$abonnement->gepauzeerd = $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum;
 			$abonnement->save();
+			// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
+			if ( ( $abonnement->herstart_datum > $deze_maand && $abonnement->herstart_datum < $volgende_maand ) ||
+				( $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand ) ) {
+				$abonnement->artikel_type = 'pauze';
+			} elseif ( $abonnement->herstart_datum >= $volgende_maand && $abonnement->pauze_datum <= $deze_maand ) {
+				continue; // geen order, de gehele maand wordt gepauzeerd of de abonnee zit nog in de overbrugging.
+			} else {
+				$abonnement->artikel_type = 'regulier';
+			}
+
 			// Hierna wordt er niets meer aan het abonnement aangepast en als er niet gefactureerd hoeft te worden dan geen verdere actie.
-			if ( $factuur_vorig >= $factuur_maand || $vandaag < $abonnement->reguliere_datum ) {
+			if ( $factuur_vorig >= $factuur_maand ) {
 				continue;
 			}
-			// Abonnementen die via de bank betaald worden krijgen een maand factuur als er gefactureerd moet worden.
-			$abonnement->artikel_type = $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand && 0.0 < $abonnement->bedrag( '#pauze' ) ? 'pauze' : 'regulier';
 			if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
 				$abonnement->betalen_per_incasso();
 			} else {
-				$abonnement->email( "_{$abonnement->artikel_type}", $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
+				$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
 			}
 		}
 		// Verhoog het maandnummer van de facturatie.

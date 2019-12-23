@@ -160,7 +160,7 @@ class Email {
 			if ( ! is_null( $page ) ) {
 				$this->mailparams['content'] = apply_filters( 'the_content', $page->post_content );
 			} else {
-				$this->mailparams['content'] = '<table>';
+				$this->mailparams['content'] = "<table><tr><th colspan=\"2\">{$this->mailparams['slug']}</th></tr>";
 				foreach ( $this->mailparams['parameters'] as $key => $parameter ) {
 					$this->mailparams['content'] .= "<tr><td>$key</td><td>$parameter</td></tr>";
 				}

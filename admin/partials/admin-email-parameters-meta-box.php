@@ -51,7 +51,11 @@
 				<li>gewijzigd: gepauzeerd, herstart of beëindigd door de abonnee</li>
 				<li>betaalwijze_ideal: bevestiging voortaan betalen per sepa incasso</li>
 				<li>betaalwijze_bank: voortaan betalen per bank met instructie</li>
-				<li>reason: reden waarom incasso mislukt</li>
+				<li>regulier_incasso: de maandelijkse factuur en bevestiging betaling</li>
+				<li>regulier_bank: de maandelijkse factuur en betalen per bank met instructie</ll>
+				<li>regulier_incasso_mislukt: de maandelijkse factuur omdat incasso mislukt en betalen per bank met instructie</li>
+			</ol>
+		</li>
 			</ol>
 			<ul style="list-style-type:square">
 				<li>[voornaam] : voornaam van de abonnee</li>
@@ -68,6 +72,7 @@
 				<li>[abonnement_wijziging] : de wijziging (pauzeren of beëindigen)</li>
 				<li>[abonnement_startgeld] : driemaal het maand abonnee bedrag</li>
 				<li>[abonnement_maandgeld] : het maand abonnee bedrag</li>
+				<li>[abonnement_bedrag] : te betalen bedrag</li>
 			</ul>
 		</li>
 		<li><h3>dagdelenkaart_ideal en dagdelenkaart_bank</h3>
@@ -129,14 +134,6 @@
 				<li>[workshop_kosten] : kosten</li>
 				<li>[workshop_link] : link naar betaling workshop bedrag</li>
 			</ul>
-		</li>
-		<li><h3>incasso_mislukt</h3>
-			<ol>
-				<li>[voornaam] : voornaam van de betaler</li>
-				<li>[achternaam] : achternaam van de betaler</li>
-				<li>[bedrag] : te betalen bedrag</li>
-				<li>[reden] : door de bank aangegeven dat incasso mislukt is</li>
-			</ol>
 		</li>
 		<li><h3>bevestiging_workshop_aanvraag</h3>
 			<ol>

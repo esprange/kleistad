@@ -193,7 +193,7 @@ class Betalen {
 							'order_id' => $order_id,
 						],
 						'description'  => $beschrijving,
-						'sequenceType' => \Mollie\API\Types\SequenceType::SEQUENCETYPE_RECURRING,
+						'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
 						'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
 					]
 				);
@@ -339,6 +339,7 @@ class Betalen {
 			$parameters = explode( '-', substr( $betaling->metadata->order_id, strlen( $class ) + 2 ) );
 			$class::callback( $parameters, $betaling->amount->value, $status );
 		}
+
 		// Andere status mogelijk a.g.v. isExpired, isCanceled of isFailed.
 		return new \WP_REST_Response(); // Geeft default http status 200 terug.
 	}
