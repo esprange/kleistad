@@ -258,7 +258,7 @@ class Saldo extends Artikel {
 			$saldo->bedrag += $bedrag;
 			$saldo->reden   = 'betaling per iDeal';
 			$saldo->save();
-			$saldo->email( '_ideal', $saldo->bestel_order( $bedrag ) );
+			$saldo->email( '_ideal', $saldo->bestel_order( $bedrag, 'saldo' ) );
 		}
 	}
 

@@ -159,11 +159,11 @@ abstract class Artikel extends Entity {
 	 * Een bestelling aanmaken.
 	 *
 	 * @param float  $bedrag       Het betaalde bedrag.
-	 * @param string $artikel_type De optionele parameter voor de factuur regels.
+	 * @param string $artikel_type De parameter voor de factuur regels.
 	 * @param string $opmerking    De optionele opmerking in de factuur.
 	 * @return string De url van de factuur.
 	 */
-	final public function bestel_order( $bedrag = 0.0, $artikel_type = '', $opmerking = '' ) {
+	final public function bestel_order( $bedrag, $artikel_type, $opmerking = '' ) {
 		$this->artikel_type = $artikel_type;
 		$order_id           = \Kleistad\Order::zoek_order( $this->referentie() );
 		$order              = new \Kleistad\Order( $order_id );
@@ -261,13 +261,16 @@ abstract class Artikel extends Entity {
 	}
 
 	/**
-	 * Voer een actie uit bij betaling, kan nader ingevuld worden.
+	 * Klant gegevens voor op de factuur, kan eventueel aangepast worden zoals bijvoorbeeld voor de contact van een workshop.
 	 *
-	 * @since 6.1.0
-	 *
-	 * @param float $bedrag Het ontvangen bedrag.
+	 * @return array De naw gegevens.
 	 */
-	protected function betaalactie( $bedrag ) {
+	public function naw_klant() {
+		$klant = get_userdata( $this->klant_id );
+		return [
+			'naam'  => "{$klant->first_name}  {$klant->last_name}",
+			'adres' => "{$klant->straat} {$klant->huisnr}\n{$klant->pcode} {$klant->plaats}",
+		];
 	}
 
 	/**
@@ -318,6 +321,16 @@ abstract class Artikel extends Entity {
 	}
 
 	/**
+	 * Voer een actie uit bij betaling, kan nader ingevuld worden.
+	 *
+	 * @since 6.1.0
+	 *
+	 * @param float $bedrag Het ontvangen bedrag.
+	 */
+	protected function betaalactie( $bedrag ) {
+	}
+
+	/**
 	 * De link die in een email als parameter meegegeven kan worden.
 	 *
 	 * @return string De html link.
@@ -344,19 +357,6 @@ abstract class Artikel extends Entity {
 	protected static function factureren_actief() {
 		$options = \Kleistad\Kleistad::get_options();
 		return ! empty( $options['factureren'] ) && strtotime( $options['factureren'] ) < strtotime( 'today' );
-	}
-
-	/**
-	 * Klant gegevens voor op de factuur, kan eventueel aangepast worden zoals bijvoorbeeld voor de contact van een workshop.
-	 *
-	 * @return array De naw gegevens.
-	 */
-	protected function naw_klant() {
-		$klant = get_userdata( $this->klant_id );
-		return [
-			'naam'  => "{$klant->first_name}  {$klant->last_name}",
-			'adres' => "{$klant->straat} {$klant->huisnr}\n{$klant->pcode} {$klant->plaats}",
-		];
 	}
 
 	/**

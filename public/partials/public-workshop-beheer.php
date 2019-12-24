@@ -12,7 +12,7 @@
 global $wp;
 if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie'] ) ) :
 	$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
-	$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
+	$alleen_lezen = $data['workshop']['betaling_email'] || $data['workshop']['vervallen'] || $voltooid;
 	$this->form();
 	?>
 
@@ -97,7 +97,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 	<button type="submit" name="kleistad_submit_workshop_beheer" value="bewaren" <?php disabled( $alleen_lezen || $data['workshop']['definitief'] ); ?> >Opslaan</button>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen"
 		data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
-	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $voltooid || ! $data['workshop']['definitief'] || 'toevoegen' === $data['actie'] ); ?>
+	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $alleen_lezen || 'toevoegen' === $data['actie'] ); ?>
 		data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 </form>

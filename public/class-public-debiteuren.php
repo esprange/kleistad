@@ -148,9 +148,17 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$order   = new \Kleistad\Order( $data['input']['id'] );
+		$emailer = new \Kleistad\Email();
 		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
 		$status  = '';
-
+		if ( $artikel->klant_id ) {
+			$klant = get_userdata( $artikel->klant_id );
+			$to    = "$klant->display_name <$klant->user_email>";
+			$naam  = "$klant->first_name $klant->last_name";
+		} else {
+			$to   = $artikel->email;
+			$naam = $artikel->naw_klant()['naam'];
+		}
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
 				if ( $order->origineel_id ) {
@@ -161,11 +169,33 @@ class Public_Debiteuren extends ShortcodeForm {
 				$status = 'De betaling is verwerkt';
 				break;
 			case 'annulering':
-				$artikel->email( '_annulering', $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'] ) );
+				$emailer->send(
+					[
+						'to'         => $to,
+						'slug'       => 'order_annulering',
+						'subject'    => 'Order geannuleerd',
+						'parameters' => [
+							'naam'        => $naam,
+							'artikel'     => $artikel_naam(),
+							'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'] ),
+						],
+					]
+				);
 				$status = 'De annulering is verwerkt en een bevestiging is verstuurd';
 				break;
 			case 'korting':
-				$artikel->email( '_correctie', $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ) );
+				$emailer->send(
+					[
+						'to'         => $to,
+						'slug'       => 'order_correctie',
+						'subject'    => 'Order gecorrigeerd',
+						'parameters' => [
+							'naam'        => $naam,
+							'artikel'     => $artikel_naam(),
+							'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ),
+						],
+					]
+				);
 				$status = 'De korting is verwerkt en een correctie is verstuurd';
 				break;
 		}

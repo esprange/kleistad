@@ -251,7 +251,7 @@ class Admin_Upgrade {
 				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen || \Kleistad\Order::zoek_order( $inschrijving->referentie() ) ) {
 					continue;
 				}
-				$inschrijving->bestel_order();
+				$inschrijving->bestel_order( 0.0, 'cursus' );
 				$betaald = $inschrijving->aantal *
 					( intval( $inschrijving->i_betaald ) * (float) $cursussen[ $cursus_id ]->inschrijfkosten + intval( $inschrijving->c_betaald ) * (float) $cursussen[ $cursus_id ]->cursuskosten );
 				if ( 0 < $betaald ) {

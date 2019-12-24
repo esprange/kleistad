@@ -165,7 +165,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$inschrijving                 = new \Kleistad\Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
 			$inschrijving->lopende_cursus = (float) $data['input']['kosten'];
 			$inschrijving->save();
-			$inschrijving->email( 'inschrijving', $inschrijving->bestel_order() );
+			$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, 'inschrijving' ) );
 			return [
 				'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
 				'content' => $this->display(),

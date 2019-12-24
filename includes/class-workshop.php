@@ -280,6 +280,23 @@ class Workshop extends Artikel {
 	}
 
 	/**
+	 * De contact gegevens van de klant, bij een workshop afwijkend.
+	 *
+	 * @return array De contact info.
+	 */
+	public function naw_klant() {
+		if ( $this->organisatie ) {
+			$naam = $this->organisatie . ', ' . $this->contact;
+		} else {
+			$naam = $this->contact;
+		}
+		return [
+			'naam'  => $naam,
+			'adres' => '',
+		];
+	}
+
+	/**
 	 * Bewaar de workshop in de database.
 	 *
 	 * @since 5.0.0
@@ -356,23 +373,6 @@ class Workshop extends Artikel {
 	}
 
 	/**
-	 * De contact gegevens van de klant, bij een workshop afwijkend.
-	 *
-	 * @return array De contact info.
-	 */
-	protected function naw_klant() {
-		if ( $this->organisatie ) {
-			$naam = $this->organisatie . ', ' . $this->contact;
-		} else {
-			$naam = $this->contact;
-		}
-		return [
-			'naam'  => $naam,
-			'adres' => '',
-		];
-	}
-
-	/**
 	 * Controleer of er betalingsverzoeken verzonden moeten worden.
 	 *
 	 * @since 6.1.0
@@ -391,7 +391,7 @@ class Workshop extends Artikel {
 			}
 			$workshop->betaling_email = true;
 			$workshop->save();
-			$workshop->email( '_betaling', $workshop->bestel_order( 0.0 ) );
+			$workshop->email( '_betaling', $workshop->bestel_order( 0.0, 'workshop' ) );
 		}
 	}
 

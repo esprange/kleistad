@@ -98,24 +98,25 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	private function formulier( $workshop_id = null ) {
 		$workshop = new \Kleistad\Workshop( $workshop_id );
 		return [
-			'workshop_id' => $workshop->id,
-			'naam'        => $workshop->naam,
-			'datum'       => date( 'd-m-Y', $workshop->datum ),
-			'start_tijd'  => date( 'H:i', $workshop->start_tijd ),
-			'eind_tijd'   => date( 'H:i', $workshop->eind_tijd ),
-			'docent'      => $workshop->docent,
-			'technieken'  => $workshop->technieken,
-			'organisatie' => $workshop->organisatie,
-			'contact'     => $workshop->contact,
-			'email'       => $workshop->email,
-			'telnr'       => $workshop->telnr,
-			'programma'   => $workshop->programma,
-			'kosten'      => $workshop->kosten,
-			'aantal'      => $workshop->aantal,
-			'betaald'     => $workshop->betaald,
-			'definitief'  => $workshop->definitief,
-			'vervallen'   => $workshop->vervallen,
-			'aanvraag_id' => $workshop->aanvraag_id,
+			'workshop_id'    => $workshop->id,
+			'naam'           => $workshop->naam,
+			'datum'          => date( 'd-m-Y', $workshop->datum ),
+			'start_tijd'     => date( 'H:i', $workshop->start_tijd ),
+			'eind_tijd'      => date( 'H:i', $workshop->eind_tijd ),
+			'docent'         => $workshop->docent,
+			'technieken'     => $workshop->technieken,
+			'organisatie'    => $workshop->organisatie,
+			'contact'        => $workshop->contact,
+			'email'          => $workshop->email,
+			'telnr'          => $workshop->telnr,
+			'programma'      => $workshop->programma,
+			'kosten'         => $workshop->kosten,
+			'aantal'         => $workshop->aantal,
+			'betaald'        => $workshop->betaald,
+			'definitief'     => $workshop->definitief,
+			'vervallen'      => $workshop->vervallen,
+			'aanvraag_id'    => $workshop->aanvraag_id,
+			'betaling_email' => $workshops->betaling_email,
 		];
 	}
 
@@ -354,7 +355,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
 		} elseif ( 'afzeggen' === $data['form_actie'] ) {
 			if ( $workshop->definitief ) {
-				$workshop->email( '_annulering', $workshop->annuleer_order( \Kleistad\Order::zoek_order( $workshop->code ), 0.0 ) );
+				$workshop->email( '_afzegging' );
 			}
 			$bericht = 'De afspraak voor de workshop is per email afgezegd';
 		}

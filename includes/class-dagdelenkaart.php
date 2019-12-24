@@ -239,7 +239,7 @@ class Dagdelenkaart extends Artikel {
 	public static function callback( $parameters, $bedrag, $betaald ) {
 		if ( $betaald ) {
 			$dagdelenkaart = new static( intval( $parameters[0] ) );
-			$dagdelenkaart->email( '_ideal', $dagdelenkaart->bestel_order( $bedrag ) );
+			$dagdelenkaart->email( '_ideal', $dagdelenkaart->bestel_order( $bedrag, 'dagdelenkaart' ) );
 		}
 	}
 
