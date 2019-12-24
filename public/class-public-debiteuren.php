@@ -165,7 +165,7 @@ class Public_Debiteuren extends ShortcodeForm {
 				$status = 'De annulering is verwerkt en een bevestiging is verstuurd';
 				break;
 			case 'korting':
-				$artikel->email( 'correctie', $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ) );
+				$artikel->email( '_correctie', $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ) );
 				$status = 'De korting is verwerkt en een correctie is verstuurd';
 				break;
 		}

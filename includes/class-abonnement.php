@@ -176,7 +176,8 @@ class Abonnement extends Artikel {
 	public function stop_incasso( $admin = false ) {
 		$this->betalen->verwijder_mandaat( $this->klant_id );
 		if ( ! $admin ) {
-			$this->email( '_betaalwijze_bank' );
+			$this->bericht = 'Je gaat het abonnement voortaan per bank betalen';
+			$this->email( '_gewijzigd' );
 		}
 		return true;
 	}
@@ -549,7 +550,8 @@ class Abonnement extends Artikel {
 		if ( $betaald ) {
 			switch ( $parameters[1] ) {
 				case 'mandaat':
-					$abonnement->email( '_betaalwijze_ideal' );
+					$abonnement->bericht = 'Je hebt Kleistad toestemming gegeven voor een maandelijkse incasso van het abonnement';
+					$abonnement->email( '_gewijzigd' );
 					break;
 				case 'start':
 					$abonnement->email( '_start_ideal', $abonnement->bestel_order( $bedrag, 'start' ) );
