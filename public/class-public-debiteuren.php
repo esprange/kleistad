@@ -151,14 +151,6 @@ class Public_Debiteuren extends ShortcodeForm {
 		$emailer = new \Kleistad\Email();
 		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
 		$status  = '';
-		if ( $artikel->klant_id ) {
-			$klant = get_userdata( $artikel->klant_id );
-			$to    = "$klant->display_name <$klant->user_email>";
-			$naam  = "$klant->first_name $klant->last_name";
-		} else {
-			$to   = $artikel->email;
-			$naam = $artikel->naw_klant()['naam'];
-		}
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
 				if ( $order->origineel_id ) {
@@ -171,12 +163,12 @@ class Public_Debiteuren extends ShortcodeForm {
 			case 'annulering':
 				$emailer->send(
 					[
-						'to'         => $to,
+						'to'         => $artikel->naw_klant()['email'],
 						'slug'       => 'order_annulering',
 						'subject'    => 'Order geannuleerd',
 						'parameters' => [
-							'naam'        => $naam,
-							'artikel'     => $artikel_naam(),
+							'naam'        => $artikel->naw_klant()['naam'],
+							'artikel'     => $artikel->artikel_naam(),
 							'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'] ),
 						],
 					]
@@ -186,12 +178,12 @@ class Public_Debiteuren extends ShortcodeForm {
 			case 'korting':
 				$emailer->send(
 					[
-						'to'         => $to,
+						'to'         => $artikel->naw_klant()['email'],
 						'slug'       => 'order_correctie',
 						'subject'    => 'Order gecorrigeerd',
 						'parameters' => [
-							'naam'        => $naam,
-							'artikel'     => $artikel_naam(),
+							'naam'        => $artikel->naw_klant()['naam'],
+							'artikel'     => $artikel->artikel_naam(),
 							'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ),
 						],
 					]

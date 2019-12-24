@@ -293,6 +293,7 @@ class Workshop extends Artikel {
 		return [
 			'naam'  => $naam,
 			'adres' => '',
+			'email' => $this->email,
 		];
 	}
 

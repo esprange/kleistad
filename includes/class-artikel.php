@@ -270,6 +270,7 @@ abstract class Artikel extends Entity {
 		return [
 			'naam'  => "{$klant->first_name}  {$klant->last_name}",
 			'adres' => "{$klant->straat} {$klant->huisnr}\n{$klant->pcode} {$klant->plaats}",
+			'email' => "$klant->display_name <$klant->user_email>",
 		];
 	}
 

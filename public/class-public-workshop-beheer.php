@@ -116,7 +116,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'definitief'     => $workshop->definitief,
 			'vervallen'      => $workshop->vervallen,
 			'aanvraag_id'    => $workshop->aanvraag_id,
-			'betaling_email' => $workshops->betaling_email,
+			'betaling_email' => $workshop->betaling_email,
 		];
 	}
 
