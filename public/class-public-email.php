@@ -150,7 +150,7 @@ class Public_Email extends ShortcodeForm {
 		);
 		return [
 			'status'  => $this->status( 'De email is naar ' . count( $adressen ) . ' personen verzonden' ),
-			'content' => $this->display(),
+			'content' => $this->goto_home(),
 		];
 	}
 

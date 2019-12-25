@@ -151,7 +151,7 @@ class Email {
 				'sign_email'  => true,
 				'slug'        => '',
 				'to'          => 'Kleistad <info@' . self::domein() . '>',
-				'attachments' => [],
+				'attachments' => '',
 			]
 		);
 
@@ -189,14 +189,18 @@ class Email {
 			],
 			$this->mailparams['content']
 		);
-
-		return wp_mail(
-			$this->mailparams['to'],
-			$this->mailparams['subject'],
-			$this->inhoud( $tekst ),
-			$this->headers(),
-			$this->mailparams['attachments']
-		);
+		if ( get_option( 'kleistad_email_actief' ) ) {
+			return wp_mail(
+				$this->mailparams['to'],
+				$this->mailparams['subject'],
+				$this->inhoud( $tekst ),
+				$this->headers(),
+				$this->mailparams['attachments']
+			);
+		} else {
+			error_log( "E-mail aan: {$this->mailparams['to']} over {$this->mailparams['subject']} met bijlage {$this->mailparams['attachments']}" ); // phpcs:ignore
+			return true;
+		}
 	}
 
 	/**
