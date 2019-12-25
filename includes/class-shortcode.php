@@ -56,9 +56,7 @@ abstract class Shortcode {
 		$access = Public_Main::SHORTCODES[ $shortcode ]['access'];
 		if ( ! empty( $access ) ) {
 			$gebruiker = wp_get_current_user();
-			if ( $gebruiker->ID ) {
-				return 0 !== count( array_intersect( $access, (array) $gebruiker->roles ) );
-			}
+			return $gebruiker->ID && 0 !== count( array_intersect( $access, (array) $gebruiker->roles ) );
 		}
 		return true;
 	}

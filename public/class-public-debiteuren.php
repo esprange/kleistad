@@ -163,13 +163,13 @@ class Public_Debiteuren extends ShortcodeForm {
 			case 'annulering':
 				$emailer->send(
 					[
-						'to'         => $artikel->naw_klant()['email'],
-						'slug'       => 'order_annulering',
-						'subject'    => 'Order geannuleerd',
-						'parameters' => [
-							'naam'        => $artikel->naw_klant()['naam'],
-							'artikel'     => $artikel->artikel_naam(),
-							'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'] ),
+						'to'          => $artikel->naw_klant()['email'],
+						'slug'        => 'order_annulering',
+						'subject'     => 'Order geannuleerd',
+						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'] ),
+						'parameters'  => [
+							'naam'    => $artikel->naw_klant()['naam'],
+							'artikel' => $artikel->artikel_naam(),
 						],
 					]
 				);
@@ -178,13 +178,13 @@ class Public_Debiteuren extends ShortcodeForm {
 			case 'korting':
 				$emailer->send(
 					[
-						'to'         => $artikel->naw_klant()['email'],
-						'slug'       => 'order_correctie',
-						'subject'    => 'Order gecorrigeerd',
-						'parameters' => [
-							'naam'        => $artikel->naw_klant()['naam'],
-							'artikel'     => $artikel->artikel_naam(),
-							'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ),
+						'to'          => $artikel->naw_klant()['email'],
+						'slug'        => 'order_correctie',
+						'subject'     => 'Order gecorrigeerd',
+						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ),
+						'parameters'  => [
+							'naam'    => $artikel->naw_klant()['naam'],
+							'artikel' => $artikel->artikel_naam(),
 						],
 					]
 				);

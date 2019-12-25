@@ -203,7 +203,7 @@ class Factuur extends \FPDF {
 	 */
 	public static function facturen( $factuurnr ) {
 		$upload_dir = wp_get_upload_dir();
-		$pattern    = sprintf( '%s/facturen/factuur-%s*', $upload_dir['basedir'], $factuurnr );
+		$pattern    = sprintf( '%s/facturen/*factuur-%s*', $upload_dir['basedir'], $factuurnr );
 		return str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], glob( $pattern ) );
 	}
 
