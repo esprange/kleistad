@@ -204,15 +204,16 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	protected function cursisten() {
 		$cursus_id        = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );
 		$cursisten_fields = [
-			'Achternaam',
 			'Voornaam',
+			'Achternaam',
 			'Telefoonnummer',
 			'Email',
 			'Aantal',
 			'Technieken',
 			'Opmerking',
 			'Datum',
-			'Betaald',
+			'Inschrijving betaald',
+			'Cursus betaald',
 		];
 		fputcsv( $this->file_handle, $cursisten_fields, ';', '"' );
 		foreach ( $this->inschrijvingen( $cursus_id ) as $cursist_id => $inschrijving ) {
@@ -226,6 +227,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				implode( ' ', $inschrijving->technieken ),
 				$inschrijving->opmerking,
 				date( 'd-m-Y', $inschrijving->datum ),
+				$inschrijving->i_betaald ? 'Ja' : 'Nee',
 				$inschrijving->c_betaald ? 'Ja' : 'Nee',
 			];
 			fputcsv( $this->file_handle, $cursist_gegevens, ';', '"' );

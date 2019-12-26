@@ -580,8 +580,9 @@ class Abonnement extends Artikel {
 		$volgende_maand = strtotime( 'first day of next month 00:00' );
 		$deze_maand     = strtotime( 'first day of this month 00:00' );
 		$factuur_maand  = (int) date( 'Ym', $vandaag );
-		$factuur_vorig  = (int) get_option( 'kleistad_factuur' ) ?: 0;
+		$factuur_vorig  = (int) get_option( 'kleistad_abofact' ) ?: 0;
 		$betalen        = new \Kleistad\Betalen();
+		$factureren     = self::factureren_actief() && $factuur_vorig < $factuur_maand;
 
 		$abonnementen = self::all();
 		foreach ( $abonnementen as $klant_id => $abonnement ) {
@@ -616,7 +617,7 @@ class Abonnement extends Artikel {
 			}
 
 			// Hierna wordt er niets meer aan het abonnement aangepast en als er niet gefactureerd hoeft te worden dan geen verdere actie.
-			if ( $factuur_vorig >= $factuur_maand ) {
+			if ( ! $factureren ) {
 				continue;
 			}
 			if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
@@ -626,7 +627,9 @@ class Abonnement extends Artikel {
 			}
 		}
 		// Verhoog het maandnummer van de facturatie.
-		update_option( 'kleistad_factuur', $factuur_maand );
+		if ( $factureren ) {
+			update_option( 'kleistad_abofact', $factuur_maand );
+		}
 	}
 
 	/**

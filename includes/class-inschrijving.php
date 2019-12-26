@@ -468,14 +468,16 @@ class Inschrijving extends Artikel {
 					$inschrijving->geannuleerd ||
 					$inschrijving->c_betaald ||
 					$cursussen[ $cursus_id ]->vervallen ||
-					$inschrijving->restant_email ||
 					strtotime( '+7 days' ) < $cursussen[ $cursus_id ]->start_datum
 					) {
 					continue;
 				}
-				$inschrijving->restant_email = true;
-				$inschrijving->save();
-				$inschrijving->email( '_betaling' );
+				if ( ! $inschrijving->restant_email ) {
+					$inschrijving->artikel_type  = 'cursus';
+					$inschrijving->restant_email = true;
+					$inschrijving->save();
+					$inschrijving->email( '_betaling' );
+				}
 			}
 		}
 	}

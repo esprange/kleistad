@@ -122,6 +122,20 @@ class Admin_Main {
 	}
 
 	/**
+	 * Filte de acties voor een email post.
+	 *
+	 * @param array    $acties De acties.
+	 * @param \WP_POst $post De post.
+	 */
+	public function post_row_actions( $acties, $post ) {
+		if ( \Kleistad\Email::POST_TYPE === $post->post_type ) {
+			unset( $acties['view'] );
+			unset( $acties['inline hide-if-no-js'] );
+		}
+		return $acties;
+	}
+
+	/**
 	 * Definieer de admin panels
 	 *
 	 * @since    4.0.87
@@ -264,6 +278,8 @@ class Admin_Main {
 		$this->background->push_to_queue( '\Kleistad\Workshop::dagelijks' );
 		$this->background->push_to_queue( '\Kleistad\Abonnement::dagelijks' );
 		$this->background->push_to_queue( '\Kleistad\Saldo::dagelijks' );
+		$this->background->push_to_queue( '\Kleistad\Inschrijving::dagelijks' );
+		$this->background->push_to_queue( '\Kleistad\Dagdelenkaart::dagelijks' );
 		$this->background->save()->dispatch();
 	}
 

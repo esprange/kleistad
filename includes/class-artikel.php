@@ -357,7 +357,7 @@ abstract class Artikel extends Entity {
 	 */
 	protected static function factureren_actief() {
 		$options = \Kleistad\Kleistad::get_options();
-		return ! empty( $options['factureren'] ) && strtotime( $options['factureren'] ) < strtotime( 'today' );
+		return ! empty( $options['factureren'] ) && strtotime( "{$options['factureren']} 00:00" ) <= strtotime( 'today' );
 	}
 
 	/**

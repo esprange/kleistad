@@ -248,7 +248,14 @@ class Admin_Upgrade {
 		$cursussen      = \Kleistad\Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen || \Kleistad\Order::zoek_order( $inschrijving->referentie() ) ) {
+				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen ) {
+					continue;
+				}
+				if ( strtotime( 'today' ) >= $cursussen[ $cursus_id ]->start_datum && ! $inschrijving->restant_email ) {
+					$inschrijving->restant_email = true;
+					$inschrijving->save();
+				}
+				if ( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) ) {
 					continue;
 				}
 				$inschrijving->bestel_order( 0.0, 'cursus' );
