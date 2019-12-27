@@ -246,25 +246,22 @@ class Admin_Upgrade {
 	private function convert_inschrijving() {
 		$inschrijvingen = \Kleistad\Inschrijving::all();
 		$cursussen      = \Kleistad\Cursus::all();
+		$vandaag        = strtotime( 'today' );
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen ) {
+				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen || $vandaag > $cursussen[ $cursus_id ]->eind_datum ) {
 					continue;
 				}
-				if ( strtotime( 'today' ) >= $cursussen[ $cursus_id ]->start_datum && ! $inschrijving->restant_email ) {
+				if ( $vandaag >= $cursussen[ $cursus_id ]->start_datum && ! $inschrijving->restant_email ) {
 					$inschrijving->restant_email = true;
 					$inschrijving->save();
 				}
 				if ( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) ) {
 					continue;
 				}
-				$inschrijving->bestel_order( 0.0, 'cursus' );
 				$betaald = $inschrijving->aantal *
 					( intval( $inschrijving->i_betaald ) * (float) $cursussen[ $cursus_id ]->inschrijfkosten + intval( $inschrijving->c_betaald ) * (float) $cursussen[ $cursus_id ]->cursuskosten );
-				if ( 0 < $betaald ) {
-					$order_id = \Kleistad\Order::zoek_order( $inschrijving->referentie() );
-					$inschrijving->ontvang_order( $order_id, $betaald );
-				}
+				$inschrijving->bestel_order( $betaald, 'cursus' );
 			}
 		}
 	}

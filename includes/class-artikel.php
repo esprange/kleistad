@@ -169,7 +169,7 @@ abstract class Artikel extends Entity {
 		$order              = new \Kleistad\Order( $order_id );
 		$order->betaald     = $bedrag;
 		$order->regels      = $this->factuurregels();
-		$order->historie    = ( $order_id ? 'factuur opnieuw ' : 'order en factuur ' ) . 'aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
+		$order->historie    = ( $order_id ? 'factuur opnieuw ' : ( 'order' . ( self::factureren_actief() ? ' en factuur ' : '' ) ) ) . ' aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
 		$order->klant       = $this->naw_klant();
 		$order->opmerking   = $opmerking;
 		$order->referentie  = $this->referentie();
