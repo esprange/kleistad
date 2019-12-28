@@ -228,7 +228,7 @@ class Inschrijving extends Artikel {
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
 				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-				$this->email( '_correctie', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
+				$this->email( '_wijziging', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
 				return true;
 			}
 		}
@@ -260,19 +260,16 @@ class Inschrijving extends Artikel {
 			case '_lopend':
 				$onderwerp = 'Inschrijving lopende cursus';
 				break;
-			case '_correctie':
-				$onderwerp = 'Correctie inschrijving cursus';
+			case '_wijziging':
+				$onderwerp = 'Wijziging inschrijving cursus';
 				break;
-			case '_annulering':
-				$onderwerp = 'Annulering inschrijving';
-				break;
-			case '_betaling':
+			case '_restant':
 				$onderwerp = 'Betaling restant bedrag cursus';
 				break;
 			case '_herinnering':
 				$onderwerp = 'Herinnering betaling cursus';
 				break;
-			case '_betaling_ideal':
+			case '_ideal':
 				$onderwerp = 'Betaling cursus';
 				break;
 			default:
@@ -442,7 +439,7 @@ class Inschrijving extends Artikel {
 					$inschrijving->ingedeeld = true;
 					if ( 0 < $inschrijving->cursus->inschrijfkosten ) {
 						$inschrijving->ontvang_order( \Kleistad\Order::zoek_order( $inschrijving->code ), $bedrag );
-						$inschrijving->email( '_betaling_ideal' );
+						$inschrijving->email( '_ideal' );
 					} else {
 						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, 'cursus', '' ) );
 					}
@@ -478,7 +475,7 @@ class Inschrijving extends Artikel {
 					$inschrijving->artikel_type  = 'cursus';
 					$inschrijving->restant_email = true;
 					$inschrijving->save();
-					$inschrijving->email( '_betaling' );
+					$inschrijving->email( '_restant' );
 				}
 			}
 		}

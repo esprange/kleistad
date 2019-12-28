@@ -149,7 +149,6 @@ class Dagdelenkaart extends Artikel {
 				'parameters'  => [
 					'voornaam'                => $gebruiker->first_name,
 					'achternaam'              => $gebruiker->last_name,
-					'loginnaam'               => $gebruiker->user_login,
 					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
 					'dagdelenkaart_code'      => $this->code,
 					'dagdelenkaart_opmerking' => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',

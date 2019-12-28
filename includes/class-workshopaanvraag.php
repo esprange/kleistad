@@ -286,7 +286,7 @@ class WorkshopAanvraag {
 					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $result ),
 					'from'       => self::MBX . '@' . \Kleistad\Email::verzend_domein(),
 					'reply-to'   => self::MBX . '@' . \Kleistad\Email::domein(),
-					'slug'       => 'bevestiging_workshop_aanvraag',
+					'slug'       => 'workshop_aanvraag_bevestiging',
 					'parameters' => $casus_data,
 					'sign_email' => false,
 					'auto'       => 'reply',
@@ -351,7 +351,7 @@ class WorkshopAanvraag {
 				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
 				'reply-to'   => self::MBX . '@' . \Kleistad\Email::domein(),
 				'subject'    => $subject,
-				'slug'       => 'reactie_workshop_aanvraag',
+				'slug'       => 'workshop_aanvraag_reactie',
 				'auto'       => false,
 				'parameters' => [
 					'reactie' => nl2br( $reactie ),
