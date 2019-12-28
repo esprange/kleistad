@@ -229,12 +229,10 @@ class Admin_Upgrade {
 		$vandaag          = strtotime( 'today' );
 		$abonnement_users = get_users( [ 'meta_key' => \Kleistad\Abonnement::META_KEY ] );
 		foreach ( $abonnement_users as $abonnement_user ) {
-			$abonnement = new \Kleistad\Abonnement( $abonnement_user->ID );
+			$abonnement                     = new \Kleistad\Abonnement( $abonnement_user->ID );
+			$abonnement->overbrugging_email = $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum );
 			if ( $betalen->heeft_mandaat( $abonnement_user->ID ) ) {
 				$betalen->annuleer( $abonnement_user->ID );
-			}
-			if ( $vandaag >= $abonnement->reguliere_datum ) {
-				$abonnement->overbrugging_email = true;
 			}
 			$abonnement->save();
 		}
