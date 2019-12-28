@@ -563,7 +563,8 @@ class Abonnement extends Artikel {
 					$abonnement->email( '_regulier_incasso', $abonnement->bestel_order( $bedrag, 'pauze' ) );
 					break;
 				case 'overbrugging':
-					$abonnement->email( '_vervolg' );
+					$abonnement->ontvang_order( \Kleistad\Order::zoek_order( "{$abonnement->code}-overbrugging" ), $bedrag );
+					$abonnement->email( '_ideal' );
 			}
 		} else {
 			if ( 'incasso' === $parameters[1] ) {

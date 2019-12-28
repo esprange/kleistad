@@ -441,6 +441,7 @@ class Inschrijving extends Artikel {
 					$inschrijving->c_betaald = true;
 					$inschrijving->ingedeeld = true;
 					if ( 0 < $inschrijving->cursus->inschrijfkosten ) {
+						$inschrijving->ontvang_order( \Kleistad\Order::zoek_order( $inschrijving->code ), $bedrag );
 						$inschrijving->email( '_betaling_ideal' );
 					} else {
 						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, 'cursus', '' ) );
