@@ -170,7 +170,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						'parameters'  => [
 							'naam'       => $artikel->naw_klant()['naam'],
 							'artikel'    => $artikel->artikel_naam(),
-							'referentie' => $artikel->referentie(),
+							'referentie' => $order->referentie,
 						],
 					]
 				);
@@ -186,7 +186,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						'parameters'  => [
 							'naam'       => $artikel->naw_klant()['naam'],
 							'artikel'    => $artikel->artikel_naam(),
-							'referentie' => $artikel->referentie(),
+							'referentie' => $order->referentie,
 						],
 					]
 				);
