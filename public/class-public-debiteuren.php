@@ -168,8 +168,9 @@ class Public_Debiteuren extends ShortcodeForm {
 						'subject'     => 'Order geannuleerd',
 						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'] ),
 						'parameters'  => [
-							'naam'    => $artikel->naw_klant()['naam'],
-							'artikel' => $artikel->artikel_naam(),
+							'naam'       => $artikel->naw_klant()['naam'],
+							'artikel'    => $artikel->artikel_naam(),
+							'referentie' => $artikel->referentie(),
 						],
 					]
 				);
@@ -183,8 +184,9 @@ class Public_Debiteuren extends ShortcodeForm {
 						'subject'     => 'Order gecorrigeerd',
 						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ),
 						'parameters'  => [
-							'naam'    => $artikel->naw_klant()['naam'],
-							'artikel' => $artikel->artikel_naam(),
+							'naam'       => $artikel->naw_klant()['naam'],
+							'artikel'    => $artikel->artikel_naam(),
+							'referentie' => $artikel->referentie(),
 						],
 					]
 				);
