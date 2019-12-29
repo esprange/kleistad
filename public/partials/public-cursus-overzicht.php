@@ -36,7 +36,7 @@ if ( 'cursisten' === $data['actie'] ) :
 				<td><?php echo ( ( $cursist['herinner_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 				<td>
 					<?php
-					if ( ! $cursist['i_betaald'] ) :
+					if ( ! $cursist['i_betaald'] && ! $cursist['c_betaald'] ) :
 						if ( $data['cursus']['loopt'] && $cursist['wacht'] ) :
 							?>
 						<a href="#" title="indelen" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
