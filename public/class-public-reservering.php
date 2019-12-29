@@ -66,7 +66,7 @@ class Public_Reservering extends Shortcode {
 				]
 			);
 			foreach ( $gebruikers as $gebruiker ) {
-				if ( \Kleistad\Roles::reserveer( $gebruiker->ID ) ) {
+				if ( \Kleistad\Roles::reserveer( $gebruiker->ID ) && false === strpos( $gebruiker->display_name, '$' ) ) {
 					$stokers[] = [
 						'id'   => intval( $gebruiker->ID ),
 						'naam' => $gebruiker->display_name,
