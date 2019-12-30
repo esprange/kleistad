@@ -424,12 +424,12 @@ class Inschrijving extends Artikel {
 	public static function callback( $parameters, $bedrag, $betaald ) {
 		if ( $betaald ) {
 			$inschrijving = new static( intval( $parameters[0] ), intval( $parameters[1] ) );
-
-			switch ( $parameters[2] ) {
+			$artikel_type = is_numeric( $parameters[2] ) ? $parameters[3] : $parameters[2]; // Voor oude cursuscode.
+			switch ( $artikel_type ) {
 				case 'inschrijving':
 					$inschrijving->i_betaald = true;
 					$inschrijving->ingedeeld = true;
-					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, 'inschrijving', self::OPM_INSCHRIJVING ) );
+					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, $artikel_type, self::OPM_INSCHRIJVING ) );
 					$inschrijving->save();
 					break;
 
@@ -441,7 +441,7 @@ class Inschrijving extends Artikel {
 						$inschrijving->ontvang_order( \Kleistad\Order::zoek_order( $inschrijving->code ), $bedrag );
 						$inschrijving->email( '_ideal' );
 					} else {
-						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, 'cursus', '' ) );
+						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, $artikel_type, '' ) );
 					}
 					$inschrijving->save();
 					break;
