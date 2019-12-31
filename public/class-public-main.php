@@ -77,7 +77,7 @@ class Public_Main {
 		],
 		'cursus_overzicht'      => [
 			'script' => false,
-			'js'     => [ 'jquery', 'datatables' ],
+			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 			'access' => [ 'docenten', 'bestuur' ],
 		],

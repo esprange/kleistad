@@ -59,7 +59,7 @@ if ( 'cursisten' === $data['actie'] ) :
 	<?php endif ?>
 	<button type="button" class="kleistad_download_link" name="kleistad_submit_cursus_overzicht" data-actie="presentielijst" >Presentielijst</button>
 	<?php if ( $data['bestuur_rechten'] ) : ?>
-	<button type="submit" name="kleistad_submit_cursus_overzicht" value="herinner_email" >Verstuur herinner email</button>
+	<button type="submit" name="kleistad_submit_cursus_overzicht" id="kleistad_herinner" value="herinner_email" data-confirm="Cursisten|weet je zeker dat je nu de herinneringsemail wilt versturen" >Verstuur herinner email</button>
 	<?php endif ?>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 	</form>
