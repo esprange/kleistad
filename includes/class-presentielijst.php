@@ -46,6 +46,7 @@ class Presentielijst extends \FPDF {
 		$this->setFont( 'Arial', 'B', 10 );
 		$this->Cell( 50, $h, 'Cursist', 1, 0, 'L' );
 		$this->setFont( 'Arial', 'B', 10 );
+		sort( $lesdatums );
 		foreach ( $lesdatums as $lesdatum ) {
 			$this->Cell( 12, $h, strftime( '%d-%m', $lesdatum ), 1, 0, 'C' );
 		}
