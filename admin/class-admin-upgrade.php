@@ -175,28 +175,18 @@ class Admin_Upgrade {
 		}
 	}
 
+	// phpcs:disable
+
 	/**
-	 * Verwijder alle cron jobs van Kleistad, behalve de dagelijkse cron job.
+	 * Omdat het onderstaand voornamelijk uitgecommentarieerde code bevat, de code style check uitgezet.
+	 * De code is mogelijk in de toekomst nog in aangepaste vorm nodig.
 	 */
-	private function convert_jobs() {
-		$cron_jobs = get_option( 'cron' );
-		foreach ( $cron_jobs as $time => $cron_job ) {
-			if ( is_array( $cron_job ) ) {
-				foreach ( $cron_job as $key => $job_params ) {
-					foreach ( $job_params as $param ) {
-						if ( in_array( $key, [ 'kleistad_abonnement', 'kleistad_kosten', 'kleistad_workshop', 'kleistad_daily_cleanup' ], true ) ) {
-							wp_unschedule_event( (int) $time, $key, $param['args'] );
-						}
-					}
-				}
-			}
-		}
-	}
 
 	/**
 	 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
 	 */
 	private function convert_saldo() {
+		/*
 		$saldo_users = get_users( [ 'meta_key' => 'stooksaldo' ] );
 		foreach ( $saldo_users as $saldo_user ) {
 			$huidig_saldo  = get_user_meta( $saldo_user->ID, 'stooksaldo', true );
@@ -205,12 +195,14 @@ class Admin_Upgrade {
 			$saldo->save();
 			delete_user_meta( $saldo_user->ID, 'stooksaldo' );
 		}
+		*/
 	}
 
 	/**
 	 * Convert dagdelenkaart, er wordt gecontroleerd of er een enkel record bestaat.
 	 */
 	private function convert_dagdelenkaart() {
+		/*
 		$dagdelenkaart_users = get_users( [ 'meta_key' => \Kleistad\Dagdelenkaart::META_KEY ] );
 		foreach ( $dagdelenkaart_users as $dagdelenkaart_user ) {
 			$huidig_dagdelenkaart = get_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, true );
@@ -219,12 +211,14 @@ class Admin_Upgrade {
 				update_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, $dagdelenkaart );
 			}
 		}
+		*/
 	}
 
 	/**
 	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
 	 */
 	private function convert_abonnement() {
+		/*
 		$betalen          = new \Kleistad\Betalen();
 		$vandaag          = strtotime( 'today' );
 		$abonnement_users = get_users( [ 'meta_key' => \Kleistad\Abonnement::META_KEY ] );
@@ -236,12 +230,14 @@ class Admin_Upgrade {
 			}
 			$abonnement->save();
 		}
+		*/
 	}
 
 	/**
 	 * Converteer inschrijving, maak de orders aan.
 	 */
 	private function convert_inschrijving() {
+		/*
 		$inschrijvingen = \Kleistad\Inschrijving::all();
 		$cursussen      = \Kleistad\Cursus::all();
 		$vandaag        = strtotime( 'today' );
@@ -262,70 +258,44 @@ class Admin_Upgrade {
 				$inschrijving->bestel_order( $betaald, 'cursus' );
 			}
 		}
+		*/
 	}
 
 	/**
 	 * Converteer emails
 	 */
 	private function convert_email() {
+		/*
 		global $wpdb;
 		$wpdb->query( "UPDATE {$wpdb->prefix}posts SET post_type='kleistad_email', post_title=SUBSTRING( post_title, 16 ) WHERE post_title LIKE 'kleistad_email_%'" );
+		*/
 	}
 
 	/**
 	 * Converteer cursussen
 	 */
 	private function convert_cursus() {
+		/*
 		global $wpdb;
 		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_cursussen SET inschrijfslug=SUBSTRING( inschrijfslug, 16 ) WHERE inschrijfslug LIKE 'kleistad_email_%'" );
 		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_cursussen SET indelingslug=SUBSTRING( indelingslug, 16 ) WHERE indelingslug LIKE 'kleistad_email_%'" );
+		*/
 	}
+
+	// phpcs:enable
 
 	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
 		/**
-		 * Conversie naar 6.1.0
+		 * Conversie naar ...
 		 */
-		$this->convert_jobs();
 		$this->convert_saldo();
 		$this->convert_dagdelenkaart();
 		$this->convert_abonnement();
 		$this->convert_inschrijving();
 		$this->convert_email();
 		$this->convert_cursus();
-
-		/**
-		 * Maak facturen dir aan.
-		 */
-		$upload_dir  = wp_get_upload_dir();
-		$factuur_dir = sprintf( '%s/facturen', $upload_dir['basedir'] );
-		if ( ! is_dir( $factuur_dir ) ) {
-			mkdir( $factuur_dir, 0644, true );
-		}
-		/**
-		 * Nog te controleren:
-		 *    Zijn er al facturen verstuurd voor workshops die nog buiten het '7 dagen' venster liggen ? Die krijgen namelijk een nieuwe factuur.
-		 *    Dat kan ondervangen worden door betaling_email op true te zetten voor die workshop (via phpmyadmin).
-		 */
-
-	}
-
-	/**
-	 * Verbeter de roles en capacities.
-	 */
-	private function convert_roles() {
-		$roles = wp_roles();
-
-		$roles->add_cap( 'administrator', \Kleistad\Roles::OVERRIDE );
-		$roles->add_cap( 'editor', \Kleistad\Roles::OVERRIDE );
-		$roles->add_cap( 'author', \Kleistad\Roles::OVERRIDE );
-
-		$roles->add_cap( 'administrator', \Kleistad\Roles::RESERVEER );
-		$roles->add_cap( 'editor', \Kleistad\Roles::RESERVEER );
-		$roles->add_cap( 'author', \Kleistad\Roles::RESERVEER );
-		$roles->add_cap( 'contributor', \Kleistad\Roles::RESERVEER );
-		$roles->add_cap( 'subscriber', \Kleistad\Roles::RESERVEER );
 	}
 }
