@@ -599,7 +599,7 @@ class Abonnement extends Artikel {
 			if ( $vandaag < $abonnement->reguliere_datum ) {
 				if ( $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) && ! $abonnement->overbrugging_email ) {
 					$abonnement->email( '_vervolg', $abonnement->bestel_order( 0.0, 'overbrugging' ) );
-					$abonnement->overbrugging_email = true; // Vlag in ieder geval zetten zodat dit niet nog een keer optreedt
+					$abonnement->overbrugging_email = true;
 					$abonnement->save();
 				}
 				continue; // Meer actie is niet nodig. Abonnee zit nog in startperiode of overbrugging.
