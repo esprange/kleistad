@@ -113,11 +113,12 @@ abstract class Artikel extends Entity {
 	/**
 	 * Een bestelling annuleren.
 	 *
-	 * @param int   $id        Het id van de order.
-	 * @param float $restant   Het eventueel te betalen bedrag bij annulering.
+	 * @param int    $id        Het id van de order.
+	 * @param float  $restant   Het te betalen bedrag bij annulering.
+	 * @param string $opmerking De opmerkingstekst in de factuur.
 	 * @return string De url van de creditfactuur of lege string.
 	 */
-	final public function annuleer_order( $id, $restant = 0.0 ) {
+	final public function annuleer_order( $id, $restant, $opmerking ) {
 		if ( ! $this->afzeggen() ) {
 			return '';
 		}
@@ -145,7 +146,7 @@ abstract class Artikel extends Entity {
 			);
 		}
 		$credit_order->regels    = $regels;
-		$credit_order->opmerking = 'Vanwege annulering';
+		$credit_order->opmerking = $opmerking;
 		$credit_order->historie  = 'order en credit factuur aangemaakt';
 		$order->credit_id        = $credit_order->save();
 		$order->betaald          = 0;
@@ -186,10 +187,10 @@ abstract class Artikel extends Entity {
 	 *
 	 * @param int    $id        Het id van de order.
 	 * @param float  $korting   De te geven korting.
-	 * @param string $opmerking De optionele opmerking in de factuur.
+	 * @param string $opmerking De opmerking in de factuur.
 	 * @return string De url van de factuur.
 	 */
-	final public function korting_order( $id, $korting, $opmerking = '' ) {
+	final public function korting_order( $id, $korting, $opmerking ) {
 		$order            = new \Kleistad\Order( $id );
 		$regels           = $order->regels;
 		$regels[]         = array_merge(
