@@ -70,7 +70,15 @@ if ( 'debiteur' === $data['actie'] ) :
 					<label for="kleistad_restant">Restant te betalen</label>
 				</div>
 				<div class="kleistad_col_3" >
-				<input type="number" step="0.01" id="kleistad_restant" name="restant" min="0" value="<?php echo esc_attr( $data['debiteur']['restant'] ); ?>">
+					<input type="number" step="0.01" id="kleistad_restant" name="restant" min="0" value="<?php echo esc_attr( $data['debiteur']['restant'] ); ?>">
+				</div>
+			</div>
+			<div class="kleistad_row">
+				<div class="kleistad_col_3 kleistad_label">
+					<label for="kleistad_opmerking_annulering">Opmerking</label>
+				</div>
+				<div class="kleistad_col_7" >
+					<textarea class="kleistad_input" name="opmerking_annulering" id="kleistad_opmerking_annulering" rows="5" cols="50"></textarea>
 				</div>
 			</div>
 		</div>
@@ -91,7 +99,15 @@ if ( 'debiteur' === $data['actie'] ) :
 					<label for="kleistad_korting">Korting</label>
 				</div>
 				<div class="kleistad_col_3" >
-				<input type="number" step="0.01" id="kleistad_korting" name="korting" min="0" value="<?php echo esc_attr( $data['debiteur']['korting'] ); ?>">
+					<input type="number" step="0.01" id="kleistad_korting" name="korting" min="0" value="<?php echo esc_attr( $data['debiteur']['korting'] ); ?>">
+				</div>
+			</div>
+			<div class="kleistad_row">
+				<div class="kleistad_col_3 kleistad_label">
+					<label for="kleistad_opmerking_korting">Opmerking</label>
+				</div>
+				<div class="kleistad_col_7" >
+					<textarea class="kleistad_input" name="opmerking_korting" id="kleistad_opmerking_korting" rows="5" cols="50"></textarea>
 				</div>
 			</div>
 		</div>

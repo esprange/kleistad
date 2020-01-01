@@ -111,20 +111,22 @@ class Public_Debiteuren extends ShortcodeForm {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'id'             => FILTER_SANITIZE_NUMBER_INT,
-				'ontvangst'      => [
+				'id'                   => FILTER_SANITIZE_NUMBER_INT,
+				'ontvangst'            => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
-				'korting'        => [
+				'korting'              => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
-				'restant'        => [
+				'restant'              => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
-				'debiteur_actie' => FILTER_SANITIZE_STRING,
+				'opmerking_korting'    => FILTER_SANITIZE_STRING,
+				'opmerking_annulering' => FILTER_SANITIZE_STRING,
+				'debiteur_actie'       => FILTER_SANITIZE_STRING,
 			]
 		);
 		$order         = new \Kleistad\Order( $data['input']['id'] );
@@ -166,7 +168,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						'to'          => $artikel->naw_klant()['email'],
 						'slug'        => 'order_annulering',
 						'subject'     => 'Order geannuleerd',
-						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'] ),
+						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'], $data['input']['opmerking_annulering'] ),
 						'parameters'  => [
 							'naam'       => $artikel->naw_klant()['naam'],
 							'artikel'    => $artikel->artikel_naam(),
@@ -182,7 +184,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						'to'          => $artikel->naw_klant()['email'],
 						'slug'        => 'order_correctie',
 						'subject'     => 'Order gecorrigeerd',
-						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'] ),
+						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'], $data['input']['opmerking_korting'] ),
 						'parameters'  => [
 							'naam'       => $artikel->naw_klant()['naam'],
 							'artikel'    => $artikel->artikel_naam(),
