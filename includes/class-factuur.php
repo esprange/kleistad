@@ -123,7 +123,7 @@ class Factuur extends \FPDF {
 			$totaal += $prijs;
 			$btw    += $regel['aantal'] * $regel['btw'];
 			$this->Cell( $w['aantal'], $h, $regel['aantal'], 0, 0, 'C' );
-			$this->Cell( $w['artikel'], $h, $regel['artikel'], 0, 0, 'L' );
+			$this->Cell( $w['artikel'], $h, utf8_decode( $regel['artikel'] ), 0, 0, 'L' );
 			$this->Cell( $w['stuksprijs'], $h, $this->euro( $regel['prijs'] + $regel['btw'] ), 0, 0, 'R' );
 			$this->Cell( $w['prijs'], $h, $this->euro( $prijs ), 0, 1, 'R' );
 		}
