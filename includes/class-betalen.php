@@ -204,30 +204,6 @@ class Betalen {
 	}
 
 	/**
-	 * Annuleer subscripties. Deze functie wordt obsoleet na upgrade naar versie 6.1.
-	 *
-	 * @param int $gebruiker_id   De gebruiker waarvoor een subscription loopt.
-	 */
-	public function annuleer( $gebruiker_id ) {
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-
-		try {
-			if ( '' !== $mollie_gebruiker_id ) {
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-				$subscripties     = $mollie_gebruiker->subscriptions();
-				foreach ( $subscripties as $subscriptie ) {
-					if ( $subscriptie->isActive() ) {
-						$mollie_gebruiker->cancelSubscription( $subscriptie->id );
-					}
-				}
-			}
-		} catch ( \Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
-		}
-		return '';
-	}
-
-	/**
 	 * Test of de gebruiker een mandaat heeft afgegeven.
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvoor getest wordt of deze mandaat heeft.
