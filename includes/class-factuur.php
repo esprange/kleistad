@@ -158,7 +158,7 @@ class Factuur extends \FPDF {
 			$this->setFont( 'Arial', 'B', 10 );
 			$this->Cell( 0, $h, 'Opmerkingen', 0, 1 );
 			$this->setFont( 'Arial' );
-			$this->MultiCell( 0, $h, $arg );
+			$this->MultiCell( 0, $h, utf8_decode( $arg ) );
 		}
 	}
 
