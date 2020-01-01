@@ -556,7 +556,7 @@ class Abonnement extends Artikel {
 				case 'start':
 					$abonnement->email( '_start_ideal', $abonnement->bestel_order( $bedrag, 'start' ) );
 					break;
-				case 'incasso':
+				case 'regulier':
 					$abonnement->email( '_regulier_incasso', $abonnement->bestel_order( $bedrag, 'regulier' ) );
 					break;
 				case 'pauze':
