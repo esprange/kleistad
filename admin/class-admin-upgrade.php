@@ -32,7 +32,6 @@ class Admin_Upgrade {
 			$this->convert_opties();
 			$this->convert_database();
 			$this->convert_data();
-			$this->convert_roles();
 			update_option( 'kleistad-database-versie', self::DBVERSIE );
 		}
 	}
