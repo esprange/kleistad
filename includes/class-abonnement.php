@@ -596,13 +596,13 @@ class Abonnement extends Artikel {
 				continue;
 			}
 			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er iets te betalen is, zonder verdere acties.
-			if ( $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) && $vandaag < $abonnement->reguliere_datum ) {
-				if ( ! $abonnement->overbrugging_email && 0.0 < $abonnement->bedrag( '#overbrugging' ) ) {
-					$abonnement->email( '_vervolg', $abonnement->bestel_order( 0.0, 'overbrugging' ) ); // Alleen versturen als er werkelijk iets te betalen is.
-					$abonnement->overbrugging_email = true;
+			if ( $vandaag < $abonnement->reguliere_datum ) {
+				if ( $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) && ! $abonnement->overbrugging_email ) {
+					$abonnement->email( '_vervolg', $abonnement->bestel_order( 0.0, 'overbrugging' ) );
+					$abonnement->overbrugging_email = true; // Vlag in ieder geval zetten zodat dit niet nog een keer optreedt
 					$abonnement->save();
 				}
-				continue; // Meer actie is niet nodig.
+				continue; // Meer actie is niet nodig. Abonnee zit nog in startperiode of overbrugging.
 			}
 			// Abonnementen zijn gepauzeerd als het vandaag tussen de pauze en herstart datum is.
 			$abonnement->gepauzeerd = $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum;
@@ -612,7 +612,7 @@ class Abonnement extends Artikel {
 				( $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand ) ) {
 				$abonnement->artikel_type = 'pauze';
 			} elseif ( $abonnement->herstart_datum >= $volgende_maand && $abonnement->pauze_datum <= $deze_maand ) {
-				continue; // geen order, de gehele maand wordt gepauzeerd of de abonnee zit nog in de overbrugging.
+				continue; // geen order, de gehele maand wordt gepauzeerd.
 			} else {
 				$abonnement->artikel_type = 'regulier';
 			}
