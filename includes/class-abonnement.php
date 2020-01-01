@@ -557,10 +557,8 @@ class Abonnement extends Artikel {
 					$abonnement->email( '_start_ideal', $abonnement->bestel_order( $bedrag, 'start' ) );
 					break;
 				case 'regulier':
-					$abonnement->email( '_regulier_incasso', $abonnement->bestel_order( $bedrag, 'regulier' ) );
-					break;
 				case 'pauze':
-					$abonnement->email( '_regulier_incasso', $abonnement->bestel_order( $bedrag, 'pauze' ) );
+					$abonnement->email( '_regulier_incasso', $abonnement->bestel_order( $bedrag, $parameters[1] ) );
 					break;
 				case 'overbrugging':
 					$abonnement->ontvang_order( \Kleistad\Order::zoek_order( "{$abonnement->code}-overbrugging" ), $bedrag );
