@@ -50,9 +50,9 @@ class Factuur extends \FPDF {
 		$this->setY( 65 );
 		$this->SetLeftMargin( 25 );
 		$this->setFont( 'Arial', 'B', 10 );
-		$this->Cell( 0, $h, $args['naam'], 0, 1 );
+		$this->Cell( 0, $h, utf8_decode( $args['naam'] ), 0, 1 );
 		$this->setFont( 'Arial', '', 10 );
-		$this->MultiCell( 0, $h, $args['adres'] );
+		$this->MultiCell( 0, $h, utf8_decode( $args['adres'] ) );
 	}
 
 	/**
