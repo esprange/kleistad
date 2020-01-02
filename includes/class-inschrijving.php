@@ -348,7 +348,7 @@ class Inschrijving extends Artikel {
 		if ( ! $this->i_betaald && $bedrag >= $this->cursus->inschrijfkosten ) {
 			$this->i_betaald = true;
 		}
-		if ( ! $this->c_betaald && $bedrag === $this->cursus->cursuskosten ) {
+		if ( ! $this->c_betaald && 0.1 < abs( $bedrag - ( $this->cursus->cursuskosten + $this->cursus->inschrijfkosten ) ) ) {
 			$this->c_betaald = true;
 		}
 		if ( ! $this->ingedeeld && ( $this->i_betaald || $this->c_betaald ) ) {

@@ -219,7 +219,7 @@ abstract class Artikel extends Entity {
 		$order->betaald += $bedrag;
 		$order->historie = 'betaling bedrag € ' . number_format_i18n( $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
 		$order->save();
-		$this->betaalactie( $bedrag );
+		$this->betaalactie( $order->betaald );
 	}
 
 	/**
