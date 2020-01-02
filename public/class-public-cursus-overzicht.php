@@ -173,9 +173,11 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		} else {
 			$aantal_verzonden_email = 0;
 			foreach ( $this->inschrijvingen( $data['input']['cursus_id'] ) as $inschrijving ) {
-				if ( $inschrijving->c_betaald ) {
+				$cursus = new \Kleistad\Cursus( $data['input']['cursus_id'] );
+				$order  = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
+				if ( $inschrijving->c_betaald || $order->betaald > $cursus->inschrijfkosten ) {
 					/**
-					 * Als de cursist al betaald heeft, geen actie.
+					 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.
 					 */
 					continue;
 				}
