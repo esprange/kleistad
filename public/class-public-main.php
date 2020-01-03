@@ -355,6 +355,18 @@ class Public_Main {
 	}
 
 	/**
+	 * Pas de template aan ingeval van de pagina voor de ideal betaal link.
+	 *
+	 * @param string $template De locatie van de template file.
+	 */
+	public function template_include( $template ) {
+		if ( is_page( 'kleistad-betaling' ) ) {
+			return dirname( __FILE__ ) . '/partials/public-betaling-page.php';
+		}
+		return $template;
+	}
+
+	/**
 	 * Enqueue de styles voor de shortcode.
 	 *
 	 * @param string $shortcode De shortcode tag.
