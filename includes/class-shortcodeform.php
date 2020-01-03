@@ -57,10 +57,10 @@ abstract class ShortcodeForm extends Shortcode {
 	 * Enqueue nu ook de form specieke javascript.
 	 */
 	protected function enqueue() {
+		parent::enqueue();
 		if ( ! wp_script_is( 'kleistad-form' ) ) {
 			wp_enqueue_script( 'kleistad-form' );
 		}
-		parent::enqueue();
 	}
 
 	/**
@@ -216,8 +216,7 @@ abstract class ShortcodeForm extends Shortcode {
 			return new \WP_Error( 'intern', 'interne fout' );
 		}
 		$data           = [ 'form_actie' => $request->get_param( 'form_actie' ) ];
-		$referer        = wp_parse_url( $request->get_header( 'referer' ) );
-		self::$form_url = $referer['scheme'] . '://' . $referer['host'] . $referer['path'] ?? '';
+		self::$form_url = $request->get_header( 'referer' );
 		$result         = $shortcode_object->validate( $data );
 		if ( ! is_wp_error( $result ) ) {
 			if ( 'test' === strtok( $data['form_actie'], '_' ) ) {

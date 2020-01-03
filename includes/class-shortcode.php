@@ -85,7 +85,13 @@ abstract class Shortcode {
 				]
 			);
 		}
-		wp_enqueue_script( "kleistad{$this->shortcode}" );
+		if ( wp_script_is( "kleistad{$this->shortcode}", 'registered' ) ) {
+			wp_enqueue_script( "kleistad{$this->shortcode}" );
+		} else {
+			foreach ( \Kleistad\Public_Main::SHORTCODES[ $this->shortcode ]['js'] as $dependency ) {
+				wp_enqueue_script( $dependency );
+			}
+		}
 	}
 
 	/**

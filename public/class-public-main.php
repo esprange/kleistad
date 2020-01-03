@@ -367,48 +367,6 @@ class Public_Main {
 	}
 
 	/**
-	 * Enqueue de styles voor de shortcode.
-	 *
-	 * @param string $shortcode De shortcode tag.
-	 */
-	private function enqueue_styles( $shortcode ) {
-		foreach ( self::SHORTCODES[ $shortcode ]['css'] as $dependency ) {
-			wp_enqueue_style( $dependency );
-		}
-		if ( ! wp_style_is( 'kleistad' ) ) {
-			wp_enqueue_style( 'kleistad' );
-		}
-	}
-
-	/**
-	 * Enqueue de scripts voor de shortcode.
-	 *
-	 * @param string $shortcode De shortcode tag.
-	 */
-	private function enqueue_scripts( $shortcode ) {
-		if ( ! wp_script_is( 'kleistad' ) ) {
-			wp_enqueue_script( 'kleistad' );
-			wp_localize_script(
-				'kleistad',
-				'kleistadData',
-				[
-					'nonce'           => wp_create_nonce( 'wp_rest' ),
-					'success_message' => 'de bewerking is geslaagd!',
-					'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
-					'base_url'        => self::base_url(),
-				]
-			);
-		}
-		if ( wp_script_is( "kleistad{$shortcode}", 'registered' ) ) {
-			wp_enqueue_script( "kleistad{$shortcode}" );
-		} else {
-			foreach ( self::SHORTCODES[ $shortcode ]['js'] as $dependency ) {
-				wp_enqueue_script( $dependency );
-			}
-		}
-	}
-
-	/**
 	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
 	 *
 	 * @since 4.0.87
@@ -420,15 +378,12 @@ class Public_Main {
 	 */
 	public function shortcode_handler( $atts, $content, $tag ) {
 		$shortcode = substr( $tag, strlen( 'kleistad-' ) );
-		$this->enqueue_styles( $shortcode );
-		$this->enqueue_scripts( $shortcode );
 
 		$shortcode_class  = '\Kleistad\Public_' . ucwords( $shortcode, '_' );
 		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options );
 		if ( ! \Kleistad\Shortcode::check_access( $shortcode ) ) {
 			return $shortcode_object->status( new \WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
 		}
-
 		$html        = '';
 		static $divs = false; // De ondersteunende divs zijn maar eenmalig nodig.
 		if ( ! $divs ) {
