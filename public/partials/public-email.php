@@ -11,7 +11,7 @@
 
 $this->form();
 ?>
-	<input id="kleistad_selectie" name="adressen" type="hidden">
+	<input id="kleistad_gebruikerids" name="gebruikerids" type="hidden">
 	<div class="kleistad_row">
 		<div class="kleistad_label">
 			<label>Selecteer de groep(en) waarvoor de email verzonden moet worden</label>
@@ -25,7 +25,7 @@ $this->form();
 					<?php echo esc_html( $groep['naam'] ); ?>
 					<ul>
 					<?php foreach ( $groep['leden'] as $gebruiker_id => $gebruiker ) : ?>
-						<li title="<?php echo esc_attr( $gebruiker_id ); ?>">
+						<li gebruikerid="<?php echo esc_attr( $gebruiker_id ); ?>">
 						<?php echo esc_html( $gebruiker ); ?>
 						</li>
 					<?php endforeach ?>

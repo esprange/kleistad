@@ -22,14 +22,14 @@
 			$( '#kleistad_gebruikers' ).on( 'changed.jstree',
 				function() {
 					var gebruikerIds = [],
-						selectIndexes = $( '#kleistad_gebruikers' ).jstree( 'get_selected', true );
+						selectIndexes = $( this ).jstree( 'get_selected', true );
 					$.each( selectIndexes, function() {
-						var gebruikerId = this.li_attr.title;
+						var gebruikerId = this.li_attr.gebruikerid;
 						if ( undefined !== gebruikerId ) {
 							gebruikerIds.push( gebruikerId );
 						}
 					});
-					$( '#kleistad_selectie' ).val( gebruikerIds.join( ',' ) );
+					$( '#kleistad_gebruikerids' ).val( gebruikerIds.join( ',' ) );
 				}
 			);
 		}

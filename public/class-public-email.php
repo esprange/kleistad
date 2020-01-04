@@ -41,14 +41,14 @@ class Public_Email extends ShortcodeForm {
 		if ( $bestuur_rechten ) {
 			$bestuur = get_users( [ 'role' => 'bestuur' ] );
 			foreach ( $bestuur as $bestuurslid ) {
-				$data['input']['tree'][-1]['naam']                              = 'Bestuur';
-				$data['input']['tree'][-1]['leden'][ $bestuurslid->user_email ] = $bestuurslid->display_name;
+				$data['input']['tree'][-1]['naam']                      = 'Bestuur';
+				$data['input']['tree'][-1]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
 			}
 
 			$docenten = get_users( [ 'role' => 'docenten' ] );
 			foreach ( $docenten as $docent ) {
-				$data['input']['tree'][-2]['naam']                         = 'Docenten';
-				$data['input']['tree'][-2]['leden'][ $docent->user_email ] = $docent->display_name;
+				$data['input']['tree'][-2]['naam']                 = 'Docenten';
+				$data['input']['tree'][-2]['leden'][ $docent->ID ] = $docent->display_name;
 			}
 
 			$abonnementen = \Kleistad\Abonnement::all();
@@ -56,7 +56,7 @@ class Public_Email extends ShortcodeForm {
 				if ( ! $abonnement->geannuleerd ) {
 					$abonnee                          = get_userdata( $abonnee_id );
 					$data['input']['tree'][0]['naam'] = 'Abonnees';
-					$data['input']['tree'][0]['leden'][ $abonnee->user_email ] = $abonnee->display_name;
+					$data['input']['tree'][0]['leden'][ $abonnee->ID ] = $abonnee->display_name;
 				}
 			}
 		}
@@ -71,8 +71,8 @@ class Public_Email extends ShortcodeForm {
 					continue;
 				}
 				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
-					$data['input']['tree'][ $cursus_id ]['naam']                          = $cursussen[ $cursus_id ]->code . ' - ' . $cursussen[ $cursus_id ]->naam;
-					$data['input']['tree'][ $cursus_id ]['leden'][ $cursist->user_email ] = $cursist->display_name;
+					$data['input']['tree'][ $cursus_id ]['naam']                  = $cursussen[ $cursus_id ]->code . ' - ' . $cursussen[ $cursus_id ]->naam;
+					$data['input']['tree'][ $cursus_id ]['leden'][ $cursist->ID ] = $cursist->display_name;
 				}
 			}
 		}
@@ -93,7 +93,7 @@ class Public_Email extends ShortcodeForm {
 		$data['input']                  = filter_input_array(
 			INPUT_POST,
 			[
-				'adressen'      => FILTER_SANITIZE_STRING,
+				'gebruikerids'  => FILTER_SANITIZE_STRING,
 				'onderwerp'     => FILTER_SANITIZE_STRING,
 				'email_content' => FILTER_DEFAULT,
 				'aanhef'        => FILTER_SANITIZE_STRING,
@@ -105,7 +105,7 @@ class Public_Email extends ShortcodeForm {
 		if ( empty( $data['input']['email_content'] ) ) {
 			$error->add( 'email', 'Er is geen email content' );
 		}
-		if ( 'verzenden' === $data['form_actie'] && empty( $data['input']['adressen'] ) ) {
+		if ( 'verzenden' === $data['form_actie'] && empty( $data['input']['gebruikerids'] ) ) {
 			$error->add( 'email', 'Er is geen enkele ontvanger geselecteerd' );
 		}
 		if ( empty( $data['input']['onderwerp'] ) ) {
@@ -133,12 +133,19 @@ class Public_Email extends ShortcodeForm {
 	 * @since   5.5.0
 	 */
 	protected function save( $data ) {
-		$adressen = array_unique( explode( ',', $data['input']['adressen'] ) );
-		$emailer  = new \Kleistad\Email();
+		$gebruikerids  = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
+		$query         = new \WP_User_Query(
+			[
+				'include' => array_map( 'intval', $gebruikerids ),
+				'fields'  => [ 'user_email' ],
+			]
+		);
+		$emailadressen = array_column( (array) $query->get_results(), 'user_email' );
+		$emailer       = new \Kleistad\Email();
 		$emailer->send(
 			[
 				'to'        => 'Kleistad gebruiker <info@' . \Kleistad\Email::domein() . '>',
-				'bcc'       => $adressen,
+				'bcc'       => $emailadressen,
 				'from_name' => "{$data['input']['namens']} namens Kleistad",
 				'from'      => 'info@' . \Kleistad\Email::verzend_domein(),
 				'reply-to'  => 'info@' . \Kleistad\Email::domein(),
@@ -149,7 +156,7 @@ class Public_Email extends ShortcodeForm {
 			]
 		);
 		return [
-			'status'  => $this->status( 'De email is naar ' . count( $adressen ) . ' personen verzonden' ),
+			'status'  => $this->status( 'De email is naar ' . count( $emailadressen ) . ' personen verzonden' ),
 			'content' => $this->goto_home(),
 		];
 	}
