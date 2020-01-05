@@ -463,20 +463,20 @@ class Inschrijving extends Artikel {
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
 				if (
+					$inschrijving->restant_email ||
 					$inschrijving->geannuleerd ||
 					$inschrijving->c_betaald ||
 					$cursussen[ $cursus_id ]->vervallen ||
+					! $inschrijving->ingedeeld ||
 					strtotime( '+7 days' ) < $cursussen[ $cursus_id ]->start_datum ||
 					strtotime( 'today' ) > $cursussen[ $cursus_id ]->eind_datum
 					) {
 					continue;
 				}
-				if ( ! $inschrijving->restant_email ) {
-					$inschrijving->artikel_type  = 'cursus';
-					$inschrijving->restant_email = true;
-					$inschrijving->save();
-					$inschrijving->email( '_restant' );
-				}
+				$inschrijving->artikel_type  = 'cursus';
+				$inschrijving->restant_email = true;
+				$inschrijving->save();
+				$inschrijving->email( '_restant' );
 			}
 		}
 	}
