@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.3.2  
-**Stable tag:** 6.1.2  
+**Stable tag:** 6.1.3  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -34,6 +34,15 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.1.3 ###
+* Bugfixes na in productie name versie 6.1.2
+* Opmerkingen veld toegevoegd voor aanmaken korting en annuleringen
+* Verbeterde selectie bij versturen herinneremail cursusbetaling
+* Verbeterde bepaling cursus betaald
+* Verbeterde betaalpagina
+* Privacy fix in emailpagina
+### 6.1.1 ###
+* Aanpassing emails als custom posttype
 ### 6.1.0 ###
 * Financiële uitbreiding met automatische facturen, omzet registratie en uitbreiding gebruik iDeal
 ### 6.0.0 ###
