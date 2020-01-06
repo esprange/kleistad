@@ -125,7 +125,7 @@ var detectTap;
 			window.scrollTo( 0, 0 );
 		}
 		if ( 'file_uri' in data ) {
-			window.location.href = data.file_uri;
+			window.open( data.file_uri, '_blank' );
 		}
 		if ( 'redirect_uri' in data ) {
 			window.location.replace( data.redirect_uri );
