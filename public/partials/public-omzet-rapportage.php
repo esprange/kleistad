@@ -90,7 +90,13 @@ if ( 'details' === $data['actie'] ) :
 			</tr>
 		</thead>
 		<tbody>
-	<?php foreach ( $data['omzet'] as $naam => $omzet ) : ?>
+	<?php
+		$totaal_netto = 0;
+		$totaal_btw   = 0;
+	foreach ( $data['omzet'] as $naam => $omzet ) :
+		$totaal_netto += $omzet['netto'];
+		$totaal_btw   += $omzet['btw'];
+		?>
 		<tr>
 			<td><?php echo esc_html( $naam ); ?></td>
 			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['netto'], 2 ) ); ?></td>
@@ -104,6 +110,14 @@ if ( 'details' === $data['actie'] ) :
 		</tr>
 	<?php endforeach ?>
 		</tbody>
+		<tfoot>
+		<tr>
+			<th>Totaal</th>
+			<th style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $totaal_netto, 2 ) ); ?></th>
+			<th style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $totaal_btw, 2 ) ); ?></th>
+			<th>&nbsp;</th>
+		</tr>
+	</tfoot>
 	</table>
 </div>
 <?php endif ?>
