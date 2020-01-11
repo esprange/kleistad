@@ -55,7 +55,7 @@ class Saldo extends Artikel {
 	public function __construct( $klant_id ) {
 		$this->klant_id = $klant_id;
 		$this->betalen  = new \Kleistad\Betalen();
-		$saldo          = round( get_user_meta( $this->klant_id, self::META_KEY, true ), 2 ) ?: $this->default_data;
+		$saldo          = round( get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data, 2 );
 		$this->data     = wp_parse_args( $saldo, $this->default_data );
 		$this->volgnr   = count( $this->storting );
 	}

@@ -341,11 +341,12 @@ class Public_Main {
 	 * @param array $email_change_email Basis voor WP_mail.
 	 * @param array $user               De bestaande user info.
 	 * @param array $userdata           De gewijzigd user info.
+	 * phpcs:disable
 	 */
-	public function email_change_email( $email_change_email, $user, $userdata ) {
+	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
 		$emailer = new \Kleistad\Email();
 		return $emailer->notify( 'email_wijziging', $userdata );
-	}
+	} // phpcs:enable
 
 	/**
 	 * Wordt aangeroepen door filter password_change_email, als het wachtwoord gewijzigd wordt.
@@ -353,11 +354,12 @@ class Public_Main {
 	 * @param array $email_change_email Basis voor WP_mail.
 	 * @param array $user               De bestaande user info.
 	 * @param array $userdata           De gewijzigd user info.
+	 * phpcs:disable
 	 */
-	public function password_change_email( $email_change_email, $user, $userdata ) {
+	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
 		$emailer = new \Kleistad\Email();
 		return $emailer->notify( 'paswoord_wijziging', $userdata );
-	}
+	} // phpcs:enable
 
 	/**
 	 * Uitbreiding \WP_User object met adres gegevens

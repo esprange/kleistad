@@ -185,7 +185,6 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			];
 		} elseif ( 'herinner_email' === $data['form_actie'] ) {
 			$aantal_verzonden_email = 0;
-			$cursus                 = new \Kleistad\Cursus( $data['input']['cursus_id'] );
 			// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
 			foreach ( $this->inschrijvingen( $data['input']['cursus_id'], false ) as $inschrijving ) {
 				$order = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
