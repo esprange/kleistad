@@ -77,18 +77,15 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$glazuur_id   = 0;
 		$kleur_id     = 0;
 		$uiterlijk_id = 0;
-		$terms        = get_the_terms( $recept->ID, 'kleistad_recept_cat' );
-		if ( false !== $terms ) {
-			foreach ( $terms as $term ) {
-				if ( intval( $term->parent ) === intval( $glazuur->term_id ) ) {
-					$glazuur_id = $term->term_id;
-				}
-				if ( intval( $term->parent ) === intval( $kleur->term_id ) ) {
-					$kleur_id = $term->term_id;
-				}
-				if ( intval( $term->parent ) === intval( $uiterlijk->term_id ) ) {
-					$uiterlijk_id = $term->term_id;
-				}
+		foreach ( get_the_terms( $recept->ID, 'kleistad_recept_cat' ) as $term ) {
+			if ( intval( $term->parent ) === intval( $glazuur->term_id ) ) {
+				$glazuur_id = $term->term_id;
+			}
+			if ( intval( $term->parent ) === intval( $kleur->term_id ) ) {
+				$kleur_id = $term->term_id;
+			}
+			if ( intval( $term->parent ) === intval( $uiterlijk->term_id ) ) {
+				$uiterlijk_id = $term->term_id;
 			}
 		}
 		return [
