@@ -343,7 +343,7 @@ class Public_Main {
 	 * @param array $userdata           De gewijzigd user info.
 	 * phpcs:disable
 	 */
-	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
+	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
 		$emailer = new \Kleistad\Email();
 		return $emailer->notify( 'email_wijziging', $userdata );
 	} // phpcs:enable
@@ -356,7 +356,7 @@ class Public_Main {
 	 * @param array $userdata           De gewijzigd user info.
 	 * phpcs:disable
 	 */
-	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
+	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
 		$emailer = new \Kleistad\Email();
 		return $emailer->notify( 'paswoord_wijziging', $userdata );
 	} // phpcs:enable

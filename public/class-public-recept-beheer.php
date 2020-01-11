@@ -78,7 +78,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$kleur_id     = 0;
 		$uiterlijk_id = 0;
 		$terms        = get_the_terms( $recept->ID, 'kleistad_recept_cat' );
-		if ( is_array( $terms ) ) {
+		if ( false !== $terms ) {
 			foreach ( $terms as $term ) {
 				if ( intval( $term->parent ) === intval( $glazuur->term_id ) ) {
 					$glazuur_id = $term->term_id;
