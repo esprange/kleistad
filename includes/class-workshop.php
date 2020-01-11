@@ -350,7 +350,7 @@ class Workshop extends Artikel {
 	 * @param float $bedrag Het betaalde bedrag.
 	 */
 	protected function betaalactie( $bedrag ) {
-		if ( ! $this->betaald && 0.1 < abs( $bedrag - $this->kosten ) ) {
+		if ( ! $this->betaald && $bedrag >= ( $this->kosten - 0.01 ) ) {
 			$this->betaald = true;
 		}
 		$this->save();

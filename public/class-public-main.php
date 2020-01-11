@@ -336,6 +336,30 @@ class Public_Main {
 	}
 
 	/**
+	 * Wordt aangeroepen door filter email_change_email, als er een email adres gewijzigd wordt.
+	 *
+	 * @param array $email_change_email Basis voor WP_mail.
+	 * @param array $user               De bestaande user info.
+	 * @param array $userdata           De gewijzigd user info.
+	 */
+	public function email_change_email( $email_change_email, $user, $userdata ) {
+		$emailer = new \Kleistad\Email();
+		return $emailer->notify( 'email_wijziging', $userdata );
+	}
+
+	/**
+	 * Wordt aangeroepen door filter password_change_email, als het wachtwoord gewijzigd wordt.
+	 *
+	 * @param array $email_change_email Basis voor WP_mail.
+	 * @param array $user               De bestaande user info.
+	 * @param array $userdata           De gewijzigd user info.
+	 */
+	public function password_change_email( $email_change_email, $user, $userdata ) {
+		$emailer = new \Kleistad\Email();
+		return $emailer->notify( 'paswoord_wijziging', $userdata );
+	}
+
+	/**
 	 * Uitbreiding \WP_User object met adres gegevens
 	 *
 	 * @since 4.5.1

@@ -67,8 +67,6 @@ class Public_Registratie_Overzicht extends Shortcode {
 					$cursuslijst        .= 'C' . $cursus_id . ';';
 					$inschrijvinglijst[] = [
 						'ingedeeld'   => $inschrijving->ingedeeld,
-						'i_betaald'   => $inschrijving->i_betaald,
-						'c_betaald'   => $inschrijving->c_betaald,
 						'geannuleerd' => $inschrijving->geannuleerd,
 						'code'        => $inschrijving->code,
 						'aantal'      => $inschrijving->aantal,
@@ -131,8 +129,6 @@ class Public_Registratie_Overzicht extends Shortcode {
 			'Inschrijf status',
 			'Aantal',
 			'Technieken',
-			'Inschrijfgeld',
-			'Cursusgeld',
 			'Opmerking',
 		];
 		fputcsv( $this->file_handle, $cursus_fields, ';', '"' );
@@ -164,8 +160,6 @@ class Public_Registratie_Overzicht extends Shortcode {
 								$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : 'wacht op betaling' ),
 								$inschrijving->aantal,
 								implode( ' ', $inschrijving->technieken ),
-								$inschrijving->i_betaald ? 'Ja' : 'Nee',
-								$inschrijving->c_betaald ? 'Ja' : 'Nee',
 								$inschrijving->opmerking,
 							]
 						),

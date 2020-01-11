@@ -51,9 +51,10 @@
 				<li>'Inschrijf email' : bij inschrijving via bank; paginanaam aanpassen in cursus beheer</li>
 				<li>'Indeling email' : bij indeling via cursus beheer of inschrijving via iDeal; paginanaam aanpassen cursus beheer</li>
 				<li>cursus_lopend : instructie bij inschrijving op lopende cursus</li>
+				<li>cursus_lopend_betalen : bij indeling na aanbieden prijs op lopende cursus</li>
 				<li>cursus_restant : betalen resterend cursusgeld via email link</li>
 				<li>cursus_herinnering : herinnering betaling resterend cursusgeld via email link</li>
-				<li>cursus_ideal : bevestiging betaling restant bedrag</li>
+				<li>cursus_ideal : bevestiging betaling bedrag</li>
 				<li>cursus_wijziging: bevestiging aanpassing inschrijving naar andere cursus</li>
 			</ol>
 			<ul style="list-style-type:square">

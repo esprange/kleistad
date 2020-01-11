@@ -50,22 +50,6 @@
 		</tr>
 		<tr class="form-field">
 			<th scope="row">
-				<label for="i_betaald">Inschrijfgeld betaald</label>
-			</th>
-			<td>
-				<input name="i_betaald" id="i_betaald" class="code" value="1" type="checkbox" <?php checked( $item['i_betaald'] ); ?> />
-			</td>
-		</tr>
-		<tr class="form-field">
-			<th scope="row">
-				<label for="c_betaald">Cursusgeld betaald</label>
-			</th>
-			<td>
-				<input name="c_betaald" id="c_betaald" class="code" value="1" type="checkbox" <?php checked( $item['c_betaald'] ); ?> />
-			</td>
-		</tr>
-		<tr class="form-field">
-			<th scope="row">
 				<label for="geannuleerd">Geannuleerd</label>
 			</th>
 			<td>

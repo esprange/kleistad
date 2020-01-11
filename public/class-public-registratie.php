@@ -37,6 +37,7 @@ class Public_Registratie extends ShortcodeForm {
 				'pcode'        => $gebruiker->pcode,
 				'plaats'       => $gebruiker->plaats,
 				'telnr'        => $gebruiker->telnr,
+				'email'        => $gebruiker->user_email,
 			];
 		}
 		return true;
@@ -63,6 +64,7 @@ class Public_Registratie extends ShortcodeForm {
 				'pcode'        => FILTER_SANITIZE_STRING,
 				'plaats'       => FILTER_SANITIZE_STRING,
 				'telnr'        => FILTER_SANITIZE_STRING,
+				'email'        => FILTER_SANITIZE_EMAIL,
 			]
 		);
 		if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
@@ -78,6 +80,15 @@ class Public_Registratie extends ShortcodeForm {
 		if ( ! $this->validate_naam( $data['input']['achternaam'] ) ) {
 			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
 			$data['input']['achternaam'] = '';
+		}
+		if ( ! $this->validate_email( $data['input']['email'] ) ) {
+			$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
+		} else {
+			if ( 0 !== strcasecmp( $data['input']['email'], get_user_by( 'id', $data['input']['gebruiker_id'] )->user_email ) ) {
+				if ( email_exists( $data['input']['email'] ) ) {
+					$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
+				}
+			}
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
@@ -105,6 +116,7 @@ class Public_Registratie extends ShortcodeForm {
 				'huisnr'     => $data['input']['huisnr'],
 				'pcode'      => $data['input']['pcode'],
 				'plaats'     => $data['input']['plaats'],
+				'user_email' => $data['input']['email'],
 			]
 		);
 

@@ -180,7 +180,7 @@ endif;
 			</div>
 			<div class="kleistad_col_7" >
 				<p><strong>Je wilt het abonnement pauzeren</strong></p>
-				<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( \Kleistad\Abonnement::MIN_PAUZE_WEKEN ); ?> weken, maximaal <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken.</p>
+				<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( \Kleistad\Abonnement::MIN_PAUZE_WEKEN ); ?> weken. Per kalender jaar mag er in totaal maximaal <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken gepauzeerd worden.</p>
 			</div>
 		</div>
 		<?php if ( $data['gepauzeerd'] ) : ?>

@@ -56,6 +56,14 @@ $this->form();
 		</div>
 	</div>
 	<div class="kleistad_row">
+		<div class="kleistad_col_3 kleistad_label">
+			<label for="kleistad_email">E-mail adres</label>
+		</div>
+		<div class="kleistad_col_7">
+			<input class="kleistad_input" name="email" id="kleistad_email" type="email" value="<?php echo esc_attr( $data['input']['email'] ); ?>" />
+		</div>
+	</div>
+	<div class="kleistad_row">
 		<div class="kleistad_col_10">
 			<button name="kleistad_submit_registratie" type="submit" >Opslaan</button>
 		</div>

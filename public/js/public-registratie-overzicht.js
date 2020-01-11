@@ -58,7 +58,7 @@
 						deelnemer      = $( this ).data( 'deelnemer' );
 						abonnee        = $( this ).data( 'abonnee' );
 						dagdelenkaart  = $( this ).data( 'dagdelenkaart' );
-						header         = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Inschrijfgeld</th><th>Cursusgeld</th><th>Geannuleerd</th><th>Technieken</th></tr>';
+						header         = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Geannuleerd</th><th>Technieken</th></tr>';
 						$( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', deelnemer.naam ).dialog( 'open' );
 						$( '#kleistad_deelnemer_tabel' ).empty();
 						$( '#kleistad_deelnemer_tabel' )
@@ -72,12 +72,10 @@
 							$.each(
 								inschrijvingen, function( key, value ) {
 									var status = ( value.ingedeeld ) ? '<span class="dashicons dashicons-yes"></span>' : '',
-										ibetaald = ( value.i_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
-										cbetaald = ( value.c_betaald ) ? '<span class="dashicons dashicons-yes"></span>' : '',
 										geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
 										code = value.code + ( ( 1 < value.aantal ) ? '(' + value.aantal + ')' : '' ),
 										html = header + '<tr><td>' + value.naam + '</td><th>' + code + '</th><th>' + status +
-										'</th><th>' + ibetaald + '</th><th>' + cbetaald + '</th><th>' + geannuleerd + '</th><th>',
+										'</th><th>' + geannuleerd + '</th><th>',
 										separator = '';
 									$.each(
 										value.technieken, function( key, value ) {

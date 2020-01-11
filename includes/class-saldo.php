@@ -55,7 +55,7 @@ class Saldo extends Artikel {
 	public function __construct( $klant_id ) {
 		$this->klant_id = $klant_id;
 		$this->betalen  = new \Kleistad\Betalen();
-		$saldo          = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
+		$saldo          = round( get_user_meta( $this->klant_id, self::META_KEY, true ), 2 ) ?: $this->default_data;
 		$this->data     = wp_parse_args( $saldo, $this->default_data );
 		$this->volgnr   = count( $this->storting );
 	}
@@ -97,7 +97,7 @@ class Saldo extends Artikel {
 		switch ( $attribuut ) {
 			case 'bedrag':
 			case 'storting':
-				$this->data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = round( $waarde, 2 );
 				break;
 			case 'datum':
 				$this->data['storting'][ $laatste_storting ][ $attribuut ] = date( 'Y-m-d', $waarde );
@@ -217,7 +217,7 @@ class Saldo extends Artikel {
 	}
 
 	/**
-	 * Check of er een indeling moet plaatsvinden ivm betaling inschrijfgeld.
+	 * Verhoog het saldobedrag met het betaalde bedrag.
 	 *
 	 * @param float $bedrag Het betaalde bedrag.
 	 */

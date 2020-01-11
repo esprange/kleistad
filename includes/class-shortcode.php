@@ -340,7 +340,7 @@ abstract class Shortcode {
 	}
 
 	/**
-	 * Toon de uitvoer van de shortcode, eventueel voorafgegaan door een melding van een betaalactie.
+	 * Toon de uitvoer van de shortcode, eventueel voorafgegaan door een melding van een betaal status.
 	 *
 	 * @since 4.5.1
 	 */

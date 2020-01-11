@@ -131,11 +131,12 @@ class Email {
 	}
 
 	/**
-	 * Helper functie, maakt email tekst op en verzendt de mail
+	 * Helper functie, maakt email tekst voor een WP notificatie email op.
 	 *
-	 * @param array $args parameters voor verzending.
+	 * @param array $args parameters voor email.
+	 * @return string De email inhoud.
 	 */
-	public function send( $args ) {
+	private function prepare( $args ) {
 		$this->mailparams = wp_parse_args(
 			$args,
 			[
@@ -170,7 +171,7 @@ class Email {
 		/**
 		 * Via regexp de tekst bewerken. De match variable bevat resp. de match, een sleutel en eventueel een waarde.
 		 */
-		$tekst = preg_replace_callback_array(
+		return preg_replace_callback_array(
 			[
 				'#\[\s*pagina\s*:\s*([a-z,_,-]+?)\s*\]#i' => function( $match ) {
 					// Include pagina.
@@ -189,6 +190,40 @@ class Email {
 			],
 			$this->mailparams['content']
 		);
+	}
+
+	/**
+	 * Email notificatie functie, maakt email tekst op t.b.v. standaard WP notificaties
+	 *
+	 * @param string $slug De email slug.
+	 * @param array  $user De user welke de email gaat ontvangen.
+	 * @return array
+	 */
+	public function notify( $slug, $user ) {
+		$args = [
+			'slug'       => $slug,
+			'to'         => $user['user_email'],
+			'parameters' => [
+				'voornaam'   => $user['first_name'],
+				'achternaam' => $user['last_name'],
+				'email'      => $user['user_email'],
+			],
+		];
+		return [
+			'message' => $this->inhoud( $this->prepare( $args ) ),
+			'subject' => 'Wijziging email adres',
+			'headers' => $this->headers(),
+			'to'      => $this->mailparams['to'],
+		];
+	}
+
+	/**
+	 * Email verzend functie, maakt email tekst op en verzendt de mail
+	 *
+	 * @param array $args parameters voor verzending.
+	 */
+	public function send( $args ) {
+		$tekst = $this->prepare( $args );
 		if ( get_option( 'kleistad_email_actief' ) ) {
 			return wp_mail(
 				$this->mailparams['to'],

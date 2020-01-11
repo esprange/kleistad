@@ -133,6 +133,8 @@ class Kleistad {
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
 		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
 		$this->loader->add_filter( 'template_include', $plugin_public, 'template_include' );
+		$this->loader->add_filter( 'email_change_email', $plugin_public, 'email_change_email', 10, 3 );
+		$this->loader->add_filter( 'password_change_email', $plugin_public, 'password_change_email', 10, 3 );
 	}
 
 	/**

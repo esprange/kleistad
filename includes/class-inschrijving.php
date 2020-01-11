@@ -17,8 +17,6 @@ namespace Kleistad;
  * @since 4.0.87
  *
  * @property array  technieken
- * @property bool   i_betaald
- * @property bool   c_betaald
  * @property bool   ingedeeld
  * @property bool   geannuleerd
  * @property string opmerking
@@ -60,8 +58,6 @@ class Inschrijving extends Artikel {
 		'code'           => '',
 		'datum'          => '',
 		'technieken'     => [],
-		'i_betaald'      => 0,
-		'c_betaald'      => 0,
 		'ingedeeld'      => 0,
 		'geannuleerd'    => 0,
 		'opmerking'      => '',
@@ -107,8 +103,6 @@ class Inschrijving extends Artikel {
 				return ( is_array( $this->data[ $attribuut ] ) ) ? $this->data[ $attribuut ] : [];
 			case 'datum':
 				return strtotime( $this->data[ $attribuut ] );
-			case 'i_betaald':
-			case 'c_betaald':
 			case 'geannuleerd':
 			case 'restant_email':
 			case 'herinner_email':
@@ -137,8 +131,6 @@ class Inschrijving extends Artikel {
 			case 'datum':
 				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
-			case 'i_betaald':
-			case 'c_betaald':
 			case 'geannuleerd':
 			case 'restant_email':
 			case 'herinner_email':
@@ -184,7 +176,7 @@ class Inschrijving extends Artikel {
 	 */
 	public function betalen( $bericht ) {
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
-		if ( ! $this->i_betaald && 0 < $this->cursus->inschrijfkosten ) {
+		if ( ! $this->ingedeeld && 0 < $this->cursus->inschrijfkosten ) {
 			return $this->betalen->order(
 				$this->klant_id,
 				__CLASS__ . '-' . $this->code . '-inschrijving',
@@ -269,6 +261,9 @@ class Inschrijving extends Artikel {
 			case '_herinnering':
 				$onderwerp = 'Herinnering betaling cursus';
 				break;
+			case '_lopend_betalen':
+				$onderwerp = 'Betaling bedrag voor reeds gestarte cursus';
+				break;
 			case '_ideal':
 				$onderwerp = 'Betaling cursus';
 				break;
@@ -328,7 +323,6 @@ class Inschrijving extends Artikel {
 		update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
 	}
 
-
 	/**
 	 * Geef de status van het artikel als een tekst terug.
 	 *
@@ -340,25 +334,49 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Controleer of de cursus betaald is.
+	 *
+	 * @param float $betaald Het betaalde bedrag.
+	 * @return bool
+	 */
+	public function cursus_betaald( $betaald ) {
+		return ( $betaald >= ( $this->cursus->cursuskosten + $this->cursus->inschrijfkosten - 0.01 ) );
+	}
+
+	/**
+	 * Controleer of het inschrijfgeld betaald is.
+	 *
+	 * @param float $betaald Het betaalde bedrag.
+	 * @return bool
+	 */
+	public function inschrijving_betaald( $betaald ) {
+		return ( $betaald >= ( $this->cursus->inschrijfkosten - 0.01 ) );
+	}
+
+	/**
+	 * Controleer of er sprake is van een regeling betaald is.
+	 *
+	 * @param float $betaald Het betaalde bedrag.
+	 * @return bool
+	 */
+	public function regeling_betaald( $betaald ) {
+		return ( $betaald > ( $this->cursus->inschrijfkosten + 1 ) );
+	}
+
+	/**
 	 * Check of er een indeling moet plaatsvinden ivm betaling inschrijfgeld.
 	 *
-	 * @param float $bedrag Het betaalde bedrag.
+	 * @param float $bedrag Het totaal betaalde bedrag.
 	 */
 	protected function betaalactie( $bedrag ) {
-		if ( ! $this->i_betaald && $bedrag >= $this->cursus->inschrijfkosten ) {
-			$this->i_betaald = true;
-		}
-		if ( ! $this->c_betaald && 0.1 > abs( $bedrag - ( $this->cursus->cursuskosten + $this->cursus->inschrijfkosten ) ) ) {
-			$this->c_betaald = true;
-		}
-		if ( ! $this->ingedeeld && ( $this->i_betaald || $this->c_betaald ) ) {
-			$this->ingedeeld = true;
+		if ( ! $this->ingedeeld && $bedrag >= $this->cursus->inschrijfkosten ) {
 			if ( strtotime( 'today' ) < $this->cursus->start_datum ) {
 				// Alleen email versturen als de cursus nog niet gestart is.
 				$this->email( 'indeling' );
 			}
+			$this->ingedeeld = true;
+			$this->save();
 		}
-		$this->save();
 	}
 
 	/**
@@ -413,6 +431,21 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Bepaal de inschrijfstatus a.d.h.v. het betaalde bedrag.
+	 *
+	 * @param float $bedrag Het betaaalde bedrag.
+	 * @return bool Of de indelingsstatus gewijzigd is.
+	 */
+	private function betaalstatus( $bedrag ) {
+		if ( ! $this->ingedeeld && ( $bedrag >= ( $this->cursus->inschrijfkosten - 0.01 ) ) ) {
+			$this->ingedeeld = true;
+			$this->save();
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
 	 *
 	 * @since        4.2.0
@@ -427,15 +460,12 @@ class Inschrijving extends Artikel {
 			$artikel_type = is_numeric( $parameters[2] ) ? $parameters[3] : $parameters[2]; // Voor oude cursuscode.
 			switch ( $artikel_type ) {
 				case 'inschrijving':
-					$inschrijving->i_betaald = true;
 					$inschrijving->ingedeeld = true;
 					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, $artikel_type, self::OPM_INSCHRIJVING ) );
 					$inschrijving->save();
 					break;
 
 				case 'cursus':
-					$inschrijving->i_betaald = true;
-					$inschrijving->c_betaald = true;
 					$inschrijving->ingedeeld = true;
 					if ( 0 < $inschrijving->cursus->inschrijfkosten ) {
 						$inschrijving->ontvang_order( \Kleistad\Order::zoek_order( $inschrijving->code ), $bedrag );
@@ -465,7 +495,6 @@ class Inschrijving extends Artikel {
 				if (
 					$inschrijving->restant_email ||
 					$inschrijving->geannuleerd ||
-					$inschrijving->c_betaald ||
 					$cursussen[ $cursus_id ]->vervallen ||
 					! $inschrijving->ingedeeld ||
 					strtotime( '+7 days' ) < $cursussen[ $cursus_id ]->start_datum ||
@@ -473,10 +502,13 @@ class Inschrijving extends Artikel {
 					) {
 					continue;
 				}
-				$inschrijving->artikel_type  = 'cursus';
-				$inschrijving->restant_email = true;
-				$inschrijving->save();
-				$inschrijving->email( '_restant' );
+				$order = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
+				if ( ! $inschrijving->cursus_betaald( $order->betaald ) ) {
+					$inschrijving->artikel_type  = 'cursus';
+					$inschrijving->restant_email = true;
+					$inschrijving->save();
+					$inschrijving->email( '_restant' );
+				}
 			}
 		}
 	}

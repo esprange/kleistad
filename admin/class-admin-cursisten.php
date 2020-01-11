@@ -73,26 +73,6 @@ class Admin_Cursisten extends \WP_List_Table {
 	}
 
 	/**
-	 * Toon de kolom i_betaald
-	 *
-	 * @param object $item row (key, value).
-	 * @return string
-	 */
-	public function column_i_betaald( $item ) {
-		return $item['i_betaald'];
-	}
-
-	/**
-	 * Toon de kolom c_betaald
-	 *
-	 * @param object $item row (key, value).
-	 * @return string
-	 */
-	public function column_c_betaald( $item ) {
-		return $item['c_betaald'];
-	}
-
-	/**
 	 * Toon de kolom geannuleerd
 	 *
 	 * @param object $item row (key, value).
@@ -112,8 +92,6 @@ class Admin_Cursisten extends \WP_List_Table {
 			'naam'        => 'Naam',
 			'cursus'      => 'Cursus',
 			'id'          => 'Code',
-			'i_betaald'   => 'Inschrijving betaald',
-			'c_betaald'   => 'Cursus betaald',
 			'geannuleerd' => 'Geannuleerd',
 		];
 		return $columns;
@@ -129,8 +107,6 @@ class Admin_Cursisten extends \WP_List_Table {
 			'naam'        => [ 'naam', true ],
 			'cursus'      => [ 'cursus', true ],
 			'id'          => [ 'id', true ],
-			'i_betaald'   => [ 'i_betaald', true ],
-			'c_betaald'   => [ 'c_betaald', true ],
 			'geannuleerd' => [ 'geannuleerd', true ],
 		];
 		return $sortable_columns;
@@ -154,8 +130,6 @@ class Admin_Cursisten extends \WP_List_Table {
 					'id'          => $inschrijving[ $cursus_id ]->code,
 					'naam'        => $cursist->display_name . ( 1 < $inschrijving[ $cursus_id ]->aantal ? ' (' . $inschrijving[ $cursus_id ]->aantal . ')' : '' ),
 					'cursus'      => $cursus->naam,
-					'i_betaald'   => $inschrijving[ $cursus_id ]->i_betaald ? 'X' : '',
-					'c_betaald'   => $inschrijving[ $cursus_id ]->c_betaald ? 'X' : '',
 					'geannuleerd' => $inschrijving[ $cursus_id ]->geannuleerd ? 'X' : '',
 				];
 			}

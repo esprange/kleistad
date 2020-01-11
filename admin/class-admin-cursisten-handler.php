@@ -50,8 +50,6 @@ class Admin_Cursisten_Handler {
 					'id'          => FILTER_SANITIZE_STRING,
 					'naam'        => FILTER_SANITIZE_STRING,
 					'cursus_id'   => FILTER_SANITIZE_NUMBER_INT,
-					'i_betaald'   => FILTER_SANITIZE_NUMBER_INT,
-					'c_betaald'   => FILTER_SANITIZE_NUMBER_INT,
 					'aantal'      => FILTER_SANITIZE_NUMBER_INT,
 					'geannuleerd' => FILTER_SANITIZE_NUMBER_INT,
 				]
@@ -61,8 +59,6 @@ class Admin_Cursisten_Handler {
 			$cursus_id                 = intval( $parameters[0] );
 			$cursist_id                = intval( $parameters[1] );
 			$inschrijving              = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
-			$inschrijving->i_betaald   = ( 0 !== intval( $item['i_betaald'] ) );
-			$inschrijving->c_betaald   = ( 0 !== intval( $item['c_betaald'] ) );
 			$inschrijving->geannuleerd = ( 0 !== intval( $item['geannuleerd'] ) );
 			$inschrijving->aantal      = $item['aantal'];
 			if ( intval( $item['cursus_id'] ) !== $cursus_id ) {
@@ -86,8 +82,6 @@ class Admin_Cursisten_Handler {
 					'id'          => $code,
 					'naam'        => $cursist->display_name,
 					'aantal'      => $inschrijving->aantal,
-					'i_betaald'   => $inschrijving->i_betaald,
-					'c_betaald'   => $inschrijving->c_betaald,
 					'geannuleerd' => $inschrijving->geannuleerd,
 					'cursist_id'  => $cursist_id,
 					'cursus_id'   => $cursus_id,
