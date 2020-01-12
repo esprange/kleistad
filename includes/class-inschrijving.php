@@ -340,7 +340,7 @@ class Inschrijving extends Artikel {
 	 * @return bool
 	 */
 	public function cursus_betaald( $betaald ) {
-		return ( $betaald >= ( $this->cursus->cursuskosten + $this->cursus->inschrijfkosten - 0.01 ) );
+		return ( $betaald >= ( $this->aantal * ( $this->cursus->cursuskosten + $this->cursus->inschrijfkosten ) - 0.01 ) );
 	}
 
 	/**
@@ -350,7 +350,7 @@ class Inschrijving extends Artikel {
 	 * @return bool
 	 */
 	public function inschrijving_betaald( $betaald ) {
-		return ( $betaald >= ( $this->cursus->inschrijfkosten - 0.01 ) );
+		return ( $betaald >= ( $this->aantal * $this->cursus->inschrijfkosten - 0.01 ) );
 	}
 
 	/**
@@ -360,7 +360,7 @@ class Inschrijving extends Artikel {
 	 * @return bool
 	 */
 	public function regeling_betaald( $betaald ) {
-		return ( $betaald > ( $this->cursus->inschrijfkosten + 1 ) );
+		return ( $betaald > ( $this->aantal * $this->cursus->inschrijfkosten + 1 ) );
 	}
 
 	/**
