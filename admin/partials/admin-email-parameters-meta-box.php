@@ -182,5 +182,18 @@
 				</li>
 			</ol>
 		</li>
+		<li><h3>Generieke emails</h3>
+			<ol>
+				<li>email_wijziging : De aanpassing van het email adres</li>
+				<li>wachtwoord_wijziging : De aanpassing een wachtwoord</li>
+				<li>
+					<ul style="list-style-type:square">
+						<li>[voornaam] : De voornaam van de gebruiker</li>
+						<li>[achternaam] : De achternaam van de gebruiker</li>
+						<li>[email] : Het nieuwe email adres van de gebruiker</li>
+					</ul>
+				</li>
+			<ol>
+		<li>
 	</ul>
 </div>

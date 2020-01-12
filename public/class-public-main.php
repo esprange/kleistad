@@ -358,7 +358,7 @@ class Public_Main {
 	 */
 	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
 		$emailer = new \Kleistad\Email();
-		return $emailer->notify( 'paswoord_wijziging', $userdata );
+		return $emailer->notify( 'wachtwoord_wijziging', $userdata );
 	} // phpcs:enable
 
 	/**
