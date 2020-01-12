@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.3.2  
-**Stable tag:** 6.1.3  
+**Stable tag:** 6.1.4  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -34,6 +34,13 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.1.4 ###
+* Bugfixes en dynamische aanpassing betaalstatus van o.a. inschrijvingen
+* Totaalregel omzet
+* Aparte email voor indeling op lopende cursus
+* Registratie ondersteunt aanpasing email adres
+* Opgemaakte email voor aanpassing email adres
+* Opgemaakte email voor wijziging wachtwoord
 ### 6.1.3 ###
 * Bugfixes na in productie name versie 6.1.2
 * Opmerkingen veld toegevoegd voor aanmaken korting en annuleringen

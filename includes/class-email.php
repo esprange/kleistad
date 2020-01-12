@@ -197,12 +197,14 @@ class Email {
 	 *
 	 * @param string $slug De email slug.
 	 * @param array  $user De user welke de email gaat ontvangen.
+	 * @param string $copy Een eventuele copy email adres.
 	 * @return array
 	 */
-	public function notify( $slug, $user ) {
+	public function notify( $slug, $user, $copy = '' ) {
 		$args = [
 			'slug'       => $slug,
 			'to'         => $user['user_email'],
+			'cc'         => [ $copy ],
 			'parameters' => [
 				'voornaam'   => $user['first_name'],
 				'achternaam' => $user['last_name'],

@@ -343,9 +343,9 @@ class Public_Main {
 	 * @param array $userdata           De gewijzigd user info.
 	 * phpcs:disable
 	 */
-	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
+	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
 		$emailer = new \Kleistad\Email();
-		return $emailer->notify( 'email_wijziging', $userdata );
+		return $emailer->notify( 'email_wijziging', $userdata, $user['user_email'] );
 	} // phpcs:enable
 
 	/**
