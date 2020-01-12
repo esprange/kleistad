@@ -46,7 +46,7 @@ class Public_Betaling extends ShortcodeForm {
 				$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 			} else {
 				$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
-				if ( $param['hsh'] === $artikel->controle() ) {
+				if ( ! is_null( $artikel ) && $param['hsh'] === $artikel->controle() ) {
 					$data = [
 						'order_id'      => $param['order'],
 						'actie'         => 'betalen',

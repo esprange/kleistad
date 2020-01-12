@@ -295,16 +295,16 @@ abstract class Artikel extends Entity {
 	 * @return \Kleistad\Artikel Een van de kleistad Artikel objecten.
 	 */
 	public static function get_artikel( $referentie ) {
-		$parameters = explode( '-', substr( $referentie, 1 ) );
-		if ( array_key_exists( $referentie[0], self::$artikelen ) ) {
-			$class = self::$artikelen[ $referentie[0] ]['class'];
+		if ( ! empty( $referentie ) && array_key_exists( $referentie[0], self::$artikelen ) ) {
+			$parameters = explode( '-', substr( $referentie, 1 ) );
+			$class      = self::$artikelen[ $referentie[0] ]['class'];
 			if ( 1 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
 				return new $class( (int) $parameters[0] );
 			} elseif ( 2 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
 				return new $class( (int) $parameters[0], (int) $parameters[1] );
 			}
-			return null;
 		}
+		return null;
 	}
 
 	/**
