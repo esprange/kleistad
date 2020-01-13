@@ -198,10 +198,11 @@ class Email {
 	 * @param array $args De argumenten voor de email.
 	 */
 	public function notify( $args ) {
+		$tekst = $this->prepare( $args );
 		return [
 			'to'      => $this->mailparams['to'],
 			'subject' => $this->mailparams['subject'],
-			'message' => $this->inhoud( $this->prepare( $args ) ),
+			'message' => $this->inhoud( $tekst ),
 			'headers' => $this->headers(),
 		];
 	}

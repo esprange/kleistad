@@ -126,7 +126,12 @@ class Public_Registratie extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( 'wachtwoord' === $data['form_actie'] ) {
-			wp_set_password( $data['input']['nieuw_wachtwoord'], intval( $data['input']['gebruiker_id'] ) );
+			wp_update_user(
+				[
+					'ID'        => intval( $data['input']['gebruiker_id'] ),
+					'user_pass' => $data['input']['nieuw_wachtwoord'],
+				]
+			); // Bij gebruik update_user wordt de email notificatie verzonden, bij set_password niet.
 			wp_set_auth_cookie( $data['input']['gebruiker_id'], true );
 			return [
 				'content' => $this->goto_home(),

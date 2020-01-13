@@ -370,13 +370,13 @@ class Public_Main {
 	 * phpcs:disable
 	 */
 	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
- 		// phpcs:enable
+		// phpcs:enable
 		$emailer = new \Kleistad\Email();
 		return $emailer->notify(
 			[
-				'slug'       => 'wachtwoord_wijziging',
 				'to'         => $userdata['user_email'],
 				'subject'    => 'Wachtwoord gewijzigd',
+				'slug'       => 'wachtwoord_wijziging',
 				'parameters' => [
 					'voornaam'   => $userdata['first_name'],
 					'achternaam' => $userdata['last_name'],
