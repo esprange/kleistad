@@ -370,6 +370,7 @@ class Public_Main {
 	 * phpcs:disable
 	 */
 	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
+ 		// phpcs:enable
 		$emailer = new \Kleistad\Email();
 		return $emailer->notify(
 			[
@@ -380,9 +381,9 @@ class Public_Main {
 					'voornaam'   => $userdata['first_name'],
 					'achternaam' => $userdata['last_name'],
 				],
-			 ]
-		 );
-	} // phpcs:enable
+			]
+		);
+	}
 
 	/**
 	 * Wordt aangeroepen door filter retrieve_password_message, als er een wachtwoord reset gevraagd wordt.
@@ -391,8 +392,10 @@ class Public_Main {
 	 * @param string   $key        De reset sleutel.
 	 * @param string   $user_login De gebruiker login naam.
 	 * @param \WP_User $user_data  Het user record van de gebruiker.
+	 * phpcs:disable
 	 */
-	public function retrieve_password_message( $message, $key, $user_login = '', $user_data = '' ) {
+	public function retrieve_password_message( /** @scrutinizer ignore-unused */ $message, $key, $user_login = '', $user_data = '' ) {
+ 		// phpcs:enable
 		$emailer = new \Kleistad\Email();
 		$result  = $emailer->notify(
 			[
