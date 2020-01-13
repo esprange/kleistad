@@ -418,7 +418,7 @@ class Public_Main {
 	 * @return string
 	 */
 	public function password_hint() {
-		return "Hint: het wachtwoord moet minimaal 8 tekens lang zijn. Bij de invoer wordt gecontroleerd op te gemakkelijk te bedenken wachtwoorden (als 1234...).\nGebruik hoofd- en kleine letters, nummers en tekens zoals ! \" ? $ % ^ & ) om het wachtwoord sterker te maken.";
+		return "Hint: het wachtwoord moet minimaal 9 tekens lang zijn. Bij de invoer wordt gecontroleerd op te gemakkelijk te bedenken wachtwoorden (als 1234...).\nGebruik hoofd- en kleine letters, nummers en tekens zoals ! \" ? $ % ^ & ) om het wachtwoord sterker te maken.";
 	}
 
 	/**

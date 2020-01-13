@@ -1,4 +1,4 @@
-/* global wp, pwsL10n */
+/* global wp */
 
 ( function( $ ) {
 	'use strict';
@@ -8,43 +8,34 @@
 			$strengthResult,
 			$submitButton,
 			blacklistArray ) {
-		var pass1 = $pass1.val();
-		var pass2 = $pass2.val();
+		var pass1 = $pass1.val(),
+			pass2 = $pass2.val(),
+			strength;
 
-		// Reset the form & meter
 		$submitButton.attr( 'disabled', 'disabled' );
 		$strengthResult.removeClassWildcard( 'kleistad_pwd' );
-
-		// Extend our blacklist array with those from the inputs & site data
 		blacklistArray = blacklistArray.concat( wp.passwordStrength.userInputBlacklist() );
+		strength       = wp.passwordStrength.meter( pass1, blacklistArray, pass2 );
 
-		// Get the password strength
-		var strength = wp.passwordStrength.meter( pass1, blacklistArray, pass2 );
-
-		// Add the strength meter results
 		switch ( strength ) {
 			case 2:
-				$strengthResult.addClass( 'kleistad_pwd_zwak' ).html( pwsL10n.bad );
+				$strengthResult.addClass( 'kleistad_pwd_zwak' ).html( 'zwak' );
 				break;
 			case 3:
-				$strengthResult.addClass( 'kleistad_pwd_goed' ).html( pwsL10n.good );
+				$strengthResult.addClass( 'kleistad_pwd_goed' ).html( 'goed' );
 				break;
 			case 4:
-				$strengthResult.addClass( 'kleistad_pwd_sterk' ).html( pwsL10n.strong );
+				$strengthResult.addClass( 'kleistad_pwd_sterk' ).html( 'sterk' );
 				break;
 			case 5:
-				$strengthResult.addClass( 'kleistad_pwd_ongelijk' ).html( pwsL10n.mismatch );
+				$strengthResult.addClass( 'kleistad_pwd_ongelijk' ).html( 'verschillend' );
 				break;
 			default:
-				$strengthResult.addClass( 'kleistad_pwd_erg_zwak' ).html( pwsL10n.short );
+				$strengthResult.addClass( 'kleistad_pwd_erg_zwak' ).html( 'zeer zwak' );
 		}
-		// The meter function returns a result even if pass2 is empty,
-		// enable only the submit button if the password is strong and
-		// both passwords are filled up
 		if ( 3 <= strength && '' !== pass2.trim() ) {
 			$submitButton.removeAttr( 'disabled' );
 		}
-		return strength;
 	}
 
 	$( document ).ready(
@@ -54,12 +45,12 @@
 			.on( 'keyup', 'input[name=nieuw_wachtwoord], input[name=bevestig_wachtwoord]',
 			function() {
 				checkPasswordStrength(
-					$( 'input[name=nieuw_wachtwoord]' ),        // First password field
-					$( 'input[name=bevestig_wachtwoord]' ),     // Second password field
-					$( '#wachtwoord_sterkte' ),                 // Strength meter
-					$( 'button[type=submit]' ),                  // Submit button
-					[ 'kleistad', 'amersfoort', 'wachtwoord', 'atelier', 'pottenbakken', 'draaischijf', 'keramiek' ]  // Blacklisted words
-					);
+					$( 'input[name=nieuw_wachtwoord]' ),
+					$( 'input[name=bevestig_wachtwoord]' ),
+					$( '#wachtwoord_sterkte' ),
+					$( 'button[type=submit]' ),
+					[ 'kleistad', 'amersfoort', 'wachtwoord', 'atelier', 'pottenbakken', 'draaischijf', 'keramiek' ]
+				);
 				}
 			);
         }
