@@ -10,7 +10,56 @@
  */
 
 $this->form();
-?>
+if ( 'wachtwoord' === $data['actie'] ) :
+	?>
+	<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['input']['gebruiker_id'] ); ?>" >
+	<div class="kleistad_row">
+		<div class="kleistad_col_3 kleistad_label">
+			<label for="huidig_wachtwoord">Voer het huidig wachtwoord in</label>
+		</div>
+		<div class="kleistad_col_3">
+			<input id="huidig_wachtwoord" type="password" name="huidig_wachtwoord" placeholder="" required>
+		</div>
+	</div>
+	<div class="kleistad_row">
+		<div class="kleistad_col_3 kleistad_label">
+			<label for="nieuw_wachtwoord">Nieuw wachtwoord</label>
+		</div>
+		<div class="kleistad_col_3">
+			<input id="nieuw_wachtwoord" type="password" name="nieuw_wachtwoord" placeholder="" required>
+		</div>
+	</div>
+	<div class="kleistad_row wp-pwd">
+		<div class="kleistad_col_3 kleistad_label">
+			<label for="bevestig_nieuw_wachtwoord">Bevestig nieuw wachtwoord</label>
+		</div>
+		<div class="kleistad_col_3">
+			<input id="bevestig_nieuw_wachtwoord" type="password" name="bevestig_wachtwoord" placeholder="" required>
+		</div>
+	</div>
+	<div class="kleistad_row">
+		<div class="kleistad_col_3">
+		</div>
+		<div id="wachtwoord_sterkte" class="kleistad_col_3 kleistad_pwd_meter">
+			&nbsp;
+		</div>
+	</div>
+	<div class="kleistad_row">
+		<div class="kleistad_col_3">
+		</div>
+		<div class="kleistad_col_6" style="font-size:13px;" >
+			<?php echo esc_html( apply_filters( 'password_hint', '' ) ); ?>
+		</div>
+	</div>
+	<div class="kleistad_row">
+		<div class="kleistad_col_10">
+			<button type="submit" disabled name="kleistad_sumbmit_registratie" value="wachtwoord">Wijzigen</button>
+			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+		</div>
+	</div>
+	<?php
+else :
+	?>
 	<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['input']['gebruiker_id'] ); ?>" >
 	<div class="kleistad_row">
 		<div class="kleistad_col_3 kleistad_label">
@@ -60,12 +109,14 @@ $this->form();
 			<label for="kleistad_email">E-mail adres</label>
 		</div>
 		<div class="kleistad_col_7">
-			<input class="kleistad_input" name="email" id="kleistad_email" type="email" value="<?php echo esc_attr( $data['input']['email'] ); ?>" />
+			<input class="kleistad_input" name="email" id="kleistad_email" type="email" required value="<?php echo esc_attr( $data['input']['email'] ); ?>" />
 		</div>
 	</div>
 	<div class="kleistad_row">
 		<div class="kleistad_col_10">
-			<button name="kleistad_submit_registratie" type="submit" >Opslaan</button>
+			<button name="kleistad_submit_registratie" value="wijzigen" type="submit" >Opslaan</button>
+			<button class="kleistad_edit_link" data-actie="wachtwoord" type="button" >Wachtwoord wijzigen</button>
 		</div>
 	</div>
+<?php endif ?>
 </form>

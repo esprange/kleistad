@@ -252,6 +252,36 @@ table.kleistad_datatable th, td {
     content: "";
     display: table;
 }
+.kleistad_pwd_meter {
+	border: 1px solid #ddd;
+	color: #23282d;
+	box-sizing: border-box;
+}
+.kleistad_pwd_sterk {
+	background-color: #c1e1b9;
+	border-color: #83c373;
+	opacity: 1;
+}
+.kleistad_pwd_goed {
+	background-color: #ffe399;
+	border-color: #ffc733;
+	opacity: 1;
+}
+.kleistad_pwd_zwak {
+	background-color: #fbc5a9;
+	border-color: #f78b53;
+	opacity: 1;
+}
+.kleistad_pwd_erg_zwak {
+	background-color: #f1adad;
+	border-color: #e35b5b;
+	opacity: 1;
+}
+.kleistad_pwd_ongelijk {
+	background-color: #f1adad;
+	border-color: #e35b5b;
+	opacity: 1;
+}
 
 input[type=checkbox].kleistad_input_cb {
 	border:0;

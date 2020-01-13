@@ -127,6 +127,7 @@ class Kleistad {
 		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );
 		$this->loader->add_action( 'kleistad_rcv_email', $plugin_public, 'rcv_email' );
+		$this->loader->add_action( 'init', $plugin_public, 'inline_style', 100 );
 
 		$this->loader->add_filter( 'single_template', $plugin_public, 'single_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
@@ -135,6 +136,8 @@ class Kleistad {
 		$this->loader->add_filter( 'template_include', $plugin_public, 'template_include' );
 		$this->loader->add_filter( 'email_change_email', $plugin_public, 'email_change_email', 10, 3 );
 		$this->loader->add_filter( 'password_change_email', $plugin_public, 'password_change_email', 10, 3 );
+		$this->loader->add_filter( 'retrieve_password_message', $plugin_public, 'retrieve_password_message', 10, 4 );
+		$this->loader->add_filter( 'password_hint', $plugin_public, 'password_hint' );
 	}
 
 	/**

@@ -56,37 +56,56 @@ class Public_Registratie extends ShortcodeForm {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
-				'voornaam'     => FILTER_SANITIZE_STRING,
-				'achternaam'   => FILTER_SANITIZE_STRING,
-				'straat'       => FILTER_SANITIZE_STRING,
-				'huisnr'       => FILTER_SANITIZE_STRING,
-				'pcode'        => FILTER_SANITIZE_STRING,
-				'plaats'       => FILTER_SANITIZE_STRING,
-				'telnr'        => FILTER_SANITIZE_STRING,
-				'email'        => FILTER_SANITIZE_EMAIL,
+				'gebruiker_id'        => FILTER_SANITIZE_NUMBER_INT,
+				'voornaam'            => FILTER_SANITIZE_STRING,
+				'achternaam'          => FILTER_SANITIZE_STRING,
+				'straat'              => FILTER_SANITIZE_STRING,
+				'huisnr'              => FILTER_SANITIZE_STRING,
+				'pcode'               => FILTER_SANITIZE_STRING,
+				'plaats'              => FILTER_SANITIZE_STRING,
+				'telnr'               => FILTER_SANITIZE_STRING,
+				'email'               => FILTER_SANITIZE_EMAIL,
+				'huidig_wachtwoord'   => FILTER_SANITIZE_STRING,
+				'nieuw_wachtwoord'    => FILTER_SANITIZE_STRING,
+				'bevestig_wachtwoord' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
-			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
-		}
-		if ( ! empty( $data['input']['pcode'] ) && ! $this->validate_pcode( $data['input']['pcode'] ) ) {
-			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
-		}
-		if ( ! $this->validate_naam( $data['input']['voornaam'] ) ) {
-			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
-			$data['input']['voornaam'] = '';
-		}
-		if ( ! $this->validate_naam( $data['input']['achternaam'] ) ) {
-			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
-			$data['input']['achternaam'] = '';
-		}
-		if ( ! $this->validate_email( $data['input']['email'] ) ) {
-			$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
+		if ( 'wachtwoord' === $data['form_actie'] ) {
+			if ( empty( $data['input']['huidig_wachtwoord'] ) || empty( $data['input']['nieuw_wachtwoord'] ) || empty( $data['input']['bevestig_wachtwoord'] ) ) {
+				$error->add( 'onjuist', 'Alle velden moeten gevuld zijn' );
+			}
+			$gebruiker = get_user_by( 'ID', $data['input']['gebruiker_id'] );
+			if ( ! wp_check_password( $data['input']['huidig_wachtwoord'], $gebruiker->data->user_pass, $gebruiker->ID ) ) {
+				$error->add( 'onjuist', 'Het huidige wachtwoord is onjuist' );
+			}
+			if ( $data['input']['nieuw_wachtwoord'] !== $data['input']['bevestig_wachtwoord'] ) {
+				$error->add( 'onjuist', 'Het nieuw ingevulde wachtwoord is niet aan het kopie wachtwoord' );
+			}
+			if ( 9 > strlen( $data['input']['nieuw_wachtwoord'] ) ) {
+				$error->add( 'onjuist', 'Het nieuw ingevulde wachtwoord is te kort en moet minimaal 9 karakters lang zijn' );
+			}
 		} else {
-			if ( 0 !== strcasecmp( $data['input']['email'], get_user_by( 'id', $data['input']['gebruiker_id'] )->user_email ) ) {
-				if ( email_exists( $data['input']['email'] ) ) {
-					$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
+			if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
+				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct' );
+			}
+			if ( ! empty( $data['input']['pcode'] ) && ! $this->validate_pcode( $data['input']['pcode'] ) ) {
+				$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
+			}
+			if ( ! $this->validate_naam( $data['input']['voornaam'] ) ) {
+				$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
+				$data['input']['voornaam'] = '';
+			}
+			if ( ! $this->validate_naam( $data['input']['achternaam'] ) ) {
+				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
+				$data['input']['achternaam'] = '';
+			}
+			if ( ! $this->validate_email( $data['input']['email'] ) ) {
+				$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
+			} else {
+				if ( 0 !== strcasecmp( $data['input']['email'], get_user_by( 'id', $data['input']['gebruiker_id'] )->user_email ) ) {
+					if ( email_exists( $data['input']['email'] ) ) {
+						$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
+					}
 				}
 			}
 		}
@@ -106,29 +125,37 @@ class Public_Registratie extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$gebruiker_id = Public_Main::upsert_user(
-			[
-				'ID'         => $data['input']['gebruiker_id'],
-				'first_name' => $data['input']['voornaam'],
-				'last_name'  => $data['input']['achternaam'],
-				'telnr'      => $data['input']['telnr'],
-				'straat'     => $data['input']['straat'],
-				'huisnr'     => $data['input']['huisnr'],
-				'pcode'      => $data['input']['pcode'],
-				'plaats'     => $data['input']['plaats'],
-				'user_email' => $data['input']['email'],
-			]
-		);
-
-		if ( ! is_wp_error( $gebruiker_id ) ) {
+		if ( 'wachtwoord' === $data['form_actie'] ) {
+			wp_set_password( $data['input']['nieuw_wachtwoord'], intval( $data['input']['gebruiker_id'] ) );
+			wp_set_auth_cookie( $data['input']['gebruiker_id'], true );
 			return [
 				'content' => $this->goto_home(),
-				'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
+				'status'  => $this->status( 'Het wachtwoord is gewijzigd' ),
 			];
 		} else {
-			return [
-				'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' ) ),
-			];
+			$result = Public_Main::upsert_user(
+				[
+					'ID'         => $data['input']['gebruiker_id'],
+					'first_name' => $data['input']['voornaam'],
+					'last_name'  => $data['input']['achternaam'],
+					'telnr'      => $data['input']['telnr'],
+					'straat'     => $data['input']['straat'],
+					'huisnr'     => $data['input']['huisnr'],
+					'pcode'      => $data['input']['pcode'],
+					'plaats'     => $data['input']['plaats'],
+					'user_email' => $data['input']['email'],
+				]
+			);
+			if ( ! is_wp_error( $result ) ) {
+				return [
+					'content' => $this->goto_home(),
+					'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
+				];
+			} else {
+				return [
+					'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' ) ),
+				];
+			}
 		}
 	}
 }

@@ -136,8 +136,8 @@ class Public_Main {
 			'access' => [ 'bestuur' ],
 		],
 		'registratie'           => [
-			'script' => false,
-			'js'     => [ 'jquery' ],
+			'script' => true,
+			'js'     => [ 'jquery', 'password-strength-meter' ],
 			'css'    => [],
 			'access' => [ 'docenten', 'leden', 'bestuur' ],
 		],
@@ -344,9 +344,22 @@ class Public_Main {
 	 * phpcs:disable
 	 */
 	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
+	 	// phpcs:enable
 		$emailer = new \Kleistad\Email();
-		return $emailer->notify( 'email_wijziging', $userdata, $user['user_email'] );
-	} // phpcs:enable
+		return $emailer->notify(
+			[
+				'slug'       => 'email_wijziging',
+				'to'         => $userdata['user_email'],
+				'cc'         => [ $user['user_email'] ],
+				'subject'    => 'Wijziging email adres',
+				'parameters' => [
+					'voornaam'   => $userdata['first_name'],
+					'achternaam' => $userdata['last_name'],
+					'email'      => $userdata['user_email'],
+				],
+			]
+		);
+	}
 
 	/**
 	 * Wordt aangeroepen door filter password_change_email, als het wachtwoord gewijzigd wordt.
@@ -358,8 +371,59 @@ class Public_Main {
 	 */
 	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
 		$emailer = new \Kleistad\Email();
-		return $emailer->notify( 'wachtwoord_wijziging', $userdata );
+		return $emailer->notify(
+			[
+				'slug'       => 'wachtwoord_wijziging',
+				'to'         => $userdata['user_email'],
+				'subject'    => 'Wachtwoord gewijzigd',
+				'parameters' => [
+					'voornaam'   => $userdata['first_name'],
+					'achternaam' => $userdata['last_name'],
+				],
+			 ]
+		 );
 	} // phpcs:enable
+
+	/**
+	 * Wordt aangeroepen door filter retrieve_password_message, als er een wachtwoord reset gevraagd wordt.
+	 *
+	 * @param string   $message    Het bericht.
+	 * @param string   $key        De reset sleutel.
+	 * @param string   $user_login De gebruiker login naam.
+	 * @param \WP_User $user_data  Het user record van de gebruiker.
+	 */
+	public function retrieve_password_message( $message, $key, $user_login = '', $user_data = '' ) {
+		$emailer = new \Kleistad\Email();
+		$result  = $emailer->notify(
+			[
+				'slug'       => 'wachtwoord_reset',
+				'to'         => $user_data->user_email,
+				'subject'    => 'Wachtwoord reset',
+				'parameters' => [
+					'voornaam'   => $user_data->first_name,
+					'achternaam' => $user_data->last_name,
+					'reset_link' => '<a href="' . network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ) . '" >wachtwoord reset pagina</a>',
+				],
+			]
+		);
+		return $result['message'];
+	}
+
+	/**
+	 * Password hint
+	 *
+	 * @return string
+	 */
+	public function password_hint() {
+		return "Hint: het wachtwoord moet minimaal 8 tekens lang zijn. Bij de invoer wordt gecontroleerd op te gemakkelijk te bedenken wachtwoorden (als 1234...).\nGebruik hoofd- en kleine letters, nummers en tekens zoals ! \" ? $ % ^ & ) om het wachtwoord sterker te maken.";
+	}
+
+	/**
+	 * Voegt inline style in, zoals om te voorkomen dat er zwakke wachtwoorden mogelijk zijn.
+	 */
+	public function inline_style() {
+		wp_add_inline_style( 'login', '.pw-weak {display:none !important;}' );
+	}
 
 	/**
 	 * Uitbreiding \WP_User object met adres gegevens

@@ -195,27 +195,14 @@ class Email {
 	/**
 	 * Email notificatie functie, maakt email tekst op t.b.v. standaard WP notificaties
 	 *
-	 * @param string $slug De email slug.
-	 * @param array  $user De user welke de email gaat ontvangen.
-	 * @param string $copy Een eventuele copy email adres.
-	 * @return array
+	 * @param array $args De argumenten voor de email.
 	 */
-	public function notify( $slug, $user, $copy = '' ) {
-		$args = [
-			'slug'       => $slug,
-			'to'         => $user['user_email'],
-			'cc'         => [ $copy ],
-			'parameters' => [
-				'voornaam'   => $user['first_name'],
-				'achternaam' => $user['last_name'],
-				'email'      => $user['user_email'],
-			],
-		];
+	public function notify( $args ) {
 		return [
-			'message' => $this->inhoud( $this->prepare( $args ) ),
-			'subject' => 'Wijziging email adres',
-			'headers' => $this->headers(),
 			'to'      => $this->mailparams['to'],
+			'subject' => $this->mailparams['subject'],
+			'message' => $this->inhoud( $this->prepare( $args ) ),
+			'headers' => $this->headers(),
 		];
 	}
 
