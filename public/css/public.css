@@ -254,7 +254,7 @@ table.kleistad_datatable th, td {
 }
 .kleistad_pwd_meter {
 	border: 1px solid #ddd;
-	box-sizing: border-box;
+	box-sizing: border-box; /* csslint allow: box-sizing */
 	color: #23282d;
 }
 .kleistad_pwd_sterk {
