@@ -71,7 +71,7 @@ class Public_Registratie extends ShortcodeForm {
 		);
 		$gebruiker            = wp_get_current_user();
 		$data['gebruiker_id'] = $gebruiker->ID;
-		if ( ! ( $gebruiker instanceof \WP_User ) ) {
+		if ( ! $data['gebruiker_id'] ) {
 			$error->add( 'security', 'Er is een security fout geconstateerd' );
 		} elseif ( 'wachtwoord' === $data['form_actie'] ) {
 			if ( empty( $data['input']['huidig_wachtwoord'] ) || empty( $data['input']['nieuw_wachtwoord'] ) || empty( $data['input']['bevestig_wachtwoord'] ) ) {
