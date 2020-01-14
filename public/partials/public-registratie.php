@@ -12,7 +12,6 @@
 $this->form();
 if ( 'wachtwoord' === $data['actie'] ) :
 	?>
-	<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['input']['gebruiker_id'] ); ?>" >
 	<div class="kleistad_row">
 		<div class="kleistad_col_3 kleistad_label">
 			<label for="huidig_wachtwoord">Voer het huidig wachtwoord in</label>
@@ -60,7 +59,6 @@ if ( 'wachtwoord' === $data['actie'] ) :
 	<?php
 else :
 	?>
-	<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['input']['gebruiker_id'] ); ?>" >
 	<div class="kleistad_row">
 		<div class="kleistad_col_3 kleistad_label">
 			<label for="kleistad_voornaam">Naam</label>

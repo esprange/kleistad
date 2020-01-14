@@ -52,11 +52,10 @@ class Public_Registratie extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function validate( &$data ) {
-		$error         = new \WP_Error();
-		$data['input'] = filter_input_array(
+		$error                = new \WP_Error();
+		$data['input']        = filter_input_array(
 			INPUT_POST,
 			[
-				'gebruiker_id'        => FILTER_SANITIZE_NUMBER_INT,
 				'voornaam'            => FILTER_SANITIZE_STRING,
 				'achternaam'          => FILTER_SANITIZE_STRING,
 				'straat'              => FILTER_SANITIZE_STRING,
@@ -70,16 +69,19 @@ class Public_Registratie extends ShortcodeForm {
 				'bevestig_wachtwoord' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( 'wachtwoord' === $data['form_actie'] ) {
+		$gebruiker            = wp_get_current_user();
+		$data['gebruiker_id'] = $gebruiker->ID;
+		if ( ! ( $gebruiker instanceof \WP_User ) ) {
+			$error->add( 'security', 'Er is een security fout geconstateerd' );
+		} elseif ( 'wachtwoord' === $data['form_actie'] ) {
 			if ( empty( $data['input']['huidig_wachtwoord'] ) || empty( $data['input']['nieuw_wachtwoord'] ) || empty( $data['input']['bevestig_wachtwoord'] ) ) {
 				$error->add( 'onjuist', 'Alle velden moeten gevuld zijn' );
 			}
-			$gebruiker = get_user_by( 'ID', $data['input']['gebruiker_id'] );
 			if ( ! wp_check_password( $data['input']['huidig_wachtwoord'], $gebruiker->data->user_pass, $gebruiker->ID ) ) {
 				$error->add( 'onjuist', 'Het huidige wachtwoord is onjuist' );
 			}
 			if ( $data['input']['nieuw_wachtwoord'] !== $data['input']['bevestig_wachtwoord'] ) {
-				$error->add( 'onjuist', 'Het nieuw ingevulde wachtwoord is niet aan het kopie wachtwoord' );
+				$error->add( 'onjuist', 'Het nieuw ingevulde wachtwoord is niet gelijk aan het kopie wachtwoord' );
 			}
 			if ( 9 > strlen( $data['input']['nieuw_wachtwoord'] ) ) {
 				$error->add( 'onjuist', 'Het nieuw ingevulde wachtwoord is te kort en moet minimaal 9 karakters lang zijn' );
@@ -101,12 +103,8 @@ class Public_Registratie extends ShortcodeForm {
 			}
 			if ( ! $this->validate_email( $data['input']['email'] ) ) {
 				$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
-			} else {
-				if ( 0 !== strcasecmp( $data['input']['email'], get_user_by( 'id', $data['input']['gebruiker_id'] )->user_email ) ) {
-					if ( email_exists( $data['input']['email'] ) ) {
-						$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
-					}
-				}
+			} elseif ( 0 !== strcasecmp( $data['input']['email'], $gebruiker->user_email ) && email_exists( $data['input']['email'] ) ) {
+				$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
 			}
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
@@ -128,11 +126,11 @@ class Public_Registratie extends ShortcodeForm {
 		if ( 'wachtwoord' === $data['form_actie'] ) {
 			wp_update_user(
 				[
-					'ID'        => intval( $data['input']['gebruiker_id'] ),
+					'ID'        => intval( $data['gebruiker_id'] ),
 					'user_pass' => $data['input']['nieuw_wachtwoord'],
 				]
 			); // Bij gebruik update_user wordt de email notificatie verzonden, bij set_password niet.
-			wp_set_auth_cookie( $data['input']['gebruiker_id'], true );
+			wp_set_auth_cookie( $data['gebruiker_id'], true );
 			return [
 				'content' => $this->goto_home(),
 				'status'  => $this->status( 'Het wachtwoord is gewijzigd' ),
@@ -140,7 +138,7 @@ class Public_Registratie extends ShortcodeForm {
 		} else {
 			$result = Public_Main::upsert_user(
 				[
-					'ID'         => $data['input']['gebruiker_id'],
+					'ID'         => $data['gebruiker_id'],
 					'first_name' => $data['input']['voornaam'],
 					'last_name'  => $data['input']['achternaam'],
 					'telnr'      => $data['input']['telnr'],
