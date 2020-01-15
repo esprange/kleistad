@@ -53,7 +53,7 @@ class Presentielijst extends \FPDF {
 		$this->setFont( 'Arial' );
 		$this->ln();
 		foreach ( $cursisten as $cursist ) {
-			$this->Cell( 50, $h, $cursist, 1, 0, 'L' );
+			$this->Cell( 50, $h, utf8_decode( $cursist ), 1, 0, 'L' );
 			foreach ( $lesdatums as $lesdatum ) {
 				$this->Cell( 12, $h, '', 1, 0, 'C' );
 			}
