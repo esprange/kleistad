@@ -592,6 +592,9 @@ class Abonnement extends Artikel {
 				$abonnement->autoriseer( false );
 				$abonnement->save();
 				continue;
+			} elseif ( ! \Kleistad\Roles::reserveer( $klant_id ) ) {
+				$abonnement->autoriseer( true );
+				$abonnement->save();
 			}
 			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er iets te betalen is, zonder verdere acties.
 			if ( $vandaag < $abonnement->reguliere_datum ) {
