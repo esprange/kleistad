@@ -209,7 +209,11 @@ class Order extends \Kleistad\Entity {
 		if ( ! $this->id ) {
 			$wpdb->query( "INSERT INTO {$wpdb->prefix}kleistad_orders ( factuurnr ) VALUES ( 1 + ( SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders AS O2 ) ) " );
 			$this->id        = $wpdb->insert_id;
-			$this->factuurnr = intval( $wpdb->get_var( "SELECT factuurnr FROM {$wpdb->prefix}kleistad_orders WHERE id = $this->id" ) );
+			$this->factuurnr = intval(
+				$wpdb->get_var(
+					$wpdb->prepare( "SELECT factuurnr FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", $this->id )
+				)
+			);
 		} else {
 			$this->mutatie_datum = time();
 		}

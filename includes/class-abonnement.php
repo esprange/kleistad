@@ -583,6 +583,7 @@ class Abonnement extends Artikel {
 	private static function factureer( $abonnement ) {
 		$volgende_maand = strtotime( 'first day of next month 00:00' );
 		$deze_maand     = strtotime( 'first day of this month 00:00' );
+		$betalen        = new \Kleistad\Betalen();
 		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
 		if ( ( $abonnement->herstart_datum > $deze_maand && $abonnement->herstart_datum < $volgende_maand ) ||
 			( $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand ) ) {
@@ -603,11 +604,10 @@ class Abonnement extends Artikel {
 	 * Dagelijkse job
 	 */
 	public static function dagelijks() {
-		$vandaag        = strtotime( 'today' );
-		$factuur_maand  = (int) date( 'Ym', $vandaag );
-		$factuur_vorig  = (int) get_option( 'kleistad_abofact' ) ?: 0;
-		$betalen        = new \Kleistad\Betalen();
-		$factureren     = $factuur_vorig < $factuur_maand;
+		$vandaag       = strtotime( 'today' );
+		$factuur_maand = (int) date( 'Ym', $vandaag );
+		$factuur_vorig = (int) get_option( 'kleistad_abofact' ) ?: 0;
+		$factureren    = $factuur_vorig < $factuur_maand;
 		foreach ( self::all() as $klant_id => $abonnement ) {
 			// Abonnementen waarvan de einddatum verstreken is worden gestopt.
 			$abonnement->geannuleerd = ( $abonnement->eind_datum && $vandaag > $abonnement->eind_datum );
