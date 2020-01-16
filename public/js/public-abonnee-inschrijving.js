@@ -5,13 +5,15 @@
 		var bedrag      = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedrag' );
 		var bedragtekst = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedragtekst' );
 
-		$( 'input[name^=extras]:checkbox:checked' ).each(
-			function() {
-				bedrag += $( this ).data( 'bedrag' );
-			}
-		);
-        $( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' ' + bedragtekst );
-        $( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' ' + bedragtekst + ' volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail.' );
+		if ( 'undefined' !== typeof bedrag ) {
+			$( 'input[name^=extras]:checkbox:checked' ).each(
+				function() {
+					bedrag += $( this ).data( 'bedrag' );
+				}
+			);
+			$( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' ' + bedragtekst );
+			$( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' ' + bedragtekst + ' volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail.' );
+		}
 	}
 
     $( document ).ready(
