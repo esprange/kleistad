@@ -326,6 +326,10 @@ class Abonnement extends Artikel {
 				return $uitgebreid ? 'pauze gepland per ' . strftime( '%x', $this->pauze_datum ) . ' tot ' . strftime( '%x', $this->herstart_datum ) : 'pauze gepland';
 			} elseif ( $vandaag <= $this->eind_datum ) {
 				return $uitgebreid ? 'stop gepland per ' . strftime( '%x', $this->eind_datum ) : 'stop gepland';
+			} elseif ( $vandaag < $this->driemaand_datum ) {
+				return $uitgebreid ? 'gesstart sinds ' . strftime( '%x', $this->start_datum ) : 'gestart';
+			} elseif ( $vandaag < $this->reguliere_datum ) {
+				return 'overbrugging';
 			}
 			return $uitgebreid ? 'actief sinds ' . strftime( '%x', $this->start_datum ) : 'actief';
 		}
@@ -572,29 +576,48 @@ class Abonnement extends Artikel {
 	}
 
 	/**
+	 * Factureer de maand
+	 *
+	 * @param \Kleistad\Abonnement $abonnement Het abonnement.
+	 */
+	private static function factureer( $abonnement ) {
+		$volgende_maand = strtotime( 'first day of next month 00:00' );
+		$deze_maand     = strtotime( 'first day of this month 00:00' );
+		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
+		if ( ( $abonnement->herstart_datum > $deze_maand && $abonnement->herstart_datum < $volgende_maand ) ||
+			( $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand ) ) {
+			$abonnement->artikel_type = 'pauze';
+		} elseif ( $abonnement->herstart_datum >= $volgende_maand && $abonnement->pauze_datum <= $deze_maand ) {
+			return; // geen order, de gehele maand wordt gepauzeerd.
+		} else {
+			$abonnement->artikel_type = 'regulier';
+		}
+		if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
+			$abonnement->betalen_per_incasso();
+		} else {
+			$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
+		}
+	}
+
+	/**
 	 * Dagelijkse job
 	 */
 	public static function dagelijks() {
 		$vandaag        = strtotime( 'today' );
-		$volgende_maand = strtotime( 'first day of next month 00:00' );
-		$deze_maand     = strtotime( 'first day of this month 00:00' );
 		$factuur_maand  = (int) date( 'Ym', $vandaag );
 		$factuur_vorig  = (int) get_option( 'kleistad_abofact' ) ?: 0;
 		$betalen        = new \Kleistad\Betalen();
-		$factureren     = self::factureren_actief() && $factuur_vorig < $factuur_maand;
-
-		$abonnementen = self::all();
-		foreach ( $abonnementen as $klant_id => $abonnement ) {
+		$factureren     = $factuur_vorig < $factuur_maand;
+		foreach ( self::all() as $klant_id => $abonnement ) {
 			// Abonnementen waarvan de einddatum verstreken is worden gestopt.
 			$abonnement->geannuleerd = ( $abonnement->eind_datum && $vandaag > $abonnement->eind_datum );
 			// Gestopte abonnementen en abonnementen die nog moeten starten hebben geen actie nodig.
 			if ( $abonnement->geannuleerd || $vandaag < $abonnement->start_datum ) {
 				$abonnement->autoriseer( false );
-				$abonnement->save();
 				continue;
-			} elseif ( ! \Kleistad\Roles::reserveer( $klant_id ) ) {
+			}
+			if ( ! \Kleistad\Roles::reserveer( $klant_id ) ) {
 				$abonnement->autoriseer( true );
-				$abonnement->save();
 			}
 			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er iets te betalen is, zonder verdere acties.
 			if ( $vandaag < $abonnement->reguliere_datum ) {
@@ -605,27 +628,12 @@ class Abonnement extends Artikel {
 				}
 				continue; // Meer actie is niet nodig. Abonnee zit nog in startperiode of overbrugging.
 			}
-			// Abonnementen zijn gepauzeerd als het vandaag tussen de pauze en herstart datum is.
+			// Abonnementen zijn gepauzeerd als het vandaag tussen de pauze en herstart datum is, anders niet.
 			$abonnement->gepauzeerd = $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum;
 			$abonnement->save();
-			// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
-			if ( ( $abonnement->herstart_datum > $deze_maand && $abonnement->herstart_datum < $volgende_maand ) ||
-				( $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand ) ) {
-				$abonnement->artikel_type = 'pauze';
-			} elseif ( $abonnement->herstart_datum >= $volgende_maand && $abonnement->pauze_datum <= $deze_maand ) {
-				continue; // geen order, de gehele maand wordt gepauzeerd.
-			} else {
-				$abonnement->artikel_type = 'regulier';
-			}
-
-			// Hierna wordt er niets meer aan het abonnement aangepast en als er niet gefactureerd hoeft te worden dan geen verdere actie.
-			if ( ! $factureren ) {
-				continue;
-			}
-			if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
-				$abonnement->betalen_per_incasso();
-			} else {
-				$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
+			// Hierna wordt er niets meer aan het abonnement aangepast, nu nog factureren indien nodig.
+			if ( $factureren ) {
+				self::factureer( $abonnement );
 			}
 		}
 		// Verhoog het maandnummer van de facturatie.
