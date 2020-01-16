@@ -26,6 +26,7 @@ namespace Kleistad;
  * @property string referentie
  * @property array  regels
  * @property string opmerking
+ * @property int    factuurnr
  *
  * @since 6.1.0
  */
@@ -62,6 +63,7 @@ class Order extends \Kleistad\Entity {
 				'referentie'    => '',
 				'regels'        => wp_json_encode( [] ),
 				'opmerking'     => '',
+				'factuurnr'     => 0,
 			];
 		}
 	}
@@ -170,7 +172,7 @@ class Order extends \Kleistad\Entity {
 	 * @return string Het factuur nummer.
 	 */
 	public function factuurnr() {
-		return sprintf( '%s-%06d', date( 'Y', $this->datum ), $this->id );
+		return sprintf( '%s-%06d', date( 'Y', $this->datum ), $this->factuurnr );
 	}
 
 	/**
@@ -197,10 +199,6 @@ class Order extends \Kleistad\Entity {
 	 */
 	public function save() {
 		global $wpdb;
-		// Als er al een id is, dan betreft het een mutatie.
-		if ( $this->id ) {
-			$this->mutatie_datum = time();
-		}
 		if ( $this->origineel_id ) {
 			$origineel_order = new \Kleistad\Order( $this->origineel_id );
 			$openstaand      = $origineel_order->bruto() + $this->bruto() - $this->betaald;
@@ -208,8 +206,14 @@ class Order extends \Kleistad\Entity {
 			$openstaand = $this->bruto() - $this->betaald;
 		}
 		$this->gesloten = $this->gesloten || ( 0.01 >= abs( $openstaand ) );
+		if ( ! $this->id ) {
+			$wpdb->query( "INSERT INTO {$wpdb->prefix}kleistad_orders ( factuurnr ) VALUES ( 1 + ( SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders AS O2 ) ) " );
+			$this->id        = $wpdb->insert_id;
+			$this->factuurnr = intval( $wpdb->get_var( "SELECT factuurnr FROM {$wpdb->prefix}kleistad_orders WHERE id = $this->id" ) );
+		} else {
+			$this->mutatie_datum = time();
+		}
 		$wpdb->replace( "{$wpdb->prefix}kleistad_orders", $this->data );
-		$this->id = $wpdb->insert_id;
 		return $this->id;
 	}
 

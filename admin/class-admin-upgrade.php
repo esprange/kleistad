@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 43;
+	const DBVERSIE = 44;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -165,6 +165,7 @@ class Admin_Upgrade {
 			referentie varchar(20) NOT NULL,
 			regels varchar(2000),
 			opmerking varchar(200),
+			factuurnr int(10) DEFAULT 0,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -284,6 +285,14 @@ class Admin_Upgrade {
 	// phpcs:enable
 
 	/**
+	 * Converteer de orders zodat het factuurnr in ieder geval is ingevuld voor de oude orders.
+	 */
+	private function convert_order() {
+		global $wpdb;
+		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_orders SET factuurnr=id WHERE factuurnr = 0" );
+	}
+
+	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
@@ -296,5 +305,6 @@ class Admin_Upgrade {
 		$this->convert_inschrijving();
 		$this->convert_email();
 		$this->convert_cursus();
+		$this->convert_order();
 	}
 }

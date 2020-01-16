@@ -170,7 +170,7 @@ abstract class Artikel extends Entity {
 		$order              = new \Kleistad\Order( $order_id );
 		$order->betaald     = $bedrag;
 		$order->regels      = $this->factuurregels();
-		$order->historie    = ( $order_id ? 'factuur opnieuw ' : ( 'order' . ( self::factureren_actief() ? ' en factuur ' : '' ) ) ) . ' aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
+		$order->historie    = ( $order_id ? 'factuur opnieuw ' : 'order en factuur ' ) . ' aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
 		$order->klant       = $this->naw_klant();
 		$order->opmerking   = $opmerking;
 		$order->referentie  = $this->referentie();
@@ -354,14 +354,6 @@ abstract class Artikel extends Entity {
 	}
 
 	/**
-	 * Test of factureren actief is.
-	 */
-	protected static function factureren_actief() {
-		$options = \Kleistad\Kleistad::get_options();
-		return ! empty( $options['factureren'] ) && strtotime( "{$options['factureren']} 00:00" ) <= strtotime( 'today' );
-	}
-
-	/**
 	 * Maak een factuur aan.
 	 *
 	 * @param \Kleistad\Order $order          De order.
@@ -369,9 +361,6 @@ abstract class Artikel extends Entity {
 	 * @return string Het pad naar de factuur.
 	 */
 	private function maak_factuur( $order, $type ) {
-		if ( ! self::factureren_actief() ) {
-			return '';
-		}
 		$factuur = new \Kleistad\Factuur();
 		return $factuur->run( $order, $type );
 	}

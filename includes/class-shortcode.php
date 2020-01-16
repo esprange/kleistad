@@ -82,6 +82,7 @@ abstract class Shortcode {
 					'success_message' => 'de bewerking is geslaagd!',
 					'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
 					'base_url'        => \Kleistad\Public_Main::base_url(),
+					'admin_url'       => admin_url( 'admin-ajax.php' ),
 				]
 			);
 		}
