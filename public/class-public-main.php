@@ -500,6 +500,25 @@ class Public_Main {
 	}
 
 	/**
+	 * Update het wachtwoord (aangeroepen via admin_ajax).
+	 */
+	public function wachtwoord() {
+		check_ajax_referer( 'wp_rest', 'security' );
+		global $current_user;
+		$actie = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING );
+		if ( 'wijzig_wachtwoord' === $actie ) {
+			$wachtwoord = filter_input( INPUT_POST, 'wachtwoord', FILTER_SANITIZE_STRING );
+			$userdata   = [
+				'ID'        => $current_user->ID,
+				'user_pass' => $wachtwoord,
+			];
+			$user_id    = wp_update_user( $userdata );
+			echo ( $user_id === $current_user->ID ) ? 'success' : 'error';
+		}
+		exit();
+	}
+
+	/**
 	 * Insert of update de gebruiker.
 	 *
 	 * @param array $userdata De gebruiker gegevens, inclusief contact informatie.

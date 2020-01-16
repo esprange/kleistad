@@ -9,55 +9,56 @@
  * @subpackage Kleistad/public/partials
  */
 
-$this->form();
 if ( 'wachtwoord' === $data['actie'] ) :
 	?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
-			<label for="huidig_wachtwoord">Voer het huidig wachtwoord in</label>
-		</div>
-		<div class="kleistad_col_3">
-			<input id="huidig_wachtwoord" type="password" name="huidig_wachtwoord" placeholder="" required>
-		</div>
+	<div id="kleistad_wachtwoord_succes" style="display:none" >
+		<?php echo $this->status( 'Het wachtwoord is gewijzigd' ); // phpcs:ignore ?>
+		<?php echo $this->goto_home(); // phpcs:ignore ?>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
-			<label for="nieuw_wachtwoord">Nieuw wachtwoord</label>
-		</div>
-		<div class="kleistad_col_3">
-			<input id="nieuw_wachtwoord" type="password" name="nieuw_wachtwoord" placeholder="" required>
-		</div>
+	<div id="kleistad_wachtwoord_fout" style="display:none" >
+		<?php echo $this->status( new \WP_Error( 'Interne fout', 'Er is iets fout gegaan, probeer het opnieuw' ) ); // phpcs:ignore ?>
 	</div>
-	<div class="kleistad_row wp-pwd">
-		<div class="kleistad_col_3 kleistad_label">
-			<label for="bevestig_nieuw_wachtwoord">Bevestig nieuw wachtwoord</label>
+	<div id="kleistad_wachtwoord_form">
+		<div class="kleistad_row">
+			<div class="kleistad_col_3 kleistad_label">
+				<label for="nieuw_wachtwoord">Nieuw wachtwoord</label>
+			</div>
+			<div class="kleistad_col_3">
+				<input id="nieuw_wachtwoord" type="password" name="nieuw_wachtwoord" placeholder="" required>
+			</div>
 		</div>
-		<div class="kleistad_col_3">
-			<input id="bevestig_nieuw_wachtwoord" type="password" name="bevestig_wachtwoord" placeholder="" required>
+		<div class="kleistad_row wp-pwd">
+			<div class="kleistad_col_3 kleistad_label">
+				<label for="bevestig_nieuw_wachtwoord">Bevestig nieuw wachtwoord</label>
+			</div>
+			<div class="kleistad_col_3">
+				<input id="bevestig_nieuw_wachtwoord" type="password" name="bevestig_wachtwoord" placeholder="" required>
+			</div>
 		</div>
-	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_3">
+		<div class="kleistad_row">
+			<div class="kleistad_col_3">
+			</div>
+			<div id="wachtwoord_sterkte" class="kleistad_col_3 kleistad_pwd_meter">
+				&nbsp;
+			</div>
 		</div>
-		<div id="wachtwoord_sterkte" class="kleistad_col_3 kleistad_pwd_meter">
-			&nbsp;
+		<div class="kleistad_row">
+			<div class="kleistad_col_3">
+			</div>
+			<div class="kleistad_col_6" style="font-size:13px;" >
+				<?php echo esc_html( apply_filters( 'password_hint', '' ) ); ?>
+			</div>
 		</div>
-	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_3">
-		</div>
-		<div class="kleistad_col_6" style="font-size:13px;" >
-			<?php echo esc_html( apply_filters( 'password_hint', '' ) ); ?>
-		</div>
-	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_10">
-			<button type="submit" disabled name="kleistad_sumbmit_registratie" value="wachtwoord">Wijzigen</button>
-			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+		<div class="kleistad_row">
+			<div class="kleistad_col_10">
+				<button type="button" disabled id="kleistad_wachtwoord" >Wijzigen</button>
+				<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+			</div>
 		</div>
 	</div>
 	<?php
 else :
+	$this->form();
 	?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_3 kleistad_label">
@@ -116,5 +117,5 @@ else :
 			<button class="kleistad_edit_link" data-actie="wachtwoord" type="button" >Wachtwoord wijzigen</button>
 		</div>
 	</div>
+	</form>
 <?php endif ?>
-</form>

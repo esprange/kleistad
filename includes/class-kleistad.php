@@ -128,6 +128,8 @@ class Kleistad {
 		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );
 		$this->loader->add_action( 'kleistad_rcv_email', $plugin_public, 'rcv_email' );
 		$this->loader->add_action( 'init', $plugin_public, 'inline_style', 100 );
+		$this->loader->add_action( 'wp_ajax_kleistad_wachtwoord', $plugin_public, 'wachtwoord', 100 );
+		$this->loader->add_action( 'wp_ajax_nopriv_kleistad_wachtwoord', $plugin_public, 'wachtwoord', 100 );
 
 		$this->loader->add_filter( 'single_template', $plugin_public, 'single_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
