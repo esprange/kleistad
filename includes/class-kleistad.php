@@ -48,9 +48,7 @@ class Kleistad {
 	 * @since    4.0.87
 	 */
 	public function __construct() {
-
-		$data          = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'kleistad.php', false, false );
-		$this->version = $data['Version'];
+		$this->version = get_option( 'kleistad-plugin-versie', '6.2.0' );
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
 		$this->define_admin_hooks();

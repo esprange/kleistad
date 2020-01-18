@@ -27,6 +27,8 @@ class Admin_Upgrade {
 	 * @since 6.1.0
 	 */
 	public function run() {
+		$data             = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'kleistad.php', false, false );
+		update_option( 'kleistad-plugin-versie', $data['Version'] );
 		$database_version = intval( get_option( 'kleistad-database-versie', 0 ) );
 		if ( $database_version < self::DBVERSIE ) {
 			$this->convert_opties();
@@ -282,15 +284,17 @@ class Admin_Upgrade {
 		*/
 	}
 
-	// phpcs:enable
-
 	/**
 	 * Converteer de orders zodat het factuurnr in ieder geval is ingevuld voor de oude orders.
 	 */
 	private function convert_order() {
+		/*
 		global $wpdb;
 		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_orders SET factuurnr=id WHERE factuurnr = 0" );
+		*/
 	}
+
+	// phpcs:enable
 
 	/**
 	 * Converteer data

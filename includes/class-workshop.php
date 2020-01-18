@@ -39,7 +39,6 @@ namespace Kleistad;
 class Workshop extends Artikel {
 
 	const META_KEY   = 'kleistad_workshop';
-	const EMAIL_TIJD = 9; // 9:00 uur.
 
 	/**
 	 * Constructor
