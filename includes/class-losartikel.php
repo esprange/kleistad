@@ -17,7 +17,6 @@ namespace Kleistad;
  * @property string code
  * @property array  regels
  * @property array  klant
- * @property string titel
  * @property float  prijs
  */
 class LosArtikel extends Artikel {
@@ -34,7 +33,6 @@ class LosArtikel extends Artikel {
 		$this->data    = [
 			'regels' => [],
 			'klant'  => [],
-			'titel'  => 'Kleistad bestelling',
 			'prijs'  => 0.0,
 			'code'   => "X$verkoop_id",
 		];
