@@ -38,7 +38,7 @@ namespace Kleistad;
  */
 class Workshop extends Artikel {
 
-	const META_KEY   = 'kleistad_workshop';
+	const META_KEY = 'kleistad_workshop';
 
 	/**
 	 * Constructor
