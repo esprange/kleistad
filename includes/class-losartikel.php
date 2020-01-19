@@ -14,9 +14,10 @@ namespace Kleistad;
 /**
  * Klasse voor het beheren van losse artikelen verkoop.
  *
- * @property float  bedrag
- * @property string reden
- * @property array  storting
+ * @property string code
+ * @property array  regels
+ * @property array  klant
+ * @property string titel
  * @property float  prijs
  */
 class LosArtikel extends Artikel {

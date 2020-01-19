@@ -26,7 +26,6 @@ class Public_Verkoop extends ShortcodeForm {
 	 * @since   6.2.0
 	 */
 	protected function prepare( &$data ) {
-		$gebruiker_id = get_current_user_id();
 		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [
@@ -80,7 +79,7 @@ class Public_Verkoop extends ShortcodeForm {
 	 * @since   6.2.0
 	 */
 	protected function save( $data ) {
-		$verkoopnr = get_option( 'kleistad_losnr', 0 );
+		$verkoopnr = intval( get_option( 'kleistad_losnr', 0 ) );
 		if ( ! update_option( 'kleistad_losnr', ++$verkoopnr ) ) {
 			return [ 'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ) ];
 		}
