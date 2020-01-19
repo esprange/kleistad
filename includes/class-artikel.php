@@ -166,20 +166,15 @@ abstract class Artikel extends Entity {
 	 */
 	final public function bestel_order( $bedrag, $artikel_type, $opmerking = '' ) {
 		$this->artikel_type = $artikel_type;
-		$order_id           = \Kleistad\Order::zoek_order( $this->referentie() );
-		$order              = new \Kleistad\Order( $order_id );
+		$order              = new \Kleistad\Order();
 		$order->betaald     = $bedrag;
 		$order->regels      = $this->factuurregels();
-		$order->historie    = ( $order_id ? 'factuur opnieuw ' : 'order en factuur ' ) . ' aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
+		$order->historie    = 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
 		$order->klant       = $this->naw_klant();
 		$order->opmerking   = $opmerking;
 		$order->referentie  = $this->referentie();
 		$order->save();
-		if ( $order_id ) {
-			return ''; // Als er eerder al een factuur is gemaakt dan hoeft er niet opnieuw een factuur verstuurd te worden.
-		} else {
-			return $this->maak_factuur( $order, '' );
-		}
+		return $this->maak_factuur( $order, '' );
 	}
 
 	/**
