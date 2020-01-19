@@ -184,6 +184,14 @@ class Kleistad {
 				'pcount' => 1,
 			]
 		);
+		\Kleistad\Artikel::register(
+			'X',
+			[
+				'naam'   => 'overige verkoop',
+				'class'  => '\Kleistad\LosArtikel',
+				'pcount' => 1,
+			]
+		);
 	}
 
 	/**

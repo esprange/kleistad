@@ -165,6 +165,12 @@ class Public_Main {
 			'css'    => [ 'jquery-ui' ],
 			'access' => [ 'bestuur' ],
 		],
+		'verkoop'               => [
+			'script' => true,
+			'js'     => [ 'jquery' ],
+			'css'    => [],
+			'access' => [ 'bestuur' ],
+		],
 		'workshop_aanvraag'     => [
 			'script' => false,
 			'js'     => [ 'jquery' ],

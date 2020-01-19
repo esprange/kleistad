@@ -57,6 +57,7 @@ class Order extends \Kleistad\Entity {
 					[
 						'naam'  => '',
 						'adres' => '',
+						'email' => '',
 					]
 				),
 				'mutatie_datum' => null,
