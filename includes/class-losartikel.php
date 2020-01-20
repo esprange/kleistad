@@ -107,11 +107,7 @@ class LosArtikel extends Artikel {
 	 * @return array De naw gegevens.
 	 */
 	public function naw_klant() {
-		return [
-			'naam'  => $this->klant['naam'],
-			'adres' => '',
-			'email' => $this->klant['email'],
-		];
+		return $this->klant;
 	}
 
 	/**

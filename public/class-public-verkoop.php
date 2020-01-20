@@ -27,14 +27,24 @@ class Public_Verkoop extends ShortcodeForm {
 	 */
 	protected function prepare( &$data ) {
 		if ( ! isset( $data['input'] ) ) {
-			$data          = [];
-			$data['input'] = [
+			$data               = [];
+			$data['input']      = [
 				'omschrijving' => [ '' ],
 				'aantal'       => [ 1 ],
 				'prijs'        => [ 0.0 ],
 				'klant'        => '',
+				'klant_id'     => 0,
 				'email'        => '',
 			];
+			$data['gebruikers'] = get_users(
+				[
+					'orderby' => 'nicename',
+					'fields'  => [
+						'display_name',
+						'id',
+					],
+				]
+			);
 		}
 		return true;
 	}
@@ -52,6 +62,8 @@ class Public_Verkoop extends ShortcodeForm {
 			INPUT_POST,
 			[
 				'klant'        => FILTER_SANITIZE_STRING,
+				'klant_id'     => FILTER_SANITIZE_NUMBER_INT,
+				'klant_type'   => FILTER_SANITIZE_STRING,
 				'email'        => FILTER_SANITIZE_EMAIL,
 				'omschrijving' => [
 					'filter' => FILTER_SANITIZE_STRING,
@@ -83,13 +95,23 @@ class Public_Verkoop extends ShortcodeForm {
 		if ( ! update_option( 'kleistad_losnr', ++$verkoopnr ) ) {
 			return [ 'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ) ];
 		}
-		$verkoop        = new \Kleistad\LosArtikel( $verkoopnr );
-		$verkoop->klant = [
-			'naam'  => $data['input']['klant'],
-			'email' => $data['input']['email'],
-		];
-		$index          = 0;
-		$count          = count( $data['input']['omschrijving'] );
+		$verkoop = new \Kleistad\LosArtikel( $verkoopnr );
+		if ( 'bestaand' === $data['input']['klant_type'] ) {
+			$klant          = get_user_by( 'id', $data['input']['klant_id'] );
+			$verkoop->klant = [
+				'naam'  => $klant->display_name,
+				'adres' => "$klant->straat $klant->huisnr\n$klant->pcode $klant->plaats",
+				'email' => $klant->user_email,
+			];
+		} else {
+			$verkoop->klant = [
+				'naam'  => $data['input']['klant'],
+				'adres' => '',
+				'email' => $data['input']['email'],
+			];
+		}
+		$index = 0;
+		$count = count( $data['input']['omschrijving'] );
 		do {
 			$verkoop->bestelregel( $data['input']['omschrijving'][ $index ], $data['input']['aantal'][ $index ], $data['input']['prijs'][ $index ] );
 		} while ( ++$index < $count );

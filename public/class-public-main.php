@@ -167,8 +167,8 @@ class Public_Main {
 		],
 		'verkoop'               => [
 			'script' => true,
-			'js'     => [ 'jquery' ],
-			'css'    => [],
+			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs' ],
+			'css'    => [ 'jquery-ui' ],
 			'access' => [ 'bestuur' ],
 		],
 		'workshop_aanvraag'     => [

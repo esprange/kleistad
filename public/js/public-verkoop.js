@@ -3,6 +3,16 @@
 
 	$( document ).ready(
         function() {
+			$( '#kleistad_tabs' ).tabs(
+				{
+					heightStyle: 'auto',
+					activate: function( event, ui ) {
+						ui.newPanel.find( 'input,select').attr( 'required', true );
+						ui.oldPanel.find( 'input,select').attr( 'required', false );
+						$( '#kleistad_klant_type' ).val( $( this ).tabs( 'option', 'active' ) ? 'bestaand' : 'nieuw' );
+					}
+				}
+			);
 
 			$( '.kleistad_shortcode' )
 			/**
@@ -15,6 +25,21 @@
 					$newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
 					$oldRow.after( $newRow );
 					return false;
+				}
+			)
+			.on( 'change', '[name^=aantal],[name^=prijs]',
+				function() {
+					var totaal = 0;
+					$( '[name^=prijs' ).each(
+						function() {
+							var prijs  = $( this ).val(),
+								aantal = $( this ).closest( 'div' ).next( 'div' ).find( '[name^=aantal]' ).val();
+							$( this ).closest( 'div' ).prev( 'div' ).find( '[name^=omschrijving]' ).attr( 'required', aantal > 0 );
+							totaal += prijs * aantal;
+						}
+
+					);
+					$( '#kleistad_submit_verkoop' ).data( 'confirm', 'Verkoop|Het totaal bedrag is € ' + totaal.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + '. Is dit correct ?' );
 				}
 			);
         }
