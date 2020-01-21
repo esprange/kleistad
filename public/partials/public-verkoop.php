@@ -12,8 +12,8 @@
 $this->form();
 ?>
 <input type="hidden" name="klant_type" id="kleistad_klant_type" value="nieuw">
-<div id="kleistad_tabs">
-	<ul>
+<div id="kleistad_tabs" class="ui-tabs uit-widget">
+	<ul class="ui-tabs-nav">
 		<li><a href="#tab_nieuwe_klant">Losse verkoop</a></li>
 		<li><a href="#tab_vaste_klant">Bestaande klant</a></li>
 	</ul>
@@ -37,7 +37,7 @@ $this->form();
 			</div>
 		</div>
 	</div>
-	<div id="tab_vaste_klant">
+	<div id="tab_vaste_klant" style="display:none;">
 		<div class="kleistad_row">
 			<div class="kleistad_col_3 kleistad_label">
 				<label for="kleistad_klant_id">Klant naam</label>
