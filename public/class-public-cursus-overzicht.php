@@ -103,7 +103,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 					'telnr'          => $cursist->telnr,
 					'email'          => $cursist->user_email,
 					'i_betaald'      => $inschrijving->inschrijving_betaald( $order->betaald ),
-					'c_betaald'      => $inschrijving->cursus_betaald( $order->betaald ),
+					'c_betaald'      => $order->gesloten,
 					'restant_email'  => $inschrijving->restant_email,
 					'herinner_email' => $inschrijving->herinner_email,
 					'technieken'     => implode( ', ', $inschrijving->technieken ),
@@ -177,6 +177,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$inschrijving                 = new \Kleistad\Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
 			$inschrijving->lopende_cursus = (float) $data['input']['kosten'];
 			$inschrijving->ingedeeld      = true;
+			$inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 			$inschrijving->save();
 			$inschrijving->email( '_lopend_betalen', $inschrijving->bestel_order( 0.0, 'inschrijving' ) );
 			return [
@@ -188,7 +189,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
 			foreach ( $this->inschrijvingen( $data['input']['cursus_id'], false ) as $inschrijving ) {
 				$order = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
-				if ( $inschrijving->cursus_betaald( $order->betaald ) || $inschrijving->regeling_betaald( $order->betaald ) || $inschrijving->herinner_email ) {
+				if ( $order->gesloten || $inschrijving->regeling_betaald( $order->betaald ) || $inschrijving->herinner_email ) {
 					/**
 					 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.
 					 * En uiteraard sturen maar éénmaal de standaard herinnering.

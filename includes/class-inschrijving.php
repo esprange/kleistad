@@ -334,16 +334,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Controleer of de cursus betaald is.
-	 *
-	 * @param float $betaald Het betaalde bedrag.
-	 * @return bool
-	 */
-	public function cursus_betaald( $betaald ) {
-		return ( $betaald >= ( $this->aantal * ( $this->cursus->cursuskosten + $this->cursus->inschrijfkosten ) - 0.01 ) );
-	}
-
-	/**
 	 * Controleer of het inschrijfgeld betaald is.
 	 *
 	 * @param float $betaald Het betaalde bedrag.
@@ -503,7 +493,7 @@ class Inschrijving extends Artikel {
 					continue;
 				}
 				$order = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
-				if ( ! $inschrijving->cursus_betaald( $order->betaald ) ) {
+				if ( ! $order->gesloten ) {
 					$inschrijving->artikel_type  = 'cursus';
 					$inschrijving->restant_email = true;
 					$inschrijving->save();
