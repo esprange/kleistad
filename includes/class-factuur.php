@@ -26,6 +26,25 @@ class Factuur extends \FPDF {
 	}
 
 	/**
+	 * Kort een tekst af als deze te lang is voor een veld.
+	 *
+	 * @param string $tekst  De tekst.
+	 * @param int    $maxlen De maximale lengte.
+	 * @return string
+	 */
+	private function trunc( $tekst, $maxlen ) {
+		$ellip = '...';
+		$tekst = trim( $tekst );
+		if ( strlen( $tekst ) <= $maxlen ) {
+		  return $tekst;
+		}
+		$_tekst = strrev( substr( $tekst, 0, $maxlen - strlen( $ellip ) ) );
+		$count  = preg_match( '/\s/', $_tekst, $matches);
+		$_tekst = strrev( substr( $_tekst, strpos( $_tekst, $matches[0] ) ) );
+		return $_tekst . $ellip;
+	}
+
+	/**
 	 * Start de pagina.
 	 *
 	 * @param string $titel De titel van de pagina.
@@ -123,7 +142,7 @@ class Factuur extends \FPDF {
 			$totaal += $prijs;
 			$btw    += $regel['aantal'] * $regel['btw'];
 			$this->Cell( $w['aantal'], $h, $regel['aantal'], 0, 0, 'C' );
-			$this->Cell( $w['artikel'], $h, utf8_decode( $regel['artikel'] ), 0, 0, 'L' );
+			$this->Cell( $w['artikel'], $h, utf8_decode( $this->trunc( $regel['artikel'], 63 ) ), 0, 0, 'L' );
 			$this->Cell( $w['stuksprijs'], $h, $this->euro( $regel['prijs'] + $regel['btw'] ), 0, 0, 'R' );
 			$this->Cell( $w['prijs'], $h, $this->euro( $prijs ), 0, 1, 'R' );
 		}
