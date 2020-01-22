@@ -165,12 +165,12 @@ class Public_Debiteuren extends ShortcodeForm {
 			case 'annulering':
 				$emailer->send(
 					[
-						'to'          => $artikel->naw_klant()['email'],
+						'to'          => $order->klant['email'],
 						'slug'        => 'order_annulering',
 						'subject'     => 'Order geannuleerd',
 						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'], $data['input']['opmerking_annulering'] ),
 						'parameters'  => [
-							'naam'       => $artikel->naw_klant()['naam'],
+							'naam'       => $order->klant['naam'],
 							'artikel'    => $artikel->artikel_naam(),
 							'referentie' => $order->referentie,
 						],
@@ -181,12 +181,12 @@ class Public_Debiteuren extends ShortcodeForm {
 			case 'korting':
 				$emailer->send(
 					[
-						'to'          => $artikel->naw_klant()['email'],
+						'to'          => $order->klant['email'],
 						'slug'        => 'order_correctie',
 						'subject'     => 'Order gecorrigeerd',
 						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'], $data['input']['opmerking_korting'] ),
 						'parameters'  => [
-							'naam'       => $artikel->naw_klant()['naam'],
+							'naam'       => $order->klant['naam'],
 							'artikel'    => $artikel->artikel_naam(),
 							'referentie' => $order->referentie,
 						],

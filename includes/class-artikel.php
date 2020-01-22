@@ -196,7 +196,6 @@ abstract class Artikel extends Entity {
 			]
 		);
 		$order->regels    = $regels;
-		$order->klant     = $this->naw_klant();
 		$order->historie  = 'Correctie factuur i.v.m. korting € ' . number_format_i18n( $korting, 2 );
 		$order->opmerking = $opmerking;
 		$order->save();
