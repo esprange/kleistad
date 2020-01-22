@@ -36,10 +36,10 @@ class Factuur extends \FPDF {
 		$ellip = '...';
 		$tekst = trim( $tekst );
 		if ( strlen( $tekst ) <= $maxlen ) {
-		  return $tekst;
+			return $tekst;
 		}
 		$_tekst = strrev( substr( $tekst, 0, $maxlen - strlen( $ellip ) ) );
-		$count  = preg_match( '/\s/', $_tekst, $matches);
+		preg_match( '/\s/', $_tekst, $matches );
 		$_tekst = strrev( substr( $_tekst, strpos( $_tekst, $matches[0] ) ) );
 		return $_tekst . $ellip;
 	}
