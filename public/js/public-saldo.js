@@ -4,8 +4,8 @@
     function wijzigTeksten() {
 		var bedrag = $( 'input[name=bedrag]:radio:checked' ).val();
 		if ( 'undefined' !== typeof bedrag ) {
-			$( 'label[for=kleistad_betaal_ideal]' ).text( 'ik betaal € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + ' en verhoog mijn saldo.' );
-			$( 'label[for=kleistad_betaal_stort]' ).text( 'ik betaal door storting van € ' + bedrag.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + '. Verhoging saldo vindt daarna plaats.' );
+			$( 'label[for=kleistad_betaal_ideal]' ).text( 'ik betaal ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + ' en verhoog mijn saldo.' );
+			$( 'label[for=kleistad_betaal_stort]' ).text( 'ik betaal door storting van ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + '. Verhoging saldo vindt daarna plaats.' );
 		}
     }
 

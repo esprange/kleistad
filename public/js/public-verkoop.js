@@ -39,7 +39,7 @@
 						}
 
 					);
-					$( '#kleistad_submit_verkoop' ).data( 'confirm', 'Verkoop|Het totaal bedrag is € ' + totaal.toLocaleString( undefined, { minimumFractionDigits: 2 } ) + '. Is dit correct ?' );
+					$( '#kleistad_submit_verkoop' ).data( 'confirm', 'Verkoop|Het totaal bedrag is ' + totaal.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + '. Is dit correct ?' );
 				}
 			);
         }
