@@ -222,7 +222,7 @@ class Factuur extends \FPDF {
 	 */
 	public static function facturen( $factuurnr ) {
 		$upload_dir = wp_get_upload_dir();
-		$files      = glob( sprintf( '%s/facturen/*factuur-%s*', $upload_dir['basedir'], $factuurnr ) );
+		$files      = glob( sprintf( '%s/facturen/*factuur-%s*', $upload_dir['basedir'], $factuurnr ) ) ?: [];
 		usort(
 			$files,
 			function( $a, $b ) {
