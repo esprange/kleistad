@@ -84,6 +84,16 @@ class Order extends \Kleistad\Entity {
 			case 'origineel_id':
 				return intval( $this->data[ $attribuut ] );
 			case 'regels':
+				$regels = [];
+				foreach ( json_decode( $this->data['regels'], true ) as $regel ) {
+					$regels[] = [
+						'artikel' => $regel['artikel'],
+						'aantal'  => floatval( $regel['aantal'] ),
+						'prijs'   => floatval( $regel['prijs'] ),
+						'btw'     => floatval( $regel['btw'] ),
+					];
+				}
+				return $regels;
 			case 'klant':
 			case 'historie':
 				return json_decode( $this->data[ $attribuut ], true );
@@ -110,6 +120,17 @@ class Order extends \Kleistad\Entity {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'regels':
+				$regels = [];
+				foreach ( $waarde as $regel ) {
+					$regels[] = [
+						'artikel' => $regel['artikel'],
+						'aantal'  => number_format( $regel['aantal'], 2, '.', ''),
+						'prijs'   => number_format( $regel['prijs'], 2, '.', ''),
+						'btw'     => number_format( $regel['btw'], 2, '.', ''),
+					];
+				}
+				$this->data[ $attribuut ] = wp_json_encode( $regels );
+				break;
 			case 'klant':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
