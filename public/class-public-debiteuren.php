@@ -50,19 +50,21 @@ class Public_Debiteuren extends ShortcodeForm {
 		$order   = new \Kleistad\Order( $id );
 		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
 		return [
-			'id'         => $order->id,
-			'naam'       => $order->klant['naam'],
-			'betreft'    => $artikel->artikel_naam(),
-			'referentie' => $order->referentie,
-			'factuur'    => $order->factuurnr(),
-			'betaald'    => $order->betaald,
-			'openstaand' => $order->te_betalen(),
-			'sinds'      => $order->datum,
-			'historie'   => $order->historie,
-			'ontvangst'  => 0.0,
-			'korting'    => 0.0,
-			'restant'    => 0.0,
-			'credit'     => boolval( $order->origineel_id ),
+			'id'          => $order->id,
+			'naam'        => $order->klant['naam'],
+			'betreft'     => $artikel->artikel_naam(),
+			'referentie'  => $order->referentie,
+			'factuur'     => $order->factuurnr(),
+			'betaald'     => $order->betaald,
+			'openstaand'  => $order->te_betalen(),
+			'sinds'       => $order->datum,
+			'historie'    => $order->historie,
+			'gesloten'    => $order->gesloten,
+			'ontvangst'   => 0.0,
+			'korting'     => 0.0,
+			'restant'     => 0.0,
+			'geblokkeerd' => $order->geblokkeerd(),
+			'credit'      => boolval( $order->origineel_id ),
 		];
 	}
 
@@ -82,11 +84,6 @@ class Public_Debiteuren extends ShortcodeForm {
 		);
 		if ( 'debiteur' === $data['actie'] ) {
 			$data['debiteur'] = $this->debiteur( $data['id'] );
-			$data['bewerken'] = true;
-		} elseif ( 'toon_debiteur' === $data['actie'] ) {
-			$data['actie']    = 'debiteur';
-			$data['debiteur'] = $this->debiteur( $data['id'] );
-			$data['bewerken'] = false;
 		} elseif ( 'zoek' === $atts['actie'] ) {
 			$data['actie']      = 'zoek';
 			$data['debiteuren'] = ! empty( $data['id'] ) ? $this->debiteuren( $data['id'] ) : [];
