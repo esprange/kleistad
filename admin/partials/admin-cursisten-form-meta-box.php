@@ -40,22 +40,6 @@
 				</select>
 			</td>
 		</tr>
-		<tr class="form-field">
-			<th scope="row">
-				<label for="aantal">Aantal</label>
-			</th>
-			<td>
-				<input name="aantal" id="aantal" class="code" value="<?php echo esc_attr( $item['aantal'] ); ?>" type="number" step="1" min="1" />
-			</td>
-		</tr>
-		<tr class="form-field">
-			<th scope="row">
-				<label for="geannuleerd">Geannuleerd</label>
-			</th>
-			<td>
-				<input name="geannuleerd" id="geannuleerd" class="code" value="1" type="checkbox" <?php checked( $item['geannuleerd'] ); ?> />
-			</td>
-		</tr>
 	</tbody>
 </table>
 

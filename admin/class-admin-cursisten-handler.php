@@ -44,31 +44,29 @@ class Admin_Cursisten_Handler {
 		$message = '';
 		$notice  = '';
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
-			$item                      = filter_input_array(
+			$item         = filter_input_array(
 				INPUT_POST,
 				[
-					'id'          => FILTER_SANITIZE_STRING,
-					'naam'        => FILTER_SANITIZE_STRING,
-					'cursus_id'   => FILTER_SANITIZE_NUMBER_INT,
-					'aantal'      => FILTER_SANITIZE_NUMBER_INT,
-					'geannuleerd' => FILTER_SANITIZE_NUMBER_INT,
+					'id'        => FILTER_SANITIZE_STRING,
+					'naam'      => FILTER_SANITIZE_STRING,
+					'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
-			$code                      = $item['id'];
-			$parameters                = explode( '-', substr( $code, 1 ) );
-			$cursus_id                 = intval( $parameters[0] );
-			$cursist_id                = intval( $parameters[1] );
-			$inschrijving              = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
-			$inschrijving->geannuleerd = ( 0 !== intval( $item['geannuleerd'] ) );
-			$inschrijving->aantal      = $item['aantal'];
+			$code         = $item['id'];
+			$parameters   = explode( '-', substr( $code, 1 ) );
+			$cursus_id    = intval( $parameters[0] );
+			$cursist_id   = intval( $parameters[1] );
+			$inschrijving = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
+			$message      = 'De gegevens zijn opgeslagen';
 			if ( intval( $item['cursus_id'] ) !== $cursus_id ) {
 				// cursus gewijzigd.
-				$inschrijving->correct( $item['cursus_id'] );
+				if ( false === $inschrijving->correct( $item['cursus_id'] ) ) {
+					$message = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
+				}
 			} else {
 				// attributen inschrijving gewijzigd.
 				$inschrijving->save();
 			}
-			$message = 'De gegevens zijn opgeslagen';
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
 				$code         = $_REQUEST['id'];
