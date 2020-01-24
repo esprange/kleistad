@@ -124,9 +124,9 @@ class Order extends \Kleistad\Entity {
 				foreach ( $waarde as $regel ) {
 					$regels[] = [
 						'artikel' => $regel['artikel'],
-						'aantal'  => number_format( $regel['aantal'], 2, '.', ''),
-						'prijs'   => number_format( $regel['prijs'], 2, '.', ''),
-						'btw'     => number_format( $regel['btw'], 2, '.', ''),
+						'aantal'  => number_format( $regel['aantal'], 2, '.', '' ),
+						'prijs'   => number_format( $regel['prijs'], 2, '.', '' ),
+						'btw'     => number_format( $regel['btw'], 2, '.', '' ),
 					];
 				}
 				$this->data[ $attribuut ] = wp_json_encode( $regels );
@@ -151,6 +151,14 @@ class Order extends \Kleistad\Entity {
 			default:
 				$this->data[ $attribuut ] = $waarde;
 		}
+	}
+
+	/**
+	 * Bepaal of de order nog gecorrigeerd mag worden.
+	 */
+	public function geblokkeerd() {
+		$blokkade = get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
+		return ( $this->datum < $blokkade );
 	}
 
 	/**
