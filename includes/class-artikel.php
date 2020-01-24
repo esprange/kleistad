@@ -183,10 +183,13 @@ abstract class Artikel extends Entity {
 	 * @param int    $id        Het id van de order.
 	 * @param float  $korting   De te geven korting.
 	 * @param string $opmerking De opmerking in de factuur.
-	 * @return string De url van de factuur.
+	 * @return bool|string De url van de factuur of fout.
 	 */
 	final public function korting_order( $id, $korting, $opmerking ) {
-		$order            = new \Kleistad\Order( $id );
+		$order = new \Kleistad\Order( $id );
+		if ( $order->geblokkeerd() ) {
+			return false;
+		}
 		$regels           = $order->regels;
 		$regels[]         = array_merge(
 			$this->split_bedrag( - $korting ),
@@ -221,11 +224,22 @@ abstract class Artikel extends Entity {
 	 *
 	 * @param int    $id        Het id van de order.
 	 * @param string $opmerking De optionele opmerking in de factuur.
-	 * @return string De url van de factuur.
+	 * @return bool|string De url van de factuur of false.
 	 */
 	final public function wijzig_order( $id, $opmerking = '' ) {
-		$order            = new \Kleistad\Order( $id );
-		$order->regels    = $this->factuurregels();
+		$order = new \Kleistad\Order( $id );
+		if ( $order->geblokkeerd() ) {
+			return false;
+		}
+		$order->referentie = $this->referentie();
+		$oude_regels       = $order->regels;
+		$korting_regels    = [];
+		foreach ( $oude_regels as $oude_regel ) {
+			if ( 'korting' === $oude_regel['artikel'] ) {
+				$korting_regels[] = $oude_regel;
+			}
+		}
+		$order->regels    = array_merge( $this->factuurregels(), $korting_regels );
 		$order->klant     = $this->naw_klant();
 		$order->historie  = 'Order gewijzigd';
 		$order->opmerking = $opmerking;

@@ -207,12 +207,18 @@ class Workshop extends Artikel {
 		if ( ! $herbevestiging ) {
 			$this->email( '_bevestiging' );
 		} else {
-			if ( \Kleistad\Order::zoek_order( $this->code ) ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-				$this->email( '_betaling', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
+			$order_id = \Kleistad\Order::zoek_order( $this->code );
+			if ( $order_id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
+				$factuur = $this->wijzig_order( $order_id );
+				if ( false === $factuur ) {
+					return false;
+				}
+				$this->email( '_betaling', $factuur );
 			} else {
 				$this->email( '_herbevestiging' );
 			}
 		}
+		return true;
 	}
 
 	/**

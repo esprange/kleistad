@@ -351,8 +351,14 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$workshop->save();
 			$bericht = 'De workshop informatie is opgeslagen';
 		} elseif ( 'bevestigen' === $data['form_actie'] ) {
-			$workshop->bevestig();
-			$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
+			if ( $workshop->bevestig() ) {
+				$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
+			} else {
+				return [
+					'status'  => $this->status( new \WP_Error( 'factuur', 'De factuur kan niet meer gewijzigd worden' ) ),
+					'content' => $this->display(),
+				];
+			}
 		} elseif ( 'afzeggen' === $data['form_actie'] ) {
 			if ( $workshop->definitief ) {
 				$workshop->email( '_afzegging' );

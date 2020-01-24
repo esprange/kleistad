@@ -216,11 +216,16 @@ class Inschrijving extends Artikel {
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
 			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
-				$this->data['code']           = "C$cursus_id-$this->klant_id";
+				$order_id                     = \Kleistad\Order::zoek_order( $this->code );
+				$this->code                   = "C$cursus_id-$this->klant_id";
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
 				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-				$this->email( '_wijziging', $this->wijzig_order( \Kleistad\Order::zoek_order( $this->code ) ) );
+				$factuur = $this->wijzig_order( $order_id );
+				if ( false === $factuur ) {
+					return false;
+				}
+				$this->email( '_wijziging', $factuur );
 				return true;
 			}
 		}
