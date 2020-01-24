@@ -1,9 +1,9 @@
 <?php
 /**
- * Shortcode stookbestand (voor bestuur).
+ * Shortcode omzet rapportage (voor bestuur).
  *
  * @link       https://www.kleistad.nl
- * @since      4.0.87
+ * @since      6.1.0
  *
  * @package    Kleistad
  * @subpackage Kleistad/public
