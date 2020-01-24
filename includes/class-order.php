@@ -235,7 +235,7 @@ class Order extends \Kleistad\Entity {
 		} else {
 			$openstaand = $this->bruto() - $this->betaald;
 		}
-		$this->gesloten = $this->gesloten || ( 0.01 >= abs( $openstaand ) );
+		$this->gesloten = 0.01 >= abs( $openstaand );
 		if ( ! $this->id ) {
 			$wpdb->query( "INSERT INTO {$wpdb->prefix}kleistad_orders ( factuurnr ) VALUES ( 1 + ( SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders AS O2 ) ) " );
 			$this->id        = $wpdb->insert_id;
