@@ -22,29 +22,38 @@
 				<li>start_ideal: bevesting start na ideal betaling</li>
 				<li>start_bank: start betalen per bank met instructie</li>
 				<li>vervolg: einde 3 maand periode in zicht</li>
+				<ul style="list-style-type:square">
+					<li>[voornaam] : voornaam van de abonnee</li>
+					<li>[achternaam] : achternaam van de abonnee</li>
+					<li>[loginnaam] : loginnaam van de abonnee</li>
+					<li>[start_datum] : datum waarop abonnement moet ingaan</li>
+					<li>[pauze_datum] : datum waarop abonnement gepauzeerd wordt</li>
+					<li>[herstart_datum] : datum waarop abonnement herstart wordt</li>
+					<li>[eind_datum] : datum waarop abonnement beëindigd wordt</li>
+					<li>[abonnement] : soort abonnement (beperkt of onbeperkt</li>
+					<li>[abonnement_code] : code te vermelden bij betaling</li>
+					<li>[abonnement_dag] : dag waarvoor beperkt abonnement geldt</li>
+					<li>[abonnement_opmerking] : door abonnee geplaatste opmerking</li>
+					<li>[abonnement_wijziging] : de wijziging (pauzeren of beëindigen)</li>
+					<li>[abonnement_extras] : de extras bij het abonnement</li>
+					<li>[abonnement_startgeld] : driemaal het maand abonnee bedrag</li>
+					<li>[abonnement_maandgeld] : het maand abonnee bedrag</li>
+					<li>[abonnement_overbrugging] : het maand abonnee bedrag</li>
+					<li>[abonnement_bedrag] : te betalen bedrag</li>
+					<li>[abonnement_link] : de betaal link</li>
+				</ul>
 			</ol>
 		</li>
+		<li><h3>bestelling_* emails</h3>
+			<ol>
+				<li>bestelling : bestelling inclusief factuur</li>
+				<li>bestelling_ideal : bevestiging ideal betaling</li>
+				<ul style="list-style-type:square">
+					<li>[naam] : voornaam van de klant</li>
+					<li>[bedrag] : te betalen bedrag</li>
+					<li>[bestel_link] : link naar ideal betaling</li>
+				</ul>
 			</ol>
-			<ul style="list-style-type:square">
-				<li>[voornaam] : voornaam van de abonnee</li>
-				<li>[achternaam] : achternaam van de abonnee</li>
-				<li>[loginnaam] : loginnaam van de abonnee</li>
-				<li>[start_datum] : datum waarop abonnement moet ingaan</li>
-				<li>[pauze_datum] : datum waarop abonnement gepauzeerd wordt</li>
-				<li>[herstart_datum] : datum waarop abonnement herstart wordt</li>
-				<li>[eind_datum] : datum waarop abonnement beëindigd wordt</li>
-				<li>[abonnement] : soort abonnement (beperkt of onbeperkt</li>
-				<li>[abonnement_code] : code te vermelden bij betaling</li>
-				<li>[abonnement_dag] : dag waarvoor beperkt abonnement geldt</li>
-				<li>[abonnement_opmerking] : door abonnee geplaatste opmerking</li>
-				<li>[abonnement_wijziging] : de wijziging (pauzeren of beëindigen)</li>
-				<li>[abonnement_extras] : de extras bij het abonnement</li>
-				<li>[abonnement_startgeld] : driemaal het maand abonnee bedrag</li>
-				<li>[abonnement_maandgeld] : het maand abonnee bedrag</li>
-				<li>[abonnement_overbrugging] : het maand abonnee bedrag</li>
-				<li>[abonnement_bedrag] : te betalen bedrag</li>
-				<li>[abonnement_link] : de betaal link</li>
-			</ul>
 		</li>
 		<li><h3>cursus_* emails</h3>
 			<ol>
@@ -56,62 +65,62 @@
 				<li>cursus_herinnering : herinnering betaling resterend cursusgeld via email link</li>
 				<li>cursus_ideal : bevestiging betaling bedrag</li>
 				<li>cursus_wijziging: bevestiging aanpassing inschrijving naar andere cursus</li>
+				<ul style="list-style-type:square">
+					<li>[voornaam] : voornaam van de cursist</li>
+					<li>[achternaam] : achternaam van de cursist</li>
+					<li>[cursus_naam] : titel van de cursus</li>
+					<li>[cursus_docent] : naam van de docent</li>
+					<li>[cursus_start_datum] : start van de cursus</li>
+					<li>[cursus_start_tijd] : start tijd van de cursus</li>
+					<li>[cursus_eind_datum] : einde van de cursus</li>
+					<li>[cursus_eind_tijd] : eind tijd van de cursus</li>
+					<li>[cursus_technieken] : gekozen technieken</li>
+					<li>[cursus_code] : code te vermelden bij betaling</li>
+					<li>[cursus_aantal] : aantal ingeschreven cursisten</li>
+					<li>[cursus_kosten] : kosten exclusief inschrijfgeld</li>
+					<li>[cursus_inschrijfkosten] : inschrijf kosten</li>
+					<li>[cursus_opmerking] : de gemaakte opmerking</li>
+					<li>[cursus_link] : link naar betaling restant cursus bedrag</li>
+				</ul>
 			</ol>
-			<ul style="list-style-type:square">
-				<li>[voornaam] : voornaam van de cursist</li>
-				<li>[achternaam] : achternaam van de cursist</li>
-				<li>[cursus_naam] : titel van de cursus</li>
-				<li>[cursus_docent] : naam van de docent</li>
-				<li>[cursus_start_datum] : start van de cursus</li>
-				<li>[cursus_start_tijd] : start tijd van de cursus</li>
-				<li>[cursus_eind_datum] : einde van de cursus</li>
-				<li>[cursus_eind_tijd] : eind tijd van de cursus</li>
-				<li>[cursus_technieken] : gekozen technieken</li>
-				<li>[cursus_code] : code te vermelden bij betaling</li>
-				<li>[cursus_aantal] : aantal ingeschreven cursisten</li>
-				<li>[cursus_kosten] : kosten exclusief inschrijfgeld</li>
-				<li>[cursus_inschrijfkosten] : inschrijf kosten</li>
-				<li>[cursus_opmerking] : de gemaakte opmerking</li>
-				<li>[cursus_link] : link naar betaling restant cursus bedrag</li>
-			</ul>
 		</li>
 		<li><h3>dagdelenkaart_* emails</h3>
 			<ol>
 				<li>dagdelenkaart_bank : aanvraag dagdelenkaart</li>
 				<li>dagdelenkaart_ideal : bevesting betaling dagdelenkaart per ideal</li>
+				<ul style="list-style-type:square">
+					<li>[voornaam] : voornaam van de gebruiker</li>
+					<li>[achternaam] : achternaam van de gebruiker</li>
+					<li>[start_datum] : datum waarop de dagdelenkaart moet ingaan</li>
+					<li>[dagdelenkaart_code] : code te vermelden bij betaling</li>
+					<li>[dagdelenkaart_opmerking] : door gebruiker geplaatste opmerking</li>
+					<li>[dagdelenkaart_prijs] : kosten van de dagdelenkaart</li>
+					<li>[dagdelenkaart_link] : link naar betaling per ideal</li>
+				</ul>
 			</ol>
-			<ul style="list-style-type:square">
-				<li>[voornaam] : voornaam van de gebruiker</li>
-				<li>[achternaam] : achternaam van de gebruiker</li>
-				<li>[start_datum] : datum waarop de dagdelenkaart moet ingaan</li>
-				<li>[dagdelenkaart_code] : code te vermelden bij betaling</li>
-				<li>[dagdelenkaart_opmerking] : door gebruiker geplaatste opmerking</li>
-				<li>[dagdelenkaart_prijs] : kosten van de dagdelenkaart</li>
-				<li>[dagdelenkaart_link] : link naar betaling per ideal</li>
-			</ul>
 		</li>
 		<li><h3>order_* emails</h3>
 			<ol>
 				<li>order_correctie : correctie order</li>
 				<li>order_annuliering : annulering order</li>
+				<ul style="list-style-type:square">
+					<li>[naam] : naam van de klant</li>
+					<li>[artikel] : artikel dat gecorrigeerd of geannuleerd is</li>
+				</ul>
 			</ol>
-			<ul style="list-style-type:square">
-				<li>[naam] : naam van de klant</li>
-				<li>[artikel] : artikel dat gecorrigeerd of geannuleerd is</li>
-			</ul>
 		</li>
 		<li><h3>saldo_* emails</h3>
 			<ol>
 				<li>saldo_bank : aanvraag saldo</li>
 				<li>saldo_ideal : bevesting betaling saldo per ideal</li>
+				<ul style="list-style-type:square">
+					<li>[voornaam] : voornaam van de stoker</li>
+					<li>[achternaam] : achternaam van de stoker</li>
+					<li>[bedrag] : bedrag dat overgemaakt wordt of via iDEAL is betaald</li>
+					<li>[saldo] : huidig saldo</li>
+					<li>[saldo_link] : link naar betaling per ideal</li>
+				</ul>
 			</ol>
-			<ul style="list-style-type:square">
-				<li>[voornaam] : voornaam van de stoker</li>
-				<li>[achternaam] : achternaam van de stoker</li>
-				<li>[bedrag] : bedrag dat overgemaakt wordt of via iDEAL is betaald</li>
-				<li>[saldo] : huidig saldo</li>
-				<li>[saldo_link] : link naar betaling per ideal</li>
-			</ul>
 		</li>
 		<li><h3>stook_* emails</h3>
 			<ol>
@@ -146,22 +155,22 @@
 				<li>workshop_bevestiging : bevestiging van de gemaakte afspraken voor de workshop</li>
 				<li>workshop_betaling : betalen workshop kosten via email link</li>
 				<li>workshop_ideal : bevestiging betaling workshop kosten per ideal</li>
+				<ul style="list-style-type:square">
+					<li>[contact] : contactpersoon van de workshop aanvraag</li>
+					<li>[organisatie] : organisatie welke de workshop aanvraagt</li>
+					<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest')</li>
+					<li>[aantal] : aantal deelnemers</li>
+					<li>[workshop_docent] : naam van de docent</li>
+					<li>[workshop_datum] : datum van de workshop</li>
+					<li>[workshop_start_tijd] : start tijd van de workshop</li>
+					<li>[workshop_eind_tijd] : eind tijd van de workshop</li>
+					<li>[workshop_technieken] : gekozen technieken</li>
+					<li>[workshop_programma] : beschrijving van het programma van de workshop</li>
+					<li>[workshop_code] : code te vermelden bij betaling</li>
+					<li>[workshop_kosten] : kosten</li>
+					<li>[workshop_link] : link naar betaling workshop bedrag</li>
+				</ul>
 			</ol>
-			<ul style="list-style-type:square">
-				<li>[contact] : contactpersoon van de workshop aanvraag</li>
-				<li>[organisatie] : organisatie welke de workshop aanvraagt</li>
-				<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest')</li>
-				<li>[aantal] : aantal deelnemers</li>
-				<li>[workshop_docent] : naam van de docent</li>
-				<li>[workshop_datum] : datum van de workshop</li>
-				<li>[workshop_start_tijd] : start tijd van de workshop</li>
-				<li>[workshop_eind_tijd] : eind tijd van de workshop</li>
-				<li>[workshop_technieken] : gekozen technieken</li>
-				<li>[workshop_programma] : beschrijving van het programma van de workshop</li>
-				<li>[workshop_code] : code te vermelden bij betaling</li>
-				<li>[workshop_kosten] : kosten</li>
-				<li>[workshop_link] : link naar betaling workshop bedrag</li>
-			</ul>
 		</li>
 		<li><h3>workshop_aanvraag_* emails</h3>
 			<ol>
@@ -186,14 +195,12 @@
 			<ol>
 				<li>email_wijziging : De aanpassing van het email adres</li>
 				<li>wachtwoord_wijziging : De aanpassing een wachtwoord</li>
-				<li>
-					<ul style="list-style-type:square">
-						<li>[voornaam] : De voornaam van de gebruiker</li>
-						<li>[achternaam] : De achternaam van de gebruiker</li>
-						<li>[email] : Het nieuwe email adres van de gebruiker</li>
-					</ul>
-				</li>
-			<ol>
-		<li>
+				<ul style="list-style-type:square">
+					<li>[voornaam] : De voornaam van de gebruiker</li>
+					<li>[achternaam] : De achternaam van de gebruiker</li>
+					<li>[email] : Het nieuwe email adres van de gebruiker</li>
+				</ul>
+			</ol>
+		</li>
 	</ul>
 </div>

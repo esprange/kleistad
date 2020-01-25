@@ -43,6 +43,7 @@
 				<li>[kleistad_registratie_overzicht] overzicht van alle cursisten en leden</li>
 				<li>[kleistad_saldo_overzicht] overzicht stooksaldo leden</li>
 				<li>[kleistad_stookbestand] opvragen stookbestand</li>
+				<li>[kleistad_verkoop] verkoop overige artikelen invoeren</li>
 				<li>[kleistad_workshop_beheer] formulier om workshops te beheren</li>
 			</ul>
 		</li>
