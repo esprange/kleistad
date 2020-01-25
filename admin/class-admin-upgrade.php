@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 45;
+	const DBVERSIE = 48;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -224,12 +224,8 @@ class Admin_Upgrade {
 		foreach ( $orders as $order ) {
 			$klant = json_decode( $order['klant'], true );
 			if ( ! isset( $klant['email'] ) ) {
-				$artikel = \Kleistad\Artikel::get_artikel( $order['referentie'] );
-				if ( property_exists( $artikel, 'email' ) ) {
-					$klant['email'] = $artikel->email;
-				} else {
-					$klant['email'] = get_user_by( 'id', $artikel->klant_id )->user_email;
-				}
+				$artikel        = \Kleistad\Artikel::get_artikel( $order['referentie'] );
+				$klant['email'] = $artikel->naw_klant()['email'];
 				$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_orders SET klant=%s WHERE id=%d", wp_json_encode( $klant ), $order['id'] ) );
 			}
 		}
