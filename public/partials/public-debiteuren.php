@@ -48,14 +48,14 @@ if ( 'debiteur' === $data['actie'] ) :
 						<label for="kleistad_ontvangst">Ontvangen bedrag</label>
 					</div>
 					<div class="kleistad_col_3" >
-						<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.01" max="<?php echo esc_attr( $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
+						<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
 					</div>
 				<?php else : // Als een credit stand. ?>
 					<div class="kleistad_col_4 kleistad_label">
 						<label for="kleistad_ontvangst">Teruggestort bedrag</label>
 					</div>
 					<div class="kleistad_col_3" >
-						<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.01" max="<?php echo esc_attr( - $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
+						<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( - $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
 					</div>
 				<?php endif ?>
 			</div>

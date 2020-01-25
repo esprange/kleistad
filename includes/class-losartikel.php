@@ -124,7 +124,7 @@ class LosArtikel extends Artikel {
 		return $emailer->send(
 			[
 				'to'          => "{$this->klant['naam']} <{$this->klant['email']}>",
-				'subject'     => 'Bestelling Kleistad op ' . date( '%d-%m-%Y' ),
+				'subject'     => 'Bestelling Kleistad op ' . date( 'd-m-Y' ),
 				'slug'        => 'bestelling' . $type,
 				'attachments' => $factuur,
 				'parameters'  => [
