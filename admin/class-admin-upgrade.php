@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 44;
+	const DBVERSIE = 45;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -180,118 +180,59 @@ class Admin_Upgrade {
 	// phpcs:disable
 
 	/**
-	 * Omdat het onderstaand voornamelijk uitgecommentarieerde code bevat, de code style check uitgezet.
-	 * De code is mogelijk in de toekomst nog in aangepaste vorm nodig.
-	 */
-
-	/**
 	 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
 	 */
 	private function convert_saldo() {
-		/*
-		$saldo_users = get_users( [ 'meta_key' => 'stooksaldo' ] );
-		foreach ( $saldo_users as $saldo_user ) {
-			$huidig_saldo  = get_user_meta( $saldo_user->ID, 'stooksaldo', true );
-			$saldo         = new \Kleistad\Saldo( $saldo_user->ID );
-			$saldo->bedrag = (float) $huidig_saldo;
-			$saldo->save();
-			delete_user_meta( $saldo_user->ID, 'stooksaldo' );
-		}
-		*/
 	}
 
 	/**
 	 * Convert dagdelenkaart, er wordt gecontroleerd of er een enkel record bestaat.
 	 */
 	private function convert_dagdelenkaart() {
-		/*
-		$dagdelenkaart_users = get_users( [ 'meta_key' => \Kleistad\Dagdelenkaart::META_KEY ] );
-		foreach ( $dagdelenkaart_users as $dagdelenkaart_user ) {
-			$huidig_dagdelenkaart = get_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, true );
-			if ( isset( $huidig_dagdelenkaart['code'] ) ) {
-				$dagdelenkaart[1] = $huidig_dagdelenkaart;
-				update_user_meta( $dagdelenkaart_user->ID, \Kleistad\Dagdelenkaart::META_KEY, $dagdelenkaart );
-			}
-		}
-		*/
 	}
 
 	/**
 	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
 	 */
 	private function convert_abonnement() {
-		/*
-		$betalen          = new \Kleistad\Betalen();
-		$vandaag          = strtotime( 'today' );
-		$abonnement_users = get_users( [ 'meta_key' => \Kleistad\Abonnement::META_KEY ] );
-		foreach ( $abonnement_users as $abonnement_user ) {
-			$abonnement                     = new \Kleistad\Abonnement( $abonnement_user->ID );
-			$abonnement->overbrugging_email = $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum );
-			if ( $betalen->heeft_mandaat( $abonnement_user->ID ) ) {
-				$betalen->annuleer( $abonnement_user->ID );
-			}
-			$abonnement->save();
-		}
-		*/
 	}
 
 	/**
 	 * Converteer inschrijving, maak de orders aan.
 	 */
 	private function convert_inschrijving() {
-		/*
-		$inschrijvingen = \Kleistad\Inschrijving::all();
-		$cursussen      = \Kleistad\Cursus::all();
-		$vandaag        = strtotime( 'today' );
-		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( $inschrijving->geannuleerd || $cursussen[ $cursus_id ]->vervallen || $vandaag > $cursussen[ $cursus_id ]->eind_datum ) {
-					continue;
-				}
-				if ( $vandaag >= $cursussen[ $cursus_id ]->start_datum && ! $inschrijving->restant_email ) {
-					$inschrijving->restant_email = true;
-					$inschrijving->save();
-				}
-				if ( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) ) {
-					continue;
-				}
-				$betaald = $inschrijving->aantal *
-					( intval( $inschrijving->i_betaald ) * (float) $cursussen[ $cursus_id ]->inschrijfkosten + intval( $inschrijving->c_betaald ) * (float) $cursussen[ $cursus_id ]->cursuskosten );
-				$inschrijving->bestel_order( $betaald, 'cursus' );
-			}
-		}
-		*/
 	}
 
 	/**
 	 * Converteer emails
 	 */
 	private function convert_email() {
-		/*
-		global $wpdb;
-		$wpdb->query( "UPDATE {$wpdb->prefix}posts SET post_type='kleistad_email', post_title=SUBSTRING( post_title, 16 ) WHERE post_title LIKE 'kleistad_email_%'" );
-		*/
 	}
 
 	/**
 	 * Converteer cursussen
 	 */
 	private function convert_cursus() {
-		/*
-		global $wpdb;
-		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_cursussen SET inschrijfslug=SUBSTRING( inschrijfslug, 16 ) WHERE inschrijfslug LIKE 'kleistad_email_%'" );
-		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_cursussen SET indelingslug=SUBSTRING( indelingslug, 16 ) WHERE indelingslug LIKE 'kleistad_email_%'" );
-		*/
 	}
 
 	/**
-	 * Converteer de orders zodat het factuurnr in ieder geval is ingevuld voor de oude orders.
+	 * Converteer de orders zodat op oude orders ook het emailadres bekend is.
 	 */
 	private function convert_order() {
-		/*
 		global $wpdb;
-		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_orders SET factuurnr=id WHERE factuurnr = 0" );
-		*/
+		$orders = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders", ARRAY_A ); // phpcs:ignore
+		foreach ( $orders as $order ) {
+			$klant = json_decode( $order['klant'], true );
+			if ( ! isset( $klant['email'] ) ) {
+				$artikel = \Kleistad\Artikel::get_artikel( $order['referentie'] );
+				if ( property_exists( $artikel, 'email' ) ) {
+					$klant['email'] = $artikel->email;
+				} else {
+					$klant['email'] = get_user_by( 'id', $artikel->klant_id )->user_email;
+				}
+				$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_orders SET klant=%s WHERE id=%d", wp_json_encode( $klant ), $order['id'] ) );
+			}
+		}
 	}
 
 	// phpcs:enable
