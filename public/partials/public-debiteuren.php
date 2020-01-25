@@ -132,6 +132,7 @@ if ( 'debiteur' === $data['actie'] ) :
 			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 		</div>
 	</div>
+	<?php \Kleistad\Order::toon_blokkade(); //phpcs:ignore ?>
 </form>
 	<?php
 	else : // Als niet 'debiteur'.

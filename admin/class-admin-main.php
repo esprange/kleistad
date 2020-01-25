@@ -313,6 +313,13 @@ class Admin_Main {
 		if ( is_string( filter_input( INPUT_GET, 'dagelijks' ) ) ) {
 			$this->daily_jobs();
 		}
+		$blokkade = filter_input( INPUT_GET, 'blokkade', FILTER_SANITIZE_STRING );
+		if ( $blokkade ) {
+			$blokkade_datum = strtotime( $blokkade );
+			if ( false !== $blokkade_datum ) {
+				\Kleistad\Order::zet_blokkade( $blokkade_datum );
+			}
+		}
 		add_meta_box( 'kleistad_instellingen_form_meta_box', 'Instellingen', [ $this, 'instellingen_form_meta_box_handler' ], 'instellingen', 'normal', 'default' );
 		add_meta_box( 'kleistad_google_connect_meta_box', 'Connect Google Kalender', [ $this, 'google_connect_meta_box_handler' ], 'google_connect', 'normal', 'default' );
 		add_meta_box( 'kleistad_shortcodes_meta_box', 'Gebruik van de plugin', [ $this, 'shortcodes_meta_box_handler' ], 'shortcodes', 'normal', 'default' );

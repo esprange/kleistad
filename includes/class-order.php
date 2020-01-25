@@ -252,6 +252,25 @@ class Order extends \Kleistad\Entity {
 	}
 
 	/**
+	 * Zet de blokkade datum.
+	 *
+	 * @param int $datum De datum in unix time.
+	 */
+	public static function zet_blokkade( $datum ) {
+		update_option( 'kleistad_blokkade', $datum );
+	}
+
+	/**
+	 * Toon de blokkade datum.
+	 */
+	public static function toon_blokkade() {
+		$datum = get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
+		if ( $datum ) {
+			echo '<span style="font-size:75%" >facturen aangemaakt voor ' . date( 'd-m-Y', $datum ) . ' zijn niet meer te wijzigen</span>'; //phpcs:ignore
+		}
+	}
+
+	/**
 	 * Zoek de meest recente bestelling o.b.v. de referentie (dus een credit factuur wordt dan eerder gevonden dan de gewone factuur).
 	 *
 	 * @since 6.1.0
