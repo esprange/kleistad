@@ -69,7 +69,7 @@ if ( 'details' === $data['actie'] ) :
 		<select name="jaar" id="kleistad_jaar">
 			<?php
 				$huidig_jaar = (int) date( 'Y' );
-				$jaar        = 2019;
+				$jaar        = 2020;
 			while ( $jaar <= $huidig_jaar ) :
 				?>
 				<option value="<?php echo esc_attr( $jaar ); ?>" <?php selected( $jaar, $select_jaar ); ?> ><?php echo esc_html( $jaar++ ); ?></option>
