@@ -232,19 +232,19 @@ class Admin_Upgrade {
 	}
 
 	/**
-	 * Converteer de orders zodat op oude orders ook het emailadres bekend is.
+	 * Converteer de orders.
 	 */
 	private function convert_order() {
-		global $wpdb;
-		$orders = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders", ARRAY_A ); // phpcs:ignore
-		foreach ( $orders as $order ) {
-			$klant = json_decode( $order['klant'], true );
-			if ( ! isset( $klant['email'] ) ) {
-				$artikel        = \Kleistad\Artikel::get_artikel( $order['referentie'] );
-				$klant['email'] = $artikel->naw_klant()['email'];
-				$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_orders SET klant=%s WHERE id=%d", wp_json_encode( $klant ), $order['id'] ) );
-			}
-		}
+		// global $wpdb;
+		// $orders = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders", ARRAY_A ); // phpcs:ignore
+		// foreach ( $orders as $order ) {
+		// 	$klant = json_decode( $order['klant'], true );
+		// 	if ( ! isset( $klant['email'] ) ) {
+		// 		$artikel        = \Kleistad\Artikel::get_artikel( $order['referentie'] );
+		// 		$klant['email'] = $artikel->naw_klant()['email'];
+		// 		$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_orders SET klant=%s WHERE id=%d", wp_json_encode( $klant ), $order['id'] ) );
+		// 	}
+		// }
 	}
 
 	// phpcs:enable
