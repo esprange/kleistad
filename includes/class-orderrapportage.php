@@ -35,8 +35,7 @@ class Orderrapportage {
 				'key'   => $key,
 			];
 		}
-		$options = \Kleistad\Kleistad::get_options();
-		if ( strtotime( $options['factureren'] ) < mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) {
+		if ( strtotime( '1-1-2020' ) < mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) { // Vanaf 2020 wordt gefactureerd.
 			$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand ORDER BY datum", ARRAY_A ); // phpcs:ignore
 			foreach ( $order_ids as $order_id ) {
 				$order = new \Kleistad\Order( $order_id );
