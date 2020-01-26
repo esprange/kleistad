@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 48;
+	const DBVERSIE = 50;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -51,20 +51,36 @@ class Admin_Upgrade {
 			'cursusmaximum'        => 12,
 			'workshopprijs'        => 120,
 			'termijn'              => 4,
-			'sleutel'              => '',
-			'sleutel_test'         => '',
-			'google_kalender_id'   => '',
-			'google_sleutel'       => '',
-			'google_client_id'     => '',
-			'imap_server'          => '',
-			'imap_pwd'             => '',
-			'betalen'              => 0,
-			'factureren'           => '',
 			'extra'                => [],
 		];
-		$current_options = \Kleistad\Kleistad::get_options();
-		$options         = wp_parse_args( empty( $current_options ) ? [] : $current_options, $default_options );
-		update_option( 'kleistad-opties', $options );
+		$default_setup   = [
+			'sleutel'            => '',
+			'sleutel_test'       => '',
+			'google_kalender_id' => '',
+			'google_sleutel'     => '',
+			'google_client_id'   => '',
+			'imap_server'        => '',
+			'imap_pwd'           => '',
+			'betalen'            => 0,
+		];
+		$current_options = get_option( 'kleistad-opties', [] );
+		$current_setup   = get_option( 'kleistad-setup', [] );
+		$options         = [];
+		$setup           = [];
+		foreach ( array_keys( $default_options ) as $key ) {
+			if ( isset( $current_options[ $key ] ) ) {
+				$options[ $key ] = $current_options[ $key ];
+			}
+		}
+		foreach ( array_keys( $default_setup ) as $key ) {
+			if ( isset( $current_setup[ $key ] ) ) {
+				$setup[ $key ] = $current_setup[ $key ];
+			} elseif ( isset( $current_options[ $key ] ) ) {
+				$setup[ $key ] = $current_options[ $key ];
+			}
+		}
+		update_option( 'kleistad-opties', wp_parse_args( $options, $default_options ) );
+		update_option( 'kleistad-setup', wp_parse_args( $setup, $default_setup ) );
 	}
 
 	/**
@@ -247,5 +263,6 @@ class Admin_Upgrade {
 		$this->convert_email();
 		$this->convert_cursus();
 		$this->convert_order();
+		$this->convert_opties();
 	}
 }
