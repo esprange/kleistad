@@ -87,6 +87,10 @@ class Public_Debiteuren extends ShortcodeForm {
 		} elseif ( 'zoek' === $atts['actie'] ) {
 			$data['actie']      = 'zoek';
 			$data['debiteuren'] = ! empty( $data['id'] ) ? $this->debiteuren( $data['id'] ) : [];
+		} elseif ( 'blokkade' === $atts['actie'] ) {
+			$data['actie']            = 'blokkade';
+			$data['huidige_blokkade'] = \Kleistad\Order::get_blokkade();
+			$data['nieuwe_blokkade']  = strtotime( '+3 month', $data['huidige_blokkade'] );
 		} else {
 			$data['actie']      = 'openstaand';
 			$data['debiteuren'] = $this->debiteuren();
@@ -126,14 +130,16 @@ class Public_Debiteuren extends ShortcodeForm {
 				'debiteur_actie'       => FILTER_SANITIZE_STRING,
 			]
 		);
-		$order         = new \Kleistad\Order( $data['input']['id'] );
-		if ( 'korting' === $data['input']['debiteur_actie'] ) {
-			if ( $order->bruto() < $data['input']['korting'] ) {
-				$error->add( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
+		if ( 'blokkade' !== $data['form_actie'] ) {
+			$order = new \Kleistad\Order( $data['input']['id'] );
+			if ( 'korting' === $data['input']['debiteur_actie'] ) {
+				if ( $order->bruto() < $data['input']['korting'] ) {
+					$error->add( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
+				}
 			}
-		}
-		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+			if ( ! empty( $error->get_error_codes() ) ) {
+				return $error;
+			}
 		}
 		return true;
 	}
@@ -146,6 +152,13 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @since   6.1.0
 	 */
 	protected function save( $data ) {
+		if ( 'blokkade' === $data['form_actie'] ) {
+			\Kleistad\Order::zet_blokkade( strftime( '+3 month', \Kleistad\Order::get_blokkade() ) );
+			return [
+				'status'  => 'De blokkade datum is gewijzigd',
+				'content' => $this->home(),
+			];
+		}
 		$order   = new \Kleistad\Order( $data['input']['id'] );
 		$emailer = new \Kleistad\Email();
 		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );

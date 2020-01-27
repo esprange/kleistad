@@ -9,7 +9,30 @@
  * @subpackage Kleistad/public/partials
  */
 
-if ( 'debiteur' === $data['actie'] ) :
+if ( 'blokkade' === $data['actie'] ) :
+	$blok = strtotime( 'today' ) > $data['nieuwe_blokkade'];
+	?>
+	<?php $this->form(); ?>
+	<div class="kleistad_row">
+		<p>Alle orders voorafgaand <?php echo esc_html( date( 'd-m-Y', $data['huidige_blokkade'] ) ); ?> zijn nu niet meer te wijzigen.
+		Dat betekent dat er geen correcties of kortingen op deze orders kunnen worden gedaan omdat dit dan invloed heeft op bijvoorbeeld
+		de BTW aangifte (de factuur wordt gewijzigd) of op de jaarrekening. Een order kan natuurlijk wel nog geannuleerd worden.</p>
+		<p>Omdat Kleistad per kwartaal de BTW aangifte doet, is de eerstvolgende blokkade datum <strong style="white-space:nowrap;" ><?php echo esc_html( date( 'd-m-Y', $data['nieuwe_blokkade'] ) ); ?></strong>.</p>
+		<?php if ( $blok ) : ?>
+			<p>Druk op 'doorvoeren' als je de huidige blokkade datum wilt wijzigen.</p>
+		<?php else : ?>
+			<p>Omdat deze datum nog in de toekomst ligt is het nu niet mogelijk om de blokkade datum te wijzigen.</p>
+		<?php endif ?>
+	</div>
+	<div class="kleistad_row" style="padding-top:20px;">
+		<div class="kleistad_col_3">
+			<button name="kleistad_submit_debiteuren" type="submit" value="blokkade"
+				<?php disabled( ! $blok ); ?> data-confirm="Debiteuren|Weet je zeker dat je de blokkade datum wilt wijzigen naar <?php echo esc_attr( date( 'd-m-Y', $data['nieuwe_blokkade'] ) ); ?> ?" >Bevestigen</button>
+		</div>
+	</div>
+	</form>
+	<?php
+elseif ( 'debiteur' === $data['actie'] ) :
 	?>
 	<p><?php echo esc_html( ucfirst( $data['debiteur']['betreft'] ) ); ?>, openstaand voor <?php echo esc_html( $data['debiteur']['naam'] ); ?></p>
 	<table class="kleistad_form">

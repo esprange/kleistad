@@ -157,7 +157,7 @@ class Order extends \Kleistad\Entity {
 	 * Bepaal of de order nog gecorrigeerd mag worden.
 	 */
 	public function geblokkeerd() {
-		$blokkade = get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
+		$blokkade = self::get_blokkade();
 		return ( $this->datum < $blokkade );
 	}
 
@@ -261,13 +261,19 @@ class Order extends \Kleistad\Entity {
 	}
 
 	/**
+	 * Get de blokkade datum.
+	 *
+	 * @return int $datum De datum in unix time.
+	 */
+	public static function get_blokkade() {
+		return get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
+	}
+
+	/**
 	 * Toon de blokkade datum.
 	 */
 	public static function toon_blokkade() {
-		$datum = get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
-		if ( $datum ) {
-			echo '<span style="font-size:75%" >facturen aangemaakt voor ' . date( 'd-m-Y', $datum ) . ' zijn niet meer te wijzigen</span>'; //phpcs:ignore
-		}
+		echo '<span style="font-size:75%" >facturen aangemaakt voor ' . date( 'd-m-Y', self::get_blokkade() ) . ' zijn niet meer te wijzigen</span>'; //phpcs:ignore
 	}
 
 	/**
