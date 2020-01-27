@@ -155,7 +155,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 		</div>
 	</div>
-	<?php \Kleistad\Order::toon_blokkade(); //phpcs:ignore ?>
+	<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', \Kleistad\Order::get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>
 </form>
 	<?php
 	else : // Als niet 'debiteur'.

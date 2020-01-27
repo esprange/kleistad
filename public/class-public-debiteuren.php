@@ -153,10 +153,10 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( 'blokkade' === $data['form_actie'] ) {
-			\Kleistad\Order::zet_blokkade( strftime( '+3 month', \Kleistad\Order::get_blokkade() ) );
+			\Kleistad\Order::zet_blokkade( strtotime( '+3 month', \Kleistad\Order::get_blokkade() ) );
 			return [
 				'status'  => 'De blokkade datum is gewijzigd',
-				'content' => $this->home(),
+				'content' => $this->goto_home(),
 			];
 		}
 		$order   = new \Kleistad\Order( $data['input']['id'] );
