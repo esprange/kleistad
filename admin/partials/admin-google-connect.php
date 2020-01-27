@@ -1,6 +1,6 @@
 <?php
 /**
- * Toon de google connect meta box
+ * Toon de google connect form
  *
  * @link       https://www.kleistad.nl
  * @since      5.0.0
@@ -9,6 +9,13 @@
  * @subpackage Kleistad/admin/partials
  */
 
+$result = true;
+if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
+	\Kleistad\Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=google_connect' ) );
+}
+if ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
+	$result = \Kleistad\Google::koppel_service();
+}
 if ( is_wp_error( $result ) ) {
 	foreach ( $result->get_error_messages() as $fout ) {
 		?>

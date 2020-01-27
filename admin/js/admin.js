@@ -33,9 +33,9 @@
 					var sjabloon = +
 						'<tr>' +
 						'<th scope="row">Abonnement extra #</th>' +
-						'<td><input type="text" class="kleistad-extra" name="kleistad-opties[extra][#][naam]" /></td>' +
+						'<td><input type="text" class="kleistad-extra regular-text" name="kleistad-opties[extra][#][naam]" /></td>' +
 						'<th scope="row">Prijs</th>' +
-						'<td><input type="number" step="0.01" min="0" name="kleistad-opties[extra][#][prijs]" /></td>' +
+						'<td><input type="number" step="0.01" min="0" name="kleistad-opties[extra][#][prijs]" class="small-text" /></td>' +
 						'</tr>';
 					var html     = sjabloon.replace( /#/g, ++aantal );
 					$( html ).insertBefore( '#kleistad-extra-toevoegen' );

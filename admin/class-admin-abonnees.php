@@ -49,6 +49,19 @@ class Admin_Abonnees extends \WP_List_Table {
 	 * @param object $item row (key, value).
 	 * @return string
 	 */
+	public function column_naam( $item ) {
+		$actions = [
+			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=status">%s</a>', $item['id'], 'Wijzigen' ),
+		];
+		return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );
+	}
+
+	/**
+	 * Toon de kolom soort en actie
+	 *
+	 * @param object $item row (key, value).
+	 * @return string
+	 */
 	public function column_soort( $item ) {
 		$actions = [
 			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=soort">%s</a>', $item['id'], 'Wijzigen' ),
@@ -68,19 +81,6 @@ class Admin_Abonnees extends \WP_List_Table {
 			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=extras">%s</a>', $item['id'], 'Wijzigen' ),
 		];
 		return sprintf( '%s %s', $item['extras'], $this->row_actions( $actions ) );
-	}
-
-	/**
-	 * Toon de kolom status en acties
-	 *
-	 * @param object $item row (key, value).
-	 * @return string
-	 */
-	public function column_status( $item ) {
-		$actions = [
-			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=status">%s</a>', $item['id'], 'Wijzigen' ),
-		];
-		return sprintf( '%s %s', $item['status'], $this->row_actions( $actions ) );
 	}
 
 	/**
@@ -107,8 +107,8 @@ class Admin_Abonnees extends \WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = [
-			'code'   => 'Code',
 			'naam'   => 'Naam',
+			'code'   => 'Code',
 			'status' => 'Status',
 			'soort'  => 'Soort abonnement',
 			'extras' => 'Extras',

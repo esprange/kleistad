@@ -54,7 +54,7 @@ class Admin_Regelingen extends \WP_List_Table {
 			'delete' => sprintf( '<a href="?page=%s&action=delete&id=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['id'], 'Verwijderen' ),
 		];
 
-		return sprintf( '%s %s', $item['gebruiker_naam'], $this->row_actions( $actions ) );
+		return sprintf( '<strong>%s</strong> %s', $item['gebruiker_naam'], $this->row_actions( $actions ) );
 	}
 
 	/**

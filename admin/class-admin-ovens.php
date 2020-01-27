@@ -54,7 +54,7 @@ class Admin_Ovens extends \WP_List_Table {
 			'edit' => sprintf( '<a href="?page=ovens_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
 
-		return sprintf( '%s %s', $item['naam'], $this->row_actions( $actions ) );
+		return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );
 	}
 
 	/**
