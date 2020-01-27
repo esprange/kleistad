@@ -163,11 +163,11 @@ class WorkshopAanvraag {
 	 */
 	public static function ontvang_en_verwerk() {
 		// phpcs:disable WordPress.NamingConventions
-		$options = \Kleistad\Kleistad::get_options();
+		$setup   = \Kleistad\Kleistad::get_setup();
 		$mailbox = new \PhpImap\Mailbox(
-			'{' . $options['imap_server'] . '}INBOX',
+			'{' . $setup['imap_server'] . '}INBOX',
 			self::MBX . '@' . \Kleistad\Email::domein(),
-			$options['imap_pwd']
+			$setup['imap_pwd']
 		);
 		$emailer = new \Kleistad\Email();
 		try {

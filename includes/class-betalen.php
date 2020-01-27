@@ -34,16 +34,16 @@ class Betalen {
 			$this->mollie = new \Kleistad\MollieSimulatie();
 			return;
 		}
-		$options      = \Kleistad\Kleistad::get_options();
+		$setup        = \Kleistad\Kleistad::get_setup();
 		$this->mollie = new \Mollie\Api\MollieApiClient();
 
-		if ( '1' === $options['betalen'] ) {
-			if ( '' !== $options['sleutel'] ) {
-				$this->mollie->setApiKey( $options['sleutel'] );
+		if ( '1' === $setup['betalen'] ) {
+			if ( '' !== $setup['sleutel'] ) {
+				$this->mollie->setApiKey( $setup['sleutel'] );
 			}
 		} else {
-			if ( '' !== $options['sleutel_test'] ) {
-				$this->mollie->setApiKey( $options['sleutel_test'] );
+			if ( '' !== $setup['sleutel_test'] ) {
+				$this->mollie->setApiKey( $setup['sleutel_test'] );
 			}
 		}
 	}

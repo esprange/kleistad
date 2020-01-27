@@ -46,13 +46,13 @@ class Google {
 		if ( false === $redirect_uri ) {
 			return false;
 		}
-		$options           = \Kleistad\Kleistad::get_options();
-		self::$kalender_id = $options['google_kalender_id'];
+		$setup             = \Kleistad\Kleistad::get_setup();
+		self::$kalender_id = $setup['google_kalender_id'];
 		$client            = new \Google_Client();
 		$client->setApplicationName( 'Kleistad_Calendar' );
 		$client->setAccessType( 'offline' );
-		$client->setClientId( $options['google_client_id'] );
-		$client->setClientSecret( $options['google_sleutel'] );
+		$client->setClientId( $setup['google_client_id'] );
+		$client->setClientSecret( $setup['google_sleutel'] );
 		$client->setIncludeGrantedScopes( true );
 		$client->addScope( \Google_Service_Calendar::CALENDAR_EVENTS );
 		$client->setRedirectUri( $redirect_uri );
@@ -171,8 +171,8 @@ class Google {
 	 * @return string Kalender id.
 	 */
 	public static function kalender_id() {
-		$options           = \Kleistad\Kleistad::get_options();
-		self::$kalender_id = $options['google_kalender_id'];
+		$setup             = \Kleistad\Kleistad::get_setup();
+		self::$kalender_id = $setup['google_kalender_id'];
 		return self::$kalender_id;
 	}
 
