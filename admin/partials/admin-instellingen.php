@@ -9,8 +9,7 @@
  * @subpackage Kleistad/admin/partials
  */
 
-if ( 'f_instellingen' === $active_tab ) :
-	?>
+?>
 <form method="POST" action="options.php" >
 	<?php settings_fields( 'kleistad-opties' ); ?>
 	<table class="form-table" >
@@ -84,61 +83,4 @@ if ( 'f_instellingen' === $active_tab ) :
 		</table>
 	<?php submit_button(); ?>
 	<p>&nbsp;</p>
-	</form>
-<?php elseif ( 't_instellingen' === $active_tab ) : ?>
-	<form method="POST" action="options.php" >
-	<?php settings_fields( 'kleistad-setup' ); ?>
-	<table class="form-table" >
-		<tr >
-			<th scope="row">Mollie geheime sleutel</th>
-			<td><input type="text" name="kleistad-setup[sleutel]" class="regular-text"
-					value="<?php echo esc_attr( $this->setup['sleutel'] ); ?>" /></td>
-			<th scope="row">Mollie geheime sleutel voor testen</th>
-			<td><input type="text" name="kleistad-setup[sleutel_test]" class="regular-text"
-					value="<?php echo esc_attr( $this->setup['sleutel_test'] ); ?>" /></td>
-		</tr>
-
-		<tr >
-			<th scope="row">Mollie betalen actief</th>
-			<td>
-				<p>
-				<label>
-				<input type="radio" name="kleistad-setup[betalen]"
-					value="0" <?php checked( 0, $this->setup['betalen'] ); ?>/>Uit
-				</label><br>
-				<label>
-				<input type="radio" name="kleistad-setup[betalen]"
-					value="1" <?php checked( 1, $this->setup['betalen'] ); ?>/>Aan
-				</label>
-				</p>
-			</td>
-		</tr>
-
-		<tr >
-			<th scope="row">Google kalender id</th>
-			<td><input type="text" name="kleistad-setup[google_kalender_id]" class="regular-text"
-					value="<?php echo esc_attr( $this->setup['google_kalender_id'] ); ?>" /></td>
-		</tr>
-
-		<tr >
-			<th scope="row">Google client id</th>
-			<td><input type="text" name="kleistad-setup[google_client_id]" class="regular-text"
-					value="<?php echo esc_attr( $this->setup['google_client_id'] ); ?>" /></td>
-			<th scope="row">Google geheime sleutel</th>
-			<td><input type="text" name="kleistad-setup[google_sleutel]" class="regular-text"
-					value="<?php echo esc_attr( $this->setup['google_sleutel'] ); ?>" /></td>
-		</tr>
-
-		<tr >
-			<th scope="row">Email IMAP server</th>
-			<td><input type="text" name="kleistad-setup[imap_server]" class="regular-text"
-					value="<?php echo esc_attr( $this->setup['imap_server'] ); ?>" /><p class="example">imap.example.com:poortnr/ssl</p></td>
-			<th scope="row">Email IMAP paswoord</th>
-			<td><input type="text" name="kleistad-setup[imap_pwd]" class="regular-text"
-					value="<?php echo esc_attr( $this->setup['imap_pwd'] ); ?>" /></td>
-		</tr>
-	</table>
-	<?php submit_button(); ?>
-	<p>&nbsp;</p>
 </form>
-<?php endif ?>

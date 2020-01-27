@@ -322,42 +322,30 @@ class Admin_Main {
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
-		if ( is_string( filter_input( INPUT_GET, 'dagelijks' ) ) ) {
+		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
+			\Kleistad\Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=google_connect' ) );
+		} elseif ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			$this->daily_jobs();
 		}
-		$blokkade = filter_input( INPUT_GET, 'blokkade', FILTER_SANITIZE_STRING );
-		if ( $blokkade ) {
-			$blokkade_datum = strtotime( $blokkade );
-			if ( false !== $blokkade_datum ) {
-				\Kleistad\Order::zet_blokkade( $blokkade_datum );
+		if ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
+			$result = \Kleistad\Google::koppel_service();
+			if ( is_wp_error( $result ) ) {
+				?>
+				<div class="error"><p><?php echo esc_html( get_error_message( $result ) ); ?></p></div>
+				<?php
 			}
 		}
-		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'f_instellingen';
+
+		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
 		?>
 		<div class="wrap">
 			<h2 class="nav-tab-wrapper">
-			    <a href="?page=kleistad&tab=f_instellingen" class="nav-tab <?php echo 'f_instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Functionele instellingen</a>
-			    <a href="?page=kleistad&tab=t_instellingen" class="nav-tab <?php echo 't_instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Technische instellingen</a>
-			    <a href="?page=kleistad&tab=google_connect" class="nav-tab <?php echo 'google_connect' === $active_tab ? 'nav-tab-active' : ''; ?>">Google kalender connectie</a>
+			    <a href="?page=kleistad&tab=instellingen" class="nav-tab <?php echo 'instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Functionele instellingen</a>
+			    <a href="?page=kleistad&tab=setup" class="nav-tab <?php echo 'setup' === $active_tab ? 'nav-tab-active' : ''; ?>">Technische instellingen</a>
 			    <a href="?page=kleistad&tab=shortcodes" class="nav-tab <?php echo 'shortcodes' === $active_tab ? 'nav-tab-active' : ''; ?>">Shortcodes</a>
-			    <a href="?page=kleistad&tab=email_parameters" class="nav-tab <?php echo 'email_parameters' === $active_tab ? 'nav-tab-active' : ''; ?>">Email parameters</a>
+			    <a href="?page=kleistad&tab=email-parameters" class="nav-tab <?php echo 'email-parameters' === $active_tab ? 'nav-tab-active' : ''; ?>">Email parameters</a>
 			</h2>
-			<?php
-			switch ( $active_tab ) {
-				case 'f_instellingen':
-				case 't_instellingen':
-					require 'partials/admin-instellingen.php';
-					break;
-				case 'shortcodes':
-					require 'partials/admin-shortcodes.php';
-					break;
-				case 'email_parameters':
-					require 'partials/admin-email-parameters.php';
-					break;
-				default:
-					require 'partials/admin-google-connect.php';
-			}
-			?>
+			<?php require "partials/admin-$active_tab.php"; ?>
 		</div>
 		<?php
 	}
