@@ -102,6 +102,7 @@ class Google {
 			$client = self::maak_client();
 			if ( false === $client ) {
 				$error->add( 'google', 'Client service is niet aangemaakt' );
+				return $error;
 			}
 			$token = $client->fetchAccessTokenWithAuthCode( $authorization_code );
 			if ( isset( $token['error'] ) && ! empty( $token['error'] ) ) {
