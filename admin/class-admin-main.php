@@ -322,23 +322,22 @@ class Admin_Main {
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
+		$result = true;
 		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
-			\Kleistad\Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=google_connect' ) );
+			\Kleistad\Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
+		} elseif ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
+			$result = \Kleistad\Google::koppel_service();
 		} elseif ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			$this->daily_jobs();
 		}
-		if ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
-			$result = \Kleistad\Google::koppel_service();
-			if ( is_wp_error( $result ) ) {
-				?>
-				<div class="error"><p><?php echo esc_html( get_error_message( $result ) ); ?></p></div>
-				<?php
-			}
-		}
-
 		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
 		?>
 		<div class="wrap">
+			<?php if ( is_wp_error( $result ) ) : ?>
+			<div class="error">
+				<p><?php echo esc_html( $result->get_error_message() ); ?></p>
+			</div>
+			<?php endif ?>
 			<h2 class="nav-tab-wrapper">
 			    <a href="?page=kleistad&tab=instellingen" class="nav-tab <?php echo 'instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Functionele instellingen</a>
 			    <a href="?page=kleistad&tab=setup" class="nav-tab <?php echo 'setup' === $active_tab ? 'nav-tab-active' : ''; ?>">Technische instellingen</a>
