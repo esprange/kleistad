@@ -11,7 +11,7 @@
 
 ?>
 <ul style="list-style-type:none">
-<li><h3>abonnement_* emails</h3>
+	<li><h3>abonnement_* emails</h3>
 		<ol>
 			<li>gewijzigd: gepauzeerd, herstart of beëindigd door de abonnee</li>
 			<li>ideal: bevestiging ideal betaling via betaal link</li>
@@ -21,7 +21,7 @@
 			<li>start_ideal: bevesting start na ideal betaling</li>
 			<li>start_bank: start betalen per bank met instructie</li>
 			<li>vervolg: einde 3 maand periode in zicht</li>
-			<ul style="list-style-type:square">
+			<ul style="list-style-type:square;margin-left:25px">
 				<li>[voornaam] : voornaam van de abonnee</li>
 				<li>[achternaam] : achternaam van de abonnee</li>
 				<li>[loginnaam] : loginnaam van de abonnee</li>
@@ -47,7 +47,7 @@
 		<ol>
 			<li>bestelling : bestelling inclusief factuur</li>
 			<li>bestelling_ideal : bevestiging ideal betaling</li>
-			<ul style="list-style-type:square">
+			<ul style="list-style-type:square;margin-left:25px">
 				<li>[naam] : voornaam van de klant</li>
 				<li>[bedrag] : te betalen bedrag</li>
 				<li>[bestel_link] : link naar ideal betaling</li>
@@ -64,7 +64,7 @@
 			<li>cursus_herinnering : herinnering betaling resterend cursusgeld via email link</li>
 			<li>cursus_ideal : bevestiging betaling bedrag</li>
 			<li>cursus_wijziging: bevestiging aanpassing inschrijving naar andere cursus</li>
-			<ul style="list-style-type:square">
+			<ul style="list-style-type:square;margin-left:25px">
 				<li>[voornaam] : voornaam van de cursist</li>
 				<li>[achternaam] : achternaam van de cursist</li>
 				<li>[cursus_naam] : titel van de cursus</li>
@@ -87,7 +87,7 @@
 		<ol>
 			<li>dagdelenkaart_bank : aanvraag dagdelenkaart</li>
 			<li>dagdelenkaart_ideal : bevesting betaling dagdelenkaart per ideal</li>
-			<ul style="list-style-type:square">
+			<ul style="list-style-type:square;margin-left:25px">
 				<li>[voornaam] : voornaam van de gebruiker</li>
 				<li>[achternaam] : achternaam van de gebruiker</li>
 				<li>[start_datum] : datum waarop de dagdelenkaart moet ingaan</li>
@@ -102,7 +102,7 @@
 		<ol>
 			<li>order_correctie : correctie order</li>
 			<li>order_annuliering : annulering order</li>
-			<ul style="list-style-type:square">
+			<ul style="list-style-type:square;margin-left:25px">
 				<li>[naam] : naam van de klant</li>
 				<li>[artikel] : artikel dat gecorrigeerd of geannuleerd is</li>
 			</ul>
@@ -112,7 +112,7 @@
 		<ol>
 			<li>saldo_bank : aanvraag saldo</li>
 			<li>saldo_ideal : bevesting betaling saldo per ideal</li>
-			<ul style="list-style-type:square">
+			<ul style="list-style-type:square;margin-left:25px">
 				<li>[voornaam] : voornaam van de stoker</li>
 				<li>[achternaam] : achternaam van de stoker</li>
 				<li>[bedrag] : bedrag dat overgemaakt wordt of via iDEAL is betaald</li>
@@ -124,7 +124,7 @@
 	<li><h3>stook_* emails</h3>
 		<ol>
 			<li>melding<
-				<ul style="list-style-type:square">
+				<ul style="list-style-type:square;margin-left:25px">
 					<li>[voornaam] : voornaam van de hoofdstoker</li>
 					<li>[achternaam] : achternaam van de hoofdstoker</li>
 					<li>[bedrag] : bruto bedrag van de stook</li>
@@ -135,7 +135,7 @@
 				</ul>
 			</li>
 			<li>kosten_verwerkt
-				<ul style="list-style-type:square">
+				<ul style="list-style-type:square;margin-left:25px">
 					<li>[voornaam] : voornaam van de medestoker</li>
 					<li>[achternaam] : achternaam van de medestoker</li>
 					<li>[stoker] : naam van de hoofdstoker</li>
@@ -154,7 +154,7 @@
 			<li>workshop_bevestiging : bevestiging van de gemaakte afspraken voor de workshop</li>
 			<li>workshop_betaling : betalen workshop kosten via email link</li>
 			<li>workshop_ideal : bevestiging betaling workshop kosten per ideal</li>
-			<ul style="list-style-type:square">
+			<ul style="list-style-type:square;margin-left:25px">
 				<li>[contact] : contactpersoon van de workshop aanvraag</li>
 				<li>[organisatie] : organisatie welke de workshop aanvraagt</li>
 				<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest')</li>
@@ -174,7 +174,7 @@
 	<li><h3>workshop_aanvraag_* emails</h3>
 		<ol>
 			<li>bevestiging
-				<ul style="list-style-type:square">
+				<ul style="list-style-type:square;margin-left:25px">
 					<li>[contact] : naam van de aanvrager</li>
 					<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest' )</li>
 					<li>[periode] : aangegeven periode</li>
@@ -184,7 +184,7 @@
 				</ul>
 			</li>
 			<li>workshop_aanvraag_reactie
-				<ul style="list-style-type:square">
+				<ul style="list-style-type:square;margin-left:25px">
 					<li>[reactie] : de reactie op de vraag van de aanvrager</li>
 				</ul>
 			</li>
@@ -194,7 +194,7 @@
 		<ol>
 			<li>email_wijziging : De aanpassing van het email adres</li>
 			<li>wachtwoord_wijziging : De aanpassing een wachtwoord</li>
-			<ul style="list-style-type:square">
+			<ul style="list-style-type:square;margin-left:25px">
 				<li>[voornaam] : De voornaam van de gebruiker</li>
 				<li>[achternaam] : De achternaam van de gebruiker</li>
 				<li>[email] : Het nieuwe email adres van de gebruiker</li>

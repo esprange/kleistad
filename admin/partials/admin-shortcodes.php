@@ -13,9 +13,27 @@
 <ul style="list-style-type:none">
 	<li><h3>publiek toegankelijk (dus zonder ingelogd te zijn)</h3>
 		<ol>
-			<li>[kleistad_abonnee_inschrijving verklaring=''] inschrijving als abonnee (verklaring parameter is optioneel)</li>
-			<li>[kleistad_cursus_inschrijving cursus=C11,C22,.. verbergen="tekst"] inschrijving voor cursus (cursus parameter is optioneel). Met de optionele parameterverbergen wordt het formulier verborgen en de tekst getoond.</li>
-			<li>[kleistad_dagdelenkaart verklaring=''] aankoop dagdelenkaart (verklaring parameter is optioneel)</li>
+			<li>[kleistad_abonnee_inschrijving] inschrijving als abonnee</li>
+			<ul style="list-style-type:square;margin-left:25px">
+				<li>verklaring= De optionele verklaring die goedgekeurd moet worden.
+				<p>Bijvoorbeeld: <code>verklaring=<?php echo htmlspecialchars( 'ik heb de <a href="https://www.kleistad.nl/.. ..huisregels.pdf" target="_blank" rel="noopener">Huisregels</a> gelezen' ); // phpcs:ignore ?></code></p>
+				</li>
+			</ul>
+			<li>[kleistad_cursus_inschrijving] inschrijving voor cursus.</li>
+			<ul style="list-style-type:square;margin-left:25px">
+				<li>cursus= De specifieke cursussen die getoond moeten worden i.p.v. alle gepubliceerde cursussen.
+				<p>Bijvoorbeeld: <code>cursus=C11,C22</code></p>
+				</li>
+				<li>verbergen= Verbergt het formulier en toont in plaats daarvan de tekst. Als op de tekst geklikt wordt, wordt het formulier zichtbaar.
+				<p>Bijvoorbeeld: <code>verbergen=Inschrijven voor cursus</code></p>
+				</li>
+			</ul>
+			<li>[kleistad_dagdelenkaart] aankoop dagdelenkaart</li>
+			<ul style="list-style-type:square;margin-left:25px">
+				<li>verklaring= De optionele verklaring die goedgekeurd moet worden.
+				<p>Bijvoorbeeld: <code>verklaring=<?php echo htmlspecialchars( 'ik heb de <a href="https://www.kleistad.nl/.. ..huisregels.pdf" target="_blank" rel="noopener">Huisregels</a> gelezen' ); // phpcs:ignore ?></code><p>
+				</li>
+			</ul>
 			<li>[kleistad_recept] overzicht van keramiek recepten</li>
 			<li>[kleistad_workshop_aanvraag] aanvraag voor workshops en kinderfeestjes</li>
 			<li>[kleistad_betaling] het betalen van een uitstaand bedrag per iDeal (via link vanuit email)</li>
@@ -24,20 +42,33 @@
 	<li><h3>toegankelijk voor leden</h3>
 		<ol>
 			<li>[kleistad_abonnee_wijziging] wijzigen abonnement door lid</li>
+		</ol>
+	</li>
+	<li><h3>toegankelijk voor leden, docenten en bestuur</h3>
+		<ol>
 			<li>[kleistad_kalender] overzicht workshops en cursussen</li>
-			<li>[kleistad_rapport] overzicht stook activiteiten door lid</li>
-			<li>[kleistad_recept_beheer] wijzigen keramiek recepten door lid</li>
-			<li>[kleistad_registratie] wijzigen adresgegevens door lid</li>
-			<li>[kleistad_reservering oven=1] reserveren ovenstook (oven parameter is verplicht)</li>
-			<li>[kleistad_saldo] wijzigen stooksaldo door lid</li>
+			<li>[kleistad_rapport] overzicht stook activiteiten</li>
+			<li>[kleistad_recept_beheer] wijzigen keramiek recepten</li>
+			<li>[kleistad_registratie] wijzigen adresgegevens</li>
+			<li>[kleistad_reservering] reserveren ovenstook</li>
+			<ul style="list-style-type:square;margin-left:25px">
+				<li>oven= Het ovennummer (verplicht)
+				<p>Bijvoorbeeld <code>oven=3</code></p>
+				</li>
+			</ul>
+			<li>[kleistad_saldo] wijzigen stooksaldo</li>
+		</ol>
+	</li>
+	<li><h3>toegankelijk voor docenten en bestuur</h3>
+		<ol>
+			<li>[kleistad_email] formulier om emails naar abonnees en/of cursisten te sturen</li>
+			<li>[kleistad_cursus_overzicht] overzicht cursussen en cursist per cursus</li>
 		</ol>
 	</li>
 	<li><h3>toegankelijk voor bestuur</h3>
 		<ol>
 			<li>[kleistad_abonnement_overzicht] overzicht abonnees</li>
 			<li>[kleistad_cursus_beheer] formulier om cursussen te beheren</li>
-			<li>[kleistad_cursus_overzicht] overzicht cursussen en cursist per cursus</li>
-			<li>[kleistad_email] formulier om emails naar abonnees en/of cursisten te sturen</li>
 			<li>[kleistad_omzet_rapportage] overzicht omzet op maandbasis</li>
 			<li>[kleistad_registratie_overzicht] overzicht van alle cursisten en leden</li>
 			<li>[kleistad_saldo_overzicht] overzicht stooksaldo leden</li>
@@ -49,9 +80,10 @@
 	<li><h3>toegankelijk voor boekhouder</h3>
 		<ol>
 			<li>[debiteuren] overzicht openstaande orders</li>
+			<ul style="list-style-type:square;margin-left:25px">
+				<li>actie=zoek. Met zoekfunctie die ook gesloten orders toont</li>
+				<li>actie=blokkade. Om een kwartaal af te sluiten</li>
+			</ul>
 		</ol>
 	</li>
 </ul>
-<p>bij de optionele verklaring parameter bij <strong>kleistad_abonnee_inschrijving</strong> en <strong>kleistad_dagdelenkaart</strong> kan bijvoorbeeld ingevuld worden:</p>
-<code><?php echo htmlspecialchars( 'ik heb de <a href="https://www.kleistad.nl/wp/wp-content/uploads/2017/08/Huisregels-inloop-atelier-KLEISTAD-aug2017.pdf" target="_blank" rel="noopener">Huisregels inloop atelier KLEISTAD -aug2017</a> gelezen' ); // phpcs:ignore ?></code>
-<p>bij de optionele cursus parameter bij <strong>kleistad_cursus_inschrijving</strong> moet een cursus code opgegeven worden, bijvoorbeeld <code>C29</code>. In dat geval wordt er overzicht van cursussen getoond maar alleen de cursus waar het om gaat.</p>
