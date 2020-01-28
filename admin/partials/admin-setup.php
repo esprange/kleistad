@@ -90,7 +90,7 @@
 	<p>Forceer dagelijkse job</p>
 	<hr/>
 	<p>Elke dag wordt om 9:00 een job gestart die kijkt of er herinneringen, stookmeldingen, verzoeken om restant betaling, incasso's e.d. nodig zijn.</p>
-	Met onderstaande knop kan deze handeling op elk moment geforceerd worden. De job bevat logica die er voor zorgt dat een handeling niet dubbel wordt verricht,
+	<p>Met onderstaande knop kan deze handeling op elk moment geforceerd worden. De job bevat logica die er voor zorgt dat een handeling niet dubbel wordt verricht,
 	hoe vaak de job ook per dag gestart wordt.</p>
 	<?php submit_button( 'Dagelijkse job uitvoeren', 'primary', 'dagelijks' ); ?>
 	<p>&nbsp;</p>
