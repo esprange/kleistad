@@ -151,7 +151,7 @@ class Abonnement extends Artikel {
 	 */
 	public function referentie() {
 		if ( strpos( ' regulier pauze', $this->artikel_type ) ) {
-			return "$this->code-" . date( 'Ym' );
+			return "$this->code-$this->artikel_type-" . date( 'Ym' );
 		} else {
 			return "$this->code-$this->artikel_type";
 		}
@@ -164,7 +164,7 @@ class Abonnement extends Artikel {
 	 */
 	public function start_incasso() {
 		$this->artikel_type = 'mandaat';
-		return $this->betalen( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
+		return $this->ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
 	}
 
 	/**
@@ -188,7 +188,7 @@ class Abonnement extends Artikel {
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
 	 * @return string|bool De redirect url of het is fout gegaan.
 	 */
-	public function betalen( $bericht ) {
+	public function ideal( $bericht ) {
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf      = strftime( '%d-%m-%Y', $this->start_datum );
@@ -206,13 +206,13 @@ class Abonnement extends Artikel {
 				$vermelding = ' machtiging tot sepa-incasso';
 				$mandaat    = true;
 				break;
-			default:
+			default: // Regulier of pauze, echter dan is artikel type YYMM.
 				$vermelding = '';
 				$mandaat    = false;
 		}
 		return $this->betalen->order(
 			$this->klant_id,
-			__CLASS__ . "-{$this->code}-{$this->artikel_type}",
+			$this->referentie(),
 			$this->bedrag( "#{$this->artikel_type}" ),
 			"Kleistad abonnement {$this->code}$vermelding",
 			$bericht,
@@ -223,12 +223,12 @@ class Abonnement extends Artikel {
 	/**
 	 * Maak de sepa incasso betalingen.
 	 */
-	public function betalen_per_incasso() {
+	public function sepa_incasso() {
 		$bedrag = $this->bedrag( "#{$this->artikel_type}" );
 		if ( 0.0 < $bedrag ) {
 			$this->betalen->eenmalig(
 				$this->klant_id,
-				__CLASS__ . "-{$this->code}-{$this->artikel_type}",
+				$this->referentie(),
 				$bedrag,
 				"Kleistad abonnement {$this->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
 			);
@@ -351,6 +351,54 @@ class Abonnement extends Artikel {
 			$this->email( '_gewijzigd' );
 		}
 		return true;
+	}
+
+	/**
+	 * Doe acties na betaling van abonnementen. Wordt aangeroepen vanuit de betaal callback.
+	 *
+	 * @param int    $order_id  Het eventueel al bestaande order id.
+	 * @param float  $bedrag    Het betaalde bedrag.
+	 * @param bool   $betaald   Of er werkelijk betaald is.
+	 * @param string $type     Het type betaling.
+	 */
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
+		if ( $betaald ) {
+			if ( $order_id ) {
+				/**
+				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of betaling per bank.
+				 * Omdat de order al bestaat betekent dit ook dat er al een factuur verstuurd is.
+				 */
+				$this->ontvang_order( $order_id, $bedrag );
+				if ( 'ideal' === $type ) {
+					$this->email( '_ideal_betaald' );
+				}
+			} elseif ( 'mandaat' === $this->artikel_type ) {
+				/**
+				 * Bij een mandaat ( 1 eurocent ) hoeven we geen factuur te sturen en is er dus geen order aangemaakt.
+				 */
+				$this->bericht = 'Je hebt Kleistad toestemming gegeven voor een maandelijkse incasso van het abonnement';
+				$this->email( '_gewijzigd' );
+			} elseif ( 'start' === $this->artikel_type ) {
+				/**
+				 * Bij een start en nog niet bestaande order moet dit wel afkomstig zijn van het invullen van
+				 * een inschrijving formulier.
+				 */
+				$this->email( '_start_ideal', $this->bestel_order( $bedrag ) );
+			} else {
+				/**
+				 * Blijkbaar iets anders dan een start. Omdat de order nog niet bestaat moet dit wel afkomstig zijn van een
+				 * incasso want de overbruggingsfactuur is al 7 dagen vooraf verstuurd.
+				 */
+				$this->email( '_regulier_incasso', $this->bestel_order( $bedrag ) );
+			}
+		} else {
+			if ( 'directdebit' === $type ) {
+				/**
+				 * Als het een incasso betreft die gefaald is dan maken we alsnog de order aan.
+				 */
+				$this->email( '_regulier_mislukt', $this->bestel_order( 0.0 ) );
+			}
+		}
 	}
 
 	/**
@@ -543,39 +591,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Doe acties na betaling van abonnementen. Wordt aangeroepen vanuit de betaal callback.
-	 *
-	 * @param array $parameters De parameters 0: gebruiker-id, 1: de melddatum.
-	 * @param float $bedrag     Geeft aan of het een eerste start of een herstart betreft.
-	 * @param bool  $betaald    Of er werkelijk betaald is.
-	 */
-	public static function callback( $parameters, $bedrag, $betaald ) {
-		$abonnement = new static( intval( $parameters[0] ) );
-		if ( $betaald ) {
-			switch ( $parameters[1] ) {
-				case 'mandaat':
-					$abonnement->bericht = 'Je hebt Kleistad toestemming gegeven voor een maandelijkse incasso van het abonnement';
-					$abonnement->email( '_gewijzigd' );
-					break;
-				case 'start':
-					$abonnement->email( '_start_ideal', $abonnement->bestel_order( $bedrag, 'start' ) );
-					break;
-				case 'regulier':
-				case 'pauze':
-					$abonnement->email( '_regulier_incasso', $abonnement->bestel_order( $bedrag, $parameters[1] ) );
-					break;
-				case 'overbrugging':
-					$abonnement->ontvang_order( \Kleistad\Order::zoek_order( "{$abonnement->code}-overbrugging" ), $bedrag );
-					$abonnement->email( '_ideal' );
-			}
-		} else {
-			if ( 'incasso' === $parameters[1] ) {
-				$abonnement->email( '_regulier_mislukt', $abonnement->bestel_order( 0.0, 'regulier' ) );
-			}
-		}
-	}
-
-	/**
 	 * Factureer de maand
 	 *
 	 * @param \Kleistad\Abonnement $abonnement Het abonnement.
@@ -594,9 +609,9 @@ class Abonnement extends Artikel {
 			$abonnement->artikel_type = 'regulier';
 		}
 		if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
-			$abonnement->betalen_per_incasso();
+			$abonnement->sepa_incasso();
 		} else {
-			$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0, $abonnement->artikel_type ) );
+			$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0 ) );
 		}
 	}
 
@@ -619,10 +634,11 @@ class Abonnement extends Artikel {
 			if ( ! \Kleistad\Roles::reserveer( $klant_id ) ) {
 				$abonnement->autoriseer( true );
 			}
-			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er iets te betalen is, zonder verdere acties.
+			// Abonnementen waarvan de driemaanden termijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er nog geen einddatum ingevuld is.
 			if ( $vandaag < $abonnement->reguliere_datum ) {
-				if ( $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) && ! $abonnement->overbrugging_email ) {
-					$abonnement->email( '_vervolg', $abonnement->bestel_order( 0.0, 'overbrugging' ) );
+				if ( $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) && ! $abonnement->eind_datum && ! $abonnement->overbrugging_email ) {
+					$abonnement->artikel_type = 'overbrugging';
+					$abonnement->email( '_vervolg', $abonnement->bestel_order( 0.0 ) );
 					$abonnement->overbrugging_email = true;
 					$abonnement->save();
 				}

@@ -76,7 +76,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @param string $bericht Dummy variable.
 	 */
-	public function betalen( $bericht ) {
+	public function ideal( $bericht ) {
 		$order_id = \Kleistad\Order::zoek_order( $this->referentie() );
 		$order    = new \Kleistad\Order( $order_id );
 		return $this->betalen->order(
@@ -85,7 +85,7 @@ class LosArtikel extends Artikel {
 				'email'    => $order->klant['email'],
 				'order_id' => $this->code,
 			],
-			__CLASS__ . '-' . $this->code,
+			$this->referentie(),
 			$order->te_betalen(),
 			'Kleistad bestelling ' . $this->code,
 			$bericht
@@ -192,18 +192,21 @@ class LosArtikel extends Artikel {
 	 *
 	 * @since      6.2.0
 	 *
-	 * @param array $parameters De parameters 0: volgnummer bestelling.
-	 * @param float $bedrag     Het bedrag dat betaald is.
-	 * @param bool  $betaald    Of er werkelijk betaald is.
+	 * @param int    $order_id   De order_id, als die al bekend is.
+	 * @param float  $bedrag     Het bedrag dat betaald is.
+	 * @param bool   $betaald    Of er werkelijk betaald is.
+	 * @param string $type      Type betaling, ideal , directdebit of bank.
 	 */
-	public static function callback( $parameters, $bedrag, $betaald ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
 		if ( $betaald ) {
-			$losartikel        = new static( intval( $parameters[0] ) );
-			$order_id          = \Kleistad\Order::zoek_order( $losartikel->code );
-			$order             = new \Kleistad\Order( $order_id );
-			$losartikel->klant = $order->klant;
-			$losartikel->ontvang_order( $order_id, $bedrag );
-			$losartikel->email( '_ideal' );
+			if ( $order_id ) {
+				$order       = new \Kleistad\Order( $order_id );
+				$this->klant = $order->klant;
+				$this->ontvang_order( $order_id, $bedrag );
+				if ( 'ideal' === $type ) {
+					$this->email( '_ideal_betaald' );
+				}
+			}
 		}
 	}
 

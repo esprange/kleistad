@@ -178,8 +178,9 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$inschrijving->lopende_cursus = (float) $data['input']['kosten'];
 			$inschrijving->ingedeeld      = true;
 			$inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
+			$inschrijving->artikel_type   = 'inschrijving';
 			$inschrijving->save();
-			$inschrijving->email( '_lopend_betalen', $inschrijving->bestel_order( 0.0, 'inschrijving' ) );
+			$inschrijving->email( '_lopend_betalen', $inschrijving->bestel_order( 0.0 ) );
 			return [
 				'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
 				'content' => $this->display(),

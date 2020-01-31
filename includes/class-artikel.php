@@ -64,16 +64,17 @@ abstract class Artikel extends Entity {
 	 * @param  string $bericht Het bericht na succesvolle betaling.
 	 * @return string|bool De redirect uri of het is fout gegaan.
 	 */
-	abstract public function betalen( $bericht );
+	abstract public function ideal( $bericht );
 
 	/**
-	 * Aanroep vanuit betaling per ideal.
+	 * Aanroep vanuit betaling per ideal of sepa incasso.
 	 *
-	 * @param array $parameters De parameters 0: workshop-id.
-	 * @param float $bedrag     Het betaalde bedrag.
-	 * @param bool  $betaald    Of er werkelijk betaald is.
+	 * @param int    $order_id   De order id.
+	 * @param float  $bedrag     Het betaalde bedrag.
+	 * @param bool   $betaald    Of er werkelijk betaald is.
+	 * @param string $type       Een betaling per bank, ideal of incasso.
 	 */
-	abstract public static function callback( $parameters, $bedrag, $betaald );
+	abstract public function verwerk_betaling( $order_id, $bedrag, $betaald, $type );
 
 	/**
 	 * Geef de code van het artikel
@@ -153,6 +154,7 @@ abstract class Artikel extends Entity {
 		$order->gesloten         = true;
 		$order->historie         = 'geannuleerd, credit factuur ' . $credit_order->factuurnr() . ' aangemaakt';
 		$order->save();
+		$this->betaalactie( $credit_order->betaald );
 		return $this->maak_factuur( $credit_order, 'credit' );
 	}
 
@@ -160,20 +162,19 @@ abstract class Artikel extends Entity {
 	 * Een bestelling aanmaken.
 	 *
 	 * @param float  $bedrag       Het betaalde bedrag.
-	 * @param string $artikel_type De parameter voor de factuur regels.
 	 * @param string $opmerking    De optionele opmerking in de factuur.
 	 * @return string De url van de factuur.
 	 */
-	final public function bestel_order( $bedrag, $artikel_type, $opmerking = '' ) {
-		$this->artikel_type = $artikel_type;
-		$order              = new \Kleistad\Order();
-		$order->betaald     = $bedrag;
-		$order->regels      = $this->factuurregels();
-		$order->historie    = 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
-		$order->klant       = $this->naw_klant();
-		$order->opmerking   = $opmerking;
-		$order->referentie  = $this->referentie();
+	final public function bestel_order( $bedrag, $opmerking = '' ) {
+		$order             = new \Kleistad\Order();
+		$order->betaald    = $bedrag;
+		$order->regels     = $this->factuurregels();
+		$order->historie   = 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
+		$order->klant      = $this->naw_klant();
+		$order->opmerking  = $opmerking;
+		$order->referentie = $this->referentie();
 		$order->save();
+		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, '' );
 	}
 
@@ -202,6 +203,7 @@ abstract class Artikel extends Entity {
 		$order->historie  = 'Correctie factuur i.v.m. korting € ' . number_format_i18n( $korting, 2 );
 		$order->opmerking = $opmerking;
 		$order->save();
+		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -244,6 +246,7 @@ abstract class Artikel extends Entity {
 		$order->historie  = 'Order gewijzigd';
 		$order->opmerking = $opmerking;
 		$order->save();
+		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -307,10 +310,13 @@ abstract class Artikel extends Entity {
 			$parameters = explode( '-', substr( $referentie, 1 ) );
 			$class      = self::$artikelen[ $referentie[0] ]['class'];
 			if ( 1 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
-				return new $class( (int) $parameters[0] );
+				$artikel               = new $class( (int) $parameters[0] );
+				$artikel->artikel_type = $parameters[1] ?? '';
 			} elseif ( 2 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
-				return new $class( (int) $parameters[0], (int) $parameters[1] );
+				$artikel               = new $class( (int) $parameters[0], (int) $parameters[1] );
+				$artikel->artikel_type = $parameters[2] ?? '';
 			}
+			return $artikel;
 		}
 		return null;
 	}

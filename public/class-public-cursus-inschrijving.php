@@ -211,14 +211,15 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		$lopend = $data['cursus']->start_datum < strtotime( 'today' );
 
 		if ( ! $lopend && 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $inschrijving->betalen( 'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging' );
+			$ideal_uri = $inschrijving->ideal( 'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging' );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}
 			return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		} else {
 			if ( ! $lopend ) {
-				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, 'inschrijving', \Kleistad\Inschrijving::OPM_INSCHRIJVING ) );
+				$inschrijving->artikel_type = 'inschrijving';
+				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, \Kleistad\Inschrijving::OPM_INSCHRIJVING ) );
 			} else {
 				$inschrijving->email( '_lopend' );
 			}

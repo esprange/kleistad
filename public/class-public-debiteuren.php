@@ -166,9 +166,9 @@ class Public_Debiteuren extends ShortcodeForm {
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
 				if ( $order->origineel_id ) {
-					$artikel->ontvang_order( $data['input']['id'], - (float) $data['input']['ontvangst'] );
+					$artikel->verwerk_betaling( $data['input']['id'], - (float) $data['input']['ontvangst'], true, 'bank' );
 				} else {
-					$artikel->ontvang_order( $data['input']['id'], (float) $data['input']['ontvangst'] );
+					$artikel->verwerk_betaling( $data['input']['id'], (float) $data['input']['ontvangst'], true, 'bank' );
 				}
 				$status = 'De betaling is verwerkt';
 				break;
@@ -180,9 +180,10 @@ class Public_Debiteuren extends ShortcodeForm {
 						'subject'     => 'Order geannuleerd',
 						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'], $data['input']['opmerking_annulering'] ),
 						'parameters'  => [
-							'naam'       => $order->klant['naam'],
-							'artikel'    => $artikel->artikel_naam(),
-							'referentie' => $order->referentie,
+							'naam'        => $order->klant['naam'],
+							'artikel'     => $artikel->artikel_naam(),
+							'referentie'  => $order->referentie,
+							'betaal_link' => $artikel->betaal_link(),
 						],
 					]
 				);
@@ -196,9 +197,10 @@ class Public_Debiteuren extends ShortcodeForm {
 						'subject'     => 'Order gecorrigeerd',
 						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'], $data['input']['opmerking_korting'] ),
 						'parameters'  => [
-							'naam'       => $order->klant['naam'],
-							'artikel'    => $artikel->artikel_naam(),
-							'referentie' => $order->referentie,
+							'naam'        => $order->klant['naam'],
+							'artikel'     => $artikel->artikel_naam(),
+							'referentie'  => $order->referentie,
+							'betaal_link' => $artikel->betaal_link(),
 						],
 					]
 				);

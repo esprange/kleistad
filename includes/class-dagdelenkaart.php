@@ -107,12 +107,12 @@ class Dagdelenkaart extends Artikel {
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
 	 * @return string|bool De redirect url van een ideal betaling of false als het niet lukt.
 	 */
-	public function betalen( $bericht ) {
+	public function ideal( $bericht ) {
 		$options = \Kleistad\Kleistad::get_options();
 
 		return $this->betalen->order(
 			$this->klant_id,
-			__CLASS__ . '-' . $this->code,
+			$this->referentie(),
 			$options['dagdelenkaart'],
 			'Kleistad dagdelenkaart ' . $this->code,
 			$bericht,
@@ -231,14 +231,21 @@ class Dagdelenkaart extends Artikel {
 	/**
 	 * Activeer een dagdelenkaart. Wordt aangeroepen vanuit de betaal callback.
 	 *
-	 * @param array $parameters De parameters 0: gebruiker-id, 1: de aankoopdatum.
-	 * @param float $bedrag     Het bedrag dat betaald is.
-	 * @param bool  $betaald    Of er werkelijk betaald is.
+	 * @param int    $order_id De order id, als die al bestaat.
+	 * @param float  $bedrag   Het bedrag dat betaald is.
+	 * @param bool   $betaald  Of er werkelijk betaald is.
+	 * @param string $type    Het type betaling.
 	 */
-	public static function callback( $parameters, $bedrag, $betaald ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
 		if ( $betaald ) {
-			$dagdelenkaart = new static( intval( $parameters[0] ) );
-			$dagdelenkaart->email( '_ideal', $dagdelenkaart->bestel_order( $bedrag, 'dagdelenkaart' ) );
+			if ( $order_id ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
+				$this->ontvang_order( $order_id, $bedrag );
+				if ( 'ideal' === $type ) {
+					$this->email( '_ideal_betaald' );
+				}
+			} else { // Betaling vanuit inschrijvingformulier.
+				$this->email( '_ideal', $this->bestel_order( $bedrag ) );
+			}
 		}
 	}
 

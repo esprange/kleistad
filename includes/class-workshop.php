@@ -181,14 +181,14 @@ class Workshop extends Artikel {
 	 * @param string $bericht      Het bericht bij succesvolle betaling.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function betalen( $bericht ) {
+	public function ideal( $bericht ) {
 		return $this->betalen->order(
 			[
 				'naam'     => $this->contact,
 				'email'    => $this->email,
 				'order_id' => $this->code,
 			],
-			__CLASS__ . '-' . $this->code . '-workshop',
+			$this->referentie(),
 			$this->kosten,
 			'Kleistad workshop ' . $this->code . ' op ' . strftime( '%d-%m-%Y', $this->datum ),
 			$bericht
@@ -397,7 +397,7 @@ class Workshop extends Artikel {
 			}
 			$workshop->betaling_email = true;
 			$workshop->save();
-			$workshop->email( '_betaling', $workshop->bestel_order( 0.0, 'workshop' ) );
+			$workshop->email( '_betaling', $workshop->bestel_order( 0.0 ) );
 		}
 	}
 
@@ -406,18 +406,22 @@ class Workshop extends Artikel {
 	 *
 	 * @since        5.0.0
 	 *
-	 * @param array $parameters De parameters 0: workshop-id.
-	 * @param float $bedrag     Het betaalde bedrag.
-	 * @param bool  $betaald    Of er werkelijk betaald is.
-	 * @scrutinizer ignore-unused
+	 * @param int    $order_id   De order id, als deze al bestaat.
+	 * @param float  $bedrag     Het betaalde bedrag.
+	 * @param bool   $betaald    Of er werkelijk betaald is.
+	 * @param string $type      Type betaling, ideal , directdebit of bank.
 	 */
-	public static function callback( $parameters, $bedrag, $betaald ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
 		if ( $betaald ) {
-			$workshop          = new static( intval( $parameters[0] ) );
-			$workshop->betaald = true;
-			$workshop->save();
-			$workshop->ontvang_order( \Kleistad\Order::zoek_order( $workshop->code ), $bedrag );
-			$workshop->email( '_ideal' );
+			if ( $order_id ) {
+				/**
+				 * Bij workshops is er altijd eerst een factuur verstuurd
+				 */
+				$workshop->ontvang_order( $order_id, $bedrag );
+				if ( 'ideal' === $type ) {
+					$workshop->email( '_ideal_betaald' );
+				}
+			}
 		}
 	}
 

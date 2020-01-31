@@ -34,6 +34,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 6.2.1 =
+* Admin schermen verbeterd, knop voor dagelijks job toegevoegd
+* Debiteuren shortcode uitgebreid zodat hiermee ook een blokkade datum kan worden aangepast
 = 6.2.0 =
 * Shortcode verkoop toegevoegd voor verkoop losse artikelen
 * Controle op geblokkeerde periode

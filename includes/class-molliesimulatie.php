@@ -64,6 +64,13 @@ class MollieSimulatie {
 					public $amount;
 
 					/**
+					 * Method property
+					 *
+					 * @var string $method Kan o.a. ideal en directdebit bevatten.
+					 */
+					public $method = 'ideal';
+
+					/**
 					 * Geeft aan dat er betaald is.
 					 */
 					public function isPaid() {
@@ -81,6 +88,13 @@ class MollieSimulatie {
 					 * Geeft aan dat er geen sprake is van chargebacks.
 					 */
 					public function hasChargeBacks() {
+						return false;
+					}
+
+					/**
+					 * Geeft aan dat er sprake is van een incasso.
+					 */
+					public function hasSequenceTypeRecurring() {
 						return false;
 					}
 

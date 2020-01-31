@@ -124,10 +124,10 @@ class Saldo extends Artikel {
 	 * @param string $bericht Het bericht bij succesvolle betaling.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function betalen( $bericht ) {
+	public function ideal( $bericht ) {
 		return $this->betalen->order(
 			$this->klant_id,
-			__CLASS__ . '-' . $this->code,
+			$this->referentie(),
 			$this->prijs,
 			'Kleistad stooksaldo ' . $this->code,
 			$bericht
@@ -217,13 +217,44 @@ class Saldo extends Artikel {
 	}
 
 	/**
+	 * Verwerk een betaling. Wordt aangeroepen vanuit de betaal callback
+	 *
+	 * @since      4.2.0
+	 *
+	 * @param int    $order_id  De order_id, als die al bestaat.
+	 * @param float  $bedrag    Het bedrag dat betaald is.
+	 * @param bool   $betaald   Of er werkelijk betaald is.
+	 * @param string $type   Type betaling, ideal , directdebit of bank.
+	 */
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
+		if ( $betaald ) {
+			if ( $order_id ) {
+				/**
+				 * Er bestaat al een order dus dit is een betaling o.b.v. een email link of per bank.
+				 */
+				$this->ontvang_order( $order_id, $bedrag );
+				if ( 'ideal' === $type ) {
+					$this->email( '_ideal_betaald' );
+				}
+			} else {
+				/**
+				 * Een betaling vanuit het formulier
+				 */
+				$this->email( '_ideal', $this->bestel_order( $bedrag ) );
+			}
+		}
+	}
+
+	/**
 	 * Verhoog het saldobedrag met het betaalde bedrag.
 	 *
 	 * @param float $bedrag Het betaalde bedrag.
 	 */
 	protected function betaalactie( $bedrag ) {
-		$this->reden   = 'betaling per bank';
-		$this->bedrag += $bedrag;
+		if ( 0 < $bedrag ) {
+			$this->reden   = 'betaling per bank';
+			$this->bedrag += $bedrag;
+		}
 	}
 
 	/**
@@ -241,25 +272,6 @@ class Saldo extends Artikel {
 				]
 			),
 		];
-	}
-
-	/**
-	 * Verwerk een betaling. Wordt aangeroepen vanuit de betaal callback
-	 *
-	 * @since      4.2.0
-	 *
-	 * @param array $parameters De parameters 0: gebruiker-id, 1: of het een herstart betreft.
-	 * @param float $bedrag     Het bedrag dat betaald is.
-	 * @param bool  $betaald    Of er werkelijk betaald is.
-	 */
-	public static function callback( $parameters, $bedrag, $betaald ) {
-		if ( $betaald ) {
-			$saldo          = new static( intval( $parameters[0] ) );
-			$saldo->bedrag += $bedrag;
-			$saldo->reden   = 'betaling per iDeal';
-			$saldo->save();
-			$saldo->email( '_ideal', $saldo->bestel_order( $bedrag, 'saldo' ) );
-		}
 	}
 
 	/**

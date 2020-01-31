@@ -72,13 +72,13 @@ class Public_Saldo extends ShortcodeForm {
 		$saldo->nieuw( $data['input']['bedrag'] );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $saldo->betalen( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging' );
+			$ideal_uri = $saldo->ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging' );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}
 			return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		} else {
-			if ( $saldo->email( '_bank', $saldo->bestel_order( 0.0, 'saldo' ) ) ) {
+			if ( $saldo->email( '_bank', $saldo->bestel_order( 0.0 ) ) ) {
 				return [
 					'content' => $this->goto_home(),
 					'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),

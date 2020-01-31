@@ -174,12 +174,12 @@ class Inschrijving extends Artikel {
 	 * @param string $bericht      Het bericht bij succesvolle betaling.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function betalen( $bericht ) {
+	public function ideal( $bericht ) {
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
 		if ( ! $this->ingedeeld && 0 < $this->cursus->inschrijfkosten ) {
 			return $this->betalen->order(
 				$this->klant_id,
-				__CLASS__ . '-' . $this->code . '-inschrijving',
+				$this->referentie() . '-inschrijving',
 				$this->aantal * $this->cursus->inschrijfkosten,
 				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
 				$bericht
@@ -187,7 +187,7 @@ class Inschrijving extends Artikel {
 		} else {
 			return $this->betalen->order(
 				$this->klant_id,
-				__CLASS__ . '-' . $this->code . '-cursus',
+				$this->referentie() . '-cursus',
 				$this->aantal * $this->cursus->cursuskosten,
 				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
 				$bericht
@@ -445,34 +445,40 @@ class Inschrijving extends Artikel {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param array $parameters De parameters 0: cursus-id, 1: gebruiker-id, 2: startdatum, 3: type betaling.
-	 * @param float $bedrag     Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool  $betaald    Of er werkelijk betaald is.
+	 * @param int    $order_id   De order id, als deze bestaat.
+	 * @param float  $bedrag     Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool   $betaald    Of er werkelijk betaald is.
+	 * @param string $type       Type betaling, ideal , directdebit of bank.
 	 */
-	public static function callback( $parameters, $bedrag, $betaald ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
 		if ( $betaald ) {
-			$inschrijving = new static( intval( $parameters[0] ), intval( $parameters[1] ) );
-			$artikel_type = is_numeric( $parameters[2] ) ? $parameters[3] : $parameters[2]; // Voor oude cursuscode.
-			switch ( $artikel_type ) {
-				case 'inschrijving':
-					$inschrijving->ingedeeld = true;
-					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, $artikel_type, self::OPM_INSCHRIJVING ) );
-					$inschrijving->save();
-					break;
-
-				case 'cursus':
-					$inschrijving->ingedeeld = true;
-					if ( 0 < $inschrijving->cursus->inschrijfkosten ) {
-						$inschrijving->ontvang_order( \Kleistad\Order::zoek_order( $inschrijving->code ), $bedrag );
-						$inschrijving->email( '_ideal' );
-					} else {
-						$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, $artikel_type, '' ) );
+			if ( $order_id ) {
+				/**
+				 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
+				 */
+				$inschrijving->ontvang_order( $order_id, $bedrag );
+				if ( $inschrijving->ingedeeld ) {
+					/**
+					 * Als de cursist al ingedeeld is volstaat een bedankje.
+					 */
+					if ( 'ideal' === $type ) {
+						$inschrijving->email( '_ideal_betaald' );
 					}
-					$inschrijving->save();
-					break;
-
-				default:
-					break;
+				} else {
+					/**
+					 * De cursist krijgt de melding dat deze nu ingedeeld is.
+					 */
+					$inschrijving->email( 'indeling' );
+				}
+			} else {
+				/**
+				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
+				 */
+				if ( 'inschrijving' === $this->artikel_type ) {
+					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, self::OPM_INSCHRIJVING ) );
+				} else {
+					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag ) );
+				}
 			}
 		}
 	}

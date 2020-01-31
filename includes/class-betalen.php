@@ -306,17 +306,16 @@ class Betalen {
 	 */
 	public static function callback_betaling_verwerkt( \WP_REST_Request $request ) {
 		$mollie_betaling_id = $request->get_param( 'id' );
-
-		$object   = new static();
-		$betaling = $object->mollie->payments->get( $mollie_betaling_id );
-		$status   = $betaling->isPaid() && ! $betaling->hasRefunds() && ! $betaling->hasChargeBacks();
-		$class    = strtok( $betaling->metadata->order_id, '-' );
-		if ( class_exists( $class ) ) {
-			$parameters = explode( '-', substr( $betaling->metadata->order_id, strlen( $class ) + 2 ) );
-			$class::callback( $parameters, $betaling->amount->value, $status );
-		}
-
-		// Andere status mogelijk a.g.v. isExpired, isCanceled of isFailed.
+		$object             = new static();
+		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
+		$artikel            = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
+		$order_id           = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
+		$artikel->verwerk_betaling(
+			$order_id,
+			$betaling->amount->value,
+			$betaling->isPaid(), // In eerdere instantie ook checks of er geen sprake was van -hasRefunds() en hasChargeBacks().
+			$betaling->method
+		);
 		return new \WP_REST_Response(); // Geeft default http status 200 terug.
 	}
 }
