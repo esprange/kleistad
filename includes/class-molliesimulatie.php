@@ -92,13 +92,6 @@ class MollieSimulatie {
 					}
 
 					/**
-					 * Geeft aan dat er sprake is van een incasso.
-					 */
-					public function hasSequenceTypeRecurring() {
-						return false;
-					}
-
-					/**
 					 * De constructor.
 					 */
 					public function __construct() {
