@@ -417,9 +417,9 @@ class Workshop extends Artikel {
 				/**
 				 * Bij workshops is er altijd eerst een factuur verstuurd
 				 */
-				$workshop->ontvang_order( $order_id, $bedrag );
+				$this->ontvang_order( $order_id, $bedrag );
 				if ( 'ideal' === $type ) {
-					$workshop->email( '_ideal_betaald' );
+					$this->email( '_ideal_betaald' );
 				}
 			}
 		}

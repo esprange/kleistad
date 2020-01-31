@@ -456,29 +456,25 @@ class Inschrijving extends Artikel {
 				/**
 				 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
 				 */
-				$inschrijving->ontvang_order( $order_id, $bedrag );
-				if ( $inschrijving->ingedeeld ) {
+				$this->ontvang_order( $order_id, $bedrag );
+				if ( $this->ingedeeld ) {
 					/**
 					 * Als de cursist al ingedeeld is volstaat een bedankje.
 					 */
 					if ( 'ideal' === $type ) {
-						$inschrijving->email( '_ideal_betaald' );
+						$this->email( '_ideal_betaald' );
 					}
 				} else {
 					/**
 					 * De cursist krijgt de melding dat deze nu ingedeeld is.
 					 */
-					$inschrijving->email( 'indeling' );
+					$this->email( 'indeling' );
 				}
 			} else {
 				/**
 				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
 				 */
-				if ( 'inschrijving' === $this->artikel_type ) {
-					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag, self::OPM_INSCHRIJVING ) );
-				} else {
-					$inschrijving->email( 'indeling', $inschrijving->bestel_order( $bedrag ) );
-				}
+				$this->email( 'indeling', $this->bestel_order( $bedrag, 'inschrijving' === $this->artikel_type ? self::OPM_INSCHRIJVING : '' ) );
 			}
 		}
 	}

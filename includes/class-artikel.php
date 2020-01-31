@@ -312,7 +312,7 @@ abstract class Artikel extends Entity {
 			if ( 1 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
 				$artikel               = new $class( (int) $parameters[0] );
 				$artikel->artikel_type = $parameters[1] ?? '';
-			} elseif ( 2 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
+			} else {
 				$artikel               = new $class( (int) $parameters[0], (int) $parameters[1] );
 				$artikel->artikel_type = $parameters[2] ?? '';
 			}
