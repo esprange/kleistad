@@ -216,12 +216,13 @@ class Inschrijving extends Artikel {
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
 			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
-				$order_id                     = \Kleistad\Order::zoek_order( $this->code );
+				$order_id                     = \Kleistad\Order::zoek_order( $this->referentie() );
 				$this->code                   = "C$cursus_id-$this->klant_id";
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
 				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-				$factuur = $this->wijzig_order( $order_id );
+				$this->cursus = new \Kleistad\Cursus( $cursus_id );
+				$factuur      = $this->wijzig_order( $order_id );
 				if ( false === $factuur ) {
 					return false;
 				}
@@ -392,7 +393,7 @@ class Inschrijving extends Artikel {
 				),
 			];
 		} else {
-			if ( $meetdag <= $this->cursus->start_datum ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten.
+			if ( $meetdag > $this->cursus->start_datum ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten.
 				return [
 					array_merge(
 						self::split_bedrag( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ),
