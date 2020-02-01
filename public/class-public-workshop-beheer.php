@@ -360,10 +360,13 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				];
 			}
 		} elseif ( 'afzeggen' === $data['form_actie'] ) {
+			$workshop->afzeggen();
 			if ( $workshop->definitief ) {
 				$workshop->email( '_afzegging' );
+				$bericht = 'De afspraak voor de workshop is per email afgezegd';
+			} else {
+				$bericht = 'De afspraak voor de workshop is verwijderd';
 			}
-			$bericht = 'De afspraak voor de workshop is per email afgezegd';
 		}
 		return [
 			'status'  => $this->status( $bericht ),

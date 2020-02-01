@@ -366,10 +366,6 @@ class Inschrijving extends Artikel {
 	 */
 	protected function betaalactie( $bedrag ) {
 		if ( ! $this->ingedeeld && $bedrag >= $this->cursus->inschrijfkosten ) {
-			if ( strtotime( 'today' ) < $this->cursus->start_datum ) {
-				// Alleen email versturen als de cursus nog niet gestart is.
-				$this->email( 'indeling' );
-			}
 			$this->ingedeeld = true;
 			$this->save();
 		}
