@@ -119,5 +119,6 @@ if ( 'details' === $data['actie'] ) :
 		</tr>
 	</tfoot>
 	</table>
+	<button type="button" class="kleistad_download_link" data-actie="omzetrapport" >Omzet rapport</button>
 </div>
 <?php endif ?>

@@ -14,11 +14,9 @@ $per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : strtoti
 $per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
 
 $extra_beschikbaar = false;
-if ( ! $in_driemaandperiode ) :
-	foreach ( $this->options['extra'] as $extra ) :
-		$extra_beschikbaar = $extra_beschikbaar || ( 0 < $extra['prijs'] );
-	endforeach;
-endif;
+foreach ( $this->options['extra'] as $extra ) :
+	$extra_beschikbaar = $extra_beschikbaar || ( 0 < $extra['prijs'] );
+endforeach;
 ?>
 <p>Abonnement status per <?php echo esc_html( $per ); ?> :</p>
 <table class="kleistad_form">
@@ -42,6 +40,7 @@ endif;
 <?php $this->form(); ?>
 	<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 	<input type="hidden" name="per_datum" value="<?php echo esc_attr( $per_datum ); ?>" >
+	<?php if ( ! $in_driemaandperiode ) : ?>
 	<div class="kleistad_row"> <!-- soort -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad_input_cbr" value="soort" >
@@ -87,9 +86,9 @@ endif;
 		endif;
 		?>
 	</div>
-	<?php
-	if ( $extra_beschikbaar ) :
-		?>
+	<?php endif // Niet in 3 maand periode. ?>
+
+	<?php if ( $extra_beschikbaar && ! $in_driemaandperiode ) : ?>
 	<div class="kleistad_row"> <!-- extras -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad_input_cbr" value="extras" >
@@ -126,10 +125,8 @@ endif;
 		endforeach;
 		?>
 	</div>
-		<?php
-	endif;
-	if ( 'beperkt' === $data['input']['soort'] ) :
-		?>
+	<?php endif // Extras en niet in 3 maand periode. ?>
+	<?php if ( 'beperkt' === $data['input']['soort'] ) : ?>
 	<div class="kleistad_row"> <!-- dag -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_dag" class="kleistad_abo_optie kleistad_input_cbr" value="dag" >
@@ -163,10 +160,8 @@ endif;
 			</div>
 		</div>
 	</div>
-		<?php
-	endif;
-	if ( ! $in_driemaandperiode ) :
-		?>
+	<?php endif // Wijzig beperkt. ?>
+	<?php if ( ! $in_driemaandperiode ) : ?>
 	<div class="kleistad_row"> <!-- pauze -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad_input_cbr" value="pauze" >
@@ -216,9 +211,7 @@ endif;
 		</div>
 		<?php endif // Pauze is nog wel mogelijk. ?>
 	</div>
-		<?php
-	endif // Niet in drie maand periode.
-	?>
+	<?php endif // Niet in drie maand periode. ?>
 	<div class="kleistad_row"> <!-- einde -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad_input_cbr" value="einde" >
@@ -233,9 +226,7 @@ endif;
 			<p><strong>Je wilt je abonnement per <?php echo esc_html( $per ); ?> stoppen</strong></p>
 		</div>
 	</div>
-	<?php
-	if ( ! $in_driemaandperiode ) :
-		?>
+	<?php if ( ! $in_driemaandperiode ) : ?>
 	<div class="kleistad_row"> <!-- betaalwijze -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad_input_cbr" value="betaalwijze" >
@@ -283,9 +274,7 @@ endif;
 		endif; // Incasso is actief.
 		?>
 	</div>
-		<?php
-	endif; // Niet in 3 maanden periode.
-	?>
+	<?php endif // Niet in 3 maanden periode. ?>
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_10">
 			<button name="kleistad_submit_abonnee_wijziging" type="submit" id="kleistad_submit_abonnee_wijziging" disabled >Bevestigen</button>

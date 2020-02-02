@@ -235,7 +235,7 @@ var detectTap;
 				function() {
 					var $button       = $( this );
 					var shortcodeData = $.fn.shortcode( $button );
-					$( 'input' ).each(
+					$( 'input,select' ).each(
 						function() {
 							shortcodeData[ $( this ).attr( 'name') ] = $( this ).val();
 						}

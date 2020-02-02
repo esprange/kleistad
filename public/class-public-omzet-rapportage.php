@@ -46,4 +46,13 @@ class Public_Omzet_Rapportage extends Shortcode {
 		}
 	}
 
+	/**
+	 * Maak een presentielijst aan.
+	 */
+	protected function omzetrapport() {
+		$maand   = filter_input( INPUT_GET, 'maand', FILTER_SANITIZE_STRING );
+		$jaar    = filter_input( INPUT_GET, 'jaar', FILTER_SANITIZE_STRING );
+		$rapport = new \Kleistad\OmzetRapport();
+		return $rapport->run( $maand, $jaar );
+	}
 }
