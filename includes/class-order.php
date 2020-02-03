@@ -232,6 +232,8 @@ class Order extends \Kleistad\Entity {
 		if ( $this->origineel_id ) {
 			$origineel_order = new \Kleistad\Order( $this->origineel_id );
 			$openstaand      = $origineel_order->bruto() + $this->bruto() - $this->betaald;
+		} elseif ( $this->credit_id ) {
+			$openstaand = 0;
 		} else {
 			$openstaand = $this->bruto() - $this->betaald;
 		}

@@ -351,7 +351,7 @@ abstract class Artikel extends Entity {
 	 *
 	 * @return string De html link.
 	 */
-	protected function betaal_link() {
+	public function betaal_link() {
 		if ( $this->artikel_type ) {
 			$url = add_query_arg(
 				[
