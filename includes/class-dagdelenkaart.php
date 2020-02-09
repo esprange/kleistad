@@ -88,7 +88,7 @@ class Dagdelenkaart extends Artikel {
 				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
 			default:
-				$this->data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
 		}
 	}
 
@@ -151,7 +151,7 @@ class Dagdelenkaart extends Artikel {
 					'achternaam'              => $gebruiker->last_name,
 					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
 					'dagdelenkaart_code'      => $this->code,
-					'dagdelenkaart_opmerking' => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
+					'dagdelenkaart_opmerking' => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
 					'dagdelenkaart_link'      => $this->betaal_link(),
 				],
@@ -231,20 +231,21 @@ class Dagdelenkaart extends Artikel {
 	/**
 	 * Activeer een dagdelenkaart. Wordt aangeroepen vanuit de betaal callback.
 	 *
-	 * @param int    $order_id De order id, als die al bestaat.
-	 * @param float  $bedrag   Het bedrag dat betaald is.
-	 * @param bool   $betaald  Of er werkelijk betaald is.
-	 * @param string $type    Het type betaling.
+	 * @param int    $order_id      De order id, als die al bestaat.
+	 * @param float  $bedrag        Het bedrag dat betaald is.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Het type betaling.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
 			if ( $order_id ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
-				$this->ontvang_order( $order_id, $bedrag );
-				if ( 'ideal' === $type ) {
+				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->email( '_ideal_betaald' );
 				}
 			} else { // Betaling vanuit inschrijvingformulier.
-				$this->email( '_ideal', $this->bestel_order( $bedrag ) );
+				$this->email( '_ideal', $this->bestel_order( $bedrag, $this->start_datum, '', $transactie_id ) );
 			}
 		}
 	}

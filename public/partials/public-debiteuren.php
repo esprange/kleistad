@@ -54,7 +54,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 	</table>
 	<?php $this->form(); ?>
 	<input type="hidden" name="id" value="<?php echo esc_attr( $data['debiteur']['id'] ); ?>"/>
-	<?php if ( ! $data['debiteur']['gesloten'] ) : ?>
+	<?php if ( ! $data['debiteur']['gesloten'] || $data['debiteur']['terugstorting'] ) : ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_6">
 				<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" class="kleistad_input_cbr" value="bankbetaling" >
@@ -174,9 +174,10 @@ elseif ( 'debiteur' === $data['actie'] ) :
 </div>
 <br/><hr><br/>
 <?php endif // Als zoek. ?>
-<table class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+<table class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "asc" ]]' >
 	<thead>
 		<tr>
+			<th data-visible="false">Vervaldatum</th>
 			<th>Code</th>
 			<th>Naam</th>
 			<th>Betreft</th>
@@ -193,7 +194,8 @@ elseif ( 'debiteur' === $data['actie'] ) :
 		foreach ( $data['debiteuren'] as $debiteur ) :
 			$datum->setTimestamp( $debiteur['sinds'] );
 			?>
-			<tr>
+			<tr style="<?php echo $debiteur['verval_datum'] <= strtotime( 'today' ) && ! $debiteur['gesloten'] ? 'color:#b30000' : ''; ?>" >
+				<td data-visible="false"><?php echo esc_html( $debiteur['verval_datum'] ); ?></td>
 				<td><?php echo esc_html( $debiteur['referentie'] . ( $debiteur['credit'] ? '(C)' : '' ) ); ?></td>
 				<td><?php echo esc_html( $debiteur['naam'] ); ?></td>
 				<td><?php echo esc_html( $debiteur['betreft'] ); ?></td>

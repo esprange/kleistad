@@ -142,7 +142,7 @@ class Workshop extends Artikel {
 				$this->data['telefoon'] = $waarde;
 				break;
 			default:
-				$this->data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
 		}
 	}
 
@@ -397,7 +397,7 @@ class Workshop extends Artikel {
 			}
 			$workshop->betaling_email = true;
 			$workshop->save();
-			$workshop->email( '_betaling', $workshop->bestel_order( 0.0 ) );
+			$workshop->email( '_betaling', $workshop->bestel_order( 0.0, $workshop->datum ) );
 		}
 	}
 
@@ -406,19 +406,20 @@ class Workshop extends Artikel {
 	 *
 	 * @since        5.0.0
 	 *
-	 * @param int    $order_id   De order id, als deze al bestaat.
-	 * @param float  $bedrag     Het betaalde bedrag.
-	 * @param bool   $betaald    Of er werkelijk betaald is.
-	 * @param string $type      Type betaling, ideal , directdebit of bank.
+	 * @param int    $order_id     De order id, als deze al bestaat.
+	 * @param float  $bedrag       Het betaalde bedrag.
+	 * @param bool   $betaald      Of er werkelijk betaald is.
+	 * @param string $type         Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
 			if ( $order_id ) {
 				/**
 				 * Bij workshops is er altijd eerst een factuur verstuurd
 				 */
-				$this->ontvang_order( $order_id, $bedrag );
-				if ( 'ideal' === $type ) {
+				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->email( '_ideal_betaald' );
 				}
 			}

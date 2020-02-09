@@ -29,13 +29,14 @@ class LosArtikel extends Artikel {
 	 * @param int $verkoop_id Een uniek id van de verkoop.
 	 */
 	public function __construct( $verkoop_id ) {
-		$this->betalen = new \Kleistad\Betalen();
-		$this->data    = [
+		$this->betalen      = new \Kleistad\Betalen();
+		$this->data         = [
 			'regels' => [],
 			'klant'  => [],
 			'prijs'  => 0.0,
 			'code'   => "X$verkoop_id",
 		];
+		$this->artikel_type = 'overig';
 	}
 
 	/**
@@ -59,7 +60,7 @@ class LosArtikel extends Artikel {
 	 * @param mixed  $waarde De nieuwe waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
-		$this->data[ $attribuut ] = $waarde;
+		$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
 	}
 
 	/**
@@ -192,18 +193,19 @@ class LosArtikel extends Artikel {
 	 *
 	 * @since      6.2.0
 	 *
-	 * @param int    $order_id   De order_id, als die al bekend is.
-	 * @param float  $bedrag     Het bedrag dat betaald is.
-	 * @param bool   $betaald    Of er werkelijk betaald is.
-	 * @param string $type      Type betaling, ideal , directdebit of bank.
+	 * @param int    $order_id      De order_id, als die al bekend is.
+	 * @param float  $bedrag        Het bedrag dat betaald is.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
 			if ( $order_id ) {
 				$order       = new \Kleistad\Order( $order_id );
 				$this->klant = $order->klant;
-				$this->ontvang_order( $order_id, $bedrag );
-				if ( 'ideal' === $type ) {
+				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->email( '_ideal_betaald' );
 				}
 			}

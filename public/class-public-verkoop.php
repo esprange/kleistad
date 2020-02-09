@@ -115,7 +115,7 @@ class Public_Verkoop extends ShortcodeForm {
 		do {
 			$verkoop->bestelregel( $data['input']['omschrijving'][ $index ], $data['input']['aantal'][ $index ], $data['input']['prijs'][ $index ] );
 		} while ( ++$index < $count );
-		$verkoop->email( '', $verkoop->bestel_order( 0.0 ) );
+		$verkoop->email( '', $verkoop->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'Er is een email verzonden met factuur en nadere informatie over de betaling' ),

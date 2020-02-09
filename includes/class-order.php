@@ -23,10 +23,12 @@ namespace Kleistad;
  * @property string historie
  * @property array  klant
  * @property int    mutatie_datum
+ * @property int    verval_datum
  * @property string referentie
  * @property array  regels
  * @property string opmerking
  * @property int    factuurnr
+ * @property string transactie_id
  *
  * @since 6.1.0
  */
@@ -61,6 +63,7 @@ class Order extends \Kleistad\Entity {
 					]
 				),
 				'mutatie_datum' => null,
+				'verval_datum'  => null,
 				'referentie'    => '',
 				'regels'        => wp_json_encode( [] ),
 				'opmerking'     => '',
@@ -99,6 +102,7 @@ class Order extends \Kleistad\Entity {
 				return json_decode( $this->data[ $attribuut ], true );
 			case 'datum':
 			case 'mutatie_datum':
+			case 'verval_datum':
 				return strtotime( $this->data[ $attribuut ] );
 			case 'gesloten':
 				return boolval( $this->data[ $attribuut ] );
@@ -143,6 +147,7 @@ class Order extends \Kleistad\Entity {
 				break;
 			case 'datum':
 			case 'mutatie_datum':
+			case 'verval_datum':
 				$this->data[ $attribuut ] = date( 'Y-m-d h:m:s', $waarde );
 				break;
 			case 'gesloten':
@@ -197,6 +202,14 @@ class Order extends \Kleistad\Entity {
 	}
 
 	/**
+	 * Controleer of er een terugstorting actief is. In dat geval moeten er geen bankbetalingen gedaan worden.
+	 */
+	public function terugstorting_actief() {
+		$betalen = new \Kleistad\Betalen();
+		return $betalen->terugstorting_actief( $this->transactie_id );
+	}
+
+	/**
 	 * Maak het factuurnr van de order als het nog niet bestaat.
 	 *
 	 * @return string Het factuur nummer.
@@ -236,6 +249,21 @@ class Order extends \Kleistad\Entity {
 			$openstaand = 0;
 		} else {
 			$openstaand = $this->bruto() - $this->betaald;
+		}
+		if ( $this->transactie_id && 0 > $openstaand ) {
+			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
+			$betalen = new \Kleistad\Betalen();
+			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'terugstorting conform factuur ' . $this->factuurnr() );
+			add_filter(
+				'kleistad_melding',
+				function( $html ) use ( $result ) {
+					return $html . \Kleistad\Shortcode::melding(
+						$result ? 1 : -1,
+						$result ? 'er is opdracht gegeven om het terug te betalen bedrag over te maken' :
+						'de opdracht om het bedrag terug te storten is geweigerd. Probeer het per bank over te maken'
+					);
+				}
+			);
 		}
 		$this->gesloten = 0.01 >= abs( $openstaand );
 		if ( ! $this->id ) {

@@ -73,20 +73,20 @@ class Betalen {
 	/**
 	 * Bereid de order informatie voor.
 	 *
-	 * @param int|array $referentie   referentie waarvoor de betaling wordt uitgevoerd (WordPress id of array order/naam/email).
+	 * @param int|array $klant        klant waarvoor de betaling wordt uitgevoerd (WordPress id of array order/naam/email).
 	 * @param string    $order_id     de externe order referentie, maximaal 35 karakters.
 	 * @param float     $bedrag       het bedrag.
-	 * @param string    $beschrijving de externe order referentie, maximaal 35 karakters.
+	 * @param string    $beschrijving de externe order beschrijving, maximaal 35 karakters.
 	 * @param string    $bericht      het bericht bij succesvolle betaling.
 	 * @param bool      $mandateren   er wordt een herhaalde betaling voorbereid.
 	 * @return bool|string De redirect bestemming of false.
 	 */
-	public function order( $referentie, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
+	public function order( $klant, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
 		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
 		try {
-			if ( ! is_array( $referentie ) ) {
-				$gebruiker_id        = $referentie;
+			if ( ! is_array( $klant ) ) {
+				$gebruiker_id        = $klant;
 				$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 				if ( '' === $mollie_gebruiker_id || is_null( $mollie_gebruiker_id ) ) {
 					$gebruiker           = get_userdata( $gebruiker_id );
@@ -103,8 +103,8 @@ class Betalen {
 			} else {
 				$mollie_gebruiker = $this->mollie->customers->create(
 					[
-						'name'  => $referentie['naam'],
-						'email' => $referentie['email'],
+						'name'  => $klant['naam'],
+						'email' => $klant['email'],
 					]
 				);
 			}
@@ -201,6 +201,51 @@ class Betalen {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
 		}
+	}
+
+	/**
+	 * Stort een eerder bedrag (deels) terug.
+	 *
+	 * @param string $mollie_betaling_id Het id van de oorspronkelijke betaling.
+	 * @param string $order_id           De externe referentie.
+	 * @param float  $bedrag             Het terug te storten bedrag.
+	 * @param string $beschrijving       De externe beschrijving van de opdracht.
+	 */
+	public function terugstorting( $mollie_betaling_id, $order_id, $bedrag, $beschrijving ) {
+		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
+		$value    = number_format( $bedrag, 2, '.', '' );
+		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
+			$refund = $betaling->refund(
+				[
+					'amount'      => [
+						'currency' => 'EUR',
+						'value'    => $value,
+					],
+					'metadata'    => [
+						'order_id' => $order_id,
+					],
+					'description' => $beschrijving,
+				]
+			);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Test of er een refund actief is.
+	 *
+	 * @param string $mollie_betaling_id De transactie id.
+	 */
+	public function terugstorting_actief( $mollie_betaling_id ) {
+		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
+		foreach ( $betaling->refunds() as $refund ) {
+			if ( false !== strpos( 'queued pending processing', $refund->status ) ) {
+				return true;
+			}
+		}
+		return false; // Status is failed of refunded.
 	}
 
 	/**
@@ -310,12 +355,37 @@ class Betalen {
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
 		$artikel            = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
 		$order_id           = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
-		$artikel->verwerk_betaling(
-			$order_id,
-			$betaling->amount->value,
-			$betaling->isPaid(), // In eerdere instantie ook checks of er geen sprake was van -hasRefunds() en hasChargeBacks().
-			$betaling->method
-		);
+		if ( $betaling->hasRefunds() ) {
+			foreach ( $betaling->refunds() as $refund ) {
+				if ( 'refunded' === $refund->status ) {
+					$artikel->verwerk_betaling(
+						$order_id,
+						- $refund->amount->value,
+						true,
+						$betaling->method,
+						$mollie_betaling_id
+					);
+				} elseif ( 'failed' === $refund->status ) {
+					$emailer = new \Kleistad\Email();
+					$emailer->send(
+						[
+							'to'      => 'Boekhouding <info@' . \Kleistad\Email::domein() . '>',
+							'subject' => 'terugstorting niet mogelijk',
+							'content' => "<p>Mollie heeft aangegeven dat voor {$betaling->metadata->order_id} de terugstorting van {$refund->amount->value} niet mogelijk was</p>",
+							'sign'    => 'Mollie',
+						]
+					);
+				}
+			}
+		} else {
+			$artikel->verwerk_betaling(
+				$order_id,
+				$betaling->amount->value,
+				$betaling->isPaid(),
+				$betaling->method,
+				$mollie_betaling_id
+			);
+		}
 		return new \WP_REST_Response(); // Geeft default http status 200 terug.
 	}
 }

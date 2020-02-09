@@ -219,7 +219,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		} else {
 			if ( ! $lopend ) {
 				$inschrijving->artikel_type = 'inschrijving';
-				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, \Kleistad\Inschrijving::OPM_INSCHRIJVING ) );
+				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, $data['cursus']->start_datum, \Kleistad\Inschrijving::OPM_INSCHRIJVING ) );
 			} else {
 				$inschrijving->email( '_lopend' );
 			}

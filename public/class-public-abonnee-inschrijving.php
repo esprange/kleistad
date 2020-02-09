@@ -166,7 +166,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}
 		} else {
-			$abonnement->email( '_start_bank', $abonnement->bestel_order( 0.0 ) );
+			$abonnement->email( '_start_bank', $abonnement->bestel_order( 0.0, $abonnement->start_datum ) );
 			return [
 				'content' => $this->goto_home(),
 				'status'  => $this->status( 'De inschrijving van het abonnement is verwerkt en er wordt een email verzonden met bevestiging' ),

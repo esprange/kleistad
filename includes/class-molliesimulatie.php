@@ -15,7 +15,8 @@ namespace Kleistad;
  * Definitie van de mollie simulatie class.
  */
 class MollieSimulatie {
- // phpcs:disable WordPress.NamingConventions
+// phpcs:disable WordPress.NamingConventions
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Customers object
@@ -39,16 +40,34 @@ class MollieSimulatie {
 	public $methods;
 
 	/**
+	 * SQL lite object
+	 *
+	 * @var object $_db SQLite object
+	 */
+	public static $_db;
+
+	/**
 	 * De constructor van de simulatie class
 	 */
 	public function __construct() {
+		self::$_db = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+		$res       = self::$_db->query( "SELECT name FROM sqlite_master WHERE type='table' AND name='payments'" );
+		if ( ! $res->fetchArray() ) {
+			self::$_db->exec( 'CREATE TABLE payments( id TEXT PRIMARY KEY, data TEXT )' );
+		}
+		$res = self::$_db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='refunds'" );
+		if ( ! $res->fetchArray() ) {
+			self::$_db->exec( 'CREATE TABLE refunds(  intern_id INTEGER primary key, id text, data text )' );
+		}
 
 		$this->payments = new class() {
 			/**
 			 * Geef een payment object terug.
+			 *
+			 * @param string $id Het Mollie id.
 			 */
-			public function get() {
-				return new class() {
+			public function get( $id ) {
+				return new class( $id ) {
 					/**
 					 * Metadata object
 					 *
@@ -64,11 +83,46 @@ class MollieSimulatie {
 					public $amount;
 
 					/**
+					 * Geeft aan hoeveel er nog openstaat.
+					 *
+					 * @var object $amountRemaining Het object waarin het openstaande bedrag zit.
+					 */
+					public $amountRemaining;
+
+					/**
 					 * Method property
 					 *
 					 * @var string $method Kan o.a. ideal en directdebit bevatten.
 					 */
-					public $method = 'ideal';
+					public $method;
+
+					/**
+					 * Description property
+					 *
+					 * @var string $description Beschrijving.
+					 */
+					public $description;
+
+					/**
+					 * Sequencetype property
+					 *
+					 * @var string $sequenceType Type one-off of recurring.
+					 */
+					public $sequenceType;
+
+					/**
+					 * Webhook property
+					 *
+					 * @var string $webhookUrl De webhook.
+					 */
+					public $webhookUrl;
+
+					/**
+					 * HasRefunds property
+					 *
+					 * @var bool $_hasRefunds Of er een refund bestaat.
+					 */
+					private $_hasRefunds = false;
 
 					/**
 					 * Geeft aan dat er betaald is.
@@ -81,7 +135,14 @@ class MollieSimulatie {
 					 * Geeft aan dat er geen sprake is refunds.
 					 */
 					public function hasRefunds() {
-						return false;
+						return $this->_hasRefunds;
+					}
+
+					/**
+					 * Geeft aan dat er geen sprake is refunds.
+					 */
+					public function canBeRefunded() {
+						return true;
 					}
 
 					/**
@@ -92,14 +153,55 @@ class MollieSimulatie {
 					}
 
 					/**
-					 * De constructor.
+					 * Geef de refunds terug (in simulatie maar één ).
 					 */
-					public function __construct() {
-						$data = get_option( 'mollie_simulatie' );
-						if ( isset( $data['metadata'] ) ) {
-							$this->metadata = (object) $data['metadata'];
+					public function refunds() {
+						$res     = MollieSimulatie::$_db->query( "SELECT * FROM refunds WHERE id='{$this->id}'" );
+						$refunds = [];
+						$row     = $res->fetchArray();
+						if ( $row ) {
+							$refunds[] = json_decode( $row['data'] );
+						};
+						return $refunds;
+					}
+
+					/**
+					 * Voer een refund uit
+					 *
+					 * @param array $data De data.
+					 */
+					public function refund( $data ) {
+						$data['status'] = 'pending';
+						MollieSimulatie::$_db->exec( "INSERT INTO refunds (id, data) VALUES ( '{$this->id}','" . wp_json_encode( $data ) . "')" );
+						MollieSimulatie::$_db->exec( "UPDATE payments set data='" . wp_json_encode( $this ) . "' WHERE id='{$this->id}'" );
+					}
+
+					/**
+					 * De constructor.
+					 *
+					 * @param string $id Het payment id.
+					 */
+					public function __construct( $id ) {
+						$this->id = $id;
+						$res      = MollieSimulatie::$_db->query( "SELECT data FROM payments WHERE id = '{$this->id}'" );
+						$row      = $res->fetchArray();
+						if ( $row ) {
+							$data                  = json_decode( $row['data'] );
+							$this->metadata        = $data->metadata;
+							$this->amount          = $data->amount;
+							$this->amountRemaining = $data->amount;
+							$this->description     = $data->description;
+							$this->method          = property_exists( $data, 'method' ) ? $data->method : 'directdebit';
+							$this->sequenceType    = $data->sequenceType;
+							$this->webhookUrl      = $data->webhookUrl;
 						}
-						$this->amount = (object) $data['amount'];
+						$res = MollieSimulatie::$_db->query( "SELECT data FROM refunds WHERE id = '{$this->id}'" );
+						$row = $res->fetchArray();
+						if ( $row ) {
+							$data                         = json_decode( $row['data'] );
+							$this->amountRemaining->value = $this->amount->value - $data->amount->value;
+							$this->_hasRefunds            = true;
+						};
 					}
 				};
 			}
@@ -288,7 +390,7 @@ class MollieSimulatie {
 							 *
 							 * @var string $id Het id
 							 */
-							public $id = '_sim123456';
+							public $id;
 
 							/**
 							 * De constructor
@@ -296,7 +398,8 @@ class MollieSimulatie {
 							 * @param array $data De orderdata.
 							 */
 							public function __construct( $data ) {
-								update_option( 'mollie_simulatie', $data );
+								$this->id = \uniqid();
+								MollieSimulatie::$_db->exec( "INSERT INTO payments (id, data) VALUES ( '{$this->id}','" . wp_json_encode( $data ) . "')" );
 								$response = wp_remote_post(
 									$data['webhookUrl'],
 									[

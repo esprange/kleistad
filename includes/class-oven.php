@@ -90,7 +90,7 @@ class Oven extends Entity {
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
 			default:
-				$this->data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
 		}
 	}
 

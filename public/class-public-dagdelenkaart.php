@@ -134,7 +134,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 				}
 				return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			} else {
-				if ( $dagdelenkaart->email( '_bank', $dagdelenkaart->bestel_order( 0.0 ) ) ) {
+				if ( $dagdelenkaart->email( '_bank', $dagdelenkaart->bestel_order( 0.0, $dagdelenkaart->start_datum ) ) ) {
 					return [
 						'content' => $this->goto_home(),
 						'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),

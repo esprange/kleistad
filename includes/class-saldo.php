@@ -221,26 +221,27 @@ class Saldo extends Artikel {
 	 *
 	 * @since      4.2.0
 	 *
-	 * @param int    $order_id  De order_id, als die al bestaat.
-	 * @param float  $bedrag    Het bedrag dat betaald is.
-	 * @param bool   $betaald   Of er werkelijk betaald is.
-	 * @param string $type   Type betaling, ideal , directdebit of bank.
+	 * @param int    $order_id      De order_id, als die al bestaat.
+	 * @param float  $bedrag        Het bedrag dat betaald is.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
 			if ( $order_id ) {
 				/**
 				 * Er bestaat al een order dus dit is een betaling o.b.v. een email link of per bank.
 				 */
-				$this->ontvang_order( $order_id, $bedrag );
-				if ( 'ideal' === $type ) {
+				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->email( '_ideal_betaald' );
 				}
 			} else {
 				/**
 				 * Een betaling vanuit het formulier
 				 */
-				$this->email( '_ideal', $this->bestel_order( $bedrag ) );
+				$this->email( '_ideal', $this->bestel_order( $bedrag, strtotime( '+7 days  0:00' ), '', $transactie_id ) );
 			}
 		}
 	}
@@ -254,6 +255,7 @@ class Saldo extends Artikel {
 		if ( 0 < $bedrag ) {
 			$this->reden   = 'betaling per bank';
 			$this->bedrag += $bedrag;
+			$this->save();
 		}
 	}
 

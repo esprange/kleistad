@@ -131,7 +131,7 @@ class Abonnement extends Artikel {
 				$this->data[ $attribuut ] = (int) $waarde;
 				break;
 			default:
-				$this->data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
 		}
 	}
 
@@ -263,7 +263,7 @@ class Abonnement extends Artikel {
 					'abonnement'              => $this->soort,
 					'abonnement_code'         => $this->code,
 					'abonnement_dag'          => $this->dag,
-					'abonnement_opmerking'    => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
+					'abonnement_opmerking'    => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking ",
 					'abonnement_wijziging'    => $this->bericht,
 					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->extras_lijst() : '',
 					'abonnement_startgeld'    => number_format_i18n( $this->bedrag( '#start' ), 2 ),
@@ -356,20 +356,21 @@ class Abonnement extends Artikel {
 	/**
 	 * Doe acties na betaling van abonnementen. Wordt aangeroepen vanuit de betaal callback.
 	 *
-	 * @param int    $order_id  Het eventueel al bestaande order id.
-	 * @param float  $bedrag    Het betaalde bedrag.
-	 * @param bool   $betaald   Of er werkelijk betaald is.
-	 * @param string $type     Het type betaling.
+	 * @param int    $order_id   Het eventueel al bestaande order id.
+	 * @param float  $bedrag     Het betaalde bedrag.
+	 * @param bool   $betaald    Of er werkelijk betaald is.
+	 * @param string $type       Het type betaling.
+	 * @param string $transactie_id De betalings id.
 	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
 			if ( $order_id ) {
 				/**
 				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of betaling per bank.
 				 * Omdat de order al bestaat betekent dit ook dat er al een factuur verstuurd is.
 				 */
-				$this->ontvang_order( $order_id, $bedrag );
-				if ( 'ideal' === $type ) {
+				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->email( '_ideal_betaald' );
 				}
 			} elseif ( 'mandaat' === $this->artikel_type ) {
@@ -383,20 +384,20 @@ class Abonnement extends Artikel {
 				 * Bij een start en nog niet bestaande order moet dit wel afkomstig zijn van het invullen van
 				 * een inschrijving formulier.
 				 */
-				$this->email( '_start_ideal', $this->bestel_order( $bedrag ) );
+				$this->email( '_start_ideal', $this->bestel_order( $bedrag, $this->start_datum, '', $transactie_id ) );
 			} else {
 				/**
 				 * Blijkbaar iets anders dan een start. Omdat de order nog niet bestaat moet dit wel afkomstig zijn van een
 				 * incasso want de overbruggingsfactuur is al 7 dagen vooraf verstuurd.
 				 */
-				$this->email( '_regulier_incasso', $this->bestel_order( $bedrag ) );
+				$this->email( '_regulier_incasso', $this->bestel_order( $bedrag, strtotime( '+14 days 0:00' ), '', $transactie_id ) );
 			}
 		} else {
 			if ( 'directdebit' === $type ) {
 				/**
 				 * Als het een incasso betreft die gefaald is dan maken we alsnog de order aan.
 				 */
-				$this->email( '_regulier_mislukt', $this->bestel_order( 0.0 ) );
+				$this->email( '_regulier_mislukt', $this->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
 			}
 		}
 	}
@@ -611,7 +612,7 @@ class Abonnement extends Artikel {
 		if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
 			$abonnement->sepa_incasso();
 		} else {
-			$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0 ) );
+			$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
 		}
 	}
 
@@ -638,7 +639,7 @@ class Abonnement extends Artikel {
 			if ( $vandaag < $abonnement->reguliere_datum ) {
 				if ( $vandaag >= strtotime( '-7 days', $abonnement->driemaand_datum ) && ! $abonnement->eind_datum && ! $abonnement->overbrugging_email ) {
 					$abonnement->artikel_type = 'overbrugging';
-					$abonnement->email( '_vervolg', $abonnement->bestel_order( 0.0 ) );
+					$abonnement->email( '_vervolg', $abonnement->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
 					$abonnement->overbrugging_email = true;
 					$abonnement->save();
 				}

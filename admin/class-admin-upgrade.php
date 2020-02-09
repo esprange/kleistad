@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 50;
+	const DBVERSIE = 52;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -180,7 +180,9 @@ class Admin_Upgrade {
 			historie varchar(2000),
 			klant tinytext,
 			mutatie_datum datetime,
+			verval_datum datetime,
 			referentie varchar(20) NOT NULL,
+			transactie_id varchar(20) NOT NULL DEFAULT '',
 			regels varchar(2000),
 			opmerking varchar(200),
 			factuurnr int(10) DEFAULT 0,
@@ -235,16 +237,8 @@ class Admin_Upgrade {
 	 * Converteer de orders.
 	 */
 	private function convert_order() {
-		// global $wpdb;
-		// $orders = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders", ARRAY_A ); // phpcs:ignore
-		// foreach ( $orders as $order ) {
-		// 	$klant = json_decode( $order['klant'], true );
-		// 	if ( ! isset( $klant['email'] ) ) {
-		// 		$artikel        = \Kleistad\Artikel::get_artikel( $order['referentie'] );
-		// 		$klant['email'] = $artikel->naw_klant()['email'];
-		// 		$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_orders SET klant=%s WHERE id=%d", wp_json_encode( $klant ), $order['id'] ) );
-		// 	}
-		// }
+		global $wpdb;
+		$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_orders SET verval_datum=%s", '2020-12-31 00:00:00' ) );
 	}
 
 	// phpcs:enable

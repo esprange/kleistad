@@ -69,12 +69,13 @@ abstract class Artikel extends Entity {
 	/**
 	 * Aanroep vanuit betaling per ideal of sepa incasso.
 	 *
-	 * @param int    $order_id   De order id.
-	 * @param float  $bedrag     Het betaalde bedrag.
-	 * @param bool   $betaald    Of er werkelijk betaald is.
-	 * @param string $type       Een betaling per bank, ideal of incasso.
+	 * @param int    $order_id      De order id.
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Een betaling per bank, ideal of incasso.
+	 * @param string $transactie_id De betalings id.
 	 */
-	abstract public function verwerk_betaling( $order_id, $bedrag, $betaald, $type );
+	abstract public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' );
 
 	/**
 	 * Geef de code van het artikel
@@ -132,6 +133,7 @@ abstract class Artikel extends Entity {
 		$credit_order->betaald      = $order->betaald;
 		$credit_order->klant        = $order->klant;
 		$credit_order->origineel_id = $order->id;
+		$credit_order->verval_datum = strtotime( 'tomorrow' );
 		$regels                     = $order->regels;
 		foreach ( $regels as &$regel ) {
 			$regel['artikel'] = 'annulering ' . $regel['artikel'];
@@ -146,13 +148,14 @@ abstract class Artikel extends Entity {
 				]
 			);
 		}
-		$credit_order->regels    = $regels;
-		$credit_order->opmerking = $opmerking;
-		$credit_order->historie  = 'order en credit factuur aangemaakt';
-		$order->credit_id        = $credit_order->save();
-		$order->betaald          = 0;
-		$order->gesloten         = true;
-		$order->historie         = 'geannuleerd, credit factuur ' . $credit_order->factuurnr() . ' aangemaakt';
+		$credit_order->regels        = $regels;
+		$credit_order->opmerking     = $opmerking;
+		$credit_order->historie      = 'order en credit factuur aangemaakt';
+		$credit_order->transactie_id = $order->transactie_id;
+		$order->credit_id            = $credit_order->save();
+		$order->betaald              = 0;
+		$order->gesloten             = true;
+		$order->historie             = 'geannuleerd, credit factuur ' . $credit_order->factuurnr() . ' aangemaakt';
 		$order->save();
 		$this->betaalactie( $credit_order->betaald );
 		return $this->maak_factuur( $credit_order, 'credit' );
@@ -161,18 +164,22 @@ abstract class Artikel extends Entity {
 	/**
 	 * Een bestelling aanmaken.
 	 *
-	 * @param float  $bedrag       Het betaalde bedrag.
-	 * @param string $opmerking    De optionele opmerking in de factuur.
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param int    $verval_datum  De datum waarop de factuur vervalt.
+	 * @param string $opmerking     De optionele opmerking in de factuur.
+	 * @param string $transactie_id De betalings id.
 	 * @return string De url van de factuur.
 	 */
-	final public function bestel_order( $bedrag, $opmerking = '' ) {
-		$order             = new \Kleistad\Order();
-		$order->betaald    = $bedrag;
-		$order->regels     = $this->factuurregels();
-		$order->historie   = 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
-		$order->klant      = $this->naw_klant();
-		$order->opmerking  = $opmerking;
-		$order->referentie = $this->referentie();
+	final public function bestel_order( $bedrag, $verval_datum, $opmerking = '', $transactie_id = '' ) {
+		$order                = new \Kleistad\Order();
+		$order->betaald       = $bedrag;
+		$order->regels        = $this->factuurregels();
+		$order->historie      = 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
+		$order->klant         = $this->naw_klant();
+		$order->opmerking     = $opmerking;
+		$order->referentie    = $this->referentie();
+		$order->transactie_id = $transactie_id;
+		$order->verval_datum  = $verval_datum;
 		$order->save();
 		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, '' );
@@ -210,13 +217,15 @@ abstract class Artikel extends Entity {
 	/**
 	 * Een bestelling betalen.
 	 *
-	 * @param int   $id Het id van de order.
-	 * @param float $bedrag Het betaalde bedrag.
+	 * @param int    $id            Het id van de order.
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param string $transactie_id De betalings id.
 	 */
-	final public function ontvang_order( $id, $bedrag ) {
-		$order           = new \Kleistad\Order( $id );
-		$order->betaald += $bedrag;
-		$order->historie = 'betaling bedrag € ' . number_format_i18n( $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
+	final public function ontvang_order( $id, $bedrag, $transactie_id ) {
+		$order                = new \Kleistad\Order( $id );
+		$order->betaald      += $bedrag;
+		$order->historie      = 'betaling bedrag € ' . number_format_i18n( $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
+		$order->transactie_id = $transactie_id;
 		$order->save();
 		$this->betaalactie( $order->betaald );
 	}

@@ -164,13 +164,13 @@ class WorkshopAanvraag {
 	public static function ontvang_en_verwerk() {
 		// phpcs:disable WordPress.NamingConventions
 		$setup   = \Kleistad\Kleistad::get_setup();
-		$mailbox = new \PhpImap\Mailbox(
-			'{' . $setup['imap_server'] . '}INBOX',
-			self::MBX . '@' . \Kleistad\Email::domein(),
-			$setup['imap_pwd']
-		);
 		$emailer = new \Kleistad\Email();
 		try {
+			$mailbox   = new \PhpImap\Mailbox(
+				'{' . $setup['imap_server'] . '}INBOX',
+				self::MBX . '@' . \Kleistad\Email::domein(),
+				$setup['imap_pwd']
+			);
 			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
 		} catch ( \PhpImap\Exceptions\ConnectionException $ex ) {
 			error_log( 'IMAP connection failed: ' . $ex->getMessage() ); // phpcs:ignore

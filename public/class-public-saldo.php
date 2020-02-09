@@ -78,7 +78,7 @@ class Public_Saldo extends ShortcodeForm {
 			}
 			return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		} else {
-			if ( $saldo->email( '_bank', $saldo->bestel_order( 0.0 ) ) ) {
+			if ( $saldo->email( '_bank', $saldo->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) ) ) {
 				return [
 					'content' => $this->goto_home(),
 					'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),

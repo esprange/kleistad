@@ -180,7 +180,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 			$inschrijving->artikel_type   = 'inschrijving';
 			$inschrijving->save();
-			$inschrijving->email( '_lopend_betalen', $inschrijving->bestel_order( 0.0 ) );
+			$inschrijving->email( '_lopend_betalen', $inschrijving->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
 			return [
 				'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
 				'content' => $this->display(),

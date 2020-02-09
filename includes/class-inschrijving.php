@@ -137,7 +137,7 @@ class Inschrijving extends Artikel {
 				$this->data[ $attribuut ] = (int) $waarde;
 				break;
 			default:
-				$this->data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
 		}
 	}
 
@@ -297,7 +297,7 @@ class Inschrijving extends Artikel {
 					'cursus_kosten'          => number_format_i18n( $this->aantal * $this->cursus->cursuskosten, 2 ),
 					'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->cursus->inschrijfkosten, 2 ),
 					'cursus_aantal'          => $this->aantal,
-					'cursus_opmerking'       => ( '' !== $this->opmerking ) ? 'De volgende opmerking heb je doorgegeven: ' . $this->opmerking : '',
+					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'cursus_link'            => $this->betaal_link(),
 				],
 			]
@@ -442,23 +442,24 @@ class Inschrijving extends Artikel {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param int    $order_id   De order id, als deze bestaat.
-	 * @param float  $bedrag     Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool   $betaald    Of er werkelijk betaald is.
-	 * @param string $type       Type betaling, ideal , directdebit of bank.
+	 * @param int    $order_id      De order id, als deze bestaat.
+	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type ) {
+	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
 			if ( $order_id ) {
 				/**
 				 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
 				 */
-				$this->ontvang_order( $order_id, $bedrag );
+				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 				if ( $this->ingedeeld ) {
 					/**
 					 * Als de cursist al ingedeeld is volstaat een bedankje.
 					 */
-					if ( 'ideal' === $type ) {
+					if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 						$this->email( '_ideal_betaald' );
 					}
 				} else {
@@ -471,7 +472,7 @@ class Inschrijving extends Artikel {
 				/**
 				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
 				 */
-				$this->email( 'indeling', $this->bestel_order( $bedrag, 'inschrijving' === $this->artikel_type ? self::OPM_INSCHRIJVING : '' ) );
+				$this->email( 'indeling', $this->bestel_order( $bedrag, $this->cursus->start_datum, 'inschrijving' === $this->artikel_type ? self::OPM_INSCHRIJVING : '', $transactie_id ) );
 			}
 		}
 	}

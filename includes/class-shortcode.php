@@ -45,6 +45,16 @@ abstract class Shortcode {
 	protected $file_handle;
 
 	/**
+	 * Abstract definitie van de prepare functie
+	 *
+	 * @since   4.0.87
+	 *
+	 * @param array $data de data die voorbereid moet worden voor display.
+	 * @return \WP_ERROR|bool
+	 */
+	abstract protected function prepare( &$data);
+
+	/**
 	 * Controleer toegang tot deze shortcode.
 	 *
 	 * @since 5.7.2
@@ -59,6 +69,22 @@ abstract class Shortcode {
 			return $gebruiker->ID && 0 !== count( array_intersect( $access, (array) $gebruiker->roles ) );
 		}
 		return true;
+	}
+
+	/**
+	 * Maak een melding tekst aan.
+	 *
+	 * @param bool   $status  1 succes, 0 fout, -1 notificatie.
+	 * @param string $bericht Het bericht.
+	 * @return string De opgemaakte tekst.
+	 */
+	public static function melding( $status, $bericht ) {
+		$levels = [
+			-1 => 'kleistad_inform',
+			0  => 'kleistad_fout',
+			1  => 'kleistad_succes',
+		];
+		return "<div class=\"{$levels[$status]}\"><p>$bericht</p></div>";
 	}
 
 	/**
@@ -105,6 +131,7 @@ abstract class Shortcode {
 	 */
 	protected function display( &$data = [ 'actie' => '-' ] ) {
 		$this->enqueue();
+		$html   = apply_filters( 'kleistad_melding', '' );
 		$result = $this->prepare( $data );
 		if ( is_wp_error( $result ) ) {
 			$html = $this->status( $result );
@@ -134,12 +161,12 @@ abstract class Shortcode {
 		$html = '';
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
-				$html .= '<div class="kleistad_fout"><p>' . $error . '</p></div>';
+				$html .= self::melding( 0, $error );
 			}
 		} else {
 			$succes = $result['status'] ?? ( is_string( $result ) ? $result : '' );
 			if ( ! empty( $succes ) ) {
-				$html = '<div class="kleistad_succes"><p>' . $succes . '</p></div>';
+				$html = self::melding( 1, $succes );
 			}
 		}
 		return $html;
@@ -349,13 +376,4 @@ abstract class Shortcode {
 		return $this->display();
 	}
 
-	/**
-	 * Abstract definitie van de prepare functie
-	 *
-	 * @since   4.0.87
-	 *
-	 * @param array $data de data die voorbereid moet worden voor display.
-	 * @return \WP_ERROR|bool
-	 */
-	abstract protected function prepare( &$data);
 }
