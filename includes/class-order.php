@@ -193,7 +193,7 @@ class Order extends \Kleistad\Entity {
 	 */
 	public function geblokkeerd() {
 		$blokkade = self::get_blokkade();
-		return ( $this->datum < $blokkade );
+		return ( $this->datum < $blokkade || $this->credit_id );
 	}
 
 	/**
@@ -236,7 +236,10 @@ class Order extends \Kleistad\Entity {
 	 */
 	public function terugstorting_actief() {
 		$betalen = new \Kleistad\Betalen();
-		return $betalen->terugstorting_actief( $this->transactie_id );
+		if ( $this->transactie_id ) {
+			return $betalen->terugstorting_actief( $this->transactie_id );
+		}
+		return false;
 	}
 
 	/**
@@ -280,7 +283,21 @@ class Order extends \Kleistad\Entity {
 		} else {
 			$openstaand = $this->bruto() - $this->betaald;
 		}
-		if ( $this->transactie_id && 0 > $openstaand ) {
+		$this->gesloten = 0.01 >= abs( $openstaand );
+		if ( ! $this->id ) {
+			$wpdb->query( "INSERT INTO {$wpdb->prefix}kleistad_orders ( factuurnr ) VALUES ( 1 + ( SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders AS O2 ) ) " );
+			$this->id        = $wpdb->insert_id;
+			$this->factuurnr = intval(
+				$wpdb->get_var(
+					$wpdb->prepare( "SELECT factuurnr FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", $this->id )
+				)
+			);
+		} else {
+			$this->mutatie_datum = time();
+		}
+		$wpdb->replace( "{$wpdb->prefix}kleistad_orders", $this->data );
+
+		if ( $this->transactie_id && -0.01 > $openstaand ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
 			$betalen = new \Kleistad\Betalen();
 			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'terugstorting conform factuur ' . $this->factuurnr() );
@@ -295,19 +312,6 @@ class Order extends \Kleistad\Entity {
 				}
 			);
 		}
-		$this->gesloten = 0.01 >= abs( $openstaand );
-		if ( ! $this->id ) {
-			$wpdb->query( "INSERT INTO {$wpdb->prefix}kleistad_orders ( factuurnr ) VALUES ( 1 + ( SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders AS O2 ) ) " );
-			$this->id        = $wpdb->insert_id;
-			$this->factuurnr = intval(
-				$wpdb->get_var(
-					$wpdb->prepare( "SELECT factuurnr FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", $this->id )
-				)
-			);
-		} else {
-			$this->mutatie_datum = time();
-		}
-		$wpdb->replace( "{$wpdb->prefix}kleistad_orders", $this->data );
 		return $this->id;
 	}
 

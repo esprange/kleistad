@@ -57,7 +57,7 @@ class Public_Debiteuren extends ShortcodeForm {
 		if ( '@' !== $order->referentie[0] ) {
 			$betreft      = \Kleistad\Artikel::get_artikel( $order->referentie )->artikel_naam();
 			$geblokkeerd  = $order->geblokkeerd();
-			$annuleerbaar = true;
+			$annuleerbaar = ! boolval( $order->credit_id );
 		} else {
 			$betreft      = 'afboeking';
 			$geblokkeerd  = true;

@@ -240,9 +240,11 @@ class Betalen {
 	 */
 	public function terugstorting_actief( $mollie_betaling_id ) {
 		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-		foreach ( $betaling->refunds() as $refund ) {
-			if ( false !== strpos( 'queued pending processing', $refund->status ) ) {
-				return true;
+		if ( $betaling->hasRefunds() ) {
+			foreach ( $betaling->refunds() as $refund ) {
+				if ( false !== strpos( 'queued pending processing', $refund->status ) ) {
+					return true;
+				}
 			}
 		}
 		return false; // Status is failed of refunded.
