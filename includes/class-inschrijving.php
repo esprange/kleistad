@@ -26,8 +26,19 @@ namespace Kleistad;
  */
 class Inschrijving extends Artikel {
 
-	const META_KEY         = 'kleistad_cursus';
-	const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
+	public const META_KEY          = 'kleistad_cursus';
+	private const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
+	private const EMAIL_SUBJECT    = [
+		'inschrijving'    => 'Inschrijving cursus',
+		'indeling'        => 'Indeling cursus',
+		'_herinnering'    => 'Herinnering betaling cursus',
+		'_ideal'          => 'Betaling cursus',
+		'_ideal_betaald'  => 'Betaling cursus',
+		'_lopend'         => 'Inschrijving lopende cursus',
+		'_lopend_betalen' => 'Betaling bedrag voor reeds gestarte cursus',
+		'_restant'        => 'Betaling restant bedrag cursus',
+		'_wijziging'      => 'Wijziging inschrijving cursus',
+	];
 
 	/**
 	 * De kosten van een lopende cursus
@@ -108,10 +119,7 @@ class Inschrijving extends Artikel {
 			case 'herinner_email':
 				return boolval( $this->data[ $attribuut ] ?? false );
 			default:
-				if ( is_string( $this->data[ $attribuut ] ) ) {
-					return htmlspecialchars_decode( $this->data[ $attribuut ] );
-				}
-				return $this->data[ $attribuut ];
+				return ( is_string( $this->data[ $attribuut ] ) ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
 	}
 
@@ -240,36 +248,13 @@ class Inschrijving extends Artikel {
 	public function email( $type, $factuur = '' ) {
 		$emailer   = new \Kleistad\Email();
 		$cursist   = get_userdata( $this->klant_id );
-		$onderwerp = ucfirst( $type ) . ' cursus';
-		$slug      = "cursus$type";
-
-		switch ( $type ) {
-			case 'inschrijving':
-				$slug = $this->cursus->inschrijfslug;
-				break;
-			case 'indeling':
-				$slug = $this->cursus->indelingslug;
-				break;
-			case '_lopend':
-				$onderwerp = 'Inschrijving lopende cursus';
-				break;
-			case '_wijziging':
-				$onderwerp = 'Wijziging inschrijving cursus';
-				break;
-			case '_restant':
-				$onderwerp = 'Betaling restant bedrag cursus';
-				break;
-			case '_herinnering':
-				$onderwerp = 'Herinnering betaling cursus';
-				break;
-			case '_lopend_betalen':
-				$onderwerp = 'Betaling bedrag voor reeds gestarte cursus';
-				break;
-			case '_ideal':
-				$onderwerp = 'Betaling cursus';
-				break;
-			default:
-				$slug = '';
+		$onderwerp = self::EMAIL_SUBJECT[ $type ];
+		if ( 'inschrijving' === $type ) {
+			$slug = $this->cursus->inschrijfslug;
+		} elseif ( 'indeling' === $type ) {
+			$slug = $this->cursus->indelingslug;
+		} else {
+			$slug = "cursus$type";
 		}
 		return $emailer->send(
 			[
@@ -487,7 +472,7 @@ class Inschrijving extends Artikel {
 					$inschrijving->geannuleerd ||
 					$cursussen[ $cursus_id ]->vervallen ||
 					! $inschrijving->ingedeeld ||
-					strtotime( '+7 days' ) < $cursussen[ $cursus_id ]->start_datum ||
+					strtotime( '+7 days 0:00' ) < $cursussen[ $cursus_id ]->start_datum ||
 					strtotime( 'today' ) > $cursussen[ $cursus_id ]->eind_datum
 					) {
 					continue;
