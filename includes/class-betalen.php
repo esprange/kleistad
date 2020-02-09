@@ -215,7 +215,7 @@ class Betalen {
 		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
 		$value    = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
-			$refund = $betaling->refund(
+			$betaling->refund(
 				[
 					'amount'      => [
 						'currency' => 'EUR',

@@ -132,17 +132,11 @@ class Workshop extends Artikel {
 			case 'eind_tijd':
 				$this->data[ $attribuut ] = date( 'H:i', $waarde );
 				break;
-			case 'vervallen':
-			case 'betaald':
-			case 'definitief':
-			case 'betaling_email':
-				$this->data[ $attribuut ] = (int) $waarde;
-				break;
 			case 'telnr':
 				$this->data['telefoon'] = $waarde;
 				break;
 			default:
-				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
+				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
 		}
 	}
 

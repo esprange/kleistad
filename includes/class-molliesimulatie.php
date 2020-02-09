@@ -68,6 +68,14 @@ class MollieSimulatie {
 			 */
 			public function get( $id ) {
 				return new class( $id ) {
+
+					/**
+					 * Id of the object
+					 *
+					 * @var string $id De id string.
+					 */
+					public $id;
+
 					/**
 					 * Metadata object
 					 *
@@ -172,8 +180,8 @@ class MollieSimulatie {
 					 */
 					public function refund( $data ) {
 						$data['status'] = 'pending';
-						MollieSimulatie::$_db->exec( "INSERT INTO refunds (id, data) VALUES ( '{$this->id}','" . wp_json_encode( $data ) . "')" );
-						MollieSimulatie::$_db->exec( "UPDATE payments set data='" . wp_json_encode( $this ) . "' WHERE id='{$this->id}'" );
+						MollieSimulatie::$_db->exec( "INSERT INTO refunds (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+						MollieSimulatie::$_db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ wp_json_encode( $this ) . "' WHERE id='{$this->id}'" ); //phpcs:ignore
 					}
 
 					/**
@@ -399,7 +407,7 @@ class MollieSimulatie {
 							 */
 							public function __construct( $data ) {
 								$this->id = \uniqid();
-								MollieSimulatie::$_db->exec( "INSERT INTO payments (id, data) VALUES ( '{$this->id}','" . wp_json_encode( $data ) . "')" );
+								MollieSimulatie::$_db->exec( "INSERT INTO payments (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 								$response = wp_remote_post(
 									$data['webhookUrl'],
 									[

@@ -131,13 +131,8 @@ class Inschrijving extends Artikel {
 			case 'datum':
 				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
-			case 'geannuleerd':
-			case 'restant_email':
-			case 'herinner_email':
-				$this->data[ $attribuut ] = (int) $waarde;
-				break;
 			default:
-				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
+				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
 		}
 	}
 

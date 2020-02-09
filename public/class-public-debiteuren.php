@@ -207,10 +207,6 @@ class Public_Debiteuren extends ShortcodeForm {
 						],
 					]
 				);
-				if ( $order ) {
-					$betaling = new \Kleistad\Betaling();
-				}
-
 				$status = 'De korting is verwerkt en een correctie is verstuurd';
 				break;
 		}

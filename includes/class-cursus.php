@@ -175,15 +175,8 @@ class Cursus extends Entity {
 			case 'eind_tijd':
 				$this->data[ $attribuut ] = date( 'H:i', $waarde );
 				break;
-			case 'vervallen':
-			case 'vol':
-			case 'techniekkeuze':
-			case 'meer':
-			case 'tonen':
-				$this->data[ $attribuut ] = (int) $waarde;
-				break;
 			default:
-				$this->data[ $attribuut ] = $waarde;
+				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
 		}
 	}
 

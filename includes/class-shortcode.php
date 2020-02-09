@@ -74,7 +74,7 @@ abstract class Shortcode {
 	/**
 	 * Maak een melding tekst aan.
 	 *
-	 * @param bool   $status  1 succes, 0 fout, -1 notificatie.
+	 * @param int    $status  1 succes, 0 fout, -1 notificatie.
 	 * @param string $bericht Het bericht.
 	 * @return string De opgemaakte tekst.
 	 */

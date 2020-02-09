@@ -49,12 +49,11 @@ elseif ( 'debiteur' === $data['actie'] ) :
 		</tr>
 		<tr><th>betaald</th><td>&euro; <?php echo esc_html( number_format_i18n( $data['debiteur']['betaald'], 2 ) ); ?></td></tr>
 		<tr><th>openstaand</th><td>&euro; <?php echo esc_html( number_format_i18n( $data['debiteur']['openstaand'], 2 ) ); ?></td></tr>
-		<tr>
-		</tr>
+		<tr><th colspan="2"><?php echo $data['debiteur']['terugstorting'] ? 'Een stornering is ingediend' : ''; ?></th></tr>
 	</table>
 	<?php $this->form(); ?>
 	<input type="hidden" name="id" value="<?php echo esc_attr( $data['debiteur']['id'] ); ?>"/>
-	<?php if ( ! $data['debiteur']['gesloten'] || $data['debiteur']['terugstorting'] ) : ?>
+	<?php if ( ! ( $data['debiteur']['gesloten'] || $data['debiteur']['terugstorting'] ) ) : ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_6">
 				<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" class="kleistad_input_cbr" value="bankbetaling" >
