@@ -102,10 +102,13 @@ if ( 'details' === $data['actie'] ) :
 			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['netto'], 2 ) ); ?></td>
 			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['btw'], 2 ) ); ?></td>
 			<td>
-				<a href="#" title="details" class="kleistad_view kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+				<?php
+				if ( $omzet['details'] ) :
+					?>
+					<a href="#" title="details" class="kleistad_view kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 					data-id="<?php echo esc_attr( $select_jaar . '-' . $select_maand . '-' . $omzet['key'] ); ?>" data-actie="details" >
 					&nbsp;
-				</a>
+				</a><?php endif ?>
 			</td>
 		</tr>
 	<?php endforeach ?>

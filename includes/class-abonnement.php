@@ -30,10 +30,19 @@ namespace Kleistad;
  */
 class Abonnement extends Artikel {
 
-	const META_KEY        = 'kleistad_abonnement';
-	const PAUZE_WEKEN     = 13;
-	const MAX_PAUZE_WEKEN = 9;
-	const MIN_PAUZE_WEKEN = 2;
+	public const META_KEY        = 'kleistad_abonnement';
+	public const MAX_PAUZE_WEKEN = 9;
+	public const MIN_PAUZE_WEKEN = 2;
+	private const EMAIL_SUBJECT  = [
+		'_gewijzigd'        => 'Wijziging abonnement',
+		'_ideal_betaald'    => 'Betaling abonnement',
+		'_regulier_bank'    => 'Betaling abonnement per bankstorting',
+		'_regulier_incasso' => 'Betaling abonnement per incasso',
+		'_regulier_mislukt' => 'Betaling abonnement per incasso mislukt',
+		'_start_bank'       => 'Welkom bij Kleistad',
+		'_start_ideal'      => 'Welkom bij Kleistad',
+		'_vervolg'          => 'Verlenging abonnement',
+	];
 
 	/**
 	 * De beginwaarden van een abonnement.
@@ -243,7 +252,7 @@ class Abonnement extends Artikel {
 		return $emailer->send(
 			[
 				'to'          => "$abonnee->display_name <$abonnee->user_email>",
-				'subject'     => false !== strpos( $type, '_start' ) ? 'Welkom bij Kleistad' : 'Abonnement Kleistad',
+				'subject'     => self::EMAIL_SUBJECT[ $type ],
 				'slug'        => 'abonnement' . $type,
 				'attachments' => $factuur,
 				'parameters'  =>
@@ -335,7 +344,7 @@ class Abonnement extends Artikel {
 	 * Stop het abonnement per datum.
 	 *
 	 * @param int  $eind_datum Einddatum.
-	 * @param bool $admin        Als functie vanuit admin scherm wordt aangeroepen.
+	 * @param bool $admin      Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function stoppen( $eind_datum, $admin = false ) {
 		$this->eind_datum = $eind_datum;

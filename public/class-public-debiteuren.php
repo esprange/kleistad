@@ -26,11 +26,15 @@ class Public_Debiteuren extends ShortcodeForm {
 		$debiteuren = [];
 		$orders     = \Kleistad\Order::all( $zoek );
 		foreach ( $orders as $order ) {
-			$artikel      = \Kleistad\Artikel::get_artikel( $order->referentie );
+			if ( '@' !== $order->referentie[0] ) {
+				$betreft = \Kleistad\Artikel::get_artikel( $order->referentie )->artikel_naam();
+			} else {
+				$betreft = 'afboeking';
+			}
 			$debiteuren[] = [
 				'id'           => $order->id,
 				'naam'         => $order->klant['naam'],
-				'betreft'      => $artikel->artikel_naam(),
+				'betreft'      => $betreft,
 				'referentie'   => $order->referentie,
 				'openstaand'   => $order->te_betalen(),
 				'credit'       => boolval( $order->origineel_id ),
@@ -49,25 +53,36 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array De informatie.
 	 */
 	private function debiteur( $id ) {
-		$order   = new \Kleistad\Order( $id );
-		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
+		$order = new \Kleistad\Order( $id );
+		if ( '@' !== $order->referentie[0] ) {
+			$betreft      = \Kleistad\Artikel::get_artikel( $order->referentie )->artikel_naam();
+			$geblokkeerd  = $order->geblokkeerd();
+			$annuleerbaar = true;
+		} else {
+			$betreft      = 'afboeking';
+			$geblokkeerd  = true;
+			$annuleerbaar = false;
+		}
+		$te_betalen = $order->te_betalen();
 		return [
 			'id'            => $order->id,
 			'naam'          => $order->klant['naam'],
-			'betreft'       => $artikel->artikel_naam(),
+			'betreft'       => $betreft,
 			'referentie'    => $order->referentie,
 			'factuur'       => $order->factuurnr(),
 			'betaald'       => $order->betaald,
-			'openstaand'    => $order->te_betalen(),
+			'openstaand'    => $te_betalen,
 			'sinds'         => $order->datum,
 			'historie'      => $order->historie,
 			'gesloten'      => $order->gesloten,
 			'ontvangst'     => 0.0,
 			'korting'       => 0.0,
 			'restant'       => 0.0,
-			'geblokkeerd'   => $order->geblokkeerd(),
+			'geblokkeerd'   => $geblokkeerd,
+			'annuleerbaar'  => $annuleerbaar,
 			'terugstorting' => $order->terugstorting_actief(),
 			'credit'        => boolval( $order->origineel_id ),
+			'afboekbaar'    => 0 < $te_betalen && strtotime( 'today' ) > strtotime( '+30 days', $order->verval_datum ), // Wettelijke betaaltermijn 30 dagen.
 		];
 	}
 
@@ -209,6 +224,10 @@ class Public_Debiteuren extends ShortcodeForm {
 				);
 				$status = 'De korting is verwerkt en een correctie is verstuurd';
 				break;
+			case 'afboeken':
+				$artikel->afzeggen();
+				$order->afboeken();
+				$status = 'De order is afgeboekt';
 		}
 		if ( ! empty( $status ) ) {
 			return [

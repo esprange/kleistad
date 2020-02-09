@@ -34,7 +34,7 @@ if ( 'blokkade' === $data['actie'] ) :
 	<?php
 elseif ( 'debiteur' === $data['actie'] ) :
 	?>
-	<p><?php echo esc_html( ucfirst( $data['debiteur']['betreft'] ) ); ?>, openstaand voor <?php echo esc_html( $data['debiteur']['naam'] ); ?></p>
+	<p><?php echo esc_html( ucfirst( $data['debiteur']['betreft'] ) . ', ' . ( ! $data['debiteur']['gesloten'] ? 'openstaand voor ' : 'besteld door ' ) . $data['debiteur']['naam'] ); ?></p>
 	<table class="kleistad_form">
 		<tr><th>referentie</th><td><?php echo esc_html( $data['debiteur']['referentie'] . ' geboekt op ' . date( 'd-m-Y', $data['debiteur']['sinds'] ) ); ?></td><th>historie</th></tr>
 		<tr><th>factuur</th><td>
@@ -53,97 +53,107 @@ elseif ( 'debiteur' === $data['actie'] ) :
 	</table>
 	<?php $this->form(); ?>
 	<input type="hidden" name="id" value="<?php echo esc_attr( $data['debiteur']['id'] ); ?>"/>
+
 	<?php if ( ! ( $data['debiteur']['gesloten'] || $data['debiteur']['terugstorting'] ) ) : ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" class="kleistad_input_cbr" value="bankbetaling" >
-				<label class="kleistad_label_cbr" for="kleistad_deb_bankbetaling">Bankbetaling invoeren</label>
-			</div>
+			<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" class="kleistad_input_cbr" value="bankbetaling" >
+			<label class="kleistad_label_cbr" for="kleistad_deb_bankbetaling">Bankbetaling invoeren</label>
 		</div>
-		<div class="kleistad_deb_bankbetaling kleistad_deb_veld" style="display:none" >
-			<div class="kleistad_row">
-				<div class="kleistad_col_3" >
-					&nbsp;
-				</div>
-				<?php if ( ! $data['debiteur']['credit'] ) : ?>
-					<div class="kleistad_col_4 kleistad_label">
-						<label for="kleistad_ontvangst">Ontvangen bedrag</label>
-					</div>
-					<div class="kleistad_col_3" >
-						<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
-					</div>
-				<?php else : // Als een credit stand. ?>
-					<div class="kleistad_col_4 kleistad_label">
-						<label for="kleistad_ontvangst">Teruggestort bedrag</label>
-					</div>
-					<div class="kleistad_col_3" >
-						<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( - $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
-					</div>
-				<?php endif ?>
+	</div>
+	<div class="kleistad_deb_bankbetaling kleistad_deb_veld" style="display:none" >
+		<div class="kleistad_row">
+			<div class="kleistad_col_3" >
+				&nbsp;
 			</div>
+			<?php if ( ! $data['debiteur']['credit'] ) : ?>
+				<div class="kleistad_col_4 kleistad_label">
+					<label for="kleistad_ontvangst">Ontvangen bedrag</label>
+				</div>
+				<div class="kleistad_col_3" >
+					<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
+				</div>
+			<?php else : // Als een credit stand. ?>
+				<div class="kleistad_col_4 kleistad_label">
+					<label for="kleistad_ontvangst">Teruggestort bedrag</label>
+				</div>
+				<div class="kleistad_col_3" >
+					<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( - $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
+				</div>
+			<?php endif ?>
 		</div>
 	</div>
 	<?php endif // Als nog niet gesloten. ?>
-	<?php if ( ! $data['debiteur']['credit'] ) : ?>
+
+	<?php if ( ! $data['debiteur']['credit'] && $data['debiteur']['annuleerbaar'] ) : ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_annulering" class="kleistad_input_cbr" value="annulering" >
-				<label class="kleistad_label_cbr" for="kleistad_deb_annulering">Annuleren</label>
+			<input type="radio" name="debiteur_actie" id="kleistad_deb_annulering" class="kleistad_input_cbr" value="annulering" >
+			<label class="kleistad_label_cbr" for="kleistad_deb_annulering">Annuleren</label>
+		</div>
+	</div>
+	<div class="kleistad_deb_annulering kleistad_deb_veld" style="display:none" >
+		<div class="kleistad_row">
+			<div class="kleistad_col_3" >
+				&nbsp;
+			</div>
+			<div class="kleistad_col_4 kleistad_label">
+				<label for="kleistad_restant">Restant te betalen</label>
+			</div>
+			<div class="kleistad_col_3" >
+				<input type="number" step="0.01" id="kleistad_restant" name="restant" min="0" value="<?php echo esc_attr( $data['debiteur']['restant'] ); ?>">
 			</div>
 		</div>
-		<div class="kleistad_deb_annulering kleistad_deb_veld" style="display:none" >
-			<div class="kleistad_row">
-				<div class="kleistad_col_3" >
-					&nbsp;
-				</div>
-				<div class="kleistad_col_4 kleistad_label">
-					<label for="kleistad_restant">Restant te betalen</label>
-				</div>
-				<div class="kleistad_col_3" >
-					<input type="number" step="0.01" id="kleistad_restant" name="restant" min="0" value="<?php echo esc_attr( $data['debiteur']['restant'] ); ?>">
-				</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_3 kleistad_label">
+				<label for="kleistad_opmerking_annulering">Opmerking</label>
 			</div>
-			<div class="kleistad_row">
-				<div class="kleistad_col_3 kleistad_label">
-					<label for="kleistad_opmerking_annulering">Opmerking</label>
-				</div>
-				<div class="kleistad_col_7" >
-					<textarea class="kleistad_input" name="opmerking_annulering" id="kleistad_opmerking_annulering" rows="5" cols="50"></textarea>
-				</div>
+			<div class="kleistad_col_7" >
+				<textarea class="kleistad_input" name="opmerking_annulering" id="kleistad_opmerking_annulering" rows="5" cols="50"></textarea>
 			</div>
 		</div>
 	</div>
-	<?php endif ?>
+	<?php endif // Debet stand. ?>
+
+	<?php if ( $data['debiteur']['afboekbaar'] ) : ?>
+	<div class="kleistad_row">
+		<div class="kleistad_col_6">
+			<input type="radio" name="debiteur_actie" id="kleistad_deb_afboeken" class="kleistad_input_cbr" value="afboeken" >
+			<label class="kleistad_label_cbr" for="kleistad_deb_afboeken">Afboeken (dubieuze debiteur)</label>
+		</div>
+	</div>
+	<?php endif // Dubieuze debiteur. ?>
+
 	<?php if ( ! ( $data['debiteur']['geblokkeerd'] || $data['debiteur']['credit'] ) ) : ?>
 	<div class="kleistad_row">
 		<div class="kleistad_col_6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_korting" class="kleistad_input_cbr" value="korting" >
-				<label class="kleistad_label_cbr" for="kleistad_deb_korting">Korting verstrekken</label>
+			<input type="radio" name="debiteur_actie" id="kleistad_deb_korting" class="kleistad_input_cbr" value="korting" >
+			<label class="kleistad_label_cbr" for="kleistad_deb_korting">Korting verstrekken</label>
+		</div>
+	</div>
+	<div class="kleistad_deb_korting kleistad_deb_veld" style="display:none" >
+		<div class="kleistad_row">
+			<div class="kleistad_col_3" >
+				&nbsp;
+			</div>
+			<div class="kleistad_col_4 kleistad_label">
+				<label for="kleistad_korting">Korting</label>
+			</div>
+			<div class="kleistad_col_3" >
+				<input type="number" step="0.01" id="kleistad_korting" name="korting" min="0" value="<?php echo esc_attr( $data['debiteur']['korting'] ); ?>">
 			</div>
 		</div>
-		<div class="kleistad_deb_korting kleistad_deb_veld" style="display:none" >
-			<div class="kleistad_row">
-				<div class="kleistad_col_3" >
-					&nbsp;
-				</div>
-				<div class="kleistad_col_4 kleistad_label">
-					<label for="kleistad_korting">Korting</label>
-				</div>
-				<div class="kleistad_col_3" >
-					<input type="number" step="0.01" id="kleistad_korting" name="korting" min="0" value="<?php echo esc_attr( $data['debiteur']['korting'] ); ?>">
-				</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_3 kleistad_label">
+				<label for="kleistad_opmerking_korting">Opmerking</label>
 			</div>
-			<div class="kleistad_row">
-				<div class="kleistad_col_3 kleistad_label">
-					<label for="kleistad_opmerking_korting">Opmerking</label>
-				</div>
-				<div class="kleistad_col_7" >
-					<textarea class="kleistad_input" name="opmerking_korting" id="kleistad_opmerking_korting" rows="5" cols="50"></textarea>
-				</div>
+			<div class="kleistad_col_7" >
+				<textarea class="kleistad_input" name="opmerking_korting" id="kleistad_opmerking_korting" rows="5" cols="50"></textarea>
 			</div>
 		</div>
 	</div>
 	<?php endif // Als factuur nog niet geblokkeerd. ?>
+
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_3">
 			<button name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit_debiteuren" disabled >Bevestigen</button>

@@ -195,6 +195,14 @@ class Kleistad {
 				'pcount' => 1,
 			]
 		);
+		\Kleistad\Artikel::register(
+			'@',
+			[
+				'naam'   => 'dubieuze debiteuren',
+				'class'  => '',
+				'pcount' => 1,
+			]
+		);
 	}
 
 	/**

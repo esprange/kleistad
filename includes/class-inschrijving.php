@@ -246,9 +246,8 @@ class Inschrijving extends Artikel {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $factuur = '' ) {
-		$emailer   = new \Kleistad\Email();
-		$cursist   = get_userdata( $this->klant_id );
-		$onderwerp = self::EMAIL_SUBJECT[ $type ];
+		$emailer = new \Kleistad\Email();
+		$cursist = get_userdata( $this->klant_id );
 		if ( 'inschrijving' === $type ) {
 			$slug = $this->cursus->inschrijfslug;
 		} elseif ( 'indeling' === $type ) {
@@ -259,7 +258,7 @@ class Inschrijving extends Artikel {
 		return $emailer->send(
 			[
 				'to'          => "$cursist->display_name <$cursist->user_email>",
-				'subject'     => $onderwerp,
+				'subject'     => self::EMAIL_SUBJECT[ $type ],
 				'slug'        => $slug,
 				'attachments' => $factuur,
 				'parameters'  =>

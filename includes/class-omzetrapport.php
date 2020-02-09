@@ -60,12 +60,14 @@ class OmzetRapport extends \FPDF {
 		$totaal_netto = 0;
 		$totaal_btw   = 0;
 		foreach ( $omzet as $naam => $omzetregel ) {
-			$totaal_netto += $omzetregel['netto'];
-			$totaal_btw   += $omzetregel['btw'];
-			$this->Cell( 50, $h, $naam, 0, 0, 'L' );
-			$this->Cell( 50, $h, number_format_i18n( $omzetregel['netto'], 2 ), 0, 0, 'R' );
-			$this->Cell( 50, $h, number_format_i18n( $omzetregel['btw'], 2 ), 0, 0, 'R' );
-			$this->ln();
+			if ( 0.0 !== $omzetregel['netto'] ) {
+				$totaal_netto += $omzetregel['netto'];
+				$totaal_btw   += $omzetregel['btw'];
+				$this->Cell( 50, $h, $naam, 0, 0, 'L' );
+				$this->Cell( 50, $h, number_format_i18n( $omzetregel['netto'], 2 ), 0, 0, 'R' );
+				$this->Cell( 50, $h, number_format_i18n( $omzetregel['btw'], 2 ), 0, 0, 'R' );
+				$this->ln();
+			}
 		}
 		$this->setFont( 'Arial', 'B', 10 );
 		$this->Cell( 50, $h, 'Totaal', 'T', 0, 'L' );
@@ -126,7 +128,7 @@ class OmzetRapport extends \FPDF {
 		$omzet = \Kleistad\Orderrapportage::maandrapportage( $maand, $jaar );
 		$this->tabel( $omzet );
 		foreach ( $omzet as $naam => $omzetregel ) {
-			if ( 0 < $omzetregel['netto'] ) {
+			if ( 0 !== $omzetregel['netto'] ) {
 				$this->addPage();
 				$omzetdetails = \Kleistad\Orderrapportage::maanddetails( $maand, $jaar, $omzetregel['key'] );
 				$this->details( $naam, $omzetdetails );

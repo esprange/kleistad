@@ -63,11 +63,12 @@ class Order extends \Kleistad\Entity {
 					]
 				),
 				'mutatie_datum' => null,
-				'verval_datum'  => null,
+				'verval_datum'  => date( 'Y-m-d 00:00:0', strtotime( '+30 days 00:00' ) ),
 				'referentie'    => '',
 				'regels'        => wp_json_encode( [] ),
 				'opmerking'     => '',
 				'factuurnr'     => 0,
+				'transactie_id' => '',
 			];
 		}
 	}
@@ -156,6 +157,35 @@ class Order extends \Kleistad\Entity {
 			default:
 				$this->data[ $attribuut ] = $waarde;
 		}
+	}
+
+	/**
+	 * Afboeken van een order.
+	 */
+	public function afboeken() {
+		$te_betalen           = $this->te_betalen();
+		$dd_order             = new self();
+		$dd_order->historie   = 'Afboeking order door ' . wp_get_current_user()->display_name;
+		$dd_order->referentie = '@-' . $this->referentie;
+		$dd_order->betaald    = $te_betalen;
+		$dd_order->klant      = [
+			'naam'  => 'Dubieuze debiteur',
+			'adres' => '',
+			'email' => 'no_reply@' . \Kleistad\Email::domein(),
+		];
+		$dd_order->regels     = [
+			array_merge(
+				\Kleistad\Artikel::split_bedrag( $te_betalen ),
+				[
+					'artikel' => 'Afboeking',
+					'aantal'  => '1',
+				]
+			),
+		];
+		$dd_order->save();
+		$this->betaald += $te_betalen;
+		$this->historie = 'Afboeking';
+		$this->save();
 	}
 
 	/**

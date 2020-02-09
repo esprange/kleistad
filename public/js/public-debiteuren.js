@@ -38,6 +38,13 @@
 					$( '#kleistad_submit_debiteuren' ).prop( 'disabled', false ).data( 'confirm', 'Debiteuren|Klopt het bedrag van de korting ?' );
                 }
 			)
+			.on( 'click', '#kleistad_deb_afboeken',
+                function() {
+					$( '.kleistad_deb_veld' ).hide();
+					$( '.kleistad_deb_afboeken' ).toggle( this.checked );
+					$( '#kleistad_submit_debiteuren' ).prop( 'disabled', false ).data( 'confirm', 'Debiteuren|Verwacht je inderdaad dat er niet meer betaald wordt ?' );
+                }
+			)
 			.on( 'click', '#kleistad_deb_annulering',
                 function() {
 					$( '.kleistad_deb_veld' ).hide();
