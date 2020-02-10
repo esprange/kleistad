@@ -426,7 +426,7 @@ class MollieSimulatie {
 							 */
 							public function getCheckOutUrl() {
 								$data = get_option( 'mollie_simulatie' );
-								return 'http://localhost/molliesimulator.html?' . $data['redirectUrl'];
+								return add_query_arg( 'redirect', \rawurlencode( $data['redirectUrl'] ), plugin_dir_url( __DIR__ ) . 'molliesimulator.php' );
 							}
 
 						};

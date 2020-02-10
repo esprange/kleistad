@@ -35,3 +35,6 @@ quickstart.php
 
 # pdf's
 *.pdf
+
+#sqlite db for mollie
+mollie.db
