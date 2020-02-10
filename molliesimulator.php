@@ -54,7 +54,8 @@ if ( isset( $_GET['id'] ) ) {
 		}
 	}
 	if ( $url ) {
-		if ( false !== $ch = curl_init() ) {
+		$ch = curl_init();
+		if ( false !== $ch ) {
 			echo '<span class="alert alert-success" >Verzenden data naar website</span><br/>';
 			curl_setopt( $ch, CURLOPT_URL, $url );
 			curl_setopt( $ch, CURLOPT_POST, 1 );
