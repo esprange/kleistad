@@ -10,6 +10,7 @@
 
 <!-- Latest compiled JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
 <script>
 	document.addEventListener( 'DOMContentLoaded',
 		function() {
@@ -53,14 +54,17 @@ if ( isset( $_GET['id'] ) ) {
 		}
 	}
 	if ( $url ) {
-		echo '<span style="color:green">sending data to webhook</span><br/>';
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, "id=$id" );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		$server_output = curl_exec( $ch );
-		curl_close( $ch );
+		if ( false !== $ch = curl_init() ) {
+			echo '<span class="alert alert-success" >Verzenden data naar website</span><br/>';
+			curl_setopt( $ch, CURLOPT_URL, $url );
+			curl_setopt( $ch, CURLOPT_POST, 1 );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, "id=$id" );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+			$server_output = curl_exec( $ch );
+			curl_close( $ch );
+		} else {
+			echo '<span class="alert alert-danger" >Geen output channel beschikbaar</span><br/>';
+		}
 	}
 }
 ?>
@@ -87,7 +91,7 @@ if ( isset( $_GET['id'] ) ) {
 			<?php if ( 'recurring' === $betaling['sequenceType'] ) : ?>
 			<a class="btn" href="?id=<?php echo $row['id']; ?>#" >betalen</a>
 			<?php else : ?>
-			&nbsp;<?php endif ?></td> 
+			&nbsp;<?php endif ?></td>
 		</tr>
 	<?php endwhile ?>
 	</tbody>
@@ -110,7 +114,7 @@ if ( isset( $_GET['id'] ) ) {
 			<td><?php echo $betaling['metadata']['order_id']; ?></td>
 			<td><?php echo $betaling['description']; ?></td>
 			<td><?php echo $betaling['amount']['value']; ?></td>
-			<td><a class="btn btn-success" href="?id=<?php echo $row['id']; ?>&refund_status=refunded#" >terugstorten</a><a class="btn btn-warning" href="?id=<?php echo $row['id']; ?>&refund_status=failed#" >falen</a></td> 
+			<td><a class="btn btn-success" href="?id=<?php echo $row['id']; ?>&refund_status=refunded#" >terugstorten</a><a class="btn btn-warning" href="?id=<?php echo $row['id']; ?>&refund_status=failed#" >falen</a></td>
 		</tr>
 	<?php endwhile ?>
 	</tbody>
