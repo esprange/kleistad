@@ -40,25 +40,20 @@ class MollieSimulatie {
 	public $methods;
 
 	/**
-	 * SQL lite object
-	 *
-	 * @var object $_db SQLite object
-	 */
-	public static $_db;
-
-	/**
 	 * De constructor van de simulatie class
 	 */
 	public function __construct() {
-		self::$_db = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-		$res       = self::$_db->query( "SELECT name FROM sqlite_master WHERE type='table' AND name='payments'" );
+		$db  = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' AND name='payments'" );
 		if ( ! $res->fetchArray() ) {
-			self::$_db->exec( 'CREATE TABLE payments( id TEXT PRIMARY KEY, data TEXT )' );
+			$db->exec( 'CREATE TABLE payments( id TEXT PRIMARY KEY, data TEXT )' );
 		}
-		$res = self::$_db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='refunds'" );
+		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='refunds'" );
 		if ( ! $res->fetchArray() ) {
-			self::$_db->exec( 'CREATE TABLE refunds(  intern_id INTEGER primary key, id text, data text )' );
+			$db->exec( 'CREATE TABLE refunds(  intern_id INTEGER primary key, id text, data text )' );
 		}
+		$db->close();
+		unset( $db );
 
 		$this->payments = new class() {
 			/**
@@ -112,6 +107,13 @@ class MollieSimulatie {
 					public $description;
 
 					/**
+					 * Status property
+					 *
+					 * @var string $status De statustekst.
+					 */
+					public $status;
+
+					/**
 					 * Sequencetype property
 					 *
 					 * @var string $sequenceType Type one-off of recurring.
@@ -136,7 +138,28 @@ class MollieSimulatie {
 					 * Geeft aan dat er betaald is.
 					 */
 					public function isPaid() {
-						return true;
+						return 'paid' === $this->status;
+					}
+
+					/**
+					 * Geeft aan dat er niet betaald is.
+					 */
+					public function isFailed() {
+						return 'failed' === $this->status;
+					}
+
+					/**
+					 * Geeft aan dat de betaling afgebroken is.
+					 */
+					public function isCanceled() {
+						return 'canceled' === $this->status;
+					}
+
+					/**
+					 * Geeft aan dat de betaling afgebroken is.
+					 */
+					public function isExpired() {
+						return 'expired' === $this->status;
 					}
 
 					/**
@@ -164,12 +187,15 @@ class MollieSimulatie {
 					 * Geef de refunds terug (in simulatie maar één ).
 					 */
 					public function refunds() {
-						$res     = MollieSimulatie::$_db->query( "SELECT * FROM refunds WHERE id='{$this->id}'" );
+						$db      = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+						$res     = $db->query( "SELECT * FROM refunds WHERE id='{$this->id}'" );
 						$refunds = [];
 						$row     = $res->fetchArray();
 						if ( $row ) {
 							$refunds[] = json_decode( $row['data'] );
 						};
+						$db->close();
+						unset( $db );
 						return $refunds;
 					}
 
@@ -180,8 +206,11 @@ class MollieSimulatie {
 					 */
 					public function refund( $data ) {
 						$data['status'] = 'pending';
-						MollieSimulatie::$_db->exec( "INSERT INTO refunds (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
-						MollieSimulatie::$_db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ wp_json_encode( $this ) . "' WHERE id='{$this->id}'" ); //phpcs:ignore
+						$db             = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+						$db->exec( "INSERT INTO refunds (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+						$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ wp_json_encode( $this ) . "' WHERE id='{$this->id}'" ); //phpcs:ignore
+						$db->close();
+						unset( $db );
 					}
 
 					/**
@@ -191,7 +220,8 @@ class MollieSimulatie {
 					 */
 					public function __construct( $id ) {
 						$this->id = $id;
-						$res      = MollieSimulatie::$_db->query( "SELECT data FROM payments WHERE id = '{$this->id}'" );
+						$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+						$res      = $db->query( "SELECT data FROM payments WHERE id = '{$this->id}'" );
 						$row      = $res->fetchArray();
 						if ( $row ) {
 							$data                  = json_decode( $row['data'] );
@@ -199,17 +229,20 @@ class MollieSimulatie {
 							$this->amount          = $data->amount;
 							$this->amountRemaining = $data->amount;
 							$this->description     = $data->description;
+							$this->status          = $data->status;
 							$this->method          = property_exists( $data, 'method' ) ? $data->method : 'directdebit';
 							$this->sequenceType    = $data->sequenceType;
 							$this->webhookUrl      = $data->webhookUrl;
 						}
-						$res = MollieSimulatie::$_db->query( "SELECT data FROM refunds WHERE id = '{$this->id}'" );
+						$res = $db->query( "SELECT data FROM refunds WHERE id = '{$this->id}'" );
 						$row = $res->fetchArray();
 						if ( $row ) {
 							$data                         = json_decode( $row['data'] );
 							$this->amountRemaining->value = $this->amount->value - $data->amount->value;
 							$this->_hasRefunds            = true;
 						};
+						$db->close();
+						unset( $db );
 					}
 				};
 			}
@@ -401,32 +434,31 @@ class MollieSimulatie {
 							public $id;
 
 							/**
+							 * Payment data
+							 *
+							 * @var array $data De payment data.
+							 */
+							private $data;
+
+							/**
 							 * De constructor
 							 *
 							 * @param array $data De orderdata.
 							 */
 							public function __construct( $data ) {
-								$this->id = \uniqid();
-								MollieSimulatie::$_db->exec( "INSERT INTO payments (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
-								$response = wp_remote_post(
-									$data['webhookUrl'],
-									[
-										'body'    => [ 'id' => $this->id ],
-										'timeout' => 60,
-									]
-								);
-								if ( is_wp_error( $response ) ) {
-									$error_message = $response->get_error_message();
-									error_log( "Something went wrong: $error_message" ); // phpcs:ignore
-								}
+								$this->id   = \uniqid();
+								$this->data = $data;
+								$db         = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+								$db->exec( "INSERT INTO payments (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+								$db->close();
+								unset( $db );
 							}
 
 							/**
 							 * Geef de url terug.
 							 */
 							public function getCheckOutUrl() {
-								$data = get_option( 'mollie_simulatie' );
-								return add_query_arg( 'redirect', \rawurlencode( $data['redirectUrl'] ), plugin_dir_url( __DIR__ ) . 'molliesimulator.php' );
+								return add_query_arg( 'id', $this->id, plugin_dir_url( __DIR__ ) . 'molliesimulator.php' );
 							}
 
 						};
