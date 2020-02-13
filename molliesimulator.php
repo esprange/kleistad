@@ -18,7 +18,7 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 	$id  = $_GET[ 'id' ];
 	$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 	$row = $res->fetchArray();
-	if ( is_array( $row ) ) {
+	if ( false !== $row ) {
 		$payment         = json_decode( $row['data'] );
 		$payment->status = $_GET[ 'status' ];
 		$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ json_encode( $payment ) . "' WHERE id='$id'" ); //phpcs:ignore
@@ -207,13 +207,13 @@ function verwerk_refund( $id ) {
 	global $db;
 	$res = $db->query( "SELECT data FROM refunds WHERE id='$id'" );
 	$row = $res->fetchArray();
-	if ( is_array( $row ) ) {
+	if ( false !== $row ) {
 		$refund         = json_decode( $row['data'] );
 		$refund->status = $_GET['status'];
 		$db->exec( "UPDATE refunds set data='" . /** @scrutinizer ignore-type */ json_encode( $refund ) . "' WHERE id='$id'" );	 //phpcs:ignore
 		$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 		$row = $res->fetchArray();
-		if ( is_array( $row ) ) {
+		if ( false !== $row ) {
 			$payment = json_decode( $row['data'] );
 			return feedback( $id, $payment->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
 		} else {
@@ -233,7 +233,7 @@ function verwerk_incasso( $id ) {
 	global $db;
 	$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 	$row = $res->fetchArray();
-	if ( is_array( $row ) ) {
+	if ( false !== $row ) {
 		$incasso         = json_decode( $row['data'] );
 		$incasso->status = $_GET['status'];
 		$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ json_encode( $incasso ) . "' WHERE id='$id'" );	 //phpcs:ignore

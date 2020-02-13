@@ -191,7 +191,7 @@ class MollieSimulatie {
 						$res     = $db->query( "SELECT * FROM refunds WHERE id='{$this->id}'" );
 						$refunds = [];
 						$row     = $res->fetchArray();
-						if ( is_array( $row ) ) {
+						if ( false !== $row ) {
 							$refunds[] = json_decode( $row['data'] );
 						};
 						$db->close();
@@ -223,7 +223,7 @@ class MollieSimulatie {
 						$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
 						$res      = $db->query( "SELECT data FROM payments WHERE id = '{$this->id}'" );
 						$row      = $res->fetchArray();
-						if ( is_array( $row ) ) {
+						if ( false !== $row ) {
 							$data                  = json_decode( $row['data'] );
 							$this->metadata        = $data->metadata;
 							$this->amount          = $data->amount;
@@ -236,7 +236,7 @@ class MollieSimulatie {
 						}
 						$res = $db->query( "SELECT data FROM refunds WHERE id = '{$this->id}'" );
 						$row = $res->fetchArray();
-						if ( is_array( $row ) ) {
+						if ( false !== $row ) {
 							$data                         = json_decode( $row['data'] );
 							$this->amountRemaining->value = $this->amount->value - $data->amount->value;
 							$this->_hasRefunds            = true;
