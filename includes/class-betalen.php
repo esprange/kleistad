@@ -108,7 +108,7 @@ class Betalen {
 					]
 				);
 			}
-			$uniqid   = uniqid();
+			$uniqid   = 'kleistad_' . bin2hex( random_bytes( 6 ) );
 			$betaling = $mollie_gebruiker->createPayment(
 				[
 					'amount'       => [
@@ -127,7 +127,7 @@ class Betalen {
 					'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
 				]
 			);
-			set_transient( $uniqid, $betaling->id );
+			set_transient( $uniqid, $betaling->id, 20 * 60 ); // 20 minuten expiry (iDeal heeft in Mollie een expiratie van 15 minuten).
 			return $betaling->getCheckOutUrl();
 		} catch ( \Exception $e ) {
 			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
