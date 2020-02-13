@@ -18,7 +18,7 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 	$id  = $_GET[ 'id' ];
 	$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 	$row = $res->fetchArray();
-	if ( $row ) {
+	if ( is_array( $row ) ) {
 		$payment         = json_decode( $row['data'] );
 		$payment->status = $_GET[ 'status' ];
 		$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ json_encode( $payment ) . "' WHERE id='$id'" ); //phpcs:ignore
@@ -135,7 +135,7 @@ function feedback( $id, $url ) {
 		curl_setopt( $ch, CURLOPT_POST, 1 );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, "id=$id" );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		$server_output = curl_exec( $ch );
+		curl_exec( $ch );
 		curl_close( $ch );
 	}
 	return $ch;
@@ -207,13 +207,13 @@ function verwerk_refund( $id ) {
 	global $db;
 	$res = $db->query( "SELECT data FROM refunds WHERE id='$id'" );
 	$row = $res->fetchArray();
-	if ( $row ) {
+	if ( is_array( $row ) ) {
 		$refund         = json_decode( $row['data'] );
 		$refund->status = $_GET['status'];
 		$db->exec( "UPDATE refunds set data='" . /** @scrutinizer ignore-type */ json_encode( $refund ) . "' WHERE id='$id'" );	 //phpcs:ignore
 		$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 		$row = $res->fetchArray();
-		if ( $row ) {
+		if ( is_array( $row ) ) {
 			$payment = json_decode( $row['data'] );
 			return feedback( $id, $payment->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
 		} else {
@@ -233,11 +233,11 @@ function verwerk_incasso( $id ) {
 	global $db;
 	$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 	$row = $res->fetchArray();
-	if ( $row ) {
+	if ( is_array( $row ) ) {
 		$incasso         = json_decode( $row['data'] );
 		$incasso->status = $_GET['status'];
 		$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ json_encode( $incasso ) . "' WHERE id='$id'" );	 //phpcs:ignore
-		return feedback( $id, $payment->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
+		return feedback( $id, $incasso->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
 	} else {
 		return fout( 'Payment niet gevonden' );
 	}
