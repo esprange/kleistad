@@ -574,11 +574,9 @@ class MollieSimulatie {
 			 * @param array $data De klant data.
 			 */
 			public function create( $data ) {
-				$this->id    = 'cst_' . \uniqid();
-				$this->name  = $data['name'];
-				$this->email = $data['email'];
-				$db          = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-				$db->exec( "INSERT INTO customers (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+				$id = 'cst_' . \uniqid();
+				$db = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+				$db->exec( "INSERT INTO customers (id, data) VALUES ( '$id','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 				$db->close();
 				unset( $db );
 				return $this;
