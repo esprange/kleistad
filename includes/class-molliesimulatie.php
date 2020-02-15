@@ -44,14 +44,23 @@ class MollieSimulatie {
 	 */
 	public function __construct() {
 		$db  = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='customers'" );
+		if ( ! $res->fetchArray() ) {
+			$db->exec( 'CREATE TABLE customers(  intern_id INTEGER primary key, id text, data text )' );
+		}
 		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' AND name='payments'" );
 		if ( ! $res->fetchArray() ) {
-			$db->exec( 'CREATE TABLE payments( id TEXT PRIMARY KEY, data TEXT )' );
+			$db->exec( 'CREATE TABLE payments( intern_id INTEGER primary key, id TEXT, customer_id TEXT, data TEXT )' );
 		}
 		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='refunds'" );
 		if ( ! $res->fetchArray() ) {
-			$db->exec( 'CREATE TABLE refunds(  intern_id INTEGER primary key, id text, data text )' );
+			$db->exec( 'CREATE TABLE refunds(  intern_id INTEGER primary key, id text, payment_id TEXT, data text )' );
 		}
+		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='mandates'" );
+		if ( ! $res->fetchArray() ) {
+			$db->exec( 'CREATE TABLE mandates(  intern_id INTEGER primary key, id text, customer_id TEXT, data text )' );
+		}
+		$db->exec( 'PRAGMA journal_mode = wal;' );
 		$db->close();
 		unset( $db );
 
@@ -252,16 +261,53 @@ class MollieSimulatie {
 
 			/**
 			 * Geef een customer object terug.
+			 *
+			 * @param string $id Het customer id.
 			 */
-			public function get() {
-				return new class() {
+			public function get( $id ) {
+				return new class( $id ) {
 
 					/**
-					 * Dummy customer id
+					 * Customer id
 					 *
 					 * @var string $id De customer ID.
 					 */
-					public $id = 'sim001';
+					public $id;
+
+					/**
+					 * Naam van de klant.
+					 *
+					 * @var string
+					 */
+					public $name;
+
+					/**
+					 * Email adres van de klant.
+					 *
+					 * @var string
+					 */
+					public $email;
+
+					/**
+					 * De constructor.
+					 *
+					 * @param string $id Het payment id.
+					 */
+					public function __construct( $id ) {
+						$this->id = $id;
+						$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+						$res      = $db->query( "SELECT data FROM customers WHERE id = '{$this->id}'" );
+						$row      = $res->fetchArray();
+						$db->close();
+						unset( $db );
+						if ( false !== $row ) {
+							$data        = json_decode( $row['data'] );
+							$this->name  = $data->name;
+							$this->email = $data->email;
+							return $this;
+						}
+						return null;
+					}
 
 					/**
 					 * Geef de subscripties terug.
@@ -328,61 +374,106 @@ class MollieSimulatie {
 					 * Geef de mandates terug.
 					 */
 					public function mandates() {
-						return [
-							new class() {
+						$mandates = [];
+						$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+						$res      = $db->query( "SELECT * FROM mandates WHERE customer_id='{$this->id}'" );
+						while ( $row = $res->fetchArray() ) { //phpcs:ignore
+							$data       = json_decode( $row['data'] );
+							$mandates[] = new class( $row['id'], $data ) {
+
 								/**
-								 * Mandaat id.
+								 * Het mandaat id
 								 *
-								 * @var string $id Het id
+								 * @var string $id Het id.
 								 */
 								public $id;
 
 								/**
-								 * Mandaat id.
+								 * De mandaat status
 								 *
-								 * @var string $signatureDate De datum dat het mandaat is afgegeven.
+								 * @var string $status De status.
 								 */
-								public $signatureDate = '16-06-2019';
+								public $status;
 
 								/**
-								 * De details van het mandaat.
+								 * Klant details
 								 *
-								 * @var object $details
+								 * @var object $detaild De klant details.
 								 */
 								public $details;
 
 								/**
-								 * De constructor.
+								 * Validatie datum
+								 *
+								 * @var string $signatureDate Datum.
 								 */
-								public function __construct() {
-									$this->details = (object) [
-										'consumerAccount' => 'XYZ',
-										'consumerName'    => 'X',
-									];
+								public $signatureDate;
+
+								/**
+								 * Creatie datum
+								 *
+								 * @var string $createdAt Datum.
+								 */
+								public $createdAt;
+
+								/**
+								 * De constructor
+								 *
+								 * @param string $id   Het mandaat id.
+								 * @param object $data De data.
+								 */
+								public function __construct( $id, $data ) {
+									$this->status        = $data->status;
+									$this->id            = $id;
+									$this->details       = $data->details;
+									$this->signatureDate = $data->signatureDate;
+									$this->createdAt     = $data->createdAt;
 								}
 
 								/**
 								 * Is het mandaat valide.
 								 */
 								public function isValid() {
-									return true;
+									return 'valid' === $this->status;
 								}
-
-							},
-						];
+							};
+						}
+						$db->close();
+						return $mandates;
 					}
 
 					/**
 					 * Heeft een valide mandaat
 					 */
 					public function hasValidMandate() {
-						return true;
+						$db    = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+						$res   = $db->query( "SELECT * FROM mandates WHERE customer_id='{$this->id}'" );
+						$valid = false;
+						while ( $row = $res->fetchArray() ) { //phpcs:ignore
+							$mandaat = json_decode( $row['data'] );
+							$valid   = $valid || 'valid' === $mandaat->status;
+						}
+						$db->close();
+						unset( $db );
+						return $valid;
 					}
 
 					/**
 					 * Trek het mandaat terug.
+					 *
+					 * @param string $id Het mandaat id.
 					 */
-					public function revokeMandate() {
+					public function revokeMandate( $id ) {
+						$db  = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+						$res = $db->query( "SELECT * FROM mandates WHERE id='$id'" );
+						$row = $res->fetchArray();
+						if ( false !== $row ) {
+							$mandaat         = json_decode( $row['data'] );
+							$mandaat->status = 'invalid';
+							$db->exec( "UPDATE mandates set data='" . /** @scrutinizer ignore-type */ wp_json_encode( $mandaat ) . "' WHERE id='$id'" ); //phpcs:ignore
+						}
+						$db->close();
+						unset( $db );
 					}
 
 					/**
@@ -425,7 +516,7 @@ class MollieSimulatie {
 					 * @param array $data De orderdata.
 					 */
 					public function createPayment( $data ) {
-						return new class( $data ) {
+						return new class( $data, $this->id, $this->name ) {
 							/**
 							 * Payment id
 							 *
@@ -434,22 +525,33 @@ class MollieSimulatie {
 							public $id;
 
 							/**
-							 * Payment data
-							 *
-							 * @var array $data De payment data.
-							 */
-							private $data;
-
-							/**
 							 * De constructor
 							 *
-							 * @param array $data De orderdata.
+							 * @param array  $data          De orderdata.
+							 * @param string $customer_id   Het klant id.
+							 * @param string $customer_name De klant naam.
 							 */
-							public function __construct( $data ) {
-								$this->id   = \uniqid();
-								$this->data = $data;
-								$db         = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-								$db->exec( "INSERT INTO payments (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+							public function __construct( $data, $customer_id, $customer_name ) {
+								$this->id          = 'tr_' . \uniqid();
+								$db                = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+								$data['status']    = 'pending';
+								$data['mandateId'] = '';
+								if ( 'first' === $data['sequenceType'] ) {
+									$mandaat_id = 'mdt_' . \uniqid();
+									$mandaat    = [
+										'signatureDate' => '',
+										'details'       => [
+											'consumerName' => $customer_name,
+											'consumerAccount' => 'NL55INGB0114443333',
+											'consumerBic'  => 'INGBNL2A',
+										],
+										'createdAt'     => date( 'c' ),
+										'status'        => 'pending',
+									];
+									$db->exec( "INSERT INTO mandates (id, customer_id, data) VALUES ( '$mandaat_id','$customer_id','" . /** @scrutinizer ignore-type */ wp_json_encode( $mandaat ) . "')" ); //phpcs:ignore
+									$data['mandateId'] = $mandaat_id;
+								}
+								$db->exec( "INSERT INTO payments (id, customer_id, data) VALUES ( '{$this->id}','$customer_id','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 								$db->close();
 								unset( $db );
 							}
@@ -468,10 +570,18 @@ class MollieSimulatie {
 
 			/**
 			 * Maak een customer aan.
+			 *
+			 * @param array $data De klant data.
 			 */
-			public function create() {
-				$customer = $this->get();
-				return $customer;
+			public function create( $data ) {
+				$this->id    = 'cst_' . \uniqid();
+				$this->name  = $data['name'];
+				$this->email = $data['email'];
+				$db          = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+				$db->exec( "INSERT INTO customers (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+				$db->close();
+				unset( $db );
+				return $this;
 			}
 		};
 

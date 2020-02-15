@@ -16,13 +16,25 @@ $db->busyTimeout( 5000 );
 
 if ( isset( $_GET[ 'idealupdate'] ) ) {
 	$id  = $_GET[ 'id' ];
-	$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
+	$res = $db->query( "SELECT * FROM payments WHERE id='$id'" );
 	$row = $res->fetchArray();
 	if ( false !== $row ) {
 		$payment         = json_decode( $row['data'] );
 		$payment->status = $_GET[ 'status' ];
 		$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ json_encode( $payment ) . "' WHERE id='$id'" ); //phpcs:ignore
-		if ( feedback( $id, $payment->webhookUrl ) ) {
+		if ( 'first' === $payment->sequenceType && 'paid' === $payment->status ) {
+			$res = $db->query( "SELECT data FROM mandates WHERE id='{$payment->mandateId}'" );
+			$row = $res->fetchArray();
+			if ( false !== $row ) {
+				$mandate                = json_decode( $row['data'] );
+				$mandate->status        = 'valid';
+				$mandate->signatureDate = date( 'c' );
+				$db->exec( "UPDATE mandates set data='" . /** @scrutinizer ignore-type */ json_encode( $mandate ) . "' WHERE id='{$payment->mandateId}'" ); //phpcs:ignore
+			} else {
+				$melding = fout( 'Mandate niet gevonden' );
+			}
+		}
+		if ( empty( $melding ) && feedback( $id, $payment->webhookUrl ) ) {
 			header( 'location: ' . $payment->redirectUrl );
 			die();
 		} else {
@@ -53,7 +65,7 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 		<div class="row">
 			<div class="col">
 			</div>
-			<div class="col-sm-8">
+			<div class="col-sm-10">
 				<h2>Mollie simulatie</h2>
 				<?php
 				echo $melding;
@@ -209,19 +221,20 @@ function verwerk_refund( $id ) {
 	$row = $res->fetchArray();
 	if ( false !== $row ) {
 		$refund         = json_decode( $row['data'] );
-		$refund->status = $_GET['status'];
+		$refund->status = $_GET['refundstatus'];
 		$db->exec( "UPDATE refunds set data='" . /** @scrutinizer ignore-type */ json_encode( $refund ) . "' WHERE id='$id'" );	 //phpcs:ignore
 		$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 		$row = $res->fetchArray();
 		if ( false !== $row ) {
 			$payment = json_decode( $row['data'] );
-			return feedback( $id, $payment->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
+			$html    = feedback( $id, $payment->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
 		} else {
-			return fout( 'Payment niet gevonden' );
+			$html = fout( 'Payment niet gevonden' );
 		}
 	} else {
-		return fout( 'Refund niet gevonden' );
+		$html = fout( 'Refund niet gevonden' );
 	}
+	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="window.location=window.location.pathname;window.location.Reload();">Verder</button></div>';
 }
 
 /**
@@ -235,12 +248,13 @@ function verwerk_incasso( $id ) {
 	$row = $res->fetchArray();
 	if ( false !== $row ) {
 		$incasso         = json_decode( $row['data'] );
-		$incasso->status = $_GET['status'];
+		$incasso->status = $_GET['incassostatus'];
 		$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ json_encode( $incasso ) . "' WHERE id='$id'" );	 //phpcs:ignore
-		return feedback( $id, $incasso->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
+		$html = feedback( $id, $incasso->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
 	} else {
-		return fout( 'Payment niet gevonden' );
+		$html = fout( 'Payment niet gevonden' );
 	}
+	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="window.location=window.location.pathname;window.location.Reload();">Verder</button></div>';
 }
 
 /**
@@ -268,25 +282,33 @@ function toon_openstaand() {
 	</thead>
 	<tbody>
 		<?php
-		while ( $row = $payments->fetchArray() ) :
-			$betaling = json_decode( $row['data'], true );
-			if ( 'oneoff' !== $betaling['sequenceType'] ) :
+		while ( $row = $payments->fetchArray() ) {
+			$betaling = json_decode( $row['data'] );
+			if ( 'oneoff' !== $betaling->sequenceType ) {
 				?>
 		<tr>
 			<td><?php echo $row['id']; ?></td>
-			<td><?php echo $betaling['metadata']['order_id']; ?></td>
-			<td><?php echo $betaling['description']; ?></td>
-			<td><?php echo $betaling['sequenceType']; ?></td>
-			<td><?php echo $betaling['amount']['value']; ?></td>
+			<td><?php echo $betaling->metadata->order_id; ?></td>
+			<td><?php echo $betaling->description; ?></td>
+			<td><?php echo $betaling->sequenceType; ?></td>
+			<td><?php echo $betaling->amount->value; ?></td>
 			<td>
-				<?php if ( 'recurring' === $betaling['sequenceType'] ) : ?>
+				<?php
+				if ( 'pending' === $betaling->status ) {
+					?>
 				<a class="btn btn-success" href="?id=<?php echo $row['id']; ?>&incassostatus=paid#">betalen</a>
 				<a class="btn btn-warning" href="?id=<?php echo $row['id']; ?>&incassostatus=failed#">falen</a>
-				<?php else : ?>
-				&nbsp;<?php endif ?></td>
+					<?php
+				} else {
+					echo $betaling->status;
+				}
+				?>
+			</td>
 		</tr>
-		<?php endif ?>
-		<?php endwhile ?>
+					<?php
+			}
+		}
+		?>
 	</tbody>
 </table>
 
@@ -302,23 +324,35 @@ function toon_openstaand() {
 		</tr>
 	</thead>
 	<tbody>
-		<?php
-		while ( $row = $refunds->fetchArray() ) :
-			$betaling = json_decode( $row['data'], true );
-			?>
+			<?php
+			while ( $row = $refunds->fetchArray() ) {
+				$betaling = json_decode( $row['data'] );
+				?>
 		<tr>
 			<td><?php echo $row['id']; ?></td>
-			<td><?php echo $betaling['metadata']['order_id']; ?></td>
-			<td><?php echo $betaling['description']; ?></td>
-			<td><?php echo $betaling['amount']['value']; ?></td>
-			<td><a class="btn btn-success"
+			<td><?php echo $betaling->metadata->order_id; ?></td>
+			<td><?php echo $betaling->description; ?></td>
+			<td><?php echo $betaling->amount->value; ?></td>
+			<td>
+				<?php
+				if ( 'pending' === $betaling->status ) {
+					?>
+				<a class="btn btn-success"
 					href="?id=<?php echo $row['id']; ?>&refundstatus=refunded#">terugstorten</a><a
 					class="btn btn-warning" href="?id=<?php echo $row['id']; ?>&refundstatus=failed#">falen</a>
+					<?php
+				} else {
+					echo $betaling->status;
+				}
+				?>
 			</td>
 		</tr>
-		<?php endwhile ?>
+				<?php
+			}
+			?>
 	</tbody>
 </table>
-	<?php
-	return ob_get_clean();
+			<?php
+			return ob_get_clean();
 }
+
