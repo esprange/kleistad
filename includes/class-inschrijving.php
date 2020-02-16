@@ -26,9 +26,9 @@ namespace Kleistad;
  */
 class Inschrijving extends Artikel {
 
-	public const META_KEY          = 'kleistad_cursus';
+	public const META_KEY         = 'kleistad_cursus';
 	public const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
-	private const EMAIL_SUBJECT    = [
+	private const EMAIL_SUBJECT   = [
 		'inschrijving'    => 'Inschrijving cursus',
 		'indeling'        => 'Indeling cursus',
 		'_herinnering'    => 'Herinnering betaling cursus',
