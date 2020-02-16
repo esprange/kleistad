@@ -79,12 +79,14 @@ $this->form();
 			<label class="kleistad_label_cbr" for="kleistad_overig" >Overig</label>
 		</div>
 	</div>
-	<div class ="kleistad_row" title="Heb je nadere vragen, stel ze gerust. Of laat hier opmerkingen achter die van belang zouden kunnen zijn voor Kleistad" >
+	<div class ="kleistad_row" >
 		<div class="kleistad_col_4 kleistad_label">
 			<label for="kleistad_vraag">Je vraag</label>
 		</div>
-		<div class="kleistad_col_6 kleistad_input">
-			<textarea class="kleistad_input" name="vraag" id="kleistad_vraag" rows="5" cols="50"><?php echo esc_textarea( $data['input']['vraag'] ); ?></textarea>
+	</div>
+	<div class ="kleistad_row" title="Geef aan wat je vraag is of wat je ons wilt mededelen" >
+		<div class="kleistad_col_10 kleistad_input">
+			<textarea class="kleistad_input" name="vraag" id="kleistad_vraag" rows="5" cols="50" required ><?php echo esc_textarea( $data['input']['vraag'] ); ?></textarea>
 		</div>
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;">
