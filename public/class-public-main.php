@@ -63,6 +63,12 @@ class Public_Main {
 			'css'    => [ 'datatables' ],
 			'access' => [],
 		],
+		'contact'               => [
+			'script' => false,
+			'js'     => [],
+			'css'    => [],
+			'access' => [],
+		],
 		'cursus_beheer'         => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
