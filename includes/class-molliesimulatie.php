@@ -260,6 +260,13 @@ class MollieSimulatie {
 		$this->customers = new class() {
 
 			/**
+			 * De id ingeval van een create.
+			 *
+			 * @var string $id De customer id.
+			 */
+			public $id;
+
+			/**
 			 * Geef een customer object terug.
 			 *
 			 * @param string $id Het customer id.
@@ -574,9 +581,9 @@ class MollieSimulatie {
 			 * @param array $data De klant data.
 			 */
 			public function create( $data ) {
-				$id = 'cst_' . \uniqid();
-				$db = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-				$db->exec( "INSERT INTO customers (id, data) VALUES ( '$id','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+				$this->id = 'cst_' . \uniqid();
+				$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+				$db->exec( "INSERT INTO customers (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 				$db->close();
 				unset( $db );
 				return $this;
