@@ -68,10 +68,8 @@ class Admin_Abonnees_Handler {
 				}
 				break;
 			case 'mollie':
-				if ( $item['mandaat'] ) {
-					$abonnement->stop_incasso( true );
-					$item['mandaat'] = false;
-				}
+				$abonnement->stop_incasso( true );
+				$item['mandaat'] = false;
 				break;
 			default:
 				break;

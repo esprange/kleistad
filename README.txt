@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.3.2
-Stable tag: 6.2.0
+Stable tag: 6.3.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,9 +34,14 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 6.2.1 =
+= 6.3.0 =
 * Admin schermen verbeterd, knop voor dagelijks job toegevoegd
-* Debiteuren shortcode uitgebreid zodat hiermee ook een blokkade datum kan worden aangepast
+* Debiteuren uitgebreid zodat hiermee ook een blokkade datum kan worden aangepast
+* Debiteuren sorteert op vervaldatum en kleurt kritieke betalingen
+* Debiteuren annulering storneert automatisch ingeval van Mollie betaling
+* Debiteuren afboeken voor dubieuze debiteuren
+* Omzetrapportage pdf rapport
+* Contact formulier shortcode
 = 6.2.0 =
 * Shortcode verkoop toegevoegd voor verkoop losse artikelen
 * Controle op geblokkeerde periode

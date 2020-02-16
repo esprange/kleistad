@@ -31,7 +31,7 @@
 		</tr>
 
 		<tr >
-			<th scope="row">Prijs standaaard cursus excl. inschrijving</th>
+			<th scope="row">Prijs standaard cursus excl. inschrijving</th>
 			<td><input type="number" step="0.01" min="0" name="kleistad-opties[cursusprijs]" class="small-text"
 					value="<?php echo esc_attr( $this->options['cursusprijs'] ); ?>" /></td>
 		</tr>

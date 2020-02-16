@@ -156,7 +156,7 @@ elseif ( 'extras' === $actie ) :
 			?>
 		<tr class="form-field">
 			<td>
-				<?php submit_button( 'verwijder mandaat' ); ?>
+				<?php submit_button( 'Verwijder mandaat', 'primary', 'submit', true, [ 'id' => 'mollie' ] ); ?>
 			</td>
 		</tr>
 		<tr>

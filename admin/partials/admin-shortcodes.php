@@ -40,6 +40,7 @@
 			<li>[kleistad_recept] overzicht van keramiek recepten</li>
 			<li>[kleistad_workshop_aanvraag] aanvraag voor workshops en kinderfeestjes</li>
 			<li>[kleistad_betaling] het betalen van een uitstaand bedrag per iDeal (via link vanuit email)</li>
+			<li>[kleistad_contact] het contact formulier</li>
 		</ol>
 	</li>
 	<li><h3>toegankelijk voor leden</h3>

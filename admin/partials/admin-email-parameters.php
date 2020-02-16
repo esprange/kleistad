@@ -207,6 +207,15 @@
 				<li>[email] : Het nieuwe email adres van de gebruiker</li>
 			</ul>
 			</li>
+			<li>contact_vraag : Een vraag via het formulier
+			<ul style="list-style-type:square;margin-left:25px">
+				<li>[naam] : De naam van de vraagsteller</li>
+				<li>[onderwerp] : Het onderwerp van de vraag</li>
+				<li>[email] : Het email adres van de vraagsteller</li>
+				<li>[telefoon] : Het telefoonnummer van de vraagsteller</li>
+				<li>[vraag] : De vraag</li>
+			</ul>
+			</li>
 		</ol>
 	</li>
 </ul>
