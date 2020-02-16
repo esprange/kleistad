@@ -75,7 +75,7 @@ class Public_Contact extends ShortcodeForm {
 		$emailer->send(
 			[
 				'to'         => 'Kleistad <info@' . \Kleistad\Email::domein() . '>',
-				'from'       => $data['input']['email'],
+				'from'       => 'no_reply@' . \Kleistad\Email::verzend_domein(),
 				'cc'         => [ $data['input']['email'] ],
 				'slug'       => 'contact_vraag',
 				'subject'    => 'Vraag over ' . $data['input']['onderwerp'],
