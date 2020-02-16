@@ -27,7 +27,7 @@ namespace Kleistad;
 class Inschrijving extends Artikel {
 
 	public const META_KEY          = 'kleistad_cursus';
-	private const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
+	public const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
 	private const EMAIL_SUBJECT    = [
 		'inschrijving'    => 'Inschrijving cursus',
 		'indeling'        => 'Indeling cursus',
@@ -182,7 +182,7 @@ class Inschrijving extends Artikel {
 		if ( ! $this->ingedeeld && 0 < $this->cursus->inschrijfkosten ) {
 			return $this->betalen->order(
 				$this->klant_id,
-				$this->referentie() . '-inschrijving',
+				$this->referentie(),
 				$this->aantal * $this->cursus->inschrijfkosten,
 				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
 				$bericht
@@ -190,7 +190,7 @@ class Inschrijving extends Artikel {
 		} else {
 			return $this->betalen->order(
 				$this->klant_id,
-				$this->referentie() . '-cursus',
+				$this->referentie(),
 				$this->aantal * $this->cursus->cursuskosten,
 				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
 				$bericht
