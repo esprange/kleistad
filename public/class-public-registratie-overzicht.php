@@ -133,8 +133,6 @@ class Public_Registratie_Overzicht extends Shortcode {
 		];
 		fputcsv( $this->file_handle, $cursus_fields, ';', '"' );
 		foreach ( $cursisten as $cursist ) {
-			$is_lid = ( ! empty( $cursist->role ) || ( is_array( $cursist->role ) && ( count( $cursist->role ) > 0 ) ) );
-
 			$cursist_gegevens = [
 				$cursist->first_name,
 				$cursist->last_name,
@@ -144,7 +142,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 				$cursist->pcode,
 				$cursist->plaats,
 				$cursist->telnr,
-				$is_lid ? 'Ja' : 'Nee',
+				\Kleistad\Roles::reserveer( $cursist->ID ) ? 'Ja' : 'Nee',
 			];
 
 			if ( array_key_exists( $cursist->ID, $inschrijvingen ) ) {
@@ -170,10 +168,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 		usort(
 			$cursist_cursus_gegevens,
 			function( $a, $b ) {
-				if ( $a['inschrijfdatum'] === $b['inschrijfdatum'] ) {
-					return 0;
-				}
-				return $a['inschrijfdatum'] > $b['inschrijfdatum'] ? 1 : -1;
+				return ( $a['inschrijfdatum'] <=> $b['inschrijfdatum'] );
 			}
 		);
 		foreach ( $cursist_cursus_gegevens as $cursus_gegevens ) {
