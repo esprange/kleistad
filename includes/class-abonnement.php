@@ -486,7 +486,7 @@ class Abonnement extends Artikel {
 			];
 			foreach ( $this->extras as $extra ) {
 				$regels[] = array_merge(
-					self::split_bedrag( $this->bedrag( $extra ) ),
+					self::split_bedrag( $this->bedrag_extra( $extra ) ),
 					[
 						'artikel' => "gebruik $extra",
 						'aantal'  => $aantal,
@@ -522,6 +522,22 @@ class Abonnement extends Artikel {
 	}
 
 	/**
+	 * Bereken de prijs van een extra.
+	 *
+	 * @param string $extra het extra element.
+	 * @return float Het maandbedrag van de extra.
+	 */
+	private function bedrag_extra( $extra ) {
+		$options = \Kleistad\Kleistad::get_options();
+		foreach ( $options['extra'] as $extra_optie ) {
+			if ( $extra === $extra_optie['naam'] ) {
+				return (float) $extra_optie['prijs'];
+			}
+		}
+		return 0.0;
+	}
+
+	/**
 	 * Bereken de maandelijkse kosten, de overbrugging, of het startbedrag.
 	 *
 	 * @param  string $type Welk bedrag gevraagd wordt, standaard het maandbedrag.
@@ -532,15 +548,9 @@ class Abonnement extends Artikel {
 		$basis_bedrag  = (float) $options[ $this->soort . '_abonnement' ];
 		$extras_bedrag = 0.0;
 		foreach ( $this->extras as $extra ) {
-			foreach ( $options['extra'] as $extra_optie ) {
-				if ( $extra_optie['naam'] === $extra ) {
-					$extras_bedrag += $extra_optie['prijs'];
-				}
-			}
+			$extras_bedrag += $this->bedrag_extra( $extra );
 		}
 		switch ( $type ) {
-			case '':
-				return $basis_bedrag;
 			case '#mandaat':
 				return 0.01;
 			case '#start':
@@ -552,12 +562,7 @@ class Abonnement extends Artikel {
 			case '#pauze':
 				return $this->pauze_fractie() * ( $basis_bedrag + $extras_bedrag );
 			default:
-				foreach ( $options['extra'] as $extra_option ) {
-					if ( $type === $extra_option['naam'] ) {
-						return (float) $extra_option['prijs'];
-					}
-				}
-				return 0.0;
+				return $basis_bedrag;
 		};
 	}
 
@@ -590,7 +595,7 @@ class Abonnement extends Artikel {
 	private function extras_lijst() {
 		$lijst = [];
 		foreach ( $this->extras as $extra ) {
-			$lijst[] = $extra . ' ( € ' . number_format_i18n( $this->bedrag( $extra ), 2 ) . ' p.m.)';
+			$lijst[] = $extra . ' ( € ' . number_format_i18n( $this->bedrag_extra( $extra ), 2 ) . ' p.m.)';
 		}
 		return implode( ', ', $lijst );
 	}
