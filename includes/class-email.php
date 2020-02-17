@@ -235,7 +235,7 @@ class Email {
 	 * @return string De opgemaakte tekst.
 	 */
 	private function inhoud( $tekst ) {
-		$schone_tekst = wordwrap( preg_replace( '/\s+/', ' ', $tekst ), 76, "\r\n", false );
+		$schone_tekst = wordwrap( preg_replace( '/\s+/', ' ', $tekst ), 75, "\r\n", false );
 		ob_start();
 		?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
