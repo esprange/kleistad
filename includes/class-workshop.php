@@ -266,7 +266,7 @@ class Workshop extends Artikel {
 				$email_parameters['reply-to'] = 'info@' . \Kleistad\Email::domein();
 				break;
 			case '_betaling':
-			case '_betaling_ideal':
+			case '_ideal':
 				$email_parameters['subject'] = 'Betaling ' . $this->naam;
 				break;
 			case '_annulering':
@@ -390,6 +390,7 @@ class Workshop extends Artikel {
 				continue;
 			}
 			$workshop->betaling_email = true;
+			$workshop->artikel_type   = 'workshop';
 			$workshop->save();
 			$workshop->email( '_betaling', $workshop->bestel_order( 0.0, $workshop->datum ) );
 		}
@@ -414,7 +415,7 @@ class Workshop extends Artikel {
 				 */
 				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-					$this->email( '_ideal_betaald' );
+					$this->email( '_ideal' );
 				}
 			}
 		}
