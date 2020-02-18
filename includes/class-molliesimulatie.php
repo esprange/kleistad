@@ -43,26 +43,10 @@ class MollieSimulatie {
 	 * De constructor van de simulatie class
 	 */
 	public function __construct() {
-		$db  = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='customers'" );
-		if ( ! $res->fetchArray() ) {
-			$db->exec( 'CREATE TABLE customers(  intern_id INTEGER primary key, id text, data text )' );
+		$db_file = $_SERVER['DOCUMENT_ROOT'] . '/mollie.db';
+		if ( ! file_exists( $db_file ) ) {
+			$this->create_db( $db_file );
 		}
-		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' AND name='payments'" );
-		if ( ! $res->fetchArray() ) {
-			$db->exec( 'CREATE TABLE payments( intern_id INTEGER primary key, id TEXT, customer_id TEXT, data TEXT )' );
-		}
-		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='refunds'" );
-		if ( ! $res->fetchArray() ) {
-			$db->exec( 'CREATE TABLE refunds(  intern_id INTEGER primary key, id text, payment_id TEXT, data text )' );
-		}
-		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='mandates'" );
-		if ( ! $res->fetchArray() ) {
-			$db->exec( 'CREATE TABLE mandates(  intern_id INTEGER primary key, id text, customer_id TEXT, data text )' );
-		}
-		$db->exec( 'PRAGMA journal_mode = wal;' );
-		$db->close();
-		unset( $db );
 
 		$this->payments = new class() {
 			/**
@@ -521,4 +505,35 @@ class MollieSimulatie {
 		};
 
 	}
+
+	/**
+	 * Maak de db file aan.
+	 *
+	 * @param string $db_file Het sqlite bestand.
+	 */
+	private function create_db( $db_file ) {
+		$db  = new \SQLite3( $file );
+		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='customers'" );
+		if ( ! $res->fetchArray() ) {
+			$db->exec( 'CREATE TABLE customers(  intern_id INTEGER primary key, id text, data text )' );
+		}
+		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' AND name='payments'" );
+		if ( ! $res->fetchArray() ) {
+			$db->exec( 'CREATE TABLE payments( intern_id INTEGER primary key, id TEXT, customer_id TEXT, data TEXT )' );
+		}
+		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='refunds'" );
+		if ( ! $res->fetchArray() ) {
+			$db->exec( 'CREATE TABLE refunds(  intern_id INTEGER primary key, id text, payment_id TEXT, data text )' );
+		}
+		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='mandates'" );
+		if ( ! $res->fetchArray() ) {
+			$db->exec( 'CREATE TABLE mandates(  intern_id INTEGER primary key, id text, customer_id TEXT, data text )' );
+		}
+		$db->exec( 'PRAGMA journal_mode = wal;' );
+		$db->close();
+		unset( $db );
+
+	}
+
+
 } // phpcs:enable
