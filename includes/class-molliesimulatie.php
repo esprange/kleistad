@@ -512,7 +512,7 @@ class MollieSimulatie {
 	 * @param string $db_file Het sqlite bestand.
 	 */
 	private function create_db( $db_file ) {
-		$db  = new \SQLite3( $file );
+		$db  = new \SQLite3( $db_file );
 		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='customers'" );
 		if ( ! $res->fetchArray() ) {
 			$db->exec( 'CREATE TABLE customers(  intern_id INTEGER primary key, id text, data text )' );
