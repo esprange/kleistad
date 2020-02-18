@@ -298,7 +298,7 @@ class MollieSimulatie {
 					/**
 					 * De constructor.
 					 *
-					 * @param string $id Het payment id.
+					 * @param string $id Het customer id.
 					 */
 					public function __construct( $id ) {
 						$this->id = $id;
@@ -314,67 +314,6 @@ class MollieSimulatie {
 							return $this;
 						}
 						return null;
-					}
-
-					/**
-					 * Geef de subscripties terug.
-					 */
-					public function subscriptions() {
-						return [
-							new class() {
-								/**
-								 * De omschrijving van de subscriptie
-								 *
-								 * @var string $description De omschrijving tijdens het aanmaken van de subscriptie.
-								 */
-								public $description = '';
-
-								/**
-								 * Het bedrag de subscriptie
-								 *
-								 * @var object $amount Het bedrag.
-								 */
-								public $amount;
-
-								/**
-								 * Het interval van de subscriptie
-								 *
-								 * @var string $interval Het interval.
-								 */
-								public $interval = 'maandelijks';
-
-								/**
-								 * De start van de subscriptie
-								 *
-								 * @var string $startDate de datum.
-								 */
-								public $startDate = '01-02-2019';
-
-								/**
-								 * Het id van de subscriptie.
-								 *
-								 * @var string $id Het id.
-								 */
-								public $id = 'subscriptie_id';
-
-								/**
-								 * Is de subscriptie actief.
-								 */
-								public function isActive() {
-									return true;
-								}
-
-								/**
-								 * De constructor.
-								 */
-								public function __construct() {
-									$this->amount = (object) [
-										'currency' => 'EUR',
-										'value'    => 99.9,
-									];
-								}
-							},
-						];
 					}
 
 					/**
@@ -484,40 +423,6 @@ class MollieSimulatie {
 					}
 
 					/**
-					 * Cancel de subscriptie.
-					 */
-					public function cancelSubscription() {
-					}
-
-					/**
-					 * Get de subscriptie.
-					 */
-					public function getSubscription() {
-						return new class() {
-							/**
-							 * Is de subscriptie actief.
-							 */
-							public function isActive() {
-								return true;
-							}
-						};
-					}
-
-					/**
-					 * Maak een subscriptie aan.
-					 */
-					public function createSubscription() {
-						return new class() {
-							/**
-							 * Het subscriptie id
-							 *
-							 * @var string $id Het id
-							 */
-							public $id = '_sim123456';
-						};
-					}
-
-					/**
 					 * Maak de betaling
 					 *
 					 * @param array $data De orderdata.
@@ -586,7 +491,7 @@ class MollieSimulatie {
 				$db->exec( "INSERT INTO customers (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 				$db->close();
 				unset( $db );
-				return $this;
+				return $this->get( $this->id );
 			}
 		};
 
