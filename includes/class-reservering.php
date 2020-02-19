@@ -26,7 +26,6 @@ namespace Kleistad;
  * @property int    programma
  * @property bool   gemeld
  * @property bool   verwerkt
- * @property bool   actief
  * @property bool   gereserveerd
  * @property int    status
  * @property array  verdeling
@@ -148,20 +147,10 @@ class Reservering extends Entity {
 			case 'gemeld':
 			case 'verwerkt':
 				return boolval( $this->data[ $attribuut ] );
-			case 'actief':
-				return strtotime( $this->data['jaar'] . '-' . $this->data['maand'] . '-' . $this->data['dag'] . ' 00:00' ) < time();
 			case 'gereserveerd':
 				return ( ! is_null( $this->data['id'] ) );
-			case 'jaar':
-			case 'maand':
-			case 'dag':
-			case 'oven_id':
-			case 'gebruiker_id':
-			case 'temperatuur':
-			case 'programma':
-				return intval( $this->data[ $attribuut ] );
 			default:
-				return $this->data[ $attribuut ];
+				return is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
 	}
 

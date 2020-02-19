@@ -17,13 +17,6 @@ namespace Kleistad;
 class Public_Reservering extends Shortcode {
 
 	/**
-	 * Shortcode actief vlag.
-	 *
-	 * @var bool $actief Vlag om te voorkomen dat er meer dan 1 reserveringstabel getoond wordt.
-	 */
-	private static $actief = false;
-
-	/**
 	 *
 	 * Prepareer 'reservering' form
 	 *
@@ -39,12 +32,6 @@ class Public_Reservering extends Shortcode {
 		if ( ! \Kleistad\Roles::reserveer() ) {
 			$error->add( 'security', 'hiervoor moet je ingelogd zijn' );
 			return $error;
-		}
-		if ( self::$actief ) {
-			$error->add( 'fout', 'er kan maar één tabel met oven reserveringen tegelijk getoond worden' );
-			return $error;
-		} else {
-			self::$actief = true; // Voorkomen dat twee reserveringstabellen op één pagina getoond worden.
 		}
 		$atts = shortcode_atts(
 			[ 'oven' => 'niet ingevuld' ],
