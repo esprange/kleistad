@@ -45,6 +45,13 @@ abstract class Shortcode {
 	protected $file_handle;
 
 	/**
+	 * Lijst van actieve shortcodes.
+	 *
+	 * @var array de lijst.
+	 */
+	private static $shortcode_lijst = [];
+
+	/**
 	 * Abstract definitie van de prepare functie
 	 *
 	 * @since   4.0.87
@@ -200,6 +207,23 @@ abstract class Shortcode {
 	}
 
 	/**
+	 * Singleton handler
+	 *
+	 * @param string $shortcode   Shortcode (zonder kleistad- ).
+	 * @param array  $atts        Shortcode parameters.
+	 * @param array  $options     Plugin opties.
+	 */
+	public static function get_instance( $shortcode, $atts, $options ) {
+		if ( in_array( $shortcode, self::$shortcode_lijst, true ) ) {
+			return null;
+		} else {
+			self::$shortcode_lijst[] = $shortcode;
+			$shortcode_class         = '\Kleistad\Public_' . ucwords( $shortcode, '_' );
+			return new $shortcode_class( $shortcode, $atts, $options );
+		}
+	}
+
+	/**
 	 * De constructor
 	 *
 	 * @since   4.0.87
@@ -208,7 +232,7 @@ abstract class Shortcode {
 	 * @param array  $atts        Shortcode parameters.
 	 * @param array  $options     Plugin opties.
 	 */
-	public function __construct( $shortcode, $atts, $options ) {
+	private function __construct( $shortcode, $atts, $options ) {
 		$this->atts      = $atts;
 		$this->options   = $options;
 		$this->shortcode = $shortcode;

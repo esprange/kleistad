@@ -482,10 +482,11 @@ class Public_Main {
 	 * @return string           html resultaat.
 	 */
 	public function shortcode_handler( $atts, $content, $tag ) {
-		$shortcode = substr( $tag, strlen( 'kleistad-' ) );
-
-		$shortcode_class  = '\Kleistad\Public_' . ucwords( $shortcode, '_' );
-		$shortcode_object = new $shortcode_class( $shortcode, $atts, $this->options );
+		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
+		$shortcode_object = \Kleistad\Shortcode::get_instance( $shortcode, $atts, $this->options );
+		if ( is_null( $shortcode_object ) ) {
+			return '';
+		}
 		if ( ! \Kleistad\Shortcode::check_access( $shortcode ) ) {
 			return $shortcode_object->status( new \WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
 		}
