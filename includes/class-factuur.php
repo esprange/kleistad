@@ -226,7 +226,7 @@ class Factuur extends \FPDF {
 		usort(
 			$files,
 			function( $a, $b ) {
-				return filemtime( $a ) - filemtime( $b );
+				return filemtime( $b ) <=> filemtime( $a ); // Nieuwste factuur bovenaan.
 			}
 		);
 		return str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $files );
