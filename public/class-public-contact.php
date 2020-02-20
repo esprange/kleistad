@@ -27,14 +27,25 @@ class Public_Contact extends ShortcodeForm {
 	 */
 	protected function prepare( &$data ) {
 		if ( ! isset( $data['input'] ) ) {
-			$data          = [];
-			$data['input'] = [
-				'naam'      => '',
-				'email'     => '',
-				'telnr'     => '',
-				'onderwerp' => '',
-				'vraag'     => '',
-			];
+			$data      = [];
+			$gebruiker = wp_get_current_user();
+			if ( $gebruiker->exists() ) {
+				$data['input'] = [
+					'naam'      => $gebruiker->display_name,
+					'email'     => $gebruiker->user_email,
+					'telnr'     => $gebruiker->telnr,
+					'onderwerp' => '',
+					'vraag'     => '',
+				];
+			} else {
+				$data['input'] = [
+					'naam'      => '',
+					'email'     => '',
+					'telnr'     => '',
+					'onderwerp' => '',
+					'vraag'     => '',
+				];
+			}
 		}
 		return true;
 	}
