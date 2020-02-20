@@ -168,11 +168,7 @@ class Order extends \Kleistad\Entity {
 		$dd_order->historie   = 'Afboeking order door ' . wp_get_current_user()->display_name;
 		$dd_order->referentie = '@-' . $this->referentie;
 		$dd_order->betaald    = $te_betalen;
-		$dd_order->klant      = [
-			'naam'  => 'Dubieuze debiteur',
-			'adres' => '',
-			'email' => 'no_reply@' . \Kleistad\Email::domein(),
-		];
+		$dd_order->klant      = $this->klant;
 		$dd_order->regels     = [
 			array_merge(
 				\Kleistad\Artikel::split_bedrag( $te_betalen ),

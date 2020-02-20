@@ -46,8 +46,9 @@ class Orderrapportage {
 					$omzet[ $naam ]['btw']    += $order->btw();
 					$omzet[ $naam ]['details'] = true;
 				} else {
-					$omzet[ $naam ]['netto'] -= $order->netto();
-					$omzet[ $naam ]['btw']   -= $order->btw();
+					$omzet[ $naam ]['netto']  -= $order->netto();
+					$omzet[ $naam ]['btw']    -= $order->btw();
+					$omzet[ $naam ]['details'] = true;
 				}
 			}
 		}
