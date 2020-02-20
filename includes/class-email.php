@@ -341,10 +341,12 @@ class Email {
 						<tr>
 							<td class="inner">
 								<?php echo $schone_tekst; // phpcs:ignore ?><br />
+								<?php if ( ! empty( $this->mailparams['sign'] ) ) : ?>
 								<p>Met vriendelijke groet,</p>
 								<p><?php echo $this->mailparams['sign']; // phpcs:ignore ?></p>
-								<?php if ( $this->mailparams['sign_email'] ) : ?>
+									<?php if ( $this->mailparams['sign_email'] ) : ?>
 								<p><a href="mailto:<?php echo esc_attr( 'info@' . self::domein() ); ?>" target="_top" ><?php echo esc_html( 'info@' . self::domein() ); ?></a></p>
+								<?php endif ?>
 								<?php endif ?>
 							</td>
 						</tr>

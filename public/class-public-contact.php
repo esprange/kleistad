@@ -86,10 +86,13 @@ class Public_Contact extends ShortcodeForm {
 		$emailer->send(
 			[
 				'to'         => 'Kleistad <info@' . \Kleistad\Email::domein() . '>',
-				'from'       => 'no_reply@' . \Kleistad\Email::verzend_domein(),
-				'cc'         => [ $data['input']['email'] ],
+				'from'       => 'info@' . \Kleistad\Email::verzend_domein(),
+				'from_name'  => $data['input']['naam'],
+				'reply-to'   => $data['input']['email'],
 				'slug'       => 'contact_vraag',
 				'subject'    => 'Vraag over ' . $data['input']['onderwerp'],
+				'auto'       => false,
+				'sign'       => '',
 				'parameters' => [
 					'naam'     => $data['input']['naam'],
 					'vraag'    => $data['input']['vraag'],
@@ -98,6 +101,23 @@ class Public_Contact extends ShortcodeForm {
 				],
 			]
 		);
+		$emailer->send(
+			[
+				'to'         => $data['input']['email'],
+				'from'       => 'info@' . \Kleistad\Email::verzend_domein(),
+				'from_name'  => 'Kleistad',
+				'reply-to'   => 'Kleistad <info@' . \Kleistad\Email::domein() . '>',
+				'slug'       => 'contact_vraag',
+				'subject'    => 'Ontvangst vraag over ' . $data['input']['onderwerp'],
+				'parameters' => [
+					'naam'     => $data['input']['naam'],
+					'vraag'    => $data['input']['vraag'] . '<br/><p>Bedankt voor de vraag, wij proberen die snel te beantwoorden.</p><br/>',
+					'telefoon' => $data['input']['telnr'],
+					'email'    => $data['input']['email'],
+				],
+			]
+		);
+
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'Jouw vraag is ontvangen en er wordt spoedig contact met je opgenomen' ),
