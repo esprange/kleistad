@@ -71,8 +71,6 @@ class Public_Kalender extends Shortcode {
 								'aantal'     => $workshop->aantal,
 								'docent'     => $workshop->docent,
 								'technieken' => implode( ', ', $workshop->technieken ),
-								'start'      => strftime( '%H:%M', $workshop->start_tijd ),
-								'eind'       => strftime( '%H:%M', $workshop->eind_tijd ),
 							],
 						];
 					}
@@ -91,8 +89,6 @@ class Public_Kalender extends Shortcode {
 								'aantal'     => $cursus->maximum - $cursus->ruimte(),
 								'docent'     => $cursus->docent,
 								'technieken' => implode( ', ', $cursus->technieken ),
-								'start'      => strftime( '%H:%M', $cursus->start_tijd ),
-								'eind'       => strftime( '%H:%M', $cursus->eind_tijd ),
 							],
 						];
 					}
@@ -105,11 +101,8 @@ class Public_Kalender extends Shortcode {
 					'end'             => $event->eind->format( \DateTime::ATOM ),
 					'backgroundColor' => 'violet',
 					'textColor'       => 'black',
-					'editable'        => false,
 					'extendedProps'   => [
 						'naam'  => $event->titel,
-						'start' => $event->start->format( 'H:i' ),
-						'eind'  => $event->eind->format( 'H:i' ),
 					],
 				];
 			}
