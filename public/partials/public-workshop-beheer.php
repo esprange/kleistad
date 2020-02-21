@@ -88,16 +88,15 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 			<td colspan="1"></td>
 		</tr>
 		<tr>
-			<th>Afspraak definitief</th>
-			<td><input type="hidden" name="definitief" value="<?php echo (int) $data['workshop']['definitief']; ?>" ><?php echo $data['workshop']['definitief'] ? '&#10004;' : '&#10060;'; ?></td>
-			<th>Betaald</th>
-			<td><input type="hidden" name="betaald" value="<?php echo (int) $data['workshop']['betaald']; ?>" ><?php echo $data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?></td>
+			<th>Afspraak definitief &nbsp;&nbsp;<input type="hidden" name="definitief" value="<?php echo (int) $data['workshop']['definitief']; ?>" ><?php echo $data['workshop']['definitief'] ? '&#10004;' : '&#10060;'; ?></th>
+			<th>Gefactureerd &nbsp;&nbsp;<?php echo $data['workshop']['gefactureerd'] ? '&#10004;' : '&#10060;'; ?></th>
+			<th>Betaald &nbsp;&nbsp;<input type="hidden" name="betaald" value="<?php echo (int) $data['workshop']['betaald']; ?>" ><?php echo $data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?></th>
 		</tr>
 	</table>
 	<button type="submit" name="kleistad_submit_workshop_beheer" value="bewaren" <?php disabled( $alleen_lezen || $data['workshop']['definitief'] ); ?> >Opslaan</button>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen"
 		data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
-	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $alleen_lezen || 'toevoegen' === $data['actie'] ); ?>
+	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $alleen_lezen || 'toevoegen' === $data['actie'] || $data['workshop']['gefactureerd'] ); ?>
 		data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 </form>

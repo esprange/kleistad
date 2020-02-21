@@ -269,7 +269,7 @@ class Workshop extends Artikel {
 			case '_ideal':
 				$email_parameters['subject'] = 'Betaling ' . $this->naam;
 				break;
-			case '_annulering':
+			case '_afzegging':
 				$email_parameters['subject'] = 'Annulering ' . $this->naam;
 				break;
 			default:

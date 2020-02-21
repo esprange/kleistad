@@ -97,6 +97,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	private function formulier( $workshop_id = null ) {
 		$workshop = new \Kleistad\Workshop( $workshop_id );
+		$order_id = \Kleistad\Order::zoek_order( $workshop->referentie() );
 		return [
 			'workshop_id'    => $workshop->id,
 			'naam'           => $workshop->naam,
@@ -116,6 +117,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'definitief'     => $workshop->definitief,
 			'vervallen'      => $workshop->vervallen,
 			'aanvraag_id'    => $workshop->aanvraag_id,
+			'gefactureerd'   => boolval( $order_id ),
 			'betaling_email' => $workshop->betaling_email,
 		];
 	}
