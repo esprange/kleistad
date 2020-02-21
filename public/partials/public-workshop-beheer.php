@@ -12,7 +12,7 @@
 global $wp;
 if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie'] ) ) :
 	$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
-	$alleen_lezen = $data['workshop']['betaling_email'] || $data['workshop']['vervallen'] || $voltooid;
+	$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
 	$this->form();
 	?>
 

@@ -102,7 +102,7 @@ class Public_Kalender extends Shortcode {
 					'backgroundColor' => 'violet',
 					'textColor'       => 'black',
 					'extendedProps'   => [
-						'naam'  => $event->titel,
+						'naam' => $event->titel,
 					],
 				];
 			}

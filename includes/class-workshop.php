@@ -365,7 +365,7 @@ class Workshop extends Artikel {
 			array_merge(
 				self::split_bedrag( $this->kosten ),
 				[
-					'artikel' => "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ),
+					'artikel' => "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ) . ", {$this->aantal} deelnemers",
 					'aantal'  => 1,
 				]
 			),

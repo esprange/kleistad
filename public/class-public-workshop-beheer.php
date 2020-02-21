@@ -333,20 +333,21 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		} else {
 			$workshop = new \Kleistad\Workshop();
 		}
-		$workshop->naam        = $data['workshop']['naam'];
-		$workshop->datum       = strtotime( $data['workshop']['datum'] );
-		$workshop->start_tijd  = strtotime( $data['workshop']['start_tijd'] );
-		$workshop->eind_tijd   = strtotime( $data['workshop']['eind_tijd'] );
-		$workshop->docent      = $data['workshop']['docent'];
-		$workshop->technieken  = $data['workshop']['technieken'];
-		$workshop->organisatie = $data['workshop']['organisatie'];
-		$workshop->contact     = $data['workshop']['contact'];
-		$workshop->email       = $data['workshop']['email'];
-		$workshop->telnr       = $data['workshop']['telnr'];
-		$workshop->programma   = $data['workshop']['programma'];
-		$workshop->kosten      = $data['workshop']['kosten'];
-		$workshop->aantal      = $data['workshop']['aantal'];
-		$workshop->aanvraag_id = $data['workshop']['aanvraag_id'];
+		$workshop->naam         = $data['workshop']['naam'];
+		$workshop->datum        = strtotime( $data['workshop']['datum'] );
+		$workshop->start_tijd   = strtotime( $data['workshop']['start_tijd'] );
+		$workshop->eind_tijd    = strtotime( $data['workshop']['eind_tijd'] );
+		$workshop->docent       = $data['workshop']['docent'];
+		$workshop->technieken   = $data['workshop']['technieken'];
+		$workshop->organisatie  = $data['workshop']['organisatie'];
+		$workshop->contact      = $data['workshop']['contact'];
+		$workshop->email        = $data['workshop']['email'];
+		$workshop->telnr        = $data['workshop']['telnr'];
+		$workshop->programma    = $data['workshop']['programma'];
+		$workshop->kosten       = $data['workshop']['kosten'];
+		$workshop->aantal       = $data['workshop']['aantal'];
+		$workshop->aanvraag_id  = $data['workshop']['aanvraag_id'];
+		$workshop->artikel_type = 'workshop';
 		if ( 'bewaren' === $data['form_actie'] ) {
 			$workshop->save();
 			$bericht = 'De workshop informatie is opgeslagen';
