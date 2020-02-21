@@ -237,8 +237,6 @@ class Admin_Upgrade {
 	 * Converteer de orders.
 	 */
 	private function convert_order() {
-		global $wpdb;
-		$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}kleistad_orders SET verval_datum=%s", '2020-12-31 00:00:00' ) );
 	}
 
 	// phpcs:enable
