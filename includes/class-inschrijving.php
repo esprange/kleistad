@@ -325,7 +325,11 @@ class Inschrijving extends Artikel {
 	 * @return bool
 	 */
 	public function inschrijving_betaald( $betaald ) {
-		return ( $betaald >= ( $this->aantal * $this->cursus->inschrijfkosten - 0.01 ) );
+		if ( 0 < $this->cursus->inschrijfkosten ) {
+			return $betaald >= round( $this->aantal * $this->cursus->inschrijfkosten, 2 );
+		} else {
+			return $betaald >= round( $this->aantal * $this->cursus->cursuskosten, 2 );
+		}
 	}
 
 	/**
@@ -344,7 +348,7 @@ class Inschrijving extends Artikel {
 	 * @param float $bedrag Het totaal betaalde bedrag.
 	 */
 	protected function betaalactie( $bedrag ) {
-		if ( ! $this->ingedeeld && $bedrag >= $this->cursus->inschrijfkosten ) {
+		if ( ! $this->ingedeeld && $this->inschrijving_betaald( $bedrag ) ) {
 			$this->ingedeeld = true;
 			$this->save();
 		}
@@ -402,21 +406,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Bepaal de inschrijfstatus a.d.h.v. het betaalde bedrag.
-	 *
-	 * @param float $bedrag Het betaaalde bedrag.
-	 * @return bool Of de indelingsstatus gewijzigd is.
-	 */
-	private function betaalstatus( $bedrag ) {
-		if ( ! $this->ingedeeld && ( $bedrag >= ( $this->cursus->inschrijfkosten - 0.01 ) ) ) {
-			$this->ingedeeld = true;
-			$this->save();
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
 	 *
 	 * @since        4.2.0
@@ -433,11 +422,11 @@ class Inschrijving extends Artikel {
 				/**
 				 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
 				 */
-				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 				if ( $this->ingedeeld ) {
 					/**
 					 * Als de cursist al ingedeeld is volstaat een bedankje.
 					 */
+					$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 					if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 						$this->email( '_ideal_betaald' );
 					}
@@ -445,6 +434,7 @@ class Inschrijving extends Artikel {
 					/**
 					 * De cursist krijgt de melding dat deze nu ingedeeld is.
 					 */
+					$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 					$this->email( 'indeling' );
 				}
 			} else {
