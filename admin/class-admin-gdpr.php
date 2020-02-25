@@ -176,6 +176,30 @@ class Admin_GDPR {
 	}
 
 	/**
+	 * Export functie privacy gevoelige data.
+	 *
+	 * @global object $wpdb wp database
+	 * @param  int $gebruiker_id Het gebruiker id.
+	 * @return array De persoonlijke data (stooksaldo).
+	 */
+	private static function export_dagdelenkaart( $gebruiker_id ) {
+		$dagdelenkaart = \Kleistad\Dagdelenkaart( $gebruiker_id );
+		$items         = [];
+		$items[]       = [
+			'group_id'    => 'dagdelenkaart',
+			'group_label' => 'Dagdelenkaart informatie',
+			'item_id'     => 'dagdelenkaart-' . $dagdelenkaart->id,
+			'data'        => [
+				[
+					'name'  => 'Datum',
+					'value' => strftime( $dagdelenkaart->start_datum ),
+				],
+			],
+		];
+		return $items;
+	}
+
+	/**
 	 * Exporteer persoonlijke data.
 	 *
 	 * @since 4.3.0
@@ -221,7 +245,8 @@ class Admin_GDPR {
 				self::export_inschrijving( $gebruiker_id ),
 				self::export_abonnement( $gebruiker_id ),
 				self::export_saldo( $gebruiker_id ),
-				self::export_reservering( $gebruiker_id )
+				self::export_reservering( $gebruiker_id ),
+				self::export_dagdelenkaart( $gebruiker_id )
 			);
 		}
 		// Geef aan of er nog meer te exporteren valt, de controle op page nummer is een dummy.
@@ -273,6 +298,115 @@ class Admin_GDPR {
 			'messages'       => [],
 			'done'           => ( 0 < $count && 1 === $page ), // Controle op page is een dummy.
 		];
+	}
+
+	/**
+	 * Verwijder oude gegevens, ouder dan 5 jaar conform de privacy verklaring
+	 *
+	 * @since 6.4.0
+	 */
+	public static function erase_old_privacy_data() {
+		$erase_agv     = strtotime( '-5 years' ); // Persoonlijke gegevens worden 5 jaar bewaard.
+		$erase_fiscaal = strtotime( '-7 years' ); // Order gegevens worden 7 jaar bewaard.
+		self::erase_cursussen( $erase_agv );
+		self::erase_dagdeelkaarten( $erase_agv );
+		self::erase_abonnementen( $erase_agv );
+		self::erase_workshops( $erase_agv );
+		self::erase_gebruikers( $erase_agv );
+		self::erase_orders( $erase_fiscaal );
+	}
+
+	/**
+	 * Verwijder oude cursussen
+	 *
+	 * @param int $datum Het criterium.
+	 */
+	private static function erase_cursussen( $datum ) {
+		foreach ( \Kleistad\Cursus::all() as $cursus_id => $cursus ) {
+			if ( $datum > $cursus->eind_datum ) {
+				foreach ( \Kleistad\Inschrijving::all() as $cursist_id => $cursist_inschrijvingen ) {
+					if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) ) {
+						$cursist_inschrijvingen[ $cursus_id ]->erase();
+					}
+				}
+				$cursus->erase();
+			}
+		}
+	}
+
+	/**
+	 * Verwijder oude dagdeelkaarten
+	 *
+	 * @param int $datum Het criterium.
+	 */
+	private static function erase_dagdeelkaarten( $datum ) {
+		foreach ( \Kleistad\Dagdeelkaart::all() as $gebruiker_id => $dagdeelkaart ) {
+			if ( $datum > strtotime( '+3 month', $dagdeelkaart->start_datum ) ) {
+				$dagdeelkaart->erase();
+			}
+		}
+	}
+
+	/**
+	 * Verwijder oude abonnementen
+	 *
+	 * @param int $datum Het criterium.
+	 */
+	private static function erase_abonnementen( $datum ) {
+		foreach ( \Kleistad\Abonnement::all() as $abonnee_id => $abonnement ) {
+			if ( $datum > $abonnement->eind_datum ) {
+				$abonnement->erase();
+				$saldo = new \Kleistad\Saldo( $abonnee_id );
+				$saldo->erase();
+			}
+		}
+	}
+
+	/**
+	 * Verwijder oude workshops
+	 *
+	 * @param int $datum Het criterium.
+	 */
+	private static function erase_workshops( $datum ) {
+		foreach ( \Kleistad\Workshop::all() as $workshop ) {
+			if ( $datum > $workshop->datum ) {
+				$workshop->erase();
+			}
+		}
+	}
+
+	/**
+	 * Verwijder voormalige gebruikers
+	 * Als de gebruiker lang geleden is aangemaakt en er staat niets meer open, dan kan deze weg.
+	 * Maar als er nog rollen toegekend zijn niet. Een bestuurslid hoeft voor de rest niets te hebben maar heeft wel de rol.
+	 *
+	 * @param int $datum Het criterium.
+	 */
+	private static function erase_gebruikers( $datum ) {
+		foreach ( get_users() as $gebruiker ) {
+			if (
+				$datum > strtotime( $gebruiker->user_registered ) &&
+				empty( get_user_meta( $gebruiker->ID, \Kleistad\Inschrijving::META_KEY ) ) &&
+				empty( get_user_meta( $gebruiker->ID, \Kleistad\Dagdeelkaart::META_KEY ) ) &&
+				empty( get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY ) ) &&
+				empty( $gebruiker->roles )
+				) {
+					wp_delete_user( $gebruiker->ID, 1 );
+			}
+		}
+	}
+
+	/**
+	 * Verwijder oude orders
+	 *
+	 * @param int $datum Het criterium.
+	 */
+	private static function erase_orders( $datum ) {
+		foreach ( \Kleistad\Order::all( $zoek ) as $order ) {
+			if ( $datum > $order->datum ) {
+				$order->erase();
+			}
+		};
 	}
 
 }

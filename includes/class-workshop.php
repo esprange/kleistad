@@ -141,6 +141,14 @@ class Workshop extends Artikel {
 	}
 
 	/**
+	 * Erase de workshop
+	 */
+	public function erase() {
+		global $wpdb;
+		$wpdb->delete( "{$wpdb->prefix}kleistad_workshops", [ 'id' => $this->id ] );
+	}
+
+	/**
 	 * Zeg de gemaakte afspraak voor de workshop af.
 	 *
 	 * @since 5.0.0

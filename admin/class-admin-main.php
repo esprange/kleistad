@@ -295,6 +295,15 @@ class Admin_Main {
 	}
 
 	/**
+	 * Doe de gdpr cleaning, vooralsnog alleen op de laatste dag van de maand.
+	 */
+	public function daily_gdpr() {
+		if ( intval( date( 'd' ) ) === intval( date( 't' ) ) ) {
+			\Kleistad\Admin_GDPR::erase_old_privacy_data();
+		}
+	}
+
+	/**
 	 * Registreer de kleistad settings, uitgevoerd tijdens admin init.
 	 *
 	 * @since   4.0.87
@@ -310,6 +319,9 @@ class Admin_Main {
 		}
 		if ( ! wp_next_scheduled( 'kleistad_daily_jobs' ) ) {
 			wp_schedule_event( strtotime( '08:00' ), 'daily', 'kleistad_daily_jobs' );
+		}
+		if ( ! wp_next_scheduled( 'kleistad_daily_gdpr' ) ) {
+			wp_schedule_event( strtotime( '01:00' ), 'daily', 'kleistad_daily_gdpr' );
 		}
 
 		register_setting( 'kleistad-opties', 'kleistad-opties', [ 'sanitize_callback' => [ $this, 'validate_settings' ] ] );

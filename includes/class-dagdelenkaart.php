@@ -93,6 +93,13 @@ class Dagdelenkaart extends Artikel {
 	}
 
 	/**
+	 * Verwijder de dagdelenkaart, niet alleen de laatste maar ook alle voorgaande.
+	 */
+	public function erase() {
+		delete_user_meta( $this->klant_id, self::META_KEY );
+	}
+
+	/**
 	 * Geef de artikel naam.
 	 *
 	 * @return string

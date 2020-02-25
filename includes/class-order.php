@@ -160,6 +160,14 @@ class Order extends \Kleistad\Entity {
 	}
 
 	/**
+	 * Erase de order
+	 */
+	public function erase() {
+		global $wpdb;
+		$wpdb->delete( "{$wpdb->prefix}kleistad_orders", [ 'id' => $this->id ] );
+	}
+
+	/**
 	 * Afboeken van een order.
 	 */
 	public function afboeken() {

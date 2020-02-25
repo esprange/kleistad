@@ -181,6 +181,14 @@ class Cursus extends Entity {
 	}
 
 	/**
+	 * Erase de cursus
+	 */
+	public function erase() {
+		global $wpdb;
+		$wpdb->delete( "{$wpdb->prefix}kleistad_cursussen", [ 'id' => $this->id ] );
+	}
+
+	/**
 	 * Hulp functie voor de oudere cursussen (voor 6.1.1 werd de naam ingevuld, nu het nummer ).
 	 *
 	 * @return string De naam van de docent.

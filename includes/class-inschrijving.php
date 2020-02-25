@@ -145,6 +145,19 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Verwijder de inschrijving
+	 */
+	public function erase() {
+		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
+		$unset( $inschrijvingen[ $this->cursus->id ] );
+		if ( empty( $inschrijvingen ) ) {
+			delete_user_meta( $this->klant_id, self::META_KEY );
+		} else {
+			update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
+		}
+	}
+
+	/**
 	 * Zeg de gemaakte afspraak voor de cursus af.
 	 *
 	 * @since 6.1.0

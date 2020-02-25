@@ -86,4 +86,13 @@ abstract class Entity {
 			$this->data[ $key ] = $value;
 		}
 	}
+
+	/**
+	 * Erase een element.
+	 *
+	 * @since 6.4.0
+	 */
+	public function erase() {
+		return true;
+	}
 }
