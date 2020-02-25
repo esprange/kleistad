@@ -284,15 +284,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
-	 *
-	 * @param array $data het te laden object.
-	 */
-	public function load( $data ) {
-		$this->data = wp_parse_args( $data, $this->default_data );
-	}
-
-	/**
 	 * Sla de inschrijving op als user metadata in de database.
 	 *
 	 * @since 4.0.87
@@ -499,7 +490,6 @@ class Inschrijving extends Artikel {
 					krsort( $inschrijvingen );
 					foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
 						$arr[ $cursist->ID ][ $cursus_id ] = new \Kleistad\Inschrijving( $cursus_id, $cursist->ID );
-						$arr[ $cursist->ID ][ $cursus_id ]->load( $inschrijving );
 					}
 				}
 			}
