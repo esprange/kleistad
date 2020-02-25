@@ -87,7 +87,7 @@ class Public_Kalender extends Shortcode {
 							'extendedProps' => [
 								'naam'       => "cursus $cursus->code",
 								'aantal'     => $cursus->maximum - $cursus->ruimte(),
-								'docent'     => $cursus->docent,
+								'docent'     => $cursus->docent_naam(),
 								'technieken' => implode( ', ', $cursus->technieken ),
 							],
 						];
@@ -102,7 +102,8 @@ class Public_Kalender extends Shortcode {
 					'backgroundColor' => 'violet',
 					'textColor'       => 'black',
 					'extendedProps'   => [
-						'naam' => $event->titel,
+						'naam'   => $event->titel,
+						'aantal' => 1,
 					],
 				];
 			}
