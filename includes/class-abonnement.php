@@ -280,15 +280,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Omdat een inschrijving een meta data object betreft kan het niet omgezet worden naar de laatste versie.
-	 *
-	 * @param array $data het te laden object.
-	 */
-	public function load( $data ) {
-		$this->data = wp_parse_args( $data, $this->default_data );
-	}
-
-	/**
 	 * Pauzeer het abonnement per pauze datum.
 	 *
 	 * @param int  $pauze_datum    Pauzedatum.
@@ -688,7 +679,6 @@ class Abonnement extends Artikel {
 			foreach ( $abonnees as $abonnee ) {
 				$abonnement          = get_user_meta( $abonnee->ID, self::META_KEY, true );
 				$arr[ $abonnee->ID ] = new \Kleistad\Abonnement( $abonnee->ID );
-				$arr[ $abonnee->ID ]->load( $abonnement );
 			}
 		}
 		return $arr;

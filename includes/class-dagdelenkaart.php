@@ -178,15 +178,6 @@ class Dagdelenkaart extends Artikel {
 	}
 
 	/**
-	 * Omdat een dagdelenkaart een meta data object betreft kan het niet omgezet worden naar de laatste versie.
-	 *
-	 * @param array $data het te laden object.
-	 */
-	public function load( $data ) {
-		$this->data = wp_parse_args( $data, $this->default_data );
-	}
-
-	/**
 	 * Bewaar de dagdelenkaart als metadata in de database.
 	 */
 	public function save() {
@@ -271,9 +262,7 @@ class Dagdelenkaart extends Artikel {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$dagdelenkaart         = get_user_meta( $gebruiker->ID, self::META_KEY, true );
 			$arr[ $gebruiker->ID ] = new \Kleistad\Dagdelenkaart( $gebruiker->ID );
-			$arr[ $gebruiker->ID ]->load( $dagdelenkaart );
 		}
 		return $arr;
 	}
