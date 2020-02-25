@@ -677,7 +677,6 @@ class Abonnement extends Artikel {
 				]
 			);
 			foreach ( $abonnees as $abonnee ) {
-				$abonnement          = get_user_meta( $abonnee->ID, self::META_KEY, true );
 				$arr[ $abonnee->ID ] = new \Kleistad\Abonnement( $abonnee->ID );
 			}
 		}
