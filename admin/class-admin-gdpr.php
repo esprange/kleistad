@@ -183,7 +183,7 @@ class Admin_GDPR {
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
 	private static function export_dagdelenkaart( $gebruiker_id ) {
-		$dagdelenkaart = \Kleistad\Dagdelenkaart( $gebruiker_id );
+		$dagdelenkaart = new \Kleistad\Dagdelenkaart( $gebruiker_id );
 		$items         = [];
 		$items[]       = [
 			'group_id'    => 'dagdelenkaart',
@@ -340,7 +340,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private static function erase_dagdeelkaarten( $datum ) {
-		foreach ( \Kleistad\Dagdeelkaart::all() as $gebruiker_id => $dagdeelkaart ) {
+		foreach ( \Kleistad\Dagdelenkaart::all() as $gebruiker_id => $dagdeelkaart ) {
 			if ( $datum > strtotime( '+3 month', $dagdeelkaart->start_datum ) ) {
 				$dagdeelkaart->erase();
 			}
@@ -402,7 +402,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private static function erase_orders( $datum ) {
-		foreach ( \Kleistad\Order::all( $zoek ) as $order ) {
+		foreach ( \Kleistad\Order::all() as $order ) {
 			if ( $datum > $order->datum ) {
 				$order->erase();
 			}
