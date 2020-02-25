@@ -188,7 +188,7 @@ class Admin_GDPR {
 		$items[]       = [
 			'group_id'    => 'dagdelenkaart',
 			'group_label' => 'Dagdelenkaart informatie',
-			'item_id'     => 'dagdelenkaart-' . $dagdelenkaart->id,
+			'item_id'     => 'dagdelenkaart-' . $dagdelenkaart->code,
 			'data'        => [
 				[
 					'name'  => 'Datum',
@@ -387,7 +387,7 @@ class Admin_GDPR {
 			if (
 				$datum > strtotime( $gebruiker->user_registered ) &&
 				empty( get_user_meta( $gebruiker->ID, \Kleistad\Inschrijving::META_KEY ) ) &&
-				empty( get_user_meta( $gebruiker->ID, \Kleistad\Dagdeelkaart::META_KEY ) ) &&
+				empty( get_user_meta( $gebruiker->ID, \Kleistad\Dagdelenkaart::META_KEY ) ) &&
 				empty( get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY ) ) &&
 				empty( $gebruiker->roles )
 				) {
