@@ -386,9 +386,11 @@ class Admin_GDPR {
 		foreach ( get_users() as $gebruiker ) {
 			if (
 				$datum > strtotime( $gebruiker->user_registered ) &&
-				empty( get_user_meta( $gebruiker->ID, \Kleistad\Inschrijving::META_KEY ) ) &&
-				empty( get_user_meta( $gebruiker->ID, \Kleistad\Dagdelenkaart::META_KEY ) ) &&
-				empty( get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY ) ) &&
+				empty(
+					get_user_meta( $gebruiker->ID, \Kleistad\Inschrijving::META_KEY, true ) .
+					get_user_meta( $gebruiker->ID, \Kleistad\Dagdelenkaart::META_KEY, true ) .
+					get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY, true )
+				) &&
 				empty( $gebruiker->roles )
 				) {
 					wp_delete_user( $gebruiker->ID, 1 );
