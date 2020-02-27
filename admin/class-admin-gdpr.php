@@ -387,9 +387,9 @@ class Admin_GDPR {
 			if (
 				$datum > strtotime( $gebruiker->user_registered ) &&
 				empty(
-					get_user_meta( $gebruiker->ID, \Kleistad\Inschrijving::META_KEY, true ) .
-					get_user_meta( $gebruiker->ID, \Kleistad\Dagdelenkaart::META_KEY, true ) .
-					get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY, true )
+					(string) get_user_meta( $gebruiker->ID, \Kleistad\Inschrijving::META_KEY, true ) .
+					(string) get_user_meta( $gebruiker->ID, \Kleistad\Dagdelenkaart::META_KEY, true ) .
+					(string) get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY, true )
 				) &&
 				empty( $gebruiker->roles )
 				) {
