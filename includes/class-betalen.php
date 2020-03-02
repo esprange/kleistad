@@ -377,6 +377,8 @@ class Betalen {
 							'sign'    => 'Mollie',
 						]
 					);
+				} else {
+					error_log( "Onverwachte refund status $refund->status voor transactie $mollie_betaling_id" ); // phpcs:ignore
 				}
 			}
 		} else {
