@@ -54,11 +54,12 @@ if ( 'betalen' === $data['actie'] ) :
 			<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $data['reeds_betaald'] + $data['openstaand'], 2 ) ); ?></td>
 		</tr>
 		<tr>
-			<td colspan="3" style="text-align:right">Nog te betalen</td>
+			<td colspan="3" style="text-align:right">Saldo</td>
 			<td style="text-align:right"><strong>&euro; <?php echo esc_html( number_format_i18n( $data['openstaand'], 2 ) ); ?></strong></td>
 		</tr>
 		</tfoot>
 	</table>
+	<?php if ( 0 < $data['openstaand'] ) : ?>
 	<div class ="kleistad_row">
 		<div class="kleistad_col_10">
 			<?php \Kleistad\Betalen::issuers(); ?>
@@ -69,5 +70,20 @@ if ( 'betalen' === $data['actie'] ) :
 			<button type="submit" name="kleistad_submit_betaling" id="kleistad_submit">Betalen</button><br />
 		</div>
 	</div>
+	<?php elseif ( 0 > $data['openstaand'] ) : ?>
+	<div class="kleistad_row">
+		<div class="kleistad_col_10" style="padding-top: 20px;">
+			Het nog openstaande bedrag zal zo spoedig mogelijk teruggestort worden
+			<?php echo $this->goto_home(); // phpcs:ignore ?>
+		</div>
+	</div>
+	<?php else : ?>
+	<div class="kleistad_row">
+		<div class="kleistad_col_10" style="padding-top: 20px;">
+			Er is geen verdere actie nodig
+			<?php echo $this->goto_home(); // phpcs:ignore ?>
+		</div>
+	</div>
+	<?php endif ?>
 </form>
 <?php endif ?>
