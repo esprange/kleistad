@@ -79,7 +79,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		</tr>
 		<tr>
 			<th>Programma</th>
-			<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="2" maxlength="500" <?php readonly( $alleen_lezen ); ?> ><?php echo esc_textarea( $data['workshop']['programma'] ); ?></textarea>
+			<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="5" maxlength="500" <?php readonly( $alleen_lezen ); ?> ><?php echo esc_textarea( $data['workshop']['programma'] ); ?></textarea>
 		</tr>
 		<tr>
 			<th>Kosten</th>
