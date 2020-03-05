@@ -10,6 +10,7 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 [![Build Status](https://travis-ci.org/esprange/kleistad.svg?branch=master)](https://travis-ci.org/esprange/kleistad)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
+[![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
 
 Wordpress plugin for Stichting Kleistad, Amersfoort (The Netherlands), see www.kleistad.nl.
 
