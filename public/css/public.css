@@ -203,9 +203,7 @@ table.kleistad_reserveringen {
     width: 90%;
 }
 table.kleistad_reserveringen th {
-    border-bottom-width: 1px;
-    border-style:solid;
-    border-top-width: 1px;
+    border-style: solid;
     border-width: 0;
     overflow: hidden;
 }
@@ -214,9 +212,7 @@ table.kleistad_reserveringen th[colspan] {
     vertical-align: middle;
 }
 table.kleistad_reserveringen td {
-    border-bottom-width: 1px;
-    border-style:solid;
-    border-top-width: 1px;
+    border-style: solid;
     border-width: 0;
     overflow: hidden;
 }
