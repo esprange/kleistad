@@ -187,15 +187,17 @@ class Inschrijving extends Artikel {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param string $bericht      Het bericht bij succesvolle betaling.
+	 * @param  string $bericht    Het bericht bij succesvolle betaling.
+	 * @param  string $referentie De referentie van het artikel.
+	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function ideal( $bericht ) {
+	public function ideal( $bericht, $referentie, $openstaand = null ) {
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
 		if ( ! $this->ingedeeld && 0 < $this->cursus->inschrijfkosten ) {
 			return $this->betalen->order(
 				$this->klant_id,
-				$this->referentie(),
+				$referentie,
 				$this->aantal * $this->cursus->inschrijfkosten,
 				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
 				$bericht
@@ -203,8 +205,8 @@ class Inschrijving extends Artikel {
 		} else {
 			return $this->betalen->order(
 				$this->klant_id,
-				$this->referentie(),
-				$this->aantal * $this->cursus->cursuskosten,
+				$referentie,
+				$openstaand ?? $this->aantal * $this->cursus->cursuskosten,
 				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
 				$bericht
 			);
@@ -290,7 +292,7 @@ class Inschrijving extends Artikel {
 					'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->cursus->inschrijfkosten, 2 ),
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
-					'cursus_link'            => $this->betaal_link(),
+					'cursus_link'            => $this->betaal_link,
 				],
 			]
 		);
@@ -474,6 +476,7 @@ class Inschrijving extends Artikel {
 				if ( ! $order->gesloten ) {
 					$inschrijving->artikel_type  = 'cursus';
 					$inschrijving->restant_email = true;
+					$inschrijving->maak_link( $order->id );
 					$inschrijving->save();
 					$inschrijving->email( '_restant' );
 				}

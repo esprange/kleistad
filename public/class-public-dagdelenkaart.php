@@ -128,7 +128,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 			$dagdelenkaart->nieuw( strtotime( $data['input']['start_datum'] ), $data['input']['opmerking'] );
 
 			if ( 'ideal' === $data['input']['betaal'] ) {
-				$ideal_uri = $dagdelenkaart->ideal( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden' );
+				$ideal_uri = $dagdelenkaart->ideal( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden', $dagdelenkaart->referentie() );
 				if ( ! empty( $ideal_uri ) ) {
 					return [ 'redirect_uri' => $ideal_uri ];
 				}

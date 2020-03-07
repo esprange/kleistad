@@ -158,7 +158,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		$abonnement->save();
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $abonnement->ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
+			$ideal_uri = $abonnement->ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $abonnement->referentie() );
 			if ( is_string( $ideal_uri ) ) { // Er is gekozen voor een ideal betaling, dus redirect uitvoeren.
 				if ( ! empty( $ideal_uri ) ) {
 					return [ 'redirect_uri' => $ideal_uri ];

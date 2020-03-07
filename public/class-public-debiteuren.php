@@ -191,7 +191,6 @@ class Public_Debiteuren extends ShortcodeForm {
 				$status = 'De betaling is verwerkt';
 				break;
 			case 'annulering':
-				$artikel->artikel_type = 'annulering';
 				$emailer->send(
 					[
 						'to'          => $order->klant['email'],
@@ -202,14 +201,13 @@ class Public_Debiteuren extends ShortcodeForm {
 							'naam'        => $order->klant['naam'],
 							'artikel'     => $artikel->artikel_naam(),
 							'referentie'  => $order->referentie,
-							'betaal_link' => $artikel->betaal_link(),
+							'betaal_link' => $artikel->betaal_link,
 						],
 					]
 				);
 				$status = 'De annulering is verwerkt en een bevestiging is verstuurd';
 				break;
 			case 'korting':
-				$artikel->artikel_type = 'korting';
 				$emailer->send(
 					[
 						'to'          => $order->klant['email'],
@@ -220,7 +218,7 @@ class Public_Debiteuren extends ShortcodeForm {
 							'naam'        => $order->klant['naam'],
 							'artikel'     => $artikel->artikel_naam(),
 							'referentie'  => $order->referentie,
-							'betaal_link' => $artikel->betaal_link(),
+							'betaal_link' => $artikel->betaal_link,
 						],
 					]
 				);

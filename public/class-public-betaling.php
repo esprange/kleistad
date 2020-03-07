@@ -105,22 +105,7 @@ class Public_Betaling extends ShortcodeForm {
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$artikel               = \Kleistad\Artikel::get_artikel( $data['order']->referentie );
 			$artikel->artikel_type = $data['input']['artikel_type'];
-			if ( 'correctie' === $artikel->artikel_type ) {
-				$betalen   = new \Kleistad\Betalen();
-				$ideal_uri = $betalen->order(
-					[
-						'naam'     => $artikel->naw_klant()['naam'],
-						'email'    => $artikel->naw_klant()['email'],
-						'order_id' => $artikel->code,
-					],
-					get_class( $artikel ) . '|' . $artikel->referentie() . '|correctie',
-					$data['order']->openstaand(),
-					'Kleistad ' . $artikel->artikel_naam() . " {$artikel->code}",
-					'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging'
-				);
-			} else {
-				$ideal_uri = $artikel->ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
-			}
+			$ideal_uri             = $artikel->ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->referentie, $data['order']->te_betalen() );
 		}
 		if ( ! empty( $ideal_uri ) ) {
 			return [ 'redirect_uri' => $ideal_uri ];

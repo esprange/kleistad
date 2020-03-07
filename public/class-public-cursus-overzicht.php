@@ -203,6 +203,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				$aantal_verzonden_email++;
 				$inschrijving->artikel_type   = 'cursus';
 				$inschrijving->herinner_email = true;
+				$inschrijving->maak_link( $order->id );
 				$inschrijving->email( '_herinnering' );
 				$inschrijving->save();
 			}

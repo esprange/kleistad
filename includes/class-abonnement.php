@@ -175,7 +175,7 @@ class Abonnement extends Artikel {
 	 */
 	public function start_incasso() {
 		$this->artikel_type = 'mandaat';
-		return $this->ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
+		return $this->ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', $this->referentie() );
 	}
 
 	/**
@@ -197,9 +197,11 @@ class Abonnement extends Artikel {
 	 * Maak de ideal betalingen.
 	 *
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
+	 * @param  string $referentie De referentie van het artikel.
+	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url of het is fout gegaan.
 	 */
-	public function ideal( $bericht ) {
+	public function ideal( $bericht, $referentie, $openstaand = null ) {
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf      = strftime( '%d-%m-%Y', $this->start_datum );
@@ -223,8 +225,8 @@ class Abonnement extends Artikel {
 		}
 		return $this->betalen->order(
 			$this->klant_id,
-			$this->referentie(),
-			$this->bedrag( "#{$this->artikel_type}" ),
+			$referentie,
+			$openstaand ?? $this->bedrag( "#{$this->artikel_type}" ),
 			"Kleistad abonnement {$this->code}$vermelding",
 			$bericht,
 			$mandaat
@@ -234,7 +236,7 @@ class Abonnement extends Artikel {
 	/**
 	 * Maak de sepa incasso betalingen.
 	 */
-	public function sepa_incasso() {
+	private function sepa_incasso() {
 		$bedrag = $this->bedrag( "#{$this->artikel_type}" );
 		if ( 0.0 < $bedrag ) {
 			$this->betalen->eenmalig(
@@ -280,7 +282,7 @@ class Abonnement extends Artikel {
 					'abonnement_startgeld'    => number_format_i18n( $this->bedrag( '#start' ), 2 ),
 					'abonnement_maandgeld'    => number_format_i18n( $this->bedrag( '#regulier' ), 2 ),
 					'abonnement_overbrugging' => number_format_i18n( $this->bedrag( '#overbrugging' ), 2 ),
-					'abonnement_link'         => $this->betaal_link(),
+					'abonnement_link'         => $this->betaal_link,
 				],
 			]
 		);

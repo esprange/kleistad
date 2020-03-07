@@ -177,6 +177,12 @@ function betaalformulier( $id ) {
 			<input class="form-control" id="description" value="<?php echo $payment->description; ?>" disabled>
 		</div>
 	</div>
+	<div class="form-group row">
+		<label for="bedrag" class="col-sm-2 col-form-label">bedrag</label>
+		<div class="col-sm-6">
+			<input class="form-control" id="bedrag" value="<?php echo $payment->amount->value; ?>" disabled>
+		</div>
+	</div>
 	<fieldset class="form-group">
 		<div class="row">
 			<legend class="col-form-label col-sm-2 pt-0">betaal status</legend>

@@ -121,14 +121,16 @@ class Saldo extends Artikel {
 	 *
 	 * @since      4.2.0
 	 *
-	 * @param string $bericht Het bericht bij succesvolle betaling.
+	 * @param  string $bericht Het bericht bij succesvolle betaling.
+	 * @param  string $referentie De referentie van het artikel.
+	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function ideal( $bericht ) {
+	public function ideal( $bericht, $referentie, $openstaand = 0 ) {
 		return $this->betalen->order(
 			$this->klant_id,
-			$this->referentie(),
-			$this->prijs,
+			$referentie,
+			$openstaand ?? $this->prijs,
 			'Kleistad stooksaldo ' . $this->code,
 			$bericht
 		);
@@ -166,7 +168,7 @@ class Saldo extends Artikel {
 					'achternaam' => $gebruiker->last_name,
 					'bedrag'     => number_format_i18n( $this->prijs, 2 ),
 					'saldo'      => number_format_i18n( $this->bedrag, 2 ),
-					'saldo_link' => $this->betaal_link(),
+					'saldo_link' => $this->betaal_link,
 				],
 			]
 		);

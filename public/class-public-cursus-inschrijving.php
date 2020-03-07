@@ -211,7 +211,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		$lopend = $data['cursus']->start_datum < strtotime( 'today' );
 
 		if ( ! $lopend && 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $inschrijving->ideal( 'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging' );
+			$ideal_uri = $inschrijving->ideal( 'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging', $inschrijving->referentie() );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}

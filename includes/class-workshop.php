@@ -180,18 +180,20 @@ class Workshop extends Artikel {
 	 *
 	 * @since        5.0.0
 	 *
-	 * @param string $bericht      Het bericht bij succesvolle betaling.
+	 * @param  string $bericht    Het bericht bij succesvolle betaling.
+	 * @param  string $referentie De referentie van het artikel.
+	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function ideal( $bericht ) {
+	public function ideal( $bericht, $referentie, $openstaand = null ) {
 		return $this->betalen->order(
 			[
 				'naam'     => $this->contact,
 				'email'    => $this->email,
 				'order_id' => $this->code,
 			],
-			$this->referentie(),
-			$this->kosten,
+			$referentie,
+			$openstaand ?? $this->kosten,
 			'Kleistad workshop ' . $this->code . ' op ' . strftime( '%d-%m-%Y', $this->datum ),
 			$bericht
 		);
@@ -259,7 +261,7 @@ class Workshop extends Artikel {
 				'workshop_technieken' => implode( ', ', $this->technieken ),
 				'workshop_programma'  => $this->programma,
 				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
-				'workshop_link'       => $this->betaal_link(),
+				'workshop_link'       => $this->betaal_link,
 			],
 		];
 
@@ -398,7 +400,6 @@ class Workshop extends Artikel {
 				continue;
 			}
 			$workshop->betaling_email = true;
-			$workshop->artikel_type   = 'workshop';
 			$workshop->save();
 			$workshop->email( '_betaling', $workshop->bestel_order( 0.0, $workshop->datum ) );
 		}

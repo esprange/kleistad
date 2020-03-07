@@ -72,7 +72,7 @@ class Public_Saldo extends ShortcodeForm {
 		$saldo->nieuw( $data['input']['bedrag'] );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $saldo->ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging' );
+			$ideal_uri = $saldo->ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging', $saldo->referentie() );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}

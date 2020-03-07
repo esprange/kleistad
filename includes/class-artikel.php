@@ -38,6 +38,13 @@ abstract class Artikel extends Entity {
 	protected $betalen;
 
 	/**
+	 * De betaal link.
+	 *
+	 * @var string $betaal_link De url om te betalen.
+	 */
+	public $betaal_link = '';
+
+	/**
 	 * Bij artikelen kan aangegeven worden welk type order afgehandeld moet worden.
 	 *
 	 * @var string $artikel_type Bijvoorbeeld bij abonnementen het type start, overbrugging of regulier.
@@ -61,10 +68,12 @@ abstract class Artikel extends Entity {
 	/**
 	 * Betaal het artikel per ideal.
 	 *
-	 * @param  string $bericht Het bericht na succesvolle betaling.
+	 * @param  string $bericht    Het bericht na succesvolle betaling.
+	 * @param  string $referentie De referentie van het artikel.
+	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect uri of het is fout gegaan.
 	 */
-	abstract public function ideal( $bericht );
+	abstract public function ideal( $bericht, $referentie, $openstaand = null );
 
 	/**
 	 * Aanroep vanuit betaling per ideal of sepa incasso.
@@ -157,6 +166,7 @@ abstract class Artikel extends Entity {
 		$order->gesloten             = true;
 		$order->historie             = 'geannuleerd, credit factuur ' . $credit_order->factuurnr() . ' aangemaakt';
 		$order->save();
+		$this->maak_link( $order->credit_id );
 		$this->betaalactie( $credit_order->betaald );
 		return $this->maak_factuur( $credit_order, 'credit' );
 	}
@@ -181,6 +191,7 @@ abstract class Artikel extends Entity {
 		$order->transactie_id = $transactie_id;
 		$order->verval_datum  = $verval_datum;
 		$order->save();
+		$this->maak_link( $order->id );
 		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, '' );
 	}
@@ -210,6 +221,7 @@ abstract class Artikel extends Entity {
 		$order->historie  = 'Correctie factuur i.v.m. korting € ' . number_format_i18n( $korting, 2 );
 		$order->opmerking = $opmerking;
 		$order->save();
+		$this->maak_link( $order->id );
 		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
@@ -242,9 +254,8 @@ abstract class Artikel extends Entity {
 		if ( $order->geblokkeerd() ) {
 			return false;
 		}
-		$order->referentie = $this->referentie();
-		$oude_regels       = $order->regels;
-		$korting_regels    = [];
+		$oude_regels    = $order->regels;
+		$korting_regels = [];
 		foreach ( $oude_regels as $oude_regel ) {
 			if ( 'korting' === $oude_regel['artikel'] ) {
 				$korting_regels[] = $oude_regel;
@@ -255,6 +266,7 @@ abstract class Artikel extends Entity {
 		$order->historie  = 'Order gewijzigd';
 		$order->opmerking = $opmerking;
 		$order->save();
+		$this->maak_link( $order->id );
 		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
@@ -320,10 +332,10 @@ abstract class Artikel extends Entity {
 			$class      = self::$artikelen[ $referentie[0] ]['class'];
 			if ( 1 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
 				$artikel               = new $class( (int) $parameters[0] );
-				$artikel->artikel_type = $parameters[1] ?? '';
+				$artikel->artikel_type = $parameters[1] ?? $artikel->artikel_type;
 			} else {
 				$artikel               = new $class( (int) $parameters[0], (int) $parameters[1] );
-				$artikel->artikel_type = $parameters[2] ?? '';
+				$artikel->artikel_type = $parameters[2] ?? $artikel->artikel_type;
 			}
 			return $artikel;
 		}
@@ -358,22 +370,18 @@ abstract class Artikel extends Entity {
 	/**
 	 * De link die in een email als parameter meegegeven kan worden.
 	 *
-	 * @return string De html link.
+	 * @param  int $order_id Het is van de order.
 	 */
-	public function betaal_link() {
-		if ( $this->artikel_type ) {
-			$url = add_query_arg(
-				[
-					'order' => \Kleistad\Order::zoek_order( $this->referentie() ),
-					'hsh'   => $this->controle(),
-					'art'   => $this->artikel_type,
-				],
-				home_url( '/kleistad-betaling' )
-			);
-			return "<a href=\"$url\" >Kleistad pagina</a>";
-		} else {
-			return '';
-		}
+	protected function maak_link( $order_id ) {
+		$url               = add_query_arg(
+			[
+				'order' => $order_id,
+				'hsh'   => $this->controle(),
+				'art'   => $this->artikel_type,
+			],
+			home_url( '/kleistad-betaling' )
+		);
+		$this->betaal_link = "<a href=\"$url\" >Kleistad pagina</a>";
 	}
 
 	/**

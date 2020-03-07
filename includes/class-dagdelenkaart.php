@@ -111,16 +111,18 @@ class Dagdelenkaart extends Artikel {
 	/**
 	 * Start de betaling van een nieuw dagdelenkaart.
 	 *
-	 * @param string $bericht  Te tonen melding als betaling gelukt.
+	 * @param  string $bericht  Te tonen melding als betaling gelukt.
+	 * @param  string $referentie De referentie van het artikel.
+	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url van een ideal betaling of false als het niet lukt.
 	 */
-	public function ideal( $bericht ) {
+	public function ideal( $bericht, $referentie, $openstaand = null ) {
 		$options = \Kleistad\Kleistad::get_options();
 
 		return $this->betalen->order(
 			$this->klant_id,
-			$this->referentie(),
-			$options['dagdelenkaart'],
+			$referentie,
+			$openstaand ?? $options['dagdelenkaart'],
 			'Kleistad dagdelenkaart ' . $this->code,
 			$bericht,
 			false
@@ -160,7 +162,7 @@ class Dagdelenkaart extends Artikel {
 					'dagdelenkaart_code'      => $this->code,
 					'dagdelenkaart_opmerking' => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
-					'dagdelenkaart_link'      => $this->betaal_link(),
+					'dagdelenkaart_link'      => $this->betaal_link,
 				],
 			]
 		);

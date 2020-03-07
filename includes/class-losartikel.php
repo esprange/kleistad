@@ -29,14 +29,13 @@ class LosArtikel extends Artikel {
 	 * @param int $verkoop_id Een uniek id van de verkoop.
 	 */
 	public function __construct( $verkoop_id ) {
-		$this->betalen      = new \Kleistad\Betalen();
-		$this->data         = [
+		$this->betalen = new \Kleistad\Betalen();
+		$this->data    = [
 			'regels' => [],
 			'klant'  => [],
 			'prijs'  => 0.0,
 			'code'   => "X$verkoop_id",
 		];
-		$this->artikel_type = 'overig';
 	}
 
 	/**
@@ -75,19 +74,20 @@ class LosArtikel extends Artikel {
 	/**
 	 * Betalen functie, wordt niet gebruikt.
 	 *
-	 * @param string $bericht Dummy variable.
+	 * @param  string $bericht Dummy variable.
+	 * @param  string $referentie De referentie van het artikel.
+	 * @param  float  $openstaand Het bedrag dat openstaat.
+	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function ideal( $bericht ) {
-		$order_id = \Kleistad\Order::zoek_order( $this->referentie() );
-		$order    = new \Kleistad\Order( $order_id );
+	public function ideal( $bericht, $referentie, $openstaand = null ) {
 		return $this->betalen->order(
 			[
 				'naam'     => $order->klant['naam'],
 				'email'    => $order->klant['email'],
 				'order_id' => $this->code,
 			],
-			$this->referentie(),
-			$order->te_betalen(),
+			$referentie,
+			$openstaand,
 			'Kleistad bestelling ' . $this->code,
 			$bericht
 		);
@@ -131,7 +131,7 @@ class LosArtikel extends Artikel {
 				'parameters'  => [
 					'naam'        => $this->klant['naam'],
 					'bedrag'      => number_format_i18n( $this->prijs, 2 ),
-					'bestel_link' => $this->betaal_link(),
+					'bestel_link' => $this->betaal_link,
 				],
 			]
 		);
