@@ -263,7 +263,7 @@ class Abonnement extends Artikel {
 				'to'          => "$abonnee->display_name <$abonnee->user_email>",
 				'subject'     => self::EMAIL_SUBJECT[ $type ],
 				'slug'        => 'abonnement' . $type,
-				'attachments' => $factuur,
+				'attachments' => $factuur ?: [],
 				'parameters'  =>
 				[
 					'voornaam'                => $abonnee->first_name,

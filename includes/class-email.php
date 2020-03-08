@@ -152,7 +152,7 @@ class Email {
 				'sign_email'  => true,
 				'slug'        => '',
 				'to'          => 'Kleistad <info@' . self::domein() . '>',
-				'attachments' => '',
+				'attachments' => [],
 			]
 		);
 
@@ -161,6 +161,9 @@ class Email {
 			if ( ! is_null( $page ) ) {
 				$this->mailparams['content'] = apply_filters( 'the_content', $page->post_content );
 			} else {
+				if ( ! defined( 'KLEISTAD_DEV' ) ) {
+					return '';
+				}
 				$this->mailparams['content'] = "<table><tr><th colspan=\"2\">{$this->mailparams['slug']}</th></tr>";
 				foreach ( $this->mailparams['parameters'] as $key => $parameter ) {
 					$this->mailparams['content'] .= "<tr><td>$key</td><td>$parameter</td></tr>";
@@ -214,7 +217,7 @@ class Email {
 	 */
 	public function send( $args ) {
 		$tekst = $this->prepare( $args );
-		if ( get_option( 'kleistad_email_actief' ) ) {
+		if ( $tekst && get_option( 'kleistad_email_actief' ) ) {
 			return wp_mail(
 				$this->mailparams['to'],
 				$this->mailparams['subject'],

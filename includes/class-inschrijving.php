@@ -275,7 +275,7 @@ class Inschrijving extends Artikel {
 				'to'          => "$cursist->display_name <$cursist->user_email>",
 				'subject'     => self::EMAIL_SUBJECT[ $type ],
 				'slug'        => $slug,
-				'attachments' => $factuur,
+				'attachments' => $factuur ?: [],
 				'parameters'  =>
 				[
 					'voornaam'               => $cursist->first_name,

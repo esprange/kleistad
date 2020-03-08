@@ -102,9 +102,9 @@ abstract class Artikel extends Entity {
 	 * Email function
 	 *
 	 * @param string $type    Het soort email.
-	 * @param string $bijlage De eventueel te versturen bijlage.
+	 * @param string $factuur De eventueel te versturen factuur.
 	 */
-	abstract public function email( $type, $bijlage = '' );
+	abstract public function email( $type, $factuur = '' );
 
 	/**
 	 * Bestelling

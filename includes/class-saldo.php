@@ -126,7 +126,7 @@ class Saldo extends Artikel {
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function ideal( $bericht, $referentie, $openstaand = 0 ) {
+	public function ideal( $bericht, $referentie, $openstaand = null ) {
 		return $this->betalen->order(
 			$this->klant_id,
 			$referentie,
@@ -162,7 +162,7 @@ class Saldo extends Artikel {
 				'to'          => "$gebruiker->display_name <$gebruiker->user_email>",
 				'subject'     => 'Bijstorting stooksaldo',
 				'slug'        => 'saldo' . $type,
-				'attachments' => $factuur,
+				'attachments' => $factuur ?: [],
 				'parameters'  => [
 					'voornaam'   => $gebruiker->first_name,
 					'achternaam' => $gebruiker->last_name,

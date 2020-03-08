@@ -57,7 +57,23 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" >
+	<!-- jQuery library -->
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+	</script>
+	<script>
+		$( document ).ready(
+			function() {
+				$( '.table' ).DataTable(
+					{
+						'lengthMenu'  : [ 5, 10, 25 ],
+						'page-length' : 5
+					}
+				);
+			}
+		);
+	</script>
 </head>
 
 <body>
@@ -99,17 +115,16 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 		</div>
 	</div>
 
-	<!-- jQuery library -->
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
-	</script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
 		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
 	</script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
 		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
 	</script>
-
+	<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" >
+	</script>
+	<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" >
+	</script>
 </body>
 
 </html>
@@ -240,7 +255,7 @@ function verwerk_refund( $id ) {
 	} else {
 		$html = fout( 'Refund niet gevonden' );
 	}
-	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="window.location=window.location.pathname;window.location.Reload();">Verder</button></div>';
+	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="window.location.replace(window.location.protocol + window.location.hostname + window.location.pathname );">Verder</button></div>';
 }
 
 /**
@@ -260,7 +275,7 @@ function verwerk_incasso( $id ) {
 	} else {
 		$html = fout( 'Payment niet gevonden' );
 	}
-	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="window.location=window.location.pathname;window.location.Reload();">Verder</button></div>';
+	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="window.location.replace(window.location.protocol + window.location.hostname + window.location.pathname );">Verder</button></div>';
 }
 
 /**
@@ -273,7 +288,7 @@ function toon_openstaand() {
 	ob_start();
 	?>
 <button class="btn btn-primary" type="button"
-	onClick="window.location=window.location.pathname;window.location.Reload();">refresh</button>
+	onClick="window.location=window.location.pathname;window.location.reload();">refresh</button>
 <h2>Payments</h2>
 <table class="table table-striped table-hover table-condensed">
 	<thead>
@@ -283,7 +298,7 @@ function toon_openstaand() {
 			<th scope="col">description</th>
 			<th scope="col">type</th>
 			<th scope="col">value</th>
-			<td></td>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -319,14 +334,14 @@ function toon_openstaand() {
 </table>
 
 <h2>Refunds</h2>
-<table class="table table-striped table-hover table-condensed">
+<table class="table table-striped table-hover table-condensed" >
 	<thead>
 		<tr>
 			<th scope="col">id</th>
 			<th scope="col">order_id</th>
 			<th scope="col">description</th>
 			<th scope="col">value</th>
-			<td></td>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>

@@ -80,6 +80,7 @@ class LosArtikel extends Artikel {
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
 	public function ideal( $bericht, $referentie, $openstaand = null ) {
+		$order = new \Kleistad\Order( \Kleistad\Order::zoek_order( $referentie ) );
 		return $this->betalen->order(
 			[
 				'naam'     => $order->klant['naam'],
@@ -87,7 +88,7 @@ class LosArtikel extends Artikel {
 				'order_id' => $this->code,
 			],
 			$referentie,
-			$openstaand,
+			$openstaand ?? $order->te_betalen(),
 			'Kleistad bestelling ' . $this->code,
 			$bericht
 		);
@@ -127,7 +128,7 @@ class LosArtikel extends Artikel {
 				'to'          => "{$this->klant['naam']} <{$this->klant['email']}>",
 				'subject'     => 'Bestelling Kleistad op ' . date( 'd-m-Y' ),
 				'slug'        => 'bestelling' . $type,
-				'attachments' => $factuur,
+				'attachments' => $factuur ?: [],
 				'parameters'  => [
 					'naam'        => $this->klant['naam'],
 					'bedrag'      => number_format_i18n( $this->prijs, 2 ),

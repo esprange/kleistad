@@ -247,7 +247,7 @@ class Workshop extends Artikel {
 		$emailer          = new \Kleistad\Email();
 		$email_parameters = [
 			'to'          => "{$this->contact} <{$this->email}>",
-			'attachments' => $factuur,
+			'attachments' => $factuur ?: [],
 			'parameters'  => [
 				'contact'             => $this->contact,
 				'naam'                => ( 'workshop' === $this->naam ) ? 'de workshop' : ( 'kinderfeest' === $this->naam ? 'het kinderfeest' : $this->naam ),
