@@ -359,7 +359,7 @@ class Betalen {
 		$order_id           = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
 		if ( $betaling->hasRefunds() ) {
 			foreach ( $betaling->refunds() as $refund ) {
-				if ( 'refunded' === $refund->status ) {
+				if ( 'pending' === $refund->status ) { // Eigenlijk zou status refunded moeten worden getest maar die geeft Mollie niet terug.
 					$artikel->verwerk_betaling(
 						$order_id,
 						- $refund->amount->value,

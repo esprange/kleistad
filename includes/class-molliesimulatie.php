@@ -170,13 +170,6 @@ class MollieSimulatie {
 					}
 
 					/**
-					 * Geeft aan dat er geen sprake is van chargebacks.
-					 */
-					public function hasChargeBacks() {
-						return false;
-					}
-
-					/**
 					 * Geef de refunds terug (in simulatie maar één ).
 					 */
 					public function refunds() {
@@ -198,7 +191,7 @@ class MollieSimulatie {
 					 * @param array $data De data.
 					 */
 					public function refund( $data ) {
-						$data['status'] = 'pending';
+						$data['status'] = 'queued';
 						$db             = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
 						$db->exec( "INSERT INTO refunds (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 						$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ wp_json_encode( $this ) . "' WHERE id='{$this->id}'" ); //phpcs:ignore

@@ -63,6 +63,11 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
 	</script>
 	<script>
+		function home() {
+			var url = window.location.protocol + '//' + window.location.hostname + window.location.pathname;
+			window.location.replace( url );
+		}
+
 		$( document ).ready(
 			function() {
 				$( '.table' ).DataTable(
@@ -76,7 +81,7 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 	</script>
 	<style>
 		.table-condensed{
- 			font-size: 12px;
+			 font-size: 12px;
 		}
 	</style>
 </head>
@@ -260,7 +265,7 @@ function verwerk_refund( $id ) {
 	} else {
 		$html = fout( 'Refund niet gevonden' );
 	}
-	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="window.location.replace(window.location.protocol + window.location.hostname + window.location.pathname );">Verder</button></div>';
+	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="home();">Verder</button></div>';
 }
 
 /**
@@ -280,7 +285,7 @@ function verwerk_incasso( $id ) {
 	} else {
 		$html = fout( 'Payment niet gevonden' );
 	}
-	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="window.location.replace(window.location.protocol + window.location.hostname + window.location.pathname );">Verder</button></div>';
+	return $html . '<div class="row"><button class="btn btn-primary" type="button" onClick="home();">Verder</button></div>';
 }
 
 /**
@@ -293,7 +298,7 @@ function toon_openstaand() {
 	ob_start();
 	?>
 <button class="btn btn-primary" type="button"
-	onClick="window.location=window.location.pathname;window.location.reload();">refresh</button>
+	onClick="home();">refresh</button>
 <h3>Payments</h3>
 <table class="table table-striped table-hover table-condensed" data-order='[[ 0, "desc" ]]' >
 	<thead>
@@ -361,10 +366,10 @@ function toon_openstaand() {
 			<td><?php echo $betaling->amount->value; ?></td>
 			<td>
 				<?php
-				if ( 'pending' === $betaling->status ) {
+				if ( 'queued' === $betaling->status ) {
 					?>
 				<a class="btn btn-success"
-					href="?id=<?php echo $row['id']; ?>&refundstatus=refunded#">terugstorten</a><a
+					href="?id=<?php echo $row['id']; ?>&refundstatus=pending#">terugstorten</a><a
 					class="btn btn-warning" href="?id=<?php echo $row['id']; ?>&refundstatus=failed#">falen</a>
 					<?php
 				} else {
