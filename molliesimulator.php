@@ -74,15 +74,20 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 			}
 		);
 	</script>
+	<style>
+		.table-condensed{
+ 			font-size: 12px;
+		}
+	</style>
 </head>
 
 <body>
 	<div class="container">
 		<div class="row">
 			<div class="col">
+			<h2>Mollie simulatie</h2>
 			</div>
 			<div class="col-sm-10">
-				<h2>Mollie simulatie</h2>
 				<?php
 				echo $melding;
 				if ( isset( $_GET[ 'refundstatus' ] ) ) {
@@ -289,8 +294,8 @@ function toon_openstaand() {
 	?>
 <button class="btn btn-primary" type="button"
 	onClick="window.location=window.location.pathname;window.location.reload();">refresh</button>
-<h2>Payments</h2>
-<table class="table table-striped table-hover table-condensed">
+<h3>Payments</h3>
+<table class="table table-striped table-hover table-condensed" data-order='[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th scope="col">id</th>
@@ -310,7 +315,7 @@ function toon_openstaand() {
 		<tr>
 			<td><?php echo $row['id']; ?></td>
 			<td><?php echo $betaling->metadata->order_id; ?></td>
-			<td><?php echo $betaling->description; ?></td>
+			<td><?php echo substr( $betaling->description, 0, 50 ); ?></td>
 			<td><?php echo $betaling->sequenceType; ?></td>
 			<td><?php echo $betaling->amount->value; ?></td>
 			<td>
@@ -333,8 +338,8 @@ function toon_openstaand() {
 	</tbody>
 </table>
 
-<h2>Refunds</h2>
-<table class="table table-striped table-hover table-condensed" >
+<h3>Refunds</h3>
+<table class="table table-striped table-hover table-condensed" data-order='[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th scope="col">id</th>
@@ -352,7 +357,7 @@ function toon_openstaand() {
 		<tr>
 			<td><?php echo $row['id']; ?></td>
 			<td><?php echo $betaling->metadata->order_id; ?></td>
-			<td><?php echo $betaling->description; ?></td>
+			<td><?php echo substr( $betaling->description, 0, 50 ); ?></td>
 			<td><?php echo $betaling->amount->value; ?></td>
 			<td>
 				<?php
