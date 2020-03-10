@@ -80,9 +80,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
 			$data['open_cursussen'][ $cursus->id ] = [
-				'naam'          => $cursus->naam .
-					', start ' . strftime( '%A %d-%m-%y', $cursus->start_datum ) .
-					( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
+				'naam'          => $cursus->naam . ( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
 				'selecteerbaar' => ! $cursus->vol && ! $cursus->vervallen,
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
