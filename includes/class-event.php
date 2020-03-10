@@ -133,7 +133,7 @@ class Event {
 			},
 			$datums
 		);
-		$this->event->setRecurrence( [ 'RDATE;VALUE=DATE-TIME:' . implode( ',', $datumteksten ) ] );
+		$this->event->setRecurrence( [ 'RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1', 'RDATE;VALUE=DATE-TIME:' . implode( ',', $datumteksten ) ] );
 	}
 
 	/**
