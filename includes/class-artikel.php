@@ -234,9 +234,13 @@ abstract class Artikel extends Entity {
 	 * @param string $transactie_id De betalings id.
 	 */
 	final public function ontvang_order( $id, $bedrag, $transactie_id ) {
-		$order                = new \Kleistad\Order( $id );
-		$order->betaald      += $bedrag;
-		$order->historie      = 'betaling bedrag € ' . number_format_i18n( $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
+		$order           = new \Kleistad\Order( $id );
+		$order->betaald += $bedrag;
+		if ( 0 <= $bedrag ) {
+			$order->historie = 'betaling bedrag € ' . number_format_i18n( $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
+		} else {
+			$order->historie = 'stornering bedrag € ' . number_format_i18n( - $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
+		}
 		$order->transactie_id = $transactie_id;
 		$order->save();
 		$this->betaalactie( $order->betaald );

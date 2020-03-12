@@ -311,7 +311,7 @@ class Order extends \Kleistad\Entity {
 					return $html . \Kleistad\Shortcode::melding(
 						$result ? 1 : -1,
 						$result ? 'er is opdracht gegeven om het terug te betalen bedrag over te maken' :
-						'de opdracht om het bedrag terug te storten is geweigerd. Probeer het per bank over te maken'
+						'de opdracht om het bedrag terug te storten is niet mogelijk. Probeer het per bank over te maken'
 					);
 				}
 			);
@@ -348,6 +348,18 @@ class Order extends \Kleistad\Entity {
 	public static function zoek_order( $referentie ) {
 		global $wpdb;
 		return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s ORDER BY id DESC LIMIT 1", $referentie ) ) ?? 0;
+	}
+
+	/**
+	 * Dagelijkse job
+	 */
+	public static function dagelijks() {
+		global $wpdb;
+		$betalen        = new \Kleistad\Betalen();
+		$transactie_ids = $wpdb->get_results( "SELECT transactie_id FROM {$wpdb->prefix}kleistad_orders WHERE gesloten = 0 AND transactie_id > ''", ARRAY_N ); // phpcs:ignore
+		foreach ( $transactie_ids as $transactie_id ) {
+			$betalen->terugstorting_verwerken( $transactie_id[0] );
+		}
 	}
 
 	/**
