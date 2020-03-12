@@ -164,6 +164,7 @@ class Workshop extends Artikel {
 				unset( $e ); // phpcs:ignore
 			}
 		}
+		return true;
 	}
 
 	/**
