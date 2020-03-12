@@ -24,6 +24,7 @@
 				fixedWeekCount: false,
 				allDaySlot: false,
 				minTime: '08:00:00',
+				scrollTime: '09:00:00',
 				eventRender: function( info ) {
 					var tekst = '';
 					if ( 'timeGridDay' === info.view.type ) {

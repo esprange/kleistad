@@ -372,6 +372,13 @@ function toon_openstaand() {
 					href="?id=<?php echo $row['id']; ?>&refundstatus=pending#">terugstorten</a><a
 					class="btn btn-warning" href="?id=<?php echo $row['id']; ?>&refundstatus=failed#">falen</a>
 					<?php
+				} elseif ( 'pending' === $betaling->status ) {
+					?>
+				<a class="btn btn-success"
+					href="?id=<?php echo $row['id']; ?>&refundstatus=refunded#">teruggestort</a><a
+					class="btn btn-warning" href="?id=<?php echo $row['id']; ?>&refundstatus=failed#">falen</a>
+					<?php
+
 				} else {
 					echo $betaling->status;
 				}
