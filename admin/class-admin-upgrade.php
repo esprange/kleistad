@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 52;
+	const DBVERSIE = 54;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -231,6 +231,12 @@ class Admin_Upgrade {
 	 * Converteer cursussen
 	 */
 	private function convert_cursus() {
+		$cursussen = \Kleistad\Cursus::all();
+		foreach( $cursussen as $cursus ) {
+			if ( 1 < count( $cursus->lesdatums ) ) {
+				$cursus->save();
+			}
+		}
 	}
 
 	/**
