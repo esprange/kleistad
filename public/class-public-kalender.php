@@ -101,10 +101,6 @@ class Public_Kalender extends Shortcode {
 					'end'             => $event->eind->format( \DateTime::ATOM ),
 					'backgroundColor' => 'violet',
 					'textColor'       => 'black',
-					'extendedProps'   => [
-						'naam'   => $event->titel,
-						'aantal' => 1,
-					],
 				];
 			}
 		}
