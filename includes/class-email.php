@@ -183,7 +183,7 @@ class Email {
 				},
 				'#\[\s*([a-z,_]+)\s*\]#i'                 => function( $match ) {
 					// Include parameters.
-					return isset( $this->mailparams['parameters'] ) ? $this->mailparams['parameters'][ $match[1] ] : '';
+					return $this->mailparams['parameters'][ $match[1] ] ?? '';
 				},
 				'#\[\s*(cc|bcc)\s*:\s*(.+?)\s*\]#i'       => function( $match ) {
 					// Bcc of Cc parameters.
