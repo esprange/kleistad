@@ -248,17 +248,18 @@ function betaalformulier( $id ) {
  */
 function verwerk_refund( $id ) {
 	global $db;
-	$res = $db->query( "SELECT data FROM refunds WHERE id='$id'" );
+	$res = $db->query( "SELECT payment_id, data FROM refunds WHERE id='$id'" );
 	$row = $res->fetchArray();
 	if ( false !== $row ) {
 		$refund         = json_decode( $row['data'] );
 		$refund->status = $_GET['refundstatus'];
+		$payment_id     = $row['payment_id'];
 		$db->exec( "UPDATE refunds set data='" . /** @scrutinizer ignore-type */ json_encode( $refund ) . "' WHERE id='$id'" );	 //phpcs:ignore
-		$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
+		$res = $db->query( "SELECT data FROM payments WHERE id='$payment_id'" );
 		$row = $res->fetchArray();
 		if ( false !== $row ) {
 			$payment = json_decode( $row['data'] );
-			$html    = feedback( $id, $payment->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
+			$html    = feedback( $payment_id, $payment->webhookUrl ) ? succes( 'Verzenden data naar website' ) : fout( 'Geen output channel beschikbaar' );
 		} else {
 			$html = fout( 'Payment niet gevonden' );
 		}

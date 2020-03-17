@@ -170,11 +170,116 @@ class MollieSimulatie {
 					}
 
 					/**
+					 * Geef een refund.
+					 *
+					 * @param string $refund_id Het id van de refund.
+					 */
+					public function getRefund( $refund_id ) {
+						return new class( $refund_id ) {
+
+							/**
+							 * Status property
+							 *
+							 * @var string $status De statustekst.
+							 */
+							public $status;
+
+							/**
+							 * Id of the object
+							 *
+							 * @var string $id De id string.
+							 */
+							public $id;
+
+							/**
+							 * Amount object
+							 *
+							 * @var object $amount Het object waarin het betaalde bedrag zit.
+							 */
+							public $amount;
+
+							/**
+							 * Metadata object
+							 *
+							 * @var object $metadata Het object waar de meta data in zit.
+							 */
+							public $metadata;
+
+							/**
+							 * Description property
+							 *
+							 * @var string $description Beschrijving.
+							 */
+							public $description;
+
+							/**
+							 * De constructor.
+							 *
+							 * @param string $id Het refund id.
+							 */
+							public function __construct( $id ) {
+								$this->id = $id;
+								$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+								$res      = $db->query( "SELECT data FROM refunds WHERE id = '{$this->id}'" );
+								$row      = $res->fetchArray();
+								if ( false !== $row ) {
+									$data              = json_decode( $row['data'] );
+									$this->metadata    = $data->metadata;
+									$this->amount      = $data->amount;
+									$this->description = $data->description;
+									$this->status      = $data->status;
+									$db->close();
+									unset( $db );
+								}
+							}
+
+							/**
+							 * Is refunded.
+							 */
+							public function isTransferred() {
+								return 'refunded' === $this->status;
+							}
+
+							/**
+							 * Is pending.
+							 */
+							public function isPending() {
+								return 'pending' === $this->status;
+							}
+
+							/**
+							 * Is processed.
+							 */
+							public function isProcessing() {
+								return 'processing' === $this->status;
+							}
+
+							/**
+							 * Is queued.
+							 */
+							public function isQueued() {
+								return 'queued' === $this->status;
+							}
+
+							/**
+							 * Cancel the refund.
+							 */
+							public function cancel() {
+								$this->id = $id;
+								$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+								$db->query( "DELETE FROM refunds WHERE id = '{$this->id}'" );
+								$db->close();
+								unset( $db );
+							}
+						};
+					}
+
+					/**
 					 * Geef de refunds terug (in simulatie maar één ).
 					 */
 					public function refunds() {
 						$db      = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-						$res     = $db->query( "SELECT * FROM refunds WHERE id='{$this->id}'" );
+						$res     = $db->query( "SELECT * FROM refunds WHERE payment_id='{$this->id}'" );
 						$refunds = [];
 						$row     = $res->fetchArray();
 						if ( false !== $row ) {
@@ -192,11 +297,13 @@ class MollieSimulatie {
 					 */
 					public function refund( $data ) {
 						$data['status'] = 'queued';
+						$id             = uniqid( 're_' );
 						$db             = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-						$db->exec( "INSERT INTO refunds (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+						$db->exec( "INSERT INTO refunds (id, payment_id, data) VALUES ( '$id','{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 						$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ wp_json_encode( $this ) . "' WHERE id='{$this->id}'" ); //phpcs:ignore
 						$db->close();
 						unset( $db );
+						return $this->getRefund( $id );
 					}
 
 					/**
@@ -220,7 +327,7 @@ class MollieSimulatie {
 							$this->sequenceType    = $data->sequenceType;
 							$this->webhookUrl      = $data->webhookUrl;
 						}
-						$res = $db->query( "SELECT data FROM refunds WHERE id = '{$this->id}'" );
+						$res = $db->query( "SELECT data FROM refunds WHERE payment_id = '{$this->id}'" );
 						$row = $res->fetchArray();
 						if ( false !== $row ) {
 							$data                         = json_decode( $row['data'] );
@@ -421,12 +528,12 @@ class MollieSimulatie {
 							 * @param string $customer_name De klant naam.
 							 */
 							public function __construct( $data, $customer_id, $customer_name ) {
-								$this->id          = 'tr_' . \uniqid();
+								$this->id          = uniqid( 'tr_' );
 								$db                = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
 								$data['status']    = 'pending';
 								$data['mandateId'] = '';
 								if ( 'first' === $data['sequenceType'] ) {
-									$mandaat_id = 'mdt_' . \uniqid();
+									$mandaat_id = uniqid( 'mdt_' );
 									$mandaat    = [
 										'signatureDate' => '',
 										'details'       => [
@@ -463,7 +570,7 @@ class MollieSimulatie {
 			 * @param array $data De klant data.
 			 */
 			public function create( $data ) {
-				$this->id = 'cst_' . \uniqid();
+				$this->id = \uniqid( 'cst_' );
 				$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
 				$db->exec( "INSERT INTO customers (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 				$db->close();

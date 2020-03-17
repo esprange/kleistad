@@ -212,19 +212,20 @@ class Betalen {
 	 * @param string $beschrijving       De externe beschrijving van de opdracht.
 	 */
 	public function terugstorting( $mollie_betaling_id, $order_id, $bedrag, $beschrijving ) {
-		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-		$refund   = $this->terugstorting_status( $betaling );
-		if ( false !== $refund ) { // Er is al een refund actief, die proberen we te cancelen.
-			if ( false === strpos( 'pending queued', $refund->status() ) ) {
+		$transient = $mollie_betaling_id . '_refund';
+		$betaling  = $this->mollie->payments->get( $mollie_betaling_id );
+		$refund_id = get_transient( $transient );
+		if ( false !== $refund_id ) { // Probeer bestaande refund te cancellen.
+			$refund = $betaling->getRefund( $refund_id );
+			if ( $refund->isProcessing() ) {
 				return false; // Het is niet mogelijk om de actieve refund te cancelen. Dus is er nu geen nieuwe refund mogelijk.
 			}
-			if ( ! is_null( $refund->cancel() ) ) {
-				return false; // Het was niet mogelijk om de cancel uit te voeren.
-			}
+			$refund->cancel();
+			$delete_transient( $transient );
 		}
 		$value = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
-			$betaling->refund(
+			$refund = $betaling->refund(
 				[
 					'amount'      => [
 						'currency' => 'EUR',
@@ -236,6 +237,7 @@ class Betalen {
 					'description' => $beschrijving,
 				]
 			);
+			set_transient( $transient, $refund->id );
 			return true;
 		} else {
 			return false;
@@ -248,8 +250,14 @@ class Betalen {
 	 * @param string $mollie_betaling_id De transactie id.
 	 */
 	public function terugstorting_actief( $mollie_betaling_id ) {
-		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-		return ( false !== $this->terugstorting_status( $betaling ) );
+		$transient = $mollie_betaling_id . '_refund';
+		$refund_id = get_transient( $transient );
+		if ( false !== $refund_id ) {
+			$betaling = $this->mollie->payments->get( $mollie_betaling_id );
+			$refund   = $betaling->getRefund( $refund_id );
+			return $refund->isPending() || $refund->isQueued();
+		}
+		return false;
 	}
 
 	/**
@@ -258,40 +266,24 @@ class Betalen {
 	 * @param string $mollie_betaling_id De transactie_id.
 	 */
 	public function terugstorting_verwerken( $mollie_betaling_id ) {
-		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-		$artikel  = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
-		$order_id = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
-		if ( $betaling->hasRefunds() ) {
-			foreach ( $betaling->refunds() as $refund ) {
-				if ( 'refunded' === $refund->status ) {
-					$artikel->verwerk_betaling(
-						$order_id,
-						- $refund->amount->value,
-						true,
-						$betaling->method,
-						$mollie_betaling_id
-					);
-					break;
-				}
+		$transient = $mollie_betaling_id . '_refund';
+		$refund_id = get_transient( $transient );
+		if ( false !== $refund_id ) {
+			$betaling = $this->mollie->payments->get( $mollie_betaling_id );
+			$artikel  = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
+			$order_id = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
+			$refund   = $betaling->getRefund( $refund_id );
+			if ( $refund->isTransferred() ) {
+				$artikel->verwerk_betaling(
+					$order_id,
+					- $refund->amount->value,
+					true,
+					$betaling->method,
+					$mollie_betaling_id
+				);
+				delete_transient( $transient );
 			}
 		}
-	}
-
-	/**
-	 * Bepaal of er een refund bestaat die nog niet een eindstatus heeft.
-	 *
-	 * @param object $betaling Mollie betaal object.
-	 * @return bool|object Return waarde false of het refund object dat actief is.
-	 */
-	private function terugstorting_status( $betaling ) {
-		if ( $betaling->hasRefunds() ) {
-			foreach ( $betaling->refunds() as $refund ) {
-				if ( false === strpos( 'failed refunded', $refund->status ) ) {
-					return $refund; // Als er een andere status is dan failed of refunded dan is de refund nog actief.
-				}
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -399,23 +391,9 @@ class Betalen {
 		$mollie_betaling_id = $request->get_param( 'id' );
 		$object             = new static();
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
-		$artikel            = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
-		$order_id           = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
-		if ( $betaling->hasRefunds() ) {
-			foreach ( $betaling->refunds() as $refund ) {
-				if ( 'failed' === $refund->status ) {
-					$emailer = new \Kleistad\Email();
-					$emailer->send(
-						[
-							'to'      => 'Boekhouding <info@' . \Kleistad\Email::domein() . '>',
-							'subject' => 'terugstorting niet mogelijk',
-							'content' => "<p>Mollie heeft aangegeven dat voor {$betaling->metadata->order_id} de terugstorting van {$refund->amount->value} niet mogelijk was</p>",
-							'sign'    => 'Mollie',
-						]
-					);
-				}
-			}
-		} else {
+		if ( ! $betaling->hasRefunds() ) { // Als de callback aangeroepen wordt vanwege een refund is er geen actie nodig.
+			$order_id = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
+			$artikel  = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
 			$artikel->verwerk_betaling(
 				$order_id,
 				$betaling->amount->value,
