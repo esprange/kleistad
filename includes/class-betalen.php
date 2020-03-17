@@ -217,11 +217,12 @@ class Betalen {
 		$refund_id = get_transient( $transient );
 		if ( false !== $refund_id ) { // Probeer bestaande refund te cancellen.
 			$refund = $betaling->getRefund( $refund_id );
-			if ( $refund->isProcessing() ) {
+			if ( $refund->isPending() || $refund->isQueued() ) {
+				$refund->cancel();
+				delete_transient( $transient );
+			} else {
 				return false; // Het is niet mogelijk om de actieve refund te cancelen. Dus is er nu geen nieuwe refund mogelijk.
 			}
-			$refund->cancel();
-			delete_transient( $transient );
 		}
 		$value = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
@@ -251,13 +252,7 @@ class Betalen {
 	 */
 	public function terugstorting_actief( $mollie_betaling_id ) {
 		$transient = $mollie_betaling_id . '_refund';
-		$refund_id = get_transient( $transient );
-		if ( false !== $refund_id ) {
-			$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-			$refund   = $betaling->getRefund( $refund_id );
-			return $refund->isPending() || $refund->isQueued();
-		}
-		return false;
+		return boolval( get_transient( $transient ) );
 	}
 
 	/**
@@ -375,7 +370,6 @@ class Betalen {
 				return $html;
 			} catch ( \Exception $e ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
-				return '';
 			}
 		}
 		return '';
