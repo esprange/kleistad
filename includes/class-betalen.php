@@ -212,17 +212,9 @@ class Betalen {
 	 * @param string $beschrijving       De externe beschrijving van de opdracht.
 	 */
 	public function terugstorting( $mollie_betaling_id, $order_id, $bedrag, $beschrijving ) {
-		$transient = $mollie_betaling_id . '_refund';
-		$betaling  = $this->mollie->payments->get( $mollie_betaling_id );
-		$refund_id = get_transient( $transient );
-		if ( false !== $refund_id ) { // Probeer bestaande refund te cancellen.
-			$refund = $betaling->getRefund( $refund_id );
-			if ( $refund->isPending() || $refund->isQueued() ) {
-				$refund->cancel();
-				delete_transient( $transient );
-			} else {
-				return false; // Het is niet mogelijk om de actieve refund te cancelen. Dus is er nu geen nieuwe refund mogelijk.
-			}
+		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
+		if ( $this->terugstorting_actief( $mollie_betaling_id ) ) {
+			return false; // Het is niet mogelijk om de actieve refund te cancelen. Dus is er nu geen nieuwe refund mogelijk.
 		}
 		$value = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
@@ -238,7 +230,7 @@ class Betalen {
 					'description' => $beschrijving,
 				]
 			);
-			set_transient( $transient, $refund->id );
+			set_transient( $mollie_betaling_id . '_refund', $refund->id );
 			return true;
 		} else {
 			return false;
@@ -251,34 +243,7 @@ class Betalen {
 	 * @param string $mollie_betaling_id De transactie id.
 	 */
 	public function terugstorting_actief( $mollie_betaling_id ) {
-		$transient = $mollie_betaling_id . '_refund';
-		return boolval( get_transient( $transient ) );
-	}
-
-	/**
-	 * Verwerk de betaling van een terugstorting
-	 *
-	 * @param string $mollie_betaling_id De transactie_id.
-	 */
-	public function terugstorting_verwerken( $mollie_betaling_id ) {
-		$transient = $mollie_betaling_id . '_refund';
-		$refund_id = get_transient( $transient );
-		if ( false !== $refund_id ) {
-			$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-			$artikel  = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
-			$order_id = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
-			$refund   = $betaling->getRefund( $refund_id );
-			if ( $refund->isTransferred() ) {
-				$artikel->verwerk_betaling(
-					$order_id,
-					- $refund->amount->value,
-					true,
-					$betaling->method,
-					$mollie_betaling_id
-				);
-				delete_transient( $transient );
-			}
-		}
+		return boolval( get_transient( $mollie_betaling_id . '_refund' ) );
 	}
 
 	/**
@@ -385,9 +350,9 @@ class Betalen {
 		$mollie_betaling_id = $request->get_param( 'id' );
 		$object             = new static();
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
+		$order_id           = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
+		$artikel            = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
 		if ( ! $betaling->hasRefunds() ) { // Als de callback aangeroepen wordt vanwege een refund is er geen actie nodig.
-			$order_id = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
-			$artikel  = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
 			$artikel->verwerk_betaling(
 				$order_id,
 				$betaling->amount->value,
@@ -395,6 +360,20 @@ class Betalen {
 				$betaling->method,
 				$mollie_betaling_id
 			);
+		} else {
+			$transient = $mollie_betaling_id . '_refund';
+			$refund_id = get_transient( $transient );
+			if ( false !== $refund_id ) { // Alleen uitvoeren als voor een openstaand refund.
+				$refund = $betaling->getRefund( $refund_id );
+				$artikel->verwerk_betaling(
+					$order_id,
+					- $refund->amount->value,
+					'failed' !== $refund->status,
+					$betaling->method,
+					$mollie_betaling_id
+				);
+				delete_transient( $transient ); // Door een transient te gebruiken, garanderen we dat deze refund maar één keer verwerkt wordt.
+			}
 		}
 		return new \WP_REST_Response(); // Geeft default http status 200 terug.
 	}

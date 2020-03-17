@@ -291,7 +291,6 @@ class Admin_Main {
 		$this->background->push_to_queue( '\Kleistad\Saldo::dagelijks' );
 		$this->background->push_to_queue( '\Kleistad\Inschrijving::dagelijks' );
 		$this->background->push_to_queue( '\Kleistad\Dagdelenkaart::dagelijks' );
-		$this->background->push_to_queue( '\Kleistad\Order::dagelijks' );
 		$this->background->save()->dispatch();
 	}
 

@@ -351,18 +351,6 @@ class Order extends \Kleistad\Entity {
 	}
 
 	/**
-	 * Dagelijkse job
-	 */
-	public static function dagelijks() {
-		global $wpdb;
-		$betalen        = new \Kleistad\Betalen();
-		$transactie_ids = $wpdb->get_results( "SELECT transactie_id FROM {$wpdb->prefix}kleistad_orders WHERE gesloten = 0 AND transactie_id > ''", ARRAY_N ); // phpcs:ignore
-		foreach ( $transactie_ids as $transactie_id ) {
-			$betalen->terugstorting_verwerken( $transactie_id[0] );
-		}
-	}
-
-	/**
 	 * Return alle orders.
 	 *
 	 * @param string $zoek Toon alleen orders die voldoen aan de zoekterm, anders toon alleen openstaande ordes.
