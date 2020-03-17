@@ -221,7 +221,7 @@ class Betalen {
 				return false; // Het is niet mogelijk om de actieve refund te cancelen. Dus is er nu geen nieuwe refund mogelijk.
 			}
 			$refund->cancel();
-			$delete_transient( $transient );
+			delete_transient( $transient );
 		}
 		$value = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions

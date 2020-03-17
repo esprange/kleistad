@@ -265,7 +265,6 @@ class MollieSimulatie {
 							 * Cancel the refund.
 							 */
 							public function cancel() {
-								$this->id = $id;
 								$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
 								$db->query( "DELETE FROM refunds WHERE id = '{$this->id}'" );
 								$db->close();
