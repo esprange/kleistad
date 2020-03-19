@@ -55,9 +55,8 @@ class Public_Kalender extends Shortcode {
 		$fc_events = [];
 		foreach ( $events as $event ) {
 			$class = $event->properties['class'] ?? '';
-			$id    = $event->properties['id'];
 			if ( strpos( $class, 'Workshop' ) ) {
-				$workshop = new \Kleistad\Workshop( $id );
+				$workshop = new \Kleistad\Workshop( $event->properties['id'] );
 				if ( ! $workshop->vervallen ) {
 					$fc_events[] = [
 						'id'            => $event->id,
@@ -75,7 +74,7 @@ class Public_Kalender extends Shortcode {
 					];
 				}
 			} elseif ( strpos( $class, 'Cursus' ) ) {
-				$cursus = new \Kleistad\Cursus( $id );
+				$cursus = new \Kleistad\Cursus( $event->properties['id'] );
 				if ( ! $cursus->vervallen ) {
 					$fc_events[] = [
 						'id'            => $event->id,
