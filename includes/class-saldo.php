@@ -245,17 +245,7 @@ class Saldo extends Artikel {
 				 */
 				$this->email( '_ideal', $this->bestel_order( $bedrag, strtotime( '+7 days  0:00' ), '', $transactie_id ) );
 			}
-		}
-	}
-
-	/**
-	 * Verhoog het saldobedrag met het betaalde bedrag.
-	 *
-	 * @param float $bedrag Het betaalde bedrag.
-	 */
-	protected function betaalactie( $bedrag ) {
-		if ( 0 < $bedrag ) {
-			$this->reden   = 'betaling per bank';
+			$this->reden   = $bedrag > 0 ? 'bijstorting' : 'terugboeking';
 			$this->bedrag += $bedrag;
 			$this->save();
 		}

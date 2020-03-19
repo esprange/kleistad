@@ -66,30 +66,30 @@ class Public_Registratie extends ShortcodeForm {
 				'email'      => FILTER_SANITIZE_EMAIL,
 			]
 		);
-		$gebruiker            = wp_get_current_user();
-		$data['gebruiker_id'] = $gebruiker->ID;
+		$data['gebruiker_id'] = get_current_user_id();
 		if ( ! $data['gebruiker_id'] ) {
-			$error->add( 'security', 'Er is een security fout geconstateerd' );
-		} else {
-			if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
-				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct' );
-			}
-			if ( ! empty( $data['input']['pcode'] ) && ! $this->validate_pcode( $data['input']['pcode'] ) ) {
-				$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
-			}
-			if ( ! $this->validate_naam( $data['input']['voornaam'] ) ) {
-				$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
-				$data['input']['voornaam'] = '';
-			}
-			if ( ! $this->validate_naam( $data['input']['achternaam'] ) ) {
-				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
-				$data['input']['achternaam'] = '';
-			}
-			if ( ! $this->validate_email( $data['input']['email'] ) ) {
-				$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
-			} elseif ( 0 !== strcasecmp( $data['input']['email'], $gebruiker->user_email ) && email_exists( $data['input']['email'] ) ) {
-				$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
-			}
+			return new \WP_Error( 'security', 'Er is een security fout geconstateerd' );
+		}
+		if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
+			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct' );
+		}
+		if ( ! empty( $data['input']['pcode'] ) && ! $this->validate_pcode( $data['input']['pcode'] ) ) {
+			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
+		}
+		if ( ! $this->validate_naam( $data['input']['voornaam'] ) ) {
+			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
+			$data['input']['voornaam'] = '';
+		}
+		if ( ! $this->validate_naam( $data['input']['achternaam'] ) ) {
+			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
+			$data['input']['achternaam'] = '';
+		}
+		if ( ! $this->validate_email( $data['input']['email'] ) ) {
+			$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
+		}
+		$id = email_exists( $data['input']['email'] );
+		if ( $id && $id !== $data['gebruiker_id'] ) {
+			$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;
