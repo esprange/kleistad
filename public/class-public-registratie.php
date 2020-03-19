@@ -88,7 +88,7 @@ class Public_Registratie extends ShortcodeForm {
 			$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
 		}
 		$id = email_exists( $data['input']['email'] );
-		if ( $id && $id !== $data['gebruiker_id'] ) {
+		if ( false !== $id && $id !== $data['gebruiker_id'] ) {
 			$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
