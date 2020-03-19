@@ -54,53 +54,50 @@ class Public_Kalender extends Shortcode {
 		);
 		$fc_events = [];
 		foreach ( $events as $event ) {
-			if ( isset( $event->properties['class'] ) ) {
-				$id = $event->properties['id'];
-				if ( strpos( $event->properties['class'], 'Workshop' ) ) {
-					$workshop = new \Kleistad\Workshop( $id );
-					if ( ! $workshop->vervallen ) {
-						$fc_events[] = [
-							'id'            => $event->id,
-							'title'         => "$workshop->naam ($workshop->code)",
-							'start'         => $event->start->format( \DateTime::ATOM ),
-							'end'           => $event->eind->format( \DateTime::ATOM ),
-							'className'     => $workshop->betaald ? 'kleistad_workshop_betaald' :
-								( $workshop->definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ),
-							'extendedProps' => [
-								'naam'       => $workshop->naam,
-								'aantal'     => $workshop->aantal,
-								'docent'     => $workshop->docent,
-								'technieken' => implode( ', ', $workshop->technieken ),
-							],
-						];
-					}
-				} elseif ( strpos( $event->properties['class'], 'Cursus' ) ) {
-					$cursus = new \Kleistad\Cursus( $id );
-					if ( ! $cursus->vervallen ) {
-						$lopend      = $cursus->start_datum < strtotime( 'today' );
-						$fc_events[] = [
-							'id'            => $event->id,
-							'title'         => $cursus->naam,
-							'start'         => $event->start->format( \DateTime::ATOM ),
-							'end'           => $event->eind->format( \DateTime::ATOM ),
-							'className'     => $cursus->tonen || $lopend ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
-							'extendedProps' => [
-								'naam'       => "cursus $cursus->code",
-								'aantal'     => $cursus->maximum - $cursus->ruimte(),
-								'docent'     => $cursus->docent_naam(),
-								'technieken' => implode( ', ', $cursus->technieken ),
-							],
-						];
-					}
+			$class = $event->properties['class'] ?? '';
+			$id    = $event->properties['id'];
+			if ( strpos( $class, 'Workshop' ) ) {
+				$workshop = new \Kleistad\Workshop( $id );
+				if ( ! $workshop->vervallen ) {
+					$fc_events[] = [
+						'id'            => $event->id,
+						'title'         => "$workshop->naam ($workshop->code)",
+						'start'         => $event->start->format( \DateTime::ATOM ),
+						'end'           => $event->eind->format( \DateTime::ATOM ),
+						'className'     => $workshop->betaald ? 'kleistad_workshop_betaald' :
+							( $workshop->definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ),
+						'extendedProps' => [
+							'naam'       => $workshop->naam,
+							'aantal'     => $workshop->aantal,
+							'docent'     => $workshop->docent,
+							'technieken' => implode( ', ', $workshop->technieken ),
+						],
+					];
+				}
+			} elseif ( strpos( $class, 'Cursus' ) ) {
+				$cursus = new \Kleistad\Cursus( $id );
+				if ( ! $cursus->vervallen ) {
+					$fc_events[] = [
+						'id'            => $event->id,
+						'title'         => $cursus->naam,
+						'start'         => $event->start->format( \DateTime::ATOM ),
+						'end'           => $event->eind->format( \DateTime::ATOM ),
+						'className'     => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
+						'extendedProps' => [
+							'naam'       => "cursus $cursus->code",
+							'aantal'     => $cursus->maximum - $cursus->ruimte(),
+							'docent'     => $cursus->docent_naam(),
+							'technieken' => implode( ', ', $cursus->technieken ),
+						],
+					];
 				}
 			} else {
 				$fc_events[] = [
-					'id'              => $event->id,
-					'title'           => $event->titel ?: '',
-					'start'           => $event->start->format( \DateTime::ATOM ),
-					'end'             => $event->eind->format( \DateTime::ATOM ),
-					'backgroundColor' => 'violet',
-					'textColor'       => 'black',
+					'id'        => $event->id,
+					'title'     => $event->titel ?: '',
+					'start'     => $event->start->format( \DateTime::ATOM ),
+					'end'       => $event->eind->format( \DateTime::ATOM ),
+					'className' => 'kleistad_overige_afspraak',
 				];
 			}
 		}
