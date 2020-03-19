@@ -70,6 +70,37 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
+	 * Overzicht cursisten op cursus
+	 *
+	 * @param \Kleistad\Cursus $cursus     De cursus.
+	 * @param bool             $is_bestuur Toon alle cursussen of alleen die van de huidige gebruiker (docent).
+	 * @return array De cursisten.
+	 */
+	private function cursistenlijst( $cursus, $is_bestuur ) {
+		$cursisten = [];
+		foreach ( $this->inschrijvingen( $cursus->id, $is_bestuur ) as $cursist_id => $inschrijving ) {
+			if ( $cursus->vol && ! $inschrijving->ingedeeld ) {
+				continue; // Het heeft geen zin om wachtende inschrijvingen te tonen als de cursus geen plaats meer heeft.
+			}
+			$cursist     = get_userdata( $cursist_id );
+			$order       = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
+			$cursisten[] = [
+				'id'             => $cursist_id,
+				'naam'           => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+				'telnr'          => $cursist->telnr,
+				'email'          => $cursist->user_email,
+				'i_betaald'      => $inschrijving->inschrijving_betaald( $order->betaald ),
+				'c_betaald'      => $order->gesloten,
+				'restant_email'  => $inschrijving->restant_email,
+				'herinner_email' => $inschrijving->herinner_email,
+				'technieken'     => implode( ', ', $inschrijving->technieken ),
+				'wacht'          => ( ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! \Kleistad\Order::zoek_order( $inschrijving->code ) ),
+			];
+		}
+		return $cursisten;
+	}
+
+	/**
 	 *
 	 * Prepareer 'cursus_overzicht' form
 	 *
@@ -85,31 +116,12 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		if ( 'cursisten' === $data['actie'] ) {
 			$cursus            = new \Kleistad\Cursus( $data['id'] );
 			$data['cursus']    = [
-				'id'    => $data['id'],
+				'id'    => $cursus->id,
 				'naam'  => $cursus->naam,
 				'code'  => $cursus->code,
 				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
-			$data['cursisten'] = [];
-			foreach ( $this->inschrijvingen( $data['id'], $is_bestuur ) as $cursist_id => $inschrijving ) {
-				if ( $cursus->vol && ! $inschrijving->ingedeeld ) {
-					continue; // Het heeft geen zin om wachtende inschrijvingen te tonen als de cursus geen plaats meer heeft.
-				}
-				$cursist             = get_userdata( $cursist_id );
-				$order               = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
-				$data['cursisten'][] = [
-					'id'             => $cursist_id,
-					'naam'           => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
-					'telnr'          => $cursist->telnr,
-					'email'          => $cursist->user_email,
-					'i_betaald'      => $inschrijving->inschrijving_betaald( $order->betaald ),
-					'c_betaald'      => $order->gesloten,
-					'restant_email'  => $inschrijving->restant_email,
-					'herinner_email' => $inschrijving->herinner_email,
-					'technieken'     => implode( ', ', $inschrijving->technieken ),
-					'wacht'          => ( ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! \Kleistad\Order::zoek_order( $inschrijving->code ) ),
-				];
-			}
+			$data['cursisten'] = $this->cursistenlijst( $cursus, $is_bestuur );
 		} elseif ( 'indelen' === $data['actie'] ) {
 			list( $cursist_id, $cursus_id ) = array_map( 'intval', explode( '-', $data['id'] ) );
 			$cursus                         = new \Kleistad\Cursus( $cursus_id );
