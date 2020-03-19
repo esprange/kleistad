@@ -96,7 +96,7 @@ class Public_Kalender extends Shortcode {
 			} else {
 				$fc_events[] = [
 					'id'              => $event->id,
-					'title'           => $event->titel,
+					'title'           => $event->titel ?: '',
 					'start'           => $event->start->format( \DateTime::ATOM ),
 					'end'             => $event->eind->format( \DateTime::ATOM ),
 					'backgroundColor' => 'violet',
