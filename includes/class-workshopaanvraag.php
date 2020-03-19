@@ -163,21 +163,19 @@ class WorkshopAanvraag {
 	 */
 	public static function ontvang_en_verwerk() {
 		// phpcs:disable WordPress.NamingConventions
-		$setup   = \Kleistad\Kleistad::get_setup();
-		$emailer = new \Kleistad\Email();
+		$setup    = \Kleistad\Kleistad::get_setup();
+		$answered = [];
+		$emailer  = new \Kleistad\Email();
+		$mailbox  = new \PhpImap\Mailbox(
+			'{' . $setup['imap_server'] . '}INBOX',
+			self::MBX . '@' . \Kleistad\Email::domein(),
+			$setup['imap_pwd']
+		);
 		try {
-			$mailbox   = new \PhpImap\Mailbox(
-				'{' . $setup['imap_server'] . '}INBOX',
-				self::MBX . '@' . \Kleistad\Email::domein(),
-				$setup['imap_pwd']
-			);
 			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
 		} catch ( \PhpImap\Exceptions\ConnectionException $ex ) {
 			error_log( 'IMAP connection failed: ' . $ex->getMessage() ); // phpcs:ignore
-			return;
-		}
-		if ( empty( $email_ids ) ) {
-			return; // Geen berichten.
+			die();
 		}
 		foreach ( $email_ids as $email_id ) {
 			$email = $mailbox->getMail( $email_id );
@@ -211,8 +209,10 @@ class WorkshopAanvraag {
 					]
 				);
 			}
-			$mailbox->setFlag( [ $email_id ], '\\Answered' );
+			$answered[] = $email_id;
 		}
+		$mailbox->setFlag( $answered, '\\Answered' );
+		$mailbox->disconnect();
 		// phpcs:enable
 	}
 
