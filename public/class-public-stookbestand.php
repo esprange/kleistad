@@ -63,15 +63,14 @@ class Public_Stookbestand extends Shortcode {
 	 * @param  \Kleistad\Reservering $reservering Het reservering object.
 	 */
 	private function bepaal_medestokers( $reservering ) {
-		if ( $reservering->datum >= $this->vanaf_datum && $reservering->datum <= $this->tot_datum ) {
-			foreach ( $reservering->verdeling as $verdeling ) {
-				$medestoker_id = $verdeling['id'];
-				if ( $medestoker_id > 0 && ! array_key_exists( $medestoker_id, $this->medestokers ) ) {
-					$medestoker = get_userdata( $medestoker_id );
-					if ( false !== $medestoker ) {
-						$this->medestokers[ $medestoker_id ] = $medestoker->display_name;
-					}
-				}
+		if ( $reservering->datum < $this->vanaf_datum || $reservering->datum > $this->tot_datum ) {
+			return;
+		}
+		foreach ( $reservering->verdeling as $verdeling ) {
+			$medestoker_id = $verdeling['id'];
+			if ( $medestoker_id > 0 && ! array_key_exists( $medestoker_id, $this->medestokers ) ) {
+				$medestoker                          = get_userdata( $medestoker_id );
+				$this->medestokers[ $medestoker_id ] = ( ! $medestoker ) ? 'onbekend' : $medestoker->display_name;
 			}
 		}
 	}
@@ -82,45 +81,37 @@ class Public_Stookbestand extends Shortcode {
 	 * @param  \Kleistad\Reservering $reservering Het reservering object.
 	 */
 	private function bepaal_stookgegevens( $reservering ) {
-		if ( $reservering->datum >= $this->vanaf_datum && $reservering->datum <= $this->tot_datum ) {
-			$stoker      = get_userdata( $reservering->gebruiker_id );
-			$stoker_naam = ( ! $stoker ) ? 'onbekend' : $stoker->display_name;
-			$values      = [
-				$stoker_naam,
-				$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
-				$this->ovens[ $reservering->oven_id ]->naam,
-				number_format_i18n( $this->ovens[ $reservering->oven_id ]->kosten, 2 ),
-				$reservering->soortstook,
-				$reservering->temperatuur,
-				$reservering->programma,
-			];
-
-			foreach ( $this->medestokers as $id => $medestoker ) {
-				$percentage = 0;
-				foreach ( $reservering->verdeling as $stookdeel ) {
-					if ( $stookdeel['id'] == $id ) { // phpcs:ignore
-						$percentage += $stookdeel['perc'];
-					}
-				}
-				$values [] = ( 0 === $percentage ) ? '' : $percentage;
-			}
-
-			$totaal = 0.0;
-			foreach ( $this->medestokers as $id => $medestoker ) {
-				$kosten       = 0.0;
-				$kosten_tonen = false;
-				foreach ( $reservering->verdeling as $stookdeel ) {
-					if ( $stookdeel['id'] === $id ) {
-						$kosten      += $stookdeel['prijs'] ?? $this->ovens[ $reservering->oven_id ]->stookkosten( $id, $stookdeel['perc'] );
-						$totaal      += $kosten;
-						$kosten_tonen = true;
-					}
-				}
-				$values [] = ( $kosten_tonen ) ? number_format_i18n( $kosten, 2 ) : '';
-			}
-			$values [] = number_format_i18n( $totaal, 2 );
-			fputcsv( $this->file_handle, $values, ';', '"' );
+		if ( $reservering->datum < $this->vanaf_datum || $reservering->datum > $this->tot_datum ) {
+			return;
 		}
+		$stoker      = get_userdata( $reservering->gebruiker_id );
+		$stoker_naam = ( ! $stoker ) ? 'onbekend' : $stoker->display_name;
+		$totaal      = 0.0;
+		$perc_values = [];
+		$kost_values = [];
+		$values      = [
+			$stoker_naam,
+			$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
+			$this->ovens[ $reservering->oven_id ]->naam,
+			number_format_i18n( $this->ovens[ $reservering->oven_id ]->kosten, 2 ),
+			$reservering->soortstook,
+			$reservering->temperatuur,
+			$reservering->programma,
+		];
+		foreach ( $this->medestokers as $id => $medestoker ) {
+			$percentage = 0;
+			$kosten     = 0.0;
+			foreach ( $reservering->verdeling as $stookdeel ) {
+				if ( $stookdeel['id'] == $id ) { // phpcs:ignore
+					$percentage += $stookdeel['perc'];
+					$kosten     += $stookdeel['prijs'] ?? $this->ovens[ $reservering->oven_id ]->stookkosten( $id, $stookdeel['perc'] );
+					$totaal     += $kosten;
+				}
+			}
+			$perc_values [] = $percentage ?: '';
+			$kost_values [] = $kosten ? number_format_i18n( $kosten, 2 ) : '';
+		}
+		fputcsv( $this->file_handle, array_merge( $values, $perc_values, $kost_values, [ number_format_i18n( $totaal, 2 ) ] ), ';', '"' );
 	}
 
 	/**
