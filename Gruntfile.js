@@ -78,41 +78,51 @@ module.exports = function( grunt ) { // jshint ignore:line
 			}
 		},
 
-		zip: {
-			'using-router': {
-				router: function( filepath ) {
-					if ( -1 === filepath.search( 'vendor/google/apiclient-services/src/Google/Service' ) ) {
-						return 'kleistad/' + filepath;
-					}
-					if ( -1 === filepath.search( 'Calendar' ) ) {
-						return null;
-					}
-					return 'kleistad/' + filepath;
-				},
-				src: [
-					'*.php',
-					'README.txt',
-					'LICENSE.txt',
-					'public/**/*',
-					'admin/**/*',
-					'includes/**/*',
-					'vendor/**/*'
-				],
-				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
-			}
-		}
-	});
+		clean : {
+					google: [
+						'vendor/google/apiclient-services/src/Google/Service/**/*',
+						'!vendor/google/apiclient-services/src/Google/Service/Calendar/**',
+						'!vendor/google/apiclient-services/src/Google/Service/Calendar.php'
+					]
+		},
 
+		zip: {
+			'//fileserver/web/kleistad_plugin/kleistad.zip' :
+			[
+				'*.php',
+				'README.txt',
+				'LICENSE.txt',
+				'public/**/*',
+				'admin/**/*',
+				'includes/**/*',
+				'vendor/**/*'
+			]
+		}
+	} );
+
+	grunt.util.linefeed = '\n';
 	grunt.loadNpmTasks( 'grunt-rewrite' );
 	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
+	grunt.loadNpmTasks( 'grunt-contrib-clean' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
-	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
+	grunt.loadNpmTasks( 'grunt-composer' );
 	grunt.loadNpmTasks( 'grunt-checkwpversion' );
-	grunt.registerTask( 'checkversion', ['checkwpversion'] );
 	grunt.loadNpmTasks( 'grunt-zip' );
 	grunt.loadNpmTasks( 'grunt-version' );
-	grunt.registerTask( 'oplevering', [ 'checkversion', 'readme', 'uglify', 'cssmin', 'zip' ] );
-	grunt.util.linefeed = '\n';
+	grunt.registerTask( 'checkversion', ['checkwpversion'] );
+	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
+	grunt.registerTask( 'oplevering',
+		[
+			'checkversion',
+			'readme',
+			'uglify',
+			'cssmin',
+			'composer:update:no-autoloader',
+			'clean',
+			'composer:dump-autoload',
+			'zip'
+		]
+	);
 
 };
