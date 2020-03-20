@@ -11,6 +11,8 @@ fullcalendar*/
 tmp/
 wpcs/
 .vscode/
+tests/
+bin/
 
 # Build files
 *.zip
@@ -28,13 +30,5 @@ wpcs/
 Thumbs.db
 wp-cli.local.yml
 
-# Google test files
-credentials.json
-token.json
-quickstart.php
-
 # pdf's
 *.pdf
-
-#sqlite db for mollie
-mollie.db
