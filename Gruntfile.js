@@ -87,16 +87,21 @@ module.exports = function( grunt ) { // jshint ignore:line
 		},
 
 		zip: {
-			'//fileserver/web/kleistad_plugin/kleistad.zip' :
-			[
-				'*.php',
-				'README.txt',
-				'LICENSE.txt',
-				'public/**/*',
-				'admin/**/*',
-				'includes/**/*',
-				'vendor/**/*'
-			]
+			'using-router': {
+				router: function( filepath ) {
+					return 'kleistad/' + filepath;
+				},
+				src: [
+					'kleistad.php',
+					'README.txt',
+					'LICENSE.txt',
+					'public/**/*',
+					'admin/**/*',
+					'includes/**/*',
+					'vendor/**/*'
+				],
+				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
+			}
 		}
 	} );
 
