@@ -12,8 +12,8 @@
 $in_driemaandperiode = strtotime( 'today' ) < $data['driemaand_datum'];
 $per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : strtotime( 'first day of next month 00:00' );
 $per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
-
-$extra_beschikbaar = false;
+$extra_beschikbaar   = false;
+$dag                 = 24 * 60 * 60;
 foreach ( $this->options['extra'] as $extra ) :
 	$extra_beschikbaar = $extra_beschikbaar || ( 0 < $extra['prijs'] );
 endforeach;
@@ -169,6 +169,41 @@ endforeach;
 		</div>
 	</div>
 	<div class="kleistad_abo_pauze kleistad_abo_veld"  style="display:none" >
+		<?php
+		if ( $data['abonnement']->gepauzeerd ) :
+			if ( $data['abonnement']->herstart_datum >= $per_datum ) :
+				?>
+		<div class="kleistad_row">
+			<div class="kleistad_col_3" >
+				&nbsp;
+			</div>
+			<div class="kleistad_col_7" >
+				<p><strong>Je wilt je gepauzeerde abonnement hervatten</strong></p>
+				<p>Je kan de datum dat je abonnement hervat wordt wel aanpassen maar niet eerder dan per eerstvolgende maand en de maximale pauze is <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken.</p>
+				<input name="pauze_datum" id="kleistad_pauze_datum" type="hidden" value="<?php echo esc_attr( date( 'd-m-Y', $data['abonnement']->pauze_datum ) ); ?>"
+					data-min_pauze="<?php echo esc_attr( max( ( $per_datum - $data['abonnement']->pauze_datum ) / $dag, \Kleistad\Abonnement::MIN_PAUZE_WEKEN * 7 ) ); ?>"
+					data-max_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>">
+			</div>
+		</div>
+		<div class="kleistad_row">
+			<div class="kleistad_col_3" >
+				&nbsp;
+			</div>
+			<div class="kleistad_col_4 kleistad_label" >
+				<label for="kleistad_herstart_datum">Tot</label>
+			</div>
+			<div class="kleistad_col_3">
+				<input name="herstart_datum" id="kleistad_herstart_datum" class="kleistad_datum" type="text"
+					value="<?php echo esc_attr( date( 'd-m-Y', $data['abonnement']->herstart_datum ) ); ?>"
+					readonly="readonly" >
+			</div>
+		</div>
+			<?php else : ?>
+		<div class="kleistad_row">
+			<p>Je abonnement staat al gepauzeerd en wordt per <?php echo esc_html( date( 'd-m-Y', $data['abonnement']->herstart_datum ) ); ?> hervat.</p>
+		</div>
+			<?php endif // Er wordt deze maand of per eerste komende maand hervat. ?>
+		<?Php else : // Pauze is nog wel mogelijk. ?>
 		<div class="kleistad_row" >
 			<div class="kleistad_col_3" >
 				&nbsp;
@@ -178,11 +213,6 @@ endforeach;
 				<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( \Kleistad\Abonnement::MIN_PAUZE_WEKEN ); ?> weken. Per kalender jaar mag er in totaal maximaal <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken gepauzeerd worden.</p>
 			</div>
 		</div>
-		<?php if ( $data['gepauzeerd'] ) : ?>
-		<div class="kleistad_row">
-			<p>Je abonnement staat al gepauzeerd, pas nadat het weer actief is kan je een nieuwe periode inplannen</p>
-		</div>
-		<?Php else : // Pauze is nog wel mogelijk. ?>
 		<div class="kleistad_row" >
 			<div class="kleistad_col_3" >
 				&nbsp;
@@ -193,8 +223,9 @@ endforeach;
 			<div class="kleistad_col_3">
 				<input name="pauze_datum" id="kleistad_pauze_datum" class="kleistad_datum" type="text"
 					value="<?php echo esc_attr( date( 'd-m-Y', $per_datum ) ); ?>"
-					data-min_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MIN_PAUZE_WEKEN ); ?>"
-					data-max_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?>">
+					data-min_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MIN_PAUZE_WEKEN * 7 ); ?>"
+					data-max_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>"
+					readonly="readonly" >
 			</div>
 		</div>
 		<div class="kleistad_row" >
@@ -206,7 +237,8 @@ endforeach;
 			</div>
 			<div class="kleistad_col_3">
 				<input name="herstart_datum" id="kleistad_herstart_datum" class="kleistad_datum" type="text"
-					value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . 'weeks', $per_datum ) ) ); ?>">
+					value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . 'weeks', $per_datum ) ) ); ?>"
+					readonly="readonly" >
 			</div>
 		</div>
 		<?php endif // Pauze is nog wel mogelijk. ?>

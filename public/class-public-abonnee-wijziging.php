@@ -73,9 +73,6 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		if ( 'pauze' === $data['input']['wijziging'] ) {
 			$data['input']['pauze_datum']    = strtotime( $data['input']['pauze_datum'] );
 			$data['input']['herstart_datum'] = strtotime( $data['input']['herstart_datum'] );
-			if ( $data['input']['pauze_datum'] < strtotime( 'first day of next month 00:00' ) ) {
-				$error->add( 'pauze', 'Het abonnement mag niet eerder dan komende maand gepauzeerd worden' );
-			}
 			if ( $data['input']['herstart_datum'] < strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
 				$error->add( 'pauze', 'Het abonnement moet minimaal ' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weken dagen gepauzeerd worden' );
 			}

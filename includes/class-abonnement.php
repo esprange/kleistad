@@ -300,7 +300,11 @@ class Abonnement extends Artikel {
 		$this->herstart_datum = $herstart_datum;
 		$this->save();
 		if ( ! $admin ) {
-			$this->bericht = 'Je pauzeert het abonnement per ' . strftime( '%d-%m-%Y', $this->pauze_datum ) . ' en hervat het per ' . strftime( '%d-%m-%Y', $this->herstart_datum );
+			if ( $this->gepauzeerd ) {
+				$this->bericht = 'Je hebt aangegeven dat je abonnement, dat nu gepauzeerd is, hervat wordt per ' . strftime( '%d-%m-%Y', $this->herstart_datum );
+			} else {
+				$this->bericht = 'Je pauzeert het abonnement per ' . strftime( '%d-%m-%Y', $this->pauze_datum ) . ' en hervat het per ' . strftime( '%d-%m-%Y', $this->herstart_datum );
+			}
 			$this->email( '_gewijzigd' );
 		}
 		return true;
