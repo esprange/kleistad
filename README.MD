@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.3.2  
-**Stable tag:** 6.3.2  
+**Stable tag:** 6.3.3  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -35,8 +35,11 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.3.3 ###
+* Aanpassing abonnement wijzigen, herstart bij pauze nu mogelijk
 ### 6.3.2 ###
 * Bugfixes en refactoring
+* Terugstorten via Mollie verbeterd
 ### 6.3.1 ###
 * Kleine bugfixes en verbetering contact form en dubieuze debiteuren
 * Gebruik nieuwste versies van FullCalendar en jsTree
