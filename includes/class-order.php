@@ -304,7 +304,7 @@ class Order extends \Kleistad\Entity {
 		if ( $this->transactie_id && -0.01 > $openstaand ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
 			$betalen = new \Kleistad\Betalen();
-			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'terugstorting conform factuur ' . $this->factuurnr() );
+			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'Kleistad: zie factuur ' . $this->factuurnr() );
 			add_filter(
 				'kleistad_melding',
 				function( $html ) use ( $result ) {
