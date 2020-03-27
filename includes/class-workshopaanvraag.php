@@ -173,47 +173,47 @@ class WorkshopAanvraag {
 		);
 		try {
 			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
+			foreach ( $email_ids as $email_id ) {
+				$email = $mailbox->getMail( $email_id );
+				if ( $email->textHtml ) {
+					$html = new \Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
+					$body = $html->getText();
+					if ( '' === $body ) {
+						$body = $email->textPlain;
+					}
+				} elseif ( $email->textPlain ) {
+					$body = $email->textPlain;
+				} else {
+					$body = '<p>bericht tekst kan niet worden weergegeven</p>';
+				}
+				if ( ! self::verwerk(
+					[
+						'from-name'  => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
+						'from-email' => sanitize_email( $email->fromAddress ),
+						'subject'    => sanitize_text_field( $email->subject ),
+						'body'       => sanitize_textarea_field( $body ),
+					]
+				)
+					) {
+					$emailer->send(
+						[
+							'to'        => 'Kleistad <info@' . \Kleistad\Email::domein() . '>',
+							'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
+							'from'      => sanitize_email( $email->fromAddress ),
+							'subject'   => 'FW:' . sanitize_text_field( $email->subject ),
+							'content'   => sanitize_textarea_field( $body ),
+						]
+					);
+				}
+				$answered[] = $email_id;
+			}
+			$mailbox->setFlag( $answered, '\\Answered' );
+			$mailbox->disconnect();
 		} catch ( \PhpImap\Exceptions\ConnectionException $ex ) {
-			error_log( 'IMAP connection failed: ' . $ex->getMessage() ); // phpcs:ignore
+			error_log( 'IMAP fail: ' . $ex->getMessage() ); // phpcs:ignore
 			die();
 		}
-		foreach ( $email_ids as $email_id ) {
-			$email = $mailbox->getMail( $email_id );
-			if ( $email->textHtml ) {
-				$html = new \Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
-				$body = $html->getText();
-				if ( '' === $body ) {
-					$body = $email->textPlain;
-				}
-			} elseif ( $email->textPlain ) {
-				$body = $email->textPlain;
-			} else {
-				$body = '<p>bericht tekst kan niet worden weergegeven</p>';
-			}
-			if ( ! self::verwerk(
-				[
-					'from-name'  => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
-					'from-email' => sanitize_email( $email->fromAddress ),
-					'subject'    => sanitize_text_field( $email->subject ),
-					'body'       => sanitize_textarea_field( $body ),
-				]
-			)
-				) {
-				$emailer->send(
-					[
-						'to'        => 'Kleistad <info@' . \Kleistad\Email::domein() . '>',
-						'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
-						'from'      => sanitize_email( $email->fromAddress ),
-						'subject'   => 'FW:' . sanitize_text_field( $email->subject ),
-						'content'   => sanitize_textarea_field( $body ),
-					]
-				);
-			}
-			$answered[] = $email_id;
-		}
-		$mailbox->setFlag( $answered, '\\Answered' );
-		$mailbox->disconnect();
-		// phpcs:enable
+	// phpcs:enable
 	}
 
 	/**
