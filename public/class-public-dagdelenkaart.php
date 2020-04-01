@@ -77,7 +77,10 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 				'plaats'          => FILTER_SANITIZE_STRING,
 				'telnr'           => FILTER_SANITIZE_STRING,
 				'start_datum'     => FILTER_SANITIZE_STRING,
-				'opmerking'       => FILTER_SANITIZE_STRING,
+				'opmerking'       => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_FLAG_STRIP_LOW,
+				],
 				'betaal'          => FILTER_SANITIZE_STRING,
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]

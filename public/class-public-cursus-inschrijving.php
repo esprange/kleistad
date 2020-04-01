@@ -130,7 +130,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 					'filter'    => FILTER_SANITIZE_NUMBER_INT,
 					'min-range' => 1,
 				],
-				'opmerking'       => FILTER_SANITIZE_STRING,
+				'opmerking'       => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_FLAG_STRIP_LOW,
+				],
 				'betaal'          => FILTER_SANITIZE_STRING,
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
