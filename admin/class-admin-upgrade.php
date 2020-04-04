@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 54;
+	const DBVERSIE = 55;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -213,6 +213,12 @@ class Admin_Upgrade {
 	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
 	 */
 	private function convert_abonnement() {
+		$abonnementen  = \Kleistad\Abonnement::all();
+		$factuur_vorig = (int) get_option( 'kleistad_abofact' ) ?: 0;
+		foreach ( $abonnementen as $abonnement ) {
+			$abonnement->factuur = $factuur_vorig;
+			$abonnement->save();
+		}
 	}
 
 	/**

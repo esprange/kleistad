@@ -27,6 +27,7 @@ namespace Kleistad;
  * @property bool   gepauzeerd
  * @property bool   overbrugging_email
  * @property array  extras
+ * @property int    factuur_maand
  */
 class Abonnement extends Artikel {
 
@@ -64,6 +65,7 @@ class Abonnement extends Artikel {
 		'gepauzeerd'         => 0,
 		'overbrugging_email' => 0,
 		'extras'             => [],
+		'factuur_maand'      => '',
 	];
 
 	/**
@@ -610,6 +612,11 @@ class Abonnement extends Artikel {
 	 * @param \Kleistad\Abonnement $abonnement Het abonnement.
 	 */
 	private static function factureer( $abonnement ) {
+		$vandaag       = strtotime( 'today' );
+		$factuur_maand = (int) date( 'Ym', $vandaag );
+		if ( $abonnement->factuur_maand >= $factuur_maand ) {
+			return;
+		}
 		$volgende_maand = strtotime( 'first day of next month 00:00' );
 		$deze_maand     = strtotime( 'first day of this month 00:00' );
 		$betalen        = new \Kleistad\Betalen();
@@ -627,17 +634,15 @@ class Abonnement extends Artikel {
 		} else {
 			$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
 		}
+		$abonnement->factuur_maand = $factuur_maand;
 	}
 
 	/**
 	 * Dagelijkse job
 	 */
 	public static function dagelijks() {
-		$vandaag       = strtotime( 'today' );
-		$factuur_maand = (int) date( 'Ym', $vandaag );
-		$factuur_vorig = (int) get_option( 'kleistad_abofact' ) ?: 0;
-		$factureren    = $factuur_vorig < $factuur_maand;
-		foreach ( self::all() as $klant_id => $abonnement ) {
+		$vandaag = strtotime( 'today' );
+		foreach ( self::all() as $abonnement ) {
 			if ( $abonnement->geannuleerd || $vandaag < $abonnement->start_datum ) {
 				// Gestopte abonnementen en abonnementen die nog moeten starten hebben geen actie nodig.
 				continue;
@@ -661,15 +666,9 @@ class Abonnement extends Artikel {
 			}
 			// Abonnementen zijn gepauzeerd als het vandaag tussen de pauze en herstart datum is, anders niet.
 			$abonnement->gepauzeerd = $vandaag < $abonnement->herstart_datum && $vandaag >= $abonnement->pauze_datum;
-			$abonnement->save();
 			// Hierna wordt er niets meer aan het abonnement aangepast, nu nog factureren indien nodig.
-			if ( $factureren ) {
-				self::factureer( $abonnement );
-			}
-		}
-		// Verhoog het maandnummer van de facturatie.
-		if ( $factureren ) {
-			update_option( 'kleistad_abofact', $factuur_maand );
+			self::factureer( $abonnement );
+			$abonnement->save();
 		}
 	}
 
