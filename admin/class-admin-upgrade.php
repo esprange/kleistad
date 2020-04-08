@@ -216,7 +216,7 @@ class Admin_Upgrade {
 		$abonnementen  = \Kleistad\Abonnement::all();
 		$factuur_vorig = (int) get_option( 'kleistad_abofact' ) ?: 0;
 		foreach ( $abonnementen as $abonnement ) {
-			$abonnement->factuur = $factuur_vorig;
+			$abonnement->factuur_maand = $factuur_vorig;
 			$abonnement->save();
 		}
 	}

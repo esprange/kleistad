@@ -241,7 +241,7 @@ class Abonnement extends Artikel {
 	private function sepa_incasso() {
 		$bedrag = $this->bedrag( "#{$this->artikel_type}" );
 		if ( 0.0 < $bedrag ) {
-			$this->betalen->eenmalig(
+			return $this->betalen->eenmalig(
 				$this->klant_id,
 				$this->referentie(),
 				$bedrag,
@@ -376,13 +376,14 @@ class Abonnement extends Artikel {
 		if ( $betaald ) {
 			if ( $order_id ) {
 				/**
-				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of betaling per bank.
-				 * Omdat de order al bestaat betekent dit ook dat er al een factuur verstuurd is.
+				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of incasso of betaling per bank.
 				 */
-				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				$factuur = $this->ontvang_order( $order_id, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->email( '_ideal_betaald' );
-				}
+				} elseif ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
+					$this->email( '_regulier_incasso', $factuur );
+				} // Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
 			} elseif ( 'mandaat' === $this->artikel_type ) {
 				/**
 				 * Bij een mandaat ( 1 eurocent ) hoeven we geen factuur te sturen en is er dus geen order aangemaakt.
@@ -395,20 +396,12 @@ class Abonnement extends Artikel {
 				 * een inschrijving formulier.
 				 */
 				$this->email( '_start_ideal', $this->bestel_order( $bedrag, $this->start_datum, '', $transactie_id ) );
-			} else {
-				/**
-				 * Blijkbaar iets anders dan een start. Omdat de order nog niet bestaat moet dit wel afkomstig zijn van een
-				 * incasso want de overbruggingsfactuur is al 7 dagen vooraf verstuurd.
-				 */
-				$this->email( '_regulier_incasso', $this->bestel_order( $bedrag, strtotime( '+14 days 0:00' ), '', $transactie_id ) );
 			}
-		} else {
-			if ( 'directdebit' === $type ) {
-				/**
-				 * Als het een incasso betreft die gefaald is dan maken we alsnog de order aan.
-				 */
-				$this->email( '_regulier_mislukt', $this->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
-			}
+		} elseif ( 'directdebit' === $type ) {
+			/**
+			 * Als het een incasso betreft die gefaald is dan maken we alsnog de order aan.
+			 */
+			$this->email( '_regulier_mislukt', $this->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
 		}
 	}
 
@@ -630,7 +623,7 @@ class Abonnement extends Artikel {
 			$abonnement->artikel_type = 'regulier';
 		}
 		if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
-			$abonnement->sepa_incasso();
+			$abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $abonnement->sepa_incasso(), false );
 		} else {
 			$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
 		}

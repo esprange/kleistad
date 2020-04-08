@@ -178,13 +178,14 @@ abstract class Artikel extends Entity {
 	 * @param int    $verval_datum  De datum waarop de factuur vervalt.
 	 * @param string $opmerking     De optionele opmerking in de factuur.
 	 * @param string $transactie_id De betalings id.
+	 * @param bool   $factuur       Of er een factuur aangemaakt moet worden.
 	 * @return string De url van de factuur.
 	 */
-	final public function bestel_order( $bedrag, $verval_datum, $opmerking = '', $transactie_id = '' ) {
+	final public function bestel_order( $bedrag, $verval_datum, $opmerking = '', $transactie_id = '', $factuur = true ) {
 		$order                = new \Kleistad\Order();
 		$order->betaald       = $bedrag;
 		$order->regels        = $this->factuurregels();
-		$order->historie      = 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 );
+		$order->historie      = $factuur ? 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 ) : 'order aangemaakt';
 		$order->klant         = $this->naw_klant();
 		$order->opmerking     = $opmerking;
 		$order->referentie    = $this->referentie();
@@ -193,7 +194,7 @@ abstract class Artikel extends Entity {
 		$order->save();
 		$this->maak_link( $order->id );
 		$this->betaalactie( $order->betaald );
-		return $this->maak_factuur( $order, '' );
+		return $factuur ? $this->maak_factuur( $order, '' ) : '';
 	}
 
 	/**
@@ -244,6 +245,10 @@ abstract class Artikel extends Entity {
 		$order->transactie_id = $transactie_id;
 		$order->save();
 		$this->betaalactie( $order->betaald );
+		if ( empty( $order->factuurnr ) ) {
+			return $this->maak_factuur( $order, '' );
+		}
+		return '';
 	}
 
 	/**

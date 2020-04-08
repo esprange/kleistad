@@ -183,7 +183,7 @@ class Betalen {
 		if ( '' !== $mollie_gebruiker_id ) {
 			try {
 				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-				$mollie_gebruiker->createPayment(
+				$betaling         = $mollie_gebruiker->createPayment(
 					[
 						'amount'       => [
 							'currency' => 'EUR',
@@ -201,6 +201,7 @@ class Betalen {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
 		}
+		return $betaling->id;
 	}
 
 	/**
