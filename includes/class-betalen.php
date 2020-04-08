@@ -177,6 +177,7 @@ class Betalen {
 	 * @param string $order_id     de externe order referentie, maximaal 35 karakters.
 	 * @param float  $bedrag       Het te betalen bedrag.
 	 * @param string $beschrijving De beschrijving bij de betaling.
+	 * @return string|void De transactie_id.
 	 */
 	public function eenmalig( $gebruiker_id, $order_id, $bedrag, $beschrijving ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
@@ -200,8 +201,8 @@ class Betalen {
 			} catch ( \Exception $e ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
+			return $betaling->id;
 		}
-		return $betaling->id;
 	}
 
 	/**
