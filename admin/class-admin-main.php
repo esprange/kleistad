@@ -392,7 +392,7 @@ class Admin_Main {
 	private function corona() {
 		if ( isset( $_FILES['corona_file'] ) ) {
 			$beschikbaarheid = [];
-			$csv             = array_map( 'str_getcsv', file( $_FILES['corona_file']['tmp_name'] ) );
+			$csv             = array_map( 'str_getcsv', file( $_FILES['corona_file']['tmp_name'] ) ?: [] );
 			foreach ( $csv as $line ) {
 				list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen ) = explode( ';', $line[0] );
 				$datum = strtotime( $s_datum );

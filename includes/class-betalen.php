@@ -198,10 +198,10 @@ class Betalen {
 						'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
 					]
 				);
+				return $betaling->id;
 			} catch ( \Exception $e ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
-			return $betaling->id;
 		}
 	}
 
