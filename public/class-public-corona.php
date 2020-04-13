@@ -80,7 +80,7 @@ class Public_Corona extends ShortcodeForm {
 	 * Prepareer 'corona' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
+	 * @return bool | WP_Error
 	 *
 	 * @since   6.3.4
 	 */

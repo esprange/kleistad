@@ -15,7 +15,7 @@ $this->form();
 <input type="hidden" id="kleistad_naam" value="<?php echo esc_attr( $data['input']['naam'] ); ?>">
 <div class="kleistad_row">
 	<div class="kleistad_col_3">
-	<select name="datum" id="kleistad_datum" value="<?php echo esc_attr( $data['input']['datum'] ); ?> ">
+	<select name="datum" id="kleistad_datum" >
 <?php foreach ( $data['datums'] as $datum ) : ?>
 		<option value="<?php echo esc_attr( $datum ); ?>" <?php selected( $data['input']['datum'], $datum ); ?> >
 			<?php echo esc_html( strftime( '%A %x', $datum ) ); ?>
@@ -24,30 +24,29 @@ $this->form();
 	</select>
 	</div>
 </div>
-<div class="kleistad_row">
-	<div class="kleistad_col_2">
-		&nbsp;
-	</div>
-<?php foreach ( $data['beschikbaarheid'] as $beschikbaarheid ) : ?>
-	<div class="kleistad_col_2">
-		<?php echo esc_html( $beschikbaarheid['T'] ); ?>
-	</div>
-<?php endforeach ?>
-</div>
 
 <?php
 foreach ( [
-	'D' => 'draaien',
-	'H' => 'handvormen',
-] as $werk => $titel ) :
+	'H' => [
+		'titel' => 'handvormen',
+		'kleur' => 'rgb( 255, 229, 153 )',
+	],
+	'D' => [
+		'titel' => 'draaien',
+		'kleur' => 'rgb( 247, 202, 172 )',
+	],
+] as $werk => $opmaak ) :
 	?>
-<div class="kleistad_row">
+<div class="kleistad_row" style="background:<?php echo esc_attr( $opmaak['kleur'] ); ?>">
 	<div class="kleistad_col_2">
-		<?php echo esc_html( $titel ); ?>
+		<strong><?php echo esc_html( $opmaak['titel'] ); ?></strong>
 	</div>
 	<?php foreach ( $data['beschikbaarheid'] as $index => $beschikbaarheid ) : ?>
 	<div class="kleistad_col_2">
 		<table>
+			<tr>
+				<th><?php echo esc_html( $beschikbaarheid['T'] ); ?></th>
+			</tr>
 			<?php
 				$button = false;
 			for ( $plek = 0; $plek < $beschikbaarheid[ $werk ]; $plek++ ) :
@@ -77,5 +76,6 @@ foreach ( [
 	<?php endforeach ?>
 </div>
 <?php endforeach ?>
+	<br/>
 	<button name="kleistad_submit_corona" id="kleistad_submit" type="submit" >Opslaan</button>
 </form>
