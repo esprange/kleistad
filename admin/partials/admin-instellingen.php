@@ -10,6 +10,22 @@
  */
 
 ?>
+<div class="card" style="position:absolute;left:50%;width:50%;z-index:2" >
+<form method="POST" enctype="multipart/form-data">
+	<p>Lees beschikbaarheid voor Corona reserveringen</p>
+	<hr/>
+	<p>Maak met excel een bestand met het volgende formaat en sla dit op als .csv bestand. Laad het bestand om de beschikbaarheid aan te geven.</p>
+	<div style="float:left">
+	<img src="<?php echo plugin_dir_url( __DIR__ ); //phpcs:ignore ?>images/corona.png"
+		style="width:200px" alt="dag als d-m-y, starttijd, eindtijd, aantal draaien, aantal handvormen" >
+	</div>
+	<div style="float:right">
+	<input type="file" name="corona_file" accept=".csv" ><br/>
+	<?php submit_button( 'Bestand laden', 'primary', 'corona' ); ?>
+	</div>
+</form>
+</div>
+
 <form method="POST" action="options.php" >
 	<?php settings_fields( 'kleistad-opties' ); ?>
 	<table class="form-table" >

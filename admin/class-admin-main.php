@@ -341,6 +341,8 @@ class Admin_Main {
 			$result = \Kleistad\Google::koppel_service();
 		} elseif ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			$this->daily_jobs();
+		} elseif ( ! is_null( filter_input( INPUT_POST, 'corona' ) ) ) {
+			$this->corona();
 		}
 		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
 		?>
@@ -380,5 +382,30 @@ class Admin_Main {
 			}
 		}
 		return $input;
+	}
+
+	/**
+	 * Lees het corona beschikbaarheid bestand en sla dit op.
+	 *
+	 * @return void
+	 */
+	private function corona() {
+		if ( isset( $_FILES['corona_file'] ) ) {
+			$beschikbaarheid = [];
+			$csv             = array_map( 'str_getcsv', file( $_FILES['corona_file']['tmp_name'] ) );
+			foreach ( $csv as $line ) {
+				list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen ) = explode( ';', $line[0] );
+				$datum = strtotime( $s_datum );
+				if ( false !== $datum && $datum >= strtotime( 'today 0:00' ) ) {
+					$beschikbaarheid[ $datum ][] =
+						[
+							'T' => "$start - $eind",
+							'D' => $limiet_draaien,
+							'H' => $limiet_handvormen,
+						];
+				}
+			}
+			update_option( 'kleistad_corona_beschikbaarheid', $beschikbaarheid );
+		}
 	}
 }

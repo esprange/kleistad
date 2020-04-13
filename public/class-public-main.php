@@ -69,6 +69,12 @@ class Public_Main {
 			'css'    => [],
 			'access' => [],
 		],
+		'corona'                => [
+			'script' => true,
+			'js'     => [ 'jquery', 'jquery-ui-button' ],
+			'css'    => [ 'jquery-ui' ],
+			'access' => [],
+		],
 		'cursus_beheer'         => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
