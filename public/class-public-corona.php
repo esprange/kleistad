@@ -41,7 +41,7 @@ class Public_Corona extends ShortcodeForm {
 		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
 		$datum_lijst     = [];
 		foreach ( $beschikbaarheid as $mogelijke_datum => $niet_gebruikt ) {
-			if ( $mogelijke_datum >= strtotime( 'today 0:00' ) && $mogelijke_datum < strtotime( '+ 2 weeks 0:00' ) ) {
+			if ( $mogelijke_datum >= strtotime( 'today 0:00' ) ) {
 				$datum_lijst[] = $mogelijke_datum;
 			}
 		}
@@ -87,9 +87,11 @@ class Public_Corona extends ShortcodeForm {
 	protected function prepare( &$data ) {
 		$datums = $this->mogelijke_datums();
 		if ( empty( $datums ) ) {
-			return new \WP_Error( 'corona', 'Er is geen enkele beschikbaarheid' );
+			return new \WP_Error( 'werkplek', 'Er is geen enkele beschikbaarheid' );
 		}
-		$datum           = filter_input( INPUT_GET, 'datum' ) ?: $datums[0];
+		wp_add_inline_style( 'kleistad', '.kleistad_shortcode td, th { padding:0;text-align:center; }' );
+		$datum_str       = filter_input( INPUT_GET, 'datum' );
+		$datum           = is_null( $datum_str ) ? $datums[0] : strtotime( $datum_str );
 		$current_user_id = get_current_user_id();
 		if ( $current_user_id ) {
 			$data = [
@@ -103,7 +105,7 @@ class Public_Corona extends ShortcodeForm {
 				'datums'          => $datums,
 			];
 		} else {
-			return new \WP_Error( 'corona', 'Je moet ingelogd zijn om deze functie te gebruiken' );
+			return new \WP_Error( 'werkplek', 'Je moet ingelogd zijn om deze functie te gebruiken' );
 		}
 		return true;
 	}
@@ -120,7 +122,7 @@ class Public_Corona extends ShortcodeForm {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'datum' => FILTER_SANITIZE_NUMBER_INT,
+				'datum' => FILTER_SANITIZE_STRING,
 				'res'   => [
 					'filter' => FILTER_DEFAULT,
 					'flags'  => FILTER_REQUIRE_ARRAY,
@@ -141,13 +143,21 @@ class Public_Corona extends ShortcodeForm {
 	 * @since   6.3.4
 	 */
 	protected function save( $data ) {
-		$reserveringen = get_option( 'kleistad_corona_' . date( 'm-d-Y', $data['input']['datum'] ), [] );
-		$aanpassingen  = $data['input']['res'];
-		$id            = intval( $data['input']['id'] );
+		$datum           = strtotime( $data['input']['datum'] );
+		$beschikbaarheid = $this->beschikbaarheid( $datum );
+		$reserveringen   = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
+		$aanpassingen    = $data['input']['res'];
+		$id              = intval( $data['input']['id'] );
 		foreach ( $aanpassingen as $index => $aanpassing ) {
 			foreach ( $aanpassing as $werk => $check ) {
-				if ( ! isset( $reserveringen[ $index ][ $werk ] ) || ! in_array( $id, $reserveringen[ $index ][ $werk ], true ) ) {
-					$reserveringen[ $index ][ $werk ][] = $id;
+				if ( ! in_array( $id, $reserveringen[ $index ][ $werk ] ?? [], true ) ) {
+					if ( count( $reserveringen[ $index ][ $werk ] ?? [] ) < $beschikbaarheid[ $index ][ $werk ] ) {
+						$reserveringen[ $index ][ $werk ][] = $id;
+					} else {
+						return [
+							'status' => $this->status( new \WP_Error( 'werkplek', 'De reservering kon niet worden opgeslagen, probeer het opnieuw' ) ),
+						];
+					}
 				}
 			}
 		}
@@ -158,7 +168,7 @@ class Public_Corona extends ShortcodeForm {
 				}
 			}
 		}
-		update_option( 'kleistad_corona_' . date( 'm-d-Y', $data['input']['datum'] ), $reserveringen );
+		update_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), $reserveringen );
 		return [
 			'status' => $this->status( 'De reservering is aangepast' ),
 		];

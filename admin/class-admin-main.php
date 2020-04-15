@@ -394,7 +394,7 @@ class Admin_Main {
 			$beschikbaarheid = [];
 			$csv             = array_map( 'str_getcsv', file( $_FILES['corona_file']['tmp_name'] ) ?: [] );
 			foreach ( $csv as $line ) {
-				list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen ) = explode( ';', $line[0] );
+				list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen, $limiet_boven ) = explode( ';', $line[0] );
 				$datum = strtotime( $s_datum );
 				if ( false !== $datum && $datum >= strtotime( 'today 0:00' ) ) {
 					$beschikbaarheid[ $datum ][] =
@@ -402,6 +402,7 @@ class Admin_Main {
 							'T' => "$start - $eind",
 							'D' => $limiet_draaien,
 							'H' => $limiet_handvormen,
+							'B' => $limiet_boven,
 						];
 				}
 			}

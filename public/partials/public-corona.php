@@ -1,6 +1,6 @@
 <?php
 /**
- * Toon het contact formulier
+ * Toon het werkplek reservering formulier
  *
  * @link       https://www.kleistad.nl
  * @since      6.3.0
@@ -15,13 +15,8 @@ $this->form();
 <input type="hidden" id="kleistad_naam" value="<?php echo esc_attr( $data['input']['naam'] ); ?>">
 <div class="kleistad_row">
 	<div class="kleistad_col_3">
-	<select name="datum" id="kleistad_datum" >
-<?php foreach ( $data['datums'] as $datum ) : ?>
-		<option value="<?php echo esc_attr( $datum ); ?>" <?php selected( $data['input']['datum'], $datum ); ?> >
-			<?php echo esc_html( strftime( '%A %x', $datum ) ); ?>
-		</option>
-<?php endforeach ?>
-	</select>
+	<input type=text name="datum" id="kleistad_datum" class="kleistad_datum" data-datums='<?php echo esc_attr( wp_json_encode( $data['datums'] ) ); ?>'
+		value="<?php echo esc_attr( date( 'd-m-Y', $data['input']['datum'] ) ); ?>" readonly="readonly" >
 	</div>
 </div>
 
@@ -34,6 +29,10 @@ foreach ( [
 	'D' => [
 		'titel' => 'draaien',
 		'kleur' => 'rgb( 247, 202, 172 )',
+	],
+	'B' => [
+		'titel' => 'bovenruimte',
+		'kleur' => 'rgb( 217, 217, 217 )',
 	],
 ] as $werk => $opmaak ) :
 	?>

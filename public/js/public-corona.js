@@ -1,25 +1,45 @@
 ( function( $ ) {
 	'use strict';
 
+	var datums;
+
 	function disableOnCheck() {
 		$( '.kleistad_corona' ).each(
 			function() {
-				var pars  = $( this ).attr( 'id' ).split( '_' );
-				var other = '#' + pars[0] + '_' + ( pars[1] === 'D' ? 'H' : 'D' );
+				var id   = $( this ).attr( 'id' );
+				var pars = id.split( '_' );
 				if ( $( this ).is( ':checked' ) ) {
-					$( other ).button( 'disable' );
+					$( '[id^="' + pars[0] + '"]' ).not( '#' + id ).button( 'disable' );
 				} else {
-					$( other ).button( 'enable' );
+ 					if ( false === $( '[id^="' + pars[0] + '"]' ).is( ':checked' ) ) {
+						$( '[id^="' + pars[0] + '"]' ).button( 'enable' );
+					}
 				}
 			}
 		);
 
 	}
 
+	function beschikbaar( datum ) {
+		var unixTime = datum.getTime() / 1000 - datum.getTimezoneOffset() * 60;
+		if ( $.inArray( unixTime, datums ) !== -1 ) {
+			return [true, '', 'beschikbaar' ];
+		} else {
+			return [false, '', 'gesloten' ];
+		}
+	}
+
 	function onLoad() {
+		datums = $( '#kleistad_datum' ).data( 'datums' );
 		$( '.kleistad_corona' ).button(
 			{
 				'icon':false
+			}
+		);
+		$( '#kleistad_datum' ).datepicker( 'option',
+			{
+				beforeShowDay: beschikbaar,
+				minDate: new Date()
 			}
 		);
 		disableOnCheck();

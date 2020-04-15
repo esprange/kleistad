@@ -71,7 +71,7 @@ class Public_Main {
 		],
 		'corona'                => [
 			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-button' ],
+			'js'     => [ 'jquery', 'jquery-ui-button', 'jquery-ui-datepicker' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [],
 		],
