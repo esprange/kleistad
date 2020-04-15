@@ -15,7 +15,7 @@ $this->form();
 <input type="hidden" id="kleistad_naam" value="<?php echo esc_attr( $data['input']['naam'] ); ?>">
 <div class="kleistad_row">
 	<div class="kleistad_col_3">
-	<input type=text name="datum" id="kleistad_datum" class="kleistad_datum" data-datums='<?php echo esc_attr( wp_json_encode( $data['datums'] ) ); ?>'
+	<input type=text name="datum" id="kleistad_datum" class="kleistad_datum" data-datums='<?php echo esc_attr( wp_json_encode( $data['datums'] ) ?: '[]' ); ?>'
 		value="<?php echo esc_attr( date( 'd-m-Y', $data['input']['datum'] ) ); ?>" readonly="readonly" >
 	</div>
 </div>

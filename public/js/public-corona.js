@@ -24,9 +24,8 @@
 		var unixTime = datum.getTime() / 1000 - datum.getTimezoneOffset() * 60;
 		if ( $.inArray( unixTime, datums ) !== -1 ) {
 			return [true, '', 'beschikbaar' ];
-		} else {
-			return [false, '', 'gesloten' ];
 		}
+		return [false, '', 'gesloten' ];
 	}
 
 	function onLoad() {
