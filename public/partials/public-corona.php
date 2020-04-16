@@ -14,9 +14,12 @@ $this->form();
 <input type="hidden" name="id" value="<?php echo esc_attr( $data['input']['id'] ); ?>">
 <input type="hidden" id="kleistad_naam" value="<?php echo esc_attr( $data['input']['naam'] ); ?>">
 <div class="kleistad_row">
-	<div class="kleistad_col_3">
+	<div style="float:left;margin-bottom:10px">
 	<input type=text name="datum" id="kleistad_datum" class="kleistad_datum" data-datums='<?php echo esc_attr( wp_json_encode( $data['datums'] ) ?: '[]' ); ?>'
 		value="<?php echo esc_attr( date( 'd-m-Y', $data['input']['datum'] ) ); ?>" readonly="readonly" >
+	</div>
+	<div style="float:right;margin-bottom:10px">
+		<button name="kleistad_submit_corona" type="submit" >Opslaan</button>
 	</div>
 </div>
 
@@ -75,6 +78,9 @@ foreach ( [
 	<?php endforeach ?>
 </div>
 <?php endforeach ?>
-	<br/>
-	<button name="kleistad_submit_corona" id="kleistad_submit" type="submit" >Opslaan</button>
+<div class="kleistad_row">
+	<div style="float:right;margin-top:10px">
+		<button name="kleistad_submit_corona" type="submit" >Opslaan</button>
+	</div>
+</div>
 </form>
