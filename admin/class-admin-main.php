@@ -391,7 +391,7 @@ class Admin_Main {
 	 */
 	private function corona() {
 		if ( isset( $_FILES['corona_file'] ) ) {
-			$beschikbaarheid = [];
+			$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
 			$csv             = array_map( 'str_getcsv', file( $_FILES['corona_file']['tmp_name'] ) ?: [] );
 			foreach ( $csv as $line ) {
 				list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen, $limiet_boven ) = explode( ';', $line[0] );
