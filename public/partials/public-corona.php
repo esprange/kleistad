@@ -19,7 +19,7 @@ $this->form();
 		value="<?php echo esc_attr( date( 'd-m-Y', $data['input']['datum'] ) ); ?>" readonly="readonly" >
 	</div>
 	<div style="float:right;margin-bottom:10px">
-		<button name="kleistad_submit_corona" type="submit" >Opslaan</button>
+		<button name="kleistad_submit_corona" type="submit" >Bevestigen</button>
 	</div>
 </div>
 
@@ -80,7 +80,7 @@ foreach ( [
 <?php endforeach ?>
 <div class="kleistad_row">
 	<div style="float:right;margin-top:10px">
-		<button name="kleistad_submit_corona" type="submit" >Opslaan</button>
+		<button name="kleistad_submit_corona" type="submit" >Bevestigen</button>
 	</div>
 </div>
 </form>
