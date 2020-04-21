@@ -231,6 +231,10 @@ class Saldo extends Artikel {
 	 */
 	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
+			$this->bedrag += $bedrag;
+			$this->reden   = $bedrag > 0 ? 'bijstorting' : 'terugboeking';
+			$this->save();
+
 			if ( $order_id ) {
 				/**
 				 * Er bestaat al een order dus dit is een betaling o.b.v. een email link of per bank.
@@ -245,9 +249,6 @@ class Saldo extends Artikel {
 				 */
 				$this->email( '_ideal', $this->bestel_order( $bedrag, strtotime( '+7 days  0:00' ), '', $transactie_id ) );
 			}
-			$this->reden   = $bedrag > 0 ? 'bijstorting' : 'terugboeking';
-			$this->bedrag += $bedrag;
-			$this->save();
 		}
 	}
 
