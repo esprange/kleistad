@@ -396,15 +396,20 @@ class Admin_Main {
 			foreach ( $csv as $line ) {
 				list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen, $limiet_boven ) = explode( ';', $line[0] );
 				$datum = strtotime( $s_datum );
-				if ( false !== $datum && $datum >= strtotime( 'today 0:00' ) ) {
-					$beschikbaarheid[ $datum ][] =
-						[
-							'T' => "$start - $eind",
-							'D' => $limiet_draaien,
-							'H' => $limiet_handvormen,
-							'B' => $limiet_boven,
-						];
+				$tijd  = "$start - $eind";
+				if ( false === $datum || $datum < strtotime( 'today 0:00' ) ) {
+					continue;
 				}
+				if ( isset( $beschikbaarheid[ $datum ] ) && false !== array_search( $tijd, array_column( $beschikbaarheid[ $datum ], 'T' ), true ) ) {
+					continue;
+				}
+				$beschikbaarheid[ $datum ][] =
+					[
+						'T' => $tijd,
+						'D' => $limiet_draaien,
+						'H' => $limiet_handvormen,
+						'B' => $limiet_boven,
+					];
 			}
 			update_option( 'kleistad_corona_beschikbaarheid', $beschikbaarheid );
 		}
