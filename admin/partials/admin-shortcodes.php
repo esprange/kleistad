@@ -48,6 +48,11 @@
 			<li>[kleistad_abonnee_wijziging] wijzigen abonnement door lid</li>
 		</ol>
 	</li>
+	<li><h3>toegankelijk voor geselecteerde cursisten, leden, docenten, bestuur</h3>
+		<ol>
+			<li>[kleistad_corona] tijdelijke voorziening voor reserveringen werkplek ivm Covid19 virus</li>
+		</ol>
+	</li>
 	<li><h3>toegankelijk voor leden, docenten en bestuur</h3>
 		<ol>
 			<li>[kleistad_kalender] overzicht workshops en cursussen</li>
@@ -80,6 +85,12 @@
 			<li>[kleistad_stookbestand] opvragen stookbestand</li>
 			<li>[kleistad_verkoop] verkoop overige artikelen invoeren</li>
 			<li>[kleistad_workshop_beheer] formulier om workshops te beheren</li>
+			<li>[kleistad_corona] Werkplek reservering overzichten
+			<ul style="list-style-type:square;margin-left:25px">
+				<li>actie=overzicht. Overzicht van gebruik werkplekken in aantallen</li>
+				<li>actie=gebruikers. Gebruik werkplekken door een gebruiker</li>
+			</ul>
+			</li>
 		</ol>
 	</li>
 	<li><h3>toegankelijk voor boekhouder</h3>

@@ -65,6 +65,10 @@
 					$( this ).button( 'option', 'label', $( this ).is( ':checked' ) ? $( '#kleistad_naam' ).val() : 'reserveren' );
 					disableOnCheck();
 				}
+			).on( 'change', '#kleistad_gebruiker',
+				function() {
+					window.location.assign( window.location.origin + window.location.pathname + '?gebruiker=' + $( this ).val() );
+				}
 			);
 		}
     );

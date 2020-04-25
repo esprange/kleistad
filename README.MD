@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.3.2  
-**Stable tag:** 6.3.3  
+**Stable tag:** 6.3.5  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 
@@ -35,6 +35,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.3.5 ###
+* Corona shortcode voor reserveren werkplekken toegevoegd
+* Bugfix in verwerking betaling stooksaldo (saldo in email niet actueel)
 ### 6.3.3 ###
 * Aanpassing abonnement wijzigen, herstart bij pauze nu mogelijk
 ### 6.3.2 ###

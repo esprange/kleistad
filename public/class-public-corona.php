@@ -49,6 +49,56 @@ class Public_Corona extends ShortcodeForm {
 	}
 
 	/**
+	 * Haal alle reserveringen op voor een bezetting overzicht
+	 *
+	 * @return array
+	 */
+	private function bezetting() {
+		$bezetting        = [];
+		$beschikbaarheden = get_option( 'kleistad_corona_beschikbaarheid', [] );
+		foreach ( $beschikbaarheden as $datum => $beschikbaarheid ) {
+			$reserveringen = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
+			$index         = 0;
+			foreach ( $beschikbaarheid as $tijdzone ) {
+				$bezetting[ $datum ][ $tijdzone['T'] ] = [
+					'H' => isset( $reserveringen[ $index ]['H'] ) ? count( $reserveringen[ $index ]['H'] ) : 0,
+					'D' => isset( $reserveringen[ $index ]['D'] ) ? count( $reserveringen[ $index ]['D'] ) : 0,
+					'B' => isset( $reserveringen[ $index ]['B'] ) ? count( $reserveringen[ $index ]['B'] ) : 0,
+				];
+				$index++;
+			}
+		}
+		return $bezetting;
+	}
+
+	/**
+	 * Toon het gebruik van het atelier obv de reserveringen door de gebruiker
+	 *
+	 * @param int $id De gebruiker.
+	 * @return array
+	 */
+	private function gebruik( $id ) {
+		$beschikbaarheden = get_option( 'kleistad_corona_beschikbaarheid', [] );
+		$gebruik          = [];
+		foreach ( $beschikbaarheden as $datum => $beschikbaarheid ) {
+			$aanwezig      = false;
+			$reserveringen = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
+			foreach ( $reserveringen as $index => $reservering ) {
+				foreach ( $reservering as $werk => $ids ) {
+					if ( in_array( $id, $ids, true ) ) {
+						$aanwezig = $werk;
+						break;
+					}
+				}
+				if ( $aanwezig ) {
+					$gebruik[ $datum ][ $beschikbaarheid[ $index ]['T'] ] = $aanwezig;
+				}
+			}
+		}
+		return $gebruik;
+	}
+
+	/**
 	 * Haal de reeds aanwezige reserveringen op
 	 *
 	 * @param  int $datum De datum.
@@ -85,6 +135,31 @@ class Public_Corona extends ShortcodeForm {
 	 * @since   6.3.4
 	 */
 	protected function prepare( &$data ) {
+		$atts = shortcode_atts(
+			[ 'actie' => '' ],
+			$this->atts,
+			'kleistad_corona'
+		);
+		if ( ! empty( $atts['actie'] ) && current_user_can( 'bestuur' ) ) {
+			$data['actie'] = $atts['actie'];
+			if ( 'gebruikers' === $data['actie'] ) {
+				$data['gebruikers'] = get_users(
+					[
+						'role__in' => [ 'bestuur', 'leden', 'cursist-1' ],
+						'fields'   => [
+							'ID',
+							'display_name',
+						],
+					]
+				);
+				$data['id']         = intval( filter_input( INPUT_GET, 'gebruiker' ) );
+				$data['gebruik']    = $this->gebruik( $data['id'] );
+				return true;
+			} elseif ( 'overzicht' === $data['actie'] ) {
+				$data['overzicht'] = $this->bezetting();
+				return true;
+			}
+		}
 		$datums = $this->mogelijke_datums();
 		if ( empty( $datums ) ) {
 			return new \WP_Error( 'werkplek', 'Er is geen enkele beschikbaarheid' );
@@ -95,6 +170,7 @@ class Public_Corona extends ShortcodeForm {
 		$current_user_id = get_current_user_id();
 		if ( $current_user_id ) {
 			$data = [
+				'actie'           => 'reserveren',
 				'input'           => [
 					'naam'  => get_user_by( 'id', $current_user_id )->first_name,
 					'id'    => $current_user_id,
@@ -172,6 +248,73 @@ class Public_Corona extends ShortcodeForm {
 		return [
 			'status' => $this->status( 'De reservering is aangepast' ),
 		];
+	}
+
+	/**
+	 * Schrijf overzicht informatie naar het bestand.
+	 */
+	protected function overzicht() {
+		$overzicht = $this->bezetting();
+		ksort( $overzicht );
+		$overzicht_fields = [
+			'Datum',
+			'Tijd',
+			'Handvormen',
+			'Draaien',
+			'Bovenruimte',
+		];
+		fputcsv( $this->file_handle, $overzicht_fields, ';', '"' );
+		foreach ( $overzicht as $datum => $tijden ) {
+			foreach ( $tijden as $tijd => $gebruik ) {
+				fputcsv(
+					$this->file_handle,
+					[
+						date( 'd-m-Y', $datum ),
+						$tijd,
+						$gebruik['H'],
+						$gebruik['D'],
+						$gebruik['B'],
+					],
+					';',
+					'"'
+				);
+			}
+		}
+	}
+
+	/**
+	 * Schrijf overzicht informatie naar het bestand.
+	 */
+	protected function gebruiker() {
+		$titels       = [
+			'H' => 'Handvormen',
+			'D' => 'Draaien',
+			'B' => 'Bovenruimte',
+		];
+		$gebruiker_id = filter_input( INPUT_GET, 'gebruiker', FILTER_SANITIZE_NUMBER_INT );
+		$gebruik      = $this->gebruik( intval( $gebruiker_id ) );
+		ksort( $gebruik );
+
+		$gebruik_fields = [
+			'Datum',
+			'Tijd',
+			'Gebruik',
+		];
+		fputcsv( $this->file_handle, $gebruik_fields, ';', '"' );
+		foreach ( $gebruik as $datum => $tijden ) {
+			foreach ( $tijden as $tijd => $werk ) {
+				fputcsv(
+					$this->file_handle,
+					[
+						date( 'd-m-Y', $datum ),
+						$tijd,
+						$titels[ $werk ],
+					],
+					';',
+					'"'
+				);
+			}
+		}
 	}
 
 }

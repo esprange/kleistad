@@ -13,6 +13,7 @@ wpcs/
 .vscode/
 tests/
 bin/
+lib/
 
 # Build files
 *.zip

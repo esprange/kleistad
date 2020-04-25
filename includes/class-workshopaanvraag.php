@@ -207,7 +207,9 @@ class WorkshopAanvraag {
 				}
 				$answered[] = $email_id;
 			}
-			$mailbox->setFlag( $answered, '\\Answered' );
+			if ( ! empty( $answered ) ) {
+				$mailbox->setFlag( $answered, '\\Answered' );
+			}
 			$mailbox->disconnect();
 		} catch ( \PhpImap\Exceptions\ConnectionException $ex ) {
 			error_log( 'IMAP fail: ' . $ex->getMessage() ); // phpcs:ignore
