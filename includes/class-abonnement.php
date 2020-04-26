@@ -589,8 +589,8 @@ class Abonnement extends Artikel {
 	 * @return float De fractie.
 	 */
 	private function pauze_fractie() {
-		$tot_pauze      = min( 0, $this->pauze_datum - strtotime( 'first day of month 00:00' ) );
-		$vanaf_herstart = min( 0, strtotime( 'last day of month 00:00' ) - $this->herstart_datum );
+		$tot_pauze      = min( 0, $this->pauze_datum - strtotime( 'first day of this month 00:00' ) );
+		$vanaf_herstart = max( 0, strtotime( 'last day of this month 00:00' ) - $this->herstart_datum );
 		$aantal_dagen   = intval( ( $tot_pauze + $vanaf_herstart ) / ( 60 * 60 * 24 ) );
 		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't' ) ), 2 ) : 0.00;
 	}
