@@ -50,8 +50,18 @@ if ( 'gebruikers' === $data['actie'] ) : ?>
 </table>
 
 <button type="button" class="kleistad_download_link" data-actie="gebruiker" >Download</button>
-<?php elseif ( 'overzicht' === $data['actie'] ) : ?>
-<table class="kleistad_datatable display compact nowrap" >
+	<?php
+elseif ( 'overzicht' === $data['actie'] ) :
+	$key = 0;
+	foreach ( $data['overzicht'] as $datum => $tijden ) {
+		if ( $datum < strtotime( 'today 00:00' ) ) :
+			$key += count( $tijden );
+		else :
+			break;
+		endif;
+	}
+	?>
+<table class="kleistad_datatable display compact nowrap" data-display-start="<?php echo esc_attr( $key ); ?>">
 	<thead>
 		<tr>
 			<th>Datum</th>
