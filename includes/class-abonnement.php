@@ -589,10 +589,12 @@ class Abonnement extends Artikel {
 	 * @return float De fractie.
 	 */
 	private function pauze_fractie() {
-		$tot_pauze      = min( 0, $this->pauze_datum - strtotime( 'first day of this month 00:00' ) );
-		$vanaf_herstart = max( 0, strtotime( 'last day of this month 00:00' ) - $this->herstart_datum );
-		$aantal_dagen   = intval( ( $tot_pauze + $vanaf_herstart ) / ( 60 * 60 * 24 ) );
-		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't' ) ), 2 ) : 0.00;
+		$aantal_dagen = intval( date( 't' ) );
+		$maand_start  = strtotime( 'first day of this month 00:00' );
+		$maand_eind   = strtotime( 'last day of this month 00:00' );
+		$begin_dagen  = $this->pauze_datum < $maand_start ? 0 : intval( date( 'd', $this->pauze_datum ) ) - 1;
+		$eind_dagen   = $this->herstart_datum > $maand_eind ? 0 : $aantal_dagen - intval( date( 'd', $this->herstart_datum ) ) + 1;
+		return round( ( $begin_dagen + $eind_dagen ) / $aantal_dagen, 2 );
 	}
 
 	/**
@@ -646,7 +648,7 @@ class Abonnement extends Artikel {
 			if ( $abonnement->geannuleerd || $vandaag < $abonnement->start_datum ) {
 				// Gestopte abonnementen en abonnementen die nog moeten starten hebben geen actie nodig.
 				continue;
-			} elseif ( $abonnement->eind_datum && $vandaag > $abonnement->eind_datum ) {
+			} elseif ( $abonnement->eind_datum && $vandaag >= $abonnement->eind_datum ) {
 				// Abonnementen waarvan de einddatum verstreken is worden gestopt.
 				$abonnement->geannuleerd = true;
 				$abonnement->autoriseer( false );
