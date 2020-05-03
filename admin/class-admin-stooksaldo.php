@@ -88,7 +88,7 @@ class Admin_Stooksaldo extends \WP_List_Table {
 	public function get_sortable_columns() {
 		$sortable_columns = [
 			'naam'  => [ 'naam', true ],
-			'saldo' => [ 'saldo', false ],
+			'saldo' => [ 'saldo', true ],
 		];
 		return $sortable_columns;
 	}
@@ -116,8 +116,6 @@ class Admin_Stooksaldo extends \WP_List_Table {
 		$gebruiker_query = new \WP_User_Query(
 			[
 				'fields'   => [ 'ID', 'display_name' ],
-				'orderby'  => [ 'naam' === $orderby ? 'display_name' : 'meta_value_num' ],
-				'order'    => $order,
 				'search'   => '*' . $search . '*',
 				'meta_key' => \Kleistad\Saldo::META_KEY,
 				'paged'    => $paged,
@@ -132,6 +130,7 @@ class Admin_Stooksaldo extends \WP_List_Table {
 				'saldo' => $saldo->bedrag,
 			];
 		}
+		array_multisort( array_column( $this->items, $orderby ), 'asc' === $order ? SORT_ASC : SORT_DESC, $this->items );
 		$total_items = $gebruiker_query->get_total();
 		$this->set_pagination_args(
 			[
