@@ -251,8 +251,9 @@ class Public_Registratie_Overzicht extends Shortcode {
 			'Postcode',
 			'Plaats',
 			'Telefoon',
-			'Start_datum',
 			'Dagdelenkaart code',
+			'Start_datum',
+			'Eind_datum',
 			'Opmerking',
 		];
 		fputcsv( $this->file_handle, $dagdelenkaart_fields, ';', '"' );
@@ -274,6 +275,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 					[
 						$dagdelenkaarten[ $gebruiker->ID ]->code,
 						date( 'd-m-Y', $dagdelenkaarten[ $gebruiker->ID ]->start_datum ),
+						date( 'd-m-Y', $dagdelenkaarten[ $gebruiker->ID ]->eind_datum ),
 						$dagdelenkaarten[ $gebruiker->ID ]->opmerking,
 					]
 				);
