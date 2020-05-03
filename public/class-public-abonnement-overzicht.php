@@ -75,6 +75,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 				'Pauze',
 				'Herstart',
 				'Incasso',
+				'Overbrugging',
 			]
 		);
 		fputcsv( $this->file_handle, $abonnees_fields, ';', '"' );
@@ -101,6 +102,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 						$abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '',
 						$abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '',
 						$betalen->heeft_mandaat( $abonnee_id ) ? 'ja' : 'nee',
+						$abonnement->overbrugging_email ? 'ja' : 'nee',
 					]
 				);
 				fputcsv( $this->file_handle, $abonnee_gegevens, ';', '"' );
