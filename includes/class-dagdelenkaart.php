@@ -15,6 +15,7 @@ namespace Kleistad;
  * Kleistad dagdelenkaart.
  *
  * @property int    start_datum
+ * @property int    eind_datum
  * @property string opmerking
  */
 class Dagdelenkaart extends Artikel {
@@ -67,6 +68,8 @@ class Dagdelenkaart extends Artikel {
 			case 'datum':
 			case 'start_datum':
 				return strtotime( $this->data[ $attribuut ] );
+			case 'eind_datum':
+				return strtotime( '+3 month ' . $this->data['start_datum'] );
 			default:
 				if ( is_string( $this->data[ $attribuut ] ) ) {
 					return htmlspecialchars_decode( $this->data[ $attribuut ] );
