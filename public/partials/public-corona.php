@@ -54,7 +54,7 @@ if ( 'gebruikers' === $data['actie'] ) : ?>
 elseif ( 'overzicht' === $data['actie'] ) :
 	$key = 0;
 	foreach ( $data['overzicht'] as $datum => $tijden ) {
-		if ( $datum < strtotime( 'today 00:00' ) ) :
+		if ( $datum < strtotime( 'today' ) ) :
 			$key += count( $tijden );
 		else :
 			break;

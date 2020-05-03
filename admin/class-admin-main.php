@@ -391,16 +391,19 @@ class Admin_Main {
 	 */
 	private function corona() {
 		if ( isset( $_FILES['corona_file'] ) ) {
+			$vandaag         = strtotime( 'today' );
 			$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
 			$csv             = array_map( 'str_getcsv', file( $_FILES['corona_file']['tmp_name'] ) ?: [] );
+			foreach ( $beschikbaarheid as $datum => $tijden ) {
+				if ( $datum >= $vandaag ) {
+					unset( $beschikbaarheid[ $datum ] );
+				}
+			}
 			foreach ( $csv as $line ) {
 				list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen, $limiet_boven ) = explode( ';', $line[0] );
 				$datum = strtotime( $s_datum );
 				$tijd  = "$start - $eind";
-				if ( false === $datum || $datum < strtotime( 'today 0:00' ) ) {
-					continue;
-				}
-				if ( isset( $beschikbaarheid[ $datum ] ) && false !== array_search( $tijd, array_column( $beschikbaarheid[ $datum ], 'T' ), true ) ) {
+				if ( false === $datum || $datum < $vandaag ) {
 					continue;
 				}
 				$beschikbaarheid[ $datum ][] =
