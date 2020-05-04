@@ -81,9 +81,9 @@ class Public_Corona extends ShortcodeForm {
 		$beschikbaarheden = get_option( 'kleistad_corona_beschikbaarheid', [] );
 		$gebruik          = [];
 		foreach ( $beschikbaarheden as $datum => $beschikbaarheid ) {
-			$aanwezig      = false;
 			$reserveringen = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
 			foreach ( $reserveringen as $index => $reservering ) {
+				$aanwezig = false;
 				foreach ( $reservering as $werk => $ids ) {
 					if ( in_array( $id, $ids, true ) ) {
 						$aanwezig = $werk;
