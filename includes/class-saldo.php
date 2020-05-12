@@ -367,7 +367,7 @@ class Saldo extends Artikel {
 								'achternaam'       => $stoker->last_name,
 								'bedrag'           => number_format_i18n( $bedrag, 2 ),
 								'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
-								'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . $options['termijn'] - 1 . ' day', $reservering->datum ) ), // datum deadline.
+								'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . ( $options['termijn'] - 1 ) . ' day', $reservering->datum ) ), // datum deadline.
 								'verdeling'        => $tabel,
 								'stookoven'        => $ovens[ $reservering->oven_id ]->naam,
 							],
