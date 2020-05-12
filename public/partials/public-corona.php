@@ -69,12 +69,14 @@ elseif ( 'overzicht' === $data['actie'] ) :
 			<th>Handvormen</th>
 			<th>Draaien</th>
 			<th>Boven</th>
+			<th>Totaal</th>
 		</tr>
 	</thead>
 	<tbody>
 	<?php
 	foreach ( $data['overzicht'] as $datum => $tijden ) :
 		foreach ( $tijden as $tijd => $gebruik ) :
+			$totaal = $gebruik['H'] + $gebruik['D'] + $gebruik['B'];
 			?>
 		<tr>
 			<td data-sort="<?php echo esc_attr( $datum ); ?>" ><?php echo esc_html( date( 'd-m-Y', $datum ) ); ?></td>
@@ -82,6 +84,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 			<td><?php echo esc_html( $gebruik['H'] ); ?></td>
 			<td><?php echo esc_html( $gebruik['D'] ); ?></td>
 			<td><?php echo esc_html( $gebruik['B'] ); ?></td>
+			<td><strong><?php echo esc_html( $totaal ); ?></strong></td>
 		</tr>
 			<?php
 			endforeach;
