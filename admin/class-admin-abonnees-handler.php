@@ -32,10 +32,9 @@ class Admin_Abonnees_Handler {
 	 * @since 5.2.0
 	 * @param array  $item De informatie vanuit het formulier.
 	 * @param string $actie de actie waar het om gaat.
-	 * @param string $submit de subactie.
 	 * @return string De status van de wijziging.
 	 */
-	private function wijzig_abonnee( $item, $actie, $submit ) {
+	private function wijzig_abonnee( $item, $actie ) {
 		$abonnement          = new \Kleistad\Abonnement( $item['id'] );
 		$item['mollie_info'] = \Kleistad\Betalen::info( $item['id'] );
 		if ( 'status' === $actie ) {
@@ -60,10 +59,9 @@ class Admin_Abonnees_Handler {
 	 *
 	 * @param array  $item de abonnee.
 	 * @param string $actie de actie waar het om gaat.
-	 * @param string $submit de subactie.
 	 * @return bool|string
 	 */
-	private function validate_abonnee( $item, $actie, $submit ) {
+	private function validate_abonnee( $item, $actie ) {
 		$messages = [];
 
 		if ( 'status' === $actie ) {
@@ -135,17 +133,15 @@ class Admin_Abonnees_Handler {
 						'flags'  => FILTER_REQUIRE_ARRAY,
 					],
 					'actie'            => FILTER_SANITIZE_STRING,
-					'submit'           => FILTER_SANITIZE_STRING,
 				]
 			);
 			if ( ! is_array( $item['extras'] ) ) {
 				$item['extras'] = [];
 			}
 			$actie      = $item['actie'];
-			$submit     = strtolower( $item['submit'] );
-			$item_valid = $this->validate_abonnee( $item, $actie, $submit );
+			$item_valid = $this->validate_abonnee( $item, $actie );
 			if ( true === $item_valid ) {
-				$message = $this->wijzig_abonnee( $item, $actie, $submit );
+				$message = $this->wijzig_abonnee( $item, $actie );
 			} else {
 				$notice = $item_valid;
 			}

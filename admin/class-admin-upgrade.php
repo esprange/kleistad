@@ -214,7 +214,7 @@ class Admin_Upgrade {
 	 */
 	private function convert_abonnement() {
 		$abonnementen = \Kleistad\Abonnement::all();
-		foreach ( $abonnementen as $abonnementen) {
+		foreach ( $abonnementen as $abonnement ) {
 			if ( 0 === $abonnement->start_eind_datum ) {
 				$abonnement->start_eind_datum = strtotime( '+3 month', $abonnement->start_datum );
 				$abonnement->reguliere_datum  = strtotime( 'first day of +4 month ' . $abonnement->start_datum );
