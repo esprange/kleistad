@@ -35,7 +35,7 @@
 				<li>[abonnement_opmerking] : door abonnee geplaatste opmerking</li>
 				<li>[abonnement_wijziging] : de wijziging (pauzeren of beëindigen)</li>
 				<li>[abonnement_extras] : de extras bij het abonnement</li>
-				<li>[abonnement_startgeld] : driemaal het maand abonnee bedrag</li>
+				<li>[abonnement_startgeld] : het bedrag voor de startperiode, driemaal het maand abonnee bedrag</li>
 				<li>[abonnement_maandgeld] : het maand abonnee bedrag</li>
 				<li>[abonnement_overbrugging] : het maand abonnee bedrag</li>
 				<li>[abonnement_bedrag] : te betalen bedrag</li>

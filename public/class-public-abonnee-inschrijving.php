@@ -149,15 +149,15 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				]
 			);
 		}
-		$abonnement               = new \Kleistad\Abonnement( $gebruiker_id );
-		$abonnement->soort        = $data['input']['abonnement_keuze'];
-		$abonnement->opmerking    = $data['input']['opmerking'];
-		$abonnement->start_datum  = strtotime( $data['input']['start_datum'] );
-		$abonnement->geannuleerd  = false;
-		$abonnement->gepauzeerd   = false;
-		$abonnement->dag          = $data['input']['dag'];
-		$abonnement->extras       = $data['input']['extras'];
-		$abonnement->artikel_type = 'start';
+		$abonnement                   = new \Kleistad\Abonnement( $gebruiker_id );
+		$abonnement->soort            = $data['input']['abonnement_keuze'];
+		$abonnement->opmerking        = $data['input']['opmerking'];
+		$abonnement->start_datum      = strtotime( $data['input']['start_datum'] );
+		$abonnement->start_eind_datum = strtotime( '+3 month', $abonnement->start_datum );
+		$abonnement->reguliere_datum  = strtotime( 'first day of +4 month ' . $abonnement->start_datum );
+		$abonnement->dag              = $data['input']['dag'];
+		$abonnement->extras           = $data['input']['extras'];
+		$abonnement->artikel_type     = 'start';
 		$abonnement->save();
 
 		if ( 'ideal' === $data['input']['betaal'] ) {

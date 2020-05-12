@@ -53,7 +53,7 @@ class Public_Email extends ShortcodeForm {
 
 			$abonnementen = \Kleistad\Abonnement::all();
 			foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-				if ( ! $abonnement->geannuleerd ) {
+				if ( ! $abonnement->geannuleerd() ) {
 					$abonnee                          = get_userdata( $abonnee_id );
 					$data['input']['tree'][0]['naam'] = 'Abonnees';
 					$data['input']['tree'][0]['leden'][ $abonnee->ID ] = $abonnee->display_name;

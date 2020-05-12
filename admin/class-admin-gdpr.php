@@ -323,7 +323,7 @@ class Admin_GDPR {
 	 */
 	private static function erase_cursussen( $datum ) {
 		foreach ( \Kleistad\Cursus::all() as $cursus_id => $cursus ) {
-			if ( $datum > $cursus->eind_datum ) {
+			if ( $cursus->eind_datum && $datum > $cursus->eind_datum ) {
 				foreach ( \Kleistad\Inschrijving::all() as $cursist_id => $cursist_inschrijvingen ) {
 					if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) ) {
 						$cursist_inschrijvingen[ $cursus_id ]->erase();
@@ -341,7 +341,7 @@ class Admin_GDPR {
 	 */
 	private static function erase_dagdeelkaarten( $datum ) {
 		foreach ( \Kleistad\Dagdelenkaart::all() as $gebruiker_id => $dagdeelkaart ) {
-			if ( $datum > strtotime( '+3 month', $dagdeelkaart->start_datum ) ) {
+			if ( $dagdeelkaart->eind_datum && $datum > $dagdeelkaart->eind_datum ) {
 				$dagdeelkaart->erase();
 			}
 		}
@@ -354,7 +354,7 @@ class Admin_GDPR {
 	 */
 	private static function erase_abonnementen( $datum ) {
 		foreach ( \Kleistad\Abonnement::all() as $abonnee_id => $abonnement ) {
-			if ( $datum > $abonnement->eind_datum ) {
+			if ( $abonnement->eind_datum && $datum > $abonnement->eind_datum ) {
 				$abonnement->erase();
 				$saldo = new \Kleistad\Saldo( $abonnee_id );
 				$saldo->erase();
