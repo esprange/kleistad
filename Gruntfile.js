@@ -125,7 +125,7 @@ module.exports = function( grunt ) { // jshint ignore:line
 			'cssmin',
 			'composer:update:no-autoloader',
 			'clean',
-			'composer:dump-autoload',
+			'composer:dump-autoload:optimize',
 			'zip'
 		]
 	);
