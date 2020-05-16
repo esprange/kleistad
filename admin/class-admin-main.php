@@ -94,6 +94,15 @@ class Admin_Main {
 	private $regelingen_handler;
 
 	/**
+	 *  Recept termen beheer
+	 *
+	 * @since     6.3.6
+	 * @access    private
+	 * @var       object    $recepttermen_handler  De handler voor beheer van de recept termen.
+	 */
+	private $recepttermen_handler;
+
+	/**
 	 * Background object
 	 *
 	 * @since   6.1.0
@@ -111,14 +120,15 @@ class Admin_Main {
 	 * @param array  $setup   De plugin setup.
 	 */
 	public function __construct( $version, $options, $setup ) {
-		$this->version            = $version;
-		$this->options            = $options;
-		$this->setup              = $setup;
-		$this->ovens_handler      = new \Kleistad\Admin_Ovens_Handler();
-		$this->cursisten_handler  = new \Kleistad\Admin_Cursisten_Handler();
-		$this->abonnees_handler   = new \Kleistad\Admin_Abonnees_Handler();
-		$this->stooksaldo_handler = new \Kleistad\Admin_Stooksaldo_Handler();
-		$this->regelingen_handler = new \Kleistad\Admin_Regelingen_Handler();
+		$this->version              = $version;
+		$this->options              = $options;
+		$this->setup                = $setup;
+		$this->ovens_handler        = new \Kleistad\Admin_Ovens_Handler();
+		$this->cursisten_handler    = new \Kleistad\Admin_Cursisten_Handler();
+		$this->abonnees_handler     = new \Kleistad\Admin_Abonnees_Handler();
+		$this->stooksaldo_handler   = new \Kleistad\Admin_Stooksaldo_Handler();
+		$this->regelingen_handler   = new \Kleistad\Admin_Regelingen_Handler();
+		$this->recepttermen_handler = new \Kleistad\Admin_Recepttermen_Handler();
 	}
 
 	/**
@@ -160,6 +170,7 @@ class Admin_Main {
 		$this->cursisten_handler->add_pages();
 		$this->stooksaldo_handler->add_pages();
 		$this->regelingen_handler->add_pages();
+		$this->recepttermen_handler->add_pages();
 	}
 
 	/**

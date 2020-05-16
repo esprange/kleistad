@@ -54,11 +54,7 @@ class Public_Recept extends Shortcode {
 	 * @return \WP_REST_Response
 	 */
 	public static function callback_recept( \WP_REST_Request $request ) {
-		$data             = [];
-		$glazuur_parent   = get_term_by( 'name', '_glazuur', \Kleistad\Recept::CATEGORY );
-		$kleur_parent     = get_term_by( 'name', '_kleur', \Kleistad\Recept::CATEGORY );
-		$uiterlijk_parent = get_term_by( 'name', '_uiterlijk', \Kleistad\Recept::CATEGORY );
-
+		$data  = [];
 		$query = [
 			'post_type'   => \Kleistad\Recept::POST_TYPE,
 			'numberposts' => '-1',
@@ -134,7 +130,7 @@ class Public_Recept extends Shortcode {
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => $glazuur_parent->term_id,
+				'parent'     => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);
@@ -144,7 +140,7 @@ class Public_Recept extends Shortcode {
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => $kleur_parent->term_id,
+				'parent'     => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);
@@ -154,7 +150,7 @@ class Public_Recept extends Shortcode {
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => $uiterlijk_parent->term_id,
+				'parent'     => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);

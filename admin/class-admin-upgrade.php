@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 56;
+	const DBVERSIE = 59;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -247,6 +247,15 @@ class Admin_Upgrade {
 	private function convert_order() {
 	}
 
+	/**
+	 * Converteer recepten en gerelateerde elementen.
+	 */
+	private function convert_recept() {
+		foreach( \Kleistad\Recept::hoofdtermen() as $hoofdterm ) {
+			wp_update_term( $hoofdterm->term_id, \Kleistad\Recept::CATEGORY, [ 'description' => ucfirst( substr( $hoofdterm->name, 1 ) ) ]);
+		}
+	}
+
 	// phpcs:enable
 
 	/**
@@ -264,5 +273,6 @@ class Admin_Upgrade {
 		$this->convert_cursus();
 		$this->convert_order();
 		$this->convert_opties();
+		$this->convert_recept();
 	}
 }
