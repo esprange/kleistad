@@ -102,7 +102,7 @@ class Admin_Recepttermen_Handler {
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
 				if ( isset( $_REQUEST['delete'] ) ) {
-					wp_delete_term( $_REQUEST['id'] );
+					wp_delete_term( $_REQUEST['id'], \Kleistad\Recept::CATEGORY );
 				} else {
 					$term = get_term( $_REQUEST['id'] );
 					$item = [

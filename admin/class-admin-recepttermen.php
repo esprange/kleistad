@@ -126,8 +126,8 @@ class Admin_Recepttermen extends \WP_List_Table {
 		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val   = filter_input( INPUT_GET, 'order' );
 		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-
-		$termen = get_terms(
+		$termen      = [];
+		foreach ( get_terms(
 			[
 				'taxonomy'   => \Kleistad\Recept::CATEGORY,
 				'orderby'    => $orderby,
@@ -135,14 +135,14 @@ class Admin_Recepttermen extends \WP_List_Table {
 				'hide_empty' => false,
 				'parent'     => $this->hoofdterm_id,
 			]
-		);
-		foreach ( $termen as $term ) {
-			$this->items[] = [
+		) as $term ) {
+			$termen[] = [
 				'naam'   => $term->name,
 				'id'     => $term->term_id,
 				'aantal' => $term->count,
 			];
 		}
+		$this->items = array_slice( $termen, $paged * $per_page, $per_page, true );
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items,
