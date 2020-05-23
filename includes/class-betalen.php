@@ -355,7 +355,7 @@ class Betalen {
 		$mollie_betaling_id = $request->get_param( 'id' );
 		$object             = new static();
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
-		$expiratie          = 13 * MONTH_IN_SECOND - ( time() - strtotime( $betaling->createdAt ) );  // Na 13 maanden expiratie transient.
+		$expiratie          = 13 * MONTH_IN_SECONDS - ( time() - strtotime( $betaling->createdAt ) );  // Na 13 maanden expiratie transient.
 		$order_id           = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
 		$artikel            = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
 		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
@@ -382,7 +382,7 @@ class Betalen {
 						unset( $refund_ids[ $refund->id ] );
 					}
 				}
-				set_transient( $transient, $refunds_ids, $expiratie );
+				set_transient( $transient, $refund_ids, $expiratie );
 			}
 			if ( $betaling->hasChargebacks() ) {
 				$transient      = $mollie_betaling_id . self::CHARGEBACKS;
