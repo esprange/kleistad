@@ -17,14 +17,7 @@
         "setasign/fpdf": "^1.8.1",
         "a5hleyrich/wp-background-processing": "^1.0"
     },
-    "require-dev": {
-    },
-    "config": {
-      "optimize-autoloader" : true
-    },
     "autoload": {
-      "psr-4": {
-        "Kleistad\\": [ "public/", "includes/", "admin/" ]
-      }
+      "classmap": [ "public/", "includes/", "admin/" ]
     }
 }

@@ -381,11 +381,15 @@ class Abonnement extends Artikel {
 				/**
 				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of incasso of betaling per bank.
 				 */
-				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-					$this->email( '_ideal_betaald', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
-				} elseif ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
-					$this->email( '_regulier_incasso', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
-				} // Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
+				if ( 0 < $bedrag ) {
+					if ( 'ideal' === $type ) {
+						$this->email( '_ideal_betaald', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
+					} elseif ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
+						$this->email( '_regulier_incasso', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
+					} // Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
+				} else { // Als bedrag < 0 dan was het een terugstorting.
+					$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				}
 			} elseif ( 'mandaat' === $this->artikel_type ) {
 				/**
 				 * Bij een mandaat ( 1 eurocent ) hoeven we geen factuur te sturen en is er dus geen order aangemaakt.
@@ -574,7 +578,7 @@ class Abonnement extends Artikel {
 	 */
 	private function overbrugging_fractie() {
 		$overbrugging_datum = strtotime( '+1 day', $this->start_eind_datum );
-		$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / ( 60 * 60 * 24 ) );
+		$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / ( DAY_IN_SECONDS ) );
 		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't', $this->start_eind_datum ) ), 2 ) : 0.00;
 	}
 

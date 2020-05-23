@@ -13,7 +13,6 @@ $in_startperiode   = strtotime( 'today' ) < $data['abonnement']->start_eind_datu
 $per_datum         = $in_startperiode ? $data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
 $per               = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
 $extra_beschikbaar = false;
-$dag               = 24 * 60 * 60;
 foreach ( $this->options['extra'] as $extra ) :
 	$extra_beschikbaar = $extra_beschikbaar || ( 0 < $extra['prijs'] );
 endforeach;
@@ -181,7 +180,7 @@ endforeach;
 				<p><strong>Je wilt je gepauzeerde abonnement hervatten</strong></p>
 				<p>Je kan de datum dat je abonnement hervat wordt wel aanpassen maar niet eerder dan per eerstvolgende maand en de maximale pauze is <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken.</p>
 				<input name="pauze_datum" id="kleistad_pauze_datum" type="hidden" value="<?php echo esc_attr( date( 'd-m-Y', $data['abonnement']->pauze_datum ) ); ?>"
-					data-min_pauze="<?php echo esc_attr( max( ( $per_datum - $data['abonnement']->pauze_datum ) / $dag, \Kleistad\Abonnement::MIN_PAUZE_WEKEN * 7 ) ); ?>"
+					data-min_pauze="<?php echo esc_attr( max( ( $per_datum - $data['abonnement']->pauze_datum ) / DAY_IN_SECONDS, \Kleistad\Abonnement::MIN_PAUZE_WEKEN * 7 ) ); ?>"
 					data-max_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>">
 			</div>
 		</div>

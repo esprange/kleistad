@@ -370,7 +370,7 @@ abstract class Shortcode {
 
 		foreach ( $files as $file ) {
 			if ( is_file( $file ) ) {
-				if ( $now - filemtime( $file ) >= 60 * 60 * 24 ) {
+				if ( $now - filemtime( $file ) >= DAY_IN_SECONDS ) {
 					unlink( $file );
 				}
 			}

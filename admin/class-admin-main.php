@@ -261,7 +261,7 @@ class Admin_Main {
 				'action' => $action,
 			],
 		];
-		$request = wp_remote_post( 'http://sprako.xs4all.nl/kleistad_plugin/update.php', $params );
+		$request = wp_remote_get( 'http://plugin.kleistad.nl/update.php', $params );
 		if ( ! is_wp_error( $request ) || ( is_array( $request ) && wp_remote_retrieve_response_code( $request ) === 200 ) ) {
 			// phpcs:ignore
 			return @unserialize( $request['body'] );

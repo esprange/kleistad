@@ -100,8 +100,12 @@ module.exports = function( grunt ) { // jshint ignore:line
 					'includes/**/*',
 					'vendor/**/*'
 				],
-				dest: '//fileserver/web/kleistad_plugin/kleistad.zip'
+				dest: 'zip/kleistad.zip'
 			}
+		},
+		
+		shell: {
+			command: 'ftp -i -s:plugin_upload.ftp'
 		}
 	} );
 
@@ -114,6 +118,7 @@ module.exports = function( grunt ) { // jshint ignore:line
 	grunt.loadNpmTasks( 'grunt-composer' );
 	grunt.loadNpmTasks( 'grunt-checkwpversion' );
 	grunt.loadNpmTasks( 'grunt-zip' );
+	grunt.loadNpmTasks( 'grunt-shell' );
 	grunt.loadNpmTasks( 'grunt-version' );
 	grunt.registerTask( 'checkversion', ['checkwpversion'] );
 	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
@@ -126,7 +131,8 @@ module.exports = function( grunt ) { // jshint ignore:line
 			'composer:update:no-autoloader',
 			'clean',
 			'composer:dump-autoload',
-			'zip'
+			'zip',
+			'shell:command'
 		]
 	);
 
