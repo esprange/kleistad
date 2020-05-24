@@ -85,8 +85,8 @@ class Public_Contact extends ShortcodeForm {
 		$emailer = new \Kleistad\Email();
 		$emailer->send(
 			[
-				'to'         => 'Kleistad <info@' . \Kleistad\Email::domein() . '>',
-				'from'       => 'info@' . \Kleistad\Email::verzend_domein(),
+				'to'         => 'Kleistad <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
+				'from'       => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
 				'from_name'  => $data['input']['naam'],
 				'reply-to'   => $data['input']['email'],
 				'slug'       => 'contact_vraag',
@@ -104,9 +104,9 @@ class Public_Contact extends ShortcodeForm {
 		$emailer->send(
 			[
 				'to'         => $data['input']['email'],
-				'from'       => 'info@' . \Kleistad\Email::verzend_domein(),
+				'from'       => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
 				'from_name'  => 'Kleistad',
-				'reply-to'   => 'Kleistad <info@' . \Kleistad\Email::domein() . '>',
+				'reply-to'   => 'Kleistad <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
 				'slug'       => 'contact_vraag',
 				'subject'    => 'Ontvangst vraag over ' . $data['input']['onderwerp'],
 				'parameters' => [

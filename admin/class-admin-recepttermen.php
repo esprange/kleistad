@@ -25,7 +25,7 @@ class Admin_Recepttermen extends \WP_List_Table {
 	 *
 	 * @var int $hoofdterm_id Het id van de hoofd term
 	 */
-	private int $hoofdterm_id;
+	private $hoofdterm_id;
 
 	/**
 	 * Constructor
@@ -110,15 +110,13 @@ class Admin_Recepttermen extends \WP_List_Table {
 	public function prepare_items() {
 		global $wpdb;
 
-		$per_page = 5;
+		$per_page = 10;
 
 		$columns  = $this->get_columns();
 		$hidden   = $this->get_hidden();
 		$sortable = $this->get_sortable_columns();
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
-
-		$total_items = $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}kleistad_ovens" ); // phpcs:ignore
 
 		$paged_val   = filter_input( INPUT_GET, 'paged' );
 		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
@@ -143,6 +141,7 @@ class Admin_Recepttermen extends \WP_List_Table {
 			];
 		}
 		$this->items = array_slice( $termen, $paged * $per_page, $per_page, true );
+		$total_items = count( $termen );
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items,

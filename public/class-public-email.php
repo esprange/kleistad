@@ -144,11 +144,11 @@ class Public_Email extends ShortcodeForm {
 		$emailer       = new \Kleistad\Email();
 		$emailer->send(
 			[
-				'to'        => 'Kleistad gebruiker <info@' . \Kleistad\Email::domein() . '>',
+				'to'        => 'Kleistad gebruiker <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
 				'bcc'       => $emailadressen,
 				'from_name' => "{$data['input']['namens']} namens Kleistad",
-				'from'      => 'info@' . \Kleistad\Email::verzend_domein(),
-				'reply-to'  => 'info@' . \Kleistad\Email::domein(),
+				'from'      => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
+				'reply-to'  => \Kleistad\Email::info() . \Kleistad\Email::domein(),
 				'subject'   => $data['input']['onderwerp'],
 				'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
 				'sign'      => "{$data['input']['namens']},<br/>Kleistad",
