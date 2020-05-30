@@ -108,7 +108,15 @@ class Recept {
 		);
 		if ( empty( self::$hoofdtermen ) ) {
 			foreach ( [ self::GRONDSTOF, self::KLEUR, self::UITERLIJK, self::GLAZUUR ] as $hoofdterm_naam ) {
-				self::$hoofdtermen[ $hoofdterm_naam ] = get_term_by( 'name', $hoofdterm_naam, self::CATEGORY ) ?: get_term( wp_insert_term( $hoofdterm_naam, self::CATEGORY ) );
+				$term = get_term_by( 'name', $hoofdterm_naam, self::CATEGORY );
+				if ( false === $term ) {
+					$result = wp_insert_term( $hoofdterm_naam, self::CATEGORY );
+					if ( is_array( $result ) ) {
+						self::$hoofdtermen[ $hoofdterm_naam ] = get_term( $result['term_id'] );
+					}
+				} else {
+					self::$hoofdtermen[ $hoofdterm_naam ] = $term;
+				}
 			}
 		}
 	}

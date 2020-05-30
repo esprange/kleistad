@@ -100,21 +100,22 @@ class Admin_Recepttermen_Handler {
 				$notice = $item_valid;
 			}
 		} else {
+			$item = [
+				'id'   => 0,
+				'naam' => '',
+			];
 			if ( isset( $_REQUEST['id'] ) ) {
 				if ( isset( $_REQUEST['delete'] ) ) {
 					wp_delete_term( $_REQUEST['id'], \Kleistad\Recept::CATEGORY );
 				} else {
 					$term = get_term( $_REQUEST['id'] );
-					$item = [
-						'id'   => $term->term_id,
-						'naam' => $term->name,
-					];
+					if ( ! is_wp_error( $term ) ) {
+						$item = [
+							'id'   => $term->term_id,
+							'naam' => $term->name,
+						];
+					}
 				}
-			} else {
-				$item = [
-					'id'   => 0,
-					'naam' => '',
-				];
 			}
 		}
 		add_meta_box( 'receptterm_form_meta_box', 'receptterm', [ $this, 'recepttermen_form_meta_box_handler' ], 'receptterm', 'normal', 'default' );

@@ -257,7 +257,8 @@ class Admin_Main {
 	 */
 	public function get_remote( $action = '' ) {
 		$params  = [
-			'body' => [
+			'timeout' => 10,
+			'body'    => [
 				'action' => $action,
 			],
 		];

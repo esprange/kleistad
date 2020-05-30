@@ -188,8 +188,7 @@ class WorkshopAanvraag {
 						'subject'    => sanitize_text_field( $email->subject ),
 						'body'       => sanitize_textarea_field( $body ),
 					]
-				)
-					) {
+				) && ! defined( 'KLEISTAD_DEV' ) ) {
 					$emailer->send(
 						[
 							'to'        => 'Kleistad <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',

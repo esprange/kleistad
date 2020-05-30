@@ -90,7 +90,7 @@ class Kleistad {
 		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_admin, 'register_exporter', 10 );
 		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_admin, 'register_eraser', 10 );
 		$this->loader->add_filter( 'pre_set_site_transient_update_plugins', $plugin_admin, 'check_update' );
-		$this->loader->add_filter( 'plugins_api', $plugin_admin, 'check_info', 10, 3 );
+		$this->loader->add_filter( 'plugins_api', $plugin_admin, 'check_info', 20, 3 );
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin, 'post_row_actions', 10, 2 );
 	}
 
