@@ -158,7 +158,10 @@ class WorkshopAanvraag {
 	 */
 	public static function ontvang_en_verwerk() {
 		// phpcs:disable WordPress.NamingConventions
-		$setup    = \Kleistad\Kleistad::get_setup();
+		$setup = \Kleistad\Kleistad::get_setup();
+		if ( empty( $setup['imap_server'] || empty( $setup['imap_pwd'] ) ) ) {
+			die();
+		}
 		$answered = [];
 		$emailer  = new \Kleistad\Email();
 		$mailbox  = new \PhpImap\Mailbox(

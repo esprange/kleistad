@@ -340,7 +340,7 @@ class Abonnement extends Artikel {
 			} elseif ( $vandaag <= $this->eind_datum ) {
 				return $uitgebreid ? 'stop gepland per ' . strftime( '%x', $this->eind_datum ) : 'stop gepland';
 			} elseif ( $vandaag < $this->start_eind_datum ) {
-				return $uitgebreid ? 'gesstart sinds ' . strftime( '%x', $this->start_datum ) : 'gestart';
+				return $uitgebreid ? 'gestart sinds ' . strftime( '%x', $this->start_datum ) : 'gestart';
 			} elseif ( $vandaag < $this->reguliere_datum ) {
 				return 'overbrugging';
 			}
@@ -383,13 +383,12 @@ class Abonnement extends Artikel {
 				 */
 				if ( 0 < $bedrag ) {
 					if ( 'ideal' === $type ) {
-						$this->email( '_ideal_betaald', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
+						return $this->email( '_ideal_betaald', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
 					} elseif ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
-						$this->email( '_regulier_incasso', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
-					} // Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
-				} else { // Als bedrag < 0 dan was het een terugstorting.
-					$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-				}
+						return $this->email( '_regulier_incasso', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
+					}
+				} // Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden of als bedrag < 0 dan was het een terugstorting.
+				return $this->ontvang_order( $order_id, $bedrag, $transactie_id );
 			} elseif ( 'mandaat' === $this->artikel_type ) {
 				/**
 				 * Bij een mandaat ( 1 eurocent ) hoeven we geen factuur te sturen en is er dus geen order aangemaakt.
@@ -609,33 +608,32 @@ class Abonnement extends Artikel {
 
 	/**
 	 * Factureer de maand
-	 *
-	 * @param \Kleistad\Abonnement $abonnement Het abonnement.
 	 */
-	private static function factureer( $abonnement ) {
+	private function factureer() {
 		$vandaag       = strtotime( 'today' );
 		$factuur_maand = (int) date( 'Ym', $vandaag );
-		if ( $abonnement->factuur_maand >= $factuur_maand ) {
+		if ( $this->factuur_maand >= $factuur_maand ) {
 			return;
 		}
 		$volgende_maand = strtotime( 'first day of next month 00:00' );
 		$deze_maand     = strtotime( 'first day of this month 00:00' );
 		$betalen        = new \Kleistad\Betalen();
 		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
-		if ( ( $abonnement->herstart_datum > $deze_maand && $abonnement->herstart_datum < $volgende_maand ) ||
-			( $abonnement->pauze_datum >= $deze_maand && $abonnement->pauze_datum < $volgende_maand ) ) {
-			$abonnement->artikel_type = 'pauze';
-		} elseif ( $abonnement->herstart_datum >= $volgende_maand && $abonnement->pauze_datum <= $deze_maand ) {
+		if ( ( $this->herstart_datum > $deze_maand && $this->herstart_datum < $volgende_maand ) ||
+			( $this->pauze_datum >= $deze_maand && $this->pauze_datum < $volgende_maand ) ) {
+			$this->artikel_type = 'pauze';
+		} elseif ( $this->herstart_datum >= $volgende_maand && $this->pauze_datum <= $deze_maand ) {
 			return; // geen order, de gehele maand wordt gepauzeerd.
 		} else {
-			$abonnement->artikel_type = 'regulier';
+			$this->artikel_type = 'regulier';
 		}
-		if ( $betalen->heeft_mandaat( $abonnement->klant_id ) ) {
-			$abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $abonnement->sepa_incasso(), false );
+		if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
+			$this->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->sepa_incasso(), false );
 		} else {
-			$abonnement->email( '_regulier_bank', $abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
+			$this->email( '_regulier_bank', $this->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
 		}
-		$abonnement->factuur_maand = $factuur_maand;
+		$this->factuur_maand = $factuur_maand;
+		$this->save();
 	}
 
 	/**
@@ -665,8 +663,7 @@ class Abonnement extends Artikel {
 				continue; // Meer actie is niet nodig. Abonnee zit nog in startperiode of overbrugging.
 			}
 			// Hierna wordt er niets meer aan het abonnement aangepast, nu nog factureren indien nodig.
-			self::factureer( $abonnement );
-			$abonnement->save();
+			$abonnement->factureer();
 		}
 	}
 
