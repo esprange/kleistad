@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 59;
+	const DBVERSIE = 60;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -181,7 +181,7 @@ class Admin_Upgrade {
 			klant tinytext,
 			mutatie_datum datetime,
 			verval_datum datetime,
-			referentie varchar(20) NOT NULL,
+			referentie varchar(30) NOT NULL,
 			transactie_id varchar(20) NOT NULL DEFAULT '',
 			regels varchar(2000),
 			opmerking varchar(200),

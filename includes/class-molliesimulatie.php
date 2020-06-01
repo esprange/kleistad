@@ -227,6 +227,13 @@ class MollieSimulatie {
 							public $description;
 
 							/**
+							 * Create datum
+							 *
+							 * @var string $createdAt Datum.
+							 */
+							public $createdAt;
+
+							/**
 							 * De constructor.
 							 *
 							 * @param string $id Het refund id.
