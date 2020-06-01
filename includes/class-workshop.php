@@ -273,8 +273,8 @@ class Workshop extends Artikel {
 				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( '_herbevestiging' === $type ? ' (correctie)' : '' );
 				$email_parameters['auto']     = false;
 				$email_parameters['slug']     = 'workshop_bevestiging';
-				$email_parameters['from']     = 'info@' . \Kleistad\Email::verzend_domein();
-				$email_parameters['reply-to'] = 'info@' . \Kleistad\Email::domein();
+				$email_parameters['from']     = \Kleistad\Email::info() . \Kleistad\Email::verzend_domein();
+				$email_parameters['reply-to'] = \Kleistad\Email::info() . \Kleistad\Email::domein();
 				break;
 			case '_betaling':
 			case '_ideal':

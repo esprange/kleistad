@@ -18,6 +18,8 @@ class Betalen {
 
 	const MOLLIE_ID   = 'mollie_customer_id';
 	const QUERY_PARAM = 'betaling';
+	const REFUNDS     = '_refunds';
+	const CHARGEBACKS = '_chargebacks';
 
 	/**
 	 * Het mollie object.
@@ -127,7 +129,7 @@ class Betalen {
 					'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
 				]
 			);
-			set_transient( $uniqid, $betaling->id, 20 * 60 ); // 20 minuten expiry (iDeal heeft in Mollie een expiratie van 15 minuten).
+			set_transient( $uniqid, $betaling->id, 20 * MINUTE_IN_SECONDS ); // 20 minuten expiry (iDeal heeft in Mollie een expiratie van 15 minuten).
 			return $betaling->getCheckOutUrl();
 		} catch ( \Exception $e ) {
 			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
@@ -215,12 +217,9 @@ class Betalen {
 	 */
 	public function terugstorting( $mollie_betaling_id, $order_id, $bedrag, $beschrijving ) {
 		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-		if ( $this->terugstorting_actief( $mollie_betaling_id ) ) {
-			return false; // Het is niet mogelijk om de actieve refund te cancelen. Dus is er nu geen nieuwe refund mogelijk.
-		}
-		$value = number_format( $bedrag, 2, '.', '' );
+		$value    = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
-			$refund = $betaling->refund(
+			$refund       = $betaling->refund(
 				[
 					'amount'      => [
 						'currency' => 'EUR',
@@ -232,7 +231,10 @@ class Betalen {
 					'description' => $beschrijving,
 				]
 			);
-			set_transient( $mollie_betaling_id . '_refund', $refund->id );
+			$transient    = $mollie_betaling_id . self::REFUNDS;
+			$refund_ids   = get_transient( $transient ) ?: [];
+			$refund_ids[] = $refund->id;
+			set_transient( $transient, $refund_ids );
 			return true;
 		} else {
 			return false;
@@ -245,7 +247,7 @@ class Betalen {
 	 * @param string $mollie_betaling_id De transactie id.
 	 */
 	public function terugstorting_actief( $mollie_betaling_id ) {
-		return boolval( get_transient( $mollie_betaling_id . '_refund' ) );
+		return ! empty( get_transient( $mollie_betaling_id . self::REFUNDS ) );
 	}
 
 	/**
@@ -349,12 +351,14 @@ class Betalen {
 	 * @return \WP_REST_Response de response.
 	 */
 	public static function callback_betaling_verwerkt( \WP_REST_Request $request ) {
+		// phpcs:disable WordPress.NamingConventions
 		$mollie_betaling_id = $request->get_param( 'id' );
 		$object             = new static();
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
+		$expiratie          = 13 * MONTH_IN_SECONDS - ( time() - strtotime( $betaling->createdAt ) );  // Na 13 maanden expiratie transient.
 		$order_id           = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
 		$artikel            = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
-		if ( ! $betaling->hasRefunds() ) { // Als de callback aangeroepen wordt vanwege een refund is er geen actie nodig.
+		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
 			$artikel->verwerk_betaling(
 				$order_id,
 				$betaling->amount->value,
@@ -363,18 +367,39 @@ class Betalen {
 				$mollie_betaling_id
 			);
 		} else {
-			$transient = $mollie_betaling_id . '_refund';
-			$refund_id = get_transient( $transient );
-			if ( false !== $refund_id ) { // Alleen uitvoeren als voor een openstaand refund.
-				$refund = $betaling->getRefund( $refund_id );
-				$artikel->verwerk_betaling(
-					$order_id,
-					- $refund->amount->value,
-					'failed' !== $refund->status,
-					$betaling->method,
-					$mollie_betaling_id
-				);
-				delete_transient( $transient ); // Door een transient te gebruiken, garanderen we dat deze refund maar één keer verwerkt wordt.
+			if ( $betaling->hasRefunds() ) {
+				$transient  = $mollie_betaling_id . self::REFUNDS;
+				$refund_ids = get_transient( $transient ) ?: [];
+				foreach ( $betaling->refunds() as $refund ) {
+					if ( in_array( $refund->id, $refund_ids, true ) ) {
+						$artikel->verwerk_betaling(
+							$order_id,
+							- $refund->amount->value,
+							'failed' !== $refund->status,
+							$betaling->method,
+							$mollie_betaling_id
+						);
+						unset( $refund_ids[ $refund->id ] );
+					}
+				}
+				set_transient( $transient, $refund_ids, $expiratie );
+			}
+			if ( $betaling->hasChargebacks() ) {
+				$transient      = $mollie_betaling_id . self::CHARGEBACKS;
+				$chargeback_ids = get_transient( $transient ) ?: [];
+				foreach ( $betaling->chargebacks() as $chargeback ) {
+					if ( ! in_array( $chargeback->id, $chargeback_ids, true ) ) {
+						$artikel->verwerk_betaling(
+							$order_id,
+							- $chargeback->amount->value,
+							$betaling->isPaid(),
+							$betaling->method,
+							$mollie_betaling_id
+						);
+						$chargeback_ids[] = $chargeback->id;
+					}
+				}
+				set_transient( $transient, $chargeback_ids, $expiratie );
 			}
 		}
 		return new \WP_REST_Response(); // Geeft default http status 200 terug.

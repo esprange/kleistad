@@ -3,10 +3,11 @@ Contributors: Eric Sprangers
 Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
-Tested up to: 5.3.2
-Stable tag: 6.3.5
+Tested up to: 5.4.1
+Stable tag: 6.4.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
+Requires at least PHP version: 7.2
 
 [![Build Status](https://travis-ci.org/esprange/kleistad.svg?branch=master)](https://travis-ci.org/esprange/kleistad)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
@@ -35,6 +36,14 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 6.4.0 =
+* Recept termen zijn via dashboard aan te passen
+* Refunds en chargebacks bij betalen zijn verbeterd
+= 6.3.6 =
+* Stooksaldo's in dashboard kunnen gesorteerd worden
+* Fix avg cleanup
+* Dagdelenkaart overzicht bevat einddatum
+* Abonnementen download bevat overbruggingsemail vlag
 = 6.3.5 =
 * Corona shortcode voor reserveren werkplekken toegevoegd
 * Bugfix in verwerking betaling stooksaldo (saldo in email niet actueel)

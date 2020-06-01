@@ -20,34 +20,30 @@
 				<?php echo esc_html( $item['naam'] ); ?> (<?php echo esc_html( $item['code'] ); ?>)
 				<input type="hidden" name="naam" value="<?php echo esc_attr( $item['naam'] ); ?>" >
 				<input type="hidden" name="code" value="<?php echo esc_attr( $item['code'] ); ?>" >
-				<input type="hidden" name="gestart" value="<?php echo esc_attr( $item['gestart'] ); ?>" >
 				<input type="hidden" name="gepauzeerd" value="<?php echo esc_attr( $item['gepauzeerd'] ); ?>" >
 				<input type="hidden" name="geannuleerd" value="<?php echo esc_attr( $item['geannuleerd'] ); ?>" >
 				<input type="hidden" name="actie" value="<?php echo esc_attr( $actie ); ?>" >
 			</td>
 		</tr>
-<?php
-if ( 'soort' === $actie ) :
-	?>
+		<?php if ( 'status' === $actie ) : ?>
 		<tr class="form-field">
 			<th scope="row">
-				<label for="soort">Soort</label>
+				<label for="kleistad_soort">Soort</label>
 			</th>
 			<td>
-				<select id="kleistad-soort" name="soort" required class="code">
+				<select id="kleistad_soort" name="soort" class="code">
 					<option value="">Selecteer een abonnement soort</option>
 					<option value="onbeperkt" <?php selected( $item['soort'], 'onbeperkt' ); ?> >Onbeperkt</option>
 					<option value="beperkt" <?php selected( $item['soort'], 'beperkt' ); ?> >Beperkt</option>
 				</select>
-				Let op: bij wijzigen soort wordt een eventuele automatische incasso gestopt!
 			</td>
 		</tr>
 		<tr class="form-field">
 			<th scope="row">
-				<label for="dag">Dag</label>
+				<label for="kleistad_dag">Dag</label>
 			</th>
 			<td>
-				<select id="kleistad-dag" name="dag" <?php echo ( 'beperkt' === $item['soort'] ? 'required' : '' ); ?> class="code" >
+				<select id="kleistad_dag" name="dag" class="code" >
 					<option value="">Selecteer een dag</option>
 					<option value="maandag" <?php selected( $item['dag'], 'maandag' ); ?>>Maandag</option>
 					<option value="dinsdag" <?php selected( $item['dag'], 'dinsdag' ); ?>>Dinsdag</option>
@@ -57,19 +53,14 @@ if ( 'soort' === $actie ) :
 				</select>
 			</td>
 		</tr>
-		<tr>
-			<td>
-				<?php submit_button(); ?>
-			</td>
-		</tr>
-	<?php
-elseif ( 'extras' === $actie ) :
-	$options = \Kleistad\Kleistad::get_options();
-	$i       = 1;
-	foreach ( $options['extra'] as $extra ) :
-		if ( 0 < $extra['prijs'] ) :
-			?>
-	<tr class="form-field">
+			<?php
+			$options = \Kleistad\Kleistad::get_options();
+			$i       = 0;
+			foreach ( $options['extra'] as $extra ) :
+				$i++;
+				if ( 0 < $extra['prijs'] ) :
+					?>
+		<tr class="form-field">
 			<th scope="row">
 				<label for="extra_<?php echo esc_attr( $i ); ?>"><?php echo esc_html( $extra['naam'] ); ?></label>
 			</th>
@@ -78,80 +69,69 @@ elseif ( 'extras' === $actie ) :
 					value="<?php echo esc_attr( $extra['naam'] ); ?>" >
 			</td>
 		</tr>
-			<?php
-		endif;
+					<?php
+				endif;
 	endforeach;
-	?>
+			?>
 		<tr>
+			<th scope="row">
+				<label for="kleistad_inschrijf_datum">Inschrijving per</label>
+			</th>
 			<td>
+				<input type="text" id="kleistad_inschrijf_datum" name="inschrijf_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['inschrijf_datum'] ); ?>" readonly >
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<label for="kleistad_start_datum">Startperiode</label>
+			</th>
+			<td>
+				<input type="text" id="kleistad_start_datum" name="start_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off"
+					<?php readonly( $item['geannuleerd'] ); ?> >
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<label for="kleistad_start_eind_datum">Einde startperiode</label>
+			</th>
+			<td>
+				<input type="text" id="kleistad_start_eind_datum" name="start_eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['start_eind_datum'] ); ?>" autocomplete="off"
+					<?php readonly( $item['geannuleerd'] ); ?> >
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<label for="kleistad_pauze_datum">Pauze per</label>
+			</th>
+			<td>
+				<input type="text" id="kleistad_pauze_datum" name="pauze_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['pauze_datum'] ); ?>" autocomplete="off"
+					<?php readonly( $item['geannuleerd'] ); ?> >
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<label for="kleistad_herstart_datum">Herstart per</label>
+			</th>
+			<td>
+				<input type="text" id="kleistad_herstart_datum" name="herstart_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['herstart_datum'] ); ?>" autocomplete="off"
+					<?php readonly( $item['geannuleerd'] ); ?> >
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<label for="kleistad_eind_datum">Beëindiging per</label>
+			</th>
+			<td>
+				<input type="text" id="kleistad_eind_datum" name="eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" autocomplete="off"
+					<?php readonly( $item['geannuleerd'] ); ?> >
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
 				<?php submit_button(); ?>
 			</td>
 		</tr>
-	<?php
-	elseif ( 'status' === $actie ) :
-		if ( ! $item['geannuleerd'] && ! $item['gestart'] ) :
-			?>
-		<tr class="form-field">
-			<td>
-				<?php submit_button( 'Starten', 'primary', 'submit', true, [ 'id' => 'starten' ] ); ?>
-			</td>
-			<td>
-				Let op: bij starten wordt de uitgebreide welkomst email verstuurd!
-			</td>
-		</tr>
 			<?php
-		endif;
-		if ( ! $item['geannuleerd'] ) :
-			?>
-		<tr class="form-field">
-			<td>
-				<?php submit_button( 'Stoppen', 'primary', 'submit', true, [ 'id' => 'stoppen' ] ); ?>
-			</td>
-		</tr>
-			<?php
-		endif;
-		if ( ! $item['geannuleerd'] && $item['gestart'] && ! $item['gepauzeerd'] ) :
-			?>
-		<tr class="form-field">
-			<td>
-				<?php submit_button( 'Pauzeren', 'primary', 'submit', true, [ 'id' => 'pauzeren' ] ); ?>
-			</td>
-		</tr>
-		<?php endif ?>
-		<tr>
-			<th scope="row">
-				&nbsp;
-			</th>
-			<td><table>
-				<tr>
-					<th>Inschrijving</th><th>Start</th><th>Pauze</th><th>Herstart</th><th>Eind</th>
-				</tr>
-				<tr>
-					<td>
-						<input type="text" name="inschrijf_datum" value="<?php echo esc_attr( $item['inschrijf_datum'] ); ?>"
-							readonly >
-					</td>
-					<td>
-						<input type="text" name="start_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off"
-							<?php readonly( $item['geannuleerd'] || $item['gestart'] ); ?> >
-					</td>
-					<td>
-						<input type="text" name="pauze_datum" class="kleistad_datum maand" value="<?php echo esc_attr( $item['pauze_datum'] ); ?>" autocomplete="off"
-							<?php readonly( $item['geannuleerd'] || ! $item['gestart'] || $item['gepauzeerd'] ); ?> >
-					</td>
-					<td>
-						<input type="text" name="herstart_datum" class="kleistad_datum maand" value="<?php echo esc_attr( $item['herstart_datum'] ); ?>" autocomplete="off"
-							<?php readonly( $item['geannuleerd'] || ! $item['gestart'] ); ?> >
-					</td>
-					<td>
-						<input type="text" name="eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" autocomplete="off"
-							<?php readonly( $item['geannuleerd'] ); ?> >
-					</td>
-				</tr>
-				</table>
-			</td>
-		</tr>
-		<?php
 		elseif ( 'mollie' === $actie ) :
 			?>
 		<tr class="form-field">

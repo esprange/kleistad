@@ -57,33 +57,6 @@ class Admin_Abonnees extends \WP_List_Table {
 	}
 
 	/**
-	 * Toon de kolom soort en actie
-	 *
-	 * @param object $item row (key, value).
-	 * @return string
-	 */
-	public function column_soort( $item ) {
-		$actions = [
-			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=soort">%s</a>', $item['id'], 'Wijzigen' ),
-		];
-		$soort   = $item['soort'] . ( 'beperkt' === $item['soort'] ? ' (' . $item['dag'] . ')' : '' );
-		return sprintf( '%s %s', $soort, $this->row_actions( $actions ) );
-	}
-
-	/**
-	 * Toon de kolom extras en actie
-	 *
-	 * @param object $item row (key, value).
-	 * @return string
-	 */
-	public function column_extras( $item ) {
-		$actions = [
-			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=extras">%s</a>', $item['id'], 'Wijzigen' ),
-		];
-		return sprintf( '%s %s', $item['extras'], $this->row_actions( $actions ) );
-	}
-
-	/**
 	 * Toon de kolom mollie en actie
 	 *
 	 * @param object $item row (key, value).

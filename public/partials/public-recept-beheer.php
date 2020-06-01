@@ -36,7 +36,6 @@ if ( isset( $data['recept'] ) ) :
 	<div class="kleistad_row" style="padding-top:15px">
 		<div class="kleistad_col_3">
 		<?php
-		$glazuur = get_term_by( 'name', '_glazuur', 'kleistad_recept_cat' );
 		wp_dropdown_categories(
 			[
 				'orderby'           => 'name',
@@ -50,7 +49,7 @@ if ( isset( $data['recept'] ) ) :
 				'id'                => 'kleistad_glazuur',
 				'name'              => 'glazuur',
 				'selected'          => $data['recept']['glazuur'],
-				'child_of'          => $glazuur->term_id,
+				'child_of'          => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id,
 				'tabindex'          => 2,
 			]
 		);
@@ -58,7 +57,6 @@ if ( isset( $data['recept'] ) ) :
 		</div>
 		<div class="kleistad_col_3">
 		<?php
-		$kleur        = get_term_by( 'name', '_kleur', 'kleistad_recept_cat' );
 		$cat_dropdown = wp_dropdown_categories(
 			[
 				'orderby'           => 'name',
@@ -72,7 +70,7 @@ if ( isset( $data['recept'] ) ) :
 				'id'                => 'kleistad_kleur',
 				'name'              => 'kleur',
 				'selected'          => $data['recept']['kleur'],
-				'child_of'          => $kleur->term_id,
+				'child_of'          => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id,
 				'tabindex'          => 3,
 			]
 		);
@@ -80,7 +78,6 @@ if ( isset( $data['recept'] ) ) :
 		</div>
 		<div class="kleistad_col_3">
 		<?php
-		$uiterlijk = get_term_by( 'name', '_uiterlijk', 'kleistad_recept_cat' );
 		wp_dropdown_categories(
 			[
 				'orderby'           => 'name',
@@ -94,7 +91,7 @@ if ( isset( $data['recept'] ) ) :
 				'id'                => 'kleistad_uiterlijk',
 				'name'              => 'uiterlijk',
 				'selected'          => $data['recept']['uiterlijk'],
-				'child_of'          => $uiterlijk->term_id,
+				'child_of'          => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id,
 				'tabindex'          => 4,
 			]
 		);

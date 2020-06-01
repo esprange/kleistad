@@ -9,15 +9,13 @@ node_modules/
 vendor/
 fullcalendar*/
 tmp/
-wpcs/
 .vscode/
 tests/
 bin/
 lib/
+zip/
 
 # Build files
-*.zip
-*.tar.gz
 *.min.js
 *.min.css
 
@@ -33,3 +31,6 @@ wp-cli.local.yml
 
 # pdf's
 *.pdf
+
+# ftp
+*.ftp

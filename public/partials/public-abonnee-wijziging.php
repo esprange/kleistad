@@ -9,11 +9,10 @@
  * @subpackage Kleistad/public/partials
  */
 
-$in_driemaandperiode = strtotime( 'today' ) < $data['driemaand_datum'];
-$per_datum           = $in_driemaandperiode ? $data['driemaand_datum'] : strtotime( 'first day of next month 00:00' );
-$per                 = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
-$extra_beschikbaar   = false;
-$dag                 = 24 * 60 * 60;
+$in_startperiode   = strtotime( 'today' ) < $data['abonnement']->start_eind_datum;
+$per_datum         = $in_startperiode ? $data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
+$per               = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
+$extra_beschikbaar = false;
 foreach ( $this->options['extra'] as $extra ) :
 	$extra_beschikbaar = $extra_beschikbaar || ( 0 < $extra['prijs'] );
 endforeach;
@@ -40,7 +39,7 @@ endforeach;
 <?php $this->form(); ?>
 	<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 	<input type="hidden" name="per_datum" value="<?php echo esc_attr( $per_datum ); ?>" >
-	<?php if ( ! $in_driemaandperiode ) : ?>
+	<?php if ( ! $in_startperiode ) : ?>
 	<div class="kleistad_row"> <!-- soort -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad_input_cbr" value="soort" >
@@ -53,7 +52,7 @@ endforeach;
 				&nbsp;
 			</div>
 			<div class="kleistad_col_7" >
-				<?php if ( 'onbeperkt' === $data['input']['soort'] ) : ?>
+				<?php if ( 'onbeperkt' === $data['abonnement']->soort ) : ?>
 				<input name="soort" type="hidden" value="beperkt" >
 				<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een onbeperkt naar een beperkt abonnement. Kies de dag waarop je van een beperkt abonnement gebruikt gaat maken</strong></p>
 				<?php else : ?>
@@ -63,7 +62,7 @@ endforeach;
 			</div>
 		</div>
 		<?php
-		if ( 'onbeperkt' === $data['input']['soort'] ) :
+		if ( 'onbeperkt' === $data['abonnement']->soort ) :
 			?>
 		<div class="kleistad_row" >
 			<div class="kleistad_col_3">
@@ -74,11 +73,11 @@ endforeach;
 			</div>
 			<div class="kleistad_col_4">
 				<select class="kleistad_input" name="dag" id="kleistad_dag_keuze" >
-					<option value="maandag" <?php selected( $data['input']['dag'], 'maandag' ); ?> >Maandag</option>
-					<option value="dinsdag" <?php selected( $data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
-					<option value="woensdag" <?php selected( $data['input']['dag'], 'woensdag' ); ?>>Woensdag</option>
-					<option value="donderdag" <?php selected( $data['input']['dag'], 'donderdag' ); ?>>Donderdag</option>
-					<option value="vrijdag" <?php selected( $data['input']['dag'], 'vrijdag' ); ?>>Vrijdag</option>
+					<option value="maandag" <?php selected( $data['abonnement']->dag, 'maandag' ); ?> >Maandag</option>
+					<option value="dinsdag" <?php selected( $data['abonnement']->dag, 'dinsdag' ); ?>>Dinsdag</option>
+					<option value="woensdag" <?php selected( $data['abonnement']->dag, 'woensdag' ); ?>>Woensdag</option>
+					<option value="donderdag" <?php selected( $data['abonnement']->dag, 'donderdag' ); ?>>Donderdag</option>
+					<option value="vrijdag" <?php selected( $data['abonnement']->dag, 'vrijdag' ); ?>>Vrijdag</option>
 				</select>
 			</div>
 		</div>
@@ -86,9 +85,9 @@ endforeach;
 		endif;
 		?>
 	</div>
-	<?php endif // Niet in 3 maand periode. ?>
+	<?php endif // Niet in start periode. ?>
 
-	<?php if ( $extra_beschikbaar && ! $in_driemaandperiode ) : ?>
+	<?php if ( $extra_beschikbaar && ! $in_startperiode ) : ?>
 	<div class="kleistad_row"> <!-- extras -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad_input_cbr" value="extras" >
@@ -111,7 +110,7 @@ endforeach;
 				?>
 			<div class="kleistad_col_4">
 				<input class="kleistad_input_cbr" name="extras[]" id="extras_<?php echo esc_attr( $i ); ?>" type="checkbox"
-					<?php checked( false !== array_search( $extra['naam'], $data['input']['extras'], true ) ); ?>
+					<?php checked( false !== array_search( $extra['naam'], $data['abonnement']->extras, true ) ); ?>
 					data-bedrag="<?php echo esc_attr( 3 * $extra['prijs'] ); ?>"
 					value="<?php echo esc_attr( $extra['naam'] ); ?>" />
 				<label class="kleistad_label_cbr" for="extras_<?php echo esc_attr( $i ); ?>" ><?php echo esc_html( $extra['naam'] ); ?></label>
@@ -126,7 +125,7 @@ endforeach;
 		?>
 	</div>
 	<?php endif // Extras en niet in 3 maand periode. ?>
-	<?php if ( 'beperkt' === $data['input']['soort'] ) : ?>
+	<?php if ( 'beperkt' === $data['abonnement']->soort ) : ?>
 	<div class="kleistad_row"> <!-- dag -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_dag" class="kleistad_abo_optie kleistad_input_cbr" value="dag" >
@@ -151,17 +150,17 @@ endforeach;
 			</div>
 			<div class="kleistad_col_4">
 				<select class="kleistad_input" name="dag" id="kleistad_dag_keuze2" >
-					<option value="maandag" <?php selected( $data['input']['dag'], 'maandag' ); ?> >Maandag</option>
-					<option value="dinsdag" <?php selected( $data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
-					<option value="woensdag" <?php selected( $data['input']['dag'], 'woensdag' ); ?>>Woensdag</option>
-					<option value="donderdag" <?php selected( $data['input']['dag'], 'donderdag' ); ?>>Donderdag</option>
-					<option value="vrijdag" <?php selected( $data['input']['dag'], 'vrijdag' ); ?>>Vrijdag</option>
+					<option value="maandag" <?php selected( $data['abonnement']->dag, 'maandag' ); ?> >Maandag</option>
+					<option value="dinsdag" <?php selected( $data['abonnement']->dag, 'dinsdag' ); ?>>Dinsdag</option>
+					<option value="woensdag" <?php selected( $data['abonnement']->dag, 'woensdag' ); ?>>Woensdag</option>
+					<option value="donderdag" <?php selected( $data['abonnement']->dag, 'donderdag' ); ?>>Donderdag</option>
+					<option value="vrijdag" <?php selected( $data['abonnement']->dag, 'vrijdag' ); ?>>Vrijdag</option>
 				</select>
 			</div>
 		</div>
 	</div>
 	<?php endif // Wijzig beperkt. ?>
-	<?php if ( ! $in_driemaandperiode ) : ?>
+	<?php if ( ! $in_startperiode ) : ?>
 	<div class="kleistad_row"> <!-- pauze -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad_input_cbr" value="pauze" >
@@ -170,7 +169,7 @@ endforeach;
 	</div>
 	<div class="kleistad_abo_pauze kleistad_abo_veld"  style="display:none" >
 		<?php
-		if ( $data['abonnement']->gepauzeerd ) :
+		if ( $data['abonnement']->gepauzeerd() ) :
 			if ( $data['abonnement']->herstart_datum >= $per_datum ) :
 				?>
 		<div class="kleistad_row">
@@ -181,7 +180,7 @@ endforeach;
 				<p><strong>Je wilt je gepauzeerde abonnement hervatten</strong></p>
 				<p>Je kan de datum dat je abonnement hervat wordt wel aanpassen maar niet eerder dan per eerstvolgende maand en de maximale pauze is <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken.</p>
 				<input name="pauze_datum" id="kleistad_pauze_datum" type="hidden" value="<?php echo esc_attr( date( 'd-m-Y', $data['abonnement']->pauze_datum ) ); ?>"
-					data-min_pauze="<?php echo esc_attr( max( ( $per_datum - $data['abonnement']->pauze_datum ) / $dag, \Kleistad\Abonnement::MIN_PAUZE_WEKEN * 7 ) ); ?>"
+					data-min_pauze="<?php echo esc_attr( max( ( $per_datum - $data['abonnement']->pauze_datum ) / DAY_IN_SECONDS, \Kleistad\Abonnement::MIN_PAUZE_WEKEN * 7 ) ); ?>"
 					data-max_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>">
 			</div>
 		</div>
@@ -258,7 +257,7 @@ endforeach;
 			<p><strong>Je wilt je abonnement per <?php echo esc_html( $per ); ?> stoppen</strong></p>
 		</div>
 	</div>
-	<?php if ( ! $in_driemaandperiode ) : ?>
+	<?php if ( ! $in_startperiode ) : ?>
 	<div class="kleistad_row"> <!-- betaalwijze -->
 		<div class="kleistad_col_6">
 			<input type="radio" name="wijziging" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad_input_cbr" value="betaalwijze" >

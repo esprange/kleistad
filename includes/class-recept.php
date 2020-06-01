@@ -18,6 +18,17 @@ class Recept {
 
 	const POST_TYPE = 'kleistad_recept';
 	const CATEGORY  = 'kleistad_recept_cat';
+	const KLEUR     = '_kleur';
+	const GRONDSTOF = '_grondstof';
+	const UITERLIJK = '_uiterlijk';
+	const GLAZUUR   = '_glazuur';
+
+	/**
+	 * De hoofdterm objecten.
+	 *
+	 * @var array De objecten.
+	 */
+	private static $hoofdtermen;
 
 	/**
 	 * Initialiseer de recepten als custom post type.
@@ -95,7 +106,27 @@ class Recept {
 			10,
 			2
 		);
-
+		if ( empty( self::$hoofdtermen ) ) {
+			foreach ( [ self::GRONDSTOF, self::KLEUR, self::UITERLIJK, self::GLAZUUR ] as $hoofdterm_naam ) {
+				$term = get_term_by( 'name', $hoofdterm_naam, self::CATEGORY );
+				if ( false === $term ) {
+					$result = wp_insert_term( $hoofdterm_naam, self::CATEGORY );
+					if ( is_array( $result ) ) {
+						self::$hoofdtermen[ $hoofdterm_naam ] = get_term( $result['term_id'] );
+					}
+				} else {
+					self::$hoofdtermen[ $hoofdterm_naam ] = $term;
+				}
+			}
+		}
 	}
 
+	/**
+	 * Geef de hoofdtermen terug, maakt deze eventueel aan als ze nog niet bestaan.
+	 *
+	 * @return array De hoofdterm objecten.
+	 */
+	public static function hoofdtermen() {
+		return self::$hoofdtermen;
+	}
 }

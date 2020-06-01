@@ -100,6 +100,13 @@ class MollieSimulatie {
 					public $description;
 
 					/**
+					 * Create datum
+					 *
+					 * @var string $createdAt Datum.
+					 */
+					public $createdAt;
+
+					/**
 					 * Status property
 					 *
 					 * @var string $status De statustekst.
@@ -163,6 +170,13 @@ class MollieSimulatie {
 					}
 
 					/**
+					 * Geeft aan dat er geen sprake is chargebacks.
+					 */
+					public function hasChargebacks() {
+						return false;
+					}
+
+					/**
 					 * Geeft aan dat er geen sprake is refunds.
 					 */
 					public function canBeRefunded() {
@@ -213,6 +227,13 @@ class MollieSimulatie {
 							public $description;
 
 							/**
+							 * Create datum
+							 *
+							 * @var string $createdAt Datum.
+							 */
+							public $createdAt;
+
+							/**
 							 * De constructor.
 							 *
 							 * @param string $id Het refund id.
@@ -228,6 +249,7 @@ class MollieSimulatie {
 									$this->amount      = $data->amount;
 									$this->description = $data->description;
 									$this->status      = $data->status;
+									$this->createdAt   = date( 'c' );
 									$db->close();
 									unset( $db );
 								}
@@ -321,6 +343,7 @@ class MollieSimulatie {
 							$this->amount          = $data->amount;
 							$this->amountRemaining = $data->amount;
 							$this->description     = $data->description;
+							$this->createdAt       = date( 'c' );
 							$this->status          = $data->status;
 							$this->method          = property_exists( $data, 'method' ) ? $data->method : 'directdebit';
 							$this->sequenceType    = $data->sequenceType;

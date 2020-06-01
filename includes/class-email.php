@@ -65,6 +65,15 @@ class Email {
 	}
 
 	/**
+	 * Geef het info adres terug.
+	 *
+	 * @return string
+	 */
+	public static function info() {
+		return ! defined( 'KLEISTAD_DEV' ) ? 'info@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+	}
+
+	/**
 	 * Helper functie, haalt het domein op van de website.
 	 *
 	 * @return string
@@ -151,7 +160,7 @@ class Email {
 				'sign'        => 'Kleistad',
 				'sign_email'  => true,
 				'slug'        => '',
-				'to'          => 'Kleistad <info@' . self::domein() . '>',
+				'to'          => 'Kleistad <' . self::info() . self::domein() . '>',
 				'attachments' => [],
 			]
 		);
@@ -186,8 +195,10 @@ class Email {
 					return $this->mailparams['parameters'][ $match[1] ] ?? '';
 				},
 				'#\[\s*(cc|bcc)\s*:\s*(.+?)\s*\]#i'       => function( $match ) {
-					// Bcc of Cc parameters.
-					$this->mailparams[ $match[1] ][] = $match[2];
+					// Bcc of Cc parameter, alleen gebruiken ingeval van productie.
+					if ( ! defined( 'KLEISTAD_DEV' ) ) {
+						$this->mailparams[ $match[1] ][] = $match[2];
+					}
 					return '';
 				},
 			],
@@ -348,7 +359,7 @@ class Email {
 								<p>Met vriendelijke groet,</p>
 								<p><?php echo $this->mailparams['sign']; // phpcs:ignore ?></p>
 									<?php if ( $this->mailparams['sign_email'] ) : ?>
-								<p><a href="mailto:<?php echo esc_attr( 'info@' . self::domein() ); ?>" target="_top" ><?php echo esc_html( 'info@' . self::domein() ); ?></a></p>
+								<p><a href="mailto:<?php echo esc_attr( self::info() . self::domein() ); ?>" target="_top" ><?php echo esc_html( self::info() . self::domein() ); ?></a></p>
 								<?php endif ?>
 								<?php endif ?>
 							</td>

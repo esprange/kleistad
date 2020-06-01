@@ -32,47 +32,22 @@ class Admin_Abonnees_Handler {
 	 * @since 5.2.0
 	 * @param array  $item De informatie vanuit het formulier.
 	 * @param string $actie de actie waar het om gaat.
-	 * @param string $submit de subactie.
 	 * @return string De status van de wijziging.
 	 */
-	private function wijzig_abonnee( $item, $actie, $submit ) {
+	private function wijzig_abonnee( $item, $actie ) {
 		$abonnement          = new \Kleistad\Abonnement( $item['id'] );
-		$vandaag             = strtotime( 'today' );
 		$item['mollie_info'] = \Kleistad\Betalen::info( $item['id'] );
-		switch ( $actie ) {
-			case 'status':
-				switch ( $submit ) {
-					case 'pauzeren':
-						$abonnement->pauzeren( strtotime( $item['pauze_datum'] ), strtotime( $item['herstart_datum'] ), true );
-						$item['gepauzeerd'] = $vandaag >= $item['pauze_datum'];
-						break;
-					case 'starten':
-						$abonnement->start_datum = strtotime( $item['start_datum'] );
-						$abonnement->save();
-						$item['gestart'] = $vandaag >= $item['start_datum'];
-						break;
-					case 'stoppen':
-						$abonnement->stoppen( strtotime( $item['eind_datum'] ), true );
-						$item['geannuleerd'] = $vandaag >= $item['eind_datum'];
-						break;
+		if ( 'status' === $actie ) {
+			foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort', 'dag' ] as $veld ) {
+				if ( ! empty( $item[ $veld ] ) ) {
+					$abonnement->$veld = ( false !== strpos( $veld, 'datum' ) ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
 				}
-				break;
-			case 'soort':
-				if ( ( $abonnement->soort !== $item['soort'] ) || ( $abonnement->dag !== $item['dag'] ) ) {
-					$abonnement->wijzigen( $vandaag, 'soort', $item['soort'], $item['dag'], true );
-				}
-				break;
-			case 'extras':
-				if ( $abonnement->extras !== $item['extras'] ) {
-					$abonnement->wijzigen( $vandaag, 'extras', $item['extras'], '', true );
-				}
-				break;
-			case 'mollie':
-				$abonnement->stop_incasso( true );
-				$item['mandaat'] = false;
-				break;
-			default:
-				break;
+			}
+			$abonnement->extras = $item['extras'];
+			$abonnement->save();
+		} elseif ( 'mollie' === $actie ) {
+			$abonnement->stop_incasso( true );
+			$item['mandaat'] = false;
 		}
 		return 'De gegevens zijn opgeslagen';
 	}
@@ -84,31 +59,29 @@ class Admin_Abonnees_Handler {
 	 *
 	 * @param array  $item de abonnee.
 	 * @param string $actie de actie waar het om gaat.
-	 * @param string $submit de subactie.
 	 * @return bool|string
 	 */
-	private function validate_abonnee( $item, $actie, $submit ) {
+	private function validate_abonnee( $item, $actie ) {
 		$messages = [];
 
 		if ( 'status' === $actie ) {
-			switch ( $submit ) {
-				case 'pauzeren':
-					if ( false === strtotime( $item['pauze_datum'] ) ) {
-						$messages[] = 'Pauze datum ontbreekt of is ongeldig';
-					}
-					break;
-				case 'starten':
-					if ( false === strtotime( $item['start_datum'] ) ) {
-						$messages[] = 'Start datum ontbreekt of is ongeldig';
-					}
-					break;
-				case 'stoppen':
-					if ( false === strtotime( $item['eind_datum'] ) ) {
-						$messages[] = 'Eind datum ontbreekt of is ongeldig';
-					}
-					break;
-				default:
-					break;
+			if ( ! empty( $item['start_datum'] ) && strtotime( $item['start_datum'] ) < strtotime( $item['inschrijf_datum'] ) ) {
+				$messages[] = 'De start datum kan niet voor de inschrijf datum liggen';
+			}
+			if ( ! empty( $item['pauze_datum'] ) && ( empty( $item['start_datum'] ) || strtotime( $item['start_datum'] ) >= strtotime( $item['pauze_datum'] ) ) ) {
+				$messages[] = 'De pauze datum kan niet voor de start datum liggen of de start datum ontbreekt';
+			}
+			if ( ! empty( $item['herstart_datum'] ) && ( empty( $item['pauze_datum'] ) || strtotime( $item['herstart_datum'] ) < strtotime( $item['pauze_datum'] ) ) ) {
+				$messages[] = 'De herstart datum kan niet voor de pauze datum liggen of de pauze datum ontbreekt';
+			}
+			if ( ! empty( $item['start_eind_datum'] ) && ( empty( $item['start_datum'] ) || strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) ) {
+				$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen of de start datum ontbreekt';
+			}
+			if ( ! empty( $item['eind_datum'] ) && strtotime( $item['eind_datum'] ) <= strtotime( $item['inschrijf_datum'] ) ) {
+				$messages[] = 'De eind datum van het abonnement kan niet voor de inschrijf datum liggen';
+			}
+			if ( ! empty( $item['soort'] ) && 'beperkt' === $item['soort'] && empty( $item['dag'] ) ) {
+				$messages[] = 'Als de abonnement soort beperkt is dan moet er een dag gekozen worden';
 			}
 		}
 
@@ -140,36 +113,35 @@ class Admin_Abonnees_Handler {
 			$item = filter_input_array(
 				INPUT_POST,
 				[
-					'id'              => FILTER_SANITIZE_NUMBER_INT,
-					'naam'            => FILTER_SANITIZE_STRING,
-					'code'            => FILTER_SANITIZE_STRING,
-					'soort'           => FILTER_SANITIZE_STRING,
-					'dag'             => FILTER_SANITIZE_STRING,
-					'gestart'         => FILTER_SANITIZE_NUMBER_INT,
-					'geannuleerd'     => FILTER_SANITIZE_NUMBER_INT,
-					'gepauzeerd'      => FILTER_SANITIZE_NUMBER_INT,
-					'inschrijf_datum' => FILTER_SANITIZE_STRING,
-					'start_datum'     => FILTER_SANITIZE_STRING,
-					'pauze_datum'     => FILTER_SANITIZE_STRING,
-					'eind_datum'      => FILTER_SANITIZE_STRING,
-					'herstart_datum'  => FILTER_SANITIZE_STRING,
-					'mandaat'         => FILTER_SANITIZE_NUMBER_INT,
-					'extras'          => [
+					'id'               => FILTER_SANITIZE_NUMBER_INT,
+					'naam'             => FILTER_SANITIZE_STRING,
+					'code'             => FILTER_SANITIZE_STRING,
+					'soort'            => FILTER_SANITIZE_STRING,
+					'dag'              => FILTER_SANITIZE_STRING,
+					'gestart'          => FILTER_SANITIZE_NUMBER_INT,
+					'geannuleerd'      => FILTER_SANITIZE_NUMBER_INT,
+					'gepauzeerd'       => FILTER_SANITIZE_NUMBER_INT,
+					'inschrijf_datum'  => FILTER_SANITIZE_STRING,
+					'start_datum'      => FILTER_SANITIZE_STRING,
+					'start_eind_datum' => FILTER_SANITIZE_STRING,
+					'pauze_datum'      => FILTER_SANITIZE_STRING,
+					'eind_datum'       => FILTER_SANITIZE_STRING,
+					'herstart_datum'   => FILTER_SANITIZE_STRING,
+					'mandaat'          => FILTER_SANITIZE_NUMBER_INT,
+					'extras'           => [
 						'filter' => FILTER_SANITIZE_STRING,
 						'flags'  => FILTER_REQUIRE_ARRAY,
 					],
-					'actie'           => FILTER_SANITIZE_STRING,
-					'submit'          => FILTER_SANITIZE_STRING,
+					'actie'            => FILTER_SANITIZE_STRING,
 				]
 			);
 			if ( ! is_array( $item['extras'] ) ) {
 				$item['extras'] = [];
 			}
 			$actie      = $item['actie'];
-			$submit     = strtolower( $item['submit'] );
-			$item_valid = $this->validate_abonnee( $item, $actie, $submit );
+			$item_valid = $this->validate_abonnee( $item, $actie );
 			if ( true === $item_valid ) {
-				$message = $this->wijzig_abonnee( $item, $actie, $submit );
+				$message = $this->wijzig_abonnee( $item, $actie );
 			} else {
 				$notice = $item_valid;
 			}
@@ -181,22 +153,22 @@ class Admin_Abonnees_Handler {
 				$abonnee    = get_userdata( $abonnee_id );
 				$betalen    = new \Kleistad\Betalen();
 				$item       = [
-					'id'              => $abonnee_id,
-					'naam'            => $abonnee->display_name,
-					'soort'           => $abonnement->soort,
-					'dag'             => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
-					'code'            => $abonnement->code,
-					'extras'          => $abonnement->extras,
-					'geannuleerd'     => $abonnement->geannuleerd,
-					'gepauzeerd'      => $abonnement->gepauzeerd,
-					'gestart'         => \Kleistad\Roles::reserveer( $abonnee_id ),
-					'inschrijf_datum' => ( $abonnement->datum ? strftime( '%d-%m-%Y', $abonnement->datum ) : '' ),
-					'start_datum'     => ( $abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '' ),
-					'pauze_datum'     => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
-					'eind_datum'      => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
-					'herstart_datum'  => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
-					'mandaat'         => $betalen->heeft_mandaat( $abonnee_id ),
-					'mollie_info'     => \Kleistad\Betalen::info( $abonnee_id ),
+					'id'               => $abonnee_id,
+					'naam'             => $abonnee->display_name,
+					'soort'            => $abonnement->soort,
+					'dag'              => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
+					'code'             => $abonnement->code,
+					'extras'           => $abonnement->extras,
+					'geannuleerd'      => $abonnement->geannuleerd(),
+					'gepauzeerd'       => $abonnement->gepauzeerd(),
+					'inschrijf_datum'  => ( $abonnement->datum ? strftime( '%d-%m-%Y', $abonnement->datum ) : '' ),
+					'start_datum'      => ( $abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '' ),
+					'start_eind_datum' => ( $abonnement->start_eind_datum ? strftime( '%d-%m-%Y', $abonnement->start_eind_datum ) : '' ),
+					'pauze_datum'      => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
+					'eind_datum'       => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
+					'herstart_datum'   => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
+					'mandaat'          => $betalen->heeft_mandaat( $abonnee_id ),
+					'mollie_info'      => \Kleistad\Betalen::info( $abonnee_id ),
 				];
 			}
 		}

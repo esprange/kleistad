@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 55;
+	const DBVERSIE = 60;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -181,7 +181,7 @@ class Admin_Upgrade {
 			klant tinytext,
 			mutatie_datum datetime,
 			verval_datum datetime,
-			referentie varchar(20) NOT NULL,
+			referentie varchar(30) NOT NULL,
 			transactie_id varchar(20) NOT NULL DEFAULT '',
 			regels varchar(2000),
 			opmerking varchar(200),
@@ -213,6 +213,14 @@ class Admin_Upgrade {
 	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
 	 */
 	private function convert_abonnement() {
+		$abonnementen = \Kleistad\Abonnement::all();
+		foreach ( $abonnementen as $abonnement ) {
+			if ( 0 === $abonnement->start_eind_datum ) {
+				$abonnement->start_eind_datum = strtotime( '+3 month', $abonnement->start_datum );
+				$abonnement->reguliere_datum  = strtotime( 'first day of +4 month ' . $abonnement->start_datum );
+				$abonnement->save();
+			}
+		}
 	}
 
 	/**
@@ -239,6 +247,15 @@ class Admin_Upgrade {
 	private function convert_order() {
 	}
 
+	/**
+	 * Converteer recepten en gerelateerde elementen.
+	 */
+	private function convert_recept() {
+		foreach( \Kleistad\Recept::hoofdtermen() as $hoofdterm ) {
+			wp_update_term( $hoofdterm->term_id, \Kleistad\Recept::CATEGORY, [ 'description' => ucfirst( substr( $hoofdterm->name, 1 ) ) ]);
+		}
+	}
+
 	// phpcs:enable
 
 	/**
@@ -256,5 +273,6 @@ class Admin_Upgrade {
 		$this->convert_cursus();
 		$this->convert_order();
 		$this->convert_opties();
+		$this->convert_recept();
 	}
 }
