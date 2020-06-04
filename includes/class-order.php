@@ -288,18 +288,16 @@ class Order extends \Kleistad\Entity {
 			$openstaand = $this->bruto() - $this->betaald;
 		}
 		$this->gesloten = 0.01 >= abs( $openstaand );
+		$wpdb->query( 'START TRANSACTION READ WRITE' );
 		if ( ! $this->id ) {
-			$wpdb->query( "INSERT INTO {$wpdb->prefix}kleistad_orders ( factuurnr ) VALUES ( 1 + ( SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders AS O2 ) ) " );
-			$this->id        = $wpdb->insert_id;
-			$this->factuurnr = intval(
-				$wpdb->get_var(
-					$wpdb->prepare( "SELECT factuurnr FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", $this->id )
-				)
-			);
+			$this->factuurnr = 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );
+			$wpdb->insert( "{$wpdb->prefix}kleistad_orders", $this->data );
+			$this->id = $wpdb->insert_id;
 		} else {
 			$this->mutatie_datum = time();
+			$wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] );
 		}
-		$wpdb->replace( "{$wpdb->prefix}kleistad_orders", $this->data );
+		$wpdb->query( 'COMMIT' );
 
 		if ( $this->transactie_id && -0.01 > $openstaand ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
