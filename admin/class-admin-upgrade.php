@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 60;
+	const DBVERSIE = 61;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -215,9 +215,9 @@ class Admin_Upgrade {
 	private function convert_abonnement() {
 		$abonnementen = \Kleistad\Abonnement::all();
 		foreach ( $abonnementen as $abonnement ) {
-			if ( 0 === $abonnement->start_eind_datum ) {
+			if ( false === $abonnement->start_eind_datum ) {
 				$abonnement->start_eind_datum = strtotime( '+3 month', $abonnement->start_datum );
-				$abonnement->reguliere_datum  = strtotime( 'first day of +4 month ' . $abonnement->start_datum );
+				$abonnement->reguliere_datum  = strtotime( 'first day of +4 month', $abonnement->start_datum );
 				$abonnement->save();
 			}
 		}
@@ -251,9 +251,6 @@ class Admin_Upgrade {
 	 * Converteer recepten en gerelateerde elementen.
 	 */
 	private function convert_recept() {
-		foreach( \Kleistad\Recept::hoofdtermen() as $hoofdterm ) {
-			wp_update_term( $hoofdterm->term_id, \Kleistad\Recept::CATEGORY, [ 'description' => ucfirst( substr( $hoofdterm->name, 1 ) ) ]);
-		}
 	}
 
 	// phpcs:enable
