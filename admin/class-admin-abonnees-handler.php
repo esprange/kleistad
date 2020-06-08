@@ -144,7 +144,6 @@ class Admin_Abonnees_Handler {
 			$item_valid = $this->validate_abonnee( $item, $actie );
 			if ( true === $item_valid ) {
 				$message = $this->wijzig_abonnee( $item, $actie );
-				$message = 'De gegevens zijn opgeslagen';
 			} else {
 				$notice = $item_valid;
 			}
