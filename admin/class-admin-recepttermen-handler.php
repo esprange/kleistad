@@ -62,7 +62,6 @@ class Admin_Recepttermen_Handler {
 	public function recepttermen_form_page_handler() {
 		$message  = '';
 		$notice   = '';
-		$title    = 'Recept term';
 		$single   = 'receptterm';
 		$multiple = 'recepttermen';
 		$item     = [];
@@ -107,6 +106,7 @@ class Admin_Recepttermen_Handler {
 			if ( isset( $_REQUEST['id'] ) ) {
 				if ( isset( $_REQUEST['delete'] ) ) {
 					wp_delete_term( $_REQUEST['id'], \Kleistad\Recept::CATEGORY );
+					$message = 'De gegevens zijn opgeslagen';
 				} else {
 					$term = get_term( $_REQUEST['id'] );
 					if ( ! is_wp_error( $term ) ) {

@@ -41,8 +41,10 @@ class Admin_Cursisten_Handler {
 	 * @since    5.2.0
 	 */
 	public function cursisten_form_page_handler() {
-		$message = '';
-		$notice  = '';
+		$message  = '';
+		$notice   = '';
+		$single   = 'cursist';
+		$multiple = 'cursisten';
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
 			$item         = filter_input_array(
 				INPUT_POST,
@@ -66,6 +68,7 @@ class Admin_Cursisten_Handler {
 			} else {
 				// attributen inschrijving gewijzigd.
 				$inschrijving->save();
+				$message = 'De gegevens zijn opgeslagen';
 			}
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
@@ -87,7 +90,7 @@ class Admin_Cursisten_Handler {
 			}
 		}
 		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this, 'cursisten_form_meta_box_handler' ], 'cursist', 'normal', 'default' );
-		require 'partials/admin-cursisten-form-page.php';
+		require 'partials/admin-form-page.php';
 	}
 
 	/**

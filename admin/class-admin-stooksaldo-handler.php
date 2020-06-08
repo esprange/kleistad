@@ -63,8 +63,10 @@ class Admin_Stooksaldo_Handler {
 	 */
 	public function stooksaldo_form_page_handler() {
 
-		$message = '';
-		$notice  = '';
+		$message  = '';
+		$notice   = '';
+		$single   = 'stooksaldo';
+		$multiple = 'stooksaldo';
 
 		$default = [
 			'id'    => 0,
@@ -82,6 +84,7 @@ class Admin_Stooksaldo_Handler {
 				$beheerder     = wp_get_current_user();
 				$saldo->reden  = 'correctie door ' . $beheerder->display_name;
 				$saldo->save();
+				$message = 'De gegevens zijn opgeslagen';
 			} else {
 				$notice = $item_valid;
 			}
@@ -104,7 +107,7 @@ class Admin_Stooksaldo_Handler {
 		}
 		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this, 'stooksaldo_form_meta_box_handler' ], 'stooksaldo', 'normal', 'default' );
 
-		require 'partials/admin-stooksaldo-form-page.php';
+		require 'partials/admin-form-page.php';
 	}
 
 	/**

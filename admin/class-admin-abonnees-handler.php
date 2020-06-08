@@ -106,9 +106,11 @@ class Admin_Abonnees_Handler {
 	 * @since    5.2.0
 	 */
 	public function abonnees_form_page_handler() {
-		$message = '';
-		$notice  = '';
-		$actie   = null;
+		$message  = '';
+		$notice   = '';
+		$single   = 'abonnee';
+		$multiple = 'abonnees';
+		$actie    = null;
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
@@ -142,6 +144,7 @@ class Admin_Abonnees_Handler {
 			$item_valid = $this->validate_abonnee( $item, $actie );
 			if ( true === $item_valid ) {
 				$message = $this->wijzig_abonnee( $item, $actie );
+				$message = 'De gegevens zijn opgeslagen';
 			} else {
 				$notice = $item_valid;
 			}
@@ -173,7 +176,7 @@ class Admin_Abonnees_Handler {
 			}
 		}
 		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default', [ $actie ] );
-		require 'partials/admin-abonnees-form-page.php';
+		require 'partials/admin-form-page.php';
 	}
 
 	/**

@@ -73,7 +73,7 @@ class Admin_Regelingen_Handler {
 				} else {
 					update_user_meta( $gebruiker_id, \Kleistad\Oven::REGELING, $regelingen );
 				}
-				$message = 'Regeling verwijderd';
+				$message = 'De gegevens zijn opgeslagen';
 			}
 		}
 		require 'partials/admin-regelingen-page.php';
@@ -86,8 +86,10 @@ class Admin_Regelingen_Handler {
 	 */
 	public function regelingen_form_page_handler() {
 
-		$message = '';
-		$notice  = '';
+		$message  = '';
+		$notice   = '';
+		$single   = 'regeling';
+		$multiple = 'regelingen';
 
 		$default = [
 			'id'             => '',
@@ -140,7 +142,7 @@ class Admin_Regelingen_Handler {
 		}
 		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this, 'regelingen_form_meta_box_handler' ], 'regeling', 'normal', 'default' );
 
-		require 'partials/admin-regelingen-form-page.php';
+		require 'partials/admin-form-page.php';
 	}
 
 	/**

@@ -66,9 +66,11 @@ class Admin_Ovens_Handler {
 	 * @since    5.2.0
 	 */
 	public function ovens_form_page_handler() {
-		$message = '';
-		$notice  = '';
-		$item    = [];
+		$message  = '';
+		$notice   = '';
+		$single   = 'oven';
+		$multiple = 'ovens';
+		$item     = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
 			$item       = filter_input_array(
 				INPUT_POST,
@@ -112,7 +114,7 @@ class Admin_Ovens_Handler {
 			$item['beschikbaarheid'] = $oven->beschikbaarheid;
 		}
 		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this, 'ovens_form_meta_box_handler' ], 'oven', 'normal', 'default' );
-		require 'partials/admin-ovens-form-page.php';
+		require 'partials/admin-form-page.php';
 	}
 
 	/**
