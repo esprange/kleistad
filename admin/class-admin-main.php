@@ -143,10 +143,10 @@ class Admin_Main {
 	}
 
 	/**
-	 * Filte de acties voor een email post.
+	 * Filter de acties voor een email post.
 	 *
 	 * @param array    $acties De acties.
-	 * @param \WP_POst $post De post.
+	 * @param \WP_Post $post De post.
 	 */
 	public function post_row_actions( $acties, $post ) {
 		if ( \Kleistad\Email::POST_TYPE === $post->post_type ) {
