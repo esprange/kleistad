@@ -132,21 +132,21 @@ class Google {
 	 * Maak de Google services aan.
 	 *
 	 * @since 6.1.0
+	 *
+	 * @throws \Exception Als er geen connecties gemaakt kunnen worden.
 	 */
 	private static function create_services() {
 		$client = self::maak_client();
 		if ( false === $client ) {
-			error_log( '!!! Google maak client failure' ); //phpcs:ignore
-			die;
+			throw new \Exception( 'Google maak client failure' );
 		}
 		if ( $client->isAccessTokenExpired() ) {
 			if ( $client->getRefreshToken() ) {
 				$client->fetchAccessTokenWithRefreshToken( $client->getRefreshToken() );
 				update_option( self::ACCESS_TOKEN, $client->getAccessToken() );
 			} else {
-				error_log( '!!! Google refresh token failure' ); //phpcs:ignore
 				delete_option( self::ACCESS_TOKEN );
-				die;
+				throw new \Exception( 'Google refresh token failure' );
 			}
 		}
 		self::$calendar_service = new \Google_Service_Calendar( $client );
