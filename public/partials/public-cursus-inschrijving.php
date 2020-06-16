@@ -56,7 +56,7 @@ else :
 				'technieken' => $cursus['technieken'],
 				'meer'       => $cursus['meer'],
 				'ruimte'     => $cursus['ruimte'],
-				'prijs'      => $cursus['prijs'],
+				'bedrag'     => $cursus['bedrag'],
 				'lopend'     => $cursus['lopend'],
 			]
 		);

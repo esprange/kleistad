@@ -189,6 +189,31 @@ class Cursus extends Entity {
 	}
 
 	/**
+	 * Start de cursus binnenkort ?
+	 *
+	 * @return bool
+	 */
+	public function is_binnenkort() {
+		return strtotime( '+7 days 0:00' ) >= $this->start_datum;
+	}
+
+	/**
+	 * Bereken het bedrag om ingedeeld te worden bij de cursus.
+	 *
+	 * @return float
+	 */
+	public function bedrag() {
+		if ( $this->is_binnenkort() ) {
+			if ( 0.01 < $this->inschrijfkosten ) {
+				return $this->inschrijfkosten + $this->cursuskosten;
+			}
+		} elseif ( 0 < $this->inschrijfkosten ) {
+			return $this->inschrijfkosten;
+		}
+		return $this->cursuskosten;
+	}
+
+	/**
 	 * Hulp functie voor de oudere cursussen (voor 6.1.1 werd de naam ingevuld, nu het nummer ).
 	 *
 	 * @return string De naam van de docent.

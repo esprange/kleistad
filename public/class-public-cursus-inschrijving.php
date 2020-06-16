@@ -85,8 +85,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
 				'ruimte'        => $cursus->ruimte(),
-				'prijs'         => ( 0 < $cursus->inschrijfkosten ? $cursus->inschrijfkosten : $cursus->cursuskosten ),
-				'inschrijfgeld' => ( 0 < $cursus->inschrijfkosten ),
+				'bedrag'        => $cursus->bedrag(),
 				'lopend'        => $cursus->start_datum < strtotime( 'today' ),
 			];
 		}
@@ -220,7 +219,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		} else {
 			if ( ! $lopend ) {
 				$inschrijving->artikel_type = 'inschrijving';
-				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, $data['cursus']->start_datum, \Kleistad\Inschrijving::OPM_INSCHRIJVING ) );
+				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, $data['cursus']->start_datum, $inschrijving->heeft_restant() ) );
 			} else {
 				$inschrijving->email( '_lopend' );
 			}

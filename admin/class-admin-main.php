@@ -157,6 +157,53 @@ class Admin_Main {
 	}
 
 	/**
+	 * Voeg een header label toe voor de email templates.
+	 *
+	 * @param array $columns De bestaande labels.
+	 * @return array
+	 */
+	public function email_posts_columns( $columns ) {
+		unset( $columns['date'] );
+		return array_merge( $columns, [ 'wijziging' => 'Datum wijziging' ] );
+	}
+
+	/**
+	 * Geef aan dat de wijziging column ook sorteerbaar is.
+	 *
+	 * @param array $columns De labels.
+	 * @return array
+	 */
+	public function email_sortable_columns( $columns ) {
+		return array_merge( $columns, [ 'wijziging' => 'wijziging' ] );
+	}
+
+	/**
+	 * Zorg dat er gesorteerd wordt op wijzig datum.
+	 *
+	 * @param \WP_Query $wp_query De query.
+	 */
+	public function email_get_posts_order( $wp_query ) {
+		if ( is_admin() ) {
+			if ( \Kleistad\Email::POST_TYPE === $wp_query->query['post_type'] ) {
+				$wp_query->set( 'orderby', 'modified' );
+			}
+		}
+	}
+
+	/**
+	 * Toon extra columns in het email template overzicht.
+	 *
+	 * @param string $column De kolom.
+	 * @param int    $post_id De post id.
+	 */
+	public function email_posts_custom_column( $column, $post_id ) {
+		if ( 'wijziging' === $column ) {
+			$time = get_the_modified_date( '', $post_id ) . ' ' . get_the_modified_time( '', $post_id );
+			echo "Gewijzigd<br><span title=\"$time\">$time</span>"; // phpcs:ignore
+		}
+	}
+
+	/**
 	 * Definieer de admin panels
 	 *
 	 * @since    4.0.87

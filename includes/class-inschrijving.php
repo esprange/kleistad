@@ -52,10 +52,10 @@ class Inschrijving extends Artikel {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @access private
+	 * @access public
 	 * @var object $cursus cursus object.
 	 */
-	private $cursus;
+	public $cursus;
 
 	/**
 	 * De beginwaarden van een inschrijving
@@ -194,23 +194,26 @@ class Inschrijving extends Artikel {
 	 */
 	public function ideal( $bericht, $referentie, $openstaand = null ) {
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
-		if ( ! $this->ingedeeld && 0 < $this->cursus->inschrijfkosten ) {
-			return $this->betalen->order(
-				$this->klant_id,
-				$referentie,
-				$this->aantal * $this->cursus->inschrijfkosten,
-				'Kleistad cursus ' . $this->code . ' inschrijfkosten voor ' . $deelnemers,
-				$bericht
-			);
-		} else {
-			return $this->betalen->order(
-				$this->klant_id,
-				$referentie,
-				$openstaand ?? $this->aantal * $this->cursus->cursuskosten,
-				'Kleistad cursus ' . $this->code . ' cursuskosten voor ' . $deelnemers,
-				$bericht
-			);
+		$vermelding = ( $openstaand || ! $this->heeft_restant() ) ? 'cursus' : 'inschrijf';
+		return $this->betalen->order(
+			$this->klant_id,
+			$referentie,
+			$openstaand ?? $this->aantal * $this->cursus->bedrag(),
+			"Kleistad cursus {$this->code} {$vermelding}kosten voor $deelnemers",
+			$bericht
+		);
+	}
+
+	/**
+	 * Bepaal of er een melding nodig is dat er later een restant bedrag betaald moet worden.
+	 *
+	 * @return string De melding.
+	 */
+	public function heeft_restant() {
+		if ( ! $this->cursus->is_binnenkort() && 0 < $this->cursus->inschrijfkosten ) {
+			return self::OPM_INSCHRIJVING;
 		}
+		return '';
 	}
 
 	/**
@@ -288,8 +291,9 @@ class Inschrijving extends Artikel {
 					'cursus_eind_tijd'       => strftime( '%H:%M', $this->cursus->eind_tijd ),
 					'cursus_technieken'      => implode( ', ', $this->technieken ),
 					'cursus_code'            => $this->code,
-					'cursus_kosten'          => number_format_i18n( $this->aantal * $this->cursus->cursuskosten, 2 ),
-					'cursus_inschrijfkosten' => number_format_i18n( $this->aantal * $this->cursus->inschrijfkosten, 2 ),
+					'cursus_restant_melding' => $this->heeft_restant(),
+					'cursus_bedrag'          => number_format_i18n( $this->aantal * $this->cursus->bedrag(), 2 ),
+					'cursus_restantbedrag'   => number_format_i18n( $this->aantal * $this->cursus->restantbedrag(), 2 ),
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'cursus_link'            => $this->betaal_link,
@@ -366,7 +370,6 @@ class Inschrijving extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$meetdag = strtotime( '+7 days 00:00' );
 		if ( 0 < $this->lopende_cursus ) {
 			return [
 				array_merge(
@@ -378,7 +381,7 @@ class Inschrijving extends Artikel {
 				),
 			];
 		} else {
-			if ( $meetdag > $this->cursus->start_datum ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten.
+			if ( $this->cursus->is_binnenkort() ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten, echter bij inschrijfgeld 1 ct dit afronden naar 0.
 				return [
 					array_merge(
 						self::split_bedrag( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ),
@@ -447,9 +450,19 @@ class Inschrijving extends Artikel {
 				/**
 				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
 				 */
-				$this->email( 'indeling', $this->bestel_order( $bedrag, $this->cursus->start_datum, 'inschrijving' === $this->artikel_type ? self::OPM_INSCHRIJVING : '', $transactie_id ) );
+				$this->email( 'indeling', $this->bestel_order( $bedrag, $this->cursus->start_datum, $this->heeft_restant(), $transactie_id ) );
 			}
 		}
+	}
+
+	/**
+	 * Bepaal het restantbedrag
+	 *
+	 * @return float
+	 */
+	private function restantbedrag() {
+		$order = new \Kleistad\Order( $this->referentie() );
+		return $order->te_betalen();
 	}
 
 	/**
@@ -459,20 +472,19 @@ class Inschrijving extends Artikel {
 	 */
 	public static function dagelijks() {
 		$inschrijvingen = self::all();
-		$cursussen      = \Kleistad\Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
 				if (
 					$inschrijving->restant_email ||
 					$inschrijving->geannuleerd ||
-					$cursussen[ $cursus_id ]->vervallen ||
+					$inschrijving->cursus->vervallen ||
 					! $inschrijving->ingedeeld ||
-					strtotime( '+7 days 0:00' ) < $cursussen[ $cursus_id ]->start_datum ||
-					strtotime( 'today' ) > $cursussen[ $cursus_id ]->eind_datum
+					! $inschrijving->cursus->is_binnenkort() ||
+					strtotime( 'today' ) > $inschrijving->cursus->eind_datum
 					) {
 					continue;
 				}
-				$order = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
+				$order = new \Kleistad\Order( $inschrijving->referentie() );
 				if ( ! $order->gesloten ) {
 					$inschrijving->artikel_type  = 'cursus';
 					$inschrijving->restant_email = true;

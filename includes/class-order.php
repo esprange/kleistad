@@ -37,40 +37,39 @@ class Order extends \Kleistad\Entity {
 	/**
 	 * Maak het object aan.
 	 *
-	 * @param int $order_id Het order id of 0.
+	 * @param int|string $arg Het order id of de referentie of 0.
 	 */
-	public function __construct( $order_id = 0 ) {
+	public function __construct( $arg = 0 ) {
 		global $wpdb;
-		if ( $order_id ) {
-			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", $order_id ), ARRAY_A ); // phpcs:ignore
-			if ( ! is_null( $result ) ) {
-				$this->data = $result;
-			}
-		} else {
-			$this->data = [
-				'id'            => 0,
-				'betaald'       => 0.0,
-				'datum'         => date( 'Y-m-d H:i:s' ),
-				'credit_id'     => 0,
-				'origineel_id'  => 0,
-				'gesloten'      => false,
-				'historie'      => wp_json_encode( [] ),
-				'klant'         => wp_json_encode(
-					[
-						'naam'  => '',
-						'adres' => '',
-						'email' => '',
-					]
-				),
-				'mutatie_datum' => null,
-				'verval_datum'  => date( 'Y-m-d 00:00:0', strtotime( '+30 days 00:00' ) ),
-				'referentie'    => '',
-				'regels'        => wp_json_encode( [] ),
-				'opmerking'     => '',
-				'factuurnr'     => 0,
-				'transactie_id' => '',
-			];
+		$result = null;
+		if ( is_string( $arg ) ) {
+			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s ORDER BY id DESC LIMIT 1", $arg ) ) ?? 0;
+		} elseif ( $arg ) {
+			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", $arg ), ARRAY_A );
 		}
+		$this->data = $result ?? [
+			'id'            => 0,
+			'betaald'       => 0.0,
+			'datum'         => date( 'Y-m-d H:i:s' ),
+			'credit_id'     => 0,
+			'origineel_id'  => 0,
+			'gesloten'      => false,
+			'historie'      => wp_json_encode( [] ),
+			'klant'         => wp_json_encode(
+				[
+					'naam'  => '',
+					'adres' => '',
+					'email' => '',
+				]
+			),
+			'mutatie_datum' => null,
+			'verval_datum'  => date( 'Y-m-d 00:00:0', strtotime( '+30 days 00:00' ) ),
+			'referentie'    => '',
+			'regels'        => wp_json_encode( [] ),
+			'opmerking'     => '',
+			'factuurnr'     => 0,
+			'transactie_id' => '',
+		];
 	}
 
 	/**

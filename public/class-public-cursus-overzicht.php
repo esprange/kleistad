@@ -83,7 +83,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				continue; // Het heeft geen zin om wachtende inschrijvingen te tonen als de cursus geen plaats meer heeft.
 			}
 			$cursist     = get_userdata( $cursist_id );
-			$order       = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
+			$order       = new \Kleistad\Order( $inschrijving->referentie() );
 			$cursisten[] = [
 				'id'             => $cursist_id,
 				'naam'           => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
@@ -133,7 +133,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'lessen'      => $lopend['lessen'],
 				'lessen_rest' => $lopend['lessen_rest'],
 				'kosten'      => $lopend['kosten'],
-				'max'         => $cursus->inschrijfkosten + $cursus->cursuskosten,
+				'max'         => round( $cursus->inschrijfkosten, 1 ) + $cursus->cursuskosten,
 			];
 			$data['cursist']                = [
 				'id'     => $cursist_id,
@@ -201,7 +201,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$aantal_verzonden_email = 0;
 			// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
 			foreach ( $this->inschrijvingen( $data['input']['cursus_id'], false ) as $inschrijving ) {
-				$order = new \Kleistad\Order( \Kleistad\Order::zoek_order( $inschrijving->referentie() ) );
+				$order = new \Kleistad\Order( $inschrijving->referentie() );
 				if ( $order->gesloten || $inschrijving->regeling_betaald( $order->betaald ) || $inschrijving->herinner_email ) {
 					/**
 					 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.

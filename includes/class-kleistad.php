@@ -87,11 +87,15 @@ class Kleistad {
 		$this->loader->add_action( 'kleistad_daily_gdpr', $plugin_admin, 'daily_gdpr' );
 		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'instantiate_background' );
 		$this->loader->add_action( 'update_option_kleistad-setup', $plugin_admin, 'setup_gewijzigd', 10, 2 );
+		$this->loader->add_action( 'manage_kleistad_email_posts_custom_column', $plugin_admin, 'email_posts_custom_column', 10, 2 );
 		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_admin, 'register_exporter', 10 );
 		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_admin, 'register_eraser', 10 );
 		$this->loader->add_filter( 'pre_set_site_transient_update_plugins', $plugin_admin, 'check_update' );
 		$this->loader->add_filter( 'plugins_api', $plugin_admin, 'check_info', 20, 3 );
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin, 'post_row_actions', 10, 2 );
+		$this->loader->add_filter( 'manage_kleistad_email_posts_columns', $plugin_admin, 'email_posts_columns' );
+		$this->loader->add_filter( 'manage_edit-kleistad_email_sortable_columns', $plugin_admin, 'email_sortable_columns' );
+		$this->loader->add_filter( 'pre_get_posts', $plugin_admin, 'email_get_posts_order' );
 	}
 
 	/**

@@ -80,7 +80,7 @@ class LosArtikel extends Artikel {
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
 	public function ideal( $bericht, $referentie, $openstaand = null ) {
-		$order = new \Kleistad\Order( \Kleistad\Order::zoek_order( $referentie ) );
+		$order = new \Kleistad\Order( $referentie );
 		return $this->betalen->order(
 			[
 				'naam'     => $order->klant['naam'],
