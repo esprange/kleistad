@@ -164,7 +164,7 @@ class Admin_Main {
 	 */
 	public function email_posts_columns( $columns ) {
 		unset( $columns['date'] );
-		return array_merge( $columns, [ 'wijziging' => 'Datum wijziging' ] );
+		return array_merge( $columns, [ 'wijziging' => 'Datum' ] );
 	}
 
 	/**
@@ -198,8 +198,9 @@ class Admin_Main {
 	 */
 	public function email_posts_custom_column( $column, $post_id ) {
 		if ( 'wijziging' === $column ) {
-			$time = get_the_modified_date( '', $post_id ) . ' ' . get_the_modified_time( '', $post_id );
-			echo "Gewijzigd<br><span title=\"$time\">$time</span>"; // phpcs:ignore
+			$date = get_the_modified_date( '', $post_id ) ?: '';
+			$time = get_the_modified_time( '', $post_id ) ?: '';
+			echo "Gewijzigd<br><span title=\"$date $time\">$date $time</span>"; // phpcs:ignore
 		}
 	}
 

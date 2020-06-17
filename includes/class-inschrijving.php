@@ -461,7 +461,7 @@ class Inschrijving extends Artikel {
 	 * @return float
 	 */
 	private function restantbedrag() {
-		$order = new \Kleistad\Order( $this->referentie() );
+		$order = new \Kleistad\Order( $this->referentie() );
 		return $order->te_betalen();
 	}
 
