@@ -31,24 +31,6 @@ class Admin_Main {
 	private $version;
 
 	/**
-	 *  De plugin opties
-	 *
-	 * @since     4.0.87
-	 * @access    private
-	 * @var       array     $options  De plugin options.
-	 */
-	private $options;
-
-	/**
-	 *  De plugin setup
-	 *
-	 * @since     6.2.1
-	 * @access    private
-	 * @var       array     $setup  De plugin technische setup.
-	 */
-	private $setup;
-
-	/**
 	 *  Oven beheer
 	 *
 	 * @since     5.0.2
@@ -103,6 +85,15 @@ class Admin_Main {
 	private $recepttermen_handler;
 
 	/**
+	 *  Instellingen beheer
+	 *
+	 * @since     6.4.2
+	 * @access    private
+	 * @var       object    $instellingen_handler  De handler voor beheer van de instellingen.
+	 */
+	private $instellingen_handler;
+
+	/**
 	 * Background object
 	 *
 	 * @since   6.1.0
@@ -121,20 +112,21 @@ class Admin_Main {
 	 */
 	public function __construct( $version, $options, $setup ) {
 		$this->version              = $version;
-		$this->options              = $options;
-		$this->setup                = $setup;
 		$this->ovens_handler        = new \Kleistad\Admin_Ovens_Handler();
 		$this->cursisten_handler    = new \Kleistad\Admin_Cursisten_Handler();
 		$this->abonnees_handler     = new \Kleistad\Admin_Abonnees_Handler();
 		$this->stooksaldo_handler   = new \Kleistad\Admin_Stooksaldo_Handler();
 		$this->regelingen_handler   = new \Kleistad\Admin_Regelingen_Handler();
 		$this->recepttermen_handler = new \Kleistad\Admin_Recepttermen_Handler();
+		$this->instellingen_handler = new \Kleistad\Admin_Instellingen_Handler( $options, $setup );
 	}
 
 	/**
 	 * Registreer de stylesheets van de admin functies.
 	 *
 	 * @since    4.0.87
+	 *
+	 * @internal Action for admin_enqueue_scripts.
 	 */
 	public function enqueue_scripts_and_styles() {
 		wp_enqueue_style( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'css/admin.css', [], $this->version, 'all' );
@@ -147,6 +139,8 @@ class Admin_Main {
 	 *
 	 * @param array    $acties De acties.
 	 * @param \WP_Post $post De post.
+	 *
+	 * @internal Filter for post_row_actions.
 	 */
 	public function post_row_actions( $acties, $post ) {
 		if ( \Kleistad\Email::POST_TYPE === $post->post_type ) {
@@ -161,6 +155,8 @@ class Admin_Main {
 	 *
 	 * @param array $columns De bestaande labels.
 	 * @return array
+	 *
+	 * @internal Filter for manage_kleistad_email_posts_columns.
 	 */
 	public function email_posts_columns( $columns ) {
 		unset( $columns['date'] );
@@ -172,6 +168,8 @@ class Admin_Main {
 	 *
 	 * @param array $columns De labels.
 	 * @return array
+	 *
+	 * @internal Filter for manage_edit-kleistad_email_sortable_columns.
 	 */
 	public function email_sortable_columns( $columns ) {
 		return array_merge( $columns, [ 'wijziging' => 'wijziging' ] );
@@ -181,6 +179,8 @@ class Admin_Main {
 	 * Zorg dat er gesorteerd wordt op wijzig datum.
 	 *
 	 * @param \WP_Query $wp_query De query.
+	 *
+	 * @internal Filter for pre_get_posts.
 	 */
 	public function email_get_posts_order( $wp_query ) {
 		if ( is_admin() ) {
@@ -195,6 +195,8 @@ class Admin_Main {
 	 *
 	 * @param string $column De kolom.
 	 * @param int    $post_id De post id.
+	 *
+	 * @internal Action for manage_kleistad_email_posts_custom_column.
 	 */
 	public function email_posts_custom_column( $column, $post_id ) {
 		if ( 'wijziging' === $column ) {
@@ -208,10 +210,12 @@ class Admin_Main {
 	 * Definieer de admin panels
 	 *
 	 * @since    4.0.87
+	 *
+	 * @internal Action for admin_menu.
 	 */
 	public function add_plugin_admin_menu() {
 		global $submenu;
-		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', 'kleistad', [ $this, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), ++$GLOBALS['_wp_last_object_menu'] );
+		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', 'kleistad', [ $this->instellingen_handler, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), ++$GLOBALS['_wp_last_object_menu'] );
 		add_submenu_page( 'kleistad', 'Instellingen', 'Instellingen', 'manage_options', 'kleistad', null );
 		$this->ovens_handler->add_pages();
 		$this->abonnees_handler->add_pages();
@@ -227,6 +231,8 @@ class Admin_Main {
 	 * @since 4.3.0
 	 *
 	 * @param array $exporters De exporters die WP aanroept bij het genereren van de zip file.
+	 *
+	 * @internal Filter for wp_privacy_personal_data_exporters.
 	 */
 	public function register_exporter( $exporters ) {
 		$exporters['kleistad'] = [
@@ -242,6 +248,8 @@ class Admin_Main {
 	 * @since 4.3.0
 	 *
 	 * @param array $erasers De erasers die WP aanroept bij het verwijderen persoonlijke data.
+	 *
+	 * @internal Filter for wp_privacy_personal_data_erasers.
 	 */
 	public function register_eraser( $erasers ) {
 		$erasers['kleistad'] = [
@@ -258,6 +266,8 @@ class Admin_Main {
 	 *
 	 * @param  object $transient Het object waarin WP de updates deelt.
 	 * @return object De transient.
+	 *
+	 * @internal Filter for pre_set_site_transient_update_plugins.
 	 */
 	public function check_update( $transient ) {
 		if ( ! empty( $transient->checked ) ) {
@@ -282,6 +292,8 @@ class Admin_Main {
 	 * @param  string $action De gevraagde actie.
 	 * @param  object $arg Argument door WP ingevuld.
 	 * @return bool|object
+	 *
+	 * @internal Filter for plugins_api.
 	 */
 	public function check_info( $obj, $action = '', $arg = null ) {
 		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) && isset( $arg->slug ) && 'kleistad' === $arg->slug ) {
@@ -324,6 +336,8 @@ class Admin_Main {
 	 * @param array $oud Oude waarde.
 	 * @param array $nieuw Nieuwe waarde.
 	 * @since 5.0.0
+	 *
+	 * @internal Action for update_option_kleistad-setup.
 	 */
 	public function setup_gewijzigd( $oud, $nieuw ) {
 		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
@@ -334,6 +348,8 @@ class Admin_Main {
 
 	/**
 	 * Bereid het background proces voor.
+	 *
+	 * @internal Action for plugins_loaded.
 	 */
 	public function instantiate_background() {
 		if ( is_null( $this->background ) ) {
@@ -343,6 +359,8 @@ class Admin_Main {
 
 	/**
 	 * Doe de dagelijkse jobs
+	 *
+	 * @internal Action for Kleistad_daily_jobs.
 	 */
 	public function daily_jobs() {
 		$this->background->push_to_queue( '\Kleistad\Shortcode::cleanup_downloads' );
@@ -356,6 +374,8 @@ class Admin_Main {
 
 	/**
 	 * Doe de gdpr cleaning, vooralsnog alleen op de laatste dag van de maand.
+	 *
+	 * @internal Action for Kleistad_daily_gdpr.
 	 */
 	public function daily_gdpr() {
 		if ( intval( date( 'd' ) ) === intval( date( 't' ) ) ) {
@@ -367,6 +387,8 @@ class Admin_Main {
 	 * Registreer de kleistad settings, uitgevoerd tijdens admin init.
 	 *
 	 * @since   4.0.87
+	 *
+	 * @internal Action for admin_init.
 	 */
 	public function initialize() {
 		$upgrade = new \Kleistad\Admin_Upgrade();
@@ -383,98 +405,8 @@ class Admin_Main {
 		if ( ! wp_next_scheduled( 'kleistad_daily_gdpr' ) ) {
 			wp_schedule_event( strtotime( '01:00' ), 'daily', 'kleistad_daily_gdpr' );
 		}
-
-		register_setting( 'kleistad-opties', 'kleistad-opties', [ 'sanitize_callback' => [ $this, 'validate_settings' ] ] );
-		register_setting( 'kleistad-setup', 'kleistad-setup', [ 'sanitize_callback' => [ $this, 'validate_settings' ] ] );
+		register_setting( 'kleistad-opties', 'kleistad-opties', [ 'sanitize_callback' => [ $this->instellingen_handler, 'validate_settings' ] ] );
+		register_setting( 'kleistad-setup', 'kleistad-setup', [ 'sanitize_callback' => [ $this->instellingen_handler, 'validate_settings' ] ] );
 	}
 
-	/**
-	 * Toon de instellingen page van de plugin.
-	 *
-	 * @since    4.0.87
-	 */
-	public function display_settings_page() {
-		$result = true;
-		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
-			\Kleistad\Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
-		} elseif ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
-			$result = \Kleistad\Google::koppel_service();
-		} elseif ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
-			$this->daily_jobs();
-		} elseif ( ! is_null( filter_input( INPUT_POST, 'corona' ) ) ) {
-			$this->corona();
-		}
-		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
-		?>
-		<div class="wrap">
-			<?php if ( is_wp_error( $result ) ) : ?>
-			<div class="error">
-				<p><?php echo esc_html( $result->get_error_message() ); ?></p>
-			</div>
-			<?php endif ?>
-			<h2 class="nav-tab-wrapper">
-			    <a href="?page=kleistad&tab=instellingen" class="nav-tab <?php echo 'instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Functionele instellingen</a>
-			    <a href="?page=kleistad&tab=setup" class="nav-tab <?php echo 'setup' === $active_tab ? 'nav-tab-active' : ''; ?>">Technische instellingen</a>
-			    <a href="?page=kleistad&tab=shortcodes" class="nav-tab <?php echo 'shortcodes' === $active_tab ? 'nav-tab-active' : ''; ?>">Shortcodes</a>
-			    <a href="?page=kleistad&tab=email-parameters" class="nav-tab <?php echo 'email-parameters' === $active_tab ? 'nav-tab-active' : ''; ?>">Email parameters</a>
-			</h2>
-			<?php require "partials/admin-$active_tab.php"; ?>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Valideer de ingevoerde instellingen
-	 *
-	 * @since    4.0.87
-	 *
-	 * @param array $input de ingevoerde instellingen.
-	 * @return array  $input
-	 */
-	public function validate_settings( $input ) {
-		foreach ( $input as &$element ) {
-			if ( is_string( $element ) ) {
-				$element = sanitize_text_field( $element );
-			} else {
-				if ( is_array( $element ) ) {
-					$element = $this->validate_settings( $element );
-				}
-			}
-		}
-		return $input;
-	}
-
-	/**
-	 * Lees het corona beschikbaarheid bestand en sla dit op.
-	 *
-	 * @return void
-	 */
-	private function corona() {
-		if ( isset( $_FILES['corona_file'] ) ) {
-			$vandaag         = strtotime( 'today' );
-			$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
-			$csv             = array_map( 'str_getcsv', file( $_FILES['corona_file']['tmp_name'] ) ?: [] );
-			foreach ( $beschikbaarheid as $datum => $tijden ) {
-				if ( $datum >= $vandaag ) {
-					unset( $beschikbaarheid[ $datum ] );
-				}
-			}
-			foreach ( $csv as $line ) {
-				list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen, $limiet_boven ) = explode( ';', $line[0] );
-				$datum = strtotime( $s_datum );
-				$tijd  = "$start - $eind";
-				if ( false === $datum || $datum < $vandaag ) {
-					continue;
-				}
-				$beschikbaarheid[ $datum ][] =
-					[
-						'T' => $tijd,
-						'D' => $limiet_draaien,
-						'H' => $limiet_handvormen,
-						'B' => $limiet_boven,
-					];
-			}
-			update_option( 'kleistad_corona_beschikbaarheid', $beschikbaarheid );
-		}
-	}
 }
