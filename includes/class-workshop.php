@@ -91,7 +91,7 @@ class Workshop extends Artikel {
 		if ( preg_match( '~(datum|start_tijd|eind_tijd)~', $attribuut ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
-		if ( preg_match( '~(vervallen|betaald|definitief|betaling_email' ) ) {
+		if ( preg_match( '~(vervallen|betaald|definitief|betaling_email', $attribuut ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {
@@ -208,7 +208,7 @@ class Workshop extends Artikel {
 		$this->save();
 		if ( ! $herbevestiging ) {
 			return $this->email( '_bevestiging' );
-		} 
+		}
 		$order_id = \Kleistad\Order::zoek_order( $this->code );
 		if ( $order_id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
 			$factuur = $this->wijzig_order( $order_id );
