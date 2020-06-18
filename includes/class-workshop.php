@@ -88,18 +88,15 @@ class Workshop extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
+		if ( preg_match( '~(datum|start_tijd|eind_tijd)~', $attribuut ) ) {
+			return strtotime( $this->data[ $attribuut ] );
+		}
+		if ( preg_match( '~(vervallen|betaald|definitief|betaling_email' ) ) {
+			return boolval( $this->data[ $attribuut ] );
+		}
 		switch ( $attribuut ) {
 			case 'technieken':
 				return json_decode( $this->data['technieken'], true );
-			case 'datum':
-			case 'start_tijd':
-			case 'eind_tijd':
-				return strtotime( $this->data[ $attribuut ] );
-			case 'vervallen':
-			case 'betaald':
-			case 'definitief':
-			case 'betaling_email':
-				return boolval( $this->data[ $attribuut ] );
 			case 'code':
 				return "W{$this->data['id']}";
 			case 'telnr':
@@ -210,20 +207,18 @@ class Workshop extends Artikel {
 		$this->definitief = true;
 		$this->save();
 		if ( ! $herbevestiging ) {
-			$this->email( '_bevestiging' );
-		} else {
-			$order_id = \Kleistad\Order::zoek_order( $this->code );
-			if ( $order_id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-				$factuur = $this->wijzig_order( $order_id );
-				if ( false === $factuur ) {
-					return false;
-				}
-				$this->email( '_betaling', $factuur );
-			} else {
-				$this->email( '_herbevestiging' );
+			return $this->email( '_bevestiging' );
+		} 
+		$order_id = \Kleistad\Order::zoek_order( $this->code );
+		if ( $order_id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
+			$factuur = $this->wijzig_order( $order_id );
+			if ( false === $factuur ) {
+				return false;
 			}
+			return $this->email( '_betaling', $factuur );
+		} else {
+			return $this->email( '_herbevestiging' );
 		}
-		return true;
 	}
 
 	/**
@@ -418,15 +413,13 @@ class Workshop extends Artikel {
 	 * @param string $transactie_id De betaling id.
 	 */
 	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
-		if ( $betaald ) {
-			if ( $order_id ) {
-				/**
-				 * Bij workshops is er altijd eerst een factuur verstuurd
-				 */
-				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-					$this->email( '_ideal' );
-				}
+		if ( $betaald && $order_id ) {
+			/**
+			 * Bij workshops is er altijd eerst een factuur verstuurd
+			 */
+			$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
+				$this->email( '_ideal' );
 			}
 		}
 	}
