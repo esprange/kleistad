@@ -79,12 +79,13 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			} elseif ( ! $cursus->tonen ) {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
+			$ruimte                                = $cursus->ruimte();
 			$data['open_cursussen'][ $cursus->id ] = [
-				'naam'          => $cursus->naam . ( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
-				'selecteerbaar' => ! $cursus->vol && ! $cursus->vervallen,
+				'naam'          => $cursus->naam . ( 0 === $ruimte ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
+				'selecteerbaar' => $ruimte && ! $cursus->vervallen,
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
-				'ruimte'        => $cursus->ruimte(),
+				'ruimte'        => $ruimte,
 				'bedrag'        => $cursus->bedrag(),
 				'lopend'        => $cursus->start_datum < strtotime( 'today' ),
 			];
@@ -143,7 +144,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		}
 		$data['cursus'] = new \Kleistad\Cursus( $data['input']['cursus_id'] );
 		$ruimte         = $data['cursus']->ruimte();
-		if ( $data['cursus']->vol ) {
+		if ( 0 === $ruimte ) {
 			$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
 			$data['input']['cursus_id'] = 0;
 		} elseif ( $ruimte < $data['input']['aantal'] ) {

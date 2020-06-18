@@ -39,30 +39,6 @@ namespace Kleistad;
 class Cursus extends Entity {
 
 	/**
-	 * Berekent de nog beschikbare ruimte voor een cursus a.d.h.v. de inschrijvingen.
-	 *
-	 * @return int nog beschikbare ruimte.
-	 */
-	public function ruimte() {
-		$inschrijvingen = \Kleistad\Inschrijving::all();
-
-		$aantal = $this->maximum;
-
-		foreach ( $inschrijvingen as $inschrijving ) {
-
-			if ( array_key_exists( $this->id, $inschrijving ) ) {
-				if ( $inschrijving[ $this->id ]->geannuleerd ) {
-					continue;
-				}
-				if ( $inschrijving[ $this->id ]->ingedeeld ) {
-					$aantal = $aantal - $inschrijving[ $this->id ]->aantal;
-				}
-			}
-		}
-		return max( $aantal, 0 );
-	}
-
-	/**
 	 * Constructor
 	 *
 	 * @global object $wpdb WordPress database.
@@ -115,6 +91,12 @@ class Cursus extends Entity {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
+		if ( preg_match( '~(start_datum|eind_datum|start_tijd|eind_tijd)~', $attribuut ) ) {
+			return strtotime( $this->data[ $attribuut ] );
+		}
+		if ( preg_match( '~(vol|vervallen|techniekkeuze|meer|tonen)~', $attribuut ) ) {
+			return boolval( $this->data[ $attribuut ] );
+		}
 		switch ( $attribuut ) {
 			case 'technieken':
 				return json_decode( $this->data[ $attribuut ], true );
@@ -125,18 +107,6 @@ class Cursus extends Entity {
 					},
 					json_decode( $this->data[ $attribuut ], true )
 				);
-			case 'start_datum':
-			case 'eind_datum':
-			case 'start_tijd':
-			case 'eind_tijd':
-				return strtotime( $this->data[ $attribuut ] );
-			case 'vol':
-				return boolval( $this->data[ $attribuut ] ) || 0 === $this->ruimte();
-			case 'vervallen':
-			case 'techniekkeuze':
-			case 'meer':
-			case 'tonen':
-				return boolval( $this->data[ $attribuut ] );
 			case 'code':
 				return "C{$this->data['id']}";
 			case 'event_id':
@@ -178,6 +148,25 @@ class Cursus extends Entity {
 			default:
 				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
 		}
+	}
+
+	/**
+	 * Berekent de nog beschikbare ruimte voor een cursus a.d.h.v. de inschrijvingen.
+	 *
+	 * @return int nog beschikbare ruimte.
+	 */
+	public function ruimte() {
+		if ( $this->vol ) {
+			return 0;
+		}
+		$inschrijvingen = \Kleistad\Inschrijving::all();
+		$aantal         = $this->maximum;
+		foreach ( $inschrijvingen as $inschrijving ) {
+			if ( array_key_exists( $this->id, $inschrijving ) && $inschrijving[ $this->id ]->ingedeeld && ! $inschrijving[ $this->id ]->geannuleerd ) {
+				$aantal = $aantal - $inschrijving[ $this->id ]->aantal;
+			}
+		}
+		return max( $aantal, 0 );
 	}
 
 	/**

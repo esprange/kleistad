@@ -17,11 +17,6 @@ namespace Kleistad;
 class Admin_Main {
 
 	/**
-	 * Plugin-database-versie
-	 */
-	const DBVERSIE = 27;
-
-	/**
 	 * De versie van de plugin.
 	 *
 	 * @since    4.0.87
@@ -315,7 +310,7 @@ class Admin_Main {
 	 * @param  string $action De gevraagde actie.
 	 * @return bool|object remote info.
 	 */
-	public function get_remote( $action = '' ) {
+	private function get_remote( $action = '' ) {
 		$params  = [
 			'timeout' => 10,
 			'body'    => [

@@ -35,7 +35,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'eind_tijd'   => date( 'H:i', $cursus->eind_tijd ),
 				'docent'      => $cursus->docent_naam(),
 				'vervallen'   => $cursus->vervallen,
-				'vol'         => $cursus->vol,
+				'vol'         => $cursus->ruimte(),
 				'status'      => $cursus->vervallen ? 'vervallen' :
 					( $cursus->eind_datum < $vandaag ? 'voltooid' :
 					( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
@@ -72,7 +72,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			'docent'          => $cursus->docent,
 			'technieken'      => $cursus->technieken,
 			'vervallen'       => $cursus->vervallen,
-			'vol'             => $cursus->vol,
+			'vol'             => $cursus->ruimte(),
 			'techniekkeuze'   => $cursus->techniekkeuze,
 			'inschrijfkosten' => $cursus->inschrijfkosten,
 			'cursuskosten'    => $cursus->cursuskosten,

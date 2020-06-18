@@ -95,7 +95,7 @@ class Abonnement extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
-		if ( false !== strpos( $attribuut, 'datum' ) ) {
+		if ( preg_match( '~(datum)~', $attribuut ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {
