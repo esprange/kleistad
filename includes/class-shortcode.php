@@ -62,23 +62,6 @@ abstract class Shortcode {
 	abstract protected function prepare( &$data);
 
 	/**
-	 * Controleer toegang tot deze shortcode.
-	 *
-	 * @since 5.7.2
-	 *
-	 * @param string $shortcode De shortcode.
-	 * @return bool Of er toegang is.
-	 */
-	public static function check_access( $shortcode ) {
-		$access = Public_Main::SHORTCODES[ $shortcode ]['access'];
-		if ( ! empty( $access ) ) {
-			$gebruiker = wp_get_current_user();
-			return $gebruiker->ID && 0 !== count( array_intersect( $access, (array) $gebruiker->roles ) );
-		}
-		return true;
-	}
-
-	/**
 	 * Maak een melding tekst aan.
 	 *
 	 * @param int    $status  1 succes, 0 fout, -1 notificatie.
@@ -98,7 +81,7 @@ abstract class Shortcode {
 	 * Enqueue the scripts and styles for the shortcode.
 	 */
 	protected function enqueue() {
-		foreach ( \Kleistad\Public_Main::SHORTCODES[ $this->shortcode ]['css'] as $dependency ) {
+		foreach ( \Kleistad\Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['css'] as $dependency ) {
 			wp_enqueue_style( $dependency );
 		}
 		if ( ! wp_style_is( 'kleistad' ) ) {
@@ -122,7 +105,7 @@ abstract class Shortcode {
 		if ( wp_script_is( "kleistad{$this->shortcode}", 'registered' ) ) {
 			wp_enqueue_script( "kleistad{$this->shortcode}" );
 		} else {
-			foreach ( \Kleistad\Public_Main::SHORTCODES[ $this->shortcode ]['js'] as $dependency ) {
+			foreach ( \Kleistad\Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['js'] as $dependency ) {
 				wp_enqueue_script( $dependency );
 			}
 		}
@@ -252,7 +235,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( \WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
-					return self::check_access( $shortcode );
+					return \Kleistad\Public_Shortcode_Handler::check_access( $shortcode );
 				},
 			]
 		);
@@ -264,7 +247,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( \WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
-					return self::check_access( $shortcode );
+					return \Kleistad\Public_Shortcode_Handler::check_access( $shortcode );
 				},
 			]
 		);
@@ -276,7 +259,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_download' ],
 				'permission_callback' => function( \WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
-					return self::check_access( $shortcode );
+					return \Kleistad\Public_Shortcode_Handler::check_access( $shortcode );
 				},
 			]
 		);

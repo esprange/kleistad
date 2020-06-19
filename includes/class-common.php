@@ -21,6 +21,8 @@ class Common {
 	 *
 	 * @param string $user_login niet gebruikte parameter.
 	 * @param object $user wp user object.
+	 *
+	 * @internal Action for wp_login.
 	 */
 	public function user_login( $user_login, $user = null ) {
 
@@ -43,6 +45,8 @@ class Common {
 
 	/**
 	 * Toont het Kleistad logo op de login.
+	 *
+	 * @internal Action for login_enqueue_scripts.
 	 */
 	public function login_enqueue_scripts() {
 		?>
@@ -68,6 +72,8 @@ class Common {
 
 	/**
 	 * Wijzig de url naar de home url.
+	 *
+	 * @internal Action for login_headerurl.
 	 */
 	public function login_headerurl() {
 		return home_url();
@@ -75,6 +81,8 @@ class Common {
 
 	/**
 	 * Toon de juiste text bij hovering over het login logo.
+	 *
+	 * @internal Action for login_headertext.
 	 */
 	public function login_headertext() {
 		return 'Kleistad';
@@ -85,6 +93,8 @@ class Common {
 	 *
 	 * @param string $message the message shown to the user.
 	 * @return string
+	 *
+	 * @internal Filter for login_message.
 	 */
 	public function user_login_message( $message ) {
 
@@ -102,6 +112,8 @@ class Common {
 	 * @param object   $request Wordt niet gebruikt.
 	 * @param \WP_User $user Het WordPress user object.
 	 * @return string De Url.
+	 *
+	 * @internal Filter for login_redirect.
 	 */
 	public function login_redirect( $url, $request, $user ) {
 		if ( isset( $request ) && $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) { // De test van request is dummy statement, altijd true.
@@ -113,6 +125,8 @@ class Common {
 
 	/**
 	 * Verberg de toolbar voor iedereen die geen edit toegang op pagina's heeft.
+	 *
+	 * @internal Filter for after_setup_theme.
 	 */
 	public function verberg_toolbar() {
 		if ( ! current_user_can( 'edit_posts' ) ) {
@@ -129,6 +143,8 @@ class Common {
 	 * @param string    $items     De menu opties.
 	 * @param \stdClass $args      De argumenten van het filter.
 	 * @return string
+	 *
+	 * @internal Filter for wp_nav_menu_items.
 	 */
 	public function loginuit_menu( $items, $args ) {
 		static $is_active = false;
@@ -155,6 +171,8 @@ class Common {
 	 * Voeg 15 minuten schedule toe aan bestaande set van schedules.
 	 *
 	 * @param array $schedules De set van schedules.
+	 *
+	 * @internal Filter for cron_schedules.
 	 */
 	public function cron_schedules( $schedules ) {
 		if ( ! isset( $schedules['15_mins'] ) ) {

@@ -27,175 +27,26 @@ class Public_Main {
 	private $version;
 
 	/**
-	 * De kleistad plugin opties.
+	 * De handler voor de shortcodes.
 	 *
-	 * @var array kleistad plugin settings
+	 * @since 6.4.2
+	 * @access private
+	 * @var object $shortcode_handler De handler voor de shortcodes.
 	 */
-	private $options;
+	private $shortcode_handler;
 
 	/**
-	 * De shortcodes van kleistad
+	 * Initialize the class and set its properties.
 	 *
-	 * @var array shortcodes met hun style en jscript afhankelijkheden.
+	 * @since    4.0.87
+	 *
+	 * @param string $version       The version of this plugin.
+	 * @param array  $options       De plugin options.
 	 */
-	const SHORTCODES = [
-		'abonnee_inschrijving'  => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [],
-		],
-		'abonnee_wijziging'     => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ 'leden' ],
-		],
-		'abonnement_overzicht'  => [
-			'script' => false,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [ 'bestuur' ],
-		],
-		'betaling'              => [
-			'script' => true,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [],
-		],
-		'contact'               => [
-			'script' => false,
-			'js'     => [],
-			'css'    => [],
-			'access' => [],
-		],
-		'corona'                => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-button', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [],
-		],
-		'cursus_beheer'         => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ 'bestuur' ],
-		],
-		'cursus_inschrijving'   => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [],
-		],
-		'cursus_overzicht'      => [
-			'script' => false,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ 'docenten', 'bestuur' ],
-		],
-		'dagdelenkaart'         => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [],
-		],
-		'debiteuren'            => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ 'boekhouding' ],
-		],
-		'email'                 => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jstree' ],
-			'css'    => [ 'jquery-ui', 'jstree' ],
-			'access' => [ 'docenten', 'bestuur' ],
-		],
-		'kalender'              => [
-			'script' => true,
-			'js'     => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
-			'css'    => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
-			'access' => [ 'docenten', 'leden', 'bestuur' ],
-		],
-		'omzet_rapportage'      => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ 'bestuur' ],
-		],
-		'rapport'               => [
-			'script' => false,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [ 'docenten', 'leden', 'bestuur' ],
-		],
-		'recept_beheer'         => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ 'docenten', 'leden', 'bestuur' ],
-		],
-		'recept'                => [
-			'script' => true,
-			'js'     => [ 'jquery' ],
-			'css'    => [ 'dashicons' ],
-			'access' => [],
-		],
-		'registratie_overzicht' => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ 'bestuur' ],
-		],
-		'registratie'           => [
-			'script' => true,
-			'js'     => [ 'jquery', 'password-strength-meter' ],
-			'css'    => [],
-			'access' => [ 'docenten', 'leden', 'bestuur' ],
-		],
-		'reservering'           => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ 'docenten', 'leden', 'bestuur' ],
-		],
-		'saldo_overzicht'       => [
-			'script' => false,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [ 'bestuur' ],
-		],
-		'saldo'                 => [
-			'script' => true,
-			'js'     => [ 'jquery' ],
-			'css'    => [],
-			'access' => [ 'docenten', 'leden', 'bestuur' ],
-		],
-		'stookbestand'          => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ 'bestuur' ],
-		],
-		'verkoop'               => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ 'bestuur' ],
-		],
-		'workshop_aanvraag'     => [
-			'script' => false,
-			'js'     => [ 'jquery' ],
-			'css'    => [],
-			'access' => [],
-		],
-		'workshop_beheer'       => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ 'bestuur' ],
-		],
-	];
+	public function __construct( $version, $options ) {
+		$this->version           = $version;
+		$this->shortcode_handler = new \Kleistad\Public_Shortcode_Handler( $options );
+	}
 
 	/**
 	 * Geeft de basis url terug voor de endpoints.
@@ -216,31 +67,20 @@ class Public_Main {
 	}
 
 	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    4.0.87
-	 *
-	 * @param      string $version       The version of this plugin.
-	 * @param      array  $options       De plugin options.
-	 */
-	public function __construct( $version, $options ) {
-		$this->version = $version;
-		$this->options = $options;
-	}
-
-	/**
 	 * Voeg de shortcodes toe.
+	 *
+	 * @internal Action for init.
 	 */
 	public function register_shortcodes() {
-		foreach ( array_keys( self::SHORTCODES ) as $shortcode ) {
-			add_shortcode( "kleistad_$shortcode", [ $this, 'shortcode_handler' ] );
-		}
+		$this->shortcode_handler->register();
 	}
 
 	/**
 	 * Registreer de scripts en stylesheets voor de publieke functies van de plugin.
 	 *
 	 * @since    4.0.87
+	 *
+	 * @internal Action for wp_enqueue_scripts.
 	 */
 	public function register_styles_and_scripts() {
 		$dev        = defined( 'KLEISTAD_DEV' ) ? '' : '.min';
@@ -264,7 +104,7 @@ class Public_Main {
 		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad' ], $this->version, true );
 
-		foreach ( self::SHORTCODES as $shortcode => $dependencies ) {
+		foreach ( \Kleistad\Public_Shortcode_Handler::SHORTCODES as $shortcode => $dependencies ) {
 			if ( $dependencies['script'] ) {
 				$file = str_replace( '_', '-', $shortcode );
 				wp_register_script( "kleistad$shortcode", plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", $dependencies['js'], $this->version, false );
@@ -277,6 +117,8 @@ class Public_Main {
 	 * Registreer de AJAX endpoints
 	 *
 	 * @since   4.0.87
+	 *
+	 * @internal Action for rest_api_init.
 	 */
 	public function register_endpoints() {
 		\Kleistad\Adres::register_rest_routes(); // Postcode.
@@ -292,6 +134,8 @@ class Public_Main {
 	 * Maak de custom post types en taxonomy
 	 *
 	 * @since 4.1.0
+	 *
+	 * @internal Action for init.
 	 */
 	public static function register_post_types() {
 		global $wp_post_types;
@@ -309,6 +153,8 @@ class Public_Main {
 	 *
 	 * @param string $single_template het template path.
 	 * @return string
+	 *
+	 * @internal Filter for single_template.
 	 */
 	public function single_template( $single_template ) {
 		global $post;
@@ -327,6 +173,8 @@ class Public_Main {
 	 *
 	 * @param string $comments_template het template path.
 	 * @return string
+	 *
+	 * @internal Filter for comments_template.
 	 */
 	public function comments_template( $comments_template ) {
 		global $post;
@@ -345,6 +193,8 @@ class Public_Main {
 	 *
 	 * @param array $fields De commentaar velden.
 	 * @return array
+	 *
+	 * @internal Filter for comment_form_default_fields.
 	 */
 	public function comment_fields( $fields ) {
 		if ( isset( $fields['url'] ) ) {
@@ -359,10 +209,12 @@ class Public_Main {
 	 * @param array $email_change_email Basis voor WP_mail.
 	 * @param array $user               De bestaande user info.
 	 * @param array $userdata           De gewijzigd user info.
+	 *
+	 * @internal Filter for email_change_email.
 	 * phpcs:disable
 	 */
 	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
-	 	// phpcs:enable
+		// phpcs:enable
 		$emailer = new \Kleistad\Email();
 		return $emailer->notify(
 			[
@@ -385,6 +237,8 @@ class Public_Main {
 	 * @param array $email_change_email Basis voor WP_mail.
 	 * @param array $user               De bestaande user info.
 	 * @param array $userdata           De gewijzigd user info.
+	 *
+	 * @internal Filter for password_change_email.
 	 * phpcs:disable
 	 */
 	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
@@ -410,10 +264,12 @@ class Public_Main {
 	 * @param string   $key        De reset sleutel.
 	 * @param string   $user_login De gebruiker login naam.
 	 * @param \WP_User $user_data  Het user record van de gebruiker.
+	 *
+	 * @internal Filter for retrieve_password_message.
 	 * phpcs:disable
 	 */
 	public function retrieve_password_message( /** @scrutinizer ignore-unused */ $message, $key, $user_login = '', $user_data = '' ) {
- 		// phpcs:enable
+		// phpcs:enable
 		$emailer = new \Kleistad\Email();
 		$result  = $emailer->notify(
 			[
@@ -434,6 +290,8 @@ class Public_Main {
 	 * Password hint
 	 *
 	 * @return string
+	 *
+	 * @internal Filter for password_hint.
 	 */
 	public function password_hint() {
 		return "Hint: het wachtwoord moet minimaal 9 tekens lang zijn. Bij de invoer wordt gecontroleerd op te gemakkelijk te bedenken wachtwoorden (als 1234...).\nGebruik hoofd- en kleine letters, nummers en tekens zoals ! \" ? $ % ^ & ) om het wachtwoord sterker te maken.";
@@ -441,6 +299,8 @@ class Public_Main {
 
 	/**
 	 * Voegt inline style in, zoals om te voorkomen dat er zwakke wachtwoorden mogelijk zijn.
+	 *
+	 * @internal Action for init.
 	 */
 	public function inline_style() {
 		wp_add_inline_style( 'login', '.pw-weak {display:none !important;}' );
@@ -453,6 +313,8 @@ class Public_Main {
 	 *
 	 * @param array $user_contact_method De extra velden met adresgegevens.
 	 * @return array de extra velden.
+	 *
+	 * @internal Filter for user_contactmethods.
 	 */
 	public function user_contact_methods( $user_contact_method ) {
 
@@ -469,6 +331,8 @@ class Public_Main {
 	 * Pas de template aan ingeval van de pagina voor de ideal betaal link.
 	 *
 	 * @param string $template De locatie van de template file.
+	 *
+	 * @internal Filter for template_include.
 	 */
 	public function template_include( $template ) {
 		if ( is_page( 'kleistad-betaling' ) ) {
@@ -478,41 +342,9 @@ class Public_Main {
 	}
 
 	/**
-	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
-	 *
-	 * @since 4.0.87
-	 *
-	 * @param array  $atts      de meegegeven params van de shortcode.
-	 * @param string $content   wordt niet gebruikt.
-	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
-	 * @return string           html resultaat.
-	 */
-	public function shortcode_handler( $atts, $content, $tag ) {
-		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
-		$shortcode_object = \Kleistad\Shortcode::get_instance( $shortcode, $atts, $this->options );
-		if ( is_null( $shortcode_object ) ) {
-			return '';
-		}
-		if ( ! \Kleistad\Shortcode::check_access( $shortcode ) ) {
-			return $shortcode_object->status( new \WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
-		}
-		$html        = '';
-		static $divs = false; // De ondersteunende divs zijn maar eenmalig nodig.
-		if ( ! $divs ) {
-			$divs  = true;
-			$html .= '<div id="kleistad_berichten" ></div><div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
-		}
-		$html .= '<div class="kleistad_shortcode" data-tag="' . $shortcode . '" ';
-		if ( ! empty( $atts ) ) {
-			$json_atts = wp_json_encode( $atts, JSON_HEX_QUOT | JSON_HEX_TAG );
-			$html     .= ' data-atts=' . "'$json_atts'";
-		}
-		$html .= ' >' . $shortcode_object->run() . '</div>';
-		return $html;
-	}
-
-	/**
 	 * Ontvang en verwerk email
+	 *
+	 * @internal Action for rcv_email.
 	 */
 	public function rcv_email() {
 		\Kleistad\WorkshopAanvraag::ontvang_en_verwerk();
@@ -520,6 +352,8 @@ class Public_Main {
 
 	/**
 	 * Update het wachtwoord (aangeroepen via admin_ajax).
+	 *
+	 * @internal Action for wp_ajax_kleistad_wachtwoord, wp_ajax_nopriv_kleistad_wachtwoord.
 	 */
 	public function wachtwoord() {
 		check_ajax_referer( 'wp_rest', 'security' );
