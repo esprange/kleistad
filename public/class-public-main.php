@@ -379,14 +379,16 @@ class Public_Main {
 	 * @internal Action for user_register.
 	 */
 	public function user_register( $id ) {
-		$userdata   = get_userdata( $id );
-		$user_login = sanitize_user( strtolower( preg_replace( '/\s+/', '', $userdata->first_name . $userdata->last_name ) ), true );
-		while ( 8 > mb_strlen( $user_login ) || username_exists( $user_login ) ) {
-			$user_login .= chr( wp_rand( ord( '0' ), ord( '9' ) ) ); // Aanvullen met een cijfer tot minimaal 8 karakters en uniek.
+		$userdata = get_userdata( $id );
+		if ( false !== $userdata ) {
+			$user_login = sanitize_user( strtolower( preg_replace( '/\s+/', '', $userdata->first_name . $userdata->last_name ) ), true );
+			while ( 8 > mb_strlen( $user_login ) || username_exists( $user_login ) ) {
+				$user_login .= chr( wp_rand( ord( '0' ), ord( '9' ) ) ); // Aanvullen met een cijfer tot minimaal 8 karakters en uniek.
+			}
+			$userdata->user_login = $user_login;
+			$userdata->role       = '';
+			wp_update_user( $userdata );
 		}
-		$userdata->user_login = $user_login;
-		$userdata->role       = '';
-		wp_update_user( $userdata );
 	}
 
 	/**
@@ -397,13 +399,15 @@ class Public_Main {
 	 * @internal Action for profile_update.
 	 */
 	public function profile_update( $id ) {
-		remove_action( 'profile_update', [ $this, __FUNCTION__ ] ); // Voorkom dat na de update deze actie opnieuw aangeroepen wordt.
-		$userdata                = get_userdata( $id );
-		$nice_voornaam           = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata->first_name ) ) );
-		$nice_achternaam         = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata->last_name ) ) );
-		$userdata->user_nicename = "$nice_voornaam-$nice_achternaam";
-		$userdata->display_name  = "{$userdata->first_name} {$userdata->last_name}";
-		wp_update_user( $userdata );
+		$userdata = get_userdata( $id );
+		if ( false !== $userdata ) {
+			remove_action( 'profile_update', [ $this, __FUNCTION__ ] ); // Voorkom dat na de update deze actie opnieuw aangeroepen wordt.
+			$nice_voornaam           = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata->first_name ) ) );
+			$nice_achternaam         = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata->last_name ) ) );
+			$userdata->user_nicename = "$nice_voornaam-$nice_achternaam";
+			$userdata->display_name  = "{$userdata->first_name} {$userdata->last_name}";
+			wp_update_user( $userdata );
+		}
 	}
 
 }
