@@ -71,14 +71,14 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param array     $input de ingevoerde data.
 	 */
 	protected function validate_gebruiker( &$error, $input ) {
-		if ( ! $this->validate_email( $input['EMAIL'] ) ) {
-			$error->add( 'verplicht', 'De invoer ' . $input['EMAIL'] . ' is geen geldig E-mail adres.' );
-			$input['EMAIL']          = '';
+		if ( ! $this->validate_email( $input['user_email'] ) ) {
+			$error->add( 'verplicht', 'De invoer ' . $input['user_email'] . ' is geen geldig E-mail adres.' );
+			$input['user_email']     = '';
 			$input['email_controle'] = '';
 		} else {
 			$this->validate_email( $input['email_controle'] );
-			if ( $input['email_controle'] !== $input['EMAIL'] ) {
-				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['EMAIL'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
+			if ( $input['email_controle'] !== $input['user_email'] ) {
+				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['user_email'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
 				$input['email_controle'] = '';
 			}
 		}
@@ -88,13 +88,13 @@ abstract class ShortcodeForm extends Shortcode {
 		if ( ! empty( $input['pcode'] ) && ! $this->validate_pcode( $input['pcode'] ) ) {
 			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
 		}
-		if ( ! $this->validate_naam( $input['FNAME'] ) ) {
+		if ( ! $this->validate_naam( $input['first_name'] ) ) {
 			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
-			$input['FNAME'] = '';
+			$input['first_name'] = '';
 		}
-		if ( ! $this->validate_naam( $input['LNAME'] ) ) {
+		if ( ! $this->validate_naam( $input['last_name'] ) ) {
 			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
-			$input['LNAME'] = '';
+			$input['last_name'] = '';
 		}
 
 		return $error;

@@ -29,10 +29,10 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [
-				'EMAIL'           => '',
+				'user_email'      => '',
 				'email_controle'  => '',
-				'FNAME'           => '',
-				'LNAME'           => '',
+				'first_name'      => '',
+				'last_name'       => '',
 				'straat'          => '',
 				'huisnr'          => '',
 				'pcode'           => '',
@@ -67,10 +67,10 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 			INPUT_POST,
 			[
 				'gebruiker_id'    => FILTER_SANITIZE_NUMBER_INT,
-				'EMAIL'           => FILTER_SANITIZE_EMAIL,
+				'user_email'      => FILTER_SANITIZE_EMAIL,
 				'email_controle'  => FILTER_SANITIZE_EMAIL,
-				'FNAME'           => FILTER_SANITIZE_STRING,
-				'LNAME'           => FILTER_SANITIZE_STRING,
+				'first_name'      => FILTER_SANITIZE_STRING,
+				'last_name'       => FILTER_SANITIZE_STRING,
 				'straat'          => FILTER_SANITIZE_STRING,
 				'huisnr'          => FILTER_SANITIZE_STRING,
 				'pcode'           => FILTER_SANITIZE_STRING,
@@ -108,14 +108,14 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( ! is_user_logged_in() ) {
-			$gebruiker_id = email_exists( $data['input']['EMAIL'] );
-			$gebruiker_id = Public_Main::upsert_user(
+			$gebruiker_id = email_exists( $data['input']['user_email'] );
+			$gebruiker_id = upsert_user(
 				[
 					'ID'         => ( false !== $gebruiker_id ) ? $gebruiker_id : null,
-					'first_name' => $data['input']['FNAME'],
-					'last_name'  => $data['input']['LNAME'],
+					'first_name' => $data['input']['first_name'],
+					'last_name'  => $data['input']['last_name'],
 					'telnr'      => $data['input']['telnr'],
-					'user_email' => $data['input']['EMAIL'],
+					'user_email' => $data['input']['user_email'],
 					'straat'     => $data['input']['straat'],
 					'huisnr'     => $data['input']['huisnr'],
 					'pcode'      => $data['input']['pcode'],

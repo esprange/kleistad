@@ -17,6 +17,23 @@ namespace Kleistad;
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 /**
+ * Insert of update de gebruiker.
+ *
+ * @param array $userdata De gebruiker gegevens, inclusief contact informatie.
+ * @return int|\WP_Error  De user_id of een error object.
+ */
+function upsert_user( $userdata ) {
+	if ( is_null( $userdata['ID'] ) ) {
+		$userdata['user_login'] = $userdata['user_email'];
+		$userdata['user_pass']  = wp_generate_password( 12, true );
+		$result                 = wp_insert_user( (object) $userdata );
+	} else {
+		$result = wp_update_user( (object) $userdata );
+	}
+	return $result;
+}
+
+/**
  * De Kleistad plugin class.
  *
  * @since      4.0.87
@@ -136,6 +153,8 @@ class Kleistad {
 		$this->loader->add_action( 'init', $plugin_public, 'inline_style', 100 );
 		$this->loader->add_action( 'wp_ajax_kleistad_wachtwoord', $plugin_public, 'wachtwoord', 100 );
 		$this->loader->add_action( 'wp_ajax_nopriv_kleistad_wachtwoord', $plugin_public, 'wachtwoord', 100 );
+		$this->loader->add_action( 'register_user', $plugin_public, 'register_user' );
+		$this->loader->add_action( 'profile_update', $plugin_public, 'profile_update' );
 
 		$this->loader->add_filter( 'single_template', $plugin_public, 'single_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );

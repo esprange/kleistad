@@ -91,7 +91,7 @@ class Workshop extends Artikel {
 		if ( preg_match( '~(datum|start_tijd|eind_tijd)~', $attribuut ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
-		if ( preg_match( '~(vervallen|betaald|definitief|betaling_email', $attribuut ) ) {
+		if ( preg_match( '~(vervallen|betaald|definitief|betaling_email)~', $attribuut ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {

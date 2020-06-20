@@ -18,9 +18,9 @@
 		<label for="kleistad_voornaam">Voornaam</label>
 	</div>
 	<div class="kleistad_col_4">
-		<input class="kleistad_input" name="FNAME" id="kleistad_voornaam" type="text"
+		<input class="kleistad_input" name="first_name" id="kleistad_voornaam" type="text"
 		required maxlength="25" placeholder="voornaam" title="Vul s.v.p. de voornaam in"
-		value="<?php echo esc_attr( $data['input']['FNAME'] ); ?>" autocomplete="given-name" />
+		value="<?php echo esc_attr( $data['input']['first_name'] ); ?>" autocomplete="given-name" />
 	</div>
 </div>
 <div class="kleistad_row">
@@ -28,9 +28,9 @@
 		<label for="kleistad_achternaam">Achternaam</label>
 	</div>
 	<div class="kleistad_col_4">
-		<input class="kleistad_input" name="LNAME" id="kleistad_achternaam" type="text"
+		<input class="kleistad_input" name="last_name" id="kleistad_achternaam" type="text"
 		required maxlength="25" placeholder="achternaam" title="Vul s.v.p. de achternaam in"
-		value="<?php echo esc_attr( $data['input']['LNAME'] ); ?>" autocomplete="family-name" />
+		value="<?php echo esc_attr( $data['input']['last_name'] ); ?>" autocomplete="family-name" />
 	</div>
 </div>
 <div class="kleistad_row">
@@ -38,10 +38,10 @@
 		<label for="kleistad_emailadres">Email adres</label>
 	</div>
 	<div class="kleistad_col_4">
-		<input class="kleistad_input" name="EMAIL" id="kleistad_emailadres" type="email"
+		<input class="kleistad_input" name="user_email" id="kleistad_emailadres" type="email"
 		required placeholder="mijnemailadres@voorbeeld.nl" pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$"
 		title="Vul s.v.p. een geldig email adres in"
-		value="<?php echo esc_attr( $data['input']['EMAIL'] ); ?>" autocomplete="email" />
+		value="<?php echo esc_attr( $data['input']['user_email'] ); ?>" autocomplete="email" />
 	</div>
 </div>
 <div class="kleistad_row">

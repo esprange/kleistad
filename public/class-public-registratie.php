@@ -107,7 +107,7 @@ class Public_Registratie extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$result = Public_Main::upsert_user(
+		$result = upsert_user(
 			[
 				'ID'         => $data['gebruiker_id'],
 				'first_name' => $data['input']['voornaam'],

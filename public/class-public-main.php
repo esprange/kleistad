@@ -372,41 +372,38 @@ class Public_Main {
 	}
 
 	/**
-	 * Insert of update de gebruiker.
+	 * Format the fields after insert of user
 	 *
-	 * @param array $userdata De gebruiker gegevens, inclusief contact informatie.
-	 * @return int|\WP_Error  De user_id of een error object.
+	 * @param int $id Het gebruiker id.
+	 *
+	 * @internal Action for user_register.
 	 */
-	public static function upsert_user( $userdata ) {
-		$nice_voornaam   = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata['first_name'] ) ) );
-		$nice_achternaam = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata['last_name'] ) ) );
-
-		if ( is_null( $userdata['ID'] ) ) {
-			$uniek     = '';
-			$startnaam = $nice_voornaam;
-			if ( 8 > mb_strlen( $startnaam ) ) { // Gebruikersnaam moet minimaal 8 karakters hebben.
-				$startnaam = substr( $startnaam . $nice_achternaam, 0, 8 );
-				while ( 8 > mb_strlen( $startnaam ) ) {
-					$startnaam .= chr( wp_rand( ord( '0' ), ord( '9' ) ) ); // Aanvullen met een cijfer.
-				}
-			}
-			while ( username_exists( $startnaam . $uniek ) ) {
-				$uniek = intval( $uniek ) + 1;
-			}
-
-			$userdata['user_login']      = $startnaam . $uniek;
-			$userdata['user_pass']       = wp_generate_password( 12, true );
-			$userdata['user_registered'] = date( 'Y-m-d H:i:s' );
-			$userdata['user_nicename']   = $nice_voornaam . '-' . $nice_achternaam;
-			$userdata['display_name']    = $userdata['first_name'] . ' ' . $userdata['last_name'];
-			$userdata['role']            = '';
-			$result                      = wp_insert_user( (object) $userdata );
-		} else {
-			$userdata['user_nicename'] = $nice_voornaam . '-' . $nice_achternaam;
-			$userdata['display_name']  = $userdata['first_name'] . ' ' . $userdata['last_name'];
-			$result                    = wp_update_user( (object) $userdata );
+	public function user_register( $id ) {
+		$userdata   = get_userdata( $id );
+		$user_login = sanitize_user( strtolower( preg_replace( '/\s+/', '', $userdata->first_name . $userdata->last_name ) ), true );
+		while ( 8 > mb_strlen( $user_login ) || username_exists( $user_login ) ) {
+			$user_login .= chr( wp_rand( ord( '0' ), ord( '9' ) ) ); // Aanvullen met een cijfer tot minimaal 8 karakters en uniek.
 		}
-		return $result;
+		$userdata->user_login = $user_login;
+		$userdata->role       = '';
+		wp_update_user( $userdata );
+	}
+
+	/**
+	 * Update the fields after update of user
+	 *
+	 * @param int $id Het gebruiker id.
+	 *
+	 * @internal Action for profile_update.
+	 */
+	public function profile_update( $id ) {
+		remove_action( 'profile_update', [ $this, __FUNCTION__ ] ); // Voorkom dat na de update deze actie opnieuw aangeroepen wordt.
+		$userdata                = get_userdata( $id );
+		$nice_voornaam           = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata->first_name ) ) );
+		$nice_achternaam         = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata->last_name ) ) );
+		$userdata->user_nicename = "$nice_voornaam-$nice_achternaam";
+		$userdata->display_name  = "{$userdata->first_name} {$userdata->last_name}";
+		wp_update_user( $userdata );
 	}
 
 }
