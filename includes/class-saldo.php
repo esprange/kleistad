@@ -15,7 +15,6 @@ namespace Kleistad;
  * Klasse voor het beheren van de stook saldo.
  *
  * @property float  bedrag
- * @property string reden
  * @property array  storting
  * @property float  prijs
  */
@@ -34,8 +33,15 @@ class Saldo extends Artikel {
 			[],
 		],
 		'bedrag'   => 0.0,
-		'reden'    => '',
 	];
+
+	/**
+	 * De reden waarvoor het saldo gewijzigd wordt. Is alleen voor de logging bedoeld.
+	 *
+	 * @access public
+	 * @var string $reden De reden.
+	 */
+	public $reden;
 
 	/**
 	 * Het volgnummer van de dagdelenkaart.
@@ -79,6 +85,8 @@ class Saldo extends Artikel {
 				return strtotime( $this->data['storting'][ $laatste_storting ][ $attribuut ] );
 			case 'prijs':
 				return (float) $this->data['storting'][ $laatste_storting ][ $attribuut ];
+			case 'reden':
+				return $this->reden;
 			default:
 				return $this->data['storting'][ $laatste_storting ][ $attribuut ];
 		}
@@ -101,6 +109,9 @@ class Saldo extends Artikel {
 				break;
 			case 'datum':
 				$this->data['storting'][ $laatste_storting ][ $attribuut ] = date( 'Y-m-d', $waarde );
+				break;
+			case 'reden':
+				$this->reden = $waarde;
 				break;
 			default:
 				$this->data['storting'][ $laatste_storting ][ $attribuut ] = $waarde;
@@ -186,7 +197,6 @@ class Saldo extends Artikel {
 			'code'  => "S$this->klant_id-$datum-$this->volgnr",
 			'datum' => date( 'Y-m-d', strtotime( 'today' ) ),
 			'prijs' => $prijs,
-			'reden' => '',
 		];
 		$this->save();
 	}
@@ -202,7 +212,12 @@ class Saldo extends Artikel {
 		$saldo        = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$huidig_saldo = $saldo ? (float) $saldo['bedrag'] : 0.0;
 		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) && $huidig_saldo !== $this->bedrag ) {
-			self::write_log( get_userdata( $this->klant_id )->display_name . ' nu: € ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: € ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden );
+			$tekst = get_userdata( $this->klant_id )->display_name . ' nu: € ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: € ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
+			file_put_contents(  // phpcs:ignore
+				wp_upload_dir()['basedir'] . '/stooksaldo.log',
+				date( 'c' ) . " : $tekst\n",
+				FILE_APPEND
+			);
 			return true;
 		}
 		return false;
@@ -231,8 +246,8 @@ class Saldo extends Artikel {
 	 */
 	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
-			$this->bedrag += $bedrag;
-			$this->reden   = $bedrag > 0 ? 'bijstorting' : 'terugboeking';
+			$this->bedrag = round( $this->bedrag + $bedrag, 2 );
+			$this->reden  = $bedrag > 0 ? 'storting' : 'stornering';
 			$this->save();
 
 			if ( $order_id ) {
@@ -385,22 +400,10 @@ class Saldo extends Artikel {
 	 *
 	 * @since      4.0.87
 	 *
-	 * @param string $reden De te loggen tekst.
+	 * @param string $tekst De te loggen tekst.
 	 */
-	public static function log( $reden ) {
-		self::write_log( $reden );
-	}
-
-	/**
-	 * Private functie welke de update van stooksaldo.log doet.
-	 *
-	 * @since      4.0.87
-	 *
-	 * @param string $tekst Toe te voegen tekst aan log.
-	 */
-	private static function write_log( $tekst ) {
-		$upload_dir = wp_upload_dir();
-		file_put_contents( $upload_dir['basedir'] . '/stooksaldo.log', date( 'c' ) . " : $tekst\n", FILE_APPEND); // phpcs:ignore
+	private function log( $tekst ) {
+		file_put_contents( wp_upload_dir()['basedir'] . '/stooksaldo.log', date( 'c' ) . " : $tekst\n", FILE_APPEND); // phpcs:ignore
 	}
 
 }
