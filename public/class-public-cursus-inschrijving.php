@@ -188,17 +188,17 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 					'plaats'     => $data['input']['plaats'],
 				]
 			);
+			if ( ! is_int( $gebruiker_id ) ) {
+				return [
+					'status' => $this->status( new \WP_Error( 'fout', 'Er is een interne fout geconstateerd. Probeer het later opnieuw.' ) ),
+				];
+			}
 		} else {
 			if ( is_super_admin() ) {
 				$gebruiker_id = (int) $data['input']['gebruiker_id'];
 			} else {
 				$gebruiker_id = get_current_user_id();
 			}
-		}
-		if ( is_wp_error( $gebruiker_id ) ) {
-			return [
-				'status' => $this->status( new \WP_Error( 'fout', 'Er is een interne fout geconstateerd. Probeer het later opnieuw.' ) ),
-			];
 		}
 
 		$inschrijving = new \Kleistad\Inschrijving( (int) $data['cursus']->id, $gebruiker_id );
