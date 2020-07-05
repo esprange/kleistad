@@ -48,7 +48,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$inschrijvingen = \Kleistad\Inschrijving::all();
 		$cursus_info    = [];
 		foreach ( $cursussen as $cursus_id => $cursus ) {
-			if ( ! $cursus->vervallen && ( 0 === $docent_id || intval( $cursus->docent ) === $docent_id ) ) {
+			if ( ! $cursus->vervallen && ( 0 === $docent_id || (int) $cursus->docent === $docent_id ) ) {
 				$heeft_inschrijvingen = false;
 				foreach ( $inschrijvingen as $cursist_inschrijvingen ) {
 					if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
@@ -115,7 +115,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$is_bestuur              = in_array( 'bestuur', (array) $user->roles, true );
 		$data['bestuur_rechten'] = $is_bestuur;
 		if ( 'cursisten' === $data['actie'] ) {
-			$cursus            = new \Kleistad\Cursus( $data['id'] );
+			$cursus            = new \Kleistad\Cursus( (int) $data['id'] );
 			$data['cursus']    = [
 				'id'    => $cursus->id,
 				'naam'  => $cursus->naam,
@@ -124,19 +124,18 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			];
 			$data['cursisten'] = $this->cursistenlijst( $cursus, $is_bestuur );
 		} elseif ( 'indelen' === $data['actie'] ) {
-			list( $cursist_id, $cursus_id ) = array_map( 'intval', explode( '-', $data['id'] ) );
-			$cursus                         = new \Kleistad\Cursus( $cursus_id );
-			$inschrijving                   = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
-			$cursist                        = get_userdata( $cursist_id );
-			$lopend                         = $cursus->lopend( $inschrijving->datum );
-			$data['cursus']                 = [
+			[ $cursus_id, $cursist_id ] = array_map( 'intval', explode( '-', $data['id'] ) );
+			$inschrijving               = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
+			$cursist                    = get_userdata( $cursist_id );
+			$lopend                     = $inschrijving->cursus->lopend( $inschrijving->datum );
+			$data['cursus']             = [
 				'id'          => $cursus_id,
 				'lessen'      => $lopend['lessen'],
 				'lessen_rest' => $lopend['lessen_rest'],
 				'kosten'      => $lopend['kosten'],
-				'max'         => round( $cursus->inschrijfkosten, 1 ) + $cursus->cursuskosten,
+				'max'         => round( $inschrijving->cursus->inschrijfkosten, 1 ) + $inschrijving->cursus->cursuskosten,
 			];
-			$data['cursist']                = [
+			$data['cursist']            = [
 				'id'     => $cursist_id,
 				'naam'   => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
 				'datum'  => $inschrijving->datum,
@@ -187,7 +186,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( 'indelen' === $data['form_actie'] ) {
-			$inschrijving                 = new \Kleistad\Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
+			$inschrijving                 = new \Kleistad\Inschrijving( (int) $data['input']['cursus_id'], (int) $data['input']['cursist_id'] );
 			$inschrijving->lopende_cursus = (float) $data['input']['kosten'];
 			$inschrijving->ingedeeld      = true;
 			$inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.

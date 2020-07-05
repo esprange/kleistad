@@ -41,7 +41,7 @@ class Public_Betaling extends ShortcodeForm {
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
 		if ( ! is_null( $param['order'] ) ) {
-			$order = new \Kleistad\Order( intval( $param['order'] ) );
+			$order = new \Kleistad\Order( (int) $param['order'] );
 			if ( $order->gesloten ) {
 				$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 			} else {

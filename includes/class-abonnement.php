@@ -77,12 +77,16 @@ class Abonnement extends Artikel {
 	/**
 	 * Constructor, maak het abonnement object .
 	 *
-	 * @param int $klant_id wp user id van de abonnee.
+	 * @param int|string $arg Het argument, een wp user id van de abonnee of een referentie.
 	 */
-	public function __construct( $klant_id ) {
-		$this->klant_id              = $klant_id;
+	public function __construct( $arg ) {
+		if ( is_string( $arg ) ) {
+			$this->klant_id = (int) strtok( $arg, '- ' );
+		} else {
+			$this->klant_id = $arg;
+		}
 		$this->betalen               = new \Kleistad\Betalen();
-		$this->default_data['code']  = "A$klant_id";
+		$this->default_data['code']  = "A{$this->klant_id}";
 		$this->default_data['datum'] = date( 'Y-m-d' );
 		$abonnement                  = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$this->data                  = is_array( $abonnement ) ? wp_parse_args( $abonnement, $this->default_data ) : $this->default_data;
@@ -100,7 +104,7 @@ class Abonnement extends Artikel {
 		}
 		switch ( $attribuut ) {
 			case 'overbrugging_email':
-				return boolval( $this->data[ $attribuut ] );
+				return (bool) $this->data[ $attribuut ];
 			case 'dag':
 				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
 			case 'extras':
@@ -579,8 +583,8 @@ class Abonnement extends Artikel {
 	 */
 	private function overbrugging_fractie() {
 		$overbrugging_datum = strtotime( '+1 day', $this->start_eind_datum );
-		$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / ( DAY_IN_SECONDS ) );
-		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't', $this->start_eind_datum ) ), 2 ) : 0.00;
+		$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / DAY_IN_SECONDS );
+		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / (int) date( 't', $this->start_eind_datum ), 2 ) : 0.00;
 	}
 
 	/**
@@ -589,11 +593,11 @@ class Abonnement extends Artikel {
 	 * @return float De fractie.
 	 */
 	private function pauze_fractie() {
-		$aantal_dagen = intval( date( 't' ) );
+		$aantal_dagen = (int) date( 't' );
 		$maand_start  = strtotime( 'first day of this month 00:00' );
 		$maand_eind   = strtotime( 'last day of this month 00:00' );
-		$begin_dagen  = $this->pauze_datum < $maand_start ? 0 : intval( date( 'd', $this->pauze_datum ) ) - 1;
-		$eind_dagen   = $this->herstart_datum > $maand_eind ? 0 : $aantal_dagen - intval( date( 'd', $this->herstart_datum ) ) + 1;
+		$begin_dagen  = $this->pauze_datum < $maand_start ? 0 : (int) date( 'd', $this->pauze_datum ) - 1;
+		$eind_dagen   = $this->herstart_datum > $maand_eind ? 0 : $aantal_dagen - (int) date( 'd', $this->herstart_datum ) + 1;
 		return round( ( $begin_dagen + $eind_dagen ) / $aantal_dagen, 2 );
 	}
 

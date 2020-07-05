@@ -194,6 +194,9 @@ class Factuur extends \FPDF {
 		$file       = sprintf( '%s/facturen/%s-%s', $upload_dir['basedir'], "{$type}factuur", $factuurnr );
 		$versie     = '';
 		if ( file_exists( "$file.pdf" ) ) {
+			if ( empty( $type ) ) {
+				return '';
+			}
 			$versie = 0;
 			do {
 				$versie++;

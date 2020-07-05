@@ -26,9 +26,14 @@ class LosArtikel extends Artikel {
 	 *
 	 * @since      6.2.0
 	 *
-	 * @param int $verkoop_id Een uniek id van de verkoop.
+	 * @param int|string $arg Het argument, Een uniek id van de verkoop of een referentie.
 	 */
-	public function __construct( $verkoop_id ) {
+	public function __construct( $arg ) {
+		if ( is_string( $arg ) ) {
+			$verkoop_id = (int) strtok( $arg, '-' );
+		} else {
+			$verkoop_id = $arg;
+		}
 		$this->betalen = new \Kleistad\Betalen();
 		$this->data    = [
 			'regels' => [],

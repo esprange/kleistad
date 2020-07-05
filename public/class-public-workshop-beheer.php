@@ -117,7 +117,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'definitief'     => $workshop->definitief,
 			'vervallen'      => $workshop->vervallen,
 			'aanvraag_id'    => $workshop->aanvraag_id,
-			'gefactureerd'   => boolval( $order_id ),
+			'gefactureerd'   => (bool) $order_id,
 			'betaling_email' => $workshop->betaling_email,
 		];
 	}
@@ -145,7 +145,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			*/
 			$data['docenten'] = $this->docenten();
 			if ( ! isset( $data['workshop'] ) ) {
-				$data['workshop'] = $this->formulier( $data['id'] );
+				$data['workshop'] = $this->formulier( (int) $data['id'] );
 			}
 		} elseif ( 'inplannen' === $data['actie'] ) {
 			/**
@@ -328,7 +328,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			];
 		}
 
-		$workshop_id = $data['workshop']['workshop_id'];
+		$workshop_id = (int) $data['workshop']['workshop_id'];
 		$bericht     = '';
 		if ( $workshop_id > 0 ) {
 			$workshop = new \Kleistad\Workshop( $workshop_id );

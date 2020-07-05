@@ -103,7 +103,7 @@ class Admin_Regelingen extends \WP_List_Table {
 		$sortable              = $this->get_sortable_columns();
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 		$paged_val             = filter_input( INPUT_GET, 'paged' );
-		$paged                 = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$paged                 = ! is_null( $paged_val ) ? max( 0, (int) $paged_val - 1 ) : 0;
 		$order_val             = filter_input( INPUT_GET, 'order' );
 		$order                 = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
 		$gebruiker_query       = new \WP_User_Query(

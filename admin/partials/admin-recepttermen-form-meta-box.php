@@ -9,7 +9,7 @@
  * @subpackage Kleistad/admin/partials
  */
 
-$hoofdterm = (array) get_term( intval( filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) ) );
+$hoofdterm = (array) get_term( (int) filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) );
 
 ?>
 <h2><?php echo esc_html( $hoofdterm['description'] ); ?></h2>

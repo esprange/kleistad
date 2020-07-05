@@ -46,7 +46,7 @@ class Admin_Cursisten_Handler {
 		$single   = 'cursist';
 		$multiple = 'cursisten';
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
-			$item         = filter_input_array(
+			$item                       = filter_input_array(
 				INPUT_POST,
 				[
 					'id'        => FILTER_SANITIZE_STRING,
@@ -54,13 +54,11 @@ class Admin_Cursisten_Handler {
 					'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
-			$code         = $item['id'];
-			$parameters   = explode( '-', substr( $code, 1 ) );
-			$cursus_id    = intval( $parameters[0] );
-			$cursist_id   = intval( $parameters[1] );
-			$inschrijving = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
-			$message      = 'De gegevens zijn opgeslagen';
-			if ( intval( $item['cursus_id'] ) !== $cursus_id ) {
+			$code                       = $item['id'];
+			[ $cursus_id, $cursist_id ] = array_map( 'intval', explode( '-', substr( $code, 1 ) ) );
+			$inschrijving               = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
+			$message                    = 'De gegevens zijn opgeslagen';
+			if ( (int) $item['cursus_id'] !== $cursus_id ) {
 				// cursus gewijzigd.
 				if ( false === $inschrijving->correct( $item['cursus_id'] ) ) {
 					$message = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
@@ -68,20 +66,15 @@ class Admin_Cursisten_Handler {
 			} else {
 				// attributen inschrijving gewijzigd.
 				$inschrijving->save();
-				$message = 'De gegevens zijn opgeslagen';
 			}
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
-				$code         = $_REQUEST['id'];
-				$parameters   = explode( '-', substr( $code, 1 ) );
-				$cursus_id    = intval( $parameters[0] );
-				$cursist_id   = intval( $parameters[1] );
-				$cursist      = get_userdata( $cursist_id );
-				$inschrijving = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
-				$cursus       = new \Kleistad\Cursus( $cursus_id );
-				$item         = [
+				$code                       = $_REQUEST['id'];
+				[ $cursus_id, $cursist_id ] = array_map( 'intval', explode( '-', substr( $code, 1 ) ) );
+				$inschrijving               = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
+				$item                       = [
 					'id'          => $code,
-					'naam'        => $cursist->display_name,
+					'naam'        => get_userdata( $cursist_id )->display_name,
 					'aantal'      => $inschrijving->aantal,
 					'geannuleerd' => $inschrijving->geannuleerd,
 					'cursist_id'  => $cursist_id,
