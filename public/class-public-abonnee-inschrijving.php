@@ -149,6 +149,11 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				]
 			);
 		}
+		if ( is_wp_error( $gebruiker_id ) ) {
+			return [
+				'status' => $this->status( new \WP_Error( 'fout', 'Er is een interne fout geconstateerd. Probeer het later opnieuw.' ) ),
+			];
+		}
 		$abonnement                   = new \Kleistad\Abonnement( $gebruiker_id );
 		$abonnement->soort            = $data['input']['abonnement_keuze'];
 		$abonnement->opmerking        = $data['input']['opmerking'];
