@@ -138,7 +138,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( false === (int) $data['input']['cursus_id'] ) {
+		if ( is_null( $data['input']['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 			return $error;
 		}
@@ -175,10 +175,9 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( ! is_user_logged_in() ) {
-			$gebruiker_id = email_exists( $data['input']['user_email'] );
 			$gebruiker_id = upsert_user(
 				[
-					'ID'         => ( $gebruiker_id ) ? $gebruiker_id : null,
+					'ID'         => email_exists( $data['input']['user_email'] ),
 					'first_name' => $data['input']['first_name'],
 					'last_name'  => $data['input']['last_name'],
 					'telnr'      => $data['input']['telnr'],

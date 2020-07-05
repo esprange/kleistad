@@ -108,10 +108,9 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( ! is_user_logged_in() ) {
-			$gebruiker_id = email_exists( $data['input']['user_email'] );
 			$gebruiker_id = upsert_user(
 				[
-					'ID'         => ( false !== $gebruiker_id ) ? $gebruiker_id : null,
+					'ID'         => email_exists( $data['input']['user_email'] ),
 					'first_name' => $data['input']['first_name'],
 					'last_name'  => $data['input']['last_name'],
 					'telnr'      => $data['input']['telnr'],

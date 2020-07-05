@@ -89,8 +89,8 @@ class Inschrijving extends Artikel {
 			$cursus_id      = (int) strtok( $arg[0], '-' );
 			$this->klant_id = (int) strtok( '-' );
 		} else {
-			$cursus_id      = $arg[0];
-			$this->klant_id = $arg[1];
+			$cursus_id      = (int) $arg[0];
+			$this->klant_id = (int) $arg[1];
 		}
 		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
 		$this->betalen               = new \Kleistad\Betalen();

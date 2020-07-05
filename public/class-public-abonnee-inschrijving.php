@@ -127,7 +127,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( $data['input']['gebruiker_id'] ) {
-			$gebruiker_id = $data['input']['gebruiker_id'];
+			$gebruiker_id = (int) $data['input']['gebruiker_id'];
 		} else {
 			$gebruiker_id = email_exists( $data['input']['user_email'] );
 			if ( false !== $gebruiker_id && \Kleistad\Roles::reserveer( $gebruiker_id ) ) {
@@ -137,7 +137,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 			};
 			$gebruiker_id = upsert_user(
 				[
-					'ID'         => ( false !== $gebruiker_id ) ? $gebruiker_id : null,
+					'ID'         => $gebruiker_id,
 					'first_name' => $data['input']['first_name'],
 					'last_name'  => $data['input']['last_name'],
 					'telnr'      => $data['input']['telnr'],
