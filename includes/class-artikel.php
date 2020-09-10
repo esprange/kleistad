@@ -267,10 +267,11 @@ abstract class Artikel extends Entity {
 				$korting_regels[] = $oude_regel;
 			}
 		}
-		$order->regels    = array_merge( $this->factuurregels(), $korting_regels );
-		$order->klant     = $this->naw_klant();
-		$order->historie  = 'Order gewijzigd';
-		$order->opmerking = $opmerking;
+		$order->regels     = array_merge( $this->factuurregels(), $korting_regels );
+		$order->klant      = $this->naw_klant();
+		$order->historie   = 'Order gewijzigd';
+		$order->referentie = $this->referentie();
+		$order->opmerking  = $opmerking;
 		$order->save();
 		$this->maak_link( $order->id );
 		$this->betaalactie( $order->betaald );

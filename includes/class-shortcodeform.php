@@ -77,9 +77,11 @@ abstract class ShortcodeForm extends Shortcode {
 			$input['email_controle'] = '';
 		} else {
 			$this->validate_email( $input['email_controle'] );
-			if ( $input['email_controle'] !== $input['user_email'] ) {
+			if ( 0 !== strcasecmp( $input['email_controle'], $input['user_email'] ) ) {
 				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $input['user_email'] . ' en ' . $input['email_controle'] . ' zijn niet identiek' );
 				$input['email_controle'] = '';
+			} else {
+				$input['user_email'] = strtolower( $input['user_email'] );
 			}
 		}
 		if ( ! empty( $input['telnr'] ) && ! $this->validate_telnr( $input['telnr'] ) ) {
@@ -87,6 +89,8 @@ abstract class ShortcodeForm extends Shortcode {
 		}
 		if ( ! empty( $input['pcode'] ) && ! $this->validate_pcode( $input['pcode'] ) ) {
 			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
+		} else {
+			$input['pcode'] = strtoupper( $input['pcode'] );
 		}
 		if ( ! $this->validate_naam( $input['first_name'] ) ) {
 			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );

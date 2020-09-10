@@ -30,7 +30,7 @@ namespace Kleistad;
 class Abonnement extends Artikel {
 
 	public const META_KEY        = 'kleistad_abonnement';
-	public const MAX_PAUZE_WEKEN = 17;
+	public const MAX_PAUZE_WEKEN = 9;
 	public const MIN_PAUZE_WEKEN = 2;
 	private const EMAIL_SUBJECT  = [
 		'_gewijzigd'        => 'Wijziging abonnement',

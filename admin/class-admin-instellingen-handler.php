@@ -108,12 +108,13 @@ class Admin_Instellingen_Handler {
 	 * @return void
 	 */
 	private function corona() {
-		if ( ! isset( $_FILES['corona_file'] ) ) {
+		$csv_file = $_FILES['corona_file']['tmp_name'] ?? '';
+		if ( empty( $csv_file ) ) {
 			return;
 		}
 		$vandaag         = strtotime( 'today' );
 		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
-		$csv             = array_map( 'str_getcsv', file( $_FILES['corona_file']['tmp_name'] ) ?: [] );
+		$csv             = array_map( 'str_getcsv', file( $csv_file ) ?: [] );
 		foreach ( $beschikbaarheid as $datum => $tijden ) {
 			if ( $datum >= $vandaag ) {
 				unset( $beschikbaarheid[ $datum ] );

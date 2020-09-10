@@ -39,7 +39,7 @@ class Public_Saldo extends ShortcodeForm {
 	 * Valideer/sanitize 'saldo' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return bool
+	 * @return \WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
@@ -53,9 +53,19 @@ class Public_Saldo extends ShortcodeForm {
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
+				'ander'        => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
 				'betaal'       => FILTER_SANITIZE_STRING,
 			]
 		);
+		if ( ! intval( $data['input']['bedrag'] ) ) {
+			$data['input']['bedrag'] = $data['input']['ander'];
+		}
+		if ( 15 > floatval( $data['input']['bedrag'] ) || 100 < floatval( $data['input']['bedrag'] ) ) {
+			return new \WP_Error( 'onjuist', 'Het bedrag moet tussen 15 en 100 euro liggen' );
+		}
 		return true;
 	}
 
@@ -69,7 +79,7 @@ class Public_Saldo extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$saldo = new \Kleistad\Saldo( $data['input']['gebruiker_id'] );
-		$saldo->nieuw( $data['input']['bedrag'] );
+		$saldo->nieuw( floatval( $data['input']['bedrag'] ) );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$ideal_uri = $saldo->ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging', $saldo->referentie() );

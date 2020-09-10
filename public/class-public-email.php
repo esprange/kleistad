@@ -133,27 +133,28 @@ class Public_Email extends ShortcodeForm {
 	 * @since   5.5.0
 	 */
 	protected function save( $data ) {
-		$gebruikerids  = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
-		$query         = new \WP_User_Query(
+		$huidige_gebruiker = wp_get_current_user();
+		$gebruikerids      = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
+		$query             = new \WP_User_Query(
 			[
 				'include' => array_map( 'intval', $gebruikerids ),
 				'fields'  => [ 'user_email' ],
 			]
 		);
-		$emailadressen = array_column( (array) $query->get_results(), 'user_email' );
-		$emailer       = new \Kleistad\Email();
+		$emailadressen     = array_column( (array) $query->get_results(), 'user_email' );
+		$emailadressen[]   = "{$huidige_gebruiker->display_name} <{$huidige_gebruiker->user_email}>";
+		$emailer           = new \Kleistad\Email();
 		$emailer->send(
-			[
-				'to'        => 'Kleistad gebruiker <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
-				'bcc'       => $emailadressen,
-				'from_name' => "{$data['input']['namens']} namens Kleistad",
-				'from'      => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
-				'reply-to'  => \Kleistad\Email::info() . \Kleistad\Email::domein(),
-				'subject'   => $data['input']['onderwerp'],
-				'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
-				'sign'      => "{$data['input']['namens']},<br/>Kleistad",
-				'auto'      => false,
-			]
+			array_merge(
+				$this->mail_parameters( $data ),
+				[
+					'to'       => 'Kleistad gebruiker <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
+					'bcc'      => $emailadressen,
+					'from'     => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
+					'reply-to' => \Kleistad\Email::info() . \Kleistad\Email::domein(),
+					'subject'  => $data['input']['onderwerp'],
+				]
+			)
 		);
 		return [
 			'status'  => $this->status( 'De email is naar ' . count( $emailadressen ) . ' personen verzonden' ),
@@ -171,17 +172,31 @@ class Public_Email extends ShortcodeForm {
 		$huidige_gebruiker = wp_get_current_user();
 		$emailer           = new \Kleistad\Email();
 		$emailer->send(
-			[
-				'to'        => "{$huidige_gebruiker->display_name} <{$huidige_gebruiker->user_email}>",
-				'from_name' => "{$data['input']['namens']} namens Kleistad",
-				'subject'   => "TEST: {$data['input']['onderwerp']}",
-				'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
-				'sign'      => "{$huidige_gebruiker->display_name},<br/>Kleistad",
-				'auto'      => false,
-			]
+			array_merge(
+				$this->mail_parameters( $data ),
+				[
+					'to'      => "{$huidige_gebruiker->display_name} <{$huidige_gebruiker->user_email}>",
+					'subject' => "TEST: {$data['input']['onderwerp']}",
+				]
+			)
 		);
 		return [
 			'status' => $this->status( 'De test email is verzonden' ),
+		];
+	}
+
+	/**
+	 * Vul de generieke mail parameters in (welke zowel voor een testbericht als echt bericht identiek zijn).
+	 *
+	 * @param array $data Date te verzenden.
+	 * @return array
+	 */
+	private function mail_parameters( $data ) {
+		return [
+			'from_name' => "{$data['input']['namens']} namens Kleistad",
+			'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
+			'sign'      => "{$data['input']['namens']},<br/>Kleistad",
+			'auto'      => false,
 		];
 	}
 }

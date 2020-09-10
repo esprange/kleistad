@@ -48,8 +48,9 @@ class Public_Reservering extends Shortcode {
 			$stokers    = [];
 			$gebruikers = get_users(
 				[
-					'fields'  => [ 'ID', 'display_name' ],
-					'orderby' => [ 'nicename' ],
+					'fields'    => [ 'ID', 'display_name' ],
+					'orderby'   => [ 'nicename' ],
+					'roles__in' => [ 'leden', 'docenten', 'bestuur' ],
 				]
 			);
 			foreach ( $gebruikers as $gebruiker ) {

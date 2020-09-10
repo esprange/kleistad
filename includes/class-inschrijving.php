@@ -293,7 +293,7 @@ class Inschrijving extends Artikel {
 					'cursus_code'            => $this->code,
 					'cursus_restant_melding' => $this->heeft_restant(),
 					'cursus_bedrag'          => number_format_i18n( $this->aantal * $this->cursus->bedrag(), 2 ),
-					'cursus_restantbedrag'   => number_format_i18n( $this->aantal * $this->cursus->restantbedrag(), 2 ),
+					'cursus_restantbedrag'   => number_format_i18n( $this->aantal * $this->restantbedrag(), 2 ),
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'cursus_link'            => $this->betaal_link,

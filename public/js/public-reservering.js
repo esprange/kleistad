@@ -295,7 +295,7 @@
             /**
              * Verander de opmaak bij hovering.
              */
-            .on( 'hover', 'tr[data-form]', function() {
+            .on( 'mouseenter mouseleave', 'tr[data-form]', function() {
 					$( this ).toggleClass( 'kleistad_hover_reservering' );
 				}
             )

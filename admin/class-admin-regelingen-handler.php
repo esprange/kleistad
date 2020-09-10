@@ -155,8 +155,9 @@ class Admin_Regelingen_Handler {
 	public function regelingen_form_meta_box_handler( $item ) {
 		$gebruikers = get_users(
 			[
-				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => [ 'display_name' ],
+				'fields'   => [ 'ID', 'display_name' ],
+				'orderby'  => [ 'display_name' ],
+				'role__in' => [ 'leden', 'bestuur', 'docenten' ],
 			]
 		);
 		$ovens      = \Kleistad\Oven::all();

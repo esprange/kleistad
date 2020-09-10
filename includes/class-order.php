@@ -41,13 +41,7 @@ class Order extends \Kleistad\Entity {
 	 */
 	public function __construct( $arg = 0 ) {
 		global $wpdb;
-		$result = null;
-		if ( is_string( $arg ) ) {
-			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s ORDER BY id DESC LIMIT 1", $arg ) ) ?? 0;
-		} elseif ( $arg ) {
-			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", $arg ), ARRAY_A );
-		}
-		$this->data = $result ?? [
+		$this->data = [
 			'id'            => 0,
 			'betaald'       => 0.0,
 			'datum'         => date( 'Y-m-d H:i:s' ),
@@ -70,6 +64,15 @@ class Order extends \Kleistad\Entity {
 			'factuurnr'     => 0,
 			'transactie_id' => '',
 		];
+		$resultaat = null;
+		if ( is_numeric( $arg ) ) {
+			$resultaat = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", intval( $arg ) ), ARRAY_A );
+		} elseif ( $arg ) {
+			$resultaat = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s ORDER BY id DESC LIMIT 1", $arg ), ARRAY_A ) ?? 0;
+		}
+		if ( ! is_null( $resultaat ) ) {
+			$this->data = $resultaat;
+		}
 	}
 
 	/**

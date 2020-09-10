@@ -34,3 +34,5 @@ wp-cli.local.yml
 
 # ftp
 *.ftp
+
+cookie.txt
