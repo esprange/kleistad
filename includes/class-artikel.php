@@ -245,7 +245,7 @@ abstract class Artikel extends Entity {
 		$order->transactie_id = $transactie_id;
 		$order->save();
 		$this->betaalactie( $order->betaald );
-		return empty( $order->factuurnr ) ? $this->maak_factuur( $order, '' ) : '';
+		return $this->maak_factuur( $order, '' );
 	}
 
 	/**
@@ -334,17 +334,10 @@ abstract class Artikel extends Entity {
 	 * @return \Kleistad\Artikel Een van de kleistad Artikel objecten.
 	 */
 	public static function get_artikel( $referentie ) {
-		if ( ! empty( $referentie ) && array_key_exists( $referentie[0], self::$artikelen ) ) {
-			$parameters = explode( '-', substr( $referentie, 1 ) );
-			$class      = self::$artikelen[ $referentie[0] ]['class'];
-			if ( 1 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
-				$artikel               = new $class( (int) $parameters[0] );
-				$artikel->artikel_type = $parameters[1] ?? $artikel->artikel_type;
-			} else {
-				$artikel               = new $class( (int) $parameters[0], (int) $parameters[1] );
-				$artikel->artikel_type = $parameters[2] ?? $artikel->artikel_type;
-			}
-			return $artikel;
+		$artikel_key = mb_substr( $referentie, 0, 1 );
+		if ( array_key_exists( $artikel_key, self::$artikelen ) ) {
+			$class = self::$artikelen[ $artikel_key ]['class'];
+			return new $class( mb_substr( $referentie, 1 ) );
 		}
 		return null;
 	}

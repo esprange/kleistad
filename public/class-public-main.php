@@ -137,7 +137,7 @@ class Public_Main {
 	 *
 	 * @internal Action for init.
 	 */
-	public static function register_post_types() {
+	public function register_post_types() {
 		global $wp_post_types;
 		\Kleistad\Recept::create_type();
 		\Kleistad\WorkshopAanvraag::create_type();

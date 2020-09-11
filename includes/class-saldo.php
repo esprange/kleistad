@@ -56,14 +56,18 @@ class Saldo extends Artikel {
 	 *
 	 * @since      4.0.87
 	 *
-	 * @param int $klant_id De gebruiker waarvoor het saldo wordt gemaakt.
+	 * @param int|string $arg Het argument, een wp user id van de abonnee of een referentie.
 	 */
-	public function __construct( $klant_id ) {
-		$this->klant_id = $klant_id;
-		$this->betalen  = new \Kleistad\Betalen();
-		$saldo          = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
-		$this->data     = wp_parse_args( $saldo, $this->default_data );
-		$this->volgnr   = count( $this->storting );
+	public function __construct( $arg ) {
+		if ( is_string( $arg ) ) {
+			$this->klant_id = (int) strtok( $arg, '-' );
+		} else {
+			$this->klant_id = $arg;
+		}
+		$this->betalen = new \Kleistad\Betalen();
+		$saldo         = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
+		$this->data    = wp_parse_args( $saldo, $this->default_data );
+		$this->volgnr  = count( $this->storting );
 	}
 
 	/**
@@ -312,7 +316,7 @@ class Saldo extends Artikel {
 					$wpdb->query( 'START TRANSACTION' );
 					$stoker = get_userdata( $reservering->gebruiker_id );
 					foreach ( $reservering->verdeling as $stookdeel ) {
-						if ( 0 === intval( $stookdeel['id'] ) ) {
+						if ( 0 === (int) $stookdeel['id'] ) {
 							continue; // Volgende verdeling.
 						}
 						$medestoker         = get_userdata( $stookdeel['id'] );
@@ -364,7 +368,7 @@ class Saldo extends Artikel {
 					$stookdelen = $reservering->verdeling;
 					$tabel      = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
 					foreach ( $stookdelen as $stookdeel ) {
-						if ( 0 === intval( $stookdeel['id'] ) ) {
+						if ( 0 === (int) $stookdeel['id'] ) {
 							continue; // Volgende verdeling.
 						}
 						$medestoker = get_userdata( $stookdeel['id'] );

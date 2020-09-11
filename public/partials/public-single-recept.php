@@ -24,13 +24,13 @@ get_header(); ?>
 				$recept_terms = get_the_terms( $the_id, 'kleistad_recept_cat' );
 				if ( is_array( $recept_terms ) ) {
 					foreach ( $recept_terms as $recept_term ) {
-						if ( intval( $recept_term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id ) ) {
+						if ( (int) \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id === (int) $recept_term->parent ) {
 							$glazuur_naam = $recept_term->name;
 						}
-						if ( intval( $recept_term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id ) ) {
+						if ( (int) \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id === (int) $recept_term->parent ) {
 							$kleur_naam = $recept_term->name;
 						}
-						if ( intval( $recept_term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id ) ) {
+						if ( (int) \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id === (int) $recept_term->parent ) {
 							$uiterlijk_naam = $recept_term->name;
 						}
 					}

@@ -109,7 +109,7 @@ class Public_Registratie extends ShortcodeForm {
 	protected function save( $data ) {
 		$result = upsert_user(
 			[
-				'ID'         => $data['gebruiker_id'],
+				'ID'         => (int) $data['gebruiker_id'],
 				'first_name' => $data['input']['voornaam'],
 				'last_name'  => $data['input']['achternaam'],
 				'telnr'      => $data['input']['telnr'],

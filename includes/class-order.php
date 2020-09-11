@@ -88,15 +88,15 @@ class Order extends \Kleistad\Entity {
 			case 'id':
 			case 'credit_id':
 			case 'origineel_id':
-				return intval( $this->data[ $attribuut ] );
+				return (int) $this->data[ $attribuut ];
 			case 'regels':
 				$regels = [];
 				foreach ( json_decode( $this->data['regels'], true ) as $regel ) {
 					$regels[] = [
 						'artikel' => $regel['artikel'],
-						'aantal'  => floatval( $regel['aantal'] ),
-						'prijs'   => floatval( $regel['prijs'] ),
-						'btw'     => floatval( $regel['btw'] ),
+						'aantal'  => (float) $regel['aantal'],
+						'prijs'   => (float) $regel['prijs'],
+						'btw'     => (float) $regel['btw'],
 					];
 				}
 				return $regels;
@@ -108,7 +108,7 @@ class Order extends \Kleistad\Entity {
 			case 'verval_datum':
 				return strtotime( $this->data[ $attribuut ] );
 			case 'gesloten':
-				return boolval( $this->data[ $attribuut ] );
+				return (bool) $this->data[ $attribuut ];
 			case 'betaald':
 				return (float) $this->data[ $attribuut ];
 			default:

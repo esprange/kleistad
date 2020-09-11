@@ -91,7 +91,7 @@ class Public_Verkoop extends ShortcodeForm {
 	 * @since   6.2.0
 	 */
 	protected function save( $data ) {
-		$verkoopnr = intval( get_option( 'kleistad_losnr', 0 ) );
+		$verkoopnr = (int) get_option( 'kleistad_losnr', 0 );
 		if ( ! update_option( 'kleistad_losnr', ++$verkoopnr ) ) {
 			return [ 'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ) ];
 		}

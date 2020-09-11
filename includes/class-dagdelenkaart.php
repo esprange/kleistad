@@ -47,10 +47,14 @@ class Dagdelenkaart extends Artikel {
 	/**
 	 * Constructor
 	 *
-	 * @param int $klant_id wp id van de gebruiker.
+	 * @param int|string $arg Het argument, een wp user id van de abonnee of een referentie.
 	 */
-	public function __construct( $klant_id ) {
-		$this->klant_id  = $klant_id;
+	public function __construct( $arg ) {
+		if ( is_string( $arg ) ) {
+			$this->klant_id = (int) strtok( $arg, '-' );
+		} else {
+			$this->klant_id = $arg;
+		}
 		$this->betalen   = new \Kleistad\Betalen();
 		$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->volgnr    = count( /* @scrutinizer ignore-type */ $dagdelenkaarten );

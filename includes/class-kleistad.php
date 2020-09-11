@@ -23,7 +23,7 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
  * @return int|\WP_Error  De user_id of een error object.
  */
 function upsert_user( $userdata ) {
-	if ( is_null( $userdata['ID'] ) ) {
+	if ( empty( $userdata['ID'] ) ) {
 		$userdata['user_login'] = $userdata['user_email'];
 		$userdata['user_pass']  = wp_generate_password( 12, true );
 		$result                 = wp_insert_user( (object) $userdata );

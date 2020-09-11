@@ -112,7 +112,7 @@ class Admin_Ovens extends \WP_List_Table {
 		$total_items = $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}kleistad_ovens" ); // phpcs:ignore
 
 		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$paged       = ! is_null( $paged_val ) ? max( 0, (int) $paged_val - 1 ) : 0;
 		$orderby_val = filter_input( INPUT_GET, 'orderby' );
 		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val   = filter_input( INPUT_GET, 'order' );

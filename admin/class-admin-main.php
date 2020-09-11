@@ -373,7 +373,7 @@ class Admin_Main {
 	 * @internal Action for Kleistad_daily_gdpr.
 	 */
 	public function daily_gdpr() {
-		if ( intval( date( 'd' ) ) === intval( date( 't' ) ) ) {
+		if ( (int) date( 'd' ) === (int) date( 't' ) ) {
 			\Kleistad\Admin_GDPR::erase_old_privacy_data();
 		}
 	}

@@ -108,7 +108,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		if ( '' === $data['input']['start_datum'] ) {
 			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
 		}
-		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
+		if ( 0 === (int) $data['input']['gebruiker_id'] ) {
 			$this->validate_gebruiker( $error, $data['input'] );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
@@ -127,7 +127,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( $data['input']['gebruiker_id'] ) {
-			$gebruiker_id = $data['input']['gebruiker_id'];
+			$gebruiker_id = (int) $data['input']['gebruiker_id'];
 		} else {
 			$gebruiker_id = email_exists( $data['input']['user_email'] );
 			if ( false !== $gebruiker_id && \Kleistad\Roles::reserveer( $gebruiker_id ) ) {
@@ -137,7 +137,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 			};
 			$gebruiker_id = upsert_user(
 				[
-					'ID'         => ( false !== $gebruiker_id ) ? $gebruiker_id : null,
+					'ID'         => $gebruiker_id,
 					'first_name' => $data['input']['first_name'],
 					'last_name'  => $data['input']['last_name'],
 					'telnr'      => $data['input']['telnr'],
@@ -148,6 +148,11 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 					'plaats'     => $data['input']['plaats'],
 				]
 			);
+			if ( ! is_int( $gebruiker_id ) ) {
+				return [
+					'status' => $this->status( new \WP_Error( 'fout', 'Er is een interne fout geconstateerd. Probeer het later opnieuw.' ) ),
+				];
+			}
 		}
 		$abonnement                   = new \Kleistad\Abonnement( $gebruiker_id );
 		$abonnement->soort            = $data['input']['abonnement_keuze'];
