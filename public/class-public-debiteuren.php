@@ -69,7 +69,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			'naam'          => $order->klant['naam'],
 			'betreft'       => $betreft,
 			'referentie'    => $order->referentie,
-			'factuur'       => $order->factuurnr(),
+			'factuur'       => $order->factuurnummer(),
 			'betaald'       => $order->betaald,
 			'openstaand'    => $te_betalen,
 			'sinds'         => $order->datum,

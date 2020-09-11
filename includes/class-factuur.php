@@ -189,7 +189,7 @@ class Factuur extends \FPDF {
 	 * @return string Pad naar de factuur.
 	 */
 	public function run( $order, $type ) {
-		$factuurnr  = $order->factuurnr();
+		$factuurnr  = $order->factuurnummer();
 		$upload_dir = wp_get_upload_dir();
 		$file       = sprintf( '%s/facturen/%s-%s', $upload_dir['basedir'], "{$type}factuur", $factuurnr );
 		$versie     = '';

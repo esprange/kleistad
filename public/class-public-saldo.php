@@ -78,7 +78,7 @@ class Public_Saldo extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$saldo = new \Kleistad\Saldo( $data['input']['gebruiker_id'] );
+		$saldo = new \Kleistad\Saldo( intval( $data['input']['gebruiker_id'] ) );
 		$saldo->nieuw( floatval( $data['input']['bedrag'] ) );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {

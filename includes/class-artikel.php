@@ -164,7 +164,7 @@ abstract class Artikel extends Entity {
 		$order->credit_id            = $credit_order->save();
 		$order->betaald              = 0;
 		$order->gesloten             = true;
-		$order->historie             = 'geannuleerd, credit factuur ' . $credit_order->factuurnr() . ' aangemaakt';
+		$order->historie             = 'geannuleerd, credit factuur ' . $credit_order->factuurnummer() . ' aangemaakt';
 		$order->save();
 		$this->maak_link( $order->credit_id );
 		$this->betaalactie( $credit_order->betaald );
@@ -245,7 +245,7 @@ abstract class Artikel extends Entity {
 		$order->transactie_id = $transactie_id;
 		$order->save();
 		$this->betaalactie( $order->betaald );
-		return empty( $order->factuurnr ) ? $this->maak_factuur( $order, '' ) : '';
+		return ( 0 === $order->factuurnr ) ? $this->maak_factuur( $order, '' ) : '';
 	}
 
 	/**

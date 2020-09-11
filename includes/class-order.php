@@ -64,7 +64,7 @@ class Order extends \Kleistad\Entity {
 			'factuurnr'     => 0,
 			'transactie_id' => '',
 		];
-		$resultaat = null;
+		$resultaat  = null;
 		if ( is_numeric( $arg ) ) {
 			$resultaat = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", intval( $arg ) ), ARRAY_A );
 		} elseif ( $arg ) {
@@ -253,7 +253,7 @@ class Order extends \Kleistad\Entity {
 	 *
 	 * @return string Het factuur nummer.
 	 */
-	public function factuurnr() {
+	public function factuurnummer() {
 		return sprintf( '%s-%06d', date( 'Y', $this->datum ), $this->factuurnr );
 	}
 
@@ -304,7 +304,7 @@ class Order extends \Kleistad\Entity {
 		if ( $this->transactie_id && -0.01 > $openstaand ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
 			$betalen = new \Kleistad\Betalen();
-			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'Kleistad: zie factuur ' . $this->factuurnr() );
+			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'Kleistad: zie factuur ' . $this->factuurnummer() );
 			add_filter(
 				'kleistad_melding',
 				function( $html ) use ( $result ) {
