@@ -95,7 +95,7 @@ class Cursus extends Entity {
 			return strtotime( $this->data[ $attribuut ] );
 		}
 		if ( preg_match( '~(vol|vervallen|techniekkeuze|meer|tonen)~', $attribuut ) ) {
-			return (bool) $this->data[ $attribuut ];
+			return boolval( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {
 			case 'technieken':
@@ -209,7 +209,7 @@ class Cursus extends Entity {
 	 */
 	public function docent_naam() {
 		if ( is_numeric( $this->docent ) ) {
-			return get_user_by( 'id', (int) $this->docent )->display_name;
+			return get_user_by( 'id', intval( $this->docent ) )->display_name;
 		} else {
 			return $this->docent;
 		}

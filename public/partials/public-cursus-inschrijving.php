@@ -43,7 +43,7 @@ else :
 	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
 		if ( $cursus['selecteerbaar'] ) :
 			// De eerder geselecteerde als die nog steeds selecteerbaar is of als er maar 1 cursus mogelijk is.
-			if ( (int) $data['input']['cursus_id'] === $cursus_id || 1 === $count ) :
+			if ( intval( $data['input']['cursus_id'] ) === $cursus_id || 1 === $count ) :
 				$checked_id = $cursus_id;
 				break;
 			endif;

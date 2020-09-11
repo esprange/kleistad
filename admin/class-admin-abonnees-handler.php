@@ -35,7 +35,7 @@ class Admin_Abonnees_Handler {
 	 * @return string De status van de wijziging.
 	 */
 	private function wijzig_abonnee( $item, $actie ) {
-		$abonnement          = new \Kleistad\Abonnement( (int) $item['id'] );
+		$abonnement          = new \Kleistad\Abonnement( $item['id'] );
 		$item['mollie_info'] = \Kleistad\Betalen::info( $item['id'] );
 		if ( 'status' === $actie ) {
 			foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort', 'dag' ] as $veld ) {
@@ -149,7 +149,7 @@ class Admin_Abonnees_Handler {
 			}
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
-				$abonnee_id = (int) $_REQUEST['id'];
+				$abonnee_id = $_REQUEST['id'];
 				$actie      = $_REQUEST['actie'];
 				$abonnement = new \Kleistad\Abonnement( $abonnee_id );
 				$abonnee    = get_userdata( $abonnee_id );

@@ -45,7 +45,7 @@ class Admin_Regelingen_Handler {
 		if ( ! empty( $item['kosten'] ) && ! is_numeric( $item['kosten'] ) ) {
 			$messages[] = 'Kosten format is fout';
 		}
-		if ( ! empty( $item['kosten'] ) && ! ( 0.0 <= (float) $item['kosten'] ) ) {
+		if ( ! empty( $item['kosten'] ) && ! ( 0.0 <= floatval( $item['kosten'] ) ) ) {
 			$messages[] = 'Kosten kunnen niet kleiner zijn dan 0';
 		}
 		if ( empty( $messages ) ) {
@@ -115,7 +115,7 @@ class Admin_Regelingen_Handler {
 				} else {
 					$message = 'De regeling is gewijzigd';
 				}
-				$oven                   = new \Kleistad\Oven( (int) $item['oven_id'] );
+				$oven                   = new \Kleistad\Oven( $item['oven_id'] );
 				$gebruiker              = get_userdata( $item['gebruiker_id'] );
 				$item['gebruiker_naam'] = $gebruiker->display_name;
 				$item['oven_naam']      = $oven->naam;

@@ -138,11 +138,11 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( is_null( $data['input']['cursus_id'] ) ) {
+		if ( false === intval( $data['input']['cursus_id'] ) ) {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 			return $error;
 		}
-		$data['cursus'] = new \Kleistad\Cursus( (int) $data['input']['cursus_id'] );
+		$data['cursus'] = new \Kleistad\Cursus( $data['input']['cursus_id'] );
 		$ruimte         = $data['cursus']->ruimte();
 		if ( 0 === $ruimte ) {
 			$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
@@ -155,7 +155,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
 			$data['input']['aantal'] = 1;
 		}
-		if ( 0 === (int) $data['input']['gebruiker_id'] ) {
+		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
 			$this->validate_gebruiker( $error, $data['input'] );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
@@ -175,9 +175,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( ! is_user_logged_in() ) {
+			$gebruiker_id = email_exists( $data['input']['user_email'] );
 			$gebruiker_id = upsert_user(
 				[
-					'ID'         => email_exists( $data['input']['user_email'] ),
+					'ID'         => ( $gebruiker_id ) ? $gebruiker_id : null,
 					'first_name' => $data['input']['first_name'],
 					'last_name'  => $data['input']['last_name'],
 					'telnr'      => $data['input']['telnr'],
@@ -188,20 +189,15 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 					'plaats'     => $data['input']['plaats'],
 				]
 			);
-			if ( ! is_int( $gebruiker_id ) ) {
-				return [
-					'status' => $this->status( new \WP_Error( 'fout', 'Er is een interne fout geconstateerd. Probeer het later opnieuw.' ) ),
-				];
-			}
 		} else {
 			if ( is_super_admin() ) {
-				$gebruiker_id = (int) $data['input']['gebruiker_id'];
+				$gebruiker_id = $data['input']['gebruiker_id'];
 			} else {
 				$gebruiker_id = get_current_user_id();
 			}
 		}
 
-		$inschrijving = new \Kleistad\Inschrijving( (int) $data['cursus']->id, $gebruiker_id );
+		$inschrijving = new \Kleistad\Inschrijving( $data['cursus']->id, $gebruiker_id );
 		if ( $inschrijving->ingedeeld ) {
 			return [
 				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
@@ -209,7 +205,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		}
 		$inschrijving->technieken = $data['input']['technieken'];
 		$inschrijving->opmerking  = $data['input']['opmerking'];
-		$inschrijving->aantal     = (int) $data['input']['aantal'];
+		$inschrijving->aantal     = intval( $data['input']['aantal'] );
 		$inschrijving->datum      = strtotime( 'today' );
 		$inschrijving->save();
 

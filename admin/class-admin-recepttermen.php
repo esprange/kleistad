@@ -33,7 +33,7 @@ class Admin_Recepttermen extends \WP_List_Table {
 	 * @param int $hoofdterm_id De parent van de termen.
 	 */
 	public function __construct( $hoofdterm_id ) {
-		$this->hoofdterm_id = (int) $hoofdterm_id;
+		$this->hoofdterm_id = intval( $hoofdterm_id );
 		parent::__construct(
 			[
 				'singular' => 'term',
@@ -119,7 +119,7 @@ class Admin_Recepttermen extends \WP_List_Table {
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
 		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, (int) $paged_val - 1 ) : 0;
+		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$orderby_val = filter_input( INPUT_GET, 'orderby' );
 		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val   = filter_input( INPUT_GET, 'order' );

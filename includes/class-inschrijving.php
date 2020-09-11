@@ -82,19 +82,14 @@ class Inschrijving extends Artikel {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int|string ...$arg Het argument, een wp user id van de abonnee of een referentie.
+	 * @param int $cursus_id id van de cursus.
+	 * @param int $klant_id wp user id van de cursist.
 	 */
-	public function __construct( ...$arg ) {
-		if ( is_string( $arg[0] ) ) {
-			$cursus_id      = (int) strtok( $arg[0], '-' );
-			$this->klant_id = (int) strtok( '-' );
-		} else {
-			$cursus_id      = (int) $arg[0];
-			$this->klant_id = (int) $arg[1];
-		}
+	public function __construct( $cursus_id, $klant_id ) {
 		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
+		$this->klant_id              = $klant_id;
 		$this->betalen               = new \Kleistad\Betalen();
-		$this->default_data['code']  = "C$cursus_id-{$this->klant_id}";
+		$this->default_data['code']  = "C$cursus_id-$klant_id";
 		$this->default_data['datum'] = date( 'Y-m-d' );
 
 		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
@@ -122,7 +117,7 @@ class Inschrijving extends Artikel {
 			case 'geannuleerd':
 			case 'restant_email':
 			case 'herinner_email':
-				return (bool) ( $this->data[ $attribuut ] ?? false );
+				return boolval( $this->data[ $attribuut ] ?? false );
 			default:
 				return ( is_string( $this->data[ $attribuut ] ) ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
@@ -467,7 +462,7 @@ class Inschrijving extends Artikel {
 	 */
 	private function restantbedrag() {
 		$order = new \Kleistad\Order( $this->referentie() );
-		return $order->id ? $order->te_betalen() : 0;
+		return $order->te_betalen();
 	}
 
 	/**

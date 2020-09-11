@@ -29,7 +29,7 @@ class Admin_Upgrade {
 	public function run() {
 		$data = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'kleistad.php', false, false );
 		update_option( 'kleistad-plugin-versie', $data['Version'] );
-		$database_version = (int) get_option( 'kleistad-database-versie', 0 );
+		$database_version = intval( get_option( 'kleistad-database-versie', 0 ) );
 		if ( $database_version < self::DBVERSIE ) {
 			$this->convert_opties();
 			$this->convert_database();

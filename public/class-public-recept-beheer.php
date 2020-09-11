@@ -76,13 +76,13 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$termen       = get_the_terms( $recept->ID, \Kleistad\Recept::CATEGORY );
 		if ( is_array( $termen ) ) {
 			foreach ( $termen as $term ) {
-				if ( (int) \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id === (int) $term->parent ) {
+				if ( intval( $term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id ) ) {
 					$glazuur_id = $term->term_id;
 				}
-				if ( (int) \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id === (int) $term->parent ) {
+				if ( intval( $term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id ) ) {
 					$kleur_id = $term->term_id;
 				}
-				if ( (int) \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id === (int) $term->parent ) {
+				if ( intval( $term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id ) ) {
 					$uiterlijk_id = $term->term_id;
 				}
 			}
@@ -233,7 +233,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$data['recept']['content']['basis']       = [];
 		$basis_limiet                             = count( $basis['basis_component'] );
 		for ( $i = 0; $i < $basis_limiet; $i++ ) {
-			if ( '' !== $basis['basis_component'][ $i ] && 0 !== (float) $basis['basis_gewicht'][ $i ] ) {
+			if ( ( '' !== $basis['basis_component'][ $i ] ) && ( 0 !== floatval( $basis['basis_gewicht'][ $i ] ) ) ) {
 				$data['recept']['content']['basis'][ $i ] = [
 					'component' => $basis['basis_component'][ $i ],
 					'gewicht'   => str_replace( ',', '.', $basis['basis_gewicht'][ $i ] ) * 1.0,
@@ -243,7 +243,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$data['recept']['content']['toevoeging'] = [];
 		$toevoeging_limiet                       = count( $toevoeging['toevoeging_component'] );
 		for ( $i = 0; $i < $toevoeging_limiet; $i++ ) {
-			if ( '' !== $toevoeging['toevoeging_component'][ $i ] && 0 !== (float) $toevoeging['toevoeging_gewicht'][ $i ] ) {
+			if ( '' !== $toevoeging['toevoeging_component'][ $i ] && 0 !== floatval( $toevoeging['toevoeging_gewicht'][ $i ] ) ) {
 				$data['recept']['content']['toevoeging'][ $i ] = [
 					'component' => $toevoeging['toevoeging_component'][ $i ],
 					'gewicht'   => str_replace( ',', '.', $toevoeging['toevoeging_gewicht'][ $i ] ) * 1.0,
@@ -358,9 +358,9 @@ class Public_Recept_Beheer extends ShortcodeForm {
 						wp_set_object_terms(
 							$recept_id,
 							[
-								(int) $data['recept']['glazuur'],
-								(int) $data['recept']['kleur'],
-								(int) $data['recept']['uiterlijk'],
+								intval( $data['recept']['glazuur'] ),
+								intval( $data['recept']['kleur'] ),
+								intval( $data['recept']['uiterlijk'] ),
 							],
 							\Kleistad\Recept::CATEGORY
 						);

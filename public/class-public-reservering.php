@@ -30,7 +30,7 @@ class Public_Reservering extends Shortcode {
 		$error = new \WP_Error();
 
 		if ( ! \Kleistad\Roles::reserveer() ) {
-			$error->add( 'security', 'je hebt hiervoor geen toegang' );
+			$error->add( 'security', 'hiervoor moet je ingelogd zijn' );
 			return $error;
 		}
 		$atts = shortcode_atts(
@@ -41,7 +41,7 @@ class Public_Reservering extends Shortcode {
 		if ( is_numeric( $atts['oven'] ) ) {
 			$oven_id = $atts['oven'];
 			$oven    = new \Kleistad\Oven( $oven_id );
-			if ( 0 === (int) $oven->id ) {
+			if ( ! intval( $oven->id ) ) {
 				$error->add( 'fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !' );
 				return $error;
 			}
@@ -56,7 +56,7 @@ class Public_Reservering extends Shortcode {
 			foreach ( $gebruikers as $gebruiker ) {
 				if ( \Kleistad\Roles::reserveer( $gebruiker->ID ) && false === strpos( $gebruiker->display_name, '$' ) ) {
 					$stokers[] = [
-						'id'   => $gebruiker->ID,
+						'id'   => intval( $gebruiker->ID ),
 						'naam' => $gebruiker->display_name,
 					];
 				}
@@ -263,10 +263,10 @@ class Public_Reservering extends Shortcode {
 	 * @return \WP_REST_Response Ajax response.
 	 */
 	public static function callback_show( \WP_REST_Request $request ) {
-		$oven_id = (int) $request->get_param( 'oven_id' );
-		$periode = mktime( 0, 0, 0, (int) $request->get_param( 'maand' ), 1, (int) $request->get_param( 'jaar' ) );
-		$maand   = (int) date( 'n', $periode );
-		$jaar    = (int) date( 'Y', $periode );
+		$oven_id = intval( $request->get_param( 'oven_id' ) );
+		$periode = mktime( 0, 0, 0, intval( $request->get_param( 'maand' ) ), 1, intval( $request->get_param( 'jaar' ) ) );
+		$maand   = intval( date( 'n', $periode ) );
+		$jaar    = intval( date( 'Y', $periode ) );
 		return new \WP_REST_Response(
 			[
 				'content' => self::toon_reserveringen( $oven_id, $maand, $jaar ),
@@ -288,9 +288,9 @@ class Public_Reservering extends Shortcode {
 	public static function callback_muteer( \WP_REST_Request $request ) {
 		$input       = $request->get_param( 'reservering' );
 		$oven_id     = $request->get_param( 'oven_id' );
-		$jaar        = (int) $input['jaar'];
-		$maand       = (int) $input['maand'];
-		$dag         = (int) $input['dag'];
+		$jaar        = intval( $input['jaar'] );
+		$maand       = intval( $input['maand'] );
+		$dag         = intval( $input['dag'] );
 		$reservering = new \Kleistad\Reservering( $oven_id, mktime( 23, 59, 0, $maand, $dag, $jaar ) );
 
 		switch ( $request->get_method() ) {
@@ -303,9 +303,9 @@ class Public_Reservering extends Shortcode {
 				$reservering->dag          = $dag;
 				$reservering->maand        = $maand;
 				$reservering->jaar         = $jaar;
-				$reservering->temperatuur  = (int) $input['temperatuur'];
+				$reservering->temperatuur  = intval( $input['temperatuur'] );
 				$reservering->soortstook   = sanitize_text_field( $input['soortstook'] );
-				$reservering->programma    = (int) $input['programma'];
+				$reservering->programma    = intval( $input['programma'] );
 				$reservering->verdeling    = $input['verdeling'];
 				$reservering->save();
 				break;
@@ -314,9 +314,9 @@ class Public_Reservering extends Shortcode {
 				if ( ! $reservering->gereserveerd ) {
 					break;
 				}
-				$reservering->temperatuur = (int) $input['temperatuur'];
+				$reservering->temperatuur = intval( $input['temperatuur'] );
 				$reservering->soortstook  = sanitize_text_field( $input['soortstook'] );
-				$reservering->programma   = (int) $input['programma'];
+				$reservering->programma   = intval( $input['programma'] );
 				$reservering->verdeling   = $input['verdeling'];
 				$reservering->save();
 				break;

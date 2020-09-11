@@ -46,13 +46,13 @@ class Workshop extends Artikel {
 	 * @since 5.0.0
 	 *
 	 * @global object $wpdb WordPress database.
-	 * @param int|string $arg (optional) workshop welke geladen moet worden of referentie.
+	 * @param int $workshop_id (optional) workshop welke geladen moet worden.
 	 */
-	public function __construct( $arg = null ) {
+	public function __construct( $workshop_id = null ) {
 		global $wpdb;
 		$this->betalen = new \Kleistad\Betalen();
 		$options       = \Kleistad\Kleistad::get_options();
-		if ( is_null( $arg ) ) {
+		if ( is_null( $workshop_id ) ) {
 			$this->data = [
 				'id'             => null,
 				'naam'           => '',
@@ -75,11 +75,6 @@ class Workshop extends Artikel {
 				'aanvraag_id'    => 0,
 			];
 		} else {
-			if ( is_string( $arg ) ) {
-				$workshop_id = (int) strtok( $arg, '-' );
-			} else {
-				$workshop_id = $arg;
-			}
 			$this->data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
 		}
 	}
@@ -97,7 +92,7 @@ class Workshop extends Artikel {
 			return strtotime( $this->data[ $attribuut ] );
 		}
 		if ( preg_match( '~(vervallen|betaald|definitief|betaling_email)~', $attribuut ) ) {
-			return (bool) $this->data[ $attribuut ];
+			return boolval( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {
 			case 'technieken':

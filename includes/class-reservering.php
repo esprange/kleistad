@@ -146,11 +146,11 @@ class Reservering extends Entity {
 				return strtotime( $this->data['jaar'] . '-' . $this->data['maand'] . '-' . $this->data['dag'] . ' 00:00' );
 			case 'gemeld':
 			case 'verwerkt':
-				return (bool) $this->data[ $attribuut ];
+				return boolval( $this->data[ $attribuut ] );
 			case 'gereserveerd':
 				return ( ! is_null( $this->data['id'] ) );
 			default:
-				return is_numeric( $this->data[ $attribuut ] ) ? (int) $this->data[ $attribuut ] : $this->data[ $attribuut ];
+				return is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
 	}
 
@@ -183,14 +183,14 @@ class Reservering extends Entity {
 			case 'verdeling':
 				$verdeling = [];
 				foreach ( $waarde as $stookdeel ) {
-					$index = array_search( (int) $stookdeel['id'], array_column( $verdeling, 'id' ), true );
+					$index = array_search( intval( $stookdeel['id'] ), array_column( $verdeling, 'id' ), true );
 					if ( false === $index ) {
 						$verdeling[] = [
-							'id'   => (int) $stookdeel['id'],
-							'perc' => (int) $stookdeel['perc'],
+							'id'   => intval( $stookdeel['id'] ),
+							'perc' => intval( $stookdeel['perc'] ),
 						];
 					} else {
-						$verdeling[ $index ]['perc'] += (int) $stookdeel['perc'];
+						$verdeling[ $index ]['perc'] += intval( $stookdeel['perc'] );
 					}
 				}
 				$this->data[ $attribuut ] = wp_json_encode( $verdeling );

@@ -37,7 +37,7 @@ class Public_Debiteuren extends ShortcodeForm {
 				'betreft'      => $betreft,
 				'referentie'   => $order->referentie,
 				'openstaand'   => $order->te_betalen(),
-				'credit'       => (bool) $order->origineel_id,
+				'credit'       => boolval( $order->origineel_id ),
 				'sinds'        => $order->datum,
 				'gesloten'     => $order->gesloten,
 				'verval_datum' => $order->verval_datum,
@@ -57,7 +57,7 @@ class Public_Debiteuren extends ShortcodeForm {
 		if ( '@' !== $order->referentie[0] ) {
 			$betreft      = \Kleistad\Artikel::get_artikel( $order->referentie )->artikel_naam();
 			$geblokkeerd  = $order->geblokkeerd();
-			$annuleerbaar = ( 0 === $order->credit_id );
+			$annuleerbaar = ! boolval( $order->credit_id );
 		} else {
 			$betreft      = 'afboeking';
 			$geblokkeerd  = true;
@@ -81,7 +81,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			'geblokkeerd'   => $geblokkeerd,
 			'annuleerbaar'  => $annuleerbaar,
 			'terugstorting' => $order->terugstorting_actief(),
-			'credit'        => (bool) $order->origineel_id,
+			'credit'        => boolval( $order->origineel_id ),
 			'afboekbaar'    => 0 < $te_betalen && strtotime( 'today' ) > strtotime( '+30 days', $order->verval_datum ), // Wettelijke betaaltermijn 30 dagen.
 		];
 	}
@@ -177,17 +177,16 @@ class Public_Debiteuren extends ShortcodeForm {
 				'content' => $this->goto_home(),
 			];
 		}
-		$order_id = (int) $data['input']['id'];
-		$order    = new \Kleistad\Order( $order_id );
-		$emailer  = new \Kleistad\Email();
-		$artikel  = \Kleistad\Artikel::get_artikel( $order->referentie );
-		$status   = '';
+		$order   = new \Kleistad\Order( $data['input']['id'] );
+		$emailer = new \Kleistad\Email();
+		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
+		$status  = '';
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
 				if ( $order->origineel_id ) {
-					$artikel->verwerk_betaling( $order_id, - (float) $data['input']['ontvangst'], true, 'bank' );
+					$artikel->verwerk_betaling( $data['input']['id'], - (float) $data['input']['ontvangst'], true, 'bank' );
 				} else {
-					$artikel->verwerk_betaling( $order_id, (float) $data['input']['ontvangst'], true, 'bank' );
+					$artikel->verwerk_betaling( $data['input']['id'], (float) $data['input']['ontvangst'], true, 'bank' );
 				}
 				$status = 'De betaling is verwerkt';
 				break;
@@ -197,7 +196,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						'to'          => $order->klant['email'],
 						'slug'        => 'order_annulering',
 						'subject'     => 'Order geannuleerd',
-						'attachments' => $artikel->annuleer_order( $order_id, (float) $data['input']['restant'], $data['input']['opmerking_annulering'] ),
+						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'], $data['input']['opmerking_annulering'] ),
 						'parameters'  => [
 							'naam'        => $order->klant['naam'],
 							'artikel'     => $artikel->artikel_naam(),
@@ -214,7 +213,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						'to'          => $order->klant['email'],
 						'slug'        => 'order_correctie',
 						'subject'     => 'Order gecorrigeerd',
-						'attachments' => $artikel->korting_order( $order_id, (float) $data['input']['korting'], $data['input']['opmerking_korting'] ),
+						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'], $data['input']['opmerking_korting'] ),
 						'parameters'  => [
 							'naam'        => $order->klant['naam'],
 							'artikel'     => $artikel->artikel_naam(),

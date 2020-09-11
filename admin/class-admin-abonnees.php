@@ -121,7 +121,7 @@ class Admin_Abonnees extends \WP_List_Table {
 		$search_val   = filter_input( INPUT_GET, 's' );
 		$search       = ! is_null( $search_val ) ? $search_val : '';
 		$paged_val    = filter_input( INPUT_GET, 'paged' );
-		$paged        = ! is_null( $paged_val ) ? max( 0, (int) $paged_val - 1 ) : 0;
+		$paged        = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$orderby_val  = filter_input( INPUT_GET, 'orderby' );
 		$orderby      = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val    = filter_input( INPUT_GET, 'order' );

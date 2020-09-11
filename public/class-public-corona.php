@@ -152,7 +152,7 @@ class Public_Corona extends ShortcodeForm {
 						],
 					]
 				);
-				$data['id']         = (int) filter_input( INPUT_GET, 'gebruiker' );
+				$data['id']         = intval( filter_input( INPUT_GET, 'gebruiker' ) );
 				$data['gebruik']    = $this->gebruik( $data['id'] );
 				return true;
 			} elseif ( 'overzicht' === $data['actie'] ) {
@@ -223,7 +223,7 @@ class Public_Corona extends ShortcodeForm {
 		$beschikbaarheid = $this->beschikbaarheid( $datum );
 		$reserveringen   = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
 		$aanpassingen    = $data['input']['res'] ?: [];
-		$id              = (int) $data['input']['id'];
+		$id              = intval( $data['input']['id'] );
 		foreach ( $aanpassingen as $index => $aanpassing ) {
 			foreach ( $aanpassing as $werk => $check ) {
 				if ( ! in_array( $id, $reserveringen[ $index ][ $werk ] ?? [], true ) ) {
@@ -292,7 +292,7 @@ class Public_Corona extends ShortcodeForm {
 			'B' => 'Bovenruimte',
 		];
 		$gebruiker_id = filter_input( INPUT_GET, 'gebruiker', FILTER_SANITIZE_NUMBER_INT );
-		$gebruik      = $this->gebruik( (int) $gebruiker_id );
+		$gebruik      = $this->gebruik( intval( $gebruiker_id ) );
 		ksort( $gebruik );
 
 		$gebruik_fields = [

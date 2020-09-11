@@ -63,14 +63,15 @@ class Public_Email extends ShortcodeForm {
 
 		$cursus_criterium = strtotime( '-6 months' ); // Cursussen die langer dan een half jaar gelden zijn geëindigd worden niet getoond.
 		$inschrijvingen   = \Kleistad\Inschrijving::all();
+		$cursussen        = \Kleistad\Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			$cursist = get_userdata( $cursist_id );
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! $bestuur_rechten && (int) $inschrijving->cursus->docent !== $user->ID ) {
+				if ( ! $bestuur_rechten && intval( $cursussen[ $cursus_id ]->docent ) !== $user->ID ) {
 					continue;
 				}
-				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $inschrijving->cursus->eind_datum ) {
-					$data['input']['tree'][ $cursus_id ]['naam']                  = $inschrijving->cursus->code . ' - ' . $inschrijving->cursus->naam;
+				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
+					$data['input']['tree'][ $cursus_id ]['naam']                  = $cursussen[ $cursus_id ]->code . ' - ' . $cursussen[ $cursus_id ]->naam;
 					$data['input']['tree'][ $cursus_id ]['leden'][ $cursist->ID ] = $cursist->display_name;
 				}
 			}

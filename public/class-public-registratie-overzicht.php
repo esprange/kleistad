@@ -70,7 +70,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 						'geannuleerd' => $inschrijving->geannuleerd,
 						'code'        => $inschrijving->code,
 						'aantal'      => $inschrijving->aantal,
-						'naam'        => $inschrijving->cursus->naam,
+						'naam'        => $cursussen[ $cursus_id ]->naam,
 						'technieken'  => $inschrijving->technieken,
 					];
 				}
@@ -110,6 +110,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 */
 	protected function cursisten() {
 		$cursisten               = get_users( [ 'orderby' => 'nicename' ] );
+		$cursussen               = \Kleistad\Cursus::all();
 		$inschrijvingen          = \Kleistad\Inschrijving::all();
 		$cursist_cursus_gegevens = [];
 		$cursus_fields           = [
@@ -151,7 +152,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 						'data'           => array_merge(
 							$cursist_gegevens,
 							[
-								'C' . $cursus_id . '-' . $inschrijving->cursus->naam,
+								'C' . $cursus_id . '-' . $cursussen[ $cursus_id ]->naam,
 								$inschrijving->code,
 								date( 'd-m-Y', $inschrijving->datum ),
 								$inschrijving->geannuleerd ? 'geannuleerd' : ( $inschrijving->ingedeeld ? 'ingedeeld' : 'wacht op betaling' ),
