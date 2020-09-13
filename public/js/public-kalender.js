@@ -42,7 +42,6 @@
 									tekst +=  '<br/>' + info.event.extendedProps.technieken;
 								}
 							}
-							// Voor scrutiner, falls through
 							/* falls through */
 						case 'timeGridWeek':
 							tekst += '</div></div>';
