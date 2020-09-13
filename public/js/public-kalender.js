@@ -44,6 +44,7 @@
 							}
 							/* falls through */
 						case 'timeGridWeek':
+							/* verwerkt hier beide views */
 							tekst += '</div></div>';
 							return { html: tekst };
 						default:
