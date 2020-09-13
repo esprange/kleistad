@@ -179,7 +179,7 @@ class Admin_Main {
 	 */
 	public function email_get_posts_order( $wp_query ) {
 		if ( is_admin() ) {
-			if ( \Kleistad\Email::POST_TYPE === $wp_query->query['post_type'] ) {
+			if ( isset( $wp_query->query['post_type'] ) && \Kleistad\Email::POST_TYPE === $wp_query->query['post_type'] ) {
 				$wp_query->set( 'orderby', 'modified' );
 			}
 		}
