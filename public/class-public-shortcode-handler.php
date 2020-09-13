@@ -96,8 +96,8 @@ class Public_Shortcode_Handler {
 		],
 		'kalender'              => [
 			'script' => true,
-			'js'     => [ 'jquery', 'fullcalendar-core', 'fullcalendar-nl', 'fullcalendar-day', 'fullcalendar-week' ],
-			'css'    => [ 'fullcalendar-core', 'fullcalendar-day', 'fullcalendar-week' ],
+			'js'     => [ 'jquery', 'fullcalendar' ],
+			'css'    => [ 'fullcalendar' ],
 			'access' => [ 'docenten', 'leden', 'bestuur' ],
 		],
 		'omzet_rapportage'      => [

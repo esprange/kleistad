@@ -8,35 +8,45 @@
 
 			var calendarEl = document.getElementById( 'kleistad_fullcalendar' );
 			var calendar = new FullCalendar.Calendar( calendarEl, {
-				plugins: [ 'dayGrid', 'timeGrid' ],
-				defaultView: 'dayGridMonth',
+				initialView: 'dayGridMonth',
 				locales: [ 'nl' ],
 				locale: 'nl',
-				header: {
+				headerToolbar: {
 					left: 'dayGridMonth, timeGridWeek, timeGridDay',
 					center: 'title',
 					right: 'today prev,next'
 				},
-				eventLimit: true,
+				height: 'auto',
+				dayMaxEventRows: true,
 				navLinks: true,
 				buttonIcons: true,
 				weekNumbers: true,
+				weekNumberFormat: { week: 'numeric' },
 				fixedWeekCount: false,
 				allDaySlot: false,
-				minTime: '08:00:00',
+				slotMinTime: '08:00:00',
 				scrollTime: '09:00:00',
-				eventRender: function( info ) {
-					var tekst = '';
-					if ( 'timeGridDay' === info.view.type ) {
-						if ( 'undefined' !== typeof( info.event.extendedProps.naam ) ) {
-							tekst += '<div class="kleistad_row"><div class="kleistad_col_3">' + info.event.extendedProps.naam + '</div></div>';
-							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Docent</div><div class="kleistad_col_2">' + info.event.extendedProps.docent + '</div></div>';
-							tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Aantal</div><div class="kleistad_col_2">' + info.event.extendedProps.aantal + '</div></div>';
-							if ( ( '' !== info.event.extendedProps.technieken ) ) {
-								tekst += '<div class="kleistad_row"><div class="kleistad_col_1">Techniek</div><div class="kleistad_col_2">' + info.event.extendedProps.technieken + '</div></div>';
+				eventContent: function( info ) {
+					var tekst =
+						'<div class="fc-event-main-frame ' + info.className + '">' + 
+							'<div class="fc-event-time">' + info.timeText + '</div>' +
+							'<div class="fc-event-title-container">' +
+								'<div class="fc-event-title fc-sticky">' + info.event.title + '</div>';
+					switch ( info.view.type ) {
+						case 'timeGridDay':
+							if ( 'undefined' !== typeof( info.event.extendedProps.naam ) ) {
+								tekst += info.event.extendedProps.naam;
+								tekst += '<br/>Docent :' + info.event.extendedProps.docent;
+								tekst += '<br/>Aantal :' + info.event.extendedProps.aantal;
+								if ( ( '' !== info.event.extendedProps.technieken ) ) {
+									tekst +=  '<br/>' + info.event.extendedProps.technieken;
+								}
 							}
-						}
-						info.el.innerHTML += tekst;
+						case 'timeGridWeek':
+							tekst += '</div></div>';
+							return { html: tekst };
+						default:
+							return;
 					}
 				},
 				events: function( info, successCallback, failureCallback ) {

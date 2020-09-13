@@ -76,7 +76,8 @@ class Google {
 	 */
 	public static function vraag_service_aan( $redirect_url ) {
 		update_option( self::REDIRECT_URI, $redirect_url );
-		update_option( self::REFRESH_TOKEN, '' );
+		delete_option( self::REFRESH_TOKEN );
+		// 13-09-2020 i.p.v. update_option naar lege string.
 		$client = self::maak_client();
 		if ( false === $client ) {
 			return;
