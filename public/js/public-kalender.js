@@ -47,7 +47,7 @@
 							tekst += '</div></div>';
 							return { html: tekst };
 						default:
-							break;
+							return undefined;
 					}
 				},
 				events: function( info, successCallback, failureCallback ) {
