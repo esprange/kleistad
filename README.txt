@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.5.1
-Stable tag: 6.5.2
+Stable tag: 6.5.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least PHP version: 7.2
@@ -36,8 +36,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 6.5.2 =
-* Agenda maakt nu gebruik van fullcalendar 5.3.2
+= 6.5.3 =
+* Agenda maakt nu gebruik van fullcalendar 5.3.2 en datatables 1.10.21
+* Fix in workshops en cursus zodat een correctie factuur alleen verzonden wordt als de order wijzigt
+* Aanpassing plugin afhankelijk omgeving (development, staging, production)
 = 6.5.1 =
 * Stooksaldo kan nu ook een afwijkend bedrag zijn
 * Cursussen welke binnen een week beginnen moeten in hun geheel betaald worden bij inschrijving

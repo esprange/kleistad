@@ -42,10 +42,9 @@
 									tekst +=  '<br/>' + info.event.extendedProps.technieken;
 								}
 							}
-							/* falls through */
+							return { html: tekst + '</div></div>' };
 						case 'timeGridWeek':
-							tekst += '</div></div>';
-							return { html: tekst };
+							return { html: tekst + '</div></div>' };
 						default:
 							return undefined;
 					}
