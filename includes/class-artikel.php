@@ -256,22 +256,25 @@ abstract class Artikel extends Entity {
 	 * @return bool|string De url van de factuur of false.
 	 */
 	final public function wijzig_order( $id, $opmerking = '' ) {
-		$order = new \Kleistad\Order( $id );
+		$originele_order = new \Kleistad\Order( $id );
+		$order           = clone $originele_order;
 		if ( $order->geblokkeerd() ) {
 			return false;
 		}
-		$oude_regels    = $order->regels;
 		$korting_regels = [];
-		foreach ( $oude_regels as $oude_regel ) {
-			if ( 'korting' === $oude_regel['artikel'] ) {
-				$korting_regels[] = $oude_regel;
+		foreach ( $order->regels as $regel ) {
+			if ( 'korting' === $regel['artikel'] ) {
+				$korting_regels[] = $regel;
 			}
 		}
 		$order->regels     = array_merge( $this->factuurregels(), $korting_regels );
 		$order->klant      = $this->naw_klant();
-		$order->historie   = 'Order gewijzigd';
 		$order->referentie = $this->referentie();
-		$order->opmerking  = $opmerking;
+		if ( $order === $originele_order ) {
+			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
+		}
+		$order->historie  = 'Order gewijzigd';
+		$order->opmerking = $opmerking;
 		$order->save();
 		$this->maak_link( $order->id );
 		$this->betaalactie( $order->betaald );

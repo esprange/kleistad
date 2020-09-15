@@ -212,13 +212,13 @@ class Workshop extends Artikel {
 		$order_id = \Kleistad\Order::zoek_order( $this->code );
 		if ( $order_id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
 			$factuur = $this->wijzig_order( $order_id );
-			if ( false === $factuur ) {
+			if ( false === $factuur ) { // De factuur is aangemaakt in een periode die boekhoudkundig geblokkeerd is, correctie is niet mogelijk.
 				return false;
+			} elseif ( ! empty( $factuur ) ) { // Er was al een factuur die nog gecorrigeerd mag worden.
+				return $this->email( '_betaling', $factuur );
 			}
-			return $this->email( '_betaling', $factuur );
-		} else {
-			return $this->email( '_herbevestiging' );
 		}
+		return $this->email( '_herbevestiging' );
 	}
 
 	/**

@@ -68,7 +68,6 @@ class Admin_Cursisten_Handler {
 			} else {
 				// attributen inschrijving gewijzigd.
 				$inschrijving->save();
-				$message = 'De gegevens zijn opgeslagen';
 			}
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
