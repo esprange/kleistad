@@ -70,7 +70,7 @@ class Email {
 	 * @return string
 	 */
 	public static function info() {
-		return ! defined( 'KLEISTAD_DEV' ) ? 'info@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+		return ( 'development' !== wp_get_environment_type() ) ? 'info@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
 	}
 
 	/**
@@ -170,8 +170,8 @@ class Email {
 			if ( ! is_null( $page ) ) {
 				$this->mailparams['content'] = apply_filters( 'the_content', $page->post_content );
 			} else {
-				if ( ! defined( 'KLEISTAD_DEV' ) ) {
-					return '';
+				if ( 'production' === wp_get_environment_type() ) {
+					return ''; // Verstuur geen bericht als er geen inhoud is.
 				}
 				$this->mailparams['content'] = "<table><tr><th colspan=\"2\">{$this->mailparams['slug']}</th></tr>";
 				foreach ( $this->mailparams['parameters'] as $key => $parameter ) {
@@ -196,7 +196,7 @@ class Email {
 				},
 				'#\[\s*(cc|bcc)\s*:\s*(.+?)\s*\]#i'       => function( $match ) {
 					// Bcc of Cc parameter, alleen gebruiken ingeval van productie.
-					if ( ! defined( 'KLEISTAD_DEV' ) ) {
+					if ( 'production' === wp_get_environment_type() ) {
 						$this->mailparams[ $match[1] ][] = $match[2];
 					}
 					return '';

@@ -191,7 +191,7 @@ class WorkshopAanvraag {
 						'subject'    => sanitize_text_field( $email->subject ),
 						'body'       => sanitize_textarea_field( $body ),
 					]
-				) && ! defined( 'KLEISTAD_DEV' ) ) {
+				) && 'production' === wp_get_environment_type() ) {
 					$emailer->send(
 						[
 							'to'        => 'Kleistad <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
@@ -369,6 +369,6 @@ class WorkshopAanvraag {
 	 * @return string
 	 */
 	private static function mbx() {
-		return ! defined( 'KLEISTAD_DEV' ) ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+		return ( 'production' === wp_get_environment_type() ) ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
 	}
 }
