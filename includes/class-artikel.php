@@ -270,9 +270,10 @@ abstract class Artikel extends Entity {
 		$order->regels     = array_merge( $this->factuurregels(), $korting_regels );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->referentie();
-		if ( $order === $originele_order ) {
+		if ( $order == $originele_order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}
+
 		$order->historie  = 'Order gewijzigd';
 		$order->opmerking = $opmerking;
 		$order->save();

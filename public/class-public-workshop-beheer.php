@@ -353,7 +353,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$workshop->save();
 			$bericht = 'De workshop informatie is opgeslagen';
 		} elseif ( 'bevestigen' === $data['form_actie'] ) {
-			if ( $workshop->bevestig() ) {
+			if ( false !== $workshop->bevestig() ) {
 				$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
 			} else {
 				return [
