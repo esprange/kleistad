@@ -59,16 +59,16 @@ class Public_Kalender extends Shortcode {
 				$workshop = new \Kleistad\Workshop( $event->properties['id'] );
 				if ( ! $workshop->vervallen ) {
 					$fc_events[] = [
-						'id'            => $event->id,
-						'title'         => "$workshop->naam ($workshop->code)",
-						'start'         => $event->start->format( \DateTime::ATOM ),
-						'end'           => $event->eind->format( \DateTime::ATOM ),
-						'className'     => $workshop->betaald ? 'kleistad_workshop_betaald' :
-							( $workshop->definitief ? 'kleistad_workshop_definitief' : 'kleistad_workshop_concept' ),
-						'extendedProps' => [
+						'id'              => $event->id,
+						'title'           => "$workshop->naam ($workshop->code)",
+						'start'           => $event->start->format( \DateTime::ATOM ),
+						'end'             => $event->eind->format( \DateTime::ATOM ),
+						'backgroundColor' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
+						'textColor'       => $workshop->betaald ? 'white' : ( $workshop->definitief ? 'black' : 'black' ),
+						'extendedProps'   => [
 							'naam'       => $workshop->naam,
 							'aantal'     => $workshop->aantal,
-							'docent'     => $workshop->docent,
+							'docent'     => $workshop->docent ?: 'n.b.]',
 							'technieken' => implode( ', ', $workshop->technieken ),
 						],
 					];
@@ -77,26 +77,28 @@ class Public_Kalender extends Shortcode {
 				$cursus = new \Kleistad\Cursus( $event->properties['id'] );
 				if ( ! $cursus->vervallen ) {
 					$fc_events[] = [
-						'id'            => $event->id,
-						'title'         => $cursus->naam,
-						'start'         => $event->start->format( \DateTime::ATOM ),
-						'end'           => $event->eind->format( \DateTime::ATOM ),
-						'className'     => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'kleistad_cursus_tonen' : 'kleistad_cursus_concept',
-						'extendedProps' => [
-							'naam'       => "cursus $cursus->code",
+						'id'              => $event->id,
+						'title'           => "$cursus->naam ($cursus->code)",
+						'start'           => $event->start->format( \DateTime::ATOM ),
+						'end'             => $event->eind->format( \DateTime::ATOM ),
+						'backgroundColor' => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'slateblue' : 'lightblue',
+						'textColor'       => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'white' : 'black',
+						'extendedProps'   => [
+							'naam'       => 'cursus',
 							'aantal'     => $cursus->maximum - $cursus->ruimte(),
-							'docent'     => $cursus->docent_naam(),
+							'docent'     => $cursus->docent_naam() ?: 'n.b.',
 							'technieken' => implode( ', ', $cursus->technieken ),
 						],
 					];
 				}
 			} else {
 				$fc_events[] = [
-					'id'        => $event->id,
-					'title'     => $event->titel ?: '',
-					'start'     => $event->start->format( \DateTime::ATOM ),
-					'end'       => $event->eind->format( \DateTime::ATOM ),
-					'className' => 'kleistad_overige_afspraak',
+					'id'              => $event->id,
+					'title'           => $event->titel ?: '',
+					'start'           => $event->start->format( \DateTime::ATOM ),
+					'end'             => $event->eind->format( \DateTime::ATOM ),
+					'backgroundColor' => 'violet',
+					'textColor'       => 'black',
 				];
 			}
 		}

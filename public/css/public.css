@@ -387,30 +387,6 @@ label.kleistad_label_cb {
 .kleistad_reservering_ander {
 	background: pink;
 }
-.kleistad_workshop_betaald {
-	background: green;
-	color: white;
-}
-.kleistad_workshop_definitief {
-	background: springgreen;
-	color: black;
-}
-.kleistad_workshop_concept {
-	background: orange;
-	color: black;
-}
-.kleistad_cursus_tonen {
-	background: slateblue;
-	color: white;
-}
-.kleistad_cursus_concept {
-	background: lightblue;
-	color: black;
-}
-.kleistad_overige_afspraak {
-	background: violet;
-	color: black;
-}
 .kleistad_filters {
     border: 0;
     display: none;
