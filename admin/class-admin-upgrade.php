@@ -201,18 +201,6 @@ class Admin_Upgrade {
 	 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
 	 */
 	private function convert_saldo() {
-		$gebruikers = get_users( [ 'ID' ] );
-		foreach( $gebruikers as $gebruiker ) {
-			$saldo = get_user_meta( $gebruiker->ID, \Kleistad\Saldo::META_KEY, true );
-			if ( empty( $saldo ) || ! isset( $saldo['reden'] ) ) {
-				continue;
-			}
-			unset ( $saldo['reden'] );
-			foreach( $saldo['storting'] as $index => $storting ) {
-				unset( $saldo['storting'][$index]['reden'] );
-			}
-			update_user_meta( $gebruiker->ID, \Kleistad\Saldo::META_KEY, $saldo );
-		}
 	}
 
 	/**
@@ -225,14 +213,6 @@ class Admin_Upgrade {
 	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
 	 */
 	private function convert_abonnement() {
-		$abonnementen = \Kleistad\Abonnement::all();
-		foreach ( $abonnementen as $abonnement ) {
-			if ( false === $abonnement->start_eind_datum ) {
-				$abonnement->start_eind_datum = strtotime( '+3 month', $abonnement->start_datum );
-				$abonnement->reguliere_datum  = strtotime( 'first day of +4 month', $abonnement->start_datum );
-				$abonnement->save();
-			}
-		}
 	}
 
 	/**
