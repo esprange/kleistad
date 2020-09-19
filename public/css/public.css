@@ -34,6 +34,9 @@ table.display {
 a.jstree-anchor {
 	box-shadow: 0 0 0 0 #FFFFFF !important;
 }
+a.fc-daygrid-event {
+    color: black !important;
+}
 .kleistad-state-highlight{
 	border: 2px solid #F60083 !important;
 }
