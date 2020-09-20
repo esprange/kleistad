@@ -33,14 +33,17 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				'hsh'  => FILTER_SANITIZE_STRING,
 			]
 		);
-		$inschrijving = \Kleistad\Artikel::get_artikel( $param['code'] );
-		if ( ! is_null( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < /* @scrutinizer ignore-type */ $inschrijving->aantal ) {
-			$data['cursus_naam']  = /* @scrutinizer ignore-type */ $inschrijving->cursus->naam;
+		$inschrijving = $this->inschrijving( $param['code'] );
+		if ( ! is_null( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
+			if ( $inschrijving->geannuleerd ) {
+				return new \WP_Error( 'Geannuleerd', 'Deelname aan de cursus is geannuleerd.' );
+			}
+			$data['cursus_naam']  = $inschrijving->cursus->naam;
 			$data['cursist_code'] = $inschrijving->code;
 			$data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
 			$index                = 1;
 			if ( ! isset( $data['input'] ) ) {
-				foreach ( /* @scrutinizer ignore-type */ $inschrijving->extra_cursisten as $extra_cursist_id ) {
+				foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
 					$extra_cursist = get_user_by( 'id', $extra_cursist_id );
 					if ( false === $extra_cursist ) {
 						continue;
@@ -89,7 +92,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				'code'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['inschrijving'] = \Kleistad\Artikel::get_artikel( $data['input']['code'] );
+		$data['inschrijving'] = $this->inschrijving( $data['input']['code'] );
 		$emails               = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
 		foreach ( $data['input']['extra_cursist'] as &$extra_cursist ) {
 			if ( ! empty( $extra_cursist['user_email'] ) ) {
@@ -178,6 +181,17 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'De gegevens zijn opgeslagen' . ( $emails_verzonden ? ' en welkomst email is verstuurd' : '' ) ),
 		];
+	}
+
+	/**
+	 * Vind de inschrijving op basis van de code
+	 *
+	 * @param  string $code De code.
+	 * @return \Kleistad\Inschrijving De inschrijving.
+	 */
+	private function inschrijving( $code ) {
+		$parameters = explode( '-', substr( $code, 1 ) );
+		return new \Kleistad\Inschrijving( (int) $parameters[0], (int) $parameters[1] );
 	}
 
 }
