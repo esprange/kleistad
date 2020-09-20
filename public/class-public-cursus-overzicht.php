@@ -83,20 +83,33 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			if ( 0 === $ruimte && ! $inschrijving->ingedeeld ) {
 				continue; // Het heeft geen zin om wachtende inschrijvingen te tonen als de cursus geen plaats meer heeft.
 			}
-			$cursist     = get_userdata( $cursist_id );
-			$order       = new \Kleistad\Order( $inschrijving->referentie() );
-			$cursisten[] = [
-				'id'             => $cursist_id,
-				'naam'           => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
-				'telnr'          => $cursist->telnr,
-				'email'          => $cursist->user_email,
-				'i_betaald'      => $inschrijving->inschrijving_betaald( $order->betaald ),
-				'c_betaald'      => $order->gesloten,
-				'restant_email'  => $inschrijving->restant_email,
-				'herinner_email' => $inschrijving->herinner_email,
-				'technieken'     => implode( ', ', $inschrijving->technieken ),
-				'wacht'          => ( ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! \Kleistad\Order::zoek_order( $inschrijving->code ) ),
-			];
+			$cursist = get_userdata( $cursist_id );
+			if ( $inschrijving->hoofd_cursist_id ) {
+				$hoofd_inschrijving = new \Kleistad\Inschrijving( $cursus->id, $inschrijving->hoofd_cursist_id );
+				$cursisten[]        = [
+					'id'         => $cursist_id,
+					'naam'       => $cursist->display_name,
+					'telnr'      => $cursist->telnr,
+					'email'      => $cursist->user_email,
+					'extra'      => true,
+					'technieken' => implode( ', ', $inschrijving->technieken ),
+				];
+			} else {
+				$order       = new \Kleistad\Order( $inschrijving->referentie() );
+				$cursisten[] = [
+					'id'             => $cursist_id,
+					'naam'           => $cursist->display_name . $inschrijving->toon_aantal(),
+					'telnr'          => $cursist->telnr,
+					'email'          => $cursist->user_email,
+					'extra'          => false,
+					'i_betaald'      => $inschrijving->inschrijving_betaald( $order->betaald ),
+					'c_betaald'      => $order->gesloten,
+					'restant_email'  => $inschrijving->restant_email,
+					'herinner_email' => $inschrijving->herinner_email,
+					'technieken'     => implode( ', ', $inschrijving->technieken ),
+					'wacht'          => ( ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! \Kleistad\Order::zoek_order( $inschrijving->code ) ),
+				];
+			}
 		}
 		return $cursisten;
 	}
@@ -202,23 +215,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$aantal_verzonden_email = 0;
 			// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
 			foreach ( $this->inschrijvingen( $data['input']['cursus_id'], false ) as $inschrijving ) {
-				$order = new \Kleistad\Order( $inschrijving->referentie() );
-				if ( $order->gesloten || $inschrijving->regeling_betaald( $order->betaald ) || $inschrijving->herinner_email ) {
-					/**
-					 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.
-					 * En uiteraard sturen maar éénmaal de standaard herinnering.
-					 */
-					continue;
-				}
 				/**
 				 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
 				 */
-				$aantal_verzonden_email++;
-				$inschrijving->artikel_type   = 'cursus';
-				$inschrijving->herinner_email = true;
-				$inschrijving->maak_link( $order->id );
-				$inschrijving->email( '_herinnering' );
-				$inschrijving->save();
+				$aantal_verzonden_email += $inschrijving->herinnering();
 			}
 			return [
 				'status'  => $this->status( ( $aantal_verzonden_email > 0 ) ? "Emails zijn verstuurd naar $aantal_verzonden_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
@@ -269,7 +269,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$cursus    = new \Kleistad\Cursus( $cursus_id );
 		$cursisten = [];
 		foreach ( $this->inschrijvingen( $cursus_id, false ) as $cursist_id => $inschrijving ) {
-			$cursisten[] = get_user_by( 'id', $cursist_id )->display_name;
+			$cursisten[] = get_user_by( 'id', $cursist_id )->display_name . $inschrijving->toon_aantal();
 		}
 		$presentielijst = new \Kleistad\Presentielijst( 'L' );
 		return $presentielijst->run( $cursus, $cursisten );

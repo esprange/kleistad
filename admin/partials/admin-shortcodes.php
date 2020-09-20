@@ -30,6 +30,7 @@
 				</li>
 			</ul>
 			</li>
+			<li>[kleistad_cursus_extra] het invoeren van de gegevens van extra cursus deelnemers</li>
 			<li>[kleistad_dagdelenkaart] aankoop dagdelenkaart
 			<ul style="list-style-type:square;margin-left:25px">
 				<li>verklaring= De optionele verklaring die goedgekeurd moet worden.

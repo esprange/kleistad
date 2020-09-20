@@ -31,8 +31,17 @@ if ( 'cursisten' === $data['actie'] ) :
 			<tr>
 				<td><?php echo esc_html( $cursist['naam'] ); ?></td>
 				<td><?php echo esc_html( $cursist['technieken'] ); ?></td>
+				<?php if ( $cursist['extra'] ) : ?>
+				<td><span class="dashicons dashicons-minus"></span></td>
+				<?php else : ?>
 				<td><?php echo ( ( $cursist['c_betaald'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
+				<?php endif ?>
+
 				<?php if ( $data['bestuur_rechten'] ) : ?>
+					<?php if ( $cursist['extra'] ) : ?>
+				<td><span class="dashicons dashicons-minus"></span></td>
+				<td><span class="dashicons dashicons-minus"></span></td>
+				<?php else : ?>
 				<td><?php echo ( ( $cursist['herinner_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 				<td>
 					<?php
@@ -48,6 +57,7 @@ if ( 'cursisten' === $data['actie'] ) :
 					endif
 					?>
 				</td>
+				<?php endif ?>
 				<?php endif ?>
 			</tr>
 		<?php endforeach ?>

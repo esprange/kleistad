@@ -78,6 +78,8 @@
 				<li>[cursus_technieken] : gekozen technieken</li>
 				<li>[cursus_code] : code te vermelden bij betaling</li>
 				<li>[cursus_aantal] : aantal ingeschreven cursisten</li>
+				<li>[cursus_extra_cursisten] : tekst om te tonen als er extra cursisten zijn</li>
+				<li>[cursus_hoofd_cursist] : de naam van de hoofdcursist als er meer dan 1 inschrijving is</li>
 				<li>[cursus_kosten] : kosten exclusief inschrijfgeld</li>
 				<li>[cursus_inschrijfkosten] : inschrijf kosten</li>
 				<li>[cursus_opmerking] : de gemaakte opmerking</li>

@@ -64,6 +64,12 @@ class Public_Shortcode_Handler {
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 			'access' => [ 'bestuur' ],
 		],
+		'cursus_extra'          => [
+			'script' => true,
+			'js'     => [ 'jquery' ],
+			'css'    => [],
+			'access' => [],
+		],
 		'cursus_inschrijving'   => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],

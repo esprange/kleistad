@@ -17,6 +17,8 @@ namespace Kleistad;
  * @since 4.0.87
  *
  * @property array  technieken
+ * @property array  extra_cursisten
+ * @property int    hoofd_cursist_id
  * @property bool   ingedeeld
  * @property bool   geannuleerd
  * @property string opmerking
@@ -31,6 +33,7 @@ class Inschrijving extends Artikel {
 	private const EMAIL_SUBJECT   = [
 		'inschrijving'    => 'Inschrijving cursus',
 		'indeling'        => 'Indeling cursus',
+		'_extra'          => 'Welkom cursus',
 		'_herinnering'    => 'Herinnering betaling cursus',
 		'_ideal'          => 'Betaling cursus',
 		'_ideal_betaald'  => 'Betaling cursus',
@@ -66,15 +69,17 @@ class Inschrijving extends Artikel {
 	 * @var array $default_data de standaard waarden bij het aanmaken van een inschrijving.
 	 */
 	private $default_data = [
-		'code'           => '',
-		'datum'          => '',
-		'technieken'     => [],
-		'ingedeeld'      => 0,
-		'geannuleerd'    => 0,
-		'opmerking'      => '',
-		'aantal'         => 1,
-		'restant_email'  => 0,
-		'herinner_email' => 0,
+		'code'             => '',
+		'datum'            => '',
+		'technieken'       => [],
+		'ingedeeld'        => 0,
+		'geannuleerd'      => 0,
+		'opmerking'        => '',
+		'aantal'           => 1,
+		'restant_email'    => 0,
+		'herinner_email'   => 0,
+		'extra_cursisten'  => [],
+		'hoofd_cursist_id' => 0,
 	];
 
 	/**
@@ -111,6 +116,7 @@ class Inschrijving extends Artikel {
 	public function __get( $attribuut ) {
 		switch ( $attribuut ) {
 			case 'technieken':
+			case 'extra_cursisten':
 				return ( is_array( $this->data[ $attribuut ] ) ) ? $this->data[ $attribuut ] : [];
 			case 'datum':
 				return strtotime( $this->data[ $attribuut ] );
@@ -134,6 +140,7 @@ class Inschrijving extends Artikel {
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'technieken':
+			case 'extra_cursisten':
 				$this->data[ $attribuut ] = is_array( $waarde ) ? $waarde : [];
 				break;
 			case 'datum':
@@ -168,9 +175,39 @@ class Inschrijving extends Artikel {
 		if ( ! $this->geannuleerd ) {
 			$this->geannuleerd = true;
 			$this->save();
+			foreach ( $this->extra_cursisten as $extra_cursist_id ) {
+				$extra_inschrijving              = new \Kleistad\Inschrijving( $this->cursus->id, $extra_cursist_id );
+				$extra_inschrijving->geannuleerd = true;
+				$extra_inschrijving->save();
+			}
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Stuur de herinnerings email.
+	 *
+	 * @return int Aantal emails verstuurd.
+	 */
+	public function herinnering() {
+		if ( 0 === $this->aantal ) {
+			return 0;
+		}
+		$order = new \Kleistad\Order( $this->referentie() );
+		if ( $order->gesloten || $this->regeling_betaald( $order->betaald ) || $this->herinner_email ) {
+			/**
+			 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.
+			 * En uiteraard sturen maar éénmaal de standaard herinnering.
+			 */
+			return 0;
+		}
+		$this->artikel_type   = 'cursus';
+		$this->herinner_email = true;
+		$this->maak_link( $order->id );
+		$this->email( '_herinnering' );
+		$this->save();
+		return 1;
 	}
 
 	/**
@@ -214,6 +251,41 @@ class Inschrijving extends Artikel {
 			return self::OPM_INSCHRIJVING;
 		}
 		return '';
+	}
+
+	/**
+	 * Geef de tekst en de link naar de aanmelden extra cursisten pagina
+	 *
+	 * @return string De melding.
+	 */
+	public function heeft_extra_cursisten() {
+		if ( $this->aantal > 1 ) {
+			$url = add_query_arg(
+				[
+					'code' => $this->code,
+					'hsh'  => $this->controle(),
+				],
+				home_url( '/extra_cursisten' )
+			);
+			if ( 2 === $this->aantal ) {
+				$tekst = 'Je hebt aangegeven dat er 1 mededeelnemer is aan de cursus/workshop. Kleistad wil graag weten wie dit is zodat we hem/haar per email kunnen informeren over de zaken die de cursus/workshop aangaan. ';
+			} else {
+				$tekst = 'Je hebt aangegeven dat er ' . ( $this->aantal - 1 ) . 'mededeelnemers zijn aan de cursus/workshop. Kleistad wil graag weten wie dit zijn zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ';
+			}
+			$tekst .= "Je kunt dit invoeren op de volgende <a href=\"$url\" >Kleistad pagina</a>.";
+			return $tekst;
+		}
+		return '';
+	}
+
+	/**
+	 * Toont eventueel aantal medecursisten
+	 *
+	 * @return string Het aantal.
+	 */
+	public function toon_aantal() {
+		$aantal = $this->aantal - count( $this->extra_cursisten );
+		return ( 1 < $aantal ) ? " ($aantal)" : '';
 	}
 
 	/**
@@ -292,8 +364,10 @@ class Inschrijving extends Artikel {
 					'cursus_technieken'      => implode( ', ', $this->technieken ),
 					'cursus_code'            => $this->code,
 					'cursus_restant_melding' => $this->heeft_restant(),
+					'cursus_extra_cursisten' => $this->heeft_extra_cursisten(),
+					'cursus_hoofd_cursist'   => $this->hoofd_cursist_id ? get_user_by( 'id', $this->hoofd_cursist_id )->display_name : '',
 					'cursus_bedrag'          => number_format_i18n( $this->aantal * $this->cursus->bedrag(), 2 ),
-					'cursus_restantbedrag'   => number_format_i18n( $this->aantal * $this->restantbedrag(), 2 ),
+					'cursus_restantbedrag'   => number_format_i18n( $this->restantbedrag(), 2 ),
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'cursus_link'            => $this->betaal_link,
@@ -475,6 +549,7 @@ class Inschrijving extends Artikel {
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
 				if (
+					0 === $inschrijving->aantal ||
 					$inschrijving->restant_email ||
 					$inschrijving->geannuleerd ||
 					$inschrijving->cursus->vervallen ||
