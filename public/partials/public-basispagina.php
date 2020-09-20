@@ -27,8 +27,11 @@
 		<header id="masthead" class="site-header" role="banner">
 			<div class="site-header-main">
 				<div class="site-branding">
-					<p class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
-					<p class="site-description"><?php echo get_bloginfo( 'description', 'display' ); // phpcs:ignore ?></p>
+					<div style="float:left;padding-right:20px;">
+						<img src="https://www.kleistad.nl/wp/wp-content/uploads/2016/03/cropped-logo-kleistad.jpg" width="100" >
+					</div>
+					<span class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a><br/></span>
+					<span class="site-description"><?php echo get_bloginfo( 'description', 'display' ); // phpcs:ignore ?></span>
 				</div><!-- .site-branding -->
 			</div><!-- .site-header-main -->
 		</header><!-- .site-header -->
