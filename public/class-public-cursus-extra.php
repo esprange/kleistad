@@ -34,7 +34,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			]
 		);
 		if ( empty( $param['code'] ) || empty( $param['hsh'] ) ) {
-			return true;
+			return new \WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
 		$inschrijving = $this->inschrijving( $param['code'] );
 		if ( ! is_null( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
