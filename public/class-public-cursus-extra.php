@@ -34,13 +34,13 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			]
 		);
 		$inschrijving = \Kleistad\Artikel::get_artikel( $param['code'] );
-		if ( ! is_null( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
-			$data['cursus_naam']  = $inschrijving->cursus->naam;
+		if ( ! is_null( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < /* @scrutinizer ignore-type */ $inschrijving->aantal ) {
+			$data['cursus_naam']  = /* @scrutinizer ignore-type */ $inschrijving->cursus->naam;
 			$data['cursist_code'] = $inschrijving->code;
 			$data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
 			$index                = 1;
 			if ( ! isset( $data['input'] ) ) {
-				foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
+				foreach ( /* @scrutinizer ignore-type */ $inschrijving->extra_cursisten as $extra_cursist_id ) {
 					$extra_cursist = get_user_by( 'id', $extra_cursist_id );
 					if ( false === $extra_cursist ) {
 						continue;
@@ -148,6 +148,11 @@ class Public_Cursus_Extra extends ShortcodeForm {
 						]
 					);
 				}
+			}
+			if ( ! is_int( $extra_cursist_id ) ) {
+				return [
+					'status' => $this->status( new \WP_Error( 'intern', 'Er is een interne fout opgetreden, probeer het eventueel later opnieuw.' ) ),
+				];
 			}
 			$extra_cursisten[]  = $extra_cursist_id;
 			$extra_inschrijving = new \Kleistad\Inschrijving( $data['inschrijving']->cursus->id, $extra_cursist_id );

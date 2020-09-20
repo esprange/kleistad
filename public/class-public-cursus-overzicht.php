@@ -85,8 +85,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			}
 			$cursist = get_userdata( $cursist_id );
 			if ( $inschrijving->hoofd_cursist_id ) {
-				$hoofd_inschrijving = new \Kleistad\Inschrijving( $cursus->id, $inschrijving->hoofd_cursist_id );
-				$cursisten[]        = [
+				$cursisten[] = [
 					'id'         => $cursist_id,
 					'naam'       => $cursist->display_name,
 					'telnr'      => $cursist->telnr,

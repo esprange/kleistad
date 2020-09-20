@@ -270,7 +270,7 @@ class Inschrijving extends Artikel {
 			if ( 2 === $this->aantal ) {
 				$tekst = 'Je hebt aangegeven dat er 1 mededeelnemer is aan de cursus/workshop. Kleistad wil graag weten wie dit is zodat we hem/haar per email kunnen informeren over de zaken die de cursus/workshop aangaan. ';
 			} else {
-				$tekst = 'Je hebt aangegeven dat er ' . ( $this->aantal - 1 ) . 'mededeelnemers zijn aan de cursus/workshop. Kleistad wil graag weten wie dit zijn zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ';
+				$tekst = 'Je hebt aangegeven dat er ' . ( $this->aantal - 1 ) . ' mededeelnemers zijn aan de cursus/workshop. Kleistad wil graag weten wie dit zijn zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ';
 			}
 			$tekst .= "Je kunt dit invoeren op de volgende <a href=\"$url\" >Kleistad pagina</a>.";
 			return $tekst;
