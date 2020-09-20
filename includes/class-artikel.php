@@ -24,18 +24,18 @@ abstract class Artikel extends Entity {
 	const BTW = 0.21; // 21 procent.
 
 	/**
-	 * De klant.
-	 *
-	 * @var int $klant_id
-	 */
-	protected $klant_id;
-
-	/**
 	 * Het betaal object.
 	 *
 	 * @var \Kleistad\Betalen $betalen
 	 */
 	protected $betalen;
+
+	/**
+	 * De klant.
+	 *
+	 * @var int $klant_id
+	 */
+	public $klant_id;
 
 	/**
 	 * De betaal link.
