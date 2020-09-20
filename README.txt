@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.5.1
-Stable tag: 6.5.3
+Stable tag: 6.6.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least PHP version: 7.2
@@ -36,6 +36,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 6.6.0 =
+* Nieuwe shortcode cursus_extra om gegevens extra deelnemers in te voeren
+* Bugfix in cursus restantbedrag in email en versturen herinneringsemail  
 = 6.5.3 =
 * Agenda maakt nu gebruik van fullcalendar 5.3.2 en datatables 1.10.21
 * Fix in workshops en cursus zodat een correctie factuur alleen verzonden wordt als de order wijzigt
