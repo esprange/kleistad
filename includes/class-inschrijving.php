@@ -265,7 +265,7 @@ class Inschrijving extends Artikel {
 					'code' => $this->code,
 					'hsh'  => $this->controle(),
 				],
-				home_url( '/extra_cursisten' )
+				home_url( '/kleistad-extra_cursisten' )
 			);
 			if ( 2 === $this->aantal ) {
 				$tekst = 'Je hebt aangegeven dat er 1 mededeelnemer is aan de cursus/workshop. Kleistad wil graag weten wie dit is zodat we hem/haar per email kunnen informeren over de zaken die de cursus/workshop aangaan. ';

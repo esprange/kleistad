@@ -26,13 +26,16 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 * @since   6.6.0
 	 */
 	protected function prepare( &$data ) {
-		$param        = filter_input_array(
+		$param = filter_input_array(
 			INPUT_GET,
 			[
 				'code' => FILTER_SANITIZE_STRING,
 				'hsh'  => FILTER_SANITIZE_STRING,
 			]
 		);
+		if ( empty( $param['code'] ) || empty( $param['hsh'] ) ) {
+			return true;
+		}
 		$inschrijving = $this->inschrijving( $param['code'] );
 		if ( ! is_null( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
