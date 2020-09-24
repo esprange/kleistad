@@ -332,7 +332,7 @@ class Public_Main {
 	 */
 	public function template_include( $template ) {
 		global $pagename;
-		if( isset( $pagename ) && preg_match( '~(kleistad-betaling|kleistad-extra_cursisten)~', $pagename ) ) {
+		if ( isset( $pagename ) && preg_match( '~(kleistad-betaling|kleistad-extra_cursisten)~', $pagename ) ) {
 			return dirname( __FILE__ ) . '/partials/public-basispagina.php';
 		}
 		return $template;
