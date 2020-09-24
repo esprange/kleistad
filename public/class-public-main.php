@@ -331,8 +331,8 @@ class Public_Main {
 	 * @internal Filter for template_include.
 	 */
 	public function template_include( $template ) {
-		global $post;
-		if ( 'kleistad-betaling' === $post->post_name || 'kleistad-extra_cursisten' === $post->post_name ) {
+		global $pagename;
+		if( isset( $pagename ) && preg_match( '~(kleistad-betaling|kleistad-extra_cursisten)~', $pagename ) ) {
 			return dirname( __FILE__ ) . '/partials/public-basispagina.php';
 		}
 		return $template;
