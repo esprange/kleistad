@@ -35,8 +35,7 @@ class Public_Betaling extends ShortcodeForm {
 				'art'   => FILTER_SANITIZE_STRING,
 			]
 		);
-
-		if ( is_null( $param['hsh'] ) ) {
+		if ( is_null( $param ) ) {
 			$data['actie'] = '';
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
