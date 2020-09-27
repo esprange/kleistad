@@ -21,7 +21,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * Prepareer 'cursus_inschrijving' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
+	 * @return bool|\WP_Error
 	 *
 	 * @since   4.0.87
 	 */
