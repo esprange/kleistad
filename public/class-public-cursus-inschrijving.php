@@ -216,6 +216,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 
 		$verwerking = 'verwerkt';
 		$bijlage    = '';
+		$email      = 'inschrijving';
 		if ( 0 === $data['ruimte'] ) {
 			$verwerking = 'op de wachtlijst geplaatst';
 			$email      = '_wachtlijst';
@@ -242,7 +243,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * Als aangeroepen met url parameters dan
 	 *
 	 * @param array $data De uit te wisselen data.
-	 * @return bool|WP_Error Het resultaat
+	 * @return bool|\WP_Error Het resultaat
 	 */
 	private function prepare_wachtlijst_indeling( &$data ) {
 		$param = filter_input_array(
