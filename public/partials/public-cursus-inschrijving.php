@@ -84,6 +84,7 @@ else :
 				'ruimte'     => $cursus['ruimte'],
 				'bedrag'     => $cursus['bedrag'],
 				'lopend'     => $cursus['lopend'],
+				'vol'        => $cursus['vol'],
 			]
 		);
 		if ( false === $json_cursus ) :

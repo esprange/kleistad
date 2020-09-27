@@ -50,6 +50,8 @@ if ( 'cursisten' === $data['actie'] ) :
 							?>
 						<a href="#" title="indelen" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 							data-id="<?php echo esc_attr( $cursist['id'] . '-' . $data['cursus']['id'] ); ?>" data-actie="indelen" >wacht op factuur</a>
+						<?php elseif ( $cursist['wachtlijst'] ) : ?>
+						wachtlijst
 						<?php else : ?>
 						nog niet betaald !
 							<?php

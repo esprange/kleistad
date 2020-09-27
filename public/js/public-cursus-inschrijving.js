@@ -29,7 +29,7 @@
                 $( '#kleistad_cursus_technieken' ).css( 'visibility', 'visible' );
             }
         );
-        if ( cursus.meer && ( 1 < cursus.ruimte ) ) {
+        if ( cursus.meer && ! cursus.vol && ( 1 < cursus.ruimte ) ) {
             $( '#kleistad_cursus_aantal' ).css( 'visibility', 'visible' );
         } else {
             $( '#kleistad_cursus_aantal' ).css( 'visibility', 'hidden' );
@@ -39,7 +39,7 @@
             $( '#kleistad_cursus_lopend' ).show();
             $( '#kleistad_cursus_vol' ).hide();
             $( '#kleistad_submit' ).html( 'verzenden' );
-		} else if ( 0 < cursus.ruimte ) {
+		} else if ( ! cursus.vol ) {
             $( '#kleistad_cursus_betalen' ).show();
             $( '#kleistad_cursus_lopend' ).hide();
             $( '#kleistad_cursus_vol' ).hide();

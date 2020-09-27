@@ -107,6 +107,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 					'herinner_email' => $inschrijving->herinner_email,
 					'technieken'     => implode( ', ', $inschrijving->technieken ),
 					'wacht'          => ( ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! \Kleistad\Order::zoek_order( $inschrijving->code ) ),
+					'wachtlijst'     => ! $inschrijving->ingedeeld && $inschrijving->wacht_datum,
 				];
 			}
 		}

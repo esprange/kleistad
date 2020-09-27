@@ -442,6 +442,10 @@ class Inschrijving extends Artikel {
 		if ( ! $this->ingedeeld && $this->inschrijving_betaald( $bedrag ) ) {
 			$this->ingedeeld = true;
 			$this->save();
+			if ( 0 === $this->cursus->ruimte() ) {
+				$this->cursus->vol = true;
+				$this->cursus->save();
+			}
 		}
 	}
 

@@ -85,11 +85,12 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$ruimte                                = $cursus->ruimte();
 			$lopend                                = $cursus->start_datum < strtotime( 'today' );
 			$data['open_cursussen'][ $cursus->id ] = [
-				'naam'          => $cursus->naam . ( 0 === $ruimte ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
+				'naam'          => $cursus->naam . ( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
 				'selecteerbaar' => ! $cursus->vervallen && ( 0 < $ruimte || ! $lopend ),
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
 				'ruimte'        => $ruimte,
+				'vol'           => $cursus->vol,
 				'bedrag'        => $cursus->bedrag(),
 				'lopend'        => $lopend,
 			];
@@ -151,16 +152,20 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			return $error;
 		}
 		$data['cursus'] = new \Kleistad\Cursus( $data['input']['cursus_id'] );
-		$data['ruimte'] = $data['cursus']->ruimte();
-		if ( 0 < $data['ruimte'] ) {
-			if ( $data['ruimte'] < $data['input']['aantal'] ) {
-				$error->add( 'vol', 0 === $data['ruimte'] ? 'Helaas is er geen ruimte meer' : 'Er zijn maar ' . $data['ruimte'] . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
-				$data['input']['aantal'] = $data['ruimte'];
+		if ( $data['cursus']->vol ) {
+			if ( 1 < $data['input']['aantal'] ) {
+				$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Je kan eventueel op een wachtlijst geplaatst worden' );
+				$data['input']['aantal'] = 1;
 			}
-		}
-		if ( 0 === intval( $data['input']['aantal'] ) ) {
-			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
-			$data['input']['aantal'] = 1;
+		} else {
+			$ruimte = $data['cursus']->ruimte();
+			if ( $ruimte < $data['input']['aantal'] ) {
+				$error->add( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." );
+				$data['input']['aantal'] = $ruimte;
+			} elseif ( 0 === intval( $data['input']['aantal'] ) ) {
+				$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
+				$data['input']['aantal'] = 1;
+			}
 		}
 		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
 			$this->validate_gebruiker( $error, $data['input'] );
@@ -206,18 +211,20 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
-		$inschrijving->technieken   = $data['input']['technieken'];
-		$inschrijving->opmerking    = $data['input']['opmerking'];
-		$inschrijving->aantal       = intval( $data['input']['aantal'] );
-		$inschrijving->datum        = strtotime( 'today' );
-		$inschrijving->wacht_datum  = ( 0 === $data['ruimte'] ) ? strtotime( 'today' ) : 0;
+		if ( ! $data['input']['wacht'] ) {
+			$inschrijving->technieken = $data['input']['technieken'];
+			$inschrijving->opmerking  = $data['input']['opmerking'];
+			$inschrijving->aantal     = intval( $data['input']['aantal'] );
+			$inschrijving->datum      = strtotime( 'today' );
+		}
+		$inschrijving->wacht_datum  = ( $data['cursus']->vol ) ? strtotime( 'today' ) : 0;
 		$inschrijving->artikel_type = 'inschrijving';
 		$inschrijving->save();
 
 		$verwerking = 'verwerkt';
 		$bijlage    = '';
 		$email      = 'inschrijving';
-		if ( 0 === $data['ruimte'] ) {
+		if ( $data['cursus']->vol ) {
 			$verwerking = 'op de wachtlijst geplaatst';
 			$email      = '_wachtlijst';
 		} elseif ( $data['cursus']->start_datum < strtotime( 'today' ) ) {
