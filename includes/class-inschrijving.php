@@ -249,6 +249,22 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Bepaal of er nog wel ingeschreven kan worden voor de cursus.
+	 *
+	 * @since 6.6.1
+	 * 
+	 * @return string Lege string als inschrijving mogelijk is, anders de foutboodschap.
+	 */
+	public function beschikbaarcontrole() {
+		if ( ! $this->ingedeeld && $this->cursus->vol ) {
+			$this->wacht_datum( strtotime( 'today') );
+			$this->save();
+			return 'Helaas is de cursus nu vol. Mocht er een plek vrijkomen dan ontvang je een email';
+		}
+		return '';
+	}
+
+	/**
 	 * Bepaal of er een melding nodig is dat er later een restant bedrag betaald moet worden.
 	 *
 	 * @return string De melding.

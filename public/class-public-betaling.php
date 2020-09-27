@@ -84,11 +84,17 @@ class Public_Betaling extends ShortcodeForm {
 				'artikel_type' => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['order'] = new \Kleistad\Order( $data['input']['order_id'] );
-		if ( $data['order']->gesloten ) {
+		$order         = new \Kleistad\Order( $data['input']['order_id'] );
+		if ( $order->gesloten ) {
 			return new \WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		return true;
+		$data['artikel'] = \Kleistad\Artikel::get_artikel( $order->referentie );
+		$controle        = $data['artikel']->beschikbaarcontrole();
+		if ( empty( $controle ) ) {
+			return true;
+		} else {
+			return new \WP_Error( 'Beschikbaar', $controle );
+		}
 	}
 
 	/**
@@ -102,9 +108,8 @@ class Public_Betaling extends ShortcodeForm {
 	protected function save( $data ) {
 		$ideal_uri = '';
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$artikel               = \Kleistad\Artikel::get_artikel( $data['order']->referentie );
-			$artikel->artikel_type = $data['input']['artikel_type'];
-			$ideal_uri             = $artikel->ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->referentie, $data['order']->te_betalen() );
+			$data['artikel']->artikel_type = $data['input']['artikel_type'];
+			$ideal_uri                     = $data['artikel']->ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->referentie, $data['order']->te_betalen() );
 		}
 		if ( ! empty( $ideal_uri ) ) {
 			return [ 'redirect_uri' => $ideal_uri ];
