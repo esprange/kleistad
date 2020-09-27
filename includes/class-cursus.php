@@ -156,9 +156,6 @@ class Cursus extends Entity {
 	 * @return int nog beschikbare ruimte.
 	 */
 	public function ruimte() {
-		if ( $this->vol ) {
-			return 0;
-		}
 		$inschrijvingen = \Kleistad\Inschrijving::all();
 		$aantal         = $this->maximum;
 		foreach ( $inschrijvingen as $inschrijving ) {

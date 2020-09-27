@@ -9,32 +9,58 @@
  * @subpackage Kleistad/public/partials
  */
 
+if ( isset( $data['wacht'] ) ) :
+	$this->form();
+	?>
+	<h2><?php echo esc_html( $data['cursist_naam'] ); ?></h2>
+	<strong>Aanmelding voor cursus <?php echo esc_html( $data['cursus_naam'] ); ?></strong>
+	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus_id'] ); ?>" />
+	<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['gebruiker_id'] ); ?>" />
+	<input type="hidden" name="wacht" value="1" />
+	<input type="hidden" name="aantal" value="1" />
+	<p>Door de betaling te doen voor deze cursus wordt je meteen ingedeeld</p>
+	<div class ="kleistad_row">
+		<div class ="kleistad_row">
+			<div class="kleistad_col_10">
+				<?php \Kleistad\Betalen::issuers(); ?>
+			</div>
+		</div>
+	</div>
+	<div class="kleistad_row" style="padding-top:20px;">
+		<div class="kleistad_col_10">
+			<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" type="submit" >Betalen</button>
+		</div>
+	</div>
+	</form>
+	<?php
+	return;
+endif;
+
 if ( ! empty( $data['verbergen'] ) ) :
 	?>
 	<a href="#kleistad_inschrijven" onclick="document.getElementById('kleistad_inschrijven').style.display='inline';"><?php echo esc_html( $data['verbergen'] ); ?></a>
 	<div id="kleistad_inschrijven" style="display:none;">
-	<?php
-else :
-	?>
+	<?php else : ?>
 	<div>
-	<?php
+		<?php
 endif;
-$this->form();
-$checked_id = 0;
-$count      = 0;
-foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-	if ( $cursus['selecteerbaar'] ) :
-		$count++;
-	endif;
+
+	$this->form();
+	$checked_id = 0;
+	$count      = 0;
+	foreach ( $data['open_cursussen'] as $cursus ) :
+		if ( $cursus['selecteerbaar'] ) :
+			$count++;
+		endif;
 endforeach;
-if ( ! $count ) :
-	?>
+	if ( ! $count ) :
+		?>
 	<div class="kleistad_row" >
 		<div class="kleistad_col_10 kleistad_label" >
 			<?php echo esc_html( $data['cursus_selectie'] ? 'Helaas zijn er geen cursussen beschikbaar of ze zijn al volgeboekt' : 'Helaas is deze cursus nu niet beschikbaar' ); ?>
 		</div>
 	</div>
-	<?php
+		<?php
 else :
 	?>
 	<div style="<?php echo esc_attr( $data['cursus_selectie'] ? '' : 'display: none' ); ?>" >
@@ -160,6 +186,15 @@ else :
 			</div>
 		</div>
 	</div>
+	<div id="kleistad_cursus_vol" style="display:none" >
+		<div class="kleistad_row">
+			<div class="kleistad_col_10">
+				<label class="kleistad_label">
+				Deze cursus is vol. Bij inschrijving op deze cursus kom je op een wachtlijst en zal contact met je worden opgenomen als er een plek vrijkomt.
+				</label>
+			</div>
+		</div>
+	</div>
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_10">
 			<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" <?php disabled( ! $checked_id ); ?> type="submit" >Betalen</button>
@@ -167,7 +202,7 @@ else :
 		</div>
 	</div>
 	<?php
-	endif
+endif
 ?>
 </form>
 </div>

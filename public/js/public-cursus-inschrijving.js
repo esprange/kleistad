@@ -37,11 +37,18 @@
         if ( cursus.lopend ) {
             $( '#kleistad_cursus_betalen' ).hide();
             $( '#kleistad_cursus_lopend' ).show();
+            $( '#kleistad_cursus_vol' ).hide();
             $( '#kleistad_submit' ).html( 'verzenden' );
-        } else {
+		} else if ( 0 < cursus.ruimte ) {
             $( '#kleistad_cursus_betalen' ).show();
             $( '#kleistad_cursus_lopend' ).hide();
+            $( '#kleistad_cursus_vol' ).hide();
             $( '#kleistad_submit' ).html( 'betalen' );
+		} else {
+            $( '#kleistad_cursus_betalen' ).hide();
+            $( '#kleistad_cursus_lopend' ).hide();
+            $( '#kleistad_cursus_vol' ).show();
+            $( '#kleistad_submit' ).html( 'verzenden' );
         }
 	}
 

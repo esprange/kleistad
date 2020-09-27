@@ -23,6 +23,7 @@ namespace Kleistad;
  * @property bool   geannuleerd
  * @property string opmerking
  * @property int    aantal
+ * @property string wacht_datum
  * @property bool   restant_email
  * @property bool   herinner_email
  */
@@ -41,6 +42,8 @@ class Inschrijving extends Artikel {
 		'_lopend_betalen' => 'Betaling bedrag voor reeds gestarte cursus',
 		'_restant'        => 'Betaling restant bedrag cursus',
 		'_wijziging'      => 'Wijziging inschrijving cursus',
+		'_wachtlijst'     => 'Plaatsing op wachtlijst cursus',
+		'_ruimte'         => 'Er is een cursusplek vrijgekomen',
 	];
 
 	/**
@@ -78,6 +81,7 @@ class Inschrijving extends Artikel {
 		'aantal'           => 1,
 		'restant_email'    => 0,
 		'herinner_email'   => 0,
+		'wacht_datum'      => '',
 		'extra_cursisten'  => [],
 		'hoofd_cursist_id' => 0,
 	];
@@ -91,11 +95,12 @@ class Inschrijving extends Artikel {
 	 * @param int $klant_id wp user id van de cursist.
 	 */
 	public function __construct( $cursus_id, $klant_id ) {
-		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
-		$this->klant_id              = $klant_id;
-		$this->betalen               = new \Kleistad\Betalen();
-		$this->default_data['code']  = "C$cursus_id-$klant_id";
-		$this->default_data['datum'] = date( 'Y-m-d' );
+		$this->cursus                      = new \Kleistad\Cursus( $cursus_id );
+		$this->klant_id                    = $klant_id;
+		$this->betalen                     = new \Kleistad\Betalen();
+		$this->default_data['code']        = "C$cursus_id-$klant_id";
+		$this->default_data['datum']       = date( 'Y-m-d' );
+		$this->default_data['wacht_datum'] = date( 'Y-m-d' );
 
 		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $inschrijvingen ) && ( isset( $inschrijvingen[ $cursus_id ] ) ) ) {
@@ -119,6 +124,7 @@ class Inschrijving extends Artikel {
 			case 'extra_cursisten':
 				return ( is_array( $this->data[ $attribuut ] ) ) ? $this->data[ $attribuut ] : [];
 			case 'datum':
+			case 'wacht_datum':
 				return strtotime( $this->data[ $attribuut ] );
 			case 'geannuleerd':
 			case 'restant_email':
@@ -144,6 +150,7 @@ class Inschrijving extends Artikel {
 				$this->data[ $attribuut ] = is_array( $waarde ) ? $waarde : [];
 				break;
 			case 'datum':
+			case 'wacht_datum':
 				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
 			default:
@@ -536,7 +543,23 @@ class Inschrijving extends Artikel {
 	 */
 	private function restantbedrag() {
 		$order = new \Kleistad\Order( $this->referentie() );
-		return $order->te_betalen();
+		return ( $order->id ) ? $order->te_betalen() : 0;
+	}
+
+	/**
+	 * Maak een link voor de wachtlijst cursist om te betalen voor de indeling op de cursus.
+	 * Afwijkend van een betaallink is in dit geval er nog geen order aangemaakt.
+	 * De afhandeling in het formulier is dus nagenoeg identiek aan de afhandeling bij inschrijving op de cursus met directe betaling
+	 */
+	private function maak_wachtlijst_link() {
+		$url               = add_query_arg(
+			[
+				'code' => $this->code,
+				'hsh'  => $this->controle(),
+			],
+			home_url( '/kleistad-wachtlijst' )
+		);
+		$this->betaal_link = "<a href=\"$url\" >Kleistad pagina</a>";
 	}
 
 	/**
@@ -546,26 +569,46 @@ class Inschrijving extends Artikel {
 	 */
 	public static function dagelijks() {
 		$inschrijvingen = self::all();
+		$vandaag        = strtotime( 'today' );
+		$cursus_vol     = [];
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if (
-					0 === $inschrijving->aantal ||
-					$inschrijving->restant_email ||
+				if ( 0 === $inschrijving->aantal ||
 					$inschrijving->geannuleerd ||
 					$inschrijving->cursus->vervallen ||
-					! $inschrijving->ingedeeld ||
-					! $inschrijving->cursus->is_binnenkort() ||
-					strtotime( 'today' ) > $inschrijving->cursus->eind_datum
-					) {
+					$vandaag > $inschrijving->cursus->eind_datum
+				) {
 					continue;
 				}
-				$order = new \Kleistad\Order( $inschrijving->referentie() );
-				if ( ! $order->gesloten ) {
-					$inschrijving->artikel_type  = 'cursus';
-					$inschrijving->restant_email = true;
-					$inschrijving->maak_link( $order->id );
-					$inschrijving->save();
-					$inschrijving->email( '_restant' );
+				/**
+				 * Wachtlijst emails
+				 */
+				if ( ! $inschrijving->ingedeeld && $vandaag < $inschrijving->cursus->start_datum ) {
+					if ( ! isset( $cursus_vol[ $cursus_id ] ) ) {
+						$cursus_vol[ $cursus_id ]  = $inschrijving->cursus->ruimte();
+						$inschrijving->cursus->vol = ( 0 === $cursus_vol[ $cursus_id ] );
+						$inschrijving->cursus->save();
+					}
+					if ( 0 < $cursus_vol[ $cursus_id ] && $inschrijving->wacht_datum < $vandaag ) {
+						$inschrijving->wacht_datum = strtotime( 'tomorrow' );
+						$inschrijving->maak_wachtlijst_link();
+						$inschrijving->save();
+						$inschrijving->email( '_ruimte' );
+					}
+					continue;
+				}
+				/**
+				 * Restant betaal emails
+				 */
+				if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
+					$order = new \Kleistad\Order( $inschrijving->referentie() );
+					if ( ! $order->gesloten ) {
+						$inschrijving->artikel_type  = 'cursus';
+						$inschrijving->restant_email = true;
+						$inschrijving->maak_link( $order->id );
+						$inschrijving->save();
+						$inschrijving->email( '_restant' );
+					}
 				}
 			}
 		}
@@ -598,5 +641,16 @@ class Inschrijving extends Artikel {
 			}
 		}
 		return $arr;
+	}
+
+	/**
+	 * Vind de inschrijving op basis van de code
+	 *
+	 * @param  string $code De code.
+	 * @return \Kleistad\Inschrijving De inschrijving.
+	 */
+	public static function vind( $code ) {
+		$parameters = explode( '-', substr( $code, 1 ) );
+		return new \Kleistad\Inschrijving( (int) $parameters[0], (int) $parameters[1] );
 	}
 }

@@ -70,7 +70,7 @@ class Order extends \Kleistad\Entity {
 		} elseif ( $arg ) {
 			$resultaat = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s ORDER BY id DESC LIMIT 1", $arg ), ARRAY_A ) ?? 0;
 		}
-		if ( ! is_null( $resultaat ) ) {
+		if ( ! empty( $resultaat ) ) {
 			$this->data = $resultaat;
 		}
 	}

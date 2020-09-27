@@ -26,7 +26,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data ) {
-
+		$result = $this->prepare_wachtlijst_indeling( $data );
+		if ( false !== $result ) {
+			return $result;
+		}
 		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [
@@ -80,14 +83,15 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
 			$ruimte                                = $cursus->ruimte();
+			$lopend                                = $cursus->start_datum < strtotime( 'today' );
 			$data['open_cursussen'][ $cursus->id ] = [
 				'naam'          => $cursus->naam . ( 0 === $ruimte ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
-				'selecteerbaar' => $ruimte && ! $cursus->vervallen,
+				'selecteerbaar' => ! $cursus->vervallen && ( 0 < $ruimte || ! $lopend ),
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
 				'ruimte'        => $ruimte,
 				'bedrag'        => $cursus->bedrag(),
-				'lopend'        => $cursus->start_datum < strtotime( 'today' ),
+				'lopend'        => $lopend,
 			];
 		}
 		return true;
@@ -136,6 +140,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				],
 				'betaal'          => FILTER_SANITIZE_STRING,
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
+				'wacht'           => [
+					'filter'  => FILTER_VALIDATE_INT,
+					'options' => [ 'default' => 0 ],
+				],
 			]
 		);
 		if ( false === intval( $data['input']['cursus_id'] ) ) {
@@ -143,15 +151,14 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			return $error;
 		}
 		$data['cursus'] = new \Kleistad\Cursus( $data['input']['cursus_id'] );
-		$ruimte         = $data['cursus']->ruimte();
-		if ( 0 === $ruimte ) {
-			$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Inschrijving is niet mogelijk.' );
-			$data['input']['cursus_id'] = 0;
-		} elseif ( $ruimte < $data['input']['aantal'] ) {
-			$error->add( 'vol', 'Er zijn maar ' . $ruimte . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
-			$data['input']['aantal'] = $ruimte;
+		$data['ruimte'] = $data['cursus']->ruimte();
+		if ( 0 < $data['ruimte'] ) {
+			if ( $data['ruimte'] < $data['input']['aantal'] ) {
+				$error->add( 'vol', 0 === $data['ruimte'] ? 'Helaas is er geen ruimte meer' : 'Er zijn maar ' . $data['ruimte'] . ' plaatsen beschikbaar. Pas het aantal eventueel aan.' );
+				$data['input']['aantal'] = $data['ruimte'];
+			}
 		}
-		if ( false === $data['input']['aantal'] ) {
+		if ( 0 === intval( $data['input']['aantal'] ) ) {
 			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
 			$data['input']['aantal'] = 1;
 		}
@@ -174,7 +181,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		if ( ! is_user_logged_in() ) {
+		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
 			$gebruiker_id = email_exists( $data['input']['user_email'] );
 			$gebruiker_id = upsert_user(
 				[
@@ -190,11 +197,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				]
 			);
 		} else {
-			if ( is_super_admin() ) {
-				$gebruiker_id = $data['input']['gebruiker_id'];
-			} else {
-				$gebruiker_id = get_current_user_id();
-			}
+			$gebruiker_id = $data['input']['gebruiker_id'];
 		}
 
 		$inschrijving = new \Kleistad\Inschrijving( $data['cursus']->id, $gebruiker_id );
@@ -203,33 +206,68 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
-		$inschrijving->technieken = $data['input']['technieken'];
-		$inschrijving->opmerking  = $data['input']['opmerking'];
-		$inschrijving->aantal     = intval( $data['input']['aantal'] );
-		$inschrijving->datum      = strtotime( 'today' );
+		$inschrijving->technieken   = $data['input']['technieken'];
+		$inschrijving->opmerking    = $data['input']['opmerking'];
+		$inschrijving->aantal       = intval( $data['input']['aantal'] );
+		$inschrijving->datum        = strtotime( 'today' );
+		$inschrijving->wacht_datum  = ( 0 === $data['ruimte'] ) ? strtotime( 'today' ) : 0;
+		$inschrijving->artikel_type = 'inschrijving';
 		$inschrijving->save();
 
-		$lopend = $data['cursus']->start_datum < strtotime( 'today' );
-
-		if ( ! $lopend && 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $inschrijving->ideal( 'Bedankt voor de betaling! De inschrijving is verwerkt en er wordt een email verzonden met bevestiging', $inschrijving->referentie() );
+		$verwerking = 'verwerkt';
+		$bijlage    = '';
+		if ( 0 === $data['ruimte'] ) {
+			$verwerking = 'op de wachtlijst geplaatst';
+			$email      = '_wachtlijst';
+		} elseif ( $data['cursus']->start_datum < strtotime( 'today' ) ) {
+			$email = '_lopend';
+		} elseif ( 'stort' === $data['input']['betaal'] ) {
+			$email   = 'inschrijving';
+			$bijlage = $inschrijving->bestel_order( 0.0, $data['cursus']->start_datum, $inschrijving->heeft_restant() );
+		} elseif ( 'ideal' === $data['input']['betaal'] || $data['input']['wacht'] ) {
+			$ideal_uri = $inschrijving->ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->referentie() );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}
 			return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
-		} else {
-			if ( ! $lopend ) {
-				$inschrijving->artikel_type = 'inschrijving';
-				$inschrijving->email( 'inschrijving', $inschrijving->bestel_order( 0.0, $data['cursus']->start_datum, $inschrijving->heeft_restant() ) );
-			} else {
-				$inschrijving->email( '_lopend' );
-			}
-
-			return [
-				'content' => $this->goto_home(),
-				'status'  => $this->status( 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie' ),
-			];
 		}
+		$inschrijving->email( $email, $bijlage );
+		return [
+			'content' => $this->goto_home(),
+			'status'  => $this->status( "De inschrijving is $verwerking en er is een email verzonden met nadere informatie" ),
+		];
+	}
+
+	/**
+	 * Als aangeroepen met url parameters dan
+	 *
+	 * @param array $data De uit te wisselen data.
+	 * @return bool|WP_Error Het resultaat
+	 */
+	private function prepare_wachtlijst_indeling( &$data ) {
+		$param = filter_input_array(
+			INPUT_GET,
+			[
+				'code' => FILTER_SANITIZE_STRING,
+				'hsh'  => FILTER_SANITIZE_STRING,
+			]
+		);
+		if ( ! is_null( $param ) && ! empty( $param['code'] ) ) {
+			$inschrijving = \Kleistad\Inschrijving::vind( $param['code'] );
+			if ( $param['hsh'] !== $inschrijving->controle() ) {
+				return new \WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
+			} else {
+				$data['cursus_naam']  = $inschrijving->cursus->naam;
+				$data['cursus_id']    = $inschrijving->cursus->id;
+				$data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
+				$data['gebruiker_id'] = $inschrijving->klant_id;
+				$data['wacht']        = true;
+				$data['ruimte']       = $inschrijving->cursus->ruimte();
+				$data['wacht']        = 'wacht';
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

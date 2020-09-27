@@ -100,12 +100,6 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 			<td><input type="number" lang="nl" step="0.01" name="cursuskosten" id="kleistad_cursuskosten" <?php echo esc_attr( $readonly ); ?> value="<?php echo esc_attr( $data['cursus']['cursuskosten'] ); ?>" min="0" required ></td>
 		</tr>
 		<tr>
-			<th>Cursus vol</th>
-			<td><input type="checkbox" name="vol" <?php echo esc_attr( $readonly ); ?> id="kleistad_vol" <?php checked( $data['cursus']['vol'] ); ?> ></td>
-			<th>Cursus vervallen</th>
-			<td><input type="checkbox" name="vervallen" <?php echo esc_attr( $readonly ); ?> id="kleistad_vervallen" <?php checked( $data['cursus']['vervallen'] ); ?> ></td>
-		</tr>
-		<tr>
 			<th>Maximum cursisten</th>
 			<td><input type="number" step="1" name="maximum" <?php echo esc_attr( $readonly ); ?> id="kleistad_maximum" min="1" max="99" value="<?php echo esc_attr( $data['cursus']['maximum'] ); ?>" required></td>
 			<th>Inschrijven meerdere cursisten mogelijk</th>
@@ -114,7 +108,8 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		<tr>
 			<th>Publiceer de cursus</th>
 			<td><input type="checkbox" name="tonen" <?php echo esc_attr( $readonly ); ?> id="kleistad_tonen" <?php checked( $data['cursus']['tonen'] ); ?> ></td>
-			<td colspan="2"></td>
+			<th>Cursus vervallen</th>
+			<td><input type="checkbox" name="vervallen" <?php echo esc_attr( $readonly ); ?> id="kleistad_vervallen" <?php checked( $data['cursus']['vervallen'] ); ?> ></td>
 		</tr>
 		<tr>
 			<th>Inschrijf email</th>
@@ -146,7 +141,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		<?php
 		foreach ( $data['cursussen'] as $cursus ) :
 			?>
-			<tr <?php echo $cursus['vol'] ? 'style="background-color:lightblue"' : ( $cursus['vervallen'] ? 'style="background-color:lightgray"' : '' ); ?> >
+			<tr <?php echo $cursus['vervallen'] ? 'style="background-color:lightgray"' : ''; ?> >
 				<td data-sort="<?php echo esc_attr( $cursus['id'] ); ?>">C<?php echo esc_html( $cursus['id'] ); ?></td>
 				<td><?php echo esc_html( $cursus['naam'] ); ?></td>
 				<td><?php echo esc_html( $cursus['docent'] ); ?></td>

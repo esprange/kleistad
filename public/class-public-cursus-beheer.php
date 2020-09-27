@@ -72,7 +72,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			'docent'          => $cursus->docent,
 			'technieken'      => $cursus->technieken,
 			'vervallen'       => $cursus->vervallen,
-			'vol'             => $cursus->ruimte(),
 			'techniekkeuze'   => $cursus->techniekkeuze,
 			'inschrijfkosten' => $cursus->inschrijfkosten,
 			'cursuskosten'    => $cursus->cursuskosten,
@@ -145,7 +144,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'start_tijd'      => FILTER_SANITIZE_STRING,
 				'eind_tijd'       => FILTER_SANITIZE_STRING,
 				'techniekkeuze'   => FILTER_SANITIZE_STRING,
-				'vol'             => FILTER_SANITIZE_STRING,
 				'vervallen'       => FILTER_SANITIZE_STRING,
 				'inschrijfkosten' => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
@@ -235,7 +233,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			$cursus->start_tijd      = strtotime( $data['cursus']['start_tijd'] );
 			$cursus->eind_tijd       = strtotime( $data['cursus']['eind_tijd'] );
 			$cursus->techniekkeuze   = '' != $data['cursus']['techniekkeuze']; // phpcs:ignore
-			$cursus->vol             = '' != $data['cursus']['vol']; // phpcs:ignore
 			$cursus->vervallen       = '' != $data['cursus']['vervallen']; // phpcs:ignore
 			$cursus->inschrijfkosten = $data['cursus']['inschrijfkosten'];
 			$cursus->cursuskosten    = $data['cursus']['cursuskosten'];
