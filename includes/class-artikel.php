@@ -309,7 +309,7 @@ abstract class Artikel extends Entity {
 	 *
 	 * @since 6.6.1
 	 *
-	 * @return string Als leeg dan beschikbaar, anders bevat foutmelding. 
+	 * @return string Als leeg dan beschikbaar, anders bevat foutmelding.
 	 */
 	public function beschikbaarcontrole() {
 		return '';
