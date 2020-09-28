@@ -257,7 +257,7 @@ class Inschrijving extends Artikel {
 	 */
 	public function beschikbaarcontrole() {
 		if ( ! $this->ingedeeld && $this->cursus->vol ) {
-			$this->wacht_datum( strtotime( 'today' ) );
+			$this->wacht_datum = strtotime( 'today' );
 			$this->save();
 			return 'Helaas is de cursus nu vol. Mocht er een plek vrijkomen dan ontvang je een email';
 		}
