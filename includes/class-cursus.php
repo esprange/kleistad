@@ -273,6 +273,7 @@ class Cursus extends Entity {
 					foreach ( $this->lesdatums as $lesdatum ) {
 						$datums[] = new \DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
 					}
+					sort( $datums );
 					$event->patroon( $datums );
 					break;
 			}
