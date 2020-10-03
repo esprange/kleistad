@@ -84,11 +84,11 @@ class Public_Betaling extends ShortcodeForm {
 				'artikel_type' => FILTER_SANITIZE_STRING,
 			]
 		);
-		$order         = new \Kleistad\Order( $data['input']['order_id'] );
-		if ( $order->gesloten ) {
+		$data['order'] = new \Kleistad\Order( $data['input']['order_id'] );
+		if ( $data['order']->gesloten ) {
 			return new \WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		$data['artikel'] = \Kleistad\Artikel::get_artikel( $order->referentie );
+		$data['artikel'] = \Kleistad\Artikel::get_artikel( $data['order']->referentie );
 		$controle        = $data['artikel']->beschikbaarcontrole();
 		if ( empty( $controle ) ) {
 			return true;
