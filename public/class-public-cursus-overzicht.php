@@ -77,12 +77,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @return array De cursisten.
 	 */
 	private function cursistenlijst( $cursus, $is_bestuur ) {
-		$ruimte    = $cursus->ruimte();
 		$cursisten = [];
 		foreach ( $this->inschrijvingen( $cursus->id, $is_bestuur ) as $cursist_id => $inschrijving ) {
-			if ( 0 === $ruimte && ! $inschrijving->ingedeeld ) {
-				continue; // Het heeft geen zin om wachtende inschrijvingen te tonen als de cursus geen plaats meer heeft.
-			}
 			$cursist = get_userdata( $cursist_id );
 			if ( $inschrijving->hoofd_cursist_id ) {
 				$cursisten[] = [
