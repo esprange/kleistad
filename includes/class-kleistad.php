@@ -24,9 +24,10 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
  */
 function upsert_user( $userdata ) {
 	if ( is_null( $userdata['ID'] ) ) {
-		$userdata['user_login'] = $userdata['user_email'];
-		$userdata['user_pass']  = wp_generate_password( 12, true );
-		$result                 = wp_insert_user( (object) $userdata );
+		$userdata['user_login']    = $userdata['user_email'];
+		$userdata['user_pass']     = wp_generate_password( 12, true );
+		$userdata['user_nicename'] = $userdata['first_name'] . '-' . $userdata['last_name'];
+		$result                    = wp_insert_user( (object) $userdata );
 	} else {
 		$result = wp_update_user( (object) $userdata );
 	}
