@@ -87,7 +87,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$wachtbaar                             = $cursus->start_datum > strtotime( 'tomorrow + 1 day' );
 			$data['open_cursussen'][ $cursus->id ] = [
 				'naam'          => $cursus->naam . ( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
-				'selecteerbaar' => ! $cursus->vervallen && ( 0 < $ruimte || $wachtbaar ),
+				'selecteerbaar' => ! $cursus->vervallen && ( ! $cursus->vol || $wachtbaar ),
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
 				'ruimte'        => $ruimte,
