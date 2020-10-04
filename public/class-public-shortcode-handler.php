@@ -55,7 +55,7 @@ class Public_Shortcode_Handler {
 		'corona'                => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-button', 'jquery-ui-dialog', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 			'access' => [],
 		],
 		'cursus_beheer'         => [

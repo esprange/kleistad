@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.5.1  
-**Stable tag:** 6.6.1  
+**Stable tag:** 6.7.0  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 **Requires at least PHP version:** 7.2  
@@ -36,6 +36,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.7.0 ###
+* Corona (werkplekbeheer) ondersteunt nu ook registratie van beheerders
+* Corona (werkplekbeheer) geeft nu betere rapportage mbt aanwezigheid i.g.v. positieve test
 ### 6.6.1 ###
 * Cursus inschrijving ondersteunt nu wachtlijsten
 ### 6.6.0 ###
