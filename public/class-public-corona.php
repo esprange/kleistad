@@ -19,17 +19,69 @@ class Public_Corona extends ShortcodeForm {
 	/**
 	 * Haal de beschikbaarheid op
 	 *
-	 * @todo Beschikbaarheid ophalen uit optie kleistad_corona.
-	 *
 	 * @param  int $datum De datum.
 	 * @return array De beschikbaarheid.
 	 */
 	private function beschikbaarheid( $datum ) {
-		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
-		if ( isset( $beschikbaarheid[ $datum ] ) ) {
-			return $beschikbaarheid[ $datum ];
+		$adhoc            = get_option( 'kleistad_adhoc_' . date( 'yyyymmdd', $datum ), [] );
+		$resultaat        = [];
+		$meesters         = get_option( 'kleistad_meesters', [] );
+		$beschikbaarheden = get_option( 'kleistad_corona_beschikbaarheid', [] );
+		if ( isset( $beschikbaarheden[ $datum ] ) ) {
+			foreach ( $beschikbaarheden[ $datum ]  as $blokdeel => $beschikbaarheid ) {
+				if ( isset( $adhoc[ $blokdeel ] ) ) {
+					$resultaat[] = array_merge(
+						$beschikbaarheid,
+						[
+							'M' => [
+								'id' => $adhoc[ $blokdeel ],
+								's'  => 0,
+							],
+						]
+					);
+				} else {
+					$dagnr       = intval( date( 'w', $datum ) );
+					$resultaat[] = array_merge(
+						$beschikbaarheid,
+						[
+							'M' => [
+								'id' => $meesters[ $dagnr ][ $blokdeel ] ?? 0,
+								's'  => intval( isset( $meesters[ $dagnr ][ $blokdeel ] ) ),
+							],
+						]
+					);
+				}
+			}
 		}
-		return [];
+		return $resultaat;
+	}
+
+	/**
+	 * Bewaar een standaard meester
+	 *
+	 * @param int $id       Het gebruikersid van de meester.
+	 * @param int $datum    De unix datum.
+	 * @param int $blokdeel Het blokdeel, beginnend vanaf 0.
+	 */
+	private function standaard_meester( $id, $datum, $blokdeel ) {
+		$dagnr                           = intval( date( 'w', $datum ) );
+		$meesters                        = get_option( 'kleistad_meesters', [] );
+		$meesters[ $dagnr ][ $blokdeel ] = $id;
+		update_option( 'kleistad_meesters', $meesters );
+	}
+
+	/**
+	 * Bewaar een afwijkende meester
+	 *
+	 * @param int $id       Het gebruikersid van de meester.
+	 * @param int $datum    De unix datum.
+	 * @param int $blokdeel Het blokdeel, beginnend vanaf 0.
+	 */
+	private function adhoc_meester( $id, $datum, $blokdeel ) {
+		$optie              = 'kleistad_adhoc_' . date( 'yyyymmdd', $datum );
+		$adhoc              = get_option( $optie, [] );
+		$adhoc[ $blokdeel ] = $id;
+		update_option( $optie, $adhoc );
 	}
 
 	/**
@@ -135,23 +187,24 @@ class Public_Corona extends ShortcodeForm {
 	 * @since   6.3.4
 	 */
 	protected function prepare( &$data ) {
-		$atts = shortcode_atts(
+		$atts       = shortcode_atts(
 			[ 'actie' => '' ],
 			$this->atts,
 			'kleistad_corona'
 		);
+		$gebruikers = get_users(
+			[
+				'role__in' => [ 'bestuur', 'leden', 'cursist-1' ],
+				'fields'   => [
+					'ID',
+					'display_name',
+				],
+			]
+		);
 		if ( ! empty( $atts['actie'] ) && current_user_can( 'bestuur' ) ) {
 			$data['actie'] = $atts['actie'];
 			if ( 'gebruikers' === $data['actie'] ) {
-				$data['gebruikers'] = get_users(
-					[
-						'role__in' => [ 'bestuur', 'leden', 'cursist-1' ],
-						'fields'   => [
-							'ID',
-							'display_name',
-						],
-					]
-				);
+				$data['gebruikers'] = $gebruikers;
 				$data['id']         = intval( filter_input( INPUT_GET, 'gebruiker' ) );
 				$data['gebruik']    = $this->gebruik( $data['id'] );
 				return true;
@@ -179,6 +232,7 @@ class Public_Corona extends ShortcodeForm {
 				'beschikbaarheid' => $this->beschikbaarheid( $datum ),
 				'reserveringen'   => $this->reserveringen( $datum ),
 				'datums'          => $datums,
+				'gebruikers'      => $gebruikers,
 			];
 		} else {
 			return new \WP_Error( 'werkplek', 'Je moet ingelogd zijn om deze functie te gebruiken' );
@@ -198,12 +252,20 @@ class Public_Corona extends ShortcodeForm {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'datum' => FILTER_SANITIZE_STRING,
-				'res'   => [
+				'datum'     => FILTER_SANITIZE_STRING,
+				'res'       => [
 					'filter' => FILTER_DEFAULT,
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				],
-				'id'    => FILTER_SANITIZE_NUMBER_INT,
+				'id'        => FILTER_SANITIZE_NUMBER_INT,
+				'meester'   => [
+					'filter' => FILTER_DEFAULT,
+					'flags'  => FILTER_REQUIRE_ARRAY,
+				],
+				'standaard' => [
+					'filter' => FILTER_DEFAULT,
+					'flags'  => FILTER_REQUIRE_ARRAY,
+				],
 			]
 		);
 		return true;
@@ -245,6 +307,15 @@ class Public_Corona extends ShortcodeForm {
 			}
 		}
 		update_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), $reserveringen );
+		if ( current_user_can( 'bestuur' ) && is_array( $data['input']['meester'] ) ) {
+			foreach ( $data['input']['meester'] as $blokdeel => $id ) {
+				if ( $data['input']['standaard'][ $blokdeel ] ) {
+					$this->standaard_meester( $id, $datum, $blokdeel );
+				} else {
+					$this->adhoc_meester( $id, $datum, $blokdeel );
+				}
+			}
+		}
 		return [
 			'status' => $this->status( 'De reservering is aangepast' ),
 		];
@@ -286,29 +357,42 @@ class Public_Corona extends ShortcodeForm {
 	 * Schrijf overzicht informatie naar het bestand.
 	 */
 	protected function gebruiker() {
-		$titels       = [
-			'H' => 'Handvormen',
-			'D' => 'Draaien',
-			'B' => 'Bovenruimte',
-		];
-		$gebruiker_id = filter_input( INPUT_GET, 'gebruiker', FILTER_SANITIZE_NUMBER_INT );
-		$gebruik      = $this->gebruik( intval( $gebruiker_id ) );
+		$gebruiker_id = intval( filter_input( INPUT_GET, 'gebruiker', FILTER_SANITIZE_NUMBER_INT ) );
+		$gebruik      = $this->gebruik( $gebruiker_id );
 		ksort( $gebruik );
 
+		fputcsv( $this->file_handle, [ get_user_by( 'id', $gebruiker_id )->display_name ], ';', '"' );
 		$gebruik_fields = [
 			'Datum',
 			'Tijd',
-			'Gebruik',
+			'Aanwezig',
 		];
 		fputcsv( $this->file_handle, $gebruik_fields, ';', '"' );
 		foreach ( $gebruik as $datum => $tijden ) {
+			$beschikbaarheid = $this->beschikbaarheid( $datum );
+			$reserveringen   = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
 			foreach ( $tijden as $tijd => $werk ) {
+				$aanwezig_ids = [];
+				foreach ( $beschikbaarheid as $blokdeel => $blok ) {
+					if ( $blok['T'] === $tijd ) {
+						foreach ( $reserveringen[ $blokdeel ] as $werk ) {
+							$aanwezig_ids = array_merge( $aanwezig_ids, $werk );
+						}
+						if ( $blok['M']['id'] ) {
+							$aanwezig_ids[] = $blok['M']['id'];
+						}
+					}
+				}
+				$aanwezig = [];
+				foreach ( array_unique( $aanwezig_ids ) as $id ) {
+					$aanwezig[] = get_user_by( 'id', $id )->display_name;
+				}
 				fputcsv(
 					$this->file_handle,
 					[
 						date( 'd-m-Y', $datum ),
 						$tijd,
-						$titels[ $werk ],
+						implode( ',', $aanwezig ),
 					],
 					';',
 					'"'

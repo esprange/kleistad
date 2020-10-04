@@ -481,10 +481,17 @@ label.kleistad_label_cb {
     }
 }
 
+div.kleistad_corona_tijden {
+    display: none;
+}
 
 @media screen and (max-width: 768px) {
     table.kleistad_reserveringen th, td, button {
         font-size: x-small;
+    }
+
+    div.kleistad_corona_tijden {
+        display: block;
     }
 
 /* csslint ignore:start */

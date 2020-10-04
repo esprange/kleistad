@@ -15,7 +15,7 @@ if ( 'gebruikers' === $data['actie'] ) : ?>
 <div class="kleistad_row" style="padding-top:20px;" >
 	<select name="gebruiker" id="kleistad_gebruiker" >
 	<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
-		<option <?php echo selected( $gebruiker->ID, $data['id'] ); ?> value="<?php echo esc_attr( $gebruiker->ID ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
+		<option <?php selected( $gebruiker->ID, $data['id'] ); ?> value="<?php echo esc_attr( $gebruiker->ID ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
 	<?php endforeach ?>
 	</select>
 </div>
@@ -98,16 +98,53 @@ elseif ( 'overzicht' === $data['actie'] ) :
 <?php else : ?>
 <input type="hidden" name="id" value="<?php echo esc_attr( $data['input']['id'] ); ?>">
 <input type="hidden" id="kleistad_naam" value="<?php echo esc_attr( $data['input']['naam'] ); ?>">
+
+<div id="kleistad_meester">
+	<?php if ( current_user_can( 'bestuur' ) ) : ?>
+<select id="kleistad_meester_selectie" name="meester" >
+		<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
+	<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" ><?php echo esc_html( $gebruiker->display_name ); ?></option>
+		<?php endforeach ?>
+</select>
+<input type="checkbox" id="kleistad_meester_standaard" >standaard</input>
+<?php endif ?>
+</div>
+
 <div class="kleistad_row">
 	<div style="float:left;margin-bottom:10px">
 	<input type=text name="datum" id="kleistad_datum" class="kleistad_datum" data-datums='<?php echo esc_attr( wp_json_encode( $data['datums'] ) ?: '[]' ); ?>'
 		value="<?php echo esc_attr( date( 'd-m-Y', $data['input']['datum'] ) ); ?>" readonly="readonly" >
+	<button type="button" id="kleistad_eerder" ><span class="dashicons dashicons-controls-back"></span></button>
+	<button type="button" id="kleistad_later" ><span class="dashicons dashicons-controls-forward"></span></button>
 	</div>
 	<div style="float:right;margin-bottom:10px">
 		<button name="kleistad_submit_corona" type="submit" >Bevestigen</button>
 	</div>
 </div>
-
+<div class="kleistad_row">
+	<div class="kleistad_col_2"><strong>beheerder</strong></div>
+	<?php
+	foreach ( $data['beschikbaarheid'] as $index => $beschikbaarheid ) :
+		$meester      = get_user_by( 'id', $beschikbaarheid['M']['id'] );
+		$meester_naam = false === $meester ? '' : $meester->display_name;
+		?>
+		<div class="kleistad_row kleistad_corona_tijden" >
+			<strong><?php echo esc_html( $beschikbaarheid['T'] ); ?></strong>
+		</div>
+		<div class="kleistad_col_2">
+			<?php if ( current_user_can( 'bestuur' ) ) : ?>
+				<input type="hidden" value="<?php echo esc_attr( $beschikbaarheid['M']['s'] ); ?>" name="<?php echo esc_attr( "standaard[$index]" ); ?>" id="<?php echo esc_attr( "standaard{$index}" ); ?>" >
+				<label for="<?php echo esc_attr( "meester{$index}" ); ?>" style="width:100%" ><?php echo esc_html( $meester_naam ?: '---' ); ?></label>
+				<input type="checkbox" class="kleistad_meester" value="<?php echo esc_attr( $beschikbaarheid['M']['id'] ); ?>"
+					name="<?php echo esc_attr( "meester[$index]" ); ?>" id="<?php echo esc_attr( "meester{$index}" ); ?>"
+					data-tijd="<?php echo esc_html( $beschikbaarheid['T'] ); ?>"
+					data-blokdeel="<?php echo esc_attr( $index ); ?>" />
+			<?php else : ?>
+				<?php echo esc_html( $meester_naam ); ?>
+			<?php endif ?>
+		</div>
+	<?php endforeach ?>
+</div>
 	<?php
 	foreach ( [
 		'H' => [
