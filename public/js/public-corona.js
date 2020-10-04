@@ -34,10 +34,9 @@
 		var datumEerder;
 		if ( 0 === index ) {
 			return datum.toLocaleDateString();
-		} else {
-			datumEerder = new Date( datums[ index - 1 ] * 1000 );
-			return datumEerder.toLocaleDateString();
 		}
+		datumEerder = new Date( datums[ index - 1 ] * 1000 );
+		return datumEerder.toLocaleDateString();
 	}
 
 	function later( datum ) {
@@ -46,10 +45,9 @@
 		var datumLater;
 		if ( index === datums.lastIndexOf() ) {
 			return datum.toLocaleDateString();
-		} else {
-			datumLater = new Date( datums[ index + 1 ] * 1000 );
-			return datumLater.toLocaleDateString();
 		}
+		datumLater = new Date( datums[ index + 1 ] * 1000 );
+		return datumLater.toLocaleDateString();
 	}
 
 	function onLoad() {
@@ -95,7 +93,7 @@
 						'OK': function() {
 							var blokdeel = $( this ).data( 'blokdeel' );
 							$( '#meester' + blokdeel ).val( $( '#kleistad_meester_selectie' ).val() );
-							$( '#meester' + blokdeel ).button( 'option', 'label', $( "#kleistad_meester_selectie option:selected" ).text() );
+							$( '#meester' + blokdeel ).button( 'option', 'label', $( '#kleistad_meester_selectie option:selected' ).text() );
 							$( '#standaard' + blokdeel ).val( $( '#kleistad_meester_standaard' ).prop( 'checked') ? 1 : 0 );
 							dialogMeester.dialog( 'close' );
 						}

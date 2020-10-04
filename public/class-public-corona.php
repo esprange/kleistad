@@ -375,8 +375,8 @@ class Public_Corona extends ShortcodeForm {
 				$aanwezig_ids = [];
 				foreach ( $beschikbaarheid as $blokdeel => $blok ) {
 					if ( $blok['T'] === $tijd ) {
-						foreach ( $reserveringen[ $blokdeel ] as $werk ) {
-							$aanwezig_ids = array_merge( $aanwezig_ids, $werk );
+						foreach ( $reserveringen[ $blokdeel ] as $werk2 ) {
+							$aanwezig_ids = array_merge( $aanwezig_ids, $werk2 );
 						}
 						if ( $blok['M']['id'] ) {
 							$aanwezig_ids[] = $blok['M']['id'];
