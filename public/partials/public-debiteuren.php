@@ -183,6 +183,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 </div>
 <br/><hr><br/>
 <?php endif // Als zoek. ?>
+<p><strong>Totaal openstaand:</strong> &euro; <?php echo esc_html( number_format_i18n( $data['openstaand'], 2 ) ); ?></p>
 <table class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "asc" ]]' >
 	<thead>
 		<tr>

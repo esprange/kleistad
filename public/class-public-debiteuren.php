@@ -105,6 +105,10 @@ class Public_Debiteuren extends ShortcodeForm {
 		} elseif ( 'zoek' === $atts['actie'] ) {
 			$data['actie']      = 'zoek';
 			$data['debiteuren'] = ! empty( $data['id'] ) ? $this->debiteuren( $data['id'] ) : [];
+			$data['openstaand'] = 0;
+			foreach ( $data['debiteuren'] as $debiteur ) {
+				$data['openstaand'] += $debiteur['openstaand'];
+			}
 		} elseif ( 'blokkade' === $atts['actie'] ) {
 			$data['actie']            = 'blokkade';
 			$data['huidige_blokkade'] = \Kleistad\Order::get_blokkade();
@@ -112,6 +116,10 @@ class Public_Debiteuren extends ShortcodeForm {
 		} else {
 			$data['actie']      = 'openstaand';
 			$data['debiteuren'] = $this->debiteuren();
+			$data['openstaand'] = 0;
+			foreach ( $data['debiteuren'] as $debiteur ) {
+				$data['openstaand'] += $debiteur['openstaand'];
+			}
 		}
 		return true;
 	}
