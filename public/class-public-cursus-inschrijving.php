@@ -265,16 +265,18 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$inschrijving = \Kleistad\Inschrijving::vind( $param['code'] );
 			if ( $param['hsh'] !== $inschrijving->controle() ) {
 				return new \WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
-			} else {
-				$data['cursus_naam']  = $inschrijving->cursus->naam;
-				$data['cursus_id']    = $inschrijving->cursus->id;
-				$data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
-				$data['gebruiker_id'] = $inschrijving->klant_id;
-				$data['wacht']        = true;
-				$data['ruimte']       = $inschrijving->cursus->ruimte();
-				$data['wacht']        = 'wacht';
-				return true;
 			}
+			if ( $inschrijving->cursus->vol ) {
+				return new \WP_Error( 'Vol', 'Helaas, waarschijnlijk is iemand anders je voor geweest. De cursus is volgeboekt.' );
+			}
+			$data['cursus_naam']  = $inschrijving->cursus->naam;
+			$data['cursus_id']    = $inschrijving->cursus->id;
+			$data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
+			$data['gebruiker_id'] = $inschrijving->klant_id;
+			$data['wacht']        = true;
+			$data['ruimte']       = $inschrijving->cursus->ruimte();
+			$data['wacht']        = 'wacht';
+			return true;
 		}
 		return false;
 	}
