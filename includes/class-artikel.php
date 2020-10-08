@@ -233,8 +233,9 @@ abstract class Artikel extends Entity {
 	 * @param int    $id            Het id van de order.
 	 * @param float  $bedrag        Het betaalde bedrag.
 	 * @param string $transactie_id De betalings id.
+	 * @param bool   $factuur       Of er wel / niet een factuur aangemaakt moet worden.
 	 */
-	final public function ontvang_order( $id, $bedrag, $transactie_id ) {
+	final public function ontvang_order( $id, $bedrag, $transactie_id, $factuur = false ) {
 		$order           = new \Kleistad\Order( $id );
 		$order->betaald += $bedrag;
 		if ( 0 <= $bedrag ) {
@@ -245,7 +246,7 @@ abstract class Artikel extends Entity {
 		$order->transactie_id = $transactie_id;
 		$order->save();
 		$this->betaalactie( $order->betaald );
-		return ( 0 === $order->factuurnr ) ? $this->maak_factuur( $order, '' ) : '';
+		return ( $factuur ) ? $this->maak_factuur( $order, '' ) : '';
 	}
 
 	/**

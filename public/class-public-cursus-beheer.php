@@ -35,7 +35,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'eind_tijd'   => date( 'H:i', $cursus->eind_tijd ),
 				'docent'      => $cursus->docent_naam(),
 				'vervallen'   => $cursus->vervallen,
-				'vol'         => $cursus->ruimte(),
 				'status'      => $cursus->vervallen ? 'vervallen' :
 					( $cursus->eind_datum < $vandaag ? 'voltooid' :
 					( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),

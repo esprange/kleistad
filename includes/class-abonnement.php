@@ -385,12 +385,15 @@ class Abonnement extends Artikel {
 				 */
 				if ( 0 < $bedrag ) {
 					if ( 'ideal' === $type ) {
-						return $this->email( '_ideal_betaald', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
+						$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+						$this->email( '_ideal_betaald' );
 					} elseif ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
-						return $this->email( '_regulier_incasso', $this->ontvang_order( $order_id, $bedrag, $transactie_id ) );
+						$this->email( '_regulier_incasso', $this->ontvang_order( $order_id, $bedrag, $transactie_id, true ) );
 					}
-				} // Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden of als bedrag < 0 dan was het een terugstorting.
-				return $this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				} else {
+					// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden of als bedrag < 0 dan was het een terugstorting.
+					$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+				}
 			} elseif ( 'mandaat' === $this->artikel_type ) {
 				/**
 				 * Bij een mandaat ( 1 eurocent ) hoeven we geen factuur te sturen en is er dus geen order aangemaakt.
@@ -406,9 +409,9 @@ class Abonnement extends Artikel {
 			}
 		} elseif ( 'directdebit' === $type ) {
 			/**
-			 * Als het een incasso betreft die gefaald is dan maken we alsnog de order aan.
+			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 			 */
-			$this->email( '_regulier_mislukt', $this->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
+			$this->email( '_regulier_mislukt', $this->ontvang_order( $order_id, 0, $transactie_id, true ) );
 		}
 	}
 

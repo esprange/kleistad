@@ -275,7 +275,6 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$data['gebruiker_id'] = $inschrijving->klant_id;
 			$data['wacht']        = true;
 			$data['ruimte']       = $inschrijving->cursus->ruimte();
-			$data['wacht']        = 'wacht';
 			return true;
 		}
 		return false;
