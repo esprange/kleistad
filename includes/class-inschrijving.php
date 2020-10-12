@@ -622,7 +622,7 @@ class Inschrijving extends Artikel {
 				 */
 				if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
 					$order = new \Kleistad\Order( $inschrijving->referentie() );
-					if ( ! $order->gesloten ) {
+					if ( $order->id && ! $order->gesloten ) {
 						$inschrijving->artikel_type  = 'cursus';
 						$inschrijving->restant_email = true;
 						$inschrijving->maak_link( $order->id );
