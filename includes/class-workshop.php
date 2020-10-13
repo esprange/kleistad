@@ -305,7 +305,7 @@ class Workshop extends Artikel {
 			];
 		}
 		return [
-			'naam'  => $naam,
+			'naam'  => $this->contact,
 			'adres' => '',
 			'email' => $this->email,
 		];
