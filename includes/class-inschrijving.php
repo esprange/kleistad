@@ -593,6 +593,9 @@ class Inschrijving extends Artikel {
 		$cursus_vol     = [];
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
+				/**
+				 * Geen acties voor medecursisten, oude of vervallen cursus deelnemers of die zelf geannuleerd hebben.
+				 */
 				if ( 0 === $inschrijving->aantal ||
 					$inschrijving->geannuleerd ||
 					$inschrijving->cursus->vervallen ||
@@ -601,33 +604,35 @@ class Inschrijving extends Artikel {
 					continue;
 				}
 				/**
-				 * Wachtlijst emails
+				 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn.
 				 */
-				if ( ! $inschrijving->ingedeeld && $vandaag < $inschrijving->cursus->start_datum ) {
-					if ( ! isset( $cursus_vol[ $cursus_id ] ) ) {
-						$cursus_vol[ $cursus_id ]  = $inschrijving->cursus->ruimte();
-						$inschrijving->cursus->vol = ( 0 === $cursus_vol[ $cursus_id ] );
-						$inschrijving->cursus->save();
+				if ( ! $inschrijving->ingedeeld ) {
+					if ( $vandaag < $inschrijving->cursus->start_datum ) {
+						if ( ! isset( $cursus_vol[ $cursus_id ] ) ) {
+							$cursus_vol[ $cursus_id ]  = $inschrijving->cursus->ruimte();
+							$inschrijving->cursus->vol = ( 0 === $cursus_vol[ $cursus_id ] );
+							$inschrijving->cursus->save();
+						}
+						if ( 0 < $cursus_vol[ $cursus_id ] && $inschrijving->wacht_datum < $vandaag ) {
+							$inschrijving->wacht_datum = strtotime( 'tomorrow' );
+							$inschrijving->maak_wachtlijst_link();
+							$inschrijving->save();
+							$inschrijving->email( '_ruimte' );
+						}
 					}
-					if ( 0 < $cursus_vol[ $cursus_id ] && $inschrijving->wacht_datum < $vandaag ) {
-						$inschrijving->wacht_datum = strtotime( 'tomorrow' );
-						$inschrijving->maak_wachtlijst_link();
-						$inschrijving->save();
-						$inschrijving->email( '_ruimte' );
-					}
-					continue;
-				}
-				/**
-				 * Restant betaal emails
-				 */
-				if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
-					$order = new \Kleistad\Order( $inschrijving->referentie() );
-					if ( $order->id && ! $order->gesloten ) {
-						$inschrijving->artikel_type  = 'cursus';
-						$inschrijving->restant_email = true;
-						$inschrijving->maak_link( $order->id );
-						$inschrijving->save();
-						$inschrijving->email( '_restant' );
+				} else {
+					/**
+					 * Restant betaal emails, alleen voor cursisten die ingedeeld zijn en de cursus binnenkort start.
+					 */
+					if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
+						$order = new \Kleistad\Order( $inschrijving->referentie() );
+						if ( $order->id && ! $order->gesloten ) {
+							$inschrijving->artikel_type  = 'cursus';
+							$inschrijving->restant_email = true;
+							$inschrijving->maak_link( $order->id );
+							$inschrijving->save();
+							$inschrijving->email( '_restant' );
+						}
 					}
 				}
 			}
