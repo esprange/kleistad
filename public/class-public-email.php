@@ -36,8 +36,8 @@ class Public_Email extends ShortcodeForm {
 			];
 		}
 
-		$user            = wp_get_current_user();
-		$bestuur_rechten = in_array( 'bestuur', (array) $user->roles, true );
+		$gebruiker       = wp_get_current_user();
+		$bestuur_rechten = in_array( 'bestuur', (array) $gebruiker->roles, true );
 		if ( $bestuur_rechten ) {
 			$bestuur = get_users( [ 'role' => 'bestuur' ] );
 			foreach ( $bestuur as $bestuurslid ) {
@@ -67,7 +67,7 @@ class Public_Email extends ShortcodeForm {
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			$cursist = get_userdata( $cursist_id );
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! $bestuur_rechten && intval( $cursussen[ $cursus_id ]->docent ) !== $user->ID ) {
+				if ( ! $bestuur_rechten && intval( $cursussen[ $cursus_id ]->docent ) !== $gebruiker->ID ) {
 					continue;
 				}
 				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
@@ -133,17 +133,18 @@ class Public_Email extends ShortcodeForm {
 	 * @since   5.5.0
 	 */
 	protected function save( $data ) {
-		$huidige_gebruiker = wp_get_current_user();
-		$gebruikerids      = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
-		$query             = new \WP_User_Query(
+		$gebruiker       = wp_get_current_user();
+		$bestuur_rechten = in_array( 'bestuur', (array) $gebruiker->roles, true );
+		$gebruikerids    = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
+		$query           = new \WP_User_Query(
 			[
 				'include' => array_map( 'intval', $gebruikerids ),
 				'fields'  => [ 'user_email' ],
 			]
 		);
-		$emailadressen     = array_column( (array) $query->get_results(), 'user_email' );
-		$emailadressen[]   = "{$huidige_gebruiker->display_name} <{$huidige_gebruiker->user_email}>";
-		$emailer           = new \Kleistad\Email();
+		$emailadressen   = array_column( (array) $query->get_results(), 'user_email' );
+		$emailadressen[] = "{$gebruiker->display_name} <{$gebruiker->user_email}>";
+		$emailer         = new \Kleistad\Email();
 		$emailer->send(
 			array_merge(
 				$this->mail_parameters( $data ),
@@ -151,7 +152,7 @@ class Public_Email extends ShortcodeForm {
 					'to'       => 'Kleistad gebruiker <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
 					'bcc'      => $emailadressen,
 					'from'     => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
-					'reply-to' => \Kleistad\Email::info() . \Kleistad\Email::domein(),
+					'reply-to' => $bestuur_rechten ? ( \Kleistad\Email::info() . \Kleistad\Email::domein() ) : $gebruiker->user_email,
 					'subject'  => $data['input']['onderwerp'],
 				]
 			)
@@ -169,13 +170,13 @@ class Public_Email extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function test( $data ) {
-		$huidige_gebruiker = wp_get_current_user();
-		$emailer           = new \Kleistad\Email();
+		$gebruiker = wp_get_current_user();
+		$emailer   = new \Kleistad\Email();
 		$emailer->send(
 			array_merge(
 				$this->mail_parameters( $data ),
 				[
-					'to'      => "{$huidige_gebruiker->display_name} <{$huidige_gebruiker->user_email}>",
+					'to'      => "{$gebruiker->display_name} <{$gebruiker->user_email}>",
 					'subject' => "TEST: {$data['input']['onderwerp']}",
 				]
 			)

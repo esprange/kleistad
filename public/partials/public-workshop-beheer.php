@@ -43,7 +43,15 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		</tr>
 		<tr>
 			<th>Organisatie</th>
-			<td colspan="3"><input type="text" name="organisatie" value="<?php echo esc_attr( $data['workshop']['organisatie'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
+			<td colspan="3"><input type="text" name="organisatie" value="<?php echo esc_attr( $data['workshop']['organisatie'] ); ?>" </td>
+		</tr>
+		<tr>
+			<th>Organisatie adres</th>
+			<td colspan="3"><textarea name="organisatie_adres" rows="2" maxlength="100" ><?php echo esc_textarea( $data['workshop']['organisatie_adres'] ); ?></textarea></td>
+		</tr>
+		<tr>
+			<th>Organisatie email</th>
+			<td colspan="3"><input type="email" name="organisatie_email" value="<?php echo esc_attr( $data['workshop']['organisatie_email'] ); ?>" /></td>
 		</tr>
 		<tr>
 			<th>Aantal deelnemers</th>

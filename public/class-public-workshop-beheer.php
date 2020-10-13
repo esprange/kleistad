@@ -99,26 +99,28 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshop = new \Kleistad\Workshop( $workshop_id );
 		$order_id = \Kleistad\Order::zoek_order( $workshop->referentie() );
 		return [
-			'workshop_id'    => $workshop->id,
-			'naam'           => $workshop->naam,
-			'datum'          => date( 'd-m-Y', $workshop->datum ),
-			'start_tijd'     => date( 'H:i', $workshop->start_tijd ),
-			'eind_tijd'      => date( 'H:i', $workshop->eind_tijd ),
-			'docent'         => $workshop->docent,
-			'technieken'     => $workshop->technieken,
-			'organisatie'    => $workshop->organisatie,
-			'contact'        => $workshop->contact,
-			'email'          => $workshop->email,
-			'telnr'          => $workshop->telnr,
-			'programma'      => $workshop->programma,
-			'kosten'         => $workshop->kosten,
-			'aantal'         => $workshop->aantal,
-			'betaald'        => $workshop->betaald,
-			'definitief'     => $workshop->definitief,
-			'vervallen'      => $workshop->vervallen,
-			'aanvraag_id'    => $workshop->aanvraag_id,
-			'gefactureerd'   => boolval( $order_id ),
-			'betaling_email' => $workshop->betaling_email,
+			'workshop_id'       => $workshop->id,
+			'naam'              => $workshop->naam,
+			'datum'             => date( 'd-m-Y', $workshop->datum ),
+			'start_tijd'        => date( 'H:i', $workshop->start_tijd ),
+			'eind_tijd'         => date( 'H:i', $workshop->eind_tijd ),
+			'docent'            => $workshop->docent,
+			'technieken'        => $workshop->technieken,
+			'organisatie'       => $workshop->organisatie,
+			'organisatie_adres' => $workshop->organisatie_adres,
+			'organisatie_email' => $workshop->organisatie_email,
+			'contact'           => $workshop->contact,
+			'email'             => $workshop->email,
+			'telnr'             => $workshop->telnr,
+			'programma'         => $workshop->programma,
+			'kosten'            => $workshop->kosten,
+			'aantal'            => $workshop->aantal,
+			'betaald'           => $workshop->betaald,
+			'definitief'        => $workshop->definitief,
+			'vervallen'         => $workshop->vervallen,
+			'aanvraag_id'       => $workshop->aanvraag_id,
+			'gefactureerd'      => boolval( $order_id ),
+			'betaling_email'    => $workshop->betaling_email,
 		];
 	}
 
@@ -208,31 +210,33 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$data['workshop']              = filter_input_array(
 				INPUT_POST,
 				[
-					'workshop_id' => FILTER_SANITIZE_NUMBER_INT,
-					'naam'        => FILTER_SANITIZE_STRING,
-					'datum'       => FILTER_SANITIZE_STRING,
-					'start_tijd'  => FILTER_SANITIZE_STRING,
-					'eind_tijd'   => FILTER_SANITIZE_STRING,
-					'docent'      => FILTER_SANITIZE_STRING,
-					'technieken'  => [
+					'workshop_id'       => FILTER_SANITIZE_NUMBER_INT,
+					'naam'              => FILTER_SANITIZE_STRING,
+					'datum'             => FILTER_SANITIZE_STRING,
+					'start_tijd'        => FILTER_SANITIZE_STRING,
+					'eind_tijd'         => FILTER_SANITIZE_STRING,
+					'docent'            => FILTER_SANITIZE_STRING,
+					'technieken'        => [
 						'filter'  => FILTER_SANITIZE_STRING,
 						'flags'   => FILTER_REQUIRE_ARRAY,
 						'options' => [ 'default' => [] ],
 					],
-					'organisatie' => FILTER_SANITIZE_STRING,
-					'contact'     => FILTER_SANITIZE_STRING,
-					'email'       => FILTER_SANITIZE_EMAIL,
-					'telnr'       => FILTER_SANITIZE_STRING,
-					'vervallen'   => FILTER_VALIDATE_BOOLEAN,
-					'kosten'      => [
+					'organisatie'       => FILTER_SANITIZE_STRING,
+					'organisatie_adres' => FILTER_SANITIZE_STRING,
+					'organisatie_email' => FILTER_SANITIZE_EMAIL,
+					'contact'           => FILTER_SANITIZE_STRING,
+					'email'             => FILTER_SANITIZE_EMAIL,
+					'telnr'             => FILTER_SANITIZE_STRING,
+					'vervallen'         => FILTER_VALIDATE_BOOLEAN,
+					'kosten'            => [
 						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 					],
-					'aantal'      => FILTER_SANITIZE_NUMBER_INT,
-					'definitief'  => FILTER_VALIDATE_BOOLEAN,
-					'betaald'     => FILTER_VALIDATE_BOOLEAN,
-					'programma'   => FILTER_DEFAULT,
-					'aanvraag_id' => FILTER_SANITIZE_NUMBER_INT,
+					'aantal'            => FILTER_SANITIZE_NUMBER_INT,
+					'definitief'        => FILTER_VALIDATE_BOOLEAN,
+					'betaald'           => FILTER_VALIDATE_BOOLEAN,
+					'programma'         => FILTER_DEFAULT,
+					'aanvraag_id'       => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
 			$data['workshop']['programma'] = sanitize_textarea_field( $data['workshop']['programma'] );
@@ -276,6 +280,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'kosten',
 				'status',
 				'organisatie',
+				'organisatie_adres',
+				'organisatie_email',
 				'contact',
 				'email',
 				'telnr',
@@ -299,6 +305,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					number_format_i18n( $workshop->kosten, 2 ),
 					$workshop->status(),
 					$workshop->organisatie,
+					$workshop->organisatie_adres,
+					$workshop->organisatie_email,
 					$workshop->contact,
 					$workshop->email,
 					$workshop->telnr,
@@ -335,20 +343,22 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		} else {
 			$workshop = new \Kleistad\Workshop();
 		}
-		$workshop->naam        = $data['workshop']['naam'];
-		$workshop->datum       = strtotime( $data['workshop']['datum'] );
-		$workshop->start_tijd  = strtotime( $data['workshop']['start_tijd'] );
-		$workshop->eind_tijd   = strtotime( $data['workshop']['eind_tijd'] );
-		$workshop->docent      = $data['workshop']['docent'];
-		$workshop->technieken  = $data['workshop']['technieken'];
-		$workshop->organisatie = $data['workshop']['organisatie'];
-		$workshop->contact     = $data['workshop']['contact'];
-		$workshop->email       = $data['workshop']['email'];
-		$workshop->telnr       = $data['workshop']['telnr'];
-		$workshop->programma   = $data['workshop']['programma'];
-		$workshop->kosten      = $data['workshop']['kosten'];
-		$workshop->aantal      = $data['workshop']['aantal'];
-		$workshop->aanvraag_id = $data['workshop']['aanvraag_id'];
+		$workshop->naam              = $data['workshop']['naam'];
+		$workshop->datum             = strtotime( $data['workshop']['datum'] );
+		$workshop->start_tijd        = strtotime( $data['workshop']['start_tijd'] );
+		$workshop->eind_tijd         = strtotime( $data['workshop']['eind_tijd'] );
+		$workshop->docent            = $data['workshop']['docent'];
+		$workshop->technieken        = $data['workshop']['technieken'];
+		$workshop->organisatie       = $data['workshop']['organisatie'];
+		$workshop->organisatie_adres = $data['workshop']['organisatie_adres'];
+		$workshop->organisatie_email = $data['workshop']['organisatie_email'];
+		$workshop->contact           = $data['workshop']['contact'];
+		$workshop->email             = $data['workshop']['email'];
+		$workshop->telnr             = $data['workshop']['telnr'];
+		$workshop->programma         = $data['workshop']['programma'];
+		$workshop->kosten            = $data['workshop']['kosten'];
+		$workshop->aantal            = $data['workshop']['aantal'];
+		$workshop->aanvraag_id       = $data['workshop']['aanvraag_id'];
 		if ( 'bewaren' === $data['form_actie'] ) {
 			$workshop->save();
 			$bericht = 'De workshop informatie is opgeslagen';

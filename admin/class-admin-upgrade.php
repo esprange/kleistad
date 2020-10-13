@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 67;
+	const DBVERSIE = 68;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -153,7 +153,9 @@ class Admin_Upgrade {
 			eind_tijd time,
 			docent tinytext,
 			technieken tinytext,
-			organisatie tinytext,
+			organisatie tinytext DEFAULT '',
+			organisatie_adres tinytext DEFAULT '',
+			organisatie_email tinytext DEFAULT '',
 			contact tinytext,
 			email tinytext,
 			telefoon tinytext,

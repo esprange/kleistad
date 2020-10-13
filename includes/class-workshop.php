@@ -23,6 +23,8 @@ namespace Kleistad;
  * @property string docent
  * @property array  technieken
  * @property string organisatie
+ * @property string organisatie_adres
+ * @property stirng organisatie_email
  * @property string contact
  * @property string email
  * @property string telnr
@@ -54,25 +56,27 @@ class Workshop extends Artikel {
 		$options       = \Kleistad\Kleistad::get_options();
 		if ( is_null( $workshop_id ) ) {
 			$this->data = [
-				'id'             => null,
-				'naam'           => '',
-				'datum'          => date( 'Y-m-d' ),
-				'start_tijd'     => '10:00',
-				'eind_tijd'      => '12:00',
-				'docent'         => '',
-				'technieken'     => wp_json_encode( [] ),
-				'organisatie'    => '',
-				'contact'        => '',
-				'email'          => '',
-				'telefoon'       => '',
-				'programma'      => '',
-				'vervallen'      => 0,
-				'kosten'         => $options['workshopprijs'],
-				'aantal'         => 6,
-				'betaald'        => 0,
-				'definitief'     => 0,
-				'betaling_email' => 0,
-				'aanvraag_id'    => 0,
+				'id'                => null,
+				'naam'              => '',
+				'datum'             => date( 'Y-m-d' ),
+				'start_tijd'        => '10:00',
+				'eind_tijd'         => '12:00',
+				'docent'            => '',
+				'technieken'        => wp_json_encode( [] ),
+				'organisatie'       => '',
+				'organisatie_adres' => '',
+				'organisatie_email' => '',
+				'contact'           => '',
+				'email'             => '',
+				'telefoon'          => '',
+				'programma'         => '',
+				'vervallen'         => 0,
+				'kosten'            => $options['workshopprijs'],
+				'aantal'            => 6,
+				'betaald'           => 0,
+				'definitief'        => 0,
+				'betaling_email'    => 0,
+				'aanvraag_id'       => 0,
 			];
 		} else {
 			$this->data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
@@ -262,6 +266,9 @@ class Workshop extends Artikel {
 		];
 
 		$email_parameters['slug'] = "workshop$type";
+		if ( $factuur && $this->organisatie_email ) {
+			$email_parameters['to'] .= ", {$this->organisatie} <{$this->organisatie_email}>";
+		}
 		switch ( $type ) {
 			case '_bevestiging':
 			case '_herbevestiging':
@@ -291,9 +298,11 @@ class Workshop extends Artikel {
 	 */
 	public function naw_klant() {
 		if ( $this->organisatie ) {
-			$naam = $this->organisatie . ', ' . $this->contact;
-		} else {
-			$naam = $this->contact;
+			return [
+				'naam'  => $this->organisatie,
+				'adres' => $this->organisatie_adres,
+				'email' => $this->organisatie_email ?: $this->email,
+			];
 		}
 		return [
 			'naam'  => $naam,
