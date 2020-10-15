@@ -145,14 +145,15 @@ class Public_Email extends ShortcodeForm {
 		$emailadressen   = array_column( (array) $query->get_results(), 'user_email' );
 		$emailadressen[] = "{$gebruiker->display_name} <{$gebruiker->user_email}>";
 		$emailer         = new \Kleistad\Email();
+		$to              = 'production' === wp_get_environment_type() ? ( \Kleistad\Email::info() . \Kleistad\Email::domein() ) : get_bloginfo( 'admin_email' );
 		$emailer->send(
 			array_merge(
 				$this->mail_parameters( $data ),
 				[
-					'to'       => 'Kleistad gebruiker <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
+					'to'       => "Kleistad gebruiker <$to>",
 					'bcc'      => $emailadressen,
-					'from'     => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
-					'reply-to' => $bestuur_rechten ? ( \Kleistad\Email::info() . \Kleistad\Email::domein() ) : $gebruiker->user_email,
+					'from'     => $to,
+					'reply-to' => $bestuur_rechten ? $to : $gebruiker->user_email,
 					'subject'  => $data['input']['onderwerp'],
 				]
 			)
