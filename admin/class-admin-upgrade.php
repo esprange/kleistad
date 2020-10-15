@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 68;
+	const DBVERSIE = 70;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -247,6 +247,17 @@ class Admin_Upgrade {
 	private function convert_recept() {
 	}
 
+	/**
+	 * Converteer gebruikers.
+	 */
+	private function convert_users() {
+		foreach( get_users() as $gebruiker ) {
+			if ( empty( get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY, true ) ) ) {
+				$gebruiker->remove_cap( 'leden' );
+			}
+		}
+	}
+
 	// phpcs:enable
 
 	/**
@@ -265,5 +276,6 @@ class Admin_Upgrade {
 		$this->convert_order();
 		$this->convert_opties();
 		$this->convert_recept();
+		$this->convert_users();
 	}
 }

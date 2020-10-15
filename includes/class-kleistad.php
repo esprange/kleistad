@@ -27,6 +27,7 @@ function upsert_user( $userdata ) {
 		$userdata['user_login']    = $userdata['user_email'];
 		$userdata['user_pass']     = wp_generate_password( 12, true );
 		$userdata['user_nicename'] = strtolower( $userdata['first_name'] . '-' . $userdata['last_name'] );
+		$userdata['role']          = '';
 		$result                    = wp_insert_user( (object) $userdata );
 	} else {
 		$result = wp_update_user( (object) $userdata );

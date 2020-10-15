@@ -86,7 +86,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$lopend                                = $cursus->start_datum < strtotime( 'today' );
 			$wachtbaar                             = $cursus->start_datum > strtotime( 'tomorrow + 1 day' );
 			$data['open_cursussen'][ $cursus->id ] = [
-				'naam'          => $cursus->naam . ( $cursus->vol ? ' VOL' : ( $cursus->vervallen ? ' VERVALLEN' : '' ) ),
+				'naam'          => $cursus->naam . ( $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : '' ) ),
 				'selecteerbaar' => ! $cursus->vervallen && ( ! $cursus->vol || $wachtbaar ),
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
@@ -216,7 +216,6 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$inschrijving->technieken = $data['input']['technieken'];
 			$inschrijving->opmerking  = $data['input']['opmerking'];
 			$inschrijving->aantal     = intval( $data['input']['aantal'] );
-			$inschrijving->datum      = strtotime( 'today' );
 		}
 		$inschrijving->wacht_datum  = ( $data['cursus']->vol ) ? strtotime( 'today' ) : 0;
 		$inschrijving->artikel_type = 'inschrijving';

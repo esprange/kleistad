@@ -95,12 +95,11 @@ class Inschrijving extends Artikel {
 	 * @param int $klant_id wp user id van de cursist.
 	 */
 	public function __construct( $cursus_id, $klant_id ) {
-		$this->cursus                      = new \Kleistad\Cursus( $cursus_id );
-		$this->klant_id                    = $klant_id;
-		$this->betalen                     = new \Kleistad\Betalen();
-		$this->default_data['code']        = "C$cursus_id-$klant_id";
-		$this->default_data['datum']       = date( 'Y-m-d' );
-		$this->default_data['wacht_datum'] = date( 'Y-m-d' );
+		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
+		$this->klant_id              = $klant_id;
+		$this->betalen               = new \Kleistad\Betalen();
+		$this->default_data['code']  = "C$cursus_id-$klant_id";
+		$this->default_data['datum'] = date( 'Y-m-d' );
 
 		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $inschrijvingen ) && ( isset( $inschrijvingen[ $cursus_id ] ) ) ) {
@@ -613,7 +612,7 @@ class Inschrijving extends Artikel {
 							$inschrijving->cursus->vol = ( 0 === $cursus_vol[ $cursus_id ] );
 							$inschrijving->cursus->save();
 						}
-						if ( 0 < $cursus_vol[ $cursus_id ] && $inschrijving->wacht_datum < $vandaag ) {
+						if ( 0 < $cursus_vol[ $cursus_id ] && 0 < $inschrijving->wacht_datum && $inschrijving->wacht_datum < $vandaag ) {
 							$inschrijving->wacht_datum = strtotime( 'tomorrow' );
 							$inschrijving->maak_wachtlijst_link();
 							$inschrijving->save();
