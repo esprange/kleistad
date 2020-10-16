@@ -513,7 +513,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @param boolean $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
 	 */
-	private function autoriseer( $valid ) {
+	public function autoriseer( $valid ) {
 		$abonnee = new \WP_User( $this->klant_id );
 		if ( is_super_admin( $this->klant_id ) ) {
 			// Voorkom dat de admin enige rol kwijtraakt.
@@ -521,12 +521,8 @@ class Abonnement extends Artikel {
 		}
 		if ( $valid ) {
 			$abonnee->add_cap( 'leden' );
-			$abonnee->add_cap( \Kleistad\Roles::RESERVEER );
-			// Alternatief is wellicht abonnee add of remove role subscriber.
 		} else {
 			$abonnee->remove_cap( 'leden' );
-			$abonnee->remove_cap( \Kleistad\Roles::RESERVEER );
-			$abonnee->remove_role( 'subscriber' );
 		}
 	}
 

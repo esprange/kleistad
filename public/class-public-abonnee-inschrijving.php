@@ -158,6 +158,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		$abonnement->dag              = $data['input']['dag'];
 		$abonnement->extras           = $data['input']['extras'];
 		$abonnement->artikel_type     = 'start';
+		$abonnement->autoriseer( true );
 		$abonnement->save();
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
