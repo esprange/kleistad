@@ -389,9 +389,12 @@ class Abonnement extends Artikel {
 						$this->email( '_ideal_betaald' );
 					} elseif ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
 						$this->email( '_regulier_incasso', $this->ontvang_order( $order_id, $bedrag, $transactie_id, true ) );
+					} else {
+						// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
+						$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 					}
 				} else {
-					// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden of als bedrag < 0 dan was het een terugstorting.
+					// Anders is het een terugstorting.
 					$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 				}
 			} elseif ( 'mandaat' === $this->artikel_type ) {
