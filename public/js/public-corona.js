@@ -74,7 +74,7 @@
 
     $( document ).ready(
 		function()  {
-			var dialogMeester, dialogReserveer;
+			var dialogMeester;
 
 			onLoad();
 
