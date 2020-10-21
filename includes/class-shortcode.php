@@ -169,10 +169,9 @@ abstract class Shortcode {
 	 * @return string
 	 */
 	public function goto_home() {
-		$user = wp_get_current_user();
-		if ( 0 === $user->ID ) {
+		if ( ! is_user_logged_in() ) {
 			$url = home_url();
-		} elseif ( $user->has_cap( 'bestuur' ) ) {
+		} elseif ( \Kleistad\Roles::is_bestuur() ) {
 			$url = home_url( '/bestuur/' );
 		} else {
 			$url = home_url( '/leden/' );

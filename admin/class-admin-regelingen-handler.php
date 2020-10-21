@@ -157,7 +157,7 @@ class Admin_Regelingen_Handler {
 			[
 				'fields'   => [ 'ID', 'display_name' ],
 				'orderby'  => [ 'display_name' ],
-				'role__in' => [ 'leden', 'bestuur', 'docenten' ],
+				'role__in' => [ \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR, \Kleistad\Roles::DOCENT ],
 			]
 		);
 		$ovens      = \Kleistad\Oven::all();

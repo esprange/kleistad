@@ -677,4 +677,27 @@ class Inschrijving extends Artikel {
 		$parameters = explode( '-', substr( $code, 1 ) );
 		return new \Kleistad\Inschrijving( (int) $parameters[0], (int) $parameters[1] );
 	}
+
+	/**
+	 * Bepaal of iemand cursist is van een cursus die moet starten of al loopt.
+	 *
+	 * @param int $id Het gebruiker id.
+	 * @return bool
+	 */
+	public static function is_actief_cursist( $id ) {
+		static $cursussen = [];
+		$inschrijvingen   = get_user_meta( $id, self::META_KEY, true );
+		if ( is_array( $inschrijvingen ) ) {
+			if ( empty( $cursussen ) ) {
+				$cursussen = \ Kleistad\Cursus::all();
+			}
+			$vandaag = strtotime( 'today' );
+			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+				if ( $vandaag <= $cursussen[ $cursus_id ]->eind_datum ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

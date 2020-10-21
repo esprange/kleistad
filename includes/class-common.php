@@ -117,8 +117,8 @@ class Common {
 	 */
 	public function login_redirect( $url, $request, $user ) {
 		if ( isset( $request ) && $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) { // De test van request is dummy statement, altijd true.
-			$url = ( $user->has_cap( 'bestuur' ) ) ? home_url( '/bestuur/' ) : (
-				$user->has_cap( 'leden' ) ? home_url( '/leden/' ) : home_url( '/werkplek/' ) );
+			$url = ( $user->has_cap( \Kleistad\Roles::BESTUUR ) ) ? home_url( '/bestuur/' ) : (
+				$user->has_cap( \Kleistad\Roles::LID ) ? home_url( '/leden/' ) : home_url( '/werkplek/' ) );
 		}
 		return $url;
 	}

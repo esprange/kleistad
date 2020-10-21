@@ -101,34 +101,24 @@
 				}
 			);
 
-			dialogReserveer = $( '#kleistad_reserveer' ).dialog(
-				{
-					autoOpen: false,
-					height: 'auto',
-					width: 360,
-					modal: true,
-					open: function() {
-						// var blokdeel = $( this ).data( 'blokdeel' );
-						// $( '#kleistad_meester_selectie' ).val( $( '#meester' + blokdeel ).val() );
-						// $( '#kleistad_meester_standaard').val( $( '#meester' + blokdeel ).prev( 'input' ).val() );
-					},
-					buttons: {
-						'OK': function() {
-							// var blokdeel = $( this ).data( 'blokdeel' );
-							// $( '#meester' + blokdeel ).val( $( '#kleistad_meester_selectie' ).val() );
-							// $( '#meester' + blokdeel ).button( 'option', 'label', $( "#kleistad_meester_selectie option:selected" ).text() );
-							// $( '#standaard' + blokdeel ).val( $( '#kleistad_meester_standaard' ).prop( 'checked') ? 1 : 0 );
-							dialogReserveer.dialog( 'close' );
-						}
-					}
-				}
-			);
-
-
 			$( '.kleistad_shortcode' )
 			.on( 'change', '#kleistad_datum',
 				function() {
 					window.location.assign( window.location.origin + window.location.pathname + '?datum=' + $( this ).val() );
+				}
+			)
+			.on( 'click', '.kleistad_select_gebruiker',
+				function() {
+					if ( 'zelf' === $( this).val() ) {
+						$( '#kleistad_select_ander' ).hide();
+					} else {
+						$( '#kleistad_select_ander' ).show();
+					}
+				}
+			)
+			.on( 'change', '#kleistad_select_gebruiker',
+				function() {
+					$( '#kleistad_naam' ).val( $( this ).find( 'option:selected' ).text() );
 				}
 			)
 			.on( 'click', '#kleistad_eerder',
@@ -144,6 +134,8 @@
 			.on( 'click', '.kleistad_corona',
 				function() {
 					$( this ).button( 'option', 'label', $( this ).is( ':checked' ) ? $( '#kleistad_naam' ).val() : 'reserveren' );
+					$( '#kleistad_selectie_blok' ).hide();
+					$( '#kleistad_gebruiker_blok' ).text( 'Werkplek reserveren voor ' + $( '#kleistad_naam' ).val() );
 					disableOnCheck();
 				}
 			).on( 'change', '#kleistad_gebruiker',

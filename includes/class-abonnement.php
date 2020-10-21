@@ -523,9 +523,9 @@ class Abonnement extends Artikel {
 			return;
 		}
 		if ( $valid ) {
-			$abonnee->add_cap( 'leden' );
+			$abonnee->add_cap( \Kleistad\Roles::LID );
 		} else {
-			$abonnee->remove_cap( 'leden' );
+			$abonnee->remove_cap( \Kleistad\Roles::LID );
 		}
 	}
 
@@ -693,5 +693,19 @@ class Abonnement extends Artikel {
 			}
 		}
 		return $arr;
+	}
+
+	/**
+	 * Geef aan of het een actief lid betreft.
+	 *
+	 * @param int $id Het id van het lid.
+	 * @return bool
+	 */
+	public static function is_actief_lid( $id ) {
+		$lid = new self( $id );
+		if ( $lid->eind_datum && $lid->eind_datum > strtotime( 'today' ) ) {
+			return false; // Is lid geweest maar nu niet meer.
+		}
+		return (bool) $lid->start_datum; // Als er een start datum is dan is het een lid, anders niet.
 	}
 }

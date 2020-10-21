@@ -193,15 +193,10 @@ class Public_Corona extends ShortcodeForm {
 			'kleistad_corona'
 		);
 		$gebruikers = get_users(
-			[
-				'role__in' => [ 'bestuur', 'leden', 'cursist-1' ],
-				'fields'   => [
-					'ID',
-					'display_name',
-				],
-			]
+			[ 'fields' => [ 'ID', 'display_name' ] ],
 		);
-		if ( ! empty( $atts['actie'] ) && current_user_can( 'bestuur' ) ) {
+
+		if ( ! empty( $atts['actie'] ) && \Kleistad\Roles::is_bestuur() ) {
 			$data['actie'] = $atts['actie'];
 			if ( 'gebruikers' === $data['actie'] ) {
 				$data['gebruikers'] = $gebruikers;
@@ -221,21 +216,35 @@ class Public_Corona extends ShortcodeForm {
 		$datum_str       = filter_input( INPUT_GET, 'datum' );
 		$datum           = is_null( $datum_str ) ? $datums[0] : strtotime( $datum_str );
 		$current_user_id = get_current_user_id();
-		if ( $current_user_id ) {
-			$data = [
-				'actie'           => 'reserveren',
-				'input'           => [
-					'naam'  => get_user_by( 'id', $current_user_id )->first_name,
-					'id'    => $current_user_id,
-					'datum' => $datum,
-				],
-				'beschikbaarheid' => $this->beschikbaarheid( $datum ),
-				'reserveringen'   => $this->reserveringen( $datum ),
-				'datums'          => $datums,
-				'gebruikers'      => $gebruikers,
-			];
-		} else {
-			return new \WP_Error( 'werkplek', 'Je moet ingelogd zijn om deze functie te gebruiken' );
+		$data            = [
+			'actie'           => 'reserveren',
+			'input'           => [
+				'naam'  => get_user_by( 'id', $current_user_id )->first_name,
+				'id'    => $current_user_id,
+				'datum' => $datum,
+			],
+			'beschikbaarheid' => $this->beschikbaarheid( $datum ),
+			'reserveringen'   => $this->reserveringen( $datum ),
+			'datums'          => $datums,
+			'gebruikers'      => $gebruikers,
+		];
+		if ( \Kleistad\Roles::is_bestuur() || \Kleistad\Roles::is_docent() ) {
+			$cursisten_zonder_abonnement = get_transient( 'kleistad_cza' );
+			if ( ! is_array( $cursisten_zonder_abonnement ) ) {
+				$cursisten_zonder_abonnement = [];
+				foreach ( $gebruikers as $gebruiker ) {
+					if ( \Kleistad\Abonnement::is_actief_lid( $gebruiker->ID ) ||
+							\Kleistad\Roles::is_bestuur( $gebruiker->ID ) ||
+							\Kleistad\Roles::is_docent( $gebruiker->ID ) ) {
+						continue;
+					}
+					if ( \Kleistad\Inschrijving::is_actief_cursist( $gebruiker->ID ) ) {
+						$cursisten_zonder_abonnement[] = $gebruiker;
+					}
+				}
+				set_transient( 'kleistad_za', $cursisten_zonder_abonnement, 900 );
+			}
+			$data['cursisten_za'] = $cursisten_zonder_abonnement;
 		}
 		return true;
 	}
@@ -307,7 +316,7 @@ class Public_Corona extends ShortcodeForm {
 			}
 		}
 		update_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), $reserveringen );
-		if ( current_user_can( 'bestuur' ) && is_array( $data['input']['meester'] ) ) {
+		if ( \Kleistad\Roles::is_bestuur() && is_array( $data['input']['meester'] ) ) {
 			foreach ( $data['input']['meester'] as $blokdeel => $id ) {
 				if ( $data['input']['standaard'][ $blokdeel ] ) {
 					$this->standaard_meester( $id, $datum, $blokdeel );

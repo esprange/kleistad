@@ -96,11 +96,33 @@ elseif ( 'overzicht' === $data['actie'] ) :
 	<button type="button" class="kleistad_download_link" data-actie="overzicht" >Download</button>
 </div>
 <?php else : ?>
-<input type="hidden" name="id" value="<?php echo esc_attr( $data['input']['id'] ); ?>">
+	<?php if ( \Kleistad\Roles::is_bestuur() || \Kleistad\Roles::is_docent() ) : ?>
+	<div class="kleistad_row" id="kleistad_selectie_blok">
+		<div class="kleistad_col_3">
+			<input type="radio" name="gebruik" id="kleistad_corona_zelf" checked class="kleistad_select_gebruiker kleistad_input_cbr" value="zelf" >
+			<label class="kleistad_label_cbr" for="kleistad_corona_zelf">Reserveren voor jezelf</label>
+		</div>
+		<div class="kleistad_col_3">
+			<input type="radio" name="gebruik" id="kleistad_corona_ander" class="kleistad_select_gebruiker kleistad_input_cbr" value="ander" >
+			<label class="kleistad_label_cbr" for="kleistad_corona_ander">Reserveren voor een ander</label>
+		</div>
+		<div class="kleistad_col_4" id="kleistad_select_ander" style="display:none" >
+			<select name="id" id="kleistad_select_gebruiker" >
+			<?php foreach ( $data['cursisten_za'] as $cursist_za ) : ?>
+				<option value="<?php echo esc_attr( $cursist_za->ID ); ?>" <?php selected( $cursist_za->ID, $data['input']['id'] ); ?> ><?php echo esc_html( $cursist_za->display_name ); ?></option>
+			<?php endforeach ?>
+			</select>
+		</div>
+	</div>
+	<div class="kleistad_row" id="kleistad_gebruiker_blok" > 
+	</div>
+	<?php else : ?>
+	<input type="hidden" name="id" value="<?php echo esc_attr( $data['input']['id'] ); ?>">
+	<?php endif ?>
 <input type="hidden" id="kleistad_naam" value="<?php echo esc_attr( $data['input']['naam'] ); ?>">
 
 <div id="kleistad_meester">
-	<?php if ( current_user_can( 'bestuur' ) ) : ?>
+	<?php if ( \Kleistad\Roles::is_bestuur() ) : ?>
 <select id="kleistad_meester_selectie" name="meester" >
 		<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
 	<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" ><?php echo esc_html( $gebruiker->display_name ); ?></option>
@@ -132,7 +154,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 			<strong><?php echo esc_html( $beschikbaarheid['T'] ); ?></strong>
 		</div>
 		<div class="kleistad_col_2">
-			<?php if ( current_user_can( 'bestuur' ) ) : ?>
+			<?php if ( \Kleistad\Roles::is_bestuur() ) : ?>
 				<input type="hidden" value="<?php echo esc_attr( $beschikbaarheid['M']['s'] ); ?>" name="<?php echo esc_attr( "standaard[$index]" ); ?>" id="<?php echo esc_attr( "standaard{$index}" ); ?>" >
 				<label for="<?php echo esc_attr( "meester{$index}" ); ?>" style="width:100%" ><?php echo esc_html( $meester_naam ?: '---' ); ?></label>
 				<input type="checkbox" class="kleistad_meester" value="<?php echo esc_attr( $beschikbaarheid['M']['id'] ); ?>"

@@ -36,16 +36,14 @@ class Public_Email extends ShortcodeForm {
 			];
 		}
 
-		$gebruiker       = wp_get_current_user();
-		$bestuur_rechten = in_array( 'bestuur', (array) $gebruiker->roles, true );
-		if ( $bestuur_rechten ) {
-			$bestuur = get_users( [ 'role' => 'bestuur' ] );
+		if ( \Kleistad\Roles::is_bestuur() ) {
+			$bestuur = get_users( [ 'role' => \Kleistad\Roles::BESTUUR ] );
 			foreach ( $bestuur as $bestuurslid ) {
 				$data['input']['tree'][-1]['naam']                      = 'Bestuur';
 				$data['input']['tree'][-1]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
 			}
 
-			$docenten = get_users( [ 'role' => 'docenten' ] );
+			$docenten = get_users( [ 'role' => \Kleistad\Roles::DOCENT ] );
 			foreach ( $docenten as $docent ) {
 				$data['input']['tree'][-2]['naam']                 = 'Docenten';
 				$data['input']['tree'][-2]['leden'][ $docent->ID ] = $docent->display_name;
@@ -67,7 +65,7 @@ class Public_Email extends ShortcodeForm {
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			$cursist = get_userdata( $cursist_id );
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! $bestuur_rechten && intval( $cursussen[ $cursus_id ]->docent ) !== $gebruiker->ID ) {
+				if ( ! \Kleistad\Roles::is_bestuur() && intval( $cursussen[ $cursus_id ]->docent ) !== get_current_user_id() ) {
 					continue;
 				}
 				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
@@ -134,7 +132,6 @@ class Public_Email extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		$gebruiker       = wp_get_current_user();
-		$bestuur_rechten = in_array( 'bestuur', (array) $gebruiker->roles, true );
 		$gebruikerids    = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
 		$query           = new \WP_User_Query(
 			[
@@ -153,7 +150,7 @@ class Public_Email extends ShortcodeForm {
 					'to'       => "Kleistad gebruiker <$to>",
 					'bcc'      => $emailadressen,
 					'from'     => $to,
-					'reply-to' => $bestuur_rechten ? $to : $gebruiker->user_email,
+					'reply-to' => \Kleistad\Roles::is_bestuur() ? $to : $gebruiker->user_email,
 					'subject'  => $data['input']['onderwerp'],
 				]
 			)

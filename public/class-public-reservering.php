@@ -50,7 +50,7 @@ class Public_Reservering extends Shortcode {
 				[
 					'fields'    => [ 'ID', 'display_name' ],
 					'orderby'   => [ 'nicename' ],
-					'roles__in' => [ 'leden', 'docenten', 'bestuur' ],
+					'roles__in' => [ \Kleistad\Roles::LID, \Kleistad\Roles::DOCENT, \Kleistad\Roles::BESTUUR ],
 				]
 			);
 			foreach ( $gebruikers as $gebruiker ) {

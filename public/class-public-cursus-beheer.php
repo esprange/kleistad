@@ -96,7 +96,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		$data['docenten'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
-				'role'    => [ 'docenten' ],
+				'role'    => [ \Kleistad\Roles::DOCENT ],
 				'orderby' => [ 'nicename' ],
 			]
 		);

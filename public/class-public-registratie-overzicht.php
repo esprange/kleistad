@@ -36,9 +36,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 		foreach ( $gebruikers as $gebruiker ) {
 			$cursuslijst       = '';
 			$inschrijvinglijst = [];
-			$is_lid            = false;
 			if ( array_key_exists( $gebruiker->ID, $abonnementen ) ) {
-				$is_lid       = true;
 				$abonnee_info = [
 					'code'           => $abonnementen[ $gebruiker->ID ]->code,
 					'start_datum'    => date( 'd-m-Y', $abonnementen[ $gebruiker->ID ]->start_datum ),
@@ -86,7 +84,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			];
 
 			$registraties[] = [
-				'is_lid'             => $is_lid,
+				'is_lid'             => \Kleistad\Abonnement::is_actief_lid( $gebruiker->ID ),
 				'cursuslijst'        => $cursuslijst,
 				'deelnemer_info'     => $deelnemer_info,
 				'abonnee_info'       => $abonnee_info,
@@ -142,7 +140,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 				$cursist->pcode,
 				$cursist->plaats,
 				$cursist->telnr,
-				\Kleistad\Roles::reserveer( $cursist->ID ) ? 'Ja' : 'Nee',
+				\Kleistad\Abonnement::is_actief_lid( $cursist->ID ) ? 'Ja' : 'Nee',
 			];
 
 			if ( array_key_exists( $cursist->ID, $inschrijvingen ) ) {

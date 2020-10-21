@@ -120,9 +120,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @since   4.5.4
 	 */
 	protected function prepare( &$data ) {
-		$user                    = wp_get_current_user();
-		$is_bestuur              = in_array( 'bestuur', (array) $user->roles, true );
-		$data['bestuur_rechten'] = $is_bestuur;
+		$data['bestuur_rechten'] = \Kleistad\Roles::is_bestuur();
 		if ( 'cursisten' === $data['actie'] ) {
 			$cursus            = new \Kleistad\Cursus( $data['id'] );
 			$data['cursus']    = [
@@ -131,7 +129,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'code'  => $cursus->code,
 				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
-			$data['cursisten'] = $this->cursistenlijst( $cursus, $is_bestuur );
+			$data['cursisten'] = $this->cursistenlijst( $cursus, $data['bestuur_rechten'] );
 		} elseif ( 'indelen' === $data['actie'] ) {
 			list( $cursist_id, $cursus_id ) = array_map( 'intval', explode( '-', $data['id'] ) );
 			$cursus                         = new \Kleistad\Cursus( $cursus_id );
@@ -153,11 +151,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			];
 
 		} else {
-			$user = wp_get_current_user();
-			if ( $is_bestuur ) {
+			if ( \Kleistad\Roles::is_bestuur() ) {
 				$data['cursus_info'] = $this->cursussen();
 			} else {
-				$data['cursus_info'] = $this->cursussen( $user->ID );
+				$data['cursus_info'] = $this->cursussen( get_current_user_id() );
 			}
 		}
 		return true;
