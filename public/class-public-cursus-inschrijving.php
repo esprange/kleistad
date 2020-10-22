@@ -207,6 +207,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		}
 
 		$inschrijving = new \Kleistad\Inschrijving( $data['cursus']->id, $gebruiker_id );
+		if ( $inschrijving->geannuleerd ) { // Blijkbaar eerder geannuleerd.
+			$inschrijving->ingedeeld   = false;
+			$inschrijving->geannuleerd = false;
+		};
 		if ( $inschrijving->ingedeeld ) {
 			return [
 				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
