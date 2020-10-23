@@ -52,6 +52,7 @@ class Admin_Cursisten_Handler {
 					'id'        => FILTER_SANITIZE_STRING,
 					'naam'      => FILTER_SANITIZE_STRING,
 					'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
+					'aantal'    => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
 			$code         = $item['id'];
@@ -60,9 +61,9 @@ class Admin_Cursisten_Handler {
 			$cursist_id   = intval( $parameters[1] );
 			$inschrijving = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
 			$message      = 'De gegevens zijn opgeslagen';
-			if ( intval( $item['cursus_id'] ) !== $cursus_id ) {
+			if ( intval( $item['cursus_id'] ) !== $cursus_id || intval( $item['aantal'] ) !== $inschrijving->aantal ) {
 				// cursus gewijzigd.
-				if ( false === $inschrijving->correct( $item['cursus_id'] ) ) {
+				if ( false === $inschrijving->correct( $item['cursus_id'], intval( $item['aantal'] ) ) ) {
 					$message = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
 				}
 			} else {

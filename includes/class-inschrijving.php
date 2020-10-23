@@ -325,25 +325,32 @@ class Inschrijving extends Artikel {
 	 * @since 4.5.0
 	 *
 	 * @param int $cursus_id nieuw cursus_id.
+	 * @param int $aantal    aantal cursisten.
 	 */
-	public function correct( $cursus_id ) {
+	public function correct( $cursus_id, $aantal ) {
 		$bestaande_inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
+			$order_id       = \Kleistad\Order::zoek_order( $this->referentie() );
 			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
-				$order_id                     = \Kleistad\Order::zoek_order( $this->referentie() );
 				$this->code                   = "C$cursus_id-$this->klant_id";
+				$this->aantal                 = $aantal;
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
 				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
 				$this->cursus = new \Kleistad\Cursus( $cursus_id );
-				$factuur      = $this->wijzig_order( $order_id );
-				if ( false === $factuur ) {
-					return false;
-				}
-				$this->email( '_wijziging', $factuur );
-				return true;
+			} elseif ( $aantal !== $this->aantal ) {
+				$this->aantal = $aantal;
+				$this->save();
+			} else {
+				return false;
 			}
+			$factuur = $this->wijzig_order( $order_id );
+			if ( false === $factuur ) {
+				return false;
+			}
+			$this->email( '_wijziging', $factuur );
+			return true;
 		}
 		return false; // zou niet mogen.
 	}

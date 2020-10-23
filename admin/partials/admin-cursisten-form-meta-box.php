@@ -40,6 +40,14 @@
 				</select>
 			</td>
 		</tr>
+		<tr class="form-field">
+			<th scope="row">
+				<label for="aantal">Aantal</label>
+			</th>
+			<td>
+				<input name="aantal" id="aantal" type="number" style="width: 95%" required class="code" value="<?php echo esc_attr( $item['aantal'] ); ?>">
+			</td>
+		</tr>
 	</tbody>
 </table>
 
