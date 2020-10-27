@@ -150,7 +150,9 @@ class Google {
 				throw new \Exception( 'Google refresh token failure' );
 			}
 		}
-		self::$calendar_service = new \Google_Service_Calendar( $client );
+		if ( is_a( $client, '\Google\Client' ) ) {
+			self::$calendar_service = new \Google_Service_Calendar( $client );
+		}
 	}
 
 	/**
