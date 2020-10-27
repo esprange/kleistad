@@ -48,7 +48,7 @@ class Google {
 		}
 		$setup             = \Kleistad\Kleistad::get_setup();
 		self::$kalender_id = $setup['google_kalender_id'];
-		$client            = new \Google_Client();
+		$client            = new \Google\Client();
 		$client->setApplicationName( 'Kleistad_Calendar' );
 		$client->setAccessType( 'offline' );
 		$client->setClientId( $setup['google_client_id'] );

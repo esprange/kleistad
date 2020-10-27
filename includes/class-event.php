@@ -75,12 +75,12 @@ class Event {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param string $event event welke geladen moet worden.
+	 * @param string $event_id event id welke geladen moet worden.
 	 * @throws \Exception Er is geen connectie.
 	 */
-	public function __construct( $event ) {
+	public function __construct( $event_id ) {
 		try {
-			$this->event        = \Kleistad\Google::calendar_service()->events->get( \Kleistad\Google::kalender_id(), $event );
+			$this->event        = \Kleistad\Google::calendar_service()->events->get( \Kleistad\Google::kalender_id(), $event_id );
 			$extendedproperties = $this->event->getExtendedProperties();
 			$this->properties   = ! is_null( $extendedproperties ) ? $extendedproperties->getPrivate() : [];
 		} catch ( \Google\Service\Exception $e ) {
@@ -89,7 +89,7 @@ class Event {
 			$organizer->setEmail( wp_get_current_user()->user_email );
 			$this->event             = new \Google_Service_Calendar_Event(
 				[
-					'Id'        => $event,
+					'Id'        => $event_id,
 					'location'  => get_option( 'kleistad_adres', 'Kleistad, Neonweg 12, 3812 RH Amersfoort' ),
 					'organizer' => $organizer,
 					'status'    => 'tentative',
