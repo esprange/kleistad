@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.5.1  
-**Stable tag:** 6.8.1  
+**Stable tag:** 6.9.0  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 **Requires at least PHP version:** 7.2  
@@ -36,6 +36,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.9.0 ###
+* Docenten en bestuur kunnen werkplek reserveringen voor cursisten toevoegingen
+* In cursisten correctie via dashboard kan ook het aantal gecorrigeerd worden
 ### 6.8.1 ###
 * De docent ontvangt voortaan reply email op email verzonden door docent
 * Het is mogelijk om factuur adresgegevens aan te passen voor de workshops
