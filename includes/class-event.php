@@ -75,36 +75,30 @@ class Event {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param string|\Google_Service_Calendar_Event $event event welke geladen moet worden.
+	 * @param string $event event welke geladen moet worden.
 	 * @throws \Exception Er is geen connectie.
 	 */
 	public function __construct( $event ) {
-		if ( is_string( $event ) ) {
-			try {
-				$this->event        = \Kleistad\Google::calendar_service()->events->get( \Kleistad\Google::kalender_id(), $event );
-				$extendedproperties = $this->event->getExtendedProperties();
-				$this->properties   = $extendedproperties->getPrivate();
-			} catch ( \Google_Service_exception $e ) {
-				$organizer = new \Google_Service_Calendar_EventOrganizer();
-				$organizer->setDisplayName( wp_get_current_user()->display_name );
-				$organizer->setEmail( wp_get_current_user()->user_email );
-				$this->event             = new \Google_Service_Calendar_Event(
-					[
-						'Id'        => $event,
-						'location'  => get_option( 'kleistad_adres', 'Kleistad, Neonweg 12, 3812 RH Amersfoort' ),
-						'organizer' => $organizer,
-						'status'    => 'tentative',
-					]
-				);
-				$this->properties['key'] = self::META_KEY;
-				$extendedproperties      = new \Google_Service_Calendar_EventExtendedProperties();
-				$extendedproperties->setPrivate( $this->properties );
-				$this->event->setExtendedProperties( $extendedproperties );
-			}
-		} else {
-			$this->event        = $event;
+		try {
+			$this->event        = \Kleistad\Google::calendar_service()->events->get( \Kleistad\Google::kalender_id(), $event );
 			$extendedproperties = $this->event->getExtendedProperties();
 			$this->properties   = ! is_null( $extendedproperties ) ? $extendedproperties->getPrivate() : [];
+		} catch ( \Google\Service\Exception $e ) {
+			$organizer = new \Google_Service_Calendar_EventOrganizer();
+			$organizer->setDisplayName( wp_get_current_user()->display_name );
+			$organizer->setEmail( wp_get_current_user()->user_email );
+			$this->event             = new \Google_Service_Calendar_Event(
+				[
+					'Id'        => $event,
+					'location'  => get_option( 'kleistad_adres', 'Kleistad, Neonweg 12, 3812 RH Amersfoort' ),
+					'organizer' => $organizer,
+					'status'    => 'tentative',
+				]
+			);
+			$this->properties['key'] = self::META_KEY;
+			$extendedproperties      = new \Google_Service_Calendar_EventExtendedProperties();
+			$extendedproperties->setPrivate( $this->properties );
+			$this->event->setExtendedProperties( $extendedproperties );
 		}
 	}
 
@@ -248,7 +242,7 @@ class Event {
 		$arr     = [];
 		foreach ( $events as $event ) {
 			if ( ! empty( $event->start->dateTime ) ) { // Skip events die de hele dag duren, zoals verjaardagen en vakanties.
-				$arr[ $event->getId() ] = new \Kleistad\Event( $event );
+				$arr[ $event->getId() ] = new \Kleistad\Event( $event->getId() );
 			}
 		}
 		return $arr;

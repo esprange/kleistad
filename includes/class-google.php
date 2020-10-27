@@ -25,7 +25,7 @@ class Google {
 	/**
 	 * De Google kalender service.
 	 *
-	 * @var \Google_Service $calendar_service De google service.
+	 * @var \Google_Service_Calendar $calendar_service De google service.
 	 */
 	private static $calendar_service = null;
 
@@ -39,7 +39,7 @@ class Google {
 	/**
 	 * Maak een Google API client aan.
 	 *
-	 * @return \Google_Client|bool $client of false.
+	 * @return \Google\Client|bool $client of false.
 	 */
 	private static function maak_client() {
 		$redirect_uri = get_option( self::REDIRECT_URI );
