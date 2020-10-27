@@ -251,11 +251,6 @@ class Admin_Upgrade {
 	 * Converteer gebruikers.
 	 */
 	private function convert_users() {
-		foreach( get_users() as $gebruiker ) {
-			if ( empty( get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY, true ) ) ) {
-				$gebruiker->remove_cap( \Kleistad\Roles::LID );
-			}
-		}
 	}
 
 	// phpcs:enable
