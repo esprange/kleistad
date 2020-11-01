@@ -10,6 +10,7 @@
  */
 
 $this->form();
+$current_user = wp_get_current_user();
 
 if ( 'gebruikers' === $data['actie'] ) : ?>
 <div class="kleistad_row" style="padding-top:20px;" >
@@ -108,6 +109,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 		</div>
 		<div class="kleistad_col_4" id="kleistad_select_ander" style="display:none" >
 			<select name="id" id="kleistad_select_gebruiker" >
+				<option value="<?php echo esc_attr( $current_user->ID ); ?>" <?php selected( $current_user->ID, $data['input']['id'] ); ?> ><?php echo esc_html( $current_user->display_name ); ?></option>
 			<?php foreach ( $data['cursisten_za'] as $cursist_za ) : ?>
 				<option value="<?php echo esc_attr( $cursist_za->ID ); ?>" <?php selected( $cursist_za->ID, $data['input']['id'] ); ?> ><?php echo esc_html( $cursist_za->display_name ); ?></option>
 			<?php endforeach ?>

@@ -90,7 +90,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'selecteerbaar' => ! $cursus->vervallen && ( ! $cursus->vol || $wachtbaar ),
 				'technieken'    => $cursus->technieken,
 				'meer'          => $cursus->meer,
-				'ruimte'        => $ruimte,
+				'ruimte'        => min( $ruimte, 4 ),
 				'vol'           => $cursus->vol,
 				'bedrag'        => $cursus->bedrag(),
 				'lopend'        => $lopend,

@@ -229,7 +229,7 @@ class Public_Corona extends ShortcodeForm {
 			'gebruikers'      => $gebruikers,
 		];
 		if ( \Kleistad\Roles::is_bestuur() || \Kleistad\Roles::is_docent() ) {
-			$cursisten_zonder_abonnement = get_transient( 'kleistad_cza' );
+			$cursisten_zonder_abonnement = get_transient( 'kleistad_za' );
 			if ( ! is_array( $cursisten_zonder_abonnement ) ) {
 				$cursisten_zonder_abonnement = [];
 				foreach ( $gebruikers as $gebruiker ) {
