@@ -137,23 +137,6 @@ class Oven extends Entity {
 	}
 
 	/**
-	 * Bepaal of de kosten laag, midden of hoog zijn.
-	 *
-	 * @param int $temperatuur De temperatuur.
-	 * @return float De kosten.
-	 */
-	public function kosten( $temperatuur ) {
-		$options = \Kleistad\Kleistad::get_options();
-		if ( $temperatuur < $options['oven_midden'] ) {
-			return $data['kosten_laag'];
-		} elseif ( $temperatuur < $options['oven_hoog'] ) {
-			return $data['kosten_midden'];
-		} else {
-			return $data['kosten_hoog'];
-		}
-	}
-
-	/**
 	 * Return alle ovens.
 	 *
 	 * @return array ovens.

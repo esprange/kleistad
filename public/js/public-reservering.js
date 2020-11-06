@@ -1,4 +1,4 @@
-/* global kleistadData, detectTap */
+/* global kleistadData, detectTap, navigator */
 
 ( function( $ ) {
     'use strict';
@@ -236,7 +236,6 @@
 			$( '#kleistad_reservering' ).dialog( 'close' );
 		} else {
 			$( '#kleistad_temperatuur' )[0].reportValidity();
-//			$( '#kleistad_temperatuur' ).css( 'border', '2px solid #d66' );
 			return;
 		}
   
