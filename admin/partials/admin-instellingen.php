@@ -93,7 +93,17 @@
 		<tr >
 			<th scope="row">Termijn (dagen) dat correctie stook mogelijk is</th>
 			<td><input type="number" min="0"  name="kleistad-opties[termijn]"
-					value="<?php echo esc_attr( $this->options['termijn'] ); ?>" class="tiny-text" /></td>
+					value="<?php echo esc_attr( $this->options['termijn'] ); ?>" class="small-text" /></td>
+		</tr>
+		<tr >
+			<th scope="row">Oven temperatuur waarbij het midden tarief gaat gelden</th>
+			<td><input type="number" min="0"  name="kleistad-opties[oven_midden]"
+					value="<?php echo esc_attr( $this->options['oven_midden'] ); ?>" class="small-text" /></td>
+		</tr>
+		<tr >
+			<th scope="row">Oven temperatuur waarbij het hoge tarief gaat gelden</th>
+			<td><input type="number" min="0"  name="kleistad-opties[oven_hoog]"
+					value="<?php echo esc_attr( $this->options['oven_hoog'] ); ?>" class="small-text" /></td>
 		</tr>
 
 		</table>

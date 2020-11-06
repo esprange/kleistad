@@ -18,7 +18,9 @@ namespace Kleistad;
  *
  * @property int    id
  * @property string naam
- * @property float  kosten
+ * @property float  kosten_laag
+ * @property float  kosten_midden
+ * @property float  kosten_hoog
  * @property array  beschikbaarheid
  */
 class Oven extends Entity {
@@ -38,7 +40,9 @@ class Oven extends Entity {
 		$default_data = [
 			'id'              => null,
 			'naam'            => '',
-			'kosten'          => 0,
+			'kosten_laag'     => 0,
+			'kosten_midden'   => 0,
+			'kosten_hoog'     => 0,
 			'beschikbaarheid' => wp_json_encode( [] ),
 		];
 		$this->data   = $default_data;
@@ -99,12 +103,22 @@ class Oven extends Entity {
 	 *
 	 * @param  int   $stoker_id   De stoker.
 	 * @param  float $percentage  Het percentage van de stook.
+	 * @param  int   $temperatuur De temperatuur waarbij gestookt wordt.
 	 * @return float De kosten.
 	 */
-	public function stookkosten( $stoker_id, $percentage ) {
+	public function stookkosten( $stoker_id, $percentage, $temperatuur ) {
+		$options    = \Kleistad\Kleistad::get_options();
 		$regelingen = get_user_meta( $stoker_id, self::REGELING, true );
-		$kosten     = $percentage * ( $regelingen[ $this->data['id'] ] ?? $this->data['kosten'] ) / 100;
-		return round( $kosten, 2 );
+		if ( isset( $regelingen[ $this->data['id'] ] ) ) {
+			$kosten = $regelingen[ $this->data['id'] ];
+		} elseif ( $temperatuur < $options['oven_midden'] ) {
+			$kosten = $this->data['kosten_laag'];
+		} elseif ( $temperatuur < $options['oven_hoog'] ) {
+			$kosten = $this->data['kosten_midden'];
+		} else {
+			$kosten = $this->data['kosten_hoog'];
+		}
+		return round( $percentage * $kosten / 100, 2 );
 	}
 
 	/**
@@ -120,6 +134,23 @@ class Oven extends Entity {
 		$wpdb->replace( "{$wpdb->prefix}kleistad_ovens", $this->data );
 		$this->id = $wpdb->insert_id;
 		return $this->id;
+	}
+
+	/**
+	 * Bepaal of de kosten laag, midden of hoog zijn.
+	 *
+	 * @param int $temperatuur De temperatuur.
+	 * @return float De kosten.
+	 */
+	public function kosten( $temperatuur ) {
+		$options = \Kleistad\Kleistad::get_options();
+		if ( $temperatuur < $options['oven_midden'] ) {
+			return $data['kosten_laag'];
+		} elseif ( $temperatuur < $options['oven_hoog'] ) {
+			return $data['kosten_midden'];
+		} else {
+			return $data['kosten_hoog'];
+		}
 	}
 
 	/**

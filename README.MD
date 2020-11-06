@@ -3,8 +3,8 @@
 **Donate link:** https://www.kleistad.nl  
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
-**Tested up to:** 5.5.1  
-**Stable tag:** 6.9.0  
+**Tested up to:** 5.5.3  
+**Stable tag:** 6.10.0  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 **Requires at least PHP version:** 7.2  
@@ -36,6 +36,11 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.10.0 ###
+* Cursisten kunnen zichzelf afmelden voor de wachtlijst
+* Bestuur kan een cursist afmelden voor de wachtlijst
+* Oven tarieven voor laag, midden en hoge temperaturen
+* Fix in het plain text deel van uitgaande berichten
 ### 6.9.0 ###
 * Docenten en bestuur kunnen werkplek reserveringen voor cursisten toevoegingen
 * In cursisten correctie via dashboard kan ook het aantal gecorrigeerd worden

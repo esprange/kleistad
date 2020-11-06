@@ -76,7 +76,9 @@ class Admin_Ovens extends \WP_List_Table {
 	public function get_columns() {
 		$columns = [
 			'naam'            => 'Naam',
-			'kosten'          => 'Tarief',
+			'kosten_laag'     => 'Laag tarief',
+			'kosten_midden'   => 'Midden tarief',
+			'kosten_hoog'     => 'Hoog tarief',
 			'beschikbaarheid' => 'Beschikbaarheid',
 			'id'              => 'Id',
 		];

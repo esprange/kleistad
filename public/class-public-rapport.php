@@ -46,7 +46,7 @@ class Public_Rapport extends Shortcode {
 						'prog'      => $reservering->programma > 0 ? $reservering->programma : '',
 						'perc'      => $stookdeel['perc'],
 						'kosten'    => number_format_i18n(
-							$stookdeel['prijs'] ?? $ovens[ $reservering->oven_id ]->stookkosten( $huidige_gebruiker->ID, $stookdeel['perc'] ),
+							$stookdeel['prijs'] ?? $ovens[ $reservering->oven_id ]->stookkosten( $huidige_gebruiker->ID, $stookdeel['perc'], $reservering->temperatuur ),
 							2
 						),
 						'voorlopig' => ! $reservering->verwerkt,

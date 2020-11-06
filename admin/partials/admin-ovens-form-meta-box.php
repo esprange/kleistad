@@ -10,7 +10,7 @@
  */
 
 ?>
-<table style="width: 100%;border-spacing: 2px;padding: 5px" class="form-table">
+<table class="form-table">
 	<tbody>
 		<tr class="form-field">
 			<th  scope="row">
@@ -23,10 +23,28 @@
 		</tr>
 		<tr class="form-field">
 			<th  scope="row">
-				<label for="kosten">Tarief</label>
+				<label for="kosten_laag">Laag tarief</label>
 			</th>
 			<td>
-				<input id="kosten" name="kosten" type="number" style="width: 95%" value="<?php echo esc_attr( $item['kosten'] ); ?>"
+				<input id="kosten_laag" name="kosten_laag" type="number" value="<?php echo esc_attr( $item['kosten_laag'] ); ?>"
+					step="0.01" class="code" placeholder="99.99" required />
+			</td>
+		</tr>
+		<tr class="form-field">
+			<th  scope="row">
+				<label for="kosten_midden">Midden tarief</label>
+			</th>
+			<td>
+				<input id="kosten_midden" name="kosten_midden" type="number" value="<?php echo esc_attr( $item['kosten_midden'] ); ?>"
+					step="0.01" class="code" placeholder="99.99" required>
+			</td>
+		</tr>
+		<tr class="form-field">
+			<th  scope="row">
+				<label for="kosten_hoog">Hoog tarief</label>
+			</th>
+			<td>
+				<input id="kosten_hoog" name="kosten_hoog" type="number" value="<?php echo esc_attr( $item['kosten_hoog'] ); ?>"
 					step="0.01" class="code" placeholder="99.99" required>
 			</td>
 		</tr>

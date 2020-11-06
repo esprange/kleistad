@@ -130,7 +130,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
 			$data['cursisten'] = $this->cursistenlijst( $cursus, $data['bestuur_rechten'] );
-		} elseif ( 'indelen' === $data['actie'] ) {
+		} elseif ( 'indelen' === $data['actie'] || 'uitschrijven' === $data['actie'] ) {
 			list( $cursist_id, $cursus_id ) = array_map( 'intval', explode( '-', $data['id'] ) );
 			$cursus                         = new \Kleistad\Cursus( $cursus_id );
 			$inschrijving                   = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
@@ -202,6 +202,14 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$inschrijving->email( '_lopend_betalen', $inschrijving->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
 			return [
 				'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
+				'content' => $this->display(),
+			];
+		} elseif ( 'uitschrijven' === $data['form_actie'] ) {
+			$inschrijving              = new \Kleistad\Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
+			$inschrijving->geannuleerd = true;
+			$inschrijving->save();
+			return [
+				'status'  => $this->status( 'De inschrijving is geannuleerd' ),
 				'content' => $this->display(),
 			];
 		} elseif ( 'herinner_email' === $data['form_actie'] ) {

@@ -146,6 +146,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 					'filter'  => FILTER_VALIDATE_INT,
 					'options' => [ 'default' => 0 ],
 				],
+				'uitschrijven'    => [
+					'filter'  => FILTER_VALIDATE_INT,
+					'options' => [ 'default' => 0 ],
+				],
 			]
 		);
 		if ( false === intval( $data['input']['cursus_id'] ) ) {
@@ -153,6 +157,13 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			return $error;
 		}
 		$data['cursus'] = new \Kleistad\Cursus( $data['input']['cursus_id'] );
+		if ( $data['input']['uitschrijven'] ) {
+			if ( false === intval( $data['input']['cursus_id'] ) || false === intval( $data['input']['gebruiker_id'] ) ) {
+				$error->add( 'intern', 'Er is iets mis gegaan, neem eventueel contact op met Kleistad' );
+				return $error;
+			}
+			return true;
+		}
 		if ( $data['cursus']->vol ) {
 			if ( 1 < $data['input']['aantal'] ) {
 				$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Je kan eventueel op een wachtlijst geplaatst worden' );
@@ -207,6 +218,20 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		}
 
 		$inschrijving = new \Kleistad\Inschrijving( $data['cursus']->id, $gebruiker_id );
+		if ( $data['input']['uitschrijven'] ) {
+			if ( ! $inschrijving->ingedeeld ) {
+				$inschrijving->geannuleerd = true;
+				$inschrijving->save();
+				return [
+					'content' => $this->goto_home(),
+					'status'  => $this->status( 'De inschrijving is verwijderd uit de wachtlijst, je zult geen emails meer ontvangen over deze cursus' ),
+				];
+			} else {
+				return [
+					'status' => $this->status( new \WP_Error( 'ingedeeld', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Voor een annulering, neem contact op met Kleistad.' ) ),
+				];
+			}
+		}
 		if ( $inschrijving->geannuleerd ) { // Blijkbaar eerder geannuleerd.
 			$inschrijving->ingedeeld   = false;
 			$inschrijving->geannuleerd = false;
@@ -262,6 +287,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			[
 				'code' => FILTER_SANITIZE_STRING,
 				'hsh'  => FILTER_SANITIZE_STRING,
+				'stop' => FILTER_SANITIZE_STRING,
 			]
 		);
 		if ( ! is_null( $param ) && ! empty( $param['code'] ) ) {
@@ -269,15 +295,19 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			if ( $param['hsh'] !== $inschrijving->controle() ) {
 				return new \WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 			}
-			if ( $inschrijving->cursus->vol ) {
+			if ( empty( $param['stop'] ) && $inschrijving->cursus->vol ) {
 				return new \WP_Error( 'Vol', 'Helaas, waarschijnlijk is iemand anders je voor geweest. De cursus is volgeboekt.' );
 			}
 			$data['cursus_naam']  = $inschrijving->cursus->naam;
 			$data['cursus_id']    = $inschrijving->cursus->id;
 			$data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
 			$data['gebruiker_id'] = $inschrijving->klant_id;
-			$data['wacht']        = true;
-			$data['ruimte']       = $inschrijving->cursus->ruimte();
+			if ( empty( $param['stop'] ) ) {
+				$data['wacht']  = true;
+				$data['ruimte'] = $inschrijving->cursus->ruimte();
+			} else {
+				$data['uitschrijven'] = true;
+			}
 			return true;
 		}
 		return false;

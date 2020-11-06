@@ -46,12 +46,12 @@ if ( 'cursisten' === $data['actie'] ) :
 				<td>
 					<?php
 					if ( ! $cursist['i_betaald'] && ! $cursist['c_betaald'] ) :
-						if ( $data['cursus']['loopt'] && $cursist['wacht'] ) :
+						if ( ( $data['cursus']['loopt'] && $cursist['wacht'] ) || $cursist['wachtlijst'] ) :
 							?>
 						<a href="#" title="indelen" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
-							data-id="<?php echo esc_attr( $cursist['id'] . '-' . $data['cursus']['id'] ); ?>" data-actie="indelen" >wacht op factuur</a>
-						<?php elseif ( $cursist['wachtlijst'] ) : ?>
-						wachtlijst
+							data-id="<?php echo esc_attr( $cursist['id'] . '-' . $data['cursus']['id'] ); ?>" 
+							data-actie="<?php echo $cursist['wachtlijst'] ? 'uitschrijven' : 'indelen'; ?>" >
+							<?php echo $cursist['wachtlijst'] ? 'wachtlijst' : 'wacht op factuur'; ?> </a>
 						<?php else : ?>
 						nog niet betaald !
 							<?php
@@ -118,6 +118,30 @@ if ( 'cursisten' === $data['actie'] ) :
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_3">
 			<button name="kleistad_submit_cursus_overzicht" type="submit" value="indelen" >Bevestigen</button>
+		</div>
+		<div class="kleistad_col_4">
+		</div>
+		<div class="kleistad_col_3">
+			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+		</div>
+	</div>
+	</form>
+<?php elseif ( 'uitschrijven' === $data['actie'] ) : ?>
+	<?php $this->form(); ?>
+	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>">
+	<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $data['cursist']['id'] ); ?>">
+	<h2>Verwijderen uit cursus wachtlijst</h2>
+	<div class="kleistad_row">
+		<div class="kleistad_col_3">
+			<label>Cursist</label>
+		</div>
+		<div class="kleistad_col_5">
+			<?php echo esc_html( $data['cursist']['naam'] ); ?>
+		</div>
+	</div>
+	<div class="kleistad_row" style="padding-top:20px;">
+		<div class="kleistad_col_3">
+			<button name="kleistad_submit_cursus_overzicht" type="submit" value="uitschrijven" >Bevestigen</button>
 		</div>
 		<div class="kleistad_col_4">
 		</div>

@@ -316,7 +316,7 @@ class Saldo extends Artikel {
 							continue; // Volgende verdeling.
 						}
 						$medestoker         = get_userdata( $stookdeel['id'] );
-						$bedrag             = $ovens[ $reservering->oven_id ]->stookkosten( $stookdeel['id'], $stookdeel['perc'] );
+						$bedrag             = $ovens[ $reservering->oven_id ]->stookkosten( $stookdeel['id'], $stookdeel['perc'], $reservering->temperatuur );
 						$stookdeel['prijs'] = $bedrag;
 						$reservering->prijs( $stookdeel['id'], $bedrag );
 						if ( $bedrag < 0.01 ) {
@@ -359,7 +359,7 @@ class Saldo extends Artikel {
 				}
 			} elseif ( ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
 				if ( \Kleistad\Reservering::ONDERHOUD !== $reservering->soortstook ) {
-					$bedrag     = $ovens[ $reservering->oven_id ]->stookkosten( $reservering->gebruiker_id, 100 );
+					$bedrag     = $ovens[ $reservering->oven_id ]->stookkosten( $reservering->gebruiker_id, 100, $reservering->temperatuur );
 					$stoker     = get_userdata( $reservering->gebruiker_id );
 					$stookdelen = $reservering->verdeling;
 					$tabel      = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';

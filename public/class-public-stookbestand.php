@@ -93,7 +93,6 @@ class Public_Stookbestand extends Shortcode {
 			$stoker_naam,
 			$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
 			$this->ovens[ $reservering->oven_id ]->naam,
-			number_format_i18n( $this->ovens[ $reservering->oven_id ]->kosten, 2 ),
 			$reservering->soortstook,
 			$reservering->temperatuur,
 			$reservering->programma,
@@ -104,7 +103,7 @@ class Public_Stookbestand extends Shortcode {
 			foreach ( $reservering->verdeling as $stookdeel ) {
 				if ( $stookdeel['id'] == $id ) { // phpcs:ignore
 					$percentage += $stookdeel['perc'];
-					$kosten     += $stookdeel['prijs'] ?? $this->ovens[ $reservering->oven_id ]->stookkosten( $id, $stookdeel['perc'] );
+					$kosten     += $stookdeel['prijs'] ?? $this->ovens[ $reservering->oven_id ]->stookkosten( $id, $stookdeel['perc'], $reservering->temperatuur );
 					$totaal     += $kosten;
 				}
 			}
@@ -125,7 +124,7 @@ class Public_Stookbestand extends Shortcode {
 		array_walk( $reserveringen, [ $this, 'bepaal_medestokers' ] );
 		asort( $this->medestokers );
 
-		$fields = [ 'Stoker', 'Datum', 'Oven', 'Kosten', 'Soort Stook', 'Temperatuur', 'Programma' ];
+		$fields = [ 'Stoker', 'Datum', 'Oven', 'Soort Stook', 'Temperatuur', 'Programma' ];
 		for ( $i = 1; $i <= 2; $i ++ ) {
 			foreach ( $this->medestokers as $medestoker ) {
 				$fields[] = $medestoker;

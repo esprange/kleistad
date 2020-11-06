@@ -15,6 +15,9 @@ if ( false === $stokers_json ) {
 }
 ?>
 <h1>Reserveringen voor de <?php echo esc_html( $data['oven']['naam'] ); ?></h1>
+<div id="kleistad_geen_ie" style="display:none">
+	<strong>Helaas wordt Internet Explorer niet meer ondersteund voor deze functionaliteit, gebruik bijvoorbeeld Chrome of Edge</strong>
+</div>
 <table id="kleistad_reserveringen" class="kleistad_reserveringen"
 	data-maand="<?php echo esc_attr( date( 'n' ) ); ?>"
 	data-jaar="<?php echo esc_attr( date( 'Y' ) ); ?>"

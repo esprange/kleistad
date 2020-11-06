@@ -119,6 +119,12 @@ class Email {
 				return $from_name;
 			}
 		);
+		add_filter(
+			'wp_mail_content_type',
+			function() {
+				return 'text/html';
+			}
+		);
 		add_action(
 			'wp_mail_failed',
 			function( $wp_error ) {
@@ -128,10 +134,9 @@ class Email {
 		add_action(
 			'phpmailer_init',
 			function( $phpmailer ) {
-				// phpcs:disable
+				// phpcs:disable WordPress.NamingConventions
 				if ( empty( $phpmailer->AltBody ) ) {
-					$html = new \Html2Text\Html2Text( $phpmailer->Body );
-					$phpmailer->AltBody = $html->getText();
+					$phpmailer->AltBody = 'Emails van Kleistad zijn in HTML formaat en kunnen via de meeste mailclients normaal weergegeven worden';
 				}
 				// phpcs:enable
 			}

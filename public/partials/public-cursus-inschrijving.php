@@ -36,6 +36,28 @@ if ( isset( $data['wacht'] ) ) :
 	return;
 endif;
 
+if ( isset( $data['uitschrijven'] ) ) :
+	?>
+	$this->form();
+	?>
+	<h2><?php echo esc_html( $data['cursist_naam'] ); ?></h2>
+	<strong>Afmelden voor de wachtlijst van cursus <?php echo esc_html( $data['cursus_naam'] ); ?></strong>
+	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus_id'] ); ?>" />
+	<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $data['gebruiker_id'] ); ?>" />
+	<input type="hidden" name="uitschrijven" value="1" />
+	<input type="hidden" name="aantal" value="1" />
+	<p>Door af te melden zal je geen email ontvangen als er een plaats vrijkomt voor deze cursus</p>
+	<div class="kleistad_row" style="padding-top:20px;">
+		<div class="kleistad_col_10">
+			<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" type="submit" >Afmelden</button>
+		</div>
+	</div>
+	</form>
+
+	<?php
+	return;
+endif;
+
 if ( ! empty( $data['verbergen'] ) ) :
 	?>
 	<a href="#kleistad_inschrijven" onclick="document.getElementById('kleistad_inschrijven').style.display='inline';"><?php echo esc_html( $data['verbergen'] ); ?></a>

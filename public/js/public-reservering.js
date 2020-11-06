@@ -44,7 +44,7 @@
 				'<option value="Glazuur" ' + ( 'Glazuur' === formData.soortstook ? 'selected>' : '>' ) + 'Glazuur</option>' +
 				'<option value="Overig" ' + ( 'Overig' === formData.soortstook ? 'selected>' : '>' ) + 'Overig</option>' +
 				'</select></td></tr>' +
-				'<tr><td colspan="2"><label>Temperatuur &nbsp; &deg;C</label></td><td><input id="kleistad_temperatuur" type="number" min="0" max="1400" value="' + formData.temperatuur + '" ></td></tr>' +
+				'<tr><td colspan="2"><label>Temperatuur &nbsp; &deg;C</label></td><td><input id="kleistad_temperatuur" name="temperatuur" type="number" min="100" max="1400" required value="' + formData.temperatuur + '" ></td></tr>' +
 				'<tr><td colspan="2"><label>Programma</label></td><td><input id="kleistad_programma" type="number" min="0" max="99" value="' + formData.programma + '" ></td></tr>' );
 		if ( $( '#kleistad_reserveringen' ).data( 'override' ) ) {
 			$( '#kleistad_soortstook' ).append( '<option value="Onderhoud" ' + ( 'Onderhoud' === formData.soortstook ? 'selected>' : '>' ) + 'Onderhoud</option>' );
@@ -231,9 +231,15 @@
                     verdeling.push( { id: +item.value, perc: +stokerPercs[index].value } );
                 }
             }
-        );
-        $( '#kleistad_reservering' ).dialog( 'close' );
-
+		);
+		if ( $( '#kleistad_temperatuur' )[0].checkValidity() ) {
+			$( '#kleistad_reservering' ).dialog( 'close' );
+		} else {
+			$( '#kleistad_temperatuur' )[0].reportValidity();
+//			$( '#kleistad_temperatuur' ).css( 'border', '2px solid #d66' );
+			return;
+		}
+  
         $.ajax(
             {
                 url: kleistadData.base_url + '/reserveer/',
@@ -274,7 +280,12 @@
 
     $( document ).ready(
         function() {
-            /**
+			if ( navigator.appName === 'Microsoft Internet Explorer' || !!( navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/rv:11/)) || (typeof $.browser !== 'undefined' && $.browser.msie === 1 ) ) {
+				$( '#kleistad_reserveringen' ).hide();
+				$( '#kleistad_geen_ie').show();
+			}
+
+			/**
              * Toon de tabel.
              */
 			if ( 'undefined' !== typeof $( '#kleistad_reserveringen' ).data( 'maand' ) ) {

@@ -400,6 +400,7 @@ class Inschrijving extends Artikel {
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'cursus_link'            => $this->betaal_link,
+					'cursus_uitschrijf_link' => $this->uitschrijf_link(),
 				],
 			]
 		);
@@ -589,6 +590,21 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Geef de link terug voor het opheffen van een wachtlijst registratie.
+	 */
+	private function uitschrijf_link() {
+		$url = add_query_arg(
+			[
+				'code' => $this->code,
+				'hsh'  => $this->controle(),
+				'stop' => 1,
+			],
+			home_url( '/kleistad-wachtlijst' )
+		);
+		return "<a href=\"$url\" >Kleistad pagina</a>";
+	}
+
+	/**
 	 * Controleer of er betalingsverzoeken verzonden moeten worden.
 	 *
 	 * @since 6.1.0
@@ -596,7 +612,7 @@ class Inschrijving extends Artikel {
 	public static function dagelijks() {
 		$inschrijvingen = self::all();
 		$vandaag        = strtotime( 'today' );
-		$cursus_vol     = [];
+		$ruimte         = [];
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
 				/**
@@ -611,15 +627,19 @@ class Inschrijving extends Artikel {
 				}
 				/**
 				 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn.
+				 * Effect is hier wel dat als er wel plaats is maar de wachtlijst cursist neemt geen actie, deze
+				 * om de dag een email krijgt.
+				 *
+				 * @todo Bij cursus vastleggen wanneer de status vol is gewijzigd. Als dit langer geleden is dan gisteren, geen email verzenden.
 				 */
 				if ( ! $inschrijving->ingedeeld ) {
 					if ( $vandaag < $inschrijving->cursus->start_datum ) {
-						if ( ! isset( $cursus_vol[ $cursus_id ] ) ) {
-							$cursus_vol[ $cursus_id ]  = $inschrijving->cursus->ruimte();
-							$inschrijving->cursus->vol = ( 0 === $cursus_vol[ $cursus_id ] );
+						if ( ! isset( $ruimte[ $cursus_id ] ) ) {
+							$ruimte[ $cursus_id ]      = $inschrijving->cursus->ruimte();
+							$inschrijving->cursus->vol = ( 0 === $ruimte[ $cursus_id ] );
 							$inschrijving->cursus->save();
 						}
-						if ( 0 < $cursus_vol[ $cursus_id ] && 0 < $inschrijving->wacht_datum && $inschrijving->wacht_datum < $vandaag ) {
+						if ( 0 < $ruimte[ $cursus_id ] && 0 < $inschrijving->wacht_datum && $inschrijving->wacht_datum < $vandaag ) {
 							$inschrijving->wacht_datum = strtotime( 'tomorrow' );
 							$inschrijving->maak_wachtlijst_link();
 							$inschrijving->save();

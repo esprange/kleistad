@@ -29,11 +29,13 @@ class Admin_Ovens_Handler {
 		if ( empty( $item['naam'] ) ) {
 			$messages[] = 'Naam is verplicht';
 		}
-		if ( ! empty( $item['kosten'] ) && ! is_numeric( $item['kosten'] ) ) {
-			$messages[] = 'Kosten format is fout';
-		}
-		if ( ! empty( $item['kosten'] ) && ! absint( intval( $item['kosten'] ) ) ) {
-			$messages[] = 'Kosten kunnen niet kleiner zijn dan 0';
+		foreach ( [ 'laag', 'midden', 'hoog' ] as $range ) {
+			if ( ! empty( $item[ "kosten$range" ] ) && ! is_numeric( $item[ "kosten$range" ] ) ) {
+				$messages[] = "Kosten $range format is fout";
+			}
+			if ( ! empty( $item[ "kosten$range" ] ) && ! absint( intval( $item[ "kosten$range" ] ) ) ) {
+				$messages[] = 'Kosten $range kunnen niet kleiner zijn dan 0';
+			}
 		}
 		if ( empty( $messages ) ) {
 			return true;
@@ -77,7 +79,15 @@ class Admin_Ovens_Handler {
 				[
 					'id'              => FILTER_SANITIZE_NUMBER_INT,
 					'naam'            => FILTER_SANITIZE_STRING,
-					'kosten'          => [
+					'kosten_laag'     => [
+						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+					],
+					'kosten_midden'   => [
+						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+					],
+					'kosten_hoog'     => [
 						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 					],
@@ -95,7 +105,9 @@ class Admin_Ovens_Handler {
 					$oven = new \Kleistad\Oven();
 				}
 				$oven->naam            = $item['naam'];
-				$oven->kosten          = $item['kosten'];
+				$oven->kosten_laag     = $item['kosten_laag'];
+				$oven->kosten_midden   = $item['kosten_midden'];
+				$oven->kosten_hoog     = $item['kosten_hoog'];
 				$oven->beschikbaarheid = $item['beschikbaarheid'];
 				$oven->save();
 				$message = 'De gegevens zijn opgeslagen';
@@ -110,7 +122,9 @@ class Admin_Ovens_Handler {
 			}
 			$item['id']              = $oven->id;
 			$item['naam']            = $oven->naam;
-			$item['kosten']          = $oven->kosten;
+			$item['kosten_laag']     = $oven->kosten_laag;
+			$item['kosten_midden']   = $oven->kosten_midden;
+			$item['kosten_hoog']     = $oven->kosten_hoog;
 			$item['beschikbaarheid'] = $oven->beschikbaarheid;
 		}
 		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this, 'ovens_form_meta_box_handler' ], 'oven', 'normal', 'default' );

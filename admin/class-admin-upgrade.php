@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 70;
+	const DBVERSIE = 74;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -52,6 +52,8 @@ class Admin_Upgrade {
 			'workshopprijs'        => 120,
 			'termijn'              => 4,
 			'extra'                => [],
+			'oven_midden'          => 1100,
+			'oven_hoog'            => 1200,
 		];
 		$default_setup   = [
 			'sleutel'            => '',
@@ -113,7 +115,9 @@ class Admin_Upgrade {
 			"CREATE TABLE {$wpdb->prefix}kleistad_ovens (
 			id int(10) NOT NULL AUTO_INCREMENT,
 			naam tinytext,
-			kosten numeric(10,2),
+			kosten_laag numeric(10,2),
+			kosten_midden numeric(10,2),
+			kosten_hoog numeric(10,2),
 			beschikbaarheid tinytext,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
@@ -253,6 +257,24 @@ class Admin_Upgrade {
 	private function convert_users() {
 	}
 
+	/**
+	 * Converteer de ovens.
+	 *
+	 * Voor nu laag is tot 1099 graden
+	 * Midden is 1100 tot 1199 graden
+	 * Hoog is 1200 of meer
+	 * Max is 1300, min is 100
+	 */
+	private function convert_ovens() {
+		global $wpdb;
+		$wpdb->query(
+			"UPDATE {$wpdb->prefix}kleistad_ovens SET kosten_laag = kosten, kosten_midden = kosten, kosten_hoog = kosten"
+		);
+		$wpdb->query(
+			"ALTER TABLE {$wpdb->prefix}kleistad_ovens DROP COLUMN kosten"
+		); 
+	}
+
 	// phpcs:enable
 
 	/**
@@ -272,5 +294,6 @@ class Admin_Upgrade {
 		$this->convert_opties();
 		$this->convert_recept();
 		$this->convert_users();
+		$this->convert_ovens();
 	}
 }
