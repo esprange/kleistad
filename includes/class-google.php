@@ -140,7 +140,6 @@ class Google {
 		$client = self::maak_client();
 		if ( false === $client ) {
 			throw new \Exception( 'Google maak client failure' );
-			return;
 		}
 		if ( $client->isAccessTokenExpired() ) {
 			if ( $client->getRefreshToken() ) {
@@ -149,7 +148,6 @@ class Google {
 			} else {
 				delete_option( self::ACCESS_TOKEN );
 				throw new \Exception( 'Google refresh token failure' );
-				return;
 			}
 		}
 		self::$calendar_service = new \Google_Service_Calendar( $client );

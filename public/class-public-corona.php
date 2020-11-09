@@ -92,7 +92,7 @@ class Public_Corona extends ShortcodeForm {
 	private function mogelijke_datums() {
 		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
 		$datum_lijst     = [];
-		foreach ( $beschikbaarheid as $mogelijke_datum => $niet_gebruikt ) {
+		foreach ( array_keys( $beschikbaarheid ) as $mogelijke_datum ) {
 			if ( $mogelijke_datum >= strtotime( 'today' ) ) {
 				$datum_lijst[] = $mogelijke_datum;
 			}
@@ -296,7 +296,7 @@ class Public_Corona extends ShortcodeForm {
 		$aanpassingen    = $data['input']['res'] ?: [];
 		$id              = intval( $data['input']['id'] );
 		foreach ( $aanpassingen as $index => $aanpassing ) {
-			foreach ( $aanpassing as $werk => $check ) {
+			foreach ( array_keys( $aanpassing ) as $werk ) {
 				if ( ! in_array( $id, $reserveringen[ $index ][ $werk ] ?? [], true ) ) {
 					if ( count( $reserveringen[ $index ][ $werk ] ?? [] ) < $beschikbaarheid[ $index ][ $werk ] ) {
 						$reserveringen[ $index ][ $werk ][] = $id;
@@ -380,12 +380,12 @@ class Public_Corona extends ShortcodeForm {
 		foreach ( $gebruik as $datum => $tijden ) {
 			$beschikbaarheid = $this->beschikbaarheid( $datum );
 			$reserveringen   = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
-			foreach ( $tijden as $tijd => $werk ) {
+			foreach ( array_keys( $tijden ) as $tijd ) {
 				$aanwezig_ids = [];
 				foreach ( $beschikbaarheid as $blokdeel => $blok ) {
 					if ( $blok['T'] === $tijd ) {
-						foreach ( $reserveringen[ $blokdeel ] as $werk2 ) {
-							$aanwezig_ids = array_merge( $aanwezig_ids, $werk2 );
+						foreach ( $reserveringen[ $blokdeel ] as $werk ) {
+							$aanwezig_ids = array_merge( $aanwezig_ids, $werk );
 						}
 						if ( $blok['M']['id'] ) {
 							$aanwezig_ids[] = $blok['M']['id'];

@@ -109,7 +109,9 @@ class Oven extends Entity {
 	public function stookkosten( $stoker_id, $percentage, $temperatuur ) {
 		$options    = \Kleistad\Kleistad::get_options();
 		$regelingen = get_user_meta( $stoker_id, self::REGELING, true );
-		if ( isset( $regelingen[ $this->data['id'] ] ) ) {
+		if ( 0 === $stoker_id ) {
+			$kosten = 0;
+		} elseif ( isset( $regelingen[ $this->data['id'] ] ) ) {
 			$kosten = $regelingen[ $this->data['id'] ];
 		} elseif ( $temperatuur < $options['oven_midden'] ) {
 			$kosten = $this->data['kosten_laag'];

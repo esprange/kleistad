@@ -155,22 +155,6 @@ class Reservering extends Entity {
 	}
 
 	/**
-	 * Registreer de prijs van de stook op een stookdeel.
-	 *
-	 * @param int   $medestoker_id Het id van de medestoker.
-	 * @param float $prijs         De prijs van het stoken.
-	 */
-	public function prijs( $medestoker_id, $prijs ) {
-		$verdeling = json_decode( $this->data['verdeling'], true );
-		foreach ( $verdeling as &$stookdeel ) {
-			if ( $medestoker_id === $stookdeel['id'] ) {
-				$stookdeel['prijs'] = $prijs;
-			}
-		};
-		$this->data['verdeling'] = wp_json_encode( $verdeling );
-	}
-
-	/**
 	 * Set attribuut van het object.
 	 *
 	 * @since 4.0.87
@@ -182,15 +166,17 @@ class Reservering extends Entity {
 		switch ( $attribuut ) {
 			case 'verdeling':
 				$verdeling = [];
-				foreach ( $waarde as $stookdeel ) {
+				foreach ( $waarde as $stookdeel ) { // Ontdubbelen van stookdelen voor één dezelfde stoker.
 					$index = array_search( intval( $stookdeel['id'] ), array_column( $verdeling, 'id' ), true );
 					if ( false === $index ) {
 						$verdeling[] = [
-							'id'   => intval( $stookdeel['id'] ),
-							'perc' => intval( $stookdeel['perc'] ),
+							'id'    => intval( $stookdeel['id'] ),
+							'perc'  => intval( $stookdeel['perc'] ),
+							'prijs' => floatval( $stookdeel['prijs'] ?? 0.0 ),
 						];
 					} else {
-						$verdeling[ $index ]['perc'] += intval( $stookdeel['perc'] );
+						$verdeling[ $index ]['perc']  += intval( $stookdeel['perc'] );
+						$verdeling[ $index ]['prijs'] += floatval( $stookdeel['prijs'] ?? 0.0 );
 					}
 				}
 				$this->data[ $attribuut ] = wp_json_encode( $verdeling );

@@ -25,7 +25,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		$cursussen = \Kleistad\Cursus::all();
 		$lijst     = [];
 		$vandaag   = strtotime( 'today' );
-		foreach ( $cursussen as $cursus_id => $cursus ) {
+		foreach ( $cursussen as $cursus ) {
 			$lijst[] = [
 				'id'          => $cursus->id,
 				'naam'        => $cursus->naam,

@@ -232,12 +232,13 @@
                 }
             }
 		);
-		if ( $( '#kleistad_temperatuur' )[0].checkValidity() ) {
-			$( '#kleistad_reservering' ).dialog( 'close' );
-		} else {
-			$( '#kleistad_temperatuur' )[0].reportValidity();
-			return;
+		if ( 'Onderhoud' !== $( '#kleistad_soortstook' ).val() ) {
+			if ( ! $( '#kleistad_temperatuur' )[0].checkValidity() ) {
+				$( '#kleistad_temperatuur' )[0].reportValidity();
+				return;
+			}
 		}
+		$( '#kleistad_reservering' ).dialog( 'close' );
   
         $.ajax(
             {

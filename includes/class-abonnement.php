@@ -425,9 +425,8 @@ class Abonnement extends Artikel {
 	 * @param string $type         Soort wijziging: soort abonnement of de extras.
 	 * @param mixed  $soort        Beperkt/onbeperkt wijziging of de extras.
 	 * @param string $dag          Dag voor beperkt abonnement.
-	 * @param bool   $admin        Als functie vanuit admin scherm wordt aangeroepen.
 	 */
-	public function wijzigen( $wijzig_datum, $type, $soort, $dag = '', $admin = false ) {
+	public function wijzigen( $wijzig_datum, $type, $soort, $dag = '' ) {
 		$gewijzigd = false;
 		switch ( $type ) {
 			case 'soort':

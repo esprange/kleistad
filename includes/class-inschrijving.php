@@ -613,7 +613,7 @@ class Inschrijving extends Artikel {
 		$inschrijvingen = self::all();
 		$vandaag        = strtotime( 'today' );
 		$ruimte         = [];
-		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
+		foreach ( $inschrijvingen as $cursist_inschrijvingen ) {
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
 				/**
 				 * Geen acties voor medecursisten, oude of vervallen cursus deelnemers of die zelf geannuleerd hebben.
@@ -685,7 +685,7 @@ class Inschrijving extends Artikel {
 				$inschrijvingen = get_user_meta( $cursist->ID, self::META_KEY, true );
 				if ( is_array( $inschrijvingen ) ) {
 					krsort( $inschrijvingen );
-					foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+					foreach ( array_keys( $inschrijvingen ) as $cursus_id ) {
 						$arr[ $cursist->ID ][ $cursus_id ] = new \Kleistad\Inschrijving( $cursus_id, $cursist->ID );
 					}
 				}
@@ -719,7 +719,7 @@ class Inschrijving extends Artikel {
 				$cursussen = \ Kleistad\Cursus::all();
 			}
 			$vandaag = strtotime( 'today' );
-			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+			foreach ( array_keys( $inschrijvingen ) as $cursus_id ) {
 				if ( $vandaag <= $cursussen[ $cursus_id ]->eind_datum ) {
 					return true;
 				}

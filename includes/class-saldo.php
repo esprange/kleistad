@@ -310,20 +310,17 @@ class Saldo extends Artikel {
 						continue;
 					}
 					$wpdb->query( 'START TRANSACTION' );
-					$stoker = get_userdata( $reservering->gebruiker_id );
-					foreach ( $reservering->verdeling as $stookdeel ) {
-						if ( 0 === intval( $stookdeel['id'] ) ) {
+					$stoker    = get_userdata( $reservering->gebruiker_id );
+					$verdeling = [];
+					foreach ( $reservering->verdeling as $index => $stookdeel ) {
+						$verdeling[ $index ]          = $stookdeel;
+						$verdeling[ $index ]['prijs'] = $ovens[ $reservering->oven_id ]->stookkosten( $stookdeel['id'], $stookdeel['perc'], $reservering->temperatuur );
+						if ( $verdeling[ $index ]['prijs'] < 0.01 ) {
 							continue; // Volgende verdeling.
 						}
-						$medestoker         = get_userdata( $stookdeel['id'] );
-						$bedrag             = $ovens[ $reservering->oven_id ]->stookkosten( $stookdeel['id'], $stookdeel['perc'], $reservering->temperatuur );
-						$stookdeel['prijs'] = $bedrag;
-						$reservering->prijs( $stookdeel['id'], $bedrag );
-						if ( $bedrag < 0.01 ) {
-							continue; // Volgende verdeling.
-						}
+						$medestoker    = get_userdata( $stookdeel['id'] );
 						$saldo         = new \Kleistad\Saldo( $stookdeel['id'] );
-						$saldo->bedrag = $saldo->bedrag - $bedrag;
+						$saldo->bedrag = $saldo->bedrag - $verdeling[ $index ]['prijs'];
 						$saldo->reden  = 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $stoker->display_name;
 						if ( $saldo->save() ) {
 							$emailer->send(
@@ -335,7 +332,7 @@ class Saldo extends Artikel {
 										'voornaam'   => $medestoker->first_name,
 										'achternaam' => $medestoker->last_name,
 										'stoker'     => $stoker->display_name,
-										'bedrag'     => number_format_i18n( $bedrag, 2 ),
+										'bedrag'     => number_format_i18n( $verdeling[ $index ]['prijs'], 2 ),
 										'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
 										'stookdeel'  => $stookdeel['perc'],
 										'stookdatum' => date( 'd-m-Y', $reservering->datum ),
@@ -344,26 +341,25 @@ class Saldo extends Artikel {
 								]
 							);
 						} else {
-							throw new \Exception( 'stooksaldo van gebruiker ' . $medestoker->display_name . ' kon niet aangepast worden met kosten ' . $bedrag );
+							throw new \Exception( 'stooksaldo van gebruiker ' . $medestoker->display_name . ' kon niet aangepast worden met kosten ' . $stookdeel['prijs'] );
 						}
 					}
-					$reservering->verwerkt = true;
-					$result                = $reservering->save();
-					if ( 0 === $result ) {
+					$reservering->verwerkt  = true;
+					$reservering->verdeling = $verdeling;
+					if ( $reservering->save() ) {
+						$wpdb->query( 'COMMIT' );
+					} else {
 						throw new \Exception( 'reservering met id ' . $reservering->id . ' kon niet aangepast worden' );
 					}
-					$wpdb->query( 'COMMIT' );
 				} catch ( \Exception $e ) {
 					$wpdb->query( 'ROLLBACK' );
 					error_log( 'stooksaldo verwerking: ' . $e->getMessage() ); // phpcs:ignore
 				}
 			} elseif ( ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
 				if ( \Kleistad\Reservering::ONDERHOUD !== $reservering->soortstook ) {
-					$bedrag     = $ovens[ $reservering->oven_id ]->stookkosten( $reservering->gebruiker_id, 100, $reservering->temperatuur );
-					$stoker     = get_userdata( $reservering->gebruiker_id );
-					$stookdelen = $reservering->verdeling;
-					$tabel      = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
-					foreach ( $stookdelen as $stookdeel ) {
+					$stoker = get_userdata( $reservering->gebruiker_id );
+					$tabel  = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
+					foreach ( $reservering->verdeling as $stookdeel ) {
 						if ( 0 === intval( $stookdeel['id'] ) ) {
 							continue; // Volgende verdeling.
 						}
@@ -380,7 +376,7 @@ class Saldo extends Artikel {
 							'parameters' => [
 								'voornaam'         => $stoker->first_name,
 								'achternaam'       => $stoker->last_name,
-								'bedrag'           => number_format_i18n( $bedrag, 2 ),
+								'bedrag'           => number_format_i18n( $ovens[ $reservering->oven_id ]->stookkosten( $reservering->gebruiker_id, 100, $reservering->temperatuur ), 2 ),
 								'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $reservering->datum ) ), // datum verwerking.
 								'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . ( $options['termijn'] - 1 ) . ' day', $reservering->datum ) ), // datum deadline.
 								'verdeling'        => $tabel,
@@ -394,16 +390,4 @@ class Saldo extends Artikel {
 			}
 		}
 	}
-
-	/**
-	 * Functie om algemene teksten toe te voegen aan de log
-	 *
-	 * @since      4.0.87
-	 *
-	 * @param string $tekst De te loggen tekst.
-	 */
-	private function log( $tekst ) {
-		file_put_contents( wp_upload_dir()['basedir'] . '/stooksaldo.log', date( 'c' ) . " : $tekst\n", FILE_APPEND); // phpcs:ignore
-	}
-
 }
