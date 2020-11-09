@@ -92,9 +92,11 @@ class Public_Corona extends ShortcodeForm {
 	private function mogelijke_datums() {
 		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
 		$datum_lijst     = [];
-		foreach ( array_keys( $beschikbaarheid ) as $mogelijke_datum ) {
-			if ( $mogelijke_datum >= strtotime( 'today' ) ) {
-				$datum_lijst[] = $mogelijke_datum;
+		if ( is_array( $beschikbaarheid ) ) {
+			foreach ( array_keys( $beschikbaarheid ) as $mogelijke_datum ) {
+				if ( $mogelijke_datum >= strtotime( 'today' ) ) {
+					$datum_lijst[] = $mogelijke_datum;
+				}
 			}
 		}
 		return $datum_lijst;
