@@ -37,7 +37,6 @@ if ( isset( $data['wacht'] ) ) :
 endif;
 
 if ( isset( $data['uitschrijven'] ) ) :
-	?>
 	$this->form();
 	?>
 	<h2><?php echo esc_html( $data['cursist_naam'] ); ?></h2>
