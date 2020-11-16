@@ -259,20 +259,8 @@ class Admin_Upgrade {
 
 	/**
 	 * Converteer de ovens.
-	 *
-	 * Voor nu laag is tot 1099 graden
-	 * Midden is 1100 tot 1199 graden
-	 * Hoog is 1200 of meer
-	 * Max is 1300, min is 100
 	 */
 	private function convert_ovens() {
-		global $wpdb;
-		$wpdb->query(
-			"UPDATE {$wpdb->prefix}kleistad_ovens SET kosten_laag = kosten, kosten_midden = kosten, kosten_hoog = kosten"
-		);
-		$wpdb->query(
-			"ALTER TABLE {$wpdb->prefix}kleistad_ovens DROP COLUMN kosten"
-		); 
 	}
 
 	// phpcs:enable

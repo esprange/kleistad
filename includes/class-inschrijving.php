@@ -29,9 +29,9 @@ namespace Kleistad;
  */
 class Inschrijving extends Artikel {
 
-	public const META_KEY         = 'kleistad_cursus';
-	public const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
-	private const EMAIL_SUBJECT   = [
+	public const META_KEY          = 'kleistad_cursus';
+	private const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
+	private const EMAIL_SUBJECT    = [
 		'inschrijving'    => 'Inschrijving cursus',
 		'indeling'        => 'Indeling cursus',
 		'_extra'          => 'Welkom cursus',
@@ -52,6 +52,13 @@ class Inschrijving extends Artikel {
 	 * @var float $lopende_cursus De kosten.
 	 */
 	public $lopende_cursus = 0;
+
+	/**
+	 * Of de inschrijving al bestond
+	 *
+	 * @var bool $ingeschreven Of er al eerder was ingeschreven.
+	 */
+	public $ingeschreven = false;
 
 	/**
 	 * De cursus
@@ -100,9 +107,9 @@ class Inschrijving extends Artikel {
 		$this->betalen               = new \Kleistad\Betalen();
 		$this->default_data['code']  = "C$cursus_id-$klant_id";
 		$this->default_data['datum'] = date( 'Y-m-d' );
-
-		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
-		if ( is_array( $inschrijvingen ) && ( isset( $inschrijvingen[ $cursus_id ] ) ) ) {
+		$inschrijvingen              = get_user_meta( $this->klant_id, self::META_KEY, true );
+		$this->ingeschreven          = is_array( $inschrijvingen ) && isset( $inschrijvingen[ $cursus_id ] );
+		if ( $this->ingeschreven ) {
 			$this->data = wp_parse_args( $inschrijvingen[ $cursus_id ], $this->default_data );
 		} else {
 			$this->data = $this->default_data;

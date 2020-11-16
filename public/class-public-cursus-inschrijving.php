@@ -240,6 +240,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			return [
 				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
+		} elseif ( $inschrijving->ingeschreven ) {
+			return [
+				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingeschreven op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
+			];
 		}
 		if ( ! $data['input']['wacht'] ) {
 			$inschrijving->technieken = $data['input']['technieken'];
