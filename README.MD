@@ -38,6 +38,7 @@ Plaats de shortcodes in de pagina's
 ## Changelog ##
 ### 6.10.2 ###
 * Cursisten kunnen zich niet dubbel inschrijven voor een cursus
+* Aanpassing maximum in cursusbeheer wijzigt de status vol van een cursus
 ### 6.10.1 ###
 * Cursisten kunnen zichzelf afmelden voor de wachtlijst
 * Bestuur kan een cursist afmelden voor de wachtlijst
