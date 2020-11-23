@@ -15,7 +15,15 @@
         "html2text/html2text": "^4.2",
         "php-imap/php-imap": "^3.0",
         "setasign/fpdf": "^1.8.1",
-        "a5hleyrich/wp-background-processing": "^1.0"
+        "deliciousbrains/wp-background-processing": "^1.0"
+    },
+    "scripts": {
+        "post-update-cmd": "Google\\Task\\Composer::cleanup"
+    },
+    "extra": {
+        "google/apiclient-services": [
+            "Calendar"
+        ]
     },
     "autoload": {
       "classmap": [ "public/", "includes/", "admin/" ]

@@ -78,14 +78,6 @@ module.exports = function( grunt ) { // jshint ignore:line
 			}
 		},
 
-		clean : {
-					google: [
-						'vendor/google/apiclient-services/src/Google/Service/**/*',
-						'!vendor/google/apiclient-services/src/Google/Service/Calendar/**',
-						'!vendor/google/apiclient-services/src/Google/Service/Calendar.php'
-					]
-		},
-
 		zip: {
 			'using-router': {
 				router: function( filepath ) {
@@ -113,7 +105,6 @@ module.exports = function( grunt ) { // jshint ignore:line
 	grunt.loadNpmTasks( 'grunt-rewrite' );
 	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
-	grunt.loadNpmTasks( 'grunt-contrib-clean' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
 	grunt.loadNpmTasks( 'grunt-composer' );
 	grunt.loadNpmTasks( 'grunt-checkwpversion' );
@@ -129,7 +120,6 @@ module.exports = function( grunt ) { // jshint ignore:line
 			'uglify',
 			'cssmin',
 			'composer:update:no-autoloader',
-			'clean',
 			'composer:dump-autoload:optimize',
 			'zip',
 			'shell:command'
