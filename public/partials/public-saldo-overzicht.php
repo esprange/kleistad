@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 ?>
 <table class="kleistad_datatable display compact" data-order= '[[ 0, "asc" ]]'>
 	<thead>

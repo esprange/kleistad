@@ -9,6 +9,8 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 ?>
 <table style="width: 100%; border-spacing:2px; padding:5px" class="form-table">
 	<tbody>

@@ -22,7 +22,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @return array De cursussen data.
 	 */
 	private function lijst() {
-		$cursussen = \Kleistad\Cursus::all();
+		$cursussen = Cursus::all();
 		$lijst     = [];
 		$vandaag   = strtotime( 'today' );
 		foreach ( $cursussen as $cursus ) {
@@ -50,7 +50,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @return array De cursus data.
 	 */
 	private function formulier( $cursus_id = null ) {
-		$cursus = new \Kleistad\Cursus( $cursus_id );
+		$cursus = new Cursus( $cursus_id );
 		return [
 			'id'              => $cursus->id,
 			'naam'            => $cursus->naam,
@@ -96,7 +96,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		$data['docenten'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
-				'role'    => [ \Kleistad\Roles::DOCENT ],
+				'role'    => [ Roles::DOCENT ],
 				'orderby' => [ 'nicename' ],
 			]
 		);
@@ -176,10 +176,10 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			if ( 0.0 === $data['cursus']['cursuskosten'] && 0.0 < $data['cursus']['inschrijfkosten'] ) {
 				$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
 			}
-			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['inschrijfslug'], OBJECT, \Kleistad\Email::POST_TYPE ) ) ) { // phpcs:ignore
+			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['inschrijfslug'], OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
 				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['inschrijfslug'] );
 			}
-			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['indelingslug'], OBJECT, \Kleistad\Email::POST_TYPE ) ) ) { // phpcs:ignore
+			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['indelingslug'], OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
 				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['indelingslug'] );
 			}
 			if ( ! empty( $error->get_error_codes() ) ) {
@@ -201,9 +201,9 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		$cursus_id = $data['cursus']['cursus_id'];
 
 		if ( $cursus_id > 0 ) {
-			$cursus = new \Kleistad\Cursus( $cursus_id );
+			$cursus = new Cursus( $cursus_id );
 		} else {
-			$cursus = new \Kleistad\Cursus();
+			$cursus = new Cursus();
 		}
 		if ( 'verwijderen' === $data['form_actie'] ) {
 			/*

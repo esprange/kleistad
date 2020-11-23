@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 $this->form();
 ?>
 	<div class="kleistad_row">
@@ -86,7 +88,7 @@ $this->form();
 	</div>
 	<div class="kleistad_row">
 		<div class="kleistad_col_10">
-			<?php \Kleistad\Betalen::issuers(); ?>
+			<?php Betalen::issuers(); ?>
 		</div>
 	</div>
 	<div class ="kleistad_row">

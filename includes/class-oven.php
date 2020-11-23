@@ -107,7 +107,7 @@ class Oven extends Entity {
 	 * @return float De kosten.
 	 */
 	public function stookkosten( $stoker_id, $percentage, $temperatuur ) {
-		$options    = \Kleistad\Kleistad::get_options();
+		$options    = Kleistad::get_options();
 		$regelingen = get_user_meta( $stoker_id, self::REGELING, true );
 		if ( 0 === $stoker_id ) {
 			$kosten = 0;
@@ -148,7 +148,7 @@ class Oven extends Entity {
 		$arr   = [];
 		$ovens = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens", ARRAY_A ); // phpcs:ignore
 		foreach ( $ovens as $oven ) {
-			$arr[ $oven['id'] ] = new \Kleistad\Oven();
+			$arr[ $oven['id'] ] = new Oven();
 			$arr[ $oven['id'] ]->load( $oven );
 		}
 		return $arr;

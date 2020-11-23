@@ -28,15 +28,15 @@ class Activator {
 		// het onderstaande uitgecommentarieerd want er is geen reden meer om dit steeds opnieuw te doen.
 		// $roles = wp_roles();
 
-		// $roles->add_cap( 'administrator', \Kleistad\Roles::OVERRIDE );
-		// $roles->add_cap( 'editor', \Kleistad\Roles::OVERRIDE );
-		// $roles->add_cap( 'author', \Kleistad\Roles::OVERRIDE );
+		// $roles->add_cap( 'administrator', Roles::OVERRIDE );
+		// $roles->add_cap( 'editor', Roles::OVERRIDE );
+		// $roles->add_cap( 'author', Roles::OVERRIDE );
 
-		// $roles->add_cap( 'administrator', \Kleistad\Roles::RESERVEER );
-		// $roles->add_cap( 'editor', \Kleistad\Roles::RESERVEER );
-		// $roles->add_cap( 'author', \Kleistad\Roles::RESERVEER );
-		// $roles->add_cap( 'contributor', \Kleistad\Roles::RESERVEER );
-		// $roles->add_cap( 'subscriber', \Kleistad\Roles::RESERVEER );
+		// $roles->add_cap( 'administrator', Roles::RESERVEER );
+		// $roles->add_cap( 'editor', Roles::RESERVEER );
+		// $roles->add_cap( 'author', Roles::RESERVEER );
+		// $roles->add_cap( 'contributor', Roles::RESERVEER );
+		// $roles->add_cap( 'subscriber', Roles::RESERVEER );
 		// phpcs:enable
 
 		Public_Main::register_post_types();

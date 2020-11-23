@@ -46,7 +46,7 @@ class Public_Kalender extends Shortcode {
 	 * @return \WP_REST_Response
 	 */
 	public static function callback_kalender( \WP_REST_Request $request ) {
-		$events    = \Kleistad\Event::query(
+		$events    = Event::query(
 			[
 				'timeMin' => $request->get_param( 'start' ),
 				'timeMax' => $request->get_param( 'eind' ),
@@ -56,7 +56,7 @@ class Public_Kalender extends Shortcode {
 		foreach ( $events as $event ) {
 			$class = $event->properties['class'] ?? '';
 			if ( strpos( $class, 'Workshop' ) ) {
-				$workshop = new \Kleistad\Workshop( $event->properties['id'] );
+				$workshop = new Workshop( $event->properties['id'] );
 				if ( ! $workshop->vervallen ) {
 					$fc_events[] = [
 						'id'              => $event->id,
@@ -74,7 +74,7 @@ class Public_Kalender extends Shortcode {
 					];
 				}
 			} elseif ( strpos( $class, 'Cursus' ) ) {
-				$cursus = new \Kleistad\Cursus( $event->properties['id'] );
+				$cursus = new Cursus( $event->properties['id'] );
 				if ( ! $cursus->vervallen ) {
 					$fc_events[] = [
 						'id'              => $event->id,

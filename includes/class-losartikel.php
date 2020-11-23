@@ -29,7 +29,7 @@ class LosArtikel extends Artikel {
 	 * @param int $verkoop_id Een uniek id van de verkoop.
 	 */
 	public function __construct( $verkoop_id ) {
-		$this->betalen = new \Kleistad\Betalen();
+		$this->betalen = new Betalen();
 		$this->data    = [
 			'regels' => [],
 			'klant'  => [],
@@ -80,7 +80,7 @@ class LosArtikel extends Artikel {
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
 	public function ideal( $bericht, $referentie, $openstaand = null ) {
-		$order = new \Kleistad\Order( $referentie );
+		$order = new Order( $referentie );
 		return $this->betalen->order(
 			[
 				'naam'     => $order->klant['naam'],
@@ -122,7 +122,7 @@ class LosArtikel extends Artikel {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type = '', $factuur = '' ) {
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		return $emailer->send(
 			[
 				'to'          => "{$this->klant['naam']} <{$this->klant['email']}>",
@@ -203,7 +203,7 @@ class LosArtikel extends Artikel {
 	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
 			if ( $order_id ) {
-				$order       = new \Kleistad\Order( $order_id );
+				$order       = new Order( $order_id );
 				$this->klant = $order->klant;
 				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.

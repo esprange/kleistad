@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 $this->form();
 ?>
 	<input id="kleistad_gebruikerids" name="gebruikerids" type="hidden">

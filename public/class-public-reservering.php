@@ -29,7 +29,7 @@ class Public_Reservering extends Shortcode {
 		global $wpdb;
 		$error = new \WP_Error();
 
-		if ( ! \Kleistad\Roles::reserveer() ) {
+		if ( ! Roles::reserveer() ) {
 			$error->add( 'security', 'hiervoor moet je ingelogd zijn' );
 			return $error;
 		}
@@ -40,7 +40,7 @@ class Public_Reservering extends Shortcode {
 		);
 		if ( is_numeric( $atts['oven'] ) ) {
 			$oven_id = $atts['oven'];
-			$oven    = new \Kleistad\Oven( $oven_id );
+			$oven    = new Oven( $oven_id );
 			if ( ! intval( $oven->id ) ) {
 				$error->add( 'fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !' );
 				return $error;
@@ -50,11 +50,11 @@ class Public_Reservering extends Shortcode {
 				[
 					'fields'    => [ 'ID', 'display_name' ],
 					'orderby'   => [ 'nicename' ],
-					'roles__in' => [ \Kleistad\Roles::LID, \Kleistad\Roles::DOCENT, \Kleistad\Roles::BESTUUR ],
+					'roles__in' => [ Roles::LID, Roles::DOCENT, Roles::BESTUUR ],
 				]
 			);
 			foreach ( $gebruikers as $gebruiker ) {
-				if ( \Kleistad\Roles::reserveer( $gebruiker->ID ) && false === strpos( $gebruiker->display_name, '$' ) ) {
+				if ( Roles::reserveer( $gebruiker->ID ) && false === strpos( $gebruiker->display_name, '$' ) ) {
 					$stokers[] = [
 						'id'   => intval( $gebruiker->ID ),
 						'naam' => $gebruiker->display_name,
@@ -67,7 +67,7 @@ class Public_Reservering extends Shortcode {
 					'id'   => $oven->id,
 					'naam' => $oven->naam,
 				],
-				'override' => \Kleistad\Roles::override(),
+				'override' => Roles::override(),
 			];
 			return true;
 		} else {
@@ -140,14 +140,14 @@ class Public_Reservering extends Shortcode {
 	 * @return string html opgemaakte tekstregel.
 	 */
 	private static function maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar ) {
-		$reservering  = new \Kleistad\Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
+		$reservering  = new Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
 		$gebruiker_id = get_current_user_id();
 		$stoker_id    = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
 		$stoker_naam  = get_userdata( $stoker_id )->display_name;
-		$kleur        = \Kleistad\Reservering::ONDERHOUD === $reservering->soortstook ? 'kleistad_reservering_onderhoud' :
+		$kleur        = Reservering::ONDERHOUD === $reservering->soortstook ? 'kleistad_reservering_onderhoud' :
 			( $reservering->verdeling[0]['id'] === $gebruiker_id ? 'kleistad_reservering_zelf' : 'kleistad_reservering_ander' );
 		$logica       = [
-			\Kleistad\Reservering::ONGEBRUIKT    => [
+			Reservering::ONGEBRUIKT    => [
 				'wie'          => '',
 				'temperatuur'  => '',
 				'programma'    => '',
@@ -157,7 +157,7 @@ class Public_Reservering extends Shortcode {
 				'select'       => false,
 				'gebruiker_id' => 0,
 			],
-			\Kleistad\Reservering::RESERVEERBAAR => [
+			Reservering::RESERVEERBAAR => [
 				'wie'          => '- beschikbaar -',
 				'temperatuur'  => '',
 				'programma'    => '',
@@ -167,7 +167,7 @@ class Public_Reservering extends Shortcode {
 				'select'       => true,
 				'gebruiker_id' => $gebruiker_id,
 			],
-			\Kleistad\Reservering::WIJZIGBAAR    => [
+			Reservering::WIJZIGBAAR    => [
 				'wie'          => $stoker_naam,
 				'temperatuur'  => $reservering->temperatuur,
 				'programma'    => $reservering->programma,
@@ -177,7 +177,7 @@ class Public_Reservering extends Shortcode {
 				'select'       => true,
 				'gebruiker_id' => $reservering->gebruiker_id,
 			],
-			\Kleistad\Reservering::ALLEENLEZEN   => [
+			Reservering::ALLEENLEZEN   => [
 				'wie'          => $stoker_naam,
 				'temperatuur'  => $reservering->temperatuur,
 				'programma'    => $reservering->programma,
@@ -187,7 +187,7 @@ class Public_Reservering extends Shortcode {
 				'select'       => true,
 				'gebruiker_id' => $reservering->gebruiker_id,
 			],
-			\Kleistad\Reservering::VERWIJDERBAAR => [
+			Reservering::VERWIJDERBAAR => [
 				'wie'          => $stoker_naam,
 				'temperatuur'  => $reservering->temperatuur,
 				'programma'    => $reservering->programma,
@@ -197,7 +197,7 @@ class Public_Reservering extends Shortcode {
 				'select'       => true,
 				'gebruiker_id' => $reservering->gebruiker_id,
 			],
-			\Kleistad\Reservering::DEFINITIEF    => [
+			Reservering::DEFINITIEF    => [
 				'wie'          => $stoker_naam,
 				'temperatuur'  => $reservering->temperatuur,
 				'programma'    => $reservering->programma,
@@ -245,7 +245,7 @@ class Public_Reservering extends Shortcode {
 	private static function toon_reserveringen( $oven_id, $maand, $jaar ) {
 		$tabelinhoud = '';
 		$aantaldagen = intval( date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) ) );
-		$oven        = new \Kleistad\Oven( $oven_id );
+		$oven        = new Oven( $oven_id );
 		for ( $dag = 1; $dag <= $aantaldagen; $dag++ ) {
 			$dagnaam = strftime( '%A', mktime( 0, 0, 0, $maand, $dag, $jaar ) );
 			if ( ! $oven->{$dagnaam} ) {
@@ -291,7 +291,7 @@ class Public_Reservering extends Shortcode {
 		$jaar        = intval( $input['jaar'] );
 		$maand       = intval( $input['maand'] );
 		$dag         = intval( $input['dag'] );
-		$reservering = new \Kleistad\Reservering( $oven_id, mktime( 23, 59, 0, $maand, $dag, $jaar ) );
+		$reservering = new Reservering( $oven_id, mktime( 23, 59, 0, $maand, $dag, $jaar ) );
 
 		switch ( $request->get_method() ) {
 			case 'POST':

@@ -9,6 +9,8 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 ?>
 <table class="form-table">
 	<tbody>

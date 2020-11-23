@@ -38,7 +38,7 @@ class Admin_Cursisten extends \WP_List_Table {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->cursussen = \Kleistad\Cursus::all( true );
+		$this->cursussen = Cursus::all( true );
 		parent::__construct(
 			[
 				'singular' => 'cursist',
@@ -155,7 +155,7 @@ class Admin_Cursisten extends \WP_List_Table {
 		$orderby        = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val      = filter_input( INPUT_GET, 'order' );
 		$order          = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$inschrijvingen = \Kleistad\Inschrijving::all();
+		$inschrijvingen = Inschrijving::all();
 
 		array_walk( $inschrijvingen, [ $this, 'bepaal_cursisten' ], $search );
 		usort(

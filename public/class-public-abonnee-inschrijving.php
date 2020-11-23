@@ -130,7 +130,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 			$gebruiker_id = $data['input']['gebruiker_id'];
 		} else {
 			$gebruiker_id = email_exists( $data['input']['user_email'] );
-			if ( false !== $gebruiker_id && \Kleistad\Roles::reserveer( $gebruiker_id ) ) {
+			if ( false !== $gebruiker_id && Roles::reserveer( $gebruiker_id ) ) {
 				return [
 					'status' => $this->status( new \WP_Error( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' ) ),
 				];
@@ -149,7 +149,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				]
 			);
 		}
-		$abonnement                   = new \Kleistad\Abonnement( $gebruiker_id );
+		$abonnement                   = new Abonnement( $gebruiker_id );
 		$abonnement->soort            = $data['input']['abonnement_keuze'];
 		$abonnement->opmerking        = $data['input']['opmerking'];
 		$abonnement->start_datum      = strtotime( $data['input']['start_datum'] );

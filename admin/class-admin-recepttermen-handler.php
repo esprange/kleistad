@@ -79,7 +79,7 @@ class Admin_Recepttermen_Handler {
 				if ( $item['id'] > 0 ) {
 					wp_update_term(
 						$item['id'],
-						\Kleistad\Recept::CATEGORY,
+						Recept::CATEGORY,
 						[
 							'naam'   => $item['naam'],
 							'parent' => $item['hoofdterm_id'],
@@ -88,7 +88,7 @@ class Admin_Recepttermen_Handler {
 				} else {
 					wp_insert_term(
 						$item['naam'],
-						\Kleistad\Recept::CATEGORY,
+						Recept::CATEGORY,
 						[
 							'parent' => $item['hoofdterm_id'],
 						]
@@ -105,7 +105,7 @@ class Admin_Recepttermen_Handler {
 			];
 			if ( isset( $_REQUEST['id'] ) ) {
 				if ( isset( $_REQUEST['delete'] ) ) {
-					wp_delete_term( $_REQUEST['id'], \Kleistad\Recept::CATEGORY );
+					wp_delete_term( $_REQUEST['id'], Recept::CATEGORY );
 					$message = 'De gegevens zijn opgeslagen';
 				} else {
 					$term = get_term( $_REQUEST['id'] );

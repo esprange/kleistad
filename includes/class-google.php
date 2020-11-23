@@ -46,7 +46,7 @@ class Google {
 		if ( false === $redirect_uri ) {
 			return false;
 		}
-		$setup             = \Kleistad\Kleistad::get_setup();
+		$setup             = Kleistad::get_setup();
 		self::$kalender_id = $setup['google_kalender_id'];
 		$client            = new \Google\Client();
 		$client->setApplicationName( 'Kleistad_Calendar' );
@@ -173,7 +173,7 @@ class Google {
 	 * @return string Kalender id.
 	 */
 	public static function kalender_id() {
-		$setup             = \Kleistad\Kleistad::get_setup();
+		$setup             = Kleistad::get_setup();
 		self::$kalender_id = $setup['google_kalender_id'];
 		return self::$kalender_id;
 	}

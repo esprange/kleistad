@@ -127,7 +127,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 		}
 
 		if ( is_int( $gebruiker_id ) && 0 < $gebruiker_id ) {
-			$dagdelenkaart = new \Kleistad\Dagdelenkaart( $gebruiker_id );
+			$dagdelenkaart = new Dagdelenkaart( $gebruiker_id );
 			$dagdelenkaart->nieuw( strtotime( $data['input']['start_datum'] ), $data['input']['opmerking'] );
 
 			if ( 'ideal' === $data['input']['betaal'] ) {

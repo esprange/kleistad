@@ -26,7 +26,7 @@ abstract class Artikel extends Entity {
 	/**
 	 * Het betaal object.
 	 *
-	 * @var \Kleistad\Betalen $betalen
+	 * @var Betalen $betalen
 	 */
 	protected $betalen;
 
@@ -133,11 +133,11 @@ abstract class Artikel extends Entity {
 		if ( ! $this->afzeggen() ) {
 			return '';
 		}
-		$order = new \Kleistad\Order( $id );
+		$order = new Order( $id );
 		if ( $order->credit_id || $order->origineel_id ) {
 			return '';  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
 		}
-		$credit_order               = new \Kleistad\Order();
+		$credit_order               = new Order();
 		$credit_order->referentie   = $order->referentie;
 		$credit_order->betaald      = $order->betaald;
 		$credit_order->klant        = $order->klant;
@@ -182,7 +182,7 @@ abstract class Artikel extends Entity {
 	 * @return string De url van de factuur.
 	 */
 	final public function bestel_order( $bedrag, $verval_datum, $opmerking = '', $transactie_id = '', $factuur = true ) {
-		$order                = new \Kleistad\Order();
+		$order                = new Order();
 		$order->betaald       = $bedrag;
 		$order->regels        = $this->factuurregels();
 		$order->historie      = $factuur ? 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 ) : 'order aangemaakt';
@@ -206,7 +206,7 @@ abstract class Artikel extends Entity {
 	 * @return bool|string De url van de factuur of fout.
 	 */
 	final public function korting_order( $id, $korting, $opmerking ) {
-		$order = new \Kleistad\Order( $id );
+		$order = new Order( $id );
 		if ( $order->geblokkeerd() ) {
 			return false;
 		}
@@ -236,7 +236,7 @@ abstract class Artikel extends Entity {
 	 * @param bool   $factuur       Of er wel / niet een factuur aangemaakt moet worden.
 	 */
 	final public function ontvang_order( $id, $bedrag, $transactie_id, $factuur = false ) {
-		$order           = new \Kleistad\Order( $id );
+		$order           = new Order( $id );
 		$order->betaald += $bedrag;
 		if ( 0 <= $bedrag ) {
 			$order->historie = 'betaling bedrag € ' . number_format_i18n( $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
@@ -257,7 +257,7 @@ abstract class Artikel extends Entity {
 	 * @return bool|string De url van de factuur of false.
 	 */
 	final public function wijzig_order( $id, $opmerking = '' ) {
-		$originele_order = new \Kleistad\Order( $id );
+		$originele_order = new Order( $id );
 		$order           = clone $originele_order;
 		if ( $order->geblokkeerd() ) {
 			return false;
@@ -347,12 +347,12 @@ abstract class Artikel extends Entity {
 	 * Bepaal het Kleistad artikel a.d.h.v. de referentie.
 	 *
 	 * @param string $referentie De artikel referentie.
-	 * @return \Kleistad\Artikel Een van de kleistad Artikel objecten.
+	 * @return Artikel Een van de kleistad Artikel objecten.
 	 */
 	public static function get_artikel( $referentie ) {
 		if ( ! empty( $referentie ) && array_key_exists( $referentie[0], self::$artikelen ) ) {
 			$parameters = explode( '-', substr( $referentie, 1 ) );
-			$class      = self::$artikelen[ $referentie[0] ]['class'];
+			$class      = '\\' . __NAMESPACE__ . '\\' . self::$artikelen[ $referentie[0] ]['class'];
 			if ( 1 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
 				$artikel               = new $class( (int) $parameters[0] );
 				$artikel->artikel_type = $parameters[1] ?? $artikel->artikel_type;
@@ -410,12 +410,12 @@ abstract class Artikel extends Entity {
 	/**
 	 * Maak een factuur aan.
 	 *
-	 * @param \Kleistad\Order $order          De order.
-	 * @param string          $type           Het type factuur.
+	 * @param Order  $order De order.
+	 * @param string $type  Het type factuur.
 	 * @return string Het pad naar de factuur.
 	 */
 	private function maak_factuur( $order, $type ) {
-		$factuur = new \Kleistad\Factuur();
+		$factuur = new Factuur();
 		return $factuur->run( $order, $type );
 	}
 

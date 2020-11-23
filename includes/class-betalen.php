@@ -33,10 +33,10 @@ class Betalen {
 	 */
 	public function __construct() {
 		if ( defined( 'KLEISTAD_MOLLIE_SIM' ) ) {
-			$this->mollie = new \Kleistad\MollieSimulatie();
+			$this->mollie = new MollieSimulatie();
 			return;
 		}
-		$setup        = \Kleistad\Kleistad::get_setup();
+		$setup        = Kleistad::get_setup();
 		$this->mollie = new \Mollie\Api\MollieApiClient();
 
 		if ( '1' === $setup['betalen'] ) {
@@ -125,8 +125,8 @@ class Betalen {
 					],
 					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
 					'sequenceType' => $mandateren ? \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-					'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, \Kleistad\ShortcodeForm::get_url() ),
-					'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
+					'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, ShortcodeForm::get_url() ),
+					'webhookUrl'   => Public_Main::base_url() . '/betaling/',
 				]
 			);
 			set_transient( $uniqid, $betaling->id, 20 * MINUTE_IN_SECONDS ); // 20 minuten expiry (iDeal heeft in Mollie een expiratie van 15 minuten).
@@ -197,7 +197,7 @@ class Betalen {
 						],
 						'description'  => $beschrijving,
 						'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
-						'webhookUrl'   => \Kleistad\Public_Main::base_url() . '/betaling/',
+						'webhookUrl'   => Public_Main::base_url() . '/betaling/',
 					]
 				);
 				return $betaling->id;
@@ -356,8 +356,8 @@ class Betalen {
 		$object             = new static();
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
 		$expiratie          = 13 * MONTH_IN_SECONDS - ( time() - strtotime( $betaling->createdAt ) );  // Na 13 maanden expiratie transient.
-		$order_id           = \Kleistad\Order::zoek_order( $betaling->metadata->order_id );
-		$artikel            = \Kleistad\Artikel::get_artikel( $betaling->metadata->order_id );
+		$order_id           = Order::zoek_order( $betaling->metadata->order_id );
+		$artikel            = Artikel::get_artikel( $betaling->metadata->order_id );
 		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
 			$artikel->verwerk_betaling(
 				$order_id,

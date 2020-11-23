@@ -40,11 +40,11 @@ class Public_Betaling extends ShortcodeForm {
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
 		if ( ! is_null( $param['order'] ) ) {
-			$order = new \Kleistad\Order( intval( $param['order'] ) );
+			$order = new Order( intval( $param['order'] ) );
 			if ( $order->gesloten ) {
 				$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 			} else {
-				$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
+				$artikel = Artikel::get_artikel( $order->referentie );
 				if ( ! is_null( $artikel ) && $param['hsh'] === $artikel->controle() ) {
 					$data = [
 						'order_id'      => $param['order'],
@@ -84,11 +84,11 @@ class Public_Betaling extends ShortcodeForm {
 				'artikel_type' => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['order'] = new \Kleistad\Order( $data['input']['order_id'] );
+		$data['order'] = new Order( $data['input']['order_id'] );
 		if ( $data['order']->gesloten ) {
 			return new \WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		$data['artikel'] = \Kleistad\Artikel::get_artikel( $data['order']->referentie );
+		$data['artikel'] = Artikel::get_artikel( $data['order']->referentie );
 		$controle        = $data['artikel']->beschikbaarcontrole();
 		if ( empty( $controle ) ) {
 			return true;

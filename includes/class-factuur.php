@@ -184,8 +184,8 @@ class Factuur extends \FPDF {
 	/**
 	 * Maak de factuur aan.
 	 *
-	 * @param \Kleistad\Order $order De order.
-	 * @param string          $type  Het type factuur: gewoon, correctie of credit.
+	 * @param Order  $order De order.
+	 * @param string $type  Het type factuur: gewoon, correctie of credit.
 	 * @return string Pad naar de factuur.
 	 */
 	public function run( $order, $type ) {

@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 ?>
 
 <div id="kleistad_deelnemer_info">

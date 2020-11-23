@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	$this->form();
 	$voltooid = $data['cursus']['eind_datum'] < strtotime( 'today' );

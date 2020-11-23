@@ -9,15 +9,17 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 $hoofdterm_id = filter_input(
 	INPUT_GET,
 	'hoofdterm_id',
 	FILTER_SANITIZE_NUMBER_INT,
 	[
-		'options' => [ 'default' => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id ],
+		'options' => [ 'default' => Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id ],
 	]
 );
-$table        = new \Kleistad\Admin_Recepttermen( $hoofdterm_id );
+$table        = new Admin_Recepttermen( $hoofdterm_id );
 ?>
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
@@ -33,7 +35,7 @@ $table        = new \Kleistad\Admin_Recepttermen( $hoofdterm_id );
 	}
 	</script>
 	<select name="hoofdterm_id" onChange="hoofdtermSwitch(this.value);" >
-		<?php foreach ( \Kleistad\Recept::hoofdtermen() as $hoofdterm ) : ?>
+		<?php foreach ( Recept::hoofdtermen() as $hoofdterm ) : ?>
 			<option value="<?php echo esc_attr( $hoofdterm->term_id ); ?>" <?php selected( $hoofdterm->term_id, $hoofdterm_id ); ?> ><?php echo esc_html( $hoofdterm->description ); ?></option>
 		<?php endforeach ?>
 	</select>

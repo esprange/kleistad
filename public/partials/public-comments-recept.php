@@ -8,6 +8,8 @@
  * @since Kleistad 4.1.0
  */
 
+namespace Kleistad;
+
 if ( post_password_required() ) {
 	return;
 }

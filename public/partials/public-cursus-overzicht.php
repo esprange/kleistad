@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 if ( 'cursisten' === $data['actie'] ) :
 	?>
 	<?php $this->form(); ?>

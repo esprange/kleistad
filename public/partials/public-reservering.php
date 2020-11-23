@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 $stokers_json = wp_json_encode( $data['stokers'] );
 if ( false === $stokers_json ) {
 	return;
@@ -23,7 +25,7 @@ if ( false === $stokers_json ) {
 	data-jaar="<?php echo esc_attr( date( 'Y' ) ); ?>"
 	data-oven-naam="<?php echo esc_attr( $data['oven']['naam'] ); ?>"
 	data-stokers='<?php echo $stokers_json; // phpcs:ignore ?>'
-	data-override="<?php echo (int) \Kleistad\Roles::override(); ?>" >
+	data-override="<?php echo (int) Roles::override(); ?>" >
 	<thead>
 		<tr>
 			<th>
@@ -54,7 +56,7 @@ if ( false === $stokers_json ) {
 	<input id="kleistad_dag" type="hidden" >
 	<input id="kleistad_maand" type="hidden" >
 	<input id="kleistad_jaar" type="hidden" >
-	<table class="kleistad_form  \Kleistad\Reservering_form">
+	<table class="kleistad_form  Reservering_form">
 		<thead>
 		</thead>
 		<tbody>

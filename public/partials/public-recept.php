@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 if ( isset( $data['recept'] ) ) :
 	?>
 <button id="kleistad_recept_print" >Afdrukken</button>

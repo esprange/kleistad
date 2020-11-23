@@ -291,11 +291,11 @@ geen.
 
 Deze plugin voegt vier tabellen toe aan de database:
 
-*  \Kleistad\Ovens
-*  \Kleistad\Reserveringen
-*  \Kleistad\Cursussen
-*  \Kleistad\Workshops
-*  \Kleistad\Orders
+*  Ovens
+*  Reserveringen
+*  Cursussen
+*  Workshops
+*  Orders
 
 De plugin maakt gebruik van Mollie, de Google Calendar API en de geodata locatieserver.
 

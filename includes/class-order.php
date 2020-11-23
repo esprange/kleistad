@@ -32,7 +32,7 @@ namespace Kleistad;
  *
  * @since 6.1.0
  */
-class Order extends \Kleistad\Entity {
+class Order extends Entity {
 
 	/**
 	 * Maak het object aan.
@@ -181,7 +181,7 @@ class Order extends \Kleistad\Entity {
 		$dd_order->klant      = $this->klant;
 		$dd_order->regels     = [
 			array_merge(
-				\Kleistad\Artikel::split_bedrag( $te_betalen ),
+				Artikel::split_bedrag( $te_betalen ),
 				[
 					'artikel' => 'Afboeking',
 					'aantal'  => '1',
@@ -241,7 +241,7 @@ class Order extends \Kleistad\Entity {
 	 * Controleer of er een terugstorting actief is. In dat geval moeten er geen bankbetalingen gedaan worden.
 	 */
 	public function terugstorting_actief() {
-		$betalen = new \Kleistad\Betalen();
+		$betalen = new Betalen();
 		if ( $this->transactie_id ) {
 			return $betalen->terugstorting_actief( $this->transactie_id );
 		}
@@ -264,7 +264,7 @@ class Order extends \Kleistad\Entity {
 	 */
 	public function te_betalen() {
 		if ( $this->origineel_id ) {
-			$origineel_order = new \Kleistad\Order( $this->origineel_id );
+			$origineel_order = new Order( $this->origineel_id );
 			return $origineel_order->bruto() + $this->bruto() - $this->betaald;
 		} else {
 			return $this->credit_id ? 0.0 : $this->bruto() - $this->betaald;
@@ -282,7 +282,7 @@ class Order extends \Kleistad\Entity {
 	public function save() {
 		global $wpdb;
 		if ( $this->origineel_id ) {
-			$origineel_order = new \Kleistad\Order( $this->origineel_id );
+			$origineel_order = new Order( $this->origineel_id );
 			$openstaand      = $origineel_order->bruto() + $this->bruto() - $this->betaald;
 		} elseif ( $this->credit_id ) {
 			$openstaand = 0;
@@ -303,12 +303,12 @@ class Order extends \Kleistad\Entity {
 
 		if ( $this->transactie_id && -0.01 > $openstaand ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
-			$betalen = new \Kleistad\Betalen();
+			$betalen = new Betalen();
 			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'Kleistad: zie factuur ' . $this->factuurnummer() );
 			add_filter(
 				'kleistad_melding',
 				function( $html ) use ( $result ) {
-					return $html . \Kleistad\Shortcode::melding(
+					return $html . Shortcode::melding(
 						$result ? 1 : -1,
 						$result ? 'er is opdracht gegeven om het terug te betalen bedrag over te maken' :
 						'de opdracht om het bedrag terug te storten is niet mogelijk. Probeer het per bank over te maken'
@@ -363,7 +363,7 @@ class Order extends \Kleistad\Entity {
 		$where  = empty( $zoek ) ? 'WHERE gesloten = 0' : "WHERE lower( concat ( klant, ' ', referentie ) ) LIKE '%$zoek%'";
 		$orders = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders $where", ARRAY_A ); // phpcs:ignore
 		foreach ( $orders as $order ) {
-			$arr[ $order['id'] ] = new \Kleistad\Order();
+			$arr[ $order['id'] ] = new Order();
 			$arr[ $order['id'] ]->load( $order );
 		}
 		return $arr;

@@ -9,6 +9,8 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 ?>
 <table style="width: 100%;border-spacing: 2px; padding: 5px" class="form-table">
 	<tbody>
@@ -20,7 +22,7 @@
 			<td>
 				<select name="gebruiker_id" id="gebruiker_id" style="width: 95%" required>
 					<?php foreach ( $gebruikers as $gebruiker ) : ?>
-						<?php if ( \Kleistad\Roles::reserveer( $gebruiker->ID ) ) : ?>
+						<?php if ( Roles::reserveer( $gebruiker->ID ) ) : ?>
 						<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" <?php selected( $item['gebruiker_id'], $gebruiker->ID ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
 						<?php endif ?>
 					<?php endforeach ?>

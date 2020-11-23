@@ -192,7 +192,7 @@ abstract class ShortcodeForm extends Shortcode {
 				'callback'            => [ __CLASS__, 'callback_formsubmit' ],
 				'permission_callback' => function( \WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
-					return \Kleistad\Public_Shortcode_Handler::check_access( $shortcode );
+					return Public_Shortcode_Handler::check_access( $shortcode );
 				},
 			]
 		);

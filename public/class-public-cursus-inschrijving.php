@@ -68,7 +68,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		$data['cursus_selectie'] = true;
 		$data['verbergen']       = $atts['verbergen'];
 		$data['open_cursussen']  = [];
-		$cursussen               = \Kleistad\Cursus::all( true );
+		$cursussen               = Cursus::all( true );
 		$cursus_selecties        = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
 		if ( 1 === count( $cursus_selecties ) ) {
 			$data['cursus_selectie']    = false;
@@ -156,7 +156,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 			return $error;
 		}
-		$data['cursus'] = new \Kleistad\Cursus( $data['input']['cursus_id'] );
+		$data['cursus'] = new Cursus( $data['input']['cursus_id'] );
 		if ( $data['input']['uitschrijven'] ) {
 			if ( false === intval( $data['input']['cursus_id'] ) || false === intval( $data['input']['gebruiker_id'] ) ) {
 				$error->add( 'intern', 'Er is iets mis gegaan, neem eventueel contact op met Kleistad' );
@@ -217,7 +217,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$gebruiker_id = $data['input']['gebruiker_id'];
 		}
 
-		$inschrijving = new \Kleistad\Inschrijving( $data['cursus']->id, $gebruiker_id );
+		$inschrijving = new Inschrijving( $data['cursus']->id, $gebruiker_id );
 		if ( $data['input']['uitschrijven'] ) {
 			if ( ! $inschrijving->ingedeeld ) {
 				$inschrijving->geannuleerd = true;
@@ -295,7 +295,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			]
 		);
 		if ( ! is_null( $param ) && ! empty( $param['code'] ) ) {
-			$inschrijving = \Kleistad\Inschrijving::vind( $param['code'] );
+			$inschrijving = Inschrijving::vind( $param['code'] );
 			if ( $param['hsh'] !== $inschrijving->controle() ) {
 				return new \WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 			}

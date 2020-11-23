@@ -12,11 +12,6 @@
 namespace Kleistad;
 
 /**
- * Include deze admin functie om de plugin versie te achterhalen uit de header van het hoofdplugin script.
- */
-require_once ABSPATH . 'wp-admin/includes/plugin.php';
-
-/**
  * Insert of update de gebruiker.
  *
  * @param array $userdata De gebruiker gegevens, inclusief contact informatie.
@@ -48,7 +43,7 @@ class Kleistad {
 	 * @since    4.0.87
 	 *
 	 * @access   protected
-	 * @var      \Kleistad\Loader    $loader    Beheert en registreert alle hooks van de plugin.
+	 * @var      Loader    $loader    Beheert en registreert alle hooks van de plugin.
 	 */
 	protected $loader;
 
@@ -86,7 +81,7 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function load_dependencies() {
-		$this->loader = new \Kleistad\Loader();
+		$this->loader = new Loader();
 	}
 
 	/**
@@ -97,7 +92,7 @@ class Kleistad {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new \Kleistad\Admin_Main( $this->get_version(), self::get_options(), self::get_setup() );
+		$plugin_admin = new Admin_Main( $this->get_version(), self::get_options(), self::get_setup() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts_and_styles' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
@@ -124,7 +119,7 @@ class Kleistad {
 	 * @access  private
 	 */
 	private function define_common_hooks() {
-		$plugin_common = new \Kleistad\Common();
+		$plugin_common = new Common();
 
 		$this->loader->add_action( 'wp_login', $plugin_common, 'user_login', 10, 2 );
 		$this->loader->add_action( 'login_enqueue_scripts', $plugin_common, 'login_enqueue_scripts' );
@@ -145,7 +140,7 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		$plugin_public = new \Kleistad\Public_Main( $this->get_version(), self::get_options() );
+		$plugin_public = new Public_Main( $this->get_version(), self::get_options() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
@@ -173,55 +168,55 @@ class Kleistad {
 	 * Registreer de artikelen voor later gebruik.
 	 */
 	private function register_artikelen() {
-		\Kleistad\Artikel::register(
+		Artikel::register(
 			'A',
 			[
 				'naam'   => 'abonnement',
-				'class'  => '\Kleistad\Abonnement',
+				'class'  => 'Abonnement',
 				'pcount' => 1,
 			]
 		);
-		\Kleistad\Artikel::register(
+		Artikel::register(
 			'C',
 			[
 				'naam'   => 'cursus',
-				'class'  => '\Kleistad\Inschrijving',
+				'class'  => 'Inschrijving',
 				'pcount' => 2,
 			]
 		);
-		\Kleistad\Artikel::register(
+		Artikel::register(
 			'K',
 			[
 				'naam'   => 'dagdelenkaart',
-				'class'  => '\Kleistad\Dagdelenkaart',
+				'class'  => 'Dagdelenkaart',
 				'pcount' => 1,
 			]
 		);
-		\Kleistad\Artikel::register(
+		Artikel::register(
 			'S',
 			[
 				'naam'   => 'stooksaldo',
-				'class'  => '\Kleistad\Saldo',
+				'class'  => 'Saldo',
 				'pcount' => 1,
 			]
 		);
-		\Kleistad\Artikel::register(
+		Artikel::register(
 			'W',
 			[
 				'naam'   => 'workshop',
-				'class'  => '\Kleistad\Workshop',
+				'class'  => 'Workshop',
 				'pcount' => 1,
 			]
 		);
-		\Kleistad\Artikel::register(
+		Artikel::register(
 			'X',
 			[
 				'naam'   => 'overige verkoop',
-				'class'  => '\Kleistad\LosArtikel',
+				'class'  => 'LosArtikel',
 				'pcount' => 1,
 			]
 		);
-		\Kleistad\Artikel::register(
+		Artikel::register(
 			'@',
 			[
 				'naam'   => 'dubieuze debiteuren',
@@ -244,7 +239,7 @@ class Kleistad {
 	 * Referentie naar de class die de hooks laadt.
 	 *
 	 * @since     4.0.87
-	 * @return    \Kleistad\Loader    de loader.
+	 * @return    Loader    de loader.
 	 */
 	public function get_loader() {
 		return $this->loader;

@@ -45,7 +45,7 @@ class Public_Main {
 	 */
 	public function __construct( $version, $options ) {
 		$this->version           = $version;
-		$this->shortcode_handler = new \Kleistad\Public_Shortcode_Handler( $options );
+		$this->shortcode_handler = new Public_Shortcode_Handler( $options );
 	}
 
 	/**
@@ -100,7 +100,7 @@ class Public_Main {
 		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad' ], $this->version, true );
 
-		foreach ( \Kleistad\Public_Shortcode_Handler::SHORTCODES as $shortcode => $dependencies ) {
+		foreach ( Public_Shortcode_Handler::SHORTCODES as $shortcode => $dependencies ) {
 			if ( $dependencies['script'] ) {
 				$file = str_replace( '_', '-', $shortcode );
 				wp_register_script( "kleistad$shortcode", plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", $dependencies['js'], $this->version, false );
@@ -117,13 +117,13 @@ class Public_Main {
 	 * @internal Action for rest_api_init.
 	 */
 	public function register_endpoints() {
-		\Kleistad\Adres::register_rest_routes(); // Postcode.
-		\Kleistad\Betalen::register_rest_routes(); // Mollie.
-		\Kleistad\Public_Kalender::register_rest_routes(); // Google API.
-		\Kleistad\Public_Recept::register_rest_routes(); // Recept zoeker.
-		\Kleistad\Public_Reservering::register_rest_routes(); // Oven reserveringen.
-		\Kleistad\Shortcode::register_rest_routes(); // Shortcode opvragen.
-		\Kleistad\ShortcodeForm::register_rest_routes(); // Shortcode formulieren.
+		Adres::register_rest_routes(); // Postcode.
+		Betalen::register_rest_routes(); // Mollie.
+		Public_Kalender::register_rest_routes(); // Google API.
+		Public_Recept::register_rest_routes(); // Recept zoeker.
+		Public_Reservering::register_rest_routes(); // Oven reserveringen.
+		Shortcode::register_rest_routes(); // Shortcode opvragen.
+		ShortcodeForm::register_rest_routes(); // Shortcode formulieren.
 	}
 
 	/**
@@ -135,11 +135,11 @@ class Public_Main {
 	 */
 	public static function register_post_types() {
 		global $wp_post_types;
-		\Kleistad\Recept::create_type();
-		\Kleistad\WorkshopAanvraag::create_type();
-		\Kleistad\Email::create_type();
-		$wp_post_types[ \Kleistad\WorkshopAanvraag::POST_TYPE ]->exclude_from_search = true;
-		$wp_post_types[ \Kleistad\Email::POST_TYPE ]->exclude_from_search            = true;
+		Recept::create_type();
+		WorkshopAanvraag::create_type();
+		Email::create_type();
+		$wp_post_types[ WorkshopAanvraag::POST_TYPE ]->exclude_from_search = true;
+		$wp_post_types[ Email::POST_TYPE ]->exclude_from_search            = true;
 	}
 
 	/**
@@ -211,7 +211,7 @@ class Public_Main {
 	 */
 	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
 		// phpcs:enable
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		return $emailer->notify(
 			[
 				'slug'       => 'email_wijziging',
@@ -239,7 +239,7 @@ class Public_Main {
 	 */
 	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
 		// phpcs:enable
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		return $emailer->notify(
 			[
 				'to'         => $userdata['user_email'],
@@ -266,7 +266,7 @@ class Public_Main {
 	 */
 	public function retrieve_password_message( /** @scrutinizer ignore-unused */ $message, $key, $user_login = '', $user_data = '' ) {
 		// phpcs:enable
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		$result  = $emailer->notify(
 			[
 				'slug'       => 'wachtwoord_reset',
@@ -344,7 +344,7 @@ class Public_Main {
 	 * @internal Action for rcv_email.
 	 */
 	public function rcv_email() {
-		\Kleistad\WorkshopAanvraag::ontvang_en_verwerk();
+		WorkshopAanvraag::ontvang_en_verwerk();
 	}
 
 	/**

@@ -81,7 +81,7 @@ class Abonnement extends Artikel {
 	 */
 	public function __construct( $klant_id ) {
 		$this->klant_id              = $klant_id;
-		$this->betalen               = new \Kleistad\Betalen();
+		$this->betalen               = new Betalen();
 		$this->default_data['code']  = "A$klant_id";
 		$this->default_data['datum'] = date( 'Y-m-d' );
 		$abonnement                  = get_user_meta( $this->klant_id, self::META_KEY, true );
@@ -263,7 +263,7 @@ class Abonnement extends Artikel {
 	 */
 	public function email( $type, $factuur = '' ) {
 		$abonnee = get_userdata( $this->klant_id );
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		return $emailer->send(
 			[
 				'to'          => "$abonnee->display_name <$abonnee->user_email>",
@@ -522,9 +522,9 @@ class Abonnement extends Artikel {
 			return;
 		}
 		if ( $valid ) {
-			$abonnee->add_cap( \Kleistad\Roles::LID );
+			$abonnee->add_cap( Roles::LID );
 		} else {
-			$abonnee->remove_cap( \Kleistad\Roles::LID );
+			$abonnee->remove_cap( Roles::LID );
 		}
 	}
 
@@ -535,7 +535,7 @@ class Abonnement extends Artikel {
 	 * @return float Het maandbedrag van de extra.
 	 */
 	private function bedrag_extra( $extra ) {
-		$options = \Kleistad\Kleistad::get_options();
+		$options = Kleistad::get_options();
 		foreach ( $options['extra'] as $extra_optie ) {
 			if ( $extra === $extra_optie['naam'] ) {
 				return (float) $extra_optie['prijs'];
@@ -551,7 +551,7 @@ class Abonnement extends Artikel {
 	 * @return float Het maandbedrag.
 	 */
 	private function bedrag( $type = '' ) {
-		$options       = \Kleistad\Kleistad::get_options();
+		$options       = Kleistad::get_options();
 		$basis_bedrag  = (float) $options[ $this->soort . '_abonnement' ];
 		$extras_bedrag = 0.0;
 		foreach ( $this->extras as $extra ) {
@@ -620,7 +620,7 @@ class Abonnement extends Artikel {
 		}
 		$volgende_maand = strtotime( 'first day of next month 00:00' );
 		$deze_maand     = strtotime( 'first day of this month 00:00' );
-		$betalen        = new \Kleistad\Betalen();
+		$betalen        = new Betalen();
 		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
 		if ( ( $this->herstart_datum > $deze_maand && $this->herstart_datum < $volgende_maand ) ||
 			( $this->pauze_datum >= $deze_maand && $this->pauze_datum < $volgende_maand ) ) {
@@ -688,7 +688,7 @@ class Abonnement extends Artikel {
 				]
 			);
 			foreach ( $abonnees as $abonnee ) {
-				$arr[ $abonnee->ID ] = new \Kleistad\Abonnement( $abonnee->ID );
+				$arr[ $abonnee->ID ] = new Abonnement( $abonnee->ID );
 			}
 		}
 		return $arr;

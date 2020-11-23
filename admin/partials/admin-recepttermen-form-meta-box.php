@@ -9,6 +9,8 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 $hoofdterm = (array) get_term( intval( filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) ) );
 
 ?>

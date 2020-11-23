@@ -126,9 +126,9 @@ class Admin_Abonnees extends \WP_List_Table {
 		$orderby      = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val    = filter_input( INPUT_GET, 'order' );
 		$order        = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$abonnementen = \Kleistad\Abonnement::all( $search );
+		$abonnementen = Abonnement::all( $search );
 		$abonnees     = [];
-		$betalen      = new \Kleistad\Betalen();
+		$betalen      = new Betalen();
 
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
 			$abonnee    = get_userdata( $abonnee_id );

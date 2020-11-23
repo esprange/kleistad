@@ -27,7 +27,7 @@ class Public_Saldo extends ShortcodeForm {
 	 */
 	protected function prepare( &$data ) {
 		$gebruiker_id = get_current_user_id();
-		$saldo        = new \Kleistad\Saldo( $gebruiker_id );
+		$saldo        = new Saldo( $gebruiker_id );
 		$data         = [
 			'gebruiker_id' => $gebruiker_id,
 			'saldo'        => number_format_i18n( $saldo->bedrag, 2 ),
@@ -78,7 +78,7 @@ class Public_Saldo extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$saldo = new \Kleistad\Saldo( intval( $data['input']['gebruiker_id'] ) );
+		$saldo = new Saldo( intval( $data['input']['gebruiker_id'] ) );
 		$saldo->nieuw( floatval( $data['input']['bedrag'] ) );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {

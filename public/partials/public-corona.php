@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 $this->form();
 $huidige_gebruiker = wp_get_current_user();
 
@@ -97,7 +99,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 	<button type="button" class="kleistad_download_link" data-actie="overzicht" >Download</button>
 </div>
 <?php else : ?>
-	<?php if ( \Kleistad\Roles::is_bestuur() || \Kleistad\Roles::is_docent() ) : ?>
+	<?php if ( Roles::is_bestuur() || Roles::is_docent() ) : ?>
 	<div class="kleistad_row" id="kleistad_selectie_blok">
 		<div class="kleistad_col_3">
 			<input type="radio" name="gebruik" id="kleistad_corona_zelf" checked class="kleistad_select_gebruiker kleistad_input_cbr" value="zelf" >
@@ -124,7 +126,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 <input type="hidden" id="kleistad_naam" value="<?php echo esc_attr( $data['input']['naam'] ); ?>">
 
 <div id="kleistad_meester">
-	<?php if ( \Kleistad\Roles::is_bestuur() ) : ?>
+	<?php if ( Roles::is_bestuur() ) : ?>
 <select id="kleistad_meester_selectie" name="meester" >
 		<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
 	<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" ><?php echo esc_html( $gebruiker->display_name ); ?></option>
@@ -156,7 +158,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 			<strong><?php echo esc_html( $beschikbaarheid['T'] ); ?></strong>
 		</div>
 		<div class="kleistad_col_2">
-			<?php if ( \Kleistad\Roles::is_bestuur() ) : ?>
+			<?php if ( Roles::is_bestuur() ) : ?>
 				<input type="hidden" value="<?php echo esc_attr( $beschikbaarheid['M']['s'] ); ?>" name="<?php echo esc_attr( "standaard[$index]" ); ?>" id="<?php echo esc_attr( "standaard{$index}" ); ?>" >
 				<label for="<?php echo esc_attr( "meester{$index}" ); ?>" style="width:100%" ><?php echo esc_html( $meester_naam ?: '---' ); ?></label>
 				<input type="checkbox" class="kleistad_meester" value="<?php echo esc_attr( $beschikbaarheid['M']['id'] ); ?>"

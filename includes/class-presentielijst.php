@@ -66,8 +66,8 @@ class Presentielijst extends \FPDF {
 	/**
 	 * Maak de presentielijst aan.
 	 *
-	 * @param \Kleistad\Cursus $cursus    De cursus waarvoor een presentielijst moet worden aangemaakt.
-	 * @param array            $cursisten De namen van de cursisten.
+	 * @param Cursus $cursus    De cursus waarvoor een presentielijst moet worden aangemaakt.
+	 * @param array  $cursisten De namen van de cursisten.
 	 * @return string Pad naar de presentielijst.
 	 */
 	public function run( $cursus, $cursisten ) {

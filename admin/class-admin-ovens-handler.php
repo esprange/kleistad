@@ -100,9 +100,9 @@ class Admin_Ovens_Handler {
 			$item_valid = $this->validate_oven( $item );
 			if ( true === $item_valid ) {
 				if ( $item['id'] > 0 ) {
-					$oven = new \Kleistad\Oven( $item['id'] );
+					$oven = new Oven( $item['id'] );
 				} else {
-					$oven = new \Kleistad\Oven();
+					$oven = new Oven();
 				}
 				$oven->naam            = $item['naam'];
 				$oven->kosten_laag     = $item['kosten_laag'];
@@ -116,9 +116,9 @@ class Admin_Ovens_Handler {
 			}
 		} else {
 			if ( isset( $_REQUEST['id'] ) ) {
-				$oven = new \Kleistad\Oven( $_REQUEST['id'] );
+				$oven = new Oven( $_REQUEST['id'] );
 			} else {
-				$oven = new \Kleistad\Oven();
+				$oven = new Oven();
 			}
 			$item['id']              = $oven->id;
 			$item['naam']            = $oven->naam;

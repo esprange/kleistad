@@ -11,6 +11,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 ?>
 
 <div class="kleistad_row">

@@ -198,7 +198,7 @@ class Public_Corona extends ShortcodeForm {
 			[ 'fields' => [ 'ID', 'display_name' ] ],
 		);
 
-		if ( ! empty( $atts['actie'] ) && \Kleistad\Roles::is_bestuur() ) {
+		if ( ! empty( $atts['actie'] ) && Roles::is_bestuur() ) {
 			$data['actie'] = $atts['actie'];
 			if ( 'gebruikers' === $data['actie'] ) {
 				$data['gebruikers'] = $gebruikers;
@@ -230,17 +230,17 @@ class Public_Corona extends ShortcodeForm {
 			'datums'          => $datums,
 			'gebruikers'      => $gebruikers,
 		];
-		if ( \Kleistad\Roles::is_bestuur() || \Kleistad\Roles::is_docent() ) {
+		if ( Roles::is_bestuur() || Roles::is_docent() ) {
 			$cursisten_zonder_abonnement = get_transient( 'kleistad_za' );
 			if ( ! is_array( $cursisten_zonder_abonnement ) ) {
 				$cursisten_zonder_abonnement = [];
 				foreach ( $gebruikers as $gebruiker ) {
-					if ( \Kleistad\Abonnement::is_actief_lid( $gebruiker->ID ) ||
-							\Kleistad\Roles::is_bestuur( $gebruiker->ID ) ||
-							\Kleistad\Roles::is_docent( $gebruiker->ID ) ) {
+					if ( Abonnement::is_actief_lid( $gebruiker->ID ) ||
+							Roles::is_bestuur( $gebruiker->ID ) ||
+							Roles::is_docent( $gebruiker->ID ) ) {
 						continue;
 					}
-					if ( \Kleistad\Inschrijving::is_actief_cursist( $gebruiker->ID ) ) {
+					if ( Inschrijving::is_actief_cursist( $gebruiker->ID ) ) {
 						$cursisten_zonder_abonnement[] = $gebruiker;
 					}
 				}
@@ -318,7 +318,7 @@ class Public_Corona extends ShortcodeForm {
 			}
 		}
 		update_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), $reserveringen );
-		if ( \Kleistad\Roles::is_bestuur() && is_array( $data['input']['meester'] ) ) {
+		if ( Roles::is_bestuur() && is_array( $data['input']['meester'] ) ) {
 			foreach ( $data['input']['meester'] as $blokdeel => $id ) {
 				if ( $data['input']['standaard'][ $blokdeel ] ) {
 					$this->standaard_meester( $id, $datum, $blokdeel );

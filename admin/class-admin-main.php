@@ -107,13 +107,13 @@ class Admin_Main {
 	 */
 	public function __construct( $version, $options, $setup ) {
 		$this->version              = $version;
-		$this->ovens_handler        = new \Kleistad\Admin_Ovens_Handler();
-		$this->cursisten_handler    = new \Kleistad\Admin_Cursisten_Handler();
-		$this->abonnees_handler     = new \Kleistad\Admin_Abonnees_Handler();
-		$this->stooksaldo_handler   = new \Kleistad\Admin_Stooksaldo_Handler();
-		$this->regelingen_handler   = new \Kleistad\Admin_Regelingen_Handler();
-		$this->recepttermen_handler = new \Kleistad\Admin_Recepttermen_Handler();
-		$this->instellingen_handler = new \Kleistad\Admin_Instellingen_Handler( $options, $setup );
+		$this->ovens_handler        = new Admin_Ovens_Handler();
+		$this->cursisten_handler    = new Admin_Cursisten_Handler();
+		$this->abonnees_handler     = new Admin_Abonnees_Handler();
+		$this->stooksaldo_handler   = new Admin_Stooksaldo_Handler();
+		$this->regelingen_handler   = new Admin_Regelingen_Handler();
+		$this->recepttermen_handler = new Admin_Recepttermen_Handler();
+		$this->instellingen_handler = new Admin_Instellingen_Handler( $options, $setup );
 	}
 
 	/**
@@ -138,7 +138,7 @@ class Admin_Main {
 	 * @internal Filter for post_row_actions.
 	 */
 	public function post_row_actions( $acties, $post ) {
-		if ( \Kleistad\Email::POST_TYPE === $post->post_type ) {
+		if ( Email::POST_TYPE === $post->post_type ) {
 			unset( $acties['view'] );
 			unset( $acties['inline hide-if-no-js'] );
 		}
@@ -179,7 +179,7 @@ class Admin_Main {
 	 */
 	public function email_get_posts_order( $wp_query ) {
 		if ( is_admin() ) {
-			if ( isset( $wp_query->query['post_type'] ) && \Kleistad\Email::POST_TYPE === $wp_query->query['post_type'] ) {
+			if ( isset( $wp_query->query['post_type'] ) && Email::POST_TYPE === $wp_query->query['post_type'] ) {
 				$wp_query->set( 'orderby', 'modified' );
 			}
 		}
@@ -337,7 +337,7 @@ class Admin_Main {
 	public function setup_gewijzigd( $oud, $nieuw ) {
 		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
 			$oud['google_client_id'] !== $nieuw['google_client_id'] ) {
-			delete_option( \Kleistad\Google::ACCESS_TOKEN );
+			delete_option( Google::ACCESS_TOKEN );
 		}
 	}
 
@@ -348,7 +348,7 @@ class Admin_Main {
 	 */
 	public function instantiate_background() {
 		if ( is_null( $this->background ) ) {
-			$this->background = new \Kleistad\Background();
+			$this->background = new Background();
 		}
 	}
 
@@ -358,12 +358,12 @@ class Admin_Main {
 	 * @internal Action for Kleistad_daily_jobs.
 	 */
 	public function daily_jobs() {
-		$this->background->push_to_queue( '\Kleistad\Shortcode::cleanup_downloads' );
-		$this->background->push_to_queue( '\Kleistad\Workshop::dagelijks' );
-		$this->background->push_to_queue( '\Kleistad\Abonnement::dagelijks' );
-		$this->background->push_to_queue( '\Kleistad\Saldo::dagelijks' );
-		$this->background->push_to_queue( '\Kleistad\Inschrijving::dagelijks' );
-		$this->background->push_to_queue( '\Kleistad\Dagdelenkaart::dagelijks' );
+		$this->background->push_to_queue( 'Shortcode::cleanup_downloads' );
+		$this->background->push_to_queue( 'Workshop::dagelijks' );
+		$this->background->push_to_queue( 'Abonnement::dagelijks' );
+		$this->background->push_to_queue( 'Saldo::dagelijks' );
+		$this->background->push_to_queue( 'Inschrijving::dagelijks' );
+		$this->background->push_to_queue( 'Dagdelenkaart::dagelijks' );
 		$this->background->save()->dispatch();
 	}
 
@@ -374,7 +374,7 @@ class Admin_Main {
 	 */
 	public function daily_gdpr() {
 		if ( intval( date( 'd' ) ) === intval( date( 't' ) ) ) {
-			\Kleistad\Admin_GDPR::erase_old_privacy_data();
+			Admin_GDPR::erase_old_privacy_data();
 		}
 	}
 
@@ -386,7 +386,7 @@ class Admin_Main {
 	 * @internal Action for admin_init.
 	 */
 	public function initialize() {
-		$upgrade = new \Kleistad\Admin_Upgrade();
+		$upgrade = new Admin_Upgrade();
 		$upgrade->run();
 
 		ob_start();

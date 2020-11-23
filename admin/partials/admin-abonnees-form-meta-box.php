@@ -9,6 +9,8 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 ?>
 <table style="width: 100%; border-spacing:2px; padding:5px" class="form-table">
 	<tbody>
@@ -54,7 +56,7 @@
 			</td>
 		</tr>
 			<?php
-			$options = \Kleistad\Kleistad::get_options();
+			$options = Kleistad::get_options();
 			$i       = 0;
 			foreach ( $options['extra'] as $extra ) :
 				$i++;

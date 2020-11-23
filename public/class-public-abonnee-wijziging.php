@@ -26,8 +26,8 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 */
 	protected function prepare( &$data ) {
 		$abonnee_id             = get_current_user_id();
-		$betalen                = new \Kleistad\Betalen();
-		$data['abonnement']     = new \Kleistad\Abonnement( $abonnee_id );
+		$betalen                = new Betalen();
+		$data['abonnement']     = new Abonnement( $abonnee_id );
 		$data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id );
 		return true;
 	}
@@ -65,11 +65,11 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		if ( 'pauze' === $data['input']['wijziging'] ) {
 			$data['input']['pauze_datum']    = strtotime( $data['input']['pauze_datum'] );
 			$data['input']['herstart_datum'] = strtotime( $data['input']['herstart_datum'] );
-			if ( $data['input']['herstart_datum'] < strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
-				$error->add( 'pauze', 'Het abonnement moet minimaal ' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . ' weken dagen gepauzeerd worden' );
+			if ( $data['input']['herstart_datum'] < strtotime( '+' . Abonnement::MIN_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
+				$error->add( 'pauze', 'Het abonnement moet minimaal ' . Abonnement::MIN_PAUZE_WEKEN . ' weken dagen gepauzeerd worden' );
 			}
-			if ( $data['input']['herstart_datum'] > strtotime( '+' . \Kleistad\Abonnement::MAX_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
-				$error->add( 'pauze', 'Het abonnement mag maximaal ' . \Kleistad\Abonnement::MAX_PAUZE_WEKEN . ' weken per keer gepauzeerd worden' );
+			if ( $data['input']['herstart_datum'] > strtotime( '+' . Abonnement::MAX_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
+				$error->add( 'pauze', 'Het abonnement mag maximaal ' . Abonnement::MAX_PAUZE_WEKEN . ' weken per keer gepauzeerd worden' );
 			}
 		}
 
@@ -88,7 +88,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$abonnement = new \Kleistad\Abonnement( $data['input']['abonnee_id'] );
+		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
 		switch ( $data['input']['wijziging'] ) {
 			case 'pauze':
 				$status = $abonnement->pauzeren( $data['input']['pauze_datum'], $data['input']['herstart_datum'] );

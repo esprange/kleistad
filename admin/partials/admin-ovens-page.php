@@ -9,7 +9,9 @@
  * @subpackage Kleistad/admin/partials
  */
 
-$table = new \Kleistad\Admin_Ovens();
+namespace Kleistad;
+
+$table = new Admin_Ovens();
 ?>
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>

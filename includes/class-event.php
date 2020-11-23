@@ -80,7 +80,7 @@ class Event {
 	 */
 	public function __construct( $event_id ) {
 		try {
-			$this->event        = \Kleistad\Google::calendar_service()->events->get( \Kleistad\Google::kalender_id(), $event_id );
+			$this->event        = Google::calendar_service()->events->get( Google::kalender_id(), $event_id );
 			$extendedproperties = $this->event->getExtendedProperties();
 			$this->properties   = ! is_null( $extendedproperties ) ? $extendedproperties->getPrivate() : [];
 		} catch ( \Google\Service\Exception $e ) {
@@ -210,9 +210,9 @@ class Event {
 		$extendedproperties->setPrivate( $this->properties );
 		$this->event->setExtendedProperties( $extendedproperties );
 		if ( is_null( $this->event->getCreated() ) ) {
-			$this->event = \Kleistad\Google::calendar_service()->events->insert( \Kleistad\Google::kalender_id(), $this->event );
+			$this->event = Google::calendar_service()->events->insert( Google::kalender_id(), $this->event );
 		} else {
-			$this->event = \Kleistad\Google::calendar_service()->events->update( \Kleistad\Google::kalender_id(), $this->event->getId(), $this->event );
+			$this->event = Google::calendar_service()->events->update( Google::kalender_id(), $this->event->getId(), $this->event );
 		}
 	}
 
@@ -220,7 +220,7 @@ class Event {
 	 * Delete het event.
 	 */
 	public function delete() {
-		\Kleistad\Google::calendar_service()->events->delete( \Kleistad\Google::kalender_id(), $this->event->getId() );
+		Google::calendar_service()->events->delete( Google::kalender_id(), $this->event->getId() );
 	}
 
 	/**
@@ -231,18 +231,18 @@ class Event {
 	 */
 	public static function query( $query = [] ) {
 		$default_query = [
-			'calendarId'   => \Kleistad\Google::kalender_id(),
+			'calendarId'   => Google::kalender_id(),
 			'orderBy'      => 'startTime',
 			'singleEvents' => true,
 			'timeMin'      => date( 'c', mktime( 0, 0, 0, 1, 1, 2018 ) ),
 			// phpcs:ignore 'privateExtendedProperty' => 'key=' . self::META_KEY,
 		];
-		$results = \Kleistad\Google::calendar_service()->events->listEvents( \Kleistad\Google::kalender_id(), array_merge( $default_query, $query ) );
+		$results = Google::calendar_service()->events->listEvents( Google::kalender_id(), array_merge( $default_query, $query ) );
 		$events  = $results->getItems();
 		$arr     = [];
 		foreach ( $events as $event ) {
 			if ( ! empty( $event->start->dateTime ) ) { // Skip events die de hele dag duren, zoals verjaardagen en vakanties.
-				$arr[ $event->getId() ] = new \Kleistad\Event( $event->getId() );
+				$arr[ $event->getId() ] = new Event( $event->getId() );
 			}
 		}
 		return $arr;

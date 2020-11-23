@@ -9,6 +9,8 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 ?>
 <div class="card" style="position:absolute;left:50%;width:50%;z-index:2" >
 <form method="POST" enctype="multipart/form-data">

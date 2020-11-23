@@ -32,13 +32,13 @@ class Public_Shortcode_Handler {
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker' ],
 			'css'    => [ 'jquery-ui' ],
-			'access' => [ \Kleistad\Roles::LID ],
+			'access' => [ Roles::LID ],
 		],
 		'abonnement_overzicht'  => [
 			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'datatables' ],
-			'access' => [ \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::BESTUUR ],
 		],
 		'betaling'              => [
 			'script' => true,
@@ -56,13 +56,13 @@ class Public_Shortcode_Handler {
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-button', 'jquery-ui-dialog', 'jquery-ui-datepicker', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::LID, Roles::BESTUUR ],
 		],
 		'cursus_beheer'         => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::BESTUUR ],
 		],
 		'cursus_extra'          => [
 			'script' => true,
@@ -80,7 +80,7 @@ class Public_Shortcode_Handler {
 			'script' => false,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::BESTUUR ],
 		],
 		'dagdelenkaart'         => [
 			'script' => true,
@@ -92,37 +92,37 @@ class Public_Shortcode_Handler {
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ \Kleistad\Roles::BOEKHOUD ],
+			'access' => [ Roles::BOEKHOUD ],
 		],
 		'email'                 => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jstree' ],
 			'css'    => [ 'jquery-ui', 'jstree' ],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::BESTUUR ],
 		],
 		'kalender'              => [
 			'script' => true,
 			'js'     => [ 'jquery', 'fullcalendar' ],
 			'css'    => [ 'fullcalendar' ],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::LID, Roles::BESTUUR ],
 		],
 		'omzet_rapportage'      => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::BESTUUR ],
 		],
 		'rapport'               => [
 			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'datatables' ],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::LID, Roles::BESTUUR ],
 		],
 		'recept_beheer'         => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::LID, Roles::BESTUUR ],
 		],
 		'recept'                => [
 			'script' => true,
@@ -134,43 +134,43 @@ class Public_Shortcode_Handler {
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::BESTUUR ],
 		],
 		'registratie'           => [
 			'script' => true,
 			'js'     => [ 'jquery', 'password-strength-meter' ],
 			'css'    => [],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::LID, Roles::BESTUUR ],
 		],
 		'reservering'           => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
 			'css'    => [ 'jquery-ui' ],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::LID, Roles::BESTUUR ],
 		],
 		'saldo_overzicht'       => [
 			'script' => false,
 			'js'     => [ 'jquery', 'datatables' ],
 			'css'    => [ 'datatables' ],
-			'access' => [ \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::BESTUUR ],
 		],
 		'saldo'                 => [
 			'script' => true,
 			'js'     => [ 'jquery' ],
 			'css'    => [],
-			'access' => [ \Kleistad\Roles::DOCENT, \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::DOCENT, Roles::LID, Roles::BESTUUR ],
 		],
 		'stookbestand'          => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
 			'css'    => [ 'jquery-ui' ],
-			'access' => [ \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::BESTUUR ],
 		],
 		'verkoop'               => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs' ],
 			'css'    => [ 'jquery-ui' ],
-			'access' => [ \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::BESTUUR ],
 		],
 		'workshop_aanvraag'     => [
 			'script' => false,
@@ -182,7 +182,7 @@ class Public_Shortcode_Handler {
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
 			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ \Kleistad\Roles::BESTUUR ],
+			'access' => [ Roles::BESTUUR ],
 		],
 	];
 
@@ -225,7 +225,7 @@ class Public_Shortcode_Handler {
 	 */
 	public function handler( $atts, $content, $tag ) {
 		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
-		$shortcode_object = \Kleistad\Shortcode::get_instance( $shortcode, $atts, $this->options );
+		$shortcode_object = Shortcode::get_instance( $shortcode, $atts, $this->options );
 		if ( is_null( $shortcode_object ) ) {
 			return '';
 		}

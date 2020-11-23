@@ -127,7 +127,7 @@ class Admin_Recepttermen extends \WP_List_Table {
 		$termen      = [];
 		foreach ( get_terms(
 			[
-				'taxonomy'   => \Kleistad\Recept::CATEGORY,
+				'taxonomy'   => Recept::CATEGORY,
 				'orderby'    => $orderby,
 				'order'      => strtoupper( $order ),
 				'hide_empty' => false,

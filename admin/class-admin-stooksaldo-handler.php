@@ -79,7 +79,7 @@ class Admin_Stooksaldo_Handler {
 			$item_valid = $this->validate_stooksaldo( $item );
 
 			if ( true === $item_valid ) {
-				$saldo         = new \Kleistad\Saldo( $item['id'] );
+				$saldo         = new Saldo( $item['id'] );
 				$saldo->bedrag = $item['saldo'];
 				$beheerder     = wp_get_current_user();
 				$saldo->reden  = 'correctie door ' . $beheerder->display_name;
@@ -96,7 +96,7 @@ class Admin_Stooksaldo_Handler {
 					$item   = $default;
 					$notice = 'De gebruiker is niet gevonden';
 				} else {
-					$saldo = new \Kleistad\Saldo( $_REQUEST['id'] );
+					$saldo = new Saldo( $_REQUEST['id'] );
 					$item  = [
 						'id'    => $_REQUEST['id'],
 						'naam'  => $gebruiker->display_name,

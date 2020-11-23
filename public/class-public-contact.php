@@ -82,11 +82,11 @@ class Public_Contact extends ShortcodeForm {
 	 * @since   6.3.0
 	 */
 	protected function save( $data ) {
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		$emailer->send(
 			[
-				'to'         => 'Kleistad <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
-				'from'       => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
+				'to'         => 'Kleistad <' . Email::info() . Email::domein() . '>',
+				'from'       => Email::info() . Email::verzend_domein(),
 				'from_name'  => $data['input']['naam'],
 				'reply-to'   => $data['input']['email'],
 				'slug'       => 'contact_vraag',
@@ -104,9 +104,9 @@ class Public_Contact extends ShortcodeForm {
 		$emailer->send(
 			[
 				'to'         => $data['input']['email'],
-				'from'       => \Kleistad\Email::info() . \Kleistad\Email::verzend_domein(),
+				'from'       => Email::info() . Email::verzend_domein(),
 				'from_name'  => 'Kleistad',
-				'reply-to'   => 'Kleistad <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
+				'reply-to'   => 'Kleistad <' . Email::info() . Email::domein() . '>',
 				'slug'       => 'contact_vraag',
 				'subject'    => 'Ontvangst vraag over ' . $data['input']['onderwerp'],
 				'parameters' => [

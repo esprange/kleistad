@@ -9,6 +9,8 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 ?>
 <ul style="list-style-type:none">
 	<li><h3>publiek toegankelijk (dus zonder ingelogd te zijn)</h3>

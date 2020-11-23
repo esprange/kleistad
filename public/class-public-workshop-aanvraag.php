@@ -100,7 +100,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 * @since   5.6.0
 	 */
 	protected function save( $data ) {
-		$result = \Kleistad\WorkshopAanvraag::start( $data['input'] );
+		$result = WorkshopAanvraag::start( $data['input'] );
 		if ( $result ) {
 			return [
 				'content' => $this->goto_home(),

@@ -9,7 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
-global $wp;
+namespace Kleistad;
+
 if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie'] ) ) :
 	$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
 	$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;

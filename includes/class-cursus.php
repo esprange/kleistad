@@ -46,7 +46,7 @@ class Cursus extends Entity {
 	 */
 	public function __construct( $cursus_id = null ) {
 		global $wpdb;
-		$options    = \Kleistad\Kleistad::get_options();
+		$options    = Kleistad::get_options();
 		$this->data = [
 			'id'              => null,
 			'naam'            => '',
@@ -156,7 +156,7 @@ class Cursus extends Entity {
 	 * @return int nog beschikbare ruimte.
 	 */
 	public function ruimte() {
-		$inschrijvingen = \Kleistad\Inschrijving::all();
+		$inschrijvingen = Inschrijving::all();
 		$aantal         = $this->maximum;
 		foreach ( $inschrijvingen as $inschrijving ) {
 			if ( array_key_exists( $this->id, $inschrijving ) && $inschrijving[ $this->id ]->ingedeeld && ! $inschrijving[ $this->id ]->geannuleerd ) {
@@ -247,7 +247,7 @@ class Cursus extends Entity {
 		$timezone = new \DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 
 		try {
-			$event             = new \Kleistad\Event( $this->event_id );
+			$event             = new Event( $this->event_id );
 			$event->properties = [
 				'docent'     => $this->docent_naam(),
 				'technieken' => $this->technieken,
@@ -291,7 +291,7 @@ class Cursus extends Entity {
 	 */
 	public function verwijder() {
 		global $wpdb;
-		$inschrijvingen = \Kleistad\Inschrijving::all();
+		$inschrijvingen = Inschrijving::all();
 		foreach ( $inschrijvingen as $inschrijving ) {
 			if ( array_key_exists( $this->id, $inschrijving ) ) {
 				return false; // Er is al een inschrijving dus verwijderen is niet meer mogelijk.
@@ -299,7 +299,7 @@ class Cursus extends Entity {
 		}
 		if ( $wpdb->delete( "{$wpdb->prefix}kleistad_cursussen", [ 'id' => $this->id ] ) ) {
 			try {
-				$event = new \Kleistad\Event( $this->event_id );
+				$event = new Event( $this->event_id );
 				$event->delete();
 			} catch ( \Exception $e ) {
 				unset( $e ); // phpcs:ignore
@@ -323,7 +323,7 @@ class Cursus extends Entity {
 		$filter          = $open ? ' WHERE eind_datum > CURRENT_DATE' : '';
 		$cursussen_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen $filter ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // phpcs:ignore
 		foreach ( $cursussen_tabel as $cursus ) {
-			$arr[ $cursus['id'] ] = new \Kleistad\Cursus( $cursus['id'] );
+			$arr[ $cursus['id'] ] = new Cursus( $cursus['id'] );
 		}
 		return $arr;
 	}

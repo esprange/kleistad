@@ -56,7 +56,7 @@ class Public_Recept extends Shortcode {
 	public static function callback_recept( \WP_REST_Request $request ) {
 		$data  = [];
 		$query = [
-			'post_type'   => \Kleistad\Recept::POST_TYPE,
+			'post_type'   => Recept::POST_TYPE,
 			'numberposts' => '-1',
 			'post_status' => [
 				'publish',
@@ -65,7 +65,7 @@ class Public_Recept extends Shortcode {
 			'author__in'  => $request->get_param( 'auteurs' ),
 			'tax_query'   => [
 				[
-					'taxonomy' => \Kleistad\Recept::CATEGORY,
+					'taxonomy' => Recept::CATEGORY,
 					'field'    => 'id',
 					'terms'    => $request->get_param( 'terms' ),
 					'operator' => 'AND',
@@ -126,31 +126,31 @@ class Public_Recept extends Shortcode {
 
 		$data['glazuur']   = get_terms(
 			[
-				'taxonomy'   => \Kleistad\Recept::CATEGORY,
+				'taxonomy'   => Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id,
+				'parent'     => Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);
 		$data['kleur']     = get_terms(
 			[
-				'taxonomy'   => \Kleistad\Recept::CATEGORY,
+				'taxonomy'   => Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id,
+				'parent'     => Recept::hoofdtermen()[ Recept::KLEUR ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);
 		$data['uiterlijk'] = get_terms(
 			[
-				'taxonomy'   => \Kleistad\Recept::CATEGORY,
+				'taxonomy'   => Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id,
+				'parent'     => Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);

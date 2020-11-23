@@ -99,12 +99,12 @@ class Inschrijving extends Artikel {
 	 * @since 4.0.87
 	 *
 	 * @param int $cursus_id id van de cursus.
-	 * @param int $klant_id wp user id van de cursist.
+	 * @param int $klant_id  wp user id van de cursist.
 	 */
 	public function __construct( $cursus_id, $klant_id ) {
-		$this->cursus                = new \Kleistad\Cursus( $cursus_id );
+		$this->cursus                = new Cursus( $cursus_id );
 		$this->klant_id              = $klant_id;
-		$this->betalen               = new \Kleistad\Betalen();
+		$this->betalen               = new Betalen();
 		$this->default_data['code']  = "C$cursus_id-$klant_id";
 		$this->default_data['datum'] = date( 'Y-m-d' );
 		$inschrijvingen              = get_user_meta( $this->klant_id, self::META_KEY, true );
@@ -189,7 +189,7 @@ class Inschrijving extends Artikel {
 			$this->geannuleerd = true;
 			$this->save();
 			foreach ( $this->extra_cursisten as $extra_cursist_id ) {
-				$extra_inschrijving              = new \Kleistad\Inschrijving( $this->cursus->id, $extra_cursist_id );
+				$extra_inschrijving              = new Inschrijving( $this->cursus->id, $extra_cursist_id );
 				$extra_inschrijving->geannuleerd = true;
 				$extra_inschrijving->save();
 			}
@@ -207,7 +207,7 @@ class Inschrijving extends Artikel {
 		if ( 0 === $this->aantal ) {
 			return 0;
 		}
-		$order = new \Kleistad\Order( $this->referentie() );
+		$order = new Order( $this->referentie() );
 		if ( $order->gesloten || $this->regeling_betaald( $order->betaald ) || $this->herinner_email ) {
 			/**
 			 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.
@@ -338,14 +338,14 @@ class Inschrijving extends Artikel {
 		$bestaande_inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
-			$order_id       = \Kleistad\Order::zoek_order( $this->referentie() );
+			$order_id       = Order::zoek_order( $this->referentie() );
 			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
 				$this->code                   = "C$cursus_id-$this->klant_id";
 				$this->aantal                 = $aantal;
 				$inschrijvingen[ $cursus_id ] = $this->data;
 				unset( $inschrijvingen[ $this->cursus->id ] );
 				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-				$this->cursus = new \Kleistad\Cursus( $cursus_id );
+				$this->cursus = new Cursus( $cursus_id );
 			} elseif ( $aantal !== $this->aantal ) {
 				$this->aantal = $aantal;
 				$this->save();
@@ -372,7 +372,7 @@ class Inschrijving extends Artikel {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $factuur = '' ) {
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		$cursist = get_userdata( $this->klant_id );
 		if ( 'inschrijving' === $type ) {
 			$slug = $this->cursus->inschrijfslug;
@@ -576,7 +576,7 @@ class Inschrijving extends Artikel {
 	 * @return float
 	 */
 	private function restantbedrag() {
-		$order = new \Kleistad\Order( $this->referentie() );
+		$order = new Order( $this->referentie() );
 		return ( $order->id ) ? $order->te_betalen() : 0;
 	}
 
@@ -658,7 +658,7 @@ class Inschrijving extends Artikel {
 					 * Restant betaal emails, alleen voor cursisten die ingedeeld zijn en de cursus binnenkort start.
 					 */
 					if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
-						$order = new \Kleistad\Order( $inschrijving->referentie() );
+						$order = new Order( $inschrijving->referentie() );
 						if ( $order->id && ! $order->gesloten ) {
 							$inschrijving->artikel_type  = 'cursus';
 							$inschrijving->restant_email = true;
@@ -693,7 +693,7 @@ class Inschrijving extends Artikel {
 				if ( is_array( $inschrijvingen ) ) {
 					krsort( $inschrijvingen );
 					foreach ( array_keys( $inschrijvingen ) as $cursus_id ) {
-						$arr[ $cursist->ID ][ $cursus_id ] = new \Kleistad\Inschrijving( $cursus_id, $cursist->ID );
+						$arr[ $cursist->ID ][ $cursus_id ] = new Inschrijving( $cursus_id, $cursist->ID );
 					}
 				}
 			}
@@ -705,11 +705,11 @@ class Inschrijving extends Artikel {
 	 * Vind de inschrijving op basis van de code
 	 *
 	 * @param  string $code De code.
-	 * @return \Kleistad\Inschrijving De inschrijving.
+	 * @return Inschrijving De inschrijving.
 	 */
 	public static function vind( $code ) {
 		$parameters = explode( '-', substr( $code, 1 ) );
-		return new \Kleistad\Inschrijving( (int) $parameters[0], (int) $parameters[1] );
+		return new Inschrijving( (int) $parameters[0], (int) $parameters[1] );
 	}
 
 	/**

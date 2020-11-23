@@ -24,10 +24,10 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	private function debiteuren( $zoek = '' ) {
 		$debiteuren = [];
-		$orders     = \Kleistad\Order::all( $zoek );
+		$orders     = Order::all( $zoek );
 		foreach ( $orders as $order ) {
 			if ( '@' !== $order->referentie[0] ) {
-				$betreft = \Kleistad\Artikel::get_artikel( $order->referentie )->artikel_naam();
+				$betreft = Artikel::get_artikel( $order->referentie )->artikel_naam();
 			} else {
 				$betreft = 'afboeking';
 			}
@@ -53,9 +53,9 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array De informatie.
 	 */
 	private function debiteur( $id ) {
-		$order = new \Kleistad\Order( $id );
+		$order = new Order( $id );
 		if ( '@' !== $order->referentie[0] ) {
-			$betreft      = \Kleistad\Artikel::get_artikel( $order->referentie )->artikel_naam();
+			$betreft      = Artikel::get_artikel( $order->referentie )->artikel_naam();
 			$geblokkeerd  = $order->geblokkeerd();
 			$annuleerbaar = ! boolval( $order->credit_id );
 		} else {
@@ -111,7 +111,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			}
 		} elseif ( 'blokkade' === $atts['actie'] ) {
 			$data['actie']            = 'blokkade';
-			$data['huidige_blokkade'] = \Kleistad\Order::get_blokkade();
+			$data['huidige_blokkade'] = Order::get_blokkade();
 			$data['nieuwe_blokkade']  = strtotime( '+3 month', $data['huidige_blokkade'] );
 		} else {
 			$data['actie']      = 'openstaand';
@@ -157,7 +157,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			]
 		);
 		if ( 'blokkade' !== $data['form_actie'] ) {
-			$order = new \Kleistad\Order( $data['input']['id'] );
+			$order = new Order( $data['input']['id'] );
 			if ( 'korting' === $data['input']['debiteur_actie'] ) {
 				if ( $order->bruto() < $data['input']['korting'] ) {
 					$error->add( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
@@ -179,15 +179,15 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( 'blokkade' === $data['form_actie'] ) {
-			\Kleistad\Order::zet_blokkade( strtotime( '+3 month', \Kleistad\Order::get_blokkade() ) );
+			Order::zet_blokkade( strtotime( '+3 month', Order::get_blokkade() ) );
 			return [
 				'status'  => 'De blokkade datum is gewijzigd',
 				'content' => $this->goto_home(),
 			];
 		}
-		$order   = new \Kleistad\Order( $data['input']['id'] );
-		$emailer = new \Kleistad\Email();
-		$artikel = \Kleistad\Artikel::get_artikel( $order->referentie );
+		$order   = new Order( $data['input']['id'] );
+		$emailer = new Email();
+		$artikel = Artikel::get_artikel( $order->referentie );
 		$status  = '';
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':

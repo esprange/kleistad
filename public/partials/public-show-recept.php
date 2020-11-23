@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 /**
  * Truncate een tekstregel tot gewenste woordlengte
  *

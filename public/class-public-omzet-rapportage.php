@@ -28,9 +28,9 @@ class Public_Omzet_Rapportage extends Shortcode {
 	protected function prepare( &$data ) {
 		if ( 'details' === $data['actie'] ) {
 			list( $data['jaar'], $data['maand'], $data['artikelcode'] ) = explode( '-', $data['id'] );
-			$data['artikel']      = \Kleistad\Artikel::$artikelen[ $data['artikelcode'] ]['naam'];
+			$data['artikel']      = Artikel::$artikelen[ $data['artikelcode'] ]['naam'];
 			$data['periode']      = strtotime( "{$data['jaar']}-{$data['maand']}-1 00:00" );
-			$data['omzetdetails'] = \Kleistad\Orderrapportage::maanddetails( $data['maand'], $data['jaar'], $data['artikelcode'] );
+			$data['omzetdetails'] = Orderrapportage::maanddetails( $data['maand'], $data['jaar'], $data['artikelcode'] );
 			return true;
 		} else {
 			if ( empty( $data['id'] ) ) {
@@ -41,7 +41,7 @@ class Public_Omzet_Rapportage extends Shortcode {
 				list( $data['jaar'], $data['maand'] ) = explode( '-', $data['id'] );
 				$data['periode']                      = strtotime( "{$data['id']}-1 00:00" );
 			}
-			$data['omzet'] = \Kleistad\Orderrapportage::maandrapportage( $data['maand'], $data['jaar'] );
+			$data['omzet'] = Orderrapportage::maandrapportage( $data['maand'], $data['jaar'] );
 			return true;
 		}
 	}
@@ -52,7 +52,7 @@ class Public_Omzet_Rapportage extends Shortcode {
 	protected function omzetrapport() {
 		$maand   = filter_input( INPUT_GET, 'maand', FILTER_SANITIZE_STRING );
 		$jaar    = filter_input( INPUT_GET, 'jaar', FILTER_SANITIZE_STRING );
-		$rapport = new \Kleistad\OmzetRapport();
+		$rapport = new OmzetRapport();
 		return $rapport->run( $maand, $jaar );
 	}
 }

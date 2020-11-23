@@ -73,16 +73,16 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$glazuur_id   = 0;
 		$kleur_id     = 0;
 		$uiterlijk_id = 0;
-		$termen       = get_the_terms( $recept->ID, \Kleistad\Recept::CATEGORY );
+		$termen       = get_the_terms( $recept->ID, Recept::CATEGORY );
 		if ( is_array( $termen ) ) {
 			foreach ( $termen as $term ) {
-				if ( intval( $term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id ) ) {
+				if ( intval( $term->parent ) === intval( Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id ) ) {
 					$glazuur_id = $term->term_id;
 				}
-				if ( intval( $term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id ) ) {
+				if ( intval( $term->parent ) === intval( Recept::hoofdtermen()[ Recept::KLEUR ]->term_id ) ) {
 					$kleur_id = $term->term_id;
 				}
-				if ( intval( $term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id ) ) {
+				if ( intval( $term->parent ) === intval( Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id ) ) {
 					$uiterlijk_id = $term->term_id;
 				}
 			}
@@ -362,7 +362,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 								intval( $data['recept']['kleur'] ),
 								intval( $data['recept']['uiterlijk'] ),
 							],
-							\Kleistad\Recept::CATEGORY
+							Recept::CATEGORY
 						);
 						return [
 							'status'  => $this->status( 'Gegevens zijn opgeslagen' ),

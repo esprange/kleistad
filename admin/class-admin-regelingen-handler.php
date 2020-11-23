@@ -60,18 +60,18 @@ class Admin_Regelingen_Handler {
 	 */
 	public function regelingen_page_handler() {
 		$message = '';
-		$table   = new \Kleistad\Admin_Regelingen();
+		$table   = new Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
 			$id = filter_input( INPUT_GET, 'id' );
 
 			if ( ! is_null( $id ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $id, '%d-%d' );
-				$regelingen                   = get_user_meta( $gebruiker_id, \Kleistad\Oven::REGELING, true );
+				$regelingen                   = get_user_meta( $gebruiker_id, Oven::REGELING, true );
 				unset( $regelingen[ $oven_id ] );
 				if ( empty( $regelingen ) ) {
-					delete_user_meta( $gebruiker_id, \Kleistad\Oven::REGELING );
+					delete_user_meta( $gebruiker_id, Oven::REGELING );
 				} else {
-					update_user_meta( $gebruiker_id, \Kleistad\Oven::REGELING, $regelingen );
+					update_user_meta( $gebruiker_id, Oven::REGELING, $regelingen );
 				}
 				$message = 'De gegevens zijn opgeslagen';
 			}
@@ -104,18 +104,18 @@ class Admin_Regelingen_Handler {
 			$item       = wp_parse_args( $_REQUEST, $default );
 			$item_valid = $this->validate_regeling( $item );
 			if ( true === $item_valid ) {
-				$gebruiker_regelingen = get_user_meta( $item['gebruiker_id'], \Kleistad\Oven::REGELING, true );
+				$gebruiker_regelingen = get_user_meta( $item['gebruiker_id'], Oven::REGELING, true );
 				if ( empty( $gebruiker_regelingen ) ) {
 					$gebruiker_regelingen = [];
 				}
 				$gebruiker_regelingen[ $item['oven_id'] ] = $item['kosten'];
-				update_user_meta( $item['gebruiker_id'], \Kleistad\Oven::REGELING, $gebruiker_regelingen );
+				update_user_meta( $item['gebruiker_id'], Oven::REGELING, $gebruiker_regelingen );
 				if ( '' === $item['id'] ) {
 					$message = 'De regeling is bewaard';
 				} else {
 					$message = 'De regeling is gewijzigd';
 				}
-				$oven                   = new \Kleistad\Oven( $item['oven_id'] );
+				$oven                   = new Oven( $item['oven_id'] );
 				$gebruiker              = get_userdata( $item['gebruiker_id'] );
 				$item['gebruiker_naam'] = $gebruiker->display_name;
 				$item['oven_naam']      = $oven->naam;
@@ -126,10 +126,10 @@ class Admin_Regelingen_Handler {
 			$item = $default;
 			if ( isset( $_REQUEST['id'] ) ) {
 				list($gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d-%d' );
-				$gebruiker_regelingen         = get_user_meta( $gebruiker_id, \Kleistad\Oven::REGELING, true );
+				$gebruiker_regelingen         = get_user_meta( $gebruiker_id, Oven::REGELING, true );
 
 				$gebruiker = get_userdata( $gebruiker_id );
-				$oven      = new \Kleistad\Oven( $oven_id );
+				$oven      = new Oven( $oven_id );
 				$item      = [
 					'id'             => $_REQUEST['id'],
 					'gebruiker_id'   => $gebruiker_id,
@@ -157,10 +157,10 @@ class Admin_Regelingen_Handler {
 			[
 				'fields'   => [ 'ID', 'display_name' ],
 				'orderby'  => [ 'display_name' ],
-				'role__in' => [ \Kleistad\Roles::LID, \Kleistad\Roles::BESTUUR, \Kleistad\Roles::DOCENT ],
+				'role__in' => [ Roles::LID, Roles::BESTUUR, Roles::DOCENT ],
 			]
 		);
-		$ovens      = \Kleistad\Oven::all();
+		$ovens      = Oven::all();
 
 		require 'partials/admin-regelingen-form-meta-box.php';
 	}

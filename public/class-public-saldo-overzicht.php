@@ -33,8 +33,8 @@ class Public_Saldo_Overzicht extends Shortcode {
 		);
 		$data['stokers'] = [];
 		foreach ( $gebruikers as $gebruiker ) {
-			if ( \Kleistad\Roles::reserveer( $gebruiker->ID ) ) {
-				$saldo             = new \Kleistad\Saldo( $gebruiker->ID );
+			if ( Roles::reserveer( $gebruiker->ID ) ) {
+				$saldo             = new Saldo( $gebruiker->ID );
 				$data['stokers'][] = [
 					'naam'  => $gebruiker->display_name,
 					'saldo' => number_format_i18n( $saldo->bedrag, 2 ),

@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 if ( 'blokkade' === $data['actie'] ) :
 	$blok = strtotime( 'today' ) > $data['nieuwe_blokkade'];
 	?>
@@ -38,7 +40,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 	<table class="kleistad_form">
 		<tr><th>referentie</th><td><?php echo esc_html( $data['debiteur']['referentie'] . ' geboekt op ' . date( 'd-m-Y', $data['debiteur']['sinds'] ) ); ?></td><th>historie</th></tr>
 		<tr><th>factuur</th><td>
-			<?php foreach ( \Kleistad\Factuur::facturen( $data['debiteur']['factuur'] ) as $factuur_url ) : ?>
+			<?php foreach ( Factuur::facturen( $data['debiteur']['factuur'] ) as $factuur_url ) : ?>
 				<a href="<?php echo esc_url( $factuur_url ); ?>" target="_blank"><?php echo esc_html( basename( $factuur_url ) ); ?></a><br/>
 			<?php endforeach ?>
 			</td><td rowspan="3">
@@ -164,7 +166,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 		</div>
 	</div>
-	<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', \Kleistad\Order::get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>
+	<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', Order::get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>
 </form>
 	<?php
 	else : // Als niet 'debiteur'.

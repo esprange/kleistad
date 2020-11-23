@@ -7,6 +7,8 @@
  * @since Kleistad 4.1.0
  */
 
+namespace Kleistad;
+
 get_header(); ?>
 
 <div id="primary" class="content-area">
@@ -24,13 +26,13 @@ get_header(); ?>
 				$recept_terms = get_the_terms( $the_id, 'kleistad_recept_cat' );
 				if ( is_array( $recept_terms ) ) {
 					foreach ( $recept_terms as $recept_term ) {
-						if ( intval( $recept_term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id ) ) {
+						if ( intval( $recept_term->parent ) === intval( Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id ) ) {
 							$glazuur_naam = $recept_term->name;
 						}
-						if ( intval( $recept_term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id ) ) {
+						if ( intval( $recept_term->parent ) === intval( Recept::hoofdtermen()[ Recept::KLEUR ]->term_id ) ) {
 							$kleur_naam = $recept_term->name;
 						}
-						if ( intval( $recept_term->parent ) === intval( \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id ) ) {
+						if ( intval( $recept_term->parent ) === intval( Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id ) ) {
 							$uiterlijk_naam = $recept_term->name;
 						}
 					}

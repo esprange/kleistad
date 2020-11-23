@@ -9,6 +9,8 @@
  * @subpackage Kleistad/admin/partials
  */
 
+namespace Kleistad;
+
 ?>
 
 <table style="width: 100%; border-spacing:2px; padding:5px" class="form-table">
@@ -28,7 +30,7 @@
 			</th>
 			<td><select name="cursus_id" id="cursus_id" required class="code">
 			<?php
-			$cursussen = \Kleistad\Cursus::all( true );
+			$cursussen = Cursus::all( true );
 			foreach ( $cursussen as $cursus_id => $cursus ) :
 				?>
 					<option value="<?php echo esc_attr( $cursus_id ); ?>" <?php selected( $item['cursus_id'], $cursus_id ); ?>>

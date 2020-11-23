@@ -59,7 +59,7 @@ class Admin_Cursisten_Handler {
 			$parameters   = explode( '-', substr( $code, 1 ) );
 			$cursus_id    = intval( $parameters[0] );
 			$cursist_id   = intval( $parameters[1] );
-			$inschrijving = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
+			$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
 			$message      = 'De gegevens zijn opgeslagen';
 			if ( intval( $item['cursus_id'] ) !== $cursus_id || intval( $item['aantal'] ) !== $inschrijving->aantal ) {
 				// cursus gewijzigd.
@@ -77,8 +77,8 @@ class Admin_Cursisten_Handler {
 				$cursus_id    = intval( $parameters[0] );
 				$cursist_id   = intval( $parameters[1] );
 				$cursist      = get_userdata( $cursist_id );
-				$inschrijving = new \Kleistad\Inschrijving( $cursus_id, $cursist_id );
-				$cursus       = new \Kleistad\Cursus( $cursus_id );
+				$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
+				$cursus       = new Cursus( $cursus_id );
 				$item         = [
 					'id'          => $code,
 					'naam'        => $cursist->display_name,

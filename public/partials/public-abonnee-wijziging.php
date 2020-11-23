@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 $in_startperiode   = strtotime( 'today' ) < $data['abonnement']->start_eind_datum;
 $per_datum         = $in_startperiode ? $data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
 $per               = date( 'j', $per_datum ) . strftime( ' %B %Y', $per_datum );
@@ -178,10 +180,10 @@ endforeach;
 			</div>
 			<div class="kleistad_col_7" >
 				<p><strong>Je wilt je gepauzeerde abonnement hervatten</strong></p>
-				<p>Je kan de datum dat je abonnement hervat wordt wel aanpassen maar niet eerder dan per eerstvolgende maand en de maximale pauze is <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken.</p>
+				<p>Je kan de datum dat je abonnement hervat wordt wel aanpassen maar niet eerder dan per eerstvolgende maand en de maximale pauze is <?php echo esc_html( Abonnement::MAX_PAUZE_WEKEN ); ?> weken.</p>
 				<input name="pauze_datum" id="kleistad_pauze_datum" type="hidden" value="<?php echo esc_attr( date( 'd-m-Y', $data['abonnement']->pauze_datum ) ); ?>"
-					data-min_pauze="<?php echo esc_attr( max( ( $per_datum - $data['abonnement']->pauze_datum ) / DAY_IN_SECONDS, \Kleistad\Abonnement::MIN_PAUZE_WEKEN * 7 ) ); ?>"
-					data-max_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>">
+					data-min_pauze="<?php echo esc_attr( max( ( $per_datum - $data['abonnement']->pauze_datum ) / DAY_IN_SECONDS, Abonnement::MIN_PAUZE_WEKEN * 7 ) ); ?>"
+					data-max_pauze="<?php echo esc_attr( Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>">
 			</div>
 		</div>
 		<div class="kleistad_row">
@@ -209,7 +211,7 @@ endforeach;
 			</div>
 			<div class="kleistad_col_7" >
 				<p><strong>Je wilt het abonnement pauzeren</strong></p>
-				<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( \Kleistad\Abonnement::MIN_PAUZE_WEKEN ); ?> weken. Per kalender jaar mag er in totaal maximaal <?php echo esc_html( \Kleistad\Abonnement::MAX_PAUZE_WEKEN ); ?> weken gepauzeerd worden.</p>
+				<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( Abonnement::MIN_PAUZE_WEKEN ); ?> weken. Per kalender jaar mag er in totaal maximaal <?php echo esc_html( Abonnement::MAX_PAUZE_WEKEN ); ?> weken gepauzeerd worden.</p>
 			</div>
 		</div>
 		<div class="kleistad_row" >
@@ -222,8 +224,8 @@ endforeach;
 			<div class="kleistad_col_3">
 				<input name="pauze_datum" id="kleistad_pauze_datum" class="kleistad_datum" type="text"
 					value="<?php echo esc_attr( date( 'd-m-Y', $per_datum ) ); ?>"
-					data-min_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MIN_PAUZE_WEKEN * 7 ); ?>"
-					data-max_pauze="<?php echo esc_attr( \Kleistad\Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>"
+					data-min_pauze="<?php echo esc_attr( Abonnement::MIN_PAUZE_WEKEN * 7 ); ?>"
+					data-max_pauze="<?php echo esc_attr( Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>"
 					readonly="readonly" >
 			</div>
 		</div>
@@ -236,7 +238,7 @@ endforeach;
 			</div>
 			<div class="kleistad_col_3">
 				<input name="herstart_datum" id="kleistad_herstart_datum" class="kleistad_datum" type="text"
-					value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '+' . \Kleistad\Abonnement::MIN_PAUZE_WEKEN . 'weeks', $per_datum ) ) ); ?>"
+					value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '+' . Abonnement::MIN_PAUZE_WEKEN . 'weeks', $per_datum ) ) ); ?>"
 					readonly="readonly" >
 			</div>
 		</div>
@@ -282,7 +284,7 @@ endforeach;
 				&nbsp;<input type="hidden" name="betaal" value="ideal" />
 			</div>
 			<div class="kleistad_col_7">
-				<?php \Kleistad\Betalen::issuers(); ?>
+				<?php Betalen::issuers(); ?>
 			</div>
 		</div>
 			<?php

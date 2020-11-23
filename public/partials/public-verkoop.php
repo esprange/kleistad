@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 $this->form();
 ?>
 <input type="hidden" name="klant_type" id="kleistad_klant_type" value="nieuw">

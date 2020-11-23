@@ -31,7 +31,7 @@ class Admin_GDPR {
 	 * @return array De persoonlijke data (cursus info).
 	 */
 	private static function export_inschrijving( $gebruiker_id ) {
-		$inschrijvingen = \Kleistad\Inschrijving::all();
+		$inschrijvingen = Inschrijving::all();
 		$items          = [];
 		if ( isset( $inschrijvingen[ $gebruiker_id ] ) ) {
 			foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
@@ -72,7 +72,7 @@ class Admin_GDPR {
 	 * @return array De persoonlijke data (abonnement info).
 	 */
 	private static function export_abonnement( $gebruiker_id ) {
-		$abonnement = new \Kleistad\Abonnement( $gebruiker_id );
+		$abonnement = new Abonnement( $gebruiker_id );
 		$items      = [];
 		$items[]    = [
 			'group_id'    => 'abonnementinfo',
@@ -125,7 +125,7 @@ class Admin_GDPR {
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
 	private static function export_saldo( $gebruiker_id ) {
-		$saldo   = new \Kleistad\Saldo( $gebruiker_id );
+		$saldo   = new Saldo( $gebruiker_id );
 		$items   = [];
 		$items[] = [
 			'group_id'    => 'stooksaldo',
@@ -149,8 +149,8 @@ class Admin_GDPR {
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
 	private static function export_reservering( $gebruiker_id ) {
-		$reserveringen = \Kleistad\Reservering::all();
-		$ovens         = \Kleistad\Oven::all();
+		$reserveringen = Reservering::all();
+		$ovens         = Oven::all();
 		$items         = [];
 		foreach ( $reserveringen as $reservering ) {
 			$key = array_search( $gebruiker_id, array_column( $reservering->verdeling, 'id' ), true );
@@ -183,7 +183,7 @@ class Admin_GDPR {
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
 	private static function export_dagdelenkaart( $gebruiker_id ) {
-		$dagdelenkaart = new \Kleistad\Dagdelenkaart( $gebruiker_id );
+		$dagdelenkaart = new Dagdelenkaart( $gebruiker_id );
 		$items         = [];
 		$items[]       = [
 			'group_id'    => 'dagdelenkaart',
@@ -268,7 +268,7 @@ class Admin_GDPR {
 	public static function eraser( $email, $page = 1 ) {
 		$count        = 0;
 		$gebruiker_id = email_exists( $email );
-		$domein       = \Kleistad\Email::domein();
+		$domein       = Email::domein();
 		if ( false !== $gebruiker_id ) {
 			$stub = "- verwijderd$gebruiker_id -";
 			wp_update_user(
@@ -289,7 +289,7 @@ class Admin_GDPR {
 			update_user_meta( $gebruiker_id, 'huisnr', '******' );
 			update_user_meta( $gebruiker_id, 'pcode', '******' );
 			update_user_meta( $gebruiker_id, 'plaats', '******' );
-			delete_user_meta( $gebruiker_id, \Kleistad\Saldo::META_KEY );
+			delete_user_meta( $gebruiker_id, Saldo::META_KEY );
 			$count = 6;
 		}
 		return [
@@ -322,9 +322,9 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private static function erase_cursussen( $datum ) {
-		foreach ( \Kleistad\Cursus::all() as $cursus_id => $cursus ) {
+		foreach ( Cursus::all() as $cursus_id => $cursus ) {
 			if ( $cursus->eind_datum && $datum > $cursus->eind_datum ) {
-				foreach ( \Kleistad\Inschrijving::all() as $cursist_id => $cursist_inschrijvingen ) {
+				foreach ( Inschrijving::all() as $cursist_id => $cursist_inschrijvingen ) {
 					if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) ) {
 						$cursist_inschrijvingen[ $cursus_id ]->erase();
 					}
@@ -340,7 +340,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private static function erase_dagdeelkaarten( $datum ) {
-		foreach ( \Kleistad\Dagdelenkaart::all() as $gebruiker_id => $dagdeelkaart ) {
+		foreach ( Dagdelenkaart::all() as $gebruiker_id => $dagdeelkaart ) {
 			if ( $dagdeelkaart->eind_datum && $datum > $dagdeelkaart->eind_datum ) {
 				$dagdeelkaart->erase();
 			}
@@ -353,10 +353,10 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private static function erase_abonnementen( $datum ) {
-		foreach ( \Kleistad\Abonnement::all() as $abonnee_id => $abonnement ) {
+		foreach ( Abonnement::all() as $abonnee_id => $abonnement ) {
 			if ( $abonnement->eind_datum && $datum > $abonnement->eind_datum ) {
 				$abonnement->erase();
-				$saldo = new \Kleistad\Saldo( $abonnee_id );
+				$saldo = new Saldo( $abonnee_id );
 				$saldo->erase();
 			}
 		}
@@ -368,7 +368,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private static function erase_workshops( $datum ) {
-		foreach ( \Kleistad\Workshop::all() as $workshop ) {
+		foreach ( Workshop::all() as $workshop ) {
 			if ( $datum > $workshop->datum ) {
 				$workshop->erase();
 			}
@@ -387,9 +387,9 @@ class Admin_GDPR {
 			if (
 				$datum > strtotime( $gebruiker->user_registered ) &&
 				empty(
-					(string) get_user_meta( $gebruiker->ID, \Kleistad\Inschrijving::META_KEY, true ) .
-					(string) get_user_meta( $gebruiker->ID, \Kleistad\Dagdelenkaart::META_KEY, true ) .
-					(string) get_user_meta( $gebruiker->ID, \Kleistad\Abonnement::META_KEY, true )
+					(string) get_user_meta( $gebruiker->ID, Inschrijving::META_KEY, true ) .
+					(string) get_user_meta( $gebruiker->ID, Dagdelenkaart::META_KEY, true ) .
+					(string) get_user_meta( $gebruiker->ID, Abonnement::META_KEY, true )
 				) &&
 				empty( $gebruiker->roles )
 				) {
@@ -404,7 +404,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private static function erase_orders( $datum ) {
-		foreach ( \Kleistad\Order::all() as $order ) {
+		foreach ( Order::all() as $order ) {
 			if ( $datum > $order->datum ) {
 				$order->erase();
 			}

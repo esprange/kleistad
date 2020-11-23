@@ -26,13 +26,13 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data ) {
-		$cursussen    = \Kleistad\Cursus::all();
+		$cursussen    = Cursus::all();
 		$registraties = [];
 
 		$gebruikers      = get_users( [ 'orderby' => 'nicename' ] );
-		$inschrijvingen  = \Kleistad\Inschrijving::all();
-		$abonnementen    = \Kleistad\Abonnement::all();
-		$dagdelenkaarten = \Kleistad\Dagdelenkaart::all();
+		$inschrijvingen  = Inschrijving::all();
+		$abonnementen    = Abonnement::all();
+		$dagdelenkaarten = Dagdelenkaart::all();
 		foreach ( $gebruikers as $gebruiker ) {
 			$cursuslijst       = '';
 			$inschrijvinglijst = [];
@@ -84,7 +84,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			];
 
 			$registraties[] = [
-				'is_lid'             => \Kleistad\Abonnement::is_actief_lid( $gebruiker->ID ),
+				'is_lid'             => Abonnement::is_actief_lid( $gebruiker->ID ),
 				'cursuslijst'        => $cursuslijst,
 				'deelnemer_info'     => $deelnemer_info,
 				'abonnee_info'       => $abonnee_info,
@@ -108,8 +108,8 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 */
 	protected function cursisten() {
 		$cursisten               = get_users( [ 'orderby' => 'nicename' ] );
-		$cursussen               = \Kleistad\Cursus::all();
-		$inschrijvingen          = \Kleistad\Inschrijving::all();
+		$cursussen               = Cursus::all();
+		$inschrijvingen          = Inschrijving::all();
 		$cursist_cursus_gegevens = [];
 		$cursus_fields           = [
 			'Voornaam',
@@ -140,7 +140,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 				$cursist->pcode,
 				$cursist->plaats,
 				$cursist->telnr,
-				\Kleistad\Abonnement::is_actief_lid( $cursist->ID ) ? 'Ja' : 'Nee',
+				Abonnement::is_actief_lid( $cursist->ID ) ? 'Ja' : 'Nee',
 			];
 
 			if ( array_key_exists( $cursist->ID, $inschrijvingen ) ) {
@@ -179,7 +179,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 */
 	protected function abonnees() {
 		$abonnees       = get_users( [ 'orderby' => 'nicename' ] );
-		$abonnementen   = \Kleistad\Abonnement::all();
+		$abonnementen   = Abonnement::all();
 		$abonnee_fields = [
 			'Achternaam',
 			'Voornaam',
@@ -239,7 +239,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 */
 	protected function dagdelenkaarten() {
 		$gebruikers           = get_users( [ 'orderby' => 'nicename' ] );
-		$dagdelenkaarten      = \Kleistad\Dagdelenkaart::all();
+		$dagdelenkaarten      = Dagdelenkaart::all();
 		$dagdelenkaart_fields = [
 			'Achternaam',
 			'Voornaam',

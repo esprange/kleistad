@@ -110,7 +110,7 @@ class Reservering extends Entity {
 			}
 		} else {
 			if ( ! $this->verwerkt ) {
-				if ( get_current_user_id() === $this->verdeling[0]['id'] || \Kleistad\Roles::override() ) {
+				if ( get_current_user_id() === $this->verdeling[0]['id'] || Roles::override() ) {
 					if ( ! $this->datum < strtotime( 'today midnight' ) ) {
 						return self::VERWIJDERBAAR;
 					} else {
@@ -248,7 +248,7 @@ class Reservering extends Entity {
 
 		$reserveringen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_reserveringen $where ORDER BY jaar DESC, maand DESC, dag DESC", ARRAY_A ); // phpcs:ignore
 		foreach ( $reserveringen as $reservering_id => $reservering ) {
-			$arr[ $reservering_id ] = new \Kleistad\Reservering( $reservering['oven_id'] );
+			$arr[ $reservering_id ] = new Reservering( $reservering['oven_id'] );
 			$arr[ $reservering_id ]->load( $reservering );
 		}
 		return $arr;

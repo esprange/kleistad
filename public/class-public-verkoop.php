@@ -95,7 +95,7 @@ class Public_Verkoop extends ShortcodeForm {
 		if ( ! update_option( 'kleistad_losnr', ++$verkoopnr ) ) {
 			return [ 'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ) ];
 		}
-		$verkoop = new \Kleistad\LosArtikel( $verkoopnr );
+		$verkoop = new LosArtikel( $verkoopnr );
 		if ( 'bestaand' === $data['input']['klant_type'] ) {
 			$klant          = get_user_by( 'id', $data['input']['klant_id'] );
 			$verkoop->klant = [

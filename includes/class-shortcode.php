@@ -81,7 +81,7 @@ abstract class Shortcode {
 	 * Enqueue the scripts and styles for the shortcode.
 	 */
 	protected function enqueue() {
-		foreach ( \Kleistad\Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['css'] as $dependency ) {
+		foreach ( Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['css'] as $dependency ) {
 			wp_enqueue_style( $dependency );
 		}
 		if ( ! wp_style_is( 'kleistad' ) ) {
@@ -97,7 +97,7 @@ abstract class Shortcode {
 					'nonce'           => wp_create_nonce( 'wp_rest' ),
 					'success_message' => 'de bewerking is geslaagd!',
 					'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
-					'base_url'        => \Kleistad\Public_Main::base_url(),
+					'base_url'        => Public_Main::base_url(),
 					'admin_url'       => admin_url( 'admin-ajax.php' ),
 				]
 			);
@@ -105,7 +105,7 @@ abstract class Shortcode {
 		if ( wp_script_is( "kleistad{$this->shortcode}", 'registered' ) ) {
 			wp_enqueue_script( "kleistad{$this->shortcode}" );
 		} else {
-			foreach ( \Kleistad\Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['js'] as $dependency ) {
+			foreach ( Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['js'] as $dependency ) {
 				wp_enqueue_script( $dependency );
 			}
 		}
@@ -131,7 +131,7 @@ abstract class Shortcode {
 			$html = ob_get_clean();
 		}
 
-		$betaal_result = \Kleistad\Betalen::controleer();
+		$betaal_result = Betalen::controleer();
 		if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
 			return $this->status( $betaal_result ) . $this->goto_home();
 		} elseif ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
@@ -171,7 +171,7 @@ abstract class Shortcode {
 	public function goto_home() {
 		if ( ! is_user_logged_in() ) {
 			$url = home_url();
-		} elseif ( \Kleistad\Roles::is_bestuur() ) {
+		} elseif ( Roles::is_bestuur() ) {
 			$url = home_url( '/bestuur/' );
 		} else {
 			$url = home_url( '/leden/' );
@@ -200,7 +200,7 @@ abstract class Shortcode {
 			return null;
 		} else {
 			self::$shortcode_lijst[] = $shortcode;
-			$shortcode_class         = '\Kleistad\Public_' . ucwords( $shortcode, '_' );
+			$shortcode_class         = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode, '_' );
 			return new $shortcode_class( $shortcode, $atts, $options );
 		}
 	}
@@ -234,7 +234,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( \WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
-					return \Kleistad\Public_Shortcode_Handler::check_access( $shortcode );
+					return Public_Shortcode_Handler::check_access( $shortcode );
 				},
 			]
 		);
@@ -246,7 +246,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( \WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
-					return \Kleistad\Public_Shortcode_Handler::check_access( $shortcode );
+					return Public_Shortcode_Handler::check_access( $shortcode );
 				},
 			]
 		);
@@ -258,7 +258,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_download' ],
 				'permission_callback' => function( \WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
-					return \Kleistad\Public_Shortcode_Handler::check_access( $shortcode );
+					return Public_Shortcode_Handler::check_access( $shortcode );
 				},
 			]
 		);
@@ -272,10 +272,10 @@ abstract class Shortcode {
 	 */
 	protected static function get_shortcode_object( \WP_REST_Request $request ) {
 		$tag   = $request->get_param( 'tag' );
-		$class = '\Kleistad\Public_' . ucwords( $tag, '_' );
+		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
 		if ( class_exists( $class ) ) {
 			$atts = json_decode( $request->get_param( 'atts' ), true );
-			return new $class( $tag, $atts, \Kleistad\Kleistad::get_options() );
+			return new $class( $tag, $atts, Kleistad::get_options() );
 		}
 		return false;
 	}
@@ -305,11 +305,11 @@ abstract class Shortcode {
 	/**
 	 * Maak een tijdelijk bestand aan voor download.
 	 *
-	 * @param \Kleistad\Shortcode $shortcode_object De shortcode waarvoor de download plaatsvindt.
-	 * @param string              $functie          De shortcode functie die aangeroepen moet worden.
+	 * @param Shortcode $shortcode_object De shortcode waarvoor de download plaatsvindt.
+	 * @param string    $functie          De shortcode functie die aangeroepen moet worden.
 	 * @return \WP_REST_Response
 	 */
-	protected static function download( \Kleistad\Shortcode $shortcode_object, $functie ) {
+	protected static function download( Shortcode $shortcode_object, $functie ) {
 		$upload_dir = wp_upload_dir();
 		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
 		$result     = fopen( $upload_dir['basedir'] . $file, 'w' );

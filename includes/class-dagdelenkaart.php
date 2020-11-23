@@ -51,7 +51,7 @@ class Dagdelenkaart extends Artikel {
 	 */
 	public function __construct( $klant_id ) {
 		$this->klant_id  = $klant_id;
-		$this->betalen   = new \Kleistad\Betalen();
+		$this->betalen   = new Betalen();
 		$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->volgnr    = count( /* @scrutinizer ignore-type */ $dagdelenkaarten );
 		$this->data      = wp_parse_args( end( /* @scrutinizer ignore-type */ $dagdelenkaarten ), $this->default_data );
@@ -120,7 +120,7 @@ class Dagdelenkaart extends Artikel {
 	 * @return string|bool De redirect url van een ideal betaling of false als het niet lukt.
 	 */
 	public function ideal( $bericht, $referentie, $openstaand = null ) {
-		$options = \Kleistad\Kleistad::get_options();
+		$options = Kleistad::get_options();
 
 		return $this->betalen->order(
 			$this->klant_id,
@@ -149,8 +149,8 @@ class Dagdelenkaart extends Artikel {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $factuur = '' ) {
-		$emailer   = new \Kleistad\Email();
-		$options   = \Kleistad\Kleistad::get_options();
+		$emailer   = new Email();
+		$options   = Kleistad::get_options();
 		$gebruiker = get_userdata( $this->klant_id );
 		return $emailer->send(
 			[
@@ -177,7 +177,7 @@ class Dagdelenkaart extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$options = \Kleistad\Kleistad::get_options();
+		$options = Kleistad::get_options();
 		return [
 			array_merge(
 				self::split_bedrag( $options['dagdelenkaart'] ),
@@ -274,7 +274,7 @@ class Dagdelenkaart extends Artikel {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			$arr[ $gebruiker->ID ] = new \Kleistad\Dagdelenkaart( $gebruiker->ID );
+			$arr[ $gebruiker->ID ] = new Dagdelenkaart( $gebruiker->ID );
 		}
 		return $arr;
 	}

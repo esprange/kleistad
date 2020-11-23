@@ -99,7 +99,7 @@ class WorkshopAanvraag {
 	 */
 	private static function verwerk( $email ) {
 		$casus   = null;
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		/**
 		* Zoek eerst op basis van het case nummer in subject.
 		*/
@@ -126,7 +126,7 @@ class WorkshopAanvraag {
 		if ( is_object( $casus ) && self::POST_TYPE === $casus->post_type ) {
 			$emailer->send(
 				[
-					'to'      => 'Workshop mailbox <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
+					'to'      => 'Workshop mailbox <' . Email::info() . Email::domein() . '>',
 					'subject' => 'aanvraag workshop/kinderfeest',
 					'content' => '<p>Er is een reactie ontvangen van ' . $email['from-name'] . '</p>',
 					'sign'    => 'Workshop mailbox',
@@ -158,15 +158,15 @@ class WorkshopAanvraag {
 	 */
 	public static function ontvang_en_verwerk() {
 		// phpcs:disable WordPress.NamingConventions
-		$setup = \Kleistad\Kleistad::get_setup();
+		$setup = Kleistad::get_setup();
 		if ( empty( $setup['imap_server'] ) || empty( $setup['imap_pwd'] ) ) {
 			die();
 		}
 		$answered = [];
-		$emailer  = new \Kleistad\Email();
+		$emailer  = new Email();
 		$mailbox  = new \PhpImap\Mailbox(
 			'{' . $setup['imap_server'] . '}INBOX',
-			self::mbx() . \Kleistad\Email::domein(),
+			self::mbx() . Email::domein(),
 			$setup['imap_pwd']
 		);
 		try {
@@ -194,7 +194,7 @@ class WorkshopAanvraag {
 				) && 'production' === wp_get_environment_type() ) {
 					$emailer->send(
 						[
-							'to'        => 'Kleistad <' . \Kleistad\Email::info() . \Kleistad\Email::domein() . '>',
+							'to'        => 'Kleistad <' . Email::info() . Email::domein() . '>',
 							'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
 							'from'      => sanitize_email( $email->fromAddress ),
 							'subject'   => 'FW:' . sanitize_text_field( $email->subject ),
@@ -248,7 +248,7 @@ class WorkshopAanvraag {
 	 * @param array $casus_data De gegevens behorende bij de casus.
 	 */
 	public static function start( $casus_data ) {
-		$emailer = new \Kleistad\Email();
+		$emailer = new Email();
 		$result  = wp_insert_post(
 			[
 				'post_type'      => self::POST_TYPE,
@@ -283,8 +283,8 @@ class WorkshopAanvraag {
 				[
 					'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
 					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $result ),
-					'from'       => self::mbx() . \Kleistad\Email::verzend_domein(),
-					'reply-to'   => self::mbx() . \Kleistad\Email::domein(),
+					'from'       => self::mbx() . Email::verzend_domein(),
+					'reply-to'   => self::mbx() . Email::domein(),
 					'slug'       => 'workshop_aanvraag_bevestiging',
 					'parameters' => $casus_data,
 					'sign_email' => false,
@@ -324,7 +324,7 @@ class WorkshopAanvraag {
 	 * @param string $reactie De reactie op de vraag.
 	 */
 	public static function reactie( $id, $reactie ) {
-		$emailer       = new \Kleistad\Email();
+		$emailer       = new Email();
 		$casus         = get_post( $id );
 		$casus_details = maybe_unserialize( $casus->post_excerpt );
 		$subject       = sprintf( "[WA#%08d] Reactie op {$casus_details['naam']} vraag", $id );
@@ -346,9 +346,9 @@ class WorkshopAanvraag {
 		$emailer->send(
 			[
 				'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
-				'from'       => self::mbx() . \Kleistad\Email::verzend_domein(),
+				'from'       => self::mbx() . Email::verzend_domein(),
 				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
-				'reply-to'   => self::mbx() . \Kleistad\Email::domein(),
+				'reply-to'   => self::mbx() . Email::domein(),
 				'subject'    => $subject,
 				'slug'       => 'workshop_aanvraag_reactie',
 				'auto'       => false,

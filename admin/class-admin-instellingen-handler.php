@@ -54,9 +54,9 @@ class Admin_Instellingen_Handler {
 	public function display_settings_page() {
 		$result = true;
 		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
-			\Kleistad\Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
+			Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
 		} elseif ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
-			$result = \Kleistad\Google::koppel_service();
+			$result = Google::koppel_service();
 		} elseif ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			do_action( 'kleistad_daily_jobs' );
 		} elseif ( ! is_null( filter_input( INPUT_POST, 'corona' ) ) ) {

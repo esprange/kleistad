@@ -52,8 +52,8 @@ class Workshop extends Artikel {
 	 */
 	public function __construct( $workshop_id = null ) {
 		global $wpdb;
-		$this->betalen = new \Kleistad\Betalen();
-		$options       = \Kleistad\Kleistad::get_options();
+		$this->betalen = new Betalen();
+		$options       = Kleistad::get_options();
 		if ( is_null( $workshop_id ) ) {
 			$this->data = [
 				'id'                => null,
@@ -159,7 +159,7 @@ class Workshop extends Artikel {
 			$this->vervallen = true;
 			$this->save();
 			try {
-				$event = new \Kleistad\Event( $this->event_id );
+				$event = new Event( $this->event_id );
 				$event->delete();
 			} catch ( \Exception $e ) {
 				unset( $e ); // phpcs:ignore
@@ -213,7 +213,7 @@ class Workshop extends Artikel {
 		if ( ! $herbevestiging ) {
 			return $this->email( '_bevestiging' );
 		}
-		$order_id = \Kleistad\Order::zoek_order( $this->code );
+		$order_id = Order::zoek_order( $this->code );
 		if ( $order_id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
 			$factuur = $this->wijzig_order( $order_id );
 			if ( false === $factuur ) { // De factuur is aangemaakt in een periode die boekhoudkundig geblokkeerd is, correctie is niet mogelijk.
@@ -244,7 +244,7 @@ class Workshop extends Artikel {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $factuur = '' ) {
-		$emailer          = new \Kleistad\Email();
+		$emailer          = new Email();
 		$email_parameters = [
 			'to'          => "{$this->contact} <{$this->email}>",
 			'attachments' => $factuur ?: [],
@@ -275,8 +275,8 @@ class Workshop extends Artikel {
 				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( '_herbevestiging' === $type ? ' (correctie)' : '' );
 				$email_parameters['auto']     = false;
 				$email_parameters['slug']     = 'workshop_bevestiging';
-				$email_parameters['from']     = \Kleistad\Email::info() . \Kleistad\Email::verzend_domein();
-				$email_parameters['reply-to'] = \Kleistad\Email::info() . \Kleistad\Email::domein();
+				$email_parameters['from']     = Email::info() . Email::verzend_domein();
+				$email_parameters['reply-to'] = Email::info() . Email::domein();
 				break;
 			case '_betaling':
 			case '_ideal':
@@ -324,10 +324,10 @@ class Workshop extends Artikel {
 		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
 		$this->id = $wpdb->insert_id;
 		$timezone = new \DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
-		\Kleistad\WorkshopAanvraag::gepland( $this->aanvraag_id, $this->id );
+		WorkshopAanvraag::gepland( $this->aanvraag_id, $this->id );
 
 		try {
-			$event             = new \Kleistad\Event( $this->event_id );
+			$event             = new Event( $this->event_id );
 			$event->properties = [
 				'docent'     => $this->docent,
 				'technieken' => $this->technieken,
@@ -446,7 +446,7 @@ class Workshop extends Artikel {
 		$filter          = $open ? ' WHERE datum > CURRENT_DATE' : '';
 		$workshops_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_workshops $filter ORDER BY datum DESC, start_tijd ASC", ARRAY_A ); // phpcs:ignore
 		foreach ( $workshops_tabel as $workshop ) {
-			$arr[ $workshop['id'] ] = new \Kleistad\Workshop( $workshop['id'] );
+			$arr[ $workshop['id'] ] = new Workshop( $workshop['id'] );
 		}
 		return $arr;
 	}

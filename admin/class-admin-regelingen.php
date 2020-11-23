@@ -111,14 +111,14 @@ class Admin_Regelingen extends \WP_List_Table {
 				'fields'   => [ 'ID', 'display_name' ],
 				'orderby'  => [ 'display_name' ],
 				'order'    => $order,
-				'meta_key' => \Kleistad\Oven::REGELING,
+				'meta_key' => Oven::REGELING,
 			]
 		);
-		$ovens                 = \Kleistad\Oven::all();
+		$ovens                 = Oven::all();
 		$regelingen            = [];
 
 		foreach ( $gebruiker_query->get_results() as $gebruiker ) {
-			$gebruiker_regelingen = get_user_meta( $gebruiker->ID, \Kleistad\Oven::REGELING, true );
+			$gebruiker_regelingen = get_user_meta( $gebruiker->ID, Oven::REGELING, true );
 			foreach ( $gebruiker_regelingen as $oven_id => $kosten_oven ) {
 				$regelingen[] = [
 					'id'             => $gebruiker->ID . '-' . $oven_id,

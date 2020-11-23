@@ -36,7 +36,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 		if ( empty( $param['code'] ) || empty( $param['hsh'] ) ) {
 			return new \WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
-		$inschrijving = \Kleistad\Inschrijving::vind( $param['code'] );
+		$inschrijving = Inschrijving::vind( $param['code'] );
 		if ( ! is_null( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
 				return new \WP_Error( 'Geannuleerd', 'Deelname aan de cursus is geannuleerd.' );
@@ -95,7 +95,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				'code'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['inschrijving'] = \Kleistad\Inschrijving::vind( $data['input']['code'] );
+		$data['inschrijving'] = Inschrijving::vind( $data['input']['code'] );
 		$emails               = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
 		foreach ( $data['input']['extra_cursist'] as &$extra_cursist ) {
 			if ( ! empty( $extra_cursist['user_email'] ) ) {
@@ -161,7 +161,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				];
 			}
 			$extra_cursisten[]  = $extra_cursist_id;
-			$extra_inschrijving = new \Kleistad\Inschrijving( $data['inschrijving']->cursus->id, $extra_cursist_id );
+			$extra_inschrijving = new Inschrijving( $data['inschrijving']->cursus->id, $extra_cursist_id );
 			if ( $extra_inschrijving->ingedeeld ) {
 				if ( 0 < $extra_inschrijving->aantal ) {
 					return [

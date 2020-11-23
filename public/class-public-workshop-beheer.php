@@ -22,7 +22,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array De workshops data.
 	 */
 	private function planning() {
-		$workshops = \Kleistad\Workshop::all();
+		$workshops = Workshop::all();
 		$lijst     = [];
 		foreach ( $workshops as $workshop_id => $workshop ) {
 			$lijst[] = [
@@ -49,7 +49,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	private function aanvragen() {
 		$casussen = get_posts(
 			[
-				'post_type'      => \Kleistad\WorkshopAanvraag::POST_TYPE,
+				'post_type'      => WorkshopAanvraag::POST_TYPE,
 				'posts_per_page' => -1,
 				'post_status'    => [ 'nieuw', 'gereageerd', 'vraag', 'gepland' ],
 			]
@@ -82,7 +82,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			if ( \Kleistad\Roles::override( $gebruiker->ID ) ) {
+			if ( Roles::override( $gebruiker->ID ) ) {
 				$docenten[] = $gebruiker;
 			}
 		}
@@ -96,8 +96,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array De workshop data.
 	 */
 	private function formulier( $workshop_id = null ) {
-		$workshop = new \Kleistad\Workshop( $workshop_id );
-		$order_id = \Kleistad\Order::zoek_order( $workshop->referentie() );
+		$workshop = new Workshop( $workshop_id );
+		$order_id = Order::zoek_order( $workshop->referentie() );
 		return [
 			'workshop_id'       => $workshop->id,
 			'naam'              => $workshop->naam,
@@ -265,7 +265,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Schrijf workshop informatie naar het bestand.
 	 */
 	protected function workshops() {
-		$workshops = \Kleistad\Workshop::all();
+		$workshops = Workshop::all();
 		fputcsv(
 			$this->file_handle,
 			[
@@ -329,7 +329,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( 'reageren' === $data['form_actie'] ) {
-			\Kleistad\WorkshopAanvraag::reactie( $data['casus']['casus_id'], $data['casus']['reactie'] );
+			WorkshopAanvraag::reactie( $data['casus']['casus_id'], $data['casus']['reactie'] );
 			return [
 				'status'  => $this->status( 'Er is een email verzonden naar de aanvrager' ),
 				'content' => $this->display(),
@@ -339,9 +339,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshop_id = $data['workshop']['workshop_id'];
 		$bericht     = '';
 		if ( $workshop_id > 0 ) {
-			$workshop = new \Kleistad\Workshop( $workshop_id );
+			$workshop = new Workshop( $workshop_id );
 		} else {
-			$workshop = new \Kleistad\Workshop();
+			$workshop = new Workshop();
 		}
 		$workshop->naam              = $data['workshop']['naam'];
 		$workshop->datum             = strtotime( $data['workshop']['datum'] );

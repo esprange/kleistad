@@ -35,8 +35,8 @@ class Admin_Abonnees_Handler {
 	 * @return string De status van de wijziging.
 	 */
 	private function wijzig_abonnee( $item, $actie ) {
-		$abonnement          = new \Kleistad\Abonnement( $item['id'] );
-		$item['mollie_info'] = \Kleistad\Betalen::info( $item['id'] );
+		$abonnement          = new Abonnement( $item['id'] );
+		$item['mollie_info'] = Betalen::info( $item['id'] );
 		if ( 'status' === $actie ) {
 			foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort', 'dag' ] as $veld ) {
 				if ( ! empty( $item[ $veld ] ) ) {
@@ -151,9 +151,9 @@ class Admin_Abonnees_Handler {
 			if ( isset( $_REQUEST['id'] ) ) {
 				$abonnee_id = $_REQUEST['id'];
 				$actie      = $_REQUEST['actie'];
-				$abonnement = new \Kleistad\Abonnement( $abonnee_id );
+				$abonnement = new Abonnement( $abonnee_id );
 				$abonnee    = get_userdata( $abonnee_id );
-				$betalen    = new \Kleistad\Betalen();
+				$betalen    = new Betalen();
 				$item       = [
 					'id'               => $abonnee_id,
 					'naam'             => $abonnee->display_name,
@@ -170,7 +170,7 @@ class Admin_Abonnees_Handler {
 					'eind_datum'       => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
 					'herstart_datum'   => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
 					'mandaat'          => $betalen->heeft_mandaat( $abonnee_id ),
-					'mollie_info'      => \Kleistad\Betalen::info( $abonnee_id ),
+					'mollie_info'      => Betalen::info( $abonnee_id ),
 				];
 			}
 		}

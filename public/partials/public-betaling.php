@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 if ( 'betalen' === $data['actie'] ) :
 	$this->form();
 	?>
@@ -62,7 +64,7 @@ if ( 'betalen' === $data['actie'] ) :
 	<?php if ( 0 < $data['openstaand'] ) : ?>
 	<div class ="kleistad_row">
 		<div class="kleistad_col_10">
-			<?php \Kleistad\Betalen::issuers(); ?>
+			<?php Betalen::issuers(); ?>
 		</div>
 	</div>
 	<div class="kleistad_row">

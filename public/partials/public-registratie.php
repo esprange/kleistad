@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 if ( 'wachtwoord' === $data['actie'] ) :
 	?>
 	<div id="kleistad_wachtwoord_succes" style="display:none" >

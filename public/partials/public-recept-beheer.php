@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 if ( isset( $data['recept'] ) ) :
 	$this->form();
 	?>
@@ -49,7 +51,7 @@ if ( isset( $data['recept'] ) ) :
 				'id'                => 'kleistad_glazuur',
 				'name'              => 'glazuur',
 				'selected'          => $data['recept']['glazuur'],
-				'child_of'          => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::GLAZUUR ]->term_id,
+				'child_of'          => Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id,
 				'tabindex'          => 2,
 			]
 		);
@@ -70,7 +72,7 @@ if ( isset( $data['recept'] ) ) :
 				'id'                => 'kleistad_kleur',
 				'name'              => 'kleur',
 				'selected'          => $data['recept']['kleur'],
-				'child_of'          => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::KLEUR ]->term_id,
+				'child_of'          => Recept::hoofdtermen()[ Recept::KLEUR ]->term_id,
 				'tabindex'          => 3,
 			]
 		);
@@ -91,7 +93,7 @@ if ( isset( $data['recept'] ) ) :
 				'id'                => 'kleistad_uiterlijk',
 				'name'              => 'uiterlijk',
 				'selected'          => $data['recept']['uiterlijk'],
-				'child_of'          => \Kleistad\Recept::hoofdtermen()[ \Kleistad\Recept::UITERLIJK ]->term_id,
+				'child_of'          => Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id,
 				'tabindex'          => 4,
 			]
 		);

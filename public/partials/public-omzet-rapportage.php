@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 $select_maand = (int) date( 'm', $data['periode'] );
 $select_jaar  = (int) date( 'Y', $data['periode'] );
 if ( 'details' === $data['actie'] ) :

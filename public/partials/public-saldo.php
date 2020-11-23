@@ -11,6 +11,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 ?>
 <p>Je huidige stooksaldo is <strong>&euro; <?php echo esc_html( $data['saldo'] ); ?></strong></p>
 <?php $this->form(); ?>
@@ -42,7 +44,7 @@
 	</div>
 	<div class ="kleistad_row">
 		<div class="kleistad_col_10">
-			<?php \Kleistad\Betalen::issuers(); ?>
+			<?php Betalen::issuers(); ?>
 		</div>
 	</div>
 	<div class ="kleistad_row">

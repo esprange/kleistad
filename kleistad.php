@@ -19,6 +19,8 @@
  * GitHub Plugin URI: https://github.com/esprange/kleistad
  */
 
+namespace Kleistad;
+
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
@@ -34,7 +36,7 @@ require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 register_activation_hook(
 	__FILE__,
 	function() {
-		\Kleistad\Activator::activate();
+		Activator::activate();
 	}
 );
 
@@ -44,12 +46,12 @@ register_activation_hook(
 register_deactivation_hook(
 	__FILE__,
 	function() {
-		\Kleistad\Deactivator::deactivate();
+		Deactivator::deactivate();
 	}
 );
 
 /**
  * Start uitvoering van de plugin.
  */
-$kleistad_plugin = new \Kleistad\Kleistad();
+$kleistad_plugin = new Kleistad();
 $kleistad_plugin->run();

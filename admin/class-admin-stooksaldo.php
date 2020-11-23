@@ -117,13 +117,13 @@ class Admin_Stooksaldo extends \WP_List_Table {
 			[
 				'fields'   => [ 'ID', 'display_name' ],
 				'search'   => '*' . $search . '*',
-				'meta_key' => \Kleistad\Saldo::META_KEY,
+				'meta_key' => Saldo::META_KEY,
 				'paged'    => $paged,
 				'number'   => $per_page,
 			]
 		);
 		foreach ( $gebruiker_query->get_results() as $gebruiker ) {
-			$saldo         = new \Kleistad\Saldo( $gebruiker->ID );
+			$saldo         = new Saldo( $gebruiker->ID );
 			$this->items[] = [
 				'id'    => $gebruiker->ID,
 				'naam'  => $gebruiker->display_name,

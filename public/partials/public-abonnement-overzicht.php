@@ -9,6 +9,8 @@
  * @subpackage Kleistad/public/partials
  */
 
+namespace Kleistad;
+
 ?>
 <div id="kleistad_abonnees_info">
 	<table class="kleistad_datatable display compact nowrap" data-order='[[ 0, "asc" ]]'>

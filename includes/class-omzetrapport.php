@@ -125,12 +125,12 @@ class OmzetRapport extends \FPDF {
 		$this->SetAuthor( 'Kleistad' );
 		$this->SetTitle( 'Omzet rapport' );
 		$this->start( 'periode ' . strftime( '%B', mktime( 0, 0, 0, $maand, 1, 2020 ) ) . " $jaar" );
-		$omzet = \Kleistad\Orderrapportage::maandrapportage( $maand, $jaar );
+		$omzet = Orderrapportage::maandrapportage( $maand, $jaar );
 		$this->tabel( $omzet );
 		foreach ( $omzet as $naam => $omzetregel ) {
 			if ( 0 !== $omzetregel['netto'] ) {
 				$this->addPage();
-				$omzetdetails = \Kleistad\Orderrapportage::maanddetails( $maand, $jaar, $omzetregel['key'] );
+				$omzetdetails = Orderrapportage::maanddetails( $maand, $jaar, $omzetregel['key'] );
 				$this->details( $naam, $omzetdetails );
 			}
 		}

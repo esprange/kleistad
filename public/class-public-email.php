@@ -36,20 +36,20 @@ class Public_Email extends ShortcodeForm {
 			];
 		}
 
-		if ( \Kleistad\Roles::is_bestuur() ) {
-			$bestuur = get_users( [ 'role' => \Kleistad\Roles::BESTUUR ] );
+		if ( Roles::is_bestuur() ) {
+			$bestuur = get_users( [ 'role' => Roles::BESTUUR ] );
 			foreach ( $bestuur as $bestuurslid ) {
 				$data['input']['tree'][-1]['naam']                      = 'Bestuur';
 				$data['input']['tree'][-1]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
 			}
 
-			$docenten = get_users( [ 'role' => \Kleistad\Roles::DOCENT ] );
+			$docenten = get_users( [ 'role' => Roles::DOCENT ] );
 			foreach ( $docenten as $docent ) {
 				$data['input']['tree'][-2]['naam']                 = 'Docenten';
 				$data['input']['tree'][-2]['leden'][ $docent->ID ] = $docent->display_name;
 			}
 
-			$abonnementen = \Kleistad\Abonnement::all();
+			$abonnementen = Abonnement::all();
 			foreach ( $abonnementen as $abonnee_id => $abonnement ) {
 				if ( ! $abonnement->geannuleerd() ) {
 					$abonnee                          = get_userdata( $abonnee_id );
@@ -60,12 +60,12 @@ class Public_Email extends ShortcodeForm {
 		}
 
 		$cursus_criterium = strtotime( '-6 months' ); // Cursussen die langer dan een half jaar gelden zijn geëindigd worden niet getoond.
-		$inschrijvingen   = \Kleistad\Inschrijving::all();
-		$cursussen        = \Kleistad\Cursus::all();
+		$inschrijvingen   = Inschrijving::all();
+		$cursussen        = Cursus::all();
 		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
 			$cursist = get_userdata( $cursist_id );
 			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! \Kleistad\Roles::is_bestuur() && intval( $cursussen[ $cursus_id ]->docent ) !== get_current_user_id() ) {
+				if ( ! Roles::is_bestuur() && intval( $cursussen[ $cursus_id ]->docent ) !== get_current_user_id() ) {
 					continue;
 				}
 				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
@@ -141,8 +141,8 @@ class Public_Email extends ShortcodeForm {
 		);
 		$emailadressen   = array_column( (array) $query->get_results(), 'user_email' );
 		$emailadressen[] = "{$gebruiker->display_name} <{$gebruiker->user_email}>";
-		$emailer         = new \Kleistad\Email();
-		$to              = 'production' === wp_get_environment_type() ? ( \Kleistad\Email::info() . \Kleistad\Email::domein() ) : get_bloginfo( 'admin_email' );
+		$emailer         = new Email();
+		$to              = 'production' === wp_get_environment_type() ? ( Email::info() . Email::domein() ) : get_bloginfo( 'admin_email' );
 		$emailer->send(
 			array_merge(
 				$this->mail_parameters( $data ),
@@ -150,7 +150,7 @@ class Public_Email extends ShortcodeForm {
 					'to'       => "Kleistad gebruiker <$to>",
 					'bcc'      => $emailadressen,
 					'from'     => $to,
-					'reply-to' => \Kleistad\Roles::is_bestuur() ? $to : $gebruiker->user_email,
+					'reply-to' => Roles::is_bestuur() ? $to : $gebruiker->user_email,
 					'subject'  => $data['input']['onderwerp'],
 				]
 			)
@@ -169,7 +169,7 @@ class Public_Email extends ShortcodeForm {
 	 */
 	protected function test( $data ) {
 		$gebruiker = wp_get_current_user();
-		$emailer   = new \Kleistad\Email();
+		$emailer   = new Email();
 		$emailer->send(
 			array_merge(
 				$this->mail_parameters( $data ),

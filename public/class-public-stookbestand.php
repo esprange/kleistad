@@ -60,7 +60,7 @@ class Public_Stookbestand extends Shortcode {
 	/**
 	 * Array walk functie, bepaal de medestokers van alle reserveringen in de tijdrange.
 	 *
-	 * @param  \Kleistad\Reservering $reservering Het reservering object.
+	 * @param  Reservering $reservering Het reservering object.
 	 */
 	private function bepaal_medestokers( $reservering ) {
 		if ( $reservering->datum < $this->vanaf_datum || $reservering->datum > $this->tot_datum ) {
@@ -78,7 +78,7 @@ class Public_Stookbestand extends Shortcode {
 	/**
 	 * Array walk functie, bepaal de percentages en kosten van alle reserveringen in de tijdrange.
 	 *
-	 * @param  \Kleistad\Reservering $reservering Het reservering object.
+	 * @param  Reservering $reservering Het reservering object.
 	 */
 	private function bepaal_stookgegevens( $reservering ) {
 		if ( $reservering->datum < $this->vanaf_datum || $reservering->datum > $this->tot_datum ) {
@@ -119,8 +119,8 @@ class Public_Stookbestand extends Shortcode {
 	protected function stook() {
 		$this->vanaf_datum = strtotime( filter_input( INPUT_GET, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
 		$this->tot_datum   = strtotime( filter_input( INPUT_GET, 'tot_datum', FILTER_SANITIZE_STRING ) );
-		$this->ovens       = \Kleistad\Oven::all();
-		$reserveringen     = \Kleistad\Reservering::all();
+		$this->ovens       = Oven::all();
+		$reserveringen     = Reservering::all();
 		array_walk( $reserveringen, [ $this, 'bepaal_medestokers' ] );
 		asort( $this->medestokers );
 

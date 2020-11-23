@@ -28,7 +28,7 @@ class Orderrapportage {
 	public static function maandrapportage( $maand, $jaar ) {
 		global $wpdb;
 		$omzet = [];
-		foreach ( \Kleistad\Artikel::$artikelen as $key => $artikel ) {
+		foreach ( Artikel::$artikelen as $key => $artikel ) {
 			$omzet[ $artikel['naam'] ] = [
 				'netto'   => 0.0,
 				'btw'     => 0.0,
@@ -39,8 +39,8 @@ class Orderrapportage {
 		if ( strtotime( '1-1-2020' ) < mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) { // Vanaf 2020 wordt gefactureerd.
 			$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand ORDER BY datum", ARRAY_A ); // phpcs:ignore
 			foreach ( $order_ids as $order_id ) {
-				$order = new \Kleistad\Order( intval( $order_id['id'] ) );
-				$naam  = \Kleistad\Artikel::$artikelen[ $order->referentie[0] ]['naam'];
+				$order = new Order( intval( $order_id['id'] ) );
+				$naam  = Artikel::$artikelen[ $order->referentie[0] ]['naam'];
 				if ( '@' !== $order->referentie[0] ) {
 					$omzet[ $naam ]['netto']  += $order->netto();
 					$omzet[ $naam ]['btw']    += $order->btw();
@@ -68,7 +68,7 @@ class Orderrapportage {
 		$details   = [];
 		$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand AND referentie LIKE '$artikelcode%' ORDER BY datum", ARRAY_A ); // phpcs:ignore
 		foreach ( $order_ids as $order_id ) {
-			$order     = new \Kleistad\Order( intval( $order_id['id'] ) );
+			$order     = new Order( intval( $order_id['id'] ) );
 			$details[] = [
 				'datum' => $order->datum,
 				'netto' => $order->netto(),

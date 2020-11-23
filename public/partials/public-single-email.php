@@ -7,6 +7,8 @@
  * @since Kleistad 4.1.0
  */
 
+namespace Kleistad;
+
 get_header(); ?>
 
 <div id="primary" class="content-area">

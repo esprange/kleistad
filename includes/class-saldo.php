@@ -60,7 +60,7 @@ class Saldo extends Artikel {
 	 */
 	public function __construct( $klant_id ) {
 		$this->klant_id = $klant_id;
-		$this->betalen  = new \Kleistad\Betalen();
+		$this->betalen  = new Betalen();
 		$saldo          = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->data     = wp_parse_args( $saldo, $this->default_data );
 		$this->volgnr   = count( $this->storting );
@@ -166,7 +166,7 @@ class Saldo extends Artikel {
 	 * @return boolean succes of falen van verzending email.
 	 */
 	public function email( $type, $factuur = '' ) {
-		$emailer   = new \Kleistad\Email();
+		$emailer   = new Email();
 		$gebruiker = get_userdata( $this->klant_id );
 		return $emailer->send(
 			[
@@ -293,10 +293,10 @@ class Saldo extends Artikel {
 	 */
 	public static function dagelijks() {
 		global $wpdb;
-		$emailer       = new \Kleistad\Email();
-		$reserveringen = \Kleistad\Reservering::all( true );
-		$ovens         = \Kleistad\Oven::all();
-		$options       = \Kleistad\Kleistad::get_options();
+		$emailer       = new Email();
+		$reserveringen = Reservering::all( true );
+		$ovens         = Oven::all();
+		$options       = Kleistad::get_options();
 
 		foreach ( $reserveringen as $reservering ) {
 			if ( $reservering->datum <= strtotime( '- ' . $options['termijn'] . ' days 00:00' ) ) {
@@ -304,7 +304,7 @@ class Saldo extends Artikel {
 					/**
 					 * Het onderstaande wordt als een transactie uitgevoerd omdat zowel het saldo als de reservering in de database gemuteerd worden.
 					 */
-					if ( \Kleistad\Reservering::ONDERHOUD === $reservering->soortstook ) {
+					if ( Reservering::ONDERHOUD === $reservering->soortstook ) {
 						$reservering->verwerkt = true;
 						$reservering->save();
 						continue;
@@ -319,7 +319,7 @@ class Saldo extends Artikel {
 							continue; // Volgende verdeling.
 						}
 						$medestoker    = get_userdata( $stookdeel['id'] );
-						$saldo         = new \Kleistad\Saldo( $stookdeel['id'] );
+						$saldo         = new Saldo( $stookdeel['id'] );
 						$saldo->bedrag = $saldo->bedrag - $verdeling[ $index ]['prijs'];
 						$saldo->reden  = 'stook op ' . date( 'd-m-Y', $reservering->datum ) . ' door ' . $stoker->display_name;
 						if ( $saldo->save() ) {
@@ -356,7 +356,7 @@ class Saldo extends Artikel {
 					error_log( 'stooksaldo verwerking: ' . $e->getMessage() ); // phpcs:ignore
 				}
 			} elseif ( ! $reservering->gemeld && $reservering->datum < strtotime( 'today' ) ) {
-				if ( \Kleistad\Reservering::ONDERHOUD !== $reservering->soortstook ) {
+				if ( Reservering::ONDERHOUD !== $reservering->soortstook ) {
 					$stoker = get_userdata( $reservering->gebruiker_id );
 					$tabel  = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
 					foreach ( $reservering->verdeling as $stookdeel ) {

@@ -26,7 +26,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 	 * @since   4.5.4
 	 */
 	protected function prepare( &$data ) {
-		$abonnementen = \Kleistad\Abonnement::all();
+		$abonnementen = Abonnement::all();
 		$abonnee_info = [];
 		$email_lijst  = '';
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
@@ -54,8 +54,8 @@ class Public_Abonnement_Overzicht extends Shortcode {
 	 * Schrijf abonnementen naar het bestand.
 	 */
 	protected function abonnementen() {
-		$betalen         = new \Kleistad\Betalen();
-		$abonnementen    = \Kleistad\Abonnement::all();
+		$betalen         = new Betalen();
+		$abonnementen    = Abonnement::all();
 		$abonnees_fields = [
 			'Code',
 			'Achternaam',
