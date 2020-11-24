@@ -240,15 +240,16 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			return [
 				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
-		} elseif ( $inschrijving->ingeschreven ) {
-			return [
-				'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingeschreven op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
-			];
-		}
-		if ( ! $data['input']['wacht'] ) {
-			$inschrijving->technieken = $data['input']['technieken'];
-			$inschrijving->opmerking  = $data['input']['opmerking'];
-			$inschrijving->aantal     = intval( $data['input']['aantal'] );
+		} elseif ( ! $data['input']['wacht'] ) {
+			if ( $inschrijving->ingeschreven ) {
+				return [
+					'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingeschreven op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
+				];
+			} else {
+				$inschrijving->technieken = $data['input']['technieken'];
+				$inschrijving->opmerking  = $data['input']['opmerking'];
+				$inschrijving->aantal     = intval( $data['input']['aantal'] );
+			}
 		}
 		$inschrijving->wacht_datum  = ( $data['cursus']->vol ) ? strtotime( 'today' ) : 0;
 		$inschrijving->artikel_type = 'inschrijving';
