@@ -31,7 +31,7 @@ class Background extends \WP_Background_Process {
 	 * @param mixed $taak Queue item to iterate over, in dit geval de functie uitvoeren.
 	 */
 	protected function task( $taak ) {
-		call_user_func( $taak );
+		call_user_func( '\\' . __NAMESPACE__ . '\\' . $taak );
 		return false;
 	}
 
