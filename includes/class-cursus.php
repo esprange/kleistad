@@ -184,6 +184,24 @@ class Cursus extends Entity {
 	}
 
 	/**
+	 * Kan er op een wachtlijst worden ingeschreven ?
+	 *
+	 * @return bool
+	 */
+	public function is_wachtbaar() {
+		return $this->start_datum > strtotime( 'tomorrow + 1 day' );
+	}
+
+	/**
+	 * Is de cursus actief ?
+	 *
+	 * @return bool
+	 */
+	public function is_lopend() {
+		return $this->start_datum < strtotime( 'today' );
+	}
+
+	/**
 	 * Bereken het bedrag om ingedeeld te worden bij de cursus.
 	 *
 	 * @return float

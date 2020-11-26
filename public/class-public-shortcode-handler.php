@@ -72,7 +72,7 @@ class Public_Shortcode_Handler {
 		],
 		'cursus_inschrijving'   => [
 			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner' ],
+			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner', 'jquery-ui-tooltip' ],
 			'css'    => [ 'jquery-ui' ],
 			'access' => [],
 		],

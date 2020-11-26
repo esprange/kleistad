@@ -69,13 +69,15 @@ if ( ! empty( $data['verbergen'] ) ) :
 endif;
 
 	$this->form();
-	$checked_id = 0;
-	$count      = 0;
-	foreach ( $data['open_cursussen'] as $cursus ) :
-		if ( $cursus['selecteerbaar'] ) :
+	$checked_id    = 0;
+	$count         = 0;
+	$selecteerbaar = [];
+	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
+		$selecteerbaar[ $cursus_id ] = ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() );
+		if ( $selecteerbaar[ $cursus_id ] ) :
 			$count++;
 		endif;
-endforeach;
+	endforeach;
 	if ( ! $count ) :
 		?>
 	<div class="kleistad_row" >
@@ -86,11 +88,11 @@ endforeach;
 		<?php
 else :
 	?>
-	<div style="<?php echo esc_attr( $data['cursus_selectie'] ? '' : 'display: none' ); ?>" >
+	<div id="kleistad_cursussen" style="<?php echo esc_attr( $data['cursus_selectie'] ? '' : 'display: none' ); ?>" >
 	<?php
 	// Check eerst welke cursus geselecteerd moet staan.
 	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
-		if ( $cursus['selecteerbaar'] ) :
+		if ( ! $selecteerbaar[ $cursus_id ] ) :
 			// De eerder geselecteerde als die nog steeds selecteerbaar is of als er maar 1 cursus mogelijk is.
 			if ( intval( $data['input']['cursus_id'] ) === $cursus_id || 1 === $count ) :
 				$checked_id = $cursus_id;
@@ -102,23 +104,30 @@ else :
 	foreach ( $data['open_cursussen'] as $cursus_id => $cursus ) :
 		$json_cursus = wp_json_encode(
 			[
-				'technieken' => $cursus['technieken'],
-				'meer'       => $cursus['meer'],
-				'ruimte'     => $cursus['ruimte'],
-				'bedrag'     => $cursus['bedrag'],
-				'lopend'     => $cursus['lopend'],
-				'vol'        => $cursus['vol'],
+				'technieken' => $cursus->technieken,
+				'meer'       => $cursus->meer,
+				'ruimte'     => min( $cursus->ruimte(), 4 ),
+				'bedrag'     => $cursus->bedrag(),
+				'lopend'     => $cursus->is_lopend(),
+				'vol'        => $cursus->vol,
 			]
 		);
+		if ( ( 0 < $cursus->inschrijfkosten ) ) :
+			$tooltip = 'cursus start per ' . strftime( '%x', $cursus->start_datum ) . '| ' . count( $cursus->lesdatums ) . ' lessen';
+		else :
+			$tooltip = 'workshop op ' . strftime( '%x', $cursus->start_datum );
+		endif;
+		$tooltip .= '|docent is ' . $cursus->docent_naam() . '|kosten &euro; ' . number_format_i18n( $cursus->inschrijfkosten + $cursus->cursuskosten, 2 ) . ' p.p.';
 		if ( false === $json_cursus ) :
 			continue;
 		endif;
 		?>
-		<div class="kleistad_col_10 kleistad_row" >
+		<div class="kleistad_col_10 kleistad_row" 
+			title="<?php echo $tooltip; // phpcs:ignore ?>" >
 			<input class="kleistad_input_cbr" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
-				data-cursus='<?php echo $json_cursus; // phpcs:ignore ?>' <?php disabled( ! $cursus['selecteerbaar'] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
+				data-cursus='<?php echo $json_cursus; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar[ $cursus_id ] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
 			<label class="kleistad_label_cbr" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
-				<span style="<?php echo esc_attr( $cursus['selecteerbaar'] ? '' : 'color: gray;' ); ?>"><?php echo esc_html( $cursus['naam'] ); ?></span></label>
+				<span style="<?php echo esc_attr( $selecteerbaar[ $cursus_id ] ? '' : 'color: gray;' ); ?>"><?php echo esc_html( $cursus->naam ); ?></span></label>
 		</div>
 		<?php
 	endforeach;

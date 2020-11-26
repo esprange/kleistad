@@ -58,6 +58,15 @@
 				wijzigVelden( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 			}
 
+			$( '#kleistad_cursussen' ).tooltip(
+				{
+					track: true,
+					content: function( callback ) { 
+						callback( $( this ).prop( 'title' ).replaceAll( '|', '<br />' ) );
+					}
+				}
+			);
+
 			$( '#kleistad_aantal' ).spinner({
 				min:1,
 				max: ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) ? $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ).ruimte : 1,

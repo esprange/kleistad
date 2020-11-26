@@ -82,19 +82,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			} elseif ( ! $cursus->tonen ) {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
-			$ruimte                                = $cursus->ruimte();
-			$lopend                                = $cursus->start_datum < strtotime( 'today' );
-			$wachtbaar                             = $cursus->start_datum > strtotime( 'tomorrow + 1 day' );
-			$data['open_cursussen'][ $cursus->id ] = [
-				'naam'          => $cursus->naam . ( $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : '' ) ),
-				'selecteerbaar' => ! $cursus->vervallen && ( ! $cursus->vol || $wachtbaar ),
-				'technieken'    => $cursus->technieken,
-				'meer'          => $cursus->meer,
-				'ruimte'        => min( $ruimte, 4 ),
-				'vol'           => $cursus->vol,
-				'bedrag'        => $cursus->bedrag(),
-				'lopend'        => $lopend,
-			];
+			$data['open_cursussen'][ $cursus->id ] = $cursus;
 		}
 		return true;
 	}
