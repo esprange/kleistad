@@ -30,7 +30,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 		$abonnee_info = [];
 		$email_lijst  = '';
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-			if ( ! $abonnement->geannuleerd() ) {
+			if ( ! $abonnement->is_geannuleerd() ) {
 				$abonnee        = get_userdata( $abonnee_id );
 				$abonnee_info[] = [
 					'naam'   => $abonnee->display_name,
@@ -81,7 +81,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 		fputcsv( $this->file_handle, $abonnees_fields, ';', '"' );
 
 		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-			if ( ! $abonnement->geannuleerd() ) {
+			if ( ! $abonnement->is_geannuleerd() ) {
 				$abonnee          = get_userdata( $abonnee_id );
 				$abonnee_gegevens = [
 					'A' . $abonnee_id,

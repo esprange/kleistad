@@ -26,6 +26,7 @@ namespace Kleistad;
  * @property bool   overbrugging_email
  * @property array  extras
  * @property int    factuur_maand
+ * @property string historie
  */
 class Abonnement extends Artikel {
 
@@ -64,6 +65,7 @@ class Abonnement extends Artikel {
 		'overbrugging_email' => 0,
 		'extras'             => [],
 		'factuur_maand'      => '',
+		'historie'           => '',
 	];
 
 	/**
@@ -105,6 +107,8 @@ class Abonnement extends Artikel {
 				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
 			case 'extras':
 				return $this->data['extras'] ?? [];
+			case 'historie':
+				return json_decode( $this->data[ $attribuut ], true ) ?: [];
 			default:
 				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
@@ -119,6 +123,12 @@ class Abonnement extends Artikel {
 	public function __set( $attribuut, $waarde ) {
 		if ( false !== strpos( $attribuut, 'datum' ) ) {
 			$this->data[ $attribuut ] = $waarde ? date( 'Y-m-d', $waarde ) : '';
+		} elseif ( 'historie' === $attribuut ) {
+			$nu = new \DateTime();
+			$nu->setTimezone( new \DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
+			$historie                 = json_decode( $this->data[ $attribuut ], true );
+			$historie[]               = $nu->format( 'd-m-Y H:i' ) . ": $waarde";
+			$this->data[ $attribuut ] = wp_json_encode( $historie );
 		} else {
 			$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
 		}
@@ -145,7 +155,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return bool
 	 */
-	public function gepauzeerd() {
+	public function is_gepauzeerd() {
 		$vandaag = strtotime( 'today' );
 		return $vandaag < $this->herstart_datum && $vandaag >= $this->pauze_datum;
 	}
@@ -155,7 +165,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return bool
 	 */
-	public function geannuleerd() {
+	public function is_geannuleerd() {
 		$vandaag = strtotime( 'today' );
 		return $this->eind_datum && $vandaag >= $this->eind_datum;
 	}
@@ -179,6 +189,8 @@ class Abonnement extends Artikel {
 	 * @return string|bool De redirect uri of false als de betaling niet lukt.
 	 */
 	public function start_incasso() {
+		$this->historie = 'gestart met automatisch betalen';
+		$this->save();
 		$this->artikel_type = 'mandaat';
 		return $this->ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', $this->referentie() );
 	}
@@ -191,6 +203,8 @@ class Abonnement extends Artikel {
 	 */
 	public function stop_incasso( $admin = false ) {
 		$this->betalen->verwijder_mandaat( $this->klant_id );
+		$this->historie = 'gestopt met automatisch betalen';
+		$this->save();
 		if ( ! $admin ) {
 			$this->bericht = 'Je gaat het abonnement voortaan per bank betalen';
 			$this->email( '_gewijzigd' );
@@ -302,16 +316,19 @@ class Abonnement extends Artikel {
 	 * @param bool $admin          Als functie vanuit admin scherm wordt aangeroepen.
 	 */
 	public function pauzeren( $pauze_datum, $herstart_datum, $admin = false ) {
-		$thans_gepauzeerd     = $this->gepauzeerd();
+		$thans_gepauzeerd     = $this->is_gepauzeerd();
 		$this->pauze_datum    = $pauze_datum;
 		$this->herstart_datum = $herstart_datum;
+		$pauze_datum_str      = strftime( '%d-%m-%Y', $this->pauze_datum );
+		$herstart_datum_str   = strftime( '%d-%m-%Y', $this->herstart_datum );
+		$this->historie       = "gepauzeerd per $pauze_datum_str en hervat per $herstart_datum_str";
 		$this->save();
+		if ( $thans_gepauzeerd ) {
+			$this->bericht = "Je hebt aangegeven dat je abonnement, dat nu gepauzeerd is, hervat wordt per $herstart_datum_str";
+		} else {
+			$this->bericht = "Je pauzeert het abonnement per $pauze_datum_str en hervat het per $herstart_datum_str";
+		}
 		if ( ! $admin ) {
-			if ( $thans_gepauzeerd ) {
-				$this->bericht = 'Je hebt aangegeven dat je abonnement, dat nu gepauzeerd is, hervat wordt per ' . strftime( '%d-%m-%Y', $this->herstart_datum );
-			} else {
-				$this->bericht = 'Je pauzeert het abonnement per ' . strftime( '%d-%m-%Y', $this->pauze_datum ) . ' en hervat het per ' . strftime( '%d-%m-%Y', $this->herstart_datum );
-			}
 			$this->email( '_gewijzigd' );
 		}
 		return true;
@@ -332,9 +349,9 @@ class Abonnement extends Artikel {
 	 */
 	public function status( $uitgebreid = false ) {
 		$vandaag = strtotime( 'today' );
-		if ( $this->geannuleerd() ) {
+		if ( $this->is_geannuleerd() ) {
 			return $uitgebreid ? 'gestopt sinds ' . strftime( '%x', $this->eind_datum ) : 'gestopt';
-		} elseif ( $this->gepauzeerd() ) {
+		} elseif ( $this->is_gepauzeerd() ) {
 			return $uitgebreid ? 'gepauzeerd sinds ' . strftime( '%x', $this->pauze_datum ) . ' tot ' . strftime( '%x', $this->herstart_datum ) : 'gepauzeerd';
 		} elseif ( $vandaag > $this->start_datum ) {
 			if ( $vandaag < $this->pauze_datum ) {
@@ -359,10 +376,12 @@ class Abonnement extends Artikel {
 	 */
 	public function stoppen( $eind_datum, $admin = false ) {
 		$this->eind_datum = $eind_datum;
+		$eind_datum_str   = strftime( '%d-%m-%Y', $this->eind_datum );
 		$this->betalen->verwijder_mandaat( $this->klant_id );
+		$this->historie = "gestopt per $eind_datum_str";
+		$this->bericht  = "Je hebt het abonnement per $eind_datum_str beëindigd.";
 		$this->save();
 		if ( ! $admin ) {
-			$this->bericht = 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $this->eind_datum ) . ' beëindigd.';
 			$this->email( '_gewijzigd' );
 		}
 		return true;
@@ -427,20 +446,23 @@ class Abonnement extends Artikel {
 	 * @param string $dag          Dag voor beperkt abonnement.
 	 */
 	public function wijzigen( $wijzig_datum, $type, $soort, $dag = '' ) {
-		$gewijzigd = false;
+		$gewijzigd        = false;
+		$wijzig_datum_str = strftime( '%d-%m-%Y', $wijzig_datum );
 		switch ( $type ) {
 			case 'soort':
-				$gewijzigd   = $this->soort != $soort || $this->dag != $dag; // phpcs:ignore
-				$this->soort   = $soort;
-				$this->dag     = $dag;
-				$this->bericht = 'Je hebt het abonnement per ' . strftime( '%d-%m-%Y', $wijzig_datum ) . ' gewijzigd naar ' . $this->soort .
+				$gewijzigd      = $this->soort != $soort || $this->dag != $dag; // phpcs:ignore
+				$this->soort    = $soort;
+				$this->dag      = $dag;
+				$this->historie = "gewijzigd per $wijzig_datum_str naar $soort $dag";
+				$this->bericht  = "Je hebt het abonnement per $wijzig_datum_str gewijzigd naar {$this->soort} " .
 					( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
 				break;
 			case 'extras':
 				$gewijzigd    = $this->extras != $soort; // phpcs:ignore
-				$this->extras  = $soort;
-				$this->bericht = 'Je gaat voortaan per ' . strftime( '%d-%m-%Y', $wijzig_datum ) .
-					( count( $soort ) ? ' gebruik maken van ' . implode( ', ', $soort ) : ' geen gebruik meer van extras' );
+				$this->extras   = $soort;
+				$soort_str      = count( $soort ) ? ( 'gebruik maken van ' . implode( ', ', $soort ) ) : 'geen extras meer gebruiken';
+				$this->historie = "extras gewijzigd per $wijzig_datum_str naar $soort_str";
+				$this->bericht  = "Je gaat voortaan per $wijzig_datum_str $soort_str";
 				break;
 			default:
 				$this->bericht = '';
@@ -645,7 +667,7 @@ class Abonnement extends Artikel {
 	public static function dagelijks() {
 		$vandaag = strtotime( 'today' );
 		foreach ( self::all() as $abonnement ) {
-			if ( $abonnement->geannuleerd() || $vandaag < $abonnement->start_datum ) {
+			if ( $abonnement->is_geannuleerd() || $vandaag < $abonnement->start_datum ) {
 				// Gestopte abonnementen en abonnementen die nog moeten starten hebben geen actie nodig.
 				continue;
 			} elseif ( $abonnement->eind_datum && $vandaag >= $abonnement->eind_datum ) {

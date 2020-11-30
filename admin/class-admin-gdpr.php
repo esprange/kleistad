@@ -144,7 +144,6 @@ class Admin_GDPR {
 	/**
 	 * Export functie privacy gevoelige data.
 	 *
-	 * @global object $wpdb wp database
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
@@ -178,7 +177,6 @@ class Admin_GDPR {
 	/**
 	 * Export functie privacy gevoelige data.
 	 *
-	 * @global object $wpdb wp database
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */

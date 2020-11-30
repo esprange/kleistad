@@ -99,6 +99,8 @@ class Admin_Ovens extends \WP_List_Table {
 
 	/**
 	 * Prepareer de te tonen items
+	 *
+	 * @global object $wpdb WordPress database.
 	 */
 	public function prepare_items() {
 		global $wpdb;

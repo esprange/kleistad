@@ -46,7 +46,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 					'dag'            => ( 'beperkt' === $abonnementen[ $gebruiker->ID ]->soort ) ? $abonnementen[ $gebruiker->ID ]->dag : '',
 					'soort'          => ucfirst( $abonnementen[ $gebruiker->ID ]->soort ),
 					'extras'         => implode( ' ', $abonnementen[ $gebruiker->ID ]->extras ),
-					'geannuleerd'    => $abonnementen[ $gebruiker->ID ]->geannuleerd(),
+					'geannuleerd'    => $abonnementen[ $gebruiker->ID ]->is_geannuleerd(),
 					'opmerking'      => $abonnementen[ $gebruiker->ID ]->opmerking,
 				];
 			} else {

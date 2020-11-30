@@ -12,7 +12,18 @@
 namespace Kleistad;
 
 ?>
-<table style="width: 100%; border-spacing:2px; padding:5px" class="form-table">
+
+<div style="position:relative;top:0;">
+<?php if ( count( $item['historie'] ) ) : ?>
+	<div class="card" style="width:50%;position:absolute;top:0px;right:0px" >
+	<ul style="list-style-type:square">
+	<?php foreach ( $item['historie'] as $historie ) : ?>
+		<li><?php echo esc_html( $historie ); ?></li>
+	<?php endforeach ?>
+	</ul>
+	</div>
+<?php endif ?>
+<table style="border-spacing:2px; padding:5px;" class="form-table">
 	<tbody>
 		<tr class="form-field">
 			<th  scope="row">
@@ -128,11 +139,6 @@ namespace Kleistad;
 					<?php readonly( $item['geannuleerd'] ); ?> >
 			</td>
 		</tr>
-		<tr>
-			<td colspan="2">
-				<?php submit_button(); ?>
-			</td>
-		</tr>
 			<?php
 		elseif ( 'mollie' === $actie ) :
 			?>
@@ -154,3 +160,4 @@ endif
 		?>
 	</tbody>
 </table>
+</div>

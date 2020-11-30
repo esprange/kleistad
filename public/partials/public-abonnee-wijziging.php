@@ -171,7 +171,7 @@ endforeach;
 	</div>
 	<div class="kleistad_abo_pauze kleistad_abo_veld"  style="display:none" >
 		<?php
-		if ( $data['abonnement']->gepauzeerd() ) :
+		if ( $data['abonnement']->is_gepauzeerd() ) :
 			if ( $data['abonnement']->herstart_datum >= $per_datum ) :
 				?>
 		<div class="kleistad_row">

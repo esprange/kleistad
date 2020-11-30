@@ -315,16 +315,7 @@ class Cursus extends Entity {
 				return false; // Er is al een inschrijving dus verwijderen is niet meer mogelijk.
 			}
 		}
-		if ( $wpdb->delete( "{$wpdb->prefix}kleistad_cursussen", [ 'id' => $this->id ] ) ) {
-			try {
-				$event = new Event( $this->event_id );
-				$event->delete();
-			} catch ( \Exception $e ) {
-				unset( $e ); // phpcs:ignore
-			}
-		} else {
-			return false;
-		};
+		$this->erase();
 		return true;
 	}
 

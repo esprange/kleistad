@@ -161,8 +161,8 @@ class Admin_Abonnees_Handler {
 					'dag'              => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
 					'code'             => $abonnement->code,
 					'extras'           => $abonnement->extras,
-					'geannuleerd'      => $abonnement->geannuleerd(),
-					'gepauzeerd'       => $abonnement->gepauzeerd(),
+					'geannuleerd'      => $abonnement->is_geannuleerd(),
+					'gepauzeerd'       => $abonnement->is_gepauzeerd(),
 					'inschrijf_datum'  => ( $abonnement->datum ? strftime( '%d-%m-%Y', $abonnement->datum ) : '' ),
 					'start_datum'      => ( $abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '' ),
 					'start_eind_datum' => ( $abonnement->start_eind_datum ? strftime( '%d-%m-%Y', $abonnement->start_eind_datum ) : '' ),
@@ -170,6 +170,7 @@ class Admin_Abonnees_Handler {
 					'eind_datum'       => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
 					'herstart_datum'   => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
 					'mandaat'          => $betalen->heeft_mandaat( $abonnee_id ),
+					'historie'         => $abonnement->historie,
 					'mollie_info'      => Betalen::info( $abonnee_id ),
 				];
 			}
