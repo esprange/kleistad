@@ -110,10 +110,10 @@ if ( isset( $data['recept'] ) ) :
 	</div>
 	<div class="kleistad_row" style="padding-top:15px">
 		<div class="kleistad_col_5">
-			<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" rows="5"><?php echo esc_textarea( $data['recept']['content']['kenmerk'] ); ?></textarea>
+			<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" maxlength="1000" rows="5"><?php echo esc_textarea( $data['recept']['content']['kenmerk'] ); ?></textarea>
 		</div>
 		<div class="kleistad_col_5">
-			<textarea name="herkomst" id="kleistad_herkomst" tabindex="6" rows="5"><?php echo esc_textarea( $data['recept']['content']['herkomst'] ); ?></textarea>
+			<textarea name="herkomst" id="kleistad_herkomst" tabindex="6" maxlength="1000" rows="5"><?php echo esc_textarea( $data['recept']['content']['herkomst'] ); ?></textarea>
 		</div>
 	</div>
 	<div class="kleistad_row">
@@ -126,7 +126,7 @@ if ( isset( $data['recept'] ) ) :
 	</div>
 	<div class="kleistad_row" style="padding-top:15px">
 		<div class="kleistad_col_5">
-			<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" rows="5"><?php echo esc_textarea( $data['recept']['content']['stookschema'] ); ?></textarea>
+			<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" maxlength="1000" rows="5"><?php echo esc_textarea( $data['recept']['content']['stookschema'] ); ?></textarea>
 		</div>
 		<div class="kleistad_col_5">
 			<input type="file" name="foto" id="kleistad_foto_input" accept=".jpeg,.jpg,.tiff,.tif" /><br />

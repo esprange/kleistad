@@ -140,7 +140,7 @@ $this->form();
 			<label for="kleistad_vraag">Wil je iets vragen of wil je iets delen ?</label>
 		</div>
 		<div class="kleistad_col_7 kleistad_input">
-			<textarea class="kleistad_input" name="vraag" id="kleistad_vraag" rows="5" cols="50"><?php echo esc_textarea( $data['input']['vraag'] ); ?></textarea>
+			<textarea class="kleistad_input" name="vraag" id="kleistad_vraag" maxlength="1000" rows="5" cols="50"><?php echo esc_textarea( $data['input']['vraag'] ); ?></textarea>
 		</div>
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;">

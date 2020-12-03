@@ -102,7 +102,7 @@ namespace Kleistad;
 		<label for="kleistad_opmerking">Opmerking</label>
 	</div>
 	<div class="kleistad_col_7 kleistad_input">
-		<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" rows="3" cols="50"><?php echo esc_textarea( $data['input']['opmerking'] ); ?></textarea>
+		<textarea class="kleistad_input" name="opmerking" id="kleistad_opmerking" maxlength="1000" rows="3" cols="50"><?php echo esc_textarea( $data['input']['opmerking'] ); ?></textarea>
 	</div>
 </div>
 <div class="kleistad_row">

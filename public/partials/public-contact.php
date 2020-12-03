@@ -88,7 +88,7 @@ $this->form();
 	</div>
 	<div class ="kleistad_row" title="Geef aan wat je vraag is of wat je ons wilt mededelen" >
 		<div class="kleistad_col_10 kleistad_input">
-			<textarea class="kleistad_input" name="vraag" id="kleistad_vraag" rows="5" cols="50" required ><?php echo esc_textarea( $data['input']['vraag'] ); ?></textarea>
+			<textarea class="kleistad_input" name="vraag" id="kleistad_vraag" maxlength="1000" rows="5" cols="50" required ><?php echo esc_textarea( $data['input']['vraag'] ); ?></textarea>
 		</div>
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;">

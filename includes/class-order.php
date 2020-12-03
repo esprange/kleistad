@@ -293,13 +293,19 @@ class Order extends Entity {
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
 		if ( ! $this->id ) {
 			$this->factuurnr = 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );
-			$wpdb->insert( "{$wpdb->prefix}kleistad_orders", $this->data );
+			if ( false === $wpdb->insert( "{$wpdb->prefix}kleistad_orders", $this->data ) ) {
+				$wpdb->print_error();
+			}
 			$this->id = $wpdb->insert_id;
 		} else {
 			$this->mutatie_datum = time();
-			$wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] );
+			if ( false === $wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] ) ) {
+				$wpdb->print_error();
+			}
 		}
-		$wpdb->query( 'COMMIT' );
+		if ( false === $wpdb->query( 'COMMIT' ) ) {
+			$wpdb->print_error();
+		}
 
 		if ( $this->transactie_id && -0.01 > $openstaand ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.

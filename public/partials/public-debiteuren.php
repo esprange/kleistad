@@ -111,7 +111,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 				<label for="kleistad_opmerking_annulering">Opmerking</label>
 			</div>
 			<div class="kleistad_col_7" >
-				<textarea class="kleistad_input" name="opmerking_annulering" id="kleistad_opmerking_annulering" rows="5" cols="50"></textarea>
+				<textarea class="kleistad_input" name="opmerking_annulering" id="kleistad_opmerking_annulering" maxlength="500" rows="5" cols="50"></textarea>
 			</div>
 		</div>
 	</div>
@@ -150,7 +150,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 				<label for="kleistad_opmerking_korting">Opmerking</label>
 			</div>
 			<div class="kleistad_col_7" >
-				<textarea class="kleistad_input" name="opmerking_korting" id="kleistad_opmerking_korting" rows="5" cols="50"></textarea>
+				<textarea class="kleistad_input" name="opmerking_korting" id="kleistad_opmerking_korting" maxlength="500" rows="5" cols="50"></textarea>
 			</div>
 		</div>
 	</div>
@@ -186,10 +186,9 @@ elseif ( 'debiteur' === $data['actie'] ) :
 <br/><hr><br/>
 <?php endif // Als zoek. ?>
 <p><strong>Totaal openstaand:</strong> &euro; <?php echo esc_html( number_format_i18n( $data['openstaand'], 2 ) ); ?></p>
-<table class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "asc" ]]' >
+<table class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 3, "desc" ], [ 5, "asc" ]]' >
 	<thead>
 		<tr>
-			<th data-visible="false">Vervaldatum</th>
 			<th>Code</th>
 			<th>Naam</th>
 			<th>Betreft</th>
@@ -208,7 +207,6 @@ elseif ( 'debiteur' === $data['actie'] ) :
 			$datum->setTimestamp( $debiteur['sinds'] );
 			?>
 			<tr style="<?php echo $debiteur['verval_datum'] <= strtotime( 'today' ) && ! $debiteur['gesloten'] ? 'color:#b30000' : ''; ?>" >
-				<td data-visible="false"><?php echo esc_html( $debiteur['verval_datum'] ); ?></td>
 				<td><?php echo esc_html( $debiteur['referentie'] . ( $debiteur['credit'] ? '(C)' : '' ) ); ?></td>
 				<td><?php echo esc_html( $debiteur['naam'] ); ?></td>
 				<td><?php echo esc_html( $debiteur['betreft'] ); ?></td>

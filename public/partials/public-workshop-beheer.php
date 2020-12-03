@@ -146,7 +146,7 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 			<td colspan="2" ><label for="kleistad_reactie">Reactie</label></td>
 		</tr>
 		<tr>
-			<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" rows="10" required ></textarea></td>
+			<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" maxlength="1000" rows="10" required ></textarea></td>
 		</tr>
 	</table>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>

@@ -190,7 +190,7 @@ class Admin_Upgrade {
 			referentie varchar(30) NOT NULL,
 			transactie_id varchar(20) NOT NULL DEFAULT '',
 			regels varchar(2000),
-			opmerking varchar(200),
+			opmerking varchar(500),
 			factuurnr int(10) DEFAULT 0,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
