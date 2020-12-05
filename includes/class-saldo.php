@@ -273,15 +273,7 @@ class Saldo extends Artikel {
 	 * @return array
 	 */
 	protected function factuurregels() {
-		return [
-			array_merge(
-				self::split_bedrag( $this->prijs ),
-				[
-					'artikel' => 'stooksaldo',
-					'aantal'  => 1,
-				]
-			),
-		];
+		return new Orderregel( 'stooksaldo', 1, $this->prijs );
 	}
 
 	/**

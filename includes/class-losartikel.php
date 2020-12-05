@@ -22,6 +22,13 @@ namespace Kleistad;
 class LosArtikel extends Artikel {
 
 	/**
+	 * Lijst van orderregels
+	 *
+	 * @var array $orderregels De regels.
+	 */
+	private $orderregels = [];
+
+	/**
 	 * De constructor
 	 *
 	 * @since      6.2.0
@@ -31,10 +38,9 @@ class LosArtikel extends Artikel {
 	public function __construct( $verkoop_id ) {
 		$this->betalen = new Betalen();
 		$this->data    = [
-			'regels' => [],
-			'klant'  => [],
-			'prijs'  => 0.0,
-			'code'   => "X$verkoop_id",
+			'klant' => [],
+			'prijs' => 0.0,
+			'code'  => "X$verkoop_id",
 		];
 	}
 
@@ -146,16 +152,8 @@ class LosArtikel extends Artikel {
 	 * @param float  $prijs   De bruto prijs per artikel.
 	 */
 	public function bestelregel( $artikel, $aantal, $prijs ) {
-		$regels       = $this->regels;
-		$regels[]     = array_merge(
-			self::split_bedrag( $prijs ),
-			[
-				'artikel' => $artikel,
-				'aantal'  => $aantal,
-			]
-		);
-		$this->regels = $regels;
-		$this->prijs += $aantal * $prijs;
+		$this->orderregels = new Orderregel( $artikel, $aantal, $prijs );
+		$this->prijs      += $aantal * $prijs;
 	}
 
 	/**
@@ -180,7 +178,7 @@ class LosArtikel extends Artikel {
 	 * @return array
 	 */
 	protected function factuurregels() {
-		return $this->regels;
+		return $this->orderregels;
 	}
 
 	/**

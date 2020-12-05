@@ -486,45 +486,17 @@ class Inschrijving extends Artikel {
 	 */
 	protected function factuurregels() {
 		if ( 0 < $this->lopende_cursus ) {
-			return [
-				array_merge(
-					self::split_bedrag( $this->lopende_cursus ),
-					[
-						'artikel' => "cursus: {$this->cursus->naam} (reeds gestart)",
-						'aantal'  => $this->aantal,
-					]
-				),
-			];
+			return new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->lopende_cursus );
 		} else {
 			if ( $this->cursus->is_binnenkort() ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten, echter bij inschrijfgeld 1 ct dit afronden naar 0.
-				return [
-					array_merge(
-						self::split_bedrag( $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ),
-						[
-							'artikel' => "cursus: {$this->cursus->naam}",
-							'aantal'  => $this->aantal,
-						]
-					),
-				];
+				return new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten + $this->cursus->cursuskosten );
 			} else {
-				$regels = [];
+				$orderregels = [];
 				if ( 0 < $this->cursus->inschrijfkosten ) {
-					$regels[] = array_merge(
-						self::split_bedrag( $this->cursus->inschrijfkosten ),
-						[
-							'artikel' => "inschrijfkosten cursus: {$this->cursus->naam}",
-							'aantal'  => $this->aantal,
-						]
-					);
+					$orderregels[] = new Orderregel( "inschrijfkosten cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten );
 				}
-				$regels[] = array_merge(
-					self::split_bedrag( $this->cursus->cursuskosten ),
-					[
-						'artikel' => "cursus: {$this->cursus->naam}",
-						'aantal'  => $this->aantal,
-					]
-				);
-				return $regels;
+				$orderregels[] = new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->cursuskosten );
+				return $orderregels;
 			}
 		}
 	}

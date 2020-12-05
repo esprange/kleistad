@@ -55,15 +55,10 @@ class Public_Debiteuren extends ShortcodeForm {
 	private function debiteur( $id ) {
 		$order = new Order( $id );
 		if ( '@' !== $order->referentie[0] ) {
-			$betreft      = Artikel::get_artikel( $order->referentie )->artikel_naam();
-			$geblokkeerd  = $order->geblokkeerd();
-			$annuleerbaar = ! boolval( $order->credit_id );
+			$betreft = Artikel::get_artikel( $order->referentie )->artikel_naam();
 		} else {
-			$betreft      = 'afboeking';
-			$geblokkeerd  = true;
-			$annuleerbaar = false;
+			$betreft = 'afboeking';
 		}
-		$te_betalen = $order->te_betalen();
 		return [
 			'id'            => $order->id,
 			'naam'          => $order->klant['naam'],
@@ -71,18 +66,18 @@ class Public_Debiteuren extends ShortcodeForm {
 			'referentie'    => $order->referentie,
 			'factuur'       => $order->factuurnummer(),
 			'betaald'       => $order->betaald,
-			'openstaand'    => $te_betalen,
+			'openstaand'    => $order->te_betalen(),
 			'sinds'         => $order->datum,
 			'historie'      => $order->historie,
 			'gesloten'      => $order->gesloten,
 			'ontvangst'     => 0.0,
 			'korting'       => 0.0,
 			'restant'       => 0.0,
-			'geblokkeerd'   => $geblokkeerd,
-			'annuleerbaar'  => $annuleerbaar,
-			'terugstorting' => $order->terugstorting_actief(),
-			'credit'        => boolval( $order->origineel_id ),
-			'afboekbaar'    => 0 < $te_betalen && strtotime( 'today' ) > strtotime( '+30 days', $order->verval_datum ), // Wettelijke betaaltermijn 30 dagen.
+			'geblokkeerd'   => $order->is_geblokkeerd(),
+			'annuleerbaar'  => $order->is_annuleerbaar(),
+			'terugstorting' => $order->is_terugstorting_actief(),
+			'credit'        => $order->is_credit(),
+			'afboekbaar'    => $order->is_afboekbaar(),
 		];
 	}
 
@@ -111,7 +106,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			}
 		} elseif ( 'blokkade' === $atts['actie'] ) {
 			$data['actie']            = 'blokkade';
-			$data['huidige_blokkade'] = Order::get_blokkade();
+			$data['huidige_blokkade'] = get_blokkade();
 			$data['nieuwe_blokkade']  = strtotime( '+3 month', $data['huidige_blokkade'] );
 		} else {
 			$data['actie']      = 'openstaand';
@@ -143,6 +138,10 @@ class Public_Debiteuren extends ShortcodeForm {
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
+				'terugstorting'        => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
 				'korting'              => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
@@ -159,7 +158,7 @@ class Public_Debiteuren extends ShortcodeForm {
 		if ( 'blokkade' !== $data['form_actie'] ) {
 			$order = new Order( $data['input']['id'] );
 			if ( 'korting' === $data['input']['debiteur_actie'] ) {
-				if ( $order->bruto() < $data['input']['korting'] ) {
+				if ( $order->orderregels->bruto() < $data['input']['korting'] ) {
 					$error->add( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
 				}
 			}
@@ -179,7 +178,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( 'blokkade' === $data['form_actie'] ) {
-			Order::zet_blokkade( strtotime( '+3 month', Order::get_blokkade() ) );
+			zet_blokkade( strtotime( '+3 month', get_blokkade() ) );
 			return [
 				'status'  => 'De blokkade datum is gewijzigd',
 				'content' => $this->goto_home(),
@@ -191,10 +190,11 @@ class Public_Debiteuren extends ShortcodeForm {
 		$status  = '';
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
-				if ( $order->origineel_id ) {
-					$artikel->verwerk_betaling( $data['input']['id'], - (float) $data['input']['ontvangst'], true, 'bank' );
-				} else {
+				if ( $data['input']['ontvangst'] ) {
 					$artikel->verwerk_betaling( $data['input']['id'], (float) $data['input']['ontvangst'], true, 'bank' );
+				}
+				if ( $data['input']['terugstorting'] ) {
+					$artikel->verwerk_betaling( $data['input']['id'], - (float) $data['input']['terugstorting'], true, 'bank' );
 				}
 				$status = 'De betaling is verwerkt';
 				break;

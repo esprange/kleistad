@@ -34,13 +34,13 @@ if ( 'betalen' === $data['actie'] ) :
 		</thead>
 		<tbody>
 	<?php
-	foreach ( $data['regels']  as $regel ) :
+	foreach ( $data['orderregels']  as $orderregel ) :
 		?>
 		<tr>
-			<td style="text-align:right" ><?php echo esc_html( $regel['aantal'] ); ?></td>
-			<td><?php echo esc_html( $regel['artikel'] ); ?></td>
-			<td style="text-align:right" >&euro; <?php echo esc_html( number_format_i18n( $regel['prijs'] + $regel['btw'], 2 ) ); ?></td>
-			<td style="text-align:right" >&euro; <?php echo esc_html( number_format_i18n( $regel['aantal'] * ( $regel['prijs'] + $regel['btw'] ), 2 ) ); ?></td>
+			<td style="text-align:right" ><?php echo esc_html( $orderregel->aantal ); ?></td>
+			<td><?php echo esc_html( $orderregel->artikel ); ?></td>
+			<td style="text-align:right" >&euro; <?php echo esc_html( number_format_i18n( $orderregel->prijs + $orderregel->btw, 2 ) ); ?></td>
+			<td style="text-align:right" >&euro; <?php echo esc_html( number_format_i18n( $orderregel->aantal * ( $orderregel->prijs + $orderregel->btw ), 2 ) ); ?></td>
 		</tr>
 		<?php
 		endforeach

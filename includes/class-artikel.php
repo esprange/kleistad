@@ -21,8 +21,6 @@ namespace Kleistad;
  */
 abstract class Artikel extends Entity {
 
-	const BTW = 0.21; // 21 procent.
-
 	/**
 	 * Het betaal object.
 	 *
@@ -143,21 +141,13 @@ abstract class Artikel extends Entity {
 		$credit_order->klant        = $order->klant;
 		$credit_order->origineel_id = $order->id;
 		$credit_order->verval_datum = strtotime( 'tomorrow' );
-		$regels                     = $order->regels;
-		foreach ( $regels as &$regel ) {
-			$regel['artikel'] = 'annulering ' . $regel['artikel'];
-			$regel['aantal']  = - $regel['aantal'];
+
+		foreach ( $order->orderregels as $orderregel ) {
+			$credit_order->orderregels->toevoegen( new Orderregel( "annulering {$orderregel->artikel}", - $orderregel->aantal, $orderregel->prijs, $orderregel->btw ) );
 		}
 		if ( 0.0 < $restant ) {
-			$regels[] = array_merge(
-				$this->split_bedrag( $restant ),
-				[
-					'artikel' => 'kosten i.v.m. annulering',
-					'aantal'  => 1,
-				]
-			);
+			$credit_order->orderregels->toevoegen( new Orderregel( 'kosten i.v.m. annulering', 1, $restant ) );
 		}
-		$credit_order->regels        = $regels;
 		$credit_order->opmerking     = $opmerking;
 		$credit_order->historie      = 'order en credit factuur aangemaakt';
 		$credit_order->transactie_id = $order->transactie_id;
@@ -184,13 +174,13 @@ abstract class Artikel extends Entity {
 	final public function bestel_order( $bedrag, $verval_datum, $opmerking = '', $transactie_id = '', $factuur = true ) {
 		$order                = new Order();
 		$order->betaald       = $bedrag;
-		$order->regels        = $this->factuurregels();
 		$order->historie      = $factuur ? 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 ) : 'order aangemaakt';
 		$order->klant         = $this->naw_klant();
 		$order->opmerking     = $opmerking;
 		$order->referentie    = $this->referentie();
 		$order->transactie_id = $transactie_id;
 		$order->verval_datum  = $verval_datum;
+		$order->orderregels->toevoegen( $this->factuurregels() );
 		$order->save();
 		$this->maak_link( $order->id );
 		$this->betaalactie( $order->betaald );
@@ -207,18 +197,10 @@ abstract class Artikel extends Entity {
 	 */
 	final public function korting_order( $id, $korting, $opmerking ) {
 		$order = new Order( $id );
-		if ( $order->geblokkeerd() ) {
+		if ( $order->is_geblokkeerd() ) {
 			return false;
 		}
-		$regels           = $order->regels;
-		$regels[]         = array_merge(
-			$this->split_bedrag( - $korting ),
-			[
-				'artikel' => 'korting',
-				'aantal'  => 1,
-			]
-		);
-		$order->regels    = $regels;
+		$order->orderregels->toevoegen( new Orderregel( Orderregel::KORTING, 1, - $korting ) );
 		$order->historie  = 'Correctie factuur i.v.m. korting € ' . number_format_i18n( $korting, 2 );
 		$order->opmerking = $opmerking;
 		$order->save();
@@ -262,13 +244,7 @@ abstract class Artikel extends Entity {
 		if ( $order->geblokkeerd() ) {
 			return false;
 		}
-		$korting_regels = [];
-		foreach ( $order->regels as $regel ) {
-			if ( 'korting' === $regel['artikel'] ) {
-				$korting_regels[] = $regel;
-			}
-		}
-		$order->regels     = array_merge( $this->factuurregels(), $korting_regels );
+		$order->orderregels->vervang( $this->factuurregels() );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->referentie();
 		if ( $order == $originele_order ) { // phpcs:ignore
@@ -363,21 +339,6 @@ abstract class Artikel extends Entity {
 			return $artikel;
 		}
 		return null;
-	}
-
-	/**
-	 * Splits een bruto bedrag op in het netto bedrag en de btw.
-	 *
-	 * @param  float $bedrag Het bruto bedrag.
-	 * @return array
-	 */
-	public static function split_bedrag( $bedrag ) {
-		$prijs = round( $bedrag / ( 1 + self::BTW ), 2 );
-		$btw   = round( $bedrag - $prijs, 2 );
-		return [
-			'prijs' => $prijs,
-			'btw'   => $btw,
-		];
 	}
 
 	/**

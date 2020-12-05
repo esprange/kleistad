@@ -112,11 +112,11 @@ class Factuur extends \FPDF {
 	/**
 	 * Toon de bestelling.
 	 *
-	 * @param array $regels         De factuur regels behorende bij de bestelling.
-	 * @param float $betaald        Wat er al betaald is.
-	 * @param float $nog_te_betalen Wat er nog betaald moet worden ingeval van een credit_factuur.
+	 * @param Orderregels $orderregels         De order regels behorende bij de bestelling.
+	 * @param float       $betaald        Wat er al betaald is.
+	 * @param float       $nog_te_betalen Wat er nog betaald moet worden ingeval van een credit_factuur.
 	 */
-	private function order( $regels, $betaald, $nog_te_betalen ) {
+	private function order( Orderregels $orderregels, float $betaald, float $nog_te_betalen ) {
 		$this->SetY( 120 );
 		$this->SetLeftMargin( 25 );
 		$w = [
@@ -135,23 +135,18 @@ class Factuur extends \FPDF {
 		$this->Cell( $w['stuksprijs'], $h, 'Stuksprijs', 'TB', 0, 'C' );
 		$this->Cell( $w['prijs'], $h, 'Prijs', 'TB', 1, 'C' );
 		$this->setFont( 'Arial' );
-		$totaal = 0.0;
-		$btw    = 0.0;
-		foreach ( $regels as $regel ) {
-			$prijs   = $regel['aantal'] * ( $regel['prijs'] + $regel['btw'] );
-			$totaal += $prijs;
-			$btw    += $regel['aantal'] * $regel['btw'];
-			$this->Cell( $w['aantal'], $h, $regel['aantal'], 0, 0, 'C' );
-			$this->Cell( $w['artikel'], $h, utf8_decode( $this->trunc( $regel['artikel'], 63 ) ), 0, 0, 'L' );
-			$this->Cell( $w['stuksprijs'], $h, $this->euro( $regel['prijs'] + $regel['btw'] ), 0, 0, 'R' );
-			$this->Cell( $w['prijs'], $h, $this->euro( $prijs ), 0, 1, 'R' );
+		foreach ( $orderregels as $orderregel ) {
+			$this->Cell( $w['aantal'], $h, $orderregel->aantal, 0, 0, 'C' );
+			$this->Cell( $w['artikel'], $h, utf8_decode( $this->trunc( $orderregel->artikel, 63 ) ), 0, 0, 'L' );
+			$this->Cell( $w['stuksprijs'], $h, $this->euro( $orderregel->prijs + $orderregel->btw ), 0, 0, 'R' );
+			$this->Cell( $w['prijs'], $h, $this->euro( $orderregel->aantal * ( $orderregel->prijs + $orderregel->btw ) ), 0, 1, 'R' );
 		}
 		$this->Ln( $h * 2 );
 		$this->Cell( $w['volledig'], 0, '', 'T', 1 );
 		$this->Cell( $w['samenvatting'], $h, 'Totaal', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( $totaal ), 0, 1, 'R' );
+		$this->Cell( $w['prijs'], $h, $this->euro( $orderregels->bruto() ), 0, 1, 'R' );
 		$this->Cell( $w['samenvatting'], $h, 'Inclusief BTW 21%', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( $btw ), 'B', 1, 'R' );
+		$this->Cell( $w['prijs'], $h, $this->euro( $orderregels->btw() ), 'B', 1, 'R' );
 		$this->Cell( $w['samenvatting'], $h, 'Reeds betaald ', 0, 0, 'R' );
 		$this->Cell( $w['prijs'], $h, $this->euro( $betaald ), 'B', 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
@@ -208,7 +203,7 @@ class Factuur extends \FPDF {
 		$this->start( strtoupper( $type ) . ' FACTUUR' );
 		$this->klant( $order->klant );
 		$this->info( $factuurnr, $order->datum, $order->referentie );
-		$this->order( $order->regels, $order->betaald, $order->te_betalen() );
+		$this->order( $order->orderregels, $order->betaald, $order->te_betalen() );
 		$this->opmerking( $order->opmerking );
 		$this->Output( 'F', $file );
 		return $file;

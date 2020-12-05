@@ -177,16 +177,7 @@ class Dagdelenkaart extends Artikel {
 	 * @return array De regels.
 	 */
 	protected function factuurregels() {
-		$options = Kleistad::get_options();
-		return [
-			array_merge(
-				self::split_bedrag( $options['dagdelenkaart'] ),
-				[
-					'artikel' => 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ),
-					'aantal'  => 1,
-				]
-			),
-		];
+		return new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, Kleistad::get_options()['dagdelenkaart'] );
 	}
 
 	/**

@@ -68,7 +68,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 			<div class="kleistad_col_3" >
 				&nbsp;
 			</div>
-			<?php if ( ! $data['debiteur']['credit'] ) : ?>
+			<?php if ( 0 < $data['debiteur']['openstaand'] ) : ?>
 				<div class="kleistad_col_4 kleistad_label">
 					<label for="kleistad_ontvangst">Ontvangen bedrag</label>
 				</div>
@@ -77,10 +77,10 @@ elseif ( 'debiteur' === $data['actie'] ) :
 				</div>
 			<?php else : // Als een credit stand. ?>
 				<div class="kleistad_col_4 kleistad_label">
-					<label for="kleistad_ontvangst">Teruggestort bedrag</label>
+					<label for="kleistad_terugstorting">Teruggestort bedrag</label>
 				</div>
 				<div class="kleistad_col_3" >
-					<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( - $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
+					<input type="number" step="0.01" id="kleistad_terugstorting" name="terugstorting" min="0.00" max="<?php echo esc_attr( - $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( $data['debiteur']['ontvangst'] ); ?>">
 				</div>
 			<?php endif ?>
 		</div>
@@ -166,7 +166,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 		</div>
 	</div>
-	<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', Order::get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>
+	<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>
 </form>
 	<?php
 	else : // Als niet 'debiteur'.

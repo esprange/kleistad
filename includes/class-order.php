@@ -35,6 +35,13 @@ namespace Kleistad;
 class Order extends Entity {
 
 	/**
+	 * De order regels
+	 *
+	 * @var Orderregels $regels De orderregel objecten.
+	 */
+	public Orderregels $orderregels;
+
+	/**
 	 * Maak het object aan.
 	 *
 	 * @param int|string $arg Het order id of de referentie of 0.
@@ -73,6 +80,7 @@ class Order extends Entity {
 		if ( ! empty( $resultaat ) ) {
 			$this->data = $resultaat;
 		}
+		$this->orderregels = new Orderregels( $this->data['regels'] );
 	}
 
 	/**
@@ -89,17 +97,6 @@ class Order extends Entity {
 			case 'credit_id':
 			case 'origineel_id':
 				return intval( $this->data[ $attribuut ] );
-			case 'regels':
-				$regels = [];
-				foreach ( json_decode( $this->data['regels'], true ) as $regel ) {
-					$regels[] = [
-						'artikel' => $regel['artikel'],
-						'aantal'  => floatval( $regel['aantal'] ),
-						'prijs'   => floatval( $regel['prijs'] ),
-						'btw'     => floatval( $regel['btw'] ),
-					];
-				}
-				return $regels;
 			case 'klant':
 			case 'historie':
 				return json_decode( $this->data[ $attribuut ], true );
@@ -126,18 +123,6 @@ class Order extends Entity {
 	 */
 	public function __set( $attribuut, $waarde ) {
 		switch ( $attribuut ) {
-			case 'regels':
-				$regels = [];
-				foreach ( $waarde as $regel ) {
-					$regels[] = [
-						'artikel' => $regel['artikel'],
-						'aantal'  => number_format( $regel['aantal'], 2, '.', '' ),
-						'prijs'   => number_format( $regel['prijs'], 2, '.', '' ),
-						'btw'     => number_format( $regel['btw'], 2, '.', '' ),
-					];
-				}
-				$this->data[ $attribuut ] = wp_json_encode( $regels );
-				break;
 			case 'klant':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
@@ -173,21 +158,13 @@ class Order extends Entity {
 	 * Afboeken van een order.
 	 */
 	public function afboeken() {
-		$te_betalen           = $this->te_betalen();
-		$dd_order             = new self();
-		$dd_order->historie   = 'Afboeking order door ' . wp_get_current_user()->display_name;
-		$dd_order->referentie = '@-' . $this->referentie;
-		$dd_order->betaald    = $te_betalen;
-		$dd_order->klant      = $this->klant;
-		$dd_order->regels     = [
-			array_merge(
-				Artikel::split_bedrag( $te_betalen ),
-				[
-					'artikel' => 'Afboeking',
-					'aantal'  => '1',
-				]
-			),
-		];
+		$te_betalen            = $this->te_betalen();
+		$dd_order              = new self();
+		$dd_order->historie    = 'Afboeking order door ' . wp_get_current_user()->display_name;
+		$dd_order->referentie  = '@-' . $this->referentie;
+		$dd_order->betaald     = $te_betalen;
+		$dd_order->klant       = $this->klant;
+		$dd_order->orderregels = new Orderregel( 'Afboeking', 1, $te_betalen );
 		$dd_order->save();
 		$this->betaald += $te_betalen;
 		$this->historie = 'Afboeking';
@@ -197,50 +174,34 @@ class Order extends Entity {
 	/**
 	 * Bepaal of de order nog gecorrigeerd mag worden.
 	 */
-	public function geblokkeerd() {
-		$blokkade = self::get_blokkade();
-		return ( $this->datum < $blokkade || $this->credit_id );
+	public function is_geblokkeerd() {
+		return $this->datum < get_blokkade() || boolval( $this->credit_id ) || '@' === $this->referentie[0];
 	}
 
 	/**
-	 * Bepaal het totaal bedrag van de order.
-	 *
-	 * @return float
+	 * Bepaal of de order nog annuleerbaar is.
 	 */
-	public function bruto() {
-		return $this->netto() + $this->btw();
+	public function is_annuleerbaar() {
+		return ! boolval( $this->credit_id ) && '@' !== $this->referentie[0];
 	}
 
 	/**
-	 * Bepaal het totaal bedrag exclusief BTW van de order.
-	 *
-	 * @return float
+	 * Bepaal of het een credit order is.
 	 */
-	public function netto() {
-		$netto = 0.0;
-		foreach ( $this->regels as $regel ) {
-			$netto += ( $regel['prijs'] ) * $regel['aantal'];
-		}
-		return $netto;
+	public function is_credit() {
+		return boolval( $this->origineel_id );
 	}
 
-	/**
-	 * Bepaal het totaal bedrag aan BTW van de order.
-	 *
-	 * @return float
+	/** Beppal of de order afboekbaar is, na de Wettelijke betaaltermijn 30 dagen.
 	 */
-	public function btw() {
-		$btw = 0.0;
-		foreach ( $this->regels as $regel ) {
-			$btw += ( $regel['btw'] ) * $regel['aantal'];
-		}
-		return $btw;
+	public function is_afboekbaar() {
+		return 0 < $this->te_betalen() && strtotime( 'today' ) > strtotime( '+30 days', $this->verval_datum );
 	}
 
 	/**
 	 * Controleer of er een terugstorting actief is. In dat geval moeten er geen bankbetalingen gedaan worden.
 	 */
-	public function terugstorting_actief() {
+	public function is_terugstorting_actief() {
 		$betalen = new Betalen();
 		if ( $this->transactie_id ) {
 			return $betalen->terugstorting_actief( $this->transactie_id );
@@ -263,11 +224,11 @@ class Order extends Entity {
 	 * @return float
 	 */
 	public function te_betalen() {
-		if ( $this->origineel_id ) {
+		if ( $this->is_credit() ) {
 			$origineel_order = new Order( $this->origineel_id );
-			return $origineel_order->bruto() + $this->bruto() - $this->betaald;
+			return round( $origineel_order->orderregels->bruto() + $this->orderregels->bruto() - $this->betaald, 2 );
 		} else {
-			return $this->credit_id ? 0.0 : $this->bruto() - $this->betaald;
+			return round( $this->orderregels->bruto() - $this->betaald, 2 );
 		}
 	}
 
@@ -281,33 +242,26 @@ class Order extends Entity {
 	 */
 	public function save() {
 		global $wpdb;
-		if ( $this->origineel_id ) {
-			$origineel_order = new Order( $this->origineel_id );
-			$openstaand      = $origineel_order->bruto() + $this->bruto() - $this->betaald;
-		} elseif ( $this->credit_id ) {
-			$openstaand = 0;
-		} else {
-			$openstaand = $this->bruto() - $this->betaald;
-		}
-		$this->gesloten = 0.01 >= abs( $openstaand );
+		$this->gesloten = 0.01 >= abs( $this->te_betalen() );
+		$this->regels   = $this->orderregels->export();
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
 		if ( ! $this->id ) {
 			$this->factuurnr = 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );
 			if ( false === $wpdb->insert( "{$wpdb->prefix}kleistad_orders", $this->data ) ) {
-				$wpdb->print_error();
+				return false;
 			}
 			$this->id = $wpdb->insert_id;
 		} else {
 			$this->mutatie_datum = time();
 			if ( false === $wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] ) ) {
-				$wpdb->print_error();
+				return false;
 			}
 		}
 		if ( false === $wpdb->query( 'COMMIT' ) ) {
-			$wpdb->print_error();
+			return false;
 		}
 
-		if ( $this->transactie_id && -0.01 > $openstaand ) {
+		if ( $this->transactie_id && ! $this->gesloten ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
 			$betalen = new Betalen();
 			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'Kleistad: zie factuur ' . $this->factuurnummer() );
@@ -323,24 +277,6 @@ class Order extends Entity {
 			);
 		}
 		return $this->id;
-	}
-
-	/**
-	 * Zet de blokkade datum.
-	 *
-	 * @param int $datum De datum in unix time.
-	 */
-	public static function zet_blokkade( $datum ) {
-		update_option( 'kleistad_blokkade', $datum );
-	}
-
-	/**
-	 * Get de blokkade datum.
-	 *
-	 * @return int $datum De datum in unix time.
-	 */
-	public static function get_blokkade() {
-		return (int) get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
 	}
 
 	/**
@@ -367,10 +303,9 @@ class Order extends Entity {
 		$arr    = [];
 		$zoek   = strtolower( $zoek );
 		$where  = empty( $zoek ) ? 'WHERE gesloten = 0' : "WHERE lower( concat ( klant, ' ', referentie ) ) LIKE '%$zoek%'";
-		$orders = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders $where", ARRAY_A ); // phpcs:ignore
+		$orders = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders $where", ARRAY_A ); // phpcs:ignore
 		foreach ( $orders as $order ) {
-			$arr[ $order['id'] ] = new Order();
-			$arr[ $order['id'] ]->load( $order );
+			$arr[ $order['id'] ] = new Order( $order['id'] );
 		}
 		return $arr;
 	}

@@ -507,29 +507,14 @@ class Abonnement extends Artikel {
 				$basis  = '';
 				$aantal = 0;
 		}
+		$orderregels = [];
 		if ( 0 < $aantal ) {
-			$regels = [
-				array_merge(
-					self::split_bedrag( $this->bedrag() ),
-					[
-						'artikel' => $basis,
-						'aantal'  => $aantal,
-					]
-				),
-			];
+			$orderregels[] = new Orderregel( $basis, $aantal, $this->bedrag() );
 			foreach ( $this->extras as $extra ) {
-				$regels[] = array_merge(
-					self::split_bedrag( $this->bedrag_extra( $extra ) ),
-					[
-						'artikel' => "gebruik $extra",
-						'aantal'  => $aantal,
-					]
-				);
+				$orderregels[] = new Orderregel( "gebruik $extra", $aantal, $this->bedrag_extra( $extra ) );
 			}
-		} else {
-			$regels = [];
 		}
-		return $regels;
+		return $orderregels;
 	}
 
 	/**

@@ -31,6 +31,24 @@ function upsert_user( $userdata ) {
 }
 
 /**
+ * Zet de blokkade datum.
+ *
+ * @param int $datum De datum in unix time.
+ */
+function zet_blokkade( $datum ) {
+	update_option( 'kleistad_blokkade', $datum );
+}
+
+/**
+ * Get de blokkade datum.
+ *
+ * @return int $datum De datum in unix time.
+ */
+function get_blokkade() {
+	return (int) get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
+}
+
+/**
  * De Kleistad plugin class.
  *
  * @since      4.0.87

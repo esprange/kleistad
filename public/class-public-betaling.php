@@ -52,7 +52,7 @@ class Public_Betaling extends ShortcodeForm {
 						'klant'         => $order->klant['naam'],
 						'openstaand'    => $order->te_betalen(),
 						'reeds_betaald' => $order->betaald,
-						'regels'        => $order->regels,
+						'orderregels'   => $order->orderregels,
 						'betreft'       => $artikel->artikel_naam(),
 						'artikel_type'  => $param['art'],
 					];
