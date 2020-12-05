@@ -25,7 +25,7 @@ namespace Kleistad;
  * @property int    mutatie_datum
  * @property int    verval_datum
  * @property string referentie
- * @property array  regels
+ * @property string regels
  * @property string opmerking
  * @property int    factuurnr
  * @property string transactie_id
@@ -158,13 +158,13 @@ class Order extends Entity {
 	 * Afboeken van een order.
 	 */
 	public function afboeken() {
-		$te_betalen            = $this->te_betalen();
-		$dd_order              = new self();
-		$dd_order->historie    = 'Afboeking order door ' . wp_get_current_user()->display_name;
-		$dd_order->referentie  = '@-' . $this->referentie;
-		$dd_order->betaald     = $te_betalen;
-		$dd_order->klant       = $this->klant;
-		$dd_order->orderregels = new Orderregel( 'Afboeking', 1, $te_betalen );
+		$te_betalen              = $this->te_betalen();
+		$dd_order                = new self();
+		$dd_order->historie      = 'Afboeking order door ' . wp_get_current_user()->display_name;
+		$dd_order->referentie    = '@-' . $this->referentie;
+		$dd_order->betaald       = $te_betalen;
+		$dd_order->klant         = $this->klant;
+		$dd_order->orderregels[] = new Orderregel( 'Afboeking', 1, $te_betalen );
 		$dd_order->save();
 		$this->betaald += $te_betalen;
 		$this->historie = 'Afboeking';
@@ -247,24 +247,18 @@ class Order extends Entity {
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
 		if ( ! $this->id ) {
 			$this->factuurnr = 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );
-			if ( false === $wpdb->insert( "{$wpdb->prefix}kleistad_orders", $this->data ) ) {
-				return false;
-			}
+			$wpdb->insert( "{$wpdb->prefix}kleistad_orders", $this->data );
 			$this->id = $wpdb->insert_id;
 		} else {
 			$this->mutatie_datum = time();
-			if ( false === $wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] ) ) {
-				return false;
-			}
+			$wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] );
 		}
-		if ( false === $wpdb->query( 'COMMIT' ) ) {
-			return false;
-		}
+		$wpdb->query( 'COMMIT' );
 
-		if ( $this->transactie_id && ! $this->gesloten ) {
+		if ( $this->transactie_id && -0.01 > $this->te_betalen() ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
 			$betalen = new Betalen();
-			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $openstaand, 'Kleistad: zie factuur ' . $this->factuurnummer() );
+			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $this->te_betalen(), 'Kleistad: zie factuur ' . $this->factuurnummer() );
 			add_filter(
 				'kleistad_melding',
 				function( $html ) use ( $result ) {

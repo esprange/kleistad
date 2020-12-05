@@ -152,7 +152,7 @@ class LosArtikel extends Artikel {
 	 * @param float  $prijs   De bruto prijs per artikel.
 	 */
 	public function bestelregel( $artikel, $aantal, $prijs ) {
-		$this->orderregels = new Orderregel( $artikel, $aantal, $prijs );
+		$this->orderregels[] = new Orderregel( $artikel, $aantal, $prijs );
 		$this->prijs      += $aantal * $prijs;
 	}
 

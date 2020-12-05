@@ -49,13 +49,6 @@ class Orderregels implements Countable, Iterator {
 	}
 
 	/**
-	 * Clone ook de regels.
-	 */
-	public function __clone() {
-		$this->regels = clone $this->regels;
-	}
-
-	/**
 	 * Voeg een regel toe.
 	 *
 	 * @param array | Orderregel $regeltoetevoegen Toe te voegen regel of regels.
@@ -151,7 +144,7 @@ class Orderregels implements Countable, Iterator {
 				'btw'     => number_format( $regel->btw, 2, '.', '' ),
 			];
 		}
-		return wp_json_encode( $regels );
+		return wp_json_encode( $regels ); /** @scrutinizer ignore-tyoe */
 	}
 
 	/**

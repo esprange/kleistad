@@ -482,7 +482,7 @@ class Inschrijving extends Artikel {
 	/**
 	 * De regels voor de factuur.
 	 *
-	 * @return array De regels.
+	 * @return array|Orderregel De regels of één regel.
 	 */
 	protected function factuurregels() {
 		if ( 0 < $this->lopende_cursus ) {

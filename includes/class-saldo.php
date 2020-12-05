@@ -270,7 +270,7 @@ class Saldo extends Artikel {
 	/**
 	 * De factuur regels.
 	 *
-	 * @return array
+	 * @return Orderregel
 	 */
 	protected function factuurregels() {
 		return new Orderregel( 'stooksaldo', 1, $this->prijs );

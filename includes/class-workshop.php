@@ -373,7 +373,7 @@ class Workshop extends Artikel {
 	/**
 	 * De regels voor de factuur.
 	 *
-	 * @return array De regels.
+	 * @return Orderregel De regel.
 	 */
 	protected function factuurregels() {
 		return new Orderregel( "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ) . ", {$this->aantal} deelnemers", 1, $this->kosten );

@@ -241,10 +241,10 @@ abstract class Artikel extends Entity {
 	final public function wijzig_order( $id, $opmerking = '' ) {
 		$originele_order = new Order( $id );
 		$order           = clone $originele_order;
-		if ( $order->geblokkeerd() ) {
+		if ( $order->is_geblokkeerd() ) {
 			return false;
 		}
-		$order->orderregels->vervang( $this->factuurregels() );
+		$order->orderregels->vervangen( $this->factuurregels() );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->referentie();
 		if ( $order == $originele_order ) { // phpcs:ignore
