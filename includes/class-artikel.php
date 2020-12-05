@@ -107,7 +107,7 @@ abstract class Artikel extends Entity {
 	/**
 	 * Bestelling
 	 *
-	 * @return array
+	 * @return array|Orderregel Een array van orderregels of maar één regel.
 	 */
 	abstract protected function factuurregels();
 
