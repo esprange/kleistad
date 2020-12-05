@@ -42,12 +42,12 @@ class Orderrapportage {
 				$order = new Order( intval( $order_id['id'] ) );
 				$naam  = Artikel::$artikelen[ $order->referentie[0] ]['naam'];
 				if ( '@' !== $order->referentie[0] ) {
-					$omzet[ $naam ]['netto']  += $order->netto();
-					$omzet[ $naam ]['btw']    += $order->btw();
+					$omzet[ $naam ]['netto']  += $order->orderregels->netto();
+					$omzet[ $naam ]['btw']    += $order->orderregels->btw();
 					$omzet[ $naam ]['details'] = true;
 				} else {
-					$omzet[ $naam ]['netto']  -= $order->netto();
-					$omzet[ $naam ]['btw']    -= $order->btw();
+					$omzet[ $naam ]['netto']  -= $order->orderregels->netto();
+					$omzet[ $naam ]['btw']    -= $order->orderregels->btw();
 					$omzet[ $naam ]['details'] = true;
 				}
 			}
