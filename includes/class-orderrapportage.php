@@ -71,8 +71,8 @@ class Orderrapportage {
 			$order     = new Order( intval( $order_id['id'] ) );
 			$details[] = [
 				'datum' => $order->datum,
-				'netto' => $order->netto(),
-				'btw'   => $order->btw(),
+				'netto' => $order->orderregels->netto(),
+				'btw'   => $order->orderregels->btw(),
 				'klant' => $order->klant['naam'],
 				'code'  => $order->referentie,
 			];
