@@ -144,7 +144,7 @@ class Orderregels implements Countable, Iterator {
 				'btw'     => number_format( $regel->btw, 2, '.', '' ),
 			];
 		}
-		return wp_json_encode( $regels ); /** @scrutinizer ignore-type */
+		return wp_json_encode( $regels ) ?: '[]';
 	}
 
 	/**
