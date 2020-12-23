@@ -41,7 +41,7 @@ namespace Kleistad;
 	<tbody>
 		<?php
 		foreach ( $data['registraties'] as $registratie ) :
-			$json_inschrijvingen = wp_json_encode( $registratie['inschrijvingen'] );
+			$json_inschrijvingen = wp_json_encode( $registratie['inschrijving_info'] );
 			$json_deelnemer      = wp_json_encode( $registratie['deelnemer_info'] );
 			$json_abonnee        = wp_json_encode( $registratie['abonnee_info'] );
 			$json_dagdelenkaart  = wp_json_encode( $registratie['dagdelenkaart_info'] );

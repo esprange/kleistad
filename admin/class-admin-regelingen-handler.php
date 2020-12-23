@@ -157,10 +157,10 @@ class Admin_Regelingen_Handler {
 			[
 				'fields'   => [ 'ID', 'display_name' ],
 				'orderby'  => [ 'display_name' ],
-				'role__in' => [ Roles::LID, Roles::BESTUUR, Roles::DOCENT ],
+				'role__in' => [ LID, BESTUUR, DOCENT ],
 			]
 		);
-		$ovens      = Oven::all();
+		$ovens      = new Ovens();
 
 		require 'partials/admin-regelingen-form-meta-box.php';
 	}

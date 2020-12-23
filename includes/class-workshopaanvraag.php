@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use Html2Text;
+use PhpImap;
+
 /**
  * Kleistad WorkshopAanvraag class.
  *
@@ -126,7 +129,7 @@ class WorkshopAanvraag {
 		if ( is_object( $casus ) && self::POST_TYPE === $casus->post_type ) {
 			$emailer->send(
 				[
-					'to'      => 'Workshop mailbox <' . Email::info() . Email::domein() . '>',
+					'to'      => "Workshop mailbox <{$emailer->info}{$emailer->domein}>",
 					'subject' => 'aanvraag workshop/kinderfeest',
 					'content' => '<p>Er is een reactie ontvangen van ' . $email['from-name'] . '</p>',
 					'sign'    => 'Workshop mailbox',
@@ -148,9 +151,8 @@ class WorkshopAanvraag {
 				]
 			);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -158,15 +160,15 @@ class WorkshopAanvraag {
 	 */
 	public static function ontvang_en_verwerk() {
 		// phpcs:disable WordPress.NamingConventions
-		$setup = Kleistad::get_setup();
+		$setup = setup();
 		if ( empty( $setup['imap_server'] ) || empty( $setup['imap_pwd'] ) ) {
 			die();
 		}
 		$answered = [];
 		$emailer  = new Email();
-		$mailbox  = new \PhpImap\Mailbox(
+		$mailbox  = new PhpImap\Mailbox(
 			'{' . $setup['imap_server'] . '}INBOX',
-			self::mbx() . Email::domein(),
+			self::mbx() . $emailer->domein,
 			$setup['imap_pwd']
 		);
 		try {
@@ -174,7 +176,7 @@ class WorkshopAanvraag {
 			foreach ( $email_ids as $email_id ) {
 				$email = $mailbox->getMail( $email_id );
 				if ( $email->textHtml ) {
-					$html = new \Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
+					$html = new Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
 					$body = $html->getText();
 					if ( '' === $body ) {
 						$body = $email->textPlain;
@@ -194,7 +196,7 @@ class WorkshopAanvraag {
 				) && 'production' === wp_get_environment_type() ) {
 					$emailer->send(
 						[
-							'to'        => 'Kleistad <' . Email::info() . Email::domein() . '>',
+							'to'        => "Kleistad <{$emailer->info}{$emailer->domein}>",
 							'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
 							'from'      => sanitize_email( $email->fromAddress ),
 							'subject'   => 'FW:' . sanitize_text_field( $email->subject ),
@@ -208,7 +210,7 @@ class WorkshopAanvraag {
 				$mailbox->setFlag( $answered, '\\Answered' );
 			}
 			$mailbox->disconnect();
-		} catch ( \PhpImap\Exceptions\ConnectionException $ex ) {
+		} catch ( PhpImap\Exceptions\ConnectionException $ex ) {
 			error_log( 'IMAP fail: ' . $ex->getMessage() ); // phpcs:ignore
 			die();
 		}
@@ -222,12 +224,7 @@ class WorkshopAanvraag {
 	 * @param array  $parameters De parameters van de communicatie.
 	 */
 	private static function communicatie( $content, $parameters ) {
-		if ( empty( $content ) ) {
-			$correspondentie = [];
-		} else {
-			$correspondentie = unserialize( base64_decode( $content ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-		}
-
+		$correspondentie = empty( $content ) ? [] : $correspondentie = unserialize( base64_decode( $content ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 		array_unshift(
 			$correspondentie,
 			array_merge(
@@ -283,8 +280,8 @@ class WorkshopAanvraag {
 				[
 					'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
 					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $result ),
-					'from'       => self::mbx() . Email::verzend_domein(),
-					'reply-to'   => self::mbx() . Email::domein(),
+					'from'       => self::mbx() . $emailer->verzend_domein,
+					'reply-to'   => self::mbx() . $emailer->domein,
 					'slug'       => 'workshop_aanvraag_bevestiging',
 					'parameters' => $casus_data,
 					'sign_email' => false,
@@ -346,9 +343,9 @@ class WorkshopAanvraag {
 		$emailer->send(
 			[
 				'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
-				'from'       => self::mbx() . Email::verzend_domein(),
+				'from'       => self::mbx() . $emailer->verzend_domein,
 				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
-				'reply-to'   => self::mbx() . Email::domein(),
+				'reply-to'   => self::mbx() . $emailer->domein,
 				'subject'    => $subject,
 				'slug'       => 'workshop_aanvraag_reactie',
 				'auto'       => false,

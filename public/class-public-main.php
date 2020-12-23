@@ -49,24 +49,6 @@ class Public_Main {
 	}
 
 	/**
-	 * Geeft de basis url terug voor de endpoints.
-	 *
-	 * @return string url voor endpoints
-	 */
-	public static function api() {
-		return 'kleistad_api';
-	}
-
-	/**
-	 * Geeft de basis url terug voor de endpoints.
-	 *
-	 * @return string url voor endpoints
-	 */
-	public static function base_url() {
-		return rest_url( self::api() );
-	}
-
-	/**
 	 * Voeg de shortcodes toe.
 	 *
 	 * @internal Action for init.
@@ -115,6 +97,7 @@ class Public_Main {
 	 * @since   4.0.87
 	 *
 	 * @internal Action for rest_api_init.
+	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
 	public function register_endpoints() {
 		Adres::register_rest_routes(); // Postcode.
@@ -132,6 +115,7 @@ class Public_Main {
 	 * @since 4.1.0
 	 *
 	 * @internal Action for init.
+	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
 	public static function register_post_types() {
 		global $wp_post_types;

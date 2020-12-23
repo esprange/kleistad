@@ -30,9 +30,10 @@ class Admin_GDPR {
 	 * @param int $gebruiker_id Id van de gebruiker.
 	 * @return array De persoonlijke data (cursus info).
 	 */
-	private static function export_inschrijving( $gebruiker_id ) {
-		$inschrijvingen = Inschrijving::all();
+	private function export_inschrijving( $gebruiker_id ) {
+		$inschrijvingen = new Inschrijvingen();
 		$items          = [];
+		// @TODO aanpassen
 		if ( isset( $inschrijvingen[ $gebruiker_id ] ) ) {
 			foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
 				$items[] = [
@@ -71,7 +72,7 @@ class Admin_GDPR {
 	 * @param  int $gebruiker_id Het wp user id van de abonnee.
 	 * @return array De persoonlijke data (abonnement info).
 	 */
-	private static function export_abonnement( $gebruiker_id ) {
+	private function export_abonnement( $gebruiker_id ) {
 		$abonnement = new Abonnement( $gebruiker_id );
 		$items      = [];
 		$items[]    = [
@@ -124,7 +125,7 @@ class Admin_GDPR {
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
-	private static function export_saldo( $gebruiker_id ) {
+	private function export_saldo( $gebruiker_id ) {
 		$saldo   = new Saldo( $gebruiker_id );
 		$items   = [];
 		$items[] = [
@@ -147,28 +148,32 @@ class Admin_GDPR {
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
-	private static function export_reservering( $gebruiker_id ) {
-		$reserveringen = Reservering::all();
-		$ovens         = Oven::all();
-		$items         = [];
-		foreach ( $reserveringen as $reservering ) {
-			$key = array_search( $gebruiker_id, array_column( $reservering->verdeling, 'id' ), true );
-			if ( false !== $key ) {
-				$items[] = [
-					'group_id'    => 'stook',
-					'group_label' => 'Stook informatie',
-					'item_id'     => 'stook-' . $reservering->id,
-					'data'        => [
-						[
-							'name'  => 'Datum',
-							'value' => strftime( $reservering->datum ),
-						],
-						[
-							'name'  => 'Oven',
-							'value' => $ovens[ $reservering->oven_id ]->naam,
-						],
-					],
-				];
+	private function export_reservering( $gebruiker_id ) {
+		$items = [];
+		$ovens = new Ovens();
+		foreach ( $ovens as $oven ) {
+			$stoken = new Stoken( $oven->id, 0, date() );
+			foreach ( $stoken as $stook ) {
+				foreach ( $stook->stookdelen as $stookdeel ) {
+					if ( $stookdeel->medestoker === $gebruiker_id ) {
+						$items[] = [
+							'group_id'    => 'stook',
+							'group_label' => 'Stook informatie',
+							'item_id'     => 'stook-' . $oven->id . date( 'm-d-Y', $stook->datum ),
+							'data'        => [
+								[
+									'name'  => 'Datum',
+									'value' => strftime( $stook->datum ),
+								],
+								[
+									'name'  => 'Oven',
+									'value' => $ovens[ $oven->id ]->naam,
+								],
+							],
+						];
+
+					}
+				}
 			}
 		}
 		return $items;
@@ -180,7 +185,7 @@ class Admin_GDPR {
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
-	private static function export_dagdelenkaart( $gebruiker_id ) {
+	private function export_dagdelenkaart( $gebruiker_id ) {
 		$dagdelenkaart = new Dagdelenkaart( $gebruiker_id );
 		$items         = [];
 		$items[]       = [
@@ -205,7 +210,7 @@ class Admin_GDPR {
 	 * @param string $email Het email adres van de te exporteren persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
 	 */
-	public static function exporter( $email, $page = 1 ) {
+	public function exporter( $email, $page = 1 ) {
 		$export_items = [];
 		$gebruiker_id = email_exists( $email );
 		if ( false !== $gebruiker_id ) {
@@ -240,11 +245,11 @@ class Admin_GDPR {
 						],
 					],
 				],
-				self::export_inschrijving( $gebruiker_id ),
-				self::export_abonnement( $gebruiker_id ),
-				self::export_saldo( $gebruiker_id ),
-				self::export_reservering( $gebruiker_id ),
-				self::export_dagdelenkaart( $gebruiker_id )
+				$this->export_inschrijving( $gebruiker_id ),
+				$this->export_abonnement( $gebruiker_id ),
+				$this->export_saldo( $gebruiker_id ),
+				$this->export_reservering( $gebruiker_id ),
+				$this->export_dagdelenkaart( $gebruiker_id )
 			);
 		}
 		// Geef aan of er nog meer te exporteren valt, de controle op page nummer is een dummy.
@@ -263,10 +268,10 @@ class Admin_GDPR {
 	 * @param string $email Het email adres van de te verwijderen persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
 	 */
-	public static function eraser( $email, $page = 1 ) {
+	public function eraser( $email, $page = 1 ) {
 		$count        = 0;
 		$gebruiker_id = email_exists( $email );
-		$domein       = Email::domein();
+		$domein       = substr( strrchr( get_bloginfo( 'admin_email' ), '@' ), 1 );
 		if ( false !== $gebruiker_id ) {
 			$stub = "- verwijderd$gebruiker_id -";
 			wp_update_user(
@@ -303,15 +308,15 @@ class Admin_GDPR {
 	 *
 	 * @since 6.4.0
 	 */
-	public static function erase_old_privacy_data() {
+	public function erase_old_privacy_data() {
 		$erase_agv     = strtotime( '-5 years' ); // Persoonlijke gegevens worden 5 jaar bewaard.
 		$erase_fiscaal = strtotime( '-7 years' ); // Order gegevens worden 7 jaar bewaard.
-		self::erase_cursussen( $erase_agv );
-		self::erase_dagdeelkaarten( $erase_agv );
-		self::erase_abonnementen( $erase_agv );
-		self::erase_workshops( $erase_agv );
-		self::erase_gebruikers( $erase_agv );
-		self::erase_orders( $erase_fiscaal );
+		$this->erase_cursussen( $erase_agv );
+		$this->erase_dagdeelkaarten( $erase_agv );
+		$this->erase_abonnementen( $erase_agv );
+		$this->erase_workshops( $erase_agv );
+		$this->erase_gebruikers( $erase_agv );
+		$this->erase_orders( $erase_fiscaal );
 	}
 
 	/**
@@ -319,13 +324,13 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private static function erase_cursussen( $datum ) {
-		foreach ( Cursus::all() as $cursus_id => $cursus ) {
+	private function erase_cursussen( $datum ) {
+		$cursussen = new Cursussen();
+		foreach ( $cursussen as $cursus ) {
 			if ( $cursus->eind_datum && $datum > $cursus->eind_datum ) {
-				foreach ( Inschrijving::all() as $cursist_id => $cursist_inschrijvingen ) {
-					if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) ) {
-						$cursist_inschrijvingen[ $cursus_id ]->erase();
-					}
+				$inschrijvingen = new Inschrijvingen( $cursus->id );
+				foreach ( $inschrijvingen() as $inschrijving ) {
+					$inschrijving->erase();
 				}
 				$cursus->erase();
 			}
@@ -337,8 +342,9 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private static function erase_dagdeelkaarten( $datum ) {
-		foreach ( Dagdelenkaart::all() as $gebruiker_id => $dagdeelkaart ) {
+	private function erase_dagdeelkaarten( $datum ) {
+		$dagdeelkaarten = new Dagdeelkaarten();
+		foreach ( $dagdeelkaarten() as $dagdeelkaart ) {
 			if ( $dagdeelkaart->eind_datum && $datum > $dagdeelkaart->eind_datum ) {
 				$dagdeelkaart->erase();
 			}
@@ -350,12 +356,13 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private static function erase_abonnementen( $datum ) {
-		foreach ( Abonnement::all() as $abonnee_id => $abonnement ) {
+	private function erase_abonnementen( $datum ) {
+		$abonnementen = new Abonnementen();
+		foreach ( $abonnementen as $abonnement ) {
 			if ( $abonnement->eind_datum && $datum > $abonnement->eind_datum ) {
-				$abonnement->erase();
-				$saldo = new Saldo( $abonnee_id );
+				$saldo = new Saldo( $abonnement->klant_id );
 				$saldo->erase();
+				$abonnement->erase();
 			}
 		}
 	}
@@ -365,8 +372,9 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private static function erase_workshops( $datum ) {
-		foreach ( Workshop::all() as $workshop ) {
+	private function erase_workshops( $datum ) {
+		$workshops = new Workshops();
+		foreach ( $workshops as $workshop ) {
 			if ( $datum > $workshop->datum ) {
 				$workshop->erase();
 			}
@@ -380,7 +388,7 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private static function erase_gebruikers( $datum ) {
+	private function erase_gebruikers( $datum ) {
 		foreach ( get_users() as $gebruiker ) {
 			if (
 				$datum > strtotime( $gebruiker->user_registered ) &&
@@ -401,8 +409,9 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private static function erase_orders( $datum ) {
-		foreach ( Order::all() as $order ) {
+	private function erase_orders( $datum ) {
+		$order = new Orders();
+		foreach ( $orders as $order ) {
 			if ( $datum > $order->datum ) {
 				$order->erase();
 			}

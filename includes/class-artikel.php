@@ -19,7 +19,7 @@ namespace Kleistad;
  *
  * @since 6.1.0
  */
-abstract class Artikel extends Entity {
+abstract class Artikel {
 
 	/**
 	 * Het betaal object.
@@ -27,6 +27,14 @@ abstract class Artikel extends Entity {
 	 * @var Betalen $betalen
 	 */
 	protected $betalen;
+
+	/**
+	 * De artikel data
+	 *
+	 * @access protected
+	 * @var array $data welke de attributen van het artikel bevat.
+	 */
+	protected $data = [];
 
 	/**
 	 * De klant.
@@ -50,18 +58,11 @@ abstract class Artikel extends Entity {
 	public $artikel_type = '';
 
 	/**
-	 * De artikelen.
-	 *
-	 * @var array $artikelen De parameters behorende bij de artikelen.
-	 */
-	public static $artikelen = [];
-
-	/**
 	 * Geef de naam van het artikel.
 	 *
 	 * @return string
 	 */
-	abstract public function artikel_naam();
+	abstract public function geef_artikelnaam(): string;
 
 	/**
 	 * Betaal het artikel per ideal.
@@ -71,7 +72,7 @@ abstract class Artikel extends Entity {
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect uri of het is fout gegaan.
 	 */
-	abstract public function ideal( $bericht, $referentie, $openstaand = null );
+	abstract public function doe_idealbetaling( string $bericht, string $referentie, float $openstaand = null );
 
 	/**
 	 * Aanroep vanuit betaling per ideal of sepa incasso.
@@ -82,19 +83,19 @@ abstract class Artikel extends Entity {
 	 * @param string $type          Een betaling per bank, ideal of incasso.
 	 * @param string $transactie_id De betalings id.
 	 */
-	abstract public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' );
+	abstract public function verwerk_betaling( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' );
 
 	/**
 	 * Geef de code van het artikel
 	 *
 	 * @return string De referentie.
 	 */
-	abstract public function referentie();
+	abstract public function geef_referentie(): string;
 
 	/**
 	 * Dagelijks uit te voeren handelingen, in te vullen door het artikel.
 	 */
-	abstract public static function dagelijks();
+	abstract public static function doe_dagelijks();
 
 	/**
 	 * Email function
@@ -102,22 +103,14 @@ abstract class Artikel extends Entity {
 	 * @param string $type    Het soort email.
 	 * @param string $factuur De eventueel te versturen factuur.
 	 */
-	abstract public function email( $type, $factuur = '' );
+	abstract public function verzend_email( string $type, string $factuur = '' );
 
 	/**
 	 * Bestelling
 	 *
 	 * @return array|Orderregel Een array van orderregels of maar één regel.
 	 */
-	abstract protected function factuurregels();
-
-	/**
-	 * Geef de status van het artikel als een tekst terug.
-	 *
-	 * @param  boolean $uitgebreid Uitgebreide tekst of korte tekst.
-	 * @return string De status tekst.
-	 */
-	abstract public function status( $uitgebreid = false );
+	abstract protected function geef_factuurregels();
 
 	/**
 	 * Een bestelling annuleren.
@@ -127,7 +120,7 @@ abstract class Artikel extends Entity {
 	 * @param string $opmerking De opmerkingstekst in de factuur.
 	 * @return string De url van de creditfactuur of lege string.
 	 */
-	final public function annuleer_order( $id, $restant, $opmerking ) {
+	final public function annuleer_order( int $id, float $restant, string $opmerking ): string {
 		if ( ! $this->afzeggen() ) {
 			return '';
 		}
@@ -171,16 +164,16 @@ abstract class Artikel extends Entity {
 	 * @param bool   $factuur       Of er een factuur aangemaakt moet worden.
 	 * @return string De url van de factuur.
 	 */
-	final public function bestel_order( $bedrag, $verval_datum, $opmerking = '', $transactie_id = '', $factuur = true ) {
+	final public function bestel_order( float $bedrag, int $verval_datum, string $opmerking = '', string $transactie_id = '', bool $factuur = true ): string {
 		$order                = new Order();
 		$order->betaald       = $bedrag;
 		$order->historie      = $factuur ? 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 ) : 'order aangemaakt';
 		$order->klant         = $this->naw_klant();
 		$order->opmerking     = $opmerking;
-		$order->referentie    = $this->referentie();
+		$order->referentie    = $this->geef_referentie();
 		$order->transactie_id = $transactie_id;
 		$order->verval_datum  = $verval_datum;
-		$order->orderregels->toevoegen( $this->factuurregels() );
+		$order->orderregels->toevoegen( $this->geef_factuurregels() );
 		$order->save();
 		$this->maak_link( $order->id );
 		$this->betaalactie( $order->betaald );
@@ -195,7 +188,7 @@ abstract class Artikel extends Entity {
 	 * @param string $opmerking De opmerking in de factuur.
 	 * @return bool|string De url van de factuur of fout.
 	 */
-	final public function korting_order( $id, $korting, $opmerking ) {
+	final public function korting_order( int $id, float $korting, string $opmerking ) {
 		$order = new Order( $id );
 		if ( $order->is_geblokkeerd() ) {
 			return false;
@@ -216,15 +209,12 @@ abstract class Artikel extends Entity {
 	 * @param float  $bedrag        Het betaalde bedrag.
 	 * @param string $transactie_id De betalings id.
 	 * @param bool   $factuur       Of er wel / niet een factuur aangemaakt moet worden.
+	 * @return string Pad naar de factuur of leeg.
 	 */
-	final public function ontvang_order( $id, $bedrag, $transactie_id, $factuur = false ) {
-		$order           = new Order( $id );
-		$order->betaald += $bedrag;
-		if ( 0 <= $bedrag ) {
-			$order->historie = 'betaling bedrag € ' . number_format_i18n( $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
-		} else {
-			$order->historie = 'stornering bedrag € ' . number_format_i18n( - $bedrag, 2 ) . ' nieuwe status betaald is € ' . number_format_i18n( $order->betaald, 2 );
-		}
+	final public function ontvang_order( int $id, float $bedrag, string $transactie_id, bool $factuur = false ): string {
+		$order                = new Order( $id );
+		$order->betaald      += $bedrag;
+		$order->historie      = sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'betaling' : 'stornering', abs( $bedrag ), $order->betaald );
 		$order->transactie_id = $transactie_id;
 		$order->save();
 		$this->betaalactie( $order->betaald );
@@ -238,7 +228,7 @@ abstract class Artikel extends Entity {
 	 * @param string $opmerking De optionele opmerking in de factuur.
 	 * @return bool|string De url van de factuur of false.
 	 */
-	final public function wijzig_order( $id, $opmerking = '' ) {
+	final public function wijzig_order( int $id, string $opmerking = '' ) {
 		$originele_order = new Order( $id );
 		$order           = clone $originele_order;
 		if ( $order->is_geblokkeerd() ) {
@@ -246,7 +236,7 @@ abstract class Artikel extends Entity {
 		}
 		$order->orderregels->vervangen( $this->factuurregels() );
 		$order->klant      = $this->naw_klant();
-		$order->referentie = $this->referentie();
+		$order->referentie = $this->geef_referentie();
 		if ( $order == $originele_order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}
@@ -266,7 +256,7 @@ abstract class Artikel extends Entity {
 	 *
 	 * @return string Hash string.
 	 */
-	final public function controle() {
+	final public function controle() : string {
 		return hash( 'sha256', "KlEiStAd{$this->code}cOnTrOlE3812LE" );
 	}
 
@@ -277,7 +267,7 @@ abstract class Artikel extends Entity {
 	 *
 	 * @return bool
 	 */
-	public function afzeggen() {
+	public function afzeggen() : bool {
 		return true;
 	}
 
@@ -288,7 +278,7 @@ abstract class Artikel extends Entity {
 	 *
 	 * @return string Als leeg dan beschikbaar, anders bevat foutmelding.
 	 */
-	public function beschikbaarcontrole() {
+	public function beschikbaarcontrole() : string {
 		return '';
 	}
 
@@ -297,7 +287,7 @@ abstract class Artikel extends Entity {
 	 *
 	 * @return array De naw gegevens.
 	 */
-	public function naw_klant() {
+	public function naw_klant() : array {
 		$klant = get_userdata( $this->klant_id );
 		return [
 			'naam'  => "{$klant->first_name}  {$klant->last_name}",
@@ -307,56 +297,21 @@ abstract class Artikel extends Entity {
 	}
 
 	/**
-	 * Registreer het artikel
-	 *
-	 * @param string $key  De sleutelletter van het artikel.
-	 * @param array  $args De parameters.
-	 */
-	public static function register( $key, $args ) {
-		if ( array_key_exists( $key, self::$artikelen ) ) {
-			return;
-		}
-		self::$artikelen[ $key ] = $args;
-	}
-
-	/**
-	 * Bepaal het Kleistad artikel a.d.h.v. de referentie.
-	 *
-	 * @param string $referentie De artikel referentie.
-	 * @return Artikel Een van de kleistad Artikel objecten.
-	 */
-	public static function get_artikel( $referentie ) {
-		if ( ! empty( $referentie ) && array_key_exists( $referentie[0], self::$artikelen ) ) {
-			$parameters = explode( '-', substr( $referentie, 1 ) );
-			$class      = '\\' . __NAMESPACE__ . '\\' . self::$artikelen[ $referentie[0] ]['class'];
-			if ( 1 === self::$artikelen[ $referentie[0] ]['pcount'] ) {
-				$artikel               = new $class( (int) $parameters[0] );
-				$artikel->artikel_type = $parameters[1] ?? $artikel->artikel_type;
-			} else {
-				$artikel               = new $class( (int) $parameters[0], (int) $parameters[1] );
-				$artikel->artikel_type = $parameters[2] ?? $artikel->artikel_type;
-			}
-			return $artikel;
-		}
-		return null;
-	}
-
-	/**
 	 * Voer een actie uit bij betaling, kan nader ingevuld worden.
 	 *
 	 * @since 6.1.0
 	 *
 	 * @param float $bedrag Het ontvangen bedrag.
 	 */
-	protected function betaalactie( $bedrag ) {
+	protected function betaalactie( float $bedrag ) {
 	}
 
 	/**
 	 * De link die in een email als parameter meegegeven kan worden.
 	 *
-	 * @param  int $order_id Het is van de order.
+	 * @param  int $order_id Het id van de order.
 	 */
-	protected function maak_link( $order_id ) {
+	protected function maak_link( int $order_id ) {
 		$url               = add_query_arg(
 			[
 				'order' => $order_id,
@@ -375,7 +330,7 @@ abstract class Artikel extends Entity {
 	 * @param string $type  Het type factuur.
 	 * @return string Het pad naar de factuur.
 	 */
-	private function maak_factuur( $order, $type ) {
+	private function maak_factuur( Order $order, string $type ): string {
 		$factuur = new Factuur();
 		return $factuur->run( $order, $type );
 	}

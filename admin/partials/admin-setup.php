@@ -77,13 +77,13 @@ namespace Kleistad;
 </div>
 <div class="card" style="float:right;width:50%;" >
 <form method="POST" >
-	<p>Huidige Google connectie status: <strong><?php echo Google::is_authorized() ? 'gekoppeld' : 'niet gekoppeld'; ?></strong></p>
+	<p>Huidige Google connectie status: <strong><?php echo Googleconnect::is_authorized() ? 'gekoppeld' : 'niet gekoppeld'; ?></strong></p>
 	<hr/>
 	<p>Zonder koppeling is de kalender via de shortcode 'kleistad_kalender' niet zichtbaar en zullen workshops en cursussen niet in de Google kalender worden vastgelegd.
 	Nadat de koppeling gemaakt is kunnen bestaande workshops en cursussen die nog niet in de kalender zijn opgenomen wel worden toegevoegd.
 	Open daarvoor de cursus of workshop en sla deze op (er hoeven geen parameters gewijzigd te worden).</p>
 	<p>Met onderstaande knop wordt gelinkt naar Google. Zorg dan dat je ingelogd bent op het juiste Google account en geef dan toestemming tot de toegang van Kleistad tot de kalender</p>
-	<?php submit_button( 'Google Kalender koppelen', 'primary', 'connect', true, disabled( Google::is_authorized(), true, false ) ); ?>
+	<?php submit_button( 'Google Kalender koppelen', 'primary', 'connect', true, disabled( Googleconnect::is_authorized(), true, false ) ); ?>
 	<p>&nbsp;</p>
 </form>
 </div>

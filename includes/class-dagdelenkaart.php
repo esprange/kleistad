@@ -20,7 +20,12 @@ namespace Kleistad;
  */
 class Dagdelenkaart extends Artikel {
 
-	const META_KEY = 'kleistad_dagdelenkaart';
+	public const DEFINITIE = [
+		'prefix' => 'K',
+		'naam'   => 'dagdelenkaart',
+		'pcount' => 1,
+	];
+	public const META_KEY  = 'kleistad_dagdelenkaart';
 
 	/**
 	 * De beginwaarden van een dagdelenkaart.
@@ -98,7 +103,7 @@ class Dagdelenkaart extends Artikel {
 	/**
 	 * Verwijder de dagdelenkaart, niet alleen de laatste maar ook alle voorgaande.
 	 */
-	public function erase() {
+	public function erase() :bool {
 		delete_user_meta( $this->klant_id, self::META_KEY );
 	}
 
@@ -107,7 +112,7 @@ class Dagdelenkaart extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function artikel_naam() {
+	public function geef_artikelnaam() : string {
 		return 'dagdelenkaart';
 	}
 
@@ -119,8 +124,8 @@ class Dagdelenkaart extends Artikel {
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url van een ideal betaling of false als het niet lukt.
 	 */
-	public function ideal( $bericht, $referentie, $openstaand = null ) {
-		$options = Kleistad::get_options();
+	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
+		$options = opties();
 
 		return $this->betalen->order(
 			$this->klant_id,
@@ -137,7 +142,7 @@ class Dagdelenkaart extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function referentie() {
+	public function geef_referentie() : string {
 		return $this->code;
 	}
 
@@ -148,9 +153,9 @@ class Dagdelenkaart extends Artikel {
 	 * @param string $factuur Bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email( $type, $factuur = '' ) {
+	public function verzend_email( $type, $factuur = '' ) {
 		$emailer   = new Email();
-		$options   = Kleistad::get_options();
+		$options   = opties();
 		$gebruiker = get_userdata( $this->klant_id );
 		return $emailer->send(
 			[
@@ -176,8 +181,8 @@ class Dagdelenkaart extends Artikel {
 	 *
 	 * @return Orderregel De regels.
 	 */
-	protected function factuurregels() {
-		return new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, Kleistad::get_options()['dagdelenkaart'] );
+	protected function geef_factuurregels() {
+		return new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, opties()['dagdelenkaart'] );
 	}
 
 	/**
@@ -211,15 +216,14 @@ class Dagdelenkaart extends Artikel {
 	 * @param  boolean $uitgebreid Uitgebreide tekst of korte tekst.
 	 * @return string De status tekst.
 	 */
-	public function status( $uitgebreid = false ) {
+	public function geef_statustekst( bool $uitgebreid ) : string {
 		$vandaag = strtotime( 'today' );
 		if ( $this->start_datum > $vandaag ) {
 			return $uitgebreid ? 'gaat starten per ' . strftime( '%d-%m-%Y', $this->start_datum ) : 'nieuw';
 		} elseif ( strtotime( '+3 month', $this->start_datum ) <= $vandaag ) {
 			return $uitgebreid ? 'actief tot ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'actief';
-		} else {
-			return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'voltooid';
 		}
+		return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'voltooid';
 	}
 
 	/**
@@ -236,18 +240,19 @@ class Dagdelenkaart extends Artikel {
 			if ( $order_id ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
 				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-					$this->email( '_ideal_betaald' );
+					$this->verzend_email( '_ideal_betaald' );
 				}
-			} else { // Betaling vanuit inschrijvingformulier.
-				$this->email( '_ideal', $this->bestel_order( $bedrag, $this->start_datum, '', $transactie_id ) );
+				return;
 			}
+			// Betaling vanuit inschrijvingformulier.
+			$this->verzend_email( '_ideal', $this->bestel_order( $bedrag, $this->start_datum, '', $transactie_id ) );
 		}
 	}
 
 	/**
 	 * Dagelijkse handelingen.
 	 */
-	public static function dagelijks() {
+	public static function doe_dagelijks() {
 		// Geen functionaliteit vooralsnog.
 	}
 

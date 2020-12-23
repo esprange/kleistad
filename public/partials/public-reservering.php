@@ -25,7 +25,7 @@ if ( false === $stokers_json ) {
 	data-jaar="<?php echo esc_attr( date( 'Y' ) ); ?>"
 	data-oven-naam="<?php echo esc_attr( $data['oven']['naam'] ); ?>"
 	data-stokers='<?php echo $stokers_json; // phpcs:ignore ?>'
-	data-override="<?php echo (int) Roles::override(); ?>" >
+	data-override="<?php echo (int) current_user_can( OVERRIDE ); ?>" >
 	<thead>
 		<tr>
 			<th>

@@ -23,9 +23,16 @@ namespace Kleistad;
  * @property float  kosten_hoog
  * @property array  beschikbaarheid
  */
-class Oven extends Entity {
+class Oven {
 
 	const REGELING = 'kleistad_regeling';
+
+	/**
+	 * De ovendata
+	 *
+	 * @var array $data De ruwe data.
+	 */
+	private array $data;
 
 	/**
 	 * Constructor
@@ -105,9 +112,10 @@ class Oven extends Entity {
 	 * @param  float $percentage  Het percentage van de stook.
 	 * @param  int   $temperatuur De temperatuur waarbij gestookt wordt.
 	 * @return float De kosten.
+	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function stookkosten( $stoker_id, $percentage, $temperatuur ) {
-		$options    = Kleistad::get_options();
+		$options    = opties();
 		$regelingen = get_user_meta( $stoker_id, self::REGELING, true );
 		if ( 0 === $stoker_id ) {
 			$kosten = 0;
@@ -138,19 +146,4 @@ class Oven extends Entity {
 		return $this->id;
 	}
 
-	/**
-	 * Return alle ovens.
-	 *
-	 * @return array ovens.
-	 */
-	public static function all() {
-		global $wpdb;
-		$arr   = [];
-		$ovens = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens", ARRAY_A ); // phpcs:ignore
-		foreach ( $ovens as $oven ) {
-			$arr[ $oven['id'] ] = new Oven();
-			$arr[ $oven['id'] ]->load( $oven );
-		}
-		return $arr;
-	}
 }

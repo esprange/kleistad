@@ -67,7 +67,7 @@ namespace Kleistad;
 			</td>
 		</tr>
 			<?php
-			$options = Kleistad::get_options();
+			$options = opties();
 			$i       = 0;
 			foreach ( $options['extra'] as $extra ) :
 				$i++;

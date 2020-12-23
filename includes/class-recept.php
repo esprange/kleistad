@@ -99,9 +99,8 @@ class Recept {
 			function( $output, $arr ) {
 				if ( self::CATEGORY === $arr['taxonomy'] ) {
 					return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
-				} else {
-					return $output;
 				}
+				return $output;
 			},
 			10,
 			2
@@ -114,9 +113,9 @@ class Recept {
 					if ( is_array( $result ) ) {
 						self::$hoofdtermen[ $hoofdterm_naam ] = get_term( $result['term_id'] );
 					}
-				} else {
-					self::$hoofdtermen[ $hoofdterm_naam ] = $term;
+					return;
 				}
+				self::$hoofdtermen[ $hoofdterm_naam ] = $term;
 			}
 		}
 	}

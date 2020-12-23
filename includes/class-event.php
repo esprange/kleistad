@@ -11,6 +11,13 @@
 
 namespace Kleistad;
 
+use DateTime;
+use DateTimeZone;
+use Google;
+use Google_Service_Calendar_Event;
+use Google_Service_Calendar_EventDateTime;
+use Exception;
+
 /**
  * Kleistad Event class.
  *
@@ -31,44 +38,30 @@ class Event {
 	/**
 	 * Het Google event object.
 	 *
-	 * @var \Google_Service_Calendar_Event $event Het event.
+	 * @var Google_Service_Calendar_Event $event Het event.
 	 */
-	protected $event;
+	protected Google_Service_Calendar_Event $event;
 
 	/**
 	 * De private properties van het event.
 	 *
 	 * @var array $properties De properties.
 	 */
-	protected $properties = [];
+	protected array $properties = [];
 
 	/**
-	 * Converteer \DateTime object naar Google datetime format, zoals '2015-05-28T09:00:00-07:00'.
+	 * De connect naar Google
 	 *
-	 * @param \DateTime $datetime Het datetime object.
-	 * @return \Google_Service_Calendar_EventDateTime De tijd in Google datetime format.
+	 * @var Googleconnect $googleconnect Het google connectie object.
 	 */
-	private function to_google_dt( \DateTime $datetime ) {
-		$google_datetime = new \Google_Service_Calendar_EventDateTime();
-		$google_datetime->setDateTime( $datetime->format( \DateTime::RFC3339 ) );
-		$google_datetime->setTimeZone( $datetime->getTimeZone()->getName() );
-		return $google_datetime;
-	}
+	protected Googleconnect $googleconnect;
 
 	/**
-	 * Converteer Google datetime object, zoals '2015-05-28T09:00:00-07:00' naar \DateTime object.
+	 * Het Google kalender id.
 	 *
-	 * @param \Google_Service_Calendar_EventDateTime $google_datetime Het datetime object.
-	 * @return \DateTime Het php \DateTime object.
+	 * @var string $kalender_id De google kalender id.
 	 */
-	private function from_google_dt( $google_datetime ) {
-		if ( ! empty( $google_datetime->getTimeZone() ) ) {
-			$datetime = new \DateTime( $google_datetime->getDateTime(), new \DateTimeZone( $google_datetime->getTimeZone() ) );
-		} else {
-			$datetime = new \DateTime( $google_datetime->getDateTime() );
-		}
-		return $datetime;
-	}
+	protected string $kalender_id = '';
 
 	/**
 	 * Constructor
@@ -76,18 +69,20 @@ class Event {
 	 * @since 5.0.0
 	 *
 	 * @param string $event_id event id welke geladen moet worden.
-	 * @throws \Exception Er is geen connectie.
+	 * @throws Exception Er is geen connectie.
 	 */
-	public function __construct( $event_id ) {
+	public function __construct( string $event_id ) {
+		$this->googleconnect = new Googleconnect();
+		$this->kalender_id   = setup()['google_kalender_id'];
 		try {
-			$this->event        = Google::calendar_service()->events->get( Google::kalender_id(), $event_id );
+			$this->event        = $this->googleconnect->calendar_service()->events->get( $this->kalender_id, $event_id );
 			$extendedproperties = $this->event->getExtendedProperties();
 			$this->properties   = ! is_null( $extendedproperties ) ? $extendedproperties->getPrivate() : [];
-		} catch ( \Google\Service\Exception $e ) {
-			$organizer = new \Google_Service_Calendar_EventOrganizer();
+		} catch ( Google\Service\Exception $e ) {
+			$organizer = new Google_Service_Calendar_EventOrganizer();
 			$organizer->setDisplayName( wp_get_current_user()->display_name );
 			$organizer->setEmail( wp_get_current_user()->user_email );
-			$this->event             = new \Google_Service_Calendar_Event(
+			$this->event             = new Google_Service_Calendar_Event(
 				[
 					'Id'        => $event_id,
 					'location'  => get_option( 'kleistad_adres', 'Kleistad, Neonweg 12, 3812 RH Amersfoort' ),
@@ -96,30 +91,28 @@ class Event {
 				]
 			);
 			$this->properties['key'] = self::META_KEY;
-			$extendedproperties      = new \Google_Service_Calendar_EventExtendedProperties();
+			$extendedproperties      = new Google_Service_Calendar_EventExtendedProperties();
 			$extendedproperties->setPrivate( $this->properties );
 			$this->event->setExtendedProperties( $extendedproperties );
 		}
 	}
 
 	/**
-	 * Wijzig het event naar een herhalend event
+	 * Wijzig het event naar een wekelijks herhalend event
 	 *
-	 * @param \DateTime $eind      Einddatum.
-	 * @param bool      $wekelijks Wekelijks herhalen indien waar.
+	 * @param DateTime $eind Einddatum.
 	 */
-	public function herhalen( $eind, $wekelijks = true ) {
-		$freq  = $wekelijks ? 'WEEKLY' : 'DAILY';
+	public function herhalen( DateTime $eind ) : void {
 		$until = $eind->format( 'Ymd\THis\Z' );
-		$this->event->setRecurrence( [ "RRULE:FREQ=$freq;UNTIL=$until" ] );
+		$this->event->setRecurrence( [ "RRULE:FREQ=WEEKLY;UNTIL=$until" ] );
 	}
 
 	/**
 	 * Wijzig het event naar een herhalend event
 	 *
-	 * @param array $datums Datums als \DateTime object.
+	 * @param array $datums Datums als DateTime object.
 	 */
-	public function patroon( $datums ) {
+	public function patroon( array $datums ) : void {
 		unset( $datums[0] );
 		$datumteksten = array_map(
 			function( $datum ) {
@@ -138,7 +131,7 @@ class Event {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		switch ( $attribuut ) {
 			case 'vervallen':
 				return 'cancelled' === $this->event->getStatus();
@@ -155,9 +148,8 @@ class Event {
 			case 'properties':
 				if ( isset( $this->properties['data'] ) ) {
 					return json_decode( $this->properties['data'], true );
-				} else {
-					return [];
 				}
+				return [];
 			default:
 				return null;
 		}
@@ -171,7 +163,7 @@ class Event {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'titel':
 				$this->event->setSummary( $waarde );
@@ -202,49 +194,49 @@ class Event {
 	 * Bewaar het event in de kalender.
 	 *
 	 * @since 5.0.0
-	 *
-	 * param string Het event id.
 	 */
-	public function save() {
+	public function save() : void {
 		$extendedproperties = $this->event->getExtendedProperties();
 		$extendedproperties->setPrivate( $this->properties );
 		$this->event->setExtendedProperties( $extendedproperties );
 		if ( is_null( $this->event->getCreated() ) ) {
-			$this->event = Google::calendar_service()->events->insert( Google::kalender_id(), $this->event );
-		} else {
-			$this->event = Google::calendar_service()->events->update( Google::kalender_id(), $this->event->getId(), $this->event );
+			$this->event = $this->googleconnect->calendar_service()->events->insert( $this->kalender_id, $this->event );
+			return;
 		}
+		$this->event = $this->googleconnect->calendar_service()->events->update( $this->kalender_id, $this->event->getId(), $this->event );
 	}
 
 	/**
 	 * Delete het event.
 	 */
-	public function delete() {
-		Google::calendar_service()->events->delete( Google::kalender_id(), $this->event->getId() );
+	public function delete() : void {
+		$this->googleconnect->calendar_service()->events->delete( $this->kalender_id, $this->event->getId() );
 	}
 
 	/**
-	 * Return alle events.
+	 * Converteer DateTime object naar Google datetime format, zoals '2015-05-28T09:00:00-07:00'.
 	 *
-	 * @param array $query De query.
-	 * @return array events.
+	 * @param DateTime $datetime Het datetime object.
+	 * @return Google_Service_Calendar_EventDateTime De tijd in Google datetime format.
 	 */
-	public static function query( $query = [] ) {
-		$default_query = [
-			'calendarId'   => Google::kalender_id(),
-			'orderBy'      => 'startTime',
-			'singleEvents' => true,
-			'timeMin'      => date( 'c', mktime( 0, 0, 0, 1, 1, 2018 ) ),
-			// phpcs:ignore 'privateExtendedProperty' => 'key=' . self::META_KEY,
-		];
-		$results = Google::calendar_service()->events->listEvents( Google::kalender_id(), array_merge( $default_query, $query ) );
-		$events  = $results->getItems();
-		$arr     = [];
-		foreach ( $events as $event ) {
-			if ( ! empty( $event->start->dateTime ) ) { // Skip events die de hele dag duren, zoals verjaardagen en vakanties.
-				$arr[ $event->getId() ] = new Event( $event->getId() );
-			}
-		}
-		return $arr;
+	private function to_google_dt( DateTime $datetime ) : Google_Service_Calendar_EventDateTime {
+		$google_datetime = new Google_Service_Calendar_EventDateTime();
+		$google_datetime->setDateTime( $datetime->format( DateTime::RFC3339 ) );
+		$google_datetime->setTimeZone( $datetime->getTimeZone()->getName() );
+		return $google_datetime;
 	}
+
+	/**
+	 * Converteer Google datetime object, zoals '2015-05-28T09:00:00-07:00' naar \DateTime object.
+	 *
+	 * @param Google_Service_Calendar_EventDateTime $google_datetime Het datetime object.
+	 * @return DateTime Het php DateTime object.
+	 */
+	private function from_google_dt( Google_Service_Calendar_EventDateTime $google_datetime ) : DateTime {
+		if ( ! empty( $google_datetime->getTimeZone() ) ) {
+			return new DateTime( $google_datetime->getDateTime(), new DateTimeZone( $google_datetime->getTimeZone() ) );
+		}
+		return new DateTime( $google_datetime->getDateTime() );
+	}
+
 }

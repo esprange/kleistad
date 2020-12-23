@@ -31,26 +31,31 @@ class Public_Rapport extends Shortcode {
 		$data['naam']      = $huidige_gebruiker->display_name;
 		$data['saldo']     = number_format_i18n( $saldo->bedrag, 2 );
 		$data['items']     = [];
-		$ovens             = Oven::all();
-		$reserveringen     = Reservering::all();
-		foreach ( $reserveringen as $reservering ) {
-			foreach ( $reservering->verdeling as $stookdeel ) {
-				if ( $stookdeel['id'] === $huidige_gebruiker->ID ) {
-					$stoker          = get_userdata( $reservering->gebruiker_id );
-					$data['items'][] = [
-						'datum'     => $reservering->datum,
-						'oven'      => $ovens[ $reservering->oven_id ]->naam,
-						'stoker'    => false === $stoker ? 'onbekend' : $stoker->display_name,
-						'stook'     => $reservering->soortstook,
-						'temp'      => $reservering->temperatuur > 0 ? $reservering->temperatuur : '',
-						'prog'      => $reservering->programma > 0 ? $reservering->programma : '',
-						'perc'      => $stookdeel['perc'],
-						'kosten'    => number_format_i18n(
-							$stookdeel['prijs'] ?? $ovens[ $reservering->oven_id ]->stookkosten( $huidige_gebruiker->ID, $stookdeel['perc'], $reservering->temperatuur ),
-							2
-						),
-						'voorlopig' => ! $reservering->verwerkt,
-					];
+		$ovens             = new Ovens();
+		foreach ( $ovens as $oven ) {
+			$stoken = new Stoken( $oven->id, 0, time() );
+			foreach ( $stoken as $stook ) {
+				if ( ! $stook->is_gereserveerd() ) {
+					continue;
+				}
+				foreach ( $stook->stookdelen as $stookdeel ) {
+					if ( $stookdeel->medestoker === $huidige_gebruiker->ID ) {
+						$stoker          = get_userdata( $stook->hoofdstoker );
+						$data['items'][] = [
+							'datum'     => $stook->datum,
+							'oven'      => $oven->naam,
+							'stoker'    => false === $stoker ? 'onbekend' : $stoker->display_name,
+							'stook'     => $stook->soort,
+							'temp'      => $stook->temperatuur > 0 ? $stook->temperatuur : '',
+							'prog'      => $stook->programma > 0 ? $stook->programma : '',
+							'perc'      => $stookdeel->percentage,
+							'kosten'    => number_format_i18n(
+								$stookdeel->prijs ?? $oven->stookkosten( $huidige_gebruiker->ID, $stookdeel->percentage, $stook->temperatuur ),
+								2
+							),
+							'voorlopig' => ! $stook->verwerkt,
+						];
+					}
 				}
 			}
 		}

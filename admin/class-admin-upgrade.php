@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 74;
+	const DBVERSIE = 77;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -99,6 +99,7 @@ class Admin_Upgrade {
 			jaar smallint(4) NOT NULL,
 			maand tinyint(2) NOT NULL,
 			dag tinyint(1) NOT NULL,
+			datum date,
 			gebruiker_id int(10) NOT NULL,
 			temperatuur int(10),
 			soortstook tinytext,
@@ -263,6 +264,14 @@ class Admin_Upgrade {
 	private function convert_ovens() {
 	}
 
+	/**
+	 * Converteer stookreserveringen.
+	 */
+	private function convert_reserveringen() {
+		global $wpdb;
+		$wpdb->query ( "UPDATE {$wpdb->prefix}kleistad_reserveringen SET datum = concat( jaar, '-', maand, '-', dag )" );
+	}
+
 	// phpcs:enable
 
 	/**
@@ -283,5 +292,6 @@ class Admin_Upgrade {
 		$this->convert_recept();
 		$this->convert_users();
 		$this->convert_ovens();
+		$this->convert_reserveringen();
 	}
 }

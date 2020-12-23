@@ -11,23 +11,31 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
+/**
+ * Custom capabilities van kleistad gebruikers.
+ */
+const OVERRIDE  = 'kleistad_reserveer_voor_ander';
+const RESERVEER = 'kleistad_reservering_aanmaken';
+const BESTUUR   = 'bestuur';
+const DOCENT    = 'docenten';
+const LID       = 'leden';
+const BOEKHOUD  = 'boekhouding';
+const INTERN    = 'intern';
+
 /**
  * Insert of update de gebruiker.
  *
  * @param array $userdata De gebruiker gegevens, inclusief contact informatie.
- * @return int|\WP_Error  De user_id of een error object.
+ * @return int|WP_Error  De user_id of een error object.
  */
 function upsert_user( $userdata ) {
 	if ( is_null( $userdata['ID'] ) ) {
-		$userdata['user_login']    = $userdata['user_email'];
-		$userdata['user_pass']     = wp_generate_password( 12, true );
-		$userdata['user_nicename'] = strtolower( $userdata['first_name'] . '-' . $userdata['last_name'] );
-		$userdata['role']          = '';
-		$result                    = wp_insert_user( (object) $userdata );
-	} else {
-		$result = wp_update_user( (object) $userdata );
+		$userdata['role'] = '';
+		return wp_insert_user( (object) $userdata );
 	}
-	return $result;
+	return wp_update_user( (object) $userdata );
 }
 
 /**
@@ -46,6 +54,55 @@ function zet_blokkade( $datum ) {
  */
 function get_blokkade() {
 	return (int) get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
+}
+
+/**
+ * De opties van de plugin.
+ *
+ * @since     4.4.0
+ * @return    array    De opties.
+ */
+function opties() {
+	static $opties = [];
+	if ( empty( $opties ) ) {
+		$opties = get_option( 'kleistad-opties', [] );
+	}
+	return $opties;
+}
+
+/**
+ * De technische setup van de plugin.
+ *
+ * @since     6.2.1
+ * @return    array    De setup opties.
+ */
+function setup() {
+	static $setup = [];
+	if ( empty( $setup ) ) {
+		$setup = get_option( 'kleistad-setup', [] );
+	}
+	return $setup;
+}
+
+/**
+ * Geeft de basis url terug voor de endpoints.
+ *
+ * @return string url voor endpoints
+ */
+function base_url() {
+	return rest_url( KLEISTAD_API );
+}
+
+/**
+ * Bepaal het Kleistad artikel a.d.h.v. de referentie.
+ *
+ * @param string $referentie De artikel referentie.
+ * @return Artikel Een van de kleistad Artikel objecten.
+ * @SuppressWarnings(PHPMD.ElseExpression)
+ */
+function get_artikel( string $referentie ): Artikel {
+	$reg = new Artikelregister();
+	return $reg->geef_object( $referentie );
 }
 
 /**
@@ -89,7 +146,7 @@ class Kleistad {
 		$this->define_admin_hooks();
 		$this->define_common_hooks();
 		$this->define_public_hooks();
-		$this->register_artikelen();
+		new Artikelregister( [ 'Abonnement', 'Afboeking', 'Dagdelenkaart', 'Inschrijving', 'LosArtikel', 'Saldo', 'Workshop' ] );
 	}
 
 	/**
@@ -110,7 +167,7 @@ class Kleistad {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Admin_Main( $this->get_version(), self::get_options(), self::get_setup() );
+		$plugin_admin = new Admin_Main( $this->get_version(), opties(), setup() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts_and_styles' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
@@ -149,6 +206,7 @@ class Kleistad {
 		$this->loader->add_filter( 'login_redirect', $plugin_common, 'login_redirect', 10, 3 );
 		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_common, 'loginuit_menu', 10, 2 );
 		$this->loader->add_filter( 'cron_schedules', $plugin_common, 'cron_schedules' ); // phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
+		$this->loader->add_filter( 'wp_pre_insert_user_data', $plugin_common, 'pre_insert_user_data', 10, 3 );
 	}
 
 	/**
@@ -158,7 +216,7 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		$plugin_public = new Public_Main( $this->get_version(), self::get_options() );
+		$plugin_public = new Public_Main( $this->get_version(), opties() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
@@ -168,7 +226,6 @@ class Kleistad {
 		$this->loader->add_action( 'init', $plugin_public, 'inline_style', 100 );
 		$this->loader->add_action( 'wp_ajax_kleistad_wachtwoord', $plugin_public, 'wachtwoord', 100 );
 		$this->loader->add_action( 'wp_ajax_nopriv_kleistad_wachtwoord', $plugin_public, 'wachtwoord', 100 );
-		$this->loader->add_action( 'register_user', $plugin_public, 'register_user' );
 		$this->loader->add_action( 'profile_update', $plugin_public, 'profile_update' );
 
 		$this->loader->add_filter( 'single_template', $plugin_public, 'single_template' );
@@ -180,68 +237,6 @@ class Kleistad {
 		$this->loader->add_filter( 'password_change_email', $plugin_public, 'password_change_email', 10, 3 );
 		$this->loader->add_filter( 'retrieve_password_message', $plugin_public, 'retrieve_password_message', 10, 4 );
 		$this->loader->add_filter( 'password_hint', $plugin_public, 'password_hint' );
-	}
-
-	/**
-	 * Registreer de artikelen voor later gebruik.
-	 */
-	private function register_artikelen() {
-		Artikel::register(
-			'A',
-			[
-				'naam'   => 'abonnement',
-				'class'  => 'Abonnement',
-				'pcount' => 1,
-			]
-		);
-		Artikel::register(
-			'C',
-			[
-				'naam'   => 'cursus',
-				'class'  => 'Inschrijving',
-				'pcount' => 2,
-			]
-		);
-		Artikel::register(
-			'K',
-			[
-				'naam'   => 'dagdelenkaart',
-				'class'  => 'Dagdelenkaart',
-				'pcount' => 1,
-			]
-		);
-		Artikel::register(
-			'S',
-			[
-				'naam'   => 'stooksaldo',
-				'class'  => 'Saldo',
-				'pcount' => 1,
-			]
-		);
-		Artikel::register(
-			'W',
-			[
-				'naam'   => 'workshop',
-				'class'  => 'Workshop',
-				'pcount' => 1,
-			]
-		);
-		Artikel::register(
-			'X',
-			[
-				'naam'   => 'overige verkoop',
-				'class'  => 'LosArtikel',
-				'pcount' => 1,
-			]
-		);
-		Artikel::register(
-			'@',
-			[
-				'naam'   => 'dubieuze debiteuren',
-				'class'  => '',
-				'pcount' => 1,
-			]
-		);
 	}
 
 	/**
@@ -271,34 +266,6 @@ class Kleistad {
 	 */
 	public function get_version() {
 		return $this->version;
-	}
-
-	/**
-	 * De opties van de plugin.
-	 *
-	 * @since     4.4.0
-	 * @return    array    De opties.
-	 */
-	public static function get_options() {
-		static $options = [];
-		if ( empty( $options ) ) {
-			$options = get_option( 'kleistad-opties', [] );
-		}
-		return $options;
-	}
-
-	/**
-	 * De technische setup van de plugin.
-	 *
-	 * @since     6.2.1
-	 * @return    array    De setup opties.
-	 */
-	public static function get_setup() {
-		static $setup = [];
-		if ( empty( $setup ) ) {
-			$setup = get_option( 'kleistad-setup', [] );
-		}
-		return $setup;
 	}
 
 }

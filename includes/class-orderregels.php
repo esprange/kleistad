@@ -54,21 +54,20 @@ class Orderregels implements Countable, Iterator {
 	 * @param array | Orderregel $regeltoetevoegen Toe te voegen regel of regels.
 	 */
 	public function toevoegen( $regeltoetevoegen ) {
-		if ( is_array( $regeltoetevoegen ) ) {
-			$this->regels = array_merge( $this->regels, $regeltoetevoegen );
-		} else {
-			$this->regels[] = $regeltoetevoegen;
-		}
+		$this->regels = array_merge(
+			$this->regels,
+			is_array( $regeltoetevoegen ) ? $regeltoetevoegen : [ $regeltoetevoegen ]
+		);
 		// Eventuele kortingsregels samenvoegen.
 		$korting = false;
 		foreach ( $this->regels as $key => $regel ) {
 			if ( Orderregel::KORTING === $regel->artikel ) {
 				if ( false === $korting ) {
 					$korting = $key;
-				} else {
-					$this->regels[ $korting ]->prijs += $regel->prijs;
-					unset( $this->regels[ $key ] );
+					continue;
 				}
+				$this->regels[ $korting ]->prijs += $regel->prijs;
+				unset( $this->regels[ $key ] );
 			}
 		}
 	}
@@ -79,17 +78,16 @@ class Orderregels implements Countable, Iterator {
 	 * @param array | Orderregel $regelvervangen Te vervangen regel of regels.
 	 */
 	public function vervangen( $regelvervangen ) {
+		if ( ! is_array( $regelvervangen ) ) {
+			$regelvervangen = [ $regelvervangen ];
+		}
 		foreach ( $this->regels as $key => $regel ) {
 			if ( Orderregel::KORTING !== $regel->artikel ) {
 				unset( $this->regels[ $key ] );
 			}
 		}
-		if ( is_array( $regelvervangen ) ) {
-			foreach ( $regelvervangen as $regel ) {
-				array_unshift( $this->regels, $regel );
-			}
-		} else {
-			array_unshift( $this->regels, $regelvervangen );
+		foreach ( $regelvervangen as $regel ) {
+			array_unshift( $this->regels, $regel );
 		}
 		$this->regels = array_values( $this->regels );
 	}

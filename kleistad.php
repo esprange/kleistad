@@ -25,6 +25,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+const KLEISTAD_API = 'kleistad_api';
+
 /**
  * De autoloader toevoegen.
  */

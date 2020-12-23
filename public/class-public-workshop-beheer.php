@@ -22,7 +22,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array De workshops data.
 	 */
 	private function planning() {
-		$workshops = Workshop::all();
+		$workshops = new Workshops();
 		$lijst     = [];
 		foreach ( $workshops as $workshop_id => $workshop ) {
 			$lijst[] = [
@@ -78,11 +78,11 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$gebruikers = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => [ 'nicename' ],
+				'orderby' => 'display_name',
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			if ( Roles::override( $gebruiker->ID ) ) {
+			if ( user_can( $gebruiker->ID, self::OVERRIDE ) ) {
 				$docenten[] = $gebruiker;
 			}
 		}
@@ -97,7 +97,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	private function formulier( $workshop_id = null ) {
 		$workshop = new Workshop( $workshop_id );
-		$order_id = Order::zoek_order( $workshop->referentie() );
+		$order    = new Order( $workshop->geef_referentie() );
 		return [
 			'workshop_id'       => $workshop->id,
 			'naam'              => $workshop->naam,
@@ -119,7 +119,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'definitief'        => $workshop->definitief,
 			'vervallen'         => $workshop->vervallen,
 			'aanvraag_id'       => $workshop->aanvraag_id,
-			'gefactureerd'      => boolval( $order_id ),
+			'gefactureerd'      => boolval( $order->id ),
 			'betaling_email'    => $workshop->betaling_email,
 		];
 	}
@@ -265,7 +265,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Schrijf workshop informatie naar het bestand.
 	 */
 	protected function workshops() {
-		$workshops = Workshop::all();
+		$workshops = new Workshops();
 		fputcsv(
 			$this->file_handle,
 			[
@@ -374,7 +374,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		} elseif ( 'afzeggen' === $data['form_actie'] ) {
 			$workshop->afzeggen();
 			if ( $workshop->definitief ) {
-				$workshop->email( '_afzegging' );
+				$workshop->verzend_email( '_afzegging' );
 				$bericht = 'De afspraak voor de workshop is per email afgezegd';
 			} else {
 				$bericht = 'De afspraak voor de workshop is verwijderd';

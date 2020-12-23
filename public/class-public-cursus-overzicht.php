@@ -19,50 +19,39 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	/**
 	 * Bepaal de actieve cursisten in een cursus.
 	 *
-	 * @param  int  $cursus_id Het id van de cursus.
-	 * @param  bool $compleet  Of het overzicht ook niet ingedeelde cursisten moet tonen.
+	 * @param  int $cursus_id Het id van de cursus.
 	 * @return array De inschrijving van cursisten voor de cursus. Cursist_id is de index.
 	 */
-	private function inschrijvingen( $cursus_id, $compleet = false ) {
-		$cursist_inschrijving = [];
-		$inschrijvingen       = Inschrijving::all();
-		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-			if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
-				if ( ! $compleet && ! $cursist_inschrijvingen[ $cursus_id ]->ingedeeld ) {
+	private function geef_inschrijvingen( int $cursus_id ) : array {
+		$inschrijvingen = [];
+		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
+			if ( $cursus_id === $inschrijving->cursus->id && ! $inschrijving->geannuleerd ) {
+				if ( ! current_user_can( BESTUUR ) && ! $inschrijving->ingedeeld ) {
 					continue;
 				}
-				$cursist_inschrijving[ $cursist_id ] = $cursist_inschrijvingen[ $cursus_id ];
+				$inschrijvingen[ $inschrijving->klant_id ] = $inschrijving;
 			}
 		}
-		return $cursist_inschrijving;
+		return $inschrijvingen;
 	}
 
 	/**
 	 * Geef de cursus info mee.
 	 *
-	 * @param int $docent_id Nul (ingeval van bestuur) of het id van de docent.
 	 * @return array De cursus informatie.
 	 */
-	private function cursussen( $docent_id = 0 ) {
-		$cursussen      = Cursus::all();
-		$inschrijvingen = Inschrijving::all();
-		$cursus_info    = [];
-		foreach ( $cursussen as $cursus_id => $cursus ) {
+	private function geef_cursussen() {
+		$cursus_info = [];
+		$docent_id   = current_user_can( BESTUUR ) ? 0 : get_current_user_id();
+		foreach ( new Cursussen() as $cursus ) {
 			if ( ! $cursus->vervallen && ( 0 === $docent_id || intval( $cursus->docent ) === $docent_id ) ) {
-				$heeft_inschrijvingen = false;
-				foreach ( $inschrijvingen as $cursist_inschrijvingen ) {
-					if ( array_key_exists( $cursus_id, $cursist_inschrijvingen ) && ! $cursist_inschrijvingen[ $cursus_id ]->geannuleerd ) {
-						$heeft_inschrijvingen = true;
-						break;
-					}
-				}
-				$cursus_info[ $cursus_id ] = [
-					'start_dt'       => $cursus->start_datum,
-					'code'           => "C$cursus_id",
-					'naam'           => $cursus->naam,
-					'docent'         => $cursus->docent_naam(),
-					'start_datum'    => strftime( '%d-%m-%Y', $cursus->start_datum ),
-					'inschrijvingen' => $heeft_inschrijvingen,
+				$cursus_info[ $cursus->id ] = [
+					'start_dt'             => $cursus->start_datum,
+					'code'                 => "C{$cursus->id}",
+					'naam'                 => $cursus->naam,
+					'docent'               => $cursus->docent_naam(),
+					'start_datum'          => strftime( '%d-%m-%Y', $cursus->start_datum ),
+					'heeft_inschrijvingen' => ! empty( $this->geef_inschrijvingen( $cursus->id ) ),
 				];
 			}
 		}
@@ -73,39 +62,36 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * Overzicht cursisten op cursus
 	 *
 	 * @param Cursus $cursus     De cursus.
-	 * @param bool   $is_bestuur Toon alle cursussen of alleen die van de huidige gebruiker (docent).
 	 * @return array De cursisten.
 	 */
-	private function cursistenlijst( $cursus, $is_bestuur ) {
+	private function cursistenlijst( $cursus ) {
 		$cursisten = [];
-		foreach ( $this->inschrijvingen( $cursus->id, $is_bestuur ) as $cursist_id => $inschrijving ) {
-			$cursist = get_userdata( $cursist_id );
-			if ( $inschrijving->hoofd_cursist_id ) {
-				$cursisten[] = [
-					'id'         => $cursist_id,
-					'naam'       => $cursist->display_name,
-					'telnr'      => $cursist->telnr,
-					'email'      => $cursist->user_email,
-					'extra'      => true,
-					'technieken' => implode( ', ', $inschrijving->technieken ),
-				];
-			} else {
-				$order       = new Order( $inschrijving->referentie() );
-				$cursisten[] = [
-					'id'             => $cursist_id,
-					'naam'           => $cursist->display_name . $inschrijving->toon_aantal(),
-					'telnr'          => $cursist->telnr,
-					'email'          => $cursist->user_email,
-					'extra'          => false,
-					'i_betaald'      => $inschrijving->inschrijving_betaald( $order->betaald ),
-					'c_betaald'      => $order->gesloten,
-					'restant_email'  => $inschrijving->restant_email,
-					'herinner_email' => $inschrijving->herinner_email,
-					'technieken'     => implode( ', ', $inschrijving->technieken ),
-					'wacht'          => ( ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! Order::zoek_order( $inschrijving->code ) ),
-					'wachtlijst'     => ! $inschrijving->ingedeeld && 0 < $inschrijving->wacht_datum,
-				];
+		foreach ( new Inschrijvingen( $cursus->id ) as $inschrijving ) {
+			$cursist      = get_userdata( $inschrijving->klant_id );
+			$cursist_info = [
+				'id'         => $cursist->ID,
+				'naam'       => $cursist->display_name,
+				'telnr'      => $cursist->telnr,
+				'email'      => $cursist->user_email,
+				'extra'      => true,
+				'technieken' => implode( ', ', $inschrijving->technieken ),
+			];
+			if ( ! $inschrijving->hoofd_cursist_id ) {
+				$order        = new Order( $inschrijving->geef_referentie() );
+				$cursist_info = array_merge(
+					$cursist_info,
+					[
+						'extra'          => false,
+						'i_betaald'      => $inschrijving->inschrijving_betaald( $order->betaald ),
+						'c_betaald'      => $order->gesloten,
+						'restant_email'  => $inschrijving->restant_email,
+						'herinner_email' => $inschrijving->herinner_email,
+						'wacht'          => ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! $order->id,
+						'wachtlijst'     => ! $inschrijving->ingedeeld && 0 < $inschrijving->wacht_datum,
+					]
+				);
 			}
+			$cursisten[] = $cursist_info;
 		}
 		return $cursisten;
 	}
@@ -120,7 +106,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @since   4.5.4
 	 */
 	protected function prepare( &$data ) {
-		$data['bestuur_rechten'] = Roles::is_bestuur();
+		$data['bestuur_rechten'] = current_user_can( BESTUUR );
 		if ( 'cursisten' === $data['actie'] ) {
 			$cursus            = new Cursus( $data['id'] );
 			$data['cursus']    = [
@@ -130,7 +116,9 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
 			$data['cursisten'] = $this->cursistenlijst( $cursus, $data['bestuur_rechten'] );
-		} elseif ( 'indelen' === $data['actie'] || 'uitschrijven' === $data['actie'] ) {
+			return true;
+		}
+		if ( 'indelen' === $data['actie'] || 'uitschrijven' === $data['actie'] ) {
 			list( $cursist_id, $cursus_id ) = array_map( 'intval', explode( '-', $data['id'] ) );
 			$cursus                         = new Cursus( $cursus_id );
 			$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
@@ -149,14 +137,9 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'datum'  => $inschrijving->datum,
 				'aantal' => $inschrijving->aantal,
 			];
-
-		} else {
-			if ( Roles::is_bestuur() ) {
-				$data['cursus_info'] = $this->cursussen();
-			} else {
-				$data['cursus_info'] = $this->cursussen( get_current_user_id() );
-			}
+			return true;
 		}
+		$data['cursus_info'] = $this->geef_cursussen();
 		return true;
 	}
 
@@ -199,7 +182,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 			$inschrijving->artikel_type   = 'inschrijving';
 			$inschrijving->save();
-			$inschrijving->email( '_lopend_betalen', $inschrijving->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
+			$inschrijving->verzend_email( '_lopend_betalen', $inschrijving->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
 			return [
 				'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
 				'content' => $this->display(),
@@ -213,16 +196,16 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'content' => $this->display(),
 			];
 		} elseif ( 'herinner_email' === $data['form_actie'] ) {
-			$aantal_verzonden_email = 0;
+			$aantal_email = 0;
 			// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
 			foreach ( $this->inschrijvingen( $data['input']['cursus_id'], false ) as $inschrijving ) {
 				/**
 				 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
 				 */
-				$aantal_verzonden_email += $inschrijving->herinnering();
+				$aantal_email += $inschrijving->herinnering();
 			}
 			return [
-				'status'  => $this->status( ( $aantal_verzonden_email > 0 ) ? "Emails zijn verstuurd naar $aantal_verzonden_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
+				'status'  => $this->status( ( $aantal_email > 0 ) ? "Emails zijn verstuurd naar $aantal_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
 				'content' => $this->display(),
 			];
 		}

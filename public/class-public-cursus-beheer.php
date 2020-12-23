@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De Cursus beheer class.
  */
@@ -22,7 +24,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @return array De cursussen data.
 	 */
 	private function lijst() {
-		$cursussen = Cursus::all();
+		$cursussen = new Cursussen();
 		$lijst     = [];
 		$vandaag   = strtotime( 'today' );
 		foreach ( $cursussen as $cursus ) {
@@ -96,8 +98,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		$data['docenten'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
-				'role'    => [ Roles::DOCENT ],
-				'orderby' => [ 'nicename' ],
+				'role'    => [ DOCENT ],
+				'orderby' => 'display_name',
 			]
 		);
 
@@ -108,6 +110,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			if ( ! isset( $data['cursus'] ) ) {
 				$data['cursus'] = $this->formulier();
 			}
+			return true;
 		} elseif ( 'wijzigen' === $data['actie'] ) {
 			/*
 			 * Er is een cursus gekozen om te wijzigen.
@@ -115,9 +118,9 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			if ( ! isset( $data['cursus'] ) ) {
 				$data['cursus'] = $this->formulier( $data['id'] );
 			}
-		} else {
-			$data['cursussen'] = $this->lijst();
+			return true;
 		}
+		$data['cursussen'] = $this->lijst();
 		return true;
 	}
 
@@ -125,12 +128,13 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * Valideer/sanitize 'cursus_beheer' form
 	 *
 	 * @param array $data gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   4.0.87
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	protected function validate( &$data ) {
-		$error          = new \WP_Error();
+		$error          = new WP_Error();
 		$data['cursus'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -163,28 +167,29 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'tonen'           => FILTER_SANITIZE_STRING,
 			]
 		);
+		if ( 'verwijderen' === $data['form_actie'] ) {
+			return true;
+		}
 		if ( is_null( $data['cursus']['technieken'] ) ) {
 			$data['cursus']['technieken'] = [];
 		}
-		if ( 'bewaren' === $data['form_actie'] ) {
-			if ( strtotime( $data['cursus']['start_tijd'] ) >= strtotime( $data['cursus']['eind_tijd'] ) ) {
-				$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
-			}
-			if ( strtotime( $data['cursus']['start_datum'] ) > strtotime( $data['cursus']['eind_datum'] ) ) {
-				$error->add( 'Invoerfout', 'De startdatum moet eerder of gelijk aan de einddatum zijn' );
-			}
-			if ( 0.0 === $data['cursus']['cursuskosten'] && 0.0 < $data['cursus']['inschrijfkosten'] ) {
-				$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
-			}
-			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['inschrijfslug'], OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
-				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['inschrijfslug'] );
-			}
-			if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['indelingslug'], OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
-				$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['indelingslug'] );
-			}
-			if ( ! empty( $error->get_error_codes() ) ) {
-				return $error;
-			}
+		if ( strtotime( $data['cursus']['start_tijd'] ) >= strtotime( $data['cursus']['eind_tijd'] ) ) {
+			$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
+		}
+		if ( strtotime( $data['cursus']['start_datum'] ) > strtotime( $data['cursus']['eind_datum'] ) ) {
+			$error->add( 'Invoerfout', 'De startdatum moet eerder of gelijk aan de einddatum zijn' );
+		}
+		if ( 0.0 === $data['cursus']['cursuskosten'] && 0.0 < $data['cursus']['inschrijfkosten'] ) {
+			$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
+		}
+		if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['inschrijfslug'], OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
+			$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['inschrijfslug'] );
+		}
+		if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['indelingslug'], OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
+			$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['indelingslug'] );
+		}
+		if ( ! empty( $error->get_error_codes() ) ) {
+			return $error;
 		}
 		return true;
 	}
@@ -193,32 +198,28 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * Bewaar 'cursus_beheer' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error | array
+	 * @return array
 	 *
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
 		$cursus_id = $data['cursus']['cursus_id'];
-
-		if ( $cursus_id > 0 ) {
-			$cursus = new Cursus( $cursus_id );
-		} else {
-			$cursus = new Cursus();
-		}
+		$cursus    = $cursus_id > 0 ? new Cursus( $cursus_id ) : new Cursus();
 		if ( 'verwijderen' === $data['form_actie'] ) {
 			/*
 			* Cursus moet verwijderd worden.
 			*/
-			if ( $cursus->verwijder() ) {
+			if ( ! $cursus->verwijder() ) {
 				return [
-					'status'  => $this->status( 'De cursus informatie is verwijderd' ),
-					'content' => $this->display(),
+					'status' => $this->status( new WP_Error( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' ) ),
 				];
 			}
 			return [
-				'status' => $this->status( new \WP_Error( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' ) ),
+				'status'  => $this->status( 'De cursus informatie is verwijderd' ),
+				'content' => $this->display(),
 			];
-		} elseif ( 'bewaren' === $data['form_actie'] ) {
+		}
+		if ( 'bewaren' === $data['form_actie'] ) {
 			$cursus->naam            = $data['cursus']['naam'];
 			$cursus->docent          = $data['cursus']['docent'];
 			$cursus->start_datum     = strtotime( $data['cursus']['start_datum'] );

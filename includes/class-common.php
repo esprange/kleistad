@@ -23,6 +23,7 @@ class Common {
 	 * @param object $user wp user object.
 	 *
 	 * @internal Action for wp_login.
+	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
 	public function user_login( $user_login, $user = null ) {
 
@@ -117,8 +118,8 @@ class Common {
 	 */
 	public function login_redirect( $url, $request, $user ) {
 		if ( isset( $request ) && $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) { // De test van request is dummy statement, altijd true.
-			$url = ( $user->has_cap( Roles::BESTUUR ) ) ? home_url( '/bestuur/' ) : (
-				$user->has_cap( Roles::LID ) ? home_url( '/leden/' ) : home_url( '/werkplek/' ) );
+			$url = ( $user->has_cap( BESTUUR ) ) ? home_url( '/bestuur/' ) : (
+				$user->has_cap( LID ) ? home_url( '/leden/' ) : home_url( '/werkplek/' ) );
 		}
 		return $url;
 	}
@@ -157,11 +158,9 @@ class Common {
 		if ( false === $redirect || is_home() ) {
 			$redirect = home_url();
 		}
-		if ( is_user_logged_in() ) {
-			$link = '<a href="' . wp_logout_url( home_url() ) . '" title="Uitloggen">Uitloggen</a>';
-		} else {
-			$link = '<a href="' . wp_login_url( $redirect ) . '" title="Inloggen">Inloggen</a>';
-		}
+		$link      = is_user_logged_in() ?
+			( '<a href="' . wp_logout_url( home_url() ) . '" title="Uitloggen">Uitloggen</a>' ) :
+			( '<a href="' . wp_login_url( $redirect ) . '" title="Inloggen">Inloggen</a>' );
 		$is_active = true;
 		$items    .= '<li id="log-in-out-link" class="menu-item menu-type-link">' . $link . '</li>';
 		return $items;
@@ -182,5 +181,21 @@ class Common {
 			];
 		}
 		return $schedules;
+	}
+
+	/**
+	 * Pas user record aan na insert of update van user data.
+	 *
+	 * @param array $data   De user data.
+	 * @param bool  $update Of er wel/niet een update is.
+	 * @return array
+	 */
+	public function pre_insert_user_data( $data, $update ) {
+		if ( ! $update ) {
+			$data['user_login']    = $data['user_email'];
+			$data['user_pass']     = wp_generate_password( 12, true );
+			$data['user_nicename'] = strtolower( $data['first_name'] . '-' . $data['last_name'] );
+		}
+		return $data;
 	}
 }

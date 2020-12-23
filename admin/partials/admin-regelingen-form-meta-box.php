@@ -22,9 +22,7 @@ namespace Kleistad;
 			<td>
 				<select name="gebruiker_id" id="gebruiker_id" style="width: 95%" required>
 					<?php foreach ( $gebruikers as $gebruiker ) : ?>
-						<?php if ( Roles::reserveer( $gebruiker->ID ) ) : ?>
 						<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" <?php selected( $item['gebruiker_id'], $gebruiker->ID ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
-						<?php endif ?>
 					<?php endforeach ?>
 				</select>
 			<?php else : ?>

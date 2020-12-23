@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad betalingen class.
  */
@@ -24,13 +26,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	private function debiteuren( $zoek = '' ) {
 		$debiteuren = [];
-		$orders     = Order::all( $zoek );
+		$orders     = new Orders();
 		foreach ( $orders as $order ) {
-			if ( '@' !== $order->referentie[0] ) {
-				$betreft = Artikel::get_artikel( $order->referentie )->artikel_naam();
-			} else {
-				$betreft = 'afboeking';
+			if ( ! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek ) ) {
+				continue;
 			}
+			$betreft      = '@' !== $order->referentie[0] ? get_artikel( $order->referentie )->geef_artikelnaam() : 'afboeking';
 			$debiteuren[] = [
 				'id'           => $order->id,
 				'naam'         => $order->klant['naam'],
@@ -49,16 +50,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	/**
 	 * Toon de informatie van één debiteur.
 	 *
-	 * @param int $id Het order id.
+	 * @param int $order_id Het order id.
 	 * @return array De informatie.
 	 */
-	private function debiteur( $id ) {
-		$order = new Order( $id );
-		if ( '@' !== $order->referentie[0] ) {
-			$betreft = Artikel::get_artikel( $order->referentie )->artikel_naam();
-		} else {
-			$betreft = 'afboeking';
-		}
+	private function debiteur( $order_id ) {
+		$order   = new Order( $order_id );
+		$betreft = '@' !== $order->referentie[0] ? get_artikel( $order->referentie )->geef_artikelnaam() : 'afboeking';
 		return [
 			'id'            => $order->id,
 			'naam'          => $order->klant['naam'],
@@ -124,12 +121,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * Valideer/sanitize 'debiteuren' form
 	 *
 	 * @param array $data gevalideerde data.
-	 * @return bool|\WP_Error
+	 * @return bool|WP_Error
 	 *
 	 * @since   6.1.0
 	 */
 	protected function validate( &$data ) {
-		$error         = new \WP_Error();
+		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -186,7 +183,7 @@ class Public_Debiteuren extends ShortcodeForm {
 		}
 		$order   = new Order( $data['input']['id'] );
 		$emailer = new Email();
-		$artikel = Artikel::get_artikel( $order->referentie );
+		$artikel = get_artikel( $order->referentie );
 		$status  = '';
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
@@ -207,7 +204,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'], $data['input']['opmerking_annulering'] ),
 						'parameters'  => [
 							'naam'        => $order->klant['naam'],
-							'artikel'     => $artikel->artikel_naam(),
+							'artikel'     => $artikel->geef_artikelnaam(),
 							'referentie'  => $order->referentie,
 							'betaal_link' => $artikel->betaal_link,
 						],
@@ -224,7 +221,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'], $data['input']['opmerking_korting'] ),
 						'parameters'  => [
 							'naam'        => $order->klant['naam'],
-							'artikel'     => $artikel->artikel_naam(),
+							'artikel'     => $artikel->geef_artikelnaam(),
 							'referentie'  => $order->referentie,
 							'betaal_link' => $artikel->betaal_link,
 						],
@@ -243,6 +240,6 @@ class Public_Debiteuren extends ShortcodeForm {
 				'content' => $this->display(),
 			];
 		}
-		return [ 'status' => new \WP_Error( 'fout', 'Er is iets fout gegaan' ) ];
+		return [ 'status' => new WP_Error( 'fout', 'Er is iets fout gegaan' ) ];
 	}
 }

@@ -27,34 +27,30 @@ class Public_Contact extends ShortcodeForm {
 	 */
 	protected function prepare( &$data ) {
 		if ( ! isset( $data['input'] ) ) {
-			$data      = [];
-			$gebruiker = wp_get_current_user();
-			if ( $gebruiker->exists() ) {
-				$data['input'] = [
-					'naam'      => $gebruiker->display_name,
-					'email'     => $gebruiker->user_email,
-					'telnr'     => $gebruiker->telnr,
-					'onderwerp' => '',
-					'vraag'     => '',
-				];
-			} else {
-				$data['input'] = [
+			$data      = [
+				'input' => [
 					'naam'      => '',
 					'email'     => '',
 					'telnr'     => '',
 					'onderwerp' => '',
 					'vraag'     => '',
-				];
+				],
+			];
+			$gebruiker = wp_get_current_user();
+			if ( $gebruiker->exists() ) {
+				$data['input']['naam']  = $gebruiker->display_name;
+				$data['input']['email'] = $gebruiker->user_email;
+				$data['input']['telnr'] = $gebruiker->telnr;
 			}
 		}
 		return true;
 	}
 
 	/**
-	 * Valideer/sanitize 'cursus_inschrijving' form
+	 * Valideer/sanitize 'contact' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return bool
 	 *
 	 * @since   6.3.0
 	 */
@@ -77,47 +73,35 @@ class Public_Contact extends ShortcodeForm {
 	 * Bewaar 'contact' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|array
+	 * @return array
 	 *
 	 * @since   6.3.0
 	 */
 	protected function save( $data ) {
-		$emailer = new Email();
-		$emailer->send(
-			[
-				'to'         => 'Kleistad <' . Email::info() . Email::domein() . '>',
-				'from'       => Email::info() . Email::verzend_domein(),
-				'from_name'  => $data['input']['naam'],
-				'reply-to'   => $data['input']['email'],
-				'slug'       => 'contact_vraag',
-				'subject'    => 'Vraag over ' . $data['input']['onderwerp'],
-				'auto'       => false,
-				'sign'       => '',
-				'parameters' => [
-					'naam'     => $data['input']['naam'],
-					'vraag'    => $data['input']['vraag'],
-					'telefoon' => $data['input']['telnr'],
-					'email'    => $data['input']['email'],
-				],
-			]
-		);
-		$emailer->send(
-			[
-				'to'         => $data['input']['email'],
-				'from'       => Email::info() . Email::verzend_domein(),
-				'from_name'  => 'Kleistad',
-				'reply-to'   => 'Kleistad <' . Email::info() . Email::domein() . '>',
-				'slug'       => 'contact_vraag',
-				'subject'    => 'Ontvangst vraag over ' . $data['input']['onderwerp'],
-				'parameters' => [
-					'naam'     => $data['input']['naam'],
-					'vraag'    => $data['input']['vraag'] . '<br/><p>Bedankt voor de vraag, wij proberen die snel te beantwoorden.</p><br/>',
-					'telefoon' => $data['input']['telnr'],
-					'email'    => $data['input']['email'],
-				],
-			]
-		);
+		$emailer          = new Email();
+		$email_parameters = [
+			'to'         => "Kleistad <{$emailer->info}{$emailer->domein}>",
+			'from'       => "{$emailer->info}{$emailer->verzend_domein}",
+			'from_name'  => $data['input']['naam'],
+			'reply-to'   => $data['input']['email'],
+			'slug'       => 'contact_vraag',
+			'subject'    => 'Vraag over ' . $data['input']['onderwerp'],
+			'auto'       => false,
+			'sign'       => '',
+			'parameters' => [
+				'naam'     => $data['input']['naam'],
+				'vraag'    => $data['input']['vraag'],
+				'telefoon' => $data['input']['telnr'],
+				'email'    => $data['input']['email'],
+			],
+		];
+		$emailer->send( $email_parameters );
 
+		$email_parameters['to']                   = $data['input']['email'];
+		$email_parameters['from_name']            = 'Kleistad';
+		$email_parameters['reply-to']             = "Kleistad <{$emailer->info}{$emailer->domein}>";
+		$email_parameters['parameters']['vraag'] .= '<br/><p>Bedankt voor de vraag, wij proberen die snel te beantwoorden.</p><br/>';
+		$emailer->send( $email_parameters );
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'Jouw vraag is ontvangen en er wordt spoedig contact met je opgenomen' ),

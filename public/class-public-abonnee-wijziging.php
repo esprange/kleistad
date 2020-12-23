@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De class Abonnee Wijziging.
  */
@@ -36,12 +38,12 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * Valideer/sanitize 'abonnee_wijziging' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
 	protected function validate( &$data ) {
-		$error = new \WP_Error();
+		$error = new WP_Error();
 
 		$data['input'] = filter_input_array(
 			INPUT_POST,
@@ -83,7 +85,8 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * Bewaar 'abonnee_wijziging' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return \WP_Error|array
+	 * @return WP_Error|array
+	 * @suppressWarnings(PHPMD.CyclomaticComplexity)
 	 *
 	 * @since   4.0.87
 	 */
@@ -108,16 +111,15 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 			case 'betaalwijze':
 				if ( 'ideal' === $data['input']['betaal'] ) {
 					$ideal_uri = $abonnement->start_incasso();
-					if ( ! empty( $ideal_uri ) ) {
-						return [ 'redirect_uri' => $ideal_uri ];
+					if ( false === $ideal_uri ) {
+						return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 					}
-					return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
+					return [ 'redirect_uri' => $ideal_uri ];
 				}
 				$status = $abonnement->stop_incasso();
 				break;
 			default:
 				$status = false;
-				break;
 		}
 		if ( $status ) {
 			return [
@@ -126,7 +128,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 			];
 		}
 		return [
-			'status' => $this->status( new \WP_Error( 'intern', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' ) ),
+			'status' => $this->status( new WP_Error( 'intern', 'De wijziging van het abonnement was niet mogelijk, neem eventueel contact op met Kleistad' ) ),
 		];
 	}
 }

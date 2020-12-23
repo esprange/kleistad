@@ -185,7 +185,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Public_Main::api(),
+			KLEISTAD_API,
 			'/formsubmit',
 			[
 				'methods'             => 'POST',

@@ -60,13 +60,8 @@ class Orderregel {
 		$btw_percentage = 0.21;
 		$this->artikel  = $artikel;
 		$this->aantal   = $aantal;
-		if ( is_null( $btw ) ) {
-			$this->prijs = round( $bedrag / ( 1 + $btw_percentage ), 2 );
-			$this->btw   = round( $bedrag - $this->prijs, 2 );
-		} else {
-			$this->prijs = $bedrag;
-			$this->btw   = $btw;
-		}
+		$this->prijs    = is_null( $btw ) ? round( $bedrag / ( 1 + $btw_percentage ), 2 ) : $bedrag;
+		$this->btw      = is_null( $btw ) ? $bedrag - $this->prijs : $btw;
 	}
 
 }

@@ -209,8 +209,7 @@ class Admin_Main {
 	 * @internal Action for admin_menu.
 	 */
 	public function add_plugin_admin_menu() {
-		global $submenu;
-		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', 'kleistad', [ $this->instellingen_handler, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), ++$GLOBALS['_wp_last_object_menu'] );
+		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', 'kleistad', [ $this->instellingen_handler, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), 30 );
 		add_submenu_page( 'kleistad', 'Instellingen', 'Instellingen', 'manage_options', 'kleistad', null );
 		$this->ovens_handler->add_pages();
 		$this->abonnees_handler->add_pages();
@@ -265,16 +264,18 @@ class Admin_Main {
 	 * @internal Filter for pre_set_site_transient_update_plugins.
 	 */
 	public function check_update( $transient ) {
-		if ( ! empty( $transient->checked ) ) {
-			$obj = $this->get_remote( 'version' );
-			if ( false !== $obj ) {
-				if ( version_compare( $this->version, $obj->new_version, '<' ) ) {
-					$transient->response[ $obj->plugin ] = $obj;
-				} else {
-					$transient->no_update[ $obj->plugin ] = $obj;
-				}
-			}
+		if ( empty( $transient->checked ) ) {
+			return $transient;
 		}
+		$obj = $this->get_remote( 'version' );
+		if ( false === $obj ) {
+			return $transient;
+		}
+		if ( version_compare( $this->version, $obj->new_version, '<' ) ) {
+			$transient->response[ $obj->plugin ] = $obj;
+			return $transient;
+		}
+		$transient->no_update[ $obj->plugin ] = $obj;
 		return $transient;
 	}
 
@@ -320,7 +321,7 @@ class Admin_Main {
 		$request = wp_remote_get( 'http://plugin.kleistad.nl/update.php', $params );
 		if ( ! is_wp_error( $request ) || ( is_array( $request ) && wp_remote_retrieve_response_code( $request ) === 200 ) ) {
 			// phpcs:ignore
-			return @unserialize( $request['body'] );
+			return unserialize( $request['body'] );
 		}
 		return false;
 	}
@@ -337,7 +338,7 @@ class Admin_Main {
 	public function setup_gewijzigd( $oud, $nieuw ) {
 		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
 			$oud['google_client_id'] !== $nieuw['google_client_id'] ) {
-			delete_option( Google::ACCESS_TOKEN );
+			delete_option( Googleconnect::ACCESS_TOKEN );
 		}
 	}
 
@@ -359,11 +360,11 @@ class Admin_Main {
 	 */
 	public function daily_jobs() {
 		$this->background->push_to_queue( 'Shortcode::cleanup_downloads' );
-		$this->background->push_to_queue( 'Workshop::dagelijks' );
-		$this->background->push_to_queue( 'Abonnement::dagelijks' );
-		$this->background->push_to_queue( 'Saldo::dagelijks' );
-		$this->background->push_to_queue( 'Inschrijving::dagelijks' );
-		$this->background->push_to_queue( 'Dagdelenkaart::dagelijks' );
+		$this->background->push_to_queue( 'Workshop::doe_dagelijks' );
+		$this->background->push_to_queue( 'Abonnement::doe_dagelijks' );
+		$this->background->push_to_queue( 'Saldo::doe_dagelijks' );
+		$this->background->push_to_queue( 'Inschrijving::doe_dagelijks' );
+		$this->background->push_to_queue( 'Dagdelenkaart::doe_dagelijks' );
 		$this->background->save()->dispatch();
 	}
 
@@ -374,7 +375,8 @@ class Admin_Main {
 	 */
 	public function daily_gdpr() {
 		if ( intval( date( 'd' ) ) === intval( date( 't' ) ) ) {
-			Admin_GDPR::erase_old_privacy_data();
+			$gdpr = new Admin_GDPR();
+			$gdpr->erase_old_privacy_data();
 		}
 	}
 

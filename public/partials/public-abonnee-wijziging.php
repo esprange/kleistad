@@ -30,7 +30,7 @@ endforeach;
 		?>
 	</td></tr>
 	<tr><td>Abonnement start</td><td><?php echo esc_html( strftime( '%x', $data['abonnement']->start_datum ) ); ?></td></tr>
-	<tr><td>Abonnement status</td><td><?php echo esc_html( $data['abonnement']->status( true ) ); ?></td></tr>
+	<tr><td>Abonnement status</td><td><?php echo esc_html( $data['abonnement']->geef_statustekst( true ) ); ?></td></tr>
 	<?php if ( false !== $extra_beschikbaar ) : ?>
 	<tr><td>Extra's</td><td>
 		<?php echo esc_html( 0 < count( $data['abonnement']->extras ) ? implode( ', ', $data['abonnement']->extras ) : 'geen' ); ?>

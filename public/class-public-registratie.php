@@ -102,13 +102,13 @@ class Public_Registratie extends ShortcodeForm {
 	 * Bewaar 'registratie' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_ERROR|array
+	 * @return WP_ERROR|array
 	 *
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$result = upsert_user(
-			[
+		$result = wp_update_user(
+			(object) [
 				'ID'         => $data['gebruiker_id'],
 				'first_name' => $data['input']['voornaam'],
 				'last_name'  => $data['input']['achternaam'],

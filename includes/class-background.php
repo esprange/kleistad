@@ -11,12 +11,14 @@
 
 namespace Kleistad;
 
+use WP_Background_Process;
+
 /**
  * Kleistad daily jobs.
  *
  * Zie https://github.com/deliciousbrains/wp-background-processing voor beschrijving van deze background job.
  */
-class Background extends \WP_Background_Process {
+class Background extends WP_Background_Process {
 
 	/**
 	 * De naam van het background proces.

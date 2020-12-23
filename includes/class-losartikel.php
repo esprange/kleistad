@@ -21,6 +21,12 @@ namespace Kleistad;
  */
 class LosArtikel extends Artikel {
 
+	public const DEFINITIE = [
+		'prefix' => 'X',
+		'naam'   => 'overige verkoop',
+		'pcount' => 1,
+	];
+
 	/**
 	 * Lijst van orderregels
 	 *
@@ -73,7 +79,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function artikel_naam() {
+	public function geef_artikelnaam() : string {
 		return 'losse verkoop';
 	}
 
@@ -85,7 +91,7 @@ class LosArtikel extends Artikel {
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function ideal( $bericht, $referentie, $openstaand = null ) {
+	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
 		$order = new Order( $referentie );
 		return $this->betalen->order(
 			[
@@ -105,7 +111,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function referentie() {
+	public function geef_referentie() : string {
 		return $this->code;
 	}
 
@@ -114,7 +120,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return array De naw gegevens.
 	 */
-	public function naw_klant() {
+	public function naw_klant() : array {
 		return $this->klant;
 	}
 
@@ -127,7 +133,7 @@ class LosArtikel extends Artikel {
 	 * @param string $factuur Een bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email( $type = '', $factuur = '' ) {
+	public function verzend_email( $type = '', $factuur = '' ) {
 		$emailer = new Email();
 		return $emailer->send(
 			[
@@ -153,7 +159,7 @@ class LosArtikel extends Artikel {
 	 */
 	public function bestelregel( $artikel, $aantal, $prijs ) {
 		$this->orderregels[] = new Orderregel( $artikel, $aantal, $prijs );
-		$this->prijs      += $aantal * $prijs;
+		$this->prijs        += $aantal * $prijs;
 	}
 
 	/**
@@ -161,7 +167,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @param bool $uitgebreid Dummy variabele.
 	 */
-	public function status( $uitgebreid = false ) {
+	public function geef_statustekst( $uitgebreid = false ) {
 		return $uitgebreid ? '' : '';
 	}
 
@@ -177,14 +183,14 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return array
 	 */
-	protected function factuurregels() {
+	protected function geef_factuurregels() {
 		return $this->orderregels;
 	}
 
 	/**
 	 * Dummy functie voor dagelijks.
 	 */
-	public static function dagelijks() {
+	public static function doe_dagelijks() {
 	}
 
 	/**
@@ -205,7 +211,7 @@ class LosArtikel extends Artikel {
 				$this->klant = $order->klant;
 				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-					$this->email( '_ideal_betaald' );
+					$this->verzend_email( '_ideal_betaald' );
 				}
 			}
 		}

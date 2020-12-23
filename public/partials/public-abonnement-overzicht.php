@@ -18,7 +18,6 @@ namespace Kleistad;
 			<tr>
 				<th>Naam</th>
 				<th>E-mail</th>
-				<th>Telefoon</th>
 				<th>Soort</th>
 				<th>Extras</th>
 				<th>Status</th>
@@ -29,7 +28,6 @@ namespace Kleistad;
 			<tr class="kleistad_abonnee_info" >
 				<td><?php echo esc_html( $abonnee_info['naam'] ); ?></td>
 				<td><?php echo esc_html( $abonnee_info['email'] ); ?></td>
-				<td><?php echo esc_html( $abonnee_info['telnr'] ); ?></td>
 				<td><?php echo esc_html( $abonnee_info['soort'] ); ?></td>
 				<td><?php echo $abonnee_info['extras']; // phpcs:ignore ?></td>
 				<td><?php echo esc_html( $abonnee_info['status'] ); ?></td>

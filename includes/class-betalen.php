@@ -11,6 +11,12 @@
 
 namespace Kleistad;
 
+use WP_REST_Response;
+use WP_REST_Request;
+use WP_ERROR;
+use Mollie;
+use Exception;
+
 /**
  * Definitie van de betalen class.
  */
@@ -36,8 +42,8 @@ class Betalen {
 			$this->mollie = new MollieSimulatie();
 			return;
 		}
-		$setup        = Kleistad::get_setup();
-		$this->mollie = new \Mollie\Api\MollieApiClient();
+		$setup        = setup();
+		$this->mollie = new Mollie\Api\MollieApiClient();
 
 		if ( '1' === $setup['betalen'] ) {
 			if ( '' !== $setup['sleutel'] ) {
@@ -55,7 +61,7 @@ class Betalen {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Public_Main::api(),
+			KLEISTAD_API,
 			'/betaling',
 			[
 				'methods'             => 'POST',
@@ -123,15 +129,15 @@ class Betalen {
 						'order_id' => $order_id,
 						'bericht'  => $bericht,
 					],
-					'method'       => \Mollie\Api\Types\PaymentMethod::IDEAL,
-					'sequenceType' => $mandateren ? \Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : \Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
+					'method'       => Mollie\Api\Types\PaymentMethod::IDEAL,
+					'sequenceType' => $mandateren ? Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
 					'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, ShortcodeForm::get_url() ),
-					'webhookUrl'   => Public_Main::base_url() . '/betaling/',
+					'webhookUrl'   => base_url() . '/betaling/',
 				]
 			);
 			set_transient( $uniqid, $betaling->id, 20 * MINUTE_IN_SECONDS ); // 20 minuten expiry (iDeal heeft in Mollie een expiratie van 15 minuten).
 			return $betaling->getCheckOutUrl();
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
 			return false;
 		}
@@ -140,7 +146,7 @@ class Betalen {
 	/**
 	 * Controleer of de order gelukt is.
 	 *
-	 * @return \WP_ERROR | string | bool De status van de betaling als tekst, WP_error of mislukts of false als er geen betaling is.
+	 * @return WP_ERROR | string | bool De status van de betaling als tekst, WP_error of mislukts of false als er geen betaling is.
 	 */
 	public static function controleer() {
 		$mollie_betaling_id = false;
@@ -158,15 +164,14 @@ class Betalen {
 			if ( $betaling->isPaid() ) {
 				return $betaling->metadata->bericht;
 			} elseif ( $betaling->isFailed() ) {
-				return new \WP_Error( 'betalen', 'De betaling heeft niet kunnen plaatsvinden. Probeer het opnieuw.' );
+				return new WP_Error( 'betalen', 'De betaling heeft niet kunnen plaatsvinden. Probeer het opnieuw.' );
 			} elseif ( $betaling->isExpired() ) {
-				return new \WP_Error( 'betalen', 'De betaling is verlopen. Probeer het opnieuw.' );
+				return new WP_Error( 'betalen', 'De betaling is verlopen. Probeer het opnieuw.' );
 			} elseif ( $betaling->isCanceled() ) {
-				return new \WP_Error( 'betalen', 'De betaling is geannuleerd. Probeer het opnieuw.' );
-			} else {
-				return new \WP_Error( 'betalen', 'De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.' );
+				return new WP_Error( 'betalen', 'De betaling is geannuleerd. Probeer het opnieuw.' );
 			}
-		} catch ( \Exception $e ) {
+			return new WP_Error( 'betalen', 'De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.' );
+		} catch ( Exception $e ) {
 			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
 			return false;
 		}
@@ -196,12 +201,12 @@ class Betalen {
 							'order_id' => $order_id,
 						],
 						'description'  => $beschrijving,
-						'sequenceType' => \Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
-						'webhookUrl'   => Public_Main::base_url() . '/betaling/',
+						'sequenceType' => Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
+						'webhookUrl'   => base_url() . '/betaling/',
 					]
 				);
 				return $betaling->id;
-			} catch ( \Exception $e ) {
+			} catch ( Exception $e ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
 		}
@@ -236,9 +241,8 @@ class Betalen {
 			$refund_ids[] = $refund->id;
 			set_transient( $transient, $refund_ids );
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -263,7 +267,7 @@ class Betalen {
 				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
 				return $mollie_gebruiker->hasValidMandate();
 			}
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
@@ -289,7 +293,7 @@ class Betalen {
 				}
 				return true;
 			}
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
@@ -306,7 +310,7 @@ class Betalen {
 	<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
 		<option value="" >&nbsp;</option>
 		<?php
-		$method = $object->mollie->methods->get( \Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
+		$method = $object->mollie->methods->get( Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
 		foreach ( $method->issuers() as $issuer ) :
 			?>
 			<option value="<?php echo esc_attr( $issuer->id ); ?>"><?php echo esc_html( $issuer->name ); ?></option>
@@ -337,7 +341,7 @@ class Betalen {
 					}
 				}
 				return $html;
-			} catch ( \Exception $e ) {
+			} catch ( Exception $e ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
 		}
@@ -347,61 +351,62 @@ class Betalen {
 	/**
 	 * Webhook functie om betaling status te verwerken. Wordt aangeroepen door Mollie.
 	 *
-	 * @param \WP_REST_Request $request het request.
-	 * @return \WP_REST_Response de response.
+	 * @param WP_REST_Request $request het request.
+	 * @return WP_REST_Response de response.
 	 */
-	public static function callback_betaling_verwerkt( \WP_REST_Request $request ) {
+	public static function callback_betaling_verwerkt( WP_REST_Request $request ) {
 		// phpcs:disable WordPress.NamingConventions
 		$mollie_betaling_id = $request->get_param( 'id' );
 		$object             = new static();
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
 		$expiratie          = 13 * MONTH_IN_SECONDS - ( time() - strtotime( $betaling->createdAt ) );  // Na 13 maanden expiratie transient.
-		$order_id           = Order::zoek_order( $betaling->metadata->order_id );
-		$artikel            = Artikel::get_artikel( $betaling->metadata->order_id );
+		$order              = new Order( $betaling->metadata->order_id );
+		$artikel            = get_artikel( $betaling->metadata->order_id );
 		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
 			$artikel->verwerk_betaling(
-				$order_id,
+				$order->id,
 				$betaling->amount->value,
 				$betaling->isPaid(),
 				$betaling->method,
 				$mollie_betaling_id
 			);
-		} else {
-			if ( $betaling->hasRefunds() ) {
-				$transient  = $mollie_betaling_id . self::REFUNDS;
-				$refund_ids = get_transient( $transient ) ?: [];
-				foreach ( $betaling->refunds() as $refund ) {
-					if ( in_array( $refund->id, $refund_ids, true ) ) {
-						$artikel->verwerk_betaling(
-							$order_id,
-							- $refund->amount->value,
-							'failed' !== $refund->status,
-							$betaling->method,
-							$mollie_betaling_id
-						);
-						unset( $refund_ids[ $refund->id ] );
-					}
-				}
-				set_transient( $transient, $refund_ids, $expiratie );
-			}
-			if ( $betaling->hasChargebacks() ) {
-				$transient      = $mollie_betaling_id . self::CHARGEBACKS;
-				$chargeback_ids = get_transient( $transient ) ?: [];
-				foreach ( $betaling->chargebacks() as $chargeback ) {
-					if ( ! in_array( $chargeback->id, $chargeback_ids, true ) ) {
-						$artikel->verwerk_betaling(
-							$order_id,
-							- $chargeback->amount->value,
-							$betaling->isPaid(),
-							$betaling->method,
-							$mollie_betaling_id
-						);
-						$chargeback_ids[] = $chargeback->id;
-					}
-				}
-				set_transient( $transient, $chargeback_ids, $expiratie );
-			}
+			return new WP_REST_Response(); // Geeft default http status 200 terug.
 		}
-		return new \WP_REST_Response(); // Geeft default http status 200 terug.
+		if ( $betaling->hasRefunds() ) {
+			$transient  = $mollie_betaling_id . self::REFUNDS;
+			$refund_ids = get_transient( $transient ) ?: [];
+			foreach ( $betaling->refunds() as $refund ) {
+				if ( in_array( $refund->id, $refund_ids, true ) ) {
+					$artikel->verwerk_betaling(
+						$order->id,
+						- $refund->amount->value,
+						'failed' !== $refund->status,
+						$betaling->method,
+						$mollie_betaling_id
+					);
+					unset( $refund_ids[ $refund->id ] );
+				}
+			}
+			set_transient( $transient, $refund_ids, $expiratie );
+			return new WP_REST_Response(); // Geeft default http status 200 terug.
+		}
+		if ( $betaling->hasChargebacks() ) {
+			$transient      = $mollie_betaling_id . self::CHARGEBACKS;
+			$chargeback_ids = get_transient( $transient ) ?: [];
+			foreach ( $betaling->chargebacks() as $chargeback ) {
+				if ( ! in_array( $chargeback->id, $chargeback_ids, true ) ) {
+					$artikel->verwerk_betaling(
+						$order->id,
+						- $chargeback->amount->value,
+						$betaling->isPaid(),
+						$betaling->method,
+						$mollie_betaling_id
+					);
+					$chargeback_ids[] = $chargeback->id;
+				}
+			}
+			set_transient( $transient, $chargeback_ids, $expiratie );
+			return new WP_REST_Response(); // Geeft default http status 200 terug.
+		}
 	}
 }

@@ -52,11 +52,12 @@ class Admin_Instellingen_Handler {
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
-		$result = true;
+		$result        = true;
+		$googleconnect = new Googleconnect();
 		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
-			Google::vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
+			$googleconnect->vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
 		} elseif ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
-			$result = Google::koppel_service();
+			$result = $googleconnect->koppel_service();
 		} elseif ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			do_action( 'kleistad_daily_jobs' );
 		} elseif ( ! is_null( filter_input( INPUT_POST, 'corona' ) ) ) {
@@ -93,10 +94,10 @@ class Admin_Instellingen_Handler {
 		foreach ( $input as &$element ) {
 			if ( is_string( $element ) ) {
 				$element = sanitize_text_field( $element );
-			} else {
-				if ( is_array( $element ) ) {
-					$element = $this->validate_settings( $element );
-				}
+				continue;
+			}
+			if ( is_array( $element ) ) {
+				$element = $this->validate_settings( $element );
 			}
 		}
 		return $input;

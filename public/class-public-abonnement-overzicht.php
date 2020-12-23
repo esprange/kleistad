@@ -26,41 +26,30 @@ class Public_Abonnement_Overzicht extends Shortcode {
 	 * @since   4.5.4
 	 */
 	protected function prepare( &$data ) {
-		$abonnementen = Abonnement::all();
-		$abonnee_info = [];
-		$email_lijst  = '';
-		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-			if ( ! $abonnement->is_geannuleerd() ) {
-				$abonnee        = get_userdata( $abonnee_id );
-				$abonnee_info[] = [
+		$data['abonnee_info'] = [];
+		$abonnees             = new Abonnees();
+		foreach ( $abonnees as $abonnee ) {
+			if ( ! $abonnee->abonnement->is_geannuleerd() ) {
+				$data['abonnee_info'][] = [
 					'naam'   => $abonnee->display_name,
-					'telnr'  => $abonnee->telnr,
 					'email'  => $abonnee->user_email,
-					'soort'  => $abonnement->soort . ( 'beperkt' === $abonnement->soort ? ' (' . $abonnement->dag . ')' : '' ),
-					'status' => $abonnement->status(),
-					'extras' => implode( ',<br/> ', $abonnement->extras ),
+					'soort'  => $abonnee->abonnement->soort . ( 'beperkt' === $abonnee->abonnement->soort ? ' (' . $abonnee->abonnement->dag . ')' : '' ),
+					'status' => $abonnee->abonnement->geef_statustekst( false ),
+					'extras' => implode( ',<br/> ', $abonnee->abonnement->extras ),
 				];
-				$email_lijst   .= $abonnee->user_email . ';';
 			}
 		}
-		$data = [
-			'abonnee_info' => $abonnee_info,
-			'email_lijst'  => $email_lijst,
-		];
 		return true;
 	}
 
 	/**
-	 * Schrijf abonnementen naar het bestand.
+	 * Schrijf de eerste regel naar het download bestand.
 	 */
-	protected function abonnementen() {
-		$betalen         = new Betalen();
-		$abonnementen    = Abonnement::all();
+	private function schrijf_labels() {
 		$abonnees_fields = [
 			'Code',
 			'Achternaam',
 			'Voornaam',
-			'Telefoonnummer',
 			'Email',
 			'Soort',
 		];
@@ -79,33 +68,46 @@ class Public_Abonnement_Overzicht extends Shortcode {
 			]
 		);
 		fputcsv( $this->file_handle, $abonnees_fields, ';', '"' );
+	}
 
-		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-			if ( ! $abonnement->is_geannuleerd() ) {
-				$abonnee          = get_userdata( $abonnee_id );
-				$abonnee_gegevens = [
-					'A' . $abonnee_id,
-					$abonnee->first_name,
-					$abonnee->last_name,
-					$abonnee->telnr,
-					$abonnee->user_email,
-					$abonnement->soort . ( 'beperkt' === $abonnement->soort ? ' (' . $abonnement->dag . ')' : '' ),
-				];
-				foreach ( $this->options['extra']  as $extra ) {
-					$abonnee_gegevens[] = array_search( $extra['naam'], $abonnement->extras, true ) ? 'ja' : '';
-				}
-				$abonnee_gegevens = array_merge(
-					$abonnee_gegevens,
-					[
-						$abonnement->status(),
-						$abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '',
-						$abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '',
-						$abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '',
-						$betalen->heeft_mandaat( $abonnee_id ) ? 'ja' : 'nee',
-						$abonnement->overbrugging_email ? 'ja' : 'nee',
-					]
-				);
-				fputcsv( $this->file_handle, $abonnee_gegevens, ';', '"' );
+	/**
+	 * Schrijf één regel naar het bestand
+	 *
+	 * @param Abonnee $abonnee De abonnee.
+	 */
+	private function schrijf_record( Abonnee $abonnee ) {
+		$abonnee_gegevens = [
+			'A' . $abonnee->ID,
+			$abonnee->first_name,
+			$abonnee->last_name,
+			$abonnee->user_email,
+			$abonnee->abonnement->soort . ( 'beperkt' === $abonnee->abonnement->soort ? ' (' . $abonnee->abonnement->dag . ')' : '' ),
+		];
+		foreach ( $this->options['extra']  as $extra ) {
+			$abonnee_gegevens[] = array_search( $extra['naam'], $abonnee->abonnement->extras, true ) ? 'ja' : '';
+		}
+		$abonnee_gegevens = array_merge(
+			$abonnee_gegevens,
+			[
+				$abonnee->abonnement->geef_statustekst( false ),
+				$abonnee->abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->start_datum ) : '',
+				$abonnee->abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->pauze_datum ) : '',
+				$abonnee->abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->herstart_datum ) : '',
+				$abonnee->abonnement->betaalt_automatisch() ? 'ja' : 'nee',
+				$abonnee->abonnement->overbrugging_email ? 'ja' : 'nee',
+			]
+		);
+		fputcsv( $this->file_handle, $abonnee_gegevens, ';', '"' );
+	}
+
+	/**
+	 * Schrijf abonnementen naar het bestand.
+	 */
+	protected function abonnementen() {
+		$this->schrijf_labels();
+		foreach ( new Abonnees() as $abonnee ) {
+			if ( ! $abonnee->abonnement->is_geannuleerd() ) {
+				$this->schrijf_record( $abonnee );
 			}
 		}
 	}

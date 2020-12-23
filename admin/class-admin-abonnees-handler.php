@@ -46,7 +46,7 @@ class Admin_Abonnees_Handler {
 			$abonnement->extras = $item['extras'];
 			$abonnement->save();
 		} elseif ( 'mollie' === $actie ) {
-			$abonnement->stop_incasso( true );
+			$abonnement->stop_incasso();
 			$item['mandaat'] = false;
 		}
 		return 'De gegevens zijn opgeslagen';

@@ -21,24 +21,9 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Admin_Cursisten extends \WP_List_Table {
 
 	/**
-	 * De mogelijke cursussen.
-	 *
-	 * @var array $cursussen De cursussen.
-	 */
-	private $cursussen = [];
-
-	/**
-	 * De te tonen cursisten.
-	 *
-	 * @var array $cursisten De cursisten.
-	 */
-	private $cursisten = [];
-
-	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->cursussen = Cursus::all( true );
 		parent::__construct(
 			[
 				'singular' => 'cursist',
@@ -113,30 +98,6 @@ class Admin_Cursisten extends \WP_List_Table {
 	}
 
 	/**
-	 * Bepaal of de cursist getoond moeten worden en verzamel de weer te geven informatie.
-	 *
-	 * @param array  $inschrijving De inschrijvingen van de cursist.
-	 * @param int    $cursist_id   De id van de cursist.
-	 * @param string $search       De eventuele search filter op de naam van de cursist.
-	 */
-	private function bepaal_cursisten( $inschrijving, $cursist_id, $search ) {
-		foreach ( $this->cursussen as $cursus_id => $cursus ) {
-			if ( array_key_exists( $cursus_id, $inschrijving ) ) {
-				$cursist = get_userdata( $cursist_id );
-				if ( ! empty( $search ) && false === stripos( $cursist->display_name, (string) $search ) ) {
-					continue;
-				}
-				$this->cursisten[] = [
-					'id'          => $inschrijving[ $cursus_id ]->code,
-					'naam'        => $cursist->display_name . ( 1 < $inschrijving[ $cursus_id ]->aantal ? ' (' . $inschrijving[ $cursus_id ]->aantal . ')' : '' ),
-					'cursus'      => $cursus->naam,
-					'geannuleerd' => $inschrijving[ $cursus_id ]->geannuleerd ? 'X' : '',
-				];
-			}
-		}
-	}
-
-	/**
 	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
@@ -147,25 +108,41 @@ class Admin_Cursisten extends \WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$search_val     = filter_input( INPUT_GET, 's' );
-		$search         = ! is_null( $search_val ) ? $search_val : '';
-		$paged_val      = filter_input( INPUT_GET, 'paged' );
-		$paged          = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val    = filter_input( INPUT_GET, 'orderby' );
-		$orderby        = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val      = filter_input( INPUT_GET, 'order' );
-		$order          = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$inschrijvingen = Inschrijving::all();
+		$search_val  = filter_input( INPUT_GET, 's' );
+		$search      = ! is_null( $search_val ) ? $search_val : '';
+		$paged_val   = filter_input( INPUT_GET, 'paged' );
+		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$orderby_val = filter_input( INPUT_GET, 'orderby' );
+		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val   = filter_input( INPUT_GET, 'order' );
+		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$cursisten   = [];
+		$vandaag     = strtotime( 'today' );
+		foreach ( new Cursisten() as $cursist ) {
+			if ( ! empty( $search ) && false === stripos( $cursist->display_name, (string) $search ) ) {
+				continue;
+			}
+			foreach ( $cursist->inschrijvingen as $inschrijving ) {
+				if ( $vandaag > $inschrijving->cursus->eind_datum ) {
+					continue;
+				}
+				$cursisten[] = [
+					'id'          => $inschrijving->cursus->code,
+					'naam'        => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+					'cursus'      => $inschrijving->cursus->naam,
+					'geannuleerd' => $inschrijving->geannuleerd ? 'X' : '',
+				];
+			}
+		}
 
-		array_walk( $inschrijvingen, [ $this, 'bepaal_cursisten' ], $search );
 		usort(
-			$this->cursisten,
+			$cursisten,
 			function( $a, $b ) use ( $orderby, $order ) {
 				return ( 'asc' === $order ) ? strcmp( $a[ $orderby ], $b[ $orderby ] ) : strcmp( $b[ $orderby ], $a[ $orderby ] );
 			}
 		);
-		$this->items = array_slice( $this->cursisten, $paged * $per_page, $per_page, true );
-		$total_items = count( $this->cursisten );
+		$this->items = array_slice( $cursisten, $paged * $per_page, $per_page, true );
+		$total_items = count( $cursisten );
 
 		$this->set_pagination_args(
 			[

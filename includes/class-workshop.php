@@ -11,6 +11,10 @@
 
 namespace Kleistad;
 
+use DateTimeZone;
+use DateTime;
+use Exception;
+
 /**
  * Kleistad workshop class.
  *
@@ -40,7 +44,12 @@ namespace Kleistad;
  */
 class Workshop extends Artikel {
 
-	const META_KEY = 'kleistad_workshop';
+	public const DEFINITIE = [
+		'prefix' => 'W',
+		'naam'   => 'workshop',
+		'pcount' => 1,
+	];
+	public const META_KEY  = 'kleistad_workshop';
 
 	/**
 	 * Constructor
@@ -53,7 +62,7 @@ class Workshop extends Artikel {
 	public function __construct( $workshop_id = null ) {
 		global $wpdb;
 		$this->betalen = new Betalen();
-		$options       = Kleistad::get_options();
+		$options       = opties();
 		if ( is_null( $workshop_id ) ) {
 			$this->data = [
 				'id'                => null,
@@ -78,9 +87,9 @@ class Workshop extends Artikel {
 				'betaling_email'    => 0,
 				'aanvraag_id'       => 0,
 			];
-		} else {
-			$this->data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+			return;
 		}
+		$this->data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
 	}
 
 	/**
@@ -144,9 +153,10 @@ class Workshop extends Artikel {
 	/**
 	 * Erase de workshop
 	 */
-	public function erase() {
+	public function erase() : bool {
 		global $wpdb;
 		$wpdb->delete( "{$wpdb->prefix}kleistad_workshops", [ 'id' => $this->id ] );
+		return true;
 	}
 
 	/**
@@ -154,14 +164,14 @@ class Workshop extends Artikel {
 	 *
 	 * @since 5.0.0
 	 */
-	public function afzeggen() {
+	public function afzeggen() : bool {
 		if ( ! $this->vervallen ) {
 			$this->vervallen = true;
 			$this->save();
 			try {
 				$event = new Event( $this->event_id );
 				$event->delete();
-			} catch ( \Exception $e ) {
+			} catch ( Exception $e ) {
 				unset( $e ); // phpcs:ignore
 			}
 		}
@@ -173,7 +183,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function artikel_naam() {
+	public function geef_artikelnaam() : string {
 		return $this->naam;
 	}
 
@@ -187,7 +197,7 @@ class Workshop extends Artikel {
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function ideal( $bericht, $referentie, $openstaand = null ) {
+	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
 		return $this->betalen->order(
 			[
 				'naam'     => $this->contact,
@@ -211,18 +221,18 @@ class Workshop extends Artikel {
 		$this->definitief = true;
 		$this->save();
 		if ( ! $herbevestiging ) {
-			return $this->email( '_bevestiging' );
+			return $this->verzend_email( '_bevestiging' );
 		}
-		$order_id = Order::zoek_order( $this->code );
-		if ( $order_id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-			$factuur = $this->wijzig_order( $order_id );
+		$order = new Order( $this->geef_referentie() );
+		if ( $order->id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
+			$factuur = $this->wijzig_order( $order->id );
 			if ( false === $factuur ) { // De factuur is aangemaakt in een periode die boekhoudkundig geblokkeerd is, correctie is niet mogelijk.
 				return false;
 			} elseif ( ! empty( $factuur ) ) { // Er was al een factuur die nog gecorrigeerd mag worden.
-				return $this->email( '_betaling', $factuur );
+				return $this->verzend_email( '_betaling', $factuur );
 			}
 		}
-		return $this->email( '_herbevestiging' );
+		return $this->verzend_email( '_herbevestiging' );
 	}
 
 	/**
@@ -230,7 +240,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function referentie() {
+	public function geef_referentie() : string {
 		return $this->code;
 	}
 
@@ -243,7 +253,7 @@ class Workshop extends Artikel {
 	 * @param string $factuur Een bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email( $type, $factuur = '' ) {
+	public function verzend_email( $type, $factuur = '' ) {
 		$emailer          = new Email();
 		$email_parameters = [
 			'to'          => "{$this->contact} <{$this->email}>",
@@ -275,8 +285,8 @@ class Workshop extends Artikel {
 				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( '_herbevestiging' === $type ? ' (correctie)' : '' );
 				$email_parameters['auto']     = false;
 				$email_parameters['slug']     = 'workshop_bevestiging';
-				$email_parameters['from']     = Email::info() . Email::verzend_domein();
-				$email_parameters['reply-to'] = Email::info() . Email::domein();
+				$email_parameters['from']     = "{$emailer->info}{$emailer->verzend_domein}";
+				$email_parameters['reply-to'] = "{$emailer->info}{$emailer->domein}";
 				break;
 			case '_betaling':
 			case '_ideal':
@@ -296,7 +306,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return array De contact info.
 	 */
-	public function naw_klant() {
+	public function naw_klant() : array {
 		if ( $this->organisatie ) {
 			return [
 				'naam'  => $this->organisatie,
@@ -323,7 +333,7 @@ class Workshop extends Artikel {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
 		$this->id = $wpdb->insert_id;
-		$timezone = new \DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
+		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 		WorkshopAanvraag::gepland( $this->aanvraag_id, $this->id );
 
 		try {
@@ -338,10 +348,10 @@ class Workshop extends Artikel {
 			$event->titel      = $this->naam;
 			$event->definitief = $this->definitief;
 			$event->vervallen  = $this->vervallen;
-			$event->start      = new \DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
-			$event->eind       = new \DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
+			$event->start      = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
+			$event->eind       = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			$event->save();
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			error_log ( $e->getMessage() ); // phpcs:ignore
 		}
 
@@ -353,7 +363,7 @@ class Workshop extends Artikel {
 	 *
 	 * @param bool $uitgebreid Of er een uitgebreide versie geleverd moet worden.
 	 */
-	public function status( $uitgebreid = false ) {
+	public function geef_statustekst( bool $uitgebreid = false ) : string {
 		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->betaald ? 'betaald' : '' ) );
 		return $uitgebreid ? 'workshop ' . $status : $status;
 	}
@@ -375,7 +385,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return Orderregel De regel.
 	 */
-	protected function factuurregels() {
+	protected function geef_factuurregels() {
 		return new Orderregel( "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ) . ", {$this->aantal} deelnemers", 1, $this->kosten );
 	}
 
@@ -384,8 +394,8 @@ class Workshop extends Artikel {
 	 *
 	 * @since 6.1.0
 	 */
-	public static function dagelijks() {
-		$workshops = self::all();
+	public static function doe_dagelijks() {
+		$workshops = new Workshops();
 		foreach ( $workshops as $workshop ) {
 			if (
 				! $workshop->definitief ||
@@ -398,7 +408,7 @@ class Workshop extends Artikel {
 			}
 			$workshop->betaling_email = true;
 			$workshop->save();
-			$workshop->email( '_betaling', $workshop->bestel_order( 0.0, $workshop->datum ) );
+			$workshop->verzend_email( '_betaling', $workshop->bestel_order( 0.0, $workshop->datum ) );
 		}
 	}
 
@@ -420,27 +430,9 @@ class Workshop extends Artikel {
 			 */
 			$this->ontvang_order( $order_id, $bedrag, $transactie_id );
 			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-				$this->email( '_ideal' );
+				$this->verzend_email( '_ideal' );
 			}
 		}
-	}
-
-	/**
-	 * Return alle workshops.
-	 *
-	 * @global object $wpdb WordPress database.
-	 * @param bool $open Toon alles.
-	 * @return array workshops.
-	 */
-	public static function all( $open = false ) {
-		global $wpdb;
-		$arr             = [];
-		$filter          = $open ? ' WHERE datum > CURRENT_DATE' : '';
-		$workshops_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_workshops $filter ORDER BY datum DESC, start_tijd ASC", ARRAY_A ); // phpcs:ignore
-		foreach ( $workshops_tabel as $workshop ) {
-			$arr[ $workshop['id'] ] = new Workshop( $workshop['id'] );
-		}
-		return $arr;
 	}
 
 }

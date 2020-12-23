@@ -58,82 +58,58 @@ class Public_Stookbestand extends Shortcode {
 	}
 
 	/**
-	 * Array walk functie, bepaal de medestokers van alle reserveringen in de tijdrange.
-	 *
-	 * @param  Reservering $reservering Het reservering object.
-	 */
-	private function bepaal_medestokers( $reservering ) {
-		if ( $reservering->datum < $this->vanaf_datum || $reservering->datum > $this->tot_datum ) {
-			return;
-		}
-		foreach ( $reservering->verdeling as $verdeling ) {
-			$medestoker_id = $verdeling['id'];
-			if ( $medestoker_id > 0 && ! array_key_exists( $medestoker_id, $this->medestokers ) ) {
-				$medestoker                          = get_userdata( $medestoker_id );
-				$this->medestokers[ $medestoker_id ] = ( ! $medestoker ) ? 'onbekend' : $medestoker->display_name;
-			}
-		}
-	}
-
-	/**
-	 * Array walk functie, bepaal de percentages en kosten van alle reserveringen in de tijdrange.
-	 *
-	 * @param  Reservering $reservering Het reservering object.
-	 */
-	private function bepaal_stookgegevens( $reservering ) {
-		if ( $reservering->datum < $this->vanaf_datum || $reservering->datum > $this->tot_datum ) {
-			return;
-		}
-		$stoker      = get_userdata( $reservering->gebruiker_id );
-		$stoker_naam = ( ! $stoker ) ? 'onbekend' : $stoker->display_name;
-		$totaal      = 0.0;
-		$perc_values = [];
-		$kost_values = [];
-		$values      = [
-			$stoker_naam,
-			$reservering->dag . '-' . $reservering->maand . '-' . $reservering->jaar,
-			$this->ovens[ $reservering->oven_id ]->naam,
-			$reservering->soortstook,
-			$reservering->temperatuur,
-			$reservering->programma,
-		];
-		foreach ( $this->medestokers as $id => $medestoker ) {
-			$percentage = 0;
-			$kosten     = 0.0;
-			foreach ( $reservering->verdeling as $stookdeel ) {
-				if ( $stookdeel['id'] == $id ) { // phpcs:ignore
-					$percentage += $stookdeel['perc'];
-					$kosten     += $stookdeel['prijs'] ?? $this->ovens[ $reservering->oven_id ]->stookkosten( $id, $stookdeel['perc'], $reservering->temperatuur );
-					$totaal     += $kosten;
-				}
-			}
-			$perc_values [] = $percentage ?: '';
-			$kost_values [] = $kosten ? number_format_i18n( $kosten, 2 ) : '';
-		}
-		fputcsv( $this->file_handle, array_merge( $values, $perc_values, $kost_values, [ number_format_i18n( $totaal, 2 ) ] ), ';', '"' );
-	}
-
-	/**
 	 * Schrijf abonnees informatie naar het bestand.
 	 */
 	protected function stook() {
-		$this->vanaf_datum = strtotime( filter_input( INPUT_GET, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
-		$this->tot_datum   = strtotime( filter_input( INPUT_GET, 'tot_datum', FILTER_SANITIZE_STRING ) );
-		$this->ovens       = Oven::all();
-		$reserveringen     = Reservering::all();
-		array_walk( $reserveringen, [ $this, 'bepaal_medestokers' ] );
-		asort( $this->medestokers );
-
-		$fields = [ 'Stoker', 'Datum', 'Oven', 'Soort Stook', 'Temperatuur', 'Programma' ];
-		for ( $i = 1; $i <= 2; $i ++ ) {
-			foreach ( $this->medestokers as $medestoker ) {
-				$fields[] = $medestoker;
+		$vanaf_datum = strtotime( filter_input( INPUT_GET, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
+		$tot_datum   = strtotime( filter_input( INPUT_GET, 'tot_datum', FILTER_SANITIZE_STRING ) );
+		$ovens       = new Ovens();
+		$stoken      = [];
+		foreach ( $ovens as $oven ) {
+			$stoken[ $oven->id ] = new Stoken( $oven->id, $vanaf_datum, $tot_datum );
+			foreach ( $stoken[ $oven->id ] as $stook ) {
+				foreach ( $stook->stookdelen as $stookdeel ) {
+					$medestokers[ "$stookdeel->medestoker" ] = get_userdata( $stookdeel->medestoker )->display_name;
+				}
 			}
 		}
-		$fields[] = 'Totaal';
-		fputcsv( $this->file_handle, $fields, ';', '"' );
+		asort( $medestokers );
 
-		array_walk( $reserveringen, [ $this, 'bepaal_stookgegevens' ] );
+		$fields                 = [ 'Stoker', 'Datum', 'Oven', 'Soort Stook', 'Temperatuur', 'Programma' ];
+		$fields_lege_percentage = [];
+		$fields_lege_prijs      = [];
+		for ( $i = 1; $i <= 2; $i ++ ) {
+			foreach ( $medestokers as $id => $medestoker ) {
+				$fields[]                      = $medestoker;
+				$fields_lege_percentage[ $id ] = '';
+				$fields_lege_prijs[ $id ]      = '';
+			}
+		}
+		fputcsv( $this->file_handle, $fields, ';', '"' );
+		$records = [];
+		foreach ( $ovens as $oven ) {
+			foreach ( $stoken[ $oven->id ] as $stook ) {
+				$stook_values             = [
+					get_userdata( $stook->hoofdstoker )->display_name,
+					date( 'd-m-Y', $stook->datum ),
+					$oven->naam,
+					$stook->soort,
+					$stook->temperatuur,
+					$stook->programma,
+				];
+				$stoker_percentage_values = $fields_lege_percentage;
+				$stoker_prijs_values      = $fields_lege_prijs;
+				foreach ( $stook->stookdelen as $stookdeel ) {
+					$stoker_percentage_values[ "$stookdeel->medestoker" ] = "$stookdeel->percentage %";
+					$stoker_prijs_values[ "$stookdeel->medestoker" ]      = '€ ' . number_format_i18n( $stookdeel->prijs, 2 );
+				}
+				$records[ "$stook->datum $oven->naam" ] = array_merge( $stook_values, $stoker_percentage_values, $stoker_prijs_values );
+			}
+		}
+		ksort( $records );
+		foreach ( $records as $record ) {
+			fputcsv( $this->file_handle, $record, ';', '"' );
+		}
 	}
 
 }

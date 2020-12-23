@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use WP_Error;
+use WP_Query;
+
 /**
  * De kleistad rapport email.
  */
@@ -36,41 +39,36 @@ class Public_Email extends ShortcodeForm {
 			];
 		}
 
-		if ( Roles::is_bestuur() ) {
-			$bestuur = get_users( [ 'role' => Roles::BESTUUR ] );
+		if ( current_user_can( BESTUUR ) ) {
+			$bestuur = get_users( [ 'role' => BESTUUR ] );
 			foreach ( $bestuur as $bestuurslid ) {
 				$data['input']['tree'][-1]['naam']                      = 'Bestuur';
 				$data['input']['tree'][-1]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
 			}
 
-			$docenten = get_users( [ 'role' => Roles::DOCENT ] );
+			$docenten = get_users( [ 'role' => DOCENT ] );
 			foreach ( $docenten as $docent ) {
 				$data['input']['tree'][-2]['naam']                 = 'Docenten';
 				$data['input']['tree'][-2]['leden'][ $docent->ID ] = $docent->display_name;
 			}
 
-			$abonnementen = Abonnement::all();
-			foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-				if ( ! $abonnement->is_geannuleerd() ) {
-					$abonnee                          = get_userdata( $abonnee_id );
-					$data['input']['tree'][0]['naam'] = 'Abonnees';
+			foreach ( new Abonnees() as $abonnee ) {
+				if ( ! $abonnee->abonnement->is_geannuleerd() ) {
+					$data['input']['tree'][0]['naam']                  = 'Abonnees';
 					$data['input']['tree'][0]['leden'][ $abonnee->ID ] = $abonnee->display_name;
 				}
 			}
 		}
 
 		$cursus_criterium = strtotime( '-6 months' ); // Cursussen die langer dan een half jaar gelden zijn geëindigd worden niet getoond.
-		$inschrijvingen   = Inschrijving::all();
-		$cursussen        = Cursus::all();
-		foreach ( $inschrijvingen as $cursist_id => $cursist_inschrijvingen ) {
-			$cursist = get_userdata( $cursist_id );
-			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( ! Roles::is_bestuur() && intval( $cursussen[ $cursus_id ]->docent ) !== get_current_user_id() ) {
+		foreach ( new Cursisten() as $cursist ) {
+			foreach ( $cursist->inschrijvingen as $inschrijving ) {
+				if ( ! current_user_can( BESTUUR ) && intval( $inschrijving->cursus->docent ) !== get_current_user_id() ) {
 					continue;
 				}
-				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $cursussen[ $cursus_id ]->eind_datum ) {
-					$data['input']['tree'][ $cursus_id ]['naam']                  = $cursussen[ $cursus_id ]->code . ' - ' . $cursussen[ $cursus_id ]->naam;
-					$data['input']['tree'][ $cursus_id ]['leden'][ $cursist->ID ] = $cursist->display_name;
+				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $inschrijving->cursus->eind_datum ) {
+					$data['input']['tree'][ $inschrijving->cursus->id ]['naam']                  = "{$inschrijving->cursus->code} - {$inschrijving->cursus->naam}";
+					$data['input']['tree'][ $inschrijving->cursus->id ]['leden'][ $cursist->ID ] = $cursist->display_name;
 				}
 			}
 		}
@@ -82,12 +80,12 @@ class Public_Email extends ShortcodeForm {
 	 * Valideer/sanitize email form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_ERROR|bool
+	 * @return WP_ERROR|bool
 	 *
 	 * @since   5.5.0
 	 */
 	protected function validate( &$data ) {
-		$error                          = new \WP_Error();
+		$error                          = new WP_Error();
 		$data['input']                  = filter_input_array(
 			INPUT_POST,
 			[
@@ -133,7 +131,7 @@ class Public_Email extends ShortcodeForm {
 	protected function save( $data ) {
 		$gebruiker       = wp_get_current_user();
 		$gebruikerids    = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
-		$query           = new \WP_User_Query(
+		$query           = new WP_User_Query(
 			[
 				'include' => array_map( 'intval', $gebruikerids ),
 				'fields'  => [ 'user_email' ],
@@ -142,15 +140,15 @@ class Public_Email extends ShortcodeForm {
 		$emailadressen   = array_column( (array) $query->get_results(), 'user_email' );
 		$emailadressen[] = "{$gebruiker->display_name} <{$gebruiker->user_email}>";
 		$emailer         = new Email();
-		$to              = 'production' === wp_get_environment_type() ? ( Email::info() . Email::domein() ) : get_bloginfo( 'admin_email' );
+		$from            = 'production' === wp_get_environment_type() ? "{$emailer->info}{$emailer->domein}" : get_bloginfo( 'admin_email' );
 		$emailer->send(
 			array_merge(
 				$this->mail_parameters( $data ),
 				[
-					'to'       => "Kleistad gebruiker <$to>",
+					'to'       => "Kleistad gebruiker <$from>",
 					'bcc'      => $emailadressen,
-					'from'     => $to,
-					'reply-to' => Roles::is_bestuur() ? $to : $gebruiker->user_email,
+					'from'     => $from,
+					'reply-to' => current_user_can( BESTUUR ) ? $from : $gebruiker->user_email,
 					'subject'  => $data['input']['onderwerp'],
 				]
 			)

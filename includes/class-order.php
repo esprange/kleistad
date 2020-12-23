@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use DateTime;
+use DateTimeZone;
+
 /**
  * Kleistad Order class.
  *
@@ -32,7 +35,14 @@ namespace Kleistad;
  *
  * @since 6.1.0
  */
-class Order extends Entity {
+class Order {
+
+	/**
+	 * De orderdata
+	 *
+	 * @var array $data De ruwe data.
+	 */
+	private array $data;
 
 	/**
 	 * De order regels
@@ -91,7 +101,7 @@ class Order extends Entity {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		switch ( $attribuut ) {
 			case 'id':
 			case 'credit_id':
@@ -121,14 +131,14 @@ class Order extends Entity {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) : void {
 		switch ( $attribuut ) {
 			case 'klant':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
 			case 'historie':
-				$nu = new \DateTime();
-				$nu->setTimezone( new \DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
+				$nu = new DateTime();
+				$nu->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
 				$historie                 = json_decode( $this->data[ $attribuut ], true );
 				$historie[]               = $nu->format( 'd-m-Y H:i' ) . ": $waarde";
 				$this->data[ $attribuut ] = wp_json_encode( $historie );
@@ -149,7 +159,7 @@ class Order extends Entity {
 	/**
 	 * Erase de order
 	 */
-	public function erase() {
+	public function erase() : bool {
 		global $wpdb;
 		$wpdb->delete( "{$wpdb->prefix}kleistad_orders", [ 'id' => $this->id ] );
 	}
@@ -158,13 +168,13 @@ class Order extends Entity {
 	 * Afboeken van een order.
 	 */
 	public function afboeken() {
-		$te_betalen              = $this->te_betalen();
-		$dd_order                = new self();
-		$dd_order->historie      = 'Afboeking order door ' . wp_get_current_user()->display_name;
-		$dd_order->referentie    = '@-' . $this->referentie;
-		$dd_order->betaald       = $te_betalen;
-		$dd_order->klant         = $this->klant;
-		$dd_order->orderregels[] = new Orderregel( 'Afboeking', 1, $te_betalen );
+		$te_betalen           = $this->te_betalen();
+		$dd_order             = new self();
+		$dd_order->historie   = 'Afboeking order door ' . wp_get_current_user()->display_name;
+		$dd_order->referentie = '@-' . $this->referentie;
+		$dd_order->betaald    = $te_betalen;
+		$dd_order->klant      = $this->klant;
+		$dd_order->orderregels->toevoegen( new Orderregel( 'Afboeking', 1, $te_betalen ) );
 		$dd_order->save();
 		$this->betaald += $te_betalen;
 		$this->historie = 'Afboeking';
@@ -174,34 +184,34 @@ class Order extends Entity {
 	/**
 	 * Bepaal of de order nog gecorrigeerd mag worden.
 	 */
-	public function is_geblokkeerd() {
+	public function is_geblokkeerd() : bool {
 		return $this->datum < get_blokkade() || boolval( $this->credit_id ) || '@' === $this->referentie[0];
 	}
 
 	/**
 	 * Bepaal of de order nog annuleerbaar is.
 	 */
-	public function is_annuleerbaar() {
+	public function is_annuleerbaar() : bool {
 		return ! boolval( $this->credit_id ) && '@' !== $this->referentie[0];
 	}
 
 	/**
 	 * Bepaal of het een credit order is.
 	 */
-	public function is_credit() {
+	public function is_credit() : bool {
 		return boolval( $this->origineel_id );
 	}
 
 	/** Beppal of de order afboekbaar is, na de Wettelijke betaaltermijn 30 dagen.
 	 */
-	public function is_afboekbaar() {
+	public function is_afboekbaar() : bool {
 		return 0 < $this->te_betalen() && strtotime( 'today' ) > strtotime( '+30 days', $this->verval_datum );
 	}
 
 	/**
 	 * Controleer of er een terugstorting actief is. In dat geval moeten er geen bankbetalingen gedaan worden.
 	 */
-	public function is_terugstorting_actief() {
+	public function is_terugstorting_actief() : bool {
 		$betalen = new Betalen();
 		if ( $this->transactie_id ) {
 			return $betalen->terugstorting_actief( $this->transactie_id );
@@ -214,7 +224,7 @@ class Order extends Entity {
 	 *
 	 * @return string Het factuur nummer.
 	 */
-	public function factuurnummer() {
+	public function factuurnummer() : string {
 		return sprintf( '%s-%06d', date( 'Y', $this->datum ), $this->factuurnr );
 	}
 
@@ -223,13 +233,12 @@ class Order extends Entity {
 	 *
 	 * @return float
 	 */
-	public function te_betalen() {
+	public function te_betalen() : float {
 		if ( $this->is_credit() ) {
 			$origineel_order = new Order( $this->origineel_id );
 			return round( $origineel_order->orderregels->bruto() + $this->orderregels->bruto() - $this->betaald, 2 );
-		} else {
-			return round( $this->orderregels->bruto() - $this->betaald, 2 );
 		}
+		return round( $this->orderregels->bruto() - $this->betaald, 2 );
 	}
 
 	/**
@@ -239,8 +248,9 @@ class Order extends Entity {
 	 *
 	 * @global object $wpdb     WordPress database.
 	 * @return int De order id.
+	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function save() {
+	public function save() : int {
 		global $wpdb;
 		$this->gesloten = 0.01 >= abs( $this->te_betalen() );
 		$this->regels   = $this->orderregels->export();
@@ -274,25 +284,12 @@ class Order extends Entity {
 	}
 
 	/**
-	 * Zoek de meest recente bestelling o.b.v. de referentie (dus een credit factuur wordt dan eerder gevonden dan de gewone factuur).
-	 *
-	 * @since 6.1.0
-	 *
-	 * @param  string $referentie De referentie.
-	 * @return int Het id van de bestelling of 0.
-	 */
-	public static function zoek_order( $referentie ) {
-		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s ORDER BY id DESC LIMIT 1", $referentie ) ) ?? 0;
-	}
-
-	/**
 	 * Return alle orders.
 	 *
 	 * @param string $zoek Toon alleen orders die voldoen aan de zoekterm, anders toon alleen openstaande ordes.
 	 * @return array orders.
 	 */
-	public static function all( $zoek = '' ) {
+	public static function all( string $zoek = '' ) : array {
 		global $wpdb;
 		$arr    = [];
 		$zoek   = strtolower( $zoek );

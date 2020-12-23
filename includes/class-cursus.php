@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use DateTime;
+use DateTimeZone;
+
 /**
  * Kleistad Cursus class.
  *
@@ -36,7 +39,14 @@ namespace Kleistad;
  * @property bool   tonen
  * @property string event_id
  */
-class Cursus extends Entity {
+class Cursus {
+
+	/**
+	 * De cursusdata
+	 *
+	 * @var array $data De ruwe data.
+	 */
+	private array $data;
 
 	/**
 	 * Constructor
@@ -44,9 +54,9 @@ class Cursus extends Entity {
 	 * @global object $wpdb WordPress database.
 	 * @param int $cursus_id (optional) cursus welke geladen moet worden.
 	 */
-	public function __construct( $cursus_id = null ) {
+	public function __construct( int $cursus_id = null ) {
 		global $wpdb;
-		$options    = Kleistad::get_options();
+		$options    = opties();
 		$this->data = [
 			'id'              => null,
 			'naam'            => '',
@@ -78,7 +88,6 @@ class Cursus extends Entity {
 						[ $this->data['start_datum'] ] :
 						[ $this->data['start_datum'], $this->data['eind_datum'] ]
 					);
-
 				}
 			}
 		}
@@ -97,6 +106,9 @@ class Cursus extends Entity {
 		if ( preg_match( '~(vol|vervallen|techniekkeuze|meer|tonen)~', $attribuut ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
+		if ( preg_match( '~(inschrijfkosten|cursuskosten)~', $attribuut ) ) {
+			return floatval( $this->data[ $attribuut ] );
+		}
 		switch ( $attribuut ) {
 			case 'technieken':
 				return json_decode( $this->data[ $attribuut ], true );
@@ -112,7 +124,8 @@ class Cursus extends Entity {
 			case 'event_id':
 				return sprintf( 'kleistadcursus%06d', $this->data['id'] );
 			default:
-				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
+				return is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) :
+					( is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ] );
 		}
 	}
 
@@ -156,11 +169,10 @@ class Cursus extends Entity {
 	 * @return int nog beschikbare ruimte.
 	 */
 	public function ruimte() {
-		$inschrijvingen = Inschrijving::all();
-		$aantal         = $this->maximum;
-		foreach ( $inschrijvingen as $inschrijving ) {
-			if ( array_key_exists( $this->id, $inschrijving ) && $inschrijving[ $this->id ]->ingedeeld && ! $inschrijving[ $this->id ]->geannuleerd ) {
-				$aantal = $aantal - $inschrijving[ $this->id ]->aantal;
+		$aantal = $this->maximum;
+		foreach ( new Inschrijvingen( $this->id ) as $inschrijving ) {
+			if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
+				$aantal = $aantal - $inschrijving->aantal;
 			}
 		}
 		return max( $aantal, 0 );
@@ -169,9 +181,10 @@ class Cursus extends Entity {
 	/**
 	 * Erase de cursus
 	 */
-	public function erase() {
+	public function erase() :bool {
 		global $wpdb;
 		$wpdb->delete( "{$wpdb->prefix}kleistad_cursussen", [ 'id' => $this->id ] );
+		return true;
 	}
 
 	/**
@@ -225,9 +238,8 @@ class Cursus extends Entity {
 	public function docent_naam() {
 		if ( is_numeric( $this->docent ) ) {
 			return get_user_by( 'id', intval( $this->docent ) )->display_name;
-		} else {
-			return $this->docent;
 		}
+		return $this->docent;
 	}
 
 	/**
@@ -237,18 +249,18 @@ class Cursus extends Entity {
 	 * @return array De advies kosten en het aantal resterende lessen.
 	 */
 	public function lopend( $vanafdatum ) {
-		$aantal_lessen           = count( $this->lesdatums );
-		$totaal_kosten           = $this->inschrijfkosten + $this->cursuskosten;
-		$aantal_lessen_resterend = 0;
+		$aantal_lessen    = count( $this->lesdatums );
+		$totaal_kosten    = $this->inschrijfkosten + $this->cursuskosten;
+		$aantal_resterend = 0;
 		foreach ( $this->lesdatums as $lesdatum ) {
 			if ( $lesdatum >= $vanafdatum ) {
-				$aantal_lessen_resterend++;
+				$aantal_resterend++;
 			}
 		}
 		return [
 			'lessen'      => $aantal_lessen,
-			'lessen_rest' => $aantal_lessen_resterend,
-			'kosten'      => round( $totaal_kosten * $aantal_lessen_resterend / $aantal_lessen * 2 ) / 2,
+			'lessen_rest' => $aantal_resterend,
+			'kosten'      => round( $totaal_kosten * $aantal_resterend / $aantal_lessen * 2 ) / 2,
 		];
 	}
 
@@ -262,7 +274,7 @@ class Cursus extends Entity {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->data );
 		$this->id = $wpdb->insert_id;
-		$timezone = new \DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
+		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 
 		try {
 			$event             = new Event( $this->event_id );
@@ -276,12 +288,12 @@ class Cursus extends Entity {
 			$event->titel      = $this->naam;
 			$event->definitief = $this->tonen;
 			$event->vervallen  = $this->vervallen;
-			$event->start      = new \DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
-			$event->eind       = new \DateTime( $this->data['start_datum'] . ' ' . $this->data['eind_tijd'], $timezone );
+			$event->start      = new DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
+			$event->eind       = new DateTime( $this->data['start_datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			switch ( count( $this->lesdatums ) ) {
 				case 0: // Oude cursus, er zijn nog geen lesdatums toegevoegd.
 					if ( $this->start_datum !== $this->eind_datum ) {
-						$event->herhalen( new \DateTime( $this->data['eind_datum'] . ' ' . $this->data['eind_tijd'], $timezone ) );
+						$event->herhalen( new DateTime( $this->data['eind_datum'] . ' ' . $this->data['eind_tijd'], $timezone ) );
 					}
 					break;
 				case 1: // Geen recurrence, er is maar één lesdatum.
@@ -289,7 +301,7 @@ class Cursus extends Entity {
 				default:
 					$datums = [];
 					foreach ( $this->lesdatums as $lesdatum ) {
-						$datums[] = new \DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
+						$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
 					}
 					sort( $datums );
 					$event->patroon( $datums );
@@ -308,32 +320,11 @@ class Cursus extends Entity {
 	 * @return bool True als de cursus verwijderd kan worden.
 	 */
 	public function verwijder() {
-		global $wpdb;
-		$inschrijvingen = Inschrijving::all();
-		foreach ( $inschrijvingen as $inschrijving ) {
-			if ( array_key_exists( $this->id, $inschrijving ) ) {
-				return false; // Er is al een inschrijving dus verwijderen is niet meer mogelijk.
-			}
+		if ( count( new Inschrijvingen( $this->id ) ) ) {
+			return false; // Er is al een inschrijving dus verwijderen is niet meer mogelijk.
 		}
 		$this->erase();
 		return true;
 	}
 
-	/**
-	 * Return alle cursussen.
-	 *
-	 * @global object $wpdb WordPress database.
-	 * @param bool $open Toon alleen de open cursussen if true.
-	 * @return array cursussen.
-	 */
-	public static function all( $open = false ) {
-		global $wpdb;
-		$arr             = [];
-		$filter          = $open ? ' WHERE eind_datum > CURRENT_DATE' : '';
-		$cursussen_tabel = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen $filter ORDER BY start_datum DESC, start_tijd ASC", ARRAY_A ); // phpcs:ignore
-		foreach ( $cursussen_tabel as $cursus ) {
-			$arr[ $cursus['id'] ] = new Cursus( $cursus['id'] );
-		}
-		return $arr;
-	}
 }

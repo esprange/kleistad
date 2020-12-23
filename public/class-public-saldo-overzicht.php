@@ -27,19 +27,18 @@ class Public_Saldo_Overzicht extends Shortcode {
 	protected function prepare( &$data ) {
 		$gebruikers      = get_users(
 			[
-				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => [ 'nicename' ],
+				'fields'   => [ 'ID', 'display_name' ],
+				'orderby'  => [ 'display_name' ],
+				'role__in' => [ RESERVEER ],
 			]
 		);
 		$data['stokers'] = [];
 		foreach ( $gebruikers as $gebruiker ) {
-			if ( Roles::reserveer( $gebruiker->ID ) ) {
-				$saldo             = new Saldo( $gebruiker->ID );
-				$data['stokers'][] = [
-					'naam'  => $gebruiker->display_name,
-					'saldo' => number_format_i18n( $saldo->bedrag, 2 ),
-				];
-			}
+			$saldo             = new Saldo( $gebruiker->ID );
+			$data['stokers'][] = [
+				'naam'  => $gebruiker->display_name,
+				'saldo' => number_format_i18n( $saldo->bedrag, 2 ),
+			];
 		}
 		return true;
 	}

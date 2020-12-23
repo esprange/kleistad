@@ -30,8 +30,12 @@ namespace Kleistad;
 			</th>
 			<td><select name="cursus_id" id="cursus_id" required class="code">
 			<?php
-			$cursussen = Cursus::all( true );
+			$cursussen = new Cursussen();
+			$vandaag   = strtotime( 'today' );
 			foreach ( $cursussen as $cursus_id => $cursus ) :
+				if ( $vandaag > $cursus->eind_datum ) :
+					continue;
+				endif
 				?>
 					<option value="<?php echo esc_attr( $cursus_id ); ?>" <?php selected( $item['cursus_id'], $cursus_id ); ?>>
 						<?php echo esc_html( "$cursus->code $cursus->naam" ); ?>

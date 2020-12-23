@@ -42,25 +42,25 @@ class Presentielijst extends \FPDF {
 	private function matrix( $cursisten, $lesdatums ) {
 		$this->SetY( 45 );
 		$this->SetLeftMargin( 25 );
-		$h = 8;
+		$fontheight = 8;
 		$this->setFont( 'Arial', 'B', 10 );
-		$this->Cell( 50, $h, 'Cursist', 1, 0, 'L' );
+		$this->Cell( 50, $fontheight, 'Cursist', 1, 0, 'L' );
 		$this->setFont( 'Arial', 'B', 10 );
 		sort( $lesdatums );
 		foreach ( $lesdatums as $lesdatum ) {
-			$this->Cell( 12, $h, strftime( '%d-%m', $lesdatum ), 1, 0, 'C' );
+			$this->Cell( 12, $fontheight, strftime( '%d-%m', $lesdatum ), 1, 0, 'C' );
 		}
 		$this->setFont( 'Arial' );
 		$this->ln();
 		foreach ( $cursisten as $cursist ) {
-			$this->Cell( 50, $h, utf8_decode( $cursist ), 1, 0, 'L' );
+			$this->Cell( 50, $fontheight, utf8_decode( $cursist ), 1, 0, 'L' );
 			foreach ( $lesdatums as $lesdatum ) {
-				$this->Cell( 12, $h, '', 1, 0, 'C' );
+				$this->Cell( 12, $fontheight, '', 1, 0, 'C' );
 			}
 			$this->ln();
 		}
 		$this->ln();
-		$this->Cell( 0, $h, strftime( '%d-%m-%Y' ), 0 );
+		$this->Cell( 0, $fontheight, strftime( '%d-%m-%Y' ), 0 );
 	}
 
 	/**

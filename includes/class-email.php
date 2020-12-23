@@ -17,6 +17,27 @@ namespace Kleistad;
 class Email {
 
 	/**
+	 * Het domein van de emails waar antwoorden naar gezonden worden
+	 *
+	 * @var string $domein Het domein.
+	 */
+	public string $domein;
+
+	/**
+	 * Het domein van de emails die verzonden worden
+	 *
+	 * @var string $verzenddomein Het domein, kan een mailgun domein zijn.
+	 */
+	public string $verzend_domein;
+
+	/**
+	 * De mailbox van de standaard verzender
+	 *
+	 * @var string $info De mailbox, meestal info maar bij development en test de beheerder.
+	 */
+	public string $info;
+
+	/**
 	 * De mail parameters.
 	 *
 	 * @var array $mailparams
@@ -65,31 +86,13 @@ class Email {
 	}
 
 	/**
-	 * Geef het info adres terug.
-	 *
-	 * @return string
+	 * Constructor
 	 */
-	public static function info() {
-		return ( 'development' !== wp_get_environment_type() ) ? 'info@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
-	}
-
-	/**
-	 * Helper functie, haalt het domein op van de website.
-	 *
-	 * @return string
-	 */
-	public static function domein() {
-		return substr( strrchr( get_bloginfo( 'admin_email' ), '@' ), 1 );
-	}
-
-	/**
-	 * Helper functie, haalt het domein op van de verzender.
-	 *
-	 * @return string
-	 */
-	public static function verzend_domein() {
-		$mailgun_opties = get_option( 'wp_mail_smtp' );
-		return false === $mailgun_opties ? self::domein() : $mailgun_opties['mailgun']['domain'];
+	public function __construct() {
+		$this->info           = 'development' !== wp_get_environment_type() ? 'info@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+		$this->domein         = substr( strrchr( get_bloginfo( 'admin_email' ), '@' ), 1 );
+		$mailgun_opties       = get_option( 'wp_mail_smtp' );
+		$this->verzend_domein = false === $mailgun_opties ? $this->domein : $mailgun_opties['mailgun']['domain'];
 	}
 
 	/**
@@ -158,14 +161,14 @@ class Email {
 				'bcc'         => [],
 				'cc'          => [],
 				'content'     => '',
-				'from'        => 'no_reply@' . self::verzend_domein(),
+				'from'        => "no_reply@{$this->verzend_domein}",
 				'from_name'   => 'Kleistad',
 				'parameters'  => [],
-				'reply-to'    => 'no_reply@' . self::domein(),
+				'reply-to'    => "no_reply@{$this->domein}",
 				'sign'        => 'Kleistad',
 				'sign_email'  => true,
 				'slug'        => '',
-				'to'          => 'Kleistad <' . self::info() . self::domein() . '>',
+				'to'          => "Kleistad <{$this->info}{$this->domein}>",
 				'attachments' => [],
 			]
 		);
@@ -241,10 +244,9 @@ class Email {
 				$this->headers(),
 				$this->mailparams['attachments']
 			);
-		} else {
-			error_log( "E-mail aan: {$this->mailparams['to']} over {$this->mailparams['subject']} met bijlage {$this->mailparams['attachments']}" ); // phpcs:ignore
-			return true;
 		}
+		error_log( "E-mail aan: {$this->mailparams['to']} over {$this->mailparams['subject']} met bijlage {$this->mailparams['attachments']}" ); // phpcs:ignore
+		return true;
 	}
 
 	/**
@@ -364,7 +366,7 @@ class Email {
 								<p>Met vriendelijke groet,</p>
 								<p><?php echo $this->mailparams['sign']; // phpcs:ignore ?></p>
 									<?php if ( $this->mailparams['sign_email'] ) : ?>
-								<p><a href="mailto:<?php echo esc_attr( self::info() . self::domein() ); ?>" target="_top" ><?php echo esc_html( self::info() . self::domein() ); ?></a></p>
+								<p><a href="mailto:<?php echo esc_attr( "{$this->info}{$this->domein}" ); ?>" target="_top" ><?php echo esc_html( "{$this->info}{$this->domein}" ); ?></a></p>
 								<?php endif ?>
 								<?php endif ?>
 							</td>

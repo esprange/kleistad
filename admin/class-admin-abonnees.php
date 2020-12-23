@@ -126,21 +126,24 @@ class Admin_Abonnees extends \WP_List_Table {
 		$orderby      = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val    = filter_input( INPUT_GET, 'order' );
 		$order        = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$abonnementen = Abonnement::all( $search );
+		$abonnementen = new Abonnementen();
 		$abonnees     = [];
 		$betalen      = new Betalen();
 
-		foreach ( $abonnementen as $abonnee_id => $abonnement ) {
-			$abonnee    = get_userdata( $abonnee_id );
+		foreach ( $abonnementen as $abonnement ) {
+			$abonnee = get_userdata( $abonnement->klant_id );
+			if ( false === strpos( $abonnee->display_name . $abonnee->user_email, $search ) ) {
+				continue;
+			}
 			$abonnees[] = [
-				'id'     => $abonnee_id,
+				'id'     => $abonnement->klant_id,
 				'naam'   => $abonnee->display_name,
-				'status' => $abonnement->status(),
+				'status' => $abonnement->geef_statustekst(),
 				'soort'  => $abonnement->soort,
 				'dag'    => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
 				'extras' => implode( ', ', $abonnement->extras ),
 				'code'   => $abonnement->code,
-				'mollie' => $betalen->heeft_mandaat( $abonnee_id ),
+				'mollie' => $betalen->heeft_mandaat( $abonnement->klant_id ),
 			];
 		}
 		usort(

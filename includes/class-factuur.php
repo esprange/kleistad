@@ -11,17 +11,20 @@
 
 namespace Kleistad;
 
+use FPDF;
+
 /**
  * De class voor email, maakt gebruik van de fdpf class, zie ook http://www.fpdf.org.
  */
-class Factuur extends \FPDF {
+class Factuur extends FPDF {
 
 	/**
 	 * Output het getal als een euro bedrag.
 	 *
 	 * @param float $bedrag Het bedrag.
+	 * @return string;
 	 */
-	private function euro( $bedrag ) {
+	private function euro( float $bedrag ) : string {
 		return chr( 128 ) . ' ' . number_format_i18n( $bedrag, 2 );
 	}
 
@@ -32,13 +35,14 @@ class Factuur extends \FPDF {
 	 * @param int    $maxlen De maximale lengte.
 	 * @return string
 	 */
-	private function trunc( $tekst, $maxlen ) {
+	private function trunc( string $tekst, int $maxlen ) : string {
 		$ellip = '...';
 		$tekst = trim( $tekst );
 		if ( strlen( $tekst ) <= $maxlen ) {
 			return $tekst;
 		}
-		$_tekst = strrev( substr( $tekst, 0, $maxlen - strlen( $ellip ) ) );
+		$_tekst  = strrev( substr( $tekst, 0, $maxlen - strlen( $ellip ) ) );
+		$matches = [];
 		preg_match( '/\s/', $_tekst, $matches );
 		$_tekst = strrev( substr( $_tekst, strpos( $_tekst, $matches[0] ) ) );
 		return $_tekst . $ellip;
@@ -49,7 +53,7 @@ class Factuur extends \FPDF {
 	 *
 	 * @param string $titel De titel van de pagina.
 	 */
-	private function start( $titel ) {
+	private function start( string $titel ) : void {
 		$h = 32;
 		$this->SetLeftMargin( 25 );
 		$this->AddPage();
@@ -64,7 +68,7 @@ class Factuur extends \FPDF {
 	 *
 	 * @param array $args De te tonen informatie.
 	 */
-	private function klant( $args ) {
+	private function klant( array $args ) : void {
 		$h = 6;
 		$this->setY( 65 );
 		$this->SetLeftMargin( 25 );
@@ -81,7 +85,7 @@ class Factuur extends \FPDF {
 	 * @param int    $datum      De factuur datum.
 	 * @param string $referentie De referentie.
 	 */
-	private function info( $factuurnr, $datum, $referentie ) {
+	private function info( string $factuurnr, int $datum, string $referentie ) : void {
 		$h = 6;
 		$this->setY( 65 );
 		$this->SetRightMargin( 75 );
@@ -116,7 +120,7 @@ class Factuur extends \FPDF {
 	 * @param float       $betaald        Wat er al betaald is.
 	 * @param float       $nog_te_betalen Wat er nog betaald moet worden ingeval van een credit_factuur.
 	 */
-	private function order( Orderregels $orderregels, float $betaald, float $nog_te_betalen ) {
+	private function order( Orderregels $orderregels, float $betaald, float $nog_te_betalen ) : void {
 		$this->SetY( 120 );
 		$this->SetLeftMargin( 25 );
 		$w = [
@@ -153,10 +157,10 @@ class Factuur extends \FPDF {
 		if ( 0 <= $nog_te_betalen ) {
 			$this->Cell( $w['samenvatting'], $h, 'Verschuldigd saldo', 0, 0, 'R' );
 			$this->Cell( $w['prijs'], $h, $this->euro( $nog_te_betalen ), 0, 1, 'R' );
-		} else {
-			$this->Cell( $w['samenvatting'], $h, 'Na verrekening te ontvangen', 0, 0, 'R' );
-			$this->Cell( $w['prijs'], $h, $this->euro( - $nog_te_betalen ), 0, 1, 'R' );
+			return;
 		}
+		$this->Cell( $w['samenvatting'], $h, 'Na verrekening te ontvangen', 0, 0, 'R' );
+		$this->Cell( $w['prijs'], $h, $this->euro( - $nog_te_betalen ), 0, 1, 'R' );
 	}
 
 	/**
@@ -164,7 +168,7 @@ class Factuur extends \FPDF {
 	 *
 	 * @param string $arg De te tonen tekst.
 	 */
-	private function opmerking( $arg ) {
+	private function opmerking( string $arg ) : void {
 		if ( ! empty( $arg ) ) {
 			$h = 6;
 			$this->SetLeftMargin( 25 );
@@ -183,19 +187,18 @@ class Factuur extends \FPDF {
 	 * @param string $type  Het type factuur: gewoon, correctie of credit.
 	 * @return string Pad naar de factuur.
 	 */
-	public function run( $order, $type ) {
+	public function run( Order $order, string $type ) : string {
 		$factuurnr  = $order->factuurnummer();
 		$upload_dir = wp_get_upload_dir();
-		$file       = sprintf( '%s/facturen/%s-%s', $upload_dir['basedir'], "{$type}factuur", $factuurnr );
+		$filenaam   = sprintf( '%s/facturen/%s-%s', $upload_dir['basedir'], "{$type}factuur", $factuurnr );
 		$versie     = '';
-		if ( file_exists( "$file.pdf" ) ) {
+		$file       = "$filenaam.pdf";
+		if ( file_exists( $file ) ) {
 			$versie = 0;
 			do {
 				$versie++;
-			} while ( file_exists( "$file.$versie.pdf" ) );
-			$file = "$file.$versie.pdf";
-		} else {
-			$file = "$file.pdf";
+				$file = "$filenaam.$versie.pdf";
+			} while ( file_exists( $file ) );
 		}
 		$this->SetCreator( get_site_url() );
 		$this->SetAuthor( 'Kleistad' );
@@ -215,7 +218,7 @@ class Factuur extends \FPDF {
 	 * @param string $factuurnr Het factuur nummer.
 	 * @return array De url's van de facturen.
 	 */
-	public static function facturen( $factuurnr ) {
+	public static function facturen( string $factuurnr ) : array {
 		$upload_dir = wp_get_upload_dir();
 		$files      = glob( sprintf( '%s/facturen/*factuur-%s*', $upload_dir['basedir'], $factuurnr ) ) ?: [];
 		usort(

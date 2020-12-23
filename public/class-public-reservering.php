@@ -11,6 +11,10 @@
 
 namespace Kleistad;
 
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_Error;
+
 /**
  * De reservering form.
  */
@@ -21,59 +25,40 @@ class Public_Reservering extends Shortcode {
 	 * Prepareer 'reservering' form
 	 *
 	 * @param array $data data to be prepared.
-	 * @return \WP_ERROR|bool
+	 * @return WP_ERROR|bool
 	 *
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data ) {
-		global $wpdb;
-		$error = new \WP_Error();
-
-		if ( ! Roles::reserveer() ) {
-			$error->add( 'security', 'hiervoor moet je ingelogd zijn' );
-			return $error;
-		}
 		$atts = shortcode_atts(
 			[ 'oven' => 'niet ingevuld' ],
 			$this->atts,
 			'kleistad_reservering'
 		);
-		if ( is_numeric( $atts['oven'] ) ) {
-			$oven_id = $atts['oven'];
-			$oven    = new Oven( $oven_id );
-			if ( ! intval( $oven->id ) ) {
-				$error->add( 'fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !' );
-				return $error;
-			}
-			$stokers    = [];
-			$gebruikers = get_users(
-				[
-					'fields'    => [ 'ID', 'display_name' ],
-					'orderby'   => [ 'nicename' ],
-					'roles__in' => [ Roles::LID, Roles::DOCENT, Roles::BESTUUR ],
-				]
-			);
-			foreach ( $gebruikers as $gebruiker ) {
-				if ( Roles::reserveer( $gebruiker->ID ) && false === strpos( $gebruiker->display_name, '$' ) ) {
-					$stokers[] = [
-						'id'   => intval( $gebruiker->ID ),
-						'naam' => $gebruiker->display_name,
-					];
-				}
-			}
-			$data = [
-				'stokers'  => $stokers,
-				'oven'     => [
-					'id'   => $oven->id,
-					'naam' => $oven->naam,
-				],
-				'override' => Roles::override(),
-			];
-			return true;
-		} else {
-			$error->add( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
-			return $error;
+		if ( ! is_numeric( $atts['oven'] ) ) {
+			return new WP_Error( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
 		}
+		$oven_id = $atts['oven'];
+		$oven    = new Oven( $oven_id );
+		if ( ! intval( $oven->id ) ) {
+			return new WP_Error( 'fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !' );
+		}
+		$data = [
+			'stokers'  => get_users(
+				[
+					'fields'       => [ 'ID', 'display_name' ],
+					'orderby'      => 'display_name',
+					'roles__in'    => [ LID, DOCENT, BESTUUR ],
+					'role__not_in' => [ INTERN ],
+				]
+			),
+			'oven'     => [
+				'id'   => $oven->id,
+				'naam' => $oven->naam,
+			],
+			'override' => current_user_can( OVERRIDE ),
+		];
+		return true;
 	}
 
 	/**
@@ -83,7 +68,7 @@ class Public_Reservering extends Shortcode {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Public_Main::api(),
+			KLEISTAD_API,
 			'/reserveer',
 			[
 				'methods'             => 'POST,PUT,DELETE',
@@ -98,12 +83,12 @@ class Public_Reservering extends Shortcode {
 					],
 				],
 				'permission_callback' => function() {
-					return is_user_logged_in();
+					return is_user_logged_in() && current_user_can( RESERVEER );
 				},
 			]
 		);
 		register_rest_route(
-			Public_Main::api(),
+			KLEISTAD_API,
 			'/reserveer',
 			[
 				'methods'             => 'GET',
@@ -123,31 +108,26 @@ class Public_Reservering extends Shortcode {
 					],
 				],
 				'permission_callback' => function() {
-					return is_user_logged_in();
+					return is_user_logged_in() && current_user_can( RESERVEER );
 				},
 			]
 		);
 	}
 
 	/**
-	 * Maak een regel op van de reserveringen tabel
+	 * Maak een regel op van de tabel
 	 *
-	 * @param int    $oven_id het id van de oven.
-	 * @param string $dagnaam naam van de dag.
-	 * @param int    $maand   maand van de reservering.
-	 * @param int    $dag     dag van de reservering.
-	 * @param int    $jaar    jaar van de reservering.
+	 * @param Stook $stook De stook waarvoor de regel moet worden opgemaakt.
 	 * @return string html opgemaakte tekstregel.
 	 */
-	private static function maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar ) {
-		$reservering  = new Reservering( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
+	private static function maak_stookregel( Stook $stook ) {
 		$gebruiker_id = get_current_user_id();
-		$stoker_id    = $reservering->gereserveerd ? $reservering->verdeling[0]['id'] : $gebruiker_id;
+		$stoker_id    = $stook->stookdelen[0]->medestoker;
 		$stoker_naam  = get_userdata( $stoker_id )->display_name;
-		$kleur        = Reservering::ONDERHOUD === $reservering->soortstook ? 'kleistad_reservering_onderhoud' :
-			( $reservering->verdeling[0]['id'] === $gebruiker_id ? 'kleistad_reservering_zelf' : 'kleistad_reservering_ander' );
+		$kleur        = Stook::ONDERHOUD === $stook->soort ? 'kleistad_reservering_onderhoud' :
+			( $stoker_id === $gebruiker_id ? 'kleistad_reservering_zelf' : 'kleistad_reservering_ander' );
 		$logica       = [
-			Reservering::ONGEBRUIKT    => [
+			Stook::ONGEBRUIKT    => [
 				'wie'          => '',
 				'temperatuur'  => '',
 				'programma'    => '',
@@ -157,70 +137,70 @@ class Public_Reservering extends Shortcode {
 				'select'       => false,
 				'gebruiker_id' => 0,
 			],
-			Reservering::RESERVEERBAAR => [
+			Stook::RESERVEERBAAR => [
 				'wie'          => '- beschikbaar -',
-				'temperatuur'  => '',
-				'programma'    => '',
-				'verdeling'    => [ [ 'id' => $stoker_id, 'perc' => 100 ] ], // phpcs:ignore
-				'soortstook'   => '',
+				'temperatuur'  => $stook->temperatuur,
+				'programma'    => $stook->programma,
+				'verdeling'    => $stook->stookdelen,
+				'soortstook'   => $stook->programma,
 				'kleur'        => 'kleistad_reservering_reserveerbaar',
 				'select'       => true,
 				'gebruiker_id' => $gebruiker_id,
 			],
-			Reservering::WIJZIGBAAR    => [
+			Stook::WIJZIGBAAR    => [
 				'wie'          => $stoker_naam,
-				'temperatuur'  => $reservering->temperatuur,
-				'programma'    => $reservering->programma,
-				'verdeling'    => $reservering->verdeling,
-				'soortstook'   => $reservering->soortstook,
+				'temperatuur'  => $stook->temperatuur,
+				'programma'    => $stook->programma,
+				'verdeling'    => $stook->stookdelen,
+				'soortstook'   => $stook->soort,
 				'kleur'        => $kleur,
 				'select'       => true,
-				'gebruiker_id' => $reservering->gebruiker_id,
+				'gebruiker_id' => $stook->hoofdstoker,
 			],
-			Reservering::ALLEENLEZEN   => [
+			Stook::ALLEENLEZEN   => [
 				'wie'          => $stoker_naam,
-				'temperatuur'  => $reservering->temperatuur,
-				'programma'    => $reservering->programma,
-				'verdeling'    => $reservering->verdeling,
-				'soortstook'   => $reservering->soortstook,
+				'temperatuur'  => $stook->temperatuur,
+				'programma'    => $stook->programma,
+				'verdeling'    => $stook->stookdelen,
+				'soortstook'   => $stook->soort,
 				'kleur'        => $kleur,
 				'select'       => true,
-				'gebruiker_id' => $reservering->gebruiker_id,
+				'gebruiker_id' => $stook->hoofdstoker,
 			],
-			Reservering::VERWIJDERBAAR => [
+			Stook::VERWIJDERBAAR => [
 				'wie'          => $stoker_naam,
-				'temperatuur'  => $reservering->temperatuur,
-				'programma'    => $reservering->programma,
-				'verdeling'    => $reservering->verdeling,
-				'soortstook'   => $reservering->soortstook,
+				'temperatuur'  => $stook->temperatuur,
+				'programma'    => $stook->programma,
+				'verdeling'    => $stook->stookdelen,
+				'soortstook'   => $stook->soort,
 				'kleur'        => $kleur,
 				'select'       => true,
-				'gebruiker_id' => $reservering->gebruiker_id,
+				'gebruiker_id' => $stook->hoofdstoker,
 			],
-			Reservering::DEFINITIEF    => [
+			Stook::DEFINITIEF    => [
 				'wie'          => $stoker_naam,
-				'temperatuur'  => $reservering->temperatuur,
-				'programma'    => $reservering->programma,
-				'verdeling'    => $reservering->verdeling,
-				'soortstook'   => $reservering->soortstook,
+				'temperatuur'  => $stook->temperatuur,
+				'programma'    => $stook->programma,
+				'verdeling'    => $stook->stookdelen,
+				'soortstook'   => $stook->soort,
 				'kleur'        => 'kleistad_reservering_definitief',
 				'select'       => true,
-				'gebruiker_id' => $reservering->gebruiker_id,
+				'gebruiker_id' => $stook->hoofdstoker,
 			],
 		];
-		$status       = $logica[ $reservering->status() ];
+		$status       = $logica[ $stook->status() ];
 		$html         = "<tr class=\"{$status['kleur']}\"";
 		if ( $status['select'] ) {
 			$json_selectie = wp_json_encode(
 				[
-					'dag'          => $dag,
-					'maand'        => $maand,
-					'jaar'         => $jaar,
+					'dag'          => date( 'd', $stook->datum ),
+					'maand'        => date( 'm', $stook->datum ),
+					'jaar'         => date( 'Y', $stook->datum ),
 					'soortstook'   => $status['soortstook'],
 					'temperatuur'  => $status['temperatuur'],
 					'programma'    => $status['programma'],
 					'verdeling'    => $status['verdeling'],
-					'status'       => $reservering->status(),
+					'status'       => $stook->status(),
 					'kleur'        => $status['kleur'],
 					'gebruiker_id' => $status['gebruiker_id'],
 				]
@@ -230,50 +210,52 @@ class Public_Reservering extends Shortcode {
 			}
 			$html .= "data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' ";
 		}
-		$html .= "><td>$dag $dagnaam</td><td> {$status['wie']}</td><td>{$status['soortstook']}</td><td>{$status['temperatuur']}</td></tr>";
+		$html .= '><td>' . strftime( '%d %A', $stook->datum ) . "</td><td> {$status['wie']}</td><td>{$status['soortstook']}</td><td>{$status['temperatuur']}</td></tr>";
 		return $html;
 	}
 
 	/**
-	 * Toon de reserveringen voor bepaalde maand
+	 * Toon de stook reserveringen voor bepaalde maand
 	 *
 	 * @param int $oven_id Het id van de oven.
 	 * @param int $maand   De maand.
 	 * @param int $jaar    Het jaar.
-	 * @return string De Html code.
+	 * @return string De Html code voor de body van de tabel.
 	 */
-	private static function toon_reserveringen( $oven_id, $maand, $jaar ) {
-		$tabelinhoud = '';
-		$aantaldagen = intval( date( 't', mktime( 0, 0, 0, $maand, 1, $jaar ) ) );
-		$oven        = new Oven( $oven_id );
-		for ( $dag = 1; $dag <= $aantaldagen; $dag++ ) {
-			$dagnaam = strftime( '%A', mktime( 0, 0, 0, $maand, $dag, $jaar ) );
-			if ( ! $oven->{$dagnaam} ) {
-				continue;
+	private static function toon_stoken( $oven_id, $maand, $jaar ) {
+		$vanaf = mktime( 0, 0, 0, $maand, 1, $jaar );
+		$tot   = mktime( 0, 0, 0, $maand + 1, -1, $jaar );
+		$oven  = new Oven( $oven_id );
+		$body  = '';
+		for ( $datum = $vanaf; $datum <= $tot; $datum += DAY_IN_SECONDS ) {
+			$dagnaam = strftime( '%A', $datum );
+			if ( $oven->{$dagnaam} ) {
+				$stoken[] = new Stook( $oven_id, $datum );
 			}
-			$tabelinhoud .= self::maak_regel( $oven_id, $dagnaam, $maand, $dag, $jaar );
 		}
-		return $tabelinhoud;
+		foreach ( $stoken as $stook ) {
+			$body .= self::maak_stookregel( $stook );
+		}
+		return $body;
 	}
 
 	/**
 	 * Callback from Ajax request
 	 *
-	 * @param \WP_REST_Request $request Ajax request params.
-	 * @return \WP_REST_Response Ajax response.
+	 * @param WP_REST_Request $request Ajax request params.
+	 * @return WP_REST_Response Ajax response.
 	 */
-	public static function callback_show( \WP_REST_Request $request ) {
+	public static function callback_show( WP_REST_Request $request ) {
 		$oven_id = intval( $request->get_param( 'oven_id' ) );
-		$periode = mktime( 0, 0, 0, intval( $request->get_param( 'maand' ) ), 1, intval( $request->get_param( 'jaar' ) ) );
-		$maand   = intval( date( 'n', $periode ) );
-		$jaar    = intval( date( 'Y', $periode ) );
-		return new \WP_REST_Response(
+		$maand   = intval( $request->get_param( 'maand' ) );
+		$jaar    = intval( $request->get_param( 'jaar' ) );
+		return new WP_REST_Response(
 			[
-				'content' => self::toon_reserveringen( $oven_id, $maand, $jaar ),
+				'content' => self::toon_stoken( $oven_id, $maand, $jaar ),
 				'oven_id' => $oven_id,
 				'maand'   => $maand,
 				'jaar'    => $jaar,
-				'periode' => strftime( '%B-%Y', $periode ),
+				'periode' => strftime( '%B-%Y', mktime( 0, 0, $maand, 1, $jaar ) ),
 			]
 		);
 	}
@@ -282,57 +264,55 @@ class Public_Reservering extends Shortcode {
 	 *
 	 * Callback from Ajax request
 	 *
-	 * @param \WP_REST_Request $request Ajax request params.
-	 * @return \WP_REST_Response Ajax response.
+	 * @param WP_REST_Request $request Ajax request params.
+	 * @return WP_REST_Response Ajax response.
 	 */
-	public static function callback_muteer( \WP_REST_Request $request ) {
-		$input       = $request->get_param( 'reservering' );
-		$oven_id     = $request->get_param( 'oven_id' );
-		$jaar        = intval( $input['jaar'] );
-		$maand       = intval( $input['maand'] );
-		$dag         = intval( $input['dag'] );
-		$reservering = new Reservering( $oven_id, mktime( 23, 59, 0, $maand, $dag, $jaar ) );
-
+	public static function callback_muteer( WP_REST_Request $request ) {
+		$input   = $request->get_param( 'reservering' );
+		$oven_id = $request->get_param( 'oven_id' );
+		$jaar    = intval( $input['jaar'] );
+		$maand   = intval( $input['maand'] );
+		$dag     = intval( $input['dag'] );
+		$stook   = new Stook( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
 		switch ( $request->get_method() ) {
 			case 'POST':
 				// Het betreft een toevoeging, in dit geval controleren of er niet snel door een ander een reservering is gedaan.
-				if ( $reservering->gereserveerd ) {
+				if ( $stook->is_gereserveerd() ) {
 					break;
 				}
-				$reservering->gebruiker_id = get_current_user_id();
-				$reservering->dag          = $dag;
-				$reservering->maand        = $maand;
-				$reservering->jaar         = $jaar;
-				$reservering->temperatuur  = intval( $input['temperatuur'] );
-				$reservering->soortstook   = sanitize_text_field( $input['soortstook'] );
-				$reservering->programma    = intval( $input['programma'] );
-				$reservering->verdeling    = $input['verdeling'];
-				$reservering->save();
+				$stook->hoofdstoker = get_current_user_id();
+				$stook->temperatuur = intval( $input['temperatuur'] );
+				$stook->soort       = sanitize_text_field( $input['soortstook'] );
+				$stook->programma   = intval( $input['programma'] );
+				foreach ( $input['verdeling'] as $verdeling ) {
+					$stook->stookdelen[] = new Stookdeel( $verdeling['id'], $verdeling['perc'], $verdeling['prijs'] = 0 );
+				}
+				$stook->save();
 				break;
 			case 'PUT':
 				// Het betreft een wijziging bestaande reservering. Controleer of deze al niet verwijderd is.
-				if ( ! $reservering->gereserveerd ) {
+				if ( ! $stook->is_gereserveerd() ) {
 					break;
 				}
-				$reservering->temperatuur = intval( $input['temperatuur'] );
-				$reservering->soortstook  = sanitize_text_field( $input['soortstook'] );
-				$reservering->programma   = intval( $input['programma'] );
-				$reservering->verdeling   = $input['verdeling'];
-				$reservering->save();
+				$stook->temperatuur = intval( $input['temperatuur'] );
+				$stook->soort       = sanitize_text_field( $input['soortstook'] );
+				$stook->programma   = intval( $input['programma'] );
+				$stook->stookdelen  = [];
+				foreach ( $input['verdeling'] as $verdeling ) {
+					$stook->stookdelen[] = new Stookdeel( $verdeling['id'], $verdeling['perc'], $verdeling['prijs'] = 0 );
+				}
+				$stook->save();
 				break;
 			case 'DELETE':
 				// het betreft een annulering, controleer of deze al niet verwijderd is.
-				if ( ! $reservering->gereserveerd ) {
-					break;
-				}
-				$reservering->delete();
+				$stook->verwijder();
 				break;
 			default:
 				break;
 		}
-		return new \WP_REST_Response(
+		return new WP_REST_Response(
 			[
-				'content' => self::toon_reserveringen( $oven_id, $maand, $jaar ),
+				'content' => self::toon_stoken( $oven_id, $maand, $jaar ),
 				'oven_id' => $oven_id,
 				'maand'   => $maand,
 				'jaar'    => $jaar,
@@ -340,5 +320,4 @@ class Public_Reservering extends Shortcode {
 			]
 		);
 	}
-
 }

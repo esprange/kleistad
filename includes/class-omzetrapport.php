@@ -11,10 +11,12 @@
 
 namespace Kleistad;
 
+use FPDF;
+
 /**
  * De class maakt gebruik van de fdpf class, zie ook http://www.fpdf.org.
  */
-class OmzetRapport extends \FPDF {
+class OmzetRapport extends FPDF {
 
 	/**
 	 * Start de pagina.
@@ -120,17 +122,18 @@ class OmzetRapport extends \FPDF {
 	 */
 	public function run( $maand, $jaar ) {
 		$upload_dir = wp_get_upload_dir();
+		$rapportage = new Orderrapportage();
 		$file       = sprintf( 'omzet_%d-%d-%s.pdf', $jaar, $maand, uniqid() );
 		$this->SetCreator( get_site_url() );
 		$this->SetAuthor( 'Kleistad' );
 		$this->SetTitle( 'Omzet rapport' );
 		$this->start( 'periode ' . strftime( '%B', mktime( 0, 0, 0, $maand, 1, 2020 ) ) . " $jaar" );
-		$omzet = Orderrapportage::maandrapportage( $maand, $jaar );
+		$omzet = $rapportage->maandrapport(  $maand, $jaar );
 		$this->tabel( $omzet );
 		foreach ( $omzet as $naam => $omzetregel ) {
 			if ( 0 !== $omzetregel['netto'] ) {
 				$this->addPage();
-				$omzetdetails = Orderrapportage::maanddetails( $maand, $jaar, $omzetregel['key'] );
+				$omzetdetails = $rapportage->maanddetails(  $maand, $jaar, $omzetregel['key'] );
 				$this->details( $naam, $omzetdetails );
 			}
 		}

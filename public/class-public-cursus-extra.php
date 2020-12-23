@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad cursus extra cursisten class.
  */
@@ -21,7 +23,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 * Prepareer 'cursus_extra' form
 	 *
 	 * @param array $data data voor display.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   6.6.0
 	 */
@@ -34,16 +36,19 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			]
 		);
 		if ( empty( $param['code'] ) || empty( $param['hsh'] ) ) {
-			return new \WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
+			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
-		$inschrijving = Inschrijving::vind( $param['code'] );
-		if ( ! is_null( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
+		list( $cursus_id, $cursist_id ) = explode( '-', substr( $param['code'], 1 ) );
+		$cursist                        = new Cursist( (int) $cursist_id );
+		$inschrijving                   = $cursist->geef_inschrijving( (int) $cursus_id );
+
+		if ( is_object( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
-				return new \WP_Error( 'Geannuleerd', 'Deelname aan de cursus is geannuleerd.' );
+				return new WP_Error( 'Geannuleerd', 'Deelname aan de cursus is geannuleerd.' );
 			}
 			$data['cursus_naam']  = $inschrijving->cursus->naam;
 			$data['cursist_code'] = $inschrijving->code;
-			$data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
+			$data['cursist_naam'] = $cursist->display_name;
 			$index                = 1;
 			if ( ! isset( $data['input'] ) ) {
 				foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
@@ -70,22 +75,21 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				}
 			}
 			return true;
-		} else {
-			return new \WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
+		return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 	}
 
 	/**
 	 * Valideer/sanitize 'cursus_extra' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   6.6.0
 	 */
 	protected function validate( &$data ) {
-		$error                = new \WP_Error();
-		$data['input']        = filter_input_array(
+		$error                          = new WP_Error();
+		$data['input']                  = filter_input_array(
 			INPUT_POST,
 			[
 				'extra_cursist' => [
@@ -95,14 +99,14 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				'code'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['inschrijving'] = Inschrijving::vind( $data['input']['code'] );
-		$emails               = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
+		list( $cursus_id, $cursist_id ) = explode( '-', substr( $data['input']['code'], 1 ) );
+		$data['inschrijving']           = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
+		$emails                         = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
 		foreach ( $data['input']['extra_cursist'] as &$extra_cursist ) {
-			if ( ! empty( $extra_cursist['user_email'] ) ) {
-				$emails[] = strtolower( $extra_cursist['user_email'] );
-			} else {
+			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;
 			}
+			$emails[] = strtolower( $extra_cursist['user_email'] );
 			if ( ! $this->validate_email( $extra_cursist['user_email'] ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $extra_cursist['user_email'] . ' is geen geldig E-mail adres.' );
 				$extra_cursist['user_email'] = '';
@@ -145,32 +149,32 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			if ( 0 === $extra_cursist_id ) {
 				$extra_cursist_id = email_exists( $extra_cursist['user_email'] );
 				if ( false === $extra_cursist_id ) {
-					$extra_cursist_id = upsert_user(
-						[
+					$extra_cursist_id = wp_insert_user(
+						(object) [
 							'ID'         => null,
 							'first_name' => $extra_cursist['first_name'],
 							'last_name'  => $extra_cursist['last_name'],
 							'user_email' => $extra_cursist['user_email'],
+							'role'       => '',
 						]
 					);
 				}
 			}
 			if ( ! is_int( $extra_cursist_id ) ) {
 				return [
-					'status' => $this->status( new \WP_Error( 'intern', 'Er is een interne fout opgetreden, probeer het eventueel later opnieuw.' ) ),
+					'status' => $this->status( new WP_Error( 'intern', 'Er is een interne fout opgetreden, probeer het eventueel later opnieuw.' ) ),
 				];
 			}
 			$extra_cursisten[]  = $extra_cursist_id;
 			$extra_inschrijving = new Inschrijving( $data['inschrijving']->cursus->id, $extra_cursist_id );
-			if ( $extra_inschrijving->ingedeeld ) {
-				if ( 0 < $extra_inschrijving->aantal ) {
-					return [
-						'status' => $this->status( new \WP_Error( 'dubbel', 'Volgens onze administratie heeft ' . $extra_cursist['first_name'] . ' ' . $extra_cursist['last_name'] . ' zichzelf al opgegeven voor deze cursus. Neem eventueel contact op met Kleistad.' ) ),
-					];
-				}
-			} else {
+			if ( 0 < $extra_inschrijving->aantal ) {
+				return [
+					'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie heeft ' . $extra_cursist['first_name'] . ' ' . $extra_cursist['last_name'] . ' zichzelf al opgegeven voor deze cursus. Neem eventueel contact op met Kleistad.' ) ),
+				];
+			}
+			if ( ! $extra_inschrijving->ingedeeld ) {
 				$extra_inschrijving->hoofd_cursist_id = $data['inschrijving']->klant_id;
-				$extra_inschrijving->email( '_extra' );
+				$extra_inschrijving->verzend_email( '_extra' );
 				$emails_verzonden              = true;
 				$extra_inschrijving->ingedeeld = true;
 				$extra_inschrijving->aantal    = 0;

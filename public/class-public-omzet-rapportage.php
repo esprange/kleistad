@@ -26,24 +26,22 @@ class Public_Omzet_Rapportage extends Shortcode {
 	 * @since   6.1.0
 	 */
 	protected function prepare( &$data ) {
+		$register = new Artikelregister();
+		$rapport  = new Orderrapportage();
 		if ( 'details' === $data['actie'] ) {
 			list( $data['jaar'], $data['maand'], $data['artikelcode'] ) = explode( '-', $data['id'] );
-			$data['artikel']      = Artikel::$artikelen[ $data['artikelcode'] ]['naam'];
+			$data['artikel']      = $register->geef_naam( $data['artikelcode'] );
 			$data['periode']      = strtotime( "{$data['jaar']}-{$data['maand']}-1 00:00" );
-			$data['omzetdetails'] = Orderrapportage::maanddetails( $data['maand'], $data['jaar'], $data['artikelcode'] );
-			return true;
-		} else {
-			if ( empty( $data['id'] ) ) {
-				$data['periode'] = strtotime( 'first day of this month 00:00' );
-				$data['jaar']    = date( 'Y', $data['periode'] );
-				$data['maand']   = date( 'm', $data['periode'] );
-			} else {
-				list( $data['jaar'], $data['maand'] ) = explode( '-', $data['id'] );
-				$data['periode']                      = strtotime( "{$data['id']}-1 00:00" );
-			}
-			$data['omzet'] = Orderrapportage::maandrapportage( $data['maand'], $data['jaar'] );
+			$data['omzetdetails'] = $rapport->maanddetails( $data['maand'], $data['jaar'], $data['artikelcode'] );
 			return true;
 		}
+		if ( empty( $data['id'] ) ) {
+			$data['id'] = date( 'Y-m', strtotime( 'this month 00:00' ) );
+		}
+		list( $data['jaar'], $data['maand'] ) = explode( '-', $data['id'] );
+		$data['periode']                      = strtotime( "{$data['id']}-1 00:00" );
+		$data['omzet']                        = $rapport->maandrapport( $data['maand'], $data['jaar'] );
+		return true;
 	}
 
 	/**

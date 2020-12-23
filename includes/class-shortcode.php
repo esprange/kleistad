@@ -97,7 +97,7 @@ abstract class Shortcode {
 					'nonce'           => wp_create_nonce( 'wp_rest' ),
 					'success_message' => 'de bewerking is geslaagd!',
 					'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
-					'base_url'        => Public_Main::base_url(),
+					'base_url'        => base_url(),
 					'admin_url'       => admin_url( 'admin-ajax.php' ),
 				]
 			);
@@ -171,7 +171,7 @@ abstract class Shortcode {
 	public function goto_home() {
 		if ( ! is_user_logged_in() ) {
 			$url = home_url();
-		} elseif ( Roles::is_bestuur() ) {
+		} elseif ( current_user_can( BESTUUR ) ) {
 			$url = home_url( '/bestuur/' );
 		} else {
 			$url = home_url( '/leden/' );
@@ -227,7 +227,7 @@ abstract class Shortcode {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Public_Main::api(),
+			KLEISTAD_API,
 			'/getitem', // /(?P<id>\d+)',
 			[
 				'methods'             => 'GET',
@@ -239,7 +239,7 @@ abstract class Shortcode {
 			]
 		);
 		register_rest_route(
-			Public_Main::api(),
+			KLEISTAD_API,
 			'/getitems',
 			[
 				'methods'             => 'GET',
@@ -251,7 +251,7 @@ abstract class Shortcode {
 			]
 		);
 		register_rest_route(
-			Public_Main::api(),
+			KLEISTAD_API,
 			'/download',
 			[
 				'methods'             => 'GET',
@@ -275,7 +275,7 @@ abstract class Shortcode {
 		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
 		if ( class_exists( $class ) ) {
 			$atts = json_decode( $request->get_param( 'atts' ), true );
-			return new $class( $tag, $atts, Kleistad::get_options() );
+			return new $class( $tag, $atts, opties() );
 		}
 		return false;
 	}

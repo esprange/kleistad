@@ -173,7 +173,7 @@ if ( 'cursisten' === $data['actie'] ) :
 			<td><?php echo esc_html( $cursus_info['docent'] ); ?></td>
 			<td data-sort="<?php echo esc_attr( $cursus_info['start_dt'] ); ?>"><?php echo esc_html( $cursus_info['start_datum'] ); ?></td>
 			<td>
-				<?php if ( $cursus_info['inschrijvingen'] ) : ?>
+				<?php if ( $cursus_info['heeft_inschrijvingen'] ) : ?>
 				<a href="#" title="toon cursisten" class="kleistad_view kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 					data-id="<?php echo esc_attr( $cursus_id ); ?>" data-actie="cursisten" >
 					&nbsp;

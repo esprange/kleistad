@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De class Betaling.
  */
@@ -21,12 +23,11 @@ class Public_Betaling extends ShortcodeForm {
 	 * Prepareer 'betaling' form
 	 *
 	 * @param array $data formulier data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   4.2.0
 	 */
 	protected function prepare( &$data ) {
-		$error = new \WP_Error();
 		$param = filter_input_array(
 			INPUT_GET,
 			[
@@ -35,35 +36,28 @@ class Public_Betaling extends ShortcodeForm {
 				'art'   => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( is_null( $param ) ) {
+		if ( is_null( $param ) || is_null( $param['order'] ) ) {
 			$data['actie'] = '';
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
-		if ( ! is_null( $param['order'] ) ) {
-			$order = new Order( intval( $param['order'] ) );
-			if ( $order->gesloten ) {
-				$error->add( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
-			} else {
-				$artikel = Artikel::get_artikel( $order->referentie );
-				if ( ! is_null( $artikel ) && $param['hsh'] === $artikel->controle() ) {
-					$data = [
-						'order_id'      => $param['order'],
-						'actie'         => 'betalen',
-						'klant'         => $order->klant['naam'],
-						'openstaand'    => $order->te_betalen(),
-						'reeds_betaald' => $order->betaald,
-						'orderregels'   => $order->orderregels,
-						'betreft'       => $artikel->artikel_naam(),
-						'artikel_type'  => $param['art'],
-					];
-				} else {
-					$error->add( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
-				}
-			}
+		$order = new Order( intval( $param['order'] ) );
+		if ( $order->gesloten ) {
+			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+		$artikel = get_artikel( $order->referentie );
+		if ( is_null( $artikel ) || $param['hsh'] !== $artikel->controle() ) {
+			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
+		$data = [
+			'order_id'      => $param['order'],
+			'actie'         => 'betalen',
+			'klant'         => $order->klant['naam'],
+			'openstaand'    => $order->te_betalen(),
+			'reeds_betaald' => $order->betaald,
+			'orderregels'   => $order->orderregels,
+			'betreft'       => $artikel->geef_artikelnaam(),
+			'artikel_type'  => $param['art'],
+		];
 		return true;
 	}
 
@@ -71,7 +65,7 @@ class Public_Betaling extends ShortcodeForm {
 	 * Valideer/sanitize 'betaling' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_ERROR|bool
+	 * @return sWP_ERROR|bool
 	 *
 	 * @since   4.2.0
 	 */
@@ -86,15 +80,14 @@ class Public_Betaling extends ShortcodeForm {
 		);
 		$data['order'] = new Order( $data['input']['order_id'] );
 		if ( $data['order']->gesloten ) {
-			return new \WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
+			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		$data['artikel'] = Artikel::get_artikel( $data['order']->referentie );
+		$data['artikel'] = get_artikel( $data['order']->referentie );
 		$controle        = $data['artikel']->beschikbaarcontrole();
 		if ( empty( $controle ) ) {
 			return true;
-		} else {
-			return new \WP_Error( 'Beschikbaar', $controle );
 		}
+		return new WP_Error( 'Beschikbaar', $controle );
 	}
 
 	/**
@@ -106,14 +99,17 @@ class Public_Betaling extends ShortcodeForm {
 	 * @since   4.2.0
 	 */
 	protected function save( $data ) {
-		$ideal_uri = '';
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$data['artikel']->artikel_type = $data['input']['artikel_type'];
-			$ideal_uri                     = $data['artikel']->ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->referentie, $data['order']->te_betalen() );
-		}
-		if ( ! empty( $ideal_uri ) ) {
+			$ideal_uri                     = $data['artikel']->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->referentie, $data['order']->te_betalen() );
+			if ( false === $ideal_uri ) {
+				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
+			}
 			return [ 'redirect_uri' => $ideal_uri ];
 		}
-		return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
+		return [
+			'status'  => 'Er heeft geen betaling plaatsgevonden',
+			'content' => $this->goto_home(),
+		];
 	}
 }

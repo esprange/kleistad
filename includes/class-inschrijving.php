@@ -29,6 +29,11 @@ namespace Kleistad;
  */
 class Inschrijving extends Artikel {
 
+	public const DEFINITIE         = [
+		'prefix' => 'C',
+		'naam'   => 'cursus',
+		'pcount' => 2,
+	];
 	public const META_KEY          = 'kleistad_cursus';
 	private const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
 	private const EMAIL_SUBJECT    = [
@@ -109,11 +114,9 @@ class Inschrijving extends Artikel {
 		$this->default_data['datum'] = date( 'Y-m-d' );
 		$inschrijvingen              = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$this->ingeschreven          = is_array( $inschrijvingen ) && isset( $inschrijvingen[ $cursus_id ] );
-		if ( $this->ingeschreven ) {
-			$this->data = wp_parse_args( $inschrijvingen[ $cursus_id ], $this->default_data );
-		} else {
-			$this->data = $this->default_data;
-		}
+		$this->data                  = $this->ingeschreven ?
+			wp_parse_args( $inschrijvingen[ $cursus_id ], $this->default_data ) :
+			$this->default_data;
 	}
 
 	/**
@@ -167,14 +170,15 @@ class Inschrijving extends Artikel {
 	/**
 	 * Verwijder de inschrijving
 	 */
-	public function erase() {
+	public function erase() : bool {
 		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		unset( $inschrijvingen[ $this->cursus->id ] );
 		if ( empty( $inschrijvingen ) ) {
 			delete_user_meta( $this->klant_id, self::META_KEY );
-		} else {
-			update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
+			return true;
 		}
+		update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
+		return true;
 	}
 
 	/**
@@ -184,7 +188,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return bool
 	 */
-	public function afzeggen() {
+	public function afzeggen() : bool {
 		if ( ! $this->geannuleerd ) {
 			$this->geannuleerd = true;
 			$this->save();
@@ -207,7 +211,7 @@ class Inschrijving extends Artikel {
 		if ( 0 === $this->aantal ) {
 			return 0;
 		}
-		$order = new Order( $this->referentie() );
+		$order = new Order( $this->geef_referentie() );
 		if ( $order->gesloten || $this->regeling_betaald( $order->betaald ) || $this->herinner_email ) {
 			/**
 			 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.
@@ -218,7 +222,7 @@ class Inschrijving extends Artikel {
 		$this->artikel_type   = 'cursus';
 		$this->herinner_email = true;
 		$this->maak_link( $order->id );
-		$this->email( '_herinnering' );
+		$this->verzend_email( '_herinnering' );
 		$this->save();
 		return 1;
 	}
@@ -228,7 +232,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function artikel_naam() {
+	public function geef_artikelnaam() : string {
 		return $this->cursus->naam;
 	}
 
@@ -242,7 +246,7 @@ class Inschrijving extends Artikel {
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function ideal( $bericht, $referentie, $openstaand = null ) {
+	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
 		$vermelding = ( $openstaand || ! $this->heeft_restant() ) ? 'cursus' : 'inschrijf';
 		return $this->betalen->order(
@@ -261,7 +265,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string Lege string als inschrijving mogelijk is, anders de foutboodschap.
 	 */
-	public function beschikbaarcontrole() {
+	public function beschikbaarcontrole() : string {
 		if ( ! $this->ingedeeld && $this->cursus->vol ) {
 			$this->wacht_datum = strtotime( 'today' );
 			$this->save();
@@ -289,18 +293,17 @@ class Inschrijving extends Artikel {
 	 */
 	public function heeft_extra_cursisten() {
 		if ( $this->aantal > 1 ) {
-			$url = add_query_arg(
+			$url    = add_query_arg(
 				[
 					'code' => $this->code,
 					'hsh'  => $this->controle(),
 				],
 				home_url( '/kleistad-extra_cursisten' )
 			);
-			if ( 2 === $this->aantal ) {
-				$tekst = 'Je hebt aangegeven dat er 1 mededeelnemer is aan de cursus/workshop. Kleistad wil graag weten wie dit is zodat we hem/haar per email kunnen informeren over de zaken die de cursus/workshop aangaan. ';
-			} else {
-				$tekst = 'Je hebt aangegeven dat er ' . ( $this->aantal - 1 ) . ' mededeelnemers zijn aan de cursus/workshop. Kleistad wil graag weten wie dit zijn zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ';
-			}
+			$tekst  = sprintf(
+				'Je hebt aangegeven dat er %s aan de cursus/workshop. Kleistad wil graag weten wie zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ',
+				2 === $this->aantal ? 'een mededeelnemer is ' : $this->aantal - 1 . ' mededeelnemers zijn '
+			);
 			$tekst .= "Je kunt dit invoeren op de volgende <a href=\"$url\" >Kleistad pagina</a>.";
 			return $tekst;
 		}
@@ -322,7 +325,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function referentie() {
+	public function geef_referentie() : string {
 		return $this->code;
 	}
 
@@ -338,25 +341,22 @@ class Inschrijving extends Artikel {
 		$bestaande_inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $bestaande_inschrijvingen ) ) {
 			$inschrijvingen = $bestaande_inschrijvingen;
-			$order_id       = Order::zoek_order( $this->referentie() );
-			if ( ! array_key_exists( $cursus_id, $inschrijvingen ) ) {
-				$this->code                   = "C$cursus_id-$this->klant_id";
-				$this->aantal                 = $aantal;
-				$inschrijvingen[ $cursus_id ] = $this->data;
-				unset( $inschrijvingen[ $this->cursus->id ] );
-				update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-				$this->cursus = new Cursus( $cursus_id );
-			} elseif ( $aantal !== $this->aantal ) {
-				$this->aantal = $aantal;
-				$this->save();
-			} else {
-				return false;
+			$order          = new Order( $this->geef_referentie() );
+			if ( array_key_exists( $cursus_id, $inschrijvingen ) ) {
+				return false; // Al eerder gecorrigeerd.
 			}
-			$factuur = $this->wijzig_order( $order_id );
+			$this->code                   = "C$cursus_id-$this->klant_id";
+			$this->aantal                 = $aantal;
+			$inschrijvingen[ $cursus_id ] = $this->data;
+			unset( $inschrijvingen[ $this->cursus->id ] );
+			update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
+			$this->cursus = new Cursus( $cursus_id );
+			$this->save();
+			$factuur = $this->wijzig_order( $order->id );
 			if ( false === $factuur ) {
-				return false;
+				return false; // Er is niets gewijzigd.
 			}
-			$this->email( '_wijziging', $factuur );
+			$this->verzend_email( '_wijziging', $factuur );
 			return true;
 		}
 		return false; // zou niet mogen.
@@ -371,15 +371,14 @@ class Inschrijving extends Artikel {
 	 * @param string $factuur Een bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function email( $type, $factuur = '' ) {
+	public function verzend_email( $type, $factuur = '' ) {
 		$emailer = new Email();
 		$cursist = get_userdata( $this->klant_id );
+		$slug    = "cursus$type";
 		if ( 'inschrijving' === $type ) {
 			$slug = $this->cursus->inschrijfslug;
 		} elseif ( 'indeling' === $type ) {
 			$slug = $this->cursus->indelingslug;
-		} else {
-			$slug = "cursus$type";
 		}
 		return $emailer->send(
 			[
@@ -419,12 +418,7 @@ class Inschrijving extends Artikel {
 	 * @since 4.0.87
 	 */
 	public function save() {
-		$bestaande_inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
-		if ( is_array( $bestaande_inschrijvingen ) ) {
-			$inschrijvingen = $bestaande_inschrijvingen;
-		} else {
-			$inschrijvingen = [];
-		}
+		$inschrijvingen                      = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: [];
 		$inschrijvingen[ $this->cursus->id ] = $this->data;
 		update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
 	}
@@ -432,10 +426,9 @@ class Inschrijving extends Artikel {
 	/**
 	 * Geef de status van het artikel als een tekst terug.
 	 *
-	 * @param  boolean $uitgebreid Uitgebreide tekst of korte tekst.
 	 * @return string De status tekst.
 	 */
-	public function status( $uitgebreid = false ) {
+	public function geef_statustekst() : string {
 		return $this->geannuleerd ? 'geannuleerd' : ( ( $this->ingedeeld ? 'ingedeeld' : 'ingeschreven' ) );
 	}
 
@@ -448,9 +441,8 @@ class Inschrijving extends Artikel {
 	public function inschrijving_betaald( $betaald ) {
 		if ( 0 < $this->cursus->inschrijfkosten ) {
 			return $betaald >= round( $this->aantal * $this->cursus->inschrijfkosten, 2 );
-		} else {
-			return $betaald >= round( $this->aantal * $this->cursus->cursuskosten, 2 );
 		}
+		return $betaald >= round( $this->aantal * $this->cursus->cursuskosten, 2 );
 	}
 
 	/**
@@ -484,21 +476,19 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return array|Orderregel De regels of één regel.
 	 */
-	protected function factuurregels() {
+	protected function geef_factuurregels() {
 		if ( 0 < $this->lopende_cursus ) {
 			return new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->lopende_cursus );
-		} else {
-			if ( $this->cursus->is_binnenkort() ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten, echter bij inschrijfgeld 1 ct dit afronden naar 0.
-				return new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten + $this->cursus->cursuskosten );
-			} else {
-				$orderregels = [];
-				if ( 0 < $this->cursus->inschrijfkosten ) {
-					$orderregels[] = new Orderregel( "inschrijfkosten cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten );
-				}
-				$orderregels[] = new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->cursuskosten );
-				return $orderregels;
-			}
 		}
+		if ( $this->cursus->is_binnenkort() ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten, echter bij inschrijfgeld 1 ct dit afronden naar 0.
+			return new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten + $this->cursus->cursuskosten );
+		}
+		$orderregels = [];
+		if ( 0 < $this->cursus->inschrijfkosten ) {
+			$orderregels[] = new Orderregel( "inschrijfkosten cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten );
+		}
+		$orderregels[] = new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->cursuskosten );
+		return $orderregels;
 	}
 
 	/**
@@ -514,30 +504,30 @@ class Inschrijving extends Artikel {
 	 */
 	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( $order_id ) {
-				/**
-				 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
-				 */
-				if ( $this->ingedeeld ) {
-					/**
-					 * Als de cursist al ingedeeld is volstaat een bedankje.
-					 */
-					$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-					if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-						$this->email( '_ideal_betaald' );
-					}
-				} else {
-					/**
-					 * De cursist krijgt de melding dat deze nu ingedeeld is.
-					 */
-					$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-					$this->email( 'indeling' );
-				}
-			} else {
+			if ( ! $order_id ) {
 				/**
 				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
 				 */
-				$this->email( 'indeling', $this->bestel_order( $bedrag, $this->cursus->start_datum, $this->heeft_restant(), $transactie_id ) );
+				$this->verzend_email( 'indeling', $this->bestel_order( $bedrag, $this->cursus->start_datum, $this->heeft_restant(), $transactie_id ) );
+				return;
+			}
+			$ingedeeld = $this->ingedeeld;
+			/**
+			 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
+			 */
+			$this->ontvang_order( $order_id, $bedrag, $transactie_id );
+			if ( ! $ingedeeld ) { // Voorafgaand de betaling was de cursist nog niet ingedeeld.
+				/**
+				 * De cursist krijgt de melding dat deze nu ingedeeld is.
+				 */
+				$this->verzend_email( 'indeling' );
+				return;
+			}
+			/**
+			 * Als de cursist al ingedeeld is volstaat een bedankje ingeval van een betaling per ideal, bank hoeft niet.
+			 */
+			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
+				$this->verzend_email( '_ideal_betaald' );
 			}
 		}
 	}
@@ -548,7 +538,7 @@ class Inschrijving extends Artikel {
 	 * @return float
 	 */
 	private function restantbedrag() {
-		$order = new Order( $this->referentie() );
+		$order = new Order( $this->geef_referentie() );
 		return ( $order->id ) ? $order->te_betalen() : 0;
 	}
 
@@ -557,7 +547,7 @@ class Inschrijving extends Artikel {
 	 * Afwijkend van een betaallink is in dit geval er nog geen order aangemaakt.
 	 * De afhandeling in het formulier is dus nagenoeg identiek aan de afhandeling bij inschrijving op de cursus met directe betaling
 	 */
-	private function maak_wachtlijst_link() {
+	public function maak_wachtlijst_link() {
 		$url               = add_query_arg(
 			[
 				'code' => $this->code,
@@ -588,122 +578,57 @@ class Inschrijving extends Artikel {
 	 *
 	 * @since 6.1.0
 	 */
-	public static function dagelijks() {
-		$inschrijvingen = self::all();
-		$vandaag        = strtotime( 'today' );
-		$ruimte         = [];
-		foreach ( $inschrijvingen as $cursist_inschrijvingen ) {
-			foreach ( $cursist_inschrijvingen as $cursus_id => $inschrijving ) {
-				/**
-				 * Geen acties voor medecursisten, oude of vervallen cursus deelnemers of die zelf geannuleerd hebben.
-				 */
-				if ( 0 === $inschrijving->aantal ||
-					$inschrijving->geannuleerd ||
-					$inschrijving->cursus->vervallen ||
-					$vandaag > $inschrijving->cursus->eind_datum
-				) {
-					continue;
+	public static function doe_dagelijks() {
+		$vandaag = strtotime( 'today' );
+		$ruimte  = [];
+		foreach ( new Inschrijvingen() as $inschrijving ) {
+			/**
+			 * Geen acties voor medecursisten, oude of vervallen cursus deelnemers of die zelf geannuleerd hebben.
+			 */
+			if ( 0 === $inschrijving->aantal ||
+				$inschrijving->geannuleerd ||
+				$inschrijving->cursus->vervallen ||
+				$vandaag > $inschrijving->cursus->eind_datum
+			) {
+				continue;
+			}
+			/**
+			 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn.
+			 * Effect is hier wel dat als er wel plaats is maar de wachtlijst cursist neemt geen actie, deze
+			 * om de dag een email krijgt.
+			 *
+			 * @todo Bij cursus vastleggen wanneer de status vol is gewijzigd. Als dit langer geleden is dan gisteren, geen email verzenden.
+			 */
+			if ( ! $inschrijving->ingedeeld ) {
+				if ( $vandaag < $inschrijving->cursus->start_datum ) {
+					if ( ! isset( $ruimte[ $inschrijving->cursus->id ] ) ) {
+						$ruimte[ $inschrijving->cursus->id ] = $inschrijving->cursus->ruimte();
+						$inschrijving->cursus->vol           = ( 0 === $ruimte[ $inschrijving->cursus->id ] );
+						$inschrijving->cursus->save();
+					}
+					if ( 0 < $ruimte[ $inschrijving->cursus->id ] && 0 < $inschrijving->wacht_datum && $inschrijving->wacht_datum < $vandaag ) {
+						$inschrijving->wacht_datum = strtotime( 'tomorrow' );
+						$inschrijving->maak_wachtlijst_link();
+						$inschrijving->save();
+						$inschrijving->verzend_email( '_ruimte' );
+					}
 				}
-				/**
-				 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn.
-				 * Effect is hier wel dat als er wel plaats is maar de wachtlijst cursist neemt geen actie, deze
-				 * om de dag een email krijgt.
-				 *
-				 * @todo Bij cursus vastleggen wanneer de status vol is gewijzigd. Als dit langer geleden is dan gisteren, geen email verzenden.
-				 */
-				if ( ! $inschrijving->ingedeeld ) {
-					if ( $vandaag < $inschrijving->cursus->start_datum ) {
-						if ( ! isset( $ruimte[ $cursus_id ] ) ) {
-							$ruimte[ $cursus_id ]      = $inschrijving->cursus->ruimte();
-							$inschrijving->cursus->vol = ( 0 === $ruimte[ $cursus_id ] );
-							$inschrijving->cursus->save();
-						}
-						if ( 0 < $ruimte[ $cursus_id ] && 0 < $inschrijving->wacht_datum && $inschrijving->wacht_datum < $vandaag ) {
-							$inschrijving->wacht_datum = strtotime( 'tomorrow' );
-							$inschrijving->maak_wachtlijst_link();
-							$inschrijving->save();
-							$inschrijving->email( '_ruimte' );
-						}
-					}
-				} else {
-					/**
-					 * Restant betaal emails, alleen voor cursisten die ingedeeld zijn en de cursus binnenkort start.
-					 */
-					if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
-						$order = new Order( $inschrijving->referentie() );
-						if ( $order->id && ! $order->gesloten ) {
-							$inschrijving->artikel_type  = 'cursus';
-							$inschrijving->restant_email = true;
-							$inschrijving->maak_link( $order->id );
-							$inschrijving->save();
-							$inschrijving->email( '_restant' );
-						}
-					}
+				continue;
+			}
+			/**
+			 * Restant betaal emails, alleen voor cursisten die ingedeeld zijn en de cursus binnenkort start.
+			 */
+			if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
+				$order = new Order( $inschrijving->geef_referentie() );
+				if ( $order->id && ! $order->gesloten ) {
+					$inschrijving->artikel_type  = 'cursus';
+					$inschrijving->restant_email = true;
+					$inschrijving->maak_link( $order->id );
+					$inschrijving->save();
+					$inschrijving->verzend_email( '_restant' );
 				}
 			}
 		}
 	}
 
-	/**
-	 * Return inschrijvingen.
-	 *
-	 * @return array inschrijvingen.
-	 */
-	public static function all() {
-		static $arr = null;
-		if ( is_null( $arr ) ) {
-			$arr       = [];
-			$cursisten = get_users(
-				[
-					'meta_key' => self::META_KEY,
-					'fields'   => [ 'ID' ],
-				]
-			);
-
-			foreach ( $cursisten as $cursist ) {
-				$inschrijvingen = get_user_meta( $cursist->ID, self::META_KEY, true );
-				if ( is_array( $inschrijvingen ) ) {
-					krsort( $inschrijvingen );
-					foreach ( array_keys( $inschrijvingen ) as $cursus_id ) {
-						$arr[ $cursist->ID ][ $cursus_id ] = new Inschrijving( $cursus_id, $cursist->ID );
-					}
-				}
-			}
-		}
-		return $arr;
-	}
-
-	/**
-	 * Vind de inschrijving op basis van de code
-	 *
-	 * @param  string $code De code.
-	 * @return Inschrijving De inschrijving.
-	 */
-	public static function vind( $code ) {
-		$parameters = explode( '-', substr( $code, 1 ) );
-		return new Inschrijving( (int) $parameters[0], (int) $parameters[1] );
-	}
-
-	/**
-	 * Bepaal of iemand cursist is van een cursus die moet starten of al loopt.
-	 *
-	 * @param int $id Het gebruiker id.
-	 * @return bool
-	 */
-	public static function is_actief_cursist( $id ) {
-		static $cursussen = [];
-		$inschrijvingen   = get_user_meta( $id, self::META_KEY, true );
-		if ( is_array( $inschrijvingen ) ) {
-			if ( empty( $cursussen ) ) {
-				$cursussen = \ Kleistad\Cursus::all();
-			}
-			$vandaag = strtotime( 'today' );
-			foreach ( array_keys( $inschrijvingen ) as $cursus_id ) {
-				if ( $vandaag <= $cursussen[ $cursus_id ]->eind_datum ) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 }

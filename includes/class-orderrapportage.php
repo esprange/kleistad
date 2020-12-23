@@ -21,35 +21,31 @@ class Orderrapportage {
 	/**
 	 * Return de rapportage.
 	 *
-	 * @param int $maand Het maand nummer.
-	 * @param int $jaar  Het jaar nummer.
+	 * @param int $maand De maand waar de rapportage op betrekking heeft.
+	 * @param int $jaar  Het jaar waar de rapportage op betrekking heeft.
 	 * @return array
 	 */
-	public static function maandrapportage( $maand, $jaar ) {
+	public function maandrapport( int $maand, int $jaar ) : array {
 		global $wpdb;
-		$omzet = [];
-		foreach ( Artikel::$artikelen as $key => $artikel ) {
+		$omzet           = [];
+		$artikelregister = new Artikelregister();
+		foreach ( $artikelregister as $artikel ) {
 			$omzet[ $artikel['naam'] ] = [
 				'netto'   => 0.0,
 				'btw'     => 0.0,
-				'key'     => $key,
+				'key'     => $artikel['prefix'],
 				'details' => false,
 			];
 		}
 		if ( strtotime( '1-1-2020' ) < mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) { // Vanaf 2020 wordt gefactureerd.
 			$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand ORDER BY datum", ARRAY_A ); // phpcs:ignore
 			foreach ( $order_ids as $order_id ) {
-				$order = new Order( intval( $order_id['id'] ) );
-				$naam  = Artikel::$artikelen[ $order->referentie[0] ]['naam'];
-				if ( '@' !== $order->referentie[0] ) {
-					$omzet[ $naam ]['netto']  += $order->orderregels->netto();
-					$omzet[ $naam ]['btw']    += $order->orderregels->btw();
-					$omzet[ $naam ]['details'] = true;
-				} else {
-					$omzet[ $naam ]['netto']  -= $order->orderregels->netto();
-					$omzet[ $naam ]['btw']    -= $order->orderregels->btw();
-					$omzet[ $naam ]['details'] = true;
-				}
+				$order                     = new Order( intval( $order_id['id'] ) );
+				$naam                      = $artikelregister->geef_naam( $order->referentie );
+				$factor                    = '@' !== $order->referentie[0] ? 1 : -1;
+				$omzet[ $naam ]['netto']  += $factor * $order->orderregels->netto();
+				$omzet[ $naam ]['btw']    += $factor * $order->orderregels->btw();
+				$omzet[ $naam ]['details'] = true;
 			}
 		}
 		return $omzet;
@@ -58,12 +54,12 @@ class Orderrapportage {
 	/**
 	 * Return de rapportage.
 	 *
-	 * @param int    $maand Het maand nummer.
-	 * @param int    $jaar  Het jaar nummer.
+	 * @param int    $maand       De maand waar de rapportage op betrekking heeft.
+	 * @param int    $jaar        Het jaar waar de rapportage op betrekking heeft.
 	 * @param string $artikelcode De artikelcode.
 	 * @return array
 	 */
-	public static function maanddetails( $maand, $jaar, $artikelcode ) {
+	public function maanddetails( int $maand, int $jaar, string $artikelcode ) : array {
 		global $wpdb;
 		$details   = [];
 		$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand AND referentie LIKE '$artikelcode%' ORDER BY datum", ARRAY_A ); // phpcs:ignore

@@ -11,18 +11,14 @@
 
 namespace Kleistad;
 
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_ERROR;
+
 /**
  * Definitie van de adres class.
  */
 class Adres {
-
-	/**
-	 * De constructor
-	 *
-	 * @since      5.2.0
-	 */
-	public function __construct() {
-	}
 
 	/**
 	 * Register rest URI's.
@@ -31,7 +27,7 @@ class Adres {
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
-			Public_Main::api(),
+			KLEISTAD_API,
 			'/adres',
 			[
 				'methods'             => 'GET',
@@ -56,17 +52,17 @@ class Adres {
 	 *
 	 * @since      5.2.0
 	 *
-	 * @param \WP_REST_Request $request het request.
-	 * @return \WP_REST_Response|\WP_Error de response of de error.
+	 * @param WP_REST_Request $request het request.
+	 * @return WP_REST_Response|WP_Error de response of de error.
 	 */
-	public static function callback_adres_zoeken( \WP_REST_Request $request ) {
+	public static function callback_adres_zoeken( WP_REST_Request $request ) {
 		$postcode = $request->get_param( 'postcode' );
 		$huisnr   = $request->get_param( 'huisnr' );
 		$url      = 'https://geodata.nationaalgeoregister.nl/locatieserver/free?fq=' .
 			rawurlencode( 'postcode:' . $postcode ) . '&fq=' . rawurlencode( 'huisnummer~' . $huisnr . '*' );
 		$response = wp_remote_get( $url );
 		if ( ! is_array( $response ) ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'rest_custom_error',
 				'Geen geldig antwoord van geodata service.',
 				[ 'status' => 503 ]
@@ -75,20 +71,18 @@ class Adres {
 		$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( false === $api_response || 0 === count( $api_response['response']['docs'] ) ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'rest_custom_error',
 				'Niet gevonden.',
 				[ 'status' => 204 ]
 			); // 204 is niet gevonden, antwoord leeg.
-		} else {
-			$doc = $api_response['response']['docs'][0];
-			return new \WP_REST_Response(
-				[
-					'straat' => isset( $doc['straatnaam'] ) ? $doc['straatnaam'] : '',
-					'plaats' => isset( $doc['woonplaatsnaam'] ) ? $doc['woonplaatsnaam'] : '',
-				]
-			); // Geeft default http status 200 terug.
 		}
+		return new WP_REST_Response(
+			[
+				'straat' => $api_response['response']['docs'][0]['straatnaam'] ?? '',
+				'plaats' => $api_response['response']['docs'][0]['woonplaatsnaam'] ?? '',
+			]
+		); // Geeft default http status 200 terug.
 	}
 
 }
