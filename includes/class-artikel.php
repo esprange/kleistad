@@ -234,7 +234,7 @@ abstract class Artikel {
 		if ( $order->is_geblokkeerd() ) {
 			return false;
 		}
-		$order->orderregels->vervangen( $this->factuurregels() );
+		$order->orderregels->vervangen( $this->geef_factuurregels() );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->geef_referentie();
 		if ( $order == $originele_order ) { // phpcs:ignore

@@ -188,7 +188,7 @@ class Public_Reservering extends Shortcode {
 				'gebruiker_id' => $stook->hoofdstoker,
 			],
 		];
-		$status       = $logica[ $stook->status() ];
+		$status       = $logica[ $stook->geef_statustekst() ];
 		$html         = "<tr class=\"{$status['kleur']}\"";
 		if ( $status['select'] ) {
 			$json_selectie = wp_json_encode(
@@ -200,7 +200,7 @@ class Public_Reservering extends Shortcode {
 					'temperatuur'  => $status['temperatuur'],
 					'programma'    => $status['programma'],
 					'verdeling'    => $status['verdeling'],
-					'status'       => $stook->status(),
+					'status'       => $stook->geef_statustekst(),
 					'kleur'        => $status['kleur'],
 					'gebruiker_id' => $status['gebruiker_id'],
 				]
@@ -223,10 +223,11 @@ class Public_Reservering extends Shortcode {
 	 * @return string De Html code voor de body van de tabel.
 	 */
 	private static function toon_stoken( $oven_id, $maand, $jaar ) {
-		$vanaf = mktime( 0, 0, 0, $maand, 1, $jaar );
-		$tot   = mktime( 0, 0, 0, $maand + 1, -1, $jaar );
-		$oven  = new Oven( $oven_id );
-		$body  = '';
+		$vanaf  = mktime( 0, 0, 0, $maand, 1, $jaar );
+		$tot    = mktime( 0, 0, 0, $maand + 1, -1, $jaar );
+		$oven   = new Oven( $oven_id );
+		$body   = '';
+		$stoken = [];
 		for ( $datum = $vanaf; $datum <= $tot; $datum += DAY_IN_SECONDS ) {
 			$dagnaam = strftime( '%A', $datum );
 			if ( $oven->{$dagnaam} ) {
@@ -269,7 +270,7 @@ class Public_Reservering extends Shortcode {
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) {
 		$input   = $request->get_param( 'reservering' );
-		$oven_id = $request->get_param( 'oven_id' );
+		$oven_id = $request->get_param( 'oven_id' ) ?: 0;
 		$jaar    = intval( $input['jaar'] );
 		$maand   = intval( $input['maand'] );
 		$dag     = intval( $input['dag'] );

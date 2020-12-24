@@ -224,7 +224,7 @@ class WorkshopAanvraag {
 	 * @param array  $parameters De parameters van de communicatie.
 	 */
 	private static function communicatie( $content, $parameters ) {
-		$correspondentie = empty( $content ) ? [] : $correspondentie = unserialize( base64_decode( $content ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+		$correspondentie = empty( $content ) ? [] : unserialize( base64_decode( $content ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 		array_unshift(
 			$correspondentie,
 			array_merge(

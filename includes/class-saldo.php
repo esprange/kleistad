@@ -240,6 +240,13 @@ class Saldo extends Artikel {
 	}
 
 	/**
+	 * Verwijder het saldo
+	 */
+	public function erase() {
+		delete_user_meta( $this->klant_id, self::META_KEY );
+	}
+
+	/**
 	 * Verwerk een betaling. Wordt aangeroepen vanuit de betaal callback
 	 *
 	 * @since      4.2.0

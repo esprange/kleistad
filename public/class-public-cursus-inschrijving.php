@@ -48,7 +48,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @param array $data data voor display.
 	 * @return bool|WP_Error
 	 */
-	private function prepare_stop_wachten( array &$data ) : bool {
+	private function prepare_stop_wachten( array &$data ) {
 		list( $cursus_id, $cursist_id ) = explode( '-', substr( $data['param']['code'], 1 ) );
 		$inschrijving                   = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
 		if ( $data['param']['hsh'] !== $inschrijving->controle() ) {
@@ -58,6 +58,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		$data['cursus_id']    = $inschrijving->cursus->id;
 		$data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
 		$data['gebruiker_id'] = $inschrijving->klant_id;
+		return true;
 	}
 
 	/**
@@ -66,7 +67,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @param array $data data voor display.
 	 * @return bool|WP_Error
 	 */
-	private function prepare_indelen_na_wachten( array &$data ) : bool {
+	private function prepare_indelen_na_wachten( array &$data ) {
 		list( $cursus_id, $cursist_id ) = explode( '-', substr( $data['param']['code'], 1 ) );
 		$inschrijving                   = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
 		if ( $data['param']['hsh'] !== $inschrijving->controle() ) {
@@ -352,6 +353,9 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 					'plaats'     => $data['input']['plaats'],
 				]
 			);
+			if ( ! is_int( $gebruiker_id ) ) {
+				return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
+			}
 		}
 		$inschrijving               = new Inschrijving( $data['input']['cursus_id'], $gebruiker_id );
 		$inschrijving->technieken   = $data['input']['technieken'] ?? $inschrijving->technieken;

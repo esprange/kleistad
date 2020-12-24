@@ -189,21 +189,21 @@ class Public_Corona extends ShortcodeForm {
 	 * @since   6.3.4
 	 */
 	protected function prepare( &$data ) {
-		$atts       = shortcode_atts(
+		$atts = shortcode_atts(
 			[ 'actie' => '' ],
 			$this->atts,
 			'kleistad_corona'
-		);
-		$gebruikers = get_users(
-			[ 'fields' => [ 'ID', 'display_name' ] ],
 		);
 
 		if ( ! empty( $atts['actie'] ) && current_user_can( BESTUUR ) ) {
 			$data['actie'] = $atts['actie'];
 			if ( 'gebruikers' === $data['actie'] ) {
-				$data['gebruikers'] = $gebruikers;
-				$data['id']         = intval( filter_input( INPUT_GET, 'gebruiker' ) );
-				$data['gebruik']    = $this->gebruik( $data['id'] );
+				$data['gebruikers'] = get_users(
+					[ 'fields' => [ 'ID', 'display_name' ] ],
+				);
+
+				$data['id']      = intval( filter_input( INPUT_GET, 'gebruiker' ) );
+				$data['gebruik'] = $this->gebruik( $data['id'] );
 				return true;
 			} elseif ( 'overzicht' === $data['actie'] ) {
 				$data['overzicht'] = $this->bezetting();
@@ -212,7 +212,7 @@ class Public_Corona extends ShortcodeForm {
 		}
 		$datums = $this->mogelijke_datums();
 		if ( empty( $datums ) ) {
-			return new \WP_Error( 'werkplek', 'Er is geen enkele beschikbaarheid' );
+			return new WP_Error( 'werkplek', 'Er is geen enkele beschikbaarheid' );
 		}
 		wp_add_inline_style( 'kleistad', '.kleistad_shortcode td, th { padding:0;text-align:center; }' );
 		$datum_str       = filter_input( INPUT_GET, 'datum' );
@@ -228,7 +228,9 @@ class Public_Corona extends ShortcodeForm {
 			'beschikbaarheid' => $this->beschikbaarheid( $datum ),
 			'reserveringen'   => $this->reserveringen( $datum ),
 			'datums'          => $datums,
-			'gebruikers'      => $gebruikers,
+			'gebruikers'      => get_users(
+				[ 'fields' => [ 'ID', 'display_name' ] ],
+			),
 		];
 		if ( current_user_can( BESTUUR ) || current_user_can( DOCENT ) ) {
 			$cursisten_zonder_abonnement = get_transient( 'kleistad_za' );
@@ -238,7 +240,8 @@ class Public_Corona extends ShortcodeForm {
 					if ( user_can( $gebruiker->ID, LID ) || user_can( $gebruiker->ID, BESTUUR ) || user_can( $gebruiker->ID, DOCENT ) ) {
 						continue;
 					}
-					if ( Inschrijving::is_actief_cursist( $gebruiker->ID ) ) {
+					$cursist = new Cursist( $gebruiker->ID );
+					if ( $cursist->is_actief() ) {
 						$cursisten_zonder_abonnement[] = $gebruiker;
 					}
 				}

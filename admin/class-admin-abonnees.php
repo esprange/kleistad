@@ -138,7 +138,7 @@ class Admin_Abonnees extends \WP_List_Table {
 			$abonnees[] = [
 				'id'     => $abonnement->klant_id,
 				'naam'   => $abonnee->display_name,
-				'status' => $abonnement->geef_statustekst(),
+				'status' => $abonnement->geef_statustekst( false ),
 				'soort'  => $abonnement->soort,
 				'dag'    => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
 				'extras' => implode( ', ', $abonnement->extras ),

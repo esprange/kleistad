@@ -143,7 +143,10 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'plaats'     => $data['input']['plaats'],
 			]
 		);
-		$abonnement   = new Abonnement( $gebruiker_id );
+		if ( ! is_int( $gebruiker_id ) ) {
+			return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout' ) ) ];
+		}
+		$abonnement = new Abonnement( $gebruiker_id );
 		$abonnement->starten(
 			strtotime( $data['input']['start_datum'] ),
 			$data['input']['abonnement_keuze'],

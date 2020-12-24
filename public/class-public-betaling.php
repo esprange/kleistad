@@ -65,7 +65,7 @@ class Public_Betaling extends ShortcodeForm {
 	 * Valideer/sanitize 'betaling' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return sWP_ERROR|bool
+	 * @return WP_ERROR|bool
 	 *
 	 * @since   4.2.0
 	 */

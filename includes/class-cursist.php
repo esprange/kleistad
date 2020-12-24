@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use Exception;
 use WP_User;
+use stdClass;
 
 /**
  * Kleistad Cursist class.
@@ -36,7 +37,7 @@ class Cursist extends WP_User {
 	 * @param int                         $site_id Optional Site ID, defaults to current site.
 	 * @suppressWarnings(PHPMD.ShortVariable)
 	 */
-	public function __construct( $id = 0, $name = '', $site_id = '' ) {
+	public function __construct( $id = 0, $name = '', $site_id = null ) {
 		parent::__construct( $id, $name, $site_id );
 		$inschrijvingen = get_user_meta( $this->ID, Inschrijving::META_KEY, true );
 		if ( is_array( $inschrijvingen ) ) {

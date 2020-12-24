@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use WP_Error;
 use WP_Query;
+use WP_User_Query;
 
 /**
  * De kleistad rapport email.

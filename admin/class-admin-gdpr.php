@@ -152,7 +152,7 @@ class Admin_GDPR {
 		$items = [];
 		$ovens = new Ovens();
 		foreach ( $ovens as $oven ) {
-			$stoken = new Stoken( $oven->id, 0, date() );
+			$stoken = new Stoken( $oven->id, 0, time() );
 			foreach ( $stoken as $stook ) {
 				foreach ( $stook->stookdelen as $stookdeel ) {
 					if ( $stookdeel->medestoker === $gebruiker_id ) {
@@ -312,7 +312,7 @@ class Admin_GDPR {
 		$erase_agv     = strtotime( '-5 years' ); // Persoonlijke gegevens worden 5 jaar bewaard.
 		$erase_fiscaal = strtotime( '-7 years' ); // Order gegevens worden 7 jaar bewaard.
 		$this->erase_cursussen( $erase_agv );
-		$this->erase_dagdeelkaarten( $erase_agv );
+		$this->erase_dagdelenkaarten( $erase_agv );
 		$this->erase_abonnementen( $erase_agv );
 		$this->erase_workshops( $erase_agv );
 		$this->erase_gebruikers( $erase_agv );
@@ -338,15 +338,15 @@ class Admin_GDPR {
 	}
 
 	/**
-	 * Verwijder oude dagdeelkaarten
+	 * Verwijder oude dagdelenkaarten
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_dagdeelkaarten( $datum ) {
-		$dagdeelkaarten = new Dagdeelkaarten();
-		foreach ( $dagdeelkaarten() as $dagdeelkaart ) {
-			if ( $dagdeelkaart->eind_datum && $datum > $dagdeelkaart->eind_datum ) {
-				$dagdeelkaart->erase();
+	private function erase_dagdelenkaarten( $datum ) {
+		$dagdelenkaarten = new Dagdelenkaarten();
+		foreach ( $dagdelenkaarten() as $dagdelenkaart ) {
+			if ( $dagdelenkaart->eind_datum && $datum > $dagdelenkaart->eind_datum ) {
+				$dagdelenkaart->erase();
 			}
 		}
 	}
@@ -410,7 +410,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private function erase_orders( $datum ) {
-		$order = new Orders();
+		$orders = new Orders();
 		foreach ( $orders as $order ) {
 			if ( $datum > $order->datum ) {
 				$order->erase();

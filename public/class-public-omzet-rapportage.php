@@ -29,7 +29,7 @@ class Public_Omzet_Rapportage extends Shortcode {
 		$register = new Artikelregister();
 		$rapport  = new Orderrapportage();
 		if ( 'details' === $data['actie'] ) {
-			list( $data['jaar'], $data['maand'], $data['artikelcode'] ) = explode( '-', $data['id'] );
+			sscanf( $data['id'], '%d-%d-%s', $data['jaar'], $data['maand'], $data['artikelcode'] );
 			$data['artikel']      = $register->geef_naam( $data['artikelcode'] );
 			$data['periode']      = strtotime( "{$data['jaar']}-{$data['maand']}-1 00:00" );
 			$data['omzetdetails'] = $rapport->maanddetails( $data['maand'], $data['jaar'], $data['artikelcode'] );
@@ -38,9 +38,9 @@ class Public_Omzet_Rapportage extends Shortcode {
 		if ( empty( $data['id'] ) ) {
 			$data['id'] = date( 'Y-m', strtotime( 'this month 00:00' ) );
 		}
-		list( $data['jaar'], $data['maand'] ) = explode( '-', $data['id'] );
-		$data['periode']                      = strtotime( "{$data['id']}-1 00:00" );
-		$data['omzet']                        = $rapport->maandrapport( $data['maand'], $data['jaar'] );
+		sscanf( $data['id'], '%d-%d', $data['jaar'], $data['maand'] );
+		$data['periode'] = strtotime( "{$data['id']}-1 00:00" );
+		$data['omzet']   = $rapport->maandrapport( $data['maand'], $data['jaar'] );
 		return true;
 	}
 

@@ -356,7 +356,7 @@ class Betalen {
 	 */
 	public static function callback_betaling_verwerkt( WP_REST_Request $request ) {
 		// phpcs:disable WordPress.NamingConventions
-		$mollie_betaling_id = $request->get_param( 'id' );
+		$mollie_betaling_id = (string) $request->get_param( 'id' );
 		$object             = new static();
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
 		$expiratie          = 13 * MONTH_IN_SECONDS - ( time() - strtotime( $betaling->createdAt ) );  // Na 13 maanden expiratie transient.

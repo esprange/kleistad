@@ -16,6 +16,8 @@ use DateTimeZone;
 use Google;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
+use Google_Service_Calendar_EventOrganizer;
+use Google_Service_Calendar_EventExtendedProperties;
 use Exception;
 
 /**

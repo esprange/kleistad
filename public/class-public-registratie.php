@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad registratie class.
  */
@@ -47,12 +49,12 @@ class Public_Registratie extends ShortcodeForm {
 	 * Valideer/sanitize 'registratie' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_ERROR|bool
+	 * @return WP_ERROR|bool
 	 *
 	 * @since   4.0.87
 	 */
 	protected function validate( &$data ) {
-		$error                = new \WP_Error();
+		$error                = new WP_Error();
 		$data['input']        = filter_input_array(
 			INPUT_POST,
 			[
@@ -68,7 +70,7 @@ class Public_Registratie extends ShortcodeForm {
 		);
 		$data['gebruiker_id'] = get_current_user_id();
 		if ( ! $data['gebruiker_id'] ) {
-			return new \WP_Error( 'security', 'Er is een security fout geconstateerd' );
+			return new WP_Error( 'security', 'Er is een security fout geconstateerd' );
 		}
 		if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
 			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct' );
@@ -127,7 +129,7 @@ class Public_Registratie extends ShortcodeForm {
 			];
 		} else {
 			return [
-				'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' ) ),
+				'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' ) ),
 			];
 		}
 	}

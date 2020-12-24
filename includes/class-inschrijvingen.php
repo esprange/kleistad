@@ -50,7 +50,7 @@ class Inschrijvingen implements Countable, Iterator {
 			]
 		);
 		foreach ( $cursisten as $cursist ) {
-			$inschrijvingen = get_user_meta( $cursist->ID, Inschrijving::META_KEY, true );
+			$inschrijvingen = (array) get_user_meta( $cursist->ID, Inschrijving::META_KEY, true );
 			if ( ! is_null( $cursus_id ) ) {
 				if ( ! isset( $inschrijvingen[ $cursus_id ] ) ) {
 					continue;

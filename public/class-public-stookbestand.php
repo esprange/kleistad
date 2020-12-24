@@ -17,34 +17,6 @@ namespace Kleistad;
 class Public_Stookbestand extends Shortcode {
 
 	/**
-	 * Array dat alle medestokers weergeeft in periode
-	 *
-	 * @var array $medestokers De stokers inclusief hun naam.
-	 */
-	private $medestokers = [];
-
-	/**
-	 * Array dat alle ovens bevat
-	 *
-	 * @var array $ovens De ovens met o.a. hun kosten.
-	 */
-	private $ovens = [];
-
-	/**
-	 * De vanaf datum van het stookbestand
-	 *
-	 * @var int $vanaf_datum de begindatum van het stookbestand.
-	 */
-	private $vanaf_datum;
-
-	/**
-	 * De tot datum van het stookbestand
-	 *
-	 * @var int $tot_datum de einddatum van het stookbestand.
-	 */
-	private $tot_datum;
-
-	/**
 	 *
 	 * Prepareer 'stookbestand' form
 	 *
@@ -54,7 +26,7 @@ class Public_Stookbestand extends Shortcode {
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data ) {
-		return true;
+		return isset( $data );
 	}
 
 	/**

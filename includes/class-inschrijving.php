@@ -208,7 +208,7 @@ class Inschrijving extends Artikel {
 	 * @return int Aantal emails verstuurd.
 	 */
 	public function herinnering() {
-		if ( 0 === $this->aantal ) {
+		if ( 0 === $this->aantal || $this->geannuleerd ) {
 			return 0;
 		}
 		$order = new Order( $this->geef_referentie() );

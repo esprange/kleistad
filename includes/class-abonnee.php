@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use Exception;
 use WP_User;
+use stdClass;
 
 /**
  * Kleistad Abonnee class.
@@ -36,7 +37,7 @@ class Abonnee extends WP_User {
 	 * @param int                         $site_id Optional Site ID, defaults to current site.
 	 * @suppressWarnings(PHPMD.ShortVariable)
 	 */
-	public function __construct( $id = 0, $name = '', $site_id = '' ) {
+	public function __construct( $id = 0, $name = '', $site_id = null ) {
 		parent::__construct( $id, $name, $site_id );
 		$this->abonnement = new Abonnement( $this->ID );
 	}

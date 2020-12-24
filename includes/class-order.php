@@ -159,7 +159,7 @@ class Order {
 	/**
 	 * Erase de order
 	 */
-	public function erase() : bool {
+	public function erase() {
 		global $wpdb;
 		$wpdb->delete( "{$wpdb->prefix}kleistad_orders", [ 'id' => $this->id ] );
 	}

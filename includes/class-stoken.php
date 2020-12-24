@@ -44,7 +44,6 @@ class Stoken implements Countable, Iterator {
 	 */
 	public function __construct( int $oven_id, int $vanaf_datum, int $tot_datum ) {
 		global $wpdb;
-		$oven   = new Oven( $oven_id );
 		$datums = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT datum FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND datum BETWEEN %s AND %s",

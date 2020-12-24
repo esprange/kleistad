@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad workshop class.
  */
@@ -82,7 +84,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
-			if ( user_can( $gebruiker->ID, self::OVERRIDE ) ) {
+			if ( user_can( $gebruiker->ID, OVERRIDE ) ) {
 				$docenten[] = $gebruiker;
 			}
 		}
@@ -128,7 +130,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Prepareer 'input' form
 	 *
 	 * @param array $data data voor display.
-	 * @return \WP_ERROR|bool
+	 * @return WP_ERROR|bool
 	 *
 	 * @since   5.0.0
 	 */
@@ -141,7 +143,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			if ( ! isset( $data['workshop'] ) ) {
 				$data['workshop'] = $this->formulier();
 			}
-		} elseif ( 'wijzigen' === $data['actie'] ) {
+			return true;
+		}
+		if ( 'wijzigen' === $data['actie'] ) {
 			/*
 			* Er is een workshop gekozen om te wijzigen.
 			*/
@@ -149,7 +153,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			if ( ! isset( $data['workshop'] ) ) {
 				$data['workshop'] = $this->formulier( $data['id'] );
 			}
-		} elseif ( 'inplannen' === $data['actie'] ) {
+			return true;
+		}
+		if ( 'inplannen' === $data['actie'] ) {
 			/**
 			 * Een workshop aanvraag gaat gepland worden.
 			 */
@@ -162,7 +168,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				$data['workshop']                = wp_parse_args( $casus_details, $this->formulier() );
 				$data['workshop']['aanvraag_id'] = $data['id'];
 			}
-		} elseif ( 'tonen' === $data['actie'] ) {
+			return true;
+		}
+		if ( 'tonen' === $data['actie'] ) {
 			/**
 			 * Een workshop aanvraag moet getoond worden.
 			 */
@@ -175,13 +183,13 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					'datum'           => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
 				]
 			);
-		} else {
-			/**
-			 * De workshopaanvragen en de geplande workshops moeten worden getoond.
-			 */
-			$data['workshops'] = $this->planning();
-			$data['aanvragen'] = $this->aanvragen();
+			return true;
 		}
+		/**
+		 * De workshopaanvragen en de geplande workshops moeten worden getoond.
+		 */
+		$data['workshops'] = $this->planning();
+		$data['aanvragen'] = $this->aanvragen();
 		return true;
 	}
 
@@ -189,12 +197,12 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Valideer/sanitize 'workshop_beheer' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   5.0.0
 	 */
 	protected function validate( &$data ) {
-		$error = new \WP_Error();
+		$error = new WP_Error();
 		if ( 'reageren' === $data['form_actie'] ) {
 			$data['casus'] = filter_input_array(
 				INPUT_POST,
@@ -303,7 +311,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					implode( ',', $workshop->technieken ),
 					$workshop->aantal,
 					number_format_i18n( $workshop->kosten, 2 ),
-					$workshop->status(),
+					$workshop->geef_statustekst(),
 					$workshop->organisatie,
 					$workshop->organisatie_adres,
 					$workshop->organisatie_email,
@@ -323,7 +331,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Bewaar 'input' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|array
+	 * @return WP_Error|array
 	 *
 	 * @since   5.0.0
 	 */
@@ -363,14 +371,13 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$workshop->save();
 			$bericht = 'De workshop informatie is opgeslagen';
 		} elseif ( 'bevestigen' === $data['form_actie'] ) {
-			if ( false !== $workshop->bevestig() ) {
-				$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
-			} else {
+			if ( $workshop->bevestig() ) {
 				return [
-					'status'  => $this->status( new \WP_Error( 'factuur', 'De factuur kan niet meer gewijzigd worden' ) ),
+					'status'  => $this->status( new WP_Error( 'factuur', 'De factuur kan niet meer gewijzigd worden' ) ),
 					'content' => $this->display(),
 				];
 			}
+			$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
 		} elseif ( 'afzeggen' === $data['form_actie'] ) {
 			$workshop->afzeggen();
 			if ( $workshop->definitief ) {

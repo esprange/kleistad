@@ -25,7 +25,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	private function geef_inschrijvingen( int $cursus_id ) : array {
 		$inschrijvingen = [];
 		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
-			if ( $cursus_id === $inschrijving->cursus->id && ! $inschrijving->geannuleerd ) {
+			if ( ! $inschrijving->geannuleerd ) {
 				if ( ! current_user_can( BESTUUR ) && ! $inschrijving->ingedeeld ) {
 					continue;
 				}
@@ -115,7 +115,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'code'  => $cursus->code,
 				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
-			$data['cursisten'] = $this->cursistenlijst( $cursus, $data['bestuur_rechten'] );
+			$data['cursisten'] = $this->cursistenlijst( $cursus );
 			return true;
 		}
 		if ( 'indelen' === $data['actie'] || 'uitschrijven' === $data['actie'] ) {
@@ -198,7 +198,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		} elseif ( 'herinner_email' === $data['form_actie'] ) {
 			$aantal_email = 0;
 			// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
-			foreach ( $this->inschrijvingen( $data['input']['cursus_id'], false ) as $inschrijving ) {
+			foreach ( new Inschrijvingen( $data['input']['cursus_id'] ) as $inschrijving ) {
 				/**
 				 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
 				 */
@@ -228,8 +228,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			'Ingedeeld',
 		];
 		fputcsv( $this->file_handle, $cursisten_fields, ';', '"' );
-		foreach ( $this->inschrijvingen( $cursus_id, true ) as $cursist_id => $inschrijving ) {
-			$cursist          = get_userdata( $cursist_id );
+		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
+			$cursist          = get_userdata( $inschrijving->klant_id );
 			$cursist_gegevens = [
 				$cursist->first_name,
 				$cursist->last_name,
@@ -252,8 +252,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$cursus_id = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );
 		$cursus    = new Cursus( $cursus_id );
 		$cursisten = [];
-		foreach ( $this->inschrijvingen( $cursus_id, false ) as $cursist_id => $inschrijving ) {
-			$cursisten[] = get_user_by( 'id', $cursist_id )->display_name . $inschrijving->toon_aantal();
+		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
+			if ( $inschrijving->ingedeeld ) {
+				$cursisten[] = get_user_by( 'id', $inschrijving->klant_id )->display_name . $inschrijving->toon_aantal();
+			}
 		}
 		$presentielijst = new Presentielijst( 'L' );
 		return $presentielijst->run( $cursus, $cursisten );
