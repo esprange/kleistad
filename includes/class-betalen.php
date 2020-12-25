@@ -327,13 +327,12 @@ class Betalen {
 	 * @param int $gebruiker_id De gebruiker waarvan de informatie wordt opgevraagd.
 	 * @return string leeg als de gebruiker onbekend is of string met opgemaakte HTML text.
 	 */
-	public static function info( $gebruiker_id ) {
-		$object              = new static();
+	public function info( $gebruiker_id ) {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 		if ( '' !== $mollie_gebruiker_id ) {
 			try {
 				$html             = 'Mollie info: ';
-				$mollie_gebruiker = $object->mollie->customers->get( $mollie_gebruiker_id );
+				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
 				$mandaten         = $mollie_gebruiker->mandates();
 				foreach ( $mandaten as $mandaat ) {
 					if ( $mandaat->isValid() ) {
@@ -352,7 +351,7 @@ class Betalen {
 	 * Webhook functie om betaling status te verwerken. Wordt aangeroepen door Mollie.
 	 *
 	 * @param WP_REST_Request $request het request.
-	 * @return WP_REST_Response de response.
+	 * @return WP_REST_Response|WP_Error de response.
 	 */
 	public static function callback_betaling_verwerkt( WP_REST_Request $request ) {
 		// phpcs:disable WordPress.NamingConventions
@@ -361,7 +360,12 @@ class Betalen {
 		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
 		$expiratie          = 13 * MONTH_IN_SECONDS - ( time() - strtotime( $betaling->createdAt ) );  // Na 13 maanden expiratie transient.
 		$order              = new Order( $betaling->metadata->order_id );
-		$artikel            = get_artikel( $betaling->metadata->order_id );
+		$artikelregister    = new Artikelregister();
+		$artikel            = $artikelregister->geef_object( $betaling->metadata->order_id );
+		if ( is_null( $artikel ) ) {
+			error_log( 'onbekende betaling ' . $betaling->metadata->order_id ); // phpcs:ignore
+			return new WP_Error( 'onbekend', 'betaling niet herkend' );
+		}
 		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
 			$artikel->verwerk_betaling(
 				$order->id,

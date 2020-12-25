@@ -116,7 +116,7 @@ class Admin_Instellingen_Handler {
 		$vandaag         = strtotime( 'today' );
 		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
 		$csv             = array_map( 'str_getcsv', file( $csv_file ) ?: [] );
-		foreach ( $beschikbaarheid as $datum => $tijden ) {
+		foreach ( array_keys( $beschikbaarheid ) as $datum ) {
 			if ( $datum >= $vandaag ) {
 				unset( $beschikbaarheid[ $datum ] );
 			}

@@ -325,8 +325,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private function erase_cursussen( $datum ) {
-		$cursussen = new Cursussen();
-		foreach ( $cursussen as $cursus ) {
+		foreach ( new Cursussen() as $cursus ) {
 			if ( $cursus->eind_datum && $datum > $cursus->eind_datum ) {
 				$inschrijvingen = new Inschrijvingen( $cursus->id );
 				foreach ( $inschrijvingen() as $inschrijving ) {
@@ -343,8 +342,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private function erase_dagdelenkaarten( $datum ) {
-		$dagdelenkaarten = new Dagdelenkaarten();
-		foreach ( $dagdelenkaarten() as $dagdelenkaart ) {
+		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
 			if ( $dagdelenkaart->eind_datum && $datum > $dagdelenkaart->eind_datum ) {
 				$dagdelenkaart->erase();
 			}
@@ -357,8 +355,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private function erase_abonnementen( $datum ) {
-		$abonnementen = new Abonnementen();
-		foreach ( $abonnementen as $abonnement ) {
+		foreach ( new Abonnementen() as $abonnement ) {
 			if ( $abonnement->eind_datum && $datum > $abonnement->eind_datum ) {
 				$saldo = new Saldo( $abonnement->klant_id );
 				$saldo->erase();
@@ -373,8 +370,7 @@ class Admin_GDPR {
 	 * @param int $datum Het criterium.
 	 */
 	private function erase_workshops( $datum ) {
-		$workshops = new Workshops();
-		foreach ( $workshops as $workshop ) {
+		foreach ( new Workshops() as $workshop ) {
 			if ( $datum > $workshop->datum ) {
 				$workshop->erase();
 			}

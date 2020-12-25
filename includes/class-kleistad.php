@@ -94,18 +94,6 @@ function base_url() {
 }
 
 /**
- * Bepaal het Kleistad artikel a.d.h.v. de referentie.
- *
- * @param string $referentie De artikel referentie.
- * @return Artikel Een van de kleistad Artikel objecten.
- * @SuppressWarnings(PHPMD.ElseExpression)
- */
-function get_artikel( string $referentie ): Artikel {
-	$reg = new Artikelregister();
-	return $reg->geef_object( $referentie );
-}
-
-/**
  * De Kleistad plugin class.
  *
  * @since      4.0.87

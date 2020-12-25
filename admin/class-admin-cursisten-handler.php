@@ -39,6 +39,7 @@ class Admin_Cursisten_Handler {
 	 * Toon en verwerk ingevoerde cursist gegevens
 	 *
 	 * @since    5.2.0
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function cursisten_form_page_handler() {
 		$message  = '';
@@ -62,32 +63,27 @@ class Admin_Cursisten_Handler {
 			$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
 			$message      = 'De gegevens zijn opgeslagen';
 			if ( intval( $item['cursus_id'] ) !== $cursus_id || intval( $item['aantal'] ) !== $inschrijving->aantal ) {
-				// cursus gewijzigd.
 				if ( false === $inschrijving->correct( $item['cursus_id'], intval( $item['aantal'] ) ) ) {
 					$message = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
 				}
-			} else {
-				// attributen inschrijving gewijzigd.
-				$inschrijving->save();
 			}
-		} else {
-			if ( isset( $_REQUEST['id'] ) ) {
-				$code         = $_REQUEST['id'];
-				$parameters   = explode( '-', substr( $code, 1 ) );
-				$cursus_id    = intval( $parameters[0] );
-				$cursist_id   = intval( $parameters[1] );
-				$cursist      = get_userdata( $cursist_id );
-				$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-				$cursus       = new Cursus( $cursus_id );
-				$item         = [
-					'id'          => $code,
-					'naam'        => $cursist->display_name,
-					'aantal'      => $inschrijving->aantal,
-					'geannuleerd' => $inschrijving->geannuleerd,
-					'cursist_id'  => $cursist_id,
-					'cursus_id'   => $cursus_id,
-				];
-			}
+		}
+		if ( isset( $_REQUEST['id'] ) ) {
+			$code         = $_REQUEST['id'];
+			$parameters   = explode( '-', substr( $code, 1 ) );
+			$cursus_id    = intval( $parameters[0] );
+			$cursist_id   = intval( $parameters[1] );
+			$cursist      = get_userdata( $cursist_id );
+			$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
+			$cursus       = new Cursus( $cursus_id );
+			$item         = [
+				'id'          => $code,
+				'naam'        => $cursist->display_name,
+				'aantal'      => $inschrijving->aantal,
+				'geannuleerd' => $inschrijving->geannuleerd,
+				'cursist_id'  => $cursist_id,
+				'cursus_id'   => $cursus_id,
+			];
 		}
 		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this, 'cursisten_form_meta_box_handler' ], 'cursist', 'normal', 'default' );
 		require 'partials/admin-form-page.php';
@@ -99,6 +95,7 @@ class Admin_Cursisten_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item de cursist.
+	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function cursisten_form_meta_box_handler( $item ) {
 		require 'partials/admin-cursisten-form-meta-box.php';

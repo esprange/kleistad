@@ -36,7 +36,8 @@ class Admin_Abonnees_Handler {
 	 */
 	private function wijzig_abonnee( $item, $actie ) {
 		$abonnement          = new Abonnement( $item['id'] );
-		$item['mollie_info'] = Betalen::info( $item['id'] );
+		$betalen             = new Betalen();
+		$item['mollie_info'] = $betalen->info( $item['id'] );
 		if ( 'status' === $actie ) {
 			foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort', 'dag' ] as $veld ) {
 				if ( ! empty( $item[ $veld ] ) ) {
@@ -62,29 +63,28 @@ class Admin_Abonnees_Handler {
 	 * @return bool|string
 	 */
 	private function validate_abonnee( $item, $actie ) {
-		$messages = [];
-
-		if ( 'status' === $actie ) {
-			if ( ! empty( $item['start_datum'] ) && strtotime( $item['start_datum'] ) < strtotime( $item['inschrijf_datum'] ) ) {
-				$messages[] = 'De start datum kan niet voor de inschrijf datum liggen';
-			}
-			if ( ! empty( $item['pauze_datum'] ) && ( empty( $item['start_datum'] ) || strtotime( $item['start_datum'] ) >= strtotime( $item['pauze_datum'] ) ) ) {
-				$messages[] = 'De pauze datum kan niet voor de start datum liggen of de start datum ontbreekt';
-			}
-			if ( ! empty( $item['herstart_datum'] ) && ( empty( $item['pauze_datum'] ) || strtotime( $item['herstart_datum'] ) < strtotime( $item['pauze_datum'] ) ) ) {
-				$messages[] = 'De herstart datum kan niet voor de pauze datum liggen of de pauze datum ontbreekt';
-			}
-			if ( ! empty( $item['start_eind_datum'] ) && ( empty( $item['start_datum'] ) || strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) ) {
-				$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen of de start datum ontbreekt';
-			}
-			if ( ! empty( $item['eind_datum'] ) && strtotime( $item['eind_datum'] ) <= strtotime( $item['inschrijf_datum'] ) ) {
-				$messages[] = 'De eind datum van het abonnement kan niet voor de inschrijf datum liggen';
-			}
-			if ( ! empty( $item['soort'] ) && 'beperkt' === $item['soort'] && empty( $item['dag'] ) ) {
-				$messages[] = 'Als de abonnement soort beperkt is dan moet er een dag gekozen worden';
-			}
+		if ( 'status' !== $actie ) {
+			return true;
 		}
-
+		$messages = [];
+		if ( ! empty( $item['start_datum'] ) && strtotime( $item['start_datum'] ) < strtotime( $item['inschrijf_datum'] ) ) {
+			$messages[] = 'De start datum kan niet voor de inschrijf datum liggen';
+		}
+		if ( ! empty( $item['pauze_datum'] ) && ( empty( $item['start_datum'] ) || strtotime( $item['start_datum'] ) >= strtotime( $item['pauze_datum'] ) ) ) {
+			$messages[] = 'De pauze datum kan niet voor de start datum liggen of de start datum ontbreekt';
+		}
+		if ( ! empty( $item['herstart_datum'] ) && ( empty( $item['pauze_datum'] ) || strtotime( $item['herstart_datum'] ) < strtotime( $item['pauze_datum'] ) ) ) {
+			$messages[] = 'De herstart datum kan niet voor de pauze datum liggen of de pauze datum ontbreekt';
+		}
+		if ( ! empty( $item['start_eind_datum'] ) && ( empty( $item['start_datum'] ) || strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) ) {
+			$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen of de start datum ontbreekt';
+		}
+		if ( ! empty( $item['eind_datum'] ) && strtotime( $item['eind_datum'] ) <= strtotime( $item['inschrijf_datum'] ) ) {
+			$messages[] = 'De eind datum van het abonnement kan niet voor de inschrijf datum liggen';
+		}
+		if ( ! empty( $item['soort'] ) && 'beperkt' === $item['soort'] && empty( $item['dag'] ) ) {
+			$messages[] = 'Als de abonnement soort beperkt is dan moet er een dag gekozen worden';
+		}
 		if ( empty( $messages ) ) {
 			return true;
 		}
@@ -104,10 +104,10 @@ class Admin_Abonnees_Handler {
 	 * Toon en verwerk ingevoerde abonnee gegevens
 	 *
 	 * @since    5.2.0
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function abonnees_form_page_handler() {
-		$message  = '';
-		$notice   = '';
 		$single   = 'abonnee';
 		$multiple = 'abonnees';
 		$actie    = null;
@@ -142,38 +142,36 @@ class Admin_Abonnees_Handler {
 			}
 			$actie      = $item['actie'];
 			$item_valid = $this->validate_abonnee( $item, $actie );
-			if ( true === $item_valid ) {
-				$message = $this->wijzig_abonnee( $item, $actie );
-			} else {
-				$notice = $item_valid;
-			}
-		} else {
-			if ( isset( $_REQUEST['id'] ) ) {
-				$abonnee_id = $_REQUEST['id'];
-				$actie      = $_REQUEST['actie'];
-				$abonnement = new Abonnement( $abonnee_id );
-				$abonnee    = get_userdata( $abonnee_id );
-				$betalen    = new Betalen();
-				$item       = [
-					'id'               => $abonnee_id,
-					'naam'             => $abonnee->display_name,
-					'soort'            => $abonnement->soort,
-					'dag'              => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
-					'code'             => $abonnement->code,
-					'extras'           => $abonnement->extras,
-					'geannuleerd'      => $abonnement->is_geannuleerd(),
-					'gepauzeerd'       => $abonnement->is_gepauzeerd(),
-					'inschrijf_datum'  => ( $abonnement->datum ? strftime( '%d-%m-%Y', $abonnement->datum ) : '' ),
-					'start_datum'      => ( $abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '' ),
-					'start_eind_datum' => ( $abonnement->start_eind_datum ? strftime( '%d-%m-%Y', $abonnement->start_eind_datum ) : '' ),
-					'pauze_datum'      => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
-					'eind_datum'       => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
-					'herstart_datum'   => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
-					'mandaat'          => $betalen->heeft_mandaat( $abonnee_id ),
-					'historie'         => $abonnement->historie,
-					'mollie_info'      => Betalen::info( $abonnee_id ),
-				];
-			}
+			$notice     = is_string( $item_valid ) ? $item_valid : '';
+			$message    = empty( notice ) ? $this->wijzig_abonnee( $item, $actie ) : '';
+		}
+		if ( isset( $_REQUEST['id'] ) ) {
+			$abonnee_id = $_REQUEST['id'];
+			$actie      = $_REQUEST['actie'];
+			$abonnement = new Abonnement( $abonnee_id );
+			$abonnee    = get_userdata( $abonnee_id );
+			$betalen    = new Betalen();
+			$item       = [
+				'id'               => $abonnee_id,
+				'naam'             => $abonnee->display_name,
+				'soort'            => $abonnement->soort,
+				'dag'              => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
+				'code'             => $abonnement->code,
+				'extras'           => $abonnement->extras,
+				'geannuleerd'      => $abonnement->is_geannuleerd(),
+				'gepauzeerd'       => $abonnement->is_gepauzeerd(),
+				'inschrijf_datum'  => ( $abonnement->datum ? strftime( '%d-%m-%Y', $abonnement->datum ) : '' ),
+				'start_datum'      => ( $abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '' ),
+				'start_eind_datum' => ( $abonnement->start_eind_datum ? strftime( '%d-%m-%Y', $abonnement->start_eind_datum ) : '' ),
+				'pauze_datum'      => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
+				'eind_datum'       => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
+				'herstart_datum'   => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
+				'mandaat'          => $betalen->heeft_mandaat( $abonnee_id ),
+				'historie'         => $abonnement->historie,
+				'mollie_info'      => $betalen->$betalen->info( $abonnee_id ),
+			];
+			$notice     = '';
+			$message    = '';
 		}
 		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default', [ $actie ] );
 		require 'partials/admin-form-page.php';
@@ -186,6 +184,8 @@ class Admin_Abonnees_Handler {
 	 *
 	 * @param array $item de abonnee.
 	 * @param array $request de aanroep parameters.
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function abonnees_form_meta_box_handler( $item, $request ) {
 		$actie = $request['args'][0];

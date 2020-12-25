@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_List_Table;
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -18,7 +20,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * Ovens list table
  */
-class Admin_Cursisten extends \WP_List_Table {
+class Admin_Cursisten extends WP_List_Table {
 
 	/**
 	 * Constructor
@@ -98,6 +100,34 @@ class Admin_Cursisten extends \WP_List_Table {
 	}
 
 	/**
+	 * Haal de cursisten info op
+	 *
+	 * @param string $search Eventuele zoek parameter.
+	 * @return array;
+	 */
+	private function geef_cursisten( string $search ) : array {
+		$cursisten = [];
+		$vandaag   = strtotime( 'today' );
+		foreach ( new Cursisten() as $cursist ) {
+			if ( ! empty( $search ) && false === stripos( $cursist->display_name, (string) $search ) ) {
+				continue;
+			}
+			foreach ( $cursist->inschrijvingen as $inschrijving ) {
+				if ( $vandaag > $inschrijving->cursus->eind_datum ) {
+					continue;
+				}
+				$cursisten[] = [
+					'id'          => $inschrijving->cursus->code,
+					'naam'        => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+					'cursus'      => $inschrijving->cursus->naam,
+					'geannuleerd' => $inschrijving->geannuleerd ? 'X' : '',
+				];
+			}
+		}
+		return $cursisten;
+	}
+
+	/**
 	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
@@ -116,29 +146,11 @@ class Admin_Cursisten extends \WP_List_Table {
 		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val   = filter_input( INPUT_GET, 'order' );
 		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$cursisten   = [];
-		$vandaag     = strtotime( 'today' );
-		foreach ( new Cursisten() as $cursist ) {
-			if ( ! empty( $search ) && false === stripos( $cursist->display_name, (string) $search ) ) {
-				continue;
-			}
-			foreach ( $cursist->inschrijvingen as $inschrijving ) {
-				if ( $vandaag > $inschrijving->cursus->eind_datum ) {
-					continue;
-				}
-				$cursisten[] = [
-					'id'          => $inschrijving->cursus->code,
-					'naam'        => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
-					'cursus'      => $inschrijving->cursus->naam,
-					'geannuleerd' => $inschrijving->geannuleerd ? 'X' : '',
-				];
-			}
-		}
-
+		$cursisten   = $this->geef_cursisten( $search );
 		usort(
 			$cursisten,
-			function( $a, $b ) use ( $orderby, $order ) {
-				return ( 'asc' === $order ) ? strcmp( $a[ $orderby ], $b[ $orderby ] ) : strcmp( $b[ $orderby ], $a[ $orderby ] );
+			function( $links, $rechts ) use ( $orderby, $order ) {
+				return ( 'asc' === $order ) ? strcmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcmp( $rechts[ $orderby ], $links[ $orderby ] );
 			}
 		);
 		$this->items = array_slice( $cursisten, $paged * $per_page, $per_page, true );

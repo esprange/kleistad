@@ -66,6 +66,9 @@ class Admin_Ovens_Handler {
 	 * Toon en verwerk oven gegevens
 	 *
 	 * @since    5.2.0
+	 *
+	 * @suppressWarnings(PHPMD.UnusedLocalVariable)
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function ovens_form_page_handler() {
 		$message  = '';
@@ -98,12 +101,9 @@ class Admin_Ovens_Handler {
 				]
 			);
 			$item_valid = $this->validate_oven( $item );
+			$notice     = is_string( $item_valid ) ? $item_valid : '';
 			if ( true === $item_valid ) {
-				if ( $item['id'] > 0 ) {
-					$oven = new Oven( $item['id'] );
-				} else {
-					$oven = new Oven();
-				}
+				$oven                  = $item['id'] > 0 ? new Oven( $item['id'] ) : new Oven();
 				$oven->naam            = $item['naam'];
 				$oven->kosten_laag     = $item['kosten_laag'];
 				$oven->kosten_midden   = $item['kosten_midden'];
@@ -111,15 +111,9 @@ class Admin_Ovens_Handler {
 				$oven->beschikbaarheid = $item['beschikbaarheid'];
 				$oven->save();
 				$message = 'De gegevens zijn opgeslagen';
-			} else {
-				$notice = $item_valid;
 			}
 		} else {
-			if ( isset( $_REQUEST['id'] ) ) {
-				$oven = new Oven( $_REQUEST['id'] );
-			} else {
-				$oven = new Oven();
-			}
+			$oven                    = isset( $_REQUEST['id'] ) ? new Oven( $_REQUEST['id'] ) : new Oven();
 			$item['id']              = $oven->id;
 			$item['naam']            = $oven->naam;
 			$item['kosten_laag']     = $oven->kosten_laag;
@@ -135,6 +129,7 @@ class Admin_Ovens_Handler {
 	 * Toon het oven formulier in een meta box
 	 *
 	 * @param array $item de oven.
+	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function ovens_form_meta_box_handler( $item ) {
 		require 'partials/admin-ovens-form-meta-box.php';

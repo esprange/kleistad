@@ -301,7 +301,7 @@ class Saldo extends Artikel {
 		$options       = opties();
 		$verwerk_datum = strtotime( '- ' . $options['termijn'] . ' days 00:00' );
 		foreach ( $ovens as $oven ) {
-			$stoken = new Stoken( $oven->id, strtotime( '- 1 week ' ), strtotime( 'today' ) );
+			$stoken = new Stoken( $oven->id, strtotime( '- 1 week' ), strtotime( 'today' ) );
 			foreach ( $stoken as $stook ) {
 				if ( ! $stook->is_gereserveerd() ) {
 					continue;

@@ -122,7 +122,7 @@ class Public_Reservering extends Shortcode {
 	 */
 	private static function maak_stookregel( Stook $stook ) {
 		$gebruiker_id = get_current_user_id();
-		$stoker_id    = $stook->stookdelen[0]->medestoker;
+		$stoker_id    = isset( $stook->stookdelen[0] ) ? $stook->stookdelen[0]->medestoker : $gebruiker_id;
 		$stoker_naam  = get_userdata( $stoker_id )->display_name;
 		$kleur        = Stook::ONDERHOUD === $stook->soort ? 'kleistad_reservering_onderhoud' :
 			( $stoker_id === $gebruiker_id ? 'kleistad_reservering_zelf' : 'kleistad_reservering_ander' );
@@ -256,7 +256,7 @@ class Public_Reservering extends Shortcode {
 				'oven_id' => $oven_id,
 				'maand'   => $maand,
 				'jaar'    => $jaar,
-				'periode' => strftime( '%B-%Y', mktime( 0, 0, $maand, 1, $jaar ) ),
+				'periode' => strftime( '%B-%Y', mktime( 0, 0, 0, $maand, 1, $jaar ) ),
 			]
 		);
 	}

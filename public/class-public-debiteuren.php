@@ -25,17 +25,17 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array De info.
 	 */
 	private function debiteuren( $zoek = '' ) {
-		$debiteuren = [];
-		$orders     = new Orders();
+		$debiteuren      = [];
+		$artikelregister = new Artikelregister();
+		$orders          = new Orders();
 		foreach ( $orders as $order ) {
 			if ( ! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek ) ) {
 				continue;
 			}
-			$betreft      = '@' !== $order->referentie[0] ? get_artikel( $order->referentie )->geef_artikelnaam() : 'afboeking';
 			$debiteuren[] = [
 				'id'           => $order->id,
 				'naam'         => $order->klant['naam'],
-				'betreft'      => $betreft,
+				'betreft'      => $artikelregister->geef_naam( $order->referentie ),
 				'referentie'   => $order->referentie,
 				'openstaand'   => $order->te_betalen(),
 				'credit'       => boolval( $order->origineel_id ),
@@ -54,12 +54,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array De informatie.
 	 */
 	private function debiteur( $order_id ) {
-		$order   = new Order( $order_id );
-		$betreft = '@' !== $order->referentie[0] ? get_artikel( $order->referentie )->geef_artikelnaam() : 'afboeking';
+		$order           = new Order( $order_id );
+		$artikelregister = new Artikelregister();
 		return [
 			'id'            => $order->id,
 			'naam'          => $order->klant['naam'],
-			'betreft'       => $betreft,
+			'betreft'       => $artikelregister->geef_naam( $order->referentie ),
 			'referentie'    => $order->referentie,
 			'factuur'       => $order->factuurnummer(),
 			'betaald'       => $order->betaald,
@@ -181,10 +181,11 @@ class Public_Debiteuren extends ShortcodeForm {
 				'content' => $this->goto_home(),
 			];
 		}
-		$order   = new Order( $data['input']['id'] );
-		$emailer = new Email();
-		$artikel = get_artikel( $order->referentie );
-		$status  = '';
+		$order           = new Order( $data['input']['id'] );
+		$emailer         = new Email();
+		$artikelregister = new Artikelregister();
+		$artikel         = $artikelregister->geef_object( $order->referentie );
+		$status          = '';
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
 				if ( $data['input']['ontvangst'] ) {

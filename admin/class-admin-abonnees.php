@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_List_Table;
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -18,7 +20,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * Ovens list table
  */
-class Admin_Abonnees extends \WP_List_Table {
+class Admin_Abonnees extends WP_List_Table {
 
 	/**
 	 * Constructor
@@ -68,9 +70,8 @@ class Admin_Abonnees extends \WP_List_Table {
 				'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=mollie">%s</a>', $item['id'], 'Wijzigen' ),
 			];
 			return sprintf( 'ja %s', $this->row_actions( $actions ) );
-		} else {
-			return 'nee';
 		}
+		return 'nee';
 	}
 
 	/**
@@ -108,6 +109,33 @@ class Admin_Abonnees extends \WP_List_Table {
 	}
 
 	/**
+	 * Haal de abonnee infom op
+	 *
+	 * @param string $search Eventuele zoek parameter.
+	 * @return array;
+	 */
+	private function geef_abonnees( string $search ) : array {
+		$abonnees = [];
+		$betalen  = new Betalen();
+		foreach ( new Abonnees() as $abonnee ) {
+			if ( ! empty( $search ) && false === strpos( $abonnee->display_name . $abonnee->user_email, $search ) ) {
+				continue;
+			}
+			$abonnees[] = [
+				'id'     => $abonnee->ID,
+				'naam'   => $abonnee->display_name,
+				'status' => $abonnee->abonnement->geef_statustekst( false ),
+				'soort'  => $abonnee->abonnement->soort,
+				'dag'    => ( 'beperkt' === $abonnee->abonnement->soort ? $abonnee->abonnement->dag : '' ),
+				'extras' => implode( ', ', $abonnee->abonnement->extras ),
+				'code'   => $abonnee->abonnement->code,
+				'mollie' => $betalen->heeft_mandaat( $abonnee->ID ),
+			];
+		}
+		return $abonnees;
+	}
+
+	/**
 	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
@@ -118,38 +146,19 @@ class Admin_Abonnees extends \WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$search_val   = filter_input( INPUT_GET, 's' );
-		$search       = ! is_null( $search_val ) ? $search_val : '';
-		$paged_val    = filter_input( INPUT_GET, 'paged' );
-		$paged        = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val  = filter_input( INPUT_GET, 'orderby' );
-		$orderby      = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val    = filter_input( INPUT_GET, 'order' );
-		$order        = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$abonnementen = new Abonnementen();
-		$abonnees     = [];
-		$betalen      = new Betalen();
-
-		foreach ( $abonnementen as $abonnement ) {
-			$abonnee = get_userdata( $abonnement->klant_id );
-			if ( false === strpos( $abonnee->display_name . $abonnee->user_email, $search ) ) {
-				continue;
-			}
-			$abonnees[] = [
-				'id'     => $abonnement->klant_id,
-				'naam'   => $abonnee->display_name,
-				'status' => $abonnement->geef_statustekst( false ),
-				'soort'  => $abonnement->soort,
-				'dag'    => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
-				'extras' => implode( ', ', $abonnement->extras ),
-				'code'   => $abonnement->code,
-				'mollie' => $betalen->heeft_mandaat( $abonnement->klant_id ),
-			];
-		}
+		$search_val  = filter_input( INPUT_GET, 's' );
+		$search      = ! is_null( $search_val ) ? $search_val : '';
+		$paged_val   = filter_input( INPUT_GET, 'paged' );
+		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$orderby_val = filter_input( INPUT_GET, 'orderby' );
+		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val   = filter_input( INPUT_GET, 'order' );
+		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$abonnees    = $this->geef_abonnees( $search );
 		usort(
 			$abonnees,
-			function( $a, $b ) use ( $orderby, $order ) {
-				return ( 'asc' === $order ) ? strcmp( $a[ $orderby ], $b[ $orderby ] ) : strcmp( $b[ $orderby ], $a[ $orderby ] );
+			function( $links, $rechts ) use ( $orderby, $order ) {
+				return ( 'asc' === $order ) ? strcmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcmp( $rechts[ $orderby ], $links[ $orderby ] );
 			}
 		);
 		$this->items = array_slice( $abonnees, $paged * $per_page, $per_page, true );

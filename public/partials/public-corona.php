@@ -113,7 +113,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 			<select name="id" id="kleistad_select_gebruiker" >
 				<option value="<?php echo esc_attr( $huidige_gebruiker->ID ); ?>" <?php selected( $huidige_gebruiker->ID, $data['input']['id'] ); ?> ><?php echo esc_html( $huidige_gebruiker->display_name ); ?></option>
 			<?php foreach ( $data['cursisten_za'] as $cursist_za ) : ?>
-				<option value="<?php echo esc_attr( $cursist_za->ID ); ?>" <?php selected( $cursist_za->ID, $data['input']['id'] ); ?> ><?php echo esc_html( $cursist_za->display_name ); ?></option>
+				<option value="<?php echo esc_attr( $cursist_za['id'] ); ?>" <?php selected( $cursist_za['id'], $data['input']['id'] ); ?> ><?php echo esc_html( $cursist_za['naam'] ); ?></option>
 			<?php endforeach ?>
 			</select>
 		</div>

@@ -104,9 +104,9 @@ class Stook {
 	/**
 	 * De interne sleutel van de stook
 	 *
-	 * @var int $id Het database id.
+	 * @var int $stook_id Het database id.
 	 */
-	private int $id = 0;
+	private int $stook_id = 0;
 
 	/**
 	 * Constructor
@@ -135,14 +135,15 @@ class Stook {
 			$this->programma   = intval( $resultaat['programma'] );
 			$this->gemeld      = boolval( $resultaat['gemeld'] );
 			$this->verwerkt    = boolval( $resultaat['verwerkt'] );
-			$this->id          = intval( $resultaat['id'] );
+			$this->stook_id    = intval( $resultaat['id'] );
 			$this->hoofdstoker = intval( $resultaat['gebruiker_id'] );
 			foreach ( json_decode( $resultaat['verdeling'], true ) as $stookdeel ) {
 				$this->stookdelen[] = new Stookdeel( $stookdeel['id'], intval( $stookdeel['perc'] ), intval( $stookdeel['prijs'] ?? 0 ) );
 			}
 			return;
 		}
-		$this->hoofdstoker = get_current_user_id();
+		$this->hoofdstoker  = get_current_user_id();
+		$this->stookdelen[] = new Stookdeel( $this->hoofdstoker, 100, 0 );
 	}
 
 	/**
@@ -172,11 +173,13 @@ class Stook {
 				'gebruiker_id' => $this->hoofdstoker,
 				'verdeling'    => wp_json_encode( $stookdelen ) ?: '[]',
 				'datum'        => date( 'Y-m-d', $this->datum ),
+				'gemeld'       => intval( $this->gemeld ),
+				'verwerkt'     => intval( $this->verwerkt ),
 			];
-		if ( $this->id ) {
+		if ( $this->stook_id ) {
 			if ( false === $wpdb->replace(
 				"{$wpdb->prefix}kleistad_reserveringen",
-				array_merge( $data, [ 'id' => $this->id ] )
+				array_merge( $data, [ 'id' => $this->stook_id ] )
 			) ) {
 				throw new Exception( 'Database actie kon niet voltooid worden' );
 			}
@@ -185,7 +188,7 @@ class Stook {
 		if ( false === $wpdb->insert( "{$wpdb->prefix}kleistad_reserveringen", $data ) ) {
 			throw new Exception( 'Database actie kon niet voltooid worden' );
 		}
-		$this->id = $wpdb->insert_id;
+		$this->stook_id = $wpdb->insert_id;
 	}
 
 	/**
@@ -198,11 +201,11 @@ class Stook {
 		global $wpdb;
 		if ( false === $wpdb->delete(
 			"{$wpdb->prefix}kleistad_reserveringen",
-			[ 'id' => $this->id ]
+			[ 'id' => $this->stook_id ]
 		) ) {
 			throw new Exception( 'Database actie kon niet voltooid worden' );
 		}
-		$this->id = null;
+		$this->stook_id = null;
 	}
 
 	/**
@@ -211,15 +214,15 @@ class Stook {
 	 * @return bool De reservering status.
 	 */
 	public function is_gereserveerd() : bool {
-		return boolval( $this->id );
+		return boolval( $this->stook_id );
 	}
 
 	/**
 	 * Geef de status terug van de reservering.
 	 */
 	public function geef_statustekst() {
-		if ( ! boolval( $this->id ) ) {
-			if ( $this->datum < strtotime( 'tomorrow' ) || is_super_admin() ) {
+		if ( ! boolval( $this->stook_id ) ) {
+			if ( $this->datum >= strtotime( 'today' ) || is_super_admin() ) {
 				return self::RESERVEERBAAR;
 			}
 			return self::ONGEBRUIKT;

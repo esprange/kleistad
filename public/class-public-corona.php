@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad cursus inschrijving class.
  */
@@ -184,7 +186,7 @@ class Public_Corona extends ShortcodeForm {
 	 * Prepareer 'corona' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool|\WP_Error
+	 * @return bool|WP_Error
 	 *
 	 * @since   6.3.4
 	 */
@@ -205,7 +207,8 @@ class Public_Corona extends ShortcodeForm {
 				$data['id']      = intval( filter_input( INPUT_GET, 'gebruiker' ) );
 				$data['gebruik'] = $this->gebruik( $data['id'] );
 				return true;
-			} elseif ( 'overzicht' === $data['actie'] ) {
+			}
+			if ( 'overzicht' === $data['actie'] ) {
 				$data['overzicht'] = $this->bezetting();
 				return true;
 			}
@@ -236,13 +239,15 @@ class Public_Corona extends ShortcodeForm {
 			$cursisten_zonder_abonnement = get_transient( 'kleistad_za' );
 			if ( ! is_array( $cursisten_zonder_abonnement ) ) {
 				$cursisten_zonder_abonnement = [];
-				foreach ( $gebruikers as $gebruiker ) {
-					if ( user_can( $gebruiker->ID, LID ) || user_can( $gebruiker->ID, BESTUUR ) || user_can( $gebruiker->ID, DOCENT ) ) {
+				foreach ( new Cursisten() as $cursist ) {
+					if ( user_can( $cursist->ID, LID ) || user_can( $cursist->ID, BESTUUR ) || user_can( $cursist->ID, DOCENT ) ) {
 						continue;
 					}
-					$cursist = new Cursist( $gebruiker->ID );
 					if ( $cursist->is_actief() ) {
-						$cursisten_zonder_abonnement[] = $gebruiker;
+						$cursisten_zonder_abonnement[] = [
+							'id'   => $cursist->ID,
+							'naam' => $cursist->display_name,
+						];
 					}
 				}
 				set_transient( 'kleistad_za', $cursisten_zonder_abonnement, 900 );
@@ -256,7 +261,7 @@ class Public_Corona extends ShortcodeForm {
 	 * Valideer/sanitize 'corona' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   6.3.4
 	 */
@@ -288,7 +293,7 @@ class Public_Corona extends ShortcodeForm {
 	 * Bewaar 'corona' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|array
+	 * @return WP_Error|array
 	 *
 	 * @since   6.3.4
 	 */
@@ -301,36 +306,35 @@ class Public_Corona extends ShortcodeForm {
 		foreach ( $aanpassingen as $index => $aanpassing ) {
 			foreach ( array_keys( $aanpassing ) as $werk ) {
 				if ( ! in_array( $id, $reserveringen[ $index ][ $werk ] ?? [], true ) ) {
-					if ( count( $reserveringen[ $index ][ $werk ] ?? [] ) < $beschikbaarheid[ $index ][ $werk ] ) {
-						$reserveringen[ $index ][ $werk ][] = $id;
-					} else {
+					if ( count( $reserveringen[ $index ][ $werk ] ?? [] ) >= $beschikbaarheid[ $index ][ $werk ] ) {
 						return [
-							'status' => $this->status( new \WP_Error( 'werkplek', 'De reservering kon niet worden opgeslagen, probeer het opnieuw' ) ),
+							'status' => $this->status( new WP_Error( 'werkplek', 'De reservering kon niet worden opgeslagen, probeer het opnieuw' ) ),
 						];
+					}
+					$reserveringen[ $index ][ $werk ][] = $id;
+				}
+			}
+			foreach ( $reserveringen as $index => $reservering ) {
+				foreach ( $reservering as $werk => $ids ) {
+					if ( ! isset( $aanpassingen[ $index ][ $werk ] ) && in_array( $id, $ids, true ) ) {
+						$reserveringen[ $index ][ $werk ] = array_diff( $reserveringen[ $index ][ $werk ], [ $id ] );
 					}
 				}
 			}
-		}
-		foreach ( $reserveringen as $index => $reservering ) {
-			foreach ( $reservering as $werk => $ids ) {
-				if ( ! isset( $aanpassingen[ $index ][ $werk ] ) && in_array( $id, $ids, true ) ) {
-					$reserveringen[ $index ][ $werk ] = array_diff( $reserveringen[ $index ][ $werk ], [ $id ] );
+			update_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), $reserveringen );
+			if ( current_user_can( BESTUUR ) && is_array( $data['input']['meester'] ) ) {
+				foreach ( $data['input']['meester'] as $blokdeel => $id ) {
+					if ( $data['input']['standaard'][ $blokdeel ] ) {
+						$this->standaard_meester( $id, $datum, $blokdeel );
+					} else {
+						$this->adhoc_meester( $id, $datum, $blokdeel );
+					}
 				}
 			}
+			return [
+				'status' => $this->status( 'De reservering is aangepast' ),
+			];
 		}
-		update_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), $reserveringen );
-		if ( current_user_can( BESTUUR ) && is_array( $data['input']['meester'] ) ) {
-			foreach ( $data['input']['meester'] as $blokdeel => $id ) {
-				if ( $data['input']['standaard'][ $blokdeel ] ) {
-					$this->standaard_meester( $id, $datum, $blokdeel );
-				} else {
-					$this->adhoc_meester( $id, $datum, $blokdeel );
-				}
-			}
-		}
-		return [
-			'status' => $this->status( 'De reservering is aangepast' ),
-		];
 	}
 
 	/**

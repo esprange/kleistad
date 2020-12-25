@@ -44,7 +44,8 @@ class Public_Betaling extends ShortcodeForm {
 		if ( $order->gesloten ) {
 			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		$artikel = get_artikel( $order->referentie );
+		$artikelregister = new Artikelregister();
+		$artikel         = $artikelregister->geef_object( $order->referentie );
 		if ( is_null( $artikel ) || $param['hsh'] !== $artikel->controle() ) {
 			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
@@ -82,7 +83,8 @@ class Public_Betaling extends ShortcodeForm {
 		if ( $data['order']->gesloten ) {
 			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		$data['artikel'] = get_artikel( $data['order']->referentie );
+		$artikelregister = new Artikelregister();
+		$data['artikel'] = $artikelregister->geef_object( $data['order']->referentie );
 		$controle        = $data['artikel']->beschikbaarcontrole();
 		if ( empty( $controle ) ) {
 			return true;
