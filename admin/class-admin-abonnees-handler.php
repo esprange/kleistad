@@ -143,7 +143,7 @@ class Admin_Abonnees_Handler {
 			$actie      = $item['actie'];
 			$item_valid = $this->validate_abonnee( $item, $actie );
 			$notice     = is_string( $item_valid ) ? $item_valid : '';
-			$message    = empty( notice ) ? $this->wijzig_abonnee( $item, $actie ) : '';
+			$message    = empty( $notice ) ? $this->wijzig_abonnee( $item, $actie ) : '';
 		}
 		if ( isset( $_REQUEST['id'] ) ) {
 			$abonnee_id = $_REQUEST['id'];

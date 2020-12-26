@@ -114,7 +114,7 @@ class Admin_Instellingen_Handler {
 			return;
 		}
 		$vandaag         = strtotime( 'today' );
-		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid', [] );
+		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid' ) ?: [];
 		$csv             = array_map( 'str_getcsv', file( $csv_file ) ?: [] );
 		foreach ( array_keys( $beschikbaarheid ) as $datum ) {
 			if ( $datum >= $vandaag ) {

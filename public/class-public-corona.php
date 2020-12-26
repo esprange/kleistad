@@ -61,28 +61,28 @@ class Public_Corona extends ShortcodeForm {
 	/**
 	 * Bewaar een standaard meester
 	 *
-	 * @param int $id       Het gebruikersid van de meester.
-	 * @param int $datum    De unix datum.
-	 * @param int $blokdeel Het blokdeel, beginnend vanaf 0.
+	 * @param int $meester_id Het gebruikersid van de meester.
+	 * @param int $datum      De unix datum.
+	 * @param int $blokdeel   Het blokdeel, beginnend vanaf 0.
 	 */
-	private function standaard_meester( $id, $datum, $blokdeel ) {
+	private function standaard_meester( $meester_id, $datum, $blokdeel ) {
 		$dagnr                           = intval( date( 'w', $datum ) );
 		$meesters                        = get_option( 'kleistad_meesters', [] );
-		$meesters[ $dagnr ][ $blokdeel ] = $id;
+		$meesters[ $dagnr ][ $blokdeel ] = $meester_id;
 		update_option( 'kleistad_meesters', $meesters );
 	}
 
 	/**
 	 * Bewaar een afwijkende meester
 	 *
-	 * @param int $id       Het gebruikersid van de meester.
-	 * @param int $datum    De unix datum.
-	 * @param int $blokdeel Het blokdeel, beginnend vanaf 0.
+	 * @param int $meester_id Het gebruikersid van de meester.
+	 * @param int $datum      De unix datum.
+	 * @param int $blokdeel   Het blokdeel, beginnend vanaf 0.
 	 */
-	private function adhoc_meester( $id, $datum, $blokdeel ) {
+	private function adhoc_meester( $meester_id, $datum, $blokdeel ) {
 		$optie              = 'kleistad_adhoc_' . date( 'yyyymmdd', $datum );
 		$adhoc              = get_option( $optie, [] );
-		$adhoc[ $blokdeel ] = $id;
+		$adhoc[ $blokdeel ] = $meester_id;
 		update_option( $optie, $adhoc );
 	}
 
@@ -302,39 +302,39 @@ class Public_Corona extends ShortcodeForm {
 		$beschikbaarheid = $this->beschikbaarheid( $datum );
 		$reserveringen   = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
 		$aanpassingen    = $data['input']['res'] ?: [];
-		$id              = intval( $data['input']['id'] );
+		$gebruiker_id              = intval( $data['input']['id'] );
 		foreach ( $aanpassingen as $index => $aanpassing ) {
 			foreach ( array_keys( $aanpassing ) as $werk ) {
-				if ( ! in_array( $id, $reserveringen[ $index ][ $werk ] ?? [], true ) ) {
+				if ( ! in_array( $gebruiker_id, $reserveringen[ $index ][ $werk ] ?? [], true ) ) {
 					if ( count( $reserveringen[ $index ][ $werk ] ?? [] ) >= $beschikbaarheid[ $index ][ $werk ] ) {
 						return [
 							'status' => $this->status( new WP_Error( 'werkplek', 'De reservering kon niet worden opgeslagen, probeer het opnieuw' ) ),
 						];
 					}
-					$reserveringen[ $index ][ $werk ][] = $id;
+					$reserveringen[ $index ][ $werk ][] = $gebruiker_id;
 				}
 			}
-			foreach ( $reserveringen as $index => $reservering ) {
-				foreach ( $reservering as $werk => $ids ) {
-					if ( ! isset( $aanpassingen[ $index ][ $werk ] ) && in_array( $id, $ids, true ) ) {
-						$reserveringen[ $index ][ $werk ] = array_diff( $reserveringen[ $index ][ $werk ], [ $id ] );
-					}
-				}
-			}
-			update_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), $reserveringen );
-			if ( current_user_can( BESTUUR ) && is_array( $data['input']['meester'] ) ) {
-				foreach ( $data['input']['meester'] as $blokdeel => $id ) {
-					if ( $data['input']['standaard'][ $blokdeel ] ) {
-						$this->standaard_meester( $id, $datum, $blokdeel );
-					} else {
-						$this->adhoc_meester( $id, $datum, $blokdeel );
-					}
-				}
-			}
-			return [
-				'status' => $this->status( 'De reservering is aangepast' ),
-			];
 		}
+		foreach ( $reserveringen as $index => $reservering ) {
+			foreach ( $reservering as $werk => $ids ) {
+				if ( ! isset( $aanpassingen[ $index ][ $werk ] ) && in_array( $gebruiker_id, $ids, true ) ) {
+					$reserveringen[ $index ][ $werk ] = array_diff( $reserveringen[ $index ][ $werk ], [ $gebruiker_id ] );
+				}
+			}
+		}
+		update_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), $reserveringen );
+		if ( current_user_can( BESTUUR ) && is_array( $data['input']['meester'] ) ) {
+			foreach ( $data['input']['meester'] as $blokdeel => $gebruiker_id ) {
+				if ( $data['input']['standaard'][ $blokdeel ] ) {
+					$this->standaard_meester( $gebruiker_id, $datum, $blokdeel );
+				} else {
+					$this->adhoc_meester( $gebruiker_id, $datum, $blokdeel );
+				}
+			}
+		}
+		return [
+			'status' => $this->status( 'De reservering is aangepast' ),
+		];
 	}
 
 	/**

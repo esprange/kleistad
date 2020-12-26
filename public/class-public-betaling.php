@@ -85,11 +85,14 @@ class Public_Betaling extends ShortcodeForm {
 		}
 		$artikelregister = new Artikelregister();
 		$data['artikel'] = $artikelregister->geef_object( $data['order']->referentie );
-		$controle        = $data['artikel']->beschikbaarcontrole();
-		if ( empty( $controle ) ) {
-			return true;
+		if ( is_object( $data['artikel'] ) ) {
+			$controle .= $data['artikel']->beschikbaarcontrole();
+			if ( empty( $controle ) ) {
+				return true;
+			}
+			return new WP_Error( 'Beschikbaar', $controle );
 		}
-		return new WP_Error( 'Beschikbaar', $controle );
+		return new WP_Error( 'Beschikbaar', 'Interne fout' );
 	}
 
 	/**
