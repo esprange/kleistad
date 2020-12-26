@@ -19,6 +19,12 @@ use stdClass;
  * Kleistad Cursist class.
  *
  * @since 6.11.0
+ *
+ * @property string straat
+ * @property string huisnr
+ * @property string pcode
+ * @property string plaats
+ * @property string telnr
  */
 class Cursist extends WP_User {
 

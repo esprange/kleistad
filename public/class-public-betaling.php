@@ -86,7 +86,7 @@ class Public_Betaling extends ShortcodeForm {
 		$artikelregister = new Artikelregister();
 		$data['artikel'] = $artikelregister->geef_object( $data['order']->referentie );
 		if ( is_object( $data['artikel'] ) ) {
-			$controle .= $data['artikel']->beschikbaarcontrole();
+			$controle = $data['artikel']->beschikbaarcontrole();
 			if ( empty( $controle ) ) {
 				return true;
 			}

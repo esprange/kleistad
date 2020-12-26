@@ -41,18 +41,18 @@ class Public_Corona extends ShortcodeForm {
 							],
 						]
 					);
-				} else {
-					$dagnr       = intval( date( 'w', $datum ) );
-					$resultaat[] = array_merge(
-						$beschikbaarheid,
-						[
-							'M' => [
-								'id' => $meesters[ $dagnr ][ $blokdeel ] ?? 0,
-								's'  => intval( isset( $meesters[ $dagnr ][ $blokdeel ] ) ),
-							],
-						]
-					);
+					continue;
 				}
+				$dagnr       = intval( date( 'w', $datum ) );
+				$resultaat[] = array_merge(
+					$beschikbaarheid,
+					[
+						'M' => [
+							'id' => $meesters[ $dagnr ][ $blokdeel ] ?? 0,
+							's'  => intval( isset( $meesters[ $dagnr ][ $blokdeel ] ) ),
+						],
+					]
+				);
 			}
 		}
 		return $resultaat;
@@ -327,9 +327,9 @@ class Public_Corona extends ShortcodeForm {
 			foreach ( $data['input']['meester'] as $blokdeel => $gebruiker_id ) {
 				if ( $data['input']['standaard'][ $blokdeel ] ) {
 					$this->standaard_meester( $gebruiker_id, $datum, $blokdeel );
-				} else {
-					$this->adhoc_meester( $gebruiker_id, $datum, $blokdeel );
+					continue;
 				}
+				$this->adhoc_meester( $gebruiker_id, $datum, $blokdeel );
 			}
 		}
 		return [

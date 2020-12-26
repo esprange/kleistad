@@ -37,7 +37,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
 				'docent'     => $workshop->docent,
 				'aantal'     => $workshop->aantal,
-				'status'     => $workshop->status(),
+				'status'     => $workshop->geef_statustekst(),
 			];
 		}
 		return $lijst;
