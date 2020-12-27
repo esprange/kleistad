@@ -80,7 +80,7 @@ class Artikelregister  implements Countable, Iterator {
 		foreach ( self::$register as $artikel ) {
 			if ( $referentie[0] === $artikel['prefix'] ) {
 				$parameters = explode( '-', substr( $referentie, 1 ) );
-				$class      = $artikel['class'];
+				$class      = '\\' .  __NAMESPACE__ . '\\' . $artikel['class'];
 				if ( 1 === $artikel['pcount'] ) {
 					$object               = new $class( (int) $parameters[0] );
 					$object->artikel_type = $parameters[1] ?? $object->artikel_type;

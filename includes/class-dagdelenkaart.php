@@ -90,15 +90,6 @@ class Dagdelenkaart extends Artikel {
 	}
 
 	/**
-	 * Geef de artikel naam.
-	 *
-	 * @return string
-	 */
-	public function geef_artikelnaam() : string {
-		return 'dagdelenkaart';
-	}
-
-	/**
 	 * Start de betaling van een nieuw dagdelenkaart.
 	 *
 	 * @param  string $bericht  Te tonen melding als betaling gelukt.

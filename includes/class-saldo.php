@@ -126,15 +126,6 @@ class Saldo extends Artikel {
 	}
 
 	/**
-	 * Geef de artikel naam.
-	 *
-	 * @return string
-	 */
-	public function geef_artikelnaam() : string {
-		return 'stooksaldo';
-	}
-
-	/**
 	 * Betaal de bijstorting saldo met iDeal.
 	 *
 	 * @since      4.2.0

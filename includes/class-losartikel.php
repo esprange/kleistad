@@ -75,15 +75,6 @@ class LosArtikel extends Artikel {
 	}
 
 	/**
-	 * Geef de artikel naam.
-	 *
-	 * @return string
-	 */
-	public function geef_artikelnaam() : string {
-		return 'losse verkoop';
-	}
-
-	/**
 	 * Betalen functie, wordt niet gebruikt.
 	 *
 	 * @param  string $bericht Dummy variable.

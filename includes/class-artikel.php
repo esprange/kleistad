@@ -58,13 +58,6 @@ abstract class Artikel {
 	public $artikel_type = '';
 
 	/**
-	 * Geef de naam van het artikel.
-	 *
-	 * @return string
-	 */
-	abstract public function geef_artikelnaam(): string;
-
-	/**
 	 * Betaal het artikel per ideal.
 	 *
 	 * @param  string $bericht    Het bericht na succesvolle betaling.
@@ -115,16 +108,16 @@ abstract class Artikel {
 	/**
 	 * Een bestelling annuleren.
 	 *
-	 * @param int    $id        Het id van de order.
+	 * @param int    $order_id  Het id van de order.
 	 * @param float  $restant   Het te betalen bedrag bij annulering.
 	 * @param string $opmerking De opmerkingstekst in de factuur.
 	 * @return string De url van de creditfactuur of lege string.
 	 */
-	final public function annuleer_order( int $id, float $restant, string $opmerking ): string {
+	final public function annuleer_order( int $order_id, float $restant, string $opmerking ): string {
 		if ( ! $this->afzeggen() ) {
 			return '';
 		}
-		$order = new Order( $id );
+		$order = new Order( $order_id );
 		if ( $order->credit_id || $order->origineel_id ) {
 			return '';  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
 		}
@@ -183,13 +176,13 @@ abstract class Artikel {
 	/**
 	 * Een bestelling wijzigen ivm korting.
 	 *
-	 * @param int    $id        Het id van de order.
+	 * @param int    $order_id  Het id van de order.
 	 * @param float  $korting   De te geven korting.
 	 * @param string $opmerking De opmerking in de factuur.
 	 * @return bool|string De url van de factuur of fout.
 	 */
-	final public function korting_order( int $id, float $korting, string $opmerking ) {
-		$order = new Order( $id );
+	final public function korting_order( int $order_id, float $korting, string $opmerking ) {
+		$order = new Order( $order_id );
 		if ( $order->is_geblokkeerd() ) {
 			return false;
 		}
@@ -205,14 +198,14 @@ abstract class Artikel {
 	/**
 	 * Een bestelling betalen.
 	 *
-	 * @param int    $id            Het id van de order.
+	 * @param int    $order_id      Het id van de order.
 	 * @param float  $bedrag        Het betaalde bedrag.
 	 * @param string $transactie_id De betalings id.
 	 * @param bool   $factuur       Of er wel / niet een factuur aangemaakt moet worden.
 	 * @return string Pad naar de factuur of leeg.
 	 */
-	final public function ontvang_order( int $id, float $bedrag, string $transactie_id, bool $factuur = false ): string {
-		$order                = new Order( $id );
+	final public function ontvang_order( int $order_id, float $bedrag, string $transactie_id, bool $factuur = false ): string {
+		$order                = new Order( $order_id );
 		$order->betaald      += $bedrag;
 		$order->historie      = sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'betaling' : 'stornering', abs( $bedrag ), $order->betaald );
 		$order->transactie_id = $transactie_id;
@@ -224,12 +217,12 @@ abstract class Artikel {
 	/**
 	 * Een bestelling wijzigen.
 	 *
-	 * @param int    $id        Het id van de order.
+	 * @param int    $order_id  Het id van de order.
 	 * @param string $opmerking De optionele opmerking in de factuur.
 	 * @return bool|string De url van de factuur of false.
 	 */
-	final public function wijzig_order( int $id, string $opmerking = '' ) {
-		$originele_order = new Order( $id );
+	final public function wijzig_order( int $order_id, string $opmerking = '' ) {
+		$originele_order = new Order( $order_id );
 		$order           = clone $originele_order;
 		if ( $order->is_geblokkeerd() ) {
 			return false;
@@ -258,6 +251,15 @@ abstract class Artikel {
 	 */
 	final public function controle() : string {
 		return hash( 'sha256', "KlEiStAd{$this->code}cOnTrOlE3812LE" );
+	}
+
+	/**
+	 * Geef de naam van het artikel, kan nader ingevuld worden.
+	 *
+	 * @return string
+	 */
+	public function geef_artikelnaam(): string {
+		return static::DEFINITIE['naam'];
 	}
 
 	/**

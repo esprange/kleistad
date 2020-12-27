@@ -314,20 +314,18 @@ class Inschrijving extends Artikel {
 	 * @param int $aantal    aantal cursisten.
 	 */
 	public function correct( $cursus_id, $aantal ) {
-		$bestaande_inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
-		if ( is_array( $bestaande_inschrijvingen ) ) {
-			$inschrijvingen = $bestaande_inschrijvingen;
+		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
+		if ( is_array( $inschrijvingen ) ) {
 			$order          = new Order( $this->geef_referentie() );
 			if ( array_key_exists( $cursus_id, $inschrijvingen ) ) {
 				return false; // Al eerder gecorrigeerd.
 			}
+			unset( $inschrijvingen[ $this->cursus->id ] );
 			$this->code                   = "C$cursus_id-$this->klant_id";
 			$this->aantal                 = $aantal;
+			$this->cursus                 = new Cursus( $cursus_id );
 			$inschrijvingen[ $cursus_id ] = $this->data;
-			unset( $inschrijvingen[ $this->cursus->id ] );
 			update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-			$this->cursus = new Cursus( $cursus_id );
-			$this->save();
 			$factuur = $this->wijzig_order( $order->id );
 			if ( false === $factuur ) {
 				return false; // Er is niets gewijzigd.

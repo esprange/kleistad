@@ -127,15 +127,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Geef de artikel naam.
-	 *
-	 * @return string
-	 */
-	public function geef_artikelnaam() : string {
-		return 'abonnement';
-	}
-
-	/**
 	 * Bepaal of er gepauzeerd is.
 	 *
 	 * @return bool

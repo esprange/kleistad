@@ -22,13 +22,4 @@ class Afboeking extends LosArtikel {
 		'pcount' => 1,
 	];
 
-	/**
-	 * Geef de artikel naam.
-	 *
-	 * @return string
-	 */
-	public function geef_artikelnaam() : string {
-		return 'afboeking';
-	}
-
 }
