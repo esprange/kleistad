@@ -34,7 +34,7 @@ class Inschrijving extends Artikel {
 		'naam'   => 'cursus',
 		'pcount' => 2,
 	];
-	public const META_KEY          = 'kleistad_cursus';
+	public const META_KEY          = 'kleistad_inschrijving';
 	private const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
 	private const EMAIL_SUBJECT    = [
 		'inschrijving'    => 'Inschrijving cursus',
@@ -128,20 +128,7 @@ class Inschrijving extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
-		switch ( $attribuut ) {
-			case 'technieken':
-			case 'extra_cursisten':
-				return ( is_array( $this->data[ $attribuut ] ) ) ? $this->data[ $attribuut ] : [];
-			case 'datum':
-			case 'wacht_datum':
-				return strtotime( $this->data[ $attribuut ] );
-			case 'geannuleerd':
-			case 'restant_email':
-			case 'herinner_email':
-				return boolval( $this->data[ $attribuut ] ?? false );
-			default:
-				return ( is_string( $this->data[ $attribuut ] ) ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
-		}
+		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
 	}
 
 	/**
@@ -153,18 +140,7 @@ class Inschrijving extends Artikel {
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
-		switch ( $attribuut ) {
-			case 'technieken':
-			case 'extra_cursisten':
-				$this->data[ $attribuut ] = is_array( $waarde ) ? $waarde : [];
-				break;
-			case 'datum':
-			case 'wacht_datum':
-				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
-				break;
-			default:
-				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
-		}
+		$this[ $attribuut ] = $waarde;
 	}
 
 	/**

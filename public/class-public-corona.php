@@ -302,7 +302,7 @@ class Public_Corona extends ShortcodeForm {
 		$beschikbaarheid = $this->beschikbaarheid( $datum );
 		$reserveringen   = get_option( 'kleistad_corona_' . date( 'm-d-Y', $datum ), [] );
 		$aanpassingen    = $data['input']['res'] ?: [];
-		$gebruiker_id              = intval( $data['input']['id'] );
+		$gebruiker_id    = intval( $data['input']['id'] );
 		foreach ( $aanpassingen as $index => $aanpassing ) {
 			foreach ( array_keys( $aanpassing ) as $werk ) {
 				if ( ! in_array( $gebruiker_id, $reserveringen[ $index ][ $werk ] ?? [], true ) ) {

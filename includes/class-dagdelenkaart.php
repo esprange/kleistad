@@ -25,7 +25,7 @@ class Dagdelenkaart extends Artikel {
 		'naam'   => 'dagdelenkaart',
 		'pcount' => 1,
 	];
-	public const META_KEY  = 'kleistad_dagdelenkaart';
+	public const META_KEY  = 'kleistad_dagdelenkaart_v2';
 
 	/**
 	 * De beginwaarden van een dagdelenkaart.
@@ -69,18 +69,7 @@ class Dagdelenkaart extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
-		switch ( $attribuut ) {
-			case 'datum':
-			case 'start_datum':
-				return strtotime( $this->data[ $attribuut ] );
-			case 'eind_datum':
-				return strtotime( '+3 month ' . $this->data['start_datum'] );
-			default:
-				if ( is_string( $this->data[ $attribuut ] ) ) {
-					return htmlspecialchars_decode( $this->data[ $attribuut ] );
-				}
-				return $this->data[ $attribuut ];
-		}
+		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
 	}
 
 	/**
@@ -90,14 +79,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
-		switch ( $attribuut ) {
-			case 'datum':
-			case 'start_datum':
-				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
-				break;
-			default:
-				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
-		}
+		$this[ $attribuut ] = $waarde;
 	}
 
 	/**
@@ -254,24 +236,5 @@ class Dagdelenkaart extends Artikel {
 	 */
 	public static function doe_dagelijks() {
 		// Geen functionaliteit vooralsnog.
-	}
-
-	/**
-	 * Return alle dagdelenkaarten.
-	 *
-	 * @return array dagdelenkaarten.
-	 */
-	public static function all() {
-		$arr        = [];
-		$gebruikers = get_users(
-			[
-				'meta_key' => self::META_KEY,
-				'fields'   => [ 'ID' ],
-			]
-		);
-		foreach ( $gebruikers as $gebruiker ) {
-			$arr[ $gebruiker->ID ] = new Dagdelenkaart( $gebruiker->ID );
-		}
-		return $arr;
 	}
 }

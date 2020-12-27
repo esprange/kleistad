@@ -282,22 +282,4 @@ class Order {
 		}
 		return $this->id;
 	}
-
-	/**
-	 * Return alle orders.
-	 *
-	 * @param string $zoek Toon alleen orders die voldoen aan de zoekterm, anders toon alleen openstaande ordes.
-	 * @return array orders.
-	 */
-	public static function all( string $zoek = '' ) : array {
-		global $wpdb;
-		$arr    = [];
-		$zoek   = strtolower( $zoek );
-		$where  = empty( $zoek ) ? 'WHERE gesloten = 0' : "WHERE lower( concat ( klant, ' ', referentie ) ) LIKE '%$zoek%'";
-		$orders = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders $where", ARRAY_A ); // phpcs:ignore
-		foreach ( $orders as $order ) {
-			$arr[ $order['id'] ] = new Order( $order['id'] );
-		}
-		return $arr;
-	}
 }

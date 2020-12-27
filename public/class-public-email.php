@@ -41,14 +41,12 @@ class Public_Email extends ShortcodeForm {
 		}
 
 		if ( current_user_can( BESTUUR ) ) {
-			$bestuur = get_users( [ 'role' => BESTUUR ] );
-			foreach ( $bestuur as $bestuurslid ) {
-				$data['input']['tree'][-1]['naam']                      = 'Bestuur';
-				$data['input']['tree'][-1]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
+			foreach ( get_users( [ 'role' => BESTUUR ] ) as $bestuurslid ) {
+				$data['input']['tree'][-3]['naam']                      = 'Bestuur';
+				$data['input']['tree'][-3]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
 			}
 
-			$docenten = get_users( [ 'role' => DOCENT ] );
-			foreach ( $docenten as $docent ) {
+			foreach ( get_users( [ 'role' => DOCENT ] ) as $docent ) {
 				$data['input']['tree'][-2]['naam']                 = 'Docenten';
 				$data['input']['tree'][-2]['leden'][ $docent->ID ] = $docent->display_name;
 			}
@@ -57,6 +55,13 @@ class Public_Email extends ShortcodeForm {
 				if ( ! $abonnee->abonnement->is_geannuleerd() ) {
 					$data['input']['tree'][0]['naam']                  = 'Abonnees';
 					$data['input']['tree'][0]['leden'][ $abonnee->ID ] = $abonnee->display_name;
+				}
+			}
+
+			foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
+				if ( $dagdelengebruiker->is_actief() ) {
+					$data['input']['tree'][-1]['naam']                            = 'Dagdelenkaarten';
+					$data['input']['tree'][-1]['leden'][ $dagdelengebruiker->ID ] = $dagdelengebruiker->display_name;
 				}
 			}
 		}

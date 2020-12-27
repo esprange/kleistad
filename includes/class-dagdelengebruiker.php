@@ -14,19 +14,19 @@ namespace Kleistad;
 use WP_User;
 use stdClass;
 
-/**]
- * Kleistad Abonnee class.
+/**
+ * Kleistad Dagdelenkaart gebruiker class.
  *
  * @since 6.11.0
  */
-class Abonnee extends Gebruiker {
+class Dagdelengebruiker extends Gebruiker {
 
 	/**
-	 * Het abonnement
+	 * De dagdelenkaart
 	 *
-	 * @var Abonnement $abonnement Het abonnement.
+	 * @var Dagdelenkaart $dagdelenkaart De kaart.
 	 */
-	public Abonnement $abonnement;
+	public Dagdelenkaart $dagdelenkaart;
 
 	/**
 	 * Constructor
@@ -38,15 +38,16 @@ class Abonnee extends Gebruiker {
 	 */
 	public function __construct( $id = 0, $name = '', $site_id = null ) {
 		parent::__construct( $id, $name, $site_id );
-		$this->abonnement = new Abonnement( $this->ID );
+		$this->dagdelenkaart = new Dagdelenkaart( $this->ID );
 	}
 
 	/**
-	 * Bepaal of de abonnee nu actief is.
+	 * Bepaal of de dagdelenkaart nog actief is.
 	 *
 	 * @return bool True als actief.
 	 */
 	public function is_actief() {
-		return user_can( $this->ID, LID );
+		return $this->dagdelenkaart->eind_datum > strtotime( 'today' );
 	}
 }
+

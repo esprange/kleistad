@@ -1,6 +1,6 @@
 <?php
 /**
- * De definitie van de cursisten class.
+ * De definitie van de dagdelengebruikers class.
  *
  * @link       https://www.kleistad.nl
  * @since      6.11.0
@@ -12,27 +12,27 @@
 namespace Kleistad;
 
 /**
- * Kleistad Cursisten class.
+ * Kleistad Dagdelengebruikers class.
  *
  * @since 6.11.0
  */
-class Cursisten extends Gebruikers {
+class Dagdelengebruikers extends Gebruikers {
 
 	/**
 	 * De constructor
 	 */
 	public function __construct() {
-		$cursisten = get_users(
+		$dagdelengebruikers = get_users(
 			[
 				'fields'       => [ 'ID' ],
-				'meta_key'     => Inschrijving::META_KEY,
+				'meta_key'     => Dagdelenkaart::META_KEY,
 				'meta_compare' => '!==',
 				'meta_value'   => '',
 				'orderby'      => 'display_name',
 			]
 		);
-		foreach ( $cursisten as $cursist ) {
-			$this->gebruikers[] = new Cursist( $cursist->ID );
+		foreach ( $dagdelengebruikers as $dagdelengebruiker ) {
+			$this->gebruikers[] = new Dagdelengebruiker( $dagdelengebruiker->ID );
 		}
 	}
 

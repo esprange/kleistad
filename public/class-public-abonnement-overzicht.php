@@ -18,7 +18,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 
 	/**
 	 *
-	 * Prepareer 'cursus_overzicht'
+	 * Prepareer 'abonnement_overzicht'
 	 *
 	 * @param array $data data voor display.
 	 * @return bool

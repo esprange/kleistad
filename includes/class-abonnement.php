@@ -30,7 +30,7 @@ use DateTimeZone;
  * @property bool   overbrugging_email
  * @property array  extras
  * @property int    factuur_maand
- * @property string historie
+ * @property array historie
  */
 class Abonnement extends Artikel {
 
@@ -39,7 +39,7 @@ class Abonnement extends Artikel {
 		'naam'   => 'abonnement',
 		'pcount' => 1,
 	];
-	public const META_KEY        = 'kleistad_abonnement';
+	public const META_KEY        = 'kleistad_abonnement_v2';
 	public const MAX_PAUZE_WEKEN = 9;
 	public const MIN_PAUZE_WEKEN = 2;
 	private const EMAIL_SUBJECT  = [
@@ -61,20 +61,20 @@ class Abonnement extends Artikel {
 	 */
 	private $default_data = [
 		'code'               => '',
-		'datum'              => '',
-		'start_datum'        => '',
-		'start_eind_datum'   => '',
+		'datum'              => 0,
+		'start_datum'        => 0,
+		'start_eind_datum'   => 0,
 		'dag'                => '',
 		'opmerking'          => '',
 		'soort'              => 'onbeperkt',
-		'pauze_datum'        => '',
-		'eind_datum'         => '',
-		'herstart_datum'     => '',
-		'reguliere_datum'    => '',
+		'pauze_datum'        => 0,
+		'eind_datum'         => 0,
+		'herstart_datum'     => 0,
+		'reguliere_datum'    => 0,
 		'overbrugging_email' => 0,
 		'extras'             => [],
 		'factuur_maand'      => '',
-		'historie'           => '',
+		'historie'           => [],
 	];
 
 	/**
@@ -106,21 +106,7 @@ class Abonnement extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
-		if ( preg_match( '~(datum)~', $attribuut ) ) {
-			return strtotime( $this->data[ $attribuut ] );
-		}
-		switch ( $attribuut ) {
-			case 'overbrugging_email':
-				return boolval( $this->data[ $attribuut ] );
-			case 'dag':
-				return 'beperkt' === $this->soort ? $this->data[ $attribuut ] : '';
-			case 'extras':
-				return $this->data['extras'] ?? [];
-			case 'historie':
-				return json_decode( $this->data[ $attribuut ], true ) ?: [];
-			default:
-				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
-		}
+		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
 	}
 
 	/**
@@ -130,18 +116,7 @@ class Abonnement extends Artikel {
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( string $attribuut, $waarde ) : void {
-		if ( false !== strpos( $attribuut, 'datum' ) ) {
-			$this->data[ $attribuut ] = $waarde ? date( 'Y-m-d', $waarde ) : '';
-			return;
-		} elseif ( 'historie' === $attribuut ) {
-			$tijd = new DateTime();
-			$tijd->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
-			$historie                 = json_decode( $this->data[ $attribuut ], true );
-			$historie[]               = $tijd->format( 'd-m-Y H:i' ) . ": $waarde";
-			$this->data[ $attribuut ] = wp_json_encode( $historie );
-			return;
-		}
-		$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
+		$this[ $attribuut ] = $waarde;
 	}
 
 	/**
@@ -212,7 +187,7 @@ class Abonnement extends Artikel {
 	 * @return string|bool De redirect uri of false als de betaling niet lukt.
 	 */
 	public function start_incasso() {
-		$this->historie = 'gestart met automatisch betalen';
+		$this->log( 'gestart met automatisch betalen' );
 		$this->save();
 		$this->artikel_type = 'mandaat';
 		return $this->doe_idealbetaling( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', $this->geef_referentie() );
@@ -223,7 +198,7 @@ class Abonnement extends Artikel {
 	 */
 	public function stop_incasso() : bool {
 		$this->betalen->verwijder_mandaat( $this->klant_id );
-		$this->historie = 'gestopt met automatisch betalen';
+		$this->log( 'gestopt met automatisch betalen' );
 		$this->save();
 		if ( ! is_admin() ) {
 			$this->bericht = 'Je gaat het abonnement voortaan per bank betalen';
@@ -340,7 +315,7 @@ class Abonnement extends Artikel {
 		$this->herstart_datum = $herstart_datum;
 		$pauze_datum_str      = strftime( '%d-%m-%Y', $this->pauze_datum );
 		$herstart_datum_str   = strftime( '%d-%m-%Y', $this->herstart_datum );
-		$this->historie       = "gepauzeerd per $pauze_datum_str en hervat per $herstart_datum_str";
+		$this->log( "gepauzeerd per $pauze_datum_str en hervat per $herstart_datum_str" );
 		$this->save();
 		$this->bericht     = ( $thans_gepauzeerd ) ?
 			"Je hebt aangegeven dat je abonnement, dat nu gepauzeerd is, hervat wordt per $herstart_datum_str"
@@ -417,8 +392,8 @@ class Abonnement extends Artikel {
 		$this->eind_datum = $eind_datum;
 		$eind_datum_str   = strftime( '%d-%m-%Y', $this->eind_datum );
 		$this->betalen->verwijder_mandaat( $this->klant_id );
-		$this->historie = "gestopt per $eind_datum_str";
-		$this->bericht  = "Je hebt het abonnement per $eind_datum_str beëindigd.";
+		$this->log( "gestopt per $eind_datum_str" );
+		$this->bericht = "Je hebt het abonnement per $eind_datum_str beëindigd.";
 		$this->save();
 		if ( ! is_admin() ) {
 			$this->verzend_email( '_gewijzigd' );
@@ -497,18 +472,18 @@ class Abonnement extends Artikel {
 		switch ( $type ) {
 			case 'soort':
 				$gewijzigd      = $this->soort != $soort || $this->dag != $dag; // phpcs:ignore
-				$this->soort    = $soort;
-				$this->dag      = $dag;
-				$this->historie = "gewijzigd per $wijzig_datum_str naar $soort $dag";
-				$this->bericht  = "Je hebt het abonnement per $wijzig_datum_str gewijzigd naar {$this->soort} " .
+				$this->soort = $soort;
+				$this->dag   = $dag;
+				$this->log( "gewijzigd per $wijzig_datum_str naar $soort $dag" );
+				$this->bericht = "Je hebt het abonnement per $wijzig_datum_str gewijzigd naar {$this->soort} " .
 					( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
 				break;
 			case 'extras':
 				$gewijzigd    = $this->extras != $soort; // phpcs:ignore
-				$this->extras   = $soort;
-				$soort_str      = ! is_null( $soort ) ? ( 'gebruik maken van ' . implode( ', ', $soort ) ) : 'geen extras meer gebruiken';
-				$this->historie = "extras gewijzigd per $wijzig_datum_str naar $soort_str";
-				$this->bericht  = "Je gaat voortaan per $wijzig_datum_str $soort_str";
+				$this->extras = $soort;
+				$soort_str    = ! is_null( $soort ) ? ( 'gebruik maken van ' . implode( ', ', $soort ) ) : 'geen extras meer gebruiken';
+				$this->log( "extras gewijzigd per $wijzig_datum_str naar $soort_str" );
+				$this->bericht = "Je gaat voortaan per $wijzig_datum_str $soort_str";
 				break;
 			default:
 				$this->bericht = '';
@@ -719,27 +694,11 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Return alle abonnementen
+	 * Helper functie, om een handeling toe te voegen
 	 *
-	 * @param string $search Optionele zoekterm.
-	 * @return array abonnementen.
+	 * @param string $tekst De handeling.
 	 */
-	public static function all( string $search = '' ) : array {
-		static $arr = null;
-		if ( is_null( $arr ) ) {
-			$arr      = [];
-			$abonnees = get_users(
-				[
-					'meta_key' => self::META_KEY,
-					'fields'   => [ 'ID' ],
-					'search'   => '*' . $search . '*',
-				]
-			);
-			foreach ( $abonnees as $abonnee ) {
-				$arr[ $abonnee->ID ] = new Abonnement( $abonnee->ID );
-			}
-		}
-		return $arr;
+	private function log( string $tekst ) : void {
+		array_push( $this->historie, strftime( '%c' ) . " $tekst" );
 	}
-
 }

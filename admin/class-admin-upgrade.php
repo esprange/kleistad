@@ -19,7 +19,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 77;
+	const DBVERSIE = 88;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -214,18 +214,93 @@ class Admin_Upgrade {
 	 * Convert dagdelenkaart, er wordt gecontroleerd of er een enkel record bestaat.
 	 */
 	private function convert_dagdelenkaart() {
+		$dagdelengebruikers = get_users(
+			[
+				'meta_key' => 'kleistad_dagdelenkaart',
+				'fields'   => [ 'ID' ],
+			]
+		);
+		foreach( $dagdelengebruikers as $dagdelengebruiker ) {
+			$dagdelenkaarten = get_user_meta( $dagdelengebruiker->ID, 'kleistad_dagdelenkaart', true );
+			$nieuw = [];
+			foreach( $dagdelenkaarten as $dagdelenkaart ) {
+				$nieuw[] = [
+					'code'        => $dagdelenkaart['code'],
+					'datum'       => strtotime( $dagdelenkaart['datum'] ),
+					'start_datum' => strtotime( $dagdelenkaart['start_datum'] ),
+					'eind_datum'  => strtotime( '+3 month ' . $dagdelenkaart['start_datum'] ),
+					'geannuleerd' => $dagdelenkaart['geannuleerd'],
+					'opmerking'   => $dagdelenkaart['opmerking'],
+				];
+			}
+			add_user_meta( $dagdelengebruiker->ID, 'kleistad_dagdelenkaart_v2', $nieuw, true ); 
+		}
 	}
 
 	/**
 	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
 	 */
 	private function convert_abonnement() {
+		$abonnees = get_users(
+			[
+				'meta_key' => 'kleistad_abonnement',
+				'fields'   => [ 'ID' ],
+			]
+		);
+		foreach ( $abonnees as $abonnee ) {
+			$abonnement = get_user_meta( $abonnee->ID, 'kleistad_abonnement', true );
+			$nieuw      = [
+				'code'               => $abonnement['code'],
+				'datum'              => strtotime( $abonnement['datum'] ),
+				'start_datum'        => strtotime( $abonnement['start_datum'] ),
+				'start_eind_datum'   => strtotime( $abonnement['start_eind_datum'] ),
+				'dag'                => $abonnement['dag'],
+				'opmerking'          => $abonnement['opmerking'],
+				'soort'              => $abonnement['soort'],
+				'pauze_datum'        => empty( $abonnement['pauze_datum'] ) ? 0 : strtotime( $abonnement['pauze_datum'] ),
+				'eind_datum'         => empty( $abonnement['eind_datum'] ) ? 0 : strtotime( $abonnement['eind_datum'] ),
+				'herstart_datum'     => empty( $abonnement['herstart_datum'] ) ? 0 : strtotime( $abonnement['herstart_datum'] ),
+				'reguliere_datum'    => empty( $abonnement['reguliere_datum'] ) ? 0 : strtotime( $abonnement['reguliere_datum'] ),
+				'overbrugging_email' => boolval( $abonnement['overbrugging_email'] ),
+				'extras'             => isset( $abonnement['extras'] ) ? $abonnement['extras'] : [],
+				'factuur_maand'      => isset( $abonnement['factuur_maand'] ) ? $abonnement['factuur_maand'] : 0,
+				'historie'           => json_decode( isset( $abonnement[ 'historie' ] ) ? $abonnement[ 'historie' ] : '', true ),
+			];
+			add_user_meta( $abonnee->ID, 'kleistad_abonnement_v2', $nieuw, true ); 
+		}
 	}
 
 	/**
 	 * Converteer inschrijving, maak de orders aan.
 	 */
 	private function convert_inschrijving() {
+		$cursisten = get_users(
+			[
+				'meta_key' => 'kleistad_cursus',
+				'fields'   => [ 'ID' ],
+			]
+		);
+		foreach ( $cursisten as $cursist ) {
+			$inschrijvingen = get_user_meta( $cursist->ID, 'kleistad_cursus', true );
+			$nieuw = [];
+			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+				$nieuw[$cursus_id] = [
+					'code'             => $inschrijving['code'],
+					'datum'            => strtotime( $inschrijving['datum'] ),
+					'technieken'       => isset( $inschrijving['technieken'] ) ? $inschrijving['technieken'] : [],
+					'ingedeeld'        => boolval( $inschrijving['ingedeeld'] ),
+					'geannuleerd'      => boolval( $inschrijving['geannuleerd'] ),
+					'opmerking'        => $inschrijving['opmerking'],
+					'aantal'           => $inschrijving['aantal'],
+					'restant_email'    => boolval( $inschrijving['restant_email'] ),
+					'herinner_email'   => boolval( $inschrijving['herinner_email'] ),
+					'wacht_datum'      => empty( $inschrijving['wacht_datum'] ) ? 0 : strtotime( $inschrijving['wacht_datum'] ),
+					'extra_cursisten'  => isset( $inschrijving['extra_cursisten'] ) ? $inschrijving['extra_cursisten'] : [],
+					'hoofd_cursist_id' => isset( $inschrijving['hoofd_cursist_id'] ) ? $inschrijving['hoofd_cursist_id'] : 0,
+				];
+			}
+			add_user_meta( $cursist->ID, 'kleistad_inschrijving', $nieuw, true ); 
+		}
 	}
 
 	/**
@@ -269,7 +344,7 @@ class Admin_Upgrade {
 	 */
 	private function convert_reserveringen() {
 		global $wpdb;
-		$wpdb->query ( "UPDATE {$wpdb->prefix}kleistad_reserveringen SET datum = concat( jaar, '-', maand, '-', dag )" );
+		$wpdb->query ( "UPDATE {$wpdb->prefix}kleistad_reserveringen SET datum = concat( jaar, '-', maand, '-', dag ) WHERE datum is NULL" );
 	}
 
 	// phpcs:enable
