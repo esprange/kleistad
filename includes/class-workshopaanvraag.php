@@ -157,6 +157,8 @@ class WorkshopAanvraag {
 
 	/**
 	 * Ontvang en verwerk emails.
+	 *
+	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
 	public static function ontvang_en_verwerk() {
 		// phpcs:disable WordPress.NamingConventions

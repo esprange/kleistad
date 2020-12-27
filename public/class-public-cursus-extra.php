@@ -19,6 +19,40 @@ use WP_Error;
 class Public_Cursus_Extra extends ShortcodeForm {
 
 	/**
+	 * Haal de extra cursisten op, eventueel initiëren.
+	 *
+	 * @param Inschrijving $inschrijving De inschrijving.
+	 * @return array De extra cursisten.
+	 */
+	private function prepare_extra_cursisten( Inschrijving $inschrijving ) : array {
+		$extra = [];
+		$index = 1;
+		foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
+			$extra_cursist = get_user_by( 'id', $extra_cursist_id );
+			if ( false === $extra_cursist ) {
+				continue;
+			}
+			$extra[ $index ] = [
+				'first_name' => $extra_cursist->first_name,
+				'last_name'  => $extra_cursist->last_name,
+				'user_email' => $extra_cursist->user_email,
+				'id'         => $extra_cursist_id,
+			];
+			$index++;
+		}
+		while ( $index < $inschrijving->aantal ) {
+			$extra[ $index ] = [
+				'first_name' => '',
+				'last_name'  => '',
+				'user_email' => '',
+				'id'         => 0,
+			];
+			$index++;
+		}
+		return $extra;
+	}
+
+	/**
 	 *
 	 * Prepareer 'cursus_extra' form
 	 *
@@ -38,9 +72,11 @@ class Public_Cursus_Extra extends ShortcodeForm {
 		if ( empty( $param['code'] ) || empty( $param['hsh'] ) ) {
 			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
-		list( $cursus_id, $cursist_id ) = explode( '-', substr( $param['code'], 1 ) );
-		$cursist                        = new Cursist( (int) $cursist_id );
-		$inschrijving                   = $cursist->geef_inschrijving( (int) $cursus_id );
+		$cursist_id = 0;
+		$cursus_id  = 0;
+		sscanf( substr( $param['code'], 1 ), '%d-%d', $cursus_id, $cursist_id );
+		$cursist      = new Cursist( $cursist_id );
+		$inschrijving = $cursist->geef_inschrijving( $cursus_id );
 
 		if ( is_object( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
@@ -49,30 +85,8 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			$data['cursus_naam']  = $inschrijving->cursus->naam;
 			$data['cursist_code'] = $inschrijving->code;
 			$data['cursist_naam'] = $cursist->display_name;
-			$index                = 1;
 			if ( ! isset( $data['input'] ) ) {
-				foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
-					$extra_cursist = get_user_by( 'id', $extra_cursist_id );
-					if ( false === $extra_cursist ) {
-						continue;
-					}
-					$data['input']['extra'][ $index ] = [
-						'first_name' => $extra_cursist->first_name,
-						'last_name'  => $extra_cursist->last_name,
-						'user_email' => $extra_cursist->user_email,
-						'id'         => $extra_cursist_id,
-					];
-					$index++;
-				}
-				while ( $index < $inschrijving->aantal ) {
-					$data['input']['extra'][ $index ] = [
-						'first_name' => '',
-						'last_name'  => '',
-						'user_email' => '',
-						'id'         => 0,
-					];
-					$index++;
-				}
+				$data['input']['extra'] = $this->prepare_extra_cursisten( $inschrijving );
 			}
 			return true;
 		}
@@ -88,8 +102,8 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 * @since   6.6.0
 	 */
 	protected function validate( &$data ) {
-		$error                          = new WP_Error();
-		$data['input']                  = filter_input_array(
+		$error         = new WP_Error();
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'extra_cursist' => [
@@ -99,9 +113,11 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				'code'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		list( $cursus_id, $cursist_id ) = explode( '-', substr( $data['input']['code'], 1 ) );
-		$data['inschrijving']           = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
-		$emails                         = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
+		$cursist_id    = 0;
+		$cursus_id     = 0;
+		sscanf( substr( $data['input']['code'], 1 ), '%d-%d', $cursus_id, $cursist_id );
+		$data['inschrijving'] = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
+		$emails               = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
 		foreach ( $data['input']['extra_cursist'] as &$extra_cursist ) {
 			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;

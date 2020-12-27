@@ -21,6 +21,12 @@ namespace Kleistad;
  */
 abstract class Artikel {
 
+	public const DEFINITIE = [
+		'prefix' => '',
+		'naam'   => '',
+		'pcount' => 0,
+	];
+
 	/**
 	 * Het betaal object.
 	 *

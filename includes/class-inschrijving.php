@@ -316,7 +316,7 @@ class Inschrijving extends Artikel {
 	public function correct( $cursus_id, $aantal ) {
 		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
 		if ( is_array( $inschrijvingen ) ) {
-			$order          = new Order( $this->geef_referentie() );
+			$order = new Order( $this->geef_referentie() );
 			if ( array_key_exists( $cursus_id, $inschrijvingen ) ) {
 				return false; // Al eerder gecorrigeerd.
 			}

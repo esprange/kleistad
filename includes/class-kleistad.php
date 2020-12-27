@@ -204,27 +204,28 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		$plugin_public = new Public_Main( $this->get_version(), opties() );
+		$plugin_filters = new Public_Filters();
+		$plugin_actions = new Public_Actions( $this->get_version(), opties() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_styles_and_scripts' );
-		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_endpoints' );
-		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
-		$this->loader->add_action( 'init', $plugin_public, 'register_post_types' );
-		$this->loader->add_action( 'kleistad_rcv_email', $plugin_public, 'rcv_email' );
-		$this->loader->add_action( 'init', $plugin_public, 'inline_style', 100 );
-		$this->loader->add_action( 'wp_ajax_kleistad_wachtwoord', $plugin_public, 'wachtwoord', 100 );
-		$this->loader->add_action( 'wp_ajax_nopriv_kleistad_wachtwoord', $plugin_public, 'wachtwoord', 100 );
-		$this->loader->add_action( 'profile_update', $plugin_public, 'profile_update' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'register_styles_and_scripts' );
+		$this->loader->add_action( 'rest_api_init', $plugin_actions, 'register_endpoints' );
+		$this->loader->add_action( 'init', $plugin_actions, 'register_shortcodes' );
+		$this->loader->add_action( 'init', $plugin_actions, 'register_post_types' );
+		$this->loader->add_action( 'kleistad_rcv_email', $plugin_actions, 'rcv_email' );
+		$this->loader->add_action( 'init', $plugin_actions, 'inline_style', 100 );
+		$this->loader->add_action( 'wp_ajax_kleistad_wachtwoord', $plugin_actions, 'wachtwoord', 100 );
+		$this->loader->add_action( 'wp_ajax_nopriv_kleistad_wachtwoord', $plugin_actions, 'wachtwoord', 100 );
+		$this->loader->add_action( 'profile_update', $plugin_actions, 'profile_update' );
 
-		$this->loader->add_filter( 'single_template', $plugin_public, 'single_template' );
-		$this->loader->add_filter( 'comments_template', $plugin_public, 'comments_template' );
-		$this->loader->add_filter( 'comment_form_default_fields', $plugin_public, 'comment_fields' );
-		$this->loader->add_filter( 'user_contactmethods', $plugin_public, 'user_contact_methods', 10, 2 );
-		$this->loader->add_filter( 'template_include', $plugin_public, 'template_include' );
-		$this->loader->add_filter( 'email_change_email', $plugin_public, 'email_change_email', 10, 3 );
-		$this->loader->add_filter( 'password_change_email', $plugin_public, 'password_change_email', 10, 3 );
-		$this->loader->add_filter( 'retrieve_password_message', $plugin_public, 'retrieve_password_message', 10, 4 );
-		$this->loader->add_filter( 'password_hint', $plugin_public, 'password_hint' );
+		$this->loader->add_filter( 'single_template', $plugin_filters, 'single_template' );
+		$this->loader->add_filter( 'comments_template', $plugin_filters, 'comments_template' );
+		$this->loader->add_filter( 'comment_form_default_fields', $plugin_filters, 'comment_fields' );
+		$this->loader->add_filter( 'user_contactmethods', $plugin_filters, 'user_contact_methods', 10, 2 );
+		$this->loader->add_filter( 'template_include', $plugin_filters, 'template_include' );
+		$this->loader->add_filter( 'email_change_email', $plugin_filters, 'email_change_email', 10, 3 );
+		$this->loader->add_filter( 'password_change_email', $plugin_filters, 'password_change_email', 10, 3 );
+		$this->loader->add_filter( 'retrieve_password_message', $plugin_filters, 'retrieve_password_message', 10, 4 );
+		$this->loader->add_filter( 'password_hint', $plugin_filters, 'password_hint' );
 	}
 
 	/**

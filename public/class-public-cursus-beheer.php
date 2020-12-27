@@ -111,7 +111,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				$data['cursus'] = $this->formulier();
 			}
 			return true;
-		} elseif ( 'wijzigen' === $data['actie'] ) {
+		}
+		if ( 'wijzigen' === $data['actie'] ) {
 			/*
 			 * Er is een cursus gekozen om te wijzigen.
 			 */

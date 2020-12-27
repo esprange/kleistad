@@ -94,24 +94,28 @@ class Public_Debiteuren extends ShortcodeForm {
 		);
 		if ( 'debiteur' === $data['actie'] ) {
 			$data['debiteur'] = $this->debiteur( $data['id'] );
-		} elseif ( 'zoek' === $atts['actie'] ) {
+			return true;
+		}
+		if ( 'zoek' === $atts['actie'] ) {
 			$data['actie']      = 'zoek';
 			$data['debiteuren'] = ! empty( $data['id'] ) ? $this->debiteuren( $data['id'] ) : [];
 			$data['openstaand'] = 0;
 			foreach ( $data['debiteuren'] as $debiteur ) {
 				$data['openstaand'] += $debiteur['openstaand'];
 			}
-		} elseif ( 'blokkade' === $atts['actie'] ) {
+			return true;
+		}
+		if ( 'blokkade' === $atts['actie'] ) {
 			$data['actie']            = 'blokkade';
 			$data['huidige_blokkade'] = get_blokkade();
 			$data['nieuwe_blokkade']  = strtotime( '+3 month', $data['huidige_blokkade'] );
-		} else {
-			$data['actie']      = 'openstaand';
-			$data['debiteuren'] = $this->debiteuren();
-			$data['openstaand'] = 0;
-			foreach ( $data['debiteuren'] as $debiteur ) {
-				$data['openstaand'] += $debiteur['openstaand'];
-			}
+			return true;
+		}
+		$data['actie']      = 'openstaand';
+		$data['debiteuren'] = $this->debiteuren();
+		$data['openstaand'] = 0;
+		foreach ( $data['debiteuren'] as $debiteur ) {
+			$data['openstaand'] += $debiteur['openstaand'];
 		}
 		return true;
 	}
