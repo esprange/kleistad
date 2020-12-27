@@ -7,6 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/admin
+ * suppressWarnings(PHPMD)
  */
 
 namespace Kleistad;

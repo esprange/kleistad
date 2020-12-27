@@ -33,7 +33,7 @@ class Gebruikers implements Countable, Iterator {
 	 *
 	 * @var int $current_index De index.
 	 */
-	private int $current_index = 0;
+	protected int $current_index = 0;
 
 	/**
 	 * Geef het aantal gebruikers terug.
@@ -47,7 +47,7 @@ class Gebruikers implements Countable, Iterator {
 	/**
 	 * Geef de huidige gebruiker terug.
 	 *
-	 * @return Cursist De gebruiker.
+	 * @return Gebruiker De gebruiker.
 	 */
 	public function current(): Gebruiker {
 		return $this->gebruikers[ $this->current_index ];

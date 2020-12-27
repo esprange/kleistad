@@ -36,4 +36,15 @@ class Cursisten extends Gebruikers {
 		}
 	}
 
+	/**
+	 * Geef de huidige gebruiker terug.
+	 *
+	 * @return Cursist De gebruiker.
+	 */
+	public function current(): Cursist {
+		return $this->gebruikers[ $this->current_index ];
+	}
+
+
+
 }

@@ -35,4 +35,15 @@ class Abonnees extends Gebruikers {
 			$this->gebruikers[] = new Abonnee( $abonnee->ID );
 		}
 	}
+
+	/**
+	 * Geef de huidige gebruiker terug.
+	 *
+	 * @return Abonnee De gebruiker.
+	 */
+	public function current(): Abonnee {
+		return $this->gebruikers[ $this->current_index ];
+	}
+
+
 }

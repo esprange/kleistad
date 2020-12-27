@@ -36,4 +36,14 @@ class Dagdelengebruikers extends Gebruikers {
 		}
 	}
 
+	/**
+	 * Geef de huidige gebruiker terug.
+	 *
+	 * @return Dagdelengebruiker De gebruiker.
+	 */
+	public function current(): Dagdelengebruiker {
+		return $this->gebruikers[ $this->current_index ];
+	}
+
+
 }

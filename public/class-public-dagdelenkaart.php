@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad dagdelenkaart class.
  */
@@ -57,12 +59,12 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 * Valideer/sanitize 'dagdelenkaart' form
 	 *
 	 * @param array $data gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   4.3.0
 	 */
 	protected function validate( &$data ) {
-		$error         = new \WP_Error();
+		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -102,12 +104,13 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 * Bewaar 'dagdelenkaart' form gegevens
 	 *
 	 * @param array $data te bewaren saved.
-	 * @return \WP_Error|array
+	 * @return WP_Error|array
 	 *
 	 * @since   4.3.0
 	 */
 	protected function save( $data ) {
-		if ( ! is_user_logged_in() ) {
+		$gebruiker_id = get_current_user_id();
+		if ( 0 === $gebruiker_id ) {
 			$gebruiker_id = email_exists( $data['input']['user_email'] );
 			$gebruiker_id = upsert_user(
 				[
@@ -122,8 +125,6 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 					'plaats'     => $data['input']['plaats'],
 				]
 			);
-		} else {
-			$gebruiker_id = get_current_user_id();
 		}
 
 		if ( is_int( $gebruiker_id ) && 0 < $gebruiker_id ) {
@@ -135,23 +136,20 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 				if ( ! empty( $ideal_uri ) ) {
 					return [ 'redirect_uri' => $ideal_uri ];
 				}
-				return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
-			} else {
-				if ( $dagdelenkaart->verzend_email( '_bank', $dagdelenkaart->bestel_order( 0.0, $dagdelenkaart->start_datum ) ) ) {
-					return [
-						'content' => $this->goto_home(),
-						'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
-					];
-				} else {
-					return [
-						'status' => $this->status( new \WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' ) ),
-					];
-				}
+				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}
-		} else {
+			if ( ! $dagdelenkaart->verzend_email( '_bank', $dagdelenkaart->bestel_order( 0.0, $dagdelenkaart->start_datum ) ) ) {
+				return [
+					'status' => $this->status( new WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' ) ),
+				];
+			}
 			return [
-				'status' => $this->status( new \WP_Error( '', 'Gegevens konden niet worden opgeslagen. Neem s.v.p. contact op met Kleistad.' ) ),
+				'content' => $this->goto_home(),
+				'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
 			];
 		}
+		return [
+			'status' => $this->status( new WP_Error( '', 'Gegevens konden niet worden opgeslagen. Neem s.v.p. contact op met Kleistad.' ) ),
+		];
 	}
 }
