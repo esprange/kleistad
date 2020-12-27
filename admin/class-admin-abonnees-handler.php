@@ -160,15 +160,15 @@ class Admin_Abonnees_Handler {
 				'extras'           => $abonnement->extras,
 				'geannuleerd'      => $abonnement->is_geannuleerd(),
 				'gepauzeerd'       => $abonnement->is_gepauzeerd(),
-				'inschrijf_datum'  => ( $abonnement->datum ? strftime( '%d-%m-%Y', $abonnement->datum ) : '' ),
-				'start_datum'      => ( $abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnement->start_datum ) : '' ),
-				'start_eind_datum' => ( $abonnement->start_eind_datum ? strftime( '%d-%m-%Y', $abonnement->start_eind_datum ) : '' ),
+				'inschrijf_datum'  => strftime( '%d-%m-%Y', $abonnement->datum ),
+				'start_datum'      => strftime( '%d-%m-%Y', $abonnement->start_datum ),
+				'start_eind_datum' => strftime( '%d-%m-%Y', $abonnement->start_eind_datum ),
 				'pauze_datum'      => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
 				'eind_datum'       => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
 				'herstart_datum'   => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
 				'mandaat'          => $betalen->heeft_mandaat( $abonnee_id ),
 				'historie'         => $abonnement->historie,
-				'mollie_info'      => $betalen->$betalen->info( $abonnee_id ),
+				'mollie_info'      => $betalen->info( $abonnee_id ),
 			];
 			$notice     = '';
 			$message    = '';

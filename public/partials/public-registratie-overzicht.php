@@ -20,7 +20,8 @@ namespace Kleistad;
 <p><label for="kleistad_deelnemer_selectie">Selectie</label>
 	<select id="kleistad_deelnemer_selectie" name="selectie" >
 		<option value="*" >&nbsp;</option>
-		<option value="0" >Leden</option>
+		<option value="A" >Actieve abonnees</option>
+		<option value="K" >Actieve dagdelenkaart gebruikers</option>
 			<?php foreach ( $data['cursussen'] as $cursus ) : ?>
 			<option value="<?php echo esc_attr( 'C' . $cursus->id ); ?>;">C<?php echo esc_html( $cursus->id . ' ' . $cursus->naam ); ?></option>
 			<?php endforeach ?>
@@ -31,6 +32,7 @@ namespace Kleistad;
 	<thead>
 		<tr>
 			<th data-visible="false">Lid</th>
+			<th data-visible="false">Dagdelenkaart</th>
 			<th data-visible="false">Cursuslijst</th>
 			<th>Achternaam</th>
 			<th>Voornaam</th>
@@ -53,8 +55,9 @@ namespace Kleistad;
 				data-deelnemer='<?php echo htmlspecialchars( $json_deelnemer, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 				data-abonnee='<?php echo htmlspecialchars( $json_abonnee, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
 				data-dagdelenkaart='<?php echo htmlspecialchars( $json_dagdelenkaart, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>' >
-				<td><?php echo esc_html( $registratie['is_lid'] ); ?></td>
-				<td><?php echo esc_html( $registratie['cursuslijst'] ); ?></td>
+				<td><?php echo esc_html( $registratie['is_abonnee'] ); ?></td>
+				<td><?php echo esc_html( $registratie['is_dagdelenkaart'] ); ?></td>
+				<td><?php echo esc_html( $registratie['is_cursist'] ); ?></td>
 				<td><?php echo esc_html( $registratie['achternaam'] ); ?></td>
 				<td><?php echo esc_html( $registratie['voornaam'] ); ?></td>
 				<td><?php echo esc_html( $registratie['email'] ); ?></td>

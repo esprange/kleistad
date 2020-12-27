@@ -25,8 +25,9 @@ class Public_Registratie_Overzicht extends Shortcode {
 		$registraties = [];
 		foreach ( get_users( [ 'orderby' => 'display_name' ] ) as $gebruiker ) {
 			$registraties[ $gebruiker->ID ] = [
-				'is_lid'             => user_can( $gebruiker->ID, LID ),
-				'cursuslijst'        => '',
+				'is_abonnee'         => false,
+				'is_dagdelenkaart'   => false,
+				'is_cursist'         => '',
 				'deelnemer_info'     => [
 					'naam'   => $gebruiker->display_name,
 					'straat' => $gebruiker->straat,
@@ -46,6 +47,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			];
 		}
 		foreach ( new Abonnementen() as $abonnement ) {
+			$registraties[ $abonnement->klant_id ]['is_abonnee']   = ! $abonnement->geannuleerd;
 			$registraties[ $abonnement->klant_id ]['abonnee_info'] = [
 				'code'           => $abonnement->code,
 				'start_datum'    => date( 'd-m-Y', $abonnement->start_datum ),
@@ -60,6 +62,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			];
 		}
 		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
+			$registraties[ $dagdelenkaart->klant_id ]['is_dagdelenkaart']   = $dagdelenkaart->eind_datum >= strtotime( 'today' );
 			$registraties[ $dagdelenkaart->klant_id ]['dagdelenkaart_info'] = [
 				'code'        => $dagdelenkaart->code,
 				'start_datum' => date( 'd-m-Y', $dagdelenkaart->start_datum ),
@@ -67,7 +70,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 		}
 		foreach ( new Cursisten() as $cursist ) {
 			foreach ( $cursist->inschrijvingen as $inschrijving ) {
-				$registraties[ $cursist->ID ]['cursuslijst']        .= "C{$inschrijving->cursus->id};";
+				$registraties[ $cursist->ID ]['is_cursist']         .= "C{$inschrijving->cursus->id};";
 				$registraties[ $cursist->ID ]['inschrijving_info'][] = [
 					'ingedeeld'   => $inschrijving->ingedeeld,
 					'geannuleerd' => $inschrijving->geannuleerd,
@@ -232,23 +235,22 @@ class Public_Registratie_Overzicht extends Shortcode {
 			'Opmerking',
 		];
 		fputcsv( $this->file_handle, $dagdelenkaart_fields, ';', '"' );
-		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
-			$gebruiker = get_user_by( 'id', $dagdelenkaart->klant_id );
+		foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
 			fputcsv(
 				$this->file_handle,
 				[
-					$gebruiker->last_name,
-					$gebruiker->first_name,
-					$gebruiker->user_email,
-					$gebruiker->straat,
-					$gebruiker->huisnr,
-					$gebruiker->pcode,
-					$gebruiker->plaats,
-					$gebruiker->telnr,
-					$dagdelenkaart->code,
-					date( 'd-m-Y', $dagdelenkaart->start_datum ),
-					date( 'd-m-Y', $dagdelenkaart->eind_datum ),
-					$dagdelenkaart->opmerking,
+					$dagdelengebruiker->last_name,
+					$dagdelengebruiker->first_name,
+					$dagdelengebruiker->user_email,
+					$dagdelengebruiker->straat,
+					$dagdelengebruiker->huisnr,
+					$dagdelengebruiker->pcode,
+					$dagdelengebruiker->plaats,
+					$dagdelengebruiker->telnr,
+					$dagdelengebruiker->dagdelenkaart->code,
+					date( 'd-m-Y', $dagdelengebruiker->dagdelenkaart->start_datum ),
+					date( 'd-m-Y', $dagdelengebruiker->dagdelenkaart->eind_datum ),
+					$dagdelengebruiker->dagdelenkaart->opmerking,
 				],
 				';',
 				'"'

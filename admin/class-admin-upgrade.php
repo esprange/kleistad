@@ -7,7 +7,7 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/admin
- * suppressWarnings(PHPMD)
+ * @suppressWarnings(PHPMD)
  */
 
 namespace Kleistad;
@@ -265,7 +265,7 @@ class Admin_Upgrade {
 				'overbrugging_email' => boolval( $abonnement['overbrugging_email'] ),
 				'extras'             => isset( $abonnement['extras'] ) ? $abonnement['extras'] : [],
 				'factuur_maand'      => isset( $abonnement['factuur_maand'] ) ? $abonnement['factuur_maand'] : 0,
-				'historie'           => json_decode( isset( $abonnement[ 'historie' ] ) ? $abonnement[ 'historie' ] : '', true ),
+				'historie'           => json_decode( isset( $abonnement[ 'historie' ] ) ? $abonnement[ 'historie' ] : '', true ) ?: [],
 			];
 			add_user_meta( $abonnee->ID, 'kleistad_abonnement_v2', $nieuw, true ); 
 		}

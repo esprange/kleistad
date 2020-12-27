@@ -35,8 +35,8 @@ class Dagdelenkaart extends Artikel {
 	 */
 	private $default_data = [
 		'code'        => '',
-		'datum'       => '',
-		'start_datum' => '',
+		'datum'       => 0,
+		'start_datum' => 0,
 		'geannuleerd' => false,
 		'opmerking'   => '',
 	];

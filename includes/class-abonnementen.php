@@ -48,7 +48,7 @@ class Abonnementen implements Countable, Iterator {
 			]
 		);
 		foreach ( $abonnees as $abonnee ) {
-			$this->abonnementen[ $abonnee->ID ] = new Abonnement( $abonnee->ID );
+			$this->abonnementen[] = new Abonnement( $abonnee->ID );
 		}
 	}
 

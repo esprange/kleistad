@@ -29,20 +29,19 @@
 				function() {
 					var selectie = $( this ).val();
 					var kleistadDeelnemerLijst = $( '#kleistad_deelnemer_lijst' ).DataTable();
+					kleistadDeelnemerLijst.search( '' ).columns().search( '' );
                     switch ( selectie ) {
                         case '*':
-                            kleistadDeelnemerLijst.search( '' ).columns().search( '' );
                             kleistadDeelnemerLijst.columns().search( '', false, false ).draw();
                             break;
-
-                        case '0':
-                            kleistadDeelnemerLijst.search( '' ).columns().search( '' );
+                        case 'A':
                             kleistadDeelnemerLijst.columns( 0 ).search( '1', false, false ).draw();
                             break;
-
-                        default:
-                            kleistadDeelnemerLijst.search( '' ).columns().search( '' );
-							kleistadDeelnemerLijst.columns( 1 ).search( selectie, false, false ).draw();
+						case 'K':
+							kleistadDeelnemerLijst.columns( 1 ).search( '1', false, false ).draw();
+							break;
+						default:
+							kleistadDeelnemerLijst.columns( 2 ).search( selectie, false, false ).draw();
                     }
                 }
             );
