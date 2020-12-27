@@ -285,6 +285,7 @@ class Public_Reservering extends Shortcode {
 				$stook->temperatuur = intval( $input['temperatuur'] );
 				$stook->soort       = sanitize_text_field( $input['soortstook'] );
 				$stook->programma   = intval( $input['programma'] );
+				$stook->stookdelen  = [];
 				foreach ( $input['verdeling'] as $verdeling ) {
 					$stook->stookdelen[] = new Stookdeel( $verdeling['id'], $verdeling['perc'], $verdeling['prijs'] = 0 );
 				}

@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad saldo class.
  */
@@ -64,7 +66,7 @@ class Public_Saldo extends ShortcodeForm {
 			$data['input']['bedrag'] = $data['input']['ander'];
 		}
 		if ( 15 > floatval( $data['input']['bedrag'] ) || 100 < floatval( $data['input']['bedrag'] ) ) {
-			return new \WP_Error( 'onjuist', 'Het bedrag moet tussen 15 en 100 euro liggen' );
+			return new WP_Error( 'onjuist', 'Het bedrag moet tussen 15 en 100 euro liggen' );
 		}
 		return true;
 	}
@@ -73,7 +75,7 @@ class Public_Saldo extends ShortcodeForm {
 	 * Bewaar 'saldo' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return \WP_ERROR|array
+	 * @return WP_ERROR|array
 	 *
 	 * @since   4.0.87
 	 */
@@ -86,18 +88,16 @@ class Public_Saldo extends ShortcodeForm {
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}
-			return [ 'status' => $this->status( new \WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
-		} else {
-			if ( $saldo->verzend_email( '_bank', $saldo->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) ) ) {
-				return [
-					'content' => $this->goto_home(),
-					'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
-				];
-			} else {
-				return [
-					'status' => $this->status( new \WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' ) ),
-				];
-			}
+			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}
+		if ( $saldo->verzend_email( '_bank', $saldo->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) ) ) {
+			return [
+				'content' => $this->goto_home(),
+				'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
+			];
+		}
+		return [
+			'status' => $this->status( new WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' ) ),
+		];
 	}
 }

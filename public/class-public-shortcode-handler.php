@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad class voor de publieke pagina's.
  */
@@ -222,6 +224,7 @@ class Public_Shortcode_Handler {
 	 * @param string $content   wordt niet gebruikt.
 	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
 	 * @return string           html resultaat.
+	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function handler( $atts, $content, $tag ) {
 		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
@@ -230,7 +233,7 @@ class Public_Shortcode_Handler {
 			return '';
 		}
 		if ( ! self::check_access( $shortcode ) ) {
-			return $shortcode_object->status( new \WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
+			return $shortcode_object->status( new WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
 		}
 		$html        = '';
 		static $divs = false; // De ondersteunende divs zijn maar eenmalig nodig.

@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad verkoop class.
  */
@@ -86,14 +88,15 @@ class Public_Verkoop extends ShortcodeForm {
 	 * Bewaar 'verkoop' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return \WP_ERROR|array
+	 * @return WP_ERROR|array
 	 *
 	 * @since   6.2.0
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function save( $data ) {
 		$verkoopnr = intval( get_option( 'kleistad_losnr', 0 ) );
 		if ( ! update_option( 'kleistad_losnr', ++$verkoopnr ) ) {
-			return [ 'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ) ];
+			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ) ];
 		}
 		$verkoop = new LosArtikel( $verkoopnr );
 		if ( 'bestaand' === $data['input']['klant_type'] ) {

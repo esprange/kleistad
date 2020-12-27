@@ -11,6 +11,10 @@
 
 namespace Kleistad;
 
+use WP_Error;
+use WP_REST_Request;
+use WP_REST_Response;
+
 /**
  * De abstract class voor shortcodes
  */
@@ -57,7 +61,7 @@ abstract class Shortcode {
 	 * @since   4.0.87
 	 *
 	 * @param array $data de data die voorbereid moet worden voor display.
-	 * @return \WP_ERROR|bool
+	 * @return WP_Error|bool
 	 */
 	abstract protected function prepare( &$data);
 
@@ -104,10 +108,10 @@ abstract class Shortcode {
 		}
 		if ( wp_script_is( "kleistad{$this->shortcode}", 'registered' ) ) {
 			wp_enqueue_script( "kleistad{$this->shortcode}" );
-		} else {
-			foreach ( Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['js'] as $dependency ) {
-				wp_enqueue_script( $dependency );
-			}
+			return;
+		}
+		foreach ( Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['js'] as $dependency ) {
+			wp_enqueue_script( $dependency );
 		}
 	}
 
@@ -118,6 +122,7 @@ abstract class Shortcode {
 	 *
 	 * @param  array $data de uit te wisselen data.
 	 * @return string html tekst.
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function display( &$data = [ 'actie' => '-' ] ) {
 		$this->enqueue();
@@ -145,7 +150,7 @@ abstract class Shortcode {
 	 *
 	 * @since 5.7.0
 	 *
-	 * @param string | array | \WP_Error $result Het resultaat dat getoond moet worden.
+	 * @param string | array | WP_Error $result Het resultaat dat getoond moet worden.
 	 */
 	public function status( $result ) {
 		$html = '';
@@ -153,11 +158,11 @@ abstract class Shortcode {
 			foreach ( $result->get_error_messages() as $error ) {
 				$html .= self::melding( 0, $error );
 			}
-		} else {
-			$succes = $result['status'] ?? ( is_string( $result ) ? $result : '' );
-			if ( ! empty( $succes ) ) {
-				$html = self::melding( 1, $succes );
-			}
+			return $html;
+		}
+		$succes = $result['status'] ?? ( is_string( $result ) ? $result : '' );
+		if ( ! empty( $succes ) ) {
+			$html = self::melding( 1, $succes );
 		}
 		return $html;
 	}
@@ -167,6 +172,7 @@ abstract class Shortcode {
 	 *
 	 * @since 5.7.0
 	 * @return string
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function goto_home() {
 		if ( ! is_user_logged_in() ) {
@@ -198,11 +204,10 @@ abstract class Shortcode {
 	public static function get_instance( $shortcode, $atts, $options ) {
 		if ( in_array( $shortcode, self::$shortcode_lijst, true ) ) {
 			return null;
-		} else {
-			self::$shortcode_lijst[] = $shortcode;
-			$shortcode_class         = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode, '_' );
-			return new $shortcode_class( $shortcode, $atts, $options );
 		}
+		self::$shortcode_lijst[] = $shortcode;
+		$shortcode_class         = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode, '_' );
+		return new $shortcode_class( $shortcode, $atts, $options );
 	}
 
 	/**
@@ -232,7 +237,7 @@ abstract class Shortcode {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
-				'permission_callback' => function( \WP_REST_Request $request ) {
+				'permission_callback' => function( WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
 					return Public_Shortcode_Handler::check_access( $shortcode );
 				},
@@ -244,7 +249,7 @@ abstract class Shortcode {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
-				'permission_callback' => function( \WP_REST_Request $request ) {
+				'permission_callback' => function( WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
 					return Public_Shortcode_Handler::check_access( $shortcode );
 				},
@@ -256,7 +261,7 @@ abstract class Shortcode {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_download' ],
-				'permission_callback' => function( \WP_REST_Request $request ) {
+				'permission_callback' => function( WP_REST_Request $request ) {
 					$shortcode = $request->get_param( 'tag' );
 					return Public_Shortcode_Handler::check_access( $shortcode );
 				},
@@ -267,10 +272,10 @@ abstract class Shortcode {
 	/**
 	 * Helper functie, geef het object terug of een foutboodschap.
 	 *
-	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return \WP_REST_Response| bool  De response of false.
+	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
+	 * @return WP_REST_Response| bool  De response of false.
 	 */
-	protected static function get_shortcode_object( \WP_REST_Request $request ) {
+	protected static function get_shortcode_object( WP_REST_Request $request ) {
 		$tag   = $request->get_param( 'tag' );
 		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
 		if ( class_exists( $class ) ) {
@@ -283,19 +288,19 @@ abstract class Shortcode {
 	/**
 	 * Get an item and display it.
 	 *
-	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return \WP_REST_Response|\WP_Error de response.
+	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
+	 * @return WP_REST_Response|WP_Error de response.
 	 */
-	public static function callback_getitem( \WP_REST_Request $request ) {
+	public static function callback_getitem( WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return new \WP_Error( 'intern', 'interne fout' );
+			return new WP_Error( 'intern', 'interne fout' );
 		}
 		$data = [
 			'actie' => sanitize_text_field( $request->get_param( 'actie' ) ),
 			'id'    => is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) ),
 		];
-		return new \WP_REST_Response(
+		return new WP_REST_Response(
 			[
 				'content' => $shortcode_object->display( $data ),
 			]
@@ -307,7 +312,7 @@ abstract class Shortcode {
 	 *
 	 * @param Shortcode $shortcode_object De shortcode waarvoor de download plaatsvindt.
 	 * @param string    $functie          De shortcode functie die aangeroepen moet worden.
-	 * @return \WP_REST_Response
+	 * @return WP_REST_Response
 	 */
 	protected static function download( Shortcode $shortcode_object, $functie ) {
 		$upload_dir = wp_upload_dir();
@@ -319,27 +324,25 @@ abstract class Shortcode {
 			$result = call_user_func( [ $shortcode_object, $functie ] );
 			fclose( $shortcode_object->file_handle );
 			if ( empty( $result ) ) {
-				return new \WP_REST_Response(
+				return new WP_REST_Response(
 					[
 						'file_uri' => $upload_dir['baseurl'] . $file,
 					]
 				);
-			} else {
-				unlink( $upload_dir['basedir'] . $file );
-				return new \WP_REST_Response(
-					[
-						'file_uri' => $result,
-					]
-				);
 			}
-		} else {
-			return new \WP_REST_Response(
+			unlink( $upload_dir['basedir'] . $file );
+			return new WP_REST_Response(
 				[
-					'status'  => $shortcode_object->status( new \WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
-					'content' => $shortcode_object->goto_home(),
+					'file_uri' => $result,
 				]
 			);
 		}
+		return new WP_REST_Response(
+			[
+				'status'  => $shortcode_object->status( new WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
+				'content' => $shortcode_object->goto_home(),
+			]
+		);
 	}
 
 	/**
@@ -362,13 +365,13 @@ abstract class Shortcode {
 	/**
 	 * Get an item and display it.
 	 *
-	 * @param \WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return \WP_REST_Response|\WP_Error de response.
+	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
+	 * @return WP_REST_Response|WP_Error de response.
 	 */
-	public static function callback_download( \WP_REST_Request $request ) {
+	public static function callback_download( WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return new \WP_Error( 'intern', 'interne fout' );
+			return new WP_Error( 'intern', 'interne fout' );
 		}
 		return self::download( $shortcode_object, $request->get_param( 'actie' ) );
 	}
