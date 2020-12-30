@@ -47,7 +47,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			];
 		}
 		foreach ( new Abonnementen() as $abonnement ) {
-			$registraties[ $abonnement->klant_id ]['is_abonnee']   = ! $abonnement->geannuleerd;
+			$registraties[ $abonnement->klant_id ]['is_abonnee']   = ! $abonnement->is_geannuleerd();
 			$registraties[ $abonnement->klant_id ]['abonnee_info'] = [
 				'code'           => $abonnement->code,
 				'start_datum'    => date( 'd-m-Y', $abonnement->start_datum ),

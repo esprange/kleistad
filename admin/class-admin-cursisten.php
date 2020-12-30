@@ -18,7 +18,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * Ovens list table
+ * Cursisten list table
  */
 class Admin_Cursisten extends WP_List_Table {
 

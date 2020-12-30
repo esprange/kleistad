@@ -80,6 +80,15 @@ class Admin_Main {
 	private $recepttermen_handler;
 
 	/**
+	 *  Werkplekken beheer
+	 *
+	 * @since     6.11.0
+	 * @access    private
+	 * @var       object    $werkplekken_handler  De handler voor beheer van de werkplekken.
+	 */
+	private $werkplekken_handler;
+
+	/**
 	 *  Instellingen beheer
 	 *
 	 * @since     6.4.2
@@ -113,6 +122,7 @@ class Admin_Main {
 		$this->stooksaldo_handler   = new Admin_Stooksaldo_Handler();
 		$this->regelingen_handler   = new Admin_Regelingen_Handler();
 		$this->recepttermen_handler = new Admin_Recepttermen_Handler();
+		$this->werkplekken_handler  = new Admin_Werkplekken_Handler();
 		$this->instellingen_handler = new Admin_Instellingen_Handler( $options, $setup );
 	}
 
@@ -217,6 +227,7 @@ class Admin_Main {
 		$this->stooksaldo_handler->add_pages();
 		$this->regelingen_handler->add_pages();
 		$this->recepttermen_handler->add_pages();
+		$this->werkplekken_handler->add_pages();
 	}
 
 	/**

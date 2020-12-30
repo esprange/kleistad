@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use WP_List_Table;
+use WP_User_Query;
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -18,7 +21,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * Beheer stooksaldo van leden
  */
-class Admin_Stooksaldo extends \WP_List_Table {
+class Admin_Stooksaldo extends WP_List_Table {
 
 	/**
 	 * Constructor
@@ -113,7 +116,7 @@ class Admin_Stooksaldo extends \WP_List_Table {
 		$orderby         = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val       = filter_input( INPUT_GET, 'order' );
 		$order           = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$gebruiker_query = new \WP_User_Query(
+		$gebruiker_query = new WP_User_Query(
 			[
 				'fields'   => [ 'ID', 'display_name' ],
 				'search'   => '*' . $search . '*',

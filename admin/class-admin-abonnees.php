@@ -18,7 +18,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * Ovens list table
+ * Abonnees list table
  */
 class Admin_Abonnees extends WP_List_Table {
 
