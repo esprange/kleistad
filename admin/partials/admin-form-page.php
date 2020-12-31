@@ -27,8 +27,9 @@ namespace Kleistad;
 
 	<form id="form" method="POST">
 		<input type="hidden" name="nonce" value="<?php echo esc_attr( wp_create_nonce( "kleistad_$single" ) ); ?>"/>
-		<input type="hidden" name="id" value="<?php echo esc_attr( $item['id'] ); ?>"/>
-
+		<?php if ( isset( $item['id'] ) ) : ?>
+			<input type="hidden" name="id" value="<?php echo esc_attr( $item['id'] ); ?>"/>
+		<?php endif ?>
 		<div class="metabox-holder" id="poststuff">
 			<div id="post-body">
 				<div id="post-body-content">

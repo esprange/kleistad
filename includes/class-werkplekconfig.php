@@ -86,7 +86,7 @@ class WerkplekConfig {
 	 * @return bool
 	 */
 	public function is_actief( int $datum ) : bool {
-		return $this->start_datum <= $datum && ( 0 === $this->einddatum || $datum <= $this->eind_datum );
+		return $this->start_datum <= $datum && ( 0 === $this->eind_datum || $datum <= $this->eind_datum );
 	}
 
 }

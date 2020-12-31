@@ -53,8 +53,8 @@ class Admin_Werkplekken extends WP_List_Table {
 	 */
 	public function column_start_datum( $item ) {
 		$actions = [
-			'edit'   => sprintf( '<a href="?page=werkplekken_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
-			'delete' => sprintf( '<a href="?page=%s&action=delete&id=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['id'], 'Verwijderen' ),
+			'edit'   => sprintf( '<a href="?page=werkplekken_form&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Wijzigen' ),
+			'delete' => sprintf( '<a href="?page=%s&action=delete&start_datum=%s&eind_datum=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['start_datum'], $item['eind_datum'], 'Verwijderen' ),
 		];
 		return sprintf( '<strong>%s</strong> %s', date( 'd-m-Y', $item['start_datum'] ), $this->row_actions( $actions ) );
 	}
@@ -101,7 +101,7 @@ class Admin_Werkplekken extends WP_List_Table {
 	 */
 	private function geef_werkplek_configs() : array {
 		$werkplekconfigs = [];
-		foreach ( new WerkplekConfigs() as $key => $werkplekconfig ) {
+		foreach ( new WerkplekConfigs() as $werkplekconfig ) {
 			$werkplekken = 0;
 			foreach ( $werkplekconfig->config as $atelierdag ) {
 				foreach ( $atelierdag as $dagdeel ) {
@@ -109,7 +109,6 @@ class Admin_Werkplekken extends WP_List_Table {
 				}
 			}
 			$werkplekconfigs[] = [
-				'id'          => $key,
 				'start_datum' => $werkplekconfig->start_datum,
 				'eind_datum'  => $werkplekconfig->eind_datum,
 				'werkplekken' => $werkplekken,

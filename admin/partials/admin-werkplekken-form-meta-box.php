@@ -19,7 +19,6 @@ namespace Kleistad;
 				<label for="start_datum">Start datum</label>
 			</th>
 			<td colspan="2">
-				<input type="hidden" id="id" name="id" value="<?php echo esc_attr( $item['id'] ); ?>" >
 				<input type="hidden" name="nieuwste_config" value="<?php echo esc_attr( intval( $item['nieuwste_config'] ) ); ?>">
 				<input type="text" id="kleistad_start_datum" name="start_datum" class="kleistad_datum" required value="<?php echo esc_attr( $item['start_datum'] ); ?>" >
 			</td>

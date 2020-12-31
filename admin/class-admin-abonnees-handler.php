@@ -61,6 +61,9 @@ class Admin_Abonnees_Handler {
 	 * @param array  $item de abonnee.
 	 * @param string $actie de actie waar het om gaat.
 	 * @return bool|string
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
+
 	 */
 	private function validate_abonnee( $item, $actie ) {
 		if ( 'status' !== $actie ) {
@@ -106,6 +109,7 @@ class Admin_Abonnees_Handler {
 	 * @since    5.2.0
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function abonnees_form_page_handler() {
 		$single   = 'abonnee';
@@ -144,8 +148,7 @@ class Admin_Abonnees_Handler {
 			$item_valid = $this->validate_abonnee( $item, $actie );
 			$notice     = is_string( $item_valid ) ? $item_valid : '';
 			$message    = empty( $notice ) ? $this->wijzig_abonnee( $item, $actie ) : '';
-		}
-		if ( isset( $_REQUEST['id'] ) ) {
+		} elseif ( isset( $_REQUEST['id'] ) ) {
 			$abonnee_id = $_REQUEST['id'];
 			$actie      = $_REQUEST['actie'];
 			$abonnement = new Abonnement( $abonnee_id );

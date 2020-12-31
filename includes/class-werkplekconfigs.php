@@ -113,6 +113,8 @@ class WerkplekConfigs implements Countable, Iterator {
 	 * Een toe te voegen config met eind_datum
 	 *
 	 * @param WerkplekConfig $configtoetevoegen De toe te voegen config.
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
 	 */
 	private function toevoegen_in_midden( WerkplekConfig $configtoetevoegen ) {
 		$index = count( $this->configs );
@@ -241,20 +243,6 @@ class WerkplekConfigs implements Countable, Iterator {
 			];
 		}
 		update_option( self::META_KEY, $configs, true );
-	}
-
-	/**
-	 * Geef een specifieke configuratie terug
-	 *
-	 * @param int $index De index.
-	 * @return WerkplekConfig
-	 */
-	public function find_by_id( $index ) {
-		if ( ! isset( $this->configs[ $index ] ) ) {
-			return new WerkplekConfig();
-		}
-		$this->current_index = $index;
-		return $this->configs[ $this->current_index ];
 	}
 
 	/**

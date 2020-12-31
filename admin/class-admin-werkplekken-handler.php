@@ -42,9 +42,6 @@ class Admin_Werkplekken_Handler {
 				$messages[] = 'De eerste configuratie kan geen eind datum bevatten';
 			}
 		}
-		if ( ! is_array( $item['config'] ) ) {
-			$messages[] = 'Het lijkt er op dat er iets fout is gegaan';
-		}
 		if ( empty( $messages ) ) {
 			return true;
 		}
@@ -65,17 +62,16 @@ class Admin_Werkplekken_Handler {
 	 * Werkplekken overzicht page handler
 	 *
 	 * @since    6.11.0
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function werkplekken_page_handler() {
 		$message = '';
 		$table   = new Admin_Werkplekken();
 		if ( 'delete' === $table->current_action() ) {
 			$werkplekconfigs = new WerkplekConfigs();
-			$werkplekconfig  = $werkplekconfigs->find_by_id( intval( filter_input( INPUT_GET, 'id' ) ) );
-			if ( false !== $werkplekconfig ) {
-				$werkplekconfigs->verwijder( $werkplekconfig );
-				$message = 'De werkplek configuratie is verwijderd';
-			}
+			$werkplekconfig  = $werkplekconfigs->find_by_date( intval( filter_input( INPUT_GET, 'start_datum' ) ), intval( filter_input( INPUT_GET, 'eind_datum' ) ) );
+			$werkplekconfigs->verwijder( $werkplekconfig );
+			$message = 'De werkplek configuratie is verwijderd';
 		}
 		require 'partials/admin-werkplekken-page.php';
 	}
@@ -98,7 +94,6 @@ class Admin_Werkplekken_Handler {
 			$item       = filter_input_array(
 				INPUT_POST,
 				[
-					'id'              => FILTER_SANITIZE_STRING,
 					'start_datum'     => FILTER_SANITIZE_STRING,
 					'eind_datum'      => FILTER_SANITIZE_STRING,
 					'config'          => [
@@ -123,19 +118,11 @@ class Admin_Werkplekken_Handler {
 			}
 		} else {
 			$werkplekconfigs = new WerkplekConfigs();
-			$werkplek        = false;
-			if ( isset( $_REQUEST['id'] ) ) {
-				$werkplek   = $werkplekconfigs->find_by_id( intval( $_REQUEST['id'] ) );
-				$item['id'] = $werkplek ? $werkplekconfigs->key() : null;
-			}
-			if ( false === $werkplek ) {
-				$werkplek   = new WerkplekConfig();
-				$item['id'] = 0;
-			}
+			$werkplek   = $werkplekconfigs->find_by_date( intval( $_REQUEST['start_datum'] ), intval( $_REQUEST['eind_datum'] ) );
 			$item['start_datum']     = date( 'd-m-Y', $werkplek->start_datum );
 			$item['eind_datum']      = $werkplek->eind_datum ? date( 'd-m-Y', $werkplek->eind_datum ) : '';
 			$item['config']          = $werkplek->config;
-			$item['nieuwste_config'] = max( count( $werkplekconfigs ) - 1, 0 ) === $item['id'];
+			$item['nieuwste_config'] = 0 === count( $werkplekconfigs ) || 0 === $werkplek->eind_datum;
 		}
 		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this, 'werkplekken_form_meta_box_handler' ], 'werkplek', 'normal', 'default' );
 		require 'partials/admin-form-page.php';
