@@ -29,7 +29,7 @@ class Public_Werkplek extends Shortcode {
 	private function geef_mogelijke_datums() : array {
 		$werkplekconfigs = new WerkplekConfigs();
 		if ( 0 === count( $werkplekconfigs ) ) {
-			return new WP_Error( 'config', 'Er is geen enkele configuratie beschikbaar' );
+			return [];
 		}
 		$datums         = [];
 		$vandaag        = strtotime( 'today' );
@@ -62,12 +62,11 @@ class Public_Werkplek extends Shortcode {
 	 * @since   6.11.0
 	 */
 	protected function prepare( &$data ) {
-		$result = $this->geef_mogelijke_datums();
-		if ( is_array( $result ) ) {
-			$data['datums'] = $result;
-			return true;
+		$data['datums'] = $this->geef_mogelijke_datums();
+		if ( 0 === count( $data['datums'] ) ) {
+			return new WP_Error( 'config', 'Er zijn geen datums beschikbaar' );
 		}
-		return $result;
+		return true;
 	}
 
 	/**
@@ -212,10 +211,14 @@ EOT;
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response Ajax response.
+	 * @return WP_REST_Response|WP_Error Ajax response.
 	 */
 	public static function callback_show( WP_REST_Request $request ) {
-		$datum           = strtotime( $request->get_param( 'datum' ) );
+		$datum_str = $request->get_param( 'datum' );
+		if ( is_null( $datum_str ) ) {
+			return new WP_Error( 'param', 'Onjuiste datum ontvangen' );
+		}
+		$datum           = strtotime( $datum_str );
 		$werkplekconfigs = new WerkplekConfigs();
 		$werkplekconfig  = $werkplekconfigs->find( $datum );
 		$dagconfig       = $werkplekconfig->config[ strftime( '%A', $datum ) ];
@@ -236,10 +239,14 @@ EOT;
 	 * @return WP_REST_Response Ajax response.
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) {
-		$datum           = strtotime( $request->get_param( 'datum' ) );
-		$gebruiker_id    = intval( $request->get_param( 'id' ) );
-		$dagdeel         = $request->get_param( 'dagdeel' );
-		$activiteit      = $request->get_param( 'activiteit' );
+		$datum_str    = $request->get_param( 'datum' );
+		$gebruiker_id = intval( $request->get_param( 'id' ) );
+		$dagdeel      = $request->get_param( 'dagdeel' );
+		$activiteit   = $request->get_param( 'activiteit' );
+		if ( is_null( $dagdeel ) || is_null( $activiteit ) || is_null( $gebruiker_id ) || is_null( $datum_str ) ) {
+			return new WP_Error( 'param', 'Onjuiste data ontvangen' );
+		}
+		$datum           = strtotime( $datum_str );
 		$werkplekconfigs = new WerkplekConfigs();
 		$werkplekconfig  = $werkplekconfigs->find( $datum );
 		$dagconfig       = $werkplekconfig->config[ strftime( '%A', $datum ) ];

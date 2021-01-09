@@ -91,7 +91,7 @@ class Admin_Werkplekken_Handler {
 		$multiple = 'werkplekken';
 		$item     = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_werkplek' ) ) {
-			$item       = filter_input_array(
+			$item = filter_input_array(
 				INPUT_POST,
 				[
 					'start_datum'     => FILTER_SANITIZE_STRING,
@@ -103,6 +103,9 @@ class Admin_Werkplekken_Handler {
 					'nieuwste_config' => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
+			if ( is_null( $item ) ) {
+				return; // Zou niet mogen gebeuren.
+			}
 			$item_valid = $this->validate_werkplek( $item );
 			$notice     = is_string( $item_valid ) ? $item_valid : '';
 			if ( true === $item_valid ) {

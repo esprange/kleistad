@@ -230,11 +230,9 @@ class WerkplekConfigs implements Countable, Iterator {
 	 */
 	public function find( int $datum, ?int $eind_datum = null ) : WerkplekConfig {
 		foreach ( $this->configs as $index => $config ) {
-			if (
-					( is_null( $eind_datum ) && $datum >= $config->start_datum && ( $datum <= $config->eind_datum || 0 === $config->eind_datum ) )
-				||
-					( ! is_null( $eind_datum ) && $datum === $config->start_datum && $eind_datum === $config->eind_datum )
-				) {
+			$datum_in_periode = is_null( $eind_datum ) && $datum >= $config->start_datum && ( $datum <= $config->eind_datum || 0 === $config->eind_datum );
+			$periode_gelijk   = ! is_null( $eind_datum ) && $datum === $config->start_datum && $eind_datum === $config->eind_datum;
+			if ( $datum_in_periode || $periode_gelijk ) {
 				$this->current_index = $index;
 				return $config;
 			}
