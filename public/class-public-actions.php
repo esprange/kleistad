@@ -107,6 +107,7 @@ class Public_Actions {
 		Public_Kalender::register_rest_routes(); // Google API.
 		Public_Recept::register_rest_routes(); // Recept zoeker.
 		Public_Reservering::register_rest_routes(); // Oven reserveringen.
+		Public_Werkplek::register_rest_routes(); // Werkplek reserveringen.
 		Shortcode::register_rest_routes(); // Shortcode opvragen.
 		ShortcodeForm::register_rest_routes(); // Shortcode formulieren.
 	}

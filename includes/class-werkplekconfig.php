@@ -22,9 +22,13 @@ namespace Kleistad;
  */
 class WerkplekConfig {
 
-	public const ACTIVITEIT = [ 'Draaien', 'Handvormen', 'Bovenverdieping' ]; // Vooralsnog draaien, handvormen en bovenverdieping.
-	public const ATELIERDAG = [ 'Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag' ];
+	public const ACTIVITEIT = [ 'Handvormen', 'Draaien', 'Bovenverdieping' ]; // Vooralsnog draaien, handvormen en bovenverdieping.
 	public const DAGDEEL    = [ 'Ochtend', 'Middag', 'Avond' ]; // Vooralsnog ochtend, middag en avond.
+	public const ACTIEKLEUR = [
+		'Handvormen'      => 'rgb( 255, 229, 153 )',
+		'Draaien'         => 'rgb( 247, 202, 172 )',
+		'Bovenverdieping' => 'rgb( 217, 217, 217 )',
+	];
 
 	/**
 	 * De werkplekdata
@@ -40,7 +44,7 @@ class WerkplekConfig {
 	 */
 	public function __construct() {
 		$default_config = [];
-		foreach ( self::ATELIERDAG as $dag ) {
+		foreach ( $this->geef_atelierdagen() as $dag ) {
 			foreach ( self::DAGDEEL as $dagdeel ) {
 				foreach ( self::ACTIVITEIT as $activiteit ) {
 					$default_config[ $dag ][ $dagdeel ][ $activiteit ] = 0;
@@ -87,6 +91,19 @@ class WerkplekConfig {
 	 */
 	public function is_actief( int $datum ) : bool {
 		return $this->start_datum <= $datum && ( 0 === $this->eind_datum || $datum <= $this->eind_datum );
+	}
+
+	/**
+	 * De atelierdagen.
+	 *
+	 * @return array
+	 */
+	public function geef_atelierdagen() {
+		$dagen = [];
+		for ( $dagteller = 0; $dagteller < 7; $dagteller++ ) {
+			$dagen[] = strftime( '%A', strtotime( "next Monday +$dagteller days" ) );
+		}
+		return $dagen;
 	}
 
 }

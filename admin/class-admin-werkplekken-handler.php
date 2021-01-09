@@ -69,7 +69,7 @@ class Admin_Werkplekken_Handler {
 		$table   = new Admin_Werkplekken();
 		if ( 'delete' === $table->current_action() ) {
 			$werkplekconfigs = new WerkplekConfigs();
-			$werkplekconfig  = $werkplekconfigs->find_by_date( intval( filter_input( INPUT_GET, 'start_datum' ) ), intval( filter_input( INPUT_GET, 'eind_datum' ) ) );
+			$werkplekconfig  = $werkplekconfigs->find( intval( filter_input( INPUT_GET, 'start_datum' ) ), intval( filter_input( INPUT_GET, 'eind_datum' ) ) );
 			$werkplekconfigs->verwijder( $werkplekconfig );
 			$message = 'De werkplek configuratie is verwijderd';
 		}
@@ -109,16 +109,18 @@ class Admin_Werkplekken_Handler {
 				$werkplekconfigs       = new WerkplekConfigs();
 				$start_datum           = strtotime( $item['start_datum'] );
 				$eind_datum            = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
-				$werkplek              = $werkplekconfigs->find_by_date( $start_datum, $eind_datum );
+				$werkplek              = $werkplekconfigs->find( $start_datum, $eind_datum );
 				$werkplek->start_datum = $start_datum;
 				$werkplek->eind_datum  = $eind_datum;
-				$werkplek->config      = $item['config'];
+				$werkplek->config      = $this->config_to_int( $item['config'] );
 				$werkplekconfigs->toevoegen( $werkplek );
 				$message = 'De gegevens zijn opgeslagen';
 			}
-		} else {
-			$werkplekconfigs = new WerkplekConfigs();
-			$werkplek   = $werkplekconfigs->find_by_date( intval( $_REQUEST['start_datum'] ), intval( $_REQUEST['eind_datum'] ) );
+		} else { // Bestaande config opvragen of nieuwe toevoegen.
+			$werkplekconfigs         = new WerkplekConfigs();
+			$werkplek                = isset( $_REQUEST['start_datum'] ) && isset( $_REQUEST['eind_datum'] ) ?
+				$werkplekconfigs->find( intval( $_REQUEST['start_datum'] ), intval( $_REQUEST['eind_datum'] ) ) :
+				new WerkplekConfig();
 			$item['start_datum']     = date( 'd-m-Y', $werkplek->start_datum );
 			$item['eind_datum']      = $werkplek->eind_datum ? date( 'd-m-Y', $werkplek->eind_datum ) : '';
 			$item['config']          = $werkplek->config;
@@ -136,5 +138,26 @@ class Admin_Werkplekken_Handler {
 	 */
 	public function werkplekken_form_meta_box_handler( $item ) {
 		require 'partials/admin-werkplekken-form-meta-box.php';
+	}
+
+	/**
+	 * Converteer een multidimension config array met string waarden naar int
+	 *
+	 * @param  array $config De configuratie.
+	 * @return array
+	 */
+	private function config_to_int( array $config ) : array {
+		array_walk(
+			$config,
+			function( &$dag ) {
+				array_walk(
+					$dag,
+					function( &$dagdeel ) {
+						$dagdeel = array_map( 'intval', $dagdeel );
+					}
+				);
+			}
+		);
+		return $config;
 	}
 }

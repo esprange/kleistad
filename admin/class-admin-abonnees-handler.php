@@ -63,7 +63,6 @@ class Admin_Abonnees_Handler {
 	 * @return bool|string
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 * @SuppressWarnings(PHPMD.NPathComplexity)
-
 	 */
 	private function validate_abonnee( $item, $actie ) {
 		if ( 'status' !== $actie ) {

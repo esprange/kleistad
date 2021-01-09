@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 88;
+	const DBVERSIE = 93;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -345,8 +345,35 @@ class Admin_Upgrade {
 	 */
 	private function convert_reserveringen() {
 		global $wpdb;
-		$wpdb->query ( "UPDATE {$wpdb->prefix}kleistad_reserveringen SET datum = concat( jaar, '-', maand, '-', dag ) WHERE datum is NULL" );
+		$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_reserveringen SET datum = concat( jaar, '-', maand, '-', dag ) WHERE datum is NULL" );
 	}
+
+	/**
+	 * Converteer de corona reserveringen naar werkplek gebruik
+	 */
+	private function convert_werkplekgebruik() {
+		global $wpdb;
+		$results = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}options WHERE option_name like 'kleistad_corona_%'" );
+		if ( is_array( $results ) ) {
+			foreach( $results as $corona_regel ) {
+				$datum = strtotime( str_replace( '-', '/', strtok( $corona_regel->option_name, 'kleistad_corona_' ) ) );
+				if ( $datum && false === get_option( 'kleistad_werkplek_' . date( 'Ymd', $datum ) ) ) {
+					$werkplekgebruik = new WerkplekGebruik( $datum );
+					$reserveringen   = get_option( $corona_regel->option_name );
+					$index = 0;
+					$oude_labels = [ 'H', 'D', 'B' ];
+					foreach ( WerkplekConfig::DAGDEEL as $dagdeel ) {
+						foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) {
+							$werkplekgebruik->wijzig( $dagdeel, $activiteit, $reserveringen[ $index ][ $oude_labels[ $index ] ] ?? [] );
+						};
+						$index++;
+					}
+					$werkplekgebruik->save();
+				}
+			}
+		}
+	}
+
 
 	// phpcs:enable
 
@@ -369,5 +396,6 @@ class Admin_Upgrade {
 		$this->convert_users();
 		$this->convert_ovens();
 		$this->convert_reserveringen();
+		$this->convert_werkplekgebruik();
 	}
 }

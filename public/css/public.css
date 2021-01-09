@@ -27,6 +27,9 @@ Description: stylesheet functions voor kleistad_plugin
     border: 2px solid #DDD;
     font-size:12px;
 }
+.ui-button,  .ui-button-text .ui-button{  
+    font-size: small !important; 
+   }
 table.display {
     font-size: small;
 	table-layout: auto;
@@ -437,6 +440,14 @@ label.kleistad_label_cb {
     height: 50px;
     padding-left: 45px;
     width: 250px;
+}
+
+.kleistad_werkplek_label {
+    font-size:small;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
 }
 
 /* csslint ignore:start */

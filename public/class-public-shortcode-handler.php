@@ -174,6 +174,12 @@ class Public_Shortcode_Handler {
 			'css'    => [ 'jquery-ui' ],
 			'access' => [ BESTUUR ],
 		],
+		'werkplek'              => [
+			'script' => true,
+			'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-button' ],
+			'css'    => [ 'jquery-ui' ],
+			'access' => [ DOCENT, LID, BESTUUR ],
+		],
 		'workshop_aanvraag'     => [
 			'script' => false,
 			'js'     => [ 'jquery' ],

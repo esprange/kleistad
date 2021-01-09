@@ -26,7 +26,7 @@ class WerkplekConfigs implements Countable, Iterator {
 	/**
 	 * De werkplekdata
 	 *
-	 * @var array $data De ruwe data.
+	 * @var array $configs De configuraties.
 	 */
 	private array $configs = [];
 
@@ -47,20 +47,8 @@ class WerkplekConfigs implements Countable, Iterator {
 			$werkplekconfig              = new WerkplekConfig();
 			$werkplekconfig->start_datum = $config['start_datum'];
 			$werkplekconfig->eind_datum  = $config['eind_datum'];
-			$expand                      = [];
-			foreach ( WerkplekConfig::ATELIERDAG as $dag ) {
-				$dagcode = strtolower( substr( $dag, 0, 2 ) );
-				foreach ( WerkplekConfig::DAGDEEL as $dagdeel ) {
-					$dagdeelcode = strtolower( substr( $dagdeel, 0, 1 ) );
-					foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) {
-						$activiteitcode                            = strtolower( substr( $activiteit, 0, 1 ) );
-						$expand[ $dag ][ $dagdeel ][ $activiteit ] =
-							$config['config'][ $dagcode ][ $dagdeelcode ][ $activiteitcode ];
-					}
-				}
-			}
-			$werkplekconfig->config = $expand;
-			$this->configs[]        = $werkplekconfig;
+			$werkplekconfig->config      = $config['config'];
+			$this->configs[]             = $werkplekconfig;
 		}
 	}
 
@@ -224,40 +212,34 @@ class WerkplekConfigs implements Countable, Iterator {
 	private function save() {
 		$configs = [];
 		foreach ( $this->configs as $config ) {
-			$compact = [];
-			foreach ( WerkplekConfig::ATELIERDAG as $dag ) {
-				foreach ( WerkplekConfig::DAGDEEL as $dagdeel ) {
-					foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) {
-						$dagcode        = strtolower( substr( $dag, 0, 2 ) );
-						$dagdeelcode    = strtolower( substr( $dagdeel, 0, 1 ) );
-						$activiteitcode = strtolower( substr( $activiteit, 0, 1 ) );
-						$compact[ $dagcode ][ $dagdeelcode ][ $activiteitcode ] =
-							intval( $config->config[ $dag ][ $dagdeel ][ $activiteit ] );
-					}
-				}
-			}
 			$configs[] = [
 				'start_datum' => $config->start_datum,
 				'eind_datum'  => $config->eind_datum,
-				'config'      => $compact,
+				'config'      => $config->config,
 			];
 		}
 		update_option( self::META_KEY, $configs, true );
 	}
 
 	/**
-	 * Vind de config obv datums;
+	 * Vind de config obv datums
 	 *
-	 * @param int $start_datum De start datum.
-	 * @param int $eind_datum  De eind datum.
+	 * @param int $datum       De start datum of de datum waarvoor een configuratie gezocht wordt .
+	 * @param int $eind_datum  De eind datum of null.
 	 * @return WerkplekConfig
 	 */
-	public function find_by_date( int $start_datum, int $eind_datum ) : WerkplekConfig {
-		foreach ( $this->configs as $config ) {
-			if ( $start_datum === $config->start_datum && $eind_datum === $config->eind_datum ) {
+	public function find( int $datum, ?int $eind_datum = null ) : WerkplekConfig {
+		foreach ( $this->configs as $index => $config ) {
+			if (
+					( is_null( $eind_datum ) && $datum >= $config->start_datum && ( $datum <= $config->eind_datum || 0 === $config->eind_datum ) )
+				||
+					( ! is_null( $eind_datum ) && $datum === $config->start_datum && $eind_datum === $config->eind_datum )
+				) {
+				$this->current_index = $index;
 				return $config;
 			}
 		}
+		$this->current_index = 0;
 		return new WerkplekConfig();
 	}
 
