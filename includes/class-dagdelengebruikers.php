@@ -11,12 +11,29 @@
 
 namespace Kleistad;
 
+use Countable;
+use Iterator;
+
 /**
  * Kleistad Dagdelengebruikers class.
  *
  * @since 6.11.0
  */
-class Dagdelengebruikers extends Gebruikers {
+class Dagdelengebruikers implements Countable, Iterator {
+
+	/**
+	 * De gebruikers
+	 *
+	 * @var array $dagdelengebruikers De gebruikers.
+	 */
+	protected $dagdelengebruikers = [];
+
+	/**
+	 * Intere index
+	 *
+	 * @var int $current_index De index.
+	 */
+	protected int $current_index = 0;
 
 	/**
 	 * De constructor
@@ -32,7 +49,7 @@ class Dagdelengebruikers extends Gebruikers {
 			]
 		);
 		foreach ( $dagdelengebruikers as $dagdelengebruiker ) {
-			$this->gebruikers[] = new Dagdelengebruiker( $dagdelengebruiker->ID );
+			$this->dagdelengebruikers[] = new Dagdelengebruiker( $dagdelengebruiker->ID );
 		}
 	}
 
@@ -42,8 +59,48 @@ class Dagdelengebruikers extends Gebruikers {
 	 * @return Dagdelengebruiker De gebruiker.
 	 */
 	public function current(): Dagdelengebruiker {
-		return $this->gebruikers[ $this->current_index ];
+		return $this->dagdelengebruikers[ $this->current_index ];
 	}
 
+	/**
+	 * Geef het aantal dagdelengebruikers terug.
+	 *
+	 * @return int Het aantal.
+	 */
+	public function count(): int {
+		return count( $this->dagdelengebruikers );
+	}
+
+	/**
+	 * Geef de sleutel terug.
+	 *
+	 * @return int De sleutel.
+	 */
+	public function key(): int {
+		return $this->current_index;
+	}
+
+	/**
+	 * Ga naar de volgende in de lijst.
+	 */
+	public function next() {
+		$this->current_index++;
+	}
+
+	/**
+	 * Ga terug naar het begin.
+	 */
+	public function rewind() {
+		$this->current_index = 0;
+	}
+
+	/**
+	 * Bepaal of het element bestaat.
+	 *
+	 * @return bool Of het bestaat of niet.
+	 */
+	public function valid(): bool {
+		return isset( $this->dagdelengebruikers[ $this->current_index ] );
+	}
 
 }

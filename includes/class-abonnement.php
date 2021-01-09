@@ -94,7 +94,7 @@ class Abonnement extends Artikel {
 		$this->klant_id              = $klant_id;
 		$this->betalen               = new Betalen();
 		$this->default_data['code']  = "A$klant_id";
-		$this->default_data['datum'] = date( 'Y-m-d' );
+		$this->default_data['datum'] = time();
 		$abonnement                  = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$this->data                  = is_array( $abonnement ) ? wp_parse_args( $abonnement, $this->default_data ) : $this->default_data;
 	}

@@ -86,7 +86,7 @@ $this->form();
 		</div>
 	</div>
 	<div class="kleistad_row" >
-		<button type="submit" name="kleistad_submit_email" value="verzenden" >Verzenden</button>
-		<button type="submit" name="kleistad_submit_email" value="test_email" >Test Email verzenden</button>
+		<button type="submit" name="kleistad_submit_email" id="kleistad_submit_verzenden" value="verzenden" >Verzenden</button>
+		<button type="submit" name="kleistad_submit_email" id="kleistad_submit_testen" value="test_email" >Test Email verzenden</button>
 	</div>
 </form>

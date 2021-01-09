@@ -109,7 +109,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 			<th>Betaald &nbsp;&nbsp;<input type="hidden" name="betaald" value="<?php echo (int) $data['workshop']['betaald']; ?>" ><?php echo $data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?></th>
 		</tr>
 	</table>
-	<button type="submit" name="kleistad_submit_workshop_beheer" value="bewaren" <?php disabled( $alleen_lezen || $data['workshop']['definitief'] ); ?> >Opslaan</button>
+	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $alleen_lezen || $data['workshop']['definitief'] ); ?> >Opslaan</button>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $data['workshop']['vervallen'] ); ?>
 		data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $alleen_lezen || 'toevoegen' === $data['actie'] || $data['workshop']['gefactureerd'] ); ?>

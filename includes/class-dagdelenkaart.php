@@ -79,7 +79,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
-		$this[ $attribuut ] = $waarde;
+		$this->data[ $attribuut ] = $waarde;
 	}
 
 	/**

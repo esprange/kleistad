@@ -209,18 +209,18 @@ if ( isset( $data['recept'] ) ) :
 		</div>
 	</div>
 	<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
-	<button type="submit" name="kleistad_submit_recept_beheer" value="bewaren">Opslaan</button>
+	<button type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_bewaren" value="bewaren">Opslaan</button>
 	<?php
 	if ( 0 < $data['recept']['id'] ) :
 		if ( 'publish' !== $data['recept']['status'] ) :
 			?>
-	<button type="submit" name="kleistad_submit_recept_beheer" value="publiceren" >Publiceren</button>
+	<button type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_publiceren" value="publiceren" >Publiceren</button>
 	<?php else : ?>
-	<button type="submit" name="kleistad_submit_recept_beheer" value="verbergen" >Verbergen</button>
+	<button type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verbergen" value="verbergen" >Verbergen</button>
 		<?php
 		endif;
 	?>
-	<button type="submit" name="kleistad_submit_recept_beheer" data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" value="verwijderen">Verwijderen</button>
+	<button type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verwijderen" data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" value="verwijderen">Verwijderen</button>
 	<?php endif ?>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link" >Terug</button>
 </form>

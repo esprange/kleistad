@@ -28,7 +28,7 @@ if ( 'blokkade' === $data['actie'] ) :
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_3">
-			<button name="kleistad_submit_debiteuren" type="submit" value="blokkade"
+			<button name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit" value="blokkade"
 				<?php disabled( ! $blok ); ?> data-confirm="Debiteuren|Weet je zeker dat je de blokkade datum wilt wijzigen naar <?php echo esc_attr( date( 'd-m-Y', $data['nieuwe_blokkade'] ) ); ?> ?" >Bevestigen</button>
 		</div>
 	</div>

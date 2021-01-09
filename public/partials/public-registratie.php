@@ -115,7 +115,7 @@ else :
 	</div>
 	<div class="kleistad_row">
 		<div class="kleistad_col_10">
-			<button name="kleistad_submit_registratie" value="wijzigen" type="submit" >Opslaan</button>
+			<button name="kleistad_submit_registratie" value="wijzigen" type="submit" id="kleistad_submit">Opslaan</button>
 			<button class="kleistad_edit_link" data-actie="wachtwoord" type="button" >Wachtwoord wijzigen</button>
 		</div>
 	</div>

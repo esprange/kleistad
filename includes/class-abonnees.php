@@ -11,12 +11,29 @@
 
 namespace Kleistad;
 
+use Countable;
+use Iterator;
+
 /**
  * Kleistad Abonnees class.
  *
  * @since 6.11.0
  */
-class Abonnees extends Gebruikers {
+class Abonnees implements Countable, Iterator {
+
+	/**
+	 * De gebruikers
+	 *
+	 * @var array $abonnees De gebruikers.
+	 */
+	protected $abonnees = [];
+
+	/**
+	 * Intere index
+	 *
+	 * @var int $current_index De index.
+	 */
+	protected int $current_index = 0;
 
 	/**
 	 * De constructor
@@ -32,7 +49,7 @@ class Abonnees extends Gebruikers {
 			]
 		);
 		foreach ( $abonnees as $abonnee ) {
-			$this->gebruikers[] = new Abonnee( $abonnee->ID );
+			$this->abonnees[] = new Abonnee( $abonnee->ID );
 		}
 	}
 
@@ -42,8 +59,47 @@ class Abonnees extends Gebruikers {
 	 * @return Abonnee De gebruiker.
 	 */
 	public function current(): Abonnee {
-		return $this->gebruikers[ $this->current_index ];
+		return $this->abonnees[ $this->current_index ];
 	}
 
+	/**
+	 * Geef het aantal abonnees terug.
+	 *
+	 * @return int Het aantal.
+	 */
+	public function count(): int {
+		return count( $this->abonnees );
+	}
 
+	/**
+	 * Geef de sleutel terug.
+	 *
+	 * @return int De sleutel.
+	 */
+	public function key(): int {
+		return $this->current_index;
+	}
+
+	/**
+	 * Ga naar de volgende in de lijst.
+	 */
+	public function next() {
+		$this->current_index++;
+	}
+
+	/**
+	 * Ga terug naar het begin.
+	 */
+	public function rewind() {
+		$this->current_index = 0;
+	}
+
+	/**
+	 * Bepaal of het element bestaat.
+	 *
+	 * @return bool Of het bestaat of niet.
+	 */
+	public function valid(): bool {
+		return isset( $this->abonnees[ $this->current_index ] );
+	}
 }

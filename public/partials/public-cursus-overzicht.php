@@ -48,7 +48,7 @@ if ( 'cursisten' === $data['actie'] ) :
 				<td>
 					<?php
 					if ( ! $cursist['i_betaald'] && ! $cursist['c_betaald'] ) :
-						if ( ( $data['cursus']['loopt'] && $cursist['wacht'] ) || $cursist['wachtlijst'] ) :
+						if ( $cursist['wacht'] || $cursist['wachtlijst'] ) :
 							?>
 						<a href="#" title="indelen" class="kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 							data-id="<?php echo esc_attr( $cursist['id'] . '-' . $data['cursus']['id'] ); ?>" 
@@ -119,7 +119,7 @@ if ( 'cursisten' === $data['actie'] ) :
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_3">
-			<button name="kleistad_submit_cursus_overzicht" type="submit" value="indelen" >Bevestigen</button>
+			<button name="kleistad_submit_cursus_overzicht" id="kleistad_submit" type="submit" value="indelen" >Bevestigen</button>
 		</div>
 		<div class="kleistad_col_4">
 		</div>
@@ -143,7 +143,7 @@ if ( 'cursisten' === $data['actie'] ) :
 	</div>
 	<div class="kleistad_row" style="padding-top:20px;">
 		<div class="kleistad_col_3">
-			<button name="kleistad_submit_cursus_overzicht" type="submit" value="uitschrijven" >Bevestigen</button>
+			<button name="kleistad_submit_cursus_overzicht" type="submit" id="kleistad_submit" value="uitschrijven" >Bevestigen</button>
 		</div>
 		<div class="kleistad_col_4">
 		</div>

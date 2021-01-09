@@ -11,12 +11,29 @@
 
 namespace Kleistad;
 
+use Countable;
+use Iterator;
+
 /**
  * Kleistad Cursisten class.
  *
  * @since 6.11.0
  */
-class Cursisten extends Gebruikers {
+class Cursisten implements Countable, Iterator {
+
+	/**
+	 * De gebruikers
+	 *
+	 * @var array $cursisten De gebruikers.
+	 */
+	protected $cursisten = [];
+
+	/**
+	 * Intere index
+	 *
+	 * @var int $current_index De index.
+	 */
+	protected int $current_index = 0;
 
 	/**
 	 * De constructor
@@ -32,7 +49,7 @@ class Cursisten extends Gebruikers {
 			]
 		);
 		foreach ( $cursisten as $cursist ) {
-			$this->gebruikers[] = new Cursist( $cursist->ID );
+			$this->cursisten[] = new Cursist( $cursist->ID );
 		}
 	}
 
@@ -42,9 +59,47 @@ class Cursisten extends Gebruikers {
 	 * @return Cursist De gebruiker.
 	 */
 	public function current(): Cursist {
-		return $this->gebruikers[ $this->current_index ];
+		return $this->cursisten[ $this->current_index ];
 	}
 
+	/**
+	 * Geef het aantal cursisten terug.
+	 *
+	 * @return int Het aantal.
+	 */
+	public function count(): int {
+		return count( $this->cursisten );
+	}
 
+	/**
+	 * Geef de sleutel terug.
+	 *
+	 * @return int De sleutel.
+	 */
+	public function key(): int {
+		return $this->current_index;
+	}
 
+	/**
+	 * Ga naar de volgende in de lijst.
+	 */
+	public function next() {
+		$this->current_index++;
+	}
+
+	/**
+	 * Ga terug naar het begin.
+	 */
+	public function rewind() {
+		$this->current_index = 0;
+	}
+
+	/**
+	 * Bepaal of het element bestaat.
+	 *
+	 * @return bool Of het bestaat of niet.
+	 */
+	public function valid(): bool {
+		return isset( $this->cursisten[ $this->current_index ] );
+	}
 }

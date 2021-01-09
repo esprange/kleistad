@@ -122,8 +122,8 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 			<td colspan="3"><input type="text" name="indelingslug" <?php echo esc_attr( $readonly ); ?> id="kleistad_indelingslug" value="<?php echo esc_attr( $data['cursus']['indelingslug'] ); ?>" required /></td>
 		</tr>
 	</table>
-	<button type="submit" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $voltooid ); ?> >Opslaan</button>
-	<button type="submit" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
+	<button type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $voltooid ); ?> >Opslaan</button>
+	<button type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
 	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
 </form>
 <?php else : ?>

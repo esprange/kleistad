@@ -117,7 +117,7 @@ class Admin_Cursisten extends WP_List_Table {
 					continue;
 				}
 				$cursisten[] = [
-					'id'          => $inschrijving->cursus->code,
+					'id'          => $inschrijving->code,
 					'naam'        => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
 					'cursus'      => $inschrijving->cursus->naam,
 					'geannuleerd' => $inschrijving->geannuleerd ? 'X' : '',

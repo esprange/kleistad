@@ -131,7 +131,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 		<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
 	<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" ><?php echo esc_html( $gebruiker->display_name ); ?></option>
 		<?php endforeach ?>
-</select>
+</select>g
 <input type="checkbox" id="kleistad_meester_standaard" >standaard</input>
 <?php endif ?>
 </div>
@@ -144,7 +144,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 	<button type="button" id="kleistad_later" ><span class="dashicons dashicons-controls-forward"></span></button>
 	</div>
 	<div style="float:right;margin-bottom:10px">
-		<button name="kleistad_submit_corona" type="submit" >Bevestigen</button>
+		<button name="kleistad_submit_corona" id=kleistad_submit_corona" type="submit" >Bevestigen</button>
 	</div>
 </div>
 <div class="kleistad_row">
@@ -228,7 +228,7 @@ elseif ( 'overzicht' === $data['actie'] ) :
 	<?php endforeach ?>
 <div class="kleistad_row">
 	<div style="float:right;margin-top:10px">
-		<button name="kleistad_submit_corona" type="submit" >Bevestigen</button>
+		<button name="kleistad_submit_corona" type="submit" id="kleistad_submit">Bevestigen</button>
 	</div>
 </div>
 <?php endif ?>

@@ -85,7 +85,7 @@ class Inschrijving extends Artikel {
 	 */
 	private $default_data = [
 		'code'             => '',
-		'datum'            => '',
+		'datum'            => 0,
 		'technieken'       => [],
 		'ingedeeld'        => 0,
 		'geannuleerd'      => 0,
@@ -93,7 +93,7 @@ class Inschrijving extends Artikel {
 		'aantal'           => 1,
 		'restant_email'    => 0,
 		'herinner_email'   => 0,
-		'wacht_datum'      => '',
+		'wacht_datum'      => 0,
 		'extra_cursisten'  => [],
 		'hoofd_cursist_id' => 0,
 	];
@@ -111,7 +111,7 @@ class Inschrijving extends Artikel {
 		$this->klant_id              = $klant_id;
 		$this->betalen               = new Betalen();
 		$this->default_data['code']  = "C$cursus_id-$klant_id";
-		$this->default_data['datum'] = date( 'Y-m-d' );
+		$this->default_data['datum'] = time();
 		$inschrijvingen              = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$this->ingeschreven          = is_array( $inschrijvingen ) && isset( $inschrijvingen[ $cursus_id ] );
 		$this->data                  = $this->ingeschreven ?
@@ -140,7 +140,7 @@ class Inschrijving extends Artikel {
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
-		$this[ $attribuut ] = $waarde;
+		$this->data[ $attribuut ] = $waarde;
 	}
 
 	/**
