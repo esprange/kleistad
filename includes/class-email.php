@@ -152,6 +152,7 @@ class Email {
 	 *
 	 * @param array $args parameters voor email.
 	 * @return string De email inhoud.
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function prepare( $args ) {
 		$this->mailparams = wp_parse_args(
@@ -191,7 +192,7 @@ class Email {
 		/**
 		 * Via regexp de tekst bewerken. De match variable bevat resp. de match, een sleutel en eventueel een waarde.
 		 */
-		return preg_replace_callback_array(
+		return (string) preg_replace_callback_array(
 			[
 				'#\[\s*pagina\s*:\s*([a-z,_,-]+?)\s*\]#i' => function( $match ) {
 					// Include pagina.

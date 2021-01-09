@@ -11,6 +11,10 @@
 
 namespace Kleistad;
 
+use WP_REST_Response;
+use WP_REST_Request;
+use WP_Error;
+
 /**
  * De abstract class voor shortcodes
  */
@@ -69,6 +73,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @since 5.2.1
 	 * @param \WP_ERROR $error bestaand wp error object waar nieuwe fouten aan toegevoegd kunnen worden.
 	 * @param array     $input de ingevoerde data.
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function validate_gebruiker( &$error, $input ) {
 		if ( ! $this->validate_email( $input['user_email'] ) ) {
@@ -217,21 +222,18 @@ abstract class ShortcodeForm extends Shortcode {
 	public static function callback_formsubmit( \WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return new \WP_Error( 'intern', 'interne fout' );
+			return new WP_Error( 'intern', 'interne fout' );
 		}
 		$data           = [ 'form_actie' => $request->get_param( 'form_actie' ) ];
 		self::$form_url = $request->get_header( 'referer' );
 		$result         = $shortcode_object->validate( $data );
 		if ( ! is_wp_error( $result ) ) {
 			if ( 'test' === strtok( $data['form_actie'], '_' ) ) {
-				$result = $shortcode_object->test( $data );
-			} else {
-				$result = $shortcode_object->save( $data );
+				return new WP_REST_Response( $shortcode_object->test( $data ) );
 			}
-		} else {
-			return new \WP_REST_Response( [ 'status' => $shortcode_object->status( $result ) ] );
+			return new WP_REST_Response( $shortcode_object->save( $data ) );
 		}
-		return new \WP_REST_Response( $result );
+		return new WP_REST_Response( [ 'status' => $shortcode_object->status( $result ) ] );
 	}
 
 }

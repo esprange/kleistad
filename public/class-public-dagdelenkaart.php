@@ -86,8 +86,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 				'betaal'          => FILTER_SANITIZE_STRING,
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
-		);
-
+		) ?? [];
 		if ( '' === $data['input']['start_datum'] ) {
 			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' );
 		}

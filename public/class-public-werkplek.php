@@ -236,7 +236,7 @@ EOT;
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response Ajax response.
+	 * @return WP_REST_Response|WP_Error Ajax response.
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) {
 		$datum_str    = $request->get_param( 'datum' );

@@ -99,7 +99,7 @@ class Admin_Ovens_Handler {
 						'flags'  => FILTER_FORCE_ARRAY,
 					],
 				]
-			);
+			) ?? [];
 			$item_valid = $this->validate_oven( $item );
 			$notice     = is_string( $item_valid ) ? $item_valid : '';
 			if ( true === $item_valid ) {

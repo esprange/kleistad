@@ -276,10 +276,10 @@ abstract class Shortcode {
 	 * @return WP_REST_Response| bool  De response of false.
 	 */
 	protected static function get_shortcode_object( WP_REST_Request $request ) {
-		$tag   = $request->get_param( 'tag' );
+		$tag   = $request->get_param( 'tag' ) ?? '';
 		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
 		if ( class_exists( $class ) ) {
-			$atts = json_decode( $request->get_param( 'atts' ), true );
+			$atts = json_decode( $request->get_param( 'atts' ) ?? '', true );
 			return new $class( $tag, $atts, opties() );
 		}
 		return false;

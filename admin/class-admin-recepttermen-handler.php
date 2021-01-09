@@ -58,6 +58,9 @@ class Admin_Recepttermen_Handler {
 	 * Toon en verwerk recept term gegevens
 	 *
 	 * @since    6.4.0
+	 *
+	 * @suppressWarnings(PHPMD.UnusedLocalVariable)
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function recepttermen_form_page_handler() {
 		$message  = '';
@@ -73,7 +76,7 @@ class Admin_Recepttermen_Handler {
 					'hoofdterm_id' => FILTER_SANITIZE_NUMBER_INT,
 					'naam'         => FILTER_SANITIZE_STRING,
 				]
-			);
+			) ?? [];
 			$item_valid = $this->validate_receptterm( $item );
 			if ( true === $item_valid ) {
 				if ( $item['id'] > 0 ) {
@@ -126,6 +129,7 @@ class Admin_Recepttermen_Handler {
 	 * Toon het recept term formulier in een meta box
 	 *
 	 * @param array $item de recept term.
+	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function recepttermen_form_meta_box_handler( $item ) {
 		require 'partials/admin-recepttermen-form-meta-box.php';
