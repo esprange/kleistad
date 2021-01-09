@@ -134,7 +134,7 @@ class Admin_Stooksaldo extends WP_List_Table {
 			];
 		}
 		$waarden = array_column( $this->items, $orderby );
-		array_multisort( $waarden, 'asc' === $order ? SORT_ASC : SORT_DESC, SORT_REGULAR, $this->items );
+		array_multisort( $waarden, 'asc' === $order ? SORT_ASC : SORT_DESC /** @scrutinizer ignore-type */, SORT_REGULAR /** @scrutinizer ignore-type */, $this->items ); // phpcs:ignore
 		$total_items = $gebruiker_query->get_total();
 		$this->set_pagination_args(
 			[

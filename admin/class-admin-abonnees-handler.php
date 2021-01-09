@@ -139,14 +139,16 @@ class Admin_Abonnees_Handler {
 					],
 					'actie'            => FILTER_SANITIZE_STRING,
 				]
-			) ?? [];
-			if ( ! is_array( $item['extras'] ) ) {
-				$item['extras'] = [];
+			);
+			if ( ! is_null( $item ) ) {
+				if ( ! is_array( $item['extras'] ) ) {
+					$item['extras'] = [];
+				}
+				$actie      = $item['actie'];
+				$item_valid = $this->validate_abonnee( $item, $actie );
+				$notice     = is_string( $item_valid ) ? $item_valid : '';
+				$message    = empty( $notice ) ? $this->wijzig_abonnee( $item, $actie ) : '';
 			}
-			$actie      = $item['actie'];
-			$item_valid = $this->validate_abonnee( $item, $actie );
-			$notice     = is_string( $item_valid ) ? $item_valid : '';
-			$message    = empty( $notice ) ? $this->wijzig_abonnee( $item, $actie ) : '';
 		} elseif ( isset( $_REQUEST['id'] ) ) {
 			$abonnee_id = $_REQUEST['id'];
 			$actie      = $_REQUEST['actie'];

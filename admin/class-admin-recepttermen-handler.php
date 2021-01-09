@@ -69,37 +69,39 @@ class Admin_Recepttermen_Handler {
 		$multiple = 'recepttermen';
 		$item     = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_receptterm' ) ) {
-			$item       = filter_input_array(
+			$item = filter_input_array(
 				INPUT_POST,
 				[
 					'id'           => FILTER_SANITIZE_NUMBER_INT,
 					'hoofdterm_id' => FILTER_SANITIZE_NUMBER_INT,
 					'naam'         => FILTER_SANITIZE_STRING,
 				]
-			) ?? [];
-			$item_valid = $this->validate_receptterm( $item );
-			if ( true === $item_valid ) {
-				if ( $item['id'] > 0 ) {
-					wp_update_term(
-						$item['id'],
-						Recept::CATEGORY,
-						[
-							'naam'   => $item['naam'],
-							'parent' => $item['hoofdterm_id'],
-						]
-					);
+			);
+			if ( ! is_null( $item ) ) {
+				$item_valid = $this->validate_receptterm( $item );
+				if ( true === $item_valid ) {
+					if ( $item['id'] > 0 ) {
+						wp_update_term(
+							$item['id'],
+							Recept::CATEGORY,
+							[
+								'naam'   => $item['naam'],
+								'parent' => $item['hoofdterm_id'],
+							]
+						);
+					} else {
+						wp_insert_term(
+							$item['naam'],
+							Recept::CATEGORY,
+							[
+								'parent' => $item['hoofdterm_id'],
+							]
+						);
+					}
+					$message = 'De gegevens zijn opgeslagen';
 				} else {
-					wp_insert_term(
-						$item['naam'],
-						Recept::CATEGORY,
-						[
-							'parent' => $item['hoofdterm_id'],
-						]
-					);
+					$notice = $item_valid;
 				}
-				$message = 'De gegevens zijn opgeslagen';
-			} else {
-				$notice = $item_valid;
 			}
 		} else {
 			$item = [

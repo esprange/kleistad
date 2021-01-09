@@ -77,7 +77,7 @@ class Admin_Ovens_Handler {
 		$multiple = 'ovens';
 		$item     = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
-			$item       = filter_input_array(
+			$item = filter_input_array(
 				INPUT_POST,
 				[
 					'id'              => FILTER_SANITIZE_NUMBER_INT,
@@ -99,18 +99,20 @@ class Admin_Ovens_Handler {
 						'flags'  => FILTER_FORCE_ARRAY,
 					],
 				]
-			) ?? [];
-			$item_valid = $this->validate_oven( $item );
-			$notice     = is_string( $item_valid ) ? $item_valid : '';
-			if ( true === $item_valid ) {
-				$oven                  = $item['id'] > 0 ? new Oven( $item['id'] ) : new Oven();
-				$oven->naam            = $item['naam'];
-				$oven->kosten_laag     = $item['kosten_laag'];
-				$oven->kosten_midden   = $item['kosten_midden'];
-				$oven->kosten_hoog     = $item['kosten_hoog'];
-				$oven->beschikbaarheid = $item['beschikbaarheid'];
-				$oven->save();
-				$message = 'De gegevens zijn opgeslagen';
+			);
+			if ( ! is_null( $item ) ) {
+				$item_valid = $this->validate_oven( $item );
+				$notice     = is_string( $item_valid ) ? $item_valid : '';
+				if ( true === $item_valid ) {
+					$oven                  = $item['id'] > 0 ? new Oven( $item['id'] ) : new Oven();
+					$oven->naam            = $item['naam'];
+					$oven->kosten_laag     = $item['kosten_laag'];
+					$oven->kosten_midden   = $item['kosten_midden'];
+					$oven->kosten_hoog     = $item['kosten_hoog'];
+					$oven->beschikbaarheid = $item['beschikbaarheid'];
+					$oven->save();
+					$message = 'De gegevens zijn opgeslagen';
+				}
 			}
 		} else {
 			$oven                    = isset( $_REQUEST['id'] ) ? new Oven( $_REQUEST['id'] ) : new Oven();

@@ -99,20 +99,23 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'betaal'           => FILTER_SANITIZE_STRING,
 				'mc4wp-subscribe'  => FILTER_SANITIZE_STRING,
 			]
-		) ?? [];
-		if ( '' === $data['input']['abonnement_keuze'] ) {
-			$error->add( 'verplicht', 'Er is nog geen type abonnement gekozen' );
+		);
+		if ( ! is_null( $data['input'] ) ) {
+			if ( '' === $data['input']['abonnement_keuze'] ) {
+				$error->add( 'verplicht', 'Er is nog geen type abonnement gekozen' );
+			}
+			if ( '' === $data['input']['start_datum'] ) {
+				$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
+			}
+			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
+				$this->validate_gebruiker( $error, $data['input'] );
+			}
+			if ( ! empty( $error->get_error_codes() ) ) {
+				return $error;
+			}
+			return true;
 		}
-		if ( '' === $data['input']['start_datum'] ) {
-			$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
-		}
-		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-			$this->validate_gebruiker( $error, $data['input'] );
-		}
-		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
-		}
-		return true;
+		return new WP_Error( 'input', 'geen juiste data ontvangen' );
 	}
 
 	/**

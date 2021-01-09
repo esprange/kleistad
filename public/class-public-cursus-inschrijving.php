@@ -216,34 +216,37 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'betaal'          => FILTER_SANITIZE_STRING,
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
-		) ?? [];
-		if ( false === intval( $data['input']['cursus_id'] ) ) {
-			$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
-			return $error;
-		}
-		$cursus = new Cursus( $data['input']['cursus_id'] );
-		if ( $cursus->vol ) {
-			if ( 1 < $data['input']['aantal'] ) {
-				$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Je kan eventueel op een wachtlijst geplaatst worden' );
-				$data['input']['aantal'] = 1;
+		);
+		if ( ! is_null( $data['input'] ) ) {
+			if ( false === intval( $data['input']['cursus_id'] ) ) {
+				$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 				return $error;
 			}
+			$cursus = new Cursus( $data['input']['cursus_id'] );
+			if ( $cursus->vol ) {
+				if ( 1 < $data['input']['aantal'] ) {
+					$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Je kan eventueel op een wachtlijst geplaatst worden' );
+					$data['input']['aantal'] = 1;
+					return $error;
+				}
+			}
+			$ruimte = $cursus->ruimte();
+			if ( $ruimte < $data['input']['aantal'] ) {
+				$error->add( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." );
+				$data['input']['aantal'] = $ruimte;
+			} elseif ( 0 === intval( $data['input']['aantal'] ) ) {
+				$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
+				$data['input']['aantal'] = 1;
+			}
+			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
+				$this->validate_gebruiker( $error, $data['input'] );
+			}
+			if ( ! empty( $error->get_error_codes() ) ) {
+				return $error;
+			}
+			return true;
 		}
-		$ruimte = $cursus->ruimte();
-		if ( $ruimte < $data['input']['aantal'] ) {
-			$error->add( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." );
-			$data['input']['aantal'] = $ruimte;
-		} elseif ( 0 === intval( $data['input']['aantal'] ) ) {
-			$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
-			$data['input']['aantal'] = 1;
-		}
-		if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-			$this->validate_gebruiker( $error, $data['input'] );
-		}
-		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
-		}
-		return true;
+		return new WP_Error( 'input', 'geen juiste data ontvangen' );
 	}
 
 	/**

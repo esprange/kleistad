@@ -91,7 +91,7 @@ class Admin_Werkplekken_Handler {
 		$multiple = 'werkplekken';
 		$item     = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_werkplek' ) ) {
-			$item       = filter_input_array(
+			$item = filter_input_array(
 				INPUT_POST,
 				[
 					'start_datum'     => FILTER_SANITIZE_STRING,
@@ -102,19 +102,21 @@ class Admin_Werkplekken_Handler {
 					],
 					'nieuwste_config' => FILTER_SANITIZE_NUMBER_INT,
 				]
-			) ?? [];
-			$item_valid = $this->validate_werkplek( $item );
-			$notice     = is_string( $item_valid ) ? $item_valid : '';
-			if ( true === $item_valid ) {
-				$werkplekconfigs       = new WerkplekConfigs();
-				$start_datum           = strtotime( $item['start_datum'] );
-				$eind_datum            = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
-				$werkplek              = $werkplekconfigs->find( $start_datum, $eind_datum );
-				$werkplek->start_datum = $start_datum;
-				$werkplek->eind_datum  = $eind_datum;
-				$werkplek->config      = $this->config_to_int( $item['config'] );
-				$werkplekconfigs->toevoegen( $werkplek );
-				$message = 'De gegevens zijn opgeslagen';
+			);
+			if ( ! is_null( $item ) ) {
+				$item_valid = $this->validate_werkplek( $item );
+				$notice     = is_string( $item_valid ) ? $item_valid : '';
+				if ( true === $item_valid ) {
+					$werkplekconfigs       = new WerkplekConfigs();
+					$start_datum           = strtotime( $item['start_datum'] );
+					$eind_datum            = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
+					$werkplek              = $werkplekconfigs->find( $start_datum, $eind_datum );
+					$werkplek->start_datum = $start_datum;
+					$werkplek->eind_datum  = $eind_datum;
+					$werkplek->config      = $this->config_to_int( $item['config'] );
+					$werkplekconfigs->toevoegen( $werkplek );
+					$message = 'De gegevens zijn opgeslagen';
+				}
 			}
 		} else { // Bestaande config opvragen of nieuwe toevoegen.
 			$werkplekconfigs         = new WerkplekConfigs();
