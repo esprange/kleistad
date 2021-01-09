@@ -1,4 +1,4 @@
-/* global kleistadData, detectTap, navigator */
+/* global kleistadData, navigator */
 
 ( function( $ ) {
     'use strict';
@@ -25,7 +25,7 @@
         ).done(
             function( data ) {
 				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-				$( '#kleistad_datum_titel' ).text( data.datum)
+				$( '#kleistad_datum_titel' ).text( data.datum);
 				$( '#kleistad_werkplek' ).html( data.content );
             }
         ).fail(
