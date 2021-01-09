@@ -100,6 +100,10 @@ class Admin_Werkplekken_Handler {
 						'filter' => FILTER_SANITIZE_STRING,
 						'flags'  => FILTER_FORCE_ARRAY,
 					],
+					'meesters'        => [
+						'filter' => FILTER_SANITIZE_STRING,
+						'flags'  => FILTER_FORCE_ARRAY,
+					],
 					'nieuwste_config' => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
@@ -113,7 +117,8 @@ class Admin_Werkplekken_Handler {
 					$werkplek              = $werkplekconfigs->find( $start_datum, $eind_datum );
 					$werkplek->start_datum = $start_datum;
 					$werkplek->eind_datum  = $eind_datum;
-					$werkplek->config      = $this->config_to_int( $item['config'] );
+					$werkplek->config      = $this->int_array( $item['config'] );
+					$werkplek->meesters    = $this->int_array( $item['meesters'] );
 					$werkplekconfigs->toevoegen( $werkplek );
 					$message = 'De gegevens zijn opgeslagen';
 				}
@@ -126,6 +131,7 @@ class Admin_Werkplekken_Handler {
 			$item['start_datum']     = date( 'd-m-Y', $werkplek->start_datum );
 			$item['eind_datum']      = $werkplek->eind_datum ? date( 'd-m-Y', $werkplek->eind_datum ) : '';
 			$item['config']          = $werkplek->config;
+			$item['meesters']        = $werkplek->meesters;
 			$item['nieuwste_config'] = 0 === count( $werkplekconfigs ) || 0 === $werkplek->eind_datum;
 		}
 		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this, 'werkplekken_form_meta_box_handler' ], 'werkplek', 'normal', 'default' );
@@ -143,23 +149,18 @@ class Admin_Werkplekken_Handler {
 	}
 
 	/**
-	 * Converteer een multidimension config array met string waarden naar int
+	 * Converteer een multidimension array met string waarden naar int
 	 *
-	 * @param  array $config De configuratie.
+	 * @param  array $array Het array.
 	 * @return array
 	 */
-	private function config_to_int( array $config ) : array {
+	private function int_array( array $array ) : array {
 		array_walk(
-			$config,
-			function( &$dag ) {
-				array_walk(
-					$dag,
-					function( &$dagdeel ) {
-						$dagdeel = array_map( 'intval', $dagdeel );
-					}
-				);
+			$array,
+			function ( &$element ) {
+				$element = is_array( $element ) ? $this->int_array( $element ) : intval( $element );
 			}
 		);
-		return $config;
+		return $array;
 	}
 }

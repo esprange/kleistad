@@ -43,16 +43,19 @@ class WerkplekConfig {
 	 * @since 6.11.0
 	 */
 	public function __construct() {
-		$default_config = [];
+		$default_config   = [];
+		$default_meesters = [];
 		foreach ( $this->geef_atelierdagen() as $dag ) {
 			foreach ( self::DAGDEEL as $dagdeel ) {
 				foreach ( self::ACTIVITEIT as $activiteit ) {
 					$default_config[ $dag ][ $dagdeel ][ $activiteit ] = 0;
+					$default_meesters[ $dag ][ $dagdeel ]              = 0;
 				}
 			}
 		}
 		$this->config = [
 			'config'      => $default_config,
+			'meesters'    => $default_meesters,
 			'start_datum' => strtotime( 'today' ),
 			'eind_datum'  => 0,
 		];

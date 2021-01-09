@@ -48,6 +48,7 @@ class WerkplekConfigs implements Countable, Iterator {
 			$werkplekconfig->start_datum = $config['start_datum'];
 			$werkplekconfig->eind_datum  = $config['eind_datum'];
 			$werkplekconfig->config      = $config['config'];
+			$werkplekconfig->meesters    = $config['meesters'];
 			$this->configs[]             = $werkplekconfig;
 		}
 	}
@@ -216,6 +217,7 @@ class WerkplekConfigs implements Countable, Iterator {
 				'start_datum' => $config->start_datum,
 				'eind_datum'  => $config->eind_datum,
 				'config'      => $config->config,
+				'meesters'    => $config->meesters,
 			];
 		}
 		update_option( self::META_KEY, $configs, true );

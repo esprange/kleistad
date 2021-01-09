@@ -126,17 +126,35 @@ class Public_Werkplek extends Shortcode {
 	/**
 	 * Toon de werkplekken op een dag.
 	 *
-	 * @param int   $gebruiker_id De gebruiker waarvoor de reservering plaatsvindt.
-	 * @param int   $datum        De datum.
-	 * @param array $dagconfig    De werkplek configuratie van de betreffende datum.
+	 * @param int            $gebruiker_id   De gebruiker waarvoor de reservering plaatsvindt.
+	 * @param int            $datum          De datum.
+	 * @param WerkplekConfig $werkplekconfig De werkplek configuratie van de betreffende datum.
 	 * @return string HTML content.
 	 */
-	private static function toon_werkplekken( int $gebruiker_id, int $datum, array $dagconfig ) : string {
+	private static function toon_werkplekken( int $gebruiker_id, int $datum, WerkplekConfig $werkplekconfig ) : string {
 		$werkplekgebruik = new WerkplekGebruik( $datum );
+		$dagconfig       = $werkplekconfig->config[ strftime( '%A', $datum ) ];
+		$dagmeesters     = $werkplekconfig->meesters[ strftime( '%A', $datum ) ];
 		$veld_id         = 0;
 		$button          = [];
 		$aanwezig        = [];
-		$html            = '';
+		$html            = <<<EOT
+<div class="kleistad_row" >
+	<div class="kleistad_col_3" >
+		<strong>beheerder</strong>
+	</div>
+EOT;
+		foreach ( array_keys( $dagconfig ) as $dagdeel ) {
+			$meester = $dagmeesters[ $dagdeel ] ? get_user_by( 'id', $dagmeesters[ $dagdeel ] )->display_name : '';
+			$html   .= <<<EOT
+	<div class="kleistad_col_2" style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
+		$meester
+	</div>
+EOT;
+		}
+		$html .= <<<EOT
+</div>
+EOT;
 		foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) {
 			$kleur = WerkplekConfig::ACTIEKLEUR[ $activiteit ];
 			$html .= <<<EOT
@@ -221,11 +239,10 @@ EOT;
 		$datum           = strtotime( $datum_str );
 		$werkplekconfigs = new WerkplekConfigs();
 		$werkplekconfig  = $werkplekconfigs->find( $datum );
-		$dagconfig       = $werkplekconfig->config[ strftime( '%A', $datum ) ];
 		$gebruiker_id    = get_current_user_id();
 		return new WP_REST_Response(
 			[
-				'content' => self::toon_werkplekken( $gebruiker_id, $datum, $dagconfig ),
+				'content' => self::toon_werkplekken( $gebruiker_id, $datum, $werkplekconfig ),
 				'datum'   => strftime( '%A %e %B', $datum ),
 			]
 		);
@@ -278,7 +295,7 @@ EOT;
 		}
 		return new WP_REST_Response(
 			[
-				'content' => self::toon_werkplekken( $gebruiker_id, $datum, $dagconfig ),
+				'content' => self::toon_werkplekken( $gebruiker_id, $datum, $werkplekconfig ),
 			]
 		);
 	}
