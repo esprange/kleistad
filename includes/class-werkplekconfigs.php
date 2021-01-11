@@ -226,7 +226,7 @@ class WerkplekConfigs implements Countable, Iterator {
 	/**
 	 * Vind de config obv datums
 	 *
-	 * @param int $datum       De start datum of de datum waarvoor een configuratie gezocht wordt .
+	 * @param int $datum       De start datum of de datums waarvoor een configuratie gezocht wordt .
 	 * @param int $eind_datum  De eind datum of null.
 	 * @return WerkplekConfig
 	 */
@@ -235,8 +235,7 @@ class WerkplekConfigs implements Countable, Iterator {
 			$datum_in_periode = is_null( $eind_datum ) && $datum >= $config->start_datum && ( $datum <= $config->eind_datum || 0 === $config->eind_datum );
 			$periode_gelijk   = ! is_null( $eind_datum ) && $datum === $config->start_datum && $eind_datum === $config->eind_datum;
 			if ( $datum_in_periode ) {
-				$meesters = new WerkplekMeesters( $datum );
-				$config->adhoc_meesters( $datum, $meesters->geef() );
+				$config->adhoc_meesters( $datum ); // Wijzig de standaard beheerders zonodig door een of meer ad hoc beheerders.
 				return $config;
 			}
 			if ( $periode_gelijk ) {

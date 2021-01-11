@@ -90,10 +90,9 @@ class WerkplekConfig {
 	/**
 	 * Wijzig de werkplaatsmeesters voor de configuratie van een specifieke datum
 	 *
-	 * @param int   $datum       De datum van de wijziging.
-	 * @param array $meester_ids De wp user ids van de ad hoc meester.
+	 * @param int $datum De datum van de wijziging.
 	 */
-	public function adhoc_meesters( int $datum, array $meester_ids ) {
+	public function adhoc_meesters( int $datum ) {
 		$atelierdag       = strftime( '%A', $datum );
 		$werkplekmeesters = new WerkplekMeesters( $datum );
 		$meester_ids      = $werkplekmeesters->geef();
