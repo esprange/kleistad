@@ -51,6 +51,20 @@ class Public_Werkplek extends Shortcode {
 		return $datums;
 	}
 
+	/**
+	 * Voor de ad hoc selectie van werkplaatsbeheerders, bepaal wie die taak mogen uitvoeren.
+	 *
+	 * @return array
+	 */
+	private function geef_meesters() : array {
+		return get_users(
+			[
+				'fields'   => [ 'display_name', 'ID' ],
+				'orderby'  => 'display_name',
+				'role__in' => [ LID, DOCENT, BESTUUR ],
+			]
+		);
+	}
 
 	/**
 	 *
@@ -62,7 +76,8 @@ class Public_Werkplek extends Shortcode {
 	 * @since   6.11.0
 	 */
 	protected function prepare( &$data ) {
-		$data['datums'] = $this->geef_mogelijke_datums();
+		$data['datums']   = $this->geef_mogelijke_datums();
+		$data['meesters'] = $this->geef_meesters();
 		if ( 0 === count( $data['datums'] ) ) {
 			return new WP_Error( 'config', 'Er zijn geen datums beschikbaar' );
 		}
@@ -106,6 +121,31 @@ class Public_Werkplek extends Shortcode {
 		);
 		register_rest_route(
 			KLEISTAD_API,
+			'/meester',
+			[
+				'methods'             => 'POST,DELETE',
+				'callback'            => [ __CLASS__, 'callback_meester' ],
+				'args'                => [
+					'id'      => [
+						'required' => true,
+						'type'     => 'int',
+					],
+					'datum'   => [
+						'required' => true,
+						'type'     => 'string',
+					],
+					'dagdeel' => [
+						'required' => true,
+						'type'     => 'string',
+					],
+				],
+				'permission_callback' => function() {
+					return is_user_logged_in();
+				},
+			]
+		);
+		register_rest_route(
+			KLEISTAD_API,
 			'/werkplek',
 			[
 				'methods'             => 'GET',
@@ -130,6 +170,7 @@ class Public_Werkplek extends Shortcode {
 	 * @param int            $datum          De datum.
 	 * @param WerkplekConfig $werkplekconfig De werkplek configuratie van de betreffende datum.
 	 * @return string HTML content.
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private static function toon_werkplekken( int $gebruiker_id, int $datum, WerkplekConfig $werkplekconfig ) : string {
 		$werkplekgebruik = new WerkplekGebruik( $datum );
@@ -145,12 +186,21 @@ class Public_Werkplek extends Shortcode {
 	</div>
 EOT;
 		foreach ( array_keys( $dagconfig ) as $dagdeel ) {
-			$meester = $dagmeesters[ $dagdeel ] ? get_user_by( 'id', $dagmeesters[ $dagdeel ] )->display_name : '';
-			$html   .= <<<EOT
+			$meester = $dagmeesters[ $dagdeel ] ? get_user_by( 'id', $dagmeesters[ $dagdeel ] )->display_name : '...';
+			if ( current_user_can( BESTUUR ) ) {
+				$html .= <<<EOT
+	<div class="kleistad_col_2">
+		<label for="meester$dagdeel" style="width:100%" class="kleistad_werkplek_label">$meester</label>
+		<input type="radio" class="kleistad_meester" data-dagdeel="$dagdeel" value="{$dagmeesters[$dagdeel]}" name="meester" id="meester$dagdeel" />
+	</div>
+EOT;
+			} else {
+				$html .= <<<EOT
 	<div class="kleistad_col_2" style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
 		$meester
 	</div>
 EOT;
+			}
 		}
 		$html .= <<<EOT
 </div>
@@ -299,4 +349,47 @@ EOT;
 			]
 		);
 	}
+
+	/**
+	 *
+	 * Callback from Ajax request
+	 *
+	 * @param WP_REST_Request $request Ajax request params.
+	 * @return WP_REST_Response|WP_Error Ajax response.
+	 */
+	public static function callback_meester( WP_REST_Request $request ) {
+		$datum_str  = $request->get_param( 'datum' );
+		$meester_id = intval( $request->get_param( 'id' ) );
+		$dagdeel    = $request->get_param( 'dagdeel' );
+		if ( is_null( $dagdeel ) || is_null( $meester_id ) || is_null( $datum_str ) ) {
+			return new WP_Error( 'param', 'Onjuiste data ontvangen' );
+		}
+		$datum            = strtotime( $datum_str );
+		$werkplekmeesters = new WerkplekMeesters( $datum );
+		switch ( $request->get_method() ) {
+			case 'POST':
+				$werkplekmeesters->wijzig( $dagdeel, $meester_id );
+				break;
+			case 'PUT':
+				break;
+			case 'DELETE':
+				$werkplekmeesters->verwijder( $dagdeel );
+				$werkplekconfigs = new WerkplekConfigs();
+				$werkplekconfig  = $werkplekconfigs->find( $datum );
+				$dagmeesters     = $werkplekconfig->meesters[ strftime( '%A', $datum ) ];
+				$meester_id      = $dagmeesters[ $dagdeel ];
+				break;
+			default:
+				break;
+		}
+
+		return new WP_REST_Response(
+			[
+				'id'      => $meester_id,
+				'dagdeel' => $dagdeel,
+				'naam'    => get_user_by( 'id', $meester_id )->display_name,
+			]
+		);
+	}
+
 }

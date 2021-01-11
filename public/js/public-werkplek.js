@@ -43,7 +43,7 @@
     /**
      * Wijzig of verwijder de reservering in de server.
      *
-     * @param {string} method post, put of delete.
+     * @param {string} method post of delete.
 	 * @param (int)    id, het gebruiker id.
 	 * @param (string) dagdeel, het dagdeel.
 	 * @param (string) activiteit, de activiteit. 
@@ -82,13 +82,54 @@
 		);
 	}
 
+    /**
+     * Wijzig of verwijder de reservering in de server.
+     *
+     * @param {string} method post of delete.
+	 * @param (int)    id, het meester id.
+	 * @param (string) dagdeel, het dagdeel.
+     * @returns {undefined}
+     */
+    function muteerMeester( method, datum, id, dagdeel ) {
+		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+        $.ajax(
+            {
+                url: kleistadData.base_url + '/meester/',
+                method: method,
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
+                },
+                data: {
+					id:         id,
+					datum:      datum,
+					dagdeel:    dagdeel
+                }
+            }
+        ).done(
+            function( data ) {
+				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_meester_standaard' ).prop( 'checked', false );
+				$( '.kleistad_meester:checked' ).val( data.id ).prop( 'checked', false ).button( 'option', 'label', data.naam );
+			}
+        ).fail(
+			function( jqXHR ) {
+				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
+					window.alert( jqXHR.responseJSON.message );
+					return;
+				}
+				window.alert( kleistadData.error_message );
+			}
+		);
+	}
+
 	function buttonsActive() {
 		$( '#kleistad_eerder' ).prop( 'disabled', 0 === datumIndex );
 		$( '#kleistad_later' ).prop('disabled', datums.length === datumIndex + 1 );
 	}
 
 	function onLoad() {
-		$( '.kleistad_werkplek' ).button(
+		$( '.kleistad_werkplek, .kleistad_meester' ).button(
 			{
 				icon:false
 			}
@@ -113,13 +154,32 @@
 		}
 	);
 
-    $( function() {
-
+	$( function() 
+		{
 			if ( navigator.appName === 'Microsoft Internet Explorer' || !!( navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/rv:11/)) || (typeof $.browser !== 'undefined' && $.browser.msie === 1 ) ) {
 				$( '#kleistad_werkplek' ).hide();
 				$( '#kleistad_geen_ie').show();
 			}
 			onLoad();
+
+			$( '#kleistad_meester' ).dialog(
+				{
+					autoOpen: false,
+					height: 'auto',
+					width: 360,
+					modal: true,
+					buttons: {
+						'OK': function() {
+							var datum   = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
+							var method  = $( '#kleistad_meester_standaard' ).prop( 'checked') ? 'DELETE' : 'POST';
+							var id      = $( '#kleistad_meester_selectie' ).val();
+							var dagdeel = $( '.kleistad_meester:checked' ).data( 'dagdeel' );
+							muteerMeester( method, datum, id, dagdeel );
+							$( this ).dialog( 'close' );
+						}
+					}
+				}
+			);
 
 			/**
              * Toon de tabel. 
@@ -160,6 +220,12 @@
 					var method = this.checked ? 'POST' : 'DELETE';
 					var datum  = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
 					muteerWerkplek( method, datum, $( this ).val(), $( this ).data( 'dagdeel' ), $( this ).data( 'activiteit' ) );
+				}
+			)
+			.on( 'change', '.kleistad_meester',
+				function() {
+					$( '#kleistad_meester_selectie' ).val( $( this ).val() );
+					$( '#kleistad_meester' ).dialog( 'option', 'title', 'Beheerder voor ' + $( this ).data( 'dagdeel' ).toLowerCase() ).dialog( 'open' );
 				}
 			);
         }

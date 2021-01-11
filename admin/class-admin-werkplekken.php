@@ -54,7 +54,8 @@ class Admin_Werkplekken extends WP_List_Table {
 	public function column_start_datum( $item ) {
 		$actions = [
 			'edit'   => sprintf( '<a href="?page=werkplekken_form&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Wijzigen' ),
-			'delete' => sprintf( '<a href="?page=%s&action=delete&start_datum=%s&eind_datum=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['start_datum'], $item['eind_datum'], 'Verwijderen' ),
+			'copy'   => sprintf( '<a href="?page=werkplekken_form&action=copy&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Kopiëren' ),
+			'delete' => sprintf( '<a href="?page=%s&action=delete&start_datum=%s&eind_datum=%s" class="submitdelete">%s</a>', filter_input( INPUT_GET, 'page' ), $item['start_datum'], $item['eind_datum'], 'Verwijderen' ),
 		];
 		return sprintf( '<strong>%s</strong> %s', date( 'd-m-Y', $item['start_datum'] ), $this->row_actions( $actions ) );
 	}

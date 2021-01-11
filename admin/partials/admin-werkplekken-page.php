@@ -1,6 +1,6 @@
 <?php
 /**
- * Toon de regelingen pagina
+ * Toon de werkplekken pagina
  *
  * @link       https://www.kleistad.nl
  * @since      4.0.87

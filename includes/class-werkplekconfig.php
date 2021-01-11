@@ -88,13 +88,20 @@ class WerkplekConfig {
 	}
 
 	/**
-	 * Bepaal of dit de actieve configuratie is
+	 * Wijzig de werkplaatsmeesters voor de configuratie van een specifieke datum
 	 *
-	 * @param int $datum De datum welke gecontroleerd wordt.
-	 * @return bool
+	 * @param int   $datum       De datum van de wijziging.
+	 * @param array $meester_ids De wp user ids van de ad hoc meester.
 	 */
-	public function is_actief( int $datum ) : bool {
-		return $this->start_datum <= $datum && ( 0 === $this->eind_datum || $datum <= $this->eind_datum );
+	public function adhoc_meesters( int $datum, array $meester_ids ) {
+		$atelierdag       = strftime( '%A', $datum );
+		$werkplekmeesters = new WerkplekMeesters( $datum );
+		$meester_ids      = $werkplekmeesters->geef();
+		foreach ( array_keys( $this->meesters[ $atelierdag ] ) as $dagdeel ) {
+			if ( isset( $meester_ids[ $dagdeel ] ) ) {
+				$this->config['meesters'][ $atelierdag ][ $dagdeel ] = $meester_ids[ $dagdeel ];
+			}
+		}
 	}
 
 	/**

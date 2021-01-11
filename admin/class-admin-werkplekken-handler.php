@@ -111,28 +111,33 @@ class Admin_Werkplekken_Handler {
 				$item_valid = $this->validate_werkplek( $item );
 				$notice     = is_string( $item_valid ) ? $item_valid : '';
 				if ( true === $item_valid ) {
-					$werkplekconfigs       = new WerkplekConfigs();
-					$start_datum           = strtotime( $item['start_datum'] );
-					$eind_datum            = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
-					$werkplek              = $werkplekconfigs->find( $start_datum, $eind_datum );
-					$werkplek->start_datum = $start_datum;
-					$werkplek->eind_datum  = $eind_datum;
-					$werkplek->config      = $this->int_array( $item['config'] );
-					$werkplek->meesters    = $this->int_array( $item['meesters'] );
-					$werkplekconfigs->toevoegen( $werkplek );
+					$werkplekconfigs             = new WerkplekConfigs();
+					$start_datum                 = strtotime( $item['start_datum'] );
+					$eind_datum                  = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
+					$werkplekconfig              = $werkplekconfigs->find( $start_datum, $eind_datum );
+					$werkplekconfig->start_datum = $start_datum;
+					$werkplekconfig->eind_datum  = $eind_datum;
+					$werkplekconfig->config      = $this->int_array( $item['config'] );
+					$werkplekconfig->meesters    = $this->int_array( $item['meesters'] );
+					$werkplekconfigs->toevoegen( $werkplekconfig );
 					$message = 'De gegevens zijn opgeslagen';
 				}
 			}
 		} else { // Bestaande config opvragen of nieuwe toevoegen.
-			$werkplekconfigs         = new WerkplekConfigs();
-			$werkplek                = isset( $_REQUEST['start_datum'] ) && isset( $_REQUEST['eind_datum'] ) ?
-				$werkplekconfigs->find( intval( $_REQUEST['start_datum'] ), intval( $_REQUEST['eind_datum'] ) ) :
-				new WerkplekConfig();
-			$item['start_datum']     = date( 'd-m-Y', $werkplek->start_datum );
-			$item['eind_datum']      = $werkplek->eind_datum ? date( 'd-m-Y', $werkplek->eind_datum ) : '';
-			$item['config']          = $werkplek->config;
-			$item['meesters']        = $werkplek->meesters;
-			$item['nieuwste_config'] = 0 === count( $werkplekconfigs ) || 0 === $werkplek->eind_datum;
+			$werkplekconfigs = new WerkplekConfigs();
+			$table           = new Admin_Werkplekken();
+			if ( 'copy' === $table->current_action() ) {
+				$werkplekconfig = $werkplekconfigs->find( intval( filter_input( INPUT_GET, 'start_datum' ) ), intval( filter_input( INPUT_GET, 'eind_datum' ) ) );
+			} else {
+				$werkplekconfig = isset( $_REQUEST['start_datum'] ) && isset( $_REQUEST['eind_datum'] ) ?
+					$werkplekconfigs->find( intval( $_REQUEST['start_datum'] ), intval( $_REQUEST['eind_datum'] ) ) :
+					new WerkplekConfig();
+			}
+			$item['start_datum']     = date( 'd-m-Y', $werkplekconfig->start_datum );
+			$item['eind_datum']      = $werkplekconfig->eind_datum ? date( 'd-m-Y', $werkplekconfig->eind_datum ) : '';
+			$item['config']          = $werkplekconfig->config;
+			$item['meesters']        = $werkplekconfig->meesters;
+			$item['nieuwste_config'] = 0 === count( $werkplekconfigs );
 		}
 		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this, 'werkplekken_form_meta_box_handler' ], 'werkplek', 'normal', 'default' );
 		require 'partials/admin-form-page.php';
