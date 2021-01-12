@@ -140,7 +140,7 @@ class Admin_Abonnees_Handler {
 					'actie'            => FILTER_SANITIZE_STRING,
 				]
 			);
-			if ( ! is_null( $item ) ) {
+			if ( is_array( $item ) ) {
 				if ( ! is_array( $item['extras'] ) ) {
 					$item['extras'] = [];
 				}
