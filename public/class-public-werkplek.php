@@ -20,7 +20,6 @@ use WP_Error;
  */
 class Public_Werkplek extends Shortcode {
 
-
 	/**
 	 * Kijk voor 3 maanden vooraf wat de mogelijke data zijn voor werkplekken.
 	 *
@@ -67,6 +66,28 @@ class Public_Werkplek extends Shortcode {
 	}
 
 	/**
+	 * Voor het selecteren van andere gebruikers, bepaal wie er daarvoor geselecteerd staan.
+	 *
+	 * @return array
+	 */
+	private function geef_cursisten() : array {
+		$cursisten = [];
+		foreach ( new Cursisten() as $cursist ) {
+			if ( user_can( $cursist->ID, LID ) || user_can( $cursist->ID, BESTUUR ) || user_can( $cursist->ID, DOCENT ) ) {
+				continue;
+			}
+			if ( $cursist->is_actief() ) {
+				$cursisten[] = [
+					'id'   => $cursist->ID,
+					'naam' => $cursist->display_name,
+				];
+			}
+		}
+		return $cursisten;
+	}
+
+
+	/**
 	 *
 	 * Prepareer 'reservering' form
 	 *
@@ -76,8 +97,9 @@ class Public_Werkplek extends Shortcode {
 	 * @since   6.11.0
 	 */
 	protected function prepare( &$data ) {
-		$data['datums']   = $this->geef_mogelijke_datums();
-		$data['meesters'] = $this->geef_meesters();
+		$data['datums']    = $this->geef_mogelijke_datums();
+		$data['meesters']  = $this->geef_meesters();
+		$data['cursisten'] = $this->geef_cursisten();
 		if ( 0 === count( $data['datums'] ) ) {
 			return new WP_Error( 'config', 'Er zijn geen datums beschikbaar' );
 		}
@@ -151,6 +173,10 @@ class Public_Werkplek extends Shortcode {
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_show' ],
 				'args'                => [
+					'id'    => [
+						'required' => true,
+						'type'     => 'int',
+					],
 					'datum' => [
 						'required' => true,
 						'type'     => 'string',
@@ -219,9 +245,9 @@ EOT;
 				$gebruikers           = $werkplekgebruik->geef( $dagdeel, $activiteit );
 				$html                .= <<<EOT
 	<div class="kleistad_col_2">
-		<table>
+		<table style="border:0" >
 			<tr>
-				<th>$dagdeel</th>
+				<th class="kleistad_werkplek_dagdeel">$dagdeel</th>
 			</tr>
 EOT;
 				for ( $werkplek = 0; $werkplek < $werkplekken[ $activiteit ]; $werkplek++ ) {
@@ -231,8 +257,8 @@ EOT;
 					if ( isset( $gebruikers[ $werkplek ] ) ) {
 						if ( intval( $gebruikers[ $werkplek ]->ID ) !== $gebruiker_id ) {
 							$html .= <<<EOT
-				<td>
-					<span style="font-size:small">{$gebruikers[$werkplek]->display_name}</span>
+				<td class="kleistad_werkplek_bezet">
+					{$gebruikers[$werkplek]->display_name}
 				</td>
 EOT;
 							continue;
@@ -240,7 +266,7 @@ EOT;
 						$veld_id++;
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
-				<td>
+				<td class="kleistad_werkplek_gereserveerd">
 					<label for="werkplek$veld_id" class="kleistad_werkplek_label">{$gebruikers[$werkplek]->display_name}</label>
 					<input type="checkbox" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" id="werkplek$veld_id" class="kleistad_werkplek" checked >
 				</td>
@@ -251,7 +277,7 @@ EOT;
 						$veld_id++;
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
-				<td>
+				<td class="kleistad_werkplek_vrij">
 					<label for="werkplek$veld_id" class="kleistad_werkplek_label">reserveren</label>
 					<input type="checkbox" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" id="werkplek$veld_id" class="kleistad_werkplek" >
 				</td>
@@ -259,7 +285,7 @@ EOT;
 						continue;
 					}
 					$html .= <<<EOT
-					<td>&nbsp;</td>
+				<td class="kleistad_werkplek_vrij">&nbsp;</td>
 EOT;
 				}
 				$html .= <<<EOT
@@ -282,14 +308,14 @@ EOT;
 	 * @return WP_REST_Response|WP_Error Ajax response.
 	 */
 	public static function callback_show( WP_REST_Request $request ) {
-		$datum_str = $request->get_param( 'datum' );
-		if ( is_null( $datum_str ) ) {
-			return new WP_Error( 'param', 'Onjuiste datum ontvangen' );
+		$datum_str    = $request->get_param( 'datum' );
+		$gebruiker_id = intval( $request->get_param( 'id' ) );
+		if ( is_null( $datum_str ) || 0 === $gebruiker_id ) {
+			return new WP_Error( 'param', 'Onjuiste data ontvangen' );
 		}
 		$datum           = strtotime( $datum_str );
 		$werkplekconfigs = new WerkplekConfigs();
 		$werkplekconfig  = $werkplekconfigs->find( $datum );
-		$gebruiker_id    = get_current_user_id();
 		return new WP_REST_Response(
 			[
 				'content' => self::toon_werkplekken( $gebruiker_id, $datum, $werkplekconfig ),
@@ -310,7 +336,7 @@ EOT;
 		$gebruiker_id = intval( $request->get_param( 'id' ) );
 		$dagdeel      = $request->get_param( 'dagdeel' );
 		$activiteit   = $request->get_param( 'activiteit' );
-		if ( is_null( $dagdeel ) || is_null( $activiteit ) || is_null( $gebruiker_id ) || is_null( $datum_str ) ) {
+		if ( is_null( $dagdeel ) || is_null( $activiteit ) || 0 === $gebruiker_id || is_null( $datum_str ) ) {
 			return new WP_Error( 'param', 'Onjuiste data ontvangen' );
 		}
 		$datum           = strtotime( $datum_str );

@@ -3,13 +3,14 @@
 ( function( $ ) {
     'use strict';
 
-	var datums     = $( '#kleistad_werkplek' ).data( 'datums' );
-	var datumIndex = 0;
+	var datums       = $( '#kleistad_werkplek' ).data( 'datums' );
+	var gebruiker_id = $( '#kleistad_werkplek' ).data( 'id' );
+	var datumIndex   = 0;
 
 	/**
      * Haal de inhoud van de tabel met reserveringen bij de server op.
      */
-    function toonWerkplek( datum ) {
+    function toonWerkplek( datum, id ) {
 		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
          $.ajax(
             {
@@ -19,6 +20,7 @@
                     xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
                 },
                 data: {
+					id:    id,
                     datum: datum
                 }
             }
@@ -181,13 +183,31 @@
 				}
 			);
 
+			$( '#kleistad_gebruiker' ).dialog(
+				{
+					autoOpen: false,
+					height:	  'auto',
+					width:    360,
+					modal:    true,
+					buttons: {
+						'OK' : function () {
+							var datum    = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
+							gebruiker_id = $( '#kleistad_gebruiker_selectie' ).val();
+							$( '#kleistad_wijzig_gebruiker' ).text( $( '#kleistad_gebruiker_selectie option:selected' ).text() );
+							toonWerkplek( datum, gebruiker_id );
+							$( this ).dialog( 'close' );
+						}
+					}
+				}
+			);
+
 			/**
              * Toon de tabel. 
              */
 			if ( 'undefined' !== typeof datums ) {
 				buttonsActive();
 				$( '#kleistad_datum' ).datepicker( 'setDate', datums[datumIndex] );
-				toonWerkplek( datums[datumIndex] );
+				toonWerkplek( datums[datumIndex], gebruiker_id );
 			}
 
 			$( '.kleistad_shortcode' )
@@ -196,7 +216,7 @@
 					var datum   = $.datepicker.formatDate( 'dd-mm-yy', $( '#kleistad_datum').datepicker( 'getDate' ) );
 					datumIndex  = $.inArray( datum, datums );
 					$( '#kleistad_datum' ).datepicker( 'setDate', datums[datumIndex] );
-					toonWerkplek( datum );
+					toonWerkplek( datum, gebruiker_id );
 				}
 			)
 			.on( 'click', '#kleistad_eerder',
@@ -204,7 +224,7 @@
 					datumIndex--;
 					buttonsActive();
 					$( '#kleistad_datum' ).datepicker( 'setDate', datums[datumIndex] );
-					toonWerkplek( datums[datumIndex] );
+					toonWerkplek( datums[datumIndex], gebruiker_id );
 				}
 			)
 			.on( 'click', '#kleistad_later', 
@@ -212,10 +232,10 @@
 					datumIndex++;
 					buttonsActive();
 					$( '#kleistad_datum' ).datepicker( 'setDate', datums[datumIndex] );
-					toonWerkplek( datums[datumIndex] );
+					toonWerkplek( datums[datumIndex], gebruiker_id );
 				}
 			)
-			.on( 'change', '[id^=werkplek]',
+			.on( 'change', '.kleistad_werkplek',
 				function() {
 					var method = this.checked ? 'POST' : 'DELETE';
 					var datum  = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
@@ -227,7 +247,13 @@
 					$( '#kleistad_meester_selectie' ).val( $( this ).val() );
 					$( '#kleistad_meester' ).dialog( 'option', 'title', 'Beheerder voor ' + $( this ).data( 'dagdeel' ).toLowerCase() ).dialog( 'open' );
 				}
-			);
+			)
+			.on( 'click', '#kleistad_wijzig_gebruiker',
+				function() {
+					$( '#kleistad_gebruiker' ).dialog( 'open' );
+				}
+			 );
+
         }
     );
 

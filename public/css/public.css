@@ -450,6 +450,21 @@ label.kleistad_label_cb {
     width: 100%;
 }
 
+.kleistad_werkplek_bezet {
+    font-size:small;
+    border:2px white;
+    border-style: solid;
+}
+
+.kleistad_werkplek_vrij {
+    border:2px white;
+    border-style: solid;
+}
+
+.kleistad_werkplek_dagdeel, .kleistad_werkplek_gereserveerd {
+    border: 0;
+}
+
 /* csslint ignore:start */
 [class^="kleistad_col_"] {
     border: 0;

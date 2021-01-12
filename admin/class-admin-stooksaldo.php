@@ -115,7 +115,7 @@ class Admin_Stooksaldo extends WP_List_Table {
 		$orderby_val     = filter_input( INPUT_GET, 'orderby' );
 		$orderby         = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
 		$order_val       = filter_input( INPUT_GET, 'order' );
-		$order           = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$order           = ! is_null( $order_val ) && 'asc' === $order_val ? \SORT_ASC : \SORT_DESC;
 		$gebruiker_query = new WP_User_Query(
 			[
 				'fields'   => [ 'ID', 'display_name' ],
@@ -133,9 +133,7 @@ class Admin_Stooksaldo extends WP_List_Table {
 				'saldo' => $saldo->bedrag,
 			];
 		}
-		$waarden = array_column( $this->items, $orderby );
-		$order_c = 'asc' === $order ? \SORT_ASC : \SORT_DESC;
-		array_multisort( $waarden, $order_c, $this->items );
+		array_multisort( array_column( $this->items, $orderby ), $order, $this->items );
 		$total_items = $gebruiker_query->get_total();
 		$this->set_pagination_args(
 			[
