@@ -100,7 +100,7 @@ class Admin_Ovens_Handler {
 					],
 				]
 			);
-			if ( ! is_null( $item ) ) {
+			if ( is_array( $item ) ) {
 				$item_valid = $this->validate_oven( $item );
 				$notice     = is_string( $item_valid ) ? $item_valid : '';
 				if ( true === $item_valid ) {

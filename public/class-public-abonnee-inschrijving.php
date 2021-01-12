@@ -100,7 +100,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'mc4wp-subscribe'  => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( ! is_null( $data['input'] ) ) {
+		if ( is_array( $data['input'] ) ) {
 			if ( '' === $data['input']['abonnement_keuze'] ) {
 				$error->add( 'verplicht', 'Er is nog geen type abonnement gekozen' );
 			}

@@ -77,7 +77,7 @@ class Admin_Recepttermen_Handler {
 					'naam'         => FILTER_SANITIZE_STRING,
 				]
 			);
-			if ( ! is_null( $item ) ) {
+			if ( is_array( $item ) ) {
 				$item_valid = $this->validate_receptterm( $item );
 				if ( true === $item_valid ) {
 					if ( $item['id'] > 0 ) {

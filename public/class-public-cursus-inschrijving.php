@@ -217,7 +217,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( ! is_null( $data['input'] ) ) {
+		if ( is_array( $data['input'] ) ) {
 			if ( false === intval( $data['input']['cursus_id'] ) ) {
 				$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
 				return $error;

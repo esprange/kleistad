@@ -107,7 +107,7 @@ class Admin_Werkplekken_Handler {
 					'nieuwste_config' => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
-			if ( ! is_null( $item ) ) {
+			if ( is_array( $item ) ) {
 				$item_valid = $this->validate_werkplek( $item );
 				$notice     = is_string( $item_valid ) ? $item_valid : '';
 				if ( true === $item_valid ) {
