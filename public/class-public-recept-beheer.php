@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * Include voor image file upload.
  */
@@ -104,16 +106,16 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * Verwerk foto.
 	 *
 	 * @param string $image_file Path naar een image file.
-	 * @return \WP_Error|bool True als verwerkt of error als er iets fout is gegaan.
+	 * @return WP_Error|bool True als verwerkt of error als er iets fout is gegaan.
 	 */
 	private function foto( $image_file ) {
 		$exif = @exif_read_data( $image_file ); // phpcs:ignore
 		if ( false === $exif ) {
-			return new \WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
+			return new WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
 		}
 		$image = imagecreatefromjpeg( $image_file );
 		if ( false === $image ) {
-			return new \WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
+			return new WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
 		}
 		if ( ! empty( $exif['Orientation'] ) ) {
 			switch ( $exif['Orientation'] ) {
@@ -128,7 +130,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 					break;
 			}
 			if ( false === $image ) {
-				return new \WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
+				return new WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
 			}
 		}
 		$quality = intval( min( 75000 / filesize( $image_file ) * 100, 100 ) );
@@ -141,7 +143,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * Prepareer 'recept' form
 	 *
 	 * @param array $data data voor display.
-	 * @return \WP_ERROR|bool
+	 * @return WP_ERROR|bool
 	 *
 	 * @since   4.1.0
 	 */
@@ -185,12 +187,12 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * Valideer/sanitize 'recept' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   4.1.0
 	 */
 	protected function validate( &$data ) {
-		$error                                    = new \WP_Error();
+		$error                                    = new WP_Error();
 		$data['recept']                           = filter_input_array(
 			INPUT_POST,
 			[
@@ -322,7 +324,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 						}
 					} else {
 						return [
-							'status' => $this->status( new \WP_Error( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] ) ),
+							'status' => $this->status( new WP_Error( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] ) ),
 						];
 					}
 				}
@@ -337,7 +339,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 						$data['recept']['id'] = $result;
 					} else {
 						return [
-							'status' => $this->status( new \WP_Error( 'fout', 'Recept kon niet worden toegevoegd' ) ),
+							'status' => $this->status( new WP_Error( 'fout', 'Recept kon niet worden toegevoegd' ) ),
 						];
 					}
 				}
@@ -350,7 +352,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 						$recept->post_content = $json_content;
 					} else {
 						return [
-							'status' => $this->status( new \WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ),
+							'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ),
 						];
 					}
 					$recept_id = wp_update_post( $recept, true );
@@ -371,7 +373,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 					}
 				}
 				return [
-					'status' => $this->status( new \WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' ) ),
+					'status' => $this->status( new WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' ) ),
 				];
 		}
 		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
