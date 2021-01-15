@@ -25,7 +25,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		<tr>
 			<th>Naam</th>
 			<td colspan="3">
-				<input type="text" name="naam" <?php echo esc_attr( $readonly ); ?> id="kleistad_cursus_naam" maxlenght="40" placeholder="Bijv. cursus draaitechnieken" value="<?php echo esc_attr( $data['cursus']['naam'] ); ?>" required />
+				<input type="text" name="naam" <?php echo esc_attr( $readonly ); ?> id="kleistad_cursus_naam" maxlength="40" placeholder="Bijv. cursus draaitechnieken" value="<?php echo esc_attr( $data['cursus']['naam'] ); ?>" required />
 			</td>
 		</tr>
 		<tr>
@@ -124,7 +124,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	</table>
 	<button type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $voltooid ); ?> >Opslaan</button>
 	<button type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
-	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
 </form>
 <?php else : ?>
 <table id="kleistad_cursussen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >

@@ -57,7 +57,7 @@ class Public_Kalender extends Shortcode {
 				'start'           => $event->start->format( \DateTime::ATOM ),
 				'end'             => $event->eind->format( \DateTime::ATOM ),
 				'backgroundColor' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
-				'textColor'       => $workshop->betaald ? 'white' : ( $workshop->definitief ? 'black' : 'black' ),
+				'textColor'       => $workshop->betaald ? 'white' : 'black',
 				'extendedProps'   => [
 					'naam'       => $workshop->naam,
 					'aantal'     => $workshop->aantal,

@@ -58,9 +58,7 @@ a.fc-daygrid-event {
 }
 
 .kleistad_hover_reservering {
-	border-color: gray;
-	border-style: solid;
-	border-width: 1px;
+	border: 1px solid gray;
 	color: blue;
 	cursor: pointer;
 }
@@ -80,9 +78,7 @@ div.kleistad_workshop_compact::after {
 	width: 100%;
 }
 div.kleistad_workshop_correspondentie {
-	border-color: gray;
-	border-style: solid;
-	border-width: 1px;
+	border: 1px solid gray;
 	color: black;
 	font-size: small;
 	margin: 5px;
@@ -105,9 +101,7 @@ span.kleistad_workshop_fold {
 }
 a.kleistad_workshop_unfold, a.kleistad_workshop_fold {
 	background-color: gray;
-	border-color: gray;
-	border-style: solid;
-	border-width: 5px;
+	border: 5px solid gray;
 	color: white;
 	text-decoration: none;
 }
@@ -161,7 +155,6 @@ table.kleistad_form {
     border: none;
     border-collapse: collapse;
     border-spacing: 0;
-    border-style: none;
     font-size: small;
     padding: 0;
     vertical-align: middle;
@@ -316,7 +309,6 @@ label.kleistad_label_cb {
 	background-image: url('../images/cb_nocheck.png');
 	font-weight: bold;
 	-webkit-touch-callout: none;
-	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	-webkit-user-select: none;

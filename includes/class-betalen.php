@@ -49,10 +49,10 @@ class Betalen {
 			if ( '' !== $setup['sleutel'] ) {
 				$this->mollie->setApiKey( $setup['sleutel'] );
 			}
-		} else {
-			if ( '' !== $setup['sleutel_test'] ) {
-				$this->mollie->setApiKey( $setup['sleutel_test'] );
-			}
+			return;
+		}
+		if ( '' !== $setup['sleutel_test'] ) {
+			$this->mollie->setApiKey( $setup['sleutel_test'] );
 		}
 	}
 
@@ -374,7 +374,6 @@ class Betalen {
 				$betaling->method,
 				$mollie_betaling_id
 			);
-			return new WP_REST_Response(); // Geeft default http status 200 terug.
 		}
 		if ( $betaling->hasRefunds() ) {
 			$transient  = $mollie_betaling_id . self::REFUNDS;
@@ -392,9 +391,7 @@ class Betalen {
 				}
 			}
 			set_transient( $transient, $refund_ids, $expiratie );
-			return new WP_REST_Response(); // Geeft default http status 200 terug.
-		}
-		if ( $betaling->hasChargebacks() ) {
+		} elseif ( $betaling->hasChargebacks() ) {
 			$transient      = $mollie_betaling_id . self::CHARGEBACKS;
 			$chargeback_ids = get_transient( $transient ) ?: [];
 			foreach ( $betaling->chargebacks() as $chargeback ) {
@@ -410,7 +407,7 @@ class Betalen {
 				}
 			}
 			set_transient( $transient, $chargeback_ids, $expiratie );
-			return new WP_REST_Response(); // Geeft default http status 200 terug.
 		}
+		return new WP_REST_Response(); // Geeft default http status 200 terug.
 	}
 }

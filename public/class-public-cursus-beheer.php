@@ -250,6 +250,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'content' => $this->display(),
 			];
 		}
+		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
 	}
 
 }

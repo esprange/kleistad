@@ -117,7 +117,7 @@ function strtodate( value ) {
 	 * Toon een confirmatie popup dialoog.
 	 *
 	 * @param {String} tekst Te tonen tekst. Als leeg dan wordt er geen popup getoond.
-	 * @param (function) Uit te voeren actie indien ok.
+	 * @param callback Uit te voeren actie indien ok.
 	 */
 	function askConfirm( tekst, callback ) {
 		if ( tekst.length ) {

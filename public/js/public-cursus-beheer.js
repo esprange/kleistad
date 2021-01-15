@@ -29,7 +29,7 @@
 	/**
 	 * Voeg een datum toe als die nog niet in de lijst zit.
 	 *
-	 * @param string datum Datum in mm-dd-yy formaat.
+	 * @param datum Datum in mm-dd-yy formaat.
 	 */
 	function expandLesDatums( datum ) {
 		if ( 0 > $.inArray( datum, lesDatums ) ) {

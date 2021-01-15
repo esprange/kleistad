@@ -46,18 +46,6 @@ abstract class ShortcodeForm extends Shortcode {
 	abstract protected function save( $data );
 
 	/**
-	 * Test functie, eventueel te overschrijven in child class.
-	 *
-	 * @param array $data de te gebruiken testdata.
-	 * @return array
-	 */
-	protected function test( $data ) {
-		if ( isset( $data ) ) {
-			return [];
-		};
-	}
-
-	/**
 	 * Enqueue nu ook de form specieke javascript.
 	 */
 	protected function enqueue() {
@@ -225,9 +213,6 @@ abstract class ShortcodeForm extends Shortcode {
 		self::$form_url = $request->get_header( 'referer' );
 		$result         = $shortcode_object->validate( $data );
 		if ( ! is_wp_error( $result ) ) {
-			if ( 'test' === strtok( $data['form_actie'], '_' ) ) {
-				return new WP_REST_Response( $shortcode_object->test( $data ) );
-			}
 			return new WP_REST_Response( $shortcode_object->save( $data ) );
 		}
 		return new WP_REST_Response( [ 'status' => $shortcode_object->status( $result ) ] );

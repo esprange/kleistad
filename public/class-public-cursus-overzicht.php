@@ -211,6 +211,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'content' => $this->display(),
 			];
 		}
+		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
 	}
 
 	/**

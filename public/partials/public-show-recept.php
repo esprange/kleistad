@@ -85,7 +85,7 @@ if ( $count ) :
 		$permalink = get_post_permalink( $recept['id'] );
 		if ( is_string( $permalink ) ) :
 			?>
-		<div style="width:250px;float:left;padding:15px;border:0px;">
+		<div style="width:250px;float:left;padding:15px;border:0;">
 			<a href="<?php echo esc_url( $permalink ); ?>" >
 			<div class="kleistad_recept_img" style="background-image:url('<?php echo esc_url( $recept['foto'] ); ?>');" >
 			</div>

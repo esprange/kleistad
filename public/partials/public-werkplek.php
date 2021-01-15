@@ -25,7 +25,7 @@ $huidige_gebruiker = wp_get_current_user();
 	<option value="<?php echo esc_attr( $meester->ID ); ?>" ><?php echo esc_html( $meester->display_name ); ?></option>
 		<?php endforeach ?>
 	</select>
-	<input type="checkbox" id="kleistad_meester_standaard" >standaard</input>
+	<label for="kleistad_meester_standaard">standaard</label><input type="checkbox" id="kleistad_meester_standaard" >
 <?php endif ?>
 </div>
 
@@ -48,7 +48,7 @@ $huidige_gebruiker = wp_get_current_user();
 		<button type="button" id="kleistad_later" ><span class="dashicons dashicons-controls-forward"></span></button>
 	</div>
 	<?php if ( current_user_can( BESTUUR ) || current_user_can( DOCENT ) ) : ?>
-	<div style="float:right";" >
+	<div style="float:right;" >
 		<button id="kleistad_wijzig_gebruiker" ><?php echo esc_html( $huidige_gebruiker->display_name ); ?></button>
 	</div>
 	<?php endif ?>

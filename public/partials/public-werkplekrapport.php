@@ -14,7 +14,7 @@ namespace Kleistad;
 if ( ! isset( $data['rapport'] ) ) :
 	?>
 
-<form method="GET" action="<?php echo esc_attr( get_permalink() ); ?>">
+<form method="GET" action="<?php echo esc_attr( get_permalink() ?: '#' ); ?>">
 
 <div class="kleistad_row">
 	<div class="kleistad_col_3">

@@ -166,29 +166,6 @@ class Public_Email extends ShortcodeForm {
 	}
 
 	/**
-	 * Verzend een testemail
-	 *
-	 * @param array $data data te verzenden.
-	 * @return array
-	 */
-	protected function test( $data ) {
-		$gebruiker = wp_get_current_user();
-		$emailer   = new Email();
-		$emailer->send(
-			array_merge(
-				$this->mail_parameters( $data ),
-				[
-					'to'      => "{$gebruiker->display_name} <{$gebruiker->user_email}>",
-					'subject' => "TEST: {$data['input']['onderwerp']}",
-				]
-			)
-		);
-		return [
-			'status' => $this->status( 'De test email is verzonden' ),
-		];
-	}
-
-	/**
 	 * Vul de generieke mail parameters in (welke zowel voor een testbericht als echt bericht identiek zijn).
 	 *
 	 * @param array $data Date te verzenden.

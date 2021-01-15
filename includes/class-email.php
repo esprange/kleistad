@@ -285,7 +285,7 @@ class Email {
 		}
 		table {
 			border-spacing: 0;
-			font-family: Helvetica;
+			font-family: Helvetica, sans-serif;
 			font-size: 11pt;
 			color: #333333;
 		}
@@ -376,7 +376,7 @@ class Email {
 				</td>
 			</tr>
 			<tr>
-				<td align="center" style="font-family: Calibri; font-size: 9pt;" >
+				<td align="center" style="font-family: Calibri, sans-serif; font-size: 9pt;" >
 					<?php if ( 'noreply' === $this->mailparams['auto'] ) : ?>
 						Deze e-mail is automatisch gegenereerd en kan niet beantwoord worden.
 					<?php elseif ( 'reply' === $this->mailparams['auto'] ) : ?>

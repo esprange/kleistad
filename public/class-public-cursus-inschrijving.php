@@ -171,6 +171,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			case 'inschrijven':
 				return $this->prepare_inschrijven( $data );
 		}
+		return false;
 	}
 
 	/**
@@ -374,6 +375,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			case 'inschrijven':
 				return $this->save_inschrijven( $inschrijving, $data['input']['betaal'] );
 		}
+		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
 	}
 
 }

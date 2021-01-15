@@ -275,42 +275,22 @@ class Public_Reservering extends Shortcode {
 		$maand   = intval( $input['maand'] );
 		$dag     = intval( $input['dag'] );
 		$stook   = new Stook( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
-		switch ( $request->get_method() ) {
-			case 'POST':
-				// Het betreft een toevoeging, in dit geval controleren of er niet snel door een ander een reservering is gedaan.
-				if ( $stook->is_gereserveerd() ) {
-					break;
-				}
-				$stook->hoofdstoker = get_current_user_id();
-				$stook->temperatuur = intval( $input['temperatuur'] );
-				$stook->soort       = sanitize_text_field( $input['soortstook'] );
-				$stook->programma   = intval( $input['programma'] );
-				$stook->stookdelen  = [];
-				foreach ( $input['verdeling'] as $verdeling ) {
-					$stook->stookdelen[] = new Stookdeel( $verdeling['id'], $verdeling['perc'], $verdeling['prijs'] = 0 );
-				}
-				$stook->save();
-				break;
-			case 'PUT':
-				// Het betreft een wijziging bestaande reservering. Controleer of deze al niet verwijderd is.
-				if ( ! $stook->is_gereserveerd() ) {
-					break;
-				}
-				$stook->temperatuur = intval( $input['temperatuur'] );
-				$stook->soort       = sanitize_text_field( $input['soortstook'] );
-				$stook->programma   = intval( $input['programma'] );
-				$stook->stookdelen  = [];
-				foreach ( $input['verdeling'] as $verdeling ) {
-					$stook->stookdelen[] = new Stookdeel( $verdeling['id'], $verdeling['perc'], $verdeling['prijs'] = 0 );
-				}
-				$stook->save();
-				break;
-			case 'DELETE':
-				// het betreft een annulering, controleer of deze al niet verwijderd is.
-				$stook->verwijder();
-				break;
-			default:
-				break;
+		$method  = $request->get_method();
+		if ( 'DELETE' === $method ) {
+			// het betreft een annulering, controleer of deze al niet verwijderd is.
+			$stook->verwijder();
+		}
+		if ( ( 'POST' === $method && ! $stook->is_gereserveerd() ) ||
+				( 'PUT' === $method && $stook->is_gereserveerd() )
+			) {
+			$stook->temperatuur = intval( $input['temperatuur'] );
+			$stook->soort       = sanitize_text_field( $input['soortstook'] );
+			$stook->programma   = intval( $input['programma'] );
+			$stook->stookdelen  = [];
+			foreach ( $input['verdeling'] as $verdeling ) {
+				$stook->stookdelen[] = new Stookdeel( $verdeling['id'], $verdeling['perc'], $verdeling['prijs'] = 0 );
+			}
+			$stook->save();
 		}
 		return new WP_REST_Response(
 			[

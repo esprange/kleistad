@@ -114,7 +114,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $alleen_lezen || 'toevoegen' === $data['actie'] || $data['workshop']['gefactureerd'] ); ?>
 		data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
-	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
 </form>
 	<?php
 elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
@@ -150,7 +150,7 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 		</tr>
 	</table>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
-	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
 </form>
 <div>
 	<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>

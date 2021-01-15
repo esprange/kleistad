@@ -40,7 +40,7 @@ if ( 'details' === $data['actie'] ) :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
 <?php else : ?>
 <div class="kleistad_row">
 	<div class="kleistad_col_3">

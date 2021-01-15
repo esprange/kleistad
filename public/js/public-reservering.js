@@ -40,20 +40,20 @@
 		var row, stokerVeld, percVeld;
 		$( '#kleistad_reservering table > thead' ).
 			append( '<tr><td><label>Soort stook</label></td><td colspan="2"><select id="kleistad_soortstook">' +
-				'<option value="Biscuit" ' + ( 'Biscuit' === formData.soortstook ? 'selected>' : '>' ) + 'Biscuit</option>' +
-				'<option value="Glazuur" ' + ( 'Glazuur' === formData.soortstook ? 'selected>' : '>' ) + 'Glazuur</option>' +
-				'<option value="Overig" ' + ( 'Overig' === formData.soortstook ? 'selected>' : '>' ) + 'Overig</option>' +
+				'<option value="Biscuit" ' + ( 'Biscuit' === formData.soortstook ? 'selected' : '' ) + ' >Biscuit</option>' +
+				'<option value="Glazuur" ' + ( 'Glazuur' === formData.soortstook ? 'selected' : '' ) + ' >Glazuur</option>' +
+				'<option value="Overig" ' + ( 'Overig' === formData.soortstook ? 'selected' : '' ) + ' >Overig</option>' +
 				'</select></td></tr>' +
 				'<tr><td colspan="2"><label>Temperatuur &nbsp; &deg;C</label></td><td><input id="kleistad_temperatuur" name="temperatuur" type="number" min="100" max="1400" required value="' + formData.temperatuur + '" ></td></tr>' +
 				'<tr><td colspan="2"><label>Programma</label></td><td><input id="kleistad_programma" type="number" min="0" max="99" value="' + formData.programma + '" ></td></tr>' );
 		if ( $( '#kleistad_reserveringen' ).data( 'override' ) ) {
-			$( '#kleistad_soortstook' ).append( '<option value="Onderhoud" ' + ( 'Onderhoud' === formData.soortstook ? 'selected>' : '>' ) + 'Onderhoud</option>' );
+			$( '#kleistad_soortstook' ).append( '<option value="Onderhoud" ' + ( 'Onderhoud' === formData.soortstook ? 'selected' : '' ) + ' >Onderhoud</option>' );
 		}
 
 		stokerVeld = $( '#kleistad_reserveringen' ).data( 'override' ) ?
 			'<td>' + selectStoker( false, formData.verdeling[0].medestoker ) + '</td>' :
 			'<td style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;"><input name="stoker_id" type="hidden" value="' + formData.verdeling[0].medestoker + '" >' + vindStokerNaam( formData.verdeling[0].medestoker ) + '</td>';
-		percVeld = '<td><input name="stoker_perc" type="number" tabindex="-1" readonly style="border:0px;outline:0px;" value="' + formData.verdeling[0].percentage + '" ></td>';
+		percVeld = '<td><input name="stoker_perc" type="number" tabindex="-1" readonly style="border:0;outline:0;" value="' + formData.verdeling[0].percentage + '" ></td>';
 
 		$( '#kleistad_reservering table > tbody' ).append( '<tr><td><label>Stoker</label></td>' + stokerVeld + percVeld + '</tr>' );
 

@@ -63,7 +63,7 @@ if ( false === $stokers_json ) {
 		</tbody>
 		<tfoot>
 			<tr>
-				<td><button style="font-size:16px;border-radius:25%;width:40px;text-align:center;padding:0px;" id="kleistad_stoker_toevoegen" class="kleistad_button"><span class="genericon genericon-plus"></span></button></td>
+				<td><button style="font-size:16px;border-radius:25%;width:40px;text-align:center;padding:0;" id="kleistad_stoker_toevoegen" class="kleistad_button"><span class="genericon genericon-plus"></span></button></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>

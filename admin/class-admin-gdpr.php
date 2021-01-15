@@ -327,8 +327,7 @@ class Admin_GDPR {
 	private function erase_cursussen( $datum ) {
 		foreach ( new Cursussen() as $cursus ) {
 			if ( $cursus->eind_datum && $datum > $cursus->eind_datum ) {
-				$inschrijvingen = new Inschrijvingen( $cursus->id );
-				foreach ( $inschrijvingen() as $inschrijving ) {
+				foreach ( new Inschrijvingen( $cursus->id ) as $inschrijving ) {
 					$inschrijving->erase();
 				}
 				$cursus->erase();

@@ -374,5 +374,6 @@ class Public_Recept_Beheer extends ShortcodeForm {
 					'status' => $this->status( new \WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' ) ),
 				];
 		}
+		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
 	}
 }

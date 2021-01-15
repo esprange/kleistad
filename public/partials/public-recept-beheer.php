@@ -222,7 +222,7 @@ if ( isset( $data['recept'] ) ) :
 	?>
 	<button type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verwijderen" data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" value="verwijderen">Verwijderen</button>
 	<?php endif ?>
-	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link" >Terug</button>
+	<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link" >Terug</button>
 </form>
 	<?php
 	else :

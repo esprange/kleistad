@@ -15,7 +15,7 @@ namespace Kleistad;
 
 <div style="position:relative;top:0;">
 <?php if ( count( $item['historie'] ) ) : ?>
-	<div class="card" style="width:50%;position:absolute;top:0px;right:0px" >
+	<div class="card" style="width:50%;position:absolute;top:0;right:0" >
 	<ul style="list-style-type:square">
 	<?php foreach ( $item['historie'] as $historie ) : ?>
 		<li><?php echo esc_html( $historie ); ?></li>

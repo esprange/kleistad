@@ -67,7 +67,7 @@ get_header(); ?>
 					w.document.write( '<html>' );
 					w.document.write( '<head>' );
 					w.document.write( '<meta charset="utf-8">' );
-					w.document.write( '</head><body style="font-family:Verdana;">' );
+					w.document.write( '</head><body style="font-family:Verdana, sans-serif;">' );
 					w.document.write( $( '.kleistad_recept' ).html() );
 					w.document.write( decoded );
 					w.document.write( '</body></html>' );
@@ -103,14 +103,14 @@ get_header(); ?>
 		<div class="kleistad_recept" >
 			<style>
 			table, td, th {
-				border: 0px;
+				border: 0;
 				vertical-align: top;
 				text-align: left;
 			}
 			table {
 				table-layout: auto;
 				font-size: small;
-				padding: 0px;
+				padding: 0;
 			}
 			</style>
 

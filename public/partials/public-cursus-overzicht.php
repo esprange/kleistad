@@ -75,7 +75,7 @@ if ( 'cursisten' === $data['actie'] ) :
 	<?php if ( $data['bestuur_rechten'] ) : ?>
 	<button type="submit" name="kleistad_submit_cursus_overzicht" id="kleistad_herinner" value="herinner_email" data-confirm="Cursisten|weet je zeker dat je nu de herinneringsemail wilt versturen" >Verstuur herinner email</button>
 	<?php endif ?>
-	<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
 	</form>
 <?php elseif ( 'indelen' === $data['actie'] ) : ?>
 	<?php $this->form(); ?>
@@ -124,7 +124,7 @@ if ( 'cursisten' === $data['actie'] ) :
 		<div class="kleistad_col_4">
 		</div>
 		<div class="kleistad_col_3">
-			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+			<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
 		</div>
 	</div>
 	</form>
@@ -148,7 +148,7 @@ if ( 'cursisten' === $data['actie'] ) :
 		<div class="kleistad_col_4">
 		</div>
 		<div class="kleistad_col_3">
-			<button type="button" style="position:absolute;right:0px;" class="kleistad_terug_link">Terug</button>
+			<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
 		</div>
 	</div>
 	</form>

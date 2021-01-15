@@ -30,7 +30,7 @@
 			.on( 'change', '[name^=aantal],[name^=prijs]',
 				function() {
 					var totaal = 0;
-					$( '[name^=prijs' ).each(
+					$( '[name^=prijs]' ).each(
 						function() {
 							var prijs  = $( this ).val(),
 								aantal = $( this ).closest( 'div' ).next( 'div' ).find( '[name^=aantal]' ).val();

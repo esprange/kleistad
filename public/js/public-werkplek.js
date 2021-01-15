@@ -45,10 +45,11 @@
     /**
      * Wijzig of verwijder de reservering in de server.
      *
-     * @param {string} method post of delete.
-	 * @param (int)    id, het gebruiker id.
-	 * @param (string) dagdeel, het dagdeel.
-	 * @param (string) activiteit, de activiteit. 
+     * @param {String} method post of delete.
+	 * @param {String} datum.
+	 * @param {int}    id, het gebruiker id.
+	 * @param {String} dagdeel, het dagdeel.
+	 * @param {String} activiteit, de activiteit. 
      * @returns {undefined}
      */
     function muteerWerkplek( method, datum, id, dagdeel, activiteit ) {
@@ -87,9 +88,10 @@
     /**
      * Wijzig of verwijder de reservering in de server.
      *
-     * @param {string} method post of delete.
-	 * @param (int)    id, het meester id.
-	 * @param (string) dagdeel, het dagdeel.
+     * @param {String} method post of delete.
+	 * @param {String} datum.
+	 * @param {int}    id, het meester id.
+	 * @param {String} dagdeel, het dagdeel.
      * @returns {undefined}
      */
     function muteerMeester( method, datum, id, dagdeel ) {
