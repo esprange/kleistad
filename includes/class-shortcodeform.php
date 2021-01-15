@@ -173,13 +173,10 @@ abstract class ShortcodeForm extends Shortcode {
 	 * Helper functie voor een formulier
 	 *
 	 * @since 5.7.0
-	 *
-	 * @param string $extra De eventuele extra toe te voegen attributen.
-	 * @throws \Exception    Als de json encode faalt.
 	 */
-	protected function form( $extra = null ) {
+	protected function form() {
 		?>
-		<form class="ShortcodeForm" action="#" autocomplete="off" enctype="multipart/form-data" <?php echo ( $extra ?: '' ); // phpcs:ignore ?> >
+		<form class="ShortcodeForm" action="#" autocomplete="off" enctype="multipart/form-data" >
 		<?php
 	}
 

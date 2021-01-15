@@ -4,10 +4,10 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.5.3
-Stable tag: 6.10.2
+Stable tag: 6.12.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Requires at least PHP version: 7.2
+Requires at least PHP version: 7.4
 
 [![Build Status](https://travis-ci.org/esprange/kleistad.svg?branch=master)](https://travis-ci.org/esprange/kleistad)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
@@ -36,6 +36,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 6.11.0 =
+* prerelease, forse refactoring
+* Corona shortcode vervangen door werkplek, deze ajax driven gemaakt
+* Werkplek gebruik rapportages moeten nog toegevoegd worden
 = 6.10.2 =
 * Cursisten kunnen zich niet dubbel inschrijven voor een cursus
 * Aanpassing maximum in cursusbeheer wijzigt de status vol van een cursus

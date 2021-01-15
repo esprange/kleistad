@@ -180,6 +180,12 @@ class Public_Shortcode_Handler {
 			'css'    => [ 'jquery-ui' ],
 			'access' => [ DOCENT, LID, BESTUUR ],
 		],
+		'werkplekrapport'       => [
+			'script' => true,
+			'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables' ],
+			'css'    => [ 'jquery-ui', 'datatables' ],
+			'access' => [ BESTUUR ],
+		],
 		'workshop_aanvraag'     => [
 			'script' => false,
 			'js'     => [ 'jquery' ],

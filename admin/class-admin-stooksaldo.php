@@ -133,7 +133,8 @@ class Admin_Stooksaldo extends WP_List_Table {
 				'saldo' => $saldo->bedrag,
 			];
 		}
-		array_multisort( array_column( $this->items, $orderby ), $order, $this->items );
+		$order_sleutels = array_column( $this->items, $orderby );
+		array_multisort( $order_sleutels, $order, $this->items );
 		$total_items = $gebruiker_query->get_total();
 		$this->set_pagination_args(
 			[

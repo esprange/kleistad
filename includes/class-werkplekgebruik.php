@@ -83,6 +83,15 @@ class WerkplekGebruik {
 	}
 
 	/**
+	 * Geef het gebruik terug voor verdere analyse.
+	 *
+	 * @return array Het resultaat.
+	 */
+	public function geef_gebruik() : array {
+		return $this->gebruik;
+	}
+
+	/**
 	 * Pas het gebruik aan (een array van gebruiker ids)
 	 *
 	 * @param string $dagdeel       Het dagdeel.

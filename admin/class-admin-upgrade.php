@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 93;
+	const DBVERSIE = 94;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -368,7 +368,6 @@ class Admin_Upgrade {
 						};
 						$index++;
 					}
-					$werkplekgebruik->save();
 				}
 			}
 		}
