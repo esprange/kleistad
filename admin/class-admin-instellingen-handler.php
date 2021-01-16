@@ -60,8 +60,6 @@ class Admin_Instellingen_Handler {
 			$result = $googleconnect->koppel_service();
 		} elseif ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			do_action( 'kleistad_daily_jobs' );
-		} elseif ( ! is_null( filter_input( INPUT_POST, 'corona' ) ) ) {
-			$this->corona();
 		}
 		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
 		?>
@@ -101,42 +99,6 @@ class Admin_Instellingen_Handler {
 			}
 		}
 		return $input;
-	}
-
-	/**
-	 * Lees het corona beschikbaarheid bestand en sla dit op.
-	 *
-	 * @return void
-	 */
-	private function corona() {
-		$csv_file = $_FILES['corona_file']['tmp_name'] ?? '';
-		if ( empty( $csv_file ) ) {
-			return;
-		}
-		$vandaag         = strtotime( 'today' );
-		$beschikbaarheid = get_option( 'kleistad_corona_beschikbaarheid' ) ?: [];
-		$csv             = array_map( 'str_getcsv', file( $csv_file ) ?: [] );
-		foreach ( array_keys( $beschikbaarheid ) as $datum ) {
-			if ( $datum >= $vandaag ) {
-				unset( $beschikbaarheid[ $datum ] );
-			}
-		}
-		foreach ( $csv as $line ) {
-			list( $s_datum, $start, $eind, $limiet_draaien, $limiet_handvormen, $limiet_boven ) = explode( ';', $line[0] );
-			$datum = strtotime( $s_datum );
-			$tijd  = "$start - $eind";
-			if ( false === $datum || $datum < $vandaag ) {
-				continue;
-			}
-			$beschikbaarheid[ $datum ][] =
-				[
-					'T' => $tijd,
-					'D' => $limiet_draaien,
-					'H' => $limiet_handvormen,
-					'B' => $limiet_boven,
-				];
-		}
-		update_option( 'kleistad_corona_beschikbaarheid', $beschikbaarheid );
 	}
 
 }

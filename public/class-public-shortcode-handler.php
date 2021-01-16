@@ -54,12 +54,6 @@ class Public_Shortcode_Handler {
 			'css'    => [],
 			'access' => [],
 		],
-		'corona'                => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-button', 'jquery-ui-dialog', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ DOCENT, LID, BESTUUR ],
-		],
 		'cursus_beheer'         => [
 			'script' => true,
 			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],

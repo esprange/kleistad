@@ -88,18 +88,17 @@
     /**
      * Wijzig of verwijder de reservering in de server.
      *
-     * @param {String} method post of delete.
 	 * @param {String} datum.
 	 * @param {int}    id, het meester id.
 	 * @param {String} dagdeel, het dagdeel.
      * @returns {undefined}
      */
-    function muteerMeester( method, datum, id, dagdeel ) {
+    function muteerMeester( datum, id, dagdeel ) {
 		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
         $.ajax(
             {
                 url: kleistadData.base_url + '/meester/',
-                method: method,
+                method: 'POST',
                 beforeSend: function( xhr ) {
                     xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
                 },
@@ -112,7 +111,6 @@
         ).done(
             function( data ) {
 				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-				$( '#kleistad_meester_standaard' ).prop( 'checked', false );
 				$( '.kleistad_meester:checked' ).val( data.id ).prop( 'checked', false ).button( 'option', 'label', data.naam );
 			}
         ).fail(
@@ -175,10 +173,9 @@
 					buttons: {
 						'OK': function() {
 							var datum   = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
-							var method  = $( '#kleistad_meester_standaard' ).prop( 'checked') ? 'DELETE' : 'POST';
 							var id      = $( '#kleistad_meester_selectie' ).val();
 							var dagdeel = $( '.kleistad_meester:checked' ).data( 'dagdeel' );
-							muteerMeester( method, datum, id, dagdeel );
+							muteerMeester( datum, id, dagdeel );
 							$( this ).dialog( 'close' );
 						}
 					}

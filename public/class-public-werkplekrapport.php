@@ -57,13 +57,13 @@ class Public_Werkplekrapport extends Shortcode {
 	}
 
 	/**
-	 * Geef de gebruikers welke gebruik gemaakt hebben van werkplekken, tot maximaal 3 maanden terug.
+	 * Geef de gebruikers welke gebruik gemaakt hebben van werkplekken, 3 maanden terug en 3 maanden vooruit.
 	 */
 	private function geef_gebruikers() : array {
 		$start_datum = strtotime( '- 3 month' );
-		$vandaag     = strtotime( 'today' );
+		$eind_datum  = strtotime( '+ 3 month' );
 		$gebruikers  = [];
-		for ( $datum = $start_datum; $datum <= $vandaag; $datum += DAY_IN_SECONDS ) {
+		for ( $datum = $start_datum; $datum <= $eind_datum; $datum += DAY_IN_SECONDS ) {
 			$werkplekgebruik = new WerkplekGebruik( $datum );
 			$gebruikers      = array_merge( $gebruikers, $werkplekgebruik->geef() );
 		}

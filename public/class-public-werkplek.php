@@ -145,7 +145,7 @@ class Public_Werkplek extends Shortcode {
 			KLEISTAD_API,
 			'/meester',
 			[
-				'methods'             => 'POST,DELETE',
+				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_meester' ],
 				'args'                => [
 					'id'      => [
@@ -192,38 +192,35 @@ class Public_Werkplek extends Shortcode {
 	/**
 	 * Toon de werkplekken op een dag.
 	 *
-	 * @param int            $gebruiker_id   De gebruiker waarvoor de reservering plaatsvindt.
-	 * @param int            $datum          De datum.
-	 * @param WerkplekConfig $werkplekconfig De werkplek configuratie van de betreffende datum.
+	 * @param int $gebruiker_id   De gebruiker waarvoor de reservering plaatsvindt.
+	 * @param int $datum          De datum.
 	 * @return string HTML content.
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private static function toon_werkplekken( int $gebruiker_id, int $datum, WerkplekConfig $werkplekconfig ) : string {
+	private static function toon_werkplekken( int $gebruiker_id, int $datum ) : string {
 		$werkplekgebruik = new WerkplekGebruik( $datum );
-		$dagconfig       = $werkplekconfig->config[ strftime( '%A', $datum ) ];
-		$dagmeesters     = $werkplekconfig->meesters[ strftime( '%A', $datum ) ];
 		$veld_id         = 0;
 		$button          = [];
-		$aanwezig        = [];
 		$html            = <<<EOT
 <div class="kleistad_row" >
 	<div class="kleistad_col_3" >
 		<strong>beheerder</strong>
 	</div>
 EOT;
-		foreach ( array_keys( $dagconfig ) as $dagdeel ) {
-			$meester = $dagmeesters[ $dagdeel ] ? get_user_by( 'id', $dagmeesters[ $dagdeel ] )->display_name : '...';
+		foreach ( $werkplekgebruik->geef_meesters() as $dagdeel => $meester ) {
+			$meester_naam = is_object( $meester ) ? $meester->display_name : '...';
+			$meester_id   = is_object( $meester ) ? $meester->ID : 0;
 			if ( current_user_can( BESTUUR ) ) {
 				$html .= <<<EOT
 	<div class="kleistad_col_2">
-		<label for="meester$dagdeel" style="width:100%" class="kleistad_werkplek_label">$meester</label>
-		<input type="radio" class="kleistad_meester" data-dagdeel="$dagdeel" value="{$dagmeesters[$dagdeel]}" name="meester" id="meester$dagdeel" />
+		<label for="meester$dagdeel" style="width:100%" class="kleistad_werkplek_label">$meester_naam</label>
+		<input type="radio" class="kleistad_meester" data-dagdeel="$dagdeel" value="$meester_id" name="meester" id="meester$dagdeel" />
 	</div>
 EOT;
 			} else {
 				$html .= <<<EOT
 	<div class="kleistad_col_2" style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
-		$meester
+		$meester_naam
 	</div>
 EOT;
 			}
@@ -239,11 +236,11 @@ EOT;
 		<strong>$activiteit</strong>
 	</div>
 EOT;
-			foreach ( $dagconfig as $dagdeel => $werkplekken ) {
-				$button[ $dagdeel ]   = $button[ $dagdeel ] ?? [];
-				$aanwezig[ $dagdeel ] = ( $aanwezig[ $dagdeel ] ?? false ) ?: in_array( $gebruiker_id, array_map( 'intval', array_column( $werkplekgebruik->geef( $dagdeel ), 'ID' ) ), true );
-				$gebruikers           = $werkplekgebruik->geef( $dagdeel, $activiteit );
-				$html                .= <<<EOT
+			foreach ( $werkplekgebruik->config() as $dagdeel => $werkplekken ) {
+				$button[ $dagdeel ] = $button[ $dagdeel ] ?? [];
+				$gebruikers         = $werkplekgebruik->geef( $dagdeel, $activiteit );
+				$aanwezig           = $werkplekgebruik->is_aanwezig( $dagdeel, $gebruiker_id );
+				$html              .= <<<EOT
 	<div class="kleistad_col_2">
 		<table style="border:0" >
 			<tr>
@@ -273,7 +270,7 @@ EOT;
 EOT;
 						continue;
 					}
-					if ( ! $aanwezig[ $dagdeel ] && ! ( $button[ $dagdeel ][ $activiteit ] ?? false ) ) {
+					if ( ! $aanwezig && ! ( $button[ $dagdeel ][ $activiteit ] ?? false ) ) {
 						$veld_id++;
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
@@ -313,12 +310,10 @@ EOT;
 		if ( is_null( $datum_str ) || 0 === $gebruiker_id ) {
 			return new WP_Error( 'param', 'Onjuiste data ontvangen' );
 		}
-		$datum           = strtotime( $datum_str );
-		$werkplekconfigs = new WerkplekConfigs();
-		$werkplekconfig  = $werkplekconfigs->find( $datum );
+		$datum = strtotime( $datum_str );
 		return new WP_REST_Response(
 			[
-				'content' => self::toon_werkplekken( $gebruiker_id, $datum, $werkplekconfig ),
+				'content' => self::toon_werkplekken( $gebruiker_id, $datum ),
 				'datum'   => strftime( '%A %e %B', $datum ),
 			]
 		);
@@ -340,21 +335,16 @@ EOT;
 			return new WP_Error( 'param', 'Onjuiste data ontvangen' );
 		}
 		$datum           = strtotime( $datum_str );
-		$werkplekconfigs = new WerkplekConfigs();
-		$werkplekconfig  = $werkplekconfigs->find( $datum );
-		$dagconfig       = $werkplekconfig->config[ strftime( '%A', $datum ) ];
 		$werkplekgebruik = new WerkplekGebruik( $datum );
 		$gebruiker_ids   = array_map( 'intval', array_column( $werkplekgebruik->geef( $dagdeel, $activiteit ), 'ID' ) );
 		switch ( $request->get_method() ) {
 			case 'POST':
 				if ( ! in_array( $gebruiker_id, $gebruiker_ids, true ) ) {
-					if ( count( $gebruiker_ids ) < $dagconfig[ $dagdeel ][ $activiteit ] ) {
-						$gebruiker_ids[] = $gebruiker_id;
-						$werkplekgebruik->wijzig( $dagdeel, $activiteit, $gebruiker_ids );
-						break;
-					}
-					// @TODO Foutmelding, helaas is de werkplek zojuist al door iemand anders gereserveerd.
+					$gebruiker_ids[] = $gebruiker_id;
+					$werkplekgebruik->wijzig( $dagdeel, $activiteit, $gebruiker_ids );
+					break;
 				}
+				// @TODO Foutmelding, helaas is de werkplek zojuist al door iemand anders gereserveerd.
 				break;
 			case 'PUT':
 				break;
@@ -371,7 +361,7 @@ EOT;
 		}
 		return new WP_REST_Response(
 			[
-				'content' => self::toon_werkplekken( $gebruiker_id, $datum, $werkplekconfig ),
+				'content' => self::toon_werkplekken( $gebruiker_id, $datum ),
 			]
 		);
 	}
@@ -390,30 +380,15 @@ EOT;
 		if ( is_null( $dagdeel ) || is_null( $meester_id ) || is_null( $datum_str ) ) {
 			return new WP_Error( 'param', 'Onjuiste data ontvangen' );
 		}
-		$datum            = strtotime( $datum_str );
-		$werkplekmeesters = new WerkplekMeesters( $datum );
-		switch ( $request->get_method() ) {
-			case 'POST':
-				$werkplekmeesters->wijzig( $dagdeel, $meester_id );
-				break;
-			case 'PUT':
-				break;
-			case 'DELETE':
-				$werkplekmeesters->verwijder( $dagdeel );
-				$werkplekconfigs = new WerkplekConfigs();
-				$werkplekconfig  = $werkplekconfigs->find( $datum );
-				$dagmeesters     = $werkplekconfig->meesters[ strftime( '%A', $datum ) ];
-				$meester_id      = $dagmeesters[ $dagdeel ];
-				break;
-			default:
-				break;
-		}
-
+		$datum           = strtotime( $datum_str );
+		$werkplekgebruik = new WerkplekGebruik( $datum );
+		$werkplekgebruik->wijzig_meester( $dagdeel, $meester_id );
+		$meesters = $werkplekgebruik->geef_meesters();
 		return new WP_REST_Response(
 			[
-				'id'      => $meester_id,
+				'id'      => is_object( $meesters[ $dagdeel ] ) ? $meesters[ $dagdeel ]->ID : 0,
 				'dagdeel' => $dagdeel,
-				'naam'    => get_user_by( 'id', $meester_id )->display_name,
+				'naam'    => is_object( $meesters[ $dagdeel ] ) ? $meesters[ $dagdeel ]->display_name : '...',
 			]
 		);
 	}

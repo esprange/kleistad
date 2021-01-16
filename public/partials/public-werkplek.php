@@ -21,11 +21,11 @@ $huidige_gebruiker = wp_get_current_user();
 <div id="kleistad_meester">
 	<?php if ( current_user_can( BESTUUR ) ) : ?>
 	<select id="kleistad_meester_selectie" >
+		<option value="0" >...</option>
 		<?php foreach ( $data['meesters'] as $meester ) : ?>
-	<option value="<?php echo esc_attr( $meester->ID ); ?>" ><?php echo esc_html( $meester->display_name ); ?></option>
+		<option value="<?php echo esc_attr( $meester->ID ); ?>" ><?php echo esc_html( $meester->display_name ); ?></option>
 		<?php endforeach ?>
 	</select>
-	<label for="kleistad_meester_standaard">standaard</label><input type="checkbox" id="kleistad_meester_standaard" >
 <?php endif ?>
 </div>
 

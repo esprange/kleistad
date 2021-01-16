@@ -499,7 +499,7 @@ label.kleistad_label_cb {
     }
 }
 
-div.kleistad_corona_tijden {
+div.kleistad_werkplek_dagdeel {
     display: none;
 }
 
@@ -508,7 +508,7 @@ div.kleistad_corona_tijden {
         font-size: x-small;
     }
 
-    div.kleistad_corona_tijden {
+    div.kleistad_werkplek_dagdeel {
         display: block;
     }
 

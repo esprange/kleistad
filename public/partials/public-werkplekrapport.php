@@ -81,7 +81,7 @@ endforeach
 	?>
 	</tbody>
 </table>
-
+<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
 	<?php
 	return;
 endif;
@@ -102,18 +102,21 @@ endif;
 		foreach ( $regel as $dagdeel => $activiteiten ) :
 			foreach ( $activiteiten as $activiteit => $gebruiker_ids ) :
 				foreach ( $gebruiker_ids as $gebruiker_id ) :
-					?>
+					if ( $gebruiker_id ) :
+						?>
 		<tr>
 			<td data-sort="<?php echo esc_attr( $datum ); ?>" ><?php echo esc_html( date( 'd-m-Y', $datum ) ); ?></td>
 			<td><?php echo esc_html( $dagdeel ); ?></td>
 			<td><?php echo esc_html( $activiteit ); ?></td>
 			<td><?php echo esc_html( get_user_by( 'id', $gebruiker_id )->display_name ); ?></td>
 		</tr>
-					<?php
-	endforeach;
-	endforeach;
-endforeach;
-endforeach
+						<?php
+					endif;
+				endforeach;
+			endforeach;
+		endforeach;
+	endforeach
 	?>
 	</tbody>
 </table>
+<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
