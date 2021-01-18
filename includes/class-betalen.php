@@ -131,7 +131,7 @@ class Betalen {
 					],
 					'method'       => Mollie\Api\Types\PaymentMethod::IDEAL,
 					'sequenceType' => $mandateren ? Mollie\Api\Types\SequenceType::SEQUENCETYPE_FIRST : Mollie\Api\Types\SequenceType::SEQUENCETYPE_ONEOFF,
-					'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, ShortcodeForm::get_url() ),
+					'redirectUrl'  => add_query_arg( self::QUERY_PARAM, $uniqid, wp_get_referer() ),
 					'webhookUrl'   => base_url() . '/betaling/',
 				]
 			);
@@ -148,7 +148,7 @@ class Betalen {
 	 *
 	 * @return WP_ERROR | string | bool De status van de betaling als tekst, WP_error of mislukts of false als er geen betaling is.
 	 */
-	public static function controleer() {
+	public function controleer() {
 		$mollie_betaling_id = false;
 		$uniqid             = filter_input( INPUT_GET, self::QUERY_PARAM );
 		if ( ! is_null( $uniqid ) ) {
@@ -158,9 +158,8 @@ class Betalen {
 		if ( false === $mollie_betaling_id ) {
 			return false;
 		}
-		$object = new static();
 		try {
-			$betaling = $object->mollie->payments->get( $mollie_betaling_id );
+			$betaling = $this->mollie->payments->get( $mollie_betaling_id );
 			if ( $betaling->isPaid() ) {
 				return $betaling->metadata->bericht;
 			} elseif ( $betaling->isFailed() ) {

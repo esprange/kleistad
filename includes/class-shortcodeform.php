@@ -21,13 +21,6 @@ use WP_Error;
 abstract class ShortcodeForm extends Shortcode {
 
 	/**
-	 * Redirect voor o.a. ideal betalingen
-	 *
-	 * @var string de url voor een redirect terug naar de site.
-	 */
-	private static $form_url = null;
-
-	/**
 	 * Validatie functie, wordt voor form validatie gebruikt
 	 *
 	 * @since   4.0.87
@@ -189,15 +182,6 @@ abstract class ShortcodeForm extends Shortcode {
 	}
 
 	/**
-	 * Geef de url terug, zoals eerder vanuit de client doorgegeven. Dit omdat permalink niet werkt in een Ajax call.
-	 *
-	 * @since 5.7.0
-	 */
-	public static function get_url() {
-		return self::$form_url;
-	}
-
-	/**
 	 * Verwerk een form submit via ajax call
 	 *
 	 * @since 5.7.0
@@ -209,9 +193,8 @@ abstract class ShortcodeForm extends Shortcode {
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
 			return new WP_Error( 'intern', 'interne fout' );
 		}
-		$data           = [ 'form_actie' => $request->get_param( 'form_actie' ) ];
-		self::$form_url = $request->get_header( 'referer' );
-		$result         = $shortcode_object->validate( $data );
+		$data   = [ 'form_actie' => $request->get_param( 'form_actie' ) ];
+		$result = $shortcode_object->validate( $data );
 		if ( ! is_wp_error( $result ) ) {
 			return new WP_REST_Response( $shortcode_object->save( $data ) );
 		}

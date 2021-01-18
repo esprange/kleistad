@@ -136,7 +136,8 @@ abstract class Shortcode {
 			$html = ob_get_clean();
 		}
 
-		$betaal_result = Betalen::controleer();
+		$betalen       = new Betalen();
+		$betaal_result = $betalen->controleer();
 		if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
 			return $this->status( $betaal_result ) . $this->goto_home();
 		} elseif ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
