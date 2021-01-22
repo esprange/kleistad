@@ -83,22 +83,4 @@ class Public_Shortcode_Handler {
 		return $html;
 	}
 
-	/**
-	 * Controleer toegang tot deze shortcode.
-	 *
-	 * @since 5.7.2
-	 *
-	 * @param string $shortcode De shortcode.
-	 * @return bool Of er toegang is.
-	 */
-	public static function check_access( $shortcode ) {
-		$shortcodes = new Shortcodes();
-		$access     = $shortcodes->definities[ $shortcode ]->access;
-		if ( ! empty( $access ) ) {
-			$gebruiker = wp_get_current_user();
-			return $gebruiker->ID && 0 !== count( array_intersect( $access, (array) $gebruiker->roles ) );
-		}
-		return true;
-	}
-
 }
