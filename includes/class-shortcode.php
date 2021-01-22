@@ -241,7 +241,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
 					$shortcode  = $request->get_param( 'tag' );
-					$shortcodes = new ShortCodeDefinities();
+					$shortcodes = new ShortCodes();
 					return $shortcodes->check_access( $shortcode );
 				},
 			]
@@ -254,7 +254,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
 					$shortcode  = $request->get_param( 'tag' );
-					$shortcodes = new ShortCodeDefinities();
+					$shortcodes = new ShortCodes();
 					return $shortcodes->check_access( $shortcode );
 				},
 			]
@@ -267,7 +267,7 @@ abstract class Shortcode {
 				'callback'            => [ __CLASS__, 'callback_download' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
 					$shortcode  = $request->get_param( 'tag' );
-					$shortcodes = new ShortCodeDefinities();
+					$shortcodes = new ShortCodes();
 					return $shortcodes->check_access( $shortcode );
 				},
 			]
