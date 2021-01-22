@@ -174,8 +174,9 @@ abstract class ShortcodeForm extends Shortcode {
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_formsubmit' ],
 				'permission_callback' => function( \WP_REST_Request $request ) {
-					$shortcode = $request->get_param( 'tag' );
-					return Public_Shortcode_Handler::check_access( $shortcode );
+					$shortcode  = $request->get_param( 'tag' );
+					$shortcodes = new ShortCodeDefinities();
+					return $shortcodes->check_access( $shortcode );
 				},
 			]
 		);

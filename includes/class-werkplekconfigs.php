@@ -1,6 +1,6 @@
 <?php
 /**
- * De definitie van de werkplek configuratie class
+ * De definitie van de werkplek configuratie verzameling class
  *
  * @link       https://www.kleistad.nl
  * @since      6.11.0

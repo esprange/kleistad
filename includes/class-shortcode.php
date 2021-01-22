@@ -85,8 +85,9 @@ abstract class Shortcode {
 	 * Enqueue the scripts and styles for the shortcode.
 	 */
 	protected function enqueue() {
-		foreach ( Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['css'] as $dependency ) {
-			wp_enqueue_style( $dependency );
+		$shortcodes = new Shortcodes();
+		foreach ( $shortcodes->definities[ $this->shortcode ]->css as $style ) {
+			wp_enqueue_style( $style );
 		}
 		if ( ! wp_style_is( 'kleistad' ) ) {
 			wp_enqueue_style( 'kleistad' );
@@ -110,8 +111,8 @@ abstract class Shortcode {
 			wp_enqueue_script( "kleistad{$this->shortcode}" );
 			return;
 		}
-		foreach ( Public_Shortcode_Handler::SHORTCODES[ $this->shortcode ]['js'] as $dependency ) {
-			wp_enqueue_script( $dependency );
+		foreach ( $shortcodes->definities[ $this->shortcode ]->js as $script ) {
+			wp_enqueue_script( $script );
 		}
 	}
 
@@ -239,8 +240,9 @@ abstract class Shortcode {
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
-					$shortcode = $request->get_param( 'tag' );
-					return Public_Shortcode_Handler::check_access( $shortcode );
+					$shortcode  = $request->get_param( 'tag' );
+					$shortcodes = new ShortCodeDefinities();
+					return $shortcodes->check_access( $shortcode );
 				},
 			]
 		);
@@ -251,8 +253,9 @@ abstract class Shortcode {
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
-					$shortcode = $request->get_param( 'tag' );
-					return Public_Shortcode_Handler::check_access( $shortcode );
+					$shortcode  = $request->get_param( 'tag' );
+					$shortcodes = new ShortCodeDefinities();
+					return $shortcodes->check_access( $shortcode );
 				},
 			]
 		);
@@ -263,8 +266,9 @@ abstract class Shortcode {
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_download' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
-					$shortcode = $request->get_param( 'tag' );
-					return Public_Shortcode_Handler::check_access( $shortcode );
+					$shortcode  = $request->get_param( 'tag' );
+					$shortcodes = new ShortCodeDefinities();
+					return $shortcodes->check_access( $shortcode );
 				},
 			]
 		);

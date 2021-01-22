@@ -84,10 +84,11 @@ class Public_Actions {
 		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad' ], $this->version, true );
 
-		foreach ( Public_Shortcode_Handler::SHORTCODES as $shortcode => $dependencies ) {
-			if ( $dependencies['script'] ) {
-				$file = str_replace( '_', '-', $shortcode );
-				wp_register_script( "kleistad$shortcode", plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", $dependencies['js'], $this->version, false );
+		$shortcodes = new Shortcodes();
+		foreach ( $shortcodes->definities as $tag => $shortcodedefinitie ) {
+			if ( $shortcodedefinitie->script ) {
+				$file = str_replace( '_', '-', $tag );
+				wp_register_script( "kleistad$tag", plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", $shortcodedefinitie->js, $this->version, false );
 			}
 		}
 		// phpcs:enable

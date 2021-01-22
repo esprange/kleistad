@@ -19,182 +19,6 @@ use WP_Error;
 class Public_Shortcode_Handler {
 
 	/**
-	 * De shortcodes van kleistad
-	 *
-	 * @var array shortcodes met hun style en jscript afhankelijkheden.
-	 */
-	const SHORTCODES = [
-		'abonnee_inschrijving'  => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [],
-		],
-		'abonnee_wijziging'     => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ LID ],
-		],
-		'abonnement_overzicht'  => [
-			'script' => false,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [ BESTUUR ],
-		],
-		'betaling'              => [
-			'script' => true,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [],
-		],
-		'contact'               => [
-			'script' => false,
-			'js'     => [],
-			'css'    => [],
-			'access' => [],
-		],
-		'cursus_beheer'         => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ BESTUUR ],
-		],
-		'cursus_extra'          => [
-			'script' => true,
-			'js'     => [ 'jquery' ],
-			'css'    => [],
-			'access' => [],
-		],
-		'cursus_inschrijving'   => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner', 'jquery-ui-tooltip' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [],
-		],
-		'cursus_overzicht'      => [
-			'script' => false,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ DOCENT, BESTUUR ],
-		],
-		'dagdelenkaart'         => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [],
-		],
-		'debiteuren'            => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ BOEKHOUD ],
-		],
-		'email'                 => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jstree' ],
-			'css'    => [ 'jquery-ui', 'jstree' ],
-			'access' => [ DOCENT, BESTUUR ],
-		],
-		'kalender'              => [
-			'script' => true,
-			'js'     => [ 'jquery', 'fullcalendar' ],
-			'css'    => [ 'fullcalendar' ],
-			'access' => [ DOCENT, LID, BESTUUR ],
-		],
-		'omzet_rapportage'      => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ BESTUUR ],
-		],
-		'rapport'               => [
-			'script' => false,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [ DOCENT, LID, BESTUUR ],
-		],
-		'recept_beheer'         => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ DOCENT, LID, BESTUUR ],
-		],
-		'recept'                => [
-			'script' => true,
-			'js'     => [ 'jquery' ],
-			'css'    => [ 'dashicons' ],
-			'access' => [],
-		],
-		'registratie_overzicht' => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
-			'access' => [ BESTUUR ],
-		],
-		'registratie'           => [
-			'script' => true,
-			'js'     => [ 'jquery', 'password-strength-meter' ],
-			'css'    => [],
-			'access' => [ DOCENT, LID, BESTUUR ],
-		],
-		'reservering'           => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ DOCENT, LID, BESTUUR ],
-		],
-		'saldo_overzicht'       => [
-			'script' => false,
-			'js'     => [ 'jquery', 'datatables' ],
-			'css'    => [ 'datatables' ],
-			'access' => [ BESTUUR ],
-		],
-		'saldo'                 => [
-			'script' => true,
-			'js'     => [ 'jquery' ],
-			'css'    => [],
-			'access' => [ DOCENT, LID, BESTUUR ],
-		],
-		'stookbestand'          => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ BESTUUR ],
-		],
-		'verkoop'               => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ BESTUUR ],
-		],
-		'werkplek'              => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-dialog', 'jquery-ui-button' ],
-			'css'    => [ 'jquery-ui' ],
-			'access' => [ DOCENT, LID, BESTUUR ],
-		],
-		'werkplekrapport'       => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ BESTUUR ],
-		],
-		'workshop_aanvraag'     => [
-			'script' => false,
-			'js'     => [ 'jquery' ],
-			'css'    => [],
-			'access' => [],
-		],
-		'workshop_beheer'       => [
-			'script' => true,
-			'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
-			'css'    => [ 'jquery-ui', 'datatables' ],
-			'access' => [ BESTUUR ],
-		],
-	];
-
-	/**
 	 * De kleistad plugin opties.
 	 *
 	 * @var array kleistad plugin settings
@@ -216,8 +40,9 @@ class Public_Shortcode_Handler {
 	 * Voeg de shortcodes toe.
 	 */
 	public function register() {
-		foreach ( array_keys( self::SHORTCODES ) as $shortcode ) {
-			add_shortcode( "kleistad_$shortcode", [ $this, 'handler' ] );
+		$shortcodes = new Shortcodes();
+		foreach ( array_keys( $shortcodes->definities ) as $tag ) {
+			add_shortcode( "kleistad_$tag", [ $this, 'handler' ] );
 		}
 	}
 
@@ -231,6 +56,7 @@ class Public_Shortcode_Handler {
 	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
 	 * @return string           html resultaat.
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
+	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
 	public function handler( $atts, $content, $tag ) {
 		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
@@ -238,7 +64,8 @@ class Public_Shortcode_Handler {
 		if ( is_null( $shortcode_object ) ) {
 			return '';
 		}
-		if ( ! self::check_access( $shortcode ) ) {
+		$shortcodes = new ShortCodes();
+		if ( ! $shortcodes->check_access( $shortcode ) ) {
 			return $shortcode_object->status( new WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
 		}
 		$html        = '';
@@ -265,7 +92,8 @@ class Public_Shortcode_Handler {
 	 * @return bool Of er toegang is.
 	 */
 	public static function check_access( $shortcode ) {
-		$access = self::SHORTCODES[ $shortcode ]['access'];
+		$shortcodes = new Shortcodes();
+		$access     = $shortcodes->definities[ $shortcode ]->access;
 		if ( ! empty( $access ) ) {
 			$gebruiker = wp_get_current_user();
 			return $gebruiker->ID && 0 !== count( array_intersect( $access, (array) $gebruiker->roles ) );
