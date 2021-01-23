@@ -3,7 +3,7 @@
  * De  class voor shortcode definities.
  *
  * @link       https://www.kleistad.nl
- * @since      7.0.0
+ * @since      6.12.3
  *
  * @package    Kleistad
  * @subpackage Kleistad/includes
