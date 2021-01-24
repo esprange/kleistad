@@ -116,7 +116,10 @@ class Admin_Werkplekken_Handler {
 					$werkplekconfigs             = new WerkplekConfigs();
 					$start_datum                 = strtotime( $item['start_datum'] );
 					$eind_datum                  = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
-					$werkplekconfig              = $werkplekconfigs->find( $start_datum, $eind_datum ) ?: new WerkplekConfig();
+					$werkplekconfig              = $werkplekconfigs->find( $start_datum, $eind_datum );
+					if ( ! is_object ( $werkplekconfig ) ) {
+						$werkplekconfig = new WerkplekConfig();
+					}
 					$werkplekconfig->start_datum = $start_datum;
 					$werkplekconfig->eind_datum  = $eind_datum;
 					$werkplekconfig->config      = $this->int_array( $item['config'] );

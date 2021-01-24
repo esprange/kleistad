@@ -101,10 +101,10 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		);
 		if ( is_array( $data['input'] ) ) {
 			if ( '' === $data['input']['abonnement_keuze'] ) {
-				return new_WP_Error( 'verplicht', 'Er is nog geen type abonnement gekozen' );
+				return new WP_Error( 'verplicht', 'Er is nog geen type abonnement gekozen' );
 			}
 			if ( '' === $data['input']['start_datum'] ) {
-				return new_WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
+				return new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
 			}
 			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
 				$error = $this->validate_gebruiker( $data['input'] );
