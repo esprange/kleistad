@@ -54,7 +54,7 @@ class Cursist extends Gebruiker {
 	 */
 	public function geef_inschrijving( int $cursus_id ) {
 		foreach ( $this->inschrijvingen as $inschrijving ) {
-			if ( $cursus_id === $inschrijving->cursus_id ) {
+			if ( $cursus_id === $inschrijving->cursus->id ) {
 				return $inschrijving;
 			}
 		}

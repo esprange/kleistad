@@ -165,13 +165,12 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			if ( 0 === $extra_cursist_id ) {
 				$extra_cursist_id = email_exists( $extra_cursist['user_email'] );
 				if ( false === $extra_cursist_id ) {
-					$extra_cursist_id = wp_insert_user(
-						(object) [
+					$extra_cursist_id = upsert_user(
+						[
 							'ID'         => null,
 							'first_name' => $extra_cursist['first_name'],
 							'last_name'  => $extra_cursist['last_name'],
 							'user_email' => $extra_cursist['user_email'],
-							'role'       => '',
 						]
 					);
 				}
@@ -183,7 +182,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			}
 			$extra_cursisten[]  = $extra_cursist_id;
 			$extra_inschrijving = new Inschrijving( $data['inschrijving']->cursus->id, $extra_cursist_id );
-			if ( 0 < $extra_inschrijving->aantal ) {
+			if ( $extra_inschrijving->ingedeeld && 0 < $extra_inschrijving->aantal ) {
 				return [
 					'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie heeft ' . $extra_cursist['first_name'] . ' ' . $extra_cursist['last_name'] . ' zichzelf al opgegeven voor deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 				];

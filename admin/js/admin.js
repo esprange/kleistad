@@ -1,6 +1,16 @@
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Converteer lokale datum in format 'd-m-Y' naar Date.
+	 *
+	 * @param (String) datum
+	 */
+	function strtodate( value ) {
+		var veld = value.split( '-' );
+		return new Date( veld[2], veld[1] - 1, veld[0] );
+	}
+	
     $( document ).ready(
         function() {
             /**
@@ -68,7 +78,26 @@
 						return true;
 					}
 				}
-            );
+			);
+
+			$( '#kleistad_start_datum' ).datepicker( 'option',
+				{
+					minDate: 0,
+					maxDate: $( '#kleistad_eind_datum' ).datepicker( 'getDate' ),
+					onSelect: function( datum ) {
+						$( '#kleistad_eind_datum' ).datepicker( 'option', { 
+							minDate: strtodate( datum ) } );
+					}
+				}
+			);
+			$( '#kleistad_eind_datum' ).datepicker( 'option',
+				{
+					minDate: $( '#kleistad_start_datum' ).datepicker( 'getDate' ),
+					onSelect: function( datum ) {
+						$( '#kleistad_start_datum' ).datepicker( 'option', { maxDate: strtodate( datum ) } );
+					}
+				}
+			);
         }
     );
 } )( jQuery );

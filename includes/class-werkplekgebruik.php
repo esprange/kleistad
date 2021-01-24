@@ -53,7 +53,7 @@ class WerkplekGebruik {
 	public function __construct( int $datum ) {
 		$this->datum     = $datum;
 		$werkplekconfigs = new WerkplekConfigs();
-		$werkplekconfig  = $werkplekconfigs->find( $this->datum );
+		$werkplekconfig  = $werkplekconfigs->find( $this->datum ) ?: new WerkplekConfig();
 		$this->dagconfig = $werkplekconfig->config[ strftime( '%A', $this->datum ) ];
 		$gebruik         = get_option( 'kleistad_werkplek_' . date( 'Ymd', $this->datum ) );
 		if ( false === $gebruik ) {

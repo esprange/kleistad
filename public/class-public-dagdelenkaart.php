@@ -64,7 +64,6 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 * @since   4.3.0
 	 */
 	protected function validate( &$data ) {
-		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -89,13 +88,13 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 		);
 		if ( is_array( $data['input'] ) ) {
 			if ( '' === $data['input']['start_datum'] ) {
-				$error->add( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' );
+				return new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' );
 			}
 			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-				$this->validate_gebruiker( $error, $data['input'] );
-			}
-			if ( ! empty( $error->get_error_codes() ) ) {
-				return $error;
+				$error = $this->validate_gebruiker( $data['input'] );
+				if ( is_wp_error( $error ) ) {
+					return $error;
+				}
 			}
 			return true;
 		}

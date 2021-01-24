@@ -183,7 +183,6 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function validate( &$data ) {
-		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -220,30 +219,25 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		);
 		if ( is_array( $data['input'] ) ) {
 			if ( false === intval( $data['input']['cursus_id'] ) ) {
-				$error->add( 'verplicht', 'Er is nog geen cursus gekozen' );
-				return $error;
+				return new WP_Error( 'verplicht', 'Er is nog geen cursus gekozen' );
+			}
+			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
+				$error = $this->validate_gebruiker( $data['input'] );
+				if ( is_wp_error( $error ) ) {
+					return $error;
+				}
 			}
 			$cursus = new Cursus( $data['input']['cursus_id'] );
 			if ( $cursus->vol ) {
 				if ( 1 < $data['input']['aantal'] ) {
-					$error->add( 'vol', 'Er zijn geen plaatsen meer beschikbaar. Je kan eventueel op een wachtlijst geplaatst worden' );
 					$data['input']['aantal'] = 1;
-					return $error;
+					return new WP_Error( 'vol', 'De cursus is helaas vol. Als je op een wachtlijst geplaatst wilt dan kan je dit alleen voor jezelf doen' );
 				}
 			}
 			$ruimte = $cursus->ruimte();
-			if ( $ruimte < $data['input']['aantal'] ) {
-				$error->add( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." );
+			if ( ! $cursus->vol && $ruimte < $data['input']['aantal'] ) {
 				$data['input']['aantal'] = $ruimte;
-			} elseif ( 0 === intval( $data['input']['aantal'] ) ) {
-				$error->add( 'aantal', 'Het aantal cursisten moet minimaal gelijk zijn aan 1' );
-				$data['input']['aantal'] = 1;
-			}
-			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-				$this->validate_gebruiker( $error, $data['input'] );
-			}
-			if ( ! empty( $error->get_error_codes() ) ) {
-				return $error;
+				return new WP_Error( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." );
 			}
 			return true;
 		}

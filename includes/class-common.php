@@ -183,19 +183,4 @@ class Common {
 		return $schedules;
 	}
 
-	/**
-	 * Pas user record aan na insert of update van user data.
-	 *
-	 * @param array $data   De user data.
-	 * @param bool  $update Of er wel/niet een update is.
-	 * @return array
-	 */
-	public function pre_insert_user_data( $data, $update ) {
-		if ( ! $update ) {
-			$data['user_login']    = $data['user_email'];
-			$data['user_pass']     = wp_generate_password( 12, true );
-			$data['user_nicename'] = strtolower( $data['first_name'] . '-' . $data['last_name'] );
-		}
-		return $data;
-	}
 }

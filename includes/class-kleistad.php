@@ -32,7 +32,10 @@ const INTERN    = 'intern';
  */
 function upsert_user( $userdata ) {
 	if ( is_null( $userdata['ID'] ) ) {
-		$userdata['role'] = '';
+		$userdata['role']          = '';
+		$userdata['user_login']    = $userdata['user_email'];
+		$userdata['user_pass']     = wp_generate_password( 12, true );
+		$userdata['user_nicename'] = strtolower( $userdata['first_name'] . '-' . $userdata['last_name'] );
 		return wp_insert_user( (object) $userdata );
 	}
 	return wp_update_user( (object) $userdata );
@@ -194,7 +197,6 @@ class Kleistad {
 		$this->loader->add_filter( 'login_redirect', $plugin_common, 'login_redirect', 10, 3 );
 		$this->loader->add_filter( 'wp_nav_menu_items', $plugin_common, 'loginuit_menu', 10, 2 );
 		$this->loader->add_filter( 'cron_schedules', $plugin_common, 'cron_schedules' ); // phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
-		$this->loader->add_filter( 'wp_pre_insert_user_data', $plugin_common, 'pre_insert_user_data', 10, 3 );
 	}
 
 	/**

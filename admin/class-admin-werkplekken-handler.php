@@ -70,8 +70,10 @@ class Admin_Werkplekken_Handler {
 		if ( 'delete' === $table->current_action() ) {
 			$werkplekconfigs = new WerkplekConfigs();
 			$werkplekconfig  = $werkplekconfigs->find( intval( filter_input( INPUT_GET, 'start_datum' ) ), intval( filter_input( INPUT_GET, 'eind_datum' ) ) );
-			$werkplekconfigs->verwijder( $werkplekconfig );
-			$message = 'De werkplek configuratie is verwijderd';
+			if ( is_object( $werkplekconfig ) ) {
+				$werkplekconfigs->verwijder( $werkplekconfig );
+				$message = 'De werkplek configuratie is verwijderd';
+			}
 		}
 		require 'partials/admin-werkplekken-page.php';
 	}
@@ -114,7 +116,7 @@ class Admin_Werkplekken_Handler {
 					$werkplekconfigs             = new WerkplekConfigs();
 					$start_datum                 = strtotime( $item['start_datum'] );
 					$eind_datum                  = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
-					$werkplekconfig              = $werkplekconfigs->find( $start_datum, $eind_datum );
+					$werkplekconfig              = $werkplekconfigs->find( $start_datum, $eind_datum ) ?: new WerkplekConfig();
 					$werkplekconfig->start_datum = $start_datum;
 					$werkplekconfig->eind_datum  = $eind_datum;
 					$werkplekconfig->config      = $this->int_array( $item['config'] );

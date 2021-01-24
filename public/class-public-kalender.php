@@ -32,8 +32,12 @@ class Public_Kalender extends Shortcode {
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_kalender' ],
 				'args'                => [
-					'start',
-					'eind',
+					'start' => [
+						'required' => true,
+					],
+					'eind'  => [
+						'required' => true,
+					],
 				],
 				'permission_callback' => function() {
 						return true;

@@ -33,7 +33,7 @@ class Public_Werkplek extends Shortcode {
 		$datums         = [];
 		$vandaag        = strtotime( 'today' );
 		$driemaand      = strtotime( '+3 month', $vandaag );
-		$werkplekconfig = $werkplekconfigs->find( $vandaag );
+		$werkplekconfig = $werkplekconfigs->find( $vandaag ) ?: new WerkplekConfig();
 		for ( $dagteller = $vandaag; $dagteller < $driemaand; $dagteller += DAY_IN_SECONDS ) {
 			$werkplekken = 0;
 			if ( $dagteller > $werkplekconfig->eind_datum && 0 !== $werkplekconfig->eind_datum ) {
