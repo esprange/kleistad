@@ -10,12 +10,12 @@
         }
     ],
     "require": {
-        "mollie/mollie-api-php": "^2.0",
-        "google/apiclient": "^2.4",
-        "html2text/html2text": "^4.2",
-        "php-imap/php-imap": "^3.0",
-        "setasign/fpdf": "^1.8.1",
-        "deliciousbrains/wp-background-processing": "^1.0"
+        "mollie/mollie-api-php": "^2",
+        "google/apiclient": "^2",
+        "html2text/html2text": "*",
+        "php-imap/php-imap": "*",
+        "setasign/fpdf": "*",
+        "deliciousbrains/wp-background-processing": "*"
     },
     "scripts": {
         "post-update-cmd": "Google\\Task\\Composer::cleanup"

@@ -202,8 +202,7 @@ table.kleistad_reserveringen {
     width: 90%;
 }
 table.kleistad_reserveringen th {
-    border-style: solid;
-    border-width: 0;
+    border: 0 solid;
     overflow: hidden;
 }
 table.kleistad_reserveringen th[colspan] {
@@ -211,8 +210,7 @@ table.kleistad_reserveringen th[colspan] {
     vertical-align: middle;
 }
 table.kleistad_reserveringen td {
-    border-style: solid;
-    border-width: 0;
+    border: 0 solid;
     overflow: hidden;
 }
 table.kleistad_reserveringen td:nth-child(4n) {
@@ -443,14 +441,12 @@ label.kleistad_label_cb {
 }
 
 .kleistad_werkplek_bezet {
+    border:2px solid white;
     font-size:small;
-    border:2px white;
-    border-style: solid;
 }
 
 .kleistad_werkplek_vrij {
-    border:2px white;
-    border-style: solid;
+    border:2px solid white;
 }
 
 .kleistad_werkplek_dagdeel, .kleistad_werkplek_gereserveerd {

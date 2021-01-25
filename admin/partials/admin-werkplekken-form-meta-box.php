@@ -46,7 +46,7 @@ function meester_selectie( string $name, int $id_selected ) : string {
 			</th>
 			<td colspan="2">
 				<input type="hidden" name="nieuwste_config" value="<?php echo esc_attr( intval( $item['nieuwste_config'] ) ); ?>">
-				<input type="text" id="kleistad_start_datum" name="start_datum" class="kleistad_datum" required value="<?php echo esc_attr( $item['start_datum'] ); ?>" >
+				<input type="text" id="kleistad_start_datum" name="start_datum" class="kleistad_datum" required value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off" >
 			</td>
 		</tr>
 		<tr class="form-field">
@@ -54,7 +54,7 @@ function meester_selectie( string $name, int $id_selected ) : string {
 				<label for="eind_datum">Eind datum</label>
 			</th>
 			<td colspan="2">
-				<input type="text" id="kleistad_eind_datum" name="eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" <?php disabled( $item['nieuwste_config'] ); ?> >
+				<input type="text" id="kleistad_eind_datum" name="eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" <?php disabled( $item['nieuwste_config'] ); ?> autocomplete="off" >
 			</td>
 		</tr>
 		<tr><td></td>

@@ -68,15 +68,6 @@ class WerkplekConfigs implements Countable, Iterator {
 			return;
 		}
 		/**
-		 * Zoek de configuratie, als periode al bestaat, deze vervangen.
-		 */
-		$config = $this->find( $configtoetevoegen->start_datum, $configtoetevoegen->eind_datum );
-		if ( is_object( $config ) ) {
-			$this->configs[ $this->current_index ] = $configtoetevoegen;
-			$this->save();
-			return;
-		}
-		/**
 		 * Als er geen einddatum vermeld is, dat aan het eind toevoegen.
 		 */
 		if ( 0 === $configtoetevoegen->eind_datum ) {
@@ -125,54 +116,55 @@ class WerkplekConfigs implements Countable, Iterator {
 	 * Een toe te voegen config met eind_datum
 	 *
 	 * @param WerkplekConfig $configtoetevoegen De toe te voegen config.
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-	 * @SuppressWarnings(PHPMD.NPathComplexity)
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function toevoegen_in_midden( WerkplekConfig $configtoetevoegen ) {
-		foreach ( $this->configs as $index => &$config ) {
+		$this->find( $configtoetevoegen->start_datum );
+		$start_index = $this->current_index;
+		$this->find( $configtoetevoegen->eind_datum );
+		$eind_index = $this->current_index;
+
+		if ( $start_index === $eind_index ) {
 			/**
-			 * Eind periode splitsen als in eindperiode of binnen één periode.
+			 * Splits de periode als de toe te voegen config binnen een bestaande periode valt.
+			 *
+			 *      |_________|
+			 *         |____|
+			 * wordt
+			 *      |__|____|_|
 			 */
-			if ( 0 === $config->eind_datum ||
-				( $configtoetevoegen->start_datum > $config->start_datum && $configtoetevoegen->eind_datum < $config->eind_datum ) ) {
-				$clone              = clone ( $config );
-				$clone->start_datum = strtotime( 'tomorrow', $configtoetevoegen->eind_datum );
-				$config->eind_datum = strtotime( 'yesterday', $configtoetevoegen->start_datum );
-				$this->configs[]    = $configtoetevoegen;
-				$this->configs[]    = $clone;
-				return;
-			}
+			$clone                                     = clone( $this->configs[ $start_index ] );
+			$this->configs[ $start_index ]->eind_datum = strtotime( 'yesterday', $configtoetevoegen->start_datum );
+			$clone->start_datum                        = strtotime( 'tomorrow', $configtoetevoegen->eind_datum );
+			$toevoegen                                 = [ $configtoetevoegen, $clone ];
+		} else {
 			/**
-			 * Nieuwe periode overlapt de huidige volledig, dan verwijderen.
+			 * Voeg de config toe na de voorgaande periode.
+			 *
+			 *      |___ .... ___|
+			 *         |_______|
+			 * wordt
+			 *      |__|_______|_|
 			 */
-			if ( $configtoetevoegen->start_datum <= $config->start_datum && $configtoetevoegen->eind_datum >= $config->eind_datum ) {
+			$this->configs[ $start_index ]->eind_datum = strtotime( 'yesterday', $configtoetevoegen->start_datum );
+			$this->configs[ $eind_index ]->start_datum = strtotime( 'tomorrow', $configtoetevoegen->eind_datum );
+			$toevoegen                                 = [ $configtoetevoegen ];
+		}
+
+		/**
+		 * Verwijder alles wat niet relevant meer is.
+		 */
+		for ( $index = $start_index; $index <= $eind_index; $index++ ) {
+			if ( $this->configs[ $index ]->start_datum >= $configtoetevoegen->start_datum &&
+				$this->configs[ $index ]->eind_datum <= $configtoetevoegen-eind_datum ) {
 				unset( $this->configs[ $index ] );
-				continue;
-			}
-			/**
-			 * Skip als nieuwe periode na huidige periode.
-			 */
-			if ( $configtoetevoegen->start_datum > $config->eind_datum ) {
-				continue;
-			}
-			/**
-			 * Nieuwe periode overlapt huidige periode aan eind.
-			 */
-			if ( $configtoetevoegen->eind_datum >= $config->eind_datum ) {
-				$config->eind_datum                       = strtotime( 'yesterday', $configtoetevoegen->start_datum );
-				$this->configs[ $index + 1 ]->start_datum = strtotime( 'tomorrow', $configtoetevoegen->eind_datum );
-				$this->configs[]                          = $configtoetevoegen;
-				return;
-			}
-			/**
-			 * Nieuwe periode overlapt huidige periode aan begin.
-			 */
-			if ( $configtoetevoegen->eind_datum > $config->start_datum ) {
-				$config->start_datum = strtotime( 'tomorrow', $configtoetevoegen->eind_datum );
-				$this->configs[]     = $configtoetevoegen;
-				return;
 			}
 		}
+
+		/**
+		 * En voeg uiteindelijk de nieuwe configs toe.
+		 */
+		array_splice( $this->configs, $start_index + 1, 0, $toevoegen );
 	}
 
 	/**
@@ -211,18 +203,6 @@ class WerkplekConfigs implements Countable, Iterator {
 	 * @since 6.11.0
 	 */
 	private function save() {
-		usort(
-			$this->configs,
-			function( $links, $rechts ) : int {
-				if ( 0 === $links->eind_datum ) {
-					return 1;
-				}
-				if ( 0 === $rechts->eind_datum ) {
-					return -1;
-				}
-				return $links->start_datum <=> $rechts->start_datum;
-			}
-		);
 		$configs = [];
 		foreach ( $this->configs as $config ) {
 			$configs[] = [
@@ -248,6 +228,7 @@ class WerkplekConfigs implements Countable, Iterator {
 			$periode_gelijk   = ! is_null( $eind_datum ) && $datum === $config->start_datum && $eind_datum === $config->eind_datum;
 			if ( $datum_in_periode ) {
 				$config->adhoc_meesters( $datum ); // Wijzig de standaard beheerders zonodig door een of meer ad hoc beheerders.
+				$this->current_index = $index;
 				return $config;
 			}
 			if ( $periode_gelijk ) {
