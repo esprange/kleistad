@@ -113,10 +113,10 @@ class Admin_Werkplekken_Handler {
 				$item_valid = $this->validate_werkplek( $item );
 				$notice     = is_string( $item_valid ) ? $item_valid : '';
 				if ( true === $item_valid ) {
-					$werkplekconfigs             = new WerkplekConfigs();
-					$start_datum                 = strtotime( $item['start_datum'] );
-					$eind_datum                  = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
-					$werkplekconfig              = $werkplekconfigs->find( $start_datum, $eind_datum );
+					$werkplekconfigs = new WerkplekConfigs();
+					$start_datum     = strtotime( $item['start_datum'] );
+					$eind_datum      = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
+					$werkplekconfig  = $werkplekconfigs->find( $start_datum, $eind_datum );
 					if ( ! is_object( $werkplekconfig ) ) {
 						$werkplekconfig = new WerkplekConfig();
 					}

@@ -156,7 +156,7 @@ class WerkplekConfigs implements Countable, Iterator {
 		 */
 		for ( $index = $start_index; $index <= $eind_index; $index++ ) {
 			if ( $this->configs[ $index ]->start_datum >= $configtoetevoegen->start_datum &&
-				$this->configs[ $index ]->eind_datum <= $configtoetevoegen-eind_datum ) {
+				$this->configs[ $index ]->eind_datum <= $configtoetevoegen->eind_datum ) {
 				unset( $this->configs[ $index ] );
 			}
 		}
