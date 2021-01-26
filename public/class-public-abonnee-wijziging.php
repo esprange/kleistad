@@ -22,7 +22,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * Prepareer 'abonnee_wijziging' form
 	 *
 	 * @param array $data data voor formulier.
-	 * @return bool
+	 * @return bool|WP_Error
 	 *
 	 * @since   4.0.87
 	 */
@@ -30,8 +30,11 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		$abonnee_id             = get_current_user_id();
 		$betalen                = new Betalen();
 		$data['abonnement']     = new Abonnement( $abonnee_id );
-		$data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id );
-		return true;
+		if ( $data['abonnement']->start_datum ) {
+			$data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id );
+			return true;
+		}
+		return new WP_Error( 'abonnement', 'Je hebt geen actief abonnement, neem eventueel contact op met een bestuurslid' );
 	}
 
 	/**

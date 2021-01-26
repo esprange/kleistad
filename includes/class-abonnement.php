@@ -690,6 +690,6 @@ class Abonnement extends Artikel {
 	 * @param string $tekst De handeling.
 	 */
 	private function log( string $tekst ) : void {
-		array_push( $this->historie, strftime( '%c' ) . " $tekst" );
+		$this->historie = array_merge( $this->historie, [ strftime( '%c' ) . " $tekst" ] );
 	}
 }
