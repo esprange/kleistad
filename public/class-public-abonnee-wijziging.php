@@ -27,9 +27,9 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function prepare( &$data ) {
-		$abonnee_id             = get_current_user_id();
-		$betalen                = new Betalen();
-		$data['abonnement']     = new Abonnement( $abonnee_id );
+		$abonnee_id         = get_current_user_id();
+		$betalen            = new Betalen();
+		$data['abonnement'] = new Abonnement( $abonnee_id );
 		if ( $data['abonnement']->start_datum ) {
 			$data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id );
 			return true;

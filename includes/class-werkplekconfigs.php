@@ -133,10 +133,10 @@ class WerkplekConfigs implements Countable, Iterator {
 			 * wordt
 			 *      |__|____|_|
 			 */
-			$clone                                     = clone( $this->configs[ $start_index ] );
+			$configeind                                = clone( $this->configs[ $start_index ] );
 			$this->configs[ $start_index ]->eind_datum = strtotime( 'yesterday', $configtoetevoegen->start_datum );
-			$clone->start_datum                        = strtotime( 'tomorrow', $configtoetevoegen->eind_datum );
-			$toevoegen                                 = [ $configtoetevoegen, $clone ];
+			$configeind->start_datum                   = strtotime( 'tomorrow', $configtoetevoegen->eind_datum );
+			$toevoegen                                 = [ $configtoetevoegen, $configeind ];
 		} else {
 			/**
 			 * Voeg de config toe na de voorgaande periode.
