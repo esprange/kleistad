@@ -40,32 +40,88 @@ class Public_Email extends ShortcodeForm {
 			];
 		}
 
+		$data['input']['tree'] = $this->cursisten();
 		if ( current_user_can( BESTUUR ) ) {
-			foreach ( get_users( [ 'role' => BESTUUR ] ) as $bestuurslid ) {
-				$data['input']['tree'][-3]['naam']                      = 'Bestuur';
-				$data['input']['tree'][-3]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
-			}
-
-			foreach ( get_users( [ 'role' => DOCENT ] ) as $docent ) {
-				$data['input']['tree'][-2]['naam']                 = 'Docenten';
-				$data['input']['tree'][-2]['leden'][ $docent->ID ] = $docent->display_name;
-			}
-
-			foreach ( new Abonnees() as $abonnee ) {
-				if ( ! $abonnee->abonnement->is_geannuleerd() ) {
-					$data['input']['tree'][0]['naam']                  = 'Abonnees';
-					$data['input']['tree'][0]['leden'][ $abonnee->ID ] = $abonnee->display_name;
-				}
-			}
-
-			foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
-				if ( $dagdelengebruiker->is_actief() ) {
-					$data['input']['tree'][-1]['naam']                            = 'Dagdelenkaarten';
-					$data['input']['tree'][-1]['leden'][ $dagdelengebruiker->ID ] = $dagdelengebruiker->display_name;
-				}
-			}
+			$data['input']['tree'] = array_merge(
+				$data['input']['tree'],
+				$this->abonnees(),
+				$this->dagdelengebruikers(),
+				$this->docenten(),
+				$this->bestuur(),
+			);
 		}
 
+		krsort( $data['input']['tree'] );
+		return true;
+	}
+
+	/**
+	 * Haal de abonnees gegevens op
+	 *
+	 * @return array
+	 */
+	private function abonnees() : array {
+		$data = [];
+		foreach ( new Abonnees() as $abonnee ) {
+			if ( ! $abonnee->abonnement->is_geannuleerd() ) {
+				$data[0]['naam']                  = 'Abonnees';
+				$data[0]['leden'][ $abonnee->ID ] = $abonnee->display_name;
+			}
+		}
+		return $data;
+	}
+
+	/**
+	 * Haal de dagdelengebruikers gegevens op
+	 *
+	 * @return array
+	 */
+	private function dagdelengebruikers() : array {
+		$data = [];
+		foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
+			if ( $dagdelengebruiker->is_actief() ) {
+				$data[-1]['naam']                            = 'Dagdelenkaarten';
+				$data[-1]['leden'][ $dagdelengebruiker->ID ] = $dagdelengebruiker->display_name;
+			}
+		}
+		return $data;
+	}
+
+	/**
+	 * Haal de docenten gegevens op
+	 *
+	 * @return array
+	 */
+	private function docenten() : array {
+		$data = [];
+		foreach ( get_users( [ 'role' => DOCENT ] ) as $docent ) {
+			$data[-2]['naam']                 = 'Docenten';
+			$data[-2]['leden'][ $docent->ID ] = $docent->display_name;
+		}
+		return $data;
+	}
+
+	/**
+	 * Haal de bestuursleden gegevens op
+	 *
+	 * @return array
+	 */
+	private function bestuur() : array {
+		$data = [];
+		foreach ( get_users( [ 'role' => BESTUUR ] ) as $bestuurslid ) {
+			$data[-3]['naam']                      = 'Bestuur';
+			$data[-3]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
+		}
+		return $data;
+	}
+
+	/**
+	 * Haal de cursist gegevens op
+	 *
+	 * @return array
+	 */
+	private function cursisten() : array {
+		$data             = [];
 		$cursus_criterium = strtotime( '-6 months' ); // Cursussen die langer dan een half jaar gelden zijn geëindigd worden niet getoond.
 		foreach ( new Cursisten() as $cursist ) {
 			foreach ( $cursist->inschrijvingen as $inschrijving ) {
@@ -73,13 +129,12 @@ class Public_Email extends ShortcodeForm {
 					continue;
 				}
 				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $inschrijving->cursus->eind_datum ) {
-					$data['input']['tree'][ $inschrijving->cursus->id ]['naam']                  = "{$inschrijving->cursus->code} - {$inschrijving->cursus->naam}";
-					$data['input']['tree'][ $inschrijving->cursus->id ]['leden'][ $cursist->ID ] = $cursist->display_name;
+					$data[ $inschrijving->cursus->id ]['naam']                  = "{$inschrijving->cursus->code} - {$inschrijving->cursus->naam}";
+					$data[ $inschrijving->cursus->id ]['leden'][ $cursist->ID ] = $cursist->display_name;
 				}
 			}
 		}
-		krsort( $data['input']['tree'] );
-		return true;
+		return $data;
 	}
 
 	/**
