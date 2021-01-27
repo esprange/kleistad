@@ -53,7 +53,8 @@ class Admin_Abonnees extends WP_List_Table {
 	 */
 	public function column_naam( $item ) {
 		$actions = [
-			'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=status">%s</a>', $item['id'], 'Wijzigen' ),
+			'edit'     => sprintf( '<a href="?page=abonnees_form&id=%s&actie=status">%s</a>', $item['id'], 'Wijzigen' ),
+			'historie' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=historie">%s</a>', $item['id'], 'Historie inzien' ),
 		];
 		return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );
 	}

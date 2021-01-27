@@ -80,21 +80,21 @@
 				}
 			);
 
-			$( '#kleistad_start_datum' ).datepicker( 'option',
+			$( '#kleistad_start_config' ).datepicker( 'option',
 				{
 					minDate: 0,
-					maxDate: $( '#kleistad_eind_datum' ).datepicker( 'getDate' ),
+					maxDate: $( '#kleistad_eind_config' ).datepicker( 'getDate' ),
 					onSelect: function( datum ) {
-						$( '#kleistad_eind_datum' ).datepicker( 'option', { 
+						$( '#kleistad_eind_config' ).datepicker( 'option', { 
 							minDate: strtodate( datum ) } );
 					}
 				}
 			);
-			$( '#kleistad_eind_datum' ).datepicker( 'option',
+			$( '#kleistad_eind_config' ).datepicker( 'option',
 				{
-					minDate: $( '#kleistad_start_datum' ).datepicker( 'getDate' ),
+					minDate: $( '#kleistad_start_config' ).datepicker( 'getDate' ),
 					onSelect: function( datum ) {
-						$( '#kleistad_start_datum' ).datepicker( 'option', { maxDate: strtodate( datum ) } );
+						$( '#kleistad_start_config' ).datepicker( 'option', { maxDate: strtodate( datum ) } );
 					}
 				}
 			);

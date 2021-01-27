@@ -30,26 +30,33 @@ class Admin_Abonnees_Handler {
 	 * Wijzig het abonnement.
 	 *
 	 * @since 5.2.0
-	 * @param array  $item De informatie vanuit het formulier.
-	 * @param string $actie de actie waar het om gaat.
+	 * @param array $item De informatie vanuit het formulier.
 	 * @return string De status van de wijziging.
 	 */
-	private function wijzig_abonnee( $item, $actie ) {
-		$abonnement          = new Abonnement( $item['id'] );
+	private function wijzig_abonnee( array $item ) : string {
+		$abonnement = new Abonnement( $item['id'] );
+		foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort', 'dag' ] as $veld ) {
+			if ( ! empty( $item[ $veld ] ) ) {
+				$abonnement->$veld = ( false !== strpos( $veld, 'datum' ) ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
+			}
+		}
+		$abonnement->extras = $item['extras'];
+		$abonnement->save();
+		return 'De gegevens zijn opgeslagen';
+	}
+
+	/**
+	 * Wijzig het mandaat van de abonnee
+	 *
+	 * @param array $item De informatie vanuit het formulier.
+	 * @return string De status van de wijziging.
+	 */
+	private function wijzig_abonnee_mandaat( array $item ) : string {
+		$abonnement = new Abonnement( $item['id'] );
+		$abonnement->stop_incasso();
 		$betalen             = new Betalen();
 		$item['mollie_info'] = $betalen->info( $item['id'] );
-		if ( 'status' === $actie ) {
-			foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort', 'dag' ] as $veld ) {
-				if ( ! empty( $item[ $veld ] ) ) {
-					$abonnement->$veld = ( false !== strpos( $veld, 'datum' ) ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
-				}
-			}
-			$abonnement->extras = $item['extras'];
-			$abonnement->save();
-		} elseif ( 'mollie' === $actie ) {
-			$abonnement->stop_incasso();
-			$item['mandaat'] = false;
-		}
+		$item['mandaat']     = false;
 		return 'De gegevens zijn opgeslagen';
 	}
 
@@ -90,7 +97,38 @@ class Admin_Abonnees_Handler {
 		if ( empty( $messages ) ) {
 			return true;
 		}
-		return implode( '<br />', $messages );
+		return implode( '<br/>', $messages );
+	}
+
+	/**
+	 * Geef de abonnee gegevens als een array
+	 *
+	 * @param int $abonnee_id Het WP id.
+	 * @return array De abonnee gegevens.
+	 */
+	private function geef_abonnee( $abonnee_id ) : array {
+		$abonnement = new Abonnement( $abonnee_id );
+		$abonnee    = get_userdata( $abonnee_id );
+		$betalen    = new Betalen();
+		return [
+			'id'               => $abonnee_id,
+			'naam'             => $abonnee->display_name,
+			'soort'            => $abonnement->soort,
+			'dag'              => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
+			'code'             => $abonnement->code,
+			'extras'           => $abonnement->extras,
+			'geannuleerd'      => $abonnement->is_geannuleerd(),
+			'gepauzeerd'       => $abonnement->is_gepauzeerd(),
+			'inschrijf_datum'  => strftime( '%d-%m-%Y', $abonnement->datum ),
+			'start_datum'      => strftime( '%d-%m-%Y', $abonnement->start_datum ),
+			'start_eind_datum' => strftime( '%d-%m-%Y', $abonnement->start_eind_datum ),
+			'pauze_datum'      => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
+			'eind_datum'       => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
+			'herstart_datum'   => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
+			'mandaat'          => $betalen->heeft_mandaat( $abonnee_id ),
+			'historie'         => $abonnement->historie ?: [],
+			'mollie_info'      => $betalen->info( $abonnee_id ),
+		];
 	}
 
 	/**
@@ -144,38 +182,23 @@ class Admin_Abonnees_Handler {
 				if ( ! is_array( $item['extras'] ) ) {
 					$item['extras'] = [];
 				}
-				$actie      = $item['actie'];
-				$item_valid = $this->validate_abonnee( $item, $actie );
-				$notice     = is_string( $item_valid ) ? $item_valid : '';
-				$message    = empty( $notice ) ? $this->wijzig_abonnee( $item, $actie ) : '';
+				$actie = $item['actie'];
+				if ( 'status' === $actie ) {
+					$item_valid = $this->validate_abonnee( $item, $actie );
+					$notice     = is_string( $item_valid ) ? $item_valid : '';
+					$message    = empty( $notice ) ? $this->wijzig_abonnee( $item ) : '';
+				} elseif ( 'mollie' === $actie ) {
+					$message = $this->wijzig_abonnee_mandaat( $item );
+				}
 			}
 		} elseif ( isset( $_REQUEST['id'] ) ) {
-			$abonnee_id = $_REQUEST['id'];
-			$actie      = $_REQUEST['actie'];
-			$abonnement = new Abonnement( $abonnee_id );
-			$abonnee    = get_userdata( $abonnee_id );
-			$betalen    = new Betalen();
-			$item       = [
-				'id'               => $abonnee_id,
-				'naam'             => $abonnee->display_name,
-				'soort'            => $abonnement->soort,
-				'dag'              => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
-				'code'             => $abonnement->code,
-				'extras'           => $abonnement->extras,
-				'geannuleerd'      => $abonnement->is_geannuleerd(),
-				'gepauzeerd'       => $abonnement->is_gepauzeerd(),
-				'inschrijf_datum'  => strftime( '%d-%m-%Y', $abonnement->datum ),
-				'start_datum'      => strftime( '%d-%m-%Y', $abonnement->start_datum ),
-				'start_eind_datum' => strftime( '%d-%m-%Y', $abonnement->start_eind_datum ),
-				'pauze_datum'      => ( $abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnement->pauze_datum ) : '' ),
-				'eind_datum'       => ( $abonnement->eind_datum ? strftime( '%d-%m-%Y', $abonnement->eind_datum ) : '' ),
-				'herstart_datum'   => ( $abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnement->herstart_datum ) : '' ),
-				'mandaat'          => $betalen->heeft_mandaat( $abonnee_id ),
-				'historie'         => $abonnement->historie,
-				'mollie_info'      => $betalen->info( $abonnee_id ),
-			];
-			$notice     = '';
-			$message    = '';
+			$actie   = $_REQUEST['actie'];
+			$item    = $this->geef_abonnee( intval( $_REQUEST['id'] ) );
+			$notice  = '';
+			$message = '';
+			if ( 'historie' === $actie ) {
+				$display_only = true;
+			}
 		}
 		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default', [ $actie ] );
 		require 'partials/admin-form-page.php';

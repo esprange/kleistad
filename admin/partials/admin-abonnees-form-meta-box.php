@@ -14,15 +14,6 @@ namespace Kleistad;
 ?>
 
 <div style="position:relative;top:0;">
-<?php if ( count( $item['historie'] ) ) : ?>
-	<div class="card" style="width:50%;position:absolute;top:0;right:0" >
-	<ul style="list-style-type:square">
-	<?php foreach ( $item['historie'] as $historie ) : ?>
-		<li><?php echo esc_html( $historie ); ?></li>
-	<?php endforeach ?>
-	</ul>
-	</div>
-<?php endif ?>
 <table style="border-spacing:2px; padding:5px;" class="form-table">
 	<tbody>
 		<tr class="form-field">
@@ -153,6 +144,18 @@ namespace Kleistad;
 		<tr>
 			<td colspan="2">
 				<?php echo esc_html( $item['mollie_info'] ?? '' ); ?>
+			</td>
+		</tr>
+			<?php
+		elseif ( 'historie' === $actie ) :
+			?>
+		<tr>
+			<td colspan="2">
+			<ul style="list-style-type:square">
+			<?php foreach ( $item['historie'] as $historie ) : ?>
+				<li><?php echo esc_html( $historie ); ?></li>
+			<?php endforeach ?>
+			</ul>
 			</td>
 		</tr>
 			<?php

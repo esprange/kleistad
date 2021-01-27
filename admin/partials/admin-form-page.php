@@ -19,7 +19,7 @@ namespace Kleistad;
 	</h2>
 
 	<?php if ( ! empty( $notice ) ) : ?>
-	<div id="notice" class="error"><p><?php echo esc_html( $notice ); ?></p></div>
+	<div id="notice" class="error"><p><?php echo $notice; // phpcs:ignore ?></p></div>
 	<?php endif; ?>
 	<?php if ( ! empty( $message ) ) : ?>
 	<div id="message" class="updated"><p><?php echo esc_html( $message ); ?></p></div>
@@ -34,7 +34,10 @@ namespace Kleistad;
 			<div id="post-body">
 				<div id="post-body-content">
 					<?php do_meta_boxes( $single, 'normal', $item ); ?>
-					<?php submit_button(); ?>
+					<?php
+					if ( ! isset( $display_only ) ) :
+						submit_button(); endif
+					?>
 				</div>
 			</div>
 		</div>

@@ -42,18 +42,18 @@ function meester_selectie( string $name, int $id_selected ) : string {
 	<tbody>
 		<tr class="form-field">
 			<th  scope="row">
-				<label for="start_datum">Start datum</label>
+				<label for="kleistad_start_config">Start datum</label>
 			</th>
 			<td colspan="2">
-				<input type="text" id="kleistad_start_datum" name="start_datum" class="kleistad_datum" required value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off" >
+				<input type="text" id="kleistad_start_config" name="start_datum" class="kleistad_datum" required value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off" >
 			</td>
 		</tr>
 		<tr class="form-field">
 			<th  scope="row">
-				<label for="eind_datum">Eind datum</label>
+				<label for="kleistad_eind_config">Eind datum</label>
 			</th>
 			<td colspan="2">
-				<input type="text" id="kleistad_eind_datum" name="eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" <?php disabled( $item['config_eind'] ); ?> autocomplete="off" >
+				<input type="text" id="kleistad_eind_config" name="eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" <?php disabled( $item['config_eind'] ); ?> autocomplete="off" >
 			</td>
 		</tr>
 		<tr><td></td>
