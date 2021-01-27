@@ -65,30 +65,29 @@ class Admin_Abonnees_Handler {
 	 *
 	 * @since    5.2.0
 	 *
-	 * @param array  $item de abonnee.
+	 * @param array $item de abonnee.
 	 * @return bool|string
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-	 * @SuppressWarnings(PHPMD.NPathComplexity)
+	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function validate_abonnee( $item ) {
 		$messages = [];
-		if ( ! empty( $item['start_datum'] ) && strtotime( $item['start_datum'] ) < strtotime( $item['inschrijf_datum'] ) ) {
-			$messages[] = 'De start datum kan niet voor de inschrijf datum liggen';
+		if ( strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) {
+			$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen';
 		}
-		if ( ! empty( $item['pauze_datum'] ) && ( empty( $item['start_datum'] ) || strtotime( $item['start_datum'] ) >= strtotime( $item['pauze_datum'] ) ) ) {
-			$messages[] = 'De pauze datum kan niet voor de start datum liggen of de start datum ontbreekt';
+		if ( 'beperkt' === $item['soort'] && empty( $item['dag'] ) ) {
+			$messages[] = 'Als de abonnement soort "beperkt" is dan moet er een dag gekozen worden';
 		}
-		if ( ! empty( $item['herstart_datum'] ) && ( empty( $item['pauze_datum'] ) || strtotime( $item['herstart_datum'] ) < strtotime( $item['pauze_datum'] ) ) ) {
-			$messages[] = 'De herstart datum kan niet voor de pauze datum liggen of de pauze datum ontbreekt';
-		}
-		if ( ! empty( $item['start_eind_datum'] ) && ( empty( $item['start_datum'] ) || strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) ) {
-			$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen of de start datum ontbreekt';
-		}
-		if ( ! empty( $item['eind_datum'] ) && strtotime( $item['eind_datum'] ) <= strtotime( $item['inschrijf_datum'] ) ) {
-			$messages[] = 'De eind datum van het abonnement kan niet voor de inschrijf datum liggen';
-		}
-		if ( ! empty( $item['soort'] ) && 'beperkt' === $item['soort'] && empty( $item['dag'] ) ) {
-			$messages[] = 'Als de abonnement soort beperkt is dan moet er een dag gekozen worden';
+		if ( ! empty( $item['pauze_datum'] . $item['herstart_datum'] ) ) {
+			if ( empty( $item['pauze_datum'] ) !== empty( $item['herstart_datum'] ) ) {
+				$messages[] = 'Ingeval van pauze moet de pauze datum èn de herstart datum ingevoerd worden';
+			} else {
+				if ( strtotime( $item['start_datum'] ) >= strtotime( $item['pauze_datum'] ) ) {
+					$messages[] = 'De pauze datum kan niet voor de start datum liggen';
+				}
+				if ( strtotime( $item['herstart_datum'] ) < strtotime( $item['pauze_datum'] ) ) {
+					$messages[] = 'De herstart datum kan niet voor de pauze datum liggen of de pauze datum ontbreekt';
+				}
+			}
 		}
 		if ( empty( $messages ) ) {
 			return true;

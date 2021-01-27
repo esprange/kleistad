@@ -35,7 +35,7 @@ namespace Kleistad;
 				<label for="kleistad_soort">Soort</label>
 			</th>
 			<td>
-				<select id="kleistad_soort" name="soort" class="code">
+				<select id="kleistad_soort" name="soort" required class="code">
 					<option value="">Selecteer een abonnement soort</option>
 					<option value="onbeperkt" <?php selected( $item['soort'], 'onbeperkt' ); ?> >Onbeperkt</option>
 					<option value="beperkt" <?php selected( $item['soort'], 'beperkt' ); ?> >Beperkt</option>
@@ -82,7 +82,7 @@ namespace Kleistad;
 				<label for="kleistad_inschrijf_datum">Inschrijving per</label>
 			</th>
 			<td>
-				<input type="text" id="kleistad_inschrijf_datum" name="inschrijf_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['inschrijf_datum'] ); ?>" readonly >
+				<input type="text" id="kleistad_inschrijf_datum" name="inschrijf_datum" required class="kleistad_datum" value="<?php echo esc_attr( $item['inschrijf_datum'] ); ?>" readonly >
 			</td>
 		</tr>
 		<tr>
@@ -90,7 +90,7 @@ namespace Kleistad;
 				<label for="kleistad_start_datum">Startperiode</label>
 			</th>
 			<td>
-				<input type="text" id="kleistad_start_datum" name="start_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off"
+				<input type="text" id="kleistad_start_datum" name="start_datum" required class="kleistad_datum" value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off"
 					<?php readonly( $item['geannuleerd'] ); ?> >
 			</td>
 		</tr>
@@ -99,7 +99,7 @@ namespace Kleistad;
 				<label for="kleistad_start_eind_datum">Einde startperiode</label>
 			</th>
 			<td>
-				<input type="text" id="kleistad_start_eind_datum" name="start_eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['start_eind_datum'] ); ?>" autocomplete="off"
+				<input type="text" id="kleistad_start_eind_datum" name="start_eind_datum" required class="kleistad_datum" value="<?php echo esc_attr( $item['start_eind_datum'] ); ?>" autocomplete="off"
 					<?php readonly( $item['geannuleerd'] ); ?> >
 			</td>
 		</tr>
