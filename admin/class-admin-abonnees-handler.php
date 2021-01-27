@@ -66,15 +66,11 @@ class Admin_Abonnees_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array  $item de abonnee.
-	 * @param string $actie de actie waar het om gaat.
 	 * @return bool|string
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 * @SuppressWarnings(PHPMD.NPathComplexity)
 	 */
-	private function validate_abonnee( $item, $actie ) {
-		if ( 'status' !== $actie ) {
-			return true;
-		}
+	private function validate_abonnee( $item ) {
 		$messages = [];
 		if ( ! empty( $item['start_datum'] ) && strtotime( $item['start_datum'] ) < strtotime( $item['inschrijf_datum'] ) ) {
 			$messages[] = 'De start datum kan niet voor de inschrijf datum liggen';
@@ -184,7 +180,7 @@ class Admin_Abonnees_Handler {
 				}
 				$actie = $item['actie'];
 				if ( 'status' === $actie ) {
-					$item_valid = $this->validate_abonnee( $item, $actie );
+					$item_valid = $this->validate_abonnee( $item );
 					$notice     = is_string( $item_valid ) ? $item_valid : '';
 					$message    = empty( $notice ) ? $this->wijzig_abonnee( $item ) : '';
 				} elseif ( 'mollie' === $actie ) {
