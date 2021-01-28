@@ -14,7 +14,7 @@ namespace Kleistad;
 $this->form();
 ?>
 <input type="hidden" name="klant_type" id="kleistad_klant_type" value="nieuw">
-<div id="kleistad_tabs" class="ui-tabs uit-widget">
+<div id="kleistad_tabs" class="ui-tabs ui-widget">
 	<ul class="ui-tabs-nav">
 		<li><a href="#tab_nieuwe_klant">Losse verkoop</a></li>
 		<li><a href="#tab_vaste_klant">Bestaande klant</a></li>
@@ -86,7 +86,9 @@ $this->form();
 	} while ( $index < $count );
 	?>
 <div class="kleistad_row">
-	<button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button><br/>&nbsp;
+	<div class="kleistad_col_2">
+		<button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button><br/>&nbsp;
+	</div>
 </div>
 <div class="kleistad_row">
 	<button type="submit" name="kleistad_submit_verkoop" id="kleistad_submit_verkoop" value="verzenden">Verzenden</button>

@@ -13,32 +13,12 @@ Description: stylesheet functions voor kleistad_plugin
 
 /*csslint important: false, box-model: false, unqualified-attributes: false, overqualified-elements: false*/
 
-.ui-widget{
-    font-size:14px !important;
-}
-
-.ui-widget-content {
-    border: none;
-}
-.ui-tabs .ui-tabs-nav{
-    font-size:13px;
-}
-.ui-tabs-panel{
-    border: 2px solid #DDD;
-    font-size:12px;
-}
-.ui-button,  .ui-button-text .ui-button{  
-    font-size: small !important; 
-   }
 table.display {
     font-size: small;
 	table-layout: auto;
 }
 a.jstree-anchor {
 	box-shadow: 0 0 0 0 #FFFFFF !important;
-}
-a.fc-daygrid-event {
-    color: black !important;
 }
 .kleistad-state-highlight{
 	border: 2px solid #F60083 !important;
