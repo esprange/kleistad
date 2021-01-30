@@ -122,12 +122,9 @@ class Public_Actions {
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
 	public static function register_post_types() {
-		global $wp_post_types;
 		Recept::create_type();
 		WorkshopAanvraag::create_type();
 		Email::create_type();
-		$wp_post_types[ WorkshopAanvraag::POST_TYPE ]->exclude_from_search = true;
-		$wp_post_types[ Email::POST_TYPE ]->exclude_from_search            = true;
 	}
 
 	/**
@@ -145,7 +142,9 @@ class Public_Actions {
 	 * @internal Action for rcv_email.
 	 */
 	public function rcv_email() {
-		WorkshopAanvraag::ontvang_en_verwerk();
+		$receiver         = new EmailReceiver();
+		$workshopaanvraag = new WorkshopAanvraag();
+		$receiver->ontvang( $workshopaanvraag->mbx(), [ $workshopaanvraag, 'verwerk' ] );
 	}
 
 	/**

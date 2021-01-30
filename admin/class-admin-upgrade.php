@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 94;
+	const DBVERSIE = 96;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -222,6 +222,9 @@ class Admin_Upgrade {
 			]
 		);
 		foreach( $dagdelengebruikers as $dagdelengebruiker ) {
+			if ( get_user_meta( $dagdelengebruiker->ID, 'kleistad_dagdelenkaart_v2' ) ) {
+				continue;
+			}
 			$dagdelenkaarten = get_user_meta( $dagdelengebruiker->ID, 'kleistad_dagdelenkaart', true );
 			$nieuw = [];
 			foreach( $dagdelenkaarten as $dagdelenkaart ) {
@@ -249,6 +252,9 @@ class Admin_Upgrade {
 			]
 		);
 		foreach ( $abonnees as $abonnee ) {
+			if ( get_user_meta( $abonnee->ID, 'kleistad_abonnement_v2' ) ) {
+				continue;
+			}
 			$abonnement = get_user_meta( $abonnee->ID, 'kleistad_abonnement', true );
 			$nieuw      = [
 				'code'               => $abonnement['code'],
@@ -282,6 +288,9 @@ class Admin_Upgrade {
 			]
 		);
 		foreach ( $cursisten as $cursist ) {
+			if ( get_user_meta( $cursist->ID, 'kleistad_inschrijving' ) ) {
+				continue;
+			}
 			$inschrijvingen = get_user_meta( $cursist->ID, 'kleistad_cursus', true );
 			$nieuw = [];
 			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {

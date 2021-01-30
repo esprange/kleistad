@@ -11,9 +11,6 @@
 
 namespace Kleistad;
 
-use Html2Text;
-use PhpImap;
-
 /**
  * Kleistad WorkshopAanvraag class.
  *
@@ -27,13 +24,27 @@ class WorkshopAanvraag {
 	const POST_TYPE = 'kleistad_workshopreq';
 
 	/**
+	 * Het email object
+	 *
+	 * @var Email $emailer Het emailer object.
+	 */
+	private Email $emailer;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->emailer = new Email();
+	}
+
+	/**
 	 * Initialiseer de aanvragen als custom post type.
 	 */
 	public static function create_type() {
 		register_post_type(
 			self::POST_TYPE,
 			[
-				'labels'            => [
+				'labels'              => [
 					'name'               => 'Workshop aanvragen',
 					'singular_name'      => 'Workshop aanvraag',
 					'add_new'            => 'Toevoegen',
@@ -46,18 +57,19 @@ class WorkshopAanvraag {
 					'not_found'          => 'Niet gevonden',
 					'not_found_in_trash' => 'Niet in prullenbak gevonden',
 				],
-				'public'            => true,
-				'supports'          => [
+				'public'              => true,
+				'supports'            => [
 					'title',
 					'comments',
 					'thumbnail',
 				],
-				'rewrite'           => [
+				'rewrite'             => [
 					'slug' => 'workshopaanvragen',
 				],
-				'show_ui'           => false,
-				'show_in_admin_bar' => false,
-				'show_in_nav_menus' => false,
+				'show_ui'             => false,
+				'show_in_admin_bar'   => false,
+				'show_in_nav_menus'   => false,
+				'exclude_from_search' => true,
 			]
 		);
 		register_post_status(
@@ -98,11 +110,10 @@ class WorkshopAanvraag {
 	 * Verwerk een ontvangen email.
 	 *
 	 * @param array $email De ontvangen email.
-	 * @return bool True als verwerkt.
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private static function verwerk( $email ) {
-		$casus   = null;
-		$emailer = new Email();
+	public function verwerk( array $email ) {
+		$casus = null;
 		/**
 		* Zoek eerst op basis van het case nummer in subject.
 		*/
@@ -115,7 +126,7 @@ class WorkshopAanvraag {
 			$casussen = get_posts(
 				[
 					'post_type'   => self::POST_TYPE,
-					'post_name'   => $email['from-email'],
+					'post_name'   => $email['from'],
 					'numberposts' => '1',
 					'orderby'     => 'date',
 					'order'       => 'DESC',
@@ -127,11 +138,11 @@ class WorkshopAanvraag {
 			}
 		}
 		if ( is_object( $casus ) && self::POST_TYPE === $casus->post_type ) {
-			$emailer->send(
+			$this->emailer->send(
 				[
-					'to'      => "Workshop mailbox <{$emailer->info}{$emailer->domein}>",
+					'to'      => "Workshop mailbox <{$this->emailer->info}{$this->emailer->domein}>",
 					'subject' => 'aanvraag workshop/kinderfeest',
-					'content' => '<p>Er is een reactie ontvangen van ' . $email['from-name'] . '</p>',
+					'content' => "<p>Er is een reactie ontvangen van {$email['from-name']}</p>",
 					'sign'    => 'Workshop mailbox',
 				]
 			);
@@ -139,84 +150,21 @@ class WorkshopAanvraag {
 				[
 					'ID'           => $casus_id,
 					'post_status'  => 'vraag',
-					'post_content' => self::communicatie(
+					'post_content' => $this->communicatie(
 						$casus->post_content,
 						[
 							'type'    => 'vraag',
 							'from'    => $email['from-name'],
 							'subject' => $email['subject'],
-							'tekst'   => $email['body'],
+							'tekst'   => $email['content'],
 						]
 					),
 				]
 			);
-			return true;
+			return;
 		}
-		return false;
-	}
-
-	/**
-	 * Ontvang en verwerk emails.
-	 *
-	 * @suppressWarnings(PHPMD.ExitExpression)
-	 */
-	public static function ontvang_en_verwerk() {
-		// phpcs:disable WordPress.NamingConventions
-		$setup = setup();
-		if ( empty( $setup['imap_server'] ) || empty( $setup['imap_pwd'] ) ) {
-			die();
-		}
-		$answered = [];
-		$emailer  = new Email();
-		$mailbox  = new PhpImap\Mailbox(
-			'{' . $setup['imap_server'] . '}INBOX',
-			self::mbx() . $emailer->domein,
-			$setup['imap_pwd']
-		);
-		try {
-			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
-			foreach ( $email_ids as $email_id ) {
-				$email = $mailbox->getMail( $email_id );
-				if ( $email->textHtml ) {
-					$html = new Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
-					$body = $html->getText();
-					if ( '' === $body ) {
-						$body = $email->textPlain;
-					}
-				} elseif ( $email->textPlain ) {
-					$body = $email->textPlain;
-				} else {
-					$body = '<p>bericht tekst kan niet worden weergegeven</p>';
-				}
-				if ( ! self::verwerk(
-					[
-						'from-name'  => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
-						'from-email' => sanitize_email( $email->fromAddress ),
-						'subject'    => sanitize_text_field( $email->subject ),
-						'body'       => sanitize_textarea_field( $body ),
-					]
-				) && 'production' === wp_get_environment_type() ) {
-					$emailer->send(
-						[
-							'to'        => "Kleistad <{$emailer->info}{$emailer->domein}>",
-							'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
-							'from'      => sanitize_email( $email->fromAddress ),
-							'subject'   => 'FW:' . sanitize_text_field( $email->subject ),
-							'content'   => sanitize_textarea_field( $body ),
-						]
-					);
-				}
-				$answered[] = $email_id;
-			}
-			if ( ! empty( $answered ) ) {
-				$mailbox->setFlag( $answered, '\\Answered' );
-			}
-			$mailbox->disconnect();
-		} catch ( PhpImap\Exceptions\ConnectionException $ex ) {
-			error_log( 'IMAP fail: ' . $ex->getMessage() ); // phpcs:ignore
-			die();
-		}
-	// phpcs:enable
+		$email['to'] = "Kleistad <{$this->emailer->info}{$this->emailer->domein}>";
+		$this->emailer->send( $email );
 	}
 
 	/**
@@ -224,8 +172,9 @@ class WorkshopAanvraag {
 	 *
 	 * @param string $content    Huidige content van de ticket.
 	 * @param array  $parameters De parameters van de communicatie.
+	 * @return string
 	 */
-	private static function communicatie( $content, $parameters ) {
+	private function communicatie( string $content, array $parameters ) : string {
 		$correspondentie = empty( $content ) ? [] : unserialize( base64_decode( $content ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 		array_unshift(
 			$correspondentie,
@@ -245,10 +194,10 @@ class WorkshopAanvraag {
 	 * Start een nieuwe casus en email de aanvrager
 	 *
 	 * @param array $casus_data De gegevens behorende bij de casus.
+	 * @return bool
 	 */
-	public static function start( $casus_data ) {
-		$emailer = new Email();
-		$result  = wp_insert_post(
+	public function start( array $casus_data ) : bool {
+		$result = wp_insert_post(
 			[
 				'post_type'      => self::POST_TYPE,
 				'post_title'     => $casus_data['contact'] . ' met vraag over ' . $casus_data['naam'],
@@ -266,7 +215,7 @@ class WorkshopAanvraag {
 				),
 				'post_status'    => 'nieuw',
 				'comment_status' => 'closed',
-				'post_content'   => self::communicatie(
+				'post_content'   => $this->communicatie(
 					'',
 					[
 						'tekst'   => $casus_data['vraag'],
@@ -278,12 +227,12 @@ class WorkshopAanvraag {
 			]
 		);
 		if ( is_int( $result ) ) {
-			$emailer->send(
+			$this->emailer->send(
 				[
 					'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
 					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $result ),
-					'from'       => self::mbx() . $emailer->verzend_domein,
-					'reply-to'   => self::mbx() . $emailer->domein,
+					'from'       => $this->mbx( true ),
+					'reply-to'   => $this->mbx(),
 					'slug'       => 'workshop_aanvraag_bevestiging',
 					'parameters' => $casus_data,
 					'sign_email' => false,
@@ -301,10 +250,10 @@ class WorkshopAanvraag {
 	 * @param int $casus_id    De id van de casus.
 	 * @param int $workshop_id De id van de workshop.
 	 */
-	public static function gepland( $casus_id, $workshop_id ) {
+	public function gepland( int $casus_id, int $workshop_id ) {
 		if ( $casus_id ) {
 			$casus                        = get_post( $casus_id );
-			$casus_details                = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+			$casus_details                = maybe_unserialize( $casus->post_excerpt );
 			$casus_details['workshop_id'] = $workshop_id;
 			wp_update_post(
 				[
@@ -319,19 +268,18 @@ class WorkshopAanvraag {
 	/**
 	 * Voeg een reactie toe en email de aanvrager.
 	 *
-	 * @param int    $id Id van de aanvraag.
-	 * @param string $reactie De reactie op de vraag.
+	 * @param int    $aanvraag_id Id van de aanvraag.
+	 * @param string $reactie     De reactie op de vraag.
 	 */
-	public static function reactie( $id, $reactie ) {
-		$emailer       = new Email();
-		$casus         = get_post( $id );
+	public function reactie( int $aanvraag_id, string $reactie ) {
+		$casus         = get_post( $aanvraag_id );
 		$casus_details = maybe_unserialize( $casus->post_excerpt );
-		$subject       = sprintf( "[WA#%08d] Reactie op {$casus_details['naam']} vraag", $id );
+		$subject       = sprintf( "[WA#%08d] Reactie op {$casus_details['naam']} vraag", $aanvraag_id );
 		wp_update_post(
 			[
-				'ID'           => $id,
+				'ID'           => $aanvraag_id,
 				'post_status'  => 'gereageerd',
-				'post_content' => self::communicatie(
+				'post_content' => $this->communicatie(
 					$casus->post_content,
 					[
 						'type'    => 'reactie',
@@ -342,12 +290,12 @@ class WorkshopAanvraag {
 				),
 			]
 		);
-		$emailer->send(
+		$this->emailer->send(
 			[
 				'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
-				'from'       => self::mbx() . $emailer->verzend_domein,
+				'from'       => $this->mbx( true ),
 				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
-				'reply-to'   => self::mbx() . $emailer->domein,
+				'reply-to'   => $this->mbx(),
 				'subject'    => $subject,
 				'slug'       => 'workshop_aanvraag_reactie',
 				'auto'       => false,
@@ -365,9 +313,15 @@ class WorkshopAanvraag {
 	/**
 	 * Geef het begin van de email aan.
 	 *
+	 * @param  bool $verzenden Of het de verzend mailbox is.
 	 * @return string
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
-	private static function mbx() {
-		return ( 'production' === wp_get_environment_type() ) ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+	public function mbx( bool $verzenden = false ) : string {
+		$prefix = ( 'production' === wp_get_environment_type() ) ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+		if ( $verzenden ) {
+			return $prefix . $this->emailer->verzend_domein;
+		}
+		return $prefix . $this->emailer->domein;
 	}
 }

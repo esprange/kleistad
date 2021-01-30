@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De kleistad workshop aanvraag class.
  */
@@ -43,17 +45,16 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	}
 
 	/**
-	 * Valideer/sanitize 'cursus_inschrijving' form
+	 * Valideer/sanitize 'workshop aanvraag' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   5.6.0
 	 */
 	protected function validate( &$data ) {
-		$error          = new \WP_Error();
-		$data['cursus'] = null;
-		$data['input']  = filter_input_array(
+		$error         = new WP_Error();
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'email'          => FILTER_SANITIZE_EMAIL,
@@ -70,15 +71,14 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 			$error->add( 'verplicht', 'De invoer ' . $data['input']['email'] . ' is geen geldig E-mail adres.' );
 			$data['input']['email']          = '';
 			$data['input']['email_controle'] = '';
-		} else {
-			$this->validate_email( $data['input']['email_controle'] );
-			if ( $data['input']['email_controle'] !== $data['input']['email'] ) {
-				$error->add( 'verplicht', 'De ingevoerde e-mail adressen ' . $data['input']['email'] . ' en ' . $data['input']['email_controle'] . ' zijn niet identiek' );
-				$data['input']['email_controle'] = '';
-			}
+		}
+		if ( 0 !== strcasecmp( $data['input']['email_controle'], $data['input']['email'] ) ) {
+			$error->add( 'verplicht', "De ingevoerde e-mail adressen {$data['input']['email']} en {$data['input']['email_controle']} zijn niet identiek" );
+			$data['input']['email_controle'] = '';
 		}
 		if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
-			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
+			$error->add( 'onjuist', "Het ingevoerde telefoonnummer {$data['input']['telnr']} lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven" );
+			$data['input']['telnr'] = '';
 		}
 		if ( ! $this->validate_naam( $data['input']['contact'] ) ) {
 			$error->add( 'verplicht', 'De naam van de contactpersooon (een of meer alfabetische karakters) is verplicht' );
@@ -100,17 +100,16 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 * @since   5.6.0
 	 */
 	protected function save( $data ) {
-		$result = WorkshopAanvraag::start( $data['input'] );
-		if ( $result ) {
+		$workshopaanvraag = new WorkshopAanvraag();
+		if ( $workshopaanvraag->start( $data['input'] ) ) {
 			return [
 				'content' => $this->goto_home(),
 				'status'  => $this->status( 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen' ),
 			];
-		} else {
-			return [
-				'status' => $this->status( new \WP_Error( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' ) ),
-			];
 		}
+		return [
+			'status' => $this->status( new WP_Error( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' ) ),
+		];
 	}
 
 }

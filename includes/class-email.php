@@ -56,7 +56,7 @@ class Email {
 		register_post_type(
 			self::POST_TYPE,
 			[
-				'labels'            => [
+				'labels'              => [
 					'name'               => 'Email templates',
 					'singular_name'      => 'Email template',
 					'add_new'            => 'Toevoegen',
@@ -69,18 +69,19 @@ class Email {
 					'not_found'          => 'Niet gevonden',
 					'not_found_in_trash' => 'Niet in prullenbak gevonden',
 				],
-				'public'            => true,
-				'supports'          => [
+				'public'              => true,
+				'supports'            => [
 					'title',
 					'editor',
 					'revisions',
 				],
-				'rewrite'           => false,
-				'show_ui'           => true,
-				'show_in_menu'      => 'kleistad',
-				'show_in_admin_bar' => false,
-				'show_in_nav_menus' => false,
-				'delete_with_user'  => false,
+				'rewrite'             => false,
+				'show_ui'             => true,
+				'show_in_menu'        => 'kleistad',
+				'show_in_admin_bar'   => false,
+				'show_in_nav_menus'   => false,
+				'delete_with_user'    => false,
+				'exclude_from_search' => true,
 			]
 		);
 	}
