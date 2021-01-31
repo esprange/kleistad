@@ -22,18 +22,18 @@ use PhpImap;
 class EmailReceiver {
 
 	/**
-	 * Ontvang en verwerk emails. De functie roept een callable aan met één parameter, een array met daarin de velden:
+	 * Ontvang emails. De functie roept een callable aan met één parameter, een array met daarin de velden:
 	 *   from-name
 	 *   from
 	 *   subject
 	 *   contect
 	 *
-	 * @param string   $email      Het email adres dat ontvangen moet worden.
-	 * @param Callable $verwerk    Functie die het ontvangen bericht verwerkt.
+	 * @param string   $adres   Het email adres dat ontvangen moet worden.
+	 * @param callable $verwerk Functie die het ontvangen bericht verwerkt.
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
-	public function ontvang( string $email, callable $verwerk ) {
-		if ( empty( $email ) ) {
+	public function ontvang( string $adres, callable $verwerk ) {
+		if ( empty( $adres ) ) {
 			die();
 		}
 		$setup    = setup();
@@ -41,7 +41,7 @@ class EmailReceiver {
 		// phpcs:disable WordPress.NamingConventions
 		$mailbox = new PhpImap\Mailbox(
 			'{' . $setup['imap_server'] . '}INBOX',
-			$setup['workshop'],
+			$adres,
 			$setup['imap_pwd']
 		);
 		try {
