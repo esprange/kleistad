@@ -48,7 +48,7 @@ class Public_Reservering extends Shortcode {
 				[
 					'fields'       => [ 'ID', 'display_name' ],
 					'orderby'      => 'display_name',
-					'roles__in'    => [ LID, DOCENT, BESTUUR ],
+					'role__in'     => [ LID, DOCENT, BESTUUR ],
 					'role__not_in' => [ INTERN ],
 				]
 			),

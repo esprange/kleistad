@@ -120,6 +120,7 @@ class Admin_Werkplekken_Handler {
 						'filter' => FILTER_SANITIZE_STRING,
 						'flags'  => FILTER_FORCE_ARRAY,
 					],
+					'config_eind' => FILTER_SANITIZE_STRING,
 					'meesters'    => [
 						'filter' => FILTER_SANITIZE_STRING,
 						'flags'  => FILTER_FORCE_ARRAY,

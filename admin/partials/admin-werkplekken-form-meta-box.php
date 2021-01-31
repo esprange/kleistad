@@ -53,6 +53,7 @@ function meester_selectie( string $name, int $id_selected ) : string {
 				<label for="kleistad_eind_config">Eind datum</label>
 			</th>
 			<td colspan="2">
+				<input type="hidden" name="config_eind" value="<?php echo esc_attr( intval( $item['config_eind'] ) ); ?>" >
 				<input type="text" id="kleistad_eind_config" name="eind_datum" class="kleistad_datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" <?php disabled( $item['config_eind'] ); ?> autocomplete="off" >
 			</td>
 		</tr>
