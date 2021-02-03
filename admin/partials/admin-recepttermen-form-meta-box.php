@@ -16,7 +16,7 @@ $hoofdterm = (array) get_term( intval( filter_input( INPUT_GET, 'hoofdterm_id', 
 ?>
 <h2><?php echo esc_html( $hoofdterm['description'] ); ?></h2>
 <input name="hoofdterm_id" type="hidden" value="<?php echo esc_attr( $hoofdterm['term_id'] ); ?>" >
-<table style="width: 100%;border-spacing: 2px;padding: 5px" class="form-table">
+<table class="form-table">
 	<tbody>
 		<tr class="form-field">
 			<th  scope="row">

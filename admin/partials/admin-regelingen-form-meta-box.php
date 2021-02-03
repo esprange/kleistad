@@ -12,7 +12,7 @@
 namespace Kleistad;
 
 ?>
-<table style="width: 100%;border-spacing: 2px; padding: 5px" class="form-table">
+<table class="form-table">
 	<tbody>
 		<tr class="form-field">
 			<?php if ( 0 === $item['gebruiker_id'] ) : ?>

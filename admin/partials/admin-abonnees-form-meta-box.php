@@ -13,8 +13,7 @@ namespace Kleistad;
 
 ?>
 
-<div style="position:relative;top:0;">
-<table style="border-spacing:2px; padding:5px;" class="form-table">
+<table class="form-table">
 	<tbody>
 		<tr class="form-field">
 			<th  scope="row">
@@ -163,4 +162,3 @@ endif
 		?>
 	</tbody>
 </table>
-</div>
