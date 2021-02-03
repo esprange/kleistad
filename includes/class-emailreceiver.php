@@ -33,10 +33,10 @@ class EmailReceiver {
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
 	public function ontvang( string $adres, callable $verwerk ) {
-		if ( empty( $adres ) ) {
+		$setup = setup();
+		if ( empty( $setup['imap_server'] ) ) {
 			die();
 		}
-		$setup    = setup();
 		$answered = [];
 		// phpcs:disable WordPress.NamingConventions
 		$mailbox = new PhpImap\Mailbox(
