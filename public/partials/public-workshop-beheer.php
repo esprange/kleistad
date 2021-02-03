@@ -85,7 +85,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 			<td colspan="3">
 				<input type="checkbox" id="kleistad_draaien" name="technieken[]" value="Draaien" <?php checked( in_array( 'Draaien', $data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
 				<label for="kleistad_draaien" style="padding-right:2em">Draaien</label>
-				<input type="checkbox" id="kleistad_handvormen" name="technieken[]" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['workshop']['technieken'], true ) ); ?> <?php disabled() $readonly ); ?> >
+				<input type="checkbox" id="kleistad_handvormen" name="technieken[]" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
 				<label for="kleistad_handvormen" style="padding-right:2em">Handvormen</label>
 				<input type="checkbox" id="kleistad_boetseren" name="technieken[]" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
 				<label for="kleistad_boetseren">Boetseren</label>
