@@ -151,6 +151,9 @@
 			listLesDatums();
 			setDatepickers();
 			setTimespinners();
+			if ( $( '#kleistad_start_datum' ).prop( 'disabled' ) ) {
+				$( '#kleistad_lesdatum' ).next( 'button' ).prop( 'disabled', true );
+			}
 		}
 	}
 
