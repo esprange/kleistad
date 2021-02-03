@@ -29,7 +29,11 @@ class Public_Debiteuren extends ShortcodeForm {
 		$artikelregister = new Artikelregister();
 		$orders          = new Orders();
 		foreach ( $orders as $order ) {
-			if ( ! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek ) ) {
+			if ( (
+				! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek )
+			) ||
+				( empty( $zoek ) && $order->gesloten )
+				) {
 				continue;
 			}
 			$debiteuren[] = [
