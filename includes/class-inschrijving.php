@@ -568,24 +568,23 @@ class Inschrijving extends Artikel {
 			}
 			/**
 			 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn.
-			 * Effect is hier wel dat als er wel plaats is maar de wachtlijst cursist neemt geen actie, deze
-			 * om de dag een email krijgt.
-			 *
-			 * @todo Bij cursus vastleggen wanneer de status vol is gewijzigd. Als dit langer geleden is dan gisteren, geen email verzenden.
 			 */
-			if ( ! $inschrijving->ingedeeld ) {
-				if ( $vandaag < $inschrijving->cursus->start_datum ) {
-					if ( ! isset( $ruimte[ $inschrijving->cursus->id ] ) ) {
-						$ruimte[ $inschrijving->cursus->id ] = $inschrijving->cursus->ruimte();
-						$inschrijving->cursus->vol           = ( 0 === $ruimte[ $inschrijving->cursus->id ] );
+			if ( ! $inschrijving->ingedeeld && $vandaag < $inschrijving->cursus->start_datum && $inschrijving->wacht_datum ) {
+				if ( ! isset( $ruimte[ $inschrijving->cursus->id ] ) ) {
+					$ruimte[ $inschrijving->cursus->id ] = $inschrijving->cursus->ruimte();
+					if ( ( 0 === $ruimte[ $inschrijving->cursus->id ] ) !== $inschrijving->cursus->vol ) {
+						delete_transient( "kleistad_wacht_{$inschrijving->cursus->id}" );
+						$inschrijving->cursus->vol = ( 0 === $ruimte[ $inschrijving->cursus->id ] );
 						$inschrijving->cursus->save();
 					}
-					if ( 0 < $ruimte[ $inschrijving->cursus->id ] && 0 < $inschrijving->wacht_datum && $inschrijving->wacht_datum < $vandaag ) {
-						$inschrijving->wacht_datum = strtotime( 'tomorrow' );
-						$inschrijving->maak_wachtlijst_link();
-						$inschrijving->save();
-						$inschrijving->verzend_email( '_ruimte' );
-					}
+				}
+				$laatste_wacht = get_transient( "kleistad_wacht_{$inschrijving->cursus->id}" ) ?: $vandaag;
+				if ( $ruimte[ $inschrijving->cursus->id ] && $inschrijving->wacht_datum < $laatste_wacht ) {
+					set_transient( "kleistad_wacht_{$inschrijving->cursus->id}", $vandaag, YEAR_IN_SECONDS );
+					$inschrijving->wacht_datum = strtotime( 'tomorrow' );
+					$inschrijving->maak_wachtlijst_link();
+					$inschrijving->save();
+					$inschrijving->verzend_email( '_ruimte' );
 				}
 				continue;
 			}
