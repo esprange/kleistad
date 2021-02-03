@@ -163,7 +163,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 		<div class="kleistad_col_4">
 		</div>
 		<div class="kleistad_col_3">
-			<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
+			<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
 		</div>
 	</div>
 	<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>

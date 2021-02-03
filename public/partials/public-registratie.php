@@ -54,7 +54,7 @@ if ( 'wachtwoord' === $data['actie'] ) :
 		<div class="kleistad_row">
 			<div class="kleistad_col_10">
 				<button type="button" disabled id="kleistad_wachtwoord" >Wijzigen</button>
-				<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
+				<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
 			</div>
 		</div>
 	</div>
