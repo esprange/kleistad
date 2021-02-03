@@ -11,12 +11,11 @@
 		return new Date( veld[2], veld[1] - 1, veld[0] );
 	}
 	
-    $( document ).ready(
-        function() {
+    $( function() {
             /**
              * Voeg 15 euro toe.
              */
-            $( '#add15' ).click(
+            $( '#add15' ).on( 'click', 
                 function() {
                     var saldo = $( '#saldo' ).val();
                     saldo = Math.round( ( Number( saldo ) + 15 ) * 100 ) / 100;
@@ -28,7 +27,7 @@
             /**
              * Voeg 30 euro toe.
              */
-            $( '#add30' ).click(
+            $( '#add30' ).on( 'click',
                 function() {
                     var saldo = $( '#saldo' ).val();
                     saldo = Math.round( ( Number( saldo ) + 30 ) * 100 ) / 100;
@@ -37,7 +36,7 @@
                 }
 			);
 
-			$( '#kleistad-extra' ).click(
+			$( '#kleistad-extra' ).on( 'click',
 				function() {
 					var aantal   = $( '.kleistad-extra' ).length;
 					var sjabloon = +
@@ -52,7 +51,7 @@
 				}
 			);
 
-			$( '#kleistad-soort' ).change(
+			$( '#kleistad-soort' ).on( 'change',
 				function() {
 					$( '#kleistad-dag' ).prop( 'required', ( 'beperkt' === $( this ).val() ) );
 				}
@@ -82,11 +81,12 @@
 
 			$( '#kleistad_start_config' ).datepicker( 'option',
 				{
-					minDate: 0,
-					maxDate: $( '#kleistad_eind_config' ).datepicker( 'getDate' ),
+					minDate: ( $( this ).prop( 'disabled' ) ) ? null : 0,
+					maxDate: new Date( $( '#kleistad_eind_config' ).datepicker( 'getDate' ) ),
 					onSelect: function( datum ) {
 						$( '#kleistad_eind_config' ).datepicker( 'option', { 
-							minDate: strtodate( datum ) } );
+							minDate: strtodate( datum )
+						} );
 					}
 				}
 			);
