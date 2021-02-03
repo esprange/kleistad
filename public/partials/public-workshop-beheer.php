@@ -13,7 +13,7 @@ namespace Kleistad;
 
 if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie'] ) ) :
 	$voltooid     = strtotime( $data['workshop']['datum'] ) < strtotime( 'today' );
-	$alleen_lezen = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
+	$readonly = $data['workshop']['betaald'] || $data['workshop']['vervallen'] || $voltooid;
 	$this->form();
 	?>
 
@@ -24,7 +24,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		<tr>
 			<th>Soort workshop</th>
 			<td colspan="3">
-				<select name="naam" required id="kleistad_naam" <?php readonly( $alleen_lezen ); ?> >
+				<select name="naam" required id="kleistad_naam" <?php readonly( $readonly ); ?> >
 					<option value="kinderfeest" <?php selected( $data['workshop']['naam'], 'kinderfeest' ); ?> >kinderfeest</option>
 					<option value="workshop"  <?php selected( $data['workshop']['naam'], 'workshop' ); ?>>workshop</option>
 				</select>
@@ -32,15 +32,15 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		</tr>
 		<tr>
 			<th>Naam contact</th>
-			<td colspan="3"><input type="text" name="contact" required value="<?php echo esc_attr( $data['workshop']['contact'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
+			<td colspan="3"><input type="text" name="contact" required value="<?php echo esc_attr( $data['workshop']['contact'] ); ?>" <?php readonly( $readonly ); ?> /></td>
 		</tr>
 		<tr>
 			<th>Email contact</th>
-			<td colspan="3"><input type="email" name="email" required value="<?php echo esc_attr( $data['workshop']['email'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
+			<td colspan="3"><input type="email" name="email" required value="<?php echo esc_attr( $data['workshop']['email'] ); ?>" <?php readonly( $readonly ); ?> /></td>
 		</tr>
 		<tr>
 			<th>Telefoon contact</th>
-			<td colspan="3"><input type="text" name="telnr" value="<?php echo esc_attr( $data['workshop']['telnr'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
+			<td colspan="3"><input type="text" name="telnr" value="<?php echo esc_attr( $data['workshop']['telnr'] ); ?>" <?php readonly( $readonly ); ?> /></td>
 		</tr>
 		<tr>
 			<th>Organisatie</th>
@@ -56,7 +56,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		</tr>
 		<tr>
 			<th>Aantal deelnemers</th>
-			<td><input type="number" name="aantal" id="kleistad_aantal" min="1" value="<?php echo esc_attr( $data['workshop']['aantal'] ); ?>" <?php readonly( $alleen_lezen ); ?> /></td>
+			<td><input type="number" name="aantal" id="kleistad_aantal" min="1" value="<?php echo esc_attr( $data['workshop']['aantal'] ); ?>" <?php readonly( $readonly ); ?> /></td>
 			<td colspan="2"></td>
 		</tr>
 		<tr>
@@ -66,9 +66,9 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		</tr>
 		<tr>
 			<th>Begintijd</th>
-			<td><input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['start_tijd'] ); ?>" class="kleistad_tijd" required <?php readonly( $alleen_lezen ); ?> /></td>
+			<td><input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['start_tijd'] ); ?>" class="kleistad_tijd" required <?php readonly( $readonly ); ?> /></td>
 			<th>Eindtijd</th>
-			<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['eind_tijd'] ); ?>" class="kleistad_tijd" required <?php readonly( $alleen_lezen ); ?> /></td>
+			<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['eind_tijd'] ); ?>" class="kleistad_tijd" required <?php readonly( $readonly ); ?> /></td>
 		</tr>
 		<tr>
 			<th>Docent</th>
@@ -78,22 +78,27 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 				<option value="<?php echo esc_attr( $docent->display_name ); ?>">
 			<?php endforeach ?>
 			</datalist>
-			<input type=text list="kleistad_docenten" name="docent" value="<?php echo esc_attr( $data['workshop']['docent'] ); ?>" <?php readonly( $alleen_lezen ); ?> ></td>
+			<input type=text list="kleistad_docenten" name="docent" value="<?php echo esc_attr( $data['workshop']['docent'] ); ?>" <?php readonly( $readonly ); ?> ></td>
 		</tr>
 		<tr>
 			<th>Technieken</th>
-			<td><input type="checkbox" name="technieken[]" value="Draaien" <?php checked( in_array( 'Draaien', $data['workshop']['technieken'], true ) ); ?> <?php readonly( $alleen_lezen ); ?> >Draaien</td>
-			<td><input type="checkbox" name="technieken[]" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['workshop']['technieken'], true ) ); ?> <?php readonly( $alleen_lezen ); ?> >Handvormen</td>
-			<td><input type="checkbox" name="technieken[]" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['workshop']['technieken'], true ) ); ?> <?php readonly( $alleen_lezen ); ?> >Boetseren</td>
+			<td colspan="3">
+				<input type="checkbox" id="kleistad_draaien" name="technieken[]" value="Draaien" <?php checked( in_array( 'Draaien', $data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
+				<label for="kleistad_draaien" style="padding-right:2em">Draaien</label>
+				<input type="checkbox" id="kleistad_handvormen" name="technieken[]" value="Handvormen" <?php checked( in_array( 'Handvormen', $data['workshop']['technieken'], true ) ); ?> <?php disabled() $readonly ); ?> >
+				<label for="kleistad_handvormen" style="padding-right:2em">Handvormen</label>
+				<input type="checkbox" id="kleistad_boetseren" name="technieken[]" value="Boetseren" <?php checked( in_array( 'Boetseren', $data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
+				<label for="kleistad_boetseren">Boetseren</label>
+			</td>
 		</tr>
 		<tr>
 			<th>Programma</th>
-			<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="5" maxlength="500" <?php readonly( $alleen_lezen ); ?> ><?php echo esc_textarea( $data['workshop']['programma'] ); ?></textarea>
+			<td colspan="3"><textarea name="programma" id="kleistad_programma" rows="5" maxlength="500" <?php readonly( $readonly ); ?> ><?php echo esc_textarea( $data['workshop']['programma'] ); ?></textarea>
 		</tr>
 		<tr>
 			<th>Kosten</th>
-			<td><input type="number" lang="nl" step="0.01" name="kosten" id="kleistad_kosten" min="0" value="<?php echo esc_attr( $data['workshop']['kosten'] ); ?>" <?php readonly( $alleen_lezen ); ?> > incl. BTW</td>
-			<td><input type="number" lang="nl" step="0.01" id="kleistad_kosten_ex_btw" min="0" value="<?php echo esc_attr( number_format( $data['workshop']['kosten'] / 1.21, 2 ) ); ?>" <?php readonly( $alleen_lezen ); ?> > excl. BTW</td>
+			<td><input type="number" lang="nl" step="0.01" name="kosten" id="kleistad_kosten" min="0" value="<?php echo esc_attr( $data['workshop']['kosten'] ); ?>" <?php readonly( $readonly ); ?> > incl. BTW</td>
+			<td><input type="number" lang="nl" step="0.01" id="kleistad_kosten_ex_btw" min="0" value="<?php echo esc_attr( number_format( $data['workshop']['kosten'] / 1.21, 2 ) ); ?>" <?php readonly( $readonly ); ?> > excl. BTW</td>
 			<td colspan="1"></td>
 		</tr>
 		<tr>
@@ -109,12 +114,12 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 			<th>Betaald &nbsp;&nbsp;<input type="hidden" name="betaald" value="<?php echo (int) $data['workshop']['betaald']; ?>" ><?php echo $data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?></th>
 		</tr>
 	</table>
-	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $alleen_lezen || $data['workshop']['definitief'] ); ?> >Opslaan</button>
+	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $data['workshop']['definitief'] ); ?> >Opslaan</button>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $data['workshop']['vervallen'] ); ?>
 		data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
-	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $alleen_lezen || 'toevoegen' === $data['actie'] || $data['workshop']['gefactureerd'] ); ?>
+	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $data['actie'] || $data['workshop']['gefactureerd'] ); ?>
 		data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
-	<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="float:right;" class="kleistad_terug_link">Terug</button>
 </form>
 	<?php
 elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
@@ -150,7 +155,7 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 		</tr>
 	</table>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
-	<button type="button" style="position:absolute;right:0;" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
 </form>
 <div>
 	<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>
