@@ -176,7 +176,7 @@ class Stook {
 				'gemeld'       => intval( $this->gemeld ),
 				'verwerkt'     => intval( $this->verwerkt ),
 			];
-		if ( $this->stook_id ) {
+		if ( 0 < $this->stook_id ) {
 			if ( false === $wpdb->replace(
 				"{$wpdb->prefix}kleistad_reserveringen",
 				array_merge( $data, [ 'id' => $this->stook_id ] )
