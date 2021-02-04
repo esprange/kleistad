@@ -185,12 +185,27 @@ class Public_Email extends ShortcodeForm {
 	 * Verzend emails
 	 *
 	 * @param array $data data te verzenden.
-	 * @return \WP_ERROR|array
+	 * @return WP_ERROR|array
 	 *
 	 * @since   5.5.0
 	 */
 	protected function save( $data ) {
-		$gebruiker       = wp_get_current_user();
+		$gebruiker    = wp_get_current_user();
+		$emailer      = new Email();
+		if ( 'test_email' === $data['form_actie'] ) {
+			$emailer->send(
+				array_merge(
+					$this->mail_parameters( $data ),
+					[
+						'to'      => "{$gebruiker->display_name} <{$gebruiker->user_email}>",
+						'subject' => "TEST: {$data['input']['onderwerp']}",
+					]
+				)
+			);
+			return [
+				'status' => $this->status( 'De test email is verzonden' ),
+			];
+		}
 		$gebruikerids    = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
 		$query           = new WP_User_Query(
 			[
@@ -200,7 +215,6 @@ class Public_Email extends ShortcodeForm {
 		);
 		$emailadressen   = array_column( (array) $query->get_results(), 'user_email' );
 		$emailadressen[] = "{$gebruiker->display_name} <{$gebruiker->user_email}>";
-		$emailer         = new Email();
 		$from            = 'production' === wp_get_environment_type() ? "{$emailer->info}{$emailer->domein}" : get_bloginfo( 'admin_email' );
 		$emailer->send(
 			array_merge(

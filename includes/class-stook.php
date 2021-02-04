@@ -106,7 +106,7 @@ class Stook {
 	 *
 	 * @var int $stook_id Het database id.
 	 */
-	private int $stook_id = 0;
+	private ?int $stook_id = 0;
 
 	/**
 	 * Constructor
