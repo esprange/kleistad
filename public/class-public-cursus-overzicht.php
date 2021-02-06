@@ -69,6 +69,9 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	private function cursistenlijst( $cursus ) {
 		$cursisten = [];
 		foreach ( new Inschrijvingen( $cursus->id ) as $inschrijving ) {
+			if ( $inschrijving->geannuleerd ) {
+				continue;
+			}
 			$cursist      = get_userdata( $inschrijving->klant_id );
 			$cursist_info = [
 				'id'         => $cursist->ID,
@@ -258,7 +261,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$cursus    = new Cursus( $cursus_id );
 		$cursisten = [];
 		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
-			if ( $inschrijving->ingedeeld ) {
+			if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 				$cursisten[] = get_user_by( 'id', $inschrijving->klant_id )->display_name . $inschrijving->toon_aantal();
 			}
 		}
