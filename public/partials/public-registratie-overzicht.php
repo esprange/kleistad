@@ -22,10 +22,13 @@ namespace Kleistad;
 		<option value="*" >&nbsp;</option>
 		<option value="A" >Actieve abonnees</option>
 		<option value="K" >Actieve dagdelenkaart gebruikers</option>
-			<?php foreach ( $data['cursussen'] as $cursus ) : ?>
-			<option value="<?php echo esc_attr( 'C' . $cursus->id ); ?>;">C<?php echo esc_html( $cursus->id . ' ' . $cursus->naam ); ?></option>
-			<?php endforeach ?>
-
+			<?php
+			$options = '';
+			foreach ( $data['cursussen'] as $cursus ) :
+				$options = "<option value=\"C$cursus->id\" >C$cursus->id $cursus->naam</option>\n$options";
+			endforeach;
+			echo $options; // phpcs:ignore
+			?>
 	</select>
 </p>
 <table class="kleistad_datatable display compact nowrap" id="kleistad_deelnemer_lijst">
