@@ -32,17 +32,11 @@ a.jstree-anchor {
 	width: 100%;
 	z-index: 10;
 }
-
-.kleistad_hover {
-	color: blue;
-}
-
 .kleistad_hover_reservering {
 	border: 1px solid gray;
 	color: blue;
 	cursor: pointer;
 }
-
 div.kleistad_workshop_compact {
 	height: 10em;
 	overflow: hidden;
@@ -88,16 +82,6 @@ a.kleistad_workshop_unfold, a.kleistad_workshop_fold {
 a.kleistad_workshop_fold {
 	display: none;
 }
-div.kleistad_workshop_aanvraag {
-	background-color: lightblue;
-}
-div.kleistad_workshop_vraag {
-	background-color: lightgoldenrodyellow;
-}
-div.kleistad_workshop_reactie {
-	background-color: lightgray;
-}
-
 a.kleistad_edit {
 	background-image: url('../images/icon-edit.png');
     background-repeat: no-repeat;
@@ -168,10 +152,17 @@ table.kleistad_form input[type=number] {
 table.kleistad_form input[type=submit] {
     height: 2.5em;
 }
-table.kleistad_reservering_form input {
+table.kleistad_reservering_form {
+    table-layout: auto;
+}
+table.kleistad_reservering_form td, input {
+    font-size: small;
 	text-align: right;
 }
-
+table.kleistad_reservering_form th, label, select {
+    font-size: small;
+    text-align: left;
+}
 table.kleistad_reserveringen {
     border-collapse: collapse;
     border-spacing: 0;
@@ -199,11 +190,9 @@ table.kleistad_reserveringen td:nth-child(4n) {
 table.kleistad_reserveringen th[data-align='right'] {
     text-align: right;
 }
-
 table.kleistad_datatable th, td {
 	font-size: small;
 }
-
 .kleistad_label {
     font-weight: bold;
 }
@@ -350,7 +339,6 @@ label.kleistad_label_cb {
     float: left;
     position: relative;
 }
-
 .kleistad_reservering_ongebruikt, .kleistad_reservering_definitief {
 	background: white;
 }
@@ -371,37 +359,30 @@ label.kleistad_label_cb {
     padding: 15px;
     width: 30%;
 }
-
 .kleistad_filter_term input:checked {
     font-weight: bold;
 }
-
 .kleistad_filter_term input:not(:checked) {
     font-weight: normal;
 }
-
 .kleistad_filter_term {
     border-bottom:1px solid black;
     list-style-position:inside;
     list-style-type:none;
 }
-
 .kleistad_filter_term label:hover {
     background:#eee;
     cursor:pointer;
 }
-
 .kleistad_recept_overzicht {
     margin-left: 0;
 }
-
 .kleistad_zoek {
     position: relative;
     vertical-align: middle;
     white-space: nowrap;
     width: 250px;
 }
-
 .kleistad_zoek input#search { /* csslint allow: ids */
     background: #2b303b;
     border: none;
@@ -411,7 +392,6 @@ label.kleistad_label_cb {
     padding-left: 45px;
     width: 250px;
 }
-
 .kleistad_werkplek_label {
     font-size:small;
     overflow: hidden;
@@ -419,16 +399,13 @@ label.kleistad_label_cb {
     white-space: nowrap;
     width: 100%;
 }
-
 .kleistad_werkplek_bezet {
     border:2px solid white;
     font-size:small;
 }
-
 .kleistad_werkplek_vrij {
     border:2px solid white;
 }
-
 .kleistad_werkplek_dagdeel, .kleistad_werkplek_gereserveerd {
     border: 0;
 }
@@ -499,158 +476,158 @@ div.kleistad_werkplek_dagdeel {
 
     input[type='checkbox'],
     input[type='radio'] {
-      --active: #275efe;
-      --active-inner: #fff;
-      --focus: 2px rgba(39, 94, 254, .3);
-      --border: #bbc1e1;
-      --border-hover: #275efe;
-      --background: #fff;
-      --disabled: #f6f8ff;
-      --disabled-inner: #e1e6f9;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      height: 21px;
-      outline: none;
-      display: inline-block;
-      vertical-align: top;
-      position: relative;
-      margin: 0;
-      cursor: pointer;
-      border: 1px solid var(--bc, var(--border));
-      background: var(--b, var(--background));
-      transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+        --active: green;
+        --active-inner: #fff;
+        --background: #fff;
+        --border-hover: green;
+        --border: #bbc1e1;
+        --disabled: #f6f8ff;
+        --disabled-inner: #e1e6f9;
+        --focus: 2px greenyellow;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background: var(--b, var(--background));
+        border: 1px solid var(--bc, var(--border));
+        cursor: pointer;
+        display: inline-block;
+        height: 21px;
+        margin: 0;
+        outline: none;
+        position: relative;
+        transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+        vertical-align: top;
     }
   
     input[type='checkbox']:after,
     input[type='radio']:after {
-      content: '';
-      display: block;
-      left: 0;
-      top: 0;
-      position: absolute;
-      transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+        content: '';
+        display: block;
+        left: 0;
+        position: absolute;
+        top: 0;
+        transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
     }
   
     input[type='checkbox']:checked,
     input[type='radio']:checked {
-      --b: var(--active);
-      --bc: var(--active);
-      --d-o: 0.3s;
-      --d-t: 0.6s;
-      --d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
+        --b: var(--active);
+        --bc: var(--active);
+        --d-o: 0.3s;
+        --d-t: 0.6s;
+        --d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
     }
   
     input[type='checkbox']:disabled,
     input[type='radio']:disabled {
-      --b: var(--disabled);
-      cursor: not-allowed;
-      opacity: 0.9;
+        --b: var(--disabled);
+        cursor: not-allowed;
+        opacity: 0.9;
     }
   
     input[type='checkbox']:disabled:checked,
     input[type='radio']:disabled:checked {
-      --b: var(--disabled-inner);
-      --bc: var(--border);
+        --b: var(--disabled-inner);
+        --bc: var(--border);
     }
   
     input[type='checkbox']:disabled+label,
     input[type='radio']:disabled+label {
-      cursor: not-allowed;
+        cursor: not-allowed;
     }
   
     input[type='checkbox']:hover:not(:checked):not(:disabled),
     input[type='radio']:hover:not(:checked):not(:disabled) {
-      --bc: var(--border-hover);
+        --bc: var(--border-hover);
     }
   
     input[type='checkbox']:focus,
     input[type='radio']:focus {
-      box-shadow: 0 0 0 var(--focus);
+        box-shadow: 0 0 0 var(--focus);
     }
   
     input[type='checkbox']:not(.switch),
     input[type='radio']:not(.switch) {
-      width: 21px;
+        width: 21px;
     }
   
     input[type='checkbox']:not(.switch):after,
     input[type='radio']:not(.switch):after {
-      opacity: var(--o, 0);
+        opacity: var(--o, 0);
     }
   
     input[type='checkbox']:not(.switch):checked,
     input[type='radio']:not(.switch):checked {
-      --o: 1;
+        --o: 1;
     }
   
     input[type='checkbox']+label,
     input[type='radio']+label {
-      font-size: 14px;
-      line-height: 21px;
-      display: inline-block;
-      vertical-align: top;
-      cursor: pointer;
-      margin-left: 4px;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        line-height: 21px;
+        margin-left: 4px;
+        vertical-align: top;
     }
   
     input[type='checkbox']:not(.switch) {
-      border-radius: 7px;
+        border-radius: 7px;
     }
   
     input[type='checkbox']:not(.switch):after {
-      width: 5px;
-      height: 9px;
-      border: 2px solid var(--active-inner);
-      border-top: 0;
-      border-left: 0;
-      left: 7px;
-      top: 4px;
-      transform: rotate(var(--r, 20deg));
+        border: 2px solid var(--active-inner);
+        border-left: 0;
+        border-top: 0;
+        height: 9px;
+        left: 7px;
+        top: 4px;
+        transform: rotate(var(--r, 20deg));
+        width: 5px;
     }
   
     input[type='checkbox']:not(.switch):checked {
-      --r: 43deg;
+        --r: 43deg;
     }
   
     input[type='checkbox'].switch {
-      width: 38px;
-      border-radius: 11px;
+        border-radius: 11px;
+        width: 38px;
     }
   
     input[type='checkbox'].switch:after {
-      left: 2px;
-      top: 2px;
-      border-radius: 50%;
-      width: 15px;
-      height: 15px;
-      background: var(--ab, var(--border));
-      transform: translateX(var(--x, 0));
+        background: var(--ab, var(--border));
+        border-radius: 50%;
+        height: 15px;
+        left: 2px;
+        transform: translateX(var(--x, 0));
+        top: 2px;
+        width: 15px;
     }
   
     input[type='checkbox'].switch:checked {
-      --ab: var(--active-inner);
-      --x: 17px;
+        --ab: var(--active-inner);
+        --x: 17px;
     }
   
     input[type='checkbox'].switch:disabled:not(:checked):after {
-      opacity: 0.6;
+        opacity: 0.6;
     }
   
     input[type='radio'] {
-      border-radius: 50%;
+        border-radius: 50%;
     }
   
     input[type='radio']:after {
-      width: 19px;
-      height: 19px;
-      border-radius: 50%;
-      background: var(--active-inner);
-      opacity: 0;
-      transform: scale(var(--s, 0.7));
+        background: var(--active-inner);
+        border-radius: 50%;
+        height: 19px;
+        opacity: 0;
+        transform: scale(var(--s, 0.7));
+        width: 19px;
     }
   
     input[type='radio']:checked {
-      --s: 0.5;
+        --s: 0.5;
     }
   }
   
