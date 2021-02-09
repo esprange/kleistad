@@ -74,9 +74,9 @@ abstract class Shortcode {
 	 */
 	public static function melding( $status, $bericht ) {
 		$levels = [
-			-1 => 'kleistad_inform',
-			0  => 'kleistad_fout',
-			1  => 'kleistad_succes',
+			-1 => 'kleistad-inform',
+			0  => 'kleistad-fout',
+			1  => 'kleistad-succes',
 		];
 		return "<div class=\"{$levels[$status]}\"><p>$bericht</p></div>";
 	}

@@ -60,7 +60,7 @@
             /**
              * Definieer de datumpickers.
              */
-            $( '.kleistad_datum' ).datepicker(
+            $( '.kleistad-datum' ).datepicker(
 				{
 					dateFormat: 'dd-mm-yy',
 					beforeShowDay: function( date ) {

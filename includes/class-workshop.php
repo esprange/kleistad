@@ -193,18 +193,17 @@ class Workshop extends Artikel {
 	 * @since        5.0.0
 	 *
 	 * @param  string $bericht    Het bericht bij succesvolle betaling.
-	 * @param  string $referentie De referentie van het artikel.
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
+	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
 		return $this->betalen->order(
 			[
 				'naam'     => $this->contact,
 				'email'    => $this->email,
 				'order_id' => $this->code,
 			],
-			$referentie,
+			$this->geef_referentie(),
 			$openstaand ?? $this->kosten,
 			'Kleistad workshop ' . $this->code . ' op ' . strftime( '%d-%m-%Y', $this->datum ),
 			$bericht

@@ -26,11 +26,11 @@ var detectTap;
 	 * Definieer de tabellen.
 	 */
 	function defineDatatables() {
-		var $datatable = $( '.kleistad_datatable' );
+		var $datatable = $( '.kleistad-datatable' );
 		if ( ! $datatable[0] ) {
 			return;
 		}
-		if ( ! $.fn.DataTable.isDataTable( '.kleistad_datatable' ) ) {
+		if ( ! $.fn.DataTable.isDataTable( '.kleistad-datatable' ) ) {
 			$datatable.dataTable( {
 				language: {
 					url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Dutch.json'
@@ -45,7 +45,7 @@ var detectTap;
 	 * Definieer de datum velden.
 	 */
 	function defineDatums() {
-		var $datum = $( '.kleistad_datum' );
+		var $datum = $( '.kleistad-datum' );
 		if ( $datum[0] && ! $datum.is( ':data("ui-datepicker")' ) ) {
 			$datum.datepicker( {
 				closeText: 'Sluiten',
@@ -72,7 +72,7 @@ var detectTap;
 	 * Definieer de timespinners.
 	 */
 	function defineTimespinners() {
-		var $tijd = $( '.kleistad_tijd' );
+		var $tijd = $( '.kleistad-tijd' );
 		if ( $tijd[0] ) {
 			$.widget(
 				'ui.timespinner', $.ui.spinner, {
@@ -141,7 +141,7 @@ var detectTap;
 	 * @param { String } path naar het endpoint
 	 */
 	function getContent( $shortcode, data, path ) {
-		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+		$( '#kleistad_wachten' ).addClass( 'kleistad-wachten' ).show();
 		$.ajax(
 			{
 				beforeSend: function( xhr ) {
@@ -153,12 +153,12 @@ var detectTap;
 			}
 		).done(
 			function( data ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				$.fn.vervolg( $shortcode, data );
 			}
 		).fail(
 			function( jqXHR ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 					window.console.log( jqXHR.responseJSON.message );
 				}
@@ -209,7 +209,7 @@ var detectTap;
 			/**
 			 * Als er op een edit anchor is geklikt, doe dan een edit actie.
 			 */
-			.on( 'click', '.kleistad_edit_link',
+			.on( 'click', '.kleistad-edit-link',
 				function() {
 					var $anchor       = $( this );
 					var shortcodeData = $.fn.shortcode( $anchor );
@@ -220,7 +220,7 @@ var detectTap;
 			/**
 			 * Als er op een terug anchor is geklikt
 			 */
-			.on( 'click', '.kleistad_terug_link',
+			.on( 'click', '.kleistad-terug-link',
 				function() {
 					var $button       = $( this );
 					var shortcodeData = $.fn.shortcode( $button );
@@ -231,7 +231,7 @@ var detectTap;
 			/**
 			 * Als er op een download button link is geklikt
 			 */
-			.on( 'click', '.kleistad_download_link',
+			.on( 'click', '.kleistad-download-link',
 				function() {
 					var $button       = $( this );
 					var shortcodeData = $.fn.shortcode( $button );

@@ -218,16 +218,15 @@ class Inschrijving extends Artikel {
 	 * @since        4.2.0
 	 *
 	 * @param  string $bericht    Het bericht bij succesvolle betaling.
-	 * @param  string $referentie De referentie van het artikel.
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
+	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
 		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
 		$vermelding = ( $openstaand || ! $this->heeft_restant() ) ? 'cursus' : 'inschrijf';
 		return $this->betalen->order(
 			$this->klant_id,
-			$referentie,
+			$this->geef_referentie(),
 			$openstaand ?? $this->aantal * $this->cursus->bedrag(),
 			"Kleistad cursus {$this->code} {$vermelding}kosten voor $deelnemers",
 			$bericht
@@ -553,8 +552,9 @@ class Inschrijving extends Artikel {
 	 * @since 6.1.0
 	 */
 	public static function doe_dagelijks() {
-		$vandaag = strtotime( 'today' );
-		$ruimte  = [];
+		$vandaag       = strtotime( 'today' );
+		$cursussen     = new Cursussen();
+		$laatste_wacht = $cursussen->actualiseer_vol();
 		foreach ( new Inschrijvingen() as $inschrijving ) {
 			/**
 			 * Geen acties voor medecursisten, oude of vervallen cursus deelnemers of die zelf geannuleerd hebben.
@@ -567,20 +567,12 @@ class Inschrijving extends Artikel {
 				continue;
 			}
 			/**
-			 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn.
+			 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn en alleen als de cursus nog niet gestart is.
+			 * Laatste wachtdatum is de datum er ruimte is ontstaan. Als gisteren de ruimte ontstond is de datum dus nu.
+			 * Iedereen die vooraf 'nu' wacht krijgt de email en die wacht op vervolg als er iets vrijkomt na morgen 0:00.
 			 */
-			if ( ! $inschrijving->ingedeeld && $vandaag < $inschrijving->cursus->start_datum && $inschrijving->wacht_datum ) {
-				if ( ! isset( $ruimte[ $inschrijving->cursus->id ] ) ) {
-					$ruimte[ $inschrijving->cursus->id ] = $inschrijving->cursus->ruimte();
-					if ( ( 0 === $ruimte[ $inschrijving->cursus->id ] ) !== $inschrijving->cursus->vol ) {
-						delete_transient( "kleistad_wacht_{$inschrijving->cursus->id}" );
-						$inschrijving->cursus->vol = ( 0 === $ruimte[ $inschrijving->cursus->id ] );
-						$inschrijving->cursus->save();
-					}
-				}
-				$laatste_wacht = get_transient( "kleistad_wacht_{$inschrijving->cursus->id}" ) ?: $vandaag;
-				if ( $ruimte[ $inschrijving->cursus->id ] && $inschrijving->wacht_datum < $laatste_wacht ) {
-					set_transient( "kleistad_wacht_{$inschrijving->cursus->id}", $vandaag, YEAR_IN_SECONDS );
+			if ( ! $inschrijving->ingedeeld && $inschrijving->wacht_datum && $vandaag < $inschrijving->cursus->start_datum ) {
+				if ( $inschrijving->wacht_datum < $laatste_wacht[ $inschrijving->cursus->id ] ) {
 					$inschrijving->wacht_datum = strtotime( 'tomorrow' );
 					$inschrijving->maak_wachtlijst_link();
 					$inschrijving->save();

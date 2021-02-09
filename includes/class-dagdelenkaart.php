@@ -93,17 +93,14 @@ class Dagdelenkaart extends Artikel {
 	 * Start de betaling van een nieuw dagdelenkaart.
 	 *
 	 * @param  string $bericht  Te tonen melding als betaling gelukt.
-	 * @param  string $referentie De referentie van het artikel.
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url van een ideal betaling of false als het niet lukt.
 	 */
-	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
-		$options = opties();
-
+	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
 		return $this->betalen->order(
 			$this->klant_id,
-			$referentie,
-			$openstaand ?? $options['dagdelenkaart'],
+			$this->geef_referentie(),
+			$openstaand ?? opties()['dagdelenkaart'],
 			'Kleistad dagdelenkaart ' . $this->code,
 			$bericht,
 			false

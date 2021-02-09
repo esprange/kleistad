@@ -20,31 +20,31 @@ $this->form();
 		<li><a href="#tab_vaste_klant">Bestaande klant</a></li>
 	</ul>
 	<div id="tab_nieuwe_klant">
-		<div class="kleistad_row">
-			<div class="kleistad_col_3 kleistad_label">
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_klant">Klant naam</label>
 			</div>
-			<div class="kleistad_col_7">
-				<input class="kleistad_input" id="kleistad_klant" type="text" size="20" name="klant" required
+			<div class="kleistad-col-7">
+				<input class="kleistad-input" id="kleistad_klant" type="text" size="20" name="klant" required
 					value="<?php echo esc_attr( $data['input']['klant'] ); ?>"/>
 			</div>
 		</div>
-		<div class="kleistad_row">
-			<div class="kleistad_col_3 kleistad_label">
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_email">Email adres</label>
 			</div>
-			<div class="kleistad_col_7">
-				<input class="kleistad_input" id="kleistad_email" type="email" name="email" required
+			<div class="kleistad-col-7">
+				<input class="kleistad-input" id="kleistad_email" type="email" name="email" required
 					value="<?php echo esc_attr( $data['input']['email'] ); ?>"/>
 			</div>
 		</div>
 	</div>
 	<div id="tab_vaste_klant" style="display:none;">
-		<div class="kleistad_row">
-			<div class="kleistad_col_3 kleistad_label">
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_klant_id">Klant naam</label>
 			</div>
-			<div class="kleistad_col_7">
+			<div class="kleistad-col-7">
 				<select name="klant_id" id="kleistad_klant_id" required >
 					<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
 						<option value="<?php echo esc_attr( $gebruiker->id ); ?>" <?php selected( $gebruiker->id, $data['input']['klant_id'] ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
@@ -54,14 +54,14 @@ $this->form();
 		</div>
 	</div>
 </div>
-<div class="kleistad_row">
-	<div class="kleistad_col_6 kleistad_label">
+<div class="kleistad-row">
+	<div class="kleistad-col-6 kleistad-label">
 		<label>Omschrijving</label>
 	</div>
-	<div class="kleistad_col_2 kleistad_label">
+	<div class="kleistad-col-2 kleistad-label">
 		<label>Stuksprijs</label>
 	</div>
-	<div class="kleistad_col_2 kleistad_label">
+	<div class="kleistad-col-2 kleistad-label">
 		<label>Aantal</label>
 	</div>
 </div>
@@ -70,27 +70,27 @@ $this->form();
 		$count = count( $data['input']['omschrijving'] );
 	do {
 		?>
-<div class="kleistad_row">
-	<div class="kleistad_col_6">
-		<input class="kleistad_input" type="text" name="omschrijving[]" required value="<?php echo esc_attr( $data['input']['omschrijving'][ $index ] ); ?>" >
+<div class="kleistad-row">
+	<div class="kleistad-col-6">
+		<input class="kleistad-input" type="text" name="omschrijving[]" required value="<?php echo esc_attr( $data['input']['omschrijving'][ $index ] ); ?>" >
 	</div>
-	<div class="kleistad_col_2">
-		<input class="kleistad_input" type="number" step="0.01" name="prijs[]" required value="<?php echo esc_attr( $data['input']['prijs'][ $index ] ); ?>" >
+	<div class="kleistad-col-2">
+		<input class="kleistad-input" type="number" step="0.01" name="prijs[]" required value="<?php echo esc_attr( $data['input']['prijs'][ $index ] ); ?>" >
 	</div>
-	<div class="kleistad_col_2">
-		<input class="kleistad_input" type="number" step="0.01" name="aantal[]" required value="<?php echo esc_attr( $data['input']['aantal'][ $index ] ); ?>" >
+	<div class="kleistad-col-2">
+		<input class="kleistad-input" type="number" step="0.01" name="aantal[]" required value="<?php echo esc_attr( $data['input']['aantal'][ $index ] ); ?>" >
 	</div>
 </div>
 		<?php
 		$index++;
 	} while ( $index < $count );
 	?>
-<div class="kleistad_row">
-	<div class="kleistad_col_2">
+<div class="kleistad-row">
+	<div class="kleistad-col-2">
 		<button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button><br/>&nbsp;
 	</div>
 </div>
-<div class="kleistad_row">
+<div class="kleistad-row">
 	<button type="submit" name="kleistad_submit_verkoop" id="kleistad_submit_verkoop" value="verzenden">Verzenden</button>
 </div>
 </form>

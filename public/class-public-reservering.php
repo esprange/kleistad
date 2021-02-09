@@ -124,8 +124,8 @@ class Public_Reservering extends Shortcode {
 		$gebruiker_id = get_current_user_id();
 		$stoker_id    = isset( $stook->stookdelen[0] ) ? $stook->stookdelen[0]->medestoker : $gebruiker_id;
 		$stoker_naam  = get_userdata( $stoker_id )->display_name;
-		$kleur        = Stook::ONDERHOUD === $stook->soort ? 'kleistad_reservering_onderhoud' :
-			( $stoker_id === $gebruiker_id ? 'kleistad_reservering_zelf' : 'kleistad_reservering_ander' );
+		$kleur        = Stook::ONDERHOUD === $stook->soort ? 'kleistad-reservering-onderhoud' :
+			( $stoker_id === $gebruiker_id ? 'kleistad-reservering-zelf' : 'kleistad-reservering-ander' );
 		$logica       = [
 			Stook::ONGEBRUIKT    => [
 				'wie'          => '',
@@ -133,7 +133,7 @@ class Public_Reservering extends Shortcode {
 				'programma'    => '',
 				'verdeling'    => [],
 				'soortstook'   => '',
-				'kleur'        => 'kleistad_reservering_ongebruikt',
+				'kleur'        => 'kleistad-reservering-ongebruikt',
 				'select'       => false,
 				'gebruiker_id' => 0,
 			],
@@ -143,7 +143,7 @@ class Public_Reservering extends Shortcode {
 				'programma'    => $stook->programma,
 				'verdeling'    => $stook->stookdelen,
 				'soortstook'   => $stook->programma,
-				'kleur'        => 'kleistad_reservering_reserveerbaar',
+				'kleur'        => 'kleistad-reservering-reserveerbaar',
 				'select'       => true,
 				'gebruiker_id' => $gebruiker_id,
 			],
@@ -183,7 +183,7 @@ class Public_Reservering extends Shortcode {
 				'programma'    => $stook->programma,
 				'verdeling'    => $stook->stookdelen,
 				'soortstook'   => $stook->soort,
-				'kleur'        => 'kleistad_reservering_definitief',
+				'kleur'        => 'kleistad-reservering-definitief',
 				'select'       => true,
 				'gebruiker_id' => $stook->hoofdstoker,
 			],

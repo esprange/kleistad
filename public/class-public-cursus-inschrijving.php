@@ -278,7 +278,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		}
 		$inschrijving->artikel_type = 'inschrijving';
 		$inschrijving->save();
-		$ideal_uri = $inschrijving->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->geef_referentie() );
+		$ideal_uri = $inschrijving->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
 		if ( false === $ideal_uri ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}
@@ -313,7 +313,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		} elseif ( 'stort' === $betaalwijze ) {
 			$inschrijving->verzend_email( 'inschrijving', $inschrijving->bestel_order( 0.0, $inschrijving->cursus->start_datum, $inschrijving->heeft_restant() ) );
 		} elseif ( 'ideal' === $betaalwijze ) {
-			$ideal_uri = $inschrijving->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->geef_referentie() );
+			$ideal_uri = $inschrijving->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
 			if ( false === $ideal_uri ) {
 				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}

@@ -199,11 +199,10 @@ class Public_Werkplek extends Shortcode {
 	 */
 	private static function toon_werkplekken( int $gebruiker_id, int $datum ) : string {
 		$werkplekgebruik = new WerkplekGebruik( $datum );
-		$veld_id         = 0;
 		$button          = [];
 		$html            = <<<EOT
-<div class="kleistad_row" >
-	<div class="kleistad_col_3" >
+<div class="kleistad-row" >
+	<div class="kleistad-col-3" >
 		<strong>beheerder</strong>
 	</div>
 EOT;
@@ -212,14 +211,13 @@ EOT;
 			$meester_id   = is_object( $meester ) ? $meester->ID : 0;
 			if ( current_user_can( BESTUUR ) ) {
 				$html .= <<<EOT
-	<div class="kleistad_col_2">
-		<label for="meester$dagdeel" style="width:100%" class="kleistad_werkplek_label">$meester_naam</label>
-		<input type="radio" class="kleistad_meester" data-dagdeel="$dagdeel" value="$meester_id" name="meester" id="meester$dagdeel" />
+	<div class="kleistad-col-2">
+		<button type="button" class="kleistad-meester" data-dagdeel="$dagdeel" value="$meester_id" name="meester" />$meester_naam</button>
 	</div>
 EOT;
 			} else {
 				$html .= <<<EOT
-	<div class="kleistad_col_2" style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
+	<div class="kleistad-col-2" style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
 		$meester_naam
 	</div>
 EOT;
@@ -231,8 +229,8 @@ EOT;
 		foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) {
 			$kleur = WerkplekConfig::ACTIEKLEUR[ $activiteit ];
 			$html .= <<<EOT
-<div class="kleistad_row" style="background: $kleur">
-	<div class="kleistad_col_3">
+<div class="kleistad-row" style="background: $kleur">
+	<div class="kleistad-col-3">
 		<strong>$activiteit</strong>
 	</div>
 EOT;
@@ -241,10 +239,10 @@ EOT;
 				$gebruikers         = $werkplekgebruik->geef( $dagdeel, $activiteit );
 				$aanwezig           = $werkplekgebruik->is_aanwezig( $dagdeel, $gebruiker_id );
 				$html              .= <<<EOT
-	<div class="kleistad_col_2">
+	<div class="kleistad-col-2">
 		<table style="border:0" >
 			<tr>
-				<th class="kleistad_werkplek_dagdeel">$dagdeel</th>
+				<th class="kleistad-werkplek-dagdeel">$dagdeel</th>
 			</tr>
 EOT;
 				for ( $werkplek = 0; $werkplek < $werkplekken[ $activiteit ]; $werkplek++ ) {
@@ -254,35 +252,31 @@ EOT;
 					if ( isset( $gebruikers[ $werkplek ] ) ) {
 						if ( intval( $gebruikers[ $werkplek ]->ID ) !== $gebruiker_id ) {
 							$html .= <<<EOT
-				<td class="kleistad_werkplek_bezet">
+				<td class="kleistad-werkplek-bezet">
 					{$gebruikers[$werkplek]->display_name}
 				</td>
 EOT;
 							continue;
 						}
-						$veld_id++;
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
-				<td class="kleistad_werkplek_gereserveerd">
-					<label for="werkplek$veld_id" class="kleistad_werkplek_label">{$gebruikers[$werkplek]->display_name}</label>
-					<input type="checkbox" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" id="werkplek$veld_id" class="kleistad_werkplek" checked >
+				<td class="kleistad-werkplek-gereserveerd">
+					<button type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" class="kleistad-werkplek" >{$gebruikers[$werkplek]->display_name}</button>
 				</td>
 EOT;
 						continue;
 					}
 					if ( ! $aanwezig && ! ( $button[ $dagdeel ][ $activiteit ] ?? false ) ) {
-						$veld_id++;
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
-				<td class="kleistad_werkplek_vrij">
-					<label for="werkplek$veld_id" class="kleistad_werkplek_label">reserveren</label>
-					<input type="checkbox" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" id="werkplek$veld_id" class="kleistad_werkplek" >
+				<td class="kleistad-werkplek-vrij">
+					<button type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" class="kleistad-werkplek" >reserveren</button>
 				</td>
 EOT;
 						continue;
 					}
 					$html .= <<<EOT
-				<td class="kleistad_werkplek_vrij">&nbsp;</td>
+				<td class="kleistad-werkplek-vrij">&nbsp;</td>
 EOT;
 				}
 				$html .= <<<EOT

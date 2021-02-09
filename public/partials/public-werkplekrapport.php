@@ -16,28 +16,28 @@ if ( ! isset( $data['rapport'] ) ) :
 
 <form method="GET" action="<?php echo esc_attr( get_permalink() ?: '#' ); ?>">
 
-<div class="kleistad_row">
-	<div class="kleistad_col_3">
-		<label class="kleistad_label" for="kleistad_vanaf_datum" >Vanaf</label>
+<div class="kleistad-row">
+	<div class="kleistad-col-3">
+		<label class="kleistad-label" for="kleistad_vanaf_datum" >Vanaf</label>
 	</div>
-	<div class="kleistad_col_3">
-		<input type="text" name="vanaf_datum" id="kleistad_vanaf_datum" class="kleistad_datum" value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '-2 week' ) ) ); ?>"  readonly="readonly" />
+	<div class="kleistad-col-3">
+		<input type="text" name="vanaf_datum" id="kleistad_vanaf_datum" class="kleistad-datum" value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '-2 week' ) ) ); ?>"  readonly="readonly" />
 	</div>
 </div>
-<div class="kleistad_row" >
-	<div class="kleistad_col_3">
-		<label class="kleistad_label" for="kleistad_tot_datum" >Tot</label>
+<div class="kleistad-row" >
+	<div class="kleistad-col-3">
+		<label class="kleistad-label" for="kleistad_tot_datum" >Tot</label>
 	</div>
-	<div class="kleistad_col_3">
-		<input type="text" name="tot_datum" id="kleistad_tot_datum" class="kleistad_datum" value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
+	<div class="kleistad-col-3">
+		<input type="text" name="tot_datum" id="kleistad_tot_datum" class="kleistad-datum" value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
 	</div>
 </div>
 	<?php if ( 'individueel' === $data['actie'] ) : ?>
-<div class="kleistad_row" >
-	<div class="kleistad_col_3">
-		<label class="kleistad_label" for="kleistad_gebruiker" >Gebruiker</label>
+<div class="kleistad-row" >
+	<div class="kleistad-col-3">
+		<label class="kleistad-label" for="kleistad_gebruiker" >Gebruiker</label>
 	</div>
-	<div class="kleistad_col_3">
+	<div class="kleistad-col-3">
 		<select name="gebruiker_id" >
 		<?php foreach ( $data['gebruikers'] as $gebruiker ) : ?>
 			<option value="<?php echo esc_attr( $gebruiker['ID'] ); ?>" ><?php echo esc_html( $gebruiker['display_name'] ); ?></option>
@@ -46,7 +46,7 @@ if ( ! isset( $data['rapport'] ) ) :
 	</div>
 </div>
 <?php endif ?>
-<div class="kleistad_row" style="padding-top:20px;" >
+<div class="kleistad-row" style="padding-top:20px;" >
 	<button type="submit" >Rapport</button>
 </div>
 </form>
@@ -57,7 +57,7 @@ endif;
 if ( 'individueel' === $data['actie'] ) :
 	?>
 <h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $data['tot_datum'] ) ); ?> door <?php echo esc_html( get_user_by( 'id', $data['gebruiker_id'] )->display_name ); ?></h2>
-<table class="kleistad_datatable display compact" data-order= '[[ 0, "desc" ]]' >
+<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
 <thead>
 		<tr>
 			<th>Datum</th>
@@ -81,13 +81,13 @@ endforeach
 	?>
 	</tbody>
 </table>
-<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
+<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
 	<?php
 	return;
 endif;
 ?>
 <h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $data['tot_datum'] ) ); ?></h2>
-<table class="kleistad_datatable display compact" data-order= '[[ 0, "desc" ]]' >
+<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Datum</th>
@@ -119,4 +119,4 @@ endif;
 	?>
 	</tbody>
 </table>
-<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
+<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>

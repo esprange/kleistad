@@ -16,11 +16,11 @@ if ( false === $stokers_json ) {
 	return;
 }
 ?>
-<h1>Reserveringen voor de <?php echo esc_html( $data['oven']['naam'] ); ?></h1>
+<h2>Reserveringen voor de <?php echo esc_html( $data['oven']['naam'] ); ?></h2>
 <div id="kleistad_geen_ie" style="display:none">
 	<strong>Helaas wordt Internet Explorer niet meer ondersteund voor deze functionaliteit, gebruik bijvoorbeeld Chrome of Edge</strong>
 </div>
-<table id="kleistad_reserveringen" class="kleistad_reserveringen"
+<table id="kleistad_reserveringen" class="kleistad-reserveringen"
 	data-maand="<?php echo esc_attr( date( 'n' ) ); ?>"
 	data-jaar="<?php echo esc_attr( date( 'Y' ) ); ?>"
 	data-oven-naam="<?php echo esc_attr( $data['oven']['naam'] ); ?>"
@@ -31,7 +31,7 @@ if ( false === $stokers_json ) {
 			<th>
 				<button type="button" class="kleistad_periode" value="-1" >eerder</button
 			></th>
-			<th colspan="2" ><strong><span id="kleistad_periode"></span></strong></th>
+			<th colspan="2" style="text-align:center"><strong><span id="kleistad_periode"></span></strong></th>
 			<th style="text-align:right" >
 				<button type="button" class="kleistad_periode" value="1" >later</button>
 			</th>
@@ -56,14 +56,14 @@ if ( false === $stokers_json ) {
 	<input id="kleistad_dag" type="hidden" >
 	<input id="kleistad_maand" type="hidden" >
 	<input id="kleistad_jaar" type="hidden" >
-	<table class="kleistad_form  Reservering_form">
+	<table class="kleistad-form kleistad-reservering-form">
 		<thead>
 		</thead>
 		<tbody>
 		</tbody>
 		<tfoot>
 			<tr>
-				<td><button style="font-size:16px;border-radius:25%;width:40px;text-align:center;padding:0;" id="kleistad_stoker_toevoegen" class="kleistad_button"><span class="genericon genericon-plus"></span></button></td>
+				<td><button style="font-size:16px;border-radius:25%;width:40px;text-align:center;padding:0;" id="kleistad_stoker_toevoegen" class="kleistad_button"><span class="dashicons dashicons-plus"></span></button></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
@@ -72,12 +72,12 @@ if ( false === $stokers_json ) {
 				</th>
 			</tr>
 			<tr>
-				<th>
-					<button type="button" id="kleistad_voegtoe" class="kleistad_button" >Voeg toe</button>
-					<button type="button" id="kleistad_muteer" class="kleistad_button" >Wijzig</button>
-				</th>
-				<th><button type="button" id="kleistad_verwijder" class="kleistad_button" >Verwijder</button></th>
-				<th><button type="button" id="kleistad_sluit" >Sluit</button></th>
+				<td colspan="3">
+					<button type="button" id="kleistad_voegtoe" class="kleistad_button" style="float:left;width:30%;margin-right:5%;">Voeg toe</button>
+					<button type="button" id="kleistad_muteer" class="kleistad_button"  style="float:left;width:30%;margin-right:5%;">Wijzig</button>
+					<button type="button" id="kleistad_verwijder" class="kleistad_button" style="width:30%;margin:0 auto;">Verwijder</button>
+					<button type="button" id="kleistad_sluit" style="float:right;width:30%;margin-left:5%;" >Sluit</button>
+				</td>
 			</tr>
 		</tfoot>
 	</table>

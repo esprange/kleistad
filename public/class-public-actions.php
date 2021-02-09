@@ -79,7 +79,7 @@ class Public_Actions {
 
 		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js', [ 'jquery' ], '1.10.23', false );
 		wp_register_script( 'fullcalendar-core', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.js', [], '5.5.1', false );
-		wp_register_script( 'fullcalendar', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.5/locales-all.min.js', [ 'fullcalendar-core' ], '5.5.1', false );
+		wp_register_script( 'fullcalendar', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.1/locales-all.min.js', [ 'fullcalendar-core' ], '5.5.1', false );
 		wp_register_script( 'jstree', '//cdn.jsdelivr.net/npm/jstree@3.3.11/dist/jstree.min.js', [ 'jquery' ], '3.3.11', false );
 		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", [ 'jquery', 'jquery-ui-dialog' ], $this->version, true );
 		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad' ], $this->version, true );

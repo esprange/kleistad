@@ -78,19 +78,18 @@ class LosArtikel extends Artikel {
 	 * Betalen functie, wordt niet gebruikt.
 	 *
 	 * @param  string $bericht Dummy variable.
-	 * @param  string $referentie De referentie van het artikel.
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
-		$order = new Order( $referentie );
+	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
+		$order = new Order( $this->geef_referentie() );
 		return $this->betalen->order(
 			[
 				'naam'     => $order->klant['naam'],
 				'email'    => $order->klant['email'],
 				'order_id' => $this->code,
 			],
-			$referentie,
+			$this->geef_referentie(),
 			$openstaand ?? $order->te_betalen(),
 			'Kleistad bestelling ' . $this->code,
 			$bericht

@@ -85,7 +85,7 @@ function strtodate( value ) {
 		/**
 		 *  Bij een submit de spinner tonen.
 		 */
-		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+		$( '#kleistad_wachten' ).addClass( 'kleistad-wachten' ).show();
 		$.ajax(
 			{
 				beforeSend: function( xhr ) {
@@ -99,12 +99,12 @@ function strtodate( value ) {
 			}
 		).done(
 			function( data ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				$.fn.vervolg( $shortcode, data );
 			}
 		).fail(
 			function( jqXHR ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 					window.console.log( jqXHR.responseJSON.message );
 				}
@@ -161,24 +161,6 @@ function strtodate( value ) {
 				{
 					autoOpen: false,
 					modal: true
-				}
-			);
-
-			$( '.kleistad_input_cbr' )
-			/**
-			 * Als er geen radio button is ingevoerd dat wordt deze invalid. Toon dan de rode omtrek.
-			 */
-			.on( 'invalid',
-				function() {
-					$( this ).next( '.kleistad_label_cbr' ).css( 'border', '3px solid red' );
-				}
-			)
-			/**
-			 * En verwijder voor alle radiobuttons van die groep zo gauw er één button ingedrukt is.
-			 */
-			.on( 'change',
-				function() {
-					$( '[name=' + $( this ).attr( 'name' ) + ']' ).next( '.kleistad_label_cbr' ).css( 'border', 'none' );
 				}
 			);
 

@@ -148,7 +148,7 @@ class Shortcodes {
 			'reservering'           => (object) [
 				'script' => true,
 				'js'     => [ 'jquery', 'jquery-ui-dialog' ],
-				'css'    => [ 'jquery-ui' ],
+				'css'    => [ 'jquery-ui', 'dashicons' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
 			'saldo_overzicht'       => (object) [
@@ -177,7 +177,7 @@ class Shortcodes {
 			],
 			'werkplek'              => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-dialog', 'jquery-ui-button' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-dialog' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],

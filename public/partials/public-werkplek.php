@@ -41,11 +41,12 @@ $huidige_gebruiker = wp_get_current_user();
 </div>
 
 <h2 id="kleistad_datum_titel"></h2>
-<div class="kleistad_row">
+<div class="kleistad-row">
 	<div style="float:left;margin-bottom:10px">
-		<input type=text name="datum" id="kleistad_datum" class="kleistad_datum" readonly="readonly" >
-		<button type="button" id="kleistad_eerder" ><span class="dashicons dashicons-controls-back"></span></button>
-		<button type="button" id="kleistad_later" ><span class="dashicons dashicons-controls-forward"></span></button>
+		<input type="hidden" name="datum" id="kleistad_datum" class="kleistad-datum" readonly="readonly" >
+		<button type="button" id="kleistad_eerder" style="width:3em" ><span class="dashicons dashicons-controls-back"></span></button>
+		<button type="button" id="kleistad_kalender"  style="width:3em" ><span class="dashicons dashicons-calendar"></span></button>
+		<button type="button" id="kleistad_later" style="width:3em" ><span class="dashicons dashicons-controls-forward"></span></button>
 	</div>
 	<?php if ( current_user_can( BESTUUR ) || current_user_can( DOCENT ) ) : ?>
 	<div style="float:right;" >
@@ -53,7 +54,7 @@ $huidige_gebruiker = wp_get_current_user();
 	</div>
 	<?php endif ?>
 </div>
-<div class="kleistad_row">
+<div class="kleistad-row">
 	<div id="kleistad_werkplek"
 		data-datums='<?php echo esc_attr( wp_json_encode( $data['datums'] ) ?: '[]' ); ?>'
 		data-id="<?php echo esc_attr( $huidige_gebruiker->ID ); ?>" >

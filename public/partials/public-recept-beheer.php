@@ -15,28 +15,28 @@ if ( isset( $data['recept'] ) ) :
 	$this->form();
 	?>
 	<input type="hidden" name="id" value="<?php echo esc_attr( $data['recept']['id'] ); ?>" />
-	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
+	<div class="kleistad-row">
+		<div class="kleistad-col-3 kleistad-label">
 			<label for="kleistad_titel">Recept naam</label>
 		</div>
-		<div class="kleistad_col_7">
-			<input class="kleistad_input" type="text" size="20" name="titel" tabindex="1" required id="kleistad_titel"
+		<div class="kleistad-col-7">
+			<input class="kleistad-input" type="text" size="20" name="titel" tabindex="1" required id="kleistad_titel"
 				value="<?php echo esc_attr( $data['recept']['titel'] ); ?>"/>
 		</div>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
+	<div class="kleistad-row">
+		<div class="kleistad-col-3 kleistad-label">
 			<label for="kleistad_glazuur">Soort glazuur</label>
 		</div>
-		<div class="kleistad_col_3 kleistad_label">
+		<div class="kleistad-col-3 kleistad-label">
 			<label for="kleistad_kleur">Kleur</label>
 		</div>
-		<div class="kleistad_col_3 kleistad_label">
+		<div class="kleistad-col-3 kleistad-label">
 			<label for="kleistad_uiterlijk">Uiterlijk</label>
 		</div>
 	</div>
-	<div class="kleistad_row" style="padding-top:15px">
-		<div class="kleistad_col_3">
+	<div class="kleistad-row" style="padding-top:15px">
+		<div class="kleistad-col-3">
 		<?php
 		wp_dropdown_categories(
 			[
@@ -57,7 +57,7 @@ if ( isset( $data['recept'] ) ) :
 		);
 		?>
 		</div>
-		<div class="kleistad_col_3">
+		<div class="kleistad-col-3">
 		<?php
 		$cat_dropdown = wp_dropdown_categories(
 			[
@@ -78,7 +78,7 @@ if ( isset( $data['recept'] ) ) :
 		);
 		?>
 		</div>
-		<div class="kleistad_col_3">
+		<div class="kleistad-col-3">
 		<?php
 		wp_dropdown_categories(
 			[
@@ -100,45 +100,45 @@ if ( isset( $data['recept'] ) ) :
 		?>
 		</div>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_5 kleistad_label">
+	<div class="kleistad-row">
+		<div class="kleistad-col-5 kleistad-label">
 			<label for="kleistad_kenmerk">Kenmerken</label>
 		</div>
-		<div class="kleistad_col_5 kleistad_label">
+		<div class="kleistad-col-5 kleistad-label">
 			<label for="kleistad_herkomst">Herkomst</label>
 		</div>
 	</div>
-	<div class="kleistad_row" style="padding-top:15px">
-		<div class="kleistad_col_5">
+	<div class="kleistad-row" style="padding-top:15px">
+		<div class="kleistad-col-5">
 			<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" maxlength="1000" rows="5"><?php echo esc_textarea( $data['recept']['content']['kenmerk'] ); ?></textarea>
 		</div>
-		<div class="kleistad_col_5">
+		<div class="kleistad-col-5">
 			<textarea name="herkomst" id="kleistad_herkomst" tabindex="6" maxlength="1000" rows="5"><?php echo esc_textarea( $data['recept']['content']['herkomst'] ); ?></textarea>
 		</div>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_5 kleistad_label">
+	<div class="kleistad-row">
+		<div class="kleistad-col-5 kleistad-label">
 			<label for="kleistad_stookschema">Stookschema</label>
 		</div>
-		<div class="kleistad_col_5 kleistad_label">
+		<div class="kleistad-col-5 kleistad-label">
 			<label for="kleistad_foto_input">Foto (max 2M bytes)</label>
 		</div>
 	</div>
-	<div class="kleistad_row" style="padding-top:15px">
-		<div class="kleistad_col_5">
+	<div class="kleistad-row" style="padding-top:15px">
+		<div class="kleistad-col-5">
 			<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" maxlength="1000" rows="5"><?php echo esc_textarea( $data['recept']['content']['stookschema'] ); ?></textarea>
 		</div>
-		<div class="kleistad_col_5">
+		<div class="kleistad-col-5">
 			<input type="file" name="foto" id="kleistad_foto_input" accept=".jpeg,.jpg,.tiff,.tif" /><br />
 			<img id="kleistad_foto" src="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" alt=" " >
 			<input type="hidden" name="foto_url" value="<?php echo esc_url( $data['recept']['content']['foto'] ); ?>" >
 		</div>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_5">
+	<div class="kleistad-row">
+		<div class="kleistad-col-5">
 			<label>Basis recept</label>
 		</div>
-		<div class="kleistad_col_5">
+		<div class="kleistad-col-5">
 			<label>Toevoegingen</label>
 		</div>
 	</div>
@@ -164,8 +164,8 @@ if ( isset( $data['recept'] ) ) :
 		?>
 		</select>
 	</datalist>
-	<div class="kleistad_row">
-		<div class="kleistad_col_5">
+	<div class="kleistad-row">
+		<div class="kleistad-col-5">
 			<table>
 		<?php
 		$index = 0;
@@ -186,7 +186,7 @@ if ( isset( $data['recept'] ) ) :
 			</tr>
 			</table>
 		</div>
-		<div class="kleistad_col_5">
+		<div class="kleistad-col-5">
 			<table>
 		<?php
 		$index = 0;
@@ -222,13 +222,13 @@ if ( isset( $data['recept'] ) ) :
 	?>
 	<button type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verwijderen" data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" value="verwijderen">Verwijderen</button>
 	<?php endif ?>
-	<button type="button" style="float:right" class="kleistad_terug_link" >Terug</button>
+	<button type="button" style="float:right" class="kleistad-terug-link" >Terug</button>
 </form>
 	<?php
 	else :
 		?>
 		<?php $this->form(); ?>
-	<table class="kleistad_datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
+	<table class="kleistad-datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
 		<thead>
 		<tr>
 			<th data-orderable="false">Glazuur</th>
@@ -251,12 +251,12 @@ if ( isset( $data['recept'] ) ) :
 			<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
 			<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
 			<td>
-				<a href="#" title="wijzig recept" class="kleistad_edit kleistad_edit_link" style="padding:.4em .8em;" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
+				<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" style="padding:.4em .8em;" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
 			</td>
 		</tr>
 		<?php endforeach ?>
 		</tbody>
 	</table>
-	<button type="button" class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+	<button type="button" class="kleistad-edit kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 </form>
 <?php endif ?>

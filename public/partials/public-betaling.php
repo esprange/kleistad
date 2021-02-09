@@ -20,15 +20,15 @@ if ( 'betalen' === $data['actie'] ) :
 	<input type="hidden" name="betaal" value="ideal" />
 	<h2>Overzicht betaling <?php echo esc_html( $data['betreft'] ); ?> </h2>
 
-	<div class="kleistad_row">
-		<div class="kleistad_col_3">
+	<div class="kleistad-row">
+		<div class="kleistad-col-3">
 			<p>Voor</p>
 		</div>
-		<div class="kleistad_col_7">
+		<div class="kleistad-col-7">
 			<p><?php echo esc_html( $data['klant'] ); ?></p>
 		</div>
 	</div>
-	<table class="kleistad_datatable  display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false" >
+	<table class="kleistad-datatable  display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false" >
 		<thead>
 			<tr><th>Aantal</th><th>Omschrijving</th><th>Stuksprijs</th><th>Prijs</th>
 		</thead>
@@ -62,26 +62,26 @@ if ( 'betalen' === $data['actie'] ) :
 		</tfoot>
 	</table>
 	<?php if ( 0 < $data['openstaand'] ) : ?>
-	<div class ="kleistad_row">
-		<div class="kleistad_col_10">
+	<div class ="kleistad-row">
+		<div class="kleistad-col-10">
 			<?php Betalen::issuers(); ?>
 		</div>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_10" style="padding-top: 20px;">
+	<div class="kleistad-row">
+		<div class="kleistad-col-10" style="padding-top: 20px;">
 			<button type="submit" name="kleistad_submit_betaling" id="kleistad_submit">Betalen</button><br />
 		</div>
 	</div>
 	<?php elseif ( 0 > $data['openstaand'] ) : ?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_10" style="padding-top: 20px;">
+	<div class="kleistad-row">
+		<div class="kleistad-col-10" style="padding-top: 20px;">
 			Het nog openstaande bedrag zal zo spoedig mogelijk teruggestort worden
 			<?php echo $this->goto_home(); // phpcs:ignore ?>
 		</div>
 	</div>
 	<?php else : ?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_10" style="padding-top: 20px;">
+	<div class="kleistad-row">
+		<div class="kleistad-col-10" style="padding-top: 20px;">
 			Er is geen verdere actie nodig
 			<?php echo $this->goto_home(); // phpcs:ignore ?>
 		</div>

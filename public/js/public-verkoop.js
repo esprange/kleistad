@@ -21,7 +21,7 @@
 			.on( 'click', '.extra_regel',
 				function() {
 					var $oldRow, $newRow;
-					$oldRow = $( this ).closest( '.kleistad_row' ).prev();
+					$oldRow = $( this ).closest( '.kleistad-row' ).prev();
 					$newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
 					$oldRow.after( $newRow );
 					return false;

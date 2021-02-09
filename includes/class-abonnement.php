@@ -181,7 +181,7 @@ class Abonnement extends Artikel {
 		$this->log( 'gestart met automatisch betalen' );
 		$this->save();
 		$this->artikel_type = 'mandaat';
-		return $this->doe_idealbetaling( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', $this->geef_referentie() );
+		return $this->doe_idealbetaling( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
 	}
 
 	/**
@@ -199,14 +199,13 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Maak de ideal betalingen.
+	 * Maak de ideal betalingen.]
 	 *
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
-	 * @param  string $referentie De referentie van het artikel.
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url of het is fout gegaan.
 	 */
-	public function doe_idealbetaling( string $bericht, string $referentie, float $openstaand = null ) {
+	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
 		switch ( $this->artikel_type ) {
 			case 'start':
 				$vanaf      = strftime( '%d-%m-%Y', $this->start_datum );
@@ -230,7 +229,7 @@ class Abonnement extends Artikel {
 		}
 		return $this->betalen->order(
 			$this->klant_id,
-			$referentie,
+			$this->geef_referentie(),
 			$openstaand ?? $this->geef_bedrag( "#{$this->artikel_type}" ),
 			"Kleistad abonnement {$this->code}$vermelding",
 			$bericht,

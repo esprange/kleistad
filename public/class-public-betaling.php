@@ -106,7 +106,7 @@ class Public_Betaling extends ShortcodeForm {
 	protected function save( $data ) {
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$data['artikel']->artikel_type = $data['input']['artikel_type'];
-			$ideal_uri                     = $data['artikel']->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->referentie, $data['order']->te_betalen() );
+			$ideal_uri                     = $data['artikel']->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->te_betalen() );
 			if ( false === $ideal_uri ) {
 				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}

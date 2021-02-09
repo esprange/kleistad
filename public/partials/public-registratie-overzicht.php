@@ -14,7 +14,7 @@ namespace Kleistad;
 ?>
 
 <div id="kleistad_deelnemer_info">
-	<table class="kleistad_form" id="kleistad_deelnemer_tabel" >
+	<table class="kleistad-form" id="kleistad_deelnemer_tabel" >
 	</table>
 </div>
 <p><label for="kleistad_deelnemer_selectie">Selectie</label>
@@ -31,7 +31,7 @@ namespace Kleistad;
 			?>
 	</select>
 </p>
-<table class="kleistad_datatable display compact nowrap" id="kleistad_deelnemer_lijst">
+<table class="kleistad-datatable display compact nowrap" id="kleistad_deelnemer_lijst">
 	<thead>
 		<tr>
 			<th data-visible="false">Lid</th>
@@ -69,8 +69,8 @@ namespace Kleistad;
 			<?php endforeach ?>
 	</tbody>
 </table>
-<div class="kleistad_row" style="padding-top:20px;" >
-	<button type="button" class="kleistad_download_link" data-actie="cursisten" >Download Cursisten</button>
-	<button type="button" class="kleistad_download_link" data-actie="abonnees" >Download Abonnees</button>
-	<button type="button" class="kleistad_download_link" data-actie="dagdelenkaarten" >Download Dagdelenkaarten</button>
+<div class="kleistad-row" style="padding-top:20px;" >
+	<button type="button" class="kleistad-download-link" data-actie="cursisten" >Download Cursisten</button>
+	<button type="button" class="kleistad-download-link" data-actie="abonnees" >Download Abonnees</button>
+	<button type="button" class="kleistad-download-link" data-actie="dagdelenkaarten" >Download Dagdelenkaarten</button>
 </div>

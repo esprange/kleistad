@@ -35,12 +35,29 @@
 
 	function displayFilters( status ) {
         if ( 'show' === status ) {
-            $( '#kleistad_filters' ).css( { width: '30%', display: 'block' } );
-            $( '#kleistad_recept_overzicht' ).css( { marginLeft: '30%' } );
+            $( '#kleistad_filters' ).css(
+				{
+					width: '30%',
+					display: 'block'
+				}
+			);
+            $( '#kleistad_recept_overzicht' ).css(
+				{
+					marginLeft: '30%'
+				}
+			);
             $( '#kleistad_filter_btn' ).html( '- verberg filters' );
         } else {
-            $( '#kleistad_filters' ).css( { display: 'none' } );
-            $( '#kleistad_recept_overzicht' ).css( { marginLeft: '0%' } );
+            $( '#kleistad_filters' ).css(
+				{
+					display: 'none'
+				}
+			);
+            $( '#kleistad_recept_overzicht' ).css(
+				{
+					marginLeft: '0%'
+				}
+			);
             $( '#kleistad_filter_btn' ).html( '+ filter resultaten' );
         }
     }

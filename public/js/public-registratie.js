@@ -20,25 +20,25 @@
 
 		switch ( strength ) {
 			case 2:
-				$strengthResult.addClass( 'kleistad_pwd_zwak' ).html( 'zwak' );
+				$strengthResult.addClass( 'kleistad-pwd-zwak' ).html( 'zwak' );
 				break;
 			case 3:
-				$strengthResult.addClass( 'kleistad_pwd_goed' ).html( 'goed' );
+				$strengthResult.addClass( 'kleistad-pwd-goed' ).html( 'goed' );
 				if ( '' !== pass2.trim() ) {
 					$submitButton.removeAttr( 'disabled' );
 				}
 				break;
 			case 4:
-				$strengthResult.addClass( 'kleistad_pwd_sterk' ).html( 'sterk' );
+				$strengthResult.addClass( 'kleistad-pwd-sterk' ).html( 'sterk' );
 				if ( '' !== pass2.trim() ) {
 					$submitButton.removeAttr( 'disabled' );
 				}
 				break;
 			case 5:
-				$strengthResult.addClass( 'kleistad_pwd_ongelijk' ).html( 'verschillend' );
+				$strengthResult.addClass( 'kleistad-pwd-ongelijk' ).html( 'verschillend' );
 				break;
 			default:
-				$strengthResult.addClass( 'kleistad_pwd_erg_zwak' ).html( 'zeer zwak' );
+				$strengthResult.addClass( 'kleistad-pwd-erg-zwak' ).html( 'zeer zwak' );
 		}
 	}
 

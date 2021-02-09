@@ -18,7 +18,7 @@ if ( 'details' === $data['actie'] ) :
 <input type="hidden" name="maand" value="<?php echo esc_attr( $select_maand ); ?>">
 <input type="hidden" name="jaar" value="<?php echo esc_attr( $select_jaar ); ?>">
 <p>Omzet in <?php echo esc_html( strftime( '%B %Y', mktime( 0, 0, 0, $select_maand, 1, $select_jaar ) ) ); ?> voor <?php echo esc_html( $data['artikel'] ); ?>.
-<table class="kleistad_datatable display compact nowrap" >
+<table class="kleistad-datatable display compact nowrap" >
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -40,13 +40,13 @@ if ( 'details' === $data['actie'] ) :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
+<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
 <?php else : ?>
-<div class="kleistad_row">
-	<div class="kleistad_col_3">
-		<label class="kleistad_label" for="kleistad_maand" >Maand</label>
+<div class="kleistad-row">
+	<div class="kleistad-col-3">
+		<label class="kleistad-label" for="kleistad_maand" >Maand</label>
 	</div>
-	<div class="kleistad_col_3">
+	<div class="kleistad-col-3">
 		<select name="maand" id="kleistad_maand" >
 			<option value="1" <?php selected( 1, $select_maand ); ?> >januari</option>
 			<option value="2" <?php selected( 2, $select_maand ); ?>>februari</option>
@@ -63,11 +63,11 @@ if ( 'details' === $data['actie'] ) :
 		</select>
 	</div>
 </div>
-<div class="kleistad_row">
-	<div class="kleistad_col_3">
-		<label class="kleistad_label" for="kleistad_jaar" >Jaar</label>
+<div class="kleistad-row">
+	<div class="kleistad-col-3">
+		<label class="kleistad-label" for="kleistad_jaar" >Jaar</label>
 	</div>
-	<div class="kleistad_col_3">
+	<div class="kleistad-col-3">
 		<select name="jaar" id="kleistad_jaar">
 			<?php
 				$huidig_jaar = (int) date( 'Y' );
@@ -79,10 +79,10 @@ if ( 'details' === $data['actie'] ) :
 		</select>
 	</div>
 </div>
-<button type="button" id="kleistad_rapport" class="kleistad_edit_link" style="display:none" data-id="<?php echo esc_attr( "$select_jaar-$select_maand" ); ?>" data-actie="rapport" >Toon omzet</button>
+<button type="button" id="kleistad_rapport" class="kleistad-edit-link" style="display:none" data-id="<?php echo esc_attr( "$select_jaar-$select_maand" ); ?>" data-actie="rapport" >Toon omzet</button>
 <br/><br/>
 <div>
-	<table class="kleistad_datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
+	<table class="kleistad-datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
 		<thead>
 			<tr>
 				<th>Omzet</th>
@@ -107,7 +107,7 @@ if ( 'details' === $data['actie'] ) :
 				<?php
 				if ( $omzet['details'] ) :
 					?>
-					<a href="#" title="details" class="kleistad_view kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+					<a href="#" title="details" class="kleistad-view kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 					data-id="<?php echo esc_attr( $select_jaar . '-' . $select_maand . '-' . $omzet['key'] ); ?>" data-actie="details" >
 					&nbsp;
 				</a><?php endif ?>
@@ -124,6 +124,6 @@ if ( 'details' === $data['actie'] ) :
 		</tr>
 	</tfoot>
 	</table>
-	<button type="button" class="kleistad_download_link" data-actie="omzetrapport" >Omzet rapport</button>
+	<button type="button" class="kleistad-download-link" data-actie="omzetrapport" >Omzet rapport</button>
 </div>
 <?php endif ?>

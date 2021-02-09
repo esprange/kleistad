@@ -13,7 +13,7 @@ namespace Kleistad;
 
 ?>
 <div id="kleistad_abonnees_info">
-	<table class="kleistad_datatable display compact nowrap" data-order='[[ 0, "asc" ]]'>
+	<table class="kleistad-datatable display compact nowrap" data-order='[[ 0, "asc" ]]'>
 		<thead>
 			<tr>
 				<th>Naam</th>
@@ -35,5 +35,5 @@ namespace Kleistad;
 		<?php endforeach ?>
 		</tbody>
 	</table>
-	<button type="button" class="kleistad_download_link" data-actie="abonnementen" >Download</button>
+	<button type="button" class="kleistad-download-link" data-actie="abonnementen" >Download</button>
 </div>

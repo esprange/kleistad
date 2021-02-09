@@ -11,7 +11,7 @@
      * Haal de inhoud van de tabel met reserveringen bij de server op.
      */
     function toonWerkplek( datum, id ) {
-		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+		$( '#kleistad_wachten' ).addClass( 'kleistad-wachten' ).show();
          $.ajax(
             {
                 url: kleistadData.base_url + '/werkplek/',
@@ -26,13 +26,13 @@
             }
         ).done(
             function( data ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				$( '#kleistad_datum_titel' ).text( data.datum);
 				$( '#kleistad_werkplek' ).html( data.content );
             }
         ).fail(
 			function( jqXHR ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 					window.alert( jqXHR.responseJSON.message );
 					return;
@@ -53,7 +53,7 @@
      * @returns {undefined}
      */
     function muteerWerkplek( method, datum, id, dagdeel, activiteit ) {
-		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+		$( '#kleistad_wachten' ).addClass( 'kleistad-wachten' ).show();
         $.ajax(
             {
                 url: kleistadData.base_url + '/werkplek/',
@@ -70,12 +70,12 @@
             }
         ).done(
             function( data ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				$( '#kleistad_werkplek' ).html( data.content );
             }
         ).fail(
 			function( jqXHR ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 					window.alert( jqXHR.responseJSON.message );
 					return;
@@ -94,7 +94,7 @@
      * @returns {undefined}
      */
     function muteerMeester( datum, id, dagdeel ) {
-		$( '#kleistad_wachten' ).addClass( 'kleistad_wachten' ).show();
+		$( '#kleistad_wachten' ).addClass( 'kleistad-wachten' ).show();
         $.ajax(
             {
                 url: kleistadData.base_url + '/meester/',
@@ -110,12 +110,12 @@
             }
         ).done(
             function( data ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
-				$( '.kleistad_meester:checked' ).val( data.id ).prop( 'checked', false ).button( 'option', 'label', data.naam );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
+				$( '.kleistad-meester[data-dagdeel=' + data.dagdeel + ']' ).val( data.id ).text( data.naam );
 			}
         ).fail(
 			function( jqXHR ) {
-				$( '#kleistad_wachten' ).removeClass( 'kleistad_wachten' );
+				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 					window.alert( jqXHR.responseJSON.message );
 					return;
@@ -131,11 +131,6 @@
 	}
 
 	function onLoad() {
-		$( '.kleistad_werkplek, .kleistad_meester' ).button(
-			{
-				icon:false
-			}
-		);
 		$( '#kleistad_datum' ).datepicker( 'option',
 			{
 				beforeShowDay: function( datumTekst ) {
@@ -174,7 +169,7 @@
 						'OK': function() {
 							var datum   = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
 							var id      = $( '#kleistad_meester_selectie' ).val();
-							var dagdeel = $( '.kleistad_meester:checked' ).data( 'dagdeel' );
+							var dagdeel = $( '#kleistad_meester_selectie' ).data( 'dagdeel' );
 							muteerMeester( datum, id, dagdeel );
 							$( this ).dialog( 'close' );
 						}
@@ -190,7 +185,7 @@
 					modal:    true,
 					buttons: {
 						'OK' : function () {
-							var datum    = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
+							var datum    = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum' ).datepicker( 'getDate' ) );
 							gebruiker_id = $( '#kleistad_gebruiker_selectie' ).val();
 							$( '#kleistad_wijzig_gebruiker' ).text( $( '#kleistad_gebruiker_selectie option:selected' ).text() );
 							toonWerkplek( datum, gebruiker_id );
@@ -212,9 +207,11 @@
 			$( '.kleistad_shortcode' )
 			.on( 'change', '#kleistad_datum',
 				function() {
-					var datum   = $.datepicker.formatDate( 'dd-mm-yy', $( '#kleistad_datum').datepicker( 'getDate' ) );
-					datumIndex  = $.inArray( datum, datums );
-					$( '#kleistad_datum' ).datepicker( 'setDate', datums[datumIndex] );
+					var datum  = $.datepicker.formatDate( 'dd-mm-yy', $( this ).datepicker( 'getDate' ) );
+					datumIndex = $.inArray( datum, datums );
+					buttonsActive();
+					$( this ).datepicker( 'setDate', datums[datumIndex] );
+					$( this ).datepicker( 'hide' );
 					toonWerkplek( datum, gebruiker_id );
 				}
 			)
@@ -234,17 +231,23 @@
 					toonWerkplek( datums[datumIndex], gebruiker_id );
 				}
 			)
-			.on( 'change', '.kleistad_werkplek',
+			.on( 'click', '.kleistad-werkplek',
 				function() {
-					var method = this.checked ? 'POST' : 'DELETE';
+					var method = ( 'reserveren' === $( this ).text() ) ? 'POST' : 'DELETE';
 					var datum  = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
 					muteerWerkplek( method, datum, $( this ).val(), $( this ).data( 'dagdeel' ), $( this ).data( 'activiteit' ) );
 				}
 			)
-			.on( 'change', '.kleistad_meester',
+			.on( 'click', '.kleistad-meester',
 				function() {
 					$( '#kleistad_meester_selectie' ).val( $( this ).val() );
+					$( '#kleistad_meester_selectie' ).data( 'dagdeel', $( this ).data( 'dagdeel' ) );
 					$( '#kleistad_meester' ).dialog( 'option', 'title', 'Beheerder voor ' + $( this ).data( 'dagdeel' ).toLowerCase() ).dialog( 'open' );
+				}
+			)
+			.on( 'click', '#kleistad_kalender',
+				function() {
+					$( '#kleistad_datum' ).datepicker( 'show' );
 				}
 			)
 			.on( 'click', '#kleistad_wijzig_gebruiker',

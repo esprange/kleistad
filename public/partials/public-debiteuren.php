@@ -15,7 +15,7 @@ if ( 'blokkade' === $data['actie'] ) :
 	$blok = strtotime( 'today' ) > $data['nieuwe_blokkade'];
 	?>
 	<?php $this->form(); ?>
-	<div class="kleistad_row">
+	<div class="kleistad-row">
 		<p>Alle orders voorafgaand <?php echo esc_html( date( 'd-m-Y', $data['huidige_blokkade'] ) ); ?> zijn nu niet meer te wijzigen.
 		Dat betekent dat er geen correcties of kortingen op deze orders kunnen worden gedaan omdat dit dan invloed heeft op bijvoorbeeld
 		de BTW aangifte (de factuur wordt gewijzigd) of op de jaarrekening. Een order kan natuurlijk wel nog geannuleerd worden.</p>
@@ -26,8 +26,8 @@ if ( 'blokkade' === $data['actie'] ) :
 			<p>Omdat deze datum nog in de toekomst ligt is het nu niet mogelijk om de blokkade datum te wijzigen.</p>
 		<?php endif ?>
 	</div>
-	<div class="kleistad_row" style="padding-top:20px;">
-		<div class="kleistad_col_3">
+	<div class="kleistad-row" style="padding-top:20px;">
+		<div class="kleistad-col-3">
 			<button name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit" value="blokkade"
 				<?php disabled( ! $blok ); ?> data-confirm="Debiteuren|Weet je zeker dat je de blokkade datum wilt wijzigen naar <?php echo esc_attr( date( 'd-m-Y', $data['nieuwe_blokkade'] ) ); ?> ?" >Bevestigen</button>
 		</div>
@@ -37,7 +37,7 @@ if ( 'blokkade' === $data['actie'] ) :
 elseif ( 'debiteur' === $data['actie'] ) :
 	?>
 	<p><?php echo esc_html( ucfirst( $data['debiteur']['betreft'] ) . ', ' . ( ! $data['debiteur']['gesloten'] ? 'openstaand voor ' : 'besteld door ' ) . $data['debiteur']['naam'] ); ?></p>
-	<table class="kleistad_form">
+	<table class="kleistad-form">
 		<tr><th>referentie</th><td><?php echo esc_html( $data['debiteur']['referentie'] . ' geboekt op ' . date( 'd-m-Y', $data['debiteur']['sinds'] ) ); ?></td><th>historie</th></tr>
 		<tr><th>factuur</th><td>
 			<?php foreach ( Factuur::facturen( $data['debiteur']['factuur'] ) as $factuur_url ) : ?>
@@ -57,29 +57,29 @@ elseif ( 'debiteur' === $data['actie'] ) :
 	<input type="hidden" name="id" value="<?php echo esc_attr( $data['debiteur']['id'] ); ?>"/>
 
 	<?php if ( ! ( $data['debiteur']['gesloten'] || $data['debiteur']['terugstorting'] ) ) : ?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_6">
-			<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" class="kleistad_input_cbr" value="bankbetaling" >
-			<label class="kleistad_label_cbr" for="kleistad_deb_bankbetaling">Bankbetaling invoeren</label>
+	<div class="kleistad-row">
+		<div class="kleistad-col-6">
+			<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" value="bankbetaling" >
+			<label for="kleistad_deb_bankbetaling">Bankbetaling invoeren</label>
 		</div>
 	</div>
 	<div class="kleistad_deb_bankbetaling kleistad_deb_veld" style="display:none" >
-		<div class="kleistad_row">
-			<div class="kleistad_col_3" >
+		<div class="kleistad-row">
+			<div class="kleistad-col-3" >
 				&nbsp;
 			</div>
 			<?php if ( 0 < $data['debiteur']['openstaand'] ) : ?>
-				<div class="kleistad_col_4 kleistad_label">
+				<div class="kleistad-col-4 kleistad-label">
 					<label for="kleistad_ontvangst">Ontvangen bedrag</label>
 				</div>
-				<div class="kleistad_col_3" >
+				<div class="kleistad-col-3" >
 					<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $data['debiteur']['ontvangst'] ) ); ?>">
 				</div>
 			<?php else : // Als een credit stand. ?>
-				<div class="kleistad_col_4 kleistad_label">
+				<div class="kleistad-col-4 kleistad-label">
 					<label for="kleistad_terugstorting">Teruggestort bedrag</label>
 				</div>
-				<div class="kleistad_col_3" >
+				<div class="kleistad-col-3" >
 					<input type="number" step="0.01" id="kleistad_terugstorting" name="terugstorting" min="0.00" max="<?php echo esc_attr( - $data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $data['debiteur']['ontvangst'] ) ); ?>">
 				</div>
 			<?php endif ?>
@@ -88,82 +88,82 @@ elseif ( 'debiteur' === $data['actie'] ) :
 	<?php endif // Als nog niet gesloten. ?>
 
 	<?php if ( ! $data['debiteur']['credit'] && $data['debiteur']['annuleerbaar'] ) : ?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_6">
-			<input type="radio" name="debiteur_actie" id="kleistad_deb_annulering" class="kleistad_input_cbr" value="annulering" >
-			<label class="kleistad_label_cbr" for="kleistad_deb_annulering">Annuleren</label>
+	<div class="kleistad-row">
+		<div class="kleistad-col-6">
+			<input type="radio" name="debiteur_actie" id="kleistad_deb_annulering" value="annulering" >
+			<label for="kleistad_deb_annulering">Annuleren</label>
 		</div>
 	</div>
 	<div class="kleistad_deb_annulering kleistad_deb_veld" style="display:none" >
-		<div class="kleistad_row">
-			<div class="kleistad_col_3" >
+		<div class="kleistad-row">
+			<div class="kleistad-col-3" >
 				&nbsp;
 			</div>
-			<div class="kleistad_col_4 kleistad_label">
+			<div class="kleistad-col-4 kleistad-label">
 				<label for="kleistad_restant">Restant te betalen</label>
 			</div>
-			<div class="kleistad_col_3" >
+			<div class="kleistad-col-3" >
 				<input type="number" step="0.01" id="kleistad_restant" name="restant" min="0" value="<?php echo esc_attr( $data['debiteur']['restant'] ); ?>">
 			</div>
 		</div>
-		<div class="kleistad_row">
-			<div class="kleistad_col_3 kleistad_label">
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_opmerking_annulering">Opmerking</label>
 			</div>
-			<div class="kleistad_col_7" >
-				<textarea class="kleistad_input" name="opmerking_annulering" id="kleistad_opmerking_annulering" maxlength="500" rows="5" cols="50"></textarea>
+			<div class="kleistad-col-7" >
+				<textarea class="kleistad-input" name="opmerking_annulering" id="kleistad_opmerking_annulering" maxlength="500" rows="5" cols="50"></textarea>
 			</div>
 		</div>
 	</div>
 	<?php endif // Debet stand. ?>
 
 	<?php if ( $data['debiteur']['afboekbaar'] ) : ?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_6">
-			<input type="radio" name="debiteur_actie" id="kleistad_deb_afboeken" class="kleistad_input_cbr" value="afboeken" >
-			<label class="kleistad_label_cbr" for="kleistad_deb_afboeken">Afboeken (dubieuze debiteur)</label>
+	<div class="kleistad-row">
+		<div class="kleistad-col-6">
+			<input type="radio" name="debiteur_actie" id="kleistad_deb_afboeken" value="afboeken" >
+			<label for="kleistad_deb_afboeken">Afboeken (dubieuze debiteur)</label>
 		</div>
 	</div>
 	<?php endif // Dubieuze debiteur. ?>
 
 	<?php if ( ! ( $data['debiteur']['geblokkeerd'] || $data['debiteur']['credit'] ) ) : ?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_6">
-			<input type="radio" name="debiteur_actie" id="kleistad_deb_korting" class="kleistad_input_cbr" value="korting" >
-			<label class="kleistad_label_cbr" for="kleistad_deb_korting">Korting verstrekken</label>
+	<div class="kleistad-row">
+		<div class="kleistad-col-6">
+			<input type="radio" name="debiteur_actie" id="kleistad_deb_korting" value="korting" >
+			<label for="kleistad_deb_korting">Korting verstrekken</label>
 		</div>
 	</div>
 	<div class="kleistad_deb_korting kleistad_deb_veld" style="display:none" >
-		<div class="kleistad_row">
-			<div class="kleistad_col_3" >
+		<div class="kleistad-row">
+			<div class="kleistad-col-3" >
 				&nbsp;
 			</div>
-			<div class="kleistad_col_4 kleistad_label">
+			<div class="kleistad-col-4 kleistad-label">
 				<label for="kleistad_korting">Korting</label>
 			</div>
-			<div class="kleistad_col_3" >
+			<div class="kleistad-col-3" >
 				<input type="number" step="0.01" id="kleistad_korting" name="korting" min="0" value="<?php echo esc_attr( $data['debiteur']['korting'] ); ?>">
 			</div>
 		</div>
-		<div class="kleistad_row">
-			<div class="kleistad_col_3 kleistad_label">
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_opmerking_korting">Opmerking</label>
 			</div>
-			<div class="kleistad_col_7" >
-				<textarea class="kleistad_input" name="opmerking_korting" id="kleistad_opmerking_korting" maxlength="500" rows="5" cols="50"></textarea>
+			<div class="kleistad-col-7" >
+				<textarea class="kleistad-input" name="opmerking_korting" id="kleistad_opmerking_korting" maxlength="500" rows="5" cols="50"></textarea>
 			</div>
 		</div>
 	</div>
 	<?php endif // Als factuur nog niet geblokkeerd. ?>
 
-	<div class="kleistad_row" style="padding-top:20px;">
-		<div class="kleistad_col_3">
+	<div class="kleistad-row" style="padding-top:20px;">
+		<div class="kleistad-col-3">
 			<button name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit_debiteuren" disabled >Bevestigen</button>
 		</div>
-		<div class="kleistad_col_4">
+		<div class="kleistad-col-4">
 		</div>
-		<div class="kleistad_col_3">
-			<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
+		<div class="kleistad-col-3">
+			<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
 		</div>
 	</div>
 	<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>
@@ -172,21 +172,21 @@ elseif ( 'debiteur' === $data['actie'] ) :
 	else : // Als niet 'debiteur'.
 		if ( 'zoek' === $data['actie'] ) :
 			?>
-<div class="kleistad_row">
-	<div class="kleistad_col_2">
+<div class="kleistad-row">
+	<div class="kleistad-col-2">
 		<label for="kleistad_zoek">Zoek naar</label>
 	</div>
-	<div class="kleistad_col_3">
+	<div class="kleistad-col-3">
 		<input id="kleistad_zoek" name="zoek" type="text" />
 	</div>
 	<div class="kleistad_col3">
-		<button type="button" id="kleistad_zoek_knop" class="kleistad_edit_link" data-id="" data-action="zoek">Zoek</button>
+		<button type="button" id="kleistad_zoek_knop" class="kleistad-edit-link" data-id="" data-action="zoek">Zoek</button>
 	</div>
 </div>
 <br/><hr><br/>
 <?php endif // Als zoek. ?>
 <p><strong>Totaal openstaand:</strong> &euro; <?php echo esc_html( number_format_i18n( $data['openstaand'], 2 ) ); ?></p>
-<table class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 3, "desc" ], [ 5, "asc" ]]' >
+<table class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 3, "desc" ], [ 5, "asc" ]]' >
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -214,7 +214,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 				<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
 				<td data-sort="<?php echo esc_attr( $debiteur['verval_datum'] ); ?>"><?php echo esc_html( date( 'd-m-Y', $debiteur['verval_datum'] ) ); ?></td>
 				<td>
-					<a href="#" title="wijzig order" class="<?php echo 'kleistad_edit'; ?> kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+					<a href="#" title="wijzig order" class="<?php echo 'kleistad-edit'; ?> kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 						data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="<?php echo 'debiteur'; ?>" >
 						&nbsp;
 					</a>

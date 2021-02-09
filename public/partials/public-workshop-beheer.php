@@ -20,7 +20,7 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 	<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $data['workshop']['workshop_id'] ); ?>"/>
 	<input type="hidden" name="aanvraag_id" value="<?php echo esc_attr( $data['workshop']['aanvraag_id'] ); ?>"/>
 	<input type="hidden" name="vervallen" value="<?php echo (int) $data['workshop']['vervallen']; ?>" >
-	<table class="kleistad_form" >
+	<table class="kleistad-form" >
 		<tr>
 			<th>Soort workshop</th>
 			<td colspan="3">
@@ -61,14 +61,14 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		</tr>
 		<tr>
 			<th>Datum</th>
-			<td><input type="text" name="datum" id="kleistad_datum" class="kleistad_datum" required value="<?php echo esc_attr( $data['workshop']['datum'] ); ?>" readonly="readonly" /></td>
+			<td><input type="text" name="datum" id="kleistad-datum" class="kleistad-datum" required value="<?php echo esc_attr( $data['workshop']['datum'] ); ?>" readonly="readonly" /></td>
 			<td colspan="2"></td>
 		</tr>
 		<tr>
 			<th>Begintijd</th>
-			<td><input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['start_tijd'] ); ?>" class="kleistad_tijd" required <?php readonly( $readonly ); ?> /></td>
+			<td><input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['start_tijd'] ); ?>" class="kleistad-tijd" required <?php readonly( $readonly ); ?> /></td>
 			<th>Eindtijd</th>
-			<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['eind_tijd'] ); ?>" class="kleistad_tijd" required <?php readonly( $readonly ); ?> /></td>
+			<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="<?php echo esc_attr( $data['workshop']['eind_tijd'] ); ?>" class="kleistad-tijd" required <?php readonly( $readonly ); ?> /></td>
 		</tr>
 		<tr>
 			<th>Docent</th>
@@ -119,14 +119,14 @@ if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $data['actie']
 		data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $data['actie'] || $data['workshop']['gefactureerd'] ); ?>
 		data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
-	<button type="button" style="float:right;" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="float:right;" class="kleistad-terug-link">Terug</button>
 </form>
 	<?php
 elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 	$this->form();
 	?>
 	<input type="hidden" name="casus_id" value="<?php echo esc_attr( $data['casus']['casus_id'] ); ?>"/>
-	<table class="kleistad_form" >
+	<table class="kleistad-form" >
 		<tr>
 			<th>Soort workshop</th>
 			<td><?php echo esc_html( $data['casus']['naam'] ); ?></td>
@@ -155,20 +155,20 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 		</tr>
 	</table>
 	<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
-	<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
 </form>
 <div>
 	<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>
-	<div class="kleistad_workshop_correspondentie  kleistad_workshop_<?php echo esc_attr( $correspondentie['type'] ); ?>  kleistad_workshop_compact" >
+	<div class="kleistad-workshop-correspondentie  kleistad-workshop-<?php echo esc_attr( $correspondentie['type'] ); ?>  kleistad-workshop-compact" >
 		<strong><?php echo esc_html( ucfirst( $correspondentie['type'] ) . ' van ' . $correspondentie['from'] . ' op ' . $correspondentie['tijd'] ); ?></strong>
 		<p><?php echo esc_html( $correspondentie['subject'] ); ?></p>
 		<?php echo nl2br( $correspondentie['tekst'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		<p style="text-align:center;">
-		<span class="kleistad_workshop_unfold">
-			<a class="kleistad_workshop_unfold" href="#">Uitklappen</a>
+		<span class="kleistad-workshop-unfold">
+			<a class="kleistad-workshop-unfold" href="#">Uitklappen</a>
 		</span>
-		<span class="kleistad_workshop_fold">
-			<a class="kleistad_workshop_fold" href="#">Inklappen</a>
+		<span class="kleistad-workshop-fold">
+			<a class="kleistad-workshop-fold" href="#">Inklappen</a>
 		</span>
 		</p>
 	</div>
@@ -176,7 +176,7 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 </div>
 <?php else : ?>
 <strong>Vraag en Antwoord</strong>
-<table id="kleistad_aanvragen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+<table id="kleistad_aanvragen" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Datum</th>
@@ -195,11 +195,11 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 			<td><?php echo esc_html( $aanvraag['status'] ); ?></td>
 			<td>
 				<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="tonen"
-					title="toon_aanvraag" class="kleistad_edit kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
+					title="toon_aanvraag" class="kleistad-edit kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
 					&nbsp;
 				</a>&nbsp;&nbsp;
 				<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="inplannen"
-					title="plan_workshop" class="kleistad_schedule kleistad_edit_link" style="text-decoration:none !important;color:blue;padding:.4em .8em;" >
+					title="plan_workshop" class="kleistad-schedule kleistad-edit-link" style="text-decoration:none !important;color:blue;padding:.4em .8em;" >
 					&nbsp;
 				</a>
 			</td>
@@ -209,7 +209,7 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 </table>
 <br/>
 <strong>Plannen</strong>
-<table id="kleistad_workshops" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
+<table id="kleistad_workshops" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -236,7 +236,7 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 			<td><?php echo esc_html( $workshop['status'] ); ?></td>
 			<td>
 				<a href="#" data-id="<?php echo esc_attr( $workshop['id'] ); ?>" data-actie="wijzigen"
-					title="wijzig workshop" class="kleistad_edit kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
+					title="wijzig workshop" class="kleistad-edit kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;" >
 					&nbsp;
 				</a>
 			</td>
@@ -244,8 +244,8 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<button type="button" class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
-<button type="button" class="kleistad_download_link" data-actie="workshops" >Download</button>
+<button type="button" class="kleistad-edit kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+<button type="button" class="kleistad-download-link" data-actie="workshops" >Download</button>
 	<?php
 endif;
 ?>

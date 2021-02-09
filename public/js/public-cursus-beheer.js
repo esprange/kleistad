@@ -111,7 +111,7 @@
 				},
 				beforeShow: setLimits(),
 				showOn: 'button',
-				buttonText: 'Lesdatum + / -'
+				buttonText: 'Lesdatum +/-'
 			}
 		);
 	}

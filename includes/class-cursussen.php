@@ -95,4 +95,45 @@ class Cursussen implements Countable, Iterator {
 	public function valid(): bool {
 		return isset( $this->cursussen[ $this->current_index ] );
 	}
+
+	/**
+	 * Actualiseer de cursus vol status van de nieuw of lopende cursussen.
+	 *
+	 * @return array Per cursus de datum waarop er weer een plek vrijgekomen is.
+	 */
+	public function actualiseer_vol() : array {
+		$laatste_wacht = [];
+		$vandaag       = strtotime( 'today' );
+		foreach ( $this->cursussen as $cursus ) {
+			$laatste_wacht[ $cursus->id ] = 0;
+			if ( $vandaag >= $cursus->eind_datum ) {
+				/**
+				 * De cursus is al voltooid. Hier hoeven we niets meer mee te doen.
+				 */
+				continue;
+			}
+			$laatste_wacht[ $cursus->id ] = time();
+			if ( $cursus->ruimte() ) {
+				/**
+				 * Als er nu ruimte is gekomen, pas dan de status aan.
+				 */
+				if ( $cursus->vol ) {
+					delete_transient( "kleistad_wacht_{$cursus->id}" );
+					$cursus->vol = false;
+					$cursus->save();
+					continue;
+				}
+				/**
+				 * Als er als eerder ruimte was dan geven we de eerdere datum door, als die bekend is.
+				 */
+				$datum = get_transient( "kleistad_wacht_{$cursus->id}" );
+				if ( false !== $datum ) {
+					$laatste_wacht[ $cursus->id ] = $datum;
+					continue;
+				}
+			}
+			set_transient( "kleistad_wacht_{$cursus->id}", $laatste_wacht[ $cursus->id ], $cursus->eind_datum - $vandaag );
+		}
+		return $laatste_wacht;
+	}
 }

@@ -13,12 +13,12 @@ namespace Kleistad;
 
 $this->form();
 ?>
-	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
+	<div class="kleistad-row">
+		<div class="kleistad-col-3 kleistad-label">
 			<label for="kleistad_start_datum">Start per</label>
 		</div>
-		<div class="kleistad_col_2 kleistad_input">
-			<input class="kleistad_datum kleistad_input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
+		<div class="kleistad-col-3 kleistad-input">
+			<input class="kleistad-datum kleistad-input" name="start_datum" id="kleistad_start_datum" type="text" required value="<?php echo esc_attr( date( 'd-m-Y' ) ); ?>"  readonly="readonly" />
 		</div>
 	</div>
 	<?php if ( is_user_logged_in() ) : ?>
@@ -28,25 +28,25 @@ $this->form();
 		require plugin_dir_path( dirname( __FILE__ ) ) . '/partials/public-gebruiker.php';
 	endif
 	?>
-	<div class ="kleistad_row">
-		<div class="kleistad_col_10">
-			<input type="radio" name="betaal" id="kleistad_betaal_ideal" class="kleistad_input_cbr" value="ideal" checked />
-			<label class="kleistad_label_cbr" for="kleistad_betaal_ideal">Ik betaal € <?php echo esc_html( ( number_format_i18n( $this->options['dagdelenkaart'], 2 ) ) ); ?></label>
+	<div class ="kleistad-row">
+		<div class="kleistad-col-10">
+			<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" checked />
+			<label for="kleistad_betaal_ideal">Ik betaal € <?php echo esc_html( ( number_format_i18n( $this->options['dagdelenkaart'], 2 ) ) ); ?></label>
 		</div>
 	</div>
-	<div class ="kleistad_row">
-		<div class="kleistad_col_10">
+	<div class ="kleistad-row">
+		<div class="kleistad-col-10">
 			<?php Betalen::issuers(); ?>
 		</div>
 	</div>
-	<div class ="kleistad_row">
-		<div class="kleistad_col_10">
-			<input type="radio" name="betaal" id="kleistad_betaal_stort" class="kleistad_input_cbr" required value="stort" />
-			<label class="kleistad_label_cbr" for="kleistad_betaal_stort">Ik betaal door storting van € <?php echo esc_html( ( number_format_i18n( $this->options['dagdelenkaart'], 2 ) ) ); ?> volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail.</label>
+	<div class ="kleistad-row">
+		<div class="kleistad-col-10">
+			<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" />
+			<label for="kleistad_betaal_stort">Ik betaal door storting van € <?php echo esc_html( ( number_format_i18n( $this->options['dagdelenkaart'], 2 ) ) ); ?> volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail.</label>
 		</div>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_10" style="padding-top: 20px;">
+	<div class="kleistad-row">
+		<div class="kleistad-col-10" style="padding-top: 20px;">
 			<button name="kleistad_submit_dagdelenkaart" id="kleistad_submit" type="submit" <?php disabled( ! is_super_admin() && '' !== $data['verklaring'] ); ?>>Betalen</button><br />
 		</div>
 	</div>

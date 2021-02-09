@@ -252,7 +252,7 @@ class Order {
 	 */
 	public function save() : int {
 		global $wpdb;
-		$this->gesloten = 0.01 >= abs( $this->te_betalen() );
+		$this->gesloten = ( 0 < $this->credit_id ) ?: 0.01 >= abs( $this->te_betalen() );
 		$this->regels   = $this->orderregels->export();
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
 		if ( ! $this->id ) {

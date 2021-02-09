@@ -10,7 +10,7 @@
 				minPauze = $( '#kleistad_pauze_datum' ).data( 'min_pauze' ),
 				maxPauze = $( '#kleistad_pauze_datum' ).data( 'max_pauze' );
 
-			if ( $( '#kleistad_pauze_datum' ).hasClass( 'kleistad_datum' ) ) {
+			if ( $( '#kleistad_pauze_datum' ).hasClass( 'kleistad-datum' ) ) {
 				$( '#kleistad_pauze_datum' ).datepicker( 'option',
 					{
 						minDate: new Date( nuDatum.getFullYear(), nuDatum.getMonth() + 1, 1 ),
@@ -33,7 +33,7 @@
 				);
 			}
 
-			if ( $( '#kleistad_herstart_datum' ).hasClass( 'kleistad_datum' ) ) {
+			if ( $( '#kleistad_herstart_datum' ).hasClass( 'kleistad-datum' ) ) {
 				$( '#kleistad_herstart_datum' ).datepicker( 'option',
 					{
 						minDate: new Date( strtodate( $( '#kleistad_pauze_datum' ).val() ).getTime() + minPauze * dag ),

@@ -58,20 +58,20 @@
 			/**
 			 * Klap het veld uit.
 			 */
-			.on( 'click', 'a.kleistad_workshop_unfold',
+			.on( 'click', 'a.kleistad-workshop-unfold',
 				function() {
-					$( this ).closest( '.kleistad_workshop_correspondentie' ).toggleClass( 'kleistad_workshop_compact' );
-					$( this ).hide().closest( '.kleistad_workshop_correspondentie' ).find( 'a.kleistad_workshop_fold' ).show();
+					$( this ).closest( '.kleistad-workshop-correspondentie' ).toggleClass( 'kleistad-workshop-compact' );
+					$( this ).hide().closest( '.kleistad-workshop-correspondentie' ).find( 'a.kleistad-workshop-fold' ).show();
 					return false;
 				}
 			)
 			/**
 			 * Klap het veld in.
 			 */
-			.on( 'click', 'a.kleistad_workshop_fold',
+			.on( 'click', 'a.kleistad-workshop-fold',
 				function() {
-					$( this ).closest( '.kleistad_workshop_correspondentie' ).toggleClass( 'kleistad_workshop_compact' );
-					$( this ).hide().closest( '.kleistad_workshop_correspondentie' ).find( 'a.kleistad_workshop_unfold' ).show();
+					$( this ).closest( '.kleistad-workshop-correspondentie' ).toggleClass( 'kleistad-workshop-compact' );
+					$( this ).hide().closest( '.kleistad-workshop-correspondentie' ).find( 'a.kleistad-workshop-unfold' ).show();
 					return false;
 				}
 			);

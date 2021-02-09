@@ -12,7 +12,7 @@
 namespace Kleistad;
 
 ?>
-<table class="kleistad_datatable display compact" data-order= '[[ 0, "asc" ]]'>
+<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]'>
 	<thead>
 		<tr>
 			<th>Naam</th>

@@ -67,11 +67,10 @@ abstract class Artikel {
 	 * Betaal het artikel per ideal.
 	 *
 	 * @param  string $bericht    Het bericht na succesvolle betaling.
-	 * @param  string $referentie De referentie van het artikel.
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect uri of het is fout gegaan.
 	 */
-	abstract public function doe_idealbetaling( string $bericht, string $referentie, float $openstaand = null );
+	abstract public function doe_idealbetaling( string $bericht, float $openstaand = null );
 
 	/**
 	 * Aanroep vanuit betaling per ideal of sepa incasso.
@@ -145,7 +144,6 @@ abstract class Artikel {
 		$credit_order->transactie_id = $order->transactie_id;
 		$order->credit_id            = $credit_order->save();
 		$order->betaald              = 0;
-		$order->gesloten             = true;
 		$order->historie             = 'geannuleerd, credit factuur ' . $credit_order->factuurnummer() . ' aangemaakt';
 		$order->save();
 		$this->maak_link( $order->credit_id );
@@ -310,6 +308,7 @@ abstract class Artikel {
 	 * @since 6.1.0
 	 *
 	 * @param float $bedrag Het ontvangen bedrag.
+	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	protected function betaalactie( float $bedrag ) {
 	}

@@ -131,14 +131,13 @@ class Saldo extends Artikel {
 	 * @since      4.2.0
 	 *
 	 * @param  string $bericht Het bericht bij succesvolle betaling.
-	 * @param  string $referentie De referentie van het artikel.
 	 * @param  float  $openstaand Het bedrag dat openstaat.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function doe_idealbetaling( $bericht, $referentie, $openstaand = null ) {
+	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
 		return $this->betalen->order(
 			$this->klant_id,
-			$referentie,
+			$this->geef_referentie(),
 			$openstaand ?? $this->prijs,
 			'Kleistad stooksaldo ' . $this->code,
 			$bericht
@@ -209,13 +208,15 @@ class Saldo extends Artikel {
 	public function save() {
 		$saldo        = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$huidig_saldo = $saldo ? (float) $saldo['bedrag'] : 0.0;
-		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) && $huidig_saldo !== $this->bedrag ) {
-			$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
-			file_put_contents(  // phpcs:ignore
-				wp_upload_dir()['basedir'] . '/stooksaldo.log',
-				date( 'c' ) . " : $tekst\n",
-				FILE_APPEND
-			);
+		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) ) {
+			if ( $huidig_saldo !== $this->bedrag ) {
+				$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
+				file_put_contents(  // phpcs:ignore
+					wp_upload_dir()['basedir'] . '/stooksaldo.log',
+					date( 'c' ) . " : $tekst\n",
+					FILE_APPEND
+				);
+			}
 			return true;
 		}
 		return false;

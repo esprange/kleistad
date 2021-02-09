@@ -17,7 +17,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	?>
 	<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $data['cursus']['id'] ); ?>"/>
 	<input type="hidden" name="lesdatums" id="kleistad_lesdatums" value="<?php echo esc_attr( $data['cursus']['lesdatums'] ); ?>" >
-	<table class="kleistad_form" >
+	<table class="kleistad-form" >
 	<?php if ( ! empty( $data['cursus']['code'] ) ) : ?>
 		<tr><th>Cursuscode</th><td colspan="3"><?php echo esc_html( $data['cursus']['code'] ); ?></td></tr>
 	<?php endif ?>
@@ -52,16 +52,16 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		<tr>
 			<th>Start</th>
 			<td>
-				<input type="text" name="start_datum" id="kleistad_start_datum" class="kleistad_datum" required
+				<input type="text" name="start_datum" id="kleistad_start_datum" class="kleistad-datum" required
 					value="<?php echo esc_attr( date( 'd-m-Y', $data['cursus']['start_datum'] ) ); ?>"
 					readonly="readonly" <?php disabled( $readonly ); ?> />
 			</td>
-			<th colspan="2"><div style="float:right"><input type="hidden" id="kleistad_lesdatum" class="kleistad_datum" <?php disabled( $readonly ); ?> /></div></th>
+			<th colspan="2"><div style="float:right"><input type="hidden" id="kleistad_lesdatum" class="kleistad-datum" <?php disabled( $readonly ); ?> /></div></th>
 		</tr>
 		<tr>
 			<th>Eind</th>
 			<td>
-				<input type="text" name="eind_datum" id="kleistad_eind_datum" class="kleistad_datum" required
+				<input type="text" name="eind_datum" id="kleistad_eind_datum" class="kleistad-datum" required
 					value="<?php echo esc_attr( date( 'd-m-Y', $data['cursus']['eind_datum'] ) ); ?>"
 					readonly="readonly" <?php disabled( $readonly ); ?> />
 			</td>
@@ -73,13 +73,13 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 		<tr>
 			<th>Begintijd</th>
 			<td>
-				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" class="kleistad_tijd"
+				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" class="kleistad-tijd"
 					value="<?php echo esc_attr( date( 'H:i', $data['cursus']['start_tijd'] ) ); ?>" <?php readonly( $readonly ); ?> />
 			</td>
 		</tr>
 		<tr>
 			<th>Eindtijd</th>
-			<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" class="kleistad_tijd"
+			<td><input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" class="kleistad-tijd"
 					value="<?php echo esc_attr( date( 'H:i', $data['cursus']['eind_tijd'] ) ); ?>" <?php readonly( $readonly ); ?> />
 			</td>
 		</tr>
@@ -123,10 +123,10 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	</table>
 	<button type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $readonly ); ?> >Opslaan</button>
 	<button type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $data['actie'] ); ?> >Verwijderen</button>
-	<button type="button" style="float:right" class="kleistad_terug_link">Terug</button>
+	<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
 </form>
 <?php else : ?>
-<table id="kleistad_cursussen" class="kleistad_datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+<table id="kleistad_cursussen" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 	<thead>
 		<tr>
 			<th>Code</th>
@@ -150,7 +150,7 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 				<td><?php echo esc_html( $cursus['start_tijd'] ); ?><br/><?php echo esc_html( $cursus['eind_tijd'] ); ?></td>
 				<td><?php echo esc_html( $cursus['status'] ); ?></td>
 				<td>
-					<a href="#" title="wijzig cursus" class="kleistad_edit kleistad_edit_link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+					<a href="#" title="wijzig cursus" class="kleistad-edit kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
 						data-id="<?php echo esc_attr( $cursus['id'] ); ?>" data-actie="wijzigen" >
 						&nbsp;
 					</a>
@@ -159,5 +159,5 @@ if ( false !== strpos( 'toevoegen, wijzigen', (string) $data['actie'] ) ) :
 	<?php endforeach ?>
 	</tbody>
 </table>
-<button type="button" class="kleistad_edit kleistad_edit_link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+<button type="button" class="kleistad-edit kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 <?php endif ?>

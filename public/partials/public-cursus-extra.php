@@ -24,32 +24,32 @@ foreach ( $data['input']['extra'] as $index => $extra_cursist ) :
 	?>
 <h2>Medecursist <?php echo esc_html( $index ); ?></h2>
 <div class="medecursist">
-	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
+	<div class="kleistad-row">
+		<div class="kleistad-col-3 kleistad-label">
 			<label for="kleistad_voornaam">Voornaam</label>
 		</div>
-		<div class="kleistad_col_4">
-			<input class="kleistad_input" name="extra_cursist[<?php echo esc_attr( $index ); ?>][first_name]" id="kleistad_voornaam" type="text"
+		<div class="kleistad-col-4">
+			<input class="kleistad-input" name="extra_cursist[<?php echo esc_attr( $index ); ?>][first_name]" id="kleistad_voornaam" type="text"
 			maxlength="25" placeholder="voornaam" title="Vul s.v.p. de voornaam in"
 			value="<?php echo esc_attr( $extra_cursist['first_name'] ); ?>" <?php echo esc_attr( $readonly ); ?> autocomplete="off" />
 		</div>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
+	<div class="kleistad-row">
+		<div class="kleistad-col-3 kleistad-label">
 			<label for="kleistad_achternaam">Achternaam</label>
 		</div>
-		<div class="kleistad_col_4">
-			<input class="kleistad_input" name="extra_cursist[<?php echo esc_attr( $index ); ?>][last_name]" id="kleistad_achternaam" type="text"
+		<div class="kleistad-col-4">
+			<input class="kleistad-input" name="extra_cursist[<?php echo esc_attr( $index ); ?>][last_name]" id="kleistad_achternaam" type="text"
 			maxlength="25" placeholder="achternaam" title="Vul s.v.p. de achternaam in"
 			value="<?php echo esc_attr( $extra_cursist['last_name'] ); ?>" <?php echo esc_attr( $readonly ); ?> autocomplete="off" />
 		</div>
 	</div>
-	<div class="kleistad_row">
-		<div class="kleistad_col_3 kleistad_label">
+	<div class="kleistad-row">
+		<div class="kleistad-col-3 kleistad-label">
 			<label for="kleistad_emailadres">Email adres</label>
 		</div>
-		<div class="kleistad_col_4">
-			<input class="kleistad_input" name="extra_cursist[<?php echo esc_attr( $index ); ?>][user_email]" id="kleistad_emailadres" type="email"
+		<div class="kleistad-col-4">
+			<input class="kleistad-input" name="extra_cursist[<?php echo esc_attr( $index ); ?>][user_email]" id="kleistad_emailadres" type="email"
 			placeholder="mijnemailadres@voorbeeld.nl" pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$"
 			title="Vul s.v.p. een geldig email adres in"
 			value="<?php echo esc_attr( $extra_cursist['user_email'] ); ?>" <?php echo esc_attr( $readonly ); ?> autocomplete="off" />
@@ -58,8 +58,8 @@ foreach ( $data['input']['extra'] as $index => $extra_cursist ) :
 	</div>
 </div>	
 <?php endforeach ?>
-<div class="kleistad_row" style="padding-top:20px;">
-	<div class="kleistad_col_10">
+<div class="kleistad-row" style="padding-top:20px;">
+	<div class="kleistad-col-10">
 		<button name="kleistad_submit_cursus_extra" id="kleistad_submit" type="submit" >Opslaan</button>
 	</div>
 </div>

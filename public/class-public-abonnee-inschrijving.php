@@ -157,7 +157,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		);
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $abonnement->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $abonnement->geef_referentie() );
+			$ideal_uri = $abonnement->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
 			if ( false === $ideal_uri ) {
 				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}
