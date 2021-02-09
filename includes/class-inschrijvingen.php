@@ -38,9 +38,9 @@ class Inschrijvingen implements Countable, Iterator {
 	/**
 	 * De constructor
 	 *
-	 * @param int $cursus_id De cursus id.
+	 * @param int $select_cursus_id De cursus id.
 	 */
-	public function __construct( int $cursus_id = null ) {
+	public function __construct( int $select_cursus_id = null ) {
 		$cursisten = get_users(
 			[
 				'fields'       => [ 'ID' ],
@@ -51,11 +51,11 @@ class Inschrijvingen implements Countable, Iterator {
 		);
 		foreach ( $cursisten as $cursist ) {
 			$inschrijvingen = (array) get_user_meta( $cursist->ID, Inschrijving::META_KEY, true );
-			if ( ! is_null( $cursus_id ) ) {
-				if ( ! isset( $inschrijvingen[ $cursus_id ] ) ) {
+			if ( ! is_null( $select_cursus_id ) ) {
+				if ( ! isset( $inschrijvingen[ $select_cursus_id ] ) ) {
 					continue;
 				}
-				$this->inschrijvingen[] = new Inschrijving( $cursus_id, $cursist->ID );
+				$this->inschrijvingen[] = new Inschrijving( $select_cursus_id, $cursist->ID );
 				continue;
 			}
 			foreach ( array_keys( $inschrijvingen ) as $cursus_id ) {

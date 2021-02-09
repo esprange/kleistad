@@ -210,7 +210,7 @@ class Saldo extends Artikel {
 		$saldo        = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$huidig_saldo = $saldo ? (float) $saldo['bedrag'] : 0.0;
 		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) && $huidig_saldo !== $this->bedrag ) {
-			$tekst = get_userdata( $this->klant_id )->display_name . ' nu: € ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: € ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
+			$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
 			file_put_contents(  // phpcs:ignore
 				wp_upload_dir()['basedir'] . '/stooksaldo.log',
 				date( 'c' ) . " : $tekst\n",
