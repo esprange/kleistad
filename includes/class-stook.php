@@ -229,7 +229,7 @@ class Stook {
 		}
 		if ( ! $this->verwerkt ) {
 			if ( get_current_user_id() === $this->stookdelen[0]->medestoker || current_user_can( OVERRIDE ) ) {
-				if ( $this->datum >= strtotime( 'tomorrow' ) ) {
+				if ( $this->datum >= strtotime( 'today' ) ) {
 					return self::VERWIJDERBAAR;
 				}
 				return self::WIJZIGBAAR;
