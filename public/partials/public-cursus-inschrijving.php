@@ -11,7 +11,7 @@
 
 namespace Kleistad;
 
-if ( 'indelen_na_wacht' === $data['actie'] ) :
+if ( 'indelen_na_wachten' === $data['actie'] ) :
 	$this->form();
 	?>
 	<h2><?php echo esc_html( $data['cursist_naam'] ); ?></h2>
@@ -37,7 +37,7 @@ if ( 'indelen_na_wacht' === $data['actie'] ) :
 	return;
 endif;
 
-if ( 'uitschrijven' === $data['actie'] ) :
+if ( 'stop_wachten' === $data['actie'] ) :
 	$this->form();
 	?>
 	<h2><?php echo esc_html( $data['cursist_naam'] ); ?></h2>
