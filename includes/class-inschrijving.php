@@ -229,7 +229,8 @@ class Inschrijving extends Artikel {
 			$this->geef_referentie(),
 			$openstaand ?? $this->aantal * $this->cursus->bedrag(),
 			"Kleistad cursus {$this->code} {$vermelding}kosten voor $deelnemers",
-			$bericht
+			$bericht,
+			false
 		);
 	}
 
@@ -571,8 +572,8 @@ class Inschrijving extends Artikel {
 			 * Laatste wachtdatum is de datum er ruimte is ontstaan. Als gisteren de ruimte ontstond is de datum dus nu.
 			 * Iedereen die vooraf 'nu' wacht krijgt de email en die wacht op vervolg als er iets vrijkomt na morgen 0:00.
 			 */
-			if ( ! $inschrijving->ingedeeld && $inschrijving->wacht_datum && $vandaag < $inschrijving->cursus->start_datum ) {
-				if ( $inschrijving->wacht_datum < $laatste_wacht[ $inschrijving->cursus->id ] ) {
+			if ( ! $inschrijving->ingedeeld ) {
+				if ( $inschrijving->wacht_datum && $vandaag < $inschrijving->cursus->start_datum && $inschrijving->wacht_datum < $laatste_wacht[ $inschrijving->cursus->id ] ) {
 					$inschrijving->wacht_datum = strtotime( 'tomorrow' );
 					$inschrijving->maak_wachtlijst_link();
 					$inschrijving->save();

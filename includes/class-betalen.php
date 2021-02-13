@@ -88,8 +88,9 @@ class Betalen {
 	 * @param string    $bericht      het bericht bij succesvolle betaling.
 	 * @param bool      $mandateren   er wordt een herhaalde betaling voorbereid.
 	 * @return bool|string De redirect bestemming of false.
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function order( $klant, $order_id, $bedrag, $beschrijving, $bericht, $mandateren = false ) {
+	public function order( $klant, $order_id, $bedrag, $beschrijving, $bericht, $mandateren ) {
 		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
 		try {

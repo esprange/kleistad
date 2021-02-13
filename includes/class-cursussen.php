@@ -106,6 +106,7 @@ class Cursussen implements Countable, Iterator {
 		$vandaag       = strtotime( 'today' );
 		foreach ( $this->cursussen as $cursus ) {
 			$laatste_wacht[ $cursus->id ] = 0;
+			$transient                    = "kleistad_wacht_{$cursus->id}";
 			if ( $vandaag >= $cursus->eind_datum ) {
 				/**
 				 * De cursus is al voltooid. Hier hoeven we niets meer mee te doen.
@@ -118,7 +119,7 @@ class Cursussen implements Countable, Iterator {
 				 * Als er nu ruimte is gekomen, pas dan de status aan.
 				 */
 				if ( $cursus->vol ) {
-					delete_transient( "kleistad_wacht_{$cursus->id}" );
+					delete_transient( $transient );
 					$cursus->vol = false;
 					$cursus->save();
 					continue;
@@ -126,13 +127,13 @@ class Cursussen implements Countable, Iterator {
 				/**
 				 * Als er als eerder ruimte was dan geven we de eerdere datum door, als die bekend is.
 				 */
-				$datum = get_transient( "kleistad_wacht_{$cursus->id}" );
+				$datum = get_transient( $transient );
 				if ( false !== $datum ) {
 					$laatste_wacht[ $cursus->id ] = $datum;
 					continue;
 				}
 			}
-			set_transient( "kleistad_wacht_{$cursus->id}", $laatste_wacht[ $cursus->id ], $cursus->eind_datum - $vandaag );
+			set_transient( $transient, $laatste_wacht[ $cursus->id ], $cursus->eind_datum - $vandaag );
 		}
 		return $laatste_wacht;
 	}

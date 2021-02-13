@@ -159,18 +159,15 @@ elseif ( false !== strpos( 'tonen', (string) $data['actie'] ) ) :
 </form>
 <div>
 	<?php foreach ( $data['casus']['correspondentie'] as $correspondentie ) : ?>
-	<div class="kleistad-workshop-correspondentie  kleistad-workshop-<?php echo esc_attr( $correspondentie['type'] ); ?>  kleistad-workshop-compact" >
+	<div class="kleistad-workshop-correspondentie kleistad-workshop-correspondentie-folded kleistad-workshop-<?php echo esc_attr( $correspondentie['type'] ); ?>" >
 		<strong><?php echo esc_html( ucfirst( $correspondentie['type'] ) . ' van ' . $correspondentie['from'] . ' op ' . $correspondentie['tijd'] ); ?></strong>
 		<p><?php echo esc_html( $correspondentie['subject'] ); ?></p>
 		<?php echo nl2br( $correspondentie['tekst'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		<p style="text-align:center;">
-		<span class="kleistad-workshop-unfold">
-			<a class="kleistad-workshop-unfold" href="#">Uitklappen</a>
-		</span>
-		<span class="kleistad-workshop-fold">
-			<a class="kleistad-workshop-fold" href="#">Inklappen</a>
-		</span>
-		</p>
+		<br/>
+	</div>
+	<div style="text-align:center;">
+		<button class="kleistad-workshop-unfold" >Uitklappen</button>
+		<button class="kleistad-workshop-fold" style="display:none;" >Inklappen</button>
 	</div>
 <?php endforeach ?>
 </div>

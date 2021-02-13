@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.6  
-**Stable tag:** 6.13.0  
+**Stable tag:** 6.14.0  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 **Requires at least PHP version:** 7.4  
@@ -36,6 +36,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.14.0 ###
+* Geen functionele aanpassingen, wel styling verbeteren als voorbereiding op nieuw Kleistad thema
+* Aantal bugfixes
 ### 6.12.5 ###
 * Werkplekrapport toegevoegd voor de rapportages
 * refactoring

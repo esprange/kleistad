@@ -140,7 +140,8 @@ class Saldo extends Artikel {
 			$this->geef_referentie(),
 			$openstaand ?? $this->prijs,
 			'Kleistad stooksaldo ' . $this->code,
-			$bericht
+			$bericht,
+			false
 		);
 	}
 

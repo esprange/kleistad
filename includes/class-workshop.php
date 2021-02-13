@@ -206,7 +206,8 @@ class Workshop extends Artikel {
 			$this->geef_referentie(),
 			$openstaand ?? $this->kosten,
 			'Kleistad workshop ' . $this->code . ' op ' . strftime( '%d-%m-%Y', $this->datum ),
-			$bericht
+			$bericht,
+			false
 		);
 	}
 

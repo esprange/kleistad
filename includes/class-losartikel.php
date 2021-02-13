@@ -92,7 +92,8 @@ class LosArtikel extends Artikel {
 			$this->geef_referentie(),
 			$openstaand ?? $order->te_betalen(),
 			'Kleistad bestelling ' . $this->code,
-			$bericht
+			$bericht,
+			false
 		);
 	}
 

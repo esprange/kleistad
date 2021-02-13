@@ -42,57 +42,18 @@ a.jstree-anchor {
 	cursor: pointer;
 }
 
-div.kleistad-workshop-compact {
-	height: 10em;
-	overflow: hidden;
-}
-
-div.kleistad-workshop-compact::after {
-	background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 10%, rgba(255, 255, 255, 0) 90%);
-	bottom: 0;
-	content: "";
-	height: 100%;
-	left: 0;
-	pointer-events: none;
-	position: absolute;
-	width: 100%;
-}
-
 div.kleistad-workshop-correspondentie {
 	border: 1px solid gray;
 	color: black;
 	font-size: small;
 	margin: 5px;
 	padding: 5px;
-	position: relative;
 }
 
-span.kleistad-workshop-unfold {
-	bottom: 0;
-	left: 0;
-	margin: 0;
-	padding: 10px 0;
-	position: absolute;
-	width: 100%;
-	z-index: 99;
-}
-
-span.kleistad-workshop-fold {
-	margin: 0;
-	padding: 10px 0;
-	width: 100%;
-}
-
-a.kleistad-workshop-unfold,
-a.kleistad-workshop-fold {
-	background-color: gray;
-	border: 5px solid gray;
-	color: white;
-	text-decoration: none;
-}
-
-a.kleistad-workshop-fold {
-	display: none;
+div.kleistad-workshop-correspondentie-folded {
+	background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 10%, rgba(255, 255, 255, 0) 90%);
+	height: 10em;
+	overflow-y: hidden;
 }
 
 div.kleistad-workshop-aanvraag {
@@ -496,6 +457,7 @@ div.kleistad-werkplek-dagdeel {
 		position: relative;
 		transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
 		vertical-align: top;
+		width: 21px;
 	}
 
 	input[type="checkbox"]::after,
@@ -506,10 +468,15 @@ div.kleistad-werkplek-dagdeel {
 		position: absolute;
 		top: 0;
 		transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+		opacity: var(--o, 0);
 	}
 
 	input[type="radio"] {
 		border-radius: 50%;
+	}
+
+	input[type="checkbox"] {
+		border-radius: 7px;
 	}
 
 	input[type="checkbox"]:checked,
@@ -519,6 +486,7 @@ div.kleistad-werkplek-dagdeel {
 		--d-o: 0.3s;
 		--d-t: 0.6s;
 		--d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
+		--o: 1;
 	}
 
 	input[type="checkbox"]:disabled,
@@ -533,11 +501,6 @@ div.kleistad-werkplek-dagdeel {
 		box-shadow: 0 0 0 var(--focus);
 	}
 
-	input[type="checkbox"]:not(.switch),
-	input[type="radio"]:not(.switch) {
-		width: 21px;
-	}
-
 	input[type="checkbox"] + label,
 	input[type="radio"] + label {
 		cursor: pointer;
@@ -546,10 +509,6 @@ div.kleistad-werkplek-dagdeel {
 		line-height: 21px;
 		margin-left: 4px;
 		vertical-align: top;
-	}
-
-	input[type="checkbox"]:not(.switch) {
-		border-radius: 7px;
 	}
 
 	input[type="radio"]:checked {
@@ -571,63 +530,25 @@ div.kleistad-werkplek-dagdeel {
 		background: var(--active-inner);
 		border-radius: 50%;
 		height: 19px;
-		opacity: 0;
+		opacity: 1;
 		transform: scale(var(--s, 0.7));
 		width: 19px;
 	}
 
-	input[type="checkbox"]:not(.switch)::after,
-	input[type="radio"]:not(.switch)::after {
-		opacity: var(--o, 0);
-	}
-
-	input[type="checkbox"]:not(.switch):checked,
-	input[type="radio"]:not(.switch):checked {
-		--o: 1;
-	}
-
-	input[type="checkbox"]:not(.switch):checked {
-		--r: 43deg;
-	}
-
-	input[type="checkbox"]:hover:not(:checked):not(:disabled),
-	input[type="radio"]:hover:not(:checked):not(:disabled) {
-		--bc: var(--border-hover);
-	}
-
-	input[type="checkbox"]:not(.switch)::after {
+	input[type="checkbox"]::after {
 		border: 2px solid var(--active-inner);
 		border-left: 0;
 		border-top: 0;
 		height: 9px;
 		left: 7px;
 		top: 4px;
-		transform: rotate(var(--r, 20deg));
+		transform: rotate(43deg);
 		width: 5px;
 	}
 
-	input[type="checkbox"].switch {
-		border-radius: 11px;
-		width: 38px;
-	}
-
-	input[type="checkbox"].switch::after {
-		background: var(--ab, var(--border));
-		border-radius: 50%;
-		height: 15px;
-		left: 2px;
-		top: 2px;
-		transform: translateX(var(--x, 0));
-		width: 15px;
-	}
-
-	input[type="checkbox"].switch:checked {
-		--ab: var(--active-inner);
-		--x: 17px;
-	}
-
-	input[type="checkbox"].switch:disabled:not(:checked)::after {
-		opacity: 0.6;
+	input[type="checkbox"]:hover:not(:checked):not(:disabled),
+	input[type="radio"]:hover:not(:checked):not(:disabled) {
+		--bc: var(--border-hover);
 	}
 
 	button {
