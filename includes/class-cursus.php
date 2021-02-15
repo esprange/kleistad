@@ -175,12 +175,11 @@ class Cursus {
 	 */
 	public function ruimte() {
 		$aantal = $this->maximum;
-		if ( is_null( $this->id ) ) {
-			return $aantal;
-		}
-		foreach ( new Inschrijvingen( $this->id ) as $inschrijving ) {
-			if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
-				$aantal = $aantal - $inschrijving->aantal;
+		if ( 0 < $this->id ) {
+			foreach ( new Inschrijvingen( $this->id ) as $inschrijving ) {
+				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
+					$aantal -= $inschrijving->aantal;
+				}
 			}
 		}
 		return max( $aantal, 0 );
