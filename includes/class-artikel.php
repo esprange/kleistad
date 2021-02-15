@@ -146,7 +146,7 @@ abstract class Artikel {
 				'order' => $order->credit_id,
 				'art'   => $this->artikel_type,
 			],
-			'betaal'
+			'betaling'
 		);
 		$this->betaalactie( $credit_order->betaald );
 		return $this->maak_factuur( $credit_order, 'credit' );
@@ -179,7 +179,7 @@ abstract class Artikel {
 				'order' => $order->id,
 				'art'   => $this->artikel_type,
 			],
-			'betaal'
+			'betaling'
 		);
 		$this->betaalactie( $order->betaald );
 		return $factuur ? $this->maak_factuur( $order, '' ) : '';
@@ -207,7 +207,7 @@ abstract class Artikel {
 				'order' => $order->id,
 				'art'   => $this->artikel_type,
 			],
-			'betaal'
+			'betaling'
 		);
 		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, 'correctie' );
@@ -261,7 +261,7 @@ abstract class Artikel {
 				'order' => $order->id,
 				'art'   => $this->artikel_type,
 			],
-			'betaal'
+			'betaling'
 		);
 		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, 'correctie' );

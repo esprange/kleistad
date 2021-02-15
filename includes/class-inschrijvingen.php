@@ -159,7 +159,7 @@ class Inschrijvingen implements Countable, Iterator {
 							'order' => $order->id,
 							'art'   => $inschrijving->artikel_type,
 						],
-						'betaal'
+						'betaling'
 					);
 					$inschrijving->save();
 					$inschrijving->verzend_email( '_restant' );

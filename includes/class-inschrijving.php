@@ -202,7 +202,7 @@ class Inschrijving extends Artikel {
 				'order' => $order->id,
 				'art'   => $this->artikel_type,
 			],
-			'betaal'
+			'betaling'
 		);
 		$this->verzend_email( '_herinnering' );
 		$this->save();
