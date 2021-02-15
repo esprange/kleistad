@@ -105,4 +105,27 @@ class Workshops implements Countable, Iterator {
 	public function valid(): bool {
 		return isset( $this->workshops[ $this->current_index ] );
 	}
+
+	/**
+	 * Controleer of er betalingsverzoeken verzonden moeten worden.
+	 *
+	 * @since 6.1.0
+	 */
+	public static function doe_dagelijks() {
+		foreach ( new self() as $workshop ) {
+			if (
+				! $workshop->definitief ||
+				$workshop->betaald ||
+				$workshop->vervallen ||
+				$workshop->betaling_email ||
+				strtotime( '+7 days 00:00' ) < $workshop->datum
+				) {
+				continue;
+			}
+			$workshop->betaling_email = true;
+			$workshop->save();
+			$workshop->verzend_email( '_betaling', $workshop->bestel_order( 0.0, $workshop->datum ) );
+		}
+	}
+
 }

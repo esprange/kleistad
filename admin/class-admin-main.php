@@ -371,11 +371,12 @@ class Admin_Main {
 	 */
 	public function daily_jobs() {
 		$this->background->push_to_queue( 'Shortcode::cleanup_downloads' );
-		$this->background->push_to_queue( 'Workshop::doe_dagelijks' );
-		$this->background->push_to_queue( 'Abonnement::doe_dagelijks' );
+		$this->background->push_to_queue( 'Workshops::doe_dagelijks' );
+		$this->background->push_to_queue( 'Abonnementen::doe_dagelijks' );
 		$this->background->push_to_queue( 'Saldo::doe_dagelijks' );
-		$this->background->push_to_queue( 'Inschrijving::doe_dagelijks' );
-		$this->background->push_to_queue( 'Dagdelenkaart::doe_dagelijks' );
+		$this->background->push_to_queue( 'Cursussen::doe_dagelijks' );
+		$this->background->push_to_queue( 'Inschrijvingen::doe_dagelijks' );
+		$this->background->push_to_queue( 'Dagdelenkaarten::doe_dagelijks' );
 		$this->background->save()->dispatch();
 	}
 

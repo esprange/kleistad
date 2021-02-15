@@ -22,6 +22,7 @@ use DateTimeZone;
  * @property string code
  * @property int    start_datum
  * @property int    eind_datum
+ * @property int    ruimte_datum
  * @property array  lesdatums
  * @property int    start_tijd
  * @property int    eind_tijd
@@ -62,6 +63,7 @@ class Cursus {
 			'naam'            => '',
 			'start_datum'     => date( 'Y-m-d' ),
 			'eind_datum'      => date( 'Y-m-d' ),
+			'ruimte_datum'    => '',
 			'lesdatums'       => wp_json_encode( [ date( 'Y-m-d' ) ] ),
 			'start_tijd'      => '09:30',
 			'eind_tijd'       => '12:00',
@@ -100,7 +102,7 @@ class Cursus {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( $attribuut ) {
-		if ( preg_match( '~(start_datum|eind_datum|start_tijd|eind_tijd)~', $attribuut ) ) {
+		if ( preg_match( '~(start_datum|eind_datum|ruimte_datum|start_tijd|eind_tijd)~', $attribuut ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
 		if ( preg_match( '~(vol|vervallen|techniekkeuze|meer|tonen)~', $attribuut ) ) {
@@ -153,6 +155,9 @@ class Cursus {
 			case 'start_datum':
 			case 'eind_datum':
 				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
+				break;
+			case 'ruimte_datum':
+				$this->data[ $attribuut ] = date( 'Y-m-d h:m:s', $waarde );
 				break;
 			case 'start_tijd':
 			case 'eind_tijd':

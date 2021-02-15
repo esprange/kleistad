@@ -91,11 +91,6 @@ abstract class Artikel {
 	abstract public function geef_referentie(): string;
 
 	/**
-	 * Dagelijks uit te voeren handelingen, in te vullen door het artikel.
-	 */
-	abstract public static function doe_dagelijks();
-
-	/**
 	 * Email function
 	 *
 	 * @param string $type    Het soort email.
@@ -146,7 +141,13 @@ abstract class Artikel {
 		$order->betaald              = 0;
 		$order->historie             = 'geannuleerd, credit factuur ' . $credit_order->factuurnummer() . ' aangemaakt';
 		$order->save();
-		$this->maak_link( $order->credit_id );
+		$this->betaal_link = $this->maak_link(
+			[
+				'order' => $order->credit_id,
+				'art'   => $this->artikel_type,
+			],
+			'betaal'
+		);
 		$this->betaalactie( $credit_order->betaald );
 		return $this->maak_factuur( $credit_order, 'credit' );
 	}
@@ -160,6 +161,7 @@ abstract class Artikel {
 	 * @param string $transactie_id De betalings id.
 	 * @param bool   $factuur       Of er een factuur aangemaakt moet worden.
 	 * @return string De url van de factuur.
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	final public function bestel_order( float $bedrag, int $verval_datum, string $opmerking = '', string $transactie_id = '', bool $factuur = true ): string {
 		$order                = new Order();
@@ -172,7 +174,13 @@ abstract class Artikel {
 		$order->verval_datum  = $verval_datum;
 		$order->orderregels->toevoegen( $this->geef_factuurregels() );
 		$order->save();
-		$this->maak_link( $order->id );
+		$this->betaal_link = $this->maak_link(
+			[
+				'order' => $order->id,
+				'art'   => $this->artikel_type,
+			],
+			'betaal'
+		);
 		$this->betaalactie( $order->betaald );
 		return $factuur ? $this->maak_factuur( $order, '' ) : '';
 	}
@@ -194,7 +202,13 @@ abstract class Artikel {
 		$order->historie  = 'Correctie factuur i.v.m. korting € ' . number_format_i18n( $korting, 2 );
 		$order->opmerking = $opmerking;
 		$order->save();
-		$this->maak_link( $order->id );
+		$this->betaal_link = $this->maak_link(
+			[
+				'order' => $order->id,
+				'art'   => $this->artikel_type,
+			],
+			'betaal'
+		);
 		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
@@ -207,6 +221,7 @@ abstract class Artikel {
 	 * @param string $transactie_id De betalings id.
 	 * @param bool   $factuur       Of er wel / niet een factuur aangemaakt moet worden.
 	 * @return string Pad naar de factuur of leeg.
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	final public function ontvang_order( int $order_id, float $bedrag, string $transactie_id, bool $factuur = false ): string {
 		$order                = new Order( $order_id );
@@ -241,7 +256,13 @@ abstract class Artikel {
 		$order->historie  = 'Order gewijzigd';
 		$order->opmerking = $opmerking;
 		$order->save();
-		$this->maak_link( $order->id );
+		$this->betaal_link = $this->maak_link(
+			[
+				'order' => $order->id,
+				'art'   => $this->artikel_type,
+			],
+			'betaal'
+		);
 		$this->betaalactie( $order->betaald );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
@@ -316,18 +337,13 @@ abstract class Artikel {
 	/**
 	 * De link die in een email als parameter meegegeven kan worden.
 	 *
-	 * @param  int $order_id Het id van de order.
+	 * @param array  $args   Een array met parameters.
+	 * @param string $pagina De pagina waar geland moet worden.
+	 * @return string De html link.
 	 */
-	protected function maak_link( int $order_id ) {
-		$url               = add_query_arg(
-			[
-				'order' => $order_id,
-				'hsh'   => $this->controle(),
-				'art'   => $this->artikel_type,
-			],
-			home_url( '/kleistad-betaling' )
-		);
-		$this->betaal_link = "<a href=\"$url\" >Kleistad pagina</a>";
+	protected function maak_link( array $args, string $pagina ) : string {
+		$url = add_query_arg( array_merge( $args, [ 'hsh' => $this->controle() ] ), home_url( "/kleistad-$pagina" ) );
+		return "<a href=\"$url\" >Kleistad pagina</a>";
 	}
 
 	/**

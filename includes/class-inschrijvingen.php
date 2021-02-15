@@ -113,4 +113,59 @@ class Inschrijvingen implements Countable, Iterator {
 	public function valid(): bool {
 		return isset( $this->inschrijvingen[ $this->current_index ] );
 	}
+
+		/**
+		 * Controleer of er betalingsverzoeken verzonden moeten worden.
+		 *
+		 * @since 6.1.0
+		 */
+	public static function doe_dagelijks() {
+		$vandaag = strtotime( 'today' );
+		foreach ( new self() as $inschrijving ) {
+			/**
+			 * Geen acties voor medecursisten, oude of vervallen cursus deelnemers of die zelf geannuleerd hebben.
+			 */
+			if ( 0 === $inschrijving->aantal ||
+				$inschrijving->geannuleerd ||
+				$inschrijving->cursus->vervallen ||
+				$vandaag > $inschrijving->cursus->eind_datum
+			) {
+				continue;
+			}
+			/**
+			 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn en alleen als de cursus nog niet gestart is.
+			 * Laatste wachtdatum is de datum er ruimte is ontstaan of 0 als er geen ruimte is. Als gisteren de ruimte ontstond is de datum dus nu.
+			 * Iedereen die vooraf 'nu' wacht krijgt de email en die wacht op vervolg als er iets vrijkomt na morgen 0:00.
+			 */
+			if ( ! $inschrijving->ingedeeld ) {
+				if ( $inschrijving->wacht_datum && $vandaag < $inschrijving->cursus->start_datum && $inschrijving->wacht_datum < $inschrijving->cursus->ruimte_datum ) {
+					$inschrijving->wacht_datum = strtotime( 'tomorrow' );
+					$inschrijving->betaal_link = $inschrijving->maak_link( [ 'code' => $inschrijving->code ], 'wachtlijst' );
+					$inschrijving->save();
+					$inschrijving->verzend_email( '_ruimte' );
+				}
+				continue;
+			}
+			/**
+			 * Restant betaal emails, alleen voor cursisten die ingedeeld zijn en de cursus binnenkort start.
+			 */
+			if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
+				$order = new Order( $inschrijving->geef_referentie() );
+				if ( $order->id && ! $order->gesloten ) {
+					$inschrijving->artikel_type  = 'cursus';
+					$inschrijving->restant_email = true;
+					$inschrijving->betaal_link   = $inschrijving->maak_link(
+						[
+							'order' => $order->id,
+							'art'   => $inschrijving->artikel_type,
+						],
+						'betaal'
+					);
+					$inschrijving->save();
+					$inschrijving->verzend_email( '_restant' );
+				}
+			}
+		}
+	}
+
 }

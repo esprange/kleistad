@@ -363,6 +363,7 @@ class Workshop extends Artikel {
 	 * Geef de workshop status in tekstvorm terug.
 	 *
 	 * @param bool $uitgebreid Of er een uitgebreide versie geleverd moet worden.
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	public function geef_statustekst( bool $uitgebreid = false ) : string {
 		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->betaald ? 'betaald' : '' ) );
@@ -388,29 +389,6 @@ class Workshop extends Artikel {
 	 */
 	protected function geef_factuurregels() {
 		return new Orderregel( "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ) . ", {$this->aantal} deelnemers", 1, $this->kosten );
-	}
-
-	/**
-	 * Controleer of er betalingsverzoeken verzonden moeten worden.
-	 *
-	 * @since 6.1.0
-	 */
-	public static function doe_dagelijks() {
-		$workshops = new Workshops();
-		foreach ( $workshops as $workshop ) {
-			if (
-				! $workshop->definitief ||
-				$workshop->betaald ||
-				$workshop->vervallen ||
-				$workshop->betaling_email ||
-				strtotime( '+7 days 00:00' ) < $workshop->datum
-				) {
-				continue;
-			}
-			$workshop->betaling_email = true;
-			$workshop->save();
-			$workshop->verzend_email( '_betaling', $workshop->bestel_order( 0.0, $workshop->datum ) );
-		}
 	}
 
 	/**

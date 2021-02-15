@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 96;
+	const DBVERSIE = 97;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -131,6 +131,7 @@ class Admin_Upgrade {
 			naam tinytext,
 			start_datum date,
 			eind_datum date,
+			ruimte_datum datetime,
 			lesdatums varchar(2000),
 			start_tijd time,
 			eind_tijd time,

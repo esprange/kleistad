@@ -197,7 +197,13 @@ class Inschrijving extends Artikel {
 		}
 		$this->artikel_type   = 'cursus';
 		$this->herinner_email = true;
-		$this->maak_link( $order->id );
+		$this->betaal_link    = $this->maak_link(
+			[
+				'order' => $order->id,
+				'art'   => $this->artikel_type,
+			],
+			'betaal'
+		);
 		$this->verzend_email( '_herinnering' );
 		$this->save();
 		return 1;
@@ -380,7 +386,13 @@ class Inschrijving extends Artikel {
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'cursus_link'            => $this->betaal_link,
-					'cursus_uitschrijf_link' => $this->uitschrijf_link(),
+					'cursus_uitschrijf_link' => $this->maak_link(
+						[
+							'code' => $this->code,
+							'stop' => 1,
+						],
+						'wachtlijst'
+					),
 				],
 			]
 		);
@@ -514,87 +526,6 @@ class Inschrijving extends Artikel {
 	private function restantbedrag() {
 		$order = new Order( $this->geef_referentie() );
 		return ( $order->id ) ? $order->te_betalen() : 0;
-	}
-
-	/**
-	 * Maak een link voor de wachtlijst cursist om te betalen voor de indeling op de cursus.
-	 * Afwijkend van een betaallink is in dit geval er nog geen order aangemaakt.
-	 * De afhandeling in het formulier is dus nagenoeg identiek aan de afhandeling bij inschrijving op de cursus met directe betaling
-	 */
-	public function maak_wachtlijst_link() {
-		$url               = add_query_arg(
-			[
-				'code' => $this->code,
-				'hsh'  => $this->controle(),
-			],
-			home_url( '/kleistad-wachtlijst' )
-		);
-		$this->betaal_link = "<a href=\"$url\" >Kleistad pagina</a>";
-	}
-
-	/**
-	 * Geef de link terug voor het opheffen van een wachtlijst registratie.
-	 */
-	private function uitschrijf_link() {
-		$url = add_query_arg(
-			[
-				'code' => $this->code,
-				'hsh'  => $this->controle(),
-				'stop' => 1,
-			],
-			home_url( '/kleistad-wachtlijst' )
-		);
-		return "<a href=\"$url\" >Kleistad pagina</a>";
-	}
-
-	/**
-	 * Controleer of er betalingsverzoeken verzonden moeten worden.
-	 *
-	 * @since 6.1.0
-	 */
-	public static function doe_dagelijks() {
-		$vandaag       = strtotime( 'today' );
-		$cursussen     = new Cursussen();
-		$laatste_wacht = $cursussen->actualiseer_vol();
-		foreach ( new Inschrijvingen() as $inschrijving ) {
-			/**
-			 * Geen acties voor medecursisten, oude of vervallen cursus deelnemers of die zelf geannuleerd hebben.
-			 */
-			if ( 0 === $inschrijving->aantal ||
-				$inschrijving->geannuleerd ||
-				$inschrijving->cursus->vervallen ||
-				$vandaag > $inschrijving->cursus->eind_datum
-			) {
-				continue;
-			}
-			/**
-			 * Wachtlijst emails, voor cursisten die nog niet ingedeeld zijn en alleen als de cursus nog niet gestart is.
-			 * Laatste wachtdatum is de datum er ruimte is ontstaan. Als gisteren de ruimte ontstond is de datum dus nu.
-			 * Iedereen die vooraf 'nu' wacht krijgt de email en die wacht op vervolg als er iets vrijkomt na morgen 0:00.
-			 */
-			if ( ! $inschrijving->ingedeeld ) {
-				if ( $inschrijving->wacht_datum && $vandaag < $inschrijving->cursus->start_datum && $inschrijving->wacht_datum < $laatste_wacht[ $inschrijving->cursus->id ] ) {
-					$inschrijving->wacht_datum = strtotime( 'tomorrow' );
-					$inschrijving->maak_wachtlijst_link();
-					$inschrijving->save();
-					$inschrijving->verzend_email( '_ruimte' );
-				}
-				continue;
-			}
-			/**
-			 * Restant betaal emails, alleen voor cursisten die ingedeeld zijn en de cursus binnenkort start.
-			 */
-			if ( ! $inschrijving->restant_email && $inschrijving->cursus->is_binnenkort() ) {
-				$order = new Order( $inschrijving->geef_referentie() );
-				if ( $order->id && ! $order->gesloten ) {
-					$inschrijving->artikel_type  = 'cursus';
-					$inschrijving->restant_email = true;
-					$inschrijving->maak_link( $order->id );
-					$inschrijving->save();
-					$inschrijving->verzend_email( '_restant' );
-				}
-			}
-		}
 	}
 
 }

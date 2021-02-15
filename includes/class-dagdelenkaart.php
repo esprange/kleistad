@@ -219,10 +219,4 @@ class Dagdelenkaart extends Artikel {
 		}
 	}
 
-	/**
-	 * Dagelijkse handelingen.
-	 */
-	public static function doe_dagelijks() {
-		// Geen functionaliteit vooralsnog.
-	}
 }

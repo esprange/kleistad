@@ -98,43 +98,28 @@ class Cursussen implements Countable, Iterator {
 
 	/**
 	 * Actualiseer de cursus vol status van de nieuw of lopende cursussen.
-	 *
-	 * @return array Per cursus de datum waarop er weer een plek vrijgekomen is.
 	 */
-	public function actualiseer_vol() : array {
-		$laatste_wacht = [];
-		$vandaag       = strtotime( 'today' );
-		foreach ( $this->cursussen as $cursus ) {
-			$laatste_wacht[ $cursus->id ] = 0;
-			$transient                    = "kleistad_wacht_{$cursus->id}";
-			if ( $vandaag >= $cursus->eind_datum ) {
-				/**
-				 * De cursus is al voltooid. Hier hoeven we niets meer mee te doen.
-				 */
+	public static function doe_dagelijks() {
+		$vandaag = strtotime( 'today' );
+		foreach ( new self() as $cursus ) {
+			if ( $vandaag > $cursus->eind_datum ) {
 				continue;
 			}
-			$laatste_wacht[ $cursus->id ] = time();
+			/**
+			 * Als de cursus nog niet voltooid is en er nu ruimte is, pas dan de status aan.
+			 * Dit is ook nodig voor cursussen die al gestart zijn.
+			 */
+			$cursus->ruimte_datum = 0;
 			if ( $cursus->ruimte() ) {
 				/**
-				 * Als er nu ruimte is gekomen, pas dan de status aan.
+				 * Er is een plek vrijgekomen, pas de status van de cursus aan zodat dit zichtbaar wordt op de site.
 				 */
 				if ( $cursus->vol ) {
-					delete_transient( $transient );
-					$cursus->vol = false;
-					$cursus->save();
-					continue;
-				}
-				/**
-				 * Als er als eerder ruimte was dan geven we de eerdere datum door, als die bekend is.
-				 */
-				$datum = get_transient( $transient );
-				if ( false !== $datum ) {
-					$laatste_wacht[ $cursus->id ] = $datum;
-					continue;
+					$cursus->vol          = false;
+					$cursus->ruimte_datum = time();
 				}
 			}
-			set_transient( $transient, $laatste_wacht[ $cursus->id ], $cursus->eind_datum - $vandaag );
+			$cursus->save();
 		}
-		return $laatste_wacht;
 	}
 }

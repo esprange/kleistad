@@ -102,4 +102,12 @@ class Dagdelenkaarten implements Countable, Iterator {
 	public function valid(): bool {
 		return isset( $this->dagdelenkaarten[ $this->current_index ] );
 	}
+
+	/**
+	 * Dagelijkse handelingen.
+	 */
+	public static function doe_dagelijks() {
+		// Geen functionaliteit vooralsnog.
+	}
+
 }
