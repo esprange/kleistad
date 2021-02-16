@@ -275,18 +275,12 @@ class Inschrijving extends Artikel {
 	 */
 	public function heeft_extra_cursisten() {
 		if ( $this->aantal > 1 ) {
-			$url    = add_query_arg(
-				[
-					'code' => $this->code,
-					'hsh'  => $this->controle(),
-				],
-				home_url( '/kleistad-extra_cursisten' )
-			);
+			$link   = $this->maak_link( [ 'code' => $this->code ], 'extra_cursisten' );
 			$tekst  = sprintf(
 				'Je hebt aangegeven dat er %s aan de cursus/workshop. Kleistad wil graag weten wie zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ',
 				2 === $this->aantal ? 'een mededeelnemer is ' : $this->aantal - 1 . ' mededeelnemers zijn '
 			);
-			$tekst .= "Je kunt dit invoeren op de volgende <a href=\"$url\" >Kleistad pagina</a>.";
+			$tekst .= "Je kunt dit invoeren op de volgende $link.";
 			return $tekst;
 		}
 		return '';
