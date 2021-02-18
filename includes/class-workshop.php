@@ -36,7 +36,6 @@ use Exception;
  * @property bool   vervallen
  * @property float  kosten
  * @property int    aantal
- * @property bool   betaald
  * @property bool   definitief
  * @property bool   betaling_email
  * @property string event_id
@@ -82,7 +81,6 @@ class Workshop extends Artikel {
 				'vervallen'         => 0,
 				'kosten'            => $options['workshopprijs'],
 				'aantal'            => 6,
-				'betaald'           => 0,
 				'definitief'        => 0,
 				'betaling_email'    => 0,
 				'aanvraag_id'       => 0,
@@ -104,7 +102,7 @@ class Workshop extends Artikel {
 		if ( preg_match( '~(datum|start_tijd|eind_tijd)~', $attribuut ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
-		if ( preg_match( '~(vervallen|betaald|definitief|betaling_email)~', $attribuut ) ) {
+		if ( preg_match( '~(vervallen|definitief|betaling_email)~', $attribuut ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {
@@ -366,20 +364,8 @@ class Workshop extends Artikel {
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	public function geef_statustekst( bool $uitgebreid = false ) : string {
-		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->betaald ? 'betaald' : '' ) );
+		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->is_betaald() ? 'betaald' : '' ) );
 		return $uitgebreid ? 'workshop ' . $status : $status;
-	}
-
-	/**
-	 * Check of er een indeling moet plaatsvinden ivm betaling inschrijfgeld.
-	 *
-	 * @param float $bedrag Het betaalde bedrag.
-	 */
-	protected function betaalactie( $bedrag ) {
-		if ( ! $this->betaald && $bedrag >= ( $this->kosten - 0.01 ) ) {
-			$this->betaald = true;
-		}
-		$this->save();
 	}
 
 	/**
@@ -389,6 +375,16 @@ class Workshop extends Artikel {
 	 */
 	protected function geef_factuurregels() {
 		return new Orderregel( "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ) . ", {$this->aantal} deelnemers", 1, $this->kosten );
+	}
+
+	/**
+	 * Geef aan of de workshop betaald is.
+	 *
+	 * @return bool True als betaald.
+	 */
+	public function is_betaald() {
+		$order = new Order( $this->geef_referentie() );
+		return $order->gesloten;
 	}
 
 	/**

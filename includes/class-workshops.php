@@ -115,10 +115,10 @@ class Workshops implements Countable, Iterator {
 		foreach ( new self() as $workshop ) {
 			if (
 				! $workshop->definitief ||
-				$workshop->betaald ||
 				$workshop->vervallen ||
 				$workshop->betaling_email ||
-				strtotime( '+7 days 00:00' ) < $workshop->datum
+				strtotime( '+7 days 00:00' ) < $workshop->datum ||
+				$workshop->is_betaald()
 				) {
 				continue;
 			}

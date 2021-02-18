@@ -148,7 +148,6 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->betaalactie( $credit_order->betaald );
 		return $this->maak_factuur( $credit_order, 'credit' );
 	}
 
@@ -181,7 +180,6 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->betaalactie( $order->betaald );
 		return $factuur ? $this->maak_factuur( $order, '' ) : '';
 	}
 
@@ -209,7 +207,7 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->betaalactie( $order->betaald );
+		$this->verwerk_betaling( $order->$order_id, $order->betaald, true, $this->artikel_type );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -229,7 +227,6 @@ abstract class Artikel {
 		$order->historie      = sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'betaling' : 'stornering', abs( $bedrag ), $order->betaald );
 		$order->transactie_id = $transactie_id;
 		$order->save();
-		$this->betaalactie( $order->betaald );
 		return ( $factuur ) ? $this->maak_factuur( $order, '' ) : '';
 	}
 
@@ -263,7 +260,7 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->betaalactie( $order->betaald );
+		$this->verwerk_betaling( $order->$order_id, $order->betaald, true, $this->artikel_type );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -324,24 +321,13 @@ abstract class Artikel {
 	}
 
 	/**
-	 * Voer een actie uit bij betaling, kan nader ingevuld worden.
-	 *
-	 * @since 6.1.0
-	 *
-	 * @param float $bedrag Het ontvangen bedrag.
-	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
-	 */
-	protected function betaalactie( float $bedrag ) {
-	}
-
-	/**
 	 * De link die in een email als parameter meegegeven kan worden.
 	 *
 	 * @param array  $args   Een array met parameters.
 	 * @param string $pagina De pagina waar geland moet worden.
 	 * @return string De html link.
 	 */
-	protected function maak_link( array $args, string $pagina ) : string {
+	public function maak_link( array $args, string $pagina ) : string {
 		$url = add_query_arg( array_merge( $args, [ 'hsh' => $this->controle() ] ), home_url( "/kleistad-$pagina" ) );
 		return "<a href=\"$url\" >Kleistad pagina</a>";
 	}

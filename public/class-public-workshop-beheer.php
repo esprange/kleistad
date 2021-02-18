@@ -117,7 +117,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'programma'         => $workshop->programma,
 			'kosten'            => $workshop->kosten,
 			'aantal'            => $workshop->aantal,
-			'betaald'           => $workshop->betaald,
+			'betaald'           => $workshop->is_betaald(),
 			'definitief'        => $workshop->definitief,
 			'vervallen'         => $workshop->vervallen,
 			'aanvraag_id'       => $workshop->aanvraag_id,

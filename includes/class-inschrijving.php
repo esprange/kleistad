@@ -436,22 +436,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Check of er een indeling moet plaatsvinden ivm betaling inschrijfgeld.
-	 *
-	 * @param float $bedrag Het totaal betaalde bedrag.
-	 */
-	protected function betaalactie( $bedrag ) {
-		if ( ! $this->ingedeeld && $this->inschrijving_betaald( $bedrag ) ) {
-			$this->ingedeeld = true;
-			$this->save();
-			if ( 0 === $this->cursus->ruimte() ) {
-				$this->cursus->vol = true;
-				$this->cursus->save();
-			}
-		}
-	}
-
-	/**
 	 * De regels voor de factuur.
 	 *
 	 * @return array|Orderregel De regels of één regel.
@@ -488,18 +472,19 @@ class Inschrijving extends Artikel {
 				/**
 				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
 				 */
+				$this->indelen();
 				$this->verzend_email( 'indeling', $this->bestel_order( $bedrag, $this->cursus->start_datum, $this->heeft_restant(), $transactie_id ) );
 				return;
 			}
-			$ingedeeld = $this->ingedeeld;
 			/**
 			 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
 			 */
 			$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-			if ( ! $ingedeeld ) { // Voorafgaand de betaling was de cursist nog niet ingedeeld.
+			if ( ! $this->ingedeeld ) { // Voorafgaand de betaling was de cursist nog niet ingedeeld.
 				/**
 				 * De cursist krijgt de melding dat deze nu ingedeeld is.
 				 */
+				$this->indelen();
 				$this->verzend_email( 'indeling' );
 				return;
 			}
@@ -509,6 +494,18 @@ class Inschrijving extends Artikel {
 			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
 				$this->verzend_email( '_ideal_betaald' );
 			}
+		}
+	}
+
+	/**
+	 * Deel de cursist in.
+	 */
+	private function indelen() {
+		$this->ingedeeld = true;
+		$this->save();
+		if ( 0 === $this->cursus->ruimte() ) {
+			$this->cursus->vol = true;
+			$this->cursus->save();
 		}
 	}
 

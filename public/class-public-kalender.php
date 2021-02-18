@@ -55,13 +55,14 @@ class Public_Kalender extends Shortcode {
 	private static function workshop_event( Event $event ) : array {
 		$workshop = new Workshop( $event->properties['id'] );
 		if ( ! $workshop->vervallen ) {
+			$betaald = $workshop->is_betaald();
 			return [
 				'id'              => $event->id,
 				'title'           => "$workshop->naam ($workshop->code)",
 				'start'           => $event->start->format( \DateTime::ATOM ),
 				'end'             => $event->eind->format( \DateTime::ATOM ),
-				'backgroundColor' => $workshop->betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
-				'textColor'       => $workshop->betaald ? 'white' : 'black',
+				'backgroundColor' => $betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
+				'textColor'       => $betaald ? 'white' : 'black',
 				'extendedProps'   => [
 					'naam'       => $workshop->naam,
 					'aantal'     => $workshop->aantal,
