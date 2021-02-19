@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.6
-Stable tag: 6.14.1
+Stable tag: 6.14.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least PHP version: 7.4
@@ -36,6 +36,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 6.14.2 =
+* Verbetering wachtlijst functionaliteit
 = 6.14.1 =
 * Geen functionele aanpassingen, wel styling verbeteren als voorbereiding op nieuw Kleistad thema
 * Aantal bugfixes

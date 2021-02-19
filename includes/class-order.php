@@ -137,11 +137,6 @@ class Order {
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
 				break;
 			case 'historie':
-				$nu = new DateTime();
-				$nu->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
-				$historie                 = json_decode( $this->data[ $attribuut ], true );
-				$historie[]               = $nu->format( 'd-m-Y H:i' ) . ": $waarde";
-				$this->data[ $attribuut ] = wp_json_encode( $historie );
 				break;
 			case 'datum':
 			case 'mutatie_datum':
@@ -170,15 +165,13 @@ class Order {
 	public function afboeken() {
 		$te_betalen           = $this->te_betalen();
 		$dd_order             = new self();
-		$dd_order->historie   = 'Afboeking order door ' . wp_get_current_user()->display_name;
 		$dd_order->referentie = '@-' . $this->referentie;
 		$dd_order->betaald    = $te_betalen;
 		$dd_order->klant      = $this->klant;
 		$dd_order->orderregels->toevoegen( new Orderregel( 'Afboeking', 1, $te_betalen ) );
-		$dd_order->save();
+		$dd_order->save( sprintf( 'Afboeking order door %s', wp_get_current_user()->display_name ) );
 		$this->betaald += $te_betalen;
-		$this->historie = 'Afboeking';
-		$this->save();
+		$this->save( 'Afboeking' );
 	}
 
 	/**
@@ -247,13 +240,17 @@ class Order {
 	 * @since 6.1.0
 	 *
 	 * @global object $wpdb     WordPress database.
+	 * @param string $reden De mutatie reden.
 	 * @return int De order id.
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function save() : int {
+	public function save( $reden ) : int {
 		global $wpdb;
-		$this->gesloten = ( 0 < $this->credit_id ) ?: 0.01 >= abs( $this->te_betalen() );
-		$this->regels   = $this->orderregels->export();
+		$historie               = $this->historie;
+		$historie[]             = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
+		$this->data['historie'] = wp_json_encode( $historie );
+		$this->gesloten         = ( 0 < $this->credit_id ) ?: 0.01 >= abs( $this->te_betalen() );
+		$this->regels           = $this->orderregels->export();
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
 		if ( ! $this->id ) {
 			$this->factuurnr = 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );

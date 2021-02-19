@@ -135,12 +135,10 @@ abstract class Artikel {
 			$credit_order->orderregels->toevoegen( new Orderregel( 'kosten i.v.m. annulering', 1, $restant ) );
 		}
 		$credit_order->opmerking     = $opmerking;
-		$credit_order->historie      = 'order en credit factuur aangemaakt';
 		$credit_order->transactie_id = $order->transactie_id;
-		$order->credit_id            = $credit_order->save();
+		$order->credit_id            = $credit_order->save( 'Order en credit factuur aangemaakt' );
 		$order->betaald              = 0;
-		$order->historie             = 'geannuleerd, credit factuur ' . $credit_order->factuurnummer() . ' aangemaakt';
-		$order->save();
+		$order->save( sprintf( 'Geannuleerd, credit factuur %s aangemaakt', $credit_order->factuurnummer() ) );
 		$this->betaal_link = $this->maak_link(
 			[
 				'order' => $order->credit_id,
@@ -165,14 +163,13 @@ abstract class Artikel {
 	final public function bestel_order( float $bedrag, int $verval_datum, string $opmerking = '', string $transactie_id = '', bool $factuur = true ): string {
 		$order                = new Order();
 		$order->betaald       = $bedrag;
-		$order->historie      = $factuur ? 'order en factuur aangemaakt,  nieuwe status betaald is € ' . number_format_i18n( $bedrag, 2 ) : 'order aangemaakt';
 		$order->klant         = $this->naw_klant();
 		$order->opmerking     = $opmerking;
 		$order->referentie    = $this->geef_referentie();
 		$order->transactie_id = $transactie_id;
 		$order->verval_datum  = $verval_datum;
 		$order->orderregels->toevoegen( $this->geef_factuurregels() );
-		$order->save();
+		$order->save( $factuur ? sprintf( 'Order en factuur aangemaakt, nieuwe status betaald is € %01.2f', $bedrag ) : 'Order aangemaakt' );
 		$this->betaal_link = $this->maak_link(
 			[
 				'order' => $order->id,
@@ -197,9 +194,8 @@ abstract class Artikel {
 			return false;
 		}
 		$order->orderregels->toevoegen( new Orderregel( Orderregel::KORTING, 1, - $korting ) );
-		$order->historie  = 'Correctie factuur i.v.m. korting € ' . number_format_i18n( $korting, 2 );
 		$order->opmerking = $opmerking;
-		$order->save();
+		$order->save( sprintf( 'Correctie factuur i.v.m. korting € %01.2f', $korting ) );
 		$this->betaal_link = $this->maak_link(
 			[
 				'order' => $order->id,
@@ -224,9 +220,8 @@ abstract class Artikel {
 	final public function ontvang_order( int $order_id, float $bedrag, string $transactie_id, bool $factuur = false ): string {
 		$order                = new Order( $order_id );
 		$order->betaald      += $bedrag;
-		$order->historie      = sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'betaling' : 'stornering', abs( $bedrag ), $order->betaald );
 		$order->transactie_id = $transactie_id;
-		$order->save();
+		$order->save( sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'Betaling' : 'Stornering', abs( $bedrag ), $order->betaald ) );
 		return ( $factuur ) ? $this->maak_factuur( $order, '' ) : '';
 	}
 
@@ -250,9 +245,8 @@ abstract class Artikel {
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}
 
-		$order->historie  = 'Order gewijzigd';
 		$order->opmerking = $opmerking;
-		$order->save();
+		$order->save( 'Order gewijzigd' );
 		$this->betaal_link = $this->maak_link(
 			[
 				'order' => $order->id,
