@@ -83,6 +83,7 @@ class Public_Filters {
 	 * @param array $userdata           De gewijzigd user info.
 	 *
 	 * @internal Filter for email_change_email.
+	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 * phpcs:disable
 	 */
 	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
@@ -111,6 +112,7 @@ class Public_Filters {
 	 * @param array $userdata           De gewijzigd user info.
 	 *
 	 * @internal Filter for password_change_email.
+	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 * phpcs:disable
 	 */
 	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {

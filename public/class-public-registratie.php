@@ -127,10 +127,9 @@ class Public_Registratie extends ShortcodeForm {
 				'content' => $this->goto_home(),
 				'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
 			];
-		} else {
-			return [
-				'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' ) ),
-			];
 		}
+		return [
+			'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het a.u.b. opnieuw' ) ),
+		];
 	}
 }

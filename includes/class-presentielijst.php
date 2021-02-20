@@ -11,10 +11,12 @@
 
 namespace Kleistad;
 
+use FPDF;
+
 /**
  * De class voor email, maakt gebruik van de fdpf class, zie ook http://www.fpdf.org.
  */
-class Presentielijst extends \FPDF {
+class Presentielijst extends FPDF {
 
 	/**
 	 * Start de pagina.

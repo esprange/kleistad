@@ -54,11 +54,11 @@ class Factuur extends FPDF {
 	 * @param string $titel De titel van de pagina.
 	 */
 	private function start( string $titel ) : void {
-		$h = 32;
+		$hoogte = 32;
 		$this->SetLeftMargin( 25 );
 		$this->AddPage();
 		$this->setFont( 'Arial', 'B', 24 );
-		$this->Cell( 0, $h, $titel );
+		$this->Cell( 0, $hoogte, $titel );
 		$this->setX( 150 );
 		$this->Image( plugin_dir_path( dirname( __FILE__ ) ) . 'public/images/logo kleistad-email.jpg' );
 	}
@@ -69,13 +69,13 @@ class Factuur extends FPDF {
 	 * @param array $args De te tonen informatie.
 	 */
 	private function klant( array $args ) : void {
-		$h = 6;
+		$hoogte = 6;
 		$this->setY( 65 );
 		$this->SetLeftMargin( 25 );
 		$this->setFont( 'Arial', 'B', 10 );
-		$this->Cell( 0, $h, utf8_decode( $args['naam'] ), 0, 1 );
+		$this->Cell( 0, $hoogte, utf8_decode( $args['naam'] ), 0, 1 );
 		$this->setFont( 'Arial', '', 10 );
-		$this->MultiCell( 0, $h, utf8_decode( $args['adres'] ) );
+		$this->MultiCell( 0, $hoogte, utf8_decode( $args['adres'] ) );
 	}
 
 	/**
@@ -86,31 +86,31 @@ class Factuur extends FPDF {
 	 * @param string $referentie De referentie.
 	 */
 	private function info( string $factuurnr, int $datum, string $referentie ) : void {
-		$h = 6;
+		$hoogte = 6;
 		$this->setY( 65 );
 		$this->SetRightMargin( 75 );
 		$this->setFont( 'Arial', 'B', 10 );
-		$this->Cell( 0, $h, 'Factuurdatum', 0, 1, 'R' );
+		$this->Cell( 0, $hoogte, 'Factuurdatum', 0, 1, 'R' );
 		$this->setFont( 'Arial' );
-		$this->Cell( 0, $h, strftime( '%d-%m-%Y', $datum ), 0, 1, 'R' );
+		$this->Cell( 0, $hoogte, strftime( '%d-%m-%Y', $datum ), 0, 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
-		$this->Cell( 0, $h, 'Factuurnummer', 0, 1, 'R' );
+		$this->Cell( 0, $hoogte, 'Factuurnummer', 0, 1, 'R' );
 		$this->setFont( 'Arial' );
-		$this->Cell( 0, $h, $factuurnr, 0, 1, 'R' );
+		$this->Cell( 0, $hoogte, $factuurnr, 0, 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
-		$this->Cell( 0, $h, 'Referentie', 0, 1, 'R' );
+		$this->Cell( 0, $hoogte, 'Referentie', 0, 1, 'R' );
 		$this->setFont( 'Arial' );
-		$this->Cell( 0, $h, $referentie, 0, 0, 'R' );
+		$this->Cell( 0, $hoogte, $referentie, 0, 0, 'R' );
 
-		$this->Line( 143, 65, 143, 65 + 6 * $h );
+		$this->Line( 143, 65, 143, 65 + 6 * $hoogte );
 
-		$h = 5;
+		$hoogte = 5;
 		$this->setY( 65 );
 		$this->SetLeftMargin( 145 );
 		$this->setFont( 'Arial', 'B', 10 );
-		$this->Cell( 0, $h, 'Stichting Kleistad', 0, 2 );
+		$this->Cell( 0, $hoogte, 'Stichting Kleistad', 0, 2 );
 		$this->setFont( 'Arial', '', 8 );
-		$this->MultiCell( 45, $h, "Neonweg 12\n3812 RH Amersfoort\n\nKvK 68731248\nBTW nr NL857567044B01\nIBAN NL10 RABO 0191913308" );
+		$this->MultiCell( 45, $hoogte, "Neonweg 12\n3812 RH Amersfoort\n\nKvK 68731248\nBTW nr NL857567044B01\nIBAN NL10 RABO 0191913308" );
 	}
 
 	/**
@@ -123,7 +123,7 @@ class Factuur extends FPDF {
 	private function order( Orderregels $orderregels, float $betaald, float $nog_te_betalen ) : void {
 		$this->SetY( 120 );
 		$this->SetLeftMargin( 25 );
-		$w = [
+		$breedte = [
 			'aantal'       => 15,
 			'artikel'      => 105,
 			'stuksprijs'   => 20,
@@ -131,36 +131,36 @@ class Factuur extends FPDF {
 			'samenvatting' => 15 + 105 + 20,
 			'volledig'     => 15 + 105 + 20 + 20,
 		];
-		$h = 6;
+		$hoogte = 6;
 		$this->ln();
 		$this->setFont( 'Arial', 'B', 10 );
-		$this->Cell( $w['aantal'], $h, 'Aantal', 'TB', 0, 'C' );
-		$this->Cell( $w['artikel'], $h, 'Omschrijving', 'TB', 0, 'L' );
-		$this->Cell( $w['stuksprijs'], $h, 'Stuksprijs', 'TB', 0, 'C' );
-		$this->Cell( $w['prijs'], $h, 'Prijs', 'TB', 1, 'C' );
+		$this->Cell( $breedte['aantal'], $hoogte, 'Aantal', 'TB', 0, 'C' );
+		$this->Cell( $breedte['artikel'], $hoogte, 'Omschrijving', 'TB', 0, 'L' );
+		$this->Cell( $breedte['stuksprijs'], $hoogte, 'Stuksprijs', 'TB', 0, 'C' );
+		$this->Cell( $breedte['prijs'], $hoogte, 'Prijs', 'TB', 1, 'C' );
 		$this->setFont( 'Arial' );
 		foreach ( $orderregels as $orderregel ) {
-			$this->Cell( $w['aantal'], $h, $orderregel->aantal, 0, 0, 'C' );
-			$this->Cell( $w['artikel'], $h, utf8_decode( $this->trunc( $orderregel->artikel, 63 ) ), 0, 0, 'L' );
-			$this->Cell( $w['stuksprijs'], $h, $this->euro( $orderregel->prijs + $orderregel->btw ), 0, 0, 'R' );
-			$this->Cell( $w['prijs'], $h, $this->euro( $orderregel->aantal * ( $orderregel->prijs + $orderregel->btw ) ), 0, 1, 'R' );
+			$this->Cell( $breedte['aantal'], $hoogte, $orderregel->aantal, 0, 0, 'C' );
+			$this->Cell( $breedte['artikel'], $hoogte, utf8_decode( $this->trunc( $orderregel->artikel, 63 ) ), 0, 0, 'L' );
+			$this->Cell( $breedte['stuksprijs'], $hoogte, $this->euro( $orderregel->prijs + $orderregel->btw ), 0, 0, 'R' );
+			$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $orderregel->aantal * ( $orderregel->prijs + $orderregel->btw ) ), 0, 1, 'R' );
 		}
-		$this->Ln( $h * 2 );
-		$this->Cell( $w['volledig'], 0, '', 'T', 1 );
-		$this->Cell( $w['samenvatting'], $h, 'Totaal', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( $orderregels->bruto() ), 0, 1, 'R' );
-		$this->Cell( $w['samenvatting'], $h, 'Inclusief BTW 21%', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( $orderregels->btw() ), 'B', 1, 'R' );
-		$this->Cell( $w['samenvatting'], $h, 'Reeds betaald ', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( $betaald ), 'B', 1, 'R' );
+		$this->Ln( $hoogte * 2 );
+		$this->Cell( $breedte['volledig'], 0, '', 'T', 1 );
+		$this->Cell( $breedte['samenvatting'], $hoogte, 'Totaal', 0, 0, 'R' );
+		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $orderregels->bruto() ), 0, 1, 'R' );
+		$this->Cell( $breedte['samenvatting'], $hoogte, 'Inclusief BTW 21%', 0, 0, 'R' );
+		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $orderregels->btw() ), 'B', 1, 'R' );
+		$this->Cell( $breedte['samenvatting'], $hoogte, 'Reeds betaald ', 0, 0, 'R' );
+		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $betaald ), 'B', 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
 		if ( 0 <= $nog_te_betalen ) {
-			$this->Cell( $w['samenvatting'], $h, 'Verschuldigd saldo', 0, 0, 'R' );
-			$this->Cell( $w['prijs'], $h, $this->euro( $nog_te_betalen ), 0, 1, 'R' );
+			$this->Cell( $breedte['samenvatting'], $hoogte, 'Verschuldigd saldo', 0, 0, 'R' );
+			$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $nog_te_betalen ), 0, 1, 'R' );
 			return;
 		}
-		$this->Cell( $w['samenvatting'], $h, 'Na verrekening te ontvangen', 0, 0, 'R' );
-		$this->Cell( $w['prijs'], $h, $this->euro( - $nog_te_betalen ), 0, 1, 'R' );
+		$this->Cell( $breedte['samenvatting'], $hoogte, 'Na verrekening te ontvangen', 0, 0, 'R' );
+		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( - $nog_te_betalen ), 0, 1, 'R' );
 	}
 
 	/**
@@ -170,13 +170,13 @@ class Factuur extends FPDF {
 	 */
 	private function opmerking( string $arg ) : void {
 		if ( ! empty( $arg ) ) {
-			$h = 6;
+			$hoogte = 6;
 			$this->SetLeftMargin( 25 );
-			$this->Ln( 2 * $h );
+			$this->Ln( 2 * $hoogte );
 			$this->setFont( 'Arial', 'B', 10 );
-			$this->Cell( 0, $h, 'Opmerkingen', 0, 1 );
+			$this->Cell( 0, $hoogte, 'Opmerkingen', 0, 1 );
 			$this->setFont( 'Arial' );
-			$this->MultiCell( 0, $h, utf8_decode( $arg ) );
+			$this->MultiCell( 0, $hoogte, utf8_decode( $arg ) );
 		}
 	}
 
@@ -223,8 +223,8 @@ class Factuur extends FPDF {
 		$files      = glob( sprintf( '%s/facturen/*factuur-%s*', $upload_dir['basedir'], $factuurnr ) ) ?: [];
 		usort(
 			$files,
-			function( $a, $b ) {
-				return filemtime( $b ) <=> filemtime( $a ); // Nieuwste factuur bovenaan.
+			function( $links, $rechts ) {
+				return filemtime( $rechts ) <=> filemtime( $links ); // Nieuwste factuur bovenaan.
 			}
 		);
 		return str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $files );

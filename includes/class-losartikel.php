@@ -154,34 +154,12 @@ class LosArtikel extends Artikel {
 	}
 
 	/**
-	 * Dummy functie voor status.
-	 *
-	 * @param bool $uitgebreid Dummy variabele.
-	 */
-	public function geef_statustekst( $uitgebreid = false ) {
-		return $uitgebreid ? '' : '';
-	}
-
-	/**
-	 * Dummy functie voor save.
-	 */
-	public function save() {
-		return true;
-	}
-
-	/**
 	 * De factuur regels.
 	 *
 	 * @return array
 	 */
 	protected function geef_factuurregels() {
 		return $this->orderregels;
-	}
-
-	/**
-	 * Dummy functie voor dagelijks.
-	 */
-	public static function doe_dagelijks() {
 	}
 
 	/**
