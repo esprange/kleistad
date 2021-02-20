@@ -131,7 +131,7 @@ class Factuur extends FPDF {
 			'samenvatting' => 15 + 105 + 20,
 			'volledig'     => 15 + 105 + 20 + 20,
 		];
-		$hoogte = 6;
+		$hoogte  = 6;
 		$this->ln();
 		$this->setFont( 'Arial', 'B', 10 );
 		$this->Cell( $breedte['aantal'], $hoogte, 'Aantal', 'TB', 0, 'C' );
