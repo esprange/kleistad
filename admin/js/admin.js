@@ -82,7 +82,7 @@
 			$( '#kleistad_start_config' ).datepicker( 'option',
 				{
 					minDate: ( $( this ).prop( 'disabled' ) ) ? null : 0,
-					maxDate: new Date( $( '#kleistad_eind_config' ).datepicker( 'getDate' ) ),
+					maxDate: $( '#kleistad_eind_config' ).datepicker( 'getDate' ),
 					onSelect: function( datum ) {
 						$( '#kleistad_eind_config' ).datepicker( 'option', { 
 							minDate: strtodate( datum )

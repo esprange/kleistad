@@ -11,9 +11,6 @@
 
 namespace Kleistad;
 
-use DateTime;
-use DateTimeZone;
-
 /**
  * Kleistad Order class.
  *
