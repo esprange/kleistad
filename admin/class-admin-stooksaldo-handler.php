@@ -60,20 +60,19 @@ class Admin_Stooksaldo_Handler {
 	 * Toon en verwerk stooksaldo
 	 *
 	 * @since    5.2.0
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function stooksaldo_form_page_handler() {
-
 		$message  = '';
 		$notice   = '';
 		$single   = 'stooksaldo';
 		$multiple = 'stooksaldo';
-
-		$default = [
+		$default  = [
 			'id'    => 0,
 			'saldo' => 0,
 			'naam'  => '',
 		];
-
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_stooksaldo' ) ) {
 			$item       = wp_parse_args( $_REQUEST, $default );
 			$item_valid = $this->validate_stooksaldo( $item );
@@ -116,6 +115,7 @@ class Admin_Stooksaldo_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item de stooksaldo.
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function stooksaldo_form_meta_box_handler( $item ) {
 		require 'partials/admin-stooksaldo-form-meta-box.php';

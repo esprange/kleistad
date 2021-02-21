@@ -11,13 +11,16 @@
 
 namespace Kleistad;
 
+use WP_List_Table;
+use WP_User_Query;
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 /**
  * List table voor regelingen.
  */
-class Admin_Regelingen extends \WP_List_Table {
+class Admin_Regelingen extends WP_List_Table {
 
 	/**
 	 * Constructor
@@ -106,7 +109,7 @@ class Admin_Regelingen extends \WP_List_Table {
 		$paged                 = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
 		$order_val             = filter_input( INPUT_GET, 'order' );
 		$order                 = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$gebruiker_query       = new \WP_User_Query(
+		$gebruiker_query       = new WP_User_Query(
 			[
 				'fields'   => [ 'ID', 'display_name' ],
 				'orderby'  => 'display_name',

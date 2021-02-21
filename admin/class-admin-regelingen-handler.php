@@ -57,15 +57,16 @@ class Admin_Regelingen_Handler {
 	 * Overzicht regelingen page handler
 	 *
 	 * @since    5.2.0
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function regelingen_page_handler() {
 		$message = '';
 		$table   = new Admin_Regelingen();
 		if ( 'delete' === $table->current_action() ) {
-			$id = filter_input( INPUT_GET, 'id' );
-
-			if ( ! is_null( $id ) ) {
-				list($gebruiker_id, $oven_id) = sscanf( $id, '%d-%d' );
+			$regeling_id = filter_input( INPUT_GET, 'id' );
+			if ( ! is_null( $regeling_id ) ) {
+				list($gebruiker_id, $oven_id) = sscanf( $regeling_id, '%d-%d' );
 				$regelingen                   = get_user_meta( $gebruiker_id, Oven::REGELING, true );
 				unset( $regelingen[ $oven_id ] );
 				if ( empty( $regelingen ) ) {
@@ -83,6 +84,8 @@ class Admin_Regelingen_Handler {
 	 * Toon en verwerk regelingen
 	 *
 	 * @since    5.2.0
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function regelingen_form_page_handler() {
 
@@ -110,11 +113,7 @@ class Admin_Regelingen_Handler {
 				}
 				$gebruiker_regelingen[ $item['oven_id'] ] = $item['kosten'];
 				update_user_meta( $item['gebruiker_id'], Oven::REGELING, $gebruiker_regelingen );
-				if ( '' === $item['id'] ) {
-					$message = 'De regeling is bewaard';
-				} else {
-					$message = 'De regeling is gewijzigd';
-				}
+				$message                = ( '' === $item['id'] ) ? 'De regeling is bewaard' : 'De regeling is gewijzigd';
 				$oven                   = new Oven( $item['oven_id'] );
 				$gebruiker              = get_userdata( $item['gebruiker_id'] );
 				$item['gebruiker_naam'] = $gebruiker->display_name;
@@ -151,17 +150,9 @@ class Admin_Regelingen_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item de regeling.
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function regelingen_form_meta_box_handler( $item ) {
-		$gebruikers = get_users(
-			[
-				'fields'   => [ 'ID', 'display_name' ],
-				'orderby'  => [ 'display_name' ],
-				'role__in' => [ LID, BESTUUR, DOCENT ],
-			]
-		);
-		$ovens      = new Ovens();
-
 		require 'partials/admin-regelingen-form-meta-box.php';
 	}
 }

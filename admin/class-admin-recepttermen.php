@@ -108,8 +108,6 @@ class Admin_Recepttermen extends \WP_List_Table {
 	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
-		global $wpdb;
-
 		$per_page = 10;
 
 		$columns  = $this->get_columns();

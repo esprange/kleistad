@@ -11,6 +11,15 @@
 
 namespace Kleistad;
 
+$gebruikers = get_users(
+	[
+		'fields'   => [ 'ID', 'display_name' ],
+		'orderby'  => [ 'display_name' ],
+		'role__in' => [ LID, BESTUUR, DOCENT ],
+	]
+);
+$ovens      = new Ovens();
+
 ?>
 <table class="form-table">
 	<tbody>
