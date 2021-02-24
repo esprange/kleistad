@@ -201,7 +201,7 @@ class Public_Werkplek extends Shortcode {
 		$werkplekgebruik = new WerkplekGebruik( $datum );
 		$button          = [];
 		$html            = <<<EOT
-<div class="kleistad-row" >
+<div class="kleistad-row kleistad-meesters" >
 	<div class="kleistad-col-3" >
 		<strong>beheerder</strong>
 	</div>

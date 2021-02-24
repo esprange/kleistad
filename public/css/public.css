@@ -428,6 +428,10 @@ div.kleistad-werkplek-dagdeel {
 		display: block;
 	}
 
+	div.kleistad-meesters {
+		display: none;
+	}
+
 	[class^="kleistad-col-"] {
 		width: 100%;
 	}

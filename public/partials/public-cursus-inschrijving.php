@@ -122,7 +122,7 @@ else :
 			continue;
 		endif;
 		?>
-		<div class="kleistad-col-10 kleistad-row" >
+		<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap">
 			<input name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
 				data-cursus='<?php echo $json_cursus; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar[ $cursus_id ] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
 			<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">

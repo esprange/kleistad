@@ -3,11 +3,11 @@
 **Donate link:** https://www.kleistad.nl  
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
-**Tested up to:** 5.6  
-**Stable tag:** 6.14.2  
+**Tested up to:** 5.6.2  
+**Stable tag:** 6.14.3  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
-**Requires at least PHP version:** 7.4  
+**Requires PHP:** 7.4  
 
 [![Build Status](https://travis-ci.org/esprange/kleistad.svg?branch=master)](https://travis-ci.org/esprange/kleistad)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
@@ -36,6 +36,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 6.14.3 ###
+* Visuele verbeteringen
 ### 6.14.2 ###
 * Verbetering wachtlijst functionaliteit
 ### 6.14.1 ###
