@@ -66,11 +66,11 @@ abstract class ShortcodeForm extends Shortcode {
 			$error->add( 'verplicht', "De ingevoerde e-mail adressen {$input['user_email']} en {$input['email_controle']} zijn niet identiek" );
 			$input['email_controle'] = '';
 		}
-		if ( ! empty( $input['telnr'] ) && ! $this->validate_telnr( $input['telnr'] ) ) {
+		if ( ! $this->validate_telnr( $input['telnr'] ) ) {
 			$error->add( 'onjuist', "Het ingevoerde telefoonnummer {$input['telnr']} lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven" );
 			$input['telnr'] = '';
 		}
-		if ( ! empty( $input['pcode'] ) && ! $this->validate_pcode( $input['pcode'] ) ) {
+		if ( ! $this->validate_pcode( $input['pcode'] ) ) {
 			$error->add( 'onjuist', "De ingevoerde postcode {$input['pcode']} lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven" );
 			$input['pcode'] = '';
 		}
@@ -93,6 +93,9 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @return bool if false, dan niet gevalideerd.
 	 */
 	protected function validate_telnr( &$telnr ) {
+		if ( empty( $telnr ) ) {
+			return true;
+		}
 		$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $telnr );
 		return 1 === preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
 				1 === preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr );
@@ -106,19 +109,11 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @return bool if false, dan niet gevalideerd.
 	 */
 	protected function validate_pcode( &$pcode ) {
+		if ( empty( $pcode ) ) {
+			return true;
+		}
 		$pcode = strtoupper( str_replace( ' ', '', $pcode ) );
 		return 1 === preg_match( '/^[1-9][0-9]{3} ?[a-zA-Z]{2}$/', $pcode );
-	}
-
-	/**
-	 * Hulp functie, om een adres te valideren
-	 *
-	 * @since 5.2.0
-	 * @param string $adres het adres.
-	 * @return bool if false, dan niet gevalideerd.
-	 */
-	protected function validate_adres( $adres ) {
-		return 1 === preg_match( '/^([1-9][e][\s])*([a-zA-Z]+(([\.][\s])|([\s]))?)+[1-9][0-9]*(([-][1-9][0-9]*)|([\s]?[a-zA-Z]+))?$/i', $adres );
 	}
 
 	/**
@@ -168,7 +163,7 @@ abstract class ShortcodeForm extends Shortcode {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_formsubmit' ],
-				'permission_callback' => function( \WP_REST_Request $request ) {
+				'permission_callback' => function( WP_REST_Request $request ) {
 					$shortcode  = $request->get_param( 'tag' );
 					$shortcodes = new ShortCodes();
 					return $shortcodes->check_access( $shortcode );
@@ -181,10 +176,10 @@ abstract class ShortcodeForm extends Shortcode {
 	 * Verwerk een form submit via ajax call
 	 *
 	 * @since 5.7.0
-	 * @param  \WP_REST_Request $request De callback parameters.
-	 * @return \WP_REST_Response|\WP_Error de response.
+	 * @param  WP_REST_Request $request De callback parameters.
+	 * @return WP_REST_Response|WP_Error de response.
 	 */
-	public static function callback_formsubmit( \WP_REST_Request $request ) {
+	public static function callback_formsubmit( WP_REST_Request $request ) {
 		$shortcode_object = self::get_shortcode_object( $request );
 		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
 			return new WP_Error( 'intern', 'interne fout' );

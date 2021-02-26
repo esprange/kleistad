@@ -224,6 +224,9 @@ class Order {
 	 * @return float
 	 */
 	public function te_betalen() : float {
+		if ( $this->gesloten ) {
+			return 0;
+		}
 		if ( $this->is_credit() ) {
 			$origineel_order = new Order( $this->origineel_id );
 			return round( $origineel_order->orderregels->bruto() + $this->orderregels->bruto() - $this->betaald, 2 );
@@ -266,7 +269,7 @@ class Order {
 			add_filter(
 				'kleistad_melding',
 				function( $html ) use ( $result ) {
-					return $html . Shortcode::melding(
+					return $html . melding(
 						$result ? 1 : -1,
 						$result ? 'er is opdracht gegeven om het terug te betalen bedrag over te maken' :
 						'de opdracht om het bedrag terug te storten is niet mogelijk. Probeer het per bank over te maken'

@@ -74,6 +74,22 @@ function opties() {
 }
 
 /**
+ * Maak een melding tekst aan.
+ *
+ * @param int    $status  1 succes, 0 fout, -1 notificatie.
+ * @param string $bericht Het bericht.
+ * @return string De opgemaakte tekst.
+ */
+function melding( int $status, string $bericht ) : string {
+	$levels = [
+		-1 => 'kleistad-inform',
+		0  => 'kleistad-fout',
+		1  => 'kleistad-succes',
+	];
+	return "<div class=\"{$levels[$status]}\"><p>$bericht</p></div>";
+}
+
+/**
  * De technische setup van de plugin.
  *
  * @since     6.2.1

@@ -66,22 +66,6 @@ abstract class Shortcode {
 	abstract protected function prepare( &$data);
 
 	/**
-	 * Maak een melding tekst aan.
-	 *
-	 * @param int    $status  1 succes, 0 fout, -1 notificatie.
-	 * @param string $bericht Het bericht.
-	 * @return string De opgemaakte tekst.
-	 */
-	public static function melding( $status, $bericht ) {
-		$levels = [
-			-1 => 'kleistad-inform',
-			0  => 'kleistad-fout',
-			1  => 'kleistad-succes',
-		];
-		return "<div class=\"{$levels[$status]}\"><p>$bericht</p></div>";
-	}
-
-	/**
 	 * Enqueue the scripts and styles for the shortcode.
 	 */
 	protected function enqueue() {
@@ -158,13 +142,13 @@ abstract class Shortcode {
 		$html = '';
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
-				$html .= self::melding( 0, $error );
+				$html .= melding( 0, $error );
 			}
 			return $html;
 		}
 		$succes = $result['status'] ?? ( is_string( $result ) ? $result : '' );
 		if ( ! empty( $succes ) ) {
-			$html = self::melding( 1, $succes );
+			$html = melding( 1, $succes );
 		}
 		return $html;
 	}
