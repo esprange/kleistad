@@ -126,7 +126,7 @@ else :
 			<input name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
 				data-cursus='<?php echo $json_cursus; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar[ $cursus_id ] ); ?> <?php checked( $checked_id, $cursus_id ); ?> />
 			<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
-				<span style="<?php echo esc_attr( $selecteerbaar[ $cursus_id ] ? '' : 'color: gray;' ); ?>"><?php echo esc_html( $cursus->naam . ( $cursus->vol ? ' VOL' : '' ) ); ?></span></label>
+				<span style="<?php echo esc_attr( $selecteerbaar[ $cursus_id ] ? '' : 'color: gray;' ); ?>"><?php echo esc_html( $cursus->naam . ( $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : '' ) ) ); ?></span></label>
 		</div>
 		<?php
 	endforeach;
