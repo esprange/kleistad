@@ -349,15 +349,18 @@ a.kleistad-schedule {
 	text-align: center;
 	white-space: nowrap;
 	width: 100%;
+	box-sizing: border-box;
 }
 
 .kleistad-werkplek-bezet,
 .kleistad-werkplek-vrij {
 	border: 1px solid white;
 	font-size: small;
+	padding: 5px 10px;
 }
 
 .kleistad-werkplek-dagdeel,
+.kleistad-werkplek-reserveerbaar,
 .kleistad-werkplek-gereserveerd {
 	border: 0;
 }
@@ -409,6 +412,10 @@ a.kleistad-schedule {
 
 	.kleistad-col-10 {
 		width: 100%;
+	}
+
+	.kleistad-col-kwart {
+		width: 25%;
 	}
 }
 

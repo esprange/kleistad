@@ -202,7 +202,7 @@ class Public_Werkplek extends Shortcode {
 		$button          = [];
 		$html            = <<<EOT
 <div class="kleistad-row kleistad-meesters" >
-	<div class="kleistad-col-3" >
+	<div class="kleistad-col-kwart" >
 		<strong>beheerder</strong>
 	</div>
 EOT;
@@ -211,13 +211,13 @@ EOT;
 			$meester_id   = is_object( $meester ) ? $meester->ID : 0;
 			if ( current_user_can( BESTUUR ) ) {
 				$html .= <<<EOT
-	<div class="kleistad-col-2">
+	<div class="kleistad-col-kwart" >
 		<button type="button" class="kleistad-meester" data-dagdeel="$dagdeel" value="$meester_id" name="meester" />$meester_naam</button>
 	</div>
 EOT;
 			} else {
 				$html .= <<<EOT
-	<div class="kleistad-col-2" style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
+	<div class="kleistad-col-kwart" style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
 		$meester_naam
 	</div>
 EOT;
@@ -230,7 +230,7 @@ EOT;
 			$kleur = WerkplekConfig::ACTIEKLEUR[ $activiteit ];
 			$html .= <<<EOT
 <div class="kleistad-row" style="background: $kleur">
-	<div class="kleistad-col-3">
+	<div class="kleistad-col-kwart">
 		<strong>$activiteit</strong>
 	</div>
 EOT;
@@ -239,49 +239,36 @@ EOT;
 				$gebruikers         = $werkplekgebruik->geef( $dagdeel, $activiteit );
 				$aanwezig           = $werkplekgebruik->is_aanwezig( $dagdeel, $gebruiker_id );
 				$html              .= <<<EOT
-	<div class="kleistad-col-2">
-		<table style="border:0" >
-			<tr>
-				<th class="kleistad-werkplek-dagdeel">$dagdeel</th>
-			</tr>
+	<div class="kleistad-col-kwart" >
+		<span class="kleistad-werkplek-dagdeel">$dagdeel</span>
+		<br/>
 EOT;
 				for ( $werkplek = 0; $werkplek < $werkplekken[ $activiteit ]; $werkplek++ ) {
-					$html .= <<<EOT
-			<tr>
-EOT;
 					if ( isset( $gebruikers[ $werkplek ] ) ) {
 						if ( intval( $gebruikers[ $werkplek ]->ID ) !== $gebruiker_id ) {
 							$html .= <<<EOT
-				<td class="kleistad-werkplek-bezet">
-					{$gebruikers[$werkplek]->display_name}
-				</td>
+				<div class="kleistad-werkplek-bezet" >{$gebruikers[$werkplek]->display_name}</div>
 EOT;
 							continue;
 						}
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
-				<td class="kleistad-werkplek-gereserveerd">
-					<button type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" class="kleistad-werkplek" >{$gebruikers[$werkplek]->display_name}</button>
-				</td>
+				<button type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" class="kleistad-werkplek kleistad-werkplek-gereserveerd" >{$gebruikers[$werkplek]->display_name}</button>
 EOT;
 						continue;
 					}
 					if ( ! $aanwezig && ! ( $button[ $dagdeel ][ $activiteit ] ?? false ) ) {
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
-				<td class="kleistad-werkplek-vrij">
-					<button type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" class="kleistad-werkplek" >reserveren</button>
-				</td>
+				<button type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" class="kleistad-werkplek kleistad-werkplek-reserveerbaar" >reserveren</button>
 EOT;
 						continue;
 					}
 					$html .= <<<EOT
-				<td class="kleistad-werkplek-vrij">&nbsp;</td>
+				<div class="kleistad-werkplek-vrij" >&nbsp;</div>
 EOT;
 				}
 				$html .= <<<EOT
-			</tr>
-		</table>
 	</div>
 EOT;
 			}

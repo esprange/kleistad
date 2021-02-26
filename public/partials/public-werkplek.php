@@ -54,9 +54,7 @@ $huidige_gebruiker = wp_get_current_user();
 	</div>
 	<?php endif ?>
 </div>
-<div class="kleistad-row">
-	<div id="kleistad_werkplek"
-		data-datums='<?php echo esc_attr( wp_json_encode( $data['datums'] ) ?: '[]' ); ?>'
-		data-id="<?php echo esc_attr( $huidige_gebruiker->ID ); ?>" >
-	</div>
+<div id="kleistad_werkplek"
+	data-datums='<?php echo esc_attr( wp_json_encode( $data['datums'] ) ?: '[]' ); ?>'
+	data-id="<?php echo esc_attr( $huidige_gebruiker->ID ); ?>" >
 </div>
