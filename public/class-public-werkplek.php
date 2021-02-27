@@ -190,17 +190,13 @@ class Public_Werkplek extends Shortcode {
 	}
 
 	/**
-	 * Toon de werkplekken op een dag.
+	 * Toon de meesters sectie
 	 *
-	 * @param int $gebruiker_id   De gebruiker waarvoor de reservering plaatsvindt.
-	 * @param int $datum          De datum.
-	 * @return string HTML content.
-	 * @suppressWarnings(PHPMD.ElseExpression)
+	 * @param WerkplekGebruik $werkplekgebruik Het werkplekgebruik.
+	 * @return string De html tekst.
 	 */
-	private static function toon_werkplekken( int $gebruiker_id, int $datum ) : string {
-		$werkplekgebruik = new WerkplekGebruik( $datum );
-		$button          = [];
-		$html            = <<<EOT
+	private static function toon_meesters( WerkplekGebruik $werkplekgebruik ) : string {
+		$html = <<<EOT
 <div class="kleistad-row kleistad-meesters" >
 	<div class="kleistad-col-kwart" >
 		<strong>beheerder</strong>
@@ -215,17 +211,31 @@ EOT;
 		<button type="button" class="kleistad-meester" data-dagdeel="$dagdeel" value="$meester_id" name="meester" />$meester_naam</button>
 	</div>
 EOT;
-			} else {
-				$html .= <<<EOT
+				continue;
+			}
+			$html .= <<<EOT
 	<div class="kleistad-col-kwart" style="white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
 		$meester_naam
 	</div>
 EOT;
-			}
 		}
 		$html .= <<<EOT
 </div>
 EOT;
+		return $html;
+	}
+	
+	/**
+	 * Toon de werkplekken op een dag.
+	 *
+	 * @param int $gebruiker_id   De gebruiker waarvoor de reservering plaatsvindt.
+	 * @param int $datum          De datum.
+	 * @return string HTML content.
+	 */
+	private static function toon_werkplekken( int $gebruiker_id, int $datum ) : string {
+		$werkplekgebruik = new WerkplekGebruik( $datum );
+		$button          = [];
+		$html            = self::toon_meesters( $werkplekgebruik );
 		foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) {
 			$kleur = WerkplekConfig::ACTIEKLEUR[ $activiteit ];
 			$html .= <<<EOT
@@ -318,27 +328,18 @@ EOT;
 		$datum           = strtotime( $datum_str );
 		$werkplekgebruik = new WerkplekGebruik( $datum );
 		$gebruiker_ids   = array_map( 'intval', array_column( $werkplekgebruik->geef( $dagdeel, $activiteit ), 'ID' ) );
-		switch ( $request->get_method() ) {
-			case 'POST':
-				if ( ! in_array( $gebruiker_id, $gebruiker_ids, true ) ) {
-					$gebruiker_ids[] = $gebruiker_id;
-					$werkplekgebruik->wijzig( $dagdeel, $activiteit, $gebruiker_ids );
-					break;
-				}
-				// @TODO Foutmelding, helaas is de werkplek zojuist al door iemand anders gereserveerd.
-				break;
-			case 'PUT':
-				break;
-			case 'DELETE':
-				$key = array_search( $gebruiker_id, $gebruiker_ids, true );
-				if ( false === $key ) {
-					break;
-				}
+		if ( 'POST' === $request->get_method() ) {
+			if ( ! in_array( $gebruiker_id, $gebruiker_ids, true ) ) {
+				$gebruiker_ids[] = $gebruiker_id;
+				$werkplekgebruik->wijzig( $dagdeel, $activiteit, $gebruiker_ids );
+			}
+		}
+		if ( 'DELETE' === $request->get_method() ) {
+			$key = array_search( $gebruiker_id, $gebruiker_ids, true );
+			if ( false !== $key ) {
 				unset( $gebruiker_ids[ $key ] );
 				$werkplekgebruik->wijzig( $dagdeel, $activiteit, $gebruiker_ids );
-				break;
-			default:
-				break;
+			}
 		}
 		return new WP_REST_Response(
 			[
