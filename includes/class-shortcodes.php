@@ -178,7 +178,7 @@ class Shortcodes {
 			'werkplek'              => (object) [
 				'script' => true,
 				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-dialog' ],
-				'css'    => [ 'jquery-ui' ],
+				'css'    => [ 'jquery-ui', 'dashicons' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
 			'werkplekrapport'       => (object) [
