@@ -224,7 +224,7 @@ EOT;
 EOT;
 		return $html;
 	}
-	
+
 	/**
 	 * Toon de werkplekken op een dag.
 	 *

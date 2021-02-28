@@ -252,11 +252,11 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		if ( is_null( $data['workshop']['technieken'] ) ) {
 			$data['workshop']['technieken'] = [];
 		}
-		if ( 'bewaren' === $data['form_actie'] || 'bevestigen' === $data['form_actie'] ) {
+		if ( preg_match( '~(bewaren|bevestigen)~', $data['form_actie'] ) ) {
 			if ( ! $this->validate_email( $data['workshop']['email'] ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $data['workshop']['email'] . ' is geen geldig E-mail adres.' );
 			}
-			if ( ! empty( $data['workshop']['telnr'] ) && ! $this->validate_telnr( $data['workshop']['telnr'] ) ) {
+			if ( ! $this->validate_telnr( $data['workshop']['telnr'] ) ) {
 				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
 			}
 			if ( strtotime( $data['workshop']['start_tijd'] ) >= strtotime( $data['workshop']['eind_tijd'] ) ) {
@@ -368,7 +368,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$workshop->save();
 			$bericht = 'De workshop informatie is opgeslagen';
 		} elseif ( 'bevestigen' === $data['form_actie'] ) {
-			if ( $workshop->bevestig() ) {
+			if ( ! $workshop->bevestig() ) {
 				return [
 					'status'  => $this->status( new WP_Error( 'factuur', 'De factuur kan niet meer gewijzigd worden' ) ),
 					'content' => $this->display(),
@@ -377,11 +377,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
 		} elseif ( 'afzeggen' === $data['form_actie'] ) {
 			$workshop->afzeggen();
-			$bericht = 'De afspraak voor de workshop is verwijderd';
-			if ( $workshop->definitief ) {
-				$workshop->verzend_email( '_afzegging' );
-				$bericht = 'De afspraak voor de workshop is per email afgezegd';
-			}
+			$bericht = 'De afspraak voor de workshop is ' . ( $workshop->definitief ) ? 'per email afgezegd' : 'verwijderd';
 		}
 		return [
 			'status'  => $this->status( $bericht ),

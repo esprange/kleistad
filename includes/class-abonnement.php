@@ -238,22 +238,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Maak de sepa incasso betalingen.
-	 */
-	private function doe_sepa_incasso() {
-		$bedrag = $this->geef_bedrag( "#{$this->artikel_type}" );
-		if ( 0.0 < $bedrag ) {
-			return $this->betalen->eenmalig(
-				$this->klant_id,
-				$this->geef_referentie(),
-				$bedrag,
-				"Kleistad abonnement {$this->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
-			);
-		}
-		return '';
-	}
-
-	/**
 	 * Verzenden van de email.
 	 *
 	 * @param  string $type      Welke email er verstuurd moet worden.
@@ -329,27 +313,9 @@ class Abonnement extends Artikel {
 	 *
 	 * @param  boolean $uitgebreid Uitgebreide tekst of korte tekst.
 	 * @return string De status tekst.
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function geef_statustekst( bool $uitgebreid ) : string {
-		$vandaag = strtotime( 'today' );
-		if ( $this->is_geannuleerd() ) {
-			return $uitgebreid ? 'gestopt sinds ' . strftime( '%x', $this->eind_datum ) : 'gestopt';
-		} elseif ( $this->is_gepauzeerd() ) {
-			return $uitgebreid ? 'gepauzeerd sinds ' . strftime( '%x', $this->pauze_datum ) . ' tot ' . strftime( '%x', $this->herstart_datum ) : 'gepauzeerd';
-		} elseif ( $vandaag > $this->start_datum ) {
-			if ( $vandaag < $this->pauze_datum ) {
-				return $uitgebreid ? 'pauze gepland per ' . strftime( '%x', $this->pauze_datum ) . ' tot ' . strftime( '%x', $this->herstart_datum ) : 'pauze gepland';
-			} elseif ( $vandaag <= $this->eind_datum ) {
-				return $uitgebreid ? 'stop gepland per ' . strftime( '%x', $this->eind_datum ) : 'stop gepland';
-			} elseif ( $vandaag < $this->start_eind_datum ) {
-				return $uitgebreid ? 'gestart sinds ' . strftime( '%x', $this->start_datum ) : 'gestart';
-			} elseif ( $vandaag < $this->reguliere_datum ) {
-				return 'overbrugging';
-			}
-			return $uitgebreid ? 'actief sinds ' . strftime( '%x', $this->start_datum ) : 'actief';
-		}
-		return $uitgebreid ? 'aangemeld per ' . strftime( '%x', $this->datum ) . ', start per ' . strftime( '%x', $this->start_datum ) : 'aangemeld';
+		return $uitgebreid ? $this->geef_status_uitgebreid() : $this->geef_status_kort();
 	}
 
 	/**
@@ -543,6 +509,50 @@ class Abonnement extends Artikel {
 	}
 
 	/**
+	 * Factureer de maand
+	 *
+	 * @SuppressWarnings(PHPMD.ElseExpression)
+	 */
+	public function factureer() {
+		$vandaag        = strtotime( 'today' );
+		$factuur_maand  = (int) date( 'Ym', $vandaag );
+		$volgende_maand = strtotime( 'first day of next month 00:00' );
+		$deze_maand     = strtotime( 'first day of this month 00:00' );
+		if ( $this->factuur_maand >= $factuur_maand ||
+		( $this->herstart_datum >= $volgende_maand && $this->pauze_datum <= $deze_maand )
+		) {
+			return;
+		}
+		$betalen = new Betalen();
+		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
+		$this->artikel_type = ( ( $this->herstart_datum > $deze_maand && $this->herstart_datum < $volgende_maand ) ||
+			( $this->pauze_datum >= $deze_maand && $this->pauze_datum < $volgende_maand ) ) ? 'pauze' : 'regulier';
+		if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
+			$this->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->doe_sepa_incasso(), false );
+		} else {
+			$this->verzend_email( '_regulier_bank', $this->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
+		}
+		$this->factuur_maand = $factuur_maand;
+		$this->save();
+	}
+
+	/**
+	 * Maak de sepa incasso betalingen.
+	 */
+	private function doe_sepa_incasso() {
+		$bedrag = $this->geef_bedrag( "#{$this->artikel_type}" );
+		if ( 0.0 < $bedrag ) {
+			return $this->betalen->eenmalig(
+				$this->klant_id,
+				$this->geef_referentie(),
+				$bedrag,
+				"Kleistad abonnement {$this->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
+			);
+		}
+		return '';
+	}
+
+	/**
 	 * Bereken de prijs van een extra.
 	 *
 	 * @param string $extra het extra element.
@@ -624,39 +634,63 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Factureer de maand
-	 *
-	 * @SuppressWarnings(PHPMD.ElseExpression)
-	 */
-	public function factureer() {
-		$vandaag        = strtotime( 'today' );
-		$factuur_maand  = (int) date( 'Ym', $vandaag );
-		$volgende_maand = strtotime( 'first day of next month 00:00' );
-		$deze_maand     = strtotime( 'first day of this month 00:00' );
-		if ( $this->factuur_maand >= $factuur_maand ||
-		( $this->herstart_datum >= $volgende_maand && $this->pauze_datum <= $deze_maand )
-		) {
-			return;
-		}
-		$betalen = new Betalen();
-		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
-		$this->artikel_type = ( ( $this->herstart_datum > $deze_maand && $this->herstart_datum < $volgende_maand ) ||
-			( $this->pauze_datum >= $deze_maand && $this->pauze_datum < $volgende_maand ) ) ? 'pauze' : 'regulier';
-		if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
-			$this->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->doe_sepa_incasso(), false );
-		} else {
-			$this->verzend_email( '_regulier_bank', $this->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
-		}
-		$this->factuur_maand = $factuur_maand;
-		$this->save();
-	}
-
-	/**
 	 * Helper functie, om een handeling toe te voegen
 	 *
 	 * @param string $tekst De handeling.
 	 */
 	private function log( string $tekst ) : void {
 		$this->historie = array_merge( $this->historie, [ strftime( '%c' ) . " $tekst" ] );
+	}
+
+	/**
+	 * Geef de lange status terug
+	 *
+	 * @return string
+	 */
+	private function geef_status_uitgebreid() : string {
+		$vandaag = strtotime( 'today' );
+		if ( $this->is_geannuleerd() ) {
+			return 'gestopt sinds ' . strftime( '%x', $this->eind_datum );
+		} elseif ( $this->is_gepauzeerd() ) {
+			return 'gepauzeerd sinds ' . strftime( '%x', $this->pauze_datum ) . ' tot ' . strftime( '%x', $this->herstart_datum );
+		} elseif ( $vandaag > $this->start_datum ) {
+			if ( $vandaag < $this->pauze_datum ) {
+				return 'pauze gepland per ' . strftime( '%x', $this->pauze_datum ) . ' tot ' . strftime( '%x', $this->herstart_datum );
+			} elseif ( $vandaag <= $this->eind_datum ) {
+				return 'stop gepland per ' . strftime( '%x', $this->eind_datum );
+			} elseif ( $vandaag < $this->start_eind_datum ) {
+				return 'gestart sinds ' . strftime( '%x', $this->start_datum );
+			} elseif ( $vandaag < $this->reguliere_datum ) {
+				return 'overbrugging';
+			}
+			return 'actief sinds ' . strftime( '%x', $this->start_datum );
+		}
+		return 'aangemeld per ' . strftime( '%x', $this->datum ) . ', start per ' . strftime( '%x', $this->start_datum );
+	}
+
+	/**
+	 * Geef de korte status terug
+	 *
+	 * @return string
+	 */
+	private function geef_status_kort() : string {
+		$vandaag = strtotime( 'today' );
+		if ( $this->is_geannuleerd() ) {
+			return 'gestopt';
+		} elseif ( $this->is_gepauzeerd() ) {
+			return 'gepauzeerd';
+		} elseif ( $vandaag > $this->start_datum ) {
+			if ( $vandaag < $this->pauze_datum ) {
+				return 'pauze gepland';
+			} elseif ( $vandaag <= $this->eind_datum ) {
+				return 'stop gepland';
+			} elseif ( $vandaag < $this->start_eind_datum ) {
+				return 'gestart';
+			} elseif ( $vandaag < $this->reguliere_datum ) {
+				return 'overbrugging';
+			}
+			return 'actief';
+		}
+		return 'aangemeld';
 	}
 }

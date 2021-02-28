@@ -122,9 +122,7 @@ class Workshops implements Countable, Iterator {
 				) {
 				continue;
 			}
-			$workshop->betaling_email = true;
-			$workshop->save();
-			$workshop->verzend_email( '_betaling', $workshop->bestel_order( 0.0, $workshop->datum ) );
+			$workshop->vraag_betaling();
 		}
 	}
 

@@ -132,7 +132,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @return WP_Error|bool
 	 *
 	 * @since   4.0.87
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	protected function validate( &$data ) {
 		$error          = new WP_Error();
@@ -174,20 +173,15 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		if ( is_null( $data['cursus']['technieken'] ) ) {
 			$data['cursus']['technieken'] = [];
 		}
-		if ( strtotime( $data['cursus']['start_tijd'] ) >= strtotime( $data['cursus']['eind_tijd'] ) ) {
-			$error->add( 'Invoerfout', 'De starttijd moet voor de eindtijd liggen' );
+		if ( $data['cursus']['cursuskosten'] < $data['cursus']['inschrijfkosten'] ) {
+			$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet lager zijn' );
 		}
-		if ( strtotime( $data['cursus']['start_datum'] ) > strtotime( $data['cursus']['eind_datum'] ) ) {
-			$error->add( 'Invoerfout', 'De startdatum moet eerder of gelijk aan de einddatum zijn' );
-		}
-		if ( 0.0 === $data['cursus']['cursuskosten'] && 0.0 < $data['cursus']['inschrijfkosten'] ) {
-			$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet gelijk zijn aan 0 euro' );
-		}
-		if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['inschrijfslug'], OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
-			$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['inschrijfslug'] );
-		}
-		if ( '' != $data['cursus']['tonen'] && is_null( get_page_by_title( $data['cursus']['indelingslug'], OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
-			$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['indelingslug'] );
+		if ( ! is_null( $data['cursus']['tonen'] ) ) {
+			foreach ( [ $data['cursus']['inschrijfslug'], $data['cursus']['indelingslug'] ] as $slug ) {
+				if ( is_null( get_page_by_title( $slug, OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
+					$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['inschrijfslug'] );
+				}
+			}
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $error;

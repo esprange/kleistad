@@ -108,16 +108,17 @@ class Abonnementen implements Countable, Iterator {
 	public static function doe_dagelijks() {
 		$vandaag = strtotime( 'today' );
 		foreach ( new self() as $abonnement ) {
-			if ( $abonnement->is_geannuleerd() || $vandaag < $abonnement->start_datum ) {
+			if ( $vandaag < $abonnement->start_datum ) {
 				// Gestopte abonnementen en abonnementen die nog moeten starten hebben geen actie nodig.
 				continue;
-			} elseif ( $abonnement->eind_datum && $vandaag >= $abonnement->eind_datum ) {
+			}
+			if ( $abonnement->is_geannuleerd() ) {
 				// Abonnementen waarvan de einddatum verstreken is worden gestopt.
 				$abonnement->autoriseer( false );
 				$abonnement->save();
 				continue;
 			}
-			$abonnement->autoriseer( true );
+
 			// Abonnementen waarvan de starttermijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er nog geen einddatum ingevuld is.
 			if ( $vandaag < $abonnement->reguliere_datum ) {
 				if ( $vandaag >= strtotime( '-7 days', $abonnement->start_eind_datum ) && ! $abonnement->eind_datum && ! $abonnement->overbrugging_email ) {

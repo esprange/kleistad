@@ -91,14 +91,6 @@ abstract class Artikel {
 	abstract public function geef_referentie(): string;
 
 	/**
-	 * Email function
-	 *
-	 * @param string $type    Het soort email.
-	 * @param string $factuur De eventueel te versturen factuur.
-	 */
-	abstract public function verzend_email( string $type, string $factuur = '' );
-
-	/**
 	 * Bestelling
 	 *
 	 * @return array|Orderregel Een array van orderregels of maar één regel.

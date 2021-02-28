@@ -173,6 +173,9 @@ class Workshop extends Artikel {
 				unset( $e ); // phpcs:ignore
 			}
 		}
+		if ( $this->definitief ) {
+			$this->verzend_email( '_afzegging' );
+		}
 		return true;
 	}
 
@@ -210,6 +213,15 @@ class Workshop extends Artikel {
 	}
 
 	/**
+	 * Geef aan dat de workshop betaald moet worden
+	 */
+	public function vraag_betaling() {
+		$this->betaling_email = true;
+		$this->save();
+		$this->verzend_email( '_betaling', $this->bestel_order( 0.0, $this->datum ) );
+	}
+
+	/**
 	 * Bevestig de workshop.
 	 *
 	 * @since 5.0.0
@@ -240,63 +252,6 @@ class Workshop extends Artikel {
 	 */
 	public function geef_referentie() : string {
 		return $this->code;
-	}
-
-	/**
-	 * Verzenden van de bevestiging of betalings email.
-	 *
-	 * @since      5.0.0
-	 *
-	 * @param string $type bevestiging of betaling.
-	 * @param string $factuur Een bij te sluiten factuur.
-	 * @return boolean succes of falen van verzending email.
-	 */
-	public function verzend_email( $type, $factuur = '' ) {
-		$emailer          = new Email();
-		$email_parameters = [
-			'to'          => "{$this->contact} <{$this->email}>",
-			'attachments' => $factuur ?: [],
-			'parameters'  => [
-				'contact'             => $this->contact,
-				'naam'                => ( 'workshop' === $this->naam ) ? 'de workshop' : ( 'kinderfeest' === $this->naam ? 'het kinderfeest' : $this->naam ),
-				'organisatie'         => $this->organisatie,
-				'aantal'              => $this->aantal,
-				'workshop_code'       => $this->code,
-				'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
-				'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
-				'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
-				'workshop_docent'     => $this->docent,
-				'workshop_technieken' => implode( ', ', $this->technieken ),
-				'workshop_programma'  => $this->programma,
-				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
-				'workshop_link'       => $this->betaal_link,
-			],
-		];
-
-		$email_parameters['slug'] = "workshop$type";
-		if ( $factuur && $this->organisatie_email ) {
-			$email_parameters['to'] .= ", {$this->organisatie} <{$this->organisatie_email}>";
-		}
-		switch ( $type ) {
-			case '_bevestiging':
-			case '_herbevestiging':
-				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( '_herbevestiging' === $type ? ' (correctie)' : '' );
-				$email_parameters['auto']     = false;
-				$email_parameters['slug']     = 'workshop_bevestiging';
-				$email_parameters['from']     = "{$emailer->info}{$emailer->verzend_domein}";
-				$email_parameters['reply-to'] = "{$emailer->info}{$emailer->domein}";
-				break;
-			case '_betaling':
-			case '_ideal':
-				$email_parameters['subject'] = 'Betaling ' . $this->naam;
-				break;
-			case '_afzegging':
-				$email_parameters['subject'] = 'Annulering ' . $this->naam;
-				break;
-			default:
-				return false;
-		}
-		return $emailer->send( $email_parameters );
 	}
 
 	/**
@@ -365,7 +320,7 @@ class Workshop extends Artikel {
 	 */
 	public function geef_statustekst( bool $uitgebreid = false ) : string {
 		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->is_betaald() ? 'betaald' : '' ) );
-		return $uitgebreid ? 'workshop ' . $status : $status;
+		return $uitgebreid ? "$this->naam $status" : $status;
 	}
 
 	/**
@@ -408,6 +363,63 @@ class Workshop extends Artikel {
 				$this->verzend_email( '_ideal' );
 			}
 		}
+	}
+
+	/**
+	 * Verzenden van de bevestiging of betalings email.
+	 *
+	 * @since      5.0.0
+	 *
+	 * @param string $type bevestiging of betaling.
+	 * @param string $factuur Een bij te sluiten factuur.
+	 * @return boolean succes of falen van verzending email.
+	 */
+	private function verzend_email( $type, $factuur = '' ) {
+		$emailer          = new Email();
+		$email_parameters = [
+			'to'          => "{$this->contact} <{$this->email}>",
+			'attachments' => $factuur ?: [],
+			'parameters'  => [
+				'contact'             => $this->contact,
+				'naam'                => ( 'workshop' === $this->naam ) ? 'de workshop' : ( 'kinderfeest' === $this->naam ? 'het kinderfeest' : $this->naam ),
+				'organisatie'         => $this->organisatie,
+				'aantal'              => $this->aantal,
+				'workshop_code'       => $this->code,
+				'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
+				'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
+				'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
+				'workshop_docent'     => $this->docent,
+				'workshop_technieken' => implode( ', ', $this->technieken ),
+				'workshop_programma'  => $this->programma,
+				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
+				'workshop_link'       => $this->betaal_link,
+			],
+		];
+
+		$email_parameters['slug'] = "workshop$type";
+		if ( $factuur && $this->organisatie_email ) {
+			$email_parameters['to'] .= ", {$this->organisatie} <{$this->organisatie_email}>";
+		}
+		switch ( $type ) {
+			case '_bevestiging':
+			case '_herbevestiging':
+				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( '_herbevestiging' === $type ? ' (correctie)' : '' );
+				$email_parameters['auto']     = false;
+				$email_parameters['slug']     = 'workshop_bevestiging';
+				$email_parameters['from']     = "{$emailer->info}{$emailer->verzend_domein}";
+				$email_parameters['reply-to'] = "{$emailer->info}{$emailer->domein}";
+				break;
+			case '_betaling':
+			case '_ideal':
+				$email_parameters['subject'] = 'Betaling ' . $this->naam;
+				break;
+			case '_afzegging':
+				$email_parameters['subject'] = 'Annulering ' . $this->naam;
+				break;
+			default:
+				return false;
+		}
+		return $emailer->send( $email_parameters );
 	}
 
 }
