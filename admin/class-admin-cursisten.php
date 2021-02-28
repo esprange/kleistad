@@ -150,7 +150,7 @@ class Admin_Cursisten extends WP_List_Table {
 		usort(
 			$cursisten,
 			function( $links, $rechts ) use ( $orderby, $order ) {
-				return ( 'asc' === $order ) ? strcmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcmp( $rechts[ $orderby ], $links[ $orderby ] );
+				return ( 'asc' === $order ) ? strcasecmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcasecmp( $rechts[ $orderby ], $links[ $orderby ] );
 			}
 		);
 		$this->items = array_slice( $cursisten, $paged * $per_page, $per_page, true );
