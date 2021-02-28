@@ -97,6 +97,27 @@ class Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
+	 * Haal de stoker info op
+	 *
+	 * @param string $search Eventuele zoek parameter.
+	 * @return array;
+	 */
+	private function geef_stokers( string $search ) : array {
+		$stokers = [];
+		foreach ( new Stokers() as $stoker ) {
+			if ( ! empty( $search ) && false === strpos( $stoker->display_name . $stoker->user_email, $search ) ) {
+				continue;
+			}
+			$stokers[] = [
+				'id'    => $stoker->ID,
+				'naam'  => $stoker->display_name,
+				'saldo' => $stoker->saldo->bedrag,
+			];
+		}
+		return $stokers;
+	}
+
+	/**
 	 * Prepareer de te tonen items
 	 */
 	public function prepare_items() {
@@ -108,34 +129,27 @@ class Admin_Stooksaldo extends WP_List_Table {
 
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 
-		$search_val      = filter_input( INPUT_GET, 's' );
-		$search          = ! is_null( $search_val ) ? $search_val : '';
-		$paged_val       = filter_input( INPUT_GET, 'paged' );
-		$paged           = ! is_null( $paged_val ) ? max( 1, intval( $paged_val ) ) : 1;
-		$orderby_val     = filter_input( INPUT_GET, 'orderby' );
-		$orderby         = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val       = filter_input( INPUT_GET, 'order' );
-		$order           = ! is_null( $order_val ) && 'asc' === $order_val ? \SORT_ASC : \SORT_DESC;
-		$gebruiker_query = new WP_User_Query(
-			[
-				'fields'   => [ 'ID', 'display_name' ],
-				'search'   => '*' . $search . '*',
-				'meta_key' => Saldo::META_KEY,
-				'paged'    => $paged,
-				'number'   => $per_page,
-			]
+		$search_val  = filter_input( INPUT_GET, 's' );
+		$search      = ! is_null( $search_val ) ? $search_val : '';
+		$paged_val   = filter_input( INPUT_GET, 'paged' );
+		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
+		$orderby_val = filter_input( INPUT_GET, 'orderby' );
+		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
+		$order_val   = filter_input( INPUT_GET, 'order' );
+		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
+		$stokers     = $this->geef_stokers( $search );
+		usort(
+			$stokers,
+			function( $links, $rechts ) use ( $orderby, $order ) {
+				if ( is_float( $links[ $orderby ] ) ) {
+					return ( 'asc' === $order ) ? $links[ $orderby ] <=> $rechts[ $orderby ] : $rechts[ $orderby ] <=> $links[ $orderby ];
+				}
+				return ( 'asc' === $order ) ? strcasecmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcasecmp( $rechts[ $orderby ], $links[ $orderby ] );
+			}
 		);
-		foreach ( $gebruiker_query->get_results() as $gebruiker ) {
-			$saldo         = new Saldo( $gebruiker->ID );
-			$this->items[] = [
-				'id'    => $gebruiker->ID,
-				'naam'  => $gebruiker->display_name,
-				'saldo' => $saldo->bedrag,
-			];
-		}
-		$order_sleutels = array_column( $this->items, $orderby );
-		array_multisort( $order_sleutels, $order, $this->items );
-		$total_items = $gebruiker_query->get_total();
+		$this->items = array_slice( $stokers, $paged * $per_page, $per_page, true );
+		$total_items = count( $stokers );
+
 		$this->set_pagination_args(
 			[
 				'total_items' => $total_items,
