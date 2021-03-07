@@ -198,18 +198,18 @@ abstract class Shortcode {
 	/**
 	 * Singleton handler
 	 *
-	 * @param string $shortcode   Shortcode (zonder kleistad- ).
-	 * @param array  $atts        Shortcode parameters.
-	 * @param array  $options     Plugin opties.
+	 * @param string       $shortcode_tag Shortcode (zonder kleistad- ).
+	 * @param array|string $atts          Shortcode parameters.
+	 * @param array        $options       Plugin opties.
 	 * @return Shortcode | null
 	 */
-	public static function get_instance( $shortcode, $atts, $options ) : ?Shortcode {
-		if ( in_array( $shortcode, self::$shortcode_lijst, true ) ) {
+	public static function get_instance( string $shortcode_tag, $atts, array $options ) : ?Shortcode {
+		if ( in_array( $shortcode_tag, self::$shortcode_lijst, true ) ) {
 			return null;
 		}
-		self::$shortcode_lijst[] = $shortcode;
-		$shortcode_class         = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode, '_' );
-		return new $shortcode_class( $shortcode, $atts, $options );
+		self::$shortcode_lijst[] = $shortcode_tag;
+		$shortcode_class         = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
+		return new $shortcode_class( $shortcode_tag, $atts, $options );
 	}
 
 	/**
