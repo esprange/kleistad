@@ -51,14 +51,14 @@ class Public_Shortcode_Handler {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param array  $atts      de meegegeven params van de shortcode.
-	 * @param string $content   wordt niet gebruikt.
-	 * @param string $tag       wordt gebruikt als selector voor de diverse functie aanroepen.
-	 * @return string           html resultaat.
+	 * @param array|string $atts de meegegeven params van de shortcode of een lege string.
+	 * @param string $content    wordt niet gebruikt.
+	 * @param string $tag        wordt gebruikt als selector voor de diverse functie aanroepen.
+	 * @return string            html resultaat.
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
-	public function handler( $atts, $content, $tag ) {
+	public function handler( $atts, string $content, string $tag ) : string{
 		$shortcode_tag = substr( $tag, strlen( 'kleistad-' ) );
 		$shortcode     = Shortcode::get_instance( $shortcode_tag, $atts, $this->options );
 		if ( is_null( $shortcode ) ) {

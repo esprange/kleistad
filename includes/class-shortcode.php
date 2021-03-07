@@ -201,9 +201,9 @@ abstract class Shortcode {
 	 * @param string $shortcode   Shortcode (zonder kleistad- ).
 	 * @param array  $atts        Shortcode parameters.
 	 * @param array  $options     Plugin opties.
-	 * @return Shortcode
+	 * @return Shortcode | null
 	 */
-	public static function get_instance( $shortcode, $atts, $options ) : Shortcode {
+	public static function get_instance( $shortcode, $atts, $options ) : ?Shortcode {
 		if ( in_array( $shortcode, self::$shortcode_lijst, true ) ) {
 			return null;
 		}
