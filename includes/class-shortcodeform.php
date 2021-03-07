@@ -25,7 +25,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 * @param array $data de gevalideerde data.
-	 * @return \WP_ERROR|bool
+	 * @return WP_ERROR|bool
 	 */
 	abstract protected function validate( &$data );
 
@@ -164,9 +164,9 @@ abstract class ShortcodeForm extends Shortcode {
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_formsubmit' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
-					$shortcode  = $request->get_param( 'tag' );
-					$shortcodes = new ShortCodes();
-					return $shortcodes->check_access( $shortcode );
+					$shortcode_tag = $request->get_param( 'tag' );
+					$shortcodes    = new ShortCodes();
+					return $shortcodes->check_access( $shortcode_tag );
 				},
 			]
 		);
@@ -177,19 +177,27 @@ abstract class ShortcodeForm extends Shortcode {
 	 *
 	 * @since 5.7.0
 	 * @param  WP_REST_Request $request De callback parameters.
-	 * @return WP_REST_Response|WP_Error de response.
+	 * @return WP_REST_Response De response.
+	 * @throws Exception Onbekend object.
 	 */
 	public static function callback_formsubmit( WP_REST_Request $request ) {
-		$shortcode_object = self::get_shortcode_object( $request );
-		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return new WP_Error( 'intern', 'interne fout' );
+		try {
+			$shortcode = self::get_shortcode( $request );
+			if ( ! is_a( $shortcode, __CLASS__ ) ) {
+				throw new Exception( 'callback_formsubmit voor onbekend object' );
+			}
+			$data   = [ 'form_actie' => $request->get_param( 'form_actie' ) ];
+			$result = $shortcode->validate( $data );
+			if ( ! is_wp_error( $result ) ) {
+				return new WP_REST_Response( $shortcode->save( $data ) );
+			}
+			return new WP_REST_Response( [ 'status' => $shortcode->status( $result ) ] );
+		} catch ( Kleistad_Exception $exceptie ) {
+			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
+		} catch ( Exception $exceptie ) {
+			error_log( $exceptie->getMessage() ); // phpcs:ignore
+			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
 		}
-		$data   = [ 'form_actie' => $request->get_param( 'form_actie' ) ];
-		$result = $shortcode_object->validate( $data );
-		if ( ! is_wp_error( $result ) ) {
-			return new WP_REST_Response( $shortcode_object->save( $data ) );
-		}
-		return new WP_REST_Response( [ 'status' => $shortcode_object->status( $result ) ] );
 	}
 
 }

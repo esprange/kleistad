@@ -210,6 +210,36 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Verstuur de melding dat het restant betaald moet worden als dat nog niet betaald is
+	 */
+	public function restant_betaling() {
+		$order = new Order( $this->geef_referentie() );
+		if ( $order->id && ! $order->gesloten ) {
+			$this->artikel_type  = 'cursus';
+			$this->restant_email = true;
+			$this->betaal_link   = $this->maak_link(
+				[
+					'order' => $order->id,
+					'art'   => $this->artikel_type,
+				],
+				'betaling'
+			);
+			$this->save();
+			$this->verzend_email( '_restant' );
+		}
+	}
+
+	/**
+	 * Geef de cursist aan dat er ruimte beschikbaar is gekomen
+	 */
+	public function plaatsbeschikbaar() {
+		$this->wacht_datum = strtotime( 'tomorrow' );
+		$this->betaal_link = $this->maak_link( [ 'code' => $this->code ], 'wachtlijst' );
+		$this->save();
+		$this->verzend_email( '_ruimte' );
+	}
+
+	/**
 	 * Geef de artikel naam.
 	 *
 	 * @return string

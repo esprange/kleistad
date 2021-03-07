@@ -238,46 +238,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Verzenden van de email.
-	 *
-	 * @param  string $type      Welke email er verstuurd moet worden.
-	 * @param  string $factuur   Bij de sluiten factuur.
-	 * @return boolean succes of falen van verzending email.
-	 */
-	public function verzend_email( string $type, string $factuur = '' ) : bool {
-		$abonnee = get_userdata( $this->klant_id );
-		$emailer = new Email();
-		return $emailer->send(
-			[
-				'to'          => "$abonnee->display_name <$abonnee->user_email>",
-				'subject'     => self::EMAIL_SUBJECT[ $type ],
-				'slug'        => 'abonnement' . $type,
-				'attachments' => $factuur ?: [],
-				'parameters'  =>
-				[
-					'voornaam'                => $abonnee->first_name,
-					'achternaam'              => $abonnee->last_name,
-					'loginnaam'               => $abonnee->user_login,
-					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
-					'pauze_datum'             => $this->pauze_datum ? strftime( '%d-%m-%Y', $this->pauze_datum ) : '',
-					'eind_datum'              => $this->eind_datum ? strftime( '%d-%m-%Y', $this->eind_datum ) : '',
-					'herstart_datum'          => $this->herstart_datum ? strftime( '%d-%m-%Y', $this->herstart_datum ) : '',
-					'abonnement'              => $this->soort,
-					'abonnement_code'         => $this->code,
-					'abonnement_dag'          => $this->dag,
-					'abonnement_opmerking'    => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking ",
-					'abonnement_wijziging'    => $this->bericht,
-					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->geef_extras_tekst() : '',
-					'abonnement_startgeld'    => number_format_i18n( $this->geef_bedrag( '#start' ), 2 ),
-					'abonnement_maandgeld'    => number_format_i18n( $this->geef_bedrag( '#regulier' ), 2 ),
-					'abonnement_overbrugging' => number_format_i18n( $this->geef_bedrag( '#overbrugging' ), 2 ),
-					'abonnement_link'         => $this->betaal_link,
-				],
-			]
-		);
-	}
-
-	/**
 	 * Pauzeer het abonnement per pauze datum.
 	 *
 	 * @param int $pauze_datum    Pauzedatum.
@@ -325,8 +285,10 @@ class Abonnement extends Artikel {
 	 * @param string $soort       Beperkt of onbeperkt.
 	 * @param string $dag         De dagnaam bij beperkt.
 	 * @param string $opmerking   De opmerking.
+	 * @param string $betaalwijze De betaalwijze.
+	 * @return string|bool Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
 	 */
-	public function starten( $start_datum, $soort, $dag, $opmerking ) {
+	public function starten( $start_datum, $soort, $dag, $opmerking, $betaalwijze ) {
 		$this->data             = $this->default_data;
 		$this->soort            = $soort;
 		$this->opmerking        = $opmerking;
@@ -337,6 +299,11 @@ class Abonnement extends Artikel {
 		$this->artikel_type     = 'start';
 		$this->autoriseer( true );
 		$this->save();
+		if ( 'ideal' === $betaalwijze ) {
+			return $this->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
+		}
+		$this->verzend_email( '_start_bank', $this->bestel_order( 0.0, $this->start_datum ) );
+		return true;
 	}
 
 	/**
@@ -452,6 +419,16 @@ class Abonnement extends Artikel {
 	}
 
 	/**
+	 * Geef aan dat er een overbrugging betaald moet worden
+	 */
+	public function overbrugging() {
+		$this->artikel_type = 'overbrugging';
+		$this->verzend_email( '_vervolg', $this->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
+		$this->overbrugging_email = true;
+		$this->save();
+	}
+
+	/**
 	 * Geef de factuurregels door.
 	 *
 	 * @return array De regels.
@@ -550,6 +527,46 @@ class Abonnement extends Artikel {
 			);
 		}
 		return '';
+	}
+
+	/**
+	 * Verzenden van de email.
+	 *
+	 * @param  string $type      Welke email er verstuurd moet worden.
+	 * @param  string $factuur   Bij de sluiten factuur.
+	 * @return boolean succes of falen van verzending email.
+	 */
+	private function verzend_email( string $type, string $factuur = '' ) : bool {
+		$abonnee = get_userdata( $this->klant_id );
+		$emailer = new Email();
+		return $emailer->send(
+			[
+				'to'          => "$abonnee->display_name <$abonnee->user_email>",
+				'subject'     => self::EMAIL_SUBJECT[ $type ],
+				'slug'        => 'abonnement' . $type,
+				'attachments' => $factuur ?: [],
+				'parameters'  =>
+				[
+					'voornaam'                => $abonnee->first_name,
+					'achternaam'              => $abonnee->last_name,
+					'loginnaam'               => $abonnee->user_login,
+					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
+					'pauze_datum'             => $this->pauze_datum ? strftime( '%d-%m-%Y', $this->pauze_datum ) : '',
+					'eind_datum'              => $this->eind_datum ? strftime( '%d-%m-%Y', $this->eind_datum ) : '',
+					'herstart_datum'          => $this->herstart_datum ? strftime( '%d-%m-%Y', $this->herstart_datum ) : '',
+					'abonnement'              => $this->soort,
+					'abonnement_code'         => $this->code,
+					'abonnement_dag'          => $this->dag,
+					'abonnement_opmerking'    => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking ",
+					'abonnement_wijziging'    => $this->bericht,
+					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->geef_extras_tekst() : '',
+					'abonnement_startgeld'    => number_format_i18n( $this->geef_bedrag( '#start' ), 2 ),
+					'abonnement_maandgeld'    => number_format_i18n( $this->geef_bedrag( '#regulier' ), 2 ),
+					'abonnement_overbrugging' => number_format_i18n( $this->geef_bedrag( '#overbrugging' ), 2 ),
+					'abonnement_link'         => $this->betaal_link,
+				],
+			]
+		);
 	}
 
 	/**

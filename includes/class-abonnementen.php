@@ -122,10 +122,7 @@ class Abonnementen implements Countable, Iterator {
 			// Abonnementen waarvan de starttermijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er nog geen einddatum ingevuld is.
 			if ( $vandaag < $abonnement->reguliere_datum ) {
 				if ( $vandaag >= strtotime( '-7 days', $abonnement->start_eind_datum ) && ! $abonnement->eind_datum && ! $abonnement->overbrugging_email ) {
-					$abonnement->artikel_type = 'overbrugging';
-					$abonnement->verzend_email( '_vervolg', $abonnement->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
-					$abonnement->overbrugging_email = true;
-					$abonnement->save();
+					$abonnement->overbrugging();
 				}
 				continue; // Meer actie is niet nodig. Abonnee zit nog in startperiode of overbrugging.
 			}

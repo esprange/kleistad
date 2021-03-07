@@ -46,7 +46,7 @@ class EmailReceiver {
 		);
 		try {
 			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
-		} catch ( PhpImap\Exceptions\ConnectionException $ex ) {
+		} catch ( Exception $ex ) { // Was eerder PhpImap\Exceptions\ConnectionException maar daardoor wordt niet alles afgevangen.
 			error_log( 'IMAP fail: ' . $ex->getMessage() ); // phpcs:ignore
 			die();
 		}

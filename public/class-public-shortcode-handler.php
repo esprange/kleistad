@@ -59,14 +59,14 @@ class Public_Shortcode_Handler {
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
 	public function handler( $atts, $content, $tag ) {
-		$shortcode        = substr( $tag, strlen( 'kleistad-' ) );
-		$shortcode_object = Shortcode::get_instance( $shortcode, $atts, $this->options );
-		if ( is_null( $shortcode_object ) ) {
+		$shortcode_tag = substr( $tag, strlen( 'kleistad-' ) );
+		$shortcode     = Shortcode::get_instance( $shortcode_tag, $atts, $this->options );
+		if ( is_null( $shortcode ) ) {
 			return '';
 		}
 		$shortcodes = new ShortCodes();
-		if ( ! $shortcodes->check_access( $shortcode ) ) {
-			return $shortcode_object->status( new WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
+		if ( ! $shortcodes->check_access( $shortcode_tag ) ) {
+			return $shortcode->status( new WP_Error( 'toegang', 'Je hebt geen toegang tot deze functie' ) );
 		}
 		$html        = '';
 		static $divs = false; // De ondersteunende divs zijn maar eenmalig nodig.
@@ -74,12 +74,12 @@ class Public_Shortcode_Handler {
 			$divs  = true;
 			$html .= '<div id="kleistad_berichten" ></div><div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
 		}
-		$html .= '<div class="kleistad_shortcode" data-tag="' . $shortcode . '" ';
+		$html .= '<div class="kleistad_shortcode" data-tag="' . $shortcode_tag . '" ';
 		if ( ! empty( $atts ) ) {
 			$json_atts = wp_json_encode( $atts, JSON_HEX_QUOT | JSON_HEX_TAG );
 			$html     .= ' data-atts=' . "'$json_atts'";
 		}
-		$html .= ' >' . $shortcode_object->run() . '</div>';
+		$html .= ' >' . $shortcode->run() . '</div>';
 		return $html;
 	}
 

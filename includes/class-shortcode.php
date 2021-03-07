@@ -14,6 +14,7 @@ namespace Kleistad;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
+use Exception;
 
 /**
  * De abstract class voor shortcodes
@@ -111,16 +112,30 @@ abstract class Shortcode {
 	 */
 	protected function display( &$data = [ 'actie' => '-' ] ) {
 		$this->enqueue();
-		$html   = apply_filters( 'kleistad_melding', '' );
-		$result = $this->prepare( $data );
-		if ( is_wp_error( $result ) ) {
-			$html = $this->status( $result );
-		} else {
-			ob_start();
-			require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
-			$html = ob_get_clean();
+		$html = apply_filters( 'kleistad_melding', '' );
+		try {
+			$betalen       = new Betalen();
+			$betaal_result = $betalen->controleer();
+			if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
+				return $this->status( $betaal_result ) . $this->goto_home();
+			}
+			$result = $this->prepare( $data );
+			if ( is_wp_error( $result ) ) {
+				$html = $this->status( $result );
+			} else {
+				ob_start();
+				require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
+				$html = ob_get_clean();
+			}
+			if ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
+				return $this->status( $betaal_result ) . $html;
+			}
+		} catch ( Kleistad_Exception $exceptie ) {
+			$html = $this->status( new WP_Error( 'exceptie', $exceptie->getMessage() ) );
+		} catch ( Exception $exceptie ) {
+			error_log( $exceptie->getMessage() ); //phpcs:ignore
+			$html = $this->status( new WP_Error( 'exceptie', 'Er is een onbekende fout opgetreden' ) );
 		}
-
 		$betalen       = new Betalen();
 		$betaal_result = $betalen->controleer();
 		if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
@@ -264,7 +279,7 @@ abstract class Shortcode {
 	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
 	 * @return WP_REST_Response| bool  De response of false.
 	 */
-	protected static function get_shortcode_object( WP_REST_Request $request ) {
+	protected static function get_shortcode( WP_REST_Request $request ) {
 		$tag   = $request->get_param( 'tag' ) ?? '';
 		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
 		if ( class_exists( $class ) ) {
@@ -278,60 +293,54 @@ abstract class Shortcode {
 	 * Get an item and display it.
 	 *
 	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return WP_REST_Response|WP_Error de response.
+	 * @return WP_REST_Response De response.
+	 * @throws Exception Onbekend object.
 	 */
 	public static function callback_getitem( WP_REST_Request $request ) {
-		$shortcode_object = self::get_shortcode_object( $request );
-		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return new WP_Error( 'intern', 'interne fout' );
+		try {
+			$shortcode = self::get_shortcode( $request );
+			if ( ! is_a( $shortcode, __CLASS__ ) ) {
+				throw new Exception( 'callback_formsubmit voor onbekend object' );
+			}
+			$data = [
+				'actie' => sanitize_text_field( $request->get_param( 'actie' ) ),
+				'id'    => is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) ),
+			];
+			return new WP_REST_Response( [ 'content' => $shortcode->display( $data ) ] );
+		} catch ( Kleistad_Exception $exceptie ) {
+			return new WP_REST_Response( [ 'status'->$shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
+		} catch ( Exception $exceptie ) {
+			error_log( $exceptie->GetMessage() ); // phpcs:ignore
+			return new WP_REST_Response( [ 'status'->$shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
 		}
-		$data = [
-			'actie' => sanitize_text_field( $request->get_param( 'actie' ) ),
-			'id'    => is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) ),
-		];
-		return new WP_REST_Response(
-			[
-				'content' => $shortcode_object->display( $data ),
-			]
-		);
 	}
 
 	/**
 	 * Maak een tijdelijk bestand aan voor download.
 	 *
-	 * @param Shortcode $shortcode_object De shortcode waarvoor de download plaatsvindt.
-	 * @param string    $functie          De shortcode functie die aangeroepen moet worden.
-	 * @return WP_REST_Response
+	 * @param Shortcode $shortcode De shortcode waarvoor de download plaatsvindt.
+	 * @param string    $functie   De shortcode functie die aangeroepen moet worden.
+	 * @return array
 	 */
-	protected static function download( Shortcode $shortcode_object, $functie ) {
+	protected static function download( Shortcode $shortcode, $functie ) {
 		$upload_dir = wp_upload_dir();
 		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
 		$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
 		if ( false !== $result ) {
-			$shortcode_object->file_handle = $result;
-			fwrite( $shortcode_object->file_handle, "\xEF\xBB\xBF" );
-			$result = call_user_func( [ $shortcode_object, $functie ] );
-			fclose( $shortcode_object->file_handle );
+			$shortcode->file_handle = $result;
+			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
+			$result = call_user_func( [ $shortcode, $functie ] );
+			fclose( $shortcode->file_handle );
 			if ( empty( $result ) ) {
-				return new WP_REST_Response(
-					[
-						'file_uri' => $upload_dir['baseurl'] . $file,
-					]
-				);
+				return [ 'file_uri' => $upload_dir['baseurl'] . $file ];
 			}
 			unlink( $upload_dir['basedir'] . $file );
-			return new WP_REST_Response(
-				[
-					'file_uri' => $result,
-				]
-			);
+			return [ 'file_uri' => $result ];
 		}
-		return new WP_REST_Response(
-			[
-				'status'  => $shortcode_object->status( new WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
-				'content' => $shortcode_object->goto_home(),
-			]
-		);
+		return [
+			'status'  => $shortcode->status( new WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
+			'content' => $shortcode->goto_home(),
+		];
 	}
 
 	/**
@@ -355,14 +364,22 @@ abstract class Shortcode {
 	 * Get an item and display it.
 	 *
 	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return WP_REST_Response|WP_Error de response.
+	 * @return WP_REST_Response de response.
+	 * @throws Exception Onbekend object.
 	 */
 	public static function callback_download( WP_REST_Request $request ) {
-		$shortcode_object = self::get_shortcode_object( $request );
-		if ( ! is_a( $shortcode_object, __CLASS__ ) ) {
-			return new WP_Error( 'intern', 'interne fout' );
+		try {
+			$shortcode = self::get_shortcode( $request );
+			if ( ! is_a( $shortcode, __CLASS__ ) ) {
+				throw new Exception( 'callback_formsubmit voor onbekend object' );
+			}
+			return new WP_REST_Response( self::download( $shortcode, $request->get_param( 'actie' ) ) );
+		} catch ( Kleistad_Exception $exceptie ) {
+			return new WP_REST_Response( [ 'status'->$shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
+		} catch ( Exception $exceptie ) {
+			error_log( $exceptie->GetMessage() ); // phpcs:ignore
+			return new WP_REST_Response( [ 'status'->$shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
 		}
-		return self::download( $shortcode_object, $request->get_param( 'actie' ) );
 	}
 
 	/**
