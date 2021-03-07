@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use Html2Text;
 use PhpImap;
+use Exception;
 
 /**
  * Kleistad EmailReceiver class.

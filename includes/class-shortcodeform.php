@@ -14,6 +14,7 @@ namespace Kleistad;
 use WP_REST_Response;
 use WP_REST_Request;
 use WP_Error;
+use Exception;
 
 /**
  * De abstract class voor shortcodes
@@ -180,7 +181,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @return WP_REST_Response De response.
 	 * @throws Exception Onbekend object.
 	 */
-	public static function callback_formsubmit( WP_REST_Request $request ) {
+	public static function callback_formsubmit( WP_REST_Request $request ) : WP_REST_Response {
 		try {
 			$shortcode = self::get_shortcode( $request );
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {

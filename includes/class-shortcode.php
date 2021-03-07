@@ -201,8 +201,9 @@ abstract class Shortcode {
 	 * @param string $shortcode   Shortcode (zonder kleistad- ).
 	 * @param array  $atts        Shortcode parameters.
 	 * @param array  $options     Plugin opties.
+	 * @return Shortcode
 	 */
-	public static function get_instance( $shortcode, $atts, $options ) {
+	public static function get_instance( $shortcode, $atts, $options ) : Shortcode {
 		if ( in_array( $shortcode, self::$shortcode_lijst, true ) ) {
 			return null;
 		}
@@ -277,16 +278,16 @@ abstract class Shortcode {
 	 * Helper functie, geef het object terug of een foutboodschap.
 	 *
 	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return WP_REST_Response| bool  De response of false.
+	 * @return Shortcode | null  De response of false.
 	 */
-	protected static function get_shortcode( WP_REST_Request $request ) {
+	protected static function get_shortcode( WP_REST_Request $request ) : ?Shortcode {
 		$tag   = $request->get_param( 'tag' ) ?? '';
 		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
 		if ( class_exists( $class ) ) {
 			$atts = json_decode( $request->get_param( 'atts' ) ?? '', true );
 			return new $class( $tag, $atts, opties() );
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -296,7 +297,7 @@ abstract class Shortcode {
 	 * @return WP_REST_Response De response.
 	 * @throws Exception Onbekend object.
 	 */
-	public static function callback_getitem( WP_REST_Request $request ) {
+	public static function callback_getitem( WP_REST_Request $request ) : WP_REST_Response {
 		try {
 			$shortcode = self::get_shortcode( $request );
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
@@ -367,7 +368,7 @@ abstract class Shortcode {
 	 * @return WP_REST_Response de response.
 	 * @throws Exception Onbekend object.
 	 */
-	public static function callback_download( WP_REST_Request $request ) {
+	public static function callback_download( WP_REST_Request $request ) : WP_REST_Response {
 		try {
 			$shortcode = self::get_shortcode( $request );
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
