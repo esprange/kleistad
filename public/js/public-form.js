@@ -137,7 +137,7 @@ function strtodate( value ) {
 								callback();
 								return true;
 							},
-							class: 'kleistad-button'
+							'class': 'kleistad-button'
 						},
 						{
 							text: 'Nee',
@@ -145,7 +145,7 @@ function strtodate( value ) {
 								$( this ).dialog( 'close' );
 								return false;
 							},
-							class: 'kleistad-button'
+							'class': 'kleistad-button'
 						}
 					]
 				}

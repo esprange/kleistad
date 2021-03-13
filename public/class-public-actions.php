@@ -72,12 +72,12 @@ class Public_Actions {
 		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		// Volgens stricte wp rules zou de versie toegevoegd moeten worden als parameter.
 		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_version ), [], $jquery_version );
-		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css', [], '1.10.23' );
+		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css', [], '1.10.24' );
 		wp_register_style( 'fullcalendar', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.css', [], '5.5.1' );
 		wp_register_style( 'jstree', '//cdn.jsdelivr.net/npm/jstree@3.3.11/dist/themes/default/style.min.css', [], '3.3.11' );
 		wp_register_style( 'kleistad', plugin_dir_url( __FILE__ ) . "css/public$dev.css", [], $this->version );
 
-		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js', [ 'jquery' ], '1.10.23', false );
+		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js', [ 'jquery' ], '1.10.24', false );
 		wp_register_script( 'fullcalendar-core', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.js', [], '5.5.1', false );
 		wp_register_script( 'fullcalendar', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.1/locales-all.min.js', [ 'fullcalendar-core' ], '5.5.1', false );
 		wp_register_script( 'jstree', '//cdn.jsdelivr.net/npm/jstree@3.3.11/dist/jstree.min.js', [ 'jquery' ], '3.3.11', false );

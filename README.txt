@@ -36,6 +36,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 6.14.6 =
+* Visuele verbeteringen
 = 6.14.5 =
 * Kleine bugs opgelost en visuele verbeteringen
 = 6.14.3 =
