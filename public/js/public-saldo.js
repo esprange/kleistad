@@ -16,11 +16,11 @@
 		}
     }
 
-	$( document ).ready(
-        function() {
+	$( function()
+		{
 			wijzigTeksten( bepaalBedrag() );
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			/**
 			 * Als er een change is van het te betalen stooksalde.
 			 */

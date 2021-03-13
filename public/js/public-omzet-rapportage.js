@@ -1,10 +1,10 @@
 ( function( $ ) {
 	'use strict';
 
-    $( document ).ready(
-		function() {
+    $( function()
+		{
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			.on( 'change', '#kleistad_maand',
 				function() {
 					$( '#kleistad_rapport' ).data( 'id', $( '#kleistad_jaar' ).val() + '-' +  $( this ).val() ).click();

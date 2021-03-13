@@ -1,8 +1,8 @@
 ( function( $ ) {
 	'use strict';
 
-    $( document ).ready(
-        function() {
+    $( function()
+		{
 
 			/**
              * Definieer datum veld.

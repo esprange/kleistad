@@ -52,8 +52,9 @@
         }
 	}
 
-    $( document ).ready(
-        function() {
+    $( function()
+		{
+			
 			if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
 				wijzigVelden( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
 			}

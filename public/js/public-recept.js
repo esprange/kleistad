@@ -101,8 +101,8 @@
         );
     }
 
-    $( document ).ready(
-        function() {
+    $( function()
+		{
 			leesFilters( true );
 			zoekRecepten();
 
@@ -116,9 +116,8 @@
 
 			$( '#kleistad_zoek' ).on( 'keyup',
 				function( e ) {
-					if ( 13 === e.keyCode ) {
-						leesFilters();
-						zoekRecepten();
+					if ( 13 === e.which ) {
+						$( '#kleistad_zoek_icon' ).trigger( 'click' );
 					}
 				}
 			);
@@ -132,19 +131,17 @@
 
 			$( '#kleistad_sorteer' ).on( 'change',
 				function() {
-					leesFilters();
-					zoekRecepten();
+					$( '#kleistad_zoek_icon' ).trigger( 'click' );
 				}
 			);
 
 			$( '#kleistad_recepten' )
-			.on( 'click', '.kleistad_filter',
+			.on( 'click', '.kleistad-filter',
 				function() {
-					leesFilters();
-					zoekRecepten();
+					$( '#kleistad_zoek_icon' ).trigger( 'click' );
 				}
 			)
-			.on( 'click', '.kleistad_meer',
+			.on( 'click', '.kleistad-meer',
 				function() {
 					var filter;
 					var name = $( this ).attr( 'name' );

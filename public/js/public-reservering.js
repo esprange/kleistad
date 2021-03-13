@@ -125,7 +125,7 @@
 			}
 		};
 
-		$( '#kleistad_reservering .kleistad_button' ).hide();
+		$( '#kleistad_voegtoe, #kleistad_verwijder, #kleistad_muteer' ).hide();
 		$( '#kleistad_reservering table > tbody, #kleistad_reservering table > thead' ).empty();
 		$( '#kleistad_reservering' ).dialog( 'option', 'title', $( '#kleistad_reserveringen' ).data( 'oven-naam' ) + ' op ' + formData.dag + '-' + formData.maand + '-' + formData.jaar );
 		$( '#kleistad_dag' ).val( formData.dag );
@@ -139,7 +139,7 @@
 		}
 		$( '#kleistad_tekst' ).text( logica[formData.status].tekst );
 		$( logica[formData.status].actief ).show();
-		$( logica[formData.status].focus ).focus();
+		$( logica[formData.status].focus ).trigger( 'focus' );
 		$( '.ui-dialog-titlebar' ).removeClassWildcard( 'kleistad_reservering' );
 		$( '.ui-dialog-titlebar' ).addClass( formData.kleur );
 
@@ -278,8 +278,8 @@
 		);
 	}
 
-    $( document ).ready(
-        function() {
+    $( function()
+		{
 			if ( navigator.appName === 'Microsoft Internet Explorer' || !!( navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/rv:11/)) || (typeof $.browser !== 'undefined' && $.browser.msie === 1 ) ) {
 				$( '#kleistad_reserveringen' ).hide();
 				$( '#kleistad_geen_ie').show();
@@ -303,13 +303,6 @@
 					);
                 }
             )
-            /**
-             * Verander de opmaak bij hovering.
-             */
-            .on( 'mouseenter mouseleave', 'tr[data-form]', function() {
-					$( this ).toggleClass( 'kleistad-hover-reservering' );
-				}
-            )
 			/**
              * Open een reservering (nieuw of bestaand).
              */
@@ -318,7 +311,7 @@
 						$( '#kleistad_reservering' ).dialog( 'open' );
 						kleistadForm( $( this ).data( 'form' ) );
 					}
-				return false;
+					return false;
                 }
             );
 
@@ -329,7 +322,10 @@
 					autoOpen: false,
 					height: 'auto',
 					width: 400,
-					modal: true
+					modal: true,
+					classes: {
+						'ui-button': 'kleistad-button'
+					}
 				}
 			)
 			/**
@@ -374,7 +370,7 @@
 				$( '#kleistad_reservering table > tbody > tr:last' ).
 					after( '<tr><th><label>Medestoker</label></th><td>' +  selectStoker( true, 0 ) +
 						'<td><input name="stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" value="0" ></td></tr>' );
-					$( '[name=stoker_id]:last' ).focus();
+					$( '[name=stoker_id]:last' ).trigger( 'focus' );
                     return false;
                 }
             );

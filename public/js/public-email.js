@@ -15,8 +15,8 @@
 		}
 	);
 
-    $( document ).ready(
-		function()  {
+    $( function()
+		{
 			onLoad();
 
 			$( '#kleistad_gebruikers' ).on( 'changed.jstree',

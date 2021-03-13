@@ -42,9 +42,9 @@
 		}
 	}
 
-	$( document ).ready(
-        function() {
-			$( '.kleistad_shortcode' )
+	$( function()
+		{
+			$( '.kleistad-shortcode' )
 			.on( 'keyup', 'input[name=nieuw_wachtwoord], input[name=bevestig_wachtwoord]',
 			function() {
 				strength = checkPasswordStrength(

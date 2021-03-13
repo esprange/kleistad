@@ -52,13 +52,13 @@ class Public_Shortcode_Handler {
 	 * @since 4.0.87
 	 *
 	 * @param array|string $atts de meegegeven params van de shortcode of een lege string.
-	 * @param string $content    wordt niet gebruikt.
-	 * @param string $tag        wordt gebruikt als selector voor de diverse functie aanroepen.
+	 * @param string       $content    wordt niet gebruikt.
+	 * @param string       $tag        wordt gebruikt als selector voor de diverse functie aanroepen.
 	 * @return string            html resultaat.
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
-	public function handler( $atts, string $content, string $tag ) : string{
+	public function handler( $atts, string $content, string $tag ) : string {
 		$shortcode_tag = substr( $tag, strlen( 'kleistad-' ) );
 		$shortcode     = Shortcode::get_instance( $shortcode_tag, $atts, $this->options );
 		if ( is_null( $shortcode ) ) {
@@ -74,7 +74,7 @@ class Public_Shortcode_Handler {
 			$divs  = true;
 			$html .= '<div id="kleistad_berichten" ></div><div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
 		}
-		$html .= '<div class="kleistad_shortcode" data-tag="' . $shortcode_tag . '" ';
+		$html .= '<div class="kleistad-shortcode" data-tag="' . $shortcode_tag . '" ';
 		if ( ! empty( $atts ) ) {
 			$json_atts = wp_json_encode( $atts, JSON_HEX_QUOT | JSON_HEX_TAG );
 			$html     .= ' data-atts=' . "'$json_atts'";

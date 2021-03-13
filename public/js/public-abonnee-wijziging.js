@@ -3,8 +3,8 @@
 ( function( $ ) {
 	'use strict';
 
-	$( document ).ready(
-        function() {
+	$( function()
+		{
 			var nuDatum  = new Date(),
 				dag      = 24 * 60 * 60 * 1000,
 				minPauze = $( '#kleistad_pauze_datum' ).data( 'min_pauze' ),
@@ -42,7 +42,7 @@
 				);
 			}
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			.on( 'click', '#kleistad_abo_pauze',
                 function() {
 					$( '.kleistad_abo_veld' ).hide();

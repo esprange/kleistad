@@ -173,7 +173,7 @@ var detectTap;
 	 * @param { jQuery} $element
 	 */
 	$.fn.shortcode = function shortcode( $element ) {
-		var $shortcode    = $element.closest( '.kleistad_shortcode' );
+		var $shortcode    = $element.closest( '.kleistad-shortcode' );
 		var shortcodeData = { tag:   $shortcode.data( 'tag' ) };
 		if ( 'undefined' !== typeof $shortcode.data( 'atts') ) {
 			shortcodeData.atts = JSON.stringify( $shortcode.data( 'atts' ) );
@@ -201,11 +201,11 @@ var detectTap;
 	/**
 	 * Wordt aangeroepen nadat de webpage geladen is.
 	 */
-	$( document ).ready(
-        function() {
+	$( function()
+		{
 			onLoad();
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			/**
 			 * Als er op een edit anchor is geklikt, doe dan een edit actie.
 			 */
@@ -213,7 +213,7 @@ var detectTap;
 				function() {
 					var $anchor       = $( this );
 					var shortcodeData = $.fn.shortcode( $anchor );
-					getContent( $anchor.closest( '.kleistad_shortcode' ), shortcodeData, 'getitem' );
+					getContent( $anchor.closest( '.kleistad-shortcode' ), shortcodeData, 'getitem' );
 					return true;
 				}
 			)
@@ -224,7 +224,7 @@ var detectTap;
 				function() {
 					var $button       = $( this );
 					var shortcodeData = $.fn.shortcode( $button );
-					getContent( $button.closest( '.kleistad_shortcode' ), shortcodeData, 'getitems' );
+					getContent( $button.closest( '.kleistad-shortcode' ), shortcodeData, 'getitems' );
 					return true;
 				}
 			)
@@ -240,7 +240,7 @@ var detectTap;
 							shortcodeData[ $( this ).attr( 'name') ] = $( this ).val();
 						}
 					);
-					getContent( $button.closest( '.kleistad_shortcode' ), shortcodeData, 'download' );
+					getContent( $button.closest( '.kleistad-shortcode' ), shortcodeData, 'download' );
 					return true;
 				}
 			)

@@ -139,10 +139,10 @@ class Public_Reservering extends Shortcode {
 			],
 			Stook::RESERVEERBAAR => [
 				'wie'          => '- beschikbaar -',
-				'temperatuur'  => $stook->temperatuur,
-				'programma'    => $stook->programma,
+				'temperatuur'  => '',
+				'programma'    => '',
 				'verdeling'    => $stook->stookdelen,
-				'soortstook'   => $stook->programma,
+				'soortstook'   => $stook->soort,
 				'kleur'        => 'kleistad-reservering-reserveerbaar',
 				'select'       => true,
 				'gebruiker_id' => $gebruiker_id,

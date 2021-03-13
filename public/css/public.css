@@ -1,9 +1,3 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
-
-
 /*
 Description: stylesheet functions voor kleistad_plugin
   Version: 6.6.13
@@ -12,18 +6,51 @@ Description: stylesheet functions voor kleistad_plugin
   License: GPL3.0
 */
 
-
-table.display {
+.kleistad-shortcode *:not(.dashicons),
+.kleistad-fout p,
+.kleistad-succes p,
+.kleistad-inform p {
+	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: small;
+}
+
+.kleistad-shortcode table {
 	table-layout: auto;
 }
 
-a.jstree-anchor {
+.kleistad-shortcode .jstree-anchor {
 	box-shadow: 0 0 0 0 white !important;
+}
+
+/* Fullcalendar toont om een dubbele button alsof het een radio button is. */
+.kleistad-shortcode .fc--button {
+	display: none;
+}
+
+.kleistad-shortcode .fc-toolbar-title {
+	font-size: medium;
 }
 
 .kleistad-state-highlight {
 	border: 2px solid green !important;
+}
+
+.kleistad-fout {
+	background-color: #d4a190;
+	border-left: 6px solid #d67750;
+	padding-left: 10px;
+}
+
+.kleistad-succes {
+	background-color: #a1d490;
+	border-left: 6px solid #57a841;
+	padding-left: 10px;
+}
+
+.kleistad-inform {
+	background-color: lemonchiffon;
+	border-left: 6px solid gold;
+	padding-left: 10px;
 }
 
 .kleistad-wachten {
@@ -34,12 +61,6 @@ a.jstree-anchor {
 	top: 50%;
 	width: 100%;
 	z-index: 10;
-}
-
-.kleistad-hover-reservering {
-	border: 1px solid gray;
-	color: blue;
-	cursor: pointer;
 }
 
 div.kleistad-workshop-correspondentie {
@@ -94,66 +115,9 @@ a.kleistad-schedule {
 	width: 9em;
 }
 
-.kleistad-fout {
-	background-color: #d4a190;
-	border-left: 6px solid #d67750;
-}
-
-.kleistad-succes {
-	background-color: #a1d490;
-	border-left: 6px solid #6cd650;
-}
-
-.kleistad-inform {
-	background-color: lemonchiffon;
-	border-left: 6px solid gold;
-}
-
 .kleistad-datatable th,
 .kleistad-datatable td {
 	font-size: small;
-}
-
-.kleistad-reserveringen {
-	border-collapse: collapse;
-	border-spacing: 0;
-	border-style: none;
-	font-size: small;
-	table-layout: auto;
-	vertical-align: middle;
-	width: 90%;
-}
-
-.kleistad-reserveringen th,
-.kleistad-reserveringen td {
-	border: 0 solid;
-	overflow: hidden;
-}
-
-.kleistad-reservering-form {
-	table-layout: auto;
-}
-
-.kleistad-reservering-form td,
-.kleistad-reservering-form input {
-	font-size: small;
-	text-align: right;
-}
-
-.kleistad-reservering-form th,
-.kleistad-reservering-form label,
-.kleistad-reservering-form select {
-	font-size: small;
-	text-align: left;
-}
-
-.kleistad-form {
-	border: none;
-	border-collapse: collapse;
-	border-spacing: 0;
-	font-size: small;
-	padding: 0;
-	vertical-align: middle;
 }
 
 .kleistad-form tr {
@@ -166,10 +130,6 @@ a.kleistad-schedule {
 
 .kleistad-form th {
 	border-style: none;
-}
-
-.kleistad-form > tfoot > tr:last-child th {
-	padding: 2px;
 }
 
 .kleistad-form input[type="text"],
@@ -196,10 +156,60 @@ a.kleistad-schedule {
 	height: 2.5em;
 }
 
-.kleistad-label {
-	font-weight: bold;
+.kleistad-reservering-form {
+	table-layout: auto;
 }
 
+.kleistad-reservering-form td,
+.kleistad-reservering-form input {
+	font-size: small;
+	text-align: right;
+}
+
+.kleistad-reservering-form th,
+.kleistad-reservering-form label,
+.kleistad-reservering-form select {
+	font-size: small;
+	text-align: left;
+}
+
+.kleistad-reserveringen {
+	border-collapse: collapse;
+	border-spacing: 0;
+	border-style: none;
+	font-size: small;
+	table-layout: auto;
+	vertical-align: middle;
+	width: 90%;
+}
+
+.kleistad-reserveringen th,
+.kleistad-reserveringen td {
+	border: 0 solid;
+	overflow: hidden;
+}
+
+.kleistad-reserveringen th:nth-child(n+3),
+.kleistad-reserveringen td:nth-child(n+3) {
+	text-align: right;
+}
+
+.kleistad-reserveringen tr[data-form]:hover {
+	border: 1px solid gray;
+	color: blue;
+	cursor: pointer;
+}
+
+.kleistad-form {
+	border: none;
+	border-collapse: collapse;
+	border-spacing: 0;
+	font-size: small;
+	padding: 0;
+	vertical-align: middle;
+}
+
+.kleistad-label,
 .kleistad-label + span {
 	font-weight: bold;
 }
@@ -246,12 +256,7 @@ a.kleistad-schedule {
 	opacity: 1;
 }
 
-.kleistad-pwd-erg-zwak {
-	background-color: #f1adad;
-	border-color: #e35b5b;
-	opacity: 1;
-}
-
+.kleistad-pwd-erg-zwak,
 .kleistad-pwd-ongelijk {
 	background-color: #f1adad;
 	border-color: #e35b5b;
@@ -318,30 +323,11 @@ a.kleistad-schedule {
 	cursor: pointer;
 }
 
-.kleistad-recept-overzicht {
-	margin-left: 0;
-}
-
-.kleistad-zoek {
-	position: relative;
-	vertical-align: middle;
-	white-space: nowrap;
-	width: 250px;
-}
-
-.kleistad-zoek input#search {
-	background: #2b303b;
-	border: none;
-	color: #262626;
-	float: left;
-	height: 50px;
-	padding-left: 45px;
-	width: 250px;
-}
-
 .kleistad-werkplek,
 .kleistad-meester,
-.kleistad-werkplek-bezet {
+.kleistad-werkplek-bezet,
+.kleistad-werkplek-vrij {
+	box-sizing: border-box;
 	font-size: small;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -349,7 +335,6 @@ a.kleistad-schedule {
 	text-align: center;
 	white-space: nowrap;
 	width: 100%;
-	box-sizing: border-box;
 }
 
 .kleistad-werkplek-bezet,
@@ -446,8 +431,8 @@ div.kleistad-werkplek-dagdeel {
 
 @supports (-webkit-appearance: none) or (-moz-appearance: none) {
 
-	input[type="checkbox"],
-	input[type="radio"] {
+	.kleistad-shortcode [type="checkbox"],
+	.kleistad-shortcode input[type="radio"] {
 		--active: green;
 		--active-inner: white;
 		--background: white;
@@ -471,8 +456,8 @@ div.kleistad-werkplek-dagdeel {
 		width: 21px;
 	}
 
-	input[type="checkbox"]::after,
-	input[type="radio"]::after {
+	.kleistad-shortcode input[type="checkbox"]::after,
+	.kleistad-shortcode input[type="radio"]::after {
 		content: "";
 		display: block;
 		left: 0;
@@ -482,16 +467,16 @@ div.kleistad-werkplek-dagdeel {
 		opacity: var(--o, 0);
 	}
 
-	input[type="radio"] {
+	.kleistad-shortcode input[type="radio"] {
 		border-radius: 50%;
 	}
 
-	input[type="checkbox"] {
+	.kleistad-shortcode input[type="checkbox"] {
 		border-radius: 7px;
 	}
 
-	input[type="checkbox"]:checked,
-	input[type="radio"]:checked {
+	.kleistad-shortcode input[type="checkbox"]:checked,
+	.kleistad-shortcode input[type="radio"]:checked {
 		--b: var(--active);
 		--bc: var(--active);
 		--d-o: 0.3s;
@@ -500,20 +485,20 @@ div.kleistad-werkplek-dagdeel {
 		--o: 1;
 	}
 
-	input[type="checkbox"]:disabled,
-	input[type="radio"]:disabled {
+	.kleistad-shortcode input[type="checkbox"]:disabled,
+	.kleistad-shortcode input[type="radio"]:disabled {
 		--b: var(--disabled);
 		cursor: not-allowed;
 		opacity: 0.9;
 	}
 
-	input[type="checkbox"]:focus,
-	input[type="radio"]:focus {
+	.kleistad-shortcode input[type="checkbox"]:focus,
+	.kleistad-shortcode input[type="radio"]:focus {
 		box-shadow: 0 0 0 var(--focus);
 	}
 
-	input[type="checkbox"] + label,
-	input[type="radio"] + label {
+	.kleistad-shortcode input[type="checkbox"] + label,
+	.kleistad-shortcode input[type="radio"] + label {
 		cursor: pointer;
 		display: inline-block;
 		font-size: 14px;
@@ -522,22 +507,22 @@ div.kleistad-werkplek-dagdeel {
 		vertical-align: top;
 	}
 
-	input[type="radio"]:checked {
+	.kleistad-shortcode input[type="radio"]:checked {
 		--s: 0.5;
 	}
 
-	input[type="checkbox"]:disabled:checked,
-	input[type="radio"]:disabled:checked {
+	.kleistad-shortcode input[type="checkbox"]:disabled:checked,
+	.kleistad-shortcode input[type="radio"]:disabled:checked {
 		--b: var(--disabled-inner);
 		--bc: var(--border);
 	}
 
-	input[type="checkbox"]:disabled + label,
-	input[type="radio"]:disabled + label {
+	.kleistad-shortcode input[type="checkbox"]:disabled + label,
+	.kleistad-shortcode input[type="radio"]:disabled + label {
 		cursor: not-allowed;
 	}
 
-	input[type="radio"]::after {
+	.kleistad-shortcode input[type="radio"]::after {
 		background: var(--active-inner);
 		border-radius: 50%;
 		height: 19px;
@@ -546,7 +531,7 @@ div.kleistad-werkplek-dagdeel {
 		width: 19px;
 	}
 
-	input[type="checkbox"]::after {
+	.kleistad-shortcode input[type="checkbox"]::after {
 		border: 2px solid var(--active-inner);
 		border-left: 0;
 		border-top: 0;
@@ -557,17 +542,18 @@ div.kleistad-werkplek-dagdeel {
 		width: 5px;
 	}
 
-	input[type="checkbox"]:hover:not(:checked):not(:disabled),
-	input[type="radio"]:hover:not(:checked):not(:disabled) {
+	.kleistad-shortcode input[type="checkbox"]:hover:not(:checked):not(:disabled),
+	.kleistad-shortcode input[type="radio"]:hover:not(:checked):not(:disabled) {
 		--bc: var(--border-hover);
 	}
 
-	button {
+	.kleistad-shortcode button:not(.mce-tinymce button),
+	.kleistad-button {
 		-webkit-transition-duration: 0.4s;
 		background-color: green;
 		color: white;
 		border: none;
-		border-radius: 5px;
+		border-radius: 5px !important; /* Omdat full calendar dit aanpast. */
 		cursor: pointer;
 		font-size: medium;
 		overflow: hidden;
@@ -578,20 +564,23 @@ div.kleistad-werkplek-dagdeel {
 		transition-duration: 0.4s;
 	}
 
-	button:hover {
+	.kleistad-shortcode button:hover:not(.mce-tinymce button),
+	.kleistad-button {
 		background: white;
 		box-shadow: 0 2px 10px 5px lightgray;
 		color: black;
 	}
 
-	button:active::after {
+	.kleistad-shortcode button:active::after:not(.mce-tinymce button),
+	.kleistad-button {
 		padding: 0;
 		margin: 0;
 		opacity: 1;
 		transition: 0s;
 	}
 
-	button:focus {
+	.kleistad-shortcode button:focus:not(.mce-tinymce button),
+	.kleistad-button {
 		background-color: green;
 		color: white;
 	}

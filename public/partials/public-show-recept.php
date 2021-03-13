@@ -45,17 +45,17 @@ function filter( $titel, $naam, $termen ) {
 			$index++;
 			$style = ( $toon < $index ) ? 'display:none;' : '';
 			$html .= '<li class="kleistad-filter-term" style="' . $style . '">';
-			$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad_filter" value="' . $id . '" style="display:none;" >';
+			$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad-filter" value="' . $id . '" style="display:none;" >';
 			$html .= esc_html( truncate_string( $term, 25 ) ); // Max. 30 karakters.
 			$html .= '<span style="visibility:hidden;float:right">&#9932;</span></label></li>';
 			if ( ( $toon === $index ) && ( $index !== $count ) ) {
 				$html .= '<li class="kleistad-filter-term">';
-				$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad_meer" value="meer" style="display:none;" >+ meer ... </label></li>';
+				$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad-meer" value="meer" style="display:none;" >+ meer ... </label></li>';
 			}
 		}
 		if ( $toon < $index ) {
 			$html .= '<li class="kleistad-filter-term" style="display:none;" >';
-			$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad_meer" value="minder" style="display:none;" >- minder ... </label></li>';
+			$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad-meer" value="minder" style="display:none;" >- minder ... </label></li>';
 		}
 		$html .= '</ul>';
 	}
@@ -74,7 +74,7 @@ if ( $count ) :
 	?>
 	</div>
 
-	<div id="kleistad_recept_overzicht" class="kleistad-recept-overzicht">
+	<div id="kleistad_recept_overzicht">
 	<?php
 	$index = 0;
 	foreach ( $data['recepten'] as $recept ) :

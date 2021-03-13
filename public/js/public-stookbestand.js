@@ -3,8 +3,8 @@
 ( function( $ ) {
 	'use strict';
 
-    $( document ).ready(
-		function() {
+    $( function()
+		{
 			/**
 			 * Initieer de startdatum.
 			 */

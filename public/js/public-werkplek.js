@@ -165,15 +165,19 @@
 					height: 'auto',
 					width: 360,
 					modal: true,
-					buttons: {
-						'OK': function() {
-							var datum   = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
-							var id      = $( '#kleistad_meester_selectie' ).val();
-							var dagdeel = $( '#kleistad_meester_selectie' ).data( 'dagdeel' );
-							muteerMeester( datum, id, dagdeel );
-							$( this ).dialog( 'close' );
+					buttons: [
+						{
+							text: 'OK',
+							click: function() {
+								var datum   = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum').datepicker( 'getDate' ) );
+								var id      = $( '#kleistad_meester_selectie' ).val();
+								var dagdeel = $( '#kleistad_meester_selectie' ).data( 'dagdeel' );
+								muteerMeester( datum, id, dagdeel );
+								$( this ).dialog( 'close' );
+							},
+							'class': 'kleistad-button'
 						}
-					}
+					]
 				}
 			);
 
@@ -183,15 +187,19 @@
 					height:	  'auto',
 					width:    360,
 					modal:    true,
-					buttons: {
-						'OK' : function () {
-							var datum    = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum' ).datepicker( 'getDate' ) );
-							gebruiker_id = $( '#kleistad_gebruiker_selectie' ).val();
-							$( '#kleistad_wijzig_gebruiker' ).text( $( '#kleistad_gebruiker_selectie option:selected' ).text() );
-							toonWerkplek( datum, gebruiker_id );
-							$( this ).dialog( 'close' );
+					buttons: [
+						{
+							text: 'OK',
+							click: function () {
+								var datum    = $.datepicker.formatDate( 'dd-mm-yy',  $( '#kleistad_datum' ).datepicker( 'getDate' ) );
+								gebruiker_id = $( '#kleistad_gebruiker_selectie' ).val();
+								$( '#kleistad_wijzig_gebruiker' ).text( $( '#kleistad_gebruiker_selectie option:selected' ).text() );
+								toonWerkplek( datum, gebruiker_id );
+								$( this ).dialog( 'close' );
+							},
+							'class': 'kleistad-button'
 						}
-					}
+					]
 				}
 			);
 
@@ -204,7 +212,7 @@
 				toonWerkplek( datums[datumIndex], gebruiker_id );
 			}
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			.on( 'change', '#kleistad_datum',
 				function() {
 					var datum  = $.datepicker.formatDate( 'dd-mm-yy', $( this ).datepicker( 'getDate' ) );

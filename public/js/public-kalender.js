@@ -3,8 +3,8 @@
 ( function( $ ) {
     'use strict';
 
-    $( document ).ready(
-		function() {
+    $( function()
+		{
 
 			var calendarEl = document.getElementById( 'kleistad_fullcalendar' );
 			var calendar = new FullCalendar.Calendar( calendarEl, {

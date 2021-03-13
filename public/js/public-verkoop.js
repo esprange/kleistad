@@ -1,8 +1,8 @@
 ( function( $ ) {
     'use strict';
 
-	$( document ).ready(
-        function() {
+	$( function()
+		{
 			$( '#kleistad_tabs' ).tabs(
 				{
 					heightStyle: 'auto',
@@ -14,7 +14,7 @@
 				}
 			);
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			/**
 			 * Als er een andere foto gekozen wordt.
 			 */
@@ -42,7 +42,7 @@
 					$( '#kleistad_submit_verkoop' ).data( 'confirm', 'Verkoop|Het totaal bedrag is ' + totaal.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + '. Is dit correct ?' );
 				}
 			);
-        }
+		}
     );
 
 } )( jQuery );

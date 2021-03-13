@@ -101,9 +101,9 @@ if ( isset( $data['recept'] ) ) :
 	<div class="kleistad-col-2">
 		<label for="kleistad_zoek" >Zoek een recept</label>
 	</div>
-	<div class="kleistad-col-4 kleistad-zoek" >
-		<span class="dashicons dashicons-search" style="cursor:pointer;" id="kleistad_zoek_icon"></span>
-		<input type="search" id="kleistad_zoek" placeholder="zoeken..." value="" >
+	<div class="kleistad-col-4" style="position: relative;">
+		<input type="search" id="kleistad_zoek" style="height:40px;" placeholder="zoeken..." value="" >
+		<button type="button" id="kleistad_zoek_icon" style="height:40px;position:absolute;right:0px;z-index:2;"><span class="dashicons dashicons-search"></span></button>
 	</div>
 	<div class="kleistad-col-2" style="text-align:right;">
 		<label for="kleistad_sorteer" >Sorteer op</label>

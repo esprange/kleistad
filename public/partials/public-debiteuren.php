@@ -176,11 +176,9 @@ elseif ( 'debiteur' === $data['actie'] ) :
 	<div class="kleistad-col-2">
 		<label for="kleistad_zoek">Zoek naar</label>
 	</div>
-	<div class="kleistad-col-3">
-		<input id="kleistad_zoek" name="zoek" type="text" />
-	</div>
-	<div class="kleistad_col3">
-		<button type="button" id="kleistad_zoek_knop" class="kleistad-edit-link" data-id="" data-action="zoek">Zoek</button>
+	<div class="kleistad-col-4"  style="position: relative;">
+		<input id="kleistad_zoek" name="zoek" type="text" style="height:40px;" placeholder="zoeken..." />
+		<button type="submit" id="kleistad_zoek_icon" class="kleistad-edit-link" data-id="" data-action="zoek" style="height:40px;position:absolute;right:0px;z-index:2;"><span class="dashicons dashicons-search"></span></button>
 	</div>
 </div>
 <br/><hr><br/>

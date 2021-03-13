@@ -148,7 +148,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 */
 	protected function form() {
 		?>
-		<form class="ShortcodeForm" action="#" autocomplete="off" enctype="multipart/form-data" >
+		<form action="#" autocomplete="off" enctype="multipart/form-data" >
 		<?php
 	}
 

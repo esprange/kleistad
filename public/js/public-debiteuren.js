@@ -4,7 +4,7 @@
 	function leesFilters() {
 		if ( window.sessionStorage.getItem( 'debiteur_filter' ) ) {
 			$( '#kleistad_zoek' ).val( window.sessionStorage.getItem( 'debiteur_filter' ) );
-			$( '#kleistad_zoek_knop' ).data( 'id', $( '#kleistad_zoek' ).val() );
+			$( '#kleistad_zoek_icon' ).data( 'id', $( '#kleistad_zoek' ).val() );
 		}
 	}
 
@@ -18,12 +18,12 @@
 		}
 	);
 
-    $( document ).ready(
-        function() {
+    $( function()
+		{
 
 			onLoad();
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			.on( 'click', '#kleistad_deb_bankbetaling',
                 function() {
 					$( '.kleistad_deb_veld' ).hide();
@@ -55,7 +55,15 @@
 			.on( 'change', '#kleistad_zoek',
 				function() {
 					window.sessionStorage.setItem( 'debiteur_filter', $( this ).val() );
-					$( '#kleistad_zoek_knop' ).data( 'id', $( this ).val() );
+					$( '#kleistad_zoek_icon' ).data( 'id', $( this ).val() );
+				}
+			)
+			.on( 'keydown', '#kleistad_zoek',
+				function( event ) {
+					if ( 13 === event.which ) {
+						window.sessionStorage.setItem( 'debiteur_filter', $( this ).val() );
+						$( '#kleistad_zoek_icon' ).data( 'id', $( this ).val() ).trigger( 'click' );
+					}
 				}
 			);
         }

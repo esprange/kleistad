@@ -16,8 +16,8 @@
 		}
 	}
 
-    $( document ).ready(
-        function() {
+    $( function()
+		{
 			wijzigTeksten();
 
 			/**

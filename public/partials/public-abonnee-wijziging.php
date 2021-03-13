@@ -20,23 +20,37 @@ foreach ( $this->options['extra'] as $extra ) :
 endforeach;
 ?>
 <p>Abonnement status per <?php echo esc_html( $per ); ?> :</p>
-<table class="kleistad-form">
-	<tr><td>Abonnement soort</td><td>
+<div class="kleistad-row">
+	<div class="kleistad-col-3">
+		<label class="kleistad-label">Abonnement soort</label>
+	</div>
+	<div class="kleistad-col-3">
 	<?php
 		echo esc_html(
 			$data['abonnement']->soort .
 			( 'beperkt' === $data['abonnement']->soort ? ' (' . $data['abonnement']->dag . ')' : '' )
 		);
 		?>
-	</td></tr>
-	<tr><td>Abonnement start</td><td><?php echo esc_html( strftime( '%x', $data['abonnement']->start_datum ) ); ?></td></tr>
-	<tr><td>Abonnement status</td><td><?php echo esc_html( $data['abonnement']->geef_statustekst( true ) ); ?></td></tr>
+	</div>
+</div>
+<div class="kleistad-row">
+	<div class="kleistad-col-3">
+		<label class="kleistad-label">Abonnement status</label>
+	</div>
+	<div class="kleistad-col-3">
+		<?php echo esc_html( $data['abonnement']->geef_statustekst( true ) ); ?>
+	</div>
+</div>
 	<?php if ( false !== $extra_beschikbaar ) : ?>
-	<tr><td>Extra's</td><td>
-		<?php echo esc_html( 0 < count( $data['abonnement']->extras ) ? implode( ', ', $data['abonnement']->extras ) : 'geen' ); ?>
-	</td></tr>
+<div class="kleistad-row">
+	<div class="kleistad-col-3">
+		<label class="kleistad-label">Extra's</label>
+	</div>
+	<div class="kleistad-col-3">
+		<?php echo 0 < count( $data['abonnement']->extras ) ? implode( '<br/>', $data['abonnement']->extras ) : 'geen'; // phpcs:ignore ?>
+	</div>
+</div>
 	<?php endif ?>
-</table>
 
 <?php $this->form(); ?>
 	<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
@@ -56,7 +70,7 @@ endforeach;
 			<div class="kleistad-col-7" >
 				<?php if ( 'onbeperkt' === $data['abonnement']->soort ) : ?>
 				<input name="soort" type="hidden" value="beperkt" >
-				<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een onbeperkt naar een beperkt abonnement. Kies de dag waarop je van een beperkt abonnement gebruikt gaat maken</strong></p>
+				<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een onbeperkt naar een beperkt abonnement.</strong></p><p>Kies de dag waarop je van een beperkt abonnement gebruikt gaat maken</p>
 				<?php else : ?>
 				<input name="soort" type="hidden" value="onbeperkt" >
 				<p><strong>Je wilt per <?php echo esc_html( $per ); ?> wijzigen van een beperkt naar een onbeperkt abonnement.</strong></p>
@@ -97,6 +111,14 @@ endforeach;
 		</div>
 	</div>
 	<div class="kleistad_abo_extras kleistad_abo_veld" style="display:none" >
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				&nbsp;
+			</div>
+			<div class="kleistad-col-7">
+				<p><strong>Je wilt per <?php echo esc_html( $per ); ?> een wijziging doorvoeren van de extra opties bij het abonnement.</strong></p>
+			</div>
+		</div>
 		<?php
 		$i = 0;
 		foreach ( $this->options['extra'] as $extra ) :
@@ -105,20 +127,16 @@ endforeach;
 				?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
-				<label class="kleistad-label"><?php echo 1 === $i ? 'Extra\'s' : ''; ?></label>
+				&nbsp;
 			</div>
-				<?php
-				$label = false;
-				?>
 			<div class="kleistad-col-4">
 				<input name="extras[]" id="extras_<?php echo esc_attr( $i ); ?>" type="checkbox"
 					<?php checked( false !== array_search( $extra['naam'], $data['abonnement']->extras, true ) ); ?>
-					data-bedrag="<?php echo esc_attr( 3 * $extra['prijs'] ); ?>"
 					value="<?php echo esc_attr( $extra['naam'] ); ?>" />
 				<label for="extras_<?php echo esc_attr( $i ); ?>" ><?php echo esc_html( $extra['naam'] ); ?></label>
 			</div>
 			<div class="kleistad-col-3">
-				<label class="kleistad-label" ><?php echo esc_html( ' (€ ' . number_format_i18n( $extra['prijs'], 2 ) . ' p.m.)' ); ?></label>
+				<?php echo esc_html( ' (€ ' . number_format_i18n( $extra['prijs'], 2 ) . ' p.m.)' ); ?>
 			</div>
 		</div>
 				<?php
@@ -275,7 +293,7 @@ endforeach;
 				&nbsp;
 			</div>
 			<div class="kleistad-col-7 kleistad-label" >
-				<p><strong>Je wilt je huidige betaalwijze (betaling per bank) voor je abonnement wijzigen naar automatische incasso.
+				<p><strong>Je wilt je huidige betaalwijze (betaling per bank) voor je abonnement per <?php echo esc_html( $per ); ?> wijzigen naar automatische incasso.
 				Je betaalt per iDeal € 0.01 en machtigt daarmee Kleistad om in het vervolg het abonnementsgeld maandelijks per SEPA incasso automatisch af te schrijven van jouw bankrekening.</strong></p>
 			</div>
 		</div>
@@ -295,7 +313,7 @@ endforeach;
 				&nbsp;
 			</div>
 			<div class="kleistad-col-7 kleistad-label" >
-				<p><strong>Je wilt je huidige betaalwijze (automatische sepa-incasso) wijzigen naar overschrijving per bank.</strong></p>
+				<p><strong>Je wilt je huidige betaalwijze (automatische sepa-incasso) per <?php echo esc_html( $per ); ?> wijzigen naar overschrijving per bank.</strong></p>
 			</div>
 		</div>
 		<div class ="kleistad-row">

@@ -3,10 +3,10 @@
 ( function( $ ) {
     'use strict';
 
-    $( document ).ready(
-        function() {
+    $( function() 
+		{
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			/**
 			 * Voorkom dat checkboxes gewijzigd kunnen worden als readonly form.
 			 */

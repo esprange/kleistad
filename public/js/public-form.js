@@ -129,17 +129,25 @@ function strtodate( value ) {
 					width: 'auto',
 					resizable: false,
 					title: tekst[0],
-					buttons: {
-						Ja: function() {
-							$( this ).dialog( 'close' );
-							callback();
-							return true;
+					buttons: [
+						{
+							text: 'Ja',
+							click: function() {
+								$( this ).dialog( 'close' );
+								callback();
+								return true;
+							},
+							class: 'kleistad-button'
 						},
-						Nee: function() {
-							$( this ).dialog( 'close' );
-							return false;
+						{
+							text: 'Nee',
+							click: function() {
+								$( this ).dialog( 'close' );
+								return false;
+							},
+							class: 'kleistad-button'
 						}
-					}
+					]
 				}
 			);
 			return false;
@@ -151,8 +159,8 @@ function strtodate( value ) {
 	/**
 	 * Wordt aangeroepen nadat de webpage geladen is.
 	 */
-	$( document ).ready(
-		function() {
+	$( function()
+		{
 
 			/**
 			 * Definieer de bevestig dialoog.
@@ -164,7 +172,7 @@ function strtodate( value ) {
 				}
 			);
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			/**
 			 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
 			 */
@@ -195,7 +203,7 @@ function strtodate( value ) {
 					 */
 					return askConfirm( tekst,
 						function() {
-							submitForm( $form.closest( '.kleistad_shortcode' ), formData );
+							submitForm( $form.closest( '.kleistad-shortcode' ), formData );
 						}
 					);
 				}

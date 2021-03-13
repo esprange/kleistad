@@ -3,10 +3,10 @@
 ( function( $ ) {
     'use strict';
 
-	$( document ).ready(
-        function() {
+	$( function()
+		{
 
-			$( '.kleistad_shortcode' )
+			$( '.kleistad-shortcode' )
 			/**
 			 * Als er een andere foto gekozen wordt.
 			 */

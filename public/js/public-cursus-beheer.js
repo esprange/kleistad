@@ -163,8 +163,8 @@
 		}
 	);
 
-    $( document ).ready(
-        function() {
+    $( function()
+		{
 			onLoad();
 		}
     );
