@@ -251,7 +251,7 @@ if ( isset( $data['recept'] ) ) :
 			<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
 			<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
 			<td>
-				<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" style="padding:.4em .8em;" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
+				<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
 			</td>
 		</tr>
 		<?php endforeach ?>

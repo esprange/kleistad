@@ -43,7 +43,7 @@ $huidige_gebruiker = wp_get_current_user();
 <h2 id="kleistad_datum_titel"></h2>
 <div class="kleistad-row">
 	<div style="float:left;margin-bottom:10px">
-		<input type="hidden" name="datum" id="kleistad_datum" class="kleistad-datum" readonly="readonly" >
+		<input type="hidden" name="datum" id="kleistad_datum" class="kleistad-datum" >
 		<button type="button" id="kleistad_eerder" style="width:3em" ><span class="dashicons dashicons-controls-back"></span></button>
 		<button type="button" id="kleistad_kalender"  style="width:3em" ><span class="dashicons dashicons-calendar"></span></button>
 		<button type="button" id="kleistad_later" style="width:3em" ><span class="dashicons dashicons-controls-forward"></span></button>

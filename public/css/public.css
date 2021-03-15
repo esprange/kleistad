@@ -6,6 +6,17 @@ Description: stylesheet functions voor kleistad_plugin
   License: GPL3.0
 */
 
+:root {
+	--active: green;
+	--active-inner: white;
+	--background: white;
+	--border-hover: green;
+	--border: #bbc1e1;
+	--disabled: #f6f8ff;
+	--disabled-inner: #e1e6f9;
+	--focus: 2px greenyellow;
+}
+
 .kleistad-shortcode *:not(.dashicons),
 .kleistad-fout p,
 .kleistad-succes p,
@@ -18,19 +29,28 @@ Description: stylesheet functions voor kleistad_plugin
 	table-layout: auto;
 }
 
+/* voor de jstree weergave */
 .kleistad-shortcode .jstree-anchor {
 	box-shadow: 0 0 0 0 white !important;
 }
 
 /* Fullcalendar toont om een dubbele button alsof het een radio button is. */
+/* stylelint-disable selector-class-pattern */
 .kleistad-shortcode .fc--button {
 	display: none;
 }
+/* stylelint-enable selector-class-pattern */
 
+/* voor de jqueryui dialog */
 .kleistad-shortcode .fc-toolbar-title {
 	font-size: medium;
 }
 
+.kleistad-shortcode a {
+	text-decoration: none;
+}
+
+/* voor de jqueryui datepicker */
 .kleistad-state-highlight {
 	border: 2px solid green !important;
 }
@@ -92,19 +112,19 @@ div.kleistad-workshop-reactie {
 a.kleistad-edit {
 	background-image: url(../images/icon-edit.png);
 	background-repeat: no-repeat;
-	text-decoration: none !important;
+	padding: 0.4em 0.8em;
 }
 
 a.kleistad-view {
 	background-image: url(../images/icon-view.png);
 	background-repeat: no-repeat;
-	text-decoration: none !important;
+	padding: 0.4em 0.8em;
 }
 
 a.kleistad-schedule {
 	background-image: url(../images/icon-calendar.png);
 	background-repeat: no-repeat;
-	text-decoration: none !important;
+	padding: 0.4em 0.8em;
 }
 
 .kleistad-tijd {
@@ -429,159 +449,154 @@ div.kleistad-werkplek-dagdeel {
 	}
 }
 
-@supports (-webkit-appearance: none) or (-moz-appearance: none) {
+.kleistad-shortcode input[type="checkbox"],
+.kleistad-shortcode input[type="radio"] {
+	/* --active: green;
+	--active-inner: white;
+	--background: white;
+	--border-hover: green;
+	--border: #bbc1e1;
+	--disabled: #f6f8ff;
+	--disabled-inner: #e1e6f9;
+	--focus: 2px greenyellow; */
+	appearance: none;
+	background: var(--b, var(--background));
+	border: 1px solid var(--bc, var(--border));
+	cursor: pointer;
+	display: inline-block;
+	height: 21px;
+	margin: 0;
+	outline: none;
+	position: relative;
+	transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+	vertical-align: top;
+	width: 21px;
+}
 
-	.kleistad-shortcode [type="checkbox"],
-	.kleistad-shortcode input[type="radio"] {
-		--active: green;
-		--active-inner: white;
-		--background: white;
-		--border-hover: green;
-		--border: #bbc1e1;
-		--disabled: #f6f8ff;
-		--disabled-inner: #e1e6f9;
-		--focus: 2px greenyellow;
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		background: var(--b, var(--background));
-		border: 1px solid var(--bc, var(--border));
-		cursor: pointer;
-		display: inline-block;
-		height: 21px;
-		margin: 0;
-		outline: none;
-		position: relative;
-		transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
-		vertical-align: top;
-		width: 21px;
-	}
+.kleistad-shortcode input[type="checkbox"]::after,
+.kleistad-shortcode input[type="radio"]::after {
+	content: "";
+	display: block;
+	left: 0;
+	position: absolute;
+	top: 0;
+	transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+	opacity: var(--o, 0);
+}
 
-	.kleistad-shortcode input[type="checkbox"]::after,
-	.kleistad-shortcode input[type="radio"]::after {
-		content: "";
-		display: block;
-		left: 0;
-		position: absolute;
-		top: 0;
-		transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
-		opacity: var(--o, 0);
-	}
+.kleistad-shortcode input[type="radio"] {
+	border-radius: 50%;
+}
 
-	.kleistad-shortcode input[type="radio"] {
-		border-radius: 50%;
-	}
+.kleistad-shortcode input[type="checkbox"] {
+	border-radius: 7px;
+}
 
-	.kleistad-shortcode input[type="checkbox"] {
-		border-radius: 7px;
-	}
+.kleistad-shortcode input[type="checkbox"]:checked,
+.kleistad-shortcode input[type="radio"]:checked {
+	--b: var(--active);
+	--bc: var(--active);
+	--d-o: 0.3s;
+	--d-t: 0.6s;
+	--d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
+	--o: 1;
+}
 
-	.kleistad-shortcode input[type="checkbox"]:checked,
-	.kleistad-shortcode input[type="radio"]:checked {
-		--b: var(--active);
-		--bc: var(--active);
-		--d-o: 0.3s;
-		--d-t: 0.6s;
-		--d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
-		--o: 1;
-	}
+.kleistad-shortcode input[type="checkbox"]:disabled,
+.kleistad-shortcode input[type="radio"]:disabled {
+	--b: var(--disabled);
+	cursor: not-allowed;
+	opacity: 0.9;
+}
 
-	.kleistad-shortcode input[type="checkbox"]:disabled,
-	.kleistad-shortcode input[type="radio"]:disabled {
-		--b: var(--disabled);
-		cursor: not-allowed;
-		opacity: 0.9;
-	}
+.kleistad-shortcode input[type="checkbox"]:focus,
+.kleistad-shortcode input[type="radio"]:focus {
+	box-shadow: 0 0 0 var(--focus);
+}
 
-	.kleistad-shortcode input[type="checkbox"]:focus,
-	.kleistad-shortcode input[type="radio"]:focus {
-		box-shadow: 0 0 0 var(--focus);
-	}
+.kleistad-shortcode input[type="checkbox"] + label,
+.kleistad-shortcode input[type="radio"] + label {
+	cursor: pointer;
+	display: inline-block;
+	font-size: 14px;
+	line-height: 21px;
+	margin-left: 4px;
+	vertical-align: top;
+}
 
-	.kleistad-shortcode input[type="checkbox"] + label,
-	.kleistad-shortcode input[type="radio"] + label {
-		cursor: pointer;
-		display: inline-block;
-		font-size: 14px;
-		line-height: 21px;
-		margin-left: 4px;
-		vertical-align: top;
-	}
+.kleistad-shortcode input[type="radio"]:checked {
+	--s: 0.5;
+}
 
-	.kleistad-shortcode input[type="radio"]:checked {
-		--s: 0.5;
-	}
+.kleistad-shortcode input[type="checkbox"]:disabled:checked,
+.kleistad-shortcode input[type="radio"]:disabled:checked {
+	--b: var(--disabled-inner);
+	--bc: var(--border);
+}
 
-	.kleistad-shortcode input[type="checkbox"]:disabled:checked,
-	.kleistad-shortcode input[type="radio"]:disabled:checked {
-		--b: var(--disabled-inner);
-		--bc: var(--border);
-	}
+.kleistad-shortcode input[type="checkbox"]:disabled + label,
+.kleistad-shortcode input[type="radio"]:disabled + label {
+	cursor: not-allowed;
+}
 
-	.kleistad-shortcode input[type="checkbox"]:disabled + label,
-	.kleistad-shortcode input[type="radio"]:disabled + label {
-		cursor: not-allowed;
-	}
+.kleistad-shortcode input[type="radio"]::after {
+	background: var(--active-inner);
+	border-radius: 50%;
+	height: 19px;
+	opacity: 1;
+	transform: scale(var(--s, 0.7));
+	width: 19px;
+}
 
-	.kleistad-shortcode input[type="radio"]::after {
-		background: var(--active-inner);
-		border-radius: 50%;
-		height: 19px;
-		opacity: 1;
-		transform: scale(var(--s, 0.7));
-		width: 19px;
-	}
+.kleistad-shortcode input[type="checkbox"]::after {
+	border: 2px solid var(--active-inner);
+	border-left: 0;
+	border-top: 0;
+	height: 9px;
+	left: 7px;
+	top: 4px;
+	transform: rotate(43deg);
+	width: 5px;
+}
 
-	.kleistad-shortcode input[type="checkbox"]::after {
-		border: 2px solid var(--active-inner);
-		border-left: 0;
-		border-top: 0;
-		height: 9px;
-		left: 7px;
-		top: 4px;
-		transform: rotate(43deg);
-		width: 5px;
-	}
+.kleistad-shortcode input[type="checkbox"]:hover:not(:checked):not(:disabled),
+.kleistad-shortcode input[type="radio"]:hover:not(:checked):not(:disabled) {
+	--bc: var(--border-hover);
+}
 
-	.kleistad-shortcode input[type="checkbox"]:hover:not(:checked):not(:disabled),
-	.kleistad-shortcode input[type="radio"]:hover:not(:checked):not(:disabled) {
-		--bc: var(--border-hover);
-	}
+.kleistad-button,
+.kleistad-shortcode button:not(.mce-tinymce button) {
+	background-color: green;
+	color: white;
+	border: none;
+	border-radius: 5px !important; /* Omdat full calendar dit aanpast. */
+	cursor: pointer;
+	font-size: medium;
+	overflow: hidden;
+	padding: 10px;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	transition-duration: 0.4s;
+}
 
-	.kleistad-shortcode button:not(.mce-tinymce button),
-	.kleistad-button {
-		-webkit-transition-duration: 0.4s;
-		background-color: green;
-		color: white;
-		border: none;
-		border-radius: 5px !important; /* Omdat full calendar dit aanpast. */
-		cursor: pointer;
-		font-size: medium;
-		overflow: hidden;
-		padding: 10px;
-		position: relative;
-		text-align: center;
-		text-decoration: none;
-		transition-duration: 0.4s;
-	}
+.kleistad-button,
+.kleistad-shortcode button:hover:not(.mce-tinymce button) {
+	background: white;
+	box-shadow: 0 2px 10px 5px lightgray;
+	color: black;
+}
 
-	.kleistad-shortcode button:hover:not(.mce-tinymce button),
-	.kleistad-button {
-		background: white;
-		box-shadow: 0 2px 10px 5px lightgray;
-		color: black;
-	}
+.kleistad-button,
+.kleistad-shortcode button:active::after:not(.mce-tinymce button) {
+	padding: 0;
+	margin: 0;
+	opacity: 1;
+	transition: 0s;
+}
 
-	.kleistad-shortcode button:active::after:not(.mce-tinymce button),
-	.kleistad-button {
-		padding: 0;
-		margin: 0;
-		opacity: 1;
-		transition: 0s;
-	}
-
-	.kleistad-shortcode button:focus:not(.mce-tinymce button),
-	.kleistad-button {
-		background-color: green;
-		color: white;
-	}
+.kleistad-button,
+.kleistad-shortcode button:focus:not(.mce-tinymce button) {
+	background-color: green;
+	color: white;
 }

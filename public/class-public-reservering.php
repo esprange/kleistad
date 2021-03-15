@@ -224,11 +224,11 @@ class Public_Reservering extends Shortcode {
 	 */
 	private static function toon_stoken( $oven_id, $maand, $jaar ) {
 		$vanaf  = mktime( 0, 0, 0, $maand, 1, $jaar );
-		$tot    = mktime( 0, 0, 0, $maand + 1, -1, $jaar );
+		$tot    = mktime( 0, 0, 0, $maand + 1, 1, $jaar );
 		$oven   = new Oven( $oven_id );
 		$body   = '';
 		$stoken = [];
-		for ( $datum = $vanaf; $datum <= $tot; $datum += DAY_IN_SECONDS ) {
+		for ( $datum = $vanaf; $datum < $tot; $datum += DAY_IN_SECONDS ) {
 			$dagnaam = strftime( '%A', $datum );
 			if ( $oven->{$dagnaam} ) {
 				$stoken[] = new Stook( $oven_id, $datum );

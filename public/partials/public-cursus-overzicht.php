@@ -50,7 +50,7 @@ if ( 'cursisten' === $data['actie'] ) :
 					if ( ! $cursist['i_betaald'] && ! $cursist['c_betaald'] ) :
 						if ( $cursist['wacht'] || $cursist['wachtlijst'] ) :
 							?>
-						<a href="#" title="indelen" class="kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
+						<a href="#" title="indelen" class="kleistad-edit-link"
 							data-id="<?php echo esc_attr( $cursist['id'] . '-' . $data['cursus']['id'] ); ?>" 
 							data-actie="<?php echo $cursist['wachtlijst'] ? 'uitschrijven' : 'indelen'; ?>" >
 							<?php echo $cursist['wachtlijst'] ? 'wachtlijst' : 'wacht op factuur'; ?> </a>
@@ -174,8 +174,7 @@ if ( 'cursisten' === $data['actie'] ) :
 			<td data-sort="<?php echo esc_attr( $cursus_info['start_dt'] ); ?>"><?php echo esc_html( $cursus_info['start_datum'] ); ?></td>
 			<td>
 				<?php if ( $cursus_info['heeft_inschrijvingen'] ) : ?>
-				<a href="#" title="toon cursisten" class="kleistad-view kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
-					data-id="<?php echo esc_attr( $cursus_id ); ?>" data-actie="cursisten" >
+				<a href="#" title="toon cursisten" class="kleistad-view kleistad-edit-link"	data-id="<?php echo esc_attr( $cursus_id ); ?>" data-actie="cursisten" >
 					&nbsp;
 				</a>
 				<?php endif ?>

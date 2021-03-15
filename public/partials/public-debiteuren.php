@@ -212,8 +212,7 @@ elseif ( 'debiteur' === $data['actie'] ) :
 				<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
 				<td data-sort="<?php echo esc_attr( $debiteur['verval_datum'] ); ?>"><?php echo esc_html( date( 'd-m-Y', $debiteur['verval_datum'] ) ); ?></td>
 				<td>
-					<a href="#" title="wijzig order" class="<?php echo 'kleistad-edit'; ?> kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
-						data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="<?php echo 'debiteur'; ?>" >
+					<a href="#" title="wijzig order" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="debiteur" >
 						&nbsp;
 					</a>
 				</td>

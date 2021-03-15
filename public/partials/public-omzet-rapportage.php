@@ -107,8 +107,7 @@ if ( 'details' === $data['actie'] ) :
 				<?php
 				if ( $omzet['details'] ) :
 					?>
-					<a href="#" title="details" class="kleistad-view kleistad-edit-link" style="text-decoration:none !important;color:green;padding:.4em .8em;"
-					data-id="<?php echo esc_attr( $select_jaar . '-' . $select_maand . '-' . $omzet['key'] ); ?>" data-actie="details" >
+					<a href="#" title="details" class="kleistad-view kleistad-edit-link" data-id="<?php echo esc_attr( $select_jaar . '-' . $select_maand . '-' . $omzet['key'] ); ?>" data-actie="details" >
 					&nbsp;
 				</a><?php endif ?>
 			</td>
