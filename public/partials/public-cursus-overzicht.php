@@ -36,7 +36,7 @@ if ( 'cursisten' === $data['actie'] ) :
 				<?php if ( $cursist['extra'] ) : ?>
 				<td><span class="dashicons dashicons-minus"></span></td>
 				<?php else : ?>
-				<td><?php echo ( ( $cursist['c_betaald'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
+				<td><?php echo ( ( $cursist['betaald'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 				<?php endif ?>
 
 				<?php if ( $data['bestuur_rechten'] ) : ?>
@@ -47,7 +47,7 @@ if ( 'cursisten' === $data['actie'] ) :
 				<td><?php echo ( ( $cursist['herinner_email'] ) ? '<span class="dashicons dashicons-yes"></span>' : '' ); ?></td>
 				<td>
 					<?php
-					if ( ! $cursist['i_betaald'] && ! $cursist['c_betaald'] ) :
+					if ( ! $cursist['ingedeeld'] ) :
 						if ( $cursist['wacht'] || $cursist['wachtlijst'] ) :
 							?>
 						<a href="#" title="indelen" class="kleistad-edit-link"

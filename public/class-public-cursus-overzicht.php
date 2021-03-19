@@ -87,8 +87,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 					$cursist_info,
 					[
 						'extra'          => false,
-						'i_betaald'      => $inschrijving->inschrijving_betaald( $order->betaald ),
-						'c_betaald'      => $order->gesloten,
+						'ingedeeld'      => $inschrijving->ingedeeld,
+						'betaald'        => $order->gesloten,
 						'restant_email'  => $inschrijving->restant_email,
 						'herinner_email' => $inschrijving->herinner_email,
 						'wacht'          => ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! $order->id,
