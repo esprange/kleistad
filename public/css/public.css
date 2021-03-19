@@ -451,14 +451,6 @@ div.kleistad-werkplek-dagdeel {
 
 .kleistad-shortcode input[type="checkbox"],
 .kleistad-shortcode input[type="radio"] {
-	/* --active: green;
-	--active-inner: white;
-	--background: white;
-	--border-hover: green;
-	--border: #bbc1e1;
-	--disabled: #f6f8ff;
-	--disabled-inner: #e1e6f9;
-	--focus: 2px greenyellow; */
 	appearance: none;
 	background: var(--b, var(--background));
 	border: 1px solid var(--bc, var(--border));
