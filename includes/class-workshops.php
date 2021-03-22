@@ -122,7 +122,7 @@ class Workshops implements Countable, Iterator {
 				) {
 				continue;
 			}
-			$workshop->vraag_betaling();
+			$workshop->actie->vraag_betaling();
 		}
 	}
 

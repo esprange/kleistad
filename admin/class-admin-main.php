@@ -373,7 +373,7 @@ class Admin_Main {
 		$this->background->push_to_queue( 'Shortcode::cleanup_downloads' );
 		$this->background->push_to_queue( 'Workshops::doe_dagelijks' );
 		$this->background->push_to_queue( 'Abonnementen::doe_dagelijks' );
-		$this->background->push_to_queue( 'Saldo::doe_dagelijks' );
+		$this->background->push_to_queue( 'Stoken::doe_dagelijks' );
 		$this->background->push_to_queue( 'Cursussen::doe_dagelijks' );
 		$this->background->push_to_queue( 'Inschrijvingen::doe_dagelijks' );
 		$this->background->push_to_queue( 'Dagdelenkaarten::doe_dagelijks' );

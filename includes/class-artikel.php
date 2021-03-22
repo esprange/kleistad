@@ -278,6 +278,11 @@ abstract class Artikel {
 	 * @return bool
 	 */
 	public function afzeggen() : bool {
+		if ( property_exists( $this, 'actie' ) ) {
+			if ( method_exists( $this->actie, 'afzeggen' ) ) {
+				return $this->actie->afzeggen();
+			}
+		}
 		return true;
 	}
 

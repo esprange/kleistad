@@ -50,6 +50,21 @@ class Workshop extends Artikel {
 	];
 	public const META_KEY  = 'kleistad_workshop';
 
+	private const EMAIL_SUBJECT = [
+		'_bevestiging'    => 'Bevestiging van ',
+		'_herbevestiging' => 'Bevestiging na correctie van ',
+		'_betaling'       => 'Betaling van ',
+		'_ideal'          => 'Betaling van ',
+		'_afzegging'      => 'Annulering van ',
+	];
+
+	/**
+	 * Het actie object
+	 *
+	 * @var WorkshopActie $actie De acties.
+	 */
+	public WorkshopActie $actie;
+
 	/**
 	 * Constructor
 	 *
@@ -87,7 +102,8 @@ class Workshop extends Artikel {
 			];
 			return;
 		}
-		$this->data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+		$this->data  = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+		$this->actie = new WorkshopActie( $this );
 	}
 
 	/**
@@ -158,28 +174,6 @@ class Workshop extends Artikel {
 	}
 
 	/**
-	 * Zeg de gemaakte afspraak voor de workshop af.
-	 *
-	 * @since 5.0.0
-	 */
-	public function afzeggen() : bool {
-		if ( ! $this->vervallen ) {
-			$this->vervallen = true;
-			$this->save();
-			try {
-				$event = new Event( $this->event_id );
-				$event->delete();
-			} catch ( Exception $e ) {
-				unset( $e ); // phpcs:ignore
-			}
-		}
-		if ( $this->definitief ) {
-			$this->verzend_email( '_afzegging' );
-		}
-		return true;
-	}
-
-	/**
 	 * Geef de artikel naam.
 	 *
 	 * @return string
@@ -210,39 +204,6 @@ class Workshop extends Artikel {
 			$bericht,
 			false
 		);
-	}
-
-	/**
-	 * Geef aan dat de workshop betaald moet worden
-	 */
-	public function vraag_betaling() {
-		$this->betaling_email = true;
-		$this->save();
-		$this->verzend_email( '_betaling', $this->bestel_order( 0.0, $this->datum ) );
-	}
-
-	/**
-	 * Bevestig de workshop.
-	 *
-	 * @since 5.0.0
-	 */
-	public function bevestig() {
-		$herbevestiging   = $this->definitief;
-		$this->definitief = true;
-		$this->save();
-		if ( ! $herbevestiging ) {
-			return $this->verzend_email( '_bevestiging' );
-		}
-		$order = new Order( $this->geef_referentie() );
-		if ( $order->id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-			$factuur = $this->wijzig_order( $order->id );
-			if ( false === $factuur ) { // De factuur is aangemaakt in een periode die boekhoudkundig geblokkeerd is, correctie is niet mogelijk.
-				return false;
-			} elseif ( ! empty( $factuur ) ) { // Er was al een factuur die nog gecorrigeerd mag worden.
-				return $this->verzend_email( '_betaling', $factuur );
-			}
-		}
-		return $this->verzend_email( '_herbevestiging' );
 	}
 
 	/**
@@ -374,7 +335,7 @@ class Workshop extends Artikel {
 	 * @param string $factuur Een bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	private function verzend_email( $type, $factuur = '' ) {
+	public function verzend_email( $type, $factuur = '' ) {
 		$emailer          = new Email();
 		$email_parameters = [
 			'to'          => "{$this->contact} <{$this->email}>",
@@ -394,30 +355,17 @@ class Workshop extends Artikel {
 				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
 				'workshop_link'       => $this->betaal_link,
 			],
+			'slug'        => "workshop$type",
+			'subject'     => self::EMAIL_SUBJECT( $type ) . $this->naam,
 		];
-
-		$email_parameters['slug'] = "workshop$type";
 		if ( $factuur && $this->organisatie_email ) {
 			$email_parameters['to'] .= ", {$this->organisatie} <{$this->organisatie_email}>";
 		}
-		switch ( $type ) {
-			case '_bevestiging':
-			case '_herbevestiging':
-				$email_parameters['subject']  = 'Bevestiging ' . $this->naam . ( '_herbevestiging' === $type ? ' (correctie)' : '' );
+		if ( false !== strpos( $type, 'bevestiging' ) ) {
 				$email_parameters['auto']     = false;
 				$email_parameters['slug']     = 'workshop_bevestiging';
 				$email_parameters['from']     = "{$emailer->info}{$emailer->verzend_domein}";
 				$email_parameters['reply-to'] = "{$emailer->info}{$emailer->domein}";
-				break;
-			case '_betaling':
-			case '_ideal':
-				$email_parameters['subject'] = 'Betaling ' . $this->naam;
-				break;
-			case '_afzegging':
-				$email_parameters['subject'] = 'Annulering ' . $this->naam;
-				break;
-			default:
-				return false;
 		}
 		return $emailer->send( $email_parameters );
 	}
