@@ -51,14 +51,6 @@ class Saldo extends Artikel {
 	public $reden;
 
 	/**
-	 * Het volgnummer van de dagdelenkaart.
-	 *
-	 * @access private
-	 * @var int $volgnr Het volgnummer.
-	 */
-	private $volgnr;
-
-	/**
 	 * De constructor
 	 *
 	 * @since      4.0.87
@@ -70,7 +62,6 @@ class Saldo extends Artikel {
 		$this->betalen  = new Betalen();
 		$saldo          = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->data     = wp_parse_args( $saldo, $this->default_data );
-		$this->volgnr   = count( $this->storting );
 	}
 
 	/**
@@ -82,21 +73,14 @@ class Saldo extends Artikel {
 	 * @return mixed De waarde.
 	 */
 	public function __get( $attribuut ) {
-		$laatste_storting = array_key_last( $this->data['storting'] );
-		switch ( $attribuut ) {
-			case 'storting':
-				return $this->data[ $attribuut ];
-			case 'bedrag':
-				return (float) $this->data[ $attribuut ];
-			case 'datum':
-				return strtotime( $this->data['storting'][ $laatste_storting ][ $attribuut ] );
-			case 'prijs':
-				return (float) $this->data['storting'][ $laatste_storting ][ $attribuut ];
-			case 'reden':
-				return $this->reden;
-			default:
-				return $this->data['storting'][ $laatste_storting ][ $attribuut ];
+		if ( array_key_exists( $attribuut, $this->data ) ) {
+			return $this->data[ $attribuut ];
 		}
+		$laatste_storting = end( $this->data['storting'] );
+		if ( array_key_exists( $attribuut, $laatste_storting ) ) {
+			return $laatste_storting[ $attribuut ];
+		}
+		return null;
 	}
 
 	/**
@@ -108,21 +92,11 @@ class Saldo extends Artikel {
 	 * @param mixed  $waarde De nieuwe waarde.
 	 */
 	public function __set( $attribuut, $waarde ) {
-		$laatste_storting = array_key_last( $this->data['storting'] );
-		switch ( $attribuut ) {
-			case 'bedrag':
-			case 'storting':
-				$this->data[ $attribuut ] = round( $waarde, 2 );
-				break;
-			case 'datum':
-				$this->data['storting'][ $laatste_storting ][ $attribuut ] = date( 'Y-m-d', $waarde );
-				break;
-			case 'reden':
-				$this->reden = $waarde;
-				break;
-			default:
-				$this->data['storting'][ $laatste_storting ][ $attribuut ] = $waarde;
+		if ( 'bedrag' === $attribuut ) {
+			$this->data[ $attribuut ] = round( $waarde, 2 );
+			return;
 		}
+		$this->data['storting'][ array_key_last( $this->data['storting'] ) ][ $attribuut ] = $waarde;
 	}
 
 	/**
@@ -189,10 +163,10 @@ class Saldo extends Artikel {
 	 * @param float $prijs Het toe te voegen saldo na betaling.
 	 */
 	public function nieuw( $prijs ) {
-		$this->volgnr++;
-		$datum                                   = strftime( '%y%m%d', strtotime( 'today' ) );
-		$this->data['storting'][ $this->volgnr ] = [
-			'code'  => "S$this->klant_id-$datum-$this->volgnr",
+		$datum                    = strftime( '%y%m%d', strtotime( 'today' ) );
+		$volgnr                   = count( $this->data['storting'] );
+		$this->data['storting'][] = [
+			'code'  => "S$this->klant_id-$datum-$volgnr",
 			'datum' => date( 'Y-m-d', strtotime( 'today' ) ),
 			'prijs' => $prijs,
 		];

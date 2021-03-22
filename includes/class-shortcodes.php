@@ -118,7 +118,7 @@ class Shortcodes {
 			'rapport'               => (object) [
 				'script' => false,
 				'js'     => [ 'jquery', 'datatables' ],
-				'css'    => [ 'datatables' ],
+				'css'    => [ 'datatables', 'dashicons' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
 			'recept_beheer'         => (object) [
@@ -179,7 +179,7 @@ class Shortcodes {
 				'script' => true,
 				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-dialog' ],
 				'css'    => [ 'jquery-ui', 'dashicons' ],
-				'access' => [ DOCENT, LID, BESTUUR ],
+				'access' => [ DOCENT, LID, BESTUUR, 'cursist-1' ],
 			],
 			'werkplekrapport'       => (object) [
 				'script' => true,

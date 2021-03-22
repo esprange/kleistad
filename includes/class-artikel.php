@@ -40,28 +40,28 @@ abstract class Artikel {
 	 * @access protected
 	 * @var array $data welke de attributen van het artikel bevat.
 	 */
-	protected $data = [];
+	protected array $data = [];
 
 	/**
 	 * De klant.
 	 *
 	 * @var int $klant_id
 	 */
-	public $klant_id;
+	public int $klant_id;
 
 	/**
 	 * De betaal link.
 	 *
 	 * @var string $betaal_link De url om te betalen.
 	 */
-	public $betaal_link = '';
+	public string $betaal_link = '';
 
 	/**
 	 * Bij artikelen kan aangegeven worden welk type order afgehandeld moet worden.
 	 *
 	 * @var string $artikel_type Bijvoorbeeld bij abonnementen het type start, overbrugging of regulier.
 	 */
-	public $artikel_type = '';
+	public string $artikel_type = '';
 
 	/**
 	 * Betaal het artikel per ideal.

@@ -47,7 +47,7 @@ class Admin_Cursisten_Handler {
 		$single   = 'cursist';
 		$multiple = 'cursisten';
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
-			$item         = filter_input_array(
+			$item            = filter_input_array(
 				INPUT_POST,
 				[
 					'id'        => FILTER_SANITIZE_STRING,
@@ -56,14 +56,16 @@ class Admin_Cursisten_Handler {
 					'aantal'    => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
-			$code         = $item['id'];
-			$parameters   = explode( '-', substr( $code, 1 ) );
-			$cursus_id    = intval( $parameters[0] );
-			$cursist_id   = intval( $parameters[1] );
-			$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-			$message      = 'De gegevens zijn opgeslagen';
-			if ( intval( $item['cursus_id'] ) !== $cursus_id || intval( $item['aantal'] ) !== $inschrijving->aantal ) {
-				if ( false === $inschrijving->correct( $item['cursus_id'], intval( $item['aantal'] ) ) ) {
+			$code            = $item['id'];
+			$parameters      = explode( '-', substr( $code, 1 ) );
+			$cursus_id       = intval( $parameters[0] );
+			$cursist_id      = intval( $parameters[1] );
+			$nieuw_cursus_id = intval( $item['cursus_id'] );
+			$nieuw_aantal    = intval( $item['aantal'] );
+			$message         = 'De gegevens zijn opgeslagen';
+			if ( $nieuw_cursus_id !== $cursus_id || $nieuw_aantal !== $inschrijving->aantal ) {
+				$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
+				if ( false === $inschrijving->correct( $nieuw_cursus_id, $nieuw_aantal ) ) {
 					$message = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
 				}
 			}

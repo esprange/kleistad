@@ -56,14 +56,14 @@ class Inschrijving extends Artikel {
 	 *
 	 * @var float $lopende_cursus De kosten.
 	 */
-	public $lopende_cursus = 0;
+	public float $lopende_cursus = 0;
 
 	/**
 	 * Of de inschrijving al bestond
 	 *
 	 * @var bool $ingeschreven Of er al eerder was ingeschreven.
 	 */
-	public $ingeschreven = false;
+	public bool $ingeschreven = false;
 
 	/**
 	 * De cursus
@@ -71,9 +71,9 @@ class Inschrijving extends Artikel {
 	 * @since 4.0.87
 	 *
 	 * @access public
-	 * @var object $cursus cursus object.
+	 * @var Cursus $cursus cursus object.
 	 */
-	public $cursus;
+	public Cursus $cursus;
 
 	/**
 	 * De beginwaarden van een inschrijving
@@ -83,7 +83,7 @@ class Inschrijving extends Artikel {
 	 * @access private
 	 * @var array $default_data de standaard waarden bij het aanmaken van een inschrijving.
 	 */
-	private $default_data = [
+	private array $default_data = [
 		'code'             => '',
 		'datum'            => 0,
 		'technieken'       => [],

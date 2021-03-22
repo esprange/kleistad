@@ -82,7 +82,7 @@ class Betalen {
 	 * Bereid de order informatie voor.
 	 *
 	 * @param int|array $klant        klant waarvoor de betaling wordt uitgevoerd (WordPress id of array order/naam/email).
-	 * @param string    $order_id     de externe order referentie, maximaal 35 karakters.
+	 * @param string    $referentie   de externe order referentie, maximaal 35 karakters.
 	 * @param float     $bedrag       het bedrag.
 	 * @param string    $beschrijving de externe order beschrijving, maximaal 35 karakters.
 	 * @param string    $bericht      het bericht bij succesvolle betaling.
@@ -90,7 +90,7 @@ class Betalen {
 	 * @return bool|string De redirect bestemming of false.
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function order( $klant, $order_id, $bedrag, $beschrijving, $bericht, $mandateren ) {
+	public function order( $klant, string $referentie, float $bedrag, string $beschrijving, string $bericht, bool $mandateren ) {
 		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
 		try {
@@ -127,7 +127,7 @@ class Betalen {
 					'description'  => $beschrijving,
 					'issuer'       => $bank,
 					'metadata'     => [
-						'order_id' => $order_id,
+						'order_id' => $referentie,
 						'bericht'  => $bericht,
 					],
 					'method'       => Mollie\Api\Types\PaymentMethod::IDEAL,
@@ -181,12 +181,12 @@ class Betalen {
 	 * Doe een eenmalige order bij een gebruiker waarvan al een mandaat bestaat.
 	 *
 	 * @param int    $gebruiker_id Het wp gebruiker_id.
-	 * @param string $order_id     de externe order referentie, maximaal 35 karakters.
+	 * @param string $referentie   De externe order referentie, maximaal 35 karakters.
 	 * @param float  $bedrag       Het te betalen bedrag.
 	 * @param string $beschrijving De beschrijving bij de betaling.
-	 * @return string|void De transactie_id.
+	 * @return string De transactie_id.
 	 */
-	public function eenmalig( $gebruiker_id, $order_id, $bedrag, $beschrijving ) {
+	public function eenmalig( int $gebruiker_id, string $referentie, float $bedrag, string $beschrijving ) : string {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 		if ( '' !== $mollie_gebruiker_id ) {
 			try {
@@ -198,7 +198,7 @@ class Betalen {
 							'value'    => number_format( $bedrag, 2, '.', '' ),
 						],
 						'metadata'     => [
-							'order_id' => $order_id,
+							'order_id' => $referentie,
 						],
 						'description'  => $beschrijving,
 						'sequenceType' => Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
@@ -210,17 +210,19 @@ class Betalen {
 				error_log( $e->getMessage() ); // phpcs:ignore
 			}
 		}
+		return '';
 	}
 
 	/**
 	 * Stort een eerder bedrag (deels) terug.
 	 *
 	 * @param string $mollie_betaling_id Het id van de oorspronkelijke betaling.
-	 * @param string $order_id           De externe referentie.
+	 * @param string $referentie         De externe referentie.
 	 * @param float  $bedrag             Het terug te storten bedrag.
 	 * @param string $beschrijving       De externe beschrijving van de opdracht.
+	 * @return bool
 	 */
-	public function terugstorting( $mollie_betaling_id, $order_id, $bedrag, $beschrijving ) {
+	public function terugstorting( string $mollie_betaling_id, string $referentie, float $bedrag, string $beschrijving ) : bool {
 		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
 		$value    = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
@@ -231,7 +233,7 @@ class Betalen {
 						'value'    => $value,
 					],
 					'metadata'    => [
-						'order_id' => $order_id,
+						'order_id' => $referentie,
 					],
 					'description' => $beschrijving,
 				]
@@ -249,8 +251,9 @@ class Betalen {
 	 * Test of er een refund actief is.
 	 *
 	 * @param string $mollie_betaling_id De transactie id.
+	 * @return bool
 	 */
-	public function terugstorting_actief( $mollie_betaling_id ) {
+	public function terugstorting_actief( string $mollie_betaling_id ) : bool {
 		return ! empty( get_transient( $mollie_betaling_id . self::REFUNDS ) );
 	}
 
@@ -258,8 +261,9 @@ class Betalen {
 	 * Test of de gebruiker een mandaat heeft afgegeven.
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvoor getest wordt of deze mandaat heeft.
+	 * @return bool
 	 */
-	public function heeft_mandaat( $gebruiker_id ) {
+	public function heeft_mandaat( int $gebruiker_id ) : bool {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 
 		try {
@@ -277,9 +281,9 @@ class Betalen {
 	 * Verwijder mandaten.
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvoor mandaten verwijderd moeten worden.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function verwijder_mandaat( $gebruiker_id ) {
+	public function verwijder_mandaat( int $gebruiker_id ) : bool {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 
 		try {
@@ -327,7 +331,7 @@ class Betalen {
 	 * @param int $gebruiker_id De gebruiker waarvan de informatie wordt opgevraagd.
 	 * @return string leeg als de gebruiker onbekend is of string met opgemaakte HTML text.
 	 */
-	public function info( $gebruiker_id ) {
+	public function info( int $gebruiker_id ) : string {
 		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
 		if ( '' !== $mollie_gebruiker_id ) {
 			try {
