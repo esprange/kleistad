@@ -74,7 +74,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			}
 			$cursist      = get_userdata( $inschrijving->klant_id );
 			$cursist_info = [
-				'id'         => $cursist->ID,
+				'code'       => $inschrijving->code,
 				'naam'       => $cursist->display_name,
 				'telnr'      => $cursist->telnr,
 				'email'      => $cursist->user_email,
@@ -124,21 +124,19 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			return true;
 		}
 		if ( 'indelen' === $data['actie'] || 'uitschrijven' === $data['actie'] ) {
-			$cursist_id = 0;
-			$cursus_id  = 0;
-			sscanf( $data['id'], '%d-%d', $cursist_id, $cursus_id );
-			$cursus          = new Cursus( $cursus_id );
-			$inschrijving    = new Inschrijving( $cursus_id, $cursist_id );
-			$cursist         = get_userdata( $cursist_id );
-			$lopend          = $cursus->lopend( $inschrijving->datum );
-			$data['cursus']  = [
+			list( $cursus_id, $cursist_id ) = sscanf( $data['id'], 'C%d-%d' );
+			$cursus                         = new Cursus( $cursus_id );
+			$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
+			$cursist                        = get_userdata( $cursist_id );
+			$lopend                         = $cursus->lopend( $inschrijving->datum );
+			$data['cursus']                 = [
 				'id'          => $cursus_id,
 				'lessen'      => $lopend['lessen'],
 				'lessen_rest' => $lopend['lessen_rest'],
 				'kosten'      => $lopend['kosten'],
 				'max'         => round( $cursus->inschrijfkosten, 1 ) + $cursus->cursuskosten,
 			];
-			$data['cursist'] = [
+			$data['cursist']                = [
 				'id'     => $cursist_id,
 				'naam'   => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
 				'datum'  => $inschrijving->datum,

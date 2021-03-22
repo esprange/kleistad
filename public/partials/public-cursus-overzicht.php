@@ -51,7 +51,7 @@ if ( 'cursisten' === $data['actie'] ) :
 						if ( $cursist['wacht'] || $cursist['wachtlijst'] ) :
 							?>
 						<a href="#" title="indelen" class="kleistad-edit-link"
-							data-id="<?php echo esc_attr( $cursist['id'] . '-' . $data['cursus']['id'] ); ?>" 
+							data-id="<?php echo esc_attr( $cursist['code'] ); ?>" 
 							data-actie="<?php echo $cursist['wachtlijst'] ? 'uitschrijven' : 'indelen'; ?>" >
 							<?php echo $cursist['wachtlijst'] ? 'wachtlijst' : 'wacht op factuur'; ?> </a>
 						<?php else : ?>

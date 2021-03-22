@@ -72,11 +72,10 @@ class Public_Cursus_Extra extends ShortcodeForm {
 		if ( empty( $param['code'] ) || empty( $param['hsh'] ) ) {
 			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
-		$cursist_id = 0;
-		$cursus_id  = 0;
-		sscanf( substr( $param['code'], 1 ), '%d-%d', $cursus_id, $cursist_id );
-		$cursist      = new Cursist( $cursist_id );
-		$inschrijving = $cursist->geef_inschrijving( $cursus_id );
+
+		list( $cursus_id, $cursist_id ) = sscanf( $param['code'], 'C%d-%d' );
+		$cursist                        = new Cursist( $cursist_id );
+		$inschrijving                   = $cursist->geef_inschrijving( $cursus_id );
 
 		if ( is_object( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
@@ -102,8 +101,8 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 * @since   6.6.0
 	 */
 	protected function validate( &$data ) {
-		$error         = new WP_Error();
-		$data['input'] = filter_input_array(
+		$error                          = new WP_Error();
+		$data['input']                  = filter_input_array(
 			INPUT_POST,
 			[
 				'extra_cursist' => [
@@ -113,11 +112,9 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				'code'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		$cursist_id    = 0;
-		$cursus_id     = 0;
-		sscanf( substr( $data['input']['code'], 1 ), '%d-%d', $cursus_id, $cursist_id );
-		$data['inschrijving'] = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
-		$emails               = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
+		list( $cursus_id, $cursist_id ) = sscanf( $data['input']['code'], 'C%d-%d' );
+		$data['inschrijving']           = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
+		$emails                         = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
 		foreach ( $data['input']['extra_cursist'] as &$extra_cursist ) {
 			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;

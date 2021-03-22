@@ -49,8 +49,8 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return bool|WP_Error
 	 */
 	private function prepare_stop_wachten( array &$data ) {
-		list( $cursus_id, $cursist_id ) = explode( '-', substr( $data['param']['code'], 1 ) );
-		$inschrijving                   = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
+		list( $cursus_id, $cursist_id ) = sscanf( $data['param']['code'], 'C%d-%d' );
+		$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
 		if ( $data['param']['hsh'] !== $inschrijving->controle() ) {
 			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
@@ -68,8 +68,8 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return bool|WP_Error
 	 */
 	private function prepare_indelen_na_wachten( array &$data ) {
-		list( $cursus_id, $cursist_id ) = explode( '-', substr( $data['param']['code'], 1 ) );
-		$inschrijving                   = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
+		list( $cursus_id, $cursist_id ) = sscanf( $data['param']['code'], 'C%d-%d' );
+		$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
 		if ( $data['param']['hsh'] !== $inschrijving->controle() ) {
 			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
 		}
