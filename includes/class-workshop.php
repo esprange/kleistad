@@ -356,7 +356,7 @@ class Workshop extends Artikel {
 				'workshop_link'       => $this->betaal_link,
 			],
 			'slug'        => "workshop$type",
-			'subject'     => self::EMAIL_SUBJECT( $type ) . $this->naam,
+			'subject'     => self::EMAIL_SUBJECT[ $type ] . $this->naam,
 		];
 		if ( $factuur && $this->organisatie_email ) {
 			$email_parameters['to'] .= ", {$this->organisatie} <{$this->organisatie_email}>";

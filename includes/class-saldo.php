@@ -11,8 +11,6 @@
 
 namespace Kleistad;
 
-use Exception;
-
 /**
  * Klasse voor het beheren van de stook saldo.
  *

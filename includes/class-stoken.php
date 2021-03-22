@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use Countable;
 use Iterator;
+use Exception;
 
 /**
  * Kleistad Stoken class.

@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use Exception;
+
 /**
  * Kleistad WorkshopActie class.
  *
