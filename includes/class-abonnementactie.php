@@ -113,7 +113,7 @@ class AbonnementActie {
 		$this->abonnement->artikel_type       = 'start';
 		$this->abonnement->overbrugging_email = false;
 		$this->abonnement->extras             = [];
-		$this->abonnement->factuur_maand      = '';
+		$this->abonnement->factuur_maand      = 0;
 		$this->autoriseer( true );
 		$this->abonnement->save();
 		if ( 'ideal' === $betaalwijze ) {

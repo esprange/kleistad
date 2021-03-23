@@ -86,7 +86,7 @@ class Abonnement extends Artikel {
 		'reguliere_datum'    => 0,
 		'overbrugging_email' => 0,
 		'extras'             => [],
-		'factuur_maand'      => '',
+		'factuur_maand'      => 0,
 		'historie'           => [],
 	];
 
