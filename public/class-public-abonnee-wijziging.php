@@ -97,29 +97,29 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
 		switch ( $data['input']['wijziging'] ) {
 			case 'pauze':
-				$status = $abonnement->pauzeren( $data['input']['pauze_datum'], $data['input']['herstart_datum'] );
+				$status = $abonnement->actie->pauzeren( $data['input']['pauze_datum'], $data['input']['herstart_datum'] );
 				break;
 			case 'einde':
-				$status = $abonnement->stoppen( $data['input']['per_datum'] );
+				$status = $abonnement->actie->stoppen( $data['input']['per_datum'] );
 				break;
 			case 'soort':
-				$status = $abonnement->wijzigen( $data['input']['per_datum'], 'soort', $data['input']['soort'], $data['input']['dag'] );
+				$status = $abonnement->actie->wijzigen( $data['input']['per_datum'], 'soort', $data['input']['soort'], $data['input']['dag'] );
 				break;
 			case 'extras':
-				$status = $abonnement->wijzigen( $data['input']['per_datum'], 'extras', $data['input']['extras'] );
+				$status = $abonnement->actie->wijzigen( $data['input']['per_datum'], 'extras', $data['input']['extras'] );
 				break;
 			case 'dag':
-				$status = $abonnement->wijzigen( strtotime( 'today' ), 'soort', 'beperkt', $data['input']['dag'] );
+				$status = $abonnement->actie->wijzigen( strtotime( 'today' ), 'soort', 'beperkt', $data['input']['dag'] );
 				break;
 			case 'betaalwijze':
 				if ( 'ideal' === $data['input']['betaal'] ) {
-					$ideal_uri = $abonnement->start_incasso();
+					$ideal_uri = $abonnement->actie->start_incasso();
 					if ( false === $ideal_uri ) {
 						return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 					}
 					return [ 'redirect_uri' => $ideal_uri ];
 				}
-				$status = $abonnement->stop_incasso();
+				$status = $abonnement->actie->stop_incasso();
 				break;
 			default:
 				$status = false;

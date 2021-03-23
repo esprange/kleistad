@@ -54,6 +54,20 @@ class Abonnement extends Artikel {
 	];
 
 	/**
+	 * Het Actie object
+	 *
+	 * @var AbonnementActie $actie De acties.
+	 */
+	public AbonnementActie $actie;
+
+	/**
+	 * De tekst voor een eventueel bericht in de email
+	 *
+	 * @var string $bericht De tekst.
+	 */
+	public string $bericht = '';
+
+	/**
 	 * De beginwaarden van een abonnement.
 	 *
 	 * @access private
@@ -78,14 +92,6 @@ class Abonnement extends Artikel {
 	];
 
 	/**
-	 * De tekst voor een eventueel bericht in de email
-	 *
-	 * @access private
-	 * @var string $bericht De tekst.
-	 */
-	private string $bericht = '';
-
-	/**
 	 * Constructor, maak het abonnement object .
 	 *
 	 * @param int $klant_id wp user id van de abonnee.
@@ -97,6 +103,7 @@ class Abonnement extends Artikel {
 		$this->default_data['datum'] = time();
 		$abonnement                  = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$this->data                  = is_array( $abonnement ) ? wp_parse_args( $abonnement, $this->default_data ) : $this->default_data;
+		$this->actie                 = new AbonnementActie( $this );
 	}
 
 	/**
@@ -173,32 +180,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Wijzig de betaalwijze van het abonnement naar sepa incasso.
-	 *
-	 * @return string|bool De redirect uri of false als de betaling niet lukt.
-	 */
-	public function start_incasso() {
-		$this->log( 'gestart met automatisch betalen' );
-		$this->save();
-		$this->artikel_type = 'mandaat';
-		return $this->doe_idealbetaling( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
-	}
-
-	/**
-	 * Wijzig de betaalwijze van het abonnement naar bank.
-	 */
-	public function stop_incasso() : bool {
-		$this->betalen->verwijder_mandaat( $this->klant_id );
-		$this->log( 'gestopt met automatisch betalen' );
-		$this->save();
-		if ( ! is_admin() ) {
-			$this->bericht = 'Je gaat het abonnement voortaan per bank betalen';
-			$this->verzend_email( '_gewijzigd' );
-		}
-		return true;
-	}
-
-	/**
 	 * Maak de ideal betalingen.]
 	 *
 	 * @param string $bericht  Te tonen melding als betaling gelukt.
@@ -238,30 +219,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Pauzeer het abonnement per pauze datum.
-	 *
-	 * @param int $pauze_datum    Pauzedatum.
-	 * @param int $herstart_datum Herstartdatum.
-	 */
-	public function pauzeren( int $pauze_datum, int $herstart_datum ) : bool {
-		$thans_gepauzeerd     = $this->is_gepauzeerd();
-		$this->pauze_datum    = $pauze_datum;
-		$this->herstart_datum = $herstart_datum;
-		$pauze_datum_str      = strftime( '%d-%m-%Y', $this->pauze_datum );
-		$herstart_datum_str   = strftime( '%d-%m-%Y', $this->herstart_datum );
-		$this->log( "gepauzeerd per $pauze_datum_str en hervat per $herstart_datum_str" );
-		$this->save();
-		$this->bericht     = ( $thans_gepauzeerd ) ?
-			"Je hebt aangegeven dat je abonnement, dat nu gepauzeerd is, hervat wordt per $herstart_datum_str"
-			:
-			$this->bericht = "Je pauzeert het abonnement per $pauze_datum_str en hervat het per $herstart_datum_str";
-		if ( ! is_admin() ) {
-			$this->verzend_email( '_gewijzigd' );
-		}
-		return true;
-	}
-
-	/**
 	 * Bewaar de data als user meta in de database.
 	 */
 	public function save() {
@@ -276,52 +233,6 @@ class Abonnement extends Artikel {
 	 */
 	public function geef_statustekst( bool $uitgebreid ) : string {
 		return $uitgebreid ? $this->geef_status_uitgebreid() : $this->geef_status_kort();
-	}
-
-	/**
-	 * Start het abonnement per datum.
-	 *
-	 * @param int    $start_datum Startdatum.
-	 * @param string $soort       Beperkt of onbeperkt.
-	 * @param string $dag         De dagnaam bij beperkt.
-	 * @param string $opmerking   De opmerking.
-	 * @param string $betaalwijze De betaalwijze.
-	 * @return string|bool Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
-	 */
-	public function starten( $start_datum, $soort, $dag, $opmerking, $betaalwijze ) {
-		$this->data             = $this->default_data;
-		$this->soort            = $soort;
-		$this->opmerking        = $opmerking;
-		$this->start_datum      = $start_datum;
-		$this->start_eind_datum = strtotime( '+3 month', $start_datum );
-		$this->reguliere_datum  = strtotime( 'first day of +4 month ', $start_datum );
-		$this->dag              = $dag;
-		$this->artikel_type     = 'start';
-		$this->autoriseer( true );
-		$this->save();
-		if ( 'ideal' === $betaalwijze ) {
-			return $this->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
-		}
-		$this->verzend_email( '_start_bank', $this->bestel_order( 0.0, $this->start_datum ) );
-		return true;
-	}
-
-	/**
-	 * Stop het abonnement per datum.
-	 *
-	 * @param int $eind_datum Einddatum.
-	 */
-	public function stoppen( int $eind_datum ) : bool {
-		$this->eind_datum = $eind_datum;
-		$eind_datum_str   = strftime( '%d-%m-%Y', $this->eind_datum );
-		$this->betalen->verwijder_mandaat( $this->klant_id );
-		$this->log( "gestopt per $eind_datum_str" );
-		$this->bericht = "Je hebt het abonnement per $eind_datum_str beëindigd.";
-		$this->save();
-		if ( ! is_admin() ) {
-			$this->verzend_email( '_gewijzigd' );
-		}
-		return true;
 	}
 
 	/**
@@ -382,53 +293,6 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Wijzig het abonnement per datum.
-	 *
-	 * @param int    $wijzig_datum Wijzigdatum.
-	 * @param string $type         Soort wijziging: soort abonnement of de extras.
-	 * @param mixed  $soort        Beperkt/onbeperkt wijziging of de extras.
-	 * @param string $dag          Dag voor beperkt abonnement.
-	 */
-	public function wijzigen( int $wijzig_datum, string $type, $soort, string $dag = '' ) : bool {
-		$gewijzigd        = false;
-		$wijzig_datum_str = strftime( '%d-%m-%Y', $wijzig_datum );
-		switch ( $type ) {
-			case 'soort':
-				$gewijzigd      = $this->soort != $soort || $this->dag != $dag; // phpcs:ignore
-				$this->soort = $soort;
-				$this->dag   = $dag;
-				$this->log( "gewijzigd per $wijzig_datum_str naar $soort $dag" );
-				$this->bericht = "Je hebt het abonnement per $wijzig_datum_str gewijzigd naar {$this->soort} " .
-					( 'beperkt' === $this->soort ? ' (' . $this->dag . ')' : '' );
-				break;
-			case 'extras':
-				$gewijzigd    = $this->extras != $soort; // phpcs:ignore
-				$this->extras = $soort;
-				$soort_str    = ! is_null( $soort ) ? ( 'gebruik maken van ' . implode( ', ', $soort ) ) : 'geen extras meer gebruiken';
-				$this->log( "extras gewijzigd per $wijzig_datum_str naar $soort_str" );
-				$this->bericht = "Je gaat voortaan per $wijzig_datum_str $soort_str";
-				break;
-			default:
-				$this->bericht = '';
-		}
-		if ( $gewijzigd ) {
-			$this->save();
-			$this->verzend_email( '_gewijzigd' );
-		}
-		return true;
-	}
-
-	/**
-	 * Geef aan dat er een overbrugging betaald moet worden
-	 */
-	public function overbrugging() {
-		$this->artikel_type = 'overbrugging';
-		$this->verzend_email( '_vervolg', $this->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
-		$this->overbrugging_email = true;
-		$this->save();
-	}
-
-	/**
 	 * Geef de factuurregels door.
 	 *
 	 * @return array De regels.
@@ -472,51 +336,9 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Autoriseer de abonnee zodat deze de oven reservering mag doen en toegang tot leden pagina's krijgt.
-	 *
-	 * @param boolean $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
-	 */
-	public function autoriseer( bool $valid ) {
-		$abonnee = new WP_User( $this->klant_id );
-		if ( is_super_admin( $this->klant_id ) ) {
-			// Voorkom dat de admin enige rol kwijtraakt.
-			return;
-		}
-		$abonnee->add_cap( LID, $valid );
-	}
-
-	/**
-	 * Factureer de maand
-	 *
-	 * @SuppressWarnings(PHPMD.ElseExpression)
-	 */
-	public function factureer() {
-		$vandaag        = strtotime( 'today' );
-		$factuur_maand  = (int) date( 'Ym', $vandaag );
-		$volgende_maand = strtotime( 'first day of next month 00:00' );
-		$deze_maand     = strtotime( 'first day of this month 00:00' );
-		if ( $this->factuur_maand >= $factuur_maand ||
-		( $this->herstart_datum >= $volgende_maand && $this->pauze_datum <= $deze_maand )
-		) {
-			return;
-		}
-		$betalen = new Betalen();
-		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
-		$this->artikel_type = ( ( $this->herstart_datum > $deze_maand && $this->herstart_datum < $volgende_maand ) ||
-			( $this->pauze_datum >= $deze_maand && $this->pauze_datum < $volgende_maand ) ) ? 'pauze' : 'regulier';
-		if ( $betalen->heeft_mandaat( $this->klant_id ) ) {
-			$this->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->doe_sepa_incasso(), false );
-		} else {
-			$this->verzend_email( '_regulier_bank', $this->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
-		}
-		$this->factuur_maand = $factuur_maand;
-		$this->save();
-	}
-
-	/**
 	 * Maak de sepa incasso betalingen.
 	 */
-	private function doe_sepa_incasso() {
+	public function doe_sepa_incasso() {
 		$bedrag = $this->geef_bedrag( "#{$this->artikel_type}" );
 		if ( 0.0 < $bedrag ) {
 			return $this->betalen->eenmalig(
@@ -536,7 +358,7 @@ class Abonnement extends Artikel {
 	 * @param  string $factuur   Bij de sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	private function verzend_email( string $type, string $factuur = '' ) : bool {
+	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$abonnee = get_userdata( $this->klant_id );
 		$emailer = new Email();
 		return $emailer->send(
@@ -648,15 +470,6 @@ class Abonnement extends Artikel {
 			$lijst[] = $extra . ' ( € ' . number_format_i18n( $this->geef_bedrag_extra( $extra ), 2 ) . ' p.m.)';
 		}
 		return implode( ', ', $lijst );
-	}
-
-	/**
-	 * Helper functie, om een handeling toe te voegen
-	 *
-	 * @param string $tekst De handeling.
-	 */
-	private function log( string $tekst ) : void {
-		$this->historie = array_merge( $this->historie, [ strftime( '%c' ) . " $tekst" ] );
 	}
 
 	/**

@@ -149,7 +149,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout' ) ) ];
 		}
 		$abonnement = new Abonnement( $gebruiker_id );
-		$result     = $abonnement->starten(
+		$result     = $abonnement->actie->starten(
 			strtotime( $data['input']['start_datum'] ),
 			$data['input']['abonnement_keuze'],
 			$data['input']['dag'],

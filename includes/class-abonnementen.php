@@ -114,7 +114,7 @@ class Abonnementen implements Countable, Iterator {
 			}
 			if ( $abonnement->is_geannuleerd() ) {
 				// Abonnementen waarvan de einddatum verstreken is worden gestopt.
-				$abonnement->autoriseer( false );
+				$abonnement->actie->autoriseer( false );
 				$abonnement->save();
 				continue;
 			}
@@ -122,12 +122,12 @@ class Abonnementen implements Countable, Iterator {
 			// Abonnementen waarvan de starttermijn over 1 week verstrijkt krijgen de overbrugging email en factuur, mits er nog geen einddatum ingevuld is.
 			if ( $vandaag < $abonnement->reguliere_datum ) {
 				if ( $vandaag >= strtotime( '-7 days', $abonnement->start_eind_datum ) && ! $abonnement->eind_datum && ! $abonnement->overbrugging_email ) {
-					$abonnement->overbrugging();
+					$abonnement->actie->overbrugging();
 				}
 				continue; // Meer actie is niet nodig. Abonnee zit nog in startperiode of overbrugging.
 			}
 			// Hierna wordt er niets meer aan het abonnement aangepast, nu nog factureren indien nodig.
-			$abonnement->factureer();
+			$abonnement->actie->factureer();
 		}
 	}
 
