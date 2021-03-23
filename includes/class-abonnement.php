@@ -11,7 +11,6 @@
 
 namespace Kleistad;
 
-use WP_User;
 use DateTime;
 use DateTimeZone;
 

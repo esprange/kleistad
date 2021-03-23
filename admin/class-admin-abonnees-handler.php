@@ -53,7 +53,7 @@ class Admin_Abonnees_Handler {
 	 */
 	private function wijzig_abonnee_mandaat( array $item ) : string {
 		$abonnement = new Abonnement( $item['id'] );
-		$abonnement->stop_incasso();
+		$abonnement->actie->stop_incasso();
 		$betalen             = new Betalen();
 		$item['mollie_info'] = $betalen->info( $item['id'] );
 		$item['mandaat']     = false;

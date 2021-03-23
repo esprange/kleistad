@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_User;
+
 /**
  * Kleistad AbonnementActie class.
  *
@@ -96,15 +98,22 @@ class AbonnementActie {
 		 * @param string $betaalwijze De betaalwijze.
 		 * @return string|bool Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
 		 */
-	public function starten( int $start_datum, string $soort, string $dag, string $opmerking, string $betaalwijze ) : string {
-		$this->abonnement->data             = $this->abonnement->default_data;
-		$this->abonnement->soort            = $soort;
-		$this->abonnement->opmerking        = $opmerking;
-		$this->abonnement->start_datum      = $start_datum;
-		$this->abonnement->start_eind_datum = strtotime( '+3 month', $start_datum );
-		$this->abonnement->reguliere_datum  = strtotime( 'first day of +4 month ', $start_datum );
-		$this->abonnement->dag              = $dag;
-		$this->abonnement->artikel_type     = 'start';
+	public function starten( int $start_datum, string $soort, string $dag, string $opmerking, string $betaalwijze ) {
+		$this->abonnement->code               = "A{$this->abonnement->klant_id}";
+		$this->abonnement->datum              = time();
+		$this->abonnement->soort              = $soort;
+		$this->abonnement->opmerking          = $opmerking;
+		$this->abonnement->start_datum        = $start_datum;
+		$this->abonnement->start_eind_datum   = strtotime( '+3 month', $start_datum );
+		$this->abonnement->reguliere_datum    = strtotime( 'first day of +4 month ', $start_datum );
+		$this->abonnement->pauze_datum        = 0;
+		$this->abonnement->herstart_datum     = 0;
+		$this->abonnement->eind_datum         = 0;
+		$this->abonnement->dag                = $dag;
+		$this->abonnement->artikel_type       = 'start';
+		$this->abonnement->overbrugging_email = false;
+		$this->abonnement->extras             = [];
+		$this->abonnement->factuur_maand      = '';
 		$this->autoriseer( true );
 		$this->abonnement->save();
 		if ( 'ideal' === $betaalwijze ) {
@@ -122,7 +131,8 @@ class AbonnementActie {
 	public function stoppen( int $eind_datum ) : bool {
 		$this->abonnement->eind_datum = $eind_datum;
 		$eind_datum_str               = strftime( '%d-%m-%Y', $this->abonnement->eind_datum );
-		$this->abonnement->betalen->verwijder_mandaat( $this->abonnement->klant_id );
+		$betalen                      = new Betalen();
+		$betalen->verwijder_mandaat( $this->abonnement->klant_id );
 		$this->log( "gestopt per $eind_datum_str" );
 		$this->abonnement->bericht = "Je hebt het abonnement per $eind_datum_str beëindigd.";
 		$this->abonnement->save();
