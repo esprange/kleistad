@@ -52,11 +52,13 @@ class Admin_Cursisten extends WP_List_Table {
 	 * @return string
 	 */
 	public function column_naam( $item ) {
-		$actions = [
-			'edit' => sprintf( '<a href="?page=cursisten_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
-		];
-
-		return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );
+		if ( empty( $item['geannuleerd'] ) ) {
+			$actions = [
+				'edit' => sprintf( '<a href="?page=cursisten_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
+			];
+			return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );
+		}
+		return sprintf( '<strong>%s</strong>', $item['naam'] );
 	}
 
 	/**

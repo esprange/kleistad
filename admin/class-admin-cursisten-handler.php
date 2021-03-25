@@ -40,43 +40,41 @@ class Admin_Cursisten_Handler {
 	 *
 	 * @since    5.2.0
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function cursisten_form_page_handler() {
 		$message  = '';
 		$notice   = '';
 		$single   = 'cursist';
 		$multiple = 'cursisten';
+
+		list( $cursus_id, $cursist_id ) = sscanf( $_REQUEST['id'] ?? 'C0-0', 'C%d-%d' );
+
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
-			$item                           = filter_input_array(
+			$item            = filter_input_array(
 				INPUT_POST,
 				[
-					'id'        => FILTER_SANITIZE_STRING,
 					'naam'      => FILTER_SANITIZE_STRING,
 					'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
 					'aantal'    => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
-			list( $cursus_id, $cursist_id ) = sscanf( $item['id'], 'C%d-%d' );
-			$nieuw_cursus_id                = intval( $item['cursus_id'] );
-			$nieuw_aantal                   = intval( $item['aantal'] );
-			$message                        = 'De gegevens zijn opgeslagen';
-			$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
+			$nieuw_cursus_id = intval( $item['cursus_id'] );
+			$nieuw_aantal    = intval( $item['aantal'] );
+			$message         = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
+			$inschrijving    = new Inschrijving( $cursus_id, $cursist_id );
 			if ( $nieuw_cursus_id !== $cursus_id || $nieuw_aantal !== $inschrijving->aantal ) {
-				if ( false === $inschrijving->actie->correctie( $nieuw_cursus_id, $nieuw_aantal ) ) {
-					$message = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
+				if ( $inschrijving->actie->correctie( $nieuw_cursus_id, $nieuw_aantal ) ) {
+					$message   = 'De gegevens zijn opgeslagen';
+					$cursus_id = $nieuw_cursus_id;
 				}
 			}
 		}
-		if ( isset( $_REQUEST['id'] ) ) {
-			$code         = $_REQUEST['id'];
-			$parameters   = explode( '-', substr( $code, 1 ) );
-			$cursus_id    = intval( $parameters[0] );
-			$cursist_id   = intval( $parameters[1] );
+		if ( $cursus_id ) {
 			$cursist      = get_userdata( $cursist_id );
 			$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-			$cursus       = new Cursus( $cursus_id );
 			$item         = [
-				'id'          => $code,
+				'id'          => $inschrijving->code,
 				'naam'        => $cursist->display_name,
 				'aantal'      => $inschrijving->aantal,
 				'geannuleerd' => $inschrijving->geannuleerd,
