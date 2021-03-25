@@ -256,7 +256,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'status' => $this->status( new WP_Error( 'ingedeeld', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Voor een annulering, neem contact op met Kleistad.' ) ),
 			];
 		}
-		$inschrijving->uitschrijven_wachtlijst();
+		$inschrijving->actie->uitschrijven_wachtlijst();
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'De inschrijving is verwijderd uit de wachtlijst, je zult geen emails meer ontvangen over deze cursus' ),
