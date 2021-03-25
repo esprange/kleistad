@@ -76,6 +76,13 @@ class Inschrijving extends Artikel {
 	public Cursus $cursus;
 
 	/**
+	 * Het actie object
+	 *
+	 * @var InschrijvingActie $actie De acties.
+	 */
+	public InschrijvingActie $actie;
+
+	/**
 	 * De beginwaarden van een inschrijving
 	 *
 	 * @since 4.3.0
@@ -117,6 +124,7 @@ class Inschrijving extends Artikel {
 		$this->data                  = $this->ingeschreven ?
 			wp_parse_args( $inschrijvingen[ $cursus_id ], $this->default_data ) :
 			$this->default_data;
+		$this->actie                 = new InschrijvingActie( $this );
 	}
 
 	/**
@@ -158,88 +166,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Zeg de gemaakte afspraak voor de cursus af.
-	 *
-	 * @since 6.1.0
-	 *
-	 * @return bool
-	 */
-	public function afzeggen() : bool {
-		if ( ! $this->geannuleerd ) {
-			$this->geannuleerd = true;
-			$this->save();
-			foreach ( $this->extra_cursisten as $extra_cursist_id ) {
-				$extra_inschrijving              = new Inschrijving( $this->cursus->id, $extra_cursist_id );
-				$extra_inschrijving->geannuleerd = true;
-				$extra_inschrijving->save();
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Stuur de herinnerings email.
-	 *
-	 * @return int Aantal emails verstuurd.
-	 */
-	public function herinnering() {
-		if ( 0 === $this->aantal || $this->geannuleerd ) {
-			return 0;
-		}
-		$order = new Order( $this->geef_referentie() );
-		if ( $order->gesloten || $this->regeling_betaald( $order->betaald ) || $this->herinner_email ) {
-			/**
-			 * Als de cursist al betaald heeft of via deelbetaling de kosten voldoet en een eerste deel betaald heeft, geen actie.
-			 * En uiteraard sturen maar éénmaal de standaard herinnering.
-			 */
-			return 0;
-		}
-		$this->artikel_type   = 'cursus';
-		$this->herinner_email = true;
-		$this->betaal_link    = $this->maak_link(
-			[
-				'order' => $order->id,
-				'art'   => $this->artikel_type,
-			],
-			'betaling'
-		);
-		$this->verzend_email( '_herinnering' );
-		$this->save();
-		return 1;
-	}
-
-	/**
-	 * Verstuur de melding dat het restant betaald moet worden als dat nog niet betaald is
-	 */
-	public function restant_betaling() {
-		$order = new Order( $this->geef_referentie() );
-		if ( $order->id && ! $order->gesloten ) {
-			$this->artikel_type  = 'cursus';
-			$this->restant_email = true;
-			$this->betaal_link   = $this->maak_link(
-				[
-					'order' => $order->id,
-					'art'   => $this->artikel_type,
-				],
-				'betaling'
-			);
-			$this->save();
-			$this->verzend_email( '_restant' );
-		}
-	}
-
-	/**
-	 * Geef de cursist aan dat er ruimte beschikbaar is gekomen
-	 */
-	public function plaatsbeschikbaar() {
-		$this->wacht_datum = strtotime( 'tomorrow' );
-		$this->betaal_link = $this->maak_link( [ 'code' => $this->code ], 'wachtlijst' );
-		$this->save();
-		$this->verzend_email( '_ruimte' );
-	}
-
-	/**
 	 * Geef de artikel naam.
 	 *
 	 * @return string
@@ -271,22 +197,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Bepaal of er nog wel ingeschreven kan worden voor de cursus.
-	 *
-	 * @since 6.6.1
-	 *
-	 * @return string Lege string als inschrijving mogelijk is, anders de foutboodschap.
-	 */
-	public function beschikbaarcontrole() : string {
-		if ( ! $this->ingedeeld && $this->cursus->vol ) {
-			$this->wacht_datum = strtotime( 'today' );
-			$this->save();
-			return 'Helaas is de cursus nu vol. Mocht er een plek vrijkomen dan ontvang je een email';
-		}
-		return '';
-	}
-
-	/**
 	 * Bepaal of er een melding nodig is dat er later een restant bedrag betaald moet worden.
 	 *
 	 * @return string De melding.
@@ -294,24 +204,6 @@ class Inschrijving extends Artikel {
 	public function heeft_restant() {
 		if ( ! $this->cursus->is_binnenkort() && 0 < $this->cursus->inschrijfkosten ) {
 			return self::OPM_INSCHRIJVING;
-		}
-		return '';
-	}
-
-	/**
-	 * Geef de tekst en de link naar de aanmelden extra cursisten pagina
-	 *
-	 * @return string De melding.
-	 */
-	public function heeft_extra_cursisten() {
-		if ( $this->aantal > 1 ) {
-			$link   = $this->maak_link( [ 'code' => $this->code ], 'extra_cursisten' );
-			$tekst  = sprintf(
-				'Je hebt aangegeven dat er %s aan de cursus/workshop. Kleistad wil graag weten wie zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ',
-				2 === $this->aantal ? 'een mededeelnemer is ' : $this->aantal - 1 . ' mededeelnemers zijn '
-			);
-			$tekst .= "Je kunt dit invoeren op de volgende $link.";
-			return $tekst;
 		}
 		return '';
 	}
@@ -333,37 +225,6 @@ class Inschrijving extends Artikel {
 	 */
 	public function geef_referentie() : string {
 		return $this->code;
-	}
-
-	/**
-	 * Corrigeer de inschrijving naar nieuwe cursus.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param int $cursus_id nieuw cursus_id.
-	 * @param int $aantal    aantal cursisten.
-	 */
-	public function correct( $cursus_id, $aantal ) {
-		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
-		if ( is_array( $inschrijvingen ) ) {
-			$order = new Order( $this->geef_referentie() );
-			if ( array_key_exists( $cursus_id, $inschrijvingen ) ) {
-				return false; // Al eerder gecorrigeerd.
-			}
-			unset( $inschrijvingen[ $this->cursus->id ] );
-			$this->code                   = "C$cursus_id-$this->klant_id";
-			$this->aantal                 = $aantal;
-			$this->cursus                 = new Cursus( $cursus_id );
-			$inschrijvingen[ $cursus_id ] = $this->data;
-			update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-			$factuur = $this->wijzig_order( $order->id );
-			if ( false === $factuur ) {
-				return false; // Er is niets gewijzigd.
-			}
-			$this->verzend_email( '_wijziging', $factuur );
-			return true;
-		}
-		return false; // zou niet mogen.
 	}
 
 	/**
@@ -443,29 +304,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Controleer of het inschrijfgeld betaald is.
-	 *
-	 * @param float $betaald Het betaalde bedrag.
-	 * @return bool
-	 */
-	public function inschrijving_betaald( $betaald ) {
-		if ( 0 < $this->cursus->inschrijfkosten ) {
-			return $betaald >= round( $this->aantal * $this->cursus->inschrijfkosten, 2 );
-		}
-		return $betaald >= round( $this->aantal * $this->cursus->cursuskosten, 2 );
-	}
-
-	/**
-	 * Controleer of er sprake is van een regeling betaald is.
-	 *
-	 * @param float $betaald Het betaalde bedrag.
-	 * @return bool
-	 */
-	public function regeling_betaald( $betaald ) {
-		return ( $betaald > ( $this->aantal * $this->cursus->inschrijfkosten + 1 ) );
-	}
-
-	/**
 	 * De regels voor de factuur.
 	 *
 	 * @return array|Orderregel De regels of één regel.
@@ -525,6 +363,24 @@ class Inschrijving extends Artikel {
 				$this->verzend_email( '_ideal_betaald' );
 			}
 		}
+	}
+
+	/**
+	 * Geef de tekst en de link naar de aanmelden extra cursisten pagina
+	 *
+	 * @return string De melding.
+	 */
+	private function heeft_extra_cursisten() {
+		if ( $this->aantal > 1 ) {
+			$link   = $this->maak_link( [ 'code' => $this->code ], 'extra_cursisten' );
+			$tekst  = sprintf(
+				'Je hebt aangegeven dat er %s aan de cursus/workshop. Kleistad wil graag weten wie zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ',
+				2 === $this->aantal ? 'een mededeelnemer is ' : $this->aantal - 1 . ' mededeelnemers zijn '
+			);
+			$tekst .= "Je kunt dit invoeren op de volgende $link.";
+			return $tekst;
+		}
+		return '';
 	}
 
 	/**

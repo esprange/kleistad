@@ -181,21 +181,15 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 */
 	protected function save( $data ) {
 		if ( 'indelen' === $data['form_actie'] ) {
-			$inschrijving                 = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
-			$inschrijving->lopende_cursus = (float) $data['input']['kosten'];
-			$inschrijving->ingedeeld      = true;
-			$inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
-			$inschrijving->artikel_type   = 'inschrijving';
-			$inschrijving->save();
-			$inschrijving->verzend_email( '_lopend_betalen', $inschrijving->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
+			$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
+			$inschrijving->actie->indelen_lopend( (float) $data['input']['kosten'] );
 			return [
 				'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
 				'content' => $this->display(),
 			];
 		} elseif ( 'uitschrijven' === $data['form_actie'] ) {
-			$inschrijving              = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
-			$inschrijving->geannuleerd = true;
-			$inschrijving->save();
+			$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
+			$inschrijving->actie->uitschrijven_wachtlijst();
 			return [
 				'status'  => $this->status( 'De inschrijving is geannuleerd' ),
 				'content' => $this->display(),
@@ -207,7 +201,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				/**
 				 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
 				 */
-				$aantal_email += $inschrijving->herinnering();
+				$aantal_email += $inschrijving->actie->herinnering();
 			}
 			return [
 				'status'  => $this->status( ( $aantal_email > 0 ) ? "Emails zijn verstuurd naar $aantal_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),

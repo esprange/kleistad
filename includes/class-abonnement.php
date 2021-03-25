@@ -67,42 +67,33 @@ class Abonnement extends Artikel {
 	public string $bericht = '';
 
 	/**
-	 * De beginwaarden van een abonnement.
-	 *
-	 * @access private
-	 * @var array $default_data De standaard waarden bij het aanmaken van een abonnement.
-	 */
-	private $default_data = [
-		'code'               => '',
-		'datum'              => 0,
-		'start_datum'        => 0,
-		'start_eind_datum'   => 0,
-		'dag'                => '',
-		'opmerking'          => '',
-		'soort'              => 'onbeperkt',
-		'pauze_datum'        => 0,
-		'eind_datum'         => 0,
-		'herstart_datum'     => 0,
-		'reguliere_datum'    => 0,
-		'overbrugging_email' => 0,
-		'extras'             => [],
-		'factuur_maand'      => 0,
-		'historie'           => [],
-	];
-
-	/**
 	 * Constructor, maak het abonnement object .
 	 *
 	 * @param int $klant_id wp user id van de abonnee.
 	 */
 	public function __construct( int $klant_id ) {
-		$this->klant_id              = $klant_id;
-		$this->betalen               = new Betalen();
-		$this->default_data['code']  = "A$klant_id";
-		$this->default_data['datum'] = time();
-		$abonnement                  = get_user_meta( $this->klant_id, self::META_KEY, true );
-		$this->data                  = is_array( $abonnement ) ? wp_parse_args( $abonnement, $this->default_data ) : $this->default_data;
-		$this->actie                 = new AbonnementActie( $this );
+		$default_data   = [
+			'code'               => "A$klant_id",
+			'datum'              => time(),
+			'start_datum'        => 0,
+			'start_eind_datum'   => 0,
+			'dag'                => '',
+			'opmerking'          => '',
+			'soort'              => 'onbeperkt',
+			'pauze_datum'        => 0,
+			'eind_datum'         => 0,
+			'herstart_datum'     => 0,
+			'reguliere_datum'    => 0,
+			'overbrugging_email' => 0,
+			'extras'             => [],
+			'factuur_maand'      => 0,
+			'historie'           => [],
+		];
+		$this->klant_id = $klant_id;
+		$this->betalen  = new Betalen();
+		$abonnement     = get_user_meta( $this->klant_id, self::META_KEY, true );
+		$this->data     = is_array( $abonnement ) ? wp_parse_args( $abonnement, $default_data ) : $default_data;
+		$this->actie    = new AbonnementActie( $this );
 	}
 
 	/**
@@ -170,7 +161,7 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Bepaalt of er automatisch betaalt wordt.
+	 * Bepaalt of er automatisch betaald wordt.
 	 *
 	 * @return bool
 	 */
@@ -188,15 +179,11 @@ class Abonnement extends Artikel {
 	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
 		switch ( $this->artikel_type ) {
 			case 'start':
-				$vanaf      = strftime( '%d-%m-%Y', $this->start_datum );
-				$tot        = strftime( '%d-%m-%Y', $this->start_eind_datum );
-				$vermelding = " vanaf $vanaf tot $tot";
+				$vermelding = sprintf( ' vanaf %s tot %s', strftime( '%d-%m-%Y', $this->start_datum ), strftime( '%d-%m-%Y', $this->start_eind_datum ) );
 				$mandaat    = false;
 				break;
 			case 'overbrugging':
-				$vanaf      = strftime( '%d-%m-%Y', strtotime( '+1 day', $this->start_eind_datum ) );
-				$tot        = strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) );
-				$vermelding = " vanaf $vanaf tot $tot";
+				$vermelding = sprintf( ' vanaf %s tot %s', strftime( '%d-%m-%Y', $this->start_eind_datum + DAY_IN_SECONDS ), strftime( '%d-%m-%Y', $this->reguliere_datum - DAY_IN_SECONDS ) );
 				$mandaat    = true;
 				break;
 			case 'mandaat':

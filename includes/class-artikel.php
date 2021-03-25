@@ -287,17 +287,6 @@ abstract class Artikel {
 	}
 
 	/**
-	 * Controleer of het artikel nog geleverd kan worden.
-	 *
-	 * @since 6.6.1
-	 *
-	 * @return string Als leeg dan beschikbaar, anders bevat foutmelding.
-	 */
-	public function beschikbaarcontrole() : string {
-		return '';
-	}
-
-	/**
 	 * Klant gegevens voor op de factuur, kan eventueel aangepast worden zoals bijvoorbeeld voor de contact van een workshop.
 	 *
 	 * @return array De naw gegevens.

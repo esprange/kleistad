@@ -62,7 +62,7 @@ class Admin_Cursisten_Handler {
 			$message                        = 'De gegevens zijn opgeslagen';
 			$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
 			if ( $nieuw_cursus_id !== $cursus_id || $nieuw_aantal !== $inschrijving->aantal ) {
-				if ( false === $inschrijving->correct( $nieuw_cursus_id, $nieuw_aantal ) ) {
+				if ( false === $inschrijving->actie->correctie( $nieuw_cursus_id, $nieuw_aantal ) ) {
 					$message = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
 				}
 			}
