@@ -63,7 +63,7 @@ function disabled_datum( string $datum ) {
 			</th>
 			<td colspan="2">
 				<input type="hidden" name="config_eind" value="<?php echo esc_attr( intval( $item['config_eind'] ) ); ?>" >
-				<input type="text" id="kleistad_eind_config" name="eind_datum" class="kleistad-datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" <?php disabled( $item['config_eind'] ); ?> autocomplete="off" >
+				<input type="text" id="kleistad_eind_config" name="eind_datum" class="kleistad-datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" <?php disabled( $item['eind_datum'] ); ?> autocomplete="off" >
 			</td>
 		</tr>
 		<tr><td></td>
