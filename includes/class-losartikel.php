@@ -28,6 +28,13 @@ class LosArtikel extends Artikel {
 	];
 
 	/**
+	 * Het betaling object
+	 *
+	 * @var LosArtikelBetaling $betaling Het betaal object.
+	 */
+	public LosArtikelBetaling $betaling;
+
+	/**
 	 * Lijst van orderregels
 	 *
 	 * @var array $orderregels De regels.
@@ -42,12 +49,12 @@ class LosArtikel extends Artikel {
 	 * @param int $verkoop_id Een uniek id van de verkoop.
 	 */
 	public function __construct( $verkoop_id ) {
-		$this->betalen = new Betalen();
-		$this->data    = [
+		$this->data     = [
 			'klant' => [],
 			'prijs' => 0.0,
 			'code'  => "X$verkoop_id",
 		];
+		$this->betaling = new LosArtikelBetaling( $this );
 	}
 
 	/**
@@ -72,29 +79,6 @@ class LosArtikel extends Artikel {
 	 */
 	public function __set( $attribuut, $waarde ) {
 		$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
-	}
-
-	/**
-	 * Betalen functie, wordt niet gebruikt.
-	 *
-	 * @param  string $bericht Dummy variable.
-	 * @param  float  $openstaand Het bedrag dat openstaat.
-	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
-	 */
-	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
-		$order = new Order( $this->geef_referentie() );
-		return $this->betalen->order(
-			[
-				'naam'     => $order->klant['naam'],
-				'email'    => $order->klant['email'],
-				'order_id' => $this->code,
-			],
-			$this->geef_referentie(),
-			$openstaand ?? $order->te_betalen(),
-			'Kleistad bestelling ' . $this->code,
-			$bericht,
-			false
-		);
 	}
 
 	/**
@@ -160,30 +144,6 @@ class LosArtikel extends Artikel {
 	 */
 	protected function geef_factuurregels() {
 		return $this->orderregels;
-	}
-
-	/**
-	 * Verwerk een betaling. Wordt aangeroepen vanuit de betaal callback
-	 *
-	 * @since      6.2.0
-	 *
-	 * @param int    $order_id      De order_id, als die al bekend is.
-	 * @param float  $bedrag        Het bedrag dat betaald is.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
-	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
-		if ( $betaald ) {
-			if ( $order_id ) {
-				$order       = new Order( $order_id );
-				$this->klant = $order->klant;
-				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-					$this->verzend_email( '_ideal_betaald' );
-				}
-			}
-		}
 	}
 
 }

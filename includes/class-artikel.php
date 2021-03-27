@@ -28,13 +28,6 @@ abstract class Artikel {
 	];
 
 	/**
-	 * Het betaal object.
-	 *
-	 * @var Betalen $betalen
-	 */
-	protected $betalen;
-
-	/**
 	 * De artikel data
 	 *
 	 * @access protected
@@ -283,23 +276,6 @@ abstract class Artikel {
 		if ( property_exists( $this, 'betaling' ) ) {
 			if ( method_exists( $this->betaling, 'verwerk' ) ) {
 				$this->betaling->verwerk( $order_id, $bedrag, $betaald, $type, $transactie_id );
-			}
-		}
-	}
-
-	/**
-	 * Betaal het artikel per ideal.
-	 *
-	 * Tijdelijke workaround voor refactoring.
-	 *
-	 * @param  string $bericht    Het bericht na succesvolle betaling.
-	 * @param  float  $openstaand Het bedrag dat openstaat.
-	 * @return string|bool De redirect uri of het is fout gegaan.
-	 */
-	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
-		if ( property_exists( $this, 'betaling' ) ) {
-			if ( method_exists( $this->betaling, 'doe_ideal' ) ) {
-				return $this->betaling->doe_ideal( $bericht, $openstaand ?? 0.0 );
 			}
 		}
 	}

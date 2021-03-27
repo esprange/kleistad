@@ -66,6 +66,13 @@ class Workshop extends Artikel {
 	public WorkshopActie $actie;
 
 	/**
+	 * Het betaling object
+	 *
+	 * @var WorkshopBetaling $betaling Het object.
+	 */
+	public WorkshopBetaling $betaling;
+
+	/**
 	 * Constructor
 	 *
 	 * @since 5.0.0
@@ -75,8 +82,6 @@ class Workshop extends Artikel {
 	 */
 	public function __construct( $workshop_id = null ) {
 		global $wpdb;
-		$this->betalen = new Betalen();
-		$options       = opties();
 		if ( is_null( $workshop_id ) ) {
 			$this->data = [
 				'id'                => null,
@@ -94,7 +99,7 @@ class Workshop extends Artikel {
 				'telefoon'          => '',
 				'programma'         => '',
 				'vervallen'         => 0,
-				'kosten'            => $options['workshopprijs'],
+				'kosten'            => opties()['workshopprijs'],
 				'aantal'            => 6,
 				'definitief'        => 0,
 				'betaling_email'    => 0,
@@ -102,8 +107,9 @@ class Workshop extends Artikel {
 			];
 			return;
 		}
-		$this->data  = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
-		$this->actie = new WorkshopActie( $this );
+		$this->data     = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+		$this->actie    = new WorkshopActie( $this );
+		$this->betaling = new WorkshopBetaling( $this );
 	}
 
 	/**
@@ -180,30 +186,6 @@ class Workshop extends Artikel {
 	 */
 	public function geef_artikelnaam() : string {
 		return $this->naam;
-	}
-
-	/**
-	 * Betaal de workshop met iDeal.
-	 *
-	 * @since        5.0.0
-	 *
-	 * @param  string $bericht    Het bericht bij succesvolle betaling.
-	 * @param  float  $openstaand Het bedrag dat openstaat.
-	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
-	 */
-	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
-		return $this->betalen->order(
-			[
-				'naam'     => $this->contact,
-				'email'    => $this->email,
-				'order_id' => $this->code,
-			],
-			$this->geef_referentie(),
-			$openstaand ?? $this->kosten,
-			'Kleistad workshop ' . $this->code . ' op ' . strftime( '%d-%m-%Y', $this->datum ),
-			$bericht,
-			false
-		);
 	}
 
 	/**
@@ -301,29 +283,6 @@ class Workshop extends Artikel {
 	public function is_betaald() {
 		$order = new Order( $this->geef_referentie() );
 		return $order->gesloten;
-	}
-
-	/**
-	 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
-	 *
-	 * @since        5.0.0
-	 *
-	 * @param int    $order_id     De order id, als deze al bestaat.
-	 * @param float  $bedrag       Het betaalde bedrag.
-	 * @param bool   $betaald      Of er werkelijk betaald is.
-	 * @param string $type         Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
-	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
-		if ( $betaald && $order_id ) {
-			/**
-			 * Bij workshops is er altijd eerst een factuur verstuurd
-			 */
-			$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-				$this->verzend_email( '_ideal' );
-			}
-		}
 	}
 
 	/**
