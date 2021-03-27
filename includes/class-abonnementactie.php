@@ -46,7 +46,7 @@ class AbonnementActie {
 		$this->abonnement->save();
 		$this->abonnement->artikel_type = 'mandaat';
 		$this->abonnement->bericht      = 'Kleistad gaat voortaan automatisch het abonnementsgeld afschrijven van jouw bankrekening';
-		return $this->abonnement->doe_idealbetaling( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', 0.01 );
+		return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', 0.01 );
 	}
 
 	/**
@@ -118,7 +118,7 @@ class AbonnementActie {
 		$this->autoriseer( true );
 		$this->abonnement->save();
 		if ( 'ideal' === $betaalwijze ) {
-			return $this->abonnement->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag );
+			return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag );
 		}
 		$this->abonnement->verzend_email( '_start_bank', $this->abonnement->bestel_order( 0.0, $this->abonnement->start_datum ) );
 		return true;
@@ -208,8 +208,8 @@ class AbonnementActie {
 		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
 		$this->abonnement->artikel_type = ( ( $this->abonnement->herstart_datum > $deze_maand && $this->abonnement->herstart_datum < $volgende_maand ) ||
 			( $this->abonnement->pauze_datum >= $deze_maand && $this->abonnement->pauze_datum < $volgende_maand ) ) ? 'pauze' : 'regulier';
-		if ( $this->abonnement->betaalt_automatisch() ) {
-			$this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->abonnement->doe_sepa_incasso(), false );
+		if ( $this->abonnement->betaling->incasso_actief() ) {
+			$this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->abonnement->betaling->doe_sepa_incasso(), false );
 		} else {
 			$this->abonnement->verzend_email( '_regulier_bank', $this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
 		}

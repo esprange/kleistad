@@ -282,8 +282,7 @@ abstract class Artikel {
 	public function verwerk_betaling( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( property_exists( $this, 'betaling' ) ) {
 			if ( method_exists( $this->betaling, 'verwerk' ) ) {
-				$order = new Order( $order_id );
-				$this->betaling->verwerk( $order->referentie, $bedrag, $betaald, $type, $transactie_id );
+				$this->betaling->verwerk( $order_id, $bedrag, $betaald, $type, $transactie_id );
 			}
 		}
 	}
@@ -300,11 +299,7 @@ abstract class Artikel {
 	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
 		if ( property_exists( $this, 'betaling' ) ) {
 			if ( method_exists( $this->betaling, 'doe_ideal' ) ) {
-				$result = $this->betaling->doe_ideal( $bericht, $openstaand );
-				if ( empty( $result ) ) {
-					return false;
-				}
-				return $result;
+				return $this->betaling->doe_ideal( $bericht, $openstaand );
 			}
 		}
 	}

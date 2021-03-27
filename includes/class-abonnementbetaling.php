@@ -47,10 +47,10 @@ class AbonnementBetaling implements ArtikelBetaling {
 	 *
 	 * @param  string $bericht Het bericht bij succesvolle betaling.
 	 * @param  float  $bedrag  Het te betalen bedrag.
-	 * @return string De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
+	 * @return string|bool De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag ) : string {
-		switch ( $this->artikel_type ) {
+	public function doe_ideal( string $bericht, float $bedrag ) {
+		switch ( $this->abonnement->artikel_type ) {
 			case 'start':
 				$vermelding = sprintf(
 					' vanaf %s tot %s',
@@ -91,7 +91,7 @@ class AbonnementBetaling implements ArtikelBetaling {
 	 * @return string
 	 */
 	public function doe_sepa_incasso() {
-		$bedrag = $this->geef_bedrag( "#{$this->artikel_type}" );
+		$bedrag = $this->geef_bedrag( "#{$this->abonnement->artikel_type}" );
 		if ( 0.0 < $bedrag ) {
 			return $this->betalen->eenmalig(
 				$this->abonnement->klant_id,
@@ -108,35 +108,34 @@ class AbonnementBetaling implements ArtikelBetaling {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param string $referentie    De referentie als deze bestaat.
+	 * @param int    $order_id      De order id als deze bestaat.
 	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
 	 * @param bool   $betaald       Of er werkelijk betaald is.
 	 * @param string $type          Type betaling, ideal , directdebit of bank.
 	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk( string $referentie, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			$order = new Order( $referentie );
-			if ( $order->id ) {
+			if ( $order_id ) {
 				/**
 				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of incasso of betaling per bank.
 				 */
 				if ( 0 < $bedrag ) {
 					if ( 'ideal' === $type ) {
-						$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
+						$this->abonnement->ontvang_order( $order_id, $bedrag, $transactie_id );
 						$this->abonnement->verzend_email( '_ideal_betaald' );
 						return;
 					}
 					if ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
-						$this->abonnement->verzend_email( '_regulier_incasso', $this->abonnement->ontvang_order( $order->id, $bedrag, $transactie_id, true ) );
+						$this->abonnement->verzend_email( '_regulier_incasso', $this->abonnement->ontvang_order( $order_id, $bedrag, $transactie_id, true ) );
 						return;
 					}
 					// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
-					$this->abonnement->ontvang_order( $order->id, $bedrag, $transactie_id );
+					$this->abonnement->ontvang_order( $order_id, $bedrag, $transactie_id );
 					return;
 				}
 				// Anders is het een terugstorting.
-				$this->abonnement->ontvang_order( $order->id, $bedrag, $transactie_id );
+				$this->abonnement->ontvang_order( $order_id, $bedrag, $transactie_id );
 				return;
 			}
 			if ( 'mandaat' === $this->abonnement->artikel_type ) {
@@ -159,7 +158,7 @@ class AbonnementBetaling implements ArtikelBetaling {
 			/**
 			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 			 */
-			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order->id, 0, $transactie_id, true ) );
+			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order_id, 0, $transactie_id, true ) );
 		}
 	}
 
@@ -186,9 +185,9 @@ class AbonnementBetaling implements ArtikelBetaling {
 	 */
 	public function geef_bedrag( string $type = '' ) : float {
 		$options       = opties();
-		$basis_bedrag  = (float) $options[ $this->soort . '_abonnement' ];
+		$basis_bedrag  = (float) $options[ "{$this->abonnement->soort}_abonnement" ];
 		$extras_bedrag = 0.0;
-		foreach ( $this->extras as $extra ) {
+		foreach ( $this->abonnement->extras as $extra ) {
 			$extras_bedrag += $this->geef_bedrag_extra( $extra );
 		}
 		switch ( $type ) {
@@ -197,39 +196,23 @@ class AbonnementBetaling implements ArtikelBetaling {
 			case '#start':
 				return 3 * $basis_bedrag;
 			case '#overbrugging':
-				return $this->geef_overbrugging_fractie() * $basis_bedrag;
+				return $this->abonnement->geef_overbrugging_fractie() * $basis_bedrag;
 			case '#regulier':
 				return $basis_bedrag + $extras_bedrag;
 			case '#pauze':
-				return $this->geef_pauze_fractie() * ( $basis_bedrag + $extras_bedrag );
+				return $this->abonnement->geef_pauze_fractie() * ( $basis_bedrag + $extras_bedrag );
 			default:
 				return $basis_bedrag;
 		};
 	}
 
-	/**
-	 * Geef de fractie terug wat er betaald moet worden in de overbruggingsmaand.
-	 *
-	 * @return float De fractie.
-	 */
-	public function geef_overbrugging_fractie() : float {
-		$overbrugging_datum = strtotime( '+1 day', $this->abonnement->start_eind_datum );
-		$aantal_dagen       = intval( ( $this->abonnement->reguliere_datum - $overbrugging_datum ) / ( DAY_IN_SECONDS ) );
-		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't', $this->abonnemment->start_eind_datum ) ), 2 ) : 0.00;
-	}
-
-	/**
-	 * Geef de fractie terug wat er betaald moet worden in de huidige pauzemaand.
-	 *
-	 * @return float De fractie.
-	 */
-	public function geef_pauze_fractie() : float {
-		$aantal_dagen = intval( date( 't' ) );
-		$maand_start  = strtotime( 'first day of this month 00:00' );
-		$maand_eind   = strtotime( 'last day of this month 00:00' );
-		$begin_dagen  = $this->abonnement->pauze_datum < $maand_start ? 0 : intval( date( 'd', $this->abonnement->pauze_datum ) ) - 1;
-		$eind_dagen   = $this->abonnement->herstart_datum > $maand_eind ? 0 : $aantal_dagen - intval( date( 'd', $this->abonnement->herstart_datum ) ) + 1;
-		return round( ( $begin_dagen + $eind_dagen ) / $aantal_dagen, 2 );
+		/**
+		 * Bepaalt of er automatisch betaald wordt.
+		 *
+		 * @return bool
+		 */
+	public function incasso_actief() : bool {
+		return $this->betalen->heeft_mandaat( $this->abonnement->klant_id );
 	}
 
 }

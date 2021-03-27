@@ -164,12 +164,28 @@ class Abonnement extends Artikel {
 	}
 
 	/**
-	 * Bepaalt of er automatisch betaald wordt.
+	 * Geef de fractie terug wat er betaald moet worden in de overbruggingsmaand.
 	 *
-	 * @return bool
+	 * @return float De fractie.
 	 */
-	public function betaalt_automatisch() : bool {
-		return $this->betalen->heeft_mandaat( $this->klant_id );
+	public function geef_overbrugging_fractie() : float {
+		$overbrugging_datum = strtotime( '+1 day', $this->start_eind_datum );
+		$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / ( DAY_IN_SECONDS ) );
+		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't', $this->start_eind_datum ) ), 2 ) : 0.00;
+	}
+
+	/**
+	 * Geef de fractie terug wat er betaald moet worden in de huidige pauzemaand.
+	 *
+	 * @return float De fractie.
+	 */
+	public function geef_pauze_fractie() : float {
+		$aantal_dagen = intval( date( 't' ) );
+		$maand_start  = strtotime( 'first day of this month 00:00' );
+		$maand_eind   = strtotime( 'last day of this month 00:00' );
+		$begin_dagen  = $this->pauze_datum < $maand_start ? 0 : intval( date( 'd', $this->pauze_datum ) ) - 1;
+		$eind_dagen   = $this->herstart_datum > $maand_eind ? 0 : $aantal_dagen - intval( date( 'd', $this->herstart_datum ) ) + 1;
+		return round( ( $begin_dagen + $eind_dagen ) / $aantal_dagen, 2 );
 	}
 
 	/**
@@ -206,7 +222,7 @@ class Abonnement extends Artikel {
 				$vanaf  = strftime( '%d-%m-%Y', strtotime( '+1 day', $this->start_eind_datum ) );
 				$tot    = strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) );
 				$basis  = "{$this->soort} abonnement {$this->code} vanaf $vanaf tot $tot";
-				$aantal = $this->betaling->geef_overbrugging_fractie();
+				$aantal = $this->geef_overbrugging_fractie();
 				break;
 			case 'regulier':
 				$periode = strftime( '%B %Y', strtotime( 'today' ) );
@@ -216,7 +232,7 @@ class Abonnement extends Artikel {
 			case 'pauze':
 				$periode = strftime( '%B %Y', strtotime( 'today' ) );
 				$basis   = "{$this->soort} abonnement {$this->code} periode $periode (deels gepauzeerd)";
-				$aantal  = $this->betaling->geef_pauze_fractie();
+				$aantal  = $this->geef_pauze_fractie();
 				break;
 			default:
 				$basis  = '';

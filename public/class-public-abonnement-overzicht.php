@@ -93,7 +93,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 				$abonnee->abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->start_datum ) : '',
 				$abonnee->abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->pauze_datum ) : '',
 				$abonnee->abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->herstart_datum ) : '',
-				$abonnee->abonnement->betaalt_automatisch() ? 'ja' : 'nee',
+				$abonnee->abonnement->betaling->incasso_actief() ? 'ja' : 'nee',
 				$abonnee->abonnement->overbrugging_email ? 'ja' : 'nee',
 			]
 		);
