@@ -87,6 +87,9 @@
 						$( '#kleistad_eind_config' ).datepicker( 'option', { 
 							minDate: strtodate( datum )
 						} );
+					},
+					beforeShowDay: function( datum ) {
+						return [ 1 === datum.getDay(), '', '' ]; // Maandagen zijn selecteerbaar.
 					}
 				}
 			);
@@ -95,6 +98,9 @@
 					minDate: $( '#kleistad_start_config' ).datepicker( 'getDate' ),
 					onSelect: function( datum ) {
 						$( '#kleistad_start_config' ).datepicker( 'option', { maxDate: strtodate( datum ) } );
+					},
+					beforeShowDay: function( datum ) {
+						return [ 0 === datum.getDay(), '', '' ]; // Zondagen zijn selecteerbaar.
 					}
 				}
 			);

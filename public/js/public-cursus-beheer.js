@@ -102,8 +102,8 @@
 					$( '#kleistad_lesdatums' ).val( lesDatums.join( ';' ) );
 					listLesDatums();
 				},
-				beforeShowDay: function( datumTekst ) {
-					var gotDate = $.inArray( $.datepicker.formatDate( 'dd-mm-yy', datumTekst ), lesDatums );
+				beforeShowDay: function( datum ) {
+					var gotDate = $.inArray( $.datepicker.formatDate( 'dd-mm-yy', datum ), lesDatums );
 					if ( gotDate >= 0 ) {
 						return [ true, 'kleistad-state-highlight' ];
 					}

@@ -53,8 +53,8 @@ class DagdelenkaartBetaling implements ArtikelBetaling {
 		return $this->betalen->order(
 			$this->dagdelenkaart->klant_id,
 			$this->dagdelenkaart->geef_referentie(),
-			$bedrag ?: opties()['dagdelenkaart'],
-			'Kleistad dagdelenkaart ' . $this->dagdelenkaart->code,
+			$bedrag,
+			sprintf( 'Kleistad dagdelenkaart %s', $this->dagdelenkaart->code ),
 			$bericht,
 			false
 		);

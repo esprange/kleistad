@@ -133,8 +133,8 @@
 	function onLoad() {
 		$( '#kleistad_datum' ).datepicker( 'option',
 			{
-				beforeShowDay: function( datumTekst ) {
-					var fDate   = $.datepicker.formatDate( 'dd-mm-yy', datumTekst );
+				beforeShowDay: function( datum ) {
+					var fDate   = $.datepicker.formatDate( 'dd-mm-yy', datum );
 					var gotDate = $.inArray( fDate, datums );
 					if ( gotDate >= 0 ) {
 						return [ true, 'kleistad-state-highlight' ];

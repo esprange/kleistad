@@ -50,13 +50,16 @@ class InschrijvingBetaling implements ArtikelBetaling {
 	 * @return string|bool De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
 	public function doe_ideal( string $bericht, float $bedrag ) {
-		$deelnemers = ( 1 === $this->inschrijving->aantal ) ? '1 cursist' : $this->inschrijving->aantal . ' cursisten';
-		$vermelding = ( $bedrag || ! $this->inschrijving->heeft_restant() ) ? 'cursus' : 'inschrijf';
 		return $this->betalen->order(
 			$this->inschrijving->klant_id,
 			$this->inschrijving->geef_referentie(),
-			$bedrag ?: $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag(),
-			"Kleistad cursus {$this->inschrijving->code} {$vermelding}kosten voor $deelnemers",
+			$bedrag,
+			sprintf(
+				'Kleistad cursus %s %skosten voor %s',
+				$this->inschrijving->code,
+				$this->inschrijving->heeft_restant() ? 'inschrijf' : 'cursus',
+				1 === $this->inschrijving->aantal ? '1 cursist' : $this->inschrijving->aantal . ' cursisten'
+			),
 			$bericht,
 			false
 		);
