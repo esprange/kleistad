@@ -46,7 +46,7 @@ class AbonnementActie {
 		$this->abonnement->save();
 		$this->abonnement->artikel_type = 'mandaat';
 		$this->abonnement->bericht      = 'Kleistad gaat voortaan automatisch het abonnementsgeld afschrijven van jouw bankrekening';
-		return $this->abonnement->doe_idealbetaling( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging' );
+		return $this->abonnement->doe_idealbetaling( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', 0.01 );
 	}
 
 	/**
@@ -99,6 +99,7 @@ class AbonnementActie {
 		 * @return string|bool Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
 		 */
 	public function starten( int $start_datum, string $soort, string $dag, string $opmerking, string $betaalwijze ) {
+		$start_bedrag                         = 3 * opties()[ "{$soort}_abonnement" ];
 		$this->abonnement->code               = "A{$this->abonnement->klant_id}";
 		$this->abonnement->datum              = time();
 		$this->abonnement->soort              = $soort;
@@ -117,7 +118,7 @@ class AbonnementActie {
 		$this->autoriseer( true );
 		$this->abonnement->save();
 		if ( 'ideal' === $betaalwijze ) {
-			return $this->abonnement->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging' );
+			return $this->abonnement->doe_idealbetaling( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag );
 		}
 		$this->abonnement->verzend_email( '_start_bank', $this->abonnement->bestel_order( 0.0, $this->abonnement->start_datum ) );
 		return true;

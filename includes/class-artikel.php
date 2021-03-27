@@ -64,26 +64,6 @@ abstract class Artikel {
 	public string $artikel_type = '';
 
 	/**
-	 * Betaal het artikel per ideal.
-	 *
-	 * @param  string $bericht    Het bericht na succesvolle betaling.
-	 * @param  float  $openstaand Het bedrag dat openstaat.
-	 * @return string|bool De redirect uri of het is fout gegaan.
-	 */
-	abstract public function doe_idealbetaling( string $bericht, float $openstaand = null );
-
-	/**
-	 * Aanroep vanuit betaling per ideal of sepa incasso.
-	 *
-	 * @param int    $order_id      De order id.
-	 * @param float  $bedrag        Het betaalde bedrag.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Een betaling per bank, ideal of incasso.
-	 * @param string $transactie_id De betalings id.
-	 */
-	abstract public function verwerk_betaling( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' );
-
-	/**
 	 * Geef de code van het artikel
 	 *
 	 * @return string De referentie.
@@ -273,6 +253,8 @@ abstract class Artikel {
 	/**
 	 * Zeg het artikel af, kan nader ingevuld worden.
 	 *
+	 * Tijdelijke workaround voor refactoring.
+	 *
 	 * @since 6.1.0
 	 *
 	 * @return bool
@@ -284,6 +266,47 @@ abstract class Artikel {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Aanroep vanuit betaling per ideal of sepa incasso.
+	 *
+	 * Tijdelijke workaround voor refactoring.
+	 *
+	 * @param int    $order_id      De order id.
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Een betaling per bank, ideal of incasso.
+	 * @param string $transactie_id De betalings id.
+	 */
+	public function verwerk_betaling( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+		if ( property_exists( $this, 'betaling' ) ) {
+			if ( method_exists( $this->betaling, 'verwerk' ) ) {
+				$order = new Order( $order_id );
+				$this->betaling->verwerk( $order->referentie, $bedrag, $betaald, $type, $transactie_id );
+			}
+		}
+	}
+
+	/**
+	 * Betaal het artikel per ideal.
+	 *
+	 * Tijdelijke workaround voor refactoring.
+	 *
+	 * @param  string $bericht    Het bericht na succesvolle betaling.
+	 * @param  float  $openstaand Het bedrag dat openstaat.
+	 * @return string|bool De redirect uri of het is fout gegaan.
+	 */
+	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
+		if ( property_exists( $this, 'betaling' ) ) {
+			if ( method_exists( $this->betaling, 'doe_ideal' ) ) {
+				$result = $this->betaling->doe_ideal( $bericht, $openstaand );
+				if ( empty( $result ) ) {
+					return false;
+				}
+				return $result;
+			}
+		}
 	}
 
 	/**
