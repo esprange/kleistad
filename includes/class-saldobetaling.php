@@ -71,7 +71,7 @@ class SaldoBetaling implements ArtikelBetaling {
 	 * @param string $type          Type betaling, ideal , directdebit of bank.
 	 * @param string $transactie_id De betaling id.
 	 */
-	public function ontvang( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
 			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
 			$this->saldo->reden  = $bedrag > 0 ? 'storting' : 'stornering';
