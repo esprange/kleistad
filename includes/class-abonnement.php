@@ -97,7 +97,6 @@ class Abonnement extends Artikel {
 			'historie'           => [],
 		];
 		$this->klant_id = $klant_id;
-		$this->betalen  = new Betalen();
 		$abonnement     = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$this->data     = is_array( $abonnement ) ? wp_parse_args( $abonnement, $default_data ) : $default_data;
 		$this->actie    = new AbonnementActie( $this );

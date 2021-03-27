@@ -299,7 +299,7 @@ abstract class Artikel {
 	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
 		if ( property_exists( $this, 'betaling' ) ) {
 			if ( method_exists( $this->betaling, 'doe_ideal' ) ) {
-				return $this->betaling->doe_ideal( $bericht, $openstaand );
+				return $this->betaling->doe_ideal( $bericht, $openstaand ?? 0.0 );
 			}
 		}
 	}

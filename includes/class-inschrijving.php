@@ -116,7 +116,6 @@ class Inschrijving extends Artikel {
 	public function __construct( $cursus_id, $klant_id ) {
 		$this->cursus                = new Cursus( $cursus_id );
 		$this->klant_id              = $klant_id;
-		$this->betalen               = new Betalen();
 		$this->default_data['code']  = "C$cursus_id-$klant_id";
 		$this->default_data['datum'] = time();
 		$inschrijvingen              = get_user_meta( $this->klant_id, self::META_KEY, true );
@@ -172,28 +171,6 @@ class Inschrijving extends Artikel {
 	 */
 	public function geef_artikelnaam() : string {
 		return $this->cursus->naam;
-	}
-
-	/**
-	 * Betaal de inschrijving met iDeal.
-	 *
-	 * @since        4.2.0
-	 *
-	 * @param  string $bericht    Het bericht bij succesvolle betaling.
-	 * @param  float  $openstaand Het bedrag dat openstaat.
-	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
-	 */
-	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
-		$deelnemers = ( 1 === $this->aantal ) ? '1 cursist' : $this->aantal . ' cursisten';
-		$vermelding = ( $openstaand || ! $this->heeft_restant() ) ? 'cursus' : 'inschrijf';
-		return $this->betalen->order(
-			$this->klant_id,
-			$this->geef_referentie(),
-			$openstaand ?? $this->aantal * $this->cursus->bedrag(),
-			"Kleistad cursus {$this->code} {$vermelding}kosten voor $deelnemers",
-			$bericht,
-			false
-		);
 	}
 
 	/**
@@ -324,48 +301,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
-	 *
-	 * @since        4.2.0
-	 *
-	 * @param int    $order_id      De order id, als deze bestaat.
-	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
-	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
-		if ( $betaald ) {
-			if ( ! $order_id ) {
-				/**
-				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
-				 */
-				$this->indelen();
-				$this->verzend_email( 'indeling', $this->bestel_order( $bedrag, $this->cursus->start_datum, $this->heeft_restant(), $transactie_id ) );
-				return;
-			}
-			/**
-			 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
-			 */
-			$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-			if ( ! $this->ingedeeld ) { // Voorafgaand de betaling was de cursist nog niet ingedeeld.
-				/**
-				 * De cursist krijgt de melding dat deze nu ingedeeld is.
-				 */
-				$this->indelen();
-				$this->verzend_email( 'indeling' );
-				return;
-			}
-			/**
-			 * Als de cursist al ingedeeld is volstaat een bedankje ingeval van een betaling per ideal, bank hoeft niet.
-			 */
-			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
-				$this->verzend_email( '_ideal_betaald' );
-			}
-		}
-	}
-
-	/**
 	 * Geef de tekst en de link naar de aanmelden extra cursisten pagina
 	 *
 	 * @return string De melding.
@@ -381,18 +316,6 @@ class Inschrijving extends Artikel {
 			return $tekst;
 		}
 		return '';
-	}
-
-	/**
-	 * Deel de cursist in.
-	 */
-	private function indelen() {
-		$this->ingedeeld = true;
-		$this->save();
-		if ( 0 === $this->cursus->ruimte() ) {
-			$this->cursus->vol = true;
-			$this->cursus->save();
-		}
 	}
 
 	/**
