@@ -168,7 +168,7 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->verwerk_betaling( $order->$order_id, $order->betaald, true, $this->artikel_type );
+		$this->betaling->verwerk( $order->$order_id, $order->betaald, true, $this->artikel_type );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -219,7 +219,7 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->verwerk_betaling( $order->id, $order->betaald, true, $this->artikel_type );
+		$this->betaling->verwerk( $order->id, $order->betaald, true, $this->artikel_type );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -259,25 +259,6 @@ abstract class Artikel {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Aanroep vanuit betaling per ideal of sepa incasso.
-	 *
-	 * Tijdelijke workaround voor refactoring.
-	 *
-	 * @param int    $order_id      De order id.
-	 * @param float  $bedrag        Het betaalde bedrag.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Een betaling per bank, ideal of incasso.
-	 * @param string $transactie_id De betalings id.
-	 */
-	public function verwerk_betaling( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
-		if ( property_exists( $this, 'betaling' ) ) {
-			if ( method_exists( $this->betaling, 'verwerk' ) ) {
-				$this->betaling->verwerk( $order_id, $bedrag, $betaald, $type, $transactie_id );
-			}
-		}
 	}
 
 	/**

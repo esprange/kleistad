@@ -371,7 +371,7 @@ class Betalen {
 			return new WP_Error( 'onbekend', 'betaling niet herkend' );
 		}
 		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
-			$artikel->verwerk_betaling(
+			$artikel->betaling->verwerk(
 				$order->id,
 				$betaling->amount->value,
 				$betaling->isPaid(),
@@ -384,7 +384,7 @@ class Betalen {
 			$refund_ids = get_transient( $transient ) ?: [];
 			foreach ( $betaling->refunds() as $refund ) {
 				if ( in_array( $refund->id, $refund_ids, true ) ) {
-					$artikel->verwerk_betaling(
+					$artikel->betaling->verwerk(
 						$order->id,
 						- $refund->amount->value,
 						'failed' !== $refund->status,
@@ -400,7 +400,7 @@ class Betalen {
 			$chargeback_ids = get_transient( $transient ) ?: [];
 			foreach ( $betaling->chargebacks() as $chargeback ) {
 				if ( ! in_array( $chargeback->id, $chargeback_ids, true ) ) {
-					$artikel->verwerk_betaling(
+					$artikel->betaling->verwerk(
 						$order->id,
 						- $chargeback->amount->value,
 						$betaling->isPaid(),

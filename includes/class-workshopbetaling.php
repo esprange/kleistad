@@ -54,9 +54,9 @@ class WorkshopBetaling implements ArtikelBetaling {
 	public function doe_ideal( string $bericht, float $bedrag ) {
 		return $this->betalen->order(
 			[
-				'naam'     => $this->contact,
-				'email'    => $this->email,
-				'order_id' => $this->code,
+				'naam'     => $this->workshop->contact,
+				'email'    => $this->workshop->email,
+				'order_id' => $this->workshop->code,
 			],
 			$this->workshop->geef_referentie(),
 			$bedrag,

@@ -197,10 +197,10 @@ class Public_Debiteuren extends ShortcodeForm {
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
 				if ( $data['input']['ontvangst'] ) {
-					$artikel->verwerk_betaling( $data['input']['id'], (float) $data['input']['ontvangst'], true, 'bank' );
+					$artikel->betaling->verwerk( $data['input']['id'], (float) $data['input']['ontvangst'], true, 'bank' );
 				}
 				if ( $data['input']['terugstorting'] ) {
-					$artikel->verwerk_betaling( $data['input']['id'], - (float) $data['input']['terugstorting'], true, 'bank' );
+					$artikel->betaling->verwerk( $data['input']['id'], - (float) $data['input']['terugstorting'], true, 'bank' );
 				}
 				$status = 'De betaling is verwerkt';
 				break;
