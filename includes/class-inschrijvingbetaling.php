@@ -80,7 +80,7 @@ class InschrijvingBetaling implements ArtikelBetaling {
 				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
 				 */
 				$this->indelen();
-				$this->inschrijving->verzend_email( 'indeling', $this->inschrijving->bestel_order( $bedrag, $this->cursus->start_datum, $this->inschrijving->heeft_restant(), $transactie_id ) );
+				$this->inschrijving->verzend_email( 'indeling', $this->inschrijving->bestel_order( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant(), $transactie_id ) );
 				return;
 			}
 			/**

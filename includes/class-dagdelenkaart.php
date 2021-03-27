@@ -28,6 +28,13 @@ class Dagdelenkaart extends Artikel {
 	public const META_KEY  = 'kleistad_dagdelenkaart_v2';
 
 	/**
+	 * Het betaling object
+	 *
+	 * @var DagdelenkaartBetaling $betaling Het object.
+	 */
+	public DagdelenkaartBetaling $betaling;
+
+	/**
 	 * De beginwaarden van een dagdelenkaart.
 	 *
 	 * @access private
@@ -56,10 +63,10 @@ class Dagdelenkaart extends Artikel {
 	 */
 	public function __construct( $klant_id ) {
 		$this->klant_id  = $klant_id;
-		$this->betalen   = new Betalen();
 		$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->volgnr    = count( /* @scrutinizer ignore-type */ $dagdelenkaarten );
 		$this->data      = wp_parse_args( end( /* @scrutinizer ignore-type */ $dagdelenkaarten ), $this->default_data );
+		$this->betaling  = new DagdelenkaartBetaling( $this );
 	}
 
 	/**
@@ -87,24 +94,6 @@ class Dagdelenkaart extends Artikel {
 	 */
 	public function erase() {
 		delete_user_meta( $this->klant_id, self::META_KEY );
-	}
-
-	/**
-	 * Start de betaling van een nieuw dagdelenkaart.
-	 *
-	 * @param  string $bericht  Te tonen melding als betaling gelukt.
-	 * @param  float  $openstaand Het bedrag dat openstaat.
-	 * @return string|bool De redirect url van een ideal betaling of false als het niet lukt.
-	 */
-	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
-		return $this->betalen->order(
-			$this->klant_id,
-			$this->geef_referentie(),
-			$openstaand ?? opties()['dagdelenkaart'],
-			'Kleistad dagdelenkaart ' . $this->code,
-			$bericht,
-			false
-		);
 	}
 
 	/**
@@ -194,29 +183,6 @@ class Dagdelenkaart extends Artikel {
 			return $uitgebreid ? 'actief tot ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'actief';
 		}
 		return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'voltooid';
-	}
-
-	/**
-	 * Activeer een dagdelenkaart. Wordt aangeroepen vanuit de betaal callback.
-	 *
-	 * @param int    $order_id      De order id, als die al bestaat.
-	 * @param float  $bedrag        Het bedrag dat betaald is.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Het type betaling.
-	 * @param string $transactie_id De betaling id.
-	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
-		if ( $betaald ) {
-			if ( $order_id ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
-				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-					$this->verzend_email( '_ideal_betaald' );
-				}
-				return;
-			}
-			// Betaling vanuit inschrijvingformulier.
-			$this->verzend_email( '_ideal', $this->bestel_order( $bedrag, $this->start_datum, '', $transactie_id ) );
-		}
 	}
 
 }
