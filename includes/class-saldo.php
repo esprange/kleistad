@@ -56,6 +56,13 @@ class Saldo extends Artikel {
 	public SaldoActie $actie;
 
 	/**
+	 * Het betaling object
+	 *
+	 * @var SaldoBetaling $betaling Het betaling object.
+	 */
+	public SaldoBetaling $betaling;
+
+	/**
 	 * De constructor
 	 *
 	 * @since      4.0.87
@@ -64,10 +71,10 @@ class Saldo extends Artikel {
 	 */
 	public function __construct( $klant_id ) {
 		$this->klant_id = $klant_id;
-		$this->betalen  = new Betalen();
 		$saldo          = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->data     = wp_parse_args( $saldo, $this->default_data );
 		$this->actie    = new SaldoActie( $this );
+		$this->betaling = new SaldoBetaling( $this );
 	}
 
 	/**
@@ -103,26 +110,6 @@ class Saldo extends Artikel {
 			return;
 		}
 		$this->data['storting'][ array_key_last( $this->data['storting'] ) ][ $attribuut ] = $waarde;
-	}
-
-	/**
-	 * Betaal de bijstorting saldo met iDeal.
-	 *
-	 * @since      4.2.0
-	 *
-	 * @param  string $bericht Het bericht bij succesvolle betaling.
-	 * @param  float  $openstaand Het bedrag dat openstaat.
-	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
-	 */
-	public function doe_idealbetaling( string $bericht, float $openstaand = null ) {
-		return $this->betalen->order(
-			$this->klant_id,
-			$this->geef_referentie(),
-			$openstaand ?? $this->prijs,
-			'Kleistad stooksaldo ' . $this->code,
-			$bericht,
-			false
-		);
 	}
 
 	/**
@@ -202,40 +189,6 @@ class Saldo extends Artikel {
 	 */
 	public function erase() {
 		delete_user_meta( $this->klant_id, self::META_KEY );
-	}
-
-	/**
-	 * Verwerk een betaling. Wordt aangeroepen vanuit de betaal callback
-	 *
-	 * @since      4.2.0
-	 *
-	 * @param int    $order_id      De order_id, als die al bestaat.
-	 * @param float  $bedrag        Het bedrag dat betaald is.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
-	 */
-	public function verwerk_betaling( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
-		if ( $betaald ) {
-			$this->bedrag = round( $this->bedrag + $bedrag, 2 );
-			$this->reden  = $bedrag > 0 ? 'storting' : 'stornering';
-			$this->save();
-
-			if ( $order_id ) {
-				/**
-				 * Er bestaat al een order dus dit is een betaling o.b.v. een email link of per bank.
-				 */
-				$this->ontvang_order( $order_id, $bedrag, $transactie_id );
-				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
-					$this->verzend_email( '_ideal_betaald' );
-				}
-				return;
-			}
-			/**
-			 * Een betaling vanuit het formulier
-			 */
-			$this->verzend_email( '_ideal', $this->bestel_order( $bedrag, strtotime( '+7 days  0:00' ), '', $transactie_id ) );
-		}
 	}
 
 	/**

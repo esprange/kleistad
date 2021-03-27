@@ -80,11 +80,12 @@ class Public_Saldo extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save( $data ) {
-		$saldo = new Saldo( intval( $data['input']['gebruiker_id'] ) );
-		$saldo->actie->nieuw( floatval( $data['input']['bedrag'] ) );
+		$saldo  = new Saldo( intval( $data['input']['gebruiker_id'] ) );
+		$bedrag = floatval( $data['input']['bedrag'] );
+		$saldo->actie->nieuw( $bedrag );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $saldo->doe_idealbetaling( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging' );
+			$ideal_uri = $saldo->betaling->doe_ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging', $bedrag );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}
