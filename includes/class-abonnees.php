@@ -26,7 +26,7 @@ class Abonnees implements Countable, Iterator {
 	 *
 	 * @var array $abonnees De gebruikers.
 	 */
-	protected $abonnees = [];
+	protected array $abonnees = [];
 
 	/**
 	 * Intere index

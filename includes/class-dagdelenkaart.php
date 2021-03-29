@@ -40,7 +40,7 @@ class Dagdelenkaart extends Artikel {
 	 * @access private
 	 * @var array $default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
 	 */
-	private $default_data = [
+	private array $default_data = [
 		'code'        => '',
 		'datum'       => 0,
 		'start_datum' => 0,
@@ -54,14 +54,14 @@ class Dagdelenkaart extends Artikel {
 	 * @access private
 	 * @var int $volgnr Het volgnummer.
 	 */
-	private $volgnr;
+	private int $volgnr;
 
 	/**
 	 * Constructor
 	 *
 	 * @param int $klant_id wp id van de gebruiker.
 	 */
-	public function __construct( $klant_id ) {
+	public function __construct( int $klant_id ) {
 		$this->klant_id  = $klant_id;
 		$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->volgnr    = count( /* @scrutinizer ignore-type */ $dagdelenkaarten );
@@ -75,7 +75,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
 	}
 
@@ -85,7 +85,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		$this->data[ $attribuut ] = $waarde;
 	}
 
@@ -112,7 +112,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param string $factuur Bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function verzend_email( $type, $factuur = '' ) {
+	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer   = new Email();
 		$options   = opties();
 		$gebruiker = get_userdata( $this->klant_id );
@@ -140,7 +140,7 @@ class Dagdelenkaart extends Artikel {
 	 *
 	 * @return Orderregel De regels.
 	 */
-	protected function geef_factuurregels() {
+	protected function geef_factuurregels() : Orderregel {
 		return new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, opties()['dagdelenkaart'] );
 	}
 
@@ -159,7 +159,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param int    $start_datum De datum waarop de kaart in gaat.
 	 * @param string $opmerking Een eventuele opmerking.
 	 */
-	public function nieuw( $start_datum, $opmerking ) {
+	public function nieuw( int $start_datum, string $opmerking ) {
 		$this->volgnr++;
 		$this->datum       = strtotime( 'today' );
 		$this->start_datum = $start_datum;

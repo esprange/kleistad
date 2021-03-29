@@ -26,7 +26,7 @@ class Cursisten implements Countable, Iterator {
 	 *
 	 * @var array $cursisten De gebruikers.
 	 */
-	protected $cursisten = [];
+	protected array $cursisten = [];
 
 	/**
 	 * Intere index

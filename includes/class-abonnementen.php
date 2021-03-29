@@ -26,7 +26,7 @@ class Abonnementen implements Countable, Iterator {
 	 *
 	 * @var array $abonnementen De abonnementen.
 	 */
-	private $abonnementen = [];
+	private array $abonnementen = [];
 
 	/**
 	 * Intere index

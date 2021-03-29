@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use DateTime;
 use DateTimeZone;
+use Exception;
 
 /**
  * Kleistad Cursus class.
@@ -101,7 +102,7 @@ class Cursus {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		if ( preg_match( '~(start_datum|eind_datum|ruimte_datum|start_tijd|eind_tijd)~', $attribuut ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
@@ -137,7 +138,7 @@ class Cursus {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'technieken':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
@@ -173,7 +174,7 @@ class Cursus {
 	 *
 	 * @return int nog beschikbare ruimte.
 	 */
-	public function ruimte() {
+	public function ruimte() : int {
 		$aantal = $this->maximum;
 		if ( 0 < $this->id ) {
 			foreach ( new Inschrijvingen( $this->id ) as $inschrijving ) {
@@ -199,7 +200,7 @@ class Cursus {
 	 *
 	 * @return bool
 	 */
-	public function is_binnenkort() {
+	public function is_binnenkort() : bool {
 		return strtotime( '+7 days 0:00' ) >= $this->start_datum;
 	}
 
@@ -208,7 +209,7 @@ class Cursus {
 	 *
 	 * @return bool
 	 */
-	public function is_wachtbaar() {
+	public function is_wachtbaar() : bool {
 		return $this->start_datum > strtotime( 'tomorrow + 1 day' );
 	}
 
@@ -217,7 +218,7 @@ class Cursus {
 	 *
 	 * @return bool
 	 */
-	public function is_lopend() {
+	public function is_lopend() : bool {
 		return $this->start_datum < strtotime( 'today' );
 	}
 
@@ -226,7 +227,7 @@ class Cursus {
 	 *
 	 * @return float
 	 */
-	public function bedrag() {
+	public function bedrag() : float {
 		if ( $this->is_binnenkort() ) {
 			if ( 0.01 < $this->inschrijfkosten ) {
 				return $this->inschrijfkosten + $this->cursuskosten;
@@ -242,7 +243,7 @@ class Cursus {
 	 *
 	 * @return string De naam van de docent.
 	 */
-	public function docent_naam() {
+	public function docent_naam() : string {
 		if ( is_numeric( $this->docent ) ) {
 			return get_user_by( 'id', intval( $this->docent ) )->display_name;
 		}
@@ -255,7 +256,7 @@ class Cursus {
 	 * @param int $vanafdatum De datum vanaf dat de les gevolgd gaat worden.
 	 * @return array De advies kosten en het aantal resterende lessen.
 	 */
-	public function lopend( $vanafdatum ) {
+	public function lopend( int $vanafdatum ) : array {
 		$aantal_lessen    = count( $this->lesdatums );
 		$totaal_kosten    = $this->inschrijfkosten + $this->cursuskosten;
 		$aantal_resterend = 0;
@@ -315,7 +316,7 @@ class Cursus {
 					break;
 			}
 			$event->save();
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			error_log ( $e->getMessage() ); // phpcs:ignore
 		}
 		return $this->id;
@@ -326,7 +327,7 @@ class Cursus {
 	 *
 	 * @return bool True als de cursus verwijderd kan worden.
 	 */
-	public function verwijder() {
+	public function verwijder() : bool {
 		if ( count( new Inschrijvingen( $this->id ) ) ) {
 			return false; // Er is al een inschrijving dus verwijderen is niet meer mogelijk.
 		}

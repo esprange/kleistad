@@ -15,7 +15,8 @@
         "html2text/html2text": "*",
         "php-imap/php-imap": "*",
         "setasign/fpdf": "*",
-        "deliciousbrains/wp-background-processing": "*"
+        "deliciousbrains/wp-background-processing": "*",
+        "ext-json": "*"
     },
     "scripts": {
         "post-update-cmd": "Google\\Task\\Composer::cleanup"

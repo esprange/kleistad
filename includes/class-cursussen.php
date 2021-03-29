@@ -26,7 +26,7 @@ class Cursussen implements Countable, Iterator {
 	 *
 	 * @var array $cursussen De cursussen.
 	 */
-	private $cursussen = [];
+	private array $cursussen = [];
 
 	/**
 	 * Intere index

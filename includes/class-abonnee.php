@@ -46,7 +46,7 @@ class Abonnee extends Gebruiker {
 	 *
 	 * @return bool True als actief.
 	 */
-	public function is_actief() {
+	public function is_actief() : bool {
 		return user_can( $this->ID, LID );
 	}
 }

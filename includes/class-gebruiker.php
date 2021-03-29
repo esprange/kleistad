@@ -31,7 +31,7 @@ class Gebruiker extends WP_User {
 	 *
 	 * @return bool True als actief.
 	 */
-	public function is_actief() {
+	public function is_actief() : bool {
 		return true;
 	}
 }

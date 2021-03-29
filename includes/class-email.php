@@ -42,7 +42,7 @@ class Email {
 	 *
 	 * @var array $mailparams
 	 */
-	private $mailparams;
+	private array $mailparams;
 
 	/**
 	 * We maken gebruik van een custom post object
@@ -98,8 +98,10 @@ class Email {
 
 	/**
 	 * Initialisatie functie zodat filters e.d. maar eenmalig gerealiseerd worden.
+	 *
+	 * @return array De headers.
 	 */
-	private function headers() {
+	private function headers() : array {
 		$headers   = [];
 		$from      = $this->mailparams['from'];
 		$from_name = $this->mailparams['from_name'];
@@ -155,7 +157,7 @@ class Email {
 	 * @return string De email inhoud.
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function prepare( $args ) {
+	private function prepare( array $args ) : string {
 		$this->mailparams = wp_parse_args(
 			$args,
 			[
@@ -220,8 +222,9 @@ class Email {
 	 * Email notificatie functie, maakt email tekst op t.b.v. standaard WP notificaties
 	 *
 	 * @param array $args De argumenten voor de email.
+	 * @return array
 	 */
-	public function notify( $args ) {
+	public function notify( array $args ) : array {
 		$tekst = $this->prepare( $args );
 		return [
 			'to'      => $this->mailparams['to'],
@@ -235,8 +238,9 @@ class Email {
 	 * Email verzend functie, maakt email tekst op en verzendt de mail
 	 *
 	 * @param array $args parameters voor verzending.
+	 * @return bool
 	 */
-	public function send( $args ) {
+	public function send( array $args ) : bool {
 		$tekst = $this->prepare( $args );
 		if ( $tekst && get_option( 'kleistad_email_actief' ) ) {
 			return wp_mail(
@@ -257,12 +261,12 @@ class Email {
 	 * @param string $tekst De content.
 	 * @return string De opgemaakte tekst.
 	 */
-	private function inhoud( $tekst ) {
+	private function inhoud( string $tekst ) : string {
 		$schone_tekst = wordwrap( preg_replace( '/\s+/', ' ', $tekst ), 75, "\r\n", false );
 		ob_start();
 		?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nl">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<!--[if !mso]><!-->

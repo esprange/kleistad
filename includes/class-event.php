@@ -18,7 +18,7 @@ use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
 use Google_Service_Calendar_EventOrganizer;
 use Google_Service_Calendar_EventExtendedProperties;
-use Exception;
+use Google\Service\Exception;
 
 /**
  * Kleistad Event class.
@@ -27,8 +27,8 @@ use Exception;
  *
  * @property bool     vervallen
  * @property bool     definitief
- * @property \DateTime start
- * @property \DateTime eind
+ * @property DateTime start
+ * @property DateTime eind
  * @property string   titel
  * @property string   id
  * @property array    properties
@@ -71,7 +71,7 @@ class Event {
 	 * @since 5.0.0
 	 *
 	 * @param string $event_id event id welke geladen moet worden.
-	 * @throws Exception Er is geen connectie.
+	 * @throws Google\Service\Exception Er is geen connectie.
 	 */
 	public function __construct( string $event_id ) {
 		$this->googleconnect = new Googleconnect();

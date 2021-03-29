@@ -26,7 +26,7 @@ class Dagdelenkaarten implements Countable, Iterator {
 	 *
 	 * @var array $dagdelenkaarten De dagdelenkaarten.
 	 */
-	private $dagdelenkaarten = [];
+	private array $dagdelenkaarten = [];
 
 	/**
 	 * Intere index

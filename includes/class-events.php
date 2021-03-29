@@ -26,7 +26,7 @@ class Events implements Countable, Iterator {
 	 *
 	 * @var array $events De events.
 	 */
-	private $events = [];
+	private array $events = [];
 
 	/**
 	 * Intere index

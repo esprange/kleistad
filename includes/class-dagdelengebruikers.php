@@ -26,7 +26,7 @@ class Dagdelengebruikers implements Countable, Iterator {
 	 *
 	 * @var array $dagdelengebruikers De gebruikers.
 	 */
-	protected $dagdelengebruikers = [];
+	protected array $dagdelengebruikers = [];
 
 	/**
 	 * Intere index

@@ -46,8 +46,7 @@ class Dagdelengebruiker extends Gebruiker {
 	 *
 	 * @return bool True als actief.
 	 */
-	public function is_actief() {
+	public function is_actief() : bool {
 		return $this->dagdelenkaart->eind_datum > strtotime( 'today' );
 	}
 }
-

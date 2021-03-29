@@ -90,7 +90,7 @@ class AbonnementBetaling implements ArtikelBetaling {
 	 *
 	 * @return string
 	 */
-	public function doe_sepa_incasso() {
+	public function doe_sepa_incasso() : string {
 		$bedrag = $this->geef_bedrag( "#{$this->abonnement->artikel_type}" );
 		if ( 0.0 < $bedrag ) {
 			return $this->betalen->eenmalig(
@@ -203,7 +203,7 @@ class AbonnementBetaling implements ArtikelBetaling {
 				return $this->abonnement->geef_pauze_fractie() * ( $basis_bedrag + $extras_bedrag );
 			default:
 				return $basis_bedrag;
-		};
+		}
 	}
 
 		/**

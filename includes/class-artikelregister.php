@@ -26,7 +26,7 @@ class Artikelregister  implements Countable, Iterator {
 	 *
 	 * @var array $register Het register.
 	 */
-	private static $register = [];
+	private static array $register = [];
 
 	/**
 	 * Intere index
@@ -38,11 +38,11 @@ class Artikelregister  implements Countable, Iterator {
 	/**
 	 * Constructor
 	 *
-	 * @param array $artikelclassen De optionele artikel class namen.
+	 * @param array|null $artikelclasses De optionele artikel class namen.
 	 */
-	public function __construct( array $artikelclassen = null ) {
-		if ( ! is_null( $artikelclassen ) ) {
-			foreach ( $artikelclassen as $artikelclass ) {
+	public function __construct( ?array $artikelclasses = null ) {
+		if ( ! is_null( $artikelclasses ) ) {
+			foreach ( $artikelclasses as $artikelclass ) {
 				$class            = '\\' . __NAMESPACE__ . '\\' . $artikelclass;
 				self::$register[] = array_merge(
 					[ 'class' => $artikelclass ],
@@ -55,10 +55,10 @@ class Artikelregister  implements Countable, Iterator {
 	/**
 	 * Geef de artikel naam
 	 *
-	 * @param string $referentie De optionele artikel referentie.
+	 * @param string|null $referentie De optionele artikel referentie.
 	 * @return string
 	 */
-	public function geef_naam( string $referentie = null ) : string {
+	public function geef_naam( ?string $referentie = null ) : string {
 		if ( ( is_null( $referentie ) ) ) {
 			return $this->current()['naam'];
 		}

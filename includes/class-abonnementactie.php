@@ -51,6 +51,8 @@ class AbonnementActie {
 
 	/**
 	 * Wijzig de betaalwijze van het abonnement naar bank.
+	 *
+	 * @return bool
 	 */
 	public function stop_incasso() : bool {
 		$betalen = new Betalen();
@@ -69,6 +71,7 @@ class AbonnementActie {
 	 *
 	 * @param int $pauze_datum    Pauzedatum.
 	 * @param int $herstart_datum Herstartdatum.
+	 * @return bool
 	 */
 	public function pauzeren( int $pauze_datum, int $herstart_datum ) : bool {
 		$thans_gepauzeerd                 = $this->abonnement->is_gepauzeerd();
@@ -128,6 +131,7 @@ class AbonnementActie {
 		 * Stop het abonnement per datum.
 		 *
 		 * @param int $eind_datum Einddatum.
+		 * @return bool
 		 */
 	public function stoppen( int $eind_datum ) : bool {
 		$this->abonnement->eind_datum = $eind_datum;
@@ -150,6 +154,7 @@ class AbonnementActie {
 	 * @param string $type         Soort wijziging: soort abonnement of de extras.
 	 * @param mixed  $soort        Beperkt/onbeperkt wijziging of de extras.
 	 * @param string $dag          Dag voor beperkt abonnement.
+	 * @return bool
 	 */
 	public function wijzigen( int $wijzig_datum, string $type, $soort, string $dag = '' ) : bool {
 		$gewijzigd        = false;

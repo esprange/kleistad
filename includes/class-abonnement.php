@@ -11,9 +11,6 @@
 
 namespace Kleistad;
 
-use DateTime;
-use DateTimeZone;
-
 /**
  * Class abonnement, alle acties voor het aanmaken en beheren van abonnementen
  *
