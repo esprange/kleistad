@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 97;
+	const DBVERSIE = 98;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -55,6 +55,7 @@ class Admin_Upgrade {
 			'extra'                => [],
 			'oven_midden'          => 1100,
 			'oven_hoog'            => 1200,
+			'weken_werkplek'       => 5,
 		];
 		$default_setup   = [
 			'sleutel'            => '',

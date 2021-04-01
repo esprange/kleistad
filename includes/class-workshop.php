@@ -28,7 +28,7 @@ use Exception;
  * @property array  technieken
  * @property string organisatie
  * @property string organisatie_adres
- * @property stirng organisatie_email
+ * @property string organisatie_email
  * @property string contact
  * @property string email
  * @property string telnr
@@ -120,7 +120,7 @@ class Workshop extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		if ( preg_match( '~(datum|start_tijd|eind_tijd)~', $attribuut ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
@@ -149,7 +149,7 @@ class Workshop extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'technieken':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
@@ -225,7 +225,7 @@ class Workshop extends Artikel {
 	 * @global object $wpdb     WordPress database.
 	 * @return int Het workshop id.
 	 */
-	public function save() {
+	public function save() : int {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
 		$this->id         = $wpdb->insert_id;
@@ -259,6 +259,7 @@ class Workshop extends Artikel {
 	 * Geef de workshop status in tekstvorm terug.
 	 *
 	 * @param bool $uitgebreid Of er een uitgebreide versie geleverd moet worden.
+	 * @return string
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	public function geef_statustekst( bool $uitgebreid = false ) : string {
@@ -271,7 +272,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return Orderregel De regel.
 	 */
-	protected function geef_factuurregels() {
+	protected function geef_factuurregels() : Orderregel {
 		return new Orderregel( "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ) . ", {$this->aantal} deelnemers", 1, $this->kosten );
 	}
 
@@ -280,7 +281,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return bool True als betaald.
 	 */
-	public function is_betaald() {
+	public function is_betaald() : bool {
 		$order = new Order( $this->geef_referentie() );
 		return $order->gesloten;
 	}
@@ -292,9 +293,9 @@ class Workshop extends Artikel {
 	 *
 	 * @param string $type bevestiging of betaling.
 	 * @param string $factuur Een bij te sluiten factuur.
-	 * @return boolean succes of falen van verzending email.
+	 * @return bool succes of falen van verzending email.
 	 */
-	public function verzend_email( $type, $factuur = '' ) {
+	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer          = new Email();
 		$email_parameters = [
 			'to'          => "{$this->contact} <{$this->email}>",

@@ -67,12 +67,14 @@ class WorkshopActie {
 		$this->workshop->verzend_email( '_betaling', $this->workshop->bestel_order( 0.0, $this->workshop->datum ) );
 	}
 
-		/**
-		 * Bevestig de workshop.
-		 *
-		 * @since 5.0.0
-		 */
-	public function bevestig() {
+	/**
+	 * Bevestig de workshop.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @return bool
+	 */
+	public function bevestig() : bool {
 		$herbevestiging             = $this->workshop->definitief;
 		$this->workshop->definitief = true;
 		$this->workshop->save();

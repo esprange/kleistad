@@ -27,7 +27,7 @@ class Stoken implements Countable, Iterator {
 	 *
 	 * @var array $stoken De stoken.
 	 */
-	private $stoken = [];
+	private array $stoken = [];
 
 	/**
 	 * Intere index

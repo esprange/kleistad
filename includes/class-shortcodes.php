@@ -210,7 +210,7 @@ class Shortcodes {
 	 * @param string $shortcode De shortcode.
 	 * @return bool Of er toegang is.
 	 */
-	public function check_access( $shortcode ) {
+	public function check_access( string $shortcode ) : bool {
 		$access = $this->definities[ $shortcode ]->access;
 		if ( ! empty( $access ) ) {
 			$gebruiker = wp_get_current_user();

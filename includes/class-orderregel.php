@@ -51,10 +51,10 @@ class Orderregel {
 	/**
 	 * Constructor
 	 *
-	 * @param string $artikel De artikel titel.
-	 * @param float  $aantal  Het aantal artikelen.
-	 * @param float  $bedrag  Het bedrag inclusief btw als btw is null.
-	 * @param float  $btw     Als ongelijk null dan de btw.
+	 * @param string     $artikel De artikel titel.
+	 * @param float      $aantal  Het aantal artikelen.
+	 * @param float      $bedrag  Het bedrag inclusief btw als btw is null.
+	 * @param float|null $btw     Als ongelijk null dan de btw.
 	 */
 	public function __construct( string $artikel, float $aantal, float $bedrag, float $btw = null ) {
 		$btw_percentage = 0.21;

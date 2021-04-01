@@ -120,7 +120,7 @@ class Inschrijving extends Artikel {
 	 * @param int $cursus_id id van de cursus.
 	 * @param int $klant_id  wp user id van de cursist.
 	 */
-	public function __construct( $cursus_id, $klant_id ) {
+	public function __construct( int $cursus_id, int $klant_id ) {
 		$this->cursus                = new Cursus( $cursus_id );
 		$this->klant_id              = $klant_id;
 		$this->default_data['code']  = "C$cursus_id-$klant_id";
@@ -141,7 +141,7 @@ class Inschrijving extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
 	}
 
@@ -153,7 +153,7 @@ class Inschrijving extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		$this->data[ $attribuut ] = $waarde;
 	}
 
@@ -185,7 +185,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string De melding.
 	 */
-	public function heeft_restant() {
+	public function heeft_restant() : string {
 		if ( ! $this->cursus->is_binnenkort() && 0 < $this->cursus->inschrijfkosten ) {
 			return self::OPM_INSCHRIJVING;
 		}
@@ -197,7 +197,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string Het aantal.
 	 */
-	public function toon_aantal() {
+	public function toon_aantal() : string {
 		$aantal = $this->aantal - count( $this->extra_cursisten );
 		return ( 1 < $aantal ) ? " ($aantal)" : '';
 	}
@@ -220,7 +220,7 @@ class Inschrijving extends Artikel {
 	 * @param string $factuur Een bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function verzend_email( $type, $factuur = '' ) {
+	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer = new Email();
 		$cursist = get_userdata( $this->klant_id );
 		$slug    = "cursus$type";
@@ -312,7 +312,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string De melding.
 	 */
-	private function heeft_extra_cursisten() {
+	private function heeft_extra_cursisten() : string {
 		if ( $this->aantal > 1 ) {
 			$link   = $this->maak_link( [ 'code' => $this->code ], 'extra_cursisten' );
 			$tekst  = sprintf(

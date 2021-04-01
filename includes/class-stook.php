@@ -25,7 +25,7 @@ class Stook {
 	 */
 	const ONDERHOUD = 'Onderhoud';
 	const GLAZUUR   = 'Glazuur';
-	const BISCUIT   = 'B]iscuit';
+	const BISCUIT   = 'Biscuit';
 	const OVERIG    = 'Overig';
 
 	/**
@@ -104,7 +104,7 @@ class Stook {
 	/**
 	 * De interne sleutel van de stook
 	 *
-	 * @var int $stook_id Het database id.
+	 * @var int|null $stook_id Het database id.
 	 */
 	private ?int $stook_id = 0;
 
@@ -219,8 +219,10 @@ class Stook {
 
 	/**
 	 * Geef de status terug van de reservering.
+	 *
+	 * @return string De status tekst.
 	 */
-	public function geef_statustekst() {
+	public function geef_statustekst() : string {
 		if ( ! boolval( $this->stook_id ) ) {
 			if ( $this->datum >= strtotime( 'today' ) || is_super_admin() ) {
 				return self::RESERVEERBAAR;

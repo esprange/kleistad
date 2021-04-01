@@ -244,7 +244,7 @@ class Order {
 	 * @return int De order id.
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function save( $reden ) : int {
+	public function save( string $reden ) : int {
 		global $wpdb;
 		$historie               = $this->historie;
 		$historie[]             = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
@@ -265,17 +265,7 @@ class Order {
 		if ( $this->transactie_id && -0.01 > $this->te_betalen() ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
 			$betalen = new Betalen();
-			$result  = $betalen->terugstorting( $this->transactie_id, $this->referentie, - $this->te_betalen(), 'Kleistad: zie factuur ' . $this->factuurnummer() );
-			add_filter(
-				'kleistad_melding',
-				function( $html ) use ( $result ) {
-					return $html . melding(
-						$result ? 1 : -1,
-						$result ? 'er is opdracht gegeven om het terug te betalen bedrag over te maken' :
-						'de opdracht om het bedrag terug te storten is niet mogelijk. Probeer het per bank over te maken'
-					);
-				}
-			);
+			$betalen->terugstorting( $this->transactie_id, $this->referentie, - $this->te_betalen(), 'Kleistad: zie factuur ' . $this->factuurnummer() );
 		}
 		return $this->id;
 	}

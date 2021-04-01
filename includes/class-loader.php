@@ -24,7 +24,7 @@ class Loader {
 	 * @access   protected
 	 * @var      array    $actions    De geregistreerde acties.
 	 */
-	protected $actions;
+	protected array $actions;
 
 	/**
 	 * Het array van plugin filters.
@@ -33,7 +33,7 @@ class Loader {
 	 * @access   protected
 	 * @var      array    $filters    De geregistreerde filters.
 	 */
-	protected $filters;
+	protected array $filters;
 
 	/**
 	 * De constructor, initializeer de collecties.
@@ -55,7 +55,7 @@ class Loader {
 	 * @param    int    $priority         Optioneel. De prioriteit. Default is 10.
 	 * @param    int    $accepted_args    Optioneel. Het aantal argumenten dat door wordt gegeven aan de callback. Default is 1.
 	 */
-	public function add_action( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
+	public function add_action( string $hook, object $component, string $callback, int $priority = 10, int $accepted_args = 1 ) {
 		$this->actions = $this->add( $this->actions, $hook, $component, $callback, $priority, $accepted_args );
 	}
 
@@ -69,7 +69,7 @@ class Loader {
 	 * @param    int    $priority         Optioneel. De prioriteit. Default is 10.
 	 * @param    int    $accepted_args    Optioneel. Het aantal argumenten dat door wordt gegeven aan de callback. Default is 1.
 	 */
-	public function add_filter( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
+	public function add_filter( string $hook, object $component, string $callback, int $priority = 10, int $accepted_args = 1 ) {
 		$this->filters = $this->add( $this->filters, $hook, $component, $callback, $priority, $accepted_args );
 	}
 
@@ -86,7 +86,7 @@ class Loader {
 	 * @param    int    $accepted_args    Het aantal argumenten.
 	 * @return   array                    De collectie.
 	 */
-	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
+	private function add( array $hooks, string $hook, object $component, string $callback, int $priority, int $accepted_args ) : array {
 		$hooks[] = array(
 			'hook'          => $hook,
 			'component'     => $component,

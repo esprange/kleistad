@@ -28,7 +28,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param array $data de gevalideerde data.
 	 * @return WP_ERROR|bool
 	 */
-	abstract protected function validate( &$data );
+	abstract protected function validate( array &$data );
 
 	/**
 	 * Save functie, wordt gebruikt bij formulieren.
@@ -37,7 +37,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return array
 	 */
-	abstract protected function save( $data );
+	abstract protected function save( array $data );
 
 	/**
 	 * Enqueue nu ook de form specieke javascript.
@@ -56,7 +56,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param array $input de ingevoerde data.
 	 * @return bool|WP_Error
 	 */
-	protected function validate_gebruiker( $input ) {
+	protected function validate_gebruiker( array &$input ) {
 		$error = new WP_Error();
 		if ( ! $this->validate_email( $input['user_email'] ) ) {
 			$error->add( 'verplicht', "De invoer {$input['user_email']} is geen geldig E-mail adres." );
@@ -93,7 +93,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param string $telnr het telefoonnummer, inclusief spaties, streepjes etc.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	protected function validate_telnr( &$telnr ) {
+	protected function validate_telnr( string &$telnr ) : bool {
 		if ( empty( $telnr ) ) {
 			return true;
 		}
@@ -109,7 +109,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param string $pcode de postcode, inclusief spaties, streepjes etc.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	protected function validate_pcode( &$pcode ) {
+	protected function validate_pcode( string &$pcode ) : bool {
 		if ( empty( $pcode ) ) {
 			return true;
 		}
@@ -124,9 +124,9 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param string $naam de naam.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	protected function validate_naam( $naam ) {
-		$naam = preg_replace( '/[^a-zA-Z\s]/', '', $naam );
-		return ! empty( $naam );
+	protected function validate_naam( string $naam ) : bool {
+		$result = preg_match( "/^(['a-zA-Z])(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/", htmlspecialchars_decode( remove_accents( $naam ), ENT_QUOTES ) );
+		return $result;
 	}
 
 	/**
@@ -136,7 +136,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param string $email het email adres.
 	 * @return bool if false, dan niet gevalideerd.
 	 */
-	protected function validate_email( &$email ) {
+	protected function validate_email( string &$email ) : bool {
 		$email = strtolower( $email );
 		return filter_var( $email, FILTER_VALIDATE_EMAIL );
 	}

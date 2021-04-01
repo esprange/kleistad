@@ -197,20 +197,25 @@ class Public_Debiteuren extends ShortcodeForm {
 		switch ( $data['input']['debiteur_actie'] ) {
 			case 'bankbetaling':
 				if ( $data['input']['ontvangst'] ) {
-					$artikel->betaling->verwerk( $data['input']['id'], (float) $data['input']['ontvangst'], true, 'bank' );
+					$artikel->betaling->verwerk( $order->id, (float) $data['input']['ontvangst'], true, 'bank' );
 				}
 				if ( $data['input']['terugstorting'] ) {
-					$artikel->betaling->verwerk( $data['input']['id'], - (float) $data['input']['terugstorting'], true, 'bank' );
+					$artikel->betaling->verwerk( $order->id, - (float) $data['input']['terugstorting'], true, 'bank' );
 				}
 				$status = 'De betaling is verwerkt';
 				break;
 			case 'annulering':
+				$restant = (float) $data['input']['restant'];
+				$melding = '';
+				if ( $order->betaald - $restant > 0 ) {
+					$melding = $order->transactie_id ? 'Er wordt een stornering gedaan' : 'Het teveel betaalde moet per bank teruggestort worden';
+				}
 				$emailer->send(
 					[
 						'to'          => $order->klant['email'],
 						'slug'        => 'order_annulering',
 						'subject'     => 'Order geannuleerd',
-						'attachments' => $artikel->annuleer_order( $data['input']['id'], (float) $data['input']['restant'], $data['input']['opmerking_annulering'] ),
+						'attachments' => $artikel->annuleer_order( $order->id, $restant, $data['input']['opmerking_annulering'] ),
 						'parameters'  => [
 							'naam'        => $order->klant['naam'],
 							'artikel'     => $artikel->geef_artikelnaam(),
@@ -219,7 +224,7 @@ class Public_Debiteuren extends ShortcodeForm {
 						],
 					]
 				);
-				$status = 'De annulering is verwerkt en een bevestiging is verstuurd';
+				$status = "De annulering is verwerkt en een bevestiging is verstuurd. $melding";
 				break;
 			case 'korting':
 				$emailer->send(

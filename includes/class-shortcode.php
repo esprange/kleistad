@@ -26,12 +26,12 @@ abstract class Shortcode {
 	 *
 	 * @var string shortcode (zonder kleistad-)
 	 */
-	protected $shortcode;
+	protected string $shortcode;
 
 	/**
 	 * De parameters welke gebruikt worden in de aanroep van de shortcode.
 	 *
-	 * @var array shortcode parameters
+	 * @var array|string shortcode parameters
 	 */
 	protected $atts;
 
@@ -40,7 +40,7 @@ abstract class Shortcode {
 	 *
 	 * @var array plugin options
 	 */
-	protected $options;
+	protected array $options;
 
 	/**
 	 * File handle voor download bestanden
@@ -54,7 +54,7 @@ abstract class Shortcode {
 	 *
 	 * @var array de lijst.
 	 */
-	private static $shortcode_lijst = [];
+	private static array $shortcode_lijst = [];
 
 	/**
 	 * Abstract definitie van de prepare functie
@@ -64,7 +64,7 @@ abstract class Shortcode {
 	 * @param array $data de data die voorbereid moet worden voor display.
 	 * @return WP_Error|bool
 	 */
-	abstract protected function prepare( &$data);
+	abstract protected function prepare( array &$data);
 
 	/**
 	 * Enqueue the scripts and styles for the shortcode.
@@ -110,9 +110,8 @@ abstract class Shortcode {
 	 * @return string html tekst.
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function display( &$data = [ 'actie' => '-' ] ) {
+	protected function display( array &$data = [ 'actie' => '-' ] ) : string {
 		$this->enqueue();
-		$html = apply_filters( 'kleistad_melding', '' );
 		try {
 			$betalen       = new Betalen();
 			$betaal_result = $betalen->controleer();
@@ -130,20 +129,13 @@ abstract class Shortcode {
 			if ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
 				return $this->status( $betaal_result ) . $html;
 			}
+			return $html; // Er is geen betaling, toon de reguliere inhoud van de shortcode.
 		} catch ( Kleistad_Exception $exceptie ) {
-			$html = $this->status( new WP_Error( 'exceptie', $exceptie->getMessage() ) );
+			return $this->status( new WP_Error( 'exceptie', $exceptie->getMessage() ) );
 		} catch ( Exception $exceptie ) {
 			error_log( $exceptie->getMessage() ); //phpcs:ignore
-			$html = $this->status( new WP_Error( 'exceptie', 'Er is een onbekende fout opgetreden' ) );
+			return $this->status( new WP_Error( 'exceptie', 'Er is een onbekende fout opgetreden' ) );
 		}
-		$betalen       = new Betalen();
-		$betaal_result = $betalen->controleer();
-		if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
-			return $this->status( $betaal_result ) . $this->goto_home();
-		} elseif ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
-			return $this->status( $betaal_result ) . $html;
-		}
-		return $html; // Er is geen betaling, toon de reguliere inhoud van de shortcode.
 	}
 
 	/**
@@ -152,8 +144,9 @@ abstract class Shortcode {
 	 * @since 5.7.0
 	 *
 	 * @param string | array | WP_Error $result Het resultaat dat getoond moet worden.
+	 * @return string Html tekst.
 	 */
-	public function status( $result ) {
+	public function status( $result ) : string {
 		$html = '';
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
@@ -175,7 +168,7 @@ abstract class Shortcode {
 	 * @return string
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function goto_home() {
+	public function goto_home() : string {
 		if ( ! is_user_logged_in() ) {
 			$url = home_url();
 		} elseif ( current_user_can( BESTUUR ) ) {
@@ -309,10 +302,10 @@ abstract class Shortcode {
 			];
 			return new WP_REST_Response( [ 'content' => $shortcode->display( $data ) ] );
 		} catch ( Kleistad_Exception $exceptie ) {
-			return new WP_REST_Response( [ 'status'->$shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
+			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
 		} catch ( Exception $exceptie ) {
 			error_log( $exceptie->GetMessage() ); // phpcs:ignore
-			return new WP_REST_Response( [ 'status'->$shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
+			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
 		}
 	}
 
@@ -376,10 +369,10 @@ abstract class Shortcode {
 			}
 			return new WP_REST_Response( self::download( $shortcode, $request->get_param( 'actie' ) ) );
 		} catch ( Kleistad_Exception $exceptie ) {
-			return new WP_REST_Response( [ 'status'->$shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
+			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
 		} catch ( Exception $exceptie ) {
 			error_log( $exceptie->GetMessage() ); // phpcs:ignore
-			return new WP_REST_Response( [ 'status'->$shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
+			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
 		}
 	}
 
@@ -387,8 +380,10 @@ abstract class Shortcode {
 	 * Toon de uitvoer van de shortcode, eventueel voorafgegaan door een melding van een betaal status.
 	 *
 	 * @since 4.5.1
+	 *
+	 * @return string De uitvoer.
 	 */
-	public function run() {
+	public function run() : string {
 		return $this->display();
 	}
 

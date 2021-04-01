@@ -218,8 +218,8 @@ class WerkplekConfigs implements Countable, Iterator {
 	/**
 	 * Vind de config obv datums
 	 *
-	 * @param int $datum       De start datum of de datums waarvoor een configuratie gezocht wordt .
-	 * @param int $eind_datum  De eind datum of null.
+	 * @param int      $datum       De start datum of de datums waarvoor een configuratie gezocht wordt .
+	 * @param int|null $eind_datum  De eind datum of null.
 	 * @return WerkplekConfig|bool
 	 */
 	public function find( int $datum, ?int $eind_datum = null ) {

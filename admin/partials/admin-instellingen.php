@@ -91,6 +91,11 @@ namespace Kleistad;
 			<td><input type="number" min="0"  name="kleistad-opties[oven_hoog]"
 					value="<?php echo esc_attr( $this->options['oven_hoog'] ); ?>" class="small-text" /></td>
 		</tr>
+		<tr >
+			<th scope="row">Aantal weken vooruit dat werkplekken gereserveerd kunnen worden</th>
+			<td><input type="number" min="1"  name="kleistad-opties[weken_werkplek]"
+					value="<?php echo esc_attr( $this->options['weken_werkplek'] ); ?>" class="small-text" /></td>
+		</tr>
 
 		</table>
 	<?php submit_button(); ?>

@@ -26,7 +26,7 @@ class Workshops implements Countable, Iterator {
 	 *
 	 * @var array $workshops De workshops.
 	 */
-	private $workshops = [];
+	private array $workshops = [];
 
 	/**
 	 * Intere index

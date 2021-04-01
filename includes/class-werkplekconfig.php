@@ -70,7 +70,7 @@ class WerkplekConfig {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		return array_key_exists( $attribuut, $this->config ) ? $this->config[ $attribuut ] : null;
 	}
 
@@ -83,7 +83,7 @@ class WerkplekConfig {
 	 * @param mixed  $waarde Attribuut waarde.
 	 * @return void
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		$this->config[ $attribuut ] = $waarde;
 	}
 
@@ -108,7 +108,7 @@ class WerkplekConfig {
 	 *
 	 * @return array
 	 */
-	public function geef_atelierdagen() {
+	public function geef_atelierdagen() : array {
 		$dagen = [];
 		for ( $dagteller = 0; $dagteller < 7; $dagteller++ ) {
 			$dagen[] = strftime( '%A', strtotime( "next Monday +$dagteller days" ) );

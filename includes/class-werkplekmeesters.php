@@ -20,7 +20,7 @@ namespace Kleistad;
  */
 class WerkplekMeesters {
 
-	/**
+	/**]
 	 * De atelier dag
 	 *
 	 * @var int $datum De atelier dag.
@@ -56,7 +56,7 @@ class WerkplekMeesters {
 	 *
 	 * @return array De ad_hoc werkplaats meester ids.
 	 */
-	public function geef() {
+	public function geef() : array {
 		return $this->meesters;
 	}
 
@@ -66,7 +66,7 @@ class WerkplekMeesters {
 	 * @param string $dagdeel    Het dagdeel.
 	 * @param int    $meester_id Het id van de meester.
 	 */
-	public function wijzig( string $dagdeel, $meester_id ) {
+	public function wijzig( string $dagdeel, int $meester_id ) {
 		$this->meesters[ $dagdeel ] = $meester_id;
 		$this->save();
 	}

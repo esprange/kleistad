@@ -31,8 +31,9 @@ class Public_Werkplek extends Shortcode {
 			return [];
 		}
 		$datums         = [];
+		$weken          = opties()['weken_werkplek'];
 		$vandaag        = strtotime( 'today' );
-		$driemaand      = strtotime( '+3 month', $vandaag );
+		$driemaand      = strtotime( "+$weken weeks", $vandaag );
 		$werkplekconfig = $werkplekconfigs->find( $vandaag ) ?: new WerkplekConfig();
 		for ( $dagteller = $vandaag; $dagteller < $driemaand; $dagteller += DAY_IN_SECONDS ) {
 			$werkplekken = 0;

@@ -77,7 +77,7 @@ class WorkshopBetaling implements ArtikelBetaling {
 	 * @param string $type         Type betaling, ideal , directdebit of bank.
 	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk( $order_id, $bedrag, $betaald, $type, $transactie_id = '' ) {
+	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald && $order_id ) {
 			/**
 			 * Bij workshops is er altijd eerst een factuur verstuurd

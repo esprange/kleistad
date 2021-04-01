@@ -23,7 +23,7 @@ class OmzetRapport extends FPDF {
 	 *
 	 * @param string $titel De titel van de pagina.
 	 */
-	private function start( $titel ) {
+	private function start( string $titel ) {
 		$this->SetLeftMargin( 25 );
 		$this->AddPage();
 		$this->setFont( 'Arial', 'B', 24 );
@@ -49,7 +49,7 @@ class OmzetRapport extends FPDF {
 	 *
 	 * @param array $omzet De omzet.
 	 */
-	private function tabel( $omzet ) {
+	private function tabel( array $omzet ) {
 		$this->SetY( 75 );
 		$this->SetLeftMargin( 25 );
 		$hoogte = 8;
@@ -86,7 +86,7 @@ class OmzetRapport extends FPDF {
 	 * @param string $naam         De omzet naam.
 	 * @param array  $omzetdetails De details.
 	 */
-	private function details( $naam, $omzetdetails ) {
+	private function details( string $naam, array $omzetdetails ) {
 		$this->setFont( 'Arial', 'B', 20 );
 		$this->Cell( 0, 24, $naam );
 		$this->SetY( 50 );
@@ -116,7 +116,7 @@ class OmzetRapport extends FPDF {
 	 * @param int $jaar  De jaar van het rapport.
 	 * @return string Pad naar het rapport.
 	 */
-	public function run( $maand, $jaar ) {
+	public function run( int $maand, int $jaar ) : string {
 		$upload_dir = wp_get_upload_dir();
 		$rapportage = new Orderrapportage();
 		$file       = sprintf( 'omzet_%d-%d-%s.pdf', $jaar, $maand, uniqid() );

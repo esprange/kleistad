@@ -30,7 +30,7 @@ const INTERN    = 'intern';
  * @param array $userdata De gebruiker gegevens, inclusief contact informatie.
  * @return int|WP_Error  De user_id of een error object.
  */
-function upsert_user( $userdata ) {
+function upsert_user( array $userdata ) {
 	if ( is_null( $userdata['ID'] ) ) {
 		$userdata['role']          = '';
 		$userdata['user_login']    = $userdata['user_email'];
@@ -46,7 +46,7 @@ function upsert_user( $userdata ) {
  *
  * @param int $datum De datum in unix time.
  */
-function zet_blokkade( $datum ) {
+function zet_blokkade( int $datum ) {
 	update_option( 'kleistad_blokkade', $datum );
 }
 
@@ -55,7 +55,7 @@ function zet_blokkade( $datum ) {
  *
  * @return int $datum De datum in unix time.
  */
-function get_blokkade() {
+function get_blokkade() : int {
 	return (int) get_option( 'kleistad_blokkade', strtotime( '1-1-2020' ) );
 }
 
@@ -65,7 +65,7 @@ function get_blokkade() {
  * @since     4.4.0
  * @return    array    De opties.
  */
-function opties() {
+function opties() : array {
 	static $opties = [];
 	if ( empty( $opties ) ) {
 		$opties = get_option( 'kleistad-opties', [] );
@@ -95,7 +95,7 @@ function melding( int $status, string $bericht ) : string {
  * @since     6.2.1
  * @return    array    De setup opties.
  */
-function setup() {
+function setup() : array {
 	static $setup = [];
 	if ( empty( $setup ) ) {
 		$setup = get_option( 'kleistad-setup', [] );
@@ -108,7 +108,7 @@ function setup() {
  *
  * @return string url voor endpoints
  */
-function base_url() {
+function base_url() : string {
 	return rest_url( KLEISTAD_API );
 }
 
@@ -127,7 +127,7 @@ class Kleistad {
 	 * @access   protected
 	 * @var      Loader    $loader    Beheert en registreert alle hooks van de plugin.
 	 */
-	protected $loader;
+	protected Loader $loader;
 
 	/**
 	 * De huidige versie van de plugin.
@@ -136,7 +136,7 @@ class Kleistad {
 	 * @access   protected
 	 * @var      string    $version    De versie.
 	 */
-	protected $version;
+	protected string $version;
 
 	/**
 	 * Constructor
@@ -184,8 +184,8 @@ class Kleistad {
 		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'instantiate_background' );
 		$this->loader->add_action( 'update_option_kleistad-setup', $plugin_admin, 'setup_gewijzigd', 10, 2 );
 		$this->loader->add_action( 'manage_kleistad_email_posts_custom_column', $plugin_admin, 'email_posts_custom_column', 10, 2 );
-		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_admin, 'register_exporter', 10 );
-		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_admin, 'register_eraser', 10 );
+		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_admin, 'register_exporter' );
+		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_admin, 'register_eraser' );
 		$this->loader->add_filter( 'pre_set_site_transient_update_plugins', $plugin_admin, 'check_update' );
 		$this->loader->add_filter( 'plugins_api', $plugin_admin, 'check_info', 20, 3 );
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin, 'post_row_actions', 10, 2 );
@@ -261,7 +261,7 @@ class Kleistad {
 	 * @since     4.0.87
 	 * @return    Loader    de loader.
 	 */
-	public function get_loader() {
+	public function get_loader() : Loader {
 		return $this->loader;
 	}
 
@@ -271,7 +271,7 @@ class Kleistad {
 	 * @since     4.0.87
 	 * @return    string    De versie.
 	 */
-	public function get_version() {
+	public function get_version() : string {
 		return $this->version;
 	}
 

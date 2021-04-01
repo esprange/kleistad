@@ -23,7 +23,7 @@ class Presentielijst extends FPDF {
 	 *
 	 * @param string $titel De titel van de pagina.
 	 */
-	private function start( $titel ) {
+	private function start( string $titel ) {
 		$this->SetLeftMargin( 25 );
 		$this->AddPage();
 		$this->setFont( 'Arial', 'B', 24 );
@@ -41,7 +41,7 @@ class Presentielijst extends FPDF {
 	 * @param array $cursisten De namen van de cursisten.
 	 * @param array $lesdatums De lesdatums.
 	 */
-	private function matrix( $cursisten, $lesdatums ) {
+	private function matrix( array $cursisten, array $lesdatums ) {
 		$this->SetY( 45 );
 		$this->SetLeftMargin( 25 );
 		$fontheight = 8;
@@ -72,7 +72,7 @@ class Presentielijst extends FPDF {
 	 * @param array  $cursisten De namen van de cursisten.
 	 * @return string Pad naar de presentielijst.
 	 */
-	public function run( $cursus, $cursisten ) {
+	public function run( Cursus $cursus, array $cursisten ) : string {
 		$upload_dir = wp_get_upload_dir();
 		$file       = sprintf( '%s-%s.pdf', $cursus->code, uniqid() );
 		$this->SetCreator( get_site_url() );

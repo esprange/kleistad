@@ -26,7 +26,7 @@ class Inschrijvingen implements Countable, Iterator {
 	 *
 	 * @var array $inschrijvingen De inschrijvingen.
 	 */
-	private $inschrijvingen = [];
+	private array $inschrijvingen = [];
 
 	/**
 	 * Intere index
@@ -38,7 +38,7 @@ class Inschrijvingen implements Countable, Iterator {
 	/**
 	 * De constructor
 	 *
-	 * @param int $select_cursus_id De cursus id.
+	 * @param int|null $select_cursus_id De cursus id.
 	 */
 	public function __construct( int $select_cursus_id = null ) {
 		$cursisten = get_users(

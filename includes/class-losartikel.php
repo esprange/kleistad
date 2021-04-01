@@ -39,7 +39,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @var array $orderregels De regels.
 	 */
-	private $orderregels = [];
+	private array $orderregels = [];
 
 	/**
 	 * De constructor
@@ -48,7 +48,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @param int $verkoop_id Een uniek id van de verkoop.
 	 */
-	public function __construct( $verkoop_id ) {
+	public function __construct( int $verkoop_id ) {
 		$this->data     = [
 			'klant' => [],
 			'prijs' => 0.0,
@@ -65,7 +65,7 @@ class LosArtikel extends Artikel {
 	 * @param string $attribuut Het attribuut waarvan de waarde wordt opgevraagd.
 	 * @return mixed De waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		return $this->data[ $attribuut ];
 	}
 
@@ -77,7 +77,7 @@ class LosArtikel extends Artikel {
 	 * @param string $attribuut Het attribuut waarvan de waarde wordt aangepast.
 	 * @param mixed  $waarde De nieuwe waarde.
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
 	}
 
@@ -106,9 +106,9 @@ class LosArtikel extends Artikel {
 	 *
 	 * @param string $type    Direct betaald of melding van storting.
 	 * @param string $factuur Een bij te sluiten factuur.
-	 * @return boolean succes of falen van verzending email.
+	 * @return bool succes of falen van verzending email.
 	 */
-	public function verzend_email( $type = '', $factuur = '' ) {
+	public function verzend_email( $type = '', $factuur = '' ) : bool {
 		$emailer = new Email();
 		return $emailer->send(
 			[
@@ -132,7 +132,7 @@ class LosArtikel extends Artikel {
 	 * @param float  $aantal  Het aantal artikelen.
 	 * @param float  $prijs   De bruto prijs per artikel.
 	 */
-	public function bestelregel( $artikel, $aantal, $prijs ) {
+	public function bestelregel( string $artikel, float $aantal, float $prijs ) {
 		$this->orderregels[] = new Orderregel( $artikel, $aantal, $prijs );
 		$this->prijs        += $aantal * $prijs;
 	}
@@ -142,7 +142,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return array
 	 */
-	protected function geef_factuurregels() {
+	protected function geef_factuurregels() : array {
 		return $this->orderregels;
 	}
 

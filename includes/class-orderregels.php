@@ -26,7 +26,7 @@ class Orderregels implements Countable, Iterator {
 	 *
 	 * @var array $regels De regels.
 	 */
-	private $regels = [];
+	private array $regels = [];
 
 	/**
 	 * Intere index
@@ -38,7 +38,7 @@ class Orderregels implements Countable, Iterator {
 	/**
 	 * De constructor
 	 *
-	 * @param string $json_string Een optionele string om de regels mee te laden.
+	 * @param string|null $json_string Een optionele string om de regels mee te laden.
 	 */
 	public function __construct( string $json_string = null ) {
 		if ( is_string( $json_string ) ) {

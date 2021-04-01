@@ -162,7 +162,7 @@ class InschrijvingActie {
 	 *
 	 * @return string
 	 */
-	public function aanvraag() {
+	public function aanvraag() : string {
 		if ( $this->inschrijving->cursus->vol ) {
 			$this->inschrijving->verzend_email( '_wachtlijst' );
 			return 'De inschrijving is op de wachtlijst en er is een email verzonden met nadere informatie';

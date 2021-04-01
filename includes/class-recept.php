@@ -28,7 +28,7 @@ class Recept {
 	 *
 	 * @var array De objecten.
 	 */
-	private static $hoofdtermen;
+	private static array $hoofdtermen;
 
 	/**
 	 * Initialiseer de recepten als custom post type.
@@ -96,7 +96,7 @@ class Recept {
 			 * @param array  $arr
 			 * @return string
 			 */
-			function( $output, $arr ) {
+			function( string $output, array $arr ) : string {
 				if ( self::CATEGORY === $arr['taxonomy'] ) {
 					return preg_replace( '^' . preg_quote( '<select ' ) . '^', '<select required ', $output ); // phpcs:ignore
 				}
@@ -125,7 +125,7 @@ class Recept {
 	 *
 	 * @return array De hoofdterm objecten.
 	 */
-	public static function hoofdtermen() {
+	public static function hoofdtermen(): array {
 		return self::$hoofdtermen;
 	}
 }

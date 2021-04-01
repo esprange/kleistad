@@ -33,7 +33,7 @@ class Saldo extends Artikel {
 	 * @access private
 	 * @var array $default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
 	 */
-	private $default_data = [
+	private array $default_data = [
 		'storting' => [
 			[],
 		],
@@ -46,7 +46,7 @@ class Saldo extends Artikel {
 	 * @access public
 	 * @var string $reden De reden.
 	 */
-	public $reden;
+	public string $reden;
 
 	/**
 	 * Het actie object
@@ -69,7 +69,7 @@ class Saldo extends Artikel {
 	 *
 	 * @param int $klant_id De gebruiker waarvoor het saldo wordt gemaakt.
 	 */
-	public function __construct( $klant_id ) {
+	public function __construct( int $klant_id ) {
 		$this->klant_id = $klant_id;
 		$saldo          = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: $this->default_data;
 		$this->data     = wp_parse_args( $saldo, $this->default_data );
@@ -85,7 +85,7 @@ class Saldo extends Artikel {
 	 * @param string $attribuut Het attribuut waarvan de waarde wordt opgevraagd.
 	 * @return mixed De waarde.
 	 */
-	public function &__get( $attribuut ) {
+	public function &__get( string $attribuut ) {
 		if ( array_key_exists( $attribuut, $this->data ) ) {
 			return $this->data[ $attribuut ];
 		}
@@ -93,7 +93,8 @@ class Saldo extends Artikel {
 		if ( array_key_exists( $attribuut, $laatste_storting ) ) {
 			return $laatste_storting[ $attribuut ];
 		}
-		return null;
+		$null = null; // nodig omdat de waarde by reference teruggegeven moet worden.
+		return $null;
 	}
 
 	/**
@@ -104,7 +105,7 @@ class Saldo extends Artikel {
 	 * @param string $attribuut Het attribuut waarvan de waarde wordt aangepast.
 	 * @param mixed  $waarde De nieuwe waarde.
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		if ( 'bedrag' === $attribuut ) {
 			$this->data[ $attribuut ] = round( $waarde, 2 );
 			return;
@@ -130,7 +131,7 @@ class Saldo extends Artikel {
 	 * @param string $factuur Een bij te sluiten factuur.
 	 * @return boolean succes of falen van verzending email.
 	 */
-	public function verzend_email( $type, $factuur = '' ) {
+	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer   = new Email();
 		$gebruiker = get_userdata( $this->klant_id );
 		return $emailer->send(
@@ -157,7 +158,7 @@ class Saldo extends Artikel {
 	 *
 	 * @return bool True als saldo is aangepast.
 	 */
-	public function save() {
+	public function save() : bool {
 		$saldo        = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$huidig_saldo = $saldo ? (float) $saldo['bedrag'] : 0.0;
 		if ( 0.01 > abs( $huidig_saldo - $this->bedrag ) ) {
@@ -196,7 +197,7 @@ class Saldo extends Artikel {
 	 *
 	 * @return Orderregel
 	 */
-	protected function geef_factuurregels() {
+	protected function geef_factuurregels() : Orderregel {
 		return new Orderregel( 'stooksaldo', 1, $this->prijs );
 	}
 

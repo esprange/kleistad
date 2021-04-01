@@ -69,7 +69,7 @@ class Oven {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( $attribuut ) {
+	public function __get( string $attribuut ) {
 		switch ( $attribuut ) {
 			case 'beschikbaarheid':
 				return json_decode( $this->data[ $attribuut ], true );
@@ -95,7 +95,7 @@ class Oven {
 	 * @param mixed  $waarde Attribuut waarde.
 	 * @return void
 	 */
-	public function __set( $attribuut, $waarde ) {
+	public function __set( string $attribuut, $waarde ) {
 		switch ( $attribuut ) {
 			case 'beschikbaarheid':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
@@ -114,16 +114,15 @@ class Oven {
 	 * @return float De kosten.
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function stookkosten( $stoker_id, $percentage, $temperatuur ) {
-		$options    = opties();
+	public function stookkosten( int $stoker_id, float $percentage, int $temperatuur ) : float {
 		$regelingen = get_user_meta( $stoker_id, self::REGELING, true );
 		if ( 0 === $stoker_id ) {
 			$kosten = 0;
 		} elseif ( isset( $regelingen[ $this->data['id'] ] ) ) {
 			$kosten = $regelingen[ $this->data['id'] ];
-		} elseif ( $temperatuur < $options['oven_midden'] ) {
+		} elseif ( $temperatuur < opties()['oven_midden'] ) {
 			$kosten = $this->data['kosten_laag'];
-		} elseif ( $temperatuur < $options['oven_hoog'] ) {
+		} elseif ( $temperatuur < opties()['oven_hoog'] ) {
 			$kosten = $this->data['kosten_midden'];
 		} else {
 			$kosten = $this->data['kosten_hoog'];
@@ -139,7 +138,7 @@ class Oven {
 	 * @global object $wpdb WordPress database.
 	 * @return int Het id van de oven.
 	 */
-	public function save() {
+	public function save() : int {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_ovens", $this->data );
 		$this->id = $wpdb->insert_id;

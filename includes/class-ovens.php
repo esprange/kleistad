@@ -26,7 +26,7 @@ class Ovens implements Countable, Iterator {
 	 *
 	 * @var array $ovens De ovens.
 	 */
-	private $ovens = [];
+	private array $ovens = [];
 
 	/**
 	 * Intere index

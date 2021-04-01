@@ -26,7 +26,7 @@ class Stokers implements Countable, Iterator {
 	 *
 	 * @var array $stokers De gebruikers.
 	 */
-	protected $stokers = [];
+	protected array $stokers = [];
 
 	/**
 	 * Intere index

@@ -26,7 +26,7 @@ class Orders implements Countable, Iterator {
 	 *
 	 * @var array $orders De orders.
 	 */
-	private $orders = [];
+	private array $orders = [];
 
 	/**
 	 * Intere index
