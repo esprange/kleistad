@@ -276,7 +276,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.1.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		switch ( $data['form_actie'] ) {
 			case 'verwijderen':
 				/*

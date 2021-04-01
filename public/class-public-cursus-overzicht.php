@@ -179,7 +179,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 *
 	 * @since   5.4.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		if ( 'indelen' === $data['form_actie'] ) {
 			$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
 			$inschrijving->actie->indelen_lopend( (float) $data['input']['kosten'] );

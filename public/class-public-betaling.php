@@ -108,7 +108,7 @@ class Public_Betaling extends ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$data['artikel']->artikel_type = $data['input']['artikel_type'];
 			$ideal_uri                     = $data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->te_betalen() );

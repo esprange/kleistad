@@ -189,7 +189,7 @@ class Public_Email extends ShortcodeForm {
 	 *
 	 * @since   5.5.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$gebruiker = wp_get_current_user();
 		$emailer   = new Email();
 		if ( 'test_email' === $data['form_actie'] ) {

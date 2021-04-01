@@ -109,7 +109,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 *
 	 * @since   4.3.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$gebruiker_id = get_current_user_id();
 		if ( 0 === $gebruiker_id ) {
 			$gebruiker_id = email_exists( $data['input']['user_email'] );

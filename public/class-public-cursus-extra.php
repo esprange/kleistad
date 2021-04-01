@@ -151,7 +151,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 *
 	 * @since   6.6.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$extra_cursisten  = [];
 		$emails_verzonden = false;
 		foreach ( $data['input']['extra_cursist'] as $extra_cursist ) {

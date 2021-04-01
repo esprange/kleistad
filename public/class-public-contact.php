@@ -77,7 +77,7 @@ class Public_Contact extends ShortcodeForm {
 	 *
 	 * @since   6.3.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$emailer          = new Email();
 		$email_parameters = [
 			'to'         => "Kleistad <{$emailer->info}{$emailer->domein}>",

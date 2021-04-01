@@ -197,7 +197,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$cursus_id = $data['cursus']['cursus_id'];
 		$cursus    = $cursus_id > 0 ? new Cursus( $cursus_id ) : new Cursus();
 		if ( 'verwijderen' === $data['form_actie'] ) {

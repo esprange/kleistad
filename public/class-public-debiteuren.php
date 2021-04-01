@@ -181,7 +181,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array
 	 * @since   6.1.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		if ( 'blokkade' === $data['form_actie'] ) {
 			zet_blokkade( strtotime( '+3 month', get_blokkade() ) );
 			return [

@@ -108,7 +108,7 @@ class Public_Registratie extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$result = wp_update_user(
 			(object) [
 				'ID'         => $data['gebruiker_id'],

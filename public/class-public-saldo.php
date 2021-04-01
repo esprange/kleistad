@@ -75,11 +75,11 @@ class Public_Saldo extends ShortcodeForm {
 	 * Bewaar 'saldo' form gegevens
 	 *
 	 * @param array $data te bewaren data.
-	 * @return WP_ERROR|array
+	 * @return array
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$saldo  = new Saldo( intval( $data['input']['gebruiker_id'] ) );
 		$bedrag = floatval( $data['input']['bedrag'] );
 		$saldo->actie->nieuw( $bedrag );

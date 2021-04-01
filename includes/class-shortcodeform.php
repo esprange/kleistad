@@ -37,7 +37,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return array
 	 */
-	abstract protected function save( array $data );
+	abstract protected function save( array $data ) : array;
 
 	/**
 	 * Enqueue nu ook de form specieke javascript.
@@ -125,8 +125,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @return bool if false, dan niet gevalideerd.
 	 */
 	protected function validate_naam( string $naam ) : bool {
-		$result = preg_match( "/^(['a-zA-Z])(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/", htmlspecialchars_decode( remove_accents( $naam ), ENT_QUOTES ) );
-		return $result;
+		return 1 === preg_match( "/^(['a-zA-Z])(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/", htmlspecialchars_decode( remove_accents( $naam ), ENT_QUOTES ) );
 	}
 
 	/**
@@ -165,7 +164,7 @@ abstract class ShortcodeForm extends Shortcode {
 				'methods'             => 'POST',
 				'callback'            => [ __CLASS__, 'callback_formsubmit' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
-					$shortcode_tag = $request->get_param( 'tag' );
+					$shortcode_tag = $request->get_param( 'tag' ) ?: '';
 					$shortcodes    = new ShortCodes();
 					return $shortcodes->check_access( $shortcode_tag );
 				},

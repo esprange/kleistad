@@ -93,7 +93,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
 		switch ( $data['input']['wijziging'] ) {
 			case 'pauze':

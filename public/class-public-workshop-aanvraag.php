@@ -99,7 +99,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 *
 	 * @since   5.6.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$workshopaanvraag = new WorkshopAanvraag();
 		if ( $workshopaanvraag->start( $data['input'] ) ) {
 			return [

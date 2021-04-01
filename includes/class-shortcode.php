@@ -31,9 +31,9 @@ abstract class Shortcode {
 	/**
 	 * De parameters welke gebruikt worden in de aanroep van de shortcode.
 	 *
-	 * @var array|string shortcode parameters
+	 * @var array shortcode parameters
 	 */
-	protected $atts;
+	protected array $atts;
 
 	/**
 	 * De plugin options.
@@ -215,7 +215,7 @@ abstract class Shortcode {
 	 * @param array  $options     Plugin opties.
 	 */
 	private function __construct( $shortcode, $atts, $options ) {
-		$this->atts      = $atts;
+		$this->atts      = is_string( $atts ) ? [ $atts ] : $atts;
 		$this->options   = $options;
 		$this->shortcode = $shortcode;
 	}
@@ -233,7 +233,7 @@ abstract class Shortcode {
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
-					$shortcode  = $request->get_param( 'tag' );
+					$shortcode  = $request->get_param( 'tag' ) ?: '';
 					$shortcodes = new ShortCodes();
 					return $shortcodes->check_access( $shortcode );
 				},
@@ -246,7 +246,7 @@ abstract class Shortcode {
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_getitem' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
-					$shortcode  = $request->get_param( 'tag' );
+					$shortcode  = $request->get_param( 'tag' ) ?: '';
 					$shortcodes = new ShortCodes();
 					return $shortcodes->check_access( $shortcode );
 				},
@@ -259,7 +259,7 @@ abstract class Shortcode {
 				'methods'             => 'GET',
 				'callback'            => [ __CLASS__, 'callback_download' ],
 				'permission_callback' => function( WP_REST_Request $request ) {
-					$shortcode  = $request->get_param( 'tag' );
+					$shortcode  = $request->get_param( 'tag' ) ?: '';
 					$shortcodes = new ShortCodes();
 					return $shortcodes->check_access( $shortcode );
 				},

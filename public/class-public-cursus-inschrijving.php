@@ -333,7 +333,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		$gebruiker_id = intval( $data['input']['gebruiker_id'] );
 		if ( ! $gebruiker_id ) {
 			$gebruiker_id = email_exists( $data['input']['user_email'] );

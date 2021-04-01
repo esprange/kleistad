@@ -54,7 +54,7 @@ class Cursus {
 	 * Constructor
 	 *
 	 * @global object $wpdb WordPress database.
-	 * @param int $cursus_id (optional) cursus welke geladen moet worden.
+	 * @param int|null $cursus_id (optional) cursus welke geladen moet worden.
 	 */
 	public function __construct( int $cursus_id = null ) {
 		global $wpdb;
@@ -278,7 +278,7 @@ class Cursus {
 	 * @global object $wpdb WordPress database.
 	 * @return int Het cursus id.
 	 */
-	public function save() {
+	public function save() : int {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->data );
 		$this->id = $wpdb->insert_id;

@@ -335,7 +335,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @since   5.0.0
 	 */
-	protected function save( $data ) {
+	protected function save( $data ) : array {
 		if ( 'reageren' === $data['form_actie'] ) {
 			$workshopaanvraag = new WorkshopAanvraag();
 			$workshopaanvraag->reactie( $data['casus']['casus_id'], $data['casus']['reactie'] );
