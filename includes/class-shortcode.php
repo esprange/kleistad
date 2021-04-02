@@ -191,18 +191,18 @@ abstract class Shortcode {
 	/**
 	 * Singleton handler
 	 *
-	 * @param string       $shortcode_tag Shortcode (zonder kleistad- ).
-	 * @param array|string $atts          Shortcode parameters.
-	 * @param array        $options       Plugin opties.
+	 * @param string $shortcode_tag Shortcode (zonder kleistad- ).
+	 * @param array  $attributes    Shortcode parameters.
+	 * @param array  $options       Plugin opties.
 	 * @return Shortcode | null
 	 */
-	public static function get_instance( string $shortcode_tag, $atts, array $options ) : ?Shortcode {
+	public static function get_instance( string $shortcode_tag, array $attributes, array $options ) : ?Shortcode {
 		if ( in_array( $shortcode_tag, self::$shortcode_lijst, true ) ) {
 			return null;
 		}
 		self::$shortcode_lijst[] = $shortcode_tag;
 		$shortcode_class         = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
-		return new $shortcode_class( $shortcode_tag, $atts, $options );
+		return new $shortcode_class( $shortcode_tag, $attributes, $options );
 	}
 
 	/**
@@ -210,12 +210,12 @@ abstract class Shortcode {
 	 *
 	 * @since   4.0.87
 	 *
-	 * @param string $shortcode   Shortcode (zonder kleistad- ).
-	 * @param array  $atts        Shortcode parameters.
-	 * @param array  $options     Plugin opties.
+	 * @param string $shortcode  Shortcode (zonder kleistad- ).
+	 * @param array  $attributes Shortcode parameters.
+	 * @param array  $options    Plugin opties.
 	 */
-	private function __construct( $shortcode, $atts, $options ) {
-		$this->atts      = is_string( $atts ) ? [ $atts ] : $atts;
+	private function __construct( string $shortcode, array $attributes, array $options ) {
+		$this->atts      = $attributes;
 		$this->options   = $options;
 		$this->shortcode = $shortcode;
 	}
@@ -277,8 +277,9 @@ abstract class Shortcode {
 		$tag   = $request->get_param( 'tag' ) ?? '';
 		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
 		if ( class_exists( $class ) ) {
-			$atts = json_decode( $request->get_param( 'atts' ) ?? '', true );
-			return new $class( $tag, $atts, opties() );
+			$atts       = json_decode( $request->get_param( 'atts' ) ?? '', true );
+			$attributes = is_array( $atts ) ? $atts : [ $atts ];
+			return new $class( $tag, $attributes, opties() );
 		}
 		return null;
 	}

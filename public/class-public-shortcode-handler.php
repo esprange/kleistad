@@ -60,7 +60,8 @@ class Public_Shortcode_Handler {
 	 */
 	public function handler( $atts, string $content, string $tag ) : string {
 		$shortcode_tag = substr( $tag, strlen( 'kleistad-' ) );
-		$shortcode     = Shortcode::get_instance( $shortcode_tag, $atts, $this->options );
+		$attributes    = is_string( $atts ) ? [ $atts ] : $atts;
+		$shortcode     = Shortcode::get_instance( $shortcode_tag, $attributes, $this->options );
 		if ( is_null( $shortcode ) ) {
 			return '';
 		}
