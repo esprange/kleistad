@@ -24,7 +24,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @param string $zoek De eventuele zoek term.
 	 * @return array De info.
 	 */
-	private function debiteuren( $zoek = '' ) {
+	private function debiteuren( string $zoek = '' ) : array {
 		$debiteuren      = [];
 		$artikelregister = new Artikelregister();
 		$orders          = new Orders();
@@ -57,7 +57,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @param int $order_id Het order id.
 	 * @return array De informatie.
 	 */
-	private function debiteur( $order_id ) {
+	private function debiteur( int $order_id ) : array {
 		$order           = new Order( $order_id );
 		$artikelregister = new Artikelregister();
 		return [
@@ -90,7 +90,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * @since   6.1.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$atts = shortcode_atts(
 			[ 'actie' => '' ],
 			$this->atts,
@@ -133,7 +133,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * @since   6.1.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
@@ -181,7 +181,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array
 	 * @since   6.1.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		if ( 'blokkade' === $data['form_actie'] ) {
 			zet_blokkade( strtotime( '+3 month', get_blokkade() ) );
 			return [

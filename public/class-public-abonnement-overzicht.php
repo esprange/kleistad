@@ -25,7 +25,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 	 *
 	 * @since   4.5.4
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$data['abonnee_info'] = [];
 		$abonnees             = new Abonnees();
 		foreach ( $abonnees as $abonnee ) {

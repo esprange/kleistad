@@ -93,7 +93,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$data = [
 			'registraties' => $this->registraties(),
 			'cursussen'    => new Cursussen(),

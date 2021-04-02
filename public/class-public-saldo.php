@@ -27,7 +27,7 @@ class Public_Saldo extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$gebruiker_id = get_current_user_id();
 		$saldo        = new Saldo( $gebruiker_id );
 		$data         = [
@@ -41,11 +41,11 @@ class Public_Saldo extends ShortcodeForm {
 	 * Valideer/sanitize 'saldo' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return \WP_Error|bool
+	 * @return WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 
 		$data['input'] = filter_input_array(
 			INPUT_POST,
@@ -79,7 +79,7 @@ class Public_Saldo extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$saldo  = new Saldo( intval( $data['input']['gebruiker_id'] ) );
 		$bedrag = floatval( $data['input']['bedrag'] );
 		$saldo->actie->nieuw( $bedrag );

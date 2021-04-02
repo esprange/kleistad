@@ -61,7 +61,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 *
 	 * @since   6.6.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$param = filter_input_array(
 			INPUT_GET,
 			[
@@ -100,7 +100,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 *
 	 * @since   6.6.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error                          = new WP_Error();
 		$data['input']                  = filter_input_array(
 			INPUT_POST,
@@ -147,11 +147,11 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 * Bewaar 'cursus_extra' form gegevens
 	 *
 	 * @param array $data data te bewaren.
-	 * @return \WP_Error|array
+	 * @return WP_Error|array
 	 *
 	 * @since   6.6.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$extra_cursisten  = [];
 		$emails_verzonden = false;
 		foreach ( $data['input']['extra_cursist'] as $extra_cursist ) {

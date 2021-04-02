@@ -25,7 +25,7 @@ class Public_Stookbestand extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		return isset( $data );
 	}
 

@@ -24,7 +24,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @param array $data data voor display.
 	 * @return string
 	 */
-	private function bepaal_actie( &$data ) : string {
+	private function bepaal_actie( array &$data ) : string {
 		$data['param'] = filter_input_array(
 			INPUT_GET,
 			[
@@ -140,7 +140,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [
@@ -182,7 +182,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -296,7 +296,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$inschrijving->ingedeeld    = false;
 			$inschrijving->geannuleerd  = false;
 			$inschrijving->ingeschreven = false;
-		};
+		}
 		if ( $inschrijving->ingeschreven ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingeschreven op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
@@ -333,7 +333,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$gebruiker_id = intval( $data['input']['gebruiker_id'] );
 		if ( ! $gebruiker_id ) {
 			$gebruiker_id = email_exists( $data['input']['user_email'] );

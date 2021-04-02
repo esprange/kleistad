@@ -16,7 +16,9 @@
         "php-imap/php-imap": "*",
         "setasign/fpdf": "*",
         "deliciousbrains/wp-background-processing": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-exif": "*",
+        "ext-gd": "*"
     },
     "scripts": {
         "post-update-cmd": "Google\\Task\\Composer::cleanup"

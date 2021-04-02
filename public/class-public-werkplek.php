@@ -97,7 +97,7 @@ class Public_Werkplek extends Shortcode {
 	 *
 	 * @since   6.11.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$data['datums']    = $this->geef_mogelijke_datums();
 		$data['meesters']  = $this->geef_meesters();
 		$data['cursisten'] = $this->geef_cursisten();

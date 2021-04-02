@@ -28,7 +28,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @return array De recepten data.
 	 */
-	private function lijst() {
+	private function lijst() : array {
 		/*
 		 * maak een lijst van recepten
 		 */
@@ -69,7 +69,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @param int $recept_id Het recept.
 	 * @return array De recept data.
 	 */
-	private function formulier( $recept_id ) {
+	private function formulier( int $recept_id ) : array {
 		$recept = get_post( $recept_id );
 
 		$glazuur_id   = 0;
@@ -108,7 +108,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @param string $image_file Path naar een image file.
 	 * @return WP_Error|bool True als verwerkt of error als er iets fout is gegaan.
 	 */
-	private function foto( $image_file ) {
+	private function foto( string $image_file ) {
 		$exif = @exif_read_data( $image_file ); // phpcs:ignore
 		if ( false === $exif ) {
 			return new WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
@@ -147,7 +147,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.1.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 
 		if ( 'toevoegen' === $data['actie'] ) {
 			/*
@@ -191,7 +191,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.1.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error                                    = new WP_Error();
 		$data['recept']                           = filter_input_array(
 			INPUT_POST,
@@ -276,7 +276,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.1.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		switch ( $data['form_actie'] ) {
 			case 'verwijderen':
 				/*

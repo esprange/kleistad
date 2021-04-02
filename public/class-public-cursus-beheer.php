@@ -23,7 +23,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 *
 	 * @return array De cursussen data.
 	 */
-	private function lijst() {
+	private function lijst() : array {
 		$cursussen = new Cursussen();
 		$lijst     = [];
 		$vandaag   = strtotime( 'today' );
@@ -48,10 +48,10 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	/**
 	 * Bereid een cursus wijziging voor.
 	 *
-	 * @param int $cursus_id De cursus.
+	 * @param int|null $cursus_id De cursus.
 	 * @return array De cursus data.
 	 */
-	private function formulier( $cursus_id = null ) {
+	private function formulier( ?int $cursus_id = null ) : array {
 		$cursus = new Cursus( $cursus_id );
 		return [
 			'id'              => $cursus->id,
@@ -94,7 +94,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$data['docenten'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
@@ -133,7 +133,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error          = new WP_Error();
 		$data['cursus'] = filter_input_array(
 			INPUT_POST,
@@ -197,7 +197,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$cursus_id = $data['cursus']['cursus_id'];
 		$cursus    = $cursus_id > 0 ? new Cursus( $cursus_id ) : new Cursus();
 		if ( 'verwijderen' === $data['form_actie'] ) {

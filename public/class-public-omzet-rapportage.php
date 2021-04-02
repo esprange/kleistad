@@ -25,7 +25,7 @@ class Public_Omzet_Rapportage extends Shortcode {
 	 *
 	 * @since   6.1.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$register = new Artikelregister();
 		$rapport  = new Orderrapportage();
 		if ( 'details' === $data['actie'] ) {
@@ -46,8 +46,10 @@ class Public_Omzet_Rapportage extends Shortcode {
 
 	/**
 	 * Maak een presentielijst aan.
+	 *
+	 * @return string Pad naar het rapport.
 	 */
-	protected function omzetrapport() {
+	protected function omzetrapport() : string {
 		$maand   = filter_input( INPUT_GET, 'maand', FILTER_SANITIZE_STRING );
 		$jaar    = filter_input( INPUT_GET, 'jaar', FILTER_SANITIZE_STRING );
 		$rapport = new OmzetRapport();

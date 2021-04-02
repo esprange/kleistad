@@ -23,7 +23,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @return array De workshops data.
 	 */
-	private function planning() {
+	private function planning() : array {
 		$workshops = new Workshops();
 		$lijst     = [];
 		foreach ( $workshops as $workshop ) {
@@ -48,7 +48,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @return array De aanvragen data.
 	 */
-	private function aanvragen() {
+	private function aanvragen() : array {
 		$casussen = get_posts(
 			[
 				'post_type'      => WorkshopAanvraag::POST_TYPE,
@@ -75,7 +75,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @return array De docenten.
 	 */
-	private function docenten() {
+	private function docenten() : array {
 		$docenten   = [];
 		$gebruikers = get_users(
 			[
@@ -97,7 +97,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @param int $workshop_id De workshop.
 	 * @return array De workshop data.
 	 */
-	private function formulier( $workshop_id = null ) {
+	private function formulier( int $workshop_id = null ) : array {
 		$workshop = new Workshop( $workshop_id );
 		$order    = new Order( $workshop->geef_referentie() );
 		return [
@@ -134,7 +134,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @since   5.0.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		if ( 'toevoegen' === $data['actie'] ) {
 			/*
 			* Er moet een nieuwe workshop opgevoerd worden
@@ -201,7 +201,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @since   5.0.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error = new WP_Error();
 		if ( 'reageren' === $data['form_actie'] ) {
 			$data['casus'] = filter_input_array(
@@ -335,7 +335,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @since   5.0.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		if ( 'reageren' === $data['form_actie'] ) {
 			$workshopaanvraag = new WorkshopAanvraag();
 			$workshopaanvraag->reactie( $data['casus']['casus_id'], $data['casus']['reactie'] );

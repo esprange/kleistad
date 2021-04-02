@@ -29,7 +29,7 @@ class Public_Reservering extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$atts = shortcode_atts(
 			[ 'oven' => 'niet ingevuld' ],
 			$this->atts,
@@ -120,7 +120,7 @@ class Public_Reservering extends Shortcode {
 	 * @param Stook $stook De stook waarvoor de regel moet worden opgemaakt.
 	 * @return string html opgemaakte tekstregel.
 	 */
-	private static function maak_stookregel( Stook $stook ) {
+	private static function maak_stookregel( Stook $stook ) : string {
 		$gebruiker_id = get_current_user_id();
 		$stoker_id    = isset( $stook->stookdelen[0] ) ? $stook->stookdelen[0]->medestoker : $gebruiker_id;
 		$stoker_naam  = get_userdata( $stoker_id )->display_name;
@@ -222,7 +222,7 @@ class Public_Reservering extends Shortcode {
 	 * @param int $jaar    Het jaar.
 	 * @return string De Html code voor de body van de tabel.
 	 */
-	private static function toon_stoken( $oven_id, $maand, $jaar ) {
+	private static function toon_stoken( int $oven_id, int $maand, int $jaar ) : string {
 		$vanaf  = mktime( 0, 0, 0, $maand, 1, $jaar );
 		$tot    = mktime( 0, 0, 0, $maand + 1, 1, $jaar );
 		$oven   = new Oven( $oven_id );
@@ -246,7 +246,7 @@ class Public_Reservering extends Shortcode {
 	 * @param WP_REST_Request $request Ajax request params.
 	 * @return WP_REST_Response Ajax response.
 	 */
-	public static function callback_show( WP_REST_Request $request ) {
+	public static function callback_show( WP_REST_Request $request ) : WP_REST_Response {
 		$oven_id = intval( $request->get_param( 'oven_id' ) );
 		$maand   = intval( $request->get_param( 'maand' ) );
 		$jaar    = intval( $request->get_param( 'jaar' ) );
@@ -268,7 +268,7 @@ class Public_Reservering extends Shortcode {
 	 * @param WP_REST_Request $request Ajax request params.
 	 * @return WP_REST_Response Ajax response.
 	 */
-	public static function callback_muteer( WP_REST_Request $request ) {
+	public static function callback_muteer( WP_REST_Request $request ) : WP_REST_Response {
 		$input   = $request->get_param( 'reservering' );
 		$oven_id = $request->get_param( 'oven_id' ) ?: 0;
 		$jaar    = intval( $input['jaar'] );

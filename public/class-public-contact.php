@@ -25,7 +25,7 @@ class Public_Contact extends ShortcodeForm {
 	 *
 	 * @since   6.3.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data      = [
 				'input' => [
@@ -54,7 +54,7 @@ class Public_Contact extends ShortcodeForm {
 	 *
 	 * @since   6.3.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -77,7 +77,7 @@ class Public_Contact extends ShortcodeForm {
 	 *
 	 * @since   6.3.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$emailer          = new Email();
 		$email_parameters = [
 			'to'         => "Kleistad <{$emailer->info}{$emailer->domein}>",

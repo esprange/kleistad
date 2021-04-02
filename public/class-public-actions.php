@@ -11,8 +11,6 @@
 
 namespace Kleistad;
 
-use WP_User;
-
 /**
  * De kleistad class voor de publieke actions.
  */
@@ -26,16 +24,16 @@ class Public_Actions {
 	 * @access   private
 	 * @var      string    $version    De huidige versie van deze plugin.
 	 */
-	private $version;
+	private string $version;
 
 	/**
 	 * De handler voor de shortcodes.
 	 *
 	 * @since 6.4.2
 	 * @access private
-	 * @var object $shortcode_handler De handler voor de shortcodes.
+	 * @var Public_Shortcode_Handler $shortcode_handler De handler voor de shortcodes.
 	 */
-	private $shortcode_handler;
+	private Public_Shortcode_Handler $shortcode_handler;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -45,7 +43,7 @@ class Public_Actions {
 	 * @param string $version       The version of this plugin.
 	 * @param array  $options       De plugin options.
 	 */
-	public function __construct( $version, $options ) {
+	public function __construct( string $version, array $options ) {
 		$this->version           = $version;
 		$this->shortcode_handler = new Public_Shortcode_Handler( $options );
 	}
@@ -176,7 +174,7 @@ class Public_Actions {
 	 *
 	 * @internal Action for user_register.
 	 */
-	public function user_register( $gebruiker_id ) {
+	public function user_register( int $gebruiker_id ) {
 		$userdata = get_userdata( $gebruiker_id );
 		if ( false !== $userdata ) {
 			$user_login = sanitize_user( strtolower( preg_replace( '/\s+/', '', $userdata->first_name . $userdata->last_name ) ), true );
@@ -196,7 +194,7 @@ class Public_Actions {
 	 *
 	 * @internal Action for profile_update.
 	 */
-	public function profile_update( $gebruiker_id ) {
+	public function profile_update( int $gebruiker_id ) {
 		$userdata = get_userdata( $gebruiker_id );
 		if ( false !== $userdata ) {
 			remove_action( 'profile_update', [ $this, __FUNCTION__ ] ); // Voorkom dat na de update deze actie opnieuw aangeroepen wordt.

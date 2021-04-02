@@ -27,7 +27,7 @@ class Public_Betaling extends ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$param = filter_input_array(
 			INPUT_GET,
 			[
@@ -70,7 +70,7 @@ class Public_Betaling extends ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -108,7 +108,7 @@ class Public_Betaling extends ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$data['artikel']->artikel_type = $data['input']['artikel_type'];
 			$ideal_uri                     = $data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->te_betalen() );

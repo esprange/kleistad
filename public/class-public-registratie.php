@@ -26,7 +26,7 @@ class Public_Registratie extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$gebruiker = wp_get_current_user();
 
 		if ( ! isset( $data['input'] ) ) {
@@ -53,7 +53,7 @@ class Public_Registratie extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error                = new WP_Error();
 		$data['input']        = filter_input_array(
 			INPUT_POST,
@@ -108,7 +108,7 @@ class Public_Registratie extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$result = wp_update_user(
 			(object) [
 				'ID'         => $data['gebruiker_id'],

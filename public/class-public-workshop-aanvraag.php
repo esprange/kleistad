@@ -27,7 +27,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 *
 	 * @since   5.6.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data          = [];
 			$data['input'] = [
@@ -52,7 +52,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 *
 	 * @since   5.6.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
@@ -99,7 +99,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 *
 	 * @since   5.6.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$workshopaanvraag = new WorkshopAanvraag();
 		if ( $workshopaanvraag->start( $data['input'] ) ) {
 			return [

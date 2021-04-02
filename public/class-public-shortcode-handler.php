@@ -23,7 +23,7 @@ class Public_Shortcode_Handler {
 	 *
 	 * @var array kleistad plugin settings
 	 */
-	private $options;
+	private array $options;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -32,7 +32,7 @@ class Public_Shortcode_Handler {
 	 *
 	 * @param array $options       De plugin options.
 	 */
-	public function __construct( $options ) {
+	public function __construct( array $options ) {
 		$this->options = $options;
 	}
 
@@ -51,10 +51,10 @@ class Public_Shortcode_Handler {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param array|string $atts de meegegeven params van de shortcode of een lege string.
-	 * @param string       $content    wordt niet gebruikt.
-	 * @param string       $tag        wordt gebruikt als selector voor de diverse functie aanroepen.
-	 * @return string            html resultaat.
+	 * @param array  $atts    de meegegeven params van de shortcode of een lege string.
+	 * @param string $content wordt niet gebruikt.
+	 * @param string $tag     wordt gebruikt als selector voor de diverse functie aanroepen.
+	 * @return string html resultaat.
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */

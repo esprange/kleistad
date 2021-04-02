@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use WP_REST_Request;
 use WP_REST_Response;
+use DateTime;
 
 /**
  * De kleistad kalender class.
@@ -59,8 +60,8 @@ class Public_Kalender extends Shortcode {
 			return [
 				'id'              => $event->id,
 				'title'           => "$workshop->naam ($workshop->code)",
-				'start'           => $event->start->format( \DateTime::ATOM ),
-				'end'             => $event->eind->format( \DateTime::ATOM ),
+				'start'           => $event->start->format( DateTime::ATOM ),
+				'end'             => $event->eind->format( DateTime::ATOM ),
 				'backgroundColor' => $betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
 				'textColor'       => $betaald ? 'white' : 'black',
 				'extendedProps'   => [
@@ -86,8 +87,8 @@ class Public_Kalender extends Shortcode {
 			return [
 				'id'              => $event->id,
 				'title'           => "$cursus->naam ($cursus->code)",
-				'start'           => $event->start->format( \DateTime::ATOM ),
-				'end'             => $event->eind->format( \DateTime::ATOM ),
+				'start'           => $event->start->format( DateTime::ATOM ),
+				'end'             => $event->eind->format( DateTime::ATOM ),
 				'backgroundColor' => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'slateblue' : 'lightblue',
 				'textColor'       => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'white' : 'black',
 				'extendedProps'   => [
@@ -111,8 +112,8 @@ class Public_Kalender extends Shortcode {
 		return [
 			'id'              => $event->id,
 			'title'           => $event->titel ?: '',
-			'start'           => $event->start->format( \DateTime::ATOM ),
-			'end'             => $event->eind->format( \DateTime::ATOM ),
+			'start'           => $event->start->format( DateTime::ATOM ),
+			'end'             => $event->eind->format( DateTime::ATOM ),
 			'backgroundColor' => 'violet',
 			'textColor'       => 'black',
 		];
@@ -124,7 +125,7 @@ class Public_Kalender extends Shortcode {
 	 * @param WP_REST_Request $request De parameters van de Ajax call.
 	 * @return WP_REST_Response
 	 */
-	public static function callback_kalender( WP_REST_Request $request ) {
+	public static function callback_kalender( WP_REST_Request $request ) : WP_REST_Response {
 		$events    = new Events(
 			[
 				'timeMin' => $request->get_param( 'start' ),
@@ -165,7 +166,7 @@ class Public_Kalender extends Shortcode {
 	 *
 	 * @since   5.0.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		return isset( $data ); // Dummy statement.
 	}
 

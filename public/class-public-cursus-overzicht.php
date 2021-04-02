@@ -42,7 +42,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 *
 	 * @return array De cursus informatie.
 	 */
-	private function geef_cursussen() {
+	private function geef_cursussen() : array {
 		$cursus_info = [];
 		$docent_id   = current_user_can( BESTUUR ) ? 0 : get_current_user_id();
 		foreach ( new Cursussen() as $cursus ) {
@@ -66,7 +66,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @param Cursus $cursus     De cursus.
 	 * @return array De cursisten.
 	 */
-	private function cursistenlijst( $cursus ) {
+	private function cursistenlijst( Cursus $cursus ) : array {
 		$cursisten = [];
 		foreach ( new Inschrijvingen( $cursus->id ) as $inschrijving ) {
 			if ( $inschrijving->geannuleerd ) {
@@ -110,7 +110,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 *
 	 * @since   4.5.4
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$data['bestuur_rechten'] = current_user_can( BESTUUR );
 		if ( 'cursisten' === $data['actie'] ) {
 			$cursus            = new Cursus( $data['id'] );
@@ -156,7 +156,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 *
 	 * @since   5.4.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -179,7 +179,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 *
 	 * @since   5.4.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		if ( 'indelen' === $data['form_actie'] ) {
 			$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
 			$inschrijving->actie->indelen_lopend( (float) $data['input']['kosten'] );
@@ -247,8 +247,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 
 	/**
 	 * Maak een presentielijst aan.
+	 *
+	 * @return string Pad naar de presentielijst.
 	 */
-	protected function presentielijst() {
+	protected function presentielijst() : string {
 		$cursus_id = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );
 		$cursus    = new Cursus( $cursus_id );
 		$cursisten = [];

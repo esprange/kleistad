@@ -12,7 +12,6 @@
 namespace Kleistad;
 
 use WP_Error;
-use WP_Query;
 use WP_User_Query;
 
 /**
@@ -29,7 +28,7 @@ class Public_Email extends ShortcodeForm {
 	 *
 	 * @since   5.5.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data['input'] = [
 				'tree'          => [],
@@ -145,7 +144,7 @@ class Public_Email extends ShortcodeForm {
 	 *
 	 * @since   5.5.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error                          = new WP_Error();
 		$data['input']                  = filter_input_array(
 			INPUT_POST,
@@ -189,7 +188,7 @@ class Public_Email extends ShortcodeForm {
 	 *
 	 * @since   5.5.0
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$gebruiker = wp_get_current_user();
 		$emailer   = new Email();
 		if ( 'test_email' === $data['form_actie'] ) {
@@ -240,7 +239,7 @@ class Public_Email extends ShortcodeForm {
 	 * @param array $data Date te verzenden.
 	 * @return array
 	 */
-	private function mail_parameters( $data ) {
+	private function mail_parameters( array $data ) : array {
 		return [
 			'from_name' => "{$data['input']['namens']} namens Kleistad",
 			'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",

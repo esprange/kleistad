@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use WP_REST_Request;
+use WP_REST_Response;
+
 /**
  * De kleistad recept class.
  */
@@ -24,7 +27,7 @@ class Public_Recept extends Shortcode {
 	 *
 	 * @since   4.1.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		return true;
 	}
 
@@ -50,10 +53,10 @@ class Public_Recept extends Shortcode {
 	/**
 	 * Ajax callback voor show recept functie.
 	 *
-	 * @param \WP_REST_Request $request De parameters van de Ajax call.
-	 * @return \WP_REST_Response
+	 * @param WP_REST_Request $request De parameters van de Ajax call.
+	 * @return WP_REST_Response
 	 */
-	public static function callback_recept( \WP_REST_Request $request ) {
+	public static function callback_recept( WP_REST_Request $request ) : WP_REST_Response {
 		$data  = [];
 		$query = [
 			'post_type'   => Recept::POST_TYPE,
@@ -157,7 +160,7 @@ class Public_Recept extends Shortcode {
 
 		ob_start();
 		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-show-recept.php';
-		return new \WP_REST_Response(
+		return new WP_REST_Response(
 			[
 				'content' => ob_get_clean(),
 				'terms'   => $request->get_param( 'terms' ),

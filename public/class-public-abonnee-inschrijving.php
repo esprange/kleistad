@@ -26,7 +26,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data['input'] = [
 				'gebruiker_id'     => 0,
@@ -74,7 +74,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -125,13 +125,13 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$gebruiker_id = $data['input']['gebruiker_id'] ?: email_exists( $data['input']['user_email'] );
 		if ( false !== $gebruiker_id && user_can( $gebruiker_id, LID ) ) {
 			return [
 				'status' => $this->status( new WP_Error( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' ) ),
 			];
-		};
+		}
 		$gebruiker_id = upsert_user(
 			[
 				'ID'         => $gebruiker_id ?: null,

@@ -25,7 +25,7 @@ class Public_Rapport extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$huidige_gebruiker = wp_get_current_user();
 		$saldo             = new Saldo( $huidige_gebruiker->ID );
 		$data['naam']      = $huidige_gebruiker->display_name;

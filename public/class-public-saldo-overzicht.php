@@ -24,7 +24,7 @@ class Public_Saldo_Overzicht extends Shortcode {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$stokers         = new Stokers();
 		$data['stokers'] = [];
 		foreach ( $stokers as $stoker ) {

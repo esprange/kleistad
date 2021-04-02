@@ -25,7 +25,7 @@ class Public_Werkplekrapport extends Shortcode {
 	 *
 	 * @since   6.12.1
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$atts          = shortcode_atts(
 			[ 'actie' => '' ],
 			$this->atts

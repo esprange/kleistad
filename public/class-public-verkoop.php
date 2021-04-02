@@ -27,7 +27,7 @@ class Public_Verkoop extends ShortcodeForm {
 	 *
 	 * @since   6.2.0
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
 			$data               = [];
 			$data['input']      = [
@@ -59,7 +59,7 @@ class Public_Verkoop extends ShortcodeForm {
 	 *
 	 * @since   6.2.0
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -93,7 +93,7 @@ class Public_Verkoop extends ShortcodeForm {
 	 * @since   6.2.0
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$verkoopnr = intval( get_option( 'kleistad_losnr', 0 ) );
 		if ( ! update_option( 'kleistad_losnr', ++$verkoopnr ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ) ];

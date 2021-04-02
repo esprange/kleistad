@@ -26,7 +26,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( &$data ) {
+	protected function prepare( array &$data ) {
 		$abonnee_id         = get_current_user_id();
 		$betalen            = new Betalen();
 		$data['abonnement'] = new Abonnement( $abonnee_id );
@@ -45,7 +45,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( &$data ) {
+	protected function validate( array &$data ) {
 		$error = new WP_Error();
 
 		$data['input'] = filter_input_array(
@@ -93,7 +93,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( $data ) : array {
+	protected function save( array $data ) : array {
 		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
 		switch ( $data['input']['wijziging'] ) {
 			case 'pauze':
