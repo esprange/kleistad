@@ -20,7 +20,8 @@ Description: stylesheet functions voor kleistad_plugin
 .kleistad-shortcode *:not(.dashicons),
 .kleistad-fout p,
 .kleistad-succes p,
-.kleistad-inform p {
+.kleistad-inform p,
+.kleistad-tooltip {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: small;
 }
@@ -510,8 +511,8 @@ div.kleistad-werkplek-dagdeel {
 .kleistad-shortcode input[type="radio"] + label {
 	cursor: pointer;
 	display: inline-block;
-	font-size: 14px;
-	line-height: 21px;
+	font-size: small;
+	line-height: 30px;
 	margin-left: 4px;
 	vertical-align: top;
 }

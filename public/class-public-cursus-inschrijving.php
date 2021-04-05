@@ -109,13 +109,13 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		$data['cursus_selectie'] = true;
 		$data['verbergen']       = $atts['verbergen'];
 		$data['open_cursussen']  = [];
-		$cursussen               = new Cursussen();
 		$cursus_selecties        = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
 		if ( 1 === count( $cursus_selecties ) ) {
 			$data['cursus_selectie']    = false;
 			$data['input']['cursus_id'] = $cursus_selecties[0];
 		}
-		foreach ( $cursussen as $cursus ) {
+		$selecteerbaar = false;
+		foreach ( new Cursussen() as $cursus ) {
 			if ( $vandaag >= $cursus->eind_datum ) {
 				continue; // De cursus is gereed.
 			}
@@ -127,6 +127,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
 			$data['open_cursussen'][ $cursus->id ] = $cursus;
+			$selecteerbaar                         = $selecteerbaar || ( ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() ) );
+		}
+		if ( ! $selecteerbaar ) {
+			return new WP_Error( 'Inschrijven', $data['cursus_selectie'] ? 'Helaas zijn er geen cursussen beschikbaar of ze zijn al volgeboekt' : 'Helaas is deze cursus nu niet beschikbaar' );
 		}
 		return true;
 	}

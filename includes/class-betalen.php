@@ -314,8 +314,7 @@ class Betalen {
 	<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
 		<option value="" >&nbsp;</option>
 		<?php
-		$method = $object->mollie->methods->get( Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
-		foreach ( $method->issuers() as $issuer ) :
+		foreach ( $object->banken() as $issuer ) :
 			?>
 			<option value="<?php echo esc_attr( $issuer->id ); ?>"><?php echo esc_html( $issuer->name ); ?></option>
 			<?php
@@ -323,6 +322,14 @@ class Betalen {
 		?>
 	</select>
 		<?php
+	}
+
+	/**
+	 * Toon deelnemende banken.
+	 */
+	public function banken() {
+		$method = $this->mollie->methods->get( Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
+		return $method->issuers();
 	}
 
 	/**

@@ -19,14 +19,14 @@
     }
 
     function wijzigVelden( cursus ) {
-        $( '#kleistad_cursus_draaien' ).css( 'visibility', 'hidden' );
-        $( '#kleistad_cursus_boetseren' ).css( 'visibility', 'hidden' );
-        $( '#kleistad_cursus_handvormen' ).css( 'visibility', 'hidden' );
+        $( '#kleistad_cursus_draaien' ).hide();
+        $( '#kleistad_cursus_boetseren' ).hide();
+        $( '#kleistad_cursus_handvormen' ).hide();
         $( '#kleistad_cursus_technieken' ).css( 'visibility', 'hidden' );
         $.each(
             cursus.technieken, function( key, value ) {
-                $( '#kleistad_cursus_' + value.toLowerCase() ).css( 'visibility', 'visible' );
-                $( '#kleistad_cursus_technieken' ).css( 'visibility', 'visible' );
+                $( '#kleistad_cursus_' + value.toLowerCase() ).show();
+				$( '#kleistad_cursus_technieken' ).css( 'visibility', 'visible' );
             }
         );
         if ( cursus.meer && ! cursus.vol && ( 1 < cursus.ruimte ) ) {
@@ -64,6 +64,9 @@
 					track: true,
 					content: function( callback ) { 
 						callback( $( this ).prop( 'title' ).replaceAll( '|', '<br />' ) );
+					},
+					classes: {
+						'ui-tooltip': 'ui-corner-all ui-widget-shadow kleistad-tooltip'
 					}
 				}
 			);
