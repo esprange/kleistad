@@ -13,7 +13,7 @@ namespace Kleistad;
 /**
  * Render van het cursus overzicht formulier.
  */
-class Public_Cursus_Overzicht_Display extends ShortcodeDisplay {
+class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
@@ -240,15 +240,4 @@ class Public_Cursus_Overzicht_Display extends ShortcodeDisplay {
 		return $this;
 	}
 
-	/**
-	 * Render het einde van het formulier
-	 *
-	 * @return Public_Cursus_Overzicht_Display
-	 */
-	private function form_end() : Public_Cursus_Overzicht_Display {
-		?>
-		</form>
-		<?php
-		return $this;
-	}
 }

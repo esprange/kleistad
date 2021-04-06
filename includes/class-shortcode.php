@@ -175,6 +175,17 @@ abstract class Shortcode {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function goto_home() : string {
+		$html_objectclass = get_class( $this ) . '_Display';
+		if ( class_exists( $html_objectclass ) ) {
+			$dummy   = [];
+			$display = new $html_objectclass( $dummy );
+			ob_start();
+			$display->home();
+			return ob_get_clean();
+		}
+		/**
+		 * Het onderstaande komt ter vervallen als alles overgezet is naar de display render class.
+		 */
 		if ( ! is_user_logged_in() ) {
 			$url = home_url();
 		} elseif ( current_user_can( BESTUUR ) ) {

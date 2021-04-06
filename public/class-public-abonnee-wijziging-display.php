@@ -13,7 +13,7 @@ namespace Kleistad;
 /**
  * Render van de abonnee inschrijving formulier.
  */
-class Public_Abonnee_Wijziging_Display extends ShortcodeDisplay {
+class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 
 	/**
 	 * De start datum waarmee wijzingen ingaan
@@ -474,7 +474,7 @@ class Public_Abonnee_Wijziging_Display extends ShortcodeDisplay {
 	 *
 	 * @return Public_Abonnee_Wijziging_Display
 	 */
-	private function form_end() : Public_Abonnee_Wijziging_Display {
+	protected function form_end() : Public_Abonnee_Wijziging_Display {
 		?>
 		<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 		<input type="hidden" name="per_datum" value="<?php echo esc_attr( $this->per_datum ); ?>" >

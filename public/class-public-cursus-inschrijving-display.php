@@ -1,6 +1,6 @@
 <?php
 /**
- * Toon het abonnee inschrijving formulier
+ * Toon het cursus inschrijving formulier
  *
  * @link       https://www.kleistad.nl
  * @since      4.0.87
@@ -11,9 +11,16 @@
 namespace Kleistad;
 
 /**
- * Render van de abonnee inschrijving formulier.
+ * Render van de cursus inschrijving formulier.
  */
-class Public_Cursus_Inschrijving_Display extends ShortcodeDisplay {
+class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
+
+	/**
+	 * De tekst op de submit button
+	 *
+	 * @var string $buttontekst De tekst.
+	 */
+	private string $buttontekst;
 
 	/**
 	 * Render het formulier
@@ -24,23 +31,26 @@ class Public_Cursus_Inschrijving_Display extends ShortcodeDisplay {
 	protected function html() {
 		$this->form();
 		if ( 'indelen_na_wachten' === $this->data['actie'] ) {
-			$this->indelen_na_wachten()->form_end( 'Betalen' );
+			$this->buttontekst = 'Betalen';
+			$this->indelen_na_wachten()->form_end();
 			return;
 		}
 		if ( 'stop_wachten' === $this->data['actie'] ) {
-			$this->stop_wachten()->form_end( 'Afmelden' );
+			$this->buttontekst = 'Afmelden';
+			$this->stop_wachten()->form_end();
 			return;
 		}
 		if ( 'inschrijven' === $this->data['actie'] ) {
 			$this->cursus_info()->techniek_keuze();
 			if ( is_super_admin() ) {
-				$this->aantal( 1 )->gebruiker_selectie();
+				$this->aantal( 1 )->gebruiker_selectie( 'Cursist' );
 			} elseif ( is_user_logged_in() ) {
 				$this->aantal( 1 )->gebruiker_logged_in()->opmerking()->nieuwsbrief();
 			} else {
 				$this->aantal()->gebruiker()->opmerking()->nieuwsbrief();
 			}
-			$this->betaal_info()->form_end( 'Inschrijven' );
+			$this->buttontekst = 'Inschrijven';
+			$this->betaal_info()->form_end();
 		}
 	}
 
@@ -216,21 +226,15 @@ class Public_Cursus_Inschrijving_Display extends ShortcodeDisplay {
 	private function betaal_info() : Public_Cursus_Inschrijving_Display {
 		?>
 		<div class ="kleistad-row">
-			<div class="kleistad-col-10">
-				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
-				<label for="kleistad_betaal_ideal" style="max-width:80%" ></label>
-			</div>
+			<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
+			<label for="kleistad_betaal_ideal" ></label>
 		</div>
 		<div class="kleistad-row">
-			<div class="kleistad-col-10">
-				<?php $this->ideal(); ?>
-			</div>
+			<?php $this->ideal(); ?>
 		</div>
 		<div class ="kleistad-row">
-			<div class="kleistad-col-10">
-				<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
-				<label for="kleistad_betaal_stort" style="max-width:80%" ></label>
-			</div>
+			<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
+			<label for="kleistad_betaal_stort" ></label>
 		</div>
 		<?php
 		return $this;
@@ -239,14 +243,13 @@ class Public_Cursus_Inschrijving_Display extends ShortcodeDisplay {
 	/**
 	 * Render de afronding van het formulier
 	 *
-	 * @param string $buttontekst De tekst op de button.
 	 * @return Public_Cursus_Inschrijving_Display
 	 */
-	private function form_end( string $buttontekst ) : Public_Cursus_Inschrijving_Display {
+	protected function form_end() : Public_Cursus_Inschrijving_Display {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-10">
-				<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" value="<?php echo esc_attr( $this->data['actie'] ); ?>" type="submit" ><?php echo esc_html( $buttontekst ); ?></button>
+				<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" value="<?php echo esc_attr( $this->data['actie'] ); ?>" type="submit" ><?php echo esc_html( $this->buttontekst ); ?></button>
 			</div>
 		</div>
 		</form>

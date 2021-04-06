@@ -212,22 +212,4 @@ class Factuur extends FPDF {
 		return $file;
 	}
 
-	/**
-	 * Geef de facturen terug behorend bij factuurnr.
-	 *
-	 * @param string $factuurnr Het factuur nummer.
-	 * @return array De url's van de facturen.
-	 */
-	public static function facturen( string $factuurnr ) : array {
-		$upload_dir = wp_get_upload_dir();
-		$files      = glob( sprintf( '%s/facturen/*factuur-%s*', $upload_dir['basedir'], $factuurnr ) ) ?: [];
-		usort(
-			$files,
-			function( $links, $rechts ) {
-				return filemtime( $rechts ) <=> filemtime( $links ); // Nieuwste factuur bovenaan.
-			}
-		);
-		return str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $files );
-	}
-
 }

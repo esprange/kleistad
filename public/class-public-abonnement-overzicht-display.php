@@ -13,7 +13,7 @@ namespace Kleistad;
 /**
  * Render van de abonnement overzicht.
  */
-class Public_Abonnement_Overzicht_Display extends ShortcodeDisplay {
+class Public_Abonnement_Overzicht_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier

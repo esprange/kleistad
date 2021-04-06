@@ -13,7 +13,7 @@ namespace Kleistad;
 /**
  * Render van het contact formulier.
  */
-class Public_Contact_Display extends ShortcodeDisplay {
+class Public_Contact_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
@@ -118,15 +118,4 @@ class Public_Contact_Display extends ShortcodeDisplay {
 		return $this;
 	}
 
-	/**
-	 * Render het einde van het formulier
-	 *
-	 * @return Public_Contact_Display
-	 */
-	private function form_end() : Public_Contact_Display {
-		?>
-		</form>
-		<?php
-		return $this;
-	}
 }

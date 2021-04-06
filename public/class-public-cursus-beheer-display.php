@@ -13,7 +13,7 @@ namespace Kleistad;
 /**
  * Render van de cursus beheer formulier.
  */
-class Public_Cursus_Beheer_Display extends ShortcodeDisplay {
+class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
@@ -137,18 +137,6 @@ class Public_Cursus_Beheer_Display extends ShortcodeDisplay {
 		<button type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $readonly ); ?> >Opslaan</button>
 		<button type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $this->data['actie'] ); ?> >Verwijderen</button>
 		<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
-		<?php
-		return $this;
-	}
-
-	/**
-	 * Render het einde van het formulier
-	 *
-	 * @return Public_Cursus_Beheer_Display
-	 */
-	private function form_end() : Public_Cursus_Beheer_Display {
-		?>
-		</form>
 		<?php
 		return $this;
 	}

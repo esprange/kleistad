@@ -14,7 +14,7 @@ namespace Kleistad;
 /**
  * De abstract class voor shortcodes
  */
-abstract class ShortcodeDisplay {
+abstract class Public_Shortcode_Display {
 
 	/**
 	 * De weer te geven data
@@ -53,7 +53,7 @@ abstract class ShortcodeDisplay {
 	/**
 	 * Helper functie voor een formulier
 	 */
-	protected function form() : ShortcodeDisplay {
+	protected function form() : Public_Shortcode_Display {
 		?>
 		<form action="#" autocomplete="off" enctype="multipart/form-data" >
 		<?php
@@ -61,15 +61,26 @@ abstract class ShortcodeDisplay {
 	}
 
 	/**
+	 * Helper functie voor een formulier
+	 */
+	protected function form_end() : Public_Shortcode_Display {
+		?>
+		</form>
+		<?php
+		return $this;
+	}
+
+	/**
 	 * Toon de gebruikers, bijv. ingeval een beheerder namens een bestaande gebruiker optreedt.
 	 *
-	 * @return ShortcodeDisplay
+	 * @param string $label De tekst in het label.
+	 * @return Public_Shortcode_Display
 	 */
-	protected function gebruiker_selectie() : ShortcodeDisplay {
+	protected function gebruiker_selectie( string $label ) : Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-3 kleistad-label" >
-				<label for="kleistad_gebruiker_id">Cursist</label>
+				<label for="kleistad_gebruiker_id"><?php echo esc_html( $label ); ?></label>
 			</div>
 			<div class="kleistad-col-7">
 				<select class="kleistad-input" name="gebruiker_id" id="kleistad_gebruiker_id" >
@@ -86,9 +97,9 @@ abstract class ShortcodeDisplay {
 	/**
 	 * Geef de gebruiker info die al ingelogd is.
 	 *
-	 * @return ShortcodeDisplay
+	 * @return Public_Shortcode_Display
 	 */
-	protected function gebruiker_logged_in() : ShortcodeDisplay {
+	protected function gebruiker_logged_in() : Public_Shortcode_Display {
 		?>
 		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" />
 		<input type="hidden" name="aantal" id="kleistad_aantal" value="1" />
@@ -99,9 +110,9 @@ abstract class ShortcodeDisplay {
 	/**
 	 * De invoervelden voor een opgave van een nieuwe gebruiker
 	 *
-	 * @return ShortcodeDisplay
+	 * @return Public_Shortcode_Display
 	 */
-	protected function gebruiker() : ShortcodeDisplay {
+	protected function gebruiker() : Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
@@ -191,9 +202,9 @@ abstract class ShortcodeDisplay {
 	/**
 	 * Input eventuele opmerking
 	 *
-	 * @return ShortcodeDisplay
+	 * @return Public_Shortcode_Display
 	 */
-	protected function opmerking() : ShortcodeDisplay {
+	protected function opmerking() : Public_Shortcode_Display {
 		?>
 		<div class ="kleistad-row" title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad" >
 			<div class="kleistad-col-3 kleistad-label">
@@ -210,10 +221,10 @@ abstract class ShortcodeDisplay {
 	/**
 	 * Toon een OK button in het midden van het scherm
 	 *
-	 * @return ShortcodeDisplay
+	 * @return Public_Shortcode_Display
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function goto_home() : ShortcodeDisplay {
+	protected function home() : Public_Shortcode_Display {
 		if ( ! is_user_logged_in() ) {
 			$url = home_url();
 		} elseif ( current_user_can( BESTUUR ) ) {
@@ -232,14 +243,12 @@ abstract class ShortcodeDisplay {
 		return $this;
 	}
 
-
-
 	/**
 	 * Input eventuele aanmelding nieuwsbrief
 	 *
-	 * @return ShortcodeDisplay
+	 * @return Public_Shortcode_Display
 	 */
-	protected function nieuwsbrief() : ShortcodeDisplay {
+	protected function nieuwsbrief() : Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
@@ -254,9 +263,9 @@ abstract class ShortcodeDisplay {
 	/**
 	 * Accepteer een eventuele verklaring
 	 *
-	 * @return ShortcodeDisplay
+	 * @return Public_Shortcode_Display
 	 */
-	protected function verklaring() : ShortcodeDisplay {
+	protected function verklaring() : Public_Shortcode_Display {
 		if ( empty( $this->data['verklaring'] ) ) {
 			return $this;
 		}

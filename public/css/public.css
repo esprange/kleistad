@@ -17,7 +17,7 @@ Description: stylesheet functions voor kleistad_plugin
 	--focus: 2px greenyellow;
 }
 
-.kleistad-shortcode *:not(.dashicons),
+.kleistad-shortcode *:not(.dashicons,.mce-btn i),
 .kleistad-fout p,
 .kleistad-succes p,
 .kleistad-inform p,
@@ -515,6 +515,7 @@ div.kleistad-werkplek-dagdeel {
 	line-height: 30px;
 	margin-left: 4px;
 	vertical-align: top;
+	max-width: 80%;
 }
 
 .kleistad-shortcode input[type="radio"]:checked {

@@ -14,7 +14,7 @@ namespace Kleistad;
 /**
  * Render van de abonnee inschrijving formulier.
  */
-class Public_Abonnee_Inschrijving_Display extends ShortcodeDisplay {
+class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
@@ -25,7 +25,7 @@ class Public_Abonnee_Inschrijving_Display extends ShortcodeDisplay {
 	protected function html() {
 		$this->form()->abonnement_info();
 		if ( is_super_admin() ) {
-			$this->gebruiker_selectie();
+			$this->gebruiker_selectie( 'Abonnee' );
 		} elseif ( is_user_logged_in() ) {
 			$this->gebruiker_logged_in()->opmerking()->verklaring()->nieuwsbrief();
 		} else {
@@ -125,7 +125,7 @@ class Public_Abonnee_Inschrijving_Display extends ShortcodeDisplay {
 	 *
 	 * @return Public_Abonnee_Inschrijving_Display
 	 */
-	private function form_end() : Public_Abonnee_Inschrijving_Display {
+	protected function form_end() : Public_Abonnee_Inschrijving_Display {
 		?>
 		<div class="kleistad-row" style="padding-top: 20px;">
 			<div class="kleistad-col-10">

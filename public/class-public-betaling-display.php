@@ -13,7 +13,7 @@ namespace Kleistad;
 /**
  * Render van de betaal formulier.
  */
-class Public_Betaling_Display extends ShortcodeDisplay {
+class Public_Betaling_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
@@ -118,7 +118,7 @@ class Public_Betaling_Display extends ShortcodeDisplay {
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
 				Het nog openstaande bedrag zal zo spoedig mogelijk teruggestort worden
-				<?php echo $this->goto_home(); // phpcs:ignore ?>
+				<?php $this->home(); ?>
 			</div>
 		</div>
 		<?php
@@ -135,22 +135,11 @@ class Public_Betaling_Display extends ShortcodeDisplay {
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
 				Er is geen verdere actie nodig
-				<?php echo $this->goto_home(); // phpcs:ignore ?>
+				<?php $this->home(); ?>
 			</div>
 		</div>
 		<?php
 		return $this;
 	}
 
-	/**
-	 * Render het einde van het formulier
-	 *
-	 * @return Public_Betaling_Display
-	 */
-	private function form_end() : Public_Betaling_Display {
-		?>
-		</form>
-		<?php
-		return $this;
-	}
 }
