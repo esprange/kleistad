@@ -89,7 +89,6 @@ class Public_Cursus_Inschrijving_Display extends ShortcodeDisplay {
 	 * Render het cursus velden
 	 *
 	 * @return Public_Cursus_Inschrijving_Display
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function cursus_info() : Public_Cursus_Inschrijving_Display {
 		?>
@@ -97,7 +96,7 @@ class Public_Cursus_Inschrijving_Display extends ShortcodeDisplay {
 		<?php
 		$geselecteerd = false;
 		foreach ( $this->data['open_cursussen'] as $cursus_id => $cursus ) {
-			$json_cursus = wp_json_encode(
+			$json_cursus   = wp_json_encode(
 				[
 					'technieken' => $cursus->technieken,
 					'meer'       => $cursus->meer,
@@ -107,30 +106,29 @@ class Public_Cursus_Inschrijving_Display extends ShortcodeDisplay {
 					'vol'        => $cursus->vol,
 				]
 			);
-			$tooltip     = 0 < $cursus->inschrijfkosten ?
+			$tooltip       = 0 < $cursus->inschrijfkosten ?
 				sprintf( 'cursus %s start per %s|%d lessen', $cursus->naam, strftime( '%x', $cursus->start_datum ), count( $cursus->lesdatums ) ) :
 				sprintf( 'workshop op %s', strftime( '%x', $cursus->start_datum ) );
-			$tooltip    .=
+			$tooltip      .=
 				sprintf( '|docent is %s|kosten &euro;%01.2f p.p.', $cursus->docent_naam(), $cursus->inschrijfkosten + $cursus->cursuskosten );
+			$selecteerbaar = false !== $json_cursus; // Als dit fout is gegaan, dan de cursus niet selecteerbaar maken.
+			$style         = '';
+			$naam          = $cursus->naam;
 			if ( $cursus->vervallen ) {
 				$selecteerbaar = false;
 				$style         = 'color: gray;';
-				$naam          = "$cursus->naam VERVALLEN";
+				$naam         .= ' VERVALLEN';
 			} elseif ( $cursus->vol ) {
-				if ( $cursus->is_wachtbaar() ) {
-					$selecteerbaar = true;
-					$style         = '';
+				if ( ! $cursus->is_wachtbaar() ) {
+					$selecteerbaar = false;
+					$style         = 'color: gray;';
 				}
-				$naam = "$cursus->naam VOL";
-			} else {
-				$selecteerbaar = true;
-				$style         = '';
-				$naam          = $cursus->naam;
+				$naam .= ' VOL';
 			}
 			?>
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">
 				<input name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
-					data-cursus='<?php echo $json_cursus; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?> <?php checked( $selecteerbaar && ! $geselecteerd ); ?> />
+					data-cursus='<?php echo $json_cursus ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?> <?php checked( $selecteerbaar && ! $geselecteerd ); ?> />
 				<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
 					<span style="<?php echo esc_attr( $style ); ?>"><?php echo esc_html( $naam ); ?></span></label>
 			</div>
@@ -186,7 +184,7 @@ class Public_Cursus_Inschrijving_Display extends ShortcodeDisplay {
 	 * @return Public_Cursus_Inschrijving_Display
 	 */
 	private function aantal( ?int $aantal = null ) : Public_Cursus_Inschrijving_Display {
-		if ( $aantal ) {
+		if ( 0 < $aantal ) {
 			?>
 			<input type="hidden" name="aantal" id="kleistad_aantal" value="1" />
 			<?php

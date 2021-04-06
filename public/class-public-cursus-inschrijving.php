@@ -90,7 +90,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @param array $data data voor display.
 	 * @return bool|WP_Error
 	 */
-	private function prepare_inschrijven( array &$data ) : bool {
+	private function prepare_inschrijven( array &$data ) {
 		$atts                    = shortcode_atts(
 			[
 				'cursus'    => '',

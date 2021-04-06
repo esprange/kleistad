@@ -84,6 +84,19 @@ abstract class ShortcodeDisplay {
 	}
 
 	/**
+	 * Geef de gebruiker info die al ingelogd is.
+	 *
+	 * @return ShortcodeDisplay
+	 */
+	protected function gebruiker_logged_in() : ShortcodeDisplay {
+		?>
+		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" />
+		<input type="hidden" name="aantal" id="kleistad_aantal" value="1" />
+		<?php
+		return $this;
+	}
+
+	/**
 	 * De invoervelden voor een opgave van een nieuwe gebruiker
 	 *
 	 * @return ShortcodeDisplay
@@ -193,6 +206,33 @@ abstract class ShortcodeDisplay {
 		<?php
 		return $this;
 	}
+
+	/**
+	 * Toon een OK button in het midden van het scherm
+	 *
+	 * @return ShortcodeDisplay
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 */
+	protected function goto_home() : ShortcodeDisplay {
+		if ( ! is_user_logged_in() ) {
+			$url = home_url();
+		} elseif ( current_user_can( BESTUUR ) ) {
+			$url = home_url( '/bestuur/' );
+		} else {
+			$url = home_url( '/leden/' );
+		}
+		?>
+		<br/><br/>
+		<div style="text-align:center;" >
+			<button type="button" onclick="location.href='<?php echo esc_url( $url ); ?>';" >
+				&nbsp;OK&nbsp;
+			</button>
+		</div>
+		<?php
+		return $this;
+	}
+
+
 
 	/**
 	 * Input eventuele aanmelding nieuwsbrief
