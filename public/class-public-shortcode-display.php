@@ -51,6 +51,31 @@ abstract class Public_Shortcode_Display {
 	}
 
 	/**
+	 * Toon een OK button in het midden van het scherm
+	 *
+	 * @return Public_Shortcode_Display
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 */
+	public function home() : Public_Shortcode_Display {
+		if ( ! is_user_logged_in() ) {
+			$url = home_url();
+		} elseif ( current_user_can( BESTUUR ) ) {
+			$url = home_url( '/bestuur/' );
+		} else {
+			$url = home_url( '/leden/' );
+		}
+		?>
+		<br/><br/>
+		<div style="text-align:center;" >
+			<button type="button" onclick="location.href='<?php echo esc_url( $url ); ?>';" >
+				&nbsp;OK&nbsp;
+			</button>
+		</div>
+		<?php
+		return $this;
+	}
+
+	/**
 	 * Helper functie voor een formulier
 	 */
 	protected function form() : Public_Shortcode_Display {
@@ -213,31 +238,6 @@ abstract class Public_Shortcode_Display {
 			<div class="kleistad-col-7 kleistad-input">
 				<textarea class="kleistad-input" name="opmerking" id="kleistad_opmerking" maxlength="1000" rows="3" cols="50"><?php echo esc_textarea( $this->data['input']['opmerking'] ); ?></textarea>
 			</div>
-		</div>
-		<?php
-		return $this;
-	}
-
-	/**
-	 * Toon een OK button in het midden van het scherm
-	 *
-	 * @return Public_Shortcode_Display
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	protected function home() : Public_Shortcode_Display {
-		if ( ! is_user_logged_in() ) {
-			$url = home_url();
-		} elseif ( current_user_can( BESTUUR ) ) {
-			$url = home_url( '/bestuur/' );
-		} else {
-			$url = home_url( '/leden/' );
-		}
-		?>
-		<br/><br/>
-		<div style="text-align:center;" >
-			<button type="button" onclick="location.href='<?php echo esc_url( $url ); ?>';" >
-				&nbsp;OK&nbsp;
-			</button>
 		</div>
 		<?php
 		return $this;

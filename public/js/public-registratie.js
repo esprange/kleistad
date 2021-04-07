@@ -9,14 +9,14 @@
 			$pass2,
 			$strengthResult,
 			$submitButton,
-			blacklistArray ) {
+			disallowedListArray ) {
 		var pass1 = $pass1.val(),
 			pass2 = $pass2.val();
 
 		$submitButton.attr( 'disabled', 'disabled' );
-		$strengthResult.removeClassWildcard( 'kleistad_pwd' );
-		blacklistArray = blacklistArray.concat( wp.passwordStrength.userInputBlacklist() );
-		strength       = wp.passwordStrength.meter( pass1, blacklistArray, pass2 );
+		$strengthResult.removeClassWildcard( 'kleistad-pwd' );
+		disallowedListArray = disallowedListArray.concat( wp.passwordStrength.userInputDisallowedList() );
+		strength            = wp.passwordStrength.meter( pass1, disallowedListArray, pass2 );
 
 		switch ( strength ) {
 			case 2:

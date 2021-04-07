@@ -12,7 +12,7 @@
                 {
                     autoOpen: false,
                     height: 'auto',
-                    width: 1000,
+                    width: 750,
                     modal: true,
                     buttons: {
                         Ok: function() {
