@@ -122,7 +122,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-3">
 			<?php
-			$cat_dropdown = wp_dropdown_categories(
+			wp_dropdown_categories(
 				[
 					'orderby'           => 'name',
 					'hide_empty'        => 0,

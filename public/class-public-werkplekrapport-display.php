@@ -29,19 +29,19 @@ class Public_WerkplekRapport_Display extends Public_Shortcode_Display {
 			$this->form_end();
 			return;
 		}
-		if ( 'individueel' === $data['actie'] ) {
+		if ( 'individueel' === $this->data['actie'] ) {
 			$this->individueel();
 			return;
 		}
-		$this->werkplek();
+		$this->overzicht();
 	}
 
 	/**
 	 * Render het rapport
 	 *
-	 * @return Public_Werkplek_Display
+	 * @return Public_Werkplekrapport_Display
 	 */
-	private function individueel() {
+	private function individueel() : Public_Werkplekrapport_Display {
 		?>
 		<h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?> door <?php echo esc_html( get_user_by( 'id', $this->data['gebruiker_id'] )->display_name ); ?></h2>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
@@ -76,9 +76,9 @@ class Public_WerkplekRapport_Display extends Public_Shortcode_Display {
 	/**
 	 * Render het rapport
 	 *
-	 * @return Public_Werkplek_Display
+	 * @return Public_Werkplekrapport_Display
 	 */
-	private function overzicht() {
+	private function overzicht() : Public_Werkplekrapport_Display {
 		?>
 		<h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?></h2>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
@@ -121,9 +121,9 @@ class Public_WerkplekRapport_Display extends Public_Shortcode_Display {
 	/**
 	 * Render het datum selectie
 	 *
-	 * @return Public_Werkplek_Display
+	 * @return Public_Werkplekrapport_Display
 	 */
-	private function datums() {
+	private function datums() : Public_Werkplekrapport_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
@@ -148,9 +148,9 @@ class Public_WerkplekRapport_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de gebruiker selectie
 	 *
-	 * @return Public_Werkplek_Display
+	 * @return Public_Werkplekrapport_Display
 	 */
-	private function werkplekgebruiker() {
+	private function werkplekgebruiker() : Public_Werkplekrapport_Display {
 		?>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-3">
@@ -171,9 +171,9 @@ class Public_WerkplekRapport_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de form
 	 *
-	 * @return Public_Werkplek_Display
+	 * @return Public_Werkplekrapport_Display
 	 */
-	protected function form() {
+	protected function form() : Public_Werkplekrapport_Display {
 		?>
 		<form method="GET" action="<?php echo esc_attr( get_permalink() ?: '#' ); ?>">
 		<?php
@@ -183,9 +183,9 @@ class Public_WerkplekRapport_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de form end
 	 *
-	 * @return Public_Werkplek_Display
+	 * @return Public_Werkplekrapport_Display
 	 */
-	protected function form_end() {
+	protected function form_end() : Public_Werkplekrapport_Display {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;" >
 			<button type="submit" >Rapport</button>
