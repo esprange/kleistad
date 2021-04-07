@@ -29,47 +29,6 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Toon het overzicht van recepten
-	 *
-	 * @return Public_Recept_Beheer_Display
-	 */
-	private function overzicht() : Public_Recept_Beheer_Display {
-		?>
-		<table class="kleistad-datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
-			<thead>
-			<tr>
-				<th data-orderable="false">Glazuur</th>
-				<th>Titel</th>
-				<th>Datum</th>
-				<th>Status</th>
-				<th data-orderable="false">&nbsp;</th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php foreach ( $this->data['recepten'] as $recept ) : ?>
-			<tr>
-				<td>
-				<?php if ( '' !== $recept['foto'] ) : ?>
-					<img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept['titel'] ); ?>" >
-					<?php else : ?>
-					&nbsp;
-				<?php endif; ?></td>
-				<td><?php echo esc_html( $recept['titel'] ); ?></td>
-				<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
-				<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
-				<td>
-					<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
-				</td>
-			</tr>
-			<?php endforeach ?>
-			</tbody>
-		</table>
-		<button type="button" class="kleistad-edit kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
-		<?php
-		return $this;
-	}
-
-	/**
 	 * Render het formulier
 	 *
 	 * @return Public_Recept_Beheer_Display
@@ -289,4 +248,46 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 		<?php
 		return $this;
 	}
+
+	/**
+	 * Toon het overzicht van recepten
+	 *
+	 * @return Public_Recept_Beheer_Display
+	 */
+	private function overzicht() : Public_Recept_Beheer_Display {
+		?>
+		<table class="kleistad-datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
+			<thead>
+			<tr>
+				<th data-orderable="false">Glazuur</th>
+				<th>Titel</th>
+				<th>Datum</th>
+				<th>Status</th>
+				<th data-orderable="false">&nbsp;</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php foreach ( $this->data['recepten'] as $recept ) : ?>
+			<tr>
+				<td>
+				<?php if ( '' !== $recept['foto'] ) : ?>
+					<img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept['titel'] ); ?>" >
+					<?php else : ?>
+					&nbsp;
+				<?php endif; ?></td>
+				<td><?php echo esc_html( $recept['titel'] ); ?></td>
+				<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
+				<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
+				<td>
+					<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
+				</td>
+			</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+		<button type="button" class="kleistad-edit kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<?php
+		return $this;
+	}
+
 }
