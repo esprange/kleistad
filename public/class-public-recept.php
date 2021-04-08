@@ -158,15 +158,103 @@ class Public_Recept extends Shortcode {
 			]
 		);
 
-		ob_start();
-		require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-show-recept.php';
 		return new WP_REST_Response(
 			[
-				'content' => ob_get_clean(),
+				'content' => self::render( $data ),
 				'terms'   => $request->get_param( 'terms' ),
 				'auteurs' => $request->get_param( 'auteurs' ),
 			]
 		);
 
 	}
+
+	/**
+	 * Truncate een tekstregel tot gewenste woordlengte
+	 *
+	 * @param string $string    Tekstregel.
+	 * @param int    $width     Gewenste lengte.
+	 * @return string
+	 */
+	private static function truncate_string( $string, $width ) {
+		if ( strlen( $string ) > $width ) {
+			$string = wordwrap( $string, $width );
+			$string = substr( $string, 0, strpos( $string, "\n" ) );
+		}
+		return $string;
+	}
+
+	/**
+	 * Toont filter opties voor term met naam
+	 *
+	 * @param string $titel     De h3 titel.
+	 * @param string $naam      Naam van de filtergroep.
+	 * @param array  $termen    Array van termen.
+	 * @return string           Html tekst.
+	 */
+	private static function filter( string $titel, string $naam, array $termen ) : string {
+		$html  = '';
+		$count = count( $termen );
+		$toon  = 4;
+		if ( 0 < $count ) {
+			$html .= "<h3>$titel</h3><ul>";
+			$index = 0;
+			foreach ( $termen as $id => $term ) {
+				$index++;
+				$style = ( $toon < $index ) ? 'display:none;' : '';
+				$html .= '<li class="kleistad-filter-term" style="' . $style . '">';
+				$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad-filter" value="' . $id . '" style="display:none;" >';
+				$html .= esc_html( self::truncate_string( $term, 25 ) ); // Max. 30 karakters.
+				$html .= '<span style="visibility:hidden;float:right">&#9932;</span></label></li>';
+				if ( ( $toon === $index ) && ( $index !== $count ) ) {
+					$html .= '<li class="kleistad-filter-term">';
+					$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad-meer" value="meer" style="display:none;" >+ meer ... </label></li>';
+				}
+			}
+			if ( $toon < $index ) {
+				$html .= '<li class="kleistad-filter-term" style="display:none;" >';
+				$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad-meer" value="minder" style="display:none;" >- minder ... </label></li>';
+			}
+			$html .= '</ul>';
+		}
+		return $html;
+	}
+
+	/**
+	 * Render de pagina
+	 *
+	 * @param array $data De recept data.
+	 * @return string HTML tekst.
+	 */
+	private static function render( array $data ) : string {
+		$count = count( $data['recepten'] );
+		if ( 0 === $count ) {
+			return '<br/>' . melding( -1, 'er zijn geen recepten gevonden, pas het filter aan.' );
+		}
+		$html  = '<div id="kleistad_filters" class="kleistad-filters" >';
+		$html .= self::filter( 'Type glazuur', 'term', $data['glazuur'] );
+		$html .= self::filter( 'Uiterlijk', 'term', $data['uiterlijk'] );
+		$html .= self::filter( 'Kleur', 'term', $data['kleur'] );
+		$html .= self::filter( 'Auteur', 'auteur', $data['auteur'] );
+		$html .= '</div><div id="kleistad_recept_overzicht">';
+		$index = 0;
+		foreach ( $data['recepten'] as $recept ) {
+			if ( ++$index > 24 ) {
+				break;
+			}
+			$permalink = get_post_permalink( $recept['id'] );
+			if ( is_string( $permalink ) ) {
+				$html .= '<div style="width:250px;float:left;padding:15px;border:0;"><a href="' . $permalink . '" >
+					<div class="kleistad-recept-img" style="background-image:url(\'' . $recept['foto'] . '\');" >
+					</div><div class="kleistad-recept-titel" >';
+				$html .= self::truncate_string( $recept['titel'], 25 );
+				$html .= '</div></a></div>';
+			}
+		}
+		$html .= '</div>';
+		if ( $count > $index ) {
+			$html .= '<br/>' . melding( -1, 'er zijn meer recepten dan er nu getoond worden, pas het filter aan.' );
+		}
+		return $html;
+	}
+
 }
