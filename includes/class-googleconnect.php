@@ -159,10 +159,9 @@ class Googleconnect {
 	 * @since 5.0.0
 	 * @return bool succes of falen
 	 */
-	public static function is_authorized() : bool {
+	public function is_authorized() : bool {
 		if ( false !== get_option( self::ACCESS_TOKEN ) ) {
-			$googleconnect = new self();
-			return is_object( $googleconnect->calendar_service() );
+			return is_object( $this->calendar_service() );
 		}
 		return false;
 	}

@@ -53,6 +53,7 @@ class Admin_Instellingen_Handler {
 	 */
 	public function display_settings_page() {
 		$result        = true;
+		$display       = new Admin_Instellingen_Display( $this->options, $this->setup );
 		$googleconnect = new Googleconnect();
 		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
 			$googleconnect->vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
@@ -73,9 +74,9 @@ class Admin_Instellingen_Handler {
 			    <a href="?page=kleistad&tab=instellingen" class="nav-tab <?php echo 'instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Functionele instellingen</a>
 			    <a href="?page=kleistad&tab=setup" class="nav-tab <?php echo 'setup' === $active_tab ? 'nav-tab-active' : ''; ?>">Technische instellingen</a>
 			    <a href="?page=kleistad&tab=shortcodes" class="nav-tab <?php echo 'shortcodes' === $active_tab ? 'nav-tab-active' : ''; ?>">Shortcodes</a>
-			    <a href="?page=kleistad&tab=email-parameters" class="nav-tab <?php echo 'email-parameters' === $active_tab ? 'nav-tab-active' : ''; ?>">Email parameters</a>
+			    <a href="?page=kleistad&tab=email_parameters" class="nav-tab <?php echo 'email_parameters' === $active_tab ? 'nav-tab-active' : ''; ?>">Email parameters</a>
 			</h2>
-			<?php require "partials/admin-$active_tab.php"; ?>
+			<?php $display->$active_tab(); ?>
 		</div>
 		<?php
 	}
