@@ -17,6 +17,20 @@ namespace Kleistad;
 class Admin_Recepttermen_Handler {
 
 	/**
+	 * Het display object
+	 *
+	 * @var Admin_Recepttermen_Display $display De display class.
+	 */
+	private Admin_Recepttermen_Display $display;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->display = new Admin_Recepttermen_Display();
+	}
+
+	/**
 	 * Valideer de recept term
 	 *
 	 * @since    6.4.0
@@ -51,7 +65,7 @@ class Admin_Recepttermen_Handler {
 	 * @since    6.4.0
 	 */
 	public function recepttermen_page_handler() {
-		require 'partials/admin-recepttermen-page.php';
+		$this->display->page();
 	}
 
 	/**
@@ -59,15 +73,12 @@ class Admin_Recepttermen_Handler {
 	 *
 	 * @since    6.4.0
 	 *
-	 * @suppressWarnings(PHPMD.UnusedLocalVariable)
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function recepttermen_form_page_handler() {
-		$message  = '';
-		$notice   = '';
-		$single   = 'receptterm';
-		$multiple = 'recepttermen';
-		$item     = [];
+		$message = '';
+		$notice  = '';
+		$item    = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_receptterm' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
@@ -124,7 +135,7 @@ class Admin_Recepttermen_Handler {
 			}
 		}
 		add_meta_box( 'receptterm_form_meta_box', 'receptterm', [ $this, 'recepttermen_form_meta_box_handler' ], 'receptterm', 'normal', 'default' );
-		require 'partials/admin-form-page.php';
+		$this->display->form_page( $item, 'receptterm', 'recepttermen', $notice, $message, false );
 	}
 
 	/**
@@ -134,6 +145,6 @@ class Admin_Recepttermen_Handler {
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function recepttermen_form_meta_box_handler( $item ) {
-		require 'partials/admin-recepttermen-form-meta-box.php';
+		$this->display->form_meta_box( $item, '' );
 	}
 }

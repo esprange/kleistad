@@ -54,7 +54,13 @@ class Admin_Regelingen extends WP_List_Table {
 	public function column_gebruiker_naam( $item ) {
 		$actions = [
 			'edit'   => sprintf( '<a href="?page=regelingen_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
-			'delete' => sprintf( '<a href="?page=%s&action=delete&id=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['id'], 'Verwijderen' ),
+			'delete' => sprintf(
+				'<a href="?page=%s&action=delete&id=%s&nonce=%s">%s</a>',
+				filter_input( INPUT_GET, 'page' ),
+				$item['id'],
+				wp_create_nonce( 'kleistad_regeling' ),
+				'Verwijderen'
+			),
 		];
 
 		return sprintf( '<strong>%s</strong> %s', $item['gebruiker_naam'], $this->row_actions( $actions ) );

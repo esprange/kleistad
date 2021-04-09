@@ -17,6 +17,20 @@ namespace Kleistad;
 class Admin_Abonnees_Handler {
 
 	/**
+	 * Het display object
+	 *
+	 * @var Admin_Abonnees_Display $display De display class.
+	 */
+	private Admin_Abonnees_Display $display;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->display = new Admin_Abonnees_Display();
+	}
+
+	/**
 	 * Definieer de panels
 	 *
 	 * @since 5.2.0
@@ -132,7 +146,7 @@ class Admin_Abonnees_Handler {
 	 * @since    5.2.0
 	 */
 	public function abonnees_page_handler() {
-		require 'partials/admin-abonnees-page.php';
+		$this->display->page();
 	}
 
 	/**
@@ -140,13 +154,10 @@ class Admin_Abonnees_Handler {
 	 *
 	 * @since    5.2.0
 	 *
-	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function abonnees_form_page_handler() {
-		$single   = 'abonnee';
-		$multiple = 'abonnees';
-		$actie    = null;
+		$actie = null;
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
@@ -191,12 +202,9 @@ class Admin_Abonnees_Handler {
 			$item    = $this->geef_abonnee( intval( $_REQUEST['id'] ) );
 			$notice  = '';
 			$message = '';
-			if ( 'historie' === $actie ) {
-				$display_only = true;
-			}
 		}
 		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default', [ $actie ] );
-		require 'partials/admin-form-page.php';
+		$this->display->form_page( $item, 'abonnee', 'abonnees', $notice, $message, 'historie' === $actie );
 	}
 
 	/**
@@ -206,12 +214,9 @@ class Admin_Abonnees_Handler {
 	 *
 	 * @param array $item de abonnee.
 	 * @param array $request de aanroep parameters.
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function abonnees_form_meta_box_handler( $item, $request ) {
-		$actie = $request['args'][0];
-		require 'partials/admin-abonnees-form-meta-box.php';
+		$this->display->form_meta_box( $item, $request['args'][0] );
 	}
 
 }

@@ -17,6 +17,20 @@ namespace Kleistad;
 class Admin_Ovens_Handler {
 
 	/**
+	 * Het display object
+	 *
+	 * @var Admin_Ovens_Display $display De display class.
+	 */
+	private Admin_Ovens_Display $display;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->display = new Admin_Ovens_Display();
+	}
+
+	/**
 	 * Valideer de oven
 	 *
 	 * @since    5.2.0
@@ -59,7 +73,7 @@ class Admin_Ovens_Handler {
 	 * @since    5.2.0
 	 */
 	public function ovens_page_handler() {
-		require 'partials/admin-ovens-page.php';
+		$this->display->page();
 	}
 
 	/**
@@ -67,15 +81,12 @@ class Admin_Ovens_Handler {
 	 *
 	 * @since    5.2.0
 	 *
-	 * @suppressWarnings(PHPMD.UnusedLocalVariable)
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function ovens_form_page_handler() {
-		$message  = '';
-		$notice   = '';
-		$single   = 'oven';
-		$multiple = 'ovens';
-		$item     = [];
+		$message = '';
+		$notice  = '';
+		$item    = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
@@ -124,7 +135,7 @@ class Admin_Ovens_Handler {
 			$item['beschikbaarheid'] = $oven->beschikbaarheid;
 		}
 		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this, 'ovens_form_meta_box_handler' ], 'oven', 'normal', 'default' );
-		require 'partials/admin-form-page.php';
+		$this->display->form_page( $item, 'oven', 'ovens', $notice, $message, false );
 	}
 
 	/**
@@ -134,6 +145,6 @@ class Admin_Ovens_Handler {
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function ovens_form_meta_box_handler( $item ) {
-		require 'partials/admin-ovens-form-meta-box.php';
+		$this->display->form_meta_box( $item, '' );
 	}
 }

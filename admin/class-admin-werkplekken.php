@@ -55,7 +55,14 @@ class Admin_Werkplekken extends WP_List_Table {
 		$actions = [
 			'edit'   => sprintf( '<a href="?page=werkplekken_form&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Wijzigen' ),
 			'copy'   => sprintf( '<a href="?page=werkplekken_form&action=copy&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Kopiëren' ),
-			'delete' => sprintf( '<a href="?page=%s&action=delete&start_datum=%s&eind_datum=%s" class="submitdelete">%s</a>', filter_input( INPUT_GET, 'page' ), $item['start_datum'], $item['eind_datum'], 'Verwijderen' ),
+			'delete' => sprintf(
+				'<a href="?page=%s&action=delete&start_datum=%s&eind_datum=%s&nonce=%s" class="submitdelete">%s</a>',
+				filter_input( INPUT_GET, 'page' ),
+				$item['start_datum'],
+				$item['eind_datum'],
+				wp_create_nonce( 'kleistad_werkplek' ),
+				'Verwijderen'
+			),
 		];
 		return sprintf( '<strong>%s</strong> %s', date( 'd-m-Y', $item['start_datum'] ), $this->row_actions( $actions ) );
 	}

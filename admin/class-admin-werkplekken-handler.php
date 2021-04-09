@@ -17,6 +17,20 @@ namespace Kleistad;
 class Admin_Werkplekken_Handler {
 
 	/**
+	 * Het display object
+	 *
+	 * @var Admin_Werkplekken_Display $display De display class.
+	 */
+	private Admin_Werkplekken_Display $display;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->display = new Admin_Werkplekken_Display();
+	}
+
+	/**
 	 * Valideer de werkplek
 	 *
 	 * @since    6.11.0
@@ -80,20 +94,21 @@ class Admin_Werkplekken_Handler {
 	 * Werkplekken overzicht page handler
 	 *
 	 * @since    6.11.0
-	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function werkplekken_page_handler() {
-		$message = '';
-		$table   = new Admin_Werkplekken();
-		if ( 'delete' === $table->current_action() ) {
-			$werkplekconfigs = new WerkplekConfigs();
-			$werkplekconfig  = $werkplekconfigs->find( intval( filter_input( INPUT_GET, 'start_datum' ) ), intval( filter_input( INPUT_GET, 'eind_datum' ) ) );
-			if ( is_object( $werkplekconfig ) ) {
-				$werkplekconfigs->verwijder( $werkplekconfig );
-				$message = 'De werkplek configuratie is verwijderd';
+		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_werkplek' ) &&
+			isset( $_REQUEST['action'] ) && 'delete' === $_REQUEST['action'] ) {
+			$start_datum = filter_input( INPUT_GET, 'start_datum' );
+			$eind_datum  = filter_input( INPUT_GET, 'eind_datum' );
+			if ( ! is_null( $start_datum ) && ! is_null( $eind_datum ) ) {
+				$werkplekconfigs = new WerkplekConfigs();
+				$werkplekconfig  = $werkplekconfigs->find( intval( $start_datum ), intval( $eind_datum ) );
+				if ( is_object( $werkplekconfig ) ) {
+					$werkplekconfigs->verwijder( $werkplekconfig );
+				}
 			}
 		}
-		require 'partials/admin-werkplekken-page.php';
+		$this->display->page();
 	}
 
 	/**
@@ -105,11 +120,9 @@ class Admin_Werkplekken_Handler {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function werkplekken_form_page_handler() {
-		$message  = '';
-		$notice   = '';
-		$single   = 'werkplek';
-		$multiple = 'werkplekken';
-		$item     = [];
+		$message = '';
+		$notice  = '';
+		$item    = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_werkplek' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
@@ -156,7 +169,7 @@ class Admin_Werkplekken_Handler {
 			];
 		}
 		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this, 'werkplekken_form_meta_box_handler' ], 'werkplek', 'normal', 'default' );
-		require 'partials/admin-form-page.php';
+		$this->display->form_page( $item, 'werkplek', 'werkplekken', $notice, $message, false );
 	}
 
 	/**
@@ -166,7 +179,7 @@ class Admin_Werkplekken_Handler {
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function werkplekken_form_meta_box_handler( $item ) {
-		require 'partials/admin-werkplekken-form-meta-box.php';
+		$this->display->form_meta_box( $item, '' );
 	}
 
 	/**

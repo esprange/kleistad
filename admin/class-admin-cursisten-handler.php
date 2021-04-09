@@ -17,6 +17,20 @@ namespace Kleistad;
 class Admin_Cursisten_Handler {
 
 	/**
+	 * Het display object
+	 *
+	 * @var Admin_Cursisten_Display $display De display class.
+	 */
+	private Admin_Cursisten_Display $display;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->display = new Admin_Cursisten_Display();
+	}
+
+	/**
 	 * Definieer de panels
 	 *
 	 * @since    5.2.0
@@ -32,21 +46,18 @@ class Admin_Cursisten_Handler {
 	 * @since    5.2.0
 	 */
 	public function cursisten_page_handler() {
-		require 'partials/admin-cursisten-page.php';
+		$this->display->page();
 	}
 
 	/**
 	 * Toon en verwerk ingevoerde cursist gegevens
 	 *
 	 * @since    5.2.0
-	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function cursisten_form_page_handler() {
-		$message  = '';
-		$notice   = '';
-		$single   = 'cursist';
-		$multiple = 'cursisten';
+		$message = '';
+		$notice  = '';
 
 		list( $cursus_id, $cursist_id ) = sscanf( $_REQUEST['id'] ?? 'C0-0', 'C%d-%d' );
 
@@ -83,7 +94,7 @@ class Admin_Cursisten_Handler {
 			];
 		}
 		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this, 'cursisten_form_meta_box_handler' ], 'cursist', 'normal', 'default' );
-		require 'partials/admin-form-page.php';
+		$this->display->form_page( $item, 'cursist', 'cursisten', $notice, $message, false );
 	}
 
 	/**
@@ -95,6 +106,6 @@ class Admin_Cursisten_Handler {
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function cursisten_form_meta_box_handler( $item ) {
-		require 'partials/admin-cursisten-form-meta-box.php';
+		$this->display->form_meta_box( $item, '' );
 	}
 }

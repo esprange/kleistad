@@ -17,6 +17,20 @@ namespace Kleistad;
 class Admin_Regelingen_Handler {
 
 	/**
+	 * Het display object
+	 *
+	 * @var Admin_Regelingen_Display $display De display class.
+	 */
+	private Admin_Regelingen_Display $display;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->display = new Admin_Regelingen_Display();
+	}
+
+	/**
 	 * Definieer de panels
 	 *
 	 * @since    5.2.0
@@ -58,12 +72,10 @@ class Admin_Regelingen_Handler {
 	 *
 	 * @since    5.2.0
 	 * @suppressWarnings(PHPMD.ElseExpression)
-	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function regelingen_page_handler() {
-		$message = '';
-		$table   = new Admin_Regelingen();
-		if ( 'delete' === $table->current_action() ) {
+		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_regeling' ) &&
+			isset( $_REQUEST['action'] ) && 'delete' === $_REQUEST['action'] ) {
 			$regeling_id = filter_input( INPUT_GET, 'id' );
 			if ( ! is_null( $regeling_id ) ) {
 				list( $gebruiker_id, $oven_id ) = sscanf( $regeling_id, '%d-%d' );
@@ -74,10 +86,9 @@ class Admin_Regelingen_Handler {
 				} else {
 					update_user_meta( $gebruiker_id, Oven::REGELING, $regelingen );
 				}
-				$message = 'De gegevens zijn opgeslagen';
 			}
 		}
-		require 'partials/admin-regelingen-page.php';
+		$this->display->page();
 	}
 
 	/**
@@ -85,14 +96,10 @@ class Admin_Regelingen_Handler {
 	 *
 	 * @since    5.2.0
 	 * @suppressWarnings(PHPMD.ElseExpression)
-	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function regelingen_form_page_handler() {
-
-		$message  = '';
-		$notice   = '';
-		$single   = 'regeling';
-		$multiple = 'regelingen';
+		$message = '';
+		$notice  = '';
 
 		$default = [
 			'id'             => '',
@@ -140,8 +147,7 @@ class Admin_Regelingen_Handler {
 			}
 		}
 		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this, 'regelingen_form_meta_box_handler' ], 'regeling', 'normal', 'default' );
-
-		require 'partials/admin-form-page.php';
+		$this->display->form_page( $item, 'regeling', 'regelingen', $notice, $message, false );
 	}
 
 	/**
@@ -153,6 +159,6 @@ class Admin_Regelingen_Handler {
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function regelingen_form_meta_box_handler( $item ) {
-		require 'partials/admin-regelingen-form-meta-box.php';
+		$this->display->form_meta_box( $item, '' );
 	}
 }

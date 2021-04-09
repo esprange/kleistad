@@ -17,6 +17,20 @@ namespace Kleistad;
 class Admin_Stooksaldo_Handler {
 
 	/**
+	 * Het display object
+	 *
+	 * @var Admin_Stooksaldo_Display $display De display class.
+	 */
+	private Admin_Stooksaldo_Display $display;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->display = new Admin_Stooksaldo_Display();
+	}
+
+	/**
 	 * Definieer de panels
 	 *
 	 * @since    5.2.0
@@ -53,7 +67,7 @@ class Admin_Stooksaldo_Handler {
 	 * @since    5.2.0
 	 */
 	public function stooksaldo_page_handler() {
-		require 'partials/admin-stooksaldo-page.php';
+		$this->display->page();
 	}
 
 	/**
@@ -64,11 +78,9 @@ class Admin_Stooksaldo_Handler {
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function stooksaldo_form_page_handler() {
-		$message  = '';
-		$notice   = '';
-		$single   = 'stooksaldo';
-		$multiple = 'stooksaldo';
-		$default  = [
+		$message = '';
+		$notice  = '';
+		$default = [
 			'id'    => 0,
 			'saldo' => 0,
 			'naam'  => '',
@@ -105,8 +117,7 @@ class Admin_Stooksaldo_Handler {
 			}
 		}
 		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this, 'stooksaldo_form_meta_box_handler' ], 'stooksaldo', 'normal', 'default' );
-
-		require 'partials/admin-form-page.php';
+		$this->display->form_page( $item, 'stooksaldo', 'stooksaldi', $notice, $message, false );
 	}
 
 	/**
@@ -118,6 +129,6 @@ class Admin_Stooksaldo_Handler {
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function stooksaldo_form_meta_box_handler( $item ) {
-		require 'partials/admin-stooksaldo-form-meta-box.php';
+		$this->display( $item, '' );
 	}
 }
