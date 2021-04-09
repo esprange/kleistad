@@ -187,18 +187,19 @@ class Admin_Abonnees_Handler {
 					'actie'            => FILTER_SANITIZE_STRING,
 				]
 			);
-			if ( is_array( $item ) ) {
-				if ( ! is_array( $item['extras'] ) ) {
-					$item['extras'] = [];
-				}
-				$actie = $item['actie'];
-				if ( 'status' === $actie ) {
-					$item_valid = $this->validate_abonnee( $item );
-					$notice     = is_string( $item_valid ) ? $item_valid : '';
-					$message    = empty( $notice ) ? $this->wijzig_abonnee( $item ) : '';
-				} elseif ( 'mollie' === $actie ) {
-					$message = $this->wijzig_abonnee_mandaat( $item );
-				}
+			if ( ! is_array( $item ) ) {
+				return;
+			}
+			if ( ! is_array( $item['extras'] ) ) {
+				$item['extras'] = [];
+			}
+			$actie = $item['actie'];
+			if ( 'status' === $actie ) {
+				$item_valid = $this->validate_abonnee( $item );
+				$notice     = is_string( $item_valid ) ? $item_valid : '';
+				$message    = empty( $notice ) ? $this->wijzig_abonnee( $item ) : '';
+			} elseif ( 'mollie' === $actie ) {
+				$message = $this->wijzig_abonnee_mandaat( $item );
 			}
 		} elseif ( isset( $_REQUEST['id'] ) ) {
 			$actie = $_REQUEST['actie'];

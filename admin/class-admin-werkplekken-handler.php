@@ -140,13 +140,14 @@ class Admin_Werkplekken_Handler {
 					],
 				]
 			);
-			if ( is_array( $item ) ) {
-				$item_valid = $this->validate_werkplek( $item );
-				$notice     = is_string( $item_valid ) ? $item_valid : '';
-				if ( true === $item_valid ) {
-					$this->update_werkplek( $item );
-					$message = 'De gegevens zijn opgeslagen';
-				}
+			if ( ! is_array( $item ) ) {
+				return;
+			}
+			$item_valid = $this->validate_werkplek( $item );
+			$notice     = is_string( $item_valid ) ? $item_valid : '';
+			if ( true === $item_valid ) {
+				$this->update_werkplek( $item );
+				$message = 'De gegevens zijn opgeslagen';
 			}
 		} else { // Bestaande config opvragen of nieuwe toevoegen.
 			$params          = filter_input_array(
