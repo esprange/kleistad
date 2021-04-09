@@ -80,6 +80,7 @@ class Admin_Stooksaldo_Handler {
 	public function stooksaldo_form_page_handler() {
 		$message = '';
 		$notice  = '';
+		$item    = [];
 		$default = [
 			'id'    => 0,
 			'saldo' => 0,
@@ -129,6 +130,6 @@ class Admin_Stooksaldo_Handler {
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function stooksaldo_form_meta_box_handler( $item ) {
-		$this->display( $item, '' );
+		$this->display->form_meta_box( $item, '' );
 	}
 }

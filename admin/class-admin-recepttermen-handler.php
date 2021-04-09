@@ -88,31 +88,32 @@ class Admin_Recepttermen_Handler {
 					'naam'         => FILTER_SANITIZE_STRING,
 				]
 			);
-			if ( is_array( $item ) ) {
-				$item_valid = $this->validate_receptterm( $item );
-				if ( true === $item_valid ) {
-					if ( $item['id'] > 0 ) {
-						wp_update_term(
-							$item['id'],
-							Recept::CATEGORY,
-							[
-								'naam'   => $item['naam'],
-								'parent' => $item['hoofdterm_id'],
-							]
-						);
-					} else {
-						wp_insert_term(
-							$item['naam'],
-							Recept::CATEGORY,
-							[
-								'parent' => $item['hoofdterm_id'],
-							]
-						);
-					}
-					$message = 'De gegevens zijn opgeslagen';
+			if ( ! is_array( $item ) ) {
+				return;
+			}
+			$item_valid = $this->validate_receptterm( $item );
+			if ( true === $item_valid ) {
+				if ( $item['id'] > 0 ) {
+					wp_update_term(
+						$item['id'],
+						Recept::CATEGORY,
+						[
+							'naam'   => $item['naam'],
+							'parent' => $item['hoofdterm_id'],
+						]
+					);
 				} else {
-					$notice = $item_valid;
+					wp_insert_term(
+						$item['naam'],
+						Recept::CATEGORY,
+						[
+							'parent' => $item['hoofdterm_id'],
+						]
+					);
 				}
+				$message = 'De gegevens zijn opgeslagen';
+			} else {
+				$notice = $item_valid;
 			}
 		} else {
 			$item = [

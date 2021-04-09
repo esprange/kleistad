@@ -56,13 +56,12 @@ class Admin_Cursisten_Handler {
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function cursisten_form_page_handler() {
-		$message = '';
-		$notice  = '';
-
+		$message                        = '';
+		$notice                         = '';
+		$item                           = [];
 		list( $cursus_id, $cursist_id ) = sscanf( $_REQUEST['id'] ?? 'C0-0', 'C%d-%d' );
-
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
-			$item            = filter_input_array(
+			$item = filter_input_array(
 				INPUT_POST,
 				[
 					'naam'      => FILTER_SANITIZE_STRING,
@@ -70,6 +69,9 @@ class Admin_Cursisten_Handler {
 					'aantal'    => FILTER_SANITIZE_NUMBER_INT,
 				]
 			);
+			if ( ! is_array( $item ) ) {
+				return;
+			}
 			$nieuw_cursus_id = intval( $item['cursus_id'] );
 			$nieuw_aantal    = intval( $item['aantal'] );
 			$message         = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';

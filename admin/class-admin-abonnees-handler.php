@@ -157,7 +157,10 @@ class Admin_Abonnees_Handler {
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function abonnees_form_page_handler() {
-		$actie = null;
+		$actie   = null;
+		$notice  = '';
+		$message = '';
+		$item    = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
@@ -198,10 +201,8 @@ class Admin_Abonnees_Handler {
 				}
 			}
 		} elseif ( isset( $_REQUEST['id'] ) ) {
-			$actie   = $_REQUEST['actie'];
-			$item    = $this->geef_abonnee( intval( $_REQUEST['id'] ) );
-			$notice  = '';
-			$message = '';
+			$actie = $_REQUEST['actie'];
+			$item  = $this->geef_abonnee( intval( $_REQUEST['id'] ) );
 		}
 		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default', [ $actie ] );
 		$this->display->form_page( $item, 'abonnee', 'abonnees', $notice, $message, 'historie' === $actie );
