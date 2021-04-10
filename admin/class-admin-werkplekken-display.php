@@ -18,13 +18,13 @@ class Admin_Werkplekken_Display extends Admin_Display {
 	/**
 	 * Toon de metabox
 	 *
-	 * @param array  $item Het weer te geven object in de meta box.
-	 * @param string $actie De uit te voeren actie.
+	 * @param array $item Het weer te geven object in de meta box.
+	 * @param array $metabox De metabox argumenten.
 	 * @return void
 	 *
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
-	public function form_meta_box( array $item, string $actie ) : void {
+	public function form_meta_box( array $item, array $metabox ) : void {
 		?>
 		<table style="width: 100%;border-spacing: 2px; padding: 5px" >
 			<tbody>

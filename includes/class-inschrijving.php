@@ -131,6 +131,7 @@ class Inschrijving extends Artikel {
 			wp_parse_args( $inschrijvingen[ $cursus_id ], $this->default_data ) :
 			$this->default_data;
 		$this->actie                 = new InschrijvingActie( $this );
+		$this->betaling              = new InschrijvingBetaling( $this );
 	}
 
 	/**

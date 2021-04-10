@@ -19,11 +19,11 @@ abstract class Admin_Display {
 	/**
 	 * Toon de metabox
 	 *
-	 * @param array  $item  Het weer te geven object in de meta box.
-	 * @param string $actie De uit te voeren actie.
+	 * @param array $item  Het weer te geven object in de meta box.
+	 * @param array $metabox De metabox argumenten.
 	 * @return void
 	 */
-	abstract public function form_meta_box( array $item, string $actie ) : void;
+	abstract public function form_meta_box( array $item, array $metabox ) : void;
 
 	/**
 	 * Toon de pagina

@@ -55,17 +55,8 @@ class Admin_Recepttermen_Handler {
 	 * @since    6.4.0
 	 */
 	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Recept termen', 'Recept termen', 'manage_options', 'recepttermen', [ $this, 'recepttermen_page_handler' ] );
+		add_submenu_page( 'kleistad', 'Recept termen', 'Recept termen', 'manage_options', 'recepttermen', [ $this->display, 'page' ] );
 		add_submenu_page( 'receptterm', 'Toevoegen/Wijzigen recept term', 'Toevoegen/Wijzigen recept term', 'manage_options', 'recepttermen_form', [ $this, 'recepttermen_form_page_handler' ] );
-	}
-
-	/**
-	 * Recept termen overzicht page handler
-	 *
-	 * @since    6.4.0
-	 */
-	public function recepttermen_page_handler() {
-		$this->display->page();
 	}
 
 	/**
@@ -135,17 +126,8 @@ class Admin_Recepttermen_Handler {
 				}
 			}
 		}
-		add_meta_box( 'receptterm_form_meta_box', 'receptterm', [ $this, 'recepttermen_form_meta_box_handler' ], 'receptterm', 'normal', 'default' );
+		add_meta_box( 'receptterm_form_meta_box', 'receptterm', [ $this->display, 'form_meta_box' ], 'receptterm', 'normal', 'default' );
 		$this->display->form_page( $item, 'receptterm', 'recepttermen', $notice, $message, false );
 	}
 
-	/**
-	 * Toon het recept term formulier in een meta box
-	 *
-	 * @param array $item de recept term.
-	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
-	 */
-	public function recepttermen_form_meta_box_handler( $item ) {
-		$this->display->form_meta_box( $item, '' );
-	}
 }

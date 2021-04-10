@@ -301,9 +301,9 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$inschrijving->geannuleerd  = false;
 			$inschrijving->ingeschreven = false;
 		}
-		if ( $inschrijving->ingeschreven ) {
+		if ( $inschrijving->ingedeeld ) {
 			return [
-				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingeschreven op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
+				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
 		$inschrijving->save();

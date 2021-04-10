@@ -52,22 +52,17 @@ class Admin_Instellingen_Handler {
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
-		$result        = true;
-		$display       = new Admin_Instellingen_Display( $this->options, $this->setup );
-		$googleconnect = new Googleconnect();
-		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
-			$googleconnect->vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
-		} elseif ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
-			$result = $googleconnect->koppel_service();
-		} elseif ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
+		$display = new Admin_Instellingen_Display( $this->options, $this->setup );
+		if ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			do_action( 'kleistad_daily_jobs' );
 		}
-		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
+		$active_tab    = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
+		$google_result = $this->connect_to_google();
 		?>
 		<div class="wrap">
-			<?php if ( is_wp_error( $result ) ) : ?>
+			<?php if ( is_wp_error( $google_result ) ) : ?>
 			<div class="error">
-				<p><?php echo esc_html( $result->get_error_message() ); ?></p>
+				<p><?php echo esc_html( $google_result->get_error_message() ); ?></p>
 			</div>
 			<?php endif ?>
 			<h2 class="nav-tab-wrapper">
@@ -102,4 +97,18 @@ class Admin_Instellingen_Handler {
 		return $input;
 	}
 
+	/**
+	 * Koppel Google
+	 *
+	 * @return WP_Error|bool Fout of ok.
+	 */
+	private function connect_to_google() {
+		$googleconnect = new Googleconnect();
+		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
+			$googleconnect->vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );
+		} elseif ( ! is_null( filter_input( INPUT_GET, 'code' ) ) ) {
+			return $googleconnect->koppel_service();
+		}
+		return true;
+	}
 }

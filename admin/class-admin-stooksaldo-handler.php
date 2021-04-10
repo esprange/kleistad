@@ -36,7 +36,7 @@ class Admin_Stooksaldo_Handler {
 	 * @since    5.2.0
 	 */
 	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Stooksaldo beheer', 'Stooksaldo beheer', 'manage_options', 'stooksaldo', [ $this, 'stooksaldo_page_handler' ] );
+		add_submenu_page( 'kleistad', 'Stooksaldo beheer', 'Stooksaldo beheer', 'manage_options', 'stooksaldo', [ $this->display, 'page' ] );
 		add_submenu_page( 'stooksaldo', 'Wijzigen stooksaldo', 'Wijzigen stooksaldo', 'manage_options', 'stooksaldo_form', [ $this, 'stooksaldo_form_page_handler' ] );
 	}
 
@@ -59,15 +59,6 @@ class Admin_Stooksaldo_Handler {
 			return true;
 		}
 		return implode( '<br />', $messages );
-	}
-
-	/**
-	 * Overzicht stooksaldo page handler
-	 *
-	 * @since    5.2.0
-	 */
-	public function stooksaldo_page_handler() {
-		$this->display->page();
 	}
 
 	/**
@@ -117,19 +108,8 @@ class Admin_Stooksaldo_Handler {
 				}
 			}
 		}
-		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this, 'stooksaldo_form_meta_box_handler' ], 'stooksaldo', 'normal', 'default' );
-		$this->display->form_page( $item, 'stooksaldo', 'stooksaldi', $notice, $message, false );
+		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal', 'default' );
+		$this->display->form_page( $item, 'stooksaldo', 'stooksaldo', $notice, $message, false );
 	}
 
-	/**
-	 * Toon de stooksaldo meta box
-	 *
-	 * @since    5.2.0
-	 *
-	 * @param array $item de stooksaldo.
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-	 */
-	public function stooksaldo_form_meta_box_handler( $item ) {
-		$this->display->form_meta_box( $item, '' );
-	}
 }

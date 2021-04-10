@@ -36,7 +36,7 @@ class Admin_Abonnees_Handler {
 	 * @since 5.2.0
 	 */
 	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Abonnees', 'Abonnees', 'manage_options', 'abonnees', [ $this, 'abonnees_page_handler' ] );
+		add_submenu_page( 'kleistad', 'Abonnees', 'Abonnees', 'manage_options', 'abonnees', [ $this->display, 'page' ] );
 		add_submenu_page( 'abonnees', 'Wijzigen abonnee', 'Wijzigen abonnee', 'manage_options', 'abonnees_form', [ $this, 'abonnees_form_page_handler' ] );
 	}
 
@@ -141,15 +141,6 @@ class Admin_Abonnees_Handler {
 	}
 
 	/**
-	 * Abonnees overzicht page handler
-	 *
-	 * @since    5.2.0
-	 */
-	public function abonnees_page_handler() {
-		$this->display->page();
-	}
-
-	/**
 	 * Toon en verwerk ingevoerde abonnee gegevens
 	 *
 	 * @since    5.2.0
@@ -205,20 +196,8 @@ class Admin_Abonnees_Handler {
 			$actie = $_REQUEST['actie'];
 			$item  = $this->geef_abonnee( intval( $_REQUEST['id'] ) );
 		}
-		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this, 'abonnees_form_meta_box_handler' ], 'abonnee', 'normal', 'default', [ $actie ] );
+		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this->display, 'form_meta_box' ], 'abonnee', 'normal', 'default', [ 'actie' => $actie ] );
 		$this->display->form_page( $item, 'abonnee', 'abonnees', $notice, $message, 'historie' === $actie );
-	}
-
-	/**
-	 * Toon de abonnees form meta box
-	 *
-	 * @since    5.2.0
-	 *
-	 * @param array $item de abonnee.
-	 * @param array $request de aanroep parameters.
-	 */
-	public function abonnees_form_meta_box_handler( $item, $request ) {
-		$this->display->form_meta_box( $item, $request['args'][0] );
 	}
 
 }

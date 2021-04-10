@@ -36,17 +36,8 @@ class Admin_Cursisten_Handler {
 	 * @since    5.2.0
 	 */
 	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Cursisten', 'Cursisten', 'manage_options', 'cursisten', [ $this, 'cursisten_page_handler' ] );
+		add_submenu_page( 'kleistad', 'Cursisten', 'Cursisten', 'manage_options', 'cursisten', [ $this->display, 'page' ] );
 		add_submenu_page( 'cursisten', 'Wijzigen cursist', 'Wijzigen cursist', 'manage_options', 'cursisten_form', [ $this, 'cursisten_form_page_handler' ] );
-	}
-
-	/**
-	 * Cursisten overzicht page handler
-	 *
-	 * @since    5.2.0
-	 */
-	public function cursisten_page_handler() {
-		$this->display->page();
 	}
 
 	/**
@@ -95,19 +86,8 @@ class Admin_Cursisten_Handler {
 				'cursus_id'   => $cursus_id,
 			];
 		}
-		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this, 'cursisten_form_meta_box_handler' ], 'cursist', 'normal', 'default' );
+		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this->display, 'form_meta_box' ], 'cursist', 'normal', 'default' );
 		$this->display->form_page( $item, 'cursist', 'cursisten', $notice, $message, false );
 	}
 
-	/**
-	 * Toon de cursisten form meta box
-	 *
-	 * @since    5.2.0
-	 *
-	 * @param array $item de cursist.
-	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
-	 */
-	public function cursisten_form_meta_box_handler( $item ) {
-		$this->display->form_meta_box( $item, '' );
-	}
 }

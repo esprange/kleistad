@@ -18,13 +18,13 @@ class Admin_Recepttermen_Display extends Admin_Display {
 	/**
 	 * Toon de metabox
 	 *
-	 * @param array  $item Het weer te geven object in de meta box.
-	 * @param string $actie De uit te voeren actie.
+	 * @param array $item Het weer te geven object in de meta box.
+	 * @param array $metabox De metabox argumenten.
 	 * @return void
 	 *
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
-	public function form_meta_box( array $item, string $actie ) : void {
+	public function form_meta_box( array $item, array $metabox ) : void {
 		$hoofdterm = (array) get_term( intval( filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		?>
 		<h2><?php echo esc_html( $hoofdterm['description'] ); ?></h2>

@@ -18,14 +18,14 @@ class Admin_Regelingen_Display extends Admin_Display {
 	/**
 	 * Toon de metabox
 	 *
-	 * @param array  $item Het weer te geven object in de meta box.
-	 * @param string $actie De uit te voeren actie.
+	 * @param array $item Het weer te geven object in de meta box.
+	 * @param array $metabox De metabox argumenten.
 	 * @return void
 	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
-	public function form_meta_box( array $item, string $actie ) : void {
+	public function form_meta_box( array $item, array $metabox ) : void {
 		$gebruikers = get_users(
 			[
 				'fields'   => [ 'ID', 'display_name' ],

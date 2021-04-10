@@ -63,17 +63,8 @@ class Admin_Ovens_Handler {
 	 * @since    5.2.0
 	 */
 	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Ovens', 'Ovens', 'manage_options', 'ovens', [ $this, 'ovens_page_handler' ] );
+		add_submenu_page( 'kleistad', 'Ovens', 'Ovens', 'manage_options', 'ovens', [ $this->display, 'page' ] );
 		add_submenu_page( 'ovens', 'Toevoegen oven', 'Toevoegen oven', 'manage_options', 'ovens_form', [ $this, 'ovens_form_page_handler' ] );
-	}
-
-	/**
-	 * Ovens overzicht page handler
-	 *
-	 * @since    5.2.0
-	 */
-	public function ovens_page_handler() {
-		$this->display->page();
 	}
 
 	/**
@@ -135,17 +126,8 @@ class Admin_Ovens_Handler {
 			$item['kosten_hoog']     = $oven->kosten_hoog;
 			$item['beschikbaarheid'] = $oven->beschikbaarheid;
 		}
-		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this, 'ovens_form_meta_box_handler' ], 'oven', 'normal', 'default' );
+		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this->display, 'form_meta_box' ], 'oven', 'normal', 'default' );
 		$this->display->form_page( $item, 'oven', 'ovens', $notice, $message, false );
 	}
 
-	/**
-	 * Toon het oven formulier in een meta box
-	 *
-	 * @param array $item de oven.
-	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
-	 */
-	public function ovens_form_meta_box_handler( $item ) {
-		$this->display->form_meta_box( $item, '' );
-	}
 }

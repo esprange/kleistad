@@ -18,11 +18,12 @@ class Admin_Abonnees_Display extends Admin_Display {
 	/**
 	 * Toon de metabox
 	 *
-	 * @param array  $item  Het weer te geven object in de meta box.
-	 * @param string $actie De uit te voeren actie.
+	 * @param array $item  Het weer te geven object in de meta box.
+	 * @param array $metabox De metabox argumenten.
 	 * @return void
 	 */
-	public function form_meta_box( array $item, string $actie ) : void {
+	public function form_meta_box( array $item, array $metabox ) : void {
+		$actie = $metabox['args']['actie'];
 		?>
 		<table class="form-table">
 		<tbody>
