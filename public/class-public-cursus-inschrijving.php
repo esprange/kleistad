@@ -91,7 +91,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return bool|WP_Error
 	 */
 	private function prepare_inschrijven( array &$data ) {
-		$atts                    = shortcode_atts(
+		$atts                   = shortcode_atts(
 			[
 				'cursus'    => '',
 				'verbergen' => '',
@@ -99,26 +99,20 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$this->atts,
 			'kleistad_cursus_inschrijving'
 		);
-		$data['gebruikers']      = get_users(
+		$data['gebruikers']     = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
 				'orderby' => 'display_name',
 			]
 		);
-		$vandaag                 = strtotime( 'today' );
-		$data['cursus_selectie'] = true;
-		$data['verbergen']       = $atts['verbergen'];
-		$data['open_cursussen']  = [];
-		$cursus_selecties        = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
+		$data['verbergen']      = $atts['verbergen'];
+		$data['open_cursussen'] = [];
+		$cursus_selecties       = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
 		if ( 1 === count( $cursus_selecties ) ) {
-			$data['cursus_selectie']    = false;
 			$data['input']['cursus_id'] = $cursus_selecties[0];
 		}
 		$selecteerbaar = false;
-		foreach ( new Cursussen() as $cursus ) {
-			if ( $vandaag >= $cursus->eind_datum ) {
-				continue; // De cursus is gereed.
-			}
+		foreach ( new Cursussen( true ) as $cursus ) {
 			if ( ! empty( $cursus_selecties ) ) {
 				if ( ! in_array( $cursus->id, $cursus_selecties, false ) ) { // phpcs:ignore
 					continue; // Er moeten specifieke cursussen worden getoond en deze cursus hoort daar niet bij.
@@ -127,10 +121,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
 			$data['open_cursussen'][ $cursus->id ] = $cursus;
-			$selecteerbaar                         = $selecteerbaar || ( ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() ) );
+			$selecteerbaar                         = $selecteerbaar || $cursus->is_open();
 		}
 		if ( ! $selecteerbaar ) {
-			return new WP_Error( 'Inschrijven', $data['cursus_selectie'] ? 'Helaas zijn er geen cursussen beschikbaar of ze zijn al volgeboekt' : 'Helaas is deze cursus nu niet beschikbaar' );
+			return new WP_Error( 'Inschrijven', 'Helaas zijn er geen cursusplek meer beschikbaar' );
 		}
 		return true;
 	}

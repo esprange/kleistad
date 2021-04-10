@@ -223,6 +223,15 @@ class Cursus {
 	}
 
 	/**
+	 * Is de cursus open voor inschrijvingen ?
+	 *
+	 * @return bool
+	 */
+	public function is_open() : bool {
+		return ! $this->vervallen && ( ! $this->vol || $this->is_wachtbaar() );
+	}
+
+	/**
 	 * Bereken het bedrag om ingedeeld te worden bij de cursus.
 	 *
 	 * @return float

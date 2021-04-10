@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Error;
+
 /**
  * De admin-specifieke functies van de plugin voor de Instellingen pagina.
  */
