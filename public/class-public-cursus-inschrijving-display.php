@@ -104,7 +104,6 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		?>
 		<div id="kleistad_cursussen" >
 		<?php
-		$geselecteerd = false;
 		foreach ( $this->data['open_cursussen'] as $cursus_id => $cursus ) {
 			$json_cursus   = wp_json_encode(
 				[
@@ -121,29 +120,22 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				sprintf( 'workshop op %s', strftime( '%x', $cursus->start_datum ) );
 			$tooltip      .=
 				sprintf( '|docent is %s|kosten &euro;%01.2f p.p.', $cursus->docent_naam(), $cursus->inschrijfkosten + $cursus->cursuskosten );
-			$selecteerbaar = false !== $json_cursus; // Als dit fout is gegaan, dan de cursus niet selecteerbaar maken.
+			$selecteerbaar = true;
 			$style         = '';
 			$naam          = $cursus->naam;
-			if ( $cursus->vervallen ) {
+			if ( ! $cursus->is_open() ||  false === $json_cursus ) {
 				$selecteerbaar = false;
 				$style         = 'color: gray;';
-				$naam         .= ' VERVALLEN';
-			} elseif ( $cursus->vol ) {
-				if ( ! $cursus->is_wachtbaar() ) {
-					$selecteerbaar = false;
-					$style         = 'color: gray;';
-				}
-				$naam .= ' VOL';
+				$naam          = $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? 'VOL' : '' );
 			}
 			?>
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">
 				<input name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_id ); ?>"
-					data-cursus='<?php echo $json_cursus ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?> <?php checked( $selecteerbaar && ! $geselecteerd ); ?> />
+					data-cursus='<?php echo $json_cursus ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?> <?php checked( $this->data['input']['cursus_id'], $cursus_id ); ?> required />
 				<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_id ); ?>">
 					<span style="<?php echo esc_attr( $style ); ?>"><?php echo esc_html( $naam ); ?></span></label>
 			</div>
 			<?php
-			$geselecteerd = $geselecteerd || $selecteerbaar;
 		}
 		?>
 		</div>
