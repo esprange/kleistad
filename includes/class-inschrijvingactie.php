@@ -59,7 +59,7 @@ class InschrijvingActie {
 	 * @return int Aantal emails verstuurd.
 	 */
 	public function herinnering() : int {
-		if ( 0 === $this->inschrijving->aantal || $this->inschrijving->geannuleerd ) {
+		if ( 0 === $this->inschrijving->aantal || $this->inschrijving->geannuleerd || ! $this->inschrijving->ingedeeld ) {
 			return 0;
 		}
 		$order            = new Order( $this->inschrijving->geef_referentie() );
