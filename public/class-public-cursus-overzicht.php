@@ -26,13 +26,11 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 */
 	private function geef_inschrijvingen( int $cursus_id ) : array {
 		$inschrijvingen = [];
-		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
-			if ( ! $inschrijving->geannuleerd ) {
-				if ( ! current_user_can( BESTUUR ) && ! $inschrijving->ingedeeld ) {
-					continue;
-				}
-				$inschrijvingen[ $inschrijving->klant_id ] = $inschrijving;
+		foreach ( new Inschrijvingen( $cursus_id, true ) as $inschrijving ) {
+			if ( ! current_user_can( BESTUUR ) && ! $inschrijving->ingedeeld ) {
+				continue;
 			}
+			$inschrijvingen[ $inschrijving->klant_id ] = $inschrijving;
 		}
 		return $inschrijvingen;
 	}
@@ -68,10 +66,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 */
 	private function cursistenlijst( Cursus $cursus ) : array {
 		$cursisten = [];
-		foreach ( new Inschrijvingen( $cursus->id ) as $inschrijving ) {
-			if ( $inschrijving->geannuleerd ) {
-				continue;
-			}
+		foreach ( new Inschrijvingen( $cursus->id, true ) as $inschrijving ) {
 			$cursist      = get_userdata( $inschrijving->klant_id );
 			$cursist_info = [
 				'code'       => $inschrijving->code,
@@ -197,7 +192,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		} elseif ( 'herinner_email' === $data['form_actie'] ) {
 			$aantal_email = 0;
 			// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
-			foreach ( new Inschrijvingen( $data['input']['cursus_id'] ) as $inschrijving ) {
+			foreach ( new Inschrijvingen( $data['input']['cursus_id'], true ) as $inschrijving ) {
 				/**
 				 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
 				 */
@@ -226,6 +221,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			'Opmerking',
 			'Datum',
 			'Ingedeeld',
+			'Geannuleerd',
 		];
 		fputcsv( $this->file_handle, $cursisten_fields, ';', '"' );
 		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
@@ -240,6 +236,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				$inschrijving->opmerking,
 				date( 'd-m-Y', $inschrijving->datum ),
 				$inschrijving->ingedeeld ? 'Ja' : 'Nee',
+				$inschrijving->geannuleerd ? 'Ja' : 'Nee',
 			];
 			fputcsv( $this->file_handle, $cursist_gegevens, ';', '"' );
 		}
@@ -254,8 +251,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$cursus_id = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );
 		$cursus    = new Cursus( $cursus_id );
 		$cursisten = [];
-		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
-			if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
+		foreach ( new Inschrijvingen( $cursus_id, true ) as $inschrijving ) {
+			if ( $inschrijving->ingedeeld ) {
 				$cursisten[] = get_user_by( 'id', $inschrijving->klant_id )->display_name . $inschrijving->toon_aantal();
 			}
 		}

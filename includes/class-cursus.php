@@ -177,8 +177,8 @@ class Cursus {
 	public function ruimte() : int {
 		$aantal = $this->maximum;
 		if ( 0 < $this->id ) {
-			foreach ( new Inschrijvingen( $this->id ) as $inschrijving ) {
-				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
+			foreach ( new Inschrijvingen( $this->id, true ) as $inschrijving ) {
+				if ( $inschrijving->ingedeeld ) {
 					$aantal -= $inschrijving->aantal;
 				}
 			}
@@ -337,8 +337,8 @@ class Cursus {
 	 * @return bool True als de cursus verwijderd kan worden.
 	 */
 	public function verwijder() : bool {
-		if ( count( new Inschrijvingen( $this->id ) ) ) {
-			return false; // Er is al een inschrijving dus verwijderen is niet meer mogelijk.
+		if ( count( new Inschrijvingen( $this->id, true ) ) ) {
+			return false; // Er zijn al actieve inschrijvingen dus verwijderen is niet meer mogelijk.
 		}
 		$this->erase();
 		return true;

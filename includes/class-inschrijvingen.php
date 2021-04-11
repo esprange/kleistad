@@ -29,7 +29,7 @@ class Inschrijvingen implements Countable, Iterator {
 	private array $inschrijvingen = [];
 
 	/**
-	 * Intere index
+	 * Interne index
 	 *
 	 * @var int $current_index De index.
 	 */
@@ -39,26 +39,27 @@ class Inschrijvingen implements Countable, Iterator {
 	 * De constructor
 	 *
 	 * @param int|null $select_cursus_id De cursus id.
+	 * @param bool     $actief           Geef alleen actieve inschrijvingen (d.w.z. niet geannuleerd).
+	 *
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
-	public function __construct( int $select_cursus_id = null ) {
-		$cursisten = get_users(
-			[
-				'fields'       => [ 'ID' ],
-				'meta_key'     => Inschrijving::META_KEY,
-				'meta_compare' => '!==',
-				'meta_value'   => '',
-			]
-		);
-		foreach ( $cursisten as $cursist ) {
+	public function __construct( int $select_cursus_id = null, bool $actief = false ) {
+		foreach ( new Cursisten() as $cursist ) {
 			$inschrijvingen = (array) get_user_meta( $cursist->ID, Inschrijving::META_KEY, true );
 			if ( ! is_null( $select_cursus_id ) ) {
 				if ( ! isset( $inschrijvingen[ $select_cursus_id ] ) ) {
 					continue;
 				}
+				if ( $actief && $inschrijvingen[ $select_cursus_id ]['geannuleerd'] ) {
+					continue;
+				}
 				$this->inschrijvingen[] = new Inschrijving( $select_cursus_id, $cursist->ID );
 				continue;
 			}
-			foreach ( array_keys( $inschrijvingen ) as $cursus_id ) {
+			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+				if ( $actief && $inschrijving['geannuleerd'] ) {
+					continue;
+				}
 				$this->inschrijvingen[] = new Inschrijving( $cursus_id, $cursist->ID );
 			}
 		}
