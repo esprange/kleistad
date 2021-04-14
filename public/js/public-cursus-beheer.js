@@ -9,8 +9,7 @@
 	 * Maak het lijstje van de datums, gesorteerd van laag naar hoog, zichtbaar in het formulier.
 	 */
 	function listLesDatums() {
-		var scroll = $( '#kleistad_lesdatums_lijst' ).scrollTop(),
-			datums  = [], lesDatumsLijst = '';
+		var datums = [], lesDatumsLijst = '';
 		if ( 0 === lesDatums.length ) {
 			return;
 		}
@@ -21,9 +20,9 @@
 			return a - b;
 		} );
 		datums.forEach( function( item ) {
-			lesDatumsLijst += $.datepicker.formatDate( 'dd-mm-yy', item ) + '<br/>';
+			lesDatumsLijst += '<li>' + $.datepicker.formatDate( 'dd-mm-yy', item ) + '</li>';
 		} );
-		$( '#kleistad_lesdatums_lijst' ).html( lesDatumsLijst ).scrollTop( scroll );
+		$( '#kleistad_lesdatums_lijst' ).html( lesDatumsLijst );
 	}
 
 	/**
@@ -111,7 +110,7 @@
 				},
 				beforeShow: setLimits(),
 				showOn: 'button',
-				buttonText: 'Lesdatum +/-'
+				buttonText: 'Lesdatum &plusmn;'
 			}
 		);
 	}

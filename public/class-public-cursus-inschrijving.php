@@ -124,7 +124,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$selecteerbaar                         = $selecteerbaar || $cursus->is_open();
 		}
 		if ( ! $selecteerbaar ) {
-			return new WP_Error( 'Inschrijven', 'Helaas zijn er geen cursusplek meer beschikbaar' );
+			return new WP_Error( 'Inschrijven', 'Helaas is er geen cursusplek meer beschikbaar' );
 		}
 		return true;
 	}
