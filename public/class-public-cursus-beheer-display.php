@@ -97,13 +97,19 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label>Technieken</label></div>
-			<div class="kleistad-col-8">
+			<div class="kleistad-col-8" style="display:flex;justify-content: space-between;">
+				<span>
 				<input type="checkbox" id="kleistad_draaien" name="technieken[]" value="Draaien" <?php checked( in_array( 'Draaien', $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
 				<label for="kleistad_draaien" style="padding-right:2em">Draaien</label>
+				</span>
+				<span>
 				<input type="checkbox" id="kleistad_handvormen" name="technieken[]" value="Handvormen" <?php checked( in_array( 'Handvormen', $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
 				<label for="kleistad_handvormen" style="padding-right:2em">Handvormen</label>
+				</span>
+				<span>
 				<input type="checkbox" id="kleistad_boetseren" name="technieken[]" value="Boetseren" <?php checked( in_array( 'Boetseren', $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
 				<label for="kleistad_boetseren">Boetseren</label>
+				</span>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -154,9 +160,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 				<button type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $this->data['actie'] ); ?> >Verwijderen</button>
 			</div>
 			<div class="kleistad-col-5">
-				<span style="float:right">
 				<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
-				</span>
 			</div>
 		</div>
 		<?php
@@ -170,7 +174,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	private function overzicht() : Public_Cursus_Beheer_Display {
 		?>
-		<table id="kleistad_cursussen" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+		<table class="kleistad-datatable display compact nowrap" id="kleistad_cursussen" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 		<thead>
 			<tr>
 				<th>Code</th>

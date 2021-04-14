@@ -206,7 +206,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	 */
 	private function overzicht() : Public_Cursus_Overzicht_Display {
 		?>
-		<table id="kleistad_cursussen" class="kleistad-datatable display" data-order='[[ 0, "desc" ]]'>
+		<table class="kleistad-datatable display" id="kleistad_cursussen" data-order='[[ 0, "desc" ]]'>
 			<thead>
 				<tr>
 					<th>Code</th>
