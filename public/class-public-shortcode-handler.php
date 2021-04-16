@@ -61,8 +61,10 @@ class Public_Shortcode_Handler {
 	public function handler( $atts, string $content, string $tag ) : string {
 		$shortcode_tag = substr( $tag, strlen( 'kleistad-' ) );
 		$attributes    = is_string( $atts ) ? [ $atts ] : $atts;
-		$shortcode     = Shortcode::get_instance( $shortcode_tag, $attributes, $this->options );
-		if ( is_null( $shortcode ) ) {
+		try {
+			$shortcode = Shortcode::get_instance( $shortcode_tag, $attributes, $this->options );
+		} catch ( Kleistad_Exception $exceptie ) {
+			error_log( $exceptie->getMessage() ); // phpcs:ignore
 			return '';
 		}
 		$shortcodes = new ShortCodes();

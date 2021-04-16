@@ -3,8 +3,8 @@ Contributors: Eric Sprangers
 Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
-Tested up to: 5.7
-Stable tag: 6.15.0
+Tested up to: 5.7.1
+Stable tag: 6.15.01
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4

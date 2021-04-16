@@ -218,6 +218,5 @@ class Shortcodes {
 		}
 		return true;
 	}
-
-
+	
 }

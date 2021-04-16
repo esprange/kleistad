@@ -50,11 +50,11 @@ abstract class Shortcode {
 	protected $file_handle;
 
 	/**
-	 * Lijst van actieve shortcodes.
+	 * De actieve shortcodes
 	 *
-	 * @var array de lijst.
+	 * @var array $tags de shortcode tags.
 	 */
-	private static array $shortcode_lijst = [];
+	static private array $tags = [];
 
 	/**
 	 * Abstract definitie van de prepare functie
@@ -212,13 +212,14 @@ abstract class Shortcode {
 	 * @param array  $attributes    Shortcode parameters.
 	 * @param array  $options       Plugin opties.
 	 * @return Shortcode | null
+	 * @throws Kleistad_Exception Als er de shortcode meer dat eens op de pagina voorkomt.
 	 */
 	public static function get_instance( string $shortcode_tag, array $attributes, array $options ) : ?Shortcode {
-		if ( in_array( $shortcode_tag, self::$shortcode_lijst, true ) ) {
-			return null;
+		if ( in_array( $shortcode_tag, static::$tags, true ) ) {
+			throw new Kleistad_Exception( "De shortcode kleistad_$shortcode_tag mag maar éénmaal per pagina gebruikt worden" );
 		}
-		self::$shortcode_lijst[] = $shortcode_tag;
-		$shortcode_class         = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
+		static::$tags[] = $shortcode_tag;
+		$shortcode_class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
 		return new $shortcode_class( $shortcode_tag, $attributes, $options );
 	}
 

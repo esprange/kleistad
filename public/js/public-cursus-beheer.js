@@ -45,8 +45,9 @@
 			return datum <= eindDatum && datum >= startDatum;
 		} );
 		expandLesDatums( $.datepicker.formatDate( 'dd-mm-yy', startDatum ) );
-		if ( eindDatum.getDate() !== startDatum.getDate() ) {
-			expandLesDatums( $.datepicker.formatDate( 'dd-mm-yy', eindDatum ) );
+		// if ( eindDatum.getDate() !== startDatum.getDate() ) {
+		if ( eindDatum !== startDatum ) {
+				expandLesDatums( $.datepicker.formatDate( 'dd-mm-yy', eindDatum ) );
 		}
 		$( '#kleistad_lesdatums' ).val( lesDatums.join( ';' ) );
 	}
