@@ -217,16 +217,36 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 */
 	private function betaal_info() : Public_Cursus_Inschrijving_Display {
 		?>
-		<div class ="kleistad-row">
-			<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
-			<label for="kleistad_betaal_ideal" ></label>
+		<div id="kleistad_cursus_betalen" style="display:none;"> 
+			<div class="kleistad-row">
+				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
+				<label for="kleistad_betaal_ideal" ></label>
+			</div>
+			<div class="kleistad-row">
+				<?php $this->ideal(); ?>
+			</div>
+			<div class ="kleistad-row">
+				<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
+				<label for="kleistad_betaal_stort" ></label>
+			</div>
 		</div>
-		<div class="kleistad-row">
-			<?php $this->ideal(); ?>
+		<div id="kleistad_cursus_lopend" style="display:none" >
+			<div class="kleistad-row">
+				<div class="kleistad-col-10">
+					<label class="kleistad-label">
+					Deze cursus is reeds gestart. Bij inschrijving op deze cursus zal contact met je worden opgenomen en krijg je nadere instructie over de betaling.
+					</label>
+				</div>
+			</div>
 		</div>
-		<div class ="kleistad-row">
-			<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
-			<label for="kleistad_betaal_stort" ></label>
+		<div id="kleistad_cursus_vol" style="display:none" >
+			<div class="kleistad-row">
+				<div class="kleistad-col-10">
+					<label class="kleistad-label">
+					Deze cursus is vol. Bij inschrijving op deze cursus kom je op een wachtlijst en zal contact met je worden opgenomen als er een plek vrijkomt.
+					</label>
+				</div>
+			</div>
 		</div>
 		<?php
 		return $this;

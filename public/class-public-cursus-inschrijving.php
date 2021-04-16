@@ -19,13 +19,20 @@ use WP_Error;
 class Public_Cursus_Inschrijving extends ShortcodeForm {
 
 	/**
+	 * Cursus selecties als er een filter is
+	 *
+	 * @var array $cursus_selecties Het filter.
+	 */
+	private array $cursus_selecties;
+
+	/**
 	 * Bepaal de actie
 	 *
 	 * @param array $data data voor display.
 	 * @return string
 	 */
 	private function bepaal_actie( array &$data ) : string {
-		$data['param'] = filter_input_array(
+		$data['param']          = filter_input_array(
 			INPUT_GET,
 			[
 				'code' => FILTER_SANITIZE_STRING,
@@ -33,6 +40,16 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'stop' => FILTER_SANITIZE_STRING,
 			]
 		);
+		$atts                   = shortcode_atts(
+			[
+				'cursus'    => '',
+				'verbergen' => '',
+			],
+			$this->atts,
+			'kleistad_cursus_inschrijving'
+		);
+		$data['verbergen']      = $atts['verbergen'];
+		$this->cursus_selecties = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
 		if ( ! is_null( $data['param'] ) && ! empty( $data['param']['stop'] ) ) {
 			return 'stop_wachten';
 		}
@@ -91,30 +108,20 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return bool|WP_Error
 	 */
 	private function prepare_inschrijven( array &$data ) {
-		$atts                   = shortcode_atts(
-			[
-				'cursus'    => '',
-				'verbergen' => '',
-			],
-			$this->atts,
-			'kleistad_cursus_inschrijving'
-		);
 		$data['gebruikers']     = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
 				'orderby' => 'display_name',
 			]
 		);
-		$data['verbergen']      = $atts['verbergen'];
 		$data['open_cursussen'] = [];
-		$cursus_selecties       = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
-		if ( 1 === count( $cursus_selecties ) ) {
-			$data['input']['cursus_id'] = $cursus_selecties[0];
+		if ( 1 === count( $this->cursus_selecties ) ) {
+			$data['input']['cursus_id'] = $this->cursus_selecties[0];
 		}
 		$selecteerbaar = false;
 		foreach ( new Cursussen( true ) as $cursus ) {
-			if ( ! empty( $cursus_selecties ) ) {
-				if ( ! in_array( $cursus->id, $cursus_selecties, false ) ) { // phpcs:ignore
+			if ( ! empty( $this->cursus_selecties ) ) {
+				if ( ! in_array( $cursus->id, $this->cursus_selecties, false ) ) { // phpcs:ignore
 					continue; // Er moeten specifieke cursussen worden getoond en deze cursus hoort daar niet bij.
 				}
 			} elseif ( ! $cursus->tonen ) {
