@@ -218,5 +218,5 @@ class Shortcodes {
 		}
 		return true;
 	}
-	
+
 }

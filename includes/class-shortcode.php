@@ -50,13 +50,6 @@ abstract class Shortcode {
 	protected $file_handle;
 
 	/**
-	 * De actieve shortcodes
-	 *
-	 * @var array $tags de shortcode tags.
-	 */
-	static private array $tags = [];
-
-	/**
 	 * Abstract definitie van de prepare functie
 	 *
 	 * @since   4.0.87
@@ -213,12 +206,14 @@ abstract class Shortcode {
 	 * @param array  $options       Plugin opties.
 	 * @return Shortcode | null
 	 * @throws Kleistad_Exception Als er de shortcode meer dat eens op de pagina voorkomt.
+	 * @suppressWarnings(PHPMD.UndefinedVariable)
 	 */
 	public static function get_instance( string $shortcode_tag, array $attributes, array $options ) : ?Shortcode {
-		if ( in_array( $shortcode_tag, static::$tags, true ) ) {
+		static $tags = []; // Om een of andere reden gaat PHPMD hier niet goed mee om, vandaar de annotatie.
+		if ( in_array( $shortcode_tag, $tags, true ) ) {
 			throw new Kleistad_Exception( "De shortcode kleistad_$shortcode_tag mag maar éénmaal per pagina gebruikt worden" );
 		}
-		static::$tags[] = $shortcode_tag;
+		$tags[]          = $shortcode_tag;
 		$shortcode_class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
 		return new $shortcode_class( $shortcode_tag, $attributes, $options );
 	}
