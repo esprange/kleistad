@@ -31,11 +31,15 @@ class Public_Werkplek extends Shortcode {
 			return [];
 		}
 		$datums         = [];
+		$feestdagen     = new Feestdagen();
 		$weken          = opties()['weken_werkplek'];
 		$vandaag        = strtotime( 'today' );
 		$driemaand      = strtotime( "+$weken weeks", $vandaag );
 		$werkplekconfig = $werkplekconfigs->find( $vandaag ) ?: new WerkplekConfig();
 		for ( $dagteller = $vandaag; $dagteller < $driemaand; $dagteller += DAY_IN_SECONDS ) {
+			if ( $feestdagen->is_feestdag( $dagteller ) ) {
+				continue;
+			}
 			$werkplekken = 0;
 			if ( $dagteller > $werkplekconfig->eind_datum && 0 !== $werkplekconfig->eind_datum ) {
 				$werkplekconfigs->next();
