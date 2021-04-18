@@ -33,7 +33,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 						<label for="kleistad_start_config">Start datum</label>
 					</th>
 					<td colspan="2">
-						<input type="text" id="kleistad_start_config" name="start_datum" class="kleistad-datum" required value="<?php echo esc_attr( $item['start_datum'] ); ?>" <?php $this->disabled_datum( $item['start_datum'] ); ?> autocomplete="off" >
+						<input type="text" id="kleistad_start_config" name="start_datum" class="kleistad-datum" required value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off" >
 					</td>
 				</tr>
 				<tr class="form-field">
@@ -42,7 +42,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 					</th>
 					<td colspan="2">
 						<input type="hidden" name="config_eind" value="<?php echo esc_attr( intval( $item['config_eind'] ) ); ?>" >
-						<input type="text" id="kleistad_eind_config" name="eind_datum" class="kleistad-datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" <?php disabled( $item['eind_datum'] ); ?> autocomplete="off" >
+						<input type="text" id="kleistad_eind_config" name="eind_datum" class="kleistad-datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" autocomplete="off" >
 					</td>
 				</tr>
 				<tr><td></td>
@@ -124,15 +124,6 @@ class Admin_Werkplekken_Display extends Admin_Display {
 		}
 		$select .= '<\select>';
 		return $select;
-	}
-
-	/**
-	 * Zet een datumveld op disabled als de datum in het verleden ligt.
-	 *
-	 * @param string $datum De datum.
-	 */
-	private function disabled_datum( string $datum ) {
-		disabled( strtotime( $datum ) < strtotime( 'today' ) );
 	}
 
 }

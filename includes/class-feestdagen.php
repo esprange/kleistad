@@ -27,15 +27,13 @@ class Feestdagen {
 		if ( isset( $jaren[ $jaar ] ) ) {
 			return $jaren[ $jaar ];
 		}
-		$feestdagen = get_option( "feestdagen_$jaar" );
-		if ( false !== $feestdagen ) {
-			$jaren[ $jaar ] = $feestdagen;
-			return $feestdagen;
+		$feestdagen = get_option( "kleistad_feestdagen_$jaar" );
+		if ( ! is_array( $feestdagen ) ) {
+			$feestdagen = $this->bereken( $jaar );
+			add_option( "kleistad_feestdagen_$jaar", $feestdagen );
 		}
-		$feestdagen = $this->bereken( $jaar );
-		add_option( "feestdagen_$jaar", $feestdagen );
 		$jaren[ $jaar ] = $feestdagen;
-		return $feestdagen;
+		return $jaren[ $jaar ];
 	}
 
 	/**
@@ -55,43 +53,26 @@ class Feestdagen {
 	 * @return array De feestdagen.
 	 */
 	private function bereken( int $jaar ) : array {
-		$paasdatum = strtotime( "$jaar-03-21" ) + easter_days( $jaar ) * DAY_IN_SECONDS;
-		$paasdag   = (int) date( 'j', $paasdatum );
-		$paasmaand = (int) date( 'n', $paasdatum );
-
+		$paasdatum  = strtotime( "$jaar-03-21" ) + easter_days( $jaar ) * DAY_IN_SECONDS;
+		$paasdag    = (int) date( 'j', $paasdatum );
+		$paasmaand  = (int) date( 'n', $paasdatum );
 		$feestdagen = array(
-			// Nieuwjaarsdag.
-			mktime( 0, 0, 0, 1, 1, $jaar ),
-			// 1e Kerstdag.
-			mktime( 0, 0, 0, 12, 25, $jaar ),
-			// 2e Kerstdag.
-			mktime( 0, 0, 0, 12, 26, $jaar ),
+			'nieuwjaarsdag' => mktime( 0, 0, 0, 1, 1, $jaar ),
+			'1e kerstdag'   => mktime( 0, 0, 0, 12, 25, $jaar ),
+			'2e kerstdag'   => mktime( 0, 0, 0, 12, 26, $jaar ),
 		);
-
-		// Bevrijdingsdag.
 		if ( ( $jaar % 5 ) === 0 ) {
-			$feestdagen[] = mktime( 0, 0, 0, 5, 5, $jaar );
+			$feestdagen['bevrijdingsdag'] = mktime( 0, 0, 0, 5, 5, $jaar );
 		}
-
-		// Koninginnedag.
 		// Verplaats naar zaterdag als het valt op zondag.
-		$feestdagen[] = mktime( 0, 0, 0, 4, ( (int) date( 'w', mktime( 0, 0, 0, 4, 27, $jaar ) ) === 0 ) ? 26 : 27, $jaar );  // Verplaats naar zaterdag.
-
+		$feestdagen['koningsdag'] = mktime( 0, 0, 0, 4, ( (int) date( 'w', mktime( 0, 0, 0, 4, 27, $jaar ) ) === 0 ) ? 26 : 27, $jaar );  // Verplaats naar zaterdag.
 		// Onderstaande dagen hebben een datum afhankelijk van Pasen.
-		// Goede Vrijdag (= pasen - 2).
-		// $feestdagen[] = strtotime( '-2 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) ); // phpcs:ignore
-		// 1e Paasdag.
-		$feestdagen[] = mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar );
-		// 2e Paasdag (= pasen +1).
-		$feestdagen[] = strtotime( '+1 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) );
-		// Hemelvaartsdag (= pasen + 39).
-		$feestdagen[] = strtotime( '+39 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) );
-		// 1e Pinksterdag (= pasen + 49).
-		$feestdagen[] = strtotime( '+49 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) );
-		// 2e Pinksterdag (= pasen + 50).
-		$feestdagen[] = strtotime( '+50 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) );
-
-		sort( $feestdagen );
+		// goede vrijdag  is -2 days t.o.v. pasen.
+		$feestdagen['1e paasdag']     = mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar );
+		$feestdagen['2e paasdag']     = strtotime( '+1 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) );
+		$feestdagen['hemelvaart']     = strtotime( '+39 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) );
+		$feestdagen['1e pinksterdag'] = strtotime( '+49 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) );
+		$feestdagen['2e pinksterdag'] = strtotime( '+50 days', mktime( 0, 0, 0, $paasmaand, $paasdag, $jaar ) );
 		return $feestdagen;
 	}
 

@@ -1,10 +1,10 @@
-=== Kleistad ===
+ === Kleistad ===
 Contributors: Eric Sprangers
 Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.7.1
-Stable tag: 6.15.3
+Stable tag: 6.15.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4
@@ -36,7 +36,7 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 6.15.3 =
+= 6.15.4 =
 * Visuele verbeteringen
 * Aanpassing code structuur waardoor betere code checks mogelijk zijn
 * Werkplek reserveringen houdt nu voortaan rekening met de feestdagen

@@ -70,7 +70,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			$cursist      = get_userdata( $inschrijving->klant_id );
 			$cursist_info = [
 				'code'       => $inschrijving->code,
-				'naam'       => $cursist->display_name,
+				'naam'       => $cursist->display_name . $inschrijving->toon_aantal(),
 				'telnr'      => $cursist->telnr,
 				'email'      => $cursist->user_email,
 				'extra'      => true,

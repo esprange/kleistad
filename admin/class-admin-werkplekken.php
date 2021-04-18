@@ -109,8 +109,12 @@ class Admin_Werkplekken extends WP_List_Table {
 	 */
 	private function geef_werkplek_configs() : array {
 		$werkplekconfigs = [];
+		$vandaag         = strtotime( 'today' );
 		foreach ( new WerkplekConfigs() as $werkplekconfig ) {
 			$werkplekken = 0;
+			if ( $werkplekconfig->eind_datum && $vandaag > $werkplekconfig->eind_datum ) {
+				continue;
+			}
 			foreach ( $werkplekconfig->config as $atelierdag ) {
 				foreach ( $atelierdag as $dagdeel ) {
 					$werkplekken += array_sum( $dagdeel );
