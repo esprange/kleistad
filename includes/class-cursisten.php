@@ -39,13 +39,13 @@ class Cursisten implements Countable, Iterator {
 	 * De constructor
 	 */
 	public function __construct() {
-		$cursisten = get_users(
+		global $wpdb;
+		$cursist_ids = $wpdb->get_col( "SELECT DISTINCT(cursist_id) FROM {$wpdb->prefix}kleistad_inschrijvingen" );
+		$cursisten   = get_users(
 			[
-				'fields'       => [ 'ID' ],
-				'meta_key'     => Inschrijving::META_KEY,
-				'meta_compare' => '!==',
-				'meta_value'   => '',
-				'orderby'      => 'display_name',
+				'fields'  => [ 'ID' ],
+				'include' => $cursist_ids,
+				'orderby' => 'display_name',
 			]
 		);
 		foreach ( $cursisten as $cursist ) {

@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 98;
+	const DBVERSIE = 100;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -180,6 +180,24 @@ class Admin_Upgrade {
 		);
 
 		dbDelta(
+			"CREATE TABLE {$wpdb->prefix}kleistad_inschrijvingen (
+			cursist_id int(10) NOT NULL,
+			cursus_id int(10) NOT NULL,
+			datum datetime,
+			technieken tinytext,
+			extra_cursisten tinytext,
+			hoofd_cursist_id int(10),
+			ingedeeld tinyint(1) DEFAULT 0,
+			geannuleerd tinyint(1) DEFAULT 0,
+			opmerking tinytext,
+			aantal tinyint(2) DEFAULT 0,
+			wacht_datum date,
+			restant_email tinyint(1) DEFAULT 0,
+			herinner_email tinyint(1) DEFAULT 0,
+			PRIMARY KEY  (cursist_id, cursus_id)
+			) $charset_collate;"
+		);
+		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}kleistad_orders (
 			id int(10) NOT NULL AUTO_INCREMENT,
 			betaald numeric(10,2) DEFAULT 0,
@@ -229,6 +247,46 @@ class Admin_Upgrade {
 	 * Converteer inschrijving, maak de orders aan.
 	 */
 	private function convert_inschrijving() {
+		global $wpdb;
+		$meta_key = 'kleistad_inschrijving';
+
+		$inschrijvingen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_inschrijvingen", ARRAY_A );
+		if ( count( $inschrijvingen ) ) {
+			return;
+		}
+		$cursisten = get_users(
+			[
+				'fields'       => [ 'ID' ],
+				'meta_key'     => $meta_key,
+				'meta_compare' => '!==',
+				'meta_value'   => '',
+			]
+		);
+		foreach ( $cursisten as $cursist ) {
+			$inschrijvingen = (array) get_user_meta( $cursist->ID, $meta_key, true );
+			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
+				$wpdb->insert(
+					"{$wpdb->prefix}kleistad_inschrijvingen",
+					[
+						'cursus_id'        => $cursus_id,
+						'cursist_id'       => $cursist->ID,
+						'datum'            => date( 'Y-m-d h:m:s' ),
+						'technieken'       => wp_json_encode( $inschrijving['technieken'] ?? [] ),
+						'extra_cursisten'  => wp_json_encode( $inschrijving['extra_cursisten'] ?? [] ),
+						'hoofd_cursist_id' => $inschrijving['hoofd_cursist_id'] ?? 0,
+						'ingedeeld'        => intval( $inschrijving['ingedeeld'] ?? true ),
+						'geannuleerd'      => intval( $inschrijving['geannuleerd'] ?? false ),
+						'opmerking'        => $inschrijving['opmerking'] ?? '',
+						'aantal'           => $inschrijving['aantal'] ?? 1,
+						'wacht_datum'      => date( 'Y-m-d', $inschrijving['wacht_datum'] ?? 0 ),
+						'restant_email'    => intval( $inschrijving['restant_email'] ?? true ),
+						'herinner_email'   => intval( $inschrijving['herinner_email'] ?? true ),
+					]
+				);
+
+			}
+		}
+
 	}
 
 	/**

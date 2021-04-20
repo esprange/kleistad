@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.7.1
-Stable tag: 6.15.4
+Stable tag: 6.16.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4
@@ -36,6 +36,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+- 6.16.0 =
+* Performance verbetering, cursus inschrijvingen opgenomen in aparte database tabel ipv in user_meta 
 = 6.15.4 =
 * Visuele verbeteringen
 * Aanpassing code structuur waardoor betere code checks mogelijk zijn
@@ -310,13 +312,14 @@ geen.
 
 == Additionele info ==
 
-Deze plugin voegt vier tabellen toe aan de database:
+Deze plugin voegt vijf tabellen toe aan de database:
 
 *  Ovens
 *  Reserveringen
 *  Cursussen
 *  Workshops
 *  Orders
+*  Inschrijvingen
 
 De plugin maakt gebruik van Mollie, de Google Calendar API en de geodata locatieserver.
 

@@ -34,7 +34,6 @@ class Inschrijving extends Artikel {
 		'naam'   => 'cursus',
 		'pcount' => 2,
 	];
-	public const META_KEY          = 'kleistad_inschrijving';
 	private const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
 	private const EMAIL_SUBJECT    = [
 		'inschrijving'    => 'Inschrijving cursus',
@@ -90,29 +89,6 @@ class Inschrijving extends Artikel {
 	public InschrijvingBetaling $betaling;
 
 	/**
-	 * De beginwaarden van een inschrijving
-	 *
-	 * @since 4.3.0
-	 *
-	 * @access private
-	 * @var array $default_data de standaard waarden bij het aanmaken van een inschrijving.
-	 */
-	private array $default_data = [
-		'code'             => '',
-		'datum'            => 0,
-		'technieken'       => [],
-		'ingedeeld'        => 0,
-		'geannuleerd'      => 0,
-		'opmerking'        => '',
-		'aantal'           => 1,
-		'restant_email'    => 0,
-		'herinner_email'   => 0,
-		'wacht_datum'      => 0,
-		'extra_cursisten'  => [],
-		'hoofd_cursist_id' => 0,
-	];
-
-	/**
 	 * Constructor
 	 *
 	 * @since 4.0.87
@@ -121,17 +97,42 @@ class Inschrijving extends Artikel {
 	 * @param int $klant_id  wp user id van de cursist.
 	 */
 	public function __construct( int $cursus_id, int $klant_id ) {
-		$this->cursus                = new Cursus( $cursus_id );
-		$this->klant_id              = $klant_id;
-		$this->default_data['code']  = "C$cursus_id-$klant_id";
-		$this->default_data['datum'] = time();
-		$inschrijvingen              = get_user_meta( $this->klant_id, self::META_KEY, true );
-		$this->ingeschreven          = is_array( $inschrijvingen ) && isset( $inschrijvingen[ $cursus_id ] );
-		$this->data                  = $this->ingeschreven ?
-			wp_parse_args( $inschrijvingen[ $cursus_id ], $this->default_data ) :
-			$this->default_data;
-		$this->actie                 = new InschrijvingActie( $this );
-		$this->betaling              = new InschrijvingBetaling( $this );
+		global $wpdb;
+		$this->cursus   = new Cursus( $cursus_id );
+		$this->klant_id = $klant_id;
+		$this->data     = [
+			'code'             => "C$cursus_id-$klant_id",
+			'datum'            => time(),
+			'technieken'       => [],
+			'ingedeeld'        => 0,
+			'geannuleerd'      => 0,
+			'opmerking'        => '',
+			'aantal'           => 1,
+			'restant_email'    => 0,
+			'herinner_email'   => 0,
+			'wacht_datum'      => 0,
+			'extra_cursisten'  => [],
+			'hoofd_cursist_id' => 0,
+		];
+		$this->actie    = new InschrijvingActie( $this );
+		$this->betaling = new InschrijvingBetaling( $this );
+		$inschrijving   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_inschrijvingen WHERE cursus_id = %d AND cursist_id = %d", $cursus_id, $klant_id ), ARRAY_A );
+		if ( is_null( $inschrijving ) ) {
+			$this->ingeschreven = false;
+			return;
+		}
+		$this->data['datum']            = strtotime( $inschrijving['datum'] );
+		$this->data['technieken']       = json_decode( $inschrijving['technieken'], true );
+		$this->data['ingedeeld']        = boolval( $inschrijving['ingedeeld'] );
+		$this->data['geannuleerd']      = boolval( $inschrijving['geannuleerd'] );
+		$this->data['opmerking']        = htmlspecialchars_decode( $inschrijving['opmerking'] );
+		$this->data['aantal']           = intval( $inschrijving['aantal'] );
+		$this->data['restant_email']    = boolval( $inschrijving['restant_email'] );
+		$this->data['herinner_email']   = boolval( $inschrijving['herinner_email'] );
+		$this->data['wacht_datum']      = strtotime( $inschrijving['wacht_datum'] );
+		$this->data['extra_cursisten']  = json_decode( $inschrijving['extra_cursisten'], true );
+		$this->data['hoofd_cursist_id'] = intval( $inschrijving['hoofd_cursist_id'] );
+		$this->ingeschreven             = true;
 	}
 
 	/**
@@ -162,14 +163,16 @@ class Inschrijving extends Artikel {
 	 * Verwijder de inschrijving
 	 */
 	public function erase() : bool {
-		$inschrijvingen = get_user_meta( $this->klant_id, self::META_KEY, true );
-		unset( $inschrijvingen[ $this->cursus->id ] );
-		if ( empty( $inschrijvingen ) ) {
-			delete_user_meta( $this->klant_id, self::META_KEY );
-			return true;
-		}
-		update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
-		return true;
+		global $wpdb;
+		return boolval(
+			$wpdb->delete(
+				"{$wpdb->prefix}kleistad_inschrijvingen",
+				[
+					'cursus_id'  => $this->cursus_id,
+					'cursist_id' => $this->klant_id,
+				]
+			)
+		);
 	}
 
 	/**
@@ -274,9 +277,25 @@ class Inschrijving extends Artikel {
 	 * @since 4.0.87
 	 */
 	public function save() {
-		$inschrijvingen                      = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: [];
-		$inschrijvingen[ $this->cursus->id ] = $this->data;
-		update_user_meta( $this->klant_id, self::META_KEY, $inschrijvingen );
+		global $wpdb;
+		$wpdb->replace(
+			"{$wpdb->prefix}kleistad_inschrijvingen",
+			[
+				'cursus_id'        => $this->cursus->id,
+				'cursist_id'       => $this->klant_id,
+				'datum'            => date( 'Y-m-d h:m:s', $this->datum ),
+				'technieken'       => wp_json_encode( $this->technieken ),
+				'extra_cursisten'  => wp_json_encode( $this->extra_cursisten ),
+				'hoofd_cursist_id' => $this->hoofd_cursist_id,
+				'ingedeeld'        => intval( $this->ingedeeld ),
+				'geannuleerd'      => intval( $this->geannuleerd ),
+				'opmerking'        => $this->opmerking,
+				'aantal'           => $this->aantal,
+				'wacht_datum'      => date( 'Y-m-d', $this->wacht_datum ),
+				'restant_email'    => intval( $this->restant_email ),
+				'herinner_email'   => intval( $this->herinner_email ),
+			]
+		);
 	}
 
 	/**

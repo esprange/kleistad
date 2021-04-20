@@ -126,7 +126,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			if ( ! $cursus->is_open() || false === $json_cursus ) {
 				$selecteerbaar = false;
 				$style         = 'color: gray;';
-				$naam          = $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? 'VOL' : '' );
+				$naam         .= $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : '' );
 			}
 			?>
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">

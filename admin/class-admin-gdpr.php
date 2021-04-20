@@ -388,7 +388,6 @@ class Admin_GDPR {
 			if (
 				$datum > strtotime( $gebruiker->user_registered ) &&
 				empty(
-					(string) get_user_meta( $gebruiker->ID, Inschrijving::META_KEY, true ) .
 					(string) get_user_meta( $gebruiker->ID, Dagdelenkaart::META_KEY, true ) .
 					(string) get_user_meta( $gebruiker->ID, Abonnement::META_KEY, true )
 				) &&

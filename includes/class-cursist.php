@@ -37,12 +37,11 @@ class Cursist extends Gebruiker {
 	 * @suppressWarnings(PHPMD.ShortVariable)
 	 */
 	public function __construct( $id = 0, $name = '', $site_id = null ) {
+		global $wpdb;
 		parent::__construct( $id, $name, $site_id );
-		$inschrijvingen = get_user_meta( $this->ID, Inschrijving::META_KEY, true );
-		if ( is_array( $inschrijvingen ) ) {
-			foreach ( array_keys( $inschrijvingen ) as $cursus_id ) {
-				$this->inschrijvingen[] = new Inschrijving( $cursus_id, $this->ID );
-			}
+		$cursus_ids = $wpdb->get_col( $wpdb->prepare( "SELECT cursus_id FROM {$wpdb->prefix}kleistad_inschrijvingen WHERE cursist_id = %d", $this->ID ) );
+		foreach ( $cursus_ids as $cursus_id ) {
+			$this->inschrijvingen[] = new Inschrijving( $cursus_id, $this->ID );
 		}
 	}
 

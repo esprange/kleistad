@@ -44,23 +44,22 @@ class Inschrijvingen implements Countable, Iterator {
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	public function __construct( int $select_cursus_id = null, bool $actief = false ) {
-		foreach ( new Cursisten() as $cursist ) {
-			$inschrijvingen = (array) get_user_meta( $cursist->ID, Inschrijving::META_KEY, true );
-			if ( ! is_null( $select_cursus_id ) ) {
-				if ( ! isset( $inschrijvingen[ $select_cursus_id ] ) ) {
-					continue;
-				}
-				if ( $actief && $inschrijvingen[ $select_cursus_id ]['geannuleerd'] ) {
-					continue;
-				}
-				$this->inschrijvingen[] = new Inschrijving( $select_cursus_id, $cursist->ID );
-				continue;
-			}
-			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
-				if ( $actief && $inschrijving['geannuleerd'] ) {
-					continue;
-				}
-				$this->inschrijvingen[] = new Inschrijving( $cursus_id, $cursist->ID );
+		global $wpdb;
+		$where = [];
+		if ( $actief ) {
+			$where[] = 'geannuleerd = 0';
+		}
+		if ( ! is_null( $select_cursus_id ) ) {
+			$where[] = "cursus_id = $select_cursus_id";
+		}
+		$query = "SELECT cursus_id, cursist_id FROM {$wpdb->prefix}kleistad_inschrijvingen";
+		if ( count( $where ) ) {
+			$query .= ' WHERE ' . implode( ' AND ', $where );
+		}
+		$inschrijving_keys = $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore
+		if ( is_array( $inschrijving_keys ) ) {
+			foreach ( $inschrijving_keys as $inschrijving_key ) {
+				$this->inschrijvingen[] = new Inschrijving( $inschrijving_key['cursus_id'], $inschrijving_key['cursist_id'] );
 			}
 		}
 	}
