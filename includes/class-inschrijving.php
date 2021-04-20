@@ -23,7 +23,7 @@ namespace Kleistad;
  * @property bool   geannuleerd
  * @property string opmerking
  * @property int    aantal
- * @property string wacht_datum
+ * @property int    wacht_datum
  * @property bool   restant_email
  * @property bool   herinner_email
  */
@@ -168,7 +168,7 @@ class Inschrijving extends Artikel {
 			$wpdb->delete(
 				"{$wpdb->prefix}kleistad_inschrijvingen",
 				[
-					'cursus_id'  => $this->cursus_id,
+					'cursus_id'  => $this->cursus->id,
 					'cursist_id' => $this->klant_id,
 				]
 			)
