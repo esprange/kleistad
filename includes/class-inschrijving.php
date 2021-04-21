@@ -93,10 +93,12 @@ class Inschrijving extends Artikel {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $cursus_id id van de cursus.
-	 * @param int $klant_id  wp user id van de cursist.
+	 * @param int        $cursus_id id van de cursus.
+	 * @param int        $klant_id  wp user id van de cursist.
+	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function __construct( int $cursus_id, int $klant_id ) {
+	public function __construct( int $cursus_id, int $klant_id, ?array $load = null ) {
 		global $wpdb;
 		$this->cursus   = new Cursus( $cursus_id );
 		$this->klant_id = $klant_id;
@@ -116,7 +118,11 @@ class Inschrijving extends Artikel {
 		];
 		$this->actie    = new InschrijvingActie( $this );
 		$this->betaling = new InschrijvingBetaling( $this );
-		$inschrijving   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_inschrijvingen WHERE cursus_id = %d AND cursist_id = %d", $cursus_id, $klant_id ), ARRAY_A );
+		if ( ! is_null( $load ) ) {
+			$inschrijving = $load;
+		} else {
+			$inschrijving = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_inschrijvingen WHERE cursus_id = %d AND cursist_id = %d", $cursus_id, $klant_id ), ARRAY_A );
+		}
 		if ( is_null( $inschrijving ) ) {
 			$this->ingeschreven = false;
 			return;

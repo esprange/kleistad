@@ -54,9 +54,11 @@ class Cursus {
 	 * Constructor
 	 *
 	 * @global object $wpdb WordPress database.
-	 * @param int|null $cursus_id (optional) cursus welke geladen moet worden.
+	 * @param int|null   $cursus_id (optioneel) cursus welke geladen moet worden.
+	 * @param array|null $load      (optioneel) data waarmee het object geladen kan worden (ivm performance).
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function __construct( int $cursus_id = null ) {
+	public function __construct( int $cursus_id = null, ?array $load = null ) {
 		global $wpdb;
 		$options    = opties();
 		$this->data = [
@@ -82,7 +84,11 @@ class Cursus {
 			'tonen'           => 0,
 		];
 		if ( ! is_null( $cursus_id ) ) {
-			$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
+			if ( ! is_null( $load ) ) {
+				$data = $load;
+			} else {
+				$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE id = %d", $cursus_id ), ARRAY_A );
+			}
 			if ( ! is_null( $data ) ) {
 				$this->data = $data;
 				if ( empty( $this->data['lesdatums'] ) ) {

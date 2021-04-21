@@ -40,9 +40,9 @@ class Orders implements Countable, Iterator {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders", ARRAY_A );
-		foreach ( array_column( $order_ids, 'id' ) as $order_id ) {
-			$this->orders[] = new Order( $order_id );
+		$data = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders", ARRAY_A );
+		foreach ( $data as $row ) {
+			$this->orders[] = new Order( $row['id'], $row );
 		}
 	}
 

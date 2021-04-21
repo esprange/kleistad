@@ -52,14 +52,14 @@ class Inschrijvingen implements Countable, Iterator {
 		if ( ! is_null( $select_cursus_id ) ) {
 			$where[] = "cursus_id = $select_cursus_id";
 		}
-		$query = "SELECT cursus_id, cursist_id FROM {$wpdb->prefix}kleistad_inschrijvingen";
+		$query = "SELECT * FROM {$wpdb->prefix}kleistad_inschrijvingen";
 		if ( count( $where ) ) {
 			$query .= ' WHERE ' . implode( ' AND ', $where );
 		}
-		$inschrijving_keys = $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore
-		if ( is_array( $inschrijving_keys ) ) {
-			foreach ( $inschrijving_keys as $inschrijving_key ) {
-				$this->inschrijvingen[] = new Inschrijving( $inschrijving_key['cursus_id'], $inschrijving_key['cursist_id'] );
+		$data = $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore
+		if ( is_array( $data ) ) {
+			foreach ( $data as $row ) {
+				$this->inschrijvingen[] = new Inschrijving( $row['cursus_id'], $row['cursist_id'], $row );
 			}
 		}
 	}

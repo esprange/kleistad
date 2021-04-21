@@ -51,9 +51,10 @@ class Order {
 	/**
 	 * Maak het object aan.
 	 *
-	 * @param int|string $arg Het order id of de referentie of 0.
+	 * @param int|string $arg  Het order id of de referentie of 0.
+	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( $arg = 0 ) {
+	public function __construct( $arg = 0, ?array $load = null ) {
 		global $wpdb;
 		$this->data = [
 			'id'            => 0,
@@ -79,7 +80,9 @@ class Order {
 			'transactie_id' => '',
 		];
 		$resultaat  = null;
-		if ( is_numeric( $arg ) ) {
+		if ( ! is_null( $load ) ) {
+			$resultaat = $load;
+		} elseif ( is_numeric( $arg ) ) {
 			$resultaat = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", intval( $arg ) ), ARRAY_A );
 		} elseif ( $arg ) {
 			$resultaat = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s ORDER BY id DESC LIMIT 1", $arg ), ARRAY_A ) ?? 0;
