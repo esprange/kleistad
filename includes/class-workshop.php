@@ -78,9 +78,10 @@ class Workshop extends Artikel {
 	 * @since 5.0.0
 	 *
 	 * @global object $wpdb WordPress database.
-	 * @param int $workshop_id (optional) workshop welke geladen moet worden.
+	 * @param int        $workshop_id (optional) workshop welke geladen moet worden.
+	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( $workshop_id = null ) {
+	public function __construct( $workshop_id = null, ?array $load = null ) {
 		global $wpdb;
 		if ( is_null( $workshop_id ) ) {
 			$this->data = [
@@ -107,7 +108,7 @@ class Workshop extends Artikel {
 			];
 			return;
 		}
-		$this->data     = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+		$this->data     = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
 		$this->actie    = new WorkshopActie( $this );
 		$this->betaling = new WorkshopBetaling( $this );
 	}

@@ -40,9 +40,9 @@ class Workshops implements Countable, Iterator {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$workshop_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_workshops", ARRAY_A );
-		foreach ( array_column( $workshop_ids, 'id' ) as $workshop_id ) {
-			$this->workshops[] = new Workshop( $workshop_id );
+		$data = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_workshops", ARRAY_A );
+		foreach ( $data as $row ) {
+			$this->workshops[] = new Workshop( $row['id'], $row );
 		}
 	}
 
