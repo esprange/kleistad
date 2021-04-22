@@ -12,6 +12,7 @@
 namespace Kleistad;
 
 use WP_User;
+use WP_Error;
 
 /**
  * Kleistad Gebruiker class.
