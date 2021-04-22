@@ -117,7 +117,7 @@ class AbonnementActie {
 		$this->abonnement->artikel_type       = 'start';
 		$this->abonnement->overbrugging_email = false;
 		$this->abonnement->extras             = [];
-		$this->abonnement->factuur_maand      = 0;
+		$this->abonnement->factuur_maand      = 'ideal' === $betaalwijze ? 0 : (int) date( 'Ym' );
 		$this->autoriseer( true );
 		$this->abonnement->save();
 		if ( 'ideal' === $betaalwijze ) {

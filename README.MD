@@ -37,7 +37,9 @@ Plaats de shortcodes in de pagina's
 
 ## Changelog ##
 - 6.16.0 =
-* Performance verbetering, cursus inschrijvingen opgenomen in aparte database tabel ipv in user_meta 
+* Performance verbetering, cursus inschrijvingen opgenomen in aparte database tabel ipv in user_meta
+* Performance verbetering, reductie aantal database queries
+* Robuuster abonnee inschrijving
 ### 6.15.4 ###
 * Visuele verbeteringen
 * Aanpassing code structuur waardoor betere code checks mogelijk zijn

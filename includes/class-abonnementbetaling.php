@@ -151,6 +151,8 @@ class AbonnementBetaling implements ArtikelBetaling {
 				 * Bij een start en nog niet bestaande order moet dit wel afkomstig zijn van het invullen van
 				 * een inschrijving formulier.
 				 */
+				$this->abonnement->factuur_maand = (int) date( 'Ym' );
+				$this->abonnement->save();
 				$this->abonnement->verzend_email( '_start_ideal', $this->abonnement->bestel_order( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
 				return;
 			}
