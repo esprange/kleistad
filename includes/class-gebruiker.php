@@ -39,9 +39,9 @@ class Gebruiker extends WP_User {
 	 * Registreer de gebruiker op basis van input
 	 *
 	 * @param array $data De input.
-	 * @return int
+	 * @return int|WP_Error
 	 */
-	public static function registreren( array $data ) : int {
+	public static function registreren( array $data ) {
 		$gebruiker_id = intval( $data['gebruiker_id'] ?? 0 );
 		if ( ! $gebruiker_id ) {
 			$userdata = [
@@ -60,9 +60,9 @@ class Gebruiker extends WP_User {
 				$userdata['user_login']    = $userdata['user_email'];
 				$userdata['user_pass']     = wp_generate_password( 12, true );
 				$userdata['user_nicename'] = strtolower( $userdata['first_name'] . '-' . $userdata['last_name'] );
-				return (int) wp_insert_user( (object) $userdata );
+				return wp_insert_user( (object) $userdata );
 			}
-			return (int) wp_update_user( (object) $userdata );
+			return wp_update_user( (object) $userdata );
 		}
 		return $gebruiker_id;
 	}
