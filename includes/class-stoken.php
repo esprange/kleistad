@@ -55,7 +55,7 @@ class Stoken implements Countable, Iterator {
 			ARRAY_A
 		);
 		foreach ( $data as $row ) {
-			$this->stoken[] = new Stook( $oven_id, strtotime( $row['datum '] ), $row );
+			$this->stoken[] = new Stook( $oven_id, strtotime( $row['datum'] ), $row );
 		}
 	}
 
