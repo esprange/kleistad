@@ -45,17 +45,17 @@ class Stoken implements Countable, Iterator {
 	 */
 	public function __construct( int $oven_id, int $vanaf_datum, int $tot_datum ) {
 		global $wpdb;
-		$datums = $wpdb->get_results(
+		$data = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT datum FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND datum BETWEEN %s AND %s",
+				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND datum BETWEEN %s AND %s",
 				$oven_id,
 				date( 'Y-m-d 00:00:00', $vanaf_datum ),
 				date( 'Y-m-d 23:59:59', $tot_datum ),
 			),
 			ARRAY_A
 		);
-		foreach ( array_column( $datums, 'datum' ) as $datum ) {
-			$this->stoken[] = new Stook( $oven_id, strtotime( $datum ) );
+		foreach ( $data as $row ) {
+			$this->stoken[] = new Stook( $oven_id, strtotime( $row['datum '] ), $row );
 		}
 	}
 

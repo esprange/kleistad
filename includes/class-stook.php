@@ -112,15 +112,16 @@ class Stook {
 	 * Constructor
 	 *
 	 * @global object $wpdb wp database.
-	 * @param int $oven_id Het oven id.
-	 * @param int $datum   De datum van de stook.
+	 * @param int        $oven_id Het oven id.
+	 * @param int        $datum   De datum van de stook.
+	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( int $oven_id, int $datum ) {
+	public function __construct( int $oven_id, int $datum, ?array $load = null ) {
 		global $wpdb;
 
 		$this->oven_id = $oven_id;
 		$this->datum   = $datum;
-		$resultaat     = $wpdb->get_row(
+		$resultaat     = $load ?? $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND datum BETWEEN %s AND %s",
 				$oven_id,

@@ -39,9 +39,9 @@ class Cursist extends Gebruiker {
 	public function __construct( $id = 0, $name = '', $site_id = null ) {
 		global $wpdb;
 		parent::__construct( $id, $name, $site_id );
-		$cursus_ids = $wpdb->get_col( $wpdb->prepare( "SELECT cursus_id FROM {$wpdb->prefix}kleistad_inschrijvingen WHERE cursist_id = %d", $this->ID ) );
-		foreach ( $cursus_ids as $cursus_id ) {
-			$this->inschrijvingen[] = new Inschrijving( $cursus_id, $this->ID );
+		$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_inschrijvingen WHERE cursist_id = %d", $this->ID ) );
+		foreach ( $data as $row ) {
+			$this->inschrijvingen[] = new Inschrijving( $data['cursus_id'], $this->ID, $row );
 		}
 	}
 
