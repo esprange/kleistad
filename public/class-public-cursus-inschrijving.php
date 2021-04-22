@@ -335,29 +335,14 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @param array $data data te bewaren.
 	 * @return WP_Error|array
+	 * @suppressWarnings(PHPMD.StaticAccess)
 	 *
 	 * @since   4.0.87
 	 */
 	protected function save( array $data ) : array {
-		$gebruiker_id = intval( $data['input']['gebruiker_id'] );
-		if ( ! $gebruiker_id ) {
-			$gebruiker_id = email_exists( $data['input']['user_email'] );
-			$gebruiker_id = upsert_user(
-				[
-					'ID'         => $gebruiker_id ? $gebruiker_id : null,
-					'first_name' => $data['input']['first_name'],
-					'last_name'  => $data['input']['last_name'],
-					'telnr'      => $data['input']['telnr'],
-					'user_email' => $data['input']['user_email'],
-					'straat'     => $data['input']['straat'],
-					'huisnr'     => $data['input']['huisnr'],
-					'pcode'      => $data['input']['pcode'],
-					'plaats'     => $data['input']['plaats'],
-				]
-			);
-			if ( ! is_int( $gebruiker_id ) ) {
-				return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
-			}
+		$gebruiker_id = Gebruiker::registreren( $data['input'] );
+		if ( ! is_int( $gebruiker_id ) ) {
+			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
 		$inschrijving               = new Inschrijving( $data['input']['cursus_id'], $gebruiker_id );
 		$inschrijving->technieken   = $data['input']['technieken'] ?? $inschrijving->technieken;

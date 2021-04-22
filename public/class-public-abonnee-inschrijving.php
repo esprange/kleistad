@@ -124,27 +124,15 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 * @return WP_Error|array
 	 *
 	 * @since   4.0.87
+	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
 	protected function save( array $data ) : array {
-		$gebruiker_id = $data['input']['gebruiker_id'] ?: email_exists( $data['input']['user_email'] );
-		$gebruiker_id = upsert_user(
-			[
-				'ID'         => $gebruiker_id ?: null,
-				'first_name' => $data['input']['first_name'],
-				'last_name'  => $data['input']['last_name'],
-				'telnr'      => $data['input']['telnr'],
-				'user_email' => $data['input']['user_email'],
-				'straat'     => $data['input']['straat'],
-				'huisnr'     => $data['input']['huisnr'],
-				'pcode'      => $data['input']['pcode'],
-				'plaats'     => $data['input']['plaats'],
-			]
-		);
+		$gebruiker_id = Gebruiker::registreren( $data['input'] );
 		if ( ! is_int( $gebruiker_id ) ) {
-			return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout' ) ) ];
+			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
 		$abonnement = new Abonnement( $gebruiker_id );
-		if ( $abonnement->factuur_maand ) {
+		if ( $abonnement->factuur_maand && ! $abonnement->eind_datum ) {
 			return [
 				'status' => $this->status( new WP_Error( 'niet toegestaan', 'Het is niet mogelijk om een bestaand abonnement via dit formulier te wijzigen' ) ),
 			];
@@ -153,7 +141,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 			strtotime( $data['input']['start_datum'] ),
 			$data['input']['abonnement_keuze'],
 			$data['input']['dag'],
-			$data['input']['opmerking'],
+			$data['input']['opmerking'] ?? '',
 			$data['input']['betaal']
 		);
 		if ( false === $result ) {

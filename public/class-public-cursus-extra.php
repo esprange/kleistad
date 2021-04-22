@@ -148,6 +148,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 *
 	 * @param array $data data te bewaren.
 	 * @return WP_Error|array
+	 * @suppressWarnings(PHPMD.StaticAccess)
 	 *
 	 * @since   6.6.0
 	 */
@@ -158,20 +159,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;
 			}
-			$extra_cursist_id = intval( $extra_cursist['id'] );
-			if ( 0 === $extra_cursist_id ) {
-				$extra_cursist_id = email_exists( $extra_cursist['user_email'] );
-				if ( false === $extra_cursist_id ) {
-					$extra_cursist_id = upsert_user(
-						[
-							'ID'         => null,
-							'first_name' => $extra_cursist['first_name'],
-							'last_name'  => $extra_cursist['last_name'],
-							'user_email' => $extra_cursist['user_email'],
-						]
-					);
-				}
-			}
+			$extra_cursist_id = Gebruiker::registreren( $extra_cursist );
 			if ( ! is_int( $extra_cursist_id ) ) {
 				return [
 					'status' => $this->status( new WP_Error( 'intern', 'Er is een interne fout opgetreden, probeer het eventueel later opnieuw.' ) ),

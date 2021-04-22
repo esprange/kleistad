@@ -25,23 +25,6 @@ const BOEKHOUD  = 'boekhouding';
 const INTERN    = 'intern';
 
 /**
- * Insert of update de gebruiker.
- *
- * @param array $userdata De gebruiker gegevens, inclusief contact informatie.
- * @return int|WP_Error  De user_id of een error object.
- */
-function upsert_user( array $userdata ) {
-	if ( is_null( $userdata['ID'] ) ) {
-		$userdata['role']          = '';
-		$userdata['user_login']    = $userdata['user_email'];
-		$userdata['user_pass']     = wp_generate_password( 12, true );
-		$userdata['user_nicename'] = strtolower( $userdata['first_name'] . '-' . $userdata['last_name'] );
-		return wp_insert_user( (object) $userdata );
-	}
-	return wp_update_user( (object) $userdata );
-}
-
-/**
  * Zet de blokkade datum.
  *
  * @param int $datum De datum in unix time.

@@ -83,6 +83,8 @@ class Workshop extends Artikel {
 	 */
 	public function __construct( $workshop_id = null, ?array $load = null ) {
 		global $wpdb;
+		$this->actie    = new WorkshopActie( $this );
+		$this->betaling = new WorkshopBetaling( $this );
 		if ( is_null( $workshop_id ) ) {
 			$this->data = [
 				'id'                => null,
@@ -108,9 +110,7 @@ class Workshop extends Artikel {
 			];
 			return;
 		}
-		$this->data     = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
-		$this->actie    = new WorkshopActie( $this );
-		$this->betaling = new WorkshopBetaling( $this );
+		$this->data = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
 	}
 
 	/**
