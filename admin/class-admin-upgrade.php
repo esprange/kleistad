@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 100;
+	const DBVERSIE = 102;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
