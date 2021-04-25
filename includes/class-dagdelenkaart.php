@@ -97,11 +97,13 @@ class Dagdelenkaart extends Artikel {
 	 */
 	public function erase( $alle = true ) {
 		if ( ! $alle ) {
-			$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: [];
-			unset( $dagdelenkaarten[ $this->volgnr ] );
-			if ( count( $dagdelenkaarten ) ) {
-				update_user_meta( $this->klant_id, self::META_KEY, $dagdelenkaarten );
-				return;
+			$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true );
+			if ( is_array( $dagdelenkaarten ) ) {
+				unset( $dagdelenkaarten[ $this->volgnr ] );
+				if ( count( $dagdelenkaarten ) ) {
+					update_user_meta( $this->klant_id, self::META_KEY, $dagdelenkaarten );
+					return;
+				}
 			}
 		}
 		delete_user_meta( $this->klant_id, self::META_KEY );
