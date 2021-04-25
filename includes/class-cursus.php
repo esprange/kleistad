@@ -59,7 +59,6 @@ class Cursus {
 	 */
 	public function __construct( int $cursus_id = null, ?array $load = null ) {
 		global $wpdb;
-		$options    = opties();
 		$this->data = [
 			'id'              => null,
 			'naam'            => '',
@@ -74,8 +73,8 @@ class Cursus {
 			'vervallen'       => 0,
 			'vol'             => 0,
 			'techniekkeuze'   => 0,
-			'inschrijfkosten' => $options['cursusinschrijfprijs'],
-			'cursuskosten'    => $options['cursusprijs'],
+			'inschrijfkosten' => opties()['cursusinschrijfprijs'],
+			'cursuskosten'    => opties()['cursusprijs'],
 			'inschrijfslug'   => 'cursus_aanvraag',
 			'indelingslug'    => 'cursus_ingedeeld',
 			'maximum'         => 12,

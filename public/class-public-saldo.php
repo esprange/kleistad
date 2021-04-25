@@ -82,7 +82,7 @@ class Public_Saldo extends ShortcodeForm {
 	protected function save( array $data ) : array {
 		$saldo  = new Saldo( intval( $data['input']['gebruiker_id'] ) );
 		$bedrag = floatval( $data['input']['bedrag'] );
-		$saldo->actie->nieuw( $bedrag );
+		$saldo->nieuw( $bedrag );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$ideal_uri = $saldo->betaling->doe_ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging', $bedrag );

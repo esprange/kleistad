@@ -247,46 +247,6 @@ class Admin_Upgrade {
 	 * Converteer inschrijving, maak de orders aan.
 	 */
 	private function convert_inschrijving() {
-		global $wpdb;
-		$meta_key = 'kleistad_inschrijving';
-
-		$inschrijvingen = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_inschrijvingen", ARRAY_A );
-		if ( count( $inschrijvingen ) ) {
-			return;
-		}
-		$cursisten = get_users(
-			[
-				'fields'       => [ 'ID' ],
-				'meta_key'     => $meta_key,
-				'meta_compare' => '!==',
-				'meta_value'   => '',
-			]
-		);
-		foreach ( $cursisten as $cursist ) {
-			$inschrijvingen = (array) get_user_meta( $cursist->ID, $meta_key, true );
-			foreach ( $inschrijvingen as $cursus_id => $inschrijving ) {
-				$wpdb->insert(
-					"{$wpdb->prefix}kleistad_inschrijvingen",
-					[
-						'cursus_id'        => $cursus_id,
-						'cursist_id'       => $cursist->ID,
-						'datum'            => date( 'Y-m-d h:m:s' ),
-						'technieken'       => wp_json_encode( $inschrijving['technieken'] ?? [] ),
-						'extra_cursisten'  => wp_json_encode( $inschrijving['extra_cursisten'] ?? [] ),
-						'hoofd_cursist_id' => $inschrijving['hoofd_cursist_id'] ?? 0,
-						'ingedeeld'        => intval( $inschrijving['ingedeeld'] ?? true ),
-						'geannuleerd'      => intval( $inschrijving['geannuleerd'] ?? false ),
-						'opmerking'        => $inschrijving['opmerking'] ?? '',
-						'aantal'           => $inschrijving['aantal'] ?? 1,
-						'wacht_datum'      => date( 'Y-m-d', $inschrijving['wacht_datum'] ?? 0 ),
-						'restant_email'    => intval( $inschrijving['restant_email'] ?? true ),
-						'herinner_email'   => intval( $inschrijving['herinner_email'] ?? true ),
-					]
-				);
-
-			}
-		}
-
 	}
 
 	/**

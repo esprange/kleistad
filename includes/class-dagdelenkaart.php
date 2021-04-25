@@ -91,8 +91,19 @@ class Dagdelenkaart extends Artikel {
 
 	/**
 	 * Verwijder de dagdelenkaart, niet alleen de laatste maar ook alle voorgaande.
+	 *
+	 * @param bool $alle Moeten alle dagdelenkaarten verwijderd worden of alleen de huidige.
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag )
 	 */
-	public function erase() {
+	public function erase( $alle = true ) {
+		if ( ! $alle ) {
+			$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true ) ?: [];
+			unset( $dagdelenkaarten[ $this->volgnr ] );
+			if ( count( $dagdelenkaarten ) ) {
+				update_user_meta( $this->klant_id, self::META_KEY, $dagdelenkaarten );
+				return;
+			}
+		}
 		delete_user_meta( $this->klant_id, self::META_KEY );
 	}
 

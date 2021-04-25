@@ -80,6 +80,8 @@ class DagdelenkaartBetaling implements ArtikelBetaling {
 			}
 			// Betaling vanuit inschrijvingformulier.
 			$this->dagdelenkaart->verzend_email( '_ideal', $this->dagdelenkaart->bestel_order( $bedrag, $this->dagdelenkaart->start_datum, '', $transactie_id ) );
+		} elseif ( 'ideal' === $type && ! $order_id ) {
+			$this->dagdelenkaart->erase( false );
 		}
 	}
 

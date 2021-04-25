@@ -124,6 +124,7 @@ class Abonnement extends Artikel {
 	 * Verwijder het abonnement
 	 */
 	public function erase() {
+		$this->actie->autoriseer( false );
 		delete_user_meta( $this->klant_id, self::META_KEY );
 	}
 

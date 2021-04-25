@@ -34,20 +34,5 @@ class SaldoActie {
 		$this->saldo = $saldo;
 	}
 
-	/**
-	 * Voeg een nieuw saldo toe.
-	 *
-	 * @param float $betaald Het toe te voegen bedrag.
-	 */
-	public function nieuw( float $betaald ) {
-		$datum                   = strftime( '%y%m%d', strtotime( 'today' ) );
-		$volgnr                  = count( $this->saldo->storting );
-		$this->saldo->storting[] = [
-			'code'  => "S{$this->saldo->klant_id}-$datum-$volgnr",
-			'datum' => date( 'Y-m-d', strtotime( 'today' ) ),
-			'prijs' => $betaald,
-		];
-		$this->saldo->save();
-	}
 
 }

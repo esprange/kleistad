@@ -233,7 +233,11 @@ class AbonnementActie {
 			// Voorkom dat de admin enige rol kwijtraakt.
 			return;
 		}
-		$abonnee->add_cap( LID, $valid );
+		if ( $valid ) {
+			$abonnee->add_role( LID );
+			return;
+		}
+		$abonnee->remove_role( LID );
 	}
 
 

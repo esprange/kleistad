@@ -161,6 +161,9 @@ class AbonnementBetaling implements ArtikelBetaling {
 			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 			 */
 			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order_id, 0, $transactie_id, true ) );
+			return;
+		} elseif ( 'ideal' === $type && ! $order_id ) {
+			$this->abonnement->erase();
 		}
 	}
 

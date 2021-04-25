@@ -67,4 +67,36 @@ class Gebruiker extends WP_User {
 		}
 		return $gebruiker_id;
 	}
+
+	/**
+	 * Dagelijkse job
+	 */
+	public static function doe_dagelijks() {
+		$gebruikers = get_users(
+			[
+				'role__not_in' => [ BESTUUR, DOCENT, BOEKHOUD, INTERN ],
+			]
+		);
+		foreach ( $gebruikers as $gebruiker ) {
+			$cursist = new Cursist( $gebruiker->ID );
+			if ( count( $cursist->inschrijvingen ) ) {
+				continue;
+			}
+			$abonnee = new Abonnee( $gebruiker->ID );
+			if ( $abonnee->abonnement->start_datum ) {
+				continue;
+			}
+			$dagdelengebruiker = new Dagdelengebruiker( $gebruiker->ID );
+			if ( $dagdelengebruiker->dagdelenkaart->start_datum ) {
+				continue;
+			}
+			$stoker = new Stoker( $gebruiker->ID );
+			if ( ! empty( $stoker->saldo->storting ) ) {
+				continue;
+			}
+			error_log( 'opruimen van ' . $gebruiker->display_name ); // phpcs:ignore
+			// phpcs:ignore wp_delete_user( $gebruiker->ID );
+		}
+
+	}
 }

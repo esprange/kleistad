@@ -46,7 +46,7 @@ class Saldo extends Artikel {
 	 * @access public
 	 * @var string $reden De reden.
 	 */
-	public string $reden;
+	public string $reden = '';
 
 	/**
 	 * Het actie object
@@ -114,6 +114,23 @@ class Saldo extends Artikel {
 	}
 
 	/**
+	 * Voeg een nieuw saldo toe.
+	 *
+	 * @param float $betaald Het toe te voegen bedrag.
+	 */
+	public function nieuw( float $betaald ) {
+		$datum                    = strftime( '%y%m%d', strtotime( 'today' ) );
+		$volgnr                   = count( $this->data['storting'] );
+		$this->data['storting'][] = [
+			'code'  => "S{$this->klant_id}-$datum-$volgnr",
+			'datum' => date( 'Y-m-d', strtotime( 'today' ) ),
+			'prijs' => $betaald,
+		];
+		$this->artikel_type       = 'saldo';
+		$this->save();
+	}
+
+	/**
 	 * Geef de code terug.
 	 *
 	 * @return string
@@ -161,17 +178,16 @@ class Saldo extends Artikel {
 	public function save() : bool {
 		$saldo        = get_user_meta( $this->klant_id, self::META_KEY, true );
 		$huidig_saldo = $saldo ? (float) $saldo['bedrag'] : 0.0;
-		if ( 0.01 > abs( $huidig_saldo - $this->bedrag ) ) {
-			return true;
-		}
 		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) ) {
-			$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
-			file_put_contents(  // phpcs:ignore
-				wp_upload_dir()['basedir'] . '/stooksaldo.log',
-				date( 'c' ) . " : $tekst\n",
-				FILE_APPEND
-			);
-			return true;
+			if ( 0 < abs( $huidig_saldo - $this->bedrag ) ) {
+				$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
+				file_put_contents(  // phpcs:ignore
+					wp_upload_dir()['basedir'] . '/stooksaldo.log',
+					date( 'c' ) . " : $tekst\n",
+					FILE_APPEND
+				);
+				return true;
+			}
 		}
 		return false;
 	}

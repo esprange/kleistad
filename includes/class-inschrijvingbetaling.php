@@ -104,6 +104,8 @@ class InschrijvingBetaling implements ArtikelBetaling {
 			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
 				$this->inschrijving->verzend_email( '_ideal_betaald' );
 			}
+		} elseif ( 'ideal' === $type && ! $order_id ) {
+			$this->inschrijving->erase();
 		}
 	}
 
