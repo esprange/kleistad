@@ -13,7 +13,7 @@ namespace Kleistad;
 /**
  * Render van het werkplek formulier.
  */
-class Public_WerkplekRapport_Display extends Public_Shortcode_Display {
+class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier

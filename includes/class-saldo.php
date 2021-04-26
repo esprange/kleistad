@@ -186,8 +186,8 @@ class Saldo extends Artikel {
 					date( 'c' ) . " : $tekst\n",
 					FILE_APPEND
 				);
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
