@@ -64,13 +64,6 @@ abstract class Shortcode {
 	 */
 	protected function enqueue() {
 		$shortcodes = new Shortcodes();
-		foreach ( $shortcodes->definities[ $this->shortcode ]->css as $style ) {
-			wp_enqueue_style( $style );
-		}
-		if ( ! wp_style_is( 'kleistad' ) ) {
-			wp_enqueue_style( 'kleistad' );
-		}
-
 		if ( ! wp_script_is( 'kleistad' ) ) {
 			wp_enqueue_script( 'kleistad' );
 			wp_localize_script(

@@ -219,4 +219,26 @@ class Shortcodes {
 		return true;
 	}
 
+	/**
+	 * Controleer of huidige pagina een shortcode bevat.
+	 *
+	 * @return array Array of shortcodes.
+	 */
+	public function heeft_shortcode() : array {
+		global $post;
+		$tags   = [];
+		$result = [];
+		if ( is_a( $post, 'WP_Post' ) ) {
+			foreach ( array_keys( $this->definities ) as $tag ) {
+				$tags[] = "kleistad_$tag";
+			}
+			preg_match_all( '/' . get_shortcode_regex( $tags ) . '/', $post->post_content, $matches, PREG_SET_ORDER );
+			foreach ( $matches as $match ) {
+				$result[] = substr( $match[2], strlen( 'kleistad_' ) );
+			}
+		}
+		return $result;
+	}
+
+
 }
