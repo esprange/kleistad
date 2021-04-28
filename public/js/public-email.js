@@ -31,6 +31,10 @@
 					});
 					$( '#kleistad_gebruikerids' ).val( gebruikerIds.join( ',' ) );
 				}
+			).on( 'ready.jstree',
+				function() {
+					$( this ).show();					
+				}
 			);
 		}
     );

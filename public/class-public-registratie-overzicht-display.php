@@ -88,9 +88,9 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 			</tbody>
 		</table>
 		<div class="kleistad-row" style="padding-top:20px;" >
-			<button type="button" class="kleistad-download-link" data-actie="cursisten" >Download Cursisten</button>
-			<button type="button" class="kleistad-download-link" data-actie="abonnees" >Download Abonnees</button>
-			<button type="button" class="kleistad-download-link" data-actie="dagdelenkaarten" >Download Dagdelenkaarten</button>
+			<button class="kleistad-button kleistad-download-link" type="button" data-actie="cursisten" >Download Cursisten</button>
+			<button class="kleistad-button kleistad-download-link" type="button" data-actie="abonnees" >Download Abonnees</button>
+			<button class="kleistad-button kleistad-download-link" type="button" data-actie="dagdelenkaarten" >Download Dagdelenkaarten</button>
 		</div>
 		<?php
 		return $this;

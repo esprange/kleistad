@@ -68,7 +68,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 			?>
 			</tbody>
 		</table>
-		<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 		return $this;
 	}
@@ -113,7 +113,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 			?>
 			</tbody>
 		</table>
-		<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 		return $this;
 	}
@@ -188,7 +188,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	protected function form_end() : Public_Werkplekrapport_Display {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;" >
-			<button type="submit" >Rapport</button>
+			<button class="kleistad-button" type="submit" >Rapport</button>
 		</div>
 		</form>
 		<?php

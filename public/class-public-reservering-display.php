@@ -39,11 +39,11 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 			<thead>
 				<tr>
 					<th>
-						<button type="button" class="kleistad_periode" value="-1" >eerder</button
+						<button class="kleistad-button kleistad_periode" type="button" value="-1" >eerder</button
 					></th>
 					<th colspan="2" style="text-align:center;"><strong><span id="kleistad_periode" style="font-size:medium;"></span></strong></th>
 					<th style="text-align:right" >
-						<button type="button" class="kleistad_periode" value="1" >later</button>
+						<button class="kleistad-button kleistad_periode" type="button" value="1" >later</button>
 					</th>
 				</tr>
 				<tr>
@@ -60,7 +60,7 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 			</tbody>
 		</table>
 
-		<div id ="kleistad_reservering" >
+		<div id ="kleistad_reservering" style="display:none" >
 		<form method="POST" autocomplete="off" >
 			<input id="kleistad_oven_id" type="hidden" value="<?php echo esc_attr( $this->data['oven']['id'] ); ?>" >
 			<input id="kleistad_dag" type="hidden" >
@@ -73,7 +73,7 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 				</tbody>
 				<tfoot>
 					<tr>
-						<td><button style="font-size:16px;border-radius:25%;width:40px;text-align:center;padding:0;" id="kleistad_stoker_toevoegen" class="kleistad-button"><span class="dashicons dashicons-plus"></span></button></td>
+						<td><button class="kleistad-button" style="font-size:16px;border-radius:25%;width:40px;text-align:center;padding:0;" id="kleistad_stoker_toevoegen"><span class="dashicons dashicons-plus"></span></button></td>
 						<td colspan="2"></td>
 					</tr>
 					<tr>
@@ -83,10 +83,10 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 					</tr>
 					<tr>
 						<td colspan="3">
-							<button type="button" id="kleistad_voegtoe" class="kleistad-button" style="float:left;width:30%;margin-right:5%;">Voeg toe</button>
-							<button type="button" id="kleistad_muteer" class="kleistad-button"  style="float:left;width:30%;margin-right:5%;">Wijzig</button>
-							<button type="button" id="kleistad_verwijder" class="kleistad-button" style="width:30%;margin:0 auto;">Verwijder</button>
-							<button type="button" id="kleistad_sluit" class="kleistad-button" style="float:right;width:30%;margin-left:5%;" >Sluit</button>
+							<button class="kleistad-button" type="button" id="kleistad_voegtoe" style="float:left;width:30%;margin-right:5%;">Voeg toe</button>
+							<button class="kleistad-button" type="button" id="kleistad_muteer" style="float:left;width:30%;margin-right:5%;">Wijzig</button>
+							<button class="kleistad-button" type="button" id="kleistad_verwijder" style="width:30%;margin:0 auto;">Verwijder</button>
+							<button class="kleistad-button" type="button" id="kleistad_sluit" style="float:right;width:30%;margin-left:5%;" >Sluit</button>
 						</td>
 					</tr>
 				</tfoot>

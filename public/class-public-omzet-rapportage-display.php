@@ -76,7 +76,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
-		<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 		return $this;
 	}
@@ -125,7 +125,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 				</select>
 			</div>
 		</div>
-		<button type="button" id="kleistad_rapport" class="kleistad-edit-link" style="display:none" data-id="<?php echo esc_attr( "$this->select_jaar-$this->select_maand" ); ?>" data-actie="rapport" >Toon omzet</button>
+		<button class="kleistad-button kleistad-edit-link" type="button" id="kleistad_rapport" style="display:none" data-id="<?php echo esc_attr( "$this->select_jaar-$this->select_maand" ); ?>" data-actie="rapport" >Toon omzet</button>
 		<br/><br/>
 		<div>
 			<table class="kleistad-datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
@@ -169,7 +169,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 				</tr>
 			</tfoot>
 			</table>
-			<button type="button" class="kleistad-download-link" data-actie="omzetrapport" >Omzet rapport</button>
+			<button class="kleistad-button kleistad-download-link" type="button" data-actie="omzetrapport" >Omzet rapport</button>
 		</div>
 		<?php
 		return $this;

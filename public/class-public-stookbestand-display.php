@@ -39,7 +39,7 @@ class Public_Stookbestand_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;" >
-			<button type="button" class="kleistad-download-link" data-actie="stook" >Download stookbestand</button>
+			<button class="kleistad-button kleistad-download-link" type="button" data-actie="stook" >Download stookbestand</button>
 		</div>
 		<?php
 	}

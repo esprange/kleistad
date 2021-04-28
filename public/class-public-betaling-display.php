@@ -101,7 +101,7 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
-				<button type="submit" name="kleistad_submit_betaling" id="kleistad_submit">Betalen</button><br />
+				<button class="kleistad-button" type="submit" name="kleistad_submit_betaling" id="kleistad_submit">Betalen</button><br />
 			</div>
 		</div>
 		<?php

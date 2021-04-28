@@ -38,7 +38,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad-row">
-			<div id="kleistad_gebruikers" class="kleistad-col-10">
+			<div id="kleistad_gebruikers" class="kleistad-col-10" style="display:none" >
 				<ul>
 				<?php foreach ( $this->data['input']['tree'] as $groep ) : ?>
 					<li>
@@ -113,7 +113,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 				<label for="kleistad_email" >Voer de tekst in van de email</label>
 			</div>
 		</div>
-		<div class="kleistad-row" style="padding:15px" >
+		<div class="kleistad-row" style="padding:15px;" >
 		<?php
 			wp_editor(
 				$this->data['input']['email_content'],
@@ -150,8 +150,8 @@ class Public_Email_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad-row" >
-			<button type="submit" name="kleistad_submit_email" id="kleistad_submit_verzenden" value="verzenden" >Verzenden</button>
-			<button type="submit" name="kleistad_submit_email" id="kleistad_submit_testen" value="test_email" >Test Email verzenden</button>
+			<button class="kleistad-button" type="submit" name="kleistad_submit_email" id="kleistad_submit_verzenden" value="verzenden" >Verzenden</button>
+			<button class="kleistad-button" type="submit" name="kleistad_submit_email" id="kleistad_submit_testen" value="test_email" >Test Email verzenden</button>
 		</div>
 		<?php
 		return $this;

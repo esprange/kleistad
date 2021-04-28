@@ -17,7 +17,7 @@ Description: stylesheet functions voor kleistad_plugin
 	--focus: 2px greenyellow;
 }
 
-.kleistad-shortcode *:not(.dashicons,.mce-btn i),
+.kleistad-shortcode *:not(.dashicons, .mce-container-body *),
 .kleistad-fout p,
 .kleistad-succes p,
 .kleistad-inform p,
@@ -134,6 +134,10 @@ a.kleistad-schedule {
 
 .kleistad-datum {
 	width: 9em;
+}
+
+.kleistad-datatable {
+	display: none;
 }
 
 .kleistad-datatable th,
@@ -558,8 +562,7 @@ div.kleistad-werkplek-dagdeel {
 	--bc: var(--border-hover);
 }
 
-.kleistad-button,
-.kleistad-shortcode button:not(.mce-tinymce button) {
+.kleistad-button {
 	background-color: green;
 	color: white;
 	border: none;
@@ -574,23 +577,20 @@ div.kleistad-werkplek-dagdeel {
 	transition-duration: 0.4s;
 }
 
-.kleistad-button,
-.kleistad-shortcode button:hover:not(.mce-tinymce button) {
+.kleistad-button:hover {
 	background: white;
 	box-shadow: 0 2px 10px 5px lightgray;
 	color: black;
 }
 
-.kleistad-button,
-.kleistad-shortcode button:active::after:not(.mce-tinymce button) {
+.kleistad-button:active::after {
 	padding: 0;
 	margin: 0;
 	opacity: 1;
 	transition: 0s;
 }
 
-.kleistad-button,
-.kleistad-shortcode button:focus:not(.mce-tinymce button) {
+.kleistad-button:focus {
 	background-color: green;
 	color: white;
 }

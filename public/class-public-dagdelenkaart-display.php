@@ -87,7 +87,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
-				<button name="kleistad_submit_dagdelenkaart" id="kleistad_submit" type="submit" <?php disabled( ! is_super_admin() && '' !== $this->data['verklaring'] ); ?>>Betalen</button><br />
+				<button class="kleistad-button" name="kleistad_submit_dagdelenkaart" id="kleistad_submit" type="submit" <?php disabled( ! is_super_admin() && '' !== $this->data['verklaring'] ); ?>>Betalen</button><br />
 			</div>
 		</div>
 		</form>

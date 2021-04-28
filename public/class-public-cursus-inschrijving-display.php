@@ -261,7 +261,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-10">
-				<button name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" value="<?php echo esc_attr( $this->data['actie'] ); ?>" type="submit" ><?php echo esc_html( $this->buttontekst ); ?></button>
+				<button class="kleistad-button" name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" value="<?php echo esc_attr( $this->data['actie'] ); ?>" type="submit" ><?php echo esc_html( $this->buttontekst ); ?></button>
 			</div>
 		</div>
 		</form>

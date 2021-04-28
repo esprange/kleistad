@@ -129,7 +129,7 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row" style="padding-top: 20px;">
 			<div class="kleistad-col-10">
-				<button name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit" type="submit" <?php disabled( ! is_super_admin() && '' !== $this->data['verklaring'] ); ?>>Betalen</button>
+				<button class="kleistad-button" name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit" type="submit" <?php disabled( ! is_super_admin() && '' !== $this->data['verklaring'] ); ?>>Betalen</button>
 			</div>
 		</div>
 		</form>

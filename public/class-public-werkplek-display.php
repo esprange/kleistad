@@ -63,13 +63,13 @@ class Public_Werkplek_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div style="float:left;margin-bottom:10px">
 				<input type="hidden" name="datum" id="kleistad_datum" class="kleistad-datum" >
-				<button type="button" id="kleistad_eerder" style="width:3em" ><span class="dashicons dashicons-controls-back"></span></button>
-				<button type="button" id="kleistad_kalender"  style="width:3em" ><span class="dashicons dashicons-calendar"></span></button>
-				<button type="button" id="kleistad_later" style="width:3em" ><span class="dashicons dashicons-controls-forward"></span></button>
+				<button class="kleistad-button" type="button" id="kleistad_eerder" style="width:3em" ><span class="dashicons dashicons-controls-back"></span></button>
+				<button class="kleistad-button" type="button" id="kleistad_kalender"  style="width:3em" ><span class="dashicons dashicons-calendar"></span></button>
+				<button class="kleistad-button" type="button" id="kleistad_later" style="width:3em" ><span class="dashicons dashicons-controls-forward"></span></button>
 			</div>
 			<?php if ( current_user_can( BESTUUR ) || current_user_can( DOCENT ) ) : ?>
 			<div style="float:right;" >
-				<button id="kleistad_wijzig_gebruiker" ><?php echo esc_html( $huidige_gebruiker->display_name ); ?></button>
+				<button class="kleistad-button" id="kleistad_wijzig_gebruiker" ><?php echo esc_html( $huidige_gebruiker->display_name ); ?></button>
 			</div>
 			<?php endif ?>
 		</div>

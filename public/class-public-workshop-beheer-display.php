@@ -166,14 +166,14 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
-				<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $this->data['workshop']['definitief'] ); ?> >Opslaan</button>
-				<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $this->data['workshop']['vervallen'] ); ?>
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $this->data['workshop']['definitief'] ); ?> >Opslaan</button>
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $this->data['workshop']['vervallen'] ); ?>
 					data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
-				<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $this->data['actie'] || $this->data['workshop']['gefactureerd'] ); ?>
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $this->data['actie'] || $this->data['workshop']['gefactureerd'] ); ?>
 					data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
 			</div>
 			<div class="kleistad-col-3">
-				<button type="button" style="float:right;" class="kleistad-terug-link">Terug</button>
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right;">Terug</button>
 			</div>
 		</div>
 		<?php
@@ -256,8 +256,8 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
-		<button type="button" class="kleistad-edit kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
-		<button type="button" class="kleistad-download-link" data-actie="workshops" >Download</button>
+		<button class="kleistad-button kleistad-edit kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<button class="kleistad-button kleistad-download-link" type="button" data-actie="workshops" >Download</button>
 		<?php
 		return $this;
 	}
@@ -298,8 +298,8 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" maxlength="1000" rows="10" required ></textarea></td>
 			</tr>
 		</table>
-		<button type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
-		<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
+		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right">Terug</button>
 		<div>
 		<?php foreach ( $this->data['casus']['correspondentie'] as $correspondentie ) : ?>
 			<div class="kleistad-workshop-correspondentie kleistad-workshop-correspondentie-folded kleistad-workshop-<?php echo esc_attr( $correspondentie['type'] ); ?>" >
@@ -309,8 +309,8 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<br/>
 			</div>
 			<div style="text-align:center;">
-				<button class="kleistad-workshop-unfold" >Uitklappen</button>
-				<button class="kleistad-workshop-fold" style="display:none;" >Inklappen</button>
+				<button class="kleistad-button kleistad-workshop-unfold" >Uitklappen</button>
+				<button class="kleistad-button kleistad-workshop-fold" style="display:none;" >Inklappen</button>
 			</div>
 		<?php endforeach ?>
 		<?php

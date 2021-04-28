@@ -183,7 +183,7 @@ abstract class Shortcode {
 		?>
 		<br/><br/>
 		<div style="text-align:center;" >
-			<button type="button" onclick="location.href='<?php echo esc_url( $url ); ?>';" >
+			<button class="kleistad-button" type="button" onclick="location.href='<?php echo esc_url( $url ); ?>';" >
 				&nbsp;OK&nbsp;
 			</button>
 		</div>

@@ -105,11 +105,11 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 			?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2">
-				<button class="extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button><br/>&nbsp;
+				<button class="kleistad-button extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button><br/>&nbsp;
 			</div>
 		</div>
 		<div class="kleistad-row">
-			<button type="submit" name="kleistad_submit_verkoop" id="kleistad_submit_verkoop" value="verzenden">Verzenden</button>
+			<button class="kleistad-button" type="submit" name="kleistad_submit_verkoop" id="kleistad_submit_verkoop" value="verzenden">Verzenden</button>
 		</div>
 		<?php
 		return $this;

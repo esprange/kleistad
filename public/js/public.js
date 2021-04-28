@@ -31,7 +31,11 @@ var detectTap;
 			return;
 		}
 		if ( ! $.fn.DataTable.isDataTable( '.kleistad-datatable' ) ) {
-			$datatable.dataTable( {
+			$datatable.on( 'init.dt', 
+				function() {
+					$datatable.show();
+				}
+			).dataTable( {
 				language: {
 					url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Dutch.json'
 					},

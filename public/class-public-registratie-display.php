@@ -88,8 +88,8 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
-				<button name="kleistad_submit_registratie" value="wijzigen" type="submit" id="kleistad_submit">Opslaan</button>
-				<button class="kleistad-edit-link" data-actie="wachtwoord" type="button" >Wachtwoord wijzigen</button>
+				<button class="kleistad-button" name="kleistad_submit_registratie" value="wijzigen" type="submit" id="kleistad_submit">Opslaan</button>
+				<button class="kleistad-button kleistad-edit-link" data-actie="wachtwoord" type="button" >Wachtwoord wijzigen</button>
 			</div>
 		</div>
 		<?php
@@ -143,8 +143,8 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-row">
 				<div class="kleistad-col-10">
-					<button type="button" disabled id="kleistad_wachtwoord" >Wijzigen</button>
-					<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+					<button class="kleistad-button" type="button" disabled id="kleistad_wachtwoord" >Wijzigen</button>
+					<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 				</div>
 			</div>
 		</div>

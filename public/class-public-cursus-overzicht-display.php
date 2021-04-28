@@ -97,13 +97,13 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		</table>
 		<br/>
 		<?php if ( $this->data['bestuur_rechten'] ) : ?>
-		<button type="button" class="kleistad-download-link" name="kleistad_submit_cursus_overzicht" data-actie="cursisten" >Download</button>
+		<button class="kleistad-button kleistad-download-link" type="button" name="kleistad_submit_cursus_overzicht" data-actie="cursisten" >Download</button>
 		<?php endif ?>
-		<button type="button" class="kleistad-download-link" name="kleistad_submit_cursus_overzicht" data-actie="presentielijst" >Presentielijst</button>
+		<button class="kleistad-button kleistad-download-link" type="button" name="kleistad_submit_cursus_overzicht" data-actie="presentielijst" >Presentielijst</button>
 		<?php if ( $this->data['bestuur_rechten'] ) : ?>
-		<button type="submit" name="kleistad_submit_cursus_overzicht" id="kleistad_herinner" value="herinner_email" data-confirm="Cursisten|weet je zeker dat je nu de herinneringsemail wilt versturen" >Verstuur herinner email</button>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_cursus_overzicht" id="kleistad_herinner" value="herinner_email" data-confirm="Cursisten|weet je zeker dat je nu de herinneringsemail wilt versturen" >Verstuur herinner email</button>
 		<?php endif ?>
-		<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 		return $this;
 	}
@@ -155,12 +155,12 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-3">
-				<button name="kleistad_submit_cursus_overzicht" id="kleistad_submit" type="submit" value="indelen" >Bevestigen</button>
+				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" id="kleistad_submit" type="submit" value="indelen" >Bevestigen</button>
 			</div>
 			<div class="kleistad-col-4">
 			</div>
 			<div class="kleistad-col-3">
-				<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 			</div>
 		</div>
 		<?php
@@ -187,12 +187,12 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-3">
-				<button name="kleistad_submit_cursus_overzicht" type="submit" id="kleistad_submit" value="uitschrijven" >Bevestigen</button>
+				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" type="submit" id="kleistad_submit" value="uitschrijven" >Bevestigen</button>
 			</div>
 			<div class="kleistad-col-4">
 			</div>
 			<div class="kleistad-col-3">
-				<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 			</div>
 		</div>
 		<?php

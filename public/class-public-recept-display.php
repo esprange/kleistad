@@ -35,7 +35,7 @@ class Public_Recept_Display extends Public_Shortcode_Display {
 	 */
 	private function details() : Public_Recept_Display {
 		?>
-		<button id="kleistad_recept_print" >Afdrukken</button>
+		<button class="kleistad-button" id="kleistad_recept_print" >Afdrukken</button>
 		<div class="kleistad_recept" >
 			<h2><?php echo esc_html( $this->data['recept']['titel'] ); ?></h2>
 			<div style="width:100%">
@@ -133,7 +133,7 @@ class Public_Recept_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-4" style="position: relative;">
 				<input type="search" id="kleistad_zoek" style="height:40px;" placeholder="zoeken..." value="" >
-				<button type="button" id="kleistad_zoek_icon" style="height:40px;position:absolute;right:0px;z-index:2;"><span class="dashicons dashicons-search"></span></button>
+				<button class="kleistad-button" type="button" id="kleistad_zoek_icon" style="height:40px;position:absolute;right:0px;z-index:2;"><span class="dashicons dashicons-search"></span></button>
 			</div>
 			<div class="kleistad-col-2" style="text-align:right;">
 				<label for="kleistad_sorteer" >Sorteer op</label>
@@ -149,7 +149,7 @@ class Public_Recept_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad-row">
-			<button type="button" id="kleistad_filter_btn"></button>
+			<button class="kleistad-button" type="button" id="kleistad_filter_btn"></button>
 		</div>
 		<div class="kleistad_recepten" id="kleistad_recepten">
 			de recepten worden opgehaald...

@@ -480,7 +480,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="per_datum" value="<?php echo esc_attr( $this->per_datum ); ?>" >
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-10">
-				<button name="kleistad_submit_abonnee_wijziging" type="submit" id="kleistad_submit_abonnee_wijziging" disabled >Bevestigen</button>
+				<button class="kleistad-button" name="kleistad_submit_abonnee_wijziging" type="submit" id="kleistad_submit_abonnee_wijziging" disabled >Bevestigen</button>
 			</div>
 		</div>
 		</form>

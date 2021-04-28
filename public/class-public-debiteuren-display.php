@@ -71,7 +71,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-3">
-				<button name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit" value="blokkade"
+				<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit" value="blokkade"
 					<?php disabled( ! $blok ); ?> data-confirm="Debiteuren|Weet je zeker dat je de blokkade datum wilt wijzigen naar <?php echo esc_attr( date( 'd-m-Y', $this->data['nieuwe_blokkade'] ) ); ?> ?" >Bevestigen</button>
 			</div>
 		</div>
@@ -252,12 +252,12 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-3">
-				<button name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit_debiteuren" disabled >Bevestigen</button>
+				<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit_debiteuren" disabled >Bevestigen</button>
 			</div>
 			<div class="kleistad-col-4">
 			</div>
 			<div class="kleistad-col-3">
-				<button type="button" style="float:right" class="kleistad-terug-link">Terug</button>
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 			</div>
 		</div>
 		<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>
@@ -278,7 +278,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-4"  style="position: relative;">
 				<input id="kleistad_zoek" name="zoek" type="text" style="height:40px;" placeholder="zoeken..." />
-				<button type="submit" id="kleistad_zoek_icon" class="kleistad-edit-link" data-id="" data-action="zoek" style="height:40px;position:absolute;right:0px;z-index:2;"><span class="dashicons dashicons-search"></span></button>
+				<button class="kleistad-button kleistad-edit-link" type="submit" id="kleistad_zoek_icon" data-id="" data-action="zoek" style="height:40px;position:absolute;right:0px;z-index:2;"><span class="dashicons dashicons-search"></span></button>
 			</div>
 		</div>
 		<br/><hr><br/>

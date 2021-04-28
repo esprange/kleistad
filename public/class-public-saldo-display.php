@@ -93,7 +93,7 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
-				<button type="submit" name="kleistad_submit_saldo" id="kleistad_submit" >Betalen</button><br />
+				<button class="kleistad-button" type="submit" name="kleistad_submit_saldo" id="kleistad_submit" >Betalen</button><br />
 			</div>
 		</div>
 		</form>

@@ -44,7 +44,7 @@ class Public_Abonnement_Overzicht_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
-		<button type="button" class="kleistad-download-link" data-actie="abonnementen" >Download</button>
+		<button class="kleistad-button kleistad-download-link" type="button" data-actie="abonnementen" >Download</button>
 		<?php
 	}
 }
