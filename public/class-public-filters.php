@@ -218,7 +218,7 @@ class Public_Filters {
 		global $post;
 		if ( is_a( $post, 'WP_Post' ) ) {
 			if ( has_shortcode( $post->post_content, 'kleistad_email' ) ) {
-				foreach ( [ 'wp_more', 'spellchecker', 'fullscreen', 'wp_adv' ] as $skipbutton ) {
+				foreach ( [ 'wp_more', 'spellchecker', 'fullscreen', 'wp_adv', 'categoryPosts' ] as $skipbutton ) {
 					$key = array_search( $skipbutton, $buttons, true );
 					if ( false !== $key ) {
 						unset( $buttons[ $key ] );
