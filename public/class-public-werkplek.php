@@ -268,14 +268,14 @@ EOT;
 						}
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
-				<button class="kleistad-button" type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" class="kleistad-werkplek kleistad-werkplek-gereserveerd" >{$gebruikers[$werkplek]->display_name}</button>
+				<button class="kleistad-button kleistad-werkplek kleistad-werkplek-gereserveerd" type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" >{$gebruikers[$werkplek]->display_name}</button>
 EOT;
 						continue;
 					}
 					if ( ! $aanwezig && ! ( $button[ $dagdeel ][ $activiteit ] ?? false ) ) {
 						$button[ $dagdeel ][ $activiteit ] = true;
 						$html                             .= <<<EOT
-				<button class="kleistad-button" type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" class="kleistad-werkplek kleistad-werkplek-reserveerbaar" >reserveren</button>
+				<button class="kleistad-button kleistad-werkplek kleistad-werkplek-reserveerbaar" type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" >reserveren</button>
 EOT;
 						continue;
 					}

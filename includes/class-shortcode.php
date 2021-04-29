@@ -63,27 +63,8 @@ abstract class Shortcode {
 	 * Enqueue the scripts and styles for the shortcode.
 	 */
 	protected function enqueue() {
-		$shortcodes = new Shortcodes();
 		if ( ! wp_script_is( 'kleistad' ) ) {
 			wp_enqueue_script( 'kleistad' );
-			wp_localize_script(
-				'kleistad',
-				'kleistadData',
-				[
-					'nonce'           => wp_create_nonce( 'wp_rest' ),
-					'success_message' => 'de bewerking is geslaagd!',
-					'error_message'   => 'het was niet mogelijk om de bewerking uit te voeren',
-					'base_url'        => base_url(),
-					'admin_url'       => admin_url( 'admin-ajax.php' ),
-				]
-			);
-		}
-		if ( wp_script_is( "kleistad{$this->shortcode}", 'registered' ) ) {
-			wp_enqueue_script( "kleistad{$this->shortcode}" );
-			return;
-		}
-		foreach ( $shortcodes->definities[ $this->shortcode ]->js as $script ) {
-			wp_enqueue_script( $script );
 		}
 	}
 
