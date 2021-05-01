@@ -66,7 +66,7 @@
 						callback( $( this ).prop( 'title' ).replaceAll( '|', '<br />' ) );
 					},
 					classes: {
-						'ui-tooltip': 'ui-corner-all ui-widget-shadow kleistad-tooltip'
+						'ui-tooltip': 'ui-corner-all ui-widget-shadow kleistad'
 					}
 				}
 			);

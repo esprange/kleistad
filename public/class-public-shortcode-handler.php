@@ -75,9 +75,9 @@ class Public_Shortcode_Handler {
 		static $divs = false; // De ondersteunende divs zijn maar eenmalig nodig.
 		if ( ! $divs ) {
 			$divs  = true;
-			$html .= '<div id="kleistad_berichten" ></div><div id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
+			$html .= '<div class="kleistad" id="kleistad_berichten" ></div><div class="kleistad" id="kleistad_bevestigen" ></div><div id="kleistad_wachten" ></div>';
 		}
-		$html .= '<div class="kleistad-shortcode" data-tag="' . $shortcode_tag . '" ';
+		$html .= '<div class="kleistad kleistad-shortcode" data-tag="' . $shortcode_tag . '" ';
 		if ( ! empty( $atts ) ) {
 			$json_atts = wp_json_encode( $atts, JSON_HEX_QUOT | JSON_HEX_TAG );
 			$html     .= ' data-atts=' . "'$json_atts'";

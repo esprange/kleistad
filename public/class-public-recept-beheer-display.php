@@ -285,7 +285,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
-		<button class="kleistad-button kleistad-edit kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 		<?php
 		return $this;
 	}

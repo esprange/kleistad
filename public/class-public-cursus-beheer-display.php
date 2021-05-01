@@ -205,7 +205,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 		</tbody>
 		</table>
-		<button type="button" class="kleistad-button kleistad-edit kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<button type="button" class="kleistad-button kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 		<?php
 		return $this;
 	}

@@ -256,7 +256,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
-		<button class="kleistad-button kleistad-edit kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 		<button class="kleistad-button kleistad-download-link" type="button" data-actie="workshops" >Download</button>
 		<?php
 		return $this;

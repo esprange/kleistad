@@ -17,11 +17,7 @@ Description: stylesheet functions voor kleistad_plugin
 	--focus: 2px greenyellow;
 }
 
-.kleistad-shortcode *:not(.dashicons, .mce-container-body *),
-.kleistad-fout p,
-.kleistad-succes p,
-.kleistad-inform p,
-.kleistad-tooltip {
+.kleistad *:not(.dashicons, .mce-container-body *) {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: small;
 }
