@@ -17,12 +17,6 @@ namespace Kleistad;
 class Admin_GDPR {
 
 	/**
-	 * Constructor
-	 */
-	public function __construct() {
-	}
-
-	/**
 	 * Export de inschrijving
 	 *
 	 * @since 4.3.0
@@ -31,35 +25,36 @@ class Admin_GDPR {
 	 * @return array De persoonlijke data (cursus info).
 	 */
 	private function export_inschrijving( $gebruiker_id ) {
-		$inschrijvingen = new Inschrijvingen();
-		$items          = [];
-		// @TODO aanpassen
-		if ( isset( $inschrijvingen[ $gebruiker_id ] ) ) {
-			foreach ( $inschrijvingen[ $gebruiker_id ] as $cursus_id => $inschrijving ) {
-				$items[] = [
-					'group_id'    => 'cursusinfo',
-					'group_label' => 'Cursussen informatie',
-					'item_id'     => 'cursus-' . $cursus_id,
-					'data'        => [
-						[
-							'name'  => 'Aanmeld datum',
-							'value' => strftime( '%d-%m-%y', $inschrijving->datum ),
-						],
-						[
-							'name'  => 'Opmerking',
-							'value' => $inschrijving->opmerking,
-						],
-						[
-							'name'  => 'Ingedeeld',
-							'value' => $inschrijving->ingedeeld ? 'ja' : 'nee',
-						],
-						[
-							'name'  => 'Geannuleerd',
-							'value' => $inschrijving->geannuleerd ? 'ja' : 'nee',
-						],
+		$cursist = new Cursist( $gebruiker_id );
+		$items   = [];
+		foreach ( $cursist->inschrijvingen as $inschrijving ) {
+			$items[] = [
+				'group_id'    => 'cursusinfo',
+				'group_label' => 'Cursussen informatie',
+				'item_id'     => 'cursus-' . $inschrijving->cursus->id,
+				'data'        => [
+					[
+						'name'  => 'Cursus',
+						'value' => $inschrijving->cursus->naam,
 					],
-				];
-			}
+					[
+						'name'  => 'Aanmeld datum',
+						'value' => strftime( '%d-%m-%y', $inschrijving->datum ),
+					],
+					[
+						'name'  => 'Opmerking',
+						'value' => $inschrijving->opmerking,
+					],
+					[
+						'name'  => 'Ingedeeld',
+						'value' => $inschrijving->ingedeeld ? 'ja' : 'nee',
+					],
+					[
+						'name'  => 'Geannuleerd',
+						'value' => $inschrijving->geannuleerd ? 'ja' : 'nee',
+					],
+				],
+			];
 		}
 		return $items;
 	}
@@ -261,7 +256,7 @@ class Admin_GDPR {
 	}
 
 	/**
-	 * Erase / verwijder persoonlijke data.
+	 * Erase / verwijder persoonlijke data. Om de consistentie van de database te waarborgen doen we in feite een anonimisering.
 	 *
 	 * @since 4.3.0
 	 *
@@ -271,29 +266,9 @@ class Admin_GDPR {
 	public function eraser( $email, $page = 1 ) {
 		$count        = 0;
 		$gebruiker_id = email_exists( $email );
-		$domein       = substr( strrchr( get_bloginfo( 'admin_email' ), '@' ), 1 );
 		if ( false !== $gebruiker_id ) {
-			$stub = "- verwijderd$gebruiker_id -";
-			wp_update_user(
-				(object) [
-					'user_nicename' => $stub,
-					'role'          => '',
-					'display_name'  => $stub,
-					'user_email'    => "verwijderd$gebruiker_id@$domein",
-					'nickname'      => $stub,
-					'first_name'    => '',
-					'last_name'     => $stub,
-					'description'   => '',
-					'user_pass'     => wp_generate_password( 12, true ),
-				]
-			);
-			update_user_meta( $gebruiker_id, 'telnr', '******' );
-			update_user_meta( $gebruiker_id, 'straat', '******' );
-			update_user_meta( $gebruiker_id, 'huisnr', '******' );
-			update_user_meta( $gebruiker_id, 'pcode', '******' );
-			update_user_meta( $gebruiker_id, 'plaats', '******' );
-			delete_user_meta( $gebruiker_id, Saldo::META_KEY );
-			$count = 6;
+			$gebruiker = new Gebruiker( $gebruiker_id );
+			$count     = $gebruiker->anonimiseer() ?: 0;
 		}
 		return [
 			'items_removed'  => $count,
@@ -305,6 +280,7 @@ class Admin_GDPR {
 
 	/**
 	 * Verwijder oude gegevens, ouder dan 5 jaar conform de privacy verklaring
+	 * Uiteindelijk worden ook de gebruikers verwijderd. Dat gebeurt in de dagelijkse job.
 	 *
 	 * @since 6.4.0
 	 */
@@ -315,7 +291,6 @@ class Admin_GDPR {
 		$this->erase_dagdelenkaarten( $erase_agv );
 		$this->erase_abonnementen( $erase_agv );
 		$this->erase_workshops( $erase_agv );
-		$this->erase_gebruikers( $erase_agv );
 		$this->erase_orders( $erase_fiscaal );
 	}
 
@@ -372,28 +347,6 @@ class Admin_GDPR {
 		foreach ( new Workshops() as $workshop ) {
 			if ( $datum > $workshop->datum ) {
 				$workshop->erase();
-			}
-		}
-	}
-
-	/**
-	 * Verwijder voormalige gebruikers
-	 * Als de gebruiker lang geleden is aangemaakt en er staat niets meer open, dan kan deze weg.
-	 * Maar als er nog rollen toegekend zijn niet. Een bestuurslid hoeft voor de rest niets te hebben maar heeft wel de rol.
-	 *
-	 * @param int $datum Het criterium.
-	 */
-	private function erase_gebruikers( $datum ) {
-		foreach ( get_users() as $gebruiker ) {
-			if (
-				$datum > strtotime( $gebruiker->user_registered ) &&
-				empty(
-					(string) get_user_meta( $gebruiker->ID, Dagdelenkaart::META_KEY, true ) .
-					(string) get_user_meta( $gebruiker->ID, Abonnement::META_KEY, true )
-				) &&
-				empty( $gebruiker->roles )
-				) {
-					wp_delete_user( $gebruiker->ID, 1 );
 			}
 		}
 	}

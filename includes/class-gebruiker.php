@@ -14,6 +14,10 @@ namespace Kleistad;
 use WP_User;
 use WP_Error;
 
+if ( ! function_exists( 'wp_delete_user' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/user.php';
+}
+
 /**
  * Kleistad Gebruiker class.
  *
@@ -33,6 +37,52 @@ class Gebruiker extends WP_User {
 	 * @return bool True als actief.
 	 */
 	public function is_actief() : bool {
+		return true;
+	}
+
+	/**
+	 * Anonimiseer de gebruiker
+	 *
+	 * @return bool
+	 */
+	public function anonimiseer() : bool {
+		if ( ! $this->ID ) {
+			return false;
+		}
+		$emailer = new Email();
+		add_filter( // Voorkom dat email over dummy emailadres verzonden wordt.
+			'email_change_email',
+			function() use ( $emailer ) {
+				return [
+					'to'      => "{$emailer->info}{$emailer->domein}",
+					'subject' => 'Anonimiseer gebruiker',
+					'message' => "Gebruiker {$this->display_name} wordt geanonimiseerd",
+					'headers' => [],
+				];
+			}
+		);
+		$stub = "verwijderd{$this->ID}";
+		wp_update_user(
+			(object) [
+				'ID'            => $this->ID,
+				'user_nicename' => $stub,
+				'role'          => '',
+				'display_name'  => "- $stub -",
+				'user_email'    => "{$stub}@{$emailer->domein}",
+				'nickname'      => '',
+				'first_name'    => '',
+				'last_name'     => $stub,
+				'description'   => '',
+				'telnr'         => '******',
+				'straat'        => '******',
+				'huisnr'        => '******',
+				'pcode'         => '******',
+				'plaats'        => '******',
+			]
+		);
+		// Uiteindelijk moet ook de login naam geanonimiseerd worden.
+		global $wpdb;
+		$wpdb->update( $wpdb->users, [ 'user_login' => $stub ], [ 'ID' => $this->ID ] );
 		return true;
 	}
 
@@ -74,7 +124,7 @@ class Gebruiker extends WP_User {
 	public static function doe_dagelijks() {
 		$gebruikers = get_users(
 			[
-				'role__not_in' => [ BESTUUR, DOCENT, BOEKHOUD, INTERN ],
+				'role__not_in' => [ BESTUUR, DOCENT, BOEKHOUD, LEDEN, INTERN ],
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
