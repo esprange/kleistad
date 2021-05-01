@@ -124,7 +124,7 @@ class Gebruiker extends WP_User {
 	public static function doe_dagelijks() {
 		$gebruikers = get_users(
 			[
-				'role__not_in' => [ BESTUUR, DOCENT, BOEKHOUD, LEDEN, INTERN ],
+				'role__not_in' => [ BESTUUR, DOCENT, BOEKHOUD, LID, INTERN ],
 			]
 		);
 		foreach ( $gebruikers as $gebruiker ) {
