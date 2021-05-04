@@ -291,8 +291,6 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array
 	 */
 	private function afboeken( Order $order ) : array {
-		$artikelregister = new Artikelregister();
-		$artikel         = $artikelregister->geef_object( $order->referentie );
 		$order->afboeken();
 		return [
 			'status'  => $this->status( 'De order is afgeboekt' ),
