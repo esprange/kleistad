@@ -107,7 +107,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				return new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
 			}
 			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-				$error = $this->validate_gebruiker( $data['input'] );
+				$error = $this->validator->gebruiker( $data['input'] );
 				if ( is_wp_error( $error ) ) {
 					return $error;
 				}

@@ -77,11 +77,11 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				<input class="kleistad-input" name="email_controle" id="kleistad_emailadres_controle" type="email"
 				required title="Vul ter controle s.v.p. opnieuw het email adres in"
 				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>"
-				oninput="validate_email(this, kleistad_emailadres);"/>
+				oninput="$this->validator->email(this, kleistad_emailadres);"/>
 			</div>
 		</div>
 		<script type="text/javascript">
-			function validate_email( input, compare ) {
+			function $this->validator->email( input, compare ) {
 				input.setCustomValidity( ( input.value === compare.value ) ? '' : 'E-mailadressen zijn niet gelijk' );
 			}
 		</script>

@@ -253,10 +253,10 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$data['workshop']['technieken'] = [];
 		}
 		if ( preg_match( '~(bewaren|bevestigen)~', $data['form_actie'] ) ) {
-			if ( ! $this->validate_email( $data['workshop']['email'] ) ) {
+			if ( ! $this->validator->email( $data['workshop']['email'] ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $data['workshop']['email'] . ' is geen geldig E-mail adres.' );
 			}
-			if ( ! $this->validate_telnr( $data['workshop']['telnr'] ) ) {
+			if ( ! $this->validator->telnr( $data['workshop']['telnr'] ) ) {
 				$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven' );
 			}
 			if ( strtotime( $data['workshop']['start_tijd'] ) >= strtotime( $data['workshop']['eind_tijd'] ) ) {

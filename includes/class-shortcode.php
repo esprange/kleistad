@@ -201,7 +201,7 @@ abstract class Shortcode {
 	 * @param array  $attributes Shortcode parameters.
 	 * @param array  $options    Plugin opties.
 	 */
-	private function __construct( string $shortcode, array $attributes, array $options ) {
+	protected function __construct( string $shortcode, array $attributes, array $options ) {
 		$this->atts      = $attributes;
 		$this->options   = $options;
 		$this->shortcode = $shortcode;

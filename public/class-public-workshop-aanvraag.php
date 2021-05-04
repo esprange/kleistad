@@ -67,7 +67,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				'vraag'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( ! $this->validate_email( $data['input']['email'] ) ) {
+		if ( ! $this->validator->email( $data['input']['email'] ) ) {
 			$error->add( 'verplicht', 'De invoer ' . $data['input']['email'] . ' is geen geldig E-mail adres.' );
 			$data['input']['email']          = '';
 			$data['input']['email_controle'] = '';
@@ -76,11 +76,11 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 			$error->add( 'verplicht', "De ingevoerde e-mail adressen {$data['input']['email']} en {$data['input']['email_controle']} zijn niet identiek" );
 			$data['input']['email_controle'] = '';
 		}
-		if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
+		if ( ! empty( $data['input']['telnr'] ) && ! $this->validator->telnr( $data['input']['telnr'] ) ) {
 			$error->add( 'onjuist', "Het ingevoerde telefoonnummer {$data['input']['telnr']} lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven" );
 			$data['input']['telnr'] = '';
 		}
-		if ( ! $this->validate_naam( $data['input']['contact'] ) ) {
+		if ( ! $this->validator->naam( $data['input']['contact'] ) ) {
 			$error->add( 'verplicht', 'De naam van de contactpersooon (een of meer alfabetische karakters) is verplicht' );
 			$data['input']['contact'] = '';
 		}

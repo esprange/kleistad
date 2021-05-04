@@ -22,6 +22,13 @@ use Exception;
 abstract class ShortcodeForm extends Shortcode {
 
 	/**
+	 * Validator
+	 *
+	 * @var Validator $validator Subclass met validatie functies.
+	 */
+	public Validator $validator;
+
+	/**
 	 * Validatie functie, wordt voor form validatie gebruikt
 	 *
 	 * @since   4.0.87
@@ -40,114 +47,26 @@ abstract class ShortcodeForm extends Shortcode {
 	abstract protected function save( array $data ) : array;
 
 	/**
+	 * De constructor
+	 *
+	 * @since   6.15.6
+	 *
+	 * @param string $shortcode  Shortcode (zonder kleistad- ).
+	 * @param array  $attributes Shortcode parameters.
+	 * @param array  $options    Plugin opties.
+	 */
+	protected function __construct( string $shortcode, array $attributes, array $options ) {
+		parent::__construct( $shortcode, $attributes, $options );
+		$this->validator = new Validator();
+	}
+
+	/**
 	 * Enqueue nu ook de form specieke javascript.
 	 */
 	protected function enqueue() {
 		if ( ! wp_script_is( 'kleistad-form' ) ) {
 			wp_enqueue_script( 'kleistad-form' );
 		}
-	}
-
-	/**
-	 * Valideer opvoeren nieuwe gebruiker
-	 *
-	 * @since 5.2.1
-	 * @param array $input de ingevoerde data.
-	 * @return bool|WP_Error
-	 */
-	protected function validate_gebruiker( array &$input ) {
-		$error = new WP_Error();
-		if ( ! $this->validate_email( $input['user_email'] ) ) {
-			$error->add( 'verplicht', "De invoer {$input['user_email']} is geen geldig E-mail adres." );
-			$input['user_email']     = '';
-			$input['email_controle'] = '';
-		}
-		if ( 0 !== strcasecmp( $input['email_controle'], $input['user_email'] ) ) {
-			$error->add( 'verplicht', "De ingevoerde e-mail adressen {$input['user_email']} en {$input['email_controle']} zijn niet identiek" );
-			$input['email_controle'] = '';
-		}
-		if ( ! $this->validate_telnr( $input['telnr'] ) ) {
-			$error->add( 'onjuist', "Het ingevoerde telefoonnummer {$input['telnr']} lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven" );
-			$input['telnr'] = '';
-		}
-		if ( ! $this->validate_pcode( $input['pcode'] ) ) {
-			$error->add( 'onjuist', "De ingevoerde postcode {$input['pcode']} lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven" );
-			$input['pcode'] = '';
-		}
-		if ( ! $this->validate_naam( $input['first_name'] ) ) {
-			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
-			$input['first_name'] = '';
-		}
-		if ( ! $this->validate_naam( $input['last_name'] ) ) {
-			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
-			$input['last_name'] = '';
-		}
-		return empty( $error->get_error_codes() ) ?: $error;
-	}
-
-	/**
-	 * Hulp functie, om een telefoonnr te valideren
-	 *
-	 * @since 5.2.0
-	 * @param string $telnr het telefoonnummer, inclusief spaties, streepjes etc.
-	 * @return bool if false, dan niet gevalideerd.
-	 */
-	protected function validate_telnr( string &$telnr ) : bool {
-		if ( empty( $telnr ) ) {
-			return true;
-		}
-		$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $telnr );
-		return 1 === preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
-				1 === preg_match( '/^(((\\+31|0|0031)6){1}[1-9]{1}[0-9]{7})$/i', $telnr );
-	}
-
-	/**
-	 * Hulp functie, om een postcode te valideren
-	 *
-	 * @since 5.2.0
-	 * @param string $pcode de postcode, inclusief spaties, streepjes etc.
-	 * @return bool if false, dan niet gevalideerd.
-	 */
-	protected function validate_pcode( string &$pcode ) : bool {
-		if ( empty( $pcode ) ) {
-			return true;
-		}
-		$pcode = strtoupper( str_replace( ' ', '', $pcode ) );
-		return 1 === preg_match( '/^[1-9][0-9]{3} ?[a-zA-Z]{2}$/', $pcode );
-	}
-
-	/**
-	 * Hulp functie, om een naam te valideren
-	 *
-	 * @since 5.2.0
-	 * @param string $naam de naam.
-	 * @return bool if false, dan niet gevalideerd.
-	 */
-	protected function validate_naam( string $naam ) : bool {
-		return 1 === preg_match( "/^(['a-zA-Z])(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/", htmlspecialchars_decode( remove_accents( $naam ), ENT_QUOTES ) );
-	}
-
-	/**
-	 * Hulp functie, om een email
-	 *
-	 * @since 5.2.0
-	 * @param string $email het email adres.
-	 * @return bool if false, dan niet gevalideerd.
-	 */
-	protected function validate_email( string &$email ) : bool {
-		$email = strtolower( $email );
-		return filter_var( $email, FILTER_VALIDATE_EMAIL );
-	}
-
-	/**
-	 * Helper functie voor een formulier
-	 *
-	 * @since 5.7.0
-	 */
-	protected function form() {
-		?>
-		<form action="#" autocomplete="off" enctype="multipart/form-data" >
-		<?php
 	}
 
 	/**

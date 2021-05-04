@@ -118,7 +118,8 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" value="bankbetaling" >
+				<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" 
+					value="<?php echo ( 0 < $this->data['debiteur']['openstaand'] ) ? 'bankbetaling' : 'bankstorting'; ?>" >
 				<label for="kleistad_deb_bankbetaling">Bankbetaling invoeren</label>
 			</div>
 		</div>
@@ -132,14 +133,14 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 						<label for="kleistad_ontvangst">Ontvangen bedrag</label>
 					</div>
 					<div class="kleistad-col-3" >
-						<input type="number" step="0.01" id="kleistad_ontvangst" name="ontvangst" min="0.00" max="<?php echo esc_attr( $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
+						<input type="number" step="0.01" id="kleistad_ontvangst" name="bedrag" min="0.00" max="<?php echo esc_attr( $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
 					</div>
 				<?php else : // Als een credit stand. ?>
 					<div class="kleistad-col-4 kleistad-label">
 						<label for="kleistad_terugstorting">Teruggestort bedrag</label>
 					</div>
 					<div class="kleistad-col-3" >
-						<input type="number" step="0.01" id="kleistad_terugstorting" name="terugstorting" min="0.00" max="<?php echo esc_attr( - $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
+						<input type="number" step="0.01" id="kleistad_terugstorting" name="bedrag" min="0.00" max="<?php echo esc_attr( - $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
 					</div>
 				<?php endif ?>
 			</div>

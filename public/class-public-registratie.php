@@ -72,21 +72,21 @@ class Public_Registratie extends ShortcodeForm {
 		if ( ! $data['gebruiker_id'] ) {
 			return new WP_Error( 'security', 'Er is een security fout geconstateerd' );
 		}
-		if ( ! empty( $data['input']['telnr'] ) && ! $this->validate_telnr( $data['input']['telnr'] ) ) {
+		if ( ! empty( $data['input']['telnr'] ) && ! $this->validator->telnr( $data['input']['telnr'] ) ) {
 			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct' );
 		}
-		if ( ! empty( $data['input']['pcode'] ) && ! $this->validate_pcode( $data['input']['pcode'] ) ) {
+		if ( ! empty( $data['input']['pcode'] ) && ! $this->validator->pcode( $data['input']['pcode'] ) ) {
 			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
 		}
-		if ( ! $this->validate_naam( $data['input']['voornaam'] ) ) {
+		if ( ! $this->validator->naam( $data['input']['voornaam'] ) ) {
 			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
 			$data['input']['voornaam'] = '';
 		}
-		if ( ! $this->validate_naam( $data['input']['achternaam'] ) ) {
+		if ( ! $this->validator->naam( $data['input']['achternaam'] ) ) {
 			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
 			$data['input']['achternaam'] = '';
 		}
-		if ( ! $this->validate_email( $data['input']['email'] ) ) {
+		if ( ! $this->validator->email( $data['input']['email'] ) ) {
 			$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
 		}
 		$gebruiker_id = email_exists( $data['input']['email'] );

@@ -91,7 +91,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 				return new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' );
 			}
 			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-				$error = $this->validate_gebruiker( $data['input'] );
+				$error = $this->validator->gebruiker( $data['input'] );
 				if ( is_wp_error( $error ) ) {
 					return $error;
 				}

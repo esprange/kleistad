@@ -139,11 +139,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			INPUT_POST,
 			[
 				'id'                   => FILTER_SANITIZE_NUMBER_INT,
-				'ontvangst'            => [
-					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
-				],
-				'terugstorting'        => [
+				'bedrag'               => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
 				],
@@ -161,9 +157,9 @@ class Public_Debiteuren extends ShortcodeForm {
 			]
 		);
 		if ( 'blokkade' !== $data['form_actie'] ) {
-			$order = new Order( $data['input']['id'] );
+			$data['order'] = new Order( $data['input']['id'] );
 			if ( 'korting' === $data['input']['debiteur_actie'] ) {
-				if ( $order->orderregels->bruto() < $data['input']['korting'] ) {
+				if ( $data['order']->orderregels->bruto() < $data['input']['korting'] ) {
 					$error->add( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
 				}
 			}
@@ -183,77 +179,137 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	protected function save( array $data ) : array {
 		if ( 'blokkade' === $data['form_actie'] ) {
-			zet_blokkade( strtotime( '+3 month', get_blokkade() ) );
-			return [
-				'status'  => 'De blokkade datum is gewijzigd',
-				'content' => $this->goto_home(),
-			];
+			return $this->blokkade();
 		}
-		$order           = new Order( $data['input']['id'] );
+		if ( 'bankbetaling' === $data['input']['debiteur_actie'] ) {
+			return $this->bankbetaling( $data['order'], (float) $data['input']['bedrag'] );
+		}
+		if ( 'bankstorting' === $data['input']['debiteur_actie'] ) {
+			return $this->bankbetaling( $data['order'], - (float) $data['input']['bedrag'] );
+		}
+		if ( 'annulering' === $data['input']['debiteur_actie'] ) {
+			return $this->annulering( $data['order'], (float) $data['input']['restant'], $data['input']['opmerking_annulering'] );
+		}
+		if ( 'korting' === $data['input']['debiteur_actie'] ) {
+			return $this->korting( $data['order'], (float) $data['input']['korting'], $data['input']['opmerking_korting'] );
+		}
+		if ( 'afboeken' === $data['input']['debiteur_actie'] ) {
+			return $this->afboeken( $data['order'] );
+		}
+	}
+
+	/**
+	 * Voer een bankbetaling uit
+	 *
+	 * @param Order $order  De order.
+	 * @param float $bedrag Het bedrag dat betaalt of ontvangen is.
+	 * @return array
+	 */
+	private function bankbetaling( Order $order, float $bedrag ) : array {
+		$artikelregister = new Artikelregister();
+		$artikel         = $artikelregister->geef_object( $order->referentie );
+		$artikel->betaling->verwerk( $order->id, $bedrag, true, 'bank' );
+		return [
+			'status'  => $this->status( 'De betaling is verwerkt' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Annuleer een order.
+	 *
+	 * @param Order  $order     De order.
+	 * @param float  $restant   Het restant nog te betalen.
+	 * @param string $opmerking Een opmerking te plaatsen op de factuur.
+	 * @return array
+	 */
+	private function annulering( Order $order, float $restant, string $opmerking ) : array {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $order->referentie );
-		$status          = '';
-		switch ( $data['input']['debiteur_actie'] ) {
-			case 'bankbetaling':
-				if ( $data['input']['ontvangst'] ) {
-					$artikel->betaling->verwerk( $order->id, (float) $data['input']['ontvangst'], true, 'bank' );
-				}
-				if ( $data['input']['terugstorting'] ) {
-					$artikel->betaling->verwerk( $order->id, - (float) $data['input']['terugstorting'], true, 'bank' );
-				}
-				$status = 'De betaling is verwerkt';
-				break;
-			case 'annulering':
-				$restant = (float) $data['input']['restant'];
-				$melding = '';
-				if ( $order->betaald - $restant > 0 ) {
-					$melding = $order->transactie_id ? 'Er wordt een stornering gedaan' : 'Het teveel betaalde moet per bank teruggestort worden';
-				}
-				$emailer->send(
-					[
-						'to'          => $order->klant['email'],
-						'slug'        => 'order_annulering',
-						'subject'     => 'Order geannuleerd',
-						'attachments' => $artikel->annuleer_order( $order->id, $restant, $data['input']['opmerking_annulering'] ),
-						'parameters'  => [
-							'naam'        => $order->klant['naam'],
-							'artikel'     => $artikel->geef_artikelnaam(),
-							'referentie'  => $order->referentie,
-							'betaal_link' => $artikel->betaal_link,
-						],
-					]
-				);
-				$status = "De annulering is verwerkt en een bevestiging is verstuurd. $melding";
-				break;
-			case 'korting':
-				$emailer->send(
-					[
-						'to'          => $order->klant['email'],
-						'slug'        => 'order_correctie',
-						'subject'     => 'Order gecorrigeerd',
-						'attachments' => $artikel->korting_order( $data['input']['id'], (float) $data['input']['korting'], $data['input']['opmerking_korting'] ),
-						'parameters'  => [
-							'naam'        => $order->klant['naam'],
-							'artikel'     => $artikel->geef_artikelnaam(),
-							'referentie'  => $order->referentie,
-							'betaal_link' => $artikel->betaal_link,
-						],
-					]
-				);
-				$status = 'De korting is verwerkt en een correctie is verstuurd';
-				break;
-			case 'afboeken':
-				$artikel->afzeggen();
-				$order->afboeken();
-				$status = 'De order is afgeboekt';
+		$melding         = '';
+		if ( $order->betaald - $restant > 0 ) {
+			$melding = $order->transactie_id ? 'Er wordt een stornering gedaan' : 'Het teveel betaalde moet per bank teruggestort worden';
 		}
-		if ( ! empty( $status ) ) {
-			return [
-				'status'  => $this->status( $status ),
-				'content' => $this->display(),
-			];
-		}
-		return [ 'status' => new WP_Error( 'fout', 'Er is iets fout gegaan' ) ];
+		$emailer->send(
+			[
+				'to'          => $order->klant['email'],
+				'slug'        => 'order_annulering',
+				'subject'     => 'Order geannuleerd',
+				'attachments' => $artikel->annuleer_order( $order->id, $restant, $opmerking ),
+				'parameters'  => [
+					'naam'        => $order->klant['naam'],
+					'artikel'     => $artikel->geef_artikelnaam(),
+					'referentie'  => $order->referentie,
+					'betaal_link' => $artikel->betaal_link,
+				],
+			]
+		);
+		return [
+			'status'  => $this->status( 'De annulering is verwerkt en een bevestiging is verstuurd. ' . $melding ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Geef een korting
+	 *
+	 * @param Order  $order     De order.
+	 * @param float  $korting   De korting.
+	 * @param string $opmerking Een opmerking die op de factuur geplaatst wordt.
+	 * @return array
+	 */
+	private function korting( Order $order, float $korting, string $opmerking ) : array {
+		$emailer         = new Email();
+		$artikelregister = new Artikelregister();
+		$artikel         = $artikelregister->geef_object( $order->referentie );
+		$factuur         = $artikel->korting_order( $order->id, $korting, $opmerking );
+		$emailer->send(
+			[
+				'to'          => $order->klant['email'],
+				'slug'        => 'order_correctie',
+				'subject'     => 'Order gecorrigeerd',
+				'attachments' => $factuur,
+				'parameters'  => [
+					'naam'        => $order->klant['naam'],
+					'artikel'     => $artikel->geef_artikelnaam(),
+					'referentie'  => $order->referentie,
+					'betaal_link' => $artikel->betaal_link,
+				],
+			]
+		);
+		return [
+			'status'  => $this->status( 'De korting is verwerkt en een correctie is verstuurd' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Boek een order af (dubieuze debiteur)
+	 *
+	 * @param Order $order De order.
+	 * @return array
+	 */
+	private function afboeken( Order $order ) : array {
+		$artikelregister = new Artikelregister();
+		$artikel         = $artikelregister->geef_object( $order->referentie );
+		$order->afboeken();
+		return [
+			'status'  => $this->status( 'De order is afgeboekt' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Voer een blokkade op
+	 *
+	 * @return array
+	 */
+	private function blokkade() : array {
+		zet_blokkade( strtotime( '+3 month', get_blokkade() ) );
+		return [
+			'status'  => 'De blokkade datum is gewijzigd',
+			'content' => $this->goto_home(),
+		];
 	}
 }

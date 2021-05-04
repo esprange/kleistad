@@ -120,15 +120,15 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				continue;
 			}
 			$emails[] = strtolower( $extra_cursist['user_email'] );
-			if ( ! $this->validate_email( $extra_cursist['user_email'] ) ) {
+			if ( ! $this->validator->email( $extra_cursist['user_email'] ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $extra_cursist['user_email'] . ' is geen geldig E-mail adres.' );
 				$extra_cursist['user_email'] = '';
 			}
-			if ( ! $this->validate_naam( $extra_cursist['first_name'] ) ) {
+			if ( ! $this->validator->naam( $extra_cursist['first_name'] ) ) {
 				$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
 				$extra_cursist['first_name'] = '';
 			}
-			if ( ! $this->validate_naam( $extra_cursist['last_name'] ) ) {
+			if ( ! $this->validator->naam( $extra_cursist['last_name'] ) ) {
 				$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
 				$extra_cursist['last_name'] = '';
 			}
