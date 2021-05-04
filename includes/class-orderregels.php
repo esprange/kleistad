@@ -67,6 +67,7 @@ class Orderregels implements Countable, Iterator {
 					continue;
 				}
 				$this->regels[ $korting ]->prijs += $regel->prijs;
+				$this->regels[ $korting ]->btw   += $regel->btw;
 				unset( $this->regels[ $key ] );
 			}
 		}

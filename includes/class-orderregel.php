@@ -56,7 +56,7 @@ class Orderregel {
 	 * @param float      $bedrag  Het bedrag inclusief btw als btw is null.
 	 * @param float|null $btw     Als ongelijk null dan de btw.
 	 */
-	public function __construct( string $artikel, float $aantal, float $bedrag, float $btw = null ) {
+	public function __construct( string $artikel, float $aantal, float $bedrag, ?float $btw = null ) {
 		$btw_percentage = 0.21;
 		$this->artikel  = $artikel;
 		$this->aantal   = $aantal;
