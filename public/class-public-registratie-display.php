@@ -40,10 +40,10 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 				<label for="kleistad_voornaam">Naam</label>
 			</div>
 			<div class="kleistad-col-3">
-				<input class="kleistad-input" name="voornaam" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo esc_attr( $this->data['input']['voornaam'] ); ?>" />
+				<input class="kleistad-input" name="first_name" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo esc_attr( $this->data['input']['first_name'] ); ?>" />
 			</div>
 			<div class="kleistad-col-4">
-				<input class="kleistad-input" name="achternaam" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo esc_attr( $this->data['input']['achternaam'] ); ?>" />
+				<input class="kleistad-input" name="last_name" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo esc_attr( $this->data['input']['last_name'] ); ?>" />
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -83,7 +83,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 				<label for="kleistad_email">E-mail adres</label>
 			</div>
 			<div class="kleistad-col-7">
-				<input class="kleistad-input" name="email" id="kleistad_email" type="email" required value="<?php echo esc_attr( $this->data['input']['email'] ); ?>" />
+				<input class="kleistad-input" name="user_email" id="kleistad_email" type="email" required value="<?php echo esc_attr( $this->data['input']['user_email'] ); ?>" />
 			</div>
 		</div>
 		<div class="kleistad-row">

@@ -21,7 +21,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function html() {
-		$this->form()->aanvraag()->form_end();
+		$this->form()->aanvraag()->contactinfo()->workshopinfo()->form_end();
 	}
 
 	/**
@@ -48,6 +48,17 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				<label for="kleistad_workshop" >Workshop</label>
 			</div>
 		</div>
+		<?php
+		return $this;
+	}
+
+	/**
+	 * Render het formulier
+	 *
+	 * @return Public_Workshop_Aanvraag_Display
+	 */
+	private function contactinfo() : Public_Workshop_Aanvraag_Display {
+		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_contact">Naam</label>
@@ -77,11 +88,11 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				<input class="kleistad-input" name="email_controle" id="kleistad_emailadres_controle" type="email"
 				required title="Vul ter controle s.v.p. opnieuw het email adres in"
 				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>"
-				oninput="$this->validator->email(this, kleistad_emailadres);"/>
+				oninput="validate_email( this, kleistad_emailadres );"/>
 			</div>
 		</div>
 		<script type="text/javascript">
-			function $this->validator->email( input, compare ) {
+			function validate_email( input, compare ) {
 				input.setCustomValidity( ( input.value === compare.value ) ? '' : 'E-mailadressen zijn niet gelijk' );
 			}
 		</script>
@@ -95,6 +106,17 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				value="<?php echo esc_attr( $this->data['input']['telnr'] ); ?>" autocomplete="tel" />
 			</div>
 		</div>
+		<?php
+		return $this;
+	}
+
+	/**
+	 * Render het formulier
+	 *
+	 * @return Public_Workshop_Aanvraag_Display
+	 */
+	private function workshopinfo() : Public_Workshop_Aanvraag_Display {
+		?>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-10">
 				<label class="kleistad-label">Hoeveel deelnemers verwacht je ?</label>

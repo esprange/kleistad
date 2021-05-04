@@ -32,7 +32,7 @@ class Validator {
 			$input['user_email']     = '';
 			$input['email_controle'] = '';
 		}
-		if ( 0 !== strcasecmp( $input['email_controle'], $input['user_email'] ) ) {
+		if ( isset( $input['email_controle'] ) && 0 !== strcasecmp( $input['email_controle'], $input['user_email'] ) ) {
 			$error->add( 'verplicht', "De ingevoerde e-mail adressen {$input['user_email']} en {$input['email_controle']} zijn niet identiek" );
 			$input['email_controle'] = '';
 		}

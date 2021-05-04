@@ -32,14 +32,14 @@ class Public_Registratie extends ShortcodeForm {
 		if ( ! isset( $data['input'] ) ) {
 			$data['input'] = [
 				'gebruiker_id' => $gebruiker->ID,
-				'voornaam'     => $gebruiker->first_name,
-				'achternaam'   => $gebruiker->last_name,
+				'first_name'   => $gebruiker->first_name,
+				'last_name'    => $gebruiker->last_name,
 				'straat'       => $gebruiker->straat,
 				'huisnr'       => $gebruiker->huisnr,
 				'pcode'        => $gebruiker->pcode,
 				'plaats'       => $gebruiker->plaats,
 				'telnr'        => $gebruiker->telnr,
-				'email'        => $gebruiker->user_email,
+				'user_email'   => $gebruiker->user_email,
 			];
 		}
 		return true;
@@ -54,47 +54,30 @@ class Public_Registratie extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function validate( array &$data ) {
-		$error                = new WP_Error();
 		$data['input']        = filter_input_array(
 			INPUT_POST,
 			[
-				'voornaam'   => FILTER_SANITIZE_STRING,
-				'achternaam' => FILTER_SANITIZE_STRING,
+				'first_name' => FILTER_SANITIZE_STRING,
+				'last_name'  => FILTER_SANITIZE_STRING,
 				'straat'     => FILTER_SANITIZE_STRING,
 				'huisnr'     => FILTER_SANITIZE_STRING,
 				'pcode'      => FILTER_SANITIZE_STRING,
 				'plaats'     => FILTER_SANITIZE_STRING,
 				'telnr'      => FILTER_SANITIZE_STRING,
-				'email'      => FILTER_SANITIZE_EMAIL,
+				'user_email' => FILTER_SANITIZE_EMAIL,
 			]
 		);
 		$data['gebruiker_id'] = get_current_user_id();
 		if ( ! $data['gebruiker_id'] ) {
 			return new WP_Error( 'security', 'Er is een security fout geconstateerd' );
 		}
-		if ( ! empty( $data['input']['telnr'] ) && ! $this->validator->telnr( $data['input']['telnr'] ) ) {
-			$error->add( 'onjuist', 'Het ingevoerde telefoonnummer lijkt niet correct' );
-		}
-		if ( ! empty( $data['input']['pcode'] ) && ! $this->validator->pcode( $data['input']['pcode'] ) ) {
-			$error->add( 'onjuist', 'De ingevoerde postcode lijkt niet correct. Alleen Nederlandse postcodes kunnen worden doorgegeven' );
-		}
-		if ( ! $this->validator->naam( $data['input']['voornaam'] ) ) {
-			$error->add( 'verplicht', 'Een voornaam (een of meer alfabetische karakters) is verplicht' );
-			$data['input']['voornaam'] = '';
-		}
-		if ( ! $this->validator->naam( $data['input']['achternaam'] ) ) {
-			$error->add( 'verplicht', 'Een achternaam (een of meer alfabetische karakters) is verplicht' );
-			$data['input']['achternaam'] = '';
-		}
-		if ( ! $this->validator->email( $data['input']['email'] ) ) {
-			$error->add( 'onjuist', 'Het email adres lijkt niet correct.' );
-		}
-		$gebruiker_id = email_exists( $data['input']['email'] );
-		if ( false !== $gebruiker_id && $gebruiker_id !== $data['gebruiker_id'] ) {
-			$error->add( 'onjuist', 'Dit email adres is al in gebruik' );
-		}
-		if ( ! empty( $error->get_error_codes() ) ) {
+		$error = $this->validator->gebruiker( $data['input'] );
+		if ( is_wp_error( $error ) ) {
 			return $error;
+		}
+		$gebruiker_id = email_exists( $data['input']['user_email'] );
+		if ( false !== $gebruiker_id && $gebruiker_id !== $data['gebruiker_id'] ) {
+			return new WP_Error( 'onjuist', 'Dit email adres is al in gebruik' );
 		}
 		return true;
 	}
@@ -112,14 +95,14 @@ class Public_Registratie extends ShortcodeForm {
 		$result = wp_update_user(
 			(object) [
 				'ID'         => $data['gebruiker_id'],
-				'first_name' => $data['input']['voornaam'],
-				'last_name'  => $data['input']['achternaam'],
+				'first_name' => $data['input']['first_name'],
+				'last_name'  => $data['input']['last_name'],
 				'telnr'      => $data['input']['telnr'],
 				'straat'     => $data['input']['straat'],
 				'huisnr'     => $data['input']['huisnr'],
 				'pcode'      => $data['input']['pcode'],
 				'plaats'     => $data['input']['plaats'],
-				'user_email' => $data['input']['email'],
+				'user_email' => $data['input']['user_email'],
 			]
 		);
 		if ( ! is_wp_error( $result ) ) {
