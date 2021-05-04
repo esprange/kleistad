@@ -196,6 +196,10 @@ class Public_Debiteuren extends ShortcodeForm {
 		if ( 'afboeken' === $data['input']['debiteur_actie'] ) {
 			return $this->afboeken( $data['order'] );
 		}
+		return [
+			'status'  => 'Er heeft geen actie plaatsgevonden',
+			'content' => $this->goto_home(),
+		];
 	}
 
 	/**
