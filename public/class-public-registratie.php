@@ -67,22 +67,22 @@ class Public_Registratie extends ShortcodeForm {
 				'user_email' => FILTER_SANITIZE_EMAIL,
 			]
 		);
-		$data['gebruiker_id'] = get_current_user_id();
-		if ( ! $data['gebruiker_id'] ) {
-			return new WP_Error( 'security', 'Er is een security fout geconstateerd' );
+		if ( is_array( $data['input'] ) ) {
+			$data['gebruiker_id'] = get_current_user_id();
+			if ( ! $data['gebruiker_id'] ) {
+				return new WP_Error( 'security', 'Er is een security fout geconstateerd' );
+			}
+			$error = $this->validator->gebruiker( $data['input'] );
+			if ( is_wp_error( $error ) ) {
+				return $error;
+			}
+			$gebruiker_id = email_exists( $data['input']['user_email'] );
+			if ( false !== $gebruiker_id && $gebruiker_id !== $data['gebruiker_id'] ) {
+				return new WP_Error( 'onjuist', 'Dit email adres is al in gebruik' );
+			}
+			return true;
 		}
-		if ( is_null( $data['input'] ) ) {
-			return new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' );
-		}
-		$error = $this->validator->gebruiker( $data['input'] );
-		if ( is_wp_error( $error ) ) {
-			return $error;
-		}
-		$gebruiker_id = email_exists( $data['input']['user_email'] );
-		if ( false !== $gebruiker_id && $gebruiker_id !== $data['gebruiker_id'] ) {
-			return new WP_Error( 'onjuist', 'Dit email adres is al in gebruik' );
-		}
-		return true;
+		return new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' );
 	}
 
 	/**
