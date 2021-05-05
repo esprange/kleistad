@@ -118,14 +118,19 @@ class Public_Actions {
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
 	public function register_endpoints() {
-		Adres::register_rest_routes(); // Postcode.
-		Betalen::register_rest_routes(); // Mollie.
-		Public_Kalender::register_rest_routes(); // Google API.
-		Public_Recept::register_rest_routes(); // Recept zoeker.
-		Public_Reservering::register_rest_routes(); // Oven reserveringen.
-		Public_Werkplek::register_rest_routes(); // Werkplek reserveringen.
-		Shortcode::register_rest_routes(); // Shortcode opvragen.
-		ShortcodeForm::register_rest_routes(); // Shortcode formulieren.
+		foreach (
+			[
+				'Adres',
+				'MollieClient',
+				'Public_Kalender',
+				'Public_Recept',
+				'Public_Reservering',
+				'Public_Werkplek',
+				'Shortcode',
+				'ShortcodeForm',
+			]  as $object ) {
+				call_user_func( [ '\\' . __NAMESPACE__ . '\\' . $object, 'register_rest_routes' ] ); // Postcode.
+		}
 	}
 
 	/**

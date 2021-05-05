@@ -71,6 +71,9 @@ class Public_Registratie extends ShortcodeForm {
 		if ( ! $data['gebruiker_id'] ) {
 			return new WP_Error( 'security', 'Er is een security fout geconstateerd' );
 		}
+		if ( is_null( $data['input'] ) ) {
+			return new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' );
+		}
 		$error = $this->validator->gebruiker( $data['input'] );
 		if ( is_wp_error( $error ) ) {
 			return $error;

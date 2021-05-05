@@ -286,13 +286,13 @@ abstract class Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function ideal() {
-		$betalen = new Betalen();
+		$service = new MollieClient();
 		?>
 		<img src="<?php echo esc_url( plugins_url( '../public/images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left:40px"/>
 		<label for="kleistad_bank" class="kleistad-label">Mijn bank:&nbsp;</label>
 		<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
 			<option value="" >&nbsp;</option>
-			<?php foreach ( $betalen->banken() as $bank ) : ?>
+			<?php foreach ( $service->get_banks() as $bank ) : ?>
 				<option value="<?php echo esc_attr( $bank->id ); ?>"><?php echo esc_html( $bank->name ); ?></option>
 			<?php endforeach ?>
 		</select>

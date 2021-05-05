@@ -80,8 +80,8 @@ abstract class Shortcode {
 	protected function display( array &$data = [ 'actie' => '-' ] ) : string {
 		$this->enqueue();
 		try {
-			$betalen       = new Betalen();
-			$betaal_result = $betalen->controleer();
+			$ontvangen     = new Ontvangen();
+			$betaal_result = $ontvangen->controleer();
 			if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
 				return $this->status( $betaal_result ) . $this->goto_home();
 			}

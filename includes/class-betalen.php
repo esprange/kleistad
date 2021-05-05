@@ -22,61 +22,7 @@ use Exception;
  */
 class Betalen {
 
-	const MOLLIE_ID   = 'mollie_customer_id';
 	const QUERY_PARAM = 'betaling';
-	const REFUNDS     = '_refunds';
-	const CHARGEBACKS = '_chargebacks';
-
-	/**
-	 * Het mollie object.
-	 *
-	 * @var object het mollie service object.
-	 */
-	private $mollie;
-
-	/**
-	 * De constructor
-	 */
-	public function __construct() {
-		if ( defined( 'KLEISTAD_MOLLIE_SIM' ) ) {
-			$this->mollie = new MollieSimulatie();
-			return;
-		}
-		$setup        = setup();
-		$this->mollie = new Mollie\Api\MollieApiClient();
-
-		if ( '1' === $setup['betalen'] ) {
-			if ( '' !== $setup['sleutel'] ) {
-				$this->mollie->setApiKey( $setup['sleutel'] );
-			}
-			return;
-		}
-		if ( '' !== $setup['sleutel_test'] ) {
-			$this->mollie->setApiKey( $setup['sleutel_test'] );
-		}
-	}
-
-	/**
-	 * Register rest URI's.
-	 */
-	public static function register_rest_routes() {
-		register_rest_route(
-			KLEISTAD_API,
-			'/betaling',
-			[
-				'methods'             => 'POST',
-				'callback'            => [ __CLASS__, 'callback_betaling_verwerkt' ],
-				'args'                => [
-					'id' => [
-						'required' => true,
-					],
-				],
-				'permission_callback' => function() {
-						return true;
-				},
-			]
-		);
-	}
 
 	/**
 	 * Bereid de order informatie voor.
@@ -91,34 +37,13 @@ class Betalen {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function order( $klant, string $referentie, float $bedrag, string $beschrijving, string $bericht, bool $mandateren ) {
-		$bank = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
+		$bank    = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
+		$service = new MollieClient();
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
 		try {
-			if ( ! is_array( $klant ) ) {
-				$gebruiker_id        = $klant;
-				$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-				if ( '' === $mollie_gebruiker_id || is_null( $mollie_gebruiker_id ) ) {
-					$gebruiker           = get_userdata( $gebruiker_id );
-					$mollie_gebruiker    = $this->mollie->customers->create(
-						[
-							'name'  => $gebruiker->display_name,
-							'email' => $gebruiker->user_email,
-						]
-					);
-					$mollie_gebruiker_id = $mollie_gebruiker->id;
-					update_user_meta( $gebruiker_id, self::MOLLIE_ID, $mollie_gebruiker_id );
-				}
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-			} else {
-				$mollie_gebruiker = $this->mollie->customers->create(
-					[
-						'name'  => $klant['naam'],
-						'email' => $klant['email'],
-					]
-				);
-			}
-			$uniqid   = 'kleistad_' . bin2hex( random_bytes( 6 ) );
-			$betaling = $mollie_gebruiker->createPayment(
+			$mollie_gebruiker = $service->get_client( $klant );
+			$uniqid           = 'kleistad_' . bin2hex( random_bytes( 6 ) );
+			$betaling         = $mollie_gebruiker->createPayment(
 				[
 					'amount'       => [
 						'currency' => 'EUR',
@@ -145,39 +70,6 @@ class Betalen {
 	}
 
 	/**
-	 * Controleer of de order gelukt is.
-	 *
-	 * @return WP_ERROR | string | bool De status van de betaling als tekst, WP_error of mislukts of false als er geen betaling is.
-	 */
-	public function controleer() {
-		$mollie_betaling_id = false;
-		$uniqid             = filter_input( INPUT_GET, self::QUERY_PARAM );
-		if ( ! is_null( $uniqid ) ) {
-			$mollie_betaling_id = get_transient( $uniqid );
-			delete_transient( $uniqid );
-		}
-		if ( false === $mollie_betaling_id ) {
-			return false;
-		}
-		try {
-			$betaling = $this->mollie->payments->get( $mollie_betaling_id );
-			if ( $betaling->isPaid() ) {
-				return $betaling->metadata->bericht;
-			} elseif ( $betaling->isFailed() ) {
-				return new WP_Error( 'betalen', 'De betaling heeft niet kunnen plaatsvinden. Probeer het opnieuw.' );
-			} elseif ( $betaling->isExpired() ) {
-				return new WP_Error( 'betalen', 'De betaling is verlopen. Probeer het opnieuw.' );
-			} elseif ( $betaling->isCanceled() ) {
-				return new WP_Error( 'betalen', 'De betaling is geannuleerd. Probeer het opnieuw.' );
-			}
-			return new WP_Error( 'betalen', 'De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.' );
-		} catch ( Exception $e ) {
-			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
-			return false;
-		}
-	}
-
-	/**
 	 * Doe een eenmalige order bij een gebruiker waarvan al een mandaat bestaat.
 	 *
 	 * @param int    $gebruiker_id Het wp gebruiker_id.
@@ -187,28 +79,26 @@ class Betalen {
 	 * @return string De transactie_id.
 	 */
 	public function eenmalig( int $gebruiker_id, string $referentie, float $bedrag, string $beschrijving ) : string {
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-		if ( '' !== $mollie_gebruiker_id ) {
-			try {
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-				$betaling         = $mollie_gebruiker->createPayment(
-					[
-						'amount'       => [
-							'currency' => 'EUR',
-							'value'    => number_format( $bedrag, 2, '.', '' ),
-						],
-						'metadata'     => [
-							'order_id' => $referentie,
-						],
-						'description'  => $beschrijving,
-						'sequenceType' => Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
-						'webhookUrl'   => base_url() . '/betaling/',
-					]
-				);
-				return $betaling->id;
-			} catch ( Exception $e ) {
-				error_log( $e->getMessage() ); // phpcs:ignore
-			}
+		$service          = new MollieClient();
+		$mollie_gebruiker = $service->get_client( $gebruiker_id );
+		try {
+			$betaling = $mollie_gebruiker->createPayment(
+				[
+					'amount'       => [
+						'currency' => 'EUR',
+						'value'    => number_format( $bedrag, 2, '.', '' ),
+					],
+					'metadata'     => [
+						'order_id' => $referentie,
+					],
+					'description'  => $beschrijving,
+					'sequenceType' => Mollie\Api\Types\SequenceType::SEQUENCETYPE_RECURRING,
+					'webhookUrl'   => base_url() . '/betaling/',
+				]
+			);
+			return $betaling->id;
+		} catch ( Exception $e ) {
+			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return '';
 	}
@@ -223,7 +113,8 @@ class Betalen {
 	 * @return bool
 	 */
 	public function terugstorting( string $mollie_betaling_id, string $referentie, float $bedrag, string $beschrijving ) : bool {
-		$betaling = $this->mollie->payments->get( $mollie_betaling_id );
+		$service  = new MollieClient();
+		$betaling = $service->get_payment( $mollie_betaling_id );
 		$value    = number_format( $bedrag, 2, '.', '' );
 		if ( $betaling->canBeRefunded() && 'EUR' === $betaling->amountRemaining->currency && $betaling->amountRemaining->value >= $value ) { //phpcs:ignore WordPress.NamingConventions
 			$refund       = $betaling->refund(
@@ -238,7 +129,7 @@ class Betalen {
 					'description' => $beschrijving,
 				]
 			);
-			$transient    = $mollie_betaling_id . self::REFUNDS;
+			$transient    = $betaling->id . Ontvangen::REFUNDS;
 			$refund_ids   = get_transient( $transient ) ?: [];
 			$refund_ids[] = $refund->id;
 			set_transient( $transient, $refund_ids );
@@ -254,7 +145,7 @@ class Betalen {
 	 * @return bool
 	 */
 	public function terugstorting_actief( string $mollie_betaling_id ) : bool {
-		return ! empty( get_transient( $mollie_betaling_id . self::REFUNDS ) );
+		return ! empty( get_transient( $mollie_betaling_id . Ontvangen::REFUNDS ) );
 	}
 
 	/**
@@ -264,13 +155,10 @@ class Betalen {
 	 * @return bool
 	 */
 	public function heeft_mandaat( int $gebruiker_id ) : bool {
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-
+		$service          = new MollieClient();
+		$mollie_gebruiker = $service->get_client( $gebruiker_id );
 		try {
-			if ( '' !== $mollie_gebruiker_id ) {
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-				return $mollie_gebruiker->hasValidMandate();
-			}
+			return $mollie_gebruiker->hasValidMandate();
 		} catch ( Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
@@ -284,52 +172,20 @@ class Betalen {
 	 * @return bool
 	 */
 	public function verwijder_mandaat( int $gebruiker_id ) : bool {
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-
+		$service          = new MollieClient();
+		$mollie_gebruiker = $service->get_client( $gebruiker_id );
 		try {
-			if ( '' !== $mollie_gebruiker_id ) {
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-				$mandaten         = $mollie_gebruiker->mandates();
-				foreach ( $mandaten as $mandaat ) {
-					if ( $mandaat->isValid() ) {
-						$mollie_gebruiker->revokeMandate( $mandaat->id );
-					}
+			$mandaten = $mollie_gebruiker->mandates();
+			foreach ( $mandaten as $mandaat ) {
+				if ( $mandaat->isValid() ) {
+					$mollie_gebruiker->revokeMandate( $mandaat->id );
 				}
-				return true;
 			}
+			return true;
 		} catch ( Exception $e ) {
 			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return false;
-	}
-
-	/**
-	 * Toon deelnemende banken.
-	 */
-	public static function issuers() {
-		$object = new static();
-		?>
-	<img src="<?php echo esc_url( plugins_url( '../public/images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left:40px"/>
-	<label for="kleistad_bank" class="kleistad-label">Mijn bank:&nbsp;</label>
-	<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
-		<option value="" >&nbsp;</option>
-		<?php
-		foreach ( $object->banken() as $issuer ) :
-			?>
-			<option value="<?php echo esc_attr( $issuer->id ); ?>"><?php echo esc_html( $issuer->name ); ?></option>
-			<?php
-		endforeach
-		?>
-	</select>
-		<?php
-	}
-
-	/**
-	 * Toon deelnemende banken.
-	 */
-	public function banken() {
-		$method = $this->mollie->methods->get( Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
-		return $method->issuers();
 	}
 
 	/**
@@ -339,86 +195,20 @@ class Betalen {
 	 * @return string leeg als de gebruiker onbekend is of string met opgemaakte HTML text.
 	 */
 	public function info( int $gebruiker_id ) : string {
-		$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );
-		if ( '' !== $mollie_gebruiker_id ) {
-			try {
-				$html             = 'Mollie info: ';
-				$mollie_gebruiker = $this->mollie->customers->get( $mollie_gebruiker_id );
-				$mandaten         = $mollie_gebruiker->mandates();
-				foreach ( $mandaten as $mandaat ) {
-					if ( $mandaat->isValid() ) {
-						$html .= "Er is op {$mandaat->signatureDate} een geldig mandaat afgegeven om incasso te doen vanaf bankrekening {$mandaat->details->consumerAccount} op naam van {$mandaat->details->consumerName}. ";
-					}
+		$service          = new MollieClient();
+		$mollie_gebruiker = $service->get_client( $gebruiker_id );
+		try {
+			$html = 'Mollie info: ';
+			foreach ( $mollie_gebruiker->mandates() as $mandaat ) {
+				if ( $mandaat->isValid() ) {
+					$html .= "Er is op {$mandaat->signatureDate} een geldig mandaat afgegeven om incasso te doen vanaf bankrekening {$mandaat->details->consumerAccount} op naam van {$mandaat->details->consumerName}. ";
 				}
-				return $html;
-			} catch ( Exception $e ) {
-				error_log( $e->getMessage() ); // phpcs:ignore
 			}
+			return $html;
+		} catch ( Exception $e ) {
+			error_log( $e->getMessage() ); // phpcs:ignore
 		}
 		return '';
 	}
 
-	/**
-	 * Webhook functie om betaling status te verwerken. Wordt aangeroepen door Mollie.
-	 *
-	 * @param WP_REST_Request $request het request.
-	 * @return WP_REST_Response|WP_Error de response.
-	 */
-	public static function callback_betaling_verwerkt( WP_REST_Request $request ) {
-		// phpcs:disable WordPress.NamingConventions
-		$mollie_betaling_id = (string) $request->get_param( 'id' );
-		$object             = new static();
-		$betaling           = $object->mollie->payments->get( $mollie_betaling_id );
-		$expiratie          = 13 * MONTH_IN_SECONDS - ( time() - strtotime( $betaling->createdAt ) );  // Na 13 maanden expiratie transient.
-		$order              = new Order( $betaling->metadata->order_id );
-		$artikelregister    = new Artikelregister();
-		$artikel            = $artikelregister->geef_object( $betaling->metadata->order_id );
-		if ( is_null( $artikel ) ) {
-			error_log( 'onbekende betaling ' . $betaling->metadata->order_id ); // phpcs:ignore
-			return new WP_Error( 'onbekend', 'betaling niet herkend' );
-		}
-		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
-			$artikel->betaling->verwerk(
-				$order->id,
-				$betaling->amount->value,
-				$betaling->isPaid(),
-				$betaling->method,
-				$mollie_betaling_id
-			);
-		}
-		if ( $betaling->hasRefunds() ) {
-			$transient  = $mollie_betaling_id . self::REFUNDS;
-			$refund_ids = get_transient( $transient ) ?: [];
-			foreach ( $betaling->refunds() as $refund ) {
-				if ( in_array( $refund->id, $refund_ids, true ) ) {
-					$artikel->betaling->verwerk(
-						$order->id,
-						- $refund->amount->value,
-						'failed' !== $refund->status,
-						$betaling->method,
-						$mollie_betaling_id
-					);
-					unset( $refund_ids[ $refund->id ] );
-				}
-			}
-			set_transient( $transient, $refund_ids, $expiratie );
-		} elseif ( $betaling->hasChargebacks() ) {
-			$transient      = $mollie_betaling_id . self::CHARGEBACKS;
-			$chargeback_ids = get_transient( $transient ) ?: [];
-			foreach ( $betaling->chargebacks() as $chargeback ) {
-				if ( ! in_array( $chargeback->id, $chargeback_ids, true ) ) {
-					$artikel->betaling->verwerk(
-						$order->id,
-						- $chargeback->amount->value,
-						$betaling->isPaid(),
-						$betaling->method,
-						$mollie_betaling_id
-					);
-					$chargeback_ids[] = $chargeback->id;
-				}
-			}
-			set_transient( $transient, $chargeback_ids, $expiratie );
-		}
-		return new WP_REST_Response(); // Geeft default http status 200 terug.
-	}
 }
