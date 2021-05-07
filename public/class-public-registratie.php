@@ -54,7 +54,7 @@ class Public_Registratie extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function validate( array &$data ) {
-		$data['input']        = filter_input_array(
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'first_name' => FILTER_SANITIZE_STRING,

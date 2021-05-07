@@ -51,6 +51,12 @@ class WerkplekConfigs implements Countable, Iterator {
 			$werkplekconfig->meesters    = $config['meesters'];
 			$this->configs[]             = $werkplekconfig;
 		}
+		usort(
+			$this->configs,
+			function( $links, $rechts ) {
+				return $links->start_datum <=> $rechts->start_datum;
+			}
+		);
 	}
 
 	/**
@@ -72,6 +78,14 @@ class WerkplekConfigs implements Countable, Iterator {
 		 */
 		if ( 0 === $configtoetevoegen->eind_datum ) {
 			$this->toevoegen_aan_eind( $configtoetevoegen );
+			$this->save();
+			return;
+		}
+		/**
+		 * Als het een bestaande periode betreft, dan vervangen.
+		 */
+		if ( $this->find( $configtoetevoegen->start_datum, $configtoetevoegen->eind_datum ) ) {
+			$this->configs[ $this->current_index ] = $configtoetevoegen;
 			$this->save();
 			return;
 		}
