@@ -24,7 +24,7 @@ class Admin_Instellingen_Handler {
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
-		$display = new Admin_Instellingen_Display( opties(), setup() );
+		$display = new Admin_Instellingen_Display();
 		if ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			do_action( 'kleistad_daily_jobs' );
 		}

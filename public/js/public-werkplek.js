@@ -177,7 +177,7 @@
 								var dagdeel = $( '#kleistad_meester_selectie' ).data( 'dagdeel' );
 								muteerMeester( datum, id, dagdeel );
 								$( this ).dialog( 'close' );
-							},
+							}
 						}
 					]
 				}
@@ -201,7 +201,7 @@
 								$( '#kleistad_wijzig_gebruiker' ).text( $( '#kleistad_gebruiker_selectie option:selected' ).text() );
 								toonWerkplek( datum, gebruiker_id );
 								$( this ).dialog( 'close' );
-							},
+							}
 						}
 					]
 				}
