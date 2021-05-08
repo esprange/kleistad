@@ -19,24 +19,6 @@ use WP_Error;
 class Public_Shortcode_Handler {
 
 	/**
-	 * De kleistad plugin opties.
-	 *
-	 * @var array kleistad plugin settings
-	 */
-	private array $options;
-
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    6.4.2
-	 *
-	 * @param array $options       De plugin options.
-	 */
-	public function __construct( array $options ) {
-		$this->options = $options;
-	}
-
-	/**
 	 * Voeg de shortcodes toe.
 	 */
 	public function register() {
@@ -62,7 +44,7 @@ class Public_Shortcode_Handler {
 		$shortcode_tag = substr( $tag, strlen( 'kleistad-' ) );
 		$attributes    = is_string( $atts ) ? [ $atts ] : $atts;
 		try {
-			$shortcode = Shortcode::get_instance( $shortcode_tag, $attributes, $this->options );
+			$shortcode = Shortcode::get_instance( $shortcode_tag, $attributes );
 		} catch ( Kleistad_Exception $exceptie ) {
 			error_log( $exceptie->getMessage() ); // phpcs:ignore
 			return '';

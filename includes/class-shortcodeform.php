@@ -53,10 +53,9 @@ abstract class ShortcodeForm extends Shortcode {
 	 *
 	 * @param string $shortcode  Shortcode (zonder kleistad- ).
 	 * @param array  $attributes Shortcode parameters.
-	 * @param array  $options    Plugin opties.
 	 */
-	protected function __construct( string $shortcode, array $attributes, array $options ) {
-		parent::__construct( $shortcode, $attributes, $options );
+	protected function __construct( string $shortcode, array $attributes ) {
+		parent::__construct( $shortcode, $attributes );
 		$this->validator = new Validator();
 	}
 

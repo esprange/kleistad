@@ -1,6 +1,6 @@
 <?php
 /**
- * De template voor het tonen van een enkel recepten
+ * De template voor het tonen van een enkel recept
  *
  * @package Kleistad
  * @subpackage Kleistad/public/partials
@@ -85,7 +85,7 @@ get_header(); ?>
 		} )( jQuery );
 		</script>
 		<a style="cursor:pointer;" onClick="window.history.back()">&lt; recepten</a><br/><br/>
-		<button id="kleistad-button kleistad_recept_print">Afdrukken</button>
+		<button class="kleistad-button" id="kleistad_recept_print">Afdrukken</button>
 		<div id="kleistad_recept_modal" class="modal"
 			style="display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgb(0,0,0);background-color:rgba(0,0,0,0.9);">
 

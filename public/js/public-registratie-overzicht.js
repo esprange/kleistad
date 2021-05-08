@@ -14,6 +14,9 @@
                     height: 'auto',
                     width: 750,
                     modal: true,
+					open: function() {
+						$( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
+					},					
                     buttons: {
                         Ok: function() {
                             $( this ).dialog( 'close' );

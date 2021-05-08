@@ -36,13 +36,6 @@ abstract class Shortcode {
 	protected array $atts;
 
 	/**
-	 * De plugin options.
-	 *
-	 * @var array plugin options
-	 */
-	protected array $options;
-
-	/**
 	 * File handle voor download bestanden
 	 *
 	 * @var resource de file pointer.
@@ -177,19 +170,18 @@ abstract class Shortcode {
 	 *
 	 * @param string $shortcode_tag Shortcode (zonder kleistad- ).
 	 * @param array  $attributes    Shortcode parameters.
-	 * @param array  $options       Plugin opties.
 	 * @return Shortcode | null
 	 * @throws Kleistad_Exception Als er de shortcode meer dat eens op de pagina voorkomt.
 	 * @suppressWarnings(PHPMD.UndefinedVariable)
 	 */
-	public static function get_instance( string $shortcode_tag, array $attributes, array $options ) : ?Shortcode {
+	public static function get_instance( string $shortcode_tag, array $attributes ) : ?Shortcode {
 		static $tags = []; // Om een of andere reden gaat PHPMD hier niet goed mee om, vandaar de annotatie.
 		if ( in_array( $shortcode_tag, $tags, true ) ) {
 			throw new Kleistad_Exception( "De shortcode kleistad_$shortcode_tag mag maar éénmaal per pagina gebruikt worden" );
 		}
 		$tags[]          = $shortcode_tag;
 		$shortcode_class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
-		return new $shortcode_class( $shortcode_tag, $attributes, $options );
+		return new $shortcode_class( $shortcode_tag, $attributes );
 	}
 
 	/**
@@ -199,11 +191,9 @@ abstract class Shortcode {
 	 *
 	 * @param string $shortcode  Shortcode (zonder kleistad- ).
 	 * @param array  $attributes Shortcode parameters.
-	 * @param array  $options    Plugin opties.
 	 */
-	protected function __construct( string $shortcode, array $attributes, array $options ) {
+	protected function __construct( string $shortcode, array $attributes ) {
 		$this->atts      = $attributes;
-		$this->options   = $options;
 		$this->shortcode = $shortcode;
 	}
 

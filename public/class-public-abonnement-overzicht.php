@@ -53,7 +53,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 			'Email',
 			'Soort',
 		];
-		foreach ( $this->options['extra'] as $extra ) {
+		foreach ( opties()['extra'] as $extra ) {
 			$abonnees_fields[] = ucfirst( $extra['naam'] );
 		}
 		$abonnees_fields = array_merge(
@@ -83,7 +83,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 			$abonnee->user_email,
 			$abonnee->abonnement->soort . ( 'beperkt' === $abonnee->abonnement->soort ? ' (' . $abonnee->abonnement->dag . ')' : '' ),
 		];
-		foreach ( $this->options['extra']  as $extra ) {
+		foreach ( opties()['extra']  as $extra ) {
 			$abonnee_gegevens[] = array_search( $extra['naam'], $abonnee->abonnement->extras, true ) ? 'ja' : '';
 		}
 		$abonnee_gegevens = array_merge(

@@ -19,42 +19,12 @@ use WP_Error;
 class Admin_Instellingen_Handler {
 
 	/**
-	 *  De plugin opties
-	 *
-	 * @since     4.0.87
-	 * @access    private
-	 * @var       array     $options  De plugin options.
-	 */
-	private $options;
-
-	/**
-	 *  De plugin setup
-	 *
-	 * @since     6.2.1
-	 * @access    private
-	 * @var       array     $setup  De plugin technische setup.
-	 */
-	private $setup;
-
-	/**
-	 * Initializeer het object.
-	 *
-	 * @since    4.0.87
-	 * @param array $options De plugin options.
-	 * @param array $setup   De plugin setup.
-	 */
-	public function __construct( $options, $setup ) {
-		$this->options = $options;
-		$this->setup   = $setup;
-	}
-
-	/**
 	 * Toon de instellingen page van de plugin.
 	 *
 	 * @since    4.0.87
 	 */
 	public function display_settings_page() {
-		$display = new Admin_Instellingen_Display( $this->options, $this->setup );
+		$display = new Admin_Instellingen_Display( opties(), setup() );
 		if ( ! is_null( filter_input( INPUT_POST, 'dagelijks' ) ) ) {
 			do_action( 'kleistad_daily_jobs' );
 		}

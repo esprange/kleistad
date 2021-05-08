@@ -189,8 +189,7 @@ class AbonnementBetaling implements ArtikelBetaling {
 	 * @return float Het maandbedrag.
 	 */
 	public function geef_bedrag( string $type = '' ) : float {
-		$options       = opties();
-		$basis_bedrag  = (float) $options[ "{$this->abonnement->soort}_abonnement" ];
+		$basis_bedrag  = (float) opties()[ "{$this->abonnement->soort}_abonnement" ];
 		$extras_bedrag = 0.0;
 		foreach ( $this->abonnement->extras as $extra ) {
 			$extras_bedrag += $this->geef_bedrag_extra( $extra );

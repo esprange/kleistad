@@ -87,6 +87,19 @@ function setup() : array {
 }
 
 /**
+ * De versie van de plugin
+ *
+ * @return string De versie.
+ */
+function versie() : string {
+	static $versie = '';
+	if ( empty( $versie ) ) {
+		$versie = get_option( 'kleistad-plugin-versie', '6.2.0' );
+	}
+	return $versie;
+}
+
+/**
  * Geeft de basis url terug voor de endpoints.
  *
  * @return string url voor endpoints
@@ -113,24 +126,11 @@ class Kleistad {
 	protected Loader $loader;
 
 	/**
-	 * De huidige versie van de plugin.
-	 *
-	 * @since    4.0.87
-	 * @access   protected
-	 * @var      string    $version    De versie.
-	 */
-	protected string $version;
-
-	/**
 	 * Constructor
 	 *
 	 * @since    4.0.87
 	 */
 	public function __construct() {
-		$version = get_option( 'kleistad-plugin-versie', '6.2.0' );
-		if ( $version ) {
-			$this->version = $version;
-		}
 		$this->load_dependencies();
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
 		$this->define_admin_hooks();
@@ -157,7 +157,7 @@ class Kleistad {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Admin_Main( $this->get_version(), opties(), setup() );
+		$plugin_admin = new Admin_Main();
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts_and_styles' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
@@ -206,7 +206,7 @@ class Kleistad {
 	 */
 	private function define_public_hooks() {
 		$plugin_filters = new Public_Filters();
-		$plugin_actions = new Public_Actions( $this->get_version(), opties() );
+		$plugin_actions = new Public_Actions();
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'register_styles_and_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_actions, 'register_endpoints' );
@@ -247,16 +247,6 @@ class Kleistad {
 	 */
 	public function get_loader() : Loader {
 		return $this->loader;
-	}
-
-	/**
-	 * De versie van de plugin.
-	 *
-	 * @since     4.0.87
-	 * @return    string    De versie.
-	 */
-	public function get_version() : string {
-		return $this->version;
 	}
 
 }

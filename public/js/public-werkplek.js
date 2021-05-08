@@ -165,6 +165,9 @@
 					height: 'auto',
 					width: 360,
 					modal: true,
+					open: function() {
+						$( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
+					},
 					buttons: [
 						{
 							text: 'OK',
@@ -175,7 +178,6 @@
 								muteerMeester( datum, id, dagdeel );
 								$( this ).dialog( 'close' );
 							},
-							'class': 'kleistad-button'
 						}
 					]
 				}
@@ -187,6 +189,9 @@
 					height:	  'auto',
 					width:    360,
 					modal:    true,
+					open: function() {
+						$( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
+					},
 					buttons: [
 						{
 							text: 'OK',
@@ -197,7 +202,6 @@
 								toonWerkplek( datum, gebruiker_id );
 								$( this ).dialog( 'close' );
 							},
-							'class': 'kleistad-button'
 						}
 					]
 				}

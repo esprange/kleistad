@@ -127,7 +127,6 @@ class Dagdelenkaart extends Artikel {
 	 */
 	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer   = new Email();
-		$options   = opties();
 		$gebruiker = get_userdata( $this->klant_id );
 		return $emailer->send(
 			[
@@ -141,7 +140,7 @@ class Dagdelenkaart extends Artikel {
 					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
 					'dagdelenkaart_code'      => $this->code,
 					'dagdelenkaart_opmerking' => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
-					'dagdelenkaart_prijs'     => number_format_i18n( $options['dagdelenkaart'], 2 ),
+					'dagdelenkaart_prijs'     => number_format_i18n( opties()['dagdelenkaart'], 2 ),
 					'dagdelenkaart_link'      => $this->betaal_link,
 				],
 			]

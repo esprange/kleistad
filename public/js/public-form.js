@@ -129,6 +129,9 @@ function strtodate( value ) {
 					width: 'auto',
 					resizable: false,
 					title: tekst[0],
+					open: function() {
+						$( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
+					},
 					buttons: [
 						{
 							text: 'Ja',
@@ -136,16 +139,14 @@ function strtodate( value ) {
 								$( this ).dialog( 'close' );
 								callback();
 								return true;
-							},
-							'class': 'kleistad-button'
+							}
 						},
 						{
 							text: 'Nee',
 							click: function() {
 								$( this ).dialog( 'close' );
 								return false;
-							},
-							'class': 'kleistad-button'
+							}
 						}
 					]
 				}

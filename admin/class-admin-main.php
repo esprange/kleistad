@@ -17,15 +17,6 @@ namespace Kleistad;
 class Admin_Main {
 
 	/**
-	 * De versie van de plugin.
-	 *
-	 * @since    4.0.87
-	 * @access   private
-	 * @var      string    $version    De huidige versie.
-	 */
-	private $version;
-
-	/**
 	 *  Oven beheer
 	 *
 	 * @since     5.0.2
@@ -110,12 +101,8 @@ class Admin_Main {
 	 * Initializeer het object.
 	 *
 	 * @since    4.0.87
-	 * @param string $version De versie van de plugin.
-	 * @param array  $options De plugin options.
-	 * @param array  $setup   De plugin setup.
 	 */
-	public function __construct( $version, $options, $setup ) {
-		$this->version              = $version;
+	public function __construct() {
 		$this->ovens_handler        = new Admin_Ovens_Handler();
 		$this->cursisten_handler    = new Admin_Cursisten_Handler();
 		$this->abonnees_handler     = new Admin_Abonnees_Handler();
@@ -123,7 +110,7 @@ class Admin_Main {
 		$this->regelingen_handler   = new Admin_Regelingen_Handler();
 		$this->recepttermen_handler = new Admin_Recepttermen_Handler();
 		$this->werkplekken_handler  = new Admin_Werkplekken_Handler();
-		$this->instellingen_handler = new Admin_Instellingen_Handler( $options, $setup );
+		$this->instellingen_handler = new Admin_Instellingen_Handler();
 	}
 
 	/**
@@ -135,7 +122,7 @@ class Admin_Main {
 	 */
 	public function enqueue_scripts_and_styles() {
 		wp_enqueue_style( 'jqueryui', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
-		wp_enqueue_script( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
+		wp_enqueue_script( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', [ 'jquery', 'jquery-ui-datepicker' ], versie(), false );
 	}
 
 	/**
@@ -283,7 +270,7 @@ class Admin_Main {
 		if ( false === $obj ) {
 			return $transient;
 		}
-		if ( version_compare( $this->version, $obj->new_version, '<' ) ) {
+		if ( version_compare( versie(), $obj->new_version, '<' ) ) {
 			$transient->response[ $obj->plugin ] = $obj;
 			return $transient;
 		}

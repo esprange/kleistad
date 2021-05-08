@@ -131,8 +131,7 @@ class Stoken implements Countable, Iterator {
 	 */
 	public static function doe_dagelijks() {
 		$ovens         = new Ovens();
-		$options       = opties();
-		$verwerk_datum = strtotime( '- ' . $options['termijn'] . ' days 00:00' );
+		$verwerk_datum = strtotime( '- ' . opties()['termijn'] . ' days 00:00' );
 		foreach ( $ovens as $oven ) {
 			$stoken = new Stoken( $oven->id, strtotime( '- 1 week' ), strtotime( 'today' ) );
 			foreach ( $stoken as $stook ) {
@@ -211,7 +210,6 @@ class Stoken implements Countable, Iterator {
 	 */
 	private static function meld_stook( Oven $oven, Stook $stook ) {
 		$emailer = new Email();
-		$options = opties();
 		if ( Stook::ONDERHOUD !== $stook->soort ) {
 			$stoker = get_userdata( $stook->hoofdstoker );
 			$tabel  = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
@@ -232,8 +230,8 @@ class Stoken implements Countable, Iterator {
 						'voornaam'         => $stoker->first_name,
 						'achternaam'       => $stoker->last_name,
 						'bedrag'           => number_format_i18n( $oven->stookkosten( $stook->hoofdstoker, 100, $stook->temperatuur ), 2 ),
-						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . $options['termijn'] . ' day', $stook->datum ) ), // datum verwerking.
-						'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . ( $options['termijn'] - 1 ) . ' day', $stook->datum ) ), // datum deadline.
+						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . opties()['termijn'] . ' day', $stook->datum ) ), // datum verwerking.
+						'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . ( opties()['termijn'] - 1 ) . ' day', $stook->datum ) ), // datum deadline.
 						'verdeling'        => $tabel,
 						'stookoven'        => $oven->naam,
 					],

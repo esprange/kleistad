@@ -34,16 +34,15 @@ class EmailReceiver {
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
 	public function ontvang( string $adres, callable $verwerk ) {
-		$setup = setup();
-		if ( empty( $setup['imap_server'] ) ) {
+		if ( empty( setup()['imap_server'] ) ) {
 			die();
 		}
 		$answered = [];
 		// phpcs:disable WordPress.NamingConventions
 		$mailbox = new PhpImap\Mailbox(
-			'{' . $setup['imap_server'] . '}INBOX',
+			'{' . setup()['imap_server'] . '}INBOX',
 			$adres,
-			$setup['imap_pwd']
+			setup()['imap_pwd']
 		);
 		try {
 			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );

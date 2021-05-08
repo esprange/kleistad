@@ -17,16 +17,6 @@ namespace Kleistad;
 class Public_Actions {
 
 	/**
-	 * De versie van de plugin.
-	 *
-	 * @since    4.0.87
-	 *
-	 * @access   private
-	 * @var      string    $version    De huidige versie van deze plugin.
-	 */
-	private string $version;
-
-	/**
 	 * De handler voor de shortcodes.
 	 *
 	 * @since 6.4.2
@@ -39,13 +29,9 @@ class Public_Actions {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    4.0.87
-	 *
-	 * @param string $version       The version of this plugin.
-	 * @param array  $options       De plugin options.
 	 */
-	public function __construct( string $version, array $options ) {
-		$this->version           = $version;
-		$this->shortcode_handler = new Public_Shortcode_Handler( $options );
+	public function __construct() {
+		$this->shortcode_handler = new Public_Shortcode_Handler();
 	}
 
 	/**
@@ -89,13 +75,13 @@ class Public_Actions {
 			if ( $shortcodes->definities[ $tag ]->script ) {
 				$file   = str_replace( '_', '-', $tag );
 				$script = "kleistad$tag";
-				wp_register_script( $script, plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", [], $this->version, true );
+				wp_register_script( $script, plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", [], versie(), true );
 				$scripts[] = $script;
 			}
 		}
-		wp_enqueue_style( 'kleistad', plugin_dir_url( __FILE__ ) . "css/public$dev.css", array_unique( $styles ), $this->version );
-		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", array_unique( $scripts ), $this->version, true );
-		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad' ], $this->version, true );
+		wp_enqueue_style( 'kleistad', plugin_dir_url( __FILE__ ) . "css/public$dev.css", array_unique( $styles ), versie() );
+		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", array_unique( $scripts ), versie(), true );
+		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad' ], versie(), true );
 		wp_localize_script(
 			'kleistad',
 			'kleistadData',
