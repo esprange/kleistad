@@ -134,7 +134,6 @@ class Admin_Main {
 	 * @internal Action for admin_enqueue_scripts.
 	 */
 	public function enqueue_scripts_and_styles() {
-		wp_enqueue_style( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'css/admin.css', [], $this->version, 'all' );
 		wp_enqueue_style( 'jqueryui', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
 		wp_enqueue_script( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', [ 'jquery', 'jquery-ui-datepicker' ], $this->version, false );
 	}

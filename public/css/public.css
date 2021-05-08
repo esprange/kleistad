@@ -17,6 +17,17 @@ Description: stylesheet functions voor kleistad_plugin
 	--focus: 2px greenyellow;
 }
 
+.kleistad-bank .ui-icon {
+	background-position: left top;
+	height: 24px;
+	width: 32px;
+}
+
+option.kleistad-bank {
+	background-repeat: no-repeat !important;
+	padding-left: 40px;
+}
+
 .kleistad *:not(.dashicons, .mce-container-body *) {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: small;

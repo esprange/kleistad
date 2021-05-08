@@ -93,11 +93,23 @@ class MollieClient {
 	/**
 	 * Geef de deelnemende banken
 	 *
-	 * @return array
+	 * Het object bevat
+	 *    id,    bijv 'ideal_RABONL2U'
+	 *    name,  bijv 'Rabobank'
+	 *    image, met als properties 'size1x', 'size2x' en 'svg' welke elk een url bevatten naar resp. png's en een svg image
+	 * Vanuit performance overwegingen vragen we dit maar eens per week op vanuit Mollie.
+	 *
+	 * @return object
 	 */
-	public function get_banks() : array {
-		$method = $this->mollie_service->methods->get( Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
-		return $method->issuers();
+	public function get_banks() : object {
+		$issuers = get_transient( 'mollie_banken' );
+		if ( $issuers ) {
+			return $issuers;
+		}
+		$method  = $this->mollie_service->methods->get( Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
+		$issuers = $method->issuers();
+		set_transient( 'mollie_banken', $issuers, 7 * DAY_IN_SECONDS );
+		return $issuers;
 	}
 
 	/**

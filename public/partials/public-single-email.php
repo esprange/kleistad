@@ -1,6 +1,6 @@
 <?php
 /**
- * De template voor het tonen van een enkel recepten
+ * De template voor het tonen van een enkeLe email
  *
  * @package Kleistad
  * @subpackage Kleistad/public/partials

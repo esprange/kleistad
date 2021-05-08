@@ -611,14 +611,24 @@ class MollieSimulatie {
 					 * Geef de issuers van iDeal betalingen terug
 					 */
 					public function issuers() {
-						return [
+						return (object) [
 							(object) [
-								'id'   => 'ING',
-								'name' => 'ING bank',
+								'id'    => 'ideal_INGBNL2A',
+								'name'  => 'ING',
+								'image' => (object) [
+									'size1x' => 'https://www.mollie.com/external/icons/ideal-issuers/INGBNL2A.png',
+									'size2x' => 'https://www.mollie.com/external/icons/ideal-issuers/INGBNL2A%402x.png',
+									'svg'    => 'https://www.mollie.com/external/icons/ideal-issuers/INGBNL2A.svg',
+								],
 							],
 							(object) [
-								'id'   => 'RABO',
-								'name' => 'Rabo bank',
+								'id'    => 'ideal_RABONL2U',
+								'name'  => 'Rabobank',
+								'image' => (object) [
+									'size1x' => 'https://www.mollie.com/external/icons/ideal-issuers/RABONL2U.png',
+									'size2x' => 'https://www.mollie.com/external/icons/ideal-issuers/RABONL2U%402x.png',
+									'svg'    => 'https://www.mollie.com/external/icons/ideal-issuers/RABONL2U.svg',
+								],
 							],
 						];
 					}

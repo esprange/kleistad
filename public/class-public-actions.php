@@ -65,19 +65,20 @@ class Public_Actions {
 	 * @internal Action for wp_enqueue_scripts.
 	 */
 	public function register_styles_and_scripts() {
-		$dev            = 'development' === wp_get_environment_type() ? '' : '.min';
-		$jquery_version = wp_scripts()->registered['jquery-ui-core']->ver;
-		// phpcs:disable WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		// Volgens stricte wp rules zou de versie toegevoegd moeten worden als parameter.
-		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_version ), [], $jquery_version );
-		wp_register_style( 'datatables', '//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css', [], '1.10.24' );
-		wp_register_style( 'fullcalendar', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.css', [], '5.5.1' );
-		wp_register_style( 'jstree', '//cdn.jsdelivr.net/npm/jstree@3.3.11/dist/themes/default/style.min.css', [], '3.3.11' );
+		$dev                  = 'development' === wp_get_environment_type() ? '' : '.min';
+		$jquery_ui_version    = wp_scripts()->registered['jquery-ui-core']->ver;
+		$fullcalendar_version = '5.6.0';
+		$datatables_version   = '1.10.24';
+		$jstree_version       = '3.3.11';
+		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_ui_version ), [], $jquery_ui_version );
+		wp_register_style( 'datatables', sprintf( '//cdn.datatables.net/%s/css/jquery.dataTables.min.css', $datatables_version ), [], $datatables_version );
+		wp_register_style( 'fullcalendar', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/main.min.css', $fullcalendar_version ), [], $fullcalendar_version );
+		wp_register_style( 'jstree', sprintf( '//cdn.jsdelivr.net/npm/jstree@%s/dist/themes/default/style.min.css', $jstree_version ), [], $jstree_version );
 
-		wp_register_script( 'datatables', '//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js', [ 'jquery' ], '1.10.24', true );
-		wp_register_script( 'fullcalendar-core', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.js', [], '5.5.1', true );
-		wp_register_script( 'fullcalendar', '//cdn.jsdelivr.net/npm/fullcalendar@5.5.1/locales-all.min.js', [ 'fullcalendar-core' ], '5.5.1', true );
-		wp_register_script( 'jstree', '//cdn.jsdelivr.net/npm/jstree@3.3.11/dist/jstree.min.js', [ 'jquery' ], '3.3.11', true );
+		wp_register_script( 'datatables', sprintf( '//cdn.datatables.net/%s/js/jquery.dataTables.min.js', $datatables_version ), [ 'jquery' ], $datatables_version, true );
+		wp_register_script( 'fullcalendar-core', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/main.min.js', $fullcalendar_version ), [], $fullcalendar_version, true );
+		wp_register_script( 'fullcalendar', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/locales-all.min.js', $fullcalendar_version ), [ 'fullcalendar-core' ], $fullcalendar_version, true );
+		wp_register_script( 'jstree', sprintf( '//cdn.jsdelivr.net/npm/jstree@%s/dist/jstree.min.js', $jstree_version ), [ 'jquery' ], $jstree_version, true );
 
 		$shortcodes = new Shortcodes();
 		$styles     = [];
@@ -106,7 +107,6 @@ class Public_Actions {
 			]
 		);
 
-		// phpcs:enable
 	}
 
 	/**

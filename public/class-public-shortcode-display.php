@@ -290,10 +290,14 @@ abstract class Public_Shortcode_Display {
 		?>
 		<img src="<?php echo esc_url( plugins_url( '../public/images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left:40px"/>
 		<label for="kleistad_bank" class="kleistad-label">Mijn bank:&nbsp;</label>
-		<select name="bank" id="kleistad_bank" style="padding-left:15px;width: 200px;font-weight:normal">
-			<option value="" >&nbsp;</option>
+		<select name="bank" id="kleistad_bank" class="kleistad-selectmenu" style="display:none;">
+			<option value="" data-class="kleistad-bank" data-style="background-image: url();" >&nbsp;</option>
 			<?php foreach ( $service->get_banks() as $bank ) : ?>
-				<option value="<?php echo esc_attr( $bank->id ); ?>"><?php echo esc_html( $bank->name ); ?></option>
+				<option value="<?php echo esc_attr( $bank->id ); ?>"
+					data-class="kleistad-bank"
+					data-style="background-image: url(&apos;<?php echo esc_attr( $bank->image->size1x ); ?>&apos;);" >
+					&nbsp;<?php echo esc_html( $bank->name ); ?>
+				</option>
 			<?php endforeach ?>
 		</select>
 		<?php

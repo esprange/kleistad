@@ -161,8 +161,15 @@ function strtodate( value ) {
 	 */
 	$( function()
 		{
-
 			/**
+			 * Definieer de bank selectie.
+			 */
+			var $bank = $( '#kleistad_bank' );
+			if ( $bank[0] ) {
+				$bank.iconselectmenu().iconselectmenu( 'menuWidget' ).addClass( 'ui-menu-icons kleistad-bank' );
+			}
+
+			 /**
 			 * Definieer de bevestig dialoog.
 			 */
 			$( '#kleistad_bevestigen' ).dialog(

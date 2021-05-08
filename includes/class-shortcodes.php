@@ -33,13 +33,13 @@ class Shortcodes {
 		[
 			'abonnee_inschrijving'  => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker' ],
+				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [],
 			],
 			'abonnee_wijziging'     => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [ LID ],
 			],
@@ -51,8 +51,8 @@ class Shortcodes {
 			],
 			'betaling'              => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'datatables' ],
-				'css'    => [ 'datatables' ],
+				'js'     => [ 'jquery', 'datatables', 'jquery-ui-selectmenu' ],
+				'css'    => [ 'datatables', 'jquery-ui' ],
 				'access' => [],
 			],
 			'contact'               => (object) [
@@ -75,7 +75,7 @@ class Shortcodes {
 			],
 			'cursus_inschrijving'   => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner', 'jquery-ui-tooltip' ],
+				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner', 'jquery-ui-tooltip', 'jquery-ui-selectmenu' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [],
 			],
@@ -87,7 +87,7 @@ class Shortcodes {
 			],
 			'dagdelenkaart'         => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [],
 			],
@@ -159,8 +159,8 @@ class Shortcodes {
 			],
 			'saldo'                 => (object) [
 				'script' => true,
-				'js'     => [ 'jquery' ],
-				'css'    => [],
+				'js'     => [ 'jquery', 'jquery-ui-selectmenu' ],
+				'css'    => [ 'jquery-ui' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
 			'stookbestand'          => (object) [
