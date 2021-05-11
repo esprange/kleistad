@@ -54,7 +54,8 @@ class Admin_Abonnees_Handler {
 				$abonnement->$veld = ( false !== strpos( $veld, 'datum' ) ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
 			}
 		}
-		$abonnement->extras = $item['extras'];
+		$abonnement->reguliere_datum = strtotime( 'first day of +4 month ', $abonnement->start_datum );
+		$abonnement->extras          = $item['extras'];
 		$abonnement->save();
 		return 'De gegevens zijn opgeslagen';
 	}
