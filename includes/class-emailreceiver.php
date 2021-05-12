@@ -35,7 +35,7 @@ class EmailReceiver {
 	 */
 	public function ontvang( string $adres, callable $verwerk ) {
 		if ( empty( setup()['imap_server'] ) ) {
-			die();
+			exit( 0 );
 		}
 		$answered = [];
 		// phpcs:disable WordPress.NamingConventions
@@ -48,7 +48,7 @@ class EmailReceiver {
 			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
 		} catch ( Exception $ex ) { // Was eerder PhpImap\Exceptions\ConnectionException maar daardoor wordt niet alles afgevangen.
 			error_log( 'IMAP fail: ' . $ex->getMessage() ); // phpcs:ignore
-			die();
+			exit( 0 );
 		}
 		foreach ( $email_ids as $email_id ) {
 			$email = $mailbox->getMail( $email_id );
