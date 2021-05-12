@@ -20,6 +20,9 @@ class Activator {
 	 * Activeer de plugin.
 	 */
 	public static function activate() {
+		$upgrade = new Admin_Upgrade();
+		$upgrade->run();
+
 		/*
 		* n.b. in principe heeft de (toekomstige) rol bestuur de override capability en de (toekomstige) rol lid de reserve capability
 		* zolang die rollen nog niet gedefinieerd zijn hanteren we de onderstaande toekenning
