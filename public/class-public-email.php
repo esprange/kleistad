@@ -1,6 +1,6 @@
 <?php
 /**
- * Shortcode email (email versturen naar groepen).
+ * Shortcode email (email versturen naar GROEPen).
  *
  * @link       https://www.kleistad.nl
  * @since      5.5.0
@@ -18,6 +18,14 @@ use WP_User_Query;
  * De kleistad rapport email.
  */
 class Public_Email extends ShortcodeForm {
+
+	private const GROEP = [
+		'abonnees'           => 0,
+		'dagdelengebruikers' => -1,
+		'docenten'           => -2,
+		'bestuur'            => -3,
+		'wachters'           => -4,
+	];
 
 	/**
 	 *
@@ -46,7 +54,7 @@ class Public_Email extends ShortcodeForm {
 				$this->abonnees(),
 				$this->dagdelengebruikers(),
 				$this->docenten(),
-				$this->bestuur(),
+				$this->bestuur()
 			);
 		}
 
@@ -63,8 +71,8 @@ class Public_Email extends ShortcodeForm {
 		$data = [];
 		foreach ( new Abonnees() as $abonnee ) {
 			if ( ! $abonnee->abonnement->is_geannuleerd() ) {
-				$data[0]['naam']                  = 'Abonnees';
-				$data[0]['leden'][ $abonnee->ID ] = $abonnee->display_name;
+				$data[ self::GROEP['abonnees'] ]['naam']                  = 'Abonnees';
+				$data[ self::GROEP['abonnees'] ]['leden'][ $abonnee->ID ] = $abonnee->display_name;
 			}
 		}
 		return $data;
@@ -79,8 +87,8 @@ class Public_Email extends ShortcodeForm {
 		$data = [];
 		foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
 			if ( $dagdelengebruiker->is_actief() ) {
-				$data[-1]['naam']                            = 'Dagdelenkaarten';
-				$data[-1]['leden'][ $dagdelengebruiker->ID ] = $dagdelengebruiker->display_name;
+				$data[ self::GROEP['dagdelengebruikers'] ]['naam']                            = 'Dagdelenkaarten';
+				$data[ self::GROEP['dagdelengebruikers'] ]['leden'][ $dagdelengebruiker->ID ] = $dagdelengebruiker->display_name;
 			}
 		}
 		return $data;
@@ -94,8 +102,8 @@ class Public_Email extends ShortcodeForm {
 	private function docenten() : array {
 		$data = [];
 		foreach ( get_users( [ 'role' => DOCENT ] ) as $docent ) {
-			$data[-2]['naam']                 = 'Docenten';
-			$data[-2]['leden'][ $docent->ID ] = $docent->display_name;
+			$data[ self::GROEP['docenten'] ]['naam']                 = 'Docenten';
+			$data[ self::GROEP['docenten'] ]['leden'][ $docent->ID ] = $docent->display_name;
 		}
 		return $data;
 	}
@@ -108,8 +116,8 @@ class Public_Email extends ShortcodeForm {
 	private function bestuur() : array {
 		$data = [];
 		foreach ( get_users( [ 'role' => BESTUUR ] ) as $bestuurslid ) {
-			$data[-3]['naam']                      = 'Bestuur';
-			$data[-3]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
+			$data[ self::GROEP['bestuur'] ]['naam']                      = 'Bestuur';
+			$data[ self::GROEP['bestuur'] ]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
 		}
 		return $data;
 	}
@@ -127,9 +135,14 @@ class Public_Email extends ShortcodeForm {
 				if ( ! current_user_can( BESTUUR ) && intval( $inschrijving->cursus->docent ) !== get_current_user_id() ) {
 					continue;
 				}
-				if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd && $cursus_criterium < $inschrijving->cursus->eind_datum ) {
-					$data[ $inschrijving->cursus->id ]['naam']                  = "{$inschrijving->cursus->code} - {$inschrijving->cursus->naam}";
-					$data[ $inschrijving->cursus->id ]['leden'][ $cursist->ID ] = $cursist->display_name;
+				if ( ! $inschrijving->geannuleerd && $cursus_criterium < $inschrijving->cursus->eind_datum ) {
+					if ( $inschrijving->ingedeeld ) {
+						$data[ $inschrijving->cursus->id ]['naam']                  = "{$inschrijving->cursus->code} - {$inschrijving->cursus->naam}";
+						$data[ $inschrijving->cursus->id ]['leden'][ $cursist->ID ] = $cursist->display_name;
+					} elseif ( $inschrijving->wacht_datum ) {
+						$data[ self::GROEP['wachter'] ]['naam']                  = 'wachtlijst';
+						$data[ self::GROEP['wachter'] ]['leden'][ $cursist->ID ] = $cursist->display_name;
+					}
 				}
 			}
 		}
