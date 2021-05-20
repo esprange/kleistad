@@ -122,11 +122,10 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				sprintf( '|docent is %s|kosten &euro;%01.2f p.p.', $cursus->docent_naam(), $cursus->inschrijfkosten + $cursus->cursuskosten );
 			$selecteerbaar = true;
 			$style         = '';
-			$naam          = $cursus->naam;
+			$naam          = $cursus->naam . ( $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : '' ) );
 			if ( ! $cursus->is_open() || false === $json_cursus ) {
 				$selecteerbaar = false;
 				$style         = 'color: gray;';
-				$naam         .= $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : '' );
 			}
 			?>
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">
@@ -217,7 +216,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 */
 	private function betaal_info() : Public_Cursus_Inschrijving_Display {
 		?>
-		<div id="kleistad_cursus_betalen" style="display:none;"> 
+		<div id="kleistad_cursus_betalen" style="display:none;">
 			<div class="kleistad-row">
 				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
 				<label for="kleistad_betaal_ideal" ></label>
