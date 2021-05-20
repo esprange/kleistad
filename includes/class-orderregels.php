@@ -29,7 +29,7 @@ class Orderregels implements Countable, Iterator {
 	private array $regels = [];
 
 	/**
-	 * Intere index
+	 * Interne index
 	 *
 	 * @var int $current_index De index.
 	 */
@@ -59,15 +59,17 @@ class Orderregels implements Countable, Iterator {
 			is_array( $regeltoetevoegen ) ? $regeltoetevoegen : [ $regeltoetevoegen ]
 		);
 		// Eventuele kortingsregels samenvoegen.
-		$korting = false;
+		$korting    = false;
+		$kortingkey = 0;
 		foreach ( $this->regels as $key => $regel ) {
 			if ( Orderregel::KORTING === $regel->artikel ) {
 				if ( false === $korting ) {
-					$korting = $key;
+					$korting    = true;
+					$kortingkey = $key;
 					continue;
 				}
-				$this->regels[ $korting ]->prijs += $regel->prijs;
-				$this->regels[ $korting ]->btw   += $regel->btw;
+				$this->regels[ $kortingkey ]->prijs += $regel->prijs;
+				$this->regels[ $kortingkey ]->btw   += $regel->btw;
 				unset( $this->regels[ $key ] );
 			}
 		}
