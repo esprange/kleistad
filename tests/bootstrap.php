@@ -1,31 +1,26 @@
 <?php
 /**
- * PHPUnit bootstrap file
- *
- * @package Kleistad
- */
+* PHPUnit bootstrap file
+*
+* @package Kleistad
+*/
 
-$_tests_dir = getenv( 'WP_TESTS_DIR' );
-
-if ( ! $_tests_dir ) {
-	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
+// disable xdebug backtrace
+if ( function_exists( 'xdebug_disable' ) ) {
+	xdebug_disable();
 }
 
-if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
-	echo "Could not find $_tests_dir/includes/functions.php, have you run bin/install-wp-tests.sh ?" . PHP_EOL; // WPCS: XSS ok.
-	exit( 1 );
+if ( false !== getenv( 'WP_PLUGIN_DIR' ) ) {
+	define( 'WP_PLUGIN_DIR', getenv( 'WP_PLUGIN_DIR' ) );
 }
 
-// Give access to tests_add_filter() function.
-require_once $_tests_dir . '/includes/functions.php';
-
-/**
- * Manually load the plugin being tested.
- */
-function _manually_load_plugin() {
-	require dirname( dirname( __FILE__ ) ) . '/kleistad.php';
+if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
+	require getenv( 'WP_DEVELOP_DIR' ) . 'tests/phpunit/includes/bootstrap.php';
 }
-tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
-// Start up the WP testing environment.
-require $_tests_dir . '/includes/bootstrap.php';
+function _check_for_dependencies() {
+	if ( ! is_plugin_active( 'kleistad/kleistad.php' ) ) {
+		exit( 'Some Plugin must be active to run the tests.' . PHP_EOL );
+	}
+}
+tests_add_filter( 'plugins_loaded', '_check_for_dependencies' );
