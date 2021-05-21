@@ -5,6 +5,11 @@
  * @package Kleistad
  */
 
+namespace Kleistad\Tests;
+
+use WP_UnitTest_Generator_Sequence;
+use WP_UnitTest_Factory_For_Thing;
+
 /**
  * The oven factory
  *
@@ -29,12 +34,13 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 * Create the oven.
 	 *
 	 * @param array $args the arguments.
+	 *
 	 * @return boolean
 	 */
 	public function create_object( $args ) {
-		$oven                  = new  \Kleistad\Oven();
+		$oven                  = new  Oven();
 		$oven->naam            = $args['naam'];
-		$oven->kosten          = $args['kosten'];
+		$oven->kosten_laag     = $args['kosten_laag'];
 		$oven->beschikbaarheid = $args['beschikbaarheid'];
 		$id                    = $oven->save();
 		if ( ! $id ) {
@@ -46,14 +52,15 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * Update the oven.
 	 *
-	 * @param int   $id the oven id.
+	 * @param int $id the oven id.
 	 * @param array $args the arguments.
+	 *
 	 * @return boolean
 	 */
 	public function update_object( $id, $args ) {
-		$oven                  = new  \Kleistad\Oven( $id );
+		$oven                  = new Oven( $id );
 		$oven->naam            = $args['naam'];
-		$oven->kosten          = $args['kosten'];
+		$oven->kosten_laag     = $args['kosten_laag'];
 		$oven->beschikbaarheid = $args['beschikbaarheid'];
 		$id                    = $oven->save();
 		if ( ! $id ) {
@@ -65,19 +72,22 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 * Get the oven by id.
 	 *
 	 * @param int $id the oven id.
-	 * @return \Kleistad_Oven the object.
+	 *
+	 * @return Oven the object.
 	 */
 	public function get_object_by_id( $id ) {
-		$oven = new  \Kleistad\Oven( $id );
+		$oven = new  Oven( $id );
+
 		return $oven;
 	}
 
 }
-	/**
-	 * The cursus factory
-	 *
-	 * @author espra Eric Sprangers
-	 */
+
+/**
+ * The cursus factory
+ *
+ * @author espra Eric Sprangers
+ */
 class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * Define the defaults.
@@ -97,10 +107,11 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 * Create the cursus.
 	 *
 	 * @param array $args the arguments.
+	 *
 	 * @return boolean
 	 */
 	public function create_object( $args ) {
-		$cursus             = new  \Kleistad\Cursus();
+		$cursus             = new  Cursus();
 		$cursus->naam       = $args['naam'];
 		$cursus->docent     = $args['docent'];
 		$cursus->technieken = $args['technieken'];
@@ -108,18 +119,20 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 		if ( ! $id ) {
 			return false;
 		}
+
 		return $id;
 	}
 
 	/**
 	 * Update the cursus.
 	 *
-	 * @param int   $id the cursus id.
+	 * @param int $id the cursus id.
 	 * @param array $args the arguments.
+	 *
 	 * @return boolean
 	 */
 	public function update_object( $id, $args ) {
-		$cursus             = new  \Kleistad\Cursus( $id );
+		$cursus             = new  Cursus( $id );
 		$cursus->naam       = $args['naam'];
 		$cursus->docent     = $args['docent'];
 		$cursus->technieken = $args['technieken'];
@@ -133,10 +146,12 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 * Get the cursus by id.
 	 *
 	 * @param int $id the cursus id.
-	 * @return \Kleistad_Oven the object.
+	 *
+	 * @return Cursus the object.
 	 */
 	public function get_object_by_id( $id ) {
-		$cursus = new  \Kleistad\Cursus( $id );
+		$cursus = new  Cursus( $id );
+
 		return $cursus;
 	}
 

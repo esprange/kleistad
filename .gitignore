@@ -10,6 +10,7 @@ vendor/
 fullcalendar*/
 tmp/
 .vscode/
+.idea/
 tests/
 bin/
 lib/
