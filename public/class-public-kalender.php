@@ -13,7 +13,7 @@ namespace Kleistad;
 
 use WP_REST_Request;
 use WP_REST_Response;
-use DateTime;
+use DateTimeInterface;
 
 /**
  * De kleistad kalender class.

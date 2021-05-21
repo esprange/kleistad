@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use DateTime;
 use DateTimeZone;
+use DateTimeInterface;
 use Google;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
@@ -221,7 +222,7 @@ class Event {
 	 */
 	private function to_google_dt( DateTime $datetime ) : Google_Service_Calendar_EventDateTime {
 		$google_datetime = new Google_Service_Calendar_EventDateTime();
-		$google_datetime->setDateTime( $datetime->format( DateTimeÍnterface::RFC3339 ) );
+		$google_datetime->setDateTime( $datetime->format( DateTimeInterface::RFC3339 ) );
 		$google_datetime->setTimeZone( $datetime->getTimeZone()->getName() );
 		return $google_datetime;
 	}
