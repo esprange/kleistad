@@ -60,8 +60,8 @@ class Public_Kalender extends Shortcode {
 			return [
 				'id'              => $event->id,
 				'title'           => "$workshop->naam ($workshop->code)",
-				'start'           => $event->start->format( DateTime::ATOM ),
-				'end'             => $event->eind->format( DateTime::ATOM ),
+				'start'           => $event->start->format( DateTimeInterface::ATOM ),
+				'end'             => $event->eind->format( DateTimeInterface::ATOM ),
 				'backgroundColor' => $betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
 				'textColor'       => $betaald ? 'white' : 'black',
 				'extendedProps'   => [
@@ -87,8 +87,8 @@ class Public_Kalender extends Shortcode {
 			return [
 				'id'              => $event->id,
 				'title'           => "$cursus->naam ($cursus->code)",
-				'start'           => $event->start->format( DateTime::ATOM ),
-				'end'             => $event->eind->format( DateTime::ATOM ),
+				'start'           => $event->start->format( DateTimeInterface::ATOM ),
+				'end'             => $event->eind->format( DateTimeInterface::ATOM ),
 				'backgroundColor' => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'slateblue' : 'lightblue',
 				'textColor'       => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'white' : 'black',
 				'extendedProps'   => [
@@ -112,8 +112,8 @@ class Public_Kalender extends Shortcode {
 		return [
 			'id'              => $event->id,
 			'title'           => $event->titel ?: '',
-			'start'           => $event->start->format( DateTime::ATOM ),
-			'end'             => $event->eind->format( DateTime::ATOM ),
+			'start'           => $event->start->format( DateTimeInterface::ATOM ),
+			'end'             => $event->eind->format( DateTimeInterface::ATOM ),
 			'backgroundColor' => 'violet',
 			'textColor'       => 'black',
 		];

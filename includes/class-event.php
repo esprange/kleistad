@@ -18,7 +18,6 @@ use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
 use Google_Service_Calendar_EventOrganizer;
 use Google_Service_Calendar_EventExtendedProperties;
-use Google\Service\Exception;
 
 /**
  * Kleistad Event class.
@@ -71,7 +70,6 @@ class Event {
 	 * @since 5.0.0
 	 *
 	 * @param string $event_id event id welke geladen moet worden.
-	 * @throws Google\Service\Exception Er is geen connectie.
 	 */
 	public function __construct( string $event_id ) {
 		$this->googleconnect = new Googleconnect();
@@ -223,7 +221,7 @@ class Event {
 	 */
 	private function to_google_dt( DateTime $datetime ) : Google_Service_Calendar_EventDateTime {
 		$google_datetime = new Google_Service_Calendar_EventDateTime();
-		$google_datetime->setDateTime( $datetime->format( DateTime::RFC3339 ) );
+		$google_datetime->setDateTime( $datetime->format( DateTimeÍnterface::RFC3339 ) );
 		$google_datetime->setTimeZone( $datetime->getTimeZone()->getName() );
 		return $google_datetime;
 	}
