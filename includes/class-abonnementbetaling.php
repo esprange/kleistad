@@ -156,7 +156,7 @@ class AbonnementBetaling implements ArtikelBetaling {
 				$this->abonnement->verzend_email( '_start_ideal', $this->abonnement->bestel_order( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
 				return;
 			}
-		} elseif ( 'directdebit' === $type ) {
+		} elseif ( 'directdebit' === $type && is_object( $order ) ) {
 			/**
 			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 			 */
