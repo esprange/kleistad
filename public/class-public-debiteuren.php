@@ -240,7 +240,7 @@ class Public_Debiteuren extends ShortcodeForm {
 				'to'          => $order->klant['email'],
 				'slug'        => 'order_annulering',
 				'subject'     => 'Order geannuleerd',
-				'attachments' => $artikel->annuleer_order( $order->id, $restant, $opmerking ),
+				'attachments' => $artikel->annuleer_order( $order, $restant, $opmerking ),
 				'parameters'  => [
 					'naam'        => $order->klant['naam'],
 					'artikel'     => $artikel->geef_artikelnaam(),
@@ -267,7 +267,7 @@ class Public_Debiteuren extends ShortcodeForm {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $order->referentie );
-		$factuur         = $artikel->korting_order( $order->id, $korting, $opmerking );
+		$factuur         = $artikel->korting_order( $order, $korting, $opmerking );
 		$emailer->send(
 			[
 				'to'          => $order->klant['email'],

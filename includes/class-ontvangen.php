@@ -76,12 +76,12 @@ class Ontvangen {
 			return new WP_Error( 'onbekend', 'betaling niet herkend' );
 		}
 		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
-			$this->payment( $betaling, $artikel, $order->id );
+			$this->payment( $betaling, $artikel, $order );
 		}
 		if ( $betaling->hasRefunds() ) {
-			$this->refunds( $betaling, $artikel, $order->id );
+			$this->refunds( $betaling, $artikel, $order );
 		} elseif ( $betaling->hasChargebacks() ) {
-			$this->chargebacks( $betaling, $artikel, $order->id );
+			$this->chargebacks( $betaling, $artikel, $order );
 		}
 		return new WP_REST_Response(); // Geeft default http status 200 terug.
 	}
@@ -91,12 +91,12 @@ class Ontvangen {
 	 *
 	 * @param object  $betaling Het mollie betaal object.
 	 * @param Artikel $artikel  Het artikel waarop de betaling betrekking heeft.
-	 * @param integer $order_id Het order id.
+	 * @param Order   $order    De order.
 	 * @return void
 	 */
-	private function payment( object $betaling, Artikel $artikel, int $order_id ) {
+	private function payment( object $betaling, Artikel $artikel, Order $order ) {
 		$artikel->betaling->verwerk(
-			$order_id,
+			$order,
 			$betaling->amount->value,
 			$betaling->isPaid(),
 			$betaling->method,
@@ -109,16 +109,16 @@ class Ontvangen {
 	 *
 	 * @param object  $betaling Het mollie betaal object.
 	 * @param Artikel $artikel  Het artikel waarop de refund betrekking heeft.
-	 * @param integer $order_id Het order id.
+	 * @param Order   $order    De order.
 	 * @return void
 	 */
-	private function refunds( object $betaling, Artikel $artikel, int $order_id ) {
+	private function refunds( object $betaling, Artikel $artikel, Order $order ) {
 		$transient  = $betaling->id . self::REFUNDS;
 		$refund_ids = get_transient( $transient ) ?: [];
 		foreach ( $betaling->refunds() as $refund ) {
 			if ( in_array( $refund->id, $refund_ids, true ) ) {
 				$artikel->betaling->verwerk(
-					$order_id,
+					$order,
 					- $refund->amount->value,
 					'failed' !== $refund->status,
 					$betaling->method,
@@ -135,16 +135,16 @@ class Ontvangen {
 	 *
 	 * @param object  $betaling Het mollie betaal object.
 	 * @param Artikel $artikel  Het artikel waarop de chargeback betrekking heeft.
-	 * @param integer $order_id Het order id.
+	 * @param Order   $order    De order.
 	 * @return void
 	 */
-	private function chargebacks( object $betaling, Artikel $artikel, int $order_id ) {
+	private function chargebacks( object $betaling, Artikel $artikel, Order $order ) {
 		$transient      = $betaling->id . self::CHARGEBACKS;
 		$chargeback_ids = get_transient( $transient ) ?: [];
 		foreach ( $betaling->chargebacks() as $chargeback ) {
 			if ( ! in_array( $chargeback->id, $chargeback_ids, true ) ) {
 				$artikel->betaling->verwerk(
-					$order_id,
+					$order,
 					- $chargeback->amount->value,
 					$betaling->isPaid(),
 					$betaling->method,

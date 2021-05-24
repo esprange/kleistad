@@ -70,15 +70,15 @@ class InschrijvingBetaling implements ArtikelBetaling {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param int    $order_id      De order id, als deze bestaat.
-	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
+	 * @param Order|null $order_id      De order, als deze bestaat.
+	 * @param float      $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool       $betaald       Of er werkelijk betaald is.
+	 * @param string     $type          Type betaling, ideal , directdebit of bank.
+	 * @param string     $transactie_id De betaling id.
 	 */
-	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( ! $order_id ) {
+			if ( is_null( $order ) ) {
 				/**
 				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
 				 */
@@ -89,7 +89,7 @@ class InschrijvingBetaling implements ArtikelBetaling {
 			/**
 			 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
 			 */
-			$this->inschrijving->ontvang_order( $order_id, $bedrag, $transactie_id );
+			$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
 			if ( ! $this->inschrijving->ingedeeld ) { // Voorafgaand de betaling was de cursist nog niet ingedeeld.
 				/**
 				 * De cursist krijgt de melding dat deze nu ingedeeld is.
@@ -104,7 +104,7 @@ class InschrijvingBetaling implements ArtikelBetaling {
 			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
 				$this->inschrijving->verzend_email( '_ideal_betaald' );
 			}
-		} elseif ( 'ideal' === $type && ! $order_id ) {
+		} elseif ( 'ideal' === $type && is_null( $order ) ) {
 			$this->inschrijving->erase();
 		}
 	}

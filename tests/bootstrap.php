@@ -24,3 +24,4 @@ function _check_for_dependencies() {
 	}
 }
 tests_add_filter( 'plugins_loaded', '_check_for_dependencies' );
+

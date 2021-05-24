@@ -73,16 +73,15 @@ abstract class Artikel {
 	/**
 	 * Een bestelling annuleren.
 	 *
-	 * @param int    $order_id  Het id van de order.
+	 * @param Order    $order   De order.
 	 * @param float  $restant   Het te betalen bedrag bij annulering.
 	 * @param string $opmerking De opmerkingstekst in de factuur.
 	 * @return string De url van de creditfactuur of lege string.
 	 */
-	final public function annuleer_order( int $order_id, float $restant, string $opmerking ): string {
+	final public function annuleer_order( Order $order, float $restant, string $opmerking ): string {
 		if ( ! $this->afzeggen() ) {
 			return '';
 		}
-		$order = new Order( $order_id );
 		if ( $order->credit_id || $order->origineel_id ) {
 			return '';  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
 		}
@@ -148,13 +147,12 @@ abstract class Artikel {
 	/**
 	 * Een bestelling wijzigen ivm korting.
 	 *
-	 * @param int    $order_id  Het id van de order.
+	 * @param Order  $order     De order.
 	 * @param float  $korting   De te geven korting.
 	 * @param string $opmerking De opmerking in de factuur.
 	 * @return bool|string De url van de factuur of fout.
 	 */
-	final public function korting_order( int $order_id, float $korting, string $opmerking ) {
-		$order = new Order( $order_id );
+	final public function korting_order( Order $order, float $korting, string $opmerking ) {
 		if ( $order->is_geblokkeerd() ) {
 			return false;
 		}
@@ -193,16 +191,15 @@ abstract class Artikel {
 	/**
 	 * Een bestelling wijzigen.
 	 *
-	 * @param int    $order_id  Het id van de order.
-	 * @param string $opmerking De optionele opmerking in de factuur.
+	 * @param Order  $originele_order De order.
+	 * @param string $opmerking       De optionele opmerking in de factuur.
 	 * @return bool|string De url van de factuur of false.
 	 */
-	final public function wijzig_order( int $order_id, string $opmerking = '' ) {
-		$originele_order = new Order( $order_id );
-		$order           = clone $originele_order;
-		if ( $order->is_geblokkeerd() ) {
+	final public function wijzig_order( Order $originele_order, string $opmerking = '' ) {
+		if ( $originele_order->is_geblokkeerd() ) {
 			return false;
 		}
+		$order = clone $originele_order;
 		$order->orderregels->vervangen( $this->geef_factuurregels() );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->geef_referentie();
@@ -294,7 +291,7 @@ abstract class Artikel {
 	 * @param string $type  Het type factuur.
 	 * @return string Het pad naar de factuur.
 	 */
-	private function maak_factuur( Order $order, string $type ): string {
+	protected function maak_factuur( Order $order, string $type ): string {
 		$factuur = new Factuur();
 		return $factuur->run( $order, $type );
 	}

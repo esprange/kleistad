@@ -149,7 +149,7 @@ class InschrijvingActie {
 			$oude_inschrijving = new Inschrijving( $oude_cursus_id, $this->inschrijving->klant_id );
 			$oude_inschrijving->afzeggen();
 		}
-		$factuur = $this->inschrijving->wijzig_order( $order->id );
+		$factuur = $this->inschrijving->wijzig_order( $order );
 		if ( false === $factuur ) {
 			return false; // Er is niets gewijzigd.
 		}

@@ -70,18 +70,17 @@ class LosArtikelBetaling implements ArtikelBetaling {
 	 *
 	 * @since      6.2.0
 	 *
-	 * @param int    $order_id      De order_id, als die al bekend is.
-	 * @param float  $bedrag        Het bedrag dat betaald is.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
+	 * @param Order|null $order         De order, als die al bekend is.
+	 * @param float      $bedrag        Het bedrag dat betaald is.
+	 * @param bool       $betaald       Of er werkelijk betaald is.
+	 * @param string     $type          Type betaling, ideal , directdebit of bank.
+	 * @param string     $transactie_id De betaling id.
 	 */
-	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( $order_id ) {
-				$order                   = new Order( $order_id );
+			if ( is_object( $order ) ) {
 				$this->losartikel->klant = $order->klant;
-				$this->losartikel->ontvang_order( $order_id, $bedrag, $transactie_id );
+				$this->losartikel->ontvang_order( $order, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->losartikel->verzend_email( '_ideal_betaald' );
 				}

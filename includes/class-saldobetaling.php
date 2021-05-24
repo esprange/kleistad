@@ -65,23 +65,23 @@ class SaldoBetaling implements ArtikelBetaling {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param int    $order_id      Het order_id als deze bestaat.
-	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
+	 * @param Order|null $order         De order als deze bestaat.
+	 * @param float      $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool       $betaald       Of er werkelijk betaald is.
+	 * @param string     $type          Type betaling, ideal , directdebit of bank.
+	 * @param string     $transactie_id De betaling id.
 	 */
-	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
 			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
 			$this->saldo->reden  = $bedrag > 0 ? 'storting' : 'stornering';
 			$this->saldo->save();
 
-			if ( $order_id ) {
+			if ( is_object( $order ) ) {
 				/**
 				 * Er bestaat al een order dus dit is een betaling o.b.v. een email link of per bank.
 				 */
-				$this->saldo->ontvang_order( $order_id, $bedrag, $transactie_id );
+				$this->saldo->ontvang_order( $order, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->saldo->verzend_email( '_ideal_betaald' );
 				}

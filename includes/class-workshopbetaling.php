@@ -71,18 +71,18 @@ class WorkshopBetaling implements ArtikelBetaling {
 	 *
 	 * @since        5.0.0
 	 *
-	 * @param int    $order_id     De order id, als deze al bestaat.
-	 * @param float  $bedrag       Het betaalde bedrag.
-	 * @param bool   $betaald      Of er werkelijk betaald is.
-	 * @param string $type         Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
+	 * @param Order|null $order        De order, als deze al bestaat.
+	 * @param float      $bedrag       Het betaalde bedrag.
+	 * @param bool       $betaald      Of er werkelijk betaald is.
+	 * @param string     $type         Type betaling, ideal , directdebit of bank.
+	 * @param string     $transactie_id De betaling id.
 	 */
-	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
-		if ( $betaald && $order_id ) {
+	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+		if ( $betaald && is_object( $order ) ) {
 			/**
 			 * Bij workshops is er altijd eerst een factuur verstuurd
 			 */
-			$this->workshop->ontvang_order( $order_id, $bedrag, $transactie_id );
+			$this->workshop->ontvang_order( $order, $bedrag, $transactie_id );
 			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 				$this->workshop->verzend_email( '_ideal' );
 			}

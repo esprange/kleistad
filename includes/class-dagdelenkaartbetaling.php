@@ -63,16 +63,16 @@ class DagdelenkaartBetaling implements ArtikelBetaling {
 	/**
 	 * Activeer een dagdelenkaart. Wordt aangeroepen vanuit de betaal callback.
 	 *
-	 * @param int    $order_id      De order id, als die al bestaat.
-	 * @param float  $bedrag        Het bedrag dat betaald is.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Het type betaling.
-	 * @param string $transactie_id De betaling id.
+	 * @param Order|null $order         De order, als die al bestaat.
+	 * @param float      $bedrag        Het bedrag dat betaald is.
+	 * @param bool       $betaald       Of er werkelijk betaald is.
+	 * @param string     $type          Het type betaling.
+	 * @param string     $transactie_id De betaling id.
 	 */
-	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( $order_id ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
-				$this->dagdelenkaart->ontvang_order( $order_id, $bedrag, $transactie_id );
+			if ( is_object( $order ) ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
+				$this->dagdelenkaart->ontvang_order( $order, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->dagdelenkaart->verzend_email( '_ideal_betaald' );
 				}
@@ -80,7 +80,7 @@ class DagdelenkaartBetaling implements ArtikelBetaling {
 			}
 			// Betaling vanuit inschrijvingformulier.
 			$this->dagdelenkaart->verzend_email( '_ideal', $this->dagdelenkaart->bestel_order( $bedrag, $this->dagdelenkaart->start_datum, '', $transactie_id ) );
-		} elseif ( 'ideal' === $type && ! $order_id ) {
+		} elseif ( 'ideal' === $type && is_null( $order ) ) {
 			$this->dagdelenkaart->erase( false );
 		}
 	}

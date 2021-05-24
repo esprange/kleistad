@@ -108,34 +108,34 @@ class AbonnementBetaling implements ArtikelBetaling {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param int    $order_id      De order id als deze bestaat.
-	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
+	 * @param Order|null $order         De order als deze bestaat.
+	 * @param float      $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool       $betaald       Of er werkelijk betaald is.
+	 * @param string     $type          Type betaling, ideal , directdebit of bank.
+	 * @param string     $transactie_id De betaling id.
 	 */
-	public function verwerk( int $order_id, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( $order_id ) {
+			if ( is_object( $order ) ) {
 				/**
 				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of incasso of betaling per bank.
 				 */
 				if ( 0 < $bedrag ) {
 					if ( 'ideal' === $type ) {
-						$this->abonnement->ontvang_order( $order_id, $bedrag, $transactie_id );
+						$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
 						$this->abonnement->verzend_email( '_ideal_betaald' );
 						return;
 					}
 					if ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
-						$this->abonnement->verzend_email( '_regulier_incasso', $this->abonnement->ontvang_order( $order_id, $bedrag, $transactie_id, true ) );
+						$this->abonnement->verzend_email( '_regulier_incasso', $this->abonnement->ontvang_order( $order, $bedrag, $transactie_id, true ) );
 						return;
 					}
 					// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
-					$this->abonnement->ontvang_order( $order_id, $bedrag, $transactie_id );
+					$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
 					return;
 				}
 				// Anders is het een terugstorting.
-				$this->abonnement->ontvang_order( $order_id, $bedrag, $transactie_id );
+				$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
 				return;
 			}
 			if ( 'mandaat' === $this->abonnement->artikel_type ) {
@@ -160,9 +160,9 @@ class AbonnementBetaling implements ArtikelBetaling {
 			/**
 			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 			 */
-			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order_id, 0, $transactie_id, true ) );
+			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order, 0, $transactie_id, true ) );
 			return;
-		} elseif ( 'ideal' === $type && ! $order_id ) {
+		} elseif ( 'ideal' === $type && is_null( $order ) ) {
 			$this->abonnement->erase();
 		}
 	}
