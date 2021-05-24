@@ -173,15 +173,14 @@ abstract class Artikel {
 	/**
 	 * Een bestelling betalen.
 	 *
-	 * @param int    $order_id      Het id van de order.
+	 * @param Order  $order         De order.
 	 * @param float  $bedrag        Het betaalde bedrag.
 	 * @param string $transactie_id De betalings id.
 	 * @param bool   $factuur       Of er wel / niet een factuur aangemaakt moet worden.
 	 * @return string Pad naar de factuur of leeg.
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
-	final public function ontvang_order( int $order_id, float $bedrag, string $transactie_id, bool $factuur = false ): string {
-		$order                = new Order( $order_id );
+	final public function ontvang_order( Order $order, float $bedrag, string $transactie_id, bool $factuur = false ): string {
 		$order->betaald      += $bedrag;
 		$order->transactie_id = $transactie_id;
 		$order->save( sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'Betaling' : 'Stornering', abs( $bedrag ), $order->betaald ) );
@@ -203,6 +202,7 @@ abstract class Artikel {
 		$order->orderregels->vervangen( $this->geef_factuurregels() );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->geef_referentie();
+		/** @noinspection PhpNonStrictObjectEqualityInspection */
 		if ( $order == $originele_order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}
