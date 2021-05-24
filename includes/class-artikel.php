@@ -73,7 +73,7 @@ abstract class Artikel {
 	/**
 	 * Een bestelling annuleren.
 	 *
-	 * @param Order    $order   De order.
+	 * @param Order  $order   De order.
 	 * @param float  $restant   Het te betalen bedrag bij annulering.
 	 * @param string $opmerking De opmerkingstekst in de factuur.
 	 * @return string De url van de creditfactuur of lege string.
@@ -193,6 +193,7 @@ abstract class Artikel {
 	 * @param Order  $originele_order De order.
 	 * @param string $opmerking       De optionele opmerking in de factuur.
 	 * @return bool|string De url van de factuur of false.
+	 * @noinspection PhpNonStrictObjectEqualityInspection
 	 */
 	final public function wijzig_order( Order $originele_order, string $opmerking = '' ) {
 		if ( $originele_order->is_geblokkeerd() ) {
@@ -202,7 +203,6 @@ abstract class Artikel {
 		$order->orderregels->vervangen( $this->geef_factuurregels() );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->geef_referentie();
-		/** @noinspection PhpNonStrictObjectEqualityInspection */
 		if ( $order == $originele_order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}

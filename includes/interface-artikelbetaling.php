@@ -33,7 +33,7 @@ interface ArtikelBetaling {
 	 * Betaal het artikel met iDeal.
 	 *
 	 * @param string $bericht Het bericht bij succesvolle betaling.
-	 * @param float $bedrag Het te betalen bedrag.
+	 * @param float  $bedrag  Het te betalen bedrag.
 	 *
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */

@@ -3,6 +3,7 @@
  * Class FactoryKleistad
  *
  * @package Kleistad
+ * @phpcs:disable WordPress.Files, Generic.Files
  */
 
 namespace Kleistad\Tests;
@@ -38,7 +39,7 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 * @return boolean
 	 */
 	public function create_object( $args ) {
-		$oven                  = new  Oven();
+		$oven                  = new Oven();
 		$oven->naam            = $args['naam'];
 		$oven->kosten_laag     = $args['kosten_laag'];
 		$oven->beschikbaarheid = $args['beschikbaarheid'];
@@ -52,7 +53,7 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * Update the oven.
 	 *
-	 * @param int $id the oven id.
+	 * @param int   $id the oven id.
 	 * @param array $args the arguments.
 	 *
 	 * @return boolean
@@ -76,7 +77,7 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 * @return Oven the object.
 	 */
 	public function get_object_by_id( $id ) {
-		$oven = new  Oven( $id );
+		$oven = new Oven( $id );
 
 		return $oven;
 	}
@@ -111,7 +112,7 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 * @return boolean
 	 */
 	public function create_object( $args ) {
-		$cursus             = new  Cursus();
+		$cursus             = new Cursus();
 		$cursus->naam       = $args['naam'];
 		$cursus->docent     = $args['docent'];
 		$cursus->technieken = $args['technieken'];
@@ -126,13 +127,13 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * Update the cursus.
 	 *
-	 * @param int $id the cursus id.
+	 * @param int   $id the cursus id.
 	 * @param array $args the arguments.
 	 *
 	 * @return boolean
 	 */
 	public function update_object( $id, $args ) {
-		$cursus             = new  Cursus( $id );
+		$cursus             = new Cursus( $id );
 		$cursus->naam       = $args['naam'];
 		$cursus->docent     = $args['docent'];
 		$cursus->technieken = $args['technieken'];
@@ -150,7 +151,7 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 * @return Cursus the object.
 	 */
 	public function get_object_by_id( $id ) {
-		$cursus = new  Cursus( $id );
+		$cursus = new Cursus( $id );
 
 		return $cursus;
 	}

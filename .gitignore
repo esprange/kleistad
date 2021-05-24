@@ -7,11 +7,9 @@
 # Ignore folders
 node_modules/
 vendor/
-fullcalendar*/
 tmp/
 .vscode/
 .idea/
-tests/
 bin/
 lib/
 zip/

@@ -70,7 +70,7 @@ class InschrijvingBetaling implements ArtikelBetaling {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param Order|null $order_id      De order, als deze bestaat.
+	 * @param Order|null $order         De order, als deze bestaat.
 	 * @param float      $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
 	 * @param bool       $betaald       Of er werkelijk betaald is.
 	 * @param string     $type          Type betaling, ideal , directdebit of bank.

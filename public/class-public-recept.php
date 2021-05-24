@@ -244,8 +244,8 @@ class Public_Recept extends Shortcode {
 			$permalink = get_post_permalink( $recept['id'] );
 			if ( is_string( $permalink ) ) {
 				$html .= '<div style="width:250px;float:left;padding:15px;border:0;"><a href="' . $permalink . '" >' .
-				         '<div class="kleistad-recept-img" style="background-image:url(' . "'{$recept['foto']}'" . ');" >' .
-				         '</div><div class="kleistad-recept-titel" >';
+						'<div class="kleistad-recept-img" style="background-image:url(' . "'{$recept['foto']}'" . ');" >' .
+						'</div><div class="kleistad-recept-titel" >';
 				$html .= self::truncate_string( $recept['titel'], 25 );
 				$html .= '</div></a></div>';
 			}
