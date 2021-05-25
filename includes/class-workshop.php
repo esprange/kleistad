@@ -66,13 +66,6 @@ class Workshop extends Artikel {
 	public WorkshopActie $actie;
 
 	/**
-	 * Het betaling object
-	 *
-	 * @var WorkshopBetaling $betaling Het object.
-	 */
-	public WorkshopBetaling $betaling;
-
-	/**
 	 * Constructor
 	 *
 	 * @since 5.0.0

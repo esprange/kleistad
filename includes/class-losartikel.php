@@ -28,13 +28,6 @@ class LosArtikel extends Artikel {
 	];
 
 	/**
-	 * Het betaling object
-	 *
-	 * @var LosArtikelBetaling $betaling Het betaal object.
-	 */
-	public LosArtikelBetaling $betaling;
-
-	/**
 	 * Lijst van orderregels
 	 *
 	 * @var array $orderregels De regels.

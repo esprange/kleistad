@@ -28,13 +28,6 @@ class Dagdelenkaart extends Artikel {
 	public const META_KEY  = 'kleistad_dagdelenkaart_v2';
 
 	/**
-	 * Het betaling object
-	 *
-	 * @var DagdelenkaartBetaling $betaling Het object.
-	 */
-	public DagdelenkaartBetaling $betaling;
-
-	/**
 	 * De beginwaarden van een dagdelenkaart.
 	 *
 	 * @access private

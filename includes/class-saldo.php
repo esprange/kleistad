@@ -56,13 +56,6 @@ class Saldo extends Artikel {
 	public SaldoActie $actie;
 
 	/**
-	 * Het betaling object
-	 *
-	 * @var SaldoBetaling $betaling Het betaling object.
-	 */
-	public SaldoBetaling $betaling;
-
-	/**
 	 * De constructor
 	 *
 	 * @since      4.0.87

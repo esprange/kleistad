@@ -16,7 +16,7 @@ namespace Kleistad;
  *
  * @since 6.14.7
  */
-class WorkshopBetaling implements ArtikelBetaling {
+class WorkshopBetaling extends ArtikelBetaling {
 
 	/**
 	 * Het workshop object
@@ -71,14 +71,14 @@ class WorkshopBetaling implements ArtikelBetaling {
 	 *
 	 * @since        5.0.0
 	 *
-	 * @param Order|null $order        De order, als deze al bestaat.
-	 * @param float      $bedrag       Het betaalde bedrag.
-	 * @param bool       $betaald      Of er werkelijk betaald is.
-	 * @param string     $type         Type betaling, ideal , directdebit of bank.
-	 * @param string     $transactie_id De betaling id.
+	 * @param Order  $order        De order, als deze al bestaat.
+	 * @param float  $bedrag       Het betaalde bedrag.
+	 * @param bool   $betaald      Of er werkelijk betaald is.
+	 * @param string $type         Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
-		if ( $betaald && is_object( $order ) ) {
+	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+		if ( $betaald && $order->id ) {
 			/**
 			 * Bij workshops is er altijd eerst een factuur verstuurd
 			 */

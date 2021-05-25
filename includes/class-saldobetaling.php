@@ -16,7 +16,7 @@ namespace Kleistad;
  *
  * @since 6.14.7
  */
-class SaldoBetaling implements ArtikelBetaling {
+class SaldoBetaling extends ArtikelBetaling {
 
 	/**
 	 * Het saldo object
@@ -65,19 +65,18 @@ class SaldoBetaling implements ArtikelBetaling {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param Order|null $order         De order als deze bestaat.
-	 * @param float      $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool       $betaald       Of er werkelijk betaald is.
-	 * @param string     $type          Type betaling, ideal , directdebit of bank.
-	 * @param string     $transactie_id De betaling id.
+	 * @param Order  $order         De order als deze bestaat.
+	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
 			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
 			$this->saldo->reden  = $bedrag > 0 ? 'storting' : 'stornering';
 			$this->saldo->save();
-
-			if ( is_object( $order ) ) {
+			if ( $order->id ) {
 				/**
 				 * Er bestaat al een order dus dit is een betaling o.b.v. een email link of per bank.
 				 */

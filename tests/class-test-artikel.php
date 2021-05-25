@@ -19,14 +19,44 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	private function maak_artikel(): Artikel {
 		$artikelcode = 'T' . wp_rand( 100, 999 );
-		$artikel     = $this->getMockForAbstractClass( Artikel::class );
+		$artikel     = $this->getMockForAbstractClass( Artikel::class, [], '', true, true, true, [ 'maak_factuur' ] );
 		$artikel->expects( $this->any() )
 				->method( 'geef_referentie' )
 				->will( $this->returnValue( $artikelcode ) );
 		$artikel->expects( $this->any() )
 				->method( 'geef_factuurregels' )
 				->will( $this->returnValue( new Orderregel( 'Testartikel', 1, 10 ) ) );
-		$artikel->code = $artikelcode;
+		$artikel->expects( $this->any() )->method( 'maak_factuur' )->willReturn( 'file' );
+		$artikel->code     = $artikelcode;
+		$artikel->klant_id = $this->factory->user->create();
+		$artikel->betaling = new class() extends ArtikelBetaling {
+			/**
+			 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
+			 *
+			 * @since        6.7.0
+			 *
+			 * @param Order|null $order         De order als deze bestaat.
+			 * @param float      $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+			 * @param bool       $betaald       Of er werkelijk betaald is.
+			 * @param string     $type          Type betaling, ideal , directdebit of bank.
+			 * @param string     $transactie_id De betaling id.
+			 */
+			public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+
+			}
+
+			/**
+			 * Betaal het artikel met iDeal.
+			 *
+			 * @param string $bericht Het bericht bij succesvolle betaling.
+			 * @param float  $bedrag  Het te betalen bedrag.
+			 *
+			 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
+			 */
+			public function doe_ideal( string $bericht, float $bedrag ) {
+				return 'oke';
+			}
+		};
 
 		return $artikel;
 	}
@@ -81,7 +111,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 		$artikel = $this->maak_artikel();
 		$order   = new Order( $artikel->geef_referentie() );
 		$order->save( 'dit is een test' );
-		$this->assertTrue( true, '' );
+		$this->assertEquals( 'file', $artikel->annuleer_order( $order, 5.0, 'Dit is een test' ), 'annuleer_order incorrect' );
 	}
 
 	/**
@@ -89,6 +119,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	public function test_bestel_order() {
 		$artikel = $this->maak_artikel();
+		$this->assertEquals( 'file', $artikel->bestel_order( 12, strtotime( '+ 1 month' ), 'Dit is een test' ), 'bestel_order incorrect' );
 		$this->assertTrue( true, '' );
 	}
 
@@ -97,7 +128,9 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	public function test_korting_order() {
 		$artikel = $this->maak_artikel();
-		$this->assertTrue( true, '' );
+		$order   = new Order( $artikel->geef_referentie() );
+		$order->save( 'dit is een test' );
+		$this->assertEquals( 'file', $artikel->korting_order( $order, 5, 'Dit is een test' ), 'bestel_order incorrect' );
 	}
 
 	/**
@@ -105,7 +138,9 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	public function test_ontvang_order() {
 		$artikel = $this->maak_artikel();
-		$this->assertTrue( true, '' );
+		$order   = new Order( $artikel->geef_referentie() );
+		$order->save( 'dit is een test' );
+		$this->assertEquals( 'file', $artikel->ontvang_order( $order, 10, '', true ), 'ontvang_order incorrect' );
 	}
 
 	/**

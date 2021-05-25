@@ -16,7 +16,7 @@ namespace Kleistad;
  *
  * @since 6.14.7
  */
-class DagdelenkaartBetaling implements ArtikelBetaling {
+class DagdelenkaartBetaling extends ArtikelBetaling {
 
 	/**
 	 * Het dagdelenkaart object
@@ -63,15 +63,15 @@ class DagdelenkaartBetaling implements ArtikelBetaling {
 	/**
 	 * Activeer een dagdelenkaart. Wordt aangeroepen vanuit de betaal callback.
 	 *
-	 * @param Order|null $order         De order, als die al bestaat.
-	 * @param float      $bedrag        Het bedrag dat betaald is.
-	 * @param bool       $betaald       Of er werkelijk betaald is.
-	 * @param string     $type          Het type betaling.
-	 * @param string     $transactie_id De betaling id.
+	 * @param Order  $order         De order, als die al bestaat.
+	 * @param float  $bedrag        Het bedrag dat betaald is.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Het type betaling.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( is_object( $order ) ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
+			if ( $order->id ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
 				$this->dagdelenkaart->ontvang_order( $order, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->dagdelenkaart->verzend_email( '_ideal_betaald' );
@@ -80,7 +80,7 @@ class DagdelenkaartBetaling implements ArtikelBetaling {
 			}
 			// Betaling vanuit inschrijvingformulier.
 			$this->dagdelenkaart->verzend_email( '_ideal', $this->dagdelenkaart->bestel_order( $bedrag, $this->dagdelenkaart->start_datum, '', $transactie_id ) );
-		} elseif ( 'ideal' === $type && is_null( $order ) ) {
+		} elseif ( 'ideal' === $type && ! $order->id ) {
 			$this->dagdelenkaart->erase( false );
 		}
 	}

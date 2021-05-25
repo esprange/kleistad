@@ -57,13 +57,6 @@ class Abonnement extends Artikel {
 	public AbonnementActie $actie;
 
 	/**
-	 * Het Betaling object
-	 *
-	 * @var AbonnementBetaling $betaling De betaling acties.
-	 */
-	public AbonnementBetaling $betaling;
-
-	/**
 	 * De tekst voor een eventueel bericht in de email
 	 *
 	 * @var string $bericht De tekst.

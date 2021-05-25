@@ -16,7 +16,7 @@ namespace Kleistad;
  *
  * @since 6.14.7
  */
-class InschrijvingBetaling implements ArtikelBetaling {
+class InschrijvingBetaling extends ArtikelBetaling {
 
 	/**
 	 * Het inschrijving object
@@ -70,15 +70,15 @@ class InschrijvingBetaling implements ArtikelBetaling {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param Order|null $order         De order, als deze bestaat.
-	 * @param float      $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool       $betaald       Of er werkelijk betaald is.
-	 * @param string     $type          Type betaling, ideal , directdebit of bank.
-	 * @param string     $transactie_id De betaling id.
+	 * @param Order  $order         De order, als deze bestaat.
+	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( is_null( $order ) ) {
+			if ( ! $order->id ) {
 				/**
 				 * Er is nog geen order, dus dit betreft inschrijving vanuit het formulier.
 				 */
@@ -104,7 +104,7 @@ class InschrijvingBetaling implements ArtikelBetaling {
 			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
 				$this->inschrijving->verzend_email( '_ideal_betaald' );
 			}
-		} elseif ( 'ideal' === $type && is_null( $order ) ) {
+		} elseif ( 'ideal' === $type && ! $order->id ) {
 			$this->inschrijving->erase();
 		}
 	}

@@ -82,13 +82,6 @@ class Inschrijving extends Artikel {
 	public InschrijvingActie $actie;
 
 	/**
-	 * Het betaling object
-	 *
-	 * @var InschrijvingBetaling $betaling Het object.
-	 */
-	public InschrijvingBetaling $betaling;
-
-	/**
 	 * Constructor
 	 *
 	 * @since 4.0.87

@@ -57,6 +57,13 @@ abstract class Artikel {
 	public string $artikel_type = '';
 
 	/**
+	 * Het Betaling object
+	 *
+	 * @var ArtikelBetaling $betaling De betaling acties.
+	 */
+	public ArtikelBetaling $betaling;
+
+	/**
 	 * Geef de code van het artikel
 	 *
 	 * @return string De referentie.
@@ -166,7 +173,7 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->betaling->verwerk( $order->id, $order->betaald, true, $this->artikel_type );
+		$this->betaling->verwerk( $order, $order->betaald, true, $this->artikel_type );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -206,7 +213,6 @@ abstract class Artikel {
 		if ( $order == $originele_order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}
-
 		$order->opmerking = $opmerking;
 		$order->save( 'Order gewijzigd' );
 		$this->betaal_link = $this->maak_link(
@@ -216,7 +222,6 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->betaling->verwerk( $order->id, $order->betaald, true, $this->artikel_type );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 

@@ -16,7 +16,7 @@ namespace Kleistad;
  *
  * @since 6.14.7
  */
-class LosArtikelBetaling implements ArtikelBetaling {
+class LosArtikelBetaling extends ArtikelBetaling {
 
 	/**
 	 * Het losartikel object
@@ -70,15 +70,15 @@ class LosArtikelBetaling implements ArtikelBetaling {
 	 *
 	 * @since      6.2.0
 	 *
-	 * @param Order|null $order         De order, als die al bekend is.
-	 * @param float      $bedrag        Het bedrag dat betaald is.
-	 * @param bool       $betaald       Of er werkelijk betaald is.
-	 * @param string     $type          Type betaling, ideal , directdebit of bank.
-	 * @param string     $transactie_id De betaling id.
+	 * @param Order  $order         De order, als die al bekend is.
+	 * @param float  $bedrag        Het bedrag dat betaald is.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( is_object( $order ) ) {
+			if ( $order->id ) {
 				$this->losartikel->klant = $order->klant;
 				$this->losartikel->ontvang_order( $order, $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.

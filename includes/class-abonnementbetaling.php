@@ -16,7 +16,7 @@ namespace Kleistad;
  *
  * @since 6.14.7
  */
-class AbonnementBetaling implements ArtikelBetaling {
+class AbonnementBetaling extends ArtikelBetaling {
 
 	/**
 	 * Het abonnement object
@@ -108,15 +108,15 @@ class AbonnementBetaling implements ArtikelBetaling {
 	 *
 	 * @since        4.2.0
 	 *
-	 * @param Order|null $order         De order als deze bestaat.
-	 * @param float      $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool       $betaald       Of er werkelijk betaald is.
-	 * @param string     $type          Type betaling, ideal , directdebit of bank.
-	 * @param string     $transactie_id De betaling id.
+	 * @param Order  $order         De order als deze bestaat.
+	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
 	 */
-	public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( is_object( $order ) ) {
+			if ( $order->id ) {
 				/**
 				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of incasso of betaling per bank.
 				 */
@@ -156,13 +156,13 @@ class AbonnementBetaling implements ArtikelBetaling {
 				$this->abonnement->verzend_email( '_start_ideal', $this->abonnement->bestel_order( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
 				return;
 			}
-		} elseif ( 'directdebit' === $type && is_object( $order ) ) {
+		} elseif ( 'directdebit' === $type && $order->id ) {
 			/**
 			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 			 */
 			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order, 0, $transactie_id, true ) );
 			return;
-		} elseif ( 'ideal' === $type && is_null( $order ) ) {
+		} elseif ( 'ideal' === $type && ! $order->id ) {
 			$this->abonnement->erase();
 		}
 	}
