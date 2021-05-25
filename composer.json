@@ -38,8 +38,6 @@
       "classmap": [ "public/", "includes/", "admin/" ]
     },
     "autoload-dev": {
-      "psr-4": {
-        "Kleistad\\Tests\\" : "tests/"
-      }
+      "classmap": [ "tests/"]
     }
 }

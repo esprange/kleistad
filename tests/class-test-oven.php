@@ -3,19 +3,14 @@
  * Class OvenTest
  *
  * @package Kleistad
- * @phpcs:disable WordPress.Files, Generic.Files
  */
 
-namespace Kleistad\Tests;
-
-use Kleistad\Oven;
-use Kleistad\Ovens;
-use Kleistad\Saldo;
+namespace Kleistad;
 
 /**
  * Oven test case.
  */
-class TestOven extends Kleistad_UnitTestCase {
+class Test_Oven extends Kleistad_UnitTestCase {
 
 	/**
 	 * Test creation and modification of an oven.

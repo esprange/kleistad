@@ -3,13 +3,10 @@
  * Class Kleistad_UnitTestCase
  *
  * @package Kleistad
- * @phpcs:disable WordPress.Files, Generic.Files
  */
 
-namespace Kleistad\Tests;
+namespace Kleistad;
 
-use Kleistad\Admin_Upgrade;
-use Kleistad\Kleistad;
 use WP_UnitTestCase;
 
 /**

@@ -3,20 +3,14 @@
  * Class Inschrijving Test
  *
  * @package Kleistad
- * @phpcs:disable WordPress.Files, Generic.Files
  */
 
-namespace Kleistad\Tests;
-
-use Kleistad\Cursus;
-use Kleistad\Inschrijving;
-use Kleistad\Inschrijvingen;
-use Kleistad\Order;
+namespace Kleistad;
 
 /**
  * Inschrijving test case.
  */
-class TestInschrijving extends Kleistad_UnitTestCase {
+class Test_Inschrijving extends Kleistad_UnitTestCase {
 
 	private const CURSUSNAAM = 'Testcursus';
 

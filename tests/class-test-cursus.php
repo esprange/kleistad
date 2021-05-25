@@ -3,20 +3,14 @@
  * Class CursusTest
  *
  * @package Kleistad
- * @phpcs:disable WordPress.Files, Generic.Files
  */
 
-namespace Kleistad\Tests;
-
-use Kleistad\Cursus;
-use Kleistad\Cursussen;
-use Kleistad\Inschrijving;
-use Kleistad\Inschrijvingen;
+namespace Kleistad;
 
 /**
  * Cursus test case.
  */
-class TestCursus extends Kleistad_UnitTestCase {
+class Test_Cursus extends Kleistad_UnitTestCase {
 
 	/**
 	 * Test creation and modification of a cursus.
@@ -43,7 +37,7 @@ class TestCursus extends Kleistad_UnitTestCase {
 
 		$cursus2 = new Cursus( $cursus_id );
 		$this->assertEquals( $cursus1->naam, $cursus2->naam, 'naam cursus not equal' );
-		$this->assertEqualSets( $cursus1->technieken, $cursus2->technieken, 'technieken cursus not equal' );
+		$this->assertEqualSets( $cursus1->technieken, $cursus2->technieken );
 		$this->assertEquals( $cursus1->start_datum, $cursus2->start_datum, 'start datum not equal' );
 		$this->assertEquals( $cursus1->eind_datum, $cursus2->eind_datum, 'eind datum not equal' );
 		$this->assertEquals( $cursus1->lesdatums, $cursus2->lesdatums, 'lesdatums not equal' );

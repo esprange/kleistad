@@ -3,19 +3,14 @@
  * Class Artikel Test
  *
  * @package Kleistad
- * @phpcs:disable WordPress.Files, Generic.Files
  */
 
-namespace Kleistad\Tests;
-
-use Kleistad\Artikel;
-use Kleistad\Orderregel;
-use Kleistad\Order;
+namespace Kleistad;
 
 /**
  * Inschrijving test case.
  */
-class TestArtikel extends Kleistad_UnitTestCase {
+class Test_Artikel extends Kleistad_UnitTestCase {
 
 	/**
 	 * Maak een artikel

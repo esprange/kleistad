@@ -6,7 +6,7 @@
  * @phpcs:disable WordPress.Files, Generic.Files
  */
 
-namespace Kleistad\Tests;
+namespace Kleistad;
 
 use WP_UnitTest_Generator_Sequence;
 use WP_UnitTest_Factory_For_Thing;
@@ -16,17 +16,17 @@ use WP_UnitTest_Factory_For_Thing;
  *
  * @author espra Eric Sprangers
  */
-class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
+class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * Define the defaults.
 	 *
-	 * @param type $factory the factory object.
+	 * @param object $factory the factory object.
 	 */
 	public function __construct( $factory = null ) {
 		parent::__construct( $factory );
 		$this->default_generation_definitions = [
 			'naam'            => new WP_UnitTest_Generator_Sequence( 'testoven %s' ),
-			'kosten'          => new WP_UnitTest_Generator_Sequence( '%s' ),
+			'kosten_laag'     => new WP_UnitTest_Generator_Sequence( '%s' ),
 			'beschikbaarheid' => [ 'maandag', 'woensdag', 'vrijdag' ],
 		];
 	}
@@ -64,9 +64,7 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 		$oven->kosten_laag     = $args['kosten_laag'];
 		$oven->beschikbaarheid = $args['beschikbaarheid'];
 		$id                    = $oven->save();
-		if ( ! $id ) {
-			return false;
-		}
+		return $id > 0;
 	}
 
 	/**
@@ -78,7 +76,6 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 */
 	public function get_object_by_id( $id ) {
 		$oven = new Oven( $id );
-
 		return $oven;
 	}
 
@@ -89,11 +86,11 @@ class WP_UnitTest_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
  *
  * @author espra Eric Sprangers
  */
-class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
+class Kleistad_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * Define the defaults.
 	 *
-	 * @param type $factory the factory object.
+	 * @param object $factory the factory object.
 	 */
 	public function __construct( $factory = null ) {
 		parent::__construct( $factory );
@@ -120,7 +117,6 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 		if ( ! $id ) {
 			return false;
 		}
-
 		return $id;
 	}
 
@@ -138,9 +134,7 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 		$cursus->docent     = $args['docent'];
 		$cursus->technieken = $args['technieken'];
 		$id                 = $cursus->save();
-		if ( ! $id ) {
-			return false;
-		}
+		return $id > 0;
 	}
 
 	/**
@@ -152,7 +146,6 @@ class WP_UnitTest_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 */
 	public function get_object_by_id( $id ) {
 		$cursus = new Cursus( $id );
-
 		return $cursus;
 	}
 
