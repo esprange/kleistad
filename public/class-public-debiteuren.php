@@ -212,7 +212,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	private function bankbetaling( Order $order, float $bedrag ) : array {
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $order->referentie );
-		$artikel->betaling->verwerk( $order->id, $bedrag, true, 'bank' );
+		$artikel->betaling->verwerk( $order, $bedrag, true, 'bank' );
 		return [
 			'status'  => $this->status( 'De betaling is verwerkt' ),
 			'content' => $this->display(),

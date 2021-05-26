@@ -59,9 +59,9 @@ abstract class Artikel {
 	/**
 	 * Het Betaling object
 	 *
-	 * @var ArtikelBetaling $betaling De betaling acties.
+	 * @var object $betaling De betaling acties.
 	 */
-	public ArtikelBetaling $betaling;
+	public object $betaling;
 
 	/**
 	 * Geef de code van het artikel
