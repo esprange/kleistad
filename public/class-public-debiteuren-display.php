@@ -28,23 +28,22 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			$this->form()->blokkade()->form_end();
 			return;
 		} elseif ( 'debiteur' === $this->data['actie'] ) {
-			$this->form()->debiteur();
 			if ( ! ( $this->data['debiteur']['gesloten'] || $this->data['debiteur']['terugstorting'] ) ) {
-				$this->bankbetaling();
+				$this->form()->debiteur()->bankbetaling()->debiteur_end()->form_end();
 			}
 			if ( ! $this->data['debiteur']['credit'] && $this->data['debiteur']['annuleerbaar'] ) {
-				$this->annulering();
+				$this->form()->debiteur()->annulering()->debiteur_end()->form_end();
 			}
 			if ( $this->data['debiteur']['afboekbaar'] ) {
-				$this->afboeking();
+				$this->form()->debiteur()->afboeking()->debiteur_end()->form_end();
 			}
 			if ( ! ( $this->data['debiteur']['geblokkeerd'] || $this->data['debiteur']['credit'] ) ) {
-				$this->korting();
+				$this->form()->debiteur()->korting()->debiteur_end()->form_end();
 			}
-			$this->debiteur_end()->form_end();
 			return;
 		} elseif ( 'zoek' === $this->data['actie'] ) {
-			$this->zoek();
+			$this->zoek()->overzicht();
+			return;
 		}
 		$this->overzicht();
 	}
@@ -118,7 +117,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling" 
+				<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling"
 					value="<?php echo ( 0 < $this->data['debiteur']['openstaand'] ) ? 'bankbetaling' : 'bankstorting'; ?>" >
 				<label for="kleistad_deb_bankbetaling">Bankbetaling invoeren</label>
 			</div>
@@ -279,7 +278,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-4"  style="position: relative;">
 				<input id="kleistad_zoek" name="zoek" type="text" style="height:40px;" placeholder="zoeken..." />
-				<button class="kleistad-button kleistad-edit-link" type="submit" id="kleistad_zoek_icon" data-id="" data-action="zoek" style="height:40px;position:absolute;right:0px;z-index:2;"><span class="dashicons dashicons-search"></span></button>
+				<button class="kleistad-button kleistad-edit-link" type="submit" id="kleistad_zoek_icon" data-id="" data-action="zoek" style="height:40px;position:absolute;right:0;z-index:2;"><span class="dashicons dashicons-search"></span></button>
 			</div>
 		</div>
 		<br/><hr><br/>
@@ -289,10 +288,8 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van cursussen
-	 *
-	 * @return Public_Debiteuren_Display
 	 */
-	private function overzicht() : Public_Debiteuren_Display {
+	private function overzicht() {
 		$datum = new Datetime();
 		$datum->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
 		?>
@@ -332,7 +329,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</tbody>
 		</table>
 		<?php
-		return $this;
 	}
 
 	/**

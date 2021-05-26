@@ -223,7 +223,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			]
 		);
 		if ( is_array( $data['input'] ) ) {
-			if ( false === intval( $data['input']['cursus_id'] ) ) {
+			if ( 0 === intval( $data['input']['cursus_id'] ) ) {
 				return new WP_Error( 'verplicht', 'Er is nog geen cursus gekozen' );
 			}
 			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {

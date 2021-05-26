@@ -213,7 +213,7 @@ EOT;
 			if ( current_user_can( BESTUUR ) ) {
 				$html .= <<<EOT
 	<div class="kleistad-col-kwart" >
-		<button class="kleistad-button kleistad-meester" type="button" data-dagdeel="$dagdeel" value="$meester_id" name="meester" />$meester_naam</button>
+		<button class="kleistad-button kleistad-meester" type="button" data-dagdeel="$dagdeel" value="$meester_id" name="meester" >$meester_naam</button>
 	</div>
 EOT;
 				continue;

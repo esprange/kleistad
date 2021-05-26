@@ -13,7 +13,6 @@ namespace Kleistad;
 
 use Html2Text;
 use PhpImap;
-use Exception;
 
 /**
  * Kleistad EmailReceiver class.
@@ -39,17 +38,17 @@ class EmailReceiver {
 		}
 		$answered = [];
 		// phpcs:disable WordPress.NamingConventions
-		$mailbox = new PhpImap\Mailbox(
-			'{' . setup()['imap_server'] . '}INBOX',
-			$adres,
-			setup()['imap_pwd']
-		);
 		try {
-			$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
-		} catch ( Exception $ex ) { // Was eerder PhpImap\Exceptions\ConnectionException maar daardoor wordt niet alles afgevangen.
-			error_log( 'IMAP fail: ' . $ex->getMessage() ); // phpcs:ignore
+			$mailbox = new PhpImap\Mailbox(
+				'{' . setup()['imap_server'] . '}INBOX',
+				$adres,
+				setup()['imap_pwd']
+			);
+		} catch ( PhpImap\Exceptions\InvalidParameterException $e ) {
+			error_log( 'IMAP fail: ' . $e->getMessage() ); // phpcs:ignore
 			exit( 0 );
 		}
+		$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
 		foreach ( $email_ids as $email_id ) {
 			$email = $mailbox->getMail( $email_id );
 			$body  = $email->textPlain ?: '<p>bericht tekst kan niet worden weergegeven</p>';

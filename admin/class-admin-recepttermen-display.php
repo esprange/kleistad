@@ -66,7 +66,7 @@ class Admin_Recepttermen_Display extends Admin_Display {
 			<h2>Recept termen <a class="add-new-h2" id="kleistad_toevoegen"
 						href="<?php echo esc_url( get_admin_url( get_current_blog_id(), "admin.php?page=recepttermen_form&hoofdterm_id=$hoofdterm_id" ) ); ?>">Toevoegen</a>
 			</h2>
-			<script language="javascript" type="text/javascript">
+			<script type="text/javascript">
 			function hoofdtermSwitch( hoofdterm_id ) {
 				var href = new URL( document.location );
 				href.searchParams.set( 'hoofdterm_id', hoofdterm_id );

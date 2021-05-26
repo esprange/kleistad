@@ -195,7 +195,7 @@ function betaalformulier( $id ) {
 	?>
 <form action="<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]"; ?>" method="GET">
 	<input type="hidden" name="id" value="<?php echo $id; ?>">
-	<input type="hidden" name="idealupdate" ?>
+	<input type="hidden" name="idealupdate" >
 	<div class="form-group row">
 		<label for="description" class="col-sm-2 col-form-label">beschrijving</label>
 		<div class="col-sm-6">

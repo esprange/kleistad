@@ -25,7 +25,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 				->will( $this->returnValue( $artikelcode ) );
 		$artikel->expects( $this->any() )
 				->method( 'geef_factuurregels' )
-				->will( $this->returnValue( new Orderregel( 'Testartikel', 1, 10 ) ) );
+				->will( $this->returnValue( new Orderregel( 'Testartikel', 1, wp_rand( 5, 25 ) ) ) );
 		$artikel->expects( $this->any() )->method( 'maak_factuur' )->willReturn( 'file' );
 		$artikel->code     = $artikelcode;
 		$artikel->klant_id = $this->factory->user->create();
@@ -42,7 +42,6 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 			 * @param string     $transactie_id De betaling id.
 			 */
 			public function verwerk( ?Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
-
 			}
 
 			/**
@@ -148,7 +147,11 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	public function test_wijzig_order() {
 		$artikel = $this->maak_artikel();
-		$this->assertTrue( true, '' );
+		$artikel->bestel_order( 0, strtotime( '+1 month' ) );
+		$order = new Order( $artikel->geef_referentie() );
+		$this->assertEquals( '', $artikel->wijzig_order( $order, 'Dit is een test' ), 'wijzig_order ongewijzigd incorrect' );
+		$artikel->klant_id = $this->factory->user->create();
+		$this->assertEquals( 'file', $artikel->wijzig_order( $order, 'Dit is een test' ), 'wijzig_order gewijzigd incorrect' );
 	}
 
 }

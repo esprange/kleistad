@@ -135,7 +135,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_tonen">Publiceer de cursus</label></div>
 			<div class="kleistad-col-3">
-				<td><input type="checkbox" name="tonen" <?php disabled( $readonly ); ?> id="kleistad_tonen" <?php checked( $this->data['cursus']['tonen'] ); ?> >
+				<input type="checkbox" name="tonen" <?php disabled( $readonly ); ?> id="kleistad_tonen" <?php checked( $this->data['cursus']['tonen'] ); ?> >
 			</div>
 			<div class="kleistad-col-3 kleistad-label"><label for="kleistad_vervallen">Cursus vervallen</label></div>
 			<div class="kleistad-col-2">

@@ -66,7 +66,7 @@ class Admin_Abonnees_Handler {
 	 * @param array $item De informatie vanuit het formulier.
 	 * @return string De status van de wijziging.
 	 */
-	private function wijzig_abonnee_mandaat( array $item ) : string {
+	private function wijzig_abonnee_mandaat( array &$item ) : string {
 		$abonnement = new Abonnement( $item['id'] );
 		$abonnement->actie->stop_incasso();
 		$betalen             = new Betalen();

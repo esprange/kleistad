@@ -114,22 +114,17 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			return new WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
 		}
 		$image = imagecreatefromjpeg( $image_file );
-		if ( false === $image ) {
+		if ( ! is_object( $image ) ) {
 			return new WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
 		}
 		if ( ! empty( $exif['Orientation'] ) ) {
-			switch ( $exif['Orientation'] ) {
-				case 3:
-					$image = imagerotate( $image, 180, 0 );
-					break;
-				case 6:
-					$image = imagerotate( $image, -90, 0 );
-					break;
-				case 8:
-					$image = imagerotate( $image, 90, 0 );
-					break;
-			}
-			if ( false === $image ) {
+			$rotate = [
+				3 => 180,
+				6 => -90,
+				8 => 90,
+			];
+			$image  = imagerotate( $image, $rotate[ $exif['Orientation'] ], 0 );
+			if ( ! is_object( $image ) ) {
 				return new WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
 			}
 		}

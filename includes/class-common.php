@@ -51,7 +51,7 @@ class Common {
 	 */
 	public function login_enqueue_scripts() {
 		?>
-		<style type="text/css">
+		<style>
 			#login h1 a, .login h1 a {
 				background-image: url(https://www.kleistad.nl/wp/wp-content/uploads/2016/03/cropped-logo-kleistad.jpg);
 			height:150px;
