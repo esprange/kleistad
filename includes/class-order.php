@@ -205,8 +205,8 @@ class Order {
 	 * Controleer of er een terugstorting actief is. In dat geval moeten er geen bankbetalingen gedaan worden.
 	 */
 	public function is_terugstorting_actief() : bool {
-		$betalen = new Betalen();
 		if ( $this->transactie_id ) {
+			$betalen = new Betalen();
 			return $betalen->terugstorting_actief( $this->transactie_id );
 		}
 		return false;

@@ -112,7 +112,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	/**
 	 * Test afzeggen function
 	 */
-	public function maak_link() {
+	public function test_maak_link() {
 		$artikel = $this->maak_artikel( 10 );
 		$this->assertFalse( empty( $artikel->maak_link( [ 'test' ], 'test' ) ), 'maak_link incorrect' );
 	}
