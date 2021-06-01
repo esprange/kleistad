@@ -105,11 +105,12 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		<div id="kleistad_cursussen" >
 		<?php
 		foreach ( $this->data['open_cursussen'] as $cursus_id => $cursus ) {
+			$ruimte        = $cursus->ruimte();
 			$json_cursus   = wp_json_encode(
 				[
 					'technieken' => $cursus->technieken,
 					'meer'       => $cursus->meer,
-					'ruimte'     => min( $cursus->ruimte(), 4 ),
+					'ruimte'     => min( $ruimte, 4 ),
 					'bedrag'     => $cursus->bedrag(),
 					'lopend'     => $cursus->is_lopend(),
 					'vol'        => $cursus->vol,
@@ -122,7 +123,8 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				sprintf( '|docent is %s|kosten &euro;%01.2f p.p.', $cursus->docent_naam(), $cursus->inschrijfkosten + $cursus->cursuskosten );
 			$selecteerbaar = true;
 			$style         = '';
-			$naam          = $cursus->naam . ( $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : '' ) );
+			$ruimte_tekst  = ", nog ruimte voor $ruimte deelnemer" . ( $ruimte > 1 ? 's' : '' );
+			$naam          = $cursus->naam . ( $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : $ruimte_tekst ) );
 			if ( ! $cursus->is_open() || false === $json_cursus ) {
 				$selecteerbaar = false;
 				$style         = 'color: gray;';
