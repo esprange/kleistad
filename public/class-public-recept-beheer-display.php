@@ -22,7 +22,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function html() {
 		if ( isset( $this->data['recept'] ) ) { // Volgende regel zorgt voor een false positive.
-			$this->form()->/** @scrutinizer ignore-call */edit()->form_end(); // phpcs:ignore 
+			$this->form()->/** @scrutinizer ignore-call */edit()->form_end(); // phpcs:ignore
 			return;
 		}
 		$this->overzicht();

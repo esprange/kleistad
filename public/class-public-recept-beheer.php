@@ -78,13 +78,13 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$termen       = get_the_terms( $recept->ID, Recept::CATEGORY );
 		if ( is_array( $termen ) ) {
 			foreach ( $termen as $term ) {
-				if ( intval( $term->parent ) === intval( Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id ) ) {
+				if ( intval( Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id ) === $term->parent ) {
 					$glazuur_id = $term->term_id;
 				}
-				if ( intval( $term->parent ) === intval( Recept::hoofdtermen()[ Recept::KLEUR ]->term_id ) ) {
+				if ( intval( Recept::hoofdtermen()[ Recept::KLEUR ]->term_id ) === $term->parent ) {
 					$kleur_id = $term->term_id;
 				}
-				if ( intval( $term->parent ) === intval( Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id ) ) {
+				if ( intval( Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id ) === $term->parent ) {
 					$uiterlijk_id = $term->term_id;
 				}
 			}
@@ -103,42 +103,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 * Verwerk foto.
-	 *
-	 * @param string $image_file Path naar een image file.
-	 * @return WP_Error|bool True als verwerkt of error als er iets fout is gegaan.
-	 */
-	private function foto( string $image_file ) {
-		$exif = @exif_read_data( $image_file ); // phpcs:ignore
-		if ( false === $exif ) {
-			return new WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
-		}
-		$image = imagecreatefromjpeg( $image_file );
-		if ( ! is_object( $image ) ) {
-			return new WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
-		}
-		if ( ! empty( $exif['Orientation'] ) ) {
-			$rotate = [
-				3 => 180,
-				6 => -90,
-				8 => 90,
-			];
-			$image  = imagerotate( $image, $rotate[ $exif['Orientation'] ], 0 );
-			if ( ! is_object( $image ) ) {
-				return new WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
-			}
-		}
-		$quality = intval( min( 75000 / filesize( $image_file ) * 100, 100 ) );
-		imagejpeg( $image, $image_file, $quality );
-		imagedestroy( $image );
-		return true;
-	}
-
-	/**
 	 * Prepareer 'recept' form
 	 *
 	 * @param array $data data voor display.
-	 * @return WP_ERROR|bool
+	 * @return bool
 	 *
 	 * @since   4.1.0
 	 */
@@ -187,7 +155,6 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @since   4.1.0
 	 */
 	protected function validate( array &$data ) {
-		$error                                    = new WP_Error();
 		$data['recept']                           = filter_input_array(
 			INPUT_POST,
 			[
@@ -201,62 +168,13 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$data['recept']['content']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
 		$data['recept']['content']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
 		$data['recept']['content']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
-		$basis                                    = filter_input_array(
-			INPUT_POST,
-			[
-				'basis_component' => [
-					'filter' => FILTER_SANITIZE_STRING,
-					'flags'  => FILTER_REQUIRE_ARRAY,
-				],
-				'basis_gewicht'   => [
-					'filter' => FILTER_SANITIZE_STRING,
-					'flags'  => FILTER_REQUIRE_ARRAY,
-				],
-			]
-		);
-		$toevoeging                               = filter_input_array(
-			INPUT_POST,
-			[
-				'toevoeging_component' => [
-					'filter' => FILTER_SANITIZE_STRING,
-					'flags'  => FILTER_REQUIRE_ARRAY,
-				],
-				'toevoeging_gewicht'   => [
-					'filter' => FILTER_SANITIZE_STRING,
-					'flags'  => FILTER_REQUIRE_ARRAY,
-				],
-			]
-		);
-		$data['recept']['content']['basis']       = [];
-		$basis_limiet                             = count( $basis['basis_component'] );
-		for ( $i = 0; $i < $basis_limiet; $i++ ) {
-			if ( ( '' !== $basis['basis_component'][ $i ] ) && ( 0 !== floatval( $basis['basis_gewicht'][ $i ] ) ) ) {
-				$data['recept']['content']['basis'][ $i ] = [
-					'component' => $basis['basis_component'][ $i ],
-					'gewicht'   => str_replace( ',', '.', $basis['basis_gewicht'][ $i ] ) * 1.0,
-				];
-			}
-		}
-		$data['recept']['content']['toevoeging'] = [];
-		$toevoeging_limiet                       = count( $toevoeging['toevoeging_component'] );
-		for ( $i = 0; $i < $toevoeging_limiet; $i++ ) {
-			if ( '' !== $toevoeging['toevoeging_component'][ $i ] && 0 !== floatval( $toevoeging['toevoeging_gewicht'][ $i ] ) ) {
-				$data['recept']['content']['toevoeging'][ $i ] = [
-					'component' => $toevoeging['toevoeging_component'][ $i ],
-					'gewicht'   => str_replace( ',', '.', $toevoeging['toevoeging_gewicht'][ $i ] ) * 1.0,
-				];
-			}
-		}
-		$data['recept']['content']['foto'] = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
+		$data['recept']['content']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
+		$data['recept']['content']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
+		$data['recept']['content']['foto']        = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
 
 		if ( 'bewaren' === $data['form_actie'] ) {
 			if ( UPLOAD_ERR_INI_SIZE === $_FILES['foto']['error'] ) {
-				$error->add( 'foto', 'De foto is te groot qua omvang !' );
-			} else {
-				$data['foto'] = $_FILES ['foto'];
-			}
-			if ( ! empty( $error->get_error_codes() ) ) {
-				return $error;
+				return new WP_Error( 'foto', 'De foto is te groot qua omvang !' );
 			}
 		}
 		return true;
@@ -305,9 +223,9 @@ class Public_Recept_Beheer extends ShortcodeForm {
 					'content' => $this->display(),
 				];
 			case 'bewaren':
-				if ( ! empty( $data['foto']['name'] ) ) {
+				if ( ! empty( $_FILES['foto']['name'] ) ) {
 					$file = wp_handle_upload(
-						$data['foto'],
+						$_FILES['foto'],
 						[ 'test_form' => false ]
 					);
 					if ( is_array( $file ) && ! isset( $file['error'] ) ) {
@@ -373,4 +291,72 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		}
 		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
 	}
+
+	/**
+	 * Zet de input om naar een componenten array
+	 *
+	 * @param string $namen     De input namen van de componenten.
+	 * @param string $gewichten De input ingevoerde gewichten.
+	 *
+	 * @return array
+	 */
+	private function component( string $namen, string $gewichten ) : array {
+		$input       = filter_input_array(
+			INPUT_POST,
+			[
+				$namen     => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_REQUIRE_ARRAY,
+				],
+				$gewichten => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_REQUIRE_ARRAY,
+				],
+			]
+		);
+		$componenten = [];
+		$aantal      = count( $input[ $namen ] );
+		for ( $index = 0; $index < $aantal; $index++ ) {
+			if ( ! empty( $input[ $namen ][ $index ] ) && ( 0.0 !== floatval( $input[ $gewichten ][ $index ] ) ) ) {
+				$componenten[] = [
+					'component' => $input[ $namen ][ $index ],
+					'gewicht'   => str_replace( ',', '.', $input[ $gewichten ][ $index ] ) * 1.0,
+				];
+			}
+		}
+		return $componenten;
+	}
+
+	/**
+	 * Verwerk foto.
+	 *
+	 * @param string $image_file Path naar een image file.
+	 * @return WP_Error|bool True als verwerkt of error als er iets fout is gegaan.
+	 */
+	private function foto( string $image_file ) {
+		$exif = @exif_read_data( $image_file ); // phpcs:ignore
+		if ( false === $exif ) {
+			return new WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
+		}
+		$image = imagecreatefromjpeg( $image_file );
+		if ( false === $image ) {
+			return new WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
+		}
+		if ( ! empty( $exif['Orientation'] ) ) {
+			$rotate = [
+				3 => 180,
+				6 => -90,
+				8 => 90,
+			];
+			$image  = imagerotate( $image, $rotate[ $exif['Orientation'] ], 0 );
+			if ( ! is_object( $image ) ) {
+				return new WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
+			}
+		}
+		$quality = intval( min( 75000 / filesize( $image_file ) * 100, 100 ) );
+		imagejpeg( $image, $image_file, $quality );
+		imagedestroy( $image );
+		return true;
+	}
+
 }
