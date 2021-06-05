@@ -251,7 +251,8 @@ class Email {
 				$this->mailparams['attachments']
 			);
 		}
-		error_log( "E-mail aan: {$this->mailparams['to']} over {$this->mailparams['subject']} met bijlage {$this->mailparams['attachments']}" ); // phpcs:ignore
+		$bijlagen = is_array( $this->mailparams['attachments'] ) ? implode( ', ', $this->mailparams['attachments'] ) : $this->mailparams['attachments'];
+		error_log( "E-mail aan: {$this->mailparams['to']} over {$this->mailparams['subject']} met bijlage $bijlagen" ); // phpcs:ignore
 		return true;
 	}
 
