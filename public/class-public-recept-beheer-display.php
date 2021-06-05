@@ -165,7 +165,6 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<datalist id="kleistad_recept_grondstof">
-			<select style="display: none;">
 			<?php
 			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
 			$recept_terms     = get_terms(
@@ -184,7 +183,6 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				endforeach;
 			endif
 			?>
-			</select>
 		</datalist>
 		<div class="kleistad-row">
 			<div class="kleistad-col-5">

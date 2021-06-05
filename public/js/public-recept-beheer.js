@@ -1,18 +1,20 @@
 /* global: FileReader */
 
 ( function( $ ) {
-    'use strict';
+	'use strict';
 
-	$( function()
+	$(
+		function()
 		{
-
 			$( '.kleistad-shortcode' )
 			/**
 			 * Als er een andere foto gekozen wordt.
 			 */
-			.on( 'change', '#kleistad_foto_input',
+			.on(
+				'change',
+				'#kleistad_foto_input',
 				function() {
-					var reader = new FileReader();
+					let reader = new FileReader();
 
 					if ( this.files && this.files[0] ) {
 						if ( this.files[0].size > 2000000 ) {
@@ -31,16 +33,18 @@
 			/**
 			 * Extra regel toevoegen.
 			 */
-			.on( 'click', '.extra_regel',
+			.on(
+				'click',
+				'.extra_regel',
 				function() {
-					var $oldRow, $newRow;
+					let $oldRow, $newRow;
 					$oldRow = $( this ).closest( 'tr' ).prev();
 					$newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
 					$oldRow.after( $newRow );
 					return false;
 				}
 			);
-        }
-    );
+		}
+	);
 
 } )( jQuery );
