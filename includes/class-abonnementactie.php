@@ -192,6 +192,7 @@ class AbonnementActie {
 		$this->abonnement->artikel_type = 'overbrugging';
 		$this->abonnement->verzend_email( '_vervolg', $this->abonnement->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
 		$this->abonnement->overbrugging_email = true;
+		$this->abonnement->factuur_maand      = (int) date( 'Ym' );
 		$this->abonnement->save();
 	}
 
