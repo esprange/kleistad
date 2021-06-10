@@ -18,6 +18,8 @@ if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
 	require getenv( 'WP_DEVELOP_DIR' ) . 'tests/phpunit/includes/bootstrap.php';
 }
 
+const KLEISTAD_TEST = true;
+
 tests_add_filter(
 	'plugins_loaded',
 	function() {
