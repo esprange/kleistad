@@ -28,18 +28,20 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			$this->form()->blokkade()->form_end();
 			return;
 		} elseif ( 'debiteur' === $this->data['actie'] ) {
+			$this->form()->debiteur();
 			if ( ! ( $this->data['debiteur']['gesloten'] || $this->data['debiteur']['terugstorting'] ) ) {
-				$this->form()->debiteur()->bankbetaling()->debiteur_end()->form_end();
+				$this->bankbetaling();
 			}
 			if ( ! $this->data['debiteur']['credit'] && $this->data['debiteur']['annuleerbaar'] ) {
-				$this->form()->debiteur()->annulering()->debiteur_end()->form_end();
+				$this->annulering();
 			}
 			if ( $this->data['debiteur']['afboekbaar'] ) {
-				$this->form()->debiteur()->afboeking()->debiteur_end()->form_end();
+				$this->afboeking();
 			}
 			if ( ! ( $this->data['debiteur']['geblokkeerd'] || $this->data['debiteur']['credit'] ) ) {
-				$this->form()->debiteur()->korting()->debiteur_end()->form_end();
+				$this->korting();
 			}
+			$this->debiteur_end()->form_end();
 			return;
 		} elseif ( 'zoek' === $this->data['actie'] ) {
 			$this->zoek()->overzicht();
@@ -84,12 +86,14 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * @return Public_Debiteuren_Display
 	 */
 	private function debiteur() : Public_Debiteuren_Display {
+		$factuur      = new Factuur();
+		$factuur_urls = $factuur->overzicht( $this->data['debiteur']['factuur'] );
 		?>
 		<p><?php echo esc_html( ucfirst( $this->data['debiteur']['betreft'] ) . ', ' . ( ! $this->data['debiteur']['gesloten'] ? 'openstaand voor ' : 'besteld door ' ) . $this->data['debiteur']['naam'] ); ?></p>
 		<table class="kleistad-form">
 			<tr><th>referentie</th><td><?php echo esc_html( $this->data['debiteur']['referentie'] . ' geboekt op ' . date( 'd-m-Y', $this->data['debiteur']['sinds'] ) ); ?></td><th>historie</th></tr>
 			<tr><th>factuur</th><td>
-				<?php foreach ( $this->facturen( $this->data['debiteur']['factuur'] ) as $factuur_url ) : ?>
+				<?php foreach ( $factuur_urls as $factuur_url ) : ?>
 					<a href="<?php echo esc_url( $factuur_url ); ?>" target="_blank"><?php echo esc_html( basename( $factuur_url ) ); ?></a><br/>
 				<?php endforeach ?>
 				</td><td rowspan="3">
@@ -254,7 +258,10 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-3">
 				<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit_debiteuren" disabled >Bevestigen</button>
 			</div>
-			<div class="kleistad-col-4">
+			<div class="kleistad-col-3">
+				<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" value="factuur" >Herzend factuur</button>
+			</div>
+			<div class="kleistad-col-1">
 			</div>
 			<div class="kleistad-col-3">
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>

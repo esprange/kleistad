@@ -81,24 +81,16 @@ class Public_Saldo extends ShortcodeForm {
 	 */
 	protected function save( array $data ) : array {
 		$saldo  = new Saldo( intval( $data['input']['gebruiker_id'] ) );
-		$bedrag = floatval( $data['input']['bedrag'] );
-		$saldo->nieuw( $bedrag );
-
-		if ( 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $saldo->betaling->doe_ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging', $bedrag );
-			if ( ! empty( $ideal_uri ) ) {
-				return [ 'redirect_uri' => $ideal_uri ];
-			}
+		$result = $saldo->actie->nieuw( floatval( $data['input']['bedrag'] ), $data['input']['betaal'] );
+		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}
-		if ( $saldo->verzend_email( '_bank', $saldo->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) ) ) {
-			return [
-				'content' => $this->goto_home(),
-				'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
-			];
+		if ( is_string( $result ) ) {
+			return [ 'redirect_uri' => $result ];
 		}
 		return [
-			'status' => $this->status( new WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' ) ),
+			'content' => $this->goto_home(),
+			'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
 		];
 	}
 }

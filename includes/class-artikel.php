@@ -301,4 +301,22 @@ abstract class Artikel {
 		return $factuur->run( $order, $type );
 	}
 
+	/**
+	 * Maak opnieuw de factuur aan
+	 *
+	 * @param Order $order De order.
+	 *
+	 * @return string
+	 */
+	public function herzenden( Order $order ) : string {
+		$this->betaal_link = $this->maak_link(
+			[
+				'order' => $order->id,
+				'art'   => $this->artikel_type,
+			],
+			'betaling'
+		);
+		return $this->maak_factuur( $order, $order->is_credit() ? 'credit' : '' );
+	}
+
 }

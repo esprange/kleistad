@@ -3,6 +3,8 @@
  * Class Inschrijving Test
  *
  * @package Kleistad
+ *
+ * @covers \Kleistad\Inschrijving, \Kleistad\Inschrijvingen, \Kleistad\Cursist
  */
 
 namespace Kleistad;

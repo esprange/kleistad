@@ -181,6 +181,9 @@ class Public_Debiteuren extends ShortcodeForm {
 		if ( 'blokkade' === $data['form_actie'] ) {
 			return $this->blokkade();
 		}
+		if ( 'factuur' === $data['form_actie'] ) {
+			return $this->herzend_factuur( $data['order'] );
+		}
 		if ( 'bankbetaling' === $data['input']['debiteur_actie'] ) {
 			return $this->bankbetaling( $data['order'], (float) $data['input']['bedrag'] );
 		}
@@ -289,6 +292,36 @@ class Public_Debiteuren extends ShortcodeForm {
 	}
 
 	/**
+	 * Herzend de factuur
+	 *
+	 * @param Order $order De order.
+	 * @return array
+	 */
+	private function herzend_factuur( Order $order ) : array {
+		$emailer         = new Email();
+		$artikelregister = new Artikelregister();
+		$artikel         = $artikelregister->geef_object( $order->referentie );
+		$factuur         = $artikel->herzenden( $order );
+		$emailer->send(
+			[
+				'to'          => $order->klant['email'],
+				'slug'        => 'herzend_factuur',
+				'subject'     => 'Herzending factuur',
+				'attachments' => $factuur,
+				'parameters'  => [
+					'naam'        => $order->klant['naam'],
+					'referentie'  => $order->referentie,
+					'betaal_link' => $artikel->betaal_link,
+				],
+			]
+		);
+		return [
+			'status'  => $this->status( 'Een email met factuur is opnieuw verzonden' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
 	 * Boek een order af (dubieuze debiteur)
 	 *
 	 * @param Order $order De order.
@@ -314,4 +347,5 @@ class Public_Debiteuren extends ShortcodeForm {
 			'content' => $this->goto_home(),
 		];
 	}
+
 }

@@ -189,9 +189,9 @@ class Factuur extends FPDF {
 	 */
 	public function run( Order $order, string $type ) : string {
 		$factuurnr = $order->factuurnummer();
-		$filenaam  = in_array( wp_get_environment_type(), [ 'staging', 'production' ], true ) ?
-			sprintf( '%s/facturen/%s-%s', wp_get_upload_dir()['basedir'], "{$type}factuur", $factuurnr ) :
-			sprintf( '%s/%s-%s', sys_get_temp_dir(), "{$type}factuur", $factuurnr );
+		$filenaam  = 'local' === wp_get_environment_type() ?
+			sprintf( '%s/%s-%s', sys_get_temp_dir(), "{$type}factuur", $factuurnr ) :
+			sprintf( '%s/facturen/%s-%s', wp_get_upload_dir()['basedir'], "{$type}factuur", $factuurnr );
 		$versie    = '';
 		$file      = "$filenaam.pdf";
 		if ( file_exists( $file ) ) {
@@ -213,4 +213,24 @@ class Factuur extends FPDF {
 		return $file;
 	}
 
+	/**
+	 * Geef een overzicht van alle facturen behorende bij een factuur nummer.
+	 *
+	 * @param string $factuurnr Het order factuur nr.
+	 *
+	 * @return array
+	 */
+	public function overzicht( string $factuurnr ) : array {
+		$pattern = 'local' === wp_get_environment_type() ?
+			sprintf( '%s/*factuur-%s.*', sys_get_temp_dir(), $factuurnr ) :
+			sprintf( '%s/facturen/*factuur-%s.*', wp_get_upload_dir()['basedir'], $factuurnr );
+		$files   = glob( $pattern );
+		usort(
+			$files,
+			function( $links, $rechts ) {
+				return filemtime( $rechts ) <=> filemtime( $links ); // Nieuwste factuur bovenaan.
+			}
+		);
+		return 'local' === wp_get_environment_type() ? $files : str_replace( wp_get_upload_dir()['basedir'], wp_get_upload_dir()['baseurl'], $files );
+	}
 }

@@ -103,24 +103,11 @@ class Saldo extends Artikel {
 			$this->data[ $attribuut ] = round( $waarde, 2 );
 			return;
 		}
+		if ( 'storting' === $attribuut ) {
+			$this->data['storting'][] = $waarde;
+			return;
+		}
 		$this->data['storting'][ array_key_last( $this->data['storting'] ) ][ $attribuut ] = $waarde;
-	}
-
-	/**
-	 * Voeg een nieuw saldo toe.
-	 *
-	 * @param float $betaald Het toe te voegen bedrag.
-	 */
-	public function nieuw( float $betaald ) {
-		$datum                    = strftime( '%y%m%d', strtotime( 'today' ) );
-		$volgnr                   = count( $this->data['storting'] );
-		$this->data['storting'][] = [
-			'code'  => "S{$this->klant_id}-$datum-$volgnr",
-			'datum' => date( 'Y-m-d', strtotime( 'today' ) ),
-			'prijs' => $betaald,
-		];
-		$this->artikel_type       = 'saldo';
-		$this->save();
 	}
 
 	/**

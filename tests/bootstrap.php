@@ -19,6 +19,7 @@ if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
 }
 
 const KLEISTAD_TEST = true;
+const KLEISTAD_API  = 'kleistad_test';
 
 tests_add_filter(
 	'plugins_loaded',
