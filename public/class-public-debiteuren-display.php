@@ -338,22 +338,4 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		<?php
 	}
 
-	/**
-	 * Geef de facturen terug behorend bij factuurnr.
-	 *
-	 * @param string $factuurnr Het factuur nummer.
-	 * @return array De url's van de facturen.
-	 */
-	private function facturen( string $factuurnr ) : array {
-		$upload_dir = wp_get_upload_dir();
-		$files      = glob( sprintf( '%s/facturen/*factuur-%s*', $upload_dir['basedir'], $factuurnr ) ) ?: [];
-		usort(
-			$files,
-			function( $links, $rechts ) {
-				return filemtime( $rechts ) <=> filemtime( $links ); // Nieuwste factuur bovenaan.
-			}
-		);
-		return str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $files );
-	}
-
 }
