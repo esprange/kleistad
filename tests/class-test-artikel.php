@@ -214,7 +214,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 		$artikel = $this->maak_artikel( 10 );
 		$artikel->bestel_order( 0, strtotime( '+1 month' ) );
 		$order = new Order( $artikel->geef_referentie() );
-		$this->assertEquals( '', $artikel->wijzig_order( $order, 'Dit is een test' ), 'wijzig_order ongewijzigd incorrect' );
+		$this->assertEquals( '', $artikel->wijzig_order( $order, 'Dit is een test' ), 'wijzig_order ongewijzigd incorrect' ); // phpcs:ignore
 		$artikel->klant_id = $this->factory->user->create();
 		$this->assertEquals( 'correctiefactuur', $artikel->wijzig_order( $order, 'Dit is een test' ), 'wijzig_order gewijzigd incorrect' );
 		$order = new Order( $artikel->geef_referentie() );

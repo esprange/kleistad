@@ -160,9 +160,16 @@ class InschrijvingActie {
 	/**
 	 * Verwerk de aanvraag tot inschrijving
 	 *
-	 * @return string
+	 * @param string $betaalwijze Bank of ideal.
+	 * @return string|bool De url ingeval van ideal of het resultaat.
 	 */
-	public function aanvraag() : string {
+	public function aanvraag( string $betaalwijze ) {
+		if ( $this->inschrijving->geannuleerd ) { // Blijkbaar eerder geannuleerd, eerst resetten.
+			$this->inschrijving->ingedeeld    = false;
+			$this->inschrijving->geannuleerd  = false;
+			$this->inschrijving->ingeschreven = false;
+		}
+		$this->inschrijving->save();
 		if ( $this->inschrijving->cursus->vol ) {
 			$this->inschrijving->verzend_email( '_wachtlijst' );
 			return 'De inschrijving is op de wachtlijst en er is een email verzonden met nadere informatie';
@@ -171,8 +178,11 @@ class InschrijvingActie {
 			$this->inschrijving->verzend_email( '_lopend' );
 			return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie';
 		}
+		if ( 'ideal' === $betaalwijze ) {
+			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag() );
+		}
 		$this->inschrijving->verzend_email( 'inschrijving', $this->inschrijving->bestel_order( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant() ) );
-		return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie';
+		return true;
 	}
 
 	/**
@@ -201,7 +211,7 @@ class InschrijvingActie {
 	}
 
 		/**
-		 * Bepaal of er nog wel ingeschreven kan worden voor de cursus.
+		 * Bepaal of er nog wel ingeschreven kan worden voor de cursus. Deze functie wordt vanuit Artikel betaal proces aangeroepen.
 		 *
 		 * @since 6.6.1
 		 *
@@ -215,6 +225,5 @@ class InschrijvingActie {
 		}
 		return '';
 	}
-
 
 }

@@ -297,35 +297,21 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return array
 	 */
 	private function save_inschrijven( Inschrijving $inschrijving, string $betaalwijze ) : array {
-		if ( $inschrijving->geannuleerd ) { // Blijkbaar eerder geannuleerd, eerst resetten.
-			$inschrijving->ingedeeld    = false;
-			$inschrijving->geannuleerd  = false;
-			$inschrijving->ingeschreven = false;
-		}
-		if ( $inschrijving->ingedeeld ) {
+		if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
-		$inschrijving->save();
-		$verwerking = 'verwerkt';
-		if ( $inschrijving->cursus->vol ) {
-			$verwerking = 'op de wachtlijst geplaatst';
-			$inschrijving->verzend_email( '_wachtlijst' );
-		} elseif ( $inschrijving->cursus->start_datum < strtotime( 'today' ) ) {
-			$inschrijving->verzend_email( '_lopend' );
-		} elseif ( 'stort' === $betaalwijze ) {
-			$inschrijving->verzend_email( 'inschrijving', $inschrijving->bestel_order( 0.0, $inschrijving->cursus->start_datum, $inschrijving->heeft_restant() ) );
-		} elseif ( 'ideal' === $betaalwijze ) {
-			$ideal_uri = $inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->aantal * $inschrijving->cursus->bedrag() );
-			if ( false === $ideal_uri ) {
-				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
-			}
-			return [ 'redirect_uri' => $ideal_uri ];
+		$result = $inschrijving->actie->aanvraag( $betaalwijze );
+		if ( false === $result ) {
+			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
+		}
+		if ( is_string( $result ) ) {
+			return [ 'redirect_uri' => $result ];
 		}
 		return [
 			'content' => $this->goto_home(),
-			'status'  => $this->status( "De inschrijving is $verwerking en er is een email verzonden met nadere informatie" ),
+			'status'  => $this->status( 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie' ),
 		];
 	}
 

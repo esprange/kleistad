@@ -49,6 +49,15 @@ class Orderregels implements Countable, Iterator {
 	}
 
 	/**
+	 * Deep clone
+	 */
+	public function __clone() {
+		foreach ( array_keys( $this->regels ) as $key ) {
+			$this->regels[ $key ] = clone $this->regels[ $key ];
+		}
+	}
+
+	/**
 	 * Voeg een regel toe.
 	 *
 	 * @param array | Orderregel $regeltoetevoegen Toe te voegen regel of regels.
@@ -81,18 +90,14 @@ class Orderregels implements Countable, Iterator {
 	 * @param array | Orderregel $regelvervangen Te vervangen regel of regels.
 	 */
 	public function vervangen( $regelvervangen ) {
-		if ( ! is_array( $regelvervangen ) ) {
-			$regelvervangen = [ $regelvervangen ];
-		}
-		foreach ( $this->regels as $key => $regel ) {
-			if ( Orderregel::KORTING !== $regel->artikel ) {
-				unset( $this->regels[ $key ] );
+		$korting_regels = [];
+		foreach ( $this->regels as $regel ) {
+			if ( Orderregel::KORTING === $regel->artikel ) {
+				$korting_regels[] = $regel;
 			}
 		}
-		foreach ( $regelvervangen as $regel ) {
-			array_unshift( $this->regels, $regel );
-		}
-		$this->regels = array_values( $this->regels );
+		$this->regels = is_array( $regelvervangen ) ? $regelvervangen : [ $regelvervangen ];
+		$this->toevoegen( $korting_regels );
 	}
 
 	/**

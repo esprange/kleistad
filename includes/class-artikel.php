@@ -210,7 +210,7 @@ abstract class Artikel {
 		$order->orderregels->vervangen( $this->geef_factuurregels() );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->geef_referentie();
-		if ( $order == $originele_order ) { // phpcs:ignore
+		if ( $originele_order == $order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}
 		$order->opmerking = $opmerking;

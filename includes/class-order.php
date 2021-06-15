@@ -94,6 +94,13 @@ class Order {
 	}
 
 	/**
+	 * Deep clone
+	 */
+	public function __clone() {
+		$this->orderregels = clone $this->orderregels;
+	}
+
+	/**
 	 * Get attribuut van het object.
 	 *
 	 * @since 6.1.0

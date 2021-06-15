@@ -36,7 +36,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 				$cursist_id,
 			]
 		)->getMock();
-		$inschrijving->method( 'maak_factuur' )->willReturn( 'file' );
+		$inschrijving->method( 'maak_factuur' )->willReturn( __FILE__ );
 
 		return $inschrijving;
 	}
@@ -189,7 +189,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1 = $this->maak_inschrijving();
 		$inschrijving1->save();
 		$factuur = $inschrijving1->bestel_order( 0, strtotime( 'today' ), '', '', true );
-		$this->assertEquals( 'file', $factuur, 'bestel_order incorrect' );
+		$this->assertFileExists( $factuur, 'bestel_order incorrect' );
 		$order = new Order( $inschrijving1->geef_referentie() );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 	}
@@ -205,6 +205,113 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1->annuleer_order( $order, 24.0, '' );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 
+	}
+
+	/**
+	 * Test correctie cursus inschrijving
+	 */
+	public function test_correctie() {
+		$mailer       = tests_retrieve_phpmailer_instance();
+		$inschrijving = $this->maak_inschrijving();
+		$cursist      = new Cursist( $inschrijving->klant_id );
+		$inschrijving->actie->aanvraag( 'bank' );
+
+		$cursus_nieuw               = new Cursus();
+		$cursus_nieuw->naam         = 'Nieuwe cursus';
+		$cursus_nieuw->cursuskosten = 67.00;
+		$cursus_nieuw->save();
+
+		$inschrijving->actie->correctie( $cursus_nieuw->id, 1 );
+
+		$inschrijving = new Inschrijving( $cursus_nieuw->id, $cursist->ID );
+		$order        = new Order( $inschrijving->geef_referentie() );
+		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
+		$this->assertEquals( 25.00 + 67.00, $order->te_betalen(), 'correctie kosten te betalen onjuist' );
+		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
+
+		$inschrijving->actie->correctie( $cursus_nieuw->id, 2 );
+
+		$inschrijving = new Inschrijving( $cursus_nieuw->id, $cursist->ID );
+		$order        = new Order( $inschrijving->geef_referentie() );
+		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
+		$this->assertEquals( 2 * ( 25.00 + 67.00 ), $order->te_betalen(), 'correctie kosten te betalen onjuist' );
+		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
+
+	}
+
+	/**
+	 * Test indelend lopende cursus
+	 */
+	public function test_indelen_lopend() {
+		$mailer       = tests_retrieve_phpmailer_instance();
+		$inschrijving = $this->maak_inschrijving();
+		$cursist      = new Cursist( $inschrijving->klant_id );
+
+		$inschrijving->actie->indelen_lopend( 123.45 );
+		$order = new Order( $inschrijving->geef_referentie() );
+		$this->assertEquals( 123.45, $order->te_betalen(), 'prijs lopende cursus incorrect' );
+		$this->assertEquals( 'Betaling bedrag voor reeds gestarte cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'onderwerp email lopende cursus incorrect' );
+	}
+
+	/**
+	 * Test uitschrijven wachtlijst functie
+	 */
+	public function test_uitschrijven_wachtlijst() {
+		$inschrijving = $this->maak_inschrijving();
+		$inschrijving->actie->uitschrijven_wachtlijst();
+		$this->assertTrue( $inschrijving->geannuleerd, 'status uitschrijven wachtlijst incorrect' );
+	}
+
+	/**
+	 * Test beschikbaar controle
+	 */
+	public function test_beschikbaarcontrole() {
+		$inschrijving = $this->maak_inschrijving();
+		$this->assertEmpty( $inschrijving->actie->beschikbaarcontrole(), 'beschikbaarcontrole open cursus incorrect' );
+
+		$inschrijving->cursus->vol = true;
+		$inschrijving->cursus->save();
+		$this->assertNotEmpty( $inschrijving->actie->beschikbaarcontrole(), 'beschikbaarcontrole open cursus incorrect' );
+	}
+
+	/**
+	 * Test verwerk bank function
+	 */
+	public function test_verwerk_bank() {
+		$mailer       = tests_retrieve_phpmailer_instance();
+		$inschrijving = $this->maak_inschrijving();
+		$cursist      = new Cursist( $inschrijving->klant_id );
+
+		$inschrijving->actie->aanvraag( 'bank' );
+		$this->assertEquals( 'Inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank inschrijving incorrecte email' );
+
+		$order = new Order( $inschrijving->geef_referentie() );
+		$inschrijving->betaling->verwerk( $order, 25, true, 'bank' );
+		$this->assertEquals( 2, $mailer->get_sent_count(), 'verwerk bank aantal email incorrect' );
+		$this->assertEquals( 'Indeling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank indeling incorrecte email' );
+
+		$order = new Order( $inschrijving->geef_referentie() );
+		$inschrijving->betaling->verwerk( $order, $order->te_betalen(), true, 'ideal' );
+		$this->assertEquals( 'Betaling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank restant incorrecte email' );
+
+		$order = new Order( $inschrijving->geef_referentie() );
+		$this->assertEquals( 0.0, $order->te_betalen(), 'verwerk bank saldo incorrect' );
+	}
+
+	/**
+	 * Test verwerk ideal
+	 */
+	public function test_verwerk_ideal() {
+		$mailer       = tests_retrieve_phpmailer_instance();
+		$inschrijving = $this->maak_inschrijving();
+		$cursist      = new Cursist( $inschrijving->klant_id );
+
+		$inschrijving->actie->aanvraag( 'ideal' );
+		$this->assertEquals( 0, $mailer->get_sent_count(), 'verwerk bank aantal email incorrect' );
+
+		$order = new Order( $inschrijving->geef_referentie() );
+		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
+		$this->assertEquals( 'Indeling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank inschrijving incorrecte email' );
 	}
 
 	/**
