@@ -32,7 +32,8 @@ class MollieClient {
 	 */
 	public function __construct() {
 		if ( defined( 'KLEISTAD_MOLLIE_SIM' ) ) {
-			$this->mollie_service = new MollieSimulatie();
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'tests/class-molliesimulatie.php';
+			$this->mollie_service = new \MollieSimulatie();
 			return;
 		}
 		$setup                = setup();

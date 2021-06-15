@@ -6,10 +6,15 @@
  * @since      5.5.1
  *
  * @package    Kleistad
- * @subpackage Kleistad/includes
+ * @subpackage Kleistad/tests
  */
 
-namespace Kleistad;
+/**
+ * Mollie database simulatie.
+ *
+ * @var string $mollie_sim Database naam.
+ */
+$mollie_sim = '';
 
 /**
  * Definitie van de mollie simulatie class.
@@ -43,9 +48,15 @@ class MollieSimulatie {
 	 * De constructor van de simulatie class
 	 */
 	public function __construct() {
-		$db_file = $_SERVER['DOCUMENT_ROOT'] . '/mollie.db';
-		if ( ! file_exists( $db_file ) ) {
-			$this->create_db( $db_file );
+		global $mollie_sim;
+		if ( ! defined( 'KLEISTAD_TEST' ) ) {
+			$mollie_sim = $_SERVER['DOCUMENT_ROOT'] . '/mollie.db';
+			if ( ! file_exists( $mollie_sim ) ) {
+				$this->create_db( $mollie_sim );
+			}
+		} else {
+			$mollie_sim = sys_get_temp_dir() . 'mollie.db';
+			$this->create_db( $mollie_sim );
 		}
 
 		$this->payments = new class() {
@@ -239,9 +250,10 @@ class MollieSimulatie {
 							 * @param string $id Het refund id.
 							 */
 							public function __construct( $id ) {
+								global $mollie_sim;
 								$this->id = $id;
-								$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-								$res      = $db->query( "SELECT data FROM refunds WHERE id = '{$this->id}'" );
+								$db       = new SQLite3( $mollie_sim );
+								$res      = $db->query( "SELECT data FROM refunds WHERE id = '$this->id'" );
 								$row      = $res->fetchArray();
 								if ( false !== $row ) {
 									$data              = json_decode( $row['data'] );
@@ -287,8 +299,9 @@ class MollieSimulatie {
 							 * Cancel the refund.
 							 */
 							public function cancel() {
-								$db = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-								$db->query( "DELETE FROM refunds WHERE id = '{$this->id}'" );
+								global $mollie_sim;
+								$db = new SQLite3( $mollie_sim );
+								$db->query( "DELETE FROM refunds WHERE id = '$this->id'" );
 								$db->close();
 								unset( $db );
 							}
@@ -299,13 +312,14 @@ class MollieSimulatie {
 					 * Geef de refunds terug (in simulatie maar één ).
 					 */
 					public function refunds() {
-						$db      = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-						$res     = $db->query( "SELECT * FROM refunds WHERE payment_id='{$this->id}'" );
+						global $mollie_sim;
+						$db      = new SQLite3( $mollie_sim );
+						$res     = $db->query( "SELECT * FROM refunds WHERE payment_id='$this->id'" );
 						$refunds = [];
 						$row     = $res->fetchArray();
 						if ( false !== $row ) {
 							$refunds[] = json_decode( $row['data'] );
-						};
+						}
 						$db->close();
 						unset( $db );
 						return $refunds;
@@ -317,11 +331,12 @@ class MollieSimulatie {
 					 * @param array $data De data.
 					 */
 					public function refund( $data ) {
+						global $mollie_sim;
 						$data['status'] = 'queued';
 						$id             = uniqid( 're_' );
-						$db             = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-						$db->exec( "INSERT INTO refunds (id, payment_id, data) VALUES ( '$id','{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
-						$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ wp_json_encode( $this ) . "' WHERE id='{$this->id}'" ); //phpcs:ignore
+						$db             = new SQLite3( $mollie_sim );
+						$db->exec( "INSERT INTO refunds (id, payment_id, data) VALUES ( '$id','$this->id','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+						$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ wp_json_encode( $this ) . "' WHERE id='$this->id'" ); //phpcs:ignore
 						$db->close();
 						unset( $db );
 						return $this->getRefund( $id );
@@ -333,9 +348,10 @@ class MollieSimulatie {
 					 * @param string $id Het payment id.
 					 */
 					public function __construct( $id ) {
+						global $mollie_sim;
 						$this->id = $id;
-						$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-						$res      = $db->query( "SELECT data FROM payments WHERE id = '{$this->id}'" );
+						$db       = new SQLite3( $mollie_sim );
+						$res      = $db->query( "SELECT data FROM payments WHERE id = '$this->id'" );
 						$row      = $res->fetchArray();
 						if ( false !== $row ) {
 							$data                  = json_decode( $row['data'] );
@@ -349,13 +365,13 @@ class MollieSimulatie {
 							$this->sequenceType    = $data->sequenceType;
 							$this->webhookUrl      = $data->webhookUrl;
 						}
-						$res = $db->query( "SELECT data FROM refunds WHERE payment_id = '{$this->id}'" );
+						$res = $db->query( "SELECT data FROM refunds WHERE payment_id = '$this->id'" );
 						$row = $res->fetchArray();
 						if ( false !== $row ) {
 							$data                         = json_decode( $row['data'] );
 							$this->amountRemaining->value = $this->amount->value - $data->amount->value;
 							$this->_hasRefunds            = true;
-						};
+						}
 						$db->close();
 						unset( $db );
 					}
@@ -407,9 +423,10 @@ class MollieSimulatie {
 					 * @param string $id Het customer id.
 					 */
 					public function __construct( $id ) {
+						global $mollie_sim;
 						$this->id = $id;
-						$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-						$res      = $db->query( "SELECT data FROM customers WHERE id = '{$this->id}'" );
+						$db       = new SQLite3( $mollie_sim );
+						$res      = $db->query( "SELECT data FROM customers WHERE id = '$this->id'" );
 						$row      = $res->fetchArray();
 						$db->close();
 						unset( $db );
@@ -426,9 +443,10 @@ class MollieSimulatie {
 					 * Geef de mandates terug.
 					 */
 					public function mandates() {
+						global $mollie_sim;
 						$mandates = [];
-						$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-						$res      = $db->query( "SELECT * FROM mandates WHERE customer_id='{$this->id}'" );
+						$db       = new SQLite3( $mollie_sim );
+						$res      = $db->query( "SELECT * FROM mandates WHERE customer_id='$this->id'" );
 						while ( $row = $res->fetchArray() ) { //phpcs:ignore
 							$data       = json_decode( $row['data'] );
 							$mandates[] = new class( $row['id'], $data ) {
@@ -498,8 +516,9 @@ class MollieSimulatie {
 					 * Heeft een valide mandaat
 					 */
 					public function hasValidMandate() {
-						$db    = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-						$res   = $db->query( "SELECT * FROM mandates WHERE customer_id='{$this->id}'" );
+						global $mollie_sim;
+						$db    = new SQLite3( $mollie_sim );
+						$res   = $db->query( "SELECT * FROM mandates WHERE customer_id='$this->id'" );
 						$valid = false;
 						while ( $row = $res->fetchArray() ) { //phpcs:ignore
 							$mandaat = json_decode( $row['data'] );
@@ -516,7 +535,8 @@ class MollieSimulatie {
 					 * @param string $id Het mandaat id.
 					 */
 					public function revokeMandate( $id ) {
-						$db  = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+						global $mollie_sim;
+						$db  = new SQLite3( $mollie_sim );
 						$res = $db->query( "SELECT * FROM mandates WHERE id='$id'" );
 						$row = $res->fetchArray();
 						if ( false !== $row ) {
@@ -550,8 +570,9 @@ class MollieSimulatie {
 							 * @param string $customer_name De klant naam.
 							 */
 							public function __construct( $data, $customer_id, $customer_name ) {
+								global $mollie_sim;
 								$this->id          = uniqid( 'tr_' );
-								$db                = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+								$db                = new SQLite3( $mollie_sim );
 								$data['status']    = 'pending';
 								$data['mandateId'] = '';
 								if ( 'first' === $data['sequenceType'] ) {
@@ -569,7 +590,7 @@ class MollieSimulatie {
 									$db->exec( "INSERT INTO mandates (id, customer_id, data) VALUES ( '$mandaat_id','$customer_id','" . /** @scrutinizer ignore-type */ wp_json_encode( $mandaat ) . "')" ); //phpcs:ignore
 									$data['mandateId'] = $mandaat_id;
 								}
-								$db->exec( "INSERT INTO payments (id, customer_id, data) VALUES ( '{$this->id}','$customer_id','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+								$db->exec( "INSERT INTO payments (id, customer_id, data) VALUES ( '$this->id','$customer_id','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 								$db->close();
 								unset( $db );
 							}
@@ -578,7 +599,10 @@ class MollieSimulatie {
 							 * Geef de url terug.
 							 */
 							public function getCheckOutUrl() {
-								return add_query_arg( 'id', $this->id, plugin_dir_url( __DIR__ ) . 'molliesimulator.php' );
+								if ( ! defined( 'KLEISTAD_TEST' ) ) {
+									return add_query_arg( 'id', $this->id, plugin_dir_url( __DIR__ ) . '/tests/molliesimulator.php' );
+								}
+								return add_query_arg( 'id', $this->id, 'https://www.example.com/test.php' );
 							}
 
 						};
@@ -592,9 +616,10 @@ class MollieSimulatie {
 			 * @param array $data De klant data.
 			 */
 			public function create( $data ) {
-				$this->id = \uniqid( 'cst_' );
-				$db       = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
-				$db->exec( "INSERT INTO customers (id, data) VALUES ( '{$this->id}','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
+				global $mollie_sim;
+				$this->id = uniqid( 'cst_' );
+				$db       = new SQLite3( $mollie_sim );
+				$db->exec( "INSERT INTO customers (id, data) VALUES ( '$this->id','" . /** @scrutinizer ignore-type */ wp_json_encode( $data ) . "')" ); //phpcs:ignore
 				$db->close();
 				unset( $db );
 				return $this->get( $this->id );
@@ -644,7 +669,7 @@ class MollieSimulatie {
 	 * @param string $db_file Het sqlite bestand.
 	 */
 	private function create_db( $db_file ) {
-		$db  = new \SQLite3( $db_file );
+		$db  = new SQLite3( $db_file );
 		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='customers'" );
 		if ( ! $res->fetchArray() ) {
 			$db->exec( 'CREATE TABLE customers(  intern_id INTEGER primary key, id text, data text )' );
