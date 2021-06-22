@@ -238,12 +238,18 @@ class Public_Debiteuren extends ShortcodeForm {
 		if ( $order->betaald - $restant > 0 ) {
 			$melding = $order->transactie_id ? 'Er wordt een stornering gedaan' : 'Het teveel betaalde moet per bank teruggestort worden';
 		}
+		$credit_factuur = $artikel->annuleer_order( $order, $restant, $opmerking );
+		if ( false === $credit_factuur ) {
+			return [
+				'status' => $this->status( new WP_Error( 'fout', 'Er bestaat al een creditering dus mogelijk een interne fout' ) ),
+			];
+		}
 		$emailer->send(
 			[
 				'to'          => $order->klant['email'],
 				'slug'        => 'order_annulering',
 				'subject'     => 'Order geannuleerd',
-				'attachments' => $artikel->annuleer_order( $order, $restant, $opmerking ),
+				'attachments' => $credit_factuur,
 				'parameters'  => [
 					'naam'        => $order->klant['naam'],
 					'artikel'     => $artikel->geef_artikelnaam(),
