@@ -54,24 +54,14 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	 * Render het formulier
 	 *
 	 * @return void
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function html() {
-		$this->abonnement_info();
-		if ( $this->extra_beschikbaar ) {
-			$this->abonnement_extra_info();
+		$this->abonnement_info()->abonnement_extra_info();
+		if ( $this->in_startperiode ) {
+			$this->form()->werkdag()->eindigen()->form_end();
+			return;
 		}
-		$this->form();
-		if ( ! $this->in_startperiode ) {
-			$this->abonnement_soort()->abonnement_extra();
-			if ( 'beperkt' === $this->data['abonnement']->soort ) {
-				$this->werkdag()->pauze()->eindigen()->betaalwijze()->form_end();
-			}
-		} else {
-			if ( 'beperkt' === $this->data['abonnement']->soort ) {
-				$this->werkdag()->eindigen()->form_end();
-			}
-		}
+		$this->form()->abonnement_soort()->abonnement_extra()->werkdag()->pauze()->eindigen()->betaalwijze()->form_end();
 	}
 
 	/**
@@ -122,6 +112,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	 * @return Public_Abonnee_Wijziging_Display
 	 */
 	private function abonnement_extra_info() : Public_Abonnee_Wijziging_Display {
+		if ( $this->extra_beschikbaar ) {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
@@ -132,6 +123,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
+		}
 		return $this;
 	}
 
@@ -244,11 +236,12 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Render de wijziging werkdag optie
+	 * Render de wijziging werkdag optie, alleen als het een beperkt abonnement betreft.
 	 *
 	 * @return Public_Abonnee_Wijziging_Display
 	 */
 	private function werkdag() : Public_Abonnee_Wijziging_Display {
+		if ( 'beperkt' === $this->data['abonnement']->soort ) {
 		?>
 		<div class="kleistad-row"> <!-- dag -->
 			<div class="kleistad-col-6">
@@ -284,6 +277,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
+		}
 		return $this;
 	}
 
@@ -322,7 +316,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-3" >
 					&nbsp;
 				</div>
-				<div class="kleistad-col-4 kleistad-label" >
+]				<div class="kleistad-col-4 kleistad-label" >
 					<label for="kleistad_herstart_datum">Tot</label>
 				</div>
 				<div class="kleistad-col-3">
