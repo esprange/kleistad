@@ -17,6 +17,20 @@ use WP_Post;
  * Kleistad WorkshopAanvraag class.
  *
  * @since 5.6.0
+ *
+ * @property int ID
+ * @property string post_content
+ * @property string post_status
+ * @property string post_title
+ * @property string post_name
+ * @property string post_modified
+ * @property string email
+ * @property string contact
+ * @property string omvang
+ * @property string periode
+ * @property string telnr
+ * @property string naam
+ * @property int    workshop_id
  */
 class WorkshopAanvraag {
 
@@ -116,7 +130,8 @@ class WorkshopAanvraag {
 			wp_update_post( $this->aanvraag );
 			return $this->ID;
 		}
-		$this->ID = wp_insert_post( (array) $this->aanvraag );
+		$result   = wp_insert_post( (array) $this->aanvraag );
+		$this->ID = is_int( $result ) ? $result : 0;
 		return $this->ID;
 	}
 

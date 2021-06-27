@@ -101,14 +101,10 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 */
 	protected function save( array $data ) : array {
 		$workshopaanvraag = new WorkshopAanvraag();
-		if ( $workshopaanvraag->start( $data['input'] ) ) {
-			return [
-				'content' => $this->goto_home(),
-				'status'  => $this->status( 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen' ),
-			];
-		}
+		$workshopaanvraag->start( $data['input'] );
 		return [
-			'status' => $this->status( new WP_Error( 'aanvraag', 'Sorry, er is iets fout gegaan, probeer het later nog een keer' ) ),
+			'content' => $this->goto_home(),
+			'status'  => $this->status( 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen' ),
 		];
 	}
 
