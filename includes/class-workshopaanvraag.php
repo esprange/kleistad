@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use WP_Post;
+
 /**
  * Kleistad WorkshopAanvraag class.
  *
@@ -21,20 +23,190 @@ class WorkshopAanvraag {
 	/**
 	 * We maken gebruik van een custom post object
 	 */
-	const POST_TYPE = 'kleistad_workshopreq';
+	const POST_TYPE  = 'kleistad_workshopreq';
+	const GEPLAND    = 'gepland';
+	const GEREAGEERD = 'gereageerd';
+	const NIEUW      = 'nieuw';
+	const VRAAG      = 'vraag';
 
 	/**
-	 * Het email object
+	 * De communicatie met de klant
 	 *
-	 * @var Email $emailer Het emailer object.
+	 * @var array $communicatie Bevat de gevoerde communicatie
 	 */
-	private Email $emailer;
+	public array $communicatie = [];
+
+	/**
+	 * Het custom post aanvraag object
+	 *
+	 * @var array $aanvraag De aanvraag.
+	 */
+	private array $aanvraag;
 
 	/**
 	 * Constructor
+	 *
+	 * @param mixed $key Eventuele om het object op te halen.
 	 */
-	public function __construct() {
-		$this->emailer = new Email();
+	public function __construct( $key = null ) {
+		$this->aanvraag = [
+			'ID'          => 0,
+			'post_type'   => self::POST_TYPE,
+			'post_status' => self::NIEUW,
+		];
+		if ( ! is_null( $key ) ) {
+			if ( is_object( $key ) ) {
+				$this->aanvraag = (array) $key;
+			} elseif ( 0 < intval( $key ) ) {
+				$this->aanvraag = (array) get_post( $key );
+			} elseif ( is_string( $key ) ) {
+				$result = $this->find_by_email( $key );
+				if ( is_object( $result ) ) {
+					$this->aanvraag = (array) $result;
+				}
+			}
+		}
+		if ( ! empty( $this->aanvraag['post_content'] ) ) {
+			$this->communicatie = unserialize( base64_decode( $this->post_content ) ); // phpcs:ignore
+		}
+	}
+
+	/**
+	 * Magic get function
+	 *
+	 * @param string $attribuut Het attribuut.
+	 *
+	 * @return mixed
+	 */
+	public function __get( string $attribuut ) {
+		if ( property_exists( 'WP_Post', $attribuut ) ) {
+			return $this->aanvraag[ $attribuut ];
+		}
+		$details = maybe_unserialize( $this->aanvraag['post_excerpt'] );
+		if ( isset( $details[ $attribuut ] ) ) {
+			return $details[ $attribuut ];
+		}
+		return null;
+	}
+
+	/**
+	 * Setter magic function
+	 *
+	 * @param string $attribuut Het attribuut.
+	 * @param mixed  $value     De waarde.
+	 */
+	public function __set( string $attribuut, $value ) {
+		if ( property_exists( 'WP_Post', $attribuut ) ) {
+			$this->aanvraag[ $attribuut ] = $value;
+			return;
+		}
+		$details                        = maybe_unserialize( $this->aanvraag['post_excerpt'] ?? '' ) ?: [];
+		$details[ $attribuut ]          = $value;
+		$this->aanvraag['post_excerpt'] = maybe_serialize( $details );
+	}
+
+	/**
+	 * Bewaar de aanvraag
+	 *
+	 * @return int Het workshop id.
+	 */
+	public function save() : int {
+		$this->post_content = base64_encode( serialize( $this->communicatie ) ); // phpcs:ignore
+		if ( $this->ID ) {
+			wp_update_post( $this->aanvraag );
+			return $this->ID;
+		}
+		$this->ID = wp_insert_post( (array) $this->aanvraag );
+		return $this->ID;
+	}
+
+	/**
+	 * Start een nieuwe casus en email de aanvrager
+	 *
+	 * @param array $casus_data De gegevens behorende bij de casus.
+	 */
+	public function start( array $casus_data ) {
+		$emailer           = new Email();
+		$this->post_title  = $casus_data['contact'] . ' met vraag over ' . $casus_data['naam'];
+		$this->post_name   = $casus_data['email'];
+		$this->email       = $casus_data['email'];
+		$this->contact     = $casus_data['contact'];
+		$this->omvang      = $casus_data['omvang'];
+		$this->periode     = $casus_data['periode'];
+		$this->telnr       = $casus_data['telnr'];
+		$this->naam        = $casus_data['naam'];
+		$this->workshop_id = 0;
+		$this->communicatie(
+			[
+				'tekst'   => $casus_data['vraag'],
+				'type'    => 'aanvraag',
+				'from'    => $casus_data['contact'],
+				'subject' => '',
+			]
+		);
+		$this->ID = $this->save();
+		$emailer->send(
+			[
+				'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
+				'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $this->ID ),
+				'from'       => $this->mbx() . $emailer->verzend_domein,
+				'reply-to'   => $this->mbx() . $emailer->domein,
+				'slug'       => 'workshop_aanvraag_bevestiging',
+				'parameters' => $casus_data,
+				'sign_email' => false,
+				'auto'       => 'reply',
+			]
+		);
+	}
+
+	/**
+	 * Verander de status van de casus naar gepland.
+	 *
+	 * @param int $workshop_id De id van de workshop.
+	 */
+	public function gepland( int $workshop_id ) {
+		if ( $this->ID ) {
+			$this->workshop_id = $workshop_id;
+			$this->post_status = $workshop_id ? self::GEPLAND : self::GEREAGEERD;
+			$this->save();
+		}
+	}
+
+	/**
+	 * Voeg een reactie toe en email de aanvrager.
+	 *
+	 * @param string $reactie     De reactie op de vraag.
+	 */
+	public function reactie( string $reactie ) {
+		$emailer           = new Email();
+		$subject           = sprintf( "[WA#%08d] Reactie op $this->naam vraag", $this->ID );
+		$this->post_status = self::GEREAGEERD;
+		$this->communicatie(
+			[
+				'type'    => 'reactie',
+				'from'    => wp_get_current_user()->display_name,
+				'tekst'   => $reactie,
+				'subject' => $subject,
+			]
+		);
+		$this->save();
+		$emailer->send(
+			[
+				'to'         => "$this->contact  <$this->email>",
+				'from'       => $this->mbx() . $emailer->verzend_domein,
+				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
+				'reply-to'   => $this->mbx() . $emailer->domein,
+				'subject'    => $subject,
+				'slug'       => 'workshop_aanvraag_reactie',
+				'auto'       => false,
+				'parameters' => [
+					'reactie' => nl2br( $reactie ),
+					'contact' => $this->contact,
+					'naam'    => $this->naam,
+				],
+				'sign_email' => false,
+			]
+		);
 	}
 
 	/**
@@ -73,7 +245,7 @@ class WorkshopAanvraag {
 			]
 		);
 		register_post_status(
-			'nieuw',
+			self::NIEUW,
 			[
 				'label'     => 'nieuwe aanvraag',
 				'post_type' => self::POST_TYPE,
@@ -81,7 +253,7 @@ class WorkshopAanvraag {
 			]
 		);
 		register_post_status(
-			'gereageerd',
+			self::GEREAGEERD,
 			[
 				'label'     => 'gereageerd naar aanvrager',
 				'post_type' => self::POST_TYPE,
@@ -89,7 +261,7 @@ class WorkshopAanvraag {
 			]
 		);
 		register_post_status(
-			'vraag',
+			self::VRAAG,
 			[
 				'label'     => 'aanvrager heeft nieuwe vraag gesteld',
 				'post_type' => self::POST_TYPE,
@@ -97,7 +269,7 @@ class WorkshopAanvraag {
 			]
 		);
 		register_post_status(
-			'gepland',
+			self::GEPLAND,
 			[
 				'label'     => 'de workshop is ingepland',
 				'post_type' => self::POST_TYPE,
@@ -112,216 +284,89 @@ class WorkshopAanvraag {
 	 * @param array $email De ontvangen email.
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function verwerk( array $email ) {
-		$casus = null;
+	public static function verwerk( array $email ) {
+		$emailer = new Email();
 		/**
-		* Zoek eerst op basis van het case nummer in subject.
-		*/
-		if ( 2 === sscanf( $email['subject'], '%*[^[WA#][WA#%u]', $casus_id ) ) {
-			$casus = get_post( $casus_id );
+		 * Zoek eerst op basis van het case nummer in subject.
+		 */
+		if ( 2 === sscanf( $email['subject'], '%*[^[WA#][WA#%u]', $aanvraag_id ) ) {
+			$result = get_post( $aanvraag_id );
 		} else {
 			/**
-			* Als niet gevonden probeer dan te zoeken op het email adres van de afzender.
-			*/
-			$casussen = get_posts(
-				[
-					'post_type'   => self::POST_TYPE,
-					'post_name'   => $email['from'],
-					'numberposts' => '1',
-					'orderby'     => 'date',
-					'order'       => 'DESC',
-				]
-			);
-			if ( count( $casussen ) ) {
-				$casus    = $casussen[0];
-				$casus_id = $casus->ID;
-			}
+			 * Als niet gevonden probeer dan te zoeken op het email adres van de afzender.
+			 */
+			$result = self::find_by_email( $email['from'] );
 		}
-		if ( is_object( $casus ) && self::POST_TYPE === $casus->post_type ) {
-			$this->emailer->send(
+		if ( is_object( $result ) && self::POST_TYPE === $result->post_type ) {
+			$aanvraag = new self( $result );
+			$emailer->send(
 				[
-					'to'      => "Workshop mailbox <{$this->emailer->info}{$this->emailer->domein}>",
+					'to'      => "Workshop mailbox <{$emailer->info}{$emailer->domein}>",
 					'subject' => 'aanvraag workshop/kinderfeest',
 					'content' => "<p>Er is een reactie ontvangen van {$email['from-name']}</p>",
 					'sign'    => 'Workshop mailbox',
 				]
 			);
-			wp_update_post(
+			$aanvraag->post_status = self::VRAAG;
+			$aanvraag->communicatie(
 				[
-					'ID'           => $casus_id,
-					'post_status'  => 'vraag',
-					'post_content' => $this->communicatie(
-						$casus->post_content,
-						[
-							'type'    => 'vraag',
-							'from'    => $email['from-name'],
-							'subject' => $email['subject'],
-							'tekst'   => $email['content'],
-						]
-					),
+					'type'    => 'vraag',
+					'from'    => $email['from-name'],
+					'subject' => $email['subject'],
+					'tekst'   => $email['content'],
 				]
 			);
+			$aanvraag->save();
 			return;
 		}
-		$email['to'] = "Kleistad <{$this->emailer->info}{$this->emailer->domein}>";
-		$this->emailer->send( $email );
-	}
-
-	/**
-	 * Voeg de communicatie toe aan de ticket.
-	 *
-	 * @param string $content    Huidige content van de ticket.
-	 * @param array  $parameters De parameters van de communicatie.
-	 * @return string
-	 */
-	private function communicatie( string $content, array $parameters ) : string {
-		$correspondentie = empty( $content ) ? [] : unserialize( base64_decode( $content ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-		array_unshift(
-			$correspondentie,
-			array_merge(
-				str_replace(
-					[ '{', '}' ],
-					[ '&#123', '&#125' ],
-					$parameters
-				),
-				[ 'tijd' => current_time( 'd-m-Y H:i' ) ]
-			)
-		);
-		return base64_encode( serialize( $correspondentie ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-	}
-
-	/**
-	 * Start een nieuwe casus en email de aanvrager
-	 *
-	 * @param array $casus_data De gegevens behorende bij de casus.
-	 * @return bool
-	 */
-	public function start( array $casus_data ) : bool {
-		$result = wp_insert_post(
-			[
-				'post_type'      => self::POST_TYPE,
-				'post_title'     => $casus_data['contact'] . ' met vraag over ' . $casus_data['naam'],
-				'post_name'      => $casus_data['email'],
-				'post_excerpt'   => maybe_serialize(
-					[
-						'email'       => $casus_data['email'],
-						'naam'        => $casus_data['naam'],
-						'contact'     => $casus_data['contact'],
-						'omvang'      => $casus_data['omvang'],
-						'periode'     => $casus_data['periode'],
-						'telnr'       => $casus_data['telnr'],
-						'workshop_id' => 0,
-					]
-				),
-				'post_status'    => 'nieuw',
-				'comment_status' => 'closed',
-				'post_content'   => $this->communicatie(
-					'',
-					[
-						'tekst'   => $casus_data['vraag'],
-						'type'    => 'aanvraag',
-						'from'    => $casus_data['naam'],
-						'subject' => '',
-					]
-				),
-			]
-		);
-		if ( is_int( $result ) ) {
-			$this->emailer->send(
-				[
-					'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
-					'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $result ),
-					'from'       => $this->mbx( true ),
-					'reply-to'   => $this->mbx(),
-					'slug'       => 'workshop_aanvraag_bevestiging',
-					'parameters' => $casus_data,
-					'sign_email' => false,
-					'auto'       => 'reply',
-				]
-			);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Verander de status van de casus naar gepland.
-	 *
-	 * @param int $casus_id    De id van de casus.
-	 * @param int $workshop_id De id van de workshop.
-	 */
-	public function gepland( int $casus_id, int $workshop_id ) {
-		if ( $casus_id ) {
-			$casus                        = get_post( $casus_id );
-			$casus_details                = maybe_unserialize( $casus->post_excerpt );
-			$casus_details['workshop_id'] = $workshop_id;
-			wp_update_post(
-				[
-					'ID'           => $casus_id,
-					'post_status'  => $workshop_id ? 'gepland' : 'gereageerd',
-					'post_excerpt' => maybe_serialize( $casus_details ),
-				]
-			);
-		}
-	}
-
-	/**
-	 * Voeg een reactie toe en email de aanvrager.
-	 *
-	 * @param int    $aanvraag_id Id van de aanvraag.
-	 * @param string $reactie     De reactie op de vraag.
-	 */
-	public function reactie( int $aanvraag_id, string $reactie ) {
-		$casus         = get_post( $aanvraag_id );
-		$casus_details = maybe_unserialize( $casus->post_excerpt );
-		$subject       = sprintf( "[WA#%08d] Reactie op {$casus_details['naam']} vraag", $aanvraag_id );
-		wp_update_post(
-			[
-				'ID'           => $aanvraag_id,
-				'post_status'  => 'gereageerd',
-				'post_content' => $this->communicatie(
-					$casus->post_content,
-					[
-						'type'    => 'reactie',
-						'from'    => wp_get_current_user()->display_name,
-						'tekst'   => $reactie,
-						'subject' => $subject,
-					]
-				),
-			]
-		);
-		$this->emailer->send(
-			[
-				'to'         => "{$casus_details['contact']}  <{$casus_details['email']}>",
-				'from'       => $this->mbx( true ),
-				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
-				'reply-to'   => $this->mbx(),
-				'subject'    => $subject,
-				'slug'       => 'workshop_aanvraag_reactie',
-				'auto'       => false,
-				'parameters' => [
-					'reactie' => nl2br( $reactie ),
-					'contact' => $casus_details['contact'],
-					'naam'    => $casus_details['naam'],
-				],
-				'sign_email' => false,
-			]
-		);
-
+		$email['to'] = "Kleistad <{$emailer->info}{$emailer->domein}>";
+		$emailer->send( $email );
 	}
 
 	/**
 	 * Geef het begin van de email aan.
 	 *
-	 * @param  bool $verzenden Of het de verzend mailbox is.
 	 * @return string
-	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
-	public function mbx( bool $verzenden = false ) : string {
-		$prefix = ( 'production' === wp_get_environment_type() ) ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
-		if ( $verzenden ) {
-			return $prefix . $this->emailer->verzend_domein;
-		}
-		return $prefix . $this->emailer->domein;
+	private function mbx() : string {
+		return 'production' === wp_get_environment_type() ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+	}
+
+	/**
+	 * Voeg de communicatie toe aan de ticket.
+	 *
+	 * @param array $parameters De parameters van de communicatie.
+	 */
+	private function communicatie( array $parameters ) {
+		$parameters['tijd'] ??= current_time( 'd-m-Y H:i' );
+		array_unshift(
+			$this->communicatie,
+			str_replace(
+				[ '{', '}' ],
+				[ '&#123', '&#125' ],
+				$parameters
+			)
+		);
+	}
+
+	/**
+	 * Zoek de aanvraag obv het email adres.
+	 *
+	 * @param string $email Email adres waar naar gezocht moet worden.
+	 *
+	 * @return false|WP_Post
+	 */
+	private static function find_by_email( string $email ) {
+		$posts = get_posts(
+			[
+				'post_type'   => self::POST_TYPE,
+				'post_name'   => $email,
+				'post_status' => 'any',
+				'numberposts' => '1',
+				'orderby'     => 'date',
+				'order'       => 'DESC',
+			]
+		);
+		return count( $posts ) ? $posts[0] : false;
 	}
 }

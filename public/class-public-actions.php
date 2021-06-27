@@ -148,9 +148,8 @@ class Public_Actions {
 	 * @internal Action for rcv_email.
 	 */
 	public function rcv_email() {
-		$receiver         = new EmailReceiver();
-		$workshopaanvraag = new WorkshopAanvraag();
-		$receiver->ontvang( $workshopaanvraag->mbx(), [ $workshopaanvraag, 'verwerk' ] );
+		$receiver = new EmailReceiver();
+		$receiver->ontvang( [ '\\' . __NAMESPACE__ . '\\WorkshopAanvraag', 'verwerk' ] );
 	}
 
 	/**

@@ -113,7 +113,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	 */
 	private function abonnement_extra_info() : Public_Abonnee_Wijziging_Display {
 		if ( $this->extra_beschikbaar ) {
-		?>
+			?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
 				<label class="kleistad-label">Extra's</label>
@@ -122,7 +122,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<?php echo 0 < count( $this->data['abonnement']->extras ) ? implode( '<br/>', $this->data['abonnement']->extras ) : 'geen'; // phpcs:ignore ?>
 			</div>
 		</div>
-		<?php
+			<?php
 		}
 		return $this;
 	}
@@ -242,7 +242,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	 */
 	private function werkdag() : Public_Abonnee_Wijziging_Display {
 		if ( 'beperkt' === $this->data['abonnement']->soort ) {
-		?>
+			?>
 		<div class="kleistad-row"> <!-- dag -->
 			<div class="kleistad-col-6">
 				<input type="radio" name="wijziging" id="kleistad_abo_dag" class="kleistad_abo_optie kleistad-input_cbr" value="dag" >
@@ -276,7 +276,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 			</div>
 		</div>
-		<?php
+			<?php
 		}
 		return $this;
 	}

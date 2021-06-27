@@ -49,22 +49,14 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array De aanvragen data.
 	 */
 	private function aanvragen() : array {
-		$casussen = get_posts(
-			[
-				'post_type'      => WorkshopAanvraag::POST_TYPE,
-				'posts_per_page' => -1,
-				'post_status'    => [ 'nieuw', 'gereageerd', 'vraag', 'gepland' ],
-			]
-		);
-		$lijst    = [];
-		foreach ( $casussen as $casus ) {
-			$casus_details = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-			$lijst[]       = [
-				'titel'    => $casus->post_title,
-				'status'   => $casus_details['workshop_id'] ? $casus->post_status . ' (W' . $casus_details['workshop_id'] . ')' : $casus->post_status,
-				'id'       => $casus->ID,
-				'datum_ux' => strtotime( $casus->post_modified ),
-				'datum'    => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
+		$workshop_aanvragen = new WorkshopAanvragen();
+		$lijst              = [];
+		foreach ( $workshop_aanvragen as $workshop_aanvraag ) {
+			$lijst[] = [
+				'titel'  => $workshop_aanvraag->post_title,
+				'status' => $workshop_aanvraag->workshop_id ? "$workshop_aanvraag->post_status (W$workshop_aanvraag->workshop_id)" : $workshop_aanvraag->post_status,
+				'id'     => $workshop_aanvraag->ID,
+				'datum'  => strtotime( $workshop_aanvraag->post_modified ),
 			];
 		}
 		return $lijst;
@@ -159,14 +151,20 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			/**
 			 * Een workshop aanvraag gaat gepland worden.
 			 */
-			$casus            = get_post( $data['id'] );
-			$casus_details    = unserialize( $casus->post_excerpt ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+			$aanvraag         = new WorkshopAanvraag( $data['id'] );
 			$data['docenten'] = $this->docenten();
-			if ( $casus_details['workshop_id'] ) {
-				$data['workshop'] = $this->formulier( $casus_details['workshop_id'] );
+			if ( $aanvraag->workshop_id ) {
+				$data['workshop'] = $this->formulier( $aanvraag->workshop_id );
 				return true;
 			}
-			$data['workshop']                = wp_parse_args( $casus_details, $this->formulier() );
+			$data['workshop']                = wp_parse_args(
+				[
+					'email'   => $aanvraag->email,
+					'contact' => $aanvraag->contact,
+					'telnr'   => $aanvraag->telnr,
+				],
+				$this->formulier()
+			);
 			$data['workshop']['aanvraag_id'] = $data['id'];
 			return true;
 		}
@@ -174,15 +172,18 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			/**
 			 * Een workshop aanvraag moet getoond worden.
 			 */
-			$casus         = get_post( $data['id'] );
-			$data['casus'] = array_merge(
-				unserialize( $casus->post_excerpt ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-				[
-					'casus_id'        => $data['id'],
-					'correspondentie' => unserialize( base64_decode( $casus->post_content ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
-					'datum'           => date( 'd-m-Y H:i', strtotime( $casus->post_modified ) ),
-				]
-			);
+			$aanvraag      = new WorkshopAanvraag( $data['id'] );
+			$data['casus'] = [
+				'correspondentie' => $aanvraag->communicatie,
+				'casus_id'        => $aanvraag->ID,
+				'datum'           => date( 'd-m-Y H:i', strtotime( $aanvraag->post_modified ) ),
+				'naam'            => $aanvraag->naam,
+				'contact'         => $aanvraag->contact,
+				'telnr'           => $aanvraag->telnr,
+				'email'           => $aanvraag->email,
+				'omvang'          => $aanvraag->omvang,
+				'periode'         => $aanvraag->periode,
+			];
 			return true;
 		}
 		/**
@@ -337,8 +338,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	protected function save( array $data ) : array {
 		if ( 'reageren' === $data['form_actie'] ) {
-			$workshopaanvraag = new WorkshopAanvraag();
-			$workshopaanvraag->reactie( $data['casus']['casus_id'], $data['casus']['reactie'] );
+			$workshopaanvraag = new WorkshopAanvraag( $data['casus']['casus_id'] );
+			$workshopaanvraag->reactie( $data['casus']['reactie'] );
 			return [
 				'status'  => $this->status( 'Er is een email verzonden naar de aanvrager' ),
 				'content' => $this->display(),

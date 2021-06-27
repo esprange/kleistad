@@ -149,7 +149,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2">excl. BTW</div>
 		</div>
 		<div class="kleistad-row">
-			<div class="kleistad-col-3"> 
+			<div class="kleistad-col-3">
 				<input type="hidden" name="definitief" value="<?php echo (int) $this->data['workshop']['definitief']; ?>" >
 				<?php if ( $this->data['workshop']['vervallen'] ) : ?>
 					<span style="color:red" >Afspraak is vervallen</span>
@@ -202,7 +202,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				foreach ( $this->data['aanvragen'] as $aanvraag ) :
 					?>
 				<tr>
-					<td data-sort="<?php echo esc_attr( $aanvraag['datum_ux'] ); ?>"><?php echo esc_html( $aanvraag['datum'] ); ?></td>
+					<td data-sort="<?php echo esc_attr( $aanvraag['datum'] ); ?>"><?php echo esc_html( strftime( '%d-%m-%Y %H:%M', $aanvraag['datum'] ) ); ?></td>
 					<td><?php echo esc_html( $aanvraag['titel'] ); ?></td>
 					<td><?php echo esc_html( $aanvraag['status'] ); ?></td>
 					<td>

@@ -2,8 +2,19 @@
 /**
  * PHPUnit bootstrap file
  *
- * @package Kleistad
+ * Bootstrap voor uitvoering van unit testen van de kleistad plugin.
+ *
+ * @link       https://www.kleistad.nl
+ * @since      6.16.6
+ *
+ * @package    Kleistad
+ * @file bootstrap.php
  */
+
+/**
+ * Een aantal opstart acties.
+ */
+const KLEISTAD_TEST = true;
 
 // disable xdebug backtrace.
 if ( function_exists( 'xdebug_disable' ) ) {
@@ -18,8 +29,15 @@ if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
 	require getenv( 'WP_DEVELOP_DIR' ) . 'tests/phpunit/includes/bootstrap.php';
 }
 
-const KLEISTAD_TEST = true;
-const KLEISTAD_API  = 'kleistad_test';
+/**
+ * Voor Mollie simulatie, starten met schone database.
+ */
+$mollie_sim = sys_get_temp_dir() . '/mollie.db';
+if ( file_exists( $mollie_sim ) ) {
+	unlink( $mollie_sim );
+}
+
+require dirname( dirname( __FILE__ ) ) . '/kleistad.php';
 
 tests_add_filter(
 	'plugins_loaded',

@@ -36,12 +36,12 @@ class WorkshopActie {
 		$this->workshop = $workshop;
 	}
 
-		/**
-		 * Zeg de gemaakte afspraak voor de workshop af.
-		 *
-		 * @since 5.0.0
-		 */
-	public function afzeggen() : bool {
+	/**
+	 * Zeg de gemaakte afspraak voor de workshop af.
+	 *
+	 * @since 5.0.0
+	 */
+	public function afzeggen() {
 		if ( ! $this->workshop->vervallen ) {
 			$this->workshop->vervallen = true;
 			$this->workshop->save();
@@ -55,7 +55,6 @@ class WorkshopActie {
 		if ( $this->workshop->definitief ) {
 			$this->workshop->verzend_email( '_afzegging' );
 		}
-		return true;
 	}
 
 	/**

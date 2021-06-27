@@ -57,6 +57,7 @@ class Abonnees implements Countable, Iterator {
 	 * Geef de huidige gebruiker terug.
 	 *
 	 * @return Abonnee De gebruiker.
+	 * @codeCoverageIgnore
 	 */
 	public function current(): Abonnee {
 		return $this->abonnees[ $this->current_index ];
@@ -66,6 +67,7 @@ class Abonnees implements Countable, Iterator {
 	 * Geef het aantal abonnees terug.
 	 *
 	 * @return int Het aantal.
+	 * @codeCoverageIgnore
 	 */
 	public function count(): int {
 		return count( $this->abonnees );
@@ -75,6 +77,7 @@ class Abonnees implements Countable, Iterator {
 	 * Geef de sleutel terug.
 	 *
 	 * @return int De sleutel.
+	 * @codeCoverageIgnore
 	 */
 	public function key(): int {
 		return $this->current_index;
@@ -82,6 +85,8 @@ class Abonnees implements Countable, Iterator {
 
 	/**
 	 * Ga naar de volgende in de lijst.
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function next() {
 		$this->current_index++;
@@ -89,6 +94,8 @@ class Abonnees implements Countable, Iterator {
 
 	/**
 	 * Ga terug naar het begin.
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function rewind() {
 		$this->current_index = 0;
@@ -98,8 +105,10 @@ class Abonnees implements Countable, Iterator {
 	 * Bepaal of het element bestaat.
 	 *
 	 * @return bool Of het bestaat of niet.
+	 * @codeCoverageIgnore
 	 */
 	public function valid(): bool {
 		return isset( $this->abonnees[ $this->current_index ] );
 	}
+
 }

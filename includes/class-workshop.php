@@ -224,8 +224,8 @@ class Workshop extends Artikel {
 		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
 		$this->id         = $wpdb->insert_id;
 		$timezone         = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
-		$workshopaanvraag = new WorkshopAanvraag();
-		$workshopaanvraag->gepland( $this->aanvraag_id, $this->id );
+		$workshopaanvraag = new WorkshopAanvraag( $this->aanvraag_id );
+		$workshopaanvraag->gepland( $this->id );
 
 		try {
 			$event             = new Event( $this->event_id );

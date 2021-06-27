@@ -176,6 +176,10 @@ class Admin_Instellingen_Display {
 							value="<?php echo esc_attr( setup()['imap_server'] ); ?>" /><p class="example">imap.example.com:poortnr/ssl</p></td>
 				</tr>
 				<tr>
+					<th scope="row">Email IMAP adres</th>
+					<td><input type="text" name="kleistad-setup[imap_adres]" class="regular-text" value="<?php echo esc_attr( setup()['imap_adres'] ); ?>" /></td>
+				</tr>
+				<tr>
 					<th scope="row">Email IMAP paswoord</th>
 					<td><input type="text" name="kleistad-setup[imap_pwd]" class="regular-text"
 							value="<?php echo esc_attr( setup()['imap_pwd'] ); ?>" /></td>

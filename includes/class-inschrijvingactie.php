@@ -36,10 +36,8 @@ class InschrijvingActie {
 
 	/**
 	 * Zeg de gemaakte afspraak voor de cursus af.
-	 *
-	 * @return bool
 	 */
-	public function afzeggen() : bool {
+	public function afzeggen() {
 		if ( ! $this->inschrijving->geannuleerd ) {
 			$this->inschrijving->geannuleerd = true;
 			$this->inschrijving->save();
@@ -48,9 +46,7 @@ class InschrijvingActie {
 				$extra_inschrijving->geannuleerd = true;
 				$extra_inschrijving->save();
 			}
-			return true;
 		}
-		return false;
 	}
 
 	/**
@@ -147,7 +143,7 @@ class InschrijvingActie {
 				$extra_inschrijving->save();
 			}
 			$oude_inschrijving = new Inschrijving( $oude_cursus_id, $this->inschrijving->klant_id );
-			$oude_inschrijving->afzeggen();
+			$oude_inschrijving->actie->afzeggen();
 		}
 		$factuur = $this->inschrijving->wijzig_order( $order );
 		if ( false === $factuur ) {

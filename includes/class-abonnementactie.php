@@ -45,7 +45,6 @@ class AbonnementActie {
 		$this->log( 'gestart met automatisch betalen' );
 		$this->abonnement->save();
 		$this->abonnement->artikel_type = 'mandaat';
-		$this->abonnement->bericht      = 'Kleistad gaat voortaan automatisch het abonnementsgeld afschrijven van jouw bankrekening';
 		return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', 0.01 );
 	}
 

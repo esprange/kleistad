@@ -55,7 +55,7 @@ class MollieSimulatie {
 				$this->create_db( $mollie_sim );
 			}
 		} else {
-			$mollie_sim = sys_get_temp_dir() . 'mollie.db';
+			$mollie_sim = sys_get_temp_dir() . '/mollie.db';
 			$this->create_db( $mollie_sim );
 		}
 

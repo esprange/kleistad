@@ -28,11 +28,10 @@ class EmailReceiver {
 	 *   subject
 	 *   contect
 	 *
-	 * @param string   $adres   Het email adres dat ontvangen moet worden.
 	 * @param callable $verwerk Functie die het ontvangen bericht verwerkt.
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
-	public function ontvang( string $adres, callable $verwerk ) {
+	public function ontvang( callable $verwerk ) {
 		if ( empty( setup()['imap_server'] ) ) {
 			exit( 0 );
 		}
@@ -41,7 +40,7 @@ class EmailReceiver {
 		try {
 			$mailbox = new PhpImap\Mailbox(
 				'{' . setup()['imap_server'] . '}INBOX',
-				$adres,
+				setup()['imap_adres'],
 				setup()['imap_pwd']
 			);
 		} catch ( PhpImap\Exceptions\InvalidParameterException $e ) {
@@ -50,18 +49,16 @@ class EmailReceiver {
 		}
 		$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
 		foreach ( $email_ids as $email_id ) {
-			$email = $mailbox->getMail( $email_id );
-			$body  = $email->textPlain ?: '<p>bericht tekst kan niet worden weergegeven</p>';
-			if ( $email->textHtml ) {
-				$html = new Html2Text\Html2Text( preg_replace( '/<!--\[if gte mso 9\]>.*<!\[endif\]-->/s', '', $email->textHtml ) );
-				$body = $html->getText() ?: $body;
-			}
+			$email  = $mailbox->getMail( $email_id );
+			$header = $mailbox->getMailHeader( $email_id );
+			$body   = $email->textPlain ?: '<p>bericht tekst kan niet worden weergegeven</p>';
 			$verwerk(
 				[
 					'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
 					'from'      => sanitize_email( $email->fromAddress ),
 					'subject'   => sanitize_text_field( $email->subject ),
-					'content'   => sanitize_textarea_field( $body ),
+					'content'   => $body,
+					'tijd'      => date( 'd-m-Y H:i', strtotime( $header->date ) ),
 				]
 			);
 			$answered[] = $email_id;

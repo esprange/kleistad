@@ -41,12 +41,4 @@ class Abonnee extends Gebruiker {
 		$this->abonnement = new Abonnement( $this->ID );
 	}
 
-	/**
-	 * Bepaal of de abonnee nu actief is.
-	 *
-	 * @return bool True als actief.
-	 */
-	public function is_actief() : bool {
-		return user_can( $this->ID, LID );
-	}
 }

@@ -91,15 +91,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test afzeggen function
-	 */
-	public function test_afzeggen() {
-		$artikel = $this->maak_artikel( 10 );
-		$this->assertTrue( $artikel->afzeggen(), 'afzeggen incorrect' );
-	}
-
-	/**
-	 * Test afzeggen function
+	 * Test naw function
 	 */
 	public function test_naw_klant() {
 		$artikel           = $this->maak_artikel( 10 );
@@ -110,7 +102,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test afzeggen function
+	 * Test maak link function
 	 */
 	public function test_maak_link() {
 		$artikel = $this->maak_artikel( 10 );
@@ -118,7 +110,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test afzeggen function
+	 * Test artikelnaam function
 	 */
 	public function test_geef_artikelnaam() {
 		$artikel = $this->maak_artikel( 10 );
@@ -126,7 +118,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test afzeggen function
+	 * Test annuleer order function
 	 *
 	 * 1. bestel een artikel met prijs x en betaal y.
 	 * 2. annuleer de order met restant z en controleer of een credit factuur wordt aangemaakt.

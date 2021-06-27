@@ -2,12 +2,9 @@
 /**
  * Class Abonnement Test
  *
- * Test de classen abonnement, abonnementen, abonnee, abonnementactie
- * Test van classen abonnees en abonnementbetaling ontbreken nog
- *
  * @package Kleistad
  *
- * @covers \Kleistad\Abonnement, \Kleistad\Abonnementen, \Kleistad\Abonnee
+ * @covers \Kleistad\Abonnement, \Kleistad\Abonnementen, \Kleistad\Abonnee, \Kleistad\Abonnees, \Kleistad\AbonnementActie, \Kleistad\AbonnementBetaling
  */
 
 namespace Kleistad;
@@ -43,12 +40,27 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	/**
 	 * Test creation and modification of an abonnement.
 	 */
-	public function test_abonnement() {
+	public function test_starten_bank() {
+		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
-		$this->assertTrue( $abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dinsdag', 'dit is een test', 'bank' ), 'abonnement start bank incorrect' );
 
+		$this->assertTrue( $abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dinsdag', 'dit is een test', 'bank' ), 'abonnement start bank incorrect' );
+		$this->assertEquals( 'Welkom bij Kleistad', $mailer->get_last_sent()->subject, 'start bank email incorrect' );
 		$this->assertTrue( user_can( $abonnement->klant_id, LID ), 'abonnement rol incorrect' );
-		$this->assertNotEmpty( tests_retrieve_phpmailer_instance()->get_recipient( 'to' )->address, 'abonnement email incorrect' );
+	}
+
+	/**
+	 * Test abonnement start met ideal betaling.
+	 */
+	public function test_starten_ideal() {
+		$mailer     = tests_retrieve_phpmailer_instance();
+		$abonnement = $this->maak_abonnement();
+
+		$this->assertIsString( $abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dinsdag', 'dit is een test', 'ideal' ), 'abonnement start bank incorrect' );
+		$this->assertEquals( 0, $mailer->get_sent_count(), 'start ideal aantal email onjuist' );
+		$abonnement->betaling->verwerk( new Order(), 90, true, 'ideal', 'transactie' );
+		$this->assertEquals( 'Welkom bij Kleistad', $mailer->get_last_sent()->subject, 'start ideal email incorrect' );
+		$this->assertTrue( user_can( $abonnement->klant_id, LID ), 'abonnement rol incorrect' );
 	}
 
 	/**
@@ -308,4 +320,66 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$this->assertEquals( 'Betaling abonnement per incasso', $mailer->get_last_sent( $abonnee->user_email )->subject, 'verwerk incasso incorrecte email' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $abonnee->user_email )->attachment, 'verwerk incasso attachment incorrect' );
 	}
+
+	/**
+	 * Test de abonnees verzameling
+	 */
+	public function test_abonnees() {
+		$abonnement1 = $this->maak_abonnement();
+		$abonnement1->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' );
+		$abonnement2 = $this->maak_abonnement();
+		$abonnement2->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' );
+		$abonnees = new Abonnees();
+		$this->assertTrue( 1 < $abonnees->count(), 'aantal abonnees onjuist' );
+	}
+
+	/**
+	 * Test korte en lange statustekst
+	 */
+	public function test_geef_statustekst() {
+		$abonnement = $this->maak_abonnement();
+		$this->assertEquals( 'actief', $abonnement->geef_statustekst( false ), 'Korte statustekst incorrect' );
+		$this->assertRegExp( '~actief sinds+~', $abonnement->geef_statustekst( true ), 'Lange statustekst incorrect' );
+	}
+
+	/**
+	 * Test start_incasso en stop_incasso
+	 */
+	public function test_start_stop_incasso() {
+		$mailer     = tests_retrieve_phpmailer_instance();
+		$abonnement = $this->maak_abonnement();
+		$abonnee    = new Abonnee( $abonnement->klant_id );
+		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' );
+		$abonnement->actie->start_incasso();
+		$abonnement->betaling->verwerk( new Order(), 0.01, true, 'ideal', 'incasso' );
+		$this->assertEquals( 'Wijziging abonnement', $mailer->get_last_sent( $abonnee->user_email )->subject, 'start incasso email incorrect' );
+		$abonnement->actie->stop_incasso();
+		$this->assertEquals( 'Wijziging abonnement', $mailer->get_last_sent( $abonnee->user_email )->subject, 'start incasso email incorrect' );
+		$this->assertEquals( 3, $mailer->get_sent_count(), 'incasso aantal emails onjuist' );
+	}
+
+	/**
+	 * Test facturatie reguliere incasso
+	 */
+	public function test_incasso_factuur() {
+		$mailer     = tests_retrieve_phpmailer_instance();
+		$abonnement = $this->maak_abonnement();
+		$abonnee    = new Abonnee( $abonnement->klant_id );
+		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' );
+		$abonnement->factuur_maand = date( 'Ym', strtotime( '-1 month' ) );
+		$abonnement->save();
+
+		$abonnement->actie->start_incasso();
+		$order = new Order( $abonnement->geef_referentie() );
+		$abonnement->betaling->verwerk( $order, 0.01, true, 'ideal', 'incasso' );
+
+		Abonnementen::doe_dagelijks(); // Voert actie->factureer uit en verstuurt email 1.
+		$abonnement               = new Abonnement( $abonnee->ID );
+		$abonnement->artikel_type = 'regulier';
+		$order                    = new Order( $abonnement->geef_referentie() );
+		$abonnement->betaling->verwerk( $order, 0.01, true, 'directdebit', 'incasso' );
+		$this->assertEquals( 'Betaling abonnement per incasso', $mailer->get_last_sent()->subject, 'email reguliere incasso incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'email reguliere incasso factuur ontbreekt' );
+	}
+
 }

@@ -83,14 +83,11 @@ abstract class Artikel {
 	 * @param Order  $order   De order.
 	 * @param float  $restant   Het te betalen bedrag bij annulering.
 	 * @param string $opmerking De opmerkingstekst in de factuur.
-	 * @return string De url van de creditfactuur of lege string.
+	 * @return string|bool De url van de creditfactuur of false indien annulering niet mogelijk.
 	 */
-	final public function annuleer_order( Order $order, float $restant, string $opmerking ): string {
-		if ( ! $this->afzeggen() ) {
-			return '';
-		}
+	final public function annuleer_order( Order $order, float $restant, string $opmerking ) {
 		if ( $order->credit_id || $order->origineel_id ) {
-			return '';  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
+			return false;  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
 		}
 		$credit_order               = new Order();
 		$credit_order->referentie   = $order->referentie;
@@ -243,24 +240,6 @@ abstract class Artikel {
 	 */
 	public function geef_artikelnaam(): string {
 		return static::DEFINITIE['naam'];
-	}
-
-	/**
-	 * Zeg het artikel af, kan nader ingevuld worden.
-	 *
-	 * Tijdelijke workaround voor refactoring.
-	 *
-	 * @since 6.1.0
-	 *
-	 * @return bool
-	 */
-	public function afzeggen() : bool {
-		if ( property_exists( $this, 'actie' ) ) {
-			if ( method_exists( $this->actie, 'afzeggen' ) ) {
-				return $this->actie->afzeggen();
-			}
-		}
-		return true;
 	}
 
 	/**

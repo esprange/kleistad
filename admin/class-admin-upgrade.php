@@ -64,6 +64,7 @@ class Admin_Upgrade {
 			'google_sleutel'     => '',
 			'google_client_id'   => '',
 			'imap_server'        => '',
+			'imap_adres'         => '',
 			'imap_pwd'           => '',
 			'betalen'            => 0,
 		];
