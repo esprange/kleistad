@@ -20,7 +20,6 @@
     "require": {
         "mollie/mollie-api-php": "^2",
         "google/apiclient": "^2",
-        "html2text/html2text": "*",
         "php-imap/php-imap": "^4",
         "setasign/fpdf": "*",
         "deliciousbrains/wp-background-processing": "*",

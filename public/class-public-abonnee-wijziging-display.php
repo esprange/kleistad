@@ -158,25 +158,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 			</div>
 			<?php
 			if ( 'onbeperkt' === $this->data['abonnement']->soort ) {
-				?>
-			<div class="kleistad-row" >
-				<div class="kleistad-col-3">
-					&nbsp;
-				</div>
-				<div class="kleistad-col-3 kleistad-label">
-					<label for="kleistad_dag_keuze">Dag</label>
-				</div>
-				<div class="kleistad-col-4">
-					<select class="kleistad-input" name="dag" id="kleistad_dag_keuze" >
-						<option value="maandag" <?php selected( $this->data['abonnement']->dag, 'maandag' ); ?> >Maandag</option>
-						<option value="dinsdag" <?php selected( $this->data['abonnement']->dag, 'dinsdag' ); ?>>Dinsdag</option>
-						<option value="woensdag" <?php selected( $this->data['abonnement']->dag, 'woensdag' ); ?>>Woensdag</option>
-						<option value="donderdag" <?php selected( $this->data['abonnement']->dag, 'donderdag' ); ?>>Donderdag</option>
-						<option value="vrijdag" <?php selected( $this->data['abonnement']->dag, 'vrijdag' ); ?>>Vrijdag</option>
-					</select>
-				</div>
-			</div>
-				<?php
+				$this->werkdagen();
 			}
 			?>
 		</div>
@@ -250,31 +232,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad_abo_dag kleistad_abo_veld" style="display:none" >
-			<div class="kleistad-row">
-				<div class="kleistad-col-3" >
-					&nbsp;
-				</div>
-				<div class="kleistad-col-7" >
-					<p><strong>Je hebt een beperkt abonnement en gaat Kleistad voortaan op een andere dag bezoeken. De wijziging gaat per direct in.</strong></p>
-				</div>
-			</div>
-			<div class="kleistad-row" >
-				<div class="kleistad-col-3">
-					&nbsp;
-				</div>
-				<div class="kleistad-col-3 kleistad-label">
-					<label for="kleistad_dag_keuze2">Dag</label>
-				</div>
-				<div class="kleistad-col-4">
-					<select class="kleistad-input" name="dag" id="kleistad_dag_keuze2" >
-						<option value="maandag" <?php selected( $this->data['abonnement']->dag, 'maandag' ); ?> >Maandag</option>
-						<option value="dinsdag" <?php selected( $this->data['abonnement']->dag, 'dinsdag' ); ?>>Dinsdag</option>
-						<option value="woensdag" <?php selected( $this->data['abonnement']->dag, 'woensdag' ); ?>>Woensdag</option>
-						<option value="donderdag" <?php selected( $this->data['abonnement']->dag, 'donderdag' ); ?>>Donderdag</option>
-						<option value="vrijdag" <?php selected( $this->data['abonnement']->dag, 'vrijdag' ); ?>>Vrijdag</option>
-					</select>
-				</div>
-			</div>
+			<?php $this->werkdagen() ?>
 		</div>
 			<?php
 		}
@@ -480,5 +438,30 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		</form>
 		<?php
 		return $this;
+	}
+
+	/**
+	 * Display de werkdag keuze.
+	 */
+	private function werkdagen() {
+		?>
+		<div class="kleistad-row" >
+			<div class="kleistad-col-3">
+				&nbsp;
+			</div>
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_dag_keuze2">Dag</label>
+			</div>
+			<div class="kleistad-col-4">
+				<select class="kleistad-input" name="dag" id="kleistad_dag_keuze2" >
+					<option value="maandag" <?php selected( $this->data['abonnement']->dag, 'maandag' ); ?> >Maandag</option>
+					<option value="dinsdag" <?php selected( $this->data['abonnement']->dag, 'dinsdag' ); ?>>Dinsdag</option>
+					<option value="woensdag" <?php selected( $this->data['abonnement']->dag, 'woensdag' ); ?>>Woensdag</option>
+					<option value="donderdag" <?php selected( $this->data['abonnement']->dag, 'donderdag' ); ?>>Donderdag</option>
+					<option value="vrijdag" <?php selected( $this->data['abonnement']->dag, 'vrijdag' ); ?>>Vrijdag</option>
+				</select>
+			</div>
+		</div>
+		<?php
 	}
 }

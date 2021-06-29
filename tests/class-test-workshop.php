@@ -78,7 +78,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop = $this->maak_workshop();
 		$workshop->save();
 		$workshops        = new Workshops();
-		$aantal_workshops = $this->count( $workshops );
+		$aantal_workshops = count( $workshops );
 		$workshop->erase();
 		$this->assertEquals( $aantal_workshops - 1, count( new Workshops() ), 'erase workshop incorrect' );
 	}

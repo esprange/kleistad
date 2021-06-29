@@ -2,7 +2,7 @@ module.exports = function( grunt ) { // jshint ignore:line
 
 	'use strict';
 
-	// Project configuration
+	// Project configuration.
 	grunt.initConfig( {
 
 		pkg: grunt.file.readJSON( 'package.json' ),
@@ -12,7 +12,7 @@ module.exports = function( grunt ) { // jshint ignore:line
 				readme: 'readme.txt',
 				plugin: 'kleistad.php'
 			},
-			check: { //Check plug-in version and stable tag match
+			check: { //Check plug-in version and stable tag match.
 				version1: 'plugin',
 				version2: 'readme',
 				compare: '=='
@@ -95,9 +95,18 @@ module.exports = function( grunt ) { // jshint ignore:line
 				dest: 'zip/kleistad.zip'
 			}
 		},
-		
+
 		shell: {
 			command: 'ftp -i -s:plugin_upload.ftp'
+		},
+
+		phpunit: {
+			options: {
+				bin: 'vendor/bin/phpunit',
+				configuration: 'phpunit.xml.dist',
+				colors: true,
+				coverage: true
+			}
 		}
 	} );
 
@@ -111,6 +120,7 @@ module.exports = function( grunt ) { // jshint ignore:line
 	grunt.loadNpmTasks( 'grunt-zip' );
 	grunt.loadNpmTasks( 'grunt-shell' );
 	grunt.loadNpmTasks( 'grunt-version' );
+	grunt.loadNpmTasks( 'grunt-phpunit' );
 	grunt.registerTask( 'checkversion', ['checkwpversion'] );
 	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
 	grunt.registerTask( 'oplevering',

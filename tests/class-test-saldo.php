@@ -42,7 +42,11 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 
 		$saldo->bedrag = $saldo->bedrag + 123;
 		$saldo->reden  = 'test';
-		$saldo->save();
+		$this->assertTrue( $saldo->save(), 'saldo gewijzigd onjuiste status' );
+		$saldo = new Saldo( $saldo->klant_id );
+		$this->assertEquals( 123, $saldo->bedrag, 'saldo bedrag onjuist' );
+		$this->assertTrue( $saldo->save(), 'saldo ongewijzigd onjuiste status' );
+
 		$upload_dir     = wp_upload_dir();
 		$transactie_log = $upload_dir['basedir'] . '/stooksaldo.log';
 		$this->assertFileExists( $transactie_log, 'transactie_log not created' );
@@ -80,7 +84,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 
 		$saldo = new Saldo( $stoker->ID );
 		$this->assertEquals( $bedrag, $saldo->bedrag, 'bedrag incorrect' );
-		$this->assertEquals( 1, $mailer->get_sent_count( $stoker->user_email ), 'verwerk aantal mail incorrect' );
+		$this->assertEquals( 1, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 	}
 
 	/**
@@ -95,7 +99,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 
 		$result = $saldo->actie->nieuw( $bedrag, 'ideal' ); // Verzend geen email.
 		$this->assertTrue( false !== filter_var( $result, FILTER_VALIDATE_URL, [ 'options' => FILTER_FLAG_QUERY_REQUIRED ] ), 'ideal url incorrect' );
-		$this->assertEquals( 0, $mailer->get_sent_count( $stoker->user_email ), 'verwerk aantal mail incorrect' );
+		$this->assertEquals( 0, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 		$order = new Order(); // Nog geen order.
 		$saldo = new Saldo( $stoker->ID );
 		$saldo->betaling->verwerk( $order, $bedrag, true, 'ideal' ); // Verzend email 1.
@@ -104,7 +108,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$this->assertEquals( $bedrag, $saldo->bedrag, 'bedrag incorrect' );
 		$this->assertEquals( 'Bijstorting stooksaldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk attachment incorrect' );
-		$this->assertEquals( 1, $mailer->get_sent_count( $stoker->user_email ), 'verwerk aantal mail incorrect' );
+		$this->assertEquals( 1, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 
 		$bedrag = 12.45;
 		$saldo->actie->nieuw( $bedrag, 'bank' ); // Verzend email 2.
@@ -115,7 +119,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$this->assertEquals( 2 * $bedrag, $saldo->bedrag, 'bedrag incorrect' );
 		$this->assertEquals( 'Bijstorting stooksaldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 		$this->assertFalse( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk attachment incorrect' );
-		$this->assertEquals( 3, $mailer->get_sent_count( $stoker->user_email ), 'verwerk aantal mail incorrect' );
+		$this->assertEquals( 3, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 
 	}
 }

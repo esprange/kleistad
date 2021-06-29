@@ -11,7 +11,6 @@
 
 namespace Kleistad;
 
-use Html2Text;
 use PhpImap;
 
 /**

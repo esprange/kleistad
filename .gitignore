@@ -36,3 +36,4 @@ wp-cli.local.yml
 *.ftp
 
 cookie.txt
+mollie.db

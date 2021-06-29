@@ -185,7 +185,7 @@ class Order {
 	 * Bepaal of de order nog gecorrigeerd mag worden.
 	 */
 	public function is_geblokkeerd() : bool {
-		return $this->datum < get_blokkade() || boolval( $this->credit_id ) || '@' === substr( $this->referentie, 0, 1 );
+		return $this->datum < get_blokkade() || $this->credit_id || '@' === substr( $this->referentie, 0, 1 );
 	}
 
 	/**
