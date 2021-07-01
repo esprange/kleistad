@@ -280,7 +280,7 @@
 
     $( function()
 		{
-			if ( navigator.userAgent === 'msie' ) {
+			if ( window.navigator.userAgent === 'msie' ) {
 				$( '#kleistad_reserveringen' ).hide();
 				$( '#kleistad_geen_ie').show();
 			}

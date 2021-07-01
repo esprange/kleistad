@@ -19,6 +19,7 @@ namespace Kleistad;
  * @property int    start_datum
  * @property int    eind_datum
  * @property array  meesters
+ * @property array  config
  */
 class WerkplekConfig {
 
@@ -35,7 +36,7 @@ class WerkplekConfig {
 	 *
 	 * @var array $data De ruwe data.
 	 */
-	private array $config;
+	private array $config_data;
 
 	/**
 	 * Constructor, laad de configuratie
@@ -53,7 +54,7 @@ class WerkplekConfig {
 				}
 			}
 		}
-		$this->config = [
+		$this->config_data = [
 			'config'      => $default_config,
 			'meesters'    => $default_meesters,
 			'start_datum' => strtotime( 'today' ),
@@ -70,7 +71,7 @@ class WerkplekConfig {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
-		return array_key_exists( $attribuut, $this->config ) ? $this->config[ $attribuut ] : null;
+		return array_key_exists( $attribuut, $this->config_data ) ? $this->config_data[ $attribuut ] : null;
 	}
 
 	/**
@@ -83,7 +84,7 @@ class WerkplekConfig {
 	 * @return void
 	 */
 	public function __set( string $attribuut, $waarde ) {
-		$this->config[ $attribuut ] = $waarde;
+		$this->config_data[ $attribuut ] = $waarde;
 	}
 
 	/**
@@ -97,7 +98,7 @@ class WerkplekConfig {
 		$meester_ids      = $werkplekmeesters->geef();
 		foreach ( array_keys( $this->meesters[ $atelierdag ] ) as $dagdeel ) {
 			if ( isset( $meester_ids[ $dagdeel ] ) ) {
-				$this->config['meesters'][ $atelierdag ][ $dagdeel ] = $meester_ids[ $dagdeel ];
+				$this->config_data['meesters'][ $atelierdag ][ $dagdeel ] = $meester_ids[ $dagdeel ];
 			}
 		}
 	}
