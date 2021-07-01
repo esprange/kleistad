@@ -204,11 +204,12 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			/*
 			* Cursus moet verwijderd worden.
 			*/
-			if ( ! $cursus->verwijder() ) {
+			if ( count( new Inschrijvingen( $cursus->id, true ) ) ) {
 				return [
 					'status' => $this->status( new WP_Error( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' ) ),
 				];
 			}
+			$cursus->erase();
 			return [
 				'status'  => $this->status( 'De cursus informatie is verwijderd' ),
 				'content' => $this->display(),

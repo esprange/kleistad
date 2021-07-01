@@ -232,7 +232,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad_abo_dag kleistad_abo_veld" style="display:none" >
-			<?php $this->werkdagen() ?>
+			<?php $this->werkdagen(); ?>
 		</div>
 			<?php
 		}

@@ -71,7 +71,6 @@ class Admin_Stooksaldo_Handler {
 	public function stooksaldo_form_page_handler() {
 		$message = '';
 		$notice  = '';
-		$item    = [];
 		$default = [
 			'id'    => 0,
 			'saldo' => 0,

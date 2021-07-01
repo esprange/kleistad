@@ -15,8 +15,6 @@ namespace Kleistad;
  * Kleistad WerkplekMeesters class.
  *
  * @since 6.11.0
- *
- * @property int    datum
  */
 class WerkplekMeesters {
 

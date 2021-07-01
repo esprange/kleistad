@@ -234,7 +234,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' ); // Verstuurt email 0.
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' ); // Verstuurt email 0.
 		$abonnement->factuur_maand = date( 'Ym', strtotime( '-1 month' ) );
 		$abonnement->save();
 
@@ -272,7 +272,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' ); // Verstuurt email 0.
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' ); // Verstuurt email 0.
 		$abonnement->pauze_datum    = strtotime( '- 1 month 00:00' );
 		$abonnement->herstart_datum = $this->set_date( 10 );
 		$abonnement->factuur_maand  = date( 'Ym', strtotime( '-1 month' ) );
@@ -365,7 +365,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee    = new Abonnee( $abonnement->klant_id );
-		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' );
 		$abonnement->factuur_maand = date( 'Ym', strtotime( '-1 month' ) );
 		$abonnement->save();
 

@@ -11,7 +11,7 @@
 // phpcs:disable WordPress
 
 $melding = '';
-$db      = new \SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
+$db      = new SQLite3( $_SERVER['DOCUMENT_ROOT'] . '/mollie.db' );
 $db->busyTimeout( 5000 );
 
 if ( isset( $_GET[ 'idealupdate'] ) ) {

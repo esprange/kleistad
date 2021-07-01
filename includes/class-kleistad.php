@@ -11,8 +11,6 @@
 
 namespace Kleistad;
 
-use WP_Error;
-
 /**
  * Custom capabilities van kleistad gebruikers.
  */

@@ -18,7 +18,6 @@ namespace Kleistad;
  *
  * @property int    start_datum
  * @property int    eind_datum
- * @property array  config
  * @property array  meesters
  */
 class WerkplekConfig {

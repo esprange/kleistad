@@ -223,15 +223,6 @@ class Cursus {
 	}
 
 	/**
-	 * Is de cursus open voor inschrijvingen ?
-	 *
-	 * @return bool
-	 */
-	public function is_open() : bool {
-		return ! $this->vervallen && ( ! $this->vol || $this->is_wachtbaar() );
-	}
-
-	/**
 	 * Bereken het bedrag om ingedeeld te worden bij de cursus.
 	 *
 	 * @return float
@@ -329,19 +320,6 @@ class Cursus {
 			error_log ( $e->getMessage() ); // phpcs:ignore
 		}
 		return $this->id;
-	}
-
-	/**
-	 * Verwijder de cursus.
-	 *
-	 * @return bool True als de cursus verwijderd kan worden.
-	 */
-	public function verwijder() : bool {
-		if ( count( new Inschrijvingen( $this->id, true ) ) ) {
-			return false; // Er zijn al actieve inschrijvingen dus verwijderen is niet meer mogelijk.
-		}
-		$this->erase();
-		return true;
 	}
 
 }

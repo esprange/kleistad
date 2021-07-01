@@ -11,9 +11,6 @@
 
 namespace Kleistad;
 
-use WP_REST_Response;
-use WP_REST_Request;
-use WP_ERROR;
 use Mollie;
 use Exception;
 

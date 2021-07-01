@@ -69,7 +69,6 @@ class Admin_Recepttermen_Handler {
 	public function recepttermen_form_page_handler() {
 		$message = '';
 		$notice  = '';
-		$item    = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_receptterm' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,

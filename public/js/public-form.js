@@ -170,7 +170,7 @@ function strtodate( value ) {
 				$bank.iconselectmenu().iconselectmenu( 'menuWidget' ).addClass( 'ui-menu-icons kleistad-bank' );
 			}
 
-			 /**
+			/**
 			 * Definieer de bevestig dialoog.
 			 */
 			$( '#kleistad_bevestigen' ).dialog(

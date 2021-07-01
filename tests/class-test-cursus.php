@@ -129,22 +129,6 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test is_open function
-	 */
-	public function test_is_open() {
-		$cursus = new Cursus();
-
-		$cursus->start_datum = strtotime( '+1 month' );
-		$this->assertTrue( $cursus->is_open(), 'is_open nieuw incorrect' );
-
-		$cursus->vol = true;
-		$this->assertTrue( $cursus->is_open(), 'is_open vol incorrect' );
-
-		$cursus->vervallen = true;
-		$this->assertFalse( $cursus->is_open(), 'is_open vol incorrect' );
-	}
-
-	/**
 	 * Test bedrag function
 	 */
 	public function test_bedrag() {
@@ -210,23 +194,6 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 			$cursus->lopend( strtotime( 'today' ) ),
 			'lopend is incorrect'
 		);
-	}
-
-	/**
-	 * Test verwijder function
-	 */
-	public function test_verwijder() {
-		$cursus1 = new Cursus();
-		$cursus1->save();
-		$this->assertTrue( $cursus1->verwijder(), 'verwijder zonder inschrijvngen incorrect' );
-
-		$cursus2                 = new Cursus();
-		$cursus_id               = $cursus2->save();
-		$cursist_id              = $this->factory->user->create();
-		$inschrijving            = new Inschrijving( $cursus_id, $cursist_id );
-		$inschrijving->ingedeeld = true;
-		$inschrijving->save();
-		$this->assertFalse( $cursus2->verwijder(), 'verwijder met inschrijvngen incorrect' );
 	}
 
 	/**

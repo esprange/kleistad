@@ -1,4 +1,4 @@
-/* global kleistadData, detectTap, navigator */
+/* global kleistadData, detectTap */
 
 ( function( $ ) {
     'use strict';
@@ -239,7 +239,7 @@
 			}
 		}
 		$( '#kleistad_reservering' ).dialog( 'close' );
-  
+
         $.ajax(
             {
                 url: kleistadData.base_url + '/reserveer/',
@@ -280,7 +280,7 @@
 
     $( function()
 		{
-			if ( navigator.appName === 'Microsoft Internet Explorer' || !!( navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/rv:11/)) || (typeof $.browser !== 'undefined' && $.browser.msie === 1 ) ) {
+			if ( navigator.userAgent === 'msie' ) {
 				$( '#kleistad_reserveringen' ).hide();
 				$( '#kleistad_geen_ie').show();
 			}

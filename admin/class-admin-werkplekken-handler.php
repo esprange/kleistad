@@ -122,7 +122,6 @@ class Admin_Werkplekken_Handler {
 	public function werkplekken_form_page_handler() {
 		$message = '';
 		$notice  = '';
-		$item    = [];
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_werkplek' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,

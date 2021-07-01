@@ -1,4 +1,4 @@
-/* global kleistadData, navigator */
+/* global kleistadData */
 
 ( function( $ ) {
     'use strict';
@@ -49,7 +49,7 @@
 	 * @param {String} datum.
 	 * @param {int}    id, het gebruiker id.
 	 * @param {String} dagdeel, het dagdeel.
-	 * @param {String} activiteit, de activiteit. 
+	 * @param {String} activiteit, de activiteit.
      * @returns {undefined}
      */
     function muteerWerkplek( method, datum, id, dagdeel, activiteit ) {
@@ -151,9 +151,9 @@
 		}
 	);
 
-	$( function() 
+	$( function()
 		{
-			if ( navigator.appName === 'Microsoft Internet Explorer' || !!( navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/rv:11/)) || (typeof $.browser !== 'undefined' && $.browser.msie === 1 ) ) {
+			if ( navigator.userAgent === 'msie' ) {
 				$( '#kleistad_werkplek' ).hide();
 				$( '#kleistad_geen_ie').show();
 			}
@@ -208,7 +208,7 @@
 			);
 
 			/**
-             * Toon de tabel. 
+             * Toon de tabel.
              */
 			if ( 'undefined' !== typeof datums ) {
 				buttonsActive();
@@ -235,7 +235,7 @@
 					toonWerkplek( datums[datumIndex], gebruiker_id );
 				}
 			)
-			.on( 'click', '#kleistad_later', 
+			.on( 'click', '#kleistad_later',
 				function() {
 					datumIndex++;
 					buttonsActive();
@@ -266,7 +266,7 @@
 				function() {
 					$( '#kleistad_gebruiker' ).dialog( 'open' );
 				}
-			 );
+			);
 
         }
     );
