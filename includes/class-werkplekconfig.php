@@ -57,7 +57,7 @@ class WerkplekConfig {
 		$this->config_data = [
 			'config'      => $default_config,
 			'meesters'    => $default_meesters,
-			'start_datum' => strtotime( 'today' ),
+			'start_datum' => strtotime( 'last Monday' ),
 			'eind_datum'  => 0,
 		];
 	}

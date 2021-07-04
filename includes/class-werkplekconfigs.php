@@ -170,6 +170,7 @@ class WerkplekConfigs implements Countable, Iterator {
 		 */
 		for ( $index = $start_index; $index <= $eind_index; $index++ ) {
 			if ( $this->configs[ $index ]->start_datum >= $configtoetevoegen->start_datum &&
+				$this->configs[ $index ]->eind_datum > 0 &&
 				$this->configs[ $index ]->eind_datum <= $configtoetevoegen->eind_datum ) {
 				unset( $this->configs[ $index ] );
 			}
@@ -226,6 +227,12 @@ class WerkplekConfigs implements Countable, Iterator {
 				'meesters'    => $config->meesters,
 			];
 		}
+		usort(
+			$configs,
+			function ( array $links, array $rechts ) : int {
+				return ( $links['start_datum'] <=> $rechts['start_datum'] );
+			}
+		);
 		update_option( self::META_KEY, $configs, true );
 	}
 
