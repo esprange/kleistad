@@ -109,25 +109,22 @@ class Order {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
-		switch ( $attribuut ) {
-			case 'id':
-			case 'credit_id':
-			case 'origineel_id':
-				return intval( $this->data[ $attribuut ] );
-			case 'klant':
-			case 'historie':
-				return json_decode( $this->data[ $attribuut ], true );
-			case 'datum':
-			case 'mutatie_datum':
-			case 'verval_datum':
-				return strtotime( $this->data[ $attribuut ] );
-			case 'gesloten':
-				return boolval( $this->data[ $attribuut ] );
-			case 'betaald':
-				return (float) $this->data[ $attribuut ];
-			default:
-				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
+		if ( preg_match( '~(mutatie_datum|verval_datum|datum)~', $attribuut ) ) {
+			return strtotime( $this->data[ $attribuut ] );
 		}
+		if ( preg_match( '~(credit_id|origineel_id|id)~', $attribuut ) ) {
+			return intval( $this->data[ $attribuut ] );
+		}
+		if ( preg_match( '~(klant|historie)~', $attribuut ) ) {
+			return json_decode( $this->data[ $attribuut ], true );
+		}
+		if ( 'gesloten' === $attribuut ) {
+			return boolval( $this->data[ $attribuut ] );
+		}
+		if ( 'betaald' === $attribuut ) {
+			return floatval( $this->data[ $attribuut ] );
+		}
+		return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 	}
 
 	/**
