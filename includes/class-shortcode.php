@@ -15,6 +15,7 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use Exception;
+use ReflectionClass;
 
 /**
  * De abstract class voor shortcodes
@@ -56,9 +57,8 @@ abstract class Shortcode {
 	 * Enqueue the scripts and styles for the shortcode.
 	 */
 	protected function enqueue() {
-		if ( ! wp_script_is( 'kleistad' ) ) {
-			wp_enqueue_script( 'kleistad' );
-		}
+		$reflect = new ReflectionClass( $this );
+		wp_enqueue_script( 'kleistad-' . substr( strtolower( $reflect->getShortName() ), strlen( 'public-' ) - 2 ) );
 	}
 
 	/**
@@ -180,8 +180,19 @@ abstract class Shortcode {
 			throw new Kleistad_Exception( "De shortcode kleistad_$shortcode_tag mag maar éénmaal per pagina gebruikt worden" );
 		}
 		$tags[]          = $shortcode_tag;
-		$shortcode_class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
+		$shortcode_class = self::get_class_name( $shortcode_tag );
 		return new $shortcode_class( $shortcode_tag, $attributes );
+	}
+
+	/**
+	 * Geef de class naam behorende bij de shortcode
+	 *
+	 * @param string $shortcode_tag Shortcode (zonder kleistad- ).
+	 *
+	 * @return string
+	 */
+	public static function get_class_name( string $shortcode_tag ) : string {
+		return '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
 	}
 
 	/**

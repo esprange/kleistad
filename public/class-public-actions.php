@@ -66,22 +66,23 @@ class Public_Actions {
 		wp_register_script( 'fullcalendar', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/locales-all.min.js', $fullcalendar_version ), [ 'fullcalendar-core' ], $fullcalendar_version, true );
 		wp_register_script( 'jstree', sprintf( '//cdn.jsdelivr.net/npm/jstree@%s/dist/jstree.min.js', $jstree_version ), [ 'jquery' ], $jstree_version, true );
 
+		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", [ 'jquery' ], versie(), true );
+		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad', 'jquery-ui-dialog' ], versie(), true );
+
 		$shortcodes = new Shortcodes();
 		$styles     = [];
-		$scripts    = [ 'jquery', 'jquery-ui-dialog' ];
 		foreach ( $shortcodes->heeft_shortcode() as $tag ) {
 			$styles  = array_merge( $styles, $shortcodes->definities[ $tag ]->css );
-			$scripts = array_merge( $scripts, $shortcodes->definities[ $tag ]->js );
-			if ( $shortcodes->definities[ $tag ]->script ) {
-				$file   = str_replace( '_', '-', $tag );
-				$script = "kleistad$tag";
-				wp_register_script( $script, plugin_dir_url( __FILE__ ) . "js/public-$file$dev.js", [], versie(), true );
-				$scripts[] = $script;
-			}
+			$script  = "kleistad-$tag";
+			$scripts = array_merge(
+				$shortcodes->definities[ $tag ]->js,
+				[ ( get_parent_class( Shortcode::get_class_name( $tag ) ) === Shortcode::class ) ? 'kleistad' : 'kleistad-form' ]
+			);
+			$file    = ( $shortcodes->definities[ $tag ]->script ) ?
+				plugin_dir_url( __FILE__ ) . 'js/public-' . str_replace( '_', '-', $tag ) . "$dev.js" : false;
+			wp_register_script( $script, $file, $scripts, versie(), true );
 		}
 		wp_enqueue_style( 'kleistad', plugin_dir_url( __FILE__ ) . "css/public$dev.css", array_unique( $styles ), versie() );
-		wp_register_script( 'kleistad', plugin_dir_url( __FILE__ ) . "js/public$dev.js", array_unique( $scripts ), versie(), true );
-		wp_register_script( 'kleistad-form', plugin_dir_url( __FILE__ ) . "js/public-form$dev.js", [ 'kleistad' ], versie(), true );
 		wp_localize_script(
 			'kleistad',
 			'kleistadData',

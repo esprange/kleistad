@@ -11,15 +11,17 @@
 var detectTap;
 
 ( function( $ ) {
-    'use strict';
+	'use strict';
 
 	/**
 	 * Verwijder een class mbv een wildcard pattern.
 	 */
 	$.fn.removeClassWildcard = function( pattern ) {
-		$( this ).removeClass( function( index, className ) {
-			return ( className.match( new RegExp( '(^|\\s)' + pattern + '\\S+', 'g' ) ) || [] ).join( ' ' );
-		});
+		$( this ).removeClass(
+			function( index, className ) {
+				return ( className.match( new RegExp( '(^|\\s)' + pattern + '\\S+', 'g' ) ) || [] ).join( ' ' );
+			}
+		);
 	};
 
 	/**
@@ -31,15 +33,17 @@ var detectTap;
 			return;
 		}
 		if ( ! $.fn.DataTable.isDataTable( '.kleistad-datatable' ) ) {
-			$datatable.on( 'init.dt', 
+			$datatable.on(
+				'init.dt',
 				function() {
 					$datatable.show();
 				}
-			).dataTable( {
-				language: {
-					url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Dutch.json'
+			).dataTable(
+				{
+					language: {
+						url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Dutch.json'
 					},
-				deferRender: true
+					deferRender: true
 				}
 			);
 		}
@@ -51,22 +55,23 @@ var detectTap;
 	function defineDatums() {
 		var $datum = $( '.kleistad-datum' );
 		if ( $datum[0] && ! $datum.is( ':data("ui-datepicker")' ) ) {
-			$datum.datepicker( {
-				closeText: 'Sluiten',
-				prevText: '←',
-				nextText: '→',
-				currentText: 'Vandaag',
-				monthNames: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
-				monthNamesShort: [ 'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
-				dayNames: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
-				dayNamesShort: [ 'zon', 'maa', 'din', 'woe', 'don', 'vri', 'zat' ],
-				dayNamesMin: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
-				weekHeader: 'Wk',
-				dateFormat: 'dd-mm-yy',
-				firstDay: 1,
-				isRTL: false,
-				showMonthAfterYear: false,
-				yearSuffix: ''
+			$datum.datepicker(
+				{
+					closeText: 'Sluiten',
+					prevText: '←',
+					nextText: '→',
+					currentText: 'Vandaag',
+					monthNames: [ 'januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december' ],
+					monthNamesShort: [ 'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec' ],
+					dayNames: [ 'zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag' ],
+					dayNamesShort: [ 'zon', 'maa', 'din', 'woe', 'don', 'vri', 'zat' ],
+					dayNamesMin: [ 'zo', 'ma', 'di', 'wo', 'do', 'vr', 'za' ],
+					weekHeader: 'Wk',
+					dateFormat: 'dd-mm-yy',
+					firstDay: 1,
+					isRTL: false,
+					showMonthAfterYear: false,
+					yearSuffix: ''
 				}
 			);
 		}
@@ -79,7 +84,9 @@ var detectTap;
 		var $tijd = $( '.kleistad-tijd' );
 		if ( $tijd[0] ) {
 			$.widget(
-				'ui.timespinner', $.ui.spinner, {
+				'ui.timespinner',
+				$.ui.spinner,
+				{
 					options: {
 						step: 15,
 						page: 60,
@@ -110,17 +117,22 @@ var detectTap;
 	function defineSelectMenus() {
 		var $selectMenu = $( '.kleistad-selectmenu' );
 		if ( $selectMenu[0] ) {
-			$.widget( 'custom.iconselectmenu', $.ui.selectmenu, {
-				_renderItem: function( ul, item ) {
-					var li  = $( '<li>' ),
-					wrapper = $( '<div>', { text: item.label } );
-					$( '<span>', {
-						style: item.element.attr( 'data-style' ),
-						'class': 'ui-icon ' + item.element.attr( 'data-class' )
-						}
-					)
-					.appendTo( wrapper );
-					return li.append( wrapper ).appendTo( ul );
+			$.widget(
+				'custom.iconselectmenu',
+				$.ui.selectmenu,
+				{
+					_renderItem: function( ul, item ) {
+						var li  = $( '<li>' ),
+						wrapper = $( '<div>', { text: item.label } );
+						$(
+							'<span>',
+							{
+								style: item.element.attr( 'data-style' ),
+								'class': 'ui-icon ' + item.element.attr( 'data-class' )
+							}
+						)
+						.appendTo( wrapper );
+						return li.append( wrapper ).appendTo( ul );
 					}
 				}
 			);
@@ -203,7 +215,7 @@ var detectTap;
 	$.fn.shortcode = function shortcode( $element ) {
 		var $shortcode    = $element.closest( '.kleistad-shortcode' );
 		var shortcodeData = { tag:   $shortcode.data( 'tag' ) };
-		if ( 'undefined' !== typeof $shortcode.data( 'atts') ) {
+		if ( 'undefined' !== typeof $shortcode.data( 'atts' ) ) {
 			shortcodeData.atts = JSON.stringify( $shortcode.data( 'atts' ) );
 		}
 		if ( 'undefined' !== typeof $element.data( 'id' ) ) {
@@ -221,7 +233,7 @@ var detectTap;
 	 * Wordt aangeroepen na elke ajax call.
 	 */
 	$( document ).ajaxComplete(
-        function() {
+		function() {
 			onLoad();
 		}
 	);
@@ -229,7 +241,8 @@ var detectTap;
 	/**
 	 * Wordt aangeroepen nadat de webpage geladen is.
 	 */
-	$( function()
+	$(
+		function()
 		{
 			onLoad();
 
@@ -237,7 +250,9 @@ var detectTap;
 			/**
 			 * Als er op een edit anchor is geklikt, doe dan een edit actie.
 			 */
-			.on( 'click', '.kleistad-edit-link',
+			.on(
+				'click',
+				'.kleistad-edit-link',
 				function() {
 					var $anchor       = $( this );
 					var shortcodeData = $.fn.shortcode( $anchor );
@@ -248,7 +263,9 @@ var detectTap;
 			/**
 			 * Als er op een terug anchor is geklikt
 			 */
-			.on( 'click', '.kleistad-terug-link',
+			.on(
+				'click',
+				'.kleistad-terug-link',
 				function() {
 					var $button       = $( this );
 					var shortcodeData = $.fn.shortcode( $button );
@@ -259,13 +276,15 @@ var detectTap;
 			/**
 			 * Als er op een download button link is geklikt
 			 */
-			.on( 'click', '.kleistad-download-link',
+			.on(
+				'click',
+				'.kleistad-download-link',
 				function() {
 					var $button       = $( this );
 					var shortcodeData = $.fn.shortcode( $button );
 					$( 'input,select' ).each(
 						function() {
-							shortcodeData[ $( this ).attr( 'name') ] = $( this ).val();
+							shortcodeData[ $( this ).attr( 'name' ) ] = $( this ).val();
 						}
 					);
 					getContent( $button.closest( '.kleistad-shortcode' ), shortcodeData, 'download' );
@@ -275,12 +294,14 @@ var detectTap;
 			/**
 			 * Voor de ondersteuning van touch events
 			 */
-			.on( 'touchstart',
+			.on(
+				'touchstart',
 				function() {
 					detectTap = true;
 				}
 			)
-			.on( 'touchmove',
+			.on(
+				'touchmove',
 				function() {
 					detectTap = false;
 				}
