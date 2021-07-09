@@ -82,7 +82,7 @@ class Test_Werkplek extends Kleistad_UnitTestCase {
 		$this->dump_config();
 		$this->assertEquals( 5, count( $werkplekconfigs4 ), 'aantal configs na 4e tijdsbeperking incorrect' );
 
-		// eind_datum>start_datum laatste
+		// Voeg een ongelimiteerde beperking toe, die de rest vervangt.
 		$werkplekconfigs5             = new WerkplekConfigs();
 		$werkplekconfig5              = new WerkplekConfig();
 		$werkplekconfig5->start_datum = strtotime( '+ 46 days', $basis );

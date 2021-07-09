@@ -86,10 +86,10 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	/**
 	 * Bereid een workshop wijziging voor.
 	 *
-	 * @param int $workshop_id De workshop.
+	 * @param int|null $workshop_id De workshop.
 	 * @return array De workshop data.
 	 */
-	private function formulier( int $workshop_id = null ) : array {
+	private function formulier( ?int $workshop_id = null ) : array {
 		$workshop = new Workshop( $workshop_id );
 		$order    = new Order( $workshop->geef_referentie() );
 		return [
@@ -122,7 +122,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Prepareer 'input' form
 	 *
 	 * @param array $data data voor display.
-	 * @return WP_ERROR|bool
+	 * @return bool
 	 *
 	 * @since   5.0.0
 	 */
@@ -296,8 +296,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'telnr',
 				'programma',
 			],
-			';',
-			'"'
+			';'
 		);
 		foreach ( $workshops as $workshop ) {
 			fputcsv(
@@ -321,33 +320,92 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					$workshop->telnr,
 					$workshop->programma,
 				],
-				';',
-				'"'
+				';'
 			);
 		}
 	}
 
 	/**
-	 *
-	 * Bewaar 'input' form gegevens
+	 * Reageer op een aanvraag
 	 *
 	 * @param array $data data te bewaren.
-	 * @return WP_Error|array
 	 *
-	 * @since   5.0.0
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	protected function save( array $data ) : array {
-		if ( 'reageren' === $data['form_actie'] ) {
-			$workshopaanvraag = new WorkshopAanvraag( $data['casus']['casus_id'] );
-			$workshopaanvraag->reactie( $data['casus']['reactie'] );
+	private function reageren( array $data ) : array {
+		$workshopaanvraag = new WorkshopAanvraag( $data['casus']['casus_id'] );
+		$workshopaanvraag->reactie( $data['casus']['reactie'] );
+		return [
+			'status'  => $this->status( 'Er is een email verzonden naar de aanvrager' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Zeg een workshop af
+	 *
+	 * @param array $data data te bewaren.
+	 *
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function afzeggen( array $data ) : array {
+		$workshop = new Workshop( intval( $data['workshop']['workshop_id'] ) );
+		$workshop->actie->afzeggen();
+		return [
+			'status'  => $this->status( 'De afspraak voor de workshop is ' . ( $workshop->definitief ) ? 'per email afgezegd' : 'verwijderd' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Verwerk de input data en bewaar de workshop.
+	 *
+	 * @param array $data De input.
+	 *
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function bewaren( array $data ) : array {
+		$workshop = $this->update_workshop( $data );
+		$workshop->save();
+		return [
+			'status'  => $this->status( 'De workshop informatie is opgeslagen' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Verwerk de input data en bevestig de workshop.
+	 *
+	 * @param array $data De input.
+	 *
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function bevestigen( array $data ) : array {
+		$workshop = $this->update_workshop( $data );
+		if ( ! $workshop->actie->bevestig() ) {
 			return [
-				'status'  => $this->status( 'Er is een email verzonden naar de aanvrager' ),
+				'status'  => $this->status( new WP_Error( 'factuur', 'De factuur kan niet meer gewijzigd worden' ) ),
 				'content' => $this->display(),
 			];
 		}
+		return [
+			'status'  => $this->status( 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd' ),
+			'content' => $this->display(),
+		];
+	}
 
-		$bericht                     = '';
-		$workshop_id                 = $data['workshop']['workshop_id'];
+	/**
+	 * Verwerk de input data en geef de workshop terug.
+	 *
+	 * @param array $data De input.
+	 * @return Workshop
+	 */
+	private function update_workshop( array $data ) : Workshop {
+		$workshop_id                 = intval( $data['workshop']['workshop_id'] );
 		$workshop                    = ( $workshop_id > 0 ) ? new Workshop( $workshop_id ) : new Workshop();
 		$workshop->naam              = $data['workshop']['naam'];
 		$workshop->datum             = strtotime( $data['workshop']['datum'] );
@@ -362,27 +420,10 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshop->email             = $data['workshop']['email'];
 		$workshop->telnr             = $data['workshop']['telnr'];
 		$workshop->programma         = $data['workshop']['programma'];
-		$workshop->kosten            = $data['workshop']['kosten'];
-		$workshop->aantal            = $data['workshop']['aantal'];
-		$workshop->aanvraag_id       = $data['workshop']['aanvraag_id'];
-		if ( 'bewaren' === $data['form_actie'] ) {
-			$workshop->save();
-			$bericht = 'De workshop informatie is opgeslagen';
-		} elseif ( 'bevestigen' === $data['form_actie'] ) {
-			if ( ! $workshop->actie->bevestig() ) {
-				return [
-					'status'  => $this->status( new WP_Error( 'factuur', 'De factuur kan niet meer gewijzigd worden' ) ),
-					'content' => $this->display(),
-				];
-			}
-			$bericht = 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd';
-		} elseif ( 'afzeggen' === $data['form_actie'] ) {
-			$workshop->actie->afzeggen();
-			$bericht = 'De afspraak voor de workshop is ' . ( $workshop->definitief ) ? 'per email afgezegd' : 'verwijderd';
-		}
-		return [
-			'status'  => $this->status( $bericht ),
-			'content' => $this->display(),
-		];
+		$workshop->kosten            = floatval( $data['workshop']['kosten'] );
+		$workshop->aantal            = intval( $data['workshop']['aantal'] );
+		$workshop->aanvraag_id       = intval( $data['workshop']['aanvraag_id'] );
+		return $workshop;
 	}
+
 }

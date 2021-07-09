@@ -268,10 +268,12 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	/**
 	 * Bewaar actie ingeval de gebruiker van de wachtlijst verwijdert wil worden.
 	 *
-	 * @param Inschrijving $inschrijving De inschrijving.
+	 * @param array $data data te bewaren.
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function save_stop_wachten( Inschrijving $inschrijving ) : array {
+	private function stop_wachten( array $data ) : array {
+		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['gebruiker_id'] );
 		if ( $inschrijving->ingedeeld ) {
 			return [
 				'status' => $this->status( new WP_Error( 'ingedeeld', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Voor een annulering, neem contact op met Kleistad.' ) ),
@@ -287,10 +289,12 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	/**
 	 * Bewaar actie ingeval de gebruiker op de wachtlijst ingedeeld wil worden.
 	 *
-	 * @param Inschrijving $inschrijving De inschrijving.
+	 * @param array $data data te bewaren.
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function save_indelen_na_wachten( Inschrijving $inschrijving ) : array {
+	private function indelen_na_wachten( array $data ) : array {
+		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['gebruiker_id'] );
 		if ( $inschrijving->ingedeeld ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
@@ -308,17 +312,27 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	/**
 	 * Bewaar actie ingeval de gebruiker in wil schrijven op een cursus.
 	 *
-	 * @param Inschrijving $inschrijving De inschrijving.
-	 * @param string       $betaalwijze  De wijze waarop de gebruiker wil betalen.
+	 * @param array $data data te bewaren.
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function save_inschrijven( Inschrijving $inschrijving, string $betaalwijze ) : array {
+	private function inschrijven( array $data ) : array {
+		$gebruiker_id = Gebruiker::registreren( $data['input'] );
+		if ( ! is_int( $gebruiker_id ) ) {
+			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
+		}
+		$inschrijving               = new Inschrijving( $data['input']['cursus_id'], $gebruiker_id );
+		$inschrijving->technieken   = $data['input']['technieken'];
+		$inschrijving->opmerking    = $data['input']['opmerking'];
+		$inschrijving->aantal       = intval( $data['input']['aantal'] );
+		$inschrijving->wacht_datum  = $inschrijving->cursus->vol ? strtotime( 'today' ) : 0;
+		$inschrijving->artikel_type = 'inschrijving';
 		if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
-		$result = $inschrijving->actie->aanvraag( $betaalwijze );
+		$result = $inschrijving->actie->aanvraag( $data['input']['betaal'] );
 		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}
@@ -331,36 +345,5 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		];
 	}
 
-	/**
-	 *
-	 * Bewaar 'cursus_inschrijving' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return WP_Error|array
-	 * @suppressWarnings(PHPMD.StaticAccess)
-	 *
-	 * @since   4.0.87
-	 */
-	protected function save( array $data ) : array {
-		$gebruiker_id = Gebruiker::registreren( $data['input'] );
-		if ( ! is_int( $gebruiker_id ) ) {
-			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
-		}
-		$inschrijving               = new Inschrijving( $data['input']['cursus_id'], $gebruiker_id );
-		$inschrijving->technieken   = $data['input']['technieken'] ?? $inschrijving->technieken;
-		$inschrijving->opmerking    = $data['input']['opmerking'] ?? $inschrijving->opmerking;
-		$inschrijving->aantal       = intval( $data['input']['aantal'] ) ?: $inschrijving->aantal;
-		$inschrijving->wacht_datum  = $inschrijving->cursus->vol ? strtotime( 'today' ) : 0;
-		$inschrijving->artikel_type = 'inschrijving';
-		switch ( $data['form_actie'] ) {
-			case 'stop_wachten':
-				return $this->save_stop_wachten( $inschrijving );
-			case 'indelen_na_wachten':
-				return $this->save_indelen_na_wachten( $inschrijving );
-			case 'inschrijven':
-				return $this->save_inschrijven( $inschrijving, $data['input']['betaal'] );
-		}
-		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
-	}
 
 }

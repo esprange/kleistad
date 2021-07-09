@@ -190,26 +190,12 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 * Bewaar 'cursus_beheer' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return array
-	 *
-	 * @since   4.0.87
-	 */
-	protected function save( array $data ) : array {
-		$actie = $data['form_actie'];
-		if ( method_exists( $this, $actie ) ) {
-			return $this->$actie( $data );
-		}
-		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
-	}
-
-	/**
 	 * Verwijder de cursus
 	 *
 	 * @param array $data data te verwijderen.
+	 *
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function verwijderen( array $data ) : array {
 		$cursus = new Cursus( $data['cursus']['cursus_id'] );
@@ -231,6 +217,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @param array $data date te bewaren.
 	 *
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function bewaren( array $data ) : array {
 		$cursus_id               = $data['cursus']['cursus_id'];

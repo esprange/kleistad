@@ -38,13 +38,19 @@ abstract class ShortcodeForm extends Shortcode {
 	abstract protected function validate( array &$data );
 
 	/**
-	 * Save functie, wordt gebruikt bij formulieren.
+	 * Save functie, wordt gebruikt bij formulieren. Kan overschreven worden door een meer specifieke functie.
 	 *
 	 * @since   4.0.87
 	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return array
 	 */
-	abstract protected function save( array $data ) : array;
+	protected function save( array $data ) : array {
+		$actie = $data['form_actie'];
+		if ( method_exists( $this, $actie ) ) {
+			return $this->$actie( $data );
+		}
+		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
+	}
 
 	/**
 	 * De constructor
@@ -89,8 +95,8 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @throws Exception Onbekend object.
 	 */
 	public static function callback_formsubmit( WP_REST_Request $request ) : WP_REST_Response {
+		$shortcode = self::get_shortcode( $request );
 		try {
-			$shortcode = self::get_shortcode( $request );
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
 				throw new Exception( 'callback_formsubmit voor onbekend object' );
 			}

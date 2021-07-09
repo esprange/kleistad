@@ -188,28 +188,11 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 *
-	 * Bewaar 'recept' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 *
-	 * @return array
-	 *
-	 * @since   4.1.0
-	 */
-	protected function save( array $data ): array {
-		$actie = $data['form_actie'];
-		if ( method_exists( $this, $actie ) ) {
-			return $this->$actie( $data );
-		}
-		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
-	}
-
-	/**
 	 * Recept moet verwijderd worden.
 	 *
 	 * @param array $data De input data.
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function verwijderen( array $data ): array {
 		wp_delete_post( $data['recept']['id'] );
@@ -224,6 +207,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @param array $data De input data.
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function publiceren( array $data ): array {
 		$recept              = get_post( $data['recept']['id'] );
@@ -241,6 +225,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @param array $data De input data.
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function verbergen( array $data ): array {
 		$recept              = get_post( $data['recept']['id'] );
@@ -258,6 +243,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @param array $data De input data.
 	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function bewaren( array $data ): array {
 		if ( ! empty( $_FILES['foto']['name'] ) ) {

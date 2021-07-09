@@ -11,8 +11,6 @@
 
 namespace Kleistad;
 
-use WP_Error;
-
 /**
  * De kleistad cursus overzicht class.
  */
@@ -167,46 +165,6 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
-	 * Bewaar 'cursus_overzicht' form gegevens
-	 *
-	 * @param array $data data te bewaren.
-	 * @return array
-	 *
-	 * @since   5.4.0
-	 */
-	protected function save( array $data ) : array {
-		if ( 'indelen' === $data['form_actie'] ) {
-			$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
-			$inschrijving->actie->indelen_lopend( (float) $data['input']['kosten'] );
-			return [
-				'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
-				'content' => $this->display(),
-			];
-		} elseif ( 'uitschrijven' === $data['form_actie'] ) {
-			$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
-			$inschrijving->actie->uitschrijven_wachtlijst();
-			return [
-				'status'  => $this->status( 'De inschrijving is geannuleerd' ),
-				'content' => $this->display(),
-			];
-		} elseif ( 'herinner_email' === $data['form_actie'] ) {
-			$aantal_email = 0;
-			// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
-			foreach ( new Inschrijvingen( $data['input']['cursus_id'], true ) as $inschrijving ) {
-				/**
-				 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
-				 */
-				$aantal_email += $inschrijving->actie->herinnering();
-			}
-			return [
-				'status'  => $this->status( ( $aantal_email > 0 ) ? "Emails zijn verstuurd naar $aantal_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
-				'content' => $this->display(),
-			];
-		}
-		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
-	}
-
-	/**
 	 * Schrijf cursisten informatie naar het bestand.
 	 */
 	protected function cursisten() {
@@ -223,7 +181,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			'Ingedeeld',
 			'Geannuleerd',
 		];
-		fputcsv( $this->file_handle, $cursisten_fields, ';', '"' );
+		fputcsv( $this->file_handle, $cursisten_fields, ';' );
 		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
 			$cursist          = get_userdata( $inschrijving->klant_id );
 			$cursist_gegevens = [
@@ -238,7 +196,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				$inschrijving->ingedeeld ? 'Ja' : 'Nee',
 				$inschrijving->geannuleerd ? 'Ja' : 'Nee',
 			];
-			fputcsv( $this->file_handle, $cursist_gegevens, ';', '"' );
+			fputcsv( $this->file_handle, $cursist_gegevens, ';' );
 		}
 	}
 
@@ -259,4 +217,63 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$presentielijst = new Presentielijst( 'L' );
 		return $presentielijst->run( $cursus, $cursisten );
 	}
+
+	/**
+	 * Deel een cursist in
+	 *
+	 * @param array $data data te bewaren.
+	 *
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function indelen( array $data ) : array {
+		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
+		$inschrijving->actie->indelen_lopend( (float) $data['input']['kosten'] );
+
+		return [
+			'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Schrijf een cursist uit
+	 *
+	 * @param array $data data te bewaren.
+	 *
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function uitschrijven( array $data ) : array {
+		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
+		$inschrijving->actie->uitschrijven_wachtlijst();
+		return [
+			'status'  => $this->status( 'De inschrijving is geannuleerd' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Stuur een herinner email
+	 *
+	 * @param array $data data te bewaren.
+	 *
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function herinner_email( array $data ) : array {
+		$aantal_email = 0;
+		// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
+		foreach ( new Inschrijvingen( $data['input']['cursus_id'], true ) as $inschrijving ) {
+			/**
+			 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
+			 */
+			$aantal_email += $inschrijving->actie->herinnering();
+		}
+		return [
+			'status'  => $this->status( ( $aantal_email > 0 ) ? "Emails zijn verstuurd naar $aantal_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
+			'content' => $this->display(),
+		];
+	}
+
 }

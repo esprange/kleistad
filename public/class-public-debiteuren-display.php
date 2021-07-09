@@ -136,14 +136,14 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 						<label for="kleistad_ontvangst">Ontvangen bedrag</label>
 					</div>
 					<div class="kleistad-col-3" >
-						<input type="number" step="0.01" id="kleistad_ontvangst" name="bedrag" min="0.00" max="<?php echo esc_attr( $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
+						<input type="number" step="0.01" id="kleistad_ontvangst" name="bedrag_betaald" min="0.00" max="<?php echo esc_attr( $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
 					</div>
 				<?php else : // Als een credit stand. ?>
 					<div class="kleistad-col-4 kleistad-label">
 						<label for="kleistad_terugstorting">Teruggestort bedrag</label>
 					</div>
 					<div class="kleistad-col-3" >
-						<input type="number" step="0.01" id="kleistad_terugstorting" name="bedrag" min="0.00" max="<?php echo esc_attr( - $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
+						<input type="number" step="0.01" id="kleistad_terugstorting" name="bedrag_gestort" min="0.00" max="<?php echo esc_attr( - $this->data['debiteur']['openstaand'] ); ?>" value="<?php echo esc_attr( max( 0, $this->data['debiteur']['ontvangst'] ) ); ?>">
 					</div>
 				<?php endif ?>
 			</div>

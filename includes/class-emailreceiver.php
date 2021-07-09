@@ -46,7 +46,7 @@ class EmailReceiver {
 			error_log( 'IMAP fail: ' . $e->getMessage() ); // phpcs:ignore
 			exit( 0 );
 		}
-		$email_ids = $mailbox->searchMailbox( 'UNANSWERED' );
+		$email_ids = $mailbox->searchMailbox( 'UNANSWERED', true );
 		foreach ( $email_ids as $email_id ) {
 			$email  = $mailbox->getMail( $email_id );
 			$header = $mailbox->getMailHeader( $email_id );

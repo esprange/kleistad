@@ -193,31 +193,40 @@ class Public_Email extends ShortcodeForm {
 	}
 
 	/**
-	 *
-	 * Verzend emails
+	 * Verzend test_email
 	 *
 	 * @param array $data data te verzenden.
-	 * @return WP_ERROR|array
-	 *
-	 * @since   5.5.0
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	protected function save( array $data ) : array {
+	private function test_email( array $data ) : array {
 		$gebruiker = wp_get_current_user();
 		$emailer   = new Email();
-		if ( 'test_email' === $data['form_actie'] ) {
-			$emailer->send(
-				array_merge(
-					$this->mail_parameters( $data ),
-					[
-						'to'      => "{$gebruiker->display_name} <{$gebruiker->user_email}>",
-						'subject' => "TEST: {$data['input']['onderwerp']}",
-					]
-				)
-			);
-			return [
-				'status' => $this->status( 'De test email is verzonden' ),
-			];
-		}
+		$emailer->send(
+			array_merge(
+				$this->mail_parameters( $data ),
+				[
+					'to'      => "{$gebruiker->display_name} <{$gebruiker->user_email}>",
+					'subject' => "TEST: {$data['input']['onderwerp']}",
+				]
+			)
+		);
+
+		return [
+			'status' => $this->status( 'De test email is verzonden' ),
+		];
+	}
+
+	/**
+	 * Verzend de email naar de geselecteerde ontvanger
+	 *
+	 * @param array $data data te verzenden.
+	 * @return array
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function verzenden( array $data ) : array {
+		$gebruiker       = wp_get_current_user();
+		$emailer         = new Email();
 		$gebruikerids    = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
 		$query           = new WP_User_Query(
 			[
