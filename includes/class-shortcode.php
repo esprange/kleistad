@@ -58,7 +58,7 @@ abstract class Shortcode {
 	 */
 	protected function enqueue() {
 		$reflect = new ReflectionClass( $this );
-		wp_enqueue_script( 'kleistad-' . substr( strtolower( $reflect->getShortName() ), strlen( 'public-' ) - 2 ) );
+		wp_enqueue_script( 'kleistad-' . substr( strtolower( $reflect->getShortName() ), strlen( 'public-' ) ) );
 	}
 
 	/**

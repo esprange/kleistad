@@ -85,7 +85,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 									<?php echo $cursist['wachtlijst'] ? 'wachtlijst' : 'wacht op factuur'; ?> </a>
 								<?php else : ?>
 									nog niet betaald !
-								<?php
+									<?php
 								endif;
 							endif
 							?>
