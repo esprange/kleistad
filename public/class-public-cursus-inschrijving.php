@@ -127,8 +127,24 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			} elseif ( ! $cursus->tonen ) {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
-			$data['open_cursussen'][ $cursus->id ] = $cursus;
-			$selecteerbaar                         = $selecteerbaar || ( ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() ) );
+			$is_open                  = ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() );
+			$ruimte                   = $cursus->ruimte();
+			$data['open_cursussen'][] = [
+				'cursus'  => $cursus,
+				'is_open' => $is_open,
+				'ruimte'  => $ruimte,
+				'json'    => wp_json_encode(
+					[
+						'technieken' => $cursus->technieken,
+						'meer'       => $cursus->meer,
+						'ruimte'     => min( $ruimte, 4 ),
+						'bedrag'     => $cursus->bedrag(),
+						'lopend'     => $cursus->is_lopend(),
+						'vol'        => $cursus->vol,
+					]
+				),
+			];
+			$selecteerbaar            = $selecteerbaar || $is_open;
 		}
 		if ( ! $selecteerbaar ) {
 			return new WP_Error( 'Inschrijven', 'Helaas is er geen cursusplek meer beschikbaar' );
