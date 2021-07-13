@@ -331,9 +331,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @param array $data data te bewaren.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function reageren( array $data ) : array {
+	protected function reageren( array $data ) : array {
 		$workshopaanvraag = new WorkshopAanvraag( $data['casus']['casus_id'] );
 		$workshopaanvraag->reactie( $data['casus']['reactie'] );
 		return [
@@ -348,9 +347,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @param array $data data te bewaren.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function afzeggen( array $data ) : array {
+	protected function afzeggen( array $data ) : array {
 		$workshop = new Workshop( intval( $data['workshop']['workshop_id'] ) );
 		$workshop->actie->afzeggen();
 		return [
@@ -365,9 +363,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @param array $data De input.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function bewaren( array $data ) : array {
+	protected function bewaren( array $data ) : array {
 		$workshop = $this->update_workshop( $data );
 		$workshop->save();
 		return [
@@ -382,9 +379,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @param array $data De input.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function bevestigen( array $data ) : array {
+	protected function bevestigen( array $data ) : array {
 		$workshop = $this->update_workshop( $data );
 		if ( ! $workshop->actie->bevestig() ) {
 			return [

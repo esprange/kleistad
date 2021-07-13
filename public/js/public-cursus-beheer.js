@@ -13,15 +13,21 @@
 		if ( 0 === lesDatums.length ) {
 			return;
 		}
-		lesDatums.forEach( function( item ) {
-			datums.push( strtodate( item ) );
-		} );
-		datums.sort( function( a, b ) {
-			return a - b;
-		} );
-		datums.forEach( function( item ) {
-			lesDatumsLijst += '<li>' + $.datepicker.formatDate( 'dd-mm-yy', item ) + '</li>';
-		} );
+		lesDatums.forEach(
+			function( item ) {
+				datums.push( strtodate( item ) );
+			}
+		);
+		datums.sort(
+			function( a, b ) {
+				return a - b;
+			}
+		);
+		datums.forEach(
+			function( item ) {
+				lesDatumsLijst += '<li>' + $.datepicker.formatDate( 'dd-mm-yy', item ) + '</li>';
+			}
+		);
 		$( '#kleistad_lesdatums_lijst' ).html( lesDatumsLijst );
 	}
 
@@ -40,12 +46,13 @@
 	 * Pas de lijst aan als de start of eind datum wijzigt.
 	 */
 	function updateLesDatums() {
-		lesDatums = lesDatums.filter( function( item ) {
-			var datum = strtodate( item );
-			return datum <= eindDatum && datum >= startDatum;
-		} );
+		lesDatums = lesDatums.filter(
+			function( item ) {
+				var datum = strtodate( item );
+				return datum <= eindDatum && datum >= startDatum;
+			}
+		);
 		expandLesDatums( $.datepicker.formatDate( 'dd-mm-yy', startDatum ) );
-		// if ( eindDatum.getDate() !== startDatum.getDate() ) {
 		if ( eindDatum !== startDatum ) {
 				expandLesDatums( $.datepicker.formatDate( 'dd-mm-yy', eindDatum ) );
 		}
@@ -53,7 +60,7 @@
 	}
 
 	function setLimits() {
-		var dag   = 24 * 60 * 60 * 1000;
+		var dag = 24 * 60 * 60 * 1000;
 		$( '#kleistad_eind_datum' ).datepicker( 'option', { minDate: startDatum } );
 		if ( eindDatum.getDate() !== startDatum.getDate() ) {
 			$( '#kleistad_start_datum' ).datepicker( 'option', { maxDate: eindDatum } );
@@ -62,7 +69,8 @@
 	}
 
 	function setDatepickers() {
-		$( '#kleistad_start_datum' ).datepicker( 'option',
+		$( '#kleistad_start_datum' ).datepicker(
+			'option',
 			{
 				onSelect: function( datum ) {
 					startDatum = strtodate( datum );
@@ -78,7 +86,8 @@
 			}
 		);
 
-		$( '#kleistad_eind_datum' ).datepicker( 'option',
+		$( '#kleistad_eind_datum' ).datepicker(
+			'option',
 			{
 				onSelect: function( datum ) {
 					eindDatum = strtodate( datum );
@@ -90,7 +99,8 @@
 			}
 		);
 
-		$( '#kleistad_lesdatum' ).datepicker( 'option',
+		$( '#kleistad_lesdatum' ).datepicker(
+			'option',
 			{
 				onSelect: function( datum ) {
 					var index = $.inArray( datum, lesDatums );
@@ -117,7 +127,8 @@
 	}
 
 	function setTimespinners() {
-		$( '#kleistad_start_tijd' ).timespinner( 'option',
+		$( '#kleistad_start_tijd' ).timespinner(
+			'option',
 			{
 				stop: function() {
 					var startTijd = strtotime( $( this ).val() );
@@ -129,7 +140,8 @@
 			}
 		);
 
-		$( '#kleistad_eind_tijd' ).timespinner( 'option',
+		$( '#kleistad_eind_tijd' ).timespinner(
+			'option',
 			{
 				stop: function() {
 					var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
@@ -158,15 +170,15 @@
 	}
 
 	$( document ).ajaxComplete(
-        function() {
+		function() {
 			onLoad();
 		}
 	);
 
-    $( function()
-		{
+	$(
+		function() {
 			onLoad();
 		}
-    );
+	);
 
 } )( jQuery );

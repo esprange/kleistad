@@ -134,7 +134,6 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @since   6.1.0
 	 */
 	protected function validate( array &$data ) {
-		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -159,15 +158,13 @@ class Public_Debiteuren extends ShortcodeForm {
 				'opmerking_annulering' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( 'blokkade' !== $data['form_actie'] ) {
-			$data['order'] = new Order( $data['input']['id'] );
-			if ( 'korting' === $data['input']['debiteur_actie'] ) {
-				if ( $data['order']->orderregels->bruto() < $data['input']['korting'] ) {
-					$error->add( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
-				}
-			}
-			if ( ! empty( $error->get_error_codes() ) ) {
-				return $error;
+		if ( 'blokkade' === $data['form_actie'] ) {
+			return true;
+		}
+		$data['order'] = new Order( $data['input']['id'] );
+		if ( 'korting' === $data['form_actie'] ) {
+			if ( $data['order']->orderregels->bruto() < $data['input']['korting'] ) {
+				return new WP_Error( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
 			}
 		}
 		return true;
@@ -178,9 +175,8 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * @param array $data te bewaren data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function bankbetaling( array $data ) : array {
+	protected function bankbetaling( array $data ) : array {
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $data['order']->referentie );
 		$artikel->betaling->verwerk( $data['order'], floatval( $data['input']['bedrag_betaald'] ) ?: - floatval( $data['input']['bedrag_gestort'] ), true, 'bank' );
@@ -195,9 +191,8 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * @param array $data te bewaren data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function annulering( array $data ) : array {
+	protected function annulering( array $data ) : array {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $data['order']->referentie );
@@ -236,9 +231,8 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * @param array $data te bewaren data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function korting( array $data ) : array {
+	protected function korting( array $data ) : array {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $data['order']->referentie );
@@ -268,9 +262,8 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * @param array $data de input data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function factuur( array $data ) : array {
+	protected function factuur( array $data ) : array {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $data['order']->referentie );
@@ -299,9 +292,8 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * @param array $data de input data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function afboeken( array $data ) : array {
+	protected function afboeken( array $data ) : array {
 		$data['order']->afboeken();
 		return [
 			'status'  => $this->status( 'De order is afgeboekt' ),
@@ -313,9 +305,8 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * Voer een blokkade op
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function blokkade() : array {
+	protected function blokkade() : array {
 		zet_blokkade( strtotime( '+3 month', get_blokkade() ) );
 		return [
 			'status'  => 'De blokkade datum is gewijzigd',

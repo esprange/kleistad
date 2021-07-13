@@ -270,9 +270,8 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @param array $data data te bewaren.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function stop_wachten( array $data ) : array {
+	protected function stop_wachten( array $data ) : array {
 		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['gebruiker_id'] );
 		if ( $inschrijving->ingedeeld ) {
 			return [
@@ -291,9 +290,8 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @param array $data data te bewaren.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function indelen_na_wachten( array $data ) : array {
+	protected function indelen_na_wachten( array $data ) : array {
 		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['gebruiker_id'] );
 		if ( $inschrijving->ingedeeld ) {
 			return [
@@ -314,9 +312,8 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @param array $data data te bewaren.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function inschrijven( array $data ) : array {
+	protected function inschrijven( array $data ) : array {
 		$gebruiker_id = Gebruiker::registreren( $data['input'] );
 		if ( ! is_int( $gebruiker_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];

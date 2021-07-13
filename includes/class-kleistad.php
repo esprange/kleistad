@@ -206,7 +206,7 @@ class Kleistad {
 		$plugin_filters = new Public_Filters();
 		$plugin_actions = new Public_Actions();
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'register_styles_and_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'register_styles_and_scripts', 99 );
 		$this->loader->add_action( 'rest_api_init', $plugin_actions, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_actions, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $plugin_actions, 'register_post_types' );

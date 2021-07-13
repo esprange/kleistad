@@ -1,9 +1,9 @@
 /*
 Description: stylesheet functions voor kleistad_plugin
-  Version: 6.6.13
-  Author: Eric Sprangers
-  Author URI: https://www.kleistad.nl/
-  License: GPL3.0
+Version: 6.6.13
+Author: Eric Sprangers
+Author URI: https://www.kleistad.nl/
+License: GPL3.0
 */
 
 :root {
@@ -484,7 +484,7 @@ div.kleistad-werkplek-dagdeel {
 	left: 0;
 	position: absolute;
 	top: 0;
-	transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+	transition: transform 0.3s ease, opacity 0.2s;
 	opacity: var(--o, 0);
 }
 

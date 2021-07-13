@@ -197,9 +197,8 @@ class Public_Email extends ShortcodeForm {
 	 *
 	 * @param array $data data te verzenden.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function test_email( array $data ) : array {
+	protected function test_email( array $data ) : array {
 		$gebruiker = wp_get_current_user();
 		$emailer   = new Email();
 		$emailer->send(
@@ -222,9 +221,8 @@ class Public_Email extends ShortcodeForm {
 	 *
 	 * @param array $data data te verzenden.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function verzenden( array $data ) : array {
+	protected function verzenden( array $data ) : array {
 		$gebruiker       = wp_get_current_user();
 		$emailer         = new Email();
 		$gebruikerids    = array_unique( explode( ',', $data['input']['gebruikerids'] ) );

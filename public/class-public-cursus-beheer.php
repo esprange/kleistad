@@ -195,9 +195,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @param array $data data te verwijderen.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function verwijderen( array $data ) : array {
+	protected function verwijderen( array $data ) : array {
 		$cursus = new Cursus( $data['cursus']['cursus_id'] );
 		if ( count( new Inschrijvingen( $cursus->id, true ) ) ) {
 			return [
@@ -217,9 +216,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @param array $data date te bewaren.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function bewaren( array $data ) : array {
+	protected function bewaren( array $data ) : array {
 		$cursus_id               = $data['cursus']['cursus_id'];
 		$cursus                  = $cursus_id > 0 ? new Cursus( $cursus_id ) : new Cursus();
 		$cursus->naam            = $data['cursus']['naam'];

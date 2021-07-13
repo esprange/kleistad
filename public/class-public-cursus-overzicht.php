@@ -224,9 +224,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @param array $data data te bewaren.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function indelen( array $data ) : array {
+	protected function indelen( array $data ) : array {
 		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
 		$inschrijving->actie->indelen_lopend( (float) $data['input']['kosten'] );
 
@@ -242,9 +241,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @param array $data data te bewaren.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function uitschrijven( array $data ) : array {
+	protected function uitschrijven( array $data ) : array {
 		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
 		$inschrijving->actie->uitschrijven_wachtlijst();
 		return [
@@ -259,9 +257,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @param array $data data te bewaren.
 	 *
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function herinner_email( array $data ) : array {
+	protected function herinner_email( array $data ) : array {
 		$aantal_email = 0;
 		// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
 		foreach ( new Inschrijvingen( $data['input']['cursus_id'], true ) as $inschrijving ) {

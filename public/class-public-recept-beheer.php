@@ -192,9 +192,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @param array $data De input data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function verwijderen( array $data ): array {
+	protected function verwijderen( array $data ): array {
 		wp_delete_post( $data['recept']['id'] );
 		return [
 			'status'  => $this->status( 'Het recept is verwijderd' ),
@@ -207,9 +206,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @param array $data De input data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function publiceren( array $data ): array {
+	protected function publiceren( array $data ): array {
 		$recept              = get_post( $data['recept']['id'] );
 		$recept->post_status = 'publish';
 		wp_update_post( $recept, true );
@@ -225,9 +223,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @param array $data De input data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function verbergen( array $data ): array {
+	protected function verbergen( array $data ): array {
 		$recept              = get_post( $data['recept']['id'] );
 		$recept->post_status = 'private';
 		wp_update_post( $recept, true );
@@ -243,9 +240,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @param array $data De input data.
 	 * @return array
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function bewaren( array $data ): array {
+	protected function bewaren( array $data ): array {
 		if ( ! empty( $_FILES['foto']['name'] ) ) {
 			$file = wp_handle_upload(
 				$_FILES['foto'],

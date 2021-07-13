@@ -25,23 +25,7 @@ class Admin_Instellingen_Display {
 		<form method="POST" action="options.php" >
 		<?php settings_fields( 'kleistad-opties' ); ?>
 		<table class="form-table" >
-			<?php
-				$prijzen = [
-					'onbeperkt_abonnement' => 'Prijs onbeperkt abonnement',
-					'beperkt_abonnement'   => 'Prijs beperkt abonnement',
-					'dagdelenkaart'        => 'Prijs dagdelenkaart',
-					'cursusprijs'          => 'Prijs standaard cursus excl. inschrijving',
-					'cursusinschrijfprijs' => 'Prijs cursus inschrijving',
-					'workshopprijs'        => 'Prijs standaard workshop',
-				];
-				foreach ( $prijzen as $id => $naam ) :
-					?>
-			<tr >
-				<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $naam ); ?></label></th>
-				<td colspan="3"><input type="number" step="0.01" name="kleistad-opties[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="small-text"
-					value="<?php echo esc_attr( opties()[ $id ] ); ?>" /></td>
-			</tr>
-				<?php endforeach; ?>
+			<?php $this->instellingen_prijzen(); ?>
 			<tr >
 				<th scope="row"><label for="cursusmaximum">Standaard maximum cursisten per cursus/workshop</label></th>
 				<td colspan="3"><input type="number" step="1" min="1"  max="99" name="kleistad-opties[cursusmaximum]" id="cursusmaximum" class="small-text"
@@ -125,27 +109,7 @@ class Admin_Instellingen_Display {
 						</p>
 					</td>
 				</tr>
-				<?php
-				$parameters = [
-					'sleutel'            => 'Mollie geheime sleutel',
-					'sleutel_test'       => 'Mollie geheime sleutel voor test',
-					'google_kalender_id' => 'Google kalender id',
-					'google_client_id'   => 'Google client id',
-					'google_sleutel'     => 'Google geheime sleutel',
-					'imap_server'        => 'Email IMAP server',
-					'imap_adres'         => 'Email IMAP adres',
-					'imap_pwd'           => 'Email IMAP paswoord',
-				];
-				foreach ( $parameters as $id => $naam ) :
-					?>
-					<tr >
-						<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $naam ); ?></label></th>
-						<td colspan="3">
-							<input type="text" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="regular-text"
-								value="<?php echo esc_attr( setup()[ $id ] ); ?>" />
-						</td>
-					</tr>
-				<?php endforeach; ?>
+				<?php $this->setup_tekst_parameters(); ?>
 			</table>
 			<?php submit_button(); ?>
 			<p>&nbsp;</p>
@@ -502,5 +466,59 @@ class Admin_Instellingen_Display {
 			</li>
 		</ul>
 		<?php
+	}
+
+	/**
+	 * Toon de tekst parameters
+	 *
+	 * @return void
+	 */
+	private function setup_tekst_parameters() : void {
+		$parameters = [
+			'sleutel'            => 'Mollie geheime sleutel',
+			'sleutel_test'       => 'Mollie geheime sleutel voor test',
+			'google_kalender_id' => 'Google kalender id',
+			'google_client_id'   => 'Google client id',
+			'google_sleutel'     => 'Google geheime sleutel',
+			'imap_server'        => 'Email IMAP server',
+			'imap_adres'         => 'Email IMAP adres',
+			'imap_pwd'           => 'Email IMAP paswoord',
+		];
+		foreach ( $parameters as $id => $naam ) {
+			?>
+			<tr >
+				<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $naam ); ?></label></th>
+				<td colspan="3">
+					<input type="text" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="regular-text"
+						value="<?php echo esc_attr( setup()[ $id ] ); ?>" />
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	/**
+	 * Toon de prijzen
+	 *
+	 * @return void
+	 */
+	private function instellingen_prijzen() : void {
+		$prijzen = [
+			'onbeperkt_abonnement' => 'Prijs onbeperkt abonnement',
+			'beperkt_abonnement'   => 'Prijs beperkt abonnement',
+			'dagdelenkaart'        => 'Prijs dagdelenkaart',
+			'cursusprijs'          => 'Prijs standaard cursus excl. inschrijving',
+			'cursusinschrijfprijs' => 'Prijs cursus inschrijving',
+			'workshopprijs'        => 'Prijs standaard workshop',
+		];
+		foreach ( $prijzen as $id => $naam ) {
+			?>
+			<tr >
+				<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $naam ); ?></label></th>
+				<td colspan="3"><input type="number" step="0.01" name="kleistad-opties[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="small-text"
+					value="<?php echo esc_attr( opties()[ $id ] ); ?>" /></td>
+			</tr>
+			<?php
+		}
 	}
 }
