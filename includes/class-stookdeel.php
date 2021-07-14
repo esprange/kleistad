@@ -43,8 +43,8 @@ class Stookdeel {
 	 * Constructor
 	 *
 	 * @param int   $medestoker Het WP id van de medestoker.
-	 * @param int   $percentage    Het percentage het stookdeel.
-	 * @param float $prijs       De vastgestelde prijs van het stookdeel.
+	 * @param int   $percentage Het percentage het stookdeel.
+	 * @param float $prijs      De vastgestelde prijs van het stookdeel.
 	 */
 	public function __construct( int $medestoker, int $percentage, float $prijs ) {
 		$this->medestoker = $medestoker;
