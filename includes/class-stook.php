@@ -139,7 +139,7 @@ class Stook {
 			$this->stook_id    = intval( $resultaat['id'] );
 			$this->hoofdstoker = intval( $resultaat['gebruiker_id'] );
 			foreach ( json_decode( $resultaat['verdeling'], true ) as $stookdeel ) {
-				$this->stookdelen[] = new Stookdeel( $stookdeel['id'], intval( $stookdeel['perc'] ), intval( $stookdeel['prijs'] ?? 0 ) );
+				$this->stookdelen[] = new Stookdeel( $stookdeel['id'], intval( $stookdeel['perc'] ), floatval( $stookdeel['prijs'] ?? 0 ) );
 			}
 			return;
 		}
