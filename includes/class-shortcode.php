@@ -83,14 +83,8 @@ abstract class Shortcode {
 				$html = $this->status( $result );
 			} else {
 				$html_objectclass = get_class( $this ) . '_Display';
-				if ( class_exists( $html_objectclass ) ) {
-					$display = new $html_objectclass( $data );
-					$html    = $display->render();
-				} else {
-					ob_start();
-					require plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/public-' . str_replace( '_', '-', $this->shortcode ) . '.php';
-					$html = ob_get_clean();
-				}
+				$display          = new $html_objectclass( $data );
+				$html             = $display->render();
 			}
 			if ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
 				return $this->status( $betaal_result ) . $html;

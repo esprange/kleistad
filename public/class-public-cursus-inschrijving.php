@@ -129,6 +129,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			}
 			$is_open                  = ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() );
 			$ruimte                   = $cursus->ruimte();
+			$is_lopend                = $cursus->is_lopend();
 			$data['open_cursussen'][] = [
 				'cursus'  => $cursus,
 				'is_open' => $is_open,
@@ -136,10 +137,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'json'    => wp_json_encode(
 					[
 						'technieken' => $cursus->technieken,
-						'meer'       => $cursus->meer,
+						'meer'       => ! $is_lopend && $cursus->meer,
 						'ruimte'     => min( $ruimte, 4 ),
 						'bedrag'     => $cursus->bedrag(),
-						'lopend'     => $cursus->is_lopend(),
+						'lopend'     => $is_lopend,
 						'vol'        => $cursus->vol,
 					]
 				),

@@ -135,11 +135,7 @@ a.kleistad-schedule {
 	padding: 0.4em 0.8em;
 }
 
-.kleistad-tijd {
-	width: 4em;
-}
-
-.kleistad-datum {
+.kleistad-tijd, .kleistad-datum {
 	width: 9em;
 }
 
