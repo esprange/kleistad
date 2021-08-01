@@ -3,17 +3,21 @@
 ( function( $ ) {
 	'use strict';
 
-    $( function()
+	$(
+		function()
 		{
+			var $vanaf_datum = $( '#kleistad_vanaf_datum' ),
+				$tot_datum   = $( '#kleistad_tot_datum' );
 			/**
 			 * Initieer de startdatum.
 			 */
-			$( '#kleistad_vanaf_datum' ).datepicker( 'option',
+			$vanaf_datum.datepicker(
+				'option',
 				{
 					minDate: new Date( '7/1/2017' ),
 					maxDate: 0,
 					onSelect: function( datum ) {
-						$( '#kleistad_tot_datum' ).datepicker( 'option', { minDate: strtodate( datum ) } );
+						$tot_datum.datepicker( 'option', { minDate: strtodate( datum ) } );
 					}
 				}
 			);
@@ -21,18 +25,17 @@
 			/**
 			 * Initieer de einddatum.
 			 */
-			$( '#kleistad_tot_datum' ).datepicker( 'option',
+			$tot_datum.datepicker(
+				'option',
 				{
-					minDate: new Date( $( '#kleistad_vanaf_datum' ).val() ),
+					minDate: new Date( $vanaf_datum.val() ),
 					maxDate: 0,
 					onSelect: function( datum ) {
-						$( '#kleistad_vanaf_datum' ).datepicker( 'option', { maxDate: strtodate( datum ) } );
+						$vanaf_datum.datepicker( 'option', { maxDate: strtodate( datum ) } );
 					}
 				}
 			);
-
 		}
-
-    );
+	);
 
 } )( jQuery );

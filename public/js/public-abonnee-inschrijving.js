@@ -1,9 +1,10 @@
 ( function( $ ) {
 	'use strict';
 
-    function wijzigTeksten() {
-		var bedrag      = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedrag' );
-		var bedragtekst = $( '[name=abonnement_keuze]:radio:checked' ).data( 'bedragtekst' );
+	function wijzigTeksten() {
+		var $abonnement_keuze = $( '[name=abonnement_keuze]:radio:checked' );
+		var bedrag            = $abonnement_keuze.data( 'bedrag' );
+		var bedragtekst       = $abonnement_keuze.data( 'bedragtekst' );
 
 		if ( 'undefined' !== typeof bedrag ) {
 			$( 'input[name^=extras]:checkbox:checked' ).each(
@@ -16,61 +17,70 @@
 		}
 	}
 
-    $( function()
+	$(
+		function()
 		{
 			wijzigTeksten();
 
 			/**
 			 * Initieer het start datum veld.
 			 */
-			$( '#kleistad_start_datum' ).datepicker( 'option',
+			$( '#kleistad_start_datum' ).datepicker(
+				'option',
 				{
 					minDate: 0,
 					maxDate: '+3M'
 				}
 			);
 
-            /**
-             * Afhankelijk van keuze abonnement al dan niet tonen dag waarvoor beperkt abo geldig is.
-             */
-            $( 'input[name=abonnement_keuze]:radio' ).on( 'change',
-                function() {
+			/**
+			 * Afhankelijk van keuze abonnement al dan niet tonen dag waarvoor beperkt abo geldig is.
+			 */
+			$( 'input[name=abonnement_keuze]:radio' ).on(
+				'change',
+				function() {
 					wijzigTeksten();
-                    if (  'beperkt' === this.value ) {
-                        $( '#kleistad_dag' ).css( 'visibility', 'visible' );
-
-                    } else {
-                        $( '#kleistad_dag' ).css( 'visibility', 'hidden' );
-                    }
-                }
+					if (  'beperkt' === this.value ) {
+						$( '#kleistad_dag' ).css( 'visibility', 'visible' );
+					} else {
+						$( '#kleistad_dag' ).css( 'visibility', 'hidden' );
+					}
+				}
 			);
 
-			$( 'input[name^=extras]:checkbox' ).on( 'change',
-                function() {
+			$( 'input[name^=extras]:checkbox' ).on(
+				'change',
+				function() {
 					wijzigTeksten();
 				}
 			);
 
-            $( 'input[name=betaal]:radio' ).on( 'change',
-                function() {
-                    $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
-                }
+			$( 'input[name=betaal]:radio' ).on(
+				'change',
+				function() {
+					$( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
+				}
 			);
 
 			/**
 			 * Vul adresvelden in
 			 */
-			$( '#kleistad_huisnr, #kleistad_pcode' ).on( 'change',
+			$( '#kleistad_huisnr, #kleistad_pcode' ).on(
+				'change',
 				function() {
 					var pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase().replace( /\s/g, '' ) );
-					$().lookupPostcode( pcode.val(), $( '#kleistad_huisnr' ).val(), function( data ) {
-						$( '#kleistad_straat' ).val( data.straat );
-						$( '#kleistad_plaats' ).val( data.plaats );
-					} );
+					$().lookupPostcode(
+						pcode.val(),
+						$( '#kleistad_huisnr' ).val(),
+						function( data ) {
+							$( '#kleistad_straat' ).val( data.straat );
+							$( '#kleistad_plaats' ).val( data.plaats );
+						}
+					);
 				}
 			);
-        }
-    );
+		}
+	);
 
 } )( jQuery );

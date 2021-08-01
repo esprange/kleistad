@@ -55,7 +55,7 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 			</thead>
 			<tbody>
 				<tr>
-					<th>de reserveringen worden opgehaald...</th>
+					<th colspan="4">de reserveringen worden opgehaald...</th>
 				</tr>
 			</tbody>
 		</table>
@@ -74,7 +74,7 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 				<tfoot>
 					<tr>
 						<td><button class="kleistad-button" style="font-size:16px;border-radius:25%;width:40px;text-align:center;padding:0;" id="kleistad_stoker_toevoegen"><span class="dashicons dashicons-plus"></span></button></td>
-						<td colspan="2"></td>
+						<td>&nbsp;</td><td>&nbsp;</td>
 					</tr>
 					<tr>
 						<th colspan="3">

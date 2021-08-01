@@ -44,44 +44,54 @@ get_header(); ?>
 		<script type="text/javascript">
 		( function ( $ ){
 			'use strict';
+			$(
+				function()
+				{
+					$( '#kleistad_recept_print' ).on(
+						'click',
+						function() {
+							var w       = window.open(),
+								c       = Boolean( window.chrome ),
+								elem    = document.createElement('textarea'),
+								decoded = elem.value;
+							if ( c ) {
+								elem.innerHTML = '&lt;script type="text/javascript"&gt;' +
+								'window.moveTo(0,0);window.resizeTo(640,480);window.print();setTimeout(function(){window.close();},500);' +
+								'&lt;/script&gt;';
+							} else {
+								elem.innerHTML = '&lt;script type="text/javascript"&gt;' +
+								'window.print();window.close();' +
+								'&lt;/script&gt;';
+							}
 
-			$( document ).ready(function() {
-				$( '#kleistad_recept_print' ).click( function(){
-					var w = window.open();
-					var c = Boolean( window.chrome );
+							w.document.write( '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' );
+							w.document.write( '<html lang="NL">' );
+							w.document.write( '<head>' );
+							w.document.write( '<title><?php the_title(); ?></title>' );
+							w.document.write( '<meta charset="utf-8">' );
+							w.document.write( '</head><body style="font-family:Verdana, sans-serif;">' );
+							w.document.write( $( '.kleistad_recept' ).html() );
+							w.document.write( decoded );
+							w.document.write( '</body></html>' );
+							w.document.close();
+						}
+					);
 
-					var elem = document.createElement('textarea');
-					if ( c ) {
-						elem.innerHTML = '&lt;script type="text/javascript"&gt;' +
-						'window.moveTo(0,0);window.resizeTo(640,480);window.print();setTimeout(function(){window.close();},500);' +
-						'&lt;/script&gt;';
-					} else {
-						elem.innerHTML = '&lt;script type="text/javascript"&gt;' +
-						'window.print();window.close();' +
-						'&lt;/script&gt;';
-					}
-					//	function closeme(){window.close();}setTimeout(closeme,500);window.print();&lt;/script&gt;';
-					var decoded = elem.value;
+					$( '#kleistad_recept_foto' ).on(
+						'click',
+						function() {
+							$( '#kleistad_recept_modal' ).show();
+						}
+					);
 
-					w.document.write( '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' );
-					w.document.write( '<html>' );
-					w.document.write( '<head>' );
-					w.document.write( '<meta charset="utf-8">' );
-					w.document.write( '</head><body style="font-family:Verdana, sans-serif;">' );
-					w.document.write( $( '.kleistad_recept' ).html() );
-					w.document.write( decoded );
-					w.document.write( '</body></html>' );
-					w.document.close();
-				});
-
-				$( '#kleistad_recept_foto' ).click( function() {
-					$( '#kleistad_recept_modal' ).show();
-				});
-
-				$( '#kleistad_close_modal' ).click( function() {
-					$( '#kleistad_recept_modal').hide();
-				})
-			});
+					$( '#kleistad_close_modal' ).on(
+						'click',
+						function() {
+							$( '#kleistad_recept_modal').hide();
+						}
+					)
+				}
+			)
 		} )( jQuery );
 		</script>
 		<a style="cursor:pointer;" onClick="window.history.back()">&lt; recepten</a><br/><br/>

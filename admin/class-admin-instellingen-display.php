@@ -22,6 +22,7 @@ class Admin_Instellingen_Display {
 	 */
 	public function instellingen() : void {
 		?>
+		<!--suppress HtmlUnknownTarget -->
 		<form method="POST" action="options.php" >
 		<?php settings_fields( 'kleistad-opties' ); ?>
 		<table class="form-table" >

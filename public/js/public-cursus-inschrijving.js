@@ -2,7 +2,7 @@
 	'use strict';
 
 	function wijzigTeksten( cursus ) {
-		var $spin   = $( '#kleistad_aantal' ),
+		var $spin  = $( '#kleistad_aantal' ),
 			aantal = $spin.spinner( 'value' ),
 			bedrag;
 		if ( aantal > cursus.ruimte ) {
@@ -55,8 +55,10 @@
 
 	$(
 		function() {
-			if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
-				wijzigVelden( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
+			var $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+
+			if ( 0 !== $cursus_checked.length ) {
+				wijzigVelden( $cursus_checked.data( 'cursus' ) );
 			}
 
 			$( '#kleistad_cursussen' ).tooltip(
@@ -74,15 +76,20 @@
 			$( '#kleistad_aantal' ).spinner(
 				{
 					min:1,
-					max: ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) ? $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ).ruimte : 1,
+					max: function() {
+						var $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						return ( 0 !== $cursus_checked.length ) ? $cursus_checked.data( 'cursus' ).ruimte : 1
+					},
 					stop: function() {
-						if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
-							wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
+						var $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						if ( 0 !== $cursus_checked.length ) {
+							wijzigTeksten( $cursus_checked.data( 'cursus' ) );
 						}
 					},
 					create: function() {
-						if ( 0 !== $( 'input[name=cursus_id]:radio:checked' ).length ) {
-							wijzigTeksten( $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' ) );
+						var $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						if ( 0 !== $cursus_checked.length ) {
+							wijzigTeksten( $cursus_checked.data( 'cursus' ) );
 						}
 					}
 				}

@@ -4,39 +4,51 @@
 	/**
 	 * Converteer lokale datum in format 'd-m-Y' naar Date.
 	 *
-	 * @param (String) datum
+	 * @param {String} value De tijdstring.
 	 */
 	function strtodate( value ) {
 		var veld = value.split( '-' );
 		return new Date( veld[2], veld[1] - 1, veld[0] );
 	}
-	
-    $( function() {
-            /**
-             * Voeg 15 euro toe.
-             */
-            $( '#add15' ).on( 'click', 
-                function() {
-                    var saldo = $( '#saldo' ).val();
-                    saldo = Math.round( ( Number( saldo ) + 15 ) * 100 ) / 100;
-                    $( '#saldo' ).val( saldo );
-                    return false;
-               }
-            );
 
-            /**
-             * Voeg 30 euro toe.
-             */
-            $( '#add30' ).on( 'click',
-                function() {
-                    var saldo = $( '#saldo' ).val();
-                    saldo = Math.round( ( Number( saldo ) + 30 ) * 100 ) / 100;
-                    $( '#saldo' ).val( saldo );
-                    return false;
-                }
+	$(
+		function()
+		{
+			var $saldo = $( '#saldo' );
+
+			/**
+			 * Voeg 15 euro toe.
+			 */
+			$( '#add15' ).on(
+				'click',
+				function() {
+					$saldo.val( Math.round( ( Number( $saldo.val() ) + 15 ) * 100 ) / 100 );
+					return false;
+				}
 			);
 
-			$( '#kleistad-extra' ).on( 'click',
+			/**
+			 * Voeg 30 euro toe.
+			 */
+			$( '#add30' ).on(
+				'click',
+				function() {
+					$saldo.val( Math.round( ( Number( $saldo.val() ) + 30 ) * 100 ) / 100 );
+					return false;
+				}
+			);
+
+			$( '#hoofdterm_id' ).on(
+				'change',
+				function() {
+					var href = new URL( document.location );
+					href.searchParams.set( 'hoofdterm_id', $( this ).val() );
+					document.location = href.toString();
+				}
+			);
+
+			$( '#kleistad-extra' ).on(
+				'click',
 				function() {
 					var aantal   = $( '.kleistad-extra' ).length;
 					var sjabloon = +
@@ -51,16 +63,17 @@
 				}
 			);
 
-			$( '#kleistad-soort' ).on( 'change',
+			$( '#kleistad-soort' ).on(
+				'change',
 				function() {
 					$( '#kleistad-dag' ).prop( 'required', ( 'beperkt' === $( this ).val() ) );
 				}
 			);
 
-            /**
-             * Definieer de datumpickers.
-             */
-            $( '.kleistad-datum' ).datepicker(
+			/**
+			 * Definieer de datumpickers.
+			 */
+			$( '.kleistad-datum' ).datepicker(
 				{
 					dateFormat: 'dd-mm-yy',
 					beforeShowDay: function( date ) {
@@ -71,29 +84,32 @@
 						return [ true ];
 					},
 					beforeShow: function( input ) {
-						if ( $( input ).attr( 'readonly' ) ) {
-							return false;
-						}
-						return true;
+						return ( ! $( input ).attr( 'readonly' ) );
 					}
 				}
 			);
 
-			$( '#kleistad_start_config' ).datepicker( 'option',
+			$( '#kleistad_start_config' ).datepicker(
+				'option',
 				{
 					minDate: ( $( this ).prop( 'disabled' ) ) ? null : 0,
 					maxDate: $( '#kleistad_eind_config' ).datepicker( 'getDate' ),
 					onSelect: function( datum ) {
-						$( '#kleistad_eind_config' ).datepicker( 'option', { 
-							minDate: strtodate( datum )
-						} );
+						$( '#kleistad_eind_config' ).datepicker(
+							'option',
+							{
+								minDate: strtodate( datum )
+							}
+						);
 					},
 					beforeShowDay: function( datum ) {
 						return [ 1 === datum.getDay(), '', '' ]; // Maandagen zijn selecteerbaar.
 					}
 				}
 			);
-			$( '#kleistad_eind_config' ).datepicker( 'option',
+
+			$( '#kleistad_eind_config' ).datepicker(
+				'option',
 				{
 					minDate: $( '#kleistad_start_config' ).datepicker( 'getDate' ),
 					onSelect: function( datum ) {
@@ -104,6 +120,6 @@
 					}
 				}
 			);
-        }
-    );
+		}
+	);
 } )( jQuery );

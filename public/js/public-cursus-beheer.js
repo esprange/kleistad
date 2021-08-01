@@ -1,9 +1,11 @@
 /* global strtotime, timetostr, strtodate */
 
 ( function( $ ) {
-    'use strict';
+	'use strict';
 
-	var lesDatums  = [], startDatum = new Date(), eindDatum = new Date();
+	var lesDatums  = [],
+		startDatum = new Date(),
+		eindDatum  = new Date();
 
 	/**
 	 * Maak het lijstje van de datums, gesorteerd van laag naar hoog, zichtbaar in het formulier.
@@ -82,7 +84,9 @@
 					updateLesDatums();
 					listLesDatums();
 				},
-				beforeShow: setLimits()
+				beforeShow: function() {
+					setLimits();
+				}
 			}
 		);
 
@@ -95,7 +99,9 @@
 					updateLesDatums();
 					listLesDatums();
 				},
-				beforeShow: setLimits()
+				beforeShow: function() {
+					setLimits();
+				}
 			}
 		);
 
@@ -119,7 +125,9 @@
 					}
 					return [ true, '' ];
 				},
-				beforeShow: setLimits(),
+				beforeShow: function() {
+					setLimits();
+				},
 				showOn: 'button',
 				buttonText: 'Lesdatum &plusmn;'
 			}
@@ -127,27 +135,29 @@
 	}
 
 	function setTimespinners() {
-		$( '#kleistad_start_tijd' ).timespinner(
+		var $start_tijd = $( '#kleistad_start_tijd' ),
+			$eind_tijd  = $( '#kleistad_eind_tijd' );
+		$start_tijd.timespinner(
 			'option',
 			{
 				stop: function() {
 					var startTijd = strtotime( $( this ).val() );
-					var eindTijd  = strtotime( $( '#kleistad_eind_tijd' ).val() );
+					var eindTijd  = strtotime( $eind_tijd.val() );
 					if ( startTijd + 60 > eindTijd ) {
-						$( '#kleistad_eind_tijd' ).val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
+						$eind_tijd.val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
 					}
 				}
 			}
 		);
 
-		$( '#kleistad_eind_tijd' ).timespinner(
+		$eind_tijd.timespinner(
 			'option',
 			{
 				stop: function() {
-					var startTijd = strtotime( $( '#kleistad_start_tijd' ).val() );
+					var startTijd = strtotime( $start_tijd.val() );
 					var eindTijd  = strtotime( $( this ).val() );
 					if ( startTijd > eindTijd - 60 ) {
-						$( '#kleistad_start_tijd' ).val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
+						$start_tijd.val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
 					}
 				}
 			}
@@ -155,15 +165,17 @@
 	}
 
 	function onLoad() {
-		if ( $( '#kleistad_start_datum' ).length ) {  // Een willekeurig element om te bepalen of het formulier getoond wordt.
-			startDatum = strtodate( $( '#kleistad_start_datum' ).val() );
-			eindDatum  = strtodate( $( '#kleistad_eind_datum' ).val() );
+		var $start_datum = $( '#kleistad_start_datum' );
+		var $eind_datum  = $( '#kleistad_eind_datum' );
+		if ( $start_datum.length ) {  // Een willekeurig element om te bepalen of het formulier getoond wordt.
+			startDatum = strtodate( $start_datum.val() );
+			eindDatum  = strtodate( $eind_datum.val() );
 			lesDatums  = $( '#kleistad_lesdatums' ).val().split( ';' );
 			setLimits();
 			listLesDatums();
 			setDatepickers();
 			setTimespinners();
-			if ( $( '#kleistad_start_datum' ).prop( 'disabled' ) ) {
+			if ( $start_datum.prop( 'disabled' ) ) {
 				$( '#kleistad_lesdatum' ).next( 'button' ).prop( 'disabled', true );
 			}
 		}

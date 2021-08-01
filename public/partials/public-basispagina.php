@@ -14,7 +14,9 @@ namespace Kleistad;
 ?>
 
 <!DOCTYPE html>
+<!--suppress HtmlRequiredLangAttribute -->
 <html <?php language_attributes(); ?> class="no-js">
+<!--suppress HtmlRequiredTitleElement -->
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,7 +32,7 @@ namespace Kleistad;
 			<div class="site-header-main">
 				<div class="site-branding">
 					<div style="float:left;padding-right:20px;">
-						<img src="https://www.kleistad.nl/wp/wp-content/uploads/2016/03/cropped-logo-kleistad.jpg" width="100" >
+						<img src="https://www.kleistad.nl/wp/wp-content/uploads/2016/03/cropped-logo-kleistad.jpg" alt="Kleistad" width="100" >
 					</div>
 					<span class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a><br/></span>
 					<span class="site-description"><?php echo get_bloginfo( 'description', 'display' ); // phpcs:ignore ?></span>

@@ -28,7 +28,7 @@ class Public_Recept_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-4" style="position: relative;">
 				<input type="search" id="kleistad_zoek" style="height:40px;" placeholder="zoeken..." value="" >
-				<button class="kleistad-button" type="button" id="kleistad_zoek_icon" style="height:40px;position:absolute;right:0px;z-index:2;"><span class="dashicons dashicons-search"></span></button>
+				<button class="kleistad-button" type="button" id="kleistad_zoek_icon" style="height:40px;position:absolute;right:0;z-index:2;"><span class="dashicons dashicons-search"></span></button>
 			</div>
 			<div class="kleistad-col-2" style="text-align:right;">
 				<label for="kleistad_sorteer" >Sorteer op</label>

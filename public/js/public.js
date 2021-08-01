@@ -22,6 +22,7 @@ var detectTap;
 				return ( className.match( new RegExp( '(^|\\s)' + pattern + '\\S+', 'g' ) ) || [] ).join( ' ' );
 			}
 		);
+		return this;
 	};
 
 	/**

@@ -1,3 +1,5 @@
+// noinspection EqualityComparisonWithCoercionJS
+
 /**
  * Kleistad javascript functies voor formulieren.
  *
@@ -20,7 +22,7 @@ function strtotime( value ) {
 		if ( Number( value ) == value ) {
 			return Number( value );
 		}
-		hours = value.substring( 0, 2 );
+		hours   = value.substring( 0, 2 );
 		minutes = value.substring( 3 );
 		return Number( hours ) * 60 + Number( minutes );
 	}
@@ -33,7 +35,7 @@ function strtotime( value ) {
  * @param {int} value
  */
 function timetostr( value ) {
-	var hours = Math.floor( value / 60 );
+	var hours   = Math.floor( value / 60 );
 	var minutes = value % 60;
 	return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
 }
@@ -41,7 +43,7 @@ function timetostr( value ) {
 /**
  * Converteer lokale datum in format 'd-m-Y' naar Date.
  *
- * @param (String) datum
+ * @param {String} value De datum string.
  */
 function strtodate( value ) {
 	var veld = value.split( '-' );
@@ -49,7 +51,7 @@ function strtodate( value ) {
 }
 
 ( function( $ ) {
-    'use strict';
+	'use strict';
 
 	/**
 	 * Zoek de postcode op via de server.
@@ -133,21 +135,21 @@ function strtodate( value ) {
 						$( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
 					},
 					buttons: [
-						{
-							text: 'Ja',
-							click: function() {
-								$( this ).dialog( 'close' );
-								callback();
-								return true;
-							}
-						},
-						{
-							text: 'Nee',
-							click: function() {
-								$( this ).dialog( 'close' );
-								return false;
-							}
+					{
+						text: 'Ja',
+						click: function() {
+							$( this ).dialog( 'close' );
+							callback();
+							return true;
 						}
+					},
+					{
+						text: 'Nee',
+						click: function() {
+							$( this ).dialog( 'close' );
+							return false;
+						}
+					}
 					]
 				}
 			);
@@ -160,7 +162,8 @@ function strtodate( value ) {
 	/**
 	 * Wordt aangeroepen nadat de webpage geladen is.
 	 */
-	$( function()
+	$(
+		function()
 		{
 			/**
 			 * Definieer de bank selectie.
@@ -184,7 +187,9 @@ function strtodate( value ) {
 			/**
 			 * Leg voor de submit actie vast welke button de submit geïnitieerd heeft.
 			 */
-			.on( 'click', 'button[type="submit"]',
+			.on(
+				'click',
+				'button[type="submit"]',
 				function( event ) {
 					$( this ).closest( 'form' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
 					return true;
@@ -193,7 +198,9 @@ function strtodate( value ) {
 			/**
 			 * Submit het formulier, als er een formulier is.
 			 */
-			.on( 'submit', 'form',
+			.on(
+				'submit',
+				'form',
 				function( event ) {
 					var $form         = $( this );
 					var shortcodeData = $.fn.shortcode( $form );
@@ -202,14 +209,17 @@ function strtodate( value ) {
 					var confirm       = $( '#' + clicked.id ).data( 'confirm' );
 					var tekst         = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
 					formData.append( 'form_actie', clicked.value );
-					Object.keys( shortcodeData ).forEach( function( item ) {
-						formData.append( item, shortcodeData[item] );
-					} );
+					Object.keys( shortcodeData ).forEach(
+						function( item ) {
+							formData.append( item, shortcodeData[item] );
+						}
+					);
 					event.preventDefault();
 					/**
 					 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
 					 */
-					return askConfirm( tekst,
+					return askConfirm(
+						tekst,
 						function() {
 							submitForm( $form.closest( '.kleistad-shortcode' ), formData );
 						}

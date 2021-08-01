@@ -66,16 +66,9 @@ class Admin_Recepttermen_Display extends Admin_Display {
 			<h2>Recept termen <a class="add-new-h2" id="kleistad_toevoegen"
 						href="<?php echo esc_url( get_admin_url( get_current_blog_id(), "admin.php?page=recepttermen_form&hoofdterm_id=$hoofdterm_id" ) ); ?>">Toevoegen</a>
 			</h2>
-			<script type="text/javascript">
-			function hoofdtermSwitch( hoofdterm_id ) {
-				var href = new URL( document.location );
-				href.searchParams.set( 'hoofdterm_id', hoofdterm_id );
-				document.location = href.toString();
-			}
-			</script>
 			<form id="ovens-table" method="GET">
 				<input type="hidden" name="page" value="<?php esc_attr( filter_input( INPUT_GET, 'page' ) ); ?>"/>
-				<select name="hoofdterm_id" onChange="hoofdtermSwitch(this.value);" >
+				<select name="hoofdterm_id" id="hoofdterm_id" >
 					<?php foreach ( Recept::hoofdtermen() as $hoofdterm ) : ?>
 						<option value="<?php echo esc_attr( $hoofdterm->term_id ); ?>" <?php selected( $hoofdterm->term_id, $hoofdterm_id ); ?> ><?php echo esc_html( $hoofdterm->description ); ?></option>
 					<?php endforeach ?>

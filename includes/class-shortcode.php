@@ -274,8 +274,8 @@ abstract class Shortcode {
 	 * @throws Exception Onbekend object.
 	 */
 	public static function callback_getitem( WP_REST_Request $request ) : WP_REST_Response {
+		$shortcode = self::get_shortcode( $request );
 		try {
-			$shortcode = self::get_shortcode( $request );
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
 				throw new Exception( 'callback_formsubmit voor onbekend object' );
 			}
