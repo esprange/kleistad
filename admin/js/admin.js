@@ -1,3 +1,4 @@
+/** global: URL */
 ( function( $ ) {
 	'use strict';
 
