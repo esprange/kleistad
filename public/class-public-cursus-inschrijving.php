@@ -128,7 +128,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
 			$is_open                  = ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() );
-			$ruimte                   = $cursus->vol ? 0 : $cursus->ruimte();
+			$ruimte                   = $cursus->ruimte();
 			$is_lopend                = $cursus->is_lopend();
 			$data['open_cursussen'][] = [
 				'cursus'  => $cursus,
