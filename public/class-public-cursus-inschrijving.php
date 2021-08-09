@@ -128,7 +128,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
 			$is_open                  = ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() );
-			$ruimte                   = $cursus->ruimte();
+			$ruimte                   = $cursus->vol ? 0 : $cursus->ruimte();
 			$is_lopend                = $cursus->is_lopend();
 			$data['open_cursussen'][] = [
 				'cursus'  => $cursus,
@@ -185,13 +185,9 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			];
 		}
 		$data['actie'] = $this->bepaal_actie( $data );
-		switch ( $data['actie'] ) {
-			case 'stop_wachten':
-				return $this->prepare_stop_wachten( $data );
-			case 'indelen_na_wachten':
-				return $this->prepare_indelen_na_wachten( $data );
-			case 'inschrijven':
-				return $this->prepare_inschrijven( $data );
+		$actie         = 'prepare_' . $data['actie'];
+		if ( method_exists( $this, $actie ) ) {
+			return $this->$actie( $data );
 		}
 		return false;
 	}
@@ -319,12 +315,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		if ( ! is_int( $gebruiker_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
-		$inschrijving               = new Inschrijving( $data['input']['cursus_id'], $gebruiker_id );
-		$inschrijving->technieken   = $data['input']['technieken'];
-		$inschrijving->opmerking    = $data['input']['opmerking'];
-		$inschrijving->aantal       = intval( $data['input']['aantal'] );
-		$inschrijving->wacht_datum  = $inschrijving->cursus->vol ? strtotime( 'today' ) : 0;
-		$inschrijving->artikel_type = 'inschrijving';
+		$inschrijving             = new Inschrijving( $data['input']['cursus_id'], $gebruiker_id );
+		$inschrijving->technieken = $data['input']['technieken'];
+		$inschrijving->opmerking  = $data['input']['opmerking'];
+		$inschrijving->aantal     = intval( $data['input']['aantal'] );
 		if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),

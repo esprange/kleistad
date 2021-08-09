@@ -20,7 +20,7 @@ namespace Kleistad;
  * @property int    credit_id
  * @property int    origineel_id
  * @property bool   gesloten
- * @property string historie
+ * @property array historie
  * @property array  klant
  * @property int    mutatie_datum
  * @property int    verval_datum
@@ -145,7 +145,7 @@ class Order {
 			case 'datum':
 			case 'mutatie_datum':
 			case 'verval_datum':
-				$this->data[ $attribuut ] = date( 'Y-m-d h:m:s', $waarde );
+				$this->data[ $attribuut ] = date( 'Y-m-d H:i:s', $waarde );
 				break;
 			case 'gesloten':
 				$this->data[ $attribuut ] = (int) $waarde;

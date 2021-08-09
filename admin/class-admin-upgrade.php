@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 102;
+	const DBVERSIE = 103;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -192,7 +192,7 @@ class Admin_Upgrade {
 			geannuleerd tinyint(1) DEFAULT 0,
 			opmerking tinytext,
 			aantal tinyint(2) DEFAULT 0,
-			wacht_datum date,
+			wacht_datum datetime,
 			restant_email tinyint(1) DEFAULT 0,
 			herinner_email tinyint(1) DEFAULT 0,
 			PRIMARY KEY  (cursist_id, cursus_id)

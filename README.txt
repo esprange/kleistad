@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.7.1
-Stable tag: 6.16.6
+Stable tag: 6.17.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4
@@ -36,13 +36,14 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-- 6.16.6 =
-* bugfix release en beperkte refactoring
+- 6.17.0 =
+* Diverse verbeteringen
+* Bugfixes en beperkte refactoring
 - 6.16.5 =
 * Verbetering laden van style scripts en oplossen FOUC datatables
 - 6.16.2 =
 * Bugfix saldo storten
-* Robuuster maken fout idealbetaling vanuit formulier voor abonnement, inschrijving en dagdelenkaart 
+* Robuuster maken fout idealbetaling vanuit formulier voor abonnement, inschrijving en dagdelenkaart
 - 6.16.0 =
 * Performance verbetering, cursus inschrijvingen opgenomen in aparte database tabel ipv in user_meta
 * Performance verbetering, reductie aantal database queries

@@ -242,7 +242,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		$cursus->maximum         = $data['cursus']['maximum'];
 		$cursus->meer            = '' != $data['cursus']['meer']; // phpcs:ignore
 		$cursus->tonen           = '' != $data['cursus']['tonen']; // phpcs:ignore
-		$cursus->vol             = 0 === $cursus->ruimte();
 		$cursus->save();
 		return [
 			'status'  => $this->status( 'De cursus informatie is opgeslagen' ),

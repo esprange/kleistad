@@ -16,7 +16,7 @@ namespace Kleistad;
  */
 class Test_Werkplek extends Kleistad_UnitTestCase {
 
-	const DUMP = true;
+	const DUMP = false;
 
 	/**
 	 * Reset de werkplekconfigs voorafgaand elke test.

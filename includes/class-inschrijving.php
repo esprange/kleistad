@@ -277,7 +277,7 @@ class Inschrijving extends Artikel {
 			[
 				'cursus_id'        => $this->cursus->id,
 				'cursist_id'       => $this->klant_id,
-				'datum'            => date( 'Y-m-d h:m:s', $this->datum ),
+				'datum'            => date( 'Y-m-d H:i:s', $this->datum ),
 				'technieken'       => wp_json_encode( $this->technieken ),
 				'extra_cursisten'  => wp_json_encode( $this->extra_cursisten ),
 				'hoofd_cursist_id' => $this->hoofd_cursist_id,
@@ -285,7 +285,7 @@ class Inschrijving extends Artikel {
 				'geannuleerd'      => intval( $this->geannuleerd ),
 				'opmerking'        => $this->opmerking,
 				'aantal'           => $this->aantal,
-				'wacht_datum'      => date( 'Y-m-d', $this->wacht_datum ),
+				'wacht_datum'      => date( 'Y-m-d H:i:s', $this->wacht_datum ),
 				'restant_email'    => intval( $this->restant_email ),
 				'herinner_email'   => intval( $this->herinner_email ),
 			]

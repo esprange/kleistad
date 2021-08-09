@@ -55,7 +55,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1->ingedeeld       = true;
 		$inschrijving1->technieken      = [ 'draaien' ];
 		$inschrijving1->aantal          = 3;
-		$inschrijving1->wacht_datum     = strtotime( 'today' );
+		$inschrijving1->wacht_datum     = time();
 		$inschrijving1->extra_cursisten = [ 2, 3 ];
 		$inschrijving1->save();
 
@@ -337,6 +337,101 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 			}
 		}
 
+	}
+
+	/**
+	 * Test de wachtlijst functie.
+	 */
+	public function test_plaatsbeschikbaar() {
+		$mailer               = tests_retrieve_phpmailer_instance();
+		$cursus1              = new Cursus();
+		$cursus1->maximum     = 3;
+		$cursus1->start_datum = strtotime( '+1 month' );
+		$cursus1->save();
+
+		/**
+		 * Maak eerst de cursus vol zodat er geen ruimte meer is.
+		 */
+		$cursist_ids = $this->factory->user->create_many( $cursus1->maximum );
+		for ( $i = 0; $i < 3; $i ++ ) {
+			$inschrijvingen[ $i ] = new Inschrijving( $cursus1->id, $cursist_ids[ $i ] );
+			$inschrijvingen[ $i ]->actie->aanvraag( 'ideal' );
+			$order = new Order( $inschrijvingen[ $i ]->geef_referentie() );
+			$inschrijvingen[ $i ]->betaling->verwerk( $order, 25, true, 'ideal' );
+		}
+
+		/**
+		 * Als gevolg van de inschrijvingen wordt de cursus op vol gezet.
+		 */
+		$cursus2 = new Cursus( $cursus1->id );
+		$this->assertTrue( $cursus2->vol, 'vol indicatie incorrect' );
+
+		/**
+		 * Een nieuwe cursist moet dus op de wachtlijst geplaatst worden.
+		 */
+		$wachtlijst_cursist      = new Cursist( $this->factory->user->create() );
+		$inschrijving_wachtlijst = new Inschrijving( $cursus2->id, $wachtlijst_cursist->ID );
+		$inschrijving_wachtlijst->actie->aanvraag( '' );
+		$this->assertTrue( 0 < $inschrijving_wachtlijst->wacht_datum, 'Wacht datum incorrect' );
+		$this->assertEquals( 'Plaatsing op wachtlijst cursus', $mailer->get_last_sent( $wachtlijst_cursist->user_email )->subject, 'Wachtlijst vol incorrecte email' );
+
+		/**
+		 * Maak een plek vrij door een annulering.
+		 */
+		$inschrijvingen[2]->actie->afzeggen();
+
+		/**
+		 * Dit loopt normaliter de volgende ochtend, maar nu dus even 1 seconde later.
+		 */
+		sleep( 1 );
+		Cursussen::doe_dagelijks();
+		Inschrijvingen::doe_dagelijks();
+
+		/**
+		 * Er zou nu weer plaats moeten zijn en de cursist op de wachtlijst moet een email krijgen.
+		 */
+		$inschrijving_wachtlijst = new Inschrijving( $cursus2->id, $wachtlijst_cursist->ID );
+		$this->assertFalse( $inschrijving_wachtlijst->cursus->vol, 'vol indicatie incorrect' );
+		$this->assertEquals( $inschrijving_wachtlijst->wacht_datum, $inschrijving_wachtlijst->cursus->ruimte_datum, 'incorrecte wachtdatum' );
+		$this->assertEquals( 'Er is een cursusplek vrijgekomen', $mailer->get_last_sent( $wachtlijst_cursist->user_email )->subject, 'Wachtlijst ruimte incorrecte email' );
+
+		/**
+		 * Als opnieuw het dagelijks proces loopt, 1 seconde later, mag er niets verstuurd worden.
+		 */
+		$emails_sent = $mailer->get_sent_count();
+		sleep( 1 );
+		Cursussen::doe_dagelijks();
+		Inschrijvingen::doe_dagelijks();
+		$this->assertEquals( $emails_sent, $mailer->get_sent_count(), 'incorrecte email verzonden' );
+
+		/**
+		 * Nu schrijft iemand anders in, dan wordt de cursus weer vol.
+		 */
+		$andere_cursist     = new Cursist( $this->factory->user->create() );
+		$inschrijving_ander = new Inschrijving( $cursus2->id, $andere_cursist->ID );
+		$inschrijving_ander->actie->aanvraag( 'ideal' );
+		$order = new Order( $inschrijving_ander->geef_referentie() );
+		$inschrijving_ander->betaling->verwerk( $order, 25, true, 'ideal' );
+		$inschrijving_wachtlijst = new Inschrijving( $cursus2->id, $wachtlijst_cursist->ID );
+		$this->assertTrue( $inschrijving_wachtlijst->cursus->vol, 'vol indicatie incorrect' );
+
+		/**
+		 * Wijzig nu de status door het aantal toegestane cursisten te verhogen.
+		 */
+		$emails_sent                               = $mailer->get_sent_count();
+		$inschrijving_wachtlijst->cursus->maximum += 1;
+		$inschrijving_wachtlijst->cursus->save();
+		sleep( 1 );
+		Cursussen::doe_dagelijks();
+		Inschrijvingen::doe_dagelijks();
+
+		/**
+		 * Nu zou er wel opnieuw een email verzonden moeten worden.
+		 */
+		$inschrijving_wachtlijst = new Inschrijving( $cursus2->id, $wachtlijst_cursist->ID );
+		$this->assertFalse( $inschrijving_wachtlijst->cursus->vol, 'vol indicatie incorrect' );
+		$this->assertEquals( $emails_sent + 1, $mailer->get_sent_count(), 'email niet verzonden' );
+		$this->assertEquals( 'Er is een cursusplek vrijgekomen', $mailer->get_last_sent( $wachtlijst_cursist->user_email )->subject, 'Wachtlijst ruimte incorrecte email' );
 	}
 
 }

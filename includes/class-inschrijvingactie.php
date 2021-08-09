@@ -105,7 +105,7 @@ class InschrijvingActie {
 	 * Geef de cursist aan dat er ruimte beschikbaar is gekomen
 	 */
 	public function plaatsbeschikbaar() {
-		$this->inschrijving->wacht_datum = strtotime( 'tomorrow' );
+		$this->inschrijving->wacht_datum = $this->inschrijving->cursus->ruimte_datum;
 		$this->inschrijving->betaal_link = $this->inschrijving->maak_link(
 			[
 				'code' => $this->inschrijving->code,
@@ -165,6 +165,8 @@ class InschrijvingActie {
 			$this->inschrijving->geannuleerd  = false;
 			$this->inschrijving->ingeschreven = false;
 		}
+		$this->inschrijving->wacht_datum  = $this->inschrijving->cursus->vol ? time() : 0;
+		$this->inschrijving->artikel_type = 'inschrijving';
 		$this->inschrijving->save();
 		if ( $this->inschrijving->cursus->vol ) {
 			$this->inschrijving->verzend_email( '_wachtlijst' );
@@ -215,7 +217,7 @@ class InschrijvingActie {
 		 */
 	public function beschikbaarcontrole() : string {
 		if ( ! $this->inschrijving->ingedeeld && $this->inschrijving->cursus->vol ) {
-			$this->inschrijving->wacht_datum = strtotime( 'today' );
+			$this->inschrijving->wacht_datum = time();
 			$this->inschrijving->save();
 			return 'Helaas is de cursus nu vol. Mocht er een plek vrijkomen dan ontvang je een email';
 		}

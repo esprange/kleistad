@@ -129,10 +129,11 @@ module.exports = function( grunt ) { // jshint ignore:line
 			'readme',
 			'uglify',
 			'cssmin',
-			'composer:update:no-autoloader',
+			'composer:update:no-autoloader:no-dev',
 			'composer:dump-autoload:optimize',
 			'zip',
-			'shell:command'
+			'shell:command',
+			'composer:update'
 		]
 	);
 

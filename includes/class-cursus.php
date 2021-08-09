@@ -158,7 +158,7 @@ class Cursus {
 				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
 				break;
 			case 'ruimte_datum':
-				$this->data[ $attribuut ] = date( 'Y-m-d h:m:s', $waarde );
+				$this->data[ $attribuut ] = date( 'Y-m-d H:i:s', $waarde );
 				break;
 			case 'start_tijd':
 			case 'eind_tijd':
