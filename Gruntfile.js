@@ -3,115 +3,92 @@ module.exports = function( grunt ) { // jshint ignore:line
 	'use strict';
 
 	// Project configuration.
-	grunt.initConfig( {
+	grunt.initConfig(
+		{
 
-		pkg: grunt.file.readJSON( 'package.json' ),
+			pkg: grunt.file.readJSON( 'package.json' ),
 
-		checkwpversion: {
-			options:{
-				readme: 'readme.txt',
-				plugin: 'kleistad.php'
-			},
-			check: { //Check plug-in version and stable tag match.
-				version1: 'plugin',
-				version2: 'readme',
-				compare: '=='
-			},
-			check2: { //Check plug-in version and package.json match
-				version1: 'plugin',
-				version2: '<%= pkg.version %>',
-				compare: '=='
-			}
-		},
-
-		wp_readme_to_markdown: {
-			your_target: {
-				files: {
-					'README.md': 'readme.txt'
+			checkwpversion: {
+				options:{
+					readme: 'readme.txt',
+					plugin: 'kleistad.php'
+				},
+				check: { // Check plug-in version and stable tag match.
+					version1: 'plugin',
+					version2: 'readme',
+					compare: '=='
+				},
+				check2: { // Check plug-in version and package.json match.
+					version1: 'plugin',
+					version2: '<%= pkg.version %>',
+					compare: '=='
 				}
-			}
-		},
-
-		version: {
-			plugin: {
-				options: {
-					prefix: 'Version\\s*'
-				},
-				src: [ 'kleistad.php' ]
 			},
-			readme: {
-				options: {
-					prefix: 'Stable tag\\s*'
-				},
-				src: [ 'README.txt' ]
-			}
-		},
 
-		uglify: {
-			dev: {
-				options: {
-					mangle: {
-						reserved: ['jQuery']
+			wp_readme_to_markdown: {
+				your_target: {
+					files: {
+						'README.md': 'readme.txt'
 					}
-				},
-				files: [{
-					expand: true,
-					src: [ '*.js', '!*.min.js' ],
-					dest: 'public/js',
-					cwd: 'public/js',
-					rename: function( dst, src ) {
-						return dst + '/' + src.replace( '.js', '.min.js' );
-					}
-				}]
-			}
-		},
+				}
+			},
 
-		cssmin: {
-			target: {
-				files: [{
-					expand: true,
-					cwd: 'public/css',
-					src: [ '*.css', '!*.min.css' ],
-					dest: 'public/css',
-					ext: '.min.css'
-				}]
-			}
-		},
+			uglify: {
+				dev: {
+					options: {
+						mangle: {
+							reserved: ['jQuery']
+						}
+					},
+					files: [{
+						expand: true,
+						src: [ '*.js', '!*.min.js' ],
+						dest: 'public/js',
+						cwd: 'public/js',
+						rename: function( dst, src ) {
+							return dst + '/' + src.replace( '.js', '.min.js' );
+						}
+					}]
+				}
+			},
 
-		zip: {
-			'using-router': {
-				router: function( filepath ) {
-					return 'kleistad/' + filepath;
-				},
-				src: [
-					'kleistad.php',
-					'README.txt',
-					'LICENSE.txt',
-					'public/**/*',
-					'admin/**/*',
-					'includes/**/*',
-					'vendor/**/*'
-				],
-				dest: 'zip/kleistad.zip'
-			}
-		},
+			cssmin: {
+				target: {
+					files: [{
+						expand: true,
+						cwd: 'public/css',
+						src: [ '*.css', '!*.min.css' ],
+						dest: 'public/css',
+						ext: '.min.css'
+					}]
+				}
+			},
 
-		shell: {
-			command: 'ftp -i -s:plugin_upload.ftp'
-		},
+			zip: {
+				'using-router': {
+					router: function( filepath ) {
+						return 'kleistad/' + filepath;
+					},
+					src: [
+						'kleistad.php',
+						'README.txt',
+						'LICENSE.txt',
+						'public/**/*',
+						'admin/**/*',
+						'includes/**/*',
+						'vendor/**/*'
+					],
+					dest: 'zip/kleistad.zip'
+				}
+			},
 
-		phpunit: {
-			options: {
-				bin: 'vendor/bin/phpunit',
-				configuration: 'phpunit.xml.dist',
-				colors: true,
-				coverage: true
+			shell: {
+				command: 'ftp -i -s:plugin_upload.ftp'
 			}
 		}
-	} );
+	);
 
 	grunt.util.linefeed = '\n';
-	grunt.loadNpmTasks( 'grunt-rewrite' );
 	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
@@ -119,14 +96,11 @@ module.exports = function( grunt ) { // jshint ignore:line
 	grunt.loadNpmTasks( 'grunt-checkwpversion' );
 	grunt.loadNpmTasks( 'grunt-zip' );
 	grunt.loadNpmTasks( 'grunt-shell' );
-	grunt.loadNpmTasks( 'grunt-version' );
-	grunt.loadNpmTasks( 'grunt-phpunit' );
-	grunt.registerTask( 'checkversion', ['checkwpversion'] );
-	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
-	grunt.registerTask( 'oplevering',
+	grunt.registerTask(
+		'oplevering',
 		[
-			'checkversion',
-			'readme',
+			'checkwpversion',
+			'wp_readme_to_markdown',
 			'uglify',
 			'cssmin',
 			'composer:update:no-autoloader:no-dev',
