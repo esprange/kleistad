@@ -1,12 +1,23 @@
+/**
+ * Abonnee wijziging Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 /* global strtodate */
 
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{
-			var nuDatum         = new Date(),
+			let nuDatum         = new Date(),
 				dag             = 24 * 60 * 60 * 1000,
 				$pauze_datum    = $( '#kleistad_pauze_datum' ),
 				$herstart_datum = $( '#kleistad_herstart_datum' ),

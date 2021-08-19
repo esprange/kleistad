@@ -1,39 +1,60 @@
+/**
+ * Dagdelenkaart bestelling Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 ( function( $ ) {
 	'use strict';
 
-    $( function()
+	$(
+		/**
+		 * Document ready.
+		 */
+		function()
 		{
-
 			/**
-             * Definieer datum veld.
-             */
-            $( '#kleistad_start_datum' ).datepicker( 'option',
-                {
+			 * Definieer het datum veld.
+			 */
+			$( '#kleistad_start_datum' ).datepicker(
+				'option',
+				{
 					minDate: 0,
 					maxDate: '+3M'
-                }
-            );
+				}
+			);
 
-            $( 'input[name=betaal]:radio' ).on( 'change',
-                function() {
-                    $( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
-                }
-            );
+			/**
+			 * Wijzig de button tekst.
+			 */
+			$( 'input[name=betaal]:radio' ).on(
+				'change',
+				function() {
+					$( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
+				}
+			);
 
 			/**
 			 * Vul adresvelden in
 			 */
-			$( '#kleistad_huisnr, #kleistad_pcode' ).on( 'change',
+			$( '#kleistad_huisnr, #kleistad_pcode' ).on(
+				'change',
 				function() {
 					var pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase() );
-					$().lookupPostcode( pcode.val(), $( '#kleistad_huisnr' ).val(), function( data ) {
-						$( '#kleistad_straat' ).val( data.straat );
-						$( '#kleistad_plaats' ).val( data.plaats );
-					} );
+					$().lookupPostcode(
+						pcode.val(),
+						$( '#kleistad_huisnr' ).val(),
+						function( data ) {
+							$( '#kleistad_straat' ).val( data.straat );
+							$( '#kleistad_plaats' ).val( data.plaats );
+						}
+					);
 				}
 			);
-        }
-    );
+		}
+	);
 
 } )( jQuery );

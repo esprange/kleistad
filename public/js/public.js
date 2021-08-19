@@ -3,6 +3,7 @@
  *
  * @author Eric Sprangers.
  * @since  5.2.0
+ * @package Kleistad
  */
 
 /* global kleistadData, strtotime, timetostr */
@@ -214,8 +215,8 @@ var detectTap;
 	 * @param { jQuery} $element
 	 */
 	$.fn.shortcode = function shortcode( $element ) {
-		var $shortcode    = $element.closest( '.kleistad-shortcode' );
-		var shortcodeData = { tag:   $shortcode.data( 'tag' ) };
+		let $shortcode    = $element.closest( '.kleistad-shortcode' );
+		let shortcodeData = { tag:   $shortcode.data( 'tag' ) };
 		if ( 'undefined' !== typeof $shortcode.data( 'atts' ) ) {
 			shortcodeData.atts = JSON.stringify( $shortcode.data( 'atts' ) );
 		}
@@ -255,8 +256,8 @@ var detectTap;
 				'click',
 				'.kleistad-edit-link',
 				function() {
-					var $anchor       = $( this );
-					var shortcodeData = $.fn.shortcode( $anchor );
+					let $anchor       = $( this );
+					let shortcodeData = $.fn.shortcode( $anchor );
 					getContent( $anchor.closest( '.kleistad-shortcode' ), shortcodeData, 'getitem' );
 					return true;
 				}
@@ -268,8 +269,8 @@ var detectTap;
 				'click',
 				'.kleistad-terug-link',
 				function() {
-					var $button       = $( this );
-					var shortcodeData = $.fn.shortcode( $button );
+					let $button       = $( this );
+					let shortcodeData = $.fn.shortcode( $button );
 					getContent( $button.closest( '.kleistad-shortcode' ), shortcodeData, 'getitems' );
 					return true;
 				}
@@ -281,8 +282,8 @@ var detectTap;
 				'click',
 				'.kleistad-download-link',
 				function() {
-					var $button       = $( this );
-					var shortcodeData = $.fn.shortcode( $button );
+					let $button       = $( this );
+					let shortcodeData = $.fn.shortcode( $button );
 					$( 'input,select' ).each(
 						function() {
 							shortcodeData[ $( this ).attr( 'name' ) ] = $( this ).val();

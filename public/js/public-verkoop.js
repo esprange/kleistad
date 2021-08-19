@@ -1,14 +1,23 @@
-( function( $ ) {
-    'use strict';
+/**
+ * Verkoop losse artikelen Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
 
-	$( function()
+( function( $ ) {
+	'use strict';
+
+	$(
+		function()
 		{
 			$( '#kleistad_tabs' ).tabs(
 				{
 					heightStyle: 'auto',
 					activate: function( event, ui ) {
-						ui.newPanel.find( 'input,select').attr( 'required', true );
-						ui.oldPanel.find( 'input,select').attr( 'required', false );
+						ui.newPanel.find( 'input,select' ).attr( 'required', true );
+						ui.oldPanel.find( 'input,select' ).attr( 'required', false );
 						$( '#kleistad_klant_type' ).val( $( this ).tabs( 'option', 'active' ) ? 'bestaand' : 'nieuw' );
 					}
 				}
@@ -18,18 +27,22 @@
 			/**
 			 * Als er een andere foto gekozen wordt.
 			 */
-			.on( 'click', '.extra_regel',
+			.on(
+				'click',
+				'.extra_regel',
 				function() {
-					var $oldRow, $newRow;
+					let $oldRow, $newRow;
 					$oldRow = $( this ).closest( '.kleistad-row' ).prev();
 					$newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
 					$oldRow.after( $newRow );
 					return false;
 				}
 			)
-			.on( 'change', '[name^=aantal],[name^=prijs]',
+			.on(
+				'change',
+				'[name^=aantal],[name^=prijs]',
 				function() {
-					var totaal = 0;
+					let totaal = 0;
 					$( '[name^=prijs]' ).each(
 						function() {
 							var prijs  = $( this ).val(),
@@ -43,6 +56,6 @@
 				}
 			);
 		}
-    );
+	);
 
 } )( jQuery );

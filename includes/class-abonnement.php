@@ -225,8 +225,7 @@ class Abonnement extends Artikel {
 				$aantal  = $this->geef_pauze_fractie();
 				break;
 			default:
-				$basis  = '';
-				$aantal = 0;
+				return [];
 		}
 		$orderregels = [];
 		if ( 0 < $aantal ) {

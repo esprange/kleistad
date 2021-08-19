@@ -1,12 +1,12 @@
-// noinspection EqualityComparisonWithCoercionJS
-
 /**
  * Kleistad javascript functies voor formulieren.
  *
  * @author Eric Sprangers.
  * @since  6.0.0
+ * @package Kleistad
  */
 
+/* noinspection EqualityComparisonWithCoercionJS */
 /* global kleistadData */
 /* exported strtodate, strtotime, timetostr */
 
@@ -35,8 +35,8 @@ function strtotime( value ) {
  * @param {int} value
  */
 function timetostr( value ) {
-	var hours   = Math.floor( value / 60 );
-	var minutes = value % 60;
+	let hours   = Math.floor( value / 60 );
+	let minutes = value % 60;
 	return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
 }
 
@@ -46,10 +46,13 @@ function timetostr( value ) {
  * @param {String} value De datum string.
  */
 function strtodate( value ) {
-	var veld = value.split( '-' );
+	let veld = value.split( '-' );
 	return new Date( veld[2], veld[1] - 1, veld[0] );
 }
 
+/**
+ * Document ready.
+ */
 ( function( $ ) {
 	'use strict';
 
@@ -73,7 +76,7 @@ function strtodate( value ) {
 						callback( data );
 					}
 				}
-			).fail(); // Geen verdere actie ingeval van falen.
+			); // Geen verdere actie ingeval van falen.
 		}
 	};
 
@@ -202,12 +205,12 @@ function strtodate( value ) {
 				'submit',
 				'form',
 				function( event ) {
-					var $form         = $( this );
-					var shortcodeData = $.fn.shortcode( $form );
-					var formData      = new FormData( this );
-					var clicked       = $form.data( 'clicked' );
-					var confirm       = $( '#' + clicked.id ).data( 'confirm' );
-					var tekst         = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
+					let $form         = $( this );
+					let shortcodeData = $.fn.shortcode( $form );
+					let formData      = new FormData( this );
+					let clicked       = $form.data( 'clicked' );
+					let confirm       = $( '#' + clicked.id ).data( 'confirm' );
+					let tekst         = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
 					formData.append( 'form_actie', clicked.value );
 					Object.keys( shortcodeData ).forEach(
 						function( item ) {

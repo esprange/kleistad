@@ -1,3 +1,11 @@
+/**
+ * Werkplek Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 /* global kleistadData */
 
 ( function( $ ) {
@@ -96,7 +104,7 @@
 	 * @param {String} datum.
 	 * @param {int}    id, het meester id.
 	 * @param {String} dagdeel, het dagdeel.
-     * @returns {undefined}
+	 * @returns {undefined}
 	 */
 	function muteerMeester( datum, id, dagdeel ) {
 		$wachten.addClass( 'kleistad-wachten' ).show();
@@ -130,11 +138,17 @@
 		);
 	}
 
+	/**
+	 * Activeer/deactiveer forward en backward buttons.
+	 */
 	function buttonsActive() {
 		$( '#kleistad_eerder' ).prop( 'disabled', 0 === datumIndex );
 		$( '#kleistad_later' ).prop( 'disabled', datums.length === datumIndex + 1 );
 	}
 
+	/**
+	 * Refresh form.
+	 */
 	function onLoad() {
 		$datum.datepicker(
 			'option',
@@ -151,12 +165,18 @@
 		);
 	}
 
+	/**
+	 * Na ajax return
+	 */
 	$( document ).ajaxComplete(
 		function() {
 			onLoad();
 		}
 	);
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{

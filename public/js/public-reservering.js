@@ -1,3 +1,11 @@
+/**
+ * Reservering Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 /* global kleistadData, detectTap */
 
 ( function( $ ) {
@@ -57,7 +65,7 @@
 			'<tr><th colspan="2"><label>Programma</label></th><td><input id="kleistad_programma" type="number" min="0" max="99" value="' + formData.programma + '" ></td></tr>'
 		);
 		if ( $reserveringen.data( 'override' ) ) {
-			$( '#kleistad_soortstook' ).append( '<option value="Onderhoud" ' + ( 'Onderhoud' === formData.soortstook ? 'selected' : '' ) + ' >Onderhoud</option>' );
+			$soortstook.append( '<option value="Onderhoud" ' + ( 'Onderhoud' === formData.soortstook ? 'selected' : '' ) + ' >Onderhoud</option>' );
 		}
 
 		stokerVeld = $reserveringen.data( 'override' ) ?
@@ -291,6 +299,9 @@
 		);
 	}
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{

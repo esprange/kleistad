@@ -1,6 +1,19 @@
+/**
+ * Cursus inschrijving Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Wijzig de teksten van het betaal formulier.
+	 *
+	 * @param cursus
+	 */
 	function wijzigTeksten( cursus ) {
 		var $spin  = $( '#kleistad_aantal' ),
 			aantal = $spin.spinner( 'value' ),

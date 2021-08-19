@@ -1,3 +1,11 @@
+/**
+ * Cursus beheer Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 /* global strtotime, timetostr, strtodate */
 
 ( function( $ ) {
@@ -200,7 +208,7 @@
 	);
 
 	/**
-	 * Eerste load van het formulier.
+	 * Document ready.
 	 */
 	$(
 		function() {

@@ -1,24 +1,44 @@
+/**
+ * Debiteuren beheer Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Lees de zoekterm.
+	 */
 	function leesFilters() {
-		var $zoek = $( '#kleistad_zoek' );
+		const $zoek = $( '#kleistad_zoek' );
 		if ( window.sessionStorage.getItem( 'debiteur_filter' ) ) {
 			$zoek.val( window.sessionStorage.getItem( 'debiteur_filter' ) );
 			$( '#kleistad_zoek_icon' ).data( 'id', $zoek.val() );
 		}
 	}
 
+	/**
+	 * Laden bij refresh.
+	 */
 	function onLoad() {
 		leesFilters();
 	}
 
+	/**
+	 * Idem in geval van ajax return.
+	 */
 	$( document ).ajaxComplete(
 		function() {
 			onLoad();
 		}
 	);
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{

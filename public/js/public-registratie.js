@@ -1,3 +1,11 @@
+/**
+ * Registratie Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 /* global wp, kleistadData */
 
 ( function( $ ) {
@@ -32,6 +40,9 @@
 		}
 	}
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{

@@ -1,10 +1,21 @@
+/**
+ * Abonnee inschrijving Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Wijzig de teksten in het betaal formulier.
+	 */
 	function wijzigTeksten() {
-		var $abonnement_keuze = $( '[name=abonnement_keuze]:radio:checked' );
-		var bedrag            = $abonnement_keuze.data( 'bedrag' );
-		var bedragtekst       = $abonnement_keuze.data( 'bedragtekst' );
+		const $abonnement_keuze = $( '[name=abonnement_keuze]:radio:checked' );
+		let bedrag              = $abonnement_keuze.data( 'bedrag' );
+		let bedragtekst         = $abonnement_keuze.data( 'bedragtekst' );
 
 		if ( 'undefined' !== typeof bedrag ) {
 			$( 'input[name^=extras]:checkbox:checked' ).each(
@@ -17,6 +28,9 @@
 		}
 	}
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{
@@ -48,6 +62,9 @@
 				}
 			);
 
+			/**
+			 * Wijzig de teksten als een extra optie wordt aangevinkt.
+			 */
 			$( 'input[name^=extras]:checkbox' ).on(
 				'change',
 				function() {
@@ -55,6 +72,9 @@
 				}
 			);
 
+			/**
+			 * Wijzig de button tekst bij betaling dan wel aanmelding.
+			 */
 			$( 'input[name=betaal]:radio' ).on(
 				'change',
 				function() {
@@ -68,7 +88,7 @@
 			$( '#kleistad_huisnr, #kleistad_pcode' ).on(
 				'change',
 				function() {
-					var pcode = $( '#kleistad_pcode' );
+					let pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase().replace( /\s/g, '' ) );
 					$().lookupPostcode(
 						pcode.val(),

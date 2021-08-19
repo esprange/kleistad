@@ -1,8 +1,19 @@
+/**
+ * Workshop beheer Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 /* global timetostr, strtotime */
 
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{

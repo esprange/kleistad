@@ -1,8 +1,19 @@
+/**
+ * Recept beheer Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 /* global: FileReader */
 
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{

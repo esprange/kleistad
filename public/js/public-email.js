@@ -1,6 +1,17 @@
+/**
+ * Email versturen Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Na refresh.
+	 */
 	function onLoad() {
 		$( '#kleistad_gebruikers' ).jstree(
 			{
@@ -9,34 +20,45 @@
 		);
 	}
 
+	/**
+	 * Na een Ajax return.
+	 */
 	$( document ).ajaxComplete(
-        function() {
+		function() {
 			onLoad();
 		}
 	);
 
-    $( function()
+	/**
+	 * Document ready.
+	 */
+	$(
+		function()
 		{
 			onLoad();
-
-			$( '#kleistad_gebruikers' ).on( 'changed.jstree',
+			$( '#kleistad_gebruikers' ).on(
+				'changed.jstree',
 				function() {
-					var gebruikerIds = [],
+					var gebruikerIds  = [],
 						selectIndexes = $( this ).jstree( 'get_selected', true );
-					$.each( selectIndexes, function() {
-						var gebruikerId = this.li_attr.gebruikerid;
-						if ( undefined !== gebruikerId ) {
-							gebruikerIds.push( gebruikerId );
+					$.each(
+						selectIndexes,
+						function() {
+							let gebruikerId = this.li_attr.gebruikerid;
+							if ( undefined !== gebruikerId ) {
+								gebruikerIds.push( gebruikerId );
+							}
 						}
-					});
+					);
 					$( '#kleistad_gebruikerids' ).val( gebruikerIds.join( ',' ) );
 				}
-			).on( 'ready.jstree',
+			).on(
+				'ready.jstree',
 				function() {
-					$( this ).show();					
+					$( this ).show();
 				}
 			);
 		}
-    );
+	);
 
 } )( jQuery );

@@ -229,14 +229,14 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$this->assertEquals( 25.00 + 67.00, $order->te_betalen(), 'correctie kosten te betalen onjuist' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
 
+		$inschrijving->betaling->verwerk( $order, 25.00, true, 'bank' );
 		$inschrijving->actie->correctie( $cursus_nieuw->id, 2 );
 
 		$inschrijving = new Inschrijving( $cursus_nieuw->id, $cursist->ID );
 		$order        = new Order( $inschrijving->geef_referentie() );
 		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
-		$this->assertEquals( 2 * ( 25.00 + 67.00 ), $order->te_betalen(), 'correctie kosten te betalen onjuist' );
+		$this->assertEquals( 2 * ( 25.00 + 67.00 ) - 25.00, $order->te_betalen(), 'correctie kosten te betalen onjuist' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
-
 	}
 
 	/**

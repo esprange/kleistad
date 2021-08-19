@@ -1,8 +1,19 @@
+/**
+ * Registratie overzicht Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
 /* global detectTap */
 
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{
