@@ -22,11 +22,11 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	 */
 	protected function html() {
 		if ( ! isset( $this->data['rapport'] ) ) {
-			$this->form()->datums();
 			if ( 'individueel' === $this->data['actie'] ) {
-				$this->werkplekgebruiker();
+				$this->form()->datums()->werkplekgebruiker()->form_end();
+				return;
 			}
-			$this->form_end();
+			$this->form()->datums()->form_end();
 			return;
 		}
 		if ( 'individueel' === $this->data['actie'] ) {
@@ -38,10 +38,8 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het rapport
-	 *
-	 * @return Public_Werkplekrapport_Display
 	 */
-	private function individueel() : Public_Werkplekrapport_Display {
+	private function individueel() {
 		?>
 		<h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?> door <?php echo esc_html( get_user_by( 'id', $this->data['gebruiker_id'] )->display_name ); ?></h2>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
@@ -70,15 +68,12 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 		</table>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Render het rapport
-	 *
-	 * @return Public_Werkplekrapport_Display
 	 */
-	private function overzicht() : Public_Werkplekrapport_Display {
+	private function overzicht() {
 		?>
 		<h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?></h2>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
@@ -115,7 +110,6 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 		</table>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
-		return $this;
 	}
 
 	/**
@@ -188,8 +182,8 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row" style="padding-top:20px;" >
 			<button class="kleistad-button" type="submit" >Rapport</button>
 		</div>
-		</form>
 		<?php
+		echo '</form>'; // To suppress warning of unmatched closing tag.
 		return $this;
 	}
 

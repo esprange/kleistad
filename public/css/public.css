@@ -42,10 +42,15 @@ option.kleistad-bank {
 	box-shadow: 0 0 0 0 white !important;
 }
 
-/* Fullcalendar toont om een dubbele button alsof het een radio button is. */
 /* stylelint-disable selector-class-pattern */
+/* Fullcalendar toont om een dubbele button alsof het een radio button is. */
 .kleistad-shortcode .fc--button {
 	display: none;
+}
+
+/* Datatables toont een lelijke selector voor tabel lengte */
+.kleistad-shortcode .dataTables_length select {
+	padding-right: 25px;
 }
 /* stylelint-enable selector-class-pattern */
 

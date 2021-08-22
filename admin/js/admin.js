@@ -1,4 +1,13 @@
-/** global: URL */
+/**
+ * Admin dashboard Kleistad javascript functies.
+ *
+ * @author Eric Sprangers.
+ * @since  5.2.0
+ * @package Kleistad
+ */
+
+/* global: URL */
+
 ( function( $ ) {
 	'use strict';
 
@@ -8,15 +17,19 @@
 	 * @param {String} value De tijdstring.
 	 */
 	function strtodate( value ) {
-		var veld = value.split( '-' );
+		let veld = value.split( '-' );
 		return new Date( veld[2], veld[1] - 1, veld[0] );
 	}
 
+	/**
+	 * Document ready.
+	 */
 	$(
 		function()
 		{
-			var $saldo = $( '#saldo' );
-
+			let $saldo                 = $( '#saldo' ),
+				$werkplek_start_config = $( '#kleistad_start_config' ),
+				$werkplek_eind_config  = $( '#kleistad_eind_config' );
 			/**
 			 * Voeg 15 euro toe.
 			 */
@@ -64,6 +77,9 @@
 				}
 			);
 
+			/**
+			 * Bij wijzigen beperkt abonnement, vereisen dat de dag ingevuld wordt.
+			 */
 			$( '#kleistad-soort' ).on(
 				'change',
 				function() {
@@ -90,11 +106,14 @@
 				}
 			);
 
-			$( '#kleistad_start_config' ).datepicker(
+			/**
+			 * Werkplek configyratie
+			 */
+			$werkplek_start_config.datepicker(
 				'option',
 				{
 					minDate: ( $( this ).prop( 'disabled' ) ) ? null : 0,
-					maxDate: $( '#kleistad_eind_config' ).datepicker( 'getDate' ),
+					maxDate: $werkplek_eind_config.datepicker( 'getDate' ),
 					onSelect: function( datum ) {
 						$( '#kleistad_eind_config' ).datepicker(
 							'option',
@@ -109,10 +128,13 @@
 				}
 			);
 
-			$( '#kleistad_eind_config' ).datepicker(
+			/**
+			 * Werkplek configuratie
+			 */
+			$werkplek_eind_config.datepicker(
 				'option',
 				{
-					minDate: $( '#kleistad_start_config' ).datepicker( 'getDate' ),
+					minDate: $werkplek_start_config.datepicker( 'getDate' ),
 					onSelect: function( datum ) {
 						$( '#kleistad_start_config' ).datepicker( 'option', { maxDate: strtodate( datum ) } );
 					},
