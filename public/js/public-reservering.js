@@ -11,9 +11,8 @@
 ( function( $ ) {
 	'use strict';
 
-	var $reserveringen = $( '#kleistad_reserveringen' ),
+	let $reserveringen = $( '#kleistad_reserveringen' ),
 		$formulier     = $( '#kleistad_reservering' ),
-		$temperatuur   = $( '#kleistad_temperatuur' ),
 		$soortstook    = $( '#kleistad_soortstook' );
 
 	/**
@@ -254,8 +253,8 @@
 			}
 		);
 		if ( 'Onderhoud' !== $soortstook.val() ) {
-			if ( ! $temperatuur[0].checkValidity() ) {
-				$temperatuur[0].reportValidity();
+			if ( ! document.getElementById( 'kleistad_temperatuur' ).checkValidity() ) {
+				document.getElementById( 'kleistad_temperatuur' ).reportValidity();
 				return;
 			}
 		}
@@ -273,8 +272,8 @@
 						dag:          $( '#kleistad_dag' ).val(),
 						maand:        $( '#kleistad_maand' ).val(),
 						jaar:         $( '#kleistad_jaar' ).val(),
-						temperatuur:  $temperatuur.val(),
-						soortstook:   $soortstook.val(),
+						temperatuur:  $( '#kleistad_temperatuur' ).val(),
+						soortstook:   $( '#kleistad_soortstook' ).val(),
 						gebruiker_id: $( '#stoker_id' ).val(),
 						programma:    $( '#kleistad_programma' ).val(),
 						verdeling:    verdeling

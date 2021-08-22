@@ -170,7 +170,6 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
-		$this->betaling->verwerk( $order, $order->betaald, true, $this->artikel_type );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
