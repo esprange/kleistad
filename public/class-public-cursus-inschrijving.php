@@ -316,7 +316,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
 		$inschrijving             = new Inschrijving( $data['input']['cursus_id'], $gebruiker_id );
-		$inschrijving->technieken = $data['input']['technieken'];
+		$inschrijving->technieken = $data['input']['technieken'] ?? [];
 		$inschrijving->opmerking  = $data['input']['opmerking'];
 		$inschrijving->aantal     = intval( $data['input']['aantal'] );
 		if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {

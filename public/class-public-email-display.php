@@ -46,7 +46,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 						<ul>
 						<?php foreach ( $groep['leden'] as $gebruiker_id => $gebruiker ) : ?>
 							<li gebruikerid="<?php echo esc_attr( $gebruiker_id ); ?>">
-							<?php echo esc_html( $gebruiker ); ?>
+							<?php echo esc_html( "$gebruiker_id $gebruiker" ); ?>
 							</li>
 						<?php endforeach ?>
 						</ul>

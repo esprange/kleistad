@@ -47,19 +47,21 @@ class Public_Email extends ShortcodeForm {
 			];
 		}
 
-		$data['input']['tree'] = $this->cursisten();
 		if ( current_user_can( BESTUUR ) ) {
 			$data['input']['tree'] = array_merge(
-				$data['input']['tree'],
+				$this->cursisten(),
+				$this->wachtlijst(),
 				$this->abonnees(),
 				$this->dagdelengebruikers(),
 				$this->docenten(),
 				$this->bestuur()
 			);
+			return true;
 		}
 
-		krsort( $data['input']['tree'] );
+		$data['input']['tree'] = $this->cursisten();
 		return true;
+
 	}
 
 	/**
@@ -75,7 +77,7 @@ class Public_Email extends ShortcodeForm {
 				$data[ self::GROEP['abonnees'] ]['leden'][ $abonnee->ID ] = $abonnee->display_name;
 			}
 		}
-		return $data;
+		return $this->sorteren( $data );
 	}
 
 	/**
@@ -91,7 +93,7 @@ class Public_Email extends ShortcodeForm {
 				$data[ self::GROEP['dagdelengebruikers'] ]['leden'][ $dagdelengebruiker->ID ] = $dagdelengebruiker->display_name;
 			}
 		}
-		return $data;
+		return $this->sorteren( $data );
 	}
 
 	/**
@@ -105,7 +107,7 @@ class Public_Email extends ShortcodeForm {
 			$data[ self::GROEP['docenten'] ]['naam']                 = 'Docenten';
 			$data[ self::GROEP['docenten'] ]['leden'][ $docent->ID ] = $docent->display_name;
 		}
-		return $data;
+		return $this->sorteren( $data );
 	}
 
 	/**
@@ -119,7 +121,7 @@ class Public_Email extends ShortcodeForm {
 			$data[ self::GROEP['bestuur'] ]['naam']                      = 'Bestuur';
 			$data[ self::GROEP['bestuur'] ]['leden'][ $bestuurslid->ID ] = $bestuurslid->display_name;
 		}
-		return $data;
+		return $this->sorteren( $data );
 	}
 
 	/**
@@ -128,21 +130,57 @@ class Public_Email extends ShortcodeForm {
 	 * @return array
 	 */
 	private function cursisten() : array {
+		$is_bestuur       = current_user_can( BESTUUR );
 		$data             = [];
 		$cursus_criterium = strtotime( '-6 months' ); // Cursussen die langer dan een half jaar gelden zijn geëindigd worden niet getoond.
 		foreach ( new Cursisten() as $cursist ) {
 			foreach ( $cursist->inschrijvingen as $inschrijving ) {
-				if ( ! current_user_can( BESTUUR ) && intval( $inschrijving->cursus->docent ) !== get_current_user_id() ) {
+				if ( ! $is_bestuur && intval( $inschrijving->cursus->docent ) !== get_current_user_id() ) {
 					continue;
 				}
-				if ( ! $inschrijving->geannuleerd && $cursus_criterium < $inschrijving->cursus->eind_datum ) {
-					if ( $inschrijving->ingedeeld ) {
-						$data[ $inschrijving->cursus->id ]['naam']                  = "{$inschrijving->cursus->code} - {$inschrijving->cursus->naam}";
-						$data[ $inschrijving->cursus->id ]['leden'][ $cursist->ID ] = $cursist->display_name;
-					} elseif ( $inschrijving->wacht_datum ) {
-						$data[ self::GROEP['wachter'] ]['naam']                  = 'wachtlijst';
-						$data[ self::GROEP['wachter'] ]['leden'][ $cursist->ID ] = $cursist->display_name;
-					}
+				if ( ! $inschrijving->geannuleerd && $inschrijving->ingedeeld && $cursus_criterium < $inschrijving->cursus->eind_datum ) {
+					$data[ $inschrijving->cursus->id ]['naam']                  = "{$inschrijving->cursus->code} - {$inschrijving->cursus->naam}";
+					$data[ $inschrijving->cursus->id ]['leden'][ $cursist->ID ] = $cursist->display_name;
+				}
+			}
+		}
+		return $this->sorteren( $data );
+	}
+
+	/**
+	 * Sorteer op naam van de groep en de leden.
+	 *
+	 * @param array $data De groep en leden.
+	 *
+	 * @return array De gesorteerde lijst.
+	 */
+	private function sorteren( $data ) : array {
+		usort(
+			$data,
+			function ( $links, $rechts ) {
+				$retval = $links <=> $rechts;
+				if ( 0 === $retval ) {
+					$retval = strtoupper( $links['leden'] ) <=> strtoupper( $rechts['leden'] );
+				}
+				return $retval;
+			}
+		);
+		return $data;
+	}
+
+	/**
+	 * Haal de wachtlijst cursist gegevens op
+	 *
+	 * @return array
+	 */
+	private function wachtlijst() : array {
+		$data                 = [];
+		$wachtlijst_criterium = strtotime( 'today' );
+		foreach ( new Cursisten() as $cursist ) {
+			foreach ( $cursist->inschrijvingen as $inschrijving ) {
+				if ( ! $inschrijving->geannuleerd && ! $inschrijving->ingedeeld && $wachtlijst_criterium < $inschrijving->cursus->eind_datum ) {
+					$data[ self::GROEP['wachters'] ]['naam']                  = 'Cursisten op wachtlijst';
+					$data[ self::GROEP['wachters'] ]['leden'][ $cursist->ID ] = $cursist->display_name;
 				}
 			}
 		}

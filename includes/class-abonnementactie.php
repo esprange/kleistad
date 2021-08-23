@@ -160,7 +160,7 @@ class AbonnementActie {
 		$wijzig_datum_str = strftime( '%d-%m-%Y', $wijzig_datum );
 		switch ( $type ) {
 			case 'soort':
-				$gewijzigd      = $this->abonnement->soort != $soort || $this->abonnement->dag != $dag; // phpcs:ignore
+				$gewijzigd               = $this->abonnement->soort != $soort || $this->abonnement->dag != $dag; // phpcs:ignore
 				$this->abonnement->soort = $soort;
 				$this->abonnement->dag   = $dag;
 				$this->log( "gewijzigd per $wijzig_datum_str naar $soort $dag" );
@@ -168,9 +168,9 @@ class AbonnementActie {
 					( 'beperkt' === $this->abonnement->soort ? ' (' . $this->abonnement->dag . ')' : '' );
 				break;
 			case 'extras':
-				$gewijzigd    = $this->abonnement->extras != $soort; // phpcs:ignore
-				$this->abonnement->extras = $soort;
-				$soort_str                = ! is_null( $soort ) ? ( 'gebruik maken van ' . implode( ', ', $soort ) ) : 'geen extras meer gebruiken';
+				$gewijzigd                = $this->abonnement->extras != $soort; // phpcs:ignore
+				$this->abonnement->extras = $soort ?? [];
+				$soort_str                = ! empty( $soort ) ? ( 'gebruik maken van ' . implode( ', ', $soort ) ) : 'geen extras meer gebruiken';
 				$this->log( "extras gewijzigd per $wijzig_datum_str naar $soort_str" );
 				$this->abonnement->bericht = "Je gaat voortaan per $wijzig_datum_str $soort_str";
 				break;
