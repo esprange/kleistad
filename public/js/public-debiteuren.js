@@ -79,7 +79,7 @@
 				function() {
 					$( '.kleistad_deb_veld' ).hide();
 					$( '.kleistad_deb_annulering' ).toggle( this.checked );
-					$( '#kleistad_submit_debiteuren' ).prop( 'disabled', false ).data( 'confirm', 'Debiteuren|Klopt het bedrag van het restant te betalen ?' );
+					$( '#kleistad_submit_debiteuren' ).prop( 'disabled', false ).data( 'confirm', 'Debiteuren|Klopt het bedrag van het restant te betalen ?' ).val( 'annulering' );
 				}
 			)
 			.on(
