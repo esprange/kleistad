@@ -62,7 +62,7 @@ class Presentielijst extends FPDF {
 			$this->ln();
 		}
 		$this->ln();
-		$this->Cell( 0, $fontheight, strftime( '%d-%m-%Y' ), 0 );
+		$this->Cell( 0, $fontheight, strftime( '%d-%m-%Y' ) );
 	}
 
 	/**

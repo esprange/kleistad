@@ -154,14 +154,12 @@ class AbonnementBetaling extends ArtikelBetaling {
 				$this->abonnement->factuur_maand = (int) date( 'Ym' );
 				$this->abonnement->save();
 				$this->abonnement->verzend_email( '_start_ideal', $this->abonnement->bestel_order( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
-				return;
 			}
 		} elseif ( 'directdebit' === $type && $order->id ) {
 			/**
 			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 			 */
 			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order, 0, $transactie_id, true ) );
-			return;
 		} elseif ( 'ideal' === $type && ! $order->id ) {
 			$this->abonnement->erase();
 		}

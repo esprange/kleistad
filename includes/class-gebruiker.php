@@ -56,19 +56,19 @@ class Gebruiker extends WP_User {
 				return [
 					'to'      => "{$emailer->info}{$emailer->domein}",
 					'subject' => 'Anonimiseer gebruiker',
-					'message' => "Gebruiker {$this->display_name} wordt geanonimiseerd",
+					'message' => "Gebruiker $this->display_name wordt geanonimiseerd",
 					'headers' => [],
 				];
 			}
 		);
-		$stub = "verwijderd{$this->ID}";
+		$stub = "verwijderd$this->ID";
 		wp_update_user(
 			(object) [
 				'ID'            => $this->ID,
 				'user_nicename' => $stub,
 				'role'          => '',
 				'display_name'  => "- $stub -",
-				'user_email'    => "{$stub}@{$emailer->domein}",
+				'user_email'    => "$stub@$emailer->domein",
 				'nickname'      => '',
 				'first_name'    => '',
 				'last_name'     => $stub,

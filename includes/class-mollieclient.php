@@ -12,6 +12,7 @@
 namespace Kleistad;
 
 use Mollie;
+use MollieSimulatie;
 
 /**
  * Definitie van de betalen class.
@@ -33,7 +34,7 @@ class MollieClient {
 	public function __construct() {
 		if ( defined( 'KLEISTAD_MOLLIE_SIM' ) ) {
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'tests/class-molliesimulatie.php';
-			$this->mollie_service = new \MollieSimulatie();
+			$this->mollie_service = new MollieSimulatie();
 			return;
 		}
 		$setup                = setup();

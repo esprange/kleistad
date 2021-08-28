@@ -205,23 +205,23 @@ class Abonnement extends Artikel {
 			case 'start':
 				$vanaf  = strftime( '%d-%m-%Y', $this->start_datum );
 				$tot    = strftime( '%d-%m-%Y', $this->start_eind_datum );
-				$basis  = "{$this->soort} abonnement {$this->code} vanaf $vanaf tot $tot";
+				$basis  = "$this->soort abonnement $this->code vanaf $vanaf tot $tot";
 				$aantal = 3;
 				break;
 			case 'overbrugging':
 				$vanaf  = strftime( '%d-%m-%Y', strtotime( '+1 day', $this->start_eind_datum ) );
 				$tot    = strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) );
-				$basis  = "{$this->soort} abonnement {$this->code} vanaf $vanaf tot $tot";
+				$basis  = "$this->soort abonnement $this->code vanaf $vanaf tot $tot";
 				$aantal = $this->geef_overbrugging_fractie();
 				break;
 			case 'regulier':
 				$periode = strftime( '%B %Y', strtotime( 'today' ) );
-				$basis   = "{$this->soort} abonnement {$this->code} periode $periode";
+				$basis   = "$this->soort abonnement $this->code periode $periode";
 				$aantal  = 1;
 				break;
 			case 'pauze':
 				$periode = strftime( '%B %Y', strtotime( 'today' ) );
-				$basis   = "{$this->soort} abonnement {$this->code} periode $periode (deels gepauzeerd)";
+				$basis   = "$this->soort abonnement $this->code periode $periode (deels gepauzeerd)";
 				$aantal  = $this->geef_pauze_fractie();
 				break;
 			default:

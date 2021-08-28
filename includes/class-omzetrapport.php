@@ -77,7 +77,7 @@ class OmzetRapport extends FPDF {
 		$this->Cell( 50, $hoogte, number_format_i18n( $totaal_btw, 2 ), 'T', 0, 'R' );
 		$this->ln( 25 );
 		$this->setFont( 'Arial' );
-		$this->Cell( 0, $hoogte, strftime( '%d-%m-%Y' ), 0 );
+		$this->Cell( 0, $hoogte, strftime( '%d-%m-%Y' ) );
 	}
 
 	/**

@@ -32,12 +32,12 @@ class Factuur extends FPDF {
 	 * Kort een tekst af als deze te lang is voor een veld.
 	 *
 	 * @param string $tekst  De tekst.
-	 * @param int    $maxlen De maximale lengte.
 	 * @return string
 	 */
-	private function trunc( string $tekst, int $maxlen ) : string {
-		$ellip = '...';
-		$tekst = trim( $tekst );
+	private function trunc( string $tekst ) : string {
+		$maxlen = 63;
+		$ellip  = '...';
+		$tekst  = trim( $tekst );
 		if ( strlen( $tekst ) <= $maxlen ) {
 			return $tekst;
 		}
@@ -141,7 +141,7 @@ class Factuur extends FPDF {
 		$this->setFont( 'Arial' );
 		foreach ( $orderregels as $orderregel ) {
 			$this->Cell( $breedte['aantal'], $hoogte, $orderregel->aantal, 0, 0, 'C' );
-			$this->Cell( $breedte['artikel'], $hoogte, utf8_decode( $this->trunc( $orderregel->artikel, 63 ) ), 0, 0, 'L' );
+			$this->Cell( $breedte['artikel'], $hoogte, utf8_decode( $this->trunc( $orderregel->artikel ) ), 0, 0, 'L' );
 			$this->Cell( $breedte['stuksprijs'], $hoogte, $this->euro( $orderregel->prijs + $orderregel->btw ), 0, 0, 'R' );
 			$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $orderregel->aantal * ( $orderregel->prijs + $orderregel->btw ) ), 0, 1, 'R' );
 		}

@@ -267,7 +267,7 @@ class Workshop extends Artikel {
 	 * @return Orderregel De regel.
 	 */
 	protected function geef_factuurregels() : Orderregel {
-		return new Orderregel( "{$this->naam} op " . strftime( '%A %d-%m-%y', $this->datum ) . ", {$this->aantal} deelnemers", 1, $this->kosten );
+		return new Orderregel( "$this->naam op " . strftime( '%A %d-%m-%y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten );
 	}
 
 	/**
@@ -292,7 +292,7 @@ class Workshop extends Artikel {
 	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer          = new Email();
 		$email_parameters = [
-			'to'          => "{$this->contact} <{$this->email}>",
+			'to'          => "$this->contact <$this->email>",
 			'attachments' => $factuur ?: [],
 			'parameters'  => [
 				'contact'             => $this->contact,
@@ -313,7 +313,7 @@ class Workshop extends Artikel {
 			'subject'     => self::EMAIL_SUBJECT[ $type ] . $this->naam,
 		];
 		if ( $factuur && $this->organisatie_email ) {
-			$email_parameters['to'] .= ", {$this->organisatie} <{$this->organisatie_email}>";
+			$email_parameters['to'] .= ", $this->organisatie <$this->organisatie_email>";
 		}
 		if ( false !== strpos( $type, 'bevestiging' ) ) {
 				$email_parameters['auto']     = false;

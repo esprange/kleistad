@@ -198,7 +198,7 @@ class Betalen {
 			$html = 'Mollie info: ';
 			foreach ( $mollie_gebruiker->mandates() as $mandaat ) {
 				if ( $mandaat->isValid() ) {
-					$html .= "Er is op {$mandaat->signatureDate} een geldig mandaat afgegeven om incasso te doen vanaf bankrekening {$mandaat->details->consumerAccount} op naam van {$mandaat->details->consumerName}. ";
+					$html .= "Er is op $mandaat->signatureDate een geldig mandaat afgegeven om incasso te doen vanaf bankrekening {$mandaat->details->consumerAccount} op naam van {$mandaat->details->consumerName}. ";
 				}
 			}
 			return $html;

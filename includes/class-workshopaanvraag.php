@@ -130,7 +130,7 @@ class WorkshopAanvraag {
 			wp_update_post( $this->aanvraag );
 			return $this->ID;
 		}
-		$result   = wp_insert_post( (array) $this->aanvraag );
+		$result   = wp_insert_post( $this->aanvraag );
 		$this->ID = is_int( $result ) ? $result : 0;
 		return $this->ID;
 	}

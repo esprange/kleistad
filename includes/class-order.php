@@ -256,7 +256,7 @@ class Order {
 		$historie               = $this->historie;
 		$historie[]             = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
 		$this->data['historie'] = wp_json_encode( $historie );
-		$this->gesloten         = ( 0 < $this->credit_id ) ?: 0.01 >= abs( $this->te_betalen() );
+		$this->gesloten         = $this->credit_id || ( 0.01 >= abs( $this->te_betalen() ) );
 		$this->regels           = $this->orderregels->export();
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
 		if ( ! $this->id ) {

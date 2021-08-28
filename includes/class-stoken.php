@@ -171,7 +171,7 @@ class Stoken implements Countable, Iterator {
 					$saldo->bedrag    = $saldo->bedrag - $stookdeel->prijs;
 					$saldo->reden     = 'stook op ' . date( 'd-m-Y', $stook->datum ) . ' door ' . $stoker->display_name;
 					if ( false === $saldo->save() ) {
-						error_log( "stooksaldo van gebruiker {$medestoker->display_name} kon niet aangepast worden met kosten {$stookdeel->prijs}" ); // phpcs:ignore
+						error_log( "stooksaldo van gebruiker $medestoker->display_name kon niet aangepast worden met kosten $stookdeel->prijs" ); // phpcs:ignore
 						continue;
 					}
 					if ( 0 < $stookdeel->prijs ) {
@@ -220,7 +220,7 @@ class Stoken implements Countable, Iterator {
 					continue; // Volgende verdeling.
 				}
 				$medestoker = get_userdata( $stookdeel->medestoker );
-				$tabel     .= "<tr><td>{$medestoker->first_name} {$medestoker->last_name}</td><td style=\"text-align:right;\" >{$stookdeel->percentage} %</td></tr>";
+				$tabel     .= "<tr><td>$medestoker->first_name $medestoker->last_name </td><td style=\"text-align:right;\" >$stookdeel->percentage %</td></tr>";
 			}
 			$tabel .= '<tr><td colspan="2" style="text-align:center;" >verdeling op ' . current_time( 'd-m-Y H:i' ) . '</td></table>';
 			$emailer->send(

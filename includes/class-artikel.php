@@ -97,7 +97,7 @@ abstract class Artikel {
 		$credit_order->verval_datum = strtotime( 'tomorrow' );
 
 		foreach ( $order->orderregels as $orderregel ) {
-			$credit_order->orderregels->toevoegen( new Orderregel( "annulering {$orderregel->artikel}", - $orderregel->aantal, $orderregel->prijs, $orderregel->btw ) );
+			$credit_order->orderregels->toevoegen( new Orderregel( "annulering $orderregel->artikel", - $orderregel->aantal, $orderregel->prijs, $orderregel->btw ) );
 		}
 		if ( 0.0 < $restant ) {
 			$credit_order->orderregels->toevoegen( new Orderregel( 'kosten i.v.m. annulering', 1, $restant ) );
@@ -249,8 +249,8 @@ abstract class Artikel {
 	public function naw_klant() : array {
 		$klant = get_userdata( $this->klant_id );
 		return [
-			'naam'  => "{$klant->first_name}  {$klant->last_name}",
-			'adres' => "{$klant->straat} {$klant->huisnr}\n{$klant->pcode} {$klant->plaats}",
+			'naam'  => "$klant->first_name  $klant->last_name",
+			'adres' => "$klant->straat $klant->huisnr\n$klant->pcode $klant->plaats",
 			'email' => "$klant->display_name <$klant->user_email>",
 		];
 	}
