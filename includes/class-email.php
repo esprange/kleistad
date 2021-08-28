@@ -90,10 +90,25 @@ class Email {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->info           = 'development' !== wp_get_environment_type() ? 'info@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
-		$this->domein         = substr( strrchr( get_bloginfo( 'admin_email' ), '@' ), 1 );
-		$mailgun_opties       = get_option( 'wp_mail_smtp' );
-		$this->verzend_domein = false === $mailgun_opties ? $this->domein : $mailgun_opties['mailgun']['domain'];
+		static $info           = '';
+		static $domein         = '';
+		static $verzend_domein = '';
+		if ( empty( $info ) ) {
+			$info           = 'development' !== wp_get_environment_type() ? 'info@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+			$domein         = substr( strrchr( get_bloginfo( 'admin_email' ), '@' ), 1 );
+			$verzend_domein = $domein;
+			$active_plugins = get_option( 'active_plugins' ) ?? [];
+			foreach ( $active_plugins as $active_plugin ) {
+				if ( false === strpos( $active_plugin, 'wp-mail-smtp' ) ) {
+					continue;
+				}
+				$mailgun_opties       = get_option( 'wp_mail_smtp' );
+				$this->verzend_domein = $mailgun_opties['mailgun']['domain'];
+			}
+		}
+		$this->info           = $info;
+		$this->domein         = $domein;
+		$this->verzend_domein = $verzend_domein;
 	}
 
 	/**
@@ -165,10 +180,10 @@ class Email {
 				'bcc'         => [],
 				'cc'          => [],
 				'content'     => '',
-				'from'        => "no_reply@{$this->verzend_domein}",
+				'from'        => "no_reply@$this->verzend_domein",
 				'from_name'   => 'Kleistad',
 				'parameters'  => [],
-				'reply-to'    => "no_reply@{$this->domein}",
+				'reply-to'    => "no_reply@$this->domein",
 				'sign'        => 'Kleistad',
 				'sign_email'  => true,
 				'slug'        => '',
