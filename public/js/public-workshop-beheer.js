@@ -17,9 +17,6 @@
 	$(
 		function()
 		{
-			var $start_tijd = $( '#kleistad_start_tijd' ),
-				$eind_tijd  = $( '#kleistad_eind_tijd' );
-
 			$( '.kleistad-shortcode' )
 			/**
 			 * Voorkom dat checkboxes gewijzigd kunnen worden als readonly form.
@@ -38,8 +35,9 @@
 				'change',
 				'#kleistad_start_tijd',
 				function() {
-					var startTijd = strtotime( $( this ).val() );
-					var eindTijd  = strtotime( $eind_tijd.val() );
+					let $eind_tijd = $( '#kleistad_eind_tijd' ),
+						startTijd  = strtotime( $( this ).val() ),
+						eindTijd   = strtotime( $eind_tijd.val() );
 					if ( startTijd + 60 > eindTijd ) {
 						$eind_tijd.val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
 					}
@@ -52,8 +50,9 @@
 				'change',
 				'#kleistad_eind_tijd',
 				function() {
-					var startTijd = strtotime( $start_tijd.val() );
-					var eindTijd  = strtotime( $( this ).val() );
+					let $start_tijd = $( '#kleistad_start_tijd' ),
+						startTijd   = strtotime( $start_tijd.val() ),
+						eindTijd    = strtotime( $( this ).val() );
 					if ( startTijd > eindTijd - 60 ) {
 						$start_tijd.val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
 					}
