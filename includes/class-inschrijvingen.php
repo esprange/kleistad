@@ -134,14 +134,11 @@ class Inschrijvingen implements Countable, Iterator {
 	 * Verwerk de inschrijving van een cursist waar de restant betaling voor nodig is.
 	 *
 	 * @param Inschrijving $inschrijving De inschrijving van de cursist.
-	 * @return bool De verwerking is uitgevoerd.
 	 */
-	private static function restant_verwerking( Inschrijving $inschrijving ) : bool {
+	private static function restant_verwerking( Inschrijving $inschrijving ) {
 		if ( $inschrijving->ingedeeld && $inschrijving->cursus->is_binnenkort() && ! $inschrijving->restant_email ) {
 			$inschrijving->actie->restant_betaling();
-			return true;
 		}
-		return false;
 	}
 
 	/**
