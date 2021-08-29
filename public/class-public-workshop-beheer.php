@@ -253,7 +253,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		if ( is_null( $data['workshop']['technieken'] ) ) {
 			$data['workshop']['technieken'] = [];
 		}
-		if ( preg_match( '~(bewaren|bevestigen)~', $data['form_actie'] ) ) {
+		if ( in_array( $data['form_actie'], [ 'bewaren', 'bevestigen' ], true ) ) {
 			if ( ! $this->validator->email( $data['workshop']['email'] ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $data['workshop']['email'] . ' is geen geldig E-mail adres.' );
 			}

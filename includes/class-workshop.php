@@ -115,10 +115,10 @@ class Workshop extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
-		if ( preg_match( '~(datum|start_tijd|eind_tijd)~', $attribuut ) ) {
+		if ( in_array( $attribuut, [ 'datum', 'start_tijd', 'eind_tijd' ], true ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
-		if ( preg_match( '~(vervallen|definitief|betaling_email)~', $attribuut ) ) {
+		if ( in_array( $attribuut, [ 'vervallen', 'definitief', 'betaling_email' ], true ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {
@@ -318,8 +318,8 @@ class Workshop extends Artikel {
 		if ( false !== strpos( $type, 'bevestiging' ) ) {
 				$email_parameters['auto']     = false;
 				$email_parameters['slug']     = 'workshop_bevestiging';
-				$email_parameters['from']     = "{$emailer->info}{$emailer->verzend_domein}";
-				$email_parameters['reply-to'] = "{$emailer->info}{$emailer->domein}";
+				$email_parameters['from']     = $emailer->info . $emailer->verzend_domein;
+				$email_parameters['reply-to'] = $emailer->info . $emailer->domein;
 		}
 		return $emailer->send( $email_parameters );
 	}

@@ -103,13 +103,13 @@ class Cursus {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
-		if ( preg_match( '~(start_datum|eind_datum|ruimte_datum|start_tijd|eind_tijd)~', $attribuut ) ) {
+		if ( in_array( $attribuut, [ 'start_datum', 'eind_datum', 'ruimte_datum', 'start_tijd', 'eind_tijd' ], true ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
-		if ( preg_match( '~(vol|vervallen|techniekkeuze|meer|tonen)~', $attribuut ) ) {
+		if ( in_array( $attribuut, [ 'vol', 'vervallen', 'techniekkeuze', 'meer', 'tonen' ], true ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
-		if ( preg_match( '~(inschrijfkosten|cursuskosten)~', $attribuut ) ) {
+		if ( in_array( $attribuut, [ 'inschrijfkosten', 'cursuskosten' ], true ) ) {
 			return floatval( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {

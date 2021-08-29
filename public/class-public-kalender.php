@@ -67,7 +67,7 @@ class Public_Kalender extends Shortcode {
 				'extendedProps'   => [
 					'naam'       => $workshop->naam,
 					'aantal'     => $workshop->aantal,
-					'docent'     => $workshop->docent ?: 'n.b.]',
+					'docent'     => $workshop->docent ?: 'n.b.',
 					'technieken' => implode( ', ', $workshop->technieken ),
 				],
 			];

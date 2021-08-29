@@ -54,7 +54,7 @@ class Gebruiker extends WP_User {
 			'email_change_email',
 			function() use ( $emailer ) {
 				return [
-					'to'      => "{$emailer->info}{$emailer->domein}",
+					'to'      => $emailer->info . $emailer->domein,
 					'subject' => 'Anonimiseer gebruiker',
 					'message' => "Gebruiker $this->display_name wordt geanonimiseerd",
 					'headers' => [],

@@ -60,6 +60,7 @@ function opties() : array {
  * @param int    $status  1 succes, 0 fout, -1 notificatie.
  * @param string $bericht Het bericht.
  * @return string De opgemaakte tekst.
+ * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
  */
 function melding( int $status, string $bericht ) : string {
 	$levels = [

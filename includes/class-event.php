@@ -68,9 +68,10 @@ class Event {
 	/**
 	 * Constructor
 	 *
-	 * @since 5.0.0
-	 *
 	 * @param string $event_id event id welke geladen moet worden.
+	 *
+	 * @noinspection PhpRedundantCatchClauseInspection
+	 * @since 5.0.0
 	 */
 	public function __construct( string $event_id ) {
 		$this->googleconnect = new Googleconnect();

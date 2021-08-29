@@ -101,9 +101,8 @@ class Common {
 	 * @internal Filter for login_message.
 	 */
 	public function user_login_message( $message ) {
-
 		$disabled = filter_input( INPUT_GET, 'disabled' );
-		if ( ! is_null( $disabled ) && 1 === $disabled ) {
+		if ( 1 === $disabled ) {
 			$message = '<div id="login_error">' . apply_filters( 'kleistad_disable_users_notice', 'Inloggen op dit account niet toegestaan' ) . '</div>';
 		}
 		return $message;

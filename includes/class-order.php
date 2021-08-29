@@ -109,13 +109,13 @@ class Order {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
-		if ( preg_match( '~(mutatie_datum|verval_datum|datum)~', $attribuut ) ) {
+		if ( in_array( $attribuut, [ 'mutatie_datum', 'verval_datum', 'datum' ], true ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
-		if ( preg_match( '~(credit_id|origineel_id|id)~', $attribuut ) ) {
+		if ( in_array( $attribuut, [ 'credit_id', 'origineel_id', 'id' ], true ) ) {
 			return intval( $this->data[ $attribuut ] );
 		}
-		if ( preg_match( '~(klant|historie)~', $attribuut ) ) {
+		if ( in_array( $attribuut, [ 'klant', 'historie' ], true ) ) {
 			return json_decode( $this->data[ $attribuut ], true );
 		}
 		if ( 'gesloten' === $attribuut ) {
