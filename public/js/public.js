@@ -9,7 +9,7 @@
 /* global kleistadData, strtotime, timetostr */
 /* exported detectTap */
 
-var detectTap;
+let detectTap;
 
 ( function( $ ) {
 	'use strict';
@@ -30,11 +30,12 @@ var detectTap;
 	 * Definieer de tabellen.
 	 */
 	function defineDatatables() {
-		var $datatable = $( '.kleistad-datatable' );
+		let $datatable = $( '.kleistad-datatable' );
 		if ( ! $datatable[0] ) {
 			return;
 		}
 		if ( ! $.fn.DataTable.isDataTable( '.kleistad-datatable' ) ) {
+			// noinspection JSCheckFunctionSignatures .
 			$datatable.on(
 				'init.dt',
 				function() {
@@ -55,7 +56,7 @@ var detectTap;
 	 * Definieer de datum velden.
 	 */
 	function defineDatums() {
-		var $datum = $( '.kleistad-datum' );
+		let $datum = $( '.kleistad-datum' );
 		if ( $datum[0] && ! $datum.is( ':data("ui-datepicker")' ) ) {
 			$datum.datepicker(
 				{
@@ -83,7 +84,7 @@ var detectTap;
 	 * Definieer de timespinners.
 	 */
 	function defineTimespinners() {
-		var $tijd = $( '.kleistad-tijd' );
+		let $tijd = $( '.kleistad-tijd' );
 		if ( $tijd[0] ) {
 			$.widget(
 				'ui.timespinner',
@@ -117,14 +118,14 @@ var detectTap;
 	 * Definieer selecties met icons.
 	 */
 	function defineSelectMenus() {
-		var $selectMenu = $( '.kleistad-selectmenu' );
+		let $selectMenu = $( '.kleistad-selectmenu' );
 		if ( $selectMenu[0] ) {
 			$.widget(
 				'custom.iconselectmenu',
 				$.ui.selectmenu,
 				{
 					_renderItem: function( ul, item ) {
-						var li  = $( '<li>' ),
+						let li  = $( '<li>' ),
 						wrapper = $( '<div>', { text: item.label } );
 						$(
 							'<span>',
@@ -184,6 +185,7 @@ var detectTap;
 	 */
 	function getContent( $shortcode, data, path ) {
 		$( '#kleistad_wachten' ).addClass( 'kleistad-wachten' ).show();
+		// noinspection JSUnresolvedVariable .
 		$.ajax(
 			{
 				beforeSend: function( xhr ) {
@@ -196,6 +198,7 @@ var detectTap;
 		).done(
 			function( data ) {
 				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
+				// noinspection JSUnresolvedFunction .
 				$.fn.vervolg( $shortcode, data );
 			}
 		).fail(
@@ -204,6 +207,7 @@ var detectTap;
 				if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
 					window.console.log( jqXHR.responseJSON.message );
 				}
+				// noinspection JSUnresolvedVariable .
 				$( '#kleistad_berichten' ).html( kleistadData.error_message );
 			}
 		);
@@ -256,7 +260,8 @@ var detectTap;
 				'click',
 				'.kleistad-edit-link',
 				function() {
-					let $anchor       = $( this );
+					let $anchor = $( this );
+					// noinspection JSUnresolvedFunction .
 					let shortcodeData = $.fn.shortcode( $anchor );
 					getContent( $anchor.closest( '.kleistad-shortcode' ), shortcodeData, 'getitem' );
 					return true;
@@ -269,7 +274,8 @@ var detectTap;
 				'click',
 				'.kleistad-terug-link',
 				function() {
-					let $button       = $( this );
+					let $button = $( this );
+					// noinspection JSUnresolvedFunction .
 					let shortcodeData = $.fn.shortcode( $button );
 					getContent( $button.closest( '.kleistad-shortcode' ), shortcodeData, 'getitems' );
 					return true;
@@ -282,7 +288,8 @@ var detectTap;
 				'click',
 				'.kleistad-download-link',
 				function() {
-					let $button       = $( this );
+					let $button = $( this );
+					// noinspection JSUnresolvedFunction .
 					let shortcodeData = $.fn.shortcode( $button );
 					$( 'input,select' ).each(
 						function() {

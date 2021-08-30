@@ -107,6 +107,10 @@ abstract class Artikel {
 		$order->credit_id            = $credit_order->save( 'Order en credit factuur aangemaakt' );
 		$order->betaald              = 0;
 		$order->save( sprintf( 'Geannuleerd, credit factuur %s aangemaakt', $credit_order->factuurnummer() ) );
+
+		if ( property_exists( $this, 'actie' ) && method_exists( $this->actie, 'afzeggen' ) ) {
+			$this->actie->afzeggen();
+		}
 		$this->betaal_link = $this->maak_link(
 			[
 				'order' => $order->credit_id,

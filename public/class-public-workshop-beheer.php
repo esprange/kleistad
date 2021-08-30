@@ -91,7 +91,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	private function formulier( ?int $workshop_id = null ) : array {
 		$workshop = new Workshop( $workshop_id );
-		$order    = new Order( $workshop->geef_referentie() );
 		return [
 			'workshop_id'       => $workshop->id,
 			'naam'              => $workshop->naam,
@@ -113,8 +112,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'definitief'        => $workshop->definitief,
 			'vervallen'         => $workshop->vervallen,
 			'aanvraag_id'       => $workshop->aanvraag_id,
-			'gefactureerd'      => boolval( $order->id ),
-			'betaling_email'    => $workshop->betaling_email,
+			'gefactureerd'      => $workshop->betaling_email,
 		];
 	}
 

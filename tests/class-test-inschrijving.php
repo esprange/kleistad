@@ -204,7 +204,8 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$order = new Order( $inschrijving1->geef_referentie() );
 		$inschrijving1->annuleer_order( $order, 24.0, '' );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
-
+		$inschrijving2 = new Inschrijving( $inschrijving1->cursus->id, $inschrijving1->klant_id );
+		$this->assertTrue( $inschrijving2->geannuleerd, 'annuleer status incorrect' );
 	}
 
 	/**

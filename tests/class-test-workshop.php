@@ -167,6 +167,22 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	}
 
 	/**
+	 * Test annuleer_order function
+	 */
+	public function test_annuleer_order() {
+		$workshop1        = $this->maak_workshop();
+		$workshop1->datum = strtotime( '5 days' );
+		$workshop1->actie->bevestig();
+		Workshops::doe_dagelijks();
+
+		$order = new Order( $workshop1->geef_referentie() );
+		$workshop1->annuleer_order( $order, 24.0, '' );
+		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
+		$workshop2 = new Workshop( $workshop1->id );
+		$this->assertTrue( $workshop2->vervallen, 'vervallen status incorrect' );
+	}
+
+	/**
 	 * Test start aanvraag
 	 */
 	public function test_start_aanvraag() {

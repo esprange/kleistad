@@ -52,7 +52,8 @@ class WorkshopActie {
 				unset( $exceptie ); // phpcs:ignore
 			}
 		}
-		if ( $this->workshop->definitief ) {
+		// Als de betaling email al verstuurd is, dan vind de annulering plaats vanuit de boekhouding.
+		if ( $this->workshop->definitief && ! $this->workshop->betaling_email ) {
 			$this->workshop->verzend_email( '_afzegging' );
 		}
 	}
