@@ -9,7 +9,7 @@
 /* global kleistadData, strtotime, timetostr */
 /* exported detectTap */
 
-let detectTap;
+var detectTap;
 
 ( function( $ ) {
 	'use strict';
