@@ -269,7 +269,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function stop_wachten( array $data ) : array {
-		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['gebruiker_id'] );
+		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['gebruiker_id'] );
 		if ( $inschrijving->ingedeeld ) {
 			return [
 				'status' => $this->status( new WP_Error( 'ingedeeld', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Voor een annulering, neem contact op met Kleistad.' ) ),
@@ -289,7 +289,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function indelen_na_wachten( array $data ) : array {
-		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['gebruiker_id'] );
+		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['gebruiker_id'] );
 		if ( $inschrijving->ingedeeld ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
