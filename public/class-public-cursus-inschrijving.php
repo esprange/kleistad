@@ -145,7 +145,13 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 					]
 				),
 			];
-			$selecteerbaar            = $selecteerbaar || $is_open;
+			usort(
+				$data['open_cursussen'],
+				function ( $links, $rechts ) {
+					return strtoupper( $links['cursus']->naam ) <=> strtoupper( $rechts['cursus']->naam );
+				}
+			);
+			$selecteerbaar = $selecteerbaar || $is_open;
 		}
 		if ( ! $selecteerbaar ) {
 			return new WP_Error( 'Inschrijven', 'Helaas is er geen cursusplek meer beschikbaar' );
