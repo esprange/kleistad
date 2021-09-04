@@ -13,9 +13,9 @@ use MockPHPMailer;
 /**
  * Mock filter input array function
  *
- * @param int  $type      Type input Post of Get.
- * @param int  $options   Filter opties.
- * @param bool $add_empty Afwezige keys als null tonen.
+ * @param int       $type      Type input Post of Get.
+ * @param array|int $options   Filter opties.
+ * @param bool      $add_empty Afwezige keys als null tonen.
  *
  * @return mixed
  */
@@ -31,10 +31,10 @@ function filter_input_array( int $type, $options = FILTER_DEFAULT, bool $add_emp
 /**
  * Mock filter input function
  *
- * @param int    $type     Type input Post of Get.
- * @param string $var_name Variable naam.
- * @param int    $filter   Filter.
- * @param int    $options  Filter opties.
+ * @param int       $type     Type input Post of Get.
+ * @param string    $var_name Variable naam.
+ * @param int       $filter   Filter.
+ * @param array|int $options  Filter opties.
  *
  * @return mixed
  */
