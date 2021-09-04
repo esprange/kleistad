@@ -33,9 +33,9 @@ class Public_Stookbestand extends Shortcode {
 	 * Schrijf stook informatie naar het bestand.
 	 */
 	protected function stook() {
-		$vanaf_datum = strtotime( filter_input( INPUT_GET, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
-		$tot_datum   = strtotime( filter_input( INPUT_GET, 'tot_datum', FILTER_SANITIZE_STRING ) );
-		if ( is_null( $vanaf_datum ) || is_null( $tot_datum ) ) {
+		$vanaf_datum = strtotime( filter_input( INPUT_GET, 'vanaf_datum', FILTER_SANITIZE_STRING ) ?? '' );
+		$tot_datum   = strtotime( filter_input( INPUT_GET, 'tot_datum', FILTER_SANITIZE_STRING ) ?? '' );
+		if ( ! $vanaf_datum || ! $tot_datum ) {
 			return;
 		}
 		$ovens  = new Ovens();
