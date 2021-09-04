@@ -35,8 +35,11 @@ class Public_Stookbestand extends Shortcode {
 	protected function stook() {
 		$vanaf_datum = strtotime( filter_input( INPUT_GET, 'vanaf_datum', FILTER_SANITIZE_STRING ) );
 		$tot_datum   = strtotime( filter_input( INPUT_GET, 'tot_datum', FILTER_SANITIZE_STRING ) );
-		$ovens       = new Ovens();
-		$stoken      = [];
+		if ( is_null( $vanaf_datum ) || is_null( $tot_datum ) ) {
+			return;
+		}
+		$ovens  = new Ovens();
+		$stoken = [];
 		foreach ( $ovens as $oven ) {
 			$stoken[ $oven->id ] = new Stoken( $oven->id, $vanaf_datum, $tot_datum );
 			foreach ( $stoken[ $oven->id ] as $stook ) {

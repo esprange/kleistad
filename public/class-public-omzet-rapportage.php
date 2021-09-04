@@ -50,8 +50,11 @@ class Public_Omzet_Rapportage extends Shortcode {
 	 * @return string Pad naar het rapport.
 	 */
 	protected function omzetrapport() : string {
-		$maand   = filter_input( INPUT_GET, 'maand', FILTER_SANITIZE_STRING );
-		$jaar    = filter_input( INPUT_GET, 'jaar', FILTER_SANITIZE_STRING );
+		$maand = filter_input( INPUT_GET, 'maand', FILTER_SANITIZE_STRING );
+		$jaar  = filter_input( INPUT_GET, 'jaar', FILTER_SANITIZE_STRING );
+		if ( is_null( $maand ) || is_null( $jaar ) ) {
+			return '';
+		}
 		$rapport = new OmzetRapport();
 		return $rapport->run( $maand, $jaar );
 	}
