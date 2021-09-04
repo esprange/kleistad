@@ -343,5 +343,4 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		];
 	}
 
-
 }
