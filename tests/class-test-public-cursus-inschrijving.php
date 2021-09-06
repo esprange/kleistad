@@ -1,6 +1,6 @@
 <?php
 /**
- * Class Public Inschrijving Test
+ * Class Public Cursus Inschrijving Test
  *
  * @package Kleistad
  *
@@ -12,7 +12,7 @@ namespace Kleistad;
 /**
  * Inschrijving test case.
  */
-class Test_Public_Inschrijving extends Kleistad_UnitTestCase {
+class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 
 	private const CURSUSNAAM = 'Testcursus';
 	private const SHORTCODE  = 'cursus_inschrijving';
@@ -74,8 +74,7 @@ class Test_Public_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Schrijf nu de cursist in.
 		 */
-		$inschrijving = new Inschrijving( $cursus->id, $cursist_id );
-		return $inschrijving;
+		return new Inschrijving( $cursus->id, $cursist_id );
 	}
 
 	/**
@@ -103,10 +102,22 @@ class Test_Public_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Na inschrijving kan de cursist zich uitschrijven van de wachtlijst.
 		 */
-		$data = [ 'input' => $this->input ];
-		$this->public_actie( self::SHORTCODE, 'stop_wachten', $data );
+		$data   = [ 'input' => $this->input ];
+		$result = $this->public_actie( self::SHORTCODE, 'stop_wachten', $data );
+		$this->assertTrue( false !== strpos( $result['status'], 'De inschrijving is verwijderd uit de wachtlijst' ), 'geen bevestigin stop wachten' );
+		/**
+		 * Controleer ook de inschrijving zelf.
+		 */
 		$inschrijving2 = new Inschrijving( $inschrijving->cursus->id, $inschrijving->klant_id );
 		$this->assertTrue( $inschrijving2->geannuleerd, 'stop wachten incorrect' );
+		/**
+		 * Deel de cursist nu alsnog in. Stoppen mag dan niet meer.
+		 */
+		$inschrijving2->ingedeeld   = true;
+		$inschrijving2->geannuleerd = false;
+		$inschrijving2->save();
+		$result = $this->public_actie( self::SHORTCODE, 'stop_wachten', $data );
+		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze administratie ben je al ingedeeld op deze cursus' ), 'na ingedeeld toch bevestiging stop wachten' );
 	}
 
 	/**
@@ -122,12 +133,16 @@ class Test_Public_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Na inschrijving en als er ruimte is ontstaan in de cursus, dan kan er ingedeeld worden.
 		 */
-		$data = [ 'input' => $this->input ];
-		$this->public_actie( self::SHORTCODE, 'indelen_na_wachten', $data );
+		$data   = [ 'input' => $this->input ];
+		$result = $this->public_actie( self::SHORTCODE, 'indelen_na_wachten', $data );
+		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na wachten' );
+		/**
+		 * Na betaling moet er ingedeeld worden. Dan kan er niet opnieuw indelen na wachten uitgevoerd worden.
+		 */
 		$order = new Order( $inschrijving->geef_referentie() );
 		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
-		$inschrijving2 = new Inschrijving( $inschrijving->cursus->id, $inschrijving->klant_id );
-		$this->assertTrue( $inschrijving2->ingedeeld, 'indelen na wachten incorrect' );
+		$result = $this->public_actie( self::SHORTCODE, 'indelen_na_wachten', $data );
+		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze administratie ben je al ingedeeld' ), 'geen ideal verwijzing na inschrijven' );
 	}
 
 	/**
@@ -135,10 +150,24 @@ class Test_Public_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_inschrijven() {
 		$inschrijving = $this->maak_inschrijving( false );
-		$inschrijving->actie->aanvraag( 'ideal' );
+		$data         = [ 'input' => $this->input ];
+		$result       = $this->public_actie( self::SHORTCODE, 'inschrijven', $data );
+		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na inschrijven' );
+
+		/**
+		 * Inschrijving moet herhaald kunnen worden.
+		 */
+		$result = $this->public_actie( self::SHORTCODE, 'inschrijven', $data );
+		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na inschrijven' );
+
+		/**
+		 * Inschrijving na indeling kan niet.
+		 */
 		$order = new Order( $inschrijving->geef_referentie() );
 		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
-		$inschrijving2 = new Inschrijving( $inschrijving->cursus->id, $inschrijving->klant_id );
-		$this->assertTrue( $inschrijving2->ingedeeld, 'indelen bij inschrijven incorrect' );
+		$result = $this->public_actie( self::SHORTCODE, 'inschrijven', $data );
+		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze administratie ben je al ingedeeld' ), 'geen ideal verwijzing na inschrijven' );
 	}
+
+
 }
