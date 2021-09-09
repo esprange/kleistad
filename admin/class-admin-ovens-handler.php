@@ -37,7 +37,7 @@ class Admin_Ovens_Handler {
 	 * @param array $item de oven.
 	 * @return bool|string
 	 */
-	private function validate_oven( $item ) {
+	private function validate_oven( array $item ) {
 		$messages = [];
 
 		if ( empty( $item['naam'] ) ) {
@@ -126,7 +126,7 @@ class Admin_Ovens_Handler {
 			$item['kosten_hoog']     = $oven->kosten_hoog;
 			$item['beschikbaarheid'] = $oven->beschikbaarheid;
 		}
-		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this->display, 'form_meta_box' ], 'oven', 'normal', 'default' );
+		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this->display, 'form_meta_box' ], 'oven', 'normal' );
 		$this->display->form_page( $item, 'oven', 'ovens', $notice, $message, false );
 	}
 

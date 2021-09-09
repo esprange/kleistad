@@ -37,7 +37,7 @@ class Admin_Werkplekken_Handler {
 	 * @param array $item de werkplek.
 	 * @return bool|string
 	 */
-	private function validate_werkplek( $item ) {
+	private function validate_werkplek( array $item ) {
 		$messages = [];
 
 		$start_datum = strtotime( $item['start_datum'] );
@@ -65,7 +65,7 @@ class Admin_Werkplekken_Handler {
 	 * @since    6.12.5
 	 * @param array $item de werkplek.
 	 */
-	private function update_werkplek( $item ) {
+	private function update_werkplek( array $item ) {
 		$werkplekconfigs = new WerkplekConfigs();
 		$start_datum     = strtotime( $item['start_datum'] );
 		$eind_datum      = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;
@@ -168,7 +168,7 @@ class Admin_Werkplekken_Handler {
 				'config_eind' => 0 === count( $werkplekconfigs ) || ( $bestaatreeds && 0 === $werkplekconfig->eind_datum ),
 			];
 		}
-		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this->display, 'form_meta_box' ], 'werkplek', 'normal', 'default' );
+		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this->display, 'form_meta_box' ], 'werkplek', 'normal' );
 		$this->display->form_page( $item, 'werkplek', 'werkplekken', $notice, $message, false );
 	}
 

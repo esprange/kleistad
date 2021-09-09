@@ -82,12 +82,11 @@ class Admin_Regelingen extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		$columns = [
+		return [
 			'gebruiker_naam' => 'Naam gebruiker',
 			'oven_naam'      => 'Oven',
 			'kosten'         => 'Regeling',
 		];
-		return $columns;
 	}
 
 	/**
@@ -96,10 +95,9 @@ class Admin_Regelingen extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
-		$sortable_columns = [
+		return [
 			'gebruiker_naam' => [ 'gebruiker_naam', true ],
 		];
-		return $sortable_columns;
 	}
 
 	/**

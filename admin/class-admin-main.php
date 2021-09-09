@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use WP_Post;
+use WP_Query;
+
 /**
  * De admin-specifieke functies van de plugin.
  */
@@ -95,7 +98,7 @@ class Admin_Main {
 	 * @access  private
 	 * @var     object $background Het background object.
 	 */
-	private $background;
+	private object $background;
 
 	/**
 	 * Initializeer het object.
@@ -128,12 +131,12 @@ class Admin_Main {
 	/**
 	 * Filter de acties voor een email post.
 	 *
-	 * @param array    $acties De acties.
-	 * @param \WP_Post $post De post.
+	 * @param array   $acties De acties.
+	 * @param WP_Post $post   De post.
 	 *
 	 * @internal Filter for post_row_actions.
 	 */
-	public function post_row_actions( $acties, $post ) {
+	public function post_row_actions( array $acties, WP_Post $post ) : array {
 		if ( Email::POST_TYPE === $post->post_type ) {
 			unset( $acties['view'] );
 			unset( $acties['inline hide-if-no-js'] );
@@ -149,7 +152,7 @@ class Admin_Main {
 	 *
 	 * @internal Filter for manage_kleistad_email_posts_columns.
 	 */
-	public function email_posts_columns( $columns ) {
+	public function email_posts_columns( array $columns ) :array {
 		unset( $columns['date'] );
 		return array_merge( $columns, [ 'wijziging' => 'Datum' ] );
 	}
@@ -162,22 +165,20 @@ class Admin_Main {
 	 *
 	 * @internal Filter for manage_edit-kleistad_email_sortable_columns.
 	 */
-	public function email_sortable_columns( $columns ) {
+	public function email_sortable_columns( array $columns ) : array {
 		return array_merge( $columns, [ 'wijziging' => 'wijziging' ] );
 	}
 
 	/**
 	 * Zorg dat er gesorteerd wordt op wijzig datum.
 	 *
-	 * @param \WP_Query $wp_query De query.
+	 * @param WP_Query $wp_query De query.
 	 *
 	 * @internal Filter for pre_get_posts.
 	 */
-	public function email_get_posts_order( $wp_query ) {
-		if ( is_admin() ) {
-			if ( isset( $wp_query->query['post_type'] ) && Email::POST_TYPE === $wp_query->query['post_type'] ) {
-				$wp_query->set( 'orderby', 'modified' );
-			}
+	public function email_get_posts_order( WP_Query $wp_query ) {
+		if ( isset( $wp_query->query['post_type'] ) && Email::POST_TYPE === $wp_query->query['post_type'] ) {
+			$wp_query->set( 'orderby', 'modified' );
 		}
 	}
 
@@ -189,7 +190,7 @@ class Admin_Main {
 	 *
 	 * @internal Action for manage_kleistad_email_posts_custom_column.
 	 */
-	public function email_posts_custom_column( $column, $post_id ) {
+	public function email_posts_custom_column( string $column, int $post_id ) {
 		if ( 'wijziging' === $column ) {
 			$date = get_the_modified_date( '', $post_id ) ?: '';
 			$time = get_the_modified_time( '', $post_id ) ?: '';
@@ -225,7 +226,7 @@ class Admin_Main {
 	 *
 	 * @internal Filter for wp_privacy_personal_data_exporters.
 	 */
-	public function register_exporter( $exporters ) {
+	public function register_exporter( array $exporters ) : array {
 		$gdpr                  = new Admin_GDPR();
 		$exporters['kleistad'] = [
 			'exporter_friendly_name' => 'plugin folder Kleistad',
@@ -243,7 +244,7 @@ class Admin_Main {
 	 *
 	 * @internal Filter for wp_privacy_personal_data_erasers.
 	 */
-	public function register_eraser( $erasers ) {
+	public function register_eraser( array $erasers ) : array {
 		$gdpr                = new Admin_GDPR();
 		$erasers['kleistad'] = [
 			'eraser_friendly_name' => 'Kleistad',
@@ -262,7 +263,7 @@ class Admin_Main {
 	 *
 	 * @internal Filter for pre_set_site_transient_update_plugins.
 	 */
-	public function check_update( $transient ) {
+	public function check_update( object $transient ) : object {
 		if ( empty( $transient->checked ) ) {
 			return $transient;
 		}
@@ -283,14 +284,14 @@ class Admin_Main {
 	 *
 	 * @since 4.3.8
 	 *
-	 * @param  object $obj Wordt niet gebruikt.
-	 * @param  string $action De gevraagde actie.
-	 * @param  object $arg Argument door WP ingevuld.
+	 * @param  object      $obj    Wordt niet gebruikt.
+	 * @param  string      $action De gevraagde actie.
+	 * @param  object|null $arg    Argument door WP ingevuld.
 	 * @return bool|object
 	 *
 	 * @internal Filter for plugins_api.
 	 */
-	public function check_info( $obj, $action = '', $arg = null ) {
+	public function check_info( object $obj, string $action = '', ?object $arg = null ) {
 		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) && isset( $arg->slug ) && 'kleistad' === $arg->slug ) {
 			$plugin_info  = get_site_transient( 'update_plugins' );
 			$arg->version = $plugin_info->checked['kleistad/kleistad.php'];
@@ -310,7 +311,7 @@ class Admin_Main {
 	 * @param  string $action De gevraagde actie.
 	 * @return bool|object remote info.
 	 */
-	private function get_remote( $action = '' ) {
+	private function get_remote( string $action = '' ) {
 		$params  = [
 			'timeout' => 10,
 			'body'    => [
@@ -334,7 +335,7 @@ class Admin_Main {
 	 *
 	 * @internal Action for update_option_kleistad-setup.
 	 */
-	public function setup_gewijzigd( $oud, $nieuw ) {
+	public function setup_gewijzigd( array $oud, array $nieuw ) {
 		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
 			$oud['google_client_id'] !== $nieuw['google_client_id'] ) {
 			delete_option( Googleconnect::ACCESS_TOKEN );

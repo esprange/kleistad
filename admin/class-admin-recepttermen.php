@@ -27,7 +27,7 @@ class Admin_Recepttermen extends WP_List_Table {
 	 *
 	 * @var int $hoofdterm_id Het id van de hoofd term
 	 */
-	private $hoofdterm_id;
+	private int $hoofdterm_id;
 
 	/**
 	 * Constructor
@@ -75,11 +75,10 @@ class Admin_Recepttermen extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		$columns = [
+		return [
 			'naam'   => 'Naam',
 			'aantal' => 'Aantal recepten gepubliceerd',
 		];
-		return $columns;
 	}
 
 	/**
@@ -88,10 +87,9 @@ class Admin_Recepttermen extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_hidden() {
-		$columns = [
+		return [
 			'id' => 'Id',
 		];
-		return $columns;
 	}
 
 	/**
@@ -100,10 +98,9 @@ class Admin_Recepttermen extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
-		$sortable_columns = [
+		return [
 			'naam' => [ 'naam', true ],
 		];
-		return $sortable_columns;
 	}
 
 	/**

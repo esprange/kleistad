@@ -38,10 +38,10 @@ class Admin_Instellingen_Handler {
 			</div>
 			<?php endif ?>
 			<h2 class="nav-tab-wrapper">
-			    <a href="?page=kleistad&tab=instellingen" class="nav-tab <?php echo 'instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Functionele instellingen</a>
-			    <a href="?page=kleistad&tab=setup" class="nav-tab <?php echo 'setup' === $active_tab ? 'nav-tab-active' : ''; ?>">Technische instellingen</a>
-			    <a href="?page=kleistad&tab=shortcodes" class="nav-tab <?php echo 'shortcodes' === $active_tab ? 'nav-tab-active' : ''; ?>">Shortcodes</a>
-			    <a href="?page=kleistad&tab=email_parameters" class="nav-tab <?php echo 'email_parameters' === $active_tab ? 'nav-tab-active' : ''; ?>">Email parameters</a>
+				<a href="?page=kleistad&tab=instellingen" class="nav-tab <?php echo 'instellingen' === $active_tab ? 'nav-tab-active' : ''; ?>">Functionele instellingen</a>
+				<a href="?page=kleistad&tab=setup" class="nav-tab <?php echo 'setup' === $active_tab ? 'nav-tab-active' : ''; ?>">Technische instellingen</a>
+				<a href="?page=kleistad&tab=shortcodes" class="nav-tab <?php echo 'shortcodes' === $active_tab ? 'nav-tab-active' : ''; ?>">Shortcodes</a>
+				<a href="?page=kleistad&tab=email_parameters" class="nav-tab <?php echo 'email_parameters' === $active_tab ? 'nav-tab-active' : ''; ?>">Email parameters</a>
 			</h2>
 			<?php $display->$active_tab(); ?>
 		</div>
@@ -56,7 +56,7 @@ class Admin_Instellingen_Handler {
 	 * @param array $input de ingevoerde instellingen.
 	 * @return array  $input
 	 */
-	public function validate_settings( $input ) {
+	public function validate_settings( array $input ) : array {
 		foreach ( $input as &$element ) {
 			if ( is_string( $element ) ) {
 				$element = sanitize_text_field( $element );

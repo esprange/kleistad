@@ -48,7 +48,7 @@ class Admin_Regelingen_Handler {
 	 * @param array $item the regeling.
 	 * @return bool|string
 	 */
-	private function validate_regeling( $item ) {
+	private function validate_regeling( array $item ) {
 		$messages = [];
 		if ( ! empty( $item['gebruiker_id'] ) && ! is_numeric( $item['gebruiker_id'] ) ) {
 			$messages[] = 'Geen gebruiker gekozen';
@@ -146,7 +146,7 @@ class Admin_Regelingen_Handler {
 				];
 			}
 		}
-		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this->display, 'form_meta_box' ], 'regeling', 'normal', 'default' );
+		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this->display, 'form_meta_box' ], 'regeling', 'normal' );
 		$this->display->form_page( $item, 'regeling', 'regelingen', $notice, $message, false );
 	}
 

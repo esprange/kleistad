@@ -83,12 +83,11 @@ class Admin_Werkplekken extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		$columns = [
+		return [
 			'start_datum' => 'Start datum',
 			'eind_datum'  => 'Eind datum',
 			'werkplekken' => 'Aantal werkplekken',
 		];
-		return $columns;
 	}
 
 	/**
@@ -97,11 +96,10 @@ class Admin_Werkplekken extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
-		$sortable_columns = [
+		return [
 			'start_datum' => [ 'start_datum', true ],
 			'eind_datum'  => [ 'eind_datum', true ],
 		];
-		return $sortable_columns;
 	}
 
 	/**

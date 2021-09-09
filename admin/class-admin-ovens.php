@@ -76,7 +76,7 @@ class Admin_Ovens extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		$columns = [
+		return [
 			'naam'            => 'Naam',
 			'kosten_laag'     => 'Laag tarief',
 			'kosten_midden'   => 'Midden tarief',
@@ -84,7 +84,6 @@ class Admin_Ovens extends WP_List_Table {
 			'beschikbaarheid' => 'Beschikbaarheid',
 			'id'              => 'Id',
 		];
-		return $columns;
 	}
 
 	/**
@@ -93,10 +92,9 @@ class Admin_Ovens extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
-		$sortable_columns = [
+		return [
 			'naam' => [ 'naam', true ],
 		];
-		return $sortable_columns;
 	}
 
 	/**

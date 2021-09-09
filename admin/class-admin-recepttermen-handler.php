@@ -37,7 +37,7 @@ class Admin_Recepttermen_Handler {
 	 * @param array $item de receptterm.
 	 * @return bool|string
 	 */
-	private function validate_receptterm( $item ) {
+	private function validate_receptterm( array $item ) {
 		$messages = [];
 
 		if ( empty( $item['naam'] ) ) {
@@ -125,7 +125,7 @@ class Admin_Recepttermen_Handler {
 				}
 			}
 		}
-		add_meta_box( 'receptterm_form_meta_box', 'receptterm', [ $this->display, 'form_meta_box' ], 'receptterm', 'normal', 'default' );
+		add_meta_box( 'receptterm_form_meta_box', 'receptterm', [ $this->display, 'form_meta_box' ], 'receptterm', 'normal' );
 		$this->display->form_page( $item, 'receptterm', 'recepttermen', $notice, $message, false );
 	}
 

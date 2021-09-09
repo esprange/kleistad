@@ -47,7 +47,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 				</tr>
 				<tr><td></td>
 				<?php foreach ( array_keys( $item['config'] ) as $atelierdag ) : ?>
-					<th scope="column"><label><?php echo esc_html( $atelierdag ); ?></label></th>
+					<th scope="col"><label><?php echo esc_html( $atelierdag ); ?></label></th>
 				<?php endforeach ?>
 				</tr>
 				<?php foreach ( WerkplekConfig::DAGDEEL as $dagdeel ) : ?>
@@ -65,7 +65,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 					<td><?php echo esc_html( $activiteit ); ?></td>
 						<?php foreach ( array_keys( $item['config'] ) as $atelierdag ) : ?>
 						<td><input type="text" size="4"
-							value="<?php echo esc_attr( $item['config'][ $atelierdag ][ $dagdeel ][ $activiteit ] ); ?>" 
+							value="<?php echo esc_attr( $item['config'][ $atelierdag ][ $dagdeel ][ $activiteit ] ); ?>"
 							name="<?php echo esc_attr( "config[$atelierdag][$dagdeel][$activiteit]" ); ?>" ></td>
 					<?php endforeach ?>
 				</tr>

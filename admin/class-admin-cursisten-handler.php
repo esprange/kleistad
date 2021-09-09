@@ -86,7 +86,7 @@ class Admin_Cursisten_Handler {
 				'cursus_id'   => $cursus_id,
 			];
 		}
-		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this->display, 'form_meta_box' ], 'cursist', 'normal', 'default' );
+		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this->display, 'form_meta_box' ], 'cursist', 'normal' );
 		$this->display->form_page( $item, 'cursist', 'cursisten', $notice, $message, false );
 	}
 

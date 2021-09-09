@@ -77,13 +77,12 @@ class Admin_Cursisten extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		$columns = [
+		return [
 			'naam'        => 'Naam',
 			'id'          => 'Code',
 			'cursus'      => 'Cursus',
 			'geannuleerd' => 'Geannuleerd',
 		];
-		return $columns;
 	}
 
 	/**
@@ -92,13 +91,12 @@ class Admin_Cursisten extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
-		$sortable_columns = [
+		return [
 			'naam'        => [ 'naam', true ],
 			'cursus'      => [ 'cursus', true ],
 			'id'          => [ 'id', true ],
 			'geannuleerd' => [ 'geannuleerd', true ],
 		];
-		return $sortable_columns;
 	}
 
 	/**
@@ -111,7 +109,7 @@ class Admin_Cursisten extends WP_List_Table {
 		$cursisten = [];
 		$vandaag   = strtotime( 'today' );
 		foreach ( new Cursisten() as $cursist ) {
-			if ( ! empty( $search ) && false === stripos( $cursist->display_name, (string) $search ) ) {
+			if ( ! empty( $search ) && false === stripos( $cursist->display_name, $search ) ) {
 				continue;
 			}
 			foreach ( $cursist->inschrijvingen as $inschrijving ) {

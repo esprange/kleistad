@@ -84,7 +84,7 @@ class Admin_Abonnees_Handler {
 	 * @return bool|string
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function validate_abonnee( $item ) {
+	private function validate_abonnee( array $item ) {
 		$messages = [];
 		if ( strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) {
 			$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen';
@@ -116,7 +116,7 @@ class Admin_Abonnees_Handler {
 	 * @param int $abonnee_id Het WP id.
 	 * @return array De abonnee gegevens.
 	 */
-	private function geef_abonnee( $abonnee_id ) : array {
+	private function geef_abonnee( int $abonnee_id ) : array {
 		$abonnement = new Abonnement( $abonnee_id );
 		$abonnee    = get_userdata( $abonnee_id );
 		$betalen    = new Betalen();

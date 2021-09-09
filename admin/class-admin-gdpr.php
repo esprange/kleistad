@@ -24,7 +24,7 @@ class Admin_GDPR {
 	 * @param int $gebruiker_id Id van de gebruiker.
 	 * @return array De persoonlijke data (cursus info).
 	 */
-	private function export_inschrijving( $gebruiker_id ) {
+	private function export_inschrijving( int $gebruiker_id ) : array {
 		$cursist = new Cursist( $gebruiker_id );
 		$items   = [];
 		foreach ( $cursist->inschrijvingen as $inschrijving ) {
@@ -67,7 +67,7 @@ class Admin_GDPR {
 	 * @param  int $gebruiker_id Het wp user id van de abonnee.
 	 * @return array De persoonlijke data (abonnement info).
 	 */
-	private function export_abonnement( $gebruiker_id ) {
+	private function export_abonnement( int $gebruiker_id ) : array {
 		$abonnement = new Abonnement( $gebruiker_id );
 		$items      = [];
 		$items[]    = [
@@ -120,7 +120,7 @@ class Admin_GDPR {
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
-	private function export_saldo( $gebruiker_id ) {
+	private function export_saldo( int $gebruiker_id ) : array {
 		$saldo   = new Saldo( $gebruiker_id );
 		$items   = [];
 		$items[] = [
@@ -143,7 +143,7 @@ class Admin_GDPR {
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
-	private function export_reservering( $gebruiker_id ) {
+	private function export_reservering( int $gebruiker_id ) : array {
 		$items = [];
 		$ovens = new Ovens();
 		foreach ( $ovens as $oven ) {
@@ -180,7 +180,7 @@ class Admin_GDPR {
 	 * @param  int $gebruiker_id Het gebruiker id.
 	 * @return array De persoonlijke data (stooksaldo).
 	 */
-	private function export_dagdelenkaart( $gebruiker_id ) {
+	private function export_dagdelenkaart( int $gebruiker_id ) : array {
 		$dagdelenkaart = new Dagdelenkaart( $gebruiker_id );
 		$items         = [];
 		$items[]       = [
@@ -205,11 +205,16 @@ class Admin_GDPR {
 	 * @param string $email Het email adres van de te exporteren persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
 	 */
-	public function exporter( $email, $page = 1 ) {
+	public function exporter( string $email, int $page = 1 ) : array {
 		$export_items = [];
 		$gebruiker_id = email_exists( $email );
 		if ( false !== $gebruiker_id ) {
-			$gebruiker    = get_userdata( $gebruiker_id );
+			$gebruiker = get_userdata( $gebruiker_id );
+			/**
+			 * De velden telnr, straat etc. zijn wel degelijk toegestaan, phpstorm geeft hier ten onrechte een waarschuwing.
+			 *
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
 			$export_items = array_merge(
 				[
 					[
@@ -263,7 +268,7 @@ class Admin_GDPR {
 	 * @param string $email Het email adres van de te verwijderen persoonlijke data.
 	 * @param int    $page  De pagina die opgevraagd wordt.
 	 */
-	public function eraser( $email, $page = 1 ) {
+	public function eraser( string $email, int $page = 1 ) : array {
 		$count        = 0;
 		$gebruiker_id = email_exists( $email );
 		if ( false !== $gebruiker_id ) {
@@ -299,7 +304,7 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_cursussen( $datum ) {
+	private function erase_cursussen( int $datum ) {
 		foreach ( new Cursussen() as $cursus ) {
 			if ( $cursus->eind_datum && $datum > $cursus->eind_datum ) {
 				foreach ( new Inschrijvingen( $cursus->id ) as $inschrijving ) {
@@ -315,7 +320,7 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_dagdelenkaarten( $datum ) {
+	private function erase_dagdelenkaarten( int $datum ) {
 		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
 			if ( $dagdelenkaart->eind_datum && $datum > $dagdelenkaart->eind_datum ) {
 				$dagdelenkaart->erase();
@@ -328,7 +333,7 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_abonnementen( $datum ) {
+	private function erase_abonnementen( int $datum ) {
 		foreach ( new Abonnementen() as $abonnement ) {
 			if ( $abonnement->eind_datum && $datum > $abonnement->eind_datum ) {
 				$saldo = new Saldo( $abonnement->klant_id );
@@ -343,7 +348,7 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_workshops( $datum ) {
+	private function erase_workshops( int $datum ) {
 		foreach ( new Workshops() as $workshop ) {
 			if ( $datum > $workshop->datum ) {
 				$workshop->erase();
@@ -356,13 +361,13 @@ class Admin_GDPR {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_orders( $datum ) {
+	private function erase_orders( int $datum ) {
 		$orders = new Orders();
 		foreach ( $orders as $order ) {
 			if ( $datum > $order->datum ) {
 				$order->erase();
 			}
-		};
+		}
 	}
 
 }

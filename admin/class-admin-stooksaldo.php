@@ -75,11 +75,10 @@ class Admin_Stooksaldo extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		$columns = [
+		return [
 			'naam'  => 'Naam gebruiker',
 			'saldo' => 'Saldo',
 		];
-		return $columns;
 	}
 
 	/**
@@ -88,11 +87,10 @@ class Admin_Stooksaldo extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
-		$sortable_columns = [
+		return [
 			'naam'  => [ 'naam', true ],
 			'saldo' => [ 'saldo', true ],
 		];
-		return $sortable_columns;
 	}
 
 	/**

@@ -48,7 +48,7 @@ class Admin_Stooksaldo_Handler {
 	 * @param array $item de stooksaldo.
 	 * @return bool|string
 	 */
-	private function validate_stooksaldo( $item ) {
+	private function validate_stooksaldo( array $item ) {
 		$messages = [];
 
 		if ( ! empty( $item['saldo'] ) && ! is_numeric( $item['saldo'] ) ) {
@@ -107,7 +107,7 @@ class Admin_Stooksaldo_Handler {
 				}
 			}
 		}
-		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal', 'default' );
+		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal' );
 		$this->display->form_page( $item, 'stooksaldo', 'stooksaldo', $notice, $message, false );
 	}
 

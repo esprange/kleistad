@@ -58,7 +58,7 @@ class AbonnementActie {
 		$betalen->verwijder_mandaat( $this->abonnement->klant_id );
 		$this->log( 'gestopt met automatisch betalen' );
 		$this->abonnement->save();
-		if ( ! is_admin() ) {
+		if ( ! is_super_admin() ) {
 			$this->abonnement->bericht = 'Je gaat het abonnement voortaan per bank betalen';
 			$this->abonnement->verzend_email( '_gewijzigd' );
 		}
@@ -84,7 +84,7 @@ class AbonnementActie {
 			"Je hebt aangegeven dat je abonnement, dat nu gepauzeerd is, hervat wordt per $herstart_datum_str"
 			:
 			$this->abonnement->bericht = "Je pauzeert het abonnement per $pauze_datum_str en hervat het per $herstart_datum_str";
-		if ( ! is_admin() ) {
+		if ( ! is_super_admin() ) {
 			$this->abonnement->verzend_email( '_gewijzigd' );
 		}
 		return true;
@@ -140,7 +140,7 @@ class AbonnementActie {
 		$this->log( "gestopt per $eind_datum_str" );
 		$this->abonnement->bericht = "Je hebt het abonnement per $eind_datum_str beëindigd.";
 		$this->abonnement->save();
-		if ( ! is_admin() ) {
+		if ( ! is_super_admin() ) {
 			$this->abonnement->verzend_email( '_gewijzigd' );
 		}
 		return true;

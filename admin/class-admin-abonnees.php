@@ -81,7 +81,7 @@ class Admin_Abonnees extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		$columns = [
+		return [
 			'naam'   => 'Naam',
 			'code'   => 'Code',
 			'status' => 'Status',
@@ -89,7 +89,6 @@ class Admin_Abonnees extends WP_List_Table {
 			'extras' => 'Extras',
 			'mollie' => 'Incasso',
 		];
-		return $columns;
 	}
 
 	/**
@@ -98,7 +97,7 @@ class Admin_Abonnees extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
-		$sortable_columns = [
+		return [
 			'naam'   => [ 'naam', true ],
 			'status' => [ 'status', true ],
 			'soort'  => [ 'soort', true ],
@@ -106,7 +105,6 @@ class Admin_Abonnees extends WP_List_Table {
 			'code'   => [ 'code', true ],
 			'mollie' => [ 'mollie', true ],
 		];
-		return $sortable_columns;
 	}
 
 	/**
