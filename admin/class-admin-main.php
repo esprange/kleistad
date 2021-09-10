@@ -364,6 +364,9 @@ class Admin_Main {
 	 * @internal Action for Kleistad_daily_jobs.
 	 */
 	public function daily_jobs() {
+		if ( is_null( $this->background ) ) {
+			return;
+		}
 		$this->background->push_to_queue( 'Shortcode::cleanup_downloads' );
 		$this->background->push_to_queue( 'Workshops::doe_dagelijks' );
 		$this->background->push_to_queue( 'Abonnementen::doe_dagelijks' );

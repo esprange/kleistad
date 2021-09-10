@@ -51,7 +51,8 @@ class Admin_List_Table extends WP_List_Table {
 	 * @return array
 	 */
 	protected function geef_items( string $search, string $order, string $orderby ) : array {
-		return [];
+		// Dit is een dummy statement, moet overruled worden in de afgeleide klasse. Helaas geen andere oplossing omdat wp_list_table niet abstract is.
+		return [ $search, $order, $orderby ];
 	}
 
 	/**
