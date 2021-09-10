@@ -11,16 +11,10 @@
 
 namespace Kleistad;
 
-use WP_List_Table;
-
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
-
 /**
  * Beheer stooksaldo van leden
  */
-class Admin_Stooksaldo extends WP_List_Table {
+class Admin_Stooksaldo extends Admin_List_Table {
 
 	/**
 	 * Constructor
@@ -35,23 +29,12 @@ class Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 * Default tonen van de kolommen
-	 *
-	 * @param object $item - row (key, value).
-	 * @param string $column_name - string (key).
-	 * @return string
-	 */
-	public function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
-	}
-
-	/**
 	 * Toon de kolom naam inclusief acties
 	 *
-	 * @param object $item - row (key, value array).
+	 * @param array $item - row (key, value array).
 	 * @return string
 	 */
-	public function column_naam( $item ) {
+	public function column_naam( array $item ) : string {
 		$actions = [
 			'edit' => sprintf( '<a href="?page=stooksaldo_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
@@ -62,10 +45,10 @@ class Admin_Stooksaldo extends WP_List_Table {
 	/**
 	 * Toon de kolom saldo
 	 *
-	 * @param object $item - row (key, value array).
+	 * @param array $item - row (key, value array).
 	 * @return string
 	 */
-	public function column_saldo( $item ) {
+	public function column_saldo( array $item ) : string {
 		return sprintf( '%.2f', $item['saldo'] );
 	}
 
@@ -74,7 +57,7 @@ class Admin_Stooksaldo extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
+	public function get_columns() : array {
 		return [
 			'naam'  => 'Naam gebruiker',
 			'saldo' => 'Saldo',
@@ -86,7 +69,7 @@ class Admin_Stooksaldo extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_sortable_columns() {
+	public function get_sortable_columns() : array {
 		return [
 			'naam'  => [ 'naam', true ],
 			'saldo' => [ 'saldo', true ],
@@ -94,12 +77,15 @@ class Admin_Stooksaldo extends WP_List_Table {
 	}
 
 	/**
-	 * Haal de stoker info op
+	 * Per pagina specifieke functie voor het ophalen van de items.
 	 *
-	 * @param string $search Eventuele zoek parameter.
-	 * @return array;
+	 * @param string $search   Zoekterm.
+	 * @param string $order    Sorteer volgorde.
+	 * @param string $orderby Element waarop gesorteerd moet worden.
+	 *
+	 * @return array
 	 */
-	private function geef_stokers( string $search ) : array {
+	protected function geef_items( string $search, string $order, string $orderby ) : array {
 		$stokers = [];
 		foreach ( new Stokers() as $stoker ) {
 			if ( ! empty( $search ) && false === strpos( $stoker->display_name . $stoker->user_email, $search ) ) {
@@ -111,30 +97,6 @@ class Admin_Stooksaldo extends WP_List_Table {
 				'saldo' => $stoker->saldo->bedrag,
 			];
 		}
-		return $stokers;
-	}
-
-	/**
-	 * Prepareer de te tonen items
-	 */
-	public function prepare_items() {
-		$per_page = 15;
-
-		$columns  = $this->get_columns();
-		$hidden   = [];
-		$sortable = $this->get_sortable_columns();
-
-		$this->_column_headers = [ $columns, $hidden, $sortable ];
-
-		$search_val  = filter_input( INPUT_GET, 's' );
-		$search      = ! is_null( $search_val ) ? $search_val : '';
-		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val   = filter_input( INPUT_GET, 'order' );
-		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$stokers     = $this->geef_stokers( $search );
 		usort(
 			$stokers,
 			function( $links, $rechts ) use ( $orderby, $order ) {
@@ -144,16 +106,7 @@ class Admin_Stooksaldo extends WP_List_Table {
 				return ( 'asc' === $order ) ? strcasecmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcasecmp( $rechts[ $orderby ], $links[ $orderby ] );
 			}
 		);
-		$this->items = array_slice( $stokers, $paged * $per_page, $per_page, true );
-		$total_items = count( $stokers );
-
-		$this->set_pagination_args(
-			[
-				'total_items' => $total_items,
-				'per_page'    => $per_page,
-				'total_pages' => ceil( $total_items / $per_page ),
-			]
-		);
+		return $stokers;
 	}
 
 }

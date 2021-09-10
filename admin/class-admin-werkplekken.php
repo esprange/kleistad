@@ -11,16 +11,10 @@
 
 namespace Kleistad;
 
-use WP_List_Table;
-
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
-
 /**
  * Beheer stooksaldo van leden
  */
-class Admin_Werkplekken extends WP_List_Table {
+class Admin_Werkplekken extends Admin_List_Table {
 
 	/**
 	 * Constructor
@@ -32,26 +26,16 @@ class Admin_Werkplekken extends WP_List_Table {
 				'plural'   => 'werkplekconfiguraties',
 			]
 		);
-	}
-
-	/**
-	 * Default tonen van de kolommen
-	 *
-	 * @param object $item - row (key, value).
-	 * @param string $column_name - string (key).
-	 * @return string
-	 */
-	public function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
+		$this->orderby_default = 'start_datum';
 	}
 
 	/**
 	 * Toon de kolom start_datum inclusief acties
 	 *
-	 * @param object $item - row (key, value array).
+	 * @param array $item - row (key, value array).
 	 * @return string
 	 */
-	public function column_start_datum( $item ) {
+	public function column_start_datum( array $item ) : string {
 		$actions = [
 			'edit'   => sprintf( '<a href="?page=werkplekken_form&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Wijzigen' ),
 			'copy'   => sprintf( '<a href="?page=werkplekken_form&action=copy&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Kopiëren' ),
@@ -70,10 +54,10 @@ class Admin_Werkplekken extends WP_List_Table {
 	/**
 	 * Toon de kolom eind datum
 	 *
-	 * @param object $item - row (key, value array).
+	 * @param array $item - row (key, value array).
 	 * @return string
 	 */
-	public function column_eind_datum( $item ) {
+	public function column_eind_datum( array $item ) : string {
 		return $item['eind_datum'] ? date( 'd-m-Y', $item['eind_datum'] ) : 'heden';
 	}
 
@@ -82,7 +66,7 @@ class Admin_Werkplekken extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
+	public function get_columns() : array {
 		return [
 			'start_datum' => 'Start datum',
 			'eind_datum'  => 'Eind datum',
@@ -95,7 +79,7 @@ class Admin_Werkplekken extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_sortable_columns() {
+	public function get_sortable_columns() : array {
 		return [
 			'start_datum' => [ 'start_datum', true ],
 			'eind_datum'  => [ 'eind_datum', true ],
@@ -103,9 +87,15 @@ class Admin_Werkplekken extends WP_List_Table {
 	}
 
 	/**
-	 * Geef de werkplek configuraties
+	 * Per pagina specifieke functie voor het ophalen van de items.
+	 *
+	 * @param string $search   Zoekterm.
+	 * @param string $order    Sorteer volgorde.
+	 * @param string $orderby Element waarop gesorteerd moet worden.
+	 *
+	 * @return array
 	 */
-	private function geef_werkplek_configs() : array {
+	protected function geef_items( string $search, string $order, string $orderby ) : array {
 		$werkplekconfigs = [];
 		$vandaag         = strtotime( 'today' );
 		foreach ( new WerkplekConfigs() as $werkplekconfig ) {
@@ -124,45 +114,13 @@ class Admin_Werkplekken extends WP_List_Table {
 				'werkplekken' => $werkplekken,
 			];
 		}
-		return $werkplekconfigs;
-	}
-
-	/**
-	 * Prepareer de te tonen items
-	 */
-	public function prepare_items() {
-		$per_page = 15;
-
-		$columns  = $this->get_columns();
-		$hidden   = [];
-		$sortable = $this->get_sortable_columns();
-
-		$this->_column_headers = [ $columns, $hidden, $sortable ];
-
-		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val - 1 ) ) : 0;
-		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'start_datum';
-		$order_val   = filter_input( INPUT_GET, 'order' );
-		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-
-		$werkplekconfigs = $this->geef_werkplek_configs();
 		usort(
 			$werkplekconfigs,
 			function( $links, $rechts ) use ( $orderby, $order ) {
 				return ( 'asc' === $order ) ? strcmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcmp( $rechts[ $orderby ], $links[ $orderby ] );
 			}
 		);
-		$this->items = array_slice( $werkplekconfigs, $paged * $per_page, $per_page, true );
-		$this->items = $werkplekconfigs;
-		$total_items = count( $werkplekconfigs );
-		$this->set_pagination_args(
-			[
-				'total_items' => $total_items,
-				'per_page'    => $per_page,
-				'total_pages' => ceil( $total_items / $per_page ),
-			]
-		);
+		return $werkplekconfigs;
 	}
 
 }

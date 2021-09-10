@@ -94,6 +94,11 @@ class Admin_Upgrade {
 	public function convert_database() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
+		/**
+		 * PHPStorm heeft hier een probleem mee.
+		 *
+		 * @noinspection PhpIncludeInspection
+		 */
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}kleistad_reserveringen (

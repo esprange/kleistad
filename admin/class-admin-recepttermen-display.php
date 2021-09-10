@@ -68,6 +68,7 @@ class Admin_Recepttermen_Display extends Admin_Display {
 			</h2>
 			<form id="ovens-table" method="GET">
 				<input type="hidden" name="page" value="<?php esc_attr( filter_input( INPUT_GET, 'page' ) ); ?>"/>
+				<!--suppress HtmlFormInputWithoutLabel -->
 				<select name="hoofdterm_id" id="hoofdterm_id" >
 					<?php foreach ( Recept::hoofdtermen() as $hoofdterm ) : ?>
 						<option value="<?php echo esc_attr( $hoofdterm->term_id ); ?>" <?php selected( $hoofdterm->term_id, $hoofdterm_id ); ?> ><?php echo esc_html( $hoofdterm->description ); ?></option>

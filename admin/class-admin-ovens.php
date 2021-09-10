@@ -11,16 +11,10 @@
 
 namespace Kleistad;
 
-use WP_List_Table;
-
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
-
 /**
  * Ovens list table
  */
-class Admin_Ovens extends WP_List_Table {
+class Admin_Ovens extends Admin_List_Table {
 
 	/**
 	 * Constructor
@@ -35,23 +29,12 @@ class Admin_Ovens extends WP_List_Table {
 	}
 
 	/**
-	 * De defaults voor de kolommen
-	 *
-	 * @param object $item row (key, value).
-	 * @param string $column_name key.
-	 * @return string
-	 */
-	public function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
-	}
-
-	/**
 	 * Toon de kolom naam en de acties
 	 *
-	 * @param object $item row (key, value).
+	 * @param array $item row (key, value).
 	 * @return string
 	 */
-	public function column_naam( $item ) {
+	public function column_naam( array $item ) : string {
 		$actions = [
 			'edit' => sprintf( '<a href="?page=ovens_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
@@ -62,10 +45,10 @@ class Admin_Ovens extends WP_List_Table {
 	/**
 	 * Toon de kolom beschikbaarheid
 	 *
-	 * @param object $item   row (key, value array).
+	 * @param array $item   row (key, value array).
 	 * @return string
 	 */
-	public function column_beschikbaarheid( $item ) {
+	public function column_beschikbaarheid( array $item ) : string {
 		$beschikbaarheid = json_decode( $item['beschikbaarheid'], true );
 		return implode( ', ', $beschikbaarheid );
 	}
@@ -75,7 +58,7 @@ class Admin_Ovens extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
+	public function get_columns() : array {
 		return [
 			'naam'            => 'Naam',
 			'kosten_laag'     => 'Laag tarief',
@@ -91,44 +74,24 @@ class Admin_Ovens extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_sortable_columns() {
+	public function get_sortable_columns() : array {
 		return [
 			'naam' => [ 'naam', true ],
 		];
 	}
 
 	/**
-	 * Prepareer de te tonen items
+	 * Per pagina specifieke functie voor het ophalen van de items.
 	 *
-	 * @global object $wpdb WordPress database.
+	 * @param string $search   Zoekterm.
+	 * @param string $order    Sorteer volgorde.
+	 * @param string $orderby Element waarop gesorteerd moet worden.
+	 *
+	 * @return array
 	 */
-	public function prepare_items() {
+	protected function geef_items( string $search, string $order, string $orderby ) : array {
 		global $wpdb;
-
-		$per_page = 5;
-
-		$columns  = $this->get_columns();
-		$hidden   = [];
-		$sortable = $this->get_sortable_columns();
-
-		$this->_column_headers = [ $columns, $hidden, $sortable ];
-
-		$total_items = $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}kleistad_ovens" ); // phpcs:ignore
-
-		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val   = filter_input( INPUT_GET, 'order' );
-		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$this->items = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_ovens ORDER BY $orderby $order LIMIT $per_page OFFSET $paged", ARRAY_A ); // phpcs:ignore
-		$this->set_pagination_args(
-			[
-				'total_items' => $total_items,
-				'per_page'    => $per_page,
-				'total_pages' => ceil( $total_items / $per_page ),
-			]
-		);
+		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_ovens ORDER BY %s %s", $orderby, $order ), ARRAY_A );
 	}
 
 }

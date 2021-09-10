@@ -96,9 +96,9 @@ class Admin_Main {
 	 *
 	 * @since   6.1.0
 	 * @access  private
-	 * @var     object $background Het background object.
+	 * @var     object|null $background Het background object.
 	 */
-	private object $background;
+	private ?object $background = null;
 
 	/**
 	 * Initializeer het object.
@@ -312,12 +312,17 @@ class Admin_Main {
 	 * @return bool|object remote info.
 	 */
 	private function get_remote( string $action = '' ) {
-		$params  = [
+		$params = [
 			'timeout' => 10,
 			'body'    => [
 				'action' => $action,
 			],
 		];
+		/**
+		 * De plugin url heeft vooralsnog geen certificaat.
+		 *
+		 * @noinspection HttpUrlsUsage
+		 */
 		$request = wp_remote_get( 'http://plugin.kleistad.nl/update.php', $params );
 		if ( ! is_wp_error( $request ) || ( is_array( $request ) && wp_remote_retrieve_response_code( $request ) === 200 ) ) {
 			// phpcs:ignore

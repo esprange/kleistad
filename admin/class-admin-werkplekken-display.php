@@ -57,14 +57,15 @@ class Admin_Werkplekken_Display extends Admin_Display {
 				<tr>
 					<td>Meester</td>
 					<?php foreach ( array_keys( $item['config'] ) as $atelierdag ) : ?>
-					<td><?php echo $this->meester_selectie( "meesters[$atelierdag][$dagdeel]", $item['meesters'][ $atelierdag ][ $dagdeel ] ?? 0 );  //phpcs:ignore ?></td>
+					<td><?php $this->meester_selectie( "meesters[$atelierdag][$dagdeel]", $item['meesters'][ $atelierdag ][ $dagdeel ] ?? 0 );  //phpcs:ignore ?></td>
 					<?php endforeach ?>
 				</tr>
 					<?php foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) : ?>
 				<tr>
 					<td><?php echo esc_html( $activiteit ); ?></td>
 						<?php foreach ( array_keys( $item['config'] ) as $atelierdag ) : ?>
-						<td><input type="text" size="4"
+						<td><!--suppress HtmlFormInputWithoutLabel -->
+							<input type="text" size="4"
 							value="<?php echo esc_attr( $item['config'][ $atelierdag ][ $dagdeel ][ $activiteit ] ); ?>"
 							name="<?php echo esc_attr( "config[$atelierdag][$dagdeel][$activiteit]" ); ?>" ></td>
 					<?php endforeach ?>
@@ -106,7 +107,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 	 * @param string $name        Het name van de select box.
 	 * @param int    $id_selected Het id als er een gebruiker geselecteerd is.
 	 */
-	private function meester_selectie( string $name, int $id_selected ) : string {
+	private function meester_selectie( string $name, int $id_selected ) {
 		static $meesters = null;
 		if ( is_null( $meesters ) ) {
 			$meesters = get_users(
@@ -117,13 +118,17 @@ class Admin_Werkplekken_Display extends Admin_Display {
 				]
 			);
 		}
-		$select = "<select name=\"$name\" style=\"width:100%;\" ><option value=\"0\" ></option>";
-		foreach ( $meesters as $meester ) {
-			$selected = selected( intval( $meester->ID ), $id_selected, false );
-			$select  .= "<option value=\"$meester->ID\" $selected >$meester->display_name</option>";
-		}
-		$select .= '<\select>';
-		return $select;
+		?>
+	<label for="<?php echo esc_attr( "meesters_$name" ); ?>" ></label>
+	<select name="<?php echo esc_attr( $name ); ?>" style="width:100%;" id="<?php echo esc_attr( "meesters_$name" ); ?>" >
+		<option value="0" ></option>
+		<?php foreach ( $meesters as $meester ) : ?>
+		<option value="<?php echo esc_attr( $meester->ID ); ?>" <?php selected( intval( $meester->ID ), $id_selected ); ?> >
+			<?php echo esc_html( $meester->display_name ); ?>
+		</option>
+		<?php endforeach; ?>
+	<\select>
+		<?php
 	}
 
 }

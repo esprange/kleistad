@@ -55,7 +55,7 @@
 			$( '#hoofdterm_id' ).on(
 				'change',
 				function() {
-					var href = new URL( document.location );
+					let href = new URL( document.location );
 					href.searchParams.set( 'hoofdterm_id', $( this ).val() );
 					document.location = href.toString();
 				}
@@ -64,15 +64,15 @@
 			$( '#kleistad-extra' ).on(
 				'click',
 				function() {
-					var aantal   = $( '.kleistad-extra' ).length;
-					var sjabloon = +
+					let aantal   = $( '.kleistad-extra' ).length;
+					let sjabloon = +
 						'<tr>' +
 						'<th scope="row">Abonnement extra #</th>' +
 						'<td><input type="text" class="kleistad-extra regular-text" name="kleistad-opties[extra][#][naam]" /></td>' +
 						'<th scope="row">Prijs</th>' +
 						'<td><input type="number" step="0.01" min="0" name="kleistad-opties[extra][#][prijs]" class="small-text" /></td>' +
 						'</tr>';
-					var html     = sjabloon.replace( /#/g, ++aantal );
+					let html     = sjabloon.replace( /#/g, ++aantal );
 					$( html ).insertBefore( '#kleistad-extra-toevoegen' );
 				}
 			);
@@ -94,7 +94,7 @@
 				{
 					dateFormat: 'dd-mm-yy',
 					beforeShowDay: function( date ) {
-						var day = date.getDate();
+						const day = date.getDate();
 						if ( $( this ).hasClass( 'maand' ) ) {
 							return [ ( 1 === day ) ];
 						}

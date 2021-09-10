@@ -11,16 +11,11 @@
 
 namespace Kleistad;
 
-use WP_List_Table;
 use WP_User_Query;
-
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
 /**
  * List table voor regelingen.
  */
-class Admin_Regelingen extends WP_List_Table {
+class Admin_Regelingen extends Admin_List_Table {
 
 	/**
 	 * Constructor
@@ -35,23 +30,12 @@ class Admin_Regelingen extends WP_List_Table {
 	}
 
 	/**
-	 * Toon de default kolommen
-	 *
-	 * @param object $item - row (key, value).
-	 * @param string $column_name - (key).
-	 * @return string
-	 */
-	public function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
-	}
-
-	/**
 	 * Toon de gebruiker_naam kolom met acties
 	 *
-	 * @param object $item - row (key, value).
+	 * @param array $item - row (key, value).
 	 * @return string
 	 */
-	public function column_gebruiker_naam( $item ) {
+	public function column_gebruiker_naam( array $item ) : string {
 		$actions = [
 			'edit'   => sprintf( '<a href="?page=regelingen_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 			'delete' => sprintf(
@@ -69,10 +53,10 @@ class Admin_Regelingen extends WP_List_Table {
 	/**
 	 * Toon de kosten kolom
 	 *
-	 * @param object $item - row (key, value).
+	 * @param array $item - row (key, value).
 	 * @return string
 	 */
-	public function column_kosten( $item ) {
+	public function column_kosten( array $item ) : string {
 		return sprintf( '%.2f', $item['kosten'] );
 	}
 
@@ -81,7 +65,7 @@ class Admin_Regelingen extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
+	public function get_columns() : array {
 		return [
 			'gebruiker_naam' => 'Naam gebruiker',
 			'oven_naam'      => 'Oven',
@@ -94,26 +78,23 @@ class Admin_Regelingen extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_sortable_columns() {
+	public function get_sortable_columns() : array {
 		return [
 			'gebruiker_naam' => [ 'gebruiker_naam', true ],
 		];
 	}
 
 	/**
-	 * Prepareer de te tonen items
+	 * Per pagina specifieke functie voor het ophalen van de items.
+	 *
+	 * @param string $search   Zoekterm.
+	 * @param string $order    Sorteer volgorde.
+	 * @param string $orderby Element waarop gesorteerd moet worden.
+	 *
+	 * @return array
 	 */
-	public function prepare_items() {
-		$per_page              = 5; // constant, how much records will be shown per page.
-		$columns               = $this->get_columns();
-		$hidden                = [];
-		$sortable              = $this->get_sortable_columns();
-		$this->_column_headers = [ $columns, $hidden, $sortable ];
-		$paged_val             = filter_input( INPUT_GET, 'paged' );
-		$paged                 = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$order_val             = filter_input( INPUT_GET, 'order' );
-		$order                 = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$gebruiker_query       = new WP_User_Query(
+	protected function geef_items( string $search, string $order, string $orderby ) : array {
+		$gebruiker_query = new WP_User_Query(
 			[
 				'fields'   => [ 'ID', 'display_name' ],
 				'orderby'  => 'display_name',
@@ -121,7 +102,7 @@ class Admin_Regelingen extends WP_List_Table {
 				'meta_key' => Oven::REGELING,
 			]
 		);
-		$regelingen            = [];
+		$regelingen      = [];
 
 		foreach ( $gebruiker_query->get_results() as $gebruiker ) {
 			$gebruiker_regelingen = get_user_meta( $gebruiker->ID, Oven::REGELING, true );
@@ -135,15 +116,7 @@ class Admin_Regelingen extends WP_List_Table {
 				];
 			}
 		}
-		$total_items = count( $regelingen );
-		$this->items = array_slice( $regelingen, $paged * $per_page, $per_page, true );
-		$this->set_pagination_args(
-			[
-				'total_items' => $total_items,
-				'per_page'    => $per_page,
-				'total_pages' => ceil( $total_items / $per_page ),
-			]
-		);
+		return $regelingen;
 	}
 
 }

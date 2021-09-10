@@ -11,16 +11,10 @@
 
 namespace Kleistad;
 
-use WP_List_Table;
-
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
-
 /**
  * Abonnees list table
  */
-class Admin_Abonnees extends WP_List_Table {
+class Admin_Abonnees extends Admin_List_Table {
 
 	/**
 	 * Constructor
@@ -35,23 +29,12 @@ class Admin_Abonnees extends WP_List_Table {
 	}
 
 	/**
-	 * Zet de defaults voor de kolommen
-	 *
-	 * @param object $item row (key, value).
-	 * @param string $column_name key.
-	 * @return string
-	 */
-	public function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
-	}
-
-	/**
 	 * Toon de kolom soort en actie
 	 *
-	 * @param object $item row (key, value).
+	 * @param array $item row (key, value).
 	 * @return string
 	 */
-	public function column_naam( $item ) {
+	public function column_naam( array $item ) : string {
 		$actions = [
 			'edit'     => sprintf( '<a href="?page=abonnees_form&id=%s&actie=status">%s</a>', $item['id'], 'Wijzigen' ),
 			'historie' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=historie">%s</a>', $item['id'], 'Historie inzien' ),
@@ -62,10 +45,10 @@ class Admin_Abonnees extends WP_List_Table {
 	/**
 	 * Toon de kolom mollie en actie
 	 *
-	 * @param object $item row (key, value).
+	 * @param array $item row (key, value).
 	 * @return string
 	 */
-	public function column_mollie( $item ) {
+	public function column_mollie( array $item ) : string {
 		if ( $item['mollie'] ) {
 			$actions = [
 				'edit' => sprintf( '<a href="?page=abonnees_form&id=%s&actie=mollie">%s</a>', $item['id'], 'Wijzigen' ),
@@ -80,7 +63,7 @@ class Admin_Abonnees extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
+	public function get_columns() : array {
 		return [
 			'naam'   => 'Naam',
 			'code'   => 'Code',
@@ -96,7 +79,7 @@ class Admin_Abonnees extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_sortable_columns() {
+	public function get_sortable_columns() : array {
 		return [
 			'naam'   => [ 'naam', true ],
 			'status' => [ 'status', true ],
@@ -108,12 +91,15 @@ class Admin_Abonnees extends WP_List_Table {
 	}
 
 	/**
-	 * Haal de abonnee infom op
+	 * Per pagina specifieke functie voor het ophalen van de items.
 	 *
-	 * @param string $search Eventuele zoek parameter.
-	 * @return array;
+	 * @param string $search   Zoekterm.
+	 * @param string $order    Sorteer volgorde.
+	 * @param string $orderby Element waarop gesorteerd moet worden.
+	 *
+	 * @return array
 	 */
-	private function geef_abonnees( string $search ) : array {
+	protected function geef_items( string $search, string $order, string $orderby ) : array {
 		$abonnees = [];
 		$betalen  = new Betalen();
 		foreach ( new Abonnees() as $abonnee ) {
@@ -131,45 +117,12 @@ class Admin_Abonnees extends WP_List_Table {
 				'mollie' => $betalen->heeft_mandaat( $abonnee->ID ),
 			];
 		}
-		return $abonnees;
-	}
-
-	/**
-	 * Prepareer de te tonen items
-	 */
-	public function prepare_items() {
-		$per_page = 15;
-		$columns  = $this->get_columns();
-		$hidden   = [];
-		$sortable = $this->get_sortable_columns();
-
-		$this->_column_headers = [ $columns, $hidden, $sortable ];
-
-		$search_val  = filter_input( INPUT_GET, 's' );
-		$search      = ! is_null( $search_val ) ? $search_val : '';
-		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val   = filter_input( INPUT_GET, 'order' );
-		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$abonnees    = $this->geef_abonnees( $search );
 		usort(
 			$abonnees,
 			function( $links, $rechts ) use ( $orderby, $order ) {
 				return ( 'asc' === $order ) ? strcasecmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcasecmp( $rechts[ $orderby ], $links[ $orderby ] );
 			}
 		);
-		$this->items = array_slice( $abonnees, $paged * $per_page, $per_page, true );
-		$total_items = count( $abonnees );
-
-		$this->set_pagination_args(
-			[
-				'total_items' => $total_items,
-				'per_page'    => $per_page,
-				'total_pages' => ceil( $total_items / $per_page ),
-			]
-		);
+		return $abonnees;
 	}
-
 }

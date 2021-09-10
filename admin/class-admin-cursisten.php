@@ -11,16 +11,10 @@
 
 namespace Kleistad;
 
-use WP_List_Table;
-
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
-
 /**
  * Cursisten list table
  */
-class Admin_Cursisten extends WP_List_Table {
+class Admin_Cursisten extends Admin_List_Table {
 
 	/**
 	 * Constructor
@@ -35,23 +29,12 @@ class Admin_Cursisten extends WP_List_Table {
 	}
 
 	/**
-	 * Zet de defaults voor de kolommen
-	 *
-	 * @param object $item row (key, value).
-	 * @param string $column_name key.
-	 * @return string
-	 */
-	public function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
-	}
-
-	/**
 	 * Toon de kolom naam en acties
 	 *
-	 * @param object $item row (key, value).
+	 * @param array $item row (key, value).
 	 * @return string
 	 */
-	public function column_naam( $item ) {
+	public function column_naam( array $item ) : string {
 		if ( empty( $item['geannuleerd'] ) ) {
 			$actions = [
 				'edit' => sprintf( '<a href="?page=cursisten_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
@@ -64,10 +47,10 @@ class Admin_Cursisten extends WP_List_Table {
 	/**
 	 * Toon de kolom geannuleerd
 	 *
-	 * @param object $item row (key, value).
+	 * @param array $item row (key, value).
 	 * @return string
 	 */
-	public function column_geannuleerd( $item ) {
+	public function column_geannuleerd( array $item ) : string {
 		return $item['geannuleerd'];
 	}
 
@@ -76,7 +59,7 @@ class Admin_Cursisten extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
+	public function get_columns() : array {
 		return [
 			'naam'        => 'Naam',
 			'id'          => 'Code',
@@ -90,7 +73,7 @@ class Admin_Cursisten extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_sortable_columns() {
+	public function get_sortable_columns() : array {
 		return [
 			'naam'        => [ 'naam', true ],
 			'cursus'      => [ 'cursus', true ],
@@ -100,12 +83,15 @@ class Admin_Cursisten extends WP_List_Table {
 	}
 
 	/**
-	 * Haal de cursisten info op
+	 * Per pagina specifieke functie voor het ophalen van de items.
 	 *
-	 * @param string $search Eventuele zoek parameter.
-	 * @return array;
+	 * @param string $search   Zoekterm.
+	 * @param string $order    Sorteer volgorde.
+	 * @param string $orderby Element waarop gesorteerd moet worden.
+	 *
+	 * @return array
 	 */
-	private function geef_cursisten( string $search ) : array {
+	protected function geef_items( string $search, string $order, string $orderby ) : array {
 		$cursisten = [];
 		$vandaag   = strtotime( 'today' );
 		foreach ( new Cursisten() as $cursist ) {
@@ -124,45 +110,13 @@ class Admin_Cursisten extends WP_List_Table {
 				];
 			}
 		}
-		return $cursisten;
-	}
-
-	/**
-	 * Prepareer de te tonen items
-	 */
-	public function prepare_items() {
-		$per_page = 25;
-		$columns  = $this->get_columns();
-		$hidden   = [ 'cursist_id' ];
-		$sortable = $this->get_sortable_columns();
-
-		$this->_column_headers = [ $columns, $hidden, $sortable ];
-
-		$search_val  = filter_input( INPUT_GET, 's' );
-		$search      = ! is_null( $search_val ) ? $search_val : '';
-		$paged_val   = filter_input( INPUT_GET, 'paged' );
-		$paged       = ! is_null( $paged_val ) ? max( 0, intval( $paged_val ) - 1 ) : 0;
-		$orderby_val = filter_input( INPUT_GET, 'orderby' );
-		$orderby     = ! is_null( $orderby_val ) && in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : 'naam';
-		$order_val   = filter_input( INPUT_GET, 'order' );
-		$order       = ! is_null( $order_val ) && in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$cursisten   = $this->geef_cursisten( $search );
 		usort(
 			$cursisten,
 			function( $links, $rechts ) use ( $orderby, $order ) {
 				return ( 'asc' === $order ) ? strcasecmp( $links[ $orderby ], $rechts[ $orderby ] ) : strcasecmp( $rechts[ $orderby ], $links[ $orderby ] );
 			}
 		);
-		$this->items = array_slice( $cursisten, $paged * $per_page, $per_page, true );
-		$total_items = count( $cursisten );
-
-		$this->set_pagination_args(
-			[
-				'total_items' => $total_items,
-				'per_page'    => $per_page,
-				'total_pages' => ceil( $total_items / $per_page ),
-			]
-		);
+		return $cursisten;
 	}
 
 }
