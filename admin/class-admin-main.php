@@ -267,7 +267,8 @@ class Admin_Main {
 		if ( empty( $transient->checked ) ) {
 			return $transient;
 		}
-		$obj = $this->get_remote( 'version' );
+		$update = new Admin_Update();
+		$obj    = $update->get_remote( 'version' );
 		if ( false === $obj ) {
 			return $transient;
 		}
@@ -295,40 +296,13 @@ class Admin_Main {
 		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) && isset( $arg->slug ) && 'kleistad' === $arg->slug ) {
 			$plugin_info  = get_site_transient( 'update_plugins' );
 			$arg->version = $plugin_info->checked['kleistad/kleistad.php'];
-			$info         = $this->get_remote( 'info' );
+			$update       = new Admin_Update();
+			$info         = $update->get_remote( 'info' );
 			if ( false !== $info ) {
 				return $info;
 			}
 		}
 		return $obj;
-	}
-
-	/**
-	 * Haal de info bij de update server op.
-	 *
-	 * @since 4.3.8
-	 *
-	 * @param  string $action De gevraagde actie.
-	 * @return bool|object remote info.
-	 */
-	private function get_remote( string $action = '' ) {
-		$params = [
-			'timeout' => 10,
-			'body'    => [
-				'action' => $action,
-			],
-		];
-		/**
-		 * De plugin url heeft vooralsnog geen certificaat.
-		 *
-		 * @noinspection HttpUrlsUsage
-		 */
-		$request = wp_remote_get( 'http://plugin.kleistad.nl/update.php', $params );
-		if ( ! is_wp_error( $request ) || ( is_array( $request ) && wp_remote_retrieve_response_code( $request ) === 200 ) ) {
-			// phpcs:ignore
-			return unserialize( $request['body'] );
-		}
-		return false;
 	}
 
 	/**
