@@ -15,7 +15,7 @@
 	 * @returns {float}
 	 */
 	function bepaalBedrag() {
-		var bedrag = $( 'input[name=bedrag]:radio:checked' ).val();
+		let bedrag = $( 'input[name=bedrag]:radio:checked' ).val();
 		if ( '0' === bedrag ) {
 			bedrag = $( 'input[name=ander]' ).val();
 		}
@@ -69,7 +69,7 @@
 				'input',
 				'input[name=ander]',
 				function() {
-					var bedrag = bepaalBedrag();
+					let bedrag = bepaalBedrag();
 					$( 'input[value=0]' ).prop( 'checked',true );
 					$( '#kleistad_submit' ).prop( 'disabled', 15 > bedrag || 100 < bedrag );
 					wijzigTeksten( bedrag );

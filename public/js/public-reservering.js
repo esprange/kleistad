@@ -11,6 +11,7 @@
 ( function( $ ) {
 	'use strict';
 
+	// noinspection JSJQueryEfficiency .
 	let $reserveringen = $( '#kleistad_reserveringen' ),
 		$formulier     = $( '#kleistad_reservering' ),
 		$soortstook    = $( '#kleistad_soortstook' );
@@ -19,9 +20,10 @@
 	 * Vind de stoker's naam op basis van het wordpress id in de lijst van stokers.
 	 *
 	 * @param {int} id Het Wordpress id van de stoker
+	 * @property {string} stokers.display_name
 	 */
 	function vindStokerNaam( id ) {
-		var stokers = $reserveringen.data( 'stokers' );
+		let stokers = $reserveringen.data( 'stokers' );
 		return stokers.filter(
 			function( stoker ) {
 				return ( parseInt( stoker.ID, 10 ) === id );
@@ -36,7 +38,7 @@
 	 * @param {int}     id    Id van de huidige medestoker.
 	 */
 	function selectStoker( empty, id ) {
-		var index,
+		let index,
 			stokers       = $reserveringen.data( 'stokers' ),
 			stokersAantal = stokers.length,
 			selectie      = '<select name="stoker_id" class="kleistad_verdeling" >' + ( empty ? '<option value="0"></option>' : '' );
@@ -50,10 +52,17 @@
 	/**
 	 * Toon het formulier van de stookgegevens zodat ze gewijzigd kunnen worden.
 	 *
-	 * @param {array} formData
+	 * @param {array}  formData
+	 * @param {array}  formData.verdeling
+	 * @param {string} formData.soortstook
+	 * @param {int}    formData.temperatuur
+	 * @param {int}    formData.programma
+	 * @param {int}    formData.verdeling[].medestoker
+	 * @param {int}    formData.verdeling[].percentage
 	 */
 	function wijzigen( formData ) {
-		var row, stokerVeld, percVeld;
+		const aantalStook = formData.verdeling.length;
+		let stook, stokerVeld, percVeld;
 		$( '#kleistad_reservering table > thead' ).append(
 			'<tr><th><label>Soort stook</label></th><td colspan="2"><select id="kleistad_soortstook">' +
 			'<option value="Biscuit" ' + ( 'Biscuit' === formData.soortstook ? 'selected' : '' ) + ' >Biscuit</option>' +
@@ -74,10 +83,10 @@
 
 		$( '#kleistad_reservering table > tbody' ).append( '<tr><th><label>Stoker</label></th>' + stokerVeld + percVeld + '</tr>' );
 
-		for ( row = 1; row < formData.verdeling.length; row++ ) {
+		for ( stook = 1; row < aantalStook; stook++ ) {
 			$( '#kleistad_reservering table > tbody > tr:last' ).after(
-				'<tr><th><label>Medestoker</label></th><td>' + selectStoker( true, formData.verdeling[row].medestoker ) +
-				'<td><input name="stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" value="' + formData.verdeling[row].percentage + '" ></td></tr>'
+				'<tr><th><label>Medestoker</label></th><td>' + selectStoker( true, formData.verdeling[stook].medestoker ) +
+				'<td><input name="stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" value="' + formData.verdeling[stook].percentage + '" ></td></tr>'
 			);
 		}
 
@@ -86,7 +95,13 @@
 	/**
 	 * Toon de stookgegevens, ze zijn niet te wijzigen
 	 *
-	 * @param {array} formData
+	 * @param {array}  formData
+	 * @param {array}  formData.verdeling
+	 * @param {string} formData.soortstook
+	 * @param {int}    formData.temperatuur
+	 * @param {int}    formData.programma
+	 * @param {int}    formData.verdeling[].medestoker
+	 * @param {int}    formData.verdeling[].percentage
 	 */
 	function lezen( formData ) {
 		$( '#kleistad_reservering table > thead' ).append(
@@ -108,11 +123,16 @@
 	/**
 	 * Toon het formulier om een reservering te maken, wijzigen of verwijderen.
 	 *
-	 * @param {array} formData bevat alle inhoud van de formuliervelden.
-	 * @returns {undefined}
+	 * @param {array}  formData bevat alle inhoud van de formuliervelden.
+	 * @param {string} formData.dag
+	 * @param {string} formData.maand
+	 * @param {string} formData.jaar
+	 * @param {int}    formData.gebruiker_id
+	 * @param {string} formData.status
+	 * @param {string} formData.kleur
 	 */
 	function kleistadForm( formData ) {
-		var logica =
+		const logica =
 		{
 			ongebruikt: {},
 			reserveerbaar: {
@@ -167,10 +187,9 @@
 	 * Pas de percentages aan in het formulier zodanig dat het totaal 100% blijft.
 	 *
 	 * @param {object} element gewijzigd percentage veld.
-	 * @returns {undefined}
 	 */
 	function kleistadVerdeel( element ) {
-		var sum       = 0,
+		let sum       = 0,
 			vervallen = false,
 			$stokers, $medestoker, hoofdstokerPerc, medestokerPerc;
 
@@ -203,6 +222,10 @@
 
 	/**
 	 * Haal de inhoud van de tabel met reserveringen bij de server op.
+	 *
+	 * @property {array}  kleistadData
+	 * @property {string} kleistadData.base_url
+	 * @property {string} kleistadData.error_message
 	 */
 	function kleistadShow( maand, jaar ) {
 		$.ajax(
@@ -219,6 +242,15 @@
 				}
 			}
 		).done(
+			/**
+			 * Plaats de ontvangen data in de tabel.
+			 *
+			 * @param {array}  data
+			 * @param {string} data.content
+			 * @param {string} data.maand
+			 * @param {string} data.jaar
+			 * @param {string} data.periode
+			 */
 			function( data ) {
 				$( '#kleistad_reserveringen tbody' ).html( data.content );
 				$reserveringen.data( 'maand', data.maand ).data( 'jaar', data.jaar );
@@ -239,12 +271,11 @@
 	 * Wijzig of verwijder de reservering in de server.
 	 *
 	 * @param {string} method post, put of delete.
-	 * @returns {undefined}
 	 */
 	function kleistadMuteer( method ) {
-		var stokerPercs = $( '[name=stoker_perc]' ).toArray(),
-		stokerIds       = $( '[name=stoker_id]' ).toArray(),
-		verdeling       = [ ];
+		let stokerPercs = $( '[name=stoker_perc]' ).toArray(),
+			stokerIds   = $( '[name=stoker_id]' ).toArray(),
+			verdeling   = [ ];
 		stokerIds.forEach(
 			function( item, index ) {
 				if ( ( '0' !== stokerPercs[index].value ) || ( 0 === index ) ) {

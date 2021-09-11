@@ -43,8 +43,8 @@
 			$( '#kleistad_deelnemer_selectie' ).on(
 				'click',
 				function() {
-					var selectie               = $( this ).val();
-					var kleistadDeelnemerLijst = $( '#kleistad_deelnemer_lijst' ).DataTable();
+					let selectie               = $( this ).val(),
+						kleistadDeelnemerLijst = $( '#kleistad_deelnemer_lijst' ).DataTable();
 					kleistadDeelnemerLijst.search( '' ).columns().search( '' );
 					switch ( selectie ) {
 						case '*':
@@ -69,8 +69,8 @@
 				'click touchend',
 				'tr',
 				function( event ) {
-					var header, inschrijvingen, deelnemer, abonnee, dagdelenkaart;
-					var $deelnemer_tabel = $( '#kleistad_deelnemer_tabel' );
+					let header, inschrijvingen, deelnemer, abonnee, dagdelenkaart,
+						$deelnemer_tabel = $( '#kleistad_deelnemer_tabel' );
 					if ( 'click' === event.type || detectTap ) {
 						inschrijvingen = $( this ).data( 'inschrijvingen' );
 						deelnemer      = $( this ).data( 'deelnemer' );
@@ -88,7 +88,7 @@
 							$.each(
 								inschrijvingen,
 								function( key, value ) {
-									var status      = ( value.ingedeeld ) ? '<span class="dashicons dashicons-yes"></span>' : '',
+									let status      = ( value.ingedeeld ) ? '<span class="dashicons dashicons-yes"></span>' : '',
 										geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
 										code        = value.code + ( ( 1 < value.aantal ) ? '(' + value.aantal + ')' : '' ),
 										html        = header + '<tr><td>' + value.naam + '</td><th>' + code + '</th><th>' + status +

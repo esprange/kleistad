@@ -17,7 +17,7 @@
 	$(
 		function()
 		{
-			var $vanaf_datum = $( '#kleistad_vanaf_datum' ),
+			let $vanaf_datum = $( '#kleistad_vanaf_datum' ),
 				$tot_datum   = $( '#kleistad_tot_datum' );
 			/**
 			 * Initieer de startdatum.

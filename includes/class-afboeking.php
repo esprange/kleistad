@@ -22,4 +22,12 @@ class Afboeking extends LosArtikel {
 		'pcount' => 1,
 	];
 
+	/**
+	 * Overrule de losse verkoop constructor
+	 *
+	 * @param int|null $verkoop_id Verkoop_id is hier niet gebruikt.
+	 *
+	 * @noinspection PhpMissingParentConstructorInspection*/
+	public function __construct( ?int $verkoop_id = null ) {
+	}
 }

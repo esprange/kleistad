@@ -4,9 +4,9 @@
  * @author Eric Sprangers.
  * @since  6.0.0
  * @package Kleistad
+ * noinspection EqualityComparisonWithCoercionJS
  */
 
-/* noinspection EqualityComparisonWithCoercionJS */
 /* global kleistadData */
 /* exported strtodate, strtotime, timetostr */
 
@@ -16,8 +16,9 @@
  * @param {String} value
  */
 function strtotime( value ) {
-	var hours, minutes;
+	let hours, minutes;
 	if ( 'string' === typeof value ) {
+		/* noinspection EqualityComparisonWithCoercionJS */
 		/* jshint eqeqeq:false */
 		if ( Number( value ) == value ) {
 			return Number( value );
@@ -103,6 +104,12 @@ function strtodate( value ) {
 				url:         kleistadData.base_url + '/formsubmit/'
 			}
 		).done(
+			/**
+			 * Toggle de wacht zandloper
+			 *
+			 * @param data
+			 * @property {function} $.fn.vervolg
+			 */
 			function( data ) {
 				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
 				$.fn.vervolg( $shortcode, data );
@@ -171,7 +178,7 @@ function strtodate( value ) {
 			/**
 			 * Definieer de bank selectie.
 			 */
-			var $bank = $( '#kleistad_bank' );
+			let $bank = $( '#kleistad_bank' );
 			if ( $bank[0] ) {
 				$bank.iconselectmenu().iconselectmenu( 'menuWidget' ).addClass( 'ui-menu-icons kleistad-bank' );
 			}
@@ -200,6 +207,8 @@ function strtodate( value ) {
 			)
 			/**
 			 * Submit het formulier, als er een formulier is.
+			 *
+			 * @property {function} $.fn.shortcode
 			 */
 			.on(
 				'submit',

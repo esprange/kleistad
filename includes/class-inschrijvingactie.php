@@ -172,7 +172,7 @@ class InschrijvingActie {
 			$this->inschrijving->verzend_email( '_wachtlijst' );
 			return 'De inschrijving is op de wachtlijst en er is een email verzonden met nadere informatie';
 		}
-		if ( $this->inschrijving->cursus->start_datum < strtotime( 'today' ) ) {
+		if ( $this->inschrijving->cursus->is_lopend() ) {
 			$this->inschrijving->verzend_email( '_lopend' );
 			return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie';
 		}

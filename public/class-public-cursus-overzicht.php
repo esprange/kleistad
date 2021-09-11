@@ -84,8 +84,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						'betaald'        => $order->gesloten,
 						'restant_email'  => $inschrijving->restant_email,
 						'herinner_email' => $inschrijving->herinner_email,
-						'wacht'          => ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! $order->id,
-						'wachtlijst'     => ! $inschrijving->ingedeeld && 0 < $inschrijving->wacht_datum,
+						'wachtlopend'    => ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! $order->id,
+						'wachtlijst'     => ! $inschrijving->ingedeeld && $inschrijving->wacht_datum && ! $inschrijving->cursus->is_lopend(),
 					]
 				);
 			}

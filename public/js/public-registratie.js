@@ -11,6 +11,17 @@
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Bepaal de wachtwoord sterkte a.d.h.v. de WP functies.
+	 *
+	 * @param {string} pass1
+	 * @param {string} pass2
+	 * @param {object} $strengthResult
+	 * @param {object} $submitButton
+	 * @param {array}  disallowedListArray
+	 * @property {function} wp.passwordStrength.meter
+	 * @property {function} wp.passwordStrength.userInputDisallowedList
+	 */
 	function checkPasswordStrength( pass1, pass2, $strengthResult, $submitButton, disallowedListArray ) {
 		$submitButton.attr( 'disabled', 'disabled' );
 		$strengthResult.removeClassWildcard( 'kleistad-pwd' );
@@ -46,6 +57,12 @@
 	$(
 		function()
 		{
+			/**
+			 * Event functies
+			 *
+			 * @property {array}  kleistadData
+			 * @property {string} kleistadData.admin_url
+			*/
 			$( '.kleistad-shortcode' )
 			.on(
 				'keyup',
@@ -64,7 +81,7 @@
 				'click',
 				'#kleistad_wachtwoord',
 				function() {
-					var data = {
+					let data = {
 						'action'    : 'kleistad_wachtwoord',
 						'actie'     : 'wijzig_wachtwoord',
 						'wachtwoord': $( '#nieuw_wachtwoord' ).val(),

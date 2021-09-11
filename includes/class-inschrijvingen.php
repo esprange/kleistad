@@ -122,7 +122,7 @@ class Inschrijvingen implements Countable, Iterator {
 	 */
 	private static function wachtlijst_verwerking( Inschrijving $inschrijving ) : bool {
 		if ( ! $inschrijving->ingedeeld && $inschrijving->wacht_datum ) {
-			if ( strtotime( 'today' ) < $inschrijving->cursus->start_datum && $inschrijving->wacht_datum < $inschrijving->cursus->ruimte_datum ) {
+			if ( ! $inschrijving->cursus->is_lopend() && $inschrijving->wacht_datum < $inschrijving->cursus->ruimte_datum ) {
 				$inschrijving->actie->plaatsbeschikbaar();
 			}
 			return true;

@@ -41,7 +41,7 @@
 					slotMinTime: '08:00:00',
 					scrollTime: '09:00:00',
 					eventContent: function( info ) {
-						var tekst =
+						let tekst =
 							'<div class="fc-event-main-frame">' +
 							'<div class="fc-event-time" >' + info.timeText + '</div>' +
 							'<div class="fc-event-title-container">' +

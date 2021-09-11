@@ -146,7 +146,7 @@
 			$( '#kleistad_filter_btn' ).on(
 				'click',
 				function() {
-					var tonen = 'hide' === window.sessionStorage.getItem( 'recept_filter_status' ) ? 'show' : 'hide';
+					let tonen = 'hide' === window.sessionStorage.getItem( 'recept_filter_status' ) ? 'show' : 'hide';
 					window.sessionStorage.setItem( 'recept_filter_status', tonen );
 					displayFilters( tonen );
 				}
@@ -155,7 +155,7 @@
 			$( '#kleistad_zoek' ).on(
 				'keyup',
 				function( e ) {
-					if ( 13 === e.which ) {
+					if ( 'Enter' === e.key ) {
 						$( '#kleistad_zoek_icon' ).trigger( 'click' );
 					}
 				}

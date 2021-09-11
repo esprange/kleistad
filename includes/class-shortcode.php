@@ -170,7 +170,7 @@ abstract class Shortcode {
 	 */
 	public static function get_instance( string $shortcode_tag, array $attributes ) : ?Shortcode {
 		static $tags = []; // Om een of andere reden gaat PHPMD hier niet goed mee om, vandaar de annotatie.
-		if ( in_array( $shortcode_tag, $tags, true ) ) {
+		if ( in_array( $shortcode_tag, $tags, true ) && ! is_admin() ) {
 			throw new Kleistad_Exception( "De shortcode kleistad_$shortcode_tag mag maar éénmaal per pagina gebruikt worden" );
 		}
 		$tags[]          = $shortcode_tag;

@@ -40,14 +40,14 @@ class Public_Betaling extends ShortcodeForm {
 			$data['actie'] = '';
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
-		$order = new Order( intval( $param['order'] ) );
-		if ( $order->gesloten ) {
-			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
-		}
+		$order           = new Order( intval( $param['order'] ) );
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $order->referentie );
 		if ( is_null( $artikel ) || $param['hsh'] !== $artikel->controle() ) {
 			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
+		}
+		if ( $order->gesloten ) {
+			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
 		$data = [
 			'order_id'      => $param['order'],
@@ -85,8 +85,8 @@ class Public_Betaling extends ShortcodeForm {
 		}
 		$artikelregister = new Artikelregister();
 		$data['artikel'] = $artikelregister->geef_object( $data['order']->referentie );
-		$beschikbaar     = '';
 		if ( is_object( $data['artikel'] ) ) {
+			$beschikbaar = '';
 			if ( property_exists( $data['artikel'], 'actie' ) ) {
 				if ( method_exists( $data['artikel']->actie, 'beschikbaarcontrole' ) ) {
 					$beschikbaar = $data['artikel']->actie->beschikbaarcontrole();

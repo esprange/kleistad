@@ -42,7 +42,7 @@
 			$( '#kleistad_huisnr, #kleistad_pcode' ).on(
 				'change',
 				function() {
-					var pcode = $( '#kleistad_pcode' );
+					let pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase() );
 					$().lookupPostcode(
 						pcode.val(),

@@ -16,8 +16,8 @@
 				{
 					heightStyle: 'auto',
 					activate: function( event, ui ) {
-						ui.newPanel.find( 'input,select' ).attr( 'required', true );
-						ui.oldPanel.find( 'input,select' ).attr( 'required', false );
+						ui.newPanel.find( 'input,select' ).prop( 'required', true );
+						ui.oldPanel.find( 'input,select' ).prop( 'required', false );
 						$( '#kleistad_klant_type' ).val( $( this ).tabs( 'option', 'active' ) ? 'bestaand' : 'nieuw' );
 					}
 				}
@@ -45,12 +45,11 @@
 					let totaal = 0;
 					$( '[name^=prijs]' ).each(
 						function() {
-							var prijs  = $( this ).val(),
+							let prijs  = $( this ).val(),
 								aantal = $( this ).closest( 'div' ).next( 'div' ).find( '[name^=aantal]' ).val();
 							$( this ).closest( 'div' ).prev( 'div' ).find( '[name^=omschrijving]' ).attr( 'required', aantal > 0 );
 							totaal += prijs * aantal;
 						}
-
 					);
 					$( '#kleistad_submit_verkoop' ).data( 'confirm', 'Verkoop|Het totaal bedrag is ' + totaal.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + '. Is dit correct ?' );
 				}

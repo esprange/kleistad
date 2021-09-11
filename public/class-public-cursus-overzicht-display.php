@@ -77,9 +77,9 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 						<td>
 							<?php
 							if ( ! $cursist['ingedeeld'] ) :
-								if ( $cursist['wacht'] || $cursist['wachtlijst'] ) :
+								if ( $cursist['wachtlopend'] || $cursist['wachtlijst'] ) :
 									?>
-									<a href="#" title="indelen" class="kleistad-edit-link"
+									<a href="#" title="<?php echo $cursist['wachtlijst'] ? 'uitschrijven' : 'indelen'; ?>" class="kleistad-edit-link"
 									data-id="<?php echo esc_attr( $cursist['code'] ); ?>"
 									data-actie="<?php echo $cursist['wachtlijst'] ? 'uitschrijven' : 'indelen'; ?>" >
 									<?php echo $cursist['wachtlijst'] ? 'wachtlijst' : 'wacht op factuur'; ?> </a>

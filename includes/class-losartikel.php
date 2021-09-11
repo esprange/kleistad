@@ -39,9 +39,13 @@ class LosArtikel extends Artikel {
 	 *
 	 * @since      6.2.0
 	 *
-	 * @param int $verkoop_id Een uniek id van de verkoop.
+	 * @param int|null $verkoop_id Een uniek id van de verkoop.
 	 */
-	public function __construct( int $verkoop_id ) {
+	public function __construct( ?int $verkoop_id = null ) {
+		if ( is_null( $verkoop_id ) ) {
+			$verkoop_id = intval( get_option( 'kleistad_losnr', 0 ) );
+			update_option( 'kleistad_losnr', ++$verkoop_id );
+		}
 		$this->data     = [
 			'klant' => [],
 			'prijs' => 0.0,

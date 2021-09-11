@@ -30,7 +30,7 @@
 					{
 						minDate: new Date( nuDatum.getFullYear(), nuDatum.getMonth() + 1, 1 ),
 						onSelect: function( datum ) {
-							var pauzeDatum    = strtodate( datum ),
+							let pauzeDatum    = strtodate( datum ),
 								herstartDatum = strtodate( $herstart_datum.val() );
 
 							if ( herstartDatum.getTime() < ( pauzeDatum.getTime() + minPauze * dag ) ) {

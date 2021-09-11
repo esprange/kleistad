@@ -11,7 +11,7 @@
 ( function( $ ) {
 	'use strict';
 
-	var $werkplek         = $( '#kleistad_werkplek' ),
+	let $werkplek         = $( '#kleistad_werkplek' ),
 		$wachten          = $( '#kleistad_wachten' ),
 		$meester_selectie = $( '#kleistad_meester_selectie' ),
 		$meester          = $( '#kleistad_meester' ),
@@ -154,8 +154,8 @@
 			'option',
 			{
 				beforeShowDay: function( datum ) {
-					var fDate   = $.datepicker.formatDate( 'dd-mm-yy', datum );
-					var gotDate = $.inArray( fDate, datums );
+					let fDate   = $.datepicker.formatDate( 'dd-mm-yy', datum );
+					let gotDate = $.inArray( fDate, datums );
 					if ( gotDate >= 0 ) {
 						return [ true, 'kleistad-state-highlight' ];
 					}
@@ -199,9 +199,9 @@
 					{
 						text: 'OK',
 						click: function() {
-							var datum   = $.datepicker.formatDate( 'dd-mm-yy', $datum.datepicker( 'getDate' ) );
-							var id      = $meester_selectie.val();
-							var dagdeel = $meester_selectie.data( 'dagdeel' );
+							let datum   = $.datepicker.formatDate( 'dd-mm-yy', $datum.datepicker( 'getDate' ) ),
+								id      = $meester_selectie.val(),
+								dagdeel = $meester_selectie.data( 'dagdeel' );
 							muteerMeester( datum, id, dagdeel );
 							$( this ).dialog( 'close' );
 						}
@@ -223,8 +223,8 @@
 					{
 						text: 'OK',
 						click: function () {
-							var datum    = $.datepicker.formatDate( 'dd-mm-yy',  $datum.datepicker( 'getDate' ) );
-							gebruiker_id = $( '#kleistad_gebruiker_selectie' ).val();
+							let datum        = $.datepicker.formatDate( 'dd-mm-yy',  $datum.datepicker( 'getDate' ) ),
+								gebruiker_id = $( '#kleistad_gebruiker_selectie' ).val();
 							$( '#kleistad_wijzig_gebruiker' ).text( $( '#kleistad_gebruiker_selectie option:selected' ).text() );
 							toonWerkplek( datum, gebruiker_id );
 							$( this ).dialog( 'close' );
@@ -248,8 +248,8 @@
 				'change',
 				'#kleistad_datum',
 				function() {
-					var datum  = $.datepicker.formatDate( 'dd-mm-yy', $( this ).datepicker( 'getDate' ) );
-					datumIndex = $.inArray( datum, datums );
+					let datum  = $.datepicker.formatDate( 'dd-mm-yy', $( this ).datepicker( 'getDate' ) );
+					let	datumIndex = $.inArray( datum, datums );
 					buttonsActive();
 					$( this ).datepicker( 'setDate', datums[datumIndex] );
 					$( this ).datepicker( 'hide' );
@@ -280,8 +280,8 @@
 				'click',
 				'.kleistad-werkplek',
 				function() {
-					var method = ( 'reserveren' === $( this ).text() ) ? 'POST' : 'DELETE';
-					var datum  = $.datepicker.formatDate( 'dd-mm-yy',  $datum.datepicker( 'getDate' ) );
+					let method = ( 'reserveren' === $( this ).text() ) ? 'POST' : 'DELETE',
+						datum  = $.datepicker.formatDate( 'dd-mm-yy',  $datum.datepicker( 'getDate' ) );
 					muteerWerkplek( method, datum, $( this ).val(), $( this ).data( 'dagdeel' ), $( this ).data( 'activiteit' ) );
 				}
 			)

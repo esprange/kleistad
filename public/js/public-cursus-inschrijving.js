@@ -15,7 +15,7 @@
 	 * @param cursus
 	 */
 	function wijzigTeksten( cursus ) {
-		var $spin  = $( '#kleistad_aantal' ),
+		let $spin  = $( '#kleistad_aantal' ),
 			aantal = $spin.spinner( 'value' ),
 			bedrag;
 		if ( aantal > cursus.ruimte ) {
@@ -68,7 +68,7 @@
 
 	$(
 		function() {
-			var $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+			let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
 
 			if ( 0 !== $cursus_checked.length ) {
 				wijzigVelden( $cursus_checked.data( 'cursus' ) );
@@ -90,17 +90,17 @@
 				{
 					min:1,
 					max: function() {
-						var $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
 						return ( 0 !== $cursus_checked.length ) ? $cursus_checked.data( 'cursus' ).ruimte : 1
 					},
 					stop: function() {
-						var $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
 						if ( 0 !== $cursus_checked.length ) {
 							wijzigTeksten( $cursus_checked.data( 'cursus' ) );
 						}
 					},
 					create: function() {
-						var $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
 						if ( 0 !== $cursus_checked.length ) {
 							wijzigTeksten( $cursus_checked.data( 'cursus' ) );
 						}
@@ -111,7 +111,7 @@
 			$( 'input[name=cursus_id]:radio' ).on(
 				'change',
 				function() {
-					var cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
+					let cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
 					wijzigTeksten( cursus );
 					wijzigVelden( cursus );
 				}
@@ -130,7 +130,7 @@
 			$( '#kleistad_huisnr, #kleistad_pcode' ).on(
 				'change',
 				function() {
-					var pcode = $( '#kleistad_pcode' );
+					let pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase() );
 					$().lookupPostcode(
 						pcode.val(),

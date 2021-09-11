@@ -11,6 +11,8 @@
 
 	/**
 	 * Na refresh.
+	 *
+	 * @property {object} $.fn.jstree
 	 */
 	function onLoad() {
 		$( '#kleistad_gebruikers' ).jstree(
@@ -36,10 +38,16 @@
 		function()
 		{
 			onLoad();
+
+			/**
+			 * Event functies
+			 *
+			 * @property {object} $.fn.jstree
+			 */
 			$( '#kleistad_gebruikers' ).on(
 				'changed.jstree',
 				function() {
-					var gebruikerIds  = [],
+					let gebruikerIds  = [],
 						selectIndexes = $( this ).jstree( 'get_selected', true );
 					$.each(
 						selectIndexes,

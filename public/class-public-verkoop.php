@@ -94,11 +94,7 @@ class Public_Verkoop extends ShortcodeForm {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function save( array $data ) : array {
-		$verkoopnr = intval( get_option( 'kleistad_losnr', 0 ) );
-		if ( ! update_option( 'kleistad_losnr', ++$verkoopnr ) ) {
-			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ) ];
-		}
-		$verkoop = new LosArtikel( $verkoopnr );
+		$verkoop = new LosArtikel();
 		if ( 'bestaand' === $data['input']['klant_type'] ) {
 			$klant          = get_user_by( 'id', $data['input']['klant_id'] );
 			$verkoop->klant = [
