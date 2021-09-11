@@ -83,7 +83,7 @@
 
 		$( '#kleistad_reservering table > tbody' ).append( '<tr><th><label>Stoker</label></th>' + stokerVeld + percVeld + '</tr>' );
 
-		for ( stook = 1; row < aantalStook; stook++ ) {
+		for ( stook = 1; stook < aantalStook; stook++ ) {
 			$( '#kleistad_reservering table > tbody > tr:last' ).after(
 				'<tr><th><label>Medestoker</label></th><td>' + selectStoker( true, formData.verdeling[stook].medestoker ) +
 				'<td><input name="stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" value="' + formData.verdeling[stook].percentage + '" ></td></tr>'
