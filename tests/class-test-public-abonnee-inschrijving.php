@@ -59,6 +59,21 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 	}
 
 	/**
+	 * Test prepare functie;
+	 */
+	public function test_prepare() {
+		$data   = [];
+		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data, [ 'verklaring' => 'test' ] );
+		if ( is_wp_error( $result ) ) {
+			foreach ( $result->get_error_messages() as $error ) {
+				echo $error . "\n"; // phpcs:ignore
+			}
+		}
+		$this->assertFalse( is_wp_error( $result ), 'prepare incorrect' );
+		$this->assertTrue( 'test' === ( $data['verklaring'] ?? '' ), 'prepare verklaring incorrect' );
+	}
+
+	/**
 	 * Test validate functie.
 	 */
 	public function test_validate() {
