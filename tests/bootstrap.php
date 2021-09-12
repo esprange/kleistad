@@ -26,6 +26,11 @@ if ( false !== getenv( 'WP_PLUGIN_DIR' ) ) {
 }
 
 if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
+	/**
+	 * Suppress de phpstorm foutmelding
+	 *
+	 * @noinspection PhpIncludeInspection
+	 */
 	require getenv( 'WP_DEVELOP_DIR' ) . 'tests/phpunit/includes/bootstrap.php';
 }
 
@@ -37,7 +42,7 @@ if ( file_exists( $mollie_sim ) ) {
 	unlink( $mollie_sim );
 }
 
-require dirname( dirname( __FILE__ ) ) . '/kleistad.php';
+require dirname( __FILE__, 2 ) . '/kleistad.php';
 
 tests_add_filter(
 	'plugins_loaded',

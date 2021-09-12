@@ -4,13 +4,13 @@
  *
  * @package Kleistad
  *
- * @covers \Kleistad\Public_Cursus_Betaling
+ * @covers \Kleistad\Public_Betaling
  */
 
 namespace Kleistad;
 
 /**
- * Inschrijving test case.
+ * Betaling test case.
  */
 class Test_Public_Betaling extends Kleistad_UnitTestCase {
 

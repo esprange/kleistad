@@ -4,6 +4,7 @@
  *
  * @package Kleistad
  * @phpcs:disable WordPress.Files, Generic.Files
+ * @noinspection PhpParameterNameChangedDuringInheritanceInspection
  */
 
 namespace Kleistad;
@@ -36,7 +37,7 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @param array $args the arguments.
 	 *
-	 * @return boolean
+	 * @return boolean|int
 	 */
 	public function create_object( $args ) {
 		$oven                  = new Oven();
@@ -58,7 +59,7 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @return boolean
 	 */
-	public function update_object( $id, $args ) {
+	public function update_object( $id, $args ) : bool {
 		$oven                  = new Oven( $id );
 		$oven->naam            = $args['naam'];
 		$oven->kosten_laag     = $args['kosten_laag'];
@@ -74,9 +75,8 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @return Oven the object.
 	 */
-	public function get_object_by_id( $id ) {
-		$oven = new Oven( $id );
-		return $oven;
+	public function get_object_by_id( $id ) : Oven {
+		return new Oven( $id );
 	}
 
 }
@@ -106,7 +106,7 @@ class Kleistad_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @param array $args the arguments.
 	 *
-	 * @return boolean
+	 * @return boolean|int
 	 */
 	public function create_object( $args ) {
 		$cursus             = new Cursus();
@@ -128,7 +128,7 @@ class Kleistad_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @return boolean
 	 */
-	public function update_object( $id, $args ) {
+	public function update_object( $id, $args ) : bool {
 		$cursus             = new Cursus( $id );
 		$cursus->naam       = $args['naam'];
 		$cursus->docent     = $args['docent'];
@@ -144,9 +144,8 @@ class Kleistad_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @return Cursus the object.
 	 */
-	public function get_object_by_id( $id ) {
-		$cursus = new Cursus( $id );
-		return $cursus;
+	public function get_object_by_id( $id ) : Cursus {
+		return new Cursus( $id );
 	}
 
 }

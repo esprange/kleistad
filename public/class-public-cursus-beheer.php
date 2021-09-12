@@ -134,8 +134,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function validate( array &$data ) {
-		$error          = new WP_Error();
-		$data['cursus'] = filter_input_array(
+		$error         = new WP_Error();
+		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'cursus_id'       => FILTER_SANITIZE_NUMBER_INT,
@@ -170,16 +170,16 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		if ( 'verwijderen' === $data['form_actie'] ) {
 			return true;
 		}
-		if ( is_null( $data['cursus']['technieken'] ) ) {
-			$data['cursus']['technieken'] = [];
+		if ( is_null( $data['input']['technieken'] ) ) {
+			$data['input']['technieken'] = [];
 		}
-		if ( $data['cursus']['cursuskosten'] < $data['cursus']['inschrijfkosten'] ) {
+		if ( $data['input']['cursuskosten'] < $data['input']['inschrijfkosten'] ) {
 			$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet lager zijn' );
 		}
-		if ( ! is_null( $data['cursus']['tonen'] ) ) {
-			foreach ( [ $data['cursus']['inschrijfslug'], $data['cursus']['indelingslug'] ] as $slug ) {
+		if ( ! is_null( $data['input']['tonen'] ) ) {
+			foreach ( [ $data['input']['inschrijfslug'], $data['input']['indelingslug'] ] as $slug ) {
 				if ( is_null( get_page_by_title( $slug, OBJECT, Email::POST_TYPE ) ) ) { // phpcs:ignore
-					$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['cursus']['inschrijfslug'] );
+					$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $data['input']['inschrijfslug'] );
 				}
 			}
 		}
@@ -197,7 +197,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function verwijderen( array $data ) : array {
-		$cursus = new Cursus( $data['cursus']['cursus_id'] );
+		$cursus = new Cursus( $data['input']['cursus_id'] );
 		if ( count( new Inschrijvingen( $cursus->id, true ) ) ) {
 			return [
 				'status' => $this->status( new WP_Error( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' ) ),
@@ -218,30 +218,30 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function bewaren( array $data ) : array {
-		$cursus_id               = $data['cursus']['cursus_id'];
+		$cursus_id               = $data['input']['cursus_id'];
 		$cursus                  = $cursus_id > 0 ? new Cursus( $cursus_id ) : new Cursus();
-		$cursus->naam            = $data['cursus']['naam'];
-		$cursus->docent          = $data['cursus']['docent'];
-		$cursus->start_datum     = strtotime( $data['cursus']['start_datum'] );
-		$cursus->eind_datum      = strtotime( $data['cursus']['eind_datum'] );
+		$cursus->naam            = $data['input']['naam'];
+		$cursus->docent          = $data['input']['docent'];
+		$cursus->start_datum     = strtotime( $data['input']['start_datum'] );
+		$cursus->eind_datum      = strtotime( $data['input']['eind_datum'] );
 		$cursus->lesdatums       = array_map(
 			function( $lesdatum ) {
 				return strtotime( $lesdatum );
 			},
-			explode( ';', $data['cursus']['lesdatums'] )
+			explode( ';', $data['input']['lesdatums'] )
 		);
-		$cursus->start_tijd      = strtotime( $data['cursus']['start_tijd'] );
-		$cursus->eind_tijd       = strtotime( $data['cursus']['eind_tijd'] );
-		$cursus->techniekkeuze   = '' != $data['cursus']['techniekkeuze']; // phpcs:ignore
-		$cursus->vervallen       = '' != $data['cursus']['vervallen']; // phpcs:ignore
-		$cursus->inschrijfkosten = $data['cursus']['inschrijfkosten'];
-		$cursus->cursuskosten    = $data['cursus']['cursuskosten'];
-		$cursus->inschrijfslug   = $data['cursus']['inschrijfslug'];
-		$cursus->indelingslug    = $data['cursus']['indelingslug'];
-		$cursus->technieken      = $data['cursus']['technieken'];
-		$cursus->maximum         = $data['cursus']['maximum'];
-		$cursus->meer            = '' != $data['cursus']['meer']; // phpcs:ignore
-		$cursus->tonen           = '' != $data['cursus']['tonen']; // phpcs:ignore
+		$cursus->start_tijd      = strtotime( $data['input']['start_tijd'] );
+		$cursus->eind_tijd       = strtotime( $data['input']['eind_tijd'] );
+		$cursus->techniekkeuze   = '' != $data['input']['techniekkeuze']; // phpcs:ignore
+		$cursus->vervallen       = '' != $data['input']['vervallen']; // phpcs:ignore
+		$cursus->inschrijfkosten = $data['input']['inschrijfkosten'];
+		$cursus->cursuskosten    = $data['input']['cursuskosten'];
+		$cursus->inschrijfslug   = $data['input']['inschrijfslug'];
+		$cursus->indelingslug    = $data['input']['indelingslug'];
+		$cursus->technieken      = $data['input']['technieken'];
+		$cursus->maximum         = $data['input']['maximum'];
+		$cursus->meer            = '' != $data['input']['meer']; // phpcs:ignore
+		$cursus->tonen           = '' != $data['input']['tonen']; // phpcs:ignore
 		$cursus->save();
 		return [
 			'status'  => $this->status( 'De cursus informatie is opgeslagen' ),

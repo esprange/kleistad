@@ -12,6 +12,7 @@
 namespace Kleistad;
 
 use PhpImap;
+use UnexpectedValueException;
 
 /**
  * Kleistad EmailReceiver class.
@@ -44,6 +45,8 @@ class EmailReceiver {
 			);
 		} catch ( PhpImap\Exceptions\InvalidParameterException $e ) {
 			error_log( 'IMAP fail: ' . $e->getMessage() ); // phpcs:ignore
+			exit( 0 );
+		} catch ( UnexpectedValueException $e ) {
 			exit( 0 );
 		}
 		$email_ids = $mailbox->searchMailbox( 'UNANSWERED', true );

@@ -10,7 +10,7 @@
 namespace Kleistad;
 
 /**
- * Inschrijving test case.
+ * Abonnee wijziging test case.
  */
 class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 
@@ -73,7 +73,7 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 	 * Test validate functie.
 	 */
 	public function test_validate() {
-		$this->maak_wijziging( 'test', false, false );
+		$this->maak_wijziging( 'test', false, true );
 		$_POST  = $this->input;
 		$data   = [];
 		$result = $this->public_actie( self::SHORTCODE, 'validate', $data );

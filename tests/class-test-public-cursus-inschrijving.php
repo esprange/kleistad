@@ -10,7 +10,7 @@
 namespace Kleistad;
 
 /**
- * Inschrijving test case.
+ * Cursus inschrijving test case.
  */
 class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 

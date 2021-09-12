@@ -90,10 +90,10 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_heeft_restant() {
 		$inschrijving1 = $this->maak_inschrijving();
-		$this->assertFalse( empty( $inschrijving1->heeft_restant() ), 'heeft restant toekomst incorrect' );
+		$this->assertNotEmpty( $inschrijving1->heeft_restant(), 'heeft restant toekomst incorrect' );
 
 		$inschrijving1->cursus->start_datum = strtotime( 'tomorrow' );
-		$this->assertTrue( empty( $inschrijving1->heeft_restant() ), 'heeft restant morgen incorrect' );
+		$this->assertEmpty( $inschrijving1->heeft_restant(), 'heeft restant morgen incorrect' );
 	}
 
 	/**
@@ -104,19 +104,19 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 
 		$inschrijving->aantal          = 3;
 		$inschrijving->extra_cursisten = [];
-		$this->assertFalse( empty( $inschrijving->toon_aantal() ), 'toon_aantal > 1, extra 0 incorrect' );
+		$this->assertNotEmpty( $inschrijving->toon_aantal(), 'toon_aantal > 1, extra 0 incorrect' );
 
 		$inschrijving->aantal          = 3;
 		$inschrijving->extra_cursisten = [ 2 ];
-		$this->assertFalse( empty( $inschrijving->toon_aantal() ), 'toon_aantal > 1, extra 1 incorrect' );
+		$this->assertNotEmpty( $inschrijving->toon_aantal(), 'toon_aantal > 1, extra 1 incorrect' );
 
 		$inschrijving->aantal          = 3;
 		$inschrijving->extra_cursisten = [ 2, 3 ];
-		$this->assertTrue( empty( $inschrijving->toon_aantal() ), 'toon_aantal > 1, extra 2 incorrect' );
+		$this->assertEmpty( $inschrijving->toon_aantal(), 'toon_aantal > 1, extra 2 incorrect' );
 
 		$inschrijving->aantal          = 1;
 		$inschrijving->extra_cursisten = [];
-		$this->assertTrue( empty( $inschrijving->toon_aantal() ), 'toon_aantal 1 incorrect' );
+		$this->assertEmpty( $inschrijving->toon_aantal(), 'toon_aantal 1 incorrect' );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_geef_referentie() {
 		$inschrijving = $this->maak_inschrijving();
-		$this->assertEquals( "C{$inschrijving->cursus->id}-{$inschrijving->klant_id}", $inschrijving->geef_referentie(), 'geef referentie incorrect' );
+		$this->assertEquals( "C{$inschrijving->cursus->id}-$inschrijving->klant_id", $inschrijving->geef_referentie(), 'geef referentie incorrect' );
 	}
 
 	/**
@@ -188,7 +188,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	public function test_bestel_order() {
 		$inschrijving1 = $this->maak_inschrijving();
 		$inschrijving1->save();
-		$factuur = $inschrijving1->bestel_order( 0, strtotime( 'today' ), '', '', true );
+		$factuur = $inschrijving1->bestel_order( 0, strtotime( 'today' ) );
 		$this->assertFileExists( $factuur, 'bestel_order incorrect' );
 		$order = new Order( $inschrijving1->geef_referentie() );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
@@ -327,7 +327,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijvingen = [];
 		for ( $i = 0; $i < 3; $i ++ ) {
 			$inschrijvingen[ $i ]            = new Inschrijving( $cursus->id, $cursist_ids[ $i ] );
-			$inschrijvingen[ $i ]->opmerking = "$teststring{$cursist_ids[$i]}";
+			$inschrijvingen[ $i ]->opmerking = $teststring . $cursist_ids[ $i ];
 			$inschrijvingen[ $i ]->save();
 		}
 

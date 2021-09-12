@@ -11,8 +11,6 @@
 
 /**
  * Mollie database simulatie.
- *
- * @var string $mollie_sim Database naam.
  */
 $mollie_sim = '';
 
@@ -65,7 +63,7 @@ class MollieSimulatie {
 			 *
 			 * @param string $id Het Mollie id.
 			 */
-			public function get( $id ) {
+			public function get( string $id ) : object {
 				return new class( $id ) {
 
 					/**
@@ -73,7 +71,7 @@ class MollieSimulatie {
 					 *
 					 * @var string $id De id string.
 					 */
-					public $id;
+					public string $id;
 
 					/**
 					 * Metadata object
@@ -143,54 +141,54 @@ class MollieSimulatie {
 					 *
 					 * @var bool $_hasRefunds Of er een refund bestaat.
 					 */
-					private $_hasRefunds = false;
+					private bool $_hasRefunds = false;
 
 					/**
 					 * Geeft aan dat er betaald is.
 					 */
-					public function isPaid() {
+					public function isPaid() : bool {
 						return 'paid' === $this->status;
 					}
 
 					/**
 					 * Geeft aan dat er niet betaald is.
 					 */
-					public function isFailed() {
+					public function isFailed() : bool {
 						return 'failed' === $this->status;
 					}
 
 					/**
 					 * Geeft aan dat de betaling afgebroken is.
 					 */
-					public function isCanceled() {
+					public function isCanceled() : bool {
 						return 'canceled' === $this->status;
 					}
 
 					/**
 					 * Geeft aan dat de betaling afgebroken is.
 					 */
-					public function isExpired() {
+					public function isExpired() : bool {
 						return 'expired' === $this->status;
 					}
 
 					/**
 					 * Geeft aan dat er geen sprake is refunds.
 					 */
-					public function hasRefunds() {
+					public function hasRefunds() : bool {
 						return $this->_hasRefunds;
 					}
 
 					/**
 					 * Geeft aan dat er geen sprake is chargebacks.
 					 */
-					public function hasChargebacks() {
+					public function hasChargebacks() : bool {
 						return false;
 					}
 
 					/**
 					 * Geeft aan dat er geen sprake is refunds.
 					 */
-					public function canBeRefunded() {
+					public function canBeRefunded() : bool {
 						return true;
 					}
 
@@ -199,7 +197,7 @@ class MollieSimulatie {
 					 *
 					 * @param string $refund_id Het id van de refund.
 					 */
-					public function getRefund( $refund_id ) {
+					public function getRefund( string $refund_id ) : object {
 						return new class( $refund_id ) {
 
 							/**
@@ -214,7 +212,7 @@ class MollieSimulatie {
 							 *
 							 * @var string $id De id string.
 							 */
-							public $id;
+							public string $id;
 
 							/**
 							 * Amount object
@@ -249,7 +247,7 @@ class MollieSimulatie {
 							 *
 							 * @param string $id Het refund id.
 							 */
-							public function __construct( $id ) {
+							public function __construct( string $id ) {
 								global $mollie_sim;
 								$this->id = $id;
 								$db       = new SQLite3( $mollie_sim );
@@ -270,28 +268,28 @@ class MollieSimulatie {
 							/**
 							 * Is refunded.
 							 */
-							public function isTransferred() {
+							public function isTransferred() : bool {
 								return 'refunded' === $this->status;
 							}
 
 							/**
 							 * Is pending.
 							 */
-							public function isPending() {
+							public function isPending() : bool {
 								return 'pending' === $this->status;
 							}
 
 							/**
 							 * Is processed.
 							 */
-							public function isProcessing() {
+							public function isProcessing() : bool {
 								return 'processing' === $this->status;
 							}
 
 							/**
 							 * Is queued.
 							 */
-							public function isQueued() {
+							public function isQueued() : bool {
 								return 'queued' === $this->status;
 							}
 
@@ -311,7 +309,7 @@ class MollieSimulatie {
 					/**
 					 * Geef de refunds terug (in simulatie maar één ).
 					 */
-					public function refunds() {
+					public function refunds() : array {
 						global $mollie_sim;
 						$db      = new SQLite3( $mollie_sim );
 						$res     = $db->query( "SELECT * FROM refunds WHERE payment_id='$this->id'" );
@@ -330,7 +328,7 @@ class MollieSimulatie {
 					 *
 					 * @param array $data De data.
 					 */
-					public function refund( $data ) {
+					public function refund( array $data ) : object {
 						global $mollie_sim;
 						$data['status'] = 'queued';
 						$id             = uniqid( 're_' );
@@ -347,7 +345,7 @@ class MollieSimulatie {
 					 *
 					 * @param string $id Het payment id.
 					 */
-					public function __construct( $id ) {
+					public function __construct( string $id ) {
 						global $mollie_sim;
 						$this->id = $id;
 						$db       = new SQLite3( $mollie_sim );
@@ -386,14 +384,14 @@ class MollieSimulatie {
 			 *
 			 * @var string $id De customer id.
 			 */
-			public $id;
+			public string $id;
 
 			/**
 			 * Geef een customer object terug.
 			 *
 			 * @param string $id Het customer id.
 			 */
-			public function get( $id ) {
+			public function get( string $id ) : object {
 				return new class( $id ) {
 
 					/**
@@ -401,7 +399,7 @@ class MollieSimulatie {
 					 *
 					 * @var string $id De customer ID.
 					 */
-					public $id;
+					public string $id;
 
 					/**
 					 * Naam van de klant.
@@ -422,7 +420,7 @@ class MollieSimulatie {
 					 *
 					 * @param string $id Het customer id.
 					 */
-					public function __construct( $id ) {
+					public function __construct( string $id ) {
 						global $mollie_sim;
 						$this->id = $id;
 						$db       = new SQLite3( $mollie_sim );
@@ -442,7 +440,7 @@ class MollieSimulatie {
 					/**
 					 * Geef de mandates terug.
 					 */
-					public function mandates() {
+					public function mandates() : array {
 						global $mollie_sim;
 						$mandates = [];
 						$db       = new SQLite3( $mollie_sim );
@@ -456,7 +454,7 @@ class MollieSimulatie {
 								 *
 								 * @var string $id Het id.
 								 */
-								public $id;
+								public string $id;
 
 								/**
 								 * De mandaat status
@@ -492,7 +490,7 @@ class MollieSimulatie {
 								 * @param string $id   Het mandaat id.
 								 * @param object $data De data.
 								 */
-								public function __construct( $id, $data ) {
+								public function __construct( string $id, object $data ) {
 									$this->status        = $data->status;
 									$this->id            = $id;
 									$this->details       = $data->details;
@@ -503,7 +501,7 @@ class MollieSimulatie {
 								/**
 								 * Is het mandaat valide.
 								 */
-								public function isValid() {
+								public function isValid() : bool {
 									return 'valid' === $this->status;
 								}
 							};
@@ -515,7 +513,7 @@ class MollieSimulatie {
 					/**
 					 * Heeft een valide mandaat
 					 */
-					public function hasValidMandate() {
+					public function hasValidMandate() : bool {
 						global $mollie_sim;
 						$db    = new SQLite3( $mollie_sim );
 						$res   = $db->query( "SELECT * FROM mandates WHERE customer_id='$this->id'" );
@@ -534,7 +532,7 @@ class MollieSimulatie {
 					 *
 					 * @param string $id Het mandaat id.
 					 */
-					public function revokeMandate( $id ) {
+					public function revokeMandate( string $id ) {
 						global $mollie_sim;
 						$db  = new SQLite3( $mollie_sim );
 						$res = $db->query( "SELECT * FROM mandates WHERE id='$id'" );
@@ -553,14 +551,14 @@ class MollieSimulatie {
 					 *
 					 * @param array $data De orderdata.
 					 */
-					public function createPayment( $data ) {
+					public function createPayment( array $data ) : object {
 						return new class( $data, $this->id, $this->name ) {
 							/**
 							 * Payment id
 							 *
 							 * @var string $id Het id
 							 */
-							public $id;
+							public string $id;
 
 							/**
 							 * De constructor
@@ -569,7 +567,7 @@ class MollieSimulatie {
 							 * @param string $customer_id   Het klant id.
 							 * @param string $customer_name De klant naam.
 							 */
-							public function __construct( $data, $customer_id, $customer_name ) {
+							public function __construct( array $data, string $customer_id, string $customer_name ) {
 								global $mollie_sim;
 								$this->id          = uniqid( 'tr_' );
 								$db                = new SQLite3( $mollie_sim );
@@ -598,7 +596,7 @@ class MollieSimulatie {
 							/**
 							 * Geef de url terug.
 							 */
-							public function getCheckOutUrl() {
+							public function getCheckOutUrl() : string {
 								if ( ! defined( 'KLEISTAD_TEST' ) ) {
 									return add_query_arg( 'id', $this->id, plugin_dir_url( __DIR__ ) . '/tests/molliesimulator.php' );
 								}
@@ -615,7 +613,7 @@ class MollieSimulatie {
 			 *
 			 * @param array $data De klant data.
 			 */
-			public function create( $data ) {
+			public function create( array $data ) : object {
 				global $mollie_sim;
 				$this->id = uniqid( 'cst_' );
 				$db       = new SQLite3( $mollie_sim );
@@ -630,12 +628,12 @@ class MollieSimulatie {
 			/**
 			 * Deze class hoeft alleen de get te ondersteunen.
 			 */
-			public function get() {
+			public function get() : object {
 				return new class() {
 					/**
 					 * Geef de issuers van iDeal betalingen terug
 					 */
-					public function issuers() {
+					public function issuers() : object {
 						return (object) [
 							(object) [
 								'id'    => 'ideal_INGBNL2A',
@@ -668,7 +666,7 @@ class MollieSimulatie {
 	 *
 	 * @param string $db_file Het sqlite bestand.
 	 */
-	private function create_db( $db_file ) {
+	private function create_db( string $db_file ) {
 		$db  = new SQLite3( $db_file );
 		$res = $db->query( "SELECT name FROM sqlite_master WHERE type='table' and name='customers'" );
 		if ( ! $res->fetchArray() ) {

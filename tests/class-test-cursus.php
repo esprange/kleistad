@@ -159,7 +159,7 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 	public function test_docent_naam() {
 		$cursus      = new Cursus();
 		$docent_id   = $this->factory->user->create();
-		$docent_naam = get_user_by( 'ID', $docent_id, )->display_name;
+		$docent_naam = get_user_by( 'ID', $docent_id )->display_name;
 
 		$cursus->docent = $docent_id;
 		$this->assertEquals( $docent_naam, $cursus->docent_naam(), 'numeriek docent is incorrect' );

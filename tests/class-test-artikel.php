@@ -20,6 +20,11 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 * @return Artikel
 	 */
 	private function maak_artikel( float $bedrag ): Artikel {
+		/**
+		 * Suppress de phpstorm foutmelding
+		 *
+		 * @noinspection PhpUnhandledExceptionInspection
+		 */
 		$artikel           = $this->getMockForAbstractClass( Artikel::class, [], '', true, true, true, [ 'maak_factuur' ] );
 		$artikel->code     = 'T' . wp_rand( 100, 999 );
 		$artikel->klant_id = $this->factory->user->create();
@@ -74,7 +79,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 			 *
 			 * @return string De redirect url ingeval van een ideal betaling of false als het niet lukt.
 			 */
-			public function doe_ideal( string $bericht, float $bedrag ) {
+			public function doe_ideal( string $bericht, float $bedrag ) : string {
 				return '';
 			}
 		};
@@ -87,7 +92,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	public function test_controle() {
 		$artikel = $this->maak_artikel( 10 );
-		$this->assertFalse( empty( $artikel->controle() ), 'controle fout' );
+		$this->assertNotEmpty( $artikel->controle(), 'controle fout' );
 	}
 
 	/**
@@ -106,7 +111,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	public function test_maak_link() {
 		$artikel = $this->maak_artikel( 10 );
-		$this->assertFalse( empty( $artikel->maak_link( [ 'test' ], 'test' ) ), 'maak_link incorrect' );
+		$this->assertNotEmpty( $artikel->maak_link( [ 'test' ], 'test' ), 'maak_link incorrect' );
 	}
 
 	/**
@@ -114,7 +119,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	public function test_geef_artikelnaam() {
 		$artikel = $this->maak_artikel( 10 );
-		$this->assertTrue( empty( $artikel->geef_artikelnaam() ), 'geef_artikelnaam incorrect' );
+		$this->assertEmpty( $artikel->geef_artikelnaam(), 'geef_artikelnaam incorrect' );
 	}
 
 	/**

@@ -23,13 +23,13 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 		$payment->status = $_GET[ 'status' ];
 		$db->exec( "UPDATE payments set data='" . /** @scrutinizer ignore-type */ json_encode( $payment ) . "' WHERE id='$id'" ); //phpcs:ignore
 		if ( 'first' === $payment->sequenceType && 'paid' === $payment->status ) {
-			$res = $db->query( "SELECT data FROM mandates WHERE id='{$payment->mandateId}'" );
+			$res = $db->query( "SELECT data FROM mandates WHERE id='$payment->mandateId'" );
 			$row = $res->fetchArray();
 			if ( false !== $row ) {
 				$mandate                = json_decode( $row['data'] );
 				$mandate->status        = 'valid';
 				$mandate->signatureDate = date( 'c' );
-				$db->exec( "UPDATE mandates set data='" . /** @scrutinizer ignore-type */ json_encode( $mandate ) . "' WHERE id='{$payment->mandateId}'" ); //phpcs:ignore
+				$db->exec( "UPDATE mandates set data='" . /** @scrutinizer ignore-type */ json_encode( $mandate ) . "' WHERE id='$payment->mandateId'" ); //phpcs:ignore
 			} else {
 				$melding = fout( 'Mandate niet gevonden' );
 			}
@@ -64,11 +64,14 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
 	</script>
 	<script>
 		function home() {
-			var url = window.location.protocol + '//' + window.location.hostname + window.location.pathname;
+			let url = window.location.protocol + '//' + window.location.hostname + window.location.pathname;
 			window.location.replace( url );
 		}
 
-		$( document ).ready(
+		/**
+		 * Document ready.
+		 */
+		$(
 			function() {
 				$( '.table' ).DataTable(
 					{
@@ -146,7 +149,7 @@ if ( isset( $_GET[ 'idealupdate'] ) ) {
  *
  * @param string $tekst De notificatie.
  */
-function succes( $tekst ) {
+function succes( string $tekst ) : string {
 	return "<div class=\"row alert alert-success\" >$tekst</div>";
 }
 
@@ -155,7 +158,7 @@ function succes( $tekst ) {
  *
  * @param string $tekst De notificatie.
  */
-function fout( $tekst ) {
+function fout( string $tekst ) : string {
 	return "<div class=\"row alert alert-danger\" >$tekst</div>";
 }
 
@@ -165,7 +168,7 @@ function fout( $tekst ) {
  * @param string $id  Het payment id.
  * @param string $url De webhook url.
  */
-function feedback( $id, $url ) {
+function feedback( string $id, string $url ) {
 	$ch = curl_init();
 	if ( false !== $ch ) {
 		curl_setopt( $ch, CURLOPT_URL, $url );
@@ -183,7 +186,7 @@ function feedback( $id, $url ) {
  *
  * @param string $id  Het payment id.
  */
-function betaalformulier( $id ) {
+function betaalformulier( string $id ) {
 	global $db;
 	$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 	$row = $res->fetchArray();
@@ -210,7 +213,7 @@ function betaalformulier( $id ) {
 	</div>
 	<fieldset class="form-group">
 		<div class="row">
-			<legend class="col-form-label col-sm-2 pt-0">betaal status</legend>
+			<strong class="col-form-label col-sm-2 pt-0">betaal status</strong>
 			<div class="col-sm-6">
 				<div class="form-check">
 					<input type="radio" id="paid" class="form-check-input" name="status" value="paid" required>
@@ -246,7 +249,7 @@ function betaalformulier( $id ) {
  *
  * @param string $id  Het payment id.
  */
-function verwerk_refund( $id ) {
+function verwerk_refund( string $id ) : string {
 	global $db;
 	$res = $db->query( "SELECT payment_id, data FROM refunds WHERE id='$id'" );
 	$row = $res->fetchArray();
@@ -274,7 +277,7 @@ function verwerk_refund( $id ) {
  *
  * @param string $id  Het payment id.
  */
-function verwerk_incasso( $id ) {
+function verwerk_incasso( string $id ) : string {
 	global $db;
 	$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 	$row = $res->fetchArray();

@@ -10,7 +10,7 @@
 namespace Kleistad;
 
 /**
- * Inschrijving test case.
+ * Abonnee inschrijving test case.
  */
 class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 
@@ -27,7 +27,7 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 	 * Maak een cursist inschrijving aan.
 	 *
 	 * @param bool $beperkt Of het een beperkt abonnement betreft.
-	 * @return Inschrijving De inschrijving.
+	 * @return Abonnement Het abonnement.
 	 */
 	private function maak_inschrijving( bool $beperkt ) : Abonnement {
 		$abonnee_id  = $this->factory->user->create();
@@ -77,7 +77,7 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test validate functie.
 	 */
 	public function test_validate() {
-		$this->maak_inschrijving( false );
+		$this->maak_inschrijving( true );
 		$_POST  = $this->input;
 		$data   = [];
 		$result = $this->public_actie( self::SHORTCODE, 'validate', $data );

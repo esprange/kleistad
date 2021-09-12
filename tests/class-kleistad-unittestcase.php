@@ -3,12 +3,15 @@
  * Class Kleistad_UnitTestCase
  *
  * @package Kleistad
+ * @noinspection PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;
 
 use WP_UnitTestCase;
 use MockPHPMailer;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Mock filter input array function
@@ -16,8 +19,6 @@ use MockPHPMailer;
  * @param int       $type      Type input Post of Get.
  * @param array|int $options   Filter opties.
  * @param bool      $add_empty Afwezige keys als null tonen.
- *
- * @return mixed
  */
 function filter_input_array( int $type, $options = FILTER_DEFAULT, bool $add_empty = true ) {
 	// @phpcs:disable
@@ -62,16 +63,18 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	 * Omdat de shortcode class een singleton is wordt een cache opgebouwd voor hergebruik
 	 *
 	 * @param string $shortcode_tag De shortcode die getest wordt.
-	 * @param string $method        De protected class method die moet worden getest.
-	 * @param array  $data          De uit te wisselen data.
-	 * @param array  $atts          De eventuele attributes meegegeven aan de shortcode.
+	 * @param string $method De protected class method die moet worden getest.
+	 * @param array  $data De uit te wisselen data.
+	 * @param array  $atts De eventuele attributes meegegeven aan de shortcode.
 	 *
-	 * @returns mixed
+	 * @return mixed
+	 * @throws Kleistad_Exception  De Kleistad exceptie.
+	 * @throws ReflectionException De Reflectie exceptie.
 	 */
 	protected function public_actie( string $shortcode_tag, string $method, array &$data, array $atts = [] ) {
 		static $shortcodes = [];
 		$class             = Shortcode::get_class_name( $shortcode_tag );
-		$reflection        = new \ReflectionClass( $class );
+		$reflection        = new ReflectionClass( $class );
 		$action            = $reflection->getMethod( $method );
 		$action->setAccessible( true );
 		if ( ! isset( $shortcodes[ $shortcode_tag ] ) ) {
