@@ -28,13 +28,6 @@ class Googleconnect {
 	const REDIRECT_URI  = 'kleistad_google_redirect_uri';
 
 	/**
-	 * De Google kalender service.
-	 *
-	 * @var Calendar|null $calendar_service De google service.
-	 */
-	private static ?Calendar $calendar_service = null;
-
-	/**
 	 * Maak een Google API client aan.
 	 *
 	 * @return Google\Client|bool $client of false.
@@ -119,7 +112,7 @@ class Googleconnect {
 	 *
 	 * @throws Exception Als er geen connecties gemaakt kunnen worden.
 	 */
-	private function create_services() {
+	private function create_calendar_service() : Calendar {
 		$client = $this->maak_client();
 		if ( false === $client ) {
 			throw new Exception( 'Google maak client failure' );
@@ -133,7 +126,7 @@ class Googleconnect {
 			$client->fetchAccessTokenWithRefreshToken( $refreshtoken );
 			update_option( self::ACCESS_TOKEN, $client->getAccessToken() );
 		}
-		self::$calendar_service = new Calendar( $client );
+		return new Calendar( $client );
 	}
 
 	/**
@@ -143,11 +136,12 @@ class Googleconnect {
 	 * @throws Kleistad_Exception Als er iets fout gaat.
 	 */
 	public function calendar_service() : Calendar {
+		static $calendar_service = null;
 		try {
-			if ( is_null( self::$calendar_service ) ) {
-				$this->create_services();
+			if ( is_null( $calendar_service ) ) {
+				$calendar_service = $this->create_calendar_service();
 			}
-			return self::$calendar_service;
+			return $calendar_service;
 		} catch ( Exception $e ) {
 			error_log( 'Calendar: ' . $e->getMessage() ); // phpcs:ignore
 			throw new Kleistad_Exception( 'Interne fout' );
