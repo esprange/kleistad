@@ -38,19 +38,18 @@ use Exception;
  * @property int    aantal
  * @property bool   definitief
  * @property bool   betaling_email
- * @property string event_id
  * @property int    aanvraag_id
  */
 class Workshop extends Artikel {
 
-	public const DEFINITIE = [
+	public const DEFINITIE       = [
 		'prefix' => 'W',
 		'naam'   => 'workshop',
 		'pcount' => 1,
 	];
-	public const META_KEY  = 'kleistad_workshop';
-
-	private const EMAIL_SUBJECT = [
+	public const META_KEY        = 'kleistad_workshop';
+	public const AFSPRAAK_PREFIX = 'kleistadevent';
+	private const EMAIL_SUBJECT  = [
 		'_bevestiging'    => 'Bevestiging van ',
 		'_herbevestiging' => 'Bevestiging na correctie van ',
 		'_betaling'       => 'Betaling van ',
@@ -128,8 +127,6 @@ class Workshop extends Artikel {
 				return "W{$this->data['id']}";
 			case 'telnr':
 				return $this->data['telefoon'];
-			case 'event_id':
-				return sprintf( 'kleistadevent%06d', $this->data['id'] );
 			default:
 				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
 		}
@@ -228,20 +225,13 @@ class Workshop extends Artikel {
 		$workshopaanvraag->gepland( $this->id );
 
 		try {
-			$event             = new Event( $this->event_id );
-			$event->properties = [
-				'docent'     => $this->docent,
-				'technieken' => $this->technieken,
-				'code'       => $this->code,
-				'id'         => $this->id,
-				'class'      => __CLASS__,
-			];
-			$event->titel      = $this->naam;
-			$event->definitief = $this->definitief;
-			$event->vervallen  = $this->vervallen;
-			$event->start      = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
-			$event->eind       = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
-			$event->save();
+			$afspraak             = new Afspraak( sprintf( '%s%06d', self::AFSPRAAK_PREFIX, $this->id ) );
+			$afspraak->titel      = $this->naam;
+			$afspraak->definitief = $this->definitief;
+			$afspraak->vervallen  = $this->vervallen;
+			$afspraak->start      = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
+			$afspraak->eind       = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
+			$afspraak->save();
 		} catch ( Exception $e ) {
 			error_log ( $e->getMessage() ); // phpcs:ignore
 		}

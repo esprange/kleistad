@@ -1,6 +1,6 @@
 <?php
 /**
- * De definitie van de events class.
+ * De definitie van de afspraken class.
  *
  * @link       https://www.kleistad.nl
  * @since      6.11.0
@@ -15,18 +15,18 @@ use Countable;
 use Iterator;
 
 /**
- * Kleistad events class.
+ * Kleistad afspraken class.
  *
  * @since 6.11.0
  */
-class Events implements Countable, Iterator {
+class Afspraken implements Countable, Iterator {
 
 	/**
-	 * De events
+	 * De afspraken
 	 *
-	 * @var array $events De events.
+	 * @var array $afspraken De afspraken.
 	 */
-	private array $events = [];
+	private array $afspraken = [];
 
 	/**
 	 * Intere index
@@ -53,27 +53,27 @@ class Events implements Countable, Iterator {
 		$events        = $results->getItems();
 		foreach ( $events as $event ) {
 			if ( ! empty( $event->start->dateTime ) ) { // Skip events die de hele dag duren, zoals verjaardagen en vakanties.
-				$this->events[] = new Event( $event->getId() );
+				$this->afspraken[] = new Afspraak( $event->getId() );
 			}
 		}
 	}
 
 	/**
-	 * Geef het aantal events terug.
+	 * Geef het aantal afspraken terug.
 	 *
 	 * @return int Het aantal.
 	 */
 	public function count(): int {
-		return count( $this->events );
+		return count( $this->afspraken );
 	}
 
 	/**
-	 * Geef de huidige event terug.
+	 * Geef de huidige afspraak terug.
 	 *
-	 * @return Event Het event.
+	 * @return Afspraak De afspraak.
 	 */
-	public function current(): Event {
-		return $this->events[ $this->current_index ];
+	public function current(): Afspraak {
+		return $this->afspraken[ $this->current_index ];
 	}
 
 	/**
@@ -105,6 +105,6 @@ class Events implements Countable, Iterator {
 	 * @return bool Of het bestaat of niet.
 	 */
 	public function valid(): bool {
-		return isset( $this->events[ $this->current_index ] );
+		return isset( $this->afspraken[ $this->current_index ] );
 	}
 }

@@ -14,7 +14,7 @@ namespace Kleistad;
  */
 class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 
-	private const SHORTCODE  = 'cursus_beheer';
+	private const SHORTCODE = 'cursus_beheer';
 
 	/**
 	 * Formulier data.

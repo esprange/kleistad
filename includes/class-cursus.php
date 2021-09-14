@@ -39,9 +39,10 @@ use Exception;
  * @property int    maximum
  * @property bool   meer
  * @property bool   tonen
- * @property string event_id
  */
 class Cursus {
+
+	public const AFSPRAAK_PREFIX = 'kleistadcursus';
 
 	/**
 	 * De cursusdata
@@ -124,8 +125,6 @@ class Cursus {
 				);
 			case 'code':
 				return "C{$this->data['id']}";
-			case 'event_id':
-				return sprintf( 'kleistadcursus%06d', $this->data['id'] );
 			default:
 				return is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) :
 					( is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ] );
@@ -187,9 +186,11 @@ class Cursus {
 	}
 
 	/**
-	 * Erase de cursus
+	 * Erase de cursus. Eerst op vervallen zetten zodat de afspraak ook geannuleerd wordt.
 	 */
 	public function erase() :bool {
+		$this->vervallen = true;
+		$this->save();
 		global $wpdb;
 		$wpdb->delete( "{$wpdb->prefix}kleistad_cursussen", [ 'id' => $this->id ] );
 		return true;
@@ -285,37 +286,21 @@ class Cursus {
 		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 
 		try {
-			$event             = new Event( $this->event_id );
-			$event->properties = [
-				'docent'     => $this->docent_naam(),
-				'technieken' => $this->technieken,
-				'code'       => "C$this->id",
-				'id'         => $this->id,
-				'class'      => __CLASS__,
-			];
-			$event->titel      = $this->naam;
-			$event->definitief = $this->tonen;
-			$event->vervallen  = $this->vervallen;
-			$event->start      = new DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
-			$event->eind       = new DateTime( $this->data['start_datum'] . ' ' . $this->data['eind_tijd'], $timezone );
-			switch ( count( $this->lesdatums ) ) {
-				case 0: // Oude cursus, er zijn nog geen lesdatums toegevoegd.
-					if ( $this->start_datum !== $this->eind_datum ) {
-						$event->herhalen( new DateTime( $this->data['eind_datum'] . ' ' . $this->data['eind_tijd'], $timezone ) );
-					}
-					break;
-				case 1: // Geen recurrence, er is maar één lesdatum.
-					break;
-				default:
-					$datums = [];
-					foreach ( $this->lesdatums as $lesdatum ) {
-						$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
-					}
-					sort( $datums );
-					$event->patroon( $datums );
-					break;
+			$afspraak             = new Afspraak( sprintf( '%s%06d', self::AFSPRAAK_PREFIX, $this->id ) );
+			$afspraak->titel      = $this->naam;
+			$afspraak->definitief = $this->tonen;
+			$afspraak->vervallen  = $this->vervallen;
+			$afspraak->start      = new DateTime( $this->data['start_datum'] . ' ' . $this->data['start_tijd'], $timezone );
+			$afspraak->eind       = new DateTime( $this->data['start_datum'] . ' ' . $this->data['eind_tijd'], $timezone );
+			if ( 1 < count( $this->lesdatums ) ) {
+				$datums = [];
+				foreach ( $this->lesdatums as $lesdatum ) {
+					$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
+				}
+				sort( $datums );
+				$afspraak->patroon( $datums );
 			}
-			$event->save();
+			$afspraak->save();
 		} catch ( Exception $e ) {
 			error_log ( $e->getMessage() ); // phpcs:ignore
 		}

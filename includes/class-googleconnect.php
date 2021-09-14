@@ -12,9 +12,9 @@
 namespace Kleistad;
 
 use WP_Error;
-use Google;
 use Exception;
-use Google_Service_Calendar;
+use Google;
+use Google\Service\Calendar;
 
 /**
  * Kleistad Google class.
@@ -30,9 +30,9 @@ class Googleconnect {
 	/**
 	 * De Google kalender service.
 	 *
-	 * @var Google_Service_Calendar $calendar_service De google service.
+	 * @var Calendar|null $calendar_service De google service.
 	 */
-	private static $calendar_service = null;
+	private static ?Calendar $calendar_service = null;
 
 	/**
 	 * Maak een Google API client aan.
@@ -50,7 +50,7 @@ class Googleconnect {
 		$client->setClientId( setup()['google_client_id'] );
 		$client->setClientSecret( setup()['google_sleutel'] );
 		$client->setIncludeGrantedScopes( true );
-		$client->addScope( Google_Service_Calendar::CALENDAR_EVENTS );
+		$client->addScope( Calendar::CALENDAR_EVENTS );
 		$client->setRedirectUri( $redirect_uri );
 		$refresh_token = get_option( self::REFRESH_TOKEN );
 		if ( false !== $refresh_token ) {
@@ -67,7 +67,6 @@ class Googleconnect {
 	/**
 	 * Vraag koppeling met google service aan.
 	 *
-	 * @since 5.0.0
 	 * @param  string $redirect_url De url welke gebruikt moet worden na authenticatie.
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
@@ -86,7 +85,6 @@ class Googleconnect {
 	/**
 	 * Koppel met google service.
 	 *
-	 * @since 5.0.0
 	 * @return WP_ERROR|bool Succes of error(s).
 	 */
 	public function koppel_service() {
@@ -119,8 +117,6 @@ class Googleconnect {
 	/**
 	 * Maak de Google services aan.
 	 *
-	 * @since 6.1.0
-	 *
 	 * @throws Exception Als er geen connecties gemaakt kunnen worden.
 	 */
 	private function create_services() {
@@ -137,31 +133,41 @@ class Googleconnect {
 			$client->fetchAccessTokenWithRefreshToken( $refreshtoken );
 			update_option( self::ACCESS_TOKEN, $client->getAccessToken() );
 		}
-		self::$calendar_service = new Google_Service_Calendar( $client );
+		self::$calendar_service = new Calendar( $client );
 	}
 
 	/**
 	 * Maak de Google Calendar service aan.
 	 *
-	 * @since 5.0.0
-	 * @return Google_Service_Calendar de service.
+	 * @return Calendar de service.
+	 * @throws Kleistad_Exception Als er iets fout gaat.
 	 */
-	public function calendar_service() {
-		if ( is_null( self::$calendar_service ) ) {
-			$this->create_services();
+	public function calendar_service() : Calendar {
+		try {
+			if ( is_null( self::$calendar_service ) ) {
+				$this->create_services();
+			}
+			return self::$calendar_service;
+		} catch ( Exception $e ) {
+			error_log( 'Calendar: ' . $e->getMessage() ); // phpcs:ignore
+			throw new Kleistad_Exception( 'Interne fout' );
 		}
-		return self::$calendar_service;
 	}
 
 	/**
 	 * Bepaal of er connectie is met Google.
 	 *
-	 * @since 5.0.0
 	 * @return bool succes of falen
+	 * @throws Kleistad_Exception Als er iets fout gaat.
 	 */
 	public function is_authorized() : bool {
 		if ( false !== get_option( self::ACCESS_TOKEN ) ) {
-			return is_object( $this->calendar_service() );
+			try {
+				return is_object( $this->calendar_service() );
+			} catch ( Exception $e ) {
+				error_log( 'Calendar: ' . $e->getMessage() ); // phpcs:ignore
+				throw new Kleistad_Exception( 'Interne fout' );
+			}
 		}
 		return false;
 	}

@@ -45,12 +45,6 @@ class WorkshopActie {
 		if ( ! $this->workshop->vervallen ) {
 			$this->workshop->vervallen = true;
 			$this->workshop->save();
-			try {
-				$event = new Event( $this->workshop->event_id );
-				$event->delete();
-			} catch ( Exception $exceptie ) {
-				unset( $exceptie ); // phpcs:ignore
-			}
 		}
 		// Als de betaling email al verstuurd is, dan vind de annulering plaats vanuit de boekhouding.
 		if ( $this->workshop->definitief && ! $this->workshop->betaling_email ) {

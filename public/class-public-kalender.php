@@ -50,18 +50,18 @@ class Public_Kalender extends Shortcode {
 	/**
 	 * Verwerk een workshop event
 	 *
-	 * @param Event $event Het event.
+	 * @param Afspraak $afspraak De afspraak.
 	 * @return array
 	 */
-	private static function workshop_event( Event $event ) : array {
-		$workshop = new Workshop( $event->properties['id'] );
+	private static function workshop_event( Afspraak $afspraak ) : array {
+		$workshop = new Workshop( (int) strpbrk( $afspraak->id, '0123456789' ) );
 		if ( ! $workshop->vervallen ) {
 			$betaald = $workshop->is_betaald();
 			return [
-				'id'              => $event->id,
+				'id'              => $afspraak->id,
 				'title'           => "$workshop->naam ($workshop->code)",
-				'start'           => $event->start->format( DateTimeInterface::ATOM ),
-				'end'             => $event->eind->format( DateTimeInterface::ATOM ),
+				'start'           => $afspraak->start->format( DateTimeInterface::ATOM ),
+				'end'             => $afspraak->eind->format( DateTimeInterface::ATOM ),
 				'backgroundColor' => $betaald ? 'green' : ( $workshop->definitief ? 'springgreen' : 'orange' ),
 				'textColor'       => $betaald ? 'white' : 'black',
 				'extendedProps'   => [
@@ -78,17 +78,17 @@ class Public_Kalender extends Shortcode {
 	/**
 	 * Verwerk een cursus event
 	 *
-	 * @param Event $event Het event.
+	 * @param Afspraak $afspraak De afspraak.
 	 * @return array
 	 */
-	private static function cursus_event( Event $event ) : array {
-		$cursus = new Cursus( $event->properties['id'] );
+	private static function cursus_event( Afspraak $afspraak ) : array {
+		$cursus = new Cursus( (int) strpbrk( $afspraak->id, '0123456789' ) );
 		if ( ! $cursus->vervallen ) {
 			return [
-				'id'              => $event->id,
+				'id'              => $afspraak->id,
 				'title'           => "$cursus->naam ($cursus->code)",
-				'start'           => $event->start->format( DateTimeInterface::ATOM ),
-				'end'             => $event->eind->format( DateTimeInterface::ATOM ),
+				'start'           => $afspraak->start->format( DateTimeInterface::ATOM ),
+				'end'             => $afspraak->eind->format( DateTimeInterface::ATOM ),
 				'backgroundColor' => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'slateblue' : 'lightblue',
 				'textColor'       => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'white' : 'black',
 				'extendedProps'   => [
@@ -105,15 +105,15 @@ class Public_Kalender extends Shortcode {
 	/**
 	 * Verwerk een overig event
 	 *
-	 * @param Event $event Het event.
+	 * @param Afspraak $afspraak De afspraak.
 	 * @return array
 	 */
-	private static function overig_event( Event $event ) : array {
+	private static function overig_event( Afspraak $afspraak ) : array {
 		return [
-			'id'              => $event->id,
-			'title'           => $event->titel ?: '',
-			'start'           => $event->start->format( DateTimeInterface::ATOM ),
-			'end'             => $event->eind->format( DateTimeInterface::ATOM ),
+			'id'              => $afspraak->id,
+			'title'           => $afspraak->titel ?: '',
+			'start'           => $afspraak->start->format( DateTimeInterface::ATOM ),
+			'end'             => $afspraak->eind->format( DateTimeInterface::ATOM ),
 			'backgroundColor' => 'violet',
 			'textColor'       => 'black',
 		];
@@ -126,34 +126,27 @@ class Public_Kalender extends Shortcode {
 	 * @return WP_REST_Response
 	 */
 	public static function callback_kalender( WP_REST_Request $request ) : WP_REST_Response {
-		$events    = new Events(
+		$afspraken = new Afspraken(
 			[
 				'timeMin' => $request->get_param( 'start' ),
 				'timeMax' => $request->get_param( 'eind' ),
 			]
 		);
 		$fc_events = [];
-		foreach ( $events as $event ) {
-			$class = $event->properties['class'] ?? '';
-			if ( strpos( $class, 'Workshop' ) ) {
-				$fc_event = self::workshop_event( $event );
-				if ( ! empty( $fc_event ) ) {
-					$fc_events[] = $fc_event;
-				}
+		foreach ( $afspraken as $afspraak ) {
+			if ( false !== strpos( $afspraak->id, 'kleistadevent' ) ) {
+				$fc_events[] = self::workshop_event( $afspraak );
+				continue;
 			}
-			if ( strpos( $class, 'Cursus' ) ) {
-				$fc_event = self::cursus_event( $event );
-				if ( ! empty( $fc_event ) ) {
-					$fc_events[] = $fc_event;
-				}
+			if ( false !== strpos( $afspraak->id, 'kleistadcursus' ) ) {
+				$fc_events[] = self::cursus_event( $afspraak );
+				continue;
 			}
-			if ( empty( $class ) ) {
-				$fc_events[] = self::overig_event( $event );
-			}
+			$fc_events[] = self::overig_event( $afspraak );
 		}
 		return new WP_REST_Response(
 			[
-				'events' => $fc_events,
+				'events' => array_filter( $fc_events ),
 			]
 		);
 	}
