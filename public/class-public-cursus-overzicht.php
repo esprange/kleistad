@@ -45,7 +45,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			if ( ! $cursus->vervallen && ( 0 === $docent_id || intval( $cursus->docent ) === $docent_id ) ) {
 				$cursus_info[ $cursus->id ] = [
 					'start_dt'             => $cursus->start_datum,
-					'code'                 => "C{$cursus->id}",
+					'code'                 => "C$cursus->id",
 					'naam'                 => $cursus->naam,
 					'docent'               => $cursus->docent_naam(),
 					'start_datum'          => strftime( '%d-%m-%Y', $cursus->start_datum ),
@@ -166,8 +166,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 
 	/**
 	 * Schrijf cursisten informatie naar het bestand.
+	 *
+	 * @param array $data De argumenten.
 	 */
-	protected function cursisten() {
+	protected function cursisten( array $data ) {
 		$cursus_id        = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );
 		$cursisten_fields = [
 			'Voornaam',
@@ -181,7 +183,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			'Ingedeeld',
 			'Geannuleerd',
 		];
-		fputcsv( $this->file_handle, $cursisten_fields, ';' );
+		fputcsv( $data['filehandle'], $cursisten_fields, ';' );
 		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
 			$cursist          = get_userdata( $inschrijving->klant_id );
 			$cursist_gegevens = [
@@ -196,7 +198,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				$inschrijving->ingedeeld ? 'Ja' : 'Nee',
 				$inschrijving->geannuleerd ? 'Ja' : 'Nee',
 			];
-			fputcsv( $this->file_handle, $cursist_gegevens, ';' );
+			fputcsv( $data['filehandle'], $cursist_gegevens, ';' );
 		}
 	}
 

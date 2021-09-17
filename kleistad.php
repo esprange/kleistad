@@ -16,6 +16,8 @@
  * License:           GPL-3.0+
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       kleistad
+ * Requires at least: 4.8.0
+ * Requires PHP:      7.4
  * GitHub Plugin URI: https://github.com/esprange/kleistad
  */
 

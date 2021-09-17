@@ -37,13 +37,6 @@ abstract class Shortcode {
 	protected array $atts;
 
 	/**
-	 * File handle voor download bestanden
-	 *
-	 * @var resource de file pointer.
-	 */
-	protected $file_handle;
-
-	/**
 	 * Abstract definitie van de prepare functie
 	 *
 	 * @since   4.0.87
@@ -299,15 +292,14 @@ abstract class Shortcode {
 	 * @param string    $functie   De shortcode functie die aangeroepen moet worden.
 	 * @return array
 	 */
-	protected static function download( Shortcode $shortcode, $functie ) {
+	protected static function download( Shortcode $shortcode, string $functie ) : array {
 		$upload_dir = wp_upload_dir();
 		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
-		$result     = fopen( $upload_dir['basedir'] . $file, 'w' );
-		if ( false !== $result ) {
-			$shortcode->file_handle = $result;
-			fwrite( $shortcode->file_handle, "\xEF\xBB\xBF" );
-			$result = call_user_func( [ $shortcode, $functie ] );
-			fclose( $shortcode->file_handle );
+		$filehandle = fopen( $upload_dir['basedir'] . $file, 'w' );
+		if ( false !== $filehandle ) {
+			fwrite( $filehandle, "\xEF\xBB\xBF" );
+			$result = $shortcode->$functie( [ 'filehandle' => $filehandle ] );
+			fclose( $filehandle );
 			if ( empty( $result ) ) {
 				return [ 'file_uri' => $upload_dir['baseurl'] . $file ];
 			}
@@ -348,9 +340,13 @@ abstract class Shortcode {
 		$shortcode = self::get_shortcode( $request );
 		try {
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
-				throw new Exception( 'callback_formsubmit voor onbekend object' );
+				throw new Exception( 'callback_download voor onbekend object' );
 			}
-			return new WP_REST_Response( self::download( $shortcode, $request->get_param( 'actie' ) ) );
+			$functie = $request->get_param( 'actie' );
+			if ( method_exists( $shortcode, $functie ) ) {
+				return new WP_REST_Response( self::download( $shortcode, $functie ) );
+			}
+			throw new Exception( 'callback_download voor onbekende method' );
 		} catch ( Kleistad_Exception $exceptie ) {
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
 		} catch ( Exception $exceptie ) {

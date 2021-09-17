@@ -155,25 +155,25 @@ class Kleistad {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
+		$plugin_filters = new Admin_Filters();
+		$plugin_actions = new Admin_Actions();
 
-		$plugin_admin = new Admin_Main();
-
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts_and_styles' );
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
-		$this->loader->add_action( 'admin_init', $plugin_admin, 'initialize' );
-		$this->loader->add_action( 'kleistad_daily_jobs', $plugin_admin, 'daily_jobs' );
-		$this->loader->add_action( 'kleistad_daily_gdpr', $plugin_admin, 'daily_gdpr' );
-		$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'instantiate_background' );
-		$this->loader->add_action( 'update_option_kleistad-setup', $plugin_admin, 'setup_gewijzigd', 10, 2 );
-		$this->loader->add_action( 'manage_kleistad_email_posts_custom_column', $plugin_admin, 'email_posts_custom_column', 10, 2 );
-		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_admin, 'register_exporter' );
-		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_admin, 'register_eraser' );
-		$this->loader->add_filter( 'pre_set_site_transient_update_plugins', $plugin_admin, 'check_update' );
-		$this->loader->add_filter( 'plugins_api', $plugin_admin, 'check_info', 20, 3 );
-		$this->loader->add_filter( 'post_row_actions', $plugin_admin, 'post_row_actions', 10, 2 );
-		$this->loader->add_filter( 'manage_kleistad_email_posts_columns', $plugin_admin, 'email_posts_columns' );
-		$this->loader->add_filter( 'manage_edit-kleistad_email_sortable_columns', $plugin_admin, 'email_sortable_columns' );
-		$this->loader->add_filter( 'pre_get_posts', $plugin_admin, 'email_get_posts_order' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_actions, 'enqueue_scripts_and_styles' );
+		$this->loader->add_action( 'admin_menu', $plugin_actions, 'add_plugin_admin_menu' );
+		$this->loader->add_action( 'admin_init', $plugin_actions, 'initialize' );
+		$this->loader->add_action( 'kleistad_daily_jobs', $plugin_actions, 'daily_jobs' );
+		$this->loader->add_action( 'kleistad_daily_gdpr', $plugin_actions, 'daily_gdpr' );
+		$this->loader->add_action( 'plugins_loaded', $plugin_actions, 'instantiate_background' );
+		$this->loader->add_action( 'update_option_kleistad-setup', $plugin_actions, 'setup_gewijzigd', 10, 2 );
+		$this->loader->add_action( 'manage_kleistad_email_posts_custom_column', $plugin_actions, 'email_posts_custom_column', 10, 2 );
+		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_filters, 'register_exporter' );
+		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_filters, 'register_eraser' );
+		$this->loader->add_filter( 'pre_set_site_transient_update_plugins', $plugin_filters, 'check_update' );
+		$this->loader->add_filter( 'plugins_api', $plugin_filters, 'check_info', 20, 3 );
+		$this->loader->add_filter( 'post_row_actions', $plugin_filters, 'post_row_actions', 10, 2 );
+		$this->loader->add_filter( 'manage_kleistad_email_posts_columns', $plugin_filters, 'email_posts_columns' );
+		$this->loader->add_filter( 'manage_edit-kleistad_email_sortable_columns', $plugin_filters, 'email_sortable_columns' );
+		$this->loader->add_filter( 'pre_get_posts', $plugin_filters, 'email_get_posts_order' );
 	}
 
 	/**

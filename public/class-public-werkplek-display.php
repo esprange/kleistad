@@ -39,7 +39,7 @@ class Public_Werkplek_Display extends Public_Shortcode_Display {
 
 		<div id="kleistad_meester">
 			<?php if ( current_user_can( BESTUUR ) ) : ?>
-			<select id="kleistad_meester_selectie" >
+			<<!--suppress HtmlFormInputWithoutLabel -->select id="kleistad_meester_selectie" >
 				<option value="0" >...</option>
 				<?php foreach ( $this->data['meesters'] as $meester ) : ?>
 				<option value="<?php echo esc_attr( $meester->ID ); ?>" ><?php echo esc_html( $meester->display_name ); ?></option>
@@ -50,7 +50,7 @@ class Public_Werkplek_Display extends Public_Shortcode_Display {
 
 		<div id="kleistad_gebruiker" title="Reserveer een werkplek voor ...">
 			<?php if ( current_user_can( BESTUUR ) || current_user_can( DOCENT ) ) : ?>
-			<select id="kleistad_gebruiker_selectie" >
+			<<!--suppress HtmlFormInputWithoutLabel -->select id="kleistad_gebruiker_selectie" >
 				<option value="<?php echo esc_attr( $huidige_gebruiker->ID ); ?>" selected ><?php echo esc_html( $huidige_gebruiker->display_name ); ?></option>
 					<?php foreach ( $this->data['cursisten'] as $cursist ) : ?>
 				<option value="<?php echo esc_attr( $cursist['id'] ); ?>" ><?php echo esc_html( $cursist['naam'] ); ?></option>

@@ -270,11 +270,13 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 
 	/**
 	 * Schrijf workshop informatie naar het bestand.
+	 *
+	 * @param array $data De argumenten.
 	 */
-	protected function workshops() {
+	protected function workshops( array $data ) {
 		$workshops = new Workshops();
 		fputcsv(
-			$this->file_handle,
+			$data['filehandle'],
 			[
 				'code',
 				'naam',
@@ -298,7 +300,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		);
 		foreach ( $workshops as $workshop ) {
 			fputcsv(
-				$this->file_handle,
+				$data['filehandle'],
 				[
 					$workshop->code,
 					$workshop->naam,

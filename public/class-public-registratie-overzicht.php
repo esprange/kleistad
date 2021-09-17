@@ -103,8 +103,10 @@ class Public_Registratie_Overzicht extends Shortcode {
 
 	/**
 	 * Schrijf cursisten informatie naar het bestand.
+	 *
+	 * @param array $data De argumenten.
 	 */
-	protected function cursisten() {
+	protected function cursisten( array $data ) {
 		$cursus_fields = [
 			'Voornaam',
 			'Achternaam',
@@ -123,7 +125,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			'Technieken',
 			'Opmerking',
 		];
-		fputcsv( $this->file_handle, $cursus_fields, ';', '"' );
+		fputcsv( $data['filehandle'], $cursus_fields, ';' );
 		foreach ( new Cursisten() as $cursist ) {
 			$inschrijvingen = [];
 			foreach ( $cursist->inschrijvingen as $inschrijving ) {
@@ -144,7 +146,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			}
 			foreach ( $inschrijvingen as $inschrijving ) {
 				fputcsv(
-					$this->file_handle,
+					$data['filehandle'],
 					array_merge(
 						[
 							$cursist->first_name,
@@ -159,8 +161,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 						],
 						$inschrijving['data']
 					),
-					';',
-					'"'
+					';'
 				);
 			}
 		}
@@ -168,8 +169,10 @@ class Public_Registratie_Overzicht extends Shortcode {
 
 	/**
 	 * Schrijf abonnees informatie naar het bestand.
+	 *
+	 * @param array $data De argumenten.
 	 */
-	protected function abonnees() {
+	protected function abonnees( array $data ) {
 		$abonnee_fields = [
 			'Achternaam',
 			'Voornaam',
@@ -190,7 +193,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			'Abonnement_extras',
 			'Opmerking',
 		];
-		fputcsv( $this->file_handle, $abonnee_fields, ';', '"' );
+		fputcsv( $data['filehandle'], $abonnee_fields, ';' );
 		foreach ( new Abonnees() as $abonnee ) {
 			$abonnee_gegevens = [
 				$abonnee->last_name,
@@ -212,14 +215,16 @@ class Public_Registratie_Overzicht extends Shortcode {
 				implode( ', ', $abonnee->abonnement->extras ),
 				$abonnee->abonnement->opmerking,
 			];
-			fputcsv( $this->file_handle, $abonnee_gegevens, ';', '"' );
+			fputcsv( $data['filehandle'], $abonnee_gegevens, ';' );
 		}
 	}
 
 	/**
 	 * Schrijf dagdelenkaart informatie naar het bestand.
+	 *
+	 * @param array $data De argumenten.
 	 */
-	protected function dagdelenkaarten() {
+	protected function dagdelenkaarten( array $data ) {
 		$dagdelenkaart_fields = [
 			'Achternaam',
 			'Voornaam',
@@ -234,10 +239,10 @@ class Public_Registratie_Overzicht extends Shortcode {
 			'Eind_datum',
 			'Opmerking',
 		];
-		fputcsv( $this->file_handle, $dagdelenkaart_fields, ';', '"' );
+		fputcsv( $data['filehandle'], $dagdelenkaart_fields, ';' );
 		foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
 			fputcsv(
-				$this->file_handle,
+				$data['filehandle'],
 				[
 					$dagdelengebruiker->last_name,
 					$dagdelengebruiker->first_name,
@@ -252,8 +257,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 					date( 'd-m-Y', $dagdelengebruiker->dagdelenkaart->eind_datum ),
 					$dagdelengebruiker->dagdelenkaart->opmerking,
 				],
-				';',
-				'"'
+				';'
 			);
 		}
 	}

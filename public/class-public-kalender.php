@@ -155,9 +155,11 @@ class Public_Kalender extends Shortcode {
 	 * Prepareer 'kalender' form
 	 *
 	 * @param array $data data voor display.
+	 *
 	 * @return bool
 	 *
 	 * @since   5.0.0
+	 * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
 	 */
 	protected function prepare( array &$data ) {
 		return isset( $data ); // Dummy statement.

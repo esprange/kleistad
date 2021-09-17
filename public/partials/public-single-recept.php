@@ -17,26 +17,18 @@ get_header(); ?>
 		// Start the loop.
 		while ( have_posts() ) :
 			the_post();
-
-			$glazuur_naam   = '';
-			$kleur_naam     = '';
-			$uiterlijk_naam = '';
-			$the_id         = get_the_ID();
+			$the_id = get_the_ID();
 			if ( false !== $the_id ) :
 				$recept_terms = get_the_terms( $the_id, 'kleistad_recept_cat' );
-				if ( is_array( $recept_terms ) ) {
-					foreach ( $recept_terms as $recept_term ) {
-						if ( intval( $recept_term->parent ) === intval( Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id ) ) {
-							$glazuur_naam = $recept_term->name;
-						}
-						if ( intval( $recept_term->parent ) === intval( Recept::hoofdtermen()[ Recept::KLEUR ]->term_id ) ) {
-							$kleur_naam = $recept_term->name;
-						}
-						if ( intval( $recept_term->parent ) === intval( Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id ) ) {
-							$uiterlijk_naam = $recept_term->name;
-						}
-					}
-				}
+				if ( is_array( $recept_terms ) ) :
+					foreach ( $recept_terms as $recept_term ) :
+						foreach ( [ Recept::GLAZUUR, Recept::KLEUR, Recept::UITERLIJK ] as $selector ) :
+							if ( intval( Recept::hoofdtermen()[ $selector ]->term_id ) === $recept_term->parent ) :
+								$naam[ $selector ] = $recept_term->name;
+							endif;
+						endforeach;
+					endforeach;
+				endif;
 			endif;
 			$content = json_decode( get_the_content(), true );
 
@@ -50,7 +42,7 @@ get_header(); ?>
 					$( '#kleistad_recept_print' ).on(
 						'click',
 						function() {
-							var w       = window.open(),
+							let w       = window.open(),
 								c       = Boolean( window.chrome ),
 								elem    = document.createElement('textarea'),
 								decoded = elem.value;
@@ -138,15 +130,15 @@ get_header(); ?>
 					<table>
 					<tr>
 						<th>Type glazuur</th>
-						<td><?php echo esc_html( $glazuur_naam ); ?></td>
+						<td><?php echo esc_html( $naam[ Recept::GLAZUUR ] ); ?></td>
 					</tr>
 					<tr>
 						<th>Uiterlijk</th>
-						<td><?php echo esc_html( $uiterlijk_naam ); ?></td>
+						<td><?php echo esc_html( $naam[ Recept::UITERLIJK ] ); ?></td>
 					</tr>
 					<tr>
 						<th>Kleur</th>
-						<td><?php echo esc_html( $kleur_naam ); ?></td>
+						<td><?php echo esc_html( $naam[ Recept::KLEUR ] ); ?></td>
 					</tr>
 					<tr>
 						<th>Stookschema</th>

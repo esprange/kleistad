@@ -60,13 +60,13 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_organisatie">Organisatie</label></div>
 			<div class="kleistad-col-3">
-				<input type="text" name="organisatie" value="<?php echo esc_attr( $this->data['workshop']['organisatie'] ); ?>" >
+				<input type="text" name="organisatie" id="kleistad_organisatie" value="<?php echo esc_attr( $this->data['workshop']['organisatie'] ); ?>" >
 			</div>
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_email">Email contact</label></div>
 			<div class="kleistad-col-3">
-				<input type="email" name="email" required value="<?php echo esc_attr( $this->data['workshop']['email'] ); ?>" <?php readonly( $readonly ); ?> />
+				<input type="email" name="email" id="kleistad_email" required value="<?php echo esc_attr( $this->data['workshop']['email'] ); ?>" <?php readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_organisatie_email">Organisatie email</label></div>
 			<div class="kleistad-col-3">
@@ -144,7 +144,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-2">incl. BTW</div>
 			<div class="kleistad-col-2">
-				<input type="number" lang="nl" step="0.01" id="kleistad_kosten_ex_btw" min="0" value="<?php echo esc_attr( number_format( $this->data['workshop']['kosten'] / 1.21, 2 ) ); ?>" <?php readonly( $readonly ); ?> >
+				<!--suppress HtmlFormInputWithoutLabel --><input type="number" lang="nl" step="0.01" id="kleistad_kosten_ex_btw" min="0" value="<?php echo esc_attr( number_format( $this->data['workshop']['kosten'] / 1.21, 2 ) ); ?>" <?php readonly( $readonly ); ?> >
 			</div>
 			<div class="kleistad-col-2">excl. BTW</div>
 		</div>

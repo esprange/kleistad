@@ -308,8 +308,8 @@ class Workshop extends Artikel {
 		if ( false !== strpos( $type, 'bevestiging' ) ) {
 				$email_parameters['auto']     = false;
 				$email_parameters['slug']     = 'workshop_bevestiging';
-				$email_parameters['from']     = $emailer->info . $emailer->verzend_domein;
-				$email_parameters['reply-to'] = $emailer->info . $emailer->domein;
+				$email_parameters['from']     = "$emailer->info@$emailer->verzend_domein";
+				$email_parameters['reply-to'] = "$emailer->info@$emailer->domein";
 		}
 		return $emailer->send( $email_parameters );
 	}

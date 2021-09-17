@@ -316,7 +316,7 @@ class WorkshopAanvraag {
 			$aanvraag = new self( $result );
 			$emailer->send(
 				[
-					'to'      => 'Workshop mailbox <' . $emailer->info . $emailer->domein . '>',
+					'to'      => "Workshop mailbox <$emailer->info@$emailer->domein>",
 					'subject' => 'aanvraag workshop/kinderfeest',
 					'content' => "<p>Er is een reactie ontvangen van {$email['from-name']}</p>",
 					'sign'    => 'Workshop mailbox',
@@ -334,7 +334,7 @@ class WorkshopAanvraag {
 			$aanvraag->save();
 			return;
 		}
-		$email['to'] = 'Kleistad <' . $emailer->info . $emailer->domein . '>';
+		$email['to'] = "Kleistad <$emailer->info@$emailer->domein>";
 		$emailer->send( $email );
 	}
 

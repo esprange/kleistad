@@ -90,13 +90,13 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 				?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
-				<input class="kleistad-input" type="text" name="omschrijving[]" required value="<?php echo esc_attr( $this->data['input']['omschrijving'][ $index ] ); ?>" >
+				<<!--suppress HtmlFormInputWithoutLabel -->input class="kleistad-input" type="text" name="omschrijving[]" required value="<?php echo esc_attr( $this->data['input']['omschrijving'][ $index ] ); ?>" >
 			</div>
 			<div class="kleistad-col-2">
-				<input class="kleistad-input" type="number" step="0.01" name="prijs[]" required value="<?php echo esc_attr( $this->data['input']['prijs'][ $index ] ); ?>" >
+				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" name="prijs[]" required value="<?php echo esc_attr( $this->data['input']['prijs'][ $index ] ); ?>" >
 			</div>
 			<div class="kleistad-col-2">
-				<input class="kleistad-input" type="number" step="0.01" name="aantal[]" required value="<?php echo esc_attr( $this->data['input']['aantal'][ $index ] ); ?>" >
+				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" name="aantal[]" required value="<?php echo esc_attr( $this->data['input']['aantal'][ $index ] ); ?>" >
 			</div>
 		</div>
 				<?php

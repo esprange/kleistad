@@ -40,7 +40,7 @@ class Public_Reservering extends Shortcode {
 		}
 		$oven_id = $atts['oven'];
 		$oven    = new Oven( $oven_id );
-		if ( ! intval( $oven->id ) ) {
+		if ( ! $oven->id ) {
 			return new WP_Error( 'fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !' );
 		}
 		$data = [

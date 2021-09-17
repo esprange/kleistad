@@ -26,7 +26,8 @@
         "ext-json": "*",
         "ext-exif": "*",
         "ext-gd": "*",
-        "ext-calendar": "*"
+        "ext-calendar": "*",
+        "shuchkin/simplexlsxgen": "^1.0"
     },
     "scripts": {
         "post-update-cmd": "Google\\Task\\Composer::cleanup"

@@ -195,8 +195,8 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				$gewicht   = $index < $count ? $this->data['recept']['content']['basis'][ $index ]['gewicht'] * 1.0 : 0.0;
 				?>
 				<tr>
-					<td><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
-					<td><input type="number" lang="nl" step="any" name="basis_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gr.</td>
+					<td><!--suppress HtmlFormInputWithoutLabel --><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
+					<td><!--suppress HtmlFormInputWithoutLabel --><input type="number" lang="nl" step="any" name="basis_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gr.</td>
 				</tr>
 				<?php
 			} while ( $index++ < $count );
@@ -216,8 +216,8 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				$gewicht   = $index < $count ? $this->data['recept']['content']['toevoeging'][ $index ]['gewicht'] * 1.0 : 0.0;
 				?>
 				<tr>
-					<td><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
-					<td><input type="number" lang="nl" step="0.01" name="toevoeging_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gr.</td>
+					<td><!--suppress HtmlFormInputWithoutLabel --><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
+					<td><!--suppress HtmlFormInputWithoutLabel --><input type="number" lang="nl" step="0.01" name="toevoeging_gewicht[]" maxlength="6" style="width:50%;text-align:right;" value="<?php echo esc_attr( $gewicht ); ?>" >&nbsp;gr.</td>
 				</tr>
 				<?php
 			} while ( $index++ < $count );

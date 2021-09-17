@@ -44,8 +44,10 @@ class Public_Abonnement_Overzicht extends Shortcode {
 
 	/**
 	 * Schrijf de eerste regel naar het download bestand.
+	 *
+	 * @param resource $filehandle Het bestand.
 	 */
-	private function schrijf_labels() {
+	private function schrijf_labels( $filehandle ) {
 		$abonnees_fields = [
 			'Code',
 			'Achternaam',
@@ -67,15 +69,16 @@ class Public_Abonnement_Overzicht extends Shortcode {
 				'Overbrugging',
 			]
 		);
-		fputcsv( $this->file_handle, $abonnees_fields, ';', '"' );
+		fputcsv( $filehandle, $abonnees_fields, ';' );
 	}
 
 	/**
 	 * Schrijf één regel naar het bestand
 	 *
-	 * @param Abonnee $abonnee De abonnee.
+	 * @param Abonnee  $abonnee De abonnee.
+	 * @param resource $filehandle Het bestand.
 	 */
-	private function schrijf_record( Abonnee $abonnee ) {
+	private function schrijf_record( Abonnee $abonnee, $filehandle ) {
 		$abonnee_gegevens = [
 			'A' . $abonnee->ID,
 			$abonnee->first_name,
@@ -97,17 +100,19 @@ class Public_Abonnement_Overzicht extends Shortcode {
 				$abonnee->abonnement->overbrugging_email ? 'ja' : 'nee',
 			]
 		);
-		fputcsv( $this->file_handle, $abonnee_gegevens, ';', '"' );
+		fputcsv( $filehandle, $abonnee_gegevens, ';' );
 	}
 
 	/**
 	 * Schrijf abonnementen naar het bestand.
+	 *
+	 * @param array $data De argumenten.
 	 */
-	protected function abonnementen() {
-		$this->schrijf_labels();
+	protected function abonnementen( array $data ) {
+		$this->schrijf_labels( $data['filehandle'] );
 		foreach ( new Abonnees() as $abonnee ) {
 			if ( ! $abonnee->abonnement->is_geannuleerd() ) {
-				$this->schrijf_record( $abonnee );
+				$this->schrijf_record( $abonnee, $data['filehandle'] );
 			}
 		}
 	}

@@ -53,7 +53,7 @@ class EmailReceiver {
 		foreach ( $email_ids as $email_id ) {
 			$email  = $mailbox->getMail( $email_id );
 			$header = $mailbox->getMailHeader( $email_id );
-			$body   = $email->textPlain ?: '<p>bericht tekst kan niet worden weergegeven</p>';
+			$body   = $email->textPlain ?: ( $email->textHtml ?: '<p>bericht tekst kan niet worden weergegeven</p>' );
 			$verwerk(
 				[
 					'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),

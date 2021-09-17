@@ -243,7 +243,7 @@ class Public_Email extends ShortcodeForm {
 			array_merge(
 				$this->mail_parameters( $data ),
 				[
-					'to'      => "{$gebruiker->display_name} <{$gebruiker->user_email}>",
+					'to'      => "$gebruiker->display_name <$gebruiker->user_email>",
 					'subject' => "TEST: {$data['input']['onderwerp']}",
 				]
 			)
@@ -270,9 +270,9 @@ class Public_Email extends ShortcodeForm {
 				'fields'  => [ 'user_email' ],
 			]
 		);
-		$emailadressen   = array_column( (array) $query->get_results(), 'user_email' );
-		$emailadressen[] = "{$gebruiker->display_name} <{$gebruiker->user_email}>";
-		$from            = 'production' === wp_get_environment_type() ? "{$emailer->info}{$emailer->domein}" : get_bloginfo( 'admin_email' );
+		$emailadressen   = array_column( $query->get_results(), 'user_email' );
+		$emailadressen[] = "$gebruiker->display_name <$gebruiker->user_email>";
+		$from            = 'production' === wp_get_environment_type() ? "$emailer->info@$emailer->domein" : get_bloginfo( 'admin_email' );
 		$emailer->send(
 			array_merge(
 				$this->mail_parameters( $data ),

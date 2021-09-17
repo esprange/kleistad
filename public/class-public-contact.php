@@ -80,8 +80,8 @@ class Public_Contact extends ShortcodeForm {
 	protected function save( array $data ) : array {
 		$emailer          = new Email();
 		$email_parameters = [
-			'to'         => "Kleistad <{$emailer->info}{$emailer->domein}>",
-			'from'       => "{$emailer->info}{$emailer->verzend_domein}",
+			'to'         => "Kleistad <$emailer->info@$emailer->domein>",
+			'from'       => "$emailer->info@$emailer->verzend_domein",
 			'from_name'  => $data['input']['naam'],
 			'reply-to'   => $data['input']['email'],
 			'slug'       => 'contact_vraag',
@@ -99,7 +99,7 @@ class Public_Contact extends ShortcodeForm {
 
 		$email_parameters['to']                   = $data['input']['email'];
 		$email_parameters['from_name']            = 'Kleistad';
-		$email_parameters['reply-to']             = "Kleistad <{$emailer->info}{$emailer->domein}>";
+		$email_parameters['reply-to']             = "Kleistad <$emailer->info@$emailer->domein>";
 		$email_parameters['parameters']['vraag'] .= '<br/><p>Bedankt voor de vraag, wij proberen die snel te beantwoorden.</p><br/>';
 		$emailer->send( $email_parameters );
 		return [

@@ -209,7 +209,7 @@ class Public_Actions {
 			$nice_voornaam           = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata->first_name ) ) );
 			$nice_achternaam         = strtolower( preg_replace( '/[^a-zA-Z\s]/', '', remove_accents( $userdata->last_name ) ) );
 			$userdata->user_nicename = "$nice_voornaam-$nice_achternaam";
-			$userdata->display_name  = "{$userdata->first_name} {$userdata->last_name}";
+			$userdata->display_name  = "$userdata->first_name $userdata->last_name";
 			wp_update_user( $userdata );
 		}
 	}

@@ -94,7 +94,7 @@ class Email {
 		static $domein         = '';
 		static $verzend_domein = '';
 		if ( empty( $info ) ) {
-			$info           = 'development' !== wp_get_environment_type() ? 'info@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+			$info           = 'development' !== wp_get_environment_type() ? 'info' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) );
 			$domein         = substr( strrchr( get_bloginfo( 'admin_email' ), '@' ), 1 );
 			$verzend_domein = $domein;
 			$active_plugins = get_option( 'active_plugins' ) ?? [];
@@ -187,7 +187,7 @@ class Email {
 				'sign'        => 'Kleistad',
 				'sign_email'  => true,
 				'slug'        => '',
-				'to'          => 'Kleistad <' . $this->info . $this->domein . '>',
+				'to'          => "Kleistad <$this->info@$this->domein>",
 				'attachments' => [],
 			]
 		);
@@ -388,7 +388,9 @@ class Email {
 								<p>Met vriendelijke groet,</p>
 								<p><?php echo $this->mailparams['sign']; // phpcs:ignore ?></p>
 									<?php if ( $this->mailparams['sign_email'] ) : ?>
-								<p><a href="mailto:<?php echo esc_attr( $this->info . $this->domein ); ?>" target="_top" ><?php echo esc_html( $this->info . $this->domein ); ?></a></p>
+								<p><a href="mailto:<?php echo esc_attr( "$this->info@$this->domein" ); ?>" target="_top" >
+										<?php echo esc_html( "$this->info@$this->domein" ); ?>
+									</a></p>
 								<?php endif ?>
 								<?php endif ?>
 							</td>

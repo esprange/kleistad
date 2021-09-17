@@ -67,7 +67,7 @@ class Public_Werkplekrapport extends Shortcode {
 			$werkplekgebruik = new WerkplekGebruik( $datum );
 			$gebruikers      = array_merge( $gebruikers, $werkplekgebruik->geef() );
 		}
-		$gebruikers = array_map(
+		return array_map(
 			'unserialize',
 			array_unique(
 				array_map(
@@ -78,7 +78,6 @@ class Public_Werkplekrapport extends Shortcode {
 				)
 			)
 		);
-		return $gebruikers;
 	}
 
 	/**

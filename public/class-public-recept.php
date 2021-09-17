@@ -175,7 +175,7 @@ class Public_Recept extends Shortcode {
 	 * @param int    $width     Gewenste lengte.
 	 * @return string
 	 */
-	private static function truncate_string( $string, $width ) {
+	private static function truncate_string( string $string, int $width = 25 ) : string {
 		if ( strlen( $string ) > $width ) {
 			$string = wordwrap( $string, $width );
 			$string = substr( $string, 0, strpos( $string, "\n" ) );
@@ -203,7 +203,7 @@ class Public_Recept extends Shortcode {
 				$style = ( $toon < $index ) ? 'display:none;' : '';
 				$html .= '<li class="kleistad-filter-term" style="' . $style . '">';
 				$html .= '<label><input type="checkbox" name="' . $naam . '" class="kleistad-filter" value="' . $id . '" style="display:none;" >';
-				$html .= esc_html( self::truncate_string( $term, 25 ) ); // Max. 30 karakters.
+				$html .= esc_html( self::truncate_string( $term ) ); // Max. 30 karakters.
 				$html .= '<span style="visibility:hidden;float:right">&#9932;</span></label></li>';
 				if ( ( $toon === $index ) && ( $index !== $count ) ) {
 					$html .= '<li class="kleistad-filter-term">';
@@ -246,7 +246,7 @@ class Public_Recept extends Shortcode {
 				$html .= '<div style="width:250px;float:left;padding:15px;border:0;"><a href="' . $permalink . '" >' .
 						'<div class="kleistad-recept-img" style="background-image:url(' . "'{$recept['foto']}'" . ');" >' .
 						'</div><div class="kleistad-recept-titel" >';
-				$html .= self::truncate_string( $recept['titel'], 25 );
+				$html .= self::truncate_string( $recept['titel'] );
 				$html .= '</div></a></div>';
 			}
 		}

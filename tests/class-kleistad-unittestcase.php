@@ -3,7 +3,6 @@
  * Class Kleistad_UnitTestCase
  *
  * @package Kleistad
- * @noinspection PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;
