@@ -342,7 +342,7 @@ abstract class Shortcode {
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
 				throw new Exception( 'callback_download voor onbekend object' );
 			}
-			$functie = $request->get_param( 'actie' );
+			$functie = $request->get_param( 'actie' ) ?? '';
 			if ( method_exists( $shortcode, $functie ) ) {
 				return new WP_REST_Response( self::download( $shortcode, $functie ) );
 			}
