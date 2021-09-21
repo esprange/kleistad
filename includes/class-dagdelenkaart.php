@@ -69,6 +69,9 @@ class Dagdelenkaart extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
+		if ( 'eind_datum' === $attribuut ) {
+			return strtotime( '+ 3 month', $this->data['start_datum'] );
+		}
 		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
 	}
 
