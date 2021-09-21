@@ -57,6 +57,7 @@ class Public_Betaling extends ShortcodeForm {
 			'reeds_betaald' => $order->betaald,
 			'orderregels'   => $order->orderregels,
 			'betreft'       => $artikel->geef_artikelnaam(),
+			'factuur'       => $order->factuurnummer(),
 			'artikel_type'  => $param['art'],
 		];
 		return true;
@@ -121,5 +122,20 @@ class Public_Betaling extends ShortcodeForm {
 			'status'  => 'Er heeft geen betaling plaatsgevonden',
 			'content' => $this->goto_home(),
 		];
+	}
+
+	/**
+	 * Schrijf geef de url van het bestand.
+	 *
+	 * @return string De url.
+	 */
+	protected function url_factuur() : string {
+		$order_id = intval( filter_input( INPUT_GET, 'order_id', FILTER_SANITIZE_NUMBER_INT ) ?? 0 );
+		if ( $order_id ) {
+			$order   = new Order( $order_id );
+			$factuur = new Factuur();
+			return $factuur->overzicht( $order->factuurnummer() )[0];
+		}
+		return '';
 	}
 }

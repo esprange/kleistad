@@ -12,6 +12,7 @@
 namespace Kleistad;
 
 use WP_User;
+use WP_Error;
 use stdClass;
 
 /**
@@ -22,13 +23,13 @@ class Common {
 	/**
 	 * Kijk bij de login of een account geblokkeerd is
 	 *
-	 * @param string $user_login niet gebruikte parameter.
-	 * @param object $user wp user object.
+	 * @param string       $user_login niet gebruikte parameter.
+	 * @param WP_User|null $user       wp user object.
 	 *
 	 * @internal Action for wp_login.
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
-	public function user_login( $user_login, $user = null ) {
+	public function user_login( string $user_login, ?WP_User $user = null ) {
 
 		if ( ! $user ) {
 			$user = get_user_by( 'login', $user_login );
@@ -45,6 +46,8 @@ class Common {
 			wp_safe_redirect( $login_url );
 			die();
 		}
+		$profiel = new Profiel();
+		$profiel->reset( $user );
 	}
 
 	/**
@@ -88,7 +91,7 @@ class Common {
 	 *
 	 * @internal Action for login_headertext.
 	 */
-	public function login_headertext() {
+	public function login_headertext() : string {
 		return 'Kleistad';
 	}
 
@@ -100,7 +103,7 @@ class Common {
 	 *
 	 * @internal Filter for login_message.
 	 */
-	public function user_login_message( $message ) {
+	public function user_login_message( string $message ) : string {
 		$disabled = filter_input( INPUT_GET, 'disabled' );
 		if ( 1 === $disabled ) {
 			$message = '<div id="login_error">' . apply_filters( 'kleistad_disable_users_notice', 'Inloggen op dit account niet toegestaan' ) . '</div>';
@@ -111,15 +114,18 @@ class Common {
 	/**
 	 * Redirect gebruikers naar de leden pagina.
 	 *
-	 * @param string  $url De bestaande url als er niets gewijzigd wordt.
-	 * @param object  $request Wordt niet gebruikt.
-	 * @param WP_User $user Het WordPress user object.
+	 * @param string           $url           De bestaande url als er niets gewijzigd wordt.
+	 * @param string           $requested_url Wordt niet gebruikt.
+	 * @param WP_User|WP_Error $user          Het WordPress user object.
 	 * @return string De Url.
 	 *
 	 * @internal Filter for login_redirect.
+	 * @noinspection PhpUnusedParameterInspection
+	 * phpcs:disable
 	 */
-	public function login_redirect( $url, $request, $user ) {
-		if ( isset( $request ) && $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) { // De test van request is dummy statement, altijd true.
+	public function login_redirect( string $url, /** @scrutinizer ignore-unused */ string $requested_url, $user ) : string {
+		// phpcs:enable
+		if ( is_a( $user, 'WP_User' ) ) {
 			$url = ( $user->has_cap( BESTUUR ) ) ? home_url( '/bestuur/' ) : (
 				$user->has_cap( LID ) ? home_url( '/leden/' ) : home_url( '/werkplek/' ) );
 		}
@@ -149,7 +155,7 @@ class Common {
 	 *
 	 * @internal Filter for wp_nav_menu_items.
 	 */
-	public function loginuit_menu( $items, $args ) {
+	public function loginuit_menu( string $items, stdClass $args ) : string {
 		static $is_active = false;
 
 		if ( is_admin() || 'primary' !== $args->theme_location || $is_active ) {
@@ -172,10 +178,10 @@ class Common {
 	 * Voeg 15 minuten schedule toe aan bestaande set van schedules.
 	 *
 	 * @param array $schedules De set van schedules.
-	 *
+	 * @return array
 	 * @internal Filter for cron_schedules.
 	 */
-	public function cron_schedules( $schedules ) {
+	public function cron_schedules( array $schedules ) : array {
 		if ( ! isset( $schedules['15_mins'] ) ) {
 			$schedules['15_mins'] = [
 				'interval' => 900,

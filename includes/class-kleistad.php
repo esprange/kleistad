@@ -227,6 +227,7 @@ class Kleistad {
 		$this->loader->add_filter( 'retrieve_password_message', $plugin_filters, 'retrieve_password_message', 10, 4 );
 		$this->loader->add_filter( 'password_hint', $plugin_filters, 'password_hint' );
 		$this->loader->add_filter( 'mce_buttons', $plugin_filters, 'mce_buttons' );
+		$this->loader->add_filter( 'the_content', $plugin_filters, 'profiel' );
 	}
 
 	/**

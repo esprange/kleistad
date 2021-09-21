@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 103;
+	const DBVERSIE = 115;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -213,6 +213,7 @@ class Admin_Upgrade {
 			gesloten tinyint(1) DEFAULT 0,
 			historie varchar(2000),
 			klant tinytext,
+			klant_id int(10) DEFAULT 0,
 			mutatie_datum datetime,
 			verval_datum datetime,
 			referentie varchar(30) NOT NULL,
@@ -268,9 +269,20 @@ class Admin_Upgrade {
 	}
 
 	/**
-	 * Converteer de orders.
+	 * Converteer de openstaande orders die te koppelen zijn aan leden of cursisten.
 	 */
 	private function convert_order() {
+		$artikelregister = new Artikelregister();
+		foreach ( new Orders() as $order ) {
+			if ( $order->gesloten ) {
+				continue;
+			}
+			$artikel = $artikelregister->geef_object( $order->referentie );
+			if ( is_object( $artikel) && $artikel->klant_id ) {
+				$order->klant_id = $artikel->klant_id;
+				$order->save( 'klant id toegevoegd' );
+			}
+		}
 	}
 
 	/**

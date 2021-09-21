@@ -233,4 +233,5 @@ class Factuur extends FPDF {
 		);
 		return 'local' === wp_get_environment_type() ? $files : str_replace( wp_get_upload_dir()['basedir'], wp_get_upload_dir()['baseurl'], $files );
 	}
+
 }

@@ -74,7 +74,7 @@ class Artikelregister  implements Countable, Iterator {
 	 * Geef het object
 	 *
 	 * @param string $referentie De artikel referentie.
-	 * @return Artikel
+	 * @return Artikel|null
 	 */
 	public function geef_object( string $referentie ) : ?Artikel {
 		foreach ( self::$register as $artikel ) {

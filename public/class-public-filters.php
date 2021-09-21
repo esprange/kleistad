@@ -19,6 +19,21 @@ use WP_User;
 class Public_Filters {
 
 	/**
+	 * Toon het profiel rechtsboven
+	 *
+	 * @param string $content De pagina content.
+	 * @return string
+	 */
+	public function profiel( string $content ) : string {
+		$user = wp_get_current_user();
+		if ( $user->exists() ) {
+			$profiel  = new Profiel();
+			$content .= $profiel->prepare( $user );
+		}
+		return $content;
+	}
+
+	/**
 	 * Wordt aangeroepen door filter single_template, zorgt dat WP de juiste template file toont.
 	 *
 	 * @since 4.1.0
@@ -28,7 +43,7 @@ class Public_Filters {
 	 *
 	 * @internal Filter for single_template.
 	 */
-	public function single_template( $single_template ) {
+	public function single_template( string $single_template ) : string {
 		global $post;
 
 		if ( false !== strpos( $post->post_type, 'kleistad_' ) ) {
@@ -48,7 +63,7 @@ class Public_Filters {
 	 *
 	 * @internal Filter for comments_template.
 	 */
-	public function comments_template( $comments_template ) {
+	public function comments_template( string $comments_template ) : string {
 		global $post;
 
 		if ( false !== strpos( $post->post_type, 'kleistad_' ) ) {
@@ -68,7 +83,7 @@ class Public_Filters {
 	 *
 	 * @internal Filter for comment_form_default_fields.
 	 */
-	public function comment_fields( $fields ) {
+	public function comment_fields( array $fields ) : array {
 		if ( isset( $fields['url'] ) ) {
 			unset( $fields['url'] );
 		}
@@ -82,11 +97,14 @@ class Public_Filters {
 	 * @param array $user               De bestaande user info.
 	 * @param array $userdata           De gewijzigd user info.
 	 *
+	 * @return array
+	 *
 	 * @internal Filter for email_change_email.
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
+	 * @noinspection PhpUnusedParameterInspection
 	 * phpcs:disable
 	 */
-	public function email_change_email( /** @scrutinizer ignore-unused */ $email_change_email, $user, $userdata ) {
+	public function email_change_email( /** @scrutinizer ignore-unused */ array $email_change_email, array $user, array $userdata ) : array {
 		// phpcs:enable
 		$emailer = new Email();
 		return $emailer->notify(
@@ -110,12 +128,14 @@ class Public_Filters {
 	 * @param array $email_change_email Basis voor WP_mail.
 	 * @param array $user               De bestaande user info.
 	 * @param array $userdata           De gewijzigd user info.
+	 * @return array
 	 *
 	 * @internal Filter for password_change_email.
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
+	 * @noinspection PhpUnusedParameterInspection
 	 * phpcs:disable
 	 */
-	public function password_change_email( /** @scrutinizer ignore-unused */ $email_change_email, /** @scrutinizer ignore-unused */ $user, $userdata ) {
+	public function password_change_email( /** @scrutinizer ignore-unused */ array $email_change_email, /** @scrutinizer ignore-unused */ array $user, array $userdata ) : array {
 		// phpcs:enable
 		$emailer = new Email();
 		return $emailer->notify(
@@ -141,9 +161,10 @@ class Public_Filters {
 	 *
 	 * @internal Filter for retrieve_password_message.
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
+	 * @noinspection PhpUnusedParameterInspection
 	 * phpcs:disable
 	 */
-	public function retrieve_password_message( /** @scrutinizer ignore-unused */ $message, $key, $user_login = '', $user_data = '' ) {
+	public function retrieve_password_message( /** @scrutinizer ignore-unused */ string $message, string $key, string $user_login, WP_User  $user_data ) : string {
 		// phpcs:enable
 		$emailer = new Email();
 		$result  = $emailer->notify(
@@ -168,7 +189,7 @@ class Public_Filters {
 	 *
 	 * @internal Filter for password_hint.
 	 */
-	public function password_hint() {
+	public function password_hint() : string {
 		return "Hint: het wachtwoord moet minimaal 9 tekens lang zijn. Bij de invoer wordt gecontroleerd op te gemakkelijk te bedenken wachtwoorden (als 1234...).\nGebruik hoofd- en kleine letters, nummers en tekens zoals ! \" ? $ % ^ & ) om het wachtwoord sterker te maken.";
 	}
 
@@ -182,7 +203,7 @@ class Public_Filters {
 	 *
 	 * @internal Filter for user_contactmethods.
 	 */
-	public function user_contact_methods( $user_contact_method ) {
+	public function user_contact_methods( array $user_contact_method ) : array {
 
 		$user_contact_method['telnr']  = 'Telefoon nummer';
 		$user_contact_method['straat'] = 'Straat';
@@ -200,7 +221,7 @@ class Public_Filters {
 	 *
 	 * @internal Filter for template_include.
 	 */
-	public function template_include( $template ) {
+	public function template_include( string $template ) : string {
 		global $pagename;
 		if ( isset( $pagename ) && preg_match( '~(kleistad-betaling|kleistad-extra_cursisten)~', $pagename ) ) {
 			return dirname( __FILE__ ) . '/partials/public-basispagina.php';
@@ -214,7 +235,7 @@ class Public_Filters {
 	 * @param array $buttons De buttons.
 	 * @return array
 	 */
-	public function mce_buttons( $buttons ) {
+	public function mce_buttons( array $buttons ) : array {
 		global $post;
 		if ( is_a( $post, 'WP_Post' ) ) {
 			if ( has_shortcode( $post->post_content, 'kleistad_email' ) ) {

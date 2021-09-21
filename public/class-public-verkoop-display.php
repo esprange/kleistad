@@ -29,7 +29,7 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Verkoop_Display
 	 */
-	private function verkoop() {
+	private function verkoop() : Public_Verkoop_Display {
 		?>
 		<input type="hidden" name="klant_type" id="kleistad_klant_type" value="nieuw">
 		<div id="kleistad_tabs" class="ui-tabs ui-widget">
@@ -90,7 +90,7 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 				?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
-				<<!--suppress HtmlFormInputWithoutLabel -->input class="kleistad-input" type="text" name="omschrijving[]" required value="<?php echo esc_attr( $this->data['input']['omschrijving'][ $index ] ); ?>" >
+				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="text" name="omschrijving[]" required value="<?php echo esc_attr( $this->data['input']['omschrijving'][ $index ] ); ?>" >
 			</div>
 			<div class="kleistad-col-2">
 				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" name="prijs[]" required value="<?php echo esc_attr( $this->data['input']['prijs'][ $index ] ); ?>" >

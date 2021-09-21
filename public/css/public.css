@@ -42,8 +42,9 @@ option.kleistad-bank {
 	box-shadow: 0 0 0 0 white !important;
 }
 
-/* stylelint-disable selector-class-pattern */
 /* Fullcalendar toont om een dubbele button alsof het een radio button is. */
+
+/* stylelint-disable selector-class-pattern */
 .kleistad-shortcode .fc--button {
 	display: none;
 }
@@ -96,6 +97,39 @@ option.kleistad-bank {
 	z-index: 10;
 }
 
+.kleistad-profiel {
+	height: 50px;
+	position: fixed;
+	right: 50px;
+	text-align: right;
+	top: 50px;
+	width: 300px;
+	z-index: 100;
+}
+
+@media screen and (max-width: 768px) {
+
+	.kleistad-profiel {
+		right: 10px;
+		top: 10px;
+	}
+
+}
+
+.kleistad-openstaand {
+	background-color: var(--background);
+	box-sizing: border-box;
+	padding: 10px;
+}
+
+.kleistad-betaalinfo {
+	padding: 10px;
+	margin: 0 10px;
+	border-radius: 50%;
+	font-size: 25px;
+	color: black;
+}
+
 div.kleistad-workshop-correspondentie {
 	border: 1px solid gray;
 	color: black;
@@ -140,7 +174,8 @@ a.kleistad-schedule {
 	padding: 0.4em 0.8em;
 }
 
-.kleistad-tijd, .kleistad-datum {
+.kleistad-tijd,
+.kleistad-datum {
 	width: 9em;
 }
 

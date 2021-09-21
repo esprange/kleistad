@@ -293,6 +293,9 @@ abstract class Shortcode {
 	 * @return array
 	 */
 	protected static function download( Shortcode $shortcode, string $functie ) : array {
+		if ( 0 === strpos( $functie, 'url_' ) ) {
+			return [ 'file_uri' => $shortcode->$functie() ];
+		}
 		$upload_dir = wp_upload_dir();
 		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
 		$filehandle = fopen( $upload_dir['basedir'] . $file, 'w' );

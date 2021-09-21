@@ -37,10 +37,16 @@ class Orders implements Countable, Iterator {
 
 	/**
 	 * De constructor
+	 *
+	 * @param int|null $klant_id Geef de orders van de klant.
 	 */
-	public function __construct() {
+	public function __construct( ?int $klant_id = null ) {
 		global $wpdb;
-		$data = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders", ARRAY_A );
+		$where = '';
+		if ( ! is_null( $klant_id ) ) {
+			$where = "WHERE klant_id=$klant_id";
+		}
+		$data = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders $where", ARRAY_A ); // phpcs:ignore
 		foreach ( $data as $row ) {
 			$this->orders[] = new Order( $row['id'], $row );
 		}

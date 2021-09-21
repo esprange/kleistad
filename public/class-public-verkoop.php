@@ -96,12 +96,18 @@ class Public_Verkoop extends ShortcodeForm {
 	protected function save( array $data ) : array {
 		$verkoop = new LosArtikel();
 		if ( 'bestaand' === $data['input']['klant_type'] ) {
-			$klant          = get_user_by( 'id', $data['input']['klant_id'] );
-			$verkoop->klant = [
+			$klant = get_user_by( 'id', $data['input']['klant_id'] );
+			/**
+			 * De adres elementen zijn onderdeel gemaakt van het object.
+			 *
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
+			$verkoop->klant    = [
 				'naam'  => $klant->display_name,
 				'adres' => "$klant->straat $klant->huisnr\n$klant->pcode $klant->plaats",
 				'email' => $klant->user_email,
 			];
+			$verkoop->klant_id = $klant->ID;
 		} else {
 			$verkoop->klant = [
 				'naam'  => $data['input']['klant'],

@@ -20,8 +20,9 @@ namespace Kleistad;
  * @property int    credit_id
  * @property int    origineel_id
  * @property bool   gesloten
- * @property array historie
+ * @property array  historie
  * @property array  klant
+ * @property int    klant_id
  * @property int    mutatie_datum
  * @property int    verval_datum
  * @property string referentie
@@ -71,6 +72,7 @@ class Order {
 					'email' => '',
 				]
 			),
+			'klant_id'      => 0,
 			'mutatie_datum' => null,
 			'verval_datum'  => date( 'Y-m-d 00:00:0', strtotime( '+30 days 00:00' ) ),
 			'referentie'    => '',
@@ -112,7 +114,7 @@ class Order {
 		if ( in_array( $attribuut, [ 'mutatie_datum', 'verval_datum', 'datum' ], true ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
-		if ( in_array( $attribuut, [ 'credit_id', 'origineel_id', 'id' ], true ) ) {
+		if ( in_array( $attribuut, [ 'credit_id', 'origineel_id', 'klant_id', 'id' ], true ) ) {
 			return intval( $this->data[ $attribuut ] );
 		}
 		if ( in_array( $attribuut, [ 'klant', 'historie' ], true ) ) {

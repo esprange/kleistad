@@ -40,7 +40,7 @@ abstract class Artikel {
 	 *
 	 * @var int $klant_id
 	 */
-	public int $klant_id;
+	public int $klant_id = 0;
 
 	/**
 	 * De betaal link.
@@ -118,6 +118,8 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
+		$profiel           = new Profiel();
+		$profiel->reset( $this->klant_id );
 		return $this->maak_factuur( $credit_order, 'credit' );
 	}
 
@@ -136,6 +138,7 @@ abstract class Artikel {
 		$order                = new Order();
 		$order->betaald       = $bedrag;
 		$order->klant         = $this->naw_klant();
+		$order->klant_id      = $this->klant_id;
 		$order->opmerking     = $opmerking;
 		$order->referentie    = $this->geef_referentie();
 		$order->transactie_id = $transactie_id;
@@ -149,6 +152,8 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
+		$profiel           = new Profiel();
+		$profiel->reset( $this->klant_id );
 		return $factuur ? $this->maak_factuur( $order, '' ) : '';
 	}
 
@@ -174,6 +179,8 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
+		$profiel           = new Profiel();
+		$profiel->reset( $this->klant_id );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -191,6 +198,8 @@ abstract class Artikel {
 		$order->betaald      += $bedrag;
 		$order->transactie_id = $transactie_id;
 		$order->save( sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'Betaling' : 'Stornering', abs( $bedrag ), $order->betaald ) );
+		$profiel = new Profiel();
+		$profiel->reset( $this->klant_id );
 		return ( $factuur ) ? $this->maak_factuur( $order, '' ) : '';
 	}
 
@@ -222,6 +231,8 @@ abstract class Artikel {
 			],
 			'betaling'
 		);
+		$profiel           = new Profiel();
+		$profiel->reset( $this->klant_id );
 		return $this->maak_factuur( $order, 'correctie' );
 	}
 
@@ -252,6 +263,12 @@ abstract class Artikel {
 	 */
 	public function naw_klant() : array {
 		$klant = get_userdata( $this->klant_id );
+
+		/**
+		 * De adres elementen zijn onderdeel gemaakt van het object.
+		 *
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
 		return [
 			'naam'  => "$klant->first_name  $klant->last_name",
 			'adres' => "$klant->straat $klant->huisnr\n$klant->pcode $klant->plaats",
@@ -262,13 +279,14 @@ abstract class Artikel {
 	/**
 	 * De link die in een email als parameter meegegeven kan worden.
 	 *
-	 * @param array  $args   Een array met parameters.
-	 * @param string $pagina De pagina waar geland moet worden.
+	 * @param array  $args       Een array met parameters.
+	 * @param string $pagina     De pagina waar geland moet worden.
+	 * @param string $verwijzing De tekst in de link.
 	 * @return string De html link.
 	 */
-	public function maak_link( array $args, string $pagina ) : string {
+	public function maak_link( array $args, string $pagina, string $verwijzing = 'Kleistad pagina' ) : string {
 		$url = add_query_arg( array_merge( $args, [ 'hsh' => $this->controle() ] ), home_url( "/kleistad-$pagina" ) );
-		return "<a href=\"$url\" >Kleistad pagina</a>";
+		return "<a href=\"$url\" target=\"_blank\" >$verwijzing</a>";
 	}
 
 	/**

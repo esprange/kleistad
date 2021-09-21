@@ -45,7 +45,8 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="order_id" value="<?php echo esc_attr( $this->data['order_id'] ); ?>" />
 		<input type="hidden" name="artikel_type" value="<?php echo esc_attr( $this->data['artikel_type'] ); ?>" />
 		<input type="hidden" name="betaal" value="ideal" />
-		<h2>Overzicht betaling <?php echo esc_html( $this->data['betreft'] ); ?> </h2>
+		<h2>Overzicht betaling <?php echo esc_html( $this->data['betreft'] ); ?></h2>
+		<button class="kleistad-button kleistad-download-link" type="button" data-actie="url_factuur" >factuur <?php echo esc_html( $this->data['factuur'] ); ?></button>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
 				<p>Voor</p>
