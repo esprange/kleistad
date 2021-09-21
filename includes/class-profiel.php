@@ -33,6 +33,9 @@ class Profiel {
 				return '';
 			}
 			$user = get_user_by( 'ID', $user );
+			if ( ! is_a( $user, 'WP_User' ) ) {
+				return '';
+			}
 		}
 		delete_transient( "kleistad_profiel_$user->ID" );
 		return $this->prepare( $user );
