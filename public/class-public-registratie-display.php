@@ -33,7 +33,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Registratie_Display
 	 */
-	private function details() {
+	private function details() : Public_Registratie_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
@@ -98,8 +98,6 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de details
-	 *
-	 * @return Public_Registratie_Display
 	 */
 	private function wachtwoord() {
 		?>
@@ -149,7 +147,6 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 }
