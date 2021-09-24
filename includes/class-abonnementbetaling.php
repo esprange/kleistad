@@ -45,11 +45,12 @@ class AbonnementBetaling extends ArtikelBetaling {
 	/**
 	 * Betaal het abonnement met iDeal.
 	 *
-	 * @param  string $bericht Het bericht bij succesvolle betaling.
-	 * @param  float  $bedrag  Het te betalen bedrag.
+	 * @param string $bericht    Het bericht bij succesvolle betaling.
+	 * @param float  $bedrag     Het te betalen bedrag.
+	 * @param string $referentie De referentie van de order.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag ) {
+	public function doe_ideal( string $bericht, float $bedrag, string $referentie ) {
 		switch ( $this->abonnement->artikel_type ) {
 			case 'start':
 				$vermelding = sprintf(
@@ -77,7 +78,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 		}
 		return $this->betalen->order(
 			$this->abonnement->klant_id,
-			$this->abonnement->geef_referentie(),
+			$referentie,
 			$bedrag,
 			"Kleistad abonnement {$this->abonnement->code}$vermelding",
 			$bericht,

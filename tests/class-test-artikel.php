@@ -74,12 +74,13 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 			/**
 			 * Betaal het artikel met iDeal.
 			 *
-			 * @param string $bericht Het bericht bij succesvolle betaling.
-			 * @param float  $bedrag  Het te betalen bedrag.
+			 * @param string $bericht    Het bericht bij succesvolle betaling.
+			 * @param float  $bedrag     Het te betalen bedrag.
+			 * @param string $referentie De referentie string.
 			 *
 			 * @return string De redirect url ingeval van een ideal betaling of false als het niet lukt.
 			 */
-			public function doe_ideal( string $bericht, float $bedrag ) : string {
+			public function doe_ideal( string $bericht, float $bedrag, string $referentie ) : string {
 				return '';
 			}
 		};

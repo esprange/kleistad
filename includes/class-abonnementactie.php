@@ -45,7 +45,7 @@ class AbonnementActie {
 		$this->log( 'gestart met automatisch betalen' );
 		$this->abonnement->save();
 		$this->abonnement->artikel_type = 'mandaat';
-		return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', 0.01 );
+		return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', 0.01, $this->abonnement->geef_referentie() );
 	}
 
 	/**
@@ -120,7 +120,7 @@ class AbonnementActie {
 		$this->autoriseer( true );
 		$this->abonnement->save();
 		if ( 'ideal' === $betaalwijze ) {
-			return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag );
+			return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag, $this->abonnement->geef_referentie() );
 		}
 		$this->abonnement->verzend_email( '_start_bank', $this->abonnement->bestel_order( 0.0, $this->abonnement->start_datum ) );
 		return true;

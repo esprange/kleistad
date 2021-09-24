@@ -26,12 +26,7 @@ class Public_Werkplekrapport extends Shortcode {
 	 * @since   6.12.1
 	 */
 	protected function prepare( array &$data ) {
-		$atts          = shortcode_atts(
-			[ 'actie' => '' ],
-			$this->atts
-		);
-		$data['actie'] = $atts['actie'];
-		$input         = filter_input_array(
+		$input = filter_input_array(
 			INPUT_GET,
 			[
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,

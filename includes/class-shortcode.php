@@ -34,7 +34,7 @@ abstract class Shortcode {
 	 *
 	 * @var array shortcode parameters
 	 */
-	protected array $atts;
+	private array $atts;
 
 	/**
 	 * Abstract definitie van de prepare functie
@@ -65,6 +65,9 @@ abstract class Shortcode {
 	 */
 	protected function display( array &$data = [ 'actie' => '-' ] ) : string {
 		$this->enqueue();
+		foreach ( $this->atts as $att_key => $att ) {
+			$data[ $att_key ] = htmlspecialchars_decode( $att );
+		}
 		try {
 			$ontvangen     = new Ontvangen();
 			$betaal_result = $ontvangen->controleer();

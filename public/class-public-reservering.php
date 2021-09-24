@@ -30,18 +30,12 @@ class Public_Reservering extends Shortcode {
 	 * @since   4.0.87
 	 */
 	protected function prepare( array &$data ) {
-		$atts = shortcode_atts(
-			[ 'oven' => 'niet ingevuld' ],
-			$this->atts,
-			'kleistad_reservering'
-		);
-		if ( ! is_numeric( $atts['oven'] ) ) {
+		if ( ! is_numeric( $data['oven'] ) ) {
 			return new WP_Error( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
 		}
-		$oven_id = $atts['oven'];
-		$oven    = new Oven( $oven_id );
+		$oven = new Oven( $data['oven'] );
 		if ( ! $oven->id ) {
-			return new WP_Error( 'fout', 'oven met id ' . $oven_id . ' is niet bekend in de database !' );
+			return new WP_Error( 'fout', 'oven met id ' . $data['oven'] . ' is niet bekend in de database !' );
 		}
 		$data = [
 			'stokers'  => get_users(
@@ -266,6 +260,7 @@ class Public_Reservering extends Shortcode {
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
+	 *
 	 * @return WP_REST_Response Ajax response.
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) : WP_REST_Response {

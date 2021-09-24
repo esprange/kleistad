@@ -45,14 +45,15 @@ class SaldoBetaling extends ArtikelBetaling {
 	/**
 	 * Betaal het saldo met iDeal.
 	 *
-	 * @param  string $bericht Het bericht bij succesvolle betaling.
-	 * @param  float  $bedrag  Het bedrag dat openstaat.
+	 * @param  string $bericht    Het bericht bij succesvolle betaling.
+	 * @param  float  $bedrag     Het bedrag dat openstaat.
+	 * @param  string $referentie De referentie.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag ) {
+	public function doe_ideal( string $bericht, float $bedrag, string $referentie ) {
 		return $this->betalen->order(
 			$this->saldo->klant_id,
-			$this->saldo->geef_referentie(),
+			$referentie,
 			$bedrag,
 			sprintf( 'Kleistad stooksaldo %s', $this->saldo->code ),
 			$bericht,

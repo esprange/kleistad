@@ -45,14 +45,15 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	/**
 	 * Betaal het abonnement met iDeal.
 	 *
-	 * @param  string $bericht Het bericht bij succesvolle betaling.
-	 * @param  float  $bedrag  Het te betalen bedrag.
+	 * @param  string $bericht    Het bericht bij succesvolle betaling.
+	 * @param  float  $bedrag     Het te betalen bedrag.
+	 * @param  string $referentie De referentie.
 	 * @return string|bool De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag ) {
+	public function doe_ideal( string $bericht, float $bedrag, string $referentie ) {
 		return $this->betalen->order(
 			$this->inschrijving->klant_id,
-			$this->inschrijving->geef_referentie(),
+			$referentie,
 			$bedrag,
 			sprintf(
 				'Kleistad cursus %s %skosten voor %s',

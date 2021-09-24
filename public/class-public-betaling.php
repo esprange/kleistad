@@ -50,7 +50,7 @@ class Public_Betaling extends ShortcodeForm {
 			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
 		$data = [
-			'order_id'      => $param['order'],
+			'order_id'      => $order->id,
 			'actie'         => 'betalen',
 			'klant'         => $order->klant['naam'],
 			'openstaand'    => $order->te_betalen(),
@@ -112,7 +112,7 @@ class Public_Betaling extends ShortcodeForm {
 	protected function save( array $data ) : array {
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$data['artikel']->artikel_type = $data['input']['artikel_type'];
-			$ideal_uri                     = $data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->te_betalen() );
+			$ideal_uri                     = $data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->te_betalen(), $data['order']->referentie );
 			if ( false === $ideal_uri ) {
 				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}

@@ -177,7 +177,7 @@ class InschrijvingActie {
 			return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie';
 		}
 		if ( 'ideal' === $betaalwijze ) {
-			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag() );
+			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag(), $this->inschrijving->geef_referentie() );
 		}
 		$this->inschrijving->verzend_email( 'inschrijving', $this->inschrijving->bestel_order( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant() ) );
 		return true;

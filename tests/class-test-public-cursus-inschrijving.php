@@ -81,13 +81,12 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
+		$data   = [ 'actie' => '-' ];
+		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		/**
 		 * Standaard wordt de inschrijven actie uitgevoerd. Omdat er nog geen cursussen gedefinieerd zijn moet een error afgegeven worden.
 		 */
-		$this->assertTrue( is_wp_error( $result ), 'prepare inschrijven geen foutmelding' );
-		$this->assertTrue( false !== strpos( $result->get_error_message(), 'Helaas is er geen cursusplek meer beschikbaar' ), 'prepare geen cursus incorrect' );
+		$this->assertTrue( false !== strpos( $result, 'Helaas is er geen cursusplek meer beschikbaar' ), 'prepare geen cursus incorrect' );
 
 		/**
 		 * Nu maken we een curusus aan en een cursist die op de wachtlijst staat
@@ -99,20 +98,18 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Er is nu een cursus dus inschrijven is voor iedereen mogelijk
 		 */
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
-		$this->assertTrue( $result, 'prepare inschrijven fout' );
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['open_cursussen'] ), 'prepare inschrijven geen cursus' );
 
 		/**
 		 * Nu testen we of de cursist kan stoppen van de wachtlijst
 		 */
-		$_GET   = [
+		$_GET = [
 			'code' => $inschrijving->code,
 			'hsh'  => $inschrijving->controle(),
 			'stop' => 'stop',
 		];
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
-		$this->assertTrue( $result, 'prepare indelen na wachten fout' );
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertEquals( $inschrijving->klant_id, $data['gebruiker_id'], 'prepare stoppen na wachten geen gebruiker_id' );
 		$this->assertFalse( isset( $data['ruimte'] ), 'prepare stoppen na wachten incorrect' );
 
@@ -121,8 +118,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		 */
 		unset( $_GET['stop'] ); // phpcs:ignore
 		Cursussen::doe_dagelijks(); // Zet de vol indicator uit en verstuur de email met de link.
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
-		$this->assertTrue( $result, 'prepare indelen na wachten fout' );
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertEquals( $inschrijving->klant_id, $data['gebruiker_id'], 'prepare indelen na wachten geen gebruiker_id' );
 		$this->assertTrue( isset( $data['ruimte'] ), 'prepare indelen na wachten geen gebruiker_id' );
 

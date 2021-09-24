@@ -31,7 +31,6 @@ class Public_Omzet_Rapportage extends Shortcode {
 		if ( 'details' === $data['actie'] ) {
 			sscanf( $data['id'], '%d-%d-%s', $data['jaar'], $data['maand'], $data['artikelcode'] );
 			$data['artikel']      = $register->geef_naam( $data['artikelcode'] );
-			$data['periode']      = strtotime( "{$data['jaar']}-{$data['maand']}-1 00:00" );
 			$data['omzetdetails'] = $rapport->maanddetails( $data['maand'], $data['jaar'], $data['artikelcode'] );
 			return true;
 		}
@@ -39,8 +38,7 @@ class Public_Omzet_Rapportage extends Shortcode {
 			$data['id'] = date( 'Y-m', strtotime( 'this month 00:00' ) );
 		}
 		sscanf( $data['id'], '%d-%d', $data['jaar'], $data['maand'] );
-		$data['periode'] = strtotime( "{$data['id']}-1 00:00" );
-		$data['omzet']   = $rapport->maandrapport( $data['maand'], $data['jaar'] );
+		$data['omzet'] = $rapport->maandrapport( $data['maand'], $data['jaar'] );
 		return true;
 	}
 

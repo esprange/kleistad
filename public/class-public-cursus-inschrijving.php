@@ -40,16 +40,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'stop' => FILTER_SANITIZE_STRING,
 			]
 		);
-		$atts                   = shortcode_atts(
-			[
-				'cursus'    => '',
-				'verbergen' => '',
-			],
-			$this->atts,
-			'kleistad_cursus_inschrijving'
-		);
-		$data['verbergen']      = $atts['verbergen'];
-		$this->cursus_selecties = '' !== $atts['cursus'] ? explode( ',', preg_replace( '/\s+|C/', '', $atts['cursus'] ) ) : [];
+		$this->cursus_selecties = empty( $data['cursus'] ) ? [] : explode( ',', preg_replace( '/\s+|C/', '', $data['cursus'] ) );
 		if ( ! is_null( $data['param'] ) && ! empty( $data['param']['stop'] ) ) {
 			return 'stop_wachten';
 		}
@@ -303,7 +294,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		}
 		$inschrijving->artikel_type = 'inschrijving';
 		$inschrijving->save();
-		$ideal_uri = $inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->cursus->bedrag() );
+		$ideal_uri = $inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->cursus->bedrag(), $inschrijving->geef_referentie() );
 		if ( false === $ideal_uri ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}

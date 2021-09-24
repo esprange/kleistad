@@ -17,21 +17,14 @@ class Test_Public_Contact extends Kleistad_UnitTestCase {
 	private const SHORTCODE = 'contact';
 
 	/**
-	 * Formulier data.
-	 *
-	 * @var array $input De ingevoerde data.
-	 */
-	private array $input;
-
-	/**
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
 		/**
 		 * Eerst een controle zonder dat er argumenten zijn. Die doet niets.
 		 */
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
+		$data   = [ 'actie' => '-' ];
+		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertFalse( is_wp_error( $result ), 'prepare incorrect' );
 
 		/**
@@ -40,7 +33,7 @@ class Test_Public_Contact extends Kleistad_UnitTestCase {
 		$data         = [];
 		$gebruiker_id = $this->factory->user->create();
 		wp_set_current_user( $gebruiker_id );
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
+		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertFalse( is_wp_error( $result ), 'prepare met ingelogde gebruiker incorrect' );
 		$this->assertNotEmpty( $data['input']['email'], 'prepare ingelogde gebruiker leeg' );
 	}

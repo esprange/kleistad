@@ -21,6 +21,7 @@
 				'change',
 				'#kleistad_maand',
 				function() {
+					$( '#kleistad_downloadrapport' ).prop( 'disabled', 0 === $( this ).val() );
 					$( '#kleistad_rapport' ).data(
 						'id',
 						$( '#kleistad_jaar' ).val() + '-' + $( this ).val()

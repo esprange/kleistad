@@ -37,16 +37,15 @@ class Orderrapportage {
 				'details' => false,
 			];
 		}
-		if ( strtotime( '1-1-2020' ) < mktime( 0, 0, 0, $maand + 1, 1, $jaar ) ) { // Vanaf 2020 wordt gefactureerd.
-			$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand ORDER BY datum", ARRAY_A ); // phpcs:ignore
-			foreach ( $order_ids as $order_id ) {
-				$order                     = new Order( intval( $order_id['id'] ) );
-				$naam                      = $artikelregister->geef_naam( $order->referentie );
-				$factor                    = '@' !== $order->referentie[0] ? 1 : -1;
-				$omzet[ $naam ]['netto']  += $factor * $order->orderregels->netto();
-				$omzet[ $naam ]['btw']    += $factor * $order->orderregels->btw();
-				$omzet[ $naam ]['details'] = true;
-			}
+		$maand_selectie = $maand ? "AND MONTH(datum) = $maand" : '';
+		$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar $maand_selectie ORDER BY datum", ARRAY_A ); // phpcs:ignore
+		foreach ( $order_ids as $order_id ) {
+			$order                     = new Order( intval( $order_id['id'] ) );
+			$naam                      = $artikelregister->geef_naam( $order->referentie );
+			$factor                    = '@' !== $order->referentie[0] ? 1 : -1;
+			$omzet[ $naam ]['netto']  += $factor * $order->orderregels->netto();
+			$omzet[ $naam ]['btw']    += $factor * $order->orderregels->btw();
+			$omzet[ $naam ]['details'] = true;
 		}
 		return $omzet;
 	}
@@ -61,8 +60,9 @@ class Orderrapportage {
 	 */
 	public function maanddetails( int $maand, int $jaar, string $artikelcode ) : array {
 		global $wpdb;
-		$details   = [];
-		$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar AND MONTH(datum) = $maand AND referentie LIKE '$artikelcode%' ORDER BY datum", ARRAY_A ); // phpcs:ignore
+		$details        = [];
+		$maand_selectie = $maand ? "AND MONTH(datum) = $maand" : '';
+		$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar $maand_selectie AND referentie LIKE '$artikelcode%' ORDER BY datum", ARRAY_A ); // phpcs:ignore
 		foreach ( $order_ids as $order_id ) {
 			$order     = new Order( intval( $order_id['id'] ) );
 			$details[] = [

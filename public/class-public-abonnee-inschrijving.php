@@ -48,21 +48,13 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'mc4wp-subscribe'  => '0',
 			];
 		}
-		$atts               = shortcode_atts(
-			[ 'verklaring' => '' ],
-			$this->atts,
-			'kleistad_abonnee_inschrijving'
-		);
-		$gebruikers         = get_users(
+		$data['gebruikers'] = get_users(
 			[
 				'fields'       => [ 'ID', 'display_name' ],
 				'orderby'      => 'display_name',
 				'role__not_in' => [ LID ],
 			]
 		);
-		$data['gebruikers'] = $gebruikers;
-		$data['verklaring'] = htmlspecialchars_decode( $atts['verklaring'] );
-
 		return true;
 	}
 

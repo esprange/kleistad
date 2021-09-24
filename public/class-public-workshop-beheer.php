@@ -352,7 +352,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshop = new Workshop( intval( $data['workshop']['workshop_id'] ) );
 		$workshop->actie->afzeggen();
 		return [
-			'status'  => $this->status( 'De afspraak voor de workshop is ' . ( $workshop->definitief ) ? 'per email afgezegd' : 'verwijderd' ),
+			'status'  => $this->status( 'De afspraak voor de workshop is ' . ( $workshop->definitief ? 'per email afgezegd' : 'verwijderd' ) ),
 			'content' => $this->display(),
 		];
 	}

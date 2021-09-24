@@ -26,23 +26,29 @@ class Test_Public_Cursus_Overzicht extends Kleistad_UnitTestCase {
 		$inschrijving = new Inschrijving( $cursus->id, $cursist_id );
 		$inschrijving->save();
 
-		$data['actie'] = '';
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare default incorrect' );
+		$data = [ 'actie' => '-' ];
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( 0 < count( $data['cursus_info'] ), 'prepare default data incorrect' );
 
-		$data['id']    = $cursus->id;
-		$data['actie'] = 'cursisten';
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare toevoegen incorrect' );
+		$data = [
+			'actie' => 'cursisten',
+			'id'    => $cursist_id,
+		];
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['cursisten'] ), 'prepare tonen cursisten data incorrect' );
 
-		$data['id']    = "C$cursus->id-$cursist_id";
-		$data['actie'] = 'indelen';
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare toevoegen incorrect' );
+		$data = [
+			'actie' => 'indelen',
+			'id'    => "C$cursus->id-$cursist_id",
+		];
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['cursist'] ), 'prepare indelen cursist data incorrect' );
 
-		$data['id']    = "C$cursus->id-$cursist_id";
-		$data['actie'] = 'uitschrijven';
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare toevoegen incorrect' );
+		$data = [
+			'actie' => 'uitschrijven',
+			'id'    => "C$cursus->id-$cursist_id",
+		];
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['cursist'] ), 'prepare uitschrijven cursist data incorrect' );
 	}
 
@@ -83,8 +89,8 @@ class Test_Public_Cursus_Overzicht extends Kleistad_UnitTestCase {
 		$_GET       = [ 'cursus_id' => $cursus->id ];
 		$filehandle = fopen( 'php://memory', 'wb' );
 		$data       = [ 'filehandle' => $filehandle ];
-		$result     = $this->public_actie( self::SHORTCODE, 'cursisten', $data );
-		$size       = ftell( $filehandle );
+		$this->public_actie( self::SHORTCODE, 'cursisten', $data );
+		$size = ftell( $filehandle );
 		fclose( $filehandle );
 		$this->assertTrue( 0 < $size, 'Er is geen bestand aangemaakt' );
 	}

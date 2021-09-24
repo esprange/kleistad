@@ -24,8 +24,9 @@ class Test_Public_Abonnement_Overzicht extends Kleistad_UnitTestCase {
 		$abonnement = new Abonnement( $abonnee_id );
 		$abonnement->save();
 
-		$data['actie'] = '';
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare incorrect' );
+		$data = [ 'actie' => '-' ];
+		$this->public_actie( self::SHORTCODE, 'display', $data );
+		$this->assertTrue( isset( $data['abonnee_info'] ), 'prepare incorrect' );
 		$this->assertTrue( 0 < count( $data['abonnee_info'] ), 'prepare default data incorrect' );
 	}
 

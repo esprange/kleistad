@@ -59,8 +59,8 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 	 */
 	public function test_prepare() {
 		$this->maak_wijziging( 'test', false, false );
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
+		$data   = [ 'actie' => '-' ];
+		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
 				echo $error . "\n"; // phpcs:ignore

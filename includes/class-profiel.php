@@ -62,7 +62,10 @@ class Profiel {
 				if ( $order->gesloten || $order->transactie_id ) {
 					continue;
 				}
-				$artikel       = $artikelregister->geef_object( $order->referentie );
+				$artikel = $artikelregister->geef_object( $order->referentie );
+				if ( is_null( $artikel ) ) {
+					continue;
+				}
 				$betaalstatus  = max( $betaalstatus, $order->verval_datum > $vandaag ? 1 : 2 );
 				$betaallinks[] = 'factuur ' . $artikel->maak_link(
 					[

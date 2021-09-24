@@ -37,11 +37,12 @@ abstract class ArtikelBetaling {
 	/**
 	 * Betaal het artikel met iDeal.
 	 *
-	 * @param string $bericht Het bericht bij succesvolle betaling.
-	 * @param float  $bedrag  Het te betalen bedrag.
+	 * @param string $bericht    Het bericht bij succesvolle betaling.
+	 * @param float  $bedrag     Het te betalen bedrag.
+	 * @param string $referentie De referentie behorende bij de bestelling.
 	 *
 	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	abstract public function doe_ideal( string $bericht, float $bedrag );
+	abstract public function doe_ideal( string $bericht, float $bedrag, string $referentie );
 
 }

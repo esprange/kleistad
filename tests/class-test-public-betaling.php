@@ -17,21 +17,14 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 	private const SHORTCODE = 'betaling';
 
 	/**
-	 * Formulier data.
-	 *
-	 * @var array $input De ingevoerde data.
-	 */
-	private array $input;
-
-	/**
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
 		/**
 		 * Eerst een controle zonder dat er argumenten zijn. Die doet niets.
 		 */
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
+		$data   = [ 'actie' => '-' ];
+		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertFalse( is_wp_error( $result ), 'prepare zonder argumenten incorrect' );
 
 		/**
@@ -51,7 +44,8 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 			'hsh'   => $verkoop->controle(),
 			'art'   => $verkoop->artikel_type,
 		];
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare met argumenten result incorrect' );
+		$this->public_actie( self::SHORTCODE, 'display', $data );
+		$this->assertTrue( isset( $data['openstaand'] ), 'prepare met argumenten result incorrect' );
 		$this->assertTrue( isset( $data['actie'] ), 'prepare met argumenten incorrect' );
 
 		/**
@@ -60,15 +54,15 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$order           = new Order( $verkoop->geef_referentie() );
 		$order->gesloten = true;
 		$order->save( 'test' );
-		$result = $this->public_actie( self::SHORTCODE, 'prepare', $data );
-		$this->assertTrue( false !== strpos( $result->get_error_message(), 'Volgens onze informatie is er reeds betaald' ), 'prepare gesloten order incorrect' );
+		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
+		$this->assertTrue( false !== strpos( $result, 'Volgens onze informatie is er reeds betaald' ), 'prepare gesloten order incorrect' );
 
 		/**
 		 * Nu nog een controle met foute hash ccode.
 		 */
 		$_GET['hsh'] = 'false';
-		$result      = $this->public_actie( self::SHORTCODE, 'prepare', $data );
-		$this->assertTrue( false !== strpos( $result->get_error_message(), 'Je hebt geklikt op een ongeldige link' ), 'prepare ongeldige link incorrect' );
+		$result      = $this->public_actie( self::SHORTCODE, 'display', $data );
+		$this->assertTrue( false !== strpos( $result, 'Je hebt geklikt op een ongeldige link' ), 'prepare ongeldige link incorrect' );
 	}
 
 	/**

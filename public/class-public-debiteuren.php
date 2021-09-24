@@ -91,17 +91,11 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @since   6.1.0
 	 */
 	protected function prepare( array &$data ) {
-		$atts = shortcode_atts(
-			[ 'actie' => '' ],
-			$this->atts,
-			'kleistad_debiteuren'
-		);
 		if ( 'debiteur' === $data['actie'] ) {
 			$data['debiteur'] = $this->debiteur( $data['id'] );
 			return true;
 		}
-		if ( 'zoek' === $atts['actie'] ) {
-			$data['actie']      = 'zoek';
+		if ( 'zoek' === $data['actie'] ) {
 			$data['debiteuren'] = ! empty( $data['id'] ) ? $this->debiteuren( $data['id'] ) : [];
 			$data['openstaand'] = 0;
 			foreach ( $data['debiteuren'] as $debiteur ) {
@@ -109,8 +103,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			}
 			return true;
 		}
-		if ( 'blokkade' === $atts['actie'] ) {
-			$data['actie']            = 'blokkade';
+		if ( 'blokkade' === $data['actie'] ) {
 			$data['huidige_blokkade'] = get_blokkade();
 			$data['nieuwe_blokkade']  = strtotime( '+3 month', $data['huidige_blokkade'] );
 			return true;

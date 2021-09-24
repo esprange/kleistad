@@ -35,8 +35,8 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function html() {
-		$this->select_maand = (int) date( 'm', $this->data['periode'] );
-		$this->select_jaar  = (int) date( 'Y', $this->data['periode'] );
+		$this->select_maand = $this->data['maand'];
+		$this->select_jaar  = $this->data['jaar'];
 		if ( 'details' === $this->data['actie'] ) {
 			$this->details();
 			return;
@@ -53,7 +53,10 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 		?>
 		<input type="hidden" name="maand" value="<?php echo esc_attr( $this->select_maand ); ?>">
 		<input type="hidden" name="jaar" value="<?php echo esc_attr( $this->select_jaar ); ?>">
-		<p>Omzet in <?php echo esc_html( strftime( '%B %Y', mktime( 0, 0, 0, $this->select_maand, 1, $this->select_jaar ) ) ); ?> voor <?php echo esc_html( $this->data['artikel'] ); ?>.
+		<p>Omzet in
+			<?php echo esc_html( $this->select_maand ? strftime( '%B %Y', mktime( 0, 0, 0, $this->select_maand, 1, $this->select_jaar ) ) : $this->select_jaar ); ?>
+			voor <?php echo esc_html( $this->data['artikel'] ); ?></p>.
+
 		<table class="kleistad-datatable display compact nowrap" >
 			<thead>
 				<tr>
@@ -94,7 +97,8 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-3">
 				<select name="maand" id="kleistad_maand" >
-					<option value="1" <?php selected( 1, $this->select_maand ); ?> >januari</option>
+					<option value="0" <?php selected( 0, $this->select_maand ); ?>>-</option>
+					<option value="1" <?php selected( 1, $this->select_maand ); ?>>januari</option>
 					<option value="2" <?php selected( 2, $this->select_maand ); ?>>februari</option>
 					<option value="3" <?php selected( 3, $this->select_maand ); ?>>maart</option>
 					<option value="4" <?php selected( 4, $this->select_maand ); ?>>april</option>
@@ -169,7 +173,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 				</tr>
 			</tfoot>
 			</table>
-			<button class="kleistad-button kleistad-download-link" type="button" data-actie="omzetrapport" >Omzet rapport</button>
+			<button id="kleistad_downloadrapport" class="kleistad-button kleistad-download-link" type="button" data-actie="omzetrapport" >Omzet rapport</button>
 		</div>
 		<?php
 		return $this;

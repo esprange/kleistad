@@ -29,7 +29,6 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 */
 	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
-			$data          = [];
 			$data['input'] = [
 				'user_email'      => '',
 				'email_controle'  => '',
@@ -46,12 +45,6 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 				'mc4wp-subscribe' => '0',
 			];
 		}
-		$atts               = shortcode_atts(
-			[ 'verklaring' => '' ],
-			$this->atts,
-			'kleistad_dagdelenkaart'
-		);
-		$data['verklaring'] = htmlspecialchars_decode( $atts['verklaring'] );
 		return true;
 	}
 
@@ -119,7 +112,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 		$dagdelenkaart->nieuw( strtotime( $data['input']['start_datum'] ), $data['input']['opmerking'] );
 
 		if ( 'ideal' === $data['input']['betaal'] ) {
-			$ideal_uri = $dagdelenkaart->betaling->doe_ideal( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden', opties()['dagdelenkaart'] );
+			$ideal_uri = $dagdelenkaart->betaling->doe_ideal( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden', opties()['dagdelenkaart'], $dagdelenkaart->geef_referentie() );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}

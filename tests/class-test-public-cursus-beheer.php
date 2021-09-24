@@ -17,32 +17,25 @@ class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 	private const SHORTCODE = 'cursus_beheer';
 
 	/**
-	 * Formulier data.
-	 *
-	 * @var array $input De ingevoerde data.
-	 */
-	private array $input;
-
-	/**
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
 		$cursus = new Cursus();
 		$cursus->save();
 
-		$data = [ 'actie' => '' ];
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare default incorrect' );
+		$data = [ 'actie' => '-' ];
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['cursussen'] ), 'prepare default data incorrect' );
 
 		$data = [ 'actie' => 'toevoegen' ];
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare toevoegen incorrect' );
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['cursus'] ), 'prepare toevoegen data incorrect' );
 
 		$data = [
 			'actie' => 'wijzigen',
 			'id'    => $cursus->id,
 		];
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'prepare', $data ), 'prepare wijzigen incorrect' );
+		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['cursus'] ), 'prepare toevoegen data incorrect' );
 	}
 
