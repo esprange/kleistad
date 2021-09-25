@@ -1,6 +1,6 @@
 <?php
 /**
- * Toon de omzetrapportage
+ * Toon het registratie formulier
  *
  * @link       https://www.kleistad.nl
  * @since      4.0.87
@@ -11,7 +11,7 @@
 namespace Kleistad;
 
 /**
- * Render van de omzetrapportage.
+ * Render van het formulier.
  */
 class Public_Registratie_Display extends Public_Shortcode_Display {
 
