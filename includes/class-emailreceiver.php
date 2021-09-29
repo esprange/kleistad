@@ -38,37 +38,37 @@ class EmailReceiver {
 		$answered = [];
 		// phpcs:disable WordPress.NamingConventions
 		try {
-			$mailbox = new PhpImap\Mailbox(
+			$mailbox   = new PhpImap\Mailbox(
 				'{' . setup()['imap_server'] . '}INBOX',
 				setup()['imap_adres'],
 				setup()['imap_pwd']
 			);
+			$email_ids = $mailbox->searchMailbox( 'UNANSWERED', true );
+			foreach ( $email_ids as $email_id ) {
+				$email  = $mailbox->getMail( $email_id );
+				$header = $mailbox->getMailHeader( $email_id );
+				$body   = $email->textPlain ?: ( $email->textHtml ?: '<p>bericht tekst kan niet worden weergegeven</p>' );
+				$verwerk(
+					[
+						'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
+						'from'      => sanitize_email( $email->fromAddress ),
+						'subject'   => sanitize_text_field( $email->subject ),
+						'content'   => $body,
+						'tijd'      => date( 'd-m-Y H:i', strtotime( $header->date ?? date( 'd-m-Y' ) ) ),
+					]
+				);
+				$answered[] = $email_id;
+			}
+			if ( ! empty( $answered ) ) {
+				$mailbox->setFlag( $answered, '\\Answered' );
+			}
+			$mailbox->disconnect();
 		} catch ( PhpImap\Exceptions\InvalidParameterException $e ) {
 			error_log( 'IMAP fail: ' . $e->getMessage() ); // phpcs:ignore
 			exit( 0 );
 		} catch ( UnexpectedValueException $e ) {
 			exit( 0 );
 		}
-		$email_ids = $mailbox->searchMailbox( 'UNANSWERED', true );
-		foreach ( $email_ids as $email_id ) {
-			$email  = $mailbox->getMail( $email_id );
-			$header = $mailbox->getMailHeader( $email_id );
-			$body   = $email->textPlain ?: ( $email->textHtml ?: '<p>bericht tekst kan niet worden weergegeven</p>' );
-			$verwerk(
-				[
-					'from-name' => isset( $email->fromName ) ? sanitize_text_field( $email->fromName ) : sanitize_email( $email->fromAddress ),
-					'from'      => sanitize_email( $email->fromAddress ),
-					'subject'   => sanitize_text_field( $email->subject ),
-					'content'   => $body,
-					'tijd'      => date( 'd-m-Y H:i', strtotime( $header->date ?? date( 'd-m-Y' ) ) ),
-				]
-			);
-			$answered[] = $email_id;
-		}
-		if ( ! empty( $answered ) ) {
-			$mailbox->setFlag( $answered, '\\Answered' );
-		}
-		$mailbox->disconnect();
 		// phpcs:enable
 	}
 
