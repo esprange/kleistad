@@ -97,6 +97,13 @@ option.kleistad-bank {
 	z-index: 10;
 }
 
+.kleistad-dot {
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
 .kleistad-profiel {
 	height: 50px;
 	position: fixed;
@@ -107,13 +114,10 @@ option.kleistad-bank {
 	z-index: 100;
 }
 
-@media screen and (max-width: 768px) {
-
-	.kleistad-profiel {
-		right: 10px;
-		top: 10px;
-	}
-
+.kleistad-profiel table,
+.kleistad-profiel tr,
+.kleistad-profiel td {
+	border: none;
 }
 
 .kleistad-openstaand {
@@ -477,6 +481,11 @@ div.kleistad-werkplek-dagdeel {
 }
 
 @media screen and (max-width: 768px) {
+
+	.kleistad-profiel {
+		right: 10px;
+		top: 10px;
+	}
 
 	table.kleistad-reserveringen th,
 	table.kleistad-reserveringen td,

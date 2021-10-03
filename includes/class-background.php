@@ -30,10 +30,12 @@ class Background extends WP_Background_Process {
 	/**
 	 * Voor de taak uit.
 	 *
-	 * @param mixed $taak Queue item to iterate over, in dit geval de functie uitvoeren.
+	 * @param mixed $item Queue item to iterate over, in dit geval de functie uitvoeren.
+	 *
+	 * @noinspection PhpMissingReturnTypeInspection
 	 */
-	protected function task( $taak ) {
-		call_user_func( '\\' . __NAMESPACE__ . '\\' . $taak );
+	protected function task( $item ) {
+		call_user_func( '\\' . __NAMESPACE__ . '\\' . $item );
 		return false;
 	}
 

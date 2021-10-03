@@ -91,7 +91,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param bool $alle Moeten alle dagdelenkaarten verwijderd worden of alleen de huidige.
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag )
 	 */
-	public function erase( $alle = true ) {
+	public function erase( bool $alle = true ) {
 		if ( ! $alle ) {
 			$dagdelenkaarten = get_user_meta( $this->klant_id, self::META_KEY, true );
 			if ( is_array( $dagdelenkaarten ) ) {

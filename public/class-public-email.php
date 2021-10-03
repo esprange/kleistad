@@ -154,7 +154,7 @@ class Public_Email extends ShortcodeForm {
 	 *
 	 * @return array De gesorteerde lijst.
 	 */
-	private function sorteren( $data ) : array {
+	private function sorteren( array $data ) : array {
 		usort(
 			$data,
 			function ( $links, $rechts ) {

@@ -253,16 +253,6 @@ var detectTap;
 		{
 			onLoad();
 
-			/**
-			 * Een klik op het betaalinfo deel rechtsboven.
-			 */
-			$( '#kleistad-betaalinfo' ).on(
-				'click',
-				function() {
-					$( '.kleistad-openstaand' ).toggle( 'drop' );
-				}
-			);
-
 			$( '.kleistad-shortcode' )
 			/**
 			 * Als er op een edit anchor is geklikt, doe dan een edit actie.

@@ -39,6 +39,7 @@ class SaldoActie {
 	 *
 	 * @param float  $bedrag      Het toe te voegen bedrag.
 	 * @param string $betaalwijze De betaalwijze, ideal of bank.
+	 * @return string|bool redirect url of true.
 	 */
 	public function nieuw( float $bedrag, string $betaalwijze ) {
 		$datum                     = strftime( '%y%m%d', strtotime( 'today' ) );
@@ -56,6 +57,5 @@ class SaldoActie {
 		$this->saldo->verzend_email( '_bank', $this->saldo->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
 		return true;
 	}
-
 
 }

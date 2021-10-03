@@ -69,11 +69,11 @@ class Workshop extends Artikel {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @global object $wpdb WordPress database.
-	 * @param int        $workshop_id (optional) workshop welke geladen moet worden.
+	 * @global object    $wpdb WordPress database.
+	 * @param int|null   $workshop_id (optional) workshop welke geladen moet worden.
 	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( $workshop_id = null, ?array $load = null ) {
+	public function __construct( int $workshop_id = null, ?array $load = null ) {
 		global $wpdb;
 		$this->actie    = new WorkshopActie( $this );
 		$this->betaling = new WorkshopBetaling( $this );

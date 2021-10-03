@@ -1,5 +1,3 @@
-// noinspection EqualityComparisonWithCoercionJS
-
 /**
  * Kleistad javascript functies voor formulieren.
  *

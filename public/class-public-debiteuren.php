@@ -91,6 +91,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @since   6.1.0
 	 */
 	protected function prepare( array &$data ) {
+		$blokkade                 = new Blokkade();
+		$data['huidige_blokkade'] = $blokkade->get();
+		if ( 'blokkade' === $data['actie'] ) {
+			$data['wijzigbaar'] = $blokkade->wijzigbaar();
+			return true;
+		}
 		if ( 'debiteur' === $data['actie'] ) {
 			$data['debiteur'] = $this->debiteur( $data['id'] );
 			return true;
@@ -101,11 +107,6 @@ class Public_Debiteuren extends ShortcodeForm {
 			foreach ( $data['debiteuren'] as $debiteur ) {
 				$data['openstaand'] += $debiteur['openstaand'];
 			}
-			return true;
-		}
-		if ( 'blokkade' === $data['actie'] ) {
-			$data['huidige_blokkade'] = get_blokkade();
-			$data['nieuwe_blokkade']  = strtotime( '+3 month', $data['huidige_blokkade'] );
 			return true;
 		}
 		$data['actie']      = 'openstaand';
@@ -300,9 +301,9 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function blokkade() : array {
-		zet_blokkade( strtotime( '+3 month', get_blokkade() ) );
+		$blokkade = new Blokkade();
 		return [
-			'status'  => 'De blokkade datum is gewijzigd',
+			'status'  => $blokkade->set() ? 'De blokkade datum is gewijzigd' : new WP_Error( 'intern', 'De blokkade datum kon niet gewijzigd worden' ),
 			'content' => $this->goto_home(),
 		];
 	}

@@ -105,7 +105,7 @@ class LosArtikel extends Artikel {
 	 * @param string $factuur Een bij te sluiten factuur.
 	 * @return bool succes of falen van verzending email.
 	 */
-	public function verzend_email( $type = '', $factuur = '' ) : bool {
+	public function verzend_email( string $type = '', string $factuur = '' ) : bool {
 		$emailer = new Email();
 		return $emailer->send(
 			[

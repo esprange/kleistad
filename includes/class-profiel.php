@@ -61,9 +61,10 @@ class Profiel {
 <div class="kleistad kleistad-profiel">
 	<p>
 		<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
-		<button id="kleistad-betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
 	</p>
 			<?php if ( count( $lijst ) ) : ?>
+				<button id="kleistad-betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
+				<?php echo $this->script(); // phpcs:ignore ?>
 	<div class="kleistad-openstaand" style="display:none;">
 		<table style="table-layout: auto;">
 			<tr>
@@ -119,6 +120,29 @@ class Profiel {
 			];
 		}
 		return $lijst;
+	}
+
+	/**
+	 * Een klik op het betaalinfo deel rechtsboven.
+	 */
+	private function script() : string {
+		return "
+<script type=\"text/javascript\">
+( function ( $ ){
+	'use strict';
+	$(
+		function()
+		{
+			$( '#kleistad-betaalinfo' ).on(
+				'click',
+				function() {
+					$( '.kleistad-openstaand' ).toggle( 'drop' );
+				}
+			);
+		}
+	)
+} )( jQuery );
+</script>";
 	}
 
 }

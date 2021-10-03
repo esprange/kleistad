@@ -57,35 +57,33 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function blokkade() : Public_Debiteuren_Display {
-		$blok = strtotime( 'today' ) > $this->data['nieuwe_blokkade'];
 		?>
 		<div class="kleistad-row">
 			<p>Alle orders voorafgaand <?php echo esc_html( date( 'd-m-Y', $this->data['huidige_blokkade'] ) ); ?> zijn nu niet meer te wijzigen.
 			Dat betekent dat er geen correcties of kortingen op deze orders kunnen worden gedaan omdat dit dan invloed heeft op bijvoorbeeld
 			de BTW aangifte (de factuur wordt gewijzigd) of op de jaarrekening. Een order kan natuurlijk wel nog geannuleerd worden.</p>
-			<p>Omdat Kleistad per kwartaal de BTW aangifte doet, is de eerstvolgende blokkade datum <strong style="white-space:nowrap;" ><?php echo esc_html( date( 'd-m-Y', $this->data['nieuwe_blokkade'] ) ); ?></strong>.</p>
-			<?php if ( $blok ) : ?>
-				<p>Druk op 'doorvoeren' als je de huidige blokkade datum wilt wijzigen.</p>
-			<?php else : ?>
-				<p>Omdat deze datum nog in de toekomst ligt is het nu niet mogelijk om de blokkade datum te wijzigen.</p>
-			<?php endif ?>
+			<?php if ( $this->data['wijzigbaar'] ) : ?>
+				<p>Druk op 'bevestigen' als je het voorgaande kwartaal wilt afsluiten.</p>
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-3">
 				<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit" value="blokkade"
-					<?php disabled( ! $blok ); ?> data-confirm="Debiteuren|Weet je zeker dat je de blokkade datum wilt wijzigen naar <?php echo esc_attr( date( 'd-m-Y', $this->data['nieuwe_blokkade'] ) ); ?> ?" >Bevestigen</button>
+					data-confirm="Debiteuren|Weet je zeker dat het voorgaand kwartaal wilt afsluiten" >Bevestigen</button>
 			</div>
 		</div>
+			<?php else : ?>
+		<div class="kleistad-row" >
+			<p>Het voorgaand kwartaal is reeds afgesloten.</p>
+		</div>
+			<?php endif ?>
 		<?php
 		return $this;
 	}
 
 	/**
 	 * Render het debiteur formulier
-	 *
-	 * @return Public_Debiteuren_Display
 	 */
-	private function debiteur() : Public_Debiteuren_Display {
+	private function debiteur() {
 		$factuur      = new Factuur();
 		$factuur_urls = $factuur->overzicht( $this->data['debiteur']['factuur'] );
 		?>
@@ -108,16 +106,14 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		</table>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['debiteur']['id'] ); ?>"/>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Render de bankbetaling sectie
 	 *
-	 * @return Public_Debiteuren_Display
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function bankbetaling() : Public_Debiteuren_Display {
+	private function bankbetaling() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
@@ -129,7 +125,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		<div class="kleistad_deb_bankbetaling kleistad_deb_veld" style="display:none" >
 			<div class="kleistad-row">
 				<div class="kleistad-col-3" >
-					&nbsp;
 				</div>
 				<?php if ( 0 < $this->data['debiteur']['openstaand'] ) : ?>
 					<div class="kleistad-col-4 kleistad-label">
@@ -149,15 +144,12 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Render de annulering sectie
-	 *
-	 * @return Public_Debiteuren_Display
 	 */
-	private function annulering() : Public_Debiteuren_Display {
+	private function annulering() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
@@ -187,16 +179,13 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 
 	/**
 	 * Render de afboeking sectie
-	 *
-	 * @return Public_Debiteuren_Display
 	 */
-	private function afboeking() : Public_Debiteuren_Display {
+	private function afboeking() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
@@ -205,15 +194,12 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Render de korting sectie
-	 *
-	 * @return Public_Debiteuren_Display
 	 */
-	private function korting() : Public_Debiteuren_Display {
+	private function korting() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
@@ -243,7 +229,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 
@@ -267,7 +252,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 			</div>
 		</div>
-		<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', get_blokkade() ) ); ?> zijn niet meer te wijzigen</span>
+		<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', $this->data['huidige_blokkade'] ) ); ?> zijn niet meer te wijzigen</span>
 		<?php
 		return $this;
 	}

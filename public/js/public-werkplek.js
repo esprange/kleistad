@@ -248,7 +248,7 @@
 				'change',
 				'#kleistad_datum',
 				function() {
-					let datum  = $.datepicker.formatDate( 'dd-mm-yy', $( this ).datepicker( 'getDate' ) );
+					let datum      = $.datepicker.formatDate( 'dd-mm-yy', $( this ).datepicker( 'getDate' ) );
 					let	datumIndex = $.inArray( datum, datums );
 					buttonsActive();
 					$( this ).datepicker( 'setDate', datums[datumIndex] );

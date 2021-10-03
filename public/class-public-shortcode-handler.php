@@ -31,14 +31,14 @@ class Public_Shortcode_Handler {
 	/**
 	 * Shortcode form handler functie, toont formulier, valideert input, bewaart gegevens en toont resultaat
 	 *
-	 * @since 4.0.87
-	 *
 	 * @param array|string $atts meegegeven params van de shortcode of een lege string.
 	 * @param string       $content    wordt niet gebruikt.
 	 * @param string       $tag        wordt gebruikt als selector voor de diverse functie aanroepen.
+	 *
 	 * @return string html resultaat.
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 * @suppressWarnings(PHPMD.StaticAccess)
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function handler( $atts, string $content, string $tag ) : string {
 		$shortcode_tag = substr( $tag, strlen( 'kleistad-' ) );

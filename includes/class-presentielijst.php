@@ -56,7 +56,8 @@ class Presentielijst extends FPDF {
 		$this->ln();
 		foreach ( $cursisten as $cursist ) {
 			$this->Cell( 50, $fontheight, utf8_decode( $cursist ), 1, 0, 'L' );
-			foreach ( $lesdatums as $lesdatum ) {
+			$columns = count( $lesdatums );
+			while ( 0 < $columns-- ) {
 				$this->Cell( 12, $fontheight, '', 1, 0, 'C' );
 			}
 			$this->ln();

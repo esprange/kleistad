@@ -39,10 +39,10 @@ class Oven {
 	 *
 	 * @since 4.0.87
 	 *
-	 * @param int $oven_id (optioneel) oven te laden vanuit database.
+	 * @param int|null $oven_id (optioneel) oven te laden vanuit database.
 	 * @global object $wpdb WordPress database.
 	 */
-	public function __construct( $oven_id = null ) {
+	public function __construct( int $oven_id = null ) {
 		global $wpdb;
 		$default_data = [
 			'id'              => null,

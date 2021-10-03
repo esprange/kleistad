@@ -12,7 +12,7 @@
 namespace Kleistad;
 
 use PhpImap;
-use UnexpectedValueException;
+use Exception;
 
 /**
  * Kleistad EmailReceiver class.
@@ -62,11 +62,11 @@ class EmailReceiver {
 			if ( ! empty( $answered ) ) {
 				$mailbox->setFlag( $answered, '\\Answered' );
 			}
-			$mailbox->disconnect();
-		} catch ( PhpImap\Exceptions\InvalidParameterException $e ) {
-			error_log( 'IMAP fail: ' . $e->getMessage() ); // phpcs:ignore
+			@$mailbox->disconnect(); // phpcs:ignore
+		} catch ( PhpImap\Exceptions\InvalidParameterException $e ) { // Wordt door de mailbox constructor gegeven.
+			error_log( 'Mail receiver fail: ' . $e->getMessage() ); // phpcs:ignore
 			exit( 0 );
-		} catch ( UnexpectedValueException $e ) {
+		} catch ( Exception $e ) { // Wordt door getMailHeader gegeven.
 			exit( 0 );
 		}
 		// phpcs:enable

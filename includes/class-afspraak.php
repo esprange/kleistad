@@ -18,7 +18,6 @@ use Google;
 use Google\Service\Calendar\Event;
 use Google\Service\Calendar\EventDateTime;
 use Google\Service\Calendar\EventOrganizer;
-use Google\Service\Calendar\EventExtendedProperties;
 use Exception;
 
 /**
@@ -123,7 +122,6 @@ class Afspraak {
 	 * Get attribuut van het object.
 	 *
 	 * @param string $attribuut Attribuut naam.
-	 * @return mixed Attribuut waarde.
 	 * @throws Kleistad_Exception  Als er een fout optreedt.
 	 */
 	public function __get( string $attribuut ) {

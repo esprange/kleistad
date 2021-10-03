@@ -9,12 +9,14 @@
 
 namespace Kleistad;
 
-get_header(); ?>
+get_header();
+?>
 
 <div id="primary" class="content-area">
 	<main id="main" class="site-main" role="main">
 		<?php
 		// Start the loop.
+		$naam = [];
 		while ( have_posts() ) :
 			the_post();
 			$the_id = get_the_ID();
@@ -58,10 +60,8 @@ get_header(); ?>
 
 							w.document.write( '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' );
 							w.document.write( '<html lang="NL">' );
-							w.document.write( '<head>' );
-							w.document.write( '<title><?php the_title(); ?></title>' );
-							w.document.write( '<meta charset="utf-8">' );
-							w.document.write( '</head><body style="font-family:Verdana, sans-serif;">' );
+							w.document.write( '<head><title><?php the_title(); ?></title><meta charset="utf-8"></head>' );
+							w.document.write( '<body style="font-family:Verdana, sans-serif;">' );
 							w.document.write( $( '.kleistad_recept' ).html() );
 							w.document.write( decoded );
 							w.document.write( '</body></html>' );

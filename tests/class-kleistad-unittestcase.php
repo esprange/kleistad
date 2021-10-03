@@ -133,7 +133,10 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 					$last = count( $this->mock_sent );
 					while ( $last > 0 ) {
 						$last --;
-						if ( $email_address === $this->mock_sent[ $last ]['to'][0][0] ) {
+						/**
+						 * Een beetje dirty, kijk of het email adres voorkomt in het array.
+						 */
+						if ( false !== strpos( serialize( $this->mock_sent[ $last ] ), $email_address ) ) { // phpcs:ignore
 							return (object) $this->mock_sent[ $last ];
 						}
 					}

@@ -190,7 +190,12 @@ class Public_Actions {
 				$user_login .= chr( wp_rand( ord( '0' ), ord( '9' ) ) ); // Aanvullen met een cijfer tot minimaal 8 karakters en uniek.
 			}
 			$userdata->user_login = $user_login;
-			$userdata->role       = '';
+			/**
+			 * Voorkom warning.
+			 *
+			 * @noinspection PhpUndefinedFieldInspection
+			 */
+			$userdata->role = '';
 			wp_update_user( $userdata );
 		}
 	}
