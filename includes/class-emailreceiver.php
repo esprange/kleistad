@@ -62,7 +62,7 @@ class EmailReceiver {
 			if ( ! empty( $answered ) ) {
 				$mailbox->setFlag( $answered, '\\Answered' );
 			}
-			@$mailbox->disconnect(); // phpcs:ignore
+			$mailbox->disconnect(); // phpcs:ignore
 		} catch ( PhpImap\Exceptions\InvalidParameterException $e ) { // Wordt door de mailbox constructor gegeven.
 			error_log( 'Mail receiver fail: ' . $e->getMessage() ); // phpcs:ignore
 			exit( 0 );
