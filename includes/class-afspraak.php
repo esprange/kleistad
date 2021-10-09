@@ -224,7 +224,7 @@ class Afspraak {
 			}
 			return new DateTime( $google_datetime->getDateTime() );
 		} catch ( Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 			throw new Kleistad_Exception( 'interne fout' );
 		}
 	}

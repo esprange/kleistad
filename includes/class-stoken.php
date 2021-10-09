@@ -171,7 +171,7 @@ class Stoken implements Countable, Iterator {
 					$saldo->bedrag    = $saldo->bedrag - $stookdeel->prijs;
 					$saldo->reden     = 'stook op ' . date( 'd-m-Y', $stook->datum ) . ' door ' . $stoker->display_name;
 					if ( false === $saldo->save() ) {
-						error_log( "stooksaldo van gebruiker $medestoker->display_name kon niet aangepast worden met kosten $stookdeel->prijs" ); // phpcs:ignore
+						fout( __CLASS__, "stooksaldo van gebruiker $medestoker->display_name kon niet aangepast worden met kosten $stookdeel->prijs" );
 						continue;
 					}
 					if ( 0 < $stookdeel->prijs ) {
@@ -200,7 +200,7 @@ class Stoken implements Countable, Iterator {
 			$stook->save();
 		} catch ( Exception $exceptie ) {
 			$wpdb->query( 'ROLLBACK' );
-			error_log( 'stooksaldo verwerking: ' . $exceptie->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $exceptie->getMessage() );
 		}
 	}
 

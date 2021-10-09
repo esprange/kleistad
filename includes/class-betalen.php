@@ -61,7 +61,7 @@ class Betalen {
 			set_transient( $uniqid, $betaling->id, 20 * MINUTE_IN_SECONDS ); // 20 minuten expiry (iDeal heeft in Mollie een expiratie van 15 minuten).
 			return $betaling->getCheckOutUrl();
 		} catch ( Exception $e ) {
-			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 			return false;
 		}
 	}
@@ -95,7 +95,7 @@ class Betalen {
 			);
 			return $betaling->id;
 		} catch ( Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 		}
 		return '';
 	}
@@ -157,7 +157,7 @@ class Betalen {
 		try {
 			return $mollie_gebruiker->hasValidMandate();
 		} catch ( Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 		}
 		return false;
 	}
@@ -180,7 +180,7 @@ class Betalen {
 			}
 			return true;
 		} catch ( Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 		}
 		return false;
 	}
@@ -203,7 +203,7 @@ class Betalen {
 			}
 			return $html;
 		} catch ( Exception $e ) {
-			error_log( $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 		}
 		return '';
 	}

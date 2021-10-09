@@ -46,7 +46,7 @@ class Public_Shortcode_Handler {
 		try {
 			$shortcode = Shortcode::get_instance( $shortcode_tag, $attributes );
 		} catch ( Kleistad_Exception $exceptie ) {
-			error_log( $exceptie->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $exceptie->getMessage() );
 			return '';
 		}
 		$shortcodes = new ShortCodes();

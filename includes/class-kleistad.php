@@ -54,6 +54,16 @@ function melding( int $status, string $bericht ) : string {
 }
 
 /**
+ * Generieke call voor error reporting naar de log.
+ *
+ * @param string $object  Object waar de fout geconstateerd wordt.
+ * @param string $bericht Het fout bericht.
+ */
+function fout( string $object, string $bericht ) {
+	error_log( "kleistad $object: $bericht" ); // phpcs:ignore
+}
+
+/**
  * De technische setup van de plugin.
  *
  * @since     6.2.1

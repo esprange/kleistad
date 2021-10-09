@@ -14,8 +14,6 @@ namespace Kleistad;
  */
 class Test_Saldo extends Kleistad_UnitTestCase {
 
-	private const CURSUSNAAM = 'Testcursus';
-
 	/**
 	 * Maak een saldo
 	 *

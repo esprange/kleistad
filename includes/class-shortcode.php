@@ -89,7 +89,7 @@ abstract class Shortcode {
 		} catch ( Kleistad_Exception $exceptie ) {
 			return $this->status( new WP_Error( 'exceptie', $exceptie->getMessage() ) );
 		} catch ( Exception $exceptie ) {
-			error_log( $exceptie->getMessage() ); //phpcs:ignore
+			fout( __CLASS__, $exceptie->getMessage() );
 			return $this->status( new WP_Error( 'exceptie', 'Er is een onbekende fout opgetreden' ) );
 		}
 	}
@@ -283,7 +283,7 @@ abstract class Shortcode {
 		} catch ( Kleistad_Exception $exceptie ) {
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
 		} catch ( Exception $exceptie ) {
-			error_log( $exceptie->GetMessage() ); // phpcs:ignore
+			fout( __CLASS__, $exceptie->GetMessage() );
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
 		}
 	}
@@ -356,7 +356,7 @@ abstract class Shortcode {
 		} catch ( Kleistad_Exception $exceptie ) {
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
 		} catch ( Exception $exceptie ) {
-			error_log( $exceptie->GetMessage() ); // phpcs:ignore
+			fout( __CLASS__, $exceptie->GetMessage() );
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
 		}
 	}

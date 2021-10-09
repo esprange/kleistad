@@ -302,7 +302,7 @@ class Cursus {
 			}
 			$afspraak->save();
 		} catch ( Exception $e ) {
-			error_log ( $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 		}
 		return $this->id;
 	}

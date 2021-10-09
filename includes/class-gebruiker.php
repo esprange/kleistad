@@ -144,7 +144,7 @@ class Gebruiker extends WP_User {
 			if ( ! empty( $stoker->saldo->storting ) ) {
 				continue;
 			}
-			error_log( 'opruimen van ' . $gebruiker->display_name ); // phpcs:ignore
+			error_log( 'Opruimen van ' . $gebruiker->display_name ); // phpcs:ignore
 			// phpcs:ignore wp_delete_user( $gebruiker->ID );
 		}
 

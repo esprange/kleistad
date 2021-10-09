@@ -149,7 +149,8 @@ class Email {
 		add_action(
 			'wp_mail_failed',
 			function( $wp_error ) {
-				return error_log( "mail fout: " . $wp_error->get_error_message() ); // phpcs:ignore
+				fout( __CLASS__, $wp_error->get_error_message() );
+				return;
 			}
 		);
 		add_action(
@@ -267,7 +268,7 @@ class Email {
 			);
 		}
 		$bijlagen = is_array( $this->mailparams['attachments'] ) ? implode( ', ', $this->mailparams['attachments'] ) : $this->mailparams['attachments'];
-		error_log( "E-mail aan: {$this->mailparams['to']} over {$this->mailparams['subject']} met bijlage $bijlagen" ); // phpcs:ignore
+		fout( __CLASS__, "e-mail aan: {$this->mailparams['to']} over {$this->mailparams['subject']} met bijlage $bijlagen" );
 		return true;
 	}
 

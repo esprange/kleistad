@@ -143,7 +143,7 @@ class Googleconnect {
 			}
 			return $calendar_service;
 		} catch ( Exception $e ) {
-			error_log( 'Calendar: ' . $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 			throw new Kleistad_Exception( 'Interne fout' );
 		}
 	}
@@ -159,7 +159,7 @@ class Googleconnect {
 			try {
 				return is_object( $this->calendar_service() );
 			} catch ( Exception $e ) {
-				error_log( 'Calendar: ' . $e->getMessage() ); // phpcs:ignore
+				fout( __CLASS__, $e->getMessage() );
 				throw new Kleistad_Exception( 'Interne fout' );
 			}
 		}

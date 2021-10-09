@@ -53,7 +53,7 @@ class Ontvangen {
 			}
 			return new WP_Error( 'betalen', 'De betaling is waarschijnlijk mislukt. Controleer s.v.p. de status van de bankrekening en neem eventueel contact op met Kleistad.' );
 		} catch ( Exception $e ) {
-			error_log( 'Controleer betaling fout: ' . $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 			return false;
 		}
 	}
@@ -72,7 +72,7 @@ class Ontvangen {
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $betaling->metadata->order_id );
 		if ( is_null( $artikel ) ) {
-			error_log( 'onbekende betaling ' . $betaling->metadata->order_id ); // phpcs:ignore
+			fout( __CLASS__, 'onbekende betaling ' . $betaling->metadata->order_id );
 			return new WP_Error( 'onbekend', 'betaling niet herkend' );
 		}
 		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {

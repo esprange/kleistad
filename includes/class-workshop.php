@@ -233,9 +233,8 @@ class Workshop extends Artikel {
 			$afspraak->eind       = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			$afspraak->save();
 		} catch ( Exception $e ) {
-			error_log ( $e->getMessage() ); // phpcs:ignore
+			fout( __CLASS__, $e->getMessage() );
 		}
-
 		return $this->id;
 	}
 

@@ -59,9 +59,7 @@ class Profiel {
 			ob_start();
 			?>
 <div class="kleistad kleistad-profiel">
-	<p>
-		<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
-	</p>
+	<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
 			<?php if ( count( $lijst ) ) : ?>
 				<button id="kleistad-betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
 				<?php echo $this->script(); // phpcs:ignore ?>
