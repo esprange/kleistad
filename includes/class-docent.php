@@ -44,7 +44,7 @@ class Docent extends Gebruiker {
 	 */
 	public function __construct( $id = 0, $name = '', $site_id = null ) {
 		parent::__construct( $id, $name, $site_id );
-		$this->beschikbaarheid = get_user_meta( $id, self::META_KEY ) ?? [];
+		$this->beschikbaarheid = get_user_meta( $id, self::META_KEY ) ?: [];
 	}
 
 	/**
