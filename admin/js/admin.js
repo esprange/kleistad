@@ -65,8 +65,7 @@
 				'click',
 				function() {
 					let aantal   = $( '.kleistad-extra' ).length;
-					let sjabloon = +
-						'<tr>' +
+					let sjabloon = '<tr>' +
 						'<th scope="row">Abonnement extra #</th>' +
 						'<td><input type="text" class="kleistad-extra regular-text" name="kleistad-opties[extra][#][naam]" /></td>' +
 						'<th scope="row">Prijs</th>' +
@@ -74,6 +73,21 @@
 						'</tr>';
 					let html     = sjabloon.replace( /#/g, ++aantal );
 					$( html ).insertBefore( '#kleistad-extra-toevoegen' );
+				}
+			);
+
+			$( '#kleistad-ruimte' ).on(
+				'click',
+				function() {
+					let aantal   = $( '.kleistad-ruimte' ).length;
+					let sjabloon = '<tr>' +
+						'<th scope="row">Ruimte #</th>' +
+						'<td><input type="text" class="kleistad-ruimte regular-text" name="kleistad-opties[ruimte][#][naam]" /></td>' +
+						'<th scope="row">Aantal</th>' +
+						'<td><input type="number" min="1" name="kleistad-opties[ruimte][#][aantal]" class="small-text" /></td>' +
+						'</tr>';
+					let html     = sjabloon.replace( /#/g, ++aantal );
+					$( html ).insertBefore( '#kleistad-ruimte-toevoegen' );
 				}
 			);
 

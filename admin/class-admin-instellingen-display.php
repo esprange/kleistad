@@ -39,8 +39,8 @@ class Admin_Instellingen_Display {
 				$id = str_replace( ' ', '_', opties()['extra'][ $index ]['naam'] );
 				?>
 			<tr >
-				<th scope="row"><label for="optie_<?php echo esc_attr( $id ); ?>">Abonnement extra <?php echo esc_html( $index ); ?></label></th>
-				<td><input type="text" class="kleistad-extra regular-text" name="kleistad-opties[extra][<?php echo esc_attr( $index ); ?>][naam]" id="optie_<?php echo esc_attr( $id ); ?>"
+				<th scope="row"><label for="extra_<?php echo esc_attr( $id ); ?>">Abonnement extra <?php echo esc_html( $index ); ?></label></th>
+				<td><input type="text" class="kleistad-extra regular-text" name="kleistad-opties[extra][<?php echo esc_attr( $index ); ?>][naam]" id="extra_<?php echo esc_attr( $id ); ?>"
 						value="<?php echo esc_attr( opties()['extra'][ $index ]['naam'] ); ?>"  <?php echo ! empty( opties()['extra'][ $index ]['naam'] ) ? 'readonly' : ''; ?> /></td>
 				<th scope="row"><label for="prijs_<?php echo esc_attr( $id ); ?>">Prijs</label></th>
 				<td><input type="number" step="0.01" min="0"  name="kleistad-opties[extra][<?php echo esc_attr( $index ); ?>][prijs]" class="small-text" id="prijs_<?php echo esc_attr( $id ); ?>"
@@ -55,6 +55,30 @@ class Admin_Instellingen_Display {
 				<th>Extra toevoegen</th>
 				<td colspan="3"><button type="button" id="kleistad-extra"><span class="dashicons dashicons-plus"></span></button></td>
 			</tr>
+
+			<?php
+			$index = 1;
+			while ( isset( opties()['ruimte'][ $index ]['naam'] ) ) :
+				$id = str_replace( ' ', '_', opties()['ruimte'][ $index ]['naam'] );
+				?>
+				<tr >
+					<th scope="row"><label for="ruimte_<?php echo esc_attr( $id ); ?>">Ruimte <?php echo esc_html( $index ); ?></label></th>
+					<td><input type="text" class="kleistad-ruimte regular-text" name="kleistad-opties[ruimte][<?php echo esc_attr( $index ); ?>][naam]" id="ruimte_<?php echo esc_attr( $id ); ?>"
+						value="<?php echo esc_attr( opties()['ruimte'][ $index ]['naam'] ); ?>"  <?php echo ! empty( opties()['ruimte'][ $index ]['naam'] ) ? 'readonly' : ''; ?> /></td>
+					<th scope="row"><label for="aantal_<?php echo esc_attr( $id ); ?>">Aantal werkplekken</label></th>
+					<td><input type="number" min="0"  name="kleistad-opties[ruimte][<?php echo esc_attr( $index ); ?>][aantal]" class="small-text" id="aantal_<?php echo esc_attr( $id ); ?>"
+						value="<?php echo esc_attr( opties()['ruimte'][ $index ]['aantal'] ); ?>" /></td>
+				</tr>
+				<?php
+				$index++;
+			endwhile;
+			?>
+
+			<tr id="kleistad-ruimte-toevoegen">
+				<th>Ruimte toevoegen</th>
+				<td colspan="3"><button type="button" id="kleistad-ruimte"><span class="dashicons dashicons-plus"></span></button></td>
+			</tr>
+
 			<tr >
 				<th scope="row"><label for="termijn">Termijn (dagen) dat correctie stook mogelijk is</label></th>
 				<td colspan="3"><input type="number" min="0"  name="kleistad-opties[termijn]" id="termijn"
@@ -95,21 +119,7 @@ class Admin_Instellingen_Display {
 		<form method="POST" action="options.php" >
 			<?php settings_fields( 'kleistad-setup' ); ?>
 			<table class="form-table">
-				<tr>
-					<th scope="row">Mollie betalen actief</th>
-					<td>
-						<p>
-							<label>
-								<input type="radio" name="kleistad-setup[betalen]"
-									value="0" <?php checked( 0, setup()['betalen'] ); ?>/>Uit
-							</label><br>
-							<label>
-								<input type="radio" name="kleistad-setup[betalen]"
-									value="1" <?php checked( 1, setup()['betalen'] ); ?>/>Aan
-							</label>
-						</p>
-					</td>
-				</tr>
+				<?php $this->setup_switch_parameters(); ?>
 				<?php $this->setup_tekst_parameters(); ?>
 			</table>
 			<?php submit_button(); ?>
@@ -492,6 +502,37 @@ class Admin_Instellingen_Display {
 				<td colspan="3">
 					<input type="text" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="regular-text"
 						value="<?php echo esc_attr( setup()[ $id ] ); ?>" />
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	/**
+	 * Toon de switch parameters
+	 *
+	 * @return void
+	 */
+	private function setup_switch_parameters() : void {
+		$parameters = [
+			'profiel' => 'Gebruikersprofiel actief',
+			'betalen' => 'Mollie betalen actief',
+		];
+		foreach ( $parameters as $id => $naam ) {
+			?>
+			<tr>
+				<th scope="row"><?php echo esc_html( $naam ); ?></th>
+				<td>
+					<p>
+						<label>
+							<input type="radio" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]"
+								value="0" <?php checked( 0, setup()[ $id ] ); ?>/>Uit
+						</label><br>
+						<label>
+							<input type="radio" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]"
+								value="1" <?php checked( 1, setup()[ $id ] ); ?>/>Aan
+						</label>
+					</p>
 				</td>
 			</tr>
 			<?php

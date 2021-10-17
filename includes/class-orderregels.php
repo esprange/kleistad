@@ -61,8 +61,12 @@ class Orderregels implements Countable, Iterator {
 	 * Voeg een regel toe.
 	 *
 	 * @param array | Orderregel $regeltoetevoegen Toe te voegen regel of regels.
+	 * @param bool               $reset            Start met een lege regelset.
 	 */
-	public function toevoegen( $regeltoetevoegen ) {
+	public function toevoegen( $regeltoetevoegen, bool $reset = false ) {
+		if ( $reset ) {
+			$this->regels = [];
+		}
 		$this->regels = array_merge(
 			$this->regels,
 			is_array( $regeltoetevoegen ) ? $regeltoetevoegen : [ $regeltoetevoegen ]

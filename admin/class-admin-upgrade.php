@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 115;
+	const DBVERSIE = 116;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -67,6 +67,7 @@ class Admin_Upgrade {
 			'imap_adres'         => '',
 			'imap_pwd'           => '',
 			'betalen'            => 0,
+			'profiel'            => 0,
 		];
 		$current_options = get_option( 'kleistad-opties', [] );
 		$current_setup   = get_option( 'kleistad-setup', [] );

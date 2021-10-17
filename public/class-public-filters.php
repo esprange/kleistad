@@ -26,7 +26,7 @@ class Public_Filters {
 	 */
 	public function profiel( string $content ) : string {
 		$user = wp_get_current_user();
-		if ( $user->exists() ) {
+		if ( $user->exists() && setup()['profiel'] ) {
 			$profiel  = new Profiel();
 			$content .= $profiel->prepare( $user );
 		}

@@ -135,15 +135,15 @@ abstract class Artikel {
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	final public function bestel_order( float $bedrag, int $verval_datum, string $opmerking = '', string $transactie_id = '', bool $factuur = true ): string {
-		$order                = new Order();
-		$order->betaald       = $bedrag;
+		$order                = new Order( $this->geef_referentie() ); // Hergebruik de eventueel al bestaande order.
+		$order->betaald      += $bedrag; // Als er al eerder op de order betaald is, het bedrag toevoegen.
 		$order->klant         = $this->naw_klant();
 		$order->klant_id      = $this->klant_id;
 		$order->opmerking     = $opmerking;
 		$order->referentie    = $this->geef_referentie();
-		$order->transactie_id = $transactie_id;
+		$order->transactie_id = $transactie_id ?? $order->transactie_id; // Overschrijf het transactie_id alleen als er een ideal betaling is gedaan.
 		$order->verval_datum  = $verval_datum;
-		$order->orderregels->toevoegen( $this->geef_factuurregels() );
+		$order->orderregels->toevoegen( $this->geef_factuurregels(), true ); // Overschrijf eventuele eerder factuur regels.
 		$order->save( $factuur ? sprintf( 'Order en factuur aangemaakt, nieuwe status betaald is € %01.2f', $bedrag ) : 'Order aangemaakt' );
 		$this->betaal_link = $this->maak_link(
 			[
