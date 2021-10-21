@@ -63,11 +63,9 @@ abstract class Shortcode {
 	 * @return string html tekst.
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function display( array &$data = [ 'actie' => '-' ] ) : string {
+	protected function display( array &$data = [] ) : string {
 		$this->enqueue();
-		foreach ( $this->atts as $att_key => $att ) {
-			$data[ $att_key ] = htmlspecialchars_decode( $att );
-		}
+		$data = array_merge( [ 'actie' => '-' ], $this->atts, $data );
 		try {
 			$ontvangen     = new Ontvangen();
 			$betaal_result = $ontvangen->controleer();
@@ -194,7 +192,9 @@ abstract class Shortcode {
 	 * @param array  $attributes Shortcode parameters.
 	 */
 	protected function __construct( string $shortcode, array $attributes ) {
-		$this->atts      = $attributes;
+		foreach ( $attributes as $att_key => $attribute ) {
+			$this->atts[ $att_key ] = htmlspecialchars_decode( $attribute );
+		}
 		$this->shortcode = $shortcode;
 	}
 
