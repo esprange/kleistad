@@ -114,13 +114,15 @@ class Workshop extends Artikel {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
-		if ( in_array( $attribuut, [ 'datum', 'start_tijd', 'eind_tijd' ], true ) ) {
-			return strtotime( $this->data[ $attribuut ] );
+		if ( in_array( $attribuut, [ 'start_tijd', 'eind_tijd' ], true ) ) {
+			return strtotime( "{$this->data['datum']} {$this->data[ $attribuut ]}" );
 		}
 		if ( in_array( $attribuut, [ 'vervallen', 'definitief', 'betaling_email' ], true ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
 		switch ( $attribuut ) {
+			case 'datum':
+				return strtotime( $this->data['datum'] );
 			case 'technieken':
 				return json_decode( $this->data['technieken'], true );
 			case 'code':
