@@ -116,18 +116,15 @@ class Cursussen implements Countable, Iterator {
 			 */
 			if ( 0 === $cursus->ruimte() ) {
 				/**
-				 * Er is geen ruimte. Dus de ruimte_datum is nu 0 en de cursus is vol.
+				 * Er is geen ruimte. Dus doe de acties die bij een volle cursus horen.
 				 */
-				$cursus->ruimte_datum = 0;
-				$cursus->vol          = true;
+				$cursus->registreer_vol();
 			} elseif ( $cursus->vol ) {
 				/**
-				 * Er is nu ruimte beschikbaar gekomen. Alleen dan de ruimte_datum aanpassen.
+				 * Er is nu ruimte beschikbaar gekomen.
 				 */
-				$cursus->ruimte_datum = time();
-				$cursus->vol          = false;
+				$cursus->registreer_ruimte();
 			}
-			$cursus->save();
 		}
 	}
 }

@@ -117,8 +117,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 		$this->inschrijving->ingedeeld = true;
 		$this->inschrijving->save();
 		if ( 0 === $this->inschrijving->cursus->ruimte() ) {
-			$this->inschrijving->cursus->vol = true;
-			$this->inschrijving->cursus->save();
+			$this->inschrijving->cursus->registreer_vol();
 		}
 	}
 

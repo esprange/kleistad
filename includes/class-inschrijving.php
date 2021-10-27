@@ -36,18 +36,19 @@ class Inschrijving extends Artikel {
 	];
 	private const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
 	private const EMAIL_SUBJECT    = [
-		'inschrijving'    => 'Inschrijving cursus',
-		'indeling'        => 'Indeling cursus',
-		'_extra'          => 'Welkom cursus',
-		'_herinnering'    => 'Herinnering betaling cursus',
-		'_ideal'          => 'Betaling cursus',
-		'_ideal_betaald'  => 'Betaling cursus',
-		'_lopend'         => 'Inschrijving lopende cursus',
-		'_lopend_betalen' => 'Betaling bedrag voor reeds gestarte cursus',
-		'_restant'        => 'Betaling restant bedrag cursus',
-		'_wijziging'      => 'Wijziging inschrijving cursus',
-		'_wachtlijst'     => 'Plaatsing op wachtlijst cursus',
-		'_ruimte'         => 'Er is een cursusplek vrijgekomen',
+		'inschrijving'     => 'Inschrijving cursus',
+		'indeling'         => 'Indeling cursus',
+		'_extra'           => 'Welkom cursus',
+		'_herinnering'     => 'Herinnering betaling cursus',
+		'_ideal'           => 'Betaling cursus',
+		'_ideal_betaald'   => 'Betaling cursus',
+		'_lopend'          => 'Inschrijving lopende cursus',
+		'_lopend_betalen'  => 'Betaling bedrag voor reeds gestarte cursus',
+		'_restant'         => 'Betaling restant bedrag cursus',
+		'_wijziging'       => 'Wijziging inschrijving cursus',
+		'_wachtlijst'      => 'Plaatsing op wachtlijst cursus',
+		'_ruimte'          => 'Er is een cursusplek vrijgekomen',
+		'_naar_wachtlijst' => 'De cursus is vol, aanmelding verplaatst naar wachtlijst',
 	];
 
 	/**

@@ -208,13 +208,32 @@ class InschrijvingActie {
 		$this->inschrijving->save();
 	}
 
-		/**
-		 * Bepaal of er nog wel ingeschreven kan worden voor de cursus. Deze functie wordt vanuit Artikel betaal proces aangeroepen.
-		 *
-		 * @since 6.6.1
-		 *
-		 * @return string Lege string als inschrijving mogelijk is, anders de foutboodschap.
-		 */
+	/**
+	 * Cursist is ingeschreven maar heeft nog niet betaald. Omdat de cursus vol zit, gaat de cursist naar de wachtlijst.
+	 *
+	 * @return void
+	 */
+	public function naar_wachtlijst() {
+		if ( $this->inschrijving->wacht_datum || empty( $this->beschikbaarcontrole() ) ) {
+			return; // Als de inschrijving al op de wachtlijst staat of als de curist niet daarop geplaatst kan worden hoeft er niets te gebeuren.
+		}
+		$this->inschrijving->verzend_email(
+			'_naar_wachtlijst',
+			$this->inschrijving->annuleer_order(
+				new Order( $this->inschrijving->geef_referentie() ),
+				0.0,
+				'i.v.m. volle cursus verplaatst naar wachtlijst'
+			)
+		); // De cursist is naar de wachtlijst verplaatst, de order is geannuleerd en de email kan verzonden worden.
+	}
+
+	/**
+	 * Bepaal of er nog wel ingeschreven kan worden voor de cursus. Deze functie wordt vanuit Artikel betaal proces aangeroepen.
+	 *
+	 * @since 6.6.1
+	 *
+	 * @return string Lege string als inschrijving mogelijk is, anders de foutboodschap.
+	 */
 	public function beschikbaarcontrole() : string {
 		if ( ! $this->inschrijving->ingedeeld && $this->inschrijving->cursus->vol ) {
 			$this->inschrijving->wacht_datum = time();
