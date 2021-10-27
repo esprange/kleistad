@@ -34,7 +34,7 @@ abstract class Shortcode {
 	 *
 	 * @var array shortcode parameters
 	 */
-	private array $atts;
+	private array $atts = [];
 
 	/**
 	 * Abstract definitie van de prepare functie
