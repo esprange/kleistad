@@ -223,7 +223,7 @@ class InschrijvingActie {
 				new Order( $this->inschrijving->geef_referentie() ),
 				0.0,
 				'i.v.m. volle cursus verplaatst naar wachtlijst'
-			)
+			) ?: ''
 		); // De cursist is naar de wachtlijst verplaatst, de order is geannuleerd en de email kan verzonden worden.
 	}
 
