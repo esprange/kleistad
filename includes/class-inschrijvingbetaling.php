@@ -93,10 +93,16 @@ class InschrijvingBetaling extends ArtikelBetaling {
 			$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
 			if ( ! $this->inschrijving->ingedeeld ) { // Voorafgaand de betaling was de cursist nog niet ingedeeld.
 				/**
-				 * De cursist krijgt de melding dat deze nu ingedeeld is.
+				 * De cursist krijgt de melding dat deze nu ingedeeld is als er nog ruimte is.
 				 */
-				$this->indelen();
-				$this->inschrijving->verzend_email( 'indeling' );
+				if ( $this->indelen() ) {
+					$this->inschrijving->verzend_email( 'indeling' );
+					return;
+				}
+				/**
+				 * Indelen was niet meer mogelijk, annuleer de order en zet de cursist op de wachtlijst.
+				 */
+				$this->inschrijving->actie->naar_wachtlijst();
 				return;
 			}
 			/**
@@ -113,12 +119,17 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	/**
 	 * Deel de cursist in.
 	 */
-	private function indelen() {
+	private function indelen() : bool {
+		$ruimte = $this->inschrijving->cursus->ruimte();
+		if ( $ruimte < $this->inschrijving->aantal ) {
+			return false;
+		}
 		$this->inschrijving->ingedeeld = true;
 		$this->inschrijving->save();
-		if ( 0 === $this->inschrijving->cursus->ruimte() ) {
+		if ( 0 === $ruimte - $this->inschrijving->aantal ) {
 			$this->inschrijving->cursus->registreer_vol();
 		}
+		return true;
 	}
 
 }
