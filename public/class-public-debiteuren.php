@@ -109,7 +109,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			return true;
 		}
 		if ( 'zoek' === $data['actie'] ) {
-			$zoek = $data['id'] ?? random_bytes( 15 ); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
+			$zoek = ( $data['id'] ?? '' ) ?: wp_generate_uuid4(); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
 			$data = array_merge( $data, $this->debiteuren( $zoek ) );
 			return true;
 		}
