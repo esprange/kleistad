@@ -273,17 +273,6 @@ class Admin_Upgrade {
 	 * Converteer de openstaande orders die te koppelen zijn aan leden of cursisten.
 	 */
 	private function convert_order() {
-		$artikelregister = new Artikelregister();
-		foreach ( new Orders() as $order ) {
-			if ( $order->gesloten ) {
-				continue;
-			}
-			$artikel = $artikelregister->geef_object( $order->referentie );
-			if ( is_object( $artikel) && $artikel->klant_id ) {
-				$order->klant_id = $artikel->klant_id;
-				$order->save( 'klant id toegevoegd' );
-			}
-		}
 	}
 
 	/**
