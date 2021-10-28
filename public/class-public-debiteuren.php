@@ -25,7 +25,11 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return array De info.
 	 */
 	private function debiteuren( string $zoek = '' ) : array {
-		$debiteuren      = [];
+		$data            = [
+			'openstaand'   => 0,
+			'terugstorten' => false,
+			'debiteuren'   => [],
+		];
 		$artikelregister = new Artikelregister();
 		$orders          = new Orders();
 		foreach ( $orders as $order ) {
@@ -36,19 +40,22 @@ class Public_Debiteuren extends ShortcodeForm {
 				) {
 				continue;
 			}
-			$debiteuren[] = [
+			$openstaand           = $order->te_betalen();
+			$data['debiteuren'][] = [
 				'id'           => $order->id,
 				'naam'         => $order->klant['naam'],
 				'betreft'      => $artikelregister->geef_naam( $order->referentie ),
 				'referentie'   => $order->referentie,
-				'openstaand'   => $order->te_betalen(),
+				'openstaand'   => $openstaand,
 				'credit'       => boolval( $order->origineel_id ),
 				'sinds'        => $order->datum,
 				'gesloten'     => $order->gesloten,
 				'verval_datum' => $order->verval_datum,
 			];
+			$data['openstaand']  += $openstaand;
+			$data['terugstorten'] = $data['terugstorten'] || 0 > $openstaand;
 		}
-		return $debiteuren;
+		return $data;
 	}
 
 	/**
@@ -102,19 +109,11 @@ class Public_Debiteuren extends ShortcodeForm {
 			return true;
 		}
 		if ( 'zoek' === $data['actie'] ) {
-			$data['debiteuren'] = ! empty( $data['id'] ) ? $this->debiteuren( $data['id'] ) : [];
-			$data['openstaand'] = 0;
-			foreach ( $data['debiteuren'] as $debiteur ) {
-				$data['openstaand'] += $debiteur['openstaand'];
-			}
+			$zoek = $data['id'] ?? random_bytes( 15 ); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
+			$data = array_merge( $data, $this->debiteuren( $zoek ) );
 			return true;
 		}
-		$data['actie']      = 'openstaand';
-		$data['debiteuren'] = $this->debiteuren();
-		$data['openstaand'] = 0;
-		foreach ( $data['debiteuren'] as $debiteur ) {
-			$data['openstaand'] += $debiteur['openstaand'];
-		}
+		$data = array_merge( $data, [ 'actie' => 'openstaand' ], $this->debiteuren() );
 		return true;
 	}
 
