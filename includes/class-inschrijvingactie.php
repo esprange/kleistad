@@ -214,8 +214,8 @@ class InschrijvingActie {
 	 * @return void
 	 */
 	public function naar_wachtlijst() {
-		if ( $this->inschrijving->wacht_datum || empty( $this->beschikbaarcontrole() ) ) {
-			return; // Als de inschrijving al op de wachtlijst staat of als de curist niet daarop geplaatst kan worden hoeft er niets te gebeuren.
+		if ( $this->inschrijving->wacht_datum || empty( $this->beschikbaarcontrole() ) || $this->inschrijving->cursus->is_lopend() ) {
+			return; // Als de inschrijving al op de wachtlijst staat of plaatsing daarop niet lukt of de cursus al gestart is.
 		}
 		$this->inschrijving->verzend_email(
 			'_naar_wachtlijst',
