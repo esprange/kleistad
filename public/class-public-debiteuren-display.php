@@ -285,7 +285,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		$datum = new Datetime();
 		$datum->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
 		if ( $this->data['terugstorten'] ) {
-			echo melding( -1, 'Er staan nog terug te storten bedragen open' ); // phpcs:ignore
+			echo melding( -1, 'Er staan nog per bank terug te storten bedragen open' ); // phpcs:ignore
 		}
 		?>
 		<p><strong>Totaal openstaand:</strong> &euro; <?php echo esc_html( number_format_i18n( $this->data['openstaand'], 2 ) ); ?></p>
