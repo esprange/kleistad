@@ -135,7 +135,10 @@ abstract class Artikel {
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	final public function bestel_order( float $bedrag, int $verval_datum, string $opmerking = '', string $transactie_id = '', bool $factuur = true ): string {
-		$order                = new Order( $this->geef_referentie() ); // Hergebruik de eventueel al bestaande order.
+		$order = new Order( $this->geef_referentie() ); // Hergebruik de eventueel al bestaande order.
+		if ( $order->id && $order->is_credit() ) {
+			$order = new Order(); // Credit orders worden niet hergebruikt.
+		}
 		$order->betaald      += $bedrag; // Als er al eerder op de order betaald is, het bedrag toevoegen.
 		$order->klant         = $this->naw_klant();
 		$order->klant_id      = $this->klant_id;

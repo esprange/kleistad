@@ -315,9 +315,7 @@ class Cursus {
 		$this->vol          = true;
 		$this->save();
 		foreach ( new Inschrijvingen( $this->id, true ) as $inschrijving ) {
-			if ( ! $inschrijving->ingedeeld ) {
-				$inschrijving->actie->naar_wachtlijst();
-			}
+			$inschrijving->actie->naar_wachtlijst();
 		}
 	}
 

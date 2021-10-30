@@ -264,6 +264,50 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	}
 
 	/**
+	 * Test de omzetting van een bestaande order naar de wachtlijst
+	 */
+	public function test_naar_wachtlijst() {
+		$mailer       = tests_retrieve_phpmailer_instance();
+		$inschrijving = $this->maak_inschrijving();
+		$cursist      = new Cursist( $inschrijving->klant_id );
+		$inschrijving->actie->aanvraag( 'bank' );
+		/**
+		 * Zet nu de cursus op vol.
+		 */
+		$inschrijving->cursus->maximum = 0;
+		$inschrijving->cursus->save();
+		/**
+		 * Doe de dagelijkse run, dan moet de cursist naar de wachtlijst omdat er nog niet betaald is.
+		 */
+		Cursussen::doe_dagelijks();
+		Inschrijvingen::doe_dagelijks();
+		$this->assertEquals( 'De cursus is vol, aanmelding verplaatst naar wachtlijst', $mailer->get_last_sent( $cursist->user_email )->subject, 'onderwerp email naar wachtlijst cursus incorrect' );
+		$inschrijving2 = new Inschrijving( $inschrijving->cursus->id, $inschrijving->klant_id );
+		$this->assertFalse( $inschrijving2->geannuleerd, 'incorrecte annulering status' );
+		$this->assertGreaterThan( 0, $inschrijving2->wacht_datum, 'incorrecte wacht status' );
+		/**
+		 * Zorg dat er nieuwe indeling mogelijk is.
+		 */
+		$cursus = new Cursus( $inschrijving->cursus->id );
+		$cursus->maximum++;
+		$cursus->save();
+		/**
+		 * Dit loopt normaliter de volgende ochtend, maar nu dus even 1 seconde later.
+		 */
+		sleep( 1 );
+		Cursussen::doe_dagelijks();
+		Inschrijvingen::doe_dagelijks();
+		$this->assertEquals( 'Er is een cursusplek vrijgekomen', $mailer->get_last_sent( $cursist->user_email )->subject, 'Wachtlijst ruimte incorrecte email' );
+		/**
+		 *  Betaling per ideal vanuit het wachtlijst formulier.
+		 */
+		$order = new Order( $inschrijving->geef_referentie() );
+		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
+		$this->assertEquals( 'Indeling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank indeling incorrecte email' );
+
+	}
+
+	/**
 	 * Test beschikbaar controle
 	 */
 	public function test_beschikbaarcontrole() {

@@ -214,8 +214,8 @@ class InschrijvingActie {
 	 * @return void
 	 */
 	public function naar_wachtlijst() {
-		if ( $this->inschrijving->wacht_datum || empty( $this->beschikbaarcontrole() ) || $this->inschrijving->cursus->is_lopend() ) {
-			return; // Als de inschrijving al op de wachtlijst staat of plaatsing daarop niet lukt of de cursus al gestart is.
+		if ( $this->inschrijving->wacht_datum || $this->inschrijving->ingedeeld || $this->inschrijving->geannuleerd || $this->inschrijving->cursus->is_lopend() ) {
+			return; // Niets doen als de inschrijving al op de wachtlijst staat of is ingedeeld of geannuleerd of de cursus al gestart is.
 		}
 		$this->inschrijving->verzend_email(
 			'_naar_wachtlijst',
@@ -225,6 +225,9 @@ class InschrijvingActie {
 				'i.v.m. volle cursus verplaatst naar wachtlijst'
 			) ?: ''
 		); // De cursist is naar de wachtlijst verplaatst, de order is geannuleerd en de email kan verzonden worden.
+		$this->inschrijving->wacht_datum = time();
+		$this->inschrijving->geannuleerd = false;
+		$this->inschrijving->save();
 	}
 
 	/**
