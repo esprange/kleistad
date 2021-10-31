@@ -21,9 +21,6 @@ class Public_Omzet_Rapportage extends Shortcode {
 	 * Prepareer 'omzet_rapportage' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
-	 *
-	 * @since   6.1.0
 	 */
 	protected function prepare( array &$data ) {
 		$register = new Artikelregister();

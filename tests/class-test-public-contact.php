@@ -5,6 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Contact
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;

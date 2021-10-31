@@ -32,9 +32,6 @@ class Public_Email extends ShortcodeForm {
 	 * Prepareer 'email' form inhoud
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
-	 *
-	 * @since   5.5.0
 	 */
 	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {

@@ -5,6 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Inschrijving, \Kleistad\Inschrijvingen, \Kleistad\Cursist
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;

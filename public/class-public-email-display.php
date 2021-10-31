@@ -29,7 +29,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Email_Display
 	 */
-	private function aan() {
+	private function aan() : Public_Email_Display {
 		?>
 		<input id="kleistad_gebruikerids" name="gebruikerids" type="hidden">
 		<div class="kleistad-row">
@@ -45,6 +45,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 						<?php echo esc_html( $groep['naam'] ); ?>
 						<ul>
 						<?php foreach ( $groep['leden'] as $gebruiker_id => $gebruiker ) : ?>
+							<!--suppress HtmlUnknownAttribute -->
 							<li gebruikerid="<?php echo esc_attr( $gebruiker_id ); ?>">
 							<?php echo esc_html( $gebruiker ); ?>
 							</li>
@@ -64,7 +65,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Email_Display
 	 */
-	private function onderwerp() {
+	private function onderwerp() : Public_Email_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-label">
@@ -85,7 +86,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Email_Display
 	 */
-	private function aanhef() {
+	private function aanhef() : Public_Email_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-label">
@@ -106,7 +107,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Email_Display
 	 */
-	private function inhoud() {
+	private function inhoud() : Public_Email_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-label">
@@ -137,7 +138,7 @@ class Public_Email_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Email_Display
 	 */
-	private function verzender() {
+	private function verzender() : Public_Email_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-label">

@@ -5,6 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Betaling
+ * @noinspection PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;

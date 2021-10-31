@@ -3,6 +3,7 @@
  * Class OvenTest
  *
  * @package Kleistad
+ * @noinspection PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;

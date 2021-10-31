@@ -150,7 +150,6 @@ class Email {
 			'wp_mail_failed',
 			function( $wp_error ) {
 				fout( __CLASS__, $wp_error->get_error_message() );
-				return;
 			}
 		);
 		add_action(

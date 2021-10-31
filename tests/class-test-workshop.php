@@ -8,6 +8,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Workshop, \Kleistad\Workshops, \Kleistad\WorkshopAanvraag, \Kleistad\WorkshopActie, \Kleistad\WorkshopBetaling
+ * @noinspection PhpPossiblePolymorphicInvocationInspection
  */
 
 namespace Kleistad;

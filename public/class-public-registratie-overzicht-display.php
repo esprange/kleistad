@@ -26,10 +26,8 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van cursussen
-	 *
-	 * @return Public_Registratie_Overzicht_Display
 	 */
-	private function overzicht() : Public_Registratie_Overzicht_Display {
+	private function overzicht() {
 		?>
 		<div id="kleistad_deelnemer_info">
 			<table class="kleistad-form" id="kleistad_deelnemer_tabel" >
@@ -72,10 +70,10 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 						continue;
 					endif;
 					?>
-					<tr data-inschrijvingen='<?php echo htmlspecialchars( $json_inschrijvingen, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
-						data-deelnemer='<?php echo htmlspecialchars( $json_deelnemer, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
-						data-abonnee='<?php echo htmlspecialchars( $json_abonnee, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>'
-						data-dagdelenkaart='<?php echo htmlspecialchars( $json_dagdelenkaart, ENT_QUOTES, 'UTF-8' ); // phpcs:ignore ?>' >
+					<tr data-inschrijvingen='<?php echo htmlspecialchars( $json_inschrijvingen, ENT_QUOTES ); // phpcs:ignore ?>'
+						data-deelnemer='<?php echo htmlspecialchars( $json_deelnemer, ENT_QUOTES ); // phpcs:ignore ?>'
+						data-abonnee='<?php echo htmlspecialchars( $json_abonnee, ENT_QUOTES ); // phpcs:ignore ?>'
+						data-dagdelenkaart='<?php echo htmlspecialchars( $json_dagdelenkaart, ENT_QUOTES ); // phpcs:ignore ?>' >
 						<td><?php echo esc_html( $registratie['is_abonnee'] ); ?></td>
 						<td><?php echo esc_html( $registratie['is_dagdelenkaart'] ); ?></td>
 						<td><?php echo esc_html( $registratie['is_cursist'] ); ?></td>
@@ -93,7 +91,6 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 			<button class="kleistad-button kleistad-download-link" type="button" data-actie="dagdelenkaarten" >Download Dagdelenkaarten</button>
 		</div>
 		<?php
-		return $this;
 	}
 
 }

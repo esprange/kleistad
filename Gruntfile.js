@@ -1,5 +1,10 @@
-module.exports = function( grunt ) { // jshint ignore:line
+/**
+ * Grunt build file voor Kleistad.
+ *
+ * @package kleistad
+ */
 
+module.exports = function( grunt ) {
 	'use strict';
 
 	// Project configuration.
@@ -110,5 +115,4 @@ module.exports = function( grunt ) { // jshint ignore:line
 			'composer:update'
 		]
 	);
-
 };

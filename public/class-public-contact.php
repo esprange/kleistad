@@ -21,9 +21,8 @@ class Public_Contact extends ShortcodeForm {
 	 * Prepareer 'contact' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
 	 *
-	 * @since   6.3.0
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
@@ -50,7 +49,6 @@ class Public_Contact extends ShortcodeForm {
 	 * Valideer/sanitize 'contact' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return bool
 	 *
 	 * @since   6.3.0
 	 */

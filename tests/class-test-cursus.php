@@ -3,6 +3,7 @@
  * Class CursusTest
  *
  * @package Kleistad
+ * @noinspection PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;

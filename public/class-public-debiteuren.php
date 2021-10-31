@@ -93,9 +93,6 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * Prepareer 'debiteuren' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
-	 *
-	 * @since   6.1.0
 	 */
 	protected function prepare( array &$data ) {
 		$blokkade                 = new Blokkade();

@@ -23,9 +23,6 @@ class Public_Saldo extends ShortcodeForm {
 	 * Prepareer 'saldo' form
 	 *
 	 * @param array $data voor display.
-	 * @return bool
-	 *
-	 * @since   4.0.87
 	 */
 	protected function prepare( array &$data ) {
 		$gebruiker_id = get_current_user_id();

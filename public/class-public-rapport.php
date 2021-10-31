@@ -21,9 +21,6 @@ class Public_Rapport extends Shortcode {
 	 * Prepareer 'rapport' form inhoud
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
-	 *
-	 * @since   4.0.87
 	 */
 	protected function prepare( array &$data ) {
 		$huidige_gebruiker = wp_get_current_user();

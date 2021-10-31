@@ -120,9 +120,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Prepareer 'input' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
-	 *
-	 * @since   5.0.0
 	 */
 	protected function prepare( array &$data ) {
 		if ( 'toevoegen' === $data['actie'] ) {

@@ -5,6 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Abonnement, \Kleistad\Abonnementen, \Kleistad\Abonnee, \Kleistad\Abonnees, \Kleistad\AbonnementActie, \Kleistad\AbonnementBetaling
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;
@@ -235,7 +236,8 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
 		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' ); // Verstuurt email 0.
-		$abonnement->factuur_maand = date( 'Ym', strtotime( '-1 month' ) );
+		$abonnement                = new Abonnement( $abonnee_id );
+		$abonnement->factuur_maand = date( 'Ym', strtotime( '-2 month' ) );
 		$abonnement->save();
 
 		Abonnementen::doe_dagelijks(); // Voert actie->factureer uit en verstuurt email 1.
@@ -273,9 +275,11 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
 		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' ); // Verstuurt email 0.
+
+		$abonnement                 = new Abonnement( $abonnee_id );
 		$abonnement->pauze_datum    = strtotime( '- 1 month 00:00' );
 		$abonnement->herstart_datum = $this->set_date( 10 );
-		$abonnement->factuur_maand  = date( 'Ym', strtotime( '-1 month' ) );
+		$abonnement->factuur_maand  = date( 'Ym', strtotime( '-2 month' ) );
 		$abonnement->save();
 
 		Abonnementen::doe_dagelijks(); // Voert actie->factureer uit en verstuurt email 1.
@@ -366,7 +370,9 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$abonnement = $this->maak_abonnement();
 		$abonnee    = new Abonnee( $abonnement->klant_id );
 		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'dinsdag', 'Dit is een test', 'bank' );
-		$abonnement->factuur_maand = date( 'Ym', strtotime( '-1 month' ) );
+
+		$abonnement                = new Abonnement( $abonnement->klant_id );
+		$abonnement->factuur_maand = date( 'Ym', strtotime( '-2 month' ) );
 		$abonnement->save();
 
 		$abonnement->actie->start_incasso();

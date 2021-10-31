@@ -36,7 +36,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Dagdelenkaart_Display
 	 */
-	private function dagdelenkaart_info() {
+	private function dagdelenkaart_info() : Public_Dagdelenkaart_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">

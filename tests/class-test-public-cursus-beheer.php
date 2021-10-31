@@ -5,6 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Cursus_Beheer
+ * @noinspection PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;

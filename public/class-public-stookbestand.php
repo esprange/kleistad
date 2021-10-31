@@ -21,9 +21,7 @@ class Public_Stookbestand extends Shortcode {
 	 * Prepareer 'stookbestand' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
 	 *
-	 * @since   4.0.87
 	 * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
 	 */
 	protected function prepare( array &$data ) {

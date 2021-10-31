@@ -20,9 +20,6 @@ class Public_Saldo_Overzicht extends Shortcode {
 	 * Prepareer 'saldo_overzicht' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
-	 *
-	 * @since   4.0.87
 	 */
 	protected function prepare( array &$data ) {
 		$stokers         = new Stokers();

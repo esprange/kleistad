@@ -54,7 +54,9 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * Formulier dat getoond moet worden betreft het verwijderen van de wachtlijst.
 	 *
 	 * @param array $data data voor display.
+	 *
 	 * @return bool|WP_Error
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function prepare_stop_wachten( array &$data ) {
 		list( $cursus_id, $cursist_id ) = sscanf( $data['param']['code'], 'C%d-%d' );
@@ -74,6 +76,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @param array $data data voor display.
 	 * @return bool|WP_Error
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function prepare_indelen_na_wachten( array &$data ) {
 		list( $cursus_id, $cursist_id ) = sscanf( $data['param']['code'], 'C%d-%d' );
@@ -97,6 +100,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @param array $data data voor display.
 	 * @return bool|WP_Error
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function prepare_inschrijven( array &$data ) {
 		$data['gebruikers']     = get_users(

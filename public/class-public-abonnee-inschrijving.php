@@ -22,7 +22,6 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 * Prepareer 'abonnee_inschrijving' form
 	 *
 	 * @param array $data data voor het formulier.
-	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */

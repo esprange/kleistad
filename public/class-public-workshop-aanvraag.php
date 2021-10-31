@@ -23,9 +23,6 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 * Prepareer 'workshop_aanvraag' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
-	 *
-	 * @since   5.6.0
 	 */
 	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {

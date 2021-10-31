@@ -202,7 +202,7 @@ class Public_Reservering extends Shortcode {
 			if ( false === $json_selectie ) {
 				$json_selectie = '{}';
 			}
-			$html .= "data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES, 'UTF-8' ) . "' ";
+			$html .= "data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES ) . "' ";
 		}
 		$html .= '><td>' . strftime( '%d %A', $stook->datum ) . "</td><td> {$status['wie']}</td><td>{$status['soortstook']}</td><td>{$status['temperatuur']}</td></tr>";
 		return $html;
@@ -262,6 +262,7 @@ class Public_Reservering extends Shortcode {
 	 * @param WP_REST_Request $request Ajax request params.
 	 *
 	 * @return WP_REST_Response Ajax response.
+	 * @throws \Exception
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) : WP_REST_Response {
 		$input   = $request->get_param( 'reservering' );

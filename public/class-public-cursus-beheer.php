@@ -90,7 +90,6 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * Prepareer 'cursus_beheer' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */

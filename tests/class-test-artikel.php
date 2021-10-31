@@ -3,6 +3,7 @@
  * Class Artikel Test
  *
  * @package Kleistad
+ * @noinspection PhpUndefinedFieldInspection,PhpDocMissingThrowsInspection
  */
 
 namespace Kleistad;

@@ -46,8 +46,6 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de details
-	 *
-	 * @return Public_Omzet_Rapportage_Display
 	 */
 	private function details() {
 		?>
@@ -81,13 +79,10 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 		</table>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Render de details
-	 *
-	 * @return Public_Omzet_Rapportage_Display
 	 */
 	private function overzicht() {
 		?>
@@ -176,7 +171,6 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 			<button id="kleistad_downloadrapport" class="kleistad-button kleistad-download-link" type="button" data-actie="omzetrapport" >Omzet rapport</button>
 		</div>
 		<?php
-		return $this;
 	}
 
 }

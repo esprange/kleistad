@@ -21,7 +21,6 @@ class Public_Abonnement_Overzicht extends Shortcode {
 	 * Prepareer 'abonnement_overzicht'
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
 	 *
 	 * @since   4.5.4
 	 */

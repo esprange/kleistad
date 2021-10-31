@@ -3,6 +3,7 @@
  * Class Kleistad_UnitTestCase
  *
  * @package Kleistad
+ * @noinspection PhpMultipleClassDeclarationsInspection
  */
 
 namespace Kleistad;
@@ -166,14 +167,11 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Hulp functie voor datums
 	 *
-	 * @param int      $day   Dag van de maand.
-	 * @param int|null $month Aantal maanden in toekomst of verleden, huidige maand if null.
+	 * @param int $day   Dag van de maand.
+	 * @param int $month Aantal maanden in toekomst of verleden, huidige maand if null.
 	 * @return int
 	 */
-	protected function set_date( int $day, ?int $month = null ) : int {
-		if ( is_null( $month ) ) {
-			return mktime( 0, 0, 0, (int) date( 'n' ), $day, (int) date( 'Y' ) );
-		}
+	protected function set_date( int $day, int $month = 0 ) : int {
 		return mktime( 0, 0, 0, $month + (int) date( 'n' ), $day, (int) date( 'Y' ) );
 	}
 
@@ -183,8 +181,8 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 		update_option( 'kleistad-database-versie', 0 );
-		$this->class_instance = new Kleistad();
-		$upgrade              = new Admin_Upgrade();
+		new Kleistad();
+		$upgrade = new Admin_Upgrade();
 		$upgrade->run();
 		update_option( 'kleistad_email_actief', 1 );
 		$this->reset_mockmailer_instance();

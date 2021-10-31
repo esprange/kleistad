@@ -5,6 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Saldo, \Kleistad\SaldoActie, \Kleistad\SaldoBetaling
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
  */
 
 namespace Kleistad;

@@ -23,7 +23,6 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 * Prepareer 'dagdelenkaart' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
 	 *
 	 * @since   4.3.0
 	 */

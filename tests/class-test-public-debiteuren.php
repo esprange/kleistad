@@ -5,6 +5,7 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Debiteuren
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;

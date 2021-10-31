@@ -172,12 +172,11 @@ class Public_Recept extends Shortcode {
 	 * Truncate een tekstregel tot gewenste woordlengte
 	 *
 	 * @param string $string    Tekstregel.
-	 * @param int    $width     Gewenste lengte.
 	 * @return string
 	 */
-	private static function truncate_string( string $string, int $width = 25 ) : string {
-		if ( strlen( $string ) > $width ) {
-			$string = wordwrap( $string, $width );
+	private static function truncate_string( string $string ) : string {
+		if ( strlen( $string ) > 25 ) {
+			$string = wordwrap( $string, 25 );
 			$string = substr( $string, 0, strpos( $string, "\n" ) );
 		}
 		return $string;

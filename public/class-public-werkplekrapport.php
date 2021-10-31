@@ -21,9 +21,6 @@ class Public_Werkplekrapport extends Shortcode {
 	 * Prepareer 'werkplekrapport' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
-	 *
-	 * @since   6.12.1
 	 */
 	protected function prepare( array &$data ) {
 		$input = filter_input_array(

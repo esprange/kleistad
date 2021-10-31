@@ -60,7 +60,9 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * Overzicht cursisten op cursus
 	 *
 	 * @param Cursus $cursus     De cursus.
+	 *
 	 * @return array De cursisten.
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	private function cursistenlijst( Cursus $cursus ) : array {
 		$cursisten = [];
@@ -99,7 +101,6 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * Prepareer 'cursus_overzicht' form
 	 *
 	 * @param array $data data voor display.
-	 * @return bool
 	 *
 	 * @since   4.5.4
 	 */
@@ -145,7 +146,6 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * Valideer/sanitize 'cursus_overzicht' form
 	 *
 	 * @param array $data gevalideerde data.
-	 * @return bool
 	 *
 	 * @since   5.4.0
 	 */
@@ -168,6 +168,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * Schrijf cursisten informatie naar het bestand.
 	 *
 	 * @param array $data De argumenten.
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	protected function cursisten( array $data ) {
 		$cursus_id        = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );

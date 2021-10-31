@@ -23,9 +23,6 @@ class Public_Verkoop extends ShortcodeForm {
 	 * Prepareer 'verkoop' form
 	 *
 	 * @param array $data voor display.
-	 * @return bool
-	 *
-	 * @since   6.2.0
 	 */
 	protected function prepare( array &$data ) {
 		if ( ! isset( $data['input'] ) ) {
@@ -55,9 +52,6 @@ class Public_Verkoop extends ShortcodeForm {
 	 * Valideer/sanitize 'verkoop' form
 	 *
 	 * @param array $data Gevalideerde data.
-	 * @return bool
-	 *
-	 * @since   6.2.0
 	 */
 	protected function validate( array &$data ) {
 		$data['input'] = filter_input_array(
