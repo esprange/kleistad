@@ -182,10 +182,8 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van workshops
-	 *
-	 * @return Public_Workshop_Beheer_Display
 	 */
-	private function overzicht() : Public_Workshop_Beheer_Display {
+	private function overzicht() {
 		?>
 		<strong>Vraag en Antwoord</strong>
 		<table id="kleistad_aanvragen" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
@@ -259,7 +257,6 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 		<button class="kleistad-button kleistad-download-link" type="button" data-actie="workshops" >Download</button>
 		<?php
-		return $this;
 	}
 
 	/**

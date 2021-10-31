@@ -108,10 +108,8 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de huidige extra's
-	 *
-	 * @return Public_Abonnee_Wijziging_Display
 	 */
-	private function abonnement_extra_info() : Public_Abonnee_Wijziging_Display {
+	private function abonnement_extra_info() {
 		if ( $this->extra_beschikbaar ) {
 			?>
 		<div class="kleistad-row">
@@ -124,7 +122,6 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		</div>
 			<?php
 		}
-		return $this;
 	}
 
 	/**

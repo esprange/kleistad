@@ -36,10 +36,8 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het abonnement velden
-	 *
-	 * @return Public_Abonnee_Inschrijving_Display
 	 */
-	private function abonnement_info() : Public_Abonnee_Inschrijving_Display {
+	private function abonnement_info() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
@@ -89,7 +87,6 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**

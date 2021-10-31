@@ -249,10 +249,8 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van recepten
-	 *
-	 * @return Public_Recept_Beheer_Display
 	 */
-	private function overzicht() : Public_Recept_Beheer_Display {
+	private function overzicht() {
 		?>
 		<table class="kleistad-datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
 			<thead>
@@ -285,7 +283,6 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 		</table>
 		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 		<?php
-		return $this;
 	}
 
 }

@@ -131,17 +131,15 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de techniek keuze. Javascript bepaalt of dit wordt getoond.
-	 *
-	 * @return Public_Cursus_Inschrijving_Display
 	 */
-	private function techniek_keuze() : Public_Cursus_Inschrijving_Display {
+	private function techniek_keuze() {
 		?>
 		<div id="kleistad_cursus_technieken" style="visibility: hidden;padding-bottom: 20px;" >
 			<div class="kleistad-row" >
 				<div class="kleistad-col-10">
 					<label class="kleistad-label">kies de techniek(en) die je wilt oefenen</label>
 				</div>
-			</div>
+			</div>3
 			<div class="kleistad-row" >
 				<div class="kleistad-col-1" >
 				</div>
@@ -162,7 +160,6 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**

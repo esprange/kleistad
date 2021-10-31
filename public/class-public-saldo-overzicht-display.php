@@ -26,10 +26,8 @@ class Public_Saldo_Overzicht_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van cursussen
-	 *
-	 * @return Public_Saldo_Overzicht_Display
 	 */
-	private function overzicht() : Public_Saldo_Overzicht_Display {
+	private function overzicht() {
 		?>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]'>
 			<thead>
@@ -48,7 +46,6 @@ class Public_Saldo_Overzicht_Display extends Public_Shortcode_Display {
 			</tbody>
 		</table>
 		<?php
-		return $this;
 	}
 
 }

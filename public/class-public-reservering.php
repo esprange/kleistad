@@ -14,6 +14,7 @@ namespace Kleistad;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
+use Exception;
 
 /**
  * De reservering form.
@@ -262,7 +263,7 @@ class Public_Reservering extends Shortcode {
 	 * @param WP_REST_Request $request Ajax request params.
 	 *
 	 * @return WP_REST_Response Ajax response.
-	 * @throws \Exception
+	 * @throws Exception Exceptie van stook save.
 	 */
 	public static function callback_muteer( WP_REST_Request $request ) : WP_REST_Response {
 		$input   = $request->get_param( 'reservering' );

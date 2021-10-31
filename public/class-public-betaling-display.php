@@ -37,10 +37,8 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het overzicht van de bestelling
-	 *
-	 * @return Public_Betaling_Display
 	 */
-	private function overzicht() : Public_Betaling_Display {
+	private function overzicht() {
 		?>
 		<input type="hidden" name="order_id" value="<?php echo esc_attr( $this->data['order_id'] ); ?>" />
 		<input type="hidden" name="artikel_type" value="<?php echo esc_attr( $this->data['artikel_type'] ); ?>" />
@@ -85,15 +83,12 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 			</tfoot>
 		</table>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Render het betalen
-	 *
-	 * @return Public_Betaling_Display
 	 */
-	private function betalen() : Public_Betaling_Display {
+	private function betalen() {
 		?>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
@@ -106,15 +101,12 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Render het terugstorten
-	 *
-	 * @return Public_Betaling_Display
 	 */
-	private function terugstorten() : Public_Betaling_Display {
+	private function terugstorten() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
@@ -123,15 +115,12 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Render geen actie
-	 *
-	 * @return Public_Betaling_Display
 	 */
-	private function geen_actie() : Public_Betaling_Display {
+	private function geen_actie() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
@@ -140,7 +129,6 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 }

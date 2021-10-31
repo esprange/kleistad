@@ -239,10 +239,8 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de cursussen
-	 *
-	 * @return Public_Cursus_Overzicht_Display
 	 */
-	private function overzicht() : Public_Cursus_Overzicht_Display {
+	private function overzicht() {
 		?>
 		<table class="kleistad-datatable display" id="kleistad_cursussen" data-order='[[ 0, "desc" ]]'>
 			<thead>
@@ -275,7 +273,6 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 			</tbody>
 		</table>
 		<?php
-		return $this;
 	}
 
 }

@@ -169,10 +169,8 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van cursussen
-	 *
-	 * @return Public_Cursus_Beheer_Display
 	 */
-	private function overzicht() : Public_Cursus_Beheer_Display {
+	private function overzicht() {
 		?>
 		<table class="kleistad-datatable display compact nowrap" id="kleistad_cursussen" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 		<thead>
@@ -207,6 +205,5 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		</table>
 		<button type="button" class="kleistad-button kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
 		<?php
-		return $this;
 	}
 }
