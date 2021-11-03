@@ -51,7 +51,13 @@ abstract class Shortcode {
 	 */
 	protected function enqueue() {
 		$reflect = new ReflectionClass( $this );
-		wp_enqueue_script( 'kleistad-' . substr( strtolower( $reflect->getShortName() ), strlen( 'public-' ) ) );
+		$script  = 'kleistad-' . substr( strtolower( $reflect->getShortName() ), strlen( 'public-' ) );
+		if ( wp_script_is( $script, 'registered' ) ) {
+			wp_enqueue_script( $script );
+		}
+		if ( ! wp_script_is( 'kleistad' ) ) {
+			wp_enqueue_script( 'kleistad' );
+		}
 	}
 
 	/**

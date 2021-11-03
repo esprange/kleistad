@@ -38,6 +38,16 @@ abstract class ShortcodeForm extends Shortcode {
 	abstract protected function validate( array &$data );
 
 	/**
+	 * Enqueue the scripts and styles for the shortcode.
+	 */
+	protected function enqueue() {
+		parent::enqueue();
+		if ( ! wp_script_is( 'kleistad-form' ) ) {
+			wp_enqueue_script( 'kleistad-form' );
+		}
+	}
+
+	/**
 	 * Save functie, wordt gebruikt bij formulieren. Kan overschreven worden door een meer specifieke functie.
 	 *
 	 * @since   4.0.87
@@ -93,6 +103,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 * @param  WP_REST_Request $request De callback parameters.
 	 * @return WP_REST_Response De response.
 	 * @throws Exception Onbekend object.
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public static function callback_formsubmit( WP_REST_Request $request ) : WP_REST_Response {
 		$shortcode = self::get_shortcode( $request );
