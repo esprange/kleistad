@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.8.1
-Stable tag: 6.20.2
+Stable tag: 6.20.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4
@@ -35,24 +35,26 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-- 6.20.2 =
+= 6.20.3 =
+* Bugfix voor herhaald inschrijven en verwerking refunds Mollie
+= 6.20.2 =
 * Aanmeldingen voor een cursus worden omgezet naar de wachtlijst als de cursus vol komt
 * Melding als er terug te betalen bedragen staan
-- 6.20.0 =
+= 6.20.0 =
 * Gebruikersprofiel met openstaande vorderingen toegevoegd
 * Voorbereiding workshop reserveringen
 * Beperkt bugfix en refactoring
-- 6.18.2 =
+= 6.18.2 =
 * Bij annulering via boekhouding de inschrijving of workshop correct op geannuleerd zetten
-- 6.18.1 =
+= 6.18.1 =
 * Diverse verbeteringen
 * Bugfixes en beperkte refactoring
-- 6.16.5 =
+= 6.16.5 =
 * Verbetering laden van style scripts en oplossen FOUC datatables
-- 6.16.2 =
+= 6.16.2 =
 * Bugfix saldo storten
 * Robuuster maken fout idealbetaling vanuit formulier voor abonnement, inschrijving en dagdelenkaart
-- 6.16.0 =
+= 6.16.0 =
 * Performance verbetering, cursus inschrijvingen opgenomen in aparte database tabel ipv in user_meta
 * Performance verbetering, reductie aantal database queries
 * Robuuster abonnee inschrijving

@@ -112,9 +112,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 			/**
 			 * De betaling is fout gegaan, dus als er nog niet ingedeeld is, dan de inschrijving laten vervallen.
 			 */
-			if ( ! $this->inschrijving->ingedeeld ) {
-				$this->inschrijving->erase();
-			}
+			$this->inschrijving->erase();
 		}
 	}
 

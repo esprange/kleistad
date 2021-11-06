@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 116;
+	const DBVERSIE = 117;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -228,6 +228,9 @@ class Admin_Upgrade {
 
 		if ( ! $wpdb->get_var( "SHOW INDEX FROM {$wpdb->prefix}kleistad_orders WHERE Key_name = 'referenties' " ) ) {
 			$wpdb->query( "CREATE INDEX referenties ON {$wpdb->prefix}kleistad_orders (referentie)" );
+		}
+		if ( ! $wpdb->get_var( "SHOW INDEX FROM {$wpdb->prefix}kleistad_orders WHERE Key_name = 'transactie_ids' " ) ) {
+			$wpdb->query( "CREATE INDEX transactie_ids ON {$wpdb->prefix}kleistad_orders (transactie_id)" );
 		}
 	}
 
