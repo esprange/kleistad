@@ -68,7 +68,6 @@ class Ontvangen {
 		// phpcs:disable WordPress.NamingConventions
 		$service         = new MollieClient();
 		$betaling        = $service->get_payment( (string) $request->get_param( 'id' ) );
-		$order           = new Order( $betaling->metadata->order_id );
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $betaling->metadata->order_id );
 		if ( is_null( $artikel ) ) {
@@ -76,11 +75,14 @@ class Ontvangen {
 			return new WP_Error( 'onbekend', 'betaling niet herkend' );
 		}
 		if ( ! $betaling->hasRefunds() && ! $betaling->hasChargebacks() ) {
+			$order = new Order( $betaling->metadata->order_id );
 			$this->payment( $betaling, $artikel, $order );
 		}
 		if ( $betaling->hasRefunds() ) {
+			$order = new Order( $betaling->id );
 			$this->refunds( $betaling, $artikel, $order );
 		} elseif ( $betaling->hasChargebacks() ) {
+			$order = new Order( $betaling->id );
 			$this->chargebacks( $betaling, $artikel, $order );
 		}
 		return new WP_REST_Response(); // Geeft default http status 200 terug.

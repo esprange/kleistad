@@ -79,23 +79,19 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	 */
 	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( ! $order->id || $order->is_credit() ) {
-				/**]
-				 * Er is nog geen order of deze is eerder geannuleerd, dus dit betreft inschrijving vanuit het formulier.
-				 */
-				$this->indelen();
-				$this->inschrijving->verzend_email( 'indeling', $this->inschrijving->bestel_order( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant(), $transactie_id ) );
-				return;
-			}
-			/**
-			 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
-			 */
-			$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
-			if ( ! $this->inschrijving->ingedeeld ) { // Voorafgaand de betaling was de cursist nog niet ingedeeld.
-				/**
-				 * De cursist krijgt de melding dat deze nu ingedeeld is als er nog ruimte is.
-				 */
+			if ( ! $this->inschrijving->ingedeeld && 0 < $bedrag ) {
 				if ( $this->indelen() ) {
+					if ( ! $order->id || $order->is_credit() ) {
+						/**]
+						 * Er is nog geen order of de order is een credit order en het bedrag is positief, dan betreft dit inschrijving vanuit het formulier.
+						 */
+						$this->inschrijving->verzend_email( 'indeling', $this->inschrijving->bestel_order( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant(), $transactie_id ) );
+						return;
+					}
+					/**
+					 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
+					 */
+					$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
 					$this->inschrijving->verzend_email( 'indeling' );
 					return;
 				}
@@ -108,11 +104,17 @@ class InschrijvingBetaling extends ArtikelBetaling {
 			/**
 			 * Als de cursist al ingedeeld is volstaat een bedankje ingeval van een betaling per ideal, bank hoeft niet.
 			 */
+			$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
 			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
 				$this->inschrijving->verzend_email( '_ideal_betaald' );
 			}
 		} elseif ( 'ideal' === $type && ! $order->id ) {
-			$this->inschrijving->erase();
+			/**
+			 * De betaling is fout gegaan, dus als er nog niet ingedeeld is, dan de inschrijving laten vervallen.
+			 */
+			if ( ! $this->inschrijving->ingedeeld ) {
+				$this->inschrijving->erase();
+			}
 		}
 	}
 

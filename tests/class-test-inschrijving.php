@@ -302,8 +302,9 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 *  Betaling per ideal vanuit het wachtlijst formulier.
 		 */
-		$order = new Order( $inschrijving->geef_referentie() );
-		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
+		$inschrijving2 = new $inschrijving( $inschrijving->cursus->id, $inschrijving->klant_id );
+		$order         = new Order( $inschrijving2->geef_referentie() );
+		$inschrijving2->betaling->verwerk( $order, 25, true, 'ideal' );
 		$this->assertEquals( 'Indeling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank indeling incorrecte email' );
 
 	}
