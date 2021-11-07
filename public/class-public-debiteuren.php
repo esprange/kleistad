@@ -53,7 +53,7 @@ class Public_Debiteuren extends ShortcodeForm {
 				'verval_datum' => $order->verval_datum,
 			];
 			$data['openstaand']  += $openstaand;
-			$data['terugstorten'] = $data['terugstorten'] || ( 0 > $openstaand && empty( $order->transactie_id ) ); // Alleen bankterugstorting.
+			$data['terugstorten'] = $data['terugstorten'] || ( 0 > $openstaand && ! $order->transactie_id ); // Alleen bankterugstorting.
 		}
 		return $data;
 	}
