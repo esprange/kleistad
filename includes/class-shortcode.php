@@ -281,7 +281,7 @@ abstract class Shortcode {
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
 				throw new Exception( 'callback_formsubmit voor onbekend object' );
 			}
-			$atts_actie  = json_decode( $request->get_param( 'atts' ), true )['actie'] ?? '';
+			$atts_actie  = json_decode( $request->get_param( 'atts' ) ?? '', true )['actie'] ?? '';
 			$param_actie = sanitize_text_field( $request->get_param( 'actie' ) );
 			$data        = [
 				'actie' => ( '-' === $param_actie && $atts_actie ) ? $atts_actie : $param_actie,
