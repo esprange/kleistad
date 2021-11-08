@@ -269,7 +269,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<label for="kleistad_zoek">Zoek naar</label>
 			</div>
 			<div class="kleistad-col-4"  style="position: relative;">
-				<input id="kleistad_zoek" name="zoek" type="text" style="height:40px;" placeholder="zoeken..." />
+				<input id="kleistad_zoek" type="text" style="height:40px;" placeholder="zoeken..." />
 				<button class="kleistad-button kleistad-edit-link" type="submit" id="kleistad_zoek_icon" data-id="" data-actie="zoek" style="height:40px;position:absolute;right:0;z-index:2;"><span class="dashicons dashicons-search"></span></button>
 			</div>
 		</div>

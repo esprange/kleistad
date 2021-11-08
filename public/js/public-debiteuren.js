@@ -13,10 +13,10 @@
 	 * Lees de zoekterm.
 	 */
 	function leesFilters() {
-		const $zoek = $( '#kleistad_zoek' );
-		if ( window.sessionStorage.getItem( 'debiteur_filter' ) ) {
-			$zoek.val( window.sessionStorage.getItem( 'debiteur_filter' ) );
-			$( '#kleistad_zoek_icon' ).data( 'id', $zoek.val() );
+		const zoek = window.sessionStorage.getItem( 'debiteur_filter' );
+		if ( zoek ) {
+			$( '#kleistad_zoek_icon' ).data( 'id', zoek );
+			$( '#kleistad_zoek' ).val( zoek );
 		}
 	}
 
