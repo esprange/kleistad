@@ -88,6 +88,14 @@ class Public_Werkplek extends Shortcode {
 				];
 			}
 		}
+		foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
+			if ( $dagdelengebruiker->is_actief() ) {
+				$cursisten[] = [
+					'id'   => $dagdelengebruiker->ID,
+					'naam' => $dagdelengebruiker->display_name,
+				];
+			}
+		}
 		return $cursisten;
 	}
 
