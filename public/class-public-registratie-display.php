@@ -43,7 +43,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 				<input class="kleistad-input" name="first_name" id="kleistad_voornaam" type="text" required maxlength="25" placeholder="voornaam" value="<?php echo esc_attr( $this->data['input']['first_name'] ); ?>" />
 			</div>
 			<div class="kleistad-col-4">
-				<<!--suppress HtmlFormInputWithoutLabel -->input class="kleistad-input" name="last_name" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo esc_attr( $this->data['input']['last_name'] ); ?>" />
+				<input class="kleistad-input" name="last_name" id="kleistad_achternaam" type="text" required maxlength="25" placeholder="achternaam" value="<?php echo esc_attr( $this->data['input']['last_name'] ); ?>" />
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -62,7 +62,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 				<input class="kleistad-input" name="straat" id="kleistad_straat" type="text" required placeholder="straat" maxlength="50" value="<?php echo esc_attr( $this->data['input']['straat'] ); ?>" />
 			</div>
 			<div class="kleistad-col-2">
-				<<!--suppress HtmlFormInputWithoutLabel -->input class="kleistad-input" name="huisnr" id="kleistad_huisnr" type="text" maxlength="10" required placeholder="nr" value="<?php echo esc_attr( $this->data['input']['huisnr'] ); ?>" />
+				<input class="kleistad-input" name="huisnr" id="kleistad_huisnr" type="text" maxlength="10" required placeholder="nr" value="<?php echo esc_attr( $this->data['input']['huisnr'] ); ?>" />
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -73,7 +73,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 				<input class="kleistad-input" name="pcode" id="kleistad_pcode" type="text" maxlength="10" placeholder="1234AB" pattern="^[1-9][0-9]{3} ?[a-zA-Z]{2}$" title="1234AB" value="<?php echo esc_attr( $this->data['input']['pcode'] ); ?>" />
 			</div>
 			<div class="kleistad-col-5">
-				<<!--suppress HtmlFormInputWithoutLabel -->input class="kleistad-input" name="plaats" id="kleistad_plaats" value="<?php echo esc_attr( $this->data['input']['plaats'] ); ?>"
+				<input class="kleistad-input" name="plaats" id="kleistad_plaats" value="<?php echo esc_attr( $this->data['input']['plaats'] ); ?>"
 					type="text" required maxlength="50" placeholder="MijnWoonplaats" pattern="^[a-zA-Z-'\s]+$"
 					oninvalid="setCustomValidity('Een geldige plaatsnaam wordt verwacht')" oninput="setCustomValidity('')" />
 			</div>
