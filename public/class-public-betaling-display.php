@@ -31,6 +31,9 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 			} else {
 				$this->geen_actie();
 			}
+			if ( $this->data['annuleerbaar'] ) {
+				$this->annuleren();
+			}
 			$this->form_end();
 		}
 	}
@@ -43,14 +46,17 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="order_id" value="<?php echo esc_attr( $this->data['order_id'] ); ?>" />
 		<input type="hidden" name="artikel_type" value="<?php echo esc_attr( $this->data['artikel_type'] ); ?>" />
 		<input type="hidden" name="betaal" value="ideal" />
-		<h2>Overzicht betaling <?php echo esc_html( $this->data['betreft'] ); ?></h2>
-		<button class="kleistad-button kleistad-download-link" type="button" data-actie="url_factuur" >factuur <?php echo esc_html( $this->data['factuur'] ); ?></button>
 		<div class="kleistad-row">
-			<div class="kleistad-col-3">
-				<p>Voor</p>
+			<div class="kleistad-col-5">
+				<h2>Overzicht betaling <?php echo esc_html( $this->data['betreft'] ); ?></h2>
 			</div>
-			<div class="kleistad-col-7">
-				<p><?php echo esc_html( $this->data['klant'] ); ?></p>
+			<div class="kleistad-col-5" style="text-align: right">
+				<button class="kleistad-button kleistad-download-link" type="button" data-actie="url_factuur" >factuur <?php echo esc_html( $this->data['factuur'] ); ?></button>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-5">
+				<p>Voor <?php echo esc_html( $this->data['klant'] ); ?></p>
 			</div>
 		</div>
 		<table class="kleistad-datatable  display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false" >
@@ -97,7 +103,26 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
-				<button class="kleistad-button" type="submit" name="kleistad_submit_betaling" id="kleistad_submit">Betalen</button><br />
+				<button class="kleistad-button" type="submit" name="kleistad_submit_betaling" id="kleistad_submit" value="betalen" >Betalen</button><br />
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render de annuleer mogelijkheid
+	 */
+	private function annuleren() {
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10" style="padding-top: 20px;">
+				Het is nog mogelijk om deze bestelling te annuleren.
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3" style="padding-top: 20px;">
+				<button class="kleistad-button" type="submit" name="kleistad_submit_betaling" value="annuleren"
+				data-confirm="<?php echo esc_attr( $this->data['betreft'] ); ?>|Weet je zeker dat je deze bestelling wilt annuleren" id="kleistad_annuleren">Annuleren</button><br />
 			</div>
 		</div>
 		<?php
