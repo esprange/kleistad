@@ -59,6 +59,7 @@ class Public_Betaling extends ShortcodeForm {
 			'betreft'       => $artikel->geef_artikelnaam(),
 			'factuur'       => $order->factuurnummer(),
 			'artikel_type'  => $param['art'],
+			'annuleerbaar'  => $artikel->is_annuleerbaar(),
 		];
 		return true;
 	}
@@ -109,7 +110,7 @@ class Public_Betaling extends ShortcodeForm {
 	 *
 	 * @since   4.2.0
 	 */
-	protected function save( array $data ) : array {
+	protected function betalen( array $data ) : array {
 		if ( 'ideal' === $data['input']['betaal'] ) {
 			$data['artikel']->artikel_type = $data['input']['artikel_type'];
 			$ideal_uri                     = $data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->te_betalen(), $data['order']->referentie );
@@ -122,6 +123,26 @@ class Public_Betaling extends ShortcodeForm {
 			'status'  => 'Er heeft geen betaling plaatsgevonden',
 			'content' => $this->goto_home(),
 		];
+	}
+
+	/**
+	 * Annulering door klant
+	 *
+	 * @param array $data te annuleren data.
+	 *
+	 * @return array
+	 */
+	protected function annuleren( array $data ) : array {
+		if ( $data['artikel']->is_annuleerbaar() ) {
+			$order = new Order( $data['artikel']->geef_referentie() );
+			if ( $data['artikel']->annuleer_order( $order, 0, 'Geannuleerd door klant' ) ) {
+				return [
+					'status'  => 'De order is geannuleerd en een bevestiging is verstuurd',
+					'content' => $this->goto_home(),
+				];
+			}
+		}
+		return [ 'status' => $this->status( new WP_Error( 'annuleren', 'Annulering blijkt niet mogelijk. Neem eventueel contact op met Kleistad' ) ) ];
 	}
 
 	/**

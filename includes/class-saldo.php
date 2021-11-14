@@ -198,4 +198,12 @@ class Saldo extends Artikel {
 		return new Orderregel( 'stooksaldo', 1, $this->prijs );
 	}
 
+	/**
+	 * Een saldo bestelling is altijd te annuleren
+	 *
+	 * @return bool
+	 */
+	public function is_annuleerbaar(): bool {
+		return true;
+	}
 }

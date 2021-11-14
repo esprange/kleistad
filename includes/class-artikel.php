@@ -322,4 +322,12 @@ abstract class Artikel {
 		return $this->maak_factuur( $order, $order->is_credit() ? 'credit' : '' );
 	}
 
+	/**
+	 * Controleer of de bestelling te annuleren is door de klant
+	 *
+	 * @return bool
+	 */
+	public function is_annuleerbaar() : bool {
+		return false;
+	}
 }

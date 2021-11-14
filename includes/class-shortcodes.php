@@ -51,7 +51,7 @@ class Shortcodes {
 			],
 			'betaling'              => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'datatables', 'jquery-ui-selectmenu' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'jquery-ui-selectmenu' ],
 				'css'    => [ 'datatables', 'jquery-ui' ],
 				'access' => [],
 			],

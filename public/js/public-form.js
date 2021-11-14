@@ -18,8 +18,6 @@
 function strtotime( value ) {
 	let hours, minutes;
 	if ( 'string' === typeof value ) {
-		/* noinspection EqualityComparisonWithCoercionJS */
-		/* jshint eqeqeq:false */
 		if ( Number( value ) == value ) {
 			return Number( value );
 		}
@@ -142,7 +140,7 @@ function strtodate( value ) {
 					resizable: false,
 					title: tekst[0],
 					open: function() {
-						$( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
+						$( '.ui-dialog' ).find( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
 					},
 					buttons: [
 					{

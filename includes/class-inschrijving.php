@@ -211,6 +211,15 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
+	 * Inschrijvingen zijn annuleerbaar als er inschrijfkosten zijn en de restant email nog niet verstuurd is.
+	 *
+	 * @return bool
+	 */
+	public function is_annuleerbaar(): bool {
+		return ! empty( $this->heeft_restant() );
+	}
+
+	/**
 	 * Verzenden van de inschrijving of indeling email.
 	 *
 	 * @since      4.0.87
