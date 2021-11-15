@@ -21,13 +21,11 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	/**
 	 * Prepareer 'abonnee_inschrijving' form
 	 *
-	 * @param array $data data voor het formulier.
-	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( array &$data ) {
-		if ( ! isset( $data['input'] ) ) {
-			$data['input'] = [
+	protected function prepare() {
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data['input'] = [
 				'gebruiker_id'     => 0,
 				'user_email'       => '',
 				'email_controle'   => '',
@@ -47,7 +45,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'mc4wp-subscribe'  => '0',
 			];
 		}
-		$data['gebruikers'] = get_users(
+		$this->data['gebruikers'] = get_users(
 			[
 				'fields'       => [ 'ID', 'display_name' ],
 				'orderby'      => 'display_name',

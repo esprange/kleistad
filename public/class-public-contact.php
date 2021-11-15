@@ -20,13 +20,11 @@ class Public_Contact extends ShortcodeForm {
 	 *
 	 * Prepareer 'contact' form
 	 *
-	 * @param array $data data voor display.
-	 *
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	protected function prepare( array &$data ) {
-		if ( ! isset( $data['input'] ) ) {
-			$data      = [
+	protected function prepare() {
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data = [
 				'input' => [
 					'naam'      => '',
 					'email'     => '',
@@ -35,11 +33,11 @@ class Public_Contact extends ShortcodeForm {
 					'vraag'     => '',
 				],
 			];
-			$gebruiker = wp_get_current_user();
+			$gebruiker  = wp_get_current_user();
 			if ( $gebruiker->exists() ) {
-				$data['input']['naam']  = $gebruiker->display_name;
-				$data['input']['email'] = $gebruiker->user_email;
-				$data['input']['telnr'] = $gebruiker->telnr;
+				$this->data['input']['naam']  = $gebruiker->display_name;
+				$this->data['input']['email'] = $gebruiker->user_email;
+				$this->data['input']['telnr'] = $gebruiker->telnr;
 			}
 		}
 		return true;

@@ -118,41 +118,39 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 
 	/**
 	 * Prepareer 'input' form
-	 *
-	 * @param array $data data voor display.
 	 */
-	protected function prepare( array &$data ) {
-		if ( 'toevoegen' === $data['actie'] ) {
+	protected function prepare() {
+		if ( 'toevoegen' === $this->data['actie'] ) {
 			/*
 			* Er moet een nieuwe workshop opgevoerd worden
 			*/
-			$data['docenten'] = $this->docenten();
-			if ( ! isset( $data['workshop'] ) ) {
-				$data['workshop'] = $this->formulier();
+			$this->data['docenten'] = $this->docenten();
+			if ( ! isset( $this->data['workshop'] ) ) {
+				$this->data['workshop'] = $this->formulier();
 			}
 			return true;
 		}
-		if ( 'wijzigen' === $data['actie'] ) {
+		if ( 'wijzigen' === $this->data['actie'] ) {
 			/*
 			* Er is een workshop gekozen om te wijzigen.
 			*/
-			$data['docenten'] = $this->docenten();
-			if ( ! isset( $data['workshop'] ) ) {
-				$data['workshop'] = $this->formulier( $data['id'] );
+			$this->data['docenten'] = $this->docenten();
+			if ( ! isset( $this->data['workshop'] ) ) {
+				$this->data['workshop'] = $this->formulier( $this->data['id'] );
 			}
 			return true;
 		}
-		if ( 'inplannen' === $data['actie'] ) {
+		if ( 'inplannen' === $this->data['actie'] ) {
 			/**
 			 * Een workshop aanvraag gaat gepland worden.
 			 */
-			$aanvraag         = new WorkshopAanvraag( $data['id'] );
-			$data['docenten'] = $this->docenten();
+			$aanvraag               = new WorkshopAanvraag( $this->data['id'] );
+			$this->data['docenten'] = $this->docenten();
 			if ( $aanvraag->workshop_id ) {
-				$data['workshop'] = $this->formulier( $aanvraag->workshop_id );
+				$this->data['workshop'] = $this->formulier( $aanvraag->workshop_id );
 				return true;
 			}
-			$data['workshop']                = wp_parse_args(
+			$this->data['workshop']                = wp_parse_args(
 				[
 					'email'   => $aanvraag->email,
 					'contact' => $aanvraag->contact,
@@ -160,15 +158,15 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				],
 				$this->formulier()
 			);
-			$data['workshop']['aanvraag_id'] = $data['id'];
+			$this->data['workshop']['aanvraag_id'] = $this->data['id'];
 			return true;
 		}
-		if ( 'tonen' === $data['actie'] ) {
+		if ( 'tonen' === $this->data['actie'] ) {
 			/**
 			 * Een workshop aanvraag moet getoond worden.
 			 */
-			$aanvraag      = new WorkshopAanvraag( $data['id'] );
-			$data['casus'] = [
+			$aanvraag            = new WorkshopAanvraag( $this->data['id'] );
+			$this->data['casus'] = [
 				'correspondentie' => $aanvraag->communicatie,
 				'casus_id'        => $aanvraag->ID,
 				'datum'           => date( 'd-m-Y H:i', strtotime( $aanvraag->post_modified ) ),
@@ -184,8 +182,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		/**
 		 * De workshopaanvragen en de geplande workshops moeten worden getoond.
 		 */
-		$data['workshops'] = $this->planning();
-		$data['aanvragen'] = $this->aanvragen();
+		$this->data['workshops'] = $this->planning();
+		$this->data['aanvragen'] = $this->aanvragen();
 		return true;
 	}
 

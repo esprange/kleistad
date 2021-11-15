@@ -100,37 +100,35 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 *
 	 * Prepareer 'cursus_overzicht' form
 	 *
-	 * @param array $data data voor display.
-	 *
 	 * @since   4.5.4
 	 */
-	protected function prepare( array &$data ) {
-		$data['bestuur_rechten'] = current_user_can( BESTUUR );
-		if ( 'cursisten' === $data['actie'] ) {
-			$cursus            = new Cursus( $data['id'] );
-			$data['cursus']    = [
+	protected function prepare() {
+		$this->data['bestuur_rechten'] = current_user_can( BESTUUR );
+		if ( 'cursisten' === $this->data['actie'] ) {
+			$cursus                  = new Cursus( $this->data['id'] );
+			$this->data['cursus']    = [
 				'id'    => $cursus->id,
 				'naam'  => $cursus->naam,
 				'code'  => $cursus->code,
 				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
-			$data['cursisten'] = $this->cursistenlijst( $cursus );
+			$this->data['cursisten'] = $this->cursistenlijst( $cursus );
 			return true;
 		}
-		if ( 'indelen' === $data['actie'] || 'uitschrijven' === $data['actie'] ) {
-			list( $cursus_id, $cursist_id ) = sscanf( $data['id'], 'C%d-%d' );
+		if ( 'indelen' === $this->data['actie'] || 'uitschrijven' === $this->data['actie'] ) {
+			list( $cursus_id, $cursist_id ) = sscanf( $this->data['id'], 'C%d-%d' );
 			$cursus                         = new Cursus( $cursus_id );
 			$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
 			$cursist                        = get_userdata( $cursist_id );
 			$lopend                         = $cursus->lopend( $inschrijving->datum );
-			$data['cursus']                 = [
+			$this->data['cursus']           = [
 				'id'          => $cursus_id,
 				'lessen'      => $lopend['lessen'],
 				'lessen_rest' => $lopend['lessen_rest'],
 				'kosten'      => $lopend['kosten'],
 				'max'         => round( $cursus->inschrijfkosten, 1 ) + $cursus->cursuskosten,
 			];
-			$data['cursist']                = [
+			$this->data['cursist']          = [
 				'id'     => $cursist_id,
 				'naam'   => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
 				'datum'  => $inschrijving->datum,
@@ -138,7 +136,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			];
 			return true;
 		}
-		$data['cursus_info'] = $this->geef_cursussen();
+		$this->data['cursus_info'] = $this->geef_cursussen();
 		return true;
 	}
 

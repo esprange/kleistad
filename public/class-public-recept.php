@@ -22,12 +22,11 @@ class Public_Recept extends Shortcode {
 	/**
 	 * Prepareer 'recept' form
 	 *
-	 * @param array $data data voor display.
 	 * @return bool
 	 *
 	 * @since   4.1.0
 	 */
-	protected function prepare( array &$data ) {
+	protected function prepare() {
 		return true;
 	}
 

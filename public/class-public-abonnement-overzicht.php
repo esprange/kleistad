@@ -20,16 +20,14 @@ class Public_Abonnement_Overzicht extends Shortcode {
 	 *
 	 * Prepareer 'abonnement_overzicht'
 	 *
-	 * @param array $data data voor display.
-	 *
 	 * @since   4.5.4
 	 */
-	protected function prepare( array &$data ) {
-		$data['abonnee_info'] = [];
-		$abonnees             = new Abonnees();
+	protected function prepare() {
+		$this->data['abonnee_info'] = [];
+		$abonnees                   = new Abonnees();
 		foreach ( $abonnees as $abonnee ) {
 			if ( ! $abonnee->abonnement->is_geannuleerd() ) {
-				$data['abonnee_info'][] = [
+				$this->data['abonnee_info'][] = [
 					'naam'   => $abonnee->display_name,
 					'email'  => $abonnee->user_email,
 					'soort'  => $abonnee->abonnement->soort . ( 'beperkt' === $abonnee->abonnement->soort ? ' (' . $abonnee->abonnement->dag . ')' : '' ),

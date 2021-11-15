@@ -37,14 +37,20 @@ abstract class Shortcode {
 	private array $atts = [];
 
 	/**
+	 * De data die gebruikt wordt voor display.
+	 *
+	 * @var array shortcode data
+	 */
+	protected array $data = [];
+
+	/**
 	 * Abstract definitie van de prepare functie
 	 *
 	 * @since   4.0.87
 	 *
-	 * @param array $data de data die voorbereid moet worden voor display.
 	 * @return WP_Error|bool
 	 */
-	abstract protected function prepare( array &$data);
+	abstract protected function prepare();
 
 	/**
 	 * Enqueue the scripts and styles for the shortcode.
@@ -65,25 +71,24 @@ abstract class Shortcode {
 	 *
 	 * @since 4.5.1
 	 *
-	 * @param  array $data de uit te wisselen data.
 	 * @return string html tekst.
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function display( array &$data = [] ) : string {
+	protected function display() : string {
 		$this->enqueue();
-		$data = array_merge( [ 'actie' => '-' ], $this->atts, $data );
+		$this->data = array_merge( [ 'actie' => '-' ], $this->atts, $this->data );
 		try {
 			$ontvangen     = new Ontvangen();
 			$betaal_result = $ontvangen->controleer();
 			if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
 				return $this->status( $betaal_result ) . $this->goto_home();
 			}
-			$result = $this->prepare( $data );
+			$result = $this->prepare();
 			if ( is_wp_error( $result ) ) {
 				$html = $this->status( $result );
 			} else {
 				$html_objectclass = get_class( $this ) . '_Display';
-				$display          = new $html_objectclass( $data );
+				$display          = new $html_objectclass( $this->data );
 				$html             = $display->render();
 			}
 			if ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
@@ -281,13 +286,13 @@ abstract class Shortcode {
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
 				throw new Exception( 'callback_formsubmit voor onbekend object' );
 			}
-			$atts_actie  = json_decode( $request->get_param( 'atts' ) ?? '', true )['actie'] ?? '';
-			$param_actie = sanitize_text_field( $request->get_param( 'actie' ) );
-			$data        = [
+			$atts_actie      = json_decode( $request->get_param( 'atts' ) ?? '', true )['actie'] ?? '';
+			$param_actie     = sanitize_text_field( $request->get_param( 'actie' ) );
+			$shortcode->data = [
 				'actie' => ( '-' === $param_actie && $atts_actie ) ? $atts_actie : $param_actie,
 				'id'    => is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) ),
 			];
-			return new WP_REST_Response( [ 'content' => $shortcode->display( $data ) ] );
+			return new WP_REST_Response( [ 'content' => $shortcode->display() ] );
 		} catch ( Kleistad_Exception $exceptie ) {
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
 		} catch ( Exception $exceptie ) {

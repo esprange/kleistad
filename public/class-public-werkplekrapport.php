@@ -17,12 +17,9 @@ namespace Kleistad;
 class Public_Werkplekrapport extends Shortcode {
 
 	/**
-	 *
 	 * Prepareer 'werkplekrapport' form
-	 *
-	 * @param array $data data voor display.
 	 */
-	protected function prepare( array &$data ) {
+	protected function prepare() {
 		$input = filter_input_array(
 			INPUT_GET,
 			[
@@ -32,19 +29,19 @@ class Public_Werkplekrapport extends Shortcode {
 			]
 		);
 		if ( empty( $input['vanaf_datum'] ) ) {
-			if ( 'individueel' === $data['actie'] ) {
-				$data['gebruikers'] = $this->geef_gebruikers();
+			if ( 'individueel' === $this->data['actie'] ) {
+				$this->data['gebruikers'] = $this->geef_gebruikers();
 			}
 			return true;
 		}
-		$data['vanaf_datum']  = strtotime( $input['vanaf_datum'] );
-		$data['tot_datum']    = strtotime( $input['tot_datum'] );
-		$data['gebruiker_id'] = intval( $input['gebruiker_id'] );
-		if ( 'individueel' === $data['actie'] ) {
-			$data['rapport'] = $this->individueelgebruik( $data['vanaf_datum'], $data['tot_datum'], $data['gebruiker_id'] );
+		$this->data['vanaf_datum']  = strtotime( $input['vanaf_datum'] );
+		$this->data['tot_datum']    = strtotime( $input['tot_datum'] );
+		$this->data['gebruiker_id'] = intval( $input['gebruiker_id'] );
+		if ( 'individueel' === $this->data['actie'] ) {
+			$this->data['rapport'] = $this->individueelgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'], $this->data['gebruiker_id'] );
 			return true;
 		}
-		$data['rapport'] = $this->groepsgebruik( $data['vanaf_datum'], $data['tot_datum'] );
+		$this->data['rapport'] = $this->groepsgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'] );
 		return true;
 	}
 

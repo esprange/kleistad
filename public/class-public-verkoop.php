@@ -19,31 +19,29 @@ use WP_Error;
 class Public_Verkoop extends ShortcodeForm {
 
 	/**
-	 *
 	 * Prepareer 'verkoop' form
-	 *
-	 * @param array $data voor display.
 	 */
-	protected function prepare( array &$data ) {
-		if ( ! isset( $data['input'] ) ) {
-			$data               = [];
-			$data['input']      = [
-				'omschrijving' => [ '' ],
-				'aantal'       => [ 1 ],
-				'prijs'        => [ 0.0 ],
-				'klant'        => '',
-				'klant_id'     => 0,
-				'email'        => '',
+	protected function prepare() {
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data = [
+				'input'      => [
+					'omschrijving' => [ '' ],
+					'aantal'       => [ 1 ],
+					'prijs'        => [ 0.0 ],
+					'klant'        => '',
+					'klant_id'     => 0,
+					'email'        => '',
+				],
+				'gebruikers' => get_users(
+					[
+						'orderby' => 'display_name',
+						'fields'  => [
+							'display_name',
+							'id',
+						],
+					]
+				),
 			];
-			$data['gebruikers'] = get_users(
-				[
-					'orderby' => 'display_name',
-					'fields'  => [
-						'display_name',
-						'id',
-					],
-				]
-			);
 		}
 		return true;
 	}

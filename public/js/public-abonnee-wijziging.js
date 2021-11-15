@@ -65,7 +65,7 @@
 				function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_pauze' ).toggle( this.checked );
-					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).data( 'confirm', 'Abonnement wijzigen|Weet je zeker dat je jouw abonnement wilt pauzeren of de pauze wilt aanpassen ?' );
+					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).val( 'pauze' ).data( { confirm: 'Abonnement wijzigen|Weet je zeker dat je jouw abonnement wilt pauzeren of de pauze wilt aanpassen ?' } );
 				}
 			)
 			.on(
@@ -74,7 +74,7 @@
 				function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_einde' ).toggle( this.checked );
-					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).data( 'confirm', 'Abonnement wijzigen|Weet je zeker dat je jouw abonnement wilt beëindigen ?' );
+					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).val( 'einde' ).data( { confirm: 'Abonnement wijzigen|Weet je zeker dat je jouw abonnement wilt beëindigen ?' } );
 				}
 			)
 			.on(
@@ -83,7 +83,7 @@
 				function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_wijziging' ).toggle( this.checked );
-					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).data( 'confirm', 'Abonnement wijzigen|Weet je zeker dat je jouw abonnement wilt wijzigen ?' );
+					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).val( 'soort' ).data( { confirm: 'Abonnement wijzigen|Weet je zeker dat je jouw abonnement wilt wijzigen ?' } );
 				}
 			)
 			.on(
@@ -92,7 +92,7 @@
 				function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_extras' ).toggle( this.checked );
-					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).data( 'confirm', 'Abonnement wijzigen|Weet je zeker dat je de extras van jouw abonnement wilt wijzigen ?' );
+					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).val( 'extras' ).data( { confirm: 'Abonnement wijzigen|Weet je zeker dat je de extras van jouw abonnement wilt wijzigen ?' } );
 				}
 			)
 			.on(
@@ -101,7 +101,7 @@
 				function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_dag' ).toggle( this.checked );
-					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).data( 'confirm', 'Abonnement wijzigen|Weet je zeker dat je de werkdag van jouw beperkt abonnement wilt wijzigen ?' );
+					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).val( 'dag' ).data( { confirm: 'Abonnement wijzigen|Weet je zeker dat je de werkdag van jouw beperkt abonnement wilt wijzigen ?' } );
 				}
 			)
 			.on(
@@ -110,7 +110,7 @@
 				function() {
 					$( '.kleistad_abo_veld' ).hide();
 					$( '.kleistad_abo_betaalwijze' ).toggle( this.checked );
-					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).data( 'confirm', 'Abonnement wijzigen|Weet je zeker dat je de betaalwijze van jouw abonnement wilt wijzigen ?' );
+					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).val( 'betaalwijze' ).data( { confirm: 'Abonnement wijzigen|Weet je zeker dat je de betaalwijze van jouw abonnement wilt wijzigen ?' } );
 				}
 			);
 		}

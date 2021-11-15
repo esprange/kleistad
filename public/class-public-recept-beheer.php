@@ -108,20 +108,18 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	/**
 	 * Prepareer 'recept' form
 	 *
-	 * @param array $data data voor display.
-	 *
 	 * @return bool
 	 *
 	 * @since   4.1.0
 	 */
-	protected function prepare( array &$data ) {
+	protected function prepare() {
 
-		if ( 'toevoegen' === $data['actie'] ) {
+		if ( 'toevoegen' === $this->data['actie'] ) {
 			/*
 			 * Er moet een nieuw recept opgevoerd worden
 			 */
-			$data['id']     = 0;
-			$data['recept'] = [
+			$this->data['id']     = 0;
+			$this->data['recept'] = [
 				'id'          => 0,
 				'titel'       => '',
 				'post_status' => 'draft',
@@ -139,13 +137,13 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				'kleur'       => 0,
 				'uiterlijk'   => 0,
 			];
-		} elseif ( 'wijzigen' === $data['actie'] ) {
+		} elseif ( 'wijzigen' === $this->data['actie'] ) {
 			/*
 			 * Er is een recept gekozen om te wijzigen.
 			 */
-			$data['recept'] = $this->formulier( $data['id'] );
+			$this->data['recept'] = $this->formulier( $this->data['id'] );
 		} else {
-			$data['recepten'] = $this->lijst();
+			$this->data['recepten'] = $this->lijst();
 		}
 
 		return true;

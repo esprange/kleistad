@@ -89,12 +89,10 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 *
 	 * Prepareer 'cursus_beheer' form
 	 *
-	 * @param array $data data voor display.
-	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( array &$data ) {
-		$data['docenten'] = get_users(
+	protected function prepare() {
+		$this->data['docenten'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
 				'role'    => [ DOCENT ],
@@ -102,25 +100,25 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			]
 		);
 
-		if ( 'toevoegen' === $data['actie'] ) {
+		if ( 'toevoegen' === $this->data['actie'] ) {
 			/*
 			* Er moet een nieuwe cursus opgevoerd worden
 			*/
-			if ( ! isset( $data['cursus'] ) ) {
-				$data['cursus'] = $this->formulier();
+			if ( ! isset( $this->data['cursus'] ) ) {
+				$this->data['cursus'] = $this->formulier();
 			}
 			return true;
 		}
-		if ( 'wijzigen' === $data['actie'] ) {
+		if ( 'wijzigen' === $this->data['actie'] ) {
 			/*
 			 * Er is een cursus gekozen om te wijzigen.
 			 */
-			if ( ! isset( $data['cursus'] ) ) {
-				$data['cursus'] = $this->formulier( $data['id'] );
+			if ( ! isset( $this->data['cursus'] ) ) {
+				$this->data['cursus'] = $this->formulier( $this->data['id'] );
 			}
 			return true;
 		}
-		$data['cursussen'] = $this->lijst();
+		$this->data['cursussen'] = $this->lijst();
 		return true;
 	}
 

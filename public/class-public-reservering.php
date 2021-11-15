@@ -25,20 +25,19 @@ class Public_Reservering extends Shortcode {
 	 *
 	 * Prepareer 'reservering' form
 	 *
-	 * @param array $data data to be prepared.
 	 * @return WP_ERROR|bool
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( array &$data ) {
-		if ( ! is_numeric( $data['oven'] ) ) {
+	protected function prepare() {
+		if ( ! is_numeric( $this->data['oven'] ) ) {
 			return new WP_Error( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
 		}
-		$oven = new Oven( $data['oven'] );
+		$oven = new Oven( $this->data['oven'] );
 		if ( ! $oven->id ) {
-			return new WP_Error( 'fout', 'oven met id ' . $data['oven'] . ' is niet bekend in de database !' );
+			return new WP_Error( 'fout', 'oven met id ' . $this->data['oven'] . ' is niet bekend in de database !' );
 		}
-		$data = [
+		$this->data = [
 			'stokers'  => get_users(
 				[
 					'fields'       => [ 'ID', 'display_name' ],

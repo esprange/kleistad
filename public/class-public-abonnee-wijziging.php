@@ -21,17 +21,16 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	/**
 	 * Prepareer 'abonnee_wijziging' form
 	 *
-	 * @param array $data data voor formulier.
 	 * @return bool|WP_Error
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( array &$data ) {
-		$abonnee_id         = get_current_user_id();
-		$betalen            = new Betalen();
-		$data['abonnement'] = new Abonnement( $abonnee_id );
-		if ( $data['abonnement']->start_datum ) {
-			$data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id );
+	protected function prepare() {
+		$abonnee_id               = get_current_user_id();
+		$betalen                  = new Betalen();
+		$this->data['abonnement'] = new Abonnement( $abonnee_id );
+		if ( $this->data['abonnement']->start_datum ) {
+			$this->data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id );
 			return true;
 		}
 		return new WP_Error( 'abonnement', 'Je hebt geen actief abonnement, neem eventueel contact op met een bestuurslid' );
@@ -46,13 +45,11 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function validate( array &$data ) {
-		$error = new WP_Error();
-
+		$error         = new WP_Error();
 		$data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'abonnee_id'     => FILTER_SANITIZE_NUMBER_INT,
-				'wijziging'      => FILTER_SANITIZE_STRING,
 				'dag'            => FILTER_SANITIZE_STRING,
 				'soort'          => FILTER_SANITIZE_STRING,
 				'betaal'         => FILTER_SANITIZE_STRING,
@@ -67,7 +64,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 			]
 		);
 
-		if ( 'pauze' === $data['input']['wijziging'] ) {
+		if ( 'pauze' === $data['form_actie'] ) {
 			$data['input']['pauze_datum']    = strtotime( $data['input']['pauze_datum'] );
 			$data['input']['herstart_datum'] = strtotime( $data['input']['herstart_datum'] );
 			if ( $data['input']['herstart_datum'] < strtotime( '+' . Abonnement::MIN_PAUZE_WEKEN . ' weeks', $data['input']['pauze_datum'] ) ) {
@@ -85,45 +82,92 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	}
 
 	/**
-	 * Bewaar 'abonnee_wijziging' form gegevens
+	 * Initieer een pauze.
 	 *
-	 * @param array $data te bewaren data.
-	 * @return WP_Error|array
-	 * @suppressWarnings(PHPMD.CyclomaticComplexity)
+	 * @param array $data Te bewaren data.
 	 *
-	 * @since   4.0.87
+	 * @return array
 	 */
-	protected function save( array $data ) : array {
+	protected function pauze( array $data ) : array {
 		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
-		switch ( $data['input']['wijziging'] ) {
-			case 'pauze':
-				$status = $abonnement->actie->pauzeren( $data['input']['pauze_datum'], $data['input']['herstart_datum'] );
-				break;
-			case 'einde':
-				$status = $abonnement->actie->stoppen( $data['input']['per_datum'] );
-				break;
-			case 'soort':
-				$status = $abonnement->actie->wijzigen( $data['input']['per_datum'], 'soort', $data['input']['soort'], $data['input']['dag'] );
-				break;
-			case 'extras':
-				$status = $abonnement->actie->wijzigen( $data['input']['per_datum'], 'extras', $data['input']['extras'] );
-				break;
-			case 'dag':
-				$status = $abonnement->actie->wijzigen( strtotime( 'today' ), 'soort', 'beperkt', $data['input']['dag'] );
-				break;
-			case 'betaalwijze':
-				if ( 'ideal' === $data['input']['betaal'] ) {
-					$ideal_uri = $abonnement->actie->start_incasso();
-					if ( false === $ideal_uri ) {
-						return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
-					}
-					return [ 'redirect_uri' => $ideal_uri ];
-				}
-				$status = $abonnement->actie->stop_incasso();
-				break;
-			default:
-				$status = false;
+		return $this->wijzig( $abonnement->actie->pauzeren( $data['input']['pauze_datum'], $data['input']['herstart_datum'] ) );
+	}
+
+	/**
+	 * Initieer een abonnement eind.
+	 *
+	 * @param array $data Te bewaren data.
+	 *
+	 * @return array
+	 */
+	protected function einde( array $data ) : array {
+		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
+		return $this->wijzig( $abonnement->actie->stoppen( $data['input']['per_datum'] ) );
+	}
+
+	/**
+	 * Initieer een abonnement soort wijziging.
+	 *
+	 * @param array $data Te bewaren data.
+	 *
+	 * @return array
+	 */
+	protected function soort( array $data ) : array {
+		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
+		return $this->wijzig( $abonnement->actie->wijzigen( $data['input']['per_datum'], 'soort', $data['input']['soort'], $data['input']['dag'] ) );
+	}
+
+	/**
+	 * Initieer een abonnement extras wijziging.
+	 *
+	 * @param array $data Te bewaren data.
+	 *
+	 * @return array
+	 */
+	protected function extras( array $data ) : array {
+		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
+		return $this->wijzig( $abonnement->actie->wijzigen( $data['input']['per_datum'], 'extras', $data['input']['extras'] ) );
+	}
+
+	/**
+	 * Initieer een abonnement dag wijziging.
+	 *
+	 * @param array $data Te bewaren data.
+	 *
+	 * @return array
+	 */
+	protected function dag( array $data ) : array {
+		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
+		return $this->wijzig( $abonnement->actie->wijzigen( strtotime( 'today' ), 'soort', 'beperkt', $data['input']['dag'] ) );
+	}
+
+	/**
+	 * Initieer een abonnement betaalwijze wijziging.
+	 *
+	 * @param array $data Te bewaren data.
+	 *
+	 * @return array
+	 */
+	protected function betaalwijze( array $data ) : array {
+		$abonnement = new Abonnement( $data['input']['abonnee_id'] );
+		if ( 'ideal' === $data['input']['betaal'] ) {
+			$ideal_uri = $abonnement->actie->start_incasso();
+			if ( false === $ideal_uri ) {
+				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
+			}
+			return [ 'redirect_uri' => $ideal_uri ];
 		}
+		return $this->wijzig( $abonnement->actie->stop_incasso() );
+	}
+
+	/**
+	 * Hulp functie voor afronding wijziging.
+	 *
+	 * @param bool $status Resultaat dat gerapporteerd moet worden.
+	 *
+	 * @return array
+	 */
+	private function wijzig( bool $status ) : array {
 		if ( $status ) {
 			return [
 				'status'  => $this->status( 'De wijziging is verwerkt en er wordt een email verzonden met bevestiging' ),

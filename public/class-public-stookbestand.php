@@ -17,15 +17,10 @@ namespace Kleistad;
 class Public_Stookbestand extends Shortcode {
 
 	/**
-	 *
 	 * Prepareer 'stookbestand' form
-	 *
-	 * @param array $data data voor display.
-	 *
-	 * @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection
 	 */
-	protected function prepare( array &$data ) {
-		return isset( $data );
+	protected function prepare() {
+		return true;
 	}
 
 	/**

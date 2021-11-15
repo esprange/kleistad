@@ -88,13 +88,12 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 *
 	 * Prepareer 'registratie_overzicht' form
 	 *
-	 * @param array $data data voor display.
 	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( array &$data ) {
-		$data = [
+	protected function prepare() {
+		$this->data = [
 			'registraties' => $this->registraties(),
 			'cursussen'    => new Cursussen(),
 		];

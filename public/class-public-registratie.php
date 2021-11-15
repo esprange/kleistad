@@ -21,16 +21,15 @@ class Public_Registratie extends ShortcodeForm {
 	/**
 	 * Prepareer 'registratie' form
 	 *
-	 * @param array $data data voor display.
 	 * @return bool
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare( array &$data ) {
+	protected function prepare() {
 		$gebruiker = wp_get_current_user();
 
-		if ( ! isset( $data['input'] ) ) {
-			$data['input'] = [
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data['input'] = [
 				'gebruiker_id' => $gebruiker->ID,
 				'first_name'   => $gebruiker->first_name,
 				'last_name'    => $gebruiker->last_name,

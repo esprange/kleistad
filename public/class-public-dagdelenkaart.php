@@ -22,13 +22,11 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 *
 	 * Prepareer 'dagdelenkaart' form
 	 *
-	 * @param array $data data voor display.
-	 *
 	 * @since   4.3.0
 	 */
-	protected function prepare( array &$data ) {
-		if ( ! isset( $data['input'] ) ) {
-			$data['input'] = [
+	protected function prepare() {
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data['input'] = [
 				'user_email'      => '',
 				'email_controle'  => '',
 				'first_name'      => '',

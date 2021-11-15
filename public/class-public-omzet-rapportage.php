@@ -17,25 +17,22 @@ namespace Kleistad;
 class Public_Omzet_Rapportage extends Shortcode {
 
 	/**
-	 *
 	 * Prepareer 'omzet_rapportage' form
-	 *
-	 * @param array $data data voor display.
 	 */
-	protected function prepare( array &$data ) {
+	protected function prepare() {
 		$register = new Artikelregister();
 		$rapport  = new Orderrapportage();
-		if ( 'details' === $data['actie'] ) {
-			sscanf( $data['id'], '%d-%d-%s', $data['jaar'], $data['maand'], $data['artikelcode'] );
-			$data['artikel']      = $register->geef_naam( $data['artikelcode'] );
-			$data['omzetdetails'] = $rapport->maanddetails( $data['maand'], $data['jaar'], $data['artikelcode'] );
+		if ( 'details' === $this->data['actie'] ) {
+			sscanf( $this->data['id'], '%d-%d-%s', $this->data['jaar'], $this->data['maand'], $this->data['artikelcode'] );
+			$this->data['artikel']      = $register->geef_naam( $this->data['artikelcode'] );
+			$this->data['omzetdetails'] = $rapport->maanddetails( $this->data['maand'], $this->data['jaar'], $this->data['artikelcode'] );
 			return true;
 		}
-		if ( empty( $data['id'] ) ) {
-			$data['id'] = date( 'Y-m', strtotime( 'this month 00:00' ) );
+		if ( empty( $this->data['id'] ) ) {
+			$this->data['id'] = date( 'Y-m', strtotime( 'this month 00:00' ) );
 		}
-		sscanf( $data['id'], '%d-%d', $data['jaar'], $data['maand'] );
-		$data['omzet'] = $rapport->maandrapport( $data['maand'], $data['jaar'] );
+		sscanf( $this->data['id'], '%d-%d', $this->data['jaar'], $this->data['maand'] );
+		$this->data['omzet'] = $rapport->maandrapport( $this->data['maand'], $this->data['jaar'] );
 		return true;
 	}
 

@@ -134,7 +134,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- soort -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad-input_cbr" value="soort" >
+				<input type="radio" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad-input_cbr" value="soort" >
 				<label for="kleistad_abo_wijziging">Abonnement soort wijzigen</label>
 			</div>
 		</div>
@@ -172,7 +172,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- extras -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad-input_cbr" value="extras" >
+				<input type="radio" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad-input_cbr" value="extras" >
 				<label for="kleistad_abo_extras">Abonnement extras wijzigen</label>
 			</div>
 		</div>
@@ -224,7 +224,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 			?>
 		<div class="kleistad-row"> <!-- dag -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_dag" class="kleistad_abo_optie kleistad-input_cbr" value="dag" >
+				<input type="radio" id="kleistad_abo_dag" class="kleistad_abo_optie kleistad-input_cbr" value="dag" >
 				<label for="kleistad_abo_dag">Abonnement werkdag wijzigen</label>
 			</div>
 		</div>
@@ -246,7 +246,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- pauze -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad-input_cbr" value="pauze" >
+				<input type="radio" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad-input_cbr" value="pauze" >
 				<label for="kleistad_abo_pauze" class="kleistad-label_cbr">Abonnement pauzeren</label>
 			</div>
 		</div>
@@ -343,7 +343,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- einde -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad-input_cbr" value="einde" >
+				<input type="radio" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad-input_cbr" value="einde" >
 				<label for="kleistad_abo_einde" class="kleistad-label_cbr">Abonnement beëindigen</label>
 			</div>
 		</div>
@@ -369,7 +369,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- betaalwijze -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad-input_cbr" value="betaalwijze" >
+				<input type="radio" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad-input_cbr" value="betaalwijze" >
 				<label for="kleistad_abo_betaalwijze" >Abonnement betaalwijze</label>
 			</div>
 		</div>

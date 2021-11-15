@@ -19,15 +19,12 @@ use WP_Error;
 class Public_Saldo extends ShortcodeForm {
 
 	/**
-	 *
 	 * Prepareer 'saldo' form
-	 *
-	 * @param array $data voor display.
 	 */
-	protected function prepare( array &$data ) {
+	protected function prepare() {
 		$gebruiker_id = get_current_user_id();
 		$saldo        = new Saldo( $gebruiker_id );
-		$data         = [
+		$this->data   = [
 			'gebruiker_id' => $gebruiker_id,
 			'saldo'        => number_format_i18n( $saldo->bedrag, 2 ),
 		];

@@ -91,26 +91,24 @@ class Public_Debiteuren extends ShortcodeForm {
 
 	/**
 	 * Prepareer 'debiteuren' form
-	 *
-	 * @param array $data data voor display.
 	 */
-	protected function prepare( array &$data ) {
-		$blokkade                 = new Blokkade();
-		$data['huidige_blokkade'] = $blokkade->get();
-		if ( 'blokkade' === $data['actie'] ) {
-			$data['wijzigbaar'] = $blokkade->wijzigbaar();
+	protected function prepare() {
+		$blokkade                       = new Blokkade();
+		$this->data['huidige_blokkade'] = $blokkade->get();
+		if ( 'blokkade' === $this->data['actie'] ) {
+			$this->data['wijzigbaar'] = $blokkade->wijzigbaar();
 			return true;
 		}
-		if ( 'debiteur' === $data['actie'] ) {
-			$data['debiteur'] = $this->debiteur( $data['id'] );
+		if ( 'debiteur' === $this->data['actie'] ) {
+			$this->data['debiteur'] = $this->debiteur( $this->data['id'] );
 			return true;
 		}
-		if ( 'zoek' === $data['actie'] ) {
-			$zoek = ( $data['id'] ?? '' ) ?: wp_generate_uuid4(); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
-			$data = array_merge( $data, $this->debiteuren( $zoek ) );
+		if ( 'zoek' === $this->data['actie'] ) {
+			$zoek       = ( $this->data['id'] ?? '' ) ?: wp_generate_uuid4(); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
+			$this->data = array_merge( $this->data, $this->debiteuren( $zoek ) );
 			return true;
 		}
-		$data = array_merge( $data, [ 'actie' => 'openstaand' ], $this->debiteuren() );
+		$this->data = array_merge( $this->data, [ 'actie' => 'openstaand' ], $this->debiteuren() );
 		return true;
 	}
 

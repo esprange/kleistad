@@ -28,14 +28,11 @@ class Public_Email extends ShortcodeForm {
 	];
 
 	/**
-	 *
 	 * Prepareer 'email' form inhoud
-	 *
-	 * @param array $data data voor display.
 	 */
-	protected function prepare( array &$data ) {
-		if ( ! isset( $data['input'] ) ) {
-			$data['input'] = [
+	protected function prepare() {
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data['input'] = [
 				'tree'          => [],
 				'email_content' => '',
 				'onderwerp'     => '',
@@ -45,7 +42,7 @@ class Public_Email extends ShortcodeForm {
 		}
 
 		if ( current_user_can( BESTUUR ) ) {
-			$data['input']['tree'] = array_merge(
+			$this->data['input']['tree'] = array_merge(
 				$this->cursisten(),
 				$this->wachtlijst(),
 				$this->abonnees(),
@@ -56,9 +53,8 @@ class Public_Email extends ShortcodeForm {
 			return true;
 		}
 
-		$data['input']['tree'] = $this->cursisten();
+		$this->data['input']['tree'] = $this->cursisten();
 		return true;
-
 	}
 
 	/**

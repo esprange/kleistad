@@ -22,12 +22,11 @@ class Public_Betaling extends ShortcodeForm {
 	 *
 	 * Prepareer 'betaling' form
 	 *
-	 * @param array $data formulier data.
 	 * @return WP_Error|bool
 	 *
 	 * @since   4.2.0
 	 */
-	protected function prepare( array &$data ) {
+	protected function prepare() {
 		$param = filter_input_array(
 			INPUT_GET,
 			[
@@ -37,7 +36,7 @@ class Public_Betaling extends ShortcodeForm {
 			]
 		);
 		if ( is_null( $param ) || is_null( $param['order'] ) ) {
-			$data['actie'] = '';
+			$this->data['actie'] = '';
 			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
 		$order           = new Order( intval( $param['order'] ) );
@@ -49,7 +48,7 @@ class Public_Betaling extends ShortcodeForm {
 		if ( $order->gesloten ) {
 			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		$data = [
+		$this->data = [
 			'order_id'      => $order->id,
 			'actie'         => 'betalen',
 			'klant'         => $order->klant['naam'],

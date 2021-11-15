@@ -19,23 +19,21 @@ use WP_Error;
 class Public_Workshop_Aanvraag extends ShortcodeForm {
 
 	/**
-	 *
 	 * Prepareer 'workshop_aanvraag' form
-	 *
-	 * @param array $data data voor display.
 	 */
-	protected function prepare( array &$data ) {
-		if ( ! isset( $data['input'] ) ) {
-			$data          = [];
-			$data['input'] = [
-				'naam'           => '',
-				'email'          => '',
-				'email_controle' => '',
-				'contact'        => '',
-				'telnr'          => '',
-				'omvang'         => '',
-				'periode'        => '',
-				'vraag'          => '',
+	protected function prepare() {
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data = [
+				'input' => [
+					'naam'           => '',
+					'email'          => '',
+					'email_controle' => '',
+					'contact'        => '',
+					'telnr'          => '',
+					'omvang'         => '',
+					'periode'        => '',
+					'vraag'          => '',
+				],
 			];
 		}
 		return true;

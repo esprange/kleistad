@@ -56,12 +56,11 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 *
 	 * Prepareer 'cursus_extra' form
 	 *
-	 * @param array $data data voor display.
 	 * @return WP_Error|bool
 	 *
 	 * @since   6.6.0
 	 */
-	protected function prepare( array &$data ) {
+	protected function prepare() {
 		$param = filter_input_array(
 			INPUT_GET,
 			[
@@ -81,11 +80,11 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			if ( $inschrijving->geannuleerd ) {
 				return new WP_Error( 'Geannuleerd', 'Deelname aan de cursus is geannuleerd.' );
 			}
-			$data['cursus_naam']  = $inschrijving->cursus->naam;
-			$data['cursist_code'] = $inschrijving->code;
-			$data['cursist_naam'] = $cursist->display_name;
-			if ( ! isset( $data['input'] ) ) {
-				$data['input']['extra'] = $this->prepare_extra_cursisten( $inschrijving );
+			$this->data['cursus_naam']  = $inschrijving->cursus->naam;
+			$this->data['cursist_code'] = $inschrijving->code;
+			$this->data['cursist_naam'] = $cursist->display_name;
+			if ( ! isset( $this->data['input'] ) ) {
+				$this->data['input']['extra'] = $this->prepare_extra_cursisten( $inschrijving );
 			}
 			return true;
 		}
