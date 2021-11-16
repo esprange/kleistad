@@ -94,7 +94,10 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 		 * Test eerst de betaalwijze wijziging naar ideal
 		 */
 		$this->maak_wijziging( 'betaalwijze', false, false );
-		$data = [ 'input' => $this->input ];
+		$data = [
+			'input'      => $this->input,
+			'form_actie' => 'betaalwijze',
+		];
 		foreach ( [ 'herstart_datum', 'pauze_datum', 'per_datum' ] as $datum ) {
 			$data['input'][ $datum ] = strtotime( $data['input'][ $datum ] );
 		}
@@ -106,7 +109,10 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 		 */
 		foreach ( [ 'betaalwijze', 'pauze', 'soort', 'extras', 'dag', 'einde' ] as $wijziging ) {
 			$this->maak_wijziging( $wijziging, true, false );
-			$data = [ 'input' => $this->input ];
+			$data = [
+				'input'      => $this->input,
+				'form_actie' => $wijziging,
+			];
 			foreach ( [ 'herstart_datum', 'pauze_datum', 'per_datum' ] as $datum ) {
 				$data['input'][ $datum ] = strtotime( $data['input'][ $datum ] );
 			}

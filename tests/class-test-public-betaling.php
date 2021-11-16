@@ -109,9 +109,9 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test functie save.
+	 * Test functie betalen.
 	 */
-	public function test_save() {
+	public function test_betalen() {
 		$verkoop        = new LosArtikel();
 		$verkoop->klant = [
 			'naam'  => 'test',
@@ -123,14 +123,15 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$order = new Order( $verkoop->geef_referentie() );
 
 		$data   = [
-			'input'   =>
+			'input'      =>
 			[
 				'order_id'     => $order->id,
 				'betaal'       => 'ideal',
 				'artikel_type' => $verkoop->artikel_type,
 			],
-			'order'   => $order,
-			'artikel' => $verkoop,
+			'order'      => $order,
+			'artikel'    => $verkoop,
+			'form_actie' => 'betalen',
 		];
 		$result = $this->public_actie( self::SHORTCODE, 'save', $data );
 		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na betaling' );

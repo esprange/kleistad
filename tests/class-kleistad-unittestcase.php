@@ -10,7 +10,7 @@ namespace Kleistad;
 
 use WP_UnitTestCase;
 use MockPHPMailer;
-use ReflectionClass;
+use ReflectionObject;
 use ReflectionException;
 
 /**
@@ -73,14 +73,25 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	 */
 	protected function public_actie( string $shortcode_tag, string $method, array &$data, array $atts = [] ) {
 		static $shortcodes = [];
-		$class             = Shortcode::get_class_name( $shortcode_tag );
-		$reflection        = new ReflectionClass( $class );
-		$action            = $reflection->getMethod( $method );
-		$action->setAccessible( true );
 		if ( ! isset( $shortcodes[ $shortcode_tag ] ) ) {
 			$shortcodes[ $shortcode_tag ] = Shortcode::get_instance( $shortcode_tag, $atts );
 		}
-		return $action->invokeArgs( $shortcodes[ $shortcode_tag ], [ &$data ] );
+		if ( ! isset( $data['form_actie'] ) ) {
+			$data['form_actie'] = '';
+		}
+		$refobject = new ReflectionObject( $shortcodes[ $shortcode_tag ] );
+		$refdata   = $refobject->getProperty( 'data' );
+		$refmethod = $refobject->getMethod( $method );
+		$refmethod->setAccessible( true );
+		$refdata->setAccessible( true );
+		$refdata->setValue( $shortcodes[ $shortcode_tag ], $data );
+		if ( count( $refmethod->getParameters() ) ) {
+			$status = $refmethod->invokeArgs( $shortcodes[ $shortcode_tag ], [ &$data ] );
+		} else {
+			$status = $refmethod->invoke( $shortcodes[ $shortcode_tag ] );
+			$data   = $refdata->getValue( $shortcodes[ $shortcode_tag ] );
+		}
+		return $status;
 	}
 
 	/**
