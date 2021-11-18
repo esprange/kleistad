@@ -47,13 +47,12 @@ class Public_Registratie extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'registratie' form
 	 *
-	 * @param array $data Gevalideerde data.
 	 * @return WP_ERROR|bool
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'first_name' => FILTER_SANITIZE_STRING,
@@ -66,17 +65,17 @@ class Public_Registratie extends ShortcodeForm {
 				'user_email' => FILTER_SANITIZE_EMAIL,
 			]
 		);
-		if ( is_array( $data['input'] ) ) {
-			$data['gebruiker_id'] = get_current_user_id();
-			if ( ! $data['gebruiker_id'] ) {
+		if ( is_array( $this->data['input'] ) ) {
+			$this->data['gebruiker_id'] = get_current_user_id();
+			if ( ! $this->data['gebruiker_id'] ) {
 				return new WP_Error( 'security', 'Er is een security fout geconstateerd' );
 			}
-			$error = $this->validator->gebruiker( $data['input'] );
+			$error = $this->validator->gebruiker( $this->data['input'] );
 			if ( is_wp_error( $error ) ) {
 				return $error;
 			}
-			$gebruiker_id = email_exists( $data['input']['user_email'] );
-			if ( false !== $gebruiker_id && $gebruiker_id !== $data['gebruiker_id'] ) {
+			$gebruiker_id = email_exists( $this->data['input']['user_email'] );
+			if ( false !== $gebruiker_id && $gebruiker_id !== $this->data['gebruiker_id'] ) {
 				return new WP_Error( 'onjuist', 'Dit email adres is al in gebruik' );
 			}
 			return true;
@@ -88,23 +87,22 @@ class Public_Registratie extends ShortcodeForm {
 	 *
 	 * Bewaar 'registratie' form gegevens
 	 *
-	 * @param array $data data te bewaren.
 	 * @return WP_ERROR|array
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( array $data ) : array {
+	protected function save() : array {
 		$result = wp_update_user(
 			(object) [
-				'ID'         => $data['gebruiker_id'],
-				'first_name' => $data['input']['first_name'],
-				'last_name'  => $data['input']['last_name'],
-				'telnr'      => $data['input']['telnr'],
-				'straat'     => $data['input']['straat'],
-				'huisnr'     => $data['input']['huisnr'],
-				'pcode'      => $data['input']['pcode'],
-				'plaats'     => $data['input']['plaats'],
-				'user_email' => $data['input']['user_email'],
+				'ID'         => $this->data['gebruiker_id'],
+				'first_name' => $this->data['input']['first_name'],
+				'last_name'  => $this->data['input']['last_name'],
+				'telnr'      => $this->data['input']['telnr'],
+				'straat'     => $this->data['input']['straat'],
+				'huisnr'     => $this->data['input']['huisnr'],
+				'pcode'      => $this->data['input']['pcode'],
+				'plaats'     => $this->data['input']['plaats'],
+				'user_email' => $this->data['input']['user_email'],
 			]
 		);
 		if ( ! is_wp_error( $result ) ) {

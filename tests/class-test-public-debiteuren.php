@@ -96,12 +96,12 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 			'opmerking_korting'    => 'test korting',
 			'opmerking_annulering' => 'test annulering',
 		];
-		$data   = [ 'form_actie' => '' ];
+		$data   = [];
 		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'validate', $data ), 'validate normeel incorrect' );
 
-		$data             = [ 'form_actie' => 'korting' ];
+		$data             = [];
 		$_POST['korting'] = $orders->current()->te_betalen() + 100;
-		$this->assertTrue( is_wp_error( $this->public_actie( self::SHORTCODE, 'validate', $data ) ), 'validate fout bedrag incorrect' );
+		$this->assertTrue( is_wp_error( $this->public_actie( self::SHORTCODE, 'validate', $data, 'korting' ) ), 'validate fout bedrag incorrect' );
 	}
 
 	/**

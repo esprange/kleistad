@@ -53,7 +53,7 @@ class Test_Public_Dagdelenkaart extends Kleistad_UnitTestCase {
 	 */
 	public function test_prepare() {
 		$data   = [ 'actie' => '-' ];
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data, [ 'verklaring' => 'test' ] );
+		$result = $this->public_actie( self::SHORTCODE, 'display', $data, '', [ 'verklaring' => 'test' ] );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
 				echo $error . "\n"; // phpcs:ignore

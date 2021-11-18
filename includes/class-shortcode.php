@@ -44,6 +44,13 @@ abstract class Shortcode {
 	protected array $data = [];
 
 	/**
+	 * File download resource.
+	 *
+	 * @var resource $filehandle File handle voor output.
+	 */
+	protected $filehandle;
+
+	/**
 	 * Abstract definitie van de prepare functie
 	 *
 	 * @since   4.0.87
@@ -312,13 +319,13 @@ abstract class Shortcode {
 		if ( 0 === strpos( $functie, 'url_' ) ) {
 			return [ 'file_uri' => $shortcode->$functie() ];
 		}
-		$upload_dir = wp_upload_dir();
-		$file       = '/kleistad_tmp_' . uniqid() . '.csv';
-		$filehandle = fopen( $upload_dir['basedir'] . $file, 'w' );
-		if ( false !== $filehandle ) {
-			fwrite( $filehandle, "\xEF\xBB\xBF" );
-			$result = $shortcode->$functie( [ 'filehandle' => $filehandle ] );
-			fclose( $filehandle );
+		$upload_dir            = wp_upload_dir();
+		$file                  = '/kleistad_tmp_' . uniqid() . '.csv';
+		$shortcode->filehandle = fopen( $upload_dir['basedir'] . $file, 'w' );
+		if ( false !== $shortcode->filehandle ) {
+			fwrite( $shortcode->filehandle, "\xEF\xBB\xBF" );
+			$result = $shortcode->$functie();
+			fclose( $shortcode->filehandle );
 			if ( empty( $result ) ) {
 				return [ 'file_uri' => $upload_dir['baseurl'] . $file ];
 			}

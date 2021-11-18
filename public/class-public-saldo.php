@@ -34,14 +34,13 @@ class Public_Saldo extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'saldo' form
 	 *
-	 * @param array $data Gevalideerde data.
 	 * @return WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( array &$data ) {
+	protected function validate() {
 
-		$data['input'] = filter_input_array(
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'gebruiker_id' => FILTER_SANITIZE_NUMBER_INT,
@@ -56,10 +55,10 @@ class Public_Saldo extends ShortcodeForm {
 				'betaal'       => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( ! intval( $data['input']['bedrag'] ) ) {
-			$data['input']['bedrag'] = $data['input']['ander'];
+		if ( ! intval( $this->data['input']['bedrag'] ) ) {
+			$this->data['input']['bedrag'] = $this->data['input']['ander'];
 		}
-		if ( 15 > floatval( $data['input']['bedrag'] ) || 100 < floatval( $data['input']['bedrag'] ) ) {
+		if ( 15 > floatval( $this->data['input']['bedrag'] ) || 100 < floatval( $this->data['input']['bedrag'] ) ) {
 			return new WP_Error( 'onjuist', 'Het bedrag moet tussen 15 en 100 euro liggen' );
 		}
 		return true;
@@ -68,14 +67,13 @@ class Public_Saldo extends ShortcodeForm {
 	/**
 	 * Bewaar 'saldo' form gegevens
 	 *
-	 * @param array $data te bewaren data.
 	 * @return array
 	 *
 	 * @since   4.0.87
 	 */
-	protected function save( array $data ) : array {
-		$saldo  = new Saldo( intval( $data['input']['gebruiker_id'] ) );
-		$result = $saldo->actie->nieuw( floatval( $data['input']['bedrag'] ), $data['input']['betaal'] );
+	protected function save() : array {
+		$saldo  = new Saldo( intval( $this->data['input']['gebruiker_id'] ) );
+		$result = $saldo->actie->nieuw( floatval( $this->data['input']['bedrag'] ), $this->data['input']['betaal'] );
 		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}

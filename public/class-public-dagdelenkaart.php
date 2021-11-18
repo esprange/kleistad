@@ -48,13 +48,12 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'dagdelenkaart' form
 	 *
-	 * @param array $data gevalideerde data.
 	 * @return WP_Error|bool
 	 *
 	 * @since   4.3.0
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'gebruiker_id'    => FILTER_SANITIZE_NUMBER_INT,
@@ -76,12 +75,12 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( is_array( $data['input'] ) ) {
-			if ( '' === $data['input']['start_datum'] ) {
+		if ( is_array( $this->data['input'] ) ) {
+			if ( '' === $this->data['input']['start_datum'] ) {
 				return new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' );
 			}
-			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-				$error = $this->validator->gebruiker( $data['input'] );
+			if ( 0 === intval( $this->data['input']['gebruiker_id'] ) ) {
+				$error = $this->validator->gebruiker( $this->data['input'] );
 				if ( is_wp_error( $error ) ) {
 					return $error;
 				}
@@ -94,21 +93,20 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	/**
 	 * Bewaar 'dagdelenkaart' form gegevens
 	 *
-	 * @param array $data te bewaren saved.
 	 * @return WP_Error|array
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 *
 	 * @since   4.3.0
 	 */
-	protected function save( array $data ) : array {
-		$gebruiker_id = Gebruiker::registreren( $data['input'] );
+	protected function save() : array {
+		$gebruiker_id = Gebruiker::registreren( $this->data['input'] );
 		if ( ! is_int( $gebruiker_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
 		$dagdelenkaart = new Dagdelenkaart( $gebruiker_id );
-		$dagdelenkaart->nieuw( strtotime( $data['input']['start_datum'] ), $data['input']['opmerking'] );
+		$dagdelenkaart->nieuw( strtotime( $this->data['input']['start_datum'] ), $this->data['input']['opmerking'] );
 
-		if ( 'ideal' === $data['input']['betaal'] ) {
+		if ( 'ideal' === $this->data['input']['betaal'] ) {
 			$ideal_uri = $dagdelenkaart->betaling->doe_ideal( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden', opties()['dagdelenkaart'], $dagdelenkaart->geef_referentie() );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];

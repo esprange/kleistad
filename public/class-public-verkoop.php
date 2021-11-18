@@ -48,11 +48,9 @@ class Public_Verkoop extends ShortcodeForm {
 
 	/**
 	 * Valideer/sanitize 'verkoop' form
-	 *
-	 * @param array $data Gevalideerde data.
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'klant'        => FILTER_SANITIZE_STRING,
@@ -79,16 +77,15 @@ class Public_Verkoop extends ShortcodeForm {
 	/**
 	 * Bewaar 'verkoop' form gegevens
 	 *
-	 * @param array $data te bewaren data.
 	 * @return WP_ERROR|array
 	 *
 	 * @since   6.2.0
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function save( array $data ) : array {
+	protected function save() : array {
 		$verkoop = new LosArtikel();
-		if ( 'bestaand' === $data['input']['klant_type'] ) {
-			$klant = get_user_by( 'id', $data['input']['klant_id'] );
+		if ( 'bestaand' === $this->data['input']['klant_type'] ) {
+			$klant = get_user_by( 'id', $this->data['input']['klant_id'] );
 			/**
 			 * De adres elementen zijn onderdeel gemaakt van het object.
 			 *
@@ -102,15 +99,15 @@ class Public_Verkoop extends ShortcodeForm {
 			$verkoop->klant_id = $klant->ID;
 		} else {
 			$verkoop->klant = [
-				'naam'  => $data['input']['klant'],
+				'naam'  => $this->data['input']['klant'],
 				'adres' => '',
-				'email' => $data['input']['email'],
+				'email' => $this->data['input']['email'],
 			];
 		}
 		$index = 0;
-		$count = count( $data['input']['omschrijving'] );
+		$count = count( $this->data['input']['omschrijving'] );
 		do {
-			$verkoop->bestelregel( $data['input']['omschrijving'][ $index ], $data['input']['aantal'][ $index ], $data['input']['prijs'][ $index ] );
+			$verkoop->bestelregel( $this->data['input']['omschrijving'][ $index ], $this->data['input']['aantal'][ $index ], $this->data['input']['prijs'][ $index ] );
 		} while ( ++$index < $count );
 		$verkoop->verzend_email( '', $verkoop->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
 		return [

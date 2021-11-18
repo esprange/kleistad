@@ -123,17 +123,16 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$order = new Order( $verkoop->geef_referentie() );
 
 		$data   = [
-			'input'      =>
+			'input'   =>
 			[
 				'order_id'     => $order->id,
 				'betaal'       => 'ideal',
 				'artikel_type' => $verkoop->artikel_type,
 			],
-			'order'      => $order,
-			'artikel'    => $verkoop,
-			'form_actie' => 'betalen',
+			'order'   => $order,
+			'artikel' => $verkoop,
 		];
-		$result = $this->public_actie( self::SHORTCODE, 'save', $data );
+		$result = $this->public_actie( self::SHORTCODE, 'save', $data, 'betalen' );
 		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na betaling' );
 	}
 

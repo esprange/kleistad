@@ -94,14 +94,13 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'cursus_extra' form
 	 *
-	 * @param array $data Gevalideerde data.
 	 * @return WP_Error|bool
 	 *
 	 * @since   6.6.0
 	 */
-	protected function validate( array &$data ) {
+	protected function validate() {
 		$error                          = new WP_Error();
-		$data['input']                  = filter_input_array(
+		$this->data['input']            = filter_input_array(
 			INPUT_POST,
 			[
 				'extra_cursist' => [
@@ -111,10 +110,10 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				'code'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		list( $cursus_id, $cursist_id ) = sscanf( $data['input']['code'], 'C%d-%d' );
-		$data['inschrijving']           = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
-		$emails                         = [ strtolower( get_user_by( 'id', $data['inschrijving']->klant_id )->user_email ) ];
-		foreach ( $data['input']['extra_cursist'] as &$extra_cursist ) {
+		list( $cursus_id, $cursist_id ) = sscanf( $this->data['input']['code'], 'C%d-%d' );
+		$this->data['inschrijving']     = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
+		$emails                         = [ strtolower( get_user_by( 'id', $this->data['inschrijving']->klant_id )->user_email ) ];
+		foreach ( $this->data['input']['extra_cursist'] as &$extra_cursist ) {
 			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;
 			}
@@ -145,16 +144,15 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 *
 	 * Bewaar 'cursus_extra' form gegevens
 	 *
-	 * @param array $data data te bewaren.
 	 * @return WP_Error|array
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 *
 	 * @since   6.6.0
 	 */
-	protected function save( array $data ) : array {
+	protected function save() : array {
 		$extra_cursisten  = [];
 		$emails_verzonden = false;
-		foreach ( $data['input']['extra_cursist'] as $extra_cursist ) {
+		foreach ( $this->data['input']['extra_cursist'] as $extra_cursist ) {
 			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;
 			}
@@ -165,14 +163,14 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				];
 			}
 			$extra_cursisten[]  = $extra_cursist_id;
-			$extra_inschrijving = new Inschrijving( $data['inschrijving']->cursus->id, $extra_cursist_id );
+			$extra_inschrijving = new Inschrijving( $this->data['inschrijving']->cursus->id, $extra_cursist_id );
 			if ( $extra_inschrijving->ingedeeld && 0 < $extra_inschrijving->aantal ) {
 				return [
 					'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie heeft ' . $extra_cursist['first_name'] . ' ' . $extra_cursist['last_name'] . ' zichzelf al opgegeven voor deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 				];
 			}
 			if ( ! $extra_inschrijving->ingedeeld ) {
-				$extra_inschrijving->hoofd_cursist_id = $data['inschrijving']->klant_id;
+				$extra_inschrijving->hoofd_cursist_id = $this->data['inschrijving']->klant_id;
 				$extra_inschrijving->verzend_email( '_extra' );
 				$emails_verzonden              = true;
 				$extra_inschrijving->ingedeeld = true;
@@ -181,8 +179,8 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			}
 			$extra_inschrijving->save();
 		}
-		$data['inschrijving']->extra_cursisten = $extra_cursisten;
-		$data['inschrijving']->save();
+		$this->data['inschrijving']->extra_cursisten = $extra_cursisten;
+		$this->data['inschrijving']->save();
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'De gegevens zijn opgeslagen' . ( $emails_verzonden ? ' en welkomst email is verstuurd' : '' ) ),

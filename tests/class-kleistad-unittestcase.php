@@ -63,34 +63,43 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	 * Omdat de shortcode class een singleton is wordt een cache opgebouwd voor hergebruik
 	 *
 	 * @param string $shortcode_tag De shortcode die getest wordt.
-	 * @param string $method De protected class method die moet worden getest.
-	 * @param array  $data De uit te wisselen data.
-	 * @param array  $atts De eventuele attributes meegegeven aan de shortcode.
+	 * @param string $method        De protected class method die moet worden getest.
+	 * @param array  $data          De uit te wisselen data.
+	 * @param string $form_actie    De formulier actie.
+	 * @param array  $atts          De eventuele attributes meegegeven aan de shortcode.
 	 *
 	 * @return mixed
 	 * @throws Kleistad_Exception  De Kleistad exceptie.
 	 * @throws ReflectionException De Reflectie exceptie.
 	 */
-	protected function public_actie( string $shortcode_tag, string $method, array &$data, array $atts = [] ) {
+	protected function public_actie( string $shortcode_tag, string $method, array &$data, string $form_actie = '', array $atts = [] ) {
 		static $shortcodes = [];
 		if ( ! isset( $shortcodes[ $shortcode_tag ] ) ) {
 			$shortcodes[ $shortcode_tag ] = Shortcode::get_instance( $shortcode_tag, $atts );
 		}
-		if ( ! isset( $data['form_actie'] ) ) {
-			$data['form_actie'] = '';
-		}
 		$refobject = new ReflectionObject( $shortcodes[ $shortcode_tag ] );
-		$refdata   = $refobject->getProperty( 'data' );
-		$refmethod = $refobject->getMethod( $method );
-		$refmethod->setAccessible( true );
+
+		$refdata = $refobject->getProperty( 'data' );
 		$refdata->setAccessible( true );
 		$refdata->setValue( $shortcodes[ $shortcode_tag ], $data );
-		if ( count( $refmethod->getParameters() ) ) {
-			$status = $refmethod->invokeArgs( $shortcodes[ $shortcode_tag ], [ &$data ] );
-		} else {
-			$status = $refmethod->invoke( $shortcodes[ $shortcode_tag ] );
-			$data   = $refdata->getValue( $shortcodes[ $shortcode_tag ] );
+
+		$refmethod = $refobject->getMethod( $method );
+		$refmethod->setAccessible( true );
+
+		if ( property_exists( $shortcodes[ $shortcode_tag ], 'form_actie' ) ) {
+			$refactie = $refobject->getProperty( 'form_actie' );
+			$refactie->setAccessible( true );
+			$refactie->setValue( $shortcodes[ $shortcode_tag ], $form_actie );
 		}
+
+		if ( isset( $data['filehandle'] ) ) {
+			$reffilehandle = $refobject->getProperty( 'filehandle' );
+			$reffilehandle->setAccessible( true );
+			$reffilehandle->setValue( $shortcodes[ $shortcode_tag ], $data['filehandle'] );
+		}
+
+		$status = $refmethod->invoke( $shortcodes[ $shortcode_tag ] );
+		$data   = $refdata->getValue( $shortcodes[ $shortcode_tag ] );
 		return $status;
 	}
 

@@ -143,12 +143,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'cursus_overzicht' form
 	 *
-	 * @param array $data gevalideerde data.
-	 *
 	 * @since   5.4.0
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'cursist_id' => FILTER_SANITIZE_NUMBER_INT,
@@ -164,11 +162,8 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 
 	/**
 	 * Schrijf cursisten informatie naar het bestand.
-	 *
-	 * @param array $data De argumenten.
-	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	protected function cursisten( array $data ) {
+	protected function cursisten() {
 		$cursus_id        = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );
 		$cursisten_fields = [
 			'Voornaam',
@@ -182,7 +177,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			'Ingedeeld',
 			'Geannuleerd',
 		];
-		fputcsv( $data['filehandle'], $cursisten_fields, ';' );
+		fputcsv( $this->filehandle, $cursisten_fields, ';' );
 		foreach ( new Inschrijvingen( $cursus_id ) as $inschrijving ) {
 			$cursist          = get_userdata( $inschrijving->klant_id );
 			$cursist_gegevens = [
@@ -197,7 +192,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				$inschrijving->ingedeeld ? 'Ja' : 'Nee',
 				$inschrijving->geannuleerd ? 'Ja' : 'Nee',
 			];
-			fputcsv( $data['filehandle'], $cursist_gegevens, ';' );
+			fputcsv( $this->filehandle, $cursist_gegevens, ';' );
 		}
 	}
 
@@ -222,13 +217,11 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	/**
 	 * Deel een cursist in
 	 *
-	 * @param array $data data te bewaren.
-	 *
 	 * @return array
 	 */
-	protected function indelen( array $data ) : array {
-		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
-		$inschrijving->actie->indelen_lopend( (float) $data['input']['kosten'] );
+	protected function indelen() : array {
+		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $this->data['input']['cursist_id'] );
+		$inschrijving->actie->indelen_lopend( (float) $this->data['input']['kosten'] );
 
 		return [
 			'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
@@ -239,12 +232,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	/**
 	 * Schrijf een cursist uit
 	 *
-	 * @param array $data data te bewaren.
-	 *
 	 * @return array
 	 */
-	protected function uitschrijven( array $data ) : array {
-		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['cursist_id'] );
+	protected function uitschrijven() : array {
+		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $this->data['input']['cursist_id'] );
 		$inschrijving->actie->uitschrijven_wachtlijst();
 		return [
 			'status'  => $this->status( 'De inschrijving is geannuleerd' ),
@@ -255,14 +246,12 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	/**
 	 * Stuur een herinner email
 	 *
-	 * @param array $data data te bewaren.
-	 *
 	 * @return array
 	 */
-	protected function herinner_email( array $data ) : array {
+	protected function herinner_email() : array {
 		$aantal_email = 0;
 		// Alleen voor de cursisten die ingedeeld zijn en niet geannuleerd.
-		foreach ( new Inschrijvingen( $data['input']['cursus_id'], true ) as $inschrijving ) {
+		foreach ( new Inschrijvingen( $this->data['input']['cursus_id'], true ) as $inschrijving ) {
 			/**
 			 * Stuur herinnerings emails als de cursist nog niet de cursus volledig betaald heeft.
 			 */

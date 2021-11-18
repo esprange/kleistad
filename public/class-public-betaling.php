@@ -66,13 +66,12 @@ class Public_Betaling extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'betaling' form
 	 *
-	 * @param array $data Gevalideerde data.
 	 * @return WP_ERROR|bool
 	 *
 	 * @since   4.2.0
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'order_id'     => FILTER_SANITIZE_NUMBER_INT,
@@ -80,17 +79,17 @@ class Public_Betaling extends ShortcodeForm {
 				'artikel_type' => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['order'] = new Order( $data['input']['order_id'] );
-		if ( $data['order']->gesloten ) {
+		$this->data['order'] = new Order( $this->data['input']['order_id'] );
+		if ( $this->data['order']->gesloten ) {
 			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
 		}
-		$artikelregister = new Artikelregister();
-		$data['artikel'] = $artikelregister->geef_object( $data['order']->referentie );
-		if ( is_object( $data['artikel'] ) ) {
+		$artikelregister       = new Artikelregister();
+		$this->data['artikel'] = $artikelregister->geef_object( $this->data['order']->referentie );
+		if ( is_object( $this->data['artikel'] ) ) {
 			$beschikbaar = '';
-			if ( property_exists( $data['artikel'], 'actie' ) ) {
-				if ( method_exists( $data['artikel']->actie, 'beschikbaarcontrole' ) ) {
-					$beschikbaar = $data['artikel']->actie->beschikbaarcontrole();
+			if ( property_exists( $this->data['artikel'], 'actie' ) ) {
+				if ( method_exists( $this->data['artikel']->actie, 'beschikbaarcontrole' ) ) {
+					$beschikbaar = $this->data['artikel']->actie->beschikbaarcontrole();
 				}
 			}
 			if ( empty( $beschikbaar ) ) {
@@ -104,15 +103,14 @@ class Public_Betaling extends ShortcodeForm {
 	/**
 	 * Bewaar 'betaling' form gegevens
 	 *
-	 * @param array $data te bewaren data.
 	 * @return array
 	 *
 	 * @since   4.2.0
 	 */
-	protected function betalen( array $data ) : array {
-		if ( 'ideal' === $data['input']['betaal'] ) {
-			$data['artikel']->artikel_type = $data['input']['artikel_type'];
-			$ideal_uri                     = $data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $data['order']->te_betalen(), $data['order']->referentie );
+	protected function betalen() : array {
+		if ( 'ideal' === $this->data['input']['betaal'] ) {
+			$this->data['artikel']->artikel_type = $this->data['input']['artikel_type'];
+			$ideal_uri                           = $this->data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->data['order']->te_betalen(), $this->data['order']->referentie );
 			if ( false === $ideal_uri ) {
 				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}
@@ -127,14 +125,12 @@ class Public_Betaling extends ShortcodeForm {
 	/**
 	 * Annulering door klant
 	 *
-	 * @param array $data te annuleren data.
-	 *
 	 * @return array
 	 */
-	protected function annuleren( array $data ) : array {
-		if ( $data['artikel']->is_annuleerbaar() ) {
-			$order = new Order( $data['artikel']->geef_referentie() );
-			if ( $data['artikel']->annuleer_order( $order, 0, 'Geannuleerd door klant' ) ) {
+	protected function annuleren() : array {
+		if ( $this->data['artikel']->is_annuleerbaar() ) {
+			$order = new Order( $this->data['artikel']->geef_referentie() );
+			if ( $this->data['artikel']->annuleer_order( $order, 0, 'Geannuleerd door klant' ) ) {
 				return [
 					'status'  => 'De order is geannuleerd en een bevestiging is verstuurd',
 					'content' => $this->goto_home(),

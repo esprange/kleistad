@@ -94,14 +94,11 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 		 * Test eerst de betaalwijze wijziging naar ideal
 		 */
 		$this->maak_wijziging( 'betaalwijze', false, false );
-		$data = [
-			'input'      => $this->input,
-			'form_actie' => 'betaalwijze',
-		];
+		$data = [ 'input' => $this->input ];
 		foreach ( [ 'herstart_datum', 'pauze_datum', 'per_datum' ] as $datum ) {
 			$data['input'][ $datum ] = strtotime( $data['input'][ $datum ] );
 		}
-		$result = $this->public_actie( self::SHORTCODE, 'save', $data );
+		$result = $this->public_actie( self::SHORTCODE, 'save', $data, 'betaalwijze' );
 		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na wijzigen betaal wijze' );
 
 		/**
@@ -109,14 +106,11 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 		 */
 		foreach ( [ 'betaalwijze', 'pauze', 'soort', 'extras', 'dag', 'einde' ] as $wijziging ) {
 			$this->maak_wijziging( $wijziging, true, false );
-			$data = [
-				'input'      => $this->input,
-				'form_actie' => $wijziging,
-			];
+			$data = [ 'input' => $this->input ];
 			foreach ( [ 'herstart_datum', 'pauze_datum', 'per_datum' ] as $datum ) {
 				$data['input'][ $datum ] = strtotime( $data['input'][ $datum ] );
 			}
-			$result = $this->public_actie( self::SHORTCODE, 'save', $data );
+			$result = $this->public_actie( self::SHORTCODE, 'save', $data, $wijziging );
 			$this->assertTrue( false !== strpos( $result['status'], 'De wijziging is verwerkt' ), 'geen succes na wijzigen ' . $wijziging );
 		}
 	}

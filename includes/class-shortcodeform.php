@@ -29,13 +29,19 @@ abstract class ShortcodeForm extends Shortcode {
 	public Validator $validator;
 
 	/**
+	 * Formulier actie
+	 *
+	 * @var string $form_actie De door de gebruiker gekozen formulier actie.
+	 */
+	protected string $form_actie = '';
+
+	/**
 	 * Validatie functie, wordt voor form validatie gebruikt
 	 *
 	 * @since   4.0.87
-	 * @param array $data de gevalideerde data.
 	 * @return WP_ERROR|bool
 	 */
-	abstract protected function validate( array &$data );
+	abstract protected function validate();
 
 	/**
 	 * Enqueue the scripts and styles for the shortcode.
@@ -51,13 +57,11 @@ abstract class ShortcodeForm extends Shortcode {
 	 * Save functie, wordt gebruikt bij formulieren. Kan overschreven worden door een meer specifieke functie.
 	 *
 	 * @since   4.0.87
-	 * @param array $data de gevalideerde data die kan worden opgeslagen.
 	 * @return array
 	 */
-	protected function save( array $data ) : array {
-		$actie = $data['form_actie'];
-		if ( method_exists( $this, $actie ) ) {
-			return $this->$actie( $data );
+	protected function save() : array {
+		if ( method_exists( $this, $this->form_actie ) ) {
+			return $this->{$this->form_actie}();
 		}
 		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
 	}
@@ -111,10 +115,10 @@ abstract class ShortcodeForm extends Shortcode {
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
 				throw new Exception( 'callback_formsubmit voor onbekend object' );
 			}
-			$data   = [ 'form_actie' => $request->get_param( 'form_actie' ) ];
-			$result = $shortcode->validate( $data );
+			$shortcode->form_actie = $request->get_param( 'form_actie' );
+			$result                = $shortcode->validate();
 			if ( ! is_wp_error( $result ) ) {
-				return new WP_REST_Response( $shortcode->save( $data ) );
+				return new WP_REST_Response( $shortcode->save() );
 			}
 			return new WP_REST_Response( [ 'status' => $shortcode->status( $result ) ] );
 		} catch ( Kleistad_Exception $exceptie ) {

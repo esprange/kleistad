@@ -190,13 +190,12 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'cursus_inschrijving' form
 	 *
-	 * @param array $data Gevalideerde data.
 	 * @return WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'user_email'      => FILTER_SANITIZE_EMAIL,
@@ -230,26 +229,26 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( is_array( $data['input'] ) ) {
-			if ( 0 === intval( $data['input']['cursus_id'] ) ) {
+		if ( is_array( $this->data['input'] ) ) {
+			if ( 0 === intval( $this->data['input']['cursus_id'] ) ) {
 				return new WP_Error( 'verplicht', 'Er is nog geen cursus gekozen' );
 			}
-			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-				$error = $this->validator->gebruiker( $data['input'] );
+			if ( 0 === intval( $this->data['input']['gebruiker_id'] ) ) {
+				$error = $this->validator->gebruiker( $this->data['input'] );
 				if ( is_wp_error( $error ) ) {
 					return $error;
 				}
 			}
-			$cursus = new Cursus( $data['input']['cursus_id'] );
+			$cursus = new Cursus( $this->data['input']['cursus_id'] );
 			if ( $cursus->vol ) {
-				if ( 1 < $data['input']['aantal'] ) {
-					$data['input']['aantal'] = 1;
+				if ( 1 < $this->data['input']['aantal'] ) {
+					$this->data['input']['aantal'] = 1;
 					return new WP_Error( 'vol', 'De cursus is helaas vol. Als je op een wachtlijst geplaatst wilt dan kan je dit alleen voor jezelf doen' );
 				}
 			}
 			$ruimte = $cursus->ruimte();
-			if ( ! $cursus->vol && $ruimte < $data['input']['aantal'] ) {
-				$data['input']['aantal'] = $ruimte;
+			if ( ! $cursus->vol && $ruimte < $this->data['input']['aantal'] ) {
+				$this->data['input']['aantal'] = $ruimte;
 				return new WP_Error( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." );
 			}
 			return true;
@@ -260,11 +259,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	/**
 	 * Bewaar actie ingeval de gebruiker van de wachtlijst verwijdert wil worden.
 	 *
-	 * @param array $data data te bewaren.
 	 * @return array
 	 */
-	protected function stop_wachten( array $data ) : array {
-		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['gebruiker_id'] );
+	protected function stop_wachten() : array {
+		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $this->data['input']['gebruiker_id'] );
 		if ( $inschrijving->ingedeeld ) {
 			return [
 				'status' => $this->status( new WP_Error( 'ingedeeld', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Voor een annulering, neem contact op met Kleistad.' ) ),
@@ -280,11 +278,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	/**
 	 * Bewaar actie ingeval de gebruiker op de wachtlijst ingedeeld wil worden.
 	 *
-	 * @param array $data data te bewaren.
 	 * @return array
 	 */
-	protected function indelen_na_wachten( array $data ) : array {
-		$inschrijving = new Inschrijving( $data['input']['cursus_id'], $data['input']['gebruiker_id'] );
+	protected function indelen_na_wachten() : array {
+		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $this->data['input']['gebruiker_id'] );
 		if ( $inschrijving->ingedeeld ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
@@ -302,24 +299,23 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	/**
 	 * Bewaar actie ingeval de gebruiker in wil schrijven op een cursus.
 	 *
-	 * @param array $data data te bewaren.
 	 * @return array
 	 */
-	protected function inschrijven( array $data ) : array {
-		$gebruiker_id = Gebruiker::registreren( $data['input'] );
+	protected function inschrijven() : array {
+		$gebruiker_id = Gebruiker::registreren( $this->data['input'] );
 		if ( ! is_int( $gebruiker_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
-		$inschrijving             = new Inschrijving( $data['input']['cursus_id'], $gebruiker_id );
-		$inschrijving->technieken = $data['input']['technieken'] ?? [];
-		$inschrijving->opmerking  = $data['input']['opmerking'];
-		$inschrijving->aantal     = intval( $data['input']['aantal'] );
+		$inschrijving             = new Inschrijving( $this->data['input']['cursus_id'], $gebruiker_id );
+		$inschrijving->technieken = $this->data['input']['technieken'] ?? [];
+		$inschrijving->opmerking  = $this->data['input']['opmerking'];
+		$inschrijving->aantal     = intval( $this->data['input']['aantal'] );
 		if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
-		$result = $inschrijving->actie->aanvraag( $data['input']['betaal'] );
+		$result = $inschrijving->actie->aanvraag( $this->data['input']['betaal'] );
 		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}

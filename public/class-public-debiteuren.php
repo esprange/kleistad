@@ -116,13 +116,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * Valideer/sanitize 'debiteuren' form
 	 *
-	 * @param array $data gevalideerde data.
 	 * @return bool|WP_Error
 	 *
 	 * @since   6.1.0
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'id'                   => FILTER_SANITIZE_NUMBER_INT,
@@ -146,12 +145,12 @@ class Public_Debiteuren extends ShortcodeForm {
 				'opmerking_annulering' => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( 'blokkade' === $data['form_actie'] ) {
+		if ( 'blokkade' === $this->form_actie ) {
 			return true;
 		}
-		$data['order'] = new Order( $data['input']['id'] );
-		if ( 'korting' === $data['form_actie'] ) {
-			if ( $data['order']->orderregels->bruto() < $data['input']['korting'] ) {
+		$this->data['order'] = new Order( $this->data['input']['id'] );
+		if ( 'korting' === $this->form_actie ) {
+			if ( $this->data['order']->orderregels->bruto() < $this->data['input']['korting'] ) {
 				return new WP_Error( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
 			}
 		}
@@ -161,13 +160,12 @@ class Public_Debiteuren extends ShortcodeForm {
 	/**
 	 * Voer een bankbetaling uit
 	 *
-	 * @param array $data te bewaren data.
 	 * @return array
 	 */
-	protected function bankbetaling( array $data ) : array {
+	protected function bankbetaling() : array {
 		$artikelregister = new Artikelregister();
-		$artikel         = $artikelregister->geef_object( $data['order']->referentie );
-		$artikel->betaling->verwerk( $data['order'], floatval( $data['input']['bedrag_betaald'] ) ?: - floatval( $data['input']['bedrag_gestort'] ), true, 'bank' );
+		$artikel         = $artikelregister->geef_object( $this->data['order']->referentie );
+		$artikel->betaling->verwerk( $this->data['order'], floatval( $this->data['input']['bedrag_betaald'] ) ?: - floatval( $this->data['input']['bedrag_gestort'] ), true, 'bank' );
 		return [
 			'status'  => $this->status( 'De betaling is verwerkt' ),
 			'content' => $this->display(),
@@ -177,18 +175,17 @@ class Public_Debiteuren extends ShortcodeForm {
 	/**
 	 * Annuleer een order.
 	 *
-	 * @param array $data te bewaren data.
 	 * @return array
 	 */
-	protected function annulering( array $data ) : array {
+	protected function annulering() : array {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
-		$artikel         = $artikelregister->geef_object( $data['order']->referentie );
+		$artikel         = $artikelregister->geef_object( $this->data['order']->referentie );
 		$melding         = '';
-		if ( $data['order']->betaald - floatval( $data['input']['restant'] ) > 0 ) {
-			$melding = $data['order']->transactie_id ? 'Er wordt een stornering gedaan' : 'Het teveel betaalde moet per bank teruggestort worden';
+		if ( $this->data['order']->betaald - floatval( $this->data['input']['restant'] ) > 0 ) {
+			$melding = $this->data['order']->transactie_id ? 'Er wordt een stornering gedaan' : 'Het teveel betaalde moet per bank teruggestort worden';
 		}
-		$credit_factuur = $artikel->annuleer_order( $data['order'], floatval( $data['input']['restant'] ), $data['input']['opmerking_annulering'] );
+		$credit_factuur = $artikel->annuleer_order( $this->data['order'], floatval( $this->data['input']['restant'] ), $this->data['input']['opmerking_annulering'] );
 		if ( false === $credit_factuur ) {
 			return [
 				'status' => $this->status( new WP_Error( 'fout', 'Er bestaat al een creditering dus mogelijk een interne fout' ) ),
@@ -196,14 +193,14 @@ class Public_Debiteuren extends ShortcodeForm {
 		}
 		$emailer->send(
 			[
-				'to'          => $data['order']->klant['email'],
+				'to'          => $this->data['order']->klant['email'],
 				'slug'        => 'order_annulering',
 				'subject'     => 'Order geannuleerd',
 				'attachments' => $credit_factuur,
 				'parameters'  => [
-					'naam'        => $data['order']->klant['naam'],
+					'naam'        => $this->data['order']->klant['naam'],
 					'artikel'     => $artikel->geef_artikelnaam(),
-					'referentie'  => $data['order']->referentie,
+					'referentie'  => $this->data['order']->referentie,
 					'betaal_link' => $artikel->betaal_link,
 				],
 			]
@@ -217,24 +214,23 @@ class Public_Debiteuren extends ShortcodeForm {
 	/**
 	 * Geef een korting
 	 *
-	 * @param array $data te bewaren data.
 	 * @return array
 	 */
-	protected function korting( array $data ) : array {
+	protected function korting() : array {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
-		$artikel         = $artikelregister->geef_object( $data['order']->referentie );
-		$factuur         = $artikel->korting_order( $data['order'], floatval( $data['input']['korting'] ), $data['input']['opmerking_korting'] );
+		$artikel         = $artikelregister->geef_object( $this->data['order']->referentie );
+		$factuur         = $artikel->korting_order( $this->data['order'], floatval( $this->data['input']['korting'] ), $this->data['input']['opmerking_korting'] );
 		$emailer->send(
 			[
-				'to'          => $data['order']->klant['email'],
+				'to'          => $this->data['order']->klant['email'],
 				'slug'        => 'order_correctie',
 				'subject'     => 'Order gecorrigeerd',
 				'attachments' => $factuur,
 				'parameters'  => [
-					'naam'        => $data['order']->klant['naam'],
+					'naam'        => $this->data['order']->klant['naam'],
 					'artikel'     => $artikel->geef_artikelnaam(),
-					'referentie'  => $data['order']->referentie,
+					'referentie'  => $this->data['order']->referentie,
 					'betaal_link' => $artikel->betaal_link,
 				],
 			]
@@ -248,23 +244,22 @@ class Public_Debiteuren extends ShortcodeForm {
 	/**
 	 * Herzend de factuur
 	 *
-	 * @param array $data de input data.
 	 * @return array
 	 */
-	protected function factuur( array $data ) : array {
+	protected function factuur() : array {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
-		$artikel         = $artikelregister->geef_object( $data['order']->referentie );
-		$factuur         = $artikel->herzenden( $data['order'] );
+		$artikel         = $artikelregister->geef_object( $this->data['order']->referentie );
+		$factuur         = $artikel->herzenden( $this->data['order'] );
 		$emailer->send(
 			[
-				'to'          => $data['order']->klant['email'],
+				'to'          => $this->data['order']->klant['email'],
 				'slug'        => 'herzend_factuur',
 				'subject'     => 'Herzending factuur',
 				'attachments' => $factuur,
 				'parameters'  => [
-					'naam'        => $data['order']->klant['naam'],
-					'referentie'  => $data['order']->referentie,
+					'naam'        => $this->data['order']->klant['naam'],
+					'referentie'  => $this->data['order']->referentie,
 					'betaal_link' => $artikel->betaal_link,
 				],
 			]
@@ -278,11 +273,10 @@ class Public_Debiteuren extends ShortcodeForm {
 	/**
 	 * Boek een order af (dubieuze debiteur)
 	 *
-	 * @param array $data de input data.
 	 * @return array
 	 */
-	protected function afboeken( array $data ) : array {
-		$data['order']->afboeken();
+	protected function afboeken() : array {
+		$this->data['order']->afboeken();
 		return [
 			'status'  => $this->status( 'De order is afgeboekt' ),
 			'content' => $this->display(),

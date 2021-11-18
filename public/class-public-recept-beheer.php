@@ -152,14 +152,12 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'recept' form
 	 *
-	 * @param array $data Gevalideerde data.
-	 *
 	 * @return WP_Error|bool
 	 *
 	 * @since   4.1.0
 	 */
-	protected function validate( array &$data ) {
-		$data['recept']                           = filter_input_array(
+	protected function validate() {
+		$this->data['recept']                           = filter_input_array(
 			INPUT_POST,
 			[
 				'id'        => FILTER_SANITIZE_NUMBER_INT,
@@ -169,14 +167,14 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				'uiterlijk' => FILTER_SANITIZE_NUMBER_INT,
 			]
 		);
-		$data['recept']['content']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
-		$data['recept']['content']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
-		$data['recept']['content']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
-		$data['recept']['content']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
-		$data['recept']['content']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
-		$data['recept']['content']['foto']        = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
+		$this->data['recept']['content']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
+		$this->data['recept']['content']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
+		$this->data['recept']['content']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
+		$this->data['recept']['content']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
+		$this->data['recept']['content']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
+		$this->data['recept']['content']['foto']        = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
 
-		if ( 'bewaren' === $data['form_actie'] ) {
+		if ( 'bewaren' === $this->form_actie ) {
 			if ( UPLOAD_ERR_INI_SIZE === $_FILES['foto']['error'] ) {
 				return new WP_Error( 'foto', 'De foto is te groot qua omvang !' );
 			}
@@ -188,11 +186,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	/**
 	 * Recept moet verwijderd worden.
 	 *
-	 * @param array $data De input data.
 	 * @return array
 	 */
-	protected function verwijderen( array $data ): array {
-		wp_delete_post( $data['recept']['id'] );
+	protected function verwijderen(): array {
+		wp_delete_post( $this->data['recept']['id'] );
 		return [
 			'status'  => $this->status( 'Het recept is verwijderd' ),
 			'content' => $this->display(),
@@ -202,11 +199,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	/**
 	 * Recept publicatie status moet aangepast worden
 	 *
-	 * @param array $data De input data.
 	 * @return array
 	 */
-	protected function publiceren( array $data ): array {
-		$recept              = get_post( $data['recept']['id'] );
+	protected function publiceren(): array {
+		$recept              = get_post( $this->data['recept']['id'] );
 		$recept->post_status = 'publish';
 		wp_update_post( $recept, true );
 
@@ -219,11 +215,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	/**
 	 * Recept publicatie status moet aangepast worden
 	 *
-	 * @param array $data De input data.
 	 * @return array
 	 */
-	protected function verbergen( array $data ): array {
-		$recept              = get_post( $data['recept']['id'] );
+	protected function verbergen(): array {
+		$recept              = get_post( $this->data['recept']['id'] );
 		$recept->post_status = 'private';
 		wp_update_post( $recept, true );
 
@@ -236,10 +231,9 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	/**
 	 * Recept moet worden opgeslagen
 	 *
-	 * @param array $data De input data.
 	 * @return array
 	 */
-	protected function bewaren( array $data ): array {
+	protected function bewaren(): array {
 		if ( ! empty( $_FILES['foto']['name'] ) ) {
 			$file = wp_handle_upload(
 				$_FILES['foto'],
@@ -248,7 +242,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			if ( is_array( $file ) && ! isset( $file['error'] ) ) {
 				$result = $this->foto( $file['file'] );
 				if ( true === $result ) {
-					$data['recept']['content']['foto'] = $file['url'];
+					$this->data['recept']['content']['foto'] = $file['url'];
 				} else {
 					return [ 'status' => $this->status( $result ) ];
 				}
@@ -258,7 +252,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				];
 			}
 		}
-		if ( ! $data['recept']['id'] ) {
+		if ( ! $this->data['recept']['id'] ) {
 			$result = wp_insert_post(
 				[
 					'post_status' => 'draft', // Initiële publicatie status is prive.
@@ -266,18 +260,18 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				]
 			);
 			if ( $result ) {
-				$data['recept']['id'] = $result;
+				$this->data['recept']['id'] = $result;
 			} else {
 				return [
 					'status' => $this->status( new WP_Error( 'fout', 'Recept kon niet worden toegevoegd' ) ),
 				];
 			}
 		}
-		$recept = get_post( $data['recept']['id'] );
+		$recept = get_post( $this->data['recept']['id'] );
 		if ( ! is_null( $recept ) ) {
-			$recept->post_title   = (string) $data['recept']['titel'];
-			$recept->post_excerpt = 'keramiek recept : ' . $data['recept']['content']['kenmerk'];
-			$json_content         = wp_json_encode( $data['recept']['content'], JSON_UNESCAPED_UNICODE );
+			$recept->post_title   = (string) $this->data['recept']['titel'];
+			$recept->post_excerpt = 'keramiek recept : ' . $this->data['recept']['content']['kenmerk'];
+			$json_content         = wp_json_encode( $this->data['recept']['content'], JSON_UNESCAPED_UNICODE );
 			if ( is_string( $json_content ) ) {
 				$recept->post_content = $json_content;
 			} else {
@@ -290,9 +284,9 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				wp_set_object_terms(
 					$recept_id,
 					[
-						intval( $data['recept']['glazuur'] ),
-						intval( $data['recept']['kleur'] ),
-						intval( $data['recept']['uiterlijk'] ),
+						intval( $this->data['recept']['glazuur'] ),
+						intval( $this->data['recept']['kleur'] ),
+						intval( $this->data['recept']['uiterlijk'] ),
 					],
 					Recept::CATEGORY
 				);

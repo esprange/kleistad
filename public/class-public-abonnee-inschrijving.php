@@ -58,13 +58,12 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'abonnee_inschrijving' form
 	 *
-	 * @param array $data Gevalideerde data.
 	 * @return WP_Error|bool
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'gebruiker_id'     => FILTER_SANITIZE_NUMBER_INT,
@@ -88,15 +87,15 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'mc4wp-subscribe'  => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( is_array( $data['input'] ) ) {
-			if ( '' === $data['input']['abonnement_keuze'] ) {
+		if ( is_array( $this->data['input'] ) ) {
+			if ( '' === $this->data['input']['abonnement_keuze'] ) {
 				return new WP_Error( 'verplicht', 'Er is nog geen type abonnement gekozen' );
 			}
-			if ( '' === $data['input']['start_datum'] ) {
+			if ( '' === $this->data['input']['start_datum'] ) {
 				return new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
 			}
-			if ( 0 === intval( $data['input']['gebruiker_id'] ) ) {
-				$error = $this->validator->gebruiker( $data['input'] );
+			if ( 0 === intval( $this->data['input']['gebruiker_id'] ) ) {
+				$error = $this->validator->gebruiker( $this->data['input'] );
 				if ( is_wp_error( $error ) ) {
 					return $error;
 				}
@@ -109,14 +108,13 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	/**
 	 * Bewaar 'abonnee_inschrijving' form gegevens
 	 *
-	 * @param array $data te bewaren data.
 	 * @return WP_Error|array
 	 *
 	 * @since   4.0.87
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
-	protected function save( array $data ) : array {
-		$gebruiker_id = Gebruiker::registreren( $data['input'] );
+	protected function save() : array {
+		$gebruiker_id = Gebruiker::registreren( $this->data['input'] );
 		if ( ! is_int( $gebruiker_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
@@ -127,11 +125,11 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 			];
 		}
 		$result = $abonnement->actie->starten(
-			strtotime( $data['input']['start_datum'] ),
-			$data['input']['abonnement_keuze'],
-			$data['input']['dag'],
-			$data['input']['opmerking'] ?? '',
-			$data['input']['betaal']
+			strtotime( $this->data['input']['start_datum'] ),
+			$this->data['input']['abonnement_keuze'],
+			$this->data['input']['dag'],
+			$this->data['input']['opmerking'] ?? '',
+			$this->data['input']['betaal']
 		);
 		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];

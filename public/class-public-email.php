@@ -183,14 +183,13 @@ class Public_Email extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize email form
 	 *
-	 * @param array $data Gevalideerde data.
 	 * @return WP_ERROR|bool
 	 *
 	 * @since   5.5.0
 	 */
-	protected function validate( array &$data ) {
-		$error                          = new WP_Error();
-		$data['input']                  = filter_input_array(
+	protected function validate() {
+		$error                                = new WP_Error();
+		$this->data['input']                  = filter_input_array(
 			INPUT_POST,
 			[
 				'gebruikerids'  => FILTER_SANITIZE_STRING,
@@ -200,21 +199,21 @@ class Public_Email extends ShortcodeForm {
 				'namens'        => FILTER_SANITIZE_STRING,
 			]
 		);
-		$data['input']['email_content'] = wp_kses_post( $data['input']['email_content'] );
+		$this->data['input']['email_content'] = wp_kses_post( $this->data['input']['email_content'] );
 
-		if ( empty( $data['input']['email_content'] ) ) {
+		if ( empty( $this->data['input']['email_content'] ) ) {
 			$error->add( 'email', 'Er is geen email content' );
 		}
-		if ( 'verzenden' === $data['form_actie'] && empty( $data['input']['gebruikerids'] ) ) {
+		if ( 'verzenden' === $this->form_actie && empty( $this->data['input']['gebruikerids'] ) ) {
 			$error->add( 'email', 'Er is geen enkele ontvanger geselecteerd' );
 		}
-		if ( empty( $data['input']['onderwerp'] ) ) {
+		if ( empty( $this->data['input']['onderwerp'] ) ) {
 			$error->add( 'email', 'Er is geen onderwerp opgegeven' );
 		}
-		if ( empty( $data['input']['aanhef'] ) ) {
+		if ( empty( $this->data['input']['aanhef'] ) ) {
 			$error->add( 'email', 'Er is niet aangegeven aan wie de email gericht is' );
 		}
-		if ( empty( $data['input']['namens'] ) ) {
+		if ( empty( $this->data['input']['namens'] ) ) {
 			$error->add( 'email', 'Er is niet aangegeven wie de email verstuurt' );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
@@ -226,18 +225,17 @@ class Public_Email extends ShortcodeForm {
 	/**
 	 * Verzend test_email
 	 *
-	 * @param array $data data te verzenden.
 	 * @return array
 	 */
-	protected function test_email( array $data ) : array {
+	protected function test_email() : array {
 		$gebruiker = wp_get_current_user();
 		$emailer   = new Email();
 		$emailer->send(
 			array_merge(
-				$this->mail_parameters( $data ),
+				$this->mail_parameters(),
 				[
 					'to'      => "$gebruiker->display_name <$gebruiker->user_email>",
-					'subject' => "TEST: {$data['input']['onderwerp']}",
+					'subject' => "TEST: {$this->data['input']['onderwerp']}",
 				]
 			)
 		);
@@ -250,13 +248,12 @@ class Public_Email extends ShortcodeForm {
 	/**
 	 * Verzend de email naar de geselecteerde ontvanger
 	 *
-	 * @param array $data data te verzenden.
 	 * @return array
 	 */
-	protected function verzenden( array $data ) : array {
+	protected function verzenden() : array {
 		$gebruiker       = wp_get_current_user();
 		$emailer         = new Email();
-		$gebruikerids    = array_unique( explode( ',', $data['input']['gebruikerids'] ) );
+		$gebruikerids    = array_unique( explode( ',', $this->data['input']['gebruikerids'] ) );
 		$query           = new WP_User_Query(
 			[
 				'include' => array_map( 'intval', $gebruikerids ),
@@ -268,13 +265,13 @@ class Public_Email extends ShortcodeForm {
 		$from            = 'production' === wp_get_environment_type() ? "$emailer->info@$emailer->domein" : get_bloginfo( 'admin_email' );
 		$emailer->send(
 			array_merge(
-				$this->mail_parameters( $data ),
+				$this->mail_parameters(),
 				[
 					'to'       => "Kleistad gebruiker <$from>",
 					'bcc'      => $emailadressen,
 					'from'     => $from,
 					'reply-to' => current_user_can( BESTUUR ) ? $from : $gebruiker->user_email,
-					'subject'  => $data['input']['onderwerp'],
+					'subject'  => $this->data['input']['onderwerp'],
 				]
 			)
 		);
@@ -287,14 +284,13 @@ class Public_Email extends ShortcodeForm {
 	/**
 	 * Vul de generieke mail parameters in (welke zowel voor een testbericht als echt bericht identiek zijn).
 	 *
-	 * @param array $data Date te verzenden.
 	 * @return array
 	 */
-	private function mail_parameters( array $data ) : array {
+	private function mail_parameters() : array {
 		return [
-			'from_name' => "{$data['input']['namens']} namens Kleistad",
-			'content'   => "<p>{$data['input']['aanhef']},</p>{$data['input']['email_content']}<br/>",
-			'sign'      => "{$data['input']['namens']},<br/>Kleistad",
+			'from_name' => "{$this->data['input']['namens']} namens Kleistad",
+			'content'   => "<p>{$this->data['input']['aanhef']},</p>{$this->data['input']['email_content']}<br/>",
+			'sign'      => "{$this->data['input']['namens']},<br/>Kleistad",
 			'auto'      => false,
 		];
 	}

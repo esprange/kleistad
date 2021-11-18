@@ -46,12 +46,10 @@ class Public_Contact extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'contact' form
 	 *
-	 * @param array $data Gevalideerde data.
-	 *
 	 * @since   6.3.0
 	 */
-	protected function validate( array &$data ) {
-		$data['input'] = filter_input_array(
+	protected function validate() {
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'email'     => FILTER_SANITIZE_EMAIL,
@@ -68,32 +66,31 @@ class Public_Contact extends ShortcodeForm {
 	 *
 	 * Bewaar 'contact' form gegevens
 	 *
-	 * @param array $data data te bewaren.
 	 * @return array
 	 *
 	 * @since   6.3.0
 	 */
-	protected function save( array $data ) : array {
+	protected function save() : array {
 		$emailer          = new Email();
 		$email_parameters = [
 			'to'         => "Kleistad <$emailer->info@$emailer->domein>",
 			'from'       => "$emailer->info@$emailer->verzend_domein",
-			'from_name'  => $data['input']['naam'],
-			'reply-to'   => $data['input']['email'],
+			'from_name'  => $this->data['input']['naam'],
+			'reply-to'   => $this->data['input']['email'],
 			'slug'       => 'contact_vraag',
-			'subject'    => 'Vraag over ' . $data['input']['onderwerp'],
+			'subject'    => 'Vraag over ' . $this->data['input']['onderwerp'],
 			'auto'       => false,
 			'sign'       => '',
 			'parameters' => [
-				'naam'     => $data['input']['naam'],
-				'vraag'    => $data['input']['vraag'],
-				'telefoon' => $data['input']['telnr'],
-				'email'    => $data['input']['email'],
+				'naam'     => $this->data['input']['naam'],
+				'vraag'    => $this->data['input']['vraag'],
+				'telefoon' => $this->data['input']['telnr'],
+				'email'    => $this->data['input']['email'],
 			],
 		];
 		$emailer->send( $email_parameters );
 
-		$email_parameters['to']                   = $data['input']['email'];
+		$email_parameters['to']                   = $this->data['input']['email'];
 		$email_parameters['from_name']            = 'Kleistad';
 		$email_parameters['reply-to']             = "Kleistad <$emailer->info@$emailer->domein>";
 		$email_parameters['parameters']['vraag'] .= '<br/><p>Bedankt voor de vraag, wij proberen die snel te beantwoorden.</p><br/>';

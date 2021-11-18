@@ -25,10 +25,8 @@ class Public_Stookbestand extends Shortcode {
 
 	/**
 	 * Schrijf stook informatie naar het bestand.
-	 *
-	 * @param array $data De argumenten.
 	 */
-	protected function stook( array $data ) {
+	protected function stook() {
 		$vanaf_datum = strtotime( filter_input( INPUT_GET, 'vanaf_datum', FILTER_SANITIZE_STRING ) ?? '' );
 		$tot_datum   = strtotime( filter_input( INPUT_GET, 'tot_datum', FILTER_SANITIZE_STRING ) ?? '' );
 		if ( ! $vanaf_datum || ! $tot_datum ) {
@@ -56,7 +54,7 @@ class Public_Stookbestand extends Shortcode {
 				$fields_lege_prijs[ $id ] = '';
 			}
 		}
-		fputcsv( $data['filehandle'], $fields, ';' );
+		fputcsv( $this->filehandle, $fields, ';' );
 		$records = [];
 		foreach ( $ovens as $oven ) {
 			foreach ( $stoken[ $oven->id ] as $stook ) {
@@ -79,7 +77,7 @@ class Public_Stookbestand extends Shortcode {
 		}
 		ksort( $records );
 		foreach ( $records as $record ) {
-			fputcsv( $data['filehandle'], $record, ';' );
+			fputcsv( $this->filehandle, $record, ';' );
 		}
 	}
 
