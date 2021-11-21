@@ -72,7 +72,7 @@ class Public_Registratie extends ShortcodeForm {
 				return $this->melding( new WP_Error( 'security', 'Er is een security fout geconstateerd' ) );
 			}
 			$error = $this->validator->gebruiker( $this->data['input'] );
-			if ( is_wp_error( $error ) ) {
+			if ( ! is_bool( $error ) ) {
 				return $this->melding( $error );
 			}
 			$gebruiker_id = email_exists( $this->data['input']['user_email'] );

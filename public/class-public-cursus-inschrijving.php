@@ -235,7 +235,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			}
 			if ( 0 === intval( $this->data['input']['gebruiker_id'] ) ) {
 				$error = $this->validator->gebruiker( $this->data['input'] );
-				if ( is_wp_error( $error ) ) {
+				if ( ! is_bool( $error ) ) {
 					return $this->melding( $error );
 				}
 			}
