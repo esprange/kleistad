@@ -20,8 +20,10 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 
 	/**
 	 * Prepareer 'workshop_aanvraag' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data = [
 				'input' => [
@@ -36,17 +38,17 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				],
 			];
 		}
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'workshop aanvraag' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   5.6.0
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$error               = new WP_Error();
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
@@ -79,9 +81,9 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 			$this->data['input']['contact'] = '';
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+			return $this->melding( $error );
 		}
-		return true;
+		return $this->save();
 	}
 
 	/**

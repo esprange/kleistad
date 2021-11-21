@@ -101,8 +101,10 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * Prepareer 'cursus_overzicht' form
 	 *
 	 * @since   4.5.4
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$this->data['bestuur_rechten'] = current_user_can( BESTUUR );
 		if ( 'cursisten' === $this->data['actie'] ) {
 			$cursus                  = new Cursus( $this->data['id'] );
@@ -113,7 +115,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'loopt' => $cursus->start_datum < strtotime( 'today' ),
 			];
 			$this->data['cursisten'] = $this->cursistenlijst( $cursus );
-			return true;
+			return $this->content();
 		}
 		if ( 'indelen' === $this->data['actie'] || 'uitschrijven' === $this->data['actie'] ) {
 			list( $cursus_id, $cursist_id ) = sscanf( $this->data['id'], 'C%d-%d' );
@@ -134,18 +136,20 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'datum'  => $inschrijving->datum,
 				'aantal' => $inschrijving->aantal,
 			];
-			return true;
+			return $this->content();
 		}
 		$this->data['cursus_info'] = $this->geef_cursussen();
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'cursus_overzicht' form
 	 *
 	 * @since   5.4.0
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -157,11 +161,13 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				],
 			]
 		);
-		return true;
+		return $this->save();
 	}
 
 	/**
 	 * Schrijf cursisten informatie naar het bestand.
+	 *
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	protected function cursisten() {
 		$cursus_id        = filter_input( INPUT_GET, 'cursus_id', FILTER_SANITIZE_NUMBER_INT );

@@ -101,21 +101,20 @@ class Public_Werkplek extends Shortcode {
 
 
 	/**
-	 *
 	 * Prepareer 'reservering' form
 	 *
-	 * @return WP_ERROR|bool
-	 *
 	 * @since   6.11.0
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$this->data['datums']    = $this->geef_mogelijke_datums();
 		$this->data['meesters']  = $this->geef_meesters();
 		$this->data['cursisten'] = $this->geef_cursisten();
 		if ( 0 === count( $this->data['datums'] ) ) {
-			return new WP_Error( 'config', 'Er zijn geen datums beschikbaar' );
+			return $this->status( new WP_Error( 'config', 'Er zijn geen datums beschikbaar' ) );
 		}
-		return true;
+		return $this->content();
 	}
 
 	/**

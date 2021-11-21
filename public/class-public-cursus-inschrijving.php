@@ -52,52 +52,52 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	/**
 	 * Formulier dat getoond moet worden betreft het verwijderen van de wachtlijst.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function prepare_stop_wachten() {
+	private function prepare_stop_wachten() : string {
 		list( $cursus_id, $cursist_id ) = sscanf( $this->data['param']['code'], 'C%d-%d' );
 		$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
 		if ( $this->data['param']['hsh'] !== $inschrijving->controle() ) {
-			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
+			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		$this->data['cursus_naam']  = $inschrijving->cursus->naam;
 		$this->data['cursus_id']    = $inschrijving->cursus->id;
 		$this->data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
 		$this->data['gebruiker_id'] = $inschrijving->klant_id;
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Formulier dat getoond moet worden betreft het verwijderen van de wachtlijst.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function prepare_indelen_na_wachten() {
+	private function prepare_indelen_na_wachten() : string {
 		list( $cursus_id, $cursist_id ) = sscanf( $this->data['param']['code'], 'C%d-%d' );
 		$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
 		if ( $this->data['param']['hsh'] !== $inschrijving->controle() ) {
-			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
+			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		if ( $inschrijving->cursus->vol ) {
-			return new WP_Error( 'Vol', 'Helaas, waarschijnlijk is iemand anders je voor geweest. De cursus is volgeboekt.' );
+			return $this->status( new WP_Error( 'Vol', 'Helaas, waarschijnlijk is iemand anders je voor geweest. De cursus is volgeboekt.' ) );
 		}
 		$this->data['cursus_naam']  = $inschrijving->cursus->naam;
 		$this->data['cursus_id']    = $inschrijving->cursus->id;
 		$this->data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
 		$this->data['gebruiker_id'] = $inschrijving->klant_id;
 		$this->data['ruimte']       = $inschrijving->cursus->ruimte();
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Formulier dat getoond moet worden betreft de reguliere inschrijving.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function prepare_inschrijven() {
+	private function prepare_inschrijven() : string {
 		$this->data['gebruikers']     = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
@@ -144,20 +144,20 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$selecteerbaar = $selecteerbaar || $is_open;
 		}
 		if ( ! $selecteerbaar ) {
-			return new WP_Error( 'Inschrijven', 'Helaas is er geen cursusplek meer beschikbaar' );
+			return $this->status( new WP_Error( 'Inschrijven', 'Helaas is er geen cursusplek meer beschikbaar' ) );
 		}
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 *
 	 * Prepareer 'cursus_inschrijving' form
 	 *
-	 * @return bool|WP_Error
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data          = [];
 			$this->data['input'] = [
@@ -184,17 +184,17 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		if ( method_exists( $this, $actie ) ) {
 			return $this->$actie();
 		}
-		return false;
+		return $this->status( new WP_Error( 'intern', 'Er is een fout opgetreden' ) );
 	}
 
 	/**
 	 * Valideer/sanitize 'cursus_inschrijving' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -231,29 +231,29 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		);
 		if ( is_array( $this->data['input'] ) ) {
 			if ( 0 === intval( $this->data['input']['cursus_id'] ) ) {
-				return new WP_Error( 'verplicht', 'Er is nog geen cursus gekozen' );
+				return $this->melding( new WP_Error( 'verplicht', 'Er is nog geen cursus gekozen' ) );
 			}
 			if ( 0 === intval( $this->data['input']['gebruiker_id'] ) ) {
 				$error = $this->validator->gebruiker( $this->data['input'] );
 				if ( is_wp_error( $error ) ) {
-					return $error;
+					return $this->melding( $error );
 				}
 			}
 			$cursus = new Cursus( $this->data['input']['cursus_id'] );
 			if ( $cursus->vol ) {
 				if ( 1 < $this->data['input']['aantal'] ) {
 					$this->data['input']['aantal'] = 1;
-					return new WP_Error( 'vol', 'De cursus is helaas vol. Als je op een wachtlijst geplaatst wilt dan kan je dit alleen voor jezelf doen' );
+					return $this->melding( new WP_Error( 'vol', 'De cursus is helaas vol. Als je op een wachtlijst geplaatst wilt dan kan je dit alleen voor jezelf doen' ) );
 				}
 			}
 			$ruimte = $cursus->ruimte();
 			if ( ! $cursus->vol && $ruimte < $this->data['input']['aantal'] ) {
 				$this->data['input']['aantal'] = $ruimte;
-				return new WP_Error( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." );
+				return $this->melding( new WP_Error( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." ) );
 			}
-			return true;
+			return $this->save();
 		}
-		return new WP_Error( 'input', 'geen juiste data ontvangen' );
+		return $this->melding( new WP_Error( 'input', 'geen juiste data ontvangen' ) );
 	}
 
 	/**

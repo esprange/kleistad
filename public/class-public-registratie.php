@@ -21,11 +21,12 @@ class Public_Registratie extends ShortcodeForm {
 	/**
 	 * Prepareer 'registratie' form
 	 *
-	 * @return bool
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return string
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$gebruiker = wp_get_current_user();
 
 		if ( ! isset( $this->data['input'] ) ) {
@@ -41,17 +42,17 @@ class Public_Registratie extends ShortcodeForm {
 				'user_email'   => $gebruiker->user_email,
 			];
 		}
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'registratie' form
 	 *
-	 * @return WP_ERROR|bool
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -68,19 +69,19 @@ class Public_Registratie extends ShortcodeForm {
 		if ( is_array( $this->data['input'] ) ) {
 			$this->data['gebruiker_id'] = get_current_user_id();
 			if ( ! $this->data['gebruiker_id'] ) {
-				return new WP_Error( 'security', 'Er is een security fout geconstateerd' );
+				return $this->melding( new WP_Error( 'security', 'Er is een security fout geconstateerd' ) );
 			}
 			$error = $this->validator->gebruiker( $this->data['input'] );
 			if ( is_wp_error( $error ) ) {
-				return $error;
+				return $this->melding( $error );
 			}
 			$gebruiker_id = email_exists( $this->data['input']['user_email'] );
 			if ( false !== $gebruiker_id && $gebruiker_id !== $this->data['gebruiker_id'] ) {
-				return new WP_Error( 'onjuist', 'Dit email adres is al in gebruik' );
+				return $this->melding( new WP_Error( 'onjuist', 'Dit email adres is al in gebruik' ) );
 			}
-			return true;
+			return $this->save();
 		}
-		return new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' );
+		return $this->melding( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) );
 	}
 
 	/**

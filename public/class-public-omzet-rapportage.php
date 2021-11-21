@@ -18,22 +18,24 @@ class Public_Omzet_Rapportage extends Shortcode {
 
 	/**
 	 * Prepareer 'omzet_rapportage' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$register = new Artikelregister();
 		$rapport  = new Orderrapportage();
 		if ( 'details' === $this->data['actie'] ) {
 			sscanf( $this->data['id'], '%d-%d-%s', $this->data['jaar'], $this->data['maand'], $this->data['artikelcode'] );
 			$this->data['artikel']      = $register->geef_naam( $this->data['artikelcode'] );
 			$this->data['omzetdetails'] = $rapport->maanddetails( $this->data['maand'], $this->data['jaar'], $this->data['artikelcode'] );
-			return true;
+			return $this->content();
 		}
 		if ( empty( $this->data['id'] ) ) {
 			$this->data['id'] = date( 'Y-m', strtotime( 'this month 00:00' ) );
 		}
 		sscanf( $this->data['id'], '%d-%d', $this->data['jaar'], $this->data['maand'] );
 		$this->data['omzet'] = $rapport->maandrapport( $this->data['maand'], $this->data['jaar'] );
-		return true;
+		return $this->content();
 	}
 
 	/**

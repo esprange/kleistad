@@ -18,8 +18,10 @@ class Public_Saldo_Overzicht extends Shortcode {
 
 	/**
 	 * Prepareer 'saldo_overzicht' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$this->data['stokers'] = [];
 		foreach ( new Stokers() as $stoker ) {
 			$this->data['stokers'][] = [
@@ -27,7 +29,7 @@ class Public_Saldo_Overzicht extends Shortcode {
 				'saldo' => number_format_i18n( $stoker->saldo->bedrag, 2 ),
 			];
 		}
-		return true;
+		return $this->content();
 	}
 
 

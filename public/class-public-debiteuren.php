@@ -91,36 +91,38 @@ class Public_Debiteuren extends ShortcodeForm {
 
 	/**
 	 * Prepareer 'debiteuren' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$blokkade                       = new Blokkade();
 		$this->data['huidige_blokkade'] = $blokkade->get();
 		if ( 'blokkade' === $this->data['actie'] ) {
 			$this->data['wijzigbaar'] = $blokkade->wijzigbaar();
-			return true;
+			return $this->content();
 		}
 		if ( 'debiteur' === $this->data['actie'] ) {
 			$this->data['debiteur'] = $this->debiteur( $this->data['id'] );
-			return true;
+			return $this->content();
 		}
 		if ( 'zoek' === $this->data['actie'] ) {
 			$zoek       = ( $this->data['id'] ?? '' ) ?: wp_generate_uuid4(); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
 			$this->data = array_merge( $this->data, $this->debiteuren( $zoek ) );
-			return true;
+			return $this->content();
 		}
 		$this->data = array_merge( $this->data, [ 'actie' => 'openstaand' ], $this->debiteuren() );
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 *
 	 * Valideer/sanitize 'debiteuren' form
 	 *
-	 * @return bool|WP_Error
-	 *
 	 * @since   6.1.0
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -146,15 +148,15 @@ class Public_Debiteuren extends ShortcodeForm {
 			]
 		);
 		if ( 'blokkade' === $this->form_actie ) {
-			return true;
+			return $this->save();
 		}
 		$this->data['order'] = new Order( $this->data['input']['id'] );
 		if ( 'korting' === $this->form_actie ) {
 			if ( $this->data['order']->orderregels->bruto() < $this->data['input']['korting'] ) {
-				return new WP_Error( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' );
+				return $this->melding( new WP_Error( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' ) );
 			}
 		}
-		return true;
+		return $this->save();
 	}
 
 	/**

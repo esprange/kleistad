@@ -50,7 +50,7 @@ class Test_Public_Email extends Kleistad_UnitTestCase {
 			'namens'        => 'de Tester',
 		];
 		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'validate', $data, 'verzenden' );
+		$result = $this->public_actie( self::SHORTCODE, 'process', $data, 'verzenden' );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
 				echo $error . "\n"; // phpcs:ignore

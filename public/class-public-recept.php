@@ -22,12 +22,12 @@ class Public_Recept extends Shortcode {
 	/**
 	 * Prepareer 'recept' form
 	 *
-	 * @return bool
-	 *
 	 * @since   4.1.0
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
-		return true;
+	protected function prepare() : string {
+		return $this->content();
 	}
 
 	/**

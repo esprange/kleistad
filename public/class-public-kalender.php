@@ -153,9 +153,11 @@ class Public_Kalender extends Shortcode {
 
 	/**
 	 * Prepareer 'kalender' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
-		return true;
+	protected function prepare() : string {
+		return $this->content();
 	}
 
 }

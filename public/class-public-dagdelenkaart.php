@@ -23,8 +23,10 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	 * Prepareer 'dagdelenkaart' form
 	 *
 	 * @since   4.3.0
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data['input'] = [
 				'user_email'      => '',
@@ -42,17 +44,17 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 				'mc4wp-subscribe' => '0',
 			];
 		}
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'dagdelenkaart' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   4.3.0
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -77,17 +79,17 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 		);
 		if ( is_array( $this->data['input'] ) ) {
 			if ( '' === $this->data['input']['start_datum'] ) {
-				return new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' );
+				return $this->melding( new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer de dagdelenkaart moet ingaan' ) );
 			}
 			if ( 0 === intval( $this->data['input']['gebruiker_id'] ) ) {
 				$error = $this->validator->gebruiker( $this->data['input'] );
 				if ( is_wp_error( $error ) ) {
-					return $error;
+					return $this->melding( $error );
 				}
 			}
-			return true;
+			return $this->save();
 		}
-		return new WP_Error( 'input', 'geen juiste data ontvangen' );
+		return $this->melding( new WP_Error( 'input', 'geen juiste data ontvangen' ) );
 	}
 
 	/**

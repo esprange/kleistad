@@ -22,8 +22,10 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 * Prepareer 'abonnee_inschrijving' form
 	 *
 	 * @since   4.0.87
+	 *
+	 * return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data['input'] = [
 				'gebruiker_id'     => 0,
@@ -52,17 +54,17 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'role__not_in' => [ LID ],
 			]
 		);
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'abonnee_inschrijving' form
 	 *
-	 * @return WP_Error|bool
+	 * @return array
 	 *
 	 * @since   4.0.87
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -89,26 +91,26 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		);
 		if ( is_array( $this->data['input'] ) ) {
 			if ( '' === $this->data['input']['abonnement_keuze'] ) {
-				return new WP_Error( 'verplicht', 'Er is nog geen type abonnement gekozen' );
+				return $this->melding( new WP_Error( 'verplicht', 'Er is nog geen type abonnement gekozen' ) );
 			}
 			if ( '' === $this->data['input']['start_datum'] ) {
-				return new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' );
+				return $this->melding( new WP_Error( 'verplicht', 'Er is nog niet aangegeven wanneer het abonnement moet ingaan' ) );
 			}
 			if ( 0 === intval( $this->data['input']['gebruiker_id'] ) ) {
 				$error = $this->validator->gebruiker( $this->data['input'] );
 				if ( is_wp_error( $error ) ) {
-					return $error;
+					return $this->melding( $error );
 				}
 			}
-			return true;
+			return $this->save();
 		}
-		return new WP_Error( 'input', 'geen juiste data ontvangen' );
+		return $this->melding( new WP_Error( 'input', 'geen juiste data ontvangen' ) );
 	}
 
 	/**
 	 * Bewaar 'abonnee_inschrijving' form gegevens
 	 *
-	 * @return WP_Error|array
+	 * @return array
 	 *
 	 * @since   4.0.87
 	 * @suppressWarnings(PHPMD.StaticAccess)

@@ -20,8 +20,10 @@ class Public_Verkoop extends ShortcodeForm {
 
 	/**
 	 * Prepareer 'verkoop' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data = [
 				'input'      => [
@@ -43,13 +45,15 @@ class Public_Verkoop extends ShortcodeForm {
 				),
 			];
 		}
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'verkoop' form
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() :array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -71,7 +75,7 @@ class Public_Verkoop extends ShortcodeForm {
 				],
 			]
 		);
-		return true;
+		return $this->save();
 	}
 
 	/**

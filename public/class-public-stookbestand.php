@@ -18,9 +18,11 @@ class Public_Stookbestand extends Shortcode {
 
 	/**
 	 * Prepareer 'stookbestand' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
-		return true;
+	protected function prepare() : string {
+		return $this->content();
 	}
 
 	/**

@@ -66,12 +66,13 @@ class Test_Public_Cursus_Overzicht extends Kleistad_UnitTestCase {
 		$inschrijving = new Inschrijving( $cursus->id, $cursist_id );
 		$inschrijving->save();
 
-		$_POST = [
+		$_POST  = [
 			'cursist_id' => $cursist_id,
 			'cursus_id'  => $cursus->id,
 			'kosten'     => 35.0,
 		];
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'validate', $data ), 'validate incorrect' );
+		$result = $this->public_actie( self::SHORTCODE, 'process', $data, 'indelen' );
+		$this->assertArrayHasKey( 'content', $result, 'validate incorrect' );
 	}
 
 	/**

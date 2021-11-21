@@ -21,8 +21,10 @@ class Public_Abonnement_Overzicht extends Shortcode {
 	 * Prepareer 'abonnement_overzicht'
 	 *
 	 * @since   4.5.4
+	 *
+	 * return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$this->data['abonnee_info'] = [];
 		$abonnees                   = new Abonnees();
 		foreach ( $abonnees as $abonnee ) {
@@ -36,7 +38,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 				];
 			}
 		}
-		return true;
+		return $this->content();
 	}
 
 	/**

@@ -18,8 +18,10 @@ class Public_Rapport extends Shortcode {
 
 	/**
 	 * Prepareer 'rapport' form inhoud
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$huidige_gebruiker   = wp_get_current_user();
 		$saldo               = new Saldo( $huidige_gebruiker->ID );
 		$this->data['naam']  = $huidige_gebruiker->display_name;
@@ -53,7 +55,7 @@ class Public_Rapport extends Shortcode {
 				}
 			}
 		}
-		return true;
+		return $this->content();
 	}
 
 }

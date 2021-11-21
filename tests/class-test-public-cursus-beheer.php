@@ -74,9 +74,10 @@ class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 			'tonen'           => '',
 		];
 
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'validate', $data, 'verwijderen' ), 'validate bij verwijderen incorrect' );
-
-		$this->assertTrue( $this->public_actie( self::SHORTCODE, 'validate', $data, 'test' ), 'validate bij invoer incorrect' );
+		$result = $this->public_actie( self::SHORTCODE, 'process', $data, 'verwijderen' );
+		$this->assertArrayHasKey( 'content', $result, 'validate bij verwijderen incorrect' );
+		$result = $this->public_actie( self::SHORTCODE, 'process', $data, 'bewaren' );
+		$this->assertArrayHasKey( 'content', $result, 'validate bij invoer incorrect' );
 	}
 
 	/**

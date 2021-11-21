@@ -90,8 +90,10 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * Prepareer 'cursus_beheer' form
 	 *
 	 * @since   4.0.87
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$this->data['docenten'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
@@ -107,7 +109,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			if ( ! isset( $this->data['cursus'] ) ) {
 				$this->data['cursus'] = $this->formulier();
 			}
-			return true;
+			return $this->content();
 		}
 		if ( 'wijzigen' === $this->data['actie'] ) {
 			/*
@@ -116,20 +118,20 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			if ( ! isset( $this->data['cursus'] ) ) {
 				$this->data['cursus'] = $this->formulier( $this->data['id'] );
 			}
-			return true;
+			return $this->content();
 		}
 		$this->data['cursussen'] = $this->lijst();
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'cursus_beheer' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() :array {
 		$error               = new WP_Error();
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
@@ -164,7 +166,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			]
 		);
 		if ( 'verwijderen' === $this->form_actie ) {
-			return true;
+			return $this->save();
 		}
 		if ( is_null( $this->data['input']['technieken'] ) ) {
 			$this->data['input']['technieken'] = [];
@@ -180,9 +182,9 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			}
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+			return $this->melding( $error );
 		}
-		return true;
+		return $this->save();
 	}
 
 	/**

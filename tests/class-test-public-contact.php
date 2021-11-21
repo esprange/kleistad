@@ -54,7 +54,7 @@ class Test_Public_Contact extends Kleistad_UnitTestCase {
 			'vraag'     => 'testvraag',
 		];
 		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'validate', $data );
+		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
 				echo $error . "\n"; // phpcs:ignore

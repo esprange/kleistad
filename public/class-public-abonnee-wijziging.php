@@ -21,29 +21,29 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	/**
 	 * Prepareer 'abonnee_wijziging' form
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 *
 	 * @since   4.0.87
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$abonnee_id               = get_current_user_id();
 		$betalen                  = new Betalen();
 		$this->data['abonnement'] = new Abonnement( $abonnee_id );
 		if ( $this->data['abonnement']->start_datum ) {
 			$this->data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id );
-			return true;
+			return $this->content();
 		}
-		return new WP_Error( 'abonnement', 'Je hebt geen actief abonnement, neem eventueel contact op met een bestuurslid' );
+		return $this->status( new WP_Error( 'abonnement', 'Je hebt geen actief abonnement, neem eventueel contact op met een bestuurslid' ) );
 	}
 
 	/**
 	 * Valideer/sanitize 'abonnee_wijziging' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$error               = new WP_Error();
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
@@ -75,9 +75,9 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 		}
 
 		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+			return $this->melding( $error );
 		}
-		return true;
+		return $this->save();
 	}
 
 	/**

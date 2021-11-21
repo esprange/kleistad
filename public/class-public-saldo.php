@@ -20,25 +20,27 @@ class Public_Saldo extends ShortcodeForm {
 
 	/**
 	 * Prepareer 'saldo' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$gebruiker_id = get_current_user_id();
 		$saldo        = new Saldo( $gebruiker_id );
 		$this->data   = [
 			'gebruiker_id' => $gebruiker_id,
 			'saldo'        => number_format_i18n( $saldo->bedrag, 2 ),
 		];
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'saldo' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
@@ -59,9 +61,9 @@ class Public_Saldo extends ShortcodeForm {
 			$this->data['input']['bedrag'] = $this->data['input']['ander'];
 		}
 		if ( 15 > floatval( $this->data['input']['bedrag'] ) || 100 < floatval( $this->data['input']['bedrag'] ) ) {
-			return new WP_Error( 'onjuist', 'Het bedrag moet tussen 15 en 100 euro liggen' );
+			return $this->melding( new WP_Error( 'onjuist', 'Het bedrag moet tussen 15 en 100 euro liggen' ) );
 		}
-		return true;
+		return $this->save();
 	}
 
 	/**

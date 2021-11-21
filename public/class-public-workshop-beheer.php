@@ -118,8 +118,10 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 
 	/**
 	 * Prepareer 'input' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		if ( 'toevoegen' === $this->data['actie'] ) {
 			/*
 			* Er moet een nieuwe workshop opgevoerd worden
@@ -128,7 +130,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			if ( ! isset( $this->data['workshop'] ) ) {
 				$this->data['workshop'] = $this->formulier();
 			}
-			return true;
+			return $this->content();
 		}
 		if ( 'wijzigen' === $this->data['actie'] ) {
 			/*
@@ -138,7 +140,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			if ( ! isset( $this->data['workshop'] ) ) {
 				$this->data['workshop'] = $this->formulier( $this->data['id'] );
 			}
-			return true;
+			return $this->content();
 		}
 		if ( 'inplannen' === $this->data['actie'] ) {
 			/**
@@ -148,7 +150,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			$this->data['docenten'] = $this->docenten();
 			if ( $aanvraag->workshop_id ) {
 				$this->data['workshop'] = $this->formulier( $aanvraag->workshop_id );
-				return true;
+				return $this->content();
 			}
 			$this->data['workshop']                = wp_parse_args(
 				[
@@ -159,7 +161,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				$this->formulier()
 			);
 			$this->data['workshop']['aanvraag_id'] = $this->data['id'];
-			return true;
+			return $this->content();
 		}
 		if ( 'tonen' === $this->data['actie'] ) {
 			/**
@@ -177,24 +179,24 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'omvang'          => $aanvraag->omvang,
 				'periode'         => $aanvraag->periode,
 			];
-			return true;
+			return $this->content();
 		}
 		/**
 		 * De workshopaanvragen en de geplande workshops moeten worden getoond.
 		 */
 		$this->data['workshops'] = $this->planning();
 		$this->data['aanvragen'] = $this->aanvragen();
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'workshop_beheer' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   5.0.0
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$error = new WP_Error();
 		if ( 'reageren' === $this->form_actie ) {
 			$this->data['casus'] = filter_input_array(
@@ -205,9 +207,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				]
 			);
 			if ( empty( $this->data['casus']['reactie'] ) ) {
-				return new WP_Error( 'reactie', 'Er is nog geen reactie ingevoerd!' );
+				return $this->melding( new WP_Error( 'reactie', 'Er is nog geen reactie ingevoerd!' ) );
 			}
-			return true;
+			return $this->save();
 		}
 		$this->data['workshop']              = filter_input_array(
 			INPUT_POST,
@@ -257,9 +259,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			}
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+			return $this->melding( $error );
 		}
-		return true;
+		return $this->save();
 	}
 
 	/**

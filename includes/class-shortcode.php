@@ -55,9 +55,9 @@ abstract class Shortcode {
 	 *
 	 * @since   4.0.87
 	 *
-	 * @return WP_Error|bool
+	 * @return string
 	 */
-	abstract protected function prepare();
+	abstract protected function prepare() : string;
 
 	/**
 	 * Enqueue the scripts and styles for the shortcode.
@@ -90,18 +90,10 @@ abstract class Shortcode {
 			if ( is_string( $betaal_result ) ) { // Er is een succesvolle betaling, toon het bericht.
 				return $this->status( $betaal_result ) . $this->goto_home();
 			}
-			$result = $this->prepare();
-			if ( is_wp_error( $result ) ) {
-				$html = $this->status( $result );
-			} else {
-				$html_objectclass = get_class( $this ) . '_Display';
-				$display          = new $html_objectclass( $this->data );
-				$html             = $display->render();
-			}
 			if ( is_wp_error( $betaal_result ) ) { // Er is een betaling maar niet succesvol.
-				return $this->status( $betaal_result ) . $html;
+				return $this->status( $betaal_result ) . $this->prepare();
 			}
-			return $html; // Er is geen betaling, toon de reguliere inhoud van de shortcode.
+			return $this->prepare(); // Er is geen betaling, toon de reguliere inhoud van de shortcode.
 		} catch ( Kleistad_Exception $exceptie ) {
 			return $this->status( new WP_Error( 'exceptie', $exceptie->getMessage() ) );
 		} catch ( Exception $exceptie ) {
@@ -138,36 +130,18 @@ abstract class Shortcode {
 	 *
 	 * @since 5.7.0
 	 * @return string
-	 * @suppressWarnings(PHPMD.ElseExpression)
+	 *
+	 * @throws Exception Onbekend object.
 	 */
 	public function goto_home() : string {
 		$html_objectclass = get_class( $this ) . '_Display';
-		if ( class_exists( $html_objectclass ) ) {
-			$dummy   = [];
-			$display = new $html_objectclass( $dummy );
-			ob_start();
-			$display->home();
-			return ob_get_clean();
+		if ( ! class_exists( $html_objectclass ) ) {
+			throw new Exception( 'Display object niet aanwezig' );
 		}
-		/**
-		 * Het onderstaande komt ter vervallen als alles overgezet is naar de display render class.
-		 */
-		if ( ! is_user_logged_in() ) {
-			$url = home_url();
-		} elseif ( current_user_can( BESTUUR ) ) {
-			$url = home_url( '/bestuur/' );
-		} else {
-			$url = home_url( '/leden/' );
-		}
+		$dummy   = [];
+		$display = new $html_objectclass( $dummy );
 		ob_start();
-		?>
-		<br/><br/>
-		<div style="text-align:center;" >
-			<button class="kleistad-button" type="button" onclick="location.href='<?php echo esc_url( $url ); ?>';" >
-				&nbsp;OK&nbsp;
-			</button>
-		</div>
-		<?php
+		$display->home();
 		return ob_get_clean();
 	}
 
@@ -214,6 +188,17 @@ abstract class Shortcode {
 			$this->atts[ $att_key ] = htmlspecialchars_decode( $attribute );
 		}
 		$this->shortcode = $shortcode;
+	}
+
+	/**
+	 * Haal de tekst van de shortcode op.
+	 *
+	 * @return string
+	 */
+	protected function content() : string {
+		$html_objectclass = get_class( $this ) . '_Display';
+		$display          = new $html_objectclass( $this->data );
+		return $display->render();
 	}
 
 	/**
@@ -313,6 +298,7 @@ abstract class Shortcode {
 	 *
 	 * @param Shortcode $shortcode De shortcode waarvoor de download plaatsvindt.
 	 * @param string    $functie   De shortcode functie die aangeroepen moet worden.
+	 *
 	 * @return array
 	 */
 	protected static function download( Shortcode $shortcode, string $functie ) : array {

@@ -25,17 +25,17 @@ class Public_Reservering extends Shortcode {
 	 *
 	 * Prepareer 'reservering' form
 	 *
-	 * @return WP_ERROR|bool
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		if ( ! is_numeric( $this->data['oven'] ) ) {
-			return new WP_Error( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' );
+			return $this->status( new WP_Error( 'fout', 'de shortcode bevat geen oven nummer tussen 1 en 999 !' ) );
 		}
 		$oven = new Oven( $this->data['oven'] );
 		if ( ! $oven->id ) {
-			return new WP_Error( 'fout', 'oven met id ' . $this->data['oven'] . ' is niet bekend in de database !' );
+			return $this->status( new WP_Error( 'fout', 'oven met id ' . $this->data['oven'] . ' is niet bekend in de database !' ) );
 		}
 		$this->data = [
 			'stokers'  => get_users(
@@ -52,7 +52,7 @@ class Public_Reservering extends Shortcode {
 			],
 			'override' => current_user_can( OVERRIDE ),
 		];
-		return true;
+		return $this->content();
 	}
 
 	/**

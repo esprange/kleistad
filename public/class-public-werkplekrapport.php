@@ -18,8 +18,10 @@ class Public_Werkplekrapport extends Shortcode {
 
 	/**
 	 * Prepareer 'werkplekrapport' form
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$input = filter_input_array(
 			INPUT_GET,
 			[
@@ -32,17 +34,17 @@ class Public_Werkplekrapport extends Shortcode {
 			if ( 'individueel' === $this->data['actie'] ) {
 				$this->data['gebruikers'] = $this->geef_gebruikers();
 			}
-			return true;
+			return $this->content();
 		}
 		$this->data['vanaf_datum']  = strtotime( $input['vanaf_datum'] );
 		$this->data['tot_datum']    = strtotime( $input['tot_datum'] );
 		$this->data['gebruiker_id'] = intval( $input['gebruiker_id'] );
 		if ( 'individueel' === $this->data['actie'] ) {
 			$this->data['rapport'] = $this->individueelgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'], $this->data['gebruiker_id'] );
-			return true;
+			return $this->content();
 		}
 		$this->data['rapport'] = $this->groepsgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'] );
-		return true;
+		return $this->content();
 	}
 
 	/**

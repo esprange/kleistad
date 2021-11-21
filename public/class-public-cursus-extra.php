@@ -56,11 +56,11 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 *
 	 * Prepareer 'cursus_extra' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   6.6.0
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$param = filter_input_array(
 			INPUT_GET,
 			[
@@ -69,7 +69,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			]
 		);
 		if ( empty( $param['code'] ) || empty( $param['hsh'] ) ) {
-			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
+			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 
 		list( $cursus_id, $cursist_id ) = sscanf( $param['code'], 'C%d-%d' );
@@ -78,7 +78,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 
 		if ( is_object( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
-				return new WP_Error( 'Geannuleerd', 'Deelname aan de cursus is geannuleerd.' );
+				return $this->status( new WP_Error( 'Geannuleerd', 'Deelname aan de cursus is geannuleerd.' ) );
 			}
 			$this->data['cursus_naam']  = $inschrijving->cursus->naam;
 			$this->data['cursist_code'] = $inschrijving->code;
@@ -86,19 +86,19 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			if ( ! isset( $this->data['input'] ) ) {
 				$this->data['input']['extra'] = $this->prepare_extra_cursisten( $inschrijving );
 			}
-			return true;
+			return $this->content();
 		}
-		return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
+		return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 	}
 
 	/**
 	 * Valideer/sanitize 'cursus_extra' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   6.6.0
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$error                          = new WP_Error();
 		$this->data['input']            = filter_input_array(
 			INPUT_POST,
@@ -135,9 +135,9 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			$error->add( 'emails', 'Elk email adres moet uniek zijn en niet gelijk aan het eigen email adres' );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+			return $this->melding( $error );
 		}
-		return true;
+		return $this->save();
 	}
 
 	/**

@@ -22,11 +22,11 @@ class Public_Betaling extends ShortcodeForm {
 	 *
 	 * Prepareer 'betaling' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   4.2.0
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$param = filter_input_array(
 			INPUT_GET,
 			[
@@ -37,16 +37,16 @@ class Public_Betaling extends ShortcodeForm {
 		);
 		if ( is_null( $param ) || is_null( $param['order'] ) ) {
 			$this->data['actie'] = '';
-			return true; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
+			return $this->content(); // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
 		$order           = new Order( intval( $param['order'] ) );
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->geef_object( $order->referentie );
 		if ( is_null( $artikel ) || $param['hsh'] !== $artikel->controle() ) {
-			return new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' );
+			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		if ( $order->gesloten ) {
-			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
+			return $this->status( new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' ) );
 		}
 		$this->data = [
 			'order_id'      => $order->id,
@@ -60,17 +60,17 @@ class Public_Betaling extends ShortcodeForm {
 			'artikel_type'  => $param['art'],
 			'annuleerbaar'  => $artikel->is_annuleerbaar(),
 		];
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'betaling' form
 	 *
-	 * @return WP_ERROR|bool
-	 *
 	 * @since   4.2.0
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
@@ -81,7 +81,7 @@ class Public_Betaling extends ShortcodeForm {
 		);
 		$this->data['order'] = new Order( $this->data['input']['order_id'] );
 		if ( $this->data['order']->gesloten ) {
-			return new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' );
+			return $this->melding( new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' ) );
 		}
 		$artikelregister       = new Artikelregister();
 		$this->data['artikel'] = $artikelregister->geef_object( $this->data['order']->referentie );
@@ -93,11 +93,11 @@ class Public_Betaling extends ShortcodeForm {
 				}
 			}
 			if ( empty( $beschikbaar ) ) {
-				return true;
+				return $this->save();
 			}
-			return new WP_Error( 'Beschikbaar', $beschikbaar );
+			return $this->melding( new WP_Error( 'Beschikbaar', $beschikbaar ) );
 		}
-		return new WP_Error( 'Beschikbaar', 'Interne fout' );
+		return $this->melding( new WP_Error( 'Beschikbaar', 'Interne fout' ) );
 	}
 
 	/**

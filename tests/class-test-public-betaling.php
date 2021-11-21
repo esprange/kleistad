@@ -89,7 +89,7 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 			'artikel_type' => $verkoop->artikel_type,
 		];
 		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'validate', $data );
+		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
 				echo $error . "\n"; // phpcs:ignore
@@ -102,8 +102,8 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		 */
 		$order->gesloten = true;
 		$order->save( 'test' );
-		$result = $this->public_actie( self::SHORTCODE, 'validate', $data );
-		$this->assertTrue( false !== strpos( $result->get_error_message(), 'Volgens onze informatie is er reeds betaald' ), 'validate gesloten order incorrect' );
+		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
+		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze informatie is er reeds betaald' ), 'validate gesloten order incorrect' );
 
 		// @todo Er zou ook nog een test moeten zijn vwb beschikbaarheid.
 	}

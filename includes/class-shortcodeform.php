@@ -39,9 +39,10 @@ abstract class ShortcodeForm extends Shortcode {
 	 * Validatie functie, wordt voor form validatie gebruikt
 	 *
 	 * @since   4.0.87
-	 * @return WP_ERROR|bool
+	 *
+	 * @return array
 	 */
-	abstract protected function validate();
+	abstract protected function process() : array;
 
 	/**
 	 * Enqueue the scripts and styles for the shortcode.
@@ -77,6 +78,17 @@ abstract class ShortcodeForm extends Shortcode {
 	protected function __construct( string $shortcode, array $attributes ) {
 		parent::__construct( $shortcode, $attributes );
 		$this->validator = new Validator();
+	}
+
+	/**
+	 * Geef een foutmelding terug
+	 *
+	 * @param WP_Error $error De fout.
+	 *
+	 * @return array
+	 */
+	protected function melding( WP_Error $error ) : array {
+		return [ 'status' => $this->status( $error ) ];
 	}
 
 	/**
@@ -116,11 +128,7 @@ abstract class ShortcodeForm extends Shortcode {
 				throw new Exception( 'callback_formsubmit voor onbekend object' );
 			}
 			$shortcode->form_actie = $request->get_param( 'form_actie' );
-			$result                = $shortcode->validate();
-			if ( ! is_wp_error( $result ) ) {
-				return new WP_REST_Response( $shortcode->save() );
-			}
-			return new WP_REST_Response( [ 'status' => $shortcode->status( $result ) ] );
+			return new WP_REST_Response( $shortcode->process() );
 		} catch ( Kleistad_Exception $exceptie ) {
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
 		} catch ( Exception $exceptie ) {

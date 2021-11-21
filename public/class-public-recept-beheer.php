@@ -108,11 +108,11 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	/**
 	 * Prepareer 'recept' form
 	 *
-	 * @return bool
-	 *
 	 * @since   4.1.0
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 
 		if ( 'toevoegen' === $this->data['actie'] ) {
 			/*
@@ -145,18 +145,17 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		} else {
 			$this->data['recepten'] = $this->lijst();
 		}
-
-		return true;
+		return $this->content();
 	}
 
 	/**
 	 * Valideer/sanitize 'recept' form
 	 *
-	 * @return WP_Error|bool
-	 *
 	 * @since   4.1.0
+	 *
+	 * @return array
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$this->data['recept']                           = filter_input_array(
 			INPUT_POST,
 			[
@@ -176,11 +175,11 @@ class Public_Recept_Beheer extends ShortcodeForm {
 
 		if ( 'bewaren' === $this->form_actie ) {
 			if ( UPLOAD_ERR_INI_SIZE === $_FILES['foto']['error'] ) {
-				return new WP_Error( 'foto', 'De foto is te groot qua omvang !' );
+				return $this->melding( new WP_Error( 'foto', 'De foto is te groot qua omvang !' ) );
 			}
 		}
 
-		return true;
+		return $this->save();
 	}
 
 	/**

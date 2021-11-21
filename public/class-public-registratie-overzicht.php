@@ -88,16 +88,16 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 *
 	 * Prepareer 'registratie_overzicht' form
 	 *
-	 * @return bool
-	 *
 	 * @since   4.0.87
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		$this->data = [
 			'registraties' => $this->registraties(),
 			'cursussen'    => new Cursussen(),
 		];
-		return true;
+		return $this->content();
 	}
 
 	/**

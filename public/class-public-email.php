@@ -29,8 +29,10 @@ class Public_Email extends ShortcodeForm {
 
 	/**
 	 * Prepareer 'email' form inhoud
+	 *
+	 * @return string
 	 */
-	protected function prepare() {
+	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data['input'] = [
 				'tree'          => [],
@@ -50,11 +52,11 @@ class Public_Email extends ShortcodeForm {
 				$this->docenten(),
 				$this->bestuur()
 			);
-			return true;
+			return $this->content();
 		}
 
 		$this->data['input']['tree'] = $this->cursisten();
-		return true;
+		return $this->content();
 	}
 
 	/**
@@ -183,11 +185,11 @@ class Public_Email extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize email form
 	 *
-	 * @return WP_ERROR|bool
+	 * @return array
 	 *
 	 * @since   5.5.0
 	 */
-	protected function validate() {
+	protected function process() : array {
 		$error                                = new WP_Error();
 		$this->data['input']                  = filter_input_array(
 			INPUT_POST,
@@ -217,9 +219,9 @@ class Public_Email extends ShortcodeForm {
 			$error->add( 'email', 'Er is niet aangegeven wie de email verstuurt' );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
-			return $error;
+			return $this->melding( $error );
 		}
-		return true;
+		return $this->save();
 	}
 
 	/**
