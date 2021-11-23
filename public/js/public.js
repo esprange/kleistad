@@ -87,6 +87,7 @@ var detectTap;
 	function defineTimespinners() {
 		let $tijd = $( '.kleistad-tijd' );
 		if ( $tijd[0] ) {
+			// noinspection JSUnusedGlobalSymbols .
 			$.widget(
 				'ui.timespinner',
 				$.ui.spinner,
@@ -121,6 +122,7 @@ var detectTap;
 	function defineSelectMenus() {
 		let $selectMenu = $( '.kleistad-selectmenu' );
 		if ( $selectMenu[0] ) {
+			// noinspection JSUnusedGlobalSymbols .
 			$.widget(
 				'custom.iconselectmenu',
 				$.ui.selectmenu,
@@ -231,7 +233,7 @@ var detectTap;
 		if ( 'undefined' !== typeof $element.data( 'actie' ) ) {
 			shortcodeData.actie = $element.data( 'actie' );
 		} else {
-			shortcodeData.actie = '-';
+			shortcodeData.actie = 'overzicht';
 		}
 		return shortcodeData;
 	};

@@ -19,33 +19,6 @@ use WP_Error;
 class Public_Cursus_Beheer extends ShortcodeForm {
 
 	/**
-	 * Maak de lijst van cursussen
-	 *
-	 * @return array De cursussen data.
-	 */
-	private function lijst() : array {
-		$cursussen = new Cursussen();
-		$lijst     = [];
-		$vandaag   = strtotime( 'today' );
-		foreach ( $cursussen as $cursus ) {
-			$lijst[] = [
-				'id'          => $cursus->id,
-				'naam'        => $cursus->naam,
-				'start_datum' => date( 'd-m-Y', $cursus->start_datum ),
-				'eind_datum'  => date( 'd-m-Y', $cursus->eind_datum ),
-				'start_tijd'  => date( 'H:i', $cursus->start_tijd ),
-				'eind_tijd'   => date( 'H:i', $cursus->eind_tijd ),
-				'docent'      => $cursus->docent_naam(),
-				'vervallen'   => $cursus->vervallen,
-				'status'      => $cursus->vervallen ? 'vervallen' :
-					( $cursus->eind_datum < $vandaag ? 'voltooid' :
-					( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
-			];
-		}
-		return $lijst;
-	}
-
-	/**
 	 * Bereid een cursus wijziging voor.
 	 *
 	 * @param int|null $cursus_id De cursus.
@@ -86,14 +59,11 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 *
-	 * Prepareer 'cursus_beheer' form
-	 *
-	 * @since   4.0.87
+	 * Prepareer 'cursus_beheer' toevoegen form
 	 *
 	 * @return string
 	 */
-	protected function prepare() : string {
+	protected function prepare_toevoegen() : string {
 		$this->data['docenten'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
@@ -101,26 +71,55 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'orderby' => 'display_name',
 			]
 		);
+		if ( ! isset( $this->data['cursus'] ) ) {
+			$this->data['cursus'] = $this->formulier();
+		}
+		return $this->content();
+	}
 
-		if ( 'toevoegen' === $this->data['actie'] ) {
-			/*
-			* Er moet een nieuwe cursus opgevoerd worden
-			*/
-			if ( ! isset( $this->data['cursus'] ) ) {
-				$this->data['cursus'] = $this->formulier();
-			}
-			return $this->content();
+	/**
+	 * Prepareer 'cursus_beheer' wijzigen form
+	 *
+	 * @return string
+	 */
+	protected function prepare_wijzigen() : string {
+		$this->data['docenten'] = get_users(
+			[
+				'fields'  => [ 'ID', 'display_name' ],
+				'role'    => [ DOCENT ],
+				'orderby' => 'display_name',
+			]
+		);
+		if ( ! isset( $this->data['cursus'] ) ) {
+			$this->data['cursus'] = $this->formulier( $this->data['id'] );
 		}
-		if ( 'wijzigen' === $this->data['actie'] ) {
-			/*
-			 * Er is een cursus gekozen om te wijzigen.
-			 */
-			if ( ! isset( $this->data['cursus'] ) ) {
-				$this->data['cursus'] = $this->formulier( $this->data['id'] );
-			}
-			return $this->content();
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'cursus_beheer' standaard overzicht
+	 *
+	 * @return string
+	 */
+	protected function prepare_overzicht() : string {
+		$cursussen               = new Cursussen();
+		$this->data['cursussen'] = [];
+		$vandaag                 = strtotime( 'today' );
+		foreach ( $cursussen as $cursus ) {
+			$this->data['cursussen'][] = [
+				'id'          => $cursus->id,
+				'naam'        => $cursus->naam,
+				'start_datum' => date( 'd-m-Y', $cursus->start_datum ),
+				'eind_datum'  => date( 'd-m-Y', $cursus->eind_datum ),
+				'start_tijd'  => date( 'H:i', $cursus->start_tijd ),
+				'eind_tijd'   => date( 'H:i', $cursus->eind_tijd ),
+				'docent'      => $cursus->docent_naam(),
+				'vervallen'   => $cursus->vervallen,
+				'status'      => $cursus->vervallen ? 'vervallen' :
+					( $cursus->eind_datum < $vandaag ? 'voltooid' :
+						( $cursus->start_datum < $vandaag ? 'actief' : 'nieuw' ) ),
+			];
 		}
-		$this->data['cursussen'] = $this->lijst();
 		return $this->content();
 	}
 

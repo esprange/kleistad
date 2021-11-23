@@ -23,8 +23,7 @@ class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 	public function test_prepare() {
 		$cursus = new Cursus();
 		$cursus->save();
-
-		$data = [ 'actie' => '-' ];
+		$data = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['cursussen'] ), 'prepare default data incorrect' );
 

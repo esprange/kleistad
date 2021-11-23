@@ -97,47 +97,64 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
-	 *
-	 * Prepareer 'cursus_overzicht' form
-	 *
-	 * @since   4.5.4
+	 * Prepareer 'cursus_overzicht' cursisten form
 	 *
 	 * @return string
 	 */
-	protected function prepare() : string {
-		$this->data['bestuur_rechten'] = current_user_can( BESTUUR );
-		if ( 'cursisten' === $this->data['actie'] ) {
-			$cursus                  = new Cursus( $this->data['id'] );
-			$this->data['cursus']    = [
-				'id'    => $cursus->id,
-				'naam'  => $cursus->naam,
-				'code'  => $cursus->code,
-				'loopt' => $cursus->start_datum < strtotime( 'today' ),
-			];
-			$this->data['cursisten'] = $this->cursistenlijst( $cursus );
-			return $this->content();
-		}
-		if ( 'indelen' === $this->data['actie'] || 'uitschrijven' === $this->data['actie'] ) {
-			list( $cursus_id, $cursist_id ) = sscanf( $this->data['id'], 'C%d-%d' );
-			$cursus                         = new Cursus( $cursus_id );
-			$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
-			$cursist                        = get_userdata( $cursist_id );
-			$lopend                         = $cursus->lopend( $inschrijving->datum );
-			$this->data['cursus']           = [
-				'id'          => $cursus_id,
-				'lessen'      => $lopend['lessen'],
-				'lessen_rest' => $lopend['lessen_rest'],
-				'kosten'      => $lopend['kosten'],
-				'max'         => round( $cursus->inschrijfkosten, 1 ) + $cursus->cursuskosten,
-			];
-			$this->data['cursist']          = [
-				'id'     => $cursist_id,
-				'naam'   => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
-				'datum'  => $inschrijving->datum,
-				'aantal' => $inschrijving->aantal,
-			];
-			return $this->content();
-		}
+	protected function prepare_cursisten() : string {
+		$cursus                  = new Cursus( $this->data['id'] );
+		$this->data['cursus']    = [
+			'id'    => $cursus->id,
+			'naam'  => $cursus->naam,
+			'code'  => $cursus->code,
+			'loopt' => $cursus->start_datum < strtotime( 'today' ),
+		];
+		$this->data['cursisten'] = $this->cursistenlijst( $cursus );
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'cursus_overzicht' indelen form
+	 *
+	 * @return string
+	 */
+	protected function prepare_indelen() : string {
+		sscanf( $this->data['id'], 'C%d-%d', $cursus_id, $cursist_id );
+		$cursus                = new Cursus( $cursus_id );
+		$inschrijving          = new Inschrijving( $cursus_id, $cursist_id );
+		$cursist               = get_userdata( $cursist_id );
+		$lopend                = $cursus->lopend( $inschrijving->datum );
+		$this->data['cursus']  = [
+			'id'          => $cursus_id,
+			'lessen'      => $lopend['lessen'],
+			'lessen_rest' => $lopend['lessen_rest'],
+			'kosten'      => $lopend['kosten'],
+			'max'         => round( $cursus->inschrijfkosten, 1 ) + $cursus->cursuskosten,
+		];
+		$this->data['cursist'] = [
+			'id'     => $cursist_id,
+			'naam'   => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+			'datum'  => $inschrijving->datum,
+			'aantal' => $inschrijving->aantal,
+		];
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'cursus_overzicht' uitschrijven form
+	 *
+	 * @return string
+	 */
+	protected function prepare_uitschrijven() : string {
+		return $this->prepare_indelen();
+	}
+
+	/**
+	 * Prepareer 'cursus_overzicht' form
+	 *
+	 * @return string
+	 */
+	protected function prepare_overzicht() : string {
 		$this->data['cursus_info'] = $this->geef_cursussen();
 		return $this->content();
 	}

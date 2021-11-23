@@ -78,8 +78,8 @@ class Admin_Regelingen_Handler {
 			isset( $_REQUEST['action'] ) && 'delete' === $_REQUEST['action'] ) {
 			$regeling_id = filter_input( INPUT_GET, 'id' );
 			if ( ! is_null( $regeling_id ) ) {
-				list( $gebruiker_id, $oven_id ) = sscanf( $regeling_id, '%d-%d' );
-				$regelingen                     = get_user_meta( $gebruiker_id, Oven::REGELING, true );
+				sscanf( $regeling_id, '%d-%d', $gebruiker_id, $oven_id );
+				$regelingen = get_user_meta( $gebruiker_id, Oven::REGELING, true );
 				unset( $regelingen[ $oven_id ] );
 				if ( empty( $regelingen ) ) {
 					delete_user_meta( $gebruiker_id, Oven::REGELING );
@@ -131,8 +131,8 @@ class Admin_Regelingen_Handler {
 		} else {
 			$item = $default;
 			if ( isset( $_REQUEST['id'] ) ) {
-				list( $gebruiker_id, $oven_id) = sscanf( $_REQUEST['id'], '%d-%d' );
-				$gebruiker_regelingen          = get_user_meta( $gebruiker_id, Oven::REGELING, true );
+				sscanf( $_REQUEST['id'], '%d-%d', $gebruiker_id, $oven_id );
+				$gebruiker_regelingen = get_user_meta( $gebruiker_id, Oven::REGELING, true );
 
 				$gebruiker = get_userdata( $gebruiker_id );
 				$oven      = new Oven( $oven_id );

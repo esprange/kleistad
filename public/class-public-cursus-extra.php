@@ -24,7 +24,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 * @param Inschrijving $inschrijving De inschrijving.
 	 * @return array De extra cursisten.
 	 */
-	private function prepare_extra_cursisten( Inschrijving $inschrijving ) : array {
+	private function extra_cursisten( Inschrijving $inschrijving ) : array {
 		$extra = [];
 		$index = 1;
 		foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
@@ -72,9 +72,9 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 
-		list( $cursus_id, $cursist_id ) = sscanf( $param['code'], 'C%d-%d' );
-		$cursist                        = new Cursist( $cursist_id );
-		$inschrijving                   = $cursist->geef_inschrijving( $cursus_id );
+		sscanf( $param['code'], 'C%d-%d', $cursus_id, $cursist_id );
+		$cursist      = new Cursist( $cursist_id );
+		$inschrijving = $cursist->geef_inschrijving( $cursus_id );
 
 		if ( is_object( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
@@ -84,7 +84,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			$this->data['cursist_code'] = $inschrijving->code;
 			$this->data['cursist_naam'] = $cursist->display_name;
 			if ( ! isset( $this->data['input'] ) ) {
-				$this->data['input']['extra'] = $this->prepare_extra_cursisten( $inschrijving );
+				$this->data['input']['extra'] = $this->extra_cursisten( $inschrijving );
 			}
 			return $this->content();
 		}
@@ -99,8 +99,8 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function process() : array {
-		$error                          = new WP_Error();
-		$this->data['input']            = filter_input_array(
+		$error               = new WP_Error();
+		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
 				'extra_cursist' => [
@@ -110,9 +110,9 @@ class Public_Cursus_Extra extends ShortcodeForm {
 				'code'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		list( $cursus_id, $cursist_id ) = sscanf( $this->data['input']['code'], 'C%d-%d' );
-		$this->data['inschrijving']     = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
-		$emails                         = [ strtolower( get_user_by( 'id', $this->data['inschrijving']->klant_id )->user_email ) ];
+		sscanf( $this->data['input']['code'], 'C%d-%d', $cursus_id, $cursist_id );
+		$this->data['inschrijving'] = new Inschrijving( (int) $cursus_id, (int) $cursist_id );
+		$emails                     = [ strtolower( get_user_by( 'id', $this->data['inschrijving']->klant_id )->user_email ) ];
 		foreach ( $this->data['input']['extra_cursist'] as &$extra_cursist ) {
 			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;

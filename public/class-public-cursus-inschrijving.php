@@ -53,11 +53,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * Formulier dat getoond moet worden betreft het verwijderen van de wachtlijst.
 	 *
 	 * @return string
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function prepare_stop_wachten() : string {
-		list( $cursus_id, $cursist_id ) = sscanf( $this->data['param']['code'], 'C%d-%d' );
-		$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
+	protected function prepare_stop_wachten() : string {
+		sscanf( $this->data['param']['code'], 'C%d-%d', $cursus_id, $cursist_id );
+		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
 		if ( $this->data['param']['hsh'] !== $inschrijving->controle() ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
@@ -72,11 +71,10 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * Formulier dat getoond moet worden betreft het verwijderen van de wachtlijst.
 	 *
 	 * @return string
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function prepare_indelen_na_wachten() : string {
-		list( $cursus_id, $cursist_id ) = sscanf( $this->data['param']['code'], 'C%d-%d' );
-		$inschrijving                   = new Inschrijving( $cursus_id, $cursist_id );
+	protected function prepare_indelen_na_wachten() : string {
+		sscanf( $this->data['param']['code'], 'C%d-%d', $cursus_id, $cursist_id );
+		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
 		if ( $this->data['param']['hsh'] !== $inschrijving->controle() ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
@@ -95,9 +93,28 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * Formulier dat getoond moet worden betreft de reguliere inschrijving.
 	 *
 	 * @return string
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function prepare_inschrijven() : string {
+	protected function prepare_inschrijven() : string {
+		if ( ! isset( $this->data['input'] ) ) {
+			$this->data['input'] = [
+				'user_email'      => '',
+				'email_controle'  => '',
+				'first_name'      => '',
+				'last_name'       => '',
+				'straat'          => '',
+				'huisnr'          => '',
+				'pcode'           => '',
+				'plaats'          => '',
+				'telnr'           => '',
+				'cursus_id'       => 0,
+				'gebruiker_id'    => 0,
+				'aantal'          => 1,
+				'technieken'      => [],
+				'opmerking'       => '',
+				'betaal'          => 'ideal',
+				'mc4wp-subscribe' => '0',
+			];
+		}
 		$this->data['gebruikers']     = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
@@ -158,33 +175,8 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare() : string {
-		if ( ! isset( $this->data['input'] ) ) {
-			$this->data          = [];
-			$this->data['input'] = [
-				'user_email'      => '',
-				'email_controle'  => '',
-				'first_name'      => '',
-				'last_name'       => '',
-				'straat'          => '',
-				'huisnr'          => '',
-				'pcode'           => '',
-				'plaats'          => '',
-				'telnr'           => '',
-				'cursus_id'       => 0,
-				'gebruiker_id'    => 0,
-				'aantal'          => 1,
-				'technieken'      => [],
-				'opmerking'       => '',
-				'betaal'          => 'ideal',
-				'mc4wp-subscribe' => '0',
-			];
-		}
 		$this->data['actie'] = $this->bepaal_actie();
-		$actie               = 'prepare_' . $this->data['actie'];
-		if ( method_exists( $this, $actie ) ) {
-			return $this->$actie();
-		}
-		return $this->status( new WP_Error( 'intern', 'Er is een fout opgetreden' ) );
+		return parent::prepare();
 	}
 
 	/**

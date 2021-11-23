@@ -36,8 +36,7 @@ class Public_Betaling extends ShortcodeForm {
 			]
 		);
 		if ( is_null( $param ) || is_null( $param['order'] ) ) {
-			$this->data['actie'] = '';
-			return $this->content(); // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
+			return ''; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
 		$order           = new Order( intval( $param['order'] ) );
 		$artikelregister = new Artikelregister();

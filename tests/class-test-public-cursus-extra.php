@@ -49,7 +49,7 @@ class Test_Public_Cursus_Extra extends Kleistad_UnitTestCase {
 			'code' => $inschrijving->code,
 			'hsh'  => $inschrijving->controle(),
 		];
-		$data = [ 'actie' => '-' ];
+		$data = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$this->assertFalse( is_wp_error( $this->public_actie( self::SHORTCODE, 'display', $data ) ), 'prepare extra incorrect' );
 		$this->assertEquals( $inschrijving->aantal - 1, count( $data['input']['extra'] ), 'prepare extra aantal incorrect' );
 
@@ -57,7 +57,7 @@ class Test_Public_Cursus_Extra extends Kleistad_UnitTestCase {
 		$extra_cursist_id_2            = $this->factory->user->create();
 		$inschrijving->extra_cursisten = [ $extra_cursist_id_1, $extra_cursist_id_2 ];
 		$inschrijving->save();
-		$data = [ 'actie' => '-' ];
+		$data = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$this->assertFalse( is_wp_error( $this->public_actie( self::SHORTCODE, 'display', $data ) ), 'prepare extra met cursisten incorrect' );
 		$this->assertTrue(
 			false !== array_search(

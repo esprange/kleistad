@@ -90,26 +90,46 @@ class Public_Debiteuren extends ShortcodeForm {
 	}
 
 	/**
-	 * Prepareer 'debiteuren' form
+	 * Prepareer 'debiteuren' blokkade form
 	 *
 	 * @return string
 	 */
-	protected function prepare() : string {
+	protected function prepare_blokkade() : string {
 		$blokkade                       = new Blokkade();
 		$this->data['huidige_blokkade'] = $blokkade->get();
-		if ( 'blokkade' === $this->data['actie'] ) {
-			$this->data['wijzigbaar'] = $blokkade->wijzigbaar();
-			return $this->content();
-		}
-		if ( 'debiteur' === $this->data['actie'] ) {
-			$this->data['debiteur'] = $this->debiteur( $this->data['id'] );
-			return $this->content();
-		}
-		if ( 'zoek' === $this->data['actie'] ) {
-			$zoek       = ( $this->data['id'] ?? '' ) ?: wp_generate_uuid4(); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
-			$this->data = array_merge( $this->data, $this->debiteuren( $zoek ) );
-			return $this->content();
-		}
+		$this->data['wijzigbaar']       = $blokkade->wijzigbaar();
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'debiteuren' debiteur form
+	 *
+	 * @return string
+	 */
+	protected function prepare_debiteur() : string {
+		$blokkade                       = new Blokkade();
+		$this->data['huidige_blokkade'] = $blokkade->get();
+		$this->data['debiteur']         = $this->debiteur( $this->data['id'] );
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'debiteuren' zoek form
+	 *
+	 * @return string
+	 */
+	protected function prepare_zoek() : string {
+		$zoek       = ( $this->data['id'] ?? '' ) ?: wp_generate_uuid4(); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
+		$this->data = array_merge( $this->data, $this->debiteuren( $zoek ) );
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'debiteuren' overzicht form
+	 *
+	 * @return string
+	 */
+	protected function prepare_overzicht() : string {
 		$this->data = array_merge( $this->data, [ 'actie' => 'openstaand' ], $this->debiteuren() );
 		return $this->content();
 	}

@@ -117,70 +117,95 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 * Prepareer 'input' form
+	 * Prepareer 'input' form voor toevoegen.
 	 *
 	 * @return string
 	 */
-	protected function prepare() : string {
-		if ( 'toevoegen' === $this->data['actie'] ) {
-			/*
-			* Er moet een nieuwe workshop opgevoerd worden
-			*/
-			$this->data['docenten'] = $this->docenten();
-			if ( ! isset( $this->data['workshop'] ) ) {
-				$this->data['workshop'] = $this->formulier();
-			}
+	protected function prepare_toevoegen() : string {
+		/*
+		* Er moet een nieuwe workshop opgevoerd worden
+		*/
+		$this->data['docenten'] = $this->docenten();
+		if ( ! isset( $this->data['workshop'] ) ) {
+			$this->data['workshop'] = $this->formulier();
+		}
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'input' form voor wijzigen.
+	 *
+	 * @return string
+	 */
+	protected function prepare_wijzigen() : string {
+		/*
+		* Er is een workshop gekozen om te wijzigen.
+		*/
+		$this->data['docenten'] = $this->docenten();
+		if ( ! isset( $this->data['workshop'] ) ) {
+			$this->data['workshop'] = $this->formulier( $this->data['id'] );
+		}
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'input' form voor inplannen.
+	 *
+	 * @return string
+	 */
+	protected function prepare_inplannen() : string {
+		/**
+		 * Een workshop aanvraag gaat gepland worden.
+		 */
+		$aanvraag               = new WorkshopAanvraag( $this->data['id'] );
+		$this->data['docenten'] = $this->docenten();
+		if ( $aanvraag->workshop_id ) {
+			$this->data['workshop'] = $this->formulier( $aanvraag->workshop_id );
+
 			return $this->content();
 		}
-		if ( 'wijzigen' === $this->data['actie'] ) {
-			/*
-			* Er is een workshop gekozen om te wijzigen.
-			*/
-			$this->data['docenten'] = $this->docenten();
-			if ( ! isset( $this->data['workshop'] ) ) {
-				$this->data['workshop'] = $this->formulier( $this->data['id'] );
-			}
-			return $this->content();
-		}
-		if ( 'inplannen' === $this->data['actie'] ) {
-			/**
-			 * Een workshop aanvraag gaat gepland worden.
-			 */
-			$aanvraag               = new WorkshopAanvraag( $this->data['id'] );
-			$this->data['docenten'] = $this->docenten();
-			if ( $aanvraag->workshop_id ) {
-				$this->data['workshop'] = $this->formulier( $aanvraag->workshop_id );
-				return $this->content();
-			}
-			$this->data['workshop']                = wp_parse_args(
-				[
-					'email'   => $aanvraag->email,
-					'contact' => $aanvraag->contact,
-					'telnr'   => $aanvraag->telnr,
-				],
-				$this->formulier()
-			);
-			$this->data['workshop']['aanvraag_id'] = $this->data['id'];
-			return $this->content();
-		}
-		if ( 'tonen' === $this->data['actie'] ) {
-			/**
-			 * Een workshop aanvraag moet getoond worden.
-			 */
-			$aanvraag            = new WorkshopAanvraag( $this->data['id'] );
-			$this->data['casus'] = [
-				'correspondentie' => $aanvraag->communicatie,
-				'casus_id'        => $aanvraag->ID,
-				'datum'           => date( 'd-m-Y H:i', strtotime( $aanvraag->post_modified ) ),
-				'naam'            => $aanvraag->naam,
-				'contact'         => $aanvraag->contact,
-				'telnr'           => $aanvraag->telnr,
-				'email'           => $aanvraag->email,
-				'omvang'          => $aanvraag->omvang,
-				'periode'         => $aanvraag->periode,
-			];
-			return $this->content();
-		}
+		$this->data['workshop']                = wp_parse_args(
+			[
+				'email'   => $aanvraag->email,
+				'contact' => $aanvraag->contact,
+				'telnr'   => $aanvraag->telnr,
+			],
+			$this->formulier()
+		);
+		$this->data['workshop']['aanvraag_id'] = $this->data['id'];
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'input' form voor inplannen.
+	 *
+	 * @return string
+	 */
+	protected function prepare_tonen() : string {
+		/**
+		 * Een workshop aanvraag moet getoond worden.
+		 */
+		$aanvraag            = new WorkshopAanvraag( $this->data['id'] );
+		$this->data['casus'] = [
+			'correspondentie' => $aanvraag->communicatie,
+			'casus_id'        => $aanvraag->ID,
+			'datum'           => date( 'd-m-Y H:i', strtotime( $aanvraag->post_modified ) ),
+			'naam'            => $aanvraag->naam,
+			'contact'         => $aanvraag->contact,
+			'telnr'           => $aanvraag->telnr,
+			'email'           => $aanvraag->email,
+			'omvang'          => $aanvraag->omvang,
+			'periode'         => $aanvraag->periode,
+		];
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer het standaard scherm
+	 *
+	 * @return string
+	 */
+	protected function prepare_overzicht() : string {
 		/**
 		 * De workshopaanvragen en de geplande workshops moeten worden getoond.
 		 */

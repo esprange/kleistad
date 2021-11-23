@@ -23,7 +23,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	 */
 	protected function html() {
 		if ( 'cursisten' === $this->data['actie'] ) {
-			if ( $this->data['bestuur_rechten'] ) {
+			if ( current_user_can( BESTUUR ) ) {
 				$this->form()->cursisten_bestuur()->form_end();
 			} else {
 				$this->form()->cursisten_docent()->form_end();

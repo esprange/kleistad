@@ -63,7 +63,7 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test prepare functie;
 	 */
 	public function test_prepare() {
-		$data   = [ 'actie' => '-' ];
+		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$result = $this->public_actie( self::SHORTCODE, 'display', $data, '', [ 'verklaring' => 'test' ] );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {

@@ -24,7 +24,7 @@ class Test_Public_Contact extends Kleistad_UnitTestCase {
 		/**
 		 * Eerst een controle zonder dat er argumenten zijn. Die doet niets.
 		 */
-		$data   = [ 'actie' => '-' ];
+		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertFalse( is_wp_error( $result ), 'prepare incorrect' );
 

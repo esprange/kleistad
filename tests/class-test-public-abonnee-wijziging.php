@@ -60,7 +60,7 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 	 */
 	public function test_prepare() {
 		$this->maak_wijziging( 'test', false, false );
-		$data   = [ 'actie' => '-' ];
+		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {

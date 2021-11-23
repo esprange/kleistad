@@ -82,7 +82,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
-		$data   = [ 'actie' => '-' ];
+		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		/**
 		 * Standaard wordt de inschrijven actie uitgevoerd. Omdat er nog geen cursussen gedefinieerd zijn moet een error afgegeven worden.

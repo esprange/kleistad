@@ -24,56 +24,40 @@ require_once ABSPATH . 'wp-admin/includes/file.php';
 class Public_Recept_Beheer extends ShortcodeForm {
 
 	/**
-	 * Helpfunctie om overzicht lijst te maken.
+	 * Prepareer 'recept' toevoegen form
 	 *
-	 * @return array De recepten data.
+	 * @return string
 	 */
-	private function lijst(): array {
-		/*
-		 * maak een lijst van recepten
-		 */
-		$query = [
-			'post_type'   => 'kleistad_recept',
-			'numberposts' => '-1',
-			'post_status' => [
-				'publish',
-				'pending',
-				'private',
-				'draft',
+	protected function prepare_toevoegen() : string {
+		$this->data['id']     = 0;
+		$this->data['recept'] = [
+			'id'          => 0,
+			'titel'       => '',
+			'post_status' => 'draft',
+			'created'     => 0,
+			'modified'    => 0,
+			'content'     => [
+				'kenmerk'     => '',
+				'herkomst'    => '',
+				'basis'       => [],
+				'toevoeging'  => [],
+				'stookschema' => '',
+				'foto'        => '',
 			],
-			'orderby'     => 'date',
+			'glazuur'     => 0,
+			'kleur'       => 0,
+			'uiterlijk'   => 0,
 		];
-		if ( ! is_super_admin() ) {
-			$query['author'] = get_current_user_id();
-		}
-
-		$recepten = get_posts( $query );
-		$lijst    = [];
-		foreach ( $recepten as $recept ) {
-			$content = json_decode( $recept->post_content, true );
-			$lijst[] = [
-				'id'       => $recept->ID,
-				'titel'    => $recept->post_title,
-				'status'   => $recept->post_status,
-				'created'  => strtotime( $recept->post_date ),
-				'modified' => strtotime( $recept->post_modified ),
-				'foto'     => $content['foto'],
-			];
-		}
-
-		return $lijst;
+		return $this->content();
 	}
 
 	/**
-	 * Bereid een recept wijziging voor.
+	 * Prepareer 'recept' wijzigen form
 	 *
-	 * @param int $recept_id Het recept.
-	 *
-	 * @return array De recept data.
+	 * @return string
 	 */
-	private function formulier( int $recept_id ): array {
-		$recept = get_post( $recept_id );
-
+	protected function prepare_wijzigen() : string {
+		$recept       = get_post( $this->data['id'] );
 		$glazuur_id   = 0;
 		$kleur_id     = 0;
 		$uiterlijk_id = 0;
@@ -92,7 +76,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			}
 		}
 
-		return [
+		$this->data['recept'] = [
 			'id'        => $recept->ID,
 			'titel'     => $recept->post_title,
 			'status'    => $recept->post_status,
@@ -103,47 +87,42 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			'kleur'     => $kleur_id,
 			'uiterlijk' => $uiterlijk_id,
 		];
+		return $this->content();
 	}
 
 	/**
-	 * Prepareer 'recept' form
-	 *
-	 * @since   4.1.0
+	 * Prepareer 'recept' overzicht
 	 *
 	 * @return string
 	 */
-	protected function prepare() : string {
+	protected function prepare_overzicht() : string {
+		$query = [
+			'post_type'   => 'kleistad_recept',
+			'numberposts' => '-1',
+			'post_status' => [
+				'publish',
+				'pending',
+				'private',
+				'draft',
+			],
+			'orderby'     => 'date',
+		];
+		if ( ! is_super_admin() ) {
+			$query['author'] = get_current_user_id();
+		}
 
-		if ( 'toevoegen' === $this->data['actie'] ) {
-			/*
-			 * Er moet een nieuw recept opgevoerd worden
-			 */
-			$this->data['id']     = 0;
-			$this->data['recept'] = [
-				'id'          => 0,
-				'titel'       => '',
-				'post_status' => 'draft',
-				'created'     => 0,
-				'modified'    => 0,
-				'content'     => [
-					'kenmerk'     => '',
-					'herkomst'    => '',
-					'basis'       => [],
-					'toevoeging'  => [],
-					'stookschema' => '',
-					'foto'        => '',
-				],
-				'glazuur'     => 0,
-				'kleur'       => 0,
-				'uiterlijk'   => 0,
+		$recepten               = get_posts( $query );
+		$this->data['recepten'] = [];
+		foreach ( $recepten as $recept ) {
+			$recept_content           = json_decode( $recept->post_content, true );
+			$this->data['recepten'][] = [
+				'id'       => $recept->ID,
+				'titel'    => $recept->post_title,
+				'status'   => $recept->post_status,
+				'created'  => strtotime( $recept->post_date ),
+				'modified' => strtotime( $recept->post_modified ),
+				'foto'     => $recept_content['foto'],
 			];
-		} elseif ( 'wijzigen' === $this->data['actie'] ) {
-			/*
-			 * Er is een recept gekozen om te wijzigen.
-			 */
-			$this->data['recept'] = $this->formulier( $this->data['id'] );
-		} else {
-			$this->data['recepten'] = $this->lijst();
 		}
 		return $this->content();
 	}

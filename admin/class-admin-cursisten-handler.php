@@ -47,10 +47,10 @@ class Admin_Cursisten_Handler {
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function cursisten_form_page_handler() {
-		$message                        = '';
-		$notice                         = '';
-		$item                           = [];
-		list( $cursus_id, $cursist_id ) = sscanf( $_REQUEST['id'] ?? 'C0-0', 'C%d-%d' );
+		$message = '';
+		$notice  = '';
+		$item    = [];
+		sscanf( $_REQUEST['id'] ?? 'C0-0', 'C%d-%d', $cursus_id, $cursist_id );
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,

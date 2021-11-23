@@ -51,7 +51,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		/**
 		 * Eerst een controle zonder dat er argumenten zijn. Die doet dan standaard actie openstaand.
 		 */
-		$data   = [ 'actie' => '-' ];
+		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertFalse( is_wp_error( $result ), 'prepare zonder argumenten incorrect' );
 		$this->assertEquals( 'openstaand', $data['actie'], 'actie openstaand incorrect' );

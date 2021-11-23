@@ -27,7 +27,7 @@ class Test_Public_Cursus_Overzicht extends Kleistad_UnitTestCase {
 		$inschrijving = new Inschrijving( $cursus->id, $cursist_id );
 		$inschrijving->save();
 
-		$data = [ 'actie' => '-' ];
+		$data = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( 0 < count( $data['cursus_info'] ), 'prepare default data incorrect' );
 

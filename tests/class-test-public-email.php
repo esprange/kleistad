@@ -23,7 +23,7 @@ class Test_Public_Email extends Kleistad_UnitTestCase {
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
-		$data       = [ 'actie' => '-' ];
+		$data       = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
 		$bestuurder = new WP_User( $this->factory->user->create() );
 		$docent     = new WP_User( $this->factory->user->create() );
 		$bestuurder->add_role( BESTUUR );

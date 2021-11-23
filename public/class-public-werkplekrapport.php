@@ -20,6 +20,7 @@ class Public_Werkplekrapport extends Shortcode {
 	 * Prepareer 'werkplekrapport' form
 	 *
 	 * @return string
+	 * @todo Deze functie voldoet nog niet aan de nieuwe prepare calls obv actie.
 	 */
 	protected function prepare() : string {
 		$input = filter_input_array(

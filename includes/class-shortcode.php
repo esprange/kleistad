@@ -22,6 +22,8 @@ use ReflectionClass;
  */
 abstract class Shortcode {
 
+	const STANDAARD_ACTIE = 'overzicht';
+
 	/**
 	 * De shortcode.
 	 *
@@ -51,15 +53,6 @@ abstract class Shortcode {
 	protected $filehandle;
 
 	/**
-	 * Abstract definitie van de prepare functie
-	 *
-	 * @since   4.0.87
-	 *
-	 * @return string
-	 */
-	abstract protected function prepare() : string;
-
-	/**
 	 * Enqueue the scripts and styles for the shortcode.
 	 */
 	protected function enqueue() {
@@ -74,6 +67,20 @@ abstract class Shortcode {
 	}
 
 	/**
+	 * Basis prepare functie om te bepalen wat er getoond moet worden.
+	 * Als er geen acties zijn, dan kan de prepare functie overschreven worden.
+	 *
+	 * @return string
+	 */
+	protected function prepare() : string {
+		$actie = 'prepare_' . $this->data['actie'];
+		if ( method_exists( $this, $actie ) ) {
+			return $this->$actie();
+		}
+		return $this->status( new WP_Error( 'intern', 'Er is een fout opgetreden' ) );
+	}
+
+	/**
 	 * Maak de uit te voeren html aan
 	 *
 	 * @since 4.5.1
@@ -83,7 +90,7 @@ abstract class Shortcode {
 	 */
 	protected function display() : string {
 		$this->enqueue();
-		$this->data = array_merge( [ 'actie' => '-' ], $this->atts, $this->data );
+		$this->data = array_merge( [ 'actie' => self::STANDAARD_ACTIE ], $this->atts, $this->data );
 		try {
 			$ontvangen     = new Ontvangen();
 			$betaal_result = $ontvangen->controleer();
@@ -94,8 +101,6 @@ abstract class Shortcode {
 				return $this->status( $betaal_result ) . $this->prepare();
 			}
 			return $this->prepare(); // Er is geen betaling, toon de reguliere inhoud van de shortcode.
-		} catch ( Kleistad_Exception $exceptie ) {
-			return $this->status( new WP_Error( 'exceptie', $exceptie->getMessage() ) );
 		} catch ( Exception $exceptie ) {
 			fout( __CLASS__, $exceptie->getMessage() );
 			return $this->status( new WP_Error( 'exceptie', 'Er is een onbekende fout opgetreden' ) );
@@ -130,13 +135,12 @@ abstract class Shortcode {
 	 *
 	 * @since 5.7.0
 	 * @return string
-	 *
-	 * @throws Exception Onbekend object.
 	 */
 	public function goto_home() : string {
 		$html_objectclass = get_class( $this ) . '_Display';
 		if ( ! class_exists( $html_objectclass ) ) {
-			throw new Exception( 'Display object niet aanwezig' );
+			fout( "Display object $html_objectclass niet aanwezig" );
+			return '';
 		}
 		$dummy   = [];
 		$display = new $html_objectclass( $dummy );
@@ -281,7 +285,7 @@ abstract class Shortcode {
 			$atts_actie      = json_decode( $request->get_param( 'atts' ) ?? '', true )['actie'] ?? '';
 			$param_actie     = sanitize_text_field( $request->get_param( 'actie' ) );
 			$shortcode->data = [
-				'actie' => ( '-' === $param_actie && $atts_actie ) ? $atts_actie : $param_actie,
+				'actie' => ( self::STANDAARD_ACTIE === $param_actie && $atts_actie ) ? $atts_actie : $param_actie,
 				'id'    => is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) ),
 			];
 			return new WP_REST_Response( [ 'content' => $shortcode->display() ] );
