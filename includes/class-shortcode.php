@@ -139,7 +139,7 @@ abstract class Shortcode {
 	public function goto_home() : string {
 		$html_objectclass = get_class( $this ) . '_Display';
 		if ( ! class_exists( $html_objectclass ) ) {
-			fout( "Display object $html_objectclass niet aanwezig" );
+			fout( __CLASS__, "Display object $html_objectclass niet aanwezig" );
 			return '';
 		}
 		$dummy   = [];
