@@ -198,6 +198,7 @@ abstract class Shortcode {
 		foreach ( $attributes as $att_key => $attribute ) {
 			$this->atts[ $att_key ] = htmlspecialchars_decode( $attribute );
 		}
+		$this->data      = array_merge( $this->data, $this->atts );
 		$this->shortcode = $shortcode;
 	}
 

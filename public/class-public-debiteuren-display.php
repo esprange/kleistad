@@ -94,19 +94,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		</table>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['debiteur']['id'] ); ?>"/>
 		<?php
-		if ( ! ( $this->data['debiteur']['gesloten'] || $this->data['debiteur']['terugstorting'] ) ) {
-			$this->bankbetaling();
-		}
-		if ( ! $this->data['debiteur']['credit'] && $this->data['debiteur']['annuleerbaar'] ) {
-			$this->annulering();
-		}
-		if ( $this->data['debiteur']['afboekbaar'] ) {
-			$this->afboeking();
-		}
-		if ( ! ( $this->data['debiteur']['geblokkeerd'] || $this->data['debiteur']['credit'] ) ) {
-			$this->korting();
-		}
-		$this->debiteur_end()->form_end();
+		$this->bankbetaling()->annulering()->afboeking()->korting()->debiteur_end()->form_end();
 	}
 
 	/**
@@ -160,9 +148,13 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de bankbetaling sectie
 	 *
+	 * @return Public_Debiteuren_Display
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function bankbetaling() {
+	private function bankbetaling() : Public_Debiteuren_Display {
+		if ( $this->data['debiteur']['gesloten'] || $this->data['debiteur']['terugstorting'] ) {
+			return $this;
+		}
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
@@ -193,12 +185,18 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
+		return $this;
 	}
 
 	/**
 	 * Render de annulering sectie
+	 *
+	 * @return Public_Debiteuren_Display
 	 */
-	private function annulering() {
+	private function annulering() : Public_Debiteuren_Display {
+		if ( $this->data['debiteur']['credit'] || ! $this->data['debiteur']['annuleerbaar'] ) {
+			return $this;
+		}
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
@@ -228,12 +226,18 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
+		return $this;
 	}
 
 	/**
 	 * Render de afboeking sectie
+	 *
+	 * @return Public_Debiteuren_Display
 	 */
-	private function afboeking() {
+	private function afboeking() : Public_Debiteuren_Display {
+		if ( ! $this->data['debiteur']['afboekbaar'] ) {
+			return $this;
+		}
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
@@ -242,12 +246,18 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
+		return $this;
 	}
 
 	/**
 	 * Render de korting sectie
+	 *
+	 * @return Public_Debiteuren_Display
 	 */
-	private function korting() {
+	private function korting() : Public_Debiteuren_Display {
+		if ( $this->data['debiteur']['geblokkeerd'] || $this->data['debiteur']['credit'] ) {
+			return $this;
+		}
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
@@ -277,6 +287,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
+		return $this;
 	}
 
 	/**

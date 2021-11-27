@@ -47,7 +47,6 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		];
 		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertTrue( isset( $data['openstaand'] ), 'prepare met argumenten result incorrect' );
-		$this->assertTrue( isset( $data['actie'] ), 'prepare met argumenten incorrect' );
 
 		/**
 		 * Nu sluiten we de order. Dan moet er een foutmelding zijn.
