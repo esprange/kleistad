@@ -46,6 +46,13 @@ abstract class Shortcode {
 	protected array $data = [];
 
 	/**
+	 * Actie welke bepaald welke informatie getoond moet worden.
+	 *
+	 * @var string $display_actie De uit te voeren actie.
+	 */
+	protected string $display_actie = '';
+
+	/**
 	 * File download resource.
 	 *
 	 * @var resource $filehandle File handle voor output.
@@ -73,11 +80,12 @@ abstract class Shortcode {
 	 * @return string
 	 */
 	protected function prepare() : string {
-		$actie = 'prepare_' . $this->data['actie'];
-		if ( method_exists( $this, $actie ) ) {
-			return $this->$actie();
+		$method = 'prepare_' . $this->display_actie;
+		if ( method_exists( $this, $method ) ) {
+			return $this->$method();
 		}
-		return $this->status( new WP_Error( 'intern', 'Er is een fout opgetreden' ) );
+		fout( __CLASS__, "method $method ontbreekt" );
+		return $this->status( new WP_Error( 'intern', 'Er is een onbekende fout opgetreden' ) );
 	}
 
 	/**
@@ -86,11 +94,10 @@ abstract class Shortcode {
 	 * @since 4.5.1
 	 *
 	 * @return string html tekst.
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function display() : string {
 		$this->enqueue();
-		$this->data = array_merge( [ 'actie' => self::STANDAARD_ACTIE ], $this->atts, $this->data );
+		$this->bepaal_actie();
 		try {
 			$ontvangen     = new Ontvangen();
 			$betaal_result = $ontvangen->controleer();
@@ -143,7 +150,7 @@ abstract class Shortcode {
 			return '';
 		}
 		$dummy   = [];
-		$display = new $html_objectclass( $dummy );
+		$display = new $html_objectclass( $dummy, '' );
 		ob_start();
 		$display->home();
 		return ob_get_clean();
@@ -200,8 +207,8 @@ abstract class Shortcode {
 	 * @return string
 	 */
 	protected function content() : string {
-		$html_objectclass = get_class( $this ) . '_Display';
-		$display          = new $html_objectclass( $this->data );
+		$display_class = get_class( $this ) . '_Display';
+		$display       = new $display_class( $this->data, $this->display_actie );
 		return $display->render();
 	}
 
@@ -282,10 +289,9 @@ abstract class Shortcode {
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
 				throw new Exception( 'callback_formsubmit voor onbekend object' );
 			}
-			$atts_actie      = json_decode( $request->get_param( 'atts' ) ?? '', true )['actie'] ?? '';
-			$param_actie     = sanitize_text_field( $request->get_param( 'actie' ) );
+			$shortcode->atts = json_decode( $request->get_param( 'atts' ) ?? '', true );
 			$shortcode->data = [
-				'actie' => ( self::STANDAARD_ACTIE === $param_actie && $atts_actie ) ? $atts_actie : $param_actie,
+				'actie' => sanitize_text_field( $request->get_param( 'actie' ) ),
 				'id'    => is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) ),
 			];
 			return new WP_REST_Response( [ 'content' => $shortcode->display() ] );
@@ -382,4 +388,19 @@ abstract class Shortcode {
 		return $this->display();
 	}
 
+	/**
+	 * Bepaal de display actie.
+	 * prio 1: actie via de url
+	 * prio 2: actie al aanwezig in de data (afkomstig callback functie)
+	 * prio 3: actie vanuit de actie parameter in de tag
+	 * prio 4: de default actie
+	 */
+	private function bepaal_actie() {
+		foreach ( [ filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING ), $this->data['actie'] ?? null, $this->atts['actie'] ?? null, self::STANDAARD_ACTIE ] as $actie ) {
+			if ( ! empty( $actie ) ) {
+				$this->display_actie = $actie;
+				return;
+			}
+		}
+	}
 }

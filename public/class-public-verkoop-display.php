@@ -20,7 +20,7 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
 		$this->form()->verkoop()->form_end();
 	}
 

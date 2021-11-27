@@ -16,30 +16,13 @@ namespace Kleistad;
 class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 
 	/**
-	 * Render het formulier
-	 *
-	 * @return void
-	 */
-	protected function html() {
-		if ( ! isset( $this->data['rapport'] ) ) {
-			if ( 'individueel' === $this->data['actie'] ) {
-				$this->form()->datums()->werkplekgebruiker()->form_end();
-				return;
-			}
-			$this->form()->datums()->form_end();
-			return;
-		}
-		if ( 'individueel' === $this->data['actie'] ) {
-			$this->individueel();
-			return;
-		}
-		$this->overzicht();
-	}
-
-	/**
 	 * Render het rapport
 	 */
-	private function individueel() {
+	protected function individueel() {
+		if ( ! isset( $this->data['rapport'] ) ) {
+			$this->form()->datums()->werkplekgebruiker()->form_end();
+			return;
+		}
 		?>
 		<h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?> door <?php echo esc_html( get_user_by( 'id', $this->data['gebruiker_id'] )->display_name ); ?></h2>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
@@ -73,7 +56,11 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	/**
 	 * Render het rapport
 	 */
-	private function overzicht() {
+	protected function overzicht() {
+		if ( ! isset( $this->data['rapport'] ) ) {
+			$this->form()->datums()->form_end();
+			return;
+		}
 		?>
 		<h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?></h2>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >

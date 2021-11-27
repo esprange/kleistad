@@ -21,7 +21,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	 * @return void
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function html() {
+	protected function overzicht() {
 		$this->form();
 		if ( is_user_logged_in() ) {
 			$this->dagdelenkaart_info()->gebruiker_logged_in()->opmerking()->verklaring()->nieuwsbrief();

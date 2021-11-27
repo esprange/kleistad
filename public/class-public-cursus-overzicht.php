@@ -17,86 +17,6 @@ namespace Kleistad;
 class Public_Cursus_Overzicht extends ShortcodeForm {
 
 	/**
-	 * Bepaal de actieve cursisten in een cursus.
-	 *
-	 * @param  int $cursus_id Het id van de cursus.
-	 * @return array De inschrijving van cursisten voor de cursus. Cursist_id is de index.
-	 */
-	private function geef_inschrijvingen( int $cursus_id ) : array {
-		$inschrijvingen = [];
-		foreach ( new Inschrijvingen( $cursus_id, true ) as $inschrijving ) {
-			if ( ! current_user_can( BESTUUR ) && ! $inschrijving->ingedeeld ) {
-				continue;
-			}
-			$inschrijvingen[ $inschrijving->klant_id ] = $inschrijving;
-		}
-		return $inschrijvingen;
-	}
-
-	/**
-	 * Geef de cursus info mee, alleen actieve cursussen.
-	 *
-	 * @return array De cursus informatie.
-	 */
-	private function geef_cursussen() : array {
-		$cursus_info = [];
-		$docent_id   = current_user_can( BESTUUR ) ? 0 : get_current_user_id();
-		foreach ( new Cursussen( true ) as $cursus ) {
-			if ( ! $cursus->vervallen && ( 0 === $docent_id || intval( $cursus->docent ) === $docent_id ) ) {
-				$cursus_info[ $cursus->id ] = [
-					'start_dt'             => $cursus->start_datum,
-					'code'                 => "C$cursus->id",
-					'naam'                 => $cursus->naam,
-					'docent'               => $cursus->docent_naam(),
-					'start_datum'          => strftime( '%d-%m-%Y', $cursus->start_datum ),
-					'heeft_inschrijvingen' => ! empty( $this->geef_inschrijvingen( $cursus->id ) ),
-				];
-			}
-		}
-		return $cursus_info;
-	}
-
-	/**
-	 * Overzicht cursisten op cursus
-	 *
-	 * @param Cursus $cursus     De cursus.
-	 *
-	 * @return array De cursisten.
-	 * @noinspection PhpPossiblePolymorphicInvocationInspection
-	 */
-	private function cursistenlijst( Cursus $cursus ) : array {
-		$cursisten = [];
-		foreach ( new Inschrijvingen( $cursus->id, true ) as $inschrijving ) {
-			$cursist      = get_userdata( $inschrijving->klant_id );
-			$cursist_info = [
-				'code'       => $inschrijving->code,
-				'naam'       => $cursist->display_name . $inschrijving->toon_aantal(),
-				'telnr'      => $cursist->telnr,
-				'email'      => $cursist->user_email,
-				'extra'      => true,
-				'technieken' => implode( ', ', $inschrijving->technieken ),
-			];
-			if ( ! $inschrijving->hoofd_cursist_id ) {
-				$order        = new Order( $inschrijving->geef_referentie() );
-				$cursist_info = array_merge(
-					$cursist_info,
-					[
-						'extra'          => false,
-						'ingedeeld'      => $inschrijving->ingedeeld,
-						'betaald'        => $order->gesloten,
-						'restant_email'  => $inschrijving->restant_email,
-						'herinner_email' => $inschrijving->herinner_email,
-						'wachtlopend'    => ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! $order->id,
-						'wachtlijst'     => ! $inschrijving->ingedeeld && $inschrijving->wacht_datum && ! $inschrijving->cursus->is_lopend(),
-					]
-				);
-			}
-			$cursisten[] = $cursist_info;
-		}
-		return $cursisten;
-	}
-
-	/**
 	 * Prepareer 'cursus_overzicht' cursisten form
 	 *
 	 * @return string
@@ -284,6 +204,86 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 			'status'  => $this->status( ( $aantal_email > 0 ) ? "Emails zijn verstuurd naar $aantal_email cursisten" : 'Er zijn geen nieuwe emails verzonden' ),
 			'content' => $this->display(),
 		];
+	}
+
+	/**
+	 * Bepaal de actieve cursisten in een cursus.
+	 *
+	 * @param  int $cursus_id Het id van de cursus.
+	 * @return array De inschrijving van cursisten voor de cursus. Cursist_id is de index.
+	 */
+	private function geef_inschrijvingen( int $cursus_id ) : array {
+		$inschrijvingen = [];
+		foreach ( new Inschrijvingen( $cursus_id, true ) as $inschrijving ) {
+			if ( ! current_user_can( BESTUUR ) && ! $inschrijving->ingedeeld ) {
+				continue;
+			}
+			$inschrijvingen[ $inschrijving->klant_id ] = $inschrijving;
+		}
+		return $inschrijvingen;
+	}
+
+	/**
+	 * Geef de cursus info mee, alleen actieve cursussen.
+	 *
+	 * @return array De cursus informatie.
+	 */
+	private function geef_cursussen() : array {
+		$cursus_info = [];
+		$docent_id   = current_user_can( BESTUUR ) ? 0 : get_current_user_id();
+		foreach ( new Cursussen( true ) as $cursus ) {
+			if ( ! $cursus->vervallen && ( 0 === $docent_id || intval( $cursus->docent ) === $docent_id ) ) {
+				$cursus_info[ $cursus->id ] = [
+					'start_dt'             => $cursus->start_datum,
+					'code'                 => "C$cursus->id",
+					'naam'                 => $cursus->naam,
+					'docent'               => $cursus->docent_naam(),
+					'start_datum'          => strftime( '%d-%m-%Y', $cursus->start_datum ),
+					'heeft_inschrijvingen' => ! empty( $this->geef_inschrijvingen( $cursus->id ) ),
+				];
+			}
+		}
+		return $cursus_info;
+	}
+
+	/**
+	 * Overzicht cursisten op cursus
+	 *
+	 * @param Cursus $cursus     De cursus.
+	 *
+	 * @return array De cursisten.
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
+	 */
+	private function cursistenlijst( Cursus $cursus ) : array {
+		$cursisten = [];
+		foreach ( new Inschrijvingen( $cursus->id, true ) as $inschrijving ) {
+			$cursist      = get_userdata( $inschrijving->klant_id );
+			$cursist_info = [
+				'code'       => $inschrijving->code,
+				'naam'       => $cursist->display_name . $inschrijving->toon_aantal(),
+				'telnr'      => $cursist->telnr,
+				'email'      => $cursist->user_email,
+				'extra'      => true,
+				'technieken' => implode( ', ', $inschrijving->technieken ),
+			];
+			if ( ! $inschrijving->hoofd_cursist_id ) {
+				$order        = new Order( $inschrijving->geef_referentie() );
+				$cursist_info = array_merge(
+					$cursist_info,
+					[
+						'extra'          => false,
+						'ingedeeld'      => $inschrijving->ingedeeld,
+						'betaald'        => $order->gesloten,
+						'restant_email'  => $inschrijving->restant_email,
+						'herinner_email' => $inschrijving->herinner_email,
+						'wachtlopend'    => ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! $order->id,
+						'wachtlijst'     => ! $inschrijving->ingedeeld && $inschrijving->wacht_datum && ! $inschrijving->cursus->is_lopend(),
+					]
+				);
+			}
+			$cursisten[] = $cursist_info;
+		}
+		return $cursisten;
 	}
 
 }

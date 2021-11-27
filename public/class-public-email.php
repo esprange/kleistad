@@ -60,6 +60,107 @@ class Public_Email extends ShortcodeForm {
 	}
 
 	/**
+	 * Valideer/sanitize email form
+	 *
+	 * @return array
+	 *
+	 * @since   5.5.0
+	 */
+	protected function process() : array {
+		$error                                = new WP_Error();
+		$this->data['input']                  = filter_input_array(
+			INPUT_POST,
+			[
+				'gebruikerids'  => FILTER_SANITIZE_STRING,
+				'onderwerp'     => FILTER_SANITIZE_STRING,
+				'email_content' => FILTER_DEFAULT,
+				'aanhef'        => FILTER_SANITIZE_STRING,
+				'namens'        => FILTER_SANITIZE_STRING,
+			]
+		);
+		$this->data['input']['email_content'] = wp_kses_post( $this->data['input']['email_content'] );
+
+		if ( empty( $this->data['input']['email_content'] ) ) {
+			$error->add( 'email', 'Er is geen email content' );
+		}
+		if ( 'verzenden' === $this->form_actie && empty( $this->data['input']['gebruikerids'] ) ) {
+			$error->add( 'email', 'Er is geen enkele ontvanger geselecteerd' );
+		}
+		if ( empty( $this->data['input']['onderwerp'] ) ) {
+			$error->add( 'email', 'Er is geen onderwerp opgegeven' );
+		}
+		if ( empty( $this->data['input']['aanhef'] ) ) {
+			$error->add( 'email', 'Er is niet aangegeven aan wie de email gericht is' );
+		}
+		if ( empty( $this->data['input']['namens'] ) ) {
+			$error->add( 'email', 'Er is niet aangegeven wie de email verstuurt' );
+		}
+		if ( ! empty( $error->get_error_codes() ) ) {
+			return $this->melding( $error );
+		}
+		return $this->save();
+	}
+
+	/**
+	 * Verzend test_email
+	 *
+	 * @return array
+	 */
+	protected function test_email() : array {
+		$gebruiker = wp_get_current_user();
+		$emailer   = new Email();
+		$emailer->send(
+			array_merge(
+				$this->mail_parameters(),
+				[
+					'to'      => "$gebruiker->display_name <$gebruiker->user_email>",
+					'subject' => "TEST: {$this->data['input']['onderwerp']}",
+				]
+			)
+		);
+
+		return [
+			'status' => $this->status( 'De test email is verzonden' ),
+		];
+	}
+
+	/**
+	 * Verzend de email naar de geselecteerde ontvanger
+	 *
+	 * @return array
+	 */
+	protected function verzenden() : array {
+		$gebruiker       = wp_get_current_user();
+		$emailer         = new Email();
+		$gebruikerids    = array_unique( explode( ',', $this->data['input']['gebruikerids'] ) );
+		$query           = new WP_User_Query(
+			[
+				'include' => array_map( 'intval', $gebruikerids ),
+				'fields'  => [ 'user_email' ],
+			]
+		);
+		$emailadressen   = array_column( $query->get_results(), 'user_email' );
+		$emailadressen[] = "$gebruiker->display_name <$gebruiker->user_email>";
+		$from            = 'production' === wp_get_environment_type() ? "$emailer->info@$emailer->domein" : get_bloginfo( 'admin_email' );
+		$emailer->send(
+			array_merge(
+				$this->mail_parameters(),
+				[
+					'to'       => "Kleistad gebruiker <$from>",
+					'bcc'      => $emailadressen,
+					'from'     => $from,
+					'reply-to' => current_user_can( BESTUUR ) ? $from : $gebruiker->user_email,
+					'subject'  => $this->data['input']['onderwerp'],
+				]
+			)
+		);
+		return [
+			'status'  => $this->status( 'De email is naar ' . count( $emailadressen ) . ' personen verzonden' ),
+			'content' => $this->goto_home(),
+		];
+	}
+
+	/**
 	 * Haal de abonnees gegevens op
 	 *
 	 * @return array
@@ -180,107 +281,6 @@ class Public_Email extends ShortcodeForm {
 			}
 		}
 		return $data;
-	}
-
-	/**
-	 * Valideer/sanitize email form
-	 *
-	 * @return array
-	 *
-	 * @since   5.5.0
-	 */
-	protected function process() : array {
-		$error                                = new WP_Error();
-		$this->data['input']                  = filter_input_array(
-			INPUT_POST,
-			[
-				'gebruikerids'  => FILTER_SANITIZE_STRING,
-				'onderwerp'     => FILTER_SANITIZE_STRING,
-				'email_content' => FILTER_DEFAULT,
-				'aanhef'        => FILTER_SANITIZE_STRING,
-				'namens'        => FILTER_SANITIZE_STRING,
-			]
-		);
-		$this->data['input']['email_content'] = wp_kses_post( $this->data['input']['email_content'] );
-
-		if ( empty( $this->data['input']['email_content'] ) ) {
-			$error->add( 'email', 'Er is geen email content' );
-		}
-		if ( 'verzenden' === $this->form_actie && empty( $this->data['input']['gebruikerids'] ) ) {
-			$error->add( 'email', 'Er is geen enkele ontvanger geselecteerd' );
-		}
-		if ( empty( $this->data['input']['onderwerp'] ) ) {
-			$error->add( 'email', 'Er is geen onderwerp opgegeven' );
-		}
-		if ( empty( $this->data['input']['aanhef'] ) ) {
-			$error->add( 'email', 'Er is niet aangegeven aan wie de email gericht is' );
-		}
-		if ( empty( $this->data['input']['namens'] ) ) {
-			$error->add( 'email', 'Er is niet aangegeven wie de email verstuurt' );
-		}
-		if ( ! empty( $error->get_error_codes() ) ) {
-			return $this->melding( $error );
-		}
-		return $this->save();
-	}
-
-	/**
-	 * Verzend test_email
-	 *
-	 * @return array
-	 */
-	protected function test_email() : array {
-		$gebruiker = wp_get_current_user();
-		$emailer   = new Email();
-		$emailer->send(
-			array_merge(
-				$this->mail_parameters(),
-				[
-					'to'      => "$gebruiker->display_name <$gebruiker->user_email>",
-					'subject' => "TEST: {$this->data['input']['onderwerp']}",
-				]
-			)
-		);
-
-		return [
-			'status' => $this->status( 'De test email is verzonden' ),
-		];
-	}
-
-	/**
-	 * Verzend de email naar de geselecteerde ontvanger
-	 *
-	 * @return array
-	 */
-	protected function verzenden() : array {
-		$gebruiker       = wp_get_current_user();
-		$emailer         = new Email();
-		$gebruikerids    = array_unique( explode( ',', $this->data['input']['gebruikerids'] ) );
-		$query           = new WP_User_Query(
-			[
-				'include' => array_map( 'intval', $gebruikerids ),
-				'fields'  => [ 'user_email' ],
-			]
-		);
-		$emailadressen   = array_column( $query->get_results(), 'user_email' );
-		$emailadressen[] = "$gebruiker->display_name <$gebruiker->user_email>";
-		$from            = 'production' === wp_get_environment_type() ? "$emailer->info@$emailer->domein" : get_bloginfo( 'admin_email' );
-		$emailer->send(
-			array_merge(
-				$this->mail_parameters(),
-				[
-					'to'       => "Kleistad gebruiker <$from>",
-					'bcc'      => $emailadressen,
-					'from'     => $from,
-					'reply-to' => current_user_can( BESTUUR ) ? $from : $gebruiker->user_email,
-					'subject'  => $this->data['input']['onderwerp'],
-				]
-			)
-		);
-		return [
-			'status'  => $this->status( 'De email is naar ' . count( $emailadressen ) . ' personen verzonden' ),
-			'content' => $this->goto_home(),
-		];
 	}
 
 	/**

@@ -21,6 +21,15 @@ use DateTimeInterface;
 class Public_Kalender extends Shortcode {
 
 	/**
+	 * Prepareer 'kalender' form
+	 *
+	 * @return string
+	 */
+	protected function prepare() : string {
+		return $this->content();
+	}
+
+	/**
 	 * Register rest URI's.
 	 *
 	 * @since 5.0.0
@@ -149,15 +158,6 @@ class Public_Kalender extends Shortcode {
 				'events' => array_filter( $fc_events ),
 			]
 		);
-	}
-
-	/**
-	 * Prepareer 'kalender' form
-	 *
-	 * @return string
-	 */
-	protected function prepare() : string {
-		return $this->content();
 	}
 
 }

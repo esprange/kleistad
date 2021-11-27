@@ -20,7 +20,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
 		$this->form()->aanvraag()->contactinfo()->workshopinfo()->form_end();
 	}
 

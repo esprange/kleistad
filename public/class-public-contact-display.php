@@ -20,7 +20,7 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
 		$this->form()->contact()->form_end();
 	}
 

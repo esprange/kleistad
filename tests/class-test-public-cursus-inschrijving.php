@@ -106,9 +106,9 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		 * Nu testen we of de cursist kan stoppen van de wachtlijst
 		 */
 		$_GET = [
-			'code' => $inschrijving->code,
-			'hsh'  => $inschrijving->controle(),
-			'stop' => 'stop',
+			'code'  => $inschrijving->code,
+			'hsh'   => $inschrijving->controle(),
+			'actie' => 'stop_wachten',
 		];
 		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertEquals( $inschrijving->klant_id, $data['gebruiker_id'], 'prepare stoppen na wachten geen gebruiker_id' );
@@ -117,8 +117,8 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Nu testen we of de cursist via de wachtlijst link kan werken
 		 */
-		unset( $_GET['stop'] ); // phpcs:ignore
 		Cursussen::doe_dagelijks(); // Zet de vol indicator uit en verstuur de email met de link.
+		$_GET['actie'] = 'indelen_na_wachten';
 		$this->public_actie( self::SHORTCODE, 'display', $data );
 		$this->assertEquals( $inschrijving->klant_id, $data['gebruiker_id'], 'prepare indelen na wachten geen gebruiker_id' );
 		$this->assertTrue( isset( $data['ruimte'] ), 'prepare indelen na wachten geen gebruiker_id' );

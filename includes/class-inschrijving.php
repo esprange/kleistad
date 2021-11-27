@@ -265,8 +265,8 @@ class Inschrijving extends Artikel {
 					'cursus_link'            => $this->betaal_link,
 					'cursus_uitschrijf_link' => $this->maak_link(
 						[
-							'code' => $this->code,
-							'stop' => 1,
+							'code'  => $this->code,
+							'actie' => 'stop_wachten',
 						],
 						'wachtlijst'
 					),

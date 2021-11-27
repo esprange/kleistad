@@ -16,18 +16,9 @@ namespace Kleistad;
 class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 
 	/**
-	 * Render het formulier
-	 *
-	 * @return void
-	 */
-	protected function html() {
-		$this->overzicht();
-	}
-
-	/**
 	 * Toon het overzicht van cursussen
 	 */
-	private function overzicht() {
+	protected function overzicht() {
 		?>
 		<div id="kleistad_deelnemer_info">
 			<table class="kleistad-form" id="kleistad_deelnemer_tabel" >

@@ -21,27 +21,25 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 	 * @return void
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function html() {
-		if ( 'betalen' === $this->data['actie'] ) {
-			$this->form()->overzicht();
-			if ( 0 < $this->data['openstaand'] ) {
-				$this->betalen();
-			} elseif ( 0 > $this->data['openstaand'] ) {
-				$this->terugstorten();
-			} else {
-				$this->geen_actie();
-			}
-			if ( $this->data['annuleerbaar'] ) {
-				$this->annuleren();
-			}
-			$this->form_end();
+	protected function overzicht() {
+		$this->form()->bestelling();
+		if ( 0 < $this->data['openstaand'] ) {
+			$this->betalen();
+		} elseif ( 0 > $this->data['openstaand'] ) {
+			$this->terugstorten();
+		} else {
+			$this->geen_actie();
 		}
+		if ( $this->data['annuleerbaar'] ) {
+			$this->annuleren();
+		}
+		$this->form_end();
 	}
 
 	/**
 	 * Render het overzicht van de bestelling
 	 */
-	private function overzicht() {
+	private function bestelling() {
 		?>
 		<input type="hidden" name="order_id" value="<?php echo esc_attr( $this->data['order_id'] ); ?>" />
 		<input type="hidden" name="artikel_type" value="<?php echo esc_attr( $this->data['artikel_type'] ); ?>" />

@@ -21,86 +21,6 @@ use WP_Error;
 class Public_Werkplek extends Shortcode {
 
 	/**
-	 * Kijk voor 3 maanden vooraf wat de mogelijke data zijn voor werkplekken.
-	 *
-	 * @return array De mogelijke datums.
-	 */
-	private function geef_mogelijke_datums() : array {
-		$werkplekconfigs = new WerkplekConfigs();
-		if ( 0 === count( $werkplekconfigs ) ) {
-			return [];
-		}
-		$datums         = [];
-		$feestdagen     = new Feestdagen();
-		$weken          = opties()['weken_werkplek'];
-		$vandaag        = strtotime( 'today' );
-		$driemaand      = strtotime( "+$weken weeks", $vandaag );
-		$werkplekconfig = $werkplekconfigs->find( $vandaag ) ?: new WerkplekConfig();
-		for ( $dagteller = $vandaag; $dagteller < $driemaand; $dagteller += DAY_IN_SECONDS ) {
-			if ( $feestdagen->is_feestdag( $dagteller ) ) {
-				continue;
-			}
-			$werkplekken = 0;
-			if ( $dagteller > $werkplekconfig->eind_datum && 0 !== $werkplekconfig->eind_datum ) {
-				$werkplekconfigs->next();
-				$werkplekconfig = $werkplekconfigs->current();
-			}
-			foreach ( $werkplekconfig->config[ strftime( '%A', $dagteller ) ] as $dagdeel ) {
-				$werkplekken += array_sum( $dagdeel );
-			}
-			if ( $werkplekken ) {
-				$datums[] = date( 'd-m-Y', $dagteller );
-			}
-		}
-		return $datums;
-	}
-
-	/**
-	 * Voor de ad hoc selectie van werkplaatsbeheerders, bepaal wie die taak mogen uitvoeren.
-	 *
-	 * @return array
-	 */
-	private function geef_meesters() : array {
-		return get_users(
-			[
-				'fields'   => [ 'display_name', 'ID' ],
-				'orderby'  => 'display_name',
-				'role__in' => [ LID, DOCENT, BESTUUR ],
-			]
-		);
-	}
-
-	/**
-	 * Voor het selecteren van andere gebruikers, bepaal wie er daarvoor geselecteerd staan.
-	 *
-	 * @return array
-	 */
-	private function geef_cursisten() : array {
-		$cursisten = [];
-		foreach ( new Cursisten() as $cursist ) {
-			if ( user_can( $cursist->ID, LID ) || user_can( $cursist->ID, BESTUUR ) || user_can( $cursist->ID, DOCENT ) ) {
-				continue;
-			}
-			if ( $cursist->is_actief() ) {
-				$cursisten[] = [
-					'id'   => $cursist->ID,
-					'naam' => $cursist->display_name,
-				];
-			}
-		}
-		foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
-			if ( $dagdelengebruiker->is_actief() ) {
-				$cursisten[] = [
-					'id'   => $dagdelengebruiker->ID,
-					'naam' => $dagdelengebruiker->display_name,
-				];
-			}
-		}
-		return $cursisten;
-	}
-
-
-	/**
 	 * Prepareer 'reservering' form
 	 *
 	 * @since   6.11.0
@@ -384,6 +304,85 @@ EOT;
 				'naam'    => is_object( $meesters[ $dagdeel ] ) ? $meesters[ $dagdeel ]->display_name : '...',
 			]
 		);
+	}
+
+	/**
+	 * Kijk voor 3 maanden vooraf wat de mogelijke data zijn voor werkplekken.
+	 *
+	 * @return array De mogelijke datums.
+	 */
+	private function geef_mogelijke_datums() : array {
+		$werkplekconfigs = new WerkplekConfigs();
+		if ( 0 === count( $werkplekconfigs ) ) {
+			return [];
+		}
+		$datums         = [];
+		$feestdagen     = new Feestdagen();
+		$weken          = opties()['weken_werkplek'];
+		$vandaag        = strtotime( 'today' );
+		$driemaand      = strtotime( "+$weken weeks", $vandaag );
+		$werkplekconfig = $werkplekconfigs->find( $vandaag ) ?: new WerkplekConfig();
+		for ( $dagteller = $vandaag; $dagteller < $driemaand; $dagteller += DAY_IN_SECONDS ) {
+			if ( $feestdagen->is_feestdag( $dagteller ) ) {
+				continue;
+			}
+			$werkplekken = 0;
+			if ( $dagteller > $werkplekconfig->eind_datum && 0 !== $werkplekconfig->eind_datum ) {
+				$werkplekconfigs->next();
+				$werkplekconfig = $werkplekconfigs->current();
+			}
+			foreach ( $werkplekconfig->config[ strftime( '%A', $dagteller ) ] as $dagdeel ) {
+				$werkplekken += array_sum( $dagdeel );
+			}
+			if ( $werkplekken ) {
+				$datums[] = date( 'd-m-Y', $dagteller );
+			}
+		}
+		return $datums;
+	}
+
+	/**
+	 * Voor de ad hoc selectie van werkplaatsbeheerders, bepaal wie die taak mogen uitvoeren.
+	 *
+	 * @return array
+	 */
+	private function geef_meesters() : array {
+		return get_users(
+			[
+				'fields'   => [ 'display_name', 'ID' ],
+				'orderby'  => 'display_name',
+				'role__in' => [ LID, DOCENT, BESTUUR ],
+			]
+		);
+	}
+
+	/**
+	 * Voor het selecteren van andere gebruikers, bepaal wie er daarvoor geselecteerd staan.
+	 *
+	 * @return array
+	 */
+	private function geef_cursisten() : array {
+		$cursisten = [];
+		foreach ( new Cursisten() as $cursist ) {
+			if ( user_can( $cursist->ID, LID ) || user_can( $cursist->ID, BESTUUR ) || user_can( $cursist->ID, DOCENT ) ) {
+				continue;
+			}
+			if ( $cursist->is_actief() ) {
+				$cursisten[] = [
+					'id'   => $cursist->ID,
+					'naam' => $cursist->display_name,
+				];
+			}
+		}
+		foreach ( new Dagdelengebruikers() as $dagdelengebruiker ) {
+			if ( $dagdelengebruiker->is_actief() ) {
+				$cursisten[] = [
+					'id'   => $dagdelengebruiker->ID,
+					'naam' => $dagdelengebruiker->display_name,
+				];
+			}
+		}
+		return $cursisten;
 	}
 
 }

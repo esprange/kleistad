@@ -20,7 +20,7 @@ class Public_Cursus_Extra_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
 		$this->form()->extra_cursisten()->form_end();
 	}
 
@@ -73,7 +73,7 @@ class Public_Cursus_Extra_Display extends Public_Shortcode_Display {
 					<input type="hidden" name="extra_cursist[<?php echo esc_attr( $index ); ?>][id]" value="<?php esc_attr( $extra_cursist['id'] ); ?>" />
 				</div>
 			</div>
-		</div>	
+		</div>
 		<?php endforeach ?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-10">

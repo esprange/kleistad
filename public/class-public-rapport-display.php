@@ -20,7 +20,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
 		?>
 		<p>Stookrapport voor <?php echo esc_html( $this->data['naam'] ); ?> (je huidig saldo is &euro; <?php echo esc_html( $this->data['saldo'] ); ?>)</p>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >

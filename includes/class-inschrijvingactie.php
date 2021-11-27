@@ -108,7 +108,8 @@ class InschrijvingActie {
 		$this->inschrijving->wacht_datum = $this->inschrijving->cursus->ruimte_datum;
 		$this->inschrijving->betaal_link = $this->inschrijving->maak_link(
 			[
-				'code' => $this->inschrijving->code,
+				'code'  => $this->inschrijving->code,
+				'actie' => 'indelen_na_wachten',
 			],
 			'wachtlijst'
 		);

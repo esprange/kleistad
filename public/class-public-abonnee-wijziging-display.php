@@ -23,13 +23,6 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	private int $per_datum;
 
 	/**
-	 * Of de abonnee nog in de start periode is
-	 *
-	 * @var bool $in_startperiode;
-	 */
-	private bool $in_startperiode;
-
-	/**
 	 * Of er extras beschikbaar zijn
 	 *
 	 * @var bool $extra_beschikbaar De vlag.
@@ -37,27 +30,18 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	private bool $extra_beschikbaar = false;
 
 	/**
-	 * Constructor
-	 *
-	 * @param array $data De formulier data.
-	 */
-	public function __construct( array $data ) {
-		parent::__construct( $data );
-		$this->in_startperiode = strtotime( 'today' ) < $this->data['abonnement']->start_eind_datum;
-		$this->per_datum       = $this->in_startperiode ? $this->data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
-		foreach ( opties()['extra'] as $extra ) {
-			$this->extra_beschikbaar = $this->extra_beschikbaar || ( 0 < $extra['prijs'] );
-		}
-	}
-
-	/**
 	 * Render het formulier
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
+		$in_startperiode = strtotime( 'today' ) < $this->data['abonnement']->start_eind_datum;
+		$this->per_datum = $in_startperiode ? $this->data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
+		foreach ( opties()['extra'] as $extra ) {
+			$this->extra_beschikbaar = $this->extra_beschikbaar || ( 0 < $extra['prijs'] );
+		}
 		$this->abonnement_info()->abonnement_extra_info();
-		if ( $this->in_startperiode ) {
+		if ( $in_startperiode ) {
 			$this->form()->werkdag()->eindigen()->form_end();
 			return;
 		}

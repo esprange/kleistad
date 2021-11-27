@@ -19,45 +19,21 @@ use WP_Error;
 class Public_Cursus_Inschrijving extends ShortcodeForm {
 
 	/**
-	 * Cursus selecties als er een filter is
-	 *
-	 * @var array $cursus_selecties Het filter.
-	 */
-	private array $cursus_selecties;
-
-	/**
-	 * Bepaal de actie
-	 *
-	 * @return string
-	 */
-	private function bepaal_actie() : string {
-		$this->data['param']    = filter_input_array(
-			INPUT_GET,
-			[
-				'code' => FILTER_SANITIZE_STRING,
-				'hsh'  => FILTER_SANITIZE_STRING,
-				'stop' => FILTER_SANITIZE_STRING,
-			]
-		);
-		$this->cursus_selecties = empty( $this->data['cursus'] ) ? [] : explode( ',', preg_replace( '/\s+|C/', '', $this->data['cursus'] ) );
-		if ( ! is_null( $this->data['param'] ) && ! empty( $this->data['param']['stop'] ) ) {
-			return 'stop_wachten';
-		}
-		if ( ! is_null( $this->data['param'] ) && ! empty( $this->data['param']['code'] ) ) {
-			return 'indelen_na_wachten';
-		}
-		return 'inschrijven';
-	}
-
-	/**
 	 * Formulier dat getoond moet worden betreft het verwijderen van de wachtlijst.
 	 *
 	 * @return string
 	 */
 	protected function prepare_stop_wachten() : string {
-		sscanf( $this->data['param']['code'], 'C%d-%d', $cursus_id, $cursist_id );
+		$params = filter_input_array(
+			INPUT_GET,
+			[
+				'code' => FILTER_SANITIZE_STRING,
+				'hsh'  => FILTER_SANITIZE_STRING,
+			]
+		);
+		sscanf( $params['code'], 'C%d-%d', $cursus_id, $cursist_id );
 		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-		if ( $this->data['param']['hsh'] !== $inschrijving->controle() ) {
+		if ( $params['hsh'] !== $inschrijving->controle() ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		$this->data['cursus_naam']  = $inschrijving->cursus->naam;
@@ -73,9 +49,16 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_indelen_na_wachten() : string {
-		sscanf( $this->data['param']['code'], 'C%d-%d', $cursus_id, $cursist_id );
+		$params = filter_input_array(
+			INPUT_GET,
+			[
+				'code' => FILTER_SANITIZE_STRING,
+				'hsh'  => FILTER_SANITIZE_STRING,
+			]
+		);
+		sscanf( $params['code'], 'C%d-%d', $cursus_id, $cursist_id );
 		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-		if ( $this->data['param']['hsh'] !== $inschrijving->controle() ) {
+		if ( $params['hsh'] !== $inschrijving->controle() ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		if ( $inschrijving->cursus->vol ) {
@@ -122,13 +105,14 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			]
 		);
 		$this->data['open_cursussen'] = [];
-		if ( 1 === count( $this->cursus_selecties ) ) {
-			$this->data['input']['cursus_id'] = $this->cursus_selecties[0];
+		$cursus_selecties             = empty( $this->data['cursus'] ) ? [] : explode( ',', preg_replace( '/\s+|C/', '', $this->data['cursus'] ) );
+		if ( 1 === count( $cursus_selecties ) ) {
+			$this->data['input']['cursus_id'] = $cursus_selecties[0];
 		}
 		$selecteerbaar = false;
 		foreach ( new Cursussen( true ) as $cursus ) {
-			if ( ! empty( $this->cursus_selecties ) ) {
-				if ( ! in_array( $cursus->id, $this->cursus_selecties, false ) ) { // phpcs:ignore
+			if ( ! empty( $cursus_selecties ) ) {
+				if ( ! in_array( $cursus->id, $cursus_selecties, false ) ) { // phpcs:ignore
 					continue; // Er moeten specifieke cursussen worden getoond en deze cursus hoort daar niet bij.
 				}
 			} elseif ( ! $cursus->tonen ) {
@@ -167,15 +151,14 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	}
 
 	/**
-	 *
-	 * Prepareer 'cursus_inschrijving' form
-	 *
-	 * @since   4.0.87
+	 * Default actie is inschrijven.
 	 *
 	 * @return string
 	 */
-	protected function prepare() : string {
-		$this->data['actie'] = $this->bepaal_actie();
+	protected function prepare(): string {
+		if ( Shortcode::STANDAARD_ACTIE === $this->display_actie ) {
+			$this->display_actie = 'inschrijven';
+		}
 		return parent::prepare();
 	}
 

@@ -17,74 +17,6 @@ namespace Kleistad;
 class Public_Registratie_Overzicht extends Shortcode {
 
 	/**
-	 * Haal de registratie data op
-	 *
-	 * @return array de registraties.
-	 */
-	private function registraties() : array {
-		$registraties = [];
-		foreach ( get_users( [ 'orderby' => 'display_name' ] ) as $gebruiker ) {
-			$registraties[ $gebruiker->ID ] = [
-				'is_abonnee'         => false,
-				'is_dagdelenkaart'   => false,
-				'is_cursist'         => '',
-				'deelnemer_info'     => [
-					'naam'   => $gebruiker->display_name,
-					'straat' => $gebruiker->straat,
-					'huisnr' => $gebruiker->huisnr,
-					'pcode'  => $gebruiker->pcode,
-					'plaats' => $gebruiker->plaats,
-					'telnr'  => $gebruiker->telnr,
-					'email'  => $gebruiker->user_email,
-				],
-				'abonnee_info'       => [],
-				'dagdelenkaart_info' => [],
-				'inschrijving_info'  => [],
-				'voornaam'           => $gebruiker->first_name,
-				'achternaam'         => $gebruiker->last_name,
-				'telnr'              => $gebruiker->telnr,
-				'email'              => $gebruiker->user_email,
-			];
-		}
-		foreach ( new Abonnementen() as $abonnement ) {
-			$registraties[ $abonnement->klant_id ]['is_abonnee']   = ! $abonnement->is_geannuleerd();
-			$registraties[ $abonnement->klant_id ]['abonnee_info'] = [
-				'code'           => $abonnement->code,
-				'start_datum'    => date( 'd-m-Y', $abonnement->start_datum ),
-				'pauze_datum'    => $abonnement->pauze_datum ? date( 'd-m-Y', $abonnement->pauze_datum ) : '',
-				'herstart_datum' => $abonnement->herstart_datum ? date( 'd-m-Y', $abonnement->herstart_datum ) : '',
-				'eind_datum'     => $abonnement->eind_datum ? date( 'd-m-Y', $abonnement->eind_datum ) : '',
-				'dag'            => ( 'beperkt' === $abonnement->soort ) ? $abonnement->dag : '',
-				'soort'          => ucfirst( $abonnement->soort ),
-				'extras'         => implode( ' ', $abonnement->extras ),
-				'geannuleerd'    => $abonnement->is_geannuleerd(),
-				'opmerking'      => $abonnement->opmerking,
-			];
-		}
-		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
-			$registraties[ $dagdelenkaart->klant_id ]['is_dagdelenkaart']   = $dagdelenkaart->eind_datum >= strtotime( 'today' );
-			$registraties[ $dagdelenkaart->klant_id ]['dagdelenkaart_info'] = [
-				'code'        => $dagdelenkaart->code,
-				'start_datum' => date( 'd-m-Y', $dagdelenkaart->start_datum ),
-			];
-		}
-		foreach ( new Cursisten() as $cursist ) {
-			foreach ( $cursist->inschrijvingen as $inschrijving ) {
-				$registraties[ $cursist->ID ]['is_cursist']         .= "C{$inschrijving->cursus->id};";
-				$registraties[ $cursist->ID ]['inschrijving_info'][] = [
-					'ingedeeld'   => $inschrijving->ingedeeld,
-					'geannuleerd' => $inschrijving->geannuleerd,
-					'code'        => $inschrijving->code,
-					'aantal'      => $inschrijving->aantal,
-					'naam'        => $inschrijving->cursus->naam,
-					'technieken'  => $inschrijving->technieken,
-				];
-			}
-		}
-		return $registraties;
-	}
-
-	/**
 	 *
 	 * Prepareer 'registratie_overzicht' form
 	 *
@@ -253,6 +185,74 @@ class Public_Registratie_Overzicht extends Shortcode {
 				';'
 			);
 		}
+	}
+
+	/**
+	 * Haal de registratie data op
+	 *
+	 * @return array de registraties.
+	 */
+	private function registraties() : array {
+		$registraties = [];
+		foreach ( get_users( [ 'orderby' => 'display_name' ] ) as $gebruiker ) {
+			$registraties[ $gebruiker->ID ] = [
+				'is_abonnee'         => false,
+				'is_dagdelenkaart'   => false,
+				'is_cursist'         => '',
+				'deelnemer_info'     => [
+					'naam'   => $gebruiker->display_name,
+					'straat' => $gebruiker->straat,
+					'huisnr' => $gebruiker->huisnr,
+					'pcode'  => $gebruiker->pcode,
+					'plaats' => $gebruiker->plaats,
+					'telnr'  => $gebruiker->telnr,
+					'email'  => $gebruiker->user_email,
+				],
+				'abonnee_info'       => [],
+				'dagdelenkaart_info' => [],
+				'inschrijving_info'  => [],
+				'voornaam'           => $gebruiker->first_name,
+				'achternaam'         => $gebruiker->last_name,
+				'telnr'              => $gebruiker->telnr,
+				'email'              => $gebruiker->user_email,
+			];
+		}
+		foreach ( new Abonnementen() as $abonnement ) {
+			$registraties[ $abonnement->klant_id ]['is_abonnee']   = ! $abonnement->is_geannuleerd();
+			$registraties[ $abonnement->klant_id ]['abonnee_info'] = [
+				'code'           => $abonnement->code,
+				'start_datum'    => date( 'd-m-Y', $abonnement->start_datum ),
+				'pauze_datum'    => $abonnement->pauze_datum ? date( 'd-m-Y', $abonnement->pauze_datum ) : '',
+				'herstart_datum' => $abonnement->herstart_datum ? date( 'd-m-Y', $abonnement->herstart_datum ) : '',
+				'eind_datum'     => $abonnement->eind_datum ? date( 'd-m-Y', $abonnement->eind_datum ) : '',
+				'dag'            => ( 'beperkt' === $abonnement->soort ) ? $abonnement->dag : '',
+				'soort'          => ucfirst( $abonnement->soort ),
+				'extras'         => implode( ' ', $abonnement->extras ),
+				'geannuleerd'    => $abonnement->is_geannuleerd(),
+				'opmerking'      => $abonnement->opmerking,
+			];
+		}
+		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
+			$registraties[ $dagdelenkaart->klant_id ]['is_dagdelenkaart']   = $dagdelenkaart->eind_datum >= strtotime( 'today' );
+			$registraties[ $dagdelenkaart->klant_id ]['dagdelenkaart_info'] = [
+				'code'        => $dagdelenkaart->code,
+				'start_datum' => date( 'd-m-Y', $dagdelenkaart->start_datum ),
+			];
+		}
+		foreach ( new Cursisten() as $cursist ) {
+			foreach ( $cursist->inschrijvingen as $inschrijving ) {
+				$registraties[ $cursist->ID ]['is_cursist']         .= "C{$inschrijving->cursus->id};";
+				$registraties[ $cursist->ID ]['inschrijving_info'][] = [
+					'ingedeeld'   => $inschrijving->ingedeeld,
+					'geannuleerd' => $inschrijving->geannuleerd,
+					'code'        => $inschrijving->code,
+					'aantal'      => $inschrijving->aantal,
+					'naam'        => $inschrijving->cursus->naam,
+					'technieken'  => $inschrijving->technieken,
+				];
+			}
+		}
+		return $registraties;
 	}
 
 }

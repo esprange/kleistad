@@ -20,7 +20,7 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
 		$this->form()->bijstorten()->betaal_info()->form_end();
 	}
 
@@ -29,7 +29,7 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Saldo_Display
 	 */
-	private function bijstorten() {
+	private function bijstorten() : Public_Saldo_Display {
 		?>
 		<p>Je huidige stooksaldo is <strong>&euro; <?php echo esc_html( $this->data['saldo'] ); ?></strong></p>
 		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $this->data['gebruiker_id'] ); ?>" />

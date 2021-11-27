@@ -17,24 +17,140 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
-	 *
-	 * @return void
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function html() {
-		if ( 'cursisten' === $this->data['actie'] ) {
-			if ( current_user_can( BESTUUR ) ) {
-				$this->form()->cursisten_bestuur()->form_end();
-			} else {
-				$this->form()->cursisten_docent()->form_end();
-			}
-		} elseif ( 'indelen' === $this->data['actie'] ) {
-			$this->form()->indelen()->form_end();
-		} elseif ( 'uitschrijven' === $this->data['actie'] ) {
-			$this->form()->uitschrijven()->form_end();
-		} else {
-			$this->overzicht();
+	protected function cursisten() {
+		if ( current_user_can( BESTUUR ) ) {
+			$this->form()->cursisten_bestuur()->form_end();
+			return;
 		}
+		$this->form()->cursisten_docent()->form_end();
+	}
+
+	/**
+	 * Render het indelen formulier
+	 */
+	protected function indelen() {
+		$this->form();
+		?>
+		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
+		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $this->data['cursist']['id'] ); ?>">
+		<h2>Indeling op lopende cursus</h2>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				<label>Cursist</label>
+			</div>
+			<div class="kleistad-col-5">
+				<?php echo esc_html( $this->data['cursist']['naam'] ); ?>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				<label>Inschrijfdatum</label>
+			</div>
+			<div class="kleistad-col-5">
+				<?php echo esc_html( date( 'd-m-Y', $this->data['cursist']['datum'] ) ); ?>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				<label>Prijs advies</label>
+			</div>
+			<div class="kleistad-col-5">
+				<?php echo esc_html( "totaal {$this->data['cursus']['lessen']} lessen, resterend {$this->data['cursus']['lessen_rest']}" ); ?>
+				<br/>
+				<strong>advies prijs &euro; <?php echo esc_html( number_format_i18n( $this->data['cursus']['kosten'] * $this->data['cursist']['aantal'], 2 ) ); ?></strong>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				<label for="kleistad_kosten">Vastgestelde prijs</label>
+			</div>
+			<div class="kleistad-col-5">
+				<input type=number name="kosten" id="kleistad_kosten" step="0.01" min="0" max="<?php echo esc_attr( $this->data['cursus']['max'] * $this->data['cursist']['aantal'] ); ?>"
+					value="<?php echo esc_attr( number_format( $this->data['cursus']['kosten'] * $this->data['cursist']['aantal'], 2 ) ); ?>" >
+			</div>
+		</div>
+		<div class="kleistad-row" style="padding-top:20px;">
+			<div class="kleistad-col-3">
+				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" id="kleistad_submit" type="submit" value="indelen" >Bevestigen</button>
+			</div>
+			<div class="kleistad-col-4">
+			</div>
+			<div class="kleistad-col-3">
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
+			</div>
+		</div>
+		<?php
+		$this->form_end();
+	}
+
+	/**
+	 * Render het uitschrijven formulier
+	 */
+	protected function uitschrijven() {
+		$this->form();
+		?>
+		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
+		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $this->data['cursist']['id'] ); ?>">
+		<h2>Verwijderen uit cursus wachtlijst</h2>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				<label>Cursist</label>
+			</div>
+			<div class="kleistad-col-5">
+				<?php echo esc_html( $this->data['cursist']['naam'] ); ?>
+			</div>
+		</div>
+		<div class="kleistad-row" style="padding-top:20px;">
+			<div class="kleistad-col-3">
+				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" type="submit" id="kleistad_submit" value="uitschrijven" >Bevestigen</button>
+			</div>
+			<div class="kleistad-col-4">
+			</div>
+			<div class="kleistad-col-3">
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
+			</div>
+		</div>
+		<?php
+		$this->form_end();
+	}
+
+	/**
+	 * Render de cursussen
+	 */
+	protected function overzicht() {
+		?>
+		<table class="kleistad-datatable display" id="kleistad_cursussen" data-order='[[ 0, "desc" ]]'>
+			<thead>
+			<tr>
+				<th>Code</th>
+				<th>Naam</th>
+				<th>Docent</th>
+				<th>Start</th>
+				<th data-orderable="false"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			foreach ( $this->data['cursus_info'] as $cursus_id => $cursus_info ) :
+				?>
+				<tr>
+					<td data-sort="<?php echo esc_attr( $cursus_id ); ?>"><?php echo esc_html( $cursus_info['code'] ); ?></td>
+					<td><?php echo esc_html( $cursus_info['naam'] ); ?></td>
+					<td><?php echo esc_html( $cursus_info['docent'] ); ?></td>
+					<td data-sort="<?php echo esc_attr( $cursus_info['start_dt'] ); ?>"><?php echo esc_html( $cursus_info['start_datum'] ); ?></td>
+					<td>
+						<?php if ( $cursus_info['heeft_inschrijvingen'] ) : ?>
+							<a href="#" title="toon cursisten" class="kleistad-view kleistad-edit-link"	data-id="<?php echo esc_attr( $cursus_id ); ?>" data-actie="cursisten" >
+								&nbsp;
+							</a>
+						<?php endif ?>
+					</td>
+				</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+		<?php
 	}
 
 	/**
@@ -143,136 +259,6 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 		return $this;
-	}
-
-
-	/**
-	 * Render het indelen formulier
-	 *
-	 * @return Public_Cursus_Overzicht_Display
-	 */
-	private function indelen() : Public_Cursus_Overzicht_Display {
-		?>
-		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
-		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $this->data['cursist']['id'] ); ?>">
-		<h2>Indeling op lopende cursus</h2>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3">
-				<label>Cursist</label>
-			</div>
-			<div class="kleistad-col-5">
-				<?php echo esc_html( $this->data['cursist']['naam'] ); ?>
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3">
-				<label>Inschrijfdatum</label>
-			</div>
-			<div class="kleistad-col-5">
-				<?php echo esc_html( date( 'd-m-Y', $this->data['cursist']['datum'] ) ); ?>
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3">
-				<label>Prijs advies</label>
-			</div>
-			<div class="kleistad-col-5">
-				<?php echo esc_html( "totaal {$this->data['cursus']['lessen']} lessen, resterend {$this->data['cursus']['lessen_rest']}" ); ?>
-				<br/>
-				<strong>advies prijs &euro; <?php echo esc_html( number_format_i18n( $this->data['cursus']['kosten'] * $this->data['cursist']['aantal'], 2 ) ); ?></strong>
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3">
-				<label for="kleistad_kosten">Vastgestelde prijs</label>
-			</div>
-			<div class="kleistad-col-5">
-				<input type=number name="kosten" id="kleistad_kosten" step="0.01" min="0" max="<?php echo esc_attr( $this->data['cursus']['max'] * $this->data['cursist']['aantal'] ); ?>"
-					value="<?php echo esc_attr( number_format( $this->data['cursus']['kosten'] * $this->data['cursist']['aantal'], 2 ) ); ?>" >
-			</div>
-		</div>
-		<div class="kleistad-row" style="padding-top:20px;">
-			<div class="kleistad-col-3">
-				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" id="kleistad_submit" type="submit" value="indelen" >Bevestigen</button>
-			</div>
-			<div class="kleistad-col-4">
-			</div>
-			<div class="kleistad-col-3">
-				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
-			</div>
-		</div>
-		<?php
-		return $this;
-	}
-
-	/**
-	 * Render het uitschrijven formulier
-	 *
-	 * @return Public_Cursus_Overzicht_Display
-	 */
-	private function uitschrijven() : Public_Cursus_Overzicht_Display {
-		?>
-		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
-		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $this->data['cursist']['id'] ); ?>">
-		<h2>Verwijderen uit cursus wachtlijst</h2>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3">
-				<label>Cursist</label>
-			</div>
-			<div class="kleistad-col-5">
-				<?php echo esc_html( $this->data['cursist']['naam'] ); ?>
-			</div>
-		</div>
-		<div class="kleistad-row" style="padding-top:20px;">
-			<div class="kleistad-col-3">
-				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" type="submit" id="kleistad_submit" value="uitschrijven" >Bevestigen</button>
-			</div>
-			<div class="kleistad-col-4">
-			</div>
-			<div class="kleistad-col-3">
-				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
-			</div>
-		</div>
-		<?php
-		return $this;
-	}
-
-	/**
-	 * Render de cursussen
-	 */
-	private function overzicht() {
-		?>
-		<table class="kleistad-datatable display" id="kleistad_cursussen" data-order='[[ 0, "desc" ]]'>
-			<thead>
-				<tr>
-					<th>Code</th>
-					<th>Naam</th>
-					<th>Docent</th>
-					<th>Start</th>
-					<th data-orderable="false"></th>
-				</tr>
-			</thead>
-			<tbody>
-			<?php
-			foreach ( $this->data['cursus_info'] as $cursus_id => $cursus_info ) :
-				?>
-				<tr>
-					<td data-sort="<?php echo esc_attr( $cursus_id ); ?>"><?php echo esc_html( $cursus_info['code'] ); ?></td>
-					<td><?php echo esc_html( $cursus_info['naam'] ); ?></td>
-					<td><?php echo esc_html( $cursus_info['docent'] ); ?></td>
-					<td data-sort="<?php echo esc_attr( $cursus_info['start_dt'] ); ?>"><?php echo esc_html( $cursus_info['start_datum'] ); ?></td>
-					<td>
-						<?php if ( $cursus_info['heeft_inschrijvingen'] ) : ?>
-						<a href="#" title="toon cursisten" class="kleistad-view kleistad-edit-link"	data-id="<?php echo esc_attr( $cursus_id ); ?>" data-actie="cursisten" >
-							&nbsp;
-						</a>
-						<?php endif ?>
-					</td>
-				</tr>
-			<?php endforeach ?>
-			</tbody>
-		</table>
-		<?php
 	}
 
 }

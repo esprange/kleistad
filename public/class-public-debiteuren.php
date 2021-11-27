@@ -19,77 +19,6 @@ use WP_Error;
 class Public_Debiteuren extends ShortcodeForm {
 
 	/**
-	 * Maak de lijst van openstaande betalingen.
-	 *
-	 * @param string $zoek De eventuele zoek term.
-	 * @return array De info.
-	 */
-	private function debiteuren( string $zoek = '' ) : array {
-		$data            = [
-			'openstaand'   => 0,
-			'terugstorten' => false,
-			'debiteuren'   => [],
-		];
-		$artikelregister = new Artikelregister();
-		$orders          = new Orders();
-		foreach ( $orders as $order ) {
-			if ( (
-				! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek )
-			) ||
-				( empty( $zoek ) && $order->gesloten )
-				) {
-				continue;
-			}
-			$openstaand           = $order->te_betalen();
-			$data['debiteuren'][] = [
-				'id'           => $order->id,
-				'naam'         => $order->klant['naam'],
-				'betreft'      => $artikelregister->geef_naam( $order->referentie ),
-				'referentie'   => $order->referentie,
-				'openstaand'   => $openstaand,
-				'credit'       => boolval( $order->origineel_id ),
-				'sinds'        => $order->datum,
-				'gesloten'     => $order->gesloten,
-				'verval_datum' => $order->verval_datum,
-			];
-			$data['openstaand']  += $openstaand;
-			$data['terugstorten'] = $data['terugstorten'] || ( 0 > $openstaand && ! $order->transactie_id ); // Alleen bankterugstorting.
-		}
-		return $data;
-	}
-
-	/**
-	 * Toon de informatie van één debiteur.
-	 *
-	 * @param int $order_id Het order id.
-	 * @return array De informatie.
-	 */
-	private function debiteur( int $order_id ) : array {
-		$order           = new Order( $order_id );
-		$artikelregister = new Artikelregister();
-		return [
-			'id'            => $order->id,
-			'naam'          => $order->klant['naam'],
-			'betreft'       => $artikelregister->geef_naam( $order->referentie ),
-			'referentie'    => $order->referentie,
-			'factuur'       => $order->factuurnummer(),
-			'betaald'       => $order->betaald,
-			'openstaand'    => $order->te_betalen(),
-			'sinds'         => $order->datum,
-			'historie'      => $order->historie,
-			'gesloten'      => $order->gesloten,
-			'ontvangst'     => 0.0,
-			'korting'       => 0.0,
-			'restant'       => 0.0,
-			'geblokkeerd'   => $order->is_geblokkeerd(),
-			'annuleerbaar'  => $order->is_annuleerbaar(),
-			'terugstorting' => $order->is_terugstorting_actief(),
-			'credit'        => $order->is_credit(),
-			'afboekbaar'    => $order->is_afboekbaar(),
-		];
-	}
-
-	/**
 	 * Prepareer 'debiteuren' blokkade form
 	 *
 	 * @return string
@@ -130,7 +59,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
-		$this->data = array_merge( $this->data, [ 'actie' => 'openstaand' ], $this->debiteuren() );
+		$this->data = array_merge( $this->data, $this->debiteuren() );
 		return $this->content();
 	}
 
@@ -316,6 +245,76 @@ class Public_Debiteuren extends ShortcodeForm {
 			'status'  => $blokkade->set() ? 'De blokkade datum is gewijzigd' : new WP_Error( 'intern', 'De blokkade datum kon niet gewijzigd worden' ),
 			'content' => $this->goto_home(),
 		];
+	}
+
+	/**
+	 * Toon de informatie van één debiteur.
+	 *
+	 * @param int $order_id Het order id.
+	 * @return array De informatie.
+	 */
+	private function debiteur( int $order_id ) : array {
+		$order           = new Order( $order_id );
+		$artikelregister = new Artikelregister();
+		return [
+			'id'            => $order->id,
+			'naam'          => $order->klant['naam'],
+			'betreft'       => $artikelregister->geef_naam( $order->referentie ),
+			'referentie'    => $order->referentie,
+			'factuur'       => $order->factuurnummer(),
+			'betaald'       => $order->betaald,
+			'openstaand'    => $order->te_betalen(),
+			'sinds'         => $order->datum,
+			'historie'      => $order->historie,
+			'gesloten'      => $order->gesloten,
+			'ontvangst'     => 0.0,
+			'korting'       => 0.0,
+			'restant'       => 0.0,
+			'geblokkeerd'   => $order->is_geblokkeerd(),
+			'annuleerbaar'  => $order->is_annuleerbaar(),
+			'terugstorting' => $order->is_terugstorting_actief(),
+			'credit'        => $order->is_credit(),
+			'afboekbaar'    => $order->is_afboekbaar(),
+		];
+	}
+
+	/**
+	 * Maak de lijst van openstaande betalingen.
+	 *
+	 * @param string $zoek De eventuele zoek term.
+	 * @return array De info.
+	 */
+	private function debiteuren( string $zoek = '' ) : array {
+		$data            = [
+			'openstaand'   => 0,
+			'terugstorten' => false,
+			'debiteuren'   => [],
+		];
+		$artikelregister = new Artikelregister();
+		$orders          = new Orders();
+		foreach ( $orders as $order ) {
+			if (
+				( ! empty( $zoek ) && false === stripos( $order->klant['naam'] . ' ' . $order->referentie, $zoek ) ) ||
+				( empty( $zoek ) && $order->gesloten )
+			) {
+				continue;
+			}
+			$openstaand           = $order->te_betalen();
+			$data['debiteuren'][] = [
+				'id'           => $order->id,
+				'naam'         => $order->klant['naam'],
+				'betreft'      => $artikelregister->geef_naam( $order->referentie ),
+				'referentie'   => $order->referentie,
+				'openstaand'   => $openstaand,
+				'credit'       => boolval( $order->origineel_id ),
+				'sinds'        => $order->datum,
+				'gesloten'     => $order->gesloten,
+				'verval_datum' => $order->verval_datum,
+			];
+			$data['openstaand']  += $openstaand;
+			$data['terugstorten'] = $data['terugstorten'] || ( 0 > $openstaand && ! $order->transactie_id ); // Alleen bankterugstorting.
+		}
+		return $data;
 	}
 
 }

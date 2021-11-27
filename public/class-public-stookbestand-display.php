@@ -20,7 +20,7 @@ class Public_Stookbestand_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">

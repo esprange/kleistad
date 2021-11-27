@@ -28,38 +28,25 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @return void
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function html() {
+	protected function inschrijven() {
 		$this->form();
-		if ( 'indelen_na_wachten' === $this->data['actie'] ) {
-			$this->buttontekst = 'Betalen';
-			$this->indelen_na_wachten()->form_end();
-			return;
+		$this->cursus_info()->techniek_keuze();
+		if ( is_super_admin() ) {
+			$this->aantal( 1 )->gebruiker_selectie( 'Cursist' );
+		} elseif ( is_user_logged_in() ) {
+			$this->aantal( 1 )->gebruiker_logged_in()->opmerking()->nieuwsbrief();
+		} else {
+			$this->aantal()->gebruiker()->opmerking()->nieuwsbrief();
 		}
-		if ( 'stop_wachten' === $this->data['actie'] ) {
-			$this->buttontekst = 'Afmelden';
-			$this->stop_wachten()->form_end();
-			return;
-		}
-		if ( 'inschrijven' === $this->data['actie'] ) {
-			$this->cursus_info()->techniek_keuze();
-			if ( is_super_admin() ) {
-				$this->aantal( 1 )->gebruiker_selectie( 'Cursist' );
-			} elseif ( is_user_logged_in() ) {
-				$this->aantal( 1 )->gebruiker_logged_in()->opmerking()->nieuwsbrief();
-			} else {
-				$this->aantal()->gebruiker()->opmerking()->nieuwsbrief();
-			}
-			$this->buttontekst = 'Inschrijven';
-			$this->betaal_info()->form_end();
-		}
+		$this->buttontekst = 'Inschrijven';
+		$this->betaal_info()->form_end();
 	}
 
 	/**
 	 * Render het formulier voor inschrijving na op de wachtlijst te hebben gestaan
-	 *
-	 * @return Public_Cursus_Inschrijving_Display
 	 */
-	private function indelen_na_wachten() : Public_Cursus_Inschrijving_Display {
+	protected function indelen_na_wachten() {
+		$this->form();
 		?>
 		<h2><?php echo esc_html( $this->data['cursist_naam'] ); ?></h2>
 		<strong>Aanmelding voor cursus <?php echo esc_html( $this->data['cursus_naam'] ); ?></strong>
@@ -75,15 +62,15 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
+		$this->buttontekst = 'Betalen';
+		$this->form_end();
 	}
 
 	/**
 	 * Render het stop wachten formulier
-	 *
-	 * @return Public_Cursus_Inschrijving_Display
 	 */
-	private function stop_wachten() : Public_Cursus_Inschrijving_Display {
+	protected function stop_wachten() {
+		$this->form();
 		?>
 		<h2><?php echo esc_html( $this->data['cursist_naam'] ); ?></h2>
 		<strong>Afmelden voor de wachtlijst van cursus <?php echo esc_html( $this->data['cursus_naam'] ); ?></strong>
@@ -92,7 +79,8 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="aantal" value="1" />
 		<p>Door af te melden zal je geen email ontvangen als er een plaats vrijkomt voor deze cursus</p>
 		<?php
-		return $this;
+		$this->buttontekst = 'Afmelden';
+		$this->form_end();
 	}
 
 	/**
@@ -244,7 +232,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-10">
-				<button class="kleistad-button" name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" value="<?php echo esc_attr( $this->data['actie'] ); ?>" type="submit" ><?php echo esc_html( $this->buttontekst ); ?></button>
+				<button class="kleistad-button" name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" value="<?php echo esc_attr( $this->display_actie ); ?>" type="submit" ><?php echo esc_html( $this->buttontekst ); ?></button>
 			</div>
 		</div>
 		</form>

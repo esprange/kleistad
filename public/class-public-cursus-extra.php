@@ -19,40 +19,6 @@ use WP_Error;
 class Public_Cursus_Extra extends ShortcodeForm {
 
 	/**
-	 * Haal de extra cursisten op, eventueel initiëren.
-	 *
-	 * @param Inschrijving $inschrijving De inschrijving.
-	 * @return array De extra cursisten.
-	 */
-	private function extra_cursisten( Inschrijving $inschrijving ) : array {
-		$extra = [];
-		$index = 1;
-		foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
-			$extra_cursist = get_user_by( 'id', $extra_cursist_id );
-			if ( false === $extra_cursist ) {
-				continue;
-			}
-			$extra[ $index ] = [
-				'first_name' => $extra_cursist->first_name,
-				'last_name'  => $extra_cursist->last_name,
-				'user_email' => $extra_cursist->user_email,
-				'id'         => $extra_cursist_id,
-			];
-			$index++;
-		}
-		while ( $index < $inschrijving->aantal ) {
-			$extra[ $index ] = [
-				'first_name' => '',
-				'last_name'  => '',
-				'user_email' => '',
-				'id'         => 0,
-			];
-			$index++;
-		}
-		return $extra;
-	}
-
-	/**
 	 *
 	 * Prepareer 'cursus_extra' form
 	 *
@@ -185,6 +151,40 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'De gegevens zijn opgeslagen' . ( $emails_verzonden ? ' en welkomst email is verstuurd' : '' ) ),
 		];
+	}
+
+	/**
+	 * Haal de extra cursisten op, eventueel initiëren.
+	 *
+	 * @param Inschrijving $inschrijving De inschrijving.
+	 * @return array De extra cursisten.
+	 */
+	private function extra_cursisten( Inschrijving $inschrijving ) : array {
+		$extra = [];
+		$index = 1;
+		foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
+			$extra_cursist = get_user_by( 'id', $extra_cursist_id );
+			if ( false === $extra_cursist ) {
+				continue;
+			}
+			$extra[ $index ] = [
+				'first_name' => $extra_cursist->first_name,
+				'last_name'  => $extra_cursist->last_name,
+				'user_email' => $extra_cursist->user_email,
+				'id'         => $extra_cursist_id,
+			];
+			$index++;
+		}
+		while ( $index < $inschrijving->aantal ) {
+			$extra[ $index ] = [
+				'first_name' => '',
+				'last_name'  => '',
+				'user_email' => '',
+				'id'         => 0,
+			];
+			$index++;
+		}
+		return $extra;
 	}
 
 }

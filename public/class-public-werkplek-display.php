@@ -20,7 +20,7 @@ class Public_Werkplek_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
+	protected function overzicht() {
 		$huidige_gebruiker = wp_get_current_user();
 		?>
 		<div id="kleistad_geen_ie" style="display:none">

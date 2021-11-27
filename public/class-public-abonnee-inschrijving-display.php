@@ -22,7 +22,7 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @return void
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function html() {
+	protected function overzicht() {
 		$this->form()->abonnement_info();
 		if ( is_super_admin() ) {
 			$this->gebruiker_selectie( 'Abonnee' );

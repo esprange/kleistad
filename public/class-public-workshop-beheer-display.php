@@ -17,18 +17,106 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
-	 *
-	 * @return void
 	 */
-	protected function html() {
-		if ( false !== strpos( 'toevoegen, wijzigen, inplannen', (string) $this->data['actie'] ) ) {
-			$this->form()->edit()->form_end();
-			return;
-		} elseif ( false !== strpos( 'tonen', (string) $this->data['actie'] ) ) {
-			$this->form()->communicatie()->form_end();
-			return;
-		}
-		$this->overzicht();
+	protected function toevoegen() {
+		$this->form()->edit()->form_end();
+	}
+
+	/**
+	 * Render het formulier
+	 */
+	protected function wijzigen() {
+		$this->form()->edit()->form_end();
+	}
+
+	/**
+	 * Render het formulier
+	 */
+	protected function inplannen() {
+		$this->form()->edit()->form_end();
+	}
+
+	/**
+	 * Render het formulier
+	 */
+	protected function tonen() {
+		$this->form()->communicatie()->form_end();
+	}
+
+	/**
+	 * Toon het overzicht van workshops
+	 */
+	protected function overzicht() {
+		?>
+		<strong>Vraag en Antwoord</strong>
+		<table id="kleistad_aanvragen" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+			<thead>
+			<tr>
+				<th>Datum</th>
+				<th>Beschrijving</th>
+				<th>Status</th>
+				<th data-orderable="false"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			foreach ( $this->data['aanvragen'] as $aanvraag ) :
+				?>
+				<tr>
+					<td data-sort="<?php echo esc_attr( $aanvraag['datum'] ); ?>"><?php echo esc_html( strftime( '%d-%m-%Y %H:%M', $aanvraag['datum'] ) ); ?></td>
+					<td><?php echo esc_html( $aanvraag['titel'] ); ?></td>
+					<td><?php echo esc_html( $aanvraag['status'] ); ?></td>
+					<td>
+						<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="tonen" title="toon_aanvraag" class="kleistad-edit kleistad-edit-link" >
+							&nbsp;
+						</a>&nbsp;&nbsp;
+						<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="inplannen" title="plan_workshop" class="kleistad-schedule kleistad-edit-link" >
+							&nbsp;
+						</a>
+					</td>
+				</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+		<br/>
+		<strong>Plannen</strong>
+		<table id="kleistad_workshops" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
+			<thead>
+			<tr>
+				<th>Code</th>
+				<th>Datum</th>
+				<th>Titel</th>
+				<th>Docent</th>
+				<th>Aantal</th>
+				<th>Tijd</th>
+				<th>Status</th>
+				<th data-orderable="false"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			foreach ( $this->data['workshops'] as $workshop ) :
+				?>
+				<tr>
+					<td><?php echo esc_html( $workshop['code'] ); ?></td>
+					<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
+					<td><?php echo esc_html( $workshop['naam'] ); ?></td>
+					<td><?php echo esc_html( $workshop['docent'] ); ?></td>
+					<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
+					<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
+					<td><?php echo esc_html( $workshop['status'] ); ?></td>
+					<td>
+						<a href="#" data-id="<?php echo esc_attr( $workshop['id'] ); ?>" data-actie="wijzigen" title="wijzig workshop" class="kleistad-edit kleistad-edit-link" >
+							&nbsp;
+						</a>
+					</td>
+				</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<button class="kleistad-button kleistad-download-link" type="button" data-actie="workshops" >Download</button>
+		<?php
 	}
 
 	/**
@@ -169,7 +257,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $this->data['workshop']['definitief'] ); ?> >Opslaan</button>
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $this->data['workshop']['vervallen'] ); ?>
 					data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
-				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $this->data['actie'] || $this->data['workshop']['gefactureerd'] ); ?>
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $this->display_actie || $this->data['workshop']['gefactureerd'] ); ?>
 					data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
 			</div>
 			<div class="kleistad-col-3">
@@ -178,85 +266,6 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<?php
 		return $this;
-	}
-
-	/**
-	 * Toon het overzicht van workshops
-	 */
-	private function overzicht() {
-		?>
-		<strong>Vraag en Antwoord</strong>
-		<table id="kleistad_aanvragen" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
-			<thead>
-				<tr>
-					<th>Datum</th>
-					<th>Beschrijving</th>
-					<th>Status</th>
-					<th data-orderable="false"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php
-				foreach ( $this->data['aanvragen'] as $aanvraag ) :
-					?>
-				<tr>
-					<td data-sort="<?php echo esc_attr( $aanvraag['datum'] ); ?>"><?php echo esc_html( strftime( '%d-%m-%Y %H:%M', $aanvraag['datum'] ) ); ?></td>
-					<td><?php echo esc_html( $aanvraag['titel'] ); ?></td>
-					<td><?php echo esc_html( $aanvraag['status'] ); ?></td>
-					<td>
-						<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="tonen"
-							title="toon_aanvraag" class="kleistad-edit kleistad-edit-link" >
-							&nbsp;
-						</a>&nbsp;&nbsp;
-						<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="inplannen"
-							title="plan_workshop" class="kleistad-schedule kleistad-edit-link" >
-							&nbsp;
-						</a>
-					</td>
-				</tr>
-				<?php endforeach ?>
-			</tbody>
-		</table>
-		<br/>
-		<strong>Plannen</strong>
-		<table id="kleistad_workshops" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
-			<thead>
-				<tr>
-					<th>Code</th>
-					<th>Datum</th>
-					<th>Titel</th>
-					<th>Docent</th>
-					<th>Aantal</th>
-					<th>Tijd</th>
-					<th>Status</th>
-					<th data-orderable="false"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php
-				foreach ( $this->data['workshops'] as $workshop ) :
-					?>
-				<tr>
-					<td><?php echo esc_html( $workshop['code'] ); ?></td>
-					<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
-					<td><?php echo esc_html( $workshop['naam'] ); ?></td>
-					<td><?php echo esc_html( $workshop['docent'] ); ?></td>
-					<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
-					<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
-					<td><?php echo esc_html( $workshop['status'] ); ?></td>
-					<td>
-						<a href="#" data-id="<?php echo esc_attr( $workshop['id'] ); ?>" data-actie="wijzigen"
-							title="wijzig workshop" class="kleistad-edit kleistad-edit-link" >
-							&nbsp;
-						</a>
-					</td>
-				</tr>
-			<?php endforeach ?>
-			</tbody>
-		</table>
-		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
-		<button class="kleistad-button kleistad-download-link" type="button" data-actie="workshops" >Download</button>
-		<?php
 	}
 
 	/**

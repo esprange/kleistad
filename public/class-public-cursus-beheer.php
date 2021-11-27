@@ -19,46 +19,6 @@ use WP_Error;
 class Public_Cursus_Beheer extends ShortcodeForm {
 
 	/**
-	 * Bereid een cursus wijziging voor.
-	 *
-	 * @param int|null $cursus_id De cursus.
-	 * @return array De cursus data.
-	 */
-	private function formulier( ?int $cursus_id = null ) : array {
-		$cursus = new Cursus( $cursus_id );
-		return [
-			'id'              => $cursus->id,
-			'naam'            => $cursus->naam,
-			'code'            => empty( $cursus_id ) ? '' : $cursus->code,
-			'start_datum'     => $cursus->start_datum,
-			'eind_datum'      => $cursus->eind_datum,
-			'lesdatums'       => implode(
-				';',
-				array_map(
-					function( $lesdatum ) {
-						return date( 'd-m-Y', $lesdatum );
-					},
-					$cursus->lesdatums
-				)
-			),
-			'start_tijd'      => $cursus->start_tijd,
-			'eind_tijd'       => $cursus->eind_tijd,
-			'docent'          => $cursus->docent,
-			'technieken'      => $cursus->technieken,
-			'vervallen'       => $cursus->vervallen,
-			'techniekkeuze'   => $cursus->techniekkeuze,
-			'inschrijfkosten' => $cursus->inschrijfkosten,
-			'cursuskosten'    => $cursus->cursuskosten,
-			'inschrijfslug'   => $cursus->inschrijfslug,
-			'indelingslug'    => $cursus->indelingslug,
-			'maximum'         => $cursus->maximum,
-			'meer'            => $cursus->meer,
-			'tonen'           => $cursus->tonen,
-			'gedeeld'         => ( 0 < $cursus->inschrijfkosten ),
-		];
-	}
-
-	/**
 	 * Prepareer 'cursus_beheer' toevoegen form
 	 *
 	 * @return string
@@ -239,6 +199,46 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		return [
 			'status'  => $this->status( 'De cursus informatie is opgeslagen' ),
 			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Bereid een cursus wijziging voor.
+	 *
+	 * @param int|null $cursus_id De cursus.
+	 * @return array De cursus data.
+	 */
+	private function formulier( ?int $cursus_id = null ) : array {
+		$cursus = new Cursus( $cursus_id );
+		return [
+			'id'              => $cursus->id,
+			'naam'            => $cursus->naam,
+			'code'            => empty( $cursus_id ) ? '' : $cursus->code,
+			'start_datum'     => $cursus->start_datum,
+			'eind_datum'      => $cursus->eind_datum,
+			'lesdatums'       => implode(
+				';',
+				array_map(
+					function( $lesdatum ) {
+						return date( 'd-m-Y', $lesdatum );
+					},
+					$cursus->lesdatums
+				)
+			),
+			'start_tijd'      => $cursus->start_tijd,
+			'eind_tijd'       => $cursus->eind_tijd,
+			'docent'          => $cursus->docent,
+			'technieken'      => $cursus->technieken,
+			'vervallen'       => $cursus->vervallen,
+			'techniekkeuze'   => $cursus->techniekkeuze,
+			'inschrijfkosten' => $cursus->inschrijfkosten,
+			'cursuskosten'    => $cursus->cursuskosten,
+			'inschrijfslug'   => $cursus->inschrijfslug,
+			'indelingslug'    => $cursus->indelingslug,
+			'maximum'         => $cursus->maximum,
+			'meer'            => $cursus->meer,
+			'tonen'           => $cursus->tonen,
+			'gedeeld'         => ( 0 < $cursus->inschrijfkosten ),
 		];
 	}
 

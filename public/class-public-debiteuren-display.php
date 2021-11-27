@@ -19,44 +19,31 @@ use DateTimeZone;
 class Public_Debiteuren_Display extends Public_Shortcode_Display {
 
 	/**
-	 * Render het formulier
-	 *
-	 * @return void
+	 * Render het zoek deel van het formulier
 	 */
-	protected function html() {
-		if ( 'blokkade' === $this->data['actie'] ) {
-			$this->form()->blokkade()->form_end();
-			return;
-		} elseif ( 'debiteur' === $this->data['actie'] ) {
-			$this->form()->debiteur();
-			if ( ! ( $this->data['debiteur']['gesloten'] || $this->data['debiteur']['terugstorting'] ) ) {
-				$this->bankbetaling();
-			}
-			if ( ! $this->data['debiteur']['credit'] && $this->data['debiteur']['annuleerbaar'] ) {
-				$this->annulering();
-			}
-			if ( $this->data['debiteur']['afboekbaar'] ) {
-				$this->afboeking();
-			}
-			if ( ! ( $this->data['debiteur']['geblokkeerd'] || $this->data['debiteur']['credit'] ) ) {
-				$this->korting();
-			}
-			$this->debiteur_end()->form_end();
-			return;
-		} elseif ( 'zoek' === $this->data['actie'] ) {
-			$this->zoek()->overzicht();
-			return;
-		}
+	protected function zoek() {
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-2">
+				<label for="kleistad_zoek">Zoek naar</label>
+			</div>
+			<div class="kleistad-col-4"  style="position: relative;">
+				<input id="kleistad_zoek" type="text" style="height:40px;" placeholder="zoeken..." />
+				<button class="kleistad-button kleistad-edit-link" type="submit" id="kleistad_zoek_icon" data-id="" data-actie="zoek" style="height:40px;position:absolute;right:0;z-index:2;"><span class="dashicons dashicons-search"></span></button>
+			</div>
+		</div>
+		<br/><hr><br/>
+		<?php
 		$this->overzicht();
 	}
 
 	/**
 	 * Render het blokkade formulier
 	 *
-	 * @return Public_Debiteuren_Display
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function blokkade() : Public_Debiteuren_Display {
+	protected function blokkade() {
+		$this->form();
 		?>
 		<div class="kleistad-row">
 			<p>Alle orders voorafgaand <?php echo esc_html( date( 'd-m-Y', $this->data['huidige_blokkade'] ) ); ?> zijn nu niet meer te wijzigen.
@@ -77,13 +64,14 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		</div>
 			<?php endif ?>
 		<?php
-		return $this;
+		$this->form_end();
 	}
 
 	/**
 	 * Render het debiteur formulier
 	 */
-	private function debiteur() {
+	protected function debiteur() {
+		$this->form();
 		$factuur      = new Factuur();
 		$factuur_urls = $factuur->overzicht( $this->data['debiteur']['factuur'] );
 		?>
@@ -105,6 +93,67 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			<tr><th colspan="2"><?php echo $this->data['debiteur']['terugstorting'] ? 'Een stornering is ingediend' : ''; ?></th></tr>
 		</table>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['debiteur']['id'] ); ?>"/>
+		<?php
+		if ( ! ( $this->data['debiteur']['gesloten'] || $this->data['debiteur']['terugstorting'] ) ) {
+			$this->bankbetaling();
+		}
+		if ( ! $this->data['debiteur']['credit'] && $this->data['debiteur']['annuleerbaar'] ) {
+			$this->annulering();
+		}
+		if ( $this->data['debiteur']['afboekbaar'] ) {
+			$this->afboeking();
+		}
+		if ( ! ( $this->data['debiteur']['geblokkeerd'] || $this->data['debiteur']['credit'] ) ) {
+			$this->korting();
+		}
+		$this->debiteur_end()->form_end();
+	}
+
+	/**
+	 * Toon het overzicht van cursussen
+	 */
+	protected function overzicht() {
+		$datum = new Datetime();
+		$datum->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
+		if ( $this->data['terugstorten'] ) {
+			echo melding( -1, 'Er staan nog per bank terug te storten bedragen open' ); // phpcs:ignore
+		}
+		?>
+		<p><strong>Totaal openstaand:</strong> &euro; <?php echo esc_html( number_format_i18n( $this->data['openstaand'], 2 ) ); ?></p>
+		<table class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 3, "desc" ], [ 5, "asc" ]]' >
+			<thead>
+			<tr>
+				<th>Code</th>
+				<th>Naam</th>
+				<th>Betreft</th>
+				<th>Openstaand</th>
+				<th>Sinds</th>
+				<th>Vervaldatum</th>
+				<th data-orderable="false"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+
+			foreach ( $this->data['debiteuren'] as $debiteur ) :
+				$datum->setTimestamp( $debiteur['sinds'] );
+				?>
+				<tr style="<?php echo $debiteur['verval_datum'] <= strtotime( 'today' ) && ! $debiteur['gesloten'] ? 'color:#b30000' : ''; ?>" >
+					<td><?php echo esc_html( $debiteur['referentie'] . ( $debiteur['credit'] ? '(C)' : '' ) ); ?></td>
+					<td><?php echo esc_html( $debiteur['naam'] ); ?></td>
+					<td><?php echo esc_html( $debiteur['betreft'] ); ?></td>
+					<td style="text-align:right;" data-sort="<?php echo esc_attr( $debiteur['openstaand'] ); ?>">&euro; <?php echo esc_html( number_format_i18n( $debiteur['openstaand'], 2 ) ); ?></td>
+					<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
+					<td data-sort="<?php echo esc_attr( $debiteur['verval_datum'] ); ?>"><?php echo esc_html( date( 'd-m-Y', $debiteur['verval_datum'] ) ); ?></td>
+					<td>
+						<a href="#" title="wijzig order" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="debiteur" >
+							&nbsp;
+						</a>
+					</td>
+				</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
 		<?php
 	}
 
@@ -181,7 +230,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		<?php
 	}
 
-
 	/**
 	 * Render de afboeking sectie
 	 */
@@ -231,7 +279,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		<?php
 	}
 
-
 	/**
 	 * Render het de knoppen van het debiteur einde van het formulier
 	 *
@@ -255,75 +302,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', $this->data['huidige_blokkade'] ) ); ?> zijn niet meer te wijzigen</span>
 		<?php
 		return $this;
-	}
-
-	/**
-	 * Render het zoek deel van het formulier
-	 *
-	 * @return Public_Debiteuren_Display
-	 */
-	private function zoek() : Public_Debiteuren_Display {
-		?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-2">
-				<label for="kleistad_zoek">Zoek naar</label>
-			</div>
-			<div class="kleistad-col-4"  style="position: relative;">
-				<input id="kleistad_zoek" type="text" style="height:40px;" placeholder="zoeken..." />
-				<button class="kleistad-button kleistad-edit-link" type="submit" id="kleistad_zoek_icon" data-id="" data-actie="zoek" style="height:40px;position:absolute;right:0;z-index:2;"><span class="dashicons dashicons-search"></span></button>
-			</div>
-		</div>
-		<br/><hr><br/>
-		<?php
-		return $this;
-	}
-
-	/**
-	 * Toon het overzicht van cursussen
-	 */
-	private function overzicht() {
-		$datum = new Datetime();
-		$datum->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' ) );
-		if ( $this->data['terugstorten'] ) {
-			echo melding( -1, 'Er staan nog per bank terug te storten bedragen open' ); // phpcs:ignore
-		}
-		?>
-		<p><strong>Totaal openstaand:</strong> &euro; <?php echo esc_html( number_format_i18n( $this->data['openstaand'], 2 ) ); ?></p>
-		<table class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 3, "desc" ], [ 5, "asc" ]]' >
-			<thead>
-				<tr>
-					<th>Code</th>
-					<th>Naam</th>
-					<th>Betreft</th>
-					<th>Openstaand</th>
-					<th>Sinds</th>
-					<th>Vervaldatum</th>
-					<th data-orderable="false"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php
-
-				foreach ( $this->data['debiteuren'] as $debiteur ) :
-					$datum->setTimestamp( $debiteur['sinds'] );
-					?>
-					<tr style="<?php echo $debiteur['verval_datum'] <= strtotime( 'today' ) && ! $debiteur['gesloten'] ? 'color:#b30000' : ''; ?>" >
-						<td><?php echo esc_html( $debiteur['referentie'] . ( $debiteur['credit'] ? '(C)' : '' ) ); ?></td>
-						<td><?php echo esc_html( $debiteur['naam'] ); ?></td>
-						<td><?php echo esc_html( $debiteur['betreft'] ); ?></td>
-						<td style="text-align:right;" data-sort="<?php echo esc_attr( $debiteur['openstaand'] ); ?>">&euro; <?php echo esc_html( number_format_i18n( $debiteur['openstaand'], 2 ) ); ?></td>
-						<td data-sort="<?php echo esc_attr( $debiteur['sinds'] ); ?>"><?php echo esc_html( $datum->format( 'd-m-Y H:i' ) ); ?></td>
-						<td data-sort="<?php echo esc_attr( $debiteur['verval_datum'] ); ?>"><?php echo esc_html( date( 'd-m-Y', $debiteur['verval_datum'] ) ); ?></td>
-						<td>
-							<a href="#" title="wijzig order" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $debiteur['id'] ); ?>" data-actie="debiteur" >
-								&nbsp;
-							</a>
-						</td>
-					</tr>
-			<?php endforeach ?>
-			</tbody>
-		</table>
-		<?php
 	}
 
 }

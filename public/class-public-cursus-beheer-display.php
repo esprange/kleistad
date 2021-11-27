@@ -20,12 +20,57 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function html() {
-		if ( false !== strpos( 'toevoegen, wijzigen', (string) $this->data['actie'] ) ) {
-			$this->form()->edit()->form_end();
-			return;
-		}
-		$this->overzicht();
+	protected function toevoegen() {
+		$this->form()->edit()->form_end();
+	}
+
+	/**
+	 * Render het formulier
+	 *
+	 * @return void
+	 */
+	protected function wijzigen() {
+		$this->form()->edit()->form_end();
+	}
+
+	/**
+	 * Toon het overzicht van cursussen
+	 */
+	protected function overzicht() {
+		?>
+		<table class="kleistad-datatable display compact nowrap" id="kleistad_cursussen" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+			<thead>
+			<tr>
+				<th>Code</th>
+				<th>Naam</th>
+				<th>Docent</th>
+				<th>Periode</th>
+				<th>Tijd</th>
+				<th>Status</th>
+				<th data-orderable="false"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php foreach ( $this->data['cursussen'] as $cursus ) : ?>
+				<tr <?php echo $cursus['vervallen'] ? 'style="background-color:lightgray"' : ''; ?> >
+					<td data-sort="<?php echo esc_attr( $cursus['id'] ); ?>">C<?php echo esc_html( $cursus['id'] ); ?></td>
+					<td><?php echo esc_html( $cursus['naam'] ); ?></td>
+					<td><?php echo esc_html( $cursus['docent'] ); ?></td>
+					<td><?php echo esc_html( $cursus['start_datum'] ); ?><br/><?php echo esc_html( $cursus['eind_datum'] ); ?></td>
+					<td><?php echo esc_html( $cursus['start_tijd'] ); ?><br/><?php echo esc_html( $cursus['eind_tijd'] ); ?></td>
+					<td><?php echo esc_html( $cursus['status'] ); ?></td>
+					<td>
+						<a href="#" title="wijzig cursus" class="kleistad-edit kleistad-edit-link" style="padding:.4em .8em;"
+							data-id="<?php echo esc_attr( $cursus['id'] ); ?>" data-actie="wijzigen" >
+							&nbsp;
+						</a>
+					</td>
+				</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+		<button type="button" class="kleistad-button kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<?php
 	}
 
 	/**
@@ -157,7 +202,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-5">
 				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $readonly ); ?> >Opslaan</button>
-				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $this->data['actie'] ); ?> >Verwijderen</button>
+				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $this->display_actie ); ?> >Verwijderen</button>
 			</div>
 			<div class="kleistad-col-5">
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
@@ -167,43 +212,4 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		return $this;
 	}
 
-	/**
-	 * Toon het overzicht van cursussen
-	 */
-	private function overzicht() {
-		?>
-		<table class="kleistad-datatable display compact nowrap" id="kleistad_cursussen" data-page-length="10" data-order='[[ 0, "desc" ]]' >
-		<thead>
-			<tr>
-				<th>Code</th>
-				<th>Naam</th>
-				<th>Docent</th>
-				<th>Periode</th>
-				<th>Tijd</th>
-				<th>Status</th>
-				<th data-orderable="false"></th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach ( $this->data['cursussen'] as $cursus ) : ?>
-			<tr <?php echo $cursus['vervallen'] ? 'style="background-color:lightgray"' : ''; ?> >
-				<td data-sort="<?php echo esc_attr( $cursus['id'] ); ?>">C<?php echo esc_html( $cursus['id'] ); ?></td>
-				<td><?php echo esc_html( $cursus['naam'] ); ?></td>
-				<td><?php echo esc_html( $cursus['docent'] ); ?></td>
-				<td><?php echo esc_html( $cursus['start_datum'] ); ?><br/><?php echo esc_html( $cursus['eind_datum'] ); ?></td>
-				<td><?php echo esc_html( $cursus['start_tijd'] ); ?><br/><?php echo esc_html( $cursus['eind_tijd'] ); ?></td>
-				<td><?php echo esc_html( $cursus['status'] ); ?></td>
-				<td>
-					<a href="#" title="wijzig cursus" class="kleistad-edit kleistad-edit-link" style="padding:.4em .8em;"
-						data-id="<?php echo esc_attr( $cursus['id'] ); ?>" data-actie="wijzigen" >
-						&nbsp;
-					</a>
-				</td>
-			</tr>
-			<?php endforeach ?>
-		</tbody>
-		</table>
-		<button type="button" class="kleistad-button kleistad-edit-link" data-id="0" data-actie="toevoegen" >Toevoegen</button>
-		<?php
-	}
 }

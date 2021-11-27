@@ -16,18 +16,9 @@ namespace Kleistad;
 class Public_Saldo_Overzicht_Display extends Public_Shortcode_Display {
 
 	/**
-	 * Render het formulier
-	 *
-	 * @return void
-	 */
-	protected function html() {
-		$this->overzicht();
-	}
-
-	/**
 	 * Toon het overzicht van cursussen
 	 */
-	private function overzicht() {
+	protected function overzicht() {
 		?>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]'>
 			<thead>

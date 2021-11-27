@@ -24,19 +24,21 @@ abstract class Public_Shortcode_Display {
 	protected array $data;
 
 	/**
-	 * De functie die de html aanmaakt
+	 * De uit te voeren actie
 	 *
-	 * @return void
+	 * @var string $display_actie De actie.
 	 */
-	abstract protected function html();
+	protected string $display_actie;
 
 	/**
 	 * Constructor
 	 *
-	 * @param array $data De weer te geven data.
+	 * @param array  $data          De weer te geven data.
+	 * @param string $display_actie De te tonen actie.
 	 */
-	public function __construct( array $data ) {
-		$this->data = $data;
+	public function __construct( array $data, string $display_actie ) {
+		$this->data          = $data;
+		$this->display_actie = $display_actie;
 	}
 
 	/**
@@ -46,7 +48,7 @@ abstract class Public_Shortcode_Display {
 	 */
 	public function render() : string {
 		ob_start();
-		$this->html();
+		$this->{$this->display_actie}();
 		return ob_get_clean();
 	}
 

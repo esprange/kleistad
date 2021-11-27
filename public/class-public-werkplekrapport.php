@@ -20,9 +20,30 @@ class Public_Werkplekrapport extends Shortcode {
 	 * Prepareer 'werkplekrapport' form
 	 *
 	 * @return string
-	 * @todo Deze functie voldoet nog niet aan de nieuwe prepare calls obv actie.
 	 */
-	protected function prepare() : string {
+	protected function prepare_overzicht() : string {
+		$input = filter_input_array(
+			INPUT_GET,
+			[
+				'vanaf_datum' => FILTER_SANITIZE_STRING,
+				'tot_datum'   => FILTER_SANITIZE_STRING,
+			]
+		);
+		if ( empty( $input['vanaf_datum'] ) ) {
+			return $this->content();
+		}
+		$this->data['vanaf_datum'] = strtotime( $input['vanaf_datum'] );
+		$this->data['tot_datum']   = strtotime( $input['tot_datum'] );
+		$this->data['rapport']     = $this->groepsgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'] );
+		return $this->content();
+	}
+
+	/**
+	 * Prepareer 'werkplekrapport' form
+	 *
+	 * @return string
+	 */
+	protected function prepare_individueel() : string {
 		$input = filter_input_array(
 			INPUT_GET,
 			[
@@ -32,19 +53,13 @@ class Public_Werkplekrapport extends Shortcode {
 			]
 		);
 		if ( empty( $input['vanaf_datum'] ) ) {
-			if ( 'individueel' === $this->data['actie'] ) {
-				$this->data['gebruikers'] = $this->geef_gebruikers();
-			}
+			$this->data['gebruikers'] = $this->geef_gebruikers();
 			return $this->content();
 		}
 		$this->data['vanaf_datum']  = strtotime( $input['vanaf_datum'] );
 		$this->data['tot_datum']    = strtotime( $input['tot_datum'] );
 		$this->data['gebruiker_id'] = intval( $input['gebruiker_id'] );
-		if ( 'individueel' === $this->data['actie'] ) {
-			$this->data['rapport'] = $this->individueelgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'], $this->data['gebruiker_id'] );
-			return $this->content();
-		}
-		$this->data['rapport'] = $this->groepsgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'] );
+		$this->data['rapport']      = $this->individueelgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'], $this->data['gebruiker_id'] );
 		return $this->content();
 	}
 

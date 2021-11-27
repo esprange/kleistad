@@ -19,104 +19,6 @@ use WP_Error;
 class Public_Workshop_Beheer extends ShortcodeForm {
 
 	/**
-	 * Maak de lijst van workshops
-	 *
-	 * @return array De workshops data.
-	 */
-	private function planning() : array {
-		$workshops = new Workshops();
-		$lijst     = [];
-		foreach ( $workshops as $workshop ) {
-			$lijst[] = [
-				'id'         => $workshop->id,
-				'code'       => $workshop->code,
-				'datum_ux'   => $workshop->datum,
-				'datum'      => date( 'd-m-Y', $workshop->datum ),
-				'naam'       => $workshop->naam,
-				'start_tijd' => date( 'H:i', $workshop->start_tijd ),
-				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
-				'docent'     => $workshop->docent,
-				'aantal'     => $workshop->aantal,
-				'status'     => $workshop->geef_statustekst(),
-			];
-		}
-		return $lijst;
-	}
-
-	/**
-	 * Maak de lijst van aanvragen
-	 *
-	 * @return array De aanvragen data.
-	 */
-	private function aanvragen() : array {
-		$workshop_aanvragen = new WorkshopAanvragen();
-		$lijst              = [];
-		foreach ( $workshop_aanvragen as $workshop_aanvraag ) {
-			$lijst[] = [
-				'titel'  => $workshop_aanvraag->post_title,
-				'status' => $workshop_aanvraag->workshop_id ? "$workshop_aanvraag->post_status (W$workshop_aanvraag->workshop_id)" : $workshop_aanvraag->post_status,
-				'id'     => $workshop_aanvraag->ID,
-				'datum'  => strtotime( $workshop_aanvraag->post_modified ),
-			];
-		}
-		return $lijst;
-	}
-
-	/**
-	 * Bepaal de mogelijke docenten, zou beter kunnen als er een role docenten is...
-	 *
-	 * @return array De docenten.
-	 */
-	private function docenten() : array {
-		$docenten   = [];
-		$gebruikers = get_users(
-			[
-				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => 'display_name',
-			]
-		);
-		foreach ( $gebruikers as $gebruiker ) {
-			if ( user_can( $gebruiker->ID, OVERRIDE ) ) {
-				$docenten[] = $gebruiker;
-			}
-		}
-		return $docenten;
-	}
-
-	/**
-	 * Bereid een workshop wijziging voor.
-	 *
-	 * @param int|null $workshop_id De workshop.
-	 * @return array De workshop data.
-	 */
-	private function formulier( ?int $workshop_id = null ) : array {
-		$workshop = new Workshop( $workshop_id );
-		return [
-			'workshop_id'       => $workshop->id,
-			'naam'              => $workshop->naam,
-			'datum'             => date( 'd-m-Y', $workshop->datum ),
-			'start_tijd'        => date( 'H:i', $workshop->start_tijd ),
-			'eind_tijd'         => date( 'H:i', $workshop->eind_tijd ),
-			'docent'            => $workshop->docent,
-			'technieken'        => $workshop->technieken,
-			'organisatie'       => $workshop->organisatie,
-			'organisatie_adres' => $workshop->organisatie_adres,
-			'organisatie_email' => $workshop->organisatie_email,
-			'contact'           => $workshop->contact,
-			'email'             => $workshop->email,
-			'telnr'             => $workshop->telnr,
-			'programma'         => $workshop->programma,
-			'kosten'            => $workshop->kosten,
-			'aantal'            => $workshop->aantal,
-			'betaald'           => $workshop->is_betaald(),
-			'definitief'        => $workshop->definitief,
-			'vervallen'         => $workshop->vervallen,
-			'aanvraag_id'       => $workshop->aanvraag_id,
-			'gefactureerd'      => $workshop->betaling_email,
-		];
-	}
-
-	/**
 	 * Prepareer 'input' form voor toevoegen.
 	 *
 	 * @return string
@@ -430,6 +332,104 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshop->aantal            = intval( $this->data['workshop']['aantal'] );
 		$workshop->aanvraag_id       = intval( $this->data['workshop']['aanvraag_id'] );
 		return $workshop;
+	}
+
+	/**
+	 * Maak de lijst van workshops
+	 *
+	 * @return array De workshops data.
+	 */
+	private function planning() : array {
+		$workshops = new Workshops();
+		$lijst     = [];
+		foreach ( $workshops as $workshop ) {
+			$lijst[] = [
+				'id'         => $workshop->id,
+				'code'       => $workshop->code,
+				'datum_ux'   => $workshop->datum,
+				'datum'      => date( 'd-m-Y', $workshop->datum ),
+				'naam'       => $workshop->naam,
+				'start_tijd' => date( 'H:i', $workshop->start_tijd ),
+				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
+				'docent'     => $workshop->docent,
+				'aantal'     => $workshop->aantal,
+				'status'     => $workshop->geef_statustekst(),
+			];
+		}
+		return $lijst;
+	}
+
+	/**
+	 * Maak de lijst van aanvragen
+	 *
+	 * @return array De aanvragen data.
+	 */
+	private function aanvragen() : array {
+		$workshop_aanvragen = new WorkshopAanvragen();
+		$lijst              = [];
+		foreach ( $workshop_aanvragen as $workshop_aanvraag ) {
+			$lijst[] = [
+				'titel'  => $workshop_aanvraag->post_title,
+				'status' => $workshop_aanvraag->workshop_id ? "$workshop_aanvraag->post_status (W$workshop_aanvraag->workshop_id)" : $workshop_aanvraag->post_status,
+				'id'     => $workshop_aanvraag->ID,
+				'datum'  => strtotime( $workshop_aanvraag->post_modified ),
+			];
+		}
+		return $lijst;
+	}
+
+	/**
+	 * Bepaal de mogelijke docenten, zou beter kunnen als er een role docenten is...
+	 *
+	 * @return array De docenten.
+	 */
+	private function docenten() : array {
+		$docenten   = [];
+		$gebruikers = get_users(
+			[
+				'fields'  => [ 'ID', 'display_name' ],
+				'orderby' => 'display_name',
+			]
+		);
+		foreach ( $gebruikers as $gebruiker ) {
+			if ( user_can( $gebruiker->ID, OVERRIDE ) ) {
+				$docenten[] = $gebruiker;
+			}
+		}
+		return $docenten;
+	}
+
+	/**
+	 * Bereid een workshop wijziging voor.
+	 *
+	 * @param int|null $workshop_id De workshop.
+	 * @return array De workshop data.
+	 */
+	private function formulier( ?int $workshop_id = null ) : array {
+		$workshop = new Workshop( $workshop_id );
+		return [
+			'workshop_id'       => $workshop->id,
+			'naam'              => $workshop->naam,
+			'datum'             => date( 'd-m-Y', $workshop->datum ),
+			'start_tijd'        => date( 'H:i', $workshop->start_tijd ),
+			'eind_tijd'         => date( 'H:i', $workshop->eind_tijd ),
+			'docent'            => $workshop->docent,
+			'technieken'        => $workshop->technieken,
+			'organisatie'       => $workshop->organisatie,
+			'organisatie_adres' => $workshop->organisatie_adres,
+			'organisatie_email' => $workshop->organisatie_email,
+			'contact'           => $workshop->contact,
+			'email'             => $workshop->email,
+			'telnr'             => $workshop->telnr,
+			'programma'         => $workshop->programma,
+			'kosten'            => $workshop->kosten,
+			'aantal'            => $workshop->aantal,
+			'betaald'           => $workshop->is_betaald(),
+			'definitief'        => $workshop->definitief,
+			'vervallen'         => $workshop->vervallen,
+			'aanvraag_id'       => $workshop->aanvraag_id,
+			'gefactureerd'      => $workshop->betaling_email,
+		];
 	}
 
 }
