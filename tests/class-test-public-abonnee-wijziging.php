@@ -50,7 +50,7 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 			'betaal'         => $betaling_per_bank ? 'stort' : 'ideal',
 			'pauze_datum'    => date( 'd-m-Y', strtotime( '+ 2 weeks' ) ),
 			'herstart_datum' => date( 'd-m-Y', strtotime( '+ 5 weeks' ) ),
-			'per_datum'      => date( 'd-m-Y', strtotime( 'first day of next month' ) ),
+			'per_datum'      => strtotime( 'first day of next month' ),
 			'extras'         => [ 'sleutel' ],
 		];
 	}
@@ -60,60 +60,63 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 	 */
 	public function test_prepare() {
 		$this->maak_wijziging( 'test', false, false );
-		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
 				echo $error . "\n"; // phpcs:ignore
 			}
 		}
-		$this->assertFalse( is_wp_error( $result ), 'prepare incorrect' );
+		$this->assertNotWPError( $result, 'prepare incorrect' );
 	}
 
 	/**
-	 * Test validate functie.
+	 * Test functie process betaalwijze.
 	 */
-	public function test_validate() {
-		$this->maak_wijziging( 'test', false, true );
-		$_POST  = $this->input;
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				echo $error . "\n"; // phpcs:ignore
-			}
-		}
-		$this->assertFalse( is_wp_error( $result ), 'validate incorrect' );
-	}
-
-	/**
-	 * Test functie save.
-	 */
-	public function test_save() {
-		/**
-		 * Test eerst de betaalwijze wijziging naar ideal
-		 */
+	public function test_process_betaalwijze() {
 		$this->maak_wijziging( 'betaalwijze', false, false );
-		$data = [ 'input' => $this->input ];
-		foreach ( [ 'herstart_datum', 'pauze_datum', 'per_datum' ] as $datum ) {
-			$data['input'][ $datum ] = strtotime( $data['input'][ $datum ] );
-		}
-		$result = $this->public_actie( self::SHORTCODE, 'save', $data, 'betaalwijze' );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na wijzigen betaal wijze' );
-
-		/**
-		 * Test nu de overige wijzigingen.
-		 */
-		foreach ( [ 'betaalwijze', 'pauze', 'soort', 'extras', 'dag', 'einde' ] as $wijziging ) {
-			$this->maak_wijziging( $wijziging, true, false );
-			$data = [ 'input' => $this->input ];
-			foreach ( [ 'herstart_datum', 'pauze_datum', 'per_datum' ] as $datum ) {
-				$data['input'][ $datum ] = strtotime( $data['input'][ $datum ] );
-			}
-			$result = $this->public_actie( self::SHORTCODE, 'save', $data, $wijziging );
-			$this->assertTrue( false !== strpos( $result['status'], 'De wijziging is verwerkt' ), 'geen succes na wijzigen ' . $wijziging );
-		}
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'betaalwijze' );
+		$this->assertArrayHasKey( 'redirect_uri', $result, 'geen ideal verwijzing na wijzigen betaal wijze' );
 	}
 
+	/**
+	 * Test functie process pauze.
+	 */
+	public function test_process_pauze() {
+		$this->maak_wijziging( 'pauze', true, false );
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'pauze' );
+		$this->assertStringContainsString( 'De wijziging is verwerkt', $result['status'], 'geen succes na wijzigen pauze' );
+	}
+
+	/**
+	 * Test functie process extras.
+	 */
+	public function test_process_extras() {
+		$this->maak_wijziging( 'extras', true, false );
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'extras' );
+		$this->assertStringContainsString( 'De wijziging is verwerkt', $result['status'], 'geen succes na wijzigen extras' );
+	}
+
+	/**
+	 * Test functie process dag.
+	 */
+	public function test_process_dag() {
+		$this->maak_wijziging( 'dag', true, false );
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'dag' );
+		$this->assertStringContainsString( 'De wijziging is verwerkt', $result['status'], 'geen succes na wijzigen dag' );
+	}
+
+	/**
+	 * Test functie process einde.
+	 */
+	public function test_process_einde() {
+		$this->maak_wijziging( 'einde', true, false );
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'einde' );
+		$this->assertStringContainsString( 'De wijziging is verwerkt', $result['status'], 'geen succes na wijzigen einde' );
+	}
 
 }

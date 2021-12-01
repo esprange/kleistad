@@ -24,9 +24,8 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		/**
 		 * Eerst een controle zonder dat er argumenten zijn. Die doet niets.
 		 */
-		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertFalse( is_wp_error( $result ), 'prepare zonder argumenten incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertEmpty( $result, 'prepare zonder argumenten incorrect' );
 
 		/**
 		 * Nu een controle van een reguliere verkoop, die moet ok gaan.
@@ -40,13 +39,13 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$verkoop->bestelregel( 'testverkoop', 1, 10 );
 		$verkoop->bestel_order( 0.0, strtotime( '+14 days 0:00' ) );
 
-		$_GET = [
+		$_GET   = [
 			'order' => $verkoop->code,
 			'hsh'   => $verkoop->controle(),
 			'art'   => $verkoop->artikel_type,
 		];
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( isset( $data['openstaand'] ), 'prepare met argumenten result incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( 'testverkoop', $result, 'prepare met argumenten result incorrect' );
 
 		/**
 		 * Nu sluiten we de order. Dan moet er een foutmelding zijn.
@@ -54,21 +53,21 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$order           = new Order( $verkoop->geef_referentie() );
 		$order->gesloten = true;
 		$order->save( 'test' );
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( false !== strpos( $result, 'Volgens onze informatie is er reeds betaald' ), 'prepare gesloten order incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( 'Volgens onze informatie is er reeds betaald', $result, 'prepare gesloten order incorrect' );
 
 		/**
 		 * Nu nog een controle met foute hash ccode.
 		 */
 		$_GET['hsh'] = 'false';
-		$result      = $this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( false !== strpos( $result, 'Je hebt geklikt op een ongeldige link' ), 'prepare ongeldige link incorrect' );
+		$result      = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( 'Je hebt geklikt op een ongeldige link', $result, 'prepare ongeldige link incorrect' );
 	}
 
 	/**
-	 * Test validate functie.
+	 * Test process functie.
 	 */
-	public function test_validate() {
+	public function test_process() {
 		$verkoop        = new LosArtikel();
 		$verkoop->klant = [
 			'naam'  => 'test',
@@ -87,53 +86,16 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 			'betaal'       => 'ideal',
 			'artikel_type' => $verkoop->artikel_type,
 		];
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				echo $error . "\n"; // phpcs:ignore
-			}
-		}
-		$this->assertFalse( is_wp_error( $result ), 'validate incorrect' );
-
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'betalen' );
+		$this->assertArrayHasKey( 'redirect_uri', $result, 'geen ideal verwijzing na betaling' );
 		/**
 		 * Test alsnog of betaling al heeft plaatsgevonden.
 		 */
 		$order->gesloten = true;
 		$order->save( 'test' );
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze informatie is er reeds betaald' ), 'validate gesloten order incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'betalen' );
+		$this->assertStringContainsString( 'Volgens onze informatie is er reeds betaald', $result['status'], 'validate gesloten order incorrect' );
 
 		// @todo Er zou ook nog een test moeten zijn vwb beschikbaarheid.
 	}
-
-	/**
-	 * Test functie betalen.
-	 */
-	public function test_betalen() {
-		$verkoop        = new LosArtikel();
-		$verkoop->klant = [
-			'naam'  => 'test',
-			'adres' => 'straat 1 dorp',
-			'email' => 'test@example.com',
-		];
-		$verkoop->bestelregel( 'testverkoop', 1, 10 );
-		$verkoop->bestel_order( 0.0, strtotime( '+14 days 0:00' ) );
-		$order = new Order( $verkoop->geef_referentie() );
-
-		$data   = [
-			'input'   =>
-			[
-				'order_id'     => $order->id,
-				'betaal'       => 'ideal',
-				'artikel_type' => $verkoop->artikel_type,
-			],
-			'order'   => $order,
-			'artikel' => $verkoop,
-		];
-		$result = $this->public_actie( self::SHORTCODE, 'save', $data, 'betalen' );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na betaling' );
-	}
-
-
 }

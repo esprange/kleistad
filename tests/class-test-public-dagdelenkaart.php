@@ -52,47 +52,18 @@ class Test_Public_Dagdelenkaart extends Kleistad_UnitTestCase {
 	 * Test prepare functie;
 	 */
 	public function test_prepare() {
-		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data, '', [ 'verklaring' => 'test' ] );
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				echo $error . "\n"; // phpcs:ignore
-			}
-		}
-		$this->assertFalse( is_wp_error( $result ), 'prepare incorrect' );
-		$this->assertTrue( 'test' === ( $data['verklaring'] ?? '' ), 'prepare verklaring incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [ 'verklaring' => 'test' ] );
+		$this->assertStringContainsString( 'test', $result, 'prepare verklaring incorrect' );
 	}
 
 	/**
-	 * Test validate functie.
+	 * Test process functie.
 	 */
-	public function test_validate() {
+	public function test_process() {
 		$this->maak_dagdelenkaart();
 		$_POST  = $this->input;
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				echo $error . "\n"; // phpcs:ignore
-			}
-		}
-		$this->assertFalse( is_wp_error( $result ), 'validate incorrect' );
-	}
-
-	/**
-	 * Test functie save.
-	 */
-	public function test_save() {
-		$this->maak_dagdelenkaart();
-		$data   = [ 'input' => $this->input ];
-		$result = $this->public_actie( self::SHORTCODE, 'save', $data );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na dagdelenkaart bewaren' );
-
-		/**
-		 * Dagdelenkaart moet herhaald kunnen worden.
-		 */
-		$result = $this->public_actie( self::SHORTCODE, 'save', $data );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na dagdelenkaart bewaren' );
+		$result = $this->public_form_actie( self::SHORTCODE, [] );
+		$this->assertArrayHasKey( 'redirect_uri', $result, 'geen ideal verwijzing na bestellen' );
 	}
 
 }

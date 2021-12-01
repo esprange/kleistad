@@ -79,66 +79,98 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test de prepare functie.
+	 * Test de prepare functie als er nog geen cursus gedefinieerd is.
 	 */
-	public function test_prepare() {
-		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
+	public function test_prepare_zonder_cursus() {
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
 		/**
 		 * Standaard wordt de inschrijven actie uitgevoerd. Omdat er nog geen cursussen gedefinieerd zijn moet een error afgegeven worden.
 		 */
-		$this->assertTrue( false !== strpos( $result, 'Helaas is er geen cursusplek meer beschikbaar' ), 'prepare geen cursus incorrect' );
+		$this->assertStringContainsString( 'Helaas is er geen cursusplek meer beschikbaar', $result, 'prepare geen cursus incorrect' );
+	}
 
-		/**
-		 * Nu maken we een curusus aan en een cursist die op de wachtlijst staat
-		 */
+	/**
+	 * Test de prepare functie met een cursus gedefinieerd.
+	 */
+	public function test_prepare_met_cursus() {
 		$inschrijving                   = $this->maak_inschrijving( true );
 		$inschrijving->cursus->tonen    = true;
 		$inschrijving->cursus->maximum += 1;
 		$inschrijving->cursus->save();
-		/**
-		 * Er is nu een cursus dus inschrijven is voor iedereen mogelijk
-		 */
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( isset( $data['open_cursussen'] ), 'prepare inschrijven geen cursus' );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( $inschrijving->cursus->naam, $result, 'prepare inschrijven geen cursus' );
+	}
 
-		/**
-		 * Nu testen we of de cursist kan stoppen van de wachtlijst
-		 */
-		$_GET = [
+	/**
+	 * Test prepare stoppen na wachten.
+	 */
+	public function prepare_stoppen_na_wachten() {
+		$inschrijving                   = $this->maak_inschrijving( true );
+		$inschrijving->cursus->tonen    = true;
+		$inschrijving->cursus->maximum += 1;
+		$inschrijving->cursus->save();
+		$_GET   = [
 			'code'  => $inschrijving->code,
 			'hsh'   => $inschrijving->controle(),
 			'actie' => 'stop_wachten',
 		];
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertEquals( $inschrijving->klant_id, $data['gebruiker_id'], 'prepare stoppen na wachten geen gebruiker_id' );
-		$this->assertFalse( isset( $data['ruimte'] ), 'prepare stoppen na wachten incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( 'Afmelden voor de wachtlijst van cursus', $result, 'prepare stoppen na wachten incorrect' );
+	}
 
-		/**
-		 * Nu testen we of de cursist via de wachtlijst link kan werken
-		 */
+	/**
+	 * Test function indelen na wachten
+	 */
+	public function prepare_indelen_na_wachten() {
+		$inschrijving                   = $this->maak_inschrijving( true );
+		$inschrijving->cursus->tonen    = true;
+		$inschrijving->cursus->maximum += 1;
+		$inschrijving->cursus->save();
+		$_GET = [
+			'code'  => $inschrijving->code,
+			'hsh'   => $inschrijving->controle(),
+			'actie' => 'indelen_na_wachten',
+		];
 		Cursussen::doe_dagelijks(); // Zet de vol indicator uit en verstuur de email met de link.
-		$_GET['actie'] = 'indelen_na_wachten';
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertEquals( $inschrijving->klant_id, $data['gebruiker_id'], 'prepare indelen na wachten geen gebruiker_id' );
-		$this->assertTrue( isset( $data['ruimte'] ), 'prepare indelen na wachten geen gebruiker_id' );
-
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( 'Aanmelding voor cursus', $result, 'prepare indelen na wachten niet correct' );
 	}
 
 	/**
 	 * Test validate functie.
 	 */
-	public function test_validate() {
+	public function test_inschrijven() {
 		$this->maak_inschrijving( false );
 		$_POST  = $this->input;
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				echo $error . "\n"; // phpcs:ignore
-			}
-		}
-		$this->assertFalse( is_wp_error( $result ), 'validate incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'inschrijven' );
+		$this->assertArrayHasKey( 'redirect_uri', $result, 'geen ideal verwijzing na inschrijven' );
+	}
+
+	/**
+	 * Test functie inschrijven herhaald.
+	 */
+	public function test_inschrijven_herhaald() {
+		$inschrijving = $this->maak_inschrijving( false );
+		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->save();
+
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'inschrijven' );
+		$this->assertArrayHasKey( 'redirect_uri', $result, 'geen ideal verwijzing na herhaald inschrijven' );
+	}
+
+	/**
+	 * Test functie inschrijven na indelen.
+	 */
+	public function test_inschrijven_na_indeling() {
+		$inschrijving = $this->maak_inschrijving( false );
+		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->save();
+		$order = new Order( $inschrijving->geef_referentie() );
+		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'inschrijven' );
+		$this->assertStringContainsString( 'Volgens onze administratie ben je al ingedeeld', $result['status'], 'geen ideal verwijzing na inschrijven' );
 	}
 
 	/**
@@ -147,24 +179,27 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	public function test_stop_wachten() {
 		$inschrijving = $this->maak_inschrijving( true );
 		$inschrijving->actie->aanvraag( 'ideal' );
-		/**
-		 * Na inschrijving kan de cursist zich uitschrijven van de wachtlijst.
-		 */
-		$data   = [ 'input' => $this->input ];
-		$result = $this->public_actie( self::SHORTCODE, 'stop_wachten', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'De inschrijving is verwijderd uit de wachtlijst' ), 'geen bevestigin stop wachten' );
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'stop_wachten' );
+		$this->assertStringContainsString( 'De inschrijving is verwijderd uit de wachtlijst', $result['status'], 'geen bevestigin stop wachten' );
 		/**
 		 * Controleer ook de inschrijving zelf.
 		 */
 		$inschrijving2 = new Inschrijving( $inschrijving->cursus->id, $inschrijving->klant_id );
 		$this->assertTrue( $inschrijving2->geannuleerd, 'stop wachten incorrect' );
-		/**
-		 * Deel de cursist nu alsnog in. Stoppen mag dan niet meer.
-		 */
-		$inschrijving2->ingedeeld   = true;
-		$inschrijving2->geannuleerd = false;
-		$inschrijving2->save();
-		$result = $this->public_actie( self::SHORTCODE, 'stop_wachten', $data );
+	}
+
+	/**
+	 * Test stoppen na wachten en opnieuw indelen. Stoppen mag dan niet meer.
+	 */
+	public function test_stoppen_na_wachten_ingedeeld() {
+		$inschrijving = $this->maak_inschrijving( true );
+		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->ingedeeld   = true;
+		$inschrijving->geannuleerd = false;
+		$inschrijving->save();
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'stop_wachten' );
 		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze administratie ben je al ingedeeld op deze cursus' ), 'na ingedeeld toch bevestiging stop wachten' );
 	}
 
@@ -174,48 +209,34 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	public function test_indelen_na_wachten() {
 		$inschrijving = $this->maak_inschrijving( true );
 		$inschrijving->actie->aanvraag( 'ideal' );
-
 		$inschrijving->cursus->maximum += 1;
 		$inschrijving->cursus->save();
 		Inschrijvingen::doe_dagelijks();
 		/**
 		 * Na inschrijving en als er ruimte is ontstaan in de cursus, dan kan er ingedeeld worden.
 		 */
-		$data   = [ 'input' => $this->input ];
-		$result = $this->public_actie( self::SHORTCODE, 'indelen_na_wachten', $data );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na wachten' );
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'indelen_na_wachten' );
+		$this->assertArrayHasKey( 'redirect_uri', $result, 'geen ideal verwijzing na wachten' );
+	}
+
+	/**
+	 * Test functioe indelen na wachten herhaald
+	 */
+	public function test_indelen_na_wachten_herhaald() {
+		$inschrijving = $this->maak_inschrijving( true );
+		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->cursus->maximum += 1;
+		$inschrijving->cursus->save();
+		Inschrijvingen::doe_dagelijks();
 		/**
 		 * Na betaling moet er ingedeeld worden. Dan kan er niet opnieuw indelen na wachten uitgevoerd worden.
 		 */
 		$order = new Order( $inschrijving->geef_referentie() );
 		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
-		$result = $this->public_actie( self::SHORTCODE, 'indelen_na_wachten', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze administratie ben je al ingedeeld' ), 'geen ideal verwijzing na inschrijven' );
+		$_POST  = $this->input;
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'indelen_na_wachten' );
+		$this->assertStringContainsString( 'Volgens onze administratie ben je al ingedeeld', $result['status'], 'geen ideal verwijzing na inschrijven' );
 	}
-
-	/**
-	 * Test functie inschrijven.
-	 */
-	public function test_inschrijven() {
-		$inschrijving = $this->maak_inschrijving( false );
-		$data         = [ 'input' => $this->input ];
-		$result       = $this->public_actie( self::SHORTCODE, 'inschrijven', $data );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na inschrijven' );
-
-		/**
-		 * Inschrijving moet herhaald kunnen worden.
-		 */
-		$result = $this->public_actie( self::SHORTCODE, 'inschrijven', $data );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na inschrijven' );
-
-		/**
-		 * Inschrijving na indeling kan niet.
-		 */
-		$order = new Order( $inschrijving->geef_referentie() );
-		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
-		$result = $this->public_actie( self::SHORTCODE, 'inschrijven', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze administratie ben je al ingedeeld' ), 'geen ideal verwijzing na inschrijven' );
-	}
-
 
 }

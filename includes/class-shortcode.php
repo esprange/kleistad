@@ -46,6 +46,13 @@ abstract class Shortcode {
 	protected array $data = [];
 
 	/**
+	 * Controle array om te voorkomen dat shortcodes meerdere keren voorkomen.
+	 *
+	 * @var array shortcode tags
+	 */
+	protected static $tags = [];
+
+	/**
 	 * Actie welke bepaald welke informatie getoond moet worden.
 	 *
 	 * @var string $display_actie De uit te voeren actie.
@@ -163,14 +170,12 @@ abstract class Shortcode {
 	 * @param array  $attributes    Shortcode parameters.
 	 * @return Shortcode | null
 	 * @throws Kleistad_Exception Als er de shortcode meer dat eens op de pagina voorkomt.
-	 * @suppressWarnings(PHPMD.UndefinedVariable)
 	 */
 	public static function get_instance( string $shortcode_tag, array $attributes ) : ?Shortcode {
-		static $tags = []; // Om een of andere reden gaat PHPMD hier niet goed mee om, vandaar de annotatie.
-		if ( in_array( $shortcode_tag, $tags, true ) && ! is_admin() ) {
+		if ( in_array( $shortcode_tag, self::$tags, true ) && ! is_admin() ) {
 			throw new Kleistad_Exception( "De shortcode kleistad_$shortcode_tag mag maar éénmaal per pagina gebruikt worden" );
 		}
-		$tags[]          = $shortcode_tag;
+		self::$tags[]    = $shortcode_tag;
 		$shortcode_class = self::get_class_name( $shortcode_tag );
 		return new $shortcode_class( $shortcode_tag, $attributes );
 	}

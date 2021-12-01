@@ -18,46 +18,74 @@ class Test_Public_Cursus_Overzicht extends Kleistad_UnitTestCase {
 	private const SHORTCODE = 'cursus_overzicht';
 
 	/**
-	 * Test de prepare functie.
+	 * Test de prepare overzicht functie.
 	 */
 	public function test_prepare() {
-		$cursus = new Cursus();
+		$cursus       = new Cursus();
+		$cursus->naam = 'Testcursus';
+		$cursus->save();
+		$cursist_id              = $this->factory->user->create();
+		$inschrijving            = new Inschrijving( $cursus->id, $cursist_id );
+		$inschrijving->ingedeeld = true;
+		$inschrijving->save();
+
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( $cursus->naam, $result, 'prepare default data incorrect' );
+		$this->assertStringContainsString( 'toon cursisten', $result, 'prepare default geen cursisten' );
+	}
+
+	/**
+	 * Test functie prepare cursisten
+	 */
+	public function test_prepare_cursisten() {
+		$cursus       = new Cursus();
+		$cursus->naam = 'Testcursus';
+		$cursus->save();
+		$cursist_id              = $this->factory->user->create();
+		$inschrijving            = new Inschrijving( $cursus->id, $cursist_id );
+		$inschrijving->ingedeeld = true;
+		$inschrijving->save();
+
+		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => $cursus->id ], 'cursisten' );
+		$this->assertStringContainsString( get_user_by( 'ID', $cursist_id )->display_name, $result, 'prepare tonen cursisten naam ontbreekt' );
+	}
+
+	/**
+	 * Test functie prepare indelen
+	 */
+	public function test_prepare_indelen() {
+		$cursus       = new Cursus();
+		$cursus->naam = 'Testcursus';
 		$cursus->save();
 		$cursist_id   = $this->factory->user->create();
 		$inschrijving = new Inschrijving( $cursus->id, $cursist_id );
 		$inschrijving->save();
 
-		$data = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( 0 < count( $data['cursus_info'] ), 'prepare default data incorrect' );
-
-		$data = [
-			'actie' => 'cursisten',
-			'id'    => $cursist_id,
-		];
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( isset( $data['cursisten'] ), 'prepare tonen cursisten data incorrect' );
-
-		$data = [
-			'actie' => 'indelen',
-			'id'    => "C$cursus->id-$cursist_id",
-		];
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( isset( $data['cursist'] ), 'prepare indelen cursist data incorrect' );
-
-		$data = [
-			'actie' => 'uitschrijven',
-			'id'    => "C$cursus->id-$cursist_id",
-		];
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( isset( $data['cursist'] ), 'prepare uitschrijven cursist data incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => "C$cursus->id-$cursist_id" ], 'indelen' );
+		$this->assertStringContainsString( 'Prijs advies', $result, 'prepare indelen cursist incorrect' );
+		$this->assertStringContainsString( get_user_by( 'ID', $cursist_id )->display_name, $result, 'prepare indelen cursist naam ontbreekt' );
 	}
 
 	/**
-	 * Test validate functie.
+	 * Test function prepare uitschrijven
 	 */
-	public function test_validate() {
-		$data                = [];
+	public function test_prepare_uitschrijven() {
+		$cursus       = new Cursus();
+		$cursus->naam = 'Testcursus';
+		$cursus->save();
+		$cursist_id   = $this->factory->user->create();
+		$inschrijving = new Inschrijving( $cursus->id, $cursist_id );
+		$inschrijving->save();
+
+		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => "C$cursus->id-$cursist_id" ], 'uitschrijven' );
+		$this->assertStringContainsString( 'Verwijderen uit cursus wachtlijst', $result, 'prepare uitschrijven cursist incorrect' );
+		$this->assertStringContainsString( get_user_by( 'ID', $cursist_id )->display_name, $result, 'prepare uitschrijven cursist naam ontbreekt' );
+	}
+
+	/**
+	 * Test indelen functie.
+	 */
+	public function test_indelen() {
 		$cursus              = new Cursus();
 		$cursus->start_datum = strtotime( '-1 week' );
 		$cursus->eind_datum  = strtotime( '+2 week' );
@@ -71,8 +99,8 @@ class Test_Public_Cursus_Overzicht extends Kleistad_UnitTestCase {
 			'cursus_id'  => $cursus->id,
 			'kosten'     => 35.0,
 		];
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data, 'indelen' );
-		$this->assertArrayHasKey( 'content', $result, 'validate incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'indelen' );
+		$this->assertStringContainsString( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd', $result['status'], 'indelen incorrect' );
 	}
 
 	/**
@@ -90,11 +118,10 @@ class Test_Public_Cursus_Overzicht extends Kleistad_UnitTestCase {
 
 		$_GET       = [ 'cursus_id' => $cursus->id ];
 		$filehandle = fopen( 'php://memory', 'wb' );
-		$data       = [ 'filehandle' => $filehandle ];
-		$this->public_actie( self::SHORTCODE, 'cursisten', $data );
+		$this->public_download_actie( self::SHORTCODE, [], 'cursisten', $filehandle );
 		$size = ftell( $filehandle );
 		fclose( $filehandle );
-		$this->assertTrue( 0 < $size, 'Er is geen bestand aangemaakt' );
+		$this->assertGreaterThan( 0, $size, 'Er is geen bestand aangemaakt' );
 	}
 
 }

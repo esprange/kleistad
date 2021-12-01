@@ -22,13 +22,11 @@ class Test_Public_Abonnement_Overzicht extends Kleistad_UnitTestCase {
 	 */
 	public function test_prepare() {
 		$abonnee_id = $this->factory->user->create();
-		$abonnement = new Abonnement( $abonnee_id );
-		$abonnement->save();
+		$abonnee    = new Abonnee( $abonnee_id );
+		$abonnee->abonnement->save();
 
-		$data = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
-		$this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertTrue( isset( $data['abonnee_info'] ), 'prepare incorrect' );
-		$this->assertTrue( 0 < count( $data['abonnee_info'] ), 'prepare default data incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( $abonnee->display_name, $result, 'prepare incorrect' );
 	}
 
 	/**
@@ -41,10 +39,10 @@ class Test_Public_Abonnement_Overzicht extends Kleistad_UnitTestCase {
 
 		$filehandle = fopen( 'php://memory', 'wb' );
 		$data       = [ 'filehandle' => $filehandle ];
-		$this->public_actie( self::SHORTCODE, 'abonnementen', $data );
+		$this->public_download_actie( self::SHORTCODE, [], 'abonnementen', $filehandle );
 		$size = ftell( $filehandle );
 		fclose( $filehandle );
-		$this->assertTrue( 0 < $size, 'Er is geen bestand aangemaakt' );
+		$this->assertGreaterThan( 0, $size, 'Er is geen bestand aangemaakt' );
 	}
 
 }

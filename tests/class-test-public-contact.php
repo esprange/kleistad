@@ -21,31 +21,26 @@ class Test_Public_Contact extends Kleistad_UnitTestCase {
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
-		/**
-		 * Eerst een controle zonder dat er argumenten zijn. Die doet niets.
-		 */
-		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertFalse( is_wp_error( $result ), 'prepare incorrect' );
-
-		/**
-		 * Nu met de simulatie van een bestaande gebruiker.
-		 */
-		$data         = [];
-		$gebruiker_id = $this->factory->user->create();
-		wp_set_current_user( $gebruiker_id );
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertFalse( is_wp_error( $result ), 'prepare met ingelogde gebruiker incorrect' );
-		$this->assertNotEmpty( $data['input']['email'], 'prepare ingelogde gebruiker leeg' );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertNotEmpty( $result, 'prepare incorrect' );
 	}
 
 	/**
-	 * Test validate functie.
+	 * Test prepare maar nu met de simulatie van een bestaande gebruiker.
 	 */
-	public function test_validate() {
-		/**
-		 * Test reguliere validate.
-		 */
+	public function test_prepare_ingelogd() {
+		$gebruiker_id = $this->factory->user->create();
+		wp_set_current_user( $gebruiker_id );
+		$gebruiker = get_user_by( 'ID', $gebruiker_id );
+		$result    = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( $gebruiker->user_email, $result, 'prepare ingelogde gebruiker leeg' );
+	}
+
+	/**
+	 * Test process functie.
+	 */
+	public function test_process() {
+		$mailer = tests_retrieve_phpmailer_instance();
 		$_POST  = [
 			'email'     => 'test@example.com',
 			'naam'      => 'test naam',
@@ -53,32 +48,9 @@ class Test_Public_Contact extends Kleistad_UnitTestCase {
 			'onderwerp' => 'test',
 			'vraag'     => 'testvraag',
 		];
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				echo $error . "\n"; // phpcs:ignore
-			}
-		}
-		$this->assertFalse( is_wp_error( $result ), 'validate incorrect' );
-	}
-
-	/**
-	 * Test functie save.
-	 */
-	public function test_save() {
-		$mailer        = tests_retrieve_phpmailer_instance();
-		$data['input'] = [
-			'email'     => 'test@example.com',
-			'naam'      => 'test naam',
-			'telnr'     => '',
-			'onderwerp' => 'test',
-			'vraag'     => 'testvraag',
-		];
-		$result        = $this->public_actie( self::SHORTCODE, 'save', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'Jouw vraag is ontvangen' ), 'geen succes na save' );
+		$result = $this->public_form_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( 'Jouw vraag is ontvangen', $result['status'], 'geen succes na save' );
 		$this->assertEquals( 'Vraag over test', $mailer->get_last_sent( 'test@example.com' )->subject, 'contact email onderwerp incorrect' );
 	}
-
 
 }

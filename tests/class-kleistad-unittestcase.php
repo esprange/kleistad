@@ -59,48 +59,91 @@ function filter_input( int $type, string $var_name, int $filter = FILTER_DEFAULT
 abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 
 	/**
-	 * Hulp functie om de protected frontend functies te kunnen uitvoeren
-	 * Omdat de shortcode class een singleton is wordt een cache opgebouwd voor hergebruik
+	 * Mock de protected display actie
 	 *
 	 * @param string $shortcode_tag De shortcode die getest wordt.
-	 * @param string $method        De protected class method die moet worden getest.
-	 * @param array  $data          De uit te wisselen data.
-	 * @param string $form_actie    De formulier actie.
 	 * @param array  $atts          De eventuele attributes meegegeven aan de shortcode.
+	 * @param string $display_actie De display actie.
 	 *
 	 * @return mixed
 	 * @throws Kleistad_Exception  De Kleistad exceptie.
 	 * @throws ReflectionException De Reflectie exceptie.
 	 */
-	protected function public_actie( string $shortcode_tag, string $method, array &$data, string $form_actie = '', array $atts = [] ) {
-		static $shortcodes = [];
-		if ( ! isset( $shortcodes[ $shortcode_tag ] ) ) {
-			$shortcodes[ $shortcode_tag ] = Shortcode::get_instance( $shortcode_tag, $atts );
-		}
-		$refobject = new ReflectionObject( $shortcodes[ $shortcode_tag ] );
-
-		$refdata = $refobject->getProperty( 'data' );
-		$refdata->setAccessible( true );
-		$refdata->setValue( $shortcodes[ $shortcode_tag ], $data );
-
-		$refmethod = $refobject->getMethod( $method );
+	protected function public_display_actie( string $shortcode_tag, array $atts, string $display_actie = Shortcode::STANDAARD_ACTIE ) {
+		$_GET['actie'] = $display_actie;
+		$shortcode     = $this->geef_shortcode_object( $shortcode_tag, $atts );
+		$refobject     = new ReflectionObject( $shortcode );
+		$refmethod     = $refobject->getMethod( 'display' );
 		$refmethod->setAccessible( true );
+		return $refmethod->invoke( $shortcode );
+	}
 
-		if ( property_exists( $shortcodes[ $shortcode_tag ], 'form_actie' ) ) {
-			$refactie = $refobject->getProperty( 'form_actie' );
-			$refactie->setAccessible( true );
-			$refactie->setValue( $shortcodes[ $shortcode_tag ], $form_actie );
-		}
+	/**
+	 * Mock de protected form process actie
+	 *
+	 * @param string $shortcode_tag De shortcode die getest wordt.
+	 * @param array  $atts          De eventuele attributes meegegeven aan de shortcode.
+	 * @param string $form_actie    De formulier actie.
+	 *
+	 * @return mixed
+	 * @throws Kleistad_Exception  De Kleistad exceptie.
+	 * @throws ReflectionException De Reflectie exceptie.
+	 */
+	protected function public_form_actie( string $shortcode_tag, array $atts, string $form_actie = '' ) {
+		$shortcode = $this->geef_shortcode_object( $shortcode_tag, $atts );
+		$refobject = new ReflectionObject( $shortcode );
+		$refmethod = $refobject->getMethod( 'process' );
+		$refactie  = $refobject->getProperty( 'form_actie' );
+		$refmethod->setAccessible( true );
+		$refactie->setAccessible( true );
+		$refactie->setValue( $shortcode, $form_actie );
+		return $refmethod->invoke( $shortcode );
+	}
 
-		if ( isset( $data['filehandle'] ) ) {
-			$reffilehandle = $refobject->getProperty( 'filehandle' );
-			$reffilehandle->setAccessible( true );
-			$reffilehandle->setValue( $shortcodes[ $shortcode_tag ], $data['filehandle'] );
-		}
+	/**
+	 * Mock een file download
+	 *
+	 * @param string   $shortcode_tag De shortcode.
+	 * @param array    $atts          Shortcode attributen.
+	 * @param string   $method        De gevraagde file functie.
+	 * @param resource $file_handle   De file handle.
+	 *
+	 * @return mixed
+	 * @throws Kleistad_Exception  De Kleistad exceptie.
+	 * @throws ReflectionException De Reflectie exceptie.
+	 */
+	protected function public_download_actie( string $shortcode_tag, array $atts, string $method, $file_handle ) {
+		$dummy         = [];
+		$shortcode     = $this->geef_shortcode_object( $shortcode_tag, $atts, $dummy );
+		$refobject     = new ReflectionObject( $shortcode );
+		$refmethod     = $refobject->getMethod( $method );
+		$reffilehandle = $refobject->getProperty( 'filehandle' );
+		$reffilehandle->setAccessible( true );
+		$reffilehandle->setValue( $shortcode, $file_handle );
+		$refmethod->setAccessible( true );
+		return $refmethod->invoke( $shortcode );
+	}
 
-		$status = $refmethod->invoke( $shortcodes[ $shortcode_tag ] );
-		$data   = $refdata->getValue( $shortcodes[ $shortcode_tag ] );
-		return $status;
+	/**
+	 * Initieer het shortcode object
+	 *
+	 * @param string $shortcode_tag De shortcode.
+	 * @param array  $atts          De shortcode attributen.
+	 *
+	 * @return Shortcode
+	 * @throws Kleistad_Exception  De Kleistad exceptie.
+	 * @throws ReflectionException De Reflectie exceptie.
+	 */
+	private function geef_shortcode_object( string $shortcode_tag, array $atts ) : Shortcode {
+		$shortcode = Shortcode::get_instance( $shortcode_tag, $atts );
+		$refobject = new ReflectionObject( $shortcode );
+		$refdata   = $refobject->getProperty( 'data' );
+		$reftags   = $refobject->getProperty( 'tags' );
+		$refdata->setAccessible( true );
+		$refdata->setValue( $refobject, $atts );
+		$reftags->setAccessible( true );
+		$reftags->setValue( $refobject, [] );
+		return $shortcode;
 	}
 
 	/**
@@ -206,6 +249,8 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 		$upgrade->run();
 		update_option( 'kleistad_email_actief', 1 );
 		$this->reset_mockmailer_instance();
+		$_GET  = [];
+		$_POST = [];
 	}
 
 	/**

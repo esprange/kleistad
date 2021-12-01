@@ -63,58 +63,32 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test prepare functie;
 	 */
 	public function test_prepare() {
-		$data   = [ 'actie' => Shortcode::STANDAARD_ACTIE ];
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data, '', [ 'verklaring' => 'test' ] );
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				echo $error . "\n"; // phpcs:ignore
-			}
-		}
-		$this->assertFalse( is_wp_error( $result ), 'prepare incorrect' );
-		$this->assertTrue( 'test' === ( $data['verklaring'] ?? '' ), 'prepare verklaring incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [ 'verklaring' => 'test' ] );
+		$this->assertStringContainsString( 'test', $result, 'prepare verklaring incorrect' );
 	}
 
 	/**
-	 * Test validate functie.
+	 * Test functie process.
 	 */
-	public function test_validate() {
-		$this->maak_inschrijving( true );
+	public function test_process() {
+		$this->maak_inschrijving( false );
 		$_POST  = $this->input;
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data );
-		if ( is_wp_error( $result ) ) {
-			foreach ( $result->get_error_messages() as $error ) {
-				echo $error . "\n"; // phpcs:ignore
-			}
-		}
-		$this->assertFalse( is_wp_error( $result ), 'validate incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [] );
+		$this->assertArrayHasKey( 'redirect_uri', $result, 'geen ideal verwijzing na inschrijven' );
 	}
 
 	/**
-	 * Test functie save.
+	 * Test functie process na eerste facturatie.
 	 */
-	public function test_save() {
-		$abonnement = $this->maak_inschrijving( false );
-		$data       = [ 'input' => $this->input ];
-		$result     = $this->public_actie( self::SHORTCODE, 'save', $data );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na inschrijven' );
-
-		/**
-		 * Inschrijving moet herhaald kunnen worden.
-		 */
-		$result = $this->public_actie( self::SHORTCODE, 'save', $data );
-		$this->assertTrue( isset( $result['redirect_uri'] ), 'geen ideal verwijzing na inschrijven' );
-
-		/**
-		 * Inschrijving na eerste facturatie kan niet.
-		 */
+	public function test_process_na_start() {
+		$abonnement               = $this->maak_inschrijving( false );
+		$_POST                    = $this->input;
 		$abonnement->artikel_type = 'start'; // Dit is nodig omdat de order referentie normaliter via Mollie terugkomt.
 		$order                    = new Order( $abonnement->geef_referentie() );
 		$abonnement->betaling->verwerk( $order, 25, true, 'ideal' ); // Bedrag klopt niet maar dat maar nu niet uit.
 
-		$result = $this->public_actie( self::SHORTCODE, 'save', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'Het is niet mogelijk om een bestaand abonnement' ), 'geen ideal verwijzing na inschrijven' );
+		$result = $this->public_form_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( 'Het is niet mogelijk om een bestaand abonnement', $result['status'], 'geen ideal verwijzing na inschrijven' );
 	}
-
 
 }

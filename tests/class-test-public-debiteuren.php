@@ -18,6 +18,13 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 	private const SHORTCODE = 'debiteuren';
 
 	/**
+	 * De verkopen
+	 *
+	 * @var array LosArtikels
+	 */
+	private array $verkoop;
+
+	/**
 	 * Maak debiteuren aan.
 	 *
 	 * @param int $aantal Het aantal debiteuren.
@@ -27,18 +34,19 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		/**
 		 * Maak 5 verkopen.
 		 */
-		$openstaand = 0.0;
+		$openstaand    = 0.0;
+		$this->verkoop = [];
 		for ( $index = 0; $index < $aantal; $index++ ) {
-			$verkoop        = new LosArtikel();
-			$random         = wp_rand( 1, 10 );
-			$openstaand    += $random * 10;
-			$verkoop->klant = [
+			$this->verkoop[ $index ]        = new LosArtikel();
+			$random                         = wp_rand( 1, 10 );
+			$openstaand                    += $random * 10;
+			$this->verkoop[ $index ]->klant = [
 				'naam'  => "test$index",
 				'adres' => "straat $random dorp",
 				'email' => "test$random@example.com",
 			];
-			$verkoop->bestelregel( "testverkoop $random", $random, 10 );
-			$verkoop->bestel_order( 0.0, strtotime( '+14 days 0:00' ) );
+			$this->verkoop[ $index ]->bestelregel( "testverkoop $random", $random, 10 );
+			$this->verkoop[ $index ]->bestel_order( 0.0, strtotime( '+14 days 0:00' ) );
 		}
 		return $openstaand;
 	}
@@ -48,61 +56,28 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 	 */
 	public function test_prepare() {
 		$totaal = $this->maak_debiteuren( 5 );
-		/**
-		 * Eerst een controle zonder dat er argumenten zijn. Die doet dan standaard actie openstaand.
-		 */
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertFalse( is_wp_error( $result ), 'prepare zonder argumenten incorrect' );
-		$this->assertEquals( 5, count( $data['debiteuren'] ), 'aantal openstaand incorrect' );
-		$this->assertEquals( $totaal, $data['openstaand'], 'openstaand bedrag openstaand incorrect' );
-
-		/**
-		 * Nu een controle van een van de debiteuren.
-		 */
-		$data['actie'] = 'debiteur';
-		$data['id']    = $data['debiteuren'][1]['id'];
-		$result        = $this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertFalse( is_wp_error( $result ), 'prepare debiteur actie incorrect' );
-		$this->assertEquals( $data['debiteuren'][1]['openstaand'], $data['debiteur']['openstaand'], 'debiteur data incorrect' );
-
-		/**
-		 * Zoek een debiteur
-		 */
-		$openstaand = $data['debiteuren'][2]['openstaand'];
-		$data       = [
-			'id'    => $data['debiteuren'][2]['naam'],
-			'actie' => 'zoek',
-		];
-		$result     = $this->public_actie( self::SHORTCODE, 'display', $data );
-		$this->assertFalse( is_wp_error( $result ), 'prepare zonder argumenten incorrect' );
-		$this->assertEquals( $openstaand, $data['openstaand'], 'debiteur data incorrect' );
-
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
+		$this->assertStringContainsString( $totaal, $result, 'openstaand bedrag overzicht incorrect' );
 	}
 
 	/**
-	 * Test validate functie.
+	 * Test prepare debiteur.
 	 */
-	public function test_validate() {
-		$this->maak_debiteuren( 2 );
-		$orders = new Orders();
-		$_POST  = [
-			'id'                   => $orders->current()->id,
-			'bedrag_betaald'       => $orders->current()->te_betalen() / 2,
-			'bedrag_gestort'       => $orders->current()->te_betalen() / 2 - 10,
-			'korting'              => 10,
-			'restant'              => 5,
-			'opmerking_korting'    => 'test korting',
-			'opmerking_annulering' => 'test annulering',
-		];
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'process', $data, 'bankbetaling' );
-		$this->assertArrayHasKey( 'content', $result, 'validate normaal incorrect' );
+	public function test_prepare_debiteur() {
+		$this->maak_debiteuren( 5 );
+		$order  = new Order( $this->verkoop[1]->geef_referentie() );
+		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => $order->id ], 'debiteur' );
+		$this->assertStringContainsString( $order->te_betalen(), $result, 'openstaand bedrag debiteur incorrect' );
+	}
 
-		$data             = [];
-		$_POST['korting'] = $orders->current()->te_betalen() + 100;
-		$result           = $this->public_actie( self::SHORTCODE, 'process', $data, 'korting' );
-		$this->assertArrayHasKey( 'status', $result, 'validate fout bedrag incorrect' );
+	/**
+	 * Test prepare zoek een debiteur
+	 */
+	public function test_zoek() {
+		$this->maak_debiteuren( 5 );
+		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => $this->verkoop[2]->klant['naam'] ], 'zoek' );
+		$order  = new Order( $this->verkoop[2]->geef_referentie() );
+		$this->assertStringContainsString( $order->te_betalen(), $result, 'openstaand bedrag debiteur incorrect' );
 	}
 
 	/**
@@ -111,28 +86,25 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 	public function test_bankbetaling() {
 		$this->maak_debiteuren( 2 );
 		$orders = new Orders();
-		$data   = [
-			'input' => [
-				'id'                   => $orders->current()->id,
-				'bedrag_betaald'       => $orders->current()->te_betalen(),
-				'bedrag_gestort'       => 0,
-				'korting'              => 0,
-				'restant'              => 0,
-				'opmerking_korting'    => 'test korting',
-				'opmerking_annulering' => 'test annulering',
-			],
-			'order' => $orders->current(),
+		$_POST  = [
+			'id'                   => $orders->current()->id,
+			'bedrag_betaald'       => $orders->current()->te_betalen(),
+			'bedrag_gestort'       => 0,
+			'korting'              => 0,
+			'restant'              => 0,
+			'opmerking_korting'    => 'test korting',
+			'opmerking_annulering' => 'test annulering',
 		];
-		$result = $this->public_actie( self::SHORTCODE, 'bankbetaling', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'betaling is verwerkt' ), 'bankbetaling incorrect' );
-		$order = new Order( $data['input']['id'] );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'bankbetaling' );
+		$this->assertStringContainsString( 'betaling is verwerkt', $result['status'], 'bankbetaling incorrect' );
+		$order = new Order( $orders->current()->id );
 		$this->assertTrue( $order->gesloten, 'bankbetaling incorrect verwerkt' );
 
-		$data['input']['bedrag_betaald'] = 0;
-		$data['input']['bedrag_gestort'] = $orders->current()->te_betalen();
-		$result                          = $this->public_actie( self::SHORTCODE, 'bankbetaling', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'betaling is verwerkt' ), 'bankbetaling incorrect' );
-		$order = new Order( $data['input']['id'] );
+		$_POST['bedrag_betaald'] = 0;
+		$_POST['bedrag_gestort'] = $orders->current()->te_betalen();
+		$result                  = $this->public_form_actie( self::SHORTCODE, [], 'bankbetaling' );
+		$this->assertStringContainsString( 'betaling is verwerkt', $result['status'], 'bankbetaling incorrect' );
+		$order = new Order( $orders->current()->id );
 		$this->assertTrue( $order->gesloten, 'bankbetaling incorrect verwerkt' );
 	}
 
@@ -146,42 +118,37 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$order          = $orders->current();
 		$order->betaald = 0.5 * $order->te_betalen();
 		$order->save( 'test' );
-		$data = [
-			'input' => [
-				'id'                   => $order->id,
-				'bedrag_betaald'       => 0,
-				'bedrag_gestort'       => 0,
-				'korting'              => 0,
-				'restant'              => 0.1 * $order->betaald,
-				'opmerking_korting'    => 'test korting',
-				'opmerking_annulering' => 'test annulering',
-			],
-			'order' => $order,
+		$_POST = [
+			'id'                   => $order->id,
+			'bedrag_betaald'       => 0,
+			'bedrag_gestort'       => 0,
+			'korting'              => 0,
+			'restant'              => 0.1 * $order->betaald,
+			'opmerking_korting'    => 'test korting',
+			'opmerking_annulering' => 'test annulering',
 		];
 
 		/**
 		 * Annulering van reeds betaalde order.
 		 */
-		$result = $this->public_actie( self::SHORTCODE, 'annulering', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'De annulering is verwerkt en een bevestiging is verstuurd' ), 'annulering incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'annulering' );
+		$this->assertStringContainsString( 'De annulering is verwerkt en een bevestiging is verstuurd', $result['status'], 'annulering incorrect' );
 		$this->assertEquals( 'Order geannuleerd', $mailer->get_last_sent( $order->klant['email'] )->subject, 'annulering email onderwerp incorrect' );
 
 		/**
 		 * Annuliering van nog niet betaalde order met restant
 		 */
 		$orders->next();
-		$order               = $orders->current();
-		$data['input']['id'] = $order->id;
-		$data['order']       = $order;
-		$result              = $this->public_actie( self::SHORTCODE, 'annulering', $data );
-		$this->assertFalse( false !== strpos( $result['status'], 'Het teveel betaalde moet per bank teruggestort worden' ), 'annulering incorrect' );
-		$this->assertTrue( false !== strpos( $result['status'], 'De annulering is verwerkt en een bevestiging is verstuurd.' ), 'annulering incorrect' );
+		$order       = $orders->current();
+		$_POST['id'] = $order->id;
+		$result      = $this->public_form_actie( self::SHORTCODE, [], 'annulering' );
+		$this->assertStringContainsString( 'De annulering is verwerkt en een bevestiging is verstuurd.', $result['status'], 'annulering incorrect' );
 
 		/**
 		 * Repeated annulering.
 		 */
-		$result = $this->public_actie( self::SHORTCODE, 'annulering', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'Er bestaat al een creditering dus mogelijk een interne fout' ), 'annulering incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'annulering' );
+		$this->assertStringContainsString( 'Er bestaat al een creditering dus mogelijk een interne fout', $result['status'], 'herhaalde annulering incorrect' );
 	}
 
 	/**
@@ -192,20 +159,17 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$mailer = tests_retrieve_phpmailer_instance();
 		$orders = new Orders();
 		$order  = $orders->current();
-		$data   = [
-			'input' => [
-				'id'                   => $order->id,
-				'bedrag_betaald'       => 0,
-				'bedrag_gestort'       => 0,
-				'korting'              => 0.2 * $order->te_betalen(),
-				'restant'              => 1,
-				'opmerking_korting'    => 'test korting',
-				'opmerking_annulering' => 'test annulering',
-			],
-			'order' => $order,
+		$_POST  = [
+			'id'                   => $order->id,
+			'bedrag_betaald'       => 0,
+			'bedrag_gestort'       => 0,
+			'korting'              => 0.2 * $order->te_betalen(),
+			'restant'              => 1,
+			'opmerking_korting'    => 'test korting',
+			'opmerking_annulering' => 'test annulering',
 		];
-		$result = $this->public_actie( self::SHORTCODE, 'korting', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'De korting is verwerkt en een correctie is verstuurd' ), 'annulering incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'korting' );
+		$this->assertStringContainsString( 'De korting is verwerkt en een correctie is verstuurd', $result['status'], 'annulering incorrect' );
 		$this->assertEquals( 'Order gecorrigeerd', $mailer->get_last_sent( $order->klant['email'] )->subject, 'annulering email onderwerp incorrect' );
 	}
 
@@ -217,20 +181,17 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$mailer = tests_retrieve_phpmailer_instance();
 		$orders = new Orders();
 		$order  = $orders->current();
-		$data   = [
-			'input' => [
-				'id'                   => $order->id,
-				'bedrag_betaald'       => 0,
-				'bedrag_gestort'       => 0,
-				'korting'              => 0.2 * $order->te_betalen(),
-				'restant'              => 1,
-				'opmerking_korting'    => 'test korting',
-				'opmerking_annulering' => 'test annulering',
-			],
-			'order' => $order,
+		$_POST  = [
+			'id'                   => $order->id,
+			'bedrag_betaald'       => 0,
+			'bedrag_gestort'       => 0,
+			'korting'              => 0.2 * $order->te_betalen(),
+			'restant'              => 1,
+			'opmerking_korting'    => 'test korting',
+			'opmerking_annulering' => 'test annulering',
 		];
-		$result = $this->public_actie( self::SHORTCODE, 'factuur', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'Een email met factuur is opnieuw verzonden' ), 'annulering incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'factuur' );
+		$this->assertStringContainsString( 'Een email met factuur is opnieuw verzonden', $result['status'], 'annulering incorrect' );
 		$this->assertEquals( 'Herzending factuur', $mailer->get_last_sent( $order->klant['email'] )->subject, 'annulering email onderwerp incorrect' );
 	}
 
@@ -241,28 +202,24 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$this->maak_debiteuren( 1 );
 		$orders = new Orders();
 		$order  = $orders->current();
-		$data   = [
-			'input' => [
-				'id'                   => $order->id,
-				'bedrag_betaald'       => 0,
-				'bedrag_gestort'       => 0,
-				'korting'              => 0,
-				'restant'              => 0,
-				'opmerking_korting'    => '',
-				'opmerking_annulering' => '',
-			],
-			'order' => $order,
+		$_POST  = [
+			'id'                   => $order->id,
+			'bedrag_betaald'       => 0,
+			'bedrag_gestort'       => 0,
+			'korting'              => 0,
+			'restant'              => 0,
+			'opmerking_korting'    => '',
+			'opmerking_annulering' => '',
 		];
-		$result = $this->public_actie( self::SHORTCODE, 'afboeken', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'De order is afgeboekt' ), 'afboeking incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'afboeken' );
+		$this->assertStringContainsString( 'De order is afgeboekt', $result['status'], 'afboeking incorrect' );
 	}
 
 	/**
 	 * Test functie blokkade
 	 */
 	public function test_blokkade() {
-		$data   = [];
-		$result = $this->public_actie( self::SHORTCODE, 'blokkade', $data );
-		$this->assertTrue( false !== strpos( $result['status'], 'De blokkade datum is gewijzigd' ), 'blokkade incorrect' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'blokkade' );
+		$this->assertStringContainsString( 'De blokkade datum is gewijzigd', $result['status'], 'blokkade incorrect' );
 	}
 }
