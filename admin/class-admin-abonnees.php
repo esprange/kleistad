@@ -103,7 +103,7 @@ class Admin_Abonnees extends Admin_List_Table {
 		$abonnees = [];
 		$betalen  = new Betalen();
 		foreach ( new Abonnees() as $abonnee ) {
-			if ( ! empty( $search ) && false === strpos( $abonnee->display_name . $abonnee->user_email, $search ) ) {
+			if ( ! empty( $search ) && false === stripos( $abonnee->display_name . $abonnee->user_email, $search ) ) {
 				continue;
 			}
 			$abonnees[] = [
