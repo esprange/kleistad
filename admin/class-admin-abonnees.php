@@ -114,7 +114,7 @@ class Admin_Abonnees extends Admin_List_Table {
 				'dag'    => ( 'beperkt' === $abonnee->abonnement->soort ? $abonnee->abonnement->dag : '' ),
 				'extras' => implode( ', ', $abonnee->abonnement->extras ),
 				'code'   => $abonnee->abonnement->code,
-				'mollie' => $betalen->heeft_mandaat( $abonnee->ID ),
+				'mollie' => ! $abonnee->abonnement->is_geannuleerd() && $betalen->heeft_mandaat( $abonnee->ID ),
 			];
 		}
 		usort(
