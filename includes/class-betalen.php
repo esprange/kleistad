@@ -36,6 +36,9 @@ class Betalen {
 	public function order( $klant, string $referentie, float $bedrag, string $beschrijving, string $bericht, bool $mandateren ) {
 		$bank    = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
 		$service = new MollieClient();
+		if ( $mandateren ) { // Parameter klant is in dit geval het id.
+			delete_transient( "mollie_mandaat_$klant" );
+		}
 		// Registreer de gebruiker in Mollie en het id in WordPress als er een mandaat nodig is.
 		try {
 			$mollie_gebruiker = $service->get_client( $klant );
@@ -152,14 +155,20 @@ class Betalen {
 	 * @return bool
 	 */
 	public function heeft_mandaat( int $gebruiker_id ) : bool {
-		$service          = new MollieClient();
-		$mollie_gebruiker = $service->get_client( $gebruiker_id );
-		try {
-			return $mollie_gebruiker->hasValidMandate();
-		} catch ( Exception $e ) {
-			fout( __CLASS__, $e->getMessage() );
+		$mandaat_cache = get_transient( "mollie_mandaat_$gebruiker_id" );
+		if ( false === $mandaat_cache ) {
+			$service          = new MollieClient();
+			$mollie_gebruiker = $service->get_client( $gebruiker_id );
+			try {
+				$result = $mollie_gebruiker->hasValidMandate();
+				set_transient( "mollie_mandaat_$gebruiker_id", intval( $result ), 30 * MINUTE_IN_SECONDS );
+				return $result;
+			} catch ( Exception $e ) {
+				fout( __CLASS__, $e->getMessage() );
+			}
+			return false;
 		}
-		return false;
+		return boolval( $mandaat_cache );
 	}
 
 	/**
@@ -171,6 +180,7 @@ class Betalen {
 	public function verwijder_mandaat( int $gebruiker_id ) : bool {
 		$service          = new MollieClient();
 		$mollie_gebruiker = $service->get_client( $gebruiker_id );
+		delete_transient( "mollie_mandaat_$gebruiker_id" );
 		try {
 			$mandaten = $mollie_gebruiker->mandates();
 			foreach ( $mandaten as $mandaat ) {
