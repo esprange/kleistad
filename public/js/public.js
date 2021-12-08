@@ -232,8 +232,6 @@ var detectTap;
 		}
 		if ( 'undefined' !== typeof $element.data( 'actie' ) ) {
 			shortcodeData.actie = $element.data( 'actie' );
-		} else {
-			shortcodeData.actie = 'overzicht';
 		}
 		return shortcodeData;
 	};

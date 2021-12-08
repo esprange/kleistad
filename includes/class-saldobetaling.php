@@ -76,6 +76,7 @@ class SaldoBetaling extends ArtikelBetaling {
 		if ( $betaald ) {
 			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
 			$this->saldo->reden  = $bedrag > 0 ? 'storting' : 'stornering';
+			$this->saldo->update_storting( $this->saldo->geef_referentie(), "{$this->saldo->reden} per $type op " . date( 'd-m-Y' ) );
 			$this->saldo->save();
 			if ( $order->id ) {
 				/**

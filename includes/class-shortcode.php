@@ -32,13 +32,6 @@ abstract class Shortcode {
 	protected string $shortcode;
 
 	/**
-	 * De parameters welke gebruikt worden in de aanroep van de shortcode.
-	 *
-	 * @var array shortcode parameters
-	 */
-	private array $atts = [];
-
-	/**
 	 * De data die gebruikt wordt voor display.
 	 *
 	 * @var array shortcode data
@@ -50,7 +43,7 @@ abstract class Shortcode {
 	 *
 	 * @var array shortcode tags
 	 */
-	protected static $tags = [];
+	protected static array $tags = [];
 
 	/**
 	 * Actie welke bepaald welke informatie getoond moet worden.
@@ -201,9 +194,8 @@ abstract class Shortcode {
 	 */
 	protected function __construct( string $shortcode, array $attributes ) {
 		foreach ( $attributes as $att_key => $attribute ) {
-			$this->atts[ $att_key ] = htmlspecialchars_decode( $attribute );
+			$this->data[ $att_key ] = htmlspecialchars_decode( $attribute );
 		}
-		$this->data      = array_merge( $this->data, $this->atts );
 		$this->shortcode = $shortcode;
 	}
 
@@ -275,7 +267,7 @@ abstract class Shortcode {
 		$tag   = $request->get_param( 'tag' ) ?? '';
 		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
 		if ( class_exists( $class ) ) {
-			$atts       = json_decode( $request->get_param( 'atts' ) ?? '', true );
+			$atts       = json_decode( $request->get_param( 'atts' ) ?? '[]', true );
 			$attributes = is_array( $atts ) ? $atts : [ $atts ];
 			return new $class( $tag, $attributes, opties() );
 		}
@@ -295,11 +287,9 @@ abstract class Shortcode {
 			if ( ! is_a( $shortcode, __CLASS__ ) ) {
 				throw new Exception( 'callback_formsubmit voor onbekend object' );
 			}
-			$shortcode->atts = json_decode( $request->get_param( 'atts' ) ?? '', true );
-			$shortcode->data = [
-				'actie' => sanitize_text_field( $request->get_param( 'actie' ) ),
-				'id'    => is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) ),
-			];
+			if ( ! is_null( $request->get_param( 'id' ) ) ) {
+				$shortcode->data['id'] = is_numeric( $request->get_param( 'id' ) ) ? absint( $request->get_param( 'id' ) ) : sanitize_text_field( $request->get_param( 'id' ) );
+			}
 			return new WP_REST_Response( [ 'content' => $shortcode->display() ] );
 		} catch ( Kleistad_Exception $exceptie ) {
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( $exceptie->getMessage() ) ) ] );
@@ -402,7 +392,7 @@ abstract class Shortcode {
 	 * prio 4: de default actie
 	 */
 	private function bepaal_actie() {
-		foreach ( [ filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING ), $this->data['actie'] ?? null, $this->atts['actie'] ?? null, self::STANDAARD_ACTIE ] as $actie ) {
+		foreach ( [ filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING ), $this->data['actie'] ?? null, self::STANDAARD_ACTIE ] as $actie ) {
 			if ( ! empty( $actie ) ) {
 				$this->display_actie = $actie;
 				return;

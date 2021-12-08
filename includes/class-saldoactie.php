@@ -58,4 +58,30 @@ class SaldoActie {
 		return true;
 	}
 
+	/**
+	 * Annulering van de storting.
+	 */
+	public function afzeggen() {
+		$this->saldo->update_storting( $this->saldo->geef_referentie(), 'geannuleerd' );
+		$this->saldo->save();
+	}
+
+	/**
+	 * Correctie van het uitstaand saldo door een beheerder/
+	 *
+	 * @param float $nieuw_saldo Nieuw saldo.
+	 */
+	public function correctie( float $nieuw_saldo ) {
+		$verschil              = $nieuw_saldo - $this->saldo->bedrag;
+		$corrector             = wp_get_current_user()->display_name;
+		$this->saldo->bedrag   = $nieuw_saldo;
+		$this->saldo->reden    = "correctie door $corrector";
+		$this->saldo->storting = [
+			'code'   => "S{$this->saldo->klant_id}-correctie",
+			'datum'  => date( 'Y-m-d', strtotime( 'today' ) ),
+			'prijs'  => $verschil,
+			'status' => "correctie door $corrector",
+		];
+		$this->saldo->save();
+	}
 }

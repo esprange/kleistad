@@ -34,9 +34,7 @@ class Saldo extends Artikel {
 	 * @var array $default_data de standaard waarden bij het aanmaken van een dagdelenkaart.
 	 */
 	private array $default_data = [
-		'storting' => [
-			[],
-		],
+		'storting' => [],
 		'bedrag'   => 0.0,
 	];
 
@@ -108,6 +106,36 @@ class Saldo extends Artikel {
 			return;
 		}
 		$this->data['storting'][ array_key_last( $this->data['storting'] ) ][ $attribuut ] = $waarde;
+	}
+
+	/**
+	 * Geef de storting terug die bij de code hoort
+	 *
+	 * @param string $referentie De code.
+	 *
+	 * @return array
+	 */
+	public function geef_storting( string $referentie ) : array {
+		foreach ( $this->data['storting'] as $storting ) {
+			if ( $referentie === $storting['code'] ) {
+				return $storting;
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * Update de status van de storting
+	 *
+	 * @param string $referentie De code.
+	 * @param string $status     De status van de storting.
+	 */
+	public function update_storting( string $referentie, string $status ) {
+		foreach ( $this->data['storting'] as $key => $storting ) {
+			if ( $referentie === $storting['code'] ) {
+				$this->data['storting'][ $key ]['status'] = $status;
+			}
+		}
 	}
 
 	/**

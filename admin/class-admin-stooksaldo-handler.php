@@ -81,11 +81,8 @@ class Admin_Stooksaldo_Handler {
 			$item_valid = $this->validate_stooksaldo( $item );
 
 			if ( true === $item_valid ) {
-				$saldo         = new Saldo( $item['id'] );
-				$saldo->bedrag = $item['saldo'];
-				$beheerder     = wp_get_current_user();
-				$saldo->reden  = 'correctie door ' . $beheerder->display_name;
-				$saldo->save();
+				$saldo = new Saldo( $item['id'] );
+				$saldo->actie->correctie( $item['saldo'] );
 				$message = 'De gegevens zijn opgeslagen';
 			} else {
 				$notice = $item_valid;

@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 117;
+	const DBVERSIE = 124;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -95,11 +95,6 @@ class Admin_Upgrade {
 	public function convert_database() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
-		/**
-		 * PHPStorm heeft hier een probleem mee.
-		 *
-		 * @noinspection PhpIncludeInspection
-		 */
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}kleistad_reserveringen (
@@ -240,6 +235,25 @@ class Admin_Upgrade {
 	 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
 	 */
 	private function convert_saldo() {
+		$stokers = get_users(
+			[
+				'fields'       => [ 'ID' ],
+				'meta_key'     => Saldo::META_KEY,
+				'meta_compare' => '!==',
+				'meta_value'   => '',
+			]
+		);
+		foreach ( $stokers as $stoker ) {
+			$saldo_data = get_user_meta( $stoker->ID, Saldo::META_KEY, true );
+			if ( $saldo_data ) {
+				foreach ( $saldo_data['storting'] as $key => $storting ) {
+					if ( empty( $storting ) ) {
+						unset( $saldo_data['storting'][$key] );
+					}
+				}
+				update_user_meta( $stoker->ID, Saldo::META_KEY, $saldo_data );
+			}
+		}
 	}
 
 	/**

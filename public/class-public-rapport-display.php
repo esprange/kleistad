@@ -16,13 +16,61 @@ namespace Kleistad;
 class Public_Rapport_Display extends Public_Shortcode_Display {
 
 	/**
-	 * Render het formulier
+	 * Render het rapport voor de ingelogde gebruiker
 	 *
 	 * @return void
 	 */
 	protected function overzicht() {
+		$this->rapport();
+	}
+
+	/**
+	 * Render het rapport van de geselecteerde gebruiker
+	 */
+	protected function rapport_gebruiker() {
+		$this->rapport();
 		?>
-		<p>Stookrapport voor <?php echo esc_html( $this->data['naam'] ); ?> (je huidig saldo is &euro; <?php echo esc_html( $this->data['saldo'] ); ?>)</p>
+		<button class="kleistad-button kleistad-terug-link" type="button" data-xactie="gebruikers" style="float:right" >Terug</button>
+		<?php
+	}
+
+	/**
+	 * Render het overzicht van de saldo van de gebruikers.
+	 */
+	protected function gebruikers() {
+		?>
+		<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]'>
+			<thead>
+				<tr>
+					<th>Naam</th>
+					<th data-class-name="dt-body-right">Saldo</th>
+					<th  data-class-name="dt-body-center" data-orderable="false"></th>
+				</tr>
+			</thead>
+			<tbody>
+			<?php foreach ( $this->data['stokers'] as $stoker ) : ?>
+				<tr>
+					<td><?php echo esc_html( $stoker['naam'] ); ?></td>
+					<td>&euro; <?php echo esc_html( $stoker['saldo'] ); ?></td>
+					<td>
+						<a href="#" title="details" class="kleistad-view kleistad-edit-link"
+							data-id="<?php echo esc_attr( $stoker['id'] ); ?>" data-actie="rapport_gebruiker" >
+							&nbsp;
+						</a>
+					</td>
+				</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Het overzicht van een enkele gebruikers
+	 */
+	private function rapport() {
+		?>
+		<p>Stookrapport voor <?php echo esc_html( $this->data['naam'] ); ?> (het huidig saldo is &euro; <?php echo esc_html( $this->data['saldo'] ); ?>)</p>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
 			<thead>
 				<tr>
@@ -33,7 +81,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 					<th data-class-name="dt-body-right">Temp</th>
 					<th data-class-name="dt-body-right">Prog</th>
 					<th data-class-name="dt-body-right">%</th>
-					<th data-class-name="dt-body-right">Kosten</th>
+					<th data-class-name="dt-body-right">Bedrag</th>
 					<th data-class-name="dt-body-center">Voorlopig</th>
 				</tr>
 			</thead>
@@ -41,13 +89,22 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 				<?php foreach ( $this->data['items'] as $item ) : ?>
 				<tr>
 					<td data-sort=<?php echo esc_attr( $item['datum'] ); ?> ><?php echo esc_html( date( 'd-m-Y', $item['datum'] ) ); ?></td>
-					<td><?php echo esc_html( $item['oven'] ); ?></td>
-					<td><?php echo esc_html( $item['stoker'] ); ?></td>
-					<td><?php echo esc_html( $item['stook'] ); ?></td>
-					<td><?php echo esc_html( $item['temp'] ); ?></td>
-					<td><?php echo esc_html( $item['prog'] ); ?></td>
-					<td><?php echo esc_html( $item['perc'] ); ?></td>
-					<td>&euro; <?php echo esc_html( $item['kosten'] ); ?></td>
+					<?php if ( isset( $item['oven'] ) ) : ?>
+						<td><?php echo esc_html( $item['oven'] ); ?></td>
+						<td><?php echo esc_html( $item['stoker'] ); ?></td>
+						<td><?php echo esc_html( $item['stook'] ); ?></td>
+						<td><?php echo esc_html( $item['temp'] ); ?></td>
+						<td><?php echo esc_html( $item['prog'] ); ?></td>
+						<td><?php echo esc_html( $item['perc'] ); ?></td>
+					<?php else : ?>
+						<td colspan="6"><?php echo esc_html( $item['status'] ); ?></td>
+						<td style="display:none">
+						<td style="display:none">
+						<td style="display:none">
+						<td style="display:none">
+						<td style="display:none">
+					<?php endif ?>
+					<td>&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
 					<td data-sort="<?php echo (int) $item['voorlopig']; ?>"><span <?php echo $item['voorlopig'] ? 'class="dashicons dashicons-yes"' : ''; ?> ></span></td>
 				</tr>
 				<?php endforeach ?>
@@ -55,5 +112,4 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 		</table>
 		<?php
 	}
-
 }

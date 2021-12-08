@@ -231,15 +231,6 @@ class Shortcodes {
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
 			/**
-			 * Overzicht stoken
-			 */
-			'saldo_overzicht'       => (object) [
-				'script' => false,
-				'js'     => [ 'jquery', 'datatables' ],
-				'css'    => [ 'datatables' ],
-				'access' => [ BESTUUR ],
-			],
-			/**
 			 * Bijstorten saldo
 			 */
 			'saldo'                 => (object) [
@@ -349,6 +340,5 @@ class Shortcodes {
 		}
 		return $result;
 	}
-
 
 }
