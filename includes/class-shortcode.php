@@ -60,42 +60,13 @@ abstract class Shortcode {
 	protected $filehandle;
 
 	/**
-	 * Enqueue the scripts and styles for the shortcode.
-	 */
-	protected function enqueue() {
-		$reflect = new ReflectionClass( $this );
-		$script  = 'kleistad-' . substr( strtolower( $reflect->getShortName() ), strlen( 'public-' ) );
-		if ( wp_script_is( $script, 'registered' ) ) {
-			wp_enqueue_script( $script );
-		}
-		if ( ! wp_script_is( 'kleistad' ) ) {
-			wp_enqueue_script( 'kleistad' );
-		}
-	}
-
-	/**
-	 * Basis prepare functie om te bepalen wat er getoond moet worden.
-	 * Als er geen acties zijn, dan kan de prepare functie overschreven worden.
-	 *
-	 * @return string
-	 */
-	protected function prepare() : string {
-		$method = 'prepare_' . $this->display_actie;
-		if ( method_exists( $this, $method ) ) {
-			return $this->$method();
-		}
-		fout( __CLASS__, "method $method ontbreekt" );
-		return $this->status( new WP_Error( 'intern', 'Er is een onbekende fout opgetreden' ) );
-	}
-
-	/**
 	 * Maak de uit te voeren html aan
 	 *
 	 * @since 4.5.1
 	 *
 	 * @return string html tekst.
 	 */
-	protected function display() : string {
+	public function display() : string {
 		$this->enqueue();
 		$this->bepaal_actie();
 		try {
@@ -157,6 +128,61 @@ abstract class Shortcode {
 	}
 
 	/**
+	 * De constructor
+	 *
+	 * @since   4.0.87
+	 *
+	 * @param string $shortcode  Shortcode (zonder kleistad- ).
+	 * @param array  $attributes Shortcode parameters.
+	 */
+	protected function __construct( string $shortcode, array $attributes ) {
+		foreach ( $attributes as $att_key => $attribute ) {
+			$this->data[ $att_key ] = htmlspecialchars_decode( $attribute );
+		}
+		$this->shortcode = $shortcode;
+	}
+
+	/**
+	 * Basis prepare functie om te bepalen wat er getoond moet worden.
+	 * Als er geen acties zijn, dan kan de prepare functie overschreven worden.
+	 *
+	 * @return string
+	 */
+	protected function prepare() : string {
+		$method = 'prepare_' . $this->display_actie;
+		if ( method_exists( $this, $method ) ) {
+			return $this->$method();
+		}
+		fout( __CLASS__, "method $method ontbreekt" );
+		return $this->status( new WP_Error( 'intern', 'Er is een onbekende fout opgetreden' ) );
+	}
+
+	/**
+	 * Enqueue the scripts and styles for the shortcode.
+	 */
+	protected function enqueue() {
+		$reflect = new ReflectionClass( $this );
+		$script  = 'kleistad-' . substr( strtolower( $reflect->getShortName() ), strlen( 'public-' ) );
+		if ( wp_script_is( $script, 'registered' ) ) {
+			wp_enqueue_script( $script );
+		}
+		if ( ! wp_script_is( 'kleistad' ) ) {
+			wp_enqueue_script( 'kleistad' );
+		}
+	}
+
+	/**
+	 * Haal de tekst van de shortcode op.
+	 *
+	 * @return string
+	 */
+	protected function content() : string {
+		$display_class = get_class( $this ) . '_Display';
+		$display       = new $display_class( $this->data, $this->display_actie );
+		return $display->render();
+	}
+
+	/**
 	 * Singleton handler
 	 *
 	 * @param string $shortcode_tag Shortcode (zonder kleistad- ).
@@ -182,32 +208,6 @@ abstract class Shortcode {
 	 */
 	public static function get_class_name( string $shortcode_tag ) : string {
 		return '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
-	}
-
-	/**
-	 * De constructor
-	 *
-	 * @since   4.0.87
-	 *
-	 * @param string $shortcode  Shortcode (zonder kleistad- ).
-	 * @param array  $attributes Shortcode parameters.
-	 */
-	protected function __construct( string $shortcode, array $attributes ) {
-		foreach ( $attributes as $att_key => $attribute ) {
-			$this->data[ $att_key ] = htmlspecialchars_decode( $attribute );
-		}
-		$this->shortcode = $shortcode;
-	}
-
-	/**
-	 * Haal de tekst van de shortcode op.
-	 *
-	 * @return string
-	 */
-	protected function content() : string {
-		$display_class = get_class( $this ) . '_Display';
-		$display       = new $display_class( $this->data, $this->display_actie );
-		return $display->render();
 	}
 
 	/**
@@ -258,23 +258,6 @@ abstract class Shortcode {
 	}
 
 	/**
-	 * Helper functie, geef het object terug of een foutboodschap.
-	 *
-	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
-	 * @return Shortcode | null  De response of false.
-	 */
-	protected static function get_shortcode( WP_REST_Request $request ) : ?Shortcode {
-		$tag   = $request->get_param( 'tag' ) ?? '';
-		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
-		if ( class_exists( $class ) ) {
-			$atts       = json_decode( $request->get_param( 'atts' ) ?? '[]', true );
-			$attributes = is_array( $atts ) ? $atts : [ $atts ];
-			return new $class( $tag, $attributes, opties() );
-		}
-		return null;
-	}
-
-	/**
 	 * Get an item and display it.
 	 *
 	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
@@ -296,54 +279,6 @@ abstract class Shortcode {
 		} catch ( Exception $exceptie ) {
 			fout( __CLASS__, $exceptie->GetMessage() );
 			return new WP_REST_Response( [ 'status' => $shortcode->status( new WP_Error( 'Er is een onbekende fout opgetreden' ) ) ] );
-		}
-	}
-
-	/**
-	 * Maak een tijdelijk bestand aan voor download.
-	 *
-	 * @param Shortcode $shortcode De shortcode waarvoor de download plaatsvindt.
-	 * @param string    $functie   De shortcode functie die aangeroepen moet worden.
-	 *
-	 * @return array
-	 */
-	protected static function download( Shortcode $shortcode, string $functie ) : array {
-		if ( 0 === strpos( $functie, 'url_' ) ) {
-			return [ 'file_uri' => $shortcode->$functie() ];
-		}
-		$upload_dir            = wp_upload_dir();
-		$file                  = '/kleistad_tmp_' . uniqid() . '.csv';
-		$shortcode->filehandle = fopen( $upload_dir['basedir'] . $file, 'w' );
-		if ( false !== $shortcode->filehandle ) {
-			fwrite( $shortcode->filehandle, "\xEF\xBB\xBF" );
-			$result = $shortcode->$functie();
-			fclose( $shortcode->filehandle );
-			if ( empty( $result ) ) {
-				return [ 'file_uri' => $upload_dir['baseurl'] . $file ];
-			}
-			unlink( $upload_dir['basedir'] . $file );
-			return [ 'file_uri' => $result ];
-		}
-		return [
-			'status'  => $shortcode->status( new WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
-			'content' => $shortcode->goto_home(),
-		];
-	}
-
-	/**
-	 * Ruim eventuele download files op.
-	 */
-	public static function cleanup_downloads() {
-		$upload_dir = wp_upload_dir();
-		$files      = glob( $upload_dir['basedir'] . '/kleistad_tmp_*.csv' );
-		$now        = time();
-
-		foreach ( $files as $file ) {
-			if ( is_file( $file ) ) {
-				if ( $now - filemtime( $file ) >= DAY_IN_SECONDS ) {
-					unlink( $file );
-				}
-			}
 		}
 	}
 
@@ -374,14 +309,68 @@ abstract class Shortcode {
 	}
 
 	/**
-	 * Toon de uitvoer van de shortcode, eventueel voorafgegaan door een melding van een betaal status.
-	 *
-	 * @since 4.5.1
-	 *
-	 * @return string De uitvoer.
+	 * Ruim eventuele download files op.
 	 */
-	public function run() : string {
-		return $this->display();
+	public static function cleanup_downloads() {
+		$upload_dir = wp_upload_dir();
+		$files      = glob( $upload_dir['basedir'] . '/kleistad_tmp_*.csv' );
+		$now        = time();
+
+		foreach ( $files as $file ) {
+			if ( is_file( $file ) ) {
+				if ( $now - filemtime( $file ) >= DAY_IN_SECONDS ) {
+					unlink( $file );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Helper functie, geef het object terug of een foutboodschap.
+	 *
+	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
+	 * @return Shortcode | null  De response of false.
+	 */
+	protected static function get_shortcode( WP_REST_Request $request ) : ?Shortcode {
+		$tag   = $request->get_param( 'tag' ) ?? '';
+		$class = '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $tag, '_' );
+		if ( class_exists( $class ) ) {
+			$atts       = json_decode( $request->get_param( 'atts' ) ?? '[]', true );
+			$attributes = is_array( $atts ) ? $atts : [ $atts ];
+			return new $class( $tag, $attributes, opties() );
+		}
+		return null;
+	}
+
+	/**
+	 * Maak een tijdelijk bestand aan voor download.
+	 *
+	 * @param Shortcode $shortcode De shortcode waarvoor de download plaatsvindt.
+	 * @param string    $functie   De shortcode functie die aangeroepen moet worden.
+	 *
+	 * @return array
+	 */
+	private static function download( Shortcode $shortcode, string $functie ) : array {
+		if ( 0 === strpos( $functie, 'url_' ) ) {
+			return [ 'file_uri' => $shortcode->$functie() ];
+		}
+		$upload_dir            = wp_upload_dir();
+		$file                  = '/kleistad_tmp_' . uniqid() . '.csv';
+		$shortcode->filehandle = fopen( $upload_dir['basedir'] . $file, 'w' );
+		if ( false !== $shortcode->filehandle ) {
+			fwrite( $shortcode->filehandle, "\xEF\xBB\xBF" );
+			$result = $shortcode->$functie();
+			fclose( $shortcode->filehandle );
+			if ( empty( $result ) ) {
+				return [ 'file_uri' => $upload_dir['baseurl'] . $file ];
+			}
+			unlink( $upload_dir['basedir'] . $file );
+			return [ 'file_uri' => $result ];
+		}
+		return [
+			'status'  => $shortcode->status( new WP_Error( 'intern', 'bestand kon niet aangemaakt worden' ) ),
+			'content' => $shortcode->goto_home(),
+		];
 	}
 
 	/**

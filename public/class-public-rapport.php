@@ -54,10 +54,11 @@ class Public_Rapport extends Shortcode {
 	 * @return string
 	 */
 	protected function prepare_rapport_gebruiker() : string {
-		if ( ! current_user_can( BESTUUR ) ) {
+		$gebruiker = get_user_by( 'ID', $this->data['id'] );
+		if ( ! current_user_can( BESTUUR ) || false === $gebruiker ) {
 			return '';
 		}
-		$this->data = array_merge( $this->data, $this->rapport( get_user_by( 'ID', $this->data['id'] ) ) );
+		$this->data = array_merge( $this->data, $this->rapport( $gebruiker ) );
 		return $this->content();
 	}
 

@@ -64,7 +64,7 @@ class Public_Shortcode_Handler {
 			$json_atts = wp_json_encode( $atts, JSON_HEX_QUOT | JSON_HEX_TAG );
 			$html     .= ' data-atts=' . "'$json_atts'";
 		}
-		$html .= ' >' . $shortcode->run() . '</div>';
+		$html .= ' >' . $shortcode->display() . '</div>';
 		return $html;
 	}
 
