@@ -32,7 +32,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 				$this->data['abonnee_info'][] = [
 					'naam'   => $abonnee->display_name,
 					'email'  => $abonnee->user_email,
-					'soort'  => $abonnee->abonnement->soort . ( 'beperkt' === $abonnee->abonnement->soort ? ' (' . $abonnee->abonnement->dag . ')' : '' ),
+					'soort'  => $abonnee->abonnement->soort,
 					'status' => $abonnee->abonnement->geef_statustekst( false ),
 					'extras' => implode( ',<br/> ', $abonnee->abonnement->extras ),
 				];

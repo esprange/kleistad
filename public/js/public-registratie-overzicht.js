@@ -113,7 +113,6 @@
 								'<tr><th>Abonnement</th><th>Code</th><th>Dag</th><th>Start Datum</th><th>Pauze Datum</th><th>Herstart Datum</th><th>Eind Datum</th></tr><tr><th>' +
 								abonnee.soort + '<br/>' + abonnee.extras + '</th><th>' +
 								abonnee.code + '</th><th>' +
-								abonnee.dag + '</th><th>' +
 								abonnee.start_datum + '</th><th>' +
 								abonnee.pauze_datum + '</th><th>' +
 								abonnee.herstart_datum + '</th><th>' +

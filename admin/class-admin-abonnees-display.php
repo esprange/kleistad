@@ -93,19 +93,6 @@ class Admin_Abonnees_Display extends Admin_Display {
 					</select>
 				</td>
 			</tr>
-			<tr class="form-field">
-				<th scope="row"><label for="kleistad_dag">Dag</label></th>
-				<td>
-					<select id="kleistad_dag" name="dag" class="code" >
-						<option value="">Selecteer een dag</option>
-						<option value="maandag" <?php selected( $item['dag'], 'maandag' ); ?>>Maandag</option>
-						<option value="dinsdag" <?php selected( $item['dag'], 'dinsdag' ); ?>>Dinsdag</option>
-						<option value="woensdag" <?php selected( $item['dag'], 'woensdag' ); ?>>Woensdag</option>
-						<option value="donderdag" <?php selected( $item['dag'], 'donderdag' ); ?>>Donderdag</option>
-						<option value="vrijdag" <?php selected( $item['dag'], 'vrijdag' ); ?>>Vrijdag</option>
-					</select>
-				</td>
-			</tr>
 				<?php
 				$index = 0;
 				foreach ( opties()['extra'] as $extra ) :

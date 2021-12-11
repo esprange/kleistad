@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 124;
+	const DBVERSIE = 125;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -249,6 +249,17 @@ class Admin_Upgrade {
 				foreach ( $saldo_data['storting'] as $key => $storting ) {
 					if ( empty( $storting ) ) {
 						unset( $saldo_data['storting'][$key] );
+						continue;
+					}
+					if ( ! isset( $storting['status'] ) ) {
+						$order = new Order( $storting['code'] );
+						if ( $order->gesloten && ! $order->credit_id ) {
+							if ( $order->transactie_id ) {
+								$saldo_data['storting'][$key]['status'] = 'storting per ideal op ' . date( 'd-m-Y', $order->datum );
+								continue;
+							}
+							$saldo_data['storting'][$key]['status'] = 'storting per bank op ' . date( 'd-m-Y', $order->mutatie_datum );
+						}
 					}
 				}
 				update_user_meta( $stoker->ID, Saldo::META_KEY, $saldo_data );

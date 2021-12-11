@@ -42,10 +42,10 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		}
 		$this->abonnement_info()->abonnement_extra_info();
 		if ( $in_startperiode ) {
-			$this->form()->werkdag()->eindigen()->form_end();
+			$this->form()->abonnement_soort()->eindigen()->form_end();
 			return;
 		}
-		$this->form()->abonnement_soort()->abonnement_extra()->werkdag()->pauze()->eindigen()->betaalwijze()->form_end();
+		$this->form()->abonnement_soort()->abonnement_extra()->pauze()->eindigen()->betaalwijze()->form_end();
 	}
 
 	/**
@@ -70,12 +70,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">Abonnement soort</label>
 			</div>
 			<div class="kleistad-col-3">
-			<?php
-				echo esc_html(
-					$this->data['abonnement']->soort .
-					( 'beperkt' === $this->data['abonnement']->soort ? ' (' . $this->data['abonnement']->dag . ')' : '' )
-				);
-			?>
+			<?php echo esc_html( $this->data['abonnement']->soort ); ?>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -118,7 +113,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- soort -->
 			<div class="kleistad-col-6">
-				<input type="radio" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad-input_cbr" value="soort" >
+				<input type="radio" name="wijziging" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad-input_cbr" value="soort" >
 				<label for="kleistad_abo_wijziging">Abonnement soort wijzigen</label>
 			</div>
 		</div>
@@ -130,18 +125,13 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-7" >
 					<?php if ( 'onbeperkt' === $this->data['abonnement']->soort ) : ?>
 					<input name="soort" type="hidden" value="beperkt" >
-					<p><strong>Je wilt per <?php echo esc_html( $this->per() ); ?> wijzigen van een onbeperkt naar een beperkt abonnement.</strong></p><p>Kies de dag waarop je van een beperkt abonnement gebruikt gaat maken</p>
+					<p><strong>Je wilt per <?php echo esc_html( $this->per() ); ?> wijzigen van een onbeperkt naar een beperkt abonnement.</strong></p>
 					<?php else : ?>
 					<input name="soort" type="hidden" value="onbeperkt" >
 					<p><strong>Je wilt per <?php echo esc_html( $this->per() ); ?> wijzigen van een beperkt naar een onbeperkt abonnement.</strong></p>
 					<?php endif ?>
 				</div>
 			</div>
-			<?php
-			if ( 'onbeperkt' === $this->data['abonnement']->soort ) {
-				$this->werkdagen();
-			}
-			?>
 		</div>
 		<?php
 		return $this;
@@ -156,7 +146,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- extras -->
 			<div class="kleistad-col-6">
-				<input type="radio" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad-input_cbr" value="extras" >
+				<input type="radio" name="wijziging" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad-input_cbr" value="extras" >
 				<label for="kleistad_abo_extras">Abonnement extras wijzigen</label>
 			</div>
 		</div>
@@ -199,28 +189,6 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Render de wijziging werkdag optie, alleen als het een beperkt abonnement betreft.
-	 *
-	 * @return Public_Abonnee_Wijziging_Display
-	 */
-	private function werkdag() : Public_Abonnee_Wijziging_Display {
-		if ( 'beperkt' === $this->data['abonnement']->soort ) {
-			?>
-		<div class="kleistad-row"> <!-- dag -->
-			<div class="kleistad-col-6">
-				<input type="radio" id="kleistad_abo_dag" class="kleistad_abo_optie kleistad-input_cbr" value="dag" >
-				<label for="kleistad_abo_dag">Abonnement werkdag wijzigen</label>
-			</div>
-		</div>
-		<div class="kleistad_abo_dag kleistad_abo_veld" style="display:none" >
-			<?php $this->werkdagen(); ?>
-		</div>
-			<?php
-		}
-		return $this;
-	}
-
-	/**
 	 * Render de pauzeren optie
 	 *
 	 * @return Public_Abonnee_Wijziging_Display
@@ -230,7 +198,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- pauze -->
 			<div class="kleistad-col-6">
-				<input type="radio" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad-input_cbr" value="pauze" >
+				<input type="radio" name="wijziging" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad-input_cbr" value="pauze" >
 				<label for="kleistad_abo_pauze" class="kleistad-label_cbr">Abonnement pauzeren</label>
 			</div>
 		</div>
@@ -255,7 +223,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-3" >
 					&nbsp;
 				</div>
-]				<div class="kleistad-col-4 kleistad-label" >
+				<div class="kleistad-col-4 kleistad-label" >
 					<label for="kleistad_herstart_datum">Tot</label>
 				</div>
 				<div class="kleistad-col-3">
@@ -327,7 +295,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- einde -->
 			<div class="kleistad-col-6">
-				<input type="radio" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad-input_cbr" value="einde" >
+				<input type="radio" name="wijziging" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad-input_cbr" value="einde" >
 				<label for="kleistad_abo_einde" class="kleistad-label_cbr">Abonnement beëindigen</label>
 			</div>
 		</div>
@@ -353,7 +321,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- betaalwijze -->
 			<div class="kleistad-col-6">
-				<input type="radio" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad-input_cbr" value="betaalwijze" >
+				<input type="radio" name="wijziging" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad-input_cbr" value="betaalwijze" >
 				<label for="kleistad_abo_betaalwijze" >Abonnement betaalwijze</label>
 			</div>
 		</div>
@@ -421,28 +389,4 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		return $this;
 	}
 
-	/**
-	 * Display de werkdag keuze.
-	 */
-	private function werkdagen() {
-		?>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-3">
-				&nbsp;
-			</div>
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_dag_keuze2">Dag</label>
-			</div>
-			<div class="kleistad-col-4">
-				<select class="kleistad-input" name="dag" id="kleistad_dag_keuze2" >
-					<option value="maandag" <?php selected( $this->data['abonnement']->dag, 'maandag' ); ?> >Maandag</option>
-					<option value="dinsdag" <?php selected( $this->data['abonnement']->dag, 'dinsdag' ); ?>>Dinsdag</option>
-					<option value="woensdag" <?php selected( $this->data['abonnement']->dag, 'woensdag' ); ?>>Woensdag</option>
-					<option value="donderdag" <?php selected( $this->data['abonnement']->dag, 'donderdag' ); ?>>Donderdag</option>
-					<option value="vrijdag" <?php selected( $this->data['abonnement']->dag, 'vrijdag' ); ?>>Vrijdag</option>
-				</select>
-			</div>
-		</div>
-		<?php
-	}
 }

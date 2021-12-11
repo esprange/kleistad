@@ -49,7 +49,6 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 			INPUT_POST,
 			[
 				'abonnee_id'     => FILTER_SANITIZE_NUMBER_INT,
-				'dag'            => FILTER_SANITIZE_STRING,
 				'soort'          => FILTER_SANITIZE_STRING,
 				'betaal'         => FILTER_SANITIZE_STRING,
 				'pauze_datum'    => FILTER_SANITIZE_STRING,
@@ -107,7 +106,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 */
 	protected function soort() : array {
 		$abonnement = new Abonnement( $this->data['input']['abonnee_id'] );
-		return $this->wijzig( $abonnement->actie->wijzigen( $this->data['input']['per_datum'], 'soort', $this->data['input']['soort'], $this->data['input']['dag'] ) );
+		return $this->wijzig( $abonnement->actie->wijzigen( $this->data['input']['per_datum'], 'soort', $this->data['input']['soort'] ) );
 	}
 
 	/**
@@ -127,7 +126,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 */
 	protected function dag() : array {
 		$abonnement = new Abonnement( $this->data['input']['abonnee_id'] );
-		return $this->wijzig( $abonnement->actie->wijzigen( strtotime( 'today' ), 'soort', 'beperkt', $this->data['input']['dag'] ) );
+		return $this->wijzig( $abonnement->actie->wijzigen( strtotime( 'today' ), 'soort', 'beperkt' ) );
 	}
 
 	/**

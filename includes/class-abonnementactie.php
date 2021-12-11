@@ -95,12 +95,11 @@ class AbonnementActie {
 		 *
 		 * @param int    $start_datum Startdatum.
 		 * @param string $soort       Beperkt of onbeperkt.
-		 * @param string $dag         De dagnaam bij beperkt.
 		 * @param string $opmerking   De opmerking.
 		 * @param string $betaalwijze De betaalwijze.
 		 * @return string|bool Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
 		 */
-	public function starten( int $start_datum, string $soort, string $dag, string $opmerking, string $betaalwijze ) {
+	public function starten( int $start_datum, string $soort, string $opmerking, string $betaalwijze ) {
 		$start_bedrag                         = 3 * opties()[ "{$soort}_abonnement" ];
 		$this->abonnement->code               = "A{$this->abonnement->klant_id}";
 		$this->abonnement->datum              = time();
@@ -112,7 +111,6 @@ class AbonnementActie {
 		$this->abonnement->pauze_datum        = 0;
 		$this->abonnement->herstart_datum     = 0;
 		$this->abonnement->eind_datum         = 0;
-		$this->abonnement->dag                = $dag;
 		$this->abonnement->artikel_type       = 'start';
 		$this->abonnement->overbrugging_email = false;
 		$this->abonnement->extras             = [];
@@ -152,20 +150,17 @@ class AbonnementActie {
 	 * @param int    $wijzig_datum Wijzigdatum.
 	 * @param string $type         Soort wijziging: soort abonnement of de extras.
 	 * @param mixed  $soort        Beperkt/onbeperkt wijziging of de extras.
-	 * @param string $dag          Dag voor beperkt abonnement.
 	 * @return bool
 	 */
-	public function wijzigen( int $wijzig_datum, string $type, $soort, string $dag = '' ) : bool {
+	public function wijzigen( int $wijzig_datum, string $type, $soort ) : bool {
 		$gewijzigd        = false;
 		$wijzig_datum_str = strftime( '%d-%m-%Y', $wijzig_datum );
 		switch ( $type ) {
 			case 'soort':
-				$gewijzigd               = $this->abonnement->soort != $soort || $this->abonnement->dag != $dag; // phpcs:ignore
+				$gewijzigd               = $this->abonnement->soort != $soort; // phpcs:ignore
 				$this->abonnement->soort = $soort;
-				$this->abonnement->dag   = $dag;
-				$this->log( "gewijzigd per $wijzig_datum_str naar $soort $dag" );
-				$this->abonnement->bericht = "Je hebt het abonnement per $wijzig_datum_str gewijzigd naar {$this->abonnement->soort} " .
-					( 'beperkt' === $this->abonnement->soort ? ' (' . $this->abonnement->dag . ')' : '' );
+				$this->log( "gewijzigd per $wijzig_datum_str naar $soort" );
+				$this->abonnement->bericht = "Je hebt het abonnement per $wijzig_datum_str gewijzigd naar {$this->abonnement->soort}";
 				break;
 			case 'extras':
 				$gewijzigd                = $this->abonnement->extras != $soort; // phpcs:ignore

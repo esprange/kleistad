@@ -97,15 +97,6 @@
 			)
 			.on(
 				'click',
-				'#kleistad_abo_dag',
-				function() {
-					$( '.kleistad_abo_veld' ).hide();
-					$( '.kleistad_abo_dag' ).toggle( this.checked );
-					$( '#kleistad_submit_abonnee_wijziging' ).prop( 'disabled', false ).val( 'dag' ).data( { confirm: 'Abonnement wijzigen|Weet je zeker dat je de werkdag van jouw beperkt abonnement wilt wijzigen ?' } );
-				}
-			)
-			.on(
-				'click',
 				'#kleistad_abo_betaalwijze',
 				function() {
 					$( '.kleistad_abo_veld' ).hide();

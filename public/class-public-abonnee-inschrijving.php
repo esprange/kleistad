@@ -40,7 +40,6 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'telnr'            => '',
 				'abonnement_keuze' => '',
 				'extras'           => [],
-				'dag'              => '',
 				'start_datum'      => '',
 				'opmerking'        => '',
 				'betaal'           => 'ideal',
@@ -79,7 +78,6 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'plaats'           => FILTER_SANITIZE_STRING,
 				'telnr'            => FILTER_SANITIZE_STRING,
 				'abonnement_keuze' => FILTER_SANITIZE_STRING,
-				'dag'              => FILTER_SANITIZE_STRING,
 				'start_datum'      => FILTER_SANITIZE_STRING,
 				'opmerking'        => [
 					'filter' => FILTER_SANITIZE_STRING,
@@ -129,7 +127,6 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 		$result = $abonnement->actie->starten(
 			strtotime( $this->data['input']['start_datum'] ),
 			$this->data['input']['abonnement_keuze'],
-			$this->data['input']['dag'],
 			$this->data['input']['opmerking'] ?? '',
 			$this->data['input']['betaal']
 		);

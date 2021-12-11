@@ -38,7 +38,6 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 		$abonnement->actie->starten(
 			strtotime( '- 5 month' ),
 			'beperkt',
-			'dinsdag',
 			'',
 			'stort'
 		);
@@ -59,7 +58,7 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 	 * Test prepare functie;
 	 */
 	public function test_prepare() {
-		$this->maak_wijziging( 'test', false, false );
+		$this->maak_wijziging( 'test', false, true );
 		$result = $this->public_display_actie( self::SHORTCODE, [] );
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
@@ -97,16 +96,6 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 		$_POST  = $this->input;
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'extras' );
 		$this->assertStringContainsString( 'De wijziging is verwerkt', $result['status'], 'geen succes na wijzigen extras' );
-	}
-
-	/**
-	 * Test functie process dag.
-	 */
-	public function test_process_dag() {
-		$this->maak_wijziging( 'dag', true, false );
-		$_POST  = $this->input;
-		$result = $this->public_form_actie( self::SHORTCODE, [], 'dag' );
-		$this->assertStringContainsString( 'De wijziging is verwerkt', $result['status'], 'geen succes na wijzigen dag' );
 	}
 
 	/**

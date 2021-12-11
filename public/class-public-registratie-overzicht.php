@@ -116,7 +116,6 @@ class Public_Registratie_Overzicht extends Shortcode {
 			'Eind_datum',
 			'Abonnee code',
 			'Abonnement_soort',
-			'Dag',
 			'Abonnement_extras',
 			'Opmerking',
 		];
@@ -138,7 +137,6 @@ class Public_Registratie_Overzicht extends Shortcode {
 				$abonnee->abonnement->eind_datum ? date( 'd-m-Y', $abonnee->abonnement->eind_datum ) : '',
 				$abonnee->abonnement->code,
 				$abonnee->abonnement->soort,
-				'beperkt' === $abonnee->abonnement->soort ? $abonnee->abonnement->dag : '',
 				implode( ', ', $abonnee->abonnement->extras ),
 				$abonnee->abonnement->opmerking,
 			];
@@ -225,7 +223,6 @@ class Public_Registratie_Overzicht extends Shortcode {
 				'pauze_datum'    => $abonnement->pauze_datum ? date( 'd-m-Y', $abonnement->pauze_datum ) : '',
 				'herstart_datum' => $abonnement->herstart_datum ? date( 'd-m-Y', $abonnement->herstart_datum ) : '',
 				'eind_datum'     => $abonnement->eind_datum ? date( 'd-m-Y', $abonnement->eind_datum ) : '',
-				'dag'            => ( 'beperkt' === $abonnement->soort ) ? $abonnement->dag : '',
 				'soort'          => ucfirst( $abonnement->soort ),
 				'extras'         => implode( ' ', $abonnement->extras ),
 				'geannuleerd'    => $abonnement->is_geannuleerd(),

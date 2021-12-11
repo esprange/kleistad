@@ -111,7 +111,6 @@ class Admin_Abonnees extends Admin_List_Table {
 				'naam'   => $abonnee->display_name,
 				'status' => $abonnee->abonnement->geef_statustekst( false ),
 				'soort'  => $abonnee->abonnement->soort,
-				'dag'    => ( 'beperkt' === $abonnee->abonnement->soort ? $abonnee->abonnement->dag : '' ),
 				'extras' => implode( ', ', $abonnee->abonnement->extras ),
 				'code'   => $abonnee->abonnement->code,
 				'mollie' => ! $abonnee->abonnement->is_geannuleerd() && $betalen->heeft_mandaat( $abonnee->ID ),

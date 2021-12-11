@@ -64,20 +64,6 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 				</label>
 			</div>
 		</div>
-		<div class="kleistad-row" id="kleistad_dag" style="visibility:hidden" title="kies de dag dat je van jouw beperkt abonnement gebruikt gaat maken" >
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_dag_keuze">Dag</label>
-			</div>
-			<div class="kleistad-col-7">
-				<select class="kleistad-input" name="dag" id="kleistad_dag_keuze" >
-					<option value="maandag" <?php selected( $this->data['input']['dag'], 'maandag' ); ?> >Maandag</option>
-					<option value="dinsdag" <?php selected( $this->data['input']['dag'], 'dinsdag' ); ?>>Dinsdag</option>
-					<option value="woensdag" <?php selected( $this->data['input']['dag'], 'woensdag' ); ?>>Woensdag</option>
-					<option value="donderdag" <?php selected( $this->data['input']['dag'], 'donderdag' ); ?>>Donderdag</option>
-					<option value="vrijdag" <?php selected( $this->data['input']['dag'], 'vrijdag' ); ?>>Vrijdag</option>
-				</select>
-			</div>
-		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_start_datum">Start per</label>

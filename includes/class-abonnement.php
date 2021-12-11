@@ -16,7 +16,6 @@ namespace Kleistad;
  *
  * @property int    start_datum
  * @property int    start_eind_datum
- * @property string dag
  * @property string opmerking
  * @property string soort
  * @property int    pauze_datum
@@ -74,7 +73,6 @@ class Abonnement extends Artikel {
 			'datum'              => time(),
 			'start_datum'        => 0,
 			'start_eind_datum'   => 0,
-			'dag'                => '',
 			'opmerking'          => '',
 			'soort'              => 'onbeperkt',
 			'pauze_datum'        => 0,
@@ -264,7 +262,6 @@ class Abonnement extends Artikel {
 					'herstart_datum'          => $this->herstart_datum ? strftime( '%d-%m-%Y', $this->herstart_datum ) : '',
 					'abonnement'              => $this->soort,
 					'abonnement_code'         => $this->code,
-					'abonnement_dag'          => $this->dag,
 					'abonnement_opmerking'    => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking ",
 					'abonnement_wijziging'    => $this->bericht,
 					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->geef_extras_tekst() : '',

@@ -49,7 +49,7 @@ class Admin_Abonnees_Handler {
 	 */
 	private function wijzig_abonnee( array $item ) : string {
 		$abonnement = new Abonnement( $item['id'] );
-		foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort', 'dag' ] as $veld ) {
+		foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort' ] as $veld ) {
 			if ( ! empty( $item[ $veld ] ) ) {
 				$abonnement->$veld = ( false !== strpos( $veld, 'datum' ) ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
 			}
@@ -89,9 +89,6 @@ class Admin_Abonnees_Handler {
 		if ( strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) {
 			$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen';
 		}
-		if ( 'beperkt' === $item['soort'] && empty( $item['dag'] ) ) {
-			$messages[] = 'Als de abonnement soort "beperkt" is dan moet er een dag gekozen worden';
-		}
 		if ( ! empty( $item['pauze_datum'] . $item['herstart_datum'] ) ) {
 			if ( empty( $item['pauze_datum'] ) !== empty( $item['herstart_datum'] ) ) {
 				$messages[] = 'Ingeval van pauze moet de pauze datum èn de herstart datum ingevoerd worden';
@@ -124,7 +121,6 @@ class Admin_Abonnees_Handler {
 			'id'               => $abonnee_id,
 			'naam'             => $abonnee->display_name,
 			'soort'            => $abonnement->soort,
-			'dag'              => ( 'beperkt' === $abonnement->soort ? $abonnement->dag : '' ),
 			'code'             => $abonnement->code,
 			'extras'           => $abonnement->extras,
 			'geannuleerd'      => $abonnement->is_geannuleerd(),
@@ -161,7 +157,6 @@ class Admin_Abonnees_Handler {
 					'naam'             => FILTER_SANITIZE_STRING,
 					'code'             => FILTER_SANITIZE_STRING,
 					'soort'            => FILTER_SANITIZE_STRING,
-					'dag'              => FILTER_SANITIZE_STRING,
 					'gestart'          => FILTER_SANITIZE_NUMBER_INT,
 					'geannuleerd'      => FILTER_SANITIZE_NUMBER_INT,
 					'gepauzeerd'       => FILTER_SANITIZE_NUMBER_INT,
