@@ -80,7 +80,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 			$abonnee->first_name,
 			$abonnee->last_name,
 			$abonnee->user_email,
-			$abonnee->abonnement->soort . ( 'beperkt' === $abonnee->abonnement->soort ? ' (' . $abonnee->abonnement->dag . ')' : '' ),
+			$abonnee->abonnement->soort,
 		];
 		foreach ( opties()['extra']  as $extra ) {
 			$abonnee_gegevens[] = array_search( $extra['naam'], $abonnee->abonnement->extras, true ) ? 'ja' : '';

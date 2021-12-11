@@ -103,10 +103,6 @@ class Admin_GDPR {
 					'name'  => 'Soort abonnement',
 					'value' => $abonnement->soort,
 				],
-				[
-					'name'  => 'Dag',
-					'value' => $abonnement->dag,
-				],
 			],
 		];
 		return $items;
