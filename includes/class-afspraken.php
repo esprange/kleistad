@@ -49,12 +49,16 @@ class Afspraken implements Countable, Iterator {
 			'singleEvents' => true,
 			'timeMin'      => date( 'c', mktime( 0, 0, 0, 1, 1, 2018 ) ),
 		];
-		$results       = $googleconnect->calendar_service()->events->listEvents( $kalender_id, array_merge( $default_query, $query ) );
-		$events        = $results->getItems();
-		foreach ( $events as $event ) {
-			if ( ! empty( $event->start->dateTime ) ) { // Skip events die de hele dag duren, zoals verjaardagen en vakanties.
-				$this->afspraken[] = new Afspraak( $event->getId() );
+		try {
+			$results = $googleconnect->calendar_service()->events->listEvents( $kalender_id, array_merge( $default_query, $query ) );
+			$events  = $results->getItems();
+			foreach ( $events as $event ) {
+				if ( ! empty( $event->start->dateTime ) ) { // Skip events die de hele dag duren, zoals verjaardagen en vakanties.
+					$this->afspraken[] = new Afspraak( $event->getId() );
+				}
 			}
+		} catch ( Kleistad_Exception $e ) {
+			return; // Geen afspraken omdat kalender toegang niet mogelijk is.
 		}
 	}
 

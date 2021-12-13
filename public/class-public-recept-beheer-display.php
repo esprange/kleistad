@@ -21,7 +21,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function toevoegen() {
-		$this->form()->edit()->form_end();
+		$this->form();
 	}
 
 	/**
@@ -30,16 +30,15 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function wijzigen() {
-		$this->form()->edit()->form_end();
+		$this->form();
 	}
 
 	/**
 	 * Render het formulier
 	 *
-	 * @return Public_Recept_Beheer_Display
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function edit() : Public_Recept_Beheer_Display {
+	protected function form_content() {
 		?>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['recept']['id'] ); ?>" />
 		<div class="kleistad-row">
@@ -249,7 +248,6 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 		<?php endif ?>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
-		return $this;
 	}
 
 	/**

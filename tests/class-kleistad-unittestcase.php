@@ -113,8 +113,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	 * @throws ReflectionException De Reflectie exceptie.
 	 */
 	protected function public_download_actie( string $shortcode_tag, array $atts, string $method, $file_handle ) {
-		$dummy         = [];
-		$shortcode     = $this->geef_shortcode_object( $shortcode_tag, $atts, $dummy );
+		$shortcode     = $this->geef_shortcode_object( $shortcode_tag, $atts );
 		$refobject     = new ReflectionObject( $shortcode );
 		$refmethod     = $refobject->getMethod( $method );
 		$reffilehandle = $refobject->getProperty( 'filehandle' );

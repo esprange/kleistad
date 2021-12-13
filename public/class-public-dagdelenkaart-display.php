@@ -23,12 +23,20 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		$this->form();
+	}
+
+	/**
+	 * De formulier inhoud
+	 *
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 */
+	protected function form_content() {
 		if ( is_user_logged_in() ) {
 			$this->dagdelenkaart_info()->gebruiker_logged_in()->opmerking()->verklaring()->nieuwsbrief();
 		} else {
 			$this->dagdelenkaart_info()->gebruiker()->opmerking()->verklaring()->nieuwsbrief();
 		}
-		$this->betaal_info()->form_end();
+		$this->betaal_info()->submit();
 	}
 
 	/**
@@ -80,18 +88,14 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de afronding van het formulier
-	 *
-	 * @return Public_Dagdelenkaart_Display
 	 */
-	protected function form_end() : Public_Dagdelenkaart_Display {
+	protected function submit() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
 				<button class="kleistad-button" name="kleistad_submit_dagdelenkaart" id="kleistad_submit" type="submit" <?php disabled( ! is_super_admin() && '' !== $this->data['verklaring'] ); ?>>Betalen</button><br />
 			</div>
 		</div>
-		</form>
 		<?php
-		return $this;
 	}
 }

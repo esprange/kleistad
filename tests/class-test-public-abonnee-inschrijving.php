@@ -71,7 +71,7 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test functie process.
 	 */
 	public function test_process() {
-		$this->maak_inschrijving( false );
+		$this->maak_inschrijving( true );
 		$_POST  = $this->input;
 		$result = $this->public_form_actie( self::SHORTCODE, [] );
 		$this->assertArrayHasKey( 'redirect_uri', $result, 'geen ideal verwijzing na inschrijven' );

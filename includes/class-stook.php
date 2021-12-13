@@ -11,8 +11,6 @@
 
 namespace Kleistad;
 
-use Exception;
-
 /**
  * Kleistad Stook class.
  *
@@ -151,7 +149,7 @@ class Stook {
 	 * Bewaar de stook
 	 *
 	 * @global object $wpdb WP database.
-	 * @throws Exception    Bewaren gaat niet.
+	 * @throws Kleistad_Exception Bewaren gaat niet.
 	 */
 	public function save() : void {
 		global $wpdb;
@@ -182,12 +180,12 @@ class Stook {
 				"{$wpdb->prefix}kleistad_reserveringen",
 				array_merge( $data, [ 'id' => $this->stook_id ] )
 			) ) {
-				throw new Exception( 'Database actie kon niet voltooid worden' );
+				throw new Kleistad_Exception( 'Database actie kon niet voltooid worden' );
 			}
 			return;
 		}
 		if ( false === $wpdb->insert( "{$wpdb->prefix}kleistad_reserveringen", $data ) ) {
-			throw new Exception( 'Database actie kon niet voltooid worden' );
+			throw new Kleistad_Exception( 'Database actie kon niet voltooid worden' );
 		}
 		$this->stook_id = $wpdb->insert_id;
 	}
@@ -196,7 +194,7 @@ class Stook {
 	 * Verwijder de reservering.
 	 *
 	 * @global object $wpdb WP database.
-	 * @throws Exception    Verwijdering gaat niet.
+	 * @throws Kleistad_Exception Verwijdering gaat niet.
 	 */
 	public function verwijder() {
 		global $wpdb;
@@ -204,7 +202,7 @@ class Stook {
 			"{$wpdb->prefix}kleistad_reserveringen",
 			[ 'id' => $this->stook_id ]
 		) ) {
-			throw new Exception( 'Database actie kon niet voltooid worden' );
+			throw new Kleistad_Exception( 'Database actie kon niet voltooid worden' );
 		}
 		$this->stook_id = null;
 	}

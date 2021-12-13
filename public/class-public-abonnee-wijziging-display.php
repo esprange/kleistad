@@ -23,13 +23,6 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	private int $per_datum;
 
 	/**
-	 * Of er extras beschikbaar zijn
-	 *
-	 * @var bool $extra_beschikbaar De vlag.
-	 */
-	private bool $extra_beschikbaar = false;
-
-	/**
 	 * Render het formulier
 	 *
 	 * @return void
@@ -37,15 +30,21 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	protected function overzicht() {
 		$in_startperiode = strtotime( 'today' ) < $this->data['abonnement']->start_eind_datum;
 		$this->per_datum = $in_startperiode ? $this->data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
-		foreach ( opties()['extra'] as $extra ) {
-			$this->extra_beschikbaar = $this->extra_beschikbaar || ( 0 < $extra['prijs'] );
-		}
 		$this->abonnement_info()->abonnement_extra_info();
+		$this->form();
+	}
+
+	/**
+	 * Maak de formulier inhoud aan.
+	 */
+	protected function form_content() {
+		$in_startperiode = strtotime( 'today' ) < $this->data['abonnement']->start_eind_datum;
+		$this->per_datum = $in_startperiode ? $this->data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
 		if ( $in_startperiode ) {
-			$this->form()->abonnement_soort()->eindigen()->form_end();
+			$this->abonnement_soort()->eindigen()->submit();
 			return;
 		}
-		$this->form()->abonnement_soort()->abonnement_extra()->pauze()->eindigen()->betaalwijze()->form_end();
+		$this->abonnement_soort()->abonnement_extra()->pauze()->eindigen()->betaalwijze()->submit();
 	}
 
 	/**
@@ -89,7 +88,11 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	 * Render de huidige extra's
 	 */
 	private function abonnement_extra_info() {
-		if ( $this->extra_beschikbaar ) {
+		$extra_beschikbaar = false;
+		foreach ( opties()['extra'] as $extra ) {
+			$extra_beschikbaar = $extra_beschikbaar || ( 0 < $extra['prijs'] );
+		}
+		if ( $extra_beschikbaar ) {
 			?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
@@ -287,31 +290,6 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Render het eindigen van het abonnement
-	 *
-	 * @return Public_Abonnee_Wijziging_Display
-	 */
-	private function eindigen() : Public_Abonnee_Wijziging_Display {
-		?>
-		<div class="kleistad-row"> <!-- einde -->
-			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad-input_cbr" value="einde" >
-				<label for="kleistad_abo_einde" class="kleistad-label_cbr">Abonnement beëindigen</label>
-			</div>
-		</div>
-		<div class="kleistad-row kleistad_abo_einde kleistad_abo_veld" style="display:none" >
-			<div class="kleistad-col-3" >
-				&nbsp;
-			</div>
-			<div class="kleistad-col-7 kleistad-label" >
-				<p><strong>Je wilt je abonnement per <?php echo esc_html( $this->per() ); ?> stoppen</strong></p>
-			</div>
-		</div>
-		<?php
-		return $this;
-	}
-
-	/**
 	 * Render de betaalwijze wijziging
 	 *
 	 * @return Public_Abonnee_Wijziging_Display
@@ -371,11 +349,34 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Render de formulier afsluiting
+	 * Render het eindigen van het abonnement
 	 *
 	 * @return Public_Abonnee_Wijziging_Display
 	 */
-	protected function form_end() : Public_Abonnee_Wijziging_Display {
+	private function eindigen() : Public_Abonnee_Wijziging_Display {
+		?>
+		<div class="kleistad-row"> <!-- einde -->
+			<div class="kleistad-col-6">
+				<input type="radio" name="wijziging" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad-input_cbr" value="einde" >
+				<label for="kleistad_abo_einde" class="kleistad-label_cbr">Abonnement beëindigen</label>
+			</div>
+		</div>
+		<div class="kleistad-row kleistad_abo_einde kleistad_abo_veld" style="display:none" >
+			<div class="kleistad-col-3" >
+				&nbsp;
+			</div>
+			<div class="kleistad-col-7 kleistad-label" >
+				<p><strong>Je wilt je abonnement per <?php echo esc_html( $this->per() ); ?> stoppen</strong></p>
+			</div>
+		</div>
+		<?php
+		return $this;
+	}
+
+	/**
+	 * Render de formulier afsluiting
+	 */
+	protected function submit() {
 		?>
 		<input type="hidden" name="abonnee_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" >
 		<input type="hidden" name="per_datum" value="<?php echo esc_attr( $this->per_datum ); ?>" >
@@ -384,9 +385,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button" name="kleistad_submit_abonnee_wijziging" type="submit" id="kleistad_submit_abonnee_wijziging" disabled >Bevestigen</button>
 			</div>
 		</div>
-		</form>
 		<?php
-		return $this;
 	}
 
 }

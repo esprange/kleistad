@@ -21,7 +21,14 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() {
-		$this->form()->aanvraag()->contactinfo()->workshopinfo()->form_end();
+		$this->form();
+	}
+
+	/**
+	 * Maa de formulier inhoud aan
+	 */
+	protected function form_content() {
+		$this->aanvraag()->contactinfo()->workshopinfo();
 	}
 
 	/**
@@ -91,11 +98,6 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				oninput="validate_email( this, kleistad_emailadres );"/>
 			</div>
 		</div>
-		<script type="text/javascript">
-			function validate_email( input, compare ) {
-				input.setCustomValidity( ( input.value === compare.value ) ? '' : 'E-mailadressen zijn niet gelijk' );
-			}
-		</script>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_telefoon">Telefoon</label>
@@ -112,10 +114,8 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
-	 *
-	 * @return Public_Workshop_Aanvraag_Display
 	 */
-	private function workshopinfo() : Public_Workshop_Aanvraag_Display {
+	private function workshopinfo() {
 		?>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-10">
@@ -189,7 +189,6 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 }

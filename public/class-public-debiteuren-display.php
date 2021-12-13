@@ -39,11 +39,17 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het blokkade formulier
+	 */
+	protected function blokkade() {
+		$this->form( 'form_blokkade' );
+	}
+
+	/**
+	 * Maak het blokkade formulier aan
 	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function blokkade() {
-		$this->form();
+	protected function form_blokkade() {
 		?>
 		<div class="kleistad-row">
 			<p>Alle orders voorafgaand <?php echo esc_html( date( 'd-m-Y', $this->data['huidige_blokkade'] ) ); ?> zijn nu niet meer te wijzigen.
@@ -64,14 +70,19 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		</div>
 			<?php endif ?>
 		<?php
-		$this->form_end();
 	}
 
 	/**
 	 * Render het debiteur formulier
 	 */
 	protected function debiteur() {
-		$this->form();
+		$this->form( 'form_debiteur' );
+	}
+
+	/**
+	 * Maak het debiteut form aan.
+	 */
+	protected function form_debiteur() {
 		$factuur      = new Factuur();
 		$factuur_urls = $factuur->overzicht( $this->data['debiteur']['factuur'] );
 		?>
@@ -94,7 +105,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		</table>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['debiteur']['id'] ); ?>"/>
 		<?php
-		$this->bankbetaling()->annulering()->afboeking()->korting()->debiteur_end()->form_end();
+		$this->bankbetaling()->annulering()->afboeking()->korting()->debiteur_end();
 	}
 
 	/**
@@ -292,10 +303,8 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het de knoppen van het debiteur einde van het formulier
-	 *
-	 * @return Public_Debiteuren_Display
 	 */
-	private function debiteur_end() : Public_Debiteuren_Display {
+	private function debiteur_end() {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-3">
@@ -312,7 +321,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		</div>
 		<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', $this->data['huidige_blokkade'] ) ); ?> zijn niet meer te wijzigen</span>
 		<?php
-		return $this;
 	}
 
 }

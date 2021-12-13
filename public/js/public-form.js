@@ -50,6 +50,16 @@ function strtodate( value ) {
 }
 
 /**
+ * Vergelijking van twee email inputvelden.
+ *
+ * @param input   Het inputveld.
+ * @param compare Het vergelijkingsveld.
+ */
+function validate_email( input, compare ) {
+	input.setCustomValidity( ( input.value === compare.value ) ? '' : 'E-mailadressen zijn niet gelijk' );
+}
+
+/**
  * Document ready.
  */
 ( function( $ ) {

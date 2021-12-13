@@ -79,22 +79,19 @@ abstract class Public_Shortcode_Display {
 
 	/**
 	 * Helper functie voor een formulier
+	 *
+	 * @param string $form_content De formulier functie.
 	 */
-	protected function form() : Public_Shortcode_Display {
-		?>
+	protected function form( string $form_content = 'form_content' ) {
+		if ( method_exists( $this, $form_content ) ) {
+			?>
 		<form action="#" autocomplete="off" enctype="multipart/form-data" >
-		<?php
-		return $this;
-	}
-
-	/**
-	 * Helper functie voor een formulier
-	 */
-	protected function form_end() : Public_Shortcode_Display {
-		?>
+			<?php
+			$this->$form_content();
+			?>
 		</form>
-		<?php
-		return $this;
+			<?php
+		}
 	}
 
 	/**
@@ -179,7 +176,8 @@ abstract class Public_Shortcode_Display {
 			<div class="kleistad-col-4">
 				<input class="kleistad-input" name="email_controle" id="kleistad_emailadres_controle" type="email"
 				required title="Vul ter controle s.v.p. opnieuw het email adres in"
-				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>" />
+				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>"
+				oninput="validate_email( this, kleistad_emailadres );"/>
 			</div>
 		</div>
 		<div class="kleistad-row">

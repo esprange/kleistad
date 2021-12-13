@@ -23,7 +23,16 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function overzicht() {
-		$this->form()->abonnement_info();
+		$this->form();
+	}
+
+	/**
+	 * De formulier inhoud
+	 *
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 */
+	protected function form_content() {
+		$this->abonnement_info();
 		if ( is_super_admin() ) {
 			$this->gebruiker_selectie( 'Abonnee' );
 		} elseif ( is_user_logged_in() ) {
@@ -31,7 +40,7 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 		} else {
 			$this->gebruiker()->opmerking()->verklaring()->nieuwsbrief();
 		}
-		$this->betaal_info()->form_end();
+		$this->betaal_info()->submit();
 	}
 
 	/**
@@ -104,19 +113,16 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Render de afronding van het formulier
-	 *
-	 * @return Public_Abonnee_Inschrijving_Display
+	 * Render de formulier afsluiting
 	 */
-	protected function form_end() : Public_Abonnee_Inschrijving_Display {
+	private function submit() {
 		?>
 		<div class="kleistad-row" style="padding-top: 20px;">
 			<div class="kleistad-col-10">
 				<button class="kleistad-button" name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit" type="submit" <?php disabled( ! is_super_admin() && '' !== $this->data['verklaring'] ); ?>>Betalen</button>
 			</div>
 		</div>
-		</form>
 		<?php
-		return $this;
 	}
+
 }

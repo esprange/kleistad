@@ -21,7 +21,14 @@ class Public_Email_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() {
-		$this->form()->aan()->onderwerp()->aanhef()->inhoud()->verzender()->form_end();
+		$this->form();
+	}
+
+	/**
+	 * Maak de formulier inhoud aan
+	 */
+	protected function form_content() {
+		$this->aan()->onderwerp()->aanhef()->inhoud()->verzender();
 	}
 
 	/**
@@ -135,10 +142,8 @@ class Public_Email_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de verzender
-	 *
-	 * @return Public_Email_Display
 	 */
-	private function verzender() : Public_Email_Display {
+	private function verzender() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-label">
@@ -155,7 +160,6 @@ class Public_Email_Display extends Public_Shortcode_Display {
 			<button class="kleistad-button" type="submit" name="kleistad_submit_email" id="kleistad_submit_testen" value="test_email" >Test Email verzenden</button>
 		</div>
 		<?php
-		return $this;
 	}
 
 }

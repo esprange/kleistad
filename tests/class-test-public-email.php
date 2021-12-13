@@ -37,7 +37,6 @@ class Test_Public_Email extends Kleistad_UnitTestCase {
 	 * Test test_mail functie.
 	 */
 	public function test_test_email() {
-		$mailer     = tests_retrieve_phpmailer_instance();
 		$bestuurder = new WP_User( $this->factory->user->create() );
 		$docent     = new WP_User( $this->factory->user->create() );
 		$bestuurder->add_role( BESTUUR );

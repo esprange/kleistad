@@ -38,7 +38,6 @@ class Test_Public_Abonnement_Overzicht extends Kleistad_UnitTestCase {
 		$abonnement->save();
 
 		$filehandle = fopen( 'php://memory', 'wb' );
-		$data       = [ 'filehandle' => $filehandle ];
 		$this->public_download_actie( self::SHORTCODE, [], 'abonnementen', $filehandle );
 		$size = ftell( $filehandle );
 		fclose( $filehandle );

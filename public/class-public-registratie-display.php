@@ -25,15 +25,13 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 			$this->wachtwoord();
 			return;
 		}
-		$this->form()->details()->form_end();
+		$this->form();
 	}
 
 	/**
 	 * Render de details
-	 *
-	 * @return Public_Registratie_Display
 	 */
-	private function details() : Public_Registratie_Display {
+	protected function form_content() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
@@ -96,7 +94,6 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**

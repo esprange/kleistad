@@ -16,13 +16,6 @@ namespace Kleistad;
 class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
-	 * De tekst op de submit button
-	 *
-	 * @var string $buttontekst De tekst.
-	 */
-	private string $buttontekst;
-
-	/**
 	 * Render het formulier
 	 *
 	 * @return void
@@ -30,6 +23,14 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 */
 	protected function inschrijven() {
 		$this->form();
+	}
+
+	/**
+	 * Maak de formulier inhoud
+	 *
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 */
+	protected function form_content() {
 		$this->cursus_info()->techniek_keuze();
 		if ( is_super_admin() ) {
 			$this->aantal( 1 )->gebruiker_selectie( 'Cursist' );
@@ -38,15 +39,20 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		} else {
 			$this->aantal()->gebruiker()->opmerking()->nieuwsbrief();
 		}
-		$this->buttontekst = 'Inschrijven';
-		$this->betaal_info()->form_end();
+		$this->betaal_info()->submit( 'Inschrijven' );
 	}
 
 	/**
 	 * Render het formulier voor inschrijving na op de wachtlijst te hebben gestaan
 	 */
 	protected function indelen_na_wachten() {
-		$this->form();
+		$this->form( 'form_indelen_na_wachten' );
+	}
+
+	/**
+	 * Maak het indelen na wachten formulier aan
+	 */
+	protected function form_indelen_na_wachten() {
 		?>
 		<h2><?php echo esc_html( $this->data['cursist_naam'] ); ?></h2>
 		<strong>Aanmelding voor cursus <?php echo esc_html( $this->data['cursus_naam'] ); ?></strong>
@@ -62,8 +68,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		$this->buttontekst = 'Betalen';
-		$this->form_end();
+		$this->submit( 'Betalen' );
 	}
 
 	/**
@@ -71,6 +76,12 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 */
 	protected function stop_wachten() {
 		$this->form();
+	}
+
+	/**
+	 * Maak het stop wachten formulier aan.
+	 */
+	protected function form_stop_wachten() {
 		?>
 		<h2><?php echo esc_html( $this->data['cursist_naam'] ); ?></h2>
 		<strong>Afmelden voor de wachtlijst van cursus <?php echo esc_html( $this->data['cursus_naam'] ); ?></strong>
@@ -79,8 +90,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="aantal" value="1" />
 		<p>Door af te melden zal je geen email ontvangen als er een plaats vrijkomt voor deze cursus</p>
 		<?php
-		$this->buttontekst = 'Afmelden';
-		$this->form_end();
+		$this->submit( 'Afmelden' );
 	}
 
 	/**
@@ -102,10 +112,12 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			$style         = $selecteerbaar ? '' : 'color: gray;';
 			$ruimte_tekst  = ", nog ruimte voor {$cursus_data['ruimte']} deelnemer" . ( $cursus_data['ruimte'] > 1 ? 's' : '' );
 			$naam          = $cursus_data['cursus']->naam . ( $cursus_data['cursus']->vervallen ? ' VERVALLEN' : ( $cursus_data['cursus']->vol ? ' VOL' : $ruimte_tekst ) );
+			$checked       = $selecteerbaar && ( $this->data['input']['cursus_id'] === $cursus_data['cursus']->id || 1 === count( $this->data['open_cursussen'] ) );
 			?>
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">
 				<input name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_data['cursus']->id ); ?>"
-					data-cursus='<?php echo $cursus_data['json'] ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?> <?php checked( $this->data['input']['cursus_id'], $cursus_data['cursus']->id ); ?> required />
+					data-cursus='<?php echo $cursus_data['json'] ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?>
+					<?php checked( $checked ); ?> required />
 				<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>">
 					<span style="<?php echo esc_attr( $style ); ?>"><?php echo esc_html( $naam ); ?></span></label>
 			</div>
@@ -226,17 +238,15 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de afronding van het formulier
 	 *
-	 * @return Public_Cursus_Inschrijving_Display
+	 * @param string $buttontekst De tekst die op de submit button moet worden getoond.
 	 */
-	protected function form_end() : Public_Cursus_Inschrijving_Display {
+	protected function submit( string $buttontekst ) {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-10">
-				<button class="kleistad-button" name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" value="<?php echo esc_attr( $this->display_actie ); ?>" type="submit" ><?php echo esc_html( $this->buttontekst ); ?></button>
+				<button class="kleistad-button" name="kleistad_submit_cursus_inschrijving" id="kleistad_submit" value="<?php echo esc_attr( $this->display_actie ); ?>" type="submit" ><?php echo esc_html( $buttontekst ); ?></button>
 			</div>
 		</div>
-		</form>
 		<?php
-		return $this;
 	}
 }

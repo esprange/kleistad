@@ -21,15 +21,13 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() {
-		$this->form()->verkoop()->form_end();
+		$this->form();
 	}
 
 	/**
 	 * Render de dagdelenkaart info
-	 *
-	 * @return Public_Verkoop_Display
 	 */
-	private function verkoop() : Public_Verkoop_Display {
+	protected function form_content() {
 		?>
 		<input type="hidden" name="klant_type" id="kleistad_klant_type" value="nieuw">
 		<div id="kleistad_tabs" class="ui-tabs ui-widget">
@@ -112,7 +110,6 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 			<button class="kleistad-button" type="submit" name="kleistad_submit_verkoop" id="kleistad_submit_verkoop" value="verzenden">Verzenden</button>
 		</div>
 		<?php
-		return $this;
 	}
 
 }

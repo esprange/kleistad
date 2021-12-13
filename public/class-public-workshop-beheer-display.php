@@ -19,28 +19,28 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * Render het formulier
 	 */
 	protected function toevoegen() {
-		$this->form()->edit()->form_end();
+		$this->form();
 	}
 
 	/**
 	 * Render het formulier
 	 */
 	protected function wijzigen() {
-		$this->form()->edit()->form_end();
+		$this->form();
 	}
 
 	/**
 	 * Render het formulier
 	 */
 	protected function inplannen() {
-		$this->form()->edit()->form_end();
+		$this->form();
 	}
 
 	/**
 	 * Render het formulier
 	 */
 	protected function tonen() {
-		$this->form()->communicatie()->form_end();
+		$this->form( 'form_communicatie' );
 	}
 
 	/**
@@ -122,10 +122,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	/**
 	 * Render het formulier
 	 *
-	 * @return Public_Workshop_Beheer_Display
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function edit() : Public_Workshop_Beheer_Display {
+	protected function form_content() {
 		$voltooid = strtotime( $this->data['workshop']['datum'] ) < strtotime( 'today' );
 		$readonly = $this->data['workshop']['betaald'] || $this->data['workshop']['vervallen'] || $voltooid;
 		?>
@@ -265,15 +264,12 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**
 	 * Toon het overzicht van de communicatie rondom de workshop
-	 *
-	 * @return Public_Workshop_Beheer_Display
 	 */
-	private function communicatie() : Public_Workshop_Beheer_Display {
+	protected function form_communicatie() {
 		?>
 		<input type="hidden" name="casus_id" value="<?php echo esc_attr( $this->data['casus']['casus_id'] ); ?>"/>
 		<table class="kleistad-form" >
@@ -320,7 +316,6 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		<?php endforeach ?>
 		<?php
-		return $this;
 	}
 
 }

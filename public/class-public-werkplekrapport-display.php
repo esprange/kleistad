@@ -20,7 +20,14 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	 */
 	protected function individueel() {
 		if ( ! isset( $this->data['rapport'] ) ) {
-			$this->form()->datums()->werkplekgebruiker()->form_end();
+			?>
+		<form method="GET" action="<?php echo esc_attr( get_permalink() ?: '#' ); ?>">
+			<?php $this->datums()->werkplekgebruiker(); ?>
+			<div class="kleistad-row" style="padding-top:20px;" >
+				<button class="kleistad-button" type="submit" >Rapport</button>
+			</div>
+		</form>
+			<?php
 			return;
 		}
 		?>
@@ -58,7 +65,14 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		if ( ! isset( $this->data['rapport'] ) ) {
-			$this->form()->datums()->form_end();
+			?>
+		<form method="GET" action="<?php echo esc_attr( get_permalink() ?: '#' ); ?>">
+			<?php $this->datums(); ?>
+			<div class="kleistad-row" style="padding-top:20px;" >
+				<button class="kleistad-button" type="submit" >Rapport</button>
+			</div>
+		</form>
+			<?php
 			return;
 		}
 		?>
@@ -128,10 +142,8 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de gebruiker selectie
-	 *
-	 * @return Public_Werkplekrapport_Display
 	 */
-	private function werkplekgebruiker() : Public_Werkplekrapport_Display {
+	private function werkplekgebruiker() {
 		?>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-3">
@@ -146,32 +158,6 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
-	}
-
-	/**
-	 * Render de form
-	 *
-	 * @return Public_Werkplekrapport_Display
-	 */
-	protected function form() : Public_Werkplekrapport_Display {
-		?>
-		<form method="GET" action="<?php echo esc_attr( get_permalink() ?: '#' ); ?>">
-		<?php
-		return $this;
-	}
-
-	/**
-	 * Render de form end
-	 */
-	protected function form_end() : Public_Werkplekrapport_Display {
-		?>
-		<div class="kleistad-row" style="padding-top:20px;" >
-			<button class="kleistad-button" type="submit" >Rapport</button>
-		</div>
-		<?php
-		echo '</form>'; // To suppress warning of unmatched closing tag.
-		return $this;
 	}
 
 }

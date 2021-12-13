@@ -21,15 +21,13 @@ class Public_Cursus_Extra_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() {
-		$this->form()->extra_cursisten()->form_end();
+		$this->form();
 	}
 
 	/**
 	 * Render het formulier
-	 *
-	 * @return Public_Cursus_Extra_Display
 	 */
-	private function extra_cursisten() : Public_Cursus_Extra_Display {
+	protected function form_content() {
 		?>
 		<h2>Opgave gegevens extra cursisten voor <?php echo esc_html( $this->data['cursus_naam'] ); ?></h2>
 		<p>ingeschreven door <?php echo esc_html( $this->data['cursist_naam'] ); ?></p>
@@ -81,7 +79,6 @@ class Public_Cursus_Extra_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 }

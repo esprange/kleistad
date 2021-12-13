@@ -21,7 +21,14 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() {
-		$this->form()->bijstorten()->betaal_info()->form_end();
+		$this->form();
+	}
+
+	/**
+	 * Maak de formulier inhoud aan
+	 */
+	protected function form_content() {
+		$this->bijstorten()->betaal_info()->submit();
 	}
 
 	/**
@@ -86,18 +93,14 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de afronding van het formulier
-	 *
-	 * @return Public_Saldo_Display
 	 */
-	protected function form_end() : Public_Saldo_Display {
+	protected function submit() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">
 				<button class="kleistad-button" type="submit" name="kleistad_submit_saldo" id="kleistad_submit" >Betalen</button><br />
 			</div>
 		</div>
-		</form>
 		<?php
-		return $this;
 	}
 }

@@ -21,15 +21,13 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() {
-		$this->form()->contact()->form_end();
+		$this->form();
 	}
 
 	/**
 	 * Render het formulier
-	 *
-	 * @return Public_Contact_Display
 	 */
-	private function contact() : Public_Contact_Display {
+	protected function form_content() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-4 kleistad-label">
@@ -115,7 +113,6 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 }

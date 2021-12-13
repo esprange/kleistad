@@ -152,15 +152,13 @@ class Googleconnect {
 	 * Bepaal of er connectie is met Google.
 	 *
 	 * @return bool succes of falen
-	 * @throws Kleistad_Exception Als er iets fout gaat.
 	 */
 	public function is_authorized() : bool {
 		if ( false !== get_option( self::ACCESS_TOKEN ) ) {
 			try {
 				return is_object( $this->calendar_service() );
-			} catch ( Exception $e ) {
-				fout( __CLASS__, $e->getMessage() );
-				throw new Kleistad_Exception( 'Interne fout' );
+			} catch ( Kleistad_Exception $e ) {
+				return false;
 			}
 		}
 		return false;

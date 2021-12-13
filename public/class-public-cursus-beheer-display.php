@@ -21,7 +21,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function toevoegen() {
-		$this->form()->edit()->form_end();
+		$this->form();
 	}
 
 	/**
@@ -30,7 +30,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function wijzigen() {
-		$this->form()->edit()->form_end();
+		$this->form();
 	}
 
 	/**
@@ -76,10 +76,9 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	/**
 	 * Render het formulier
 	 *
-	 * @return Public_Cursus_Beheer_Display
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function edit() : Public_Cursus_Beheer_Display {
+	protected function form_content() {
 		$readonly = $this->data['cursus']['eind_datum'] < strtotime( 'today' );
 		?>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>"/>
@@ -209,7 +208,6 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 }
