@@ -11,6 +11,7 @@
 
 namespace Kleistad;
 
+use Mollie\Api\Exceptions\ApiException;
 use WP_REST_Response;
 use WP_REST_Request;
 use WP_ERROR;
@@ -62,7 +63,9 @@ class Ontvangen {
 	 * Webhook functie om betaling status te verwerken. Wordt aangeroepen door Mollie.
 	 *
 	 * @param WP_REST_Request $request het request.
+	 *
 	 * @return WP_REST_Response|WP_Error de response.
+	 * @throws ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function callback_betaling_verwerkt( WP_REST_Request $request ) {
 		// phpcs:disable WordPress.NamingConventions

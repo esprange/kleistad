@@ -93,7 +93,9 @@ class Public_Actions {
 				'admin_url'     => admin_url( 'admin-ajax.php' ),
 			]
 		);
-
+		if ( 'kleistad_recept' === get_post_type() ) {
+			wp_enqueue_style( 'recept', plugin_dir_url( __FILE__ ) . "css/recept$dev.css", [], versie() );
+		}
 	}
 
 	/**

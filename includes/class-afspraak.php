@@ -68,8 +68,7 @@ class Afspraak {
 	 *
 	 * @param string $afspraak_id afspraak id welke geladen moet worden.
 	 *
-	 * @noinspection PhpRedundantCatchClauseInspection
-	 * @throws Kleistad_Exception Als er een fout optreedt.
+	 * @throws Kleistad_Exception Op hoger nivo af te handelen.
 	 * @since 5.0.0
 	 */
 	public function __construct( string $afspraak_id ) {
@@ -177,8 +176,8 @@ class Afspraak {
 	/**
 	 * Bewaar de afspraak in de kalender.
 	 *
+	 * @throws Kleistad_Exception Op hoger nivo af te handelen.
 	 * @since 5.0.0
-	 * @noinspection PhpUnhandledExceptionInspection
 	 */
 	public function save() : void {
 		if ( is_null( $this->event->getCreated() ) ) {
@@ -191,7 +190,7 @@ class Afspraak {
 	/**
 	 * Delete de afspraak.
 	 *
-	 * @noinspection PhpUnhandledExceptionInspection
+	 * @throws Kleistad_Exception Op hoger nivo af te handelen.
 	 */
 	public function delete() : void {
 		$this->googleconnect->calendar_service()->events->delete( $this->kalender_id, $this->event->getId() );

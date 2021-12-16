@@ -80,9 +80,10 @@ abstract class Artikel {
 	/**
 	 * Een bestelling annuleren.
 	 *
-	 * @param Order  $order   De order.
-	 * @param float  $restant   Het te betalen bedrag bij annulering.
+	 * @param Order  $order De order.
+	 * @param float  $restant Het te betalen bedrag bij annulering.
 	 * @param string $opmerking De opmerkingstekst in de factuur.
+	 *
 	 * @return string|bool De url van de creditfactuur of false indien annulering niet mogelijk.
 	 */
 	final public function annuleer_order( Order $order, float $restant, string $opmerking ) {
@@ -131,6 +132,7 @@ abstract class Artikel {
 	 * @param string $opmerking     De optionele opmerking in de factuur.
 	 * @param string $transactie_id De betalings id.
 	 * @param bool   $factuur       Of er een factuur aangemaakt moet worden.
+	 *
 	 * @return string De url van de factuur.
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
@@ -166,6 +168,7 @@ abstract class Artikel {
 	 * @param Order  $order     De order.
 	 * @param float  $korting   De te geven korting.
 	 * @param string $opmerking De opmerking in de factuur.
+	 *
 	 * @return bool|string De url van de factuur of fout.
 	 */
 	final public function korting_order( Order $order, float $korting, string $opmerking ) {
@@ -211,6 +214,7 @@ abstract class Artikel {
 	 *
 	 * @param Order  $originele_order De order.
 	 * @param string $opmerking       De optionele opmerking in de factuur.
+	 *
 	 * @return bool|string De url van de factuur of false.
 	 * @noinspection PhpNonStrictObjectEqualityInspection
 	 */

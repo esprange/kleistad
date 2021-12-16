@@ -30,6 +30,8 @@ class MollieClient {
 
 	/**
 	 * De constructor
+	 *
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgevangen worden.
 	 */
 	public function __construct() {
 		if ( defined( 'KLEISTAD_MOLLIE_SIM' ) ) {
@@ -55,7 +57,9 @@ class MollieClient {
 	 * Geef het mollie klant object
 	 *
 	 * @param int|array $klant WP user id of naam/email combi.
+	 *
 	 * @return object Het object.
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function get_client( $klant ) : object {
 		if ( ! is_array( $klant ) ) {
@@ -85,8 +89,10 @@ class MollieClient {
 	/**
 	 * Geef het mollie payment object
 	 *
-	 * @param  string $betaling_id Het Mollie betaal id.
+	 * @param string $betaling_id Het Mollie betaal id.
+	 *
 	 * @return object Het object.
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function get_payment( string $betaling_id ) : object {
 		return $this->mollie_service->payments->get( $betaling_id );
@@ -102,6 +108,7 @@ class MollieClient {
 	 * Vanuit performance overwegingen vragen we dit maar eens per week op vanuit Mollie.
 	 *
 	 * @return object
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function get_banks() : object {
 		$issuers = get_transient( 'mollie_banken' );

@@ -11,7 +11,9 @@
 
 namespace Kleistad;
 
+use Mollie\Api\Exceptions\ApiException;
 use WP_User;
+use Exception;
 
 /**
  * Kleistad AbonnementActie class.
@@ -54,8 +56,13 @@ class AbonnementActie {
 	 * @return bool
 	 */
 	public function stop_incasso() : bool {
-		$betalen = new Betalen();
-		$betalen->verwijder_mandaat( $this->abonnement->klant_id );
+		try {
+			$betalen = new Betalen();
+			$betalen->verwijder_mandaat( $this->abonnement->klant_id );
+		} catch ( ApiException $e ) {
+			fout( __CLASS__, 'Mandaat kan niet verwijderd worden : ' . $e->getMessage() );
+			return false;
+		}
 		$this->log( 'gestopt met automatisch betalen' );
 		$this->abonnement->save();
 		if ( ! is_super_admin() ) {
@@ -90,15 +97,16 @@ class AbonnementActie {
 		return true;
 	}
 
-		/**
-		 * Start het abonnement per datum.
-		 *
-		 * @param int    $start_datum Startdatum.
-		 * @param string $soort       Beperkt of onbeperkt.
-		 * @param string $opmerking   De opmerking.
-		 * @param string $betaalwijze De betaalwijze.
-		 * @return string|bool Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
-		 */
+	/**
+	 * Start het abonnement per datum.
+	 *
+	 * @param int    $start_datum Startdatum.
+	 * @param string $soort       Beperkt of onbeperkt.
+	 * @param string $opmerking   De opmerking.
+	 * @param string $betaalwijze De betaalwijze.
+	 *
+	 * @return string|bool Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
+	 */
 	public function starten( int $start_datum, string $soort, string $opmerking, string $betaalwijze ) {
 		$start_bedrag                         = 3 * opties()[ "{$soort}_abonnement" ];
 		$this->abonnement->code               = "A{$this->abonnement->klant_id}";
@@ -124,17 +132,22 @@ class AbonnementActie {
 		return true;
 	}
 
-		/**
-		 * Stop het abonnement per datum.
-		 *
-		 * @param int $eind_datum Einddatum.
-		 * @return bool
-		 */
+	/**
+	 * Stop het abonnement per datum.
+	 *
+	 * @param int $eind_datum Einddatum.
+	 *
+	 * @return bool
+	 */
 	public function stoppen( int $eind_datum ) : bool {
 		$this->abonnement->eind_datum = $eind_datum;
 		$eind_datum_str               = strftime( '%d-%m-%Y', $this->abonnement->eind_datum );
-		$betalen                      = new Betalen();
-		$betalen->verwijder_mandaat( $this->abonnement->klant_id );
+		try {
+			$betalen = new Betalen();
+			$betalen->verwijder_mandaat( $this->abonnement->klant_id );
+		} catch ( ApiException $e ) {
+			fout( __CLASS__, 'mandaat kan niet verwijderd worden : ' . $e->getMessage() );
+		}
 		$this->log( "gestopt per $eind_datum_str" );
 		$this->abonnement->bericht = "Je hebt het abonnement per $eind_datum_str beëindigd.";
 		$this->abonnement->save();
@@ -208,10 +221,14 @@ class AbonnementActie {
 		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
 		$this->abonnement->artikel_type = ( ( $this->abonnement->herstart_datum > $deze_maand && $this->abonnement->herstart_datum < $volgende_maand ) ||
 			( $this->abonnement->pauze_datum >= $deze_maand && $this->abonnement->pauze_datum < $volgende_maand ) ) ? 'pauze' : 'regulier';
-		if ( $this->abonnement->betaling->incasso_actief() ) {
-			$this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->abonnement->betaling->doe_sepa_incasso(), false );
-		} else {
-			$this->abonnement->verzend_email( '_regulier_bank', $this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
+		try {
+			if ( $this->abonnement->betaling->incasso_actief() ) {
+					$this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->abonnement->betaling->doe_sepa_incasso(), false );
+			} else {
+				$this->abonnement->verzend_email( '_regulier_bank', $this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
+			}
+		} catch ( Exception $e ) {
+			fout( __CLASS__, 'fout bij factuur aanmaken : ' . $e->getMessage() );
 		}
 		$this->abonnement->factuur_maand = $factuur_maand;
 		$this->abonnement->save();

@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use Mollie\Api\Exceptions\ApiException;
+
 /**
  * De abstract class voor shortcodes
  */
@@ -158,38 +160,7 @@ abstract class Public_Shortcode_Display {
 				value="<?php echo esc_attr( $this->data['input']['last_name'] ); ?>" autocomplete="family-name" />
 			</div>
 		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_emailadres">Email adres</label>
-			</div>
-			<div class="kleistad-col-4">
-				<input class="kleistad-input" name="user_email" id="kleistad_emailadres" type="email"
-				required placeholder="mijnemailadres@voorbeeld.nl" pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$"
-				title="Vul s.v.p. een geldig email adres in"
-				value="<?php echo esc_attr( $this->data['input']['user_email'] ); ?>" autocomplete="email" />
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_emailadres_controle">Email adres (controle)</label>
-			</div>
-			<div class="kleistad-col-4">
-				<input class="kleistad-input" name="email_controle" id="kleistad_emailadres_controle" type="email"
-				required title="Vul ter controle s.v.p. opnieuw het email adres in"
-				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>"
-				oninput="validate_email( this, kleistad_emailadres );"/>
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_telnr">Telefoon</label>
-			</div>
-			<div class="kleistad-col-2">
-				<input class="kleistad-input" name="telnr" id="kleistad_telnr" type="text"
-				maxlength="15" placeholder="0123456789" title="Vul s.v.p. een geldig telefoonnummer in"
-				value="<?php echo esc_attr( $this->data['input']['telnr'] ); ?>" autocomplete="tel" />
-			</div>
-		</div>
+		<?php $this->email()->telnr(); ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_pcode">Postcode, huisnummer</label>
@@ -282,17 +253,21 @@ abstract class Public_Shortcode_Display {
 
 	/**
 	 * Render de ideal betaal sectie
-	 *
-	 * @return void
 	 */
 	protected function ideal() {
-		$service = new MollieClient();
+		try {
+			$service = new MollieClient();
+			$banks   = $service->get_banks();
+		} catch ( ApiException $e ) {
+			echo melding( 0, 'Er is helaas iets misgegaan, probeer het later eventueel opnieuw' ); // phpcs:ignore
+			return;
+		}
 		?>
 		<img src="<?php echo esc_url( plugins_url( '../public/images/iDEAL_48x48.png', __FILE__ ) ); ?>" alt="iDEAL" style="padding-left:40px"/>
 		<label for="kleistad_bank" class="kleistad-label">Mijn bank:&nbsp;</label>
 		<select name="bank" id="kleistad_bank" class="kleistad-selectmenu" style="display:none;">
 			<option value="" data-class="kleistad-bank" data-style="background-image: url();" >&nbsp;</option>
-			<?php foreach ( $service->get_banks() as $bank ) : ?>
+			<?php foreach ( $banks as $bank ) : ?>
 				<option value="<?php echo esc_attr( $bank->id ); ?>"
 					data-class="kleistad-bank"
 					data-style="background-image: url(&apos;<?php echo esc_attr( $bank->image->size1x ); ?>&apos;);" >
@@ -301,5 +276,59 @@ abstract class Public_Shortcode_Display {
 			<?php endforeach ?>
 		</select>
 		<?php
+	}
+
+	/**
+	 * De invoervelden voor een opgave van een email adres
+	 *
+	 * @return Public_Shortcode_Display
+	 */
+	protected function email() : Public_Shortcode_Display {
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_emailadres">Email adres</label>
+			</div>
+			<div class="kleistad-col-4">
+				<input class="kleistad-input" name="user_email" id="kleistad_emailadres" type="email"
+				required placeholder="mijnemailadres@voorbeeld.nl" pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$"
+				title="Vul s.v.p. een geldig email adres in"
+				value="<?php echo esc_attr( $this->data['input']['user_email'] ); ?>" autocomplete="email" />
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_emailadres_controle">Email adres (controle)</label>
+			</div>
+			<div class="kleistad-col-4">
+				<input class="kleistad-input" name="email_controle" id="kleistad_emailadres_controle" type="email"
+				required title="Vul ter controle s.v.p. opnieuw het email adres in"
+				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>"
+				oninput="validate_email( this, kleistad_emailadres );"/>
+			</div>
+		</div>
+		<?php
+		return $this;
+	}
+
+	/**
+	 * De invoervelden voor een opgave van een telefoonnr
+	 *
+	 * @return Public_Shortcode_Display
+	 */
+	protected function telnr() : Public_Shortcode_Display {
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_telefoon">Telefoon</label>
+			</div>
+			<div class="kleistad-col-2">
+				<input class="kleistad-input" name="telnr" id="kleistad_telefoon" type="text"
+				maxlength="15" placeholder="0123456789" title="Vul s.v.p. een geldig telefoonnummer in"
+				value="<?php echo esc_attr( $this->data['input']['telnr'] ); ?>" autocomplete="tel" />
+			</div>
+		</div>
+		<?php
+		return $this;
 	}
 }

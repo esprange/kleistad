@@ -27,7 +27,8 @@ class Afboeking extends LosArtikel {
 	 *
 	 * @param int|null $verkoop_id Verkoop_id is hier niet gebruikt.
 	 *
-	 * @noinspection PhpMissingParentConstructorInspection*/
+	 * @noinspection PhpMissingParentConstructorInspection
+	 */
 	public function __construct( ?int $verkoop_id = null ) {
 	}
 }

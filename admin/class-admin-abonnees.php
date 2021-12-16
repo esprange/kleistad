@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use Exception;
+
 /**
  * Abonnees list table
  */
@@ -106,6 +108,11 @@ class Admin_Abonnees extends Admin_List_Table {
 			if ( ! empty( $search ) && false === stripos( $abonnee->display_name . $abonnee->user_email, $search ) ) {
 				continue;
 			}
+			try {
+				$mandaat = $betalen->heeft_mandaat( $abonnee->ID );
+			} catch ( Exception $e ) {
+				$mandaat = false;
+			}
 			$abonnees[] = [
 				'id'     => $abonnee->ID,
 				'naam'   => $abonnee->display_name,
@@ -113,7 +120,7 @@ class Admin_Abonnees extends Admin_List_Table {
 				'soort'  => $abonnee->abonnement->soort,
 				'extras' => implode( ', ', $abonnee->abonnement->extras ),
 				'code'   => $abonnee->abonnement->code,
-				'mollie' => ! $abonnee->abonnement->is_geannuleerd() && $betalen->heeft_mandaat( $abonnee->ID ),
+				'mollie' => ! $abonnee->abonnement->is_geannuleerd() && $mandaat,
 			];
 		}
 		usort(

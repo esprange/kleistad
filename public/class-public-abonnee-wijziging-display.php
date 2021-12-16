@@ -305,7 +305,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad_abo_betaalwijze kleistad_abo_veld" style="display:none" >
 			<?php
-			if ( ! $this->data['incasso_actief'] ) :
+			if ( 'nee' === $this->data['incasso_actief'] ) :
 				?>
 			<div class="kleistad-row" >
 				<div class="kleistad-col-3" >
@@ -325,7 +325,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 			</div>
 				<?php
-			else : // Incasso is actief.
+			elseif ( 'ja' === $this->data['incasso_actief'] ) : // Incasso is actief.
 				?>
 			<div class="kleistad-row" >
 				<div class="kleistad-col-3" >
@@ -340,9 +340,9 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 					&nbsp;<input type="hidden" name="betaal" value="stort" />
 				</div>
 			</div>
-				<?php
-			endif; // Incasso is actief.
-			?>
+				<?php else : // Onbekend of incasso actief is. ?>
+				<p><strong>Betaalwijze wijzigingen zijn helaas nu niet mogelijk. Probeer het later opnieuw.</strong></p>
+			<?php endif ?>
 		</div>
 		<?php
 		return $this;

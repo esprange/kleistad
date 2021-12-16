@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.8.1
-Stable tag: 6.21.0
+Stable tag: 6.21.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4
@@ -35,12 +35,13 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 6.21.0 =
+= 6.21.1 =
 * Beperkte abonnementen, dag is is niet meer van belang, en wijziging soort mag na startperiode.
 * Aanpassing stookrapportage, nu ook voor bestuur totaal overzicht.
 * Optimalisatie admin overzicht abonnees.
 * Annuleren door gebruiker uit te voeren.
 * Refactor de shortcode verwerking.
+* Foutafhandeling bij issues met Google of Mollie verbeterd.
 = 6.20.3 =
 * Bugfix voor herhaald inschrijven en verwerking refunds Mollie
 = 6.20.2 =

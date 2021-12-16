@@ -63,6 +63,8 @@ class Stoken implements Countable, Iterator {
 	 * Verwijder een stook.
 	 *
 	 * @param Stook $stookverwijderen Te vervangen stook.
+	 *
+	 * @throws Kleistad_Exception Moet op hoger nivo afgehandeld worden.
 	 */
 	public function verwijderen( Stook $stookverwijderen ) {
 		foreach ( $this->stoken as $key => $stook ) {
@@ -123,7 +125,6 @@ class Stoken implements Countable, Iterator {
 		return isset( $this->stoken[ $this->current_index ] );
 	}
 
-
 	/**
 	 * Verwerk de stook. Afhankelijk van de status melden dat er een afboeking gaat plaats vinden of de werkelijke afboeking uitvoeren.
 	 *
@@ -152,9 +153,9 @@ class Stoken implements Countable, Iterator {
 	/**
 	 * Verwerk een stook
 	 *
-	 * @param Oven  $oven          Een oven object.
-	 * @param Stook $stook         Een stook object.
-	 * @global object $wpdb        WordPress database.
+	 * @param Oven  $oven   Een oven object.
+	 * @param Stook $stook  Een stook object.
+	 * @global object $wpdb WordPress database.
 	 * @throws Exception    Exceptie als transactie mislukt.
 	 */
 	private static function verwerk_stook( Oven $oven, Stook $stook ) {
@@ -207,8 +208,10 @@ class Stoken implements Countable, Iterator {
 	/**
 	 * Meld een stook
 	 *
-	 * @param Oven  $oven   Een oven object.
-	 * @param Stook $stook  Een stook object.
+	 * @param Oven  $oven  Een oven object.
+	 * @param Stook $stook Een stook object.
+	 *
+	 * @throws Kleistad_Exception Moet op hoger nivo afgehandeld worden.
 	 */
 	private static function meld_stook( Oven $oven, Stook $stook ) {
 		$emailer = new Email();

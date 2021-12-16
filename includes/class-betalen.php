@@ -73,10 +73,12 @@ class Betalen {
 	 * Doe een eenmalige order bij een gebruiker waarvan al een mandaat bestaat.
 	 *
 	 * @param int    $gebruiker_id Het wp gebruiker_id.
-	 * @param string $referentie   De externe order referentie, maximaal 35 karakters.
-	 * @param float  $bedrag       Het te betalen bedrag.
+	 * @param string $referentie De externe order referentie, maximaal 35 karakters.
+	 * @param float  $bedrag Het te betalen bedrag.
 	 * @param string $beschrijving De beschrijving bij de betaling.
+	 *
 	 * @return string De transactie_id.
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function eenmalig( int $gebruiker_id, string $referentie, float $bedrag, string $beschrijving ) : string {
 		$service          = new MollieClient();
@@ -107,10 +109,12 @@ class Betalen {
 	 * Stort een eerder bedrag (deels) terug.
 	 *
 	 * @param string $mollie_betaling_id Het id van de oorspronkelijke betaling.
-	 * @param string $referentie         De externe referentie.
-	 * @param float  $bedrag             Het terug te storten bedrag.
-	 * @param string $beschrijving       De externe beschrijving van de opdracht.
+	 * @param string $referentie De externe referentie.
+	 * @param float  $bedrag Het terug te storten bedrag.
+	 * @param string $beschrijving De externe beschrijving van de opdracht.
+	 *
 	 * @return bool
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function terugstorting( string $mollie_betaling_id, string $referentie, float $bedrag, string $beschrijving ) : bool {
 		$service  = new MollieClient();
@@ -152,7 +156,9 @@ class Betalen {
 	 * Test of de gebruiker een mandaat heeft afgegeven.
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvoor getest wordt of deze mandaat heeft.
+	 *
 	 * @return bool
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function heeft_mandaat( int $gebruiker_id ) : bool {
 		$mandaat_cache = get_transient( "mollie_mandaat_$gebruiker_id" );
@@ -175,7 +181,9 @@ class Betalen {
 	 * Verwijder mandaten.
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvoor mandaten verwijderd moeten worden.
+	 *
 	 * @return bool
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function verwijder_mandaat( int $gebruiker_id ) : bool {
 		$service          = new MollieClient();
@@ -199,7 +207,9 @@ class Betalen {
 	 * Geef informatie terug van mollie over de klant
 	 *
 	 * @param int $gebruiker_id De gebruiker waarvan de informatie wordt opgevraagd.
+	 *
 	 * @return string leeg als de gebruiker onbekend is of string met opgemaakte HTML text.
+	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	public function info( int $gebruiker_id ) : string {
 		$service          = new MollieClient();

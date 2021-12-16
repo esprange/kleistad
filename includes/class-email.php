@@ -292,6 +292,7 @@ class Email {
 	<meta name="format-detection" content="telephone=no" />
 	<title>Kleistad Email</title>
 	<!--[if (gte mso 9)|(IE)]>
+	<!--suppress HtmlDeprecatedAttribute -->
 	<style type="text/css">
 		table {border-collapse: collapse;}
 	</style>
@@ -365,10 +366,12 @@ class Email {
 	</style>
 </head>
 <body>
+	<!--suppress HtmlDeprecatedTag -->
 	<center class="wrapper">
 		<div class="webkit">
 		<!--[if (gte mso 9)|(IE)]>
-		<table width="600" align="center" cellpadding="0" cellspacing="0" border="0" >
+		<!--suppress HtmlDeprecatedAttribute -->
+			<table width="600" align="center" cellpadding="0" cellspacing="0" border="0" >
 		<tr>
 		<td>
 		<![endif]-->

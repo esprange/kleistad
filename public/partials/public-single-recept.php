@@ -103,19 +103,6 @@ get_header();
 		</div>
 
 		<div class="kleistad_recept" >
-			<style>
-			table, td, th {
-				border: 0;
-				vertical-align: top;
-				text-align: left;
-			}
-			table {
-				table-layout: auto;
-				font-size: small;
-				padding: 0;
-			}
-			</style>
-
 			<h2><?php the_title(); ?></h2>
 			<div style="width:100%">
 				<div style="float:left;width:50%;padding-bottom:25px;">

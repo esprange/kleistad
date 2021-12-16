@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use Mollie\Api\Exceptions\ApiException;
+
 /**
  * Kleistad Order class.
  *
@@ -135,7 +137,7 @@ class Order {
 	 * @since 6.1.0
 	 *
 	 * @param string $attribuut Attribuut naam.
-	 * @param mixed  $waarde Attribuut waarde.
+	 * @param mixed  $waarde    Attribuut waarde.
 	 */
 	public function __set( string $attribuut, $waarde ) : void {
 		switch ( $attribuut ) {
@@ -202,7 +204,8 @@ class Order {
 		return boolval( $this->origineel_id );
 	}
 
-	/** Beppal of de order afboekbaar is, na de Wettelijke betaaltermijn 30 dagen.
+	/**
+	 * Bepaal of de order afboekbaar is, na de Wettelijke betaaltermijn 30 dagen.
 	 */
 	public function is_afboekbaar() : bool {
 		return 0 < $this->te_betalen() && strtotime( 'today' ) > strtotime( '+30 days', $this->verval_datum );
@@ -231,7 +234,7 @@ class Order {
 	/**
 	 * Te betalen bedrag, kan eventueel aangepast worden zoals bijvoorbeeld voor de inschrijfkosten van de cursus.
 	 *
-	 * @return float
+	 * @return float Het te betalen bedrag.
 	 */
 	public function te_betalen() : float {
 		if ( $this->gesloten ) {
@@ -247,12 +250,11 @@ class Order {
 	/**
 	 * Bewaar de order in de database.
 	 *
-	 * @since 6.1.0
-	 *
-	 * @global object $wpdb     WordPress database.
 	 * @param string $reden De mutatie reden.
+	 *
 	 * @return int De order id.
 	 * @SuppressWarnings(PHPMD.ElseExpression)
+	 * @global object $wpdb WordPress database.
 	 */
 	public function save( string $reden ) : int {
 		global $wpdb;
@@ -274,8 +276,12 @@ class Order {
 
 		if ( $this->transactie_id && -0.01 > $this->te_betalen() ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
-			$betalen = new Betalen();
-			$betalen->terugstorting( $this->transactie_id, $this->referentie, - $this->te_betalen(), 'Kleistad: zie factuur ' . $this->factuurnummer() );
+			try {
+				$betalen = new Betalen();
+				$betalen->terugstorting( $this->transactie_id, $this->referentie, - $this->te_betalen(), 'Kleistad: zie factuur ' . $this->factuurnummer() );
+			} catch ( ApiException $e ) {
+				fout( __CLASS__, 'terugstorting niet mogelijk : ' . $e->getMessage() );
+			}
 		}
 		return $this->id;
 	}

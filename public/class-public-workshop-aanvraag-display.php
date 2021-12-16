@@ -76,40 +76,8 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				value="<?php echo esc_attr( $this->data['input']['contact'] ); ?>" autocomplete="given-name" />
 			</div>
 		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_emailadres">Email adres</label>
-			</div>
-			<div class="kleistad-col-4">
-				<input class="kleistad-input" name="email" id="kleistad_emailadres" type="email"
-				required placeholder="mijnemailadres@voorbeeld.nl" pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$"
-				title="Vul s.v.p. een geldig email adres in"
-				value="<?php echo esc_attr( $this->data['input']['email'] ); ?>" autocomplete="email" />
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_emailadres_controle">Email adres (controle)</label>
-			</div>
-			<div class="kleistad-col-4">
-				<input class="kleistad-input" name="email_controle" id="kleistad_emailadres_controle" type="email"
-				required title="Vul ter controle s.v.p. opnieuw het email adres in"
-				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>"
-				oninput="validate_email( this, kleistad_emailadres );"/>
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_telefoon">Telefoon</label>
-			</div>
-			<div class="kleistad-col-2">
-				<input class="kleistad-input" name="telnr" id="kleistad_telefoon" type="text"
-				maxlength="15" placeholder="0123456789" title="Vul s.v.p. een geldig telefoonnummer in"
-				value="<?php echo esc_attr( $this->data['input']['telnr'] ); ?>" autocomplete="tel" />
-			</div>
-		</div>
 		<?php
-		return $this;
+		return $this->email()->telnr();
 	}
 
 	/**

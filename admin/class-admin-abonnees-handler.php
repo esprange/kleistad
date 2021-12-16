@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use Exception;
+use Mollie\Api\Exceptions\ApiException;
+
 /**
  * De admin-specifieke functies van de plugin voor abonnee beheer.
  */
@@ -64,7 +67,9 @@ class Admin_Abonnees_Handler {
 	 * Wijzig het mandaat van de abonnee
 	 *
 	 * @param array $item De informatie vanuit het formulier.
+	 *
 	 * @return string De status van de wijziging.
+	 * @throws ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	private function wijzig_abonnee_mandaat( array &$item ) : string {
 		$abonnement = new Abonnement( $item['id'] );
@@ -111,7 +116,9 @@ class Admin_Abonnees_Handler {
 	 * Geef de abonnee gegevens als een array
 	 *
 	 * @param int $abonnee_id Het WP id.
+	 *
 	 * @return array De abonnee gegevens.
+	 * @throws ApiException Moet op hoger nivo afgehandeld worden.
 	 */
 	private function geef_abonnee( int $abonnee_id ) : array {
 		$abonnement = new Abonnement( $abonnee_id );
@@ -186,11 +193,22 @@ class Admin_Abonnees_Handler {
 				$notice     = is_string( $item_valid ) ? $item_valid : '';
 				$message    = empty( $notice ) ? $this->wijzig_abonnee( $item ) : '';
 			} elseif ( 'mollie' === $actie ) {
-				$message = $this->wijzig_abonnee_mandaat( $item );
+				try {
+					$message = $this->wijzig_abonnee_mandaat( $item );
+				} catch ( Exception $e ) {
+					$notice  = 'Er is iets fout gegaan' . $e->getMessage();
+					$message = '';
+				}
 			}
 		} elseif ( isset( $_REQUEST['id'] ) ) {
 			$actie = $_REQUEST['actie'];
-			$item  = $this->geef_abonnee( intval( $_REQUEST['id'] ) );
+			try {
+				$item = $this->geef_abonnee( intval( $_REQUEST['id'] ) );
+			} catch ( Exception $e ) {
+				$notice  = 'Er is iets fout gegaan : ' . $e->getMessage();
+				$message = '';
+				$item    = [];
+			}
 		}
 		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this->display, 'form_meta_box' ], 'abonnee', 'normal', 'default', [ 'actie' => $actie ] );
 		$this->display->form_page( $item, 'abonnee', 'abonnees', $notice, $message, 'historie' === $actie );

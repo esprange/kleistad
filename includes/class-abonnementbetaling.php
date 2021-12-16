@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use Exception;
+use Mollie\Api\Exceptions\ApiException;
+
 /**
  * Kleistad AbonnementBetaling class.
  *
@@ -94,12 +97,16 @@ class AbonnementBetaling extends ArtikelBetaling {
 	public function doe_sepa_incasso() : string {
 		$bedrag = $this->geef_bedrag( "#{$this->abonnement->artikel_type}" );
 		if ( 0.0 < $bedrag ) {
-			return $this->betalen->eenmalig(
-				$this->abonnement->klant_id,
-				$this->abonnement->geef_referentie(),
-				$bedrag,
-				"Kleistad abonnement {$this->abonnement->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
-			);
+			try {
+				return $this->betalen->eenmalig(
+					$this->abonnement->klant_id,
+					$this->abonnement->geef_referentie(),
+					$bedrag,
+					"Kleistad abonnement {$this->abonnement->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
+				);
+			} catch ( Exception $e ) {
+				return ''; // Dit keer niet uitvoeren. Dan kan het later opnieuw geprobeerd worden.
+			}
 		}
 		return '';
 	}
@@ -209,11 +216,12 @@ class AbonnementBetaling extends ArtikelBetaling {
 		}
 	}
 
-		/**
-		 * Bepaalt of er automatisch betaald wordt.
-		 *
-		 * @return bool
-		 */
+	/**
+	 * Bepaalt of er automatisch betaald wordt.
+	 *
+	 * @return bool
+	 * @throws ApiException Op hoger nivo af te handelen.
+	 */
 	public function incasso_actief() : bool {
 		return $this->betalen->heeft_mandaat( $this->abonnement->klant_id );
 	}

@@ -11,6 +11,7 @@
 
 namespace Kleistad;
 
+use Mollie\Api\Exceptions\ApiException;
 use WP_Error;
 
 /**
@@ -27,10 +28,14 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 */
 	protected function prepare() : string {
 		$abonnee_id               = get_current_user_id();
-		$betalen                  = new Betalen();
 		$this->data['abonnement'] = new Abonnement( $abonnee_id );
 		if ( $this->data['abonnement']->start_datum ) {
-			$this->data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id );
+			try {
+				$betalen                      = new Betalen();
+				$this->data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id ) ? 'ja' : 'nee';
+			} catch ( ApiException $e ) {
+				$this->data['incasso_actief'] = 'onbekend';
+			}
 			return $this->content();
 		}
 		return $this->status( new WP_Error( 'abonnement', 'Je hebt geen actief abonnement, neem eventueel contact op met een bestuurslid' ) );
