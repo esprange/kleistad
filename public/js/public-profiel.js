@@ -2,9 +2,11 @@
  * Kleistad javascript voor profiel.
  *
  * @author Eric Sprangers.
- * @since  6.21.1
+ * @since  6.21.3
  * @package Kleistad
  */
+
+/* global kleistadData */
 
 ( function( $ ) {
 	'use strict';
