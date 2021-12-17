@@ -12,11 +12,46 @@
 namespace Kleistad;
 
 use WP_User;
+use WP_REST_Response;
 
 /**
  * Definitie van de profiel class.
  */
 class Profiel {
+
+	/**
+	 * Register rest URI's.
+	 *
+	 * @since 6.20.3
+	 */
+	public static function register_rest_routes() {
+		register_rest_route(
+			KLEISTAD_API,
+			'/profiel',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ __CLASS__, 'callback_profiel' ],
+				'permission_callback' => function() {
+					return true;
+				},
+			]
+		);
+	}
+
+	/**
+	 * Ajax callback voor profiel functie.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public static function callback_profiel() : WP_REST_Response {
+		$html = '';
+		$user = wp_get_current_user();
+		if ( $user->exists() && setup()['profiel'] ) {
+			$profiel = new Profiel();
+			$html    = $profiel->prepare( $user ); // phpcs:ignore
+		}
+		return new WP_REST_Response( [ 'html' => $html ] );
+	}
 
 	/**
 	 * Start een nieuw profiel
@@ -58,27 +93,27 @@ class Profiel {
 			$style     = [ 'display: none', 'background-color: lightblue', 'background-color: orange', 'background-color: red' ];
 			ob_start();
 			?>
-<div class="kleistad kleistad-profiel">
 	<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
 			<?php if ( count( $lijst ) ) : ?>
 				<button id="kleistad-betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
-				<?php echo $this->script(); // phpcs:ignore ?>
-	<div class="kleistad-openstaand" style="display:none;">
+				<br/>
+	<div class="kleistad-openstaand" style="display: none;" >
 		<table style="table-layout: auto;">
 			<tr>
-				<td colspan="2"><strong>Openstaande bestellingen</strong></td>
+				<td colspan="4"><strong>Openstaande facturen</strong></td>
 			</tr>
 				<?php foreach ( $lijst as $item ) : ?>
 			<tr>
 				<td><span class="kleistad-dot" style="<?php echo esc_attr( $style[ $item['status'] ] ); ?>"></span></td>
+				<td>factuur</td>
 				<td><?php echo $item['link']; // phpcs:ignore ?></td>
+				<td style="text-align: right">&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
 			</tr>
 			<?php endforeach ?>
 		</table>
 	</div>
-			<?php endif ?>
-</div>
-			<?php
+				<?php
+			endif;
 			$profiel = ob_get_clean();
 			set_transient( "kleistad_profiel_$user->ID", $profiel, 900 );
 		}
@@ -107,40 +142,18 @@ class Profiel {
 			}
 			$lijst[] = [
 				'status' => $order->verval_datum > $vandaag ? 1 : ( $order->verval_datum > $tweewekeneerder ? 2 : 3 ),
-				'link'   => 'factuur ' . $artikel->maak_link(
+				'link'   => $artikel->maak_link(
 					[
 						'order' => $order->id,
 						'art'   => $artikel->artikel_type,
 					],
 					'betaling',
 					$order->factuurnummer()
-				) . ' : &euro;' . number_format_i18n( $order->te_betalen(), 2 ),
+				),
+				'bedrag' => number_format_i18n( $order->te_betalen(), 2 ),
 			];
 		}
 		return $lijst;
-	}
-
-	/**
-	 * Een klik op het betaalinfo deel rechtsboven.
-	 */
-	private function script() : string {
-		return "
-<script type=\"text/javascript\">
-( function ( $ ){
-	'use strict';
-	$(
-		function()
-		{
-			$( '#kleistad-betaalinfo' ).on(
-				'click',
-				function() {
-					$( '.kleistad-openstaand' ).toggle( 'drop' );
-				}
-			);
-		}
-	)
-} )( jQuery );
-</script>";
 	}
 
 }

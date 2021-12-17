@@ -182,7 +182,6 @@ class Admin_Instellingen_Display {
 						<li>[eind_datum] : datum waarop abonnement beëindigd wordt</li>
 						<li>[abonnement] : soort abonnement (beperkt of onbeperkt</li>
 						<li>[abonnement_code] : code te vermelden bij betaling</li>
-						<li>[abonnement_dag] : dag waarvoor beperkt abonnement geldt</li>
 						<li>[abonnement_opmerking] : door abonnee geplaatste opmerking</li>
 						<li>[abonnement_wijziging] : de wijziging (pauzeren of beëindigen)</li>
 						<li>[abonnement_extras] : de extras bij het abonnement</li>

@@ -19,21 +19,6 @@ use WP_User;
 class Public_Filters {
 
 	/**
-	 * Toon het profiel rechtsboven
-	 *
-	 * @param string $content De pagina content.
-	 * @return string
-	 */
-	public function profiel( string $content ) : string {
-		$user = wp_get_current_user();
-		if ( $user->exists() && setup()['profiel'] ) {
-			$profiel  = new Profiel();
-			$content .= $profiel->prepare( $user );
-		}
-		return $content;
-	}
-
-	/**
 	 * Wordt aangeroepen door filter single_template, zorgt dat WP de juiste template file toont.
 	 *
 	 * @since 4.1.0

@@ -53,9 +53,9 @@ class Public_Actions {
 	public function register_styles_and_scripts() {
 		$dev                  = 'development' === wp_get_environment_type() ? '' : '.min';
 		$jquery_ui_version    = wp_scripts()->registered['jquery-ui-core']->ver;
-		$fullcalendar_version = '5.9.0';
-		$datatables_version   = '1.10.25';
-		$jstree_version       = '3.3.11';
+		$fullcalendar_version = '5.10.0';
+		$datatables_version   = '1.11.3';
+		$jstree_version       = '3.3.12';
 		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_ui_version ), [], $jquery_ui_version );
 		wp_register_style( 'datatables', sprintf( '//cdn.datatables.net/%s/css/jquery.dataTables.min.css', $datatables_version ), [], $datatables_version );
 		wp_register_style( 'fullcalendar', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/main.min.css', $fullcalendar_version ), [], $fullcalendar_version );
@@ -83,6 +83,7 @@ class Public_Actions {
 			wp_register_script( $script, $file, $scripts, versie(), true );
 		}
 		wp_enqueue_style( 'kleistad', plugin_dir_url( __FILE__ ) . "css/public$dev.css", array_unique( $styles ), versie() );
+		wp_enqueue_script( 'kleistad-profiel', plugin_dir_url( __FILE__ ) . "js/public-profiel$dev.js", [ 'jquery', 'kleistad' ], versie(), true );
 		wp_localize_script(
 			'kleistad',
 			'kleistadData',
@@ -115,6 +116,7 @@ class Public_Actions {
 				'Public_Recept',
 				'Public_Reservering',
 				'Public_Werkplek',
+				'Profiel',
 				'Shortcode',
 				'ShortcodeForm',
 			]  as $object ) {
