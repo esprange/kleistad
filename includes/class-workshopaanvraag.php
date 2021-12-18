@@ -143,8 +143,8 @@ class WorkshopAanvraag {
 	public function start( array $casus_data ) {
 		$emailer           = new Email();
 		$this->post_title  = $casus_data['contact'] . ' met vraag over ' . $casus_data['naam'];
-		$this->post_name   = $casus_data['email'];
-		$this->email       = $casus_data['email'];
+		$this->post_name   = $casus_data['user_email'];
+		$this->email       = $casus_data['user_email'];
 		$this->contact     = $casus_data['contact'];
 		$this->omvang      = $casus_data['omvang'];
 		$this->periode     = $casus_data['periode'];
@@ -162,7 +162,7 @@ class WorkshopAanvraag {
 		$this->ID = $this->save();
 		$emailer->send(
 			[
-				'to'         => "{$casus_data['contact']} <{$casus_data['email']}>",
+				'to'         => "{$casus_data['contact']} <{$casus_data['user_email']}>",
 				'subject'    => sprintf( "[WA#%08d] Bevestiging {$casus_data['naam']} vraag", $this->ID ),
 				'from'       => $this->mbx() . $emailer->verzend_domein,
 				'reply-to'   => $this->mbx() . $emailer->domein,

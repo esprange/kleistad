@@ -28,7 +28,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 			$this->data = [
 				'input' => [
 					'naam'           => '',
-					'email'          => '',
+					'user_email'     => '',
 					'email_controle' => '',
 					'contact'        => '',
 					'telnr'          => '',
@@ -53,7 +53,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'email'          => FILTER_SANITIZE_EMAIL,
+				'user_email'     => FILTER_SANITIZE_EMAIL,
 				'email_controle' => FILTER_SANITIZE_EMAIL,
 				'contact'        => FILTER_SANITIZE_STRING,
 				'naam'           => FILTER_SANITIZE_STRING,
@@ -63,13 +63,13 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				'vraag'          => FILTER_SANITIZE_STRING,
 			]
 		);
-		if ( ! $this->validator->email( $this->data['input']['email'] ) ) {
-			$error->add( 'verplicht', 'De invoer ' . $this->data['input']['email'] . ' is geen geldig E-mail adres.' );
-			$this->data['input']['email']          = '';
+		if ( ! $this->validator->email( $this->data['input']['user_email'] ) ) {
+			$error->add( 'verplicht', 'De invoer ' . $this->data['input']['user_email'] . ' is geen geldig E-mail adres.' );
+			$this->data['input']['user_email']     = '';
 			$this->data['input']['email_controle'] = '';
 		}
-		if ( 0 !== strcasecmp( $this->data['input']['email_controle'], $this->data['input']['email'] ) ) {
-			$error->add( 'verplicht', "De ingevoerde e-mail adressen {$this->data['input']['email']} en {$this->data['input']['email_controle']} zijn niet identiek" );
+		if ( 0 !== strcasecmp( $this->data['input']['email_controle'], $this->data['input']['user_email'] ) ) {
+			$error->add( 'verplicht', "De ingevoerde e-mail adressen {$this->data['input']['user_email']} en {$this->data['input']['email_controle']} zijn niet identiek" );
 			$this->data['input']['email_controle'] = '';
 		}
 		if ( ! empty( $this->data['input']['telnr'] ) && ! $this->validator->telnr( $this->data['input']['telnr'] ) ) {
