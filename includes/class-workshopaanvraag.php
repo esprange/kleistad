@@ -344,7 +344,7 @@ class WorkshopAanvraag {
 	 * @return string
 	 */
 	private function mbx() : string {
-		return 'production' === wp_get_environment_type() ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . '@' );
+		return 'production' === wp_get_environment_type() ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . 'workshops@' );
 	}
 
 	/**
