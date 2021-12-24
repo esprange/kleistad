@@ -45,13 +45,13 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	private function maak_aanvraag(): WorkshopAanvraag {
 		$aanvraag = new WorkshopAanvraag();
 		$data     = [
-			'email'   => rand_str( 10 ) . '@test.org',
-			'naam'    => 'workshop',
-			'contact' => 'De tester',
-			'omvang'  => '6 of minder',
-			'periode' => 'binnen 1 maand',
-			'telnr'   => '0123456789',
-			'vraag'   => 'Dit is een test',
+			'user_email' => rand_str( 10 ) . '@test.org',
+			'naam'       => 'workshop',
+			'contact'    => 'De tester',
+			'omvang'     => '6 of minder',
+			'periode'    => 'binnen 1 maand',
+			'telnr'      => '0123456789',
+			'vraag'      => 'Dit is een test',
 		];
 		$aanvraag->start( $data );
 		return $aanvraag;
