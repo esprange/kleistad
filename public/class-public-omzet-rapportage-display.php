@@ -123,7 +123,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 						<?php
 						if ( $omzet['details'] ) :
 							?>
-							<a href="#" title="details" class="kleistad-view kleistad-edit-link" data-id="<?php echo esc_attr( $this->data['jaar'] . '-' . $this->data['maand'] . '-' . $omzet['key'] ); ?>" data-actie="details" >
+							<a href="#" title="details" class="kleistad-view kleistad-edit-link" data-id="<?php echo esc_attr( "{$this->data['jaar']}-{$this->data['maand']}-{$omzet['key']}" ); ?>" data-actie="details" >
 							&nbsp;
 						</a><?php endif ?>
 					</td>
