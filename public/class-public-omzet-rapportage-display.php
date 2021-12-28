@@ -95,7 +95,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 				</select>
 			</div>
 		</div>
-		<button class="kleistad-button kleistad-edit-link" type="button" id="kleistad_rapport" style="display:none" data-id="<?php echo esc_attr( "$this->data['jaar']-$this->data['maand']" ); ?>" data-actie="rapport" >Toon omzet</button>
+		<button class="kleistad-button kleistad-edit-link" type="button" id="kleistad_rapport" style="display:none" data-id="<?php echo esc_attr( "{$this->data['jaar']}-{$this->data['maand']}" ); ?>" data-actie="rapport" >Toon omzet</button>
 		<br/><br/>
 		<div>
 			<table class="kleistad-datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
