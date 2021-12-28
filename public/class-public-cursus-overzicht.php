@@ -231,7 +231,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	private function geef_cursussen() : array {
 		$cursus_info = [];
 		$docent_id   = current_user_can( BESTUUR ) ? 0 : get_current_user_id();
-		foreach ( new Cursussen( true ) as $cursus ) {
+		foreach ( new Cursussen( strtotime( '-3 month 0:00' ) ) as $cursus ) {
 			if ( ! $cursus->vervallen && ( 0 === $docent_id || intval( $cursus->docent ) === $docent_id ) ) {
 				$cursus_info[ $cursus->id ] = [
 					'start_dt'             => $cursus->start_datum,

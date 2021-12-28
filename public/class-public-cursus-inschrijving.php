@@ -110,7 +110,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 			$this->data['input']['cursus_id'] = $cursus_selecties[0];
 		}
 		$selecteerbaar = false;
-		foreach ( new Cursussen( true ) as $cursus ) {
+		foreach ( new Cursussen( strtotime( 'today' ) ) as $cursus ) {
 			if ( ! empty( $cursus_selecties ) ) {
 				if ( ! in_array( $cursus->id, $cursus_selecties, false ) ) { // phpcs:ignore
 					continue; // Er moeten specifieke cursussen worden getoond en deze cursus hoort daar niet bij.

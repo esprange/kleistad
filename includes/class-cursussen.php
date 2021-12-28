@@ -38,14 +38,12 @@ class Cursussen implements Countable, Iterator {
 	/**
 	 * De constructor
 	 *
-	 * @param bool $actief Toon alleen toekomstige en actieve cursussen.
-	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
+	 * @param int $datum Toon alleen cursussen waarvan de eind datum later is.
 	 */
-	public function __construct( bool $actief = false ) {
+	public function __construct( int $datum = 0 ) {
 		global $wpdb;
-		$vandaag = date( 'Y-m-d' );
-		$where   = $actief ? "WHERE eind_datum >= '$vandaag'" : '';
-		$data    = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen $where", ARRAY_A ); // phpcs:ignore
+		$filter = date( 'Y-m-d', $datum );
+		$data   = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_cursussen WHERE eind_datum >= %s", $filter ), ARRAY_A );
 		foreach ( $data as $row ) {
 			$this->cursussen[] = new Cursus( $row['id'], $row );
 		}
