@@ -226,11 +226,11 @@ abstract class Artikel {
 		$order->orderregels->vervangen( $this->geef_factuurregels() );
 		$order->klant      = $this->naw_klant();
 		$order->referentie = $this->geef_referentie();
-		$order->gesloten   = false;
 		if ( $originele_order == $order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}
 		$order->opmerking = $opmerking;
+		$order->gesloten  = false;
 		$order->save( 'Order gewijzigd' );
 		$this->betaal_link = $this->maak_link(
 			[
