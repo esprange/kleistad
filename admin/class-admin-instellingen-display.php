@@ -541,7 +541,7 @@ class Admin_Instellingen_Display {
 				<tr>
 					<th><?php echo esc_html( $parameter['titel'] ); ?> toevoegen</th>
 					<td colspan="2">
-						<button type="button" class="lijst_toevoegen" data-key="<?php echo esc_attr( $key ); ?>" data-parameters='<?php echo wp_json_encode( $parameter['velden'] ); ?>'>
+						<button type="button" class="lijst_toevoegen" data-key="<?php echo esc_attr( $key ); ?>" data-parameters='<?php echo $json_velden; // phpcs:ignore ?>'>
 							<span class="dashicons dashicons-plus"></span>
 						</button>
 					</td>
