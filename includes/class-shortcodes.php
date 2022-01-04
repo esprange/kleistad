@@ -145,6 +145,16 @@ class Shortcodes {
 				'access' => [ BOEKHOUD ],
 			],
 			/**
+			 * Docent
+			 *    Planning
+			 */
+			'docent'                => (object) [
+				'script' => true,
+				'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
+				'css'    => [ 'jquery-ui' ],
+				'access' => [ DOCENT ],
+			],
+			/**
 			 * Verzend email
 			 */
 			'email'                 => (object) [
@@ -281,9 +291,9 @@ class Shortcodes {
 			 * Aanvraag workshop
 			 */
 			'workshop_aanvraag'     => (object) [
-				'script' => false,
-				'js'     => [ 'jquery' ],
-				'css'    => [],
+				'script' => true,
+				'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
+				'css'    => [ 'jquery-ui' ],
 				'access' => [],
 			],
 			/**

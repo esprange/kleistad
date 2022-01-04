@@ -282,6 +282,29 @@ a.kleistad-schedule {
 	vertical-align: middle;
 }
 
+.kleistad-tab {
+	display: none;
+}
+
+.kleistad-stap {
+	background-color: lightgrey;
+	border: none;
+	border-radius: 50%;
+	display: inline-block;
+	height: 15px;
+	margin: 0 2px;
+	opacity: 50%;
+	width: 15px;
+}
+
+.kleistad-stap.actief {
+	opacity: 100%;
+}
+
+.kleistad-stap.gereed {
+	background-color: green;
+}
+
 .kleistad-label,
 .kleistad-label + span {
 	font-weight: bold;
@@ -500,6 +523,37 @@ div.kleistad-werkplek-dagdeel {
 	[class^="kleistad-col-"] {
 		width: 100%;
 	}
+}
+
+.kleistad-inzet-optie {
+	appearance: none;
+	background: lightsalmon;
+	border: 1px solid var(--bc, var(--border));
+	border-radius: 7px;
+	display: inline-block;
+	height: 21px;
+	opacity: 0.9;
+	text-align: center;
+	width: 21px;
+	color: white;
+}
+
+.kleistad-inzet-definitief {
+	appearance: none;
+	background: dimgray;
+	border: 1px solid var(--bc, var(--border));
+	border-radius: 7px;
+	display: inline-block;
+	height: 21px;
+	opacity: 0.9;
+	text-align: center;
+	width: 21px;
+	color: white;
+}
+
+.kleistad-planning td,
+.keistad-planning th {
+	text-align: center;
 }
 
 .kleistad-shortcode input[type="checkbox"],

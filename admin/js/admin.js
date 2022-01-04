@@ -30,6 +30,12 @@
 			let $saldo                 = $( '#saldo' ),
 				$werkplek_start_config = $( '#kleistad_start_config' ),
 				$werkplek_eind_config  = $( '#kleistad_eind_config' );
+
+			/**
+			 * Initialiseer de eventuele color pickers.
+			 */
+			$( '.kleistad-color' ).wpColorPicker();
+
 			/**
 			 * Voeg 15 euro toe.
 			 */
@@ -61,35 +67,42 @@
 				}
 			);
 
-			$( '#kleistad-extra' ).on(
+			/**
+			 * Hulp functies voor lijst items bij instellingen.
+			 */
+			$( 'form' ).on(
 				'click',
+				'.lijst_toevoegen',
 				function() {
-					let aantal   = $( '.kleistad-extra' ).length;
-					let sjabloon = '<tr>' +
-						'<th scope="row">Abonnement extra #</th>' +
-						'<td><input type="text" class="kleistad-extra regular-text" name="kleistad-opties[extra][#][naam]" /></td>' +
-						'<th scope="row">Prijs</th>' +
-						'<td><input type="number" step="0.01" min="0" name="kleistad-opties[extra][#][prijs]" class="small-text" /></td>' +
-						'</tr>';
-					let html     = sjabloon.replace( /#/g, ++aantal );
-					$( html ).insertBefore( '#kleistad-extra-toevoegen' );
+					const parameters = $( this ).data( 'parameters' );
+					const key        = $( this ).data( 'key' );
+					const index      = $( '#lijst_' + key + ' tbody tr' ).length;
+					let template     =
+						'<td><input type="text" class="regular-text" name="kleistad-opties[' + key + '][' + index + '][naam]" required /></td>';
+					parameters.forEach(
+						/**
+						 * Vul de template aan met de input velden.
+						 *
+						 * @param parameter De input parameter.
+						 * @param {string} parameter.veld Het type input.
+						 * @param {string} parameter.naam De naam.
+						 */
+						function( parameter ) {
+							const veldClass = ( 'class' in parameter ) ? parameter.class + ' small-text' : 'small-text';
+							template       += '<td><input ' + parameter.veld + ' class="' + veldClass + '" name="kleistad-opties[' + key + '][' + index + '][' + parameter.naam + ']" required /></td>';
+						}
+					);
+					template += '<td><span class="lijst_verwijderen dashicons dashicons-trash" style="cursor: pointer;"></span></td>';
+					$( '#lijst_' + key + ' tbody' ).append( '<tr>' + template + '</tr>' );
+					$( '.kleistad-color' ).wpColorPicker();
 				}
-			);
-
-			$( '#kleistad-ruimte' ).on(
+			).on(
 				'click',
+				'.lijst_verwijderen',
 				function() {
-					let aantal   = $( '.kleistad-ruimte' ).length;
-					let sjabloon = '<tr>' +
-						'<th scope="row">Ruimte #</th>' +
-						'<td><input type="text" class="kleistad-ruimte regular-text" name="kleistad-opties[ruimte][#][naam]" /></td>' +
-						'<th scope="row">Aantal</th>' +
-						'<td><input type="number" min="1" name="kleistad-opties[ruimte][#][aantal]" class="small-text" /></td>' +
-						'</tr>';
-					let html     = sjabloon.replace( /#/g, ++aantal );
-					$( html ).insertBefore( '#kleistad-ruimte-toevoegen' );
+					$( this ).closest( 'tr' ).remove();
 				}
-			);
+			)
 
 			/**
 			 * Bij wijzigen beperkt abonnement, vereisen dat de dag ingevuld wordt.

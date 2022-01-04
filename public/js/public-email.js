@@ -52,6 +52,12 @@
 					$.each(
 						selectIndexes,
 						function() {
+							/**
+							 * Beschrijving van deze extra properties
+							 *
+							 * @property li_attr
+							 * @property li_attr.gebruikerid
+							 */
 							let gebruikerId = this.li_attr.gebruikerid;
 							if ( undefined !== gebruikerId ) {
 								gebruikerIds.push( gebruikerId );

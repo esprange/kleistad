@@ -12,6 +12,7 @@
 namespace Kleistad;
 
 use WP_Error;
+use WP_REST_Response;
 
 /**
  * De kleistad workshop aanvraag class.
@@ -33,10 +34,15 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 					'contact'        => '',
 					'telnr'          => '',
 					'omvang'         => '',
-					'periode'        => '',
+					'plandatum'      => '',
+					'dagdeel'        => '',
 					'vraag'          => '',
 				],
 			];
+		}
+		$planning = new Workshopplanning();
+		if ( 0 === count( $planning->geef_beschikbaaarheid() ) ) {
+			return $this->status( new WP_Error( 'Aanvraag', 'Helaas is er de komende drie maanden geen ruimte beschikbaar. Probeer het later opnieuw' ) );
 		}
 		return $this->content();
 	}
@@ -44,11 +50,10 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	/**
 	 * Valideer/sanitize 'workshop aanvraag' form
 	 *
-	 * @since   5.6.0
-	 *
 	 * @return array
+	 * @since   5.6.0
 	 */
-	protected function process() : array {
+	protected function process(): array {
 		$error               = new WP_Error();
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
@@ -58,9 +63,10 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				'contact'        => FILTER_SANITIZE_STRING,
 				'naam'           => FILTER_SANITIZE_STRING,
 				'omvang'         => FILTER_SANITIZE_STRING,
-				'periode'        => FILTER_SANITIZE_STRING,
 				'telnr'          => FILTER_SANITIZE_STRING,
 				'vraag'          => FILTER_SANITIZE_STRING,
+				'plandatum'      => FILTER_SANITIZE_STRING,
+				'dagdeel'        => FILTER_SANITIZE_STRING,
 			]
 		);
 		if ( ! $this->validator->email( $this->data['input']['user_email'] ) ) {
@@ -83,6 +89,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $this->melding( $error );
 		}
+		$this->data['input']['plandatum'] = strtotime( "{$this->data['input']['plandatum']} 0:00" );
 		return $this->save();
 	}
 
@@ -94,13 +101,39 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 *
 	 * @since   5.6.0
 	 */
-	protected function save() : array {
+	protected function save(): array {
 		$workshopaanvraag = new WorkshopAanvraag();
 		$workshopaanvraag->start( $this->data['input'] );
+
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen' ),
 		];
 	}
 
+	/**
+	 * Register rest URI's.
+	 *
+	 * @since 7.0.0
+	 */
+	public static function register_rest_routes() {
+		register_rest_route(
+			KLEISTAD_API,
+			'/aanvraag',
+			[
+				'methods'  => 'GET',
+				'callback' => [ __CLASS__, 'callback_aanvraag' ],
+			]
+		);
+	}
+
+	/**
+	 * Haal de mogelijke plandata op.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public static function callback_aanvraag() : WP_REST_Response {
+		$planning = new Workshopplanning();
+		return new WP_REST_Response( [ 'plandata' => $planning->geef_beschikbaaarheid() ] );
+	}
 }

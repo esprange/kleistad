@@ -21,6 +21,21 @@ const DOCENT    = 'docenten';
 const LID       = 'leden';
 const BOEKHOUD  = 'boekhouding';
 const INTERN    = 'intern';
+const DAGDEEL   = [ 'Ochtend', 'Middag', 'Avond' ]; // Vooralsnog ochtend, middag en avond.
+
+/**
+ * Hulpfunctie, bepaald in welk dagdeel een activiteit valt.
+ *
+ * @param int $start_tijd De start tijd van de activiteit.
+ * @param int $eind_tijd  De eind tijd van de activiteit.
+ *
+ * @return string Het dagdeel
+ */
+function bepaal_dagdeel( int $start_tijd, int $eind_tijd ) : string {
+	$ochtend_grens = strtotime( '12:30', $start_tijd );
+	$middag_grens  = strtotime( '18:00', $eind_tijd );
+	return $eind_tijd < $ochtend_grens ? DAGDEEL[0] : ( $eind_tijd < $middag_grens ? DAGDEEL[1] : DAGDEEL[2] );
+}
 
 /**
  * De opties van de plugin.

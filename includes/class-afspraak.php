@@ -70,6 +70,9 @@ class Afspraak {
 	 *
 	 * @throws Kleistad_Exception Op hoger nivo af te handelen.
 	 * @since 5.0.0
+	 *
+	 * Het onderstaande omdat PHPStorm hier in de fout gaat
+	 * @noinspection PhpRedundantCatchClauseInspection
 	 */
 	public function __construct( string $afspraak_id ) {
 		$this->googleconnect = new Googleconnect();

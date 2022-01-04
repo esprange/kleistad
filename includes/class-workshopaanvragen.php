@@ -37,13 +37,19 @@ class WorkshopAanvragen implements Countable, Iterator {
 
 	/**
 	 * De constructor
+	 *
+	 * @param int $datum Toon alleen workshops vanaf deze datum.
 	 */
-	public function __construct() {
+	public function __construct( int $datum = 0 ) {
 		$posts = get_posts(
 			[
 				'post_type'      => WorkshopAanvraag::POST_TYPE,
 				'posts_per_page' => -1,
 				'post_status'    => 'any',
+				'date_query'     => [
+					'column' => 'post_date',
+					'after'  => date( 'y-m-d', $datum ),
+				],
 			]
 		);
 		foreach ( $posts as $post ) {

@@ -37,10 +37,13 @@ class Workshops implements Countable, Iterator {
 
 	/**
 	 * De constructor
+	 *
+	 * @param int $datum Toon alleen workshops vanaf deze datum.
 	 */
-	public function __construct() {
+	public function __construct( int $datum = 0 ) {
 		global $wpdb;
-		$data = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_workshops", ARRAY_A );
+		$filter = date( 'Y-m-d', $datum );
+		$data   = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE datum >= %s", $filter ), ARRAY_A );
 		foreach ( $data as $row ) {
 			$this->workshops[] = new Workshop( $row['id'], $row );
 		}

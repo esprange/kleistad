@@ -12,7 +12,13 @@
 	/**
 	 * Wijzig de teksten van het betaal formulier.
 	 *
-	 * @param cursus
+	 * @param {object}  cursus
+	 * @param {integer} cursus.ruimte
+	 * @param {boolean} cursus.meer
+	 * @param {float}   cursus.bedrag
+	 * @param {array}   cursus.technieken
+	 * @param {boolean} cursus.vol
+	 * @param {boolean} cursus.lopend
 	 */
 	function wijzigTeksten( cursus ) {
 		let $spin  = $( '#kleistad_aantal' ),
@@ -135,6 +141,13 @@
 					$().lookupPostcode(
 						pcode.val(),
 						$( '#kleistad_huisnr' ).val(),
+						/**
+						 * Anonieme functie
+						 *
+						 * @param {object} data
+						 * @param {string} data.straat
+						 * @param {string} data.plaats
+						 */
 						function( data ) {
 							$( '#kleistad_straat' ).val( data.straat );
 							$( '#kleistad_plaats' ).val( data.plaats );

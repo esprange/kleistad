@@ -50,7 +50,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 					<th scope="col"><label><?php echo esc_html( $atelierdag ); ?></label></th>
 				<?php endforeach ?>
 				</tr>
-				<?php foreach ( WerkplekConfig::DAGDEEL as $dagdeel ) : ?>
+				<?php foreach ( DAGDEEL as $dagdeel ) : ?>
 				<tr>
 					<th><?php echo esc_html( $dagdeel ); ?></th>
 				</tr>
@@ -60,7 +60,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 					<td><?php $this->meester_selectie( "meesters[$atelierdag][$dagdeel]", $item['meesters'][ $atelierdag ][ $dagdeel ] ?? 0 );  //phpcs:ignore ?></td>
 					<?php endforeach ?>
 				</tr>
-					<?php foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) : ?>
+					<?php foreach ( opties()['werkruimte'] as $activiteit ) : ?>
 				<tr>
 					<td><?php echo esc_html( $activiteit ); ?></td>
 						<?php foreach ( array_keys( $item['config'] ) as $atelierdag ) : ?>

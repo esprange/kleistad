@@ -30,9 +30,9 @@ class Docent extends Gebruiker {
 	/**
 	 * De docent beschikbaarheid
 	 *
-	 * @var array $beschikbaarheid De beschikbaarheid.
+	 * @var array $beschikbaardata De beschikbaarheid.
 	 */
-	public array $beschikbaarheid = [];
+	public array $beschikbaardata = [];
 
 	/**
 	 * Constructor
@@ -44,7 +44,7 @@ class Docent extends Gebruiker {
 	 */
 	public function __construct( $id = 0, $name = '', $site_id = null ) {
 		parent::__construct( $id, $name, $site_id );
-		$this->beschikbaarheid = get_user_meta( $id, self::META_KEY ) ?: [];
+		$this->beschikbaardata = get_user_meta( $id, self::META_KEY, true ) ?: [];
 	}
 
 	/**
@@ -56,70 +56,18 @@ class Docent extends Gebruiker {
 	 * @return int
 	 */
 	public function beschikbaarheid( int $datum, string $dagdeel ) : int {
-		if ( isset( $this->beschikbaarheid[ $datum ][ $dagdeel ] ) ) {
-			return $this->beschikbaarheid[ $datum ][ $dagdeel ];
+		return $this->beschikbaardata[ $datum ][ $dagdeel ] ?? ( $this->beschikbaardata[ intval( date( 'N', $datum ) ) - 1 ][ $dagdeel ] ?? self::NIET_BESCHIKBAAR );
+	}
+
+	/**
+	 * Update de planning voor meerdere dagen.
+	 *
+	 * @param array $lijst De lijst van dagen.
+	 */
+	public function beschikbaarlijst( array $lijst ) {
+		foreach ( $lijst as $item ) {
+			$this->beschikbaardata[ intval( $item['datum'] ) ][ $item['dagdeel'] ] = $item['status'] ? self::BESCHIKBAAR : self::NIET_BESCHIKBAAR;
 		}
-		return self::NIET_BESCHIKBAAR;
-	}
-
-	/**
-	 * Zet de optie.
-	 *
-	 * @param int    $datum   De datum.
-	 * @param string $dagdeel Het dagdeel.
-	 */
-	public function optie( int $datum, string $dagdeel ) {
-		$this->beschikbaarheid[ $datum ][ $dagdeel ] = self::OPTIE;
-		$this->save();
-	}
-
-	/**
-	 * Zet de reservering.
-	 *
-	 * @param int    $datum   De datum.
-	 * @param string $dagdeel Het dagdeel.
-	 */
-	public function reserveer( int $datum, string $dagdeel ) {
-		$this->beschikbaarheid[ $datum ][ $dagdeel ] = self::GERESERVEERD;
-		$this->save();
-	}
-
-	/**
-	 * Zet de beschikbaarheid.
-	 *
-	 * @param int    $datum   De datum.
-	 * @param string $dagdeel Het dagdeel.
-	 */
-	public function beschikbaar( int $datum, string $dagdeel ) {
-		$this->beschikbaarheid[ $datum ][ $dagdeel ] = self::BESCHIKBAAR;
-		$this->save();
-	}
-
-	/**
-	 * Zet de niet beschikbaarheid.
-	 *
-	 * @param int    $datum   De datum.
-	 * @param string $dagdeel Het dagdeel.
-	 */
-	public function nietbeschikbaar( int $datum, string $dagdeel ) {
-		$this->beschikbaarheid[ $datum ][ $dagdeel ] = self::NIET_BESCHIKBAAR;
-		$this->save();
-	}
-
-	/**
-	 * Bewaar de beschikbaarheid.
-	 */
-	private function save() {
-		if ( $this->ID ) {
-			$data    = [];
-			$vandaag = strtotime( 'today' );
-			foreach ( $this->beschikbaarheid as $dag => $beschikbaarheid ) {
-				if ( $dag < $vandaag ) {
-					continue;
-				}
-				$data[ $dag ] = $beschikbaarheid;
-			}
-			update_user_meta( $this->ID, self::META_KEY, $data );
-		}
+		update_user_meta( $this->ID, self::META_KEY, $this->beschikbaardata );
 	}
 }

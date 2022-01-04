@@ -167,24 +167,23 @@ EOT;
 		$werkplekgebruik = new WerkplekGebruik( $datum );
 		$button          = [];
 		$html            = self::toon_meesters( $werkplekgebruik );
-		foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) {
-			$kleur = WerkplekConfig::ACTIEKLEUR[ $activiteit ];
+		foreach ( opties()['werkruimte'] as $activiteit ) {
 			$html .= <<<EOT
-<div class="kleistad-row" style="background: $kleur">
+<div class="kleistad-row" style="background: {$activiteit['kleur']}">
 	<div class="kleistad-col-kwart">
-		<strong>$activiteit</strong>
+		<strong>{$activiteit['naam']}</strong>
 	</div>
 EOT;
 			foreach ( $werkplekgebruik->config() as $dagdeel => $werkplekken ) {
 				$button[ $dagdeel ] = $button[ $dagdeel ] ?? [];
-				$gebruikers         = $werkplekgebruik->geef( $dagdeel, $activiteit );
+				$gebruikers         = $werkplekgebruik->geef( $dagdeel, $activiteit['naam'] );
 				$aanwezig           = $werkplekgebruik->is_aanwezig( $dagdeel, $gebruiker_id );
 				$html              .= <<<EOT
 	<div class="kleistad-col-kwart" >
 		<span class="kleistad-werkplek-dagdeel">$dagdeel</span>
 		<br/>
 EOT;
-				for ( $werkplek = 0; $werkplek < $werkplekken[ $activiteit ]; $werkplek++ ) {
+				for ( $werkplek = 0; $werkplek < $werkplekken[ $activiteit['naam'] ]; $werkplek++ ) {
 					if ( isset( $gebruikers[ $werkplek ] ) ) {
 						if ( intval( $gebruikers[ $werkplek ]->ID ) !== $gebruiker_id ) {
 							$html .= <<<EOT
@@ -192,16 +191,16 @@ EOT;
 EOT;
 							continue;
 						}
-						$button[ $dagdeel ][ $activiteit ] = true;
-						$html                             .= <<<EOT
-				<button class="kleistad-button kleistad-werkplek kleistad-werkplek-gereserveerd" type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" >{$gebruikers[$werkplek]->display_name}</button>
+						$button[ $dagdeel ][ $activiteit['naam'] ] = true;
+						$html                                     .= <<<EOT
+				<button class="kleistad-button kleistad-werkplek kleistad-werkplek-gereserveerd" type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="{$activiteit['naam']}" >{$gebruikers[$werkplek]->display_name}</button>
 EOT;
 						continue;
 					}
-					if ( ! $aanwezig && ! ( $button[ $dagdeel ][ $activiteit ] ?? false ) ) {
-						$button[ $dagdeel ][ $activiteit ] = true;
-						$html                             .= <<<EOT
-				<button class="kleistad-button kleistad-werkplek kleistad-werkplek-reserveerbaar" type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="$activiteit" >reserveren</button>
+					if ( ! $aanwezig && ! ( $button[ $dagdeel ][ $activiteit['naam'] ] ?? false ) ) {
+						$button[ $dagdeel ][ $activiteit['naam'] ] = true;
+						$html                                     .= <<<EOT
+				<button class="kleistad-button kleistad-werkplek kleistad-werkplek-reserveerbaar" type="button" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="{$activiteit['naam']}" >reserveren</button>
 EOT;
 						continue;
 					}

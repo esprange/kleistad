@@ -69,7 +69,7 @@
 				'click touchend',
 				'tr',
 				function( event ) {
-					let header, inschrijvingen, deelnemer, abonnee, dagdelenkaart,
+					let deelnemer, header, inschrijvingen, abonnee, dagdelenkaart,
 						$deelnemer_tabel = $( '#kleistad_deelnemer_tabel' );
 					if ( 'click' === event.type || detectTap ) {
 						inschrijvingen = $( this ).data( 'inschrijvingen' );
@@ -87,6 +87,18 @@
 						if ( 'undefined' !== typeof inschrijvingen ) {
 							$.each(
 								inschrijvingen,
+								/**
+								 * Anonieme functie
+								 *
+								 * @param key
+								 * @param {object} value
+								 * @param {boolean} value.ingedeeld
+								 * @param {boolean} value.geannuleerd
+								 * @param {string}  value.code
+								 * @param {integer} value.aantal
+								 * @param {string}  value.naam
+								 * @param {array}   value.technieken
+								 */
 								function( key, value ) {
 									let status      = ( value.ingedeeld ) ? '<span class="dashicons dashicons-yes"></span>' : '',
 										geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',

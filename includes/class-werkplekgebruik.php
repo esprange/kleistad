@@ -55,16 +55,16 @@ class WerkplekGebruik {
 		$this->dagconfig = $werkplekconfig->config[ strftime( '%A', $this->datum ) ];
 		$gebruik         = get_option( 'kleistad_werkplek_' . date( 'Ymd', $this->datum ) );
 		if ( false === $gebruik ) {
-			foreach ( WerkplekConfig::DAGDEEL as $dagdeel ) {
-				foreach ( WerkplekConfig::ACTIVITEIT as $activiteit ) {
-					$this->gebruik[ $dagdeel ][ $activiteit ] = [];
+			foreach ( DAGDEEL as $dagdeel ) {
+				foreach ( opties()['werkruimte'] as $activiteit ) {
+					$this->gebruik[ $dagdeel ][ $activiteit['naam'] ] = [];
 				}
 			}
 		}
 		if ( is_array( $gebruik ) ) {
 			$this->gebruik = $gebruik;
 		}
-		foreach ( WerkplekConfig::DAGDEEL as $dagdeel ) {
+		foreach ( DAGDEEL as $dagdeel ) {
 			$meester_id                                   = $werkplekconfig->meesters[ strftime( '%A', $this->datum ) ][ $dagdeel ];
 			$this->gebruik[ $dagdeel ][ self::MEESTER ] ??= [ $meester_id ];
 		}

@@ -7,7 +7,7 @@
  */
 
 /* global kleistadData, strtotime, timetostr */
-/* exported detectTap */
+/* exported detectTap, vervolg */
 
 // noinspection ES6ConvertVarToLetConst .
 var detectTap;

@@ -210,7 +210,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		WorkshopAanvraag::verwerk( $email );
 		$aanvraag = new WorkshopAanvraag( $aanvraag->ID );
 		$this->assertEquals( 'vraag', $aanvraag->post_status, 'aanvraag verwerk status onjuist' );
-		$this->assertEquals( 'aanvraag workshop/kinderfeest', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
+		$this->assertEquals( 'aanvraag workshop', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
 
 		$aanvraag->reactie( 'reactie 2 op vraag' );
 
@@ -223,7 +223,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		WorkshopAanvraag::verwerk( $email );
 		$aanvraag = new WorkshopAanvraag( $aanvraag->ID );
 		$this->assertEquals( 'vraag', $aanvraag->post_status, 'aanvraag verwerk status onjuist' );
-		$this->assertEquals( 'aanvraag workshop/kinderfeest', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
+		$this->assertEquals( 'aanvraag workshop', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
 	}
 
 	/**

@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 125;
+	const DBVERSIE = 134;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -56,6 +56,25 @@ class Admin_Upgrade {
 			'oven_midden'          => 1100,
 			'oven_hoog'            => 1200,
 			'weken_werkplek'       => 5,
+			'max_activiteit'       => 1,
+			'werkruimte'           => [
+				[
+					'naam'  => 'Handvormen',
+					'kleur' => '#E1E599',
+				],
+				[
+					'naam'  => 'Draaien',
+					'kleur' => '#F7CAAC',
+				],
+				[
+					'naam'  => 'Bovenverdieping',
+					'kleur' => '#D9D9D9',
+				],
+			],
+			'activiteit'           => [
+				[ 'naam' => 'Workshop' ],
+				[ 'naam' => 'Kinderfeest' ],
+			],
 		];
 		$default_setup   = [
 			'sleutel'            => '',
@@ -220,6 +239,17 @@ class Admin_Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
+		dbDelta(
+			"CREATE TABLE {$wpdb->prefix}kleistad_ruimtes (
+			id int(10) NOT NULL AUTO_INCREMENT,
+			datum date,
+			dagdeel	varchar(10) NOT NULL,
+			werkruimte varchar(30) NOT NULL,
+			referentie varchar(30) NOT NULL,
+			status tinyint(1) DEFAULT 0,
+			PRIMARY KEY  (id)
+			) $charset_collate;"
+		);
 
 		if ( ! $wpdb->get_var( "SHOW INDEX FROM {$wpdb->prefix}kleistad_orders WHERE Key_name = 'referenties' " ) ) {
 			$wpdb->query( "CREATE INDEX referenties ON {$wpdb->prefix}kleistad_orders (referentie)" );
@@ -355,5 +385,6 @@ class Admin_Upgrade {
 		$this->convert_ovens();
 		$this->convert_reserveringen();
 		$this->convert_werkplekgebruik();
+		$this->convert_opties();
 	}
 }

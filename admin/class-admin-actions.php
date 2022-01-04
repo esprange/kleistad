@@ -122,7 +122,7 @@ class Admin_Actions {
 	 */
 	public function enqueue_scripts_and_styles() {
 		wp_enqueue_style( 'jqueryui', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
-		wp_enqueue_script( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', [ 'jquery', 'jquery-ui-datepicker' ], versie(), false );
+		wp_enqueue_script( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', [ 'jquery', 'jquery-ui-datepicker', 'wp-color-picker' ], versie(), false );
 	}
 
 	/**

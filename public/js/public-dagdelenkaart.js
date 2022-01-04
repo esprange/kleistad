@@ -47,6 +47,13 @@
 					$().lookupPostcode(
 						pcode.val(),
 						$( '#kleistad_huisnr' ).val(),
+						/**
+						 * Anonieme functie
+						 *
+						 * @param {object} data
+						 * @param {string} data.straat
+						 * @param {string} data.plaats
+						 */
 						function( data ) {
 							$( '#kleistad_straat' ).val( data.straat );
 							$( '#kleistad_plaats' ).val( data.plaats );

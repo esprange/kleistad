@@ -63,14 +63,15 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$this->data['docenten'] = $this->docenten();
 		if ( $aanvraag->workshop_id ) {
 			$this->data['workshop'] = $this->formulier( $aanvraag->workshop_id );
-
 			return $this->content();
 		}
 		$this->data['workshop']                = wp_parse_args(
 			[
-				'email'   => $aanvraag->email,
-				'contact' => $aanvraag->contact,
-				'telnr'   => $aanvraag->telnr,
+				'email'      => $aanvraag->email,
+				'contact'    => $aanvraag->contact,
+				'telnr'      => $aanvraag->telnr,
+				'datum'      => $aanvraag->plandatum,
+				'start_tijd' => DAGDEEL[0] === $aanvraag->dagdeel ? '10:00' : ( DAGDEEL[1] === $aanvraag->dagdeel ? '13:00' : '19:00' ),
 			],
 			$this->formulier()
 		);
@@ -98,6 +99,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'email'           => $aanvraag->email,
 			'omvang'          => $aanvraag->omvang,
 			'periode'         => $aanvraag->periode,
+			'plandatum'       => $aanvraag->plandatum,
+			'dagdeel'         => $aanvraag->dagdeel,
 		];
 		return $this->content();
 	}
@@ -228,7 +231,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					date( 'd-m-Y', $workshop->datum ),
 					date( 'H:i', $workshop->start_tijd ),
 					date( 'H:i', $workshop->eind_tijd ),
-					$workshop->docent,
+					$workshop->docent_naam(),
 					implode( ',', $workshop->technieken ),
 					$workshop->aantal,
 					number_format_i18n( $workshop->kosten, 2 ),
@@ -351,7 +354,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'naam'       => $workshop->naam,
 				'start_tijd' => date( 'H:i', $workshop->start_tijd ),
 				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
-				'docent'     => $workshop->docent,
+				'docent'     => $workshop->docent_naam(),
 				'aantal'     => $workshop->aantal,
 				'status'     => $workshop->geef_statustekst(),
 			];

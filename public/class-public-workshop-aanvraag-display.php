@@ -25,38 +25,67 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Maa de formulier inhoud aan
+	 * Maak de formulier inhoud aan
 	 */
 	protected function form_content() {
-		$this->aanvraag()->contactinfo()->workshopinfo();
+		?>
+		<div class="kleistad-tab"><?php $this->aanvraag(); ?></div>
+		<div class="kleistad-tab"><?php $this->planning(); ?></div>
+		<div class="kleistad-tab"><?php $this->contactinfo()->email()->telnr(); ?></div>
+		<div class="kleistad-tab"><?php $this->afsluiting(); ?></div>
+		<?php
 	}
 
 	/**
 	 * Render het formulier
-	 *
-	 * @return Public_Workshop_Aanvraag_Display
 	 */
-	private function aanvraag() : Public_Workshop_Aanvraag_Display {
+	private function aanvraag() {
 		?>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-5">
-				<label class="kleistad-label">Wil je een vraag stellen over een</label>
+				<label class="kleistad-label">Wat voor activiteit wil je uitvoeren ?</label>
+			</div>
+		</div>
+		<?php foreach ( opties()['activiteit'] as $activiteit ) : ?>
+		<div class="kleistad-row" >
+			<div class="kleistad-col-1" >
+			</div>
+			<div class="kleistad-col-3 kleistad-label" >
+				<input name="naam" id="kleistad_<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" type="radio" required value="<?php echo esc_attr( $activiteit['naam'] ); ?>" <?php checked( $this->data['input']['naam'], $activiteit['naam'] ); ?> >
+				<label for="kleistad_<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" ><?php echo esc_html( ucfirst( $activiteit['naam'] ) ); ?></label>
+			</div>
+		</div>
+		<?php endforeach; ?>
+		<div class="kleistad-row" >
+			<div class="kleistad-col-10">
+				<label class="kleistad-label">Hoeveel deelnemers verwacht je ?</label>
 			</div>
 		</div>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-1" >
 			</div>
-			<div class="kleistad-col-3 kleistad-label" >
-				<input name="naam" id="kleistad_kinderfeest" type="radio" required value="kinderfeest" <?php checked( $this->data['input']['naam'], 'kinderfeest' ); ?> >
-				<label for="kleistad_kinderfeest" >Kinderfeest</label>
+			<div class="kleistad-col-4 kleistad-label" >
+				<input name="omvang" id="kleistad_klein" type="radio" required data-limiet="6" value="6 of minder" <?php checked( $this->data['input']['omvang'], '6 of minder' ); ?> >
+				<label for="kleistad_klein" >6 of minder</label>
 			</div>
-			<div class="kleistad-col-3 kleistad-label" >
-				<input name="naam" id="kleistad_workshop" type="radio" required value="workshop" <?php checked( $this->data['input']['naam'], 'workshop' ); ?> >
-				<label for="kleistad_workshop" >Workshop</label>
+		</div>
+		<div class="kleistad-row" >
+			<div class="kleistad-col-1" >
+			</div>
+			<div class="kleistad-col-4 kleistad-label" >
+				<input name="omvang" id="kleistad_middel" type="radio" required data-limiet="12" value="tussen 7 en 12" <?php checked( $this->data['input']['omvang'], 'tussen 7 en 12' ); ?> >
+				<label for="kleistad_middel" >tussen 7 en 12</label>
+			</div>
+		</div>
+		<div class="kleistad-row" >
+			<div class="kleistad-col-1" >
+			</div>
+			<div class="kleistad-col-4 kleistad-label" >
+				<input name="omvang" id="kleistad_groot" type="radio" required data-limiet="20" value="13 of meer" <?php checked( $this->data['input']['omvang'], 'meer dan 12' ); ?> >
+				<label for="kleistad_groot" >meer dan 12</label>
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**
@@ -77,83 +106,47 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this->email()->telnr();
+		return $this;
 	}
 
 	/**
 	 * Render het formulier
 	 */
-	private function workshopinfo() {
+	private function planning() {
 		?>
 		<div class="kleistad-row" >
-			<div class="kleistad-col-10">
-				<label class="kleistad-label">Hoeveel deelnemers verwacht je ?</label>
+			<div class="kleistad-col-3">
+				<label for="kleistad_plandatum" class="kleistad-label">Wanneer moet het plaatsvinden ?</label>
+			</div>
+			<div class="kleistad-col-3">
+				<input class="kleistad-datum ververs" type="text" name="plandatum" id="kleistad_plandatum" required readonly="readonly">
 			</div>
 		</div>
-		<div class="kleistad-row" >
+		<?php foreach ( DAGDEEL as $dagdeel ) : ?>
+		<div class="kleistad-dagdeel-<?php echo esc_attr( strtolower( $dagdeel ) ); ?> kleistad-row">
 			<div class="kleistad-col-1" >
 			</div>
 			<div class="kleistad-col-4 kleistad-label" >
-				<input name="omvang" id="kleistad_klein" type="radio" required value="6 of minder" <?php checked( $this->data['input']['omvang'], '6 of minder' ); ?> >
-				<label for="kleistad_klein" >6 of minder</label>
+				<input name="dagdeel" id="kleistad_<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" type="radio" required
+					value="<?php echo esc_attr( $dagdeel ); ?>" <?php checked( $this->data['input']['dagdeel'], $dagdeel ); ?> >
+				<label for="kleistad_<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" ><?php echo esc_html( $dagdeel ); ?></label>
 			</div>
 		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-4 kleistad-label" >
-				<input name="omvang" id="kleistad_middel" type="radio" required value="tussen 7 en 12" <?php checked( $this->data['input']['omvang'], 'tussen 7 en 12' ); ?> >
-				<label for="kleistad_middel" >tussen 7 en 12</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-4 kleistad-label" >
-				<input name="omvang" id="kleistad_groot" type="radio" required value="meer dan 12" <?php checked( $this->data['input']['omvang'], 'meer dan 12' ); ?> >
-				<label for="kleistad_groot" >meer dan 12</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-10">
-				<label class="kleistad-label">Wanneer verwacht je dat het moet plaatsvinden ?</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-4 kleistad-label" >
-				<input name="periode" id="kleistad_kt" type="radio" required value="binnen 1 maand" <?php checked( $this->data['input']['omvang'], '6 of minder' ); ?> >
-				<label for="kleistad_kt" >binnen 1 maand</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-4 kleistad-label" >
-				<input name="periode" id="kleistad_mt" type="radio" required value="tussen 1 en 2 maanden" <?php checked( $this->data['input']['omvang'], 'tussen 1 en 2 maanden' ); ?> >
-				<label for="kleistad_mt" >tussen 1 en 2 maanden</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-4 kleistad-label" >
-				<input name="periode" id="kleistad_lt" type="radio" required value="over 3 maanden of later" <?php checked( $this->data['input']['omvang'], 'over 3 maanden of later' ); ?> >
-				<label for="kleistad_lt" >over 3 maanden of later</label>
-			</div>
-		</div>
-		<div class ="kleistad-row" title="Heb je nadere vragen, stel ze gerust. Of laat hier opmerkingen achter die van belang zouden kunnen zijn voor Kleistad" >
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_vraag">Wil je iets vragen of wil je iets delen ?</label>
+			<?php
+		endforeach;
+	}
+
+	/**
+	 * Afsluitende vraag
+	 */
+	private function afsluiting() {
+		?>
+		<div class ="kleistad-row" title="Heb je nog nadere vragen, stel ze gerust. Of laat hier opmerkingen achter die van belang zouden kunnen zijn voor Kleistad" >
+			<div class="kleistad-col-3" >
+				<label class="kleistad-label" for="kleistad_vraag">Heb je nog speciale wensen of wil je iets delen ?</label>
 			</div>
 			<div class="kleistad-col-7 kleistad-input">
 				<textarea class="kleistad-input" name="vraag" id="kleistad_vraag" maxlength="1000" rows="5" cols="50"><?php echo esc_textarea( $this->data['input']['vraag'] ); ?></textarea>
-			</div>
-		</div>
-		<div class="kleistad-row" style="padding-top:20px;">
-			<div class="kleistad-col-10">
-				<button class="kleistad-button" name="kleistad_submit_workshop_aanvraag" id="kleistad_submit" type="submit" >Verzenden</button>
 			</div>
 		</div>
 		<?php

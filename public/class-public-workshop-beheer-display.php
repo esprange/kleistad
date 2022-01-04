@@ -135,8 +135,11 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_naam">Soort workshop</label></div>
 			<div class="kleistad-col-3">
 				<select name="naam" required id="kleistad_naam" <?php readonly( $readonly ); ?> style="width:100%" >
-					<option value="kinderfeest" <?php selected( $this->data['workshop']['naam'], 'kinderfeest' ); ?> >kinderfeest</option>
-					<option value="workshop"  <?php selected( $this->data['workshop']['naam'], 'workshop' ); ?> >workshop</option>
+					<?php foreach ( opties()['activiteit'] as $activiteit ) : ?>
+					<option value="<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" <?php selected( $this->data['workshop']['naam'], $activiteit['naam'] ); ?> >
+						<?php echo esc_html( ucfirst( $activiteit['naam'] ) ); ?>
+					</option>
+					<?php endforeach; ?>
 				</select>
 			</div>
 		</div>
@@ -177,12 +180,15 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_docent">Docent</label></div>
 			<div class="kleistad-col-3">
-				<datalist id="kleistad_docenten">
-				<?php foreach ( $this->data['docenten'] as $docent ) : ?>
-					<option value="<?php echo esc_attr( $docent->display_name ); ?>">
-				<?php endforeach ?>
-				</datalist>
-				<input type=text list="kleistad_docenten" name="docent" id="kleistad_docent" value="<?php echo esc_attr( $this->data['workshop']['docent'] ); ?>" <?php readonly( $readonly ); ?> >
+				<?php if ( $readonly ) : ?>
+					<span id="kleistad_docent"><?php echo esc_html( is_numeric( $this->data['workshop']['docent'] ) ? get_user_by( 'id', $this->data['workshop']['docent'] )->display_name : $this->data['workshop']['docent'] ); ?></span>
+				<?php else : ?>
+					<select style="width:100%" name="docent" id="kleistad_docent" required >
+						<?php foreach ( $this->data['docenten'] as $docent ) : ?>
+							<option value="<?php echo esc_attr( $docent->ID ); ?>" <?php selected( $docent->ID, $this->data['workshop']['docent'] ); ?> ><?php echo esc_html( $docent->display_name ); ?></option>
+						<?php endforeach ?>
+					</select>
+				<?php endif ?>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -274,8 +280,8 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="casus_id" value="<?php echo esc_attr( $this->data['casus']['casus_id'] ); ?>"/>
 		<table class="kleistad-form" >
 			<tr>
-				<th>Soort workshop</th>
-				<td><?php echo esc_html( $this->data['casus']['naam'] ); ?></td>
+				<th>Soort activiteit</th>
+				<td><?php echo esc_html( ucfirst( $this->data['casus']['naam'] ) ); ?></td>
 			</tr>
 			<tr>
 				<th>Contact</th>
@@ -290,8 +296,13 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<td><?php echo esc_html( $this->data['casus']['omvang'] ); ?></td>
 			</tr>
 			<tr>
+				<?php if ( $this->data['casus']['periode'] ) : ?>
 				<th>Periode</th>
 				<td><?php echo esc_html( $this->data['casus']['periode'] ); ?></td>
+				<?php else : ?>
+				<th>Planning</th>
+				<td><?php echo esc_html( date( 'd-m-Y', $this->data['casus']['plandatum'] ) . " {$this->data['casus']['dagdeel']}" ); ?></td>
+				<?php endif; ?>
 			</tr>
 			<tr>
 				<td colspan="2" ><label for="kleistad_reactie">Reactie</label></td>

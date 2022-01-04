@@ -23,14 +23,6 @@ namespace Kleistad;
  */
 class WerkplekConfig {
 
-	public const ACTIVITEIT = [ 'Handvormen', 'Draaien', 'Bovenverdieping' ]; // Vooralsnog draaien, handvormen en bovenverdieping.
-	public const DAGDEEL    = [ 'Ochtend', 'Middag', 'Avond' ]; // Vooralsnog ochtend, middag en avond.
-	public const ACTIEKLEUR = [
-		'Handvormen'      => 'rgb( 255, 229, 153 )',
-		'Draaien'         => 'rgb( 247, 202, 172 )',
-		'Bovenverdieping' => 'rgb( 217, 217, 217 )',
-	];
-
 	/**
 	 * De werkplekdata
 	 *
@@ -47,10 +39,10 @@ class WerkplekConfig {
 		$default_config   = [];
 		$default_meesters = [];
 		foreach ( $this->geef_atelierdagen() as $dag ) {
-			foreach ( self::DAGDEEL as $dagdeel ) {
-				foreach ( self::ACTIVITEIT as $activiteit ) {
-					$default_config[ $dag ][ $dagdeel ][ $activiteit ] = 0;
-					$default_meesters[ $dag ][ $dagdeel ]              = 0;
+			foreach ( DAGDEEL as $dagdeel ) {
+				foreach ( opties()['werkruimte'] as $activiteit ) {
+					$default_config[ $dag ][ $dagdeel ][ $activiteit['naam'] ] = 0;
+					$default_meesters[ $dag ][ $dagdeel ]                      = 0;
 				}
 			}
 		}

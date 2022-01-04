@@ -32,53 +32,7 @@ class Admin_Instellingen_Display {
 				<td colspan="3"><input type="number" step="1" min="1"  max="99" name="kleistad-opties[cursusmaximum]" id="cursusmaximum" class="small-text"
 					value="<?php echo esc_attr( opties()['cursusmaximum'] ); ?>" /></td>
 			</tr>
-
-			<?php
-			$index = 1;
-			while ( isset( opties()['extra'][ $index ]['naam'] ) ) :
-				$id = str_replace( ' ', '_', opties()['extra'][ $index ]['naam'] );
-				?>
-			<tr >
-				<th scope="row"><label for="extra_<?php echo esc_attr( $id ); ?>">Abonnement extra <?php echo esc_html( $index ); ?></label></th>
-				<td><input type="text" class="kleistad-extra regular-text" name="kleistad-opties[extra][<?php echo esc_attr( $index ); ?>][naam]" id="extra_<?php echo esc_attr( $id ); ?>"
-						value="<?php echo esc_attr( opties()['extra'][ $index ]['naam'] ); ?>"  <?php echo ! empty( opties()['extra'][ $index ]['naam'] ) ? 'readonly' : ''; ?> /></td>
-				<th scope="row"><label for="prijs_<?php echo esc_attr( $id ); ?>">Prijs</label></th>
-				<td><input type="number" step="0.01" min="0"  name="kleistad-opties[extra][<?php echo esc_attr( $index ); ?>][prijs]" class="small-text" id="prijs_<?php echo esc_attr( $id ); ?>"
-						value="<?php echo esc_attr( opties()['extra'][ $index ]['prijs'] ); ?>" /></td>
-			</tr>
-				<?php
-				$index++;
-			endwhile;
-			?>
-
-			<tr id="kleistad-extra-toevoegen">
-				<th>Extra toevoegen</th>
-				<td colspan="3"><button type="button" id="kleistad-extra"><span class="dashicons dashicons-plus"></span></button></td>
-			</tr>
-
-			<?php
-			$index = 1;
-			while ( isset( opties()['ruimte'][ $index ]['naam'] ) ) :
-				$id = str_replace( ' ', '_', opties()['ruimte'][ $index ]['naam'] );
-				?>
-				<tr >
-					<th scope="row"><label for="ruimte_<?php echo esc_attr( $id ); ?>">Ruimte <?php echo esc_html( $index ); ?></label></th>
-					<td><input type="text" class="kleistad-ruimte regular-text" name="kleistad-opties[ruimte][<?php echo esc_attr( $index ); ?>][naam]" id="ruimte_<?php echo esc_attr( $id ); ?>"
-						value="<?php echo esc_attr( opties()['ruimte'][ $index ]['naam'] ); ?>"  <?php echo ! empty( opties()['ruimte'][ $index ]['naam'] ) ? 'readonly' : ''; ?> /></td>
-					<th scope="row"><label for="aantal_<?php echo esc_attr( $id ); ?>">Aantal werkplekken</label></th>
-					<td><input type="number" min="0"  name="kleistad-opties[ruimte][<?php echo esc_attr( $index ); ?>][aantal]" class="small-text" id="aantal_<?php echo esc_attr( $id ); ?>"
-						value="<?php echo esc_attr( opties()['ruimte'][ $index ]['aantal'] ); ?>" /></td>
-				</tr>
-				<?php
-				$index++;
-			endwhile;
-			?>
-
-			<tr id="kleistad-ruimte-toevoegen">
-				<th>Ruimte toevoegen</th>
-				<td colspan="3"><button type="button" id="kleistad-ruimte"><span class="dashicons dashicons-plus"></span></button></td>
-			</tr>
-
+			<?php $this->setup_lijst_parameters(); ?>
 			<tr >
 				<th scope="row"><label for="termijn">Termijn (dagen) dat correctie stook mogelijk is</label></th>
 				<td colspan="3"><input type="number" min="0"  name="kleistad-opties[termijn]" id="termijn"
@@ -98,6 +52,11 @@ class Admin_Instellingen_Display {
 				<th scope="row"><label for="weken_werkplek">Aantal weken vooruit dat werkplekken gereserveerd kunnen worden</label></th>
 				<td colspan="3"><input type="number" min="1"  name="kleistad-opties[weken_werkplek]" id="weken_werkplek"
 						value="<?php echo esc_attr( opties()['weken_werkplek'] ); ?>" class="small-text" /></td>
+			</tr>
+			<tr >
+				<th scope="row"><label for="max_activiteit">Aantal activiteiten (cursus, workshop etc.) dat gelijktijdig kan plaatsvinden</label></th>
+				<td colspan="3"><input type="number" min="1"  name="kleistad-opties[max_activiteit]" id="max_activiteit"
+						value="<?php echo esc_attr( opties()['max_activiteit'] ); ?>" class="small-text" /></td>
 			</tr>
 
 			</table>
@@ -316,7 +275,7 @@ class Admin_Instellingen_Display {
 					<ul style="list-style-type:square;margin-left:25px">
 						<li>[contact] : contactpersoon van de workshop aanvraag</li>
 						<li>[organisatie] : organisatie welke de workshop aanvraagt</li>
-						<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest')</li>
+						<li>[naam] : titel van de cursus ('de workshop', 'het kinderfeest', etc.)</li>
 						<li>[aantal] : aantal deelnemers</li>
 						<li>[workshop_docent] : naam van de docent</li>
 						<li>[workshop_datum] : datum van de workshop</li>
@@ -336,7 +295,7 @@ class Admin_Instellingen_Display {
 					<li>bevestiging
 						<ul style="list-style-type:square;margin-left:25px">
 							<li>[contact] : naam van de aanvrager</li>
-							<li>[naam] : titel van de cursus ('de workshop' of 'het kinderfeest' )</li>
+							<li>[naam] : titel van de cursus ('de workshop', 'het kinderfeest', etc. )</li>
 							<li>[periode] : aangegeven periode</li>
 							<li>[omvang] : aangegeven aantal deelnemers</li>
 							<li>[email] : opgegeven email adres</li>
@@ -413,7 +372,7 @@ class Admin_Instellingen_Display {
 					</ul>
 					</li>
 					<li>[kleistad_recept] overzicht van keramiek recepten</li>
-					<li>[kleistad_workshop_aanvraag] aanvraag voor workshops en kinderfeestjes</li>
+					<li>[kleistad_workshop_aanvraag] aanvraag voor workshops, kinderfeestjes, etc.</li>
 					<li>[kleistad_betaling] het betalen van een uitstaand bedrag per iDeal (via link vanuit email)</li>
 					<li>[kleistad_contact] het contact formulier</li>
 				</ol>
@@ -438,6 +397,11 @@ class Admin_Instellingen_Display {
 					</li>
 					<li>[kleistad_saldo] wijzigen stooksaldo</li>
 					<li>[kleistad_werkplek] reserveren van een werkplek</li>
+				</ol>
+			</li>
+			<li><h3>toegankelijk voor docenten</h3>
+				<ol>
+					<li>[kleistad_docent] formulier om de beschikbaarheid van de docent voor workshops aan te geven</li>
 				</ol>
 			</li>
 			<li><h3>toegankelijk voor docenten en bestuur</h3>
@@ -503,6 +467,86 @@ class Admin_Instellingen_Display {
 						value="<?php echo esc_attr( setup()[ $id ] ); ?>" />
 				</td>
 			</tr>
+			<?php
+		}
+	}
+
+	/**
+	 * Toon de lijst parameters
+	 *
+	 * @return void
+	 */
+	private function setup_lijst_parameters() : void {
+		$parameters = [
+			'extra'      => [
+				'titel'  => 'Abonnement extra',
+				'velden' => [
+					[
+						'naam'  => 'prijs',
+						'titel' => 'Prijs',
+						'veld'  => 'type="number" step="0.01" min="0"',
+					],
+				],
+			],
+			'werkruimte' => [
+				'titel'  => 'Ruimte',
+				'velden' => [
+					[
+						'naam'  => 'kleur',
+						'titel' => 'Kleur werkplekreservering',
+						'veld'  => 'type="text"',
+						'class' => 'kleistad-color',
+					],
+				],
+			],
+			'activiteit' => [
+				'titel'  => 'Activiteit',
+				'velden' => [],
+			],
+		];
+		foreach ( $parameters as $key => $parameter ) {
+			?>
+	<tr><th><?php echo esc_html( $parameter['titel'] ); ?></th><td>
+		<table id="<?php echo esc_attr( "lijst_$key" ); ?>">
+			<thead>
+				<tr>
+					<th>Naam</th>
+					<?php foreach ( $parameter['velden'] as $veld ) : ?>
+						<th><?php echo esc_html( $veld['titel'] ); ?></th>
+					<?php endforeach; ?>
+				</tr>
+			</thead>
+			<tbody>
+			<?php
+			$index = 0;
+			foreach ( opties()[ $key ] ?? [] as $optie ) :
+				?>
+				<tr>
+					<td><!--suppress HtmlFormInputWithoutLabel -->
+						<input type="text" class="regular-text" name="<?php echo esc_attr( "kleistad-opties[$key][$index][naam]" ); ?>" value="<?php echo esc_attr( $optie['naam'] ); ?>" /></td>
+				<?php foreach ( $parameter['velden'] as $veld ) : ?>
+					<td><!--suppress HtmlFormInputWithoutLabel -->
+						<input <?php echo $veld['veld']; // phpcs:ignore ?>  class="small-text <?php echo esc_attr( $veld['class'] ?? '' ); ?>" name="<?php echo esc_attr( "kleistad-opties[$key][$index][{$veld['naam']}]" ); ?>" value="<?php echo esc_attr( $optie[ $veld['naam'] ] ); ?>" /></td>
+				<?php endforeach; ?>
+					<td><span class="lijst_verwijderen dashicons dashicons-trash" style="cursor: pointer;"></span></td>
+				</tr>
+				<?php
+				$index++;
+			endforeach;
+			?>
+			</tbody>
+			<tfoot>
+				<tr>
+					<th><?php echo esc_html( $parameter['titel'] ); ?> toevoegen</th>
+					<td colspan="2">
+						<button type="button" class="lijst_toevoegen" data-key="<?php echo esc_attr( $key ); ?>" data-parameters='<?php echo wp_json_encode( $parameter['velden'] ); ?>'>
+							<span class="dashicons dashicons-plus"></span>
+						</button>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+		</td></tr>
 			<?php
 		}
 	}

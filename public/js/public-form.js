@@ -7,7 +7,7 @@
  * noinspection EqualityComparisonWithCoercionJS
  */
 
-/* global kleistadData */
+/* global kleistadData, vervolg */
 /* exported strtodate, strtotime, timetostr */
 
 /**
@@ -18,12 +18,12 @@
 function strtotime( value ) {
 	let hours, minutes;
 	if ( 'string' === typeof value ) {
-		if ( Number( value ) == value ) {
-			return Number( value );
+		if ( value.includes( ':' ) ) {
+			hours   = value.substring( 0, 2 );
+			minutes = value.substring( 3 );
+			return Number( hours ) * 60 + Number( minutes );
 		}
-		hours   = value.substring( 0, 2 );
-		minutes = value.substring( 3 );
-		return Number( hours ) * 60 + Number( minutes );
+		return Number( value );
 	}
 	return value;
 }
@@ -64,6 +64,66 @@ function validate_email( input, compare ) {
  */
 ( function( $ ) {
 	'use strict';
+
+	/**
+	 * Toon de tab en buttons van een multistep form
+	 *
+	 * @param index
+	 */
+	function showTab( index ) {
+		let $tab  = $( '.kleistad-tab' );
+		let $stap = $( '.kleistad-stap' );
+		$tab.eq( index ).show();
+		if ( 0 === index) {
+			$( '#kleistad_tab_prev' ).hide();
+		} else {
+			$( '#kleistad_tab_prev' ).show();
+		}
+		$( '#kleistad_tab_next' ).toggle( $tab.length - 1 !== index );
+		$( '#kleistad_tab_send' ).toggle( $tab.length - 1 === index );
+		$stap.removeClass( 'actief' );
+		$stap.eq( index ).addClass( 'actief' );
+	}
+
+	/**
+	 * Initialiseer een multiform tab.
+	 */
+	function initTab() {
+		let $tab = $( '.kleistad-tab' );
+		let html = '<div style="overflow:auto;float:right;">' +
+			'<button type="button" class="kleistad-button" id="kleistad_tab_prev" >Terug</button>&nbsp;' +
+			'<button type="button" class="kleistad-button" id="kleistad_tab_next" >Verder</button>' +
+			'<button type="submit" class="kleistad-button" id="kleistad_tab_send" >Verzenden</button>' +
+			'</div><div style="text-align: center;margin-top: 40px;">';
+		$tab.each(
+			function() {
+				html += '<span class="kleistad-stap"></span>';
+			}
+		);
+		html += '</div>';
+		$tab.last().after( html );
+		showTab( 0 );
+	}
+
+	/**
+	 * Valideer de tab van een multistep form
+	 *
+	 * @param index
+	 * @param report Of de gebruiker geinformeerd moet worden
+	 */
+	function validateTab( index, report ) {
+		let $stap = $( '.kleistad-stap' );
+		let valid = true;
+		$( '.kleistad-tab' ).eq( index ).find( '[required]' ).each(
+			function() {
+				if ( ! ( ( null === this.offsetParent  ) ? this.checkValidity() : this.reportValidity() ) ) {
+					valid = false;
+				}
+			}
+		)
+		$stap.eq( index ).toggleClass( 'gereed', valid );
+		return valid;
+	}
 
 	/**
 	 * Zoek de postcode op via de server.
@@ -116,10 +176,10 @@ function validate_email( input, compare ) {
 			 * Toggle de wacht zandloper
 			 *
 			 * @param data
-			 * @property {function} $.fn.vervolg
 			 */
 			function( data ) {
 				$( '#kleistad_wachten' ).removeClass( 'kleistad-wachten' );
+				// noinspection JSUnresolvedFunction .
 				$.fn.vervolg( $shortcode, data );
 			}
 		).fail(
@@ -184,6 +244,12 @@ function validate_email( input, compare ) {
 		function()
 		{
 			/**
+			 * Tab voor multiforms
+			 */
+			let currentTab = 0;
+			initTab();
+
+			/**
 			 * Definieer de bank selectie.
 			 */
 			let $bank = $( '#kleistad_bank' );
@@ -207,7 +273,7 @@ function validate_email( input, compare ) {
 			 */
 			.on(
 				'click',
-				'button[type="submit"]',
+				'button[type="submit"], #kleistad_tab_send',
 				function( event ) {
 					$( this ).closest( 'form' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
 					return true;
@@ -222,7 +288,8 @@ function validate_email( input, compare ) {
 				'submit',
 				'form',
 				function( event ) {
-					let $form         = $( this );
+					let $form = $( this );
+					// noinspection JSUnresolvedFunction .
 					let shortcodeData = $.fn.shortcode( $form );
 					let formData      = new FormData( this );
 					let clicked       = $form.data( 'clicked' );
@@ -245,7 +312,32 @@ function validate_email( input, compare ) {
 						}
 					);
 				}
-			);
+			)
+			/**
+			 * Verwerk een klik op een multi step formulier.
+			 */
+			.on(
+				'click',
+				'#kleistad_tab_next',
+				function() {
+					let $tab = $( '.kleistad-tab' );
+					if ( ! validateTab( currentTab ) ) {
+						return false;
+					}
+					$tab.hide();
+					showTab( ++currentTab );
+					return true;
+				}
+			)
+			.on(
+				'click',
+				'#kleistad_tab_prev',
+				function() {
+					$( '.kleistad-tab' ).hide();
+					validateTab( currentTab );
+					showTab( --currentTab );
+				}
+			)
 		}
 	);
 

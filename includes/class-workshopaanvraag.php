@@ -28,6 +28,8 @@ use WP_Post;
  * @property string contact
  * @property string omvang
  * @property string periode
+ * @property int    plandatum
+ * @property string dagdeel
  * @property string telnr
  * @property string naam
  * @property int    workshop_id
@@ -147,7 +149,9 @@ class WorkshopAanvraag {
 		$this->email       = $casus_data['user_email'];
 		$this->contact     = $casus_data['contact'];
 		$this->omvang      = $casus_data['omvang'];
-		$this->periode     = $casus_data['periode'];
+		$this->periode     = $casus_data['periode'] ?? '';
+		$this->plandatum   = $casus_data['plandatum'] ?? 0;
+		$this->dagdeel     = $casus_data['dagdeel'] ?? '';
 		$this->telnr       = $casus_data['telnr'];
 		$this->naam        = $casus_data['naam'];
 		$this->workshop_id = 0;
@@ -317,7 +321,7 @@ class WorkshopAanvraag {
 			$emailer->send(
 				[
 					'to'      => "Workshop mailbox <$emailer->info@$emailer->domein>",
-					'subject' => 'aanvraag workshop/kinderfeest',
+					'subject' => "aanvraag $aanvraag->naam",
 					'content' => "<p>Er is een reactie ontvangen van {$email['from-name']}</p>",
 					'sign'    => 'Workshop mailbox',
 				]
