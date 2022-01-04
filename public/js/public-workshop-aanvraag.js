@@ -6,6 +6,8 @@
  * @package Kleistad
  */
 
+/* global kleistadData */
+
 ( function( $ ) {
 	'use strict';
 

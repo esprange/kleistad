@@ -7,7 +7,7 @@
  * noinspection EqualityComparisonWithCoercionJS
  */
 
-/* global kleistadData, vervolg */
+/* global kleistadData */
 /* exported strtodate, strtotime, timetostr */
 
 /**
@@ -109,9 +109,8 @@ function validate_email( input, compare ) {
 	 * Valideer de tab van een multistep form
 	 *
 	 * @param index
-	 * @param report Of de gebruiker geinformeerd moet worden
 	 */
-	function validateTab( index, report ) {
+	function validateTab( index ) {
 		let $stap = $( '.kleistad-stap' );
 		let valid = true;
 		$( '.kleistad-tab' ).eq( index ).find( '[required]' ).each(

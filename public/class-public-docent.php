@@ -13,6 +13,7 @@ namespace Kleistad;
 
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_Error;
 
 /**
  * De reservering form.
@@ -168,16 +169,20 @@ EOT;
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response Ajax response.
+	 * @return WP_REST_Response|WP_Error Ajax response.
 	 */
-	public static function callback_show( WP_REST_Request $request ) : WP_REST_Response {
-		$maandag = strtotime( 'Monday this week', strtotime( $request->get_param( 'datum' ) ) );
-		return new WP_REST_Response(
-			[
-				'planning' => self::show( $maandag ),
-				'datum'    => date( 'Y-m-d', $maandag ),
-			]
-		);
+	public static function callback_show( WP_REST_Request $request ) {
+		$datum_str = $request->get_param( 'datum' );
+		if ( is_string( $datum_str ) ) {
+			$maandag = strtotime( 'Monday this week', strtotime( $datum_str ) );
+			return new WP_REST_Response(
+				[
+					'planning' => self::show( $maandag ),
+					'datum'    => date( 'Y-m-d', $maandag ),
+				]
+			);
+		}
+		return new WP_Error( 'param', 'Onjuiste data ontvangen' );
 	}
 
 	/**
@@ -186,23 +191,27 @@ EOT;
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
 	 *
-	 * @return WP_REST_Response Ajax response.
+	 * @return WP_REST_Response|WP_Error Ajax response.
 	 */
-	public static function callback_muteer( WP_REST_Request $request ) : WP_REST_Response {
-		$maandag  = strtotime( 'Monday this week', strtotime( $request->get_param( 'datum' ) ) );
-		$planning = $request->get_param( 'planning' );
-		$method   = $request->get_method();
-		if ( 'POST' === $method ) {
-			self::default( $planning );
+	public static function callback_muteer( WP_REST_Request $request ) {
+		$datum_str = $request->get_param( 'datum' );
+		$planning  = $request->get_param( 'planning' );
+		if ( is_string( $datum_str ) && is_array( $planning ) ) {
+			$maandag = strtotime( 'Monday this week', strtotime( $datum_str ) );
+			$method  = $request->get_method();
+			if ( 'POST' === $method ) {
+				self::default( $planning );
+			}
+			if ( 'PUT' === $method ) {
+				self::wijzig( $planning );
+			}
+			return new WP_REST_Response(
+				[
+					'planning' => self::show( $maandag ),
+					'datum'    => date( 'Y-m-d', $maandag ),
+				]
+			);
 		}
-		if ( 'PUT' === $method ) {
-			self::wijzig( $planning );
-		}
-		return new WP_REST_Response(
-			[
-				'planning' => self::show( $maandag ),
-				'datum'    => date( 'Y-m-d', $maandag ),
-			]
-		);
+		return new WP_Error( 'param', 'Onjuiste data ontvangen' );
 	}
 }

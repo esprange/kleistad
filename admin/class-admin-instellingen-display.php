@@ -505,7 +505,9 @@ class Admin_Instellingen_Display {
 			],
 		];
 		foreach ( $parameters as $key => $parameter ) {
-			?>
+			$json_velden = wp_json_encode( $parameter['velden'] );
+			if ( is_string( $json_velden ) ) {
+				?>
 	<tr><th><?php echo esc_html( $parameter['titel'] ); ?></th><td>
 		<table id="<?php echo esc_attr( "lijst_$key" ); ?>">
 			<thead>
@@ -517,23 +519,23 @@ class Admin_Instellingen_Display {
 				</tr>
 			</thead>
 			<tbody>
-			<?php
-			$index = 0;
-			foreach ( opties()[ $key ] ?? [] as $optie ) :
-				?>
+				<?php
+				$index = 0;
+				foreach ( opties()[ $key ] ?? [] as $optie ) :
+					?>
 				<tr>
 					<td><!--suppress HtmlFormInputWithoutLabel -->
 						<input type="text" class="regular-text" name="<?php echo esc_attr( "kleistad-opties[$key][$index][naam]" ); ?>" value="<?php echo esc_attr( $optie['naam'] ); ?>" /></td>
-				<?php foreach ( $parameter['velden'] as $veld ) : ?>
+					<?php foreach ( $parameter['velden'] as $veld ) : ?>
 					<td><!--suppress HtmlFormInputWithoutLabel -->
 						<input <?php echo $veld['veld']; // phpcs:ignore ?>  class="small-text <?php echo esc_attr( $veld['class'] ?? '' ); ?>" name="<?php echo esc_attr( "kleistad-opties[$key][$index][{$veld['naam']}]" ); ?>" value="<?php echo esc_attr( $optie[ $veld['naam'] ] ); ?>" /></td>
-				<?php endforeach; ?>
+					<?php endforeach; ?>
 					<td><span class="lijst_verwijderen dashicons dashicons-trash" style="cursor: pointer;"></span></td>
 				</tr>
-				<?php
-				$index++;
+					<?php
+					$index++;
 			endforeach;
-			?>
+				?>
 			</tbody>
 			<tfoot>
 				<tr>
@@ -547,7 +549,8 @@ class Admin_Instellingen_Display {
 			</tfoot>
 		</table>
 		</td></tr>
-			<?php
+				<?php
+			}
 		}
 	}
 
