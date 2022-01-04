@@ -11,31 +11,39 @@
 ( function( $ ) {
 	'use strict';
 
-	let $planning = $( '#kleistad_planning' ),
-		$wachten  = $( '#kleistad_wachten' );
+	let $planning  = $( '#kleistad_planning' ),
+		$overzicht = $( '#kleistad_overzicht' ),
+		$wachten   = $( '#kleistad_wachten' );
 
 	/**
 	 * Haal de inhoud van de tabel met reserveringen bij de server op.
 	 *
 	 * @param {string} datum
 	 */
-	function toonPlanning( datum ) {
+	function toonTabel( datum ) {
+		let actie = ( $planning[0] ) ? 'planning' : 'overzicht';
 		$wachten.addClass( 'kleistad-wachten' ).show();
 		$.ajax(
 			{
-				url: kleistadData.base_url + '/docent_planning/',
+				url: kleistadData.base_url + '/docent_' + actie + '/',
 				method: 'GET',
 				beforeSend: function( xhr ) {
 					xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
 				},
 				data: {
-					datum: datum
+					datum: datum,
+					actie: actie
 				}
 			}
 		).done(
 			function( data ) {
 				$wachten.removeClass( 'kleistad-wachten' );
-				$planning.html( data.planning );
+				if ( 'planning' === actie ) {
+					$planning.html( data.content );
+				}
+				if ( 'overzicht' === actie ) {
+					$overzicht.html( data.content );
+				}
 			}
 		).fail(
 			function( jqXHR ) {
@@ -114,8 +122,7 @@
 	 * Document ready.
 	 */
 	$(
-		function()
-		{
+		function() {
 			let $datum = $( '#kleistad_plandatum' );
 
 			if ( window.navigator.userAgent === 'msie' ) {
@@ -130,7 +137,7 @@
 					defaultDate: 0
 				}
 			);
-			toonPlanning( $datum.val() );
+			toonTabel( $datum.val() );
 
 			$( '.kleistad-shortcode' )
 			.on(
@@ -138,7 +145,7 @@
 				'#kleistad_plandatum',
 				function() {
 					$( this ).datepicker( 'hide' );
-					toonPlanning( $datum.val(), );
+					toonTabel( $datum.val(), );
 				}
 			)
 			.on(
@@ -154,7 +161,7 @@
 				function() {
 					let datum = $datum.datepicker( 'getDate' );
 					$datum.datepicker( 'setDate', new Date( datum.getFullYear(), datum.getMonth(), datum.getDate() - 7 ) );
-					toonPlanning( $datum.val() );
+					toonTabel( $datum.val() );
 				}
 			)
 			.on(
@@ -163,7 +170,7 @@
 				function() {
 					let datum = $datum.datepicker( 'getDate' );
 					$datum.datepicker( 'setDate', new Date( datum.getFullYear(), datum.getMonth(), datum.getDate() + 7 ) );
-					toonPlanning( $datum.val() );
+					toonTabel( $datum.val() );
 				}
 			)
 			.on(

@@ -22,7 +22,7 @@ class Public_Docent extends Shortcode {
 
 	/**
 	 *
-	 * Prepareer 'planning' form
+	 * Prepareer de tabel
 	 *
 	 * @return string
 	 */
@@ -62,38 +62,87 @@ class Public_Docent extends Shortcode {
 						'required' => true,
 						'type'     => 'string',
 					],
+					'actie' => [
+						'required' => true,
+						'type'     => 'string',
+					],
 				],
 				'permission_callback' => function() {
 					return is_user_logged_in() && current_user_can( DOCENT );
 				},
 			]
 		);
+		register_rest_route(
+			KLEISTAD_API,
+			'/docent_overzicht',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ __CLASS__, 'callback_show' ],
+				'args'                => [
+					'datum' => [
+						'required' => true,
+						'type'     => 'string',
+					],
+					'actie' => [
+						'required' => true,
+						'type'     => 'string',
+					],
+				],
+				'permission_callback' => function() {
+					return is_user_logged_in() && current_user_can( BESTUUR );
+				},
+			]
+		);
 	}
 
 	/**
-	 * Toon de week planning
+	 * Hulpfunctie om volledig overzicht van docent te maken
+	 *
+	 * @param int       $maandag   De datum waarin de week start.
+	 * @param Docent    $docent    Het docent object.
+	 * @param Cursussen $cursussen De cursussen verzameling.
+	 * @param Workshops $workshops De workshops verzameling.
+	 *
+	 * @return array Het overzicht.
+	 */
+	private static function docent_beschikbaarheid( int $maandag, Docent $docent, Cursussen $cursussen, Workshops $workshops ) : array {
+		$reserveringen = [];
+		$maandag_2     = $maandag + 7 * DAY_IN_SECONDS;
+		foreach ( $cursussen as $cursus ) {
+			if ( intval( $cursus->docent ) === $docent->ID && ! $cursus->vervallen ) {
+				foreach ( $cursus->lesdatums as $lesdatum ) {
+					if ( $lesdatum >= $maandag && $lesdatum < $maandag_2 ) {
+						$reserveringen[ $lesdatum ][ bepaal_dagdeel( $cursus->start_tijd, $cursus->eind_tijd ) ] = Docent::GERESERVEERD;
+					}
+				}
+			}
+		}
+		foreach ( $workshops as $workshop ) {
+			if ( intval( $workshop->docent ) === $docent->ID && ! $workshop->vervallen ) {
+				if ( $workshop->datum >= $maandag && $workshop->datum < $maandag_2 ) {
+					$reserveringen[ $workshop->datum ][ bepaal_dagdeel( $workshop->start_tijd, $workshop->eind_tijd ) ] = $workshop->definitief ? Docent::GERESERVEERD : Docent::OPTIE;
+				}
+			}
+		}
+		foreach ( DAGDEEL as $dagdeel ) {
+			for ( $dagnr = 0; $dagnr < 7; $dagnr ++ ) {
+				$datum = $maandag + $dagnr * DAY_IN_SECONDS;
+				if ( ! isset( $reserveringen[ $datum ][ $dagdeel ] ) ) {
+					$reserveringen[ $datum ][ $dagdeel ] = $docent->beschikbaarheid( $datum, $dagdeel );
+				}
+			}
+		}
+		return $reserveringen;
+	}
+
+	/**
+	 * Maak de header van de tabel
 	 *
 	 * @param int $maandag De datum waarin de week start.
 	 *
 	 * @return string
 	 */
-	private static function show( int $maandag ) : string {
-		$docent_id     = get_current_user_id();
-		$docent        = new Docent( $docent_id );
-		$vandaag       = strtotime( 'today' );
-		$reserveringen = [];
-		foreach ( new Cursussen( $vandaag ) as $cursus ) {
-			if ( intval( $cursus->docent ) === $docent_id && ! $cursus->vervallen ) {
-				foreach ( $cursus->lesdatums as $lesdatum ) {
-					$reserveringen[ $lesdatum ][ bepaal_dagdeel( $cursus->start_tijd, $cursus->eind_tijd ) ] = Docent::GERESERVEERD;
-				}
-			}
-		}
-		foreach ( new Workshops( $vandaag ) as $workshop ) {
-			if ( intval( $workshop->docent ) === $docent_id && ! $workshop->vervallen ) {
-				$reserveringen[ $workshop->datum ][ bepaal_dagdeel( $workshop->start_tijd, $workshop->eind_tijd ) ] = $workshop->definitief ? Docent::GERESERVEERD : Docent::OPTIE;
-			}
-		}
+	private static function header( int $maandag ) : string {
 		$html      = <<<EOT
 <thead>
 	<tr>
@@ -111,25 +160,112 @@ EOT;
 </thead>
 <tbody>
 EOT;
+		return $html;
+	}
+
+	/**
+	 * Toon de week planning
+	 *
+	 * @param int $maandag De datum waarin de week start.
+	 *
+	 * @return string
+	 */
+	private static function show_planning( int $maandag ) : string {
+		$docent_id     = get_current_user_id();
+		$vandaag       = strtotime( 'today' );
+		$reserveringen = self::docent_beschikbaarheid( $maandag, new Docent( $docent_id ), new Cursussen( $vandaag ), new Workshops( $vandaag ) );
+		$html          = self::header( $maandag );
 		foreach ( DAGDEEL as $dagdeel ) {
 			$html .= <<<EOT
 	<tr>
 		<td>$dagdeel</td>
 EOT;
 			for ( $dagnr = 0; $dagnr < 7; $dagnr++ ) {
-				$datum           = $maandag + $dagnr * DAY_IN_SECONDS;
-				$beschikbaarheid = $docent->beschikbaarheid( $datum, $dagdeel );
-				if ( isset( $reserveringen[ $datum ][ $dagdeel ] ) ) {
-					$indicator = Docent::OPTIE === $reserveringen[ $datum ][ $dagdeel ] ? [ 'kleistad-inzet-optie', 'O' ] : [ 'kleistad-inzet-definitief', 'R' ];
-					$html     .= <<<EOT
-		<td><span class="$indicator[0]">$indicator[1]</span></td>
+				$datum       = $maandag + $dagnr * DAY_IN_SECONDS;
+				$reservering = $reserveringen[ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
+				switch ( $reservering ) {
+					case Docent::NIET_BESCHIKBAAR:
+						$html .= <<<EOT
+		<td><input type="checkbox" class="planning" data-datum="$datum" data-dagdeel="$dagdeel" ></td>
 EOT;
-					continue;
+						break;
+					case Docent::BESCHIKBAAR:
+						$html .= <<<EOT
+		<td><input type="checkbox" class="planning" data-datum="$datum" data-dagdeel="$dagdeel" checked="checked" ></td>
+EOT;
+						break;
+					case Docent::OPTIE:
+						$html .= <<<EOT
+		<td><span class="kleistad-inzet kleistad-inzet-optie" style="width:21px">O</span></td>
+EOT;
+						break;
+					case Docent::GERESERVEERD:
+						$html .= <<<EOT
+		<td><span class="kleistad-inzet kleistad-inzet-definitief" style="width:21px">R</span></td>
+EOT;
 				}
-				$checked = checked( $beschikbaarheid, Docent::BESCHIKBAAR, false );
-				$html   .= <<<EOT
+			}
+			$html .= <<<EOT
+	</tr>
+EOT;
+		}
+		$html .= <<<EOT
+</tbody>
+EOT;
+		return $html;
+	}
+
+	/**
+	 * Toon het week overzicht van de docenten beschikbaarheid.
+	 *
+	 * @param int $maandag De datum waarin de week start.
+	 *
+	 * @return string
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private static function show_overzicht( int $maandag ) : string {
+		$vandaag       = strtotime( 'today' );
+		$reserveringen = [];
+		$cursussen     = new Cursussen( $vandaag );
+		$workshops     = new Workshops( $vandaag );
+		$docenten      = new Docenten();
+		foreach ( $docenten as $docent ) {
+			$reserveringen[ $docent->ID ] = self::docent_beschikbaarheid( $maandag, $docent, $cursussen, $workshops );
+		}
+		$html = self::header( $maandag );
+		foreach ( DAGDEEL as $dagdeel ) {
+			$html .= <<<EOT
+	<tr>
+		<td>$dagdeel</td>
+EOT;
+			for ( $dagnr = 0; $dagnr < 7; $dagnr ++ ) {
+				$datum = $maandag + $dagnr * DAY_IN_SECONDS;
+				$html .= <<<EOT
 		<td>
-			<input type="checkbox" class="planning" $checked data-datum="$datum" data-dagdeel="$dagdeel" ></td>
+EOT;
+				foreach ( $docenten as $docent ) {
+					$reservering = $reserveringen[ $docent->ID ][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
+					switch ( $reservering ) {
+						case Docent::NIET_BESCHIKBAAR:
+							break;
+						case Docent::BESCHIKBAAR:
+							$html .= <<<EOT
+			$docent->display_name
+EOT;
+							break;
+						case Docent::OPTIE:
+							$html .= <<<EOT
+			<span class="kleistad-inzet kleistad-inzet-optie">$docent->display_name</span>
+EOT;
+							break;
+						case Docent::GERESERVEERD:
+							$html .= <<<EOT
+			<span class="kleistad-inzet kleistad-inzet-definitief">$docent->display_name</span>
+EOT;
+					}
+				}
+				$html .= <<<EOT
+		</td>
 EOT;
 			}
 			$html .= <<<EOT
@@ -173,12 +309,14 @@ EOT;
 	 */
 	public static function callback_show( WP_REST_Request $request ) {
 		$datum_str = $request->get_param( 'datum' );
-		if ( is_string( $datum_str ) ) {
+		$actie     = $request->get_param( 'actie' );
+		if ( is_string( $datum_str ) && is_string( $actie ) ) {
 			$maandag = strtotime( 'Monday this week', strtotime( $datum_str ) );
+			$show    = "show_$actie";
 			return new WP_REST_Response(
 				[
-					'planning' => self::show( $maandag ),
-					'datum'    => date( 'Y-m-d', $maandag ),
+					'content' => self::$show( $maandag ),
+					'datum'   => date( 'Y-m-d', $maandag ),
 				]
 			);
 		}
@@ -207,7 +345,7 @@ EOT;
 			}
 			return new WP_REST_Response(
 				[
-					'planning' => self::show( $maandag ),
+					'planning' => self::show_planning( $maandag ),
 					'datum'    => date( 'Y-m-d', $maandag ),
 				]
 			);

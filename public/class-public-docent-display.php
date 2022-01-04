@@ -16,11 +16,36 @@ namespace Kleistad;
 class Public_Docent_Display extends Public_Shortcode_Display {
 
 	/**
+	 * Het overzicht van de beschikbaarheid docenten
+	 */
+	protected function overzicht() {
+		$this->tabelframe( 'kleistad_overzicht' );
+	}
+
+	/**
 	 * Render het formulier
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function planning() {
+		$this->tabelframe( 'kleistad_planning' );
+		?>
+		<div style="float: left">
+			<button type="button" id="kleistad_default" class="kleistad-button">Standaard planning opslaan</button>
+		</div>
+		<div style="float: right">
+			<button type="button" id="kleistad_bewaren" class="kleistad-button">Bewaren</button>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render het frame
+	 *
+	 * @param string $tabel Het type tabel.
+	 * @return void
+	 */
+	private function tabelframe( string $tabel ) {
 		$maandag = date( 'd-m-Y', strtotime( 'Monday this week' ) );
 		?>
 		<div id="kleistad_geen_ie" style="display:none">
@@ -32,16 +57,11 @@ class Public_Docent_Display extends Public_Shortcode_Display {
 			<button class="kleistad-button" type="button" id="kleistad_kalender"  style="width:3em" ><span class="dashicons dashicons-calendar"></span></button>
 			<button class="kleistad-button" type="button" id="kleistad_later" style="width:3em" ><span class="dashicons dashicons-controls-forward"></span></button>
 		</div>
-		<table id="kleistad_planning" class="kleistad-planning" >
+		<table id="<?php echo esc_attr( $tabel ); ?>" class="<?php echo esc_attr( str_replace( '_', '-', $tabel ) ); ?>" >
 			<tr><th>Gegevens worden geladen...<th></tr>
 		</table>
-		<div style="float: left">
-			<button type="button" id="kleistad_default" class="kleistad-button">Standaard planning opslaan</button>
-		</div>
-		<div style="float: right">
-			<button type="button" id="kleistad_bewaren" class="kleistad-button">Bewaren</button>
-		</div>
 		<?php
 	}
+
 
 }

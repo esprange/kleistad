@@ -525,30 +525,23 @@ div.kleistad-werkplek-dagdeel {
 	}
 }
 
-.kleistad-inzet-optie {
+.kleistad-inzet {
 	appearance: none;
-	background: lightsalmon;
 	border: 1px solid var(--bc, var(--border));
 	border-radius: 7px;
 	display: inline-block;
 	height: 21px;
 	opacity: 0.9;
 	text-align: center;
-	width: 21px;
 	color: white;
 }
 
+.kleistad-inzet-optie {
+	background: lightsalmon;
+}
+
 .kleistad-inzet-definitief {
-	appearance: none;
 	background: dimgray;
-	border: 1px solid var(--bc, var(--border));
-	border-radius: 7px;
-	display: inline-block;
-	height: 21px;
-	opacity: 0.9;
-	text-align: center;
-	width: 21px;
-	color: white;
 }
 
 .kleistad-planning td,
