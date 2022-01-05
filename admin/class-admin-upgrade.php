@@ -20,7 +20,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 134;
+	const DBVERSIE = 136;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -239,17 +239,6 @@ class Admin_Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		dbDelta(
-			"CREATE TABLE {$wpdb->prefix}kleistad_ruimtes (
-			id int(10) NOT NULL AUTO_INCREMENT,
-			datum date,
-			dagdeel	varchar(10) NOT NULL,
-			werkruimte varchar(30) NOT NULL,
-			referentie varchar(30) NOT NULL,
-			status tinyint(1) DEFAULT 0,
-			PRIMARY KEY  (id)
-			) $charset_collate;"
-		);
 
 		if ( ! $wpdb->get_var( "SHOW INDEX FROM {$wpdb->prefix}kleistad_orders WHERE Key_name = 'referenties' " ) ) {
 			$wpdb->query( "CREATE INDEX referenties ON {$wpdb->prefix}kleistad_orders (referentie)" );
@@ -363,6 +352,24 @@ class Admin_Upgrade {
 	private function convert_werkplekgebruik() {
 	}
 
+	/**
+	 * Converteer de workshop docenten van display_name naar ID
+	 */
+	private function convert_workshops() {
+		global $wpdb;
+		foreach ( new Workshops() as $workshop ) {
+			if ( intval( $workshop->docent ) ) {
+				continue;
+			}
+			if ( $user = $wpdb->get_row( $wpdb->prepare(
+				"SELECT `ID` FROM $wpdb->users WHERE `display_name` = %s", $workshop->docent
+			) ) ) {
+				$workshop->docent = "$user->ID";
+				$workshop->save();
+			}
+		}
+	}
+
 	// phpcs:enable
 
 	/**
@@ -385,6 +392,7 @@ class Admin_Upgrade {
 		$this->convert_ovens();
 		$this->convert_reserveringen();
 		$this->convert_werkplekgebruik();
+		$this->convert_workshops();
 		$this->convert_opties();
 	}
 }
