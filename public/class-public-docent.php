@@ -136,13 +136,15 @@ class Public_Docent extends Shortcode {
 	}
 
 	/**
-	 * Maak de header van de tabel
+	 * Maak de tabel
 	 *
-	 * @param int $maandag De datum waarin de week start.
+	 * @param int      $maandag De datum waarin de week start.
+	 * @param callable $functie De functie die de inhoud van de cellen invult.
+	 * @param array    $args De extra argumenten voor de functie.
 	 *
 	 * @return string
 	 */
-	private static function header( int $maandag ) : string {
+	private static function tabel( int $maandag, callable $functie, array $args ) : string {
 		$html      = <<<EOT
 <thead>
 	<tr>
@@ -160,6 +162,28 @@ EOT;
 </thead>
 <tbody>
 EOT;
+		foreach ( DAGDEEL as $dagdeel ) {
+			$html .= <<<EOT
+	<tr>
+		<td>$dagdeel</td>
+EOT;
+			for ( $dagnr = 0; $dagnr < 7; $dagnr++ ) {
+				$datum = $maandag + $dagnr * DAY_IN_SECONDS;
+				$html .= <<<EOT
+		<td>
+EOT;
+				$html .= call_user_func( $functie, $datum, $dagdeel, $args );
+				$html .= <<<EOT
+		</td>
+EOT;
+			}
+			$html .= <<<EOT
+	</tr>
+EOT;
+		}
+		$html .= <<<EOT
+</tbody>
+EOT;
 		return $html;
 	}
 
@@ -171,47 +195,53 @@ EOT;
 	 * @return string
 	 */
 	private static function show_planning( int $maandag ) : string {
-		$docent_id     = get_current_user_id();
-		$vandaag       = strtotime( 'today' );
-		$reserveringen = self::docent_beschikbaarheid( $maandag, new Docent( $docent_id ), new Cursussen( $vandaag ), new Workshops( $vandaag ) );
-		$html          = self::header( $maandag );
-		foreach ( DAGDEEL as $dagdeel ) {
-			$html .= <<<EOT
-	<tr>
-		<td>$dagdeel</td>
+		$docent_id = get_current_user_id();
+		$vandaag   = strtotime( 'today' );
+		return self::tabel(
+			$maandag,
+			[
+				__CLASS__,
+				'show_planning_cell',
+			],
+			[
+				'reserveringen' => self::docent_beschikbaarheid( $maandag, new Docent( $docent_id ), new Cursussen( $vandaag ), new Workshops( $vandaag ) ),
+			]
+		);
+	}
+
+	/**
+	 * Toon de planning van een dag, dagdeel
+	 *
+	 * @param int    $datum   De datum.
+	 * @param string $dagdeel Het dagdeel.
+	 * @param array  $args    De argumenten (eerste betreft reserveringen).
+	 *
+	 * @return string
+	 */
+	private static function show_planning_cell( int $datum, string $dagdeel, array $args ) : string {
+		$html        = '';
+		$reservering = $args['reserveringen'][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
+		switch ( $reservering ) {
+			case Docent::NIET_BESCHIKBAAR:
+				$html .= <<<EOT
+<input type="checkbox" class="planning" data-datum="$datum" data-dagdeel="$dagdeel" >
 EOT;
-			for ( $dagnr = 0; $dagnr < 7; $dagnr++ ) {
-				$datum       = $maandag + $dagnr * DAY_IN_SECONDS;
-				$reservering = $reserveringen[ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
-				switch ( $reservering ) {
-					case Docent::NIET_BESCHIKBAAR:
-						$html .= <<<EOT
-		<td><input type="checkbox" class="planning" data-datum="$datum" data-dagdeel="$dagdeel" ></td>
+				break;
+			case Docent::BESCHIKBAAR:
+				$html .= <<<EOT
+<input type="checkbox" class="planning" data-datum="$datum" data-dagdeel="$dagdeel" checked="checked" >
 EOT;
-						break;
-					case Docent::BESCHIKBAAR:
-						$html .= <<<EOT
-		<td><input type="checkbox" class="planning" data-datum="$datum" data-dagdeel="$dagdeel" checked="checked" ></td>
+				break;
+			case Docent::OPTIE:
+				$html .= <<<EOT
+<span class="kleistad-inzet kleistad-inzet-optie" style="width:21px">O</span>
 EOT;
-						break;
-					case Docent::OPTIE:
-						$html .= <<<EOT
-		<td><span class="kleistad-inzet kleistad-inzet-optie" style="width:21px">O</span></td>
-EOT;
-						break;
-					case Docent::GERESERVEERD:
-						$html .= <<<EOT
-		<td><span class="kleistad-inzet kleistad-inzet-definitief" style="width:21px">R</span></td>
-EOT;
-				}
-			}
-			$html .= <<<EOT
-	</tr>
+				break;
+			case Docent::GERESERVEERD:
+				$html .= <<<EOT
+<span class="kleistad-inzet kleistad-inzet-definitief" style="width:21px">R</span>
 EOT;
 		}
-		$html .= <<<EOT
-</tbody>
-EOT;
 		return $html;
 	}
 
@@ -232,49 +262,52 @@ EOT;
 		foreach ( $docenten as $docent ) {
 			$reserveringen[ $docent->ID ] = self::docent_beschikbaarheid( $maandag, $docent, $cursussen, $workshops );
 		}
-		$html = self::header( $maandag );
-		foreach ( DAGDEEL as $dagdeel ) {
-			$html .= <<<EOT
-	<tr>
-		<td>$dagdeel</td>
+
+		return self::tabel(
+			$maandag,
+			[
+				__CLASS__,
+				'show_overzicht_cell',
+			],
+			[
+				'reserveringen' => $reserveringen,
+				'docenten'      => $docenten,
+			]
+		);
+	}
+
+	/**
+	 * Toon de beschikbaarheid van een dag, dagdeel
+	 *
+	 * @param int    $datum   De datum.
+	 * @param string $dagdeel Het dagdeel.
+	 * @param array  $args    De argumenten (eerste betreft reserveringen, tweede de docenten).
+	 *
+	 * @return string
+	 */
+	private static function show_overzicht_cell( int $datum, string $dagdeel, array $args ) : string {
+		$html = '';
+		foreach ( $args['docenten'] as $docent ) {
+			$reservering = $args['reserveringen'][ $docent->ID ][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
+			switch ( $reservering ) {
+				case Docent::NIET_BESCHIKBAAR:
+					break;
+				case Docent::BESCHIKBAAR:
+					$html .= <<<EOT
+		$docent->display_name<br/>
 EOT;
-			for ( $dagnr = 0; $dagnr < 7; $dagnr ++ ) {
-				$datum = $maandag + $dagnr * DAY_IN_SECONDS;
-				$html .= <<<EOT
-		<td>
+					break;
+				case Docent::OPTIE:
+					$html .= <<<EOT
+		<span class="kleistad-inzet kleistad-inzet-optie">$docent->display_name</span><br/>
 EOT;
-				foreach ( $docenten as $docent ) {
-					$reservering = $reserveringen[ $docent->ID ][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
-					switch ( $reservering ) {
-						case Docent::NIET_BESCHIKBAAR:
-							break;
-						case Docent::BESCHIKBAAR:
-							$html .= <<<EOT
-			$docent->display_name<br/>
-EOT;
-							break;
-						case Docent::OPTIE:
-							$html .= <<<EOT
-			<span class="kleistad-inzet kleistad-inzet-optie">$docent->display_name</span><br/>
-EOT;
-							break;
-						case Docent::GERESERVEERD:
-							$html .= <<<EOT
-			<span class="kleistad-inzet kleistad-inzet-definitief">$docent->display_name</span><br/>
-EOT;
-					}
-				}
-				$html .= <<<EOT
-		</td>
+					break;
+				case Docent::GERESERVEERD:
+					$html .= <<<EOT
+		<span class="kleistad-inzet kleistad-inzet-definitief">$docent->display_name</span><br/>
 EOT;
 			}
-			$html .= <<<EOT
-	</tr>
-EOT;
 		}
-		$html .= <<<EOT
-</tbody>
-EOT;
 		return $html;
 	}
 
