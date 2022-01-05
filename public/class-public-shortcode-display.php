@@ -87,7 +87,7 @@ abstract class Public_Shortcode_Display {
 	protected function form( string $form_content = 'form_content' ) {
 		if ( method_exists( $this, $form_content ) ) {
 			?>
-		<form action="#" autocomplete="off" enctype="multipart/form-data" >
+		<form action="#" autocomplete="off" enctype="multipart/form-data" class="kleistad-form" >
 			<?php
 			$this->$form_content();
 			?>

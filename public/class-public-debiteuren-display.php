@@ -87,7 +87,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		$factuur_urls = $factuur->overzicht( $this->data['debiteur']['factuur'] );
 		?>
 		<p><?php echo esc_html( ucfirst( $this->data['debiteur']['betreft'] ) . ', ' . ( ! $this->data['debiteur']['gesloten'] ? 'openstaand voor ' : 'besteld door ' ) . $this->data['debiteur']['naam'] ); ?></p>
-		<table class="kleistad-form">
+		<table class="kleistad-formtable">
 			<tr><th>referentie</th><td><?php echo esc_html( $this->data['debiteur']['referentie'] . ' geboekt op ' . date( 'd-m-Y', $this->data['debiteur']['sinds'] ) ); ?></td><th>historie</th></tr>
 			<tr><th>factuur</th><td>
 				<?php foreach ( $factuur_urls as $factuur_url ) : ?>

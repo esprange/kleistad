@@ -278,7 +278,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	protected function form_communicatie() {
 		?>
 		<input type="hidden" name="casus_id" value="<?php echo esc_attr( $this->data['casus']['casus_id'] ); ?>"/>
-		<table class="kleistad-form" >
+		<table class="kleistad-formtable" >
 			<tr>
 				<th>Soort activiteit</th>
 				<td><?php echo esc_html( ucfirst( $this->data['casus']['naam'] ) ); ?></td>

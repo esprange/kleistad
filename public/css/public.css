@@ -193,39 +193,39 @@ a.kleistad-schedule {
 	font-size: small;
 }
 
-.kleistad-form tr {
+.kleistad-formtable tr {
 	margin: 0;
 }
 
-.kleistad-form td {
+.kleistad-formtable td {
 	border-style: none;
 }
 
-.kleistad-form th {
+.kleistad-formtable th {
 	border-style: none;
 }
 
-.kleistad-form input[type="text"],
-.kleistad-form select {
+.kleistad-formtable input[type="text"],
+.kleistad-formtable select {
 	width: 100%;
 }
 
-.kleistad-form button {
+.kleistad-formtable button {
 	height: 2.5em;
 	padding: 0;
 	width: 100%;
 }
 
-.kleistad-form option,
-.kleistad-form input {
+.kleistad-formtable option,
+.kleistad-formtable input {
 	height: 2.1em;
 }
 
-.kleistad-form input[type="number"] {
+.kleistad-formtable input[type="number"] {
 	width: 5em;
 }
 
-.kleistad-form input[type="submit"] {
+.kleistad-formtable input[type="submit"] {
 	height: 2.5em;
 }
 
@@ -273,7 +273,7 @@ a.kleistad-schedule {
 	cursor: pointer;
 }
 
-.kleistad-form {
+.kleistad-formtable {
 	border: none;
 	border-collapse: collapse;
 	border-spacing: 0;

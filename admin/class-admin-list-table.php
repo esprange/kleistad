@@ -14,11 +14,6 @@ namespace Kleistad;
 use WP_List_Table;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
-	/**
-	 * PHPStorm heeft hier een probleem mee.
-	 *
-	 * @noinspection PhpIncludeInspection
-	 */
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 

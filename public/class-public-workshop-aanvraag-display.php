@@ -32,7 +32,8 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		<div class="kleistad-tab"><?php $this->aanvraag(); ?></div>
 		<div class="kleistad-tab"><?php $this->planning(); ?></div>
 		<div class="kleistad-tab"><?php $this->contactinfo()->email()->telnr(); ?></div>
-		<div class="kleistad-tab"><?php $this->afsluiting(); ?></div>
+		<div class="kleistad-tab"><?php $this->commentaar(); ?></div>
+		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
 		<?php
 	}
 
@@ -96,6 +97,11 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	private function contactinfo() : Public_Workshop_Aanvraag_Display {
 		?>
 		<div class="kleistad-row">
+			<div class="kleistad-col-10 kleistad-label">
+				<label>Wat zijn je contact gegevens ?</label>
+			</div>
+		</div>
+		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_contact">Naam</label>
 			</div>
@@ -139,7 +145,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	/**
 	 * Afsluitende vraag
 	 */
-	private function afsluiting() {
+	private function commentaar() {
 		?>
 		<div class ="kleistad-row" title="Heb je nog nadere vragen, stel ze gerust. Of laat hier opmerkingen achter die van belang zouden kunnen zijn voor Kleistad" >
 			<div class="kleistad-col-3" >
@@ -152,4 +158,27 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		<?php
 	}
 
+	/**
+	 * Bevestig ingevoerde gegevens
+	 */
+	private function bevestiging() {
+		?>
+		<div class="kleistad-row">
+			<div class="col_5">
+				<h3>Overzicht ingevoerde gegevens</h3>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<p>Het betreft de aanvraag voor een <strong><span id="bevestig_naam" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_omvang"></span></strong> deelnemers
+			in de <strong><span id="bevestig_dagdeel" style="text-transform: lowercase;" ></span></strong> op <strong><span id="bevestig_plandatum"></span></strong>.</p>
+		</div>
+		<div class="kleistad-row">
+			<p>Aangevraagd door <strong><span id="bevestig_contact"></span></strong>, met emailadres <strong><span id="bevestig_user_email"></span></strong> en telefoonnummer <strong><span id="bevestig_telnr"></span></strong></p>
+			<p>Speciale wensen en/of mededeling : </p><p><span id="bevestig_vraag"></span></p>
+		</div>
+		<div class="kleistad-row">
+			<p style="font-style: italic;float: right">Als het bovenstaande correct is dan kan de aanvraag verzonden worden</p>
+		</div>
+		<?php
+	}
 }

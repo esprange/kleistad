@@ -21,7 +21,7 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 	protected function overzicht() {
 		?>
 		<div id="kleistad_deelnemer_info">
-			<table class="kleistad-form" id="kleistad_deelnemer_tabel" >
+			<table class="kleistad-formtable" id="kleistad_deelnemer_tabel" >
 			</table>
 		</div>
 		<p><label for="kleistad_deelnemer_selectie">Selectie</label>

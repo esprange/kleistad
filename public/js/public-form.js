@@ -246,6 +246,8 @@ function validate_email( input, compare ) {
 			 * Tab voor multiforms
 			 */
 			let currentTab = 0;
+			let form_input = false;
+
 			initTab();
 
 			/**
@@ -335,6 +337,28 @@ function validate_email( input, compare ) {
 					$( '.kleistad-tab' ).hide();
 					validateTab( currentTab );
 					showTab( --currentTab );
+				}
+			)
+			.on(
+				'change',
+				'input, select, textarea',
+				function() {
+					let naam = $( this ).attr( 'name' );
+					$( '#bevestig_' + naam ).html( $( this ).val() );
+				}
+			)
+
+			window.onbeforeunload = function( event ) {
+				if ( form_input ) {
+					event.returnValue = 'Het formulier is nog niet verzonden. Weet je zeker dat je wilt afsluiten ?';
+				}
+			}
+
+			$( '.kleistad-form' ).on(
+				'change',
+				'*',
+				function() {
+					form_input = true;
 				}
 			)
 		}
