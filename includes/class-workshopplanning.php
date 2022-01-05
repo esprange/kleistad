@@ -161,10 +161,20 @@ class Workshopplanning extends WP_Async_Request {
 	 * Minimaliseer de beschikbaarheid voor alleen die dagdelen waarbij er nog ruimte voor activiteiten is en een docent beschikbaar.
 	 */
 	private function schoon_beschikbaarheid() {
-		$maximum = opties()['max_activiteit'] ?? 1;
+		$maximum         = opties()['max_activiteit'] ?? 1;
+		$activiteitpauze = opties()['actpauze'] ?? [];
 		foreach ( $this->beschikbaarheid as $key => $dag_dagdeel ) {
 			if ( $maximum <= $dag_dagdeel['aantal'] || ! $dag_dagdeel['docent'] ) {
 				unset( $this->beschikbaarheid[ $key ] );
+				continue;
+			}
+			$dag = strtotime( explode( '_', $key )[0] );
+			foreach ( $activiteitpauze as $pauze ) {
+				$pauze_start = strtotime( $pauze['start'] );
+				$pauze_eind  = strtotime( $pauze['eind'] );
+				if ( $dag >= $pauze_start && $dag <= $pauze_eind ) {
+					unset( $this->beschikbaarheid[ $key ] );
+				}
 			}
 		}
 	}

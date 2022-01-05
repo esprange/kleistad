@@ -22,6 +22,40 @@
 	}
 
 	/**
+	 * Definieer de datum velden.
+	 */
+	function defineDatumpickers() {
+		let $datum = $( '.kleistad-datum' );
+		if ( $datum[0] && ! $datum.is( ':data("ui-datepicker")' ) ) {
+			$datum.datepicker(
+				{
+					dateFormat: 'dd-mm-yy',
+					beforeShowDay: function( date ) {
+						const day = date.getDate();
+						if ( $( this ).hasClass( 'maand' ) ) {
+							return [ ( 1 === day ) ];
+						}
+						return [ true ];
+					},
+					beforeShow: function( input ) {
+						return ( ! $( input ).attr( 'readonly' ) );
+					}
+				}
+			);
+		}
+	}
+
+	/**
+	 * Initialiseer de eventuele color pickers.
+	 */
+	function defineColorpickers() {
+		let $color = $( '.kleistad-color' );
+		if ( $color[0] ) {
+			$color.wpColorPicker();
+		}
+	}
+
+	/**
 	 * Document ready.
 	 */
 	$(
@@ -31,10 +65,9 @@
 				$werkplek_start_config = $( '#kleistad_start_config' ),
 				$werkplek_eind_config  = $( '#kleistad_eind_config' );
 
-			/**
-			 * Initialiseer de eventuele color pickers.
-			 */
-			$( '.kleistad-color' ).wpColorPicker();
+			defineColorpickers();
+
+			defineDatumpickers();
 
 			/**
 			 * Voeg 15 euro toe.
@@ -94,7 +127,8 @@
 					);
 					template += '<td><span class="lijst_verwijderen dashicons dashicons-trash" style="cursor: pointer;"></span></td>';
 					$( '#lijst_' + key + ' tbody' ).append( '<tr>' + template + '</tr>' );
-					$( '.kleistad-color' ).wpColorPicker();
+					defineDatumpickers();
+					defineColorpickers();
 				}
 			).on(
 				'click',
@@ -102,7 +136,7 @@
 				function() {
 					$( this ).closest( 'tr' ).remove();
 				}
-			)
+			);
 
 			/**
 			 * Bij wijzigen beperkt abonnement, vereisen dat de dag ingevuld wordt.
@@ -111,25 +145,6 @@
 				'change',
 				function() {
 					$( '#kleistad-dag' ).prop( 'required', ( 'beperkt' === $( this ).val() ) );
-				}
-			);
-
-			/**
-			 * Definieer de datumpickers.
-			 */
-			$( '.kleistad-datum' ).datepicker(
-				{
-					dateFormat: 'dd-mm-yy',
-					beforeShowDay: function( date ) {
-						const day = date.getDate();
-						if ( $( this ).hasClass( 'maand' ) ) {
-							return [ ( 1 === day ) ];
-						}
-						return [ true ];
-					},
-					beforeShow: function( input ) {
-						return ( ! $( input ).attr( 'readonly' ) );
-					}
 				}
 			);
 

@@ -503,6 +503,23 @@ class Admin_Instellingen_Display {
 				'titel'  => 'Activiteit',
 				'velden' => [],
 			],
+			'actpauze'   => [
+				'titel'  => 'Activiteiten pauze',
+				'velden' => [
+					[
+						'naam'  => 'start',
+						'titel' => 'Start datum',
+						'veld'  => 'type="text"',
+						'class' => 'kleistad-datum',
+					],
+					[
+						'naam'  => 'eind',
+						'titel' => 'Eind datum ',
+						'veld'  => 'type="text"',
+						'class' => 'kleistad-datum',
+					],
+				],
+			],
 		];
 		foreach ( $parameters as $key => $parameter ) {
 			$json_velden = wp_json_encode( $parameter['velden'] );

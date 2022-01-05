@@ -290,17 +290,17 @@ EOT;
 					break;
 				case Docent::BESCHIKBAAR:
 					$html .= <<<EOT
-		$docent->display_name<br/>
+		<span class="kleistad-inzet" >$docent->display_name</span><br/>
 EOT;
 					break;
 				case Docent::OPTIE:
 					$html .= <<<EOT
-		<span class="kleistad-inzet kleistad-inzet-optie">$docent->display_name</span><br/>
+		<span class="kleistad-inzet kleistad-inzet-optie" >$docent->display_name</span><br/>
 EOT;
 					break;
 				case Docent::GERESERVEERD:
 					$html .= <<<EOT
-		<span class="kleistad-inzet kleistad-inzet-definitief">$docent->display_name</span><br/>
+		<span class="kleistad-inzet kleistad-inzet-definitief" >$docent->display_name</span><br/>
 EOT;
 			}
 		}

@@ -527,21 +527,28 @@ div.kleistad-werkplek-dagdeel {
 
 .kleistad-inzet {
 	appearance: none;
-	border: 1px solid var(--bc, var(--border));
-	border-radius: 7px;
 	display: inline-block;
 	height: 21px;
+	max-width: 11ch;
 	opacity: 0.9;
+	overflow:hidden;
 	text-align: center;
-	color: white;
+	text-overflow:ellipsis;
+	white-space:nowrap;
 }
 
 .kleistad-inzet-optie {
 	background: lightsalmon;
+	border: 1px solid var(--bc, var(--border));
+	border-radius: 7px;
+	color: white;
 }
 
 .kleistad-inzet-definitief {
 	background: dimgray;
+	border: 1px solid var(--bc, var(--border));
+	border-radius: 7px;
+	color: white;
 }
 
 .kleistad-planning td,
