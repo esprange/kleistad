@@ -87,7 +87,7 @@ class Workshopplanning extends WP_Async_Request {
 	 * @param int $eind  De eind datum.
 	 */
 	private function start( int $start, int $eind ) {
-		for ( $datum = $start; $datum <= $eind; $datum = $datum + DAY_IN_SECONDS ) {
+		for ( $datum = $start; $datum <= $eind; $datum += DAY_IN_SECONDS ) {
 			foreach ( DAGDEEL as $dagdeel ) {
 				$this->beschikbaarheid[ date( 'Y-m-d', $datum ) . '_' . strtolower( $dagdeel ) ] = [
 					'aantal' => 0,

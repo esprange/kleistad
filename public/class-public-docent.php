@@ -107,11 +107,10 @@ class Public_Docent extends Shortcode {
 	 */
 	private static function docent_beschikbaarheid( int $maandag, Docent $docent, Cursussen $cursussen, Workshops $workshops ) : array {
 		$reserveringen = [];
-		$maandag_2     = $maandag + 7 * DAY_IN_SECONDS;
 		foreach ( $cursussen as $cursus ) {
 			if ( intval( $cursus->docent ) === $docent->ID && ! $cursus->vervallen ) {
 				foreach ( $cursus->lesdatums as $lesdatum ) {
-					if ( $lesdatum >= $maandag && $lesdatum < $maandag_2 ) {
+					if ( $lesdatum >= $maandag && $lesdatum < ( $maandag + WEEK_IN_SECONDS ) ) {
 						$reserveringen[ $lesdatum ][ bepaal_dagdeel( $cursus->start_tijd, $cursus->eind_tijd ) ] = Docent::GERESERVEERD;
 					}
 				}
@@ -119,14 +118,13 @@ class Public_Docent extends Shortcode {
 		}
 		foreach ( $workshops as $workshop ) {
 			if ( intval( $workshop->docent ) === $docent->ID && ! $workshop->vervallen ) {
-				if ( $workshop->datum >= $maandag && $workshop->datum < $maandag_2 ) {
+				if ( $workshop->datum >= $maandag && $workshop->datum < ( $maandag + WEEK_IN_SECONDS ) ) {
 					$reserveringen[ $workshop->datum ][ bepaal_dagdeel( $workshop->start_tijd, $workshop->eind_tijd ) ] = $workshop->definitief ? Docent::GERESERVEERD : Docent::OPTIE;
 				}
 			}
 		}
 		foreach ( DAGDEEL as $dagdeel ) {
-			for ( $dagnr = 0; $dagnr < 7; $dagnr ++ ) {
-				$datum = $maandag + $dagnr * DAY_IN_SECONDS;
+			for ( $datum = $maandag;  $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 				if ( ! isset( $reserveringen[ $datum ][ $dagdeel ] ) ) {
 					$reserveringen[ $datum ][ $dagdeel ] = $docent->beschikbaarheid( $datum, $dagdeel );
 				}
@@ -145,16 +143,15 @@ class Public_Docent extends Shortcode {
 	 * @return string
 	 */
 	private static function tabel( int $maandag, callable $functie, array $args ) : string {
-		$html      = <<<EOT
+		$html = <<<EOT
 <thead>
 	<tr>
 		<th></th>
 EOT;
-		$weekdagen = [ 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag' ];
-		foreach ( $weekdagen as $dagnr => $weekdag ) {
-			$datum_str = date( 'd-m-Y', $maandag + $dagnr * DAY_IN_SECONDS );
-			$html     .= <<<EOT
-		<th>$weekdag<br/>$datum_str</th>
+		for ( $datum = $maandag; $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
+			$weekdag = strftime( '%A<br/>%d-%m-%Y', $datum );
+			$html   .= <<<EOT
+		<th>$weekdag</th>
 EOT;
 		}
 		$html .= <<<EOT
@@ -167,8 +164,7 @@ EOT;
 	<tr>
 		<td>$dagdeel</td>
 EOT;
-			for ( $dagnr = 0; $dagnr < 7; $dagnr++ ) {
-				$datum = $maandag + $dagnr * DAY_IN_SECONDS;
+			for ( $datum = $maandag; $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 				$html .= <<<EOT
 		<td>
 EOT;

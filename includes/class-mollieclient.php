@@ -117,7 +117,7 @@ class MollieClient {
 		}
 		$method  = $this->mollie_service->methods->get( Mollie\Api\Types\PaymentMethod::IDEAL, [ 'include' => 'issuers' ] );
 		$issuers = $method->issuers();
-		set_transient( 'mollie_banken', $issuers, 7 * DAY_IN_SECONDS );
+		set_transient( 'mollie_banken', $issuers, WEEK_IN_SECONDS );
 		return $issuers;
 	}
 
