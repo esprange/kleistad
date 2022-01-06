@@ -31,7 +31,12 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	protected function form_content() {
 		?>
 		<input type="hidden" id="kleistad_submit_value" value="<?php echo esc_attr( $this->display_actie ); ?>" >
+		<?php if ( isset( $this->data['verbergen'] ) ) : ?>
+		<input name="cursus_id" type="hidden" value="<?php echo esc_attr( $this->data['open_cursussen'][0]['cursus']->id ); ?>"
+			data-cursus='<?php echo $this->data['open_cursussen'][0]['json'] ?: ''; // phpcs:ignore ?>' />
+		<?php else : ?>
 		<div class="kleistad-tab"><?php $this->cursus_info(); ?></div>
+		<?php endif ?>
 		<div class="kleistad-tab"><?php $this->aantal( is_user_logged_in() ? 1 : 0 )->techniek_keuze(); ?></div>
 		<?php if ( is_super_admin() ) : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker_selectie( 'Cursist' ); ?></div>
@@ -104,7 +109,12 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 */
 	private function cursus_info() {
 		?>
-		<div id="kleistad_cursussen" <?php echo count( $this->data['open_cursussen'] ) === 0 ? 'style="display:none"' : ''; ?> >
+		<div id="kleistad_cursussen">
+			<div class="kleistad-row">
+				<div class="kleistad-col-10">
+					<label class="kleistad-label">Kies de cursus waarvoor je je wilt inschrijven</label>
+				</div>
+			</div>
 		<?php
 		foreach ( $this->data['open_cursussen'] as $cursus_data ) {
 			$tooltip       = 0 < $cursus_data['cursus']->inschrijfkosten ?
@@ -140,7 +150,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		<div id="kleistad_cursus_technieken" style="display:none;" >
 			<div class="kleistad-row" >
 				<div class="kleistad-col-10">
-					<label class="kleistad-label">kies de techniek(en) die je wilt oefenen</label>
+					<label class="kleistad-label">Kies de techniek(en) die je wilt oefenen</label>
 				</div>
 			</div>
 			<div class="kleistad-row" >
@@ -205,6 +215,11 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		?>
 		<div id="kleistad_cursus_betalen" style="display:none;">
 			<div class="kleistad-row">
+				<div class="kleistad-col-10">
+					<label class="kleistad-label">Bepaal de wijze van betalen. Pas na ontvangst van de betaling kan je worden ingedeeld !</label>
+				</div>
+			</div>
+			<div class="kleistad-row">
 				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
 				<label for="kleistad_betaal_ideal" ></label>
 			</div>
@@ -243,9 +258,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	private function bevestiging() {
 		?>
 		<div class="kleistad-row">
-			<div class="col_5">
-				<h3>Overzicht ingevoerde gegevens</h3>
-			</div>
+				<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
 		</div>
 		<div class="kleistad-row">
 			<p>Het betreft de inschrijving voor de cursus <strong><span id="bevestig_cursus" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_aantal"></span></strong> deelnemer(s)</p>

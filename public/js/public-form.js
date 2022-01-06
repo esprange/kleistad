@@ -65,19 +65,19 @@ function validate_email( input, compare ) {
 ( function( $ ) {
 	'use strict';
 
-	let currentTab = 0;
+	let currentTab = 0,
+		firstTab   = 0;
 
 	/**
 	 * Initialiseer een multiform tab.
 	 */
 	function initTab() {
-		let $tab   = $( '.kleistad-tab' );
-		let html   = '<div style="overflow:auto;float:right;">' +
+		let $tab = $( '.kleistad-tab' );
+		let html = '<div style="overflow:auto;float:right;margin-top: 20px;">' +
 			'<button type="button" class="kleistad-button" id="kleistad_tab_prev" >Terug</button>&nbsp;' +
 			'<button type="button" class="kleistad-button" id="kleistad_tab_next" >Verder</button>' +
 			'<button type="submit" class="kleistad-button" id="kleistad_submit" >Verzenden</button>' +
 			'</div><div style="text-align: center;margin-top: 40px;">';
-		currentTab = 0;
 		$tab.each(
 			function() {
 				html += '<span class="kleistad-stap"></span>';
@@ -126,13 +126,14 @@ function validate_email( input, compare ) {
 					}
 				}
 			);
+			$stap.eq( currentTab ).toggle( show );
+			if ( 0 === direction && ! show ) {
+				currentTab++;
+				firstTab++;
+			}
 		} while ( ! show && currentTab < maxTab );
 		$tab.eq( currentTab ).show();
-		if ( 0 === currentTab ) {
-			$( '#kleistad_tab_prev' ).hide();
-		} else {
-			$( '#kleistad_tab_prev' ).show();
-		}
+		$( '#kleistad_tab_prev' ).toggle( firstTab !== currentTab );
 		$( '#kleistad_tab_next' ).toggle( $tab.length - 1 !== currentTab );
 		$( '#kleistad_submit' ).toggle( $tab.length - 1 === currentTab );
 		$stap.removeClass( 'actief' );

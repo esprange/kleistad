@@ -165,7 +165,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="col_5">
-				<h3>Overzicht ingevoerde gegevens</h3>
+				<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
 			</div>
 		</div>
 		<div class="kleistad-row">
