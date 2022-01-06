@@ -121,8 +121,11 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 			KLEISTAD_API,
 			'/aanvraag',
 			[
-				'methods'  => 'GET',
-				'callback' => [ __CLASS__, 'callback_aanvraag' ],
+				'methods'             => 'GET',
+				'callback'            => [ __CLASS__, 'callback_aanvraag' ],
+				'permission_callback' => function() {
+					return true;
+				},
 			]
 		);
 	}
