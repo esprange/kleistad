@@ -127,8 +127,9 @@ abstract class Public_Shortcode_Display {
 	 */
 	protected function gebruiker_logged_in() : Public_Shortcode_Display {
 		?>
-		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" />
-		<input type="hidden" name="aantal" id="kleistad_aantal" value="1" />
+		<div>
+			<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( get_current_user_id() ); ?>" />
+		</div>
 		<?php
 		return $this;
 	}
@@ -140,55 +141,57 @@ abstract class Public_Shortcode_Display {
 	 */
 	protected function gebruiker() : Public_Shortcode_Display {
 		?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_voornaam">Voornaam</label>
+		<div>
+			<div class="kleistad-row">
+				<div class="kleistad-col-3 kleistad-label">
+					<label for="kleistad_voornaam">Voornaam</label>
+				</div>
+				<div class="kleistad-col-4">
+					<input class="kleistad-input" name="first_name" id="kleistad_voornaam" type="text"
+					required maxlength="25" placeholder="voornaam" title="Vul s.v.p. de voornaam in"
+					value="<?php echo esc_attr( $this->data['input']['first_name'] ); ?>" autocomplete="given-name" />
+				</div>
 			</div>
-			<div class="kleistad-col-4">
-				<input class="kleistad-input" name="first_name" id="kleistad_voornaam" type="text"
-				required maxlength="25" placeholder="voornaam" title="Vul s.v.p. de voornaam in"
-				value="<?php echo esc_attr( $this->data['input']['first_name'] ); ?>" autocomplete="given-name" />
+			<div class="kleistad-row">
+				<div class="kleistad-col-3 kleistad-label">
+					<label for="kleistad_achternaam">Achternaam</label>
+				</div>
+				<div class="kleistad-col-4">
+					<input class="kleistad-input" name="last_name" id="kleistad_achternaam" type="text"
+					required maxlength="25" placeholder="achternaam" title="Vul s.v.p. de achternaam in"
+					value="<?php echo esc_attr( $this->data['input']['last_name'] ); ?>" autocomplete="family-name" />
+				</div>
 			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_achternaam">Achternaam</label>
+			<?php $this->email()->telnr(); ?>
+			<div class="kleistad-row">
+				<div class="kleistad-col-3 kleistad-label">
+					<label for="kleistad_pcode">Postcode, huisnummer</label>
+				</div>
+				<div class="kleistad-col-2">
+					<input class="kleistad-input" name="pcode" id="kleistad_pcode" type="text"
+						maxlength="10" placeholder="1234AB" pattern="^[1-9][0-9]{3}?[A-Z]{2}$" title="Vul s.v.p. een geldige Nederlandse postcode in"
+						value="<?php echo esc_attr( $this->data['input']['pcode'] ); ?>" autocomplete="postal-code" />
+				</div>
+				<div class="kleistad-col-2">
+					<input class="kleistad-input" name="huisnr" id="kleistad_huisnr" type="text"
+						maxlength="10" placeholder="nr" title="Vul s.v.p. een huisnummer in"
+						value="<?php echo esc_attr( $this->data['input']['huisnr'] ); ?>" />
+				</div>
 			</div>
-			<div class="kleistad-col-4">
-				<input class="kleistad-input" name="last_name" id="kleistad_achternaam" type="text"
-				required maxlength="25" placeholder="achternaam" title="Vul s.v.p. de achternaam in"
-				value="<?php echo esc_attr( $this->data['input']['last_name'] ); ?>" autocomplete="family-name" />
-			</div>
-		</div>
-		<?php $this->email()->telnr(); ?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_pcode">Postcode, huisnummer</label>
-			</div>
-			<div class="kleistad-col-2">
-				<input class="kleistad-input" name="pcode" id="kleistad_pcode" type="text"
-					maxlength="10" placeholder="1234AB" pattern="^[1-9][0-9]{3}?[A-Z]{2}$" title="Vul s.v.p. een geldige Nederlandse postcode in"
-					value="<?php echo esc_attr( $this->data['input']['pcode'] ); ?>" autocomplete="postal-code" />
-			</div>
-			<div class="kleistad-col-2">
-				<input class="kleistad-input" name="huisnr" id="kleistad_huisnr" type="text"
-					maxlength="10" placeholder="nr" title="Vul s.v.p. een huisnummer in"
-					value="<?php echo esc_attr( $this->data['input']['huisnr'] ); ?>" />
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_straat">Straat, Plaats</label>
-			</div>
-			<div class="kleistad-col-3">
-				<input class="kleistad-input" name="straat" id="kleistad_straat" type="text" tabindex="-1"
-				maxlength="50" placeholder="straat" title="Vul s.v.p. een straatnaam in"
-				value="<?php echo esc_attr( $this->data['input']['straat'] ); ?>" />
-			</div>
-			<div class="kleistad-col-4">
-				<input class="kleistad-input" name="plaats" id="kleistad_plaats" type="text" tabindex="-1"
-				maxlength="50" placeholder="MijnWoonplaats" title="Vul s.v.p. de woonplaats in"
-				value="<?php echo esc_attr( $this->data['input']['plaats'] ); ?>" />
+			<div class="kleistad-row">
+				<div class="kleistad-col-3 kleistad-label">
+					<label for="kleistad_straat">Straat, Plaats</label>
+				</div>
+				<div class="kleistad-col-3">
+					<input class="kleistad-input" name="straat" id="kleistad_straat" type="text" tabindex="-1"
+					maxlength="50" placeholder="straat" title="Vul s.v.p. een straatnaam in"
+					value="<?php echo esc_attr( $this->data['input']['straat'] ); ?>" />
+				</div>
+				<div class="kleistad-col-4">
+					<input class="kleistad-input" name="plaats" id="kleistad_plaats" type="text" tabindex="-1"
+					maxlength="50" placeholder="MijnWoonplaats" title="Vul s.v.p. de woonplaats in"
+					value="<?php echo esc_attr( $this->data['input']['plaats'] ); ?>" />
+				</div>
 			</div>
 		</div>
 		<?php
@@ -301,6 +304,7 @@ abstract class Public_Shortcode_Display {
 				<label for="kleistad_emailadres_controle">Email adres (controle)</label>
 			</div>
 			<div class="kleistad-col-4">
+				<!--suppress JSUnresolvedVariable -->
 				<input class="kleistad-input" name="email_controle" id="kleistad_emailadres_controle" type="email"
 				required title="Vul ter controle s.v.p. opnieuw het email adres in"
 				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>"

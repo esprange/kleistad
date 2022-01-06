@@ -89,7 +89,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de afronding van het formulier
 	 */
-	protected function submit() {
+	private function submit() {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10" style="padding-top: 20px;">

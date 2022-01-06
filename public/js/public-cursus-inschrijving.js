@@ -29,8 +29,6 @@
 		}
 		$spin.spinner( { max: cursus.ruimte } );
 		$spin.spinner( 'value', aantal );
-		$( '#kleistad_submit_enabler' ).hide();
-		$( '#kleistad_submit' ).prop( 'disabled', false );
 
 		bedrag = ( cursus.meer ? aantal : 1 ) * cursus.bedrag;
 		$( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + ' en word meteen ingedeeld.' );
@@ -41,18 +39,18 @@
 		$( '#kleistad_cursus_draaien' ).hide();
 		$( '#kleistad_cursus_boetseren' ).hide();
 		$( '#kleistad_cursus_handvormen' ).hide();
-		$( '#kleistad_cursus_technieken' ).css( 'visibility', 'hidden' );
+		$( '#kleistad_cursus_technieken' ).hide();
 		$.each(
 			cursus.technieken,
 			function( key, value ) {
 				$( '#kleistad_cursus_' + value.toLowerCase() ).show();
-				$( '#kleistad_cursus_technieken' ).css( 'visibility', 'visible' );
+				$( '#kleistad_cursus_technieken' ).show();
 			}
 		);
 		if ( cursus.meer && ! cursus.vol && ( 1 < cursus.ruimte ) ) {
-			$( '#kleistad_cursus_aantal' ).css( 'visibility', 'visible' );
+			$( '#kleistad_cursus_aantal' ).show();
 		} else {
-			$( '#kleistad_cursus_aantal' ).css( 'visibility', 'hidden' );
+			$( '#kleistad_cursus_aantal' ).hide();
 		}
 		if ( cursus.lopend ) {
 			$( '#kleistad_cursus_betalen' ).hide();
@@ -75,11 +73,13 @@
 	$(
 		function() {
 			let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
-
 			if ( 0 !== $cursus_checked.length ) {
 				wijzigVelden( $cursus_checked.data( 'cursus' ) );
 			}
 
+			/**
+			 * Initialiseer de tooltips voor de cursussen.
+			 */
 			$( '#kleistad_cursussen' ).tooltip(
 				{
 					track: true,
@@ -92,49 +92,60 @@
 				}
 			);
 
+			/**
+			 * Initialiseer de aantal spinner.
+			 */
 			$( '#kleistad_aantal' ).spinner(
 				{
 					min:1,
 					max: function() {
-						let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						$cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
 						return ( 0 !== $cursus_checked.length ) ? $cursus_checked.data( 'cursus' ).ruimte : 1
 					},
 					stop: function() {
-						let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						$cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
 						if ( 0 !== $cursus_checked.length ) {
 							wijzigTeksten( $cursus_checked.data( 'cursus' ) );
 						}
 					},
 					create: function() {
-						let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
+						$cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
 						if ( 0 !== $cursus_checked.length ) {
 							wijzigTeksten( $cursus_checked.data( 'cursus' ) );
 						}
 					}
 				}
-			);
+			).trigger( 'change' );
 
-			$( 'input[name=cursus_id]:radio' ).on(
+			$( '.kleistad-shortcode' )
+			/**
+			 * De teksten en velden zijn afhankelijk van de cursus keuze.
+			 */
+			.on(
 				'change',
+				'input[name=cursus_id]:radio',
 				function() {
 					let cursus = $( 'input[name=cursus_id]:radio:checked' ).data( 'cursus' );
 					wijzigTeksten( cursus );
 					wijzigVelden( cursus );
 				}
-			);
-
-			$( 'input[name=betaal]:radio' ).on(
+			)
+			/**
+			 * Wijzig de tekst button afhankelijk of er per bank betaald gaat worden of per ideal.
+			 */
+			.on(
 				'change',
+				'input[name=betaal]:radio',
 				function() {
 					$( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
 				}
-			);
-
+			)
 			/**
 			 * Vul adresvelden in
 			 */
-			$( '#kleistad_huisnr, #kleistad_pcode' ).on(
+			.on(
 				'change',
+				'#kleistad_huisnr, #kleistad_pcode',
 				function() {
 					let pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase() );
@@ -142,19 +153,20 @@
 						pcode.val(),
 						$( '#kleistad_huisnr' ).val(),
 						/**
-						 * Anonieme functie
+						 * Anonieme functie, simuleer de trigger zodat de data ook beschikbaar is voor de bevestig velden.
 						 *
 						 * @param {object} data
 						 * @param {string} data.straat
 						 * @param {string} data.plaats
 						 */
 						function( data ) {
-							$( '#kleistad_straat' ).val( data.straat );
-							$( '#kleistad_plaats' ).val( data.plaats );
+							$( '#kleistad_straat' ).val( data.straat ).trigger( 'change' );
+							$( '#kleistad_plaats' ).val( data.plaats ).trigger( 'change' );
 						}
 					);
 				}
 			);
+
 		}
 	);
 

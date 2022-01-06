@@ -27,19 +27,25 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Maak de formulier inhoud
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function form_content() {
-		$this->cursus_info()->techniek_keuze();
-		if ( is_super_admin() ) {
-			$this->aantal( 1 )->gebruiker_selectie( 'Cursist' );
-		} elseif ( is_user_logged_in() ) {
-			$this->aantal( 1 )->gebruiker_logged_in()->opmerking()->nieuwsbrief();
-		} else {
-			$this->aantal()->gebruiker()->opmerking()->nieuwsbrief();
-		}
-		$this->betaal_info()->submit( 'Inschrijven' );
+		?>
+		<input type="hidden" id="kleistad_submit_value" value="<?php echo esc_attr( $this->display_actie ); ?>" >
+		<div class="kleistad-tab"><?php $this->cursus_info(); ?></div>
+		<div class="kleistad-tab"><?php $this->aantal( is_user_logged_in() ? 1 : 0 )->techniek_keuze(); ?></div>
+		<?php if ( is_super_admin() ) : ?>
+		<div class="kleistad-tab"><?php $this->gebruiker_selectie( 'Cursist' ); ?></div>
+		<?php elseif ( is_user_logged_in() ) : ?>
+		<div class="kleistad-tab"><?php $this->gebruiker_logged_in(); ?></div>
+		<?php else : ?>
+		<div class="kleistad-tab"><?php $this->gebruiker(); ?></div>
+		<?php endif ?>
+		<div class="kleistad-tab"><?php $this->opmerking()->nieuwsbrief(); ?></div>
+		<?php if ( ! is_super_admin() ) : ?>
+		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
+		<?php endif ?>
+		<div class="kleistad-tab"><?php $this->betaal_info(); ?></div>
+		<?php
 	}
 
 	/**
@@ -75,7 +81,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 * Render het stop wachten formulier
 	 */
 	protected function stop_wachten() {
-		$this->form();
+		$this->form( 'form_stop_wachten' );
 	}
 
 	/**
@@ -95,12 +101,10 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het cursus velden
-	 *
-	 * @return Public_Cursus_Inschrijving_Display
 	 */
-	private function cursus_info() : Public_Cursus_Inschrijving_Display {
+	private function cursus_info() {
 		?>
-		<div id="kleistad_cursussen" >
+		<div id="kleistad_cursussen" <?php echo count( $this->data['open_cursussen'] ) === 0 ? 'style="display:none"' : ''; ?> >
 		<?php
 		foreach ( $this->data['open_cursussen'] as $cursus_data ) {
 			$tooltip       = 0 < $cursus_data['cursus']->inschrijfkosten ?
@@ -126,7 +130,6 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		?>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**
@@ -134,12 +137,12 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 */
 	private function techniek_keuze() {
 		?>
-		<div id="kleistad_cursus_technieken" style="visibility: hidden;padding-bottom: 20px;" >
+		<div id="kleistad_cursus_technieken" style="display:none;" >
 			<div class="kleistad-row" >
 				<div class="kleistad-col-10">
 					<label class="kleistad-label">kies de techniek(en) die je wilt oefenen</label>
 				</div>
-			</div>3
+			</div>
 			<div class="kleistad-row" >
 				<div class="kleistad-col-1" >
 				</div>
@@ -163,7 +166,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Render de cursist_info
+	 * Render het aantal
 	 *
 	 * @param int|null $aantal Het aantal, als null dan tonen we het.
 	 * @return Public_Cursus_Inschrijving_Display
@@ -171,12 +174,14 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	private function aantal( ?int $aantal = null ) : Public_Cursus_Inschrijving_Display {
 		if ( 0 < $aantal ) {
 			?>
-			<input type="hidden" name="aantal" id="kleistad_aantal" value="1" />
+			<div style="display: none">
+				<input type="hidden" name="aantal" id="kleistad_aantal" value="1" />
+			</div>
 			<?php
 			return $this;
 		}
 		?>
-		<div id="kleistad_cursus_aantal" style="visibility: hidden" >
+		<div id="kleistad_cursus_aantal" style="display:none" >
 			<div class="kleistad-row">
 				<div class="kleistad-col-3 kleistad-label">
 					<label for="kleistad_aantal">Ik kom met </label>
@@ -195,10 +200,8 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de betaal sectie
-	 *
-	 * @return Public_Cursus_Inschrijving_Display
 	 */
-	private function betaal_info() : Public_Cursus_Inschrijving_Display {
+	private function betaal_info() {
 		?>
 		<div id="kleistad_cursus_betalen" style="display:none;">
 			<div class="kleistad-row">
@@ -232,7 +235,36 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
+	}
+
+	/**
+	 * Render de bevestiging sectie
+	 */
+	private function bevestiging() {
+		?>
+		<div class="kleistad-row">
+			<div class="col_5">
+				<h3>Overzicht ingevoerde gegevens</h3>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<p>Het betreft de inschrijving voor de cursus <strong><span id="bevestig_cursus" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_aantal"></span></strong> deelnemer(s)</p>
+			<p><span id="bevestig_technieken"></span></p>
+		</div>
+		<div class="kleistad-row">
+			<p>Cursist gegevens:</p>
+			<strong><span id="bevestig_first_name"></span> <span id="bevestig_last_name"></span><br/>
+				<span id="bevestig_straat"></span> <span id="bevestig_huisnr"></span><br/>
+				<span id="bevestig_pcode"></span> <span id="bevestig_plaats"></span><br/>
+				<span id="bevestig_telnr"></span><br/>
+				<span id="bevestig_user_email"></span><br/>
+			</strong>
+			<p>Speciale wensen en/of mededeling : </p><p><span id="bevestig_opmerking"></span></p>
+		</div>
+		<div class="kleistad-row">
+			<p style="font-style: italic;float: right">Als het bovenstaande correct is, druk dan op volgende.</p>
+		</div>
+		<?php
 	}
 
 	/**
@@ -240,7 +272,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 *
 	 * @param string $buttontekst De tekst die op de submit button moet worden getoond.
 	 */
-	protected function submit( string $buttontekst ) {
+	private function submit( string $buttontekst ) {
 		?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-10">

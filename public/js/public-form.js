@@ -60,41 +60,24 @@ function validate_email( input, compare ) {
 }
 
 /**
- * Document ready.
+ * Jquery part
  */
 ( function( $ ) {
 	'use strict';
 
-	/**
-	 * Toon de tab en buttons van een multistep form
-	 *
-	 * @param index
-	 */
-	function showTab( index ) {
-		let $tab  = $( '.kleistad-tab' );
-		let $stap = $( '.kleistad-stap' );
-		$tab.eq( index ).show();
-		if ( 0 === index) {
-			$( '#kleistad_tab_prev' ).hide();
-		} else {
-			$( '#kleistad_tab_prev' ).show();
-		}
-		$( '#kleistad_tab_next' ).toggle( $tab.length - 1 !== index );
-		$( '#kleistad_tab_send' ).toggle( $tab.length - 1 === index );
-		$stap.removeClass( 'actief' );
-		$stap.eq( index ).addClass( 'actief' );
-	}
+	let currentTab = 0;
 
 	/**
 	 * Initialiseer een multiform tab.
 	 */
 	function initTab() {
-		let $tab = $( '.kleistad-tab' );
-		let html = '<div style="overflow:auto;float:right;">' +
+		let $tab   = $( '.kleistad-tab' );
+		let html   = '<div style="overflow:auto;float:right;">' +
 			'<button type="button" class="kleistad-button" id="kleistad_tab_prev" >Terug</button>&nbsp;' +
 			'<button type="button" class="kleistad-button" id="kleistad_tab_next" >Verder</button>' +
-			'<button type="submit" class="kleistad-button" id="kleistad_tab_send" >Verzenden</button>' +
+			'<button type="submit" class="kleistad-button" id="kleistad_submit" >Verzenden</button>' +
 			'</div><div style="text-align: center;margin-top: 40px;">';
+		currentTab = 0;
 		$tab.each(
 			function() {
 				html += '<span class="kleistad-stap"></span>';
@@ -107,21 +90,53 @@ function validate_email( input, compare ) {
 
 	/**
 	 * Valideer de tab van een multistep form
-	 *
-	 * @param index
 	 */
-	function validateTab( index ) {
+	function validateTab() {
 		let $stap = $( '.kleistad-stap' );
 		let valid = true;
-		$( '.kleistad-tab' ).eq( index ).find( '[required]' ).each(
+		$( '.kleistad-tab' ).eq( currentTab ).find( '[required]' ).each(
 			function() {
 				if ( ! ( ( null === this.offsetParent  ) ? this.checkValidity() : this.reportValidity() ) ) {
 					valid = false;
 				}
 			}
 		)
-		$stap.eq( index ).toggleClass( 'gereed', valid );
+		$stap.eq( currentTab ).toggleClass( 'gereed', valid );
+		$( '#kleistad_submit' ).val( $( '#kleistad_submit_value' ).val() );
 		return valid;
+	}
+
+	/**
+	 * Toon de tab en buttons van een multistep form
+	 *
+	 * @param {int} direction
+	 */
+	function showTab( direction ) {
+		let $tab   = $( '.kleistad-tab' ),
+			$stap  = $( '.kleistad-stap' ),
+			maxTab = $tab.length,
+			show   = false;
+		$tab.eq( currentTab ).hide();
+		do {
+			currentTab += direction;
+			$tab.eq( currentTab ).children().each(
+				function() {
+					if ( 'none' !== ( $( this ).css( 'display' ) ) ) {
+						show = true;
+					}
+				}
+			);
+		} while ( ! show && currentTab < maxTab );
+		$tab.eq( currentTab ).show();
+		if ( 0 === currentTab ) {
+			$( '#kleistad_tab_prev' ).hide();
+		} else {
+			$( '#kleistad_tab_prev' ).show();
+		}
+		$( '#kleistad_tab_next' ).toggle( $tab.length - 1 !== currentTab );
+		$( '#kleistad_submit' ).toggle( $tab.length - 1 === currentTab );
+		$stap.removeClass( 'actief' );
+		$stap.eq( currentTab ).addClass( 'actief' );
 	}
 
 	/**
@@ -245,9 +260,6 @@ function validate_email( input, compare ) {
 			/**
 			 * Tab voor multiforms
 			 */
-			let currentTab = 0;
-			let form_input = false;
-
 			initTab();
 
 			/**
@@ -274,7 +286,7 @@ function validate_email( input, compare ) {
 			 */
 			.on(
 				'click',
-				'button[type="submit"], #kleistad_tab_send',
+				'button[type="submit"]',
 				function( event ) {
 					$( this ).closest( 'form' ).data( 'clicked', { id: event.target.id, value: event.target.value } );
 					return true;
@@ -321,12 +333,10 @@ function validate_email( input, compare ) {
 				'click',
 				'#kleistad_tab_next',
 				function() {
-					let $tab = $( '.kleistad-tab' );
-					if ( ! validateTab( currentTab ) ) {
+					if ( ! validateTab() ) {
 						return false;
 					}
-					$tab.hide();
-					showTab( ++currentTab );
+					showTab( +1 );
 					return true;
 				}
 			)
@@ -334,9 +344,8 @@ function validate_email( input, compare ) {
 				'click',
 				'#kleistad_tab_prev',
 				function() {
-					$( '.kleistad-tab' ).hide();
-					validateTab( currentTab );
-					showTab( --currentTab );
+					validateTab();
+					showTab( -1 );
 				}
 			)
 			.on(
@@ -348,19 +357,6 @@ function validate_email( input, compare ) {
 				}
 			)
 
-			window.onbeforeunload = function( event ) {
-				if ( form_input ) {
-					event.returnValue = 'Het formulier is nog niet verzonden. Weet je zeker dat je wilt afsluiten ?';
-				}
-			}
-
-			$( '.kleistad-form' ).on(
-				'change',
-				'*',
-				function() {
-					form_input = true;
-				}
-			)
 		}
 	);
 
