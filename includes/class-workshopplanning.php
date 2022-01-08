@@ -20,6 +20,8 @@ use WP_Async_Request;
  */
 class Workshopplanning extends WP_Async_Request {
 
+	const META_KEY = 'kleistad_workshopplanning';
+
 	/**
 	 * Unieke titel, benodigd voor background processing
 	 *
@@ -43,7 +45,7 @@ class Workshopplanning extends WP_Async_Request {
 	 * @return array De beschikbaarheid.
 	 */
 	public function geef_beschikbaaarheid() : array {
-		$data = get_transient( 'kleistad_workshopplanning' );
+		$data = get_transient( self::META_KEY );
 		if ( false === $data ) {
 			$this->handle();
 			$data = $this->beschikbaarheid;
@@ -60,13 +62,6 @@ class Workshopplanning extends WP_Async_Request {
 	}
 
 	/**
-	 * Wrapper om de handle functie publiek beschikbaar te krijgen.
-	 */
-	public function update_beschikbaarheid() {
-		$this->handle();
-	}
-
-	/**
 	 * Bepaal de beschikbaarheid en sla deze op in een transient.
 	 * eventuele parameters zijn beschikbaar via POST
 	 */
@@ -77,7 +72,7 @@ class Workshopplanning extends WP_Async_Request {
 		$this->bepaal_docent_beschikbaarheid( $start, $eind );
 		$this->bepaal_activiteit_beschikbaarheid( $start, $eind );
 		$this->schoon_beschikbaarheid();
-		set_transient( 'kleistad_workshopplanning', $this->beschikbaarheid );
+		set_transient( self::META_KEY, $this->beschikbaarheid, DAY_IN_SECONDS );
 	}
 
 	/**
@@ -89,7 +84,7 @@ class Workshopplanning extends WP_Async_Request {
 	private function start( int $start, int $eind ) {
 		for ( $datum = $start; $datum <= $eind; $datum += DAY_IN_SECONDS ) {
 			foreach ( DAGDEEL as $dagdeel ) {
-				$this->beschikbaarheid[ date( 'Y-m-d', $datum ) . '_' . strtolower( $dagdeel ) ] = [
+				$this->beschikbaarheid[ $this->index( $datum, $dagdeel ) ] = [
 					'aantal' => 0,
 					'docent' => false,
 				];
@@ -138,7 +133,7 @@ class Workshopplanning extends WP_Async_Request {
 			foreach ( DAGDEEL as $dagdeel ) {
 				foreach ( $docenten as $docent ) {
 					if ( Docent::BESCHIKBAAR === $docent->beschikbaarheid( $datum, $dagdeel ) ) {
-						$this->beschikbaarheid[ date( 'Y-m-d', $datum ) . '_' . strtolower( $dagdeel ) ]['docent'] = true;
+						$this->beschikbaarheid[ $this->index( $datum, $dagdeel ) ]['docent'] = true;
 						break;
 					}
 				}
@@ -153,8 +148,20 @@ class Workshopplanning extends WP_Async_Request {
 	 * @param string $dagdeel Het dagdeel.
 	 */
 	private function verhoog( int $datum, string $dagdeel ) {
-		$index                                     = date( 'Y-m-d', $datum ) . "_$dagdeel";
+		$index                                     = $this->index( $datum, $dagdeel );
 		$this->beschikbaarheid[ $index ]['aantal'] = ( $this->beschikbaarheid[ $index ]['aantal'] ?? 0 ) + 1;
+	}
+
+	/**
+	 * Hulp functie om de index eenduidig te bepalen
+	 *
+	 * @param int    $datum   De datum.
+	 * @param string $dagdeel Het dagdeel.
+	 *
+	 * @return string
+	 */
+	private function index( int $datum, string $dagdeel ) : string {
+		return date( 'Y-m-d', $datum ) . '_' . strtolower( $dagdeel );
 	}
 
 	/**
@@ -178,6 +185,5 @@ class Workshopplanning extends WP_Async_Request {
 			}
 		}
 	}
-
 
 }

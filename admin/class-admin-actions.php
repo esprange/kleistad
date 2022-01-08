@@ -169,7 +169,7 @@ class Admin_Actions {
 	}
 
 	/**
-	 * Aangeroepen na update van de kleistad opties.
+	 * Aangeroepen na update van de kleistad setup.
 	 *
 	 * @param array $oud Oude waarde.
 	 * @param array $nieuw Nieuwe waarde.
@@ -181,6 +181,22 @@ class Admin_Actions {
 		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
 			$oud['google_client_id'] !== $nieuw['google_client_id'] ) {
 			delete_option( Googleconnect::ACCESS_TOKEN );
+		}
+	}
+
+	/**
+	 * Aangeroepen na update van de kleistad opties.
+	 *
+	 * @param array $oud Oude waarde.
+	 * @param array $nieuw Nieuwe waarde.
+	 * @since 7.0.2
+	 *
+	 * @internal Action for update_option_kleistad-setup.
+	 */
+	public function opties_gewijzigd( array $oud, array $nieuw ) {
+		if ( $oud['max_activiteit'] !== $nieuw['max_activiteit'] ||
+			$oud['actpauze'] !== $nieuw['actpauze'] ) {
+			do_action( 'kleistad_planning' );
 		}
 	}
 

@@ -75,6 +75,7 @@ class Admin_Upgrade {
 				[ 'naam' => 'Workshop' ],
 				[ 'naam' => 'Kinderfeest' ],
 			],
+			'actpauze'             => [],
 		];
 		$default_setup   = [
 			'sleutel'            => '',

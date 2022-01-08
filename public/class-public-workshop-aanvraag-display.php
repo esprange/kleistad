@@ -56,7 +56,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row" >
 			<div class="kleistad-col-1" >
 			</div>
-			<div class="kleistad-col-3 kleistad-label" >
+			<div class="kleistad-col-5 kleistad-label" >
 				<input name="naam" id="kleistad_<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" type="radio" required value="<?php echo esc_attr( $activiteit['naam'] ); ?>" <?php checked( $this->data['input']['naam'], $activiteit['naam'] ); ?> >
 				<label for="kleistad_<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" ><?php echo esc_html( ucfirst( $activiteit['naam'] ) ); ?></label>
 			</div>
