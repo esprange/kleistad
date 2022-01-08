@@ -284,6 +284,17 @@ a.kleistad-schedule {
 
 .kleistad-tab {
 	display: none;
+	height: 350px;
+	background-color: #dddddd;
+	padding: 50px 10px;
+	position: relative;
+}
+
+.kleistad-tab-footer {
+	bottom: 0;
+	float: right;
+	font-style: italic;
+	position: absolute;
 }
 
 .kleistad-stap {

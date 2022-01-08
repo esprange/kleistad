@@ -176,6 +176,7 @@ class WorkshopAanvraag {
 				'auto'       => 'reply',
 			]
 		);
+		do_action( 'kleistad_planning' );
 	}
 
 	/**

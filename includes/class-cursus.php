@@ -304,6 +304,7 @@ class Cursus {
 		} catch ( Exception $e ) {
 			fout( __CLASS__, $e->getMessage() );
 		}
+		do_action( 'kleistad_planning' );
 		return $this->id;
 	}
 

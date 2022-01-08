@@ -171,6 +171,7 @@ class Kleistad {
 		$this->loader->add_action( 'kleistad_daily_jobs', $plugin_actions, 'daily_jobs' );
 		$this->loader->add_action( 'kleistad_daily_gdpr', $plugin_actions, 'daily_gdpr' );
 		$this->loader->add_action( 'plugins_loaded', $plugin_actions, 'instantiate_background' );
+		$this->loader->add_action( 'kleistad_planning', $plugin_actions, 'planning' );
 		$this->loader->add_action( 'update_option_kleistad-setup', $plugin_actions, 'setup_gewijzigd', 10, 2 );
 		$this->loader->add_action( 'manage_kleistad_email_posts_custom_column', $plugin_actions, 'email_posts_custom_column', 10, 2 );
 		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_filters, 'register_exporter' );

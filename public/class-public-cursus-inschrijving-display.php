@@ -31,6 +31,8 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	protected function form_content() {
 		?>
 		<input type="hidden" id="kleistad_submit_value" value="<?php echo esc_attr( $this->display_actie ); ?>" >
+		<input name="cursus_naam" type="hidden" id="kleistad_cursus_naam" value="<?php echo esc_attr( $this->data['open_cursussen'][0]['cursus']->naam ); ?>">
+		<input name="cursus_technieklijst" type="hidden" id="kleistad_cursus_technieklijst" value="">
 		<?php if ( isset( $this->data['verbergen'] ) ) : ?>
 		<input name="cursus_id" type="hidden" value="<?php echo esc_attr( $this->data['open_cursussen'][0]['cursus']->id ); ?>"
 			data-cursus='<?php echo $this->data['open_cursussen'][0]['json'] ?: ''; // phpcs:ignore ?>' />
@@ -258,24 +260,36 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	private function bevestiging() {
 		?>
 		<div class="kleistad-row">
-				<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
+			<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
 		</div>
 		<div class="kleistad-row">
-			<p>Het betreft de inschrijving voor de cursus <strong><span id="bevestig_cursus" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_aantal"></span></strong> deelnemer(s)</p>
-			<p><span id="bevestig_technieken"></span></p>
+			<div class="kleistad-col-10">
+				Het betreft de inschrijving voor de cursus <strong><span id="bevestig_cursus_naam" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_aantal"></span></strong> deelnemer(s) <strong><span id="bevestig_cursus_technieklijst"></span></strong>
+			</div>
 		</div>
 		<div class="kleistad-row">
-			<p>Cursist gegevens:</p>
+			<div class="kleistad-col-3">Cursist gegevens:</div>
+			<div class="kleistad-col-7">
 			<strong><span id="bevestig_first_name"></span> <span id="bevestig_last_name"></span><br/>
 				<span id="bevestig_straat"></span> <span id="bevestig_huisnr"></span><br/>
 				<span id="bevestig_pcode"></span> <span id="bevestig_plaats"></span><br/>
 				<span id="bevestig_telnr"></span><br/>
-				<span id="bevestig_user_email"></span><br/>
+				<span id="bevestig_user_email"></span>
 			</strong>
-			<p>Speciale wensen en/of mededeling : </p><p><span id="bevestig_opmerking"></span></p>
+			</div>
 		</div>
 		<div class="kleistad-row">
-			<p style="font-style: italic;float: right">Als het bovenstaande correct is, druk dan op volgende.</p>
+			<div class="kleistad_col_3">
+			Speciale wensen en/of mededeling :
+			</div>
+			<div class="kleistad-col-7">
+				<span id="bevestig_opmerking"></span>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10 kleistad-tab-footer">
+				Als het bovenstaande correct is, druk dan op verder.
+			</div>
 		</div>
 		<?php
 	}

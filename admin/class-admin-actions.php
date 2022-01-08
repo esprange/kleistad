@@ -89,6 +89,13 @@ class Admin_Actions {
 	private $instellingen_handler;
 
 	/**
+	 * Worksshop dispatcher.
+	 *
+	 * @var Workshopplanning De async request class.
+	 */
+	private Workshopplanning $planning_handler;
+
+	/**
 	 * Background object
 	 *
 	 * @since   6.1.0
@@ -111,6 +118,7 @@ class Admin_Actions {
 		$this->recepttermen_handler = new Admin_Recepttermen_Handler();
 		$this->werkplekken_handler  = new Admin_Werkplekken_Handler();
 		$this->instellingen_handler = new Admin_Instellingen_Handler();
+		$this->planning_handler     = new Workshopplanning();
 	}
 
 	/**
@@ -218,6 +226,15 @@ class Admin_Actions {
 			$gdpr = new Admin_GDPR();
 			$gdpr->erase_old_privacy_data();
 		}
+	}
+
+	/**
+	 * Maak een nieuwe planning aan voor workshops
+	 *
+	 * @internal Action voor kleistad_planning.
+	 */
+	public function planning() {
+		$this->planning_handler->dispatch();
 	}
 
 	/**

@@ -186,7 +186,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return string De naam van de docent.
 	 */
-	public function docent_naam() : string {
+	public function docent_naam() : ?string {
 		if ( is_numeric( $this->docent ) ) {
 			return get_user_by( 'id', intval( $this->docent ) )->display_name;
 		}
@@ -249,6 +249,7 @@ class Workshop extends Artikel {
 		} catch ( Exception $e ) {
 			fout( __CLASS__, $e->getMessage() );
 		}
+		do_action( 'kleistad_planning' );
 		return $this->id;
 	}
 

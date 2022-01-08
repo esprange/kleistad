@@ -128,6 +128,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 				'json'    => wp_json_encode(
 					[
 						'technieken' => $cursus->technieken,
+						'naam'       => $cursus->naam,
 						'meer'       => ! $is_lopend && $cursus->meer,
 						'ruimte'     => min( $ruimte, 4 ),
 						'bedrag'     => $cursus->bedrag(),

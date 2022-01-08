@@ -32,9 +32,10 @@
 	 * Document ready.
 	 */
 	$(
-		function()
-		{
+		function() {
 			wijzigTeksten();
+
+			$( '#kleistad_submit' ).html( 'betalen' );
 
 			/**
 			 * Initieer het start datum veld.
@@ -45,49 +46,46 @@
 					minDate: 0,
 					maxDate: '+3M'
 				}
-			);
+			).trigger( 'change' );
 
 			/**
 			 * Afhankelijk van keuze abonnement al dan niet tonen dag waarvoor beperkt abo geldig is.
 			 */
-			$( 'input[name=abonnement_keuze]:radio' ).on(
+			$( 'input[name=abonnement_keuze]' ).on(
 				'change',
-				function() {
+				function () {
 					wijzigTeksten();
-					if (  'beperkt' === this.value ) {
-						$( '#kleistad_dag' ).css( 'visibility', 'visible' );
-					} else {
-						$( '#kleistad_dag' ).css( 'visibility', 'hidden' );
-					}
 				}
-			);
+			).trigger( 'change' );
 
+			$( '.kleistad-shortcode' )
 			/**
 			 * Wijzig de teksten als een extra optie wordt aangevinkt.
 			 */
-			$( 'input[name^=extras]:checkbox' ).on(
+			.on(
 				'change',
-				function() {
+				'input[name^=extras]:checkbox',
+				function () {
 					wijzigTeksten();
 				}
-			);
-
+			)
 			/**
 			 * Wijzig de button tekst bij betaling dan wel aanmelding.
 			 */
-			$( 'input[name=betaal]:radio' ).on(
+			.on(
 				'change',
-				function() {
+				'input[name=betaal]:radio',
+				function () {
 					$( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
 				}
-			);
-
+			)
 			/**
 			 * Vul adresvelden in
 			 */
-			$( '#kleistad_huisnr, #kleistad_pcode' ).on(
+			.on(
 				'change',
-				function() {
+				'#kleistad_huisnr, #kleistad_pcode',
+				function () {
 					let pcode = $( '#kleistad_pcode' );
 					pcode.val( pcode.val().toUpperCase().replace( /\s/g, '' ) );
 					$().lookupPostcode(
@@ -100,9 +98,9 @@
 						 * @param {string} data.straat
 						 * @param {string} data.plaats
 						 */
-						function( data ) {
-							$( '#kleistad_straat' ).val( data.straat );
-							$( '#kleistad_plaats' ).val( data.plaats );
+						function (data) {
+							$( '#kleistad_straat' ).val( data.straat ).trigger( 'change' );
+							$( '#kleistad_plaats' ).val( data.plaats ).trigger( 'change' );
 						}
 					);
 				}

@@ -72,5 +72,6 @@ class Docent extends Gebruiker {
 			$this->beschikbaardata[ intval( $item['datum'] ) ][ $item['dagdeel'] ] = $item['status'] ? self::BESCHIKBAAR : self::NIET_BESCHIKBAAR;
 		}
 		update_user_meta( $this->ID, self::META_KEY, $this->beschikbaardata );
+		do_action( 'kleistad_planning' );
 	}
 }

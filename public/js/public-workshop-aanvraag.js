@@ -88,20 +88,24 @@
 					'change',
 					'#kleistad_plandatum',
 					function () {
-						let datum = $( this ).datepicker( 'getDate' );
+						let datum     = $( this ).datepicker( 'getDate' ),
+							$terug    = $( '#kleistad_terugzetten' ),
+							$dagdelen = $( 'div[class^="kleistad-dagdeel"]' );
 						haalPlandata();
 						if ( 'undefined' !== typeof datum ) {
+							$terug.show();
 							let beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
 							if ( beschikbaar.length ) {
-								$( 'div[class^="kleistad-dagdeel"]' ).hide();
+								$dagdelen.hide();
 								$( 'input[name="dagdeel"]' ).attr( 'checked', false );
 								beschikbaar.forEach(
 									function( item ) {
-										$( '.kleistad-dagdeel-' + item.dagdeel ).show();
+										$( '.kleistad-dagdeel-' + item.dagdeel ).show().prop( 'checked', 1 === beschikbaar.length );
 									}
 								)
 							} else {
-								$( 'div[class^="kleistad-dagdeel"]' ).show();
+								$dagdelen.show();
+								$terug.hide();
 							}
 						}
 					}

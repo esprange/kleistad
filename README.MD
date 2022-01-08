@@ -3,8 +3,8 @@
 **Donate link:** https://www.kleistad.nl  
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
-**Tested up to:** 5.8.2  
-**Stable tag:** 7.0.0  
+**Tested up to:** 5.8.3  
+**Stable tag:** 7.0.2  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 **Requires PHP:** 7.4  
@@ -40,6 +40,7 @@ Plaats de shortcodes in de pagina's
 * Aanpassing workshop aanvraag formulier, plandata afhankelijk van beschikbaarheid ruimte en docent.
 * Activiteiten en ruimtes voortaan niet meer hardcoded maar via dashboard te beheren.
 * Vanwege nieuwe functionaliteit, aanpassingen in workshop aanvraag, workshop beheer, werkplekreservering.
+* Workshop aanvraag en cursus inschrijving in multi step formulier.
 * Daarnaast refactoring (PHP nu foutvrij) en inclusief alle patches sinds 6.21.3.
 ### 6.21.3 ###
 * Beperkte abonnementen, dag is is niet meer van belang, en wijziging soort mag na startperiode.

@@ -32,15 +32,23 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function form_content() {
-		$this->abonnement_info();
-		if ( is_super_admin() ) {
-			$this->gebruiker_selectie( 'Abonnee' );
-		} elseif ( is_user_logged_in() ) {
-			$this->gebruiker_logged_in()->opmerking()->verklaring()->nieuwsbrief();
-		} else {
-			$this->gebruiker()->opmerking()->verklaring()->nieuwsbrief();
-		}
-		$this->betaal_info()->submit();
+		?>
+		<div class="kleistad-tab"><?php $this->abonnement_info(); ?></div>
+		<?php if ( is_super_admin() ) : ?>
+		<div class="kleistad-tab"><?php $this->gebruiker_selectie( 'Abonnee' ); ?></div>
+			<?php
+		else :
+			if ( is_user_logged_in() ) :
+				?>
+		<div class="kleistad-tab"><?php	$this->gebruiker_logged_in(); ?></div>
+			<?php else : ?>
+		<div class="kleistad-tab"><?php	$this->gebruiker(); ?></div>
+			<?php endif ?>
+		<div class="kleistad-tab"><?php $this->opmerking()->nieuwsbrief(); ?></div>
+		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
+		<?php endif ?>
+		<div class="kleistad-tab"><?php $this->betaal_info(); ?></div>
+		<?php
 	}
 
 	/**
@@ -86,11 +94,14 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render de betaal sectie
-	 *
-	 * @return Public_Abonnee_Inschrijving_Display
 	 */
-	private function betaal_info() : Public_Abonnee_Inschrijving_Display {
+	private function betaal_info() {
 		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<label class="kleistad-label">Bepaal de wijze van betalen.</label>
+			</div>
+		</div>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
 				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
@@ -109,18 +120,39 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**
-	 * Render de formulier afsluiting
+	 * Render de bevestiging sectie
 	 */
-	private function submit() {
+	private function bevestiging() {
 		?>
-		<div class="kleistad-row" style="padding-top: 20px;">
-			<div class="kleistad-col-10">
-				<button class="kleistad-button" name="kleistad_submit_abonnee_inschrijving" id="kleistad_submit" type="submit" <?php disabled( ! is_super_admin() && '' !== $this->data['verklaring'] ); ?>>Betalen</button>
+		<div class="kleistad-row">
+			<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
+		</div>
+		<div class="kleistad-row">
+			<p>Het betreft de start van een <strong><span id="bevestig_abonnement_keuze" style="text-transform: lowercase;" ></span></strong> abonnement dat ingaat per <strong><span id="bevestig_start_datum"></span></strong></p>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				Abonnee gegevens:
 			</div>
+			<div class="kleistad-col-7">
+			<strong><span id="bevestig_first_name"></span> <span id="bevestig_last_name"></span><br/>
+				<span id="bevestig_straat"></span> <span id="bevestig_huisnr"></span><br/>
+				<span id="bevestig_pcode"></span> <span id="bevestig_plaats"></span><br/>
+				<span id="bevestig_telnr"></span><br/>
+				<span id="bevestig_user_email"></span><br/>
+			</strong>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">Speciale wensen en/of mededeling:</div>
+			<div class="kleistad-col-7"><span id="bevestig_opmerking"></span></div>
+		</div>
+		<?php $this->verklaring(); ?>
+		<div class="kleistad-row">
+			<div style="font-style: italic;float: right">Als het bovenstaande correct is, druk dan op verder.</div>
 		</div>
 		<?php
 	}

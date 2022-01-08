@@ -171,11 +171,11 @@ class InschrijvingActie {
 		$this->inschrijving->save();
 		if ( $this->inschrijving->cursus->vol ) {
 			$this->inschrijving->verzend_email( '_wachtlijst' );
-			return 'De inschrijving is op de wachtlijst en er is een email verzonden met nadere informatie';
+			return true;
 		}
 		if ( $this->inschrijving->cursus->is_lopend() ) {
 			$this->inschrijving->verzend_email( '_lopend' );
-			return 'De inschrijving is verwerkt en er is een email verzonden met nadere informatie';
+			return true;
 		}
 		if ( 'ideal' === $betaalwijze ) {
 			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag(), $this->inschrijving->geef_referentie() );

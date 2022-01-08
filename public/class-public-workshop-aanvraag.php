@@ -26,18 +26,16 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 */
 	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
-			$this->data = [
-				'input' => [
-					'naam'           => '',
-					'user_email'     => '',
-					'email_controle' => '',
-					'contact'        => '',
-					'telnr'          => '',
-					'omvang'         => '',
-					'plandatum'      => '',
-					'dagdeel'        => '',
-					'vraag'          => '',
-				],
+			$this->data['input'] = [
+				'naam'           => '',
+				'user_email'     => '',
+				'email_controle' => '',
+				'contact'        => '',
+				'telnr'          => '',
+				'omvang'         => '',
+				'plandatum'      => '',
+				'dagdeel'        => '',
+				'vraag'          => '',
 			];
 		}
 		$planning = new Workshopplanning();

@@ -27,7 +27,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		/*
 		* Er moet een nieuwe workshop opgevoerd worden
 		*/
-		$this->data['docenten'] = $this->docenten();
+		$this->data['docenten'] = new Docenten();
 		if ( ! isset( $this->data['workshop'] ) ) {
 			$this->data['workshop'] = $this->formulier();
 		}
@@ -43,7 +43,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		/*
 		* Er is een workshop gekozen om te wijzigen.
 		*/
-		$this->data['docenten'] = $this->docenten();
+		$this->data['docenten'] = new Docenten();
 		if ( ! isset( $this->data['workshop'] ) ) {
 			$this->data['workshop'] = $this->formulier( $this->data['id'] );
 		}
@@ -60,7 +60,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		 * Een workshop aanvraag gaat gepland worden.
 		 */
 		$aanvraag               = new WorkshopAanvraag( $this->data['id'] );
-		$this->data['docenten'] = $this->docenten();
+		$this->data['docenten'] = new Docenten();
 		if ( $aanvraag->workshop_id ) {
 			$this->data['workshop'] = $this->formulier( $aanvraag->workshop_id );
 			return $this->content();
@@ -322,7 +322,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshop->datum             = strtotime( $this->data['workshop']['datum'] );
 		$workshop->start_tijd        = strtotime( $this->data['workshop']['start_tijd'] );
 		$workshop->eind_tijd         = strtotime( $this->data['workshop']['eind_tijd'] );
-		$workshop->docent            = $this->data['workshop']['docent'];
+		$workshop->docent            = $this->data['workshop']['docent'] ?? '';
 		$workshop->technieken        = $this->data['workshop']['technieken'];
 		$workshop->organisatie       = $this->data['workshop']['organisatie'];
 		$workshop->organisatie_adres = $this->data['workshop']['organisatie_adres'];
@@ -379,27 +379,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			];
 		}
 		return $lijst;
-	}
-
-	/**
-	 * Bepaal de mogelijke docenten, zou beter kunnen als er een role docenten is...
-	 *
-	 * @return array De docenten.
-	 */
-	private function docenten() : array {
-		$docenten   = [];
-		$gebruikers = get_users(
-			[
-				'fields'  => [ 'ID', 'display_name' ],
-				'orderby' => 'display_name',
-			]
-		);
-		foreach ( $gebruikers as $gebruiker ) {
-			if ( user_can( $gebruiker->ID, OVERRIDE ) ) {
-				$docenten[] = $gebruiker;
-			}
-		}
-		return $docenten;
 	}
 
 	/**

@@ -42,6 +42,11 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	 */
 	private function aanvraag() {
 		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-6">
+				<h3>Beantwoord onderstaande vragen en druk dan op <span style="font-style: italic;">Verder</span></h3>
+			</div>
+		</div>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-5">
 				<label class="kleistad-label">Wat voor activiteit wil je uitvoeren ?</label>
@@ -120,6 +125,11 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	 */
 	private function planning() {
 		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<h3>Geef aan op welke dag en dagdeel je de activiteit wilt plannen en druk dan op <span style="font-style: italic;">Verder</span></h3>.
+			</div>
+		</div>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-3">
 				<label for="kleistad_plandatum" class="kleistad-label">Wanneer moet het plaatsvinden ?</label>
@@ -130,16 +140,21 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		</div>
 		<?php foreach ( DAGDEEL as $dagdeel ) : ?>
 		<div class="kleistad-dagdeel-<?php echo esc_attr( strtolower( $dagdeel ) ); ?> kleistad-row">
-			<div class="kleistad-col-1" >
+			<div class="kleistad-col-3" >
 			</div>
-			<div class="kleistad-col-4 kleistad-label" >
+			<div class="kleistad-col-3 kleistad-label" >
 				<input name="dagdeel" id="kleistad_<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" type="radio" required
 					value="<?php echo esc_attr( $dagdeel ); ?>" <?php checked( $this->data['input']['dagdeel'], $dagdeel ); ?> >
 				<label for="kleistad_<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" ><?php echo esc_html( $dagdeel ); ?></label>
 			</div>
 		</div>
-			<?php
-		endforeach;
+		<?php endforeach; ?>
+		<div class="kleistad-row kleistad-tab-footer" >
+			<div class="kleistad-col-10">
+				Je kan alleen een datum selecten die past binnen de huidige planning van Kleistad van de komende 3 maanden. Wil je later een workshop plannen neem dan <?php $this->contact(); ?> op.
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -164,20 +179,33 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	private function bevestiging() {
 		?>
 		<div class="kleistad-row">
-			<div class="col_5">
+			<div class="kleistad-col_5">
 				<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
 			</div>
 		</div>
 		<div class="kleistad-row">
-			<p>Het betreft de aanvraag voor een <strong><span id="bevestig_naam" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_omvang"></span></strong> deelnemers
-			in de <strong><span id="bevestig_dagdeel" style="text-transform: lowercase;" ></span></strong> op <strong><span id="bevestig_plandatum"></span></strong>.</p>
+			<div class="kleistad-col-10">
+			Het betreft de aanvraag voor een <strong><span id="bevestig_naam" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_omvang"></span></strong> deelnemers
+			in de <strong><span id="bevestig_dagdeel" style="text-transform: lowercase;" ></span></strong> op <strong><span id="bevestig_plandatum"></span></strong>.
+			</div>
 		</div>
 		<div class="kleistad-row">
-			<p>Aangevraagd door <strong><span id="bevestig_contact"></span></strong>, met emailadres <strong><span id="bevestig_user_email"></span></strong> en telefoonnummer <strong><span id="bevestig_telnr"></span></strong></p>
-			<p>Speciale wensen en/of mededeling : </p><p><span id="bevestig_vraag"></span></p>
+			<div class="kleistad-col-10">
+				Aangevraagd door <strong><span id="bevestig_contact"></span></strong>, met emailadres <strong><span id="bevestig_user_email"></span></strong> en telefoonnummer <strong><span id="bevestig_telnr"></span></strong>
+			</div>
 		</div>
 		<div class="kleistad-row">
-			<p style="font-style: italic;float: right">Als het bovenstaande correct is dan kan de aanvraag verzonden worden</p>
+			<div class="kleistad-col-3">
+				Speciale wensen en/of mededeling :
+			</div>
+			<div class="kleistad-col-7">
+				<span id="bevestig_vraag"></span>
+			</div>
+		</div>
+		<div class="kleistad-row kleistad-tab-footer">
+			<div class="kleistad-col-10">
+				Als het bovenstaande correct is dan kan de aanvraag verzonden worden. Er wordt binnen een week contact opgenomen.
+			</div>
 		</div>
 		<?php
 	}

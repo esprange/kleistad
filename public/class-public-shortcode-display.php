@@ -148,7 +148,7 @@ abstract class Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-4">
 					<input class="kleistad-input" name="first_name" id="kleistad_voornaam" type="text"
-					required maxlength="25" placeholder="voornaam" title="Vul s.v.p. de voornaam in"
+					required maxlength="25" pattern="^[ a-zA-Z\-']+$" placeholder="voornaam" title="Vul s.v.p. de voornaam correct in"
 					value="<?php echo esc_attr( $this->data['input']['first_name'] ); ?>" autocomplete="given-name" />
 				</div>
 			</div>
@@ -158,7 +158,7 @@ abstract class Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-4">
 					<input class="kleistad-input" name="last_name" id="kleistad_achternaam" type="text"
-					required maxlength="25" placeholder="achternaam" title="Vul s.v.p. de achternaam in"
+					required maxlength="25" pattern="^[ a-zA-Z\-']+$" placeholder="achternaam" title="Vul s.v.p. de achternaam correct in"
 					value="<?php echo esc_attr( $this->data['input']['last_name'] ); ?>" autocomplete="family-name" />
 				</div>
 			</div>
@@ -246,12 +246,27 @@ abstract class Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
-				<input type="checkbox" id="verklaring" onchange="document.getElementById( 'kleistad_submit' ).disabled = !this.checked;" />
+				<input type="checkbox" id="verklaring" required />
 				<label for="verklaring"><?php echo $this->data['verklaring']; // phpcs:ignore ?></label>
 			</div>
 		</div>
 		<?php
 		return $this;
+	}
+
+	/**
+	 * Invoegen contact in tekst.
+	 */
+	protected function contact() {
+		if ( empty( $this->data['contact'] ) ) {
+			?>
+			contact
+			<?php
+			return;
+		}
+		?>
+			<a href="<?php echo esc_url( $this->data['contact'] ); ?>">contact</a>
+		<?php
 	}
 
 	/**

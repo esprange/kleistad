@@ -19,6 +19,7 @@
 	 * @param {array}   cursus.technieken
 	 * @param {boolean} cursus.vol
 	 * @param {boolean} cursus.lopend
+	 * @param {string}  cursus.naam
 	 */
 	function wijzigTeksten( cursus ) {
 		let $spin  = $( '#kleistad_aantal' ),
@@ -33,6 +34,7 @@
 		bedrag = ( cursus.meer ? aantal : 1 ) * cursus.bedrag;
 		$( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + ' en word meteen ingedeeld.' );
 		$( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + ' volgens de betaalinstructie in de te ontvangen email. Indeling vindt daarna plaats.' );
+		$( '#kleistad_cursus_naam' ).val( cursus.naam ).trigger( 'change' );
 	}
 
 	function wijzigVelden( cursus ) {
@@ -40,6 +42,8 @@
 		$( '#kleistad_cursus_boetseren' ).hide();
 		$( '#kleistad_cursus_handvormen' ).hide();
 		$( '#kleistad_cursus_technieken' ).hide();
+		$( 'input[name^=technieken]' ).prop( 'checked', false );
+		$( '#kleistad_cursus_technieklijst' ).html( '' );
 		$.each(
 			cursus.technieken,
 			function( key, value ) {
@@ -164,6 +168,23 @@
 							$( '#kleistad_plaats' ).val( data.plaats ).trigger( 'change' );
 						}
 					);
+				}
+			)
+			.on(
+				'change',
+				'#kleistad_draaien, #kleistad_handvormen, #kleistad_boetseren',
+				function() {
+					let $lijst = $( '#kleistad_cursus_technieklijst' ),
+					lijst      = '';
+					$( 'input[name^=technieken]' ).each(
+						function() {
+							if ( $( this ).is( ':checked' ) ) {
+								lijst += ( lijst.length ? ', ' : '' ) + $( this ).val().toLowerCase();
+							}
+						}
+					);
+					$lijst.val( lijst.length ? ( ' met gekozen technieken: ' + lijst ) : '' );
+					$lijst.trigger( 'change' );
 				}
 			);
 

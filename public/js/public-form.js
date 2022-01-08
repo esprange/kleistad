@@ -349,12 +349,19 @@ function validate_email( input, compare ) {
 					showTab( -1 );
 				}
 			)
+			/**
+			 * Dit is voor de multi step formulieren, het bevestiging scherm.
+			 */
 			.on(
 				'change',
 				'input, select, textarea',
 				function() {
 					let naam = $( this ).attr( 'name' );
-					$( '#bevestig_' + naam ).html( $( this ).val() );
+					$( '#' + ( 'bevestig_' + naam ).replace( /[^a-z_]/g, '' ) ).html(
+						$( this ).is( ':radio' ) ?
+							$( 'input[name=' + naam + ']:checked' ).val() :
+							$( this ).val()
+					)
 				}
 			)
 
