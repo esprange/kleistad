@@ -131,11 +131,13 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			$checked       = $selecteerbaar && ( $this->data['input']['cursus_id'] === $cursus_data['cursus']->id || 1 === count( $this->data['open_cursussen'] ) );
 			?>
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">
-				<input name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_data['cursus']->id ); ?>"
-					data-cursus='<?php echo $cursus_data['json'] ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?>
-					<?php checked( $checked ); ?> required />
-				<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>">
-					<span style="<?php echo esc_attr( $style ); ?>"><?php echo esc_html( $naam ); ?></span></label>
+				<div class="kleistad-col-10">
+					<input name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_data['cursus']->id ); ?>"
+						data-cursus='<?php echo $cursus_data['json'] ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?>
+						<?php checked( $checked ); ?> required />
+					<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>">
+						<span style="<?php echo esc_attr( $style ); ?>"><?php echo esc_html( $naam ); ?></span></label>
+				</div>
 			</div>
 			<?php
 		}
@@ -222,15 +224,21 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				</div>
 			</div>
 			<div class="kleistad-row">
-				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
-				<label for="kleistad_betaal_ideal" ></label>
+				<div class="kleistad-col-10">
+					<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
+					<label for="kleistad_betaal_ideal" ></label>
+				</div>
 			</div>
 			<div class="kleistad-row">
-				<?php $this->ideal(); ?>
+				<div class="kleistad-col-10">
+					<?php $this->ideal(); ?>
+				</div>
 			</div>
 			<div class ="kleistad-row">
-				<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
-				<label for="kleistad_betaal_stort" ></label>
+				<div class="kleistad-col-10">
+					<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
+					<label for="kleistad_betaal_stort" ></label>
+				</div>
 			</div>
 		</div>
 		<div id="kleistad_cursus_lopend" style="display:none" >
@@ -260,7 +268,9 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	private function bevestiging() {
 		?>
 		<div class="kleistad-row">
-			<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
+			<div class="kleistad-col-10">
+				<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
+			</div>
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
@@ -279,7 +289,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad-row">
-			<div class="kleistad_col_3">
+			<div class="kleistad-col-3">
 			Speciale wensen en/of mededeling :
 			</div>
 			<div class="kleistad-col-7">

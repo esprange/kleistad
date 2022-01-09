@@ -143,6 +143,11 @@ abstract class Public_Shortcode_Display {
 		?>
 		<div>
 			<div class="kleistad-row">
+				<div class="kleistad-col-6">
+					<label class="kleistad-label">Wat zijn je contact gegevens</label>
+				</div>
+			</div>
+			<div class="kleistad-row">
 				<div class="kleistad-col-3 kleistad-label">
 					<label for="kleistad_voornaam">Voornaam</label>
 				</div>

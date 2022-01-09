@@ -15,6 +15,7 @@ License: GPL3.0
 	--disabled: #f6f8ff;
 	--disabled-inner: #e1e6f9;
 	--focus: 2px greenyellow;
+	--tab-height: 360px;
 }
 
 .kleistad-bank .ui-icon {
@@ -284,17 +285,17 @@ a.kleistad-schedule {
 
 .kleistad-tab {
 	display: none;
-	height: 350px;
 	background-color: #dddddd;
-	padding: 50px 10px;
+	overflow-x: hidden;
+	padding: 10px 10px 50px;
 	position: relative;
 }
 
 .kleistad-tab-footer {
 	bottom: 0;
-	float: right;
 	font-style: italic;
 	position: absolute;
+	text-align: right;
 }
 
 .kleistad-stap {
@@ -466,6 +467,11 @@ a.kleistad-schedule {
 
 @media screen and (min-width: 768px) {
 
+	div.kleistad-tab {
+		height : var(--tab-height);
+		overflow-y: auto;
+	}
+
 	.kleistad-col-1 {
 		width: 10%;
 	}
@@ -529,6 +535,10 @@ div.kleistad-werkplek-dagdeel {
 
 	div.kleistad-meesters {
 		display: none;
+	}
+
+	div.kleistad-tab {
+		min-height: var(--tab-height);
 	}
 
 	[class^="kleistad-col-"] {

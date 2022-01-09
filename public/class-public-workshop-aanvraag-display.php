@@ -151,7 +151,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		<?php endforeach; ?>
 		<div class="kleistad-row kleistad-tab-footer" >
 			<div class="kleistad-col-10">
-				Je kan alleen een datum selecten die past binnen de huidige planning van Kleistad van de komende 3 maanden. Wil je later een workshop plannen neem dan <?php $this->contact(); ?> op.
+				Je kan alleen een datum selecteren die past binnen de huidige planning van Kleistad van de komende 3 maanden.<br/>Wil je later een workshop plannen neem dan <?php $this->contact(); ?> op.
 			</div>
 		</div>
 		<?php
@@ -179,7 +179,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	private function bevestiging() {
 		?>
 		<div class="kleistad-row">
-			<div class="kleistad-col_5">
+			<div class="kleistad-col-5">
 				<label class="kleistad-label">Overzicht ingevoerde gegevens</label>
 			</div>
 		</div>
@@ -202,8 +202,8 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				<span id="bevestig_vraag"></span>
 			</div>
 		</div>
-		<div class="kleistad-row kleistad-tab-footer">
-			<div class="kleistad-col-10">
+		<div class="kleistad-row">
+			<div class="kleistad-col-10 kleistad-tab-footer">
 				Als het bovenstaande correct is dan kan de aanvraag verzonden worden. Er wordt binnen een week contact opgenomen.
 			</div>
 		</div>
