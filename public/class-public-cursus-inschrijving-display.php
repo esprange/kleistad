@@ -296,8 +296,8 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				<span id="bevestig_opmerking"></span>
 			</div>
 		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-10 kleistad-tab-footer">
+		<div class="kleistad-row kleistad-tab-footer" >
+			<div class="kleistad-col-10">
 				Als het bovenstaande correct is, druk dan op verder.
 			</div>
 		</div>

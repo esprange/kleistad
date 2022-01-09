@@ -76,10 +76,7 @@
 
 	$(
 		function() {
-			let $cursus_checked = $( 'input[name=cursus_id]:radio:checked' );
-			if ( 0 !== $cursus_checked.length ) {
-				wijzigVelden( $cursus_checked.data( 'cursus' ) );
-			}
+			let $cursus_checked, $aantal;
 
 			/**
 			 * Initialiseer de tooltips voor de cursussen.
@@ -99,7 +96,7 @@
 			/**
 			 * Initialiseer de aantal spinner.
 			 */
-			$( '#kleistad_aantal' ).spinner(
+			$aantal = $( '#kleistad_aantal' ).spinner(
 				{
 					min:1,
 					max: function() {
@@ -119,8 +116,22 @@
 						}
 					}
 				}
-			).trigger( 'change' );
+			);
 
+			/**
+			 * Initialiseer velden.
+			 */
+			$cursus_checked	= $( 'input[name=cursus_id]:radio:checked, input[name=cursus_id]' );
+			if ( 0 !== $cursus_checked.length ) {
+				wijzigVelden( $cursus_checked.data( 'cursus' ) );
+				wijzigTeksten( $cursus_checked.data( 'cursus' ) );
+			}
+			$( '#kleistad_cursus_naam' ).trigger( 'change' );
+			$aantal.trigger( 'spinchange' );
+
+			/**
+			 * De event handlers.
+			 */
 			$( '.kleistad-shortcode' )
 			/**
 			 * De teksten en velden zijn afhankelijk van de cursus keuze.

@@ -88,7 +88,7 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 					data-bedragtekst="= 3 termijnen"
 					value="beperkt" <?php checked( 'beperkt', $this->data['input']['abonnement_keuze'] ); ?> />
 				<label for="kleistad_beperkt">
-					Beperkte toegang, 1 dag per week (€ <?php echo esc_html( number_format_i18n( opties()['beperkt_abonnement'], 2 ) ); ?> p.m.)
+					Beperkte toegang, 1 dagdeel per week (€ <?php echo esc_html( number_format_i18n( opties()['beperkt_abonnement'], 2 ) ); ?> p.m.)
 				</label>
 			</div>
 		</div>
@@ -170,8 +170,8 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-7"><span id="bevestig_opmerking"></span></div>
 		</div>
 		<?php $this->verklaring(); ?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-10 kleistad-tab-footer">
+		<div class="kleistad-row kleistad-tab-footer">
+			<div class="kleistad-col-10">
 				Als het bovenstaande correct is, druk dan op verder.
 			</div>
 		</div>

@@ -184,7 +184,13 @@
 				'click',
 				'#kleistad_default',
 				function() {
-					muteerPlanning( $datum.val(), true );
+					let confirm = $( this ).data( 'confirm' );
+					$().askConfirm(
+						confirm.split( '|' ),
+						function() {
+							muteerPlanning( $datum.val(), true )
+						}
+					);
 				}
 			);
 		}

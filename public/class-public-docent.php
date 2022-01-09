@@ -18,7 +18,7 @@ use WP_Error;
 /**
  * De reservering form.
  */
-class Public_Docent extends Shortcode {
+class Public_Docent extends ShortcodeForm {
 
 	/**
 	 *
@@ -237,6 +237,12 @@ EOT;
 				$html .= <<<EOT
 <span class="kleistad-inzet kleistad-inzet-definitief" style="width:21px">R</span>
 EOT;
+				break;
+			case Docent::STANDAARD:
+				$html .= <<<EOT
+<input type="checkbox" class="planning" style="background-color: mediumpurple" data-datum="$datum" data-dagdeel="$dagdeel" checked="checked" >
+EOT;
+				break;
 		}
 		return $html;
 	}
@@ -289,6 +295,7 @@ EOT;
 				case Docent::NIET_BESCHIKBAAR:
 					break;
 				case Docent::BESCHIKBAAR:
+				case Docent::STANDAARD:
 					$html .= <<<EOT
 		<span class="kleistad-inzet" >$docent->display_name</span><br/>
 EOT;
@@ -380,5 +387,14 @@ EOT;
 			);
 		}
 		return new WP_Error( 'param', 'Onjuiste data ontvangen' );
+	}
+
+	/**
+	 * Omdat het formulier via ajax calls wordt afgehandeld is er geen processing nodig.
+	 *
+	 * @return array
+	 */
+	public function process(): array {
+		return [];
 	}
 }

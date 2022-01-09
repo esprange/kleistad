@@ -132,7 +132,7 @@ function validate_email( input, compare ) {
 				firstTab++;
 			}
 		} while ( ! show && currentTab < maxTab );
-		$tab.eq( currentTab ).show();
+		$tab.eq( currentTab ).show().css( 'display', 'flex' );
 		$( '#kleistad_tab_prev' ).toggle( firstTab !== currentTab );
 		$( '#kleistad_tab_next' ).toggle( $tab.length - 1 !== currentTab );
 		$( '#kleistad_submit' ).toggle( $tab.length - 1 === currentTab );
@@ -214,7 +214,7 @@ function validate_email( input, compare ) {
 	 * @param {String} tekst Te tonen tekst. Als leeg dan wordt er geen popup getoond.
 	 * @param callback Uit te voeren actie indien ok.
 	 */
-	function askConfirm( tekst, callback ) {
+	$.fn.askConfirm = function( tekst, callback ) {
 		if ( tekst.length ) {
 			$( '#kleistad_bevestigen' ).text( tekst[1] ).dialog(
 				{
@@ -319,7 +319,7 @@ function validate_email( input, compare ) {
 					/**
 					 * Als er een tekst is om eerst te confirmeren dan de popup tonen.
 					 */
-					return askConfirm(
+					return $().askConfirm(
 						tekst,
 						function() {
 							submitForm( $form.closest( '.kleistad-shortcode' ), formData );
@@ -353,7 +353,7 @@ function validate_email( input, compare ) {
 			 * Dit is voor de multi step formulieren, het bevestiging scherm.
 			 */
 			.on(
-				'change',
+				'change spinchange',
 				'input, select, textarea',
 				function() {
 					let naam = $( this ).attr( 'name' );

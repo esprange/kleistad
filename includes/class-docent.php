@@ -25,6 +25,7 @@ class Docent extends Gebruiker {
 	public const BESCHIKBAAR      = 1;
 	public const OPTIE            = 2;
 	public const GERESERVEERD     = 3;
+	public const STANDAARD        = 4;
 	public const META_KEY         = 'kleistad_docent_beschikbaarheid';
 
 	/**
@@ -69,7 +70,9 @@ class Docent extends Gebruiker {
 	 */
 	public function beschikbaarlijst( array $lijst ) {
 		foreach ( $lijst as $item ) {
-			$this->beschikbaardata[ intval( $item['datum'] ) ][ $item['dagdeel'] ] = $item['status'] ? self::BESCHIKBAAR : self::NIET_BESCHIKBAAR;
+			$datum = intval( $item['datum'] );
+			$this->beschikbaardata[ $datum ][ $item['dagdeel'] ] = $item['status'] ?
+				( 10 > $datum ? self::STANDAARD : self::BESCHIKBAAR ) : self::NIET_BESCHIKBAAR;
 		}
 		update_user_meta( $this->ID, self::META_KEY, $this->beschikbaardata );
 		do_action( 'kleistad_planning' );

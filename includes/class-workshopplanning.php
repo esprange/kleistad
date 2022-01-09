@@ -132,7 +132,8 @@ class Workshopplanning extends WP_Async_Request {
 		for ( $datum = $start; $datum <= $eind; $datum = $datum + DAY_IN_SECONDS ) {
 			foreach ( DAGDEEL as $dagdeel ) {
 				foreach ( $docenten as $docent ) {
-					if ( Docent::BESCHIKBAAR === $docent->beschikbaarheid( $datum, $dagdeel ) ) {
+					$status = $docent->beschikbaarheid( $datum, $dagdeel );
+					if ( Docent::BESCHIKBAAR === $status || Docent::STANDAARD === $status ) {
 						$this->beschikbaarheid[ $this->index( $datum, $dagdeel ) ]['docent'] = true;
 						break;
 					}

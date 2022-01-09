@@ -284,17 +284,16 @@ a.kleistad-schedule {
 }
 
 .kleistad-tab {
-	display: none;
 	background-color: #dddddd;
+	display: none;
+	flex-direction: column;
 	overflow-x: hidden;
-	padding: 10px 10px 50px;
-	position: relative;
+	padding: 10px 10px 20px;
 }
 
 .kleistad-tab-footer {
-	bottom: 0;
 	font-style: italic;
-	position: absolute;
+	margin-top: auto;
 	text-align: right;
 }
 
