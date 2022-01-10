@@ -215,36 +215,15 @@ EOT;
 	 * @return string
 	 */
 	private static function show_planning_cell( int $datum, string $dagdeel, array $args ) : string {
-		$html        = '';
 		$reservering = $args['reserveringen'][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
-		switch ( $reservering ) {
-			case Docent::NIET_BESCHIKBAAR:
-				$html .= <<<EOT
-<input type="checkbox" class="planning" data-datum="$datum" data-dagdeel="$dagdeel" >
-EOT;
-				break;
-			case Docent::BESCHIKBAAR:
-				$html .= <<<EOT
-<input type="checkbox" class="planning" data-datum="$datum" data-dagdeel="$dagdeel" checked="checked" >
-EOT;
-				break;
-			case Docent::OPTIE:
-				$html .= <<<EOT
-<span class="kleistad-inzet kleistad-inzet-optie" style="width:21px">O</span>
-EOT;
-				break;
-			case Docent::GERESERVEERD:
-				$html .= <<<EOT
-<span class="kleistad-inzet kleistad-inzet-definitief" style="width:21px">R</span>
-EOT;
-				break;
-			case Docent::STANDAARD:
-				$html .= <<<EOT
-<input type="checkbox" class="planning" style="background-color: mediumpurple" data-datum="$datum" data-dagdeel="$dagdeel" checked="checked" >
-EOT;
-				break;
-		}
-		return $html;
+		$formats     = [
+			Docent::NIET_BESCHIKBAAR => '<input type="checkbox" class="planning" data-datum="%s" data-dagdeel="%s" >',
+			Docent::BESCHIKBAAR      => '<input type="checkbox" class="planning" data-datum="%s" data-dagdeel="%s" checked="checked" >',
+			Docent::STANDAARD        => '<input type="checkbox" class="planning" style="background-color: mediumpurple" data-datum="%s" data-dagdeel="%s" checked="checked" >',
+			Docent::OPTIE            => '<span class="kleistad-inzet kleistad-inzet-optie" style="width:21px">O</span>',
+			Docent::GERESERVEERD     => '<span class="kleistad-inzet kleistad-inzet-definitief" style="width:21px">R</span>',
+		];
+		return sprintf( $formats[ $reservering ], $datum, $dagdeel );
 	}
 
 	/**
@@ -264,7 +243,6 @@ EOT;
 		foreach ( $docenten as $docent ) {
 			$reserveringen[ $docent->ID ] = self::docent_beschikbaarheid( $maandag, $docent, $cursussen, $workshops );
 		}
-
 		return self::tabel(
 			$maandag,
 			[
@@ -288,28 +266,17 @@ EOT;
 	 * @return string
 	 */
 	private static function show_overzicht_cell( int $datum, string $dagdeel, array $args ) : string {
-		$html = '';
+		$html    = '';
+		$formats = [
+			Docent::NIET_BESCHIKBAAR => '',
+			Docent::BESCHIKBAAR      => '<span class="kleistad-inzet" >%s</span><br/>',
+			Docent::STANDAARD        => '<span class="kleistad-inzet" >%s</span><br/>',
+			Docent::OPTIE            => '<span class="kleistad-inzet kleistad-inzet-optie" >%s</span><br/>',
+			Docent::GERESERVEERD     => '<span class="kleistad-inzet kleistad-inzet-definitief" >%s</span><br/>',
+		];
 		foreach ( $args['docenten'] as $docent ) {
 			$reservering = $args['reserveringen'][ $docent->ID ][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
-			switch ( $reservering ) {
-				case Docent::NIET_BESCHIKBAAR:
-					break;
-				case Docent::BESCHIKBAAR:
-				case Docent::STANDAARD:
-					$html .= <<<EOT
-		<span class="kleistad-inzet" >$docent->display_name</span><br/>
-EOT;
-					break;
-				case Docent::OPTIE:
-					$html .= <<<EOT
-		<span class="kleistad-inzet kleistad-inzet-optie" >$docent->display_name</span><br/>
-EOT;
-					break;
-				case Docent::GERESERVEERD:
-					$html .= <<<EOT
-		<span class="kleistad-inzet kleistad-inzet-definitief" >$docent->display_name</span><br/>
-EOT;
-			}
+			$html       .= sprintf( $formats[ $reservering ], $docent->display_name );
 		}
 		return $html;
 	}
