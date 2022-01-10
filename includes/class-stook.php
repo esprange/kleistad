@@ -102,9 +102,9 @@ class Stook {
 	/**
 	 * De interne sleutel van de stook
 	 *
-	 * @var int|null $stook_id Het database id.
+	 * @var int|null $id Het database id.
 	 */
-	private ?int $stook_id = 0;
+	private ?int $id = 0;
 
 	/**
 	 * Constructor
@@ -134,7 +134,7 @@ class Stook {
 			$this->programma   = intval( $resultaat['programma'] );
 			$this->gemeld      = boolval( $resultaat['gemeld'] );
 			$this->verwerkt    = boolval( $resultaat['verwerkt'] );
-			$this->stook_id    = intval( $resultaat['id'] );
+			$this->id          = intval( $resultaat['id'] );
 			$this->hoofdstoker = intval( $resultaat['gebruiker_id'] );
 			foreach ( json_decode( $resultaat['verdeling'], true ) as $stookdeel ) {
 				$this->stookdelen[] = new Stookdeel( $stookdeel['id'], intval( $stookdeel['perc'] ), floatval( $stookdeel['prijs'] ?? 0 ) );
@@ -175,10 +175,10 @@ class Stook {
 				'gemeld'       => intval( $this->gemeld ),
 				'verwerkt'     => intval( $this->verwerkt ),
 			];
-		if ( 0 < $this->stook_id ) {
+		if ( 0 < $this->id ) {
 			if ( false === $wpdb->replace(
 				"{$wpdb->prefix}kleistad_reserveringen",
-				array_merge( $data, [ 'id' => $this->stook_id ] )
+				array_merge( $data, [ 'id' => $this->id ] )
 			) ) {
 				throw new Kleistad_Exception( 'Database actie kon niet voltooid worden' );
 			}
@@ -187,7 +187,7 @@ class Stook {
 		if ( false === $wpdb->insert( "{$wpdb->prefix}kleistad_reserveringen", $data ) ) {
 			throw new Kleistad_Exception( 'Database actie kon niet voltooid worden' );
 		}
-		$this->stook_id = $wpdb->insert_id;
+		$this->id = $wpdb->insert_id;
 	}
 
 	/**
@@ -200,11 +200,11 @@ class Stook {
 		global $wpdb;
 		if ( false === $wpdb->delete(
 			"{$wpdb->prefix}kleistad_reserveringen",
-			[ 'id' => $this->stook_id ]
+			[ 'id' => $this->id ]
 		) ) {
 			throw new Kleistad_Exception( 'Database actie kon niet voltooid worden' );
 		}
-		$this->stook_id = null;
+		$this->id = null;
 	}
 
 	/**
@@ -213,7 +213,7 @@ class Stook {
 	 * @return bool De reservering status.
 	 */
 	public function is_gereserveerd() : bool {
-		return boolval( $this->stook_id );
+		return boolval( $this->id );
 	}
 
 	/**
@@ -222,7 +222,7 @@ class Stook {
 	 * @return string De status tekst.
 	 */
 	public function geef_statustekst() : string {
-		if ( ! boolval( $this->stook_id ) ) {
+		if ( ! boolval( $this->id ) ) {
 			if ( $this->datum >= strtotime( 'today' ) || is_super_admin() ) {
 				return self::RESERVEERBAAR;
 			}
