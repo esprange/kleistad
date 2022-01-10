@@ -47,8 +47,10 @@ class WorkshopAanvragen implements Countable, Iterator {
 				'posts_per_page' => -1,
 				'post_status'    => 'any',
 				'date_query'     => [
-					'column' => 'post_date',
-					'after'  => date( 'y-m-d', $datum ),
+					[
+						'column' => 'post_date',
+						'after'  => date( 'Y-m-d', $datum ),
+					],
 				],
 			]
 		);

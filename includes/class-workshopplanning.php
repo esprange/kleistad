@@ -113,7 +113,7 @@ class Workshopplanning extends WP_Async_Request {
 			}
 			$this->verhoog( $workshop->datum, bepaal_dagdeel( $workshop->start_tijd, $workshop->eind_tijd ) );
 		}
-		foreach ( new WorkshopAanvragen( $start ) as $workshop_aanvraag ) {
+		foreach ( new WorkshopAanvragen( $start - MONTH_IN_SECONDS ) as $workshop_aanvraag ) {
 			if ( is_null( $workshop_aanvraag->plandatum ) || $workshop_aanvraag->plandatum > $eind || $workshop_aanvraag->workshop_id ) {
 				continue;
 			}
