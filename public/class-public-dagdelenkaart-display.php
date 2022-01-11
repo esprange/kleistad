@@ -36,7 +36,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 		} else {
 			$this->dagdelenkaart_info()->gebruiker()->opmerking()->verklaring()->nieuwsbrief();
 		}
-		$this->betaal_info()->submit();
+		$this->betalen()->submit();
 	}
 
 	/**
@@ -63,7 +63,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Dagdelenkaart_Display
 	 */
-	private function betaal_info() : Public_Dagdelenkaart_Display {
+	private function betalen() : Public_Dagdelenkaart_Display {
 		?>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
