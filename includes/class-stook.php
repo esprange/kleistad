@@ -53,9 +53,9 @@ class Stook {
 	/**
 	 * De hoofdstoker
 	 *
-	 * @var int $hoofdstoker Het WP user_id van de hoofdstoker.
+	 * @var int $hoofdstoker_id Het WP user_id van de hoofdstoker.
 	 */
-	public int $hoofdstoker;
+	public int $hoofdstoker_id;
 
 	/**
 	 * De temperatuur van de stook
@@ -129,20 +129,20 @@ class Stook {
 			ARRAY_A
 		);
 		if ( $resultaat ) {
-			$this->temperatuur = intval( $resultaat['temperatuur'] );
-			$this->soort       = $resultaat['soortstook'];
-			$this->programma   = intval( $resultaat['programma'] );
-			$this->gemeld      = boolval( $resultaat['gemeld'] );
-			$this->verwerkt    = boolval( $resultaat['verwerkt'] );
-			$this->id          = intval( $resultaat['id'] );
-			$this->hoofdstoker = intval( $resultaat['gebruiker_id'] );
+			$this->temperatuur    = intval( $resultaat['temperatuur'] );
+			$this->soort          = $resultaat['soortstook'];
+			$this->programma      = intval( $resultaat['programma'] );
+			$this->gemeld         = boolval( $resultaat['gemeld'] );
+			$this->verwerkt       = boolval( $resultaat['verwerkt'] );
+			$this->id             = intval( $resultaat['id'] );
+			$this->hoofdstoker_id = intval( $resultaat['gebruiker_id'] );
 			foreach ( json_decode( $resultaat['verdeling'], true ) as $stookdeel ) {
 				$this->stookdelen[] = new Stookdeel( $stookdeel['id'], intval( $stookdeel['perc'] ), floatval( $stookdeel['prijs'] ?? 0 ) );
 			}
 			return;
 		}
-		$this->hoofdstoker  = get_current_user_id();
-		$this->stookdelen[] = new Stookdeel( $this->hoofdstoker, 100, 0 );
+		$this->hoofdstoker_id = get_current_user_id();
+		$this->stookdelen[]   = new Stookdeel( $this->hoofdstoker_id, 100, 0 );
 	}
 
 	/**
@@ -169,7 +169,7 @@ class Stook {
 				'temperatuur'  => $this->temperatuur,
 				'soortstook'   => $this->soort,
 				'programma'    => $this->programma,
-				'gebruiker_id' => $this->hoofdstoker,
+				'gebruiker_id' => $this->hoofdstoker_id,
 				'verdeling'    => wp_json_encode( $stookdelen ) ?: '[]',
 				'datum'        => date( 'Y-m-d', $this->datum ),
 				'gemeld'       => intval( $this->gemeld ),

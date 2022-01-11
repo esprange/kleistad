@@ -61,7 +61,7 @@ class Public_Stookbestand extends Shortcode {
 		foreach ( $ovens as $oven ) {
 			foreach ( $stoken[ $oven->id ] as $stook ) {
 				$stook_values        = [
-					get_userdata( $stook->hoofdstoker )->display_name,
+					get_userdata( $stook->hoofdstoker_id )->display_name,
 					date( 'd-m-Y', $stook->datum ),
 					$oven->naam,
 					$stook->soort,

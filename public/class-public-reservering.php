@@ -149,7 +149,7 @@ class Public_Reservering extends Shortcode {
 				'soortstook'   => $stook->soort,
 				'kleur'        => $kleur,
 				'select'       => true,
-				'gebruiker_id' => $stook->hoofdstoker,
+				'gebruiker_id' => $stook->hoofdstoker_id,
 			],
 			Stook::ALLEENLEZEN   => [
 				'wie'          => $stoker_naam,
@@ -159,7 +159,7 @@ class Public_Reservering extends Shortcode {
 				'soortstook'   => $stook->soort,
 				'kleur'        => $kleur,
 				'select'       => true,
-				'gebruiker_id' => $stook->hoofdstoker,
+				'gebruiker_id' => $stook->hoofdstoker_id,
 			],
 			Stook::VERWIJDERBAAR => [
 				'wie'          => $stoker_naam,
@@ -169,7 +169,7 @@ class Public_Reservering extends Shortcode {
 				'soortstook'   => $stook->soort,
 				'kleur'        => $kleur,
 				'select'       => true,
-				'gebruiker_id' => $stook->hoofdstoker,
+				'gebruiker_id' => $stook->hoofdstoker_id,
 			],
 			Stook::DEFINITIEF    => [
 				'wie'          => $stoker_naam,
@@ -179,7 +179,7 @@ class Public_Reservering extends Shortcode {
 				'soortstook'   => $stook->soort,
 				'kleur'        => 'kleistad-reservering-definitief',
 				'select'       => true,
-				'gebruiker_id' => $stook->hoofdstoker,
+				'gebruiker_id' => $stook->hoofdstoker_id,
 			],
 		];
 		$status       = $logica[ $stook->geef_statustekst() ];

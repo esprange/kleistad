@@ -82,7 +82,7 @@ class Public_Rapport extends Shortcode {
 				}
 				foreach ( $stook->stookdelen as $stookdeel ) {
 					if ( $stookdeel->medestoker === $gebruiker->ID ) {
-						$stoker          = get_userdata( $stook->hoofdstoker );
+						$stoker          = get_userdata( $stook->hoofdstoker_id );
 						$data['items'][] = [
 							'datum'     => $stook->datum,
 							'oven'      => $oven->naam,

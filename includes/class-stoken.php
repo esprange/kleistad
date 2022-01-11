@@ -162,7 +162,7 @@ class Stoken implements Countable, Iterator {
 		global $wpdb;
 		$emailer = new Email();
 		try {
-			$stoker = get_userdata( $stook->hoofdstoker );
+			$stoker = get_userdata( $stook->hoofdstoker_id );
 			$wpdb->query( 'START TRANSACTION' );
 			if ( Stook::ONDERHOUD !== $stook->soort ) {
 				foreach ( $stook->stookdelen as $stookdeel ) {
@@ -216,7 +216,7 @@ class Stoken implements Countable, Iterator {
 	private static function meld_stook( Oven $oven, Stook $stook ) {
 		$emailer = new Email();
 		if ( Stook::ONDERHOUD !== $stook->soort ) {
-			$stoker = get_userdata( $stook->hoofdstoker );
+			$stoker = get_userdata( $stook->hoofdstoker_id );
 			$tabel  = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
 			foreach ( $stook->stookdelen as $stookdeel ) {
 				if ( 0 === $stookdeel->medestoker ) {
@@ -234,7 +234,7 @@ class Stoken implements Countable, Iterator {
 					'parameters' => [
 						'voornaam'         => $stoker->first_name,
 						'achternaam'       => $stoker->last_name,
-						'bedrag'           => number_format_i18n( $oven->stookkosten( $stook->hoofdstoker, 100, $stook->temperatuur ), 2 ),
+						'bedrag'           => number_format_i18n( $oven->stookkosten( $stook->hoofdstoker_id, 100, $stook->temperatuur ), 2 ),
 						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . opties()['termijn'] . ' day', $stook->datum ) ), // datum verwerking.
 						'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . ( opties()['termijn'] - 1 ) . ' day', $stook->datum ) ), // datum deadline.
 						'verdeling'        => $tabel,
