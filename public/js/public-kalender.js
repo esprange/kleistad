@@ -19,7 +19,8 @@
 		{
 
 			let calendarEl = document.getElementById( 'kleistad_fullcalendar' );
-			let calendar   = new FullCalendar.Calendar(
+			// noinspection JSUnusedGlobalSymbols .
+			let calendar = new FullCalendar.Calendar(
 				calendarEl,
 				{
 					initialView: 'dayGridMonth',

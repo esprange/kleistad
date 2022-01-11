@@ -120,6 +120,7 @@ class Common {
 	 * @return string De Url.
 	 *
 	 * @internal Filter for login_redirect.
+	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 * phpcs:disable
 	 */

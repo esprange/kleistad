@@ -30,6 +30,7 @@
 						$( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
 					},
 					buttons: {
+						// noinspection JSUnusedGlobalSymbols .
 						Ok: function() {
 							$( this ).dialog( 'close' );
 						}

@@ -20,7 +20,6 @@ class Test_Docent extends Kleistad_UnitTestCase {
 	 */
 	private function maak_docent() : Docent {
 		$docent_id = $this->factory->user->create();
-		$role      = add_role( DOCENT, 'Kleistad docent' );
 		$docent    = new Docent( $docent_id );
 		$docent->add_role( DOCENT );
 		return $docent;

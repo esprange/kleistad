@@ -209,6 +209,9 @@ abstract class Public_Shortcode_Display {
 	 * @return Public_Shortcode_Display
 	 */
 	protected function opmerking() : Public_Shortcode_Display {
+		if ( is_super_admin() ) {
+			return $this;
+		}
 		?>
 		<div class ="kleistad-row" title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad" >
 			<div class="kleistad-col-3 kleistad-label">
@@ -228,6 +231,9 @@ abstract class Public_Shortcode_Display {
 	 * @return Public_Shortcode_Display
 	 */
 	protected function nieuwsbrief() : Public_Shortcode_Display {
+		if ( is_super_admin() ) {
+			return $this;
+		}
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
@@ -245,7 +251,7 @@ abstract class Public_Shortcode_Display {
 	 * @return Public_Shortcode_Display
 	 */
 	protected function verklaring() : Public_Shortcode_Display {
-		if ( empty( $this->data['verklaring'] ) ) {
+		if ( empty( $this->data['verklaring'] ) || is_super_admin() ) {
 			return $this;
 		}
 		?>
@@ -298,6 +304,36 @@ abstract class Public_Shortcode_Display {
 				</option>
 			<?php endforeach ?>
 		</select>
+		<?php
+	}
+
+	/**
+	 * Render de betaal sectie
+	 */
+	protected function betaal_info() {
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<label class="kleistad-label">Bepaal de wijze van betalen.</label>
+			</div>
+		</div>
+		<div class ="kleistad-row">
+			<div class="kleistad-col-10">
+				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
+				<label for="kleistad_betaal_ideal"></label>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<?php $this->ideal(); ?>
+			</div>
+		</div>
+		<div class ="kleistad-row">
+			<div class="kleistad-col-10">
+				<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
+				<label for="kleistad_betaal_stort"></label>
+			</div>
+		</div>
 		<?php
 	}
 

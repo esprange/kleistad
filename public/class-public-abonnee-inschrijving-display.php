@@ -34,19 +34,17 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 	public function form_content() {
 		?>
 		<div class="kleistad-tab"><?php $this->abonnement_info(); ?></div>
+
 		<?php if ( is_super_admin() ) : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker_selectie( 'Abonnee' ); ?></div>
-			<?php
-		else :
-			if ( is_user_logged_in() ) :
-				?>
+		<?php elseif ( is_user_logged_in() ) : ?>
 		<div class="kleistad-tab"><?php	$this->gebruiker_logged_in(); ?></div>
-			<?php else : ?>
+		<?php else : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker(); ?></div>
-			<?php endif ?>
+		<?php endif ?>
+
 		<div class="kleistad-tab"><?php $this->opmerking()->nieuwsbrief(); ?></div>
 		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
-		<?php endif ?>
 		<div class="kleistad-tab"><?php $this->betaal_info(); ?></div>
 		<?php
 	}
@@ -107,35 +105,6 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 		<?php
 	}
 
-	/**
-	 * Render de betaal sectie
-	 */
-	private function betaal_info() {
-		?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-10">
-				<label class="kleistad-label">Bepaal de wijze van betalen.</label>
-			</div>
-		</div>
-		<div class ="kleistad-row">
-			<div class="kleistad-col-10">
-				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
-				<label for="kleistad_betaal_ideal"></label>
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-10">
-				<?php $this->ideal(); ?>
-			</div>
-		</div>
-		<div class ="kleistad-row">
-			<div class="kleistad-col-10">
-				<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
-				<label for="kleistad_betaal_stort"></label>
-			</div>
-		</div>
-		<?php
-	}
 
 	/**
 	 * Render de bevestiging sectie

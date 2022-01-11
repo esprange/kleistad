@@ -33,13 +33,10 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		<input type="hidden" id="kleistad_submit_value" value="<?php echo esc_attr( $this->display_actie ); ?>" >
 		<input name="cursus_naam" type="hidden" id="kleistad_cursus_naam" value="<?php echo esc_attr( $this->data['open_cursussen'][0]['cursus']->naam ); ?>">
 		<input name="cursus_technieklijst" type="hidden" id="kleistad_cursus_technieklijst" value="">
-		<?php if ( isset( $this->data['verbergen'] ) ) : ?>
-		<input name="cursus_id" type="hidden" value="<?php echo esc_attr( $this->data['open_cursussen'][0]['cursus']->id ); ?>"
-			data-cursus='<?php echo $this->data['open_cursussen'][0]['json'] ?: ''; // phpcs:ignore ?>' />
-		<?php else : ?>
+
 		<div class="kleistad-tab"><?php $this->cursus_info(); ?></div>
-		<?php endif ?>
 		<div class="kleistad-tab"><?php $this->aantal( is_user_logged_in() ? 1 : 0 )->techniek_keuze(); ?></div>
+
 		<?php if ( is_super_admin() ) : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker_selectie( 'Cursist' ); ?></div>
 		<?php elseif ( is_user_logged_in() ) : ?>
@@ -47,11 +44,10 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		<?php else : ?>
 		<div class="kleistad-tab"><?php $this->gebruiker(); ?></div>
 		<?php endif ?>
+
 		<div class="kleistad-tab"><?php $this->opmerking()->nieuwsbrief(); ?></div>
-		<?php if ( ! is_super_admin() ) : ?>
 		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
-		<?php endif ?>
-		<div class="kleistad-tab"><?php $this->betaal_info(); ?></div>
+		<div class="kleistad-tab"><?php $this->betalen(); ?></div>
 		<?php
 	}
 
@@ -110,6 +106,13 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 * Render het cursus velden
 	 */
 	private function cursus_info() {
+		if ( isset( $this->data['verbergen'] ) ) :
+			?>
+			<input name="cursus_id" type="hidden" value="<?php echo esc_attr( $this->data['open_cursussen'][0]['cursus']->id ); ?>"
+				   data-cursus='<?php echo $this->data['open_cursussen'][0]['json'] ?: ''; // phpcs:ignore ?>' />
+			<?php
+			return;
+			endif;
 		?>
 		<div id="kleistad_cursussen">
 			<div class="kleistad-row">
@@ -215,31 +218,10 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de betaal sectie
 	 */
-	private function betaal_info() {
+	private function betalen() {
 		?>
 		<div id="kleistad_cursus_betalen" style="display:none;">
-			<div class="kleistad-row">
-				<div class="kleistad-col-10">
-					<label class="kleistad-label">Bepaal de wijze van betalen. Pas na ontvangst van de betaling kan je worden ingedeeld !</label>
-				</div>
-			</div>
-			<div class="kleistad-row">
-				<div class="kleistad-col-10">
-					<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
-					<label for="kleistad_betaal_ideal" ></label>
-				</div>
-			</div>
-			<div class="kleistad-row">
-				<div class="kleistad-col-10">
-					<?php $this->ideal(); ?>
-				</div>
-			</div>
-			<div class ="kleistad-row">
-				<div class="kleistad-col-10">
-					<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
-					<label for="kleistad_betaal_stort" ></label>
-				</div>
-			</div>
+			<?php $this->betaal_info(); ?>
 		</div>
 		<div id="kleistad_cursus_lopend" style="display:none" >
 			<div class="kleistad-row">

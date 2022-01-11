@@ -85,7 +85,7 @@ class Public_Filters {
 	 * @return array
 	 *
 	 * @internal Filter for email_change_email.
-	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 * phpcs:disable
 	 */
@@ -116,7 +116,7 @@ class Public_Filters {
 	 * @return array
 	 *
 	 * @internal Filter for password_change_email.
-	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 * phpcs:disable
 	 */
@@ -145,7 +145,7 @@ class Public_Filters {
 	 * @param WP_User $user_data  Het user record van de gebruiker.
 	 *
 	 * @internal Filter for retrieve_password_message.
-	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 * phpcs:disable
 	 */
