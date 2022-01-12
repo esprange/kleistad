@@ -40,23 +40,7 @@
 			 */
 			function (data) {
 				beschikbareData = Object.values( data.plandata );
-				$( '#kleistad_plandatum' ).datepicker(
-					'option',
-					{
-						minDate: new Date( beschikbareData[ 0 ].datum ),
-						maxDate: new Date( beschikbareData[ beschikbareData.length - 1 ].datum ),
-						beforeShowDay: function( datum ) {
-							let dagdeel = $( 'input[name="dagdeel"]:checked' ).val();
-							let beschikbaar;
-							if ( 'undefined' === typeof dagdeel ) {
-								beschikbaar = 'undefined' !== typeof beschikbareData.find( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
-							} else {
-								beschikbaar = 'undefined' !== typeof beschikbareData.find( o => ( o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) ) && ( o.dagdeel === dagdeel.toLowerCase() ) );
-							}
-							return [ beschikbaar, beschikbaar ? '' : 'ui-state-disabled' ];
-						}
-					}
-				);
+				verwerkPlandata();
 			}
 		).fail(
 			function ( jqXHR) {
@@ -65,6 +49,29 @@
 					return;
 				}
 				window.alert( kleistadData.error_message );
+			}
+		);
+	}
+
+	/**
+	 * Verwerk de plandata in de datum picker.
+	 */
+	function verwerkPlandata() {
+		$( '#kleistad_plandatum' ).datepicker(
+			'option',
+			{
+				minDate: new Date( beschikbareData[ 0 ].datum ),
+				maxDate: new Date( beschikbareData[ beschikbareData.length - 1 ].datum ),
+				beforeShowDay: function( datum ) {
+					let dagdeel = $( 'input[name="dagdeel"]:checked' ).val();
+					let beschikbaar;
+					if ( 'undefined' === typeof dagdeel ) {
+						beschikbaar = 'undefined' !== typeof beschikbareData.find( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
+					} else {
+						beschikbaar = 'undefined' !== typeof beschikbareData.find( o => ( o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) ) && ( o.dagdeel === dagdeel.toLowerCase() ) );
+					}
+					return [ beschikbaar, beschikbaar ? '' : 'ui-state-disabled' ];
+				}
 			}
 		);
 	}
@@ -89,11 +96,9 @@
 					'#kleistad_plandatum',
 					function () {
 						let datum     = $( this ).datepicker( 'getDate' ),
-							$terug    = $( '#kleistad_terugzetten' ),
 							$dagdelen = $( 'div[class^="kleistad-dagdeel"]' );
 						haalPlandata();
 						if ( 'undefined' !== typeof datum ) {
-							$terug.show();
 							let beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
 							if ( beschikbaar.length ) {
 								$dagdelen.hide();
@@ -105,7 +110,6 @@
 								)
 							} else {
 								$dagdelen.show();
-								$terug.hide();
 							}
 						}
 					}
