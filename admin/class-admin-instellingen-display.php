@@ -58,6 +58,11 @@ class Admin_Instellingen_Display {
 				<td colspan="3"><input type="number" min="1"  name="kleistad-opties[max_activiteit]" id="max_activiteit"
 						value="<?php echo esc_attr( opties()['max_activiteit'] ); ?>" class="small-text" /></td>
 			</tr>
+			<tr >
+				<th scope="row"><label for="verloopaanvraag">Aantal weken voordat een workshop aanvraag verloopt</label></th>
+				<td colspan="3"><input type="number" min="1"  name="kleistad-opties[verloopaanvraag]" id="verloopaanvraag"
+					value="<?php echo esc_attr( opties()['verloopaanvraag'] ); ?>" class="small-text" /></td>
+			</tr>
 
 			</table>
 		<?php submit_button(); ?>

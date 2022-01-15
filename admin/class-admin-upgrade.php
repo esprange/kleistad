@@ -8,6 +8,7 @@
  * @package    Kleistad
  * @subpackage Kleistad/admin
  * @suppressWarnings(PHPMD)
+ * @noinspection PhpUnusedPrivateMethodInspection
  */
 
 namespace Kleistad;
@@ -20,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 136;
+	const DBVERSIE = 137;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -57,6 +58,7 @@ class Admin_Upgrade {
 			'oven_hoog'            => 1200,
 			'weken_werkplek'       => 5,
 			'max_activiteit'       => 1,
+			'verloopaanvraag'      => 1,
 			'werkruimte'           => [
 				[
 					'naam'  => 'Handvormen',
@@ -255,36 +257,6 @@ class Admin_Upgrade {
 	 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
 	 */
 	private function convert_saldo() {
-		$stokers = get_users(
-			[
-				'fields'       => [ 'ID' ],
-				'meta_key'     => Saldo::META_KEY,
-				'meta_compare' => '!==',
-				'meta_value'   => '',
-			]
-		);
-		foreach ( $stokers as $stoker ) {
-			$saldo_data = get_user_meta( $stoker->ID, Saldo::META_KEY, true );
-			if ( $saldo_data ) {
-				foreach ( $saldo_data['storting'] as $key => $storting ) {
-					if ( empty( $storting ) ) {
-						unset( $saldo_data['storting'][$key] );
-						continue;
-					}
-					if ( ! isset( $storting['status'] ) ) {
-						$order = new Order( $storting['code'] );
-						if ( $order->gesloten && ! $order->credit_id ) {
-							if ( $order->transactie_id ) {
-								$saldo_data['storting'][$key]['status'] = 'storting per ideal op ' . date( 'd-m-Y', $order->datum );
-								continue;
-							}
-							$saldo_data['storting'][$key]['status'] = 'storting per bank op ' . date( 'd-m-Y', $order->mutatie_datum );
-						}
-					}
-				}
-				update_user_meta( $stoker->ID, Saldo::META_KEY, $saldo_data );
-			}
-		}
 	}
 
 	/**
@@ -371,8 +343,6 @@ class Admin_Upgrade {
 		}
 	}
 
-	// phpcs:enable
-
 	/**
 	 * Converteer data
 	 */
@@ -380,20 +350,21 @@ class Admin_Upgrade {
 		/**
 		 * Conversie naar ...
 		 */
-		$this->convert_saldo();
-		$this->convert_dagdelenkaart();
-		$this->convert_abonnement();
-		$this->convert_inschrijving();
-		$this->convert_email();
-		$this->convert_cursus();
-		$this->convert_order();
-		$this->convert_opties();
-		$this->convert_recept();
-		$this->convert_users();
-		$this->convert_ovens();
-		$this->convert_reserveringen();
-		$this->convert_werkplekgebruik();
+//		$this->convert_saldo();
+//		$this->convert_dagdelenkaart();
+//		$this->convert_abonnement();
+//		$this->convert_inschrijving();
+//		$this->convert_email();
+//		$this->convert_cursus();
+//		$this->convert_order();
+//		$this->convert_opties();
+//		$this->convert_recept();
+//		$this->convert_users();
+//		$this->convert_ovens();
+//		$this->convert_reserveringen();
+//		$this->convert_werkplekgebruik();
 		$this->convert_workshops();
-		$this->convert_opties();
+//		$this->convert_opties();
 	}
+
 }

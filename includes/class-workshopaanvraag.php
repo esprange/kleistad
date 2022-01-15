@@ -22,6 +22,7 @@ use WP_Post;
  * @property string post_content
  * @property string post_status
  * @property string post_title
+ * @property string post_date
  * @property string post_name
  * @property string post_modified
  * @property string email
@@ -190,6 +191,18 @@ class WorkshopAanvraag {
 			$this->post_status = $workshop_id ? self::GEPLAND : self::GEREAGEERD;
 			$this->save();
 		}
+	}
+
+	/**
+	 * Bepaal of de aanvraag al afgehandeld is. Als de aanvraag al ouder is dan x weken of er is al een workshop ingepland, dan is de aanvraag verwerkt.
+	 *
+	 * @return bool True als nog in verwerking.
+	 */
+	public function is_inverwerking() : bool {
+		if ( $this->ID ) {
+			return strtotime( $this->post_date ) > strtotime( '- ' . opties()['verloopaanvraag'] . 'week' ) && ! $this->workshop_id;
+		}
+		return false;
 	}
 
 	/**
