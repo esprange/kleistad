@@ -172,7 +172,14 @@ class WorkshopAanvraag {
 				'from'       => $this->mbx() . $emailer->verzend_domein,
 				'reply-to'   => $this->mbx() . $emailer->domein,
 				'slug'       => 'workshop_aanvraag_bevestiging',
-				'parameters' => $casus_data,
+				'parameters' => [
+					'naam'    => $casus_data['naam'],
+					'contact' => $casus_data['contact'],
+					'vraag'   => $casus_data['vraag'],
+					'omvang'  => $casus_data['omvang'],
+					'dagdeel' => strtolower( ( $casus_data['dagdeel'] ) ),
+					'datum'   => strftime( '%A, %d-%m-%y', $casus_data['plandatum'] ),
+				],
 				'sign_email' => false,
 				'auto'       => 'reply',
 			]
