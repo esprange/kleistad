@@ -116,6 +116,9 @@ function validate_email( input, compare ) {
 			$stap  = $( '.kleistad-stap' ),
 			maxTab = $tab.length,
 			show   = false;
+		if ( ! $tab[0] ) {
+			return;
+		}
 		$tab.eq( currentTab ).hide();
 		do {
 			currentTab += direction;

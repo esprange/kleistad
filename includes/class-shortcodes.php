@@ -152,7 +152,7 @@ class Shortcodes {
 				'script' => true,
 				'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
 				'css'    => [ 'jquery-ui' ],
-				'access' => [ DOCENT ],
+				'access' => [ DOCENT, BESTUUR ],
 			],
 			/**
 			 * Verzend email

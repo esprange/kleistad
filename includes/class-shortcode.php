@@ -191,7 +191,9 @@ abstract class Shortcode {
 	 * @throws Kleistad_Exception Als er de shortcode meer dat eens op de pagina voorkomt.
 	 */
 	public static function get_instance( string $shortcode_tag, array $attributes ) : ?Shortcode {
-		if ( in_array( $shortcode_tag, self::$tags, true ) && ! is_admin() ) {
+		// Het onderstaande voorkomt dat pagina edits gezien worden als een dubbel voorkomende shortcode.
+		$backend = ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || is_admin();
+		if ( in_array( $shortcode_tag, self::$tags, true ) && ! $backend ) {
 			throw new Kleistad_Exception( "De shortcode kleistad_$shortcode_tag mag maar éénmaal per pagina gebruikt worden" );
 		}
 		self::$tags[]    = $shortcode_tag;

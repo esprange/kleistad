@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.8.3  
-**Stable tag:** 7.1.1  
+**Stable tag:** 7.1.3  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 **Requires PHP:** 7.4  

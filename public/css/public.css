@@ -457,6 +457,32 @@ a.kleistad-schedule {
 	border: 0;
 }
 
+.kleistad-inzet {
+	appearance: none;
+	display: inline-block;
+	height: 25px;
+	max-width: 11ch;
+	opacity: 0.9;
+	overflow:hidden;
+	text-align: center;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+}
+
+.kleistad-inzet-optie {
+	background: lightsalmon;
+	border: 1px solid var(--bc, var(--border));
+	border-radius: 7px;
+	color: white;
+}
+
+.kleistad-inzet-definitief {
+	background: dimgray;
+	border: 1px solid var(--bc, var(--border));
+	border-radius: 7px;
+	color: white;
+}
+
 [class^="kleistad-col-"] {
 	border: 0;
 	float: left;
@@ -543,32 +569,6 @@ div.kleistad-werkplek-dagdeel {
 	[class^="kleistad-col-"] {
 		width: 100%;
 	}
-}
-
-.kleistad-inzet {
-	appearance: none;
-	display: inline-block;
-	height: 21px;
-	max-width: 11ch;
-	opacity: 0.9;
-	overflow:hidden;
-	text-align: center;
-	text-overflow:ellipsis;
-	white-space:nowrap;
-}
-
-.kleistad-inzet-optie {
-	background: lightsalmon;
-	border: 1px solid var(--bc, var(--border));
-	border-radius: 7px;
-	color: white;
-}
-
-.kleistad-inzet-definitief {
-	background: dimgray;
-	border: 1px solid var(--bc, var(--border));
-	border-radius: 7px;
-	color: white;
 }
 
 .kleistad-planning td,

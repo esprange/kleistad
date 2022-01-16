@@ -68,7 +68,7 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 *
 	 * @return Public_Saldo_Display
 	 */
-	private function betaal_info() : Public_Saldo_Display {
+	protected function betaal_info() : Public_Saldo_Display {
 		?>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">

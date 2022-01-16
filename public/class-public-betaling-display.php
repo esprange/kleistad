@@ -107,10 +107,11 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad-row">
-			<div class="kleistad-col-10" style="padding-top: 20px;">
+			<div class="kleistad-col-10" style="padding-top: 20px;padding-bottom: 100px;">
 				<button class="kleistad-button" type="submit" name="kleistad_submit_betaling" id="kleistad_submit" value="betalen" >Betalen</button><br />
 			</div>
 		</div>
+		<div style="display:inline-block;height: 500px;">&nbsp;</div>
 		<?php
 	}
 

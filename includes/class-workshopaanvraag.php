@@ -193,7 +193,7 @@ class WorkshopAanvraag {
 	 * @param int $workshop_id De id van de workshop.
 	 */
 	public function gepland( int $workshop_id ) {
-		if ( $this->ID ) {
+		if ( $this->ID && $this->workshop_id !== $workshop_id ) {
 			$this->workshop_id = $workshop_id;
 			$this->post_status = $workshop_id ? self::GEPLAND : self::GEREAGEERD;
 			$this->save();

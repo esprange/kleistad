@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 137;
+	const DBVERSIE = 141;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -344,6 +344,18 @@ class Admin_Upgrade {
 	}
 
 	/**
+	 * Converteer de workshop docenten van display_name naar ID
+	 */
+	private function convert_workshop_aanvragen() {
+		global $wpdb;
+		$aanvragen = new WorkshopAanvragen();
+		foreach( $aanvragen as $aanvraag ) {
+			$tijd = date( 'Y-m-d H:i:s', strtotime( end( $aanvraag->communicatie )['tijd'] ) );
+			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET post_modified = %s WHERE ID=%d", $tijd, $aanvraag->ID ) );
+		}
+	}
+
+	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
@@ -363,7 +375,8 @@ class Admin_Upgrade {
 //		$this->convert_ovens();
 //		$this->convert_reserveringen();
 //		$this->convert_werkplekgebruik();
-		$this->convert_workshops();
+//		$this->convert_workshops();
+		$this->convert_workshop_aanvragen();
 //		$this->convert_opties();
 	}
 
