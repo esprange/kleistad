@@ -70,7 +70,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'email'      => $aanvraag->email,
 				'contact'    => $aanvraag->contact,
 				'telnr'      => $aanvraag->telnr,
-				'datum'      => date( 'd-m-Y', $aanvraag->plandatum ),
+				'datum'      => date( 'd-m-Y', $aanvraag->plandatum ?: strtotime( 'tomorrow' ) ),
 				'start_tijd' => DAGDEEL[0] === $aanvraag->dagdeel ? '10:00' : ( DAGDEEL[1] === $aanvraag->dagdeel ? '13:00' : '19:00' ),
 				'eind_tijd'  => DAGDEEL[0] === $aanvraag->dagdeel ? '12:00' : ( DAGDEEL[1] === $aanvraag->dagdeel ? '15:00' : '21:00' ),
 			],
