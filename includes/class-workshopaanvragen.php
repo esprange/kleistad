@@ -60,16 +60,6 @@ class WorkshopAanvragen implements Countable, Iterator {
 	}
 
 	/**
-	 * Voeg een workshopaanvraag toe.
-	 *
-	 * @param WorkshopAanvraag $aanvraagtoetevoegen Toe te voegen workshop.
-	 */
-	public function toevoegen( WorkshopAanvraag $aanvraagtoetevoegen ) {
-		$aanvraagtoetevoegen->save();
-		$this->aanvragen[] = $aanvraagtoetevoegen;
-	}
-
-	/**
 	 * Geef het aantal workshopaanvragen terug.
 	 *
 	 * @return int Het aantal.
