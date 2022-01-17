@@ -124,7 +124,8 @@ class InschrijvingBetaling extends ArtikelBetaling {
 		if ( $ruimte < $this->inschrijving->aantal ) {
 			return false;
 		}
-		$this->inschrijving->ingedeeld = true;
+		$this->inschrijving->ingedeeld   = true;
+		$this->inschrijving->wacht_datum = 0;
 		$this->inschrijving->save();
 		if ( 0 === $ruimte - $this->inschrijving->aantal ) {
 			$this->inschrijving->cursus->registreer_vol();

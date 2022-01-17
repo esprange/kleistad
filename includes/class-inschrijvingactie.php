@@ -40,6 +40,7 @@ class InschrijvingActie {
 	public function afzeggen() {
 		if ( ! $this->inschrijving->geannuleerd ) {
 			$this->inschrijving->geannuleerd = true;
+			$this->inschrijving->wacht_datum = 0;
 			$this->inschrijving->save();
 			foreach ( $this->inschrijving->extra_cursisten as $extra_cursist_id ) {
 				$extra_inschrijving              = new Inschrijving( $this->inschrijving->cursus->id, $extra_cursist_id );
@@ -193,6 +194,7 @@ class InschrijvingActie {
 	public function indelen_lopend( float $prijs ) {
 		$this->inschrijving->lopende_cursus = $prijs;
 		$this->inschrijving->ingedeeld      = true;
+		$this->inschrijving->wacht_datum    = 0;
 		$this->inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 		$this->inschrijving->artikel_type   = 'inschrijving';
 		$this->inschrijving->save();
