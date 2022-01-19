@@ -33,7 +33,7 @@ const DAGDEEL   = [ 'Ochtend', 'Middag', 'Avond' ]; // Vooralsnog ochtend, midda
  */
 function bepaal_dagdeel( int $start_tijd, int $eind_tijd ) : string {
 	$ochtend_grens = strtotime( '12:30', $start_tijd );
-	$middag_grens  = strtotime( '18:00', $eind_tijd );
+	$middag_grens  = strtotime( '20:00', $eind_tijd );
 	return $eind_tijd < $ochtend_grens ? DAGDEEL[0] : ( $eind_tijd < $middag_grens ? DAGDEEL[1] : DAGDEEL[2] );
 }
 
