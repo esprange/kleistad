@@ -329,30 +329,12 @@ class Admin_Upgrade {
 	 * Converteer de workshop docenten van display_name naar ID
 	 */
 	private function convert_workshops() {
-		global $wpdb;
-		foreach ( new Workshops() as $workshop ) {
-			if ( intval( $workshop->docent ) ) {
-				continue;
-			}
-			if ( $user = $wpdb->get_row( $wpdb->prepare(
-				"SELECT `ID` FROM $wpdb->users WHERE `display_name` = %s", $workshop->docent
-			) ) ) {
-				$workshop->docent = "$user->ID";
-				$workshop->save();
-			}
-		}
 	}
 
 	/**
 	 * Converteer de workshop docenten van display_name naar ID
 	 */
 	private function convert_workshop_aanvragen() {
-		global $wpdb;
-		$aanvragen = new WorkshopAanvragen();
-		foreach( $aanvragen as $aanvraag ) {
-			$tijd = date( 'Y-m-d H:i:s', strtotime( end( $aanvraag->communicatie )['tijd'] ) );
-			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET post_modified = %s WHERE ID=%d", $tijd, $aanvraag->ID ) );
-		}
 	}
 
 	/**
@@ -376,7 +358,7 @@ class Admin_Upgrade {
 //		$this->convert_reserveringen();
 //		$this->convert_werkplekgebruik();
 //		$this->convert_workshops();
-		$this->convert_workshop_aanvragen();
+//		$this->convert_workshop_aanvragen();
 //		$this->convert_opties();
 	}
 
