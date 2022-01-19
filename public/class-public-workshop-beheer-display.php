@@ -98,7 +98,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			foreach ( $this->data['workshops'] as $workshop ) :
 				?>
 				<tr>
-					<td data-sort="<?php echo esc_attr( substr( $workshop['code'], 1 ) );?>"><?php echo esc_html( $workshop['code'] ); ?></td>
+					<td data-sort="<?php echo esc_attr( substr( $workshop['code'], 1 ) ); ?>"><?php echo esc_html( $workshop['code'] ); ?></td>
 					<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
 					<td><?php echo esc_html( $workshop['naam'] ); ?></td>
 					<td><?php echo esc_html( $workshop['docent'] ); ?></td>

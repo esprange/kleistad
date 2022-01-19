@@ -14,6 +14,15 @@
 	let receptFilter;
 
 	/**
+	 * Markeer het element.
+	 */
+	let markeer = function() {
+		$( this ).prop( 'checked', true );
+		$( this ).next().css( { visibility: 'visible' } );
+		$( this ).parent().css( { fontWeight: 'bold' } );
+	}
+
+	/**
 	 * Lees de geselecteerde filters.
 	 *
 	 * @param initieel
@@ -107,18 +116,14 @@
 				$( '#kleistad_filters input[name="term"]' ).each(
 					function() {
 						if ( -1 !== $.inArray( $( this ).val(), data.terms ) ) {
-							$( this ).prop( 'checked', true );
-							$( this ).next().css( { visibility: 'visible' } );
-							$( this ).parent().css( { fontWeight: 'bold' } );
+							markeer.call( this );
 						}
 					}
 				);
 				$( '#kleistad_filters input[name="auteur"]' ).each(
 					function() {
 						if ( -1 !== $.inArray( $( this ).val(), data.auteurs ) ) {
-							$( this ).prop( 'checked', true );
-							$( this ).next().css( { visibility: 'visible' } );
-							$( this ).parent().css( { fontWeight: 'bold' } );
+							markeer.call( this );
 						}
 					}
 				);
