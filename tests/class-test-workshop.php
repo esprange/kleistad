@@ -75,6 +75,26 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	}
 
 	/**
+	 * Test of de docent_naam correct wordt weergegeven.
+	 */
+	public function test_docent_naam() {
+		$workshop = $this->maak_workshop();
+
+		$workshop->docent = 'Test tester';
+		$this->assertEquals( 'Test tester', $workshop->docent_naam(), 'enkele docent naam onjuist' );
+
+		$docent_id_1      = $this->factory->user->create();
+		$docent_naam_1    = get_user_by( 'ID', $docent_id_1 )->display_name;
+		$workshop->docent = "$docent_id_1";
+		$this->assertEquals( $docent_naam_1, $workshop->docent_naam(), 'enkele docent id onjuist' );
+
+		$docent_id_2      = $this->factory->user->create();
+		$docent_naam_2    = get_user_by( 'ID', $docent_id_2 )->display_name;
+		$workshop->docent = "$docent_id_1;$docent_id_2";
+		$this->assertEquals( "$docent_naam_1, $docent_naam_2", $workshop->docent_naam(), 'meerdere docent id onjuist' );
+	}
+
+	/**
 	 * Test function erase
 	 */
 	public function test_erase() {

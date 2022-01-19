@@ -181,11 +181,11 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_docent">Docent</label></div>
 			<div class="kleistad-col-3">
 				<?php if ( $readonly ) : ?>
-					<span id="kleistad_docent"><?php echo esc_html( is_numeric( $this->data['workshop']['docent'] ) ? get_user_by( 'id', $this->data['workshop']['docent'] )->display_name : $this->data['workshop']['docent'] ); ?></span>
+					<span id="kleistad_docent"><?php echo esc_html( $this->data['workshop']['docent_naam'] ); ?></span>
 				<?php else : ?>
-					<select style="width:100%" name="docent" id="kleistad_docent" required >
+					<select style="width:100%" name="docent[]" id="kleistad_docent" multiple required >
 						<?php foreach ( $this->data['docenten'] as $docent ) : ?>
-							<option value="<?php echo esc_attr( $docent->ID ); ?>" <?php selected( $docent->ID, $this->data['workshop']['docent'] ); ?> ><?php echo esc_html( $docent->display_name ); ?></option>
+							<option value="<?php echo esc_attr( $docent->ID ); ?>" <?php selected( in_array( $docent->ID, $this->data['workshop']['docent'], true ) ); ?> ><?php echo esc_html( $docent->display_name ); ?></option>
 						<?php endforeach ?>
 					</select>
 				<?php endif ?>

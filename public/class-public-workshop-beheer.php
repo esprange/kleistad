@@ -150,7 +150,11 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'datum'             => FILTER_SANITIZE_STRING,
 				'start_tijd'        => FILTER_SANITIZE_STRING,
 				'eind_tijd'         => FILTER_SANITIZE_STRING,
-				'docent'            => FILTER_SANITIZE_STRING,
+				'docent'            => [
+					'filter'  => FILTER_SANITIZE_STRING,
+					'flags'   => FILTER_REQUIRE_ARRAY,
+					'options' => [ 'default' => [] ],
+				],
 				'technieken'        => [
 					'filter'  => FILTER_SANITIZE_STRING,
 					'flags'   => FILTER_REQUIRE_ARRAY,
@@ -178,6 +182,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		if ( is_null( $this->data['workshop']['technieken'] ) ) {
 			$this->data['workshop']['technieken'] = [];
 		}
+		$this->data['workshop']['docent'] = implode( ';', $this->data['workshop']['docent'] );
 		if ( in_array( $this->form_actie, [ 'bewaren', 'bevestigen' ], true ) ) {
 			if ( ! $this->validator->email( $this->data['workshop']['email'] ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $this->data['workshop']['email'] . ' is geen geldig E-mail adres.' );
@@ -396,7 +401,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'datum'             => date( 'd-m-Y', $workshop->datum ),
 			'start_tijd'        => date( 'H:i', $workshop->start_tijd ),
 			'eind_tijd'         => date( 'H:i', $workshop->eind_tijd ),
-			'docent'            => $workshop->docent,
+			'docent'            => array_map( 'intval', explode( ';', $workshop->docent ) ),
+			'docent_naam'       => $workshop->docent_naam(),
 			'technieken'        => $workshop->technieken,
 			'organisatie'       => $workshop->organisatie,
 			'organisatie_adres' => $workshop->organisatie_adres,

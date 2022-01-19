@@ -182,15 +182,20 @@ class Workshop extends Artikel {
 	}
 
 	/**
-	 * Hulp functie voor de oudere workshops (voor 7.0.0 werd de naam ingevuld, nu het nummer ).
+	 * Hulp functie voor de oudere workshops (voor 7.0.0 werd de naam ingevuld, nu het nummer of een reeks van nummers ).
 	 *
 	 * @return string De naam van de docent.
 	 */
 	public function docent_naam() : ?string {
-		if ( is_numeric( $this->docent ) ) {
-			return get_user_by( 'id', intval( $this->docent ) )->display_name;
+		$docenten = [];
+		foreach ( explode( ';', $this->docent ) as $docent_item ) {
+			if ( is_numeric( $docent_item ) ) {
+				$docenten[] = get_user_by( 'id', intval( $docent_item ) )->display_name;
+				continue;
+			}
+			$docenten[] = $docent_item;
 		}
-		return $this->docent;
+		return implode( ', ', $docenten );
 	}
 
 	/**
@@ -307,7 +312,7 @@ class Workshop extends Artikel {
 				'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
 				'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
 				'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
-				'workshop_docent'     => $this->docent_naam(),
+				'workshop_docent'     => str_replace( ', ', ' en ', $this->docent_naam() ),
 				'workshop_technieken' => implode( ', ', $this->technieken ),
 				'workshop_programma'  => $this->programma,
 				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
