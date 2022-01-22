@@ -26,45 +26,12 @@ class Admin_Instellingen_Display {
 		<form method="POST" action="options.php" >
 		<?php settings_fields( 'kleistad-opties' ); ?>
 		<table class="form-table" >
-			<?php $this->instellingen_prijzen(); ?>
-			<tr >
-				<th scope="row"><label for="cursusmaximum">Standaard maximum cursisten per cursus/workshop</label></th>
-				<td colspan="3"><input type="number" step="1" min="1"  max="99" name="kleistad-opties[cursusmaximum]" id="cursusmaximum" class="small-text"
-					value="<?php echo esc_attr( opties()['cursusmaximum'] ); ?>" /></td>
-			</tr>
-			<?php $this->setup_lijst_parameters(); ?>
-			<tr >
-				<th scope="row"><label for="termijn">Termijn (dagen) dat correctie stook mogelijk is</label></th>
-				<td colspan="3"><input type="number" min="0"  name="kleistad-opties[termijn]" id="termijn"
-						value="<?php echo esc_attr( opties()['termijn'] ); ?>" class="small-text" /></td>
-			</tr>
-			<tr >
-				<th scope="row"><label for="oven_midden">Oven temperatuur waarbij het midden tarief gaat gelden</label></th>
-				<td colspan="3"><input type="number" min="0"  name="kleistad-opties[oven_midden]" id="oven_midden"
-						value="<?php echo esc_attr( opties()['oven_midden'] ); ?>" class="small-text" /></td>
-			</tr>
-			<tr >
-				<th scope="row"><label for="oven_hoog">Oven temperatuur waarbij het hoge tarief gaat gelden</label></th>
-				<td colspan="3"><input type="number" min="0"  name="kleistad-opties[oven_hoog]" id="oven_hoog"
-						value="<?php echo esc_attr( opties()['oven_hoog'] ); ?>" class="small-text" /></td>
-			</tr>
-			<tr >
-				<th scope="row"><label for="weken_werkplek">Aantal weken vooruit dat werkplekken gereserveerd kunnen worden</label></th>
-				<td colspan="3"><input type="number" min="1"  name="kleistad-opties[weken_werkplek]" id="weken_werkplek"
-						value="<?php echo esc_attr( opties()['weken_werkplek'] ); ?>" class="small-text" /></td>
-			</tr>
-			<tr >
-				<th scope="row"><label for="max_activiteit">Aantal activiteiten (cursus, workshop etc.) dat gelijktijdig kan plaatsvinden</label></th>
-				<td colspan="3"><input type="number" min="1"  name="kleistad-opties[max_activiteit]" id="max_activiteit"
-						value="<?php echo esc_attr( opties()['max_activiteit'] ); ?>" class="small-text" /></td>
-			</tr>
-			<tr >
-				<th scope="row"><label for="verloopaanvraag">Aantal weken voordat een workshop aanvraag verloopt</label></th>
-				<td colspan="3"><input type="number" min="1"  name="kleistad-opties[verloopaanvraag]" id="verloopaanvraag"
-					value="<?php echo esc_attr( opties()['verloopaanvraag'] ); ?>" class="small-text" /></td>
-			</tr>
-
-			</table>
+		<?php
+			$this->instellingen_prijzen();
+			$this->instellingen_parameters();
+			$this->setup_lijst_parameters();
+		?>
+		</table>
 		<?php submit_button(); ?>
 		<p>&nbsp;</p>
 		</form>
@@ -630,5 +597,71 @@ class Admin_Instellingen_Display {
 			</tr>
 			<?php
 		}
+	}
+
+	/**
+	 * Toon de parameters
+	 *
+	 * @return void
+	 */
+	private function instellingen_parameters() : void {
+		$parameters = [
+			'cursusmaximum'   => [
+				'min'   => 1,
+				'max'   => 99,
+				'label' => 'Standaard maximum cursisten per cursus/workshop',
+			],
+			'termijn'         => [
+				'min'   => 0,
+				'max'   => 14,
+				'label' => 'Termijn (dagen) dat correctie stook mogelijk is',
+			],
+			'oven_midden'     => [
+				'min'   => 0,
+				'max'   => 1500,
+				'label' => 'Oven temperatuur waarbij het midden tarief gaat gelden',
+			],
+			'oven_hoog'       => [
+				'min'   => 0,
+				'max'   => 1500,
+				'label' => 'Oven temperatuur waarbij het hoge tarief gaat gelden',
+			],
+			'weken_werkplek'  => [
+				'min'   => 1,
+				'max'   => 52,
+				'label' => 'Aantal weken vooruit dat werkplekken gereserveerd kunnen worden',
+			],
+			'verloopaanvraag' => [
+				'min'   => 1,
+				'max'   => 12,
+				'label' => 'Aantal weken voordat een workshop aanvraag verloopt',
+			],
+			'weken_workshop'  => [
+				'min'   => 1,
+				'max'   => 52,
+				'label' => 'Aantal weken vooruit dat workshop aanvragen gedaan kunnen worden',
+			],
+			'max_activiteit'  => [
+				'min'   => 1,
+				'max'   => 12,
+				'label' => 'Aantal activiteiten (cursus, workshop etc.) dat gelijktijdig kan plaatsvinden',
+			],
+		];
+		foreach ( $parameters as $id => $parameter ) :
+			?>
+			<tr >
+				<th scope="row">
+					<label for="<?php echo esc_attr( $id ); ?>">
+						<?php echo esc_html( $parameter['label'] ); ?>
+					</label>
+				</th>
+				<td colspan="3">
+					<input type="number" min="<?php echo esc_attr( $parameter['min'] ); ?>"
+						max="<?php echo esc_attr( $parameter['max'] ); ?>" name="kleistad-opties[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="small-text"
+						value="<?php echo esc_attr( opties()[ $id ] ); ?>" />
+				</td>
+			</tr>
+			<?php
+		endforeach;
 	}
 }

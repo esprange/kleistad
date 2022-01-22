@@ -209,20 +209,14 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label>Technieken</label></div>
-			<div class="kleistad-col-8" style="display:flex;justify-content: space-between;">
+			<?php foreach ( [ 'Draaien', 'Handvormen' ] as $techniek ) : ?>
+			<div class="kleistad-col-3" >
 				<span>
-					<input type="checkbox" id="kleistad_draaien" name="technieken[]" value="Draaien" <?php checked( in_array( 'Draaien', $this->data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
-					<label for="kleistad_draaien" style="padding-right:2em">Draaien</label>
-				</span>
-				<span>
-					<input type="checkbox" id="kleistad_handvormen" name="technieken[]" value="Handvormen" <?php checked( in_array( 'Handvormen', $this->data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
-					<label for="kleistad_handvormen" style="padding-right:2em">Handvormen</label>
-				</span>
-				<span>
-					<input type="checkbox" id="kleistad_boetseren" name="technieken[]" value="Boetseren" <?php checked( in_array( 'Boetseren', $this->data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
-					<label for="kleistad_boetseren">Boetseren</label>
+					<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>" <?php checked( in_array( $techniek, $this->data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
+					<label for="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" style="padding-right:2em"><?php echo esc_html( $techniek ); ?></label>
 				</span>
 			</div>
+			<?php endforeach; ?>
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_programma">Programma</label></div>
@@ -304,6 +298,12 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<td><?php echo esc_html( date( 'd-m-Y', $this->data['casus']['plandatum'] ) . " {$this->data['casus']['dagdeel']}" ); ?></td>
 				<?php endif; ?>
 			</tr>
+			<?php if ( count( $this->data['casus']['technieken'] ) ) : ?>
+			<tr>
+				<th>Technieken</th>
+				<td><?php echo esc_html( implode( ', ', $this->data['casus']['technieken'] ) ); ?></td>
+			</tr>
+			<?php endif; ?>
 			<tr>
 				<td colspan="2" ><label for="kleistad_reactie">Reactie</label></td>
 			</tr>

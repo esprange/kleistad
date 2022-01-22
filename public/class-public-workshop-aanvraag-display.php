@@ -91,6 +91,24 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				<label for="kleistad_groot" >meer dan 12</label>
 			</div>
 		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<label class="kleistad-label">Weet je wat al je zou willen doen?</label>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-1">
+			</div>
+			<?php foreach ( [ 'Draaien', 'Handvormen' ] as $techniek ) : ?>
+			<div class="kleistad-col-3" >
+			<span>
+				<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>" <?php checked( in_array( $techniek, $this->data['input']['technieken'], true ) ); ?> >
+				<label class="kleistad-label" for="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" ><?php echo esc_html( $techniek ); ?></label>
+			</span>
+			</div>
+			<?php endforeach; ?>
+		</div>
+
 		<?php
 	}
 
@@ -138,14 +156,14 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				<input class="kleistad-datum ververs" type="text" name="plandatum" id="kleistad_plandatum" required readonly="readonly">
 			</div>
 		</div>
-		<?php foreach ( DAGDEEL as $dagdeel ) : ?>
-		<div class="kleistad-dagdeel-<?php echo esc_attr( strtolower( $dagdeel ) ); ?> kleistad-row">
+		<?php foreach ( WorkshopAanvraag::MOMENT as $titel => $moment ) : ?>
+		<div class="kleistad-dagdeel-<?php echo esc_attr( strtolower( $moment['dagdeel'] ) ); ?> kleistad-row">
 			<div class="kleistad-col-3" >
 			</div>
 			<div class="kleistad-col-3 kleistad-label" >
-				<input name="dagdeel" id="kleistad_<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" type="radio" required
-					value="<?php echo esc_attr( $dagdeel ); ?>" <?php checked( $this->data['input']['dagdeel'], $dagdeel ); ?> >
-				<label for="kleistad_<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" ><?php echo esc_html( $dagdeel ); ?></label>
+				<input name="dagdeel" id="kleistad_<?php echo esc_attr( strtolower( $titel ) ); ?>" type="radio" required
+					value="<?php echo esc_attr( $titel ); ?>" <?php checked( $this->data['input']['dagdeel'], $titel ); ?> >
+				<label for="kleistad_<?php echo esc_attr( strtolower( $titel ) ); ?>" ><?php echo esc_html( $titel ); ?></label>
 			</div>
 		</div>
 		<?php endforeach; ?>

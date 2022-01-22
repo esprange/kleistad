@@ -35,6 +35,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				'omvang'         => '',
 				'plandatum'      => '',
 				'dagdeel'        => '',
+				'technieken'     => [],
 				'vraag'          => '',
 			];
 		}
@@ -65,8 +66,16 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				'vraag'          => FILTER_SANITIZE_STRING,
 				'plandatum'      => FILTER_SANITIZE_STRING,
 				'dagdeel'        => FILTER_SANITIZE_STRING,
+				'technieken'     => [
+					'filter'  => FILTER_SANITIZE_STRING,
+					'flags'   => FILTER_REQUIRE_ARRAY,
+					'options' => [ 'default' => [] ],
+				],
 			]
 		);
+		if ( is_null( $this->data['input']['technieken'] ) ) {
+			$this->data['input']['technieken'] = [];
+		}
 		if ( ! $this->validator->email( $this->data['input']['user_email'] ) ) {
 			$error->add( 'verplicht', 'De invoer ' . $this->data['input']['user_email'] . ' is geen geldig E-mail adres.' );
 			$this->data['input']['user_email']     = '';
@@ -76,7 +85,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 			$error->add( 'verplicht', "De ingevoerde e-mail adressen {$this->data['input']['user_email']} en {$this->data['input']['email_controle']} zijn niet identiek" );
 			$this->data['input']['email_controle'] = '';
 		}
-		if ( ! empty( $this->data['input']['telnr'] ) && ! $this->validator->telnr( $this->data['input']['telnr'] ) ) {
+		if ( ! $this->validator->telnr( $this->data['input']['telnr'] ) ) {
 			$error->add( 'onjuist', "Het ingevoerde telefoonnummer {$this->data['input']['telnr']} lijkt niet correct. Alleen Nederlandse telefoonnummers kunnen worden doorgegeven" );
 			$this->data['input']['telnr'] = '';
 		}

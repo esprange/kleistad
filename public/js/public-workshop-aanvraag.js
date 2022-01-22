@@ -63,13 +63,7 @@
 				minDate: new Date( beschikbareData[ 0 ].datum ),
 				maxDate: new Date( beschikbareData[ beschikbareData.length - 1 ].datum ),
 				beforeShowDay: function( datum ) {
-					let dagdeel = $( 'input[name="dagdeel"]:checked' ).val();
-					let beschikbaar;
-					if ( 'undefined' === typeof dagdeel ) {
-						beschikbaar = 'undefined' !== typeof beschikbareData.find( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
-					} else {
-						beschikbaar = 'undefined' !== typeof beschikbareData.find( o => ( o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) ) && ( o.dagdeel === dagdeel.toLowerCase() ) );
-					}
+					let beschikbaar = 'undefined' !== typeof beschikbareData.find( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
 					return [ beschikbaar, beschikbaar ? '' : 'ui-state-disabled' ];
 				}
 			}
@@ -86,32 +80,21 @@
 			$( '.kleistad-shortcode' )
 				.on(
 					'change',
-					'.input[name="dagdeel"]',
-					function () {
-						haalPlandata();
-					}
-				)
-				.on(
-					'change',
 					'#kleistad_plandatum',
 					function () {
-						let datum     = $( this ).datepicker( 'getDate' ),
-							$dagdelen = $( 'div[class^="kleistad-dagdeel"]' );
-						haalPlandata();
-						if ( 'undefined' !== typeof datum ) {
-							let beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
-							if ( beschikbaar.length ) {
-								$dagdelen.hide();
-								$( 'input[name="dagdeel"]' ).attr( 'checked', false );
-								beschikbaar.forEach(
-									function( item ) {
-										$( '.kleistad-dagdeel-' + item.dagdeel ).show().prop( 'checked', 1 === beschikbaar.length );
-									}
-								)
-							} else {
-								$dagdelen.show();
+						let datum       = $( this ).datepicker( 'getDate' ),
+							beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
+						$( 'div[class^="kleistad-dagdeel"]' ).hide();
+						$( 'input[name="dagdeel"]' ).prop( 'checked', false );
+						beschikbaar.forEach(
+							function( item ) {
+								let $moment = $( '.kleistad-dagdeel-' + item.dagdeel );
+								$moment.
+									show().
+									find( 'input[name="dagdeel"]' ).
+									prop( 'checked', 1 === $moment.length && 1 === beschikbaar.length );
 							}
-						}
+						)
 					}
 				)
 		}

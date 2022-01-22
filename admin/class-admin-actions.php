@@ -263,10 +263,10 @@ class Admin_Actions {
 	public function initialize() {
 		$upgrade = new Admin_Upgrade();
 		$upgrade->run();
+		$time = time();
 
 		ob_start();
 		if ( ! wp_next_scheduled( 'kleistad_rcv_email' ) ) {
-			$time = time();
 			wp_schedule_event( $time + ( 900 - ( $time % 900 ) ), '15_mins', 'kleistad_rcv_email' );
 		}
 		if ( ! wp_next_scheduled( 'kleistad_daily_jobs' ) ) {
@@ -274,6 +274,9 @@ class Admin_Actions {
 		}
 		if ( ! wp_next_scheduled( 'kleistad_daily_gdpr' ) ) {
 			wp_schedule_event( strtotime( '01:00' ), 'daily', 'kleistad_daily_gdpr' );
+		}
+		if ( ! wp_next_scheduled( 'kleistad_planning' ) ) {
+			wp_schedule_event( $time + ( HOUR_IN_SECONDS - ( $time % HOUR_IN_SECONDS ) ), 'hourly', 'kleistad_planning' );
 		}
 		register_setting( 'kleistad-opties', 'kleistad-opties', [ 'sanitize_callback' => [ $this->instellingen_handler, 'validate_settings' ] ] );
 		register_setting( 'kleistad-setup', 'kleistad-setup', [ 'sanitize_callback' => [ $this->instellingen_handler, 'validate_settings' ] ] );

@@ -22,6 +22,8 @@ class Workshopplanning extends WP_Async_Request {
 
 	const META_KEY = 'kleistad_workshopplanning';
 
+	const WORKSHOP_DAGDEEL = [ DAGDEEL[0], DAGDEEL[1] ];
+
 	/**
 	 * Unieke titel, benodigd voor background processing
 	 *
@@ -67,7 +69,7 @@ class Workshopplanning extends WP_Async_Request {
 	 */
 	protected function handle() {
 		$start = strtotime( 'tomorrow 0:00' );
-		$eind  = strtotime( '+ 3 month 0:00' );
+		$eind  = strtotime( '+ ' . opties()['weken_workshop'] . ' week 0:00' );
 		$this->start( $start, $eind );
 		$this->bepaal_docent_beschikbaarheid( $start, $eind );
 		$this->bepaal_activiteit_beschikbaarheid( $start, $eind );
@@ -83,7 +85,7 @@ class Workshopplanning extends WP_Async_Request {
 	 */
 	private function start( int $start, int $eind ) {
 		for ( $datum = $start; $datum <= $eind; $datum += DAY_IN_SECONDS ) {
-			foreach ( DAGDEEL as $dagdeel ) {
+			foreach ( self::WORKSHOP_DAGDEEL as $dagdeel ) {
 				$this->beschikbaarheid[ $this->index( $datum, $dagdeel ) ] = [
 					'aantal' => 0,
 					'docent' => false,
@@ -115,7 +117,7 @@ class Workshopplanning extends WP_Async_Request {
 		}
 		foreach ( new WorkshopAanvragen( $start - MONTH_IN_SECONDS ) as $workshop_aanvraag ) {
 			if ( ! is_null( $workshop_aanvraag->plandatum ) && $workshop_aanvraag->is_inverwerking() && $workshop_aanvraag->plandatum < $eind ) {
-				$this->verhoog( $workshop_aanvraag->plandatum, $workshop_aanvraag->dagdeel );
+				$this->verhoog( $workshop_aanvraag->plandatum, WorkshopAanvraag::MOMENT[ $workshop_aanvraag->dagdeel ]['dagdeel'] );
 			}
 		}
 	}
@@ -129,7 +131,7 @@ class Workshopplanning extends WP_Async_Request {
 	private function bepaal_docent_beschikbaarheid( int $start, int $eind ) {
 		$docenten = new Docenten();
 		for ( $datum = $start; $datum <= $eind; $datum = $datum + DAY_IN_SECONDS ) {
-			foreach ( DAGDEEL as $dagdeel ) {
+			foreach ( self::WORKSHOP_DAGDEEL as $dagdeel ) {
 				foreach ( $docenten as $docent ) {
 					$status = $docent->beschikbaarheid( $datum, $dagdeel );
 					if ( Docent::BESCHIKBAAR === $status || Docent::STANDAARD === $status ) {
@@ -148,8 +150,10 @@ class Workshopplanning extends WP_Async_Request {
 	 * @param string $dagdeel Het dagdeel.
 	 */
 	private function verhoog( int $datum, string $dagdeel ) {
-		$index                                     = $this->index( $datum, $dagdeel );
-		$this->beschikbaarheid[ $index ]['aantal'] = ( $this->beschikbaarheid[ $index ]['aantal'] ?? 0 ) + 1;
+		if ( in_array( $dagdeel, self::WORKSHOP_DAGDEEL, true ) ) {
+			$index                                     = $this->index( $datum, $dagdeel );
+			$this->beschikbaarheid[ $index ]['aantal'] = ( $this->beschikbaarheid[ $index ]['aantal'] ?? 0 ) + 1;
+		}
 	}
 
 	/**

@@ -31,7 +31,7 @@ class Public_Docent_Display extends Public_Shortcode_Display {
 		$this->tabelframe( 'kleistad_planning' );
 		?>
 		<div style="float: left">
-			<button type="button" id="kleistad_default" class="kleistad-button" data-confirm="Beschikbaarheid|Weet je zeker dat je dit als standaard planning voor alle weken wilt gebruiken ?">Standaard planning opslaan</button>
+			<button type="button" id="kleistad_default" class="kleistad-button" style="background-color: mediumpurple;" data-confirm="Beschikbaarheid|Weet je zeker dat je dit als standaard planning voor alle weken wilt gebruiken ?">Standaard planning opslaan</button>
 		</div>
 		<div style="float: right">
 			<button type="button" id="kleistad_bewaren" class="kleistad-button">Bewaren</button>

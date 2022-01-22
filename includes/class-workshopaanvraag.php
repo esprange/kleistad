@@ -33,6 +33,7 @@ use WP_Post;
  * @property string dagdeel
  * @property string telnr
  * @property string naam
+ * @property array  technieken
  * @property int    workshop_id
  */
 class WorkshopAanvraag {
@@ -45,6 +46,23 @@ class WorkshopAanvraag {
 	const GEREAGEERD = 'gereageerd';
 	const NIEUW      = 'nieuw';
 	const VRAAG      = 'vraag';
+	const MOMENT     = [
+		'Ochtend'  => [
+			'start'   => '09:30',
+			'eind'    => '11:30',
+			'dagdeel' => DAGDEEL[0],
+		],
+		'Middag'   => [
+			'start'   => '13:00',
+			'eind'    => '15:00',
+			'dagdeel' => DAGDEEL[1],
+		],
+		'Namiddag' => [
+			'start'   => '16:30',
+			'eind'    => '18:30',
+			'dagdeel' => DAGDEEL[1],
+		],
+	];
 
 	/**
 	 * De communicatie met de klant
@@ -155,6 +173,7 @@ class WorkshopAanvraag {
 		$this->dagdeel     = $casus_data['dagdeel'] ?? '';
 		$this->telnr       = $casus_data['telnr'];
 		$this->naam        = $casus_data['naam'];
+		$this->technieken  = $casus_data['technieken'];
 		$this->workshop_id = 0;
 		$this->communicatie(
 			[
@@ -173,12 +192,13 @@ class WorkshopAanvraag {
 				'reply-to'   => $this->mbx() . $emailer->domein,
 				'slug'       => 'workshop_aanvraag_bevestiging',
 				'parameters' => [
-					'naam'    => $casus_data['naam'],
-					'contact' => $casus_data['contact'],
-					'vraag'   => $casus_data['vraag'],
-					'omvang'  => $casus_data['omvang'],
-					'dagdeel' => strtolower( ( $casus_data['dagdeel'] ) ),
-					'datum'   => strftime( '%A, %d-%m-%y', $casus_data['plandatum'] ),
+					'naam'       => strtolower( $casus_data['naam'] ),
+					'contact'    => $casus_data['contact'],
+					'vraag'      => $casus_data['vraag'],
+					'omvang'     => $casus_data['omvang'],
+					'dagdeel'    => strtolower( ( $casus_data['dagdeel'] ) ),
+					'technieken' => implode( ', ', $casus_data['technieken'] ),
+					'datum'      => strftime( '%A, %d-%m-%y', $casus_data['plandatum'] ),
 				],
 				'sign_email' => false,
 				'auto'       => 'reply',
