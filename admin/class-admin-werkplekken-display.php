@@ -62,12 +62,12 @@ class Admin_Werkplekken_Display extends Admin_Display {
 				</tr>
 					<?php foreach ( opties()['werkruimte'] as $activiteit ) : ?>
 				<tr>
-					<td><?php echo esc_html( $activiteit ); ?></td>
+					<td><?php echo esc_html( $activiteit['naam'] ); ?></td>
 						<?php foreach ( array_keys( $item['config'] ) as $atelierdag ) : ?>
 						<td><!--suppress HtmlFormInputWithoutLabel -->
 							<input type="text" size="4"
-							value="<?php echo esc_attr( $item['config'][ $atelierdag ][ $dagdeel ][ $activiteit ] ); ?>"
-							name="<?php echo esc_attr( "config[$atelierdag][$dagdeel][$activiteit]" ); ?>" ></td>
+							value="<?php echo esc_attr( $item['config'][ $atelierdag ][ $dagdeel ][ $activiteit['naam'] ] ); ?>"
+							name="<?php echo esc_attr( "config[$atelierdag][$dagdeel][{$activiteit['naam']}]" ); ?>" ></td>
 					<?php endforeach ?>
 				</tr>
 				<?php endforeach ?>
