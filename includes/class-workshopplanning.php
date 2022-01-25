@@ -22,7 +22,7 @@ class Workshopplanning extends WP_Async_Request {
 
 	const META_KEY = 'kleistad_workshopplanning';
 
-	const WORKSHOP_DAGDEEL = [ DAGDEEL[0], DAGDEEL[1] ];
+	const WORKSHOP_DAGDEEL = [ OCHTEND, MIDDAG ];
 
 	/**
 	 * Unieke titel, benodigd voor background processing

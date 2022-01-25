@@ -40,12 +40,12 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 		$lijst   = [
 			[
 				'datum'   => strtotime( 'tomorrow' ),
-				'dagdeel' => DAGDEEL[0],
+				'dagdeel' => OCHTEND,
 				'status'  => Docent::BESCHIKBAAR,
 			],
 			[
 				'datum'   => strtotime( 'tomorrow + 1 day' ),
-				'dagdeel' => DAGDEEL[1],
+				'dagdeel' => MIDDAG,
 				'status'  => Docent::BESCHIKBAAR,
 			],
 		];
@@ -62,7 +62,7 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 		$lijst   = [
 			[
 				'datum'   => intval( date( 'N', strtotime( 'today' ) ) - 1 ),
-				'dagdeel' => DAGDEEL[1],
+				'dagdeel' => MIDDAG,
 				'status'  => Docent::STANDAARD,
 			],
 		];

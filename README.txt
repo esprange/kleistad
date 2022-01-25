@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.8.3
-Stable tag: 7.1.4
+Stable tag: 7.1.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4
@@ -35,8 +35,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.1.4 =
+= 7.1.5 =
 * Aanpassing workshop aanvraag, ook techniek uitvraag en nu ochtend, middag en namiddag.
+* Meerdere docenten per workshop
 * Enkele bugs opgelost.
 = 7.1.0 =
 * Nieuwe shortcode kleistad_docent voor het invoeren van beschikbaarheids gegevens.

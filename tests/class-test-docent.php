@@ -34,17 +34,17 @@ class Test_Docent extends Kleistad_UnitTestCase {
 		/**
 		 * Als er nog geen beschikbaarheid aangegeven is moet dit false zijn
 		 */
-		$this->assertEquals( Docent::NIET_BESCHIKBAAR, $docent->beschikbaarheid( strtotime( 'today' ), DAGDEEL[0] ), 'initiële beschikbaarheid fout' );
+		$this->assertEquals( Docent::NIET_BESCHIKBAAR, $docent->beschikbaarheid( strtotime( 'today' ), OCHTEND ), 'initiële beschikbaarheid fout' );
 
 		$lijst = [
 			[
 				'datum'   => strtotime( 'today' ),
-				'dagdeel' => DAGDEEL[0],
+				'dagdeel' => OCHTEND,
 				'status'  => Docent::BESCHIKBAAR,
 			],
 			[
 				'datum'   => intval( date( 'N', strtotime( 'tomorrow' ) ) - 1 ),
-				'dagdeel' => DAGDEEL[1],
+				'dagdeel' => MIDDAG,
 				'status'  => Docent::STANDAARD,
 			],
 		];
@@ -53,12 +53,12 @@ class Test_Docent extends Kleistad_UnitTestCase {
 		/**
 		 * Nu is er een beschikbaarheid dus true.
 		 */
-		$this->assertEquals( Docent::BESCHIKBAAR, $docent->beschikbaarheid( strtotime( 'today' ), DAGDEEL[0] ), 'beschikbaarheid vandaag fout' );
+		$this->assertEquals( Docent::BESCHIKBAAR, $docent->beschikbaarheid( strtotime( 'today' ), OCHTEND ), 'beschikbaarheid vandaag fout' );
 
 		/**
 		 * Nu is er een beschikbaarheid dus true.
 		 */
-		$this->assertEquals( Docent::STANDAARD, $docent->beschikbaarheid( strtotime( 'tomorrow' ), DAGDEEL[1] ), 'beschikbaarheid morgen fout' );
+		$this->assertEquals( Docent::STANDAARD, $docent->beschikbaarheid( strtotime( 'tomorrow' ), MIDDAG ), 'beschikbaarheid morgen fout' );
 	}
 
 }

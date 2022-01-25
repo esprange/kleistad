@@ -50,17 +50,17 @@ class WorkshopAanvraag {
 		'Ochtend'  => [
 			'start'   => '09:30',
 			'eind'    => '11:30',
-			'dagdeel' => DAGDEEL[0],
+			'dagdeel' => OCHTEND,
 		],
 		'Middag'   => [
 			'start'   => '13:00',
 			'eind'    => '15:00',
-			'dagdeel' => DAGDEEL[1],
+			'dagdeel' => MIDDAG,
 		],
 		'Namiddag' => [
 			'start'   => '16:30',
 			'eind'    => '18:30',
-			'dagdeel' => DAGDEEL[1],
+			'dagdeel' => AVOND,
 		],
 	];
 
