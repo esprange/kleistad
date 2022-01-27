@@ -27,6 +27,7 @@
         "ext-exif": "*",
         "ext-gd": "*",
         "ext-calendar": "*",
+        "ext-imap": "*",
         "shuchkin/simplexlsxgen": "^1.0"
     },
     "scripts": {
