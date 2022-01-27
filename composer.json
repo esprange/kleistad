@@ -21,13 +21,12 @@
     "require": {
         "mollie/mollie-api-php": "^2",
         "google/apiclient": "^2",
-        "php-imap/php-imap": "^4",
+        "php-imap/php-imap": "^4.5",
         "setasign/fpdf": "*",
         "deliciousbrains/wp-background-processing": "*",
         "ext-exif": "*",
         "ext-gd": "*",
         "ext-calendar": "*",
-        "ext-imap": "*",
         "shuchkin/simplexlsxgen": "^1.0"
     },
     "scripts": {
