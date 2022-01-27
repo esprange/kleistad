@@ -88,7 +88,7 @@ class Abonnees implements Countable, Iterator {
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public function next() {
+	public function next(): void {
 		$this->current_index++;
 	}
 
@@ -97,7 +97,7 @@ class Abonnees implements Countable, Iterator {
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public function rewind() {
+	public function rewind(): void {
 		$this->current_index = 0;
 	}
 

@@ -58,7 +58,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$saldo = $this->maak_saldo();
 		$saldo->actie->nieuw( 123.4, 'bank' );
 		$referentie1 = $saldo->geef_referentie();
-		$this->assertRegExp( '~S\d+-\d{6}-\d+~', $referentie1, 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~S\d+-\d{6}-\d+~', $referentie1, 'referentie incorrect' );
 		$saldo->actie->nieuw( 567.8, 'bank' );
 		$referentie2 = $saldo->geef_referentie();
 		$this->assertNotEquals( $referentie1, $referentie2, 'referentie wijziging incorrect' );

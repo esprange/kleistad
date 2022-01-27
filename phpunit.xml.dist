@@ -1,27 +1,21 @@
-<phpunit
-	bootstrap="tests/bootstrap.php"
-	backupGlobals="false"
-	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
-	>
-	<testsuites>
-		<testsuite name="kleistad">
-			<directory prefix="class-test-" suffix=".php">./tests/</directory>
-		</testsuite>
-	</testsuites>
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">./includes</directory>
-			<directory suffix=".php">./public</directory>
-			<directory suffix=".php">./admin</directory>
-			<exclude>
-				<directory>./*/partials</directory>
-				<directory>./*/js</directory>
-				<directory>./*/css</directory>
-				<directory>./*/images</directory>
-			</exclude>
-		</whitelist>
-	</filter>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/bootstrap.php" backupGlobals="false" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./includes</directory>
+      <directory suffix=".php">./public</directory>
+      <directory suffix=".php">./admin</directory>
+    </include>
+    <exclude>
+      <directory>./*/partials</directory>
+      <directory>./*/js</directory>
+      <directory>./*/css</directory>
+      <directory>./*/images</directory>
+    </exclude>
+  </coverage>
+  <testsuites>
+    <testsuite name="kleistad">
+      <directory prefix="class-test-" suffix=".php">./tests/</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>

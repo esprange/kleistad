@@ -119,7 +119,7 @@ class Dagdelenkaart extends Artikel {
 	 *
 	 * @param string $type    Welke email er verstuurd moet worden.
 	 * @param string $factuur Bij te sluiten factuur.
-	 * @return boolean succes of falen van verzending email.
+	 * @return bool succes of falen van verzending email.
 	 */
 	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer   = new Email();
@@ -180,7 +180,7 @@ class Dagdelenkaart extends Artikel {
 	/**
 	 * Geef de status van het abonnement als een tekst terug.
 	 *
-	 * @param  boolean $uitgebreid Uitgebreide tekst of korte tekst.
+	 * @param  bool $uitgebreid Uitgebreide tekst of korte tekst.
 	 * @return string De status tekst.
 	 */
 	public function geef_statustekst( bool $uitgebreid ) : string {

@@ -113,7 +113,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	public function test_geef_referentie() {
 		$workshop = $this->maak_workshop();
 		$workshop->save();
-		$this->assertRegExp( '~W[0-9]+~', $workshop->geef_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~W[0-9]+~', $workshop->geef_referentie(), 'referentie incorrect' );
 	}
 
 	/**
@@ -213,7 +213,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$mailer   = tests_retrieve_phpmailer_instance();
 		$aanvraag = $this->maak_aanvraag();
 		$this->assertEquals( 'nieuw', $aanvraag->post_status, 'start incorrect' );
-		$this->assertRegExp( '~[WA#[0-9]{8}] Bevestiging workshop vraag~', $mailer->get_last_sent()->subject, 'email aanvraag incorrect' );
+		$this->assertMatchesRegularExpression( '~[WA#[0-9]{8}] Bevestiging workshop vraag~', $mailer->get_last_sent()->subject, 'email aanvraag incorrect' );
 	}
 
 	/**
@@ -269,6 +269,6 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$aanvraag = $this->maak_aanvraag();
 		$aanvraag->reactie( 'dit is een reactie' );
 		$this->assertEquals( 'gereageerd', $aanvraag->post_status, 'reactie incorrect' );
-		$this->assertRegExp( '~[WA#[0-9]{8}] Reactie op workshop vraag~', $mailer->get_last_sent()->subject, 'email reactie aanvraag incorrect' );
+		$this->assertMatchesRegularExpression( '~[WA#[0-9]{8}] Reactie op workshop vraag~', $mailer->get_last_sent()->subject, 'email reactie aanvraag incorrect' );
 	}
 }

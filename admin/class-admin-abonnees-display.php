@@ -120,35 +120,35 @@ class Admin_Abonnees_Display extends Admin_Display {
 				<th scope="row"><label for="kleistad_start_datum">Startperiode</label></th>
 				<td>
 					<input type="text" id="kleistad_start_datum" name="start_datum" required class="kleistad-datum" value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off"
-						<?php readonly( $item['geannuleerd'] ); ?> >
+						<?php wp_readonly( $item['geannuleerd'] ); ?> >
 				</td>
 			</tr>
 			<tr>
 				<th scope="row"><label for="kleistad_start_eind_datum">Einde startperiode</label></th>
 				<td>
 					<input type="text" id="kleistad_start_eind_datum" name="start_eind_datum" required class="kleistad-datum" value="<?php echo esc_attr( $item['start_eind_datum'] ); ?>" autocomplete="off"
-						<?php readonly( $item['geannuleerd'] ); ?> >
+						<?php wp_readonly( $item['geannuleerd'] ); ?> >
 				</td>
 			</tr>
 			<tr>
 				<th scope="row"><label for="kleistad_pauze_datum">Pauze per</label></th>
 				<td>
 					<input type="text" id="kleistad_pauze_datum" name="pauze_datum" class="kleistad-datum" value="<?php echo esc_attr( $item['pauze_datum'] ); ?>" autocomplete="off"
-						<?php readonly( $item['geannuleerd'] ); ?> >
+						<?php wp_readonly( $item['geannuleerd'] ); ?> >
 				</td>
 			</tr>
 			<tr>
 				<th scope="row"><label for="kleistad_herstart_datum">Herstart per</label></th>
 				<td>
 					<input type="text" id="kleistad_herstart_datum" name="herstart_datum" class="kleistad-datum" value="<?php echo esc_attr( $item['herstart_datum'] ); ?>" autocomplete="off"
-						<?php readonly( $item['geannuleerd'] ); ?> >
+						<?php wp_readonly( $item['geannuleerd'] ); ?> >
 				</td>
 			</tr>
 			<tr>
 				<th scope="row"><label for="kleistad_eind_datum">Beëindiging per</label></th>
 				<td>
 					<input type="text" id="kleistad_eind_datum" name="eind_datum" class="kleistad-datum" value="<?php echo esc_attr( $item['eind_datum'] ); ?>" autocomplete="off"
-						<?php readonly( $item['geannuleerd'] ); ?> >
+						<?php wp_readonly( $item['geannuleerd'] ); ?> >
 				</td>
 			</tr>
 		<?php

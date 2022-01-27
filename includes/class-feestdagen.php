@@ -40,7 +40,7 @@ class Feestdagen {
 	 * Bepaal of de datum een feestdag is
 	 *
 	 * @param integer $datum De datum.
-	 * @return boolean
+	 * @return bool
 	 */
 	public function is_feestdag( int $datum ) : bool {
 		return in_array( $datum, $this->dagen( (int) date( 'Y', $datum ) ), true );

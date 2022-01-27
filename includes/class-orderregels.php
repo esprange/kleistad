@@ -187,14 +187,14 @@ class Orderregels implements Countable, Iterator {
 	/**
 	 * Ga naar de volgende in de lijst.
 	 */
-	public function next() {
+	public function next(): void {
 		$this->current_index++;
 	}
 
 	/**
 	 * Ga terug naar het begin.
 	 */
-	public function rewind() {
+	public function rewind(): void {
 		$this->current_index = 0;
 	}
 

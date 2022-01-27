@@ -254,8 +254,10 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 
 	/**
 	 * Reset the email index.
+	 *
+	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->reset_mockmailer_instance();
 		parent::tearDown();
 	}

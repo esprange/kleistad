@@ -41,6 +41,9 @@ class Afspraken implements Countable, Iterator {
 	 * @param array $query De query specificatie.
 	 */
 	public function __construct( array $query ) {
+		if ( defined( 'KLEISTAD_TEST' ) ) {
+			return;
+		}
 		$googleconnect = new Googleconnect();
 		$kalender_id   = setup()['google_kalender_id'];
 		$default_query = [
@@ -92,14 +95,14 @@ class Afspraken implements Countable, Iterator {
 	/**
 	 * Ga naar de volgende in de lijst.
 	 */
-	public function next() {
+	public function next(): void {
 		$this->current_index++;
 	}
 
 	/**
 	 * Ga terug naar het begin.
 	 */
-	public function rewind() {
+	public function rewind(): void {
 		$this->current_index = 0;
 	}
 

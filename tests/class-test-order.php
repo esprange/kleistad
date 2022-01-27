@@ -103,7 +103,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 	public function test_factuurnummer() {
 		$order            = new Order();
 		$order->factuurnr = 123;
-		$this->assertRegExp( '~20[0-9]{2}-\d{6}~', $order->factuurnummer(), 'factuurnummer incorrect' );
+		$this->assertMatchesRegularExpression( '~20[0-9]{2}-\d{6}~', $order->factuurnummer(), 'factuurnummer incorrect' );
 	}
 
 	/**

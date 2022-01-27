@@ -92,7 +92,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_cursus_naam">Naam</label></div>
 			<div class="kleistad-col-8">
-				<input type="text" name="naam" <?php readonly( $readonly ); ?> id="kleistad_cursus_naam" maxlength="40" placeholder="Bijv. cursus draaitechnieken" value="<?php echo esc_attr( $this->data['cursus']['naam'] ); ?>" required >
+				<input type="text" name="naam" <?php wp_readonly( $readonly ); ?> id="kleistad_cursus_naam" maxlength="40" placeholder="Bijv. cursus draaitechnieken" value="<?php echo esc_attr( $this->data['cursus']['naam'] ); ?>" required >
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -131,12 +131,12 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_start_tijd">Begintijd</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" class="kleistad-tijd"
-					value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']['start_tijd'] ) ); ?>" <?php readonly( $readonly ); ?> />
+					value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']['start_tijd'] ) ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_eind_tijd">Eindtijd</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" class="kleistad-tijd"
-					value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']['eind_tijd'] ) ); ?>" <?php readonly( $readonly ); ?> />
+					value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']['eind_tijd'] ) ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -159,17 +159,17 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_inschrijfkosten">Inschrijf kosten</label></div>
 			<div class="kleistad-col-3">
-				<input type="number" lang="nl" step="0.01" name="inschrijfkosten" id="kleistad_inschrijfkosten" <?php readonly( $readonly ); ?> value="<?php echo esc_attr( $this->data['cursus']['inschrijfkosten'] ); ?>" min="0" required >
+				<input type="number" lang="nl" step="0.01" name="inschrijfkosten" id="kleistad_inschrijfkosten" <?php wp_readonly( $readonly ); ?> value="<?php echo esc_attr( $this->data['cursus']['inschrijfkosten'] ); ?>" min="0" required >
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_cursuskosten">Cursus kosten, excl. inschrijf kosten</label></div>
 			<div class="kleistad-col-3">
-				<input type="number" lang="nl" step="0.01" name="cursuskosten" id="kleistad_cursuskosten" <?php readonly( $readonly ); ?> value="<?php echo esc_attr( $this->data['cursus']['cursuskosten'] ); ?>" min="0" required >
+				<input type="number" lang="nl" step="0.01" name="cursuskosten" id="kleistad_cursuskosten" <?php wp_readonly( $readonly ); ?> value="<?php echo esc_attr( $this->data['cursus']['cursuskosten'] ); ?>" min="0" required >
 			</div>
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_maximum">Maximum cursisten</label></div>
 			<div class="kleistad-col-3">
-				<input type="number" step="1" name="maximum" <?php readonly( $readonly ); ?> id="kleistad_maximum" min="1" max="99" value="<?php echo esc_attr( $this->data['cursus']['maximum'] ); ?>" required>
+				<input type="number" step="1" name="maximum" <?php wp_readonly( $readonly ); ?> id="kleistad_maximum" min="1" max="99" value="<?php echo esc_attr( $this->data['cursus']['maximum'] ); ?>" required>
 			</div>
 			<div class="kleistad-col-3 kleistad-label"><label for="kleistad_meer">Inschrijven meerdere cursisten mogelijk</label></div>
 			<div class="kleistad-col-2">
@@ -189,13 +189,13 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_inschrijfslug">Inschrijf email</label></div>
 			<div class="kleistad-col-8">
-				<input type="text" name="inschrijfslug" <?php readonly( $readonly ); ?> id="kleistad_inschrijfslug" value="<?php echo esc_attr( $this->data['cursus']['inschrijfslug'] ); ?>" required >
+				<input type="text" name="inschrijfslug" <?php wp_readonly( $readonly ); ?> id="kleistad_inschrijfslug" value="<?php echo esc_attr( $this->data['cursus']['inschrijfslug'] ); ?>" required >
 			</div>
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_indelingslug">Indeling email</label></div>
 			<div class="kleistad-col-8">
-				<input type="text" name="indelingslug" <?php readonly( $readonly ); ?> id="kleistad_indelingslug" value="<?php echo esc_attr( $this->data['cursus']['indelingslug'] ); ?>" required >
+				<input type="text" name="indelingslug" <?php wp_readonly( $readonly ); ?> id="kleistad_indelingslug" value="<?php echo esc_attr( $this->data['cursus']['indelingslug'] ); ?>" required >
 			</div>
 -		</div>
 		<div class="kleistad-row">

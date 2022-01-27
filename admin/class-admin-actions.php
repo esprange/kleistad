@@ -23,7 +23,7 @@ class Admin_Actions {
 	 * @access    private
 	 * @var       object    $ovens_handler  De handler voor ovens beheer.
 	 */
-	private $ovens_handler;
+	private object $ovens_handler;
 
 	/**
 	 *  Cursisten beheer
@@ -32,7 +32,7 @@ class Admin_Actions {
 	 * @access    private
 	 * @var       object    $cursisten_handler  De handler voor cursisten beheer.
 	 */
-	private $cursisten_handler;
+	private object $cursisten_handler;
 
 	/**
 	 *  Abonnees beheer
@@ -41,7 +41,7 @@ class Admin_Actions {
 	 * @access    private
 	 * @var       object    $abonnees_handler  De handler voor abonnees beheer.
 	 */
-	private $abonnees_handler;
+	private object $abonnees_handler;
 
 	/**
 	 *  Stooksaldo beheer
@@ -50,7 +50,7 @@ class Admin_Actions {
 	 * @access    private
 	 * @var       object    $stooksaldo_handler  De handler voor stooksaldo beheer.
 	 */
-	private $stooksaldo_handler;
+	private object $stooksaldo_handler;
 
 	/**
 	 *  Regeling stookkosten beheer
@@ -59,7 +59,7 @@ class Admin_Actions {
 	 * @access    private
 	 * @var       object    $regelingen_handler  De handler voor regeling stookkosten beheer.
 	 */
-	private $regelingen_handler;
+	private object $regelingen_handler;
 
 	/**
 	 *  Recept termen beheer
@@ -68,7 +68,7 @@ class Admin_Actions {
 	 * @access    private
 	 * @var       object    $recepttermen_handler  De handler voor beheer van de recept termen.
 	 */
-	private $recepttermen_handler;
+	private object $recepttermen_handler;
 
 	/**
 	 *  Werkplekken beheer
@@ -77,7 +77,7 @@ class Admin_Actions {
 	 * @access    private
 	 * @var       object    $werkplekken_handler  De handler voor beheer van de werkplekken.
 	 */
-	private $werkplekken_handler;
+	private object $werkplekken_handler;
 
 	/**
 	 *  Instellingen beheer
@@ -86,7 +86,7 @@ class Admin_Actions {
 	 * @access    private
 	 * @var       object    $instellingen_handler  De handler voor beheer van de instellingen.
 	 */
-	private $instellingen_handler;
+	private object $instellingen_handler;
 
 	/**
 	 * Worksshop dispatcher.

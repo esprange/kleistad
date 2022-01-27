@@ -26,7 +26,7 @@ class MollieClient {
 	 *
 	 * @var object het mollie service object.
 	 */
-	private $mollie_service;
+	private object $mollie_service;
 
 	/**
 	 * De constructor

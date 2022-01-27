@@ -120,7 +120,7 @@ class Inschrijving extends Artikel {
 		$this->data['technieken']       = json_decode( $inschrijving['technieken'], true );
 		$this->data['ingedeeld']        = boolval( $inschrijving['ingedeeld'] );
 		$this->data['geannuleerd']      = boolval( $inschrijving['geannuleerd'] );
-		$this->data['opmerking']        = htmlspecialchars_decode( $inschrijving['opmerking'] );
+		$this->data['opmerking']        = htmlspecialchars_decode( $inschrijving['opmerking'] ?? '' );
 		$this->data['aantal']           = intval( $inschrijving['aantal'] );
 		$this->data['restant_email']    = boolval( $inschrijving['restant_email'] );
 		$this->data['herinner_email']   = boolval( $inschrijving['herinner_email'] );
@@ -226,7 +226,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @param string $type    Inschrijving of indeling.
 	 * @param string $factuur Een bij te sluiten factuur.
-	 * @return boolean succes of falen van verzending email.
+	 * @return bool succes of falen van verzending email.
 	 */
 	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer = new Email();

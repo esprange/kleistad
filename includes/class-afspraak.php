@@ -75,22 +75,26 @@ class Afspraak {
 	 * @noinspection PhpRedundantCatchClauseInspection
 	 */
 	public function __construct( string $afspraak_id ) {
-		$this->googleconnect = new Googleconnect();
-		$this->kalender_id   = setup()['google_kalender_id'];
-		try {
-			$this->event = $this->googleconnect->calendar_service()->events->get( $this->kalender_id, $afspraak_id );
-		} catch ( Google\Service\Exception $e ) {
-			$organizer = new EventOrganizer();
-			$organizer->setDisplayName( wp_get_current_user()->display_name );
-			$organizer->setEmail( wp_get_current_user()->user_email );
-			$this->event = new Event(
-				[
-					'Id'        => $afspraak_id,
-					'location'  => get_option( 'kleistad_adres', 'Kleistad, Neonweg 12, 3812 RH Amersfoort' ),
-					'organizer' => $organizer,
-					'status'    => 'tentative',
-				]
-			);
+		$organizer = new EventOrganizer();
+		$organizer->setDisplayName( wp_get_current_user()->display_name );
+		$organizer->setEmail( wp_get_current_user()->user_email );
+		$this->event = new Event(
+			[
+				'Id'        => $afspraak_id,
+				'location'  => get_option( 'kleistad_adres', 'Kleistad, Neonweg 12, 3812 RH Amersfoort' ),
+				'organizer' => $organizer,
+				'status'    => 'tentative',
+			]
+		);
+		if ( ! defined( 'KLEISTAD_TEST' ) ) {
+			$this->googleconnect = new Googleconnect();
+			$this->kalender_id   = setup()['google_kalender_id'];
+			try {
+				$bestaand_event = $this->googleconnect->calendar_service()->events->get( $this->kalender_id, $afspraak_id );
+				$this->event    = $bestaand_event;
+			} catch ( Google\Service\Exception $e ) {
+				; // Geen actie nodig.
+			}
 		}
 	}
 
@@ -183,11 +187,13 @@ class Afspraak {
 	 * @since 5.0.0
 	 */
 	public function save() : void {
-		if ( is_null( $this->event->getCreated() ) ) {
-			$this->event = $this->googleconnect->calendar_service()->events->insert( $this->kalender_id, $this->event );
-			return;
+		if ( ! defined( 'KLEISTAD_TEST' ) ) {
+			if ( is_null( $this->event->getCreated() ) ) {
+				$this->event = $this->googleconnect->calendar_service()->events->insert( $this->kalender_id, $this->event );
+				return;
+			}
+			$this->event = $this->googleconnect->calendar_service()->events->update( $this->kalender_id, $this->event->getId(), $this->event );
 		}
-		$this->event = $this->googleconnect->calendar_service()->events->update( $this->kalender_id, $this->event->getId(), $this->event );
 	}
 
 	/**
@@ -196,7 +202,9 @@ class Afspraak {
 	 * @throws Kleistad_Exception Op hoger nivo af te handelen.
 	 */
 	public function delete() : void {
-		$this->googleconnect->calendar_service()->events->delete( $this->kalender_id, $this->event->getId() );
+		if ( ! defined( 'KLEISTAD_TEST' ) ) {
+			$this->googleconnect->calendar_service()->events->delete( $this->kalender_id, $this->event->getId() );
+		}
 	}
 
 	/**

@@ -37,7 +37,7 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @param array $args the arguments.
 	 *
-	 * @return boolean|int
+	 * @return bool|int
 	 */
 	public function create_object( $args ) {
 		$oven                  = new Oven();
@@ -57,7 +57,7 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 * @param int   $id the oven id.
 	 * @param array $args the arguments.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function update_object( $id, $args ) : bool {
 		$oven                  = new Oven( $id );
@@ -106,7 +106,7 @@ class Kleistad_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @param array $args the arguments.
 	 *
-	 * @return boolean|int
+	 * @return bool|int
 	 */
 	public function create_object( $args ) {
 		$cursus             = new Cursus();
@@ -126,7 +126,7 @@ class Kleistad_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 * @param int   $id the cursus id.
 	 * @param array $args the arguments.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function update_object( $id, $args ) : bool {
 		$cursus             = new Cursus( $id );

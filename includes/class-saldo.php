@@ -154,7 +154,7 @@ class Saldo extends Artikel {
 	 *
 	 * @param string $type    Direct betaald of melding van storting.
 	 * @param string $factuur Een bij te sluiten factuur.
-	 * @return boolean succes of falen van verzending email.
+	 * @return bool succes of falen van verzending email.
 	 */
 	public function verzend_email( string $type, string $factuur = '' ) : bool {
 		$emailer   = new Email();

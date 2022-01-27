@@ -134,7 +134,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_naam">Soort workshop</label></div>
 			<div class="kleistad-col-3">
-				<select name="naam" required id="kleistad_naam" <?php readonly( $readonly ); ?> style="width:100%" >
+				<select name="naam" required id="kleistad_naam" <?php wp_readonly( $readonly ); ?> style="width:100%" >
 					<?php foreach ( opties()['activiteit'] as $activiteit ) : ?>
 					<option value="<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" <?php selected( $this->data['workshop']['naam'], $activiteit['naam'] ); ?> >
 						<?php echo esc_html( ucfirst( $activiteit['naam'] ) ); ?>
@@ -146,7 +146,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_contact">Naam contact</label></div>
 			<div class="kleistad-col-3">
-				<input type="text" name="contact" id="kleistad_contact" required value="<?php echo esc_attr( $this->data['workshop']['contact'] ); ?>" <?php readonly( $readonly ); ?> />
+				<input type="text" name="contact" id="kleistad_contact" required value="<?php echo esc_attr( $this->data['workshop']['contact'] ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_organisatie">Organisatie</label></div>
 			<div class="kleistad-col-3">
@@ -156,7 +156,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_email">Email contact</label></div>
 			<div class="kleistad-col-3">
-				<input type="email" name="email" id="kleistad_email" required value="<?php echo esc_attr( $this->data['workshop']['email'] ); ?>" <?php readonly( $readonly ); ?> />
+				<input type="email" name="email" id="kleistad_email" required value="<?php echo esc_attr( $this->data['workshop']['email'] ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_organisatie_email">Organisatie email</label></div>
 			<div class="kleistad-col-3">
@@ -166,7 +166,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_telnr">Telefoon contact</label></div>
 			<div class="kleistad-col-3">
-				<input type="text" name="telnr" id="kleistad_telnr" value="<?php echo esc_attr( $this->data['workshop']['telnr'] ); ?>" <?php readonly( $readonly ); ?> />
+				<input type="text" name="telnr" id="kleistad_telnr" value="<?php echo esc_attr( $this->data['workshop']['telnr'] ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_organisatie_adres">Organisatie adres</label></div>
 			<div class="kleistad-col-3">
@@ -176,7 +176,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_aantal">Aantal deelnemers</label></div>
 			<div class="kleistad-col-3">
-				<input type="number" name="aantal" id="kleistad_aantal" min="1" value="<?php echo esc_attr( $this->data['workshop']['aantal'] ); ?>" <?php readonly( $readonly ); ?> />
+				<input type="number" name="aantal" id="kleistad_aantal" min="1" value="<?php echo esc_attr( $this->data['workshop']['aantal'] ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_docent">Docent</label></div>
 			<div class="kleistad-col-3">
@@ -200,11 +200,11 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_start_tijd">Begintijd</label></div>
 			<div class="kleistad-col-3">
-				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="<?php echo esc_attr( $this->data['workshop']['start_tijd'] ); ?>" class="kleistad-tijd" required <?php readonly( $readonly ); ?> />
+				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" value="<?php echo esc_attr( $this->data['workshop']['start_tijd'] ); ?>" class="kleistad-tijd" required <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_eind_tijd">Eindtijd</label></div>
 			<div class="kleistad-col-3">
-				<input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="<?php echo esc_attr( $this->data['workshop']['eind_tijd'] ); ?>" class="kleistad-tijd" required <?php readonly( $readonly ); ?> />
+				<input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" value="<?php echo esc_attr( $this->data['workshop']['eind_tijd'] ); ?>" class="kleistad-tijd" required <?php wp_readonly( $readonly ); ?> />
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -221,17 +221,17 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_programma">Programma</label></div>
 			<div class="kleistad-col-8">
-				<textarea name="programma" id="kleistad_programma" rows="5" maxlength="500" <?php readonly( $readonly ); ?> ><?php echo esc_textarea( $this->data['workshop']['programma'] ); ?></textarea>
+				<textarea name="programma" id="kleistad_programma" rows="5" maxlength="500" <?php wp_readonly( $readonly ); ?> ><?php echo esc_textarea( $this->data['workshop']['programma'] ); ?></textarea>
 			</div>
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_kosten">Kosten</label></div>
 			<div class="kleistad-col-2">
-				<input type="number" lang="nl" step="0.01" name="kosten" id="kleistad_kosten" min="0" value="<?php echo esc_attr( $this->data['workshop']['kosten'] ); ?>" <?php readonly( $readonly ); ?> >
+				<input type="number" lang="nl" step="0.01" name="kosten" id="kleistad_kosten" min="0" value="<?php echo esc_attr( $this->data['workshop']['kosten'] ); ?>" <?php wp_readonly( $readonly ); ?> >
 			</div>
 			<div class="kleistad-col-2">incl. BTW</div>
 			<div class="kleistad-col-2">
-				<!--suppress HtmlFormInputWithoutLabel --><input type="number" lang="nl" step="0.01" id="kleistad_kosten_ex_btw" min="0" value="<?php echo esc_attr( number_format( $this->data['workshop']['kosten'] / 1.21, 2 ) ); ?>" <?php readonly( $readonly ); ?> >
+				<!--suppress HtmlFormInputWithoutLabel --><input type="number" lang="nl" step="0.01" id="kleistad_kosten_ex_btw" min="0" value="<?php echo esc_attr( number_format( $this->data['workshop']['kosten'] / 1.21, 2 ) ); ?>" <?php wp_readonly( $readonly ); ?> >
 			</div>
 			<div class="kleistad-col-2">excl. BTW</div>
 		</div>

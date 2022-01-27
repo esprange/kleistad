@@ -94,14 +94,14 @@ class Inschrijvingen implements Countable, Iterator {
 	/**
 	 * Ga naar de volgende in de lijst.
 	 */
-	public function next() {
+	public function next(): void {
 		$this->current_index++;
 	}
 
 	/**
 	 * Ga terug naar het begin.
 	 */
-	public function rewind() {
+	public function rewind(): void {
 		$this->current_index = 0;
 	}
 
@@ -118,7 +118,7 @@ class Inschrijvingen implements Countable, Iterator {
 	 * Verwerk de inschrijving van een cursist die wacht op een plek.
 	 *
 	 * @param Inschrijving $inschrijving De inschrijving van de cursist.
-	 * @return boolean De verwerking is uitgevoerd.
+	 * @return bool De verwerking is uitgevoerd.
 	 */
 	private static function wachtlijst_verwerking( Inschrijving $inschrijving ) : bool {
 		if ( ! $inschrijving->ingedeeld && $inschrijving->wacht_datum ) {

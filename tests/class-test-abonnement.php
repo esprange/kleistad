@@ -107,9 +107,9 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 
 		$abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'bank' );
 
-		$this->assertRegExp( '~A[0-9]+-start-20[0-9]{4}~', $abonnement->geef_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~A[0-9]+-start-20[0-9]{4}~', $abonnement->geef_referentie(), 'referentie incorrect' );
 		$abonnement->artikel_type = 'regulier';
-		$this->assertRegExp( '~A[0-9]+-regulier-20[0-9]{4}~', $abonnement->geef_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~A[0-9]+-regulier-20[0-9]{4}~', $abonnement->geef_referentie(), 'referentie incorrect' );
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		 * Pauzeer het abonnement in de toekomst
 		 */
 		$abonnement->actie->pauzeren( strtotime( '+ 5 days 00:00' ), strtotime( '+ 20 days 00:00' ) );
-		$this->assertRegExp( '~Je pauzeert~', $abonnement->bericht, 'pauzeren actief incorrect' );
+		$this->assertMatchesRegularExpression( '~Je pauzeert~', $abonnement->bericht, 'pauzeren actief incorrect' );
 		$this->assertNotEmpty( $mailer->get_recipient( 'to', 1 )->address, 'pauzeren actief email incorrect' );
 		$this->assertEmpty( $mailer->get_sent( 1 )->attachment, 'pauzeren actie email attachment incorrect' );
 
@@ -150,7 +150,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		 */
 		$abonnement->pauze_datum = strtotime( '-5 days 00:00' );
 		$abonnement->actie->pauzeren( strtotime( '- 5 days 00:00' ), strtotime( '+ 10 days 00:00' ) );
-		$this->assertRegExp( '~Je hebt aangegeven~', $abonnement->bericht, 'pauzeren herstart actief incorrect' );
+		$this->assertMatchesRegularExpression( '~Je hebt aangegeven~', $abonnement->bericht, 'pauzeren herstart actief incorrect' );
 		$this->assertNotEmpty( $mailer->get_recipient( 'to', 2 )->address, 'herstarten email incorrect' );
 		$this->assertEmpty( $mailer->get_sent( 2 )->attachment, 'herstarten email attachement incorrect' );
 	}
@@ -167,7 +167,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		 * Stop het abonnement. Dan moet er alleen eem bevestiging uitgezonden worden.
 		 */
 		$abonnement->actie->stoppen( strtotime( 'first day of next month 00:00' ) );
-		$this->assertRegExp( '~Je hebt het~', $abonnement->bericht, 'stoppen actief bericht incorrect' );
+		$this->assertMatchesRegularExpression( '~Je hebt het~', $abonnement->bericht, 'stoppen actief bericht incorrect' );
 		$this->assertEquals( strtotime( 'first day of next month 00:00' ), $abonnement->eind_datum, 'stoppen datum incorrect' );
 		$this->assertNotEmpty( $mailer->get_recipient( 'to', 1 )->address, 'stoppen email incorrect' );
 		$this->assertEmpty( $mailer->get_last_sent()->attachment, 'stoppen email attachment incorrect' );
@@ -188,7 +188,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		 * Wijzig de dag van het beperkte abonnement. Moet bevestigd worden met bericht.
 		 */
 		$abonnee->abonnement->actie->wijzigen( strtotime( 'first day of next month 00:00' ), 'soort', 'onbeperkt' );
-		$this->assertRegExp( '~Je hebt het~', $abonnee->abonnement->bericht, 'wijzigen soort bericht incorrect' );
+		$this->assertMatchesRegularExpression( '~Je hebt het~', $abonnee->abonnement->bericht, 'wijzigen soort bericht incorrect' );
 		$this->assertEquals( 'onbeperkt', $abonnee->abonnement->soort, 'wijzigen soort incorrect' );
 		$this->assertEquals( 2, $mailer->get_sent_count(), 'wijzigen soort email incorrect' );
 
@@ -196,7 +196,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		 * Wijzig nu de extras. Moet bevestigd worden met bericht.
 		 */
 		$abonnee->abonnement->actie->wijzigen( strtotime( 'first day of next month 00:00' ), 'extras', [ 'sleutel', 'kast' ] );
-		$this->assertRegExp( '~Je gaat voortaan~', $abonnee->abonnement->bericht, 'wijzigen extras bericht incorrect' );
+		$this->assertMatchesRegularExpression( '~Je gaat voortaan~', $abonnee->abonnement->bericht, 'wijzigen extras bericht incorrect' );
 		$this->assertEquals( [ 'sleutel', 'kast' ], $abonnee->abonnement->extras, 'wijzigen extras incorrect' );
 		$this->assertEquals( 3, $mailer->get_sent_count(), 'wijzigen extras email incorrect' );
 	}
@@ -335,7 +335,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	public function test_geef_statustekst() {
 		$abonnement = $this->maak_abonnement();
 		$this->assertEquals( 'actief', $abonnement->geef_statustekst( false ), 'Korte statustekst incorrect' );
-		$this->assertRegExp( '~actief sinds+~', $abonnement->geef_statustekst( true ), 'Lange statustekst incorrect' );
+		$this->assertMatchesRegularExpression( '~actief sinds+~', $abonnement->geef_statustekst( true ), 'Lange statustekst incorrect' );
 	}
 
 	/**

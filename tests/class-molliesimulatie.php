@@ -78,63 +78,63 @@ class MollieSimulatie {
 					 *
 					 * @var object $metadata Het object waar de meta data in zit.
 					 */
-					public $metadata;
+					public object $metadata;
 
 					/**
 					 * Amount object
 					 *
 					 * @var object $amount Het object waarin het betaalde bedrag zit.
 					 */
-					public $amount;
+					public object $amount;
 
 					/**
 					 * Geeft aan hoeveel er nog openstaat.
 					 *
 					 * @var object $amountRemaining Het object waarin het openstaande bedrag zit.
 					 */
-					public $amountRemaining;
+					public object $amountRemaining;
 
 					/**
 					 * Method property
 					 *
 					 * @var string $method Kan o.a. ideal en directdebit bevatten.
 					 */
-					public $method;
+					public string $method;
 
 					/**
 					 * Description property
 					 *
 					 * @var string $description Beschrijving.
 					 */
-					public $description;
+					public string $description;
 
 					/**
 					 * Create datum
 					 *
 					 * @var string $createdAt Datum.
 					 */
-					public $createdAt;
+					public string $createdAt;
 
 					/**
 					 * Status property
 					 *
 					 * @var string $status De statustekst.
 					 */
-					public $status;
+					public string $status;
 
 					/**
 					 * Sequencetype property
 					 *
 					 * @var string $sequenceType Type one-off of recurring.
 					 */
-					public $sequenceType;
+					public string $sequenceType;
 
 					/**
 					 * Webhook property
 					 *
 					 * @var string $webhookUrl De webhook.
 					 */
-					public $webhookUrl;
+					public string $webhookUrl;
 
 					/**
 					 * HasRefunds property
@@ -205,7 +205,7 @@ class MollieSimulatie {
 							 *
 							 * @var string $status De statustekst.
 							 */
-							public $status;
+							public string $status;
 
 							/**
 							 * Id of the object
@@ -219,28 +219,28 @@ class MollieSimulatie {
 							 *
 							 * @var object $amount Het object waarin het betaalde bedrag zit.
 							 */
-							public $amount;
+							public object $amount;
 
 							/**
 							 * Metadata object
 							 *
 							 * @var object $metadata Het object waar de meta data in zit.
 							 */
-							public $metadata;
+							public object $metadata;
 
 							/**
 							 * Description property
 							 *
 							 * @var string $description Beschrijving.
 							 */
-							public $description;
+							public string $description;
 
 							/**
 							 * Create datum
 							 *
 							 * @var string $createdAt Datum.
 							 */
-							public $createdAt;
+							public string $createdAt;
 
 							/**
 							 * De constructor.
@@ -406,14 +406,14 @@ class MollieSimulatie {
 					 *
 					 * @var string
 					 */
-					public $name;
+					public string $name;
 
 					/**
 					 * Email adres van de klant.
 					 *
 					 * @var string
 					 */
-					public $email;
+					public string $email;
 
 					/**
 					 * De constructor.
@@ -461,28 +461,28 @@ class MollieSimulatie {
 								 *
 								 * @var string $status De status.
 								 */
-								public $status;
+								public string $status;
 
 								/**
 								 * Klant details
 								 *
 								 * @var object $detaild De klant details.
 								 */
-								public $details;
+								public object $details;
 
 								/**
 								 * Validatie datum
 								 *
 								 * @var string $signatureDate Datum.
 								 */
-								public $signatureDate;
+								public string $signatureDate;
 
 								/**
 								 * Creatie datum
 								 *
 								 * @var string $createdAt Datum.
 								 */
-								public $createdAt;
+								public string $createdAt;
 
 								/**
 								 * De constructor

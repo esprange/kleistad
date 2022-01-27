@@ -35,5 +35,9 @@ wp-cli.local.yml
 # ftp
 *.ftp
 
+# phpunit
+*.cache
+
 cookie.txt
 mollie.db
+

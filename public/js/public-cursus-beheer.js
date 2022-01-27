@@ -136,7 +136,7 @@
 					setLimits();
 				},
 				showOn: 'button',
-				buttonText: 'Lesdatum &plusmn;'
+				buttonText: 'Lesdatum \xB1'
 			}
 		);
 	}

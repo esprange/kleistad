@@ -237,7 +237,7 @@ class AbonnementActie {
 	/**
 	 * Autoriseer de abonnee zodat deze de oven reservering mag doen en toegang tot leden pagina's krijgt.
 	 *
-	 * @param boolean $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
+	 * @param bool $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
 	 */
 	public function autoriseer( bool $valid ) {
 		$abonnee = new WP_User( $this->abonnement->klant_id );

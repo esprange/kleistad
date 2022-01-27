@@ -134,7 +134,7 @@ class Admin_Upgrade {
 			gemeld tinyint(1) DEFAULT 0,
 			verwerkt tinyint(1) DEFAULT 0,
 			verdeling text,
-			opmerking tinytext,
+			opmerking tinytext DEFAULT '',
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -142,7 +142,7 @@ class Admin_Upgrade {
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}kleistad_ovens (
 			id int(10) NOT NULL AUTO_INCREMENT,
-			naam tinytext,
+			naam tinytext DEFAULT '',
 			kosten_laag numeric(10,2),
 			kosten_midden numeric(10,2),
 			kosten_hoog numeric(10,2),
