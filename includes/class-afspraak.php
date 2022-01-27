@@ -93,7 +93,10 @@ class Afspraak {
 				$bestaand_event = $this->googleconnect->calendar_service()->events->get( $this->kalender_id, $afspraak_id );
 				$this->event    = $bestaand_event;
 			} catch ( Google\Service\Exception $e ) {
-				; // Geen actie nodig.
+				/**
+				 * Er is geen actie nodig.
+				 */
+				;
 			}
 		}
 	}
