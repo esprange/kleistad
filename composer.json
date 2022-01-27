@@ -2,7 +2,7 @@
     "name": "kleistad/kleistad",
     "description": "WordPress plugin voor Kleistad",
     "type": "wordpress-plugin",
-    "license": "GPL-3.0",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Eric Sprangers",
@@ -22,11 +22,12 @@
         "mollie/mollie-api-php": "^2",
         "google/apiclient": "^2",
         "php-imap/php-imap": "^4.5",
-        "setasign/fpdf": "*",
-        "deliciousbrains/wp-background-processing": "*",
+        "setasign/fpdf": "^1",
+        "deliciousbrains/wp-background-processing": "^1",
         "ext-exif": "*",
         "ext-gd": "*",
         "ext-calendar": "*",
+        "ext-imap": "*",
         "shuchkin/simplexlsxgen": "^1.0"
     },
     "scripts": {
