@@ -26,9 +26,7 @@
         "deliciousbrains/wp-background-processing": "^1",
         "ext-exif": "*",
         "ext-gd": "*",
-        "ext-calendar": "*",
-        "ext-imap": "*",
-        "shuchkin/simplexlsxgen": "^1.0"
+        "ext-imap": "*"
     },
     "scripts": {
         "post-update-cmd": "Google\\Task\\Composer::cleanup"
