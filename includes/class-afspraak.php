@@ -96,7 +96,6 @@ class Afspraak {
 				/**
 				 * Er is geen actie nodig.
 				 */
-				;
 			}
 		}
 	}

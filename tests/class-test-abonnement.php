@@ -28,7 +28,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		}
 
 		$abonnee_id = $this->factory->user->create();
-		$abonnement = $this->getMockBuilder( Abonnement::class )->setMethods( [ 'maak_factuur' ] )->setConstructorArgs(
+		$abonnement = $this->getMockBuilder( Abonnement::class )->onlyMethods( [ 'maak_factuur' ] )->setConstructorArgs(
 			[
 				$abonnee_id,
 			]

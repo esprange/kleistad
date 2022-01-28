@@ -22,7 +22,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	 */
 	private function maak_saldo(): Saldo {
 		$stoker_id = $this->factory->user->create();
-		$saldo     = $this->getMockBuilder( Saldo::class )->setMethods( [ 'maak_factuur' ] )->setConstructorArgs(
+		$saldo     = $this->getMockBuilder( Saldo::class )->onlyMethods( [ 'maak_factuur' ] )->setConstructorArgs(
 			[
 				$stoker_id,
 			]

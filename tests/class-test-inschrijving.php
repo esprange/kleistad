@@ -31,7 +31,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$cursus->cursuskosten    = 100.0;
 		$cursus_id               = $cursus->save();
 
-		$inschrijving = $this->getMockBuilder( Inschrijving::class )->setMethods( [ 'maak_factuur' ] )->setConstructorArgs(
+		$inschrijving = $this->getMockBuilder( Inschrijving::class )->onlyMethods( [ 'maak_factuur' ] )->setConstructorArgs(
 			[
 				$cursus_id,
 				$cursist_id,

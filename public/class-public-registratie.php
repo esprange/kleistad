@@ -88,7 +88,7 @@ class Public_Registratie extends ShortcodeForm {
 	 *
 	 * Bewaar 'registratie' form gegevens
 	 *
-	 * @return WP_ERROR|array
+	 * @return array
 	 *
 	 * @since   4.0.87
 	 */

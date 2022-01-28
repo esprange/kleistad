@@ -186,7 +186,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return string De naam van de docent.
 	 */
-	public function docent_naam() : ?string {
+	public function docent_naam() : string {
 		$docenten = [];
 		foreach ( explode( ';', $this->docent ) as $docent_item ) {
 			if ( is_numeric( $docent_item ) ) {

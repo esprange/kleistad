@@ -95,7 +95,7 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	/**
 	 * Bewaar 'dagdelenkaart' form gegevens
 	 *
-	 * @return WP_Error|array
+	 * @return array
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 *
 	 * @since   4.3.0

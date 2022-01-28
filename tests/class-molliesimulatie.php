@@ -362,13 +362,14 @@ class MollieSimulatie {
 							$this->method          = property_exists( $data, 'method' ) ? $data->method : 'directdebit';
 							$this->sequenceType    = $data->sequenceType;
 							$this->webhookUrl      = $data->webhookUrl;
-						}
-						$res = $db->query( "SELECT data FROM refunds WHERE payment_id = '$this->id'" );
-						$row = $res->fetchArray();
-						if ( false !== $row ) {
-							$data                         = json_decode( $row['data'] );
-							$this->amountRemaining->value = $this->amount->value - $data->amount->value;
-							$this->_hasRefunds            = true;
+
+							$res = $db->query( "SELECT data FROM refunds WHERE payment_id = '$this->id'" );
+							$row = $res->fetchArray();
+							if ( false !== $row ) {
+								$data                         = json_decode( $row['data'] );
+								$this->amountRemaining->value = $this->amount->value - $data->amount->value;
+								$this->_hasRefunds            = true;
+							}
 						}
 						$db->close();
 						unset( $db );

@@ -81,7 +81,7 @@ class Public_Verkoop extends ShortcodeForm {
 	/**
 	 * Bewaar 'verkoop' form gegevens
 	 *
-	 * @return WP_ERROR|array
+	 * @return array
 	 *
 	 * @since   6.2.0
 	 * @suppressWarnings(PHPMD.ElseExpression)

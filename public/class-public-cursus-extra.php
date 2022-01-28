@@ -110,7 +110,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 	 *
 	 * Bewaar 'cursus_extra' form gegevens
 	 *
-	 * @return WP_Error|array
+	 * @return array
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 *
 	 * @since   6.6.0

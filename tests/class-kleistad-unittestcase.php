@@ -183,8 +183,8 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 				/**
 				 * Help functie voor zoeken specifieke email
 				 *
-				 * @param string   $email_address Email adress waarop gezocht moet worden.
-				 * @param int|null $index         Email die gevonden moet worden, null = laatste, 1 = voorlaatste etc.
+				 * @param string $email_address Email adress waarop gezocht moet worden.
+				 * @param int    $index         Email die gevonden moet worden, null = laatste, 1 = voorlaatste etc.
 				 *
 				 * @return false|object
 				 */

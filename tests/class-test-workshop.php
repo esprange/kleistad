@@ -25,7 +25,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	 */
 	private function maak_workshop(): Workshop {
 
-		$workshop = $this->getMockBuilder( Workshop::class )->setMethods( [ 'maak_factuur' ] )->getMock();
+		$workshop = $this->getMockBuilder( Workshop::class )->onlyMethods( [ 'maak_factuur' ] )->getMock();
 		$workshop->method( 'maak_factuur' )->willReturn( __FILE__ );
 		$workshop->kosten     = 120;
 		$workshop->naam       = 'workshop';
