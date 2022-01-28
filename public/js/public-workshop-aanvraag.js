@@ -67,7 +67,7 @@
 					return [ beschikbaar, beschikbaar ? '' : 'ui-state-disabled' ];
 				}
 			}
-		);
+		)
 	}
 
 	/**
@@ -95,6 +95,13 @@
 									prop( 'checked', 1 === $moment.length && 1 === beschikbaar.length );
 							}
 						)
+					}
+				)
+				.on(
+					'keydown',
+					'#kleistad_plandatum',
+					function( event ) {
+						event.preventDefault();
 					}
 				)
 		}

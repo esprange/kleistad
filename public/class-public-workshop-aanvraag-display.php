@@ -153,7 +153,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				<label for="kleistad_plandatum" class="kleistad-label">Wanneer moet het plaatsvinden ?</label>
 			</div>
 			<div class="kleistad-col-3">
-				<input class="kleistad-datum ververs" type="text" name="plandatum" id="kleistad_plandatum" required readonly="readonly">
+				<input class="kleistad-datum" type="text" name="plandatum" id="kleistad_plandatum" required="required">
 			</div>
 		</div>
 		<?php foreach ( WorkshopAanvraag::MOMENT as $titel => $moment ) : ?>
