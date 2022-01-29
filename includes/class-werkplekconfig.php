@@ -39,7 +39,7 @@ class WerkplekConfig {
 		$default_config   = [];
 		$default_meesters = [];
 		foreach ( $this->geef_atelierdagen() as $dag ) {
-			foreach ( DAGDEEL as $dagdeel ) {
+			foreach ( WerkplekGebruik::WERKPLEK_DAGDEEL as $dagdeel ) {
 				foreach ( opties()['werkruimte'] as $activiteit ) {
 					$default_config[ $dag ][ $dagdeel ][ $activiteit['naam'] ] = 0;
 					$default_meesters[ $dag ][ $dagdeel ]                      = 0;

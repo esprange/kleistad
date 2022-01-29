@@ -50,7 +50,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 					<th scope="col"><label><?php echo esc_html( $atelierdag ); ?></label></th>
 				<?php endforeach ?>
 				</tr>
-				<?php foreach ( DAGDEEL as $dagdeel ) : ?>
+				<?php foreach ( WerkplekGebruik::WERKPLEK_DAGDEEL as $dagdeel ) : ?>
 				<tr>
 					<th><?php echo esc_html( $dagdeel ); ?></th>
 				</tr>

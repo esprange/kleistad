@@ -124,7 +124,7 @@ class Public_Docent extends ShortcodeForm {
 				}
 			}
 		}
-		foreach ( DAGDEEL as $dagdeel ) {
+		foreach ( Docent::DOCENT_DAGDEEL as $dagdeel ) {
 			for ( $datum = $maandag;  $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 				if ( ! isset( $reserveringen[ $datum ][ $dagdeel ] ) ) {
 					$reserveringen[ $datum ][ $dagdeel ] = $docent->beschikbaarheid( $datum, $dagdeel );
@@ -160,7 +160,7 @@ EOT;
 </thead>
 <tbody>
 EOT;
-		foreach ( DAGDEEL as $dagdeel ) {
+		foreach ( Docent::DOCENT_DAGDEEL as $dagdeel ) {
 			$html .= <<<EOT
 	<tr>
 		<td>$dagdeel</td>

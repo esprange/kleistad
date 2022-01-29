@@ -47,20 +47,20 @@ class WorkshopAanvraag {
 	const NIEUW      = 'nieuw';
 	const VRAAG      = 'vraag';
 	const MOMENT     = [
-		'Ochtend'  => [
+		OCHTEND  => [
 			'start'   => '09:30',
 			'eind'    => '11:30',
 			'dagdeel' => OCHTEND,
 		],
-		'Middag'   => [
+		MIDDAG   => [
 			'start'   => '13:00',
 			'eind'    => '15:00',
 			'dagdeel' => MIDDAG,
 		],
-		'Namiddag' => [
+		NAMIDDAG => [
 			'start'   => '16:30',
 			'eind'    => '18:30',
-			'dagdeel' => AVOND,
+			'dagdeel' => NAMIDDAG,
 		],
 	];
 

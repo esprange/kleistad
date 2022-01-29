@@ -23,8 +23,8 @@ const BOEKHOUD  = 'boekhouding';
 const INTERN    = 'intern';
 const OCHTEND   = 'Ochtend';
 const MIDDAG    = 'Middag';
+const NAMIDDAG  = 'Namiddag';
 const AVOND     = 'Avond';
-const DAGDEEL   = [ OCHTEND, MIDDAG, AVOND ]; // Vooralsnog ochtend, middag en avond.
 
 /**
  * Hulpfunctie, bepaald in welk dagdeel een activiteit valt.

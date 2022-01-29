@@ -18,7 +18,8 @@ namespace Kleistad;
  */
 class WerkplekGebruik {
 
-	const MEESTER = 'Beheerder';
+	const WERKPLEK_DAGDEEL = [ OCHTEND, MIDDAG, AVOND ];
+	const MEESTER          = 'Beheerder';
 
 	/**
 	 * De atelier dag
@@ -55,7 +56,7 @@ class WerkplekGebruik {
 		$this->dagconfig = $werkplekconfig->config[ strftime( '%A', $this->datum ) ];
 		$gebruik         = get_option( 'kleistad_werkplek_' . date( 'Ymd', $this->datum ) );
 		if ( false === $gebruik ) {
-			foreach ( DAGDEEL as $dagdeel ) {
+			foreach ( self::WERKPLEK_DAGDEEL as $dagdeel ) {
 				foreach ( opties()['werkruimte'] as $activiteit ) {
 					$this->gebruik[ $dagdeel ][ $activiteit['naam'] ] = [];
 				}
@@ -64,7 +65,7 @@ class WerkplekGebruik {
 		if ( is_array( $gebruik ) ) {
 			$this->gebruik = $gebruik;
 		}
-		foreach ( DAGDEEL as $dagdeel ) {
+		foreach ( self::WERKPLEK_DAGDEEL as $dagdeel ) {
 			$meester_id                                   = $werkplekconfig->meesters[ strftime( '%A', $this->datum ) ][ $dagdeel ];
 			$this->gebruik[ $dagdeel ][ self::MEESTER ] ??= [ $meester_id ];
 		}

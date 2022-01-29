@@ -27,6 +27,7 @@ class Docent extends Gebruiker {
 	public const GERESERVEERD     = 3;
 	public const STANDAARD        = 4;
 	public const META_KEY         = 'kleistad_docent_beschikbaarheid';
+	public const DOCENT_DAGDEEL   = [ OCHTEND, MIDDAG, NAMIDDAG, AVOND ];
 
 	/**
 	 * De docent beschikbaarheid
