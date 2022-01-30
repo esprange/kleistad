@@ -41,26 +41,23 @@ class WorkshopAanvraag {
 	/**
 	 * We maken gebruik van een custom post object
 	 */
-	const POST_TYPE  = 'kleistad_workshopreq';
-	const GEPLAND    = 'gepland';
-	const GEREAGEERD = 'gereageerd';
-	const NIEUW      = 'nieuw';
-	const VRAAG      = 'vraag';
-	const MOMENT     = [
+	public const POST_TYPE  = 'kleistad_workshopreq';
+	public const GEPLAND    = 'gepland';
+	public const GEREAGEERD = 'gereageerd';
+	public const NIEUW      = 'nieuw';
+	public const VRAAG      = 'vraag';
+	public const MOMENT     = [
 		OCHTEND  => [
-			'start'   => '09:30',
-			'eind'    => '11:30',
-			'dagdeel' => OCHTEND,
+			'start' => '09:30',
+			'eind'  => '11:30',
 		],
 		MIDDAG   => [
-			'start'   => '13:00',
-			'eind'    => '15:00',
-			'dagdeel' => MIDDAG,
+			'start' => '13:00',
+			'eind'  => '15:00',
 		],
 		NAMIDDAG => [
-			'start'   => '16:30',
-			'eind'    => '18:30',
-			'dagdeel' => NAMIDDAG,
+			'start' => '16:30',
+			'eind'  => '18:30',
 		],
 	];
 

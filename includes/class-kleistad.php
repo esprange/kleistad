@@ -32,12 +32,34 @@ const AVOND     = 'Avond';
  * @param int $start_tijd De start tijd van de activiteit.
  * @param int $eind_tijd  De eind tijd van de activiteit.
  *
- * @return string Het dagdeel
+ * @return array De dagdelen
  */
-function bepaal_dagdeel( int $start_tijd, int $eind_tijd ) : string {
-	$ochtend_grens = strtotime( '12:30', $start_tijd );
-	$middag_grens  = strtotime( '20:00', $eind_tijd );
-	return $eind_tijd < $ochtend_grens ? OCHTEND : ( $eind_tijd < $middag_grens ? MIDDAG : AVOND );
+function bepaal_dagdelen( int $start_tijd, int $eind_tijd ) : array {
+	$dagdelen      = [];
+	$grenzen       = [
+		OCHTEND  => 12 * 60 + 30, // 12:30.
+		MIDDAG   => 16 * 60,      // 16:00.
+		NAMIDDAG => 20 * 60,      // 20:00.
+	];
+	$start_minuten = ( $start_tijd % DAY_IN_SECONDS ) / 60;
+	$eind_minuten  = ( $eind_tijd % DAY_IN_SECONDS ) / 60;
+
+	foreach ( $grenzen as $dagdeel => $grens ) {
+		if ( $start_minuten <= $grens ) {
+			$dagdelen[] = $dagdeel;
+			if ( $eind_minuten <= $grens ) {
+				return $dagdelen; // Start en eind binnen hetzelfde dagdeel.
+			}
+			continue; // Eind is in een later dagdeel.
+		}
+		if ( count( $dagdelen ) ) { // Start is al vastgelegd.
+			$dagdelen[] = $dagdeel;
+			if ( $eind_minuten <= $grens ) {
+				return $dagdelen;
+			}
+		}
+	}
+	return [ AVOND ];
 }
 
 /**

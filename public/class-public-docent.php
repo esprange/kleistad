@@ -111,7 +111,9 @@ class Public_Docent extends ShortcodeForm {
 			if ( intval( $cursus->docent ) === $docent->ID && ! $cursus->vervallen ) {
 				foreach ( $cursus->lesdatums as $lesdatum ) {
 					if ( $lesdatum >= $maandag && $lesdatum < ( $maandag + WEEK_IN_SECONDS ) ) {
-						$reserveringen[ $lesdatum ][ bepaal_dagdeel( $cursus->start_tijd, $cursus->eind_tijd ) ] = Docent::GERESERVEERD;
+						foreach ( bepaal_dagdelen( $cursus->start_tijd, $cursus->eind_tijd ) as $dagdeel ) {
+							$reserveringen[ $lesdatum ][ $dagdeel ] = Docent::GERESERVEERD;
+						}
 					}
 				}
 			}
@@ -120,7 +122,9 @@ class Public_Docent extends ShortcodeForm {
 			$docent_ids = array_map( 'intval', explode( ';', $workshop->docent ) );
 			if ( in_array( $docent->ID, $docent_ids, true ) && ! $workshop->vervallen ) {
 				if ( $workshop->datum >= $maandag && $workshop->datum < ( $maandag + WEEK_IN_SECONDS ) ) {
-					$reserveringen[ $workshop->datum ][ bepaal_dagdeel( $workshop->start_tijd, $workshop->eind_tijd ) ] = $workshop->definitief ? Docent::GERESERVEERD : Docent::OPTIE;
+					foreach ( bepaal_dagdelen( $workshop->start_tijd, $workshop->eind_tijd ) as $dagdeel ) {
+						$reserveringen[ $workshop->datum ][ $dagdeel ] = $workshop->definitief ? Docent::GERESERVEERD : Docent::OPTIE;
+					}
 				}
 			}
 		}

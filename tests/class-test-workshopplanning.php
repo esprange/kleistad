@@ -81,7 +81,7 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 				'user_email' => 'test@test.nl',
 				'omvang'     => 'klein',
 				'plandatum'  => strtotime( 'tomorrow + 1 day' ),
-				'dagdeel'    => array_keys( WorkshopAanvraag::MOMENT )[1],
+				'dagdeel'    => MIDDAG,
 				'technieken' => [],
 				'telnr'      => '01234',
 				'vraag'      => 'test',
@@ -112,7 +112,7 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 		$cursus->eind_datum  = strtotime( '+ 2 weeks' );
 		$cursus->lesdatums   = [ $cursus->start_datum, $cursus->eind_datum ];
 		$cursus->start_tijd  = strtotime( '13:00' );
-		$cursus->eind_tijd   = strtotime( '16:00' );
+		$cursus->eind_tijd   = strtotime( '15:30' );
 		$cursus->save();
 		delete_transient( Workshopplanning::META_KEY );
 		/**

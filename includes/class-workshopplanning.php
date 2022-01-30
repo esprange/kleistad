@@ -106,18 +106,18 @@ class Workshopplanning extends WP_Async_Request {
 				if ( $cursus->start_datum > $eind ) {
 					continue;
 				}
-				$this->verhoog( $lesdatum, bepaal_dagdeel( $cursus->start_tijd, $cursus->eind_tijd ) );
+				$this->verhoog( $lesdatum, bepaal_dagdelen( $cursus->start_tijd, $cursus->eind_tijd ) );
 			}
 		}
 		foreach ( new Workshops( $start ) as $workshop ) {
 			if ( $workshop->datum > $eind ) {
 				continue;
 			}
-			$this->verhoog( $workshop->datum, bepaal_dagdeel( $workshop->start_tijd, $workshop->eind_tijd ) );
+			$this->verhoog( $workshop->datum, bepaal_dagdelen( $workshop->start_tijd, $workshop->eind_tijd ) );
 		}
 		foreach ( new WorkshopAanvragen( $start - MONTH_IN_SECONDS ) as $workshop_aanvraag ) {
 			if ( ! is_null( $workshop_aanvraag->plandatum ) && $workshop_aanvraag->is_inverwerking() && $workshop_aanvraag->plandatum < $eind ) {
-				$this->verhoog( $workshop_aanvraag->plandatum, WorkshopAanvraag::MOMENT[ $workshop_aanvraag->dagdeel ]['dagdeel'] );
+				$this->verhoog( $workshop_aanvraag->plandatum, [ $workshop_aanvraag->dagdeel ] );
 			}
 		}
 	}
@@ -146,13 +146,15 @@ class Workshopplanning extends WP_Async_Request {
 	/**
 	 * Hulp functie, verhoog de activiteitteller van de dag
 	 *
-	 * @param int    $datum   De datum.
-	 * @param string $dagdeel Het dagdeel.
+	 * @param int   $datum    De datum.
+	 * @param array $dagdelen Het dagdeel.
 	 */
-	private function verhoog( int $datum, string $dagdeel ) {
-		if ( in_array( $dagdeel, self::WORKSHOP_DAGDEEL, true ) ) {
-			$index                                     = $this->index( $datum, $dagdeel );
-			$this->beschikbaarheid[ $index ]['aantal'] = ( $this->beschikbaarheid[ $index ]['aantal'] ?? 0 ) + 1;
+	private function verhoog( int $datum, array $dagdelen ) {
+		foreach ( $dagdelen as $dagdeel ) {
+			if ( in_array( $dagdeel, self::WORKSHOP_DAGDEEL, true ) ) {
+				$index                                     = $this->index( $datum, $dagdeel );
+				$this->beschikbaarheid[ $index ]['aantal'] = ( $this->beschikbaarheid[ $index ]['aantal'] ?? 0 ) + 1;
+			}
 		}
 	}
 

@@ -50,7 +50,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 			'contact'    => 'De tester',
 			'omvang'     => '6 of minder',
 			'periode'    => 'binnen 1 maand',
-			'dagdeel'    => array_keys( WorkshopAanvraag::MOMENT )[0],
+			'dagdeel'    => OCHTEND,
 			'plandatum'  => strtotime( 'next month' ),
 			'technieken' => [],
 			'telnr'      => '0123456789',

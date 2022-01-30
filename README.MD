@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.8.3  
-**Stable tag:** 7.1.6  
+**Stable tag:** 7.1.7  
 **License:** GPLv3 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-3.0.html  
 **Requires PHP:** 7.4  
@@ -35,7 +35,7 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 7.1.6 ###
+### 7.1.7 ###
 * Aanpassing naar docent beschikbaarheid, nu ook ochtend, middag, namiddag en avond.
 ### 7.1.5 ###
 * Aanpassing workshop aanvraag, ook techniek uitvraag en nu ochtend, middag en namiddag.
