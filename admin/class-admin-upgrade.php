@@ -255,112 +255,12 @@ class Admin_Upgrade {
 	// phpcs:disable
 
 	/**
-	 * Convert saldo, omdat de key wijzigt zal dit maar één keer uitgevoerd worden.
-	 */
-	private function convert_saldo() {
-	}
-
-	/**
-	 * Convert dagdelenkaart, er wordt gecontroleerd of er een enkel record bestaat.
-	 */
-	private function convert_dagdelenkaart() {
-	}
-
-	/**
-	 * Convert abonnement, geef aan dat er geen overbrugging email meer voor oude abo's hoeft te worden gestuurd.
-	 */
-	private function convert_abonnement() {
-	}
-
-	/**
-	 * Converteer inschrijving, maak de orders aan.
-	 */
-	private function convert_inschrijving() {
-	}
-
-	/**
-	 * Converteer emails
-	 */
-	private function convert_email() {
-	}
-
-	/**
-	 * Converteer cursussen
-	 */
-	private function convert_cursus() {
-	}
-
-	/**
-	 * Converteer de openstaande orders die te koppelen zijn aan leden of cursisten.
-	 */
-	private function convert_order() {
-	}
-
-	/**
-	 * Converteer recepten en gerelateerde elementen.
-	 */
-	private function convert_recept() {
-	}
-
-	/**
-	 * Converteer gebruikers.
-	 */
-	private function convert_users() {
-	}
-
-	/**
-	 * Converteer de ovens.
-	 */
-	private function convert_ovens() {
-	}
-
-	/**
-	 * Converteer stookreserveringen.
-	 */
-	private function convert_reserveringen() {
-	}
-
-	/**
-	 * Converteer de corona reserveringen naar werkplek gebruik
-	 */
-	private function convert_werkplekgebruik() {
-	}
-
-	/**
-	 * Converteer de workshop docenten van display_name naar ID
-	 */
-	private function convert_workshops() {
-	}
-
-	/**
-	 * Converteer de workshop docenten van display_name naar ID
-	 */
-	private function convert_workshop_aanvragen() {
-	}
-
-	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
 		/**
 		 * Conversie naar ...
 		 */
-//		$this->convert_saldo();
-//		$this->convert_dagdelenkaart();
-//		$this->convert_abonnement();
-//		$this->convert_inschrijving();
-//		$this->convert_email();
-//		$this->convert_cursus();
-//		$this->convert_order();
-//		$this->convert_opties();
-//		$this->convert_recept();
-//		$this->convert_users();
-//		$this->convert_ovens();
-//		$this->convert_reserveringen();
-//		$this->convert_werkplekgebruik();
-//		$this->convert_workshops();
-//		$this->convert_workshop_aanvragen();
-//		$this->convert_opties();
 	}
 
 }
