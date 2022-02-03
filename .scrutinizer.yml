@@ -18,7 +18,7 @@ build:
         before:
           #- 'sudo apt update'
           #- 'sudo apt-get install php8.0-imap -y'
-          - 'composer require --dev johnpbloch/wordpress --ignore-platform-req=ext-imap'
+          - 'composer require --dev johnpbloch/wordpress'
           #--ignore-platform-req=ext-imap'
 
 filter:
