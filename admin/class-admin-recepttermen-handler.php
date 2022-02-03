@@ -106,17 +106,17 @@ class Admin_Recepttermen_Handler {
 				$notice = $item_valid;
 			}
 		} else {
-			$item = [
+			$item          = [
 				'id'   => 0,
 				'naam' => '',
 			];
-			$id   = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-			if ( isset( $id ) ) {
+			$receptterm_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?: 0;
+			if ( $receptterm_id ) {
 				if ( filter_input( INPUT_GET, 'delete' ) ) {
-					wp_delete_term( $id, Recept::CATEGORY );
+					wp_delete_term( $receptterm_id, Recept::CATEGORY );
 					$message = 'De gegevens zijn opgeslagen';
 				} else {
-					$term = get_term( $id );
+					$term = get_term( $receptterm_id );
 					if ( ! is_wp_error( $term ) ) {
 						$item = [
 							'id'   => $term->term_id,

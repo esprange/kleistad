@@ -93,15 +93,15 @@ class Admin_Stooksaldo_Handler {
 				$notice = $item_valid;
 			}
 		} else {
-			$id        = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
-			$gebruiker = get_userdata( $id );
+			$gebruiker_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
+			$gebruiker    = get_userdata( $gebruiker_id );
 			if ( ! $gebruiker ) {
 				$item   = [];
 				$notice = 'De gebruiker is niet gevonden';
 			} else {
-				$saldo = new Saldo( $id );
+				$saldo = new Saldo( $gebruiker_id );
 				$item  = [
-					'id'    => $id,
+					'id'    => $gebruiker_id,
 					'naam'  => $gebruiker->display_name,
 					'saldo' => $saldo->bedrag,
 				];

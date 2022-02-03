@@ -199,10 +199,10 @@ class Admin_Abonnees_Handler {
 				}
 			}
 		} else {
-			$id    = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?: 0;
-			$actie = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
+			$abonnee_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?: 0;
+			$actie      = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
 			try {
-				$item = $this->geef_abonnee( intval( $id ) );
+				$item = $this->geef_abonnee( intval( $abonnee_id ) );
 			} catch ( Exception $e ) {
 				$notice  = 'Er is iets fout gegaan : ' . $e->getMessage();
 				$message = '';

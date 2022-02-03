@@ -115,8 +115,8 @@ class Admin_Ovens_Handler {
 				$message = 'De gegevens zijn opgeslagen';
 			}
 		} else {
-			$id                      = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-			$oven                    = $id ? new Oven( $id ) : new Oven();
+			$oven_id                 = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+			$oven                    = $oven_id ? new Oven( $oven_id ) : new Oven();
 			$item['id']              = $oven->id;
 			$item['naam']            = $oven->naam;
 			$item['kosten_laag']     = $oven->kosten_laag;

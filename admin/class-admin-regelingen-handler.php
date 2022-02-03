@@ -137,15 +137,15 @@ class Admin_Regelingen_Handler {
 				$notice = $item_valid;
 			}
 		} else {
-			$id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
-			if ( $id ) {
-				sscanf( $id, '%d-%d', $gebruiker_id, $oven_id );
+			$regeling_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
+			if ( $regeling_id ) {
+				sscanf( $regeling_id, '%d-%d', $gebruiker_id, $oven_id );
 				$gebruiker_regelingen = get_user_meta( $gebruiker_id, Oven::REGELING, true );
 
 				$gebruiker = get_userdata( $gebruiker_id );
 				$oven      = new Oven( $oven_id );
 				$item      = [
-					'id'             => $id,
+					'id'             => $regeling_id,
 					'gebruiker_id'   => $gebruiker_id,
 					'gebruiker_naam' => $gebruiker->display_name,
 					'oven_id'        => $oven_id,
