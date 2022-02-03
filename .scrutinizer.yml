@@ -11,8 +11,9 @@ build:
       environment:
         php:
           version: 8.0
-          ini:
-            'extension' : 'imap'
+          compile_options: '--enable-imap'
+          # ini:
+          #  'extension' : 'imap'
 
       dependencies:
         before:
