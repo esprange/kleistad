@@ -1,0 +1,10 @@
+---
+excluded_paths:
+  - "tests/**"
+  - "bin/**"
+  - "**.min.js"
+  - "**.min.css"
+
+engines:
+  phpcs:
+    php_version: 8.0
