@@ -33,7 +33,7 @@ class Betalen {
 	 * @return bool|string De redirect bestemming of false.
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function order( $klant, string $referentie, float $bedrag, string $beschrijving, string $bericht, bool $mandateren ) {
+	public function order( int|array $klant, string $referentie, float $bedrag, string $beschrijving, string $bericht, bool $mandateren ): bool|string {
 		$bank    = filter_input( INPUT_POST, 'bank', FILTER_SANITIZE_STRING, [ 'options' => [ 'default' => null ] ] );
 		$service = new MollieClient();
 		if ( $mandateren ) { // Parameter klant is in dit geval het id.

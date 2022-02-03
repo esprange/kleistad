@@ -20,7 +20,7 @@ use ReflectionException;
  * @param array|int $options   Filter opties.
  * @param bool      $add_empty Afwezige keys als null tonen.
  */
-function filter_input_array( int $type, $options = FILTER_DEFAULT, bool $add_empty = true ) {
+function filter_input_array( int $type, array|int $options = FILTER_DEFAULT, bool $add_empty = true ): bool|array|null {
 	// @phpcs:disable
 	if ( INPUT_GET === $type ) {
 		return filter_var_array( $_GET, $options, $add_empty);
@@ -39,7 +39,7 @@ function filter_input_array( int $type, $options = FILTER_DEFAULT, bool $add_emp
  *
  * @return mixed
  */
-function filter_input( int $type, string $var_name, int $filter = FILTER_DEFAULT, $options = 0 ) {
+function filter_input( int $type, string $var_name, int $filter = FILTER_DEFAULT, array|int $options = 0 ): mixed {
 	// @phpcs:disable
 	if ( INPUT_GET === $type && isset( $_GET[ $var_name ] ) ) {
 		return filter_var( $_GET[ $var_name ], $filter, $options );
@@ -69,7 +69,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	 * @throws Kleistad_Exception  De Kleistad exceptie.
 	 * @throws ReflectionException De Reflectie exceptie.
 	 */
-	protected function public_display_actie( string $shortcode_tag, array $atts, string $display_actie = Shortcode::STANDAARD_ACTIE ) {
+	protected function public_display_actie( string $shortcode_tag, array $atts, string $display_actie = Shortcode::STANDAARD_ACTIE ): mixed {
 		$_GET['actie'] = $display_actie;
 		$shortcode     = $this->geef_shortcode_object( $shortcode_tag, $atts );
 		$refobject     = new ReflectionObject( $shortcode );
@@ -89,7 +89,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	 * @throws Kleistad_Exception  De Kleistad exceptie.
 	 * @throws ReflectionException De Reflectie exceptie.
 	 */
-	protected function public_form_actie( string $shortcode_tag, array $atts, string $form_actie = '' ) {
+	protected function public_form_actie( string $shortcode_tag, array $atts, string $form_actie = '' ): mixed {
 		$shortcode = $this->geef_shortcode_object( $shortcode_tag, $atts );
 		$refobject = new ReflectionObject( $shortcode );
 		$refmethod = $refobject->getMethod( 'process' );
@@ -112,7 +112,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 	 * @throws Kleistad_Exception  De Kleistad exceptie.
 	 * @throws ReflectionException De Reflectie exceptie.
 	 */
-	protected function public_download_actie( string $shortcode_tag, array $atts, string $method, $file_handle ) {
+	protected function public_download_actie( string $shortcode_tag, array $atts, string $method, $file_handle ): mixed {
 		$shortcode     = $this->geef_shortcode_object( $shortcode_tag, $atts );
 		$refobject     = new ReflectionObject( $shortcode );
 		$refmethod     = $refobject->getMethod( $method );
@@ -188,7 +188,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 				 *
 				 * @return false|object
 				 */
-				public function get_last_sent( string $email_address = '', int $index = 0 ) {
+				public function get_last_sent( string $email_address = '', int $index = 0 ): object|bool {
 					if ( empty( $email_address ) ) {
 						$sent = array_reverse( $this->mock_sent )[ $index ];
 						return false === $sent ? $sent : (object) $sent;
@@ -199,7 +199,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 						/**
 						 * Een beetje dirty, kijk of het email adres voorkomt in het array.
 						 */
-						if ( false !== strpos( serialize( $this->mock_sent[ $last ] ), $email_address ) ) { // phpcs:ignore
+						if ( str_contains( serialize( $this->mock_sent[ $last ] ), $email_address ) ) { // phpcs:ignore
 							return (object) $this->mock_sent[ $last ];
 						}
 					}
@@ -213,7 +213,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 				 *
 				 * @return bool|object
 				 */
-				public function get_last_recipient( string $address_type ) {
+				public function get_last_recipient( string $address_type ): object|bool {
 					return $this->get_recipient( $address_type, count( $this->mock_sent ) - 1 );
 				}
 			};

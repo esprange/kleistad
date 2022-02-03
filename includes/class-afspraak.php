@@ -92,7 +92,7 @@ class Afspraak {
 			try {
 				$bestaand_event = $this->googleconnect->calendar_service()->events->get( $this->kalender_id, $afspraak_id );
 				$this->event    = $bestaand_event;
-			} catch ( Google\Service\Exception $e ) {
+			} catch ( Google\Service\Exception ) { // phpcs:ignore
 				/**
 				 * Er is geen actie nodig.
 				 */
@@ -133,21 +133,15 @@ class Afspraak {
 	 * @throws Kleistad_Exception  Als er een fout optreedt.
 	 */
 	public function __get( string $attribuut ) {
-		switch ( $attribuut ) {
-			case 'vervallen':
-				return 'cancelled' === $this->event->getStatus();
-			case 'definitief':
-				return 'confirmed' === $this->event->getStatus();
-			case 'start':
-				return $this->from_google_dt( $this->event->getStart() );
-			case 'eind':
-				return $this->from_google_dt( $this->event->getEnd() );
-			case 'titel':
-				return $this->event->getSummary();
-			case 'id':
-				return $this->event->getId();
-		}
-		return null;
+		return match ( $attribuut ) {
+			'vervallen'  => 'cancelled' === $this->event->getStatus(),
+			'definitief' => 'confirmed' === $this->event->getStatus(),
+			'start'      => $this->from_google_dt( $this->event->getStart() ),
+			'eind'       => $this->from_google_dt( $this->event->getEnd() ),
+			'titel'      => $this->event->getSummary(),
+			'id'         => $this->event->getId(),
+			default      => null,
+		};
 	}
 
 	/**
@@ -158,7 +152,7 @@ class Afspraak {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) {
+	public function __set( string $attribuut, mixed $waarde ) {
 		switch ( $attribuut ) {
 			case 'titel':
 				$this->event->setSummary( $waarde );

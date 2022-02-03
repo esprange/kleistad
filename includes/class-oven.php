@@ -70,20 +70,17 @@ class Oven {
 	 * @return mixed Attribuut waarde.
 	 */
 	public function __get( string $attribuut ) {
-		switch ( $attribuut ) {
-			case 'beschikbaarheid':
-				return json_decode( $this->data[ $attribuut ], true );
-			case 'zondag':
-			case 'maandag':
-			case 'dinsdag':
-			case 'woensdag':
-			case 'donderdag':
-			case 'vrijdag':
-			case 'zaterdag':
-				return ( array_search( $attribuut, json_decode( $this->data['beschikbaarheid'], true ), true ) !== false );
-			default:
-				return $this->data[ $attribuut ];
-		}
+		return match ( $attribuut ) {
+			'beschikbaarheid' => json_decode( $this->data[ $attribuut ], true ),
+			'zondag',
+			'maandag',
+			'dinsdag',
+			'woensdag',
+			'donderdag',
+			'vrijdag',
+			'zaterdag'        => ( array_search( $attribuut, json_decode( $this->data['beschikbaarheid'], true ), true ) !== false ),
+			default           => $this->data[ $attribuut ],
+		};
 	}
 
 	/**
@@ -95,14 +92,11 @@ class Oven {
 	 * @param mixed  $waarde Attribuut waarde.
 	 * @return void
 	 */
-	public function __set( string $attribuut, $waarde ) {
-		switch ( $attribuut ) {
-			case 'beschikbaarheid':
-				$this->data[ $attribuut ] = wp_json_encode( $waarde );
-				break;
-			default:
-				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
-		}
+	public function __set( string $attribuut, mixed $waarde ) {
+		$this->data[ $attribuut ] = match ( $attribuut ) {
+			'beschikbaarheid' => wp_json_encode( $waarde ),
+			default           => is_string( $waarde ) ? trim( $waarde ) : $waarde,
+		};
 	}
 
 	/**

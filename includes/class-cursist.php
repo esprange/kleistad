@@ -49,9 +49,9 @@ class Cursist extends Gebruiker {
 	 * Geef de inschrijving terug
 	 *
 	 * @param int $cursus_id Het cursus nummer waarop ingeschreven is.
-	 * @return Inschrijving|bool De inschrijving of false als er niet op de cursus ingeschreven is.
+	 * @return bool|Inschrijving De inschrijving of false als er niet op de cursus ingeschreven is.
 	 */
-	public function geef_inschrijving( int $cursus_id ) {
+	public function geef_inschrijving( int $cursus_id ): bool|Inschrijving {
 		foreach ( $this->inschrijvingen as $inschrijving ) {
 			if ( $cursus_id === $inschrijving->cursus->id ) {
 				return $inschrijving;

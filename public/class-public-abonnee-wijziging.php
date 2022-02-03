@@ -33,7 +33,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 			try {
 				$betalen                      = new Betalen();
 				$this->data['incasso_actief'] = $betalen->heeft_mandaat( $abonnee_id ) ? 'ja' : 'nee';
-			} catch ( ApiException $e ) {
+			} catch ( ApiException ) {
 				$this->data['incasso_actief'] = 'onbekend';
 			}
 			return $this->content();

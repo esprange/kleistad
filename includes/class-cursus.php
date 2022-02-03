@@ -113,22 +113,19 @@ class Cursus {
 		if ( in_array( $attribuut, [ 'inschrijfkosten', 'cursuskosten' ], true ) ) {
 			return floatval( $this->data[ $attribuut ] );
 		}
-		switch ( $attribuut ) {
-			case 'technieken':
-				return json_decode( $this->data[ $attribuut ], true );
-			case 'lesdatums':
-				return array_map(
-					function( $item ) {
-						return strtotime( $item );
-					},
-					json_decode( $this->data[ $attribuut ], true )
-				);
-			case 'code':
-				return "C{$this->data['id']}";
-			default:
-				return is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) :
-					( is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ] );
-		}
+
+		return match ( $attribuut ) {
+			'technieken' => json_decode( $this->data[ $attribuut ], true ),
+			'lesdatums'  => array_map(
+				function ( $item ) {
+					return strtotime( $item );
+				},
+				json_decode( $this->data[ $attribuut ], true )
+			),
+			'code'       => "C{$this->data['id']}",
+			default      => is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) :
+				( is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ] ),
+		};
 	}
 
 	/**
@@ -137,35 +134,24 @@ class Cursus {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) {
-		switch ( $attribuut ) {
-			case 'technieken':
-				$this->data[ $attribuut ] = wp_json_encode( $waarde );
-				break;
-			case 'lesdatums':
-				$this->data[ $attribuut ] = wp_json_encode(
-					array_map(
-						function( $item ) {
-							return date( 'Y-m-d', $item );
-						},
-						$waarde
-					)
-				);
-				break;
-			case 'start_datum':
-			case 'eind_datum':
-				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
-				break;
-			case 'ruimte_datum':
-				$this->data[ $attribuut ] = date( 'Y-m-d H:i:s', $waarde );
-				break;
-			case 'start_tijd':
-			case 'eind_tijd':
-				$this->data[ $attribuut ] = date( 'H:i', $waarde );
-				break;
-			default:
-				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
-		}
+	public function __set( string $attribuut, mixed $waarde ) {
+		$this->data[ $attribuut ] = match ( $attribuut ) {
+			'technieken' => wp_json_encode( $waarde ),
+			'lesdatums'  => wp_json_encode(
+				array_map(
+					function ( $item ) {
+						return date( 'Y-m-d', $item );
+					},
+					$waarde
+				)
+			),
+			'start_datum',
+			'eind_datum'   => date( 'Y-m-d', $waarde ),
+			'ruimte_datum' => date( 'Y-m-d H:i:s', $waarde ),
+			'start_tijd',
+			'eind_tijd'    => date( 'H:i', $waarde ),
+			default        => is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde ),
+		};
 	}
 
 	/**

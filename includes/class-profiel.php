@@ -56,10 +56,10 @@ class Profiel {
 	/**
 	 * Start een nieuw profiel
 	 *
-	 * @param WP_User|int $user Gebruiker of gebruik_id.
+	 * @param int|WP_User $user Gebruiker of gebruik_id.
 	 * @return string Het html opgemaakte profiel.
 	 */
-	public function reset( $user ) : string {
+	public function reset( int|WP_User $user ) : string {
 		if ( defined( 'DOING_CRON' ) ) {
 			return '';
 		}

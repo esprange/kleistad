@@ -140,24 +140,24 @@ class Admin_Filters {
 	 *
 	 * @since 4.3.8
 	 *
-	 * @param  object|bool $obj    Wordt niet gebruikt.
+	 * @param  mixed       $result Terug te geven object als niet gebruikt.
 	 * @param  string      $action De gevraagde actie.
-	 * @param  object|null $arg    Argument door WP ingevuld.
-	 * @return bool|object
+	 * @param  object|null $args   Argument door WP ingevuld.
+	 * @return mixed
 	 *
 	 * @internal Filter for plugins_api.
 	 */
-	public function check_info( $obj, string $action = '', ?object $arg = null ) {
-		if ( ( 'query_plugins' === $action || 'plugin_information' === $action ) && isset( $arg->slug ) && 'kleistad' === $arg->slug ) {
-			$plugin_info  = get_site_transient( 'update_plugins' );
-			$arg->version = $plugin_info->checked['kleistad/kleistad.php'];
-			$update       = new Admin_Update();
-			$info         = $update->get_remote( 'info' );
-			if ( false !== $info ) {
-				return $info;
-			}
+	public function check_info( mixed $result, string $action = '', ?object $args = null ) : mixed {
+		$relevant = ( 'plugin_information' === $action ) && isset( $args->slug ) && 'kleistad' === $args->slug;
+		if ( ! $relevant ) {
+			return $result;
 		}
-		return $obj;
+		$update = new Admin_Update();
+		$info   = $update->get_remote( 'info' );
+		if ( false !== $info ) {
+			return $info;
+		}
+		return $result;
 	}
 
 }

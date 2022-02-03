@@ -48,9 +48,9 @@ class DagdelenkaartBetaling extends ArtikelBetaling {
 	 * @param  string $bericht    Te tonen melding als betaling gelukt.
 	 * @param  float  $bedrag     Het bedrag dat openstaat.
 	 * @param  string $referentie De referentie.
-	 * @return string|bool De redirect url van een ideal betaling of false als het niet lukt.
+	 * @return bool|string redirect url van een ideal betaling of false als het niet lukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag, string $referentie ) {
+	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
 		return $this->betalen->order(
 			$this->dagdelenkaart->klant_id,
 			$referentie,

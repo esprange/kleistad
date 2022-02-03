@@ -14,7 +14,7 @@ namespace Kleistad;
 use Mollie\Api\Exceptions\ApiException;
 use WP_REST_Response;
 use WP_REST_Request;
-use WP_ERROR;
+use WP_Error;
 use Exception;
 
 /**
@@ -28,9 +28,9 @@ class Ontvangen {
 	/**
 	 * Controleer of de order gelukt is.
 	 *
-	 * @return WP_ERROR | string | bool De status van de betaling als tekst, WP_error of mislukts of false als er geen betaling is.
+	 * @return WP_Error | string | bool De status van de betaling als tekst, WP_error of mislukts of false als er geen betaling is.
 	 */
-	public function controleer() {
+	public function controleer(): WP_Error|bool|string {
 		$mollie_betaling_id = false;
 		$uniqid             = filter_input( INPUT_GET, Betalen::QUERY_PARAM );
 		if ( ! is_null( $uniqid ) ) {
@@ -67,7 +67,7 @@ class Ontvangen {
 	 * @return WP_REST_Response|WP_Error de response.
 	 * @throws ApiException Moet op hoger nivo afgehandeld worden.
 	 */
-	public function callback_betaling_verwerkt( WP_REST_Request $request ) {
+	public function callback_betaling_verwerkt( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		// phpcs:disable WordPress.NamingConventions
 		$service         = new MollieClient();
 		$betaling        = $service->get_payment( (string) $request->get_param( 'id' ) );

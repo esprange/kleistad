@@ -57,7 +57,7 @@ class Order {
 	 * @param int|string $arg  Het order id of de referentie of 0.
 	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( $arg = 0, ?array $load = null ) {
+	public function __construct( int|string $arg = 0, ?array $load = null ) {
 		global $wpdb;
 		$this->data = [
 			'id'            => 0,
@@ -139,7 +139,7 @@ class Order {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde    Attribuut waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) : void {
+	public function __set( string $attribuut, mixed $waarde ) : void {
 		switch ( $attribuut ) {
 			case 'klant':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );

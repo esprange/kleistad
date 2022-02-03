@@ -159,9 +159,9 @@ class InschrijvingActie {
 	 * Verwerk de aanvraag tot inschrijving
 	 *
 	 * @param string $betaalwijze Bank of ideal.
-	 * @return string|bool De url ingeval van ideal of het resultaat.
+	 * @return bool|string De url ingeval van ideal of het resultaat.
 	 */
-	public function aanvraag( string $betaalwijze ) {
+	public function aanvraag( string $betaalwijze ): bool|string {
 		if ( $this->inschrijving->geannuleerd ) { // Blijkbaar eerder geannuleerd, eerst resetten.
 			$this->inschrijving->ingedeeld    = false;
 			$this->inschrijving->geannuleerd  = false;

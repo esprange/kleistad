@@ -30,9 +30,9 @@ class LosArtikel extends Artikel {
 	/**
 	 * Lijst van orderregels
 	 *
-	 * @var array $orderregels De regels.
+	 * @var Orderregels $orderregels De regels.
 	 */
-	private array $orderregels = [];
+	private Orderregels $orderregels;
 
 	/**
 	 * De constructor
@@ -74,7 +74,7 @@ class LosArtikel extends Artikel {
 	 * @param string $attribuut Het attribuut waarvan de waarde wordt aangepast.
 	 * @param mixed  $waarde De nieuwe waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) {
+	public function __set( string $attribuut, mixed $waarde ) {
 		$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : $waarde;
 	}
 
@@ -130,16 +130,17 @@ class LosArtikel extends Artikel {
 	 * @param float  $prijs   De bruto prijs per artikel.
 	 */
 	public function bestelregel( string $artikel, float $aantal, float $prijs ) {
-		$this->orderregels[] = new Orderregel( $artikel, $aantal, $prijs );
-		$this->prijs        += $aantal * $prijs;
+		$this->orderregels = new Orderregels();
+		$this->orderregels->toevoegen( new Orderregel( $artikel, $aantal, $prijs ) );
+		$this->prijs += $aantal * $prijs;
 	}
 
 	/**
 	 * De factuur regels.
 	 *
-	 * @return array
+	 * @return Orderregels
 	 */
-	protected function geef_factuurregels() : array {
+	protected function geef_factuurregels() : Orderregels {
 		return $this->orderregels;
 	}
 

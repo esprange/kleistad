@@ -41,9 +41,9 @@ class AbonnementActie {
 	/**
 	 * Wijzig de betaalwijze van het abonnement naar sepa incasso.
 	 *
-	 * @return string|bool De redirect uri of false als de betaling niet lukt.
+	 * @return bool|string De redirect uri of false als de betaling niet lukt.
 	 */
-	public function start_incasso() {
+	public function start_incasso(): bool|string {
 		$this->log( 'gestart met automatisch betalen' );
 		$this->abonnement->save();
 		$this->abonnement->artikel_type = 'mandaat';
@@ -105,9 +105,9 @@ class AbonnementActie {
 	 * @param string $opmerking   De opmerking.
 	 * @param string $betaalwijze De betaalwijze.
 	 *
-	 * @return string|bool Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
+	 * @return bool|string Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
 	 */
-	public function starten( int $start_datum, string $soort, string $opmerking, string $betaalwijze ) {
+	public function starten( int $start_datum, string $soort, string $opmerking, string $betaalwijze ): bool|string {
 		$start_bedrag                         = 3 * opties()[ "{$soort}_abonnement" ];
 		$this->abonnement->code               = "A{$this->abonnement->klant_id}";
 		$this->abonnement->datum              = time();
@@ -160,17 +160,17 @@ class AbonnementActie {
 	/**
 	 * Wijzig het abonnement per datum.
 	 *
-	 * @param int    $wijzig_datum Wijzigdatum.
-	 * @param string $type         Soort wijziging: soort abonnement of de extras.
-	 * @param mixed  $soort        Beperkt/onbeperkt wijziging of de extras.
+	 * @param int          $wijzig_datum Wijzigdatum.
+	 * @param string       $type         Soort wijziging: soort abonnement of de extras.
+	 * @param string|array $soort        Beperkt/onbeperkt wijziging of de extras.
 	 * @return bool
 	 */
-	public function wijzigen( int $wijzig_datum, string $type, $soort ) : bool {
+	public function wijzigen( int $wijzig_datum, string $type, string|array $soort ) : bool {
 		$gewijzigd        = false;
 		$wijzig_datum_str = strftime( '%d-%m-%Y', $wijzig_datum );
 		switch ( $type ) {
 			case 'soort':
-				$gewijzigd               = $this->abonnement->soort != $soort; // phpcs:ignore
+				$gewijzigd               = $this->abonnement->soort !== $soort;
 				$this->abonnement->soort = $soort;
 				$this->log( "gewijzigd per $wijzig_datum_str naar $soort" );
 				$this->abonnement->bericht = "Je hebt het abonnement per $wijzig_datum_str gewijzigd naar {$this->abonnement->soort}";

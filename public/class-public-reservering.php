@@ -276,6 +276,11 @@ class Public_Reservering extends Shortcode {
 			// het betreft een annulering, controleer of deze al niet verwijderd is.
 			$stook->verwijder();
 		}
+
+		if ( ( 'POST' === $method && ! self::is_reservering_toegestaan() ) ) {
+			return new WP_REST_Response( [ 'status' => melding( 0, 'Jouw maximaal toegestaan aantal openstaande reserveringen is bereikt' ) ] );
+		}
+
 		if ( ( 'POST' === $method && ! $stook->is_gereserveerd() ) ||
 				( 'PUT' === $method && $stook->is_gereserveerd() )
 			) {
@@ -297,5 +302,14 @@ class Public_Reservering extends Shortcode {
 				'periode' => strftime( '%B-%Y', mktime( 0, 0, 0, $maand, 1, $jaar ) ),
 			]
 		);
+	}
+
+	/**
+	 * Controleer of de gebruiker mag reserveren.
+	 *
+	 * @return bool
+	 */
+	private static function is_reservering_toegestaan() : bool {
+		return current_user_can( BESTUUR ) || opties()['stook_max'] > Stook::aantal_actieve_stook( get_current_user_id() );
 	}
 }

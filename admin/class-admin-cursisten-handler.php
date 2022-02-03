@@ -50,19 +50,17 @@ class Admin_Cursisten_Handler {
 		$message = '';
 		$notice  = '';
 		$item    = [];
-		sscanf( $_REQUEST['id'] ?? 'C0-0', 'C%d-%d', $cursus_id, $cursist_id );
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_cursist' ) ) {
+		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_cursist' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
 				[
+					'id'        => FILTER_SANITIZE_STRING,
 					'naam'      => FILTER_SANITIZE_STRING,
 					'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
 					'aantal'    => FILTER_SANITIZE_NUMBER_INT,
 				]
-			);
-			if ( ! is_array( $item ) ) {
-				return;
-			}
+			) ?: [];
+			sscanf( $item['id'] ?? 'C0-0', 'C%d-%d', $cursus_id, $cursist_id );
 			$nieuw_cursus_id = intval( $item['cursus_id'] );
 			$nieuw_aantal    = intval( $item['aantal'] );
 			$message         = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
@@ -73,18 +71,20 @@ class Admin_Cursisten_Handler {
 					$cursus_id = $nieuw_cursus_id;
 				}
 			}
-		}
-		if ( $cursus_id ) {
-			$cursist      = get_userdata( $cursist_id );
-			$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-			$item         = [
-				'id'          => $inschrijving->code,
-				'naam'        => $cursist->display_name,
-				'aantal'      => $inschrijving->aantal,
-				'geannuleerd' => $inschrijving->geannuleerd,
-				'cursist_id'  => $cursist_id,
-				'cursus_id'   => $cursus_id,
-			];
+		} else {
+			sscanf( filter_input( INPUT_GET, 'id' ) ?? 'C0-0', 'C%d-%d', $cursus_id, $cursist_id );
+			if ( $cursus_id ) {
+				$cursist      = get_userdata( $cursist_id );
+				$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
+				$item         = [
+					'id'          => $inschrijving->code,
+					'naam'        => $cursist->display_name,
+					'aantal'      => $inschrijving->aantal,
+					'geannuleerd' => $inschrijving->geannuleerd,
+					'cursist_id'  => $cursist_id,
+					'cursus_id'   => $cursus_id,
+				];
+			}
 		}
 		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this->display, 'form_meta_box' ], 'cursist', 'normal' );
 		$this->display->form_page( $item, 'cursist', 'cursisten', $notice, $message, false );

@@ -150,7 +150,7 @@ class Inschrijving extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) {
+	public function __set( string $attribuut, mixed $waarde ) {
 		$this->data[ $attribuut ] = $waarde;
 	}
 
@@ -314,20 +314,22 @@ class Inschrijving extends Artikel {
 	/**
 	 * De regels voor de factuur.
 	 *
-	 * @return array|Orderregel De regels of één regel.
+	 * @return Orderregels De regels of één regel.
 	 */
-	protected function geef_factuurregels() {
+	protected function geef_factuurregels(): Orderregels {
+		$orderregels = new Orderregels();
 		if ( 0 < $this->lopende_cursus ) {
-			return new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->lopende_cursus );
+			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->lopende_cursus ) );
+			return $orderregels;
 		}
 		if ( $this->cursus->is_binnenkort() ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten, echter bij inschrijfgeld 1 ct dit afronden naar 0.
-			return new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten + $this->cursus->cursuskosten );
+			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ) );
+			return $orderregels;
 		}
-		$orderregels = [];
 		if ( 0 < $this->cursus->inschrijfkosten ) {
-			$orderregels[] = new Orderregel( "inschrijfkosten cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten );
+			$orderregels->toevoegen( new Orderregel( "inschrijfkosten cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten ) );
 		}
-		$orderregels[] = new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->cursuskosten );
+		$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->cursuskosten ) );
 		return $orderregels;
 	}
 
@@ -354,9 +356,9 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return float
 	 */
-	private function restantbedrag() {
+	private function restantbedrag(): float {
 		$order = new Order( $this->geef_referentie() );
-		return ( $order->id ) ? $order->te_betalen() : 0;
+		return ( $order->id ) ? $order->te_betalen() : 0.0;
 	}
 
 }

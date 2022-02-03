@@ -339,10 +339,10 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 
 		$order = new Order( $inschrijving->geef_referentie() );
 		$inschrijving->betaling->verwerk( $order, $order->te_betalen(), true, 'ideal' );
-		$this->assertEquals( 'Betaling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank restant incorrecte email' );
-
 		$order = new Order( $inschrijving->geef_referentie() );
 		$this->assertEquals( 0.0, $order->te_betalen(), 'verwerk bank saldo incorrect' );
+		$this->assertEquals( 'Betaling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank restant incorrecte email' );
+
 	}
 
 	/**
@@ -379,7 +379,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 
 		$inschrijvingen = new Inschrijvingen( $cursus->id );
 		foreach ( $inschrijvingen as $inschrijving ) {
-			if ( substr( $inschrijving->opmerking, 0, strlen( $teststring ) ) === $teststring ) {
+			if ( str_starts_with( $inschrijving->opmerking, $teststring ) ) {
 				$this->assertEquals( $teststring . $inschrijving->klant_id, $inschrijving->opmerking, 'opmerking inschrijvingen not equal' );
 			}
 		}

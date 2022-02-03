@@ -13,7 +13,7 @@ namespace Kleistad;
 
 use WP_Error;
 use Exception;
-use Google;
+use Google\Client;
 use Google\Service\Calendar;
 
 /**
@@ -30,14 +30,14 @@ class Googleconnect {
 	/**
 	 * Maak een Google API client aan.
 	 *
-	 * @return Google\Client|bool $client of false.
+	 * @return Client|bool $client of false.
 	 */
-	private function maak_client() {
+	private function maak_client(): Client|bool {
 		$redirect_uri = get_option( self::REDIRECT_URI );
 		if ( false === $redirect_uri ) {
 			return false;
 		}
-		$client = new Google\Client();
+		$client = new Client();
 		$client->setApplicationName( 'Kleistad_Calendar' );
 		$client->setAccessType( 'offline' );
 		$client->setClientId( setup()['google_client_id'] );
@@ -78,9 +78,9 @@ class Googleconnect {
 	/**
 	 * Koppel met google service.
 	 *
-	 * @return WP_ERROR|bool Succes of error(s).
+	 * @return WP_Error|bool Succes of error(s).
 	 */
-	public function koppel_service() {
+	public function koppel_service(): WP_Error|bool {
 		$authorization_code = filter_input( INPUT_GET, 'code' );
 		if ( ! empty( $authorization_code ) ) {
 			delete_option( self::REFRESH_TOKEN );
@@ -157,7 +157,7 @@ class Googleconnect {
 		if ( false !== get_option( self::ACCESS_TOKEN ) ) {
 			try {
 				return is_object( $this->calendar_service() );
-			} catch ( Kleistad_Exception $e ) {
+			} catch ( Kleistad_Exception ) {
 				return false;
 			}
 		}

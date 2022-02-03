@@ -39,7 +39,7 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @return bool|int
 	 */
-	public function create_object( $args ) {
+	public function create_object( $args ): bool|int {
 		$oven                  = new Oven();
 		$oven->naam            = $args['naam'];
 		$oven->kosten_laag     = $args['kosten_laag'];
@@ -108,7 +108,7 @@ class Kleistad_Factory_For_Cursus extends WP_UnitTest_Factory_For_Thing {
 	 *
 	 * @return bool|int
 	 */
-	public function create_object( $args ) {
+	public function create_object( $args ): bool|int {
 		$cursus             = new Cursus();
 		$cursus->naam       = $args['naam'];
 		$cursus->docent     = $args['docent'];

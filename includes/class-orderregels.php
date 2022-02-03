@@ -60,20 +60,13 @@ class Orderregels implements Countable, Iterator {
 	/**
 	 * Voeg een regel toe.
 	 *
-	 * @param array | Orderregel $regeltoetevoegen Toe te voegen regel of regels.
-	 * @param bool               $reset            Start met een lege regelset.
+	 * @param Orderregel $regeltoetevoegen Toe te voegen regel of regels.
 	 */
-	public function toevoegen( $regeltoetevoegen, bool $reset = false ) {
-		if ( $reset ) {
-			$this->regels = [];
-		}
-		$this->regels = array_merge(
-			$this->regels,
-			is_array( $regeltoetevoegen ) ? $regeltoetevoegen : [ $regeltoetevoegen ]
-		);
+	public function toevoegen( Orderregel $regeltoetevoegen ) {
+		$this->regels[] = $regeltoetevoegen;
+		$korting        = false;
+		$kortingkey     = 0;
 		// Eventuele kortingsregels samenvoegen.
-		$korting    = false;
-		$kortingkey = 0;
 		foreach ( $this->regels as $key => $regel ) {
 			if ( Orderregel::KORTING === $regel->artikel ) {
 				if ( false === $korting ) {
@@ -86,22 +79,6 @@ class Orderregels implements Countable, Iterator {
 				unset( $this->regels[ $key ] );
 			}
 		}
-	}
-
-	/**
-	 * Vervang een of meer regels en behoud eventuele korting.
-	 *
-	 * @param array | Orderregel $regelvervangen Te vervangen regel of regels.
-	 */
-	public function vervangen( $regelvervangen ) {
-		$korting_regels = [];
-		foreach ( $this->regels as $regel ) {
-			if ( Orderregel::KORTING === $regel->artikel ) {
-				$korting_regels[] = $regel;
-			}
-		}
-		$this->regels = is_array( $regelvervangen ) ? $regelvervangen : [ $regelvervangen ];
-		$this->toevoegen( $korting_regels );
 	}
 
 	/**

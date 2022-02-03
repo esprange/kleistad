@@ -80,7 +80,7 @@ class WorkshopAanvraag {
 	 *
 	 * @param mixed $key Eventuele om het object op te halen.
 	 */
-	public function __construct( $key = null ) {
+	public function __construct( mixed $key = null ) {
 		$this->aanvraag = [
 			'ID'          => 0,
 			'post_type'   => self::POST_TYPE,
@@ -127,7 +127,7 @@ class WorkshopAanvraag {
 	 * @param string $attribuut Het attribuut.
 	 * @param mixed  $value     De waarde.
 	 */
-	public function __set( string $attribuut, $value ) {
+	public function __set( string $attribuut, mixed $value ) {
 		if ( property_exists( 'WP_Post', $attribuut ) ) {
 			$this->aanvraag[ $attribuut ] = $value;
 			return;
@@ -411,9 +411,9 @@ class WorkshopAanvraag {
 	 *
 	 * @param string $email Email adres waar naar gezocht moet worden.
 	 *
-	 * @return false|WP_Post
+	 * @return bool|WP_Post
 	 */
-	private static function find_by_email( string $email ) {
+	private static function find_by_email( string $email ): bool|WP_Post {
 		$posts = get_posts(
 			[
 				'post_type'   => self::POST_TYPE,

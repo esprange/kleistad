@@ -51,9 +51,9 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 * @param string $bericht    Het bericht bij succesvolle betaling.
 	 * @param float  $bedrag     Het te betalen bedrag.
 	 * @param string $referentie De referentie van de order.
-	 * @return string|bool De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
+	 * @return bool|string De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag, string $referentie ) {
+	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
 		switch ( $this->abonnement->artikel_type ) {
 			case 'start':
 				$vermelding = sprintf(
@@ -104,8 +104,8 @@ class AbonnementBetaling extends ArtikelBetaling {
 					$bedrag,
 					"Kleistad abonnement {$this->abonnement->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
 				);
-			} catch ( Exception $e ) {
-				return ''; // Dit keer niet uitvoeren. Dan kan het later opnieuw geprobeerd worden.
+			} catch ( Exception ) { // phpcs:ignore
+				// geen verdere actie.
 			}
 		}
 		return '';
@@ -200,20 +200,15 @@ class AbonnementBetaling extends ArtikelBetaling {
 		foreach ( $this->abonnement->extras as $extra ) {
 			$extras_bedrag += $this->geef_bedrag_extra( $extra );
 		}
-		switch ( $type ) {
-			case '#mandaat':
-				return 0.01;
-			case '#start':
-				return 3 * $basis_bedrag;
-			case '#overbrugging':
-				return $this->abonnement->geef_overbrugging_fractie() * $basis_bedrag;
-			case '#regulier':
-				return $basis_bedrag + $extras_bedrag;
-			case '#pauze':
-				return $this->abonnement->geef_pauze_fractie() * ( $basis_bedrag + $extras_bedrag );
-			default:
-				return $basis_bedrag;
-		}
+
+		return match ( $type ) {
+			'#mandaat'      => 0.01,
+			'#start'        => 3 * $basis_bedrag,
+			'#overbrugging' => $this->abonnement->geef_overbrugging_fractie() * $basis_bedrag,
+			'#regulier'     => $basis_bedrag + $extras_bedrag,
+			'#pauze'        => $this->abonnement->geef_pauze_fractie() * ( $basis_bedrag + $extras_bedrag ),
+			default         => $basis_bedrag,
+		};
 	}
 
 	/**

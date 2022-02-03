@@ -93,7 +93,7 @@ abstract class Shortcode {
 	 * @param string | array | WP_Error $result Het resultaat dat getoond moet worden.
 	 * @return string Html tekst.
 	 */
-	public function status( $result ) : string {
+	public function status( string|array|WP_Error $result ) : string {
 		$html = '';
 		if ( is_wp_error( $result ) ) {
 			foreach ( $result->get_error_messages() as $error ) {
@@ -353,7 +353,7 @@ abstract class Shortcode {
 	 * @return array
 	 */
 	private static function download( Shortcode $shortcode, string $functie ) : array {
-		if ( 0 === strpos( $functie, 'url_' ) ) {
+		if ( str_starts_with( $functie, 'url_' ) ) {
 			return [ 'file_uri' => $shortcode->$functie() ];
 		}
 		$upload_dir            = wp_upload_dir();

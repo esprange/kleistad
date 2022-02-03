@@ -73,9 +73,9 @@ abstract class Artikel {
 	/**
 	 * Bestelling
 	 *
-	 * @return array|Orderregel Een array van orderregels of maar één regel.
+	 * @return Orderregels Een array van orderregels of maar één regel.
 	 */
-	abstract protected function geef_factuurregels();
+	abstract protected function geef_factuurregels(): Orderregels;
 
 	/**
 	 * Een bestelling annuleren.
@@ -84,9 +84,9 @@ abstract class Artikel {
 	 * @param float  $restant Het te betalen bedrag bij annulering.
 	 * @param string $opmerking De opmerkingstekst in de factuur.
 	 *
-	 * @return string|bool De url van de creditfactuur of false indien annulering niet mogelijk.
+	 * @return bool|string De url van de creditfactuur of false indien annulering niet mogelijk.
 	 */
-	final public function annuleer_order( Order $order, float $restant, string $opmerking ) {
+	final public function annuleer_order( Order $order, float $restant, string $opmerking ): bool|string {
 		if ( $order->credit_id || $order->origineel_id ) {
 			return false;  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
 		}
@@ -148,7 +148,7 @@ abstract class Artikel {
 		$order->referentie    = $this->geef_referentie();
 		$order->transactie_id = $transactie_id ?? $order->transactie_id; // Overschrijf het transactie_id alleen als er een ideal betaling is gedaan.
 		$order->verval_datum  = $verval_datum;
-		$order->orderregels->toevoegen( $this->geef_factuurregels(), true ); // Overschrijf eventuele eerder factuur regels.
+		$order->orderregels   = $this->geef_factuurregels();
 		$order->save( $factuur ? sprintf( 'Order en factuur aangemaakt, nieuwe status betaald is € %01.2f', $bedrag ) : 'Order aangemaakt' );
 		$this->betaal_link = $this->maak_link(
 			[
@@ -171,7 +171,7 @@ abstract class Artikel {
 	 *
 	 * @return bool|string De url van de factuur of fout.
 	 */
-	final public function korting_order( Order $order, float $korting, string $opmerking ) {
+	final public function korting_order( Order $order, float $korting, string $opmerking ): bool|string {
 		if ( $order->is_geblokkeerd() ) {
 			return false;
 		}
@@ -218,14 +218,14 @@ abstract class Artikel {
 	 * @return bool|string De url van de factuur of false.
 	 * @noinspection PhpNonStrictObjectEqualityInspection
 	 */
-	final public function wijzig_order( Order $originele_order, string $opmerking = '' ) {
+	final public function wijzig_order( Order $originele_order, string $opmerking = '' ): bool|string {
 		if ( $originele_order->is_geblokkeerd() ) {
 			return false;
 		}
-		$order = clone $originele_order;
-		$order->orderregels->vervangen( $this->geef_factuurregels() );
-		$order->klant      = $this->naw_klant();
-		$order->referentie = $this->geef_referentie();
+		$order              = clone $originele_order;
+		$order->orderregels = $this->geef_factuurregels();
+		$order->klant       = $this->naw_klant();
+		$order->referentie  = $this->geef_referentie();
 		if ( $originele_order == $order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
 		}

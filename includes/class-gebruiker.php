@@ -92,7 +92,7 @@ class Gebruiker extends WP_User {
 	 * @param array $data De input.
 	 * @return int|WP_Error
 	 */
-	public static function registreren( array $data ) {
+	public static function registreren( array $data ): WP_Error|int {
 		$gebruiker_id = intval( $data['gebruiker_id'] ?? 0 );
 		if ( ! $gebruiker_id ) {
 			$userdata = [

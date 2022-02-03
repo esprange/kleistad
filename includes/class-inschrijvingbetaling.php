@@ -48,9 +48,9 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	 * @param  string $bericht    Het bericht bij succesvolle betaling.
 	 * @param  float  $bedrag     Het te betalen bedrag.
 	 * @param  string $referentie De referentie.
-	 * @return string|bool De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
+	 * @return bool|string De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag, string $referentie ) {
+	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
 		return $this->betalen->order(
 			$this->inschrijving->klant_id,
 			$referentie,

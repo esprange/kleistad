@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 142;
+	const DBVERSIE = 143;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -56,6 +56,7 @@ class Admin_Upgrade {
 			'extra'                => [],
 			'oven_midden'          => 1100,
 			'oven_hoog'            => 1200,
+			'stook_max'            => 2,
 			'weken_werkplek'       => 5,
 			'weken_workshop'       => 12,
 			'max_activiteit'       => 1,

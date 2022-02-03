@@ -186,8 +186,9 @@ function feedback( string $id, string $url ) {
  * Toon het formulier
  *
  * @param string $id  Het payment id.
+ * @return string
  */
-function betaalformulier( string $id ) {
+function betaalformulier( string $id ): string {
 	global $db;
 	$res = $db->query( "SELECT data FROM payments WHERE id='$id'" );
 	$row = $res->fetchArray();
@@ -242,7 +243,7 @@ function betaalformulier( string $id ) {
 	</div>
 </form>
 	<?php
-		return ob_get_clean();
+		return ob_get_clean() ?: '';
 }
 
 /**
@@ -296,7 +297,7 @@ function verwerk_incasso( string $id ) : string {
 /**
  * Toon de openstaande incasso's en refund's
  */
-function toon_openstaand() {
+function toon_openstaand(): string {
 	global $db;
 	$payments = $db->query( 'SELECT * FROM payments' );
 	$refunds  = $db->query( 'SELECT * FROM refunds' );
@@ -396,6 +397,6 @@ function toon_openstaand() {
 	</tbody>
 </table>
 			<?php
-			return ob_get_clean();
+			return ob_get_clean() ?: '';
 }
 

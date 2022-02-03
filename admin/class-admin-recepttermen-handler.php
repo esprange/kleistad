@@ -37,7 +37,7 @@ class Admin_Recepttermen_Handler {
 	 * @param array $item de receptterm.
 	 * @return bool|string
 	 */
-	private function validate_receptterm( array $item ) {
+	private function validate_receptterm( array $item ): bool|string {
 		$messages = [];
 
 		if ( empty( $item['naam'] ) ) {
@@ -69,7 +69,7 @@ class Admin_Recepttermen_Handler {
 	public function recepttermen_form_page_handler() {
 		$message = '';
 		$notice  = '';
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_receptterm' ) ) {
+		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_receptterm' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
 				[
@@ -110,12 +110,13 @@ class Admin_Recepttermen_Handler {
 				'id'   => 0,
 				'naam' => '',
 			];
-			if ( isset( $_REQUEST['id'] ) ) {
-				if ( isset( $_REQUEST['delete'] ) ) {
-					wp_delete_term( $_REQUEST['id'], Recept::CATEGORY );
+			$id   = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+			if ( isset( $id ) ) {
+				if ( filter_input( INPUT_GET, 'delete' ) ) {
+					wp_delete_term( $id, Recept::CATEGORY );
 					$message = 'De gegevens zijn opgeslagen';
 				} else {
-					$term = get_term( $_REQUEST['id'] );
+					$term = get_term( $id );
 					if ( ! is_wp_error( $term ) ) {
 						$item = [
 							'id'   => $term->term_id,

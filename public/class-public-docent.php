@@ -313,9 +313,9 @@ EOT;
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response|WP_Error Ajax response.
+	 * @return WP_Error|WP_REST_Response Ajax response.
 	 */
-	public static function callback_show( WP_REST_Request $request ) {
+	public static function callback_show( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		$datum_str = $request->get_param( 'datum' );
 		$actie     = $request->get_param( 'actie' );
 		if ( is_string( $datum_str ) && is_string( $actie ) ) {
@@ -337,9 +337,9 @@ EOT;
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
 	 *
-	 * @return WP_REST_Response|WP_Error Ajax response.
+	 * @return WP_Error|WP_REST_Response Ajax response.
 	 */
-	public static function callback_muteer( WP_REST_Request $request ) {
+	public static function callback_muteer( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		$datum_str = $request->get_param( 'datum' );
 		$planning  = $request->get_param( 'planning' );
 		if ( is_string( $datum_str ) && is_array( $planning ) ) {

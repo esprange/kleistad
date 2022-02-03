@@ -81,7 +81,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) {
+	public function __set( string $attribuut, mixed $waarde ) {
 		$this->data[ $attribuut ] = $waarde;
 	}
 
@@ -146,10 +146,12 @@ class Dagdelenkaart extends Artikel {
 	/**
 	 * Geef de factuur regels.
 	 *
-	 * @return Orderregel De regels.
+	 * @return Orderregels De regels.
 	 */
-	protected function geef_factuurregels() : Orderregel {
-		return new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, opties()['dagdelenkaart'] );
+	protected function geef_factuurregels() : Orderregels {
+		$orderregels = new Orderregels();
+		$orderregels->toevoegen( new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, opties()['dagdelenkaart'] ) );
+		return $orderregels;
 	}
 
 	/**

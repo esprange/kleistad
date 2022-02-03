@@ -99,11 +99,10 @@ class Email {
 			$verzend_domein = $domein;
 			$active_plugins = get_option( 'active_plugins' ) ?? [];
 			foreach ( $active_plugins as $active_plugin ) {
-				if ( false === strpos( $active_plugin, 'wp-mail-smtp' ) ) {
-					continue;
+				if ( str_contains( $active_plugin, 'wp-mail-smtp' ) ) {
+					$mailgun_opties       = get_option( 'wp_mail_smtp' );
+					$this->verzend_domein = $mailgun_opties['mailgun']['domain'];
 				}
-				$mailgun_opties       = get_option( 'wp_mail_smtp' );
-				$this->verzend_domein = $mailgun_opties['mailgun']['domain'];
 			}
 		}
 		$this->info           = $info;

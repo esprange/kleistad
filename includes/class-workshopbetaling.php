@@ -50,9 +50,9 @@ class WorkshopBetaling extends ArtikelBetaling {
 	 * @param  string $bericht    Het bericht bij succesvolle betaling.
 	 * @param  float  $bedrag     Het bedrag dat openstaat.
 	 * @param  string $referentie De referentie.
-	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
+	 * @return bool|string De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag, string $referentie ) {
+	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
 		return $this->betalen->order(
 			[
 				'naam'     => $this->workshop->contact,

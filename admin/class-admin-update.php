@@ -22,9 +22,9 @@ class Admin_Update {
 	 * @since 4.3.8
 	 *
 	 * @param  string $action De gevraagde actie.
-	 * @return bool|object remote info.
+	 * @return object|bool remote info.
 	 */
-	public function get_remote( string $action = '' ) {
+	public function get_remote( string $action = '' ): object|bool {
 		$params = [
 			'timeout' => 10,
 			'body'    => [

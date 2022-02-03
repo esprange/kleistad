@@ -212,7 +212,7 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 
 		$cursussen = new Cursussen();
 		foreach ( $cursussen as $cursus ) {
-			if ( substr( $cursus->naam, 0, strlen( $teststring ) ) === $teststring ) {
+			if ( str_starts_with( $cursus->naam, $teststring ) ) {
 				$this->assertEquals( $teststring . $cursus->docent, $cursus->naam, 'naam cursussen not equal' );
 			}
 		}

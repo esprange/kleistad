@@ -143,11 +143,11 @@ class Public_Kalender extends Shortcode {
 		);
 		$fc_events = [];
 		foreach ( $afspraken as $afspraak ) {
-			if ( false !== strpos( $afspraak->id, 'kleistadevent' ) ) {
+			if ( str_contains( $afspraak->id, 'kleistadevent' ) ) {
 				$fc_events[] = self::workshop_event( $afspraak );
 				continue;
 			}
-			if ( false !== strpos( $afspraak->id, 'kleistadcursus' ) ) {
+			if ( str_contains( $afspraak->id, 'kleistadcursus' ) ) {
 				$fc_events[] = self::cursus_event( $afspraak );
 				continue;
 			}

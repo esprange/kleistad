@@ -287,7 +287,7 @@ abstract class Public_Shortcode_Display {
 		try {
 			$service = new MollieClient();
 			$banks   = $service->get_banks();
-		} catch ( ApiException $e ) {
+		} catch ( ApiException ) {
 			echo melding( 0, 'Er is helaas iets misgegaan, probeer het later eventueel opnieuw' ); // phpcs:ignore
 			return;
 		}

@@ -37,7 +37,7 @@ class Admin_Werkplekken_Handler {
 	 * @param array $item de werkplek.
 	 * @return bool|string
 	 */
-	private function validate_werkplek( array $item ) {
+	private function validate_werkplek( array $item ): bool|string {
 		$messages = [];
 
 		$start_datum = strtotime( $item['start_datum'] );
@@ -96,8 +96,8 @@ class Admin_Werkplekken_Handler {
 	 * @since    6.11.0
 	 */
 	public function werkplekken_page_handler() {
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_werkplek' ) &&
-			isset( $_REQUEST['action'] ) && 'delete' === $_REQUEST['action'] ) {
+		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_werkplek' ) &&
+			'delete' === filter_input( INPUT_GET, 'action' ) ) {
 			$start_datum = filter_input( INPUT_GET, 'start_datum' );
 			$eind_datum  = filter_input( INPUT_GET, 'eind_datum' );
 			if ( ! is_null( $start_datum ) && ! is_null( $eind_datum ) ) {
@@ -122,7 +122,7 @@ class Admin_Werkplekken_Handler {
 	public function werkplekken_form_page_handler() {
 		$message = '';
 		$notice  = '';
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_werkplek' ) ) {
+		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_werkplek' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
 				[

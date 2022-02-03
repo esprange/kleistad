@@ -54,7 +54,7 @@ class Admin_Abonnees_Handler {
 		$abonnement = new Abonnement( $item['id'] );
 		foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort' ] as $veld ) {
 			if ( ! empty( $item[ $veld ] ) ) {
-				$abonnement->$veld = ( false !== strpos( $veld, 'datum' ) ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
+				$abonnement->$veld = str_contains( $veld, 'datum' ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
 			}
 		}
 		$abonnement->reguliere_datum = strtotime( 'first day of +4 month ', $abonnement->start_datum );
@@ -89,7 +89,7 @@ class Admin_Abonnees_Handler {
 	 * @return bool|string
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function validate_abonnee( array $item ) {
+	private function validate_abonnee( array $item ): bool|string {
 		$messages = [];
 		if ( strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) {
 			$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen';
@@ -152,11 +152,9 @@ class Admin_Abonnees_Handler {
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
 	 */
 	public function abonnees_form_page_handler() {
-		$actie   = null;
 		$notice  = '';
 		$message = '';
-		$item    = [];
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_abonnee' ) ) {
+		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ) {
 			$item = filter_input_array(
 				INPUT_POST,
 				[
@@ -200,10 +198,11 @@ class Admin_Abonnees_Handler {
 					$message = '';
 				}
 			}
-		} elseif ( isset( $_REQUEST['id'] ) ) {
-			$actie = $_REQUEST['actie'];
+		} else {
+			$id    = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?: 0;
+			$actie = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
 			try {
-				$item = $this->geef_abonnee( intval( $_REQUEST['id'] ) );
+				$item = $this->geef_abonnee( intval( $id ) );
 			} catch ( Exception $e ) {
 				$notice  = 'Er is iets fout gegaan : ' . $e->getMessage();
 				$message = '';

@@ -13,7 +13,7 @@ namespace Kleistad;
 
 use WP_REST_Request;
 use WP_REST_Response;
-use WP_ERROR;
+use WP_Error;
 
 /**
  * Definitie van de adres class.
@@ -53,9 +53,9 @@ class Adres {
 	 * @since      5.2.0
 	 *
 	 * @param WP_REST_Request $request het request.
-	 * @return WP_REST_Response|WP_Error de response of de error.
+	 * @return WP_Error|WP_REST_Response de response of de error.
 	 */
-	public static function callback_adres_zoeken( WP_REST_Request $request ) {
+	public static function callback_adres_zoeken( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		$postcode = $request->get_param( 'postcode' );
 		$huisnr   = $request->get_param( 'huisnr' );
 		$url      = 'https://geodata.nationaalgeoregister.nl/locatieserver/free?fq=' .

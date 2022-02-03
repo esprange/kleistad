@@ -37,7 +37,7 @@ class Admin_Ovens_Handler {
 	 * @param array $item de oven.
 	 * @return bool|string
 	 */
-	private function validate_oven( array $item ) {
+	private function validate_oven( array $item ): bool|string {
 		$messages = [];
 
 		if ( empty( $item['naam'] ) ) {
@@ -78,8 +78,8 @@ class Admin_Ovens_Handler {
 		$message = '';
 		$notice  = '';
 		$item    = [];
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_oven' ) ) {
-			$item = filter_input_array(
+		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_oven' ) ) {
+			$item       = filter_input_array(
 				INPUT_POST,
 				[
 					'id'              => FILTER_SANITIZE_NUMBER_INT,
@@ -101,10 +101,7 @@ class Admin_Ovens_Handler {
 						'flags'  => FILTER_FORCE_ARRAY,
 					],
 				]
-			);
-			if ( ! is_array( $item ) ) {
-				return;
-			}
+			) ?: [];
 			$item_valid = $this->validate_oven( $item );
 			$notice     = is_string( $item_valid ) ? $item_valid : '';
 			if ( true === $item_valid ) {
@@ -118,7 +115,8 @@ class Admin_Ovens_Handler {
 				$message = 'De gegevens zijn opgeslagen';
 			}
 		} else {
-			$oven                    = isset( $_REQUEST['id'] ) ? new Oven( $_REQUEST['id'] ) : new Oven();
+			$id                      = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+			$oven                    = $id ? new Oven( $id ) : new Oven();
 			$item['id']              = $oven->id;
 			$item['naam']            = $oven->naam;
 			$item['kosten_laag']     = $oven->kosten_laag;

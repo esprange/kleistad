@@ -96,7 +96,7 @@ class Saldo extends Artikel {
 	 * @param string $attribuut Het attribuut waarvan de waarde wordt aangepast.
 	 * @param mixed  $waarde De nieuwe waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) {
+	public function __set( string $attribuut, mixed $waarde ) {
 		if ( 'bedrag' === $attribuut ) {
 			$this->data[ $attribuut ] = round( $waarde, 2 );
 			return;
@@ -220,10 +220,12 @@ class Saldo extends Artikel {
 	/**
 	 * De factuur regels.
 	 *
-	 * @return Orderregel
+	 * @return Orderregels
 	 */
-	protected function geef_factuurregels() : Orderregel {
-		return new Orderregel( 'stooksaldo', 1, $this->prijs );
+	protected function geef_factuurregels() : Orderregels {
+		$orderregels = new Orderregels();
+		$orderregels->toevoegen( new Orderregel( 'stooksaldo', 1, $this->prijs ) );
+		return $orderregels;
 	}
 
 	/**

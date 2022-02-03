@@ -47,7 +47,7 @@ class Test_Oven extends Kleistad_UnitTestCase {
 
 		$ovens = new Ovens();
 		foreach ( $ovens as $oven ) {
-			if ( substr( $oven->naam, 0, strlen( $teststring ) ) === $teststring ) {
+			if ( str_starts_with( $oven->naam, $teststring ) ) {
 				$this->assertEquals( $teststring . intval( $oven->kosten_laag ), $oven->naam, 'naam ovens not equal' );
 			}
 		}

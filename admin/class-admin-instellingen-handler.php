@@ -74,7 +74,7 @@ class Admin_Instellingen_Handler {
 	 *
 	 * @return WP_Error|bool Fout of ok.
 	 */
-	private function connect_to_google() {
+	private function connect_to_google(): WP_Error|bool {
 		$googleconnect = new Googleconnect();
 		if ( ! is_null( filter_input( INPUT_POST, 'connect' ) ) ) {
 			$googleconnect->vraag_service_aan( admin_url( 'admin.php?page=kleistad&tab=setup' ) );

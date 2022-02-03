@@ -120,18 +120,14 @@ class Workshop extends Artikel {
 		if ( in_array( $attribuut, [ 'vervallen', 'definitief', 'betaling_email' ], true ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
-		switch ( $attribuut ) {
-			case 'datum':
-				return strtotime( $this->data['datum'] );
-			case 'technieken':
-				return json_decode( $this->data['technieken'], true );
-			case 'code':
-				return "W{$this->data['id']}";
-			case 'telnr':
-				return $this->data['telefoon'];
-			default:
-				return is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ];
-		}
+
+		return match ( $attribuut ) {
+			'datum'      => strtotime( $this->data['datum'] ),
+			'technieken' => json_decode( $this->data['technieken'], true ),
+			'code'       => "W{$this->data['id']}",
+			'telnr'      => $this->data['telefoon'],
+			default      => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
+		};
 	}
 
 	/**
@@ -142,7 +138,7 @@ class Workshop extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) {
+	public function __set( string $attribuut, mixed $waarde ) {
 		switch ( $attribuut ) {
 			case 'technieken':
 				$this->data[ $attribuut ] = wp_json_encode( $waarde );
@@ -273,10 +269,12 @@ class Workshop extends Artikel {
 	/**
 	 * De regels voor de factuur.
 	 *
-	 * @return Orderregel De regel.
+	 * @return Orderregels De regel.
 	 */
-	protected function geef_factuurregels() : Orderregel {
-		return new Orderregel( "$this->naam op " . strftime( '%A %d-%m-%y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten );
+	protected function geef_factuurregels() : Orderregels {
+		$orderregels = new Orderregels();
+		$orderregels->toevoegen( new Orderregel( "$this->naam op " . strftime( '%A %d-%m-%y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten ) );
+		return $orderregels;
 	}
 
 	/**
@@ -324,7 +322,7 @@ class Workshop extends Artikel {
 		if ( $factuur && $this->organisatie_email ) {
 			$email_parameters['to'] .= ", $this->organisatie <$this->organisatie_email>";
 		}
-		if ( false !== strpos( $type, 'bevestiging' ) ) {
+		if ( str_contains( $type, 'bevestiging' ) ) {
 				$email_parameters['auto']     = false;
 				$email_parameters['slug']     = 'workshop_bevestiging';
 				$email_parameters['from']     = "$emailer->info@$emailer->verzend_domein";

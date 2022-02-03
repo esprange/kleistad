@@ -223,9 +223,9 @@ EOT;
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response|WP_Error Ajax response.
+	 * @return WP_Error|WP_REST_Response Ajax response.
 	 */
-	public static function callback_show( WP_REST_Request $request ) {
+	public static function callback_show( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		$datum_str    = $request->get_param( 'datum' );
 		$gebruiker_id = intval( $request->get_param( 'id' ) );
 		if ( is_null( $datum_str ) || 0 === $gebruiker_id ) {
@@ -245,9 +245,9 @@ EOT;
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response|WP_Error Ajax response.
+	 * @return WP_Error|WP_REST_Response Ajax response.
 	 */
-	public static function callback_muteer( WP_REST_Request $request ) {
+	public static function callback_muteer( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		$datum_str    = $request->get_param( 'datum' );
 		$gebruiker_id = intval( $request->get_param( 'id' ) );
 		$dagdeel      = $request->get_param( 'dagdeel' );
@@ -283,9 +283,9 @@ EOT;
 	 * Callback from Ajax request
 	 *
 	 * @param WP_REST_Request $request Ajax request params.
-	 * @return WP_REST_Response|WP_Error Ajax response.
+	 * @return WP_Error|WP_REST_Response Ajax response.
 	 */
-	public static function callback_meester( WP_REST_Request $request ) {
+	public static function callback_meester( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		$datum_str  = $request->get_param( 'datum' );
 		$meester_id = intval( $request->get_param( 'id' ) );
 		$dagdeel    = $request->get_param( 'dagdeel' );

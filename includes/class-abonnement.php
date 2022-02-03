@@ -97,7 +97,7 @@ class Abonnement extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @return mixed Attribuut waarde.
 	 */
-	public function __get( string $attribuut ) {
+	public function __get( string $attribuut ) : mixed {
 		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
 	}
 
@@ -107,7 +107,7 @@ class Abonnement extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( string $attribuut, $waarde ) : void {
+	public function __set( string $attribuut, mixed $waarde ) : void {
 		$this->data[ $attribuut ] = $waarde;
 	}
 
@@ -145,7 +145,7 @@ class Abonnement extends Artikel {
 	 * @return string
 	 */
 	public function geef_referentie() : string {
-		if ( false !== strpos( 'regulier,pauze,start', $this->artikel_type ) ) {
+		if ( str_contains( 'regulier,pauze,start', $this->artikel_type ) ) {
 			return "$this->code-$this->artikel_type-" . date( 'Ym' );
 		}
 		return "$this->code-$this->artikel_type";
@@ -196,40 +196,57 @@ class Abonnement extends Artikel {
 	/**
 	 * Geef de factuurregels door.
 	 *
-	 * @return array De regels.
+	 * @return Orderregels De regels.
 	 */
-	protected function geef_factuurregels() : array {
-		switch ( $this->artikel_type ) {
-			case 'start':
-				$vanaf  = strftime( '%d-%m-%Y', $this->start_datum );
-				$tot    = strftime( '%d-%m-%Y', $this->start_eind_datum );
-				$basis  = "$this->soort abonnement $this->code vanaf $vanaf tot $tot";
-				$aantal = 3;
-				break;
-			case 'overbrugging':
-				$vanaf  = strftime( '%d-%m-%Y', strtotime( '+1 day', $this->start_eind_datum ) );
-				$tot    = strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) );
-				$basis  = "$this->soort abonnement $this->code vanaf $vanaf tot $tot";
-				$aantal = $this->geef_overbrugging_fractie();
-				break;
-			case 'regulier':
-				$periode = strftime( '%B %Y', strtotime( 'today' ) );
-				$basis   = "$this->soort abonnement $this->code periode $periode";
-				$aantal  = 1;
-				break;
-			case 'pauze':
-				$periode = strftime( '%B %Y', strtotime( 'today' ) );
-				$basis   = "$this->soort abonnement $this->code periode $periode (deels gepauzeerd)";
-				$aantal  = $this->geef_pauze_fractie();
-				break;
-			default:
-				return [];
-		}
-		$orderregels = [];
-		if ( 0 < $aantal ) {
-			$orderregels[] = new Orderregel( $basis, $aantal, $this->betaling->geef_bedrag() );
-			foreach ( $this->extras as $extra ) {
-				$orderregels[] = new Orderregel( "gebruik $extra", $aantal, $this->betaling->geef_bedrag_extra( $extra ) );
+	protected function geef_factuurregels() : Orderregels {
+		$betaalinfo  = [
+			'start'        => [
+				'info'   => sprintf(
+					'%s abonnement %s vanaf %s tot %s',
+					$this->soort,
+					$this->code,
+					strftime( '%d-%m-%Y', $this->start_datum ),
+					strftime( '%d-%m-%Y', $this->start_eind_datum )
+				),
+				'aantal' => 3,
+			],
+			'overbrugging' => [
+				'info'   => sprintf(
+					'%s abonnement %s vanaf %s tot %s',
+					$this->soort,
+					$this->code,
+					strftime( '%d-%m-%Y', strtotime( '+1 day', $this->start_eind_datum ) ),
+					strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) )
+				),
+				'aantal' => $this->geef_overbrugging_fractie(),
+			],
+			'regulier'     => [
+				'info'   => sprintf(
+					'%s abonnement %s periode %s',
+					$this->soort,
+					$this->code,
+					strftime( '%B %Y', strtotime( 'today' ) )
+				),
+				'aantal' => 1,
+			],
+			'pauze'        => [
+				'info'   => sprintf(
+					'%s abonnement %s periode %s (deels gepauzeerd)',
+					$this->soort,
+					$this->code,
+					strftime( '%B %Y', strtotime( 'today' ) )
+				),
+				'aantal' => $this->geef_pauze_fractie(),
+			],
+		];
+		$orderregels = new Orderregels();
+		if ( isset( $betaalinfo[ $this->artikel_type ] ) ) {
+			$aantal = $betaalinfo[ $this->artikel_type ]['aantal'];
+			if ( $aantal ) {
+				$orderregels->toevoegen( new Orderregel( $betaalinfo[ $this->artikel_type ]['info'], $aantal, $this->betaling->geef_bedrag() ) );
+				foreach ( $this->extras as $extra ) {
+					$orderregels->toevoegen( new Orderregel( "gebruik $extra", $aantal, $this->betaling->geef_bedrag_extra( $extra ) ) );
+				}
 			}
 		}
 		return $orderregels;

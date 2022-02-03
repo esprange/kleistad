@@ -124,7 +124,7 @@ class Common {
 	 * @noinspection PhpUnusedParameterInspection
 	 * phpcs:disable
 	 */
-	public function login_redirect( string $url, /** @scrutinizer ignore-unused */ string $requested_url, $user ) : string {
+	public function login_redirect( string $url, /** @scrutinizer ignore-unused */ string $requested_url, WP_User|WP_Error $user ) : string {
 		// phpcs:enable
 		if ( is_a( $user, 'WP_User' ) ) {
 			$url = ( $user->has_cap( BESTUUR ) ) ? home_url( '/bestuur/' ) : (

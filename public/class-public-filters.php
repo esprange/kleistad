@@ -31,7 +31,7 @@ class Public_Filters {
 	public function single_template( string $single_template ) : string {
 		global $post;
 
-		if ( false !== strpos( $post->post_type, 'kleistad_' ) ) {
+		if ( str_contains( $post->post_type, 'kleistad_' ) ) {
 			$object          = substr( $post->post_type, strlen( 'kleistad_' ) );
 			$single_template = dirname( __FILE__ ) . "/partials/public-single-$object.php";
 		}
@@ -51,7 +51,7 @@ class Public_Filters {
 	public function comments_template( string $comments_template ) : string {
 		global $post;
 
-		if ( false !== strpos( $post->post_type, 'kleistad_' ) ) {
+		if ( str_contains( $post->post_type, 'kleistad_' ) ) {
 			$object            = substr( $post->post_type, strlen( 'kleistad_' ) );
 			$comments_template = dirname( __FILE__ ) . "/partials/public-comments-$object.php";
 		}

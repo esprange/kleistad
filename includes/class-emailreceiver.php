@@ -66,7 +66,7 @@ class EmailReceiver {
 		} catch ( PhpImap\Exceptions\InvalidParameterException $e ) { // Wordt door de mailbox constructor gegeven.
 			fout( __CLASS__, $e->getMessage() );
 			exit( 0 );
-		} catch ( Exception $e ) { // Wordt door getMailHeader gegeven.
+		} catch ( Exception ) { // Wordt door getMailHeader gegeven.
 			exit( 0 );
 		}
 		// phpcs:enable

@@ -40,9 +40,11 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 		/**
 		 * Een stub voor de geef_factuurregels functie welke een testartikel aanlegt tegen het opgegeven bedrag.
 		 */
+		$orderregels = new Orderregels();
+		$orderregels->toevoegen( new Orderregel( 'Testartikel', 1, $bedrag ) );
 		$artikel->expects( $this->any() )
 				->method( 'geef_factuurregels' )
-				->will( $this->returnValue( new Orderregel( 'Testartikel', 1, $bedrag ) ) );
+				->will( $this->returnValue( $orderregels ) );
 
 		/**
 		 * Een stub voor de maak factuur functie. Deze geeft alleen het factuur type terug.

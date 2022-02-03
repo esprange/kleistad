@@ -321,7 +321,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @param string $image_file Path naar een image file.
 	 * @return WP_Error|bool True als verwerkt of error als er iets fout is gegaan.
 	 */
-	private function foto( string $image_file ) {
+	private function foto( string $image_file ): WP_Error|bool {
 		$exif = @exif_read_data( $image_file ); // phpcs:ignore
 		if ( false === $exif ) {
 			return new WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );

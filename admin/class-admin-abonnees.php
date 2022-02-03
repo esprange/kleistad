@@ -110,7 +110,7 @@ class Admin_Abonnees extends Admin_List_Table {
 			}
 			try {
 				$mandaat = $betalen->heeft_mandaat( $abonnee->ID );
-			} catch ( Exception $e ) {
+			} catch ( Exception ) {
 				$mandaat = false;
 			}
 			$abonnees[] = [

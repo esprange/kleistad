@@ -41,8 +41,8 @@ abstract class ArtikelBetaling {
 	 * @param float  $bedrag     Het te betalen bedrag.
 	 * @param string $referentie De referentie behorende bij de bestelling.
 	 *
-	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het niet lukt.
+	 * @return bool|string De redirect url ingeval van een ideal betaling of false als het niet lukt.
 	 */
-	abstract public function doe_ideal( string $bericht, float $bedrag, string $referentie );
+	abstract public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string;
 
 }

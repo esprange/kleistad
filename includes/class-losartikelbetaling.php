@@ -48,9 +48,9 @@ class LosArtikelBetaling extends ArtikelBetaling {
 	 * @param  string $bericht    Dummy variable.
 	 * @param  float  $bedrag     Het bedrag dat openstaat.
 	 * @param  string $referentie De referentie.
-	 * @return string|bool De redirect url ingeval van een ideal betaling of false als het mislukt.
+	 * @return bool|string De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
-	public function doe_ideal( string $bericht, float $bedrag, string $referentie ) {
+	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
 		$order = new Order( $this->losartikel->geef_referentie() );
 		return $this->betalen->order(
 			[

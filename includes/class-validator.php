@@ -23,9 +23,9 @@ class Validator {
 	 *
 	 * @since 5.2.1
 	 * @param array $input de ingevoerde data.
-	 * @return bool|WP_Error
+	 * @return WP_Error|bool
 	 */
-	public function gebruiker( array &$input ) {
+	public function gebruiker( array &$input ): WP_Error|bool {
 		$error = new WP_Error();
 		if ( ! $this->email( $input['user_email'] ) ) {
 			$error->add( 'verplicht', "De invoer {$input['user_email']} is geen geldig E-mail adres." );

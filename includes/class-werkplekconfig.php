@@ -75,7 +75,7 @@ class WerkplekConfig {
 	 * @param mixed  $waarde Attribuut waarde.
 	 * @return void
 	 */
-	public function __set( string $attribuut, $waarde ) {
+	public function __set( string $attribuut, mixed $waarde ) : void {
 		$this->config_data[ $attribuut ] = $waarde;
 	}
 

@@ -60,7 +60,7 @@ class Afspraken implements Countable, Iterator {
 					$this->afspraken[] = new Afspraak( $event->getId() );
 				}
 			}
-		} catch ( Kleistad_Exception $e ) {
+		} catch ( Kleistad_Exception ) {
 			return; // Geen afspraken omdat kalender toegang niet mogelijk is.
 		}
 	}

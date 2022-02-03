@@ -314,9 +314,14 @@
 			}
 		).done(
 			function( data ) {
-				$( '#kleistad_reserveringen tbody' ).html( data.content );
-				$reserveringen.data( 'maand', data.maand ).data( 'jaar', data.jaar );
-				$( '#kleistad_periode' ).html( data.periode );
+				if ( 'undefined' === typeof data.content ) {
+					$( '#kleistad_berichten' ).html( data.status );
+				} else {
+					$( '#kleistad_berichten' ).html( '' );
+					$( '#kleistad_reserveringen tbody' ).html( data.content );
+					$reserveringen.data( 'maand', data.maand ).data( 'jaar', data.jaar );
+					$( '#kleistad_periode' ).html( data.periode );
+				}
 			}
 		).fail(
 			function( jqXHR ) {

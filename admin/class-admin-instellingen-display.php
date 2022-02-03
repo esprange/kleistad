@@ -626,6 +626,11 @@ class Admin_Instellingen_Display {
 				'max'   => 1500,
 				'label' => 'Oven temperatuur waarbij het hoge tarief gaat gelden',
 			],
+			'stook_max'       => [
+				'min'   => 1,
+				'max'   => 99,
+				'label' => 'Aantal stook reserveringen dat mag openstaan',
+			],
 			'weken_werkplek'  => [
 				'min'   => 1,
 				'max'   => 52,

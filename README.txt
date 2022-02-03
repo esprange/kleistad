@@ -3,11 +3,11 @@ Contributors: Eric Sprangers
 Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
-Tested up to: 5.8.3
+Tested up to: 5.9
 Stable tag: 7.1.7
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Requires PHP: 7.4
+Requires PHP: 8.0
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -39,7 +39,7 @@ Plaats de shortcodes in de pagina's
 * Aanpassing naar docent beschikbaarheid, nu ook ochtend, middag, namiddag en avond.
 = 7.1.5 =
 * Aanpassing workshop aanvraag, ook techniek uitvraag en nu ochtend, middag en namiddag.
-* Meerdere docenten per workshop
+* Meerdere docenten per workshop.
 * Enkele bugs opgelost.
 = 7.1.0 =
 * Nieuwe shortcode kleistad_docent voor het invoeren van beschikbaarheids gegevens.

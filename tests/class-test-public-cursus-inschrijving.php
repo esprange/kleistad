@@ -200,7 +200,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving->save();
 		$_POST  = $this->input;
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'stop_wachten' );
-		$this->assertTrue( false !== strpos( $result['status'], 'Volgens onze administratie ben je al ingedeeld op deze cursus' ), 'na ingedeeld toch bevestiging stop wachten' );
+		$this->assertTrue( str_contains( $result['status'], 'Volgens onze administratie ben je al ingedeeld op deze cursus' ), 'na ingedeeld toch bevestiging stop wachten' );
 	}
 
 	/**

@@ -61,7 +61,7 @@ class MollieClient {
 	 * @return object Het object.
 	 * @throws Mollie\Api\Exceptions\ApiException Moet op hoger nivo afgehandeld worden.
 	 */
-	public function get_client( $klant ) : object {
+	public function get_client( int|array $klant ) : object {
 		if ( ! is_array( $klant ) ) {
 			$gebruiker_id        = $klant;
 			$mollie_gebruiker_id = get_user_meta( $gebruiker_id, self::MOLLIE_ID, true );

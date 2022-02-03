@@ -48,7 +48,7 @@ class Admin_Stooksaldo_Handler {
 	 * @param array $item de stooksaldo.
 	 * @return bool|string
 	 */
-	private function validate_stooksaldo( array $item ) {
+	private function validate_stooksaldo( array $item ): bool|string {
 		$messages = [];
 
 		if ( ! empty( $item['saldo'] ) && ! is_numeric( $item['saldo'] ) ) {
@@ -71,13 +71,18 @@ class Admin_Stooksaldo_Handler {
 	public function stooksaldo_form_page_handler() {
 		$message = '';
 		$notice  = '';
-		$default = [
-			'id'    => 0,
-			'saldo' => 0,
-			'naam'  => '',
-		];
-		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'kleistad_stooksaldo' ) ) {
-			$item       = wp_parse_args( $_REQUEST, $default );
+		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_stooksaldo' ) ) {
+			$item       = filter_input_array(
+				INPUT_POST,
+				[
+					'id'    => FILTER_SANITIZE_NUMBER_INT,
+					'saldo' => [
+						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+					],
+					'naam'  => FILTER_SANITIZE_STRING,
+				]
+			);
 			$item_valid = $this->validate_stooksaldo( $item );
 
 			if ( true === $item_valid ) {
@@ -88,20 +93,18 @@ class Admin_Stooksaldo_Handler {
 				$notice = $item_valid;
 			}
 		} else {
-			$item = $default;
-			if ( isset( $_REQUEST['id'] ) ) {
-				$gebruiker = get_userdata( $_REQUEST['id'] );
-				if ( ! $gebruiker ) {
-					$item   = $default;
-					$notice = 'De gebruiker is niet gevonden';
-				} else {
-					$saldo = new Saldo( $_REQUEST['id'] );
-					$item  = [
-						'id'    => $_REQUEST['id'],
-						'naam'  => $gebruiker->display_name,
-						'saldo' => $saldo->bedrag,
-					];
-				}
+			$id        = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
+			$gebruiker = get_userdata( $id );
+			if ( ! $gebruiker ) {
+				$item   = [];
+				$notice = 'De gebruiker is niet gevonden';
+			} else {
+				$saldo = new Saldo( $id );
+				$item  = [
+					'id'    => $id,
+					'naam'  => $gebruiker->display_name,
+					'saldo' => $saldo->bedrag,
+				];
 			}
 		}
 		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal' );
