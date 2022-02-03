@@ -27,6 +27,27 @@ class Admin_Abonnees_Handler {
 	private Admin_Abonnees_Display $display;
 
 	/**
+	 * Eventuele foutmelding.
+	 *
+	 * @var string $notice Foutmelding.
+	 */
+	private string $notice = '';
+
+	/**
+	 * Of de actie uitgevoerd is.
+	 *
+	 * @var string $message Actie melding.
+	 */
+	private string $message = '';
+
+	/**
+	 * Uit te voeren actie.
+	 *
+	 * @var string $actie De Actie.
+	 */
+	private string $actie = '';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -113,17 +134,81 @@ class Admin_Abonnees_Handler {
 	}
 
 	/**
-	 * Geef de abonnee gegevens als een array
+	 * Toon en verwerk ingevoerde abonnee gegevens
 	 *
-	 * @param int $abonnee_id Het WP id.
+	 * @since    5.2.0
+	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+	 */
+	public function abonnees_form_page_handler() {
+		try {
+			$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ? $this->update() : $this->geef_abonnee();
+		} catch ( Exception $e ) {
+			$this->notice = 'Er is iets fout gegaan : ' . $e->getMessage();
+			$item         = [];
+		}
+		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this->display, 'form_meta_box' ], 'abonnee', 'normal', 'default', [ 'actie' => $this->actie ] );
+		$this->display->form_page( $item, 'abonnee', 'abonnees', $this->notice, $this->message, 'historie' === $this->actie );
+	}
+
+	/**
+	 * Verwerk de nieuwe gegevens.
+	 *
+	 * @return array Het item.
+	 *
+	 * @throws ApiException Ingeval Mollie mandaat niet op te vragen is.
+	 */
+	private function update() : array {
+		$item = filter_input_array(
+			INPUT_POST,
+			[
+				'id'               => FILTER_SANITIZE_NUMBER_INT,
+				'naam'             => FILTER_SANITIZE_STRING,
+				'code'             => FILTER_SANITIZE_STRING,
+				'soort'            => FILTER_SANITIZE_STRING,
+				'gestart'          => FILTER_SANITIZE_NUMBER_INT,
+				'geannuleerd'      => FILTER_SANITIZE_NUMBER_INT,
+				'gepauzeerd'       => FILTER_SANITIZE_NUMBER_INT,
+				'inschrijf_datum'  => FILTER_SANITIZE_STRING,
+				'start_datum'      => FILTER_SANITIZE_STRING,
+				'start_eind_datum' => FILTER_SANITIZE_STRING,
+				'pauze_datum'      => FILTER_SANITIZE_STRING,
+				'eind_datum'       => FILTER_SANITIZE_STRING,
+				'herstart_datum'   => FILTER_SANITIZE_STRING,
+				'mandaat'          => FILTER_SANITIZE_NUMBER_INT,
+				'extras'           => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_REQUIRE_ARRAY,
+				],
+				'actie'            => FILTER_SANITIZE_STRING,
+			]
+		) ?: [];
+		if ( ! is_array( $item['extras'] ) ) {
+			$item['extras'] = [];
+		}
+		$this->actie = $item['actie'];
+		if ( 'status' === $this->actie ) {
+			$item_valid    = $this->validate_abonnee( $item );
+			$this->notice  = is_string( $item_valid ) ? $item_valid : '';
+			$this->message = empty( $notice ) ? $this->wijzig_abonnee( $item ) : '';
+		} elseif ( 'mollie' === $this->actie ) {
+			$this->message = $this->wijzig_abonnee_mandaat( $item );
+		}
+		return $item;
+	}
+
+	/**
+	 * Geef de abonnee gegevens als een array
 	 *
 	 * @return array De abonnee gegevens.
 	 * @throws ApiException Moet op hoger nivo afgehandeld worden.
 	 */
-	private function geef_abonnee( int $abonnee_id ) : array {
-		$abonnement = new Abonnement( $abonnee_id );
-		$abonnee    = get_userdata( $abonnee_id );
-		$betalen    = new Betalen();
+	private function geef_abonnee() : array {
+		$abonnee_id  = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?: 0;
+		$this->actie = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
+		$abonnement  = new Abonnement( $abonnee_id );
+		$abonnee     = get_userdata( $abonnee_id );
+		$betalen     = new Betalen();
 		return [
 			'id'               => $abonnee_id,
 			'naam'             => $abonnee->display_name,
@@ -142,75 +227,6 @@ class Admin_Abonnees_Handler {
 			'historie'         => $abonnement->historie ?: [],
 			'mollie_info'      => $betalen->info( $abonnee_id ),
 		];
-	}
-
-	/**
-	 * Toon en verwerk ingevoerde abonnee gegevens
-	 *
-	 * @since    5.2.0
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-	 */
-	public function abonnees_form_page_handler() {
-		$notice  = '';
-		$message = '';
-		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ) {
-			$item = filter_input_array(
-				INPUT_POST,
-				[
-					'id'               => FILTER_SANITIZE_NUMBER_INT,
-					'naam'             => FILTER_SANITIZE_STRING,
-					'code'             => FILTER_SANITIZE_STRING,
-					'soort'            => FILTER_SANITIZE_STRING,
-					'gestart'          => FILTER_SANITIZE_NUMBER_INT,
-					'geannuleerd'      => FILTER_SANITIZE_NUMBER_INT,
-					'gepauzeerd'       => FILTER_SANITIZE_NUMBER_INT,
-					'inschrijf_datum'  => FILTER_SANITIZE_STRING,
-					'start_datum'      => FILTER_SANITIZE_STRING,
-					'start_eind_datum' => FILTER_SANITIZE_STRING,
-					'pauze_datum'      => FILTER_SANITIZE_STRING,
-					'eind_datum'       => FILTER_SANITIZE_STRING,
-					'herstart_datum'   => FILTER_SANITIZE_STRING,
-					'mandaat'          => FILTER_SANITIZE_NUMBER_INT,
-					'extras'           => [
-						'filter' => FILTER_SANITIZE_STRING,
-						'flags'  => FILTER_REQUIRE_ARRAY,
-					],
-					'actie'            => FILTER_SANITIZE_STRING,
-				]
-			);
-			if ( ! is_array( $item ) ) {
-				return;
-			}
-			if ( ! is_array( $item['extras'] ) ) {
-				$item['extras'] = [];
-			}
-			$actie = $item['actie'];
-			if ( 'status' === $actie ) {
-				$item_valid = $this->validate_abonnee( $item );
-				$notice     = is_string( $item_valid ) ? $item_valid : '';
-				$message    = empty( $notice ) ? $this->wijzig_abonnee( $item ) : '';
-			} elseif ( 'mollie' === $actie ) {
-				try {
-					$message = $this->wijzig_abonnee_mandaat( $item );
-				} catch ( Exception $e ) {
-					$notice  = 'Er is iets fout gegaan' . $e->getMessage();
-					$message = '';
-				}
-			}
-		} else {
-			$abonnee_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?: 0;
-			$actie      = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
-			try {
-				$item = $this->geef_abonnee( intval( $abonnee_id ) );
-			} catch ( Exception $e ) {
-				$notice  = 'Er is iets fout gegaan : ' . $e->getMessage();
-				$message = '';
-				$item    = [];
-			}
-		}
-		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this->display, 'form_meta_box' ], 'abonnee', 'normal', 'default', [ 'actie' => $actie ] );
-		$this->display->form_page( $item, 'abonnee', 'abonnees', $notice, $message, 'historie' === $actie );
 	}
 
 }

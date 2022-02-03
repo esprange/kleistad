@@ -50,17 +50,14 @@ class Admin_Regelingen_Handler {
 	 */
 	private function validate_regeling( array $item ): bool|string {
 		$messages = [];
-		if ( ! empty( $item['gebruiker_id'] ) && ! is_numeric( $item['gebruiker_id'] ) ) {
+		if ( ! is_numeric( $item['gebruiker_id'] ?? '' ) ) {
 			$messages[] = 'Geen gebruiker gekozen';
 		}
-		if ( ! empty( $item['oven_id'] ) && ! is_numeric( $item['oven_id'] ) ) {
+		if ( ! is_numeric( $item['oven_id'] ?? '' ) ) {
 			$messages[] = 'Geen oven gekozen';
 		}
-		if ( ! empty( $item['kosten'] ) && ! is_numeric( $item['kosten'] ) ) {
-			$messages[] = 'Kosten format is fout';
-		}
-		if ( ! empty( $item['kosten'] ) && ! ( 0.0 <= floatval( $item['kosten'] ) ) ) {
-			$messages[] = 'Kosten kunnen niet kleiner zijn dan 0';
+		if ( ! is_numeric( $item['kosten'] ?? '' ) || ( 0.0 > floatval( $item['kosten'] ?? - 1 ) ) ) {
+			$messages[] = 'Geen geldig getal voor kosten of kleiner dan dan 0';
 		}
 		if ( empty( $messages ) ) {
 			return true;
