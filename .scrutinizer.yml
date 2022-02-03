@@ -11,11 +11,15 @@ build:
       environment:
         php:
           version: 8.0
+          ini:
+            'extension' : 'imap'
+
       dependencies:
         before:
           #- 'sudo apt update'
           #- 'sudo apt-get install php8.0-imap -y'
-          - 'composer require --dev johnpbloch/wordpress --ignore-platform-req=ext-imap --ignore-platform-req=ext-imap'
+          - 'composer require --dev johnpbloch/wordpress --ignore-platform-req=ext-imap'
+          #--ignore-platform-req=ext-imap'
 
 filter:
   excluded_paths:
