@@ -82,7 +82,7 @@ class Admin_Filters {
 	 * @internal Filter for wp_privacy_personal_data_exporters.
 	 */
 	public function register_exporter( array $exporters ) : array {
-		$gdpr                  = new Admin_GDPR();
+		$gdpr                  = new Admin_GDPR_Export();
 		$exporters['kleistad'] = [
 			'exporter_friendly_name' => 'plugin folder Kleistad',
 			'callback'               => [ $gdpr, 'exporter' ],
@@ -100,7 +100,7 @@ class Admin_Filters {
 	 * @internal Filter for wp_privacy_personal_data_erasers.
 	 */
 	public function register_eraser( array $erasers ) : array {
-		$gdpr                = new Admin_GDPR();
+		$gdpr                = new Admin_GDPR_Erase();
 		$erasers['kleistad'] = [
 			'eraser_friendly_name' => 'Kleistad',
 			'callback'             => [ $gdpr, 'eraser' ],

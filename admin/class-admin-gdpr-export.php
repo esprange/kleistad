@@ -12,9 +12,72 @@
 namespace Kleistad;
 
 /**
- * GDPR class
+ * GDPR Export class
  */
-class Admin_GDPR {
+class Admin_GDPR_Export {
+
+	/**
+	 * Exporteer persoonlijke data.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param string $email Het email adres van de te exporteren persoonlijke data.
+	 * @param int    $page  De pagina die opgevraagd wordt.
+	 */
+	public function exporter( string $email, int $page = 1 ) : array {
+		$export_items = [];
+		$gebruiker_id = email_exists( $email );
+		if ( false !== $gebruiker_id ) {
+			$gebruiker = get_userdata( $gebruiker_id );
+			/**
+			 * De velden telnr, straat etc. zijn wel degelijk toegestaan, phpstorm geeft hier ten onrechte een waarschuwing.
+			 *
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
+			$export_items = array_merge(
+				[
+					[
+						'group_id'    => 'contactinfo',
+						'group_label' => 'Contact informatie',
+						'item_id'     => 'contactinfo',
+						'data'        => [
+							[
+								'name'  => 'Telefoonnummer',
+								'value' => $gebruiker->telnr,
+							],
+							[
+								'name'  => 'Straat',
+								'value' => $gebruiker->straat,
+							],
+							[
+								'name'  => 'Nummer',
+								'value' => $gebruiker->huisnr,
+							],
+							[
+								'name'  => 'Postcode',
+								'value' => $gebruiker->pcode,
+							],
+							[
+								'name'  => 'Plaats',
+								'value' => $gebruiker->plaats,
+							],
+						],
+					],
+				],
+				$this->export_inschrijving( $gebruiker_id ),
+				$this->export_abonnement( $gebruiker_id ),
+				$this->export_saldo( $gebruiker_id ),
+				$this->export_reservering( $gebruiker_id ),
+				$this->export_dagdelenkaart( $gebruiker_id )
+			);
+		}
+		// Geef aan of er nog meer te exporteren valt, de controle op page nummer is een dummy.
+		$done = ( 1 === $page ); // Dummy actie.
+		return [
+			'data' => $export_items,
+			'done' => $done,
+		];
+	}
 
 	/**
 	 * Export de inschrijving
@@ -191,179 +254,6 @@ class Admin_GDPR {
 			],
 		];
 		return $items;
-	}
-
-	/**
-	 * Exporteer persoonlijke data.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param string $email Het email adres van de te exporteren persoonlijke data.
-	 * @param int    $page  De pagina die opgevraagd wordt.
-	 */
-	public function exporter( string $email, int $page = 1 ) : array {
-		$export_items = [];
-		$gebruiker_id = email_exists( $email );
-		if ( false !== $gebruiker_id ) {
-			$gebruiker = get_userdata( $gebruiker_id );
-			/**
-			 * De velden telnr, straat etc. zijn wel degelijk toegestaan, phpstorm geeft hier ten onrechte een waarschuwing.
-			 *
-			 * @noinspection PhpPossiblePolymorphicInvocationInspection
-			 */
-			$export_items = array_merge(
-				[
-					[
-						'group_id'    => 'contactinfo',
-						'group_label' => 'Contact informatie',
-						'item_id'     => 'contactinfo',
-						'data'        => [
-							[
-								'name'  => 'Telefoonnummer',
-								'value' => $gebruiker->telnr,
-							],
-							[
-								'name'  => 'Straat',
-								'value' => $gebruiker->straat,
-							],
-							[
-								'name'  => 'Nummer',
-								'value' => $gebruiker->huisnr,
-							],
-							[
-								'name'  => 'Postcode',
-								'value' => $gebruiker->pcode,
-							],
-							[
-								'name'  => 'Plaats',
-								'value' => $gebruiker->plaats,
-							],
-						],
-					],
-				],
-				$this->export_inschrijving( $gebruiker_id ),
-				$this->export_abonnement( $gebruiker_id ),
-				$this->export_saldo( $gebruiker_id ),
-				$this->export_reservering( $gebruiker_id ),
-				$this->export_dagdelenkaart( $gebruiker_id )
-			);
-		}
-		// Geef aan of er nog meer te exporteren valt, de controle op page nummer is een dummy.
-		$done = ( 1 === $page ); // Dummy actie.
-		return [
-			'data' => $export_items,
-			'done' => $done,
-		];
-	}
-
-	/**
-	 * Erase / verwijder persoonlijke data. Om de consistentie van de database te waarborgen doen we in feite een anonimisering.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param string $email Het email adres van de te verwijderen persoonlijke data.
-	 * @param int    $page  De pagina die opgevraagd wordt.
-	 */
-	public function eraser( string $email, int $page = 1 ) : array {
-		$count        = 0;
-		$gebruiker_id = email_exists( $email );
-		if ( false !== $gebruiker_id ) {
-			$gebruiker = new Gebruiker( $gebruiker_id );
-			$count     = $gebruiker->anonimiseer() ?: 0;
-		}
-		return [
-			'items_removed'  => $count,
-			'items_retained' => false,
-			'messages'       => [],
-			'done'           => ( 0 < $count && 1 === $page ), // Controle op page is een dummy.
-		];
-	}
-
-	/**
-	 * Verwijder oude gegevens, ouder dan 5 jaar conform de privacy verklaring
-	 * Uiteindelijk worden ook de gebruikers verwijderd. Dat gebeurt in de dagelijkse job.
-	 *
-	 * @since 6.4.0
-	 */
-	public function erase_old_privacy_data() {
-		$erase_agv     = strtotime( '-5 years' ); // Persoonlijke gegevens worden 5 jaar bewaard.
-		$erase_fiscaal = strtotime( '-7 years' ); // Order gegevens worden 7 jaar bewaard.
-		$this->erase_cursussen( $erase_agv );
-		$this->erase_dagdelenkaarten( $erase_agv );
-		$this->erase_abonnementen( $erase_agv );
-		$this->erase_workshops( $erase_agv );
-		$this->erase_orders( $erase_fiscaal );
-	}
-
-	/**
-	 * Verwijder oude cursussen
-	 *
-	 * @param int $datum Het criterium.
-	 */
-	private function erase_cursussen( int $datum ) {
-		foreach ( new Cursussen() as $cursus ) {
-			if ( $cursus->eind_datum && $datum > $cursus->eind_datum ) {
-				foreach ( new Inschrijvingen( $cursus->id ) as $inschrijving ) {
-					$inschrijving->erase();
-				}
-				$cursus->erase();
-			}
-		}
-	}
-
-	/**
-	 * Verwijder oude dagdelenkaarten
-	 *
-	 * @param int $datum Het criterium.
-	 */
-	private function erase_dagdelenkaarten( int $datum ) {
-		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
-			if ( $dagdelenkaart->eind_datum && $datum > $dagdelenkaart->eind_datum ) {
-				$dagdelenkaart->erase();
-			}
-		}
-	}
-
-	/**
-	 * Verwijder oude abonnementen
-	 *
-	 * @param int $datum Het criterium.
-	 */
-	private function erase_abonnementen( int $datum ) {
-		foreach ( new Abonnementen() as $abonnement ) {
-			if ( $abonnement->eind_datum && $datum > $abonnement->eind_datum ) {
-				$saldo = new Saldo( $abonnement->klant_id );
-				$saldo->erase();
-				$abonnement->erase();
-			}
-		}
-	}
-
-	/**
-	 * Verwijder oude workshops
-	 *
-	 * @param int $datum Het criterium.
-	 */
-	private function erase_workshops( int $datum ) {
-		foreach ( new Workshops() as $workshop ) {
-			if ( $datum > $workshop->datum ) {
-				$workshop->erase();
-			}
-		}
-	}
-
-	/**
-	 * Verwijder oude orders
-	 *
-	 * @param int $datum Het criterium.
-	 */
-	private function erase_orders( int $datum ) {
-		$orders = new Orders();
-		foreach ( $orders as $order ) {
-			if ( $datum > $order->datum ) {
-				$order->erase();
-			}
-		}
 	}
 
 }

@@ -239,7 +239,7 @@ class Admin_Actions {
 	 */
 	public function daily_gdpr() {
 		if ( intval( date( 'd' ) ) === intval( date( 't' ) ) ) {
-			$gdpr = new Admin_GDPR();
+			$gdpr = new Admin_GDPR_Erase();
 			$gdpr->erase_old_privacy_data();
 		}
 	}
