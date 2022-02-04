@@ -39,7 +39,7 @@ class Admin_Regelingen extends Admin_List_Table {
 		$actions = [
 			'edit'   => sprintf( '<a href="?page=regelingen_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 			'delete' => sprintf(
-				'<a href="?page=%s&action=delete&id=%s&nonce=%s">%s</a>',
+				'<a class="submitdelete" href="?page=%s&action=delete&id=%s&nonce=%s">%s</a>',
 				filter_input( INPUT_GET, 'page' ),
 				$item['id'],
 				wp_create_nonce( 'kleistad_regeling' ),

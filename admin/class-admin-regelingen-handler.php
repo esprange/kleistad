@@ -64,6 +64,7 @@ class Admin_Regelingen_Handler {
 		}
 		return implode( '<br />', $messages );
 	}
+
 	/**
 	 * Overzicht regelingen page handler
 	 *

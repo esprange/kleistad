@@ -40,7 +40,7 @@ class Admin_Werkplekken extends Admin_List_Table {
 			'edit'   => sprintf( '<a href="?page=werkplekken_form&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Wijzigen' ),
 			'copy'   => sprintf( '<a href="?page=werkplekken_form&action=copy&start_datum=%s&eind_datum=%s">%s</a>', $item['start_datum'], $item['eind_datum'], 'Kopiëren' ),
 			'delete' => sprintf(
-				'<a href="?page=%s&action=delete&start_datum=%s&eind_datum=%s&nonce=%s" class="submitdelete">%s</a>',
+				'<a class="submitdelete" href="?page=%s&action=delete&start_datum=%s&eind_datum=%s&nonce=%s" >%s</a>',
 				filter_input( INPUT_GET, 'page' ),
 				$item['start_datum'],
 				$item['eind_datum'],

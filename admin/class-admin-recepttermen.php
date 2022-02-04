@@ -47,7 +47,14 @@ class Admin_Recepttermen extends Admin_List_Table {
 	public function column_naam( array $item ) : string {
 		$actions = [
 			'edit'   => sprintf( '<a href="?page=recepttermen_form&id=%s&hoofdterm_id=%s">%s</a>', $item['id'], $this->hoofdterm_id, 'Wijzigen' ),
-			'delete' => sprintf( '<a class="submitdelete" href="?page=%s&action=delete&id=%s&hoofdterm_id=%s">%s</a>', filter_input( INPUT_GET, 'page' ), $item['id'], $this->hoofdterm_id, 'Verwijderen' ),
+			'delete' => sprintf(
+				'<a class="submitdelete" href="?page=%s&action=delete&id=%s&hoofdterm_id=%s&nonce=%s">%s</a>',
+				filter_input( INPUT_GET, 'page' ),
+				$item['id'],
+				$this->hoofdterm_id,
+				wp_create_nonce( 'kleistad_receptterm' ),
+				'Verwijderen'
+			),
 		];
 		return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );
 	}

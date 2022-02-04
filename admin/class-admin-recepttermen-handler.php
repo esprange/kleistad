@@ -69,8 +69,22 @@ class Admin_Recepttermen_Handler {
 	 * @since    6.4.0
 	 */
 	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Recept termen', 'Recept termen', 'manage_options', 'recepttermen', [ $this->display, 'page' ] );
+		add_submenu_page( 'kleistad', 'Recept termen', 'Recept termen', 'manage_options', 'recepttermen', [ $this, 'recepttermen_page_handler' ] );
 		add_submenu_page( 'receptterm', 'Toevoegen/Wijzigen recept term', 'Toevoegen/Wijzigen recept term', 'manage_options', 'recepttermen_form', [ $this, 'recepttermen_form_page_handler' ] );
+	}
+
+	/**
+	 * Overzicht regelingen page handler
+	 */
+	public function recepttermen_page_handler() {
+		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_receptterm' ) && 'delete' === filter_input( INPUT_GET, 'action' ) ) {
+			$receptterm_id = filter_input( INPUT_GET, 'id' );
+			if ( ! is_null( $receptterm_id ) ) {
+				wp_delete_term( $receptterm_id, Recept::CATEGORY );
+				$this->message = 'De gegevens zijn opgeslagen';
+			}
+		}
+		$this->display->page();
 	}
 
 	/**
@@ -140,18 +154,13 @@ class Admin_Recepttermen_Handler {
 		];
 		$receptterm_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?: 0;
 		if ( $receptterm_id ) {
-			if ( filter_input( INPUT_GET, 'delete' ) ) {
-				wp_delete_term( $receptterm_id, Recept::CATEGORY );
-				$this->message = 'De gegevens zijn opgeslagen';
-			} else {
-				$term = get_term( $receptterm_id );
-				if ( ! is_wp_error( $term ) ) {
-					$item = [
-						'id'           => $term->term_id,
-						'hoofdterm_id' => $term->parent,
-						'naam'         => $term->name,
-					];
-				}
+			$term = get_term( $receptterm_id );
+			if ( ! is_wp_error( $term ) ) {
+				$item = [
+					'id'           => $term->term_id,
+					'hoofdterm_id' => $term->parent,
+					'naam'         => $term->name,
+				];
 			}
 		}
 		return $item;

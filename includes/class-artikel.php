@@ -176,6 +176,7 @@ abstract class Artikel {
 			return false;
 		}
 		$order->orderregels->toevoegen( new Orderregel( Orderregel::KORTING, 1, - $korting ) );
+		$order->gesloten  = false;
 		$order->opmerking = $opmerking;
 		$order->save( sprintf( 'Correctie factuur i.v.m. korting € %01.2f', $korting ) );
 		$this->betaal_link = $this->maak_link(

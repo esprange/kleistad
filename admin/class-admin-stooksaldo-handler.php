@@ -24,6 +24,20 @@ class Admin_Stooksaldo_Handler {
 	private Admin_Stooksaldo_Display $display;
 
 	/**
+	 * Eventuele foutmelding.
+	 *
+	 * @var string $notice Foutmelding.
+	 */
+	private string $notice = '';
+
+	/**
+	 * Of de actie uitgevoerd is.
+	 *
+	 * @var string $message Actie melding.
+	 */
+	private string $message = '';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -50,11 +64,9 @@ class Admin_Stooksaldo_Handler {
 	 */
 	private function validate_stooksaldo( array $item ): bool|string {
 		$messages = [];
-
 		if ( ! empty( $item['saldo'] ) && ! is_numeric( $item['saldo'] ) ) {
 			$messages[] = 'Kosten format is fout';
 		}
-
 		if ( empty( $messages ) ) {
 			return true;
 		}
@@ -69,46 +81,60 @@ class Admin_Stooksaldo_Handler {
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function stooksaldo_form_page_handler() {
-		$message = '';
-		$notice  = '';
-		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_stooksaldo' ) ) {
-			$item       = filter_input_array(
-				INPUT_POST,
-				[
-					'id'    => FILTER_SANITIZE_NUMBER_INT,
-					'saldo' => [
-						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
-					],
-					'naam'  => FILTER_SANITIZE_STRING,
-				]
-			);
-			$item_valid = $this->validate_stooksaldo( $item );
-
-			if ( true === $item_valid ) {
-				$saldo = new Saldo( $item['id'] );
-				$saldo->actie->correctie( $item['saldo'] );
-				$message = 'De gegevens zijn opgeslagen';
-			} else {
-				$notice = $item_valid;
-			}
-		} else {
-			$gebruiker_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
-			$gebruiker    = get_userdata( $gebruiker_id );
-			if ( ! $gebruiker ) {
-				$item   = [];
-				$notice = 'De gebruiker is niet gevonden';
-			} else {
-				$saldo = new Saldo( $gebruiker_id );
-				$item  = [
-					'id'    => $gebruiker_id,
-					'naam'  => $gebruiker->display_name,
-					'saldo' => $saldo->bedrag,
-				];
-			}
-		}
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_stooksaldo' ) ? $this->update_saldo() : $this->geef_saldo();
 		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal' );
-		$this->display->form_page( $item, 'stooksaldo', 'stooksaldo', $notice, $message, false );
+		$this->display->form_page( $item, 'stooksaldo', 'stooksaldo', $this->notice, $this->message, false );
+	}
+
+	/**
+	 * Update het saldo.
+	 *
+	 * @return array Het saldo.
+	 */
+	private function update_saldo() : array {
+		$item       = filter_input_array(
+			INPUT_POST,
+			[
+				'id'    => FILTER_SANITIZE_NUMBER_INT,
+				'saldo' => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
+				'naam'  => FILTER_SANITIZE_STRING,
+			]
+		);
+		$item_valid = $this->validate_stooksaldo( $item );
+
+		if ( true === $item_valid ) {
+			$saldo = new Saldo( $item['id'] );
+			$saldo->actie->correctie( $item['saldo'] );
+			$this->message = 'De gegevens zijn opgeslagen';
+		} else {
+			$this->notice = $item_valid;
+		}
+		return $item;
+	}
+
+	/**
+	 * Geef het saldo
+	 *
+	 * @return array Het saldo.
+	 */
+	private function geef_saldo() : array {
+		$gebruiker_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
+		$gebruiker    = get_userdata( $gebruiker_id );
+		if ( ! $gebruiker ) {
+			$item         = [];
+			$this->notice = 'De gebruiker is niet gevonden';
+		} else {
+			$saldo = new Saldo( $gebruiker_id );
+			$item  = [
+				'id'    => $gebruiker_id,
+				'naam'  => $gebruiker->display_name,
+				'saldo' => $saldo->bedrag,
+			];
+		}
+		return $item;
 	}
 
 }
