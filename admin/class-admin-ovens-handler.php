@@ -24,6 +24,20 @@ class Admin_Ovens_Handler {
 	private Admin_Ovens_Display $display;
 
 	/**
+	 * Eventuele foutmelding.
+	 *
+	 * @var string $notice Foutmelding.
+	 */
+	private string $notice = '';
+
+	/**
+	 * Of de actie uitgevoerd is.
+	 *
+	 * @var string $message Actie melding.
+	 */
+	private string $message = '';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -75,57 +89,70 @@ class Admin_Ovens_Handler {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function ovens_form_page_handler() {
-		$message = '';
-		$notice  = '';
-		$item    = [];
-		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_oven' ) ) {
-			$item       = filter_input_array(
-				INPUT_POST,
-				[
-					'id'              => FILTER_SANITIZE_NUMBER_INT,
-					'naam'            => FILTER_SANITIZE_STRING,
-					'kosten_laag'     => [
-						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
-					],
-					'kosten_midden'   => [
-						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
-					],
-					'kosten_hoog'     => [
-						'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-						'flags'  => FILTER_FLAG_ALLOW_FRACTION,
-					],
-					'beschikbaarheid' => [
-						'filter' => FILTER_SANITIZE_STRING,
-						'flags'  => FILTER_FORCE_ARRAY,
-					],
-				]
-			) ?: [];
-			$item_valid = $this->validate_oven( $item );
-			$notice     = is_string( $item_valid ) ? $item_valid : '';
-			if ( true === $item_valid ) {
-				$oven                  = $item['id'] > 0 ? new Oven( $item['id'] ) : new Oven();
-				$oven->naam            = $item['naam'];
-				$oven->kosten_laag     = $item['kosten_laag'];
-				$oven->kosten_midden   = $item['kosten_midden'];
-				$oven->kosten_hoog     = $item['kosten_hoog'];
-				$oven->beschikbaarheid = $item['beschikbaarheid'];
-				$oven->save();
-				$message = 'De gegevens zijn opgeslagen';
-			}
-		} else {
-			$oven_id                 = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-			$oven                    = $oven_id ? new Oven( $oven_id ) : new Oven();
-			$item['id']              = $oven->id;
-			$item['naam']            = $oven->naam;
-			$item['kosten_laag']     = $oven->kosten_laag;
-			$item['kosten_midden']   = $oven->kosten_midden;
-			$item['kosten_hoog']     = $oven->kosten_hoog;
-			$item['beschikbaarheid'] = $oven->beschikbaarheid;
-		}
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_oven' ) ? $this->update_oven() : $this->geef_oven();
 		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this->display, 'form_meta_box' ], 'oven', 'normal' );
-		$this->display->form_page( $item, 'oven', 'ovens', $notice, $message, false );
+		$this->display->form_page( $item, 'oven', 'ovens', $this->notice, $this->message, false );
 	}
 
+	/**
+	 * Update de oven.
+	 *
+	 * @return array De oven.
+	 */
+	private function update_oven() : array {
+		$item         = filter_input_array(
+			INPUT_POST,
+			[
+				'id'              => FILTER_SANITIZE_NUMBER_INT,
+				'naam'            => FILTER_SANITIZE_STRING,
+				'kosten_laag'     => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
+				'kosten_midden'   => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
+				'kosten_hoog'     => [
+					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+					'flags'  => FILTER_FLAG_ALLOW_FRACTION,
+				],
+				'beschikbaarheid' => [
+					'filter' => FILTER_SANITIZE_STRING,
+					'flags'  => FILTER_FORCE_ARRAY,
+				],
+			]
+		) ?: [];
+		$item_valid   = $this->validate_oven( $item );
+		$this->notice = is_string( $item_valid ) ? $item_valid : '';
+		if ( true === $item_valid ) {
+			$oven                  = $item['id'] > 0 ? new Oven( $item['id'] ) : new Oven();
+			$oven->naam            = $item['naam'];
+			$oven->kosten_laag     = $item['kosten_laag'];
+			$oven->kosten_midden   = $item['kosten_midden'];
+			$oven->kosten_hoog     = $item['kosten_hoog'];
+			$oven->beschikbaarheid = $item['beschikbaarheid'];
+			$oven->save();
+			$this->message = 'De gegevens zijn opgeslagen';
+		}
+		return $item;
+	}
+
+	/**
+	 * Geef de oven.
+	 *
+	 * @return array De oven.
+	 */
+	private function geef_oven() : array {
+		$oven_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$oven    = $oven_id ? new Oven( $oven_id ) : new Oven();
+		return [
+			'id'              => $oven->id,
+			'naam'            => $oven->naam,
+			'kosten_laag'     => $oven->kosten_laag,
+			'kosten_midden'   => $oven->kosten_midden,
+			'kosten_hoog'     => $oven->kosten_hoog,
+			'beschikbaarheid' => $oven->beschikbaarheid,
+		];
+	}
 }

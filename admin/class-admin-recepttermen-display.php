@@ -25,7 +25,7 @@ class Admin_Recepttermen_Display extends Admin_Display {
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function form_meta_box( array $item, array $metabox ) : void {
-		$hoofdterm = (array) get_term( intval( filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$hoofdterm = (array) get_term( filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) );
 		?>
 		<h2><?php echo esc_html( $hoofdterm['description'] ); ?></h2>
 		<input name="hoofdterm_id" type="hidden" value="<?php echo esc_attr( $hoofdterm['term_id'] ); ?>" >

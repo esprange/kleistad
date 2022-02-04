@@ -41,14 +41,19 @@ abstract class Admin_Display {
 	 * @param string $notice       Een eventuele foutmelding.
 	 * @param string $message      Een eventuele succes melding.
 	 * @param bool   $display_only Alleen weergeven vlag.
+	 * @param array  $args         Eventuele argumenten voor pagina.
 	 * @return void
 	 */
-	public function form_page( array $item, string $single, string $multiple, string $notice, string $message, bool $display_only ) : void {
+	public function form_page( array $item, string $single, string $multiple, string $notice, string $message, bool $display_only, array $args = [] ) : void {
+		$parameters = '';
+		foreach ( $args as $key => $arg ) {
+			$parameters .= "&$key=$arg";
+		}
 		?>
 		<div class="wrap">
 			<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
 			<h2><?php echo esc_html( ucfirst( $single ) ); ?><a class="add-new-h2"
-						href="<?php echo esc_url( get_admin_url( get_current_blog_id(), "admin.php?page=$multiple" ) ); ?>">terug naar lijst</a>
+						href="<?php echo esc_url( get_admin_url( get_current_blog_id(), "admin.php?page=$multiple$parameters" ) ); ?>">terug naar lijst</a>
 			</h2>
 			<?php if ( ! empty( $notice ) ) : ?>
 			<div id="notice" class="error"><p><?php echo $notice; // phpcs:ignore ?></p></div>

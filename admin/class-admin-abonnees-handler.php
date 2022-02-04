@@ -142,7 +142,7 @@ class Admin_Abonnees_Handler {
 	 */
 	public function abonnees_form_page_handler() {
 		try {
-			$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ? $this->update() : $this->geef_abonnee();
+			$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ? $this->update_abonnee() : $this->geef_abonnee();
 		} catch ( Exception $e ) {
 			$this->notice = 'Er is iets fout gegaan : ' . $e->getMessage();
 			$item         = [];
@@ -158,7 +158,7 @@ class Admin_Abonnees_Handler {
 	 *
 	 * @throws ApiException Ingeval Mollie mandaat niet op te vragen is.
 	 */
-	private function update() : array {
+	private function update_abonnee() : array {
 		$item = filter_input_array(
 			INPUT_POST,
 			[
@@ -190,7 +190,7 @@ class Admin_Abonnees_Handler {
 		if ( 'status' === $this->actie ) {
 			$item_valid    = $this->validate_abonnee( $item );
 			$this->notice  = is_string( $item_valid ) ? $item_valid : '';
-			$this->message = empty( $notice ) ? $this->wijzig_abonnee( $item ) : '';
+			$this->message = empty( $this->notice ) ? $this->wijzig_abonnee( $item ) : '';
 		} elseif ( 'mollie' === $this->actie ) {
 			$this->message = $this->wijzig_abonnee_mandaat( $item );
 		}
