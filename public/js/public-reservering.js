@@ -50,6 +50,26 @@
 	}
 
 	/**
+	 * Maak de selectie aan voor de soort stoken
+	 *
+	 * @param {string} soort
+	 * @returns {string}
+	 */
+	function stookopties( soort ) {
+		let opties    = [ 'Biscuit', 'Glazuur', 'Overig' ],
+			optieHtml = '<select id="kleistad_soortstook">';
+		if ( $reserveringen.data( 'override' ) ) {
+			opties.push( 'Onderhoud' );
+		}
+		opties.forEach(
+			function( optie ) {
+				optieHtml += '<option value="' + optie + '" ' + ( optie === soort ? 'selected' : '' ) + ' >' + optie + '</option>';
+			}
+		);
+		return optieHtml + '</select>';
+	}
+
+	/**
 	 * Toon het formulier van de stookgegevens zodat ze gewijzigd kunnen worden.
 	 *
 	 * @param {array}  formData
@@ -64,17 +84,10 @@
 		const aantalStook = formData.verdeling.length;
 		let stook, stokerVeld, percVeld;
 		$( '#kleistad_reservering table > thead' ).append(
-			'<tr><th><label>Soort stook</label></th><td colspan="2"><select id="kleistad_soortstook">' +
-			'<option value="Biscuit" ' + ( 'Biscuit' === formData.soortstook ? 'selected' : '' ) + ' >Biscuit</option>' +
-			'<option value="Glazuur" ' + ( 'Glazuur' === formData.soortstook ? 'selected' : '' ) + ' >Glazuur</option>' +
-			'<option value="Overig" ' + ( 'Overig' === formData.soortstook ? 'selected' : '' ) + ' >Overig</option>' +
-			'</select></td></tr>' +
+			'<tr><th><label>Soort stook</label></th><td colspan="2">' + stookopties( formData.soortstook ) + '</td></tr>' +
 			'<tr><th colspan="2"><label>Temperatuur &nbsp; &deg;C</label></th><td><input id="kleistad_temperatuur" name="temperatuur" type="number" min="100" max="1400" required value="' + formData.temperatuur + '" ></td></tr>' +
 			'<tr><th colspan="2"><label>Programma</label></th><td><input id="kleistad_programma" type="number" min="0" max="99" value="' + formData.programma + '" ></td></tr>'
 		);
-		if ( $reserveringen.data( 'override' ) ) {
-			$soortstook.append( '<option value="Onderhoud" ' + ( 'Onderhoud' === formData.soortstook ? 'selected' : '' ) + ' >Onderhoud</option>' );
-		}
 
 		stokerVeld = $reserveringen.data( 'override' ) ?
 			'<td>' + selectStoker( false, formData.verdeling[0].medestoker ) + '</td>' :
