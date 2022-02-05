@@ -237,7 +237,6 @@ EOT;
 	 * @param int $maandag De datum waarin de week start.
 	 *
 	 * @return string
-	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private static function show_overzicht( int $maandag ) : string {
 		$vandaag       = strtotime( 'today' );
@@ -320,7 +319,10 @@ EOT;
 			$show    = "show_$actie";
 			return new WP_REST_Response(
 				[
-					'content' => self::$show( $maandag ),
+					'content' => match ( $actie ) {
+						'overzicht' => self::show_overzicht( $maandag ),
+						'planning'  => self::show_planning( $maandag ), //phpcs:ignore
+					},
 					'datum'   => date( 'Y-m-d', $maandag ),
 				]
 			);
