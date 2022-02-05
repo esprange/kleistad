@@ -52,15 +52,12 @@ class Admin_Stooksaldo_Handler extends Admin_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item de stooksaldo.
-	 * @return bool|string
+	 * @return string
 	 */
-	private function validate_stooksaldo( array $item ): bool|string {
+	private function validate_stooksaldo( array $item ): string {
 		$messages = [];
 		if ( ! empty( $item['saldo'] ) && ! is_numeric( $item['saldo'] ) ) {
 			$messages[] = 'Kosten format is fout';
-		}
-		if ( empty( $messages ) ) {
-			return true;
 		}
 		return implode( '<br />', $messages );
 	}
@@ -71,7 +68,7 @@ class Admin_Stooksaldo_Handler extends Admin_Handler {
 	 * @return array Het saldo.
 	 */
 	private function update_saldo() : array {
-		$item       = filter_input_array(
+		$item         = filter_input_array(
 			INPUT_POST,
 			[
 				'id'    => FILTER_SANITIZE_NUMBER_INT,
@@ -82,14 +79,11 @@ class Admin_Stooksaldo_Handler extends Admin_Handler {
 				'naam'  => FILTER_SANITIZE_STRING,
 			]
 		);
-		$item_valid = $this->validate_stooksaldo( $item );
-
-		if ( true === $item_valid ) {
+		$this->notice = $this->validate_stooksaldo( $item );
+		if ( empty( $this->notice ) ) {
 			$saldo = new Saldo( $item['id'] );
 			$saldo->actie->correctie( $item['saldo'] );
 			$this->message = 'De gegevens zijn opgeslagen';
-		} else {
-			$this->notice = $item_valid;
 		}
 		return $item;
 	}
@@ -103,17 +97,15 @@ class Admin_Stooksaldo_Handler extends Admin_Handler {
 		$gebruiker_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
 		$gebruiker    = get_userdata( $gebruiker_id );
 		if ( ! $gebruiker ) {
-			$item         = [];
 			$this->notice = 'De gebruiker is niet gevonden';
-		} else {
-			$saldo = new Saldo( $gebruiker_id );
-			$item  = [
-				'id'    => $gebruiker_id,
-				'naam'  => $gebruiker->display_name,
-				'saldo' => $saldo->bedrag,
-			];
+			return [];
 		}
-		return $item;
+		$saldo = new Saldo( $gebruiker_id );
+		return [
+			'id'    => $gebruiker_id,
+			'naam'  => $gebruiker->display_name,
+			'saldo' => $saldo->bedrag,
+		];
 	}
 
 }

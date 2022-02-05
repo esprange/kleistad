@@ -63,16 +63,13 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 	 *
 	 * @since    6.4.0
 	 * @param array $item de receptterm.
-	 * @return bool|string
+	 * @return string
 	 */
-	private function validate_receptterm( array $item ): bool|string {
+	private function validate_receptterm( array $item ): string {
 		$messages = [];
 
 		if ( empty( $item['naam'] ) ) {
 			$messages[] = 'Naam is verplicht';
-		}
-		if ( empty( $messages ) ) {
-			return true;
 		}
 		return implode( '<br />', $messages );
 	}
@@ -81,11 +78,9 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 	 * Update de term
 	 *
 	 * @return array De recept term.
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function update_receptterm() : array {
-		$item       = filter_input_array(
+		$item         = filter_input_array(
 			INPUT_POST,
 			[
 				'id'           => FILTER_SANITIZE_NUMBER_INT,
@@ -93,8 +88,9 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 				'naam'         => FILTER_SANITIZE_STRING,
 			]
 		) ?: [];
-		$item_valid = $this->validate_receptterm( $item );
-		if ( true === $item_valid ) {
+		$this->notice = $this->validate_receptterm( $item );
+		if ( empty( $this->notice ) ) {
+			$this->message = 'De gegevens zijn opgeslagen';
 			if ( $item['id'] > 0 ) {
 				wp_update_term(
 					$item['id'],
@@ -104,18 +100,15 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 						'parent' => $item['hoofdterm_id'],
 					]
 				);
-			} else {
-				wp_insert_term(
-					$item['naam'],
-					Recept::CATEGORY,
-					[
-						'parent' => $item['hoofdterm_id'],
-					]
-				);
+				return $item;
 			}
-			$this->message = 'De gegevens zijn opgeslagen';
-		} else {
-			$this->notice = $item_valid;
+			wp_insert_term(
+				$item['naam'],
+				Recept::CATEGORY,
+				[
+					'parent' => $item['hoofdterm_id'],
+				]
+			);
 		}
 		return $item;
 	}

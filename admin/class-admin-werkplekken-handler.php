@@ -70,9 +70,9 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 	 *
 	 * @since    6.11.0
 	 * @param array $item de werkplek.
-	 * @return bool|string
+	 * @return string
 	 */
-	private function validate_werkplek( array $item ): bool|string {
+	private function validate_werkplek( array $item ): string {
 		$messages = [];
 
 		$start_datum = strtotime( $item['start_datum'] );
@@ -87,9 +87,6 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 			if ( $start_datum && $eind_datum && $eind_datum <= $start_datum ) {
 				$messages[] = 'De eind datum kan niet voor de start datum liggen';
 			}
-		}
-		if ( empty( $messages ) ) {
-			return true;
 		}
 		return implode( '<br />', $messages );
 	}
@@ -116,9 +113,8 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 				],
 			]
 		) ?: [];
-		$item_valid   = $this->validate_werkplek( $item );
-		$this->notice = is_string( $item_valid ) ? $item_valid : '';
-		if ( true === $item_valid ) {
+		$this->notice = $this->validate_werkplek( $item );
+		if ( empty( $this->notice ) ) {
 			$werkplekconfigs = new WerkplekConfigs();
 			$start_datum     = strtotime( $item['start_datum'] );
 			$eind_datum      = $item['eind_datum'] ? strtotime( $item['eind_datum'] ) : 0;

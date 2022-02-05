@@ -49,9 +49,9 @@ class Admin_Ovens_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 * @param array $item de oven.
-	 * @return bool|string
+	 * @return string
 	 */
-	private function validate_oven( array $item ): bool|string {
+	private function validate_oven( array $item ): string {
 		$messages = [];
 
 		if ( empty( $item['naam'] ) ) {
@@ -64,9 +64,6 @@ class Admin_Ovens_Handler extends Admin_Handler {
 			if ( ! empty( $item[ "kosten$range" ] ) && ! absint( intval( $item[ "kosten$range" ] ) ) ) {
 				$messages[] = 'Kosten $range kunnen niet kleiner zijn dan 0';
 			}
-		}
-		if ( empty( $messages ) ) {
-			return true;
 		}
 		return implode( '<br />', $messages );
 	}
@@ -100,9 +97,8 @@ class Admin_Ovens_Handler extends Admin_Handler {
 				],
 			]
 		) ?: [];
-		$item_valid   = $this->validate_oven( $item );
-		$this->notice = is_string( $item_valid ) ? $item_valid : '';
-		if ( true === $item_valid ) {
+		$this->notice = $this->validate_oven( $item );
+		if ( empty( $this->notice ) ) {
 			$oven                  = $item['id'] > 0 ? new Oven( $item['id'] ) : new Oven();
 			$oven->naam            = $item['naam'];
 			$oven->kosten_laag     = $item['kosten_laag'];

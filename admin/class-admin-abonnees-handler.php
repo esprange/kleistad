@@ -65,28 +65,22 @@ class Admin_Abonnees_Handler extends  Admin_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item de abonnee.
-	 * @return bool|string
-	 * @SuppressWarnings(PHPMD.ElseExpression)
+	 * @return string
 	 */
-	private function validate_abonnee( array $item ): bool|string {
+	private function validate_abonnee( array $item ): string {
 		$messages = [];
 		if ( strtotime( $item['start_eind_datum'] ) < strtotime( $item['start_datum'] ) ) {
 			$messages[] = 'De eind datum van de startperiode kan niet voor de start datum liggen';
 		}
-		if ( ! empty( $item['pauze_datum'] . $item['herstart_datum'] ) ) {
-			if ( empty( $item['pauze_datum'] ) !== empty( $item['herstart_datum'] ) ) {
-				$messages[] = 'Ingeval van pauze moet de pauze datum èn de herstart datum ingevoerd worden';
-			} else {
-				if ( strtotime( $item['start_datum'] ) >= strtotime( $item['pauze_datum'] ) ) {
-					$messages[] = 'De pauze datum kan niet voor de start datum liggen';
-				}
-				if ( strtotime( $item['herstart_datum'] ) < strtotime( $item['pauze_datum'] ) ) {
-					$messages[] = 'De herstart datum kan niet voor de pauze datum liggen of de pauze datum ontbreekt';
-				}
-			}
+		if ( empty( $item['pauze_datum'] ) !== empty( $item['herstart_datum'] ) ) {
+			$messages[] = 'Ingeval van pauze moet de pauze datum èn de herstart datum ingevoerd worden';
 		}
-		if ( empty( $messages ) ) {
-			return true;
+		if (
+			! empty( $item['pauze_datum'] ) &&
+			( strtotime( $item['start_datum'] ) >= strtotime( $item['pauze_datum'] ) ) ||
+			( strtotime( $item['herstart_datum'] ) < strtotime( $item['pauze_datum'] ) )
+		) {
+			$messages[] = 'De start datum, pauze datum en herstart datum moeten in logische volgorde zijn';
 		}
 		return implode( '<br/>', $messages );
 	}

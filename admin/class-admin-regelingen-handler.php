@@ -74,9 +74,9 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 	 * @since    5.2.0
 	 *
 	 * @param array $item the regeling.
-	 * @return bool|string
+	 * @return string
 	 */
-	private function validate_regeling( array $item ): bool|string {
+	private function validate_regeling( array $item ): string {
 		$messages = [];
 		if ( ! is_numeric( $item['gebruiker_id'] ?? '' ) ) {
 			$messages[] = 'Geen gebruiker gekozen';
@@ -87,9 +87,6 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 		if ( ! is_numeric( $item['kosten'] ?? '' ) || ( 0.0 > floatval( $item['kosten'] ?? - 1 ) ) ) {
 			$messages[] = 'Geen geldig getal voor kosten of kleiner dan dan 0';
 		}
-		if ( empty( $messages ) ) {
-			return true;
-		}
 		return implode( '<br />', $messages );
 	}
 
@@ -97,10 +94,9 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 	 * Update de regeling
 	 *
 	 * @return array De regeling.
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function update_regeling() : array {
-		$item       = filter_input_array(
+		$item         = filter_input_array(
 			INPUT_POST,
 			[
 				'id'             => FILTER_SANITIZE_NUMBER_INT,
@@ -114,8 +110,8 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 				],
 			]
 		) ?: [];
-		$item_valid = $this->validate_regeling( $item );
-		if ( true === $item_valid ) {
+		$this->notice = $this->validate_regeling( $item );
+		if ( empty( $this->notice ) ) {
 			$gebruiker_regelingen                     = get_user_meta( $item['gebruiker_id'], Oven::REGELING, true ) ?: [];
 			$gebruiker_regelingen[ $item['oven_id'] ] = $item['kosten'];
 			update_user_meta( $item['gebruiker_id'], Oven::REGELING, $gebruiker_regelingen );
@@ -124,8 +120,6 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 			$gebruiker              = get_userdata( $item['gebruiker_id'] );
 			$item['gebruiker_naam'] = $gebruiker->display_name;
 			$item['oven_naam']      = $oven->naam;
-		} else {
-			$this->notice = $item_valid;
 		}
 		return $item;
 	}
