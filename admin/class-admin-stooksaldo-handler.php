@@ -14,28 +14,7 @@ namespace Kleistad;
 /**
  * De admin-specifieke functies van de plugin voor stooksaldo beheer.
  */
-class Admin_Stooksaldo_Handler {
-
-	/**
-	 * Het display object
-	 *
-	 * @var Admin_Stooksaldo_Display $display De display class.
-	 */
-	private Admin_Stooksaldo_Display $display;
-
-	/**
-	 * Eventuele foutmelding.
-	 *
-	 * @var string $notice Foutmelding.
-	 */
-	private string $notice = '';
-
-	/**
-	 * Of de actie uitgevoerd is.
-	 *
-	 * @var string $message Actie melding.
-	 */
-	private string $message = '';
+class Admin_Stooksaldo_Handler extends Admin_Handler {
 
 	/**
 	 * Constructor
@@ -51,7 +30,20 @@ class Admin_Stooksaldo_Handler {
 	 */
 	public function add_pages() {
 		add_submenu_page( 'kleistad', 'Stooksaldo beheer', 'Stooksaldo beheer', 'manage_options', 'stooksaldo', [ $this->display, 'page' ] );
-		add_submenu_page( 'stooksaldo', 'Wijzigen stooksaldo', 'Wijzigen stooksaldo', 'manage_options', 'stooksaldo_form', [ $this, 'stooksaldo_form_page_handler' ] );
+		add_submenu_page( 'stooksaldo', 'Wijzigen stooksaldo', 'Wijzigen stooksaldo', 'manage_options', 'stooksaldo_form', [ $this, 'form_handler' ] );
+	}
+
+	/**
+	 * Toon en verwerk stooksaldo
+	 *
+	 * @since    5.2.0
+	 * @suppressWarnings(PHPMD.ElseExpression)
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+	 */
+	public function form_handler() {
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_stooksaldo' ) ? $this->update_saldo() : $this->geef_saldo();
+		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal' );
+		$this->display->form_page( $item, 'stooksaldo', 'stooksaldo', $this->notice, $this->message, false );
 	}
 
 	/**
@@ -71,19 +63,6 @@ class Admin_Stooksaldo_Handler {
 			return true;
 		}
 		return implode( '<br />', $messages );
-	}
-
-	/**
-	 * Toon en verwerk stooksaldo
-	 *
-	 * @since    5.2.0
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-	 */
-	public function stooksaldo_form_page_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_stooksaldo' ) ? $this->update_saldo() : $this->geef_saldo();
-		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal' );
-		$this->display->form_page( $item, 'stooksaldo', 'stooksaldo', $this->notice, $this->message, false );
 	}
 
 	/**

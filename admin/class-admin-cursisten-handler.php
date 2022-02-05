@@ -14,28 +14,7 @@ namespace Kleistad;
 /**
  * De admin-specifieke functies van de plugin voor de cursisten page.
  */
-class Admin_Cursisten_Handler {
-
-	/**
-	 * Het display object
-	 *
-	 * @var Admin_Cursisten_Display $display De display class.
-	 */
-	private Admin_Cursisten_Display $display;
-
-	/**
-	 * Eventuele foutmelding.
-	 *
-	 * @var string $notice Foutmelding.
-	 */
-	private string $notice = '';
-
-	/**
-	 * Of de actie uitgevoerd is.
-	 *
-	 * @var string $message Actie melding.
-	 */
-	private string $message = '';
+class Admin_Cursisten_Handler extends Admin_Handler {
 
 	/**
 	 * Constructor
@@ -51,7 +30,7 @@ class Admin_Cursisten_Handler {
 	 */
 	public function add_pages() {
 		add_submenu_page( 'kleistad', 'Cursisten', 'Cursisten', 'manage_options', 'cursisten', [ $this->display, 'page' ] );
-		add_submenu_page( 'cursisten', 'Wijzigen cursist', 'Wijzigen cursist', 'manage_options', 'cursisten_form', [ $this, 'cursisten_form_page_handler' ] );
+		add_submenu_page( 'cursisten', 'Wijzigen cursist', 'Wijzigen cursist', 'manage_options', 'cursisten_form', [ $this, 'form_handler' ] );
 	}
 
 	/**
@@ -59,7 +38,7 @@ class Admin_Cursisten_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function cursisten_form_page_handler() {
+	public function form_handler() {
 		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_cursist' ) ? $this->update_cursist() : $this->geef_cursist();
 		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this->display, 'form_meta_box' ], 'cursist', 'normal' );
 		$this->display->form_page( $item, 'cursist', 'cursisten', $this->notice, $this->message, false );

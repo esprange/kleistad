@@ -17,28 +17,7 @@ use Mollie\Api\Exceptions\ApiException;
 /**
  * De admin-specifieke functies van de plugin voor abonnee beheer.
  */
-class Admin_Abonnees_Handler {
-
-	/**
-	 * Het display object
-	 *
-	 * @var Admin_Abonnees_Display $display De display class.
-	 */
-	private Admin_Abonnees_Display $display;
-
-	/**
-	 * Eventuele foutmelding.
-	 *
-	 * @var string $notice Foutmelding.
-	 */
-	private string $notice = '';
-
-	/**
-	 * Of de actie uitgevoerd is.
-	 *
-	 * @var string $message Actie melding.
-	 */
-	private string $message = '';
+class Admin_Abonnees_Handler extends  Admin_Handler {
 
 	/**
 	 * Uit te voeren actie.
@@ -61,44 +40,23 @@ class Admin_Abonnees_Handler {
 	 */
 	public function add_pages() {
 		add_submenu_page( 'kleistad', 'Abonnees', 'Abonnees', 'manage_options', 'abonnees', [ $this->display, 'page' ] );
-		add_submenu_page( 'abonnees', 'Wijzigen abonnee', 'Wijzigen abonnee', 'manage_options', 'abonnees_form', [ $this, 'abonnees_form_page_handler' ] );
+		add_submenu_page( 'abonnees', 'Wijzigen abonnee', 'Wijzigen abonnee', 'manage_options', 'abonnees_form', [ $this, 'form_handler' ] );
 	}
 
 	/**
-	 * Wijzig het abonnement.
+	 * Toon en verwerk ingevoerde abonnee gegevens
 	 *
-	 * @since 5.2.0
-	 * @param array $item De informatie vanuit het formulier.
-	 * @return string De status van de wijziging.
+	 * @since    5.2.0
 	 */
-	private function wijzig_abonnee( array $item ) : string {
-		$abonnement = new Abonnement( $item['id'] );
-		foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort' ] as $veld ) {
-			if ( ! empty( $item[ $veld ] ) ) {
-				$abonnement->$veld = str_contains( $veld, 'datum' ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
-			}
+	public function form_handler() {
+		try {
+			$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ? $this->update_abonnee() : $this->geef_abonnee();
+		} catch ( Exception $e ) {
+			$this->notice = 'Er is iets fout gegaan : ' . $e->getMessage();
+			$item         = [];
 		}
-		$abonnement->reguliere_datum = strtotime( 'first day of +4 month ', $abonnement->start_datum );
-		$abonnement->extras          = $item['extras'];
-		$abonnement->save();
-		return 'De gegevens zijn opgeslagen';
-	}
-
-	/**
-	 * Wijzig het mandaat van de abonnee
-	 *
-	 * @param array $item De informatie vanuit het formulier.
-	 *
-	 * @return string De status van de wijziging.
-	 * @throws ApiException Moet op hoger nivo afgehandeld worden.
-	 */
-	private function wijzig_abonnee_mandaat( array &$item ) : string {
-		$abonnement = new Abonnement( $item['id'] );
-		$abonnement->actie->stop_incasso();
-		$betalen             = new Betalen();
-		$item['mollie_info'] = $betalen->info( $item['id'] );
-		$item['mandaat']     = false;
-		return 'De gegevens zijn opgeslagen';
+		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this->display, 'form_meta_box' ], 'abonnee', 'normal', 'default', [ 'actie' => $this->actie ] );
+		$this->display->form_page( $item, 'abonnee', 'abonnees', $this->notice, $this->message, 'historie' === $this->actie );
 	}
 
 	/**
@@ -131,24 +89,6 @@ class Admin_Abonnees_Handler {
 			return true;
 		}
 		return implode( '<br/>', $messages );
-	}
-
-	/**
-	 * Toon en verwerk ingevoerde abonnee gegevens
-	 *
-	 * @since    5.2.0
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-	 */
-	public function abonnees_form_page_handler() {
-		try {
-			$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ? $this->update_abonnee() : $this->geef_abonnee();
-		} catch ( Exception $e ) {
-			$this->notice = 'Er is iets fout gegaan : ' . $e->getMessage();
-			$item         = [];
-		}
-		add_meta_box( 'abonnees_form_meta_box', 'Abonnees', [ $this->display, 'form_meta_box' ], 'abonnee', 'normal', 'default', [ 'actie' => $this->actie ] );
-		$this->display->form_page( $item, 'abonnee', 'abonnees', $this->notice, $this->message, 'historie' === $this->actie );
 	}
 
 	/**
@@ -190,11 +130,48 @@ class Admin_Abonnees_Handler {
 		if ( 'status' === $this->actie ) {
 			$item_valid    = $this->validate_abonnee( $item );
 			$this->notice  = is_string( $item_valid ) ? $item_valid : '';
-			$this->message = empty( $this->notice ) ? $this->wijzig_abonnee( $item ) : '';
+			$this->message = empty( $this->notice ) ? $this->abonnement( $item ) : '';
 		} elseif ( 'mollie' === $this->actie ) {
-			$this->message = $this->wijzig_abonnee_mandaat( $item );
+			$this->message = $this->mandaat( $item );
 		}
 		return $item;
+	}
+
+	/**
+	 * Wijzig het abonnement van de abonee.
+	 *
+	 * @since 5.2.0
+	 * @param array $item De informatie vanuit het formulier.
+	 * @return string De status van de wijziging.
+	 */
+	private function abonnement( array $item ) : string {
+		$abonnement = new Abonnement( $item['id'] );
+		foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort' ] as $veld ) {
+			if ( ! empty( $item[ $veld ] ) ) {
+				$abonnement->$veld = str_contains( $veld, 'datum' ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
+			}
+		}
+		$abonnement->reguliere_datum = strtotime( 'first day of +4 month ', $abonnement->start_datum );
+		$abonnement->extras          = $item['extras'];
+		$abonnement->save();
+		return 'De gegevens zijn opgeslagen';
+	}
+
+	/**
+	 * Wijzig het mandaat van de abonnee
+	 *
+	 * @param array $item De informatie vanuit het formulier.
+	 *
+	 * @return string De status van de wijziging.
+	 * @throws ApiException Moet op hoger nivo afgehandeld worden.
+	 */
+	private function mandaat( array &$item ) : string {
+		$abonnement = new Abonnement( $item['id'] );
+		$abonnement->actie->stop_incasso();
+		$betalen             = new Betalen();
+		$item['mollie_info'] = $betalen->info( $item['id'] );
+		$item['mandaat']     = false;
+		return 'De gegevens zijn opgeslagen';
 	}
 
 	/**

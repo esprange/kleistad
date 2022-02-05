@@ -14,34 +14,55 @@ namespace Kleistad;
 /**
  * De admin-specifieke functies van de plugin voor de werkplekken page.
  */
-class Admin_Werkplekken_Handler {
-
-	/**
-	 * Het display object
-	 *
-	 * @var Admin_Werkplekken_Display $display De display class.
-	 */
-	private Admin_Werkplekken_Display $display;
-
-	/**
-	 * Eventuele foutmelding.
-	 *
-	 * @var string $notice Foutmelding.
-	 */
-	private string $notice = '';
-
-	/**
-	 * Of de actie uitgevoerd is.
-	 *
-	 * @var string $message Actie melding.
-	 */
-	private string $message = '';
+class Admin_Werkplekken_Handler extends Admin_Handler {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->display = new Admin_Werkplekken_Display();
+	}
+
+	/**
+	 * Definieer de panels
+	 *
+	 * @since    6.11.0
+	 */
+	public function add_pages() {
+		add_submenu_page( 'kleistad', 'Werkplekken', 'Werkplekken', 'manage_options', 'werkplekken', [ $this, 'page_handler' ] );
+		add_submenu_page( 'werkplekken', 'Toevoegen werkplekbeschikbaarheid', 'Toevoegen werkplekbeschikbaarheid', 'manage_options', 'werkplekken_form', [ $this, 'form_handler' ] );
+	}
+
+	/**
+	 * Werkplekken overzicht page handler
+	 *
+	 * @since    6.11.0
+	 */
+	public function page_handler() {
+		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_werkplek' ) &&
+			'delete' === filter_input( INPUT_GET, 'action' ) ) {
+			$start_datum = filter_input( INPUT_GET, 'start_datum' );
+			$eind_datum  = filter_input( INPUT_GET, 'eind_datum' );
+			if ( ! is_null( $start_datum ) && ! is_null( $eind_datum ) ) {
+				$werkplekconfigs = new WerkplekConfigs();
+				$werkplekconfig  = $werkplekconfigs->find( intval( $start_datum ), intval( $eind_datum ) );
+				if ( is_object( $werkplekconfig ) ) {
+					$werkplekconfigs->verwijder( $werkplekconfig );
+				}
+			}
+		}
+		$this->display->page();
+	}
+
+	/**
+	 * Toon en verwerk werkplek gegevens
+	 *
+	 * @since    6.11.0
+	 */
+	public function form_handler() {
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_werkplek' ) ? $this->update_werkplek() : $this->geef_werkplek();
+		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this->display, 'form_meta_box' ], 'werkplek', 'normal' );
+		$this->display->form_page( $item, 'werkplek', 'werkplekken', $this->notice, $this->message, false );
 	}
 
 	/**
@@ -71,51 +92,6 @@ class Admin_Werkplekken_Handler {
 			return true;
 		}
 		return implode( '<br />', $messages );
-	}
-
-	/**
-	 * Definieer de panels
-	 *
-	 * @since    6.11.0
-	 */
-	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Werkplekken', 'Werkplekken', 'manage_options', 'werkplekken', [ $this, 'werkplekken_page_handler' ] );
-		add_submenu_page( 'werkplekken', 'Toevoegen werkplekbeschikbaarheid', 'Toevoegen werkplekbeschikbaarheid', 'manage_options', 'werkplekken_form', [ $this, 'werkplekken_form_page_handler' ] );
-	}
-
-	/**
-	 * Werkplekken overzicht page handler
-	 *
-	 * @since    6.11.0
-	 */
-	public function werkplekken_page_handler() {
-		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_werkplek' ) &&
-			'delete' === filter_input( INPUT_GET, 'action' ) ) {
-			$start_datum = filter_input( INPUT_GET, 'start_datum' );
-			$eind_datum  = filter_input( INPUT_GET, 'eind_datum' );
-			if ( ! is_null( $start_datum ) && ! is_null( $eind_datum ) ) {
-				$werkplekconfigs = new WerkplekConfigs();
-				$werkplekconfig  = $werkplekconfigs->find( intval( $start_datum ), intval( $eind_datum ) );
-				if ( is_object( $werkplekconfig ) ) {
-					$werkplekconfigs->verwijder( $werkplekconfig );
-				}
-			}
-		}
-		$this->display->page();
-	}
-
-	/**
-	 * Toon en verwerk werkplek gegevens
-	 *
-	 * @since    6.11.0
-	 *
-	 * @suppressWarnings(PHPMD.UnusedLocalVariable)
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	public function werkplekken_form_page_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_werkplek' ) ? $this->update_werkplek() : $this->geef_werkplek();
-		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this->display, 'form_meta_box' ], 'werkplek', 'normal' );
-		$this->display->form_page( $item, 'werkplek', 'werkplekken', $this->notice, $this->message, false );
 	}
 
 	/**

@@ -85,7 +85,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<tr>
 				<th>Code</th>
 				<th>Datum</th>
-				<th>Titel</th>
+				<th>Contact</th>
 				<th>Docent</th>
 				<th>Aantal</th>
 				<th>Tijd</th>
@@ -100,7 +100,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<tr>
 					<td data-sort="<?php echo esc_attr( substr( $workshop['code'], 1 ) ); ?>"><?php echo esc_html( $workshop['code'] ); ?></td>
 					<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
-					<td><?php echo esc_html( $workshop['naam'] ); ?></td>
+					<td><?php echo esc_html( $workshop['contact'] ); ?></td>
 					<td><?php echo esc_html( $workshop['docent'] ); ?></td>
 					<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
 					<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>

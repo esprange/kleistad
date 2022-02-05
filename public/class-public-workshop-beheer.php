@@ -359,7 +359,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'code'       => $workshop->code,
 				'datum_ux'   => $workshop->datum,
 				'datum'      => date( 'd-m-Y', $workshop->datum ),
-				'naam'       => $workshop->naam,
+				'contact'    => $workshop->contact,
 				'start_tijd' => date( 'H:i', $workshop->start_tijd ),
 				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
 				'docent'     => $workshop->docent_naam(),

@@ -14,34 +14,34 @@ namespace Kleistad;
 /**
  * De admin-specifieke functies van de plugin voor de oven page.
  */
-class Admin_Ovens_Handler {
-
-	/**
-	 * Het display object
-	 *
-	 * @var Admin_Ovens_Display $display De display class.
-	 */
-	private Admin_Ovens_Display $display;
-
-	/**
-	 * Eventuele foutmelding.
-	 *
-	 * @var string $notice Foutmelding.
-	 */
-	private string $notice = '';
-
-	/**
-	 * Of de actie uitgevoerd is.
-	 *
-	 * @var string $message Actie melding.
-	 */
-	private string $message = '';
+class Admin_Ovens_Handler extends Admin_Handler {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->display = new Admin_Ovens_Display();
+	}
+
+	/**
+	 * Definieer de panels
+	 *
+	 * @since    5.2.0
+	 */
+	public function add_pages() {
+		add_submenu_page( 'kleistad', 'Ovens', 'Ovens', 'manage_options', 'ovens', [ $this->display, 'page' ] );
+		add_submenu_page( 'ovens', 'Toevoegen oven', 'Toevoegen oven', 'manage_options', 'ovens_form', [ $this, 'form_handler' ] );
+	}
+
+	/**
+	 * Toon en verwerk oven gegevens
+	 *
+	 * @since    5.2.0
+	 */
+	public function form_handler() {
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_oven' ) ? $this->update_oven() : $this->geef_oven();
+		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this->display, 'form_meta_box' ], 'oven', 'normal' );
+		$this->display->form_page( $item, 'oven', 'ovens', $this->notice, $this->message, false );
 	}
 
 	/**
@@ -69,29 +69,6 @@ class Admin_Ovens_Handler {
 			return true;
 		}
 		return implode( '<br />', $messages );
-	}
-
-	/**
-	 * Definieer de panels
-	 *
-	 * @since    5.2.0
-	 */
-	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Ovens', 'Ovens', 'manage_options', 'ovens', [ $this->display, 'page' ] );
-		add_submenu_page( 'ovens', 'Toevoegen oven', 'Toevoegen oven', 'manage_options', 'ovens_form', [ $this, 'ovens_form_page_handler' ] );
-	}
-
-	/**
-	 * Toon en verwerk oven gegevens
-	 *
-	 * @since    5.2.0
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	public function ovens_form_page_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_oven' ) ? $this->update_oven() : $this->geef_oven();
-		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this->display, 'form_meta_box' ], 'oven', 'normal' );
-		$this->display->form_page( $item, 'oven', 'ovens', $this->notice, $this->message, false );
 	}
 
 	/**

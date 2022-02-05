@@ -16,68 +16,7 @@ namespace Kleistad;
  */
 class Admin_Actions {
 
-	/**
-	 *  Oven beheer
-	 *
-	 * @since     5.0.2
-	 * @access    private
-	 * @var       object    $ovens_handler  De handler voor ovens beheer.
-	 */
-	private object $ovens_handler;
-
-	/**
-	 *  Cursisten beheer
-	 *
-	 * @since     5.0.2
-	 * @access    private
-	 * @var       object    $cursisten_handler  De handler voor cursisten beheer.
-	 */
-	private object $cursisten_handler;
-
-	/**
-	 *  Abonnees beheer
-	 *
-	 * @since     5.0.2
-	 * @access    private
-	 * @var       object    $abonnees_handler  De handler voor abonnees beheer.
-	 */
-	private object $abonnees_handler;
-
-	/**
-	 *  Stooksaldo beheer
-	 *
-	 * @since     5.0.2
-	 * @access    private
-	 * @var       object    $stooksaldo_handler  De handler voor stooksaldo beheer.
-	 */
-	private object $stooksaldo_handler;
-
-	/**
-	 *  Regeling stookkosten beheer
-	 *
-	 * @since     5.0.2
-	 * @access    private
-	 * @var       object    $regelingen_handler  De handler voor regeling stookkosten beheer.
-	 */
-	private object $regelingen_handler;
-
-	/**
-	 *  Recept termen beheer
-	 *
-	 * @since     6.3.6
-	 * @access    private
-	 * @var       object    $recepttermen_handler  De handler voor beheer van de recept termen.
-	 */
-	private object $recepttermen_handler;
-
-	/**
-	 *  Werkplekken beheer
-	 *
-	 * @since     6.11.0
-	 * @access    private
-	 * @var       object    $werkplekken_handler  De handler voor beheer van de werkplekken.
-	 */
-	private object $werkplekken_handler;
+	private const FUNCTIES = [ 'ovens', 'cursisten', 'abonnees', 'stooksaldo', 'regelingen', 'recepttermen', 'werkplekken' ];
 
 	/**
 	 *  Instellingen beheer
@@ -87,13 +26,6 @@ class Admin_Actions {
 	 * @var       object    $instellingen_handler  De handler voor beheer van de instellingen.
 	 */
 	private object $instellingen_handler;
-
-	/**
-	 * Worksshop dispatcher.
-	 *
-	 * @var Workshopplanning De async request class.
-	 */
-	private Workshopplanning $planning_handler;
 
 	/**
 	 * Background object
@@ -110,15 +42,7 @@ class Admin_Actions {
 	 * @since    4.0.87
 	 */
 	public function __construct() {
-		$this->ovens_handler        = new Admin_Ovens_Handler();
-		$this->cursisten_handler    = new Admin_Cursisten_Handler();
-		$this->abonnees_handler     = new Admin_Abonnees_Handler();
-		$this->stooksaldo_handler   = new Admin_Stooksaldo_Handler();
-		$this->regelingen_handler   = new Admin_Regelingen_Handler();
-		$this->recepttermen_handler = new Admin_Recepttermen_Handler();
-		$this->werkplekken_handler  = new Admin_Werkplekken_Handler();
 		$this->instellingen_handler = new Admin_Instellingen_Handler();
-		$this->planning_handler     = new Workshopplanning();
 	}
 
 	/**
@@ -159,13 +83,11 @@ class Admin_Actions {
 	public function add_plugin_admin_menu() {
 		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', 'kleistad', [ $this->instellingen_handler, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), 30 );
 		add_submenu_page( 'kleistad', 'Instellingen', 'Instellingen', 'manage_options', 'kleistad', null );
-		$this->ovens_handler->add_pages();
-		$this->abonnees_handler->add_pages();
-		$this->cursisten_handler->add_pages();
-		$this->stooksaldo_handler->add_pages();
-		$this->regelingen_handler->add_pages();
-		$this->recepttermen_handler->add_pages();
-		$this->werkplekken_handler->add_pages();
+		foreach ( self::FUNCTIES as $functie ) {
+			$class   = '\\' . __NAMESPACE__ . '\\Admin_' . ucwords( $functie ) . '_Handler';
+			$handler = new $class();
+			$handler->add_pages();
+		}
 	}
 
 	/**
@@ -250,7 +172,8 @@ class Admin_Actions {
 	 * @internal Action voor kleistad_planning.
 	 */
 	public function planning() {
-		$this->planning_handler->dispatch();
+		$planning_handler = new Workshopplanning();
+		$planning_handler->dispatch();
 	}
 
 	/**
@@ -265,7 +188,6 @@ class Admin_Actions {
 		$upgrade->run();
 		$time = time();
 
-		ob_start();
 		if ( ! wp_next_scheduled( 'kleistad_rcv_email' ) ) {
 			wp_schedule_event( $time + ( 900 - ( $time % 900 ) ), '15_mins', 'kleistad_rcv_email' );
 		}

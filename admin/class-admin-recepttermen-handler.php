@@ -14,34 +14,48 @@ namespace Kleistad;
 /**
  * De admin-specifieke functies van de plugin voor de Recept termen pagina.
  */
-class Admin_Recepttermen_Handler {
-
-	/**
-	 * Het display object
-	 *
-	 * @var Admin_Recepttermen_Display $display De display class.
-	 */
-	private Admin_Recepttermen_Display $display;
-
-	/**
-	 * Eventuele foutmelding.
-	 *
-	 * @var string $notice Foutmelding.
-	 */
-	private string $notice = '';
-
-	/**
-	 * Of de actie uitgevoerd is.
-	 *
-	 * @var string $message Actie melding.
-	 */
-	private string $message = '';
+class Admin_Recepttermen_Handler extends Admin_Handler {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->display = new Admin_Recepttermen_Display();
+	}
+
+	/**
+	 * Definieer de panels
+	 *
+	 * @since    6.4.0
+	 */
+	public function add_pages() {
+		add_submenu_page( 'kleistad', 'Recept termen', 'Recept termen', 'manage_options', 'recepttermen', [ $this, 'page_handler' ] );
+		add_submenu_page( 'receptterm', 'Toevoegen/Wijzigen recept term', 'Toevoegen/Wijzigen recept term', 'manage_options', 'recepttermen_form', [ $this, 'form_handler' ] );
+	}
+
+	/**
+	 * Overzicht regelingen page handler
+	 */
+	public function page_handler() {
+		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_receptterm' ) && 'delete' === filter_input( INPUT_GET, 'action' ) ) {
+			$receptterm_id = filter_input( INPUT_GET, 'id' );
+			if ( ! is_null( $receptterm_id ) ) {
+				wp_delete_term( $receptterm_id, Recept::CATEGORY );
+				$this->message = 'De gegevens zijn opgeslagen';
+			}
+		}
+		$this->display->page();
+	}
+
+	/**
+	 * Toon en verwerk recept term gegevens
+	 *
+	 * @since    6.4.0
+	 */
+	public function form_handler() {
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_receptterm' ) ? $this->update_receptterm() : $this->geef_receptterm();
+		add_meta_box( 'receptterm_form_meta_box', 'Receptterm', [ $this->display, 'form_meta_box' ], 'receptterm', 'normal' );
+		$this->display->form_page( $item, 'receptterm', 'recepttermen', $this->notice, $this->message, false, [ 'hoofdterm_id' => $item['hoofdterm_id'] ] );
 	}
 
 	/**
@@ -64,48 +78,13 @@ class Admin_Recepttermen_Handler {
 	}
 
 	/**
-	 * Definieer de panels
-	 *
-	 * @since    6.4.0
-	 */
-	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Recept termen', 'Recept termen', 'manage_options', 'recepttermen', [ $this, 'recepttermen_page_handler' ] );
-		add_submenu_page( 'receptterm', 'Toevoegen/Wijzigen recept term', 'Toevoegen/Wijzigen recept term', 'manage_options', 'recepttermen_form', [ $this, 'recepttermen_form_page_handler' ] );
-	}
-
-	/**
-	 * Overzicht regelingen page handler
-	 */
-	public function recepttermen_page_handler() {
-		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_receptterm' ) && 'delete' === filter_input( INPUT_GET, 'action' ) ) {
-			$receptterm_id = filter_input( INPUT_GET, 'id' );
-			if ( ! is_null( $receptterm_id ) ) {
-				wp_delete_term( $receptterm_id, Recept::CATEGORY );
-				$this->message = 'De gegevens zijn opgeslagen';
-			}
-		}
-		$this->display->page();
-	}
-
-	/**
-	 * Toon en verwerk recept term gegevens
-	 *
-	 * @since    6.4.0
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
-	 */
-	public function recepttermen_form_page_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_receptterm' ) ? $this->update_term() : $this->geef_term();
-		add_meta_box( 'receptterm_form_meta_box', 'Receptterm', [ $this->display, 'form_meta_box' ], 'receptterm', 'normal' );
-		$this->display->form_page( $item, 'receptterm', 'recepttermen', $this->notice, $this->message, false, [ 'hoofdterm_id' => $item['hoofdterm_id'] ] );
-	}
-
-	/**
 	 * Update de term
 	 *
 	 * @return array De recept term.
+	 *
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function update_term() : array {
+	private function update_receptterm() : array {
 		$item       = filter_input_array(
 			INPUT_POST,
 			[
@@ -146,7 +125,7 @@ class Admin_Recepttermen_Handler {
 	 *
 	 * @return array De recept term.
 	 */
-	private function geef_term() : array {
+	private function geef_receptterm() : array {
 		$item          = [
 			'id'           => 0,
 			'hoofdterm_id' => filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) ?: 0,

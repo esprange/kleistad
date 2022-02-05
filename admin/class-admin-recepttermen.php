@@ -28,7 +28,7 @@ class Admin_Recepttermen extends Admin_List_Table {
 	 *
 	 * @param int $hoofdterm_id De parent van de termen.
 	 */
-	public function __construct( $hoofdterm_id ) {
+	public function __construct( $hoofdterm_id = 0 ) {
 		$this->hoofdterm_id = intval( $hoofdterm_id );
 		parent::__construct(
 			[
