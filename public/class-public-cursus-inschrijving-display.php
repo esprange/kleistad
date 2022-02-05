@@ -27,6 +27,8 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Maak de formulier inhoud
+	 *
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function form_content() {
 		?>

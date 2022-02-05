@@ -30,5 +30,6 @@ class Afboeking extends LosArtikel {
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
 	public function __construct( ?int $verkoop_id = null ) {
+		$this->data['id'] = $verkoop_id;
 	}
 }

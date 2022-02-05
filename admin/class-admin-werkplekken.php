@@ -97,7 +97,7 @@ class Admin_Werkplekken extends Admin_List_Table {
 	 */
 	protected function geef_items( string $search, string $order, string $orderby ) : array {
 		$werkplekconfigs = [];
-		$vandaag         = strtotime( 'today' );
+		$vandaag         = strtotime( $search ?: 'today' ); // Omdat search default leeg is, werkt dit wel.
 		foreach ( new WerkplekConfigs() as $werkplekconfig ) {
 			$werkplekken = 0;
 			if ( $werkplekconfig->eind_datum && $vandaag > $werkplekconfig->eind_datum ) {

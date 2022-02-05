@@ -37,7 +37,6 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 	 * Overzicht regelingen page handler
 	 *
 	 * @since    5.2.0
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function page_handler() {
 		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_regeling' ) &&
@@ -47,11 +46,7 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 				sscanf( $regeling_id, '%d-%d', $gebruiker_id, $oven_id );
 				$regelingen = get_user_meta( $gebruiker_id, Oven::REGELING, true );
 				unset( $regelingen[ $oven_id ] );
-				if ( empty( $regelingen ) ) {
-					delete_user_meta( $gebruiker_id, Oven::REGELING );
-				} else {
-					update_user_meta( $gebruiker_id, Oven::REGELING, $regelingen );
-				}
+				empty( $regelingen ) ? delete_user_meta( $gebruiker_id, Oven::REGELING ) : update_user_meta( $gebruiker_id, Oven::REGELING, $regelingen );
 			}
 		}
 		$this->display->page();

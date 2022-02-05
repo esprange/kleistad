@@ -153,7 +153,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$this->data['recept']['content']['foto']        = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
 
 		if ( 'bewaren' === $this->form_actie ) {
-			if ( UPLOAD_ERR_INI_SIZE === $_FILES['foto']['error'] ) {
+			if ( UPLOAD_ERR_INI_SIZE === $this->files()['foto']['error'] ) {
 				return $this->melding( new WP_Error( 'foto', 'De foto is te groot qua omvang !' ) );
 			}
 		}
@@ -212,9 +212,9 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function bewaren(): array {
-		if ( ! empty( $_FILES['foto']['name'] ) ) {
+		if ( ! empty( $this->files()['foto']['name'] ) ) {
 			$file = wp_handle_upload(
-				$_FILES['foto'],
+				$this->files()['foto'],
 				[ 'test_form' => false ]
 			);
 			if ( is_array( $file ) && ! isset( $file['error'] ) ) {
@@ -347,4 +347,13 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		return true;
 	}
 
+	/**
+	 * Geef de global $_FILES variabele.
+	 *
+	 * @return array
+	 * @suppressWarnings (PHPMD.Superglobals)
+	 */
+	private function files() : array {
+		return $_FILES;
+	}
 }

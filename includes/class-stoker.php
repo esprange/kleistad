@@ -31,13 +31,12 @@ class Stoker extends Gebruiker {
 	/**
 	 * Constructor
 	 *
-	 * @param int|string|stdClass|WP_User $id      User's ID, a WP_User object, or a user object from the DB.
+	 * @param int|string|stdClass|WP_User $gebruiker_id      User's ID, a WP_User object, or a user object from the DB.
 	 * @param string                      $name    Optional. User's username.
 	 * @param int                         $site_id Optional Site ID, defaults to current site.
-	 * @suppressWarnings(PHPMD.ShortVariable)
 	 */
-	public function __construct( $id = 0, $name = '', $site_id = null ) {
-		parent::__construct( $id, $name, $site_id );
+	public function __construct( $gebruiker_id = 0, $name = '', $site_id = null ) {
+		parent::__construct( $gebruiker_id, $name, $site_id );
 		$this->saldo = new Saldo( $this->ID );
 	}
 

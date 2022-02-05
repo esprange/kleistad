@@ -120,13 +120,9 @@ class Common {
 	 * @return string De Url.
 	 *
 	 * @internal Filter for login_redirect.
-	 *
-	 * @noinspection PhpUnusedParameterInspection
-	 * phpcs:disable
 	 */
-	public function login_redirect( string $url, /** @scrutinizer ignore-unused */ string $requested_url, WP_User|WP_Error $user ) : string {
-		// phpcs:enable
-		if ( is_a( $user, 'WP_User' ) ) {
+	public function login_redirect( string $url, string $requested_url, WP_User|WP_Error $user ) : string {
+		if ( is_a( $user, 'WP_User' ) && $requested_url ) {
 			$url = ( $user->has_cap( BESTUUR ) ) ? home_url( '/bestuur/' ) : (
 				$user->has_cap( LID ) ? home_url( '/leden/' ) : home_url( '/werkplek/' ) );
 		}

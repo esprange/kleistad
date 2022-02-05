@@ -85,17 +85,13 @@ class Public_Filters {
 	 * @return array
 	 *
 	 * @internal Filter for email_change_email.
-	 *
-	 * @noinspection PhpUnusedParameterInspection
-	 * phpcs:disable
 	 */
-	public function email_change_email( /** @scrutinizer ignore-unused */ array $email_change_email, array $user, array $userdata ) : array {
-		// phpcs:enable
+	public function email_change_email( array $email_change_email, array $user, array $userdata ) : array {
 		$emailer = new Email();
 		return $emailer->notify(
 			[
 				'slug'       => 'email_wijziging',
-				'to'         => $userdata['user_email'],
+				'to'         => $email_change_email['to'],
 				'cc'         => [ $user['user_email'] ],
 				'subject'    => 'Wijziging email adres',
 				'parameters' => [
@@ -110,22 +106,18 @@ class Public_Filters {
 	/**
 	 * Wordt aangeroepen door filter password_change_email, als het wachtwoord gewijzigd wordt.
 	 *
-	 * @param array $email_change_email Basis voor WP_mail.
+	 * @param array $password_change_email Basis voor WP_mail.
 	 * @param array $user               De bestaande user info.
 	 * @param array $userdata           De gewijzigd user info.
 	 * @return array
 	 *
 	 * @internal Filter for password_change_email.
-	 *
-	 * @noinspection PhpUnusedParameterInspection
-	 * phpcs:disable
 	 */
-	public function password_change_email( /** @scrutinizer ignore-unused */ array $email_change_email, /** @scrutinizer ignore-unused */ array $user, array $userdata ) : array {
-		// phpcs:enable
+	public function password_change_email( array $password_change_email, array $user, array $userdata ) : array {
 		$emailer = new Email();
 		return $emailer->notify(
 			[
-				'to'         => $userdata['user_email'],
+				'to'         => $password_change_email['to'],
 				'subject'    => 'Wachtwoord gewijzigd',
 				'slug'       => 'wachtwoord_wijziging',
 				'parameters' => [
@@ -145,12 +137,8 @@ class Public_Filters {
 	 * @param WP_User $user_data  Het user record van de gebruiker.
 	 *
 	 * @internal Filter for retrieve_password_message.
-	 *
-	 * @noinspection PhpUnusedParameterInspection
-	 * phpcs:disable
 	 */
-	public function retrieve_password_message( /** @scrutinizer ignore-unused */ string $message, string $key, string $user_login, WP_User  $user_data ) : string {
-		// phpcs:enable
+	public function retrieve_password_message( string $message, string $key, string $user_login, WP_User $user_data ) : string {
 		$emailer = new Email();
 		$result  = $emailer->notify(
 			[
@@ -164,7 +152,7 @@ class Public_Filters {
 				],
 			]
 		);
-		return $result['message'];
+		return empty( $message ) ?: $result['message'];
 	}
 
 	/**
