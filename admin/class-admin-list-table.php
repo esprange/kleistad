@@ -18,9 +18,9 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * Abonnees list table
+ * Admin list table
  */
-class Admin_List_Table extends WP_List_Table {
+abstract class Admin_List_Table extends WP_List_Table {
 
 	/**
 	 * Het aantal te tonen items per pagina.
@@ -45,10 +45,7 @@ class Admin_List_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function geef_items( string $search, string $order, string $orderby ) : array {
-		// Dit is een dummy statement, moet overruled worden in de afgeleide klasse. Helaas geen andere oplossing omdat wp_list_table niet abstract is.
-		return [ $search, $order, $orderby ];
-	}
+	abstract protected function geef_items( string $search, string $order, string $orderby ) : array;
 
 	/**
 	 * Prepareer de te tonen items

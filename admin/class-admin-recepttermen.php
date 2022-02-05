@@ -111,6 +111,7 @@ class Admin_Recepttermen extends Admin_List_Table {
 				'order'      => strtoupper( $order ),
 				'hide_empty' => false,
 				'parent'     => $this->hoofdterm_id,
+				'search'     => $search,
 			]
 		) as $term ) {
 			$termen[] = [

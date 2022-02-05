@@ -99,6 +99,7 @@ class Admin_Regelingen extends Admin_List_Table {
 				'fields'   => [ 'ID', 'display_name' ],
 				'orderby'  => 'display_name',
 				'order'    => $order,
+				'search'   => $search,
 				'meta_key' => Oven::REGELING,
 			]
 		);

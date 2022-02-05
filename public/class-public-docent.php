@@ -141,13 +141,13 @@ class Public_Docent extends ShortcodeForm {
 	/**
 	 * Maak de tabel
 	 *
-	 * @param int      $maandag De datum waarin de week start.
-	 * @param callable $functie De functie die de inhoud van de cellen invult.
-	 * @param array    $args De extra argumenten voor de functie.
+	 * @param int    $maandag De datum waarin de week start.
+	 * @param string $functie De functie die de inhoud van de cellen invult.
+	 * @param array  $args De extra argumenten voor de functie.
 	 *
 	 * @return string
 	 */
-	private static function tabel( int $maandag, callable $functie, array $args ) : string {
+	private static function tabel( int $maandag, string $functie, array $args ) : string {
 		$html = <<<EOT
 <thead>
 	<tr>
@@ -173,7 +173,10 @@ EOT;
 				$html .= <<<EOT
 		<td>
 EOT;
-				$html .= call_user_func( $functie, $datum, $dagdeel, $args );
+				$html .= match ( $functie ) {
+					'overzicht' => self::show_overzicht_cell( $datum, $dagdeel, $args ),
+					'planning'  => self::show_planning_cell( $datum, $dagdeel, $args ),
+				};
 				$html .= <<<EOT
 		</td>
 EOT;
@@ -200,10 +203,7 @@ EOT;
 		$vandaag   = strtotime( 'today' );
 		return self::tabel(
 			$maandag,
-			[
-				__CLASS__,
-				'show_planning_cell',
-			],
+			'planning',
 			[
 				'reserveringen' => self::docent_beschikbaarheid( $maandag, new Docent( $docent_id ), new Cursussen( $vandaag ), new Workshops( $vandaag ) ),
 			]
@@ -250,10 +250,7 @@ EOT;
 		}
 		return self::tabel(
 			$maandag,
-			[
-				__CLASS__,
-				'show_overzicht_cell',
-			],
+			'overzicht',
 			[
 				'reserveringen' => $reserveringen,
 				'docenten'      => $docenten,
