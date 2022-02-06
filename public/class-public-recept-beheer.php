@@ -351,9 +351,18 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * Geef de global $_FILES variabele.
 	 *
 	 * @return array
-	 * @suppressWarnings (PHPMD.Superglobals)
 	 */
 	private function files() : array {
-		return $_FILES;
+		$files = new class() {
+			/**
+			 * Encapsulate de global variable.
+			 *
+			 * @return array De inhoud van de variabele.
+			 */
+			public function data() : array {
+				return $_FILES;
+			}
+		};
+		return $files->data();
 	}
 }
