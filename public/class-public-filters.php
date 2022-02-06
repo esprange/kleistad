@@ -106,18 +106,18 @@ class Public_Filters {
 	/**
 	 * Wordt aangeroepen door filter password_change_email, als het wachtwoord gewijzigd wordt.
 	 *
-	 * @param array $password_change_email Basis voor WP_mail.
-	 * @param array $user               De bestaande user info.
-	 * @param array $userdata           De gewijzigd user info.
+	 * @param array $pwd_change_email Basis voor WP_mail.
+	 * @param array $user             De bestaande user info.
+	 * @param array $userdata         De gewijzigd user info.
 	 * @return array
 	 *
 	 * @internal Filter for password_change_email.
 	 */
-	public function password_change_email( array $password_change_email, array $user, array $userdata ) : array {
+	public function password_change_email( array $pwd_change_email, array $user, array $userdata ) : array {
 		$emailer = new Email();
 		return $emailer->notify(
 			[
-				'to'         => $password_change_email['to'],
+				'to'         => $pwd_change_email['to'],
 				'subject'    => 'Wachtwoord gewijzigd',
 				'slug'       => 'wachtwoord_wijziging',
 				'parameters' => [

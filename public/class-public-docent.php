@@ -316,7 +316,6 @@ EOT;
 		$actie     = $request->get_param( 'actie' );
 		if ( is_string( $datum_str ) && is_string( $actie ) ) {
 			$maandag = strtotime( 'Monday this week', strtotime( $datum_str ) );
-			$show    = "show_$actie";
 			return new WP_REST_Response(
 				[
 					'content' => match ( $actie ) {

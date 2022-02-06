@@ -268,6 +268,8 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van de communicatie rondom de workshop
+	 *
+	 * @suppressWarnings (PHPMD.ElseExpression)
 	 */
 	protected function form_communicatie() {
 		?>

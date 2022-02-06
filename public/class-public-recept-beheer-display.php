@@ -252,6 +252,8 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van recepten
+	 *
+	 * @suppressWarnings (PHPMD.ElseExpression)
 	 */
 	protected function overzicht() {
 		?>
