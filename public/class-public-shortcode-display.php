@@ -360,11 +360,9 @@ abstract class Public_Shortcode_Display {
 				<label for="kleistad_emailadres_controle">Email adres (controle)</label>
 			</div>
 			<div class="kleistad-col-4">
-				<!--suppress JSUnresolvedVariable -->
 				<input class="kleistad-input" name="email_controle" id="kleistad_emailadres_controle" type="email"
 				required title="Vul ter controle s.v.p. opnieuw het email adres in"
-				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>"
-				oninput="validate_email( this, kleistad_emailadres );"/>
+				value="<?php echo esc_attr( $this->data['input']['email_controle'] ); ?>" />
 			</div>
 		</div>
 		<?php

@@ -1,3 +1,9 @@
+/**
+ * ES lint file voor javascript controle.
+ */
+
+/* global module */
+
 module.exports = {
     "env": {
         "browser": true,

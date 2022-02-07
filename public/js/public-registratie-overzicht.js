@@ -29,12 +29,14 @@
 					open: function() {
 						$( '.ui-button' ).addClass( 'kleistad-button' ).removeClass( 'ui-button' );
 					},
-					buttons: {
-						// noinspection JSUnusedGlobalSymbols .
-						Ok: function() {
-							$( this ).dialog( 'close' );
-						}
+					buttons: [
+						{
+							text: 'OK',
+							click: function() {
+								$( this ).dialog( 'close' );
+							}
 					}
+					]
 				}
 			);
 

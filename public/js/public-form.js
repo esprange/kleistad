@@ -50,16 +50,6 @@ function strtodate( value ) {
 }
 
 /**
- * Vergelijking van twee email inputvelden.
- *
- * @param input   Het inputveld.
- * @param compare Het vergelijkingsveld.
- */
-function validate_email( input, compare ) {
-	input.setCustomValidity( ( input.value === compare.value ) ? '' : 'E-mailadressen zijn niet gelijk' );
-}
-
-/**
  * Jquery part
  */
 ( function( $ ) {
@@ -367,7 +357,16 @@ function validate_email( input, compare ) {
 					)
 				}
 			)
-
+			/**
+			 * Controle voor gelijke email adressen
+			 */
+			.on(
+				'input',
+				'#kleistad_emailadres_controle',
+				function() {
+					this.setCustomValidity( $( this ).val() === $( '#kleistad_email_adres' ).val() ? '' : 'E-mailadressen zijn niet gelijk' );
+				}
+			)
 		}
 	);
 
