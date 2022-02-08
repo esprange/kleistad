@@ -89,7 +89,7 @@ module.exports = function( grunt ) {
 			const pkg  = grunt.file.readJSON( 'package.json' );
 			let readme = grunt.file.read( 'readme.txt' );
 			let plugin = grunt.file.read( pkg.name + '.php' );
-			grunt.file.write( 'README.txt', readme.replace( /Stable tag:.*\s/gm, 'Stable tag: ' + pkg.version ) );
+			grunt.file.write( 'README.txt', readme.replace( /Stable tag:.*\s/gm, 'Stable tag: ' + pkg.version + "\n" ) );
 			grunt.file.write( 'kleistad.php', plugin.replace( /Version:.*\s/gm, 'Version:           ' + pkg.version + "\n" ) );
 		}
 	);

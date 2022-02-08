@@ -457,10 +457,6 @@ a.kleistad-schedule {
 	border: 0;
 }
 
-div.kleistad-werkplek-dagdeel {
-	display: none;
-}
-
 .kleistad-inzet {
 	appearance: none;
 	display: inline-block;
@@ -552,10 +548,6 @@ div.kleistad-werkplek-dagdeel {
 	table.kleistad-reserveringen td,
 	table.kleistad-reserveringen button {
 		font-size: x-small;
-	}
-
-	div.kleistad-werkplek-dagdeel {
-		display: block;
 	}
 
 	div.kleistad-meesters {

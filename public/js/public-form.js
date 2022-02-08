@@ -364,7 +364,7 @@ function strtodate( value ) {
 				'input',
 				'#kleistad_emailadres_controle',
 				function() {
-					this.setCustomValidity( $( this ).val() === $( '#kleistad_email_adres' ).val() ? '' : 'E-mailadressen zijn niet gelijk' );
+					this.setCustomValidity( $( this ).val().toUpperCase() === $( '#kleistad_emailadres' ).val().toUpperCase() ? '' : 'E-mailadressen zijn niet gelijk' );
 				}
 			)
 		}

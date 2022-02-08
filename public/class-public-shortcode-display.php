@@ -218,7 +218,7 @@ abstract class Public_Shortcode_Display {
 				<label for="kleistad_opmerking">Opmerking</label>
 			</div>
 			<div class="kleistad-col-7 kleistad-input">
-				<textarea class="kleistad-input" name="opmerking" id="kleistad_opmerking" maxlength="1000" rows="3" cols="50"><?php echo esc_textarea( $this->data['input']['opmerking'] ); ?></textarea>
+				<textarea class="kleistad-input" name="opmerking" id="kleistad_opmerking" maxlength="1000" rows="5" cols="50"><?php echo esc_textarea( $this->data['input']['opmerking'] ); ?></textarea>
 			</div>
 		</div>
 		<?php
