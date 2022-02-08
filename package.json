@@ -1,6 +1,6 @@
 {
   "name": "kleistad",
-  "version": "7.1.9",
+  "version": "7.1.10",
   "main": "Gruntfile.js",
   "author": "Eric Sprangers",
   "license": "GPL-3.0",
@@ -8,26 +8,15 @@
     "type": "git",
     "url": "https://github.com/esprange/kleistad.git"
   },
-  "stylelint": {
-    "extends": "@wordpress/stylelint-config",
-    "rules": {
-      "color-named": "always-where-possible",
-      "font-weight-notation": "named-where-possible"
-    }
-  },
   "devDependencies": {
-    "@wordpress/stylelint-config": "^19.1.0",
+    "@wordpress/stylelint-config": "^20.0.0",
     "eslint": "^8.6.0",
-    "grunt-checkwpversion": "^0.3.0",
     "grunt-composer": "^0.4.5",
     "grunt-contrib-cssmin": "^3.0.0",
     "grunt-contrib-uglify": "^4.0.1",
     "grunt-shell": "^3.0.0",
     "grunt-wp-readme-to-markdown": "^2.0.1",
-    "grunt-zip": "^0.14.0",
-    "jshint": "^2.13.0",
-    "stylelint": "^13.13.1",
-    "stylelint-config-standard": "^20.0.0"
+    "grunt-zip": "^0.14.0"
   },
   "dependencies": {
     "@types/datatables.net": "^1.10.20",

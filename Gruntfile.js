@@ -12,26 +12,6 @@ module.exports = function( grunt ) {
 	// Project configuration.
 	grunt.initConfig(
 		{
-
-			pkg: grunt.file.readJSON( 'package.json' ),
-
-			checkwpversion: {
-				options:{
-					readme: 'readme.txt',
-					plugin: 'kleistad.php'
-				},
-				check: { // Check plug-in version and stable tag match.
-					version1: 'plugin',
-					version2: 'readme',
-					compare: '=='
-				},
-				check2: { // Check plug-in version and package.json match.
-					version1: 'plugin',
-					version2: '<%= pkg.version %>',
-					compare: '=='
-				}
-			},
-
 			wp_readme_to_markdown: {
 				your_target: {
 					files: {
@@ -100,17 +80,27 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
 	grunt.loadNpmTasks( 'grunt-composer' );
-	grunt.loadNpmTasks( 'grunt-checkwpversion' );
 	grunt.loadNpmTasks( 'grunt-zip' );
 	grunt.loadNpmTasks( 'grunt-shell' );
 	grunt.registerTask(
+		'versie_check',
+		'Versie mutatie in readme en plugin',
+		function (){
+			const pkg  = grunt.file.readJSON( 'package.json' );
+			let readme = grunt.file.read( 'readme.txt' );
+			let plugin = grunt.file.read( pkg.name + '.php' );
+			grunt.file.write( 'README.txt', readme.replace( /Stable tag:.*\s/gm, 'Stable tag: ' + pkg.version ) );
+			grunt.file.write( 'kleistad.php', plugin.replace( /Version:.*\s/gm, 'Version:           ' + pkg.version + "\n" ) );
+		}
+	);
+	grunt.registerTask(
 		'oplevering',
 		[
-			'checkwpversion',
+			'versie_check',
 			'wp_readme_to_markdown',
 			'uglify',
 			'cssmin',
-			'composer:update:no-autoloader:no-dev',
+			'composer:update:no-autoloader:no-dev:verbose',
 			'composer:dump-autoload:optimize',
 			'zip',
 			'shell:command',
