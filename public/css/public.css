@@ -11,9 +11,9 @@ License: GPL3.0
 	--active-inner: white;
 	--background: white;
 	--border-hover: green;
-	--border: #bbc1e1;
-	--disabled: #f6f8ff;
-	--disabled-inner: #e1e6f9;
+	--border: lightgray;
+	--disabled: ghostwhite;
+	--disabled-inner: whitesmoke;
 	--focus: 2px greenyellow;
 	--tab-height: 460px;
 }
@@ -71,14 +71,14 @@ option.kleistad-bank {
 }
 
 .kleistad-fout {
-	background-color: #d4a190;
-	border-left: 6px solid #d67750;
+	background-color: lightsalmon;
+	border-left: 6px solid indianred;
 	padding-left: 10px;
 }
 
 .kleistad-succes {
-	background-color: #a1d490;
-	border-left: 6px solid #57a841;
+	background-color: limegreen;
+	border-left: 6px solid green;
 	padding-left: 10px;
 }
 
@@ -284,7 +284,7 @@ a.kleistad-schedule {
 }
 
 .kleistad-tab {
-	background-color: #dddddd;
+	background-color: gainsboro;
 	display: none;
 	flex-direction: column;
 	overflow-x: hidden;
@@ -340,33 +340,33 @@ a.kleistad-schedule {
 }
 
 .kleistad-pwd-meter {
-	border: 1px solid #ddd;
+	border: 1px solid gainsboro;
 	box-sizing: border-box;
-	color: #23282d;
+	color: black;
 }
 
 .kleistad-pwd-sterk {
-	background-color: #c1e1b9;
-	border-color: #83c373;
+	background-color: limegreen;
+	border-color: green;
 	opacity: 1;
 }
 
 .kleistad-pwd-goed {
-	background-color: #ffe399;
-	border-color: #ffc733;
+	background-color: lemonchiffon;
+	border-color: gold;
 	opacity: 1;
 }
 
 .kleistad-pwd-zwak {
-	background-color: #fbc5a9;
-	border-color: #f78b53;
+	background-color: lightsalmon;
+	border-color: indianred;
 	opacity: 1;
 }
 
 .kleistad-pwd-erg-zwak,
 .kleistad-pwd-ongelijk {
-	background-color: #f1adad;
-	border-color: #e35b5b;
+	background-color: red;
+	border-color: darkred;
 	opacity: 1;
 }
 
@@ -426,7 +426,7 @@ a.kleistad-schedule {
 }
 
 .kleistad-filter-term label:hover {
-	background: #eee;
+	background: whitesmoke;
 	cursor: pointer;
 }
 
@@ -457,6 +457,10 @@ a.kleistad-schedule {
 	border: 0;
 }
 
+div.kleistad-werkplek-dagdeel {
+	display: none;
+}
+
 .kleistad-inzet {
 	appearance: none;
 	display: inline-block;
@@ -465,8 +469,8 @@ a.kleistad-schedule {
 	opacity: 0.9;
 	overflow:hidden;
 	text-align: center;
-	text-overflow:ellipsis;
-	white-space:nowrap;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .kleistad-inzet-optie {
@@ -540,10 +544,6 @@ a.kleistad-schedule {
 	.kleistad-col-kwart {
 		width: 25%;
 	}
-}
-
-div.kleistad-werkplek-dagdeel {
-	display: none;
 }
 
 @media screen and (max-width: 712px) {
