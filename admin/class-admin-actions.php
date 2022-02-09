@@ -107,22 +107,6 @@ class Admin_Actions {
 	}
 
 	/**
-	 * Aangeroepen na update van de kleistad opties.
-	 *
-	 * @param array $oud Oude waarde.
-	 * @param array $nieuw Nieuwe waarde.
-	 * @since 7.0.2
-	 *
-	 * @internal Action for update_option_kleistad-setup.
-	 */
-	public function opties_gewijzigd( array $oud, array $nieuw ) {
-		if ( $oud['max_activiteit'] !== $nieuw['max_activiteit'] ||
-			$oud['actpauze'] !== $nieuw['actpauze'] ) {
-			do_action( 'kleistad_planning' );
-		}
-	}
-
-	/**
 	 * Bereid het background proces voor.
 	 *
 	 * @internal Action for plugins_loaded.
@@ -167,16 +151,6 @@ class Admin_Actions {
 	}
 
 	/**
-	 * Maak een nieuwe planning aan voor workshops
-	 *
-	 * @internal Action voor kleistad_planning.
-	 */
-	public function planning() {
-		$planning_handler = new Workshopplanning();
-		$planning_handler->dispatch();
-	}
-
-	/**
 	 * Registreer de kleistad settings, uitgevoerd tijdens admin init.
 	 *
 	 * @since   4.0.87
@@ -196,9 +170,6 @@ class Admin_Actions {
 		}
 		if ( ! wp_next_scheduled( 'kleistad_daily_gdpr' ) ) {
 			wp_schedule_event( strtotime( '01:00' ), 'daily', 'kleistad_daily_gdpr' );
-		}
-		if ( ! wp_next_scheduled( 'kleistad_planning' ) ) {
-			wp_schedule_event( $time + ( HOUR_IN_SECONDS - ( $time % HOUR_IN_SECONDS ) ), 'hourly', 'kleistad_planning' );
 		}
 		register_setting( 'kleistad-opties', 'kleistad-opties', [ 'sanitize_callback' => [ $this->instellingen_handler, 'validate_settings' ] ] );
 		register_setting( 'kleistad-setup', 'kleistad-setup', [ 'sanitize_callback' => [ $this->instellingen_handler, 'validate_settings' ] ] );

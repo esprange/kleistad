@@ -48,13 +48,17 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 				'dagdeel' => MIDDAG,
 				'status'  => Docent::BESCHIKBAAR,
 			],
+			[
+				'datum'   => strtotime( 'tomorrow + 2 day' ),
+				'dagdeel' => NAMIDDAG,
+				'status'  => Docent::BESCHIKBAAR,
+			],
 		];
 		$docent1->beschikbaarlijst( $lijst );
-		delete_transient( Workshopplanning::META_KEY );
 		/**
 		 * Nu is er wel beschikbaarheid dus twee dagen.
 		 */
-		$this->assertEquals( 2, count( $planning->geef_beschikbaaarheid() ), 'Na vulling geef beschikbaarheid fout' );
+		$this->assertEquals( 3, count( $planning->geef_beschikbaaarheid() ), 'Na vulling geef beschikbaarheid fout' );
 
 		$aantal_weken = (int) floor( ( strtotime( '+ 3 month' ) - strtotime( 'tomorrow' ) ) / WEEK_IN_SECONDS );
 
@@ -67,11 +71,10 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 			],
 		];
 		$docent2->beschikbaarlijst( $lijst );
-		delete_transient( Workshopplanning::META_KEY );
 		/**
 ]		 * Een docent die één dag per week beschikbaar is naast de bestaande docent.
 		 */
-		$this->assertEquals( 2 + $aantal_weken, count( $planning->geef_beschikbaaarheid() ), 'Na vulling met standaard geef beschikbaarheid fout' );
+		$this->assertEquals( 3 + $aantal_weken, count( $planning->geef_beschikbaaarheid() ), 'Na vulling met standaard geef beschikbaarheid fout' );
 
 		$aanvraag = new WorkshopAanvraag();
 		$aanvraag->start(
@@ -87,11 +90,10 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 				'vraag'      => 'test',
 			]
 		);
-		delete_transient( Workshopplanning::META_KEY );
 		/**
 		 * Nu is er een aanvraag dus er moet nu één dag minder beschikbaar zijn.
 		 */
-		$this->assertEquals( 2 + $aantal_weken - 1, count( $planning->geef_beschikbaaarheid() ), 'Na nieuwe aanvraag geef beschikbaarheid fout' );
+		$this->assertEquals( 3 + $aantal_weken - 1, count( $planning->geef_beschikbaaarheid() ), 'Na nieuwe aanvraag geef beschikbaarheid fout' );
 
 		$workshop             = new Workshop();
 		$workshop->naam       = 'Test';
@@ -101,11 +103,10 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 		$workshop->contact    = 'tester';
 		$workshop->email      = 'tester@test.nl';
 		$workshop->save();
-		delete_transient( Workshopplanning::META_KEY );
 		/**
 		 * Nu is er een workshop dus er moet nu weer één dag minder beschikbaar zijn.
 		 */
-		$this->assertEquals( 2 + $aantal_weken - 1 - 1, count( $planning->geef_beschikbaaarheid() ), 'Na nieuwe workshop geef beschikbaarheid fout' );
+		$this->assertEquals( 3 + $aantal_weken - 1 - 1, count( $planning->geef_beschikbaaarheid() ), 'Na nieuwe workshop geef beschikbaarheid fout' );
 
 		$cursus              = new Cursus();
 		$cursus->start_datum = strtotime( '+ 1 week' );
@@ -114,11 +115,10 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 		$cursus->start_tijd  = strtotime( '13:00' );
 		$cursus->eind_tijd   = strtotime( '15:30' );
 		$cursus->save();
-		delete_transient( Workshopplanning::META_KEY );
 		/**
 		 * Nu zijn er ook nog twee lessen, dus er moeten nu weer twee dagen minder beschikbaar zijn.
 		 */
-		$this->assertEquals( 2 + $aantal_weken - 1 - 1 - 2, count( $planning->geef_beschikbaaarheid() ), 'Na nieuwe cursus geef beschikbaarheid fout' );
+		$this->assertEquals( 3 + $aantal_weken - 1 - 1 - 2, count( $planning->geef_beschikbaaarheid() ), 'Na nieuwe cursus geef beschikbaarheid fout' );
 	}
 
 }

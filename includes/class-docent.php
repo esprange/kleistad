@@ -76,6 +76,5 @@ class Docent extends Gebruiker {
 				( 10 > $datum ? self::STANDAARD : self::BESCHIKBAAR ) : self::NIET_BESCHIKBAAR;
 		}
 		update_user_meta( $this->ID, self::META_KEY, $this->beschikbaardata );
-		do_action( 'kleistad_planning' );
 	}
 }

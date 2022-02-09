@@ -11,25 +11,14 @@
 
 namespace Kleistad;
 
-use WP_Async_Request;
-
 /**
  * Kleistad Workshopplanning class.
  *
  * @since 7.0.0
  */
-class Workshopplanning extends WP_Async_Request {
-
-	const META_KEY = 'kleistad_workshopplanning';
+class Workshopplanning {
 
 	const WORKSHOP_DAGDEEL = [ OCHTEND, MIDDAG, NAMIDDAG ];
-
-	/**
-	 * Unieke titel, benodigd voor background processing
-	 *
-	 * @var string $action Background proces titel.
-	 */
-	protected $action = 'workshopplanning';
 
 	/**
 	 * Beschikbaarheid, een array met
@@ -47,34 +36,12 @@ class Workshopplanning extends WP_Async_Request {
 	 * @return array De beschikbaarheid.
 	 */
 	public function geef_beschikbaaarheid() : array {
-		$data = get_transient( self::META_KEY );
-		if ( false === $data ) {
-			$this->handle();
-			$data = $this->beschikbaarheid;
-		}
-		$beschikbaarheid = [];
-		foreach ( array_keys( $data ) as $datum_dagdeel ) {
-			list( $datum, $dagdeel ) = explode( '_', $datum_dagdeel );
-			$beschikbaarheid[]       = [
-				'datum'   => $datum,
-				'dagdeel' => $dagdeel,
-			];
-		}
-		return $beschikbaarheid;
-	}
-
-	/**
-	 * Bepaal de beschikbaarheid en sla deze op in een transient.
-	 * eventuele parameters zijn beschikbaar via POST
-	 */
-	protected function handle() {
 		$start = strtotime( 'tomorrow 0:00' );
 		$eind  = strtotime( '+ ' . opties()['weken_workshop'] . ' week 0:00' );
 		$this->start( $start, $eind );
 		$this->bepaal_docent_beschikbaarheid( $start, $eind );
 		$this->bepaal_activiteit_beschikbaarheid( $start, $eind );
-		$this->schoon_beschikbaarheid();
-		set_transient( self::META_KEY, $this->beschikbaarheid, DAY_IN_SECONDS );
+		return $this->schoon_beschikbaarheid();
 	}
 
 	/**
@@ -172,24 +139,33 @@ class Workshopplanning extends WP_Async_Request {
 
 	/**
 	 * Minimaliseer de beschikbaarheid voor alleen die dagdelen waarbij er nog ruimte voor activiteiten is en een docent beschikbaar.
+	 *
+	 * @return array De beschikbaarheid.
 	 */
-	private function schoon_beschikbaarheid() {
+	private function schoon_beschikbaarheid() : array {
 		$maximum         = opties()['max_activiteit'] ?? 1;
 		$activiteitpauze = opties()['actpauze'] ?? [];
+		$result          = [];
 		foreach ( $this->beschikbaarheid as $key => $dag_dagdeel ) {
 			if ( $maximum <= $dag_dagdeel['aantal'] || ! $dag_dagdeel['docent'] ) {
 				unset( $this->beschikbaarheid[ $key ] );
 				continue;
 			}
-			$dag = strtotime( explode( '_', $key )[0] );
+			list( $datum, $dagdeel ) = explode( '_', $key );
 			foreach ( $activiteitpauze as $pauze ) {
 				$pauze_start = strtotime( $pauze['start'] );
 				$pauze_eind  = strtotime( $pauze['eind'] );
-				if ( $dag >= $pauze_start && $dag <= $pauze_eind ) {
+				if ( $datum >= $pauze_start && $datum <= $pauze_eind ) {
 					unset( $this->beschikbaarheid[ $key ] );
+					break;
 				}
 			}
+			$result[] = [
+				'datum'   => $datum,
+				'dagdeel' => $dagdeel,
+			];
 		}
+		return $result;
 	}
 
 }
