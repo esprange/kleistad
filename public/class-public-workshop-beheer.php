@@ -71,8 +71,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'contact'    => $aanvraag->contact,
 				'telnr'      => $aanvraag->telnr,
 				'datum'      => date( 'd-m-Y', $aanvraag->plandatum ?: strtotime( 'tomorrow' ) ),
-				'start_tijd' => WorkshopAanvraag::MOMENT[ $aanvraag->dagdeel ]['start'],
-				'eind_tijd'  => WorkshopAanvraag::MOMENT[ $aanvraag->dagdeel ]['eind'],
+				'start_tijd' => WorkshopAanvraag::MOMENT[ $aanvraag->dagdeel ?? OCHTEND ]['start'],
+				'eind_tijd'  => WorkshopAanvraag::MOMENT[ $aanvraag->dagdeel ?? OCHTEND ]['eind'],
 				'technieken' => $aanvraag->technieken ?? [],
 			],
 			$this->formulier()
