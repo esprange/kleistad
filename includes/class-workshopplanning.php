@@ -134,7 +134,7 @@ class Workshopplanning {
 	 * @return string
 	 */
 	private function index( int $datum, string $dagdeel ) : string {
-		return date( 'Y-m-d', $datum ) . '_' . strtolower( $dagdeel );
+		return "$datum-" . strtolower( $dagdeel );
 	}
 
 	/**
@@ -143,27 +143,30 @@ class Workshopplanning {
 	 * @return array De beschikbaarheid.
 	 */
 	private function schoon_beschikbaarheid() : array {
+		static $result = null;
+		if ( is_array( $result ) ) {
+			return $result;
+		}
 		$maximum         = opties()['max_activiteit'] ?? 1;
 		$activiteitpauze = opties()['actpauze'] ?? [];
 		$result          = [];
 		foreach ( $this->beschikbaarheid as $key => $dag_dagdeel ) {
 			if ( $maximum <= $dag_dagdeel['aantal'] || ! $dag_dagdeel['docent'] ) {
-				unset( $this->beschikbaarheid[ $key ] );
 				continue;
 			}
-			list( $datum, $dagdeel ) = explode( '_', $key );
+			list( $datum, $dagdeel ) = explode( '-', $key );
+			$pauzeren                = false;
 			foreach ( $activiteitpauze as $pauze ) {
 				$pauze_start = strtotime( $pauze['start'] );
 				$pauze_eind  = strtotime( $pauze['eind'] );
-				if ( $datum >= $pauze_start && $datum <= $pauze_eind ) {
-					unset( $this->beschikbaarheid[ $key ] );
-					break;
-				}
+				$pauzeren    = $pauzeren || ( $datum >= $pauze_start && $datum <= $pauze_eind );
 			}
-			$result[] = [
-				'datum'   => $datum,
-				'dagdeel' => $dagdeel,
-			];
+			if ( ! $pauzeren ) {
+				$result[] = [
+					'datum'   => date( 'Y-m-d', $datum ),
+					'dagdeel' => $dagdeel,
+				];
+			}
 		}
 		return $result;
 	}
