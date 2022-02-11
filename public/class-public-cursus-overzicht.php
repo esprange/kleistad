@@ -43,7 +43,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 		$cursus                = new Cursus( $cursus_id );
 		$inschrijving          = new Inschrijving( $cursus_id, $cursist_id );
 		$cursist               = get_userdata( $cursist_id );
-		$lopend                = $cursus->lopend( $inschrijving->datum );
+		$lopend                = $cursus->lopend( strtotime( 'today' ) );
 		$this->data['cursus']  = [
 			'id'          => $cursus_id,
 			'lessen'      => $lopend['lessen'],
@@ -276,7 +276,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 						'betaald'        => $inschrijving->ingedeeld && $order->gesloten,
 						'restant_email'  => $inschrijving->restant_email,
 						'herinner_email' => $inschrijving->herinner_email,
-						'wachtlopend'    => ! $inschrijving->ingedeeld && $inschrijving->datum > $cursus->start_datum && ! $order->id,
+						'wachtlopend'    => ! $inschrijving->ingedeeld && ! $order->id,
 						'wachtlijst'     => ! $inschrijving->ingedeeld && $inschrijving->wacht_datum && ! $inschrijving->cursus->is_lopend(),
 					]
 				);
