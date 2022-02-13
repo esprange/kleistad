@@ -54,6 +54,7 @@ option.kleistad-bank {
 .kleistad-shortcode .dataTables_length select {
 	padding-right: 25px;
 }
+
 /* stylelint-enable selector-class-pattern */
 
 /* voor de jqueryui dialog */
@@ -123,7 +124,7 @@ option.kleistad-bank {
 	border: 1px solid;
 	box-shadow: 5px 10px lightgrey;
 	box-sizing: border-box;
-	float:right;
+	float: right;
 	padding: 15px;
 	width: 300px;
 }
@@ -464,7 +465,7 @@ a.kleistad-schedule {
 	height: 25px;
 	max-width: 11ch;
 	opacity: 0.9;
-	overflow:hidden;
+	overflow: hidden;
 	text-align: center;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -494,7 +495,7 @@ a.kleistad-schedule {
 @media screen and (min-width: 768px) {
 
 	div.kleistad-tab {
-		height : var(--tab-height);
+		height: var(--tab-height);
 		overflow-y: auto;
 	}
 
