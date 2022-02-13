@@ -4,10 +4,11 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.9  
-**Stable tag:** 7.1.13  
+**Stable tag:** 7.2.0  
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/esprange/kleistad/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/esprange/kleistad/?branch=master)
+
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/0c21c0e2b3d548079260b477857b179b)](https://www.codacy.com/gh/esprange/kleistad/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=esprange/kleistad&amp;utm_campaign=Badge_Grade)
 
 Wordpress plugin for Stichting Kleistad, Amersfoort (The Netherlands), see www.kleistad.nl.
 

@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.9
-Stable tag: 7.1.13
+Stable tag: 7.2.0
+
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0c21c0e2b3d548079260b477857b179b)](https://www.codacy.com/gh/esprange/kleistad/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=esprange/kleistad&amp;utm_campaign=Badge_Grade)
