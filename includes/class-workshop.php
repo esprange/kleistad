@@ -346,13 +346,13 @@ class Workshop extends Artikel {
 			'slug'        => "workshop$type",
 			'subject'     => sprintf( self::EMAIL_SUBJECT[ $type ], $this->id ) . $this->naam,
 		];
-		if ( in_array( $type, [ 'aanvraag_bevestiging', 'bevestiging', 'herbevestiging', 'afzegging', 'reactie' ], true ) ) {
+		if ( in_array( $type, [ '_aanvraag_bevestiging', '_bevestiging', '_herbevestiging', '_afzegging', '_reactie' ], true ) ) {
 			$mbx                          = 'production' === wp_get_environment_type() ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . 'workshops@' );
 			$email_parameters['from']     = $mbx . $emailer->verzend_domein;
 			$email_parameters['reply-to'] = $mbx . $emailer->domein;
 			$email_parameters['auto']     = false;
 		}
-		if ( in_array( $type, [ 'bevestiging', 'herbevestiging', 'afzegging', 'reactie' ], true ) ) {
+		if ( in_array( $type, [ '_bevestiging', '_herbevestiging', '_afzegging', '_reactie' ], true ) ) {
 			$email_parameters['sign'] = wp_get_current_user()->display_name . ',<br/>Kleistad';
 		}
 		if ( $factuur && $this->organisatie_email ) {

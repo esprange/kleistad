@@ -108,8 +108,7 @@ class WorkshopActie {
 			],
 		];
 		$this->workshop->save();
-		$this->workshop->verzend_email( 'aanvraag_bevestiging' );
-
+		$this->workshop->verzend_email( '_aanvraag_bevestiging' );
 	}
 
 	/**
@@ -132,7 +131,7 @@ class WorkshopActie {
 			$this->workshop->communicatie
 		);
 		$this->workshop->save();
-		$this->workshop->verzend_email( 'reactie' );
+		$this->workshop->verzend_email( '_reactie' );
 	}
 
 	/**

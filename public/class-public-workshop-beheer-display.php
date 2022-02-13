@@ -122,9 +122,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-			$this->contact_details( $readonly );
-			$this->planning_details( $readonly );
-			$this->kosten_details( $readonly );
+			$this->contact_details( $readonly )->planning_details( $readonly )->kosten_details( $readonly );
 		?>
 		?>
 		<div class="kleistad-row">
@@ -194,9 +192,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @param bool $readonly Of de gegevens wijzigbaar zijn.
 	 *
-	 * @return void
+	 * @return Public_Workshop_Beheer_Display
 	 */
-	private function contact_details( bool $readonly ) {
+	private function contact_details( bool $readonly ) : Public_Workshop_Beheer_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_contact">Naam contact</label></div>
@@ -229,6 +227,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
+		return $this;
 	}
 
 	/**
@@ -236,9 +235,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @param bool $readonly  Of de gegevens wijzigbaar zijn.
 	 *
-	 * @return void
+	 * @return Public_Workshop_Beheer_Display
 	 */
-	private function planning_details( bool $readonly ) {
+	private function planning_details( bool $readonly ) : Public_Workshop_Beheer_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_aantal">Aantal deelnemers</label></div>
@@ -292,6 +291,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
+		return $this;
 	}
 
 	/**

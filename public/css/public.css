@@ -150,8 +150,9 @@ option.kleistad-bank {
 	overflow-y: hidden;
 }
 
-div.kleistad-workshop-aanvraag {
-]	background-color: lightblue;
+div.kleistad-workshop-aanvraag,
+div.kleistad-workshop-nieuw {
+	background-color: lightblue;
 }
 
 div.kleistad-workshop-vraag {
