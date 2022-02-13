@@ -136,7 +136,7 @@ option.kleistad-bank {
 	padding: 10px;
 }
 
-div.kleistad-workshop-correspondentie {
+.kleistad-workshop-communicatie {
 	border: 1px solid gray;
 	color: black;
 	font-size: small;
@@ -144,14 +144,14 @@ div.kleistad-workshop-correspondentie {
 	padding: 5px;
 }
 
-div.kleistad-workshop-correspondentie-folded {
+.kleistad-workshop-communicatie-folded {
 	background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 10%, rgba(255, 255, 255, 0) 90%);
 	height: 10em;
 	overflow-y: hidden;
 }
 
 div.kleistad-workshop-aanvraag {
-	background-color: lightblue;
+]	background-color: lightblue;
 }
 
 div.kleistad-workshop-vraag {

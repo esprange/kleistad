@@ -32,11 +32,11 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				'email_controle' => '',
 				'contact'        => '',
 				'telnr'          => '',
-				'omvang'         => '',
-				'plandatum'      => '',
+				'aantal'         => '4',
+				'datum'          => '',
 				'dagdeel'        => '',
 				'technieken'     => [],
-				'vraag'          => '',
+				'opmerking'      => '',
 			];
 		}
 		$planning = new Workshopplanning();
@@ -61,10 +61,10 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 				'email_controle' => FILTER_SANITIZE_EMAIL,
 				'contact'        => FILTER_SANITIZE_STRING,
 				'naam'           => FILTER_SANITIZE_STRING,
-				'omvang'         => FILTER_SANITIZE_STRING,
+				'aantal'         => FILTER_SANITIZE_NUMBER_INT,
 				'telnr'          => FILTER_SANITIZE_STRING,
-				'vraag'          => FILTER_SANITIZE_STRING,
-				'plandatum'      => FILTER_SANITIZE_STRING,
+				'opmerking'      => FILTER_SANITIZE_STRING,
+				'datum'          => FILTER_SANITIZE_STRING,
 				'dagdeel'        => FILTER_SANITIZE_STRING,
 				'technieken'     => [
 					'filter'  => FILTER_SANITIZE_STRING,
@@ -96,7 +96,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $this->melding( $error );
 		}
-		$this->data['input']['plandatum'] = strtotime( "{$this->data['input']['plandatum']} 0:00" );
+		$this->data['input']['datum'] = strtotime( "{$this->data['input']['datum']} 0:00" );
 		return $this->save();
 	}
 
@@ -109,9 +109,8 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 * @since   5.6.0
 	 */
 	protected function save(): array {
-		$workshopaanvraag = new WorkshopAanvraag();
-		$workshopaanvraag->start( $this->data['input'] );
-
+		$workshop = new Workshop();
+		$workshop->actie->aanvraag( $this->data['input'] );
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'Dank voor de aanvraag! Je krijgt een email ter bevestiging en er wordt spoedig contact met je opgenomen' ),

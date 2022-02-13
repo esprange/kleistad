@@ -136,7 +136,6 @@ class Public_Actions {
 	 */
 	public static function register_post_types() {
 		Recept::create_type();
-		WorkshopAanvraag::create_type();
 		Email::create_type();
 	}
 
@@ -156,7 +155,7 @@ class Public_Actions {
 	 */
 	public function rcv_email() {
 		$receiver = new EmailReceiver();
-		$receiver->ontvang( [ '\\' . __NAMESPACE__ . '\\WorkshopAanvraag', 'verwerk' ] );
+		$receiver->ontvang( [ '\\' . __NAMESPACE__ . '\\WorkshopActie', 'verwerk' ] );
 	}
 
 	/**

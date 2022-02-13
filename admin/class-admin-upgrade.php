@@ -7,8 +7,8 @@
  *
  * @package    Kleistad
  * @subpackage Kleistad/admin
+ *
  * @suppressWarnings(PHPMD)
- * @noinspection PhpUnusedPrivateMethodInspection
  */
 
 namespace Kleistad;
@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 143;
+	const DBVERSIE = 147;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -201,6 +201,7 @@ class Admin_Upgrade {
 			definitief tinyint(1) DEFAULT 0,
 			betaling_email tinyint(1) DEFAULT 0,
 			aanvraag_id int(10) DEFAULT 0,
+			communicatie longblob DEFAULT NULL,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -256,12 +257,38 @@ class Admin_Upgrade {
 	// phpcs:disable
 
 	/**
+	 * Merge de communicatie van de workshop aanvragen in de workshop records.
+	 *
+	 * @return void
+	 */
+	private function convert_workshopaanvraag() {
+		global $wpdb;
+		$posts = get_posts(
+			[
+				'post_type'      => 'kleistad_workshopreq',
+				'posts_per_page' => -1,
+				'post_status'    => 'any',
+			]
+		);
+		foreach ( $posts as $post ) {
+			$details      = maybe_unserialize( $post->post_excerpt );
+			$workshop_id  = intval( $details['workshop_id'] );
+			if ( $workshop_id ) {
+				$communicatie = base64_decode( $post->post_content );
+				$wpdb->query(
+					"UPDATE {$wpdb->prefix}kleistad_workshops SET communicatie = '$communicatie' WHERE id = $workshop_id AND communicatie IS NULL" );
+			}
+		}
+	}
+
+	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
 		/**
 		 * Conversie naar ...
 		 */
+		$this->convert_workshopaanvraag();
 	}
 
 }

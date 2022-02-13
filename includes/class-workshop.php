@@ -39,6 +39,7 @@ use Exception;
  * @property bool   definitief
  * @property bool   betaling_email
  * @property int    aanvraag_id
+ * @property array  communicatie
  */
 class Workshop extends Artikel {
 
@@ -99,6 +100,7 @@ class Workshop extends Artikel {
 				'definitief'        => 0,
 				'betaling_email'    => 0,
 				'aanvraag_id'       => 0,
+				'communicatie'      => maybe_serialize( [] ),
 			];
 			return;
 		}
@@ -120,13 +122,13 @@ class Workshop extends Artikel {
 		if ( in_array( $attribuut, [ 'vervallen', 'definitief', 'betaling_email' ], true ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
-
 		return match ( $attribuut ) {
-			'datum'      => strtotime( $this->data['datum'] ),
-			'technieken' => json_decode( $this->data['technieken'], true ),
-			'code'       => "W{$this->data['id']}",
-			'telnr'      => $this->data['telefoon'],
-			default      => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
+			'datum'        => strtotime( $this->data['datum'] ),
+			'technieken'   => json_decode( $this->data['technieken'], true ),
+			'code'         => "W{$this->data['id']}",
+			'telnr'        => $this->data['telefoon'],
+			'communicatie' => maybe_unserialize( $this->data['communicatie'] ) ?: [],
+			default        => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
 		};
 	}
 
@@ -153,6 +155,9 @@ class Workshop extends Artikel {
 				break;
 			case 'telnr':
 				$this->data['telefoon'] = $waarde;
+				break;
+			case 'communicatie':
+				$this->data['communicatie'] = maybe_serialize( $waarde );
 				break;
 			default:
 				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
@@ -234,10 +239,8 @@ class Workshop extends Artikel {
 	public function save() : int {
 		global $wpdb;
 		$wpdb->replace( "{$wpdb->prefix}kleistad_workshops", $this->data );
-		$this->id         = $wpdb->insert_id;
-		$timezone         = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
-		$workshopaanvraag = new WorkshopAanvraag( $this->aanvraag_id );
-		$workshopaanvraag->gepland( $this->id );
+		$this->id = $wpdb->insert_id;
+		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 
 		try {
 			$afspraak             = new Afspraak( sprintf( '%s%06d', self::AFSPRAAK_PREFIX, $this->id ) );
@@ -328,6 +331,22 @@ class Workshop extends Artikel {
 				$email_parameters['reply-to'] = "$emailer->info@$emailer->domein";
 		}
 		return $emailer->send( $email_parameters );
+	}
+
+	/**
+	 * Zoek de workshop op basis van het aanvraag id. Deze functie is alleen nodig om tijdelijk nog communicatie over workshopaanvragen te behandelen (< 7.2)
+	 *
+	 * @param int $aanvraag_id Het id van de aanvraag.
+	 *
+	 * @return Workshop|null
+	 */
+	public static function vind_aanvraag_id( int $aanvraag_id ) : ?Workshop {
+		global $wpdb;
+		$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE aanvraag_id = %d", $aanvraag_id ), ARRAY_A );
+		if ( $data ) {
+			return new Workshop( $data['id'], $data );
+		}
+		return null;
 	}
 
 }

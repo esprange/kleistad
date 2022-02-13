@@ -19,28 +19,27 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * Render het formulier
 	 */
 	protected function toevoegen() {
-		$this->form();
+		$this->wijzigen();
 	}
 
 	/**
 	 * Render het formulier
 	 */
 	protected function wijzigen() {
-		$this->form();
-	}
-
-	/**
-	 * Render het formulier
-	 */
-	protected function inplannen() {
-		$this->form();
-	}
-
-	/**
-	 * Render het formulier
-	 */
-	protected function tonen() {
-		$this->form( 'form_communicatie' );
+		?>
+		<div id="kleistad_workshopbeheer" style="background-color: gainsboro;">
+			<ul>
+				<li><a href="#tabs_detail">Details</a></li>
+				<li><a href="#tabs_communicatie">Communicatie</a></li>
+			</ul>
+			<div id="tabs_detail">
+				<?php $this->form_content(); ?>
+			</div>
+			<div id="tabs_communicatie">
+				<?php $this->form_communicatie(); ?>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -48,38 +47,6 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		?>
-		<strong>Vraag en Antwoord</strong>
-		<table id="kleistad_aanvragen" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 0, "desc" ]]' >
-			<thead>
-			<tr>
-				<th>Datum</th>
-				<th>Beschrijving</th>
-				<th>Status</th>
-				<th data-orderable="false"></th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php
-			foreach ( $this->data['aanvragen'] as $aanvraag ) :
-				?>
-				<tr>
-					<td data-sort="<?php echo esc_attr( $aanvraag['datum'] ); ?>"><?php echo esc_html( strftime( '%d-%m-%Y %H:%M', $aanvraag['datum'] ) ); ?></td>
-					<td><?php echo esc_html( $aanvraag['titel'] ); ?></td>
-					<td><?php echo esc_html( $aanvraag['status'] ); ?></td>
-					<td>
-						<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="tonen" title="toon_aanvraag" class="kleistad-edit kleistad-edit-link" >
-							&nbsp;
-						</a>&nbsp;&nbsp;
-						<a href="#" data-id="<?php echo esc_attr( $aanvraag['id'] ); ?>" data-actie="inplannen" title="plan_workshop" class="kleistad-schedule kleistad-edit-link" >
-							&nbsp;
-						</a>
-					</td>
-				</tr>
-			<?php endforeach ?>
-			</tbody>
-		</table>
-		<br/>
-		<strong>Plannen</strong>
 		<table id="kleistad_workshops" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
 			<thead>
 			<tr>
@@ -90,6 +57,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<th>Aantal</th>
 				<th>Tijd</th>
 				<th>Status</th>
+				<th>Communicatie</th>
 				<th data-orderable="false"></th>
 			</tr>
 			</thead>
@@ -105,6 +73,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
 					<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
 					<td><?php echo esc_html( $workshop['status'] ); ?></td>
+					<td><?php echo esc_html( $workshop['cstatus'] ); ?></td>
 					<td>
 						<a href="#" data-id="<?php echo esc_attr( $workshop['id'] ); ?>" data-actie="wijzigen" title="wijzig workshop" class="kleistad-edit kleistad-edit-link" >
 							&nbsp;
@@ -268,44 +237,10 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Toon het overzicht van de communicatie rondom de workshop
-	 *
-	 * @suppressWarnings (PHPMD.ElseExpression)
 	 */
 	protected function form_communicatie() {
 		?>
-		<input type="hidden" name="casus_id" value="<?php echo esc_attr( $this->data['casus']['casus_id'] ); ?>"/>
 		<table class="kleistad-formtable" >
-			<tr>
-				<th>Soort activiteit</th>
-				<td><?php echo esc_html( ucfirst( $this->data['casus']['naam'] ) ); ?></td>
-			</tr>
-			<tr>
-				<th>Contact</th>
-				<td><?php echo esc_html( $this->data['casus']['contact'] ); ?></td>
-			</tr>
-			<tr>
-				<td><?php echo esc_html( $this->data['casus']['email'] ); ?></td>
-				<td><?php echo esc_html( $this->data['casus']['telnr'] ); ?></td>
-			</tr>
-			<tr>
-				<th>Omvang</th>
-				<td><?php echo esc_html( $this->data['casus']['omvang'] ); ?></td>
-			</tr>
-			<tr>
-				<?php if ( $this->data['casus']['periode'] ) : ?>
-				<th>Periode</th>
-				<td><?php echo esc_html( $this->data['casus']['periode'] ); ?></td>
-				<?php else : ?>
-				<th>Planning</th>
-				<td><?php echo esc_html( date( 'd-m-Y', $this->data['casus']['plandatum'] ) . " {$this->data['casus']['dagdeel']}" ); ?></td>
-				<?php endif; ?>
-			</tr>
-			<?php if ( count( $this->data['casus']['technieken'] ) ) : ?>
-			<tr>
-				<th>Technieken</th>
-				<td><?php echo esc_html( implode( ', ', $this->data['casus']['technieken'] ) ); ?></td>
-			</tr>
-			<?php endif; ?>
 			<tr>
 				<td colspan="2" ><label for="kleistad_reactie">Reactie</label></td>
 			</tr>
@@ -316,11 +251,11 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right">Terug</button>
 		<div>
-		<?php foreach ( $this->data['casus']['correspondentie'] as $correspondentie ) : ?>
-			<div class="kleistad-workshop-correspondentie kleistad-workshop-correspondentie-folded kleistad-workshop-<?php echo esc_attr( $correspondentie['type'] ); ?>" >
-				<strong><?php echo esc_html( ucfirst( $correspondentie['type'] ) . ' van ' . $correspondentie['from'] . ' op ' . $correspondentie['tijd'] ); ?></strong>
-				<p><?php echo esc_html( $correspondentie['subject'] ); ?></p>
-				<?php echo nl2br( $correspondentie['tekst'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<?php foreach ( $this->data['workshop']['communicatie'] as $communicatie ) : ?>
+			<div class="kleistad-workshop-communicatie kleistad-workshop-communicatie-folded kleistad-workshop-<?php echo esc_attr( $communicatie['type'] ); ?>" >
+				<strong><?php echo esc_html( ucfirst( $communicatie['type'] ) . ' van ' . $communicatie['from'] . ' op ' . $communicatie['tijd'] ); ?></strong>
+				<p><?php echo esc_html( $communicatie['subject'] ); ?></p>
+				<?php echo nl2br( $communicatie['tekst'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<br/>
 			</div>
 			<div style="text-align:center;">

@@ -32,7 +32,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		<div class="kleistad-tab"><?php $this->aanvraag(); ?></div>
 		<div class="kleistad-tab"><?php $this->planning(); ?></div>
 		<div class="kleistad-tab"><?php $this->contactinfo()->email()->telnr(); ?></div>
-		<div class="kleistad-tab"><?php $this->commentaar(); ?></div>
+		<div class="kleistad-tab"><?php $this->opmerking( 'Heb je nog nadere vragen, stel ze gerust. Of laat hier opmerkingen achter die van belang zouden kunnen zijn voor Kleistad' ); ?></div>
 		<div class="kleistad-tab"><?php $this->bevestiging(); ?></div>
 		<?php
 	}
@@ -63,32 +63,11 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		</div>
 		<?php endforeach; ?>
 		<div class="kleistad-row" >
-			<div class="kleistad-col-10">
-				<label class="kleistad-label">Hoeveel deelnemers verwacht je ?</label>
+			<div class="kleistad-col-3">
+				<label class="kleistad-label" for="kleistad_aantal">Hoeveel deelnemers verwacht je ?</label>
 			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-4 kleistad-label" >
-				<input name="omvang" id="kleistad_klein" type="radio" required data-limiet="6" value="6 of minder" <?php checked( $this->data['input']['omvang'], '6 of minder' ); ?> >
-				<label for="kleistad_klein" >6 of minder</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-4 kleistad-label" >
-				<input name="omvang" id="kleistad_middel" type="radio" required data-limiet="12" value="tussen 7 en 12" <?php checked( $this->data['input']['omvang'], 'tussen 7 en 12' ); ?> >
-				<label for="kleistad_middel" >tussen 7 en 12</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-4 kleistad-label" >
-				<input name="omvang" id="kleistad_groot" type="radio" required data-limiet="20" value="13 of meer" <?php checked( $this->data['input']['omvang'], 'meer dan 12' ); ?> >
-				<label for="kleistad_groot" >meer dan 12</label>
+			<div class="kleistad-col-1">
+				<input name="aantal" id="kleistad_aantal" type="number" required min="1" max="99" value="<?php echo esc_attr( $this->data['input']['aantal'] ); ?>">
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -107,6 +86,11 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 			</span>
 			</div>
 			<?php endforeach; ?>
+		</div>
+		<div class="kleistad-row kleistad-tab-footer" >
+			<div class="kleistad-col-10">
+				Het definitieve aantal deelnemer graag uiterlijk 2 weken vooraf doorgeven.<br/>Vanaf 12 deelnemers kan er gekozen worden voor twee technieken.
+			</div>
 		</div>
 
 		<?php
@@ -150,10 +134,10 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-3">
-				<label for="kleistad_plandatum" class="kleistad-label">Wanneer moet het plaatsvinden ?</label>
+				<label for="kleistad_datum" class="kleistad-label">Wanneer moet het plaatsvinden ?</label>
 			</div>
 			<div class="kleistad-col-3">
-				<input class="kleistad-datum" type="text" name="plandatum" id="kleistad_plandatum" required="required">
+				<input class="kleistad-datum" type="text" name="datum" id="kleistad_datum" required="required">
 			</div>
 		</div>
 		<?php foreach ( Workshopplanning::WORKSHOP_DAGDEEL as $dagdeel ) : ?>
@@ -176,22 +160,6 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Afsluitende vraag
-	 */
-	private function commentaar() {
-		?>
-		<div class ="kleistad-row" title="Heb je nog nadere vragen, stel ze gerust. Of laat hier opmerkingen achter die van belang zouden kunnen zijn voor Kleistad" >
-			<div class="kleistad-col-3" >
-				<label class="kleistad-label" for="kleistad_vraag">Heb je nog speciale wensen of wil je iets delen ?</label>
-			</div>
-			<div class="kleistad-col-7 kleistad-input">
-				<textarea class="kleistad-input" name="vraag" id="kleistad_vraag" maxlength="1000" rows="5" cols="50"><?php echo esc_textarea( $this->data['input']['vraag'] ); ?></textarea>
-			</div>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Bevestig ingevoerde gegevens
 	 */
 	private function bevestiging() {
@@ -203,8 +171,8 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
-			Het betreft de aanvraag voor een <strong><span id="bevestig_naam" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_omvang"></span></strong> deelnemers
-			in de <strong><span id="bevestig_dagdeel" style="text-transform: lowercase;" ></span></strong> op <strong><span id="bevestig_plandatum"></span></strong>.
+			Het betreft de aanvraag voor een <strong><span id="bevestig_naam" style="text-transform: lowercase;" ></span></strong> voor <strong><span id="bevestig_aantal"></span></strong> deelnemers
+			in de <strong><span id="bevestig_dagdeel" style="text-transform: lowercase;" ></span></strong> op <strong><span id="bevestig_datum"></span></strong>.
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -222,7 +190,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row kleistad-tab-footer">
 			<div class="kleistad-col-10">
-				Als het bovenstaande correct is dan kan de aanvraag verzonden worden. Er wordt binnen een week contact opgenomen.
+				Als het bovenstaande correct is dan kan de aanvraag verzonden worden. Er wordt binnen een week contact opgenomen. De optie voor deze datum heeft een duur van 1 week. We proberen in die tijd de optie op deze datum om te zetten in een reservering. Reserveringen kunnen tot 2 weken voor de datum worden aangepast
 			</div>
 		</div>
 		<?php

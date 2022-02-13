@@ -306,7 +306,7 @@ class Shortcodes {
 			 */
 			'workshop_beheer'       => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'jquery-ui-tabs', 'datatables' ],
 				'css'    => [ 'jquery-ui', 'datatables' ],
 				'access' => [ BESTUUR ],
 			],
@@ -325,7 +325,7 @@ class Shortcodes {
 		$access = $this->definities[ $shortcode ]->access;
 		if ( ! empty( $access ) ) {
 			$gebruiker = wp_get_current_user();
-			return $gebruiker->ID && 0 !== count( array_intersect( $access, (array) $gebruiker->roles ) );
+			return $gebruiker->ID && 0 !== count( array_intersect( $access, $gebruiker->roles ) );
 		}
 		return true;
 	}

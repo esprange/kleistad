@@ -7,7 +7,7 @@
  *
  * @package Kleistad
  *
- * @covers \Kleistad\Workshop, \Kleistad\Workshops, \Kleistad\WorkshopAanvraag, \Kleistad\WorkshopActie, \Kleistad\WorkshopBetaling
+ * @covers \Kleistad\Workshop, \Kleistad\Workshops, \Kleistad\WorkshopActie, \Kleistad\WorkshopBetaling
  * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
  */
 
@@ -33,31 +33,8 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop->datum      = strtotime( '20 days' );
 		$workshop->start_tijd = strtotime( '12:00' );
 		$workshop->eind_tijd  = strtotime( '15:00' );
-
+		$workshop->save();
 		return $workshop;
-	}
-
-	/**
-	 * Maak een aanvraag
-	 *
-	 * @return WorkshopAanvraag
-	 */
-	private function maak_aanvraag(): WorkshopAanvraag {
-		$aanvraag = new WorkshopAanvraag();
-		$data     = [
-			'user_email' => rand_str( 10 ) . '@test.org',
-			'naam'       => 'workshop',
-			'contact'    => 'De tester',
-			'omvang'     => '6 of minder',
-			'periode'    => 'binnen 1 maand',
-			'dagdeel'    => OCHTEND,
-			'plandatum'  => strtotime( 'next month' ),
-			'technieken' => [],
-			'telnr'      => '0123456789',
-			'vraag'      => 'Dit is een test',
-		];
-		$aanvraag->start( $data );
-		return $aanvraag;
 	}
 
 	/**
@@ -207,58 +184,32 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test start aanvraag
-	 */
-	public function test_start_aanvraag() {
-		$mailer   = tests_retrieve_phpmailer_instance();
-		$aanvraag = $this->maak_aanvraag();
-		$this->assertEquals( 'nieuw', $aanvraag->post_status, 'start incorrect' );
-		$this->assertMatchesRegularExpression( '~[WA#[0-9]{8}] Bevestiging workshop vraag~', $mailer->get_last_sent()->subject, 'email aanvraag incorrect' );
-	}
-
-	/**
 	 * Test verwerk aanvraag
 	 */
-	public function test_verwerk_aanvraag() {
+	public function test_verwerk() {
 		$mailer   = tests_retrieve_phpmailer_instance();
-		$aanvraag = $this->maak_aanvraag();
-		$aanvraag->reactie( 'reactie 1 op vraag' );
+		$workshop = $this->maak_workshop();
+		$workshop->actie->reactie( 'reactie 1 op vraag' );
 
 		$email = [
 			'subject'   => 'RE:' . $mailer->get_last_sent()->subject,
-			'from'      => $aanvraag->email,
-			'from-name' => $aanvraag->contact,
+			'from'      => $workshop->email,
+			'from-name' => $workshop->contact,
 			'content'   => 'Een vraag van de klant',
 		];
-		WorkshopAanvraag::verwerk( $email );
-		$aanvraag = new WorkshopAanvraag( $aanvraag->ID );
-		$this->assertEquals( 'vraag', $aanvraag->post_status, 'aanvraag verwerk status onjuist' );
-		$this->assertEquals( 'aanvraag workshop', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
+		WorkshopActie::verwerk( $email );
+		$this->assertEquals( 'Workshop vraag', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
 
-		$aanvraag->reactie( 'reactie 2 op vraag' );
+		$workshop->actie->reactie( 'reactie 2 op vraag' );
 
 		$email = [
 			'subject'   => 'eigen onderwerp',
-			'from'      => $aanvraag->email,
-			'from-name' => $aanvraag->contact,
+			'from'      => $workshop->email,
+			'from-name' => $workshop->contact,
 			'content'   => 'Een tweede vraag van de klant',
 		];
-		WorkshopAanvraag::verwerk( $email );
-		$aanvraag = new WorkshopAanvraag( $aanvraag->ID );
-		$this->assertEquals( 'vraag', $aanvraag->post_status, 'aanvraag verwerk status onjuist' );
-		$this->assertEquals( 'aanvraag workshop', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
-	}
-
-	/**
-	 * Test gepland aanvraag
-	 */
-	public function test_gepland_aanvraag() {
-		$aanvraag              = $this->maak_aanvraag();
-		$workshop              = $this->maak_workshop();
-		$workshop->aanvraag_id = $aanvraag->ID;
-		$workshop->save();
-		$aanvraag->gepland( $workshop->id );
-		$this->assertEquals( 'gepland', $aanvraag->post_status, 'aanvraag status gepland incorrect' );
+		WorkshopActie::verwerk( $email );
+		$this->assertEquals( 'FW: eigen onderwerp', $mailer->get_last_sent()->subject, 'email verwerk incorrect' );
 	}
 
 	/**
@@ -266,9 +217,8 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	 */
 	public function test_reactie_aanvraag() {
 		$mailer   = tests_retrieve_phpmailer_instance();
-		$aanvraag = $this->maak_aanvraag();
-		$aanvraag->reactie( 'dit is een reactie' );
-		$this->assertEquals( 'gereageerd', $aanvraag->post_status, 'reactie incorrect' );
-		$this->assertMatchesRegularExpression( '~[WA#[0-9]{8}] Reactie op workshop vraag~', $mailer->get_last_sent()->subject, 'email reactie aanvraag incorrect' );
+		$workshop = $this->maak_workshop();
+		$workshop->actie->reactie( 'dit is een reactie' );
+		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Reactie op workshop vraag~', $mailer->get_last_sent()->subject, 'email reactie aanvraag incorrect' );
 	}
 }

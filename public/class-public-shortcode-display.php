@@ -206,14 +206,15 @@ abstract class Public_Shortcode_Display {
 	/**
 	 * Input eventuele opmerking
 	 *
+	 * @param string $titel De titel die bij de opmerking getoond kan worden.
 	 * @return Public_Shortcode_Display
 	 */
-	protected function opmerking() : Public_Shortcode_Display {
+	protected function opmerking( string $titel = 'Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad' ) : Public_Shortcode_Display {
 		if ( is_super_admin() ) {
 			return $this;
 		}
 		?>
-		<div class ="kleistad-row" title="Wat is je ervaring met klei? Je kunt hier ook andere opmerkingen achterlaten die van belang zouden kunnen zijn voor Kleistad" >
+		<div class ="kleistad-row" title="<?php echo esc_attr( $titel ); ?>" >
 			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_opmerking">Opmerking</label>
 			</div>

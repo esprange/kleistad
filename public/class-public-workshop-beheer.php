@@ -51,64 +51,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 * Prepareer 'input' form voor inplannen.
-	 *
-	 * @return string
-	 */
-	protected function prepare_inplannen() : string {
-		/**
-		 * Een workshop aanvraag gaat gepland worden.
-		 */
-		$aanvraag               = new WorkshopAanvraag( $this->data['id'] );
-		$this->data['docenten'] = new Docenten();
-		if ( $aanvraag->workshop_id ) {
-			$this->data['workshop'] = $this->formulier( $aanvraag->workshop_id );
-			return $this->content();
-		}
-		$this->data['workshop']                = wp_parse_args(
-			[
-				'email'      => $aanvraag->email,
-				'contact'    => $aanvraag->contact,
-				'telnr'      => $aanvraag->telnr,
-				'datum'      => date( 'd-m-Y', $aanvraag->plandatum ?: strtotime( 'tomorrow' ) ),
-				'start_tijd' => WorkshopAanvraag::MOMENT[ $aanvraag->dagdeel ?? OCHTEND ]['start'],
-				'eind_tijd'  => WorkshopAanvraag::MOMENT[ $aanvraag->dagdeel ?? OCHTEND ]['eind'],
-				'technieken' => $aanvraag->technieken ?? [],
-			],
-			$this->formulier()
-		);
-		$this->data['workshop']['aanvraag_id'] = $this->data['id'];
-		return $this->content();
-	}
-
-	/**
-	 * Prepareer 'input' form voor inplannen.
-	 *
-	 * @return string
-	 */
-	protected function prepare_tonen() : string {
-		/**
-		 * Een workshop aanvraag moet getoond worden.
-		 */
-		$aanvraag            = new WorkshopAanvraag( $this->data['id'] );
-		$this->data['casus'] = [
-			'correspondentie' => $aanvraag->communicatie,
-			'casus_id'        => $aanvraag->ID,
-			'datum'           => date( 'd-m-Y H:i', strtotime( $aanvraag->post_modified ) ),
-			'naam'            => $aanvraag->naam,
-			'contact'         => $aanvraag->contact,
-			'telnr'           => $aanvraag->telnr,
-			'email'           => $aanvraag->email,
-			'omvang'          => $aanvraag->omvang,
-			'periode'         => $aanvraag->periode,
-			'plandatum'       => $aanvraag->plandatum,
-			'dagdeel'         => $aanvraag->dagdeel,
-			'technieken'      => $aanvraag->technieken ?? [],
-		];
-		return $this->content();
-	}
-
-	/**
 	 * Prepareer het standaard scherm
 	 *
 	 * @return string
@@ -118,7 +60,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		 * De workshopaanvragen en de geplande workshops moeten worden getoond.
 		 */
 		$this->data['workshops'] = $this->planning();
-		$this->data['aanvragen'] = $this->aanvragen();
 		return $this->content();
 	}
 
@@ -132,14 +73,14 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	protected function process() : array {
 		$error = new WP_Error();
 		if ( 'reageren' === $this->form_actie ) {
-			$this->data['casus'] = filter_input_array(
+			$this->data['workshop'] = filter_input_array(
 				INPUT_POST,
 				[
-					'casus_id' => FILTER_SANITIZE_NUMBER_INT,
-					'reactie'  => FILTER_SANITIZE_STRING,
+					'workshop_id' => FILTER_SANITIZE_NUMBER_INT,
+					'reactie'     => FILTER_SANITIZE_STRING,
 				]
 			);
-			if ( empty( $this->data['casus']['reactie'] ) ) {
+			if ( empty( $this->data['workshop']['reactie'] ) ) {
 				return $this->melding( new WP_Error( 'reactie', 'Er is nog geen reactie ingevoerd!' ) );
 			}
 			return $this->save();
@@ -263,10 +204,10 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function reageren() : array {
-		$workshopaanvraag = new WorkshopAanvraag( $this->data['casus']['casus_id'] );
-		$workshopaanvraag->reactie( $this->data['casus']['reactie'] );
+		$workshop = new Workshop( $this->data['workshop']['workshop_id'] );
+		$workshop->actie->reactie( $this->data['workshop']['reactie'] );
 		return [
-			'status'  => $this->status( 'Er is een email verzonden naar de aanvrager' ),
+			'status'  => $this->status( 'Er is een email verzonden naar het contact' ),
 			'content' => $this->display(),
 		];
 	}
@@ -365,25 +306,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'docent'     => $workshop->docent_naam(),
 				'aantal'     => $workshop->aantal,
 				'status'     => $workshop->geef_statustekst(),
-			];
-		}
-		return $lijst;
-	}
-
-	/**
-	 * Maak de lijst van aanvragen
-	 *
-	 * @return array De aanvragen data.
-	 */
-	private function aanvragen() : array {
-		$workshop_aanvragen = new WorkshopAanvragen();
-		$lijst              = [];
-		foreach ( $workshop_aanvragen as $workshop_aanvraag ) {
-			$lijst[] = [
-				'titel'  => $workshop_aanvraag->post_title,
-				'status' => $workshop_aanvraag->workshop_id ? "$workshop_aanvraag->post_status (W$workshop_aanvraag->workshop_id)" : $workshop_aanvraag->post_status,
-				'id'     => $workshop_aanvraag->ID,
-				'datum'  => strtotime( $workshop_aanvraag->post_modified ),
+				'cstatus'    => $workshop->communicatie[0]['type'] ?? '',
 			];
 		}
 		return $lijst;
@@ -420,6 +343,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'vervallen'         => $workshop->vervallen,
 			'aanvraag_id'       => $workshop->aanvraag_id,
 			'gefactureerd'      => $workshop->betaling_email,
+			'communicatie'      => $workshop->communicatie,
 		];
 	}
 

@@ -18,12 +18,24 @@ namespace Kleistad;
  */
 class WorkshopActie {
 
+	public const GEPLAND    = 'gepland';
+	public const GEREAGEERD = 'gereageerd';
+	public const NIEUW      = 'nieuw';
+	public const VRAAG      = 'vraag';
+
 	/**
 	 * Het workshop object
 	 *
 	 * @var Workshop $workshop De workshop.
 	 */
 	private Workshop $workshop;
+
+	/**
+	 * De communicatie met de klant
+	 *
+	 * @var array $communicatie Bevat de gevoerde communicatie
+	 */
+	public array $communicatie = [];
 
 	/**
 	 * Constructor
@@ -51,6 +63,116 @@ class WorkshopActie {
 	}
 
 	/**
+	 * Verwerk een workshop aanvraag.
+	 *
+	 * @param array $parameters De input parameters.
+	 *
+	 * @return void
+	 */
+	public function aanvraag( array $parameters ) {
+		$emailer                      = new Email();
+		$dagdelen                     = [
+			OCHTEND  => [
+				'start' => '09:30',
+				'eind'  => '11:30',
+			],
+			MIDDAG   => [
+				'start' => '13:00',
+				'eind'  => '15:00',
+			],
+			NAMIDDAG => [
+				'start' => '16:30',
+				'eind'  => '18:30',
+			],
+			AVOND    => [
+				'start' => '19:00',
+				'eind'  => '22:00',
+			],
+		];
+		$this->workshop->email        = $parameters['user_email'];
+		$this->workshop->contact      = $parameters['contact'];
+		$this->workshop->aantal       = $parameters['aantal'];
+		$this->workshop->datum        = $parameters['datum'];
+		$this->workshop->start_tijd   = strtotime( $dagdelen[ $parameters['dagdeel'] ]['start'], $parameters['datum'] );
+		$this->workshop->eind_tijd    = strtotime( $dagdelen[ $parameters['dagdeel'] ]['eind'], $parameters['datum'] );
+		$this->workshop->telnr        = $parameters['telnr'];
+		$this->workshop->naam         = $parameters['naam'];
+		$this->workshop->technieken   = $parameters['technieken'];
+		$this->workshop->communicatie = [
+			[
+				'type'    => self::NIEUW,
+				'from'    => $this->workshop->email,
+				'subject' => "aanvraag {$this->workshop->naam} op " . date( 'd-m-Y', $this->workshop->datum ),
+				'tekst'   => $parameters['opmerking'],
+				'tijd'    => current_time( 'd-m-Y H:i' ),
+			],
+		];
+		$this->workshop->save();
+		$emailer->send(
+			[
+				'to'         => "{$this->workshop->contact} <{$this->workshop->email}>",
+				'subject'    => sprintf( "[WS#%08d] Bevestiging {$this->workshop->naam} vraag", $this->workshop->id ),
+				'from'       => $this->mbx() . $emailer->verzend_domein,
+				'reply-to'   => $this->mbx() . $emailer->domein,
+				'slug'       => 'workshop_aanvraag_bevestiging',
+				'parameters' => [
+					'naam'       => strtolower( $this->workshop->naam ),
+					'contact'    => $this->workshop->contact,
+					'vraag'      => $parameters['opmerking'],
+					'aantal'     => $this->workshop->aantal,
+					'dagdeel'    => strtolower( $parameters['dagdeel'] ),
+					'technieken' => implode( ', ', $this->workshop->technieken ),
+					'datum'      => strftime( '%A, %d-%m-%y', $this->workshop->datum ),
+				],
+				'sign_email' => false,
+				'auto'       => 'reply',
+			]
+		);
+
+	}
+
+	/**
+	 * Voeg een reactie toe en email de aanvrager.
+	 *
+	 * @param string $reactie     De reactie op de vraag.
+	 */
+	public function reactie( string $reactie ) {
+		$emailer                      = new Email();
+		$subject                      = sprintf( "[WS#%08d] Reactie op {$this->workshop->naam} vraag", $this->workshop->id );
+		$this->workshop->communicatie = array_merge(
+			[
+				[
+					'type'    => 'reactie',
+					'from'    => wp_get_current_user()->display_name,
+					'subject' => $subject,
+					'tekst'   => $reactie,
+					'tijd'    => current_time( 'd-m-Y H:i' ),
+				],
+			],
+			$this->workshop->communicatie
+		);
+		$this->workshop->save();
+
+		$emailer->send(
+			[
+				'to'         => "{$this->workshop->contact}  <{$this->workshop->email}>",
+				'from'       => $this->mbx() . $emailer->verzend_domein,
+				'sign'       => wp_get_current_user()->display_name . ',<br/>Kleistad',
+				'reply-to'   => $this->mbx() . $emailer->domein,
+				'subject'    => $subject,
+				'slug'       => 'workshop_reactie',
+				'auto'       => false,
+				'parameters' => [
+					'reactie' => nl2br( $reactie ),
+					'contact' => $this->workshop->contact,
+					'naam'    => $this->workshop->naam,
+				],
+				'sign_email' => false,
+			]
+		);
+	}
+
+	/**
 	 * Geef aan dat de workshop betaald moet worden
 	 */
 	public function vraag_betaling() {
@@ -62,11 +184,10 @@ class WorkshopActie {
 	/**
 	 * Bevestig de workshop.
 	 *
-	 * @since 5.0.0
-	 *
 	 * @return bool
+	 * @since 5.0.0
 	 */
-	public function bevestig() : bool {
+	public function bevestig(): bool {
 		$herbevestiging             = $this->workshop->definitief;
 		$this->workshop->definitief = true;
 		$this->workshop->save();
@@ -85,5 +206,62 @@ class WorkshopActie {
 		return $this->workshop->verzend_email( '_herbevestiging' );
 	}
 
+	/**
+	 * Verwerk een ontvangen email.
+	 *
+	 * @param array $email De ontvangen email.
+	 */
+	public static function verwerk( array $email ) {
+		$emailer = new Email();
+		/**
+		 * Zoek eerst op basis van het case nummer in subject.
+		 */
+		$workshop = null;
+		if ( 2 === sscanf( $email['subject'], '%*[^[WA#][WA#%u]', $aanvraag_id ) ) {
+			// Haal de workshop of obv het aanvraag id. Backwards compatibiliteit.
+			$workshop = Workshop::vind_aanvraag_id( $aanvraag_id );
+		} elseif ( 2 === sscanf( $email['subject'], '%*[^[WS#][WS#%u]', $workshop_id ) ) {
+			// Haal de workshop op obv het workshop id.
+			$workshop = new Workshop( intval( $workshop_id ) );
+		}
+		if ( is_null( $workshop ) ) {
+			/**
+			 * Als niet gevonden probeer dan doorzenden naar info adres.
+			 */
+			$email['to']      = "Kleistad <$emailer->info@$emailer->domein>";
+			$email['subject'] = 'FW: ' . $email['subject'];
+			$emailer->send( $email );
+			return;
+		}
+		$emailer->send(
+			[
+				'to'      => "Workshop mailbox <$emailer->info@$emailer->domein>",
+				'subject' => ucfirst( $workshop->naam ) . ' vraag',
+				'content' => "<p>Er is een reactie ontvangen van {$email['from-name']}</p>",
+				'sign'    => 'Workshop mailbox',
+			]
+		);
+		$workshop->communicatie = array_merge(
+			[
+				[
+					'type'    => self::VRAAG,
+					'from'    => $email['from-name'],
+					'subject' => $email['subject'],
+					'tekst'   => $email['content'],
+					'tijd'    => current_time( 'd-m-Y H:i' ),
+				],
+			],
+			$workshop->communicatie,
+		);
+		$workshop->save();
+	}
 
+	/**
+	 * Het emailadres is afhankelijk van de omgeving
+	 *
+	 * @return string De mailbox.
+	 */
+	private function mbx() : string {
+		return 'production' === wp_get_environment_type() ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . 'workshops@' );
+	}
 }

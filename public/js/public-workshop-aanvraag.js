@@ -57,7 +57,7 @@
 	 * Verwerk de plandata in de datum picker.
 	 */
 	function verwerkPlandata() {
-		$( '#kleistad_plandatum' ).datepicker(
+		$( '#kleistad_datum' ).datepicker(
 			'option',
 			{
 				minDate: new Date( beschikbareData[ 0 ].datum ),
@@ -80,7 +80,7 @@
 			$( '.kleistad-shortcode' )
 				.on(
 					'change',
-					'#kleistad_plandatum',
+					'#kleistad_datum',
 					function () {
 						let datum       = $( this ).datepicker( 'getDate' ),
 							beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
@@ -99,7 +99,7 @@
 				)
 				.on(
 					'keydown',
-					'#kleistad_plandatum',
+					'#kleistad_datum',
 					function( event ) {
 						event.preventDefault();
 					}

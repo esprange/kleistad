@@ -31,6 +31,13 @@ class Workshopplanning {
 	private array $beschikbaarheid;
 
 	/**
+	 * Planning wordt eenmalig berekend.
+	 *
+	 * @var array|null De planning.
+	 */
+	private static ?array $planning = null;
+
+	/**
 	 * Geef de beschikbaarheid.
 	 *
 	 * @return array De beschikbaarheid.
@@ -81,11 +88,6 @@ class Workshopplanning {
 				continue;
 			}
 			$this->verhoog( $workshop->datum, bepaal_dagdelen( $workshop->start_tijd, $workshop->eind_tijd ) );
-		}
-		foreach ( new WorkshopAanvragen( $start - MONTH_IN_SECONDS ) as $workshop_aanvraag ) {
-			if ( ! is_null( $workshop_aanvraag->plandatum ) && $workshop_aanvraag->is_inverwerking() && $workshop_aanvraag->plandatum < $eind ) {
-				$this->verhoog( $workshop_aanvraag->plandatum, [ $workshop_aanvraag->dagdeel ] );
-			}
 		}
 	}
 
@@ -143,13 +145,12 @@ class Workshopplanning {
 	 * @return array De beschikbaarheid.
 	 */
 	private function schoon_beschikbaarheid() : array {
-		static $result = null;
-		if ( is_array( $result ) ) {
-			return $result;
+		if ( is_array( self::$planning ) ) {
+			return self::$planning;
 		}
 		$maximum         = opties()['max_activiteit'] ?? 1;
 		$activiteitpauze = opties()['actpauze'] ?? [];
-		$result          = [];
+		self::$planning  = [];
 		foreach ( $this->beschikbaarheid as $key => $dag_dagdeel ) {
 			if ( $maximum <= $dag_dagdeel['aantal'] || ! $dag_dagdeel['docent'] ) {
 				continue;
@@ -162,13 +163,13 @@ class Workshopplanning {
 				$pauzeren    = $pauzeren || ( $datum >= $pauze_start && $datum <= $pauze_eind );
 			}
 			if ( ! $pauzeren ) {
-				$result[] = [
+				self::$planning[] = [
 					'datum'   => date( 'Y-m-d', $datum ),
 					'dagdeel' => $dagdeel,
 				];
 			}
 		}
-		return $result;
+		return self::$planning;
 	}
 
 }

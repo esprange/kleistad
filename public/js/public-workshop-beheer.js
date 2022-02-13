@@ -11,12 +11,27 @@
 ( function( $ ) {
 	'use strict';
 
+	function onLoad() {
+		$( '#kleistad_workshopbeheer' ).tabs();
+	}
+
+	/**
+	 * Na een Ajax return.
+	 */
+	$( document ).ajaxComplete(
+		function() {
+			onLoad();
+		}
+	);
+
 	/**
 	 * Document ready.
 	 */
 	$(
 		function()
 		{
+			onLoad();
+
 			$( '.kleistad-shortcode' )
 			/**
 			 * Voorkom dat checkboxes gewijzigd kunnen worden als readonly form.
@@ -85,7 +100,7 @@
 				'click',
 				'.kleistad-workshop-unfold',
 				function() {
-					$( this ).parent().prev( '.kleistad-workshop-correspondentie' ).toggleClass( 'kleistad-workshop-correspondentie-folded' );
+					$( this ).parent().prev( '.kleistad-workshop-communicatie' ).toggleClass( 'kleistad-workshop-communicatie-folded' );
 					$( this ).hide().next( '.kleistad-workshop-fold' ).show();
 					return false;
 				}
@@ -97,7 +112,7 @@
 				'click',
 				'.kleistad-workshop-fold',
 				function() {
-					$( this ).parent().prev( '.kleistad-workshop-correspondentie' ).toggleClass( 'kleistad-workshop-correspondentie-folded' );
+					$( this ).parent().prev( '.kleistad-workshop-communicatie' ).toggleClass( 'kleistad-workshop-communicatie-folded' );
 					$( this ).hide().prev( '.kleistad-workshop-unfold' ).show();
 					return false;
 				}
