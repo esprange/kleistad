@@ -16,16 +16,25 @@ namespace Kleistad;
 class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
-	 * Render het formulier
+	 * Render het formulier toevoegen
 	 */
 	protected function toevoegen() {
-		$this->wijzigen();
+		$this->form();
+	}
+
+	/**
+	 * Render het formulier wijzigen
+	 */
+	protected function wijzigen() {
+		$this->form();
 	}
 
 	/**
 	 * Render het formulier
+	 *
+	 * @return void
 	 */
-	protected function wijzigen() {
+	protected function form_content() {
 		?>
 		<div id="kleistad_workshopbeheer" style="background-color: gainsboro;">
 			<ul>
@@ -33,7 +42,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<li><a href="#tabs_communicatie">Communicatie</a></li>
 			</ul>
 			<div id="tabs_detail">
-				<?php $this->form_content(); ?>
+				<?php $this->form_details(); ?>
 			</div>
 			<div id="tabs_communicatie">
 				<?php $this->form_communicatie(); ?>
@@ -57,7 +66,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<th>Aantal</th>
 				<th>Tijd</th>
 				<th>Status</th>
-				<th>Communicatie</th>
+				<th>Mail</th>
 				<th data-orderable="false"></th>
 			</tr>
 			</thead>
@@ -69,7 +78,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 					<td data-sort="<?php echo esc_attr( substr( $workshop['code'], 1 ) ); ?>"><?php echo esc_html( $workshop['code'] ); ?></td>
 					<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
 					<td><?php echo esc_html( $workshop['contact'] ); ?></td>
-					<td><?php echo esc_html( $workshop['docent'] ); ?></td>
+					<td><?php echo $workshop['docent']; // phpcs:ignore ?></td>
 					<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
 					<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
 					<td><?php echo esc_html( $workshop['status'] ); ?></td>
@@ -89,11 +98,11 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Render het formulier
+	 * Render de details van het formulier
 	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function form_content() {
+	protected function form_details() {
 		$voltooid = strtotime( $this->data['workshop']['datum'] ) < strtotime( 'today' );
 		$readonly = $this->data['workshop']['betaald'] || $this->data['workshop']['vervallen'] || $voltooid;
 		?>
@@ -152,7 +161,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<?php if ( $readonly ) : ?>
 					<span id="kleistad_docent"><?php echo esc_html( $this->data['workshop']['docent_naam'] ); ?></span>
 				<?php else : ?>
-					<select style="width:100%" name="docent[]" id="kleistad_docent" multiple required >
+					<select style="width:100%" name="docent[]" id="kleistad_docent" multiple >
 						<?php foreach ( $this->data['docenten'] as $docent ) : ?>
 							<option value="<?php echo esc_attr( $docent->ID ); ?>" <?php selected( in_array( $docent->ID, $this->data['workshop']['docent'], true ) ); ?> ><?php echo esc_html( $docent->display_name ); ?></option>
 						<?php endforeach ?>
@@ -245,7 +254,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<td colspan="2" ><label for="kleistad_reactie">Reactie</label></td>
 			</tr>
 			<tr>
-				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" maxlength="1000" rows="10" required ></textarea></td>
+				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" maxlength="1000" rows="10" ></textarea></td>
 			</tr>
 		</table>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>

@@ -295,15 +295,22 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshops = new Workshops();
 		$lijst     = [];
 		foreach ( $workshops as $workshop ) {
+			$docenten = explode( ', ', $workshop->docent_naam() );
+			array_walk(
+				$docenten,
+				function( &$docent ) {
+					$docent = substr( $docent, 0, 14 );
+				}
+			);
 			$lijst[] = [
 				'id'         => $workshop->id,
 				'code'       => $workshop->code,
 				'datum_ux'   => $workshop->datum,
 				'datum'      => date( 'd-m-Y', $workshop->datum ),
-				'contact'    => $workshop->contact,
+				'contact'    => substr( $workshop->contact, 0, 14 ),
 				'start_tijd' => date( 'H:i', $workshop->start_tijd ),
 				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
-				'docent'     => $workshop->docent_naam(),
+				'docent'     => implode( '<br/>', $docenten ),
 				'aantal'     => $workshop->aantal,
 				'status'     => $workshop->geef_statustekst(),
 				'cstatus'    => $workshop->communicatie[0]['type'] ?? '',

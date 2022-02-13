@@ -51,11 +51,13 @@ class Workshop extends Artikel {
 	public const META_KEY        = 'kleistad_workshop';
 	public const AFSPRAAK_PREFIX = 'kleistadevent';
 	private const EMAIL_SUBJECT  = [
-		'_bevestiging'    => 'Bevestiging van ',
-		'_herbevestiging' => 'Bevestiging na correctie van ',
-		'_betaling'       => 'Betaling van ',
-		'_ideal'          => 'Betaling van ',
-		'_afzegging'      => 'Annulering van ',
+		'_bevestiging'          => '[WS#%08d] Bevestiging van ',
+		'_herbevestiging'       => '[WS#%08d] Bevestiging na correctie van ',
+		'_betaling'             => 'Betaling van ',
+		'_ideal'                => 'Betaling van ',
+		'_afzegging'            => '[WS#%08d] Annulering van ',
+		'_reactie'              => '[WS#%08d] Reactie op ',
+		'_aanvraag_bevestiging' => '[WS#%08d] Bevestiging van aanvraag ',
 	];
 
 	/**
@@ -64,6 +66,27 @@ class Workshop extends Artikel {
 	 * @var WorkshopActie $actie De acties.
 	 */
 	public WorkshopActie $actie;
+
+	/**
+	 * Het door de aanvrager voorgestelde dagdeel van de workshop.
+	 *
+	 * @var string Het dagdeel.
+	 */
+	public string $dagdeel = '';
+
+	/**
+	 * De door de aanvrager gestelde vraag.
+	 *
+	 * @var string De vraag.
+	 */
+	public string $vraag = '';
+
+	/**
+	 * Reactie ingeval op een email gereageerd wordt.
+	 *
+	 * @var string De reactie.
+	 */
+	public string $reactie = '';
 
 	/**
 	 * Constructor
@@ -264,7 +287,7 @@ class Workshop extends Artikel {
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	public function geef_statustekst( bool $uitgebreid = false ) : string {
-		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) . ( $this->is_betaald() ? 'betaald' : '' ) );
+		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) );
 		return $uitgebreid ? "$this->naam $status" : $status;
 	}
 
@@ -317,18 +340,23 @@ class Workshop extends Artikel {
 				'workshop_programma'  => $this->programma,
 				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
 				'workshop_link'       => $this->betaal_link,
+				'vraag'               => $this->vraag,
+				'reactie'             => $this->reactie,
 			],
 			'slug'        => "workshop$type",
-			'subject'     => self::EMAIL_SUBJECT[ $type ] . $this->naam,
+			'subject'     => sprintf( self::EMAIL_SUBJECT[ $type ], $this->id ) . $this->naam,
 		];
+		if ( in_array( $type, [ 'aanvraag_bevestiging', 'bevestiging', 'herbevestiging', 'afzegging', 'reactie' ], true ) ) {
+			$mbx                          = 'production' === wp_get_environment_type() ? 'workshops@' : ( strtok( get_bloginfo( 'admin_email' ), '@' ) . 'workshops@' );
+			$email_parameters['from']     = $mbx . $emailer->verzend_domein;
+			$email_parameters['reply-to'] = $mbx . $emailer->domein;
+			$email_parameters['auto']     = false;
+		}
+		if ( in_array( $type, [ 'bevestiging', 'herbevestiging', 'afzegging', 'reactie' ], true ) ) {
+			$email_parameters['sign'] = wp_get_current_user()->display_name . ',<br/>Kleistad';
+		}
 		if ( $factuur && $this->organisatie_email ) {
 			$email_parameters['to'] .= ", $this->organisatie <$this->organisatie_email>";
-		}
-		if ( str_contains( $type, 'bevestiging' ) ) {
-				$email_parameters['auto']     = false;
-				$email_parameters['slug']     = 'workshop_bevestiging';
-				$email_parameters['from']     = "$emailer->info@$emailer->verzend_domein";
-				$email_parameters['reply-to'] = "$emailer->info@$emailer->domein";
 		}
 		return $emailer->send( $email_parameters );
 	}

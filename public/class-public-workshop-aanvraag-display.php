@@ -185,7 +185,7 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 				Speciale wensen en/of mededeling :
 			</div>
 			<div class="kleistad-col-7">
-				<span id="bevestig_vraag"></span>
+				<span id="bevestig_opmerking"></span>
 			</div>
 		</div>
 		<div class="kleistad-row kleistad-tab-footer">
