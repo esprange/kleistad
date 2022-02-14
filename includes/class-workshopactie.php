@@ -96,14 +96,14 @@ class WorkshopActie {
 		$this->workshop->telnr        = $parameters['telnr'];
 		$this->workshop->naam         = $parameters['naam'];
 		$this->workshop->technieken   = $parameters['technieken'];
-		$this->workshop->vraag        = $parameters['opmerking'];
+		$this->workshop->vraag        = $parameters['opmerking'] ?? '';
 		$this->workshop->dagdeel      = strtolower( $parameters['dagdeel'] );
 		$this->workshop->communicatie = [
 			[
 				'type'    => self::NIEUW,
 				'from'    => $this->workshop->email,
 				'subject' => "Aanvraag {$this->workshop->naam} op " . date( 'd-m-Y', $this->workshop->datum ),
-				'tekst'   => $parameters['opmerking'],
+				'tekst'   => $parameters['opmerking'] ?? '',
 				'tijd'    => current_time( 'd-m-Y H:i' ),
 			],
 		];
@@ -210,7 +210,7 @@ class WorkshopActie {
 					'from'    => $email['from-name'],
 					'subject' => $email['subject'],
 					'tekst'   => $email['content'],
-					'tijd'    => current_time( 'd-m-Y H:i' ),
+					'tijd'    => $email['tijd'],
 				],
 			],
 			$workshop->communicatie,

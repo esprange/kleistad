@@ -2,7 +2,9 @@
  * Spefieke styles voor single recept pagina.
  */
 
-table, td, th {
+table,
+td,
+th {
 	border: 0;
 	vertical-align: top;
 	text-align: left;

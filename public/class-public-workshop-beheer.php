@@ -314,6 +314,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'aantal'     => $workshop->aantal,
 				'status'     => $workshop->geef_statustekst(),
 				'cstatus'    => $workshop->communicatie[0]['type'] ?? '',
+				'update'     => strtotime( $workshop->communicatie[0]['tijd'] ?? '' ),
 			];
 		}
 		return $lijst;

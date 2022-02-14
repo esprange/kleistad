@@ -56,7 +56,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		?>
-		<table id="kleistad_workshops" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 1, "desc" ]]' >
+		<table id="kleistad_workshops" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 8, "desc" ]]' >
 			<thead>
 			<tr>
 				<th>Code</th>
@@ -67,7 +67,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<th>Tijd</th>
 				<th>Status</th>
 				<th>Mail</th>
-				<th data-orderable="false"></th>
+				<th></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -83,7 +83,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
 					<td><?php echo esc_html( $workshop['status'] ); ?></td>
 					<td><?php echo esc_html( $workshop['cstatus'] ); ?></td>
-					<td>
+					<td data-sort="<?php echo esc_attr( $workshop['update'] ); ?>" >
 						<a href="#" data-id="<?php echo esc_attr( $workshop['id'] ); ?>" data-actie="wijzigen" title="wijzig workshop" class="kleistad-edit kleistad-edit-link" >
 							&nbsp;
 						</a>
