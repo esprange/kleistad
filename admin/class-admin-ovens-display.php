@@ -63,7 +63,7 @@ class Admin_Ovens_Display extends Admin_Display {
 						for ( $dagnummer = 1; $dagnummer <= 7; $dagnummer++ ) :
 							$dagnaam = strftime( '%A', mktime( 0, 0, 0, 1, $dagnummer, 2018 ) );
 							?>
-						<input name="beschikbaarheid[]" id="beschikbaarheid_<?php echo esc_attr( $dagnummer ); ?>" value="<?php echo esc_attr( $dagnaam ); ?>" type="checkbox" <?php checked( array_search( $dagnaam, $item['beschikbaarheid'], true ) !== false ); ?> />
+						<input name="beschikbaarheid[]" id="beschikbaarheid_<?php echo esc_attr( $dagnummer ); ?>" value="<?php echo esc_attr( $dagnaam ); ?>" type="checkbox" <?php checked( in_array( $dagnaam, $item['beschikbaarheid'], true ) !== false ); ?> />
 							<label for="beschikbaarheid_<?php echo esc_attr( $dagnummer ); ?>"><?php echo esc_html( ucfirst( $dagnaam ) ); ?></label>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<?php endfor ?>

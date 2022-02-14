@@ -122,8 +122,7 @@ class Admin_Abonnees_Handler extends  Admin_Handler {
 		}
 		$this->actie = $item['actie'];
 		if ( 'status' === $this->actie ) {
-			$item_valid    = $this->validate_abonnee( $item );
-			$this->notice  = is_string( $item_valid ) ? $item_valid : '';
+			$this->notice  = $this->validate_abonnee( $item );
 			$this->message = empty( $this->notice ) ? $this->abonnement( $item ) : '';
 		} elseif ( 'mollie' === $this->actie ) {
 			$this->message = $this->mandaat( $item );

@@ -174,7 +174,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-4">
 					<input name="extras[]" id="extras_<?php echo esc_attr( $index ); ?>" type="checkbox"
-						<?php checked( false !== array_search( $extra['naam'], $this->data['abonnement']->extras, true ) ); ?>
+						<?php checked( in_array( $extra['naam'], $this->data['abonnement']->extras, true ) ); ?>
 						value="<?php echo esc_attr( $extra['naam'] ); ?>" />
 					<label for="extras_<?php echo esc_attr( $index ); ?>" ><?php echo esc_html( $extra['naam'] ); ?></label>
 				</div>

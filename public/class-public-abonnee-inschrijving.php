@@ -63,7 +63,7 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 	 *
 	 * @since   4.0.87
 	 */
-	protected function process() : array {
+	public function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[

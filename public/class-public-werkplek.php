@@ -287,14 +287,14 @@ EOT;
 	 */
 	public static function callback_meester( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		$datum_str  = $request->get_param( 'datum' );
-		$meester_id = intval( $request->get_param( 'id' ) );
+		$meester_id = $request->get_param( 'id' );
 		$dagdeel    = $request->get_param( 'dagdeel' );
 		if ( is_null( $dagdeel ) || is_null( $meester_id ) || is_null( $datum_str ) ) {
 			return new WP_Error( 'param', 'Onjuiste data ontvangen' );
 		}
 		$datum           = strtotime( $datum_str );
 		$werkplekgebruik = new WerkplekGebruik( $datum );
-		$werkplekgebruik->wijzig_meester( $dagdeel, $meester_id );
+		$werkplekgebruik->wijzig_meester( $dagdeel, intval( $meester_id ) );
 		$meesters = $werkplekgebruik->geef_meesters();
 		return new WP_REST_Response(
 			[

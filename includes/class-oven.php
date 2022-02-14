@@ -78,7 +78,7 @@ class Oven {
 			'woensdag',
 			'donderdag',
 			'vrijdag',
-			'zaterdag'        => ( array_search( $attribuut, json_decode( $this->data['beschikbaarheid'], true ), true ) !== false ),
+			'zaterdag'        => in_array( $attribuut, json_decode( $this->data['beschikbaarheid'], true ), true ),
 			default           => $this->data[ $attribuut ],
 		};
 	}

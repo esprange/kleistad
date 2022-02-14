@@ -102,7 +102,7 @@ class Admin_Abonnees_Display extends Admin_Display {
 			<tr class="form-field">
 				<th scope="row"><label for="extra_<?php echo esc_attr( $index ); ?>"><?php echo esc_html( $extra['naam'] ); ?></label></th>
 				<td>
-					<input type="checkbox" id="extra_<?php echo esc_attr( $index ); ?>" name="extras[]" class="code" <?php checked( false !== array_search( $extra['naam'], $item['extras'], true ) ); ?>
+					<input type="checkbox" id="extra_<?php echo esc_attr( $index ); ?>" name="extras[]" class="code" <?php checked( in_array( $extra['naam'], $item['extras'], true ) ); ?>
 						value="<?php echo esc_attr( $extra['naam'] ); ?>" >
 				</td>
 			</tr>

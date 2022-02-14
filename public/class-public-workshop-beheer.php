@@ -70,7 +70,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @return array
 	 */
-	protected function process() : array {
+	public function process() : array {
 		$error = new WP_Error();
 		if ( 'reageren' === $this->form_actie ) {
 			$this->data['workshop'] = filter_input_array(

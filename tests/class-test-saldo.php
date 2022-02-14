@@ -109,7 +109,6 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$this->assertNotEmpty( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk attachment incorrect' );
 		$this->assertEquals( 1, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 
-		$bedrag = 12.45;
 		$saldo->actie->nieuw( $bedrag, 'bank' ); // Verzend email 2.
 		$order = new Order( $saldo->geef_referentie() );
 		$saldo->betaling->verwerk( $order, $bedrag, true, 'ideal' ); // Verzend email 3.

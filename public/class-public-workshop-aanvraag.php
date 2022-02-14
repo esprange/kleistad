@@ -52,7 +52,7 @@ class Public_Workshop_Aanvraag extends ShortcodeForm {
 	 * @return array
 	 * @since   5.6.0
 	 */
-	protected function process(): array {
+	public function process(): array {
 		$error               = new WP_Error();
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,

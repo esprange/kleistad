@@ -134,7 +134,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 *
 	 * @return array
 	 */
-	protected function process() : array {
+	public function process() : array {
 		$this->data['recept']                           = filter_input_array(
 			INPUT_POST,
 			[

@@ -3,7 +3,6 @@
  * Class Kleistad_UnitTestCase
  *
  * @package Kleistad
- * @noinspection PhpMultipleClassDeclarationsInspection
  */
 
 namespace Kleistad;
@@ -191,7 +190,7 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 				public function get_last_sent( string $email_address = '', int $index = 0 ): object|bool {
 					if ( empty( $email_address ) ) {
 						$sent = array_reverse( $this->mock_sent )[ $index ];
-						return false === $sent ? $sent : (object) $sent;
+						return false === $sent ? false : (object) $sent;
 					}
 					$last = count( $this->mock_sent );
 					while ( $last > 0 ) {

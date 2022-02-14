@@ -33,7 +33,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 *
 	 * @var string $form_actie De door de gebruiker gekozen formulier actie.
 	 */
-	protected string $form_actie = '';
+	public string $form_actie = '';
 
 	/**
 	 * Validatie functie, wordt voor form validatie gebruikt
@@ -42,7 +42,7 @@ abstract class ShortcodeForm extends Shortcode {
 	 *
 	 * @return array
 	 */
-	abstract protected function process() : array;
+	abstract public function process() : array;
 
 	/**
 	 * Enqueue the scripts and styles for the shortcode.

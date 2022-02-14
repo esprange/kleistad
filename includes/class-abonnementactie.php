@@ -87,10 +87,9 @@ class AbonnementActie {
 		$herstart_datum_str               = strftime( '%d-%m-%Y', $this->abonnement->herstart_datum );
 		$this->log( "gepauzeerd per $pauze_datum_str en hervat per $herstart_datum_str" );
 		$this->abonnement->save();
-		$this->abonnement->bericht     = ( $thans_gepauzeerd ) ?
-			"Je hebt aangegeven dat je abonnement, dat nu gepauzeerd is, hervat wordt per $herstart_datum_str"
-			:
-			$this->abonnement->bericht = "Je pauzeert het abonnement per $pauze_datum_str en hervat het per $herstart_datum_str";
+		$this->abonnement->bericht = ( $thans_gepauzeerd ) ?
+			"Je hebt aangegeven dat je abonnement, dat nu gepauzeerd is, hervat wordt per $herstart_datum_str" :
+			"Je pauzeert het abonnement per $pauze_datum_str en hervat het per $herstart_datum_str";
 		if ( ! is_super_admin() ) {
 			$this->abonnement->verzend_email( '_gewijzigd' );
 		}

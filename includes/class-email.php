@@ -100,8 +100,8 @@ class Email {
 			$active_plugins = get_option( 'active_plugins' ) ?? [];
 			foreach ( $active_plugins as $active_plugin ) {
 				if ( str_contains( $active_plugin, 'wp-mail-smtp' ) ) {
-					$mailgun_opties       = get_option( 'wp_mail_smtp' );
-					$this->verzend_domein = $mailgun_opties['mailgun']['domain'];
+					$mailgun_opties = get_option( 'wp_mail_smtp' );
+					$verzend_domein = $mailgun_opties['mailgun']['domain'];
 				}
 			}
 		}

@@ -48,7 +48,7 @@ class Public_Abonnee_Wijziging extends ShortcodeForm {
 	 *
 	 * @return array
 	 */
-	protected function process() : array {
+	public function process() : array {
 		$error               = new WP_Error();
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,

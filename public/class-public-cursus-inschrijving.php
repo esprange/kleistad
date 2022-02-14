@@ -170,7 +170,7 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	 *
 	 * @return array
 	 */
-	protected function process() : array {
+	public function process() : array {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[

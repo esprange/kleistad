@@ -445,11 +445,11 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Als opnieuw het dagelijks proces loopt, 1 seconde later, mag er niets verstuurd worden.
 		 */
-		$emails_sent = $mailer->get_sent_count();
+		$emails_sent1 = $mailer->get_sent_count();
 		sleep( 1 );
 		Cursussen::doe_dagelijks();
 		Inschrijvingen::doe_dagelijks();
-		$this->assertEquals( $emails_sent, $mailer->get_sent_count(), 'incorrecte email verzonden' );
+		$this->assertEquals( $emails_sent1, $mailer->get_sent_count(), 'incorrecte email verzonden' );
 
 		/**
 		 * Nu schrijft iemand anders in, dan wordt de cursus weer vol.
@@ -465,7 +465,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Wijzig nu de status door het aantal toegestane cursisten te verhogen.
 		 */
-		$emails_sent                               = $mailer->get_sent_count();
+		$emails_sent2                              = $mailer->get_sent_count();
 		$inschrijving_wachtlijst->cursus->maximum += 1;
 		$inschrijving_wachtlijst->cursus->save();
 		sleep( 1 );
@@ -477,7 +477,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		 */
 		$inschrijving_wachtlijst = new Inschrijving( $cursus2->id, $wachtlijst_cursist->ID );
 		$this->assertFalse( $inschrijving_wachtlijst->cursus->vol, 'vol indicatie incorrect' );
-		$this->assertEquals( $emails_sent + 1, $mailer->get_sent_count(), 'email niet verzonden' );
+		$this->assertEquals( $emails_sent2 + 1, $mailer->get_sent_count(), 'email niet verzonden' );
 		$this->assertEquals( 'Er is een cursusplek vrijgekomen', $mailer->get_last_sent( $wachtlijst_cursist->user_email )->subject, 'Wachtlijst ruimte incorrecte email' );
 	}
 

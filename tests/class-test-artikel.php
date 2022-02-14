@@ -3,7 +3,6 @@
  * Class Artikel Test
  *
  * @package Kleistad
- * @noinspection PhpUndefinedFieldInspection,PhpDocMissingThrowsInspection
  */
 
 namespace Kleistad;
@@ -23,8 +22,6 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	private function maak_artikel( float $bedrag ): Artikel {
 		/**
 		 * Suppress de phpstorm foutmelding
-		 *
-		 * @noinspection PhpUnhandledExceptionInspection
 		 */
 		$artikel           = $this->getMockForAbstractClass( Artikel::class, [], '', true, true, true, [ 'maak_factuur' ] );
 		$artikel->code     = 'T' . wp_rand( 100, 999 );
