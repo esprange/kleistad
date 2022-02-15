@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 147;
+	const DBVERSIE = 148;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -275,8 +275,7 @@ class Admin_Upgrade {
 			$workshop_id  = intval( $details['workshop_id'] );
 			if ( $workshop_id ) {
 				$communicatie = base64_decode( $post->post_content );
-				$wpdb->query(
-					"UPDATE {$wpdb->prefix}kleistad_workshops SET communicatie = '$communicatie' WHERE id = $workshop_id AND communicatie IS NULL" );
+				$wpdb->query("UPDATE {$wpdb->prefix}kleistad_workshops SET communicatie = '$communicatie' WHERE id = $workshop_id AND communicatie IS NULL" );
 			}
 		}
 	}

@@ -266,12 +266,23 @@ class Workshop extends Artikel {
 		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
 
 		try {
-			$afspraak             = new Afspraak( sprintf( '%s%06d', self::AFSPRAAK_PREFIX, $this->id ) );
-			$afspraak->titel      = $this->naam;
-			$afspraak->definitief = $this->definitief;
-			$afspraak->vervallen  = $this->vervallen;
-			$afspraak->start      = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
-			$afspraak->eind       = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
+			$afspraak               = new Afspraak( sprintf( '%s%06d', self::AFSPRAAK_PREFIX, $this->id ) );
+			$afspraak->titel        = $this->naam;
+			$afspraak->definitief   = $this->definitief;
+			$afspraak->vervallen    = $this->vervallen;
+			$afspraak->start        = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
+			$afspraak->eind         = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
+			$afspraak->beschrijving = sprintf(
+				'<p><strong>%s</strong></p><p>contact: %s, %s</p><p>aantal: %d</p><p>programma: %s</p>',
+				$this->naam,
+				$this->contact,
+				$this->telnr,
+				$this->aantal,
+				$this->programma
+			);
+			foreach ( explode( ';', $this->docent ) as $docent_item ) {
+				$afspraak->deelnemers[] = [ 'email' => get_user_by( 'id', intval( $docent_item ) )->user_email ];
+			}
 			$afspraak->save();
 		} catch ( Exception $e ) {
 			fout( __CLASS__, $e->getMessage() );

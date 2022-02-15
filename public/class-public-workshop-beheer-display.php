@@ -114,7 +114,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-3">
 				<select name="naam" required id="kleistad_naam" <?php wp_readonly( $readonly ); ?> style="width:100%" >
 					<?php foreach ( opties()['activiteit'] as $activiteit ) : ?>
-					<option value="<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" <?php selected( $this->data['workshop']['naam'], $activiteit['naam'] ); ?> >
+					<option value="<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" <?php selected( 0 === strcasecmp( $this->data['workshop']['naam'], $activiteit['naam'] ) ); ?> >
 						<?php echo esc_html( ucfirst( $activiteit['naam'] ) ); ?>
 					</option>
 					<?php endforeach; ?>

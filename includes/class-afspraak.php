@@ -30,6 +30,7 @@ use Exception;
  * @property DateTime start
  * @property DateTime eind
  * @property string   titel
+ * @property string   beschrijving
  * @property string   id
  * @property array    properties
  */
@@ -62,6 +63,13 @@ class Afspraak {
 	 * @var string $kalender_id De google kalender id.
 	 */
 	protected string $kalender_id = '';
+
+	/**
+	 * De deelnemers aan de afspraak
+	 *
+	 * @var array $deelnemers Lijst van email adressen.
+	 */
+	public array $deelnemers = [];
 
 	/**
 	 * Constructor
@@ -134,12 +142,13 @@ class Afspraak {
 	 */
 	public function __get( string $attribuut ) {
 		return match ( $attribuut ) {
-			'vervallen'  => 'cancelled' === $this->event->getStatus(),
-			'definitief' => 'confirmed' === $this->event->getStatus(),
-			'start'      => $this->from_google_dt( $this->event->getStart() ),
-			'eind'       => $this->from_google_dt( $this->event->getEnd() ),
-			'titel'      => $this->event->getSummary(),
-			'id'         => $this->event->getId(),
+			'vervallen'    => 'cancelled' === $this->event->getStatus(),
+			'definitief'   => 'confirmed' === $this->event->getStatus(),
+			'start'        => $this->from_google_dt( $this->event->getStart() ),
+			'eind'         => $this->from_google_dt( $this->event->getEnd() ),
+			'titel'        => $this->event->getSummary(),
+			'id'           => $this->event->getId(),
+			'beschrijving' => $this->event->getDescription(),
 			default      => null,
 		};
 	}
@@ -156,6 +165,9 @@ class Afspraak {
 		switch ( $attribuut ) {
 			case 'titel':
 				$this->event->setSummary( $waarde );
+				break;
+			case 'beschrijving':
+				$this->event->setDescription( $waarde );
 				break;
 			case 'start':
 				$this->event->setStart( $this->to_google_dt( $waarde ) );
@@ -184,11 +196,16 @@ class Afspraak {
 	 */
 	public function save() : void {
 		if ( ! defined( 'KLEISTAD_TEST' ) ) {
+			$opt_params = [];
+			if ( $this->deelnemers ) {
+				$this->event->setAttendees( $this->deelnemers );
+				$opt_params = [ 'sendNotifications' => true ];
+			}
 			if ( is_null( $this->event->getCreated() ) ) {
-				$this->event = $this->googleconnect->calendar_service()->events->insert( $this->kalender_id, $this->event );
+				$this->event = $this->googleconnect->calendar_service()->events->insert( $this->kalender_id, $this->event, $opt_params );
 				return;
 			}
-			$this->event = $this->googleconnect->calendar_service()->events->update( $this->kalender_id, $this->event->getId(), $this->event );
+			$this->event = $this->googleconnect->calendar_service()->events->update( $this->kalender_id, $this->event->getId(), $this->event, $opt_params );
 		}
 	}
 
