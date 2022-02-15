@@ -72,43 +72,71 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	 * @since        4.2.0
 	 *
 	 * @param Order  $order         De order, als deze bestaat.
-	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
+	 * @param float  $bedrag        Het betaalde bedrag.
 	 * @param bool   $betaald       Of er werkelijk betaald is.
 	 * @param string $type          Type betaling, ideal , directdebit of bank.
 	 * @param string $transactie_id De betaling id.
 	 */
 	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
-			if ( ! $this->inschrijving->ingedeeld && 0 < $bedrag ) {
-				if ( $this->indelen() ) {
-					if ( ! $order->id || $order->is_credit() ) {
-						/**]
-						 * Er is nog geen order of de order is een credit order en het bedrag is positief, dan betreft dit inschrijving vanuit het formulier.
-						 */
-						$this->inschrijving->verzend_email( 'indeling', $this->inschrijving->bestel_order( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant(), $transactie_id ) );
-						return;
-					}
-					/**
-					 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
+			$this->verwerk_betaald( $order, $bedrag, $type, $transactie_id );
+			return;
+		}
+		$this->verwerk_mislukt( $order, $type );
+	}
+
+	/**
+	 * Verwerk de betaling.
+	 *
+	 * @param Order  $order         De order als deze bestaat.
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
+	 *
+	 * @return void
+	 */
+	private function verwerk_betaald( Order $order, float $bedrag, string $type, string $transactie_id ) {
+		if ( ! $this->inschrijving->ingedeeld && 0 < $bedrag ) {
+			if ( $this->indelen() ) {
+				if ( ! $order->id || $order->is_credit() ) {
+					/**]
+					 * Er is nog geen order of de order is een credit order en het bedrag is positief, dan betreft dit inschrijving vanuit het formulier.
 					 */
-					$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
-					$this->inschrijving->verzend_email( 'indeling' );
+					$this->inschrijving->verzend_email( 'indeling', $this->inschrijving->bestel_order( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant(), $transactie_id ) );
 					return;
 				}
 				/**
-				 * Indelen was niet meer mogelijk, annuleer de order en zet de cursist op de wachtlijst.
+				 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
 				 */
-				$this->inschrijving->actie->naar_wachtlijst();
+				$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
+				$this->inschrijving->verzend_email( 'indeling' );
 				return;
 			}
 			/**
-			 * Als de cursist al ingedeeld is volstaat een bedankje ingeval van een betaling per ideal, bank hoeft niet.
+			 * Indelen was niet meer mogelijk, annuleer de order en zet de cursist op de wachtlijst.
 			 */
-			$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
-			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
-				$this->inschrijving->verzend_email( '_ideal_betaald' );
-			}
-		} elseif ( 'ideal' === $type && ! $order->id ) {
+			$this->inschrijving->actie->naar_wachtlijst();
+			return;
+		}
+		/**
+		 * Als de cursist al ingedeeld is volstaat een bedankje ingeval van een betaling per ideal, bank hoeft niet.
+		 */
+		$this->inschrijving->ontvang_order( $order, $bedrag, $transactie_id );
+		if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
+			$this->inschrijving->verzend_email( '_ideal_betaald' );
+		}
+	}
+
+	/**
+	 * Verwerk de betaling als deze mislukt is. Alleen bij ideal betalingen interessant.
+	 *
+	 * @param Order  $order         De order als deze bestaat.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 *
+	 * @return void
+	 */
+	private function verwerk_mislukt( Order $order, string $type ) {
+		if ( 'ideal' === $type && ! $order->id ) {
 			/**
 			 * De betaling is fout gegaan, dus als er nog niet ingedeeld is, dan de inschrijving laten vervallen.
 			 */

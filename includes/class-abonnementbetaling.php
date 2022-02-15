@@ -112,68 +112,6 @@ class AbonnementBetaling extends ArtikelBetaling {
 	}
 
 	/**
-	 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
-	 *
-	 * @since        4.2.0
-	 *
-	 * @param Order  $order         De order als deze bestaat.
-	 * @param float  $bedrag        Het betaalde bedrag, wordt hier niet gebruikt.
-	 * @param bool   $betaald       Of er werkelijk betaald is.
-	 * @param string $type          Type betaling, ideal , directdebit of bank.
-	 * @param string $transactie_id De betaling id.
-	 */
-	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
-		if ( $betaald ) {
-			if ( $order->id ) {
-				/**
-				 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of incasso of betaling per bank.
-				 */
-				if ( 0 < $bedrag ) {
-					if ( 'ideal' === $type ) {
-						$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
-						$this->abonnement->verzend_email( '_ideal_betaald' );
-						return;
-					}
-					if ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
-						$this->abonnement->verzend_email( '_regulier_incasso', $this->abonnement->ontvang_order( $order, $bedrag, $transactie_id, true ) );
-						return;
-					}
-					// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
-					$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
-					return;
-				}
-				// Anders is het een terugstorting.
-				$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
-				return;
-			}
-			if ( 'mandaat' === $this->abonnement->artikel_type ) {
-				/**
-				 * Bij een mandaat ( 1 eurocent ) hoeven we geen factuur te sturen en is er dus geen order aangemaakt.
-				 */
-				$this->abonnement->bericht = 'Je hebt Kleistad toestemming gegeven voor een maandelijkse incasso van het abonnement';
-				$this->abonnement->verzend_email( '_gewijzigd' );
-				return;
-			}
-			if ( 'start' === $this->abonnement->artikel_type ) {
-				/**
-				 * Bij een start en nog niet bestaande order moet dit wel afkomstig zijn van het invullen van
-				 * een inschrijving formulier.
-				 */
-				$this->abonnement->factuur_maand = (int) date( 'Ym' );
-				$this->abonnement->save();
-				$this->abonnement->verzend_email( '_start_ideal', $this->abonnement->bestel_order( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
-			}
-		} elseif ( 'directdebit' === $type && $order->id ) {
-			/**
-			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
-			 */
-			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order, 0, '', true ) );
-		} elseif ( 'ideal' === $type && ! $order->id ) {
-			$this->abonnement->erase();
-		}
-	}
-
-	/**
 	 * Bereken de prijs van een extra.
 	 *
 	 * @param string $extra het extra element.
@@ -219,6 +157,111 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 */
 	public function incasso_actief() : bool {
 		return $this->betalen->heeft_mandaat( $this->abonnement->klant_id );
+	}
+
+	/**
+	 * Verwerk een betaling. Aangeroepen vanuit de betaal callback.
+	 *
+	 * @since        4.2.0
+	 *
+	 * @param Order  $order         De order als deze bestaat.
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param bool   $betaald       Of er werkelijk betaald is.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
+	 */
+	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
+		if ( $betaald ) {
+			$this->verwerk_betaald( $order, $bedrag, $type, $transactie_id );
+			return;
+		}
+		$this->verwerk_mislukt( $order, $type );
+	}
+
+	/**
+	 * Verwerk de betaling.
+	 *
+	 * @param Order  $order         De order als deze bestaat.
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 * @param string $transactie_id De betaling id.
+	 *
+	 * @return void
+	 */
+	private function verwerk_betaald( Order $order, float $bedrag, string $type, string $transactie_id ) {
+		if ( $order->id ) {
+			/**
+			 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of incasso of betaling per bank.
+			 */
+			if ( 0 < $bedrag ) {
+				if ( 'ideal' === $type ) {
+					$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
+					$this->abonnement->verzend_email( '_ideal_betaald' );
+					return;
+				}
+				if ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
+					$this->abonnement->verzend_email( '_regulier_incasso', $this->abonnement->ontvang_order( $order, $bedrag, $transactie_id, true ) );
+					return;
+				}
+				// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
+				$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
+				return;
+			}
+			// Anders is het een terugstorting.
+			$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
+			return;
+		}
+		/**
+		 * Geen order.
+		 */
+		if ( 'mandaat' === $this->abonnement->artikel_type ) {
+			/**
+			 * Bij een mandaat ( 1 eurocent ) hoeven we geen factuur te sturen en is er dus geen order aangemaakt.
+			 */
+			$this->abonnement->bericht = 'Je hebt Kleistad toestemming gegeven voor een maandelijkse incasso van het abonnement';
+			$this->abonnement->verzend_email( '_gewijzigd' );
+			return;
+		}
+		if ( 'start' === $this->abonnement->artikel_type ) {
+			/**
+			 * Bij een start en nog niet bestaande order moet dit wel afkomstig zijn van het invullen van
+			 * een inschrijving formulier.
+			 */
+			$this->abonnement->factuur_maand = (int) date( 'Ym' );
+			$this->abonnement->save();
+			$this->abonnement->verzend_email( '_start_ideal', $this->abonnement->bestel_order( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
+			return;
+		}
+		/**
+		 * Blijkbaar een ander artikel type. Dat zou niet mogen.
+		 */
+		fout( __CLASS__, "betaling niet verwerkt voor artikel type {$this->abonnement->artikel_type}, betaaltype: $type, transactie: $transactie_id" );
+	}
+
+	/**
+	 * Verwerk de betaling als deze mislukt is.
+	 *
+	 * @param Order  $order         De order als deze bestaat.
+	 * @param string $type          Type betaling, ideal , directdebit of bank.
+	 *
+	 * @return void
+	 */
+	private function verwerk_mislukt( Order $order, string $type ) {
+		if ( 'directdebit' === $type && $order->id ) {
+				/**
+				 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
+				 */
+			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order, 0, '', true ) );
+			return;
+		}
+		if ( 'ideal' === $type && ! $order->id ) {
+			$this->abonnement->erase();
+			return;
+		}
+		/**
+		 * Blijkbaar iets anders. Dat zou niet mogen.
+		 */
+		fout( __CLASS__, "betaling mislukt niet verwerkt voor artikel type {$this->abonnement->artikel_type}, betaaltype: $type" );
 	}
 
 }
