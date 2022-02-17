@@ -77,14 +77,14 @@ class Workshopplanning {
 	private function bepaal_activiteit_beschikbaarheid( int $start, int $eind ) {
 		foreach ( new Cursussen( $start ) as $cursus ) {
 			foreach ( $cursus->lesdatums as $lesdatum ) {
-				if ( $cursus->start_datum > $eind ) {
+				if ( ( $cursus->start_datum > $eind ) || $cursus->vervallen ) {
 					continue;
 				}
 				$this->verhoog( $lesdatum, bepaal_dagdelen( $cursus->start_tijd, $cursus->eind_tijd ) );
 			}
 		}
 		foreach ( new Workshops( $start ) as $workshop ) {
-			if ( $workshop->datum > $eind ) {
+			if ( ( $workshop->datum > $eind ) || $workshop->vervallen ) {
 				continue;
 			}
 			$this->verhoog( $workshop->datum, bepaal_dagdelen( $workshop->start_tijd, $workshop->eind_tijd ) );

@@ -33,6 +33,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 7.2.3 =
+* Merge van workshop aanvragen en workshop reserveringen. Een klant reserveert per direct een workshop
+* Docenten worden geïnformeerd bij een workshop boeking.
 = 7.1.8 =
 * Aanpassing naar docent beschikbaarheid, nu ook ochtend, middag, namiddag en avond.
 * Beperking op maximaal gelijktijdig te reserveren stook

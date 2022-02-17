@@ -55,6 +55,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * Toon het overzicht van workshops
 	 */
 	protected function overzicht() {
+		if ( $this->data['gaat_vervallen'] ) {
+			echo melding( -1, 'Morgen gaan een of meer concept workshops vervallen !' ); // phpcs:ignore
+		}
 		?>
 		<table id="kleistad_workshops" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 8, "desc" ]]' >
 			<thead>

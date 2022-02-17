@@ -22,6 +22,8 @@ use Exception;
  *
  * @property int    id
  * @property string naam
+ * @property int    datum
+ * @property int    aanvraagdatum
  * @property int    start_tijd
  * @property int    eind_tijd
  * @property string docent
@@ -106,6 +108,7 @@ class Workshop extends Artikel {
 				'id'                => null,
 				'naam'              => '',
 				'datum'             => date( 'Y-m-d' ),
+				'aanvraagdatum'     => date( 'Y-m-d' ),
 				'start_tijd'        => '10:00',
 				'eind_tijd'         => '12:00',
 				'docent'            => '',
@@ -146,12 +149,13 @@ class Workshop extends Artikel {
 			return boolval( $this->data[ $attribuut ] );
 		}
 		return match ( $attribuut ) {
-			'datum'        => strtotime( $this->data['datum'] ),
-			'technieken'   => json_decode( $this->data['technieken'], true ),
-			'code'         => "W{$this->data['id']}",
-			'telnr'        => $this->data['telefoon'],
-			'communicatie' => maybe_unserialize( $this->data['communicatie'] ) ?: [],
-			default        => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
+			'datum'         => strtotime( $this->data['datum'] ),
+			'aanvraagdatum' => strtotime( $this->data['aanvraagdatum'] ),
+			'technieken'    => json_decode( $this->data['technieken'], true ),
+			'code'          => "W{$this->data['id']}",
+			'telnr'         => $this->data['telefoon'],
+			'communicatie'  => maybe_unserialize( $this->data['communicatie'] ) ?: [],
+			default         => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
 		};
 	}
 
@@ -280,8 +284,10 @@ class Workshop extends Artikel {
 				$this->aantal,
 				$this->programma
 			);
-			foreach ( explode( ';', $this->docent ) as $docent_item ) {
-				$afspraak->deelnemers[] = [ 'email' => get_user_by( 'id', intval( $docent_item ) )->user_email ];
+			if ( $this->docent ) {
+				foreach ( explode( ';', $this->docent ) as $docent_item ) {
+					$afspraak->deelnemers[] = [ 'email' => get_user_by( 'id', intval( $docent_item ) )->user_email ];
+				}
 			}
 			$afspraak->save();
 		} catch ( Exception $e ) {

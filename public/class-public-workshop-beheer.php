@@ -59,7 +59,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		/**
 		 * De workshopaanvragen en de geplande workshops moeten worden getoond.
 		 */
-		$this->data['workshops'] = $this->planning();
+		$this->planning();
 		return $this->content();
 	}
 
@@ -125,7 +125,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		if ( is_null( $this->data['workshop']['technieken'] ) ) {
 			$this->data['workshop']['technieken'] = [];
 		}
-		$this->data['workshop']['docent'] = implode( ';', $this->data['workshop']['docent'] );
+		$this->data['workshop']['docent'] = implode( ';', $this->data['workshop']['docent'] ?? [] );
 		if ( in_array( $this->form_actie, [ 'bewaren', 'bevestigen' ], true ) ) {
 			if ( ! $this->validator->email( $this->data['workshop']['email'] ) ) {
 				$error->add( 'verplicht', 'De invoer ' . $this->data['workshop']['email'] . ' is geen geldig E-mail adres.' );
@@ -263,10 +263,24 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Verwerk de input data en geef de workshop terug.
 	 *
 	 * @return Workshop
+	 * @suppressWarnings (PHPMD.ElseExpression)
 	 */
 	private function update_workshop() : Workshop {
-		$workshop_id                 = intval( $this->data['workshop']['workshop_id'] );
-		$workshop                    = ( $workshop_id > 0 ) ? new Workshop( $workshop_id ) : new Workshop();
+		$workshop_id = intval( $this->data['workshop']['workshop_id'] );
+		if ( $workshop_id ) {
+			$workshop = new Workshop( $workshop_id );
+		} else {
+			$workshop               = new Workshop();
+			$workshop->communicatie = [
+				[
+					'type'    => WorkshopActie::NIEUW,
+					'from'    => 'Kleistad',
+					'subject' => "Toevoeging {$this->data['workshop']['naam']} door " . wp_get_current_user()->display_name,
+					'tekst'   => '',
+					'tijd'    => current_time( 'd-m-Y H:i' ),
+				],
+			];
+		}
 		$workshop->naam              = $this->data['workshop']['naam'];
 		$workshop->datum             = strtotime( $this->data['workshop']['datum'] );
 		$workshop->start_tijd        = strtotime( $this->data['workshop']['start_tijd'] );
@@ -289,12 +303,17 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	/**
 	 * Maak de lijst van workshops
 	 *
-	 * @return array De workshops data.
+	 * @return void.
 	 */
-	private function planning() : array {
-		$workshops = new Workshops();
-		$lijst     = [];
+	private function planning() {
+		$verloop                      = strtotime( 'tomorrow' ) - opties()['verloopaanvraag'] * WEEK_IN_SECONDS;
+		$workshops                    = new Workshops();
+		$this->data['workshops']      = [];
+		$this->data['gaat_vervallen'] = false;
 		foreach ( $workshops as $workshop ) {
+			if ( ! $workshop->definitief && ! $workshop->vervallen && $workshop->aanvraagdatum < $verloop ) {
+				$this->data['gaat_vervallen'] = true;
+			}
 			$docenten = explode( ', ', $workshop->docent_naam() );
 			array_walk(
 				$docenten,
@@ -302,7 +321,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					$docent = substr( $docent, 0, 14 );
 				}
 			);
-			$lijst[] = [
+			$this->data['workshops'][] = [
 				'id'         => $workshop->id,
 				'code'       => $workshop->code,
 				'datum_ux'   => $workshop->datum,
@@ -317,7 +336,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'update'     => strtotime( $workshop->communicatie[0]['tijd'] ?? '' ),
 			];
 		}
-		return $lijst;
 	}
 
 	/**

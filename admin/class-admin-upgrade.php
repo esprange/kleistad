@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 148;
+	const DBVERSIE = 150;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -183,6 +183,7 @@ class Admin_Upgrade {
 			id int(10) NOT NULL AUTO_INCREMENT,
 			naam tinytext,
 			datum date,
+			aanvraagdatum date,
 			start_tijd time,
 			eind_tijd time,
 			docent tinytext,

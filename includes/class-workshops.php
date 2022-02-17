@@ -110,23 +110,51 @@ class Workshops implements Countable, Iterator {
 	}
 
 	/**
-	 * Controleer of er betalingsverzoeken verzonden moeten worden.
+	 * Voor de dagelijkse acties mbt workshops uit.
 	 *
 	 * @since 6.1.0
 	 */
 	public static function doe_dagelijks() {
 		foreach ( new self() as $workshop ) {
-			if (
-				! $workshop->definitief ||
-				$workshop->vervallen ||
-				$workshop->betaling_email ||
-				strtotime( '+7 days 00:00' ) < $workshop->datum ||
-				$workshop->is_betaald()
-				) {
+			if ( $workshop->vervallen ) {
 				continue;
 			}
-			$workshop->actie->vraag_betaling();
+			self::doe_concept_vervallen( $workshop );
+			self::doe_vraag_betaling( $workshop );
 		}
 	}
 
+	/**
+	 * Laat de workshop vervallen als deze al langer dan x weken in concept staat.
+	 *
+	 * @param Workshop $workshop De workshop.
+	 *
+	 * @return void
+	 */
+	private static function doe_concept_vervallen( Workshop $workshop ) {
+		if ( $workshop->definitief ) {
+			return;
+		}
+		$workshop->vervallen = $workshop->aanvraagdatum + opties()['verloopaanvraag'] * WEEK_IN_SECONDS < strtotime( 'today' );
+		$workshop->save();
+	}
+
+	/**
+	 * Verzend de email met factuur als deze komende week plaatsvindt.
+	 *
+	 * @param Workshop $workshop De workshop.
+	 *
+	 * @return void
+	 */
+	private static function doe_vraag_betaling( Workshop $workshop ) {
+		if (
+			! $workshop->definitief ||
+			$workshop->betaling_email ||
+			strtotime( '+7 days 00:00' ) < $workshop->datum ||
+			$workshop->is_betaald()
+		) {
+			return;
+		}
+		$workshop->actie->vraag_betaling();
+	}
 }
