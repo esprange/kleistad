@@ -263,23 +263,21 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Verwerk de input data en geef de workshop terug.
 	 *
 	 * @return Workshop
-	 * @suppressWarnings (PHPMD.ElseExpression)
 	 */
 	private function update_workshop() : Workshop {
-		$workshop_id = intval( $this->data['workshop']['workshop_id'] );
+		$workshop               = new Workshop();
+		$workshop->communicatie = [
+			[
+				'type'    => WorkshopActie::NIEUW,
+				'from'    => 'Kleistad',
+				'subject' => "Toevoeging {$this->data['workshop']['naam']} door " . wp_get_current_user()->display_name,
+				'tekst'   => '',
+				'tijd'    => current_time( 'd-m-Y H:i' ),
+			],
+		];
+		$workshop_id            = intval( $this->data['workshop']['workshop_id'] );
 		if ( $workshop_id ) {
 			$workshop = new Workshop( $workshop_id );
-		} else {
-			$workshop               = new Workshop();
-			$workshop->communicatie = [
-				[
-					'type'    => WorkshopActie::NIEUW,
-					'from'    => 'Kleistad',
-					'subject' => "Toevoeging {$this->data['workshop']['naam']} door " . wp_get_current_user()->display_name,
-					'tekst'   => '',
-					'tijd'    => current_time( 'd-m-Y H:i' ),
-				],
-			];
 		}
 		$workshop->naam              = $this->data['workshop']['naam'];
 		$workshop->datum             = strtotime( $this->data['workshop']['datum'] );

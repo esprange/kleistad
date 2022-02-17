@@ -4,7 +4,8 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.9  
-**Stable tag:** 7.2.2  
+**Stable tag:** 7.2.3  
+
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -33,6 +34,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 7.2.3 ###
+* Merge van workshop aanvragen en workshop reserveringen. Een klant reserveert per direct een workshop
+* Docenten worden geïnformeerd bij een workshop boeking.
 ### 7.1.8 ###
 * Aanpassing naar docent beschikbaarheid, nu ook ochtend, middag, namiddag en avond.
 * Beperking op maximaal gelijktijdig te reserveren stook
