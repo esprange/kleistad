@@ -150,8 +150,20 @@ class WorkshopActie {
 	 * @since 5.0.0
 	 */
 	public function bevestig(): bool {
-		$herbevestiging             = $this->workshop->definitief;
-		$this->workshop->definitief = true;
+		$herbevestiging               = $this->workshop->definitief;
+		$this->workshop->definitief   = true;
+		$this->workshop->communicatie = array_merge(
+			[
+				[
+					'type'    => self::GEREAGEERD,
+					'from'    => wp_get_current_user()->display_name,
+					'subject' => "Reactie op {$this->workshop->naam} vraag",
+					'tekst'   => 'Bevestiging afspraak verstuurd',
+					'tijd'    => current_time( 'd-m-Y H:i' ),
+				],
+			],
+			$this->workshop->communicatie
+		);
 		$this->workshop->save();
 		if ( ! $herbevestiging ) {
 			return $this->workshop->verzend_email( '_bevestiging' );
@@ -208,8 +220,8 @@ class WorkshopActie {
 				[
 					'type'    => self::VRAAG,
 					'from'    => $email['from-name'],
-					'subject' => $email['subject'],
-					'tekst'   => $email['content'],
+					'subject' => htmlspecialchars( $email['subject'] ),
+					'tekst'   => htmlspecialchars( $email['content'] ),
 					'tijd'    => $email['tijd'],
 				],
 			],

@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 150;
+	const DBVERSIE = 156;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -275,8 +275,12 @@ class Admin_Upgrade {
 			$details      = maybe_unserialize( $post->post_excerpt );
 			$workshop_id  = intval( $details['workshop_id'] );
 			if ( $workshop_id ) {
-				$communicatie = base64_decode( $post->post_content );
-				$wpdb->query("UPDATE {$wpdb->prefix}kleistad_workshops SET communicatie = '$communicatie' WHERE id = $workshop_id AND communicatie IS NULL" );
+				$communicatie_lijst = maybe_unserialize( base64_decode( $post->post_content ) );
+				foreach ( $communicatie_lijst as $key => $communicatie_regel ) {
+					$communicatie_lijst[ $key ]['tekst'] = htmlspecialchars( wp_strip_all_tags( $communicatie_regel['tekst'] ), ENT_QUOTES );
+				}
+				$communicatie = maybe_serialize( $communicatie_lijst );
+				$wpdb->query("UPDATE {$wpdb->prefix}kleistad_workshops SET communicatie = '$communicatie' WHERE id = $workshop_id" );
 			}
 		}
 	}
