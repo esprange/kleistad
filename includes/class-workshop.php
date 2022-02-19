@@ -357,6 +357,7 @@ class Workshop extends Artikel {
 				'workshop_programma'  => $this->programma,
 				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
 				'workshop_link'       => $this->betaal_link,
+				'workshop_dagdeel'    => $this->dagdeel,
 				'vraag'               => $this->vraag,
 				'reactie'             => $this->reactie,
 			],
