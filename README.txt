@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.9
-Stable tag: 7.2.3
+Stable tag: 7.2.4
+
 
 
 
@@ -34,9 +35,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.2.3 =
+= 7.2.4 =
 * Merge van workshop aanvragen en workshop reserveringen. Een klant reserveert per direct een workshop
 * Docenten worden geïnformeerd bij een workshop boeking.
+* Datatables sorteer volgorde wordt vastgehouden.
 = 7.1.8 =
 * Aanpassing naar docent beschikbaarheid, nu ook ochtend, middag, namiddag en avond.
 * Beperking op maximaal gelijktijdig te reserveren stook

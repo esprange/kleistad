@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 156;
+	const DBVERSIE = 162;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -258,41 +258,9 @@ class Admin_Upgrade {
 	// phpcs:disable
 
 	/**
-	 * Merge de communicatie van de workshop aanvragen in de workshop records.
-	 *
-	 * @return void
-	 */
-	private function convert_workshopaanvraag() {
-		global $wpdb;
-		$posts = get_posts(
-			[
-				'post_type'      => 'kleistad_workshopreq',
-				'posts_per_page' => -1,
-				'post_status'    => 'any',
-			]
-		);
-		foreach ( $posts as $post ) {
-			$details      = maybe_unserialize( $post->post_excerpt );
-			$workshop_id  = intval( $details['workshop_id'] );
-			if ( $workshop_id ) {
-				$communicatie_lijst = maybe_unserialize( base64_decode( $post->post_content ) );
-				foreach ( $communicatie_lijst as $key => $communicatie_regel ) {
-					$communicatie_lijst[ $key ]['tekst'] = htmlspecialchars( wp_strip_all_tags( $communicatie_regel['tekst'] ), ENT_QUOTES );
-				}
-				$communicatie = maybe_serialize( $communicatie_lijst );
-				$wpdb->query("UPDATE {$wpdb->prefix}kleistad_workshops SET communicatie = '$communicatie' WHERE id = $workshop_id" );
-			}
-		}
-	}
-
-	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
-		/**
-		 * Conversie naar ...
-		 */
-		$this->convert_workshopaanvraag();
 	}
 
 }

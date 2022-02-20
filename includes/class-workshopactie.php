@@ -18,7 +18,7 @@ namespace Kleistad;
  */
 class WorkshopActie {
 
-	public const GEREAGEERD = 'gereageerd';
+	public const GEREAGEERD = 'reactie';
 	public const NIEUW      = 'nieuw';
 	public const VRAAG      = 'vraag';
 
