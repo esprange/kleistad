@@ -45,13 +45,16 @@ abstract class ShortcodeForm extends Shortcode {
 	abstract public function process() : array;
 
 	/**
-	 * Enqueue the scripts and styles for the shortcode.
+	 * De constructor
+	 *
+	 * @since   6.15.6
+	 *
+	 * @param string $shortcode  Shortcode (zonder kleistad- ).
+	 * @param array  $attributes Shortcode parameters.
 	 */
-	protected function enqueue() {
-		parent::enqueue();
-		if ( ! wp_script_is( 'kleistad-form' ) ) {
-			wp_enqueue_script( 'kleistad-form' );
-		}
+	protected function __construct( string $shortcode, array $attributes ) {
+		parent::__construct( $shortcode, $attributes );
+		$this->validator = new Validator();
 	}
 
 	/**
@@ -65,19 +68,6 @@ abstract class ShortcodeForm extends Shortcode {
 			return $this->{$this->form_actie}();
 		}
 		return [ 'status' => $this->status( new WP_Error( 'intern', 'interne fout, probeer het eventueel opnieuw' ) ) ];
-	}
-
-	/**
-	 * De constructor
-	 *
-	 * @since   6.15.6
-	 *
-	 * @param string $shortcode  Shortcode (zonder kleistad- ).
-	 * @param array  $attributes Shortcode parameters.
-	 */
-	protected function __construct( string $shortcode, array $attributes ) {
-		parent::__construct( $shortcode, $attributes );
-		$this->validator = new Validator();
 	}
 
 	/**

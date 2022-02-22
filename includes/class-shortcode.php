@@ -15,7 +15,6 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use Exception;
-use ReflectionClass;
 
 /**
  * De abstract class voor shortcodes
@@ -39,13 +38,6 @@ abstract class Shortcode {
 	protected array $data = [];
 
 	/**
-	 * Controle array om te voorkomen dat shortcodes meerdere keren voorkomen.
-	 *
-	 * @var array shortcode tags
-	 */
-	protected static array $tags = [];
-
-	/**
 	 * Actie welke bepaald welke informatie getoond moet worden.
 	 *
 	 * @var string $display_actie De uit te voeren actie.
@@ -67,7 +59,6 @@ abstract class Shortcode {
 	 * @return string html tekst.
 	 */
 	public function display() : string {
-		$this->enqueue();
 		$this->bepaal_actie();
 		try {
 			$ontvangen     = new Ontvangen();
@@ -158,20 +149,6 @@ abstract class Shortcode {
 	}
 
 	/**
-	 * Enqueue the scripts and styles for the shortcode.
-	 */
-	protected function enqueue() {
-		$reflect = new ReflectionClass( $this );
-		$script  = 'kleistad-' . substr( strtolower( $reflect->getShortName() ), strlen( 'public-' ) );
-		if ( wp_script_is( $script, 'registered' ) ) {
-			wp_enqueue_script( $script );
-		}
-		if ( ! wp_script_is( 'kleistad' ) ) {
-			wp_enqueue_script( 'kleistad' );
-		}
-	}
-
-	/**
 	 * Haal de tekst van de shortcode op.
 	 *
 	 * @return string
@@ -191,25 +168,17 @@ abstract class Shortcode {
 	 * @throws Kleistad_Exception Als er de shortcode meer dat eens op de pagina voorkomt.
 	 */
 	public static function get_instance( string $shortcode_tag, array $attributes ) : ?Shortcode {
-		// Het onderstaande voorkomt dat pagina edits gezien worden als een dubbel voorkomende shortcode.
-		$backend = ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || is_admin();
-		if ( in_array( $shortcode_tag, self::$tags, true ) && ! $backend ) {
-			throw new Kleistad_Exception( "De shortcode kleistad_$shortcode_tag mag maar éénmaal per pagina gebruikt worden" );
+		static $shortcode_actief = false;
+		if ( $shortcode_actief && ! ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || is_admin() ) ) {
+			throw new Kleistad_Exception( 'Per pagina mag maar één kleistad shortcode gebruikt worden' );
 		}
-		self::$tags[]    = $shortcode_tag;
-		$shortcode_class = self::get_class_name( $shortcode_tag );
-		return new $shortcode_class( $shortcode_tag, $attributes );
-	}
-
-	/**
-	 * Geef de class naam behorende bij de shortcode
-	 *
-	 * @param string $shortcode_tag Shortcode (zonder kleistad- ).
-	 *
-	 * @return string
-	 */
-	public static function get_class_name( string $shortcode_tag ) : string {
-		return '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
+		$shortcode_actief = true;
+		$shortcodes       = new Shortcodes();
+		$shortcode_class  = $shortcodes->get_class_name( $shortcode_tag );
+		if ( class_exists( $shortcode_class ) ) {
+			return new $shortcode_class( $shortcode_tag, $attributes );
+		}
+		throw new Kleistad_Exception( "De shortcode $shortcode_tag is niet bekend" );
 	}
 
 	/**

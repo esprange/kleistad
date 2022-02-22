@@ -36,7 +36,7 @@ class Shortcodes {
 			 */
 			'abonnee_inschrijving'  => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ],
+				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-datepicker', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [],
 			],
@@ -45,7 +45,7 @@ class Shortcodes {
 			 */
 			'abonnee_wijziging'     => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-datepicker', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [ LID ],
 			],
@@ -54,7 +54,7 @@ class Shortcodes {
 			 */
 			'abonnement_overzicht'  => (object) [
 				'script' => false,
-				'js'     => [ 'jquery', 'datatables' ],
+				'js'     => [ 'jquery', 'datatables', 'kleistad' ],
 				'css'    => [ 'datatables' ],
 				'access' => [ BESTUUR ],
 			],
@@ -63,7 +63,7 @@ class Shortcodes {
 			 */
 			'betaling'              => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'jquery-ui-selectmenu' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'datatables', 'jquery-ui' ],
 				'access' => [],
 			],
@@ -72,7 +72,7 @@ class Shortcodes {
 			 */
 			'contact'               => (object) [
 				'script' => false,
-				'js'     => [],
+				'js'     => [ 'kleistad-form' ],
 				'css'    => [],
 				'access' => [],
 			],
@@ -84,7 +84,7 @@ class Shortcodes {
 			 */
 			'cursus_beheer'         => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'datatables', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				'access' => [ BESTUUR ],
 			],
@@ -93,7 +93,7 @@ class Shortcodes {
 			 */
 			'cursus_extra'          => (object) [
 				'script' => true,
-				'js'     => [ 'jquery' ],
+				'js'     => [ 'jquery', 'kleistad-form' ],
 				'css'    => [],
 				'access' => [],
 			],
@@ -105,7 +105,7 @@ class Shortcodes {
 			 */
 			'cursus_inschrijving'   => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner', 'jquery-ui-tooltip', 'jquery-ui-selectmenu' ],
+				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'jquery-ui-spinner', 'jquery-ui-tooltip', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [],
 			],
@@ -118,7 +118,7 @@ class Shortcodes {
 			 */
 			'cursus_overzicht'      => (object) [
 				'script' => false,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				'access' => [ DOCENT, BESTUUR ],
 			],
@@ -127,7 +127,7 @@ class Shortcodes {
 			 */
 			'dagdelenkaart'         => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-selectmenu' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [],
 			],
@@ -140,7 +140,7 @@ class Shortcodes {
 			 */
 			'debiteuren'            => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui', 'datatables' ],
 				'access' => [ BOEKHOUD ],
 			],
@@ -150,7 +150,7 @@ class Shortcodes {
 			 */
 			'docent'                => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [ DOCENT, BESTUUR ],
 			],
@@ -159,7 +159,7 @@ class Shortcodes {
 			 */
 			'email'                 => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jstree' ],
+				'js'     => [ 'jquery', 'jstree', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui', 'jstree' ],
 				'access' => [ DOCENT, BESTUUR ],
 			],
@@ -168,7 +168,7 @@ class Shortcodes {
 			 */
 			'kalender'              => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'fullcalendar' ],
+				'js'     => [ 'jquery', 'fullcalendar', 'kleistad' ],
 				'css'    => [ 'fullcalendar' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
@@ -179,7 +179,7 @@ class Shortcodes {
 			 */
 			'omzet_rapportage'      => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables', 'kleistad' ],
 				'css'    => [ 'jquery-ui', 'datatables' ],
 				'access' => [ BESTUUR ],
 			],
@@ -188,7 +188,7 @@ class Shortcodes {
 			 */
 			'rapport'               => (object) [
 				'script' => false,
-				'js'     => [ 'jquery', 'datatables' ],
+				'js'     => [ 'jquery', 'datatables', 'kleistad' ],
 				'css'    => [ 'datatables', 'dashicons' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
@@ -200,7 +200,7 @@ class Shortcodes {
 			 */
 			'recept_beheer'         => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-autocomplete', 'datatables', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
@@ -209,8 +209,8 @@ class Shortcodes {
 			 */
 			'recept'                => (object) [
 				'script' => true,
-				'js'     => [ 'jquery' ],
-				'css'    => [ 'dashicons' ],
+				'js'     => [ 'jquery', 'kleistad' ],
+				'css'    => [ 'dashicons', 'kleistad-recept' ],
 				'access' => [],
 			],
 			/**
@@ -218,7 +218,7 @@ class Shortcodes {
 			 */
 			'registratie_overzicht' => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'kleistad' ],
 				'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				'access' => [ BESTUUR ],
 			],
@@ -227,7 +227,7 @@ class Shortcodes {
 			 */
 			'registratie'           => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'password-strength-meter' ],
+				'js'     => [ 'jquery', 'password-strength-meter', 'kleistad-form' ],
 				'css'    => [],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
@@ -236,7 +236,7 @@ class Shortcodes {
 			 */
 			'reservering'           => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'kleistad' ],
 				'css'    => [ 'jquery-ui', 'dashicons' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
@@ -245,7 +245,7 @@ class Shortcodes {
 			 */
 			'saldo'                 => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-selectmenu' ],
+				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [ DOCENT, LID, BESTUUR ],
 			],
@@ -254,7 +254,7 @@ class Shortcodes {
 			 */
 			'stookbestand'          => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'kleistad' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [ BESTUUR ],
 			],
@@ -263,7 +263,7 @@ class Shortcodes {
 			 */
 			'verkoop'               => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-tabs', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [ BESTUUR ],
 			],
@@ -272,7 +272,7 @@ class Shortcodes {
 			 */
 			'werkplek'              => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-dialog' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-dialog', 'kleistad' ],
 				'css'    => [ 'jquery-ui', 'dashicons' ],
 				'access' => [ DOCENT, LID, BESTUUR, 'cursist-1' ],
 			],
@@ -283,7 +283,7 @@ class Shortcodes {
 			 */
 			'werkplekrapport'       => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables', 'kleistad' ],
 				'css'    => [ 'jquery-ui', 'datatables' ],
 				'access' => [ BESTUUR ],
 			],
@@ -292,7 +292,7 @@ class Shortcodes {
 			 */
 			'workshop_aanvraag'     => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-datepicker' ],
+				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [],
 			],
@@ -306,7 +306,7 @@ class Shortcodes {
 			 */
 			'workshop_beheer'       => (object) [
 				'script' => true,
-				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'jquery-ui-tabs', 'datatables' ],
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'jquery-ui-spinner', 'jquery-ui-datepicker', 'jquery-ui-tabs', 'datatables', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui', 'datatables' ],
 				'access' => [ BESTUUR ],
 			],
@@ -333,22 +333,31 @@ class Shortcodes {
 	/**
 	 * Controleer of huidige pagina een shortcode bevat.
 	 *
-	 * @return array Array of shortcodes.
+	 * @return string De shortcode of leeg.
 	 */
-	public function heeft_shortcode() : array {
+	public function heeft_shortcode() : string {
 		global $post;
-		$tags   = [];
-		$result = [];
+		$tags = [];
 		if ( is_a( $post, 'WP_Post' ) ) {
 			foreach ( array_keys( $this->definities ) as $tag ) {
 				$tags[] = "kleistad_$tag";
 			}
-			preg_match_all( '/' . get_shortcode_regex( $tags ) . '/', $post->post_content, $matches, PREG_SET_ORDER );
-			foreach ( $matches as $match ) {
-				$result[] = substr( $match[2], strlen( 'kleistad_' ) );
+			if ( preg_match( '/' . get_shortcode_regex( $tags ) . '/', $post->post_content, $match ) ) {
+				return substr( $match[2], strlen( 'kleistad_' ) );
 			}
 		}
-		return $result;
+		return '';
+	}
+
+	/**
+	 * Geef de class naam behorende bij de shortcode
+	 *
+	 * @param string $shortcode_tag Shortcode (zonder kleistad- ).
+	 *
+	 * @return string
+	 */
+	public function get_class_name( string $shortcode_tag ) : string {
+		return '\\' . __NAMESPACE__ . '\\Public_' . ucwords( $shortcode_tag, '_' );
 	}
 
 }

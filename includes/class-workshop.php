@@ -103,34 +103,37 @@ class Workshop extends Artikel {
 		global $wpdb;
 		$this->actie    = new WorkshopActie( $this );
 		$this->betaling = new WorkshopBetaling( $this );
+		$this->data     = [
+			'id'                => null,
+			'naam'              => '',
+			'datum'             => date( 'Y-m-d' ),
+			'aanvraagdatum'     => date( 'Y-m-d' ),
+			'start_tijd'        => '10:00',
+			'eind_tijd'         => '12:00',
+			'docent'            => '',
+			'technieken'        => wp_json_encode( [] ),
+			'organisatie'       => '',
+			'organisatie_adres' => '',
+			'organisatie_email' => '',
+			'contact'           => '',
+			'email'             => '',
+			'telefoon'          => '',
+			'programma'         => '',
+			'vervallen'         => 0,
+			'kosten'            => opties()['workshopprijs'],
+			'aantal'            => 6,
+			'definitief'        => 0,
+			'betaling_email'    => 0,
+			'aanvraag_id'       => 0,
+			'communicatie'      => maybe_serialize( [] ),
+		];
 		if ( is_null( $workshop_id ) ) {
-			$this->data = [
-				'id'                => null,
-				'naam'              => '',
-				'datum'             => date( 'Y-m-d' ),
-				'aanvraagdatum'     => date( 'Y-m-d' ),
-				'start_tijd'        => '10:00',
-				'eind_tijd'         => '12:00',
-				'docent'            => '',
-				'technieken'        => wp_json_encode( [] ),
-				'organisatie'       => '',
-				'organisatie_adres' => '',
-				'organisatie_email' => '',
-				'contact'           => '',
-				'email'             => '',
-				'telefoon'          => '',
-				'programma'         => '',
-				'vervallen'         => 0,
-				'kosten'            => opties()['workshopprijs'],
-				'aantal'            => 6,
-				'definitief'        => 0,
-				'betaling_email'    => 0,
-				'aanvraag_id'       => 0,
-				'communicatie'      => maybe_serialize( [] ),
-			];
 			return;
 		}
-		$this->data = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+		$workshop = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+		if ( ! is_null( $workshop ) ) {
+			$this->data = $workshop;
+		}
 	}
 
 	/**
