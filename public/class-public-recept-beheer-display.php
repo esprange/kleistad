@@ -50,82 +50,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 					value="<?php echo esc_attr( $this->data['recept']['titel'] ); ?>"/>
 			</div>
 		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_glazuur">Soort glazuur</label>
-			</div>
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_kleur">Kleur</label>
-			</div>
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_uiterlijk">Uiterlijk</label>
-			</div>
-		</div>
-		<div class="kleistad-row" style="padding-top:15px">
-			<div class="kleistad-col-3">
-			<?php
-			wp_dropdown_categories(
-				[
-					'orderby'           => 'name',
-					'hide_empty'        => 0,
-					'show_count'        => 0,
-					'show_option_none'  => 'Kies soort glazuur',
-					'option_none_value' => '',
-					'class'             => 'cat',
-					'taxonomy'          => 'kleistad_recept_cat',
-					'hierarchical'      => 1,
-					'id'                => 'kleistad_glazuur',
-					'name'              => 'glazuur',
-					'selected'          => $this->data['recept']['glazuur'],
-					'child_of'          => Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id,
-					'tabindex'          => 2,
-				]
-			);
-			?>
-			</div>
-			<div class="kleistad-col-3">
-			<?php
-			wp_dropdown_categories(
-				[
-					'orderby'           => 'name',
-					'hide_empty'        => 0,
-					'show_count'        => 0,
-					'show_option_none'  => 'Kies kleur',
-					'option_none_value' => '',
-					'class'             => 'cat',
-					'taxonomy'          => 'kleistad_recept_cat',
-					'hierarchical'      => 1,
-					'id'                => 'kleistad_kleur',
-					'name'              => 'kleur',
-					'selected'          => $this->data['recept']['kleur'],
-					'child_of'          => Recept::hoofdtermen()[ Recept::KLEUR ]->term_id,
-					'tabindex'          => 3,
-				]
-			);
-			?>
-			</div>
-			<div class="kleistad-col-3">
-			<?php
-			wp_dropdown_categories(
-				[
-					'orderby'           => 'name',
-					'hide_empty'        => 0,
-					'show_count'        => 0,
-					'show_option_none'  => 'Kies uiterlijk',
-					'option_none_value' => '',
-					'class'             => 'cat',
-					'taxonomy'          => 'kleistad_recept_cat',
-					'hierarchical'      => 1,
-					'id'                => 'kleistad_uiterlijk',
-					'name'              => 'uiterlijk',
-					'selected'          => $this->data['recept']['uiterlijk'],
-					'child_of'          => Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id,
-					'tabindex'          => 4,
-				]
-			);
-			?>
-			</div>
-		</div>
+		<?php $this->categorien(); ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-5 kleistad-label">
 				<label for="kleistad_kenmerk">Kenmerken</label>
@@ -160,6 +85,72 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				<input type="hidden" name="foto_url" value="<?php echo esc_url( $this->data['recept']['content']['foto'] ); ?>" >
 			</div>
 		</div>
+		<?php $this->grondstoffen(); ?>
+		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_bewaren" value="bewaren">Opslaan</button>
+		<?php
+		if ( 0 < $this->data['recept']['id'] ) :
+			if ( 'publish' !== $this->data['recept']['status'] ) :
+				?>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_publiceren" value="publiceren" >Publiceren</button>
+		<?php else : ?>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verbergen" value="verbergen" >Verbergen</button>
+			<?php
+			endif;
+		?>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verwijderen" data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" value="verwijderen">Verwijderen</button>
+		<?php endif ?>
+		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
+		<?php
+	}
+
+	/**
+	 * Toon het overzicht van recepten
+	 *
+	 * @suppressWarnings (PHPMD.ElseExpression)
+	 */
+	protected function overzicht() {
+		?>
+		<table class="kleistad-datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
+			<thead>
+			<tr>
+				<th data-orderable="false">Glazuur</th>
+				<th>Titel</th>
+				<th>Datum</th>
+				<th>Status</th>
+				<th data-orderable="false">&nbsp;</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php foreach ( $this->data['recepten'] as $recept ) : ?>
+			<tr>
+				<td>
+				<?php if ( '' !== $recept['foto'] ) : ?>
+					<img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept['titel'] ); ?>" >
+					<?php else : ?>
+					&nbsp;
+				<?php endif; ?></td>
+				<td><?php echo esc_html( $recept['titel'] ); ?></td>
+				<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
+				<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
+				<td>
+					<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
+				</td>
+			</tr>
+			<?php endforeach ?>
+			</tbody>
+		</table>
+		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<?php
+	}
+
+	/**
+	 * Geef de grondstoffen
+	 *
+	 * @return void
+	 */
+	private function grondstoffen() {
+		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-5">
 				<label>Basis recept</label>
@@ -232,62 +223,92 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				</table>
 			</div>
 		</div>
-		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_bewaren" value="bewaren">Opslaan</button>
-		<?php
-		if ( 0 < $this->data['recept']['id'] ) :
-			if ( 'publish' !== $this->data['recept']['status'] ) :
-				?>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_publiceren" value="publiceren" >Publiceren</button>
-		<?php else : ?>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verbergen" value="verbergen" >Verbergen</button>
-			<?php
-			endif;
-		?>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_verwijderen" data-confirm="Recept beheer|weet je zeker dat je dit recept wilt verwijderen" value="verwijderen">Verwijderen</button>
-		<?php endif ?>
-		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 	}
 
 	/**
-	 * Toon het overzicht van recepten
+	 * Geef de categoriën.
 	 *
-	 * @suppressWarnings (PHPMD.ElseExpression)
+	 * @return void
 	 */
-	protected function overzicht() {
+	private function categorien() {
 		?>
-		<table class="kleistad-datatable display" data-page-length="5" data-order='[[ 2, "desc" ]]'>
-			<thead>
-			<tr>
-				<th data-orderable="false">Glazuur</th>
-				<th>Titel</th>
-				<th>Datum</th>
-				<th>Status</th>
-				<th data-orderable="false">&nbsp;</th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php foreach ( $this->data['recepten'] as $recept ) : ?>
-			<tr>
-				<td>
-				<?php if ( '' !== $recept['foto'] ) : ?>
-					<img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept['titel'] ); ?>" >
-					<?php else : ?>
-					&nbsp;
-				<?php endif; ?></td>
-				<td><?php echo esc_html( $recept['titel'] ); ?></td>
-				<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
-				<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
-				<td>
-					<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
-				</td>
-			</tr>
-			<?php endforeach ?>
-			</tbody>
-		</table>
-		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_glazuur">Soort glazuur</label>
+			</div>
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_kleur">Kleur</label>
+			</div>
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_uiterlijk">Uiterlijk</label>
+			</div>
+		</div>
+		<div class="kleistad-row" style="padding-top:15px">
+			<div class="kleistad-col-3">
+				<?php
+				wp_dropdown_categories(
+					[
+						'orderby'           => 'name',
+						'hide_empty'        => 0,
+						'show_count'        => 0,
+						'show_option_none'  => 'Kies soort glazuur',
+						'option_none_value' => '',
+						'class'             => 'cat',
+						'taxonomy'          => 'kleistad_recept_cat',
+						'hierarchical'      => 1,
+						'id'                => 'kleistad_glazuur',
+						'name'              => 'glazuur',
+						'selected'          => $this->data['recept']['glazuur'],
+						'child_of'          => Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id,
+						'tabindex'          => 2,
+					]
+				);
+				?>
+			</div>
+			<div class="kleistad-col-3">
+				<?php
+				wp_dropdown_categories(
+					[
+						'orderby'           => 'name',
+						'hide_empty'        => 0,
+						'show_count'        => 0,
+						'show_option_none'  => 'Kies kleur',
+						'option_none_value' => '',
+						'class'             => 'cat',
+						'taxonomy'          => 'kleistad_recept_cat',
+						'hierarchical'      => 1,
+						'id'                => 'kleistad_kleur',
+						'name'              => 'kleur',
+						'selected'          => $this->data['recept']['kleur'],
+						'child_of'          => Recept::hoofdtermen()[ Recept::KLEUR ]->term_id,
+						'tabindex'          => 3,
+					]
+				);
+				?>
+			</div>
+			<div class="kleistad-col-3">
+				<?php
+				wp_dropdown_categories(
+					[
+						'orderby'           => 'name',
+						'hide_empty'        => 0,
+						'show_count'        => 0,
+						'show_option_none'  => 'Kies uiterlijk',
+						'option_none_value' => '',
+						'class'             => 'cat',
+						'taxonomy'          => 'kleistad_recept_cat',
+						'hierarchical'      => 1,
+						'id'                => 'kleistad_uiterlijk',
+						'name'              => 'uiterlijk',
+						'selected'          => $this->data['recept']['uiterlijk'],
+						'child_of'          => Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id,
+						'tabindex'          => 4,
+					]
+				);
+				?>
+			</div>
+		</div>
 		<?php
 	}
-
 }
