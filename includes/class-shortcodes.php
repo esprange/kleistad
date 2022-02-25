@@ -62,7 +62,7 @@ class Shortcodes {
 			 * Betaling via link
 			 */
 			'betaling'              => (object) [
-				'script' => true,
+				'script' => false,
 				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'datatables', 'jquery-ui' ],
 				'access' => [],

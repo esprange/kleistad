@@ -56,15 +56,8 @@
 				}
 			)
 			/**
-			 * Als er een change is van de betaalwijze.
+			 * Als er sprake van een afwijkend bedrag is.
 			 */
-			.on(
-				'change',
-				'input[name=betaal]:radio',
-				function() {
-					$( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
-				}
-			)
 			.on(
 				'input',
 				'input[name=ander]',

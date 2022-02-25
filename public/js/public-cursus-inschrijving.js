@@ -146,41 +146,8 @@
 				}
 			)
 			/**
-			 * Wijzig de tekst button afhankelijk of er per bank betaald gaat worden of per ideal.
+			 * Bepaal de technieken
 			 */
-			.on(
-				'change',
-				'input[name=betaal]:radio',
-				function() {
-					$( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
-				}
-			)
-			/**
-			 * Vul adresvelden in
-			 */
-			.on(
-				'change',
-				'#kleistad_huisnr, #kleistad_pcode',
-				function() {
-					let pcode = $( '#kleistad_pcode' );
-					pcode.val( pcode.val().toUpperCase() );
-					$().lookupPostcode(
-						pcode.val(),
-						$( '#kleistad_huisnr' ).val(),
-						/**
-						 * Anonieme functie, simuleer de trigger zodat de data ook beschikbaar is voor de bevestig velden.
-						 *
-						 * @param {object} data
-						 * @param {string} data.straat
-						 * @param {string} data.plaats
-						 */
-						function( data ) {
-							$( '#kleistad_straat' ).val( data.straat ).trigger( 'change' );
-							$( '#kleistad_plaats' ).val( data.plaats ).trigger( 'change' );
-						}
-					);
-				}
-			)
 			.on(
 				'change',
 				'#kleistad_draaien, #kleistad_handvormen, #kleistad_boetseren',

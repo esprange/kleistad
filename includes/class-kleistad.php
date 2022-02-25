@@ -239,10 +239,11 @@ class Kleistad {
 		$plugin_filters = new Public_Filters();
 		$plugin_actions = new Public_Actions();
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'register_styles_and_scripts', 99 );
 		$this->loader->add_action( 'rest_api_init', $plugin_actions, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_actions, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $plugin_actions, 'register_post_types' );
+		$this->loader->add_action( 'init', $plugin_actions, 'register_styles_and_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'enqueue_styles_and_scripts', 99 );
 		$this->loader->add_action( 'kleistad_rcv_email', $plugin_actions, 'rcv_email' );
 		$this->loader->add_action( 'init', $plugin_actions, 'inline_style', 100 );
 		$this->loader->add_action( 'wp_ajax_kleistad_wachtwoord', $plugin_actions, 'wachtwoord', 100 );
