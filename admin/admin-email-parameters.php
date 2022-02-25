@@ -20,7 +20,7 @@
 			<li>regulier_incasso_mislukt: de maandelijkse factuur omdat incasso mislukt en betalen per bank met instructie</li>
 			<li>start_ideal: bevesting start na ideal betaling</li>
 			<li>start_bank: start betalen per bank met instructie</li>
-			<li>vervolg: einde 3 maand periode in zicht
+			<li>vervolg: einde start periode in zicht
 				<ul style="list-style-type:square;margin-left:25px">
 					<li>[voornaam] : voornaam van de abonnee</li>
 					<li>[achternaam] : achternaam van de abonnee</li>

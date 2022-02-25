@@ -42,22 +42,21 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		$cursus->maximum         = 3;
 		$cursus->save();
 		$this->input = [
-			'user_email'      => $cursist->user_email,
-			'email_controle'  => $cursist->user_email,
-			'first_name'      => $cursist->first_name,
-			'last_name'       => $cursist->last_name,
-			'straat'          => 'straat',
-			'huisnr'          => '12345',
-			'pcode'           => '1234AB',
-			'plaats'          => 'plaats',
-			'telnr'           => '0123456789',
-			'cursus_id'       => $cursus->id,
-			'gebruiker_id'    => $cursist_id,
-			'technieken'      => [],
-			'aantal'          => 1,
-			'opmerking'       => '',
-			'betaal'          => 'ideal',
-			'mc4wp-subscribe' => null,
+			'user_email'     => $cursist->user_email,
+			'email_controle' => $cursist->user_email,
+			'first_name'     => $cursist->first_name,
+			'last_name'      => $cursist->last_name,
+			'straat'         => 'straat',
+			'huisnr'         => '12345',
+			'pcode'          => '1234AB',
+			'plaats'         => 'plaats',
+			'telnr'          => '0123456789',
+			'cursus_id'      => $cursus->id,
+			'gebruiker_id'   => $cursist_id,
+			'technieken'     => [],
+			'aantal'         => 1,
+			'opmerking'      => '',
+			'betaal'         => 'ideal',
 		];
 		if ( $wachtlijst ) {
 			/**

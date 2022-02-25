@@ -16,7 +16,7 @@ use WP_Error;
 /**
  * De kleistad dagdelenkaart class.
  */
-class Public_Dagdelenkaart extends ShortcodeForm {
+class Public_Dagdelenkaart extends Public_Bestelling {
 
 	/**
 	 *
@@ -29,19 +29,18 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 	protected function prepare() : string {
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data['input'] = [
-				'user_email'      => '',
-				'email_controle'  => '',
-				'first_name'      => '',
-				'last_name'       => '',
-				'straat'          => '',
-				'huisnr'          => '',
-				'pcode'           => '',
-				'plaats'          => '',
-				'telnr'           => '',
-				'start_datum'     => '',
-				'opmerking'       => '',
-				'betaal'          => 'ideal',
-				'mc4wp-subscribe' => '0',
+				'user_email'     => '',
+				'email_controle' => '',
+				'first_name'     => '',
+				'last_name'      => '',
+				'straat'         => '',
+				'huisnr'         => '',
+				'pcode'          => '',
+				'plaats'         => '',
+				'telnr'          => '',
+				'start_datum'    => '',
+				'opmerking'      => '',
+				'betaal'         => 'ideal',
 			];
 		}
 		return $this->content();
@@ -58,23 +57,22 @@ class Public_Dagdelenkaart extends ShortcodeForm {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'gebruiker_id'    => FILTER_SANITIZE_NUMBER_INT,
-				'user_email'      => FILTER_SANITIZE_EMAIL,
-				'email_controle'  => FILTER_SANITIZE_EMAIL,
-				'first_name'      => FILTER_SANITIZE_STRING,
-				'last_name'       => FILTER_SANITIZE_STRING,
-				'straat'          => FILTER_SANITIZE_STRING,
-				'huisnr'          => FILTER_SANITIZE_STRING,
-				'pcode'           => FILTER_SANITIZE_STRING,
-				'plaats'          => FILTER_SANITIZE_STRING,
-				'telnr'           => FILTER_SANITIZE_STRING,
-				'start_datum'     => FILTER_SANITIZE_STRING,
-				'opmerking'       => [
+				'gebruiker_id'   => FILTER_SANITIZE_NUMBER_INT,
+				'user_email'     => FILTER_SANITIZE_EMAIL,
+				'email_controle' => FILTER_SANITIZE_EMAIL,
+				'first_name'     => FILTER_SANITIZE_STRING,
+				'last_name'      => FILTER_SANITIZE_STRING,
+				'straat'         => FILTER_SANITIZE_STRING,
+				'huisnr'         => FILTER_SANITIZE_STRING,
+				'pcode'          => FILTER_SANITIZE_STRING,
+				'plaats'         => FILTER_SANITIZE_STRING,
+				'telnr'          => FILTER_SANITIZE_STRING,
+				'start_datum'    => FILTER_SANITIZE_STRING,
+				'opmerking'      => [
 					'filter' => FILTER_SANITIZE_STRING,
 					'flags'  => FILTER_FLAG_STRIP_LOW,
 				],
-				'betaal'          => FILTER_SANITIZE_STRING,
-				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
+				'betaal'         => FILTER_SANITIZE_STRING,
 			]
 		);
 		if ( is_array( $this->data['input'] ) ) {

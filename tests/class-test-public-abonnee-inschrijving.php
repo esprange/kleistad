@@ -50,7 +50,6 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 			'gebruiker_id'     => $abonnee_id,
 			'opmerking'        => '',
 			'betaal'           => 'ideal',
-			'mc4wp-subscribe'  => null,
 		];
 
 		/**

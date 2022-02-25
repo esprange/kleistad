@@ -9,14 +9,27 @@
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Wijzig de teksten in het betaal formulier.
+	 */
+	function wijzigTeksten() {
+		const bedrag = parseFloat( $( '#kleistad_kosten_kaart' ).val() );
+		$( 'label[for=kleistad_betaal_ideal]' ).text( 'Ik betaal ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) );
+		$( 'label[for=kleistad_betaal_stort]' ).text( 'Ik betaal door storting van ' + bedrag.toLocaleString( undefined, { style: 'currency', currency: 'EUR' } ) + ' volgens de betaalinstructie, zoals aangegeven in de te ontvangen bevestigingsemail.' );
+	}
+
 	$(
 		/**
 		 * Document ready.
 		 */
 		function()
 		{
+			wijzigTeksten();
+
+			$( '#kleistad_submit' ).html( 'betalen' );
+
 			/**
-			 * Definieer het datum veld.
+			 * Initieer het start datum veld.
 			 */
 			$( '#kleistad_start_datum' ).datepicker(
 				'option',
@@ -24,26 +37,28 @@
 					minDate: 0,
 					maxDate: '+3M'
 				}
-			);
+			).trigger( 'change' );
 
 			/**
-			 * Wijzig de button tekst.
+			 * Wijzig de button tekst bij betaling dan wel aanmelding.
 			 */
-			$( 'input[name=betaal]:radio' ).on(
+			$( '.kleistad-shortcode' )
+			.on(
 				'change',
-				function() {
+				'input[name=betaal]:radio',
+				function () {
 					$( '#kleistad_submit' ).html( ( 'ideal' === $( this ).val() ) ? 'betalen' : 'verzenden' );
 				}
-			);
-
+			)
 			/**
 			 * Vul adresvelden in
 			 */
-			$( '#kleistad_huisnr, #kleistad_pcode' ).on(
+			.on(
 				'change',
-				function() {
+				'#kleistad_huisnr, #kleistad_pcode',
+				function () {
 					let pcode = $( '#kleistad_pcode' );
-					pcode.val( pcode.val().toUpperCase() );
+					pcode.val( pcode.val().toUpperCase().replace( /\s/g, '' ) );
 					$().lookupPostcode(
 						pcode.val(),
 						$( '#kleistad_huisnr' ).val(),
@@ -54,9 +69,9 @@
 						 * @param {string} data.straat
 						 * @param {string} data.plaats
 						 */
-						function( data ) {
-							$( '#kleistad_straat' ).val( data.straat );
-							$( '#kleistad_plaats' ).val( data.plaats );
+						function (data) {
+							$( '#kleistad_straat' ).val( data.straat ).trigger( 'change' );
+							$( '#kleistad_plaats' ).val( data.plaats ).trigger( 'change' );
 						}
 					);
 				}

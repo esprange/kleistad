@@ -169,7 +169,7 @@ abstract class Shortcode {
 	 */
 	public static function get_instance( string $shortcode_tag, array $attributes ) : ?Shortcode {
 		static $shortcode_actief = false;
-		if ( $shortcode_actief && ! ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || is_admin() ) ) {
+		if ( $shortcode_actief && ! ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || defined( 'KLEISTAD_TEST' ) || is_admin() ) ) {
 			throw new Kleistad_Exception( 'Per pagina mag maar één kleistad shortcode gebruikt worden' );
 		}
 		$shortcode_actief = true;

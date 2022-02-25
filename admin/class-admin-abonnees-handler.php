@@ -144,7 +144,7 @@ class Admin_Abonnees_Handler extends  Admin_Handler {
 				$abonnement->$veld = str_contains( $veld, 'datum' ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
 			}
 		}
-		$abonnement->reguliere_datum = strtotime( 'first day of +4 month ', $abonnement->start_datum );
+		$abonnement->reguliere_datum = strtotime( 'first day of ' . Abonnement::START_MAANDEN + 1 . ' month', $abonnement->start_datum );
 		$abonnement->extras          = $item['extras'];
 		$abonnement->save();
 		return 'De gegevens zijn opgeslagen';

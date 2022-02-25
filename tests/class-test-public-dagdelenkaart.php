@@ -31,20 +31,19 @@ class Test_Public_Dagdelenkaart extends Kleistad_UnitTestCase {
 		$gebruiker_id = $this->factory->user->create();
 		$gebruiker    = get_user_by( 'ID', $gebruiker_id );
 		$this->input  = [
-			'user_email'      => $gebruiker->user_email,
-			'email_controle'  => $gebruiker->user_email,
-			'first_name'      => $gebruiker->first_name,
-			'last_name'       => $gebruiker->last_name,
-			'straat'          => 'straat',
-			'huisnr'          => '12345',
-			'pcode'           => '1234AB',
-			'plaats'          => 'plaats',
-			'telnr'           => '0123456789',
-			'start_datum'     => date( 'd-m-Y', strtotime( '+ 1 month' ) ),
-			'gebruiker_id'    => $gebruiker_id,
-			'opmerking'       => '',
-			'betaal'          => 'ideal',
-			'mc4wp-subscribe' => null,
+			'user_email'     => $gebruiker->user_email,
+			'email_controle' => $gebruiker->user_email,
+			'first_name'     => $gebruiker->first_name,
+			'last_name'      => $gebruiker->last_name,
+			'straat'         => 'straat',
+			'huisnr'         => '12345',
+			'pcode'          => '1234AB',
+			'plaats'         => 'plaats',
+			'telnr'          => '0123456789',
+			'start_datum'    => date( 'd-m-Y', strtotime( '+ 1 month' ) ),
+			'gebruiker_id'   => $gebruiker_id,
+			'opmerking'      => '',
+			'betaal'         => 'ideal',
 		];
 	}
 

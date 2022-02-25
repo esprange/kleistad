@@ -16,7 +16,7 @@ use WP_Error;
 /**
  * De kleistad cursus inschrijving class.
  */
-class Public_Cursus_Inschrijving extends ShortcodeForm {
+class Public_Cursus_Inschrijving extends Public_Bestelling {
 
 	/**
 	 * Formulier dat getoond moet worden betreft het verwijderen van de wachtlijst.
@@ -80,22 +80,21 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 	protected function prepare_inschrijven() : string {
 		if ( ! isset( $this->data['input'] ) ) {
 			$this->data['input'] = [
-				'user_email'      => '',
-				'email_controle'  => '',
-				'first_name'      => '',
-				'last_name'       => '',
-				'straat'          => '',
-				'huisnr'          => '',
-				'pcode'           => '',
-				'plaats'          => '',
-				'telnr'           => '',
-				'cursus_id'       => 0,
-				'gebruiker_id'    => 0,
-				'aantal'          => 1,
-				'technieken'      => [],
-				'opmerking'       => '',
-				'betaal'          => 'ideal',
-				'mc4wp-subscribe' => '0',
+				'user_email'     => '',
+				'email_controle' => '',
+				'first_name'     => '',
+				'last_name'      => '',
+				'straat'         => '',
+				'huisnr'         => '',
+				'pcode'          => '',
+				'plaats'         => '',
+				'telnr'          => '',
+				'cursus_id'      => 0,
+				'gebruiker_id'   => 0,
+				'aantal'         => 1,
+				'technieken'     => [],
+				'opmerking'      => '',
+				'betaal'         => 'ideal',
 			];
 		}
 		$this->data['gebruikers']     = get_users(
@@ -174,35 +173,34 @@ class Public_Cursus_Inschrijving extends ShortcodeForm {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'user_email'      => FILTER_SANITIZE_EMAIL,
-				'email_controle'  => FILTER_SANITIZE_EMAIL,
-				'first_name'      => FILTER_SANITIZE_STRING,
-				'last_name'       => FILTER_SANITIZE_STRING,
-				'straat'          => FILTER_SANITIZE_STRING,
-				'huisnr'          => FILTER_SANITIZE_STRING,
-				'pcode'           => FILTER_SANITIZE_STRING,
-				'plaats'          => FILTER_SANITIZE_STRING,
-				'telnr'           => FILTER_SANITIZE_STRING,
-				'cursus_id'       => [
+				'user_email'     => FILTER_SANITIZE_EMAIL,
+				'email_controle' => FILTER_SANITIZE_EMAIL,
+				'first_name'     => FILTER_SANITIZE_STRING,
+				'last_name'      => FILTER_SANITIZE_STRING,
+				'straat'         => FILTER_SANITIZE_STRING,
+				'huisnr'         => FILTER_SANITIZE_STRING,
+				'pcode'          => FILTER_SANITIZE_STRING,
+				'plaats'         => FILTER_SANITIZE_STRING,
+				'telnr'          => FILTER_SANITIZE_STRING,
+				'cursus_id'      => [
 					'filter'    => FILTER_SANITIZE_NUMBER_INT,
 					'min-range' => 1,
 				],
-				'gebruiker_id'    => FILTER_SANITIZE_NUMBER_INT,
-				'technieken'      => [
+				'gebruiker_id'   => FILTER_SANITIZE_NUMBER_INT,
+				'technieken'     => [
 					'filter'  => FILTER_SANITIZE_STRING,
 					'flags'   => FILTER_FORCE_ARRAY,
 					'options' => [ 'default' => [] ],
 				],
-				'aantal'          => [
+				'aantal'         => [
 					'filter'    => FILTER_SANITIZE_NUMBER_INT,
 					'min-range' => 1,
 				],
-				'opmerking'       => [
+				'opmerking'      => [
 					'filter' => FILTER_SANITIZE_STRING,
 					'flags'  => FILTER_FLAG_STRIP_LOW,
 				],
-				'betaal'          => FILTER_SANITIZE_STRING,
-				'mc4wp-subscribe' => FILTER_SANITIZE_STRING,
+				'betaal'         => FILTER_SANITIZE_STRING,
 			]
 		);
 		if ( is_array( $this->data['input'] ) ) {

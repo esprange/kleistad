@@ -136,11 +136,8 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 		$shortcode = Shortcode::get_instance( $shortcode_tag, $atts );
 		$refobject = new ReflectionObject( $shortcode );
 		$refdata   = $refobject->getProperty( 'data' );
-		$reftags   = $refobject->getProperty( 'tags' );
 		$refdata->setAccessible( true );
 		$refdata->setValue( $refobject, $atts );
-		$reftags->setAccessible( true );
-		$reftags->setValue( $refobject, [] );
 		return $shortcode;
 	}
 

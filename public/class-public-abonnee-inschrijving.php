@@ -16,7 +16,7 @@ use WP_Error;
 /**
  * De class Abonnee Inschrijving.
  */
-class Public_Abonnee_Inschrijving extends ShortcodeForm {
+class Public_Abonnee_Inschrijving extends Public_Bestelling {
 
 	/**
 	 * Prepareer 'abonnee_inschrijving' form
@@ -43,7 +43,6 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 				'start_datum'      => '',
 				'opmerking'        => '',
 				'betaal'           => 'ideal',
-				'mc4wp-subscribe'  => '0',
 			];
 		}
 		$this->data['gebruikers'] = get_users(
@@ -84,7 +83,6 @@ class Public_Abonnee_Inschrijving extends ShortcodeForm {
 					'flags'  => FILTER_FLAG_STRIP_LOW,
 				],
 				'betaal'           => FILTER_SANITIZE_STRING,
-				'mc4wp-subscribe'  => FILTER_SANITIZE_STRING,
 			]
 		);
 		if ( is_array( $this->data['input'] ) ) {

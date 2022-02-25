@@ -235,10 +235,11 @@ abstract class Public_Shortcode_Display {
 		if ( is_super_admin() ) {
 			return $this;
 		}
+		$mc4wp_subscribe = filter_input( INPUT_POST, 'mc4wp-subscribe', FILTER_SANITIZE_STRING );
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
-				<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $this->data['input']['mc4wp-subscribe'], '1' ); ?> />
+				<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $mc4wp_subscribe, '1' ); ?> />
 				<label for="subscribe">Ik wil de Kleistad nieuwsbrief ontvangen.</label>
 			</div>
 		</div>

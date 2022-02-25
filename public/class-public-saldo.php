@@ -16,7 +16,7 @@ use WP_Error;
 /**
  * De kleistad saldo class.
  */
-class Public_Saldo extends ShortcodeForm {
+class Public_Saldo extends Public_Bestelling {
 
 	/**
 	 * Prepareer 'saldo' form

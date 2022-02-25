@@ -20,12 +20,13 @@ namespace Kleistad;
  */
 class Dagdelenkaart extends Artikel {
 
-	public const DEFINITIE = [
+	public const DEFINITIE  = [
 		'prefix' => 'K',
 		'naam'   => 'dagdelenkaart',
 		'pcount' => 1,
 	];
-	public const META_KEY  = 'kleistad_dagdelenkaart_v2';
+	public const KAART_DUUR = 3;
+	public const META_KEY   = 'kleistad_dagdelenkaart_v2';
 
 	/**
 	 * De beginwaarden van een dagdelenkaart.
@@ -70,7 +71,7 @@ class Dagdelenkaart extends Artikel {
 	 */
 	public function __get( string $attribuut ) {
 		if ( 'eind_datum' === $attribuut ) {
-			return strtotime( '+ 3 month', $this->data['start_datum'] );
+			return strtotime( self::KAART_DUUR . ' month', $this->data['start_datum'] );
 		}
 		return array_key_exists( $attribuut, $this->data ) ? $this->data[ $attribuut ] : null;
 	}
@@ -189,10 +190,10 @@ class Dagdelenkaart extends Artikel {
 		$vandaag = strtotime( 'today' );
 		if ( $this->start_datum > $vandaag ) {
 			return $uitgebreid ? 'gaat starten per ' . strftime( '%d-%m-%Y', $this->start_datum ) : 'nieuw';
-		} elseif ( strtotime( '+3 month', $this->start_datum ) <= $vandaag ) {
-			return $uitgebreid ? 'actief tot ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'actief';
+		} elseif ( strtotime( self::KAART_DUUR . ' month', $this->start_datum ) <= $vandaag ) {
+			return $uitgebreid ? 'actief tot ' . strftime( '%d-%m-%Y', strtotime( self::KAART_DUUR . ' month', $this->start_datum ) ) : 'actief';
 		}
-		return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%Y', strtotime( '+3 month', $this->start_datum ) ) : 'voltooid';
+		return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%Y', strtotime( self::KAART_DUUR . ' month', $this->start_datum ) ) : 'voltooid';
 	}
 
 }

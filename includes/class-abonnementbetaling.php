@@ -141,7 +141,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 
 		return match ( $type ) {
 			'#mandaat'      => 0.01,
-			'#start'        => 3 * $basis_bedrag,
+			'#start'        => Abonnement::START_MAANDEN * $basis_bedrag,
 			'#overbrugging' => $this->abonnement->geef_overbrugging_fractie() * $basis_bedrag,
 			'#regulier'     => $basis_bedrag + $extras_bedrag,
 			'#pauze'        => $this->abonnement->geef_pauze_fractie() * ( $basis_bedrag + $extras_bedrag ),

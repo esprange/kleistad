@@ -17,7 +17,7 @@ use WP_REST_Response;
 /**
  * De kleistad workshop aanvraag class.
  */
-class Public_Workshop_Aanvraag extends ShortcodeForm {
+class Public_Workshop_Aanvraag extends Public_Bestelling {
 
 	/**
 	 * Prepareer 'workshop_aanvraag' form

@@ -107,14 +107,14 @@ class AbonnementActie {
 	 * @return bool|string Een uri ingeval van betalen per ideal, true als per bank, false als ideal betaling niet mogelijk is.
 	 */
 	public function starten( int $start_datum, string $soort, string $opmerking, string $betaalwijze ): bool|string {
-		$start_bedrag                         = 3 * opties()[ "{$soort}_abonnement" ];
+		$start_bedrag                         = Abonnement::START_MAANDEN * opties()[ "{$soort}_abonnement" ];
 		$this->abonnement->code               = "A{$this->abonnement->klant_id}";
 		$this->abonnement->datum              = time();
 		$this->abonnement->soort              = $soort;
 		$this->abonnement->opmerking          = $opmerking;
 		$this->abonnement->start_datum        = $start_datum;
-		$this->abonnement->start_eind_datum   = strtotime( '+3 month', $start_datum );
-		$this->abonnement->reguliere_datum    = strtotime( 'first day of +4 month ', $start_datum );
+		$this->abonnement->start_eind_datum   = strtotime( Abonnement::START_MAANDEN . ' month', $start_datum );
+		$this->abonnement->reguliere_datum    = strtotime( 'first day of ' . Abonnement::START_MAANDEN + 1 . ' month', $start_datum );
 		$this->abonnement->pauze_datum        = 0;
 		$this->abonnement->herstart_datum     = 0;
 		$this->abonnement->eind_datum         = 0;

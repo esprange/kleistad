@@ -14,7 +14,7 @@ namespace Kleistad;
 /**
  * De kleistad verkoop class.
  */
-class Public_Verkoop extends ShortcodeForm {
+class Public_Verkoop extends Public_Bestelling {
 
 	/**
 	 * Prepareer 'verkoop' form
