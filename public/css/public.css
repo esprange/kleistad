@@ -493,7 +493,6 @@ a.kleistad-schedule {
 }
 
 @media screen and (min-width: 768px) {
-
 	div.kleistad-tab {
 		height: var(--tab-height);
 		overflow-y: auto;
@@ -545,7 +544,6 @@ a.kleistad-schedule {
 }
 
 @media screen and (max-width: 712px) {
-
 	table.kleistad-reserveringen th,
 	table.kleistad-reserveringen td,
 	table.kleistad-reserveringen button {
@@ -618,6 +616,7 @@ a.kleistad-schedule {
 .kleistad-checkbox:disabled,
 .kleistad-radio:disabled {
 	--b: var(--disabled);
+
 	cursor: not-allowed;
 	opacity: 0.9;
 }
