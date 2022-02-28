@@ -13,7 +13,7 @@ License: GPL3.0
 	--border-hover: green;
 	--border: lightgray;
 	--disabled: ghostwhite;
-	--disabled-inner: whitesmoke;
+	--disabled-inner: darkseagreen; /* whitesmoke; */
 	--focus: 2px greenyellow;
 	--tab-height: 460px;
 }
@@ -566,12 +566,12 @@ a.kleistad-schedule {
 }
 
 .kleistad-planning td,
-.keistad-planning th {
+.kleistad-planning th {
 	text-align: center;
 }
 
-.kleistad-shortcode input[type="checkbox"],
-.kleistad-shortcode input[type="radio"] {
+.kleistad-checkbox,
+.kleistad-radio {
 	appearance: none;
 	background: var(--b, var(--background));
 	border: 1px solid var(--bc, var(--border));
@@ -586,8 +586,8 @@ a.kleistad-schedule {
 	width: 21px;
 }
 
-.kleistad-shortcode input[type="checkbox"]::after,
-.kleistad-shortcode input[type="radio"]::after {
+.kleistad-checkbox::after,
+.kleistad-radio::after {
 	content: "";
 	display: block;
 	left: 0;
@@ -597,16 +597,16 @@ a.kleistad-schedule {
 	opacity: var(--o, 0);
 }
 
-.kleistad-shortcode input[type="radio"] {
+.kleistad-radio {
 	border-radius: 50%;
 }
 
-.kleistad-shortcode input[type="checkbox"] {
+.kleistad-checkbox {
 	border-radius: 7px;
 }
 
-.kleistad-shortcode input[type="checkbox"]:checked,
-.kleistad-shortcode input[type="radio"]:checked {
+.kleistad-checkbox:checked,
+.kleistad-radio:checked {
 	--b: var(--active);
 	--bc: var(--active);
 	--d-o: 0.3s;
@@ -615,20 +615,20 @@ a.kleistad-schedule {
 	--o: 1;
 }
 
-.kleistad-shortcode input[type="checkbox"]:disabled,
-.kleistad-shortcode input[type="radio"]:disabled {
+.kleistad-checkbox:disabled,
+.kleistad-radio:disabled {
 	--b: var(--disabled);
 	cursor: not-allowed;
 	opacity: 0.9;
 }
 
-.kleistad-shortcode input[type="checkbox"]:focus,
-.kleistad-shortcode input[type="radio"]:focus {
+.kleistad-checkbox:focus,
+.kleistad-radio:focus {
 	box-shadow: 0 0 0 var(--focus);
 }
 
-.kleistad-shortcode input[type="checkbox"] + label,
-.kleistad-shortcode input[type="radio"] + label {
+.kleistad-checkbox + label,
+.kleistad-radio + label {
 	cursor: pointer;
 	display: inline-block;
 	font-size: small;
@@ -638,22 +638,22 @@ a.kleistad-schedule {
 	max-width: 80%;
 }
 
-.kleistad-shortcode input[type="radio"]:checked {
+.kleistad-radio:checked {
 	--s: 0.5;
 }
 
-.kleistad-shortcode input[type="checkbox"]:disabled:checked,
-.kleistad-shortcode input[type="radio"]:disabled:checked {
+.kleistad-checkbox:disabled:checked,
+.kleistad-radio:disabled:checked {
 	--b: var(--disabled-inner);
 	--bc: var(--border);
 }
 
-.kleistad-shortcode input[type="checkbox"]:disabled + label,
-.kleistad-shortcode input[type="radio"]:disabled + label {
+.kleistad-checkbox:disabled + label,
+.kleistad-radio:disabled + label {
 	cursor: not-allowed;
 }
 
-.kleistad-shortcode input[type="radio"]::after {
+.kleistad-radio::after {
 	background: var(--active-inner);
 	border-radius: 50%;
 	height: 19px;
@@ -662,7 +662,7 @@ a.kleistad-schedule {
 	width: 19px;
 }
 
-.kleistad-shortcode input[type="checkbox"]::after {
+.kleistad-checkbox::after {
 	border: 2px solid var(--active-inner);
 	border-left: 0;
 	border-top: 0;
@@ -673,8 +673,8 @@ a.kleistad-schedule {
 	width: 5px;
 }
 
-.kleistad-shortcode input[type="checkbox"]:hover:not(:checked):not(:disabled),
-.kleistad-shortcode input[type="radio"]:hover:not(:checked):not(:disabled) {
+.kleistad-checkbox:hover:not(:checked):not(:disabled),
+.kleistad-radio:hover:not(:checked):not(:disabled) {
 	--bc: var(--border-hover);
 }
 
@@ -709,4 +709,8 @@ a.kleistad-schedule {
 .kleistad-button:focus {
 	background-color: green;
 	color: white;
+}
+
+.kleistad-button:disabled {
+	cursor: not-allowed;
 }

@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
+/** @noinspection PhpArrayWriteIsNotUsedInspection */
+
 /**
  * Class Public Betaling Test
  *

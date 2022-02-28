@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection MessDetectorValidationInspection */
+
 /**
  * Class Abonnement Test
  *

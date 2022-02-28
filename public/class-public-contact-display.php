@@ -65,38 +65,17 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">Onderwerp</label>
 			</div>
 		</div>
+		<?php foreach ( [ 'cursus', 'abonnement', 'stook', 'overig' ] as $onderwerp ) : ?>
 		<div class="kleistad-row" >
 			<div class="kleistad-col-1" >
 			</div>
 			<div class="kleistad-col-9 kleistad-label" >
-				<input name="onderwerp" id="kleistad_cursus" type="radio" required value="cursus" <?php checked( $this->data['input']['onderwerp'], 'cursus' ); ?> >
-				<label for="kleistad_cursus" >Cursus</label>
+				<input class="kleistad-radio" name="onderwerp" id="kleistad_<?php echo esc_attr( $onderwerp ); ?>" type="radio" required
+				value="<?php echo esc_attr( $onderwerp ); ?>cursus" <?php checked( $this->data['input']['onderwerp'], $onderwerp ); ?> >
+				<label for="kleistad_<?php echo esc_attr( $onderwerp ); ?>" ><?php echo esc_html( ucfirst( $onderwerp ) ); ?></label>
 			</div>
 		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-9 kleistad-label" >
-				<input name="onderwerp" id="kleistad_abonnement" type="radio" required value="abonnement" <?php checked( $this->data['input']['onderwerp'], 'abonnement' ); ?> >
-				<label for="kleistad_abonnement" >Abonnement</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-9 kleistad-label" >
-				<input name="onderwerp" id="kleistad_stook" type="radio" required value="stook" <?php checked( $this->data['input']['onderwerp'], 'stook' ); ?> >
-				<label for="kleistad_stook" >Stook</label>
-			</div>
-		</div>
-		<div class="kleistad-row" >
-			<div class="kleistad-col-1" >
-			</div>
-			<div class="kleistad-col-9 kleistad-label" >
-				<input name="onderwerp" id="kleistad_overig" type="radio" required value="overig" <?php checked( $this->data['input']['onderwerp'], 'overig' ); ?> >
-				<label for="kleistad_overig" >Overig</label>
-			</div>
-		</div>
+		<?php endforeach; ?>
 		<div class ="kleistad-row" >
 			<div class="kleistad-col-4 kleistad-label">
 				<label for="kleistad_vraag">Je vraag</label>

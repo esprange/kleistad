@@ -39,11 +39,11 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 			<thead>
 				<tr>
 					<th>
-						<button class="kleistad-button kleistad_periode" type="button" value="-1" >eerder</button
+						<button class="kleistad-button" name="periode" type="button" value="-1" >eerder</button
 					></th>
 					<th colspan="2" style="text-align:center;"><strong><span id="kleistad_periode" style="font-size:medium;"></span></strong></th>
 					<th style="text-align:right" >
-						<button class="kleistad-button kleistad_periode" type="button" value="1" >later</button>
+						<button class="kleistad-button" name="periode" type="button" value="1" >later</button>
 					</th>
 				</tr>
 				<tr>

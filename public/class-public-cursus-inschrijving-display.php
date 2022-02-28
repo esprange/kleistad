@@ -137,7 +137,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			?>
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">
 				<div class="kleistad-col-10">
-					<input name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_data['cursus']->id ); ?>"
+					<input class="kleistad-radio" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_data['cursus']->id ); ?>"
 						data-cursus='<?php echo $cursus_data['json'] ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?>
 						<?php checked( $checked ); ?> required />
 					<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>">
@@ -166,15 +166,15 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-1" >
 				</div>
 				<div class="kleistad-col-3 kleistad-label" id="kleistad_cursus_draaien" style="display: none" >
-					<input name="technieken[]" id="kleistad_draaien" type="checkbox" value="Draaien" <?php checked( in_array( 'Draaien', $this->data['input']['technieken'], true ) ); ?> >
+					<input class="kleistad-checkbox" name="technieken[]" id="kleistad_draaien" type="checkbox" value="Draaien" <?php checked( in_array( 'Draaien', $this->data['input']['technieken'], true ) ); ?> >
 					<label for="kleistad_draaien" >Draaien</label>
 				</div>
 				<div class="kleistad-col-3 kleistad-label" id="kleistad_cursus_handvormen" style="display: none" >
-					<input name="technieken[]" id="kleistad_handvormen" type="checkbox" value="Handvormen" <?php checked( in_array( 'Handvormen', $this->data['input']['technieken'], true ) ); ?> >
+					<input class="kleistad-checkbox" name="technieken[]" id="kleistad_handvormen" type="checkbox" value="Handvormen" <?php checked( in_array( 'Handvormen', $this->data['input']['technieken'], true ) ); ?> >
 					<label for="kleistad_handvormen" >Handvormen</label>
 				</div>
 				<div class="kleistad-col-3 kleistad-label" id="kleistad_cursus_boetseren" style="display: none" >
-					<input name="technieken[]" id="kleistad_boetseren" type="checkbox" value="Boetseren" <?php checked( in_array( 'Boetseren', $this->data['input']['technieken'], true ) ); ?> >
+					<input class="kleistad-checkbox" name="technieken[]" id="kleistad_boetseren" type="checkbox" value="Boetseren" <?php checked( in_array( 'Boetseren', $this->data['input']['technieken'], true ) ); ?> >
 					<label for="kleistad_boetseren" >Boetseren</label>
 				</div>
 				<div class="kleistad-row" >

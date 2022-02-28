@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpArrayWriteIsNotUsedInspection */
+
 /**
  * Class Public Contact Test
  *

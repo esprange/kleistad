@@ -222,9 +222,9 @@ EOT;
 	private static function show_planning_cell( int $datum, string $dagdeel, array $args ) : string {
 		$reservering = $args['reserveringen'][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
 		$formats     = [
-			Docent::NIET_BESCHIKBAAR => '<input type="checkbox" class="planning" data-datum="%s" data-dagdeel="%s" >',
-			Docent::BESCHIKBAAR      => '<input type="checkbox" class="planning" data-datum="%s" data-dagdeel="%s" checked="checked" >',
-			Docent::STANDAARD        => '<input type="checkbox" class="planning" style="background-color: mediumpurple" data-datum="%s" data-dagdeel="%s" checked="checked" >',
+			Docent::NIET_BESCHIKBAAR => '<input type="checkbox" class="kleistad-checkbox kleistad-planning" data-datum="%s" data-dagdeel="%s" >',
+			Docent::BESCHIKBAAR      => '<input type="checkbox" class="kleistad-checkbox kleistad-planning" data-datum="%s" data-dagdeel="%s" checked="checked" >',
+			Docent::STANDAARD        => '<input type="checkbox" class="kleistad-checkbox kleistad-planning" style="background-color: mediumpurple" data-datum="%s" data-dagdeel="%s" checked="checked" >',
 			Docent::OPTIE            => '<span class="kleistad-inzet kleistad-inzet-optie" style="width:21px">O</span>',
 			Docent::GERESERVEERD     => '<span class="kleistad-inzet kleistad-inzet-definitief" style="width:21px">R</span>',
 		];

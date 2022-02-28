@@ -314,7 +314,7 @@ abstract class Shortcode {
 	}
 
 	/**
-	 * Maak een tijdelijk bestand aan voor download.
+	 * Maak een tijdelijk bestand an voor download.
 	 *
 	 * @param Shortcode $shortcode De shortcode waarvoor de download plaatsvindt.
 	 * @param string    $functie   De shortcode functie die aangeroepen moet worden.

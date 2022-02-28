@@ -239,7 +239,7 @@ abstract class Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
-				<input type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $mc4wp_subscribe, '1' ); ?> />
+				<input class="kleistad-checkbox" type="checkbox" name="mc4wp-subscribe" id="subscribe" value="1" <?php checked( $mc4wp_subscribe, '1' ); ?> />
 				<label for="subscribe">Ik wil de Kleistad nieuwsbrief ontvangen.</label>
 			</div>
 		</div>
@@ -259,7 +259,7 @@ abstract class Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
-				<input type="checkbox" id="verklaring" required />
+				<input class="kleistad-checkbox" type="checkbox" id="verklaring" required />
 				<label for="verklaring"><?php echo $this->data['verklaring']; // phpcs:ignore ?></label>
 			</div>
 		</div>
@@ -321,7 +321,7 @@ abstract class Public_Shortcode_Display {
 		</div>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
-				<input type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
+				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" <?php checked( $this->data['input']['betaal'], 'ideal' ); ?> />
 				<label for="kleistad_betaal_ideal"></label>
 			</div>
 		</div>
@@ -332,7 +332,7 @@ abstract class Public_Shortcode_Display {
 		</div>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
-				<input type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
+				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
 				<label for="kleistad_betaal_stort"></label>
 			</div>
 		</div>

@@ -124,7 +124,7 @@
 		).done(
 			function( data ) {
 				$wachten.removeClass( 'kleistad-wachten' );
-				$( '.kleistad-meester[data-dagdeel=' + data.dagdeel + ']' ).val( data.id ).text( data.naam );
+				$( '[name=meester][data-dagdeel=' + data.dagdeel + ']' ).val( data.id ).text( data.naam );
 			}
 		).fail(
 			function( jqXHR ) {
@@ -278,7 +278,7 @@
 			)
 			.on(
 				'click',
-				'.kleistad-werkplek',
+				'[name=werkplek]',
 				function() {
 					let method = ( 'reserveren' === $( this ).text() ) ? 'POST' : 'DELETE',
 						datum  = $.datepicker.formatDate( 'dd-mm-yy',  $datum.datepicker( 'getDate' ) );
@@ -287,7 +287,7 @@
 			)
 			.on(
 				'click',
-				'.kleistad-meester',
+				'[name=meester]',
 				function() {
 					$meester_selectie.val( $( this ).val() );
 					$meester_selectie.data( 'dagdeel', $( this ).data( 'dagdeel' ) );

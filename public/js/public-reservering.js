@@ -41,7 +41,7 @@
 		let index,
 			stokers       = $reserveringen.data( 'stokers' ),
 			stokersAantal = stokers.length,
-			selectie      = '<select name="stoker_id" class="kleistad_verdeling" >' + ( empty ? '<option value="0"></option>' : '' );
+			selectie      = '<select name="stoker_id" >' + ( empty ? '<option value="0"></option>' : '' );
 		for ( index = 0; index < stokersAantal; index++ ) {
 			selectie += '<option value="' + stokers[index].ID + '" ' + ( parseInt( stokers[index].ID, 10 ) === id ? 'selected >' : '>' ) + stokers[index].display_name + '</option>';
 		}
@@ -99,7 +99,7 @@
 		for ( stook = 1; stook < aantalStook; stook++ ) {
 			$( '#kleistad_reservering table > tbody > tr:last' ).after(
 				'<tr><th><label>Medestoker</label></th><td>' + selectStoker( true, formData.verdeling[stook].medestoker ) +
-				'<td><input name="stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" value="' + formData.verdeling[stook].percentage + '" ></td></tr>'
+				'<td><input name="stoker_perc" type="number" min="0" max="100" value="' + formData.verdeling[stook].percentage + '" ></td></tr>'
 			);
 		}
 
@@ -193,7 +193,7 @@
 		$( '#kleistad_tekst' ).text( logica[formData.status].tekst );
 		$( logica[formData.status].actief ).show();
 		$( logica[formData.status].focus ).trigger( 'focus' );
-		$( '.ui-dialog-titlebar' ).removeClassWildcard( 'kleistad_reservering' ).addClass( formData.kleur );
+		$( '.ui-dialog-titlebar' ).removeClassWildcard( 'kleistad-reservering' ).addClass( formData.kleur );
 	}
 
 	/**
@@ -371,7 +371,7 @@
 			 */
 			$reserveringen.on(
 				'click',
-				'.kleistad_periode',
+				'button[name=periode]',
 				function() {
 					kleistadShow(
 						parseInt( $reserveringen.data( 'maand' ), 10 ) + parseInt( $( this ).val(), 10 ),
@@ -413,7 +413,7 @@
 			*/
 			.on(
 				'change',
-				'.kleistad_verdeling',
+				'[name=stoker_id],[name=stoker_perc]',
 				function() {
 					kleistadVerdeel( this );
 				}
@@ -467,7 +467,7 @@
 				function() {
 					$( '#kleistad_reservering table > tbody > tr:last' ).after(
 						'<tr><th><label>Medestoker</label></th><td>' + selectStoker( true, 0 ) +
-						'<td><input name="stoker_perc" class="kleistad_verdeling" type="number" min="0" max="100" value="0" ></td></tr>'
+						'<td><input name="stoker_perc" type="number" min="0" max="100" value="0" ></td></tr>'
 					);
 					$( '[name=stoker_id]:last' ).trigger( 'focus' );
 					return false;

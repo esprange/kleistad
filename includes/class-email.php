@@ -342,7 +342,7 @@ class Email {
 			Margin: 0;
 		}
 		a {
-			color: #f60083;
+			color: #f60091;
 			text-decoration: underline;
 		}
 		.h1 {

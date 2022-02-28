@@ -169,12 +169,12 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling"
+				<input class="kleistad-radio" type="radio" name="debiteur_actie" id="kleistad_deb_bankbetaling"
 					value="<?php echo ( 0 < $this->data['debiteur']['openstaand'] ) ? 'bankbetaling' : 'bankstorting'; ?>" >
 				<label for="kleistad_deb_bankbetaling">Bankbetaling invoeren</label>
 			</div>
 		</div>
-		<div class="kleistad_deb_bankbetaling kleistad_deb_veld" style="display:none" >
+		<div id="kleistad_optie_bankbetaling" style="display:none" >
 			<div class="kleistad-row">
 				<div class="kleistad-col-3" >
 				</div>
@@ -211,11 +211,11 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_annulering" value="annulering" >
+				<input class="kleistad-radio" type="radio" name="debiteur_actie" id="kleistad_deb_annulering" value="annulering" >
 				<label for="kleistad_deb_annulering">Annuleren</label>
 			</div>
 		</div>
-		<div class="kleistad_deb_annulering kleistad_deb_veld" style="display:none" >
+		<div id="kleistad_optie_annulering" style="display:none" >
 			<div class="kleistad-row">
 				<div class="kleistad-col-3" >
 					&nbsp;
@@ -252,8 +252,15 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_afboeken" value="afboeken" >
+				<input class="kleistad-radio" type="radio" name="debiteur_actie" id="kleistad_deb_afboeken" value="afboeken" >
 				<label for="kleistad_deb_afboeken">Afboeken (dubieuze debiteur)</label>
+			</div>
+		</div>
+		<div id="kleistad_optie_afboeken" style="display:none" >
+			<div class="kleistad-row">
+				<div class="kleistad-col-5 kleistad-label">
+					<label>Boek de order af (dubieuze debiteur)</label>
+				</div>
 			</div>
 		</div>
 		<?php
@@ -272,11 +279,11 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
-				<input type="radio" name="debiteur_actie" id="kleistad_deb_korting" value="korting" >
+				<input class="kleistad-radio" type="radio" name="debiteur_actie" id="kleistad_deb_korting" value="korting" >
 				<label for="kleistad_deb_korting">Korting verstrekken</label>
 			</div>
 		</div>
-		<div class="kleistad_deb_korting kleistad_deb_veld" style="display:none" >
+		<div id="kleistad_optie_korting" style="display:none" >
 			<div class="kleistad-row">
 				<div class="kleistad-col-3" >
 					&nbsp;

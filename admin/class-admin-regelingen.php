@@ -27,6 +27,7 @@ class Admin_Regelingen extends Admin_List_Table {
 				'plural'   => 'regelingen',
 			]
 		);
+		$this->orderby_default = 'display_name';
 	}
 
 	/**
@@ -97,7 +98,7 @@ class Admin_Regelingen extends Admin_List_Table {
 		$gebruiker_query = new WP_User_Query(
 			[
 				'fields'   => [ 'ID', 'display_name' ],
-				'orderby'  => 'display_name',
+				'orderby'  => $orderby,
 				'order'    => $order,
 				'search'   => $search,
 				'meta_key' => Oven::REGELING,

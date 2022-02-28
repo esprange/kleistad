@@ -280,12 +280,13 @@ class Workshop extends Artikel {
 			$afspraak->start        = new DateTime( $this->data['datum'] . ' ' . $this->data['start_tijd'], $timezone );
 			$afspraak->eind         = new DateTime( $this->data['datum'] . ' ' . $this->data['eind_tijd'], $timezone );
 			$afspraak->beschrijving = sprintf(
-				'<p><strong>%s</strong></p><p>contact: %s, %s</p><p>aantal: %d</p><p>programma: %s</p>',
+				'<p><strong>%s</strong></p><p>contact: %s, %s</p><p>aantal: %d</p><p>programma: %s</p><p>technieken: %s</p>',
 				$this->naam,
 				$this->contact,
 				$this->telnr,
 				$this->aantal,
-				$this->programma
+				$this->programma,
+				implode( ', ', $this->technieken )
 			);
 			if ( $this->docent ) {
 				foreach ( explode( ';', $this->docent ) as $docent_item ) {

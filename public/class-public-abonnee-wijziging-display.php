@@ -116,11 +116,11 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- soort -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_wijziging" class="kleistad_abo_optie kleistad-input_cbr" value="soort" >
-				<label for="kleistad_abo_wijziging">Abonnement soort wijzigen</label>
+				<input type="radio" name="wijziging" id="kleistad_abo_soort" class="kleistad-radio" value="soort" >
+				<label for="kleistad_abo_soort">Abonnement soort wijzigen</label>
 			</div>
 		</div>
-		<div class="kleistad_abo_wijziging kleistad_abo_veld" style="display:none" >
+		<div id="kleistad_optie_soort" style="display:none" >
 			<div class="kleistad-row">
 				<div class="kleistad-col-3" >
 					&nbsp;
@@ -149,11 +149,11 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- extras -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_extras" class="kleistad_abo_optie kleistad-input_cbr" value="extras" >
+				<input type="radio" name="wijziging" id="kleistad_abo_extras" class="kleistad-radio" value="extras" >
 				<label for="kleistad_abo_extras">Abonnement extras wijzigen</label>
 			</div>
 		</div>
-		<div class="kleistad_abo_extras kleistad_abo_veld" style="display:none" >
+		<div id="kleistad_optie_extras" style="display:none" >
 			<div class="kleistad-row">
 				<div class="kleistad-col-3">
 					&nbsp;
@@ -173,7 +173,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 					&nbsp;
 				</div>
 				<div class="kleistad-col-4">
-					<input name="extras[]" id="extras_<?php echo esc_attr( $index ); ?>" type="checkbox"
+					<input name="extras[]" id="extras_<?php echo esc_attr( $index ); ?>" type="checkbox" class="kleistad-checkbox"
 						<?php checked( in_array( $extra['naam'], $this->data['abonnement']->extras, true ) ); ?>
 						value="<?php echo esc_attr( $extra['naam'] ); ?>" />
 					<label for="extras_<?php echo esc_attr( $index ); ?>" ><?php echo esc_html( $extra['naam'] ); ?></label>
@@ -201,11 +201,11 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- pauze -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_pauze" class="kleistad_abo_optie kleistad-input_cbr" value="pauze" >
+				<input type="radio" name="wijziging" id="kleistad_abo_pauze" class="kleistad-radio" value="pauze" >
 				<label for="kleistad_abo_pauze" class="kleistad-label_cbr">Abonnement pauzeren</label>
 			</div>
 		</div>
-		<div class="kleistad_abo_pauze kleistad_abo_veld"  style="display:none" >
+		<div id="kleistad_optie_pauze" style="display:none" >
 			<?php
 			if ( $this->data['abonnement']->is_gepauzeerd() ) :
 				if ( $this->data['abonnement']->herstart_datum >= $this->per_datum ) :
@@ -299,11 +299,11 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- betaalwijze -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_betaalwijze" class="kleistad_abo_optie kleistad-input_cbr" value="betaalwijze" >
+				<input type="radio" name="wijziging" id="kleistad_abo_betaalwijze" class="kleistad-radio" value="betaalwijze" >
 				<label for="kleistad_abo_betaalwijze" >Abonnement betaalwijze</label>
 			</div>
 		</div>
-		<div class="kleistad_abo_betaalwijze kleistad_abo_veld" style="display:none" >
+		<div id="kleistad_optie_betaalwijze" style="display:none" >
 			<?php
 			if ( 'nee' === $this->data['incasso_actief'] ) :
 				?>
@@ -357,16 +357,18 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row"> <!-- einde -->
 			<div class="kleistad-col-6">
-				<input type="radio" name="wijziging" id="kleistad_abo_einde" class="kleistad_abo_optie kleistad-input_cbr" value="einde" >
+				<input type="radio" name="wijziging" id="kleistad_abo_einde" class="kleistad-radio" value="einde" >
 				<label for="kleistad_abo_einde" class="kleistad-label_cbr">Abonnement beëindigen</label>
 			</div>
 		</div>
-		<div class="kleistad-row kleistad_abo_einde kleistad_abo_veld" style="display:none" >
-			<div class="kleistad-col-3" >
-				&nbsp;
-			</div>
-			<div class="kleistad-col-7 kleistad-label" >
-				<p><strong>Je wilt je abonnement per <?php echo esc_html( $this->per() ); ?> stoppen</strong></p>
+		<div id="kleistad_optie_einde" style="display:none" >
+			<div class="kleistad-row">
+				<div class="kleistad-col-3" >
+					&nbsp;
+				</div>
+				<div class="kleistad-col-7 kleistad-label" >
+					<p><strong>Je wilt je abonnement per <?php echo esc_html( $this->per() ); ?> stoppen</strong></p>
+				</div>
 			</div>
 		</div>
 		<?php

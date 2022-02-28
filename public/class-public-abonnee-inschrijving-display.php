@@ -68,7 +68,7 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-1">
 			</div>
 			<div class="kleistad-col-6">
-				<input name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required
+				<input class="kleistad-radio" name="abonnement_keuze" id="kleistad_onbeperkt" type="radio" checked required
 					data-bedrag="<?php echo esc_attr( Abonnement::START_MAANDEN * opties()['onbeperkt_abonnement'] ); ?>"
 					data-bedragtekst="= <?php echo esc_attr( Abonnement::START_MAANDEN ); ?> termijnen"
 					value="onbeperkt" <?php checked( 'onbeperkt', $this->data['input']['abonnement_keuze'] ); ?> />
@@ -81,7 +81,7 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-1">
 			</div>
 			<div class="kleistad-col-6">
-				<input name="abonnement_keuze" id="kleistad_beperkt" type="radio" required
+				<input class="kleistad-radio" name="abonnement_keuze" id="kleistad_beperkt" type="radio" required
 					data-bedrag="<?php echo esc_attr( Abonnement::START_MAANDEN * opties()['beperkt_abonnement'] ); ?>"
 					data-bedragtekst="= <?php echo esc_attr( Abonnement::START_MAANDEN ); ?> termijnen"
 					value="beperkt" <?php checked( 'beperkt', $this->data['input']['abonnement_keuze'] ); ?> />

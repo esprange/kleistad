@@ -281,7 +281,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<?php foreach ( [ 'Draaien', 'Handvormen' ] as $techniek ) : ?>
 				<div class="kleistad-col-3" >
 				<span>
-					<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>" <?php checked( in_array( $techniek, $this->data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
+					<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" class="kleistad-checkbox" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>" <?php checked( in_array( $techniek, $this->data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
 					<label for="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" style="padding-right:2em"><?php echo esc_html( $techniek ); ?></label>
 				</span>
 				</div>
