@@ -41,4 +41,21 @@ class Abonnee extends Gebruiker {
 		$this->abonnement = new Abonnement( $this->ID );
 	}
 
+	/**
+	 * Bepaal aantal actieve reservering dat de gebruiker open heeft staan.
+	 *
+	 * @return int
+	 */
+	public function aantal_actieve_stook() : int {
+		global $wpdb;
+		$vandaag = date( 'Y-m-d' );
+		return $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$wpdb->prefix}kleistad_reserveringen WHERE gebruiker_id = %d AND datum >= %s",
+				$this->ID,
+				$vandaag
+			)
+		);
+	}
+
 }

@@ -81,22 +81,4 @@ class Test_Stook extends Kleistad_UnitTestCase {
 		$this->assertEquals( Stook::DEFINITIEF, $stook2->geef_statustekst(), 'status definitief onjuist' );
 	}
 
-	/**
-	 * Test de aantal actieve stook functie
-	 */
-	public function test_aantal_actieve_stook() {
-		$oven           = new Oven();
-		$oven->naam     = 'test oven';
-		$oven_id        = $oven->save();
-		$hoofdstoker_id = $this->factory()->user->create();
-		wp_set_current_user( $hoofdstoker_id );
-		$stook1 = new Stook( $oven_id, strtotime( 'tomorrow' ) );
-		$stook1->save();
-		$stook2 = new Stook( $oven_id, strtotime( '+ 1 week' ) );
-		$stook2->save();
-		$this->assertEquals( 2, Stook::aantal_actieve_stook( $hoofdstoker_id ), 'aantal stook 2 onjuist' );
-		$stook3 = new Stook( $oven_id, strtotime( '- 1 week' ) );
-		$stook3->save();
-		$this->assertEquals( 2, Stook::aantal_actieve_stook( $hoofdstoker_id ), 'aantal stook 3 onjuist' );
-	}
 }

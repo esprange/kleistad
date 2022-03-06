@@ -208,6 +208,33 @@ class Stook {
 	}
 
 	/**
+	 * Wijzig of voeg een verdeling toe.
+	 *
+	 * @param int    $temperatuur De stooktemperatuur.
+	 * @param string $soortstook  De soortstook.
+	 * @param int    $programma   Het programma.
+	 * @param array  $verdeling   De verdeling.
+	 *
+	 * @return bool
+	 */
+	public function wijzig( int $temperatuur, string $soortstook, int $programma, array $verdeling ) : bool {
+		$this->temperatuur    = $temperatuur;
+		$this->soort          = $soortstook;
+		$this->programma      = $programma;
+		$this->hoofdstoker_id = $verdeling[0]['id'];
+		$this->stookdelen     = [];
+		foreach ( $verdeling as $stookdeel ) {
+			$this->stookdelen[] = new Stookdeel( $stookdeel['id'], $stookdeel['perc'], $stookdeel['prijs'] = 0 );
+		}
+		try {
+			$this->save();
+			return true;
+		} catch ( Kleistad_Exception ) {
+			return false;
+		}
+	}
+
+	/**
 	 * Bepaal of de stook gereserveerd is.
 	 *
 	 * @return bool De reservering status.
@@ -240,22 +267,4 @@ class Stook {
 		return self::DEFINITIEF;
 	}
 
-	/**
-	 * Bepaal aantal actieve reservering dat de gebruiker open heeft staan.
-	 *
-	 * @param int $gebruiker_id Het id van de hoofdstoker.
-	 *
-	 * @return int
-	 */
-	public static function aantal_actieve_stook( int $gebruiker_id ) : int {
-		global $wpdb;
-		$vandaag = date( 'Y-m-d' );
-		return $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}kleistad_reserveringen WHERE gebruiker_id = %d AND datum >= %s",
-				$gebruiker_id,
-				$vandaag
-			)
-		);
-	}
 }

@@ -273,29 +273,25 @@ class Public_Reservering extends Shortcode {
 		$datum   = mktime( 0, 0, 0, $maand, $dag, $jaar );
 		$stook   = new Stook( $oven_id, $datum );
 		$method  = $request->get_method();
-		if ( 'DELETE' === $method ) {
-			// het betreft een annulering, controleer of deze al niet verwijderd is.
-			$stook->verwijder();
-		}
-
-		if ( 'POST' === $method ) {
-			$result = self::is_reservering_toegestaan( $datum );
-			if ( ! empty( $result ) ) {
-				return new WP_REST_Response( [ 'status' => melding( 0, $result ) ] );
-			}
-		}
-
-		if ( ( 'POST' === $method && ! $stook->is_gereserveerd() ) ||
-				( 'PUT' === $method && $stook->is_gereserveerd() )
-			) {
-			$stook->temperatuur = intval( $input['temperatuur'] );
-			$stook->soort       = sanitize_text_field( $input['soortstook'] );
-			$stook->programma   = intval( $input['programma'] );
-			$stook->stookdelen  = [];
-			foreach ( $input['verdeling'] as $verdeling ) {
-				$stook->stookdelen[] = new Stookdeel( $verdeling['id'], $verdeling['perc'], $verdeling['prijs'] = 0 );
-			}
-			$stook->save();
+		switch ( $method ) {
+			case 'DELETE':
+				$stook->verwijder();
+				break;
+			/**
+			 * Voor zowel Post als Put kan afgesloten worden met de wijziging of toevoeging gegevens.
+			 *
+			 * @noinspection PhpMissingBreakStatementInspection
+			 */
+			case 'POST':
+				$check = self::is_reservering_toegestaan( $datum );
+				if ( ! empty( $check ) ) {
+					return new WP_REST_Response( [ 'status' => melding( 0, $check ) ] );
+				}
+				// Geen break.
+			case 'PUT':
+				if ( ! $stook->wijzig( intval( $input['temperatuur'] ), sanitize_text_field( $input['soortstook'] ), intval( $input['programma'] ), $input['verdeling'] ) ) {
+					return new WP_REST_Response( [ 'status' => melding( 0, 'De gegevens konden niet worden opgeslagen. Probeer het eventueel opnieuw' ) ] );
+				}
 		}
 		return new WP_REST_Response(
 			[
@@ -329,7 +325,7 @@ class Public_Reservering extends Shortcode {
 		if ( $abonnee->abonnement->pauze_datum < $datum && $abonnee->abonnement->herstart_datum > $datum ) {
 			return 'Op deze datum is je abonnement gepauzeeerd. Een reservering is dan niet mogelijk.';
 		}
-		if ( opties()['stook_max'] <= Stook::aantal_actieve_stook( $stoker_id ) ) {
+		if ( opties()['stook_max'] <= $abonnee->aantal_actieve_stook() ) {
 			return 'Je kan niet meer dan ' . opties()['stook_max'] . ' openstaande reserveringen hebben.';
 		}
 		return '';
