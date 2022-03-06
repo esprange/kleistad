@@ -42,6 +42,7 @@ class LosArtikel extends Artikel {
 	 * @param int|null $verkoop_id Een uniek id van de verkoop.
 	 */
 	public function __construct( ?int $verkoop_id = null ) {
+		$this->orderregels = new Orderregels();
 		if ( is_null( $verkoop_id ) ) {
 			$verkoop_id = intval( get_option( 'kleistad_losnr', 0 ) );
 			update_option( 'kleistad_losnr', ++$verkoop_id );
@@ -130,7 +131,6 @@ class LosArtikel extends Artikel {
 	 * @param float  $prijs   De bruto prijs per artikel.
 	 */
 	public function bestelregel( string $artikel, float $aantal, float $prijs ) {
-		$this->orderregels = new Orderregels();
 		$this->orderregels->toevoegen( new Orderregel( $artikel, $aantal, $prijs ) );
 		$this->prijs += $aantal * $prijs;
 	}

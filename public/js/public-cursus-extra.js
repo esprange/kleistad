@@ -14,17 +14,16 @@
 	 */
 	$(
 		function() {
-			$( '.kleistad-input' ).on(
+			$( 'input[name^=extra_cursist]' ).on(
 				'change',
 				function() {
-					let waarde       = '',
-						$medecursist = $( this ).parents( '.medecursist' );
-					$medecursist.find( '.kleistad-input' ).each(
-						function() {
-							waarde += $( this ).val();
-						}
-					);
-					$medecursist.find( '.kleistad-input' ).prop( 'required', '' !== waarde );
+					let $inputs = $( this ).parents( '[id^=kleistad_medecursist]' ).find( 'input' ),
+						values  = $inputs.map(
+							function() {
+								return $( this ).val();
+							}
+						).get().join( '' );
+					$inputs.prop( 'required', '' !== values );
 				}
 			);
 		}

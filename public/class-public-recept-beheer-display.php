@@ -197,7 +197,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 			} while ( $index++ < $count );
 			?>
 				<tr>
-					<td colspan="2"><button class="kleistad-button extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
+					<td colspan="2"><button id="kleistad_extra_basis" class="kleistad-button ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
 				</tr>
 				</table>
 			</div>
@@ -218,7 +218,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 			} while ( $index++ < $count );
 			?>
 				<tr>
-					<td colspan="2"><button class="kleistad-button extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
+					<td colspan="2"><button id="kleistad_extra_toevoeging" class="kleistad-button ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button></td>
 				</tr>
 				</table>
 			</div>

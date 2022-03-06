@@ -1,12 +1,11 @@
-<?php /** @noinspection MessDetectorValidationInspection */
-
+<?php
 /**
  * Class Abonnement Test
  *
  * @package Kleistad
  *
  * @covers \Kleistad\Abonnement, \Kleistad\Abonnementen, \Kleistad\Abonnee, \Kleistad\Abonnees, \Kleistad\AbonnementActie, \Kleistad\AbonnementBetaling
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection, MessDetectorValidationInspection
  */
 
 namespace Kleistad;

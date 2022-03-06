@@ -254,8 +254,13 @@ class AbonnementBetaling extends ArtikelBetaling {
 			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order, 0, '', true ) );
 			return;
 		}
-		if ( 'ideal' === $type && ! $order->id ) {
-			$this->abonnement->erase();
+		if ( 'ideal' === $type ) {
+			/**
+			 * Een inschrijving die niet voltooid wordt.
+			 */
+			if ( ! $order->id ) {
+				$this->abonnement->erase();
+			}
 			return;
 		}
 		/**

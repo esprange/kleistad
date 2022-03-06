@@ -253,6 +253,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-7" >
 					<p><strong>Je wilt het abonnement pauzeren</strong></p>
 					<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( Abonnement::MIN_PAUZE_WEKEN ); ?> weken. Per kalender jaar mag er in totaal maximaal <?php echo esc_html( Abonnement::MAX_PAUZE_WEKEN ); ?> weken gepauzeerd worden.</p>
+					<p>Tijdens de pauze periode zijn er geen ovenreserveringen mogelijk. Bestaande reserveringen worden automatisch geannuleerd</p>
 				</div>
 			</div>
 			<div class="kleistad-row" >
@@ -368,6 +369,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-7 kleistad-label" >
 					<p><strong>Je wilt je abonnement per <?php echo esc_html( $this->per() ); ?> stoppen</strong></p>
+					<p>Eventuele ovenstook reserveringen na deze datum worden automatisch geannuleerd.</p>
 				</div>
 			</div>
 		</div>

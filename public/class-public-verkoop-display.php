@@ -81,11 +81,7 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 				<label>Aantal</label>
 			</div>
 		</div>
-			<?php
-				$index = 0;
-				$count = count( $this->data['input']['omschrijving'] );
-			do {
-				?>
+			<?php foreach ( array_keys( $this->data['input']['omschrijving'] ) as $index ) : ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">
 				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="text" name="omschrijving[]" required value="<?php echo esc_attr( $this->data['input']['omschrijving'][ $index ] ); ?>" >
@@ -94,16 +90,13 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" name="prijs[]" required value="<?php echo esc_attr( $this->data['input']['prijs'][ $index ] ); ?>" >
 			</div>
 			<div class="kleistad-col-2">
-				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" name="aantal[]" required value="<?php echo esc_attr( $this->data['input']['aantal'][ $index ] ); ?>" >
+				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" placeholder="1" ame="aantal[]" required value="<?php echo esc_attr( $this->data['input']['aantal'][ $index ] ); ?>" >
 			</div>
 		</div>
-				<?php
-				$index++;
-			} while ( $index < $count );
-			?>
+				<?php endforeach; ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2">
-				<button class="kleistad-button extra_regel ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button><br/>&nbsp;
+				<button id="kleistad_extra_regel" class="kleistad-button ui-button ui-widget ui-corner-all" ><span class="dashicons dashicons-plus"></span></button><br/>&nbsp;
 			</div>
 		</div>
 		<div class="kleistad-row">

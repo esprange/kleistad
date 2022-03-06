@@ -25,7 +25,7 @@
 			/**
 			 * Plak de profiel div als eerste regel in de normale pagina.
 			 */
-			$page.prepend( '<div class="kleistad kleistad-profiel">&nbsp;</div>' );
+			$page.prepend( '<div id="kleistad_profiel" class="kleistad kleistad-profiel">&nbsp;</div>' );
 
 			/**
 			 * Haal de profiel gegevens op
@@ -47,7 +47,7 @@
 				 * @param data
 				 */
 				function( data ) {
-					$( '.kleistad-profiel' ).html( data.html );
+					$( '#kleistad_profiel' ).html( data.html );
 				}
 			);
 
@@ -56,7 +56,7 @@
 			 */
 			$page.on(
 				'click',
-				'#kleistad-betaalinfo',
+				'#kleistad_betaalinfo',
 				function ( element ) {
 					$( '.kleistad-openstaand' ).toggle( 'drop' );
 					element.stopPropagation();

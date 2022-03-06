@@ -1,12 +1,11 @@
-<?php /** @noinspection PhpArrayWriteIsNotUsedInspection */
-
+<?php
 /**
  * Class Public Email Test
  *
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Email
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection, PhpArrayWriteIsNotUsedInspection, PhpUnhandledExceptionInspection
  */
 
 namespace Kleistad;

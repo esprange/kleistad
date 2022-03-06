@@ -80,6 +80,9 @@ class AbonnementActie {
 	 * @return bool
 	 */
 	public function pauzeren( int $pauze_datum, int $herstart_datum ) : bool {
+		$stoker = new Stoker( $this->abonnement->klant_id );
+		$stoker->annuleer_stook( $pauze_datum, $herstart_datum );
+
 		$thans_gepauzeerd                 = $this->abonnement->is_gepauzeerd();
 		$this->abonnement->pauze_datum    = $pauze_datum;
 		$this->abonnement->herstart_datum = $herstart_datum;
@@ -139,6 +142,9 @@ class AbonnementActie {
 	 * @return bool
 	 */
 	public function stoppen( int $eind_datum ) : bool {
+		$stoker = new Stoker( $this->abonnement->klant_id );
+		$stoker->annuleer_stook( $eind_datum );
+
 		$this->abonnement->eind_datum = $eind_datum;
 		$eind_datum_str               = strftime( '%d-%m-%Y', $this->abonnement->eind_datum );
 		try {

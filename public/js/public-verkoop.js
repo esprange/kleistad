@@ -29,7 +29,7 @@
 			 */
 			.on(
 				'click',
-				'.extra_regel',
+				'#kleistad_extra_regel',
 				function() {
 					let $oldRow, $newRow;
 					$oldRow = $( this ).closest( '.kleistad-row' ).prev();

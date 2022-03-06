@@ -466,7 +466,6 @@ a.kleistad-schedule {
 	max-width: 11ch;
 	opacity: 0.9;
 	overflow: hidden;
-	text-align: center;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
@@ -563,9 +562,16 @@ a.kleistad-schedule {
 	}
 }
 
-.kleistad-planning td,
-.kleistad-planning th {
+.kleistad-cell_center {
 	text-align: center;
+}
+
+.kleistad-cell_right {
+	text-align: right;
+}
+
+.kleistad-cell_left {
+	text-align: left;
 }
 
 .kleistad-checkbox,

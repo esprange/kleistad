@@ -270,15 +270,19 @@ class Public_Reservering extends Shortcode {
 		$jaar    = intval( $input['jaar'] );
 		$maand   = intval( $input['maand'] );
 		$dag     = intval( $input['dag'] );
-		$stook   = new Stook( $oven_id, mktime( 0, 0, 0, $maand, $dag, $jaar ) );
+		$datum   = mktime( 0, 0, 0, $maand, $dag, $jaar );
+		$stook   = new Stook( $oven_id, $datum );
 		$method  = $request->get_method();
 		if ( 'DELETE' === $method ) {
 			// het betreft een annulering, controleer of deze al niet verwijderd is.
 			$stook->verwijder();
 		}
 
-		if ( ( 'POST' === $method && ! self::is_reservering_toegestaan() ) ) {
-			return new WP_REST_Response( [ 'status' => melding( 0, 'Jouw maximaal toegestaan aantal openstaande reserveringen is bereikt' ) ] );
+		if ( 'POST' === $method ) {
+			$result = self::is_reservering_toegestaan( $datum );
+			if ( ! empty( $result ) ) {
+				return new WP_REST_Response( [ 'status' => melding( 0, $result ) ] );
+			}
 		}
 
 		if ( ( 'POST' === $method && ! $stook->is_gereserveerd() ) ||
@@ -307,9 +311,27 @@ class Public_Reservering extends Shortcode {
 	/**
 	 * Controleer of de gebruiker mag reserveren.
 	 *
-	 * @return bool
+	 * @param int $datum De datum dat er gereserveerd wordt.
+	 * @return string
 	 */
-	private static function is_reservering_toegestaan() : bool {
-		return current_user_can( BESTUUR ) || opties()['stook_max'] > Stook::aantal_actieve_stook( get_current_user_id() );
+	private static function is_reservering_toegestaan( int $datum ) : string {
+		if ( current_user_can( BESTUUR ) ) {
+			return '';
+		}
+		$stoker_id = get_current_user_id();
+		$abonnee   = new Abonnee( $stoker_id );
+		if ( $abonnee->abonnement->start_datum > $datum ) {
+			return 'Op deze datum is je abonnement nog niet gestart. Een reservering is dan nog niet mogelijk';
+		}
+		if ( $abonnee->abonnement->eind_datum && $abonnee->abonnement->eind_datum < $datum ) {
+			return 'Op deze datum is je abonnement al beëindigd. Een reservering is dan niet meer mogelijk.';
+		}
+		if ( $abonnee->abonnement->pauze_datum < $datum && $abonnee->abonnement->herstart_datum > $datum ) {
+			return 'Op deze datum is je abonnement gepauzeeerd. Een reservering is dan niet mogelijk.';
+		}
+		if ( opties()['stook_max'] <= Stook::aantal_actieve_stook( $stoker_id ) ) {
+			return 'Je kan niet meer dan ' . opties()['stook_max'] . ' openstaande reserveringen hebben.';
+		}
+		return '';
 	}
 }

@@ -78,7 +78,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			foreach ( $this->data['workshops'] as $workshop ) :
 				?>
 				<tr>
-					<td data-sort="<?php echo esc_attr( substr( $workshop['code'], 1 ) ); ?>"><?php echo esc_html( $workshop['code'] ); ?></td>
+					<td data-sort="<?php echo esc_attr( $workshop['id'] ); ?>"><?php echo esc_html( $workshop['code'] ); ?></td>
 					<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
 					<td><?php echo esc_html( $workshop['contact'] ); ?></td>
 					<td><?php echo $workshop['docent']; // phpcs:ignore ?></td>
@@ -112,38 +112,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $this->data['workshop']['workshop_id'] ); ?>"/>
 		<input type="hidden" name="aanvraag_id" value="<?php echo esc_attr( $this->data['workshop']['aanvraag_id'] ); ?>"/>
 		<input type="hidden" name="vervallen" value="<?php echo (int) $this->data['workshop']['vervallen']; ?>" >
-		<div class="kleistad-row">
-			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_naam">Soort workshop</label></div>
-			<div class="kleistad-col-3">
-				<select name="naam" required id="kleistad_naam" <?php wp_readonly( $readonly ); ?> style="width:100%" >
-					<?php foreach ( opties()['activiteit'] as $activiteit ) : ?>
-					<option value="<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" <?php selected( 0 === strcasecmp( $this->data['workshop']['naam'], $activiteit['naam'] ) ); ?> >
-						<?php echo esc_html( ucfirst( $activiteit['naam'] ) ); ?>
-					</option>
-					<?php endforeach; ?>
-				</select>
-			</div>
-		</div>
-		<?php
-			$this->contact_details( $readonly )->planning_details( $readonly )->kosten_details( $readonly );
-		?>
-		?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3">
-				<input type="hidden" name="definitief" value="<?php echo (int) $this->data['workshop']['definitief']; ?>" >
-				<?php if ( $this->data['workshop']['vervallen'] ) : ?>
-					<span style="color:red" >Afspraak is vervallen</span>
-				<?php else : ?>
-					Afspraak definitief &nbsp;&nbsp;<?php echo $this->data['workshop']['definitief'] ? '&#10004;' : '&#10060;'; ?>
-				<?php endif ?>
-			</div>
-			<div class="kleistad-col-3">
-				Gefactureerd &nbsp;&nbsp;<?php echo $this->data['workshop']['gefactureerd'] ? '&#10004;' : '&#10060;'; ?>
-			</div>
-			<div class="kleistad-col-3">
-				Betaald &nbsp;&nbsp;<input type="hidden" name="betaald" value="<?php echo (int) $this->data['workshop']['betaald']; ?>" ><?php echo $this->data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?>
-			</div>
-		</div>
+		<?php $this->activiteit_details( $readonly )->contact_details( $readonly )->planning_details( $readonly )->kosten_details( $readonly )->status_details(); ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $this->data['workshop']['definitief'] ); ?> >Opslaan</button>
@@ -188,6 +157,31 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		<?php endforeach ?>
 		<?php
+	}
+
+	/**
+	 * De activiteit details.
+	 *
+	 * @param bool $readonly Of de gegevens wijzigbaar zijn.
+	 *
+	 * @return Public_Workshop_Beheer_Display
+	 */
+	private function activiteit_details( bool $readonly ) : Public_Workshop_Beheer_Display {
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_naam">Soort workshop</label></div>
+			<div class="kleistad-col-3">
+				<select name="naam" required id="kleistad_naam" <?php wp_readonly( $readonly ); ?> style="width:100%" >
+					<?php foreach ( opties()['activiteit'] as $activiteit ) : ?>
+					<option value="<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" <?php selected( 0 === strcasecmp( $this->data['workshop']['naam'], $activiteit['naam'] ) ); ?> >
+						<?php echo esc_html( ucfirst( $activiteit['naam'] ) ); ?>
+					</option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+		<?php
+		return $this;
 	}
 
 	/**
@@ -302,9 +296,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @param bool $readonly  Of de gegevens wijzigbaar zijn.
 	 *
-	 * @return void
+	 * @return Public_Workshop_Beheer_Display
 	 */
-	private function kosten_details( bool $readonly ) {
+	private function kosten_details( bool $readonly ) : Public_Workshop_Beheer_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_kosten">Kosten</label></div>
@@ -318,6 +312,32 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2">excl. BTW</div>
 		</div>
 		<?php
+		return $this;
 	}
 
+	/**
+	 * Geef de status van de workshop weer.
+	 *
+	 * @return void
+	 */
+	private function status_details() {
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3">
+				<input type="hidden" name="definitief" value="<?php echo (int) $this->data['workshop']['definitief']; ?>" >
+				<?php if ( $this->data['workshop']['vervallen'] ) : ?>
+					<span style="color:red" >Afspraak is vervallen</span>
+				<?php else : ?>
+					Afspraak definitief &nbsp;&nbsp;<?php echo $this->data['workshop']['definitief'] ? '&#10004;' : '&#10060;'; ?>
+				<?php endif ?>
+			</div>
+			<div class="kleistad-col-3">
+				Gefactureerd &nbsp;&nbsp;<?php echo $this->data['workshop']['gefactureerd'] ? '&#10004;' : '&#10060;'; ?>
+			</div>
+			<div class="kleistad-col-3">
+				Betaald &nbsp;&nbsp;<input type="hidden" name="betaald" value="<?php echo (int) $this->data['workshop']['betaald']; ?>" ><?php echo $this->data['workshop']['betaald'] ? '&#10004;' : '&#10060;'; ?>
+			</div>
+		</div>
+		<?php
+	}
 }

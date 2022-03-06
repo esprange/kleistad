@@ -70,19 +70,19 @@ class WorkshopActie {
 	 */
 	public function aanvraag( array $parameters ) {
 		$dagdelen                     = [
-			OCHTEND  => [
+			strtolower( OCHTEND )  => [
 				'start' => '09:30',
 				'eind'  => '11:30',
 			],
-			MIDDAG   => [
+			strtolower( MIDDAG )   => [
 				'start' => '13:00',
 				'eind'  => '15:00',
 			],
-			NAMIDDAG => [
+			strtolower( NAMIDDAG ) => [
 				'start' => '16:30',
 				'eind'  => '18:30',
 			],
-			AVOND    => [
+			strtolower( AVOND )    => [
 				'start' => '19:00',
 				'eind'  => '22:00',
 			],
@@ -97,7 +97,7 @@ class WorkshopActie {
 		$this->workshop->naam         = $parameters['naam'];
 		$this->workshop->technieken   = $parameters['technieken'];
 		$this->workshop->vraag        = $parameters['opmerking'] ?? '';
-		$this->workshop->dagdeel      = strtolower( $parameters['dagdeel'] );
+		$this->workshop->dagdeel      = $parameters['dagdeel'];
 		$this->workshop->communicatie = [
 			[
 				'type'    => self::NIEUW,

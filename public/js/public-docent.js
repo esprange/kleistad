@@ -66,7 +66,7 @@
 	 */
 	function muteerPlanning( datum, defaultOpslaan ) {
 		let planning = [];
-		$( '.planning:checkbox:checked' ).each(
+		$( 'input[name=planning]:checkbox:checked' ).each(
 			function() {
 				planning.push(
 					{
@@ -77,7 +77,7 @@
 				);
 			}
 		)
-		$( '.planning:checkbox:not(:checked)' ).each(
+		$( 'input[name=planning]:checkbox:not(:checked)' ).each(
 			function() {
 				planning.push(
 					{

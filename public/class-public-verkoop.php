@@ -106,11 +106,9 @@ class Public_Verkoop extends Public_Bestelling {
 				'email' => $this->data['input']['email'],
 			];
 		}
-		$index = 0;
-		$count = count( $this->data['input']['omschrijving'] );
-		do {
+		foreach ( array_keys( $this->data['input']['omschrijving'] ) as $index ) {
 			$verkoop->bestelregel( $this->data['input']['omschrijving'][ $index ], $this->data['input']['aantal'][ $index ], $this->data['input']['prijs'][ $index ] );
-		} while ( ++$index < $count );
+		}
 		$verkoop->verzend_email( '', $verkoop->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
 		return [
 			'content' => $this->goto_home(),

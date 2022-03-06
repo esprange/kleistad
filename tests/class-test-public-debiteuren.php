@@ -1,13 +1,11 @@
-<?php /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
-/** @noinspection PhpArrayWriteIsNotUsedInspection */
-
+<?php
 /**
  * Class Public Debiteuren Test
  *
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Debiteuren
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUnhandledExceptionInspection
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUnhandledExceptionInspection, PhpArrayWriteIsNotUsedInspection, PhpArrayIndexImmediatelyRewrittenInspection
  */
 
 namespace Kleistad;

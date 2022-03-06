@@ -141,12 +141,12 @@ class Public_Workshop_Aanvraag_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php foreach ( Workshopplanning::WORKSHOP_DAGDEEL as $dagdeel ) : ?>
-		<div class="kleistad-dagdeel-<?php echo esc_attr( strtolower( $dagdeel ) ); ?> kleistad-row">
+		<div id="kleistad-dagdeel-<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" class="kleistad-row" >
 			<div class="kleistad-col-3" >
 			</div>
 			<div class="kleistad-col-3 kleistad-label" >
 				<input class="kleistad-radio" name="dagdeel" id="kleistad_<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" type="radio" required
-					value="<?php echo esc_attr( $dagdeel ); ?>" <?php checked( $this->data['input']['dagdeel'], $dagdeel ); ?> >
+					value="<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" <?php checked( $this->data['input']['dagdeel'], $dagdeel ); ?> >
 				<label for="kleistad_<?php echo esc_attr( strtolower( $dagdeel ) ); ?>" ><?php echo esc_html( $dagdeel ); ?></label>
 			</div>
 		</div>

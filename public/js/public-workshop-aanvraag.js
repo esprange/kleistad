@@ -83,18 +83,17 @@
 					'#kleistad_datum',
 					function () {
 						let datum       = $( this ).datepicker( 'getDate' ),
-							beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
-						$( 'div[class^="kleistad-dagdeel"]' ).hide();
-						$( 'input[name="dagdeel"]' ).prop( 'checked', false );
+							beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) ),
+							$dagdeel    = $( 'input[name=dagdeel]' );
+						$( 'div[id^="kleistad-dagdeel"]' ).hide();
+						$dagdeel.prop( 'checked', false );
 						beschikbaar.forEach(
 							function( item ) {
-								let $moment = $( '.kleistad-dagdeel-' + item.dagdeel );
-								$moment.
-									show().
-									find( 'input[name="dagdeel"]' ).
-									prop( 'checked', 1 === $moment.length && 1 === beschikbaar.length );
+								$( '#kleistad-dagdeel-' + item.dagdeel ).show();
+								$dagdeel.filter( '[value=' + item.dagdeel + ']' ).prop( 'checked', 1 === beschikbaar.length );
 							}
 						)
+						$dagdeel.trigger( 'change' );
 					}
 				)
 				.on(

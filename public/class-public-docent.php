@@ -108,12 +108,13 @@ class Public_Docent extends ShortcodeForm {
 	private static function docent_beschikbaarheid( int $maandag, Docent $docent, Cursussen $cursussen, Workshops $workshops ) : array {
 		$reserveringen = [];
 		foreach ( $cursussen as $cursus ) {
-			if ( intval( $cursus->docent ) === $docent->ID && ! $cursus->vervallen ) {
-				foreach ( $cursus->lesdatums as $lesdatum ) {
-					if ( $lesdatum >= $maandag && $lesdatum < ( $maandag + WEEK_IN_SECONDS ) ) {
-						foreach ( bepaal_dagdelen( $cursus->start_tijd, $cursus->eind_tijd ) as $dagdeel ) {
-							$reserveringen[ $lesdatum ][ $dagdeel ] = Docent::GERESERVEERD;
-						}
+			if ( intval( $cursus->docent ) !== $docent->ID || $cursus->vervallen ) {
+				continue;
+			}
+			foreach ( $cursus->lesdatums as $lesdatum ) {
+				if ( $lesdatum >= $maandag && $lesdatum < ( $maandag + WEEK_IN_SECONDS ) ) {
+					foreach ( bepaal_dagdelen( $cursus->start_tijd, $cursus->eind_tijd ) as $dagdeel ) {
+						$reserveringen[ $lesdatum ][ $dagdeel ] = Docent::GERESERVEERD;
 					}
 				}
 			}
@@ -156,7 +157,7 @@ EOT;
 		for ( $datum = $maandag; $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 			$weekdag = strftime( '%A<br/>%d-%m-%Y', $datum );
 			$html   .= <<<EOT
-		<th>$weekdag</th>
+		<th class="kleistad-cell_center">$weekdag</th>
 EOT;
 		}
 		$html .= <<<EOT
@@ -167,11 +168,11 @@ EOT;
 		foreach ( Docent::DOCENT_DAGDEEL as $dagdeel ) {
 			$html .= <<<EOT
 	<tr>
-		<td>$dagdeel</td>
+		<td class="kleistad-cell_center">$dagdeel</td>
 EOT;
 			for ( $datum = $maandag; $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 				$html .= <<<EOT
-		<td>
+		<td class="kleistad-cell_center">
 EOT;
 				$html .= match ( $functie ) {
 					'overzicht' => self::show_overzicht_cell( $datum, $dagdeel, $args ),
@@ -222,9 +223,9 @@ EOT;
 	private static function show_planning_cell( int $datum, string $dagdeel, array $args ) : string {
 		$reservering = $args['reserveringen'][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
 		$formats     = [
-			Docent::NIET_BESCHIKBAAR => '<input type="checkbox" class="kleistad-checkbox kleistad-planning" data-datum="%s" data-dagdeel="%s" >',
-			Docent::BESCHIKBAAR      => '<input type="checkbox" class="kleistad-checkbox kleistad-planning" data-datum="%s" data-dagdeel="%s" checked="checked" >',
-			Docent::STANDAARD        => '<input type="checkbox" class="kleistad-checkbox kleistad-planning" style="background-color: mediumpurple" data-datum="%s" data-dagdeel="%s" checked="checked" >',
+			Docent::NIET_BESCHIKBAAR => '<input type="checkbox" name="planning" class="kleistad-checkbox" data-datum="%s" data-dagdeel="%s" >',
+			Docent::BESCHIKBAAR      => '<input type="checkbox" name="planning" class="kleistad-checkbox" data-datum="%s" data-dagdeel="%s" checked="checked" >',
+			Docent::STANDAARD        => '<input type="checkbox" name="planning" class="kleistad-checkbox" style="background-color: mediumpurple" data-datum="%s" data-dagdeel="%s" checked="checked" >',
 			Docent::OPTIE            => '<span class="kleistad-inzet kleistad-inzet-optie" style="width:21px">O</span>',
 			Docent::GERESERVEERD     => '<span class="kleistad-inzet kleistad-inzet-definitief" style="width:21px">R</span>',
 		];

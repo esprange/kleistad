@@ -1,12 +1,11 @@
-<?php /** @noinspection PhpArrayWriteIsNotUsedInspection */
-
+<?php
 /**
  * Class Public Cursus Beheer Test
  *
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Cursus_Beheer
- * @noinspection PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection
+ * @noinspection PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection, PhpArrayWriteIsNotUsedInspection
  */
 
 namespace Kleistad;

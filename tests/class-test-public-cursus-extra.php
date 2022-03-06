@@ -1,12 +1,11 @@
-<?php /** @noinspection PhpArrayWriteIsNotUsedInspection */
-
+<?php
 /**
  * Class Public Cursus Extra Test
  *
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Cursus_Extra
- * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection
+ * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpUndefinedFieldInspection, PhpUnhandledExceptionInspection, PhpArrayWriteIsNotUsedInspection
  */
 
 namespace Kleistad;

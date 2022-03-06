@@ -1,13 +1,11 @@
-<?php /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
-/** @noinspection PhpArrayWriteIsNotUsedInspection */
-
+<?php
 /**
  * Class Public Betaling Test
  *
  * @package Kleistad
  *
  * @covers \Kleistad\Public_Betaling
- * @noinspection PhpUnhandledExceptionInspection
+ * @noinspection PhpUnhandledExceptionInspection, PhpArrayWriteIsNotUsedInspection, PhpArrayIndexImmediatelyRewrittenInspection
  */
 
 namespace Kleistad;

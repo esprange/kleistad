@@ -95,7 +95,7 @@ class Profiel {
 			?>
 	<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
 			<?php if ( count( $lijst ) ) : ?>
-				<button id="kleistad-betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
+				<button id="kleistad_betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
 				<br/>
 	<div class="kleistad-openstaand" style="display: none;" >
 		<table style="table-layout: auto;">
