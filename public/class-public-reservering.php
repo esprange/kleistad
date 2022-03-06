@@ -275,7 +275,9 @@ class Public_Reservering extends Shortcode {
 		$method  = $request->get_method();
 		switch ( $method ) {
 			case 'DELETE':
-				$stook->verwijder();
+				if ( ! $stook->verwijder() ) {
+					return new WP_REST_Response( [ 'status' => melding( 0, 'De gegevens konden niet worden verwijderd. Probeer het eventueel opnieuw' ) ] );
+				}
 				break;
 			/**
 			 * Voor zowel Post als Put kan afgesloten worden met de wijziging of toevoeging gegevens.
@@ -283,7 +285,7 @@ class Public_Reservering extends Shortcode {
 			 * @noinspection PhpMissingBreakStatementInspection
 			 */
 			case 'POST':
-				$check = self::is_reservering_toegestaan( $datum );
+				$check = self::is_reservering_toegestaan( $stook );
 				if ( ! empty( $check ) ) {
 					return new WP_REST_Response( [ 'status' => melding( 0, $check ) ] );
 				}
@@ -307,26 +309,28 @@ class Public_Reservering extends Shortcode {
 	/**
 	 * Controleer of de gebruiker mag reserveren.
 	 *
-	 * @param int $datum De datum dat er gereserveerd wordt.
+	 * @param Stook $stook De stook.
 	 * @return string
 	 */
-	private static function is_reservering_toegestaan( int $datum ) : string {
-		if ( current_user_can( BESTUUR ) ) {
-			return '';
+	private static function is_reservering_toegestaan( Stook $stook ) : string {
+		if ( ! current_user_can( BESTUUR ) ) {
+			$stoker_id = get_current_user_id();
+			$abonnee   = new Abonnee( $stoker_id );
+			if ( $abonnee->abonnement->start_datum > $stook->datum ) {
+				return 'Op deze datum is je abonnement nog niet gestart. Een reservering is dan nog niet mogelijk';
+			}
+			if ( $abonnee->abonnement->eind_datum && $abonnee->abonnement->eind_datum < $stook->datum ) {
+				return 'Op deze datum is je abonnement al beëindigd. Een reservering is dan niet meer mogelijk.';
+			}
+			if ( $abonnee->abonnement->pauze_datum < $stook->datum && $abonnee->abonnement->herstart_datum > $stook->datum ) {
+				return 'Op deze datum is je abonnement gepauzeeerd. Een reservering is dan niet mogelijk.';
+			}
+			if ( opties()['stook_max'] <= $abonnee->aantal_actieve_stook() ) {
+				return 'Je kan niet meer dan ' . opties()['stook_max'] . ' openstaande reserveringen hebben.';
+			}
 		}
-		$stoker_id = get_current_user_id();
-		$abonnee   = new Abonnee( $stoker_id );
-		if ( $abonnee->abonnement->start_datum > $datum ) {
-			return 'Op deze datum is je abonnement nog niet gestart. Een reservering is dan nog niet mogelijk';
-		}
-		if ( $abonnee->abonnement->eind_datum && $abonnee->abonnement->eind_datum < $datum ) {
-			return 'Op deze datum is je abonnement al beëindigd. Een reservering is dan niet meer mogelijk.';
-		}
-		if ( $abonnee->abonnement->pauze_datum < $datum && $abonnee->abonnement->herstart_datum > $datum ) {
-			return 'Op deze datum is je abonnement gepauzeeerd. Een reservering is dan niet mogelijk.';
-		}
-		if ( opties()['stook_max'] <= $abonnee->aantal_actieve_stook() ) {
-			return 'Je kan niet meer dan ' . opties()['stook_max'] . ' openstaande reserveringen hebben.';
+		if ( $stook->is_gereserveerd() ) {
+			return 'Helaas is de oven al gereserveerd';
 		}
 		return '';
 	}

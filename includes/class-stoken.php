@@ -63,8 +63,6 @@ class Stoken implements Countable, Iterator {
 	 * Verwijder een stook.
 	 *
 	 * @param Stook $stookverwijderen Te vervangen stook.
-	 *
-	 * @throws Kleistad_Exception Moet op hoger nivo afgehandeld worden.
 	 */
 	public function verwijderen( Stook $stookverwijderen ) {
 		foreach ( $this->stoken as $key => $stook ) {

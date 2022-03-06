@@ -194,17 +194,19 @@ class Stook {
 	 * Verwijder de reservering.
 	 *
 	 * @global object $wpdb WP database.
-	 * @throws Kleistad_Exception Verwijdering gaat niet.
+	 *
+	 * @return bool
 	 */
-	public function verwijder() {
+	public function verwijder() : bool {
 		global $wpdb;
-		if ( false === $wpdb->delete(
+		if ( $wpdb->delete(
 			"{$wpdb->prefix}kleistad_reserveringen",
 			[ 'id' => $this->stook_id ]
 		) ) {
-			throw new Kleistad_Exception( 'Database actie kon niet voltooid worden' );
+			$this->stook_id = null;
+			return true;
 		}
-		$this->stook_id = null;
+		return false;
 	}
 
 	/**
