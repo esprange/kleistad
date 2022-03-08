@@ -332,7 +332,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 *
 	 * @return string De html tekst.
 	 */
-	private static function abonnement ( WP_User $gebruiker ) : string {
+	private static function abonnement( WP_User $gebruiker ) : string {
 		$html       = '';
 		$abonnement = new Abonnement( $gebruiker->ID );
 		if ( $abonnement->start_datum ) {
@@ -368,7 +368,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 *
 	 * @return string De html tekst.
 	 */
-	private static function dagdelenkaart ( WP_User $gebruiker ) : string {
+	private static function dagdelenkaart( WP_User $gebruiker ) : string {
 		$html          = '';
 		$dagdelenkaart = new Dagdelenkaart( $gebruiker->ID );
 		if ( $dagdelenkaart->start_datum ) {
