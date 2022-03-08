@@ -50,11 +50,6 @@ option.kleistad-bank {
 	display: none;
 }
 
-/* Datatables toont een lelijke selector voor tabel lengte */
-.kleistad-shortcode .dataTables_length select {
-	padding-right: 25px;
-}
-
 /* stylelint-enable selector-class-pattern */
 
 /* voor de jqueryui dialog */

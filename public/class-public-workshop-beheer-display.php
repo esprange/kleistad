@@ -240,7 +240,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * @param bool $readonly  Of de gegevens wijzigbaar zijn.
 	 *
 	 * @return Public_Workshop_Beheer_Display
-	 * @suppressWarnings (PHPMD.ElseExpression)
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function planning_details( bool $readonly ) : Public_Workshop_Beheer_Display {
 		?>

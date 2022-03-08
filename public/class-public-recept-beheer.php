@@ -210,6 +210,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * Recept moet worden opgeslagen
 	 *
 	 * @return array
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function bewaren(): array {
 		if ( ! empty( $this->files()['foto']['name'] ) ) {

@@ -68,7 +68,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 	/**
 	 * Het overzicht van een enkele gebruikers
 	 *
-	 * @suppressWarnings (PHPMD.ElseExpression)
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function rapport() {
 		?>
