@@ -6,7 +6,7 @@
  * @package Kleistad
  */
 
-/* global detectTap */
+/* global kleistadData */
 
 ( function( $ ) {
 	'use strict';
@@ -71,79 +71,37 @@
 			$( '#kleistad_deelnemer_lijst tbody' ).on(
 				'click touchend',
 				'tr',
-				function( event ) {
-					let deelnemer, header, inschrijvingen, abonnee, dagdelenkaart,
-						$deelnemer_tabel = $( '#kleistad_deelnemer_tabel' );
-					if ( 'click' === event.type || detectTap ) {
-						inschrijvingen = $( this ).data( 'inschrijvingen' );
-						deelnemer      = $( this ).data( 'deelnemer' );
-						abonnee        = $( this ).data( 'abonnee' );
-						dagdelenkaart  = $( this ).data( 'dagdelenkaart' );
-						header         = '<tr><th>Cursus</th><th>Code</th><th>Ingedeeld</th><th>Geannuleerd</th><th>Technieken</th></tr>';
-						$( '#kleistad_deelnemer_info' ).dialog( 'option', 'title', deelnemer.naam ).dialog( 'open' );
-						$deelnemer_tabel.empty().append(
-							'<tr><th>Adres</<th><td colspan="6" style="text-align:left" >' +
-							deelnemer.straat + ' ' + deelnemer.huisnr + ' ' + deelnemer.pcode + ' ' + deelnemer.plaats +
-							'</td></tr>'
-						);
-
-						if ( 'undefined' !== typeof inschrijvingen ) {
-							$.each(
-								inschrijvingen,
-								/**
-								 * Anonieme functie
-								 *
-								 * @param key
-								 * @param {object} value
-								 * @param {boolean} value.ingedeeld
-								 * @param {boolean} value.geannuleerd
-								 * @param {string}  value.code
-								 * @param {integer} value.aantal
-								 * @param {string}  value.naam
-								 * @param {array}   value.technieken
-								 */
-								function( key, value ) {
-									let status      = ( value.ingedeeld ) ? '<span class="dashicons dashicons-yes"></span>' : '',
-										geannuleerd = ( value.geannuleerd ) ? '<span class="dashicons dashicons-yes"></span>' : '',
-										code        = value.code + ( ( 1 < value.aantal ) ? '(' + value.aantal + ')' : '' ),
-										html        = header + '<tr><td>' + value.naam + '</td><th>' + code + '</th><th>' + status +
-										'</th><th>' + geannuleerd + '</th><th>',
-										separator   = '';
-									$.each(
-										value.technieken,
-										function( key, value ) {
-											html     += separator + value;
-											separator = '<br/>';
-										}
-									);
-									$deelnemer_tabel.append( html + '</th></tr>' );
-									header = '';
-								}
-							);
-						} else {
-							$deelnemer_tabel.append( '<tr><td colspan="6" >Geen cursus inschrijvingen aanwezig</td></tr>' );
+				function() {
+					let $wachten = $( '#kleistad_wachten' );
+					$wachten.addClass( 'kleistad-wachten' ).show();
+					$.ajax(
+						{
+							url: kleistadData.base_url + '/registratie/',
+							method: 'GET',
+							beforeSend: function( xhr ) {
+								xhr.setRequestHeader( 'X-WP-Nonce', kleistadData.nonce );
+							},
+							data: {
+								gebruiker_id: $( this ).data( 'id' )
+							}
 						}
-						if ( ( 'undefined' !== typeof abonnee ) && ( 0 !== abonnee.length ) ) {
-							$deelnemer_tabel.append(
-								'<tr><th>Abonnement</th><th>Code</th><th>Dag</th><th>Start Datum</th><th>Pauze Datum</th><th>Herstart Datum</th><th>Eind Datum</th></tr><tr><th>' +
-								abonnee.soort + '<br/>' + abonnee.extras + '</th><th>' +
-								abonnee.code + '</th><th>' +
-								abonnee.start_datum + '</th><th>' +
-								abonnee.pauze_datum + '</th><th>' +
-								abonnee.herstart_datum + '</th><th>' +
-								abonnee.eind_datum + '</th></tr>'
-							);
+					).done(
+						function( data ) {
+							$wachten.removeClass( 'kleistad-wachten' );
+							$( '#kleistad_deelnemer_info' ).html( data.content ).dialog( 'option', 'title', data.naam ).dialog( 'open' );						}
+					).fail(
+						function( jqXHR ) {
+							$wachten.removeClass( 'kleistad-wachten' );
+							if ( 'undefined' !== typeof jqXHR.responseJSON.message ) {
+								window.alert( jqXHR.responseJSON.message );
+								return;
+							}
+							window.alert( kleistadData.error_message );
 						}
-						if ( ( 'undefined' !== typeof dagdelenkaart ) && ( 0 !== dagdelenkaart.length ) ) {
-							$deelnemer_tabel.append(
-								'<tr><th>Dagdelenkaart</th><th>Code</th><th>Start Datum</th></tr><tr><th></th><th>' +
-								dagdelenkaart.code + '</th><th>' +
-								dagdelenkaart.start_datum + '</th></tr>'
-							);
-						}
-					}
+					);
 				}
 			);
+
 		}
 	);
 } )( jQuery );

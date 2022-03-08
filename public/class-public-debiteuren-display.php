@@ -87,22 +87,55 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 		$factuur_urls = $factuur->overzicht( $this->data['debiteur']['factuur'] );
 		?>
 		<p><?php echo esc_html( ucfirst( $this->data['debiteur']['betreft'] ) . ', ' . ( ! $this->data['debiteur']['gesloten'] ? 'openstaand voor ' : 'besteld door ' ) . $this->data['debiteur']['naam'] ); ?></p>
-		<table class="kleistad-formtable">
-			<tr><th>referentie</th><td><?php echo esc_html( $this->data['debiteur']['referentie'] . ' geboekt op ' . date( 'd-m-Y', $this->data['debiteur']['sinds'] ) ); ?></td><th>historie</th></tr>
-			<tr><th>factuur</th><td>
+		<div class="kleistad-row">
+			<div class="kleistad-col-2">
+				<label class="kleistad-label">referentie</label>
+			</div>
+			<div class="kleistad-col-6">
+				<?php echo esc_html( $this->data['debiteur']['referentie'] . ' geboekt op ' . date( 'd-m-Y', $this->data['debiteur']['sinds'] ) ); ?>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-2">
+				<label class="kleistad-label">factuur</label>
+			</div>
+			<div class="kleistad-col-8">
 				<?php foreach ( $factuur_urls as $factuur_url ) : ?>
 					<a href="<?php echo esc_url( $factuur_url ); ?>" target="_blank"><?php echo esc_html( basename( $factuur_url ) ); ?></a><br/>
 				<?php endforeach ?>
-				</td><td rowspan="3">
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-2">
+				<label class="kleistad-label">historie</label>
+			</div>
+			<div class="kleistad-col-8" >
 				<?php foreach ( $this->data['debiteur']['historie'] as $historie ) : ?>
 					<?php echo esc_html( $historie ); ?><br/>
 				<?php endforeach ?>
-				</td>
-			</tr>
-			<tr><th>betaald</th><td>&euro; <?php echo esc_html( number_format_i18n( $this->data['debiteur']['betaald'], 2 ) ); ?></td></tr>
-			<tr><th>openstaand</th><td>&euro; <?php echo esc_html( number_format_i18n( $this->data['debiteur']['openstaand'], 2 ) ); ?></td></tr>
-			<tr><th colspan="2"><?php echo $this->data['debiteur']['terugstorting'] ? 'Een stornering is ingediend' : ''; ?></th></tr>
-		</table>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-2">
+				<label class="kleistad-label">betaald</label>
+			</div>
+			<div class="kleistad-col-4">
+				&euro; <?php echo esc_html( number_format_i18n( $this->data['debiteur']['betaald'], 2 ) ); ?>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-2">
+				<label class="kleistad-label">openstaand</label>
+			</div>
+			<div class="kleistad-col-4">
+				&euro; <?php echo esc_html( number_format_i18n( $this->data['debiteur']['openstaand'], 2 ) ); ?>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-7">
+				<?php echo $this->data['debiteur']['terugstorting'] ? '<strong>Een stornering is ingediend</strong>' : ''; ?>
+			</div>
+		</div>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['debiteur']['id'] ); ?>"/>
 		<?php
 		$this->bankbetaling()->annulering()->afboeking()->korting()->debiteur_end();

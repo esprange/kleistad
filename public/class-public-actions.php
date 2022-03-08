@@ -132,6 +132,7 @@ class Public_Actions {
 				'Public_Docent',
 				'Public_Recept',
 				'Public_Reservering',
+				'Public_Registratie_Overzicht',
 				'Public_Werkplek',
 				'Public_Workshop_Aanvraag',
 				'Profiel',

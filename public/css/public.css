@@ -99,12 +99,9 @@ option.kleistad-bank {
 	z-index: 10;
 }
 
-.kleistad-dot {
-	height: 20px;
-	width: 20px;
-	border-radius: 50%;
-	display: inline-block;
-}
+/**
+ * Classes behorend bij de profiel functie.
+ */
 
 .kleistad-profiel {
 	height: 20px;
@@ -117,6 +114,13 @@ option.kleistad-bank {
 .kleistad-profiel tr,
 .kleistad-profiel td {
 	border: none;
+}
+
+.kleistad-dot {
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	display: inline-block;
 }
 
 .kleistad-openstaand {
@@ -137,6 +141,10 @@ option.kleistad-bank {
 	padding: 10px;
 }
 
+/**
+ * Classes voor de weergave van de communicatie rondom een workshop.
+ */
+
 .kleistad-workshop-communicatie {
 	border: 1px solid gray;
 	color: black;
@@ -151,18 +159,22 @@ option.kleistad-bank {
 	overflow-y: hidden;
 }
 
-div.kleistad-workshop-aanvraag,
-div.kleistad-workshop-nieuw {
+.kleistad-workshop-aanvraag,
+.kleistad-workshop-nieuw {
 	background-color: lightblue;
 }
 
-div.kleistad-workshop-vraag {
+.kleistad-workshop-vraag {
 	background-color: lightgoldenrodyellow;
 }
 
-div.kleistad-workshop-reactie {
+.kleistad-workshop-reactie {
 	background-color: lightgray;
 }
+
+/**
+ * Links gebruikt in de datatables.
+ */
 
 a.kleistad-edit {
 	background-image: url(../images/icon-edit.png);
@@ -182,58 +194,26 @@ a.kleistad-schedule {
 	padding: 0.4em 0.8em;
 }
 
-.kleistad-tijd,
-.kleistad-datum {
-	width: 9em;
-}
-
-.kleistad-datatable {
-	display: none;
-}
-
-.kleistad-datatable th,
-.kleistad-datatable td {
+/**
+ * Het formulier voor het aanmaken, wijzigen of verwijderen van een stook.
+ */
+.kleistad-reservering-form {
+	border: none;
+	border-collapse: collapse;
+	border-spacing: 0;
 	font-size: small;
+	padding: 0;
+	table-layout: auto;
+	vertical-align: middle;
 }
 
-.kleistad-formtable tr {
+.kleistad-reservering-form tr {
 	margin: 0;
 }
 
-.kleistad-formtable td {
+.kleistad-reservering-form td,
+.kleistad-reservering-form th {
 	border-style: none;
-}
-
-.kleistad-formtable th {
-	border-style: none;
-}
-
-.kleistad-formtable input[type="text"],
-.kleistad-formtable select {
-	width: 100%;
-}
-
-.kleistad-formtable button {
-	height: 2.5em;
-	padding: 0;
-	width: 100%;
-}
-
-.kleistad-formtable option,
-.kleistad-formtable input {
-	height: 2.1em;
-}
-
-.kleistad-formtable input[type="number"] {
-	width: 5em;
-}
-
-.kleistad-formtable input[type="submit"] {
-	height: 2.5em;
-}
-
-.kleistad-reservering-form {
-	table-layout: auto;
 }
 
 .kleistad-reservering-form td,
@@ -249,6 +229,20 @@ a.kleistad-schedule {
 	text-align: left;
 }
 
+.kleistad-reservering-form select {
+	width: 100%;
+}
+
+.kleistad-reservering-form input {
+	height: 2.5em;
+	width: 5em;
+}
+
+/**
+ * Het overzicht van stookreserveringen.
+ *
+ * @TODO is wellicht om te zetten naar een datatable
+ */
 .kleistad-reserveringen {
 	border-collapse: collapse;
 	border-spacing: 0;
@@ -276,15 +270,26 @@ a.kleistad-schedule {
 	cursor: pointer;
 }
 
-.kleistad-formtable {
-	border: none;
-	border-collapse: collapse;
-	border-spacing: 0;
-	font-size: small;
-	padding: 0;
-	vertical-align: middle;
+.kleistad-reservering-ongebruikt,
+.kleistad-reservering-definitief {
+	background: white;
 }
 
+.kleistad-reservering-onderhoud {
+	background: lightgray;
+}
+
+.kleistad-reservering-zelf {
+	background: lightgreen;
+}
+
+.kleistad-reservering-ander {
+	background: pink;
+}
+
+/**
+ * Multistep formulier
+ */
 .kleistad-tab {
 	background-color: gainsboro;
 	display: none;
@@ -318,6 +323,14 @@ a.kleistad-schedule {
 	background-color: green;
 }
 
+/**
+ * Formulier elementen
+ */
+.kleistad-tijd,
+.kleistad-datum {
+	width: 9em;
+}
+
 .kleistad-label,
 .kleistad-label + span {
 	font-weight: bold;
@@ -333,245 +346,6 @@ a.kleistad-schedule {
 	background-image: url(../images/valid.png);
 	background-position: right top;
 	background-repeat: no-repeat;
-}
-
-.kleistad-row::after {
-	clear: both;
-	content: "";
-	display: table;
-}
-
-.kleistad-pwd-meter {
-	border: 1px solid gainsboro;
-	box-sizing: border-box;
-	color: black;
-}
-
-.kleistad-pwd-sterk {
-	background-color: limegreen;
-	border-color: green;
-	opacity: 1;
-}
-
-.kleistad-pwd-goed {
-	background-color: lemonchiffon;
-	border-color: gold;
-	opacity: 1;
-}
-
-.kleistad-pwd-zwak {
-	background-color: lightsalmon;
-	border-color: indianred;
-	opacity: 1;
-}
-
-.kleistad-pwd-erg-zwak,
-.kleistad-pwd-ongelijk {
-	background-color: red;
-	border-color: darkred;
-	opacity: 1;
-}
-
-.kleistad-recept-img {
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	background-size: contain;
-	float: left;
-	height: 200px;
-	position: relative;
-	width: 100%;
-}
-
-.kleistad-recept-titel {
-	float: left;
-	position: relative;
-}
-
-.kleistad-reservering-ongebruikt,
-.kleistad-reservering-definitief {
-	background: white;
-}
-
-.kleistad-reservering-onderhoud {
-	background: lightgray;
-}
-
-.kleistad-reservering-zelf {
-	background: lightgreen;
-}
-
-.kleistad-reservering-ander {
-	background: pink;
-}
-
-.kleistad-filters {
-	border: 0;
-	display: none;
-	float: left;
-	height: 100%;
-	padding: 15px;
-	width: 30%;
-}
-
-.kleistad-filter-term input:checked {
-	font-weight: bold;
-}
-
-.kleistad-filter-term input:not(:checked) {
-	font-weight: normal;
-}
-
-.kleistad-filter-term {
-	border-bottom: 1px solid black;
-	list-style-position: inside;
-	list-style-type: none;
-}
-
-.kleistad-filter-term + label:hover {
-	background: whitesmoke;
-	cursor: pointer;
-}
-
-.kleistad-werkplek,
-.kleistad-meester,
-.kleistad-werkplek-bezet,
-.kleistad-werkplek-vrij {
-	box-sizing: border-box;
-	font-size: small;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	text-transform: none;
-	text-align: center;
-	white-space: nowrap;
-	width: 100%;
-}
-
-.kleistad-werkplek-bezet,
-.kleistad-werkplek-vrij {
-	border: 1px solid white;
-	font-size: small;
-	padding: 5px 10px;
-}
-
-.kleistad-werkplek-dagdeel,
-.kleistad-werkplek-reserveerbaar,
-.kleistad-werkplek-gereserveerd {
-	border: 0;
-}
-
-.kleistad-inzet {
-	appearance: none;
-	display: inline-block;
-	height: 25px;
-	max-width: 11ch;
-	opacity: 0.9;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.kleistad-inzet-optie {
-	background: lightsalmon;
-	border: 1px solid var(--bc, var(--border));
-	border-radius: 7px;
-	color: white;
-}
-
-.kleistad-inzet-definitief {
-	background: dimgray;
-	border: 1px solid var(--bc, var(--border));
-	border-radius: 7px;
-	color: white;
-}
-
-[class^="kleistad-col-"] {
-	border: 0;
-	float: left;
-	padding: 2px 15px;
-	width: 100%;
-}
-
-@media screen and (min-width: 768px) {
-	div.kleistad-tab {
-		height: var(--tab-height);
-		overflow-y: auto;
-	}
-
-	.kleistad-col-1 {
-		width: 10%;
-	}
-
-	.kleistad-col-2 {
-		width: 20%;
-	}
-
-	.kleistad-col-3 {
-		width: 30%;
-	}
-
-	.kleistad-col-4 {
-		width: 40%;
-	}
-
-	.kleistad-col-5 {
-		width: 50%;
-	}
-
-	.kleistad-col-6 {
-		width: 60%;
-	}
-
-	.kleistad-col-7 {
-		width: 70%;
-	}
-
-	.kleistad-col-8 {
-		width: 80%;
-	}
-
-	.kleistad-col-9 {
-		width: 90%;
-	}
-
-	.kleistad-col-10 {
-		width: 100%;
-	}
-
-	.kleistad-col-kwart {
-		width: 25%;
-	}
-}
-
-@media screen and (max-width: 712px) {
-	table.kleistad-reserveringen th,
-	table.kleistad-reserveringen td,
-	table.kleistad-reserveringen button {
-		font-size: x-small;
-	}
-
-	div.kleistad-meesters {
-		display: none;
-	}
-
-	div.kleistad-tab {
-		min-height: var(--tab-height);
-	}
-
-	[class^="kleistad-col-"] {
-		width: 100%;
-	}
-}
-
-.kleistad-cell_center {
-	text-align: center;
-}
-
-.kleistad-cell_right {
-	text-align: right;
-}
-
-.kleistad-cell_left {
-	text-align: left;
 }
 
 .kleistad-checkbox,
@@ -718,4 +492,247 @@ a.kleistad-schedule {
 
 .kleistad-button:disabled {
 	cursor: not-allowed;
+}
+
+/**
+ * Wachtwoord elementen.
+ */
+.kleistad-pwd-meter {
+	border: 1px solid gainsboro;
+	box-sizing: border-box;
+	color: black;
+}
+
+.kleistad-pwd-sterk {
+	background-color: limegreen;
+	border-color: green;
+	opacity: 1;
+}
+
+.kleistad-pwd-goed {
+	background-color: lemonchiffon;
+	border-color: gold;
+	opacity: 1;
+}
+
+.kleistad-pwd-zwak {
+	background-color: lightsalmon;
+	border-color: indianred;
+	opacity: 1;
+}
+
+.kleistad-pwd-erg-zwak,
+.kleistad-pwd-ongelijk {
+	background-color: red;
+	border-color: darkred;
+	opacity: 1;
+}
+
+/**
+ * Specifiek voor stook recepten
+ */
+.kleistad-recept-img {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: contain;
+	float: left;
+	height: 200px;
+	position: relative;
+	width: 100%;
+}
+
+.kleistad-recept-titel {
+	float: left;
+	position: relative;
+}
+
+.kleistad-filters {
+	border: 0;
+	display: none;
+	float: left;
+	height: 100%;
+	padding: 15px;
+	width: 30%;
+}
+
+.kleistad-filter-term input:checked {
+	font-weight: bold;
+}
+
+.kleistad-filter-term input:not(:checked) {
+	font-weight: normal;
+}
+
+.kleistad-filter-term {
+	border-bottom: 1px solid black;
+	list-style-position: inside;
+	list-style-type: none;
+}
+
+.kleistad-filter-term + label:hover {
+	background: whitesmoke;
+	cursor: pointer;
+}
+
+/**
+ * Specifiek voor werkplekken
+ */
+.kleistad-werkplek,
+.kleistad-meester,
+.kleistad-werkplek-bezet,
+.kleistad-werkplek-vrij {
+	box-sizing: border-box;
+	font-size: small;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-transform: none;
+	text-align: center;
+	white-space: nowrap;
+	width: 100%;
+}
+
+.kleistad-werkplek-bezet,
+.kleistad-werkplek-vrij {
+	border: 1px solid white;
+	font-size: small;
+	padding: 5px 10px;
+}
+
+.kleistad-werkplek-dagdeel,
+.kleistad-werkplek-reserveerbaar,
+.kleistad-werkplek-gereserveerd {
+	border: 0;
+}
+
+/**
+ * Specifiek voor docent beschikbaarheid
+ */
+.kleistad-inzet {
+	appearance: none;
+	display: inline-block;
+	height: 25px;
+	max-width: 11ch;
+	opacity: 0.9;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.kleistad-inzet-optie {
+	background: lightsalmon;
+	border: 1px solid var(--bc, var(--border));
+	border-radius: 7px;
+	color: white;
+}
+
+.kleistad-inzet-definitief {
+	background: dimgray;
+	border: 1px solid var(--bc, var(--border));
+	border-radius: 7px;
+	color: white;
+}
+
+.kleistad-cell_center {
+	text-align: center;
+}
+
+.kleistad-cell_right {
+	text-align: right;
+}
+
+.kleistad-cell_left {
+	text-align: left;
+}
+
+/**
+ * Layout elementen
+ */
+.kleistad-row::after {
+	clear: both;
+	content: "";
+	display: table;
+}
+
+[class^="kleistad-col-"] {
+	border: 0;
+	float: left;
+	padding: 2px 15px;
+	width: 100%;
+}
+
+/**
+ * Voor laptopschermen en iPads
+ */
+@media screen and (min-width: 768px) {
+	div.kleistad-tab {
+		height: var(--tab-height);
+		overflow-y: auto;
+	}
+
+	.kleistad-col-1 {
+		width: 10%;
+	}
+
+	.kleistad-col-2 {
+		width: 20%;
+	}
+
+	.kleistad-col-3 {
+		width: 30%;
+	}
+
+	.kleistad-col-4 {
+		width: 40%;
+	}
+
+	.kleistad-col-5 {
+		width: 50%;
+	}
+
+	.kleistad-col-6 {
+		width: 60%;
+	}
+
+	.kleistad-col-7 {
+		width: 70%;
+	}
+
+	.kleistad-col-8 {
+		width: 80%;
+	}
+
+	.kleistad-col-9 {
+		width: 90%;
+	}
+
+	.kleistad-col-10 {
+		width: 100%;
+	}
+
+	.kleistad-col-kwart {
+		width: 25%;
+	}
+}
+
+/**
+ * Voor mobieltjes
+ */
+@media screen and (max-width: 767px) {
+	table.kleistad-reserveringen th,
+	table.kleistad-reserveringen td,
+	table.kleistad-reserveringen button {
+		font-size: x-small;
+	}
+
+	div.kleistad-meesters {
+		display: none;
+	}
+
+	div.kleistad-tab {
+		min-height: var(--tab-height);
+	}
+
+	[class^="kleistad-col-"] {
+		width: 100%;
+	}
 }

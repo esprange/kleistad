@@ -97,7 +97,7 @@ class Profiel {
 			<?php if ( count( $lijst ) ) : ?>
 				<button id="kleistad_betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
 				<br/>
-	<div class="kleistad-openstaand" style="display: none;" >
+	<div id="kleistad_openstaand" class="kleistad-openstaand" style="display: none;" >
 		<table style="table-layout: auto;">
 			<tr>
 				<td colspan="4"><strong>Openstaande facturen</strong></td>

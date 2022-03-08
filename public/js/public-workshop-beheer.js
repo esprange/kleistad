@@ -11,8 +11,28 @@
 ( function( $ ) {
 	'use strict';
 
+	/**
+	 * Vouw alle communicatie samen en verwijder de buttons als de tekst volledig in het venster past.
+	 */
+	function fold_all() {
+		$( 'div[id^=kleistad_communicatie_]' ).each(
+			function() {
+				let $comm_veld = $( this ).find( 'div.kleistad-workshop-communicatie' ),
+					overflow   = $comm_veld.prop( 'scrollHeight' ) > $comm_veld.prop( 'clientHeight' );
+				$( this ).find( 'button.kleistad-workshop-unfold' ).toggle( overflow ).html( 'Meer...' );
+				$comm_veld.toggleClass( 'kleistad-workshop-communicatie-folded', overflow );
+			}
+		)
+	}
+
 	function onLoad() {
-		$( '#kleistad_workshopbeheer' ).tabs();
+		$( '#kleistad_workshopbeheer' ).tabs(
+			{
+				activate: function() {
+					fold_all();
+				}
+			}
+		);
 	}
 
 	/**
@@ -100,23 +120,14 @@
 				'click',
 				'.kleistad-workshop-unfold',
 				function() {
-					$( this ).parent().prev( '.kleistad-workshop-communicatie' ).toggleClass( 'kleistad-workshop-communicatie-folded' );
-					$( this ).hide().next( '.kleistad-workshop-fold' ).show();
+					let $communicatie = $( this ).parents( 'div[id^=kleistad_communicatie_]' ),
+						$comm_veld    = $communicatie.find( '.kleistad-workshop-communicatie' ),
+						folded        = $comm_veld.hasClass( 'kleistad-workshop-communicatie-folded' );
+					$comm_veld.toggleClass( 'kleistad-workshop-communicatie-folded', ! folded );
+					$( this ).html( folded ? 'Minder...' : 'Meer...' );
 					return false;
 				}
 			)
-			/**
-			 * Klap het veld in.
-			 */
-			.on(
-				'click',
-				'.kleistad-workshop-fold',
-				function() {
-					$( this ).parent().prev( '.kleistad-workshop-communicatie' ).toggleClass( 'kleistad-workshop-communicatie-folded' );
-					$( this ).hide().prev( '.kleistad-workshop-unfold' ).show();
-					return false;
-				}
-			);
 		}
 	);
 

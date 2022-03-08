@@ -66,7 +66,7 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 			<input id="kleistad_dag" type="hidden" >
 			<input id="kleistad_maand" type="hidden" >
 			<input id="kleistad_jaar" type="hidden" >
-			<table class="kleistad-formtable kleistad-reservering-form">
+			<table class="kleistad-reservering-form">
 				<thead>
 				</thead>
 				<tbody>

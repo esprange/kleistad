@@ -133,27 +133,34 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function form_communicatie() {
 		?>
-		<table class="kleistad-formtable" >
-			<tr>
-				<td colspan="2" ><label for="kleistad_reactie">Reactie</label></td>
-			</tr>
-			<tr>
-				<td colspan="2" ><textarea id="kleistad_reactie" name="reactie" maxlength="1000" rows="10" ></textarea></td>
-			</tr>
-		</table>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
-		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right">Terug</button>
-		<div>
-		<?php foreach ( $this->data['workshop']['communicatie'] as $communicatie ) : ?>
-			<div class="kleistad-workshop-communicatie kleistad-workshop-communicatie-folded kleistad-workshop-<?php echo esc_attr( $communicatie['type'] ); ?>" >
-				<strong><?php echo esc_html( ucfirst( $communicatie['type'] ) . ' van ' . $communicatie['from'] . ' op ' . $communicatie['tijd'] ); ?></strong>
-				<p><?php echo esc_html( $communicatie['subject'] ); ?></p>
-				<?php echo nl2br( $communicatie['tekst'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				<br/>
+		<div class="kleistad-row" >
+			<div class="kleistad-col-2">
+				<label for="kleistad_reactie">Reactie</label>
 			</div>
-			<div style="text-align:center;">
-				<button class="kleistad-button kleistad-workshop-unfold" >Uitklappen</button>
-				<button class="kleistad-button kleistad-workshop-fold" style="display:none;" >Inklappen</button>
+		</div>
+		<div class="kleistad-row" >
+			<div class="kleistad-col-10">
+				<textarea id="kleistad_reactie" name="reactie" maxlength="1000" rows="10" ></textarea>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right">Terug</button>
+			</div>
+		</div>
+		<div>
+		<?php foreach ( $this->data['workshop']['communicatie'] as $key => $communicatie ) : ?>
+			<div class="kleistad-row" id="kleistad_communicatie_<?php echo esc_attr( $key ); ?>" >
+				<div class="kleistad-workshop-communicatie kleistad-workshop-communicatie-folded kleistad-workshop-<?php echo esc_attr( $communicatie['type'] ); ?>" >
+					<strong><?php echo esc_html( ucfirst( $communicatie['type'] ) . ' van ' . $communicatie['from'] . ' op ' . $communicatie['tijd'] ); ?></strong>
+					<p><?php echo esc_html( $communicatie['subject'] ); ?></p>
+					<?php echo wp_kses_post( nl2br( $communicatie['tekst'] ) ); ?>
+					<br/>
+				</div>
+				<div style="text-align:center;">
+					<button class="kleistad-button kleistad-workshop-unfold" >Meer...</button>
+				</div>
 			</div>
 		<?php endforeach ?>
 		<?php
@@ -233,6 +240,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * @param bool $readonly  Of de gegevens wijzigbaar zijn.
 	 *
 	 * @return Public_Workshop_Beheer_Display
+	 * @suppressWarnings (PHPMD.ElseExpression)
 	 */
 	private function planning_details( bool $readonly ) : Public_Workshop_Beheer_Display {
 		?>

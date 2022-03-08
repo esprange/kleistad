@@ -11,10 +11,55 @@
 
 namespace Kleistad;
 
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_User;
 /**
  * De kleistad registratie overzicht class.
  */
 class Public_Registratie_Overzicht extends Shortcode {
+
+	/**
+	 * Register rest URI's.
+	 *
+	 * @since 7.2.4
+	 */
+	public static function register_rest_routes() {
+		register_rest_route(
+			KLEISTAD_API,
+			'/registratie',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ __CLASS__, 'callback_show' ],
+				'args'                => [
+					'gebruiker_id' => [
+						'required' => true,
+						'type'     => 'int',
+					],
+				],
+				'permission_callback' => function () {
+					return is_user_logged_in() && current_user_can( BESTUUR );
+				},
+			]
+		);
+	}
+
+	/**
+	 * Callback from Ajax request
+	 *
+	 * @param WP_REST_Request $request Ajax request params.
+	 * @return WP_REST_Response Ajax response.
+	 */
+	public static function callback_show( WP_REST_Request $request ) : WP_REST_Response {
+		$gebruiker_id = intval( $request->get_param( 'gebruiker_id' ) );
+		$gebruiker    = get_user_by( 'ID', $gebruiker_id );
+		return new WP_REST_Response(
+			[
+				'content' => self::toon_gebruiker( $gebruiker ),
+				'naam'    => html_entity_decode( $gebruiker->display_name, ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
+			]
+		);
+	}
 
 	/**
 	 *
@@ -193,63 +238,155 @@ class Public_Registratie_Overzicht extends Shortcode {
 	private function registraties() : array {
 		$registraties = [];
 		foreach ( get_users( [ 'orderby' => 'display_name' ] ) as $gebruiker ) {
+			$abonnement                     = new Abonnement( $gebruiker->ID );
+			$dagdelenkaart                  = new Dagdelenkaart( $gebruiker->ID );
+			$cursist                        = new Cursist( $gebruiker->ID );
 			$registraties[ $gebruiker->ID ] = [
-				'is_abonnee'         => false,
-				'is_dagdelenkaart'   => false,
-				'is_cursist'         => '',
-				'deelnemer_info'     => [
-					'naam'   => $gebruiker->display_name,
-					'straat' => $gebruiker->straat,
-					'huisnr' => $gebruiker->huisnr,
-					'pcode'  => $gebruiker->pcode,
-					'plaats' => $gebruiker->plaats,
-					'telnr'  => $gebruiker->telnr,
-					'email'  => $gebruiker->user_email,
-				],
-				'abonnee_info'       => [],
-				'dagdelenkaart_info' => [],
-				'inschrijving_info'  => [],
-				'voornaam'           => $gebruiker->first_name,
-				'achternaam'         => $gebruiker->last_name,
-				'telnr'              => $gebruiker->telnr,
-				'email'              => $gebruiker->user_email,
+				'is_abonnee'       => boolval( $abonnement->start_datum ),
+				'is_dagdelenkaart' => boolval( $dagdelenkaart->start_datum ),
+				'is_cursist'       => boolval( count( $cursist->inschrijvingen ) ),
+				'voornaam'         => $gebruiker->first_name,
+				'achternaam'       => $gebruiker->last_name,
+				'telnr'            => $gebruiker->telnr,
+				'email'            => $gebruiker->user_email,
 			];
-		}
-		foreach ( new Abonnementen() as $abonnement ) {
-			$registraties[ $abonnement->klant_id ]['is_abonnee']   = ! $abonnement->is_geannuleerd();
-			$registraties[ $abonnement->klant_id ]['abonnee_info'] = [
-				'code'           => $abonnement->code,
-				'start_datum'    => date( 'd-m-Y', $abonnement->start_datum ),
-				'pauze_datum'    => $abonnement->pauze_datum ? date( 'd-m-Y', $abonnement->pauze_datum ) : '',
-				'herstart_datum' => $abonnement->herstart_datum ? date( 'd-m-Y', $abonnement->herstart_datum ) : '',
-				'eind_datum'     => $abonnement->eind_datum ? date( 'd-m-Y', $abonnement->eind_datum ) : '',
-				'soort'          => ucfirst( $abonnement->soort ),
-				'extras'         => implode( ' ', $abonnement->extras ),
-				'geannuleerd'    => $abonnement->is_geannuleerd(),
-				'opmerking'      => $abonnement->opmerking,
-			];
-		}
-		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
-			$registraties[ $dagdelenkaart->klant_id ]['is_dagdelenkaart']   = $dagdelenkaart->eind_datum >= strtotime( 'today' );
-			$registraties[ $dagdelenkaart->klant_id ]['dagdelenkaart_info'] = [
-				'code'        => $dagdelenkaart->code,
-				'start_datum' => date( 'd-m-Y', $dagdelenkaart->start_datum ),
-			];
-		}
-		foreach ( new Cursisten() as $cursist ) {
-			foreach ( $cursist->inschrijvingen as $inschrijving ) {
-				$registraties[ $cursist->ID ]['is_cursist']         .= "C{$inschrijving->cursus->id};";
-				$registraties[ $cursist->ID ]['inschrijving_info'][] = [
-					'ingedeeld'   => $inschrijving->ingedeeld,
-					'geannuleerd' => $inschrijving->geannuleerd,
-					'code'        => $inschrijving->code,
-					'aantal'      => $inschrijving->aantal,
-					'naam'        => $inschrijving->cursus->naam,
-					'technieken'  => $inschrijving->technieken,
-				];
-			}
 		}
 		return $registraties;
 	}
 
+	/**
+	 * De details van de gebruiker
+	 *
+	 * @param WP_User $gebruiker Het WP user.
+	 *
+	 * @return string De html tekst.
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
+	 */
+	private static function toon_gebruiker( WP_User $gebruiker ) : string {
+		$html  = <<< EOT
+			<div class="kleistad-row">
+				<div class="kleistad-col-1 kleistad-label">Adres</div>
+			</div>
+			<div class="kleistad-row">
+				<div class="kleistad-col-6">
+					$gebruiker->straat $gebruiker->huisnr
+				</div>
+			</div>
+			<div class="kleistad-row">
+				<div class="kleistad-col-6">
+					 $gebruiker->pcode $gebruiker->plaats
+				 </div>
+			</div>
+		EOT;
+		$html .= self::cursist( $gebruiker );
+		$html .= self::abonnement( $gebruiker );
+		$html .= self::dagdelenkaart( $gebruiker );
+		return $html;
+	}
+
+	/**
+	 * De cursus details van de gebruiker
+	 *
+	 * @param WP_User $gebruiker Het WP user.
+	 *
+	 * @return string De html tekst.
+	 */
+	private static function cursist( WP_User $gebruiker ) : string {
+		$html          = '';
+		$cursus_header = false;
+		$cursist       = new Cursist( $gebruiker->ID );
+		foreach ( $cursist->inschrijvingen as $inschrijving ) {
+			if ( ! $cursus_header ) {
+				$cursus_header = true;
+				$html         .= <<< EOT
+			<div class="kleistad-row">
+				<div class="kleistad-col-3 kleistad-label">Cursus</div>
+				<div class="kleistad-col-1 kleistad-label">Code</div>
+				<div class="kleistad-col-2 kleistad-label">Ingedeeld</div>
+				<div class="kleistad-col-2 kleistad-label">Geannuleerd</div>
+				<div class="kleistad-col-2 kleistad-label">Technieken</div>
+			</div>
+		EOT;
+			}
+			$code        = $inschrijving->cursus->code . ( 1 < $inschrijving->aantal ? " ( $inschrijving->aantal )" : '' );
+			$ingedeeld   = $inschrijving->ingedeeld ? '<span class="dashicons dashicons-yes"></span>' : '';
+			$geannuleerd = $inschrijving->geannuleerd ? '<span class="dashicons dashicons-yes"></span>' : '';
+			$technieken  = implode( ', ', $inschrijving->technieken ?? [] );
+			$html       .= <<< EOT
+			<div class="kleistad-row">
+				<div class="kleistad-col-3" style="overflow-x: hidden">{$inschrijving->cursus->naam}</div>
+				<div class="kleistad-col-1">$code</div>
+				<div class="kleistad-col-2">$ingedeeld</div>
+				<div class="kleistad-col-2">$geannuleerd</div>
+				<div class="kleistad-col-2" style="overflow-x: hidden">$technieken</div>
+			</div>
+		EOT;
+		}
+		return $html;
+	}
+
+	/**
+	 * De abonnement details van de gebruiker
+	 *
+	 * @param WP_User $gebruiker Het WP user.
+	 *
+	 * @return string De html tekst.
+	 */
+	private static function abonnement ( WP_User $gebruiker ) : string {
+		$html       = '';
+		$abonnement = new Abonnement( $gebruiker->ID );
+		if ( $abonnement->start_datum ) {
+			$extras   = count( $abonnement->extras ) ? ( '<br/>' . implode( ', ', $abonnement->extras ) ) : '';
+			$start    = date( 'd-m-Y', $abonnement->start_datum );
+			$pauze    = $abonnement->pauze_datum ? date( 'd-m-Y', $abonnement->start_datum ) : '';
+			$herstart = $abonnement->herstart_datum ? date( 'd-m-Y', $abonnement->herstart_datum ) : '';
+			$eind     = $abonnement->eind_datum ? date( 'd-m-Y', $abonnement->eind_datum ) : '';
+			$html    .= <<< EOT
+			<div class="kleistad-row">
+				<div class="kleistad-col-2 kleistad-label">Abonnement</div>
+				<div class="kleistad-col-2 kleistad-label">Start datum</div>
+				<div class="kleistad-col-2 kleistad-label">Pauze datum</div>
+				<div class="kleistad-col-2 kleistad-label">Herstart datum</div>
+				<div class="kleistad-col-2 kleistad-label">Eind datum</div>
+			</div>
+			<div class="kleistad-row">
+				<div class="kleistad-col-2">$abonnement->soort $extras</div>
+				<div class="kleistad-col-2">$start</div>
+				<div class="kleistad-col-2">$pauze</div>
+				<div class="kleistad-col-2">$herstart</div>
+				<div class="kleistad-col-2">$eind</div>
+			</div>
+		EOT;
+		}
+		return $html;
+	}
+
+	/**
+	 * De dagdelenkaart details van de gebruiker
+	 *
+	 * @param WP_User $gebruiker Het WP user.
+	 *
+	 * @return string De html tekst.
+	 */
+	private static function dagdelenkaart ( WP_User $gebruiker ) : string {
+		$html          = '';
+		$dagdelenkaart = new Dagdelenkaart( $gebruiker->ID );
+		if ( $dagdelenkaart->start_datum ) {
+			$start  = date( 'd-m-Y', $dagdelenkaart->start_datum );
+			$actief = $dagdelenkaart->start_datum > strtotime( '- ' . Dagdelenkaart::KAART_DUUR . ' month' ) ? '<span class="dashicons dashicons-yes"></span>' : '';
+			$html  .= <<< EOT
+			<div class="kleistad-row">
+				<div class="kleistad-col-2 kleistad-label">Dagdelenkaart</div>
+				<div class="kleistad-col-2 kleistad-label">Start datum</div>
+				<div class="kleistad-col-2 kleistad-label">Actief</div>
+			</div>
+			<div class="kleistad-row">
+				<div class="kleistad-col-2">$dagdelenkaart->code</div>
+				<div class="kleistad-col-2">$start</div>
+				<div class="kleistad-col-2">$actief</div>
+			</div>
+		EOT;
+		}
+		return $html;
+	}
 }

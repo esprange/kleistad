@@ -20,22 +20,16 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		?>
-		<div id="kleistad_deelnemer_info">
-			<table class="kleistad-formtable" id="kleistad_deelnemer_tabel" >
-			</table>
+		<div id="kleistad_deelnemer_info" style="font-size: small">
 		</div>
 		<p><label for="kleistad_deelnemer_selectie">Selectie</label>
 			<select id="kleistad_deelnemer_selectie" name="selectie" >
 				<option value="*" >&nbsp;</option>
 				<option value="A" >Actieve abonnees</option>
 				<option value="K" >Actieve dagdelenkaart gebruikers</option>
-					<?php
-					$options = '';
-					foreach ( $this->data['cursussen'] as $cursus ) :
-						$options = "<option value=\"C$cursus->id\" >C$cursus->id $cursus->naam</option>\n$options";
-					endforeach;
-					echo $options; // phpcs:ignore
-					?>
+				<?php foreach ( $this->data['cursussen'] as $cursus ) : ?>
+				<option value="<?php echo esc_attr( $cursus->code ); ?>" ><?php echo esc_html( "$cursus->code $cursus->naam" ); ?></option>
+				<?php endforeach; ?>
 			</select>
 		</p>
 		<table class="kleistad-datatable display compact nowrap" id="kleistad_deelnemer_lijst">
@@ -52,19 +46,9 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 			</thead>
 			<tbody>
 				<?php
-				foreach ( $this->data['registraties'] as $registratie ) :
-					$json_inschrijvingen = wp_json_encode( $registratie['inschrijving_info'] );
-					$json_deelnemer      = wp_json_encode( $registratie['deelnemer_info'] );
-					$json_abonnee        = wp_json_encode( $registratie['abonnee_info'] );
-					$json_dagdelenkaart  = wp_json_encode( $registratie['dagdelenkaart_info'] );
-					if ( false === $json_inschrijvingen || false === $json_deelnemer || false === $json_abonnee || false === $json_dagdelenkaart ) :
-						continue;
-					endif;
+				foreach ( $this->data['registraties'] as $id => $registratie ) :
 					?>
-					<tr data-inschrijvingen='<?php echo htmlspecialchars( $json_inschrijvingen, ENT_QUOTES ); // phpcs:ignore ?>'
-						data-deelnemer='<?php echo htmlspecialchars( $json_deelnemer, ENT_QUOTES ); // phpcs:ignore ?>'
-						data-abonnee='<?php echo htmlspecialchars( $json_abonnee, ENT_QUOTES ); // phpcs:ignore ?>'
-						data-dagdelenkaart='<?php echo htmlspecialchars( $json_dagdelenkaart, ENT_QUOTES ); // phpcs:ignore ?>' >
+					<tr data-id="<?php echo esc_attr( $id ); ?>">
 						<td><?php echo esc_html( $registratie['is_abonnee'] ); ?></td>
 						<td><?php echo esc_html( $registratie['is_dagdelenkaart'] ); ?></td>
 						<td><?php echo esc_html( $registratie['is_cursist'] ); ?></td>
