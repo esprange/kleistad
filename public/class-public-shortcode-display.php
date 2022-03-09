@@ -153,7 +153,7 @@ abstract class Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-4">
 					<input class="kleistad-input" name="first_name" id="kleistad_voornaam" type="text"
-					required maxlength="25" pattern="^[ a-zA-Z\-']+$" placeholder="voornaam" title="Vul s.v.p. de voornaam correct in"
+					required maxlength="25" placeholder="voornaam" title="Vul s.v.p. de voornaam correct in"
 					value="<?php echo esc_attr( $this->data['input']['first_name'] ); ?>" autocomplete="given-name" />
 				</div>
 			</div>
@@ -163,7 +163,7 @@ abstract class Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-4">
 					<input class="kleistad-input" name="last_name" id="kleistad_achternaam" type="text"
-					required maxlength="25" pattern="^[ a-zA-Z\-']+$" placeholder="achternaam" title="Vul s.v.p. de achternaam correct in"
+					required maxlength="25" placeholder="achternaam" title="Vul s.v.p. de achternaam correct in"
 					value="<?php echo esc_attr( $this->data['input']['last_name'] ); ?>" autocomplete="family-name" />
 				</div>
 			</div>

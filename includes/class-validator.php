@@ -94,7 +94,7 @@ class Validator {
 	 * @return bool if false, dan niet gevalideerd.
 	 */
 	public function naam( string $naam ) : bool {
-		return 1 === preg_match( "/^(['a-zA-Z])(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/", htmlspecialchars_decode( remove_accents( $naam ), ENT_QUOTES ) );
+		return 1 !== preg_match( '/[\^<,\"@\/{}()*$%?=>:|;#]+/i', html_entity_decode( $naam, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
 	}
 
 	/**
