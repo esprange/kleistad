@@ -27,7 +27,7 @@ class Admin_Abonnees_Display extends Admin_Display {
 		?>
 		<table class="form-table">
 		<tbody>
-			<tr class="form-field">
+			<tr>
 				<th  scope="row"><label>Naam</label></th>
 				<td>
 					<?php echo esc_html( $item['naam'] ); ?> (<?php echo esc_html( $item['code'] ); ?>)
@@ -83,10 +83,10 @@ class Admin_Abonnees_Display extends Admin_Display {
 	 */
 	private function render_status( array $item ) : void {
 		?>
-			<tr class="form-field">
+			<tr>
 				<th scope="row"><label for="kleistad_soort">Soort</label></th>
 				<td>
-					<select id="kleistad_soort" name="soort" required class="code">
+					<select id="kleistad_soort" name="soort" required >
 						<option value="">Selecteer een abonnement soort</option>
 						<option value="onbeperkt" <?php selected( $item['soort'], 'onbeperkt' ); ?> >Onbeperkt</option>
 						<option value="beperkt" <?php selected( $item['soort'], 'beperkt' ); ?> >Beperkt</option>
@@ -99,10 +99,10 @@ class Admin_Abonnees_Display extends Admin_Display {
 					$index++;
 					if ( 0 < $extra['prijs'] ) :
 						?>
-			<tr class="form-field">
+			<tr>
 				<th scope="row"><label for="extra_<?php echo esc_attr( $index ); ?>"><?php echo esc_html( $extra['naam'] ); ?></label></th>
 				<td>
-					<input type="checkbox" id="extra_<?php echo esc_attr( $index ); ?>" name="extras[]" class="code" <?php checked( in_array( $extra['naam'], $item['extras'], true ) ); ?>
+					<input type="checkbox" id="extra_<?php echo esc_attr( $index ); ?>" name="extras[]"<?php checked( in_array( $extra['naam'], $item['extras'], true ) ); ?>
 						value="<?php echo esc_attr( $extra['naam'] ); ?>" >
 				</td>
 			</tr>
@@ -162,9 +162,9 @@ class Admin_Abonnees_Display extends Admin_Display {
 	 */
 	private function render_mollie( array $item ) {
 		?>
-			<tr class="form-field">
+			<tr>
 				<td>
-					<?php submit_button( 'Verwijder mandaat', 'primary', 'submit', true, [ 'id' => 'mollie' ] ); ?>
+					<?php submit_button( 'Verwijder mandaat', 'secondary', 'submit', true, [ 'id' => 'mollie' ] ); ?>
 				</td>
 			</tr>
 			<tr>

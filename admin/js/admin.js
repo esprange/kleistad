@@ -105,11 +105,11 @@
 			 */
 			$( 'form' ).on(
 				'click',
-				'.lijst_toevoegen',
+				'button[id^=kleistad_voegtoe_]',
 				function() {
 					const parameters = $( this ).data( 'parameters' );
 					const key        = $( this ).data( 'key' );
-					const index      = $( '#lijst_' + key + ' tbody tr' ).length;
+					const index      = $( '#kleistad_lijst_' + key + ' tbody tr' ).length;
 					let template     =
 						'<td><input type="text" class="regular-text" name="kleistad-opties[' + key + '][' + index + '][naam]" required /></td>';
 					parameters.forEach(
@@ -125,14 +125,14 @@
 							template       += '<td><input ' + parameter.veld + ' class="' + veldClass + '" name="kleistad-opties[' + key + '][' + index + '][' + parameter.naam + ']" required /></td>';
 						}
 					);
-					template += '<td><span class="lijst_verwijderen dashicons dashicons-trash" style="cursor: pointer;"></span></td>';
-					$( '#lijst_' + key + ' tbody' ).append( '<tr>' + template + '</tr>' );
+					template += '<td><span id="kleistad_verwijder_' + key + '_' + index + '" class="dashicons dashicons-trash" style="cursor: pointer;"></span></td>';
+					$( '#kleistad_lijst_' + key + ' tbody' ).append( '<tr>' + template + '</tr>' );
 					defineDatumpickers();
 					defineColorpickers();
 				}
 			).on(
 				'click',
-				'.lijst_verwijderen',
+				'span[id^=kleistad_verwijder_]',
 				function() {
 					$( this ).closest( 'tr' ).remove();
 				}

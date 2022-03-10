@@ -28,7 +28,7 @@ class Admin_Stooksaldo_Display extends Admin_Display {
 		?>
 		<table class="form-table">
 		<tbody>
-			<tr class="form-field">
+			<tr>
 				<th scope="row"><label>Naam gebruiker</label></th>
 				<td>
 					<?php echo esc_html( $item['naam'] ); ?>
@@ -36,11 +36,11 @@ class Admin_Stooksaldo_Display extends Admin_Display {
 					<input name="id" type="hidden" value="<?php echo esc_attr( $item['id'] ); ?>" >
 				</td>
 			</tr>
-			<tr class="form-field">
+			<tr>
 				<th scope="row"><label for="saldo">Saldo</label></th>
 				<td>
-					<input id="saldo" name="saldo" type="number" style="width: 95%" value="<?php echo esc_attr( sprintf( '%.2f', $item['saldo'] ) ); ?>"
-						step="0.01" class="code" placeholder="99.99" required>
+					<input id="saldo" name="saldo" type="number" value="<?php echo esc_attr( sprintf( '%.2f', $item['saldo'] ) ); ?>"
+						step="0.01" size="5" placeholder="99.99" required>
 				</td>
 			</tr>
 			<tr>

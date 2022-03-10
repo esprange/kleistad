@@ -105,6 +105,10 @@ option.kleistad-bank {
 	width: 100%;
 }
 
+.kleistad-profiel table {
+	table-layout: auto;
+}
+
 .kleistad-profiel table,
 .kleistad-profiel tr,
 .kleistad-profiel td {

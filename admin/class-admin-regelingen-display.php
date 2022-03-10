@@ -37,11 +37,11 @@ class Admin_Regelingen_Display extends Admin_Display {
 		?>
 		<table class="form-table">
 			<tbody>
-				<tr class="form-field">
+				<tr>
 					<?php if ( 0 === $item['gebruiker_id'] ) : ?>
 					<th scope="row"><label for="gebruiker_id">Naam gebruiker</label></th>
 					<td>
-						<select name="gebruiker_id" id="gebruiker_id" style="width: 95%" required>
+						<select name="gebruiker_id" id="gebruiker_id" required>
 							<?php foreach ( $gebruikers as $gebruiker ) : ?>
 								<option value="<?php echo esc_attr( $gebruiker->ID ); ?>" <?php selected( $item['gebruiker_id'], $gebruiker->ID ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
 							<?php endforeach ?>
@@ -55,11 +55,11 @@ class Admin_Regelingen_Display extends Admin_Display {
 					<?php endif ?>
 					</td>
 				</tr>
-				<tr class="form-field">
+				<tr>
 				<?php if ( 0 === $item['oven_id'] ) : ?>
 					<th scope="row"><label for="oven_id">Naam oven</label></th>
 					<td>
-						<select name="oven_id" id="oven_id" style="width: 95%" required>
+						<select name="oven_id" id="oven_id" required>
 						<?php foreach ( $ovens as $oven ) : ?>
 							<option value="<?php echo esc_attr( $oven->id ); ?>" <?php selected( $item['oven_id'] == $oven->id ); // phpcs:ignore ?> ><?php echo esc_html( $oven->naam ); ?></option>
 						<?php endforeach ?>
@@ -73,11 +73,11 @@ class Admin_Regelingen_Display extends Admin_Display {
 				<?php endif ?>
 					</td>
 				</tr>
-				<tr class="form-field">
+				<tr>
 					<th scope="row"><label for="kosten">Tarief</label></th>
 					<td>
-						<input id="kosten" name="kosten" type="number" style="width: 95%" value="<?php echo esc_attr( sprintf( '%.2f', $item['kosten'] ) ); ?>"
-							step="0.01" class="code" placeholder="99.99" required>
+						<input id="kosten" name="kosten" type="number" size="5" value="<?php echo esc_attr( sprintf( '%.2f', $item['kosten'] ) ); ?>"
+							step="0.01" placeholder="99.99" required>
 					</td>
 				</tr>
 			</tbody>

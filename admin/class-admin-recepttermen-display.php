@@ -31,13 +31,13 @@ class Admin_Recepttermen_Display extends Admin_Display {
 		<input name="hoofdterm_id" type="hidden" value="<?php echo esc_attr( $hoofdterm['term_id'] ); ?>" >
 		<table class="form-table">
 			<tbody>
-				<tr class="form-field">
+				<tr>
 					<th  scope="row">
 						<label for="naam">Naam</label>
 					</th>
 					<td>
-						<input id="naam" name="naam" type="text" style="width: 95%" value="<?php echo esc_attr( $item['naam'] ); ?>"
-							size="50" class="code" placeholder="De recept term naam" required>
+						<input id="naam" name="naam" type="text" value="<?php echo esc_attr( $item['naam'] ); ?>"
+							size="50" placeholder="De recept term naam" required>
 					</td>
 				</tr>
 			</tbody>

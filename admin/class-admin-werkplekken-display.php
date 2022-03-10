@@ -28,7 +28,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 		?>
 		<table style="width: 100%;border-spacing: 2px; padding: 5px" >
 			<tbody>
-				<tr class="form-field">
+				<tr>
 					<th  scope="row">
 						<label for="kleistad_start_config">Start datum</label>
 					</th>
@@ -36,7 +36,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 						<input type="text" id="kleistad_start_config" name="start_datum" class="kleistad-datum" required value="<?php echo esc_attr( $item['start_datum'] ); ?>" autocomplete="off" >
 					</td>
 				</tr>
-				<tr class="form-field">
+				<tr>
 					<th  scope="row">
 						<label for="kleistad_eind_config">Eind datum</label>
 					</th>

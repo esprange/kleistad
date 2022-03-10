@@ -121,7 +121,7 @@ class Admin_Instellingen_Display {
 			?>
 			<tr >
 				<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $naam ); ?></label></th>
-				<td colspan="3">
+				<td>
 					<input type="text" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="regular-text"
 						value="<?php echo esc_attr( setup()[ $id ] ); ?>" />
 				</td>
@@ -185,7 +185,7 @@ class Admin_Instellingen_Display {
 			if ( is_string( $json_velden ) ) {
 				?>
 	<tr><th><?php echo esc_html( $parameter['titel'] ); ?></th><td>
-		<table id="<?php echo esc_attr( "lijst_$key" ); ?>">
+		<table id="<?php echo esc_attr( "kleistad_lijst_$key" ); ?>">
 			<thead>
 				<tr>
 					<th>Naam</th>
@@ -196,8 +196,7 @@ class Admin_Instellingen_Display {
 			</thead>
 			<tbody>
 				<?php
-				$index = 0;
-				foreach ( opties()[ $key ] ?? [] as $optie ) :
+				foreach ( opties()[ $key ] ?? [] as $index => $optie ) :
 					?>
 				<tr>
 					<td><!--suppress HtmlFormInputWithoutLabel -->
@@ -206,18 +205,17 @@ class Admin_Instellingen_Display {
 					<td><!--suppress HtmlFormInputWithoutLabel -->
 						<input <?php echo $veld['veld']; // phpcs:ignore ?>  class="small-text <?php echo esc_attr( $veld['class'] ?? '' ); ?>" name="<?php echo esc_attr( "kleistad-opties[$key][$index][{$veld['naam']}]" ); ?>" value="<?php echo esc_attr( $optie[ $veld['naam'] ] ); ?>" /></td>
 					<?php endforeach; ?>
-					<td><span class="lijst_verwijderen dashicons dashicons-trash" style="cursor: pointer;"></span></td>
+					<td><span id="kleistad_verwijder_<?php echo esc_attr( $key . '_' . $index ); ?>" class="dashicons dashicons-trash" style="cursor: pointer;"></span></td>
 				</tr>
 					<?php
-					$index++;
 			endforeach;
 				?>
 			</tbody>
 			<tfoot>
 				<tr>
 					<th><?php echo esc_html( $parameter['titel'] ); ?> toevoegen</th>
-					<td colspan="2">
-						<button type="button" class="lijst_toevoegen" data-key="<?php echo esc_attr( $key ); ?>" data-parameters='<?php echo $json_velden; // phpcs:ignore ?>'>
+					<td>
+						<button id="kleistad_voegtoe_<?php echo esc_attr( $key ); ?>" type="button" class="lijst_toevoegen" data-key="<?php echo esc_attr( $key ); ?>" data-parameters='<?php echo $json_velden; // phpcs:ignore ?>'>
 							<span class="dashicons dashicons-plus"></span>
 						</button>
 					</td>
@@ -279,7 +277,7 @@ class Admin_Instellingen_Display {
 			?>
 			<tr >
 				<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $naam ); ?></label></th>
-				<td colspan="3"><input type="number" step="0.01" name="kleistad-opties[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="small-text"
+				<td><input type="number" step="0.01" name="kleistad-opties[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="small-text"
 					value="<?php echo esc_attr( opties()[ $id ] ); ?>" /></td>
 			</tr>
 			<?php
@@ -347,7 +345,7 @@ class Admin_Instellingen_Display {
 						<?php echo esc_html( $parameter['label'] ); ?>
 					</label>
 				</th>
-				<td colspan="3">
+				<td>
 					<input type="number" min="<?php echo esc_attr( $parameter['min'] ); ?>"
 						max="<?php echo esc_attr( $parameter['max'] ); ?>" name="kleistad-opties[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="small-text"
 						value="<?php echo esc_attr( opties()[ $id ] ); ?>" />

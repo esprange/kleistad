@@ -28,7 +28,7 @@ class Admin_Cursisten_Display extends Admin_Display {
 		?>
 		<table class="form-table">
 		<tbody>
-			<tr class="form-field">
+			<tr>
 				<th  scope="row">
 					<label>Naam</label>
 				</th>
@@ -37,11 +37,11 @@ class Admin_Cursisten_Display extends Admin_Display {
 					<input type="hidden" name="naam" value="<?php echo esc_attr( $item['naam'] ); ?>" >
 				</td>
 			</tr>
-			<tr class="form-field">
+			<tr>
 				<th scope="row">
 					<label for="cursus_id">Cursus</label>
 				</th>
-				<td><select name="cursus_id" id="cursus_id" required class="code">
+				<td><select name="cursus_id" id="cursus_id" required >
 				<?php
 				$cursussen = new Cursussen();
 				$vandaag   = strtotime( 'today' );
@@ -59,12 +59,12 @@ class Admin_Cursisten_Display extends Admin_Display {
 					</select>
 				</td>
 			</tr>
-			<tr class="form-field">
+			<tr>
 				<th scope="row">
 					<label for="aantal">Aantal</label>
 				</th>
 				<td>
-					<input name="aantal" id="aantal" type="number" style="width: 95%" required class="code" value="<?php echo esc_attr( $item['aantal'] ); ?>">
+					<input name="aantal" id="aantal" type="number" size="2" requiredvalue="<?php echo esc_attr( $item['aantal'] ); ?>">
 				</td>
 			</tr>
 		</tbody>

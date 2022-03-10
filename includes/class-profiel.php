@@ -98,7 +98,7 @@ class Profiel {
 				<button id="kleistad_betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
 				<br/>
 	<div id="kleistad_openstaand" class="kleistad-openstaand" style="display: none;" >
-		<table style="table-layout: auto;">
+		<table>
 			<tr>
 				<td colspan="4"><strong>Openstaande facturen</strong></td>
 			</tr>

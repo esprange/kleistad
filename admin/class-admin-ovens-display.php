@@ -28,35 +28,23 @@ class Admin_Ovens_Display extends Admin_Display {
 		?>
 		<table class="form-table">
 			<tbody>
-				<tr class="form-field">
+				<tr>
 					<th  scope="row"><label for="naam">Naam</label></th>
 					<td>
-						<input id="naam" name="naam" type="text" style="width: 95%" value="<?php echo esc_attr( $item['naam'] ); ?>"
-							size="50" class="code" placeholder="De oven naam" required>
+						<input id="naam" name="naam" type="text" value="<?php echo esc_attr( $item['naam'] ); ?>"
+							size="50" placeholder="De oven naam" required>
 					</td>
 				</tr>
-				<tr class="form-field">
-					<th  scope="row"><label for="kosten_laag">Laag tarief</label></th>
+				<?php foreach ( [ 'laag', 'midden', 'hoog' ] as $temperatuur ) : ?>
+				<tr>
+					<th scope="row"><label for="kosten_<?php echo esc_attr( $temperatuur ); ?>"><?php echo esc_html( ucfirst( $temperatuur ) ); ?> tarief</label></th>
 					<td>
-						<input id="kosten_laag" name="kosten_laag" type="number" value="<?php echo esc_attr( $item['kosten_laag'] ); ?>"
-							step="0.01" class="code" placeholder="99.99" required />
+						<input id="kosten_<?php echo esc_attr( $temperatuur ); ?>" name="kosten_<?php echo esc_attr( $temperatuur ); ?>" type="number" value="<?php echo esc_attr( $item[ "kosten_$temperatuur" ] ); ?>"
+							step="0.01" placeholder="99.99" required />
 					</td>
 				</tr>
-				<tr class="form-field">
-					<th  scope="row"><label for="kosten_midden">Midden tarief</label></th>
-					<td>
-						<input id="kosten_midden" name="kosten_midden" type="number" value="<?php echo esc_attr( $item['kosten_midden'] ); ?>"
-							step="0.01" class="code" placeholder="99.99" required>
-					</td>
-				</tr>
-				<tr class="form-field">
-					<th  scope="row"><label for="kosten_hoog">Hoog tarief</label></th>
-					<td>
-						<input id="kosten_hoog" name="kosten_hoog" type="number" value="<?php echo esc_attr( $item['kosten_hoog'] ); ?>"
-							step="0.01" class="code" placeholder="99.99" required>
-					</td>
-				</tr>
-				<tr class="form-field">
+				<?php endforeach; ?>
+				<tr>
 					<th scope="row"><label>Beschikbaarheid</label></th>
 					<td>
 						<?php
