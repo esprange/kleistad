@@ -115,6 +115,8 @@ class Admin_Upgrade {
 
 	/**
 	 * Converteer de database.
+	 *
+	 * @suppressWarnings(PHPMD.ExcessiveMethodLength)
 	 */
 	public function convert_database() {
 		global $wpdb;

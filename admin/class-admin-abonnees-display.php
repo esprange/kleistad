@@ -28,7 +28,7 @@ class Admin_Abonnees_Display extends Admin_Display {
 		<table class="form-table">
 		<tbody>
 			<tr>
-				<th  scope="row"><label>Naam</label></th>
+				<th scope="row"><label>Naam</label></th>
 				<td>
 					<?php echo esc_html( $item['naam'] ); ?> (<?php echo esc_html( $item['code'] ); ?>)
 					<input type="hidden" name="naam" value="<?php echo esc_attr( $item['naam'] ); ?>" >

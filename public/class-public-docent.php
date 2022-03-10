@@ -106,6 +106,30 @@ class Public_Docent extends ShortcodeForm {
 	 * @return array Het overzicht.
 	 */
 	private static function docent_beschikbaarheid( int $maandag, Docent $docent, Cursussen $cursussen, Workshops $workshops ) : array {
+		$reserveringen = array_merge(
+			self::docent_op_cursussen( $maandag, $docent, $cursussen ),
+			self::docent_op_workshops( $maandag, $docent, $workshops ),
+		);
+		foreach ( Docent::DOCENT_DAGDEEL as $dagdeel ) {
+			for ( $datum = $maandag;  $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
+				if ( ! isset( $reserveringen[ $datum ][ $dagdeel ] ) ) {
+					$reserveringen[ $datum ][ $dagdeel ] = $docent->beschikbaarheid( $datum, $dagdeel );
+				}
+			}
+		}
+		return $reserveringen;
+	}
+
+	/**
+	 * Hulpfunctie om te bepalen wanneer de docent al bezet is ivm een cursus
+	 *
+	 * @param int       $maandag   De datum waarin de week start.
+	 * @param Docent    $docent    Het docent object.
+	 * @param Cursussen $cursussen De cursussen verzameling.
+	 *
+	 * @return array De reserveringen
+	 */
+	private static function docent_op_cursussen( int $maandag, Docent $docent, Cursussen $cursussen ) : array {
 		$reserveringen = [];
 		foreach ( $cursussen as $cursus ) {
 			if ( intval( $cursus->docent ) !== $docent->ID || $cursus->vervallen ) {
@@ -119,6 +143,20 @@ class Public_Docent extends ShortcodeForm {
 				}
 			}
 		}
+		return $reserveringen;
+	}
+
+	/**
+	 * Hulpfunctie om te bepalen wanneer de docent al bezet is ivm een workshop
+	 *
+	 * @param int       $maandag   De datum waarin de week start.
+	 * @param Docent    $docent    Het docent object.
+	 * @param Workshops $workshops De workshops verzameling.
+	 *
+	 * @return array De reserveringen
+	 */
+	private static function docent_op_workshops( int $maandag, Docent $docent, Workshops $workshops ) : array {
+		$reserveringen = [];
 		foreach ( $workshops as $workshop ) {
 			$docent_ids = array_map( 'intval', explode( ';', $workshop->docent ) );
 			if ( in_array( $docent->ID, $docent_ids, true ) && ! $workshop->vervallen ) {
@@ -126,13 +164,6 @@ class Public_Docent extends ShortcodeForm {
 					foreach ( bepaal_dagdelen( $workshop->start_tijd, $workshop->eind_tijd ) as $dagdeel ) {
 						$reserveringen[ $workshop->datum ][ $dagdeel ] = $workshop->definitief ? Docent::GERESERVEERD : Docent::OPTIE;
 					}
-				}
-			}
-		}
-		foreach ( Docent::DOCENT_DAGDEEL as $dagdeel ) {
-			for ( $datum = $maandag;  $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
-				if ( ! isset( $reserveringen[ $datum ][ $dagdeel ] ) ) {
-					$reserveringen[ $datum ][ $dagdeel ] = $docent->beschikbaarheid( $datum, $dagdeel );
 				}
 			}
 		}

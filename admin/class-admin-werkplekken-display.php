@@ -52,7 +52,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 				</tr>
 				<?php foreach ( WerkplekGebruik::WERKPLEK_DAGDEEL as $dagdeel ) : ?>
 				<tr>
-					<th><?php echo esc_html( $dagdeel ); ?></th>
+					<th scope="row"><?php echo esc_html( $dagdeel ); ?></th>
 				</tr>
 				<tr>
 					<td>Meester</td>

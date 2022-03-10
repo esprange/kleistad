@@ -327,6 +327,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * Geef de status van de workshop weer.
 	 *
 	 * @return void
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function status_details() {
 		?>

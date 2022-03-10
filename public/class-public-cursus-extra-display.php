@@ -27,7 +27,7 @@ class Public_Cursus_Extra_Display extends Public_Shortcode_Display {
 	/**
 	 * Render het formulier
 	 *
-	 * @suppressWarnings (PHPMD.ElseExpression)
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function form_content() {
 		?>

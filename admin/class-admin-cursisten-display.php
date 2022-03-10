@@ -29,18 +29,14 @@ class Admin_Cursisten_Display extends Admin_Display {
 		<table class="form-table">
 		<tbody>
 			<tr>
-				<th  scope="row">
-					<label>Naam</label>
-				</th>
+				<th scope="row"><label >Naam</label></th>
 				<td>
 					<?php echo esc_html( $item['naam'] ); ?>
 					<input type="hidden" name="naam" value="<?php echo esc_attr( $item['naam'] ); ?>" >
 				</td>
 			</tr>
 			<tr>
-				<th scope="row">
-					<label for="cursus_id">Cursus</label>
-				</th>
+				<th scope="row"><label for="cursus_id">Cursus</label></th>
 				<td><select name="cursus_id" id="cursus_id" required >
 				<?php
 				$cursussen = new Cursussen();
@@ -60,9 +56,7 @@ class Admin_Cursisten_Display extends Admin_Display {
 				</td>
 			</tr>
 			<tr>
-				<th scope="row">
-					<label for="aantal">Aantal</label>
-				</th>
+				<th scope="row"><label for="aantal">Aantal</label></th>
 				<td>
 					<input name="aantal" id="aantal" type="number" size="2" requiredvalue="<?php echo esc_attr( $item['aantal'] ); ?>">
 				</td>

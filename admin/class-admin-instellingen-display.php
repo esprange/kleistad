@@ -184,13 +184,13 @@ class Admin_Instellingen_Display {
 			$json_velden = wp_json_encode( $parameter['velden'] );
 			if ( is_string( $json_velden ) ) {
 				?>
-	<tr><th><?php echo esc_html( $parameter['titel'] ); ?></th><td>
-		<table id="<?php echo esc_attr( "kleistad_lijst_$key" ); ?>">
+	<tr><th scope="row"><?php echo esc_html( $parameter['titel'] ); ?></th><td>
+		<table class="form-table" id="<?php echo esc_attr( "kleistad_lijst_$key" ); ?>">
 			<thead>
 				<tr>
-					<th>Naam</th>
+					<th scope="row">Naam</th>
 					<?php foreach ( $parameter['velden'] as $veld ) : ?>
-						<th><?php echo esc_html( $veld['titel'] ); ?></th>
+						<th scope="row"><?php echo esc_html( $veld['titel'] ); ?></th>
 					<?php endforeach; ?>
 				</tr>
 			</thead>
@@ -213,7 +213,7 @@ class Admin_Instellingen_Display {
 			</tbody>
 			<tfoot>
 				<tr>
-					<th><?php echo esc_html( $parameter['titel'] ); ?> toevoegen</th>
+					<th scope="row"><?php echo esc_html( $parameter['titel'] ); ?> toevoegen</th>
 					<td>
 						<button id="kleistad_voegtoe_<?php echo esc_attr( $key ); ?>" type="button" class="lijst_toevoegen" data-key="<?php echo esc_attr( $key ); ?>" data-parameters='<?php echo $json_velden; // phpcs:ignore ?>'>
 							<span class="dashicons dashicons-plus"></span>
