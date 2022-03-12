@@ -101,8 +101,9 @@ class Public_Recept extends Shortcode {
 				$query['order']   = 'ASC';
 				break;
 		}
-		$recepten = get_posts( $query );
 
+		$recepten       = get_posts( $query );
+		$recepttermen   = new ReceptTermen();
 		$object_ids     = wp_list_pluck( $recepten, 'ID' );
 		$auteur_ids     = array_unique( wp_list_pluck( $recepten, 'post_author' ) );
 		$auteurs        = get_users(
@@ -132,7 +133,7 @@ class Public_Recept extends Shortcode {
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id,
+				'parent'     => $recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);
@@ -142,7 +143,7 @@ class Public_Recept extends Shortcode {
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => Recept::hoofdtermen()[ Recept::KLEUR ]->term_id,
+				'parent'     => $recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);
@@ -152,7 +153,7 @@ class Public_Recept extends Shortcode {
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $object_ids,
-				'parent'     => Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id,
+				'parent'     => $recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id,
 				'fields'     => 'id=>name',
 			]
 		);

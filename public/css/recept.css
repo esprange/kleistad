@@ -2,16 +2,25 @@
  * Spefieke styles voor single recept pagina.
  */
 
-table,
-td,
-th {
-	border: 0;
-	vertical-align: top;
-	text-align: left;
+table {
+	font-size: small;
 }
 
-table {
-	table-layout: auto;
-	font-size: small;
-	padding: 0;
+#kleistad_terug {
+	cursor: pointer;
+}
+
+#kleistad_recept_foto {
+	border-radius: 5px;
+	cursor: zoom-in;
+	max-width: 100%;
+	max-height :100%;
+	transition: 0.3s;
+}
+
+@media print {
+	#kleistad_terug,
+	#kleistad_profiel_container {
+		display:none;
+	}
 }

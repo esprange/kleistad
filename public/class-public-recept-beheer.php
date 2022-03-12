@@ -58,19 +58,20 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 */
 	protected function prepare_wijzigen() : string {
 		$recept       = get_post( $this->data['id'] );
+		$recepttermen = new ReceptTermen();
 		$glazuur_id   = 0;
 		$kleur_id     = 0;
 		$uiterlijk_id = 0;
 		$termen       = get_the_terms( $recept->ID, Recept::CATEGORY );
 		if ( is_array( $termen ) ) {
 			foreach ( $termen as $term ) {
-				if ( intval( Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id ) === $term->parent ) {
+				if ( intval( $recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id ) === $term->parent ) {
 					$glazuur_id = $term->term_id;
 				}
-				if ( intval( Recept::hoofdtermen()[ Recept::KLEUR ]->term_id ) === $term->parent ) {
+				if ( intval( $recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id ) === $term->parent ) {
 					$kleur_id = $term->term_id;
 				}
-				if ( intval( Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id ) === $term->parent ) {
+				if ( intval( $recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id ) === $term->parent ) {
 					$uiterlijk_id = $term->term_id;
 				}
 			}

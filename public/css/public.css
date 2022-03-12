@@ -662,7 +662,7 @@ a.kleistad-schedule {
 /**
  * Voor laptopschermen en iPads
  */
-@media screen and (min-width: 768px) {
+@media all and (min-width: 768px) {
 	div.kleistad-tab {
 		height: var(--tab-height);
 		overflow-y: auto;
@@ -716,7 +716,7 @@ a.kleistad-schedule {
 /**
  * Voor mobieltjes
  */
-@media screen and (max-width: 767px) {
+@media only screen and (max-width: 767px) {
 	table.kleistad-reserveringen th,
 	table.kleistad-reserveringen td,
 	table.kleistad-reserveringen button {

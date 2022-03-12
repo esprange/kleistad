@@ -62,7 +62,6 @@ class Public_Actions {
 		wp_register_style( 'datatables', sprintf( '//cdn.datatables.net/%s/css/jquery.dataTables.min.css', $datatables_version ), [], $datatables_version );
 		wp_register_style( 'fullcalendar', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/main.min.css', $fullcalendar_version ), [], $fullcalendar_version );
 		wp_register_style( 'jstree', sprintf( '//cdn.jsdelivr.net/npm/jstree@%s/dist/themes/default/style.min.css', $jstree_version ), [], $jstree_version );
-		wp_register_style( 'kleistad-recept', plugin_dir_url( __FILE__ ) . "css/recept$dev.css", [], versie() );
 
 		wp_register_script( 'datatables', sprintf( '//cdn.datatables.net/%s/js/jquery.dataTables.min.js', $datatables_version ), [ 'jquery' ], $datatables_version, true );
 		wp_register_script( 'fullcalendar-core', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/main.min.js', $fullcalendar_version ), [], $fullcalendar_version, true );
@@ -112,6 +111,9 @@ class Public_Actions {
 		}
 		if ( is_user_logged_in() ) {
 			wp_enqueue_script( 'kleistad-profiel', plugin_dir_url( __FILE__ ) . "js/public-profiel$dev.js", [ 'jquery', 'kleistad' ], versie(), true );
+		}
+		if ( is_singular( Recept::POST_TYPE ) ) {
+			wp_enqueue_style( 'kleistad-recept', plugin_dir_url( __FILE__ ) . "css/recept$dev.css", [ 'kleistad' ], versie() );
 		}
 	}
 

@@ -131,6 +131,9 @@ class Workshop extends Artikel {
 			return;
 		}
 		$workshop = $load ?? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE id = %d", $workshop_id ), ARRAY_A );
+		if ( is_null( $workshop ) ) {
+			$workshop = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE aanvraag_id = %d", $workshop_id ), ARRAY_A );
+		}
 		if ( ! is_null( $workshop ) ) {
 			$this->data = $workshop;
 		}
@@ -381,22 +384,6 @@ class Workshop extends Artikel {
 			$email_parameters['to'] .= ", $this->organisatie <$this->organisatie_email>";
 		}
 		return $emailer->send( $email_parameters );
-	}
-
-	/**
-	 * Zoek de workshop op basis van het aanvraag id. Deze functie is alleen nodig om tijdelijk nog communicatie over workshopaanvragen te behandelen (< 7.2)
-	 *
-	 * @param int $aanvraag_id Het id van de aanvraag.
-	 *
-	 * @return Workshop|null
-	 */
-	public static function vind_aanvraag_id( int $aanvraag_id ) : ?Workshop {
-		global $wpdb;
-		$data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_workshops WHERE aanvraag_id = %d", $aanvraag_id ), ARRAY_A );
-		if ( $data ) {
-			return new Workshop( $data['id'], $data );
-		}
-		return null;
 	}
 
 }

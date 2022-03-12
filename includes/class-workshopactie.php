@@ -193,7 +193,7 @@ class WorkshopActie {
 		$workshop = null;
 		if ( 2 === sscanf( $email['subject'], '%*[^[WA#][WA#%u]', $aanvraag_id ) ) {
 			// Haal de workshop of obv het aanvraag id. Backwards compatibiliteit.
-			$workshop = Workshop::vind_aanvraag_id( $aanvraag_id );
+			$workshop = new Workshop( intval( $aanvraag_id ) );
 		} elseif ( 2 === sscanf( $email['subject'], '%*[^[WS#][WS#%u]', $workshop_id ) ) {
 			// Haal de workshop op obv het workshop id.
 			$workshop = new Workshop( intval( $workshop_id ) );

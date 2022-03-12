@@ -51,12 +51,13 @@ class Admin_Recepttermen_Display extends Admin_Display {
 	 * @return void
 	 */
 	public function page() : void {
+		$recepttermen = new ReceptTermen();
 		$hoofdterm_id = filter_input(
 			INPUT_GET,
 			'hoofdterm_id',
 			FILTER_SANITIZE_NUMBER_INT,
 			[
-				'options' => [ 'default' => Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id ],
+				'options' => [ 'default' => $recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id ],
 			]
 		);
 		$table        = new Admin_Recepttermen( $hoofdterm_id );
@@ -70,7 +71,7 @@ class Admin_Recepttermen_Display extends Admin_Display {
 				<input type="hidden" name="page" value="<?php esc_attr( filter_input( INPUT_GET, 'page' ) ); ?>"/>
 				<!--suppress HtmlFormInputWithoutLabel -->
 				<select name="hoofdterm_id" id="hoofdterm_id" >
-					<?php foreach ( Recept::hoofdtermen() as $hoofdterm ) : ?>
+					<?php foreach ( $recepttermen->lijst() as $hoofdterm ) : ?>
 						<option value="<?php echo esc_attr( $hoofdterm->term_id ); ?>" <?php selected( $hoofdterm->term_id, $hoofdterm_id ); ?> ><?php echo esc_html( $hoofdterm->description ); ?></option>
 					<?php endforeach ?>
 				</select>

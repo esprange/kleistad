@@ -210,7 +210,7 @@ class Shortcodes {
 			'recept'                => (object) [
 				'script' => true,
 				'js'     => [ 'jquery', 'kleistad' ],
-				'css'    => [ 'dashicons', 'kleistad-recept' ],
+				'css'    => [ 'dashicons' ],
 				'access' => [],
 			],
 			/**

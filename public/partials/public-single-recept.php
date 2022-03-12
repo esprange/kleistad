@@ -9,6 +9,30 @@
 
 namespace Kleistad;
 
+wp_add_inline_script(
+	'kleistad',
+	'( function ( $ ){
+			$(
+				function()
+				{
+					$( "#kleistad_recept_foto" ).on(
+						"click",
+						function() {
+							$( "#kleistad_recept_modal" ).show();
+						}
+					);
+					$( "#kleistad_close_modal" ).on(
+						"click",
+						function() {
+							$( "#kleistad_recept_modal" ).hide();
+						}
+					)
+				}
+			)
+		}
+	)( jQuery );'
+);
+
 get_header();
 ?>
 
@@ -16,16 +40,17 @@ get_header();
 	<main id="main" class="site-main" role="main">
 		<?php
 		// Start the loop.
-		$naam = [];
+		$naam         = [];
+		$recepttermen = new ReceptTermen();
 		while ( have_posts() ) :
 			the_post();
 			$the_id = get_the_ID();
 			if ( false !== $the_id ) :
-				$recept_terms = get_the_terms( $the_id, 'kleistad_recept_cat' );
+				$recept_terms = get_the_terms( $the_id, Recept::CATEGORY );
 				if ( is_array( $recept_terms ) ) :
 					foreach ( $recept_terms as $recept_term ) :
-						foreach ( [ Recept::GLAZUUR, Recept::KLEUR, Recept::UITERLIJK ] as $selector ) :
-							if ( intval( Recept::hoofdtermen()[ $selector ]->term_id ) === $recept_term->parent ) :
+						foreach ( [ Recepttermen::GLAZUUR, Recepttermen::KLEUR, Recepttermen::UITERLIJK ] as $selector ) :
+							if ( intval( $recepttermen->lijst()[ $selector ]->term_id ) === $recept_term->parent ) :
 								$naam[ $selector ] = $recept_term->name;
 							endif;
 						endforeach;
@@ -34,75 +59,26 @@ get_header();
 			endif;
 			$content = json_decode( get_the_content(), true );
 
+			$normeren = 0;
+			foreach ( $content['basis'] as $basis ) {
+				$normeren += $basis['gewicht'];
+			}
+			$som = 0;
+			foreach ( $content['basis'] as $basis ) {
+				$som += round( $basis['gewicht'] * 100 / $normeren, 2 );
+			}
+			$restant = 100.0 - $som;
+			foreach ( $content['basis'] as $index => $basis ) {
+				$content['basis'][ $index ]['norm_gewicht'] = round( $basis['gewicht'] * 100 / $normeren, 2 ) + $restant;
+				$restant                                    = 0;
+			}
+			foreach ( $content['toevoeging'] as $index => $toevoeging ) {
+				$content['toevoeging'][ $index ]['norm_gewicht'] = round( $toevoeging['gewicht'] * 100 / $normeren, 2 );
+			}
 			?>
-		<script type="text/javascript">
-		( function ( $ ){
-			'use strict';
-			$(
-				function()
-				{
-					$( '#kleistad_recept_print' ).on(
-						'click',
-						function() {
-							let w       = window.open(),
-								c       = Boolean( window.chrome ),
-								elem    = document.createElement('textarea'),
-								decoded = elem.value;
-							if ( c ) {
-								elem.innerHTML = '&lt;script type="text/javascript"&gt;' +
-								'window.moveTo(0,0);window.resizeTo(640,480);window.print();setTimeout(function(){window.close();},500);' +
-								'&lt;/script&gt;';
-							} else {
-								elem.innerHTML = '&lt;script type="text/javascript"&gt;' +
-								'window.print();window.close();' +
-								'&lt;/script&gt;';
-							}
-
-							w.document.write( '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' );
-							w.document.write( '<html lang="NL">' );
-							w.document.write( '<head><title><?php the_title(); ?></title><meta charset="utf-8"></head>' );
-							w.document.write( '<body style="font-family:Verdana, sans-serif;">' );
-							w.document.write( $( '.kleistad_recept' ).html() );
-							w.document.write( decoded );
-							w.document.write( '</body></html>' );
-							w.document.close();
-						}
-					);
-
-					$( '#kleistad_recept_foto' ).on(
-						'click',
-						function() {
-							$( '#kleistad_recept_modal' ).show();
-						}
-					);
-
-					$( '#kleistad_close_modal' ).on(
-						'click',
-						function() {
-							$( '#kleistad_recept_modal').hide();
-						}
-					)
-				}
-			)
-		} )( jQuery );
-		</script>
-		<a style="cursor:pointer;" onClick="window.history.back()">&lt; recepten</a><br/><br/>
-		<button class="kleistad-button" id="kleistad_recept_print">Afdrukken</button>
-		<div id="kleistad_recept_modal" class="modal"
-			style="display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgb(0,0,0);background-color:rgba(0,0,0,0.9);">
-
-			<span id="kleistad_close_modal" style="position:absolute;top:35px;right:35px;color:#f1f1f1;font-size:40px;font-weight:bold;transition:0.3s;"
-				onMouseOver="this.style.color='#bbb';this.style.cursor='pointer';this.style.textDecoration='none'"
-				>&times;</span>
-
-			<img style="margin:auto;display:block;width:80%;max-width:700px;" src="<?php echo esc_url( $content['foto'] ); ?>" alt="<?php the_title(); ?>">
-
-			<div style="margin:auto;display:block;width:80%;max-width:700px;text-align:center;color:#ccc;padding:10px 0;height:150px;animation-name:zoom;animation-duration:0.6s;">
-				<?php the_title(); ?>
-			</div>
-		</div>
-
-		<div class="kleistad_recept" >
+		<a id="kleistad_terug" onClick="window.history.back()">&lt; recepten</a><br/><br/>
+		<button class="kleistad-button" onClick="window.print()" >Afdrukken</button>
+		<div class="kleistad-recept" >
 			<h2><?php the_title(); ?></h2>
 			<div style="width:100%">
 				<div style="float:left;width:50%;padding-bottom:25px;">
@@ -114,102 +90,80 @@ get_header();
 						alt="<?php the_title(); ?>" >
 				</div>
 				<div style="float:left;width:50%;">
-					<table>
-					<tr>
-						<th>Type glazuur</th>
-						<td><?php echo esc_html( $naam[ Recept::GLAZUUR ] ); ?></td>
-					</tr>
-					<tr>
-						<th>Uiterlijk</th>
-						<td><?php echo esc_html( $naam[ Recept::UITERLIJK ] ); ?></td>
-					</tr>
-					<tr>
-						<th>Kleur</th>
-						<td><?php echo esc_html( $naam[ Recept::KLEUR ] ); ?></td>
-					</tr>
-					<tr>
-						<th>Stookschema</th>
-						<td><?php echo $content['stookschema']; // phpcs:ignore ?></td>
-					</tr>
-					</table>
+					<div class="kleistad-row">
+						<div class="kleistad-col-5 kleistad-label"><label>Type glazuur</label></div>
+						<div class="kleistad-col-5"><?php echo esc_html( $naam[ ReceptTermen::GLAZUUR ] ); ?></div>
+					</div>
+					<div class="kleistad-row">
+						<div class="kleistad-col-5 kleistad-label"><label>Uiterlijk</label></div>
+						<div class="kleistad-col-5"><?php echo esc_html( $naam[ ReceptTermen::UITERLIJK ] ); ?></div>
+					</div>
+					<div class="kleistad-row">
+						<div class="kleistad-col-5 kleistad-label"><label>Kleur</label></div>
+						<div class="kleistad-col-5"><?php echo esc_html( $naam[ ReceptTermen::KLEUR ] ); ?></div>
+					</div>
+					<div class="kleistad-row">
+						<div class="kleistad-col-5 kleistad-label"><label>Stookschema</label></div>
+						<div class="kleistad-col-5"><?php echo $content['stookschema']; // phpcs:ignore ?></div>
+					</div>
 				</div>
 			</div>
 			<div style="clear:both;">
-				<table style="width:100%">
-					<tr>
-						<th style="width:25%">Auteur</th>
-						<td style="width:25%"><?php the_author(); ?></td>
-						<th style="width:25%">Laatste wijziging</th>
-						<td style="width:25%"><?php the_modified_date(); ?></td>
-					</tr>
-					<tr>
-						<th colspan="2">Basis recept</th>
-						<th colspan="2">Toevoegingen</th>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<table>
-						<?php
-						$normeren = 0;
-						foreach ( $content['basis'] as $basis ) :
-							$normeren += $basis['gewicht'];
-						endforeach;
-						$som = 0;
-						foreach ( $content['basis'] as $basis ) :
-							$som += round( $basis['gewicht'] * 100 / $normeren, 2 );
-						endforeach;
-						$restant = 100.0 - $som;
-						// To make sure that the total equals 100.
-						foreach ( $content['basis'] as $basis ) :
-							$gewicht = round( $basis['gewicht'] * 100 / $normeren, 2 ) + $restant;
-							$restant = 0;
-							?>
-								<tr>
-									<td><?php echo esc_html( $basis['component'] ); ?></td>
-									<td style="text-align:right;"><?php echo esc_html( number_format_i18n( $gewicht, 2 ) ); ?> gr.</td>
-								</tr>
-							<?php
-						endforeach;
-						?>
-							</table>
-						</td>
-						<td colspan="2">
-							<table>
-						<?php
-						foreach ( $content['toevoeging'] as $toevoeging ) :
-							$gewicht = round( $toevoeging['gewicht'] * 100 / $normeren, 2 );
-							?>
-								<tr>
-									<td><?php echo esc_html( $toevoeging['component'] ); ?></td>
-									<td style="text-align:right;"><?php echo esc_html( number_format_i18n( $gewicht, 2 ) ); ?> gr.</td>
-								</tr>
-							<?php
-						endforeach;
-						?>
-							</table>
-						</td>
-					</tr>
-				</table>
+				<div class="kleistad-row">
+					<div class="kleistad-col-2 kleistad-label">Auteur</div>
+					<div class="kleistad-col-3"><?php the_author(); ?></div>
+					<div class="kleistad-col-2 kleistad-label">Laatste wijziging</div>
+					<div class="kleistad-col-3"><?php the_modified_date(); ?></div>
+				</div>
+				<div class="kleistad-row">
+					<div class="kleistad-col-5">
+						<div class="kleistad-label"><label>Basis recept</label></div>
+						<table>
+							<?php foreach ( $content['basis'] as $basis ) : ?>
+							<tr>
+								<td><?php echo esc_html( $basis['component'] ); ?></td>
+								<td style="text-align:right;"><?php echo esc_html( number_format_i18n( $basis['norm_gewicht'], 2 ) ); ?> gr.</td>
+							</tr>
+							<?php endforeach; ?>
+						</table>
+					</div>
+					<div class="kleistad-col-5">
+						<div class="kleistad-label"><label>Toevoegingen</label></div>
+						<table>
+							<?php foreach ( $content['toevoeging'] as $toevoeging ) : ?>
+							<tr>
+								<td><?php echo esc_html( $toevoeging['component'] ); ?></td>
+								<td style="text-align:right;"><?php echo esc_html( number_format_i18n( $toevoeging['norm_gewicht'], 2 ) ); ?> gr.</td>
+							</tr>
+							<?php endforeach; ?>
+						</table>
+					</div>
+				</div>
+				<div class="kleistad-row">
+					<div class="kleistad-col-2 kleistad-label"><label>Kenmerken</label></div>
+				</div>
+				<div class="kleistad-row">
+					<div class="kleistad-col-10"><?php echo $content['kenmerk']; //  phpcs:ignore ?></div>
+				</div>
+				<div class="kleistad-row">
+					<div class="kleistad-col-2 kleistad-label"><label>Oorsprong</label></div>
+				</div>
+				<div class="kleistad-row">
+					<div class="kleistad-col-10"><?php echo $content['herkomst']; //  phpcs:ignore ?></div>
+				</div>
 			</div>
-			<div>
-				<table>
-					<tr>
-						<th>Kenmerken</th>
-					</tr>
-					<tr>
-						<td><?php echo $content['kenmerk']; //  phpcs:ignore ?></td>
-					</tr>
-				</table>
-			</div>
-			<div>
-				<table>
-					<tr>
-						<th>Oorsprong</th>
-					</tr>
-					<tr>
-						<td><?php echo $content['herkomst']; //  phpcs:ignore ?></td>
-					</tr>
-				</table>
+		</div>
+		<div id="kleistad_recept_modal" class="modal"
+			style="display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgb(0,0,0);background-color:rgba(0,0,0,0.9);">
+
+			<span id="kleistad_close_modal" style="position:absolute;top:35px;right:35px;color:#f1f1f1;font-size:40px;font-weight:bold;transition:0.3s;"
+				onMouseOver="this.style.color='#bbb';this.style.cursor='pointer';this.style.textDecoration='none'"
+				>&times;</span>
+
+			<img style="margin:auto;display:block;width:80%;max-width:700px;" src="<?php echo esc_url( $content['foto'] ); ?>" alt="<?php the_title(); ?>">
+
+			<div style="margin:auto;display:block;width:80%;max-width:700px;text-align:center;color:#ccc;padding:10px 0;height:150px;animation-name:zoom;animation-duration:0.6s;">
+				<?php the_title(); ?>
 			</div>
 		</div>
 			<?php
@@ -226,8 +180,5 @@ get_header();
 		?>
 	</main><!-- .site-main -->
 
-	<?php get_sidebar( 'content-bottom' ); ?>
-
 </div><!-- .content-area -->
-<?php get_sidebar(); ?>
 <?php get_footer(); ?>

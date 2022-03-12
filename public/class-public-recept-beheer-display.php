@@ -232,6 +232,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	private function categorien() {
+		$recepttermen = new ReceptTermen();
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
@@ -260,7 +261,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 						'id'                => 'kleistad_glazuur',
 						'name'              => 'glazuur',
 						'selected'          => $this->data['recept']['glazuur'],
-						'child_of'          => Recept::hoofdtermen()[ Recept::GLAZUUR ]->term_id,
+						'child_of'          => $recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id,
 						'tabindex'          => 2,
 					]
 				);
@@ -281,7 +282,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 						'id'                => 'kleistad_kleur',
 						'name'              => 'kleur',
 						'selected'          => $this->data['recept']['kleur'],
-						'child_of'          => Recept::hoofdtermen()[ Recept::KLEUR ]->term_id,
+						'child_of'          => $recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id,
 						'tabindex'          => 3,
 					]
 				);
@@ -302,7 +303,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 						'id'                => 'kleistad_uiterlijk',
 						'name'              => 'uiterlijk',
 						'selected'          => $this->data['recept']['uiterlijk'],
-						'child_of'          => Recept::hoofdtermen()[ Recept::UITERLIJK ]->term_id,
+						'child_of'          => $recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id,
 						'tabindex'          => 4,
 					]
 				);

@@ -93,24 +93,26 @@ class Profiel {
 			$style     = [ 'display: none', 'background-color: lightblue', 'background-color: orange', 'background-color: red' ];
 			ob_start();
 			?>
-	<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
+	<div id="kleistad_profiel_container">
+		<strong>Welkom <?php echo esc_html( $user->display_name ); ?></strong>
 			<?php if ( count( $lijst ) ) : ?>
-				<button id="kleistad_betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
-				<br/>
-	<div id="kleistad_openstaand" class="kleistad-openstaand" style="display: none;" >
-		<table>
-			<tr>
-				<td colspan="4"><strong>Openstaande facturen</strong></td>
-			</tr>
-				<?php foreach ( $lijst as $item ) : ?>
-			<tr>
-				<td><span class="kleistad-dot" style="<?php echo esc_attr( $style[ $item['status'] ] ); ?>"></span></td>
-				<td>factuur</td>
-				<td><?php echo $item['link']; // phpcs:ignore ?></td>
-				<td style="text-align: right">&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
-			</tr>
-			<?php endforeach ?>
-		</table>
+		<button id="kleistad_betaalinfo" class="kleistad-betaalinfo" style="<?php echo esc_attr( $style[ $maxstatus ] ); ?>;">&euro;</button>
+		<br/>
+		<div id="kleistad_openstaand" class="kleistad-openstaand" style="display: none;" >
+			<table>
+				<tr>
+					<td colspan="4"><strong>Openstaande facturen</strong></td>
+				</tr>
+					<?php foreach ( $lijst as $item ) : ?>
+				<tr>
+					<td><span class="kleistad-dot" style="<?php echo esc_attr( $style[ $item['status'] ] ); ?>"></span></td>
+					<td>factuur</td>
+					<td><?php echo $item['link']; // phpcs:ignore ?></td>
+					<td style="text-align: right">&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
+				</tr>
+				<?php endforeach ?>
+			</table>
+		</div>
 	</div>
 				<?php
 			endif;
