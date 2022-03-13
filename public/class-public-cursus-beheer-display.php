@@ -88,7 +88,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2 kleistad-label"><label>Cursuscode</label></div>
 			<div class="kleistad-col-3"><?php echo esc_html( $this->data['cursus']['code'] ); ?></div>
 		</div>
-		<?php
+			<?php
 		endif;
 		$this->algemeen( $readonly )->planning( $readonly )->technieken( $readonly )->parameters( $readonly );
 		?>
