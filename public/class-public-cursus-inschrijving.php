@@ -276,7 +276,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 	 * @return array
 	 */
 	protected function inschrijven() : array {
-		$gebruiker_id = Gebruiker::registreren( $this->data['input'] );
+		$gebruiker_id = registreren( $this->data['input'] );
 		if ( ! is_int( $gebruiker_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}

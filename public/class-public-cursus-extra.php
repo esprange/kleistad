@@ -122,7 +122,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 			if ( empty( $extra_cursist['user_email'] ) ) {
 				continue;
 			}
-			$extra_cursist_id = Gebruiker::registreren( $extra_cursist );
+			$extra_cursist_id = registreren( $extra_cursist );
 			if ( ! is_int( $extra_cursist_id ) ) {
 				return [
 					'status' => $this->status( new WP_Error( 'intern', 'Er is een interne fout opgetreden, probeer het eventueel later opnieuw.' ) ),

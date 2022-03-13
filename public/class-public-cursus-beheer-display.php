@@ -88,7 +88,31 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2 kleistad-label"><label>Cursuscode</label></div>
 			<div class="kleistad-col-3"><?php echo esc_html( $this->data['cursus']['code'] ); ?></div>
 		</div>
-		<?php endif ?>
+		<?php
+		endif;
+		$this->algemeen( $readonly )->planning( $readonly )->technieken( $readonly )->parameters( $readonly );
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-5">
+				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $readonly ); ?> >Opslaan</button>
+				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $this->display_actie ); ?> >Verwijderen</button>
+			</div>
+			<div class="kleistad-col-5">
+				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * De algemene aspecten van de cursus
+	 *
+	 * @param bool $readonly Of het alleen lezen betreft.
+	 *
+	 * @return Public_Cursus_Beheer_Display
+	 */
+	private function algemeen( bool $readonly ) : Public_Cursus_Beheer_Display {
+		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_cursus_naam">Naam</label></div>
 			<div class="kleistad-col-8">
@@ -109,16 +133,29 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<?php endif ?>
 			</div>
 		</div>
+		<?php
+		return $this;
+	}
+
+	/**
+	 * De planning aspecten van de cursus
+	 *
+	 * @param bool $readonly Of het alleen lezen betreft.
+	 *
+	 * @return Public_Cursus_Beheer_Display
+	 */
+	private function planning( bool $readonly ) : Public_Cursus_Beheer_Display {
+		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_start_datum">Start</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="start_datum" id="kleistad_start_datum" class="kleistad-datum" required
-					value="<?php echo esc_attr( date( 'd-m-Y', $this->data['cursus']['start_datum'] ) ); ?>" readonly="readonly" <?php disabled( $readonly ); ?> />
+				value="<?php echo esc_attr( date( 'd-m-Y', $this->data['cursus']['start_datum'] ) ); ?>" readonly="readonly" <?php disabled( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_eind_datum">Eind</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="eind_datum" id="kleistad_eind_datum" class="kleistad-datum" required
-					value="<?php echo esc_attr( date( 'd-m-Y', $this->data['cursus']['eind_datum'] ) ); ?>" readonly="readonly" <?php disabled( $readonly ); ?> />
+				value="<?php echo esc_attr( date( 'd-m-Y', $this->data['cursus']['eind_datum'] ) ); ?>" readonly="readonly" <?php disabled( $readonly ); ?> />
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -131,31 +168,50 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_start_tijd">Begintijd</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="start_tijd" id="kleistad_start_tijd" placeholder="00:00" class="kleistad-tijd"
-					value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']['start_tijd'] ) ); ?>" <?php wp_readonly( $readonly ); ?> />
+				value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']['start_tijd'] ) ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_eind_tijd">Eindtijd</label></div>
 			<div class="kleistad-col-3">
 				<input type="text" name="eind_tijd" id="kleistad_eind_tijd" placeholder="00:00" class="kleistad-tijd"
-					value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']['eind_tijd'] ) ); ?>" <?php wp_readonly( $readonly ); ?> />
+				value="<?php echo esc_attr( date( 'H:i', $this->data['cursus']['eind_tijd'] ) ); ?>" <?php wp_readonly( $readonly ); ?> />
 			</div>
 		</div>
+		<?php
+		return $this;
+	}
+
+	/**
+	 * De techniek aspecten van de cursus
+	 *
+	 * @param bool $readonly Of het alleen lezen betreft.
+	 *
+	 * @return Public_Cursus_Beheer_Display
+	 */
+	private function technieken( bool $readonly ) : Public_Cursus_Beheer_Display {
+		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label>Technieken</label></div>
 			<div class="kleistad-col-8" style="display:flex;justify-content: space-between;">
-				<span>
-				<input type="checkbox" id="kleistad_draaien" class="kleistad-checkbox" name="technieken[]" value="Draaien" <?php checked( in_array( 'Draaien', $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
-				<label for="kleistad_draaien" style="padding-right:2em">Draaien</label>
+				<?php foreach ( [ 'Draaien', 'Handvormen', 'Boetseren' ] as $techniek ) : ?>
+					<span>
+				<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" class="kleistad-checkbox" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>"
+					<?php checked( in_array( 'Draaien', $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
+				<label for="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" style="padding-right:2em"><?php echo esc_html( $techniek ); ?></label>
 				</span>
-				<span>
-				<input type="checkbox" id="kleistad_handvormen" class="kleistad-checkbox" name="technieken[]" value="Handvormen" <?php checked( in_array( 'Handvormen', $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
-				<label for="kleistad_handvormen" style="padding-right:2em">Handvormen</label>
-				</span>
-				<span>
-				<input type="checkbox" id="kleistad_boetseren" class="kleistad-checkbox" name="technieken[]" value="Boetseren" <?php checked( in_array( 'Boetseren', $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
-				<label for="kleistad_boetseren">Boetseren</label>
-				</span>
+				<?php endforeach; ?>
 			</div>
 		</div>
+		<?php
+		return $this;
+	}
+
+	/**
+	 * De instellingen van de cursus
+	 *
+	 * @param bool $readonly Of het alleen lezen betreft.
+	 */
+	private function parameters( bool $readonly ) {
+		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_inschrijfkosten">Inschrijf kosten</label></div>
 			<div class="kleistad-col-3">
@@ -197,17 +253,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-8">
 				<input type="text" name="indelingslug" <?php wp_readonly( $readonly ); ?> id="kleistad_indelingslug" value="<?php echo esc_attr( $this->data['cursus']['indelingslug'] ); ?>" required >
 			</div>
--		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-5">
-				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $readonly ); ?> >Opslaan</button>
-				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $this->display_actie ); ?> >Verwijderen</button>
-			</div>
-			<div class="kleistad-col-5">
-				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
-			</div>
 		</div>
 		<?php
 	}
-
 }

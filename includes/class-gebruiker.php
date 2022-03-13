@@ -12,7 +12,6 @@
 namespace Kleistad;
 
 use WP_User;
-use WP_Error;
 
 if ( ! function_exists( 'wp_delete_user' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/user.php';
@@ -84,38 +83,6 @@ class Gebruiker extends WP_User {
 		global $wpdb;
 		$wpdb->update( $wpdb->users, [ 'user_login' => $stub ], [ 'ID' => $this->ID ] );
 		return true;
-	}
-
-	/**
-	 * Registreer de gebruiker op basis van input
-	 *
-	 * @param array $data De input.
-	 * @return int|WP_Error
-	 */
-	public static function registreren( array $data ): WP_Error|int {
-		$gebruiker_id = intval( $data['gebruiker_id'] ?? 0 );
-		if ( ! $gebruiker_id ) {
-			$userdata = [
-				'ID'         => email_exists( $data['user_email'] ) ?: null,
-				'first_name' => $data['first_name'],
-				'last_name'  => $data['last_name'],
-				'telnr'      => $data['telnr'] ?? '',
-				'user_email' => $data['user_email'],
-				'straat'     => $data['straat'] ?? '',
-				'huisnr'     => $data['huisnr'] ?? '',
-				'pcode'      => $data['pcode'] ?? '',
-				'plaats'     => $data['plaats'] ?? '',
-			];
-			if ( is_null( $userdata['ID'] ) ) {
-				$userdata['role']          = '';
-				$userdata['user_login']    = $userdata['user_email'];
-				$userdata['user_pass']     = wp_generate_password( 12, true );
-				$userdata['user_nicename'] = strtolower( $userdata['first_name'] . '-' . $userdata['last_name'] );
-				return wp_insert_user( (object) $userdata );
-			}
-			return wp_update_user( (object) $userdata );
-		}
-		return $gebruiker_id;
 	}
 
 	/**
