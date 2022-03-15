@@ -75,8 +75,6 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het formulier
-	 *
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function form_content() {
 		$readonly = $this->data['cursus']['eind_datum'] < strtotime( 'today' );
@@ -110,6 +108,8 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	 * @param bool $readonly Of het alleen lezen betreft.
 	 *
 	 * @return Public_Cursus_Beheer_Display
+	 *
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function algemeen( bool $readonly ) : Public_Cursus_Beheer_Display {
 		?>
