@@ -131,7 +131,7 @@ class Admin_Abonnees_Handler extends  Admin_Handler {
 	}
 
 	/**
-	 * Wijzig het abonnement van de abonee.
+	 * Wijzig het abonnement van de abonnee.
 	 *
 	 * @since 5.2.0
 	 * @param array $item De informatie vanuit het formulier.
@@ -144,7 +144,8 @@ class Admin_Abonnees_Handler extends  Admin_Handler {
 				$abonnement->$veld = str_contains( $veld, 'datum' ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
 			}
 		}
-		$abonnement->reguliere_datum = strtotime( 'first day of ' . Abonnement::START_MAANDEN + 1 . ' month', $abonnement->start_datum );
+		// Omdat alleen de eind datum van de start periode gewijzigd kan worden, hier dan de reguliere datum meteen aanpassen.
+		$abonnement->reguliere_datum = strtotime( 'first day of next month', $abonnement->start_eind_datum );
 		$abonnement->extras          = $item['extras'];
 		$abonnement->save();
 		return 'De gegevens zijn opgeslagen';
