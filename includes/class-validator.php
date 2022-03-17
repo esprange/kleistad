@@ -94,6 +94,9 @@ class Validator {
 	 * @return bool if false, dan niet gevalideerd.
 	 */
 	public function naam( string $naam ) : bool {
+		if ( empty( trim( $naam ) ) ) {
+			return false;
+		}
 		return 1 !== preg_match( '/[\^<,\"@\/{}()*$%?=>:|;#]+/i', html_entity_decode( $naam, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
 	}
 
