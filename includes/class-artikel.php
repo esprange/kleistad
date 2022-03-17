@@ -220,15 +220,15 @@ abstract class Artikel {
 	 * @noinspection PhpNonStrictObjectEqualityInspection
 	 */
 	final public function wijzig_order( Order $originele_order, string $opmerking = '' ): bool|string {
-		if ( $originele_order->is_geblokkeerd() ) {
-			return false;
-		}
 		$order              = clone $originele_order;
 		$order->orderregels = $this->geef_factuurregels();
 		$order->klant       = $this->naw_klant();
 		$order->referentie  = $this->geef_referentie();
 		if ( $originele_order == $order ) { // phpcs:ignore
 			return ''; // Als er niets gewijzigd is aan de order heeft het geen zin om een nieuwe factuur aan te maken.
+		}
+		if ( $originele_order->is_geblokkeerd() && $originele_order->te_betalen() !== $order->te_betalen() ) {
+			return false;
 		}
 		$order->opmerking = $opmerking;
 		$order->gesloten  = false;

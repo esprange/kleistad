@@ -129,16 +129,20 @@ class InschrijvingActie {
 	public function correctie( int $cursus_id, int $aantal ) : bool {
 		$order = new Order( $this->inschrijving->geef_referentie() );
 		if ( $cursus_id === $this->inschrijving->cursus->id ) {
-			if ( $aantal === $this->inschrijving->aantal ) {
-				return false; // Geen wijzigingen.
+			if ( $aantal === $this->inschrijving->aantal || $order->is_geblokkeerd() ) {
+				return false; // Geen wijzigingen of de order is niet meer te wijzigen qua bedrag.
 			}
 			$this->inschrijving->aantal = $aantal;
 			$this->inschrijving->save();
 		} else {
+			$nieuwe_cursus = new Cursus( $cursus_id );
+			if ( ( $this->inschrijving->cursus->inschrijfkosten + $this->inschrijving->cursus->cursuskosten ) !== ( $nieuwe_cursus->inschrijfkosten + $nieuwe_cursus->cursuskosten ) && $order->is_geblokkeerd() ) {
+				return false; // De order is niet meer te wijzigen qua bedrag.
+			}
 			$oude_cursus_id             = $this->inschrijving->cursus->id;
 			$this->inschrijving->code   = "C$cursus_id-{$this->inschrijving->klant_id}";
 			$this->inschrijving->aantal = $aantal;
-			$this->inschrijving->cursus = new Cursus( $cursus_id );
+			$this->inschrijving->cursus = $nieuwe_cursus;
 			$this->inschrijving->save();
 			foreach ( $this->inschrijving->extra_cursisten as $extra_cursist_id ) {
 				$extra_inschrijving = new Inschrijving( $this->inschrijving->cursus->id, $extra_cursist_id );
