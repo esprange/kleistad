@@ -52,7 +52,33 @@
 		{
 			onLoad();
 
+			const regex           = '^((?!vervallen).)*$';
+			let verberg_vervallen = true,
+				table             = $( '#kleistad_workshops' ).DataTable();
+
+			table.on(
+				'draw',
+				function() {
+					let $filter = $( '#kleistad_workshops_filter' ),
+						current = $filter.html();
+					if ( ! $( '#kleistad_toon_vervallen' ).length ) {
+						$filter.html( current + '<div><label for="kleistad_toon_vervallen"> toon vervallen <input type="checkbox" id="kleistad_toon_vervallen"></label></div>' );
+					}
+				}
+			).column( ':contains(Status)' ).search( regex, true ).draw();
+
 			$( '.kleistad-shortcode' )
+			/**
+			 * Toggle het toon vervallen filter.
+			 */
+			.on(
+				'change',
+				'#kleistad_toon_vervallen',
+				function() {
+					table.column( ':contains(Status)' ).search( verberg_vervallen ? '' : regex ).draw();
+					verberg_vervallen = ! verberg_vervallen;
+				}
+			)
 			/**
 			 * Voorkom dat checkboxes gewijzigd kunnen worden als readonly form.
 			 */
