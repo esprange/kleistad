@@ -11,6 +11,8 @@
 ( function( $ ) {
 	'use strict';
 
+	let verberg_vervallen;
+
 	/**
 	 * Vouw alle communicatie samen en verwijder de buttons als de tekst volledig in het venster past.
 	 */
@@ -25,7 +27,34 @@
 		)
 	}
 
+	/**
+	 * Toon of verberg de vervallen workshops.
+	 *
+	 * @param initieel Initieel moeten de workshops verborgen zijn.
+	 */
+	function toon_vervallen( initieel = false ) {
+		if ( initieel ) {
+			verberg_vervallen = false;
+		}
+		$( '#kleistad_workshops' ).DataTable().column( ':contains(Status)' ).search( verberg_vervallen ? '' : '^((?!vervallen).)*$', true ).draw();
+		verberg_vervallen = ! verberg_vervallen;
+	}
+
+	/**
+	 * Initialisatie
+	 */
 	function onLoad() {
+		$( '#kleistad_workshops' ).DataTable().on(
+			'draw',
+			function() {
+				let $filter = $( '#kleistad_workshops_filter' ),
+					current = $filter.html();
+				if ( ! $( '#kleistad_toon_vervallen' ).length ) {
+					$filter.html( current + '<div><label for="kleistad_toon_vervallen"> toon vervallen <input type="checkbox" id="kleistad_toon_vervallen"></label></div>' );
+					toon_vervallen( true );
+				}
+			}
+		)
 		$( '#kleistad_workshopbeheer' ).tabs(
 			{
 				activate: function() {
@@ -52,21 +81,6 @@
 		{
 			onLoad();
 
-			const regex           = '^((?!vervallen).)*$';
-			let verberg_vervallen = true,
-				table             = $( '#kleistad_workshops' ).DataTable();
-
-			table.on(
-				'draw',
-				function() {
-					let $filter = $( '#kleistad_workshops_filter' ),
-						current = $filter.html();
-					if ( ! $( '#kleistad_toon_vervallen' ).length ) {
-						$filter.html( current + '<div><label for="kleistad_toon_vervallen"> toon vervallen <input type="checkbox" id="kleistad_toon_vervallen"></label></div>' );
-					}
-				}
-			).column( ':contains(Status)' ).search( regex, true ).draw();
-
 			$( '.kleistad-shortcode' )
 			/**
 			 * Toggle het toon vervallen filter.
@@ -74,9 +88,8 @@
 			.on(
 				'change',
 				'#kleistad_toon_vervallen',
-				function() {
-					table.column( ':contains(Status)' ).search( verberg_vervallen ? '' : regex ).draw();
-					verberg_vervallen = ! verberg_vervallen;
+				function () {
+					toon_vervallen();
 				}
 			)
 			/**
