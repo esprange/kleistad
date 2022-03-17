@@ -37,22 +37,10 @@ class Test_Validator extends Kleistad_UnitTestCase {
 			'pcode'          => '1234',
 			'first_name'     => '1 Test',
 			'last_name'      => '2 Case',
-		];
+		]; // email, pcode en telnr zijn fout.
 		$errors    = $validator->gebruiker( $gebruiker );
 		$this->assertTrue( is_wp_error( $errors ), 'validatie foute gebruiker incorrect' );
-		$this->assertEquals( 5, count( $errors->get_error_messages() ), 'validatie foute gebruiker aantal fout incorrect' );
-
-		$gebruiker = [
-			'user_email'     => 'example test.nl',
-			'email_controle' => 'anders@test.nl',
-			'telnr'          => '0123456',
-			'pcode'          => '1234',
-			'first_name'     => '1 Test',
-			'last_name'      => '2 Case',
-		];
-		$errors    = $validator->gebruiker( $gebruiker );
-		$this->assertTrue( is_wp_error( $errors ), 'validatie foute email gebruiker incorrect' );
-		$this->assertEquals( 5, count( $errors->get_error_messages() ), 'validatie foute email gebruiker aantal fout incorrect' );
+		$this->assertEquals( 3, count( $errors->get_error_messages() ), 'validatie foute gebruiker aantal fout incorrect' );
 
 		$gebruiker = [
 			'user_email'     => '',
@@ -64,7 +52,7 @@ class Test_Validator extends Kleistad_UnitTestCase {
 		];
 		$errors    = $validator->gebruiker( $gebruiker );
 		$this->assertTrue( is_wp_error( $errors ), 'validatie lege email gebruiker incorrect' );
-		$this->assertEquals( 5, count( $errors->get_error_messages() ), 'validatie lege email gebruiker aantal fout incorrect' );
+		$this->assertEquals( 3, count( $errors->get_error_messages() ), 'validatie lege email gebruiker aantal fout incorrect' );
 	}
 
 	/**
@@ -116,8 +104,6 @@ class Test_Validator extends Kleistad_UnitTestCase {
 		$this->assertTrue( $validator->naam( $naam ), 'dubbele naam met koppelteken incorrect' );
 		$naam = '\'s Abcdü-EfghÂ';
 		$this->assertTrue( $validator->naam( $naam ), 'naam met speciale tekens incorrect' );
-		$naam = '1';
-		$this->assertFalse( $validator->naam( $naam ), 'numerieke naam incorrect' );
 		$naam = '';
 		$this->assertFalse( $validator->naam( $naam ), 'lege naam flow incorrect' );
 	}
