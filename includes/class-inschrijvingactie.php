@@ -70,13 +70,6 @@ class InschrijvingActie {
 		}
 		$this->inschrijving->artikel_type   = 'cursus';
 		$this->inschrijving->herinner_email = true;
-		$this->inschrijving->betaal_link    = $this->inschrijving->maak_link(
-			[
-				'order' => $order->id,
-				'art'   => $this->inschrijving->artikel_type,
-			],
-			'betaling'
-		);
 		$this->inschrijving->save();
 		$this->inschrijving->verzend_email( '_herinnering' );
 		return 1;
@@ -90,13 +83,6 @@ class InschrijvingActie {
 		if ( $order->id && ! $order->gesloten ) {
 			$this->inschrijving->artikel_type  = 'cursus';
 			$this->inschrijving->restant_email = true;
-			$this->inschrijving->betaal_link   = $this->inschrijving->maak_link(
-				[
-					'order' => $order->id,
-					'art'   => $this->inschrijving->artikel_type,
-				],
-				'betaling'
-			);
 			$this->inschrijving->save();
 			$this->inschrijving->verzend_email( '_restant' );
 		}
@@ -107,13 +93,6 @@ class InschrijvingActie {
 	 */
 	public function plaatsbeschikbaar() {
 		$this->inschrijving->wacht_datum = $this->inschrijving->cursus->ruimte_datum;
-		$this->inschrijving->betaal_link = $this->inschrijving->maak_link(
-			[
-				'code'  => $this->inschrijving->code,
-				'actie' => 'indelen_na_wachten',
-			],
-			'wachtlijst'
-		);
 		$this->inschrijving->save();
 		$this->inschrijving->verzend_email( '_ruimte' );
 	}
@@ -151,7 +130,7 @@ class InschrijvingActie {
 			$oude_inschrijving = new Inschrijving( $oude_cursus_id, $this->inschrijving->klant_id );
 			$oude_inschrijving->actie->afzeggen();
 		}
-		$factuur = $this->inschrijving->wijzig_order( $order );
+		$factuur = $order->actie->wijzig( $this->inschrijving->geef_referentie() );
 		if ( false === $factuur ) {
 			return false; // Er is niets gewijzigd.
 		}
@@ -185,7 +164,8 @@ class InschrijvingActie {
 		if ( 'ideal' === $betaalwijze ) {
 			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag(), $this->inschrijving->geef_referentie() );
 		}
-		$this->inschrijving->verzend_email( 'inschrijving', $this->inschrijving->bestel_order( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant() ) );
+		$order = new Order( $this->inschrijving->geef_referentie() );
+		$this->inschrijving->verzend_email( 'inschrijving', $order->actie->bestel( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant() ) );
 		return true;
 	}
 
@@ -196,13 +176,14 @@ class InschrijvingActie {
 	 * @return void
 	 */
 	public function indelen_lopend( float $prijs ) {
-		$this->inschrijving->lopende_cursus = $prijs;
+		$this->inschrijving->maatwerkkosten = $prijs;
 		$this->inschrijving->ingedeeld      = true;
 		$this->inschrijving->wacht_datum    = 0;
 		$this->inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 		$this->inschrijving->artikel_type   = 'inschrijving';
 		$this->inschrijving->save();
-		$this->inschrijving->verzend_email( '_lopend_betalen', $this->inschrijving->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
+		$order = new Order( $this->inschrijving->geef_referentie() );
+		$this->inschrijving->verzend_email( '_lopend_betalen', $order->actie->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
 	}
 
 	/**
@@ -224,13 +205,10 @@ class InschrijvingActie {
 		if ( $this->inschrijving->wacht_datum || $this->inschrijving->ingedeeld || $this->inschrijving->geannuleerd || $this->inschrijving->cursus->is_lopend() ) {
 			return; // Niets doen als de inschrijving al op de wachtlijst staat of is ingedeeld of geannuleerd of de cursus al gestart is.
 		}
+		$order = new Order( $this->inschrijving->geef_referentie() );
 		$this->inschrijving->verzend_email(
 			'_naar_wachtlijst',
-			$this->inschrijving->annuleer_order(
-				new Order( $this->inschrijving->geef_referentie() ),
-				0.0,
-				'i.v.m. volle cursus verplaatst naar wachtlijst'
-			) ?: ''
+			$order->actie->annuleer( 0.0, 'i.v.m. volle cursus verplaatst naar wachtlijst' ) ?: ''
 		); // De cursist is naar de wachtlijst verplaatst, de order is geannuleerd en de email kan verzonden worden.
 		$this->inschrijving->wacht_datum = time();
 		$this->inschrijving->geannuleerd = false;

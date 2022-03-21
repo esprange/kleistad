@@ -52,12 +52,19 @@ class Order {
 	public Orderregels $orderregels;
 
 	/**
+	 * Apart actie object om de code een beetje te spreiden.
+	 *
+	 * @var OrderActie Het actie object.
+	 */
+	public OrderActie $actie;
+
+	/**
 	 * Maak het object aan.
 	 *
-	 * @param int|string $arg  Het order id of de referentie of 0.
+	 * @param int|string $arg  Het order id of de referentie.
 	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( int|string $arg = 0, ?array $load = null ) {
+	public function __construct( int|string $arg, ?array $load = null ) {
 		global $wpdb;
 		$this->data = [
 			'id'            => 0,
@@ -89,18 +96,21 @@ class Order {
 		} elseif ( is_numeric( $arg ) ) {
 			$resultaat = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE id = %d", intval( $arg ) ), ARRAY_A );
 		} elseif ( $arg ) {
-			$resultaat = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s OR transactie_id = %s ORDER BY id DESC LIMIT 1", $arg, $arg ), ARRAY_A ) ?? 0;
+			$this->referentie = $arg;
+			$resultaat        = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_orders WHERE referentie = %s OR transactie_id = %s ORDER BY id DESC LIMIT 1", $arg, $arg ), ARRAY_A ) ?? 0;
 		}
 		if ( ! empty( $resultaat ) ) {
 			$this->data = $resultaat;
 		}
 		$this->orderregels = new Orderregels( $this->data['regels'] );
+		$this->actie       = new OrderActie( $this );
 	}
 
 	/**
 	 * Deep clone
 	 */
 	public function __clone() {
+		$this->id          = 0;
 		$this->orderregels = clone $this->orderregels;
 	}
 
@@ -168,21 +178,6 @@ class Order {
 	}
 
 	/**
-	 * Afboeken van een order.
-	 */
-	public function afboeken() {
-		$te_betalen           = $this->te_betalen();
-		$dd_order             = new self();
-		$dd_order->referentie = '@-' . $this->referentie;
-		$dd_order->betaald    = $te_betalen;
-		$dd_order->klant      = $this->klant;
-		$dd_order->orderregels->toevoegen( new Orderregel( 'Afboeking', 1, $te_betalen ) );
-		$dd_order->save( sprintf( 'Afboeking order door %s', wp_get_current_user()->display_name ) );
-		$this->betaald += $te_betalen;
-		$this->save( 'Afboeking' );
-	}
-
-	/**
 	 * Bepaal of de order nog gecorrigeerd mag worden.
 	 */
 	public function is_geblokkeerd() : bool {
@@ -191,7 +186,7 @@ class Order {
 	}
 
 	/**
-	 * Bepaal of de order nog annuleerbaar is.
+	 * Bepaal of de order nog annuleerbaar is. Order mag niet al gecrediteerd zijn.
 	 */
 	public function is_annuleerbaar() : bool {
 		return ! boolval( $this->credit_id ) && '@' !== $this->referentie[0];

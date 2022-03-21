@@ -283,6 +283,7 @@ class Kleistad {
 		$this->loader->add_action( 'wp_ajax_kleistad_wachtwoord', $plugin_actions, 'wachtwoord', 100 );
 		$this->loader->add_action( 'wp_ajax_nopriv_kleistad_wachtwoord', $plugin_actions, 'wachtwoord', 100 );
 		$this->loader->add_action( 'profile_update', $plugin_actions, 'profile_update' );
+		$this->loader->add_action( 'kleistad_betaalinfo_update', $plugin_actions, 'betaalinfo_update' );
 
 		$this->loader->add_filter( 'single_template', $plugin_filters, 'single_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_filters, 'comments_template' );

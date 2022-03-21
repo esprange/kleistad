@@ -14,10 +14,10 @@ namespace Kleistad;
 /**
  * Klasse voor het beheren van losse artikelen verkoop.
  *
- * @property string code
- * @property array  regels
- * @property array  klant
- * @property float  prijs
+ * @property string      code
+ * @property Orderregels orderregels
+ * @property array       klant
+ * @property float       prijs
  */
 class LosArtikel extends Artikel {
 
@@ -26,33 +26,41 @@ class LosArtikel extends Artikel {
 		'naam'   => 'overige verkoop',
 		'pcount' => 1,
 	];
-
-	/**
-	 * Lijst van orderregels
-	 *
-	 * @var Orderregels $orderregels De regels.
-	 */
-	private Orderregels $orderregels;
+	private const META     = 'kleistad_losartikel_';
 
 	/**
 	 * De constructor
 	 *
 	 * @since      6.2.0
 	 *
-	 * @param int|null $verkoop_id Een uniek id van de verkoop.
+	 * @param string|int $verkoop_id Een uniek id van de verkoop.
 	 */
-	public function __construct( ?int $verkoop_id = null ) {
-		$this->orderregels = new Orderregels();
-		if ( is_null( $verkoop_id ) ) {
-			$verkoop_id = intval( get_option( 'kleistad_losnr', 0 ) );
-			update_option( 'kleistad_losnr', ++$verkoop_id );
-		}
-		$this->data     = [
-			'klant' => [],
-			'prijs' => 0.0,
-			'code'  => "X$verkoop_id",
-		];
+	public function __construct( int|string $verkoop_id = 0 ) {
 		$this->betaling = new LosArtikelBetaling( $this );
+		if ( is_string( $verkoop_id ) ) {
+			$verkoop_id = sscanf( $verkoop_id, 'X%d' );
+		}
+		if ( $verkoop_id ) {
+			$this->code = "X$verkoop_id";
+			$result     = get_transient( self::META . $this->code );
+			if ( $result ) {
+				$this->data = $result;
+				return;
+			}
+		}
+		$verkoop_id = intval( get_option( 'kleistad_losnr', 0 ) );
+		update_option( 'kleistad_losnr', ++$verkoop_id );
+		$this->code = "X$verkoop_id";
+		$this->data = [
+			'klant'       => [
+				'naam'  => '',
+				'adres' => '',
+				'email' => '',
+			],
+			'prijs'       => 0.0,
+			'code'        => $this->code,
+			'orderregels' => new Orderregels(),
+		];
 	}
 
 	/**
@@ -117,7 +125,7 @@ class LosArtikel extends Artikel {
 				'parameters'  => [
 					'naam'        => $this->klant['naam'],
 					'bedrag'      => number_format_i18n( $this->prijs, 2 ),
-					'bestel_link' => $this->betaal_link,
+					'bestel_link' => $this->maak_betaal_link(),
 				],
 			]
 		);
@@ -140,8 +148,17 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return Orderregels
 	 */
-	protected function geef_factuurregels() : Orderregels {
+	public function geef_factuurregels() : Orderregels {
 		return $this->orderregels;
+	}
+
+	/**
+	 * Bewaar het artikel.
+	 *
+	 * @return void
+	 */
+	public function save() {
+		set_transient( self::META . $this->code, $this->data, YEAR_IN_SECONDS );
 	}
 
 }

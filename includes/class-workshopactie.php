@@ -140,7 +140,8 @@ class WorkshopActie {
 	public function vraag_betaling() {
 		$this->workshop->betaling_email = true;
 		$this->workshop->save();
-		$this->workshop->verzend_email( '_betaling', $this->workshop->bestel_order( 0.0, $this->workshop->datum ) );
+		$order = new Order( $this->workshop->geef_referentie() );
+		$this->workshop->verzend_email( '_betaling', $order->actie->bestel( 0.0, $this->workshop->datum ) );
 	}
 
 	/**
@@ -170,7 +171,7 @@ class WorkshopActie {
 		}
 		$order = new Order( $this->workshop->geef_referentie() );
 		if ( $order->id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-			$factuur = $this->workshop->wijzig_order( $order );
+			$factuur = $order->actie->wijzig( $this->workshop->geef_referentie() );
 			if ( false === $factuur ) { // De factuur is aangemaakt in een periode die boekhoudkundig geblokkeerd is, correctie is niet mogelijk.
 				return false;
 			} elseif ( ! empty( $factuur ) ) { // Er was al een factuur die nog gecorrigeerd mag worden.

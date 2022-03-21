@@ -46,7 +46,9 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 				'email' => "test$random@example.com",
 			];
 			$this->verkoop[ $index ]->bestelregel( "testverkoop $random", $random, 10 );
-			$this->verkoop[ $index ]->bestel_order( 0.0, strtotime( '+14 days 0:00' ) );
+			$this->verkoop[ $index ]->save();
+			$order = new Order( $this->verkoop[ $index ]->geef_referentie() );
+			$order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) );
 		}
 		return $openstaand;
 	}

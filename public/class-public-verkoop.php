@@ -109,7 +109,9 @@ class Public_Verkoop extends Public_Bestelling {
 		foreach ( array_keys( $this->data['input']['omschrijving'] ) as $index ) {
 			$verkoop->bestelregel( $this->data['input']['omschrijving'][ $index ], $this->data['input']['aantal'][ $index ], $this->data['input']['prijs'][ $index ] );
 		}
-		$verkoop->verzend_email( '', $verkoop->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
+		$verkoop->save();
+		$order = new Order( $verkoop->geef_referentie() );
+		$verkoop->verzend_email( '', $order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) ) );
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'Er is een email verzonden met factuur en nadere informatie over de betaling' ),

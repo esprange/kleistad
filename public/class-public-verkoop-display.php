@@ -90,7 +90,7 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" name="prijs[]" required value="<?php echo esc_attr( $this->data['input']['prijs'][ $index ] ); ?>" >
 			</div>
 			<div class="kleistad-col-2">
-				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" placeholder="1" ame="aantal[]" required value="<?php echo esc_attr( $this->data['input']['aantal'][ $index ] ); ?>" >
+				<!--suppress HtmlFormInputWithoutLabel --><input class="kleistad-input" type="number" step="0.01" placeholder="1" name="aantal[]" required value="<?php echo esc_attr( $this->data['input']['aantal'][ $index ] ); ?>" >
 			</div>
 		</div>
 				<?php endforeach; ?>

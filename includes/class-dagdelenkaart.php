@@ -138,7 +138,7 @@ class Dagdelenkaart extends Artikel {
 					'dagdelenkaart_code'      => $this->code,
 					'dagdelenkaart_opmerking' => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'dagdelenkaart_prijs'     => number_format_i18n( opties()['dagdelenkaart'], 2 ),
-					'dagdelenkaart_link'      => $this->betaal_link,
+					'dagdelenkaart_link'      => $this->maak_betaal_link(),
 				],
 			]
 		);
@@ -149,7 +149,7 @@ class Dagdelenkaart extends Artikel {
 	 *
 	 * @return Orderregels De regels.
 	 */
-	protected function geef_factuurregels() : Orderregels {
+	public function geef_factuurregels() : Orderregels {
 		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, opties()['dagdelenkaart'] ) );
 		return $orderregels;

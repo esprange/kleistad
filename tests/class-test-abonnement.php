@@ -26,16 +26,8 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		if ( is_object( $role ) ) {
 			$role->add_cap( RESERVEER, true );
 		}
-
 		$abonnee_id = $this->factory->user->create();
-		$abonnement = $this->getMockBuilder( Abonnement::class )->onlyMethods( [ 'maak_factuur' ] )->setConstructorArgs(
-			[
-				$abonnee_id,
-			]
-		)->getMock();
-		$abonnement->method( 'maak_factuur' )->willReturn( __FILE__ );
-
-		return $abonnement;
+		return new Abonnement( $abonnee_id ); // $abonnement;
 	}
 
 	/**
@@ -59,7 +51,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 
 		$this->assertIsString( $abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'ideal' ), 'abonnement start bank incorrect' );
 		$this->assertEquals( 0, $mailer->get_sent_count(), 'start ideal aantal email onjuist' );
-		$abonnement->betaling->verwerk( new Order(), 90, true, 'ideal', 'transactie' );
+		$abonnement->betaling->verwerk( new Order( $abonnement->geef_referentie() ), 90, true, 'ideal', 'transactie' );
 		$this->assertEquals( 'Welkom bij Kleistad', $mailer->get_last_sent()->subject, 'start ideal email incorrect' );
 		$this->assertTrue( user_can( $abonnement->klant_id, LID ), 'abonnement rol incorrect' );
 	}
@@ -347,7 +339,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$abonnee    = new Abonnee( $abonnement->klant_id );
 		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
 		$abonnement->actie->start_incasso();
-		$abonnement->betaling->verwerk( new Order(), 0.01, true, 'ideal', 'incasso' );
+		$abonnement->betaling->verwerk( new Order( $abonnement->geef_referentie() ), 0.01, true, 'ideal', 'incasso' );
 		$this->assertEquals( 'Wijziging abonnement', $mailer->get_last_sent( $abonnee->user_email )->subject, 'start incasso email incorrect' );
 		$abonnement->actie->stop_incasso();
 		$this->assertEquals( 'Wijziging abonnement', $mailer->get_last_sent( $abonnee->user_email )->subject, 'start incasso email incorrect' );

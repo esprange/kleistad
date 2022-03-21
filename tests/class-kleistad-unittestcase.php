@@ -242,7 +242,13 @@ abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
 		new Kleistad();
 		$upgrade = new Admin_Upgrade();
 		$upgrade->run();
+		global $wpdb;
+		foreach ( [ 'orders', 'inschrijvingen', 'cursussen', 'reserveringen', 'ovens', 'workshops' ] as $tabel ) {
+			$wpdb->query( "DELETE FROM {$wpdb->prefix}kleistad_$tabel WHERE TRUE" ); // phpcs:ignore
+		}
 		update_option( 'kleistad_email_actief', 1 );
+		$losnr = get_option( 'kleistad_losnr' );
+		update_option( 'kleistad_losnr', $losnr++ );
 		$this->reset_mockmailer_instance();
 		$_GET  = [];
 		$_POST = [];

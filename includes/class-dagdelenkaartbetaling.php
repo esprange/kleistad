@@ -73,14 +73,15 @@ class DagdelenkaartBetaling extends ArtikelBetaling {
 	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
 			if ( $order->id ) { // Factuur is eerder al aangemaakt. Betaling vanuit betaal link of bank.
-				$this->dagdelenkaart->ontvang_order( $order, $bedrag, $transactie_id );
+				$order->actie->ontvang( $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->dagdelenkaart->verzend_email( '_ideal_betaald' );
 				}
 				return;
 			}
 			// Betaling vanuit inschrijvingformulier.
-			$this->dagdelenkaart->verzend_email( '_ideal', $this->dagdelenkaart->bestel_order( $bedrag, $this->dagdelenkaart->start_datum, '', $transactie_id ) );
+			$order = new Order( $this->dagdelenkaart->geef_referentie() );
+			$this->dagdelenkaart->verzend_email( '_ideal', $order->actie->bestel( $bedrag, $this->dagdelenkaart->start_datum, '', $transactie_id ) );
 		} elseif ( 'ideal' === $type && ! $order->id ) {
 			$this->dagdelenkaart->erase( false );
 		}

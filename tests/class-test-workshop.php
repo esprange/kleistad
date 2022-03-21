@@ -25,8 +25,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	 */
 	private function maak_workshop(): Workshop {
 
-		$workshop = $this->getMockBuilder( Workshop::class )->onlyMethods( [ 'maak_factuur' ] )->getMock();
-		$workshop->method( 'maak_factuur' )->willReturn( __FILE__ );
+		$workshop             = new Workshop();
 		$workshop->kosten     = 120;
 		$workshop->naam       = 'workshop';
 		$workshop->email      = 'workshop_test@example.com';
@@ -170,14 +169,14 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	/**
 	 * Test annuleer_order function
 	 */
-	public function test_annuleer_order() {
+	public function test_annuleer() {
 		$workshop1        = $this->maak_workshop();
 		$workshop1->datum = strtotime( '5 days' );
 		$workshop1->actie->bevestig();
 		Workshops::doe_dagelijks();
 
 		$order = new Order( $workshop1->geef_referentie() );
-		$workshop1->annuleer_order( $order, 24.0, '' );
+		$order->actie->annuleer( 24.0, '' );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 		$workshop2 = new Workshop( $workshop1->id );
 		$this->assertTrue( $workshop2->vervallen, 'vervallen status incorrect' );

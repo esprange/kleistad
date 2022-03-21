@@ -32,7 +32,6 @@ class Public_Betaling extends ShortcodeForm {
 			[
 				'order' => FILTER_SANITIZE_NUMBER_INT,
 				'hsh'   => FILTER_SANITIZE_STRING,
-				'art'   => FILTER_SANITIZE_STRING,
 			]
 		);
 		if ( is_null( $param ) || is_null( $param['order'] ) ) {
@@ -53,10 +52,9 @@ class Public_Betaling extends ShortcodeForm {
 			'openstaand'    => $order->te_betalen(),
 			'reeds_betaald' => $order->betaald,
 			'orderregels'   => $order->orderregels,
-			'betreft'       => $artikel->geef_artikelnaam(),
+			'betreft'       => $artikelregister->geef_naam( $order->referentie ),
 			'factuur'       => $order->factuurnummer(),
-			'artikel_type'  => $param['art'],
-			'annuleerbaar'  => $artikel->is_annuleerbaar(),
+			'annuleerbaar'  => $order->is_annuleerbaar(),
 		];
 		return $this->content();
 	}
@@ -72,9 +70,8 @@ class Public_Betaling extends ShortcodeForm {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'order_id'     => FILTER_SANITIZE_NUMBER_INT,
-				'betaal'       => FILTER_SANITIZE_STRING,
-				'artikel_type' => FILTER_SANITIZE_STRING,
+				'order_id' => FILTER_SANITIZE_NUMBER_INT,
+				'betaal'   => FILTER_SANITIZE_STRING,
 			]
 		);
 		$this->data['order'] = new Order( $this->data['input']['order_id'] );
@@ -107,8 +104,7 @@ class Public_Betaling extends ShortcodeForm {
 	 */
 	protected function betalen() : array {
 		if ( 'ideal' === $this->data['input']['betaal'] ) {
-			$this->data['artikel']->artikel_type = $this->data['input']['artikel_type'];
-			$ideal_uri                           = $this->data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->data['order']->te_betalen(), $this->data['order']->referentie );
+			$ideal_uri = $this->data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->data['order']->te_betalen(), $this->data['order']->referentie );
 			if ( false === $ideal_uri ) {
 				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}
@@ -126,14 +122,12 @@ class Public_Betaling extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function annuleren() : array {
-		if ( $this->data['artikel']->is_annuleerbaar() ) {
-			$order = new Order( $this->data['artikel']->geef_referentie() );
-			if ( $this->data['artikel']->annuleer_order( $order, 0, 'Geannuleerd door klant' ) ) {
-				return [
-					'status'  => 'De order is geannuleerd en een bevestiging is verstuurd',
-					'content' => $this->goto_home(),
-				];
-			}
+		$order = new Order( $this->data['artikel']->geef_referentie() );
+		if ( $order->is_annuleerbaar() && $order->actie->annuleer( 0.0, 'Geannuleerd door klant' ) ) {
+			return [
+				'status'  => 'De order is geannuleerd en een bevestiging is verstuurd',
+				'content' => $this->goto_home(),
+			];
 		}
 		return [ 'status' => $this->status( new WP_Error( 'annuleren', 'Annulering blijkt niet mogelijk. Neem eventueel contact op met Kleistad' ) ) ];
 	}

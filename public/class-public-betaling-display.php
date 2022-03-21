@@ -49,7 +49,6 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 	private function bestelling() {
 		?>
 		<input type="hidden" name="order_id" value="<?php echo esc_attr( $this->data['order_id'] ); ?>" />
-		<input type="hidden" name="artikel_type" value="<?php echo esc_attr( $this->data['artikel_type'] ); ?>" />
 		<input type="hidden" name="betaal" value="ideal" />
 		<div class="kleistad-row">
 			<div class="kleistad-col-5">

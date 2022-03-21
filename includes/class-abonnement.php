@@ -199,7 +199,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return Orderregels De regels.
 	 */
-	protected function geef_factuurregels() : Orderregels {
+	public function geef_factuurregels() : Orderregels {
 		$betaalinfo  = [
 			'start'        => [
 				'info'   => sprintf(
@@ -286,7 +286,7 @@ class Abonnement extends Artikel {
 					'abonnement_startgeld'    => number_format_i18n( $this->betaling->geef_bedrag( '#start' ), 2 ),
 					'abonnement_maandgeld'    => number_format_i18n( $this->betaling->geef_bedrag( '#regulier' ), 2 ),
 					'abonnement_overbrugging' => number_format_i18n( $this->betaling->geef_bedrag( '#overbrugging' ), 2 ),
-					'abonnement_link'         => $this->betaal_link,
+					'abonnement_link'         => $this->maak_betaal_link(),
 				],
 			]
 		);

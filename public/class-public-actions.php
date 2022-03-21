@@ -243,4 +243,17 @@ class Public_Actions {
 		}
 	}
 
+	/**
+	 * Update betaalinfo
+	 *
+	 * @param int $gebruiker_id Gebruiker id.
+	 *
+	 * @return void
+	 *
+	 * @internal Action for betaalinfo_update
+	 */
+	public function betaalinfo_update( int $gebruiker_id ) {
+		$profiel = new Profiel();
+		$profiel->reset( $gebruiker_id );
+	}
 }

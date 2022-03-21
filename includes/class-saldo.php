@@ -170,7 +170,7 @@ class Saldo extends Artikel {
 					'achternaam' => $gebruiker->last_name,
 					'bedrag'     => number_format_i18n( $this->prijs, 2 ),
 					'saldo'      => number_format_i18n( $this->bedrag, 2 ),
-					'saldo_link' => $this->betaal_link,
+					'saldo_link' => $this->maak_betaal_link(),
 				],
 			]
 		);
@@ -222,18 +222,10 @@ class Saldo extends Artikel {
 	 *
 	 * @return Orderregels
 	 */
-	protected function geef_factuurregels() : Orderregels {
+	public function geef_factuurregels() : Orderregels {
 		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( 'stooksaldo', 1, $this->prijs ) );
 		return $orderregels;
 	}
 
-	/**
-	 * Een saldo bestelling is altijd te annuleren
-	 *
-	 * @return bool
-	 */
-	public function is_annuleerbaar(): bool {
-		return true;
-	}
 }

@@ -130,7 +130,8 @@ class AbonnementActie {
 		if ( 'ideal' === $betaalwijze ) {
 			return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag, $this->abonnement->geef_referentie() );
 		}
-		$this->abonnement->verzend_email( '_start_bank', $this->abonnement->bestel_order( 0.0, $this->abonnement->start_datum ) );
+		$order = new Order( $this->abonnement->geef_referentie() );
+		$this->abonnement->verzend_email( '_start_bank', $order->actie->bestel( 0.0, $this->abonnement->start_datum ) );
 		return true;
 	}
 
@@ -202,7 +203,8 @@ class AbonnementActie {
 	 */
 	public function overbrugging() {
 		$this->abonnement->artikel_type = 'overbrugging';
-		$this->abonnement->verzend_email( '_vervolg', $this->abonnement->bestel_order( 0.0, strtotime( '+7 days 0:00' ) ) );
+		$order                          = new Order( $this->abonnement->geef_referentie() );
+		$this->abonnement->verzend_email( '_vervolg', $order->actie->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
 		$this->abonnement->overbrugging_email = true;
 		$this->abonnement->factuur_maand      = (int) date( 'Ym' );
 		$this->abonnement->save();
@@ -226,11 +228,12 @@ class AbonnementActie {
 		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
 		$this->abonnement->artikel_type = ( ( $this->abonnement->herstart_datum > $deze_maand && $this->abonnement->herstart_datum < $volgende_maand ) ||
 			( $this->abonnement->pauze_datum >= $deze_maand && $this->abonnement->pauze_datum < $volgende_maand ) ) ? 'pauze' : 'regulier';
+		$order                          = new Order( $this->abonnement->geef_referentie() );
 		try {
 			if ( $this->abonnement->betaling->incasso_actief() ) {
-					$this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ), '', $this->abonnement->betaling->doe_sepa_incasso(), false );
+				$order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ), '', $this->abonnement->betaling->doe_sepa_incasso(), false );
 			} else {
-				$this->abonnement->verzend_email( '_regulier_bank', $this->abonnement->bestel_order( 0.0, strtotime( '+14 days 0:00' ) ) );
+				$this->abonnement->verzend_email( '_regulier_bank', $order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) ) );
 			}
 		} catch ( Exception $e ) {
 			fout( __CLASS__, 'fout bij factuur aanmaken : ' . $e->getMessage() );

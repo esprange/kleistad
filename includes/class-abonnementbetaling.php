@@ -54,14 +54,21 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 * @return bool|string De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
 	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
-		switch ( $this->abonnement->artikel_type ) {
+		/**
+		 * Voorkom foutmelding over $code.
+		 *
+		 * @noinspection PhpUnusedLocalVariableInspection
+		 */
+		list( $code, $artikel_type ) = explode( '-', $referentie );
+		$vermelding                  = '';
+		$mandaat                     = false;
+		switch ( $artikel_type ) {
 			case 'start':
 				$vermelding = sprintf(
 					' vanaf %s tot %s',
 					strftime( '%d-%m-%Y', $this->abonnement->start_datum ),
 					strftime( '%d-%m-%Y', $this->abonnement->start_eind_datum )
 				);
-				$mandaat    = false;
 				break;
 			case 'overbrugging':
 				$vermelding = sprintf(
@@ -75,9 +82,8 @@ class AbonnementBetaling extends ArtikelBetaling {
 				$vermelding = ' machtiging tot sepa-incasso';
 				$mandaat    = true;
 				break;
-			default: // Regulier of pauze, echter dan is artikel type YYMM.
-				$vermelding = '';
-				$mandaat    = false;
+			case 'regulier':
+			case 'pauze':
 		}
 		return $this->betalen->order(
 			$this->abonnement->klant_id,
@@ -195,20 +201,20 @@ class AbonnementBetaling extends ArtikelBetaling {
 			 */
 			if ( 0 < $bedrag ) {
 				if ( 'ideal' === $type ) {
-					$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
+					$order->actie->ontvang( $bedrag, $transactie_id );
 					$this->abonnement->verzend_email( '_ideal_betaald' );
 					return;
 				}
 				if ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
-					$this->abonnement->verzend_email( '_regulier_incasso', $this->abonnement->ontvang_order( $order, $bedrag, $transactie_id, true ) );
+					$this->abonnement->verzend_email( '_regulier_incasso', $order->actie->ontvang( $bedrag, $transactie_id, true ) );
 					return;
 				}
 				// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
-				$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
+				$order->actie->ontvang( $bedrag, $transactie_id );
 				return;
 			}
 			// Anders is het een terugstorting.
-			$this->abonnement->ontvang_order( $order, $bedrag, $transactie_id );
+			$order->actie->ontvang( $bedrag, $transactie_id );
 			return;
 		}
 		/**
@@ -229,7 +235,8 @@ class AbonnementBetaling extends ArtikelBetaling {
 			 */
 			$this->abonnement->factuur_maand = (int) date( 'Ym' );
 			$this->abonnement->save();
-			$this->abonnement->verzend_email( '_start_ideal', $this->abonnement->bestel_order( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
+			$order = new Order( $this->abonnement->geef_referentie() );
+			$this->abonnement->verzend_email( '_start_ideal', $order->actie->bestel( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
 			return;
 		}
 		/**
@@ -251,7 +258,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 				/**
 				 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 				 */
-			$this->abonnement->verzend_email( '_regulier_mislukt', $this->abonnement->ontvang_order( $order, 0, '', true ) );
+			$this->abonnement->verzend_email( '_regulier_mislukt', $order->actie->ontvang( 0, '', true ) );
 			return;
 		}
 		if ( 'ideal' === $type ) {

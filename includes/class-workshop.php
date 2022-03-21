@@ -320,7 +320,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return Orderregels De regel.
 	 */
-	protected function geef_factuurregels() : Orderregels {
+	public function geef_factuurregels() : Orderregels {
 		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( "$this->naam op " . strftime( '%A %d-%m-%y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten ) );
 		return $orderregels;
@@ -363,7 +363,7 @@ class Workshop extends Artikel {
 				'workshop_technieken' => implode( ', ', $this->technieken ),
 				'workshop_programma'  => $this->programma,
 				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
-				'workshop_link'       => $this->betaal_link,
+				'workshop_link'       => $this->maak_betaal_link(),
 				'workshop_dagdeel'    => $this->dagdeel,
 				'vraag'               => $this->vraag,
 				'reactie'             => $this->reactie,

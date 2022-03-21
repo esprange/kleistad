@@ -26,6 +26,7 @@ namespace Kleistad;
  * @property int    wacht_datum
  * @property bool   restant_email
  * @property bool   herinner_email
+ * @property float  maatwerkkosten
  */
 class Inschrijving extends Artikel {
 
@@ -50,13 +51,6 @@ class Inschrijving extends Artikel {
 		'_ruimte'          => 'Er is een cursusplek vrijgekomen',
 		'_naar_wachtlijst' => 'De cursus is vol, aanmelding verplaatst naar wachtlijst',
 	];
-
-	/**
-	 * De kosten van een lopende cursus
-	 *
-	 * @var float $lopende_cursus De kosten.
-	 */
-	public float $lopende_cursus = 0;
 
 	/**
 	 * Of de inschrijving al bestond
@@ -108,6 +102,7 @@ class Inschrijving extends Artikel {
 			'wacht_datum'      => 0,
 			'extra_cursisten'  => [],
 			'hoofd_cursist_id' => 0,
+			'maatwerkkosten'   => 0.0,
 		];
 		$this->actie    = new InschrijvingActie( $this );
 		$this->betaling = new InschrijvingBetaling( $this );
@@ -127,6 +122,7 @@ class Inschrijving extends Artikel {
 		$this->data['wacht_datum']      = strtotime( $inschrijving['wacht_datum'] );
 		$this->data['extra_cursisten']  = json_decode( $inschrijving['extra_cursisten'], true );
 		$this->data['hoofd_cursist_id'] = intval( $inschrijving['hoofd_cursist_id'] );
+		$this->data['maatwerkkosten']   = floatval( $inschrijving['maatwerkkosten'] );
 		$this->ingeschreven             = true;
 	}
 
@@ -211,15 +207,6 @@ class Inschrijving extends Artikel {
 	}
 
 	/**
-	 * Inschrijvingen zijn annuleerbaar als er inschrijfkosten zijn en de restant email nog niet verstuurd is.
-	 *
-	 * @return bool
-	 */
-	public function is_annuleerbaar(): bool {
-		return ! empty( $this->heeft_restant() );
-	}
-
-	/**
 	 * Verzenden van de inschrijving of indeling email.
 	 *
 	 * @since      4.0.87
@@ -262,7 +249,14 @@ class Inschrijving extends Artikel {
 					'cursus_restantbedrag'   => number_format_i18n( $this->restantbedrag(), 2 ),
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
-					'cursus_link'            => $this->betaal_link,
+					'cursus_link'            => $this->maak_betaal_link(),
+					'cursus_ruimte_link'     => $this->maak_link(
+						[
+							'code'  => $this->code,
+							'actie' => 'indelen_na_wachten',
+						],
+						'wachtlijst'
+					),
 					'cursus_uitschrijf_link' => $this->maak_link(
 						[
 							'code'  => $this->code,
@@ -298,6 +292,7 @@ class Inschrijving extends Artikel {
 				'wacht_datum'      => date( 'Y-m-d H:i:s', $this->wacht_datum ),
 				'restant_email'    => intval( $this->restant_email ),
 				'herinner_email'   => intval( $this->herinner_email ),
+				'maatwerkkosten'   => $this->maatwerkkosten,
 			]
 		);
 	}
@@ -316,10 +311,10 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return Orderregels De regels of één regel.
 	 */
-	protected function geef_factuurregels(): Orderregels {
+	public function geef_factuurregels(): Orderregels {
 		$orderregels = new Orderregels();
-		if ( 0 < $this->lopende_cursus ) {
-			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->lopende_cursus ) );
+		if ( 0 < $this->maatwerkkosten ) {
+			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->maatwerkkosten ) );
 			return $orderregels;
 		}
 		if ( $this->cursus->is_binnenkort() ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten, echter bij inschrijfgeld 1 ct dit afronden naar 0.

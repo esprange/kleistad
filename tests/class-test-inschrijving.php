@@ -30,15 +30,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$cursus->inschrijfkosten = 25.0;
 		$cursus->cursuskosten    = 100.0;
 		$cursus_id               = $cursus->save();
-
-		$inschrijving = $this->getMockBuilder( Inschrijving::class )->onlyMethods( [ 'maak_factuur' ] )->setConstructorArgs(
-			[
-				$cursus_id,
-				$cursist_id,
-			]
-		)->getMock();
-		$inschrijving->method( 'maak_factuur' )->willReturn( __FILE__ );
-
+		$inschrijving            = new Inschrijving( $cursus_id, $cursist_id );
 		return $inschrijving;
 	}
 
@@ -186,24 +178,24 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	/**
 	 * Test bestel_order function
 	 */
-	public function test_bestel_order() {
+	public function test_bestel() {
 		$inschrijving1 = $this->maak_inschrijving();
 		$inschrijving1->save();
-		$factuur = $inschrijving1->bestel_order( 0, strtotime( 'today' ) );
-		$this->assertFileExists( $factuur, 'bestel_order incorrect' );
-		$order = new Order( $inschrijving1->geef_referentie() );
-		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
+		$order   = new Order( $inschrijving1->geef_referentie() );
+		$factuur = $order->actie->bestel( 0, strtotime( 'today' ) );
+		$this->assertFileExists( $factuur, 'bestel order incorrect' );
+		$this->assertTrue( $order->id > 0, 'bestel order incorrect' );
 	}
 
 	/**
 	 * Test annuleer_order function
 	 */
-	public function test_annuleer_order() {
+	public function test_annuleer() {
 		$inschrijving1 = $this->maak_inschrijving();
 		$inschrijving1->save();
-		$inschrijving1->bestel_order( 0, strtotime( 'today' ), '', '', false );
 		$order = new Order( $inschrijving1->geef_referentie() );
-		$inschrijving1->annuleer_order( $order, 24.0, '' );
+		$order->actie->bestel( 0, strtotime( 'today' ), '', '', false );
+		$order->actie->annuleer( 24.0, '' );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 		$inschrijving2 = new Inschrijving( $inschrijving1->cursus->id, $inschrijving1->klant_id );
 		$this->assertTrue( $inschrijving2->geannuleerd, 'annuleer status incorrect' );

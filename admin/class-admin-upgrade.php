@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 162;
+	const DBVERSIE = 163;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -224,6 +224,7 @@ class Admin_Upgrade {
 			wacht_datum datetime,
 			restant_email tinyint(1) DEFAULT 0,
 			herinner_email tinyint(1) DEFAULT 0,
+			maatwerkkosten numeric(10,2) DEFAULT 0,
 			PRIMARY KEY  (cursist_id, cursus_id)
 			) $charset_collate;"
 		);
