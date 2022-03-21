@@ -30,9 +30,10 @@ namespace Kleistad;
 class Abonnement extends Artikel {
 
 	public const DEFINITIE       = [
-		'prefix' => 'A',
-		'naam'   => 'abonnement',
-		'pcount' => 1,
+		'prefix'       => 'A',
+		'naam'         => 'abonnement',
+		'pcount'       => 1,
+		'annuleerbaar' => false,
 	];
 	public const META_KEY        = 'kleistad_abonnement_v2';
 	public const MAX_PAUZE_WEKEN = 9;

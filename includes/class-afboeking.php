@@ -17,9 +17,10 @@ namespace Kleistad;
 class Afboeking extends LosArtikel {
 
 	public const DEFINITIE = [
-		'prefix' => '@',
-		'naam'   => 'dubieuze debiteuren',
-		'pcount' => 1,
+		'prefix'       => '@',
+		'naam'         => 'dubieuze debiteuren',
+		'pcount'       => 1,
+		'annuleerbaar' => false,
 	];
 
 	/**

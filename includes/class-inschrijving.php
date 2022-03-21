@@ -31,9 +31,10 @@ namespace Kleistad;
 class Inschrijving extends Artikel {
 
 	public const DEFINITIE         = [
-		'prefix' => 'C',
-		'naam'   => 'cursus',
-		'pcount' => 2,
+		'prefix'       => 'C',
+		'naam'         => 'cursus',
+		'pcount'       => 2,
+		'annuleerbaar' => false,
 	];
 	private const OPM_INSCHRIJVING = 'Een week voorafgaand de start datum van de cursus zal je een betaalinstructie ontvangen voor het restant bedrag.';
 	private const EMAIL_SUBJECT    = [

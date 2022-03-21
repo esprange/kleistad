@@ -46,9 +46,10 @@ use Exception;
 class Workshop extends Artikel {
 
 	public const DEFINITIE       = [
-		'prefix' => 'W',
-		'naam'   => 'workshop',
-		'pcount' => 1,
+		'prefix'       => 'W',
+		'naam'         => 'workshop',
+		'pcount'       => 1,
+		'annuleerbaar' => false,
 	];
 	public const META_KEY        = 'kleistad_workshop';
 	public const AFSPRAAK_PREFIX = 'kleistadevent';

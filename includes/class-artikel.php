@@ -22,9 +22,10 @@ namespace Kleistad;
 abstract class Artikel {
 
 	public const DEFINITIE = [
-		'prefix' => '',
-		'naam'   => '',
-		'pcount' => 0,
+		'prefix'       => '',
+		'naam'         => '',
+		'pcount'       => 0,
+		'annuleerbaar' => false,
 	];
 
 	/**

@@ -21,9 +21,10 @@ namespace Kleistad;
 class Saldo extends Artikel {
 
 	public const DEFINITIE = [
-		'prefix' => 'S',
-		'naam'   => 'stooksaldo',
-		'pcount' => 1,
+		'prefix'       => 'S',
+		'naam'         => 'stooksaldo',
+		'pcount'       => 1,
+		'annuleerbaar' => true,
 	];
 	public const META_KEY  = 'kleistad_stooksaldo';
 

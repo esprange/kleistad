@@ -22,9 +22,10 @@ namespace Kleistad;
 class LosArtikel extends Artikel {
 
 	public const DEFINITIE = [
-		'prefix' => 'X',
-		'naam'   => 'overige verkoop',
-		'pcount' => 1,
+		'prefix'       => 'X',
+		'naam'         => 'overige verkoop',
+		'pcount'       => 1,
+		'annuleerbaar' => false,
 	];
 	private const META     = 'kleistad_losartikel_';
 

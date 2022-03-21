@@ -54,7 +54,7 @@ class Public_Betaling extends ShortcodeForm {
 			'orderregels'   => $order->orderregels,
 			'betreft'       => $artikelregister->geef_naam( $order->referentie ),
 			'factuur'       => $order->factuurnummer(),
-			'annuleerbaar'  => $order->is_annuleerbaar(),
+			'annuleerbaar'  => $artikel::DEFINITIE['annuleerbaar'], // Annuleerbaar door klant.
 		];
 		return $this->content();
 	}

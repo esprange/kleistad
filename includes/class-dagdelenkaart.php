@@ -21,9 +21,10 @@ namespace Kleistad;
 class Dagdelenkaart extends Artikel {
 
 	public const DEFINITIE  = [
-		'prefix' => 'K',
-		'naam'   => 'dagdelenkaart',
-		'pcount' => 1,
+		'prefix'       => 'K',
+		'naam'         => 'dagdelenkaart',
+		'pcount'       => 1,
+		'annuleerbaar' => true,
 	];
 	public const KAART_DUUR = 3;
 	public const META_KEY   = 'kleistad_dagdelenkaart_v2';
