@@ -54,14 +54,9 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 * @return bool|string De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
 	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
-		/**
-		 * Voorkom foutmelding over $code.
-		 *
-		 * @noinspection PhpUnusedLocalVariableInspection
-		 */
-		list( $code, $artikel_type ) = explode( '-', $referentie );
-		$vermelding                  = '';
-		$mandaat                     = false;
+		$artikel_type = explode( '-', $referentie )[1];
+		$vermelding   = '';
+		$mandaat      = false;
 		switch ( $artikel_type ) {
 			case 'start':
 				$vermelding = sprintf(

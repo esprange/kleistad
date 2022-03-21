@@ -19,11 +19,19 @@ namespace Kleistad;
 final class OrderActie {
 
 	/**
+	 * De order waarop de acties moeten worden uitgevoerd.
+	 *
+	 * @var Order De order.
+	 */
+	private Order $order;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Order $order De order.
 	 */
-	public function __construct( private Order $order ) {
+	public function __construct( Order $order ) {
+		$this->order = $order;
 	}
 
 	/**
