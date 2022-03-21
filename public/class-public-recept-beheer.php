@@ -355,14 +355,31 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	private function files() : array {
-		$files = new class() {
+		$files = new class( $_FILES ) {
+
+			/**
+			 * Tijdelijkse store.
+			 *
+			 * @var array $files De tijdelijke storage.
+			 */
+			private array $files;
+
+			/**
+			 * Constructor.
+			 *
+			 * @param array $globalfiles Encapsultate de super global $_FILES.
+			 */
+			public function __construct( array $globalfiles ) {
+				$this->files = $globalfiles;
+			}
+
 			/**
 			 * Encapsulate de global variable.
 			 *
 			 * @return array De inhoud van de variabele.
 			 */
 			public function data() : array {
-				return $_FILES;
+				return $this->files;
 			}
 		};
 		return $files->data();
