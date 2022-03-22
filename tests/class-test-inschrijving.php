@@ -305,12 +305,19 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test beschikbaar controle
 	 */
 	public function test_beschikbaarcontrole() {
-		$inschrijving = $this->maak_inschrijving();
-		$this->assertEmpty( $inschrijving->actie->beschikbaarcontrole(), 'beschikbaarcontrole open cursus incorrect' );
+		$inschrijving1                  = $this->maak_inschrijving();
+		$inschrijving1->cursus->maximum = 1;
+		$inschrijving1->cursus->save();
+		$inschrijving1->actie->aanvraag( 'bank' );
+		$this->assertEmpty( $inschrijving1->actie->beschikbaarcontrole(), 'beschikbaarcontrole open cursus incorrect' );
+		$inschrijving1->ingedeeld = true;
+		$inschrijving1->save();
 
-		$inschrijving->cursus->vol = true;
-		$inschrijving->cursus->save();
-		$this->assertNotEmpty( $inschrijving->actie->beschikbaarcontrole(), 'beschikbaarcontrole open cursus incorrect' );
+		$wachtlijst_cursist_id      = $this->factory->user->create();
+		$inschrijving2              = new Inschrijving( $inschrijving1->cursus->id, $wachtlijst_cursist_id );
+		$inschrijving2->cursus->vol = true;
+		$inschrijving2->actie->aanvraag( '' );
+		$this->assertStringContainsString( 'Helaas is de cursus nu vol', $inschrijving2->actie->beschikbaarcontrole(), 'beschikbaarcontrole gesloten cursus incorrect' );
 	}
 
 	/**

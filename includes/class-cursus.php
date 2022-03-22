@@ -107,7 +107,7 @@ class Cursus {
 		if ( in_array( $attribuut, [ 'start_datum', 'eind_datum', 'ruimte_datum', 'start_tijd', 'eind_tijd' ], true ) ) {
 			return strtotime( $this->data[ $attribuut ] );
 		}
-		if ( in_array( $attribuut, [ 'vol', 'vervallen', 'techniekkeuze', 'meer', 'tonen' ], true ) ) {
+		if ( in_array( $attribuut, [ 'vol', 'vervallen', 'techniekkeuze', 'tonen' ], true ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
 		if ( in_array( $attribuut, [ 'inschrijfkosten', 'cursuskosten' ], true ) ) {
@@ -123,6 +123,7 @@ class Cursus {
 				json_decode( $this->data[ $attribuut ], true )
 			),
 			'code'       => "C{$this->data['id']}",
+			'meer'       => $this->data[ $attribuut ] && ( strtotime( 'today' ) < $this->start_datum ),
 			default      => is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) :
 				( is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ] ),
 		};
@@ -207,6 +208,15 @@ class Cursus {
 	 */
 	public function is_lopend() : bool {
 		return $this->start_datum < strtotime( 'today' );
+	}
+
+	/**
+	 * Is de cursus open voor inschrijvingen ?
+	 *
+	 * @return bool
+	 */
+	public function is_open() : bool {
+		return ! $this->vervallen && ( ! $this->vol || $this->is_wachtbaar() );
 	}
 
 	/**

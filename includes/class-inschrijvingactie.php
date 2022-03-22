@@ -224,7 +224,7 @@ class InschrijvingActie {
 	 */
 	public function beschikbaarcontrole() : string {
 		if ( ! $this->inschrijving->ingedeeld && $this->inschrijving->cursus->vol ) {
-			$this->inschrijving->wacht_datum = time();
+			$this->inschrijving->wacht_datum = $this->inschrijving->wacht_datum ?: time();
 			$this->inschrijving->save();
 			return 'Helaas is de cursus nu vol. Mocht er een plek vrijkomen dan ontvang je een email';
 		}

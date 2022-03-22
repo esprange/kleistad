@@ -117,21 +117,19 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 			} elseif ( ! $cursus->tonen ) {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
-			$is_open                        = ! $cursus->vervallen && ( ! $cursus->vol || $cursus->is_wachtbaar() );
 			$ruimte                         = $cursus->ruimte();
-			$is_lopend                      = $cursus->is_lopend();
 			$this->data['open_cursussen'][] = [
 				'cursus'  => $cursus,
-				'is_open' => $is_open,
+				'is_open' => $cursus->is_open(),
 				'ruimte'  => $ruimte,
 				'json'    => wp_json_encode(
 					[
 						'technieken' => $cursus->technieken,
 						'naam'       => $cursus->naam,
-						'meer'       => ! $is_lopend && $cursus->meer,
+						'meer'       => $cursus->meer,
 						'ruimte'     => min( $ruimte, 4 ),
 						'bedrag'     => $cursus->bedrag(),
-						'lopend'     => $is_lopend,
+						'lopend'     => $cursus->is_lopend(),
 						'vol'        => $cursus->vol,
 					]
 				),
@@ -142,7 +140,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 					return strtoupper( $links['cursus']->naam ) <=> strtoupper( $rechts['cursus']->naam );
 				}
 			);
-			$selecteerbaar = $selecteerbaar || $is_open;
+			$selecteerbaar = $selecteerbaar || $cursus->is_open();
 		}
 		if ( ! $selecteerbaar ) {
 			return $this->status( new WP_Error( 'Inschrijven', 'Helaas is er geen cursusplek meer beschikbaar' ) );

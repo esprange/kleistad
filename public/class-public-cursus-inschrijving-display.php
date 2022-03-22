@@ -124,21 +124,20 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			</div>
 		<?php
 		foreach ( $this->data['open_cursussen'] as $cursus_data ) {
-			$tooltip       = 0 < $cursus_data['cursus']->inschrijfkosten ?
+			$tooltip      = 0 < $cursus_data['cursus']->inschrijfkosten ?
 				sprintf( 'cursus %s start per %s|%d lessen', $cursus_data['cursus']->naam, strftime( '%x', $cursus_data['cursus']->start_datum ), count( $cursus_data['cursus']->lesdatums ) ) :
 				sprintf( 'workshop op %s', strftime( '%x', $cursus_data['cursus']->start_datum ) );
-			$tooltip      .=
+			$tooltip     .=
 				sprintf( '|docent is %s|kosten &euro;%01.2f p.p.', $cursus_data['cursus']->docent_naam(), $cursus_data['cursus']->inschrijfkosten + $cursus_data['cursus']->cursuskosten );
-			$selecteerbaar = $cursus_data['is_open'] && $cursus_data['json'];
-			$style         = $selecteerbaar ? '' : 'color: gray;';
-			$ruimte_tekst  = ", nog ruimte voor {$cursus_data['ruimte']} deelnemer" . ( $cursus_data['ruimte'] > 1 ? 's' : '' );
-			$naam          = $cursus_data['cursus']->naam . ( $cursus_data['cursus']->vervallen ? ' VERVALLEN' : ( $cursus_data['cursus']->vol ? ' VOL' : $ruimte_tekst ) );
-			$checked       = $selecteerbaar && ( $this->data['input']['cursus_id'] === $cursus_data['cursus']->id || 1 === count( $this->data['open_cursussen'] ) );
+			$style        = $cursus_data['is_open'] ? '' : 'color: gray;';
+			$ruimte_tekst = ", nog ruimte voor {$cursus_data['ruimte']} deelnemer" . ( $cursus_data['ruimte'] > 1 ? 's' : '' );
+			$naam         = $cursus_data['cursus']->naam . ( $cursus_data['cursus']->vervallen ? ' VERVALLEN' : ( $cursus_data['cursus']->vol ? ' VOL' : $ruimte_tekst ) );
+			$checked      = $cursus_data['is_open'] && ( $this->data['input']['cursus_id'] === $cursus_data['cursus']->id || 1 === count( $this->data['open_cursussen'] ) );
 			?>
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">
 				<div class="kleistad-col-10">
 					<input class="kleistad-radio" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>" type="radio" value="<?php echo esc_attr( $cursus_data['cursus']->id ); ?>"
-						data-cursus='<?php echo $cursus_data['json'] ?: ''; // phpcs:ignore ?>' <?php disabled( ! $selecteerbaar ); ?>
+						data-cursus='<?php echo $cursus_data['json']; // phpcs:ignore ?>' <?php disabled( ! $cursus_data['is_open'] ); ?>
 						<?php checked( $checked ); ?> required />
 					<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus_data['cursus']->id ); ?>">
 						<span style="<?php echo esc_attr( $style ); ?>"><?php echo esc_html( $naam ); ?></span></label>
