@@ -58,7 +58,7 @@ abstract class Artikel {
 	public object $betaling;
 
 	/**
-	 * Geef de code van het artikel
+	 * Geef de referentie van het artikel
 	 *
 	 * @return string De referentie.
 	 */

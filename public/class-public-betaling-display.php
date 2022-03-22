@@ -32,15 +32,14 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 	protected function form_content() {
 		$this->bestelling();
 		if ( 0 < $this->data['openstaand'] ) {
-			$this->betalen();
+			$this->betalen( $this->data['annuleerbaar'] );
 		} elseif ( 0 > $this->data['openstaand'] ) {
 			$this->terugstorten();
 		} else {
 			$this->geen_actie();
 		}
-		if ( $this->data['annuleerbaar'] ) {
-			$this->annuleren();
-		}
+		?>
+		<?php
 	}
 
 	/**
@@ -97,38 +96,29 @@ class Public_Betaling_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het betalen
+	 *
+	 * @param bool $annuleerbaar Of er een annuleer knop getoond kan worden.
 	 */
-	private function betalen() {
+	private function betalen( bool $annuleerbaar ) {
 		?>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
 				<?php $this->ideal(); ?>
 			</div>
 		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-10" style="padding-top: 20px;padding-bottom: 100px;">
+		<div class="kleistad-row" style="padding-top: 20px;">
+			<div class="kleistad-col-3" >
 				<button class="kleistad-button" type="submit" name="kleistad_submit_betaling" id="kleistad_submit" value="betalen" >Betalen</button><br />
 			</div>
-		</div>
-		<div style="display:inline-block;height: 500px;">&nbsp;</div>
-		<?php
-	}
-
-	/**
-	 * Render de annuleer mogelijkheid
-	 */
-	private function annuleren() {
-		?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-10" style="padding-top: 20px;">
+			<?php if ( $annuleerbaar ) : ?>
+			<div class="kleistad-col-5" style="text-align: right;">
 				Het is nog mogelijk om deze bestelling te annuleren.
 			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3" style="padding-top: 20px;">
+			<div class="kleistad-col-2" style="text-align: right;" >
 				<button class="kleistad-button" type="submit" name="kleistad_submit_betaling" value="annuleren"
-				data-confirm="<?php echo esc_attr( $this->data['betreft'] ); ?>|Weet je zeker dat je deze bestelling wilt annuleren" id="kleistad_annuleren">Annuleren</button><br />
+					data-confirm="<?php echo esc_attr( $this->data['betreft'] ); ?>|Weet je zeker dat je deze bestelling wilt annuleren" id="kleistad_annuleren">Annuleren</button><br />
 			</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

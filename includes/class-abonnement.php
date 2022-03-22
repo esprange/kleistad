@@ -262,7 +262,7 @@ class Abonnement extends Artikel {
 	 * @return bool succes of falen van verzending email.
 	 */
 	public function verzend_email( string $type, string $factuur = '' ) : bool {
-		$abonnee = get_userdata( $this->klant_id );
+		$abonnee = new Abonnee( $this->klant_id );
 		$emailer = new Email();
 		return $emailer->send(
 			[
@@ -274,7 +274,7 @@ class Abonnement extends Artikel {
 				[
 					'voornaam'                => $abonnee->first_name,
 					'achternaam'              => $abonnee->last_name,
-					'loginnaam'               => $abonnee->user_login,
+					'wachtwoord_reset'        => $abonnee->geef_pwd_reset_anchor(),
 					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
 					'pauze_datum'             => $this->pauze_datum ? strftime( '%d-%m-%Y', $this->pauze_datum ) : '',
 					'eind_datum'              => $this->eind_datum ? strftime( '%d-%m-%Y', $this->eind_datum ) : '',

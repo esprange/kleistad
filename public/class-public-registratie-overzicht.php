@@ -308,14 +308,14 @@ class Public_Registratie_Overzicht extends Shortcode {
 			</div>
 		EOT;
 			}
-			$code        = $inschrijving->cursus->code . ( 1 < $inschrijving->aantal ? " ( $inschrijving->aantal )" : '' );
+			$code_string = $inschrijving->cursus->code . ( 1 < $inschrijving->aantal ? " ( $inschrijving->aantal )" : '' );
 			$ingedeeld   = $inschrijving->ingedeeld ? '<span class="dashicons dashicons-yes"></span>' : '';
 			$geannuleerd = $inschrijving->geannuleerd ? '<span class="dashicons dashicons-yes"></span>' : '';
 			$technieken  = implode( ', ', $inschrijving->technieken ?? [] );
 			$html       .= <<< EOT
 			<div class="kleistad-row">
 				<div class="kleistad-col-3" style="overflow-x: hidden">{$inschrijving->cursus->naam}</div>
-				<div class="kleistad-col-1">$code</div>
+				<div class="kleistad-col-1">$code_string</div>
 				<div class="kleistad-col-2">$ingedeeld</div>
 				<div class="kleistad-col-2">$geannuleerd</div>
 				<div class="kleistad-col-2" style="overflow-x: hidden">$technieken</div>

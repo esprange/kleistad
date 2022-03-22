@@ -86,6 +86,18 @@ class Gebruiker extends WP_User {
 	}
 
 	/**
+	 * Geef de url mee voor de reset van een wachtwoord.
+	 *
+	 * @return string
+	 */
+	public function geef_pwd_reset_anchor() : string {
+		$key   = get_password_reset_key( $this );
+		$login = rawurlencode( $this->user_login );
+		$url   = network_site_url( "wp-login.php?action=rp&key=$key&login=$login", 'login' );
+		return "<a href=\"$url\" target=\"_blank\" >pagina</a>";
+	}
+
+	/**
 	 * Dagelijkse job
 	 */
 	public static function doe_dagelijks() {
