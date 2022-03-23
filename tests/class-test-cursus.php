@@ -65,13 +65,13 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 		$inschrijving            = new Inschrijving( $cursus_id, $cursist_id );
 		$inschrijving->ingedeeld = true;
 		$inschrijving->save();
-		$this->assertEquals( 4, $cursus->ruimte(), 'ruimte incorrect na 1 indeling' );
+		$this->assertEquals( 4, $cursus->get_ruimte(), 'ruimte incorrect na 1 indeling' );
 		$inschrijving->aantal = 3;
 		$inschrijving->save();
-		$this->assertEquals( 2, $cursus->ruimte(), 'ruimte incorrect na 3 indeling' );
+		$this->assertEquals( 2, $cursus->get_ruimte(), 'ruimte incorrect na 3 indeling' );
 		$inschrijving->geannuleerd = true;
 		$inschrijving->save();
-		$this->assertEquals( 5, $cursus->ruimte(), 'ruimte incorrect na annulering' );
+		$this->assertEquals( 5, $cursus->get_ruimte(), 'ruimte incorrect na annulering' );
 	}
 
 	/**
@@ -138,19 +138,19 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 		$cursus->cursuskosten    = 100.0;
 
 		$cursus->start_datum = strtotime( '+ 1 month' );
-		$this->assertEquals( 25.0, $cursus->bedrag(), 'bedrag cursus toekomst is incorrect' );
+		$this->assertEquals( 25.0, $cursus->get_bedrag(), 'bedrag cursus toekomst is incorrect' );
 
 		$cursus->start_datum = strtotime( 'tomorrow' );
-		$this->assertEquals( 125.0, $cursus->bedrag(), 'bedrag cursus morgen is incorrect' );
+		$this->assertEquals( 125.0, $cursus->get_bedrag(), 'bedrag cursus morgen is incorrect' );
 
 		$workshop                  = new Cursus();
 		$workshop->inschrijfkosten = 0.0;
 		$workshop->cursuskosten    = 35.0;
 		$workshop->start_datum     = strtotime( '+ 1 month' );
-		$this->assertEquals( 35.0, $workshop->bedrag(), 'bedrag workshop toekomst is incorrect' );
+		$this->assertEquals( 35.0, $workshop->get_bedrag(), 'bedrag workshop toekomst is incorrect' );
 
 		$workshop->start_datum = strtotime( 'tomorrow' );
-		$this->assertEquals( 35.0, $workshop->bedrag(), 'bedrag workshop morgen is incorrect' );
+		$this->assertEquals( 35.0, $workshop->get_bedrag(), 'bedrag workshop morgen is incorrect' );
 
 	}
 
@@ -163,10 +163,10 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 		$docent_naam = get_user_by( 'ID', $docent_id )->display_name;
 
 		$cursus->docent = $docent_id;
-		$this->assertEquals( $docent_naam, $cursus->docent_naam(), 'numeriek docent is incorrect' );
+		$this->assertEquals( $docent_naam, $cursus->get_docent_naam(), 'numeriek docent is incorrect' );
 
 		$cursus->docent = 'Test';
-		$this->assertEquals( 'Test', $cursus->docent_naam(), 'alphanumeriek docent is incorrect' );
+		$this->assertEquals( 'Test', $cursus->get_docent_naam(), 'alphanumeriek docent is incorrect' );
 	}
 
 	/**

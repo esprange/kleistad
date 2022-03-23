@@ -180,7 +180,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					date( 'd-m-Y', $workshop->datum ),
 					date( 'H:i', $workshop->start_tijd ),
 					date( 'H:i', $workshop->eind_tijd ),
-					$workshop->docent_naam(),
+					$workshop->get_docent_naam(),
 					implode( ',', $workshop->technieken ),
 					$workshop->aantal,
 					number_format_i18n( $workshop->kosten, 2 ),
@@ -312,7 +312,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			if ( ! $workshop->definitief && ! $workshop->vervallen && $workshop->aanvraagdatum < $verloop ) {
 				$this->data['gaat_vervallen'] = true;
 			}
-			$docenten = explode( ', ', $workshop->docent_naam() );
+			$docenten = explode( ', ', $workshop->get_docent_naam() );
 			array_walk(
 				$docenten,
 				function( &$docent ) {
@@ -351,7 +351,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'start_tijd'        => date( 'H:i', $workshop->start_tijd ),
 			'eind_tijd'         => date( 'H:i', $workshop->eind_tijd ),
 			'docent'            => array_map( 'intval', explode( ';', $workshop->docent ) ),
-			'docent_naam'       => $workshop->docent_naam(),
+			'docent_naam'       => $workshop->get_docent_naam(),
 			'technieken'        => $workshop->technieken,
 			'organisatie'       => $workshop->organisatie,
 			'organisatie_adres' => $workshop->organisatie_adres,

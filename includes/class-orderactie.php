@@ -54,7 +54,7 @@ final class OrderActie {
 		$artikel                    = $artikelregister->get_object( $this->order->referentie );
 		$this->order->betaald      += $bedrag; // Als er al eerder op de order betaald is, het bedrag toevoegen.
 		$this->order->klant_id      = $artikel->klant_id;
-		$this->order->klant         = $artikel->naw_klant();
+		$this->order->klant         = $artikel->get_naw_klant();
 		$this->order->opmerking     = $opmerking;
 		$this->order->transactie_id = $transactie_id ?? $this->order->transactie_id; // Overschrijf het transactie_id alleen als er een ideal betaling is gedaan.
 		$this->order->verval_datum  = $verval_datum;

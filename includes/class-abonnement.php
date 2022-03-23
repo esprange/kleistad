@@ -192,7 +192,7 @@ class Abonnement extends Artikel {
 	 * @return string De status tekst.
 	 */
 	public function get_statustekst( bool $uitgebreid ) : string {
-		return $uitgebreid ? $this->get_status_uitgebreid() : $this->get_status_kort();
+		return $uitgebreid ? $this->status_uitgebreid() : $this->status_kort();
 	}
 
 	/**
@@ -287,7 +287,7 @@ class Abonnement extends Artikel {
 					'abonnement_startgeld'    => number_format_i18n( $this->betaling->get_bedrag( '#start' ), 2 ),
 					'abonnement_maandgeld'    => number_format_i18n( $this->betaling->get_bedrag( '#regulier' ), 2 ),
 					'abonnement_overbrugging' => number_format_i18n( $this->betaling->get_bedrag( '#overbrugging' ), 2 ),
-					'abonnement_link'         => $this->maak_betaal_link(),
+					'abonnement_link'         => $this->get_betaal_link(),
 				],
 			]
 		);
@@ -309,7 +309,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return string
 	 */
-	private function get_status_uitgebreid() : string {
+	private function status_uitgebreid() : string {
 		$vandaag = strtotime( 'today' );
 		if ( $this->is_geannuleerd() ) {
 			return 'gestopt sinds ' . strftime( '%x', $this->eind_datum );
@@ -335,7 +335,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return string
 	 */
-	private function get_status_kort() : string {
+	private function status_kort() : string {
 		$vandaag = strtotime( 'today' );
 		if ( $this->is_geannuleerd() ) {
 			return 'gestopt';

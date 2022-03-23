@@ -162,7 +162,7 @@ class InschrijvingActie {
 			return true;
 		}
 		if ( 'ideal' === $betaalwijze ) {
-			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag(), $this->inschrijving->get_referentie() );
+			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->get_bedrag(), $this->inschrijving->get_referentie() );
 		}
 		$order = new Order( $this->inschrijving->get_referentie() );
 		$this->inschrijving->verzend_email( 'inschrijving', $order->actie->bestel( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant() ) );

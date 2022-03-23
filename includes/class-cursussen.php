@@ -112,7 +112,7 @@ class Cursussen implements Countable, Iterator {
 			 * Als de cursus nog niet voltooid is en er nu ruimte is, pas dan de status aan.
 			 * Dit is ook nodig voor cursussen die al gestart zijn.
 			 */
-			if ( 0 === $cursus->ruimte() ) {
+			if ( 0 === $cursus->get_ruimte() ) {
 				/**
 				 * Er is geen ruimte. Dus doe de acties die bij een volle cursus horen.
 				 */

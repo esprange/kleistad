@@ -76,7 +76,7 @@ class Public_Kalender extends Shortcode {
 				'extendedProps'   => [
 					'naam'       => $workshop->naam,
 					'aantal'     => $workshop->aantal,
-					'docent'     => $workshop->docent_naam() ?: 'n.b.',
+					'docent'     => $workshop->get_docent_naam() ?: 'n.b.',
 					'technieken' => implode( ', ', $workshop->technieken ),
 				],
 			];
@@ -102,8 +102,8 @@ class Public_Kalender extends Shortcode {
 				'textColor'       => $cursus->tonen || $cursus->start_datum < strtotime( 'today' ) ? 'white' : 'black',
 				'extendedProps'   => [
 					'naam'       => 'cursus',
-					'aantal'     => $cursus->maximum - $cursus->ruimte(),
-					'docent'     => $cursus->docent_naam() ?: 'n.b.',
+					'aantal'     => $cursus->maximum - $cursus->get_ruimte(),
+					'docent'     => $cursus->get_docent_naam() ?: 'n.b.',
 					'technieken' => implode( ', ', $cursus->technieken ),
 				],
 			];

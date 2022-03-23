@@ -40,7 +40,7 @@ class Public_Betaling extends ShortcodeForm {
 		$order           = new Order( intval( $param['order'] ) );
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->get_object( $order->referentie );
-		if ( is_null( $artikel ) || $param['hsh'] !== $artikel->controle() ) {
+		if ( is_null( $artikel ) || $param['hsh'] !== $artikel->get_controle() ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		if ( $order->gesloten ) {

@@ -42,7 +42,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 		$cursist      = new Cursist( $cursist_id );
 		$inschrijving = $cursist->get_inschrijving( $cursus_id );
 
-		if ( is_object( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
+		if ( is_object( $inschrijving ) && $param['hsh'] === $inschrijving->get_controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
 				return $this->status( new WP_Error( 'Geannuleerd', 'Deelname aan de cursus is geannuleerd.' ) );
 			}

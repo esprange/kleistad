@@ -42,7 +42,7 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) );
 		$_GET   = [
 			'order' => $order->id,
-			'hsh'   => $verkoop->controle(),
+			'hsh'   => $verkoop->get_controle(),
 		];
 		$result = $this->public_display_actie( self::SHORTCODE, [] );
 		$this->assertStringContainsString( 'testverkoop', $result, 'prepare met argumenten result incorrect' );

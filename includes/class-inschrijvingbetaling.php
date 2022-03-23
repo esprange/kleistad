@@ -156,7 +156,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	 * Deel de cursist in.
 	 */
 	private function indelen() : bool {
-		$ruimte = $this->inschrijving->cursus->ruimte();
+		$ruimte = $this->inschrijving->cursus->get_ruimte();
 		if ( $ruimte < $this->inschrijving->aantal ) {
 			return false;
 		}

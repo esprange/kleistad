@@ -144,7 +144,7 @@ class Profiel {
 			}
 			$lijst[] = [
 				'status' => $order->verval_datum > $vandaag ? 1 : ( $order->verval_datum > $tweewekeneerder ? 2 : 3 ),
-				'link'   => $artikel->maak_link( [ 'order' => $order->id ], 'betaling', $order->factuurnummer() ),
+				'link'   => $artikel->get_link( [ 'order' => $order->id ], 'betaling', $order->factuurnummer() ),
 				'bedrag' => number_format_i18n( $order->te_betalen(), 2 ),
 			];
 		}

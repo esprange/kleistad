@@ -102,7 +102,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return array De naw gegevens.
 	 */
-	public function naw_klant() : array {
+	public function get_naw_klant() : array {
 		return $this->klant;
 	}
 
@@ -126,7 +126,7 @@ class LosArtikel extends Artikel {
 				'parameters'  => [
 					'naam'        => $this->klant['naam'],
 					'bedrag'      => number_format_i18n( $this->prijs, 2 ),
-					'bestel_link' => $this->maak_betaal_link(),
+					'bestel_link' => $this->get_betaal_link(),
 				],
 			]
 		);

@@ -152,7 +152,7 @@ class Public_Debiteuren extends ShortcodeForm {
 					'naam'        => $this->data['order']->klant['naam'],
 					'artikel'     => $artikel->get_artikelnaam(),
 					'referentie'  => $this->data['order']->referentie,
-					'betaal_link' => $artikel->maak_betaal_link(),
+					'betaal_link' => $artikel->get_betaal_link(),
 				],
 			]
 		);
@@ -182,7 +182,7 @@ class Public_Debiteuren extends ShortcodeForm {
 					'naam'        => $this->data['order']->klant['naam'],
 					'artikel'     => $artikel->get_artikelnaam(),
 					'referentie'  => $this->data['order']->referentie,
-					'betaal_link' => $artikel->maak_betaal_link(),
+					'betaal_link' => $artikel->get_betaal_link(),
 				],
 			]
 		);
@@ -211,7 +211,7 @@ class Public_Debiteuren extends ShortcodeForm {
 				'parameters'  => [
 					'naam'        => $this->data['order']->klant['naam'],
 					'referentie'  => $this->data['order']->referentie,
-					'betaal_link' => $artikel->maak_betaal_link(),
+					'betaal_link' => $artikel->get_betaal_link(),
 				],
 			]
 		);

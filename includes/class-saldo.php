@@ -171,7 +171,7 @@ class Saldo extends Artikel {
 					'achternaam' => $gebruiker->last_name,
 					'bedrag'     => number_format_i18n( $this->prijs, 2 ),
 					'saldo'      => number_format_i18n( $this->bedrag, 2 ),
-					'saldo_link' => $this->maak_betaal_link(),
+					'saldo_link' => $this->get_betaal_link(),
 				],
 			]
 		);

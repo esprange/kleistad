@@ -81,26 +81,26 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	 */
 	public function test_controle() {
 		$artikel = $this->maak_artikel( 10 );
-		$this->assertNotEmpty( $artikel->controle(), 'controle fout' );
+		$this->assertNotEmpty( $artikel->get_controle(), 'controle fout' );
 	}
 
 	/**
 	 * Test naw function
 	 */
-	public function test_naw_klant() {
+	public function test_get_naw_klant() {
 		$artikel           = $this->maak_artikel( 10 );
 		$artikel->klant_id = $this->factory->user->create();
-		$this->assertArrayHasKey( 'naam', $artikel->naw_klant(), 'naw_klant naam incorrect' );
-		$this->assertArrayHasKey( 'adres', $artikel->naw_klant(), 'naw_klant adres incorrect' );
-		$this->assertArrayHasKey( 'email', $artikel->naw_klant(), 'naw_klant email incorrect' );
+		$this->assertArrayHasKey( 'naam', $artikel->get_naw_klant(), 'naw_klant naam incorrect' );
+		$this->assertArrayHasKey( 'adres', $artikel->get_naw_klant(), 'naw_klant adres incorrect' );
+		$this->assertArrayHasKey( 'email', $artikel->get_naw_klant(), 'naw_klant email incorrect' );
 	}
 
 	/**
 	 * Test maak link function
 	 */
-	public function test_maak_link() {
+	public function test_get_link() {
 		$artikel = $this->maak_artikel( 10 );
-		$this->assertNotEmpty( $artikel->maak_link( [ 'test' ], 'test' ), 'maak_link incorrect' );
+		$this->assertNotEmpty( $artikel->get_link( [ 'test' ], 'test' ), 'get_link incorrect' );
 	}
 
 	/**

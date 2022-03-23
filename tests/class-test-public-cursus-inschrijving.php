@@ -110,7 +110,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving->cursus->save();
 		$_GET   = [
 			'code'  => $inschrijving->code,
-			'hsh'   => $inschrijving->controle(),
+			'hsh'   => $inschrijving->get_controle(),
 			'actie' => 'stop_wachten',
 		];
 		$result = $this->public_display_actie( self::SHORTCODE, [] );
@@ -127,7 +127,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving->cursus->save();
 		$_GET = [
 			'code'  => $inschrijving->code,
-			'hsh'   => $inschrijving->controle(),
+			'hsh'   => $inschrijving->get_controle(),
 			'actie' => 'indelen_na_wachten',
 		];
 		Cursussen::doe_dagelijks(); // Zet de vol indicator uit en verstuur de email met de link.

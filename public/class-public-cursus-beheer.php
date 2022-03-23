@@ -73,7 +73,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'eind_datum'  => date( 'd-m-Y', $cursus->eind_datum ),
 				'start_tijd'  => date( 'H:i', $cursus->start_tijd ),
 				'eind_tijd'   => date( 'H:i', $cursus->eind_tijd ),
-				'docent'      => $cursus->docent_naam(),
+				'docent'      => $cursus->get_docent_naam(),
 				'vervallen'   => $cursus->vervallen,
 				'status'      => $cursus->vervallen ? 'vervallen' :
 					( $cursus->eind_datum < $vandaag ? 'voltooid' :

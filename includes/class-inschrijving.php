@@ -236,7 +236,7 @@ class Inschrijving extends Artikel {
 					'voornaam'               => $cursist->first_name,
 					'achternaam'             => $cursist->last_name,
 					'cursus_naam'            => $this->cursus->naam,
-					'cursus_docent'          => $this->cursus->docent_naam(),
+					'cursus_docent'          => $this->cursus->get_docent_naam(),
 					'cursus_start_datum'     => strftime( '%A %d-%m-%y', $this->cursus->start_datum ),
 					'cursus_eind_datum'      => strftime( '%A %d-%m-%y', $this->cursus->eind_datum ),
 					'cursus_start_tijd'      => strftime( '%H:%M', $this->cursus->start_tijd ),
@@ -246,19 +246,19 @@ class Inschrijving extends Artikel {
 					'cursus_restant_melding' => $this->heeft_restant(),
 					'cursus_extra_cursisten' => $this->heeft_extra_cursisten(),
 					'cursus_hoofd_cursist'   => $this->hoofd_cursist_id ? get_user_by( 'id', $this->hoofd_cursist_id )->display_name : '',
-					'cursus_bedrag'          => number_format_i18n( $this->aantal * $this->cursus->bedrag(), 2 ),
+					'cursus_bedrag'          => number_format_i18n( $this->aantal * $this->cursus->get_bedrag(), 2 ),
 					'cursus_restantbedrag'   => number_format_i18n( $this->restantbedrag(), 2 ),
 					'cursus_aantal'          => $this->aantal,
 					'cursus_opmerking'       => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
-					'cursus_link'            => $this->maak_betaal_link(),
-					'cursus_ruimte_link'     => $this->maak_link(
+					'cursus_link'            => $this->get_betaal_link(),
+					'cursus_ruimte_link'     => $this->get_link(
 						[
 							'code'  => $this->code,
 							'actie' => 'indelen_na_wachten',
 						],
 						'wachtlijst'
 					),
-					'cursus_uitschrijf_link' => $this->maak_link(
+					'cursus_uitschrijf_link' => $this->get_link(
 						[
 							'code'  => $this->code,
 							'actie' => 'stop_wachten',
@@ -336,7 +336,7 @@ class Inschrijving extends Artikel {
 	 */
 	private function heeft_extra_cursisten() : string {
 		if ( $this->aantal > 1 ) {
-			$link   = $this->maak_link( [ 'code' => $this->code ], 'extra_cursisten' );
+			$link   = $this->get_link( [ 'code' => $this->code ], 'extra_cursisten' );
 			$tekst  = sprintf(
 				'Je hebt aangegeven dat er %s aan de cursus/workshop. Kleistad wil graag weten wie zodat we iedereen per email kunnen informeren over de zaken die de cursus/workshop aangaan. ',
 				2 === $this->aantal ? 'een mededeelnemer is ' : $this->aantal - 1 . ' mededeelnemers zijn '

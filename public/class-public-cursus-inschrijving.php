@@ -33,7 +33,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		);
 		sscanf( $params['code'], 'C%d-%d', $cursus_id, $cursist_id );
 		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-		if ( $params['hsh'] !== $inschrijving->controle() ) {
+		if ( $params['hsh'] !== $inschrijving->get_controle() ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		$this->data['cursus_naam']  = $inschrijving->cursus->naam;
@@ -58,7 +58,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		);
 		sscanf( $params['code'], 'C%d-%d', $cursus_id, $cursist_id );
 		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
-		if ( $params['hsh'] !== $inschrijving->controle() ) {
+		if ( $params['hsh'] !== $inschrijving->get_controle() ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		if ( $inschrijving->cursus->vol ) {
@@ -68,7 +68,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		$this->data['cursus_id']    = $inschrijving->cursus->id;
 		$this->data['cursist_naam'] = get_user_by( 'id', $inschrijving->klant_id )->display_name;
 		$this->data['gebruiker_id'] = $inschrijving->klant_id;
-		$this->data['ruimte']       = $inschrijving->cursus->ruimte();
+		$this->data['ruimte']       = $inschrijving->cursus->get_ruimte();
 		return $this->content();
 	}
 
@@ -117,7 +117,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 			} elseif ( ! $cursus->tonen ) {
 				continue; // In het algemeen overzicht worden alleen cursussen getoond die daarvoor geselecteerd zijn.
 			}
-			$ruimte                         = $cursus->ruimte();
+			$ruimte                         = $cursus->get_ruimte();
 			$this->data['open_cursussen'][] = [
 				'cursus'  => $cursus,
 				'is_open' => $cursus->is_open(),
@@ -128,7 +128,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 						'naam'       => $cursus->naam,
 						'meer'       => $cursus->meer,
 						'ruimte'     => min( $ruimte, 4 ),
-						'bedrag'     => $cursus->bedrag(),
+						'bedrag'     => $cursus->get_bedrag(),
 						'lopend'     => $cursus->is_lopend(),
 						'vol'        => $cursus->vol,
 					]
@@ -218,7 +218,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 					return $this->melding( new WP_Error( 'vol', 'De cursus is helaas vol. Als je op een wachtlijst geplaatst wilt dan kan je dit alleen voor jezelf doen' ) );
 				}
 			}
-			$ruimte = $cursus->ruimte();
+			$ruimte = $cursus->get_ruimte();
 			if ( ! $cursus->vol && $ruimte < $this->data['input']['aantal'] ) {
 				$this->data['input']['aantal'] = $ruimte;
 				return $this->melding( new WP_Error( 'vol', "Er zijn maar $ruimte plaatsen beschikbaar. Pas het aantal eventueel aan." ) );
@@ -261,7 +261,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		}
 		$inschrijving->artikel_type = 'inschrijving';
 		$inschrijving->save();
-		$ideal_uri = $inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->cursus->bedrag(), $inschrijving->get_referentie() );
+		$ideal_uri = $inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->cursus->get_bedrag(), $inschrijving->get_referentie() );
 		if ( false === $ideal_uri ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}

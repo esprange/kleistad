@@ -85,7 +85,7 @@ abstract class Artikel {
 	 *
 	 * @return array De naw gegevens.
 	 */
-	public function naw_klant() : array {
+	public function get_naw_klant() : array {
 		$klant = get_userdata( $this->klant_id );
 
 		/**
@@ -106,7 +106,7 @@ abstract class Artikel {
 	 * @return string Hash string.
 	 * @since  6.1.0
 	 */
-	public function controle() : string {
+	public function get_controle() : string {
 		return hash( 'sha256', sprintf( KLEISTAD_CONTROLE, strtok( $this->get_referentie(), '-' ) ) );
 	}
 
@@ -119,8 +119,8 @@ abstract class Artikel {
 	 *
 	 * @return string De html link.
 	 */
-	public function maak_link( array $args, string $pagina, string $verwijzing = 'Kleistad pagina' ) : string {
-		$url = add_query_arg( array_merge( $args, [ 'hsh' => $this->controle() ] ), home_url( "/kleistad-$pagina" ) );
+	public function get_link( array $args, string $pagina, string $verwijzing = 'Kleistad pagina' ) : string {
+		$url = add_query_arg( array_merge( $args, [ 'hsh' => $this->get_controle() ] ), home_url( "/kleistad-$pagina" ) );
 		return "<a href=\"$url\" target=\"_blank\" >$verwijzing</a>";
 	}
 
@@ -129,9 +129,9 @@ abstract class Artikel {
 	 *
 	 * @return string De link.
 	 */
-	public function maak_betaal_link() : string {
+	public function get_betaal_link() : string {
 		$order = new Order( $this->get_referentie() );
-		return $this->maak_link( [ 'order' => $order->id ], 'betaling' );
+		return $this->get_link( [ 'order' => $order->id ], 'betaling' );
 	}
 
 }

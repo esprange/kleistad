@@ -221,7 +221,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return string De naam van de docent.
 	 */
-	public function docent_naam() : string {
+	public function get_docent_naam() : string {
 		$docenten = [];
 		foreach ( explode( ';', $this->docent ) as $docent_item ) {
 			if ( is_numeric( $docent_item ) ) {
@@ -247,7 +247,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return array De contact info.
 	 */
-	public function naw_klant() : array {
+	public function get_naw_klant() : array {
 		if ( $this->organisatie ) {
 			return [
 				'naam'  => $this->organisatie,
@@ -360,11 +360,11 @@ class Workshop extends Artikel {
 				'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
 				'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
 				'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
-				'workshop_docent'     => str_replace( ', ', ' en ', $this->docent_naam() ),
+				'workshop_docent'     => str_replace( ', ', ' en ', $this->get_docent_naam() ),
 				'workshop_technieken' => implode( ', ', $this->technieken ),
 				'workshop_programma'  => $this->programma,
 				'workshop_kosten'     => number_format_i18n( $this->kosten, 2 ),
-				'workshop_link'       => $this->maak_betaal_link(),
+				'workshop_link'       => $this->get_betaal_link(),
 				'workshop_dagdeel'    => $this->dagdeel,
 				'vraag'               => $this->vraag,
 				'reactie'             => $this->reactie,

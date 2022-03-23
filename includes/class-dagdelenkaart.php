@@ -139,7 +139,7 @@ class Dagdelenkaart extends Artikel {
 					'dagdelenkaart_code'      => $this->code,
 					'dagdelenkaart_opmerking' => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'dagdelenkaart_prijs'     => number_format_i18n( opties()['dagdelenkaart'], 2 ),
-					'dagdelenkaart_link'      => $this->maak_betaal_link(),
+					'dagdelenkaart_link'      => $this->get_betaal_link(),
 				],
 			]
 		);

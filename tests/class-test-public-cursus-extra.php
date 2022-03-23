@@ -47,7 +47,7 @@ class Test_Public_Cursus_Extra extends Kleistad_UnitTestCase {
 		$inschrijving->save();
 		$_GET   = [
 			'code' => $inschrijving->code,
-			'hsh'  => $inschrijving->controle(),
+			'hsh'  => $inschrijving->get_controle(),
 		];
 		$result = $this->public_display_actie( self::SHORTCODE, [] );
 		$this->assertStringContainsString( $inschrijving->cursus->naam, $result, 'prepare extra incorrect' );

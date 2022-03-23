@@ -160,7 +160,7 @@ class Cursus {
 	 *
 	 * @return int nog beschikbare ruimte.
 	 */
-	public function ruimte() : int {
+	public function get_ruimte() : int {
 		$aantal = $this->maximum;
 		if ( 0 < $this->id ) {
 			foreach ( new Inschrijvingen( $this->id, true ) as $inschrijving ) {
@@ -224,7 +224,7 @@ class Cursus {
 	 *
 	 * @return float
 	 */
-	public function bedrag() : float {
+	public function get_bedrag() : float {
 		if ( $this->is_binnenkort() ) {
 			if ( 0.01 < $this->inschrijfkosten ) {
 				return $this->inschrijfkosten + $this->cursuskosten;
@@ -240,7 +240,7 @@ class Cursus {
 	 *
 	 * @return string De naam van de docent.
 	 */
-	public function docent_naam() : string {
+	public function get_docent_naam() : string {
 		if ( is_numeric( $this->docent ) ) {
 			return get_user_by( 'id', intval( $this->docent ) )->display_name;
 		}
@@ -294,7 +294,7 @@ class Cursus {
 					$datums[] = new DateTime( date( 'Y-m-d', $lesdatum ) . ' ' . $this->data['start_tijd'], $timezone );
 				}
 				sort( $datums );
-				$afspraak->patroon( $datums );
+				$afspraak->set_patroon( $datums );
 			}
 			$afspraak->save();
 		} catch ( Exception $e ) {

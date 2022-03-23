@@ -128,7 +128,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 				sprintf( 'cursus %s start per %s|%d lessen', $cursus_data['cursus']->naam, strftime( '%x', $cursus_data['cursus']->start_datum ), count( $cursus_data['cursus']->lesdatums ) ) :
 				sprintf( 'workshop op %s', strftime( '%x', $cursus_data['cursus']->start_datum ) );
 			$tooltip     .=
-				sprintf( '|docent is %s|kosten &euro;%01.2f p.p.', $cursus_data['cursus']->docent_naam(), $cursus_data['cursus']->inschrijfkosten + $cursus_data['cursus']->cursuskosten );
+				sprintf( '|docent is %s|kosten &euro;%01.2f p.p.', $cursus_data['cursus']->get_docent_naam(), $cursus_data['cursus']->inschrijfkosten + $cursus_data['cursus']->cursuskosten );
 			$style        = $cursus_data['is_open'] ? '' : 'color: gray;';
 			$ruimte_tekst = ", nog ruimte voor {$cursus_data['ruimte']} deelnemer" . ( $cursus_data['ruimte'] > 1 ? 's' : '' );
 			$naam         = $cursus_data['cursus']->naam . ( $cursus_data['cursus']->vervallen ? ' VERVALLEN' : ( $cursus_data['cursus']->vol ? ' VOL' : $ruimte_tekst ) );

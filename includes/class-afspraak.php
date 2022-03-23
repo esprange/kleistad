@@ -113,7 +113,7 @@ class Afspraak {
 	 *
 	 * @param DateTime $eind Einddatum.
 	 */
-	public function herhalen( DateTime $eind ) : void {
+	public function set_herhalen( DateTime $eind ) : void {
 		$until = $eind->format( 'Ymd\THis\Z' );
 		$this->event->setRecurrence( [ "RRULE:FREQ=WEEKLY;UNTIL=$until" ] );
 	}
@@ -123,7 +123,7 @@ class Afspraak {
 	 *
 	 * @param array $datums Datums als DateTime object.
 	 */
-	public function patroon( array $datums ) : void {
+	public function set_patroon( array $datums ) : void {
 		unset( $datums[0] );
 		$datumteksten = array_map(
 			function( $datum ) {
@@ -237,7 +237,7 @@ class Afspraak {
 	 * Converteer Google datetime object, zoals '2015-05-28T09:00:00-07:00' naar \DateTime object.
 	 *
 	 * @param EventDateTime $google_datetime Het datetime object.
-	 * @return DateTime Het php DateTime object.
+	 * @return DateTime /Het php DateTime object.
 	 * @throws Kleistad_Exception Een fout is opgetreden.
 	 */
 	private function from_google_dt( EventDateTime $google_datetime ) : DateTime {
