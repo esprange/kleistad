@@ -29,7 +29,7 @@ class Public_Werkplek extends Shortcode {
 	 */
 	protected function prepare() : string {
 		$this->data['datums']    = $this->geef_mogelijke_datums();
-		$this->data['meesters']  = $this->geef_meesters();
+		$this->data['meesters']  = $this->get_meesters();
 		$this->data['cursisten'] = $this->geef_cursisten();
 		if ( 0 === count( $this->data['datums'] ) ) {
 			return $this->status( new WP_Error( 'config', 'Er zijn geen datums beschikbaar' ) );
@@ -133,7 +133,7 @@ class Public_Werkplek extends Shortcode {
 		<strong>beheerder</strong>
 	</div>
 EOT;
-		foreach ( $werkplekgebruik->geef_meesters() as $dagdeel => $meester ) {
+		foreach ( $werkplekgebruik->get_meesters() as $dagdeel => $meester ) {
 			$meester_naam = is_object( $meester ) ? $meester->display_name : '...';
 			$meester_id   = is_object( $meester ) ? $meester->ID : 0;
 			if ( current_user_can( BESTUUR ) ) {
@@ -295,7 +295,7 @@ EOT;
 		$datum           = strtotime( $datum_str );
 		$werkplekgebruik = new WerkplekGebruik( $datum );
 		$werkplekgebruik->wijzig_meester( $dagdeel, intval( $meester_id ) );
-		$meesters = $werkplekgebruik->geef_meesters();
+		$meesters = $werkplekgebruik->get_meesters();
 		return new WP_REST_Response(
 			[
 				'id'      => is_object( $meesters[ $dagdeel ] ) ? $meesters[ $dagdeel ]->ID : 0,
@@ -345,7 +345,7 @@ EOT;
 	 *
 	 * @return array
 	 */
-	private function geef_meesters() : array {
+	private function get_meesters() : array {
 		return get_users(
 			[
 				'fields'   => [ 'display_name', 'ID' ],

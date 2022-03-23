@@ -75,7 +75,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
-		$this->data['cursus_info'] = $this->geef_cursussen();
+		$this->data['cursus_info'] = $this->cursus_info();
 		return $this->content();
 	}
 
@@ -207,20 +207,19 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
-	 * Bepaal de actieve cursisten in een cursus.
+	 * Bepaal of er actieve cursisten zijn in een cursus.
 	 *
 	 * @param  int $cursus_id Het id van de cursus.
-	 * @return array De inschrijving van cursisten voor de cursus. Cursist_id is de index.
+	 * @return bool
 	 */
-	private function geef_inschrijvingen( int $cursus_id ) : array {
-		$inschrijvingen = [];
+	private function heeft_inschrijvingen( int $cursus_id ) : bool {
 		foreach ( new Inschrijvingen( $cursus_id, true ) as $inschrijving ) {
 			if ( ! current_user_can( BESTUUR ) && ! $inschrijving->ingedeeld ) {
 				continue;
 			}
-			$inschrijvingen[ $inschrijving->klant_id ] = $inschrijving;
+			return true;
 		}
-		return $inschrijvingen;
+		return false;
 	}
 
 	/**
@@ -228,7 +227,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	 *
 	 * @return array De cursus informatie.
 	 */
-	private function geef_cursussen() : array {
+	private function cursus_info() : array {
 		$cursus_info = [];
 		$docent_id   = current_user_can( BESTUUR ) ? 0 : get_current_user_id();
 		foreach ( new Cursussen( strtotime( '-3 month 0:00' ) ) as $cursus ) {
@@ -239,7 +238,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 					'naam'                 => $cursus->naam,
 					'docent'               => $cursus->docent_naam(),
 					'start_datum'          => strftime( '%d-%m-%Y', $cursus->start_datum ),
-					'heeft_inschrijvingen' => ! empty( $this->geef_inschrijvingen( $cursus->id ) ),
+					'heeft_inschrijvingen' => $this->heeft_inschrijvingen( $cursus->id ),
 				];
 			}
 		}
@@ -267,7 +266,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 				'technieken' => implode( ', ', $inschrijving->technieken ),
 			];
 			if ( ! $inschrijving->hoofd_cursist_id ) {
-				$order        = new Order( $inschrijving->geef_referentie() );
+				$order        = new Order( $inschrijving->get_referentie() );
 				$cursist_info = array_merge(
 					$cursist_info,
 					[

@@ -40,7 +40,7 @@ class Public_Omzet_Rapportage extends Shortcode {
 		$register = new Artikelregister();
 		$rapport  = new Orderrapportage();
 		sscanf( $this->data['id'], '%d-%d-%s', $this->data['jaar'], $this->data['maand'], $this->data['artikelcode'] );
-		$this->data['artikel']      = $register->geef_naam( $this->data['artikelcode'] );
+		$this->data['artikel']      = $register->get_naam( $this->data['artikelcode'] );
 		$this->data['omzetdetails'] = $rapport->maanddetails( $this->data['maand'], $this->data['jaar'], $this->data['artikelcode'] );
 		return $this->content();
 	}

@@ -76,7 +76,7 @@ class SaldoBetaling extends ArtikelBetaling {
 		if ( $betaald ) {
 			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
 			$this->saldo->reden  = $bedrag > 0 ? 'storting' : 'stornering';
-			$this->saldo->update_storting( $this->saldo->geef_referentie(), "{$this->saldo->reden} per $type op " . date( 'd-m-Y' ) );
+			$this->saldo->update_storting( $this->saldo->get_referentie(), "{$this->saldo->reden} per $type op " . date( 'd-m-Y' ) );
 			$this->saldo->save();
 			if ( $order->id ) {
 				/**
@@ -91,7 +91,7 @@ class SaldoBetaling extends ArtikelBetaling {
 			/**
 			 * Een betaling vanuit het formulier
 			 */
-			$order = new Order( $this->saldo->geef_referentie() );
+			$order = new Order( $this->saldo->get_referentie() );
 			$this->saldo->verzend_email( '_ideal', $order->actie->bestel( $bedrag, strtotime( '+7 days  0:00' ), '', $transactie_id ) );
 		}
 	}

@@ -91,7 +91,7 @@ class Admin_Cursisten extends Admin_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function geef_items( string $search, string $order, string $orderby ) : array {
+	protected function get_items( string $search, string $order, string $orderby ) : array {
 		$cursisten = [];
 		$vandaag   = strtotime( 'today' );
 		foreach ( new Cursisten() as $cursist ) {

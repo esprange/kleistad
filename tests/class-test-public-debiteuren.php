@@ -47,7 +47,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 			];
 			$this->verkoop[ $index ]->bestelregel( "testverkoop $random", $random, 10 );
 			$this->verkoop[ $index ]->save();
-			$order = new Order( $this->verkoop[ $index ]->geef_referentie() );
+			$order = new Order( $this->verkoop[ $index ]->get_referentie() );
 			$order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) );
 		}
 		return $openstaand;
@@ -67,7 +67,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 	 */
 	public function test_prepare_debiteur() {
 		$this->maak_debiteuren( 5 );
-		$order  = new Order( $this->verkoop[1]->geef_referentie() );
+		$order  = new Order( $this->verkoop[1]->get_referentie() );
 		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => $order->id ], 'debiteur' );
 		$this->assertStringContainsString( $order->te_betalen(), $result, 'openstaand bedrag debiteur incorrect' );
 	}
@@ -78,7 +78,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 	public function test_zoek() {
 		$this->maak_debiteuren( 5 );
 		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => $this->verkoop[2]->klant['naam'] ], 'zoek' );
-		$order  = new Order( $this->verkoop[2]->geef_referentie() );
+		$order  = new Order( $this->verkoop[2]->get_referentie() );
 		$this->assertStringContainsString( $order->te_betalen(), $result, 'openstaand bedrag debiteur incorrect' );
 	}
 

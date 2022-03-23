@@ -112,7 +112,7 @@ class Dagdelenkaart extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function geef_referentie() : string {
+	public function get_referentie() : string {
 		return $this->code;
 	}
 
@@ -150,7 +150,7 @@ class Dagdelenkaart extends Artikel {
 	 *
 	 * @return Orderregels De regels.
 	 */
-	public function geef_factuurregels() : Orderregels {
+	public function get_factuurregels() : Orderregels {
 		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, opties()['dagdelenkaart'] ) );
 		return $orderregels;
@@ -187,7 +187,7 @@ class Dagdelenkaart extends Artikel {
 	 * @param  bool $uitgebreid Uitgebreide tekst of korte tekst.
 	 * @return string De status tekst.
 	 */
-	public function geef_statustekst( bool $uitgebreid ) : string {
+	public function get_statustekst( bool $uitgebreid ) : string {
 		$vandaag = strtotime( 'today' );
 		if ( $this->start_datum > $vandaag ) {
 			return $uitgebreid ? 'gaat starten per ' . strftime( '%d-%m-%Y', $this->start_datum ) : 'nieuw';

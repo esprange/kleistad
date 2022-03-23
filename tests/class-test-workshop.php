@@ -86,20 +86,20 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	/**
 	 * Test function geef_referentie
 	 */
-	public function test_geef_referentie() {
+	public function test_get_referentie() {
 		$workshop = $this->maak_workshop();
 		$workshop->save();
-		$this->assertMatchesRegularExpression( '~W[0-9]+~', $workshop->geef_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~W[0-9]+~', $workshop->get_referentie(), 'referentie incorrect' );
 	}
 
 	/**
 	 * Test geef artikel naam
 	 */
-	public function test_geef_artikelnaam() {
+	public function test_get_artikelnaam() {
 		$workshop       = $this->maak_workshop();
 		$workshop->naam = 'kinderfeest';
 		$workshop->save();
-		$this->assertEquals( 'kinderfeest', $workshop->geef_artikelnaam(), 'artikel naam incorrect' );
+		$this->assertEquals( 'kinderfeest', $workshop->get_artikelnaam(), 'artikel naam incorrect' );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop->actie->bevestig();
 		$this->assertFalse( $workshop->is_betaald(), 'onbetaald workshop incorrect' );
 		$workshop->actie->vraag_betaling();
-		$order = new Order( $workshop->geef_referentie() );
+		$order = new Order( $workshop->get_referentie() );
 		$workshop->betaling->verwerk( $order, $workshop->kosten, true, 'bank' );
 		$this->assertTrue( $workshop->is_betaald(), 'betaald workshop incorrect' );
 	}
@@ -175,7 +175,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop1->actie->bevestig();
 		Workshops::doe_dagelijks();
 
-		$order = new Order( $workshop1->geef_referentie() );
+		$order = new Order( $workshop1->get_referentie() );
 		$order->actie->annuleer( 24.0, '' );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 		$workshop2 = new Workshop( $workshop1->id );

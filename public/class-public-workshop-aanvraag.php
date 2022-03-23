@@ -40,7 +40,7 @@ class Public_Workshop_Aanvraag extends Public_Bestelling {
 			];
 		}
 		$planning = new Workshopplanning();
-		if ( 0 === count( $planning->geef_beschikbaaarheid() ) ) {
+		if ( 0 === count( $planning->get_beschikbaarheid() ) ) {
 			return $this->status( new WP_Error( 'Aanvraag', 'Helaas is er de komende drie maanden geen ruimte beschikbaar. Probeer het later opnieuw' ) );
 		}
 		return $this->content();
@@ -143,6 +143,6 @@ class Public_Workshop_Aanvraag extends Public_Bestelling {
 	 */
 	public static function callback_aanvraag() : WP_REST_Response {
 		$planning = new Workshopplanning();
-		return new WP_REST_Response( [ 'plandata' => $planning->geef_beschikbaaarheid() ] );
+		return new WP_REST_Response( [ 'plandata' => $planning->get_beschikbaarheid() ] );
 	}
 }

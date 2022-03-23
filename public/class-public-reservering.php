@@ -182,7 +182,7 @@ class Public_Reservering extends Shortcode {
 				'gebruiker_id' => $stook->hoofdstoker_id,
 			],
 		];
-		$status       = $logica[ $stook->geef_statustekst() ];
+		$status       = $logica[ $stook->get_statustekst() ];
 		$html         = "<tr class=\"{$status['kleur']}\"";
 		if ( $status['select'] ) {
 			$json_selectie = wp_json_encode(
@@ -194,7 +194,7 @@ class Public_Reservering extends Shortcode {
 					'temperatuur'  => $status['temperatuur'],
 					'programma'    => $status['programma'],
 					'verdeling'    => $status['verdeling'],
-					'status'       => $stook->geef_statustekst(),
+					'status'       => $stook->get_statustekst(),
 					'kleur'        => $status['kleur'],
 					'gebruiker_id' => $status['gebruiker_id'],
 				]

@@ -101,7 +101,7 @@ class Admin_Abonnees extends Admin_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function geef_items( string $search, string $order, string $orderby ) : array {
+	protected function get_items( string $search, string $order, string $orderby ) : array {
 		$abonnees = [];
 		$betalen  = new Betalen();
 		foreach ( new Abonnees() as $abonnee ) {
@@ -116,7 +116,7 @@ class Admin_Abonnees extends Admin_List_Table {
 			$abonnees[] = [
 				'id'     => $abonnee->ID,
 				'naam'   => $abonnee->display_name,
-				'status' => $abonnee->abonnement->geef_statustekst( false ),
+				'status' => $abonnee->abonnement->get_statustekst( false ),
 				'soort'  => $abonnee->abonnement->soort,
 				'extras' => implode( ', ', $abonnee->abonnement->extras ),
 				'code'   => $abonnee->abonnement->code,

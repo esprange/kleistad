@@ -51,7 +51,7 @@ class LosArtikelBetaling extends ArtikelBetaling {
 	 * @return bool|string De redirect url ingeval van een ideal betaling of false als het mislukt.
 	 */
 	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
-		$order = new Order( $this->losartikel->geef_referentie() );
+		$order = new Order( $this->losartikel->get_referentie() );
 		return $this->betalen->order(
 			[
 				'naam'     => $order->klant['naam'],

@@ -99,7 +99,7 @@ class Public_Werkplekrapport extends Shortcode {
 		$rapport = [];
 		for ( $datum = $vanaf_datum; $datum <= $tot_datum; $datum += DAY_IN_SECONDS ) {
 			$werkplekgebruik = new WerkplekGebruik( $datum );
-			foreach ( $werkplekgebruik->geef_gebruik() as $dagdeel => $gebruik ) {
+			foreach ( $werkplekgebruik->get_gebruik() as $dagdeel => $gebruik ) {
 				foreach ( $gebruik as $activiteit => $werkplek ) {
 					if ( in_array( $gebruiker_id, $werkplek, true ) ) {
 						$rapport[ $datum ][ $dagdeel ] = $activiteit;
@@ -121,7 +121,7 @@ class Public_Werkplekrapport extends Shortcode {
 		$rapport = [];
 		for ( $datum = $vanaf_datum; $datum <= $tot_datum; $datum += DAY_IN_SECONDS ) {
 			$werkplekgebruik   = new WerkplekGebruik( $datum );
-			$rapport[ $datum ] = $werkplekgebruik->geef_gebruik();
+			$rapport[ $datum ] = $werkplekgebruik->get_gebruik();
 		}
 		return $rapport;
 	}

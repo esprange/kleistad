@@ -51,14 +51,14 @@ final class OrderActie {
 			return ''; // Credit orders worden niet hergebruikt.
 		}
 		$artikelregister            = new Artikelregister();
-		$artikel                    = $artikelregister->geef_object( $this->order->referentie );
+		$artikel                    = $artikelregister->get_object( $this->order->referentie );
 		$this->order->betaald      += $bedrag; // Als er al eerder op de order betaald is, het bedrag toevoegen.
 		$this->order->klant_id      = $artikel->klant_id;
 		$this->order->klant         = $artikel->naw_klant();
 		$this->order->opmerking     = $opmerking;
 		$this->order->transactie_id = $transactie_id ?? $this->order->transactie_id; // Overschrijf het transactie_id alleen als er een ideal betaling is gedaan.
 		$this->order->verval_datum  = $verval_datum;
-		$this->order->orderregels   = $artikel->geef_factuurregels();
+		$this->order->orderregels   = $artikel->get_factuurregels();
 		$this->order->save( $factuur ? sprintf( 'Order en factuur aangemaakt, nieuwe status betaald is € %01.2f', $bedrag ) : 'Order aangemaakt' );
 		do_action( 'kleistad_betaalinfo_update', $artikel->klant_id );
 		return $factuur ? $this->maak_factuur( '' ) : '';
@@ -77,7 +77,7 @@ final class OrderActie {
 			return false;  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
 		}
 		$artikelregister            = new Artikelregister();
-		$artikel                    = $artikelregister->geef_object( $this->order->referentie );
+		$artikel                    = $artikelregister->get_object( $this->order->referentie );
 		$credit_order               = clone $this->order;
 		$credit_order->origineel_id = $this->order->id;
 		$credit_order->verval_datum = strtotime( 'tomorrow' );
@@ -132,9 +132,9 @@ final class OrderActie {
 	 */
 	public function wijzig( string $referentie, string $opmerking = '' ): bool|string {
 		$artikelregister          = new Artikelregister();
-		$artikel                  = $artikelregister->geef_object( $referentie );
+		$artikel                  = $artikelregister->get_object( $referentie );
 		$originele_order          = clone $this->order;
-		$this->order->orderregels = $artikel->geef_factuurregels();
+		$this->order->orderregels = $artikel->get_factuurregels();
 		$this->order->referentie  = $referentie;
 		$this->order->opmerking   = $opmerking;
 		if ( $originele_order == $this->order ) { // phpcs:ignore

@@ -94,7 +94,7 @@ class Admin_Regelingen extends Admin_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function geef_items( string $search, string $order, string $orderby ) : array {
+	protected function get_items( string $search, string $order, string $orderby ) : array {
 		$gebruiker_query = new WP_User_Query(
 			[
 				'fields'   => [ 'ID', 'display_name' ],

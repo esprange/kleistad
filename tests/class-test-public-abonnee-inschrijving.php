@@ -83,7 +83,7 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 		$abonnement               = $this->maak_inschrijving( false );
 		$_POST                    = $this->input;
 		$abonnement->artikel_type = 'start'; // Dit is nodig omdat de order referentie normaliter via Mollie terugkomt.
-		$order                    = new Order( $abonnement->geef_referentie() );
+		$order                    = new Order( $abonnement->get_referentie() );
 		$abonnement->betaling->verwerk( $order, 25, true, 'ideal' ); // Bedrag klopt niet maar dat maar nu niet uit.
 
 		$result = $this->public_form_actie( self::SHORTCODE, [] );

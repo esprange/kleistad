@@ -261,7 +261,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		}
 		$inschrijving->artikel_type = 'inschrijving';
 		$inschrijving->save();
-		$ideal_uri = $inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->cursus->bedrag(), $inschrijving->geef_referentie() );
+		$ideal_uri = $inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->cursus->bedrag(), $inschrijving->get_referentie() );
 		if ( false === $ideal_uri ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}

@@ -77,7 +77,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">Abonnement status</label>
 			</div>
 			<div class="kleistad-col-3">
-				<?php echo esc_html( $this->data['abonnement']->geef_statustekst( true ) ); ?>
+				<?php echo esc_html( $this->data['abonnement']->get_statustekst( true ) ); ?>
 			</div>
 		</div>
 		<?php

@@ -42,7 +42,7 @@ class Workshopplanning {
 	 *
 	 * @return array De beschikbaarheid.
 	 */
-	public function geef_beschikbaaarheid() : array {
+	public function get_beschikbaarheid() : array {
 		$start = strtotime( 'tomorrow 0:00' );
 		$eind  = strtotime( '+ ' . opties()['weken_workshop'] . ' week 0:00' );
 		$this->start( $start, $eind );

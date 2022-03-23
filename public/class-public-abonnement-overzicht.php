@@ -33,7 +33,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 					'naam'   => $abonnee->display_name,
 					'email'  => $abonnee->user_email,
 					'soort'  => $abonnee->abonnement->soort,
-					'status' => $abonnee->abonnement->geef_statustekst( false ),
+					'status' => $abonnee->abonnement->get_statustekst( false ),
 					'extras' => implode( ',<br/> ', $abonnee->abonnement->extras ),
 				];
 			}
@@ -88,7 +88,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 		$abonnee_gegevens = array_merge(
 			$abonnee_gegevens,
 			[
-				$abonnee->abonnement->geef_statustekst( false ),
+				$abonnee->abonnement->get_statustekst( false ),
 				$abonnee->abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->start_datum ) : '',
 				$abonnee->abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->pauze_datum ) : '',
 				$abonnee->abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->herstart_datum ) : '',

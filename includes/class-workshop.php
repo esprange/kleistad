@@ -212,7 +212,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function geef_artikelnaam() : string {
+	public function get_artikelnaam() : string {
 		return $this->naam;
 	}
 
@@ -238,7 +238,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function geef_referentie() : string {
+	public function get_referentie() : string {
 		return $this->code;
 	}
 
@@ -311,7 +311,7 @@ class Workshop extends Artikel {
 	 * @return string
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
-	public function geef_statustekst( bool $uitgebreid = false ) : string {
+	public function get_statustekst( bool $uitgebreid = false ) : string {
 		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) );
 		return $uitgebreid ? "$this->naam $status" : $status;
 	}
@@ -321,7 +321,7 @@ class Workshop extends Artikel {
 	 *
 	 * @return Orderregels De regel.
 	 */
-	public function geef_factuurregels() : Orderregels {
+	public function get_factuurregels() : Orderregels {
 		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( "$this->naam op " . strftime( '%A %d-%m-%y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten ) );
 		return $orderregels;
@@ -333,7 +333,7 @@ class Workshop extends Artikel {
 	 * @return bool True als betaald.
 	 */
 	public function is_betaald() : bool {
-		$order = new Order( $this->geef_referentie() );
+		$order = new Order( $this->get_referentie() );
 		return $order->gesloten;
 	}
 

@@ -184,7 +184,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					implode( ',', $workshop->technieken ),
 					$workshop->aantal,
 					number_format_i18n( $workshop->kosten, 2 ),
-					$workshop->geef_statustekst(),
+					$workshop->get_statustekst(),
 					$workshop->organisatie,
 					$workshop->organisatie_adres,
 					$workshop->organisatie_email,
@@ -329,7 +329,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
 				'docent'     => implode( '<br/>', $docenten ),
 				'aantal'     => $workshop->aantal,
-				'status'     => $workshop->geef_statustekst(),
+				'status'     => $workshop->get_statustekst(),
 				'cstatus'    => $workshop->communicatie[0]['type'] ?? '',
 				'update'     => strtotime( $workshop->communicatie[0]['tijd'] ?? '' ),
 			];

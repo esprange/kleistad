@@ -79,7 +79,7 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 		$refplanning      = $refobject->getProperty( 'planning' );
 		$refplanning->setAccessible( true );
 		$refplanning->setValue( null );
-		return $workshopplanning->geef_beschikbaaarheid();
+		return $workshopplanning->get_beschikbaarheid();
 	}
 
 	/**

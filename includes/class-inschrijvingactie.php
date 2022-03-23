@@ -59,7 +59,7 @@ class InschrijvingActie {
 		if ( 0 === $this->inschrijving->aantal || $this->inschrijving->geannuleerd || ! $this->inschrijving->ingedeeld ) {
 			return 0;
 		}
-		$order            = new Order( $this->inschrijving->geef_referentie() );
+		$order            = new Order( $this->inschrijving->get_referentie() );
 		$regeling_betaald = $order->betaald > ( $this->inschrijving->aantal * $this->inschrijving->cursus->inschrijfkosten + 1 );
 		if ( $order->gesloten || $regeling_betaald || $this->inschrijving->herinner_email ) {
 			/**
@@ -79,7 +79,7 @@ class InschrijvingActie {
 	 * Verstuur de melding dat het restant betaald moet worden als dat nog niet betaald is
 	 */
 	public function restant_betaling() {
-		$order = new Order( $this->inschrijving->geef_referentie() );
+		$order = new Order( $this->inschrijving->get_referentie() );
 		if ( $order->id && ! $order->gesloten ) {
 			$this->inschrijving->artikel_type  = 'cursus';
 			$this->inschrijving->restant_email = true;
@@ -106,7 +106,7 @@ class InschrijvingActie {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function correctie( int $cursus_id, int $aantal ) : bool {
-		$order = new Order( $this->inschrijving->geef_referentie() );
+		$order = new Order( $this->inschrijving->get_referentie() );
 		if ( $cursus_id === $this->inschrijving->cursus->id ) {
 			if ( $aantal === $this->inschrijving->aantal || $order->is_geblokkeerd() ) {
 				return false; // Geen wijzigingen of de order is niet meer te wijzigen qua bedrag.
@@ -130,7 +130,7 @@ class InschrijvingActie {
 			$oude_inschrijving = new Inschrijving( $oude_cursus_id, $this->inschrijving->klant_id );
 			$oude_inschrijving->actie->afzeggen();
 		}
-		$factuur = $order->actie->wijzig( $this->inschrijving->geef_referentie() );
+		$factuur = $order->actie->wijzig( $this->inschrijving->get_referentie() );
 		if ( false === $factuur ) {
 			return false; // Er is niets gewijzigd.
 		}
@@ -162,9 +162,9 @@ class InschrijvingActie {
 			return true;
 		}
 		if ( 'ideal' === $betaalwijze ) {
-			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag(), $this->inschrijving->geef_referentie() );
+			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->bedrag(), $this->inschrijving->get_referentie() );
 		}
-		$order = new Order( $this->inschrijving->geef_referentie() );
+		$order = new Order( $this->inschrijving->get_referentie() );
 		$this->inschrijving->verzend_email( 'inschrijving', $order->actie->bestel( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant() ) );
 		return true;
 	}
@@ -182,7 +182,7 @@ class InschrijvingActie {
 		$this->inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 		$this->inschrijving->artikel_type   = 'inschrijving';
 		$this->inschrijving->save();
-		$order = new Order( $this->inschrijving->geef_referentie() );
+		$order = new Order( $this->inschrijving->get_referentie() );
 		$this->inschrijving->verzend_email( '_lopend_betalen', $order->actie->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
 	}
 
@@ -205,7 +205,7 @@ class InschrijvingActie {
 		if ( $this->inschrijving->wacht_datum || $this->inschrijving->ingedeeld || $this->inschrijving->geannuleerd || $this->inschrijving->cursus->is_lopend() ) {
 			return; // Niets doen als de inschrijving al op de wachtlijst staat of is ingedeeld of geannuleerd of de cursus al gestart is.
 		}
-		$order = new Order( $this->inschrijving->geef_referentie() );
+		$order = new Order( $this->inschrijving->get_referentie() );
 		$this->inschrijving->verzend_email(
 			'_naar_wachtlijst',
 			$order->actie->annuleer( 0.0, 'i.v.m. volle cursus verplaatst naar wachtlijst' ) ?: ''

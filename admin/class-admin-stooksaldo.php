@@ -85,7 +85,7 @@ class Admin_Stooksaldo extends Admin_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function geef_items( string $search, string $order, string $orderby ) : array {
+	protected function get_items( string $search, string $order, string $orderby ) : array {
 		$stokers = [];
 		foreach ( new Stokers() as $stoker ) {
 			if ( ! empty( $search ) && false === stripos( $stoker->display_name . $stoker->user_email, $search ) ) {

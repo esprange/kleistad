@@ -39,7 +39,7 @@ class Public_Betaling extends ShortcodeForm {
 		}
 		$order           = new Order( intval( $param['order'] ) );
 		$artikelregister = new Artikelregister();
-		$artikel         = $artikelregister->geef_object( $order->referentie );
+		$artikel         = $artikelregister->get_object( $order->referentie );
 		if ( is_null( $artikel ) || $param['hsh'] !== $artikel->controle() ) {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
@@ -52,7 +52,7 @@ class Public_Betaling extends ShortcodeForm {
 			'openstaand'    => $order->te_betalen(),
 			'reeds_betaald' => $order->betaald,
 			'orderregels'   => $order->orderregels,
-			'betreft'       => $artikelregister->geef_naam( $order->referentie ),
+			'betreft'       => $artikelregister->get_naam( $order->referentie ),
 			'factuur'       => $order->factuurnummer(),
 			'annuleerbaar'  => $artikel::DEFINITIE['annuleerbaar'], // Annuleerbaar door klant.
 		];
@@ -79,7 +79,7 @@ class Public_Betaling extends ShortcodeForm {
 			return $this->melding( new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' ) );
 		}
 		$artikelregister       = new Artikelregister();
-		$this->data['artikel'] = $artikelregister->geef_object( $this->data['order']->referentie );
+		$this->data['artikel'] = $artikelregister->get_object( $this->data['order']->referentie );
 		if ( is_object( $this->data['artikel'] ) ) {
 			$beschikbaar = '';
 			if ( property_exists( $this->data['artikel'], 'actie' ) ) {
@@ -122,7 +122,7 @@ class Public_Betaling extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function annuleren() : array {
-		$order = new Order( $this->data['artikel']->geef_referentie() );
+		$order = new Order( $this->data['artikel']->get_referentie() );
 		if ( $order->is_annuleerbaar() && $order->actie->annuleer( 0.0, 'Geannuleerd door klant' ) ) {
 			return [
 				'status'  => 'De order is geannuleerd en een bevestiging is verstuurd',

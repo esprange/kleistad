@@ -35,12 +35,12 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 				->will( $this->returnValue( $artikel->code ) );
 
 		/**
-		 * Een stub voor de geef_factuurregels functie welke een testartikel aanlegt tegen het opgegeven bedrag.
+		 * Een stub voor de get_factuurregels functie welke een testartikel aanlegt tegen het opgegeven bedrag.
 		 */
 		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( 'Testartikel', 1, $bedrag ) );
 		$artikel->expects( $this->any() )
-				->method( 'geef_factuurregels' )
+				->method( 'get_factuurregels' )
 				->will( $this->returnValue( $orderregels ) );
 
 		/**
@@ -106,9 +106,9 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 	/**
 	 * Test artikelnaam function
 	 */
-	public function test_geef_artikelnaam() {
+	public function test_get_artikelnaam() {
 		$artikel = $this->maak_artikel( 10 );
-		$this->assertEmpty( $artikel->geef_artikelnaam(), 'geef_artikelnaam incorrect' );
+		$this->assertEmpty( $artikel->get_artikelnaam(), 'get_artikelnaam incorrect' );
 	}
 
 

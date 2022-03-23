@@ -66,7 +66,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 			for ( $i = 0; $i < 3; $i ++ ) {
 				$inschrijvingen[ $i ] = new Inschrijving( $cursus->id, $cursist_ids[ $i ] );
 				$inschrijvingen[ $i ]->actie->aanvraag( 'ideal' );
-				$order = new Order( $inschrijvingen[ $i ]->geef_referentie() );
+				$order = new Order( $inschrijvingen[ $i ]->get_referentie() );
 				$inschrijvingen[ $i ]->betaling->verwerk( $order, 25, true, 'ideal' );
 			}
 		}
@@ -165,7 +165,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving = $this->maak_inschrijving( false );
 		$inschrijving->actie->aanvraag( 'ideal' );
 		$inschrijving->save();
-		$order = new Order( $inschrijving->geef_referentie() );
+		$order = new Order( $inschrijving->get_referentie() );
 		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
 		$_POST  = $this->input;
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'inschrijven' );
@@ -231,7 +231,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Na betaling moet er ingedeeld worden. Dan kan er niet opnieuw indelen na wachten uitgevoerd worden.
 		 */
-		$order = new Order( $inschrijving->geef_referentie() );
+		$order = new Order( $inschrijving->get_referentie() );
 		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
 		$_POST  = $this->input;
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'indelen_na_wachten' );

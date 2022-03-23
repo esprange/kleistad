@@ -89,7 +89,7 @@ class Admin_Ovens extends Admin_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function geef_items( string $search, string $order, string $orderby ) : array {
+	protected function get_items( string $search, string $order, string $orderby ) : array {
 		global $wpdb;
 		$where = ! empty( $search ) ? "WHERE naam='$search'" : '';
 		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}kleistad_ovens $where ORDER BY %s $order", $orderby ), ARRAY_A ); // phpcs:ignore

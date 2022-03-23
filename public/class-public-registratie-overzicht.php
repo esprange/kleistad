@@ -175,7 +175,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 				$abonnee->pcode,
 				$abonnee->plaats,
 				$abonnee->telnr,
-				$abonnee->abonnement->geef_statustekst( false ),
+				$abonnee->abonnement->get_statustekst( false ),
 				date( 'd-m-Y', $abonnee->abonnement->datum ),
 				date( 'd-m-Y', $abonnee->abonnement->start_datum ),
 				$abonnee->abonnement->pauze_datum ? date( 'd-m-Y', $abonnee->abonnement->pauze_datum ) : '',

@@ -96,12 +96,12 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 * @return string
 	 */
 	public function doe_sepa_incasso() : string {
-		$bedrag = $this->geef_bedrag( "#{$this->abonnement->artikel_type}" );
+		$bedrag = $this->get_bedrag( "#{$this->abonnement->artikel_type}" );
 		if ( 0.0 < $bedrag ) {
 			try {
 				return $this->betalen->eenmalig(
 					$this->abonnement->klant_id,
-					$this->abonnement->geef_referentie(),
+					$this->abonnement->get_referentie(),
 					$bedrag,
 					"Kleistad abonnement {$this->abonnement->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
 				);
@@ -118,7 +118,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 * @param string $extra het extra element.
 	 * @return float Het maandbedrag van de extra.
 	 */
-	public function geef_bedrag_extra( string $extra ) : float {
+	public function get_bedrag_extra( string $extra ) : float {
 		foreach ( opties()['extra'] as $extra_optie ) {
 			if ( $extra === $extra_optie['naam'] ) {
 				return (float) $extra_optie['prijs'];
@@ -133,19 +133,19 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 * @param  string $type Welk bedrag gevraagd wordt, standaard het maandbedrag.
 	 * @return float Het maandbedrag.
 	 */
-	public function geef_bedrag( string $type = '' ) : float {
+	public function get_bedrag( string $type = '' ) : float {
 		$basis_bedrag  = (float) opties()[ "{$this->abonnement->soort}_abonnement" ];
 		$extras_bedrag = 0.0;
 		foreach ( $this->abonnement->extras as $extra ) {
-			$extras_bedrag += $this->geef_bedrag_extra( $extra );
+			$extras_bedrag += $this->get_bedrag_extra( $extra );
 		}
 
 		return match ( $type ) {
 			'#mandaat'      => 0.01,
 			'#start'        => Abonnement::START_MAANDEN * $basis_bedrag,
-			'#overbrugging' => $this->abonnement->geef_overbrugging_fractie() * $basis_bedrag,
+			'#overbrugging' => $this->abonnement->get_overbrugging_fractie() * $basis_bedrag,
 			'#regulier'     => $basis_bedrag + $extras_bedrag,
-			'#pauze'        => $this->abonnement->geef_pauze_fractie() * ( $basis_bedrag + $extras_bedrag ),
+			'#pauze'        => $this->abonnement->get_pauze_fractie() * ( $basis_bedrag + $extras_bedrag ),
 			default         => $basis_bedrag,
 		};
 	}
@@ -230,7 +230,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 			 */
 			$this->abonnement->factuur_maand = (int) date( 'Ym' );
 			$this->abonnement->save();
-			$order = new Order( $this->abonnement->geef_referentie() );
+			$order = new Order( $this->abonnement->get_referentie() );
 			$this->abonnement->verzend_email( '_start_ideal', $order->actie->bestel( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
 			return;
 		}

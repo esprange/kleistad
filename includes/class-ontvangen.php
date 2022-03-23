@@ -72,7 +72,7 @@ class Ontvangen {
 		$service         = new MollieClient();
 		$betaling        = $service->get_payment( (string) $request->get_param( 'id' ) );
 		$artikelregister = new Artikelregister();
-		$artikel         = $artikelregister->geef_object( $betaling->metadata->order_id );
+		$artikel         = $artikelregister->get_object( $betaling->metadata->order_id );
 		if ( is_null( $artikel ) ) {
 			fout( __CLASS__, 'onbekende betaling ' . $betaling->metadata->order_id );
 			return new WP_Error( 'onbekend', 'betaling niet herkend' );

@@ -50,7 +50,7 @@ class Admin_Abonnees_Handler extends  Admin_Handler {
 	 */
 	public function form_handler() {
 		try {
-			$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ? $this->update_abonnee() : $this->geef_abonnee();
+			$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'kleistad_abonnee' ) ? $this->update_abonnee() : $this->abonnee();
 		} catch ( Exception $e ) {
 			$this->notice = 'Er is iets fout gegaan : ' . $e->getMessage();
 			$item         = [];
@@ -174,7 +174,7 @@ class Admin_Abonnees_Handler extends  Admin_Handler {
 	 * @return array De abonnee gegevens.
 	 * @throws ApiException Moet op hoger nivo afgehandeld worden.
 	 */
-	private function geef_abonnee() : array {
+	private function abonnee() : array {
 		$abonnee_id  = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?: 0;
 		$this->actie = filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING );
 		$abonnement  = new Abonnement( $abonnee_id );

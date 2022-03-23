@@ -110,7 +110,7 @@ class Public_Verkoop extends Public_Bestelling {
 			$verkoop->bestelregel( $this->data['input']['omschrijving'][ $index ], $this->data['input']['aantal'][ $index ], $this->data['input']['prijs'][ $index ] );
 		}
 		$verkoop->save();
-		$order = new Order( $verkoop->geef_referentie() );
+		$order = new Order( $verkoop->get_referentie() );
 		$verkoop->verzend_email( '', $order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) ) );
 		return [
 			'content' => $this->goto_home(),

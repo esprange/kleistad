@@ -50,12 +50,12 @@ class Test_Order extends Kleistad_UnitTestCase {
 	 */
 	public function test_afboeken() {
 		$verkoop         = $this->maak_order();
-		$order1          = new Order( $verkoop->geef_referentie() );
+		$order1          = new Order( $verkoop->get_referentie() );
 		$order1->betaald = 4;
 		$order1->orderregels->toevoegen( new Orderregel( 'artikel', 1, 10 ) );
 		$order1->actie->afboeken();
 		$this->assertEquals( 10, $order1->betaald, 'afboeken originele order incorrect' );
-		$order2 = new Order( '@-' . $verkoop->geef_referentie() );
+		$order2 = new Order( '@-' . $verkoop->get_referentie() );
 		$this->assertEquals( 6, $order2->betaald, 'afboeken originele order incorrect' );
 	}
 
@@ -69,14 +69,14 @@ class Test_Order extends Kleistad_UnitTestCase {
 	public function test_bestel() {
 		$verkoop = $this->maak_order();
 
-		$order1 = new Order( $verkoop->geef_referentie() );
+		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->actie->bestel( 4.0, strtotime( 'tomorrow' ) );
 		$this->assertEquals( 4.0, $order1->betaald, 'betaald status incorrect' );
 		$this->assertEquals( 6.0, $order1->te_betalen(), 'te betalen status  incorrect' );
 
 		$verkoop->bestelregel( 'ander artikel', 1, 20.0 );
 		$verkoop->save();
-		$order2  = new Order( $verkoop->geef_referentie() );
+		$order2  = new Order( $verkoop->get_referentie() );
 		$factuur = $order2->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$this->assertEquals( 4.0, $order2->betaald, 'betaald status na hergebruik order incorrect' );
 		$this->assertStringContainsString( 'factuur', $factuur, 'factuur ontbreekt' );
@@ -93,7 +93,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 	public function test_annuleer() {
 		$verkoop = $this->maak_order();
 
-		$order1 = new Order( $verkoop->geef_referentie() );
+		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$factuur = $order1->actie->annuleer( 2.50, 'test' );
 		$order2  = new Order( $order1->credit_id );
@@ -111,7 +111,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 	public function test_korting() {
 		$verkoop = $this->maak_order();
 
-		$order1 = new Order( $verkoop->geef_referentie() );
+		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$factuur = $order1->actie->korting( 3.0 );
 		$this->assertEquals( 7.00, $order1->te_betalen(), 'te betalen bij korting incorrect' );
@@ -128,11 +128,11 @@ class Test_Order extends Kleistad_UnitTestCase {
 	public function test_wijzig() {
 		$verkoop = $this->maak_order();
 
-		$order1 = new Order( $verkoop->geef_referentie() );
+		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$verkoop->bestelregel( 'ander artikel', 1, 20.0 );
 		$verkoop->save();
-		$factuur = $order1->actie->wijzig( $verkoop->geef_referentie() );
+		$factuur = $order1->actie->wijzig( $verkoop->get_referentie() );
 		$this->assertEquals( 30.00, $order1->te_betalen(), 'te betalen bij wijzig incorrect' );
 		$this->assertStringContainsString( 'correctiefactuur', $factuur, 'correctie factuur ontbreekt' );
 	}
@@ -147,7 +147,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 	public function test_ontvang() {
 		$verkoop = $this->maak_order();
 
-		$order1 = new Order( $verkoop->geef_referentie() );
+		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$factuur = $order1->actie->ontvang( 6.0, 'test' );
 		$this->assertEquals( 4.00, $order1->te_betalen(), 'te betalen bij wijzig incorrect' );
@@ -194,7 +194,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop = new LosArtikel();
 		$verkoop->bestelregel( 'Artikel !', 1, 12.50 );
 		$verkoop->save();
-		$order = new Order( $verkoop->geef_referentie() );
+		$order = new Order( $verkoop->get_referentie() );
 		$order->actie->bestel( 0, strtotime( 'tomorrow' ) );
 		$order->verval_datum = strtotime( 'yesterday' );
 		$this->assertFalse( $order->is_afboekbaar(), 'is afboekbaar na vervallen incorrect' );

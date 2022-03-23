@@ -146,7 +146,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function geef_referentie() : string {
+	public function get_referentie() : string {
 		if ( str_contains( 'regulier,pauze,start', $this->artikel_type ) ) {
 			return "$this->code-$this->artikel_type-" . date( 'Ym' );
 		}
@@ -158,7 +158,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return float De fractie.
 	 */
-	public function geef_overbrugging_fractie() : float {
+	public function get_overbrugging_fractie() : float {
 		$overbrugging_datum = strtotime( '+1 day', $this->start_eind_datum );
 		$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / ( DAY_IN_SECONDS ) );
 		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't', $this->start_eind_datum ) ), 2 ) : 0.00;
@@ -169,7 +169,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return float De fractie.
 	 */
-	public function geef_pauze_fractie() : float {
+	public function get_pauze_fractie() : float {
 		$aantal_dagen = intval( date( 't' ) );
 		$maand_start  = strtotime( 'first day of this month 00:00' );
 		$maand_eind   = strtotime( 'last day of this month 00:00' );
@@ -191,8 +191,8 @@ class Abonnement extends Artikel {
 	 * @param  bool $uitgebreid Uitgebreide tekst of korte tekst.
 	 * @return string De status tekst.
 	 */
-	public function geef_statustekst( bool $uitgebreid ) : string {
-		return $uitgebreid ? $this->geef_status_uitgebreid() : $this->geef_status_kort();
+	public function get_statustekst( bool $uitgebreid ) : string {
+		return $uitgebreid ? $this->get_status_uitgebreid() : $this->get_status_kort();
 	}
 
 	/**
@@ -200,7 +200,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return Orderregels De regels.
 	 */
-	public function geef_factuurregels() : Orderregels {
+	public function get_factuurregels() : Orderregels {
 		$betaalinfo  = [
 			'start'        => [
 				'info'   => sprintf(
@@ -220,7 +220,7 @@ class Abonnement extends Artikel {
 					strftime( '%d-%m-%Y', strtotime( '+1 day', $this->start_eind_datum ) ),
 					strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) )
 				),
-				'aantal' => $this->geef_overbrugging_fractie(),
+				'aantal' => $this->get_overbrugging_fractie(),
 			],
 			'regulier'     => [
 				'info'   => sprintf(
@@ -238,16 +238,16 @@ class Abonnement extends Artikel {
 					$this->code,
 					strftime( '%B %Y', strtotime( 'today' ) )
 				),
-				'aantal' => $this->geef_pauze_fractie(),
+				'aantal' => $this->get_pauze_fractie(),
 			],
 		];
 		$orderregels = new Orderregels();
 		if ( isset( $betaalinfo[ $this->artikel_type ] ) ) {
 			$aantal = $betaalinfo[ $this->artikel_type ]['aantal'];
 			if ( $aantal ) {
-				$orderregels->toevoegen( new Orderregel( $betaalinfo[ $this->artikel_type ]['info'], $aantal, $this->betaling->geef_bedrag() ) );
+				$orderregels->toevoegen( new Orderregel( $betaalinfo[ $this->artikel_type ]['info'], $aantal, $this->betaling->get_bedrag() ) );
 				foreach ( $this->extras as $extra ) {
-					$orderregels->toevoegen( new Orderregel( "gebruik $extra", $aantal, $this->betaling->geef_bedrag_extra( $extra ) ) );
+					$orderregels->toevoegen( new Orderregel( "gebruik $extra", $aantal, $this->betaling->get_bedrag_extra( $extra ) ) );
 				}
 			}
 		}
@@ -283,10 +283,10 @@ class Abonnement extends Artikel {
 					'abonnement_code'         => $this->code,
 					'abonnement_opmerking'    => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking ",
 					'abonnement_wijziging'    => $this->bericht,
-					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->geef_extras_tekst() : '',
-					'abonnement_startgeld'    => number_format_i18n( $this->betaling->geef_bedrag( '#start' ), 2 ),
-					'abonnement_maandgeld'    => number_format_i18n( $this->betaling->geef_bedrag( '#regulier' ), 2 ),
-					'abonnement_overbrugging' => number_format_i18n( $this->betaling->geef_bedrag( '#overbrugging' ), 2 ),
+					'abonnement_extras'       => count( $this->extras ) ? 'Je hebt de volgende extras gekozen: ' . $this->get_extras_tekst() : '',
+					'abonnement_startgeld'    => number_format_i18n( $this->betaling->get_bedrag( '#start' ), 2 ),
+					'abonnement_maandgeld'    => number_format_i18n( $this->betaling->get_bedrag( '#regulier' ), 2 ),
+					'abonnement_overbrugging' => number_format_i18n( $this->betaling->get_bedrag( '#overbrugging' ), 2 ),
 					'abonnement_link'         => $this->maak_betaal_link(),
 				],
 			]
@@ -296,10 +296,10 @@ class Abonnement extends Artikel {
 	/**
 	 * Maak een tekst met de extras inclusief vermelding van de prijs per maand.
 	 */
-	private function geef_extras_tekst() : string {
+	private function get_extras_tekst() : string {
 		$lijst = [];
 		foreach ( $this->extras as $extra ) {
-			$lijst[] = $extra . ' ( € ' . number_format_i18n( $this->betaling->geef_bedrag_extra( $extra ), 2 ) . ' p.m.)';
+			$lijst[] = $extra . ' ( € ' . number_format_i18n( $this->betaling->get_bedrag_extra( $extra ), 2 ) . ' p.m.)';
 		}
 		return implode( ', ', $lijst );
 	}
@@ -309,7 +309,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return string
 	 */
-	private function geef_status_uitgebreid() : string {
+	private function get_status_uitgebreid() : string {
 		$vandaag = strtotime( 'today' );
 		if ( $this->is_geannuleerd() ) {
 			return 'gestopt sinds ' . strftime( '%x', $this->eind_datum );
@@ -335,7 +335,7 @@ class Abonnement extends Artikel {
 	 *
 	 * @return string
 	 */
-	private function geef_status_kort() : string {
+	private function get_status_kort() : string {
 		$vandaag = strtotime( 'today' );
 		if ( $this->is_geannuleerd() ) {
 			return 'gestopt';

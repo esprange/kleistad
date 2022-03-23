@@ -172,7 +172,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function geef_artikelnaam() : string {
+	public function get_artikelnaam() : string {
 		return $this->cursus->naam;
 	}
 
@@ -203,7 +203,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function geef_referentie() : string {
+	public function get_referentie() : string {
 		return $this->code;
 	}
 
@@ -303,7 +303,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string De status tekst.
 	 */
-	public function geef_statustekst() : string {
+	public function get_statustekst() : string {
 		return $this->geannuleerd ? 'geannuleerd' : ( ( $this->ingedeeld ? 'ingedeeld' : 'ingeschreven' ) );
 	}
 
@@ -312,7 +312,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return Orderregels De regels of één regel.
 	 */
-	public function geef_factuurregels(): Orderregels {
+	public function get_factuurregels(): Orderregels {
 		$orderregels = new Orderregels();
 		if ( 0 < $this->maatwerkkosten ) {
 			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->maatwerkkosten ) );
@@ -353,7 +353,7 @@ class Inschrijving extends Artikel {
 	 * @return float
 	 */
 	private function restantbedrag(): float {
-		$order = new Order( $this->geef_referentie() );
+		$order = new Order( $this->get_referentie() );
 		return ( $order->id ) ? $order->te_betalen() : 0.0;
 	}
 

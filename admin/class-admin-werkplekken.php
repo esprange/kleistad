@@ -95,7 +95,7 @@ class Admin_Werkplekken extends Admin_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function geef_items( string $search, string $order, string $orderby ) : array {
+	protected function get_items( string $search, string $order, string $orderby ) : array {
 		$werkplekconfigs = [];
 		$vandaag         = strtotime( $search ?: 'today' ); // Omdat search default leeg is, werkt dit wel.
 		foreach ( new WerkplekConfigs() as $werkplekconfig ) {

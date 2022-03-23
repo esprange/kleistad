@@ -138,7 +138,7 @@ class Profiel {
 			if ( $order->gesloten || $order->transactie_id ) {
 				continue;
 			}
-			$artikel = $artikelregister->geef_object( $order->referentie );
+			$artikel = $artikelregister->get_object( $order->referentie );
 			if ( is_null( $artikel ) ) {
 				continue;
 			}

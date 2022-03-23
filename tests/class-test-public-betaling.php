@@ -38,7 +38,7 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		];
 		$verkoop->bestelregel( 'testverkoop', 1, 10 );
 		$verkoop->save();
-		$order = new Order( $verkoop->geef_referentie() );
+		$order = new Order( $verkoop->get_referentie() );
 		$order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) );
 		$_GET   = [
 			'order' => $order->id,
@@ -50,7 +50,7 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		/**
 		 * Nu sluiten we de order. Dan moet er een foutmelding zijn.
 		 */
-		$order           = new Order( $verkoop->geef_referentie() );
+		$order           = new Order( $verkoop->get_referentie() );
 		$order->gesloten = true;
 		$order->save( 'test' );
 		$result = $this->public_display_actie( self::SHORTCODE, [] );
@@ -76,7 +76,7 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		];
 		$verkoop->bestelregel( 'testverkoop', 1, 10 );
 		$verkoop->save();
-		$order = new Order( $verkoop->geef_referentie() );
+		$order = new Order( $verkoop->get_referentie() );
 		$order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) );
 
 		/**

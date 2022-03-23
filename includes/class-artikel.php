@@ -62,21 +62,21 @@ abstract class Artikel {
 	 *
 	 * @return string De referentie.
 	 */
-	abstract public function geef_referentie(): string;
+	abstract public function get_referentie(): string;
 
 	/**
 	 * Bestelling
 	 *
 	 * @return Orderregels Een array van orderregels of maar één regel.
 	 */
-	abstract public function geef_factuurregels(): Orderregels;
+	abstract public function get_factuurregels(): Orderregels;
 
 	/**
 	 * Geef de naam van het artikel, kan nader ingevuld worden.
 	 *
 	 * @return string
 	 */
-	public function geef_artikelnaam(): string {
+	public function get_artikelnaam(): string {
 		return static::DEFINITIE['naam'];
 	}
 
@@ -107,7 +107,7 @@ abstract class Artikel {
 	 * @since  6.1.0
 	 */
 	public function controle() : string {
-		return hash( 'sha256', sprintf( KLEISTAD_CONTROLE, strtok( $this->geef_referentie(), '-' ) ) );
+		return hash( 'sha256', sprintf( KLEISTAD_CONTROLE, strtok( $this->get_referentie(), '-' ) ) );
 	}
 
 	/**
@@ -130,7 +130,7 @@ abstract class Artikel {
 	 * @return string De link.
 	 */
 	public function maak_betaal_link() : string {
-		$order = new Order( $this->geef_referentie() );
+		$order = new Order( $this->get_referentie() );
 		return $this->maak_link( [ 'order' => $order->id ], 'betaling' );
 	}
 

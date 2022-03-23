@@ -51,7 +51,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 
 		$this->assertIsString( $abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'ideal' ), 'abonnement start bank incorrect' );
 		$this->assertEquals( 0, $mailer->get_sent_count(), 'start ideal aantal email onjuist' );
-		$abonnement->betaling->verwerk( new Order( $abonnement->geef_referentie() ), 90, true, 'ideal', 'transactie' );
+		$abonnement->betaling->verwerk( new Order( $abonnement->get_referentie() ), 90, true, 'ideal', 'transactie' );
 		$this->assertEquals( 'Welkom bij Kleistad', $mailer->get_last_sent()->subject, 'start ideal email incorrect' );
 		$this->assertTrue( user_can( $abonnement->klant_id, LID ), 'abonnement rol incorrect' );
 	}
@@ -94,31 +94,31 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	/**
 	 * Test function geef_referentie
 	 */
-	public function test_geef_referentie() {
+	public function test_get_referentie() {
 		$abonnement = $this->maak_abonnement();
 
 		$abonnement->actie->starten( strtotime( 'today' ), 'beperkt', 'dit is een test', 'bank' );
 
-		$this->assertMatchesRegularExpression( '~A[0-9]+-start-20[0-9]{4}~', $abonnement->geef_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~A[0-9]+-start-20[0-9]{4}~', $abonnement->get_referentie(), 'referentie incorrect' );
 		$abonnement->artikel_type = 'regulier';
-		$this->assertMatchesRegularExpression( '~A[0-9]+-regulier-20[0-9]{4}~', $abonnement->geef_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~A[0-9]+-regulier-20[0-9]{4}~', $abonnement->get_referentie(), 'referentie incorrect' );
 	}
 
 	/**
-	 * Test function geef_overbrugging_fractie en geef_pauze_fractie
+	 * Test function get_overbrugging_fractie en get_pauze_fractie
 	 */
 	public function test_geef_fractie() {
 		$abonnement = $this->maak_abonnement();
 		$abonnement->actie->starten( strtotime( 'first day of this month 00:00' ), 'beperkt', 'dit is een test', 'bank' );
 
-		$this->assertTrue( 0.0 < $abonnement->geef_overbrugging_fractie(), 'overbrugging fractie incorrect' );
+		$this->assertTrue( 0.0 < $abonnement->get_overbrugging_fractie(), 'overbrugging fractie incorrect' );
 
 		$abonnement->pauze_datum    = strtotime( 'first day of this month 00:00' );
 		$abonnement->herstart_datum = strtotime( '+ 10 days 00:00', $abonnement->pauze_datum );
-		$this->assertTrue( 0.0 < $abonnement->geef_pauze_fractie(), 'pauze fractie incorrect' );
+		$this->assertTrue( 0.0 < $abonnement->get_pauze_fractie(), 'pauze fractie incorrect' );
 
 		$abonnement->herstart_datum = strtotime( 'first day of next month 00:00' );
-		$this->assertTrue( 0.0 === $abonnement->geef_pauze_fractie(), 'pauze fractie incorrect' );
+		$this->assertTrue( 0.0 === $abonnement->get_pauze_fractie(), 'pauze fractie incorrect' );
 	}
 
 	/**
@@ -295,7 +295,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
 		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
-		$order = new Order( $abonnement->geef_referentie() );
+		$order = new Order( $abonnement->get_referentie() );
 
 		$abonnee = new Abonnee( $abonnee_id );
 		$abonnee->abonnement->betaling->verwerk( $order, 10, true, 'bank' );
@@ -324,10 +324,10 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	/**
 	 * Test korte en lange statustekst
 	 */
-	public function test_geef_statustekst() {
+	public function test_get_statustekst() {
 		$abonnement = $this->maak_abonnement();
-		$this->assertEquals( 'actief', $abonnement->geef_statustekst( false ), 'Korte statustekst incorrect' );
-		$this->assertMatchesRegularExpression( '~actief sinds+~', $abonnement->geef_statustekst( true ), 'Lange statustekst incorrect' );
+		$this->assertEquals( 'actief', $abonnement->get_statustekst( false ), 'Korte statustekst incorrect' );
+		$this->assertMatchesRegularExpression( '~actief sinds+~', $abonnement->get_statustekst( true ), 'Lange statustekst incorrect' );
 	}
 
 	/**
@@ -339,7 +339,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$abonnee    = new Abonnee( $abonnement->klant_id );
 		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
 		$abonnement->actie->start_incasso();
-		$abonnement->betaling->verwerk( new Order( $abonnement->geef_referentie() ), 0.01, true, 'ideal', 'incasso' );
+		$abonnement->betaling->verwerk( new Order( $abonnement->get_referentie() ), 0.01, true, 'ideal', 'incasso' );
 		$this->assertEquals( 'Wijziging abonnement', $mailer->get_last_sent( $abonnee->user_email )->subject, 'start incasso email incorrect' );
 		$abonnement->actie->stop_incasso();
 		$this->assertEquals( 'Wijziging abonnement', $mailer->get_last_sent( $abonnee->user_email )->subject, 'start incasso email incorrect' );
@@ -360,13 +360,13 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$abonnement->save();
 
 		$abonnement->actie->start_incasso();
-		$order = new Order( $abonnement->geef_referentie() );
+		$order = new Order( $abonnement->get_referentie() );
 		$abonnement->betaling->verwerk( $order, 0.01, true, 'ideal', 'incasso' );
 
 		Abonnementen::doe_dagelijks(); // Voert actie->factureer uit en verstuurt email 1.
 		$abonnement               = new Abonnement( $abonnee->ID );
 		$abonnement->artikel_type = 'regulier';
-		$order                    = new Order( $abonnement->geef_referentie() );
+		$order                    = new Order( $abonnement->get_referentie() );
 		$abonnement->betaling->verwerk( $order, 0.01, true, 'directdebit', 'incasso' );
 		$this->assertEquals( 'Betaling abonnement per incasso', $mailer->get_last_sent()->subject, 'email reguliere incasso incorrect' );
 		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'email reguliere incasso factuur ontbreekt' );

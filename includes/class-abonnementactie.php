@@ -47,7 +47,7 @@ class AbonnementActie {
 		$this->log( 'gestart met automatisch betalen' );
 		$this->abonnement->save();
 		$this->abonnement->artikel_type = 'mandaat';
-		return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', 0.01, $this->abonnement->geef_referentie() );
+		return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! De wijziging is verwerkt en er wordt een email verzonden met bevestiging', 0.01, $this->abonnement->get_referentie() );
 	}
 
 	/**
@@ -128,9 +128,9 @@ class AbonnementActie {
 		$this->autoriseer( true );
 		$this->abonnement->save();
 		if ( 'ideal' === $betaalwijze ) {
-			return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag, $this->abonnement->geef_referentie() );
+			return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag, $this->abonnement->get_referentie() );
 		}
-		$order = new Order( $this->abonnement->geef_referentie() );
+		$order = new Order( $this->abonnement->get_referentie() );
 		$this->abonnement->verzend_email( '_start_bank', $order->actie->bestel( 0.0, $this->abonnement->start_datum ) );
 		return true;
 	}
@@ -203,7 +203,7 @@ class AbonnementActie {
 	 */
 	public function overbrugging() {
 		$this->abonnement->artikel_type = 'overbrugging';
-		$order                          = new Order( $this->abonnement->geef_referentie() );
+		$order                          = new Order( $this->abonnement->get_referentie() );
 		$this->abonnement->verzend_email( '_vervolg', $order->actie->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
 		$this->abonnement->overbrugging_email = true;
 		$this->abonnement->factuur_maand      = (int) date( 'Ym' );
@@ -228,7 +228,7 @@ class AbonnementActie {
 		// Als het abonnement in deze maand wordt gepauzeerd of herstart dan is er sprake van een gedeeltelijke .
 		$this->abonnement->artikel_type = ( ( $this->abonnement->herstart_datum > $deze_maand && $this->abonnement->herstart_datum < $volgende_maand ) ||
 			( $this->abonnement->pauze_datum >= $deze_maand && $this->abonnement->pauze_datum < $volgende_maand ) ) ? 'pauze' : 'regulier';
-		$order                          = new Order( $this->abonnement->geef_referentie() );
+		$order                          = new Order( $this->abonnement->get_referentie() );
 		try {
 			if ( $this->abonnement->betaling->incasso_actief() ) {
 				$order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ), '', $this->abonnement->betaling->doe_sepa_incasso(), false );

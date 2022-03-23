@@ -45,7 +45,7 @@ abstract class Admin_List_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	abstract protected function geef_items( string $search, string $order, string $orderby ) : array;
+	abstract protected function get_items( string $search, string $order, string $orderby ) : array;
 
 	/**
 	 * Prepareer de te tonen items
@@ -64,7 +64,7 @@ abstract class Admin_List_Table extends WP_List_Table {
 		$orderby     = in_array( $orderby_val, array_keys( $sortable ), true ) ? $orderby_val : $this->orderby_default;
 		$order_val   = filter_input( INPUT_GET, 'order' );
 		$order       = in_array( $order_val, [ 'asc', 'desc' ], true ) ? $order_val : 'asc';
-		$items       = $this->geef_items( $search, $order, $orderby );
+		$items       = $this->get_items( $search, $order, $orderby );
 		$this->items = array_slice( $items, $paged * $this->per_page, $this->per_page, true );
 		$total_items = count( $items );
 		$this->set_pagination_args(

@@ -52,9 +52,9 @@ class SaldoActie {
 		$this->saldo->artikel_type = 'saldo';
 		$this->saldo->save();
 		if ( 'ideal' === $betaalwijze ) {
-			return $this->saldo->betaling->doe_ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging', $bedrag, $this->saldo->geef_referentie() );
+			return $this->saldo->betaling->doe_ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging', $bedrag, $this->saldo->get_referentie() );
 		}
-		$order = new Order( $this->saldo->geef_referentie() );
+		$order = new Order( $this->saldo->get_referentie() );
 		$this->saldo->verzend_email( '_bank', $order->actie->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
 		return true;
 	}
@@ -63,7 +63,7 @@ class SaldoActie {
 	 * Annulering van de storting.
 	 */
 	public function afzeggen() {
-		$this->saldo->update_storting( $this->saldo->geef_referentie(), 'geannuleerd' );
+		$this->saldo->update_storting( $this->saldo->get_referentie(), 'geannuleerd' );
 		$this->saldo->save();
 	}
 

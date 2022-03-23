@@ -58,7 +58,7 @@ class Artikelregister  implements Countable, Iterator {
 	 * @param string|null $referentie De optionele artikel referentie.
 	 * @return string
 	 */
-	public function geef_naam( ?string $referentie = null ) : string {
+	public function get_naam( ?string $referentie = null ) : string {
 		if ( ( is_null( $referentie ) ) ) {
 			return $this->current()['naam'];
 		}
@@ -76,7 +76,7 @@ class Artikelregister  implements Countable, Iterator {
 	 * @param string $referentie De artikel referentie.
 	 * @return Artikel|null
 	 */
-	public function geef_object( string $referentie ) : ?Artikel {
+	public function get_object( string $referentie ) : ?Artikel {
 		foreach ( self::$register as $artikel ) {
 			if ( $referentie[0] === $artikel['prefix'] ) {
 				$parameters = explode( '-', substr( $referentie, 1 ) );

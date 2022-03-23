@@ -93,7 +93,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function geef_referentie() : string {
+	public function get_referentie() : string {
 		return $this->code;
 	}
 
@@ -149,7 +149,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return Orderregels
 	 */
-	public function geef_factuurregels() : Orderregels {
+	public function get_factuurregels() : Orderregels {
 		return $this->orderregels;
 	}
 

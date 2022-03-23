@@ -48,13 +48,13 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	/**
 	 * Test function geef_referentie
 	 */
-	public function test_geef_referentie() {
+	public function test_get_referentie() {
 		$saldo = $this->maak_saldo();
 		$saldo->actie->nieuw( 123.4, 'bank' );
-		$referentie1 = $saldo->geef_referentie();
+		$referentie1 = $saldo->get_referentie();
 		$this->assertMatchesRegularExpression( '~S\d+-\d{6}-\d+~', $referentie1, 'referentie incorrect' );
 		$saldo->actie->nieuw( 567.8, 'bank' );
-		$referentie2 = $saldo->geef_referentie();
+		$referentie2 = $saldo->get_referentie();
 		$this->assertNotEquals( $referentie1, $referentie2, 'referentie wijziging incorrect' );
 	}
 
@@ -68,7 +68,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$bedrag = 123.45;
 		$result = $saldo->actie->nieuw( $bedrag, 'bank' );
 		$this->assertTrue( $result, 'nieuw incorrect' );
-		$order = new Order( $saldo->geef_referentie() );
+		$order = new Order( $saldo->get_referentie() );
 
 		$saldo = new Saldo( $stoker->ID );
 		$saldo->betaling->verwerk( $order, $bedrag, true, 'bank' );
@@ -93,7 +93,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$result = $saldo->actie->nieuw( $bedrag, 'ideal' ); // Verzend geen email.
 		$this->assertTrue( false !== filter_var( $result, FILTER_VALIDATE_URL, [ 'options' => FILTER_FLAG_QUERY_REQUIRED ] ), 'ideal url incorrect' );
 		$this->assertEquals( 0, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
-		$order = new Order( $saldo->geef_referentie() ); // Nog geen order.
+		$order = new Order( $saldo->get_referentie() ); // Nog geen order.
 		$saldo->betaling->verwerk( $order, $bedrag, true, 'ideal' ); // Verzend email 1.
 
 		$saldo = new Saldo( $stoker->ID );
@@ -103,7 +103,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$this->assertEquals( 1, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 
 		$saldo->actie->nieuw( $bedrag, 'bank' ); // Verzend email 2.
-		$order = new Order( $saldo->geef_referentie() );
+		$order = new Order( $saldo->get_referentie() );
 		$saldo->betaling->verwerk( $order, $bedrag, true, 'ideal' ); // Verzend email 3.
 
 		$saldo = new Saldo( $stoker->ID );

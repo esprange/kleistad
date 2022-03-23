@@ -107,13 +107,13 @@ class Public_Dagdelenkaart extends Public_Bestelling {
 		$dagdelenkaart->nieuw( strtotime( $this->data['input']['start_datum'] ), $this->data['input']['opmerking'] );
 
 		if ( 'ideal' === $this->data['input']['betaal'] ) {
-			$ideal_uri = $dagdelenkaart->betaling->doe_ideal( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden', opties()['dagdelenkaart'], $dagdelenkaart->geef_referentie() );
+			$ideal_uri = $dagdelenkaart->betaling->doe_ideal( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden', opties()['dagdelenkaart'], $dagdelenkaart->get_referentie() );
 			if ( ! empty( $ideal_uri ) ) {
 				return [ 'redirect_uri' => $ideal_uri ];
 			}
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}
-		$order = new Order( $dagdelenkaart->geef_referentie() );
+		$order = new Order( $dagdelenkaart->get_referentie() );
 		if ( ! $dagdelenkaart->verzend_email( '_bank', $order->actie->bestel( 0.0, $dagdelenkaart->start_datum ) ) ) {
 			return [
 				'status' => $this->status( new WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' ) ),

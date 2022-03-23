@@ -41,7 +41,7 @@ class Orderrapportage {
 		$order_ids = $wpdb->get_results( "SELECT id FROM {$wpdb->prefix}kleistad_orders WHERE YEAR(datum) = $jaar $maand_selectie ORDER BY datum", ARRAY_A ); // phpcs:ignore
 		foreach ( $order_ids as $order_id ) {
 			$order                     = new Order( intval( $order_id['id'] ) );
-			$naam                      = $artikelregister->geef_naam( $order->referentie );
+			$naam                      = $artikelregister->get_naam( $order->referentie );
 			$factor                    = '@' !== $order->referentie[0] ? 1 : -1;
 			$omzet[ $naam ]['netto']  += $factor * $order->orderregels->netto();
 			$omzet[ $naam ]['btw']    += $factor * $order->orderregels->btw();

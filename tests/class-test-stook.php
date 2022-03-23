@@ -23,7 +23,7 @@ class Test_Stook extends Kleistad_UnitTestCase {
 		$hoofdstoker_id = $this->factory()->user->create();
 		wp_set_current_user( $hoofdstoker_id );
 		$stook = new Stook( $oven_id, strtotime( 'tomorrow' ) );
-		$this->assertEquals( Stook::RESERVEERBAAR, $stook->geef_statustekst(), 'status reserveerbaar onjuist' );
+		$this->assertEquals( Stook::RESERVEERBAAR, $stook->get_statustekst(), 'status reserveerbaar onjuist' );
 		$stook->save();
 		$this->assertTrue( $stook->is_gereserveerd(), 'is gereserveerd onjuist' );
 	}
@@ -65,20 +65,20 @@ class Test_Stook extends Kleistad_UnitTestCase {
 	/**
 	 * Test de geef statustekst functie
 	 */
-	public function test_geef_statustekst() {
+	public function test_get_statustekst() {
 		$oven           = new Oven();
 		$oven->naam     = 'test oven';
 		$oven_id        = $oven->save();
 		$hoofdstoker_id = $this->factory()->user->create();
 		wp_set_current_user( $hoofdstoker_id );
 		$stook1 = new Stook( $oven_id, strtotime( 'tomorrow' ) );
-		$this->assertEquals( Stook::RESERVEERBAAR, $stook1->geef_statustekst(), 'status reserveerbaar onjuist' );
+		$this->assertEquals( Stook::RESERVEERBAAR, $stook1->get_statustekst(), 'status reserveerbaar onjuist' );
 		$stook2 = new Stook( $oven_id, strtotime( '-1 week' ) );
-		$this->assertEquals( Stook::ONGEBRUIKT, $stook2->geef_statustekst(), 'status ongebruikt onjuist' );
+		$this->assertEquals( Stook::ONGEBRUIKT, $stook2->get_statustekst(), 'status ongebruikt onjuist' );
 		$stook2->save();
-		$this->assertEquals( Stook::WIJZIGBAAR, $stook2->geef_statustekst(), 'status wijzigbaar onjuist' );
+		$this->assertEquals( Stook::WIJZIGBAAR, $stook2->get_statustekst(), 'status wijzigbaar onjuist' );
 		$stook2->verwerkt = true;
-		$this->assertEquals( Stook::DEFINITIEF, $stook2->geef_statustekst(), 'status definitief onjuist' );
+		$this->assertEquals( Stook::DEFINITIEF, $stook2->get_statustekst(), 'status definitief onjuist' );
 	}
 
 }

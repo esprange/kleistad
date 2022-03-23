@@ -103,7 +103,7 @@ class WerkplekGebruik {
 	 *
 	 * @return array Het resultaat.
 	 */
-	public function geef_gebruik() : array {
+	public function get_gebruik() : array {
 		return $this->gebruik;
 	}
 
@@ -112,7 +112,7 @@ class WerkplekGebruik {
 	 *
 	 * @return array De meesters per dagdeel.
 	 */
-	public function geef_meesters() : array {
+	public function get_meesters() : array {
 		$meesters = [];
 		foreach ( $this->gebruik as $dagdeel => $activiteiten ) {
 			$meesters[ $dagdeel ] = get_user_by( 'id', $activiteiten[ self::MEESTER ][0] );

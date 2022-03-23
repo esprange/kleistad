@@ -144,7 +144,7 @@ class Saldo extends Artikel {
 	 *
 	 * @return string
 	 */
-	public function geef_referentie() : string {
+	public function get_referentie() : string {
 		return $this->code;
 	}
 
@@ -207,7 +207,7 @@ class Saldo extends Artikel {
 	 *
 	 * @return string De status tekst.
 	 */
-	public function geef_statustekst() : string {
+	public function get_statustekst() : string {
 		return 0 < $this->bedrag ? 'saldo' : '';
 	}
 
@@ -223,7 +223,7 @@ class Saldo extends Artikel {
 	 *
 	 * @return Orderregels
 	 */
-	public function geef_factuurregels() : Orderregels {
+	public function get_factuurregels() : Orderregels {
 		$orderregels = new Orderregels();
 		$orderregels->toevoegen( new Orderregel( 'stooksaldo', 1, $this->prijs ) );
 		return $orderregels;

@@ -40,7 +40,7 @@ class Public_Cursus_Extra extends ShortcodeForm {
 
 		sscanf( $param['code'], 'C%d-%d', $cursus_id, $cursist_id );
 		$cursist      = new Cursist( $cursist_id );
-		$inschrijving = $cursist->geef_inschrijving( $cursus_id );
+		$inschrijving = $cursist->get_inschrijving( $cursus_id );
 
 		if ( is_object( $inschrijving ) && $param['hsh'] === $inschrijving->controle() && 1 < $inschrijving->aantal ) {
 			if ( $inschrijving->geannuleerd ) {
