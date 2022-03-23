@@ -38,7 +38,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	protected function prepare_debiteur() : string {
 		$blokkade                       = new Blokkade();
 		$this->data['huidige_blokkade'] = $blokkade->get();
-		$this->data['debiteur']         = $this->debiteur( $this->data['id'] );
+		$this->data['debiteur']         = $this->get_debiteur( $this->data['id'] );
 		return $this->content();
 	}
 
@@ -49,7 +49,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 */
 	protected function prepare_zoek() : string {
 		$zoek       = ( $this->data['id'] ?? '' ) ?: wp_generate_uuid4(); // Als er nog geen zoek string is, zoek dan naar iets wat niet gevonden kan worden.
-		$this->data = array_merge( $this->data, $this->debiteuren( $zoek ) );
+		$this->data = array_merge( $this->data, $this->get_debiteuren( $zoek ) );
 		return $this->content();
 	}
 
@@ -59,7 +59,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
-		$this->data = array_merge( $this->data, $this->debiteuren() );
+		$this->data = array_merge( $this->data, $this->get_debiteuren() );
 		return $this->content();
 	}
 
@@ -253,7 +253,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @param int $order_id Het order id.
 	 * @return array De informatie.
 	 */
-	private function debiteur( int $order_id ) : array {
+	private function get_debiteur( int $order_id ) : array {
 		$order           = new Order( $order_id );
 		$artikelregister = new Artikelregister();
 		return [
@@ -284,7 +284,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @param string $zoek De eventuele zoek term.
 	 * @return array De info.
 	 */
-	private function debiteuren( string $zoek = '' ) : array {
+	private function get_debiteuren( string $zoek = '' ) : array {
 		$data            = [
 			'openstaand'   => 0,
 			'terugstorten' => false,
