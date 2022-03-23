@@ -164,7 +164,7 @@ class Stoken implements Countable, Iterator {
 			$wpdb->query( 'START TRANSACTION' );
 			if ( Stook::ONDERHOUD !== $stook->soort ) {
 				foreach ( $stook->stookdelen as $stookdeel ) {
-					$stookdeel->prijs = $oven->stookkosten( $stookdeel->medestoker, $stookdeel->percentage, $stook->temperatuur );
+					$stookdeel->prijs = $oven->get_stookkosten( $stookdeel->medestoker, $stookdeel->percentage, $stook->temperatuur );
 					$medestoker       = get_userdata( $stookdeel->medestoker );
 					$saldo            = new Saldo( $stookdeel->medestoker );
 					$saldo->bedrag    = $saldo->bedrag - $stookdeel->prijs;
@@ -232,7 +232,7 @@ class Stoken implements Countable, Iterator {
 					'parameters' => [
 						'voornaam'         => $stoker->first_name,
 						'achternaam'       => $stoker->last_name,
-						'bedrag'           => number_format_i18n( $oven->stookkosten( $stook->hoofdstoker_id, 100, $stook->temperatuur ), 2 ),
+						'bedrag'           => number_format_i18n( $oven->get_stookkosten( $stook->hoofdstoker_id, 100, $stook->temperatuur ), 2 ),
 						'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . opties()['termijn'] . ' day', $stook->datum ) ), // datum verwerking.
 						'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . ( opties()['termijn'] - 1 ) . ' day', $stook->datum ) ), // datum deadline.
 						'verdeling'        => $tabel,

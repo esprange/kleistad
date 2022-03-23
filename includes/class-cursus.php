@@ -306,7 +306,7 @@ class Cursus {
 	/**
 	 * Registreer dat de cursus nu vol is. Aanmeldingen die niet ingedeeld / geannuleerd zijn gaan naar de wachtlijst.
 	 */
-	public function registreer_vol() {
+	public function set_vol() {
 		$this->ruimte_datum = 0;
 		$this->vol          = true;
 		$this->save();
@@ -318,7 +318,7 @@ class Cursus {
 	/**
 	 * Registreer dat er weer ruimte beschikbaar is gekomen.
 	 */
-	public function registreer_ruimte() {
+	public function set_ruimte() {
 		$this->ruimte_datum = time();
 		$this->vol          = false;
 		$this->save();

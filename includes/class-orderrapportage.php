@@ -43,8 +43,8 @@ class Orderrapportage {
 			$order                     = new Order( intval( $order_id['id'] ) );
 			$naam                      = $artikelregister->get_naam( $order->referentie );
 			$factor                    = '@' !== $order->referentie[0] ? 1 : -1;
-			$omzet[ $naam ]['netto']  += $factor * $order->orderregels->netto();
-			$omzet[ $naam ]['btw']    += $factor * $order->orderregels->btw();
+			$omzet[ $naam ]['netto']  += $factor * $order->orderregels->get_netto();
+			$omzet[ $naam ]['btw']    += $factor * $order->orderregels->get_btw();
 			$omzet[ $naam ]['details'] = true;
 		}
 		return $omzet;
@@ -67,8 +67,8 @@ class Orderrapportage {
 			$order     = new Order( intval( $order_id['id'] ) );
 			$details[] = [
 				'datum' => $order->datum,
-				'netto' => $order->orderregels->netto(),
-				'btw'   => $order->orderregels->btw(),
+				'netto' => $order->orderregels->get_netto(),
+				'btw'   => $order->orderregels->get_btw(),
 				'klant' => $order->klant['naam'],
 				'code'  => $order->referentie,
 			];

@@ -86,8 +86,8 @@ class Orderregels implements Countable, Iterator {
 	 *
 	 * @return float
 	 */
-	public function bruto() : float {
-		return round( $this->netto() + $this->btw(), 2 );
+	public function get_bruto() : float {
+		return round( $this->get_netto() + $this->get_btw(), 2 );
 	}
 
 	/**
@@ -95,7 +95,7 @@ class Orderregels implements Countable, Iterator {
 	 *
 	 * @return float
 	 */
-	public function netto() : float {
+	public function get_netto() : float {
 		$netto = 0.0;
 		foreach ( $this->regels as $regel ) {
 			$netto = round( $netto + $regel->prijs * $regel->aantal, 2 );
@@ -108,7 +108,7 @@ class Orderregels implements Countable, Iterator {
 	 *
 	 * @return float
 	 */
-	public function btw() : float {
+	public function get_btw() : float {
 		$btw = 0.0;
 		foreach ( $this->regels as $regel ) {
 			$btw = round( $btw + $regel->btw * $regel->aantal, 2 );
@@ -121,7 +121,7 @@ class Orderregels implements Countable, Iterator {
 	 *
 	 * @return string De tekst.
 	 */
-	public function export() : string {
+	public function get_json_export() : string {
 		$regels = [];
 		foreach ( $this->regels as $regel ) {
 			$regels[] = [

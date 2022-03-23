@@ -92,7 +92,7 @@ final class OrderActie {
 		}
 		$this->order->credit_id = $credit_order->save( 'Order en credit factuur aangemaakt' );
 		$this->order->betaald   = 0;
-		$this->order->save( sprintf( 'Geannuleerd, credit factuur %s aangemaakt', $credit_order->factuurnummer() ) );
+		$this->order->save( sprintf( 'Geannuleerd, credit factuur %s aangemaakt', $credit_order->get_factuurnummer() ) );
 
 		if ( property_exists( $artikel, 'actie' ) && method_exists( $artikel->actie, 'afzeggen' ) ) {
 			$artikel->actie->afzeggen();
@@ -141,7 +141,7 @@ final class OrderActie {
 			return '';
 		}
 		$this->order->gesloten = false;
-		if ( $this->order->is_geblokkeerd() && $this->order->te_betalen() !== $originele_order->te_betalen() ) {
+		if ( $this->order->is_geblokkeerd() && $this->order->get_te_betalen() !== $originele_order->get_te_betalen() ) {
 			return false;
 		}
 		$this->order->save( 'Order gewijzigd' );
@@ -170,7 +170,7 @@ final class OrderActie {
 	 * Afboeken van een order.
 	 */
 	public function afboeken() {
-		$te_betalen        = $this->order->te_betalen();
+		$te_betalen        = $this->order->get_te_betalen();
 		$dd_order          = new Order( '@-' . $this->order->referentie );
 		$dd_order->betaald = $te_betalen;
 		$dd_order->klant   = $this->order->klant;

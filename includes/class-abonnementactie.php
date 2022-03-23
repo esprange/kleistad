@@ -125,7 +125,7 @@ class AbonnementActie {
 		$this->abonnement->overbrugging_email = false;
 		$this->abonnement->extras             = [];
 		$this->abonnement->factuur_maand      = 'ideal' === $betaalwijze ? 0 : (int) date( 'Ym' );
-		$this->autoriseer( true );
+		$this->set_autorisatie( true );
 		$this->abonnement->save();
 		if ( 'ideal' === $betaalwijze ) {
 			return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag, $this->abonnement->get_referentie() );
@@ -247,7 +247,7 @@ class AbonnementActie {
 	 *
 	 * @param bool $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
 	 */
-	public function autoriseer( bool $valid ) {
+	public function set_autorisatie( bool $valid ) {
 		$abonnee = new WP_User( $this->abonnement->klant_id );
 		if ( is_super_admin( $this->abonnement->klant_id ) ) {
 			// Voorkom dat de admin enige rol kwijtraakt.
@@ -259,7 +259,6 @@ class AbonnementActie {
 		}
 		$abonnee->remove_role( LID );
 	}
-
 
 	/**
 	 * Helper functie, om een handeling toe te voegen

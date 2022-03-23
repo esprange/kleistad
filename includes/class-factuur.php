@@ -148,9 +148,9 @@ class Factuur extends FPDF {
 		$this->Ln( $hoogte * 2 );
 		$this->Cell( $breedte['volledig'], 0, '', 'T', 1 );
 		$this->Cell( $breedte['samenvatting'], $hoogte, 'Totaal', 0, 0, 'R' );
-		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $orderregels->bruto() ), 0, 1, 'R' );
+		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $orderregels->get_bruto() ), 0, 1, 'R' );
 		$this->Cell( $breedte['samenvatting'], $hoogte, 'Inclusief BTW 21%', 0, 0, 'R' );
-		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $orderregels->btw() ), 'B', 1, 'R' );
+		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $orderregels->get_btw() ), 'B', 1, 'R' );
 		$this->Cell( $breedte['samenvatting'], $hoogte, 'Reeds betaald ', 0, 0, 'R' );
 		$this->Cell( $breedte['prijs'], $hoogte, $this->euro( $betaald ), 'B', 1, 'R' );
 		$this->setFont( 'Arial', 'B' );
@@ -188,7 +188,7 @@ class Factuur extends FPDF {
 	 * @return string Pad naar de factuur.
 	 */
 	public function run( Order $order, string $type ) : string {
-		$factuurnr = $order->factuurnummer();
+		$factuurnr = $order->get_factuurnummer();
 		$filenaam  = 'local' === wp_get_environment_type() ?
 			sprintf( '%s/%s-%s', sys_get_temp_dir(), "{$type}factuur", $factuurnr ) :
 			sprintf( '%s/facturen/%s-%s', wp_get_upload_dir()['basedir'], "{$type}factuur", $factuurnr );
@@ -207,7 +207,7 @@ class Factuur extends FPDF {
 		$this->start( strtoupper( $type ) . ' FACTUUR' );
 		$this->klant( $order->klant );
 		$this->info( $factuurnr, $order->datum, $order->referentie );
-		$this->order( $order->orderregels, $order->betaald, $order->te_betalen() );
+		$this->order( $order->orderregels, $order->betaald, $order->get_te_betalen() );
 		$this->opmerking( $order->opmerking );
 		$this->Output( 'F', $file );
 		return $file;

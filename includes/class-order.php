@@ -203,7 +203,7 @@ class Order {
 	 * Bepaal of de order afboekbaar is, na de Wettelijke betaaltermijn 30 dagen.
 	 */
 	public function is_afboekbaar() : bool {
-		return 0 < $this->te_betalen() && strtotime( 'today' ) > strtotime( '+30 days', $this->verval_datum );
+		return 0 < $this->get_te_betalen() && strtotime( 'today' ) > strtotime( '+30 days', $this->verval_datum );
 	}
 
 	/**
@@ -222,7 +222,7 @@ class Order {
 	 *
 	 * @return string Het factuur nummer.
 	 */
-	public function factuurnummer() : string {
+	public function get_factuurnummer() : string {
 		return sprintf( '%s-%06d', date( 'Y', $this->datum ), $this->factuurnr );
 	}
 
@@ -231,15 +231,15 @@ class Order {
 	 *
 	 * @return float Het te betalen bedrag.
 	 */
-	public function te_betalen() : float {
+	public function get_te_betalen() : float {
 		if ( $this->gesloten ) {
 			return 0;
 		}
 		if ( $this->is_credit() ) {
 			$origineel_order = new Order( $this->origineel_id );
-			return round( $origineel_order->orderregels->bruto() + $this->orderregels->bruto() - $this->betaald, 2 );
+			return round( $origineel_order->orderregels->get_bruto() + $this->orderregels->get_bruto() - $this->betaald, 2 );
 		}
-		return round( $this->orderregels->bruto() - $this->betaald, 2 );
+		return round( $this->orderregels->get_bruto() - $this->betaald, 2 );
 	}
 
 	/**
@@ -256,8 +256,8 @@ class Order {
 		$historie               = $this->historie;
 		$historie[]             = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
 		$this->data['historie'] = wp_json_encode( $historie );
-		$this->gesloten         = $this->credit_id || ( 0.01 >= abs( $this->te_betalen() ) );
-		$this->regels           = $this->orderregels->export();
+		$this->gesloten         = $this->credit_id || ( 0.01 >= abs( $this->get_te_betalen() ) );
+		$this->regels           = $this->orderregels->get_json_export();
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
 		if ( ! $this->id ) {
 			$this->factuurnr = 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );
@@ -269,11 +269,11 @@ class Order {
 		}
 		$wpdb->query( 'COMMIT' );
 
-		if ( $this->transactie_id && -0.01 > $this->te_betalen() ) {
+		if ( $this->transactie_id && -0.01 > $this->get_te_betalen() ) {
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
 			try {
 				$betalen = new Betalen();
-				$betalen->terugstorting( $this->transactie_id, $this->referentie, - $this->te_betalen(), 'Kleistad: zie factuur ' . $this->factuurnummer() );
+				$betalen->terugstorting( $this->transactie_id, $this->referentie, - $this->get_te_betalen(), 'Kleistad: zie factuur ' . $this->get_factuurnummer() );
 			} catch ( ApiException $e ) {
 				fout( __CLASS__, 'terugstorting niet mogelijk : ' . $e->getMessage() );
 			}

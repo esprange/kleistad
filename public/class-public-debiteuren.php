@@ -101,7 +101,7 @@ class Public_Debiteuren extends ShortcodeForm {
 		}
 		$this->data['order'] = new Order( $this->data['input']['id'] );
 		if ( 'korting' === $this->form_actie ) {
-			if ( $this->data['order']->orderregels->bruto() < $this->data['input']['korting'] ) {
+			if ( $this->data['order']->orderregels->get_bruto() < $this->data['input']['korting'] ) {
 				return $this->melding( new WP_Error( 'fout', 'De korting kan niet groter zijn dan het totale bedrag' ) );
 			}
 		}
@@ -261,9 +261,9 @@ class Public_Debiteuren extends ShortcodeForm {
 			'naam'          => $order->klant['naam'],
 			'betreft'       => $artikelregister->get_naam( $order->referentie ),
 			'referentie'    => $order->referentie,
-			'factuur'       => $order->factuurnummer(),
+			'factuur'       => $order->get_factuurnummer(),
 			'betaald'       => $order->betaald,
-			'openstaand'    => $order->te_betalen(),
+			'openstaand'    => $order->get_te_betalen(),
 			'sinds'         => $order->datum,
 			'historie'      => $order->historie,
 			'gesloten'      => $order->gesloten,
@@ -299,7 +299,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			) {
 				continue;
 			}
-			$openstaand           = $order->te_betalen();
+			$openstaand           = $order->get_te_betalen();
 			$data['debiteuren'][] = [
 				'id'           => $order->id,
 				'naam'         => $order->klant['naam'],

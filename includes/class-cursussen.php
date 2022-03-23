@@ -116,12 +116,12 @@ class Cursussen implements Countable, Iterator {
 				/**
 				 * Er is geen ruimte. Dus doe de acties die bij een volle cursus horen.
 				 */
-				$cursus->registreer_vol();
+				$cursus->set_vol();
 			} elseif ( $cursus->vol ) {
 				/**
 				 * Er is nu ruimte beschikbaar gekomen.
 				 */
-				$cursus->registreer_ruimte();
+				$cursus->set_ruimte();
 			}
 		}
 	}

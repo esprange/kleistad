@@ -165,7 +165,7 @@ class InschrijvingActie {
 			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->get_bedrag(), $this->inschrijving->get_referentie() );
 		}
 		$order = new Order( $this->inschrijving->get_referentie() );
-		$this->inschrijving->verzend_email( 'inschrijving', $order->actie->bestel( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant() ) );
+		$this->inschrijving->verzend_email( 'inschrijving', $order->actie->bestel( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding() ) );
 		return true;
 	}
 
@@ -222,7 +222,7 @@ class InschrijvingActie {
 	 *
 	 * @return string Lege string als inschrijving mogelijk is, anders de foutboodschap.
 	 */
-	public function beschikbaarcontrole() : string {
+	public function get_beschikbaarheid() : string {
 		if ( ! $this->inschrijving->ingedeeld && $this->inschrijving->cursus->vol ) {
 			$this->inschrijving->wacht_datum = $this->inschrijving->wacht_datum ?: time();
 			$this->inschrijving->save();

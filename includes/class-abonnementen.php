@@ -114,7 +114,7 @@ class Abonnementen implements Countable, Iterator {
 			}
 			if ( $abonnement->is_geannuleerd() ) {
 				// Abonnementen waarvan de einddatum verstreken is worden gestopt.
-				$abonnement->actie->autoriseer( false );
+				$abonnement->actie->set_autorisatie( false );
 				$abonnement->save();
 				continue;
 			}

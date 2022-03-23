@@ -181,7 +181,7 @@ class Inschrijving extends Artikel {
 	 *
 	 * @return string De melding.
 	 */
-	public function heeft_restant() : string {
+	public function get_restant_melding() : string {
 		if ( ! $this->cursus->is_binnenkort() && 0 < $this->cursus->inschrijfkosten ) {
 			return self::OPM_INSCHRIJVING;
 		}
@@ -243,7 +243,7 @@ class Inschrijving extends Artikel {
 					'cursus_eind_tijd'       => strftime( '%H:%M', $this->cursus->eind_tijd ),
 					'cursus_technieken'      => implode( ', ', $this->technieken ),
 					'cursus_code'            => $this->code,
-					'cursus_restant_melding' => $this->heeft_restant(),
+					'cursus_restant_melding' => $this->get_restant_melding(),
 					'cursus_extra_cursisten' => $this->heeft_extra_cursisten(),
 					'cursus_hoofd_cursist'   => $this->hoofd_cursist_id ? get_user_by( 'id', $this->hoofd_cursist_id )->display_name : '',
 					'cursus_bedrag'          => number_format_i18n( $this->aantal * $this->cursus->get_bedrag(), 2 ),
@@ -354,7 +354,7 @@ class Inschrijving extends Artikel {
 	 */
 	private function restantbedrag(): float {
 		$order = new Order( $this->get_referentie() );
-		return ( $order->id ) ? $order->te_betalen() : 0.0;
+		return ( $order->id ) ? $order->get_te_betalen() : 0.0;
 	}
 
 }

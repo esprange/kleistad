@@ -58,7 +58,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 			sprintf(
 				'Kleistad cursus %s %skosten voor %s',
 				$this->inschrijving->code,
-				$this->inschrijving->heeft_restant() ? 'inschrijf' : 'cursus',
+				$this->inschrijving->get_restant_melding() ? 'inschrijf' : 'cursus',
 				1 === $this->inschrijving->aantal ? '1 cursist' : $this->inschrijving->aantal . ' cursisten'
 			),
 			$bericht,
@@ -103,14 +103,14 @@ class InschrijvingBetaling extends ArtikelBetaling {
 					 * Er is nog geen order, dan betreft dit inschrijving vanuit het formulier.
 					 */
 					$order = new Order( $this->inschrijving->get_referentie() );
-					$this->inschrijving->verzend_email( 'indeling', $order->actie->bestel( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant(), $transactie_id ) );
+					$this->inschrijving->verzend_email( 'indeling', $order->actie->bestel( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding(), $transactie_id ) );
 					return;
 				}
 				if ( $order->is_credit() ) {
 					/**
 					 * Er is een credit order en het bedrag is positief, dan betreft dit inschrijving vanuit het formulier.
 					 */
-					$this->inschrijving->verzend_email( 'indeling', $order->actie->bestel( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->heeft_restant(), $transactie_id ) );
+					$this->inschrijving->verzend_email( 'indeling', $order->actie->bestel( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding(), $transactie_id ) );
 					return;
 				}
 				/**
@@ -164,7 +164,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 		$this->inschrijving->wacht_datum = 0;
 		$this->inschrijving->save();
 		if ( 0 === $ruimte - $this->inschrijving->aantal ) {
-			$this->inschrijving->cursus->registreer_vol();
+			$this->inschrijving->cursus->set_vol();
 		}
 		return true;
 	}

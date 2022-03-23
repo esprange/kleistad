@@ -69,7 +69,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$this->maak_debiteuren( 5 );
 		$order  = new Order( $this->verkoop[1]->get_referentie() );
 		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => $order->id ], 'debiteur' );
-		$this->assertStringContainsString( $order->te_betalen(), $result, 'openstaand bedrag debiteur incorrect' );
+		$this->assertStringContainsString( $order->get_te_betalen(), $result, 'openstaand bedrag debiteur incorrect' );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$this->maak_debiteuren( 5 );
 		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => $this->verkoop[2]->klant['naam'] ], 'zoek' );
 		$order  = new Order( $this->verkoop[2]->get_referentie() );
-		$this->assertStringContainsString( $order->te_betalen(), $result, 'openstaand bedrag debiteur incorrect' );
+		$this->assertStringContainsString( $order->get_te_betalen(), $result, 'openstaand bedrag debiteur incorrect' );
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$orders = new Orders();
 		$_POST  = [
 			'id'                   => $orders->current()->id,
-			'bedrag_betaald'       => $orders->current()->te_betalen(),
+			'bedrag_betaald'       => $orders->current()->get_te_betalen(),
 			'bedrag_gestort'       => 0,
 			'korting'              => 0,
 			'restant'              => 0,
@@ -103,7 +103,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$this->assertTrue( $order->gesloten, 'bankbetaling incorrect verwerkt' );
 
 		$_POST['bedrag_betaald'] = 0;
-		$_POST['bedrag_gestort'] = $orders->current()->te_betalen();
+		$_POST['bedrag_gestort'] = $orders->current()->get_te_betalen();
 		$result                  = $this->public_form_actie( self::SHORTCODE, [], 'bankbetaling' );
 		$this->assertStringContainsString( 'betaling is verwerkt', $result['status'], 'bankbetaling incorrect' );
 		$order = new Order( $orders->current()->id );
@@ -118,7 +118,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$mailer         = tests_retrieve_phpmailer_instance();
 		$orders         = new Orders();
 		$order          = $orders->current();
-		$order->betaald = 0.5 * $order->te_betalen();
+		$order->betaald = 0.5 * $order->get_te_betalen();
 		$order->save( 'test' );
 		$_POST = [
 			'id'                   => $order->id,
@@ -165,7 +165,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 			'id'                   => $order->id,
 			'bedrag_betaald'       => 0,
 			'bedrag_gestort'       => 0,
-			'korting'              => 0.2 * $order->te_betalen(),
+			'korting'              => 0.2 * $order->get_te_betalen(),
 			'restant'              => 1,
 			'opmerking_korting'    => 'test korting',
 			'opmerking_annulering' => 'test annulering',
@@ -187,7 +187,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 			'id'                   => $order->id,
 			'bedrag_betaald'       => 0,
 			'bedrag_gestort'       => 0,
-			'korting'              => 0.2 * $order->te_betalen(),
+			'korting'              => 0.2 * $order->get_te_betalen(),
 			'restant'              => 1,
 			'opmerking_korting'    => 'test korting',
 			'opmerking_annulering' => 'test annulering',

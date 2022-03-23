@@ -49,11 +49,11 @@ class Public_Betaling extends ShortcodeForm {
 		$this->data = [
 			'order_id'      => $order->id,
 			'klant'         => $order->klant['naam'],
-			'openstaand'    => $order->te_betalen(),
+			'openstaand'    => $order->get_te_betalen(),
 			'reeds_betaald' => $order->betaald,
 			'orderregels'   => $order->orderregels,
 			'betreft'       => $artikelregister->get_naam( $order->referentie ),
-			'factuur'       => $order->factuurnummer(),
+			'factuur'       => $order->get_factuurnummer(),
 			'annuleerbaar'  => $artikel::DEFINITIE['annuleerbaar'], // Annuleerbaar door klant.
 		];
 		return $this->content();
@@ -83,8 +83,8 @@ class Public_Betaling extends ShortcodeForm {
 		if ( is_object( $this->data['artikel'] ) ) {
 			$beschikbaar = '';
 			if ( property_exists( $this->data['artikel'], 'actie' ) ) {
-				if ( method_exists( $this->data['artikel']->actie, 'beschikbaarcontrole' ) ) {
-					$beschikbaar = $this->data['artikel']->actie->beschikbaarcontrole();
+				if ( method_exists( $this->data['artikel']->actie, 'get_beschikbaarheid' ) ) {
+					$beschikbaar = $this->data['artikel']->actie->get_beschikbaarheid();
 				}
 			}
 			if ( empty( $beschikbaar ) ) {
@@ -104,7 +104,7 @@ class Public_Betaling extends ShortcodeForm {
 	 */
 	protected function betalen() : array {
 		if ( 'ideal' === $this->data['input']['betaal'] ) {
-			$ideal_uri = $this->data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->data['order']->te_betalen(), $this->data['order']->referentie );
+			$ideal_uri = $this->data['artikel']->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->data['order']->get_te_betalen(), $this->data['order']->referentie );
 			if ( false === $ideal_uri ) {
 				return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 			}
@@ -142,7 +142,7 @@ class Public_Betaling extends ShortcodeForm {
 		if ( $order_id ) {
 			$order   = new Order( $order_id );
 			$factuur = new Factuur();
-			return $factuur->overzicht( $order->factuurnummer() )[0];
+			return $factuur->overzicht( $order->get_factuurnummer() )[0];
 		}
 		return '';
 	}

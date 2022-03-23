@@ -81,12 +81,12 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	/**
 	 * Test heeft_restant function
 	 */
-	public function test_heeft_restant() {
+	public function test_get_restant_melding() {
 		$inschrijving1 = $this->maak_inschrijving();
-		$this->assertNotEmpty( $inschrijving1->heeft_restant(), 'heeft restant toekomst incorrect' );
+		$this->assertNotEmpty( $inschrijving1->get_restant_melding(), 'heeft restant toekomst incorrect' );
 
 		$inschrijving1->cursus->start_datum = strtotime( 'tomorrow' );
-		$this->assertEmpty( $inschrijving1->heeft_restant(), 'heeft restant morgen incorrect' );
+		$this->assertEmpty( $inschrijving1->get_restant_melding(), 'heeft restant morgen incorrect' );
 	}
 
 	/**
@@ -220,7 +220,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving = new Inschrijving( $cursus_nieuw->id, $cursist->ID );
 		$order        = new Order( $inschrijving->get_referentie() );
 		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
-		$this->assertEquals( 25.00 + 67.00, $order->te_betalen(), 'correctie kosten te betalen onjuist' );
+		$this->assertEquals( 25.00 + 67.00, $order->get_te_betalen(), 'correctie kosten te betalen onjuist' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
 
 		$inschrijving->betaling->verwerk( $order, 25.00, true, 'bank' );
@@ -229,7 +229,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving = new Inschrijving( $cursus_nieuw->id, $cursist->ID );
 		$order        = new Order( $inschrijving->get_referentie() );
 		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
-		$this->assertEquals( 2 * ( 25.00 + 67.00 ) - 25.00, $order->te_betalen(), 'correctie kosten te betalen onjuist' );
+		$this->assertEquals( 2 * ( 25.00 + 67.00 ) - 25.00, $order->get_te_betalen(), 'correctie kosten te betalen onjuist' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
 	}
 
@@ -243,7 +243,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 
 		$inschrijving->actie->indelen_lopend( 123.45 );
 		$order = new Order( $inschrijving->get_referentie() );
-		$this->assertEquals( 123.45, $order->te_betalen(), 'prijs lopende cursus incorrect' );
+		$this->assertEquals( 123.45, $order->get_te_betalen(), 'prijs lopende cursus incorrect' );
 		$this->assertEquals( 'Betaling bedrag voor reeds gestarte cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'onderwerp email lopende cursus incorrect' );
 	}
 
@@ -304,12 +304,12 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	/**
 	 * Test beschikbaar controle
 	 */
-	public function test_beschikbaarcontrole() {
+	public function test_get_beschikbaarheid() {
 		$inschrijving1                  = $this->maak_inschrijving();
 		$inschrijving1->cursus->maximum = 1;
 		$inschrijving1->cursus->save();
 		$inschrijving1->actie->aanvraag( 'bank' );
-		$this->assertEmpty( $inschrijving1->actie->beschikbaarcontrole(), 'beschikbaarcontrole open cursus incorrect' );
+		$this->assertEmpty( $inschrijving1->actie->get_beschikbaarheid(), 'get_beschikbaarheid open cursus incorrect' );
 		$inschrijving1->ingedeeld = true;
 		$inschrijving1->save();
 
@@ -317,7 +317,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving2              = new Inschrijving( $inschrijving1->cursus->id, $wachtlijst_cursist_id );
 		$inschrijving2->cursus->vol = true;
 		$inschrijving2->actie->aanvraag( '' );
-		$this->assertStringContainsString( 'Helaas is de cursus nu vol', $inschrijving2->actie->beschikbaarcontrole(), 'beschikbaarcontrole gesloten cursus incorrect' );
+		$this->assertStringContainsString( 'Helaas is de cursus nu vol', $inschrijving2->actie->get_beschikbaarheid(), 'get_beschikbaarheid gesloten cursus incorrect' );
 	}
 
 	/**
@@ -337,9 +337,9 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$this->assertEquals( 'Indeling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank indeling incorrecte email' );
 
 		$order = new Order( $inschrijving->get_referentie() );
-		$inschrijving->betaling->verwerk( $order, $order->te_betalen(), true, 'ideal' );
+		$inschrijving->betaling->verwerk( $order, $order->get_te_betalen(), true, 'ideal' );
 		$order = new Order( $inschrijving->get_referentie() );
-		$this->assertEquals( 0.0, $order->te_betalen(), 'verwerk bank saldo incorrect' );
+		$this->assertEquals( 0.0, $order->get_te_betalen(), 'verwerk bank saldo incorrect' );
 		$this->assertEquals( 'Betaling cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank restant incorrecte email' );
 
 	}

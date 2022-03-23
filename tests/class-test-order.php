@@ -72,7 +72,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->actie->bestel( 4.0, strtotime( 'tomorrow' ) );
 		$this->assertEquals( 4.0, $order1->betaald, 'betaald status incorrect' );
-		$this->assertEquals( 6.0, $order1->te_betalen(), 'te betalen status  incorrect' );
+		$this->assertEquals( 6.0, $order1->get_te_betalen(), 'te betalen status  incorrect' );
 
 		$verkoop->bestelregel( 'ander artikel', 1, 20.0 );
 		$verkoop->save();
@@ -80,7 +80,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$factuur = $order2->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$this->assertEquals( 4.0, $order2->betaald, 'betaald status na hergebruik order incorrect' );
 		$this->assertStringContainsString( 'factuur', $factuur, 'factuur ontbreekt' );
-		$this->assertEquals( 26.0, $order2->te_betalen(), 'te betalen status na hergebruik order incorrect' );
+		$this->assertEquals( 26.0, $order2->get_te_betalen(), 'te betalen status na hergebruik order incorrect' );
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$factuur = $order1->actie->annuleer( 2.50, 'test' );
 		$order2  = new Order( $order1->credit_id );
-		$this->assertEquals( 2.50, $order2->te_betalen(), 'te betalen bij annulering incorrect' );
+		$this->assertEquals( 2.50, $order2->get_te_betalen(), 'te betalen bij annulering incorrect' );
 		$this->assertStringContainsString( 'creditfactuur', $factuur, 'credit factuur ontbreekt' );
 	}
 
@@ -114,7 +114,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$factuur = $order1->actie->korting( 3.0 );
-		$this->assertEquals( 7.00, $order1->te_betalen(), 'te betalen bij korting incorrect' );
+		$this->assertEquals( 7.00, $order1->get_te_betalen(), 'te betalen bij korting incorrect' );
 		$this->assertStringContainsString( 'correctiefactuur', $factuur, 'correctie factuur ontbreekt' );
 	}
 
@@ -133,7 +133,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop->bestelregel( 'ander artikel', 1, 20.0 );
 		$verkoop->save();
 		$factuur = $order1->actie->wijzig( $verkoop->get_referentie() );
-		$this->assertEquals( 30.00, $order1->te_betalen(), 'te betalen bij wijzig incorrect' );
+		$this->assertEquals( 30.00, $order1->get_te_betalen(), 'te betalen bij wijzig incorrect' );
 		$this->assertStringContainsString( 'correctiefactuur', $factuur, 'correctie factuur ontbreekt' );
 	}
 
@@ -150,7 +150,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$factuur = $order1->actie->ontvang( 6.0, 'test' );
-		$this->assertEquals( 4.00, $order1->te_betalen(), 'te betalen bij wijzig incorrect' );
+		$this->assertEquals( 4.00, $order1->get_te_betalen(), 'te betalen bij wijzig incorrect' );
 		$this->assertEmpty( $factuur, 'factuur bij ontvang incorrect' );
 	}
 
@@ -214,21 +214,21 @@ class Test_Order extends Kleistad_UnitTestCase {
 	/**
 	 * Test factuurnummer function
 	 */
-	public function test_factuurnummer() {
+	public function test_get_factuurnummer() {
 		$order            = new Order( 'dummy' );
 		$order->factuurnr = 123;
-		$this->assertMatchesRegularExpression( '~20[0-9]{2}-\d{6}~', $order->factuurnummer(), 'factuurnummer incorrect' );
+		$this->assertMatchesRegularExpression( '~20[0-9]{2}-\d{6}~', $order->get_factuurnummer(), 'factuurnummer incorrect' );
 	}
 
 	/**
 	 * Test te_betalen function
 	 */
-	public function test_te_betalen() {
+	public function test_get_te_betalen() {
 		$order1 = new Order( 'X' . wp_rand( 1000 ) );
 		$order1->orderregels->toevoegen( new Orderregel( 'artikel', 1, 10 ) );
 		$order1->betaald = 4;
-		$this->assertEquals( 6, $order1->te_betalen(), 'te_betalen regulier incorrect' );
+		$this->assertEquals( 6, $order1->get_te_betalen(), 'te_betalen regulier incorrect' );
 		$order1->gesloten = true;
-		$this->assertEquals( 0, $order1->te_betalen(), 'te_betalen gesloten incorrect' );
+		$this->assertEquals( 0, $order1->get_te_betalen(), 'te_betalen gesloten incorrect' );
 	}
 }

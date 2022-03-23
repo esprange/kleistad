@@ -108,7 +108,7 @@ class Oven {
 	 * @return float De kosten.
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function stookkosten( int $stoker_id, float $percentage, int $temperatuur ) : float {
+	public function get_stookkosten( int $stoker_id, float $percentage, int $temperatuur ) : float {
 		$regelingen = get_user_meta( $stoker_id, self::REGELING, true );
 		if ( 0 === $stoker_id ) {
 			$kosten = 0;

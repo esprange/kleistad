@@ -92,7 +92,7 @@ class Public_Rapport extends Shortcode {
 							'prog'      => $stook->programma > 0 ? $stook->programma : '',
 							'perc'      => $stookdeel->percentage,
 							'bedrag'    => number_format_i18n(
-								- $stookdeel->prijs ?? $oven->stookkosten( $gebruiker->ID, $stookdeel->percentage, $stook->temperatuur ),
+								- $stookdeel->prijs ?? $oven->get_stookkosten( $gebruiker->ID, $stookdeel->percentage, $stook->temperatuur ),
 								2
 							),
 							'voorlopig' => ! $stook->verwerkt,

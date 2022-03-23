@@ -277,7 +277,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	/**
 	 * Test autoriseer function
 	 */
-	public function test_autoriseer() {
+	public function test_set_autorisatie() {
 		$abonnement = $this->maak_abonnement();
 		$abonnement->actie->starten( strtotime( '- 4 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
 		$this->assertTrue( user_can( $abonnement->klant_id, LID ), 'autoriseer na start incorrect' );
