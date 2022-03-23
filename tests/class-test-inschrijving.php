@@ -113,7 +113,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test geef_referentie function
+	 * Test get_referentie function
 	 */
 	public function test_get_referentie() {
 		$inschrijving = $this->maak_inschrijving();

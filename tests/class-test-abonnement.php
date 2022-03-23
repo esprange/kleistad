@@ -92,7 +92,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test function geef_referentie
+	 * Test function get_referentie
 	 */
 	public function test_get_referentie() {
 		$abonnement = $this->maak_abonnement();

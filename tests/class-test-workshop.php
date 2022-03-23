@@ -84,7 +84,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test function geef_referentie
+	 * Test function get_referentie
 	 */
 	public function test_get_referentie() {
 		$workshop = $this->maak_workshop();

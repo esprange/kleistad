@@ -31,7 +31,7 @@ class Test_Artikel extends Kleistad_UnitTestCase {
 		 * Een stub voor de geef referentie functie die een dummy artikel code terug geeft.
 		 */
 		$artikel->expects( $this->any() )
-				->method( 'geef_referentie' )
+				->method( 'get_referentie' )
 				->will( $this->returnValue( $artikel->code ) );
 
 		/**
