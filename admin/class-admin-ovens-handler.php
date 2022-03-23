@@ -39,7 +39,7 @@ class Admin_Ovens_Handler extends Admin_Handler {
 	 * @since    5.2.0
 	 */
 	public function form_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_oven' ) ? $this->update_oven() : $this->geef_oven();
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_oven' ) ? $this->update_oven() : $this->oven();
 		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this->display, 'form_meta_box' ], 'oven', 'normal' );
 		$this->display->form_page( $item, 'oven', 'ovens', $this->notice, $this->message, false );
 	}
@@ -116,7 +116,7 @@ class Admin_Ovens_Handler extends Admin_Handler {
 	 *
 	 * @return array De oven.
 	 */
-	private function geef_oven() : array {
+	private function oven() : array {
 		$oven_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 		$oven    = $oven_id ? new Oven( $oven_id ) : new Oven();
 		return [

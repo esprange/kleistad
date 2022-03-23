@@ -60,7 +60,7 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 	 * @since    6.11.0
 	 */
 	public function form_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_werkplek' ) ? $this->update_werkplek() : $this->geef_werkplek();
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_werkplek' ) ? $this->update_werkplek() : $this->werkplek();
 		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this->display, 'form_meta_box' ], 'werkplek', 'normal' );
 		$this->display->form_page( $item, 'werkplek', 'werkplekken', $this->notice, $this->message, false );
 	}
@@ -137,7 +137,7 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 	 *
 	 * @return array De werkplek.
 	 */
-	private function geef_werkplek() : array {
+	private function werkplek() : array {
 		$params          = filter_input_array(
 			INPUT_GET,
 			[

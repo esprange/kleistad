@@ -41,7 +41,7 @@ class Admin_Stooksaldo_Handler extends Admin_Handler {
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function form_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_stooksaldo' ) ? $this->update_saldo() : $this->geef_saldo();
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_stooksaldo' ) ? $this->update_saldo() : $this->saldo();
 		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal' );
 		$this->display->form_page( $item, 'stooksaldo', 'stooksaldo', $this->notice, $this->message, false );
 	}
@@ -93,7 +93,7 @@ class Admin_Stooksaldo_Handler extends Admin_Handler {
 	 *
 	 * @return array Het saldo.
 	 */
-	private function geef_saldo() : array {
+	private function saldo() : array {
 		$gebruiker_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ?? 0;
 		$gebruiker    = get_userdata( $gebruiker_id );
 		if ( ! $gebruiker ) {

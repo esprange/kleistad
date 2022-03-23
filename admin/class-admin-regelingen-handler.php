@@ -58,7 +58,7 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 	 * @since    5.2.0
 	 */
 	public function form_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_regeling' ) ? $this->update_regeling() : $this->geef_regeling();
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_regeling' ) ? $this->update_regeling() : $this->regeling();
 		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this->display, 'form_meta_box' ], 'regeling', 'normal' );
 		$this->display->form_page( $item, 'regeling', 'regelingen', $this->notice, $this->message, false );
 	}
@@ -124,7 +124,7 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 	 *
 	 * @return array De regeling.
 	 */
-	private function geef_regeling() : array {
+	private function regeling() : array {
 		$item        = [
 			'id'             => '',
 			'gebruiker_id'   => 0,

@@ -39,7 +39,7 @@ class Admin_Cursisten_Handler extends Admin_Handler {
 	 * @since    5.2.0
 	 */
 	public function form_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_cursist' ) ? $this->update_cursist() : $this->geef_cursist();
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_cursist' ) ? $this->update_cursist() : $this->cursist();
 		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this->display, 'form_meta_box' ], 'cursist', 'normal' );
 		$this->display->form_page( $item, 'cursist', 'cursisten', $this->notice, $this->message, false );
 	}
@@ -77,7 +77,7 @@ class Admin_Cursisten_Handler extends Admin_Handler {
 	 *
 	 * @return array De cursist gegevens.
 	 */
-	private function geef_cursist() : array {
+	private function cursist() : array {
 		sscanf( filter_input( INPUT_GET, 'id' ) ?? 'C0-0', 'C%d-%d', $cursus_id, $cursist_id );
 		$cursist      = get_userdata( $cursist_id );
 		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );

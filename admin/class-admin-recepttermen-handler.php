@@ -53,7 +53,7 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 	 * @since    6.4.0
 	 */
 	public function form_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_receptterm' ) ? $this->update_receptterm() : $this->geef_receptterm();
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_receptterm' ) ? $this->update_receptterm() : $this->receptterm();
 		add_meta_box( 'receptterm_form_meta_box', 'Receptterm', [ $this->display, 'form_meta_box' ], 'receptterm', 'normal' );
 		$this->display->form_page( $item, 'receptterm', 'recepttermen', $this->notice, $this->message, false, [ 'hoofdterm_id' => $item['hoofdterm_id'] ] );
 	}
@@ -118,7 +118,7 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 	 *
 	 * @return array De recept term.
 	 */
-	private function geef_receptterm() : array {
+	private function receptterm() : array {
 		$item          = [
 			'id'           => 0,
 			'hoofdterm_id' => filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) ?: 0,
