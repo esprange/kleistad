@@ -54,7 +54,7 @@ class WerkplekMeesters {
 	 *
 	 * @return array De ad_hoc werkplaats meester ids.
 	 */
-	public function geef() : array {
+	public function get_ids() : array {
 		return $this->meesters;
 	}
 

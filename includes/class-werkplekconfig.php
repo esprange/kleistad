@@ -38,7 +38,7 @@ class WerkplekConfig {
 	public function __construct() {
 		$default_config   = [];
 		$default_meesters = [];
-		foreach ( $this->geef_atelierdagen() as $dag ) {
+		foreach ( $this->get_atelierdagen() as $dag ) {
 			foreach ( WerkplekGebruik::WERKPLEK_DAGDEEL as $dagdeel ) {
 				foreach ( opties()['werkruimte'] as $activiteit ) {
 					$default_config[ $dag ][ $dagdeel ][ $activiteit['naam'] ] = 0;
@@ -87,7 +87,7 @@ class WerkplekConfig {
 	public function adhoc_meesters( int $datum ) {
 		$atelierdag       = strftime( '%A', $datum );
 		$werkplekmeesters = new WerkplekMeesters( $datum );
-		$meester_ids      = $werkplekmeesters->geef();
+		$meester_ids      = $werkplekmeesters->get_ids();
 		foreach ( array_keys( $this->meesters[ $atelierdag ] ) as $dagdeel ) {
 			if ( isset( $meester_ids[ $dagdeel ] ) ) {
 				$this->config_data['meesters'][ $atelierdag ][ $dagdeel ] = $meester_ids[ $dagdeel ];
@@ -100,7 +100,7 @@ class WerkplekConfig {
 	 *
 	 * @return array
 	 */
-	public function geef_atelierdagen() : array {
+	private function get_atelierdagen() : array {
 		$dagen = [];
 		for ( $dagteller = 0; $dagteller < 7; $dagteller++ ) {
 			$dagen[] = strftime( '%A', strtotime( "next Monday +$dagteller days" ) );

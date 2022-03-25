@@ -142,14 +142,20 @@ class InschrijvingActie {
 	 * Verwerk de aanvraag tot inschrijving
 	 *
 	 * @param string $betaalwijze Bank of ideal.
+	 * @param int    $aantal      Aantal in te schrijven cursisten.
+	 * @param array  $technieken  Gekozen technieken.
+	 * @param string $opmerking   Opmerking gemaakt door klant.
 	 * @return bool|string De url ingeval van ideal of het resultaat.
 	 */
-	public function aanvraag( string $betaalwijze ): bool|string {
+	public function aanvraag( string $betaalwijze, int $aantal, array $technieken, string $opmerking ): bool|string {
 		if ( $this->inschrijving->geannuleerd ) { // Blijkbaar eerder geannuleerd, eerst resetten.
 			$this->inschrijving->ingedeeld    = false;
 			$this->inschrijving->geannuleerd  = false;
 			$this->inschrijving->ingeschreven = false;
 		}
+		$this->inschrijving->aantal       = $aantal;
+		$this->inschrijving->technieken   = $technieken;
+		$this->inschrijving->opmerking    = $opmerking;
 		$this->inschrijving->wacht_datum  = $this->inschrijving->cursus->vol ? time() : 0;
 		$this->inschrijving->artikel_type = 'inschrijving';
 		$this->inschrijving->save();
@@ -184,6 +190,17 @@ class InschrijvingActie {
 		$this->inschrijving->save();
 		$order = new Order( $this->inschrijving->get_referentie() );
 		$this->inschrijving->verzend_email( '_lopend_betalen', $order->actie->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
+	}
+
+	/**
+	 * Deel de cursist in nadat deze op de wachtlijst gestaan heeft.
+	 *
+	 * @return bool|string De betaal URI of het resultaat.
+	 */
+	public function indelen_na_wachten() : bool|string {
+		$this->inschrijving->artikel_type = 'inschrijving';
+		$this->inschrijving->save();
+		return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->cursus->get_bedrag(), $this->inschrijving->get_referentie() );
 	}
 
 	/**

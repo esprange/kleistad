@@ -229,7 +229,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 	}
 
 	/**
-	 * Bewaar actie ingeval de gebruiker van de wachtlijst verwijdert wil worden.
+	 * Bewaar actie ingeval de gebruiker van de wachtlijst verwijderd wil worden.
 	 *
 	 * @return array
 	 */
@@ -259,13 +259,11 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
-		$inschrijving->artikel_type = 'inschrijving';
-		$inschrijving->save();
-		$ideal_uri = $inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $inschrijving->cursus->get_bedrag(), $inschrijving->get_referentie() );
-		if ( false === $ideal_uri ) {
+		$result = $inschrijving->actie->indelen_na_wachten();
+		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}
-		return [ 'redirect_uri' => $ideal_uri ];
+		return [ 'redirect_uri' => $result ];
 	}
 
 	/**
@@ -278,16 +276,13 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 		if ( ! is_int( $gebruiker_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
-		$inschrijving             = new Inschrijving( $this->data['input']['cursus_id'], $gebruiker_id );
-		$inschrijving->technieken = $this->data['input']['technieken'] ?? [];
-		$inschrijving->opmerking  = $this->data['input']['opmerking'];
-		$inschrijving->aantal     = intval( $this->data['input']['aantal'] );
+		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $gebruiker_id );
 		if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
-		$result = $inschrijving->actie->aanvraag( $this->data['input']['betaal'] );
+		$result = $inschrijving->actie->aanvraag( $this->data['input']['betaal'], intval( $this->data['input']['aantal'] ), $this->data['input']['technieken'] ?? [], $this->data['input']['opmerking'] );
 		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}

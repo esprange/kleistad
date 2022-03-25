@@ -65,7 +65,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 			$cursist_ids = $this->factory->user->create_many( $cursus->maximum );
 			for ( $i = 0; $i < 3; $i ++ ) {
 				$inschrijvingen[ $i ] = new Inschrijving( $cursus->id, $cursist_ids[ $i ] );
-				$inschrijvingen[ $i ]->actie->aanvraag( 'ideal' );
+				$inschrijvingen[ $i ]->actie->aanvraag( 'ideal', 1, [], '' );
 				$order = new Order( $inschrijvingen[ $i ]->get_referentie() );
 				$inschrijvingen[ $i ]->betaling->verwerk( $order, 25, true, 'ideal' );
 			}
@@ -150,7 +150,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_inschrijven_herhaald() {
 		$inschrijving = $this->maak_inschrijving( false );
-		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
 		$inschrijving->save();
 
 		$_POST  = $this->input;
@@ -163,7 +163,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_inschrijven_na_indeling() {
 		$inschrijving = $this->maak_inschrijving( false );
-		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
 		$inschrijving->save();
 		$order = new Order( $inschrijving->get_referentie() );
 		$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
@@ -177,7 +177,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_stop_wachten() {
 		$inschrijving = $this->maak_inschrijving( true );
-		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
 		$_POST  = $this->input;
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'stop_wachten' );
 		$this->assertStringContainsString( 'De inschrijving is verwijderd uit de wachtlijst', $result['status'], 'geen bevestigin stop wachten' );
@@ -193,7 +193,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_stoppen_na_wachten_ingedeeld() {
 		$inschrijving = $this->maak_inschrijving( true );
-		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
 		$inschrijving->ingedeeld   = true;
 		$inschrijving->geannuleerd = false;
 		$inschrijving->save();
@@ -207,7 +207,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_indelen_na_wachten() {
 		$inschrijving = $this->maak_inschrijving( true );
-		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
 		$inschrijving->cursus->maximum += 1;
 		$inschrijving->cursus->save();
 		Inschrijvingen::doe_dagelijks();
@@ -224,7 +224,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_indelen_na_wachten_herhaald() {
 		$inschrijving = $this->maak_inschrijving( true );
-		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
 		$inschrijving->cursus->maximum += 1;
 		$inschrijving->cursus->save();
 		Inschrijvingen::doe_dagelijks();

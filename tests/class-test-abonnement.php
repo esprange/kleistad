@@ -15,12 +15,20 @@ namespace Kleistad;
  */
 class Test_Abonnement extends Kleistad_UnitTestCase {
 
+	const EXTRA = [
+		'naam'  => 'test_extra1',
+		'prijs' => 12.34,
+	];
+
 	/**
 	 * Maak een abonnement
 	 *
 	 * @return Abonnement
 	 */
 	private function maak_abonnement(): Abonnement {
+		$opties            = get_option( 'kleistad-opties' );
+		$opties['extra'][] = self::EXTRA;
+		update_option( 'kleistad-opties', $opties );
 
 		$role = add_role( LID, 'Kleistad abonnee' );
 		if ( is_object( $role ) ) {
@@ -372,4 +380,24 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'email reguliere incasso factuur ontbreekt' );
 	}
 
+	/**
+	 * Test eventuele extra's.
+	 *
+	 * @return void
+	 */
+	public function test_extras() {
+		$abonnement        = $this->maak_abonnement();
+		$abonnement->soort = 'beperkt';
+		$abonnement->actie->starten( strtotime( '- 5 month 00:00' ), 'beperkt', 'Dit is een test', 'bank' );
+
+		$abonnement                = new Abonnement( $abonnement->klant_id );
+		$abonnement->extras        = [ self::EXTRA['naam'] ];
+		$abonnement->factuur_maand = date( 'Ym', strtotime( '-2 month' ) );
+		$abonnement->save();
+		Abonnementen::doe_dagelijks(); // Voert actie->factureer uit en verstuurt email 1.
+
+		$abonnement->artikel_type = 'regulier';
+		$order                    = new Order( $abonnement->get_referentie() );
+		$this->assertEquals( self::EXTRA['prijs'] + opties()['beperkt_abonnement'], $order->get_te_betalen(), 'Te betalen bij extra onjuist' );
+	}
 }

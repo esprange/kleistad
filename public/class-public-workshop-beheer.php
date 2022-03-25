@@ -71,24 +71,12 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	public function process() : array {
-		$error = new WP_Error();
-		if ( 'reageren' === $this->form_actie ) {
-			$this->data['workshop'] = filter_input_array(
-				INPUT_POST,
-				[
-					'workshop_id' => FILTER_SANITIZE_NUMBER_INT,
-					'reactie'     => FILTER_SANITIZE_STRING,
-				]
-			);
-			if ( empty( $this->data['workshop']['reactie'] ) ) {
-				return $this->melding( new WP_Error( 'reactie', 'Er is nog geen reactie ingevoerd!' ) );
-			}
-			return $this->save();
-		}
-		$this->data['workshop']              = filter_input_array(
+		$error                  = new WP_Error();
+		$this->data['workshop'] = filter_input_array(
 			INPUT_POST,
 			[
 				'workshop_id'       => FILTER_SANITIZE_NUMBER_INT,
+				'reactie'           => FILTER_SANITIZE_STRING,
 				'naam'              => FILTER_SANITIZE_STRING,
 				'datum'             => FILTER_SANITIZE_STRING,
 				'start_tijd'        => FILTER_SANITIZE_STRING,
@@ -121,6 +109,12 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'aanvraag_id'       => FILTER_SANITIZE_NUMBER_INT,
 			]
 		);
+		if ( 'reageren' === $this->form_actie ) {
+			if ( empty( $this->data['workshop']['reactie'] ) ) {
+				return $this->melding( new WP_Error( 'reactie', 'Er is nog geen reactie ingevoerd!' ) );
+			}
+			return $this->save();
+		}
 		$this->data['workshop']['programma'] = sanitize_textarea_field( $this->data['workshop']['programma'] );
 		if ( is_null( $this->data['workshop']['technieken'] ) ) {
 			$this->data['workshop']['technieken'] = [];

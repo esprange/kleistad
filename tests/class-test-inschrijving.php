@@ -208,7 +208,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$mailer       = tests_retrieve_phpmailer_instance();
 		$inschrijving = $this->maak_inschrijving();
 		$cursist      = new Cursist( $inschrijving->klant_id );
-		$inschrijving->actie->aanvraag( 'bank' );
+		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
 
 		$cursus_nieuw               = new Cursus();
 		$cursus_nieuw->naam         = 'Nieuwe cursus';
@@ -263,7 +263,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$mailer       = tests_retrieve_phpmailer_instance();
 		$inschrijving = $this->maak_inschrijving();
 		$cursist      = new Cursist( $inschrijving->klant_id );
-		$inschrijving->actie->aanvraag( 'bank' );
+		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
 		/**
 		 * Zet nu de cursus op vol.
 		 */
@@ -308,7 +308,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1                  = $this->maak_inschrijving();
 		$inschrijving1->cursus->maximum = 1;
 		$inschrijving1->cursus->save();
-		$inschrijving1->actie->aanvraag( 'bank' );
+		$inschrijving1->actie->aanvraag( 'bank', 1, [], '' );
 		$this->assertEmpty( $inschrijving1->actie->get_beschikbaarheid(), 'get_beschikbaarheid open cursus incorrect' );
 		$inschrijving1->ingedeeld = true;
 		$inschrijving1->save();
@@ -316,7 +316,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$wachtlijst_cursist_id      = $this->factory->user->create();
 		$inschrijving2              = new Inschrijving( $inschrijving1->cursus->id, $wachtlijst_cursist_id );
 		$inschrijving2->cursus->vol = true;
-		$inschrijving2->actie->aanvraag( '' );
+		$inschrijving2->actie->aanvraag( '', 1, [], '' );
 		$this->assertStringContainsString( 'Helaas is de cursus nu vol', $inschrijving2->actie->get_beschikbaarheid(), 'get_beschikbaarheid gesloten cursus incorrect' );
 	}
 
@@ -328,7 +328,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving = $this->maak_inschrijving();
 		$cursist      = new Cursist( $inschrijving->klant_id );
 
-		$inschrijving->actie->aanvraag( 'bank' );
+		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
 		$this->assertEquals( 'Inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'verwerk bank inschrijving incorrecte email' );
 
 		$order = new Order( $inschrijving->get_referentie() );
@@ -352,7 +352,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving = $this->maak_inschrijving();
 		$cursist      = new Cursist( $inschrijving->klant_id );
 
-		$inschrijving->actie->aanvraag( 'ideal' );
+		$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
 		$this->assertEquals( 0, $mailer->get_sent_count(), 'verwerk bank aantal email incorrect' );
 
 		$order = new Order( $inschrijving->get_referentie() );
@@ -401,7 +401,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$cursist_ids = $this->factory->user->create_many( $cursus1->maximum );
 		for ( $i = 0; $i < 3; $i ++ ) {
 			$inschrijvingen[ $i ] = new Inschrijving( $cursus1->id, $cursist_ids[ $i ] );
-			$inschrijvingen[ $i ]->actie->aanvraag( 'ideal' );
+			$inschrijvingen[ $i ]->actie->aanvraag( 'ideal', 1, [], '' );
 			$order = new Order( $inschrijvingen[ $i ]->get_referentie() );
 			$inschrijvingen[ $i ]->betaling->verwerk( $order, 25, true, 'ideal' );
 		}
@@ -417,7 +417,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		 */
 		$wachtlijst_cursist      = new Cursist( $this->factory->user->create() );
 		$inschrijving_wachtlijst = new Inschrijving( $cursus2->id, $wachtlijst_cursist->ID );
-		$inschrijving_wachtlijst->actie->aanvraag( '' );
+		$inschrijving_wachtlijst->actie->aanvraag( '', 1, [], '' );
 		$this->assertTrue( 0 < $inschrijving_wachtlijst->wacht_datum, 'Wacht datum incorrect' );
 		$this->assertEquals( 'Plaatsing op wachtlijst cursus', $mailer->get_last_sent( $wachtlijst_cursist->user_email )->subject, 'Wachtlijst vol incorrecte email' );
 
@@ -455,7 +455,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		 */
 		$andere_cursist     = new Cursist( $this->factory->user->create() );
 		$inschrijving_ander = new Inschrijving( $cursus2->id, $andere_cursist->ID );
-		$inschrijving_ander->actie->aanvraag( 'ideal' );
+		$inschrijving_ander->actie->aanvraag( 'ideal', 1, [], '' );
 		$order = new Order( $inschrijving_ander->get_referentie() );
 		$inschrijving_ander->betaling->verwerk( $order, 25, true, 'ideal' );
 		$inschrijving_wachtlijst = new Inschrijving( $cursus2->id, $wachtlijst_cursist->ID );
