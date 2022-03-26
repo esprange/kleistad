@@ -216,10 +216,10 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-7" >
 					<p><strong>Je wilt je gepauzeerde abonnement hervatten</strong></p>
-					<p>Je kan de datum dat je abonnement hervat wordt wel aanpassen maar niet eerder dan per eerstvolgende maand en de maximale pauze is <?php echo esc_html( Abonnement::MAX_PAUZE_WEKEN ); ?> weken.</p>
+					<p>Je kan de datum dat je abonnement hervat wordt wel aanpassen maar niet eerder dan per eerstvolgende maand en de maximale pauze is <?php echo esc_html( opties()['max_pauze_weken'] ); ?> weken.</p>
 					<input name="pauze_datum" id="kleistad_pauze_datum" type="hidden" value="<?php echo esc_attr( date( 'd-m-Y', $this->data['abonnement']->pauze_datum ) ); ?>"
-						data-min_pauze="<?php echo esc_attr( max( ( $this->per_datum - $this->data['abonnement']->pauze_datum ) / DAY_IN_SECONDS, Abonnement::MIN_PAUZE_WEKEN * 7 ) ); ?>"
-						data-max_pauze="<?php echo esc_attr( Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>">
+						data-min_pauze="<?php echo esc_attr( max( ( $this->per_datum - $this->data['abonnement']->pauze_datum ) / DAY_IN_SECONDS, opties()['min_pauze_weken'] * 7 ) ); ?>"
+						data-max_pauze="<?php echo esc_attr( opties()['max_pauze_weken'] * 7 ); ?>">
 				</div>
 			</div>
 			<div class="kleistad-row">
@@ -252,7 +252,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-7" >
 					<p><strong>Je wilt het abonnement pauzeren</strong></p>
-					<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( Abonnement::MIN_PAUZE_WEKEN ); ?> weken. Per kalender jaar mag er in totaal maximaal <?php echo esc_html( Abonnement::MAX_PAUZE_WEKEN ); ?> weken gepauzeerd worden.</p>
+					<p>Er kan maar één pauze tegelijk ingepland worden van minimaal <?php echo esc_html( opties()['min_pauze_weken'] ); ?> weken. Per kalender jaar mag er in totaal maximaal <?php echo esc_html( opties()['max_pauze_weken'] ); ?> weken gepauzeerd worden.</p>
 					<p>Tijdens de pauze periode zijn er geen ovenreserveringen mogelijk. Bestaande reserveringen worden automatisch geannuleerd</p>
 				</div>
 			</div>
@@ -266,8 +266,8 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				<div class="kleistad-col-3">
 					<input name="pauze_datum" id="kleistad_pauze_datum" class="kleistad-datum" type="text"
 						value="<?php echo esc_attr( date( 'd-m-Y', $this->per_datum ) ); ?>"
-						data-min_pauze="<?php echo esc_attr( Abonnement::MIN_PAUZE_WEKEN * 7 ); ?>"
-						data-max_pauze="<?php echo esc_attr( Abonnement::MAX_PAUZE_WEKEN * 7 ); ?>"
+						data-min_pauze="<?php echo esc_attr( opties()['min_pauze_weken'] * 7 ); ?>"
+						data-max_pauze="<?php echo esc_attr( opties()['max_pauze_weken'] * 7 ); ?>"
 						readonly="readonly" >
 				</div>
 			</div>
@@ -280,7 +280,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 				</div>
 				<div class="kleistad-col-3">
 					<input name="herstart_datum" id="kleistad_herstart_datum" class="kleistad-datum" type="text"
-						value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '+' . Abonnement::MIN_PAUZE_WEKEN . 'weeks', $this->per_datum ) ) ); ?>"
+						value="<?php echo esc_attr( date( 'd-m-Y', strtotime( '+' . opties()['min_pauze_weken'] . 'weeks', $this->per_datum ) ) ); ?>"
 						readonly="readonly" >
 				</div>
 			</div>

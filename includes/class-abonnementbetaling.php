@@ -142,7 +142,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 
 		return match ( $type ) {
 			'#mandaat'      => 0.01,
-			'#start'        => Abonnement::START_MAANDEN * $basis_bedrag,
+			'#start'        => opties()['start_maanden'] * $basis_bedrag,
 			'#overbrugging' => $this->abonnement->get_overbrugging_fractie() * $basis_bedrag,
 			'#regulier'     => $basis_bedrag + $extras_bedrag,
 			'#pauze'        => $this->abonnement->get_pauze_fractie() * ( $basis_bedrag + $extras_bedrag ),

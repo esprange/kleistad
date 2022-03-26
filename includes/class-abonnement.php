@@ -38,7 +38,6 @@ class Abonnement extends Artikel {
 	public const META_KEY        = 'kleistad_abonnement_v2';
 	public const MAX_PAUZE_WEKEN = 9;
 	public const MIN_PAUZE_WEKEN = 2;
-	public const START_MAANDEN   = 3;
 	private const EMAIL_SUBJECT  = [
 		'_gewijzigd'        => 'Wijziging abonnement',
 		'_ideal_betaald'    => 'Betaling abonnement',

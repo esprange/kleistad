@@ -296,6 +296,21 @@ class Admin_Instellingen_Display {
 				'max'   => 99,
 				'label' => 'Standaard maximum cursisten per cursus/workshop',
 			],
+			'start_maanden'   => [
+				'min'   => 1,
+				'max'   => 3,
+				'label' => 'Start duur abonnement (maanden)',
+			],
+			'min_pauze_weken' => [
+				'min'   => 1,
+				'max'   => 12,
+				'label' => 'Minimum pauze duur abonnement (weken)',
+			],
+			'max_pauze_weken' => [
+				'min'   => 1,
+				'max'   => 12,
+				'label' => 'Maximum pauze duur abonnement (weken)',
+			],
 			'termijn'         => [
 				'min'   => 0,
 				'max'   => 14,
