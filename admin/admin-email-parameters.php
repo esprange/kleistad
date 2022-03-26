@@ -83,6 +83,7 @@
 					<li>[cursus_inschrijfkosten] : inschrijf kosten</li>
 					<li>[cursus_opmerking] : de gemaakte opmerking</li>
 					<li>[cursus_link] : link naar betaling restant cursus bedrag</li>
+					<li>[cursus_ruimte_link] : Link om ingedeeld te worden vanuit de wachtlijst</li>
 					<li>[cursus_uitschrijf_link] : link om uit te schrijven van wachtlijst</li>
 				</ul>
 			</li>
