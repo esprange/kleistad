@@ -106,8 +106,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function form_details() {
-		$voltooid = strtotime( $this->data['workshop']['datum'] ) < strtotime( 'today' );
-		$readonly = $this->data['workshop']['betaald'] || $this->data['workshop']['vervallen'] || $voltooid;
+		$readonly = $this->data['workshop']['vervallen'] || strtotime( $this->data['workshop']['datum'] ) <= strtotime( '- ' . opties()['workshop_wijzigbaar'] . ' day 0:00' );
 		?>
 		<input type="hidden" name="workshop_id" value="<?php echo esc_attr( $this->data['workshop']['workshop_id'] ); ?>"/>
 		<input type="hidden" name="aanvraag_id" value="<?php echo esc_attr( $this->data['workshop']['aanvraag_id'] ); ?>"/>
@@ -116,9 +115,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $this->data['workshop']['definitief'] ); ?> >Opslaan</button>
-				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $this->data['workshop']['vervallen'] ); ?>
-					data-confirm="Workshop beheer|weet je zeker dat je nu de bevesting wilt versturen" >Bevestigen</button>
-				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $this->display_actie || $this->data['workshop']['gefactureerd'] ); ?>
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $readonly ); ?>
+					data-confirm="Workshop beheer|weet je zeker dat je <?php echo $this->data['workshop']['definitief'] ? 'opnieuw' : 'nu'; ?> de bevesting wilt versturen" >Bevestigen</button>
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $this->display_actie ); ?>
 					data-confirm="Workshop beheer|weet je zeker dat je de workshop wilt afzeggen" >Afzeggen</button>
 			</div>
 			<div class="kleistad-col-3">

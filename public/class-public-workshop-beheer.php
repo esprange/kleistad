@@ -25,13 +25,10 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	protected function prepare_toevoegen() : string {
 		/*
-		* Er moet een nieuwe workshop opgevoerd worden
+		* Er moet een nieuwe workshop opgevoerd worden, zelfde als wijzigen maar dan zonder id.
 		*/
-		$this->data['docenten'] = new Docenten();
-		if ( ! isset( $this->data['workshop'] ) ) {
-			$this->data['workshop'] = $this->formulier();
-		}
-		return $this->content();
+		$this->data['id'] = null;
+		return $this->prepare_wijzigen();
 	}
 
 	/**
@@ -210,10 +207,19 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Zeg een workshop af
 	 *
 	 * @return array
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function afzeggen() : array {
 		$workshop = new Workshop( intval( $this->data['workshop']['workshop_id'] ) );
-		$workshop->actie->afzeggen();
+		$order    = new Order( $workshop->get_referentie() );
+		if ( $order->id ) {
+			$workshop->verzend_email( '_afzegging', $order->actie->annuleer( 0, 'Annulering workshop' ) );
+		} else {
+			$workshop->actie->afzeggen();
+			if ( $workshop->definitief ) {
+				$workshop->verzend_email( '_afzegging' );
+			}
+		}
 		return [
 			'status'  => $this->status( 'De afspraak voor de workshop is ' . ( $workshop->definitief ? 'per email afgezegd' : 'verwijderd' ) ),
 			'content' => $this->display(),
@@ -336,7 +342,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @param int|null $workshop_id De workshop.
 	 * @return array De workshop data.
 	 */
-	private function formulier( ?int $workshop_id = null ) : array {
+	private function formulier( ?int $workshop_id ) : array {
 		$workshop = new Workshop( $workshop_id );
 		return [
 			'workshop_id'       => $workshop->id,

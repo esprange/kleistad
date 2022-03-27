@@ -51,14 +51,8 @@ class WorkshopActie {
 	 * @since 5.0.0
 	 */
 	public function afzeggen() {
-		if ( ! $this->workshop->vervallen ) {
-			$this->workshop->vervallen = true;
-			$this->workshop->save();
-		}
-		// Als de betaling email al verstuurd is, dan vind de annulering plaats vanuit de boekhouding.
-		if ( $this->workshop->definitief && ! $this->workshop->betaling_email ) {
-			$this->workshop->verzend_email( '_afzegging' );
-		}
+		$this->workshop->vervallen = true;
+		$this->workshop->save();
 	}
 
 	/**

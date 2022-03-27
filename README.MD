@@ -4,7 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.9.2  
-**Stable tag:** 7.2.6  
+**Stable tag:** 7.2.7  
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -33,8 +33,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 7.2.6 ###
-* Diverse verbeteringen.
+### 7.2.7 ###
+* Diverse verbeteringen waaronder verbetering workshop beheer.
 ### 7.2.4 ###
 * Merge van workshop aanvragen en workshop reserveringen. Een klant reserveert per direct een workshop
 * Docenten worden geïnformeerd bij een workshop boeking.
