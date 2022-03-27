@@ -106,10 +106,7 @@ class Public_Docent extends ShortcodeForm {
 	 * @return array Het overzicht.
 	 */
 	private static function docent_beschikbaarheid( int $maandag, Docent $docent, Cursussen $cursussen, Workshops $workshops ) : array {
-		$reserveringen = array_merge(
-			self::docent_op_cursussen( $maandag, $docent, $cursussen ),
-			self::docent_op_workshops( $maandag, $docent, $workshops ),
-		);
+		$reserveringen = self::docent_op_cursussen( $maandag, $docent, $cursussen ) + self::docent_op_workshops( $maandag, $docent, $workshops );
 		foreach ( Docent::DOCENT_DAGDEEL as $dagdeel ) {
 			for ( $datum = $maandag;  $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 				if ( ! isset( $reserveringen[ $datum ][ $dagdeel ] ) ) {
