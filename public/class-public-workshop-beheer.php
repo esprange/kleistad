@@ -207,7 +207,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * Zeg een workshop af
 	 *
 	 * @return array
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function afzeggen() : array {
 		$workshop = new Workshop( intval( $this->data['workshop']['workshop_id'] ) );

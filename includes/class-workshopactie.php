@@ -64,11 +64,11 @@ class WorkshopActie {
 		$order = new Order( $this->workshop->get_referentie() );
 		if ( $order->id ) {
 			$this->workshop->verzend_email( '_afzegging', $order->actie->annuleer( 0, 'Annulering workshop' ) );
-		} else {
-			$this->workshop->actie->afzeggen();
-			if ( $this->workshop->definitief ) {
-				$this->workshop->verzend_email( '_afzegging' );
-			}
+			return;
+		}
+		$this->workshop->actie->afzeggen();
+		if ( $this->workshop->definitief ) {
+			$this->workshop->verzend_email( '_afzegging' );
 		}
 	}
 
