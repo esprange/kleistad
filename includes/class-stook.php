@@ -107,6 +107,13 @@ class Stook {
 	private ?int $stook_id = 0;
 
 	/**
+	 * De over waarvoor gestookt wordt.
+	 *
+	 * @var Oven $oven De oven.
+	 */
+	private Oven $oven;
+
+	/**
 	 * Constructor
 	 *
 	 * @global object $wpdb wp database.
@@ -118,6 +125,7 @@ class Stook {
 		global $wpdb;
 
 		$this->oven_id = $oven_id;
+		$this->oven    = new Oven();
 		$this->datum   = $datum;
 		$resultaat     = $load ?? $wpdb->get_row(
 			$wpdb->prepare(
@@ -162,7 +170,6 @@ class Stook {
 				'prijs' => number_format( $stookdeel->prijs, 2, '.', '' ),
 			];
 		}
-
 		$data =
 			[
 				'oven_id'      => $this->oven_id,
@@ -267,6 +274,99 @@ class Stook {
 			return self::ALLEENLEZEN;
 		}
 		return self::DEFINITIEF;
+	}
+
+	/**
+	 * Verwerk een stook
+	 *
+	 * @global object $wpdb WordPress database.
+	 */
+	public function verwerk() {
+		global $wpdb;
+		$emailer = new Email();
+		try {
+			$stoker = get_userdata( $this->hoofdstoker_id );
+			$wpdb->query( 'START TRANSACTION' );
+			if ( self::ONDERHOUD !== $this->soort ) {
+				foreach ( $this->stookdelen as $stookdeel ) {
+					$stookdeel->prijs = $this->oven->get_stookkosten( $stookdeel->medestoker, $stookdeel->percentage, $this->temperatuur );
+					$medestoker       = get_userdata( $stookdeel->medestoker );
+					$saldo            = new Saldo( $stookdeel->medestoker );
+					$saldo->bedrag    = $saldo->bedrag - $stookdeel->prijs;
+					$saldo->reden     = 'stook op ' . date( 'd-m-Y', $this->datum ) . ' door ' . $stoker->display_name;
+					if ( false === $saldo->save() ) {
+						fout( __CLASS__, "stooksaldo van gebruiker $medestoker->display_name kon niet aangepast worden met kosten $stookdeel->prijs" );
+						continue;
+					}
+					if ( 0 < $stookdeel->prijs ) {
+						$emailer->send(
+							[
+								'to'         => "$medestoker->display_name <$medestoker->user_email>",
+								'subject'    => 'Kleistad kosten zijn verwerkt op het stooksaldo',
+								'slug'       => 'stookkosten_verwerkt',
+								'parameters' => [
+									'voornaam'   => $medestoker->first_name,
+									'achternaam' => $medestoker->last_name,
+									'stoker'     => $stoker->display_name,
+									'bedrag'     => number_format_i18n( $stookdeel->prijs, 2 ),
+									'saldo'      => number_format_i18n( $saldo->bedrag, 2 ),
+									'stookdeel'  => $stookdeel->percentage,
+									'stookdatum' => date( 'd-m-Y', $this->datum ),
+									'stookoven'  => $this->oven->naam,
+								],
+							]
+						);
+					}
+				}
+			}
+			$wpdb->query( 'COMMIT' );
+			$this->verwerkt = true;
+			$this->save();
+		} catch ( Kleistad_Exception $exceptie ) {
+			$wpdb->query( 'ROLLBACK' );
+			fout( __CLASS__, $exceptie->getMessage() );
+		}
+	}
+
+	/**
+	 * Meld een stook
+	 */
+	public function meld() {
+		$emailer = new Email();
+		if ( self::ONDERHOUD !== $this->soort ) {
+			try {
+				$stoker = get_userdata( $this->hoofdstoker_id );
+				$tabel  = '<table><tr><td><strong>Naam</strong></td><td style=\"text-align:right;\"><strong>Percentage</strong></td></tr>';
+				foreach ( $this->stookdelen as $stookdeel ) {
+					if ( 0 === $stookdeel->medestoker ) {
+						continue; // Volgende verdeling.
+					}
+					$medestoker = get_userdata( $stookdeel->medestoker );
+					$tabel     .= "<tr><td>$medestoker->first_name $medestoker->last_name </td><td style=\"text-align:right;\" >$stookdeel->percentage %</td></tr>";
+				}
+				$tabel .= '<tr><td colspan="2" style="text-align:center;" >verdeling op ' . current_time( 'd-m-Y H:i' ) . '</td></table>';
+				$emailer->send(
+					[
+						'to'         => "$stoker->display_name <$stoker->user_email>",
+						'subject'    => 'Kleistad oven gebruik op ' . date( 'd-m-Y', $this->datum ),
+						'slug'       => 'stookmelding',
+						'parameters' => [
+							'voornaam'         => $stoker->first_name,
+							'achternaam'       => $stoker->last_name,
+							'bedrag'           => number_format_i18n( $this->oven->get_stookkosten( $this->hoofdstoker_id, 100, $this->temperatuur ), 2 ),
+							'datum_verwerking' => date( 'd-m-Y', strtotime( '+' . opties()['termijn'] . ' day', $this->datum ) ), // datum verwerking.
+							'datum_deadline'   => date( 'd-m-Y', strtotime( '+' . ( opties()['termijn'] - 1 ) . ' day', $this->datum ) ), // datum deadline.
+							'verdeling'        => $tabel,
+							'stookoven'        => $this->oven->naam,
+						],
+					]
+				);
+				$this->gemeld = true;
+				$this->save();
+			} catch ( Kleistad_Exception $exceptie ) {
+				fout( __CLASS__, $exceptie->getMessage() );
+			}
+		}
 	}
 
 }
