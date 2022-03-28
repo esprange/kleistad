@@ -61,6 +61,19 @@ class Cursist extends Gebruiker {
 	}
 
 	/**
+	 * Haal de lijst met ids op.
+	 *
+	 * @return array
+	 */
+	public function get_cursus_ids(): array {
+		$ids = [];
+		foreach ( $this->inschrijvingen as $inschrijving ) {
+			$ids[] = $inschrijving->code;
+		}
+		return $ids;
+	}
+
+	/**
 	 * Bepaal of de cursist nu actief is.
 	 *
 	 * @return bool True als actief.

@@ -28,7 +28,7 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 				<option value="A" >Actieve abonnees</option>
 				<option value="K" >Actieve dagdelenkaart gebruikers</option>
 				<?php foreach ( $this->data['cursussen'] as $cursus ) : ?>
-				<option value="<?php echo esc_attr( $cursus->code ); ?>" ><?php echo esc_html( "$cursus->code $cursus->naam" ); ?></option>
+				<option value="<?php echo esc_attr( $cursus['code'] ); ?>" ><?php echo esc_html( "{$cursus['code']} {$cursus['naam']}" ); ?></option>
 				<?php endforeach; ?>
 			</select>
 		</p>
@@ -51,7 +51,7 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 					<tr data-id="<?php echo esc_attr( $id ); ?>">
 						<td><?php echo esc_html( $registratie['is_abonnee'] ); ?></td>
 						<td><?php echo esc_html( $registratie['is_dagdelenkaart'] ); ?></td>
-						<td><?php echo esc_html( $registratie['is_cursist'] ); ?></td>
+						<td><?php echo esc_html( implode( ';', $registratie['is_cursist'] ) ); ?></td>
 						<td><?php echo esc_html( $registratie['achternaam'] ); ?></td>
 						<td><?php echo esc_html( $registratie['voornaam'] ); ?></td>
 						<td><?php echo esc_html( $registratie['email'] ); ?></td>

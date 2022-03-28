@@ -71,8 +71,8 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 */
 	protected function prepare() : string {
 		$this->data = [
-			'registraties' => $this->registraties(),
-			'cursussen'    => new Cursussen(),
+			'registraties' => $this->get_registraties(),
+			'cursussen'    => $this->get_cursussen(),
 		];
 		return $this->content();
 	}
@@ -235,7 +235,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 *
 	 * @return array de registraties.
 	 */
-	private function registraties() : array {
+	private function get_registraties() : array {
 		$registraties = [];
 		foreach ( get_users( [ 'orderby' => 'display_name' ] ) as $gebruiker ) {
 			$abonnement                     = new Abonnement( $gebruiker->ID );
@@ -244,7 +244,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			$registraties[ $gebruiker->ID ] = [
 				'is_abonnee'       => boolval( $abonnement->start_datum ),
 				'is_dagdelenkaart' => boolval( $dagdelenkaart->start_datum ),
-				'is_cursist'       => boolval( count( $cursist->inschrijvingen ) ),
+				'is_cursist'       => $cursist->get_cursus_ids(),
 				'voornaam'         => $gebruiker->first_name,
 				'achternaam'       => $gebruiker->last_name,
 				'telnr'            => $gebruiker->telnr,
@@ -252,6 +252,23 @@ class Public_Registratie_Overzicht extends Shortcode {
 			];
 		}
 		return $registraties;
+	}
+
+	/**
+	 * Geef de cursussen in omgekeerde volgorde.
+	 *
+	 * @return array
+	 */
+	private function get_cursussen() : array {
+		$cursussen = [];
+		foreach ( new Cursussen() as $cursus ) {
+			$cursussen[ $cursus->id ] = [
+				'code' => $cursus->code,
+				'naam' => $cursus->naam,
+			];
+		}
+		krsort( $cursussen );
+		return $cursussen;
 	}
 
 	/**

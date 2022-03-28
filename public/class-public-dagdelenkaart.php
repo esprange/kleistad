@@ -43,6 +43,12 @@ class Public_Dagdelenkaart extends Public_Bestelling {
 				'betaal'         => 'ideal',
 			];
 		}
+		$this->data['gebruikers'] = get_users(
+			[
+				'fields'  => [ 'ID', 'display_name' ],
+				'orderby' => 'display_name',
+			]
+		);
 		return $this->content();
 	}
 
@@ -104,7 +110,7 @@ class Public_Dagdelenkaart extends Public_Bestelling {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
 		$dagdelenkaart = new Dagdelenkaart( $gebruiker_id );
-		$dagdelenkaart->nieuw( strtotime( $this->data['input']['start_datum'] ), $this->data['input']['opmerking'] );
+		$dagdelenkaart->nieuw( strtotime( $this->data['input']['start_datum'] ), $this->data['input']['opmerking'] ?? '' );
 
 		if ( 'ideal' === $this->data['input']['betaal'] ) {
 			$ideal_uri = $dagdelenkaart->betaling->doe_ideal( 'Bedankt voor de betaling! Een dagdelenkaart is aangemaakt en kan bij Kleistad opgehaald worden', opties()['dagdelenkaart'], $dagdelenkaart->get_referentie() );
