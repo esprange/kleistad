@@ -54,7 +54,7 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$order->gesloten = true;
 		$order->save( 'test' );
 		$result = $this->public_display_actie( self::SHORTCODE, [] );
-		$this->assertStringContainsString( 'Volgens onze informatie is er reeds betaald', $result, 'prepare gesloten order incorrect' );
+		$this->assertStringContainsString( 'Volgens onze informatie staat er geen te betalen bedrag open', $result, 'prepare gesloten order incorrect' );
 
 		/**
 		 * Nu nog een controle met foute hash ccode.
@@ -95,7 +95,7 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$order->gesloten = true;
 		$order->save( 'test' );
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'betalen' );
-		$this->assertStringContainsString( 'Volgens onze informatie is er reeds betaald', $result['status'], 'validate gesloten order incorrect' );
+		$this->assertStringContainsString( 'Volgens onze informatie staat er geen te betalen bedrag open', $result['status'], 'validate gesloten order incorrect' );
 
 		// @todo Er zou ook nog een test moeten zijn vwb beschikbaarheid.
 	}

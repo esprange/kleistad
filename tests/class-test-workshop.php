@@ -141,16 +141,18 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop        = $this->maak_workshop();
 		$workshop->datum = strtotime( '10 days' );
 		$workshop->actie->bevestig();
-		$workshop->actie->afzeggen();
+		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestigd mail incorrect' );
+		$workshop->actie->annuleer();
 		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
+		$this->assertEmpty( $mailer->get_last_sent()->attachment, 'mail credit factuur onnodig' );
 
 		$workshop        = $this->maak_workshop();
 		$workshop->datum = strtotime( '10 days' );
 		$workshop->actie->bevestig();
 		Workshops::doe_dagelijks();
-
-		$workshop->actie->afzeggen();
+		$workshop->actie->annuleer();
 		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
+		$this->assertEmpty( $mailer->get_last_sent()->attachment, 'mail credit factuur onnodig' );
 
 		$workshop        = $this->maak_workshop();
 		$workshop->datum = strtotime( '5 days' );
@@ -158,12 +160,9 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		Workshops::doe_dagelijks();
 		$this->assertEquals( 'Betaling van workshop', $mailer->get_last_sent()->subject, 'mail betalen incorrect' );
 		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'mail betalen factuur ontbreekt' );
-		/**
-		 * Hier zit nog iets scheef. De controle of afzeggen mogelijk is, zit nu in de front-end van workshop beheer en hoort daar niet thuis
-		 * Nu wordt daar gecontroleerd of er al gefactureerd is.
-		 */
-		$workshop->actie->afzeggen();
+		$workshop->actie->annuleer();
 		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'mail credit factuur ontbreekt' );
 	}
 
 	/**

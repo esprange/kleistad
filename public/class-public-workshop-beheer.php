@@ -211,15 +211,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	protected function afzeggen() : array {
 		$workshop = new Workshop( intval( $this->data['workshop']['workshop_id'] ) );
-		$order    = new Order( $workshop->get_referentie() );
-		if ( $order->id ) {
-			$workshop->verzend_email( '_afzegging', $order->actie->annuleer( 0, 'Annulering workshop' ) );
-		} else {
-			$workshop->actie->afzeggen();
-			if ( $workshop->definitief ) {
-				$workshop->verzend_email( '_afzegging' );
-			}
-		}
+		$workshop->actie->annuleer();
 		return [
 			'status'  => $this->status( 'De afspraak voor de workshop is ' . ( $workshop->definitief ? 'per email afgezegd' : 'verwijderd' ) ),
 			'content' => $this->display(),
