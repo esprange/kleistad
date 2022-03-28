@@ -44,7 +44,7 @@ class Public_Betaling extends ShortcodeForm {
 			return $this->status( new WP_Error( 'Security', 'Je hebt geklikt op een ongeldige link of deze is nu niet geldig meer.' ) );
 		}
 		if ( $order->gesloten ) {
-			return $this->status( new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' ) );
+			return $this->status( new WP_Error( 'Betaald', 'Volgens onze informatie staat er geen te betalen bedrag open. Neem eventueel contact op met Kleistad' ) );
 		}
 		$this->data = [
 			'order_id'      => $order->id,
@@ -76,7 +76,7 @@ class Public_Betaling extends ShortcodeForm {
 		);
 		$this->data['order'] = new Order( $this->data['input']['order_id'] );
 		if ( $this->data['order']->gesloten ) {
-			return $this->melding( new WP_Error( 'Betaald', 'Volgens onze informatie is er reeds betaald. Neem eventueel contact op met Kleistad' ) );
+			return $this->melding( new WP_Error( 'Betaald', 'Volgens onze informatie staat er geen te betalen bedrag open. Neem eventueel contact op met Kleistad' ) );
 		}
 		$artikelregister       = new Artikelregister();
 		$this->data['artikel'] = $artikelregister->get_object( $this->data['order']->referentie );
@@ -123,11 +123,29 @@ class Public_Betaling extends ShortcodeForm {
 	 */
 	protected function annuleren() : array {
 		$order = new Order( $this->data['artikel']->get_referentie() );
-		if ( $order->is_annuleerbaar() && $order->actie->annuleer( 0.0, 'Geannuleerd door klant' ) ) {
-			return [
-				'status'  => 'De order is geannuleerd en een bevestiging is verstuurd',
-				'content' => $this->goto_home(),
-			];
+		if ( $order->is_annuleerbaar() ) {
+			$credit_factuur = $order->actie->annuleer( 0.0, 'Geannuleerd door klant' );
+			if ( is_string( $credit_factuur ) ) {
+				$emailer = new Email();
+				$emailer->send(
+					[
+						'to'          => $order->klant['email'],
+						'slug'        => 'order_annulering',
+						'subject'     => 'Order geannuleerd',
+						'attachments' => $credit_factuur,
+						'parameters'  => [
+							'naam'        => $order->klant['naam'],
+							'artikel'     => $this->data['artikel']->get_artikelnaam(),
+							'referentie'  => $order->referentie,
+							'betaal_link' => $this->data['artikel']->get_betaal_link(),
+						],
+					]
+				);
+				return [
+					'status'  => 'De order is geannuleerd en een bevestiging is verstuurd',
+					'content' => $this->goto_home(),
+				];
+			}
 		}
 		return [ 'status' => $this->status( new WP_Error( 'annuleren', 'Annulering blijkt niet mogelijk. Neem eventueel contact op met Kleistad' ) ) ];
 	}
