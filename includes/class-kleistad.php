@@ -200,8 +200,8 @@ class Kleistad {
 		setlocale( LC_TIME, 'NLD_nld', 'nl_NL', 'nld_nld', 'Dutch', 'nl_NL.utf8' );
 		$this->define_admin_hooks();
 		$this->define_common_hooks();
+		$this->define_shop_hooks();
 		$this->define_public_hooks();
-		new Artikelregister( [ 'Abonnement', 'Afboeking', 'Dagdelenkaart', 'Inschrijving', 'LosArtikel', 'Saldo', 'Workshop' ] );
 	}
 
 	/**
@@ -264,6 +264,20 @@ class Kleistad {
 	}
 
 	/**
+	 * Registreer shop specifieke hooks
+	 *
+	 * @since 7.3.0
+	 * @return void
+	 */
+	private function define_shop_hooks() {
+		$plugin_actions = new Shop();
+
+		$this->loader->add_action( 'init', $plugin_actions, 'shop_init' );
+		$this->loader->add_action( 'kleistad_order_annulering', $plugin_actions, 'order_annulering' );
+		$this->loader->add_action( 'kleistad_betaalinfo_update', $plugin_actions, 'betaalinfo_update' );
+	}
+
+	/**
 	 * Registreer alle public hooks.
 	 *
 	 * @since    4.0.87
@@ -277,13 +291,12 @@ class Kleistad {
 		$this->loader->add_action( 'init', $plugin_actions, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $plugin_actions, 'register_post_types' );
 		$this->loader->add_action( 'init', $plugin_actions, 'register_styles_and_scripts' );
+		$this->loader->add_action( 'init', $plugin_actions, 'inline_style', 100 );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'enqueue_styles_and_scripts', 99 );
 		$this->loader->add_action( 'kleistad_rcv_email', $plugin_actions, 'rcv_email' );
-		$this->loader->add_action( 'init', $plugin_actions, 'inline_style', 100 );
 		$this->loader->add_action( 'wp_ajax_kleistad_wachtwoord', $plugin_actions, 'wachtwoord', 100 );
 		$this->loader->add_action( 'wp_ajax_nopriv_kleistad_wachtwoord', $plugin_actions, 'wachtwoord', 100 );
 		$this->loader->add_action( 'profile_update', $plugin_actions, 'profile_update' );
-		$this->loader->add_action( 'kleistad_betaalinfo_update', $plugin_actions, 'betaalinfo_update' );
 
 		$this->loader->add_filter( 'single_template', $plugin_filters, 'single_template' );
 		$this->loader->add_filter( 'comments_template', $plugin_filters, 'comments_template' );

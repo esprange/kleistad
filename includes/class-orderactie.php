@@ -60,7 +60,7 @@ final class OrderActie {
 		$this->order->verval_datum  = $verval_datum;
 		$this->order->orderregels   = $artikel->get_factuurregels();
 		$this->order->save( $factuur ? sprintf( 'Order en factuur aangemaakt, nieuwe status betaald is € %01.2f', $bedrag ) : 'Order aangemaakt' );
-		do_action( 'kleistad_betaalinfo_update', $artikel->klant_id );
+		do_action( 'kleistad_betaalinfo_update', $this->order->klant_id );
 		return $factuur ? $this->maak_factuur( '' ) : '';
 	}
 
@@ -76,9 +76,8 @@ final class OrderActie {
 		if ( $this->order->credit_id || $this->order->origineel_id ) {
 			return false;  // De relatie id's zijn ingevuld dus er is al een credit factuur of dit is een creditering.
 		}
-		$artikelregister            = new Artikelregister();
-		$artikel                    = $artikelregister->get_object( $this->order->referentie );
 		$credit_order               = clone $this->order;
+		$credit_order->datum        = time();
 		$credit_order->origineel_id = $this->order->id;
 		$credit_order->verval_datum = strtotime( 'tomorrow' );
 		$credit_order->opmerking    = $opmerking;
@@ -94,10 +93,8 @@ final class OrderActie {
 		$this->order->betaald   = 0;
 		$this->order->save( sprintf( 'Geannuleerd, credit factuur %s aangemaakt', $credit_order->get_factuurnummer() ) );
 
-		if ( property_exists( $artikel, 'actie' ) && method_exists( $artikel->actie, 'afzeggen' ) ) {
-			$artikel->actie->afzeggen();
-		}
-		do_action( 'kleistad_betaalinfo_update', $artikel->klant_id );
+		do_action( 'kleistad_order_annulering', $this->order );
+		do_action( 'kleistad_betaalinfo_update', $this->order->klant_id );
 		return $credit_order->actie->maak_factuur( 'credit' );
 	}
 

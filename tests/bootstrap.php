@@ -53,3 +53,4 @@ tests_add_filter(
 	}
 );
 
+do_action( 'init' );

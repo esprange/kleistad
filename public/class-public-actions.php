@@ -214,12 +214,6 @@ class Public_Actions {
 				$user_login .= chr( wp_rand( ord( '0' ), ord( '9' ) ) ); // Aanvullen met een cijfer tot minimaal 8 karakters en uniek.
 			}
 			$userdata->user_login = $user_login;
-			/**
-			 * Voorkom warning.
-			 *
-			 * @noinspection PhpUndefinedFieldInspection
-			 */
-			$userdata->role = '';
 			wp_update_user( $userdata );
 		}
 	}
@@ -243,17 +237,4 @@ class Public_Actions {
 		}
 	}
 
-	/**
-	 * Update betaalinfo
-	 *
-	 * @param int $gebruiker_id Gebruiker id.
-	 *
-	 * @return void
-	 *
-	 * @internal Action for betaalinfo_update
-	 */
-	public function betaalinfo_update( int $gebruiker_id ) {
-		$profiel = new Profiel();
-		$profiel->reset( $gebruiker_id );
-	}
 }
