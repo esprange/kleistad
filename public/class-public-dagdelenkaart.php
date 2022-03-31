@@ -120,7 +120,7 @@ class Public_Dagdelenkaart extends Public_Bestelling {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}
 		$order = new Order( $dagdelenkaart->get_referentie() );
-		if ( ! $dagdelenkaart->verzend_email( '_bank', $order->actie->bestel( 0.0, $dagdelenkaart->start_datum ) ) ) {
+		if ( ! $dagdelenkaart->verzend_email( '_bank', $order->bestel( 0.0, $dagdelenkaart->start_datum ) ) ) {
 			return [
 				'status' => $this->status( new WP_Error( '', 'Een bevestigings email kon niet worden verzonden. Neem s.v.p. contact op met Kleistad.' ) ),
 			];

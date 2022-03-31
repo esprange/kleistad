@@ -103,20 +103,13 @@ class InschrijvingBetaling extends ArtikelBetaling {
 					 * Er is nog geen order, dan betreft dit inschrijving vanuit het formulier.
 					 */
 					$order = new Order( $this->inschrijving->get_referentie() );
-					$this->inschrijving->verzend_email( 'indeling', $order->actie->bestel( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding(), $transactie_id ) );
-					return;
-				}
-				if ( $order->is_credit() ) {
-					/**
-					 * Er is een credit order en het bedrag is positief, dan betreft dit inschrijving vanuit het formulier.
-					 */
-					$this->inschrijving->verzend_email( 'indeling', $order->actie->bestel( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding(), $transactie_id ) );
+					$this->inschrijving->verzend_email( 'indeling', $order->bestel( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding(), $transactie_id ) );
 					return;
 				}
 				/**
 				 * Er is al een order, dus er is betaling vanuit een mail link of er is al inschrijfgeld betaald.
 				 */
-				$order->actie->ontvang( $bedrag, $transactie_id );
+				$order->ontvang( $bedrag, $transactie_id );
 				$this->inschrijving->verzend_email( 'indeling' );
 				return;
 			}
@@ -129,7 +122,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 		/**
 		 * Als de cursist al ingedeeld is volstaat een bedankje ingeval van een betaling per ideal, bank hoeft niet.
 		 */
-		$order->actie->ontvang( $bedrag, $transactie_id );
+		$order->ontvang( $bedrag, $transactie_id );
 		if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting, dan geen email nodig.
 			$this->inschrijving->verzend_email( '_ideal_betaald' );
 		}

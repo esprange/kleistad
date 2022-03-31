@@ -81,7 +81,7 @@ class LosArtikelBetaling extends ArtikelBetaling {
 		if ( $betaald ) {
 			if ( $order->id ) {
 				$this->losartikel->klant = $order->klant;
-				$order->actie->ontvang( $bedrag, $transactie_id );
+				$order->ontvang( $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->losartikel->verzend_email( '_ideal_betaald' );
 				}

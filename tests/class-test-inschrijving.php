@@ -182,7 +182,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1 = $this->maak_inschrijving();
 		$inschrijving1->save();
 		$order   = new Order( $inschrijving1->get_referentie() );
-		$factuur = $order->actie->bestel( 0, strtotime( 'today' ) );
+		$factuur = $order->bestel( 0, strtotime( 'today' ) );
 		$this->assertFileExists( $factuur, 'bestel order incorrect' );
 		$this->assertTrue( $order->id > 0, 'bestel order incorrect' );
 	}
@@ -194,8 +194,8 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1 = $this->maak_inschrijving();
 		$inschrijving1->save();
 		$order = new Order( $inschrijving1->get_referentie() );
-		$order->actie->bestel( 0, strtotime( 'today' ), '', '', false );
-		$order->actie->annuleer( 24.0, '' );
+		$order->bestel( 0, strtotime( 'today' ), '', '', false );
+		$order->annuleer( 24.0, '' );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 		$inschrijving2 = new Inschrijving( $inschrijving1->cursus->id, $inschrijving1->klant_id );
 		$this->assertTrue( $inschrijving2->geannuleerd, 'annuleer status incorrect' );

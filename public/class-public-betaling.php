@@ -30,14 +30,14 @@ class Public_Betaling extends ShortcodeForm {
 		$param = filter_input_array(
 			INPUT_GET,
 			[
-				'order' => FILTER_SANITIZE_NUMBER_INT,
+				'order' => FILTER_SANITIZE_STRING,
 				'hsh'   => FILTER_SANITIZE_STRING,
 			]
 		);
 		if ( is_null( $param ) || is_null( $param['order'] ) ) {
 			return ''; // Waarschijnlijk bezoek na succesvolle betaling. Pagina blijft leeg, behalve eventuele boodschap.
 		}
-		$order           = new Order( intval( $param['order'] ) );
+		$order           = new Order( $param['order'] );
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->get_object( $order->referentie );
 		if ( is_null( $artikel ) || $param['hsh'] !== $artikel->get_controle() ) {
@@ -124,7 +124,7 @@ class Public_Betaling extends ShortcodeForm {
 	protected function annuleren() : array {
 		$order = new Order( $this->data['artikel']->get_referentie() );
 		if ( $order->is_annuleerbaar() ) {
-			$credit_factuur = $order->actie->annuleer( 0.0, 'Geannuleerd door klant' );
+			$credit_factuur = $order->annuleer( 0.0, 'Geannuleerd door klant' );
 			if ( is_string( $credit_factuur ) ) {
 				$emailer = new Email();
 				$emailer->send(

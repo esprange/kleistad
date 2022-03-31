@@ -55,7 +55,7 @@ class SaldoActie {
 			return $this->saldo->betaling->doe_ideal( 'Bedankt voor de betaling! Het saldo wordt aangepast en er wordt een email verzonden met bevestiging', $bedrag, $this->saldo->get_referentie() );
 		}
 		$order = new Order( $this->saldo->get_referentie() );
-		$this->saldo->verzend_email( '_bank', $order->actie->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
+		$this->saldo->verzend_email( '_bank', $order->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
 		return true;
 	}
 

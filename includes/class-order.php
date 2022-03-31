@@ -11,8 +11,6 @@
 
 namespace Kleistad;
 
-use Mollie\Api\Exceptions\ApiException;
-
 /**
  * Kleistad Order class.
  *
@@ -22,6 +20,7 @@ use Mollie\Api\Exceptions\ApiException;
  * @property int    credit_id
  * @property int    origineel_id
  * @property bool   gesloten
+ * @property bool   credit
  * @property array  historie
  * @property array  klant
  * @property int    klant_id
@@ -52,11 +51,11 @@ class Order {
 	public Orderregels $orderregels;
 
 	/**
-	 * Apart actie object om de code een beetje te spreiden.
+	 * Het factuur object.
 	 *
-	 * @var OrderActie Het actie object.
+	 * @var Factuur $factuur De factuur.
 	 */
-	public OrderActie $actie;
+	private Factuur $factuur;
 
 	/**
 	 * Maak het object aan.
@@ -73,6 +72,7 @@ class Order {
 			'credit_id'     => 0,
 			'origineel_id'  => 0,
 			'gesloten'      => false,
+			'credit'        => false,
 			'historie'      => wp_json_encode( [] ),
 			'klant'         => wp_json_encode(
 				[
@@ -102,16 +102,18 @@ class Order {
 		if ( ! empty( $resultaat ) ) {
 			$this->data = $resultaat;
 		}
+		$this->factuur     = new Factuur();
 		$this->orderregels = new Orderregels( $this->data['regels'] );
-		$this->actie       = new OrderActie( $this );
 	}
 
 	/**
 	 * Deep clone
 	 */
 	public function __clone() {
-		$this->id          = 0;
-		$this->orderregels = clone $this->orderregels;
+		$this->origineel_id = $this->id;
+		$this->id           = 0;
+		$this->datum        = time();
+		$this->orderregels  = clone $this->orderregels;
 	}
 
 	/**
@@ -132,7 +134,7 @@ class Order {
 		if ( in_array( $attribuut, [ 'klant', 'historie' ], true ) ) {
 			return json_decode( $this->data[ $attribuut ], true );
 		}
-		if ( 'gesloten' === $attribuut ) {
+		if ( in_array( $attribuut, [ 'gesloten', 'credit' ], true ) ) {
 			return boolval( $this->data[ $attribuut ] );
 		}
 		if ( 'betaald' === $attribuut ) {
@@ -162,6 +164,7 @@ class Order {
 				$this->data[ $attribuut ] = date( 'Y-m-d H:i:s', $waarde );
 				break;
 			case 'gesloten':
+			case 'credit':
 				$this->data[ $attribuut ] = (int) $waarde;
 				break;
 			default:
@@ -178,25 +181,10 @@ class Order {
 	}
 
 	/**
-	 * Bepaal of de order nog gecorrigeerd mag worden.
-	 */
-	public function is_geblokkeerd() : bool {
-		$blokkade = new Blokkade();
-		return $blokkade->check( $this->datum );
-	}
-
-	/**
 	 * Bepaal of de order nog annuleerbaar is. Order mag niet al gecrediteerd zijn.
 	 */
 	public function is_annuleerbaar() : bool {
 		return ! boolval( $this->credit_id ) && '@' !== $this->referentie[0];
-	}
-
-	/**
-	 * Bepaal of het een credit order is.
-	 */
-	public function is_credit() : bool {
-		return boolval( $this->origineel_id );
 	}
 
 	/**
@@ -235,7 +223,7 @@ class Order {
 		if ( $this->gesloten ) {
 			return 0;
 		}
-		if ( $this->is_credit() ) {
+		if ( $this->credit ) {
 			$origineel_order = new Order( $this->origineel_id );
 			return round( $origineel_order->orderregels->get_bruto() + $this->orderregels->get_bruto() - $this->betaald, 2 );
 		}
@@ -251,33 +239,202 @@ class Order {
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 * @global object $wpdb WordPress database.
 	 */
-	public function save( string $reden ) : int {
+	public function save( string $reden = '' ) : int {
 		global $wpdb;
-		$historie               = $this->historie;
-		$historie[]             = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
-		$this->data['historie'] = wp_json_encode( $historie );
-		$this->gesloten         = $this->credit_id || ( 0.01 >= abs( $this->get_te_betalen() ) );
-		$this->regels           = $this->orderregels->get_json_export();
+		if ( ! empty( $reden ) ) {
+			$historie               = $this->historie;
+			$historie[]             = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
+			$this->data['historie'] = wp_json_encode( $historie );
+		}
+		$this->gesloten = $this->credit_id || ( 0.01 >= abs( $this->get_te_betalen() ) );
+		$this->regels   = $this->orderregels->get_json_export();
 		$wpdb->query( 'START TRANSACTION READ WRITE' );
-		if ( ! $this->id ) {
+		if ( $this->id ) {
+			$this->mutatie_datum = time();
+			$wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] );
+		} else {
 			$this->factuurnr = 1 + intval( $wpdb->get_var( "SELECT MAX(factuurnr) FROM {$wpdb->prefix}kleistad_orders" ) );
 			$wpdb->insert( "{$wpdb->prefix}kleistad_orders", $this->data );
 			$this->id = $wpdb->insert_id;
-		} else {
-			$this->mutatie_datum = time();
-			$wpdb->update( "{$wpdb->prefix}kleistad_orders", $this->data, [ 'id' => $this->id ] );
 		}
 		$wpdb->query( 'COMMIT' );
-
-		if ( $this->transactie_id && -0.01 > $this->get_te_betalen() ) {
-			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
-			try {
-				$betalen = new Betalen();
-				$betalen->terugstorting( $this->transactie_id, $this->referentie, - $this->get_te_betalen(), 'Kleistad: zie factuur ' . $this->get_factuurnummer() );
-			} catch ( ApiException $e ) {
-				fout( __CLASS__, 'terugstorting niet mogelijk : ' . $e->getMessage() );
-			}
-		}
 		return $this->id;
 	}
+
+	/**
+	 * Een bestelling aanmaken.
+	 *
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param int    $verval_datum  De datum waarop de factuur vervalt.
+	 * @param string $opmerking     De optionele opmerking in de factuur.
+	 * @param string $transactie_id De betalings id.
+	 * @param bool   $factuur_nodig Of er een factuur aangemaakt moet worden.
+	 *
+	 * @return string De url van de factuur.
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
+	 */
+	public function bestel( float $bedrag, int $verval_datum, string $opmerking = '', string $transactie_id = '', bool $factuur_nodig = true ): string {
+		if ( $this->credit ) {
+			return ''; // Credit orders worden niet hergebruikt.
+		}
+		$artikelregister     = new Artikelregister();
+		$artikel             = $artikelregister->get_object( $this->referentie );
+		$this->betaald      += $bedrag; // Als er al eerder op de order betaald is, het bedrag toevoegen.
+		$this->klant_id      = $artikel->klant_id;
+		$this->klant         = $artikel->get_naw_klant();
+		$this->opmerking     = $opmerking;
+		$this->transactie_id = $transactie_id ?? $this->transactie_id; // Overschrijf het transactie_id alleen als er een ideal betaling is gedaan.
+		$this->verval_datum  = $verval_datum;
+		$this->orderregels   = $artikel->get_factuurregels();
+		$this->save( $factuur_nodig ? sprintf( 'Order en factuur aangemaakt, nieuwe status betaald is € %01.2f', $bedrag ) : 'Order aangemaakt' );
+
+		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
+		return $factuur_nodig ? $this->factuur->run( $this ) : '';
+	}
+
+	/**
+	 * Een bestelling annuleren.
+	 *
+	 * @param float  $restant   Het te betalen bedrag bij annulering.
+	 * @param string $opmerking De opmerkingstekst in de factuur.
+	 *
+	 * @return bool|string De url van de creditfactuur of false indien annulering niet mogelijk.
+	 */
+	public function annuleer( float $restant, string $opmerking = '' ): bool|string {
+		if ( $this->credit_id ) {
+			return false; // Een credit order is niet te crediteren.
+		}
+		$credit_order    = $this->crediteer( $opmerking, false, $restant );
+		$this->credit_id = $credit_order->id;
+		$this->save( 'Geannuleerd, credit factuur aangemaakt' );
+
+		do_action( 'kleistad_order_annulering', $this->referentie );
+		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
+		return $this->factuur->run( $credit_order );
+	}
+
+	/**
+	 * Een bestelling wijzigen ivm korting.
+	 *
+	 * @param float  $korting   De te geven korting.
+	 * @param string $opmerking De opmerking in de factuur.
+	 *
+	 * @return string De url van de factuur of fout.
+	 */
+	public function korting( float $korting, string $opmerking = '' ): string {
+		$credit_order            = $this->crediteer( 'creditering ivm korting op order', true );
+		$nieuwe_order            = clone $this;
+		$nieuwe_order->gesloten  = false;
+		$nieuwe_order->opmerking = $opmerking;
+		$nieuwe_order->orderregels->toevoegen( new Orderregel( Orderregel::KORTING, 1, - $korting ) );
+		$nieuwe_order->save( sprintf( 'Correctie factuur i.v.m. korting € %01.2f', $korting ) );
+		$this->factuur->run( $credit_order ); // Wordt niet verstuurd.
+		$this->credit_id = $credit_order->id;
+		$this->save( 'gecrediteerd i.v.m. korting' );
+
+		do_action( 'kleistad_order_stornering', $this->referentie );
+		do_action( 'kleistad_betaalinfo_update', $nieuwe_order->klant_id );
+		return $this->factuur->run( $nieuwe_order );
+	}
+
+	/**
+	 * Een bestelling wijzigen.
+	 *
+	 * @param string $referentie De (nieuwe) verwijzing naar het gewijzigde artikel.
+	 * @param string $opmerking  De optionele opmerking in de factuur.
+	 *
+	 * @return string De url van de factuur of false.
+	 * @noinspection PhpNonStrictObjectEqualityInspection
+	 */
+	public function wijzig( string $referentie, string $opmerking = '' ): string {
+		$artikelregister = new Artikelregister();
+		$artikel         = $artikelregister->get_object( $referentie );
+		if ( $artikel->get_referentie() === $this->referentie &&
+			$artikel->get_naw_klant() === $this->klant &&
+			$artikel->get_factuurregels() == $this->orderregels ) { // phpcs:ignore
+			return '';
+		}
+		$credit_order              = $this->crediteer( 'creditering ivm wijziging order', true );
+		$nieuwe_order              = clone $this;
+		$nieuwe_order->referentie  = $referentie;
+		$nieuwe_order->orderregels = $artikel->get_factuurregels();
+		$nieuwe_order->klant       = $artikel->get_naw_klant();
+		$nieuwe_order->opmerking   = $opmerking;
+		$nieuwe_order->gesloten    = false;
+		$nieuwe_order->save( 'Correctie factuur i.v.m. wijziging artikel' );
+		$this->factuur->run( $credit_order ); // Wordt niet verstuurd.
+		$this->credit_id = $credit_order->id;
+		$this->save( 'gecrediteerd i.v.m. wijziging' );
+
+		do_action( 'kleistad_order_stornering', $this->referentie );
+		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
+		return $this->factuur->run( $nieuwe_order );
+	}
+
+	/**
+	 * Een bestelling betalen.
+	 *
+	 * @param float  $bedrag        Het betaalde bedrag.
+	 * @param string $transactie_id De betalings id.
+	 * @param bool   $factuur_nodig Of er wel / niet een factuur aangemaakt moet worden.
+	 * @return string Pad naar de factuur of leeg.
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
+	 */
+	public function ontvang( float $bedrag, string $transactie_id, bool $factuur_nodig = false ): string {
+		$this->betaald      += $bedrag;
+		$this->transactie_id = $transactie_id;
+		$this->save( sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'Betaling' : 'Stornering', abs( $bedrag ), $this->betaald ) );
+		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
+		return ( $factuur_nodig ) ? $this->factuur->run( $this ) : '';
+	}
+
+	/**
+	 * Afboeken van een order.
+	 */
+	public function afboeken() {
+		$te_betalen            = $this->get_te_betalen();
+		$afboek_order          = new Order( '@-' . $this->referentie );
+		$afboek_order->betaald = $te_betalen;
+		$afboek_order->klant   = $this->klant;
+		$afboek_order->orderregels->toevoegen( new Orderregel( 'Afboeking', 1, $te_betalen ) );
+		$afboek_order->save( sprintf( 'Afboeking order door %s', wp_get_current_user()->display_name ) );
+		$this->betaald += $te_betalen;
+		$this->save( 'Afboeking' );
+	}
+
+	/**
+	 * Maak opnieuw de factuur aan
+	 *
+	 * @return string
+	 */
+	public function herzenden() : string {
+		return $this->factuur->run( $this );
+	}
+
+	/**
+	 * Hulp functie om de huidige order ter crediteren.
+	 *
+	 * @param string $reden    De reden.
+	 * @param bool   $gesloten Of de order meteen gesloten moet worden.
+	 * @param float  $restant  Eventuele kosten.
+	 *
+	 * @return Order
+	 */
+	private function crediteer( string $reden, bool $gesloten, float $restant = 0.0 ) : Order {
+		$credit_order               = clone $this;
+		$credit_order->verval_datum = strtotime( 'tomorrow' );
+		$credit_order->opmerking    = 'creditering vanwege vervanging factuur';
+		$credit_order->orderregels  = new Orderregels();
+		$credit_order->gesloten     = $gesloten;
+		$credit_order->credit       = true;
+		foreach ( $this->orderregels as $orderregel ) {
+			$credit_order->orderregels->toevoegen( new Orderregel( "annulering $orderregel->artikel", - $orderregel->aantal, $orderregel->prijs, $orderregel->btw ) );
+		}
+		if ( 0.0 < $restant ) {
+			$credit_order->orderregels->toevoegen( new Orderregel( 'kosten i.v.m. annulering', 1, $restant ) );
+		}
+		$credit_order->save( $reden );
+		return $credit_order;
+	}
+
 }

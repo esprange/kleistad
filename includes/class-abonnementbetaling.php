@@ -196,20 +196,20 @@ class AbonnementBetaling extends ArtikelBetaling {
 			 */
 			if ( 0 < $bedrag ) {
 				if ( 'ideal' === $type ) {
-					$order->actie->ontvang( $bedrag, $transactie_id );
+					$order->ontvang( $bedrag, $transactie_id );
 					$this->abonnement->verzend_email( '_ideal_betaald' );
 					return;
 				}
 				if ( 'directdebit' === $type ) { // Als het een incasso is dan wordt er ook een factuur aangemaakt.
-					$this->abonnement->verzend_email( '_regulier_incasso', $order->actie->ontvang( $bedrag, $transactie_id, true ) );
+					$this->abonnement->verzend_email( '_regulier_incasso', $order->ontvang( $bedrag, $transactie_id, true ) );
 					return;
 				}
 				// Anders is het een bank betaling en daarvoor wordt geen bedank email verzonden.
-				$order->actie->ontvang( $bedrag, $transactie_id );
+				$order->ontvang( $bedrag, $transactie_id );
 				return;
 			}
 			// Anders is het een terugstorting.
-			$order->actie->ontvang( $bedrag, $transactie_id );
+			$order->ontvang( $bedrag, $transactie_id );
 			return;
 		}
 		/**
@@ -231,7 +231,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 			$this->abonnement->factuur_maand = (int) date( 'Ym' );
 			$this->abonnement->save();
 			$order = new Order( $this->abonnement->get_referentie() );
-			$this->abonnement->verzend_email( '_start_ideal', $order->actie->bestel( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
+			$this->abonnement->verzend_email( '_start_ideal', $order->bestel( $bedrag, $this->abonnement->start_datum, '', $transactie_id ) );
 			return;
 		}
 		/**
@@ -253,7 +253,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 				/**
 				 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.
 				 */
-			$this->abonnement->verzend_email( '_regulier_mislukt', $order->actie->ontvang( 0, '', true ) );
+			$this->abonnement->verzend_email( '_regulier_mislukt', $order->ontvang( 0, '', true ) );
 			return;
 		}
 		if ( 'ideal' === $type ) {

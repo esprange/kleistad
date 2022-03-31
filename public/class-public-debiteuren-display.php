@@ -306,7 +306,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	 * @return Public_Debiteuren_Display
 	 */
 	private function korting() : Public_Debiteuren_Display {
-		if ( $this->data['debiteur']['geblokkeerd'] || $this->data['debiteur']['credit'] ) {
+		if ( $this->data['debiteur']['credit'] ) {
 			return $this;
 		}
 		?>

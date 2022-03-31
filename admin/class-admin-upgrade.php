@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 165;
+	const DBVERSIE = 166;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -239,6 +239,7 @@ class Admin_Upgrade {
 			datum datetime,
 			credit_id int(10) DEFAULT 0,
 			origineel_id int(10) DEFAULT 0,
+			credit tinyint(0) DEFAULT 0,
 			gesloten tinyint(1) DEFAULT 0,
 			historie varchar(2000),
 			klant tinytext,
@@ -264,10 +265,19 @@ class Admin_Upgrade {
 
 	// phpcs:disable
 
+	private function convert_orders() {
+		global $wpdb;
+		$database_version = intval( get_option( 'kleistad-database-versie', 0 ) );
+		if ( $database_version < 166 ) { // Persé maar eenmalig doen !
+			$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_orders SET credit=1 WHERE origineel_id > 0" );
+		}
+	}
+
 	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
+		$this->convert_orders();
 	}
 
 }

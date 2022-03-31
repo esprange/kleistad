@@ -82,7 +82,7 @@ class SaldoBetaling extends ArtikelBetaling {
 				/**
 				 * Er bestaat al een order dus dit is een betaling o.b.v. een email link of per bank.
 				 */
-				$order->actie->ontvang( $bedrag, $transactie_id );
+				$order->ontvang( $bedrag, $transactie_id );
 				if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 					$this->saldo->verzend_email( '_ideal_betaald' );
 				}
@@ -92,7 +92,7 @@ class SaldoBetaling extends ArtikelBetaling {
 			 * Een betaling vanuit het formulier
 			 */
 			$order = new Order( $this->saldo->get_referentie() );
-			$this->saldo->verzend_email( '_ideal', $order->actie->bestel( $bedrag, strtotime( '+7 days  0:00' ), '', $transactie_id ) );
+			$this->saldo->verzend_email( '_ideal', $order->bestel( $bedrag, strtotime( '+7 days  0:00' ), '', $transactie_id ) );
 		}
 	}
 

@@ -175,7 +175,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		Workshops::doe_dagelijks();
 
 		$order = new Order( $workshop1->get_referentie() );
-		$order->actie->annuleer( 24.0, '' );
+		$order->annuleer( 24.0, '' );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 		$workshop2 = new Workshop( $workshop1->id );
 		$this->assertTrue( $workshop2->vervallen, 'vervallen status incorrect' );

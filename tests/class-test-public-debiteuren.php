@@ -48,7 +48,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 			$this->verkoop[ $index ]->bestelregel( "testverkoop $random", $random, 10 );
 			$this->verkoop[ $index ]->save();
 			$order = new Order( $this->verkoop[ $index ]->get_referentie() );
-			$order->actie->bestel( 0.0, strtotime( '+14 days 0:00' ) );
+			$order->bestel( 0.0, strtotime( '+14 days 0:00' ) );
 		}
 		return $openstaand;
 	}
@@ -145,12 +145,6 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 		$_POST['id'] = $order->id;
 		$result      = $this->public_form_actie( self::SHORTCODE, [], 'annulering' );
 		$this->assertStringContainsString( 'De annulering is verwerkt en een bevestiging is verstuurd.', $result['status'], 'annulering incorrect' );
-
-		/**
-		 * Repeated annulering.
-		 */
-		$result = $this->public_form_actie( self::SHORTCODE, [], 'annulering' );
-		$this->assertStringContainsString( 'Er bestaat al een creditering dus mogelijk een interne fout', $result['status'], 'herhaalde annulering incorrect' );
 	}
 
 	/**

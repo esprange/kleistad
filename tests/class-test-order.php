@@ -53,7 +53,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$order1          = new Order( $verkoop->get_referentie() );
 		$order1->betaald = 4;
 		$order1->orderregels->toevoegen( new Orderregel( 'artikel', 1, 10 ) );
-		$order1->actie->afboeken();
+		$order1->afboeken();
 		$this->assertEquals( 10, $order1->betaald, 'afboeken originele order incorrect' );
 		$order2 = new Order( '@-' . $verkoop->get_referentie() );
 		$this->assertEquals( 6, $order2->betaald, 'afboeken originele order incorrect' );
@@ -70,14 +70,14 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop = $this->maak_order();
 
 		$order1 = new Order( $verkoop->get_referentie() );
-		$order1->actie->bestel( 4.0, strtotime( 'tomorrow' ) );
+		$order1->bestel( 4.0, strtotime( 'tomorrow' ) );
 		$this->assertEquals( 4.0, $order1->betaald, 'betaald status incorrect' );
 		$this->assertEquals( 6.0, $order1->get_te_betalen(), 'te betalen status  incorrect' );
 
 		$verkoop->bestelregel( 'ander artikel', 1, 20.0 );
 		$verkoop->save();
 		$order2  = new Order( $verkoop->get_referentie() );
-		$factuur = $order2->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
+		$factuur = $order2->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$this->assertEquals( 4.0, $order2->betaald, 'betaald status na hergebruik order incorrect' );
 		$this->assertStringContainsString( 'factuur', $factuur, 'factuur ontbreekt' );
 		$this->assertEquals( 26.0, $order2->get_te_betalen(), 'te betalen status na hergebruik order incorrect' );
@@ -94,9 +94,9 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop = $this->maak_order();
 
 		$order1 = new Order( $verkoop->get_referentie() );
-		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
-		$factuur = $order1->actie->annuleer( 2.50, 'test' );
-		$order2  = new Order( $order1->credit_id );
+		$order1->bestel( 0.0, strtotime( 'tomorrow' ) );
+		$factuur = $order1->annuleer( 2.50, 'test' );
+		$order2  = new Order( $verkoop->get_referentie() );
 		$this->assertEquals( 2.50, $order2->get_te_betalen(), 'te betalen bij annulering incorrect' );
 		$this->assertStringContainsString( 'creditfactuur', $factuur, 'credit factuur ontbreekt' );
 	}
@@ -112,9 +112,11 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop = $this->maak_order();
 
 		$order1 = new Order( $verkoop->get_referentie() );
-		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
-		$factuur = $order1->actie->korting( 3.0 );
-		$this->assertEquals( 7.00, $order1->get_te_betalen(), 'te betalen bij korting incorrect' );
+		$order1->bestel( 0.0, strtotime( 'tomorrow' ) );
+		$factuur = $order1->korting( 3.0 );
+
+		$order2 = new Order( $verkoop->get_referentie() );
+		$this->assertEquals( 7.00, $order2->get_te_betalen(), 'te betalen bij korting incorrect' );
 		$this->assertStringContainsString( 'correctiefactuur', $factuur, 'correctie factuur ontbreekt' );
 	}
 
@@ -129,11 +131,13 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop = $this->maak_order();
 
 		$order1 = new Order( $verkoop->get_referentie() );
-		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
+		$order1->bestel( 0.0, strtotime( 'tomorrow' ) );
 		$verkoop->bestelregel( 'ander artikel', 1, 20.0 );
 		$verkoop->save();
-		$factuur = $order1->actie->wijzig( $verkoop->get_referentie() );
-		$this->assertEquals( 30.00, $order1->get_te_betalen(), 'te betalen bij wijzig incorrect' );
+		$factuur = $order1->wijzig( $verkoop->get_referentie() );
+
+		$order2 = new Order( $verkoop->get_referentie() );
+		$this->assertEquals( 30.00, $order2->get_te_betalen(), 'te betalen bij wijzig incorrect' );
 		$this->assertStringContainsString( 'correctiefactuur', $factuur, 'correctie factuur ontbreekt' );
 	}
 
@@ -148,19 +152,10 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop = $this->maak_order();
 
 		$order1 = new Order( $verkoop->get_referentie() );
-		$order1->actie->bestel( 0.0, strtotime( 'tomorrow' ) );
-		$factuur = $order1->actie->ontvang( 6.0, 'test' );
+		$order1->bestel( 0.0, strtotime( 'tomorrow' ) );
+		$factuur = $order1->ontvang( 6.0, 'test' );
 		$this->assertEquals( 4.00, $order1->get_te_betalen(), 'te betalen bij wijzig incorrect' );
 		$this->assertEmpty( $factuur, 'factuur bij ontvang incorrect' );
-	}
-
-	/**
-	 * Test is_geblokkeerd function
-	 *
-	 * @TODO uitbreiden.
-	 */
-	public function test_is_geblokkeerd() {
-		$this->assertTrue( true, 'is_geblokkeerd incorrect' );
 	}
 
 	/**
@@ -178,16 +173,6 @@ class Test_Order extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test is_credit function
-	 */
-	public function test_is_credit() {
-		$order = new Order( 'X1' );
-		$this->assertFalse( $order->is_credit(), 'is_credit gewone order incorrect' );
-		$order->origineel_id = 1;
-		$this->assertTrue( $order->is_credit(), 'is_credit credit order incorrect' );
-	}
-
-	/**
 	 * Test is_afboekbaar function
 	 */
 	public function test_is_afboekbaar() {
@@ -195,7 +180,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop->bestelregel( 'Artikel !', 1, 12.50 );
 		$verkoop->save();
 		$order = new Order( $verkoop->get_referentie() );
-		$order->actie->bestel( 0, strtotime( 'tomorrow' ) );
+		$order->bestel( 0, strtotime( 'tomorrow' ) );
 		$order->verval_datum = strtotime( 'yesterday' );
 		$this->assertFalse( $order->is_afboekbaar(), 'is afboekbaar na vervallen incorrect' );
 		$order->verval_datum = strtotime( '- 60 day' );

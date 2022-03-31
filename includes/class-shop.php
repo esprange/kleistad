@@ -11,6 +11,8 @@
 
 namespace Kleistad;
 
+use Mollie\Api\Exceptions\ApiException;
+
 /**
  * De kleistad class voor de shop functies.
  */
@@ -35,14 +37,35 @@ class Shop {
 	/**
 	 * Kijk of er aanvullende acties nodig zijn bij de annulering van een order
 	 *
-	 * @param Order $order De te annuleren order.
+	 * @param string $referentie Referentie naar de te annuleren order.
 	 *
-	 * @internal Action for kleistad_annuleer_order.
+	 * @internal Action for kleistad_order_annulering.
 	 */
-	public function order_annulering( Order $order ) {
-		$artikel = $this->register->get_object( $order->referentie );
+	public function order_annulering( string $referentie ) {
+		$artikel = $this->register->get_object( $referentie );
 		if ( property_exists( $artikel, 'actie' ) && method_exists( $artikel->actie, 'afzeggen' ) ) {
 			$artikel->actie->afzeggen();
+		}
+		$this->order_stornering( $referentie );
+	}
+
+	/**
+	 * Kijk of er een terugstorting moet plaatsvinden.
+	 *
+	 * @param string $referentie Referentie naar de te storneren order.
+	 *
+	 * @internal Action for kleistad_order_stornering.
+	 */
+	public function order_stornering( string $referentie ) {
+		$order = new Order( $referentie );
+		if ( $order->transactie_id && -0.01 > $order->get_te_betalen() ) {
+			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
+			try {
+				$betalen = new Betalen();
+				$betalen->terugstorting( $order->transactie_id, $order->referentie, - $order->get_te_betalen(), 'Kleistad: zie factuur ' . $order->get_factuurnummer() );
+			} catch ( ApiException $e ) {
+				fout( __CLASS__, 'terugstorting niet mogelijk : ' . $e->getMessage() );
+			}
 		}
 	}
 

@@ -274,6 +274,7 @@ class Kleistad {
 
 		$this->loader->add_action( 'init', $plugin_actions, 'shop_init' );
 		$this->loader->add_action( 'kleistad_order_annulering', $plugin_actions, 'order_annulering' );
+		$this->loader->add_action( 'kleistad_order_stornering', $plugin_actions, 'order_stornering' );
 		$this->loader->add_action( 'kleistad_betaalinfo_update', $plugin_actions, 'betaalinfo_update' );
 	}
 

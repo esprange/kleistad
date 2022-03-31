@@ -58,7 +58,7 @@ class Admin_Cursisten_Display extends Admin_Display {
 			<tr>
 				<th scope="row"><label for="aantal">Aantal</label></th>
 				<td>
-					<input name="aantal" id="aantal" type="number" size="2" requiredvalue="<?php echo esc_attr( $item['aantal'] ); ?>">
+					<input name="aantal" id="aantal" type="number" size="2" required value="<?php echo esc_attr( $item['aantal'] ); ?>">
 				</td>
 			</tr>
 		</tbody>

@@ -83,7 +83,7 @@ class WorkshopBetaling extends ArtikelBetaling {
 			/**
 			 * Bij workshops is er altijd eerst een factuur verstuurd
 			 */
-			$order->actie->ontvang( $bedrag, $transactie_id );
+			$order->ontvang( $bedrag, $transactie_id );
 			if ( 'ideal' === $type && 0 < $bedrag ) { // Als bedrag < 0 dan was het een terugstorting.
 				$this->workshop->verzend_email( '_ideal' );
 			}

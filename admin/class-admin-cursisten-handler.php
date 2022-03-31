@@ -62,12 +62,10 @@ class Admin_Cursisten_Handler extends Admin_Handler {
 		sscanf( $item['id'] ?? 'C0-0', 'C%d-%d', $cursus_id, $cursist_id );
 		$nieuw_cursus_id = intval( $item['cursus_id'] );
 		$nieuw_aantal    = intval( $item['aantal'] );
-		$this->message   = 'Het was niet meer mogelijk om de wijziging door te voeren, de factuur is geblokkeerd';
+		$this->message   = '';
 		$inschrijving    = new Inschrijving( $cursus_id, $cursist_id );
-		if ( $nieuw_cursus_id !== $cursus_id || $nieuw_aantal !== $inschrijving->aantal ) {
-			if ( $inschrijving->actie->correctie( $nieuw_cursus_id, $nieuw_aantal ) ) {
-				$this->message = 'De gegevens zijn opgeslagen';
-			}
+		if ( $inschrijving->actie->correctie( $nieuw_cursus_id, $nieuw_aantal ) ) {
+			$this->message = 'De gegevens zijn opgeslagen';
 		}
 		return $item;
 	}

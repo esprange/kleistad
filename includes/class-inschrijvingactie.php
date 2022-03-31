@@ -108,16 +108,13 @@ class InschrijvingActie {
 	public function correctie( int $cursus_id, int $aantal ) : bool {
 		$order = new Order( $this->inschrijving->get_referentie() );
 		if ( $cursus_id === $this->inschrijving->cursus->id ) {
-			if ( $aantal === $this->inschrijving->aantal || $order->is_geblokkeerd() ) {
-				return false; // Geen wijzigingen of de order is niet meer te wijzigen qua bedrag.
+			if ( $aantal === $this->inschrijving->aantal ) {
+				return false; // Geen wijzigingen.
 			}
 			$this->inschrijving->aantal = $aantal;
 			$this->inschrijving->save();
 		} else {
-			$nieuwe_cursus = new Cursus( $cursus_id );
-			if ( ( $this->inschrijving->cursus->inschrijfkosten + $this->inschrijving->cursus->cursuskosten ) !== ( $nieuwe_cursus->inschrijfkosten + $nieuwe_cursus->cursuskosten ) && $order->is_geblokkeerd() ) {
-				return false; // De order is niet meer te wijzigen qua bedrag.
-			}
+			$nieuwe_cursus              = new Cursus( $cursus_id );
 			$oude_cursus_id             = $this->inschrijving->cursus->id;
 			$this->inschrijving->code   = "C$cursus_id-{$this->inschrijving->klant_id}";
 			$this->inschrijving->aantal = $aantal;
@@ -130,8 +127,8 @@ class InschrijvingActie {
 			$oude_inschrijving = new Inschrijving( $oude_cursus_id, $this->inschrijving->klant_id );
 			$oude_inschrijving->actie->afzeggen();
 		}
-		$factuur = $order->actie->wijzig( $this->inschrijving->get_referentie() );
-		if ( false === $factuur ) {
+		$factuur = $order->wijzig( $this->inschrijving->get_referentie() );
+		if ( empty( $factuur ) ) {
 			return false; // Er is niets gewijzigd.
 		}
 		$this->inschrijving->verzend_email( '_wijziging', $factuur );
@@ -171,7 +168,7 @@ class InschrijvingActie {
 			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->get_bedrag(), $this->inschrijving->get_referentie() );
 		}
 		$order = new Order( $this->inschrijving->get_referentie() );
-		$this->inschrijving->verzend_email( 'inschrijving', $order->actie->bestel( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding() ) );
+		$this->inschrijving->verzend_email( 'inschrijving', $order->bestel( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding() ) );
 		return true;
 	}
 
@@ -189,7 +186,7 @@ class InschrijvingActie {
 		$this->inschrijving->artikel_type   = 'inschrijving';
 		$this->inschrijving->save();
 		$order = new Order( $this->inschrijving->get_referentie() );
-		$this->inschrijving->verzend_email( '_lopend_betalen', $order->actie->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
+		$this->inschrijving->verzend_email( '_lopend_betalen', $order->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
 	}
 
 	/**
@@ -225,7 +222,7 @@ class InschrijvingActie {
 		$order = new Order( $this->inschrijving->get_referentie() );
 		$this->inschrijving->verzend_email(
 			'_naar_wachtlijst',
-			$order->actie->annuleer( 0.0, 'i.v.m. volle cursus verplaatst naar wachtlijst' ) ?: ''
+			$order->annuleer( 0.0, 'i.v.m. volle cursus verplaatst naar wachtlijst' ) ?: ''
 		); // De cursist is naar de wachtlijst verplaatst, de order is geannuleerd en de email kan verzonden worden.
 		$this->inschrijving->wacht_datum = time();
 		$this->inschrijving->geannuleerd = false;

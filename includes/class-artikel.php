@@ -130,8 +130,7 @@ abstract class Artikel {
 	 * @return string De link.
 	 */
 	public function get_betaal_link() : string {
-		$order = new Order( $this->get_referentie() );
-		return $this->get_link( [ 'order' => $order->id ], 'betaling' );
+		return $this->get_link( [ 'order' => $this->get_referentie() ], 'betaling' );
 	}
 
 }

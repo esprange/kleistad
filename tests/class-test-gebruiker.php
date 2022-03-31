@@ -5,7 +5,6 @@
  * @package Kleistad
  *
  * @covers \Kleistad\Gebruiker
- *
  */
 
 namespace Kleistad;
