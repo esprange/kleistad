@@ -51,13 +51,6 @@ class Order {
 	public Orderregels $orderregels;
 
 	/**
-	 * Het factuur object.
-	 *
-	 * @var Factuur $factuur De factuur.
-	 */
-	private Factuur $factuur;
-
-	/**
 	 * Maak het object aan.
 	 *
 	 * @param int|string $arg  Het order id of de referentie.
@@ -102,7 +95,6 @@ class Order {
 		if ( ! empty( $resultaat ) ) {
 			$this->data = $resultaat;
 		}
-		$this->factuur     = new Factuur();
 		$this->orderregels = new Orderregels( $this->data['regels'] );
 	}
 
@@ -287,9 +279,12 @@ class Order {
 		$this->verval_datum  = $verval_datum;
 		$this->orderregels   = $artikel->get_factuurregels();
 		$this->save( $factuur_nodig ? sprintf( 'Order en factuur aangemaakt, nieuwe status betaald is € %01.2f', $bedrag ) : 'Order aangemaakt' );
-
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
-		return $factuur_nodig ? $this->factuur->run( $this ) : '';
+		if ( $factuur_nodig ) {
+			$factuur = new Factuur();
+			return $factuur->run( $this );
+		}
+		return '';
 	}
 
 	/**
@@ -310,7 +305,8 @@ class Order {
 
 		do_action( 'kleistad_order_annulering', $this->referentie );
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
-		return $this->factuur->run( $credit_order );
+		$factuur = new Factuur();
+		return $factuur->run( $credit_order );
 	}
 
 	/**
@@ -328,13 +324,15 @@ class Order {
 		$nieuwe_order->opmerking = $opmerking;
 		$nieuwe_order->orderregels->toevoegen( new Orderregel( Orderregel::KORTING, 1, - $korting ) );
 		$nieuwe_order->save( sprintf( 'Correctie factuur i.v.m. korting € %01.2f', $korting ) );
-		$this->factuur->run( $credit_order ); // Wordt niet verstuurd.
+		$factuur = new Factuur();
+		$factuur->run( $credit_order ); // Wordt niet verstuurd.
 		$this->credit_id = $credit_order->id;
 		$this->save( 'gecrediteerd i.v.m. korting' );
 
 		do_action( 'kleistad_order_stornering', $this->referentie );
 		do_action( 'kleistad_betaalinfo_update', $nieuwe_order->klant_id );
-		return $this->factuur->run( $nieuwe_order );
+		$factuur = new Factuur();
+		return $factuur->run( $nieuwe_order );
 	}
 
 	/**
@@ -362,13 +360,15 @@ class Order {
 		$nieuwe_order->opmerking   = $opmerking;
 		$nieuwe_order->gesloten    = false;
 		$nieuwe_order->save( 'Correctie factuur i.v.m. wijziging artikel' );
-		$this->factuur->run( $credit_order ); // Wordt niet verstuurd.
+		$factuur = new Factuur();
+		$factuur->run( $credit_order ); // Wordt niet verstuurd.
 		$this->credit_id = $credit_order->id;
 		$this->save( 'gecrediteerd i.v.m. wijziging' );
 
 		do_action( 'kleistad_order_stornering', $this->referentie );
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
-		return $this->factuur->run( $nieuwe_order );
+		$factuur = new Factuur();
+		return $factuur->run( $nieuwe_order );
 	}
 
 	/**
@@ -385,7 +385,11 @@ class Order {
 		$this->transactie_id = $transactie_id;
 		$this->save( sprintf( '%s bedrag € %01.2f nieuwe status betaald is € %01.2f', 0 <= $bedrag ? 'Betaling' : 'Stornering', abs( $bedrag ), $this->betaald ) );
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
-		return ( $factuur_nodig ) ? $this->factuur->run( $this ) : '';
+		if ( $factuur_nodig ) {
+			$factuur = new Factuur();
+			return $factuur->run( $this );
+		}
+		return '';
 	}
 
 	/**
@@ -408,7 +412,8 @@ class Order {
 	 * @return string
 	 */
 	public function herzenden() : string {
-		return $this->factuur->run( $this );
+		$factuur = new Factuur();
+		return $factuur->run( $this );
 	}
 
 	/**
