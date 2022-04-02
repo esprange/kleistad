@@ -29,24 +29,40 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 		<table class="kleistad-datatable display compact nowrap" >
 			<thead>
 				<tr>
-					<th>Code</th>
-					<th>Klant</th>
-					<th>Datum</th>
-					<th>Bedrag</th>
-					<th>BTW</th>
+					<th style="width:10%">Code</th>
+					<th style="width:30%">Klant</th>
+					<th style="width:15%">Datum</th>
+					<th style="width:15%">Netto bedrag</th>
+					<th style="width:15%">BTW</th>
+					<th style="width:15%">Bruto bedrag</th>
 				</tr>
 			</thead>
 			<tbody>
-			<?php foreach ( $this->data['omzetdetails'] as $detail ) : ?>
+			<?php
+			$totaal_netto = 0;
+			$totaal_btw   = 0;
+			foreach ( $this->data['omzetdetails'] as $detail ) :
+					$totaal_netto += $detail['netto'];
+					$totaal_btw   += $detail['btw'];
+				?>
 				<tr>
 					<td><?php echo esc_html( $detail['code'] ); ?></td>
 					<td><?php echo esc_html( $detail['klant'] ); ?></td>
 					<td data-sort="<?php echo esc_attr( $detail['datum'] ); ?>" ><?php echo esc_html( strftime( '%d-%m-%Y', $detail['datum'] ) ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['netto'], 2 ) ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['btw'], 2 ) ); ?></td>
+					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['netto'] + $detail['btw'], 2 ) ); ?></td>
 				</tr>
 			<?php endforeach ?>
 			</tbody>
+			<tfoot>
+			<tr>
+				<th>Totaal</th>
+				<th colspan="3" style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $totaal_netto, 2 ) ); ?></th>
+				<th style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $totaal_btw, 2 ) ); ?></th>
+				<th style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $totaal_netto + $totaal_btw, 2 ) ); ?></th>
+			</tr>
+			</tfoot>
 		</table>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
@@ -101,10 +117,11 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 			<table class="kleistad-datatable display compact nowrap" data-paging="false" data-searching="false" data-ordering="false" data-info="false">
 				<thead>
 					<tr>
-						<th>Omzet</th>
-						<th>Bedrag</th>
-						<th>BTW</th>
-						<th data-orderable="false"></th>
+						<th style="width:35%;">Omzet</th>
+						<th style="width:20%;">Netto bedrag</th>
+						<th style="width:20%;">BTW</th>
+						<th style="width:20%;">Bruto bedrag</th>
+						<th data-orderable="false" style="width:5%;"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -119,6 +136,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $naam ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['netto'], 2 ) ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['btw'], 2 ) ); ?></td>
+					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['btw'] + $omzet['btw'], 2 ) ); ?></td>
 					<td>
 						<?php
 						if ( $omzet['details'] ) :
@@ -135,9 +153,10 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 					<th>Totaal</th>
 					<th style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $totaal_netto, 2 ) ); ?></th>
 					<th style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $totaal_btw, 2 ) ); ?></th>
+					<th style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $totaal_netto + $totaal_btw, 2 ) ); ?></th>
 					<th>&nbsp;</th>
 				</tr>
-			</tfoot>
+				</tfoot>
 			</table>
 			<button id="kleistad_downloadrapport" class="kleistad-button kleistad-download-link" type="button" data-actie="omzetrapport" >Omzet rapport</button>
 		</div>
