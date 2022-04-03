@@ -71,7 +71,7 @@ class Public_Contact_Display extends Public_Shortcode_Display {
 			</div>
 			<div class="kleistad-col-9 kleistad-label" >
 				<input class="kleistad-radio" name="onderwerp" id="kleistad_<?php echo esc_attr( $onderwerp ); ?>" type="radio" required
-				value="<?php echo esc_attr( $onderwerp ); ?>cursus" <?php checked( $this->data['input']['onderwerp'], $onderwerp ); ?> >
+				value="<?php echo esc_attr( $onderwerp ); ?>" <?php checked( $this->data['input']['onderwerp'], $onderwerp ); ?> >
 				<label for="kleistad_<?php echo esc_attr( $onderwerp ); ?>" ><?php echo esc_html( ucfirst( $onderwerp ) ); ?></label>
 			</div>
 		</div>
