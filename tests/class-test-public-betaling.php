@@ -39,9 +39,9 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$verkoop->bestelregel( 'testverkoop', 1, 10 );
 		$verkoop->save();
 		$order = new Order( $verkoop->get_referentie() );
-		$order->bestel( 0.0, strtotime( '+14 days 0:00' ) );
+		$order->bestel();
 		$_GET   = [
-			'order' => $order->id,
+			'order' => $order->referentie,
 			'hsh'   => $verkoop->get_controle(),
 		];
 		$result = $this->public_display_actie( self::SHORTCODE, [] );
@@ -77,7 +77,7 @@ class Test_Public_Betaling extends Kleistad_UnitTestCase {
 		$verkoop->bestelregel( 'testverkoop', 1, 10 );
 		$verkoop->save();
 		$order = new Order( $verkoop->get_referentie() );
-		$order->bestel( 0.0, strtotime( '+14 days 0:00' ) );
+		$order->bestel();
 
 		/**
 		 * Test reguliere validate.

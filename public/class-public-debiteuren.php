@@ -24,9 +24,8 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_blokkade() : string {
-		$blokkade                       = new Blokkade();
-		$this->data['huidige_blokkade'] = $blokkade->get();
-		$this->data['wijzigbaar']       = $blokkade->wijzigbaar();
+		$blokkade                 = new Blokkade();
+		$this->data['wijzigbaar'] = $blokkade->wijzigbaar();
 		return $this->content();
 	}
 
@@ -36,9 +35,7 @@ class Public_Debiteuren extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_debiteur() : string {
-		$blokkade                       = new Blokkade();
-		$this->data['huidige_blokkade'] = $blokkade->get();
-		$this->data['debiteur']         = $this->get_debiteur( $this->data['id'] );
+		$this->data['debiteur'] = $this->get_debiteur( $this->data['id'] );
 		return $this->content();
 	}
 
@@ -171,7 +168,7 @@ class Public_Debiteuren extends ShortcodeForm {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->get_object( $this->data['order']->referentie );
-		$factuur         = $this->data['order']->korting( floatval( $this->data['input']['korting'] ), $this->data['input']['opmerking_korting'] );
+		$factuur         = $this->data['order']->wijzig( $this->data['order']->referentie, $this->data['input']['opmerking_korting'], floatval( $this->data['input']['korting'] ) );
 		$emailer->send(
 			[
 				'to'          => $this->data['order']->klant['email'],
@@ -197,17 +194,16 @@ class Public_Debiteuren extends ShortcodeForm {
 	 *
 	 * @return array
 	 */
-	protected function factuur() : array {
+	protected function zend_factuur() : array {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->get_object( $this->data['order']->referentie );
-		$factuur         = $this->data['order']->herzenden( $this->data['order'] );
 		$emailer->send(
 			[
 				'to'          => $this->data['order']->klant['email'],
 				'slug'        => 'herzend_factuur',
 				'subject'     => 'Herzending factuur',
-				'attachments' => $factuur,
+				'attachments' => $this->data['order']->get_factuur(),
 				'parameters'  => [
 					'naam'        => $this->data['order']->klant['naam'],
 					'referentie'  => $this->data['order']->referentie,
@@ -261,7 +257,7 @@ class Public_Debiteuren extends ShortcodeForm {
 			'naam'          => $order->klant['naam'],
 			'betreft'       => $artikelregister->get_naam( $order->referentie ),
 			'referentie'    => $order->referentie,
-			'factuur'       => $order->get_factuurnummer(),
+			'factuur'       => $order->get_factuur( true ),
 			'betaald'       => $order->betaald,
 			'openstaand'    => $order->get_te_betalen(),
 			'sinds'         => $order->datum,

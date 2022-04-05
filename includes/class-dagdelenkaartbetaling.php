@@ -81,7 +81,7 @@ class DagdelenkaartBetaling extends ArtikelBetaling {
 			}
 			// Betaling vanuit inschrijvingformulier.
 			$order = new Order( $this->dagdelenkaart->get_referentie() );
-			$this->dagdelenkaart->verzend_email( '_ideal', $order->bestel( $bedrag, $this->dagdelenkaart->start_datum, '', $transactie_id ) );
+			$this->dagdelenkaart->verzend_email( '_ideal', $order->bestel( $bedrag, '', $transactie_id ) );
 		} elseif ( 'ideal' === $type && ! $order->id ) {
 			$this->dagdelenkaart->erase( false );
 		}

@@ -111,7 +111,7 @@ class Public_Verkoop extends Public_Bestelling {
 		}
 		$verkoop->save();
 		$order = new Order( $verkoop->get_referentie() );
-		$verkoop->verzend_email( '', $order->bestel( 0.0, strtotime( '+14 days 0:00' ) ) );
+		$verkoop->verzend_email( '', $order->bestel() );
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'Er is een email verzonden met factuur en nadere informatie over de betaling' ),

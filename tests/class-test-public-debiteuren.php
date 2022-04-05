@@ -48,7 +48,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 			$this->verkoop[ $index ]->bestelregel( "testverkoop $random", $random, 10 );
 			$this->verkoop[ $index ]->save();
 			$order = new Order( $this->verkoop[ $index ]->get_referentie() );
-			$order->bestel( 0.0, strtotime( '+14 days 0:00' ) );
+			$order->bestel();
 		}
 		return $openstaand;
 	}
@@ -186,7 +186,7 @@ class Test_Public_Debiteuren extends Kleistad_UnitTestCase {
 			'opmerking_korting'    => 'test korting',
 			'opmerking_annulering' => 'test annulering',
 		];
-		$result = $this->public_form_actie( self::SHORTCODE, [], 'factuur' );
+		$result = $this->public_form_actie( self::SHORTCODE, [], 'zend_factuur' );
 		$this->assertStringContainsString( 'Een email met factuur is opnieuw verzonden', $result['status'], 'annulering incorrect' );
 		$this->assertEquals( 'Herzending factuur', $mailer->get_last_sent( $order->klant['email'] )->subject, 'annulering email onderwerp incorrect' );
 	}

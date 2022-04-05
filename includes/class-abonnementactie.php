@@ -131,7 +131,7 @@ class AbonnementActie {
 			return $this->abonnement->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $start_bedrag, $this->abonnement->get_referentie() );
 		}
 		$order = new Order( $this->abonnement->get_referentie() );
-		$this->abonnement->verzend_email( '_start_bank', $order->bestel( 0.0, $this->abonnement->start_datum ) );
+		$this->abonnement->verzend_email( '_start_bank', $order->bestel() );
 		return true;
 	}
 
@@ -204,7 +204,7 @@ class AbonnementActie {
 	public function overbrugging() {
 		$this->abonnement->artikel_type = 'overbrugging';
 		$order                          = new Order( $this->abonnement->get_referentie() );
-		$this->abonnement->verzend_email( '_vervolg', $order->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
+		$this->abonnement->verzend_email( '_vervolg', $order->bestel() );
 		$this->abonnement->overbrugging_email = true;
 		$this->abonnement->factuur_maand      = (int) date( 'Ym' );
 		$this->abonnement->save();
@@ -231,9 +231,9 @@ class AbonnementActie {
 		$order                          = new Order( $this->abonnement->get_referentie() );
 		try {
 			if ( $this->abonnement->betaling->incasso_actief() ) {
-				$order->bestel( 0.0, strtotime( '+14 days 0:00' ), '', $this->abonnement->betaling->doe_sepa_incasso(), false );
+				$order->bestel( 0.0, '', $this->abonnement->betaling->doe_sepa_incasso() );
 			} else {
-				$this->abonnement->verzend_email( '_regulier_bank', $order->bestel( 0.0, strtotime( '+14 days 0:00' ) ) );
+				$this->abonnement->verzend_email( '_regulier_bank', $order->bestel() );
 			}
 		} catch ( Exception $e ) {
 			fout( __CLASS__, 'fout bij factuur aanmaken : ' . $e->getMessage() );

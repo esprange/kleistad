@@ -117,7 +117,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_get_referentie() {
 		$inschrijving = $this->maak_inschrijving();
-		$this->assertEquals( "C{$inschrijving->cursus->id}-$inschrijving->klant_id", $inschrijving->get_referentie(), 'geef referentie incorrect' );
+		$this->assertStringContainsString( "C{$inschrijving->cursus->id}-$inschrijving->klant_id", $inschrijving->get_referentie(), 'geef referentie incorrect' );
 	}
 
 	/**
@@ -182,7 +182,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1 = $this->maak_inschrijving();
 		$inschrijving1->save();
 		$order   = new Order( $inschrijving1->get_referentie() );
-		$factuur = $order->bestel( 0, strtotime( 'today' ) );
+		$factuur = $order->bestel();
 		$this->assertFileExists( $factuur, 'bestel order incorrect' );
 		$this->assertTrue( $order->id > 0, 'bestel order incorrect' );
 	}
@@ -194,7 +194,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1 = $this->maak_inschrijving();
 		$inschrijving1->save();
 		$order = new Order( $inschrijving1->get_referentie() );
-		$order->bestel( 0, strtotime( 'today' ), '', '', false );
+		$order->bestel();
 		$order->annuleer( 24.0, '' );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 		$inschrijving2 = new Inschrijving( $inschrijving1->cursus->id, $inschrijving1->klant_id );
@@ -226,10 +226,13 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving->betaling->verwerk( $order, 25.00, true, 'bank' );
 		$inschrijving->actie->correctie( $cursus_nieuw->id, 2 );
 
+		/**
+		 * Aantal wijzigt maar de referentie blijft ongewijzigd. Dat betekent dat er twee orders openstaan.
+		 */
 		$inschrijving = new Inschrijving( $cursus_nieuw->id, $cursist->ID );
-		$order        = new Order( $inschrijving->get_referentie() );
+		$order2       = new Order( $inschrijving->get_referentie() );
 		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
-		$this->assertEquals( 2 * ( 25.00 + 67.00 ) - 25.00, $order->get_te_betalen(), 'correctie kosten te betalen onjuist' );
+		$this->assertEquals( 2 * ( 25.00 + 67.00 ) - 25.00, $order2->get_te_betalen(), 'correctie kosten te betalen onjuist' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
 	}
 

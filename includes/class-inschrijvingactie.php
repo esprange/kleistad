@@ -168,7 +168,7 @@ class InschrijvingActie {
 			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->get_bedrag(), $this->inschrijving->get_referentie() );
 		}
 		$order = new Order( $this->inschrijving->get_referentie() );
-		$this->inschrijving->verzend_email( 'inschrijving', $order->bestel( 0.0, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding() ) );
+		$this->inschrijving->verzend_email( 'inschrijving', $order->bestel( 0.0, $this->inschrijving->get_restant_melding() ) );
 		return true;
 	}
 
@@ -186,7 +186,7 @@ class InschrijvingActie {
 		$this->inschrijving->artikel_type   = 'inschrijving';
 		$this->inschrijving->save();
 		$order = new Order( $this->inschrijving->get_referentie() );
-		$this->inschrijving->verzend_email( '_lopend_betalen', $order->bestel( 0.0, strtotime( '+7 days 0:00' ) ) );
+		$this->inschrijving->verzend_email( '_lopend_betalen', $order->bestel() );
 	}
 
 	/**

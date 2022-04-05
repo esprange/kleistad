@@ -158,9 +158,8 @@ class Public_Betaling extends ShortcodeForm {
 	protected function url_factuur() : string {
 		$order_id = intval( filter_input( INPUT_GET, 'order_id', FILTER_SANITIZE_NUMBER_INT ) ?? 0 );
 		if ( $order_id ) {
-			$order   = new Order( $order_id );
-			$factuur = new Factuur();
-			return $factuur->overzicht( $order->get_factuurnummer() )[0];
+			$order = new Order( $order_id );
+			return $order->get_factuur( true );
 		}
 		return '';
 	}

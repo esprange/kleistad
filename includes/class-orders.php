@@ -38,15 +38,46 @@ class Orders implements Countable, Iterator {
 	/**
 	 * De constructor
 	 *
-	 * @param int|null $klant_id Geef de orders van de klant.
+	 * @param array $search Selectie mogelijkheden.
 	 */
-	public function __construct( ?int $klant_id = null ) {
+	public function __construct( array $search = [] ) {
 		global $wpdb;
-		$where = is_null( $klant_id ) ? '' : "WHERE klant_id=$klant_id";
-		$data  = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders $where", ARRAY_A ); // phpcs:ignore
+		$where = [ 'true=true' ];
+		foreach ( $search as $key => $value ) {
+			$where[] = "$key='$value'";
+		}
+		$conditie = 'WHERE ' . implode( ' AND ', $where );
+		$data  = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}kleistad_orders $conditie", ARRAY_A ); // phpcs:ignore
 		foreach ( $data as $row ) {
 			$this->orders[] = new Order( $row['id'], $row );
 		}
+	}
+
+	/**
+	 * Geef het te betalen bedrag van alle orders
+	 *
+	 * @return array
+	 */
+	public function get_summary() : array {
+		$summary = [
+			'te_betalen'  => 0.0,
+			'betaald'     => 0.0,
+			'klant'       => $this->orders[0]->klant ?? [],
+			'gesloten'    => true,
+			'referentie'  => $this->orders[0]->referentie ?? '',
+			'orderregels' => new Orderregels(),
+		];
+		foreach ( $this->orders as $order ) {
+			$summary['te_betalen'] += $order->get_te_betalen();
+			$summary['betaald']    += $order->betaald;
+			if ( ! $order->gesloten ) {
+				$summary['gesloten'] = false;
+			}
+			foreach ( $order->orderregels as $orderregel ) {
+				$summary['orderregels']->toevoegen( $orderregel );
+			}
+		}
+		return $summary;
 	}
 
 	/**

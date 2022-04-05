@@ -52,9 +52,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	protected function form_blokkade() {
 		?>
 		<div class="kleistad-row">
-			<p>Alle orders voorafgaand <?php echo esc_html( date( 'd-m-Y', $this->data['huidige_blokkade'] ) ); ?> zijn nu niet meer te wijzigen.
-			Dat betekent dat er geen correcties of kortingen op deze orders kunnen worden gedaan omdat dit dan invloed heeft op bijvoorbeeld
-			de BTW aangifte (de factuur wordt gewijzigd) of op de jaarrekening. Een order kan natuurlijk wel nog geannuleerd worden.</p>
 			<?php if ( $this->data['wijzigbaar'] ) : ?>
 				<p>Druk op 'bevestigen' als je het voorgaande kwartaal wilt afsluiten.</p>
 		</div>
@@ -80,11 +77,9 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 	}
 
 	/**
-	 * Maak het debiteut form aan.
+	 * Maak het debiteur form aan.
 	 */
 	protected function form_debiteur() {
-		$factuur      = new Factuur();
-		$factuur_urls = $factuur->overzicht( $this->data['debiteur']['factuur'] );
 		?>
 		<p><?php echo esc_html( ucfirst( $this->data['debiteur']['betreft'] ) . ', ' . ( ! $this->data['debiteur']['gesloten'] ? 'openstaand voor ' : 'besteld door ' ) . $this->data['debiteur']['naam'] ); ?></p>
 		<div class="kleistad-row">
@@ -100,9 +95,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<label class="kleistad-label">factuur</label>
 			</div>
 			<div class="kleistad-col-8">
-				<?php foreach ( $factuur_urls as $factuur_url ) : ?>
-					<a href="<?php echo esc_url( $factuur_url ); ?>" target="_blank"><?php echo esc_html( basename( $factuur_url ) ); ?></a><br/>
-				<?php endforeach ?>
+				<a href="<?php echo esc_url( $this->data['debiteur']['factuur'] ); ?>" target="_blank"><?php echo esc_html( basename( $this->data['debiteur']['factuur'] ) ); ?></a><br/>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -351,7 +344,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" id="kleistad_submit_debiteuren" disabled >Bevestigen</button>
 			</div>
 			<div class="kleistad-col-3">
-				<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" value="factuur" >Herzend factuur</button>
+				<button class="kleistad-button" name="kleistad_submit_debiteuren" type="submit" value="zend_factuur" >Herzend factuur</button>
 			</div>
 			<div class="kleistad-col-1">
 			</div>
@@ -359,7 +352,6 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 			</div>
 		</div>
-		<span style="font-size:75%" >facturen aangemaakt voor <?php echo esc_html( date( 'd-m-Y', $this->data['huidige_blokkade'] ) ); ?> zijn niet meer te wijzigen</span>
 		<?php
 	}
 

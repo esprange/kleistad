@@ -204,7 +204,7 @@ class Inschrijving extends Artikel {
 	 * @return string
 	 */
 	public function get_referentie() : string {
-		return $this->code;
+		return "$this->code-" . date( 'Ymd', $this->datum );
 	}
 
 	/**
@@ -318,6 +318,7 @@ class Inschrijving extends Artikel {
 			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam} (reeds gestart)", $this->aantal, $this->maatwerkkosten ) );
 			return $orderregels;
 		}
+		$orderregels->verval_datum = $this->cursus->start_datum;
 		if ( $this->cursus->is_binnenkort() ) { // Als de cursus binnenkort start dan is er geen onderscheid meer in de kosten, echter bij inschrijfgeld 1 ct dit afronden naar 0.
 			$orderregels->toevoegen( new Orderregel( "cursus: {$this->cursus->naam}", $this->aantal, $this->cursus->inschrijfkosten + $this->cursus->cursuskosten ) );
 			return $orderregels;

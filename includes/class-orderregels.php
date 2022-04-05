@@ -36,6 +36,13 @@ class Orderregels implements Countable, Iterator {
 	private int $current_index = 0;
 
 	/**
+	 * De verval datum (dat er betaald moet worden) die bij de orderregels hoort.
+	 *
+	 * @var int Datum.
+	 */
+	public int $verval_datum;
+
+	/**
 	 * De constructor
 	 *
 	 * @param string|null $json_string Een optionele string om de regels mee te laden.
@@ -46,6 +53,7 @@ class Orderregels implements Countable, Iterator {
 				$this->regels[] = new Orderregel( $regel['artikel'], floatval( $regel['aantal'] ), floatval( $regel['prijs'] ), floatval( $regel['btw'] ) );
 			}
 		}
+		$this->verval_datum = strtotime( '+14 days  0:00' );
 	}
 
 	/**
@@ -58,14 +66,27 @@ class Orderregels implements Countable, Iterator {
 	}
 
 	/**
+	 * Verwijder alle regels die geen korting betreffen.
+	 *
+	 * @return void
+	 */
+	public function reset() : void {
+		foreach ( $this->regels as $key => $regel ) {
+			if ( Orderregel::KORTING !== $regel->artikel ) {
+				unset( $this->regels[ $key ] );
+			}
+		}
+	}
+
+	/**
 	 * Voeg een regel toe.
 	 *
 	 * @param Orderregel $regeltoetevoegen Toe te voegen regel of regels.
 	 */
 	public function toevoegen( Orderregel $regeltoetevoegen ) {
-		$this->regels[] = $regeltoetevoegen;
-		$korting        = false;
-		$kortingkey     = 0;
+		array_unshift( $this->regels, $regeltoetevoegen );
+		$korting    = false;
+		$kortingkey = 0;
 		// Eventuele kortingsregels samenvoegen.
 		foreach ( $this->regels as $key => $regel ) {
 			if ( Orderregel::KORTING === $regel->artikel ) {

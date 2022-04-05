@@ -92,7 +92,7 @@ class SaldoBetaling extends ArtikelBetaling {
 			 * Een betaling vanuit het formulier
 			 */
 			$order = new Order( $this->saldo->get_referentie() );
-			$this->saldo->verzend_email( '_ideal', $order->bestel( $bedrag, strtotime( '+7 days  0:00' ), '', $transactie_id ) );
+			$this->saldo->verzend_email( '_ideal', $order->bestel( $bedrag, '', $transactie_id ) );
 		}
 	}
 

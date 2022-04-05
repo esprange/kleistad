@@ -88,7 +88,7 @@ class Profiel {
 			/**
 			 * Bepaal openstaande vorderingen
 			 */
-			$lijst     = $this->openstaande_orders( new Orders( $user->ID ) );
+			$lijst     = $this->openstaande_orders( new Orders( [ 'klant_id' => $user->ID ] ) );
 			$maxstatus = empty( $lijst ) ? 0 : max( array_column( $lijst, 'status' ) );
 			$style     = [ 'display: none', 'background-color: lightblue', 'background-color: orange', 'background-color: red' ];
 			ob_start();

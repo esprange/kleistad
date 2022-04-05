@@ -103,7 +103,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 					 * Er is nog geen order, dan betreft dit inschrijving vanuit het formulier.
 					 */
 					$order = new Order( $this->inschrijving->get_referentie() );
-					$this->inschrijving->verzend_email( 'indeling', $order->bestel( $bedrag, $this->inschrijving->cursus->start_datum, $this->inschrijving->get_restant_melding(), $transactie_id ) );
+					$this->inschrijving->verzend_email( 'indeling', $order->bestel( $bedrag, $this->inschrijving->get_restant_melding(), $transactie_id ) );
 					return;
 				}
 				/**

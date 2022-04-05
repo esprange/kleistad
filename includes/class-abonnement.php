@@ -202,24 +202,26 @@ class Abonnement extends Artikel {
 	public function get_factuurregels() : Orderregels {
 		$betaalinfo  = [
 			'start'        => [
-				'info'   => sprintf(
+				'info'         => sprintf(
 					'%s abonnement %s vanaf %s tot %s',
 					$this->soort,
 					$this->code,
 					strftime( '%d-%m-%Y', $this->start_datum ),
 					strftime( '%d-%m-%Y', $this->start_eind_datum )
 				),
-				'aantal' => 3,
+				'aantal'       => 3,
+				'verval_datum' => $this->start_datum,
 			],
 			'overbrugging' => [
-				'info'   => sprintf(
+				'info'         => sprintf(
 					'%s abonnement %s vanaf %s tot %s',
 					$this->soort,
 					$this->code,
 					strftime( '%d-%m-%Y', strtotime( '+1 day', $this->start_eind_datum ) ),
 					strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) )
 				),
-				'aantal' => $this->get_overbrugging_fractie(),
+				'aantal'       => $this->get_overbrugging_fractie(),
+				'verval_datum' => strtotime( '+7 days 0:00', $this->start_eind_datum ),
 			],
 			'regulier'     => [
 				'info'   => sprintf(
@@ -242,7 +244,8 @@ class Abonnement extends Artikel {
 		];
 		$orderregels = new Orderregels();
 		if ( isset( $betaalinfo[ $this->artikel_type ] ) ) {
-			$aantal = $betaalinfo[ $this->artikel_type ]['aantal'];
+			$orderregels->verval_datum = $betaalinfo[ $this->artikel_type ]['verval_datum'] ?? $orderregels->verval_datum;
+			$aantal                    = $betaalinfo[ $this->artikel_type ]['aantal'];
 			if ( $aantal ) {
 				$orderregels->toevoegen( new Orderregel( $betaalinfo[ $this->artikel_type ]['info'], $aantal, $this->betaling->get_bedrag() ) );
 				foreach ( $this->extras as $extra ) {

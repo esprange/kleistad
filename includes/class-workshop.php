@@ -322,7 +322,8 @@ class Workshop extends Artikel {
 	 * @return Orderregels De regel.
 	 */
 	public function get_factuurregels() : Orderregels {
-		$orderregels = new Orderregels();
+		$orderregels               = new Orderregels();
+		$orderregels->verval_datum = $this->datum;
 		$orderregels->toevoegen( new Orderregel( "$this->naam op " . strftime( '%A %d-%m-%y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten ) );
 		return $orderregels;
 	}

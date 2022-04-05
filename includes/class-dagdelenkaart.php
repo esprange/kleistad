@@ -151,7 +151,8 @@ class Dagdelenkaart extends Artikel {
 	 * @return Orderregels De regels.
 	 */
 	public function get_factuurregels() : Orderregels {
-		$orderregels = new Orderregels();
+		$orderregels               = new Orderregels();
+		$orderregels->verval_datum = $this->start_datum;
 		$orderregels->toevoegen( new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, opties()['dagdelenkaart'] ) );
 		return $orderregels;
 	}

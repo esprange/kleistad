@@ -12,7 +12,7 @@
 namespace Kleistad;
 
 /**
- * De class voor email, maakt gebruik van de fdpf class, zie ook http://www.fpdf.org.
+ * De class voor factuur.
  */
 class Factuur extends PDF {
 
@@ -23,7 +23,7 @@ class Factuur extends PDF {
 	 * @return string Locatie van het bestand.
 	 */
 	public function run( Order $order ) : string {
-		$type      = $order->credit ? 'credit' : ( $order->origineel_id ? 'correctie' : '' );
+		$type      = $order->orderregels->get_bruto() < 0 ? 'credit' : '';
 		$factuurnr = $order->get_factuurnummer();
 		$file      = $this->filenaam( $factuurnr, $type );
 		$this->init( basename( $file ), strtoupper( $type ) . ' FACTUUR' );
@@ -36,17 +36,40 @@ class Factuur extends PDF {
 	}
 
 	/**
+	 * Geef de bestaande factuur terug.
+	 *
+	 * @param Order $order De order.
+	 * @return array Locatie en url van het bestand.
+	 */
+	public function get( Order $order ) : array {
+		$factuurnr = $order->get_factuurnummer();
+		$type      = $order->credit ? 'credit' : '';
+		$bestand   = sprintf( '%s-%s.pdf', "{$type}factuur", $factuurnr );
+		if ( defined( 'KLEISTAD_TEST' ) ) {
+			return [
+				'locatie' => sys_get_temp_dir() . "/$bestand",
+				'url'     => '',
+			];
+		}
+		return [
+			'locatie' => wp_get_upload_dir()['basedir'] . "/facturen/$bestand",
+			'url'     => wp_get_upload_dir()['baseurl'] . "/facturen/$bestand",
+		];
+	}
+
+	/**
 	 * Geef een overzicht van alle facturen behorende bij een factuur nummer.
 	 *
-	 * @param string $factuurnr Het order factuur nr.
+	 * @param Order $order De order.
 	 *
 	 * @return array
 	 */
-	public function overzicht( string $factuurnr ) : array {
-		$pattern = 'local' === wp_get_environment_type() ?
+	public function overzicht( Order $order ) : array {
+		$factuurnr = $order->get_factuurnummer();
+		$pattern   = 'local' === wp_get_environment_type() ?
 			sprintf( '%s/*factuur-%s.*', sys_get_temp_dir(), $factuurnr ) :
 			sprintf( '%s/facturen/*factuur-%s.*', wp_get_upload_dir()['basedir'], $factuurnr );
-		$files   = glob( $pattern );
+		$files     = glob( $pattern );
 		usort(
 			$files,
 			function( $links, $rechts ) {
