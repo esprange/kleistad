@@ -6,7 +6,7 @@
  * @package Kleistad
  */
 
-/* global kleistadData */
+/* global kleistadData, strtodate */
 
 ( function( $ ) {
 	'use strict';
@@ -160,7 +160,9 @@
 						return [ true, 'kleistad-state-highlight' ];
 					}
 					return [ false, '' ];
-				}
+				},
+				minDate: strtodate( datums[0] ),
+				maxDate: strtodate( datums[ datums.length - 1 ] ),
 			}
 		);
 	}
@@ -248,8 +250,8 @@
 				'change',
 				'#kleistad_datum',
 				function() {
-					let datum      = $.datepicker.formatDate( 'dd-mm-yy', $( this ).datepicker( 'getDate' ) );
-					let	datumIndex = $.inArray( datum, datums );
+					let datum  = $.datepicker.formatDate( 'dd-mm-yy', $( this ).datepicker( 'getDate' ) );
+					datumIndex = $.inArray( datum, datums );
 					buttonsActive();
 					$( this ).datepicker( 'setDate', datums[datumIndex] );
 					$( this ).datepicker( 'hide' );

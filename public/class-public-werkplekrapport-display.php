@@ -32,32 +32,23 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 		}
 		?>
 		<h2>Overzicht werkplekgebruik vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?> door <?php echo esc_html( get_user_by( 'id', $this->data['gebruiker_id'] )->display_name ); ?></h2>
-		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
-		<thead>
-				<tr>
-					<th>Datum</th>
-					<th>Dagdeel</th>
-					<th>Activiteit</th>
-				</tr>
-			</thead>
-			<tbody>
-			<?php
-			foreach ( $this->data['rapport'] as $datum => $regel ) :
-				foreach ( $regel as $dagdeel => $activiteit ) :
-					?>
-				<tr>
-					<td data-sort="<?php echo esc_attr( $datum ); ?>" ><?php echo esc_html( date( 'd-m-Y', $datum ) ); ?></td>
-					<td><?php echo esc_html( $dagdeel ); ?></td>
-					<td><?php echo esc_html( $activiteit ); ?></td>
-				</tr>
-							<?php
-			endforeach;
-		endforeach
-			?>
-			</tbody>
-		</table>
+		<?php
+		$this->tabel_individueel();
+		?>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
+	}
+
+	/**
+	 * De reserveringen van de gebruiker zelf.
+	 *
+	 * @return void
+	 */
+	protected function reserveringen() {
+		?>
+		<h2>Overzicht werkplek reserveringen vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?></h2>
+		<?php
+		$this->tabel_individueel();
 	}
 
 	/**
@@ -157,6 +148,40 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 				</select>
 			</div>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Maak de tabel voor het individu.
+	 *
+	 * @return void
+	 */
+	private function tabel_individueel() {
+		?>
+		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
+			<thead>
+			<tr>
+				<th>Datum</th>
+				<th>Dagdeel</th>
+				<th>Activiteit</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			foreach ( $this->data['rapport'] as $datum => $regel ) :
+				foreach ( $regel as $dagdeel => $activiteit ) :
+					?>
+					<tr>
+						<td data-sort="<?php echo esc_attr( $datum ); ?>" ><?php echo esc_html( date( 'd-m-Y', $datum ) ); ?></td>
+						<td><?php echo esc_html( $dagdeel ); ?></td>
+						<td><?php echo esc_html( $activiteit ); ?></td>
+					</tr>
+					<?php
+				endforeach;
+			endforeach
+			?>
+			</tbody>
+		</table>
 		<?php
 	}
 

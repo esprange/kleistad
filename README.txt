@@ -4,7 +4,9 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.9.2
-Stable tag: 7.3.1
+Stable tag: 7.3.3
+
+
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0c21c0e2b3d548079260b477857b179b)](https://www.codacy.com/gh/esprange/kleistad/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=esprange/kleistad&amp;utm_campaign=Badge_Grade)
@@ -32,8 +34,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.3.0 =
+= 7.3.3 =
 * Orders kunnen voortaan altijd gewijzigd worden. De bestaande order vervalt (wordt gecrediteerd) en een nieuwe wordt aangemaakt.
+* Extra werkplekrapport optie reserveringen. Toont toekomstig werkplek gebruik van de ingelogde gebruiker.
+* Bug fix werkplek reserveringen.
 = 7.2.7 =
 * Diverse verbeteringen waaronder verbetering workshop beheer.
 = 7.2.4 =

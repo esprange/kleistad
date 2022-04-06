@@ -52,7 +52,7 @@ class Public_Werkplek_Display extends Public_Shortcode_Display {
 		<h2 id="kleistad_datum_titel"></h2>
 		<div class="kleistad-row">
 			<div style="float:left;margin-bottom:10px">
-				<input type="hidden" name="datum" id="kleistad_datum" class="kleistad-datum" >
+				<input type="hidden" name="datum" id="kleistad_datum" class="kleistad-datum" value="<?php echo esc_attr( $this->data['datums'][0] ); ?>">
 				<button class="kleistad-button" type="button" id="kleistad_eerder" style="width:3em" ><span class="dashicons dashicons-controls-back"></span></button>
 				<button class="kleistad-button" type="button" id="kleistad_kalender"  style="width:3em" ><span class="dashicons dashicons-calendar"></span></button>
 				<button class="kleistad-button" type="button" id="kleistad_later" style="width:3em" ><span class="dashicons dashicons-controls-forward"></span></button>

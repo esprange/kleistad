@@ -22,6 +22,9 @@ class Public_Werkplekrapport extends Shortcode {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
+		if ( ! current_user_can( BESTUUR ) ) {
+			return '';
+		}
 		$input = filter_input_array(
 			INPUT_GET,
 			[
@@ -44,6 +47,9 @@ class Public_Werkplekrapport extends Shortcode {
 	 * @return string
 	 */
 	protected function prepare_individueel() : string {
+		if ( ! current_user_can( BESTUUR ) ) {
+			return '';
+		}
 		$input = filter_input_array(
 			INPUT_GET,
 			[
@@ -59,6 +65,19 @@ class Public_Werkplekrapport extends Shortcode {
 		$this->data['vanaf_datum']  = strtotime( $input['vanaf_datum'] );
 		$this->data['tot_datum']    = strtotime( $input['tot_datum'] );
 		$this->data['gebruiker_id'] = intval( $input['gebruiker_id'] );
+		$this->data['rapport']      = $this->individueelgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'], $this->data['gebruiker_id'] );
+		return $this->content();
+	}
+
+	/**
+	 * Prepare 'werkplekrapport' voor de gebruiker.
+	 *
+	 * @return string
+	 */
+	protected function prepare_reserveringen() : string {
+		$this->data['gebruiker_id'] = get_current_user_id();
+		$this->data['vanaf_datum']  = strtotime( 'now' );
+		$this->data['tot_datum']    = strtotime( 'now' ) + opties()['weken_werkplek'] * WEEK_IN_SECONDS;
 		$this->data['rapport']      = $this->individueelgebruik( $this->data['vanaf_datum'], $this->data['tot_datum'], $this->data['gebruiker_id'] );
 		return $this->content();
 	}

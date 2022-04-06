@@ -6,11 +6,50 @@
  * @package Kleistad
  */
 
-/* global kleistadData, strtotime, timetostr */
-/* exported detectTap, vervolg */
+/* global kleistadData */
+/* exported detectTap, vervolg, strtodate, strtotime, timetostr */
 
 // noinspection ES6ConvertVarToLetConst .
 var detectTap;
+
+/**
+ * Converteer string naar tijd in minuten
+ *
+ * @param {String} value
+ */
+function strtotime( value ) {
+	let hours, minutes;
+	if ( 'string' === typeof value ) {
+		if ( value.includes( ':' ) ) {
+			hours   = value.substring( 0, 2 );
+			minutes = value.substring( 3 );
+			return Number( hours ) * 60 + Number( minutes );
+		}
+		return Number( value );
+	}
+	return value;
+}
+
+/**
+ * Converteer tijd in minuten naar tijd text.
+ *
+ * @param {int} value
+ */
+function timetostr( value ) {
+	let hours   = Math.floor( value / 60 );
+	let minutes = value % 60;
+	return ( '0' + hours ).slice( -2 ) + ':' + ( '0' + minutes ).slice( -2 );
+}
+
+/**
+ * Converteer lokale datum in format 'd-m-Y' naar Date.
+ *
+ * @param {String} value De datum string.
+ */
+function strtodate( value ) {
+	let veld = value.split( '-' );
+	return new Date( veld[2], veld[1] - 1, veld[0] );
+}
 
 ( function( $ ) {
 	'use strict';

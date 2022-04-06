@@ -282,10 +282,10 @@ class Shortcodes {
 			 *    Overzicht
 			 */
 			'werkplekrapport'       => (object) [
-				'script' => true,
+				'script' => false,
 				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables', 'kleistad' ],
 				'css'    => [ 'jquery-ui', 'datatables' ],
-				'access' => [ BESTUUR ],
+				'access' => [ DOCENT, LID, BESTUUR, 'cursist-1' ],
 			],
 			/**
 			 * Aanvraag workshop

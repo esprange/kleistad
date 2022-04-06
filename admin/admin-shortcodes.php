@@ -64,6 +64,13 @@
 			</li>
 			<li>[kleistad_saldo] wijzigen stooksaldo</li>
 			<li>[kleistad_werkplek] reserveren van een werkplek</li>
+			<li>[kleistad_werkplekrapport] overzichten werkplekgebruik
+				<ul style="list-style-type:square;margin-left:25px">
+					<li>actie=overzicht. Overzicht van gebruik werkplekken door alle gebruikers. Alleen door bestuur te gebruiken</li>
+					<li>actie=individueel. Gebruik werkplekken door een specifieke gebruiker. Alleen door bestuur te gebruiken</li>
+					<li>actie=reserveringen. Gebruik werkplekken door de ingelogde gebruiker.</li>
+				</ul>
+			</li>
 		</ol>
 	</li>
 	<li><h3>toegankelijk voor docenten</h3>
@@ -87,12 +94,6 @@
 			<li>[kleistad_stookbestand] opvragen stookbestand</li>
 			<li>[kleistad_verkoop] verkoop overige artikelen invoeren</li>
 			<li>[kleistad_workshop_beheer] formulier om workshops te beheren</li>
-			<li>[kleistad_werkplekrapport] overzichten werkplekgebruik
-				<ul style="list-style-type:square;margin-left:25px">
-					<li>actie=overzicht. Overzicht van gebruik werkplekken door alle gebruikers</li>
-					<li>actie=individueel. Gebruik werkplekken door een gebruiker</li>
-				</ul>
-			</li>
 		</ol>
 	</li>
 	<li><h3>toegankelijk voor boekhouder</h3>
