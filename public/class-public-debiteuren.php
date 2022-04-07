@@ -168,7 +168,7 @@ class Public_Debiteuren extends ShortcodeForm {
 		$emailer         = new Email();
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->get_object( $this->data['order']->referentie );
-		$factuur         = $this->data['order']->wijzig( $this->data['order']->referentie, $this->data['input']['opmerking_korting'], floatval( $this->data['input']['korting'] ) );
+		$factuur         = $this->data['order']->korting( floatval( $this->data['input']['korting'] ), $this->data['input']['opmerking_korting'] );
 		$emailer->send(
 			[
 				'to'          => $this->data['order']->klant['email'],

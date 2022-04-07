@@ -308,21 +308,47 @@ class Order {
 	}
 
 	/**
+	 * Voer een korting uit op de order.
+	 *
+	 * @param float  $korting   De korting in euro.
+	 * @param string $opmerking De opmerking die op de factuur moet komen.
+	 *
+	 * @return string
+	 */
+	public function korting( float $korting = 0.0, string $opmerking = '' ) : string {
+		$nieuwe_order           = clone $this;
+		$nieuwe_order->gesloten = false;
+		// Als er een nieuwe korting gegeven wordt, deze toevoegen aan de set.
+		$nieuwe_order->orderregels->toevoegen( new Orderregel( Orderregel::KORTING, 1, - $korting ) );
+		// Crediteer nu de volledige order, omdat die gesloten wordt bevat deze geen stornering.
+		$credit_order    = $this->crediteer( 'creditering ivm wijziging order', true );
+		$this->credit_id = $credit_order->id;
+		// En sluit de huidige order. De betaling is overgeboekt naar de nieuwe order.
+		$this->betaald  = 0.0;
+		$this->gesloten = true; // En de order wordt gesloten omdat deze vervangen wordt.
+		$this->save( 'gecrediteerd i.v.m. wijziging' );
+		$factuur = new Factuur();
+		$factuur->run( $credit_order ); // Wordt niet standaard verstuurd.
+		$nieuwe_order->save( sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ) );
+		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
+		$factuur = new Factuur();
+		return $factuur->run( $nieuwe_order );
+	}
+
+	/**
 	 * Een bestelling wijzigen. In dit geval wordt de complete factuur gecrediteerd en wordt een nieuwe factuur verstuurd, het eerder betaalde bedrag wordt op de
 	 * nieuwe order geboekt. Als het te veel is dan wordt dit automatisch gestorneerd.
 	 * Als er al wel betaald is, dan wordt dit overgenomen op de nieuwe factuur.
 	 *
 	 * @param string $referentie De (nieuwe) verwijzing naar het gewijzigde artikel.
 	 * @param string $opmerking  De optionele opmerking in de factuur.
-	 * @param float  $korting    De wijziging betreft een korting.
 	 *
 	 * @return string De url van de factuur of leeg als er geen verschil is.
 	 */
-	public function wijzig( string $referentie, string $opmerking = '', float $korting = 0.0 ): string {
+	public function wijzig( string $referentie, string $opmerking = '' ) : string {
 		$artikelregister = new Artikelregister();
 		$artikel         = $artikelregister->get_object( $referentie );
 		if (
-			0.0 < $korting ||
 			$artikel->get_naw_klant() !== $this->klant ||
 			$artikel->get_referentie() !== $this->referentie ||
 			$artikel->get_factuurregels()->get_bruto() !== $this->orderregels->get_bruto()
@@ -332,10 +358,6 @@ class Order {
 			$nieuwe_order->gesloten   = false;
 			$nieuwe_order->referentie = $artikel->get_referentie();
 			$nieuwe_order->orderregels->reset();
-			// Als er een nieuwe korting gegeven wordt, deze toevoegen aan de set.
-			if ( 0.0 < $korting ) {
-				$nieuwe_order->orderregels->toevoegen( new Orderregel( Orderregel::KORTING, 1, - $korting ) );
-			}
 			// Crediteer nu de volledige order, omdat die gesloten wordt bevat deze geen stornering.
 			$credit_order    = $this->crediteer( 'creditering ivm wijziging order', true );
 			$this->credit_id = $credit_order->id;
@@ -343,9 +365,10 @@ class Order {
 			$this->betaald  = 0.0;
 			$this->gesloten = true; // En de order wordt gesloten omdat deze vervangen wordt.
 			$this->save( 'gecrediteerd i.v.m. wijziging' );
+			do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 			$factuur = new Factuur();
 			$factuur->run( $credit_order ); // Wordt niet standaard verstuurd.
-			return $nieuwe_order->bestel( 0.0, 'Deze factuur vervangt ' . $this->get_factuurnummer() . "\n$opmerking" );
+			return $nieuwe_order->bestel( 0.0, sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ) );
 		}
 		return '';
 	}

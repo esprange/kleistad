@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.9.2
-Stable tag: 7.3.3
+Stable tag: 7.3.4
+
 
 
 
@@ -34,7 +35,7 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.3.3 =
+= 7.3.4 =
 * Orders kunnen voortaan altijd gewijzigd worden. De bestaande order vervalt (wordt gecrediteerd) en een nieuwe wordt aangemaakt.
 * Extra werkplekrapport optie reserveringen. Toont toekomstig werkplek gebruik van de ingelogde gebruiker.
 * Bug fix werkplek reserveringen.

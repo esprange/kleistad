@@ -84,9 +84,9 @@ class Orderregels implements Countable, Iterator {
 	 * @param Orderregel $regeltoetevoegen Toe te voegen regel of regels.
 	 */
 	public function toevoegen( Orderregel $regeltoetevoegen ) {
-		array_unshift( $this->regels, $regeltoetevoegen );
-		$korting    = false;
-		$kortingkey = 0;
+		$this->regels[] = $regeltoetevoegen;
+		$korting        = false;
+		$kortingkey     = 0;
 		// Eventuele kortingsregels samenvoegen.
 		foreach ( $this->regels as $key => $regel ) {
 			if ( Orderregel::KORTING === $regel->artikel ) {
