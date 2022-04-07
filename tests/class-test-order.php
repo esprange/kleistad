@@ -110,13 +110,13 @@ class Test_Order extends Kleistad_UnitTestCase {
 
 		$order1 = new Order( $verkoop->get_referentie() );
 		$order1->bestel();
-		$factuur = $order1->wijzig( $verkoop->get_referentie(), 'test 1', 3.0 );
+		$factuur = $order1->korting( 3.0, 'test 1' );
 
 		$order2 = new Order( $verkoop->get_referentie() );
 		$this->assertEquals( 7.00, $order2->get_te_betalen(), 'te betalen bij korting incorrect' );
 		$this->assertStringContainsString( 'factuur', $factuur, 'correctie factuur ontbreekt' );
 
-		$order2->wijzig( $verkoop->get_referentie(), 'test 2', 2.0 );
+		$order2->korting( 2.0, 'test 2' );
 		$order3 = new Order( $verkoop->get_referentie() );
 		$this->assertEquals( 5.00, $order3->get_te_betalen(), 'te betalen bij korting incorrect' );
 	}
