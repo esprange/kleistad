@@ -76,6 +76,7 @@ class Orderregels implements Countable, Iterator {
 				unset( $this->regels[ $key ] );
 			}
 		}
+		$this->regels = array_values( $this->regels );
 	}
 
 	/**
@@ -100,6 +101,7 @@ class Orderregels implements Countable, Iterator {
 				unset( $this->regels[ $key ] );
 			}
 		}
+		$this->regels = array_values( $this->regels );
 	}
 
 	/**

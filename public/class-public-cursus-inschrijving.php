@@ -282,7 +282,7 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),
 			];
 		}
-		$result = $inschrijving->actie->aanvraag( $this->data['input']['betaal'], intval( $this->data['input']['aantal'] ), $this->data['input']['technieken'] ?? [], $this->data['input']['opmerking'] );
+		$result = $inschrijving->actie->aanvraag( $this->data['input']['betaal'], intval( $this->data['input']['aantal'] ), $this->data['input']['technieken'] ?? [], $this->data['input']['opmerking'] ?? '' );
 		if ( false === $result ) {
 			return [ 'status' => $this->status( new WP_Error( 'mollie', 'De betaalservice is helaas nu niet beschikbaar, probeer het later opnieuw' ) ) ];
 		}
