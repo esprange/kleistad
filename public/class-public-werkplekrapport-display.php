@@ -46,7 +46,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	 */
 	protected function reserveringen() {
 		?>
-		<h2>Overzicht werkplek reserveringen vanaf <?php echo esc_html( date( 'd-m-Y', $this->data['vanaf_datum'] ) ); ?> tot <?php echo esc_html( date( 'd-m-Y', $this->data['tot_datum'] ) ); ?></h2>
+		<h2>Overzicht werkplek reserveringen</h2>
 		<?php
 		$this->tabel_individueel();
 	}
@@ -158,7 +158,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	 */
 	private function tabel_individueel() {
 		?>
-		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
+		<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]' data-searching="false" >
 			<thead>
 			<tr>
 				<th>Datum</th>

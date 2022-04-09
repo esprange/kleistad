@@ -209,7 +209,7 @@ class Abonnement extends Artikel {
 					strftime( '%d-%m-%Y', $this->start_datum ),
 					strftime( '%d-%m-%Y', $this->start_eind_datum )
 				),
-				'aantal'       => 3,
+				'aantal'       => opties()['start_maanden'],
 				'verval_datum' => $this->start_datum,
 			],
 			'overbrugging' => [
