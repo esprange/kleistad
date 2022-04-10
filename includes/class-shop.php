@@ -46,19 +46,20 @@ class Shop {
 		if ( property_exists( $artikel, 'actie' ) && method_exists( $artikel->actie, 'afzeggen' ) ) {
 			$artikel->actie->afzeggen();
 		}
-		$this->order_stornering( $referentie );
 	}
 
 	/**
 	 * Kijk of er een terugstorting moet plaatsvinden.
 	 *
-	 * @param string $referentie Referentie naar de te storneren order.
+	 * @param Order $order De te storneren order.
 	 *
 	 * @internal Action for kleistad_order_stornering.
 	 */
-	public function order_stornering( string $referentie ) {
-		$order = new Order( $referentie );
+	public function order_stornering( Order $order ) {
 		if ( $order->transactie_id && -0.01 > $order->get_te_betalen() ) {
+			if ( defined( 'KLEISTAD_TEST' ) ) {
+				return;
+			}
 			// Er staat een negatief bedrag open. Dat kan worden terugbetaald.
 			try {
 				$betalen = new Betalen();

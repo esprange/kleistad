@@ -300,7 +300,8 @@ class Order {
 		$credit_order    = $this->crediteer( $opmerking, false, $restant );
 		$this->credit_id = $credit_order->id;
 		$this->save( 'Geannuleerd, credit factuur aangemaakt' );
-		do_action( 'kleistad_order_annulering', $this->referentie ); // Order annulering doet impliciet ook stornering.
+		do_action( 'kleistad_order_annulering', $this->referentie );
+		do_action( 'kleistad_order_stornering', $credit_order );
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 		$factuur = new Factuur();
 		return $factuur->run( $credit_order );
@@ -329,7 +330,7 @@ class Order {
 		$factuur = new Factuur();
 		$factuur->run( $credit_order ); // Wordt niet standaard verstuurd.
 		$nieuwe_order->save( sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ) );
-		do_action( 'kleistad_stornering', $nieuwe_order->referentie ); // Er zou stornering nodig kunnen zijn.
+		do_action( 'kleistad_order_stornering', $nieuwe_order ); // Er zou stornering nodig kunnen zijn.
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 		$factuur = new Factuur();
 		return $factuur->run( $nieuwe_order );
@@ -365,11 +366,11 @@ class Order {
 			$this->betaald  = 0.0;
 			$this->gesloten = true; // En de order wordt gesloten omdat deze vervangen wordt.
 			$this->save( 'gecrediteerd i.v.m. wijziging' );
-			do_action( 'kleistad_stornering', $nieuwe_order->referentie ); // Het zou kunnen zijn dat er a.g.v. de wijziging stornering nodig is.
+			do_action( 'kleistad_order_stornering', $nieuwe_order ); // Het zou kunnen zijn dat er a.g.v. de wijziging stornering nodig is.
 			do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 			$factuur = new Factuur();
 			$factuur->run( $credit_order ); // Wordt niet standaard verstuurd.
-			return $nieuwe_order->bestel( 0.0, sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ) );
+			return $nieuwe_order->bestel( 0.0, sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ), $this->transactie_id );
 		}
 		return '';
 	}
