@@ -106,7 +106,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 	public function test_annuleer_stornering() {
 		$verkoop = $this->maak_order();
 		$order1  = new Order( $verkoop->get_referentie() );
-		$order1->bestel( 10.0, 'test', 'testtransactie' . wp_rand() );
+		$order1->bestel( 10.0, 'test', 'test' . wp_rand() );
 		$order1->annuleer( 1.0, 'test' );
 		$order2 = new Order( $verkoop->get_referentie() );
 		$this->assertEquals( -9.0, $order2->get_te_betalen(), 'te storneren bij annulering incorrect' );
@@ -144,7 +144,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop = $this->maak_order();
 
 		$order1 = new Order( $verkoop->get_referentie() );
-		$order1->bestel( 10.0, 'test', 'testtransactie' . wp_rand() );
+		$order1->bestel( 10.0, 'test', 'test' . wp_rand() );
 		$order1->korting( 3.0, 'test 1' );
 
 		$order2 = new Order( $verkoop->get_referentie() );
@@ -181,7 +181,7 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$verkoop = $this->maak_order();
 
 		$order1 = new Order( $verkoop->get_referentie() );
-		$order1->bestel( 10.0, 'test', 'testtransactie' . wp_rand() );
+		$order1->bestel( 10.0, 'test', 'test' . wp_rand() );
 		$verkoop->bestelregel( 'ander artikel', 1, 5.0 );
 		$verkoop->save();
 		$order1->wijzig( $verkoop->get_referentie() );
