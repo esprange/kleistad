@@ -99,6 +99,20 @@ class Test_Order extends Kleistad_UnitTestCase {
 	}
 
 	/**
+	 * Test annuleren nadat betaald is dus met een stornering.
+	 *
+	 * @return void
+	 */
+	public function test_annuleer_stornering() {
+		$verkoop = $this->maak_order();
+		$order1  = new Order( $verkoop->get_referentie() );
+		$order1->bestel( 10.0, 'test', 'testtransactie' . wp_rand() );
+		$order1->annuleer( 1.0, 'test' );
+		$order2 = new Order( $verkoop->get_referentie() );
+		$this->assertEquals( -9.0, $order2->get_te_betalen(), 'te storneren bij annulering incorrect' );
+	}
+
+	/**
 	 * Test annuleren  function
 	 * 1. Normale bestelling.
 	 * 2. Bestelling korting geven.
@@ -122,7 +136,23 @@ class Test_Order extends Kleistad_UnitTestCase {
 	}
 
 	/**
-	 * Test annuleren  function
+	 * Korting geven, op reeds betaalde order.
+	 *
+	 * @return void
+	 */
+	public function korting_stornering() {
+		$verkoop = $this->maak_order();
+
+		$order1 = new Order( $verkoop->get_referentie() );
+		$order1->bestel( 10.0, 'test', 'testtransactie' . wp_rand() );
+		$order1->korting( 3.0, 'test 1' );
+
+		$order2 = new Order( $verkoop->get_referentie() );
+		$this->assertEquals( -3.00, $order2->get_te_betalen(), 'te betalen bij korting incorrect' );
+	}
+
+	/**
+	 * Test wijzig  function
 	 * 1. Normale bestelling.
 	 * 2. Bestelling wijziging.
 	 *
@@ -140,6 +170,24 @@ class Test_Order extends Kleistad_UnitTestCase {
 		$order2 = new Order( $verkoop->get_referentie() );
 		$this->assertEquals( 30.00, $order2->get_te_betalen(), 'te betalen bij wijzig incorrect' );
 		$this->assertStringContainsString( 'factuur', $factuur, 'correctie factuur ontbreekt' );
+	}
+
+	/**
+	 * Wijziging welke ook tot stornering leidt.
+	 *
+	 * @return void
+	 */
+	public function wijzig_stornering() {
+		$verkoop = $this->maak_order();
+
+		$order1 = new Order( $verkoop->get_referentie() );
+		$order1->bestel( 10.0, 'test', 'testtransactie' . wp_rand() );
+		$verkoop->bestelregel( 'ander artikel', 1, 5.0 );
+		$verkoop->save();
+		$order1->wijzig( $verkoop->get_referentie() );
+
+		$order2 = new Order( $verkoop->get_referentie() );
+		$this->assertEquals( -5.0, $order2->get_te_betalen(), 'te betalen bij wijzig incorrect' );
 	}
 
 	/**
