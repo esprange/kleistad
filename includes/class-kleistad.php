@@ -30,6 +30,7 @@ const OCHTEND   = 'Ochtend';
 const MIDDAG    = 'Middag';
 const NAMIDDAG  = 'Namiddag';
 const AVOND     = 'Avond';
+const BTW       = 21;
 
 /**
  * Omdat strftime obsoleet wordt, deze functie.

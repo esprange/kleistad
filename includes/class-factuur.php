@@ -180,7 +180,7 @@ class Factuur extends PDF {
 		$this->Cell( $breedte['volledig'], 0, '', 'T', 1 );
 		$this->Cell( $breedte['samenvatting'], self::H_NORMAAL, 'Totaal', 0, 0, 'R' );
 		$this->Cell( $breedte['prijs'], self::H_NORMAAL, $this->euro( $orderregels->get_bruto() ), 0, 1, 'R' );
-		$this->Cell( $breedte['samenvatting'], self::H_NORMAAL, 'Inclusief BTW 21%', 0, 0, 'R' );
+		$this->Cell( $breedte['samenvatting'], self::H_NORMAAL, 'Inclusief BTW ' . BTW . '%', 0, 0, 'R' );
 		$this->Cell( $breedte['prijs'], self::H_NORMAAL, $this->euro( $orderregels->get_btw() ), 'B', 1, 'R' );
 		$this->Cell( $breedte['samenvatting'], self::H_NORMAAL, 'Reeds betaald ', 0, 0, 'R' );
 		$this->Cell( $breedte['prijs'], self::H_NORMAAL, $this->euro( $betaald ), 'B', 1, 'R' );

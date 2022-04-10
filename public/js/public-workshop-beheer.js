@@ -6,7 +6,7 @@
  * @package Kleistad
  */
 
-/* global timetostr, strtotime */
+/* global timetostr, strtotime, kleistadData */
 
 ( function( $ ) {
 	'use strict';
@@ -134,22 +134,28 @@
 			)
 			/**
 			 * Pas de ex btw kosten aan als het incl btw kosten veld wijzigt.
+			 *
+			 * @property {array}  kleistadData
+			 * @property {float} kleistadData.btw
 			 */
 			.on(
 				'change paste keyup',
 				'#kleistad_kosten',
 				function() {
-					$( '#kleistad_kosten_ex_btw' ).val( ( $( this ).val() / 1.21 ).toFixed( 2 ) );
+					$( '#kleistad_kosten_ex_btw' ).val( ( $( this ).val() / ( 1 + kleistadData.btw / 100 ) ).toFixed( 2 ) );
 				}
 			)
 			/**
 			 * Pas de incl btw kosten aan als het excl btw kosten veld wijzigt.
+			 *
+			 * @property {array}  kleistadData
+			 * @property {float} kleistadData.btw
 			 */
 			.on(
 				'change paste keyup',
 				'#kleistad_kosten_ex_btw',
 				function() {
-					$( '#kleistad_kosten' ).val( ( $( this ).val() * 1.21 ).toFixed( 2 ) );
+					$( '#kleistad_kosten' ).val( ( $( this ).val() * ( 1 + kleistadData.btw / 100 ) ).toFixed( 2 ) );
 				}
 			)
 			/**

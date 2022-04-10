@@ -55,8 +55,8 @@ class Public_Actions {
 	public function register_styles_and_scripts() {
 		$dev                  = 'development' === wp_get_environment_type() ? '' : '.min';
 		$jquery_ui_version    = wp_scripts()->registered['jquery-ui-core']->ver;
-		$fullcalendar_version = '5.10.2';
-		$datatables_version   = '1.11.4';
+		$fullcalendar_version = '5.11.0';
+		$datatables_version   = '1.11.5';
 		$jstree_version       = '3.3.12';
 		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_ui_version ), [], $jquery_ui_version );
 		wp_register_style( 'datatables', sprintf( '//cdn.datatables.net/%s/css/jquery.dataTables.min.css', $datatables_version ), [], $datatables_version );
@@ -76,6 +76,7 @@ class Public_Actions {
 				[
 					'nonce'         => wp_create_nonce( 'wp_rest' ),
 					'error_message' => 'het was niet mogelijk om de bewerking uit te voeren',
+					'btw'           => BTW,
 					'base_url'      => base_url(),
 					'admin_url'     => admin_url( 'admin-ajax.php' ),
 				]
