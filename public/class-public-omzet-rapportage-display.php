@@ -136,7 +136,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $naam ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['netto'], 2 ) ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['btw'], 2 ) ); ?></td>
-					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['btw'] + $omzet['btw'], 2 ) ); ?></td>
+					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $omzet['netto'] + $omzet['btw'], 2 ) ); ?></td>
 					<td>
 						<?php
 						if ( $omzet['details'] ) :
