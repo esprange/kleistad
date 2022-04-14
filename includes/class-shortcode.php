@@ -185,6 +185,7 @@ abstract class Shortcode {
 	 * Register rest URI's.
 	 *
 	 * @since 5.7.0
+	 * @codeCoverageIgnore
 	 */
 	public static function register_rest_routes() {
 		register_rest_route(
@@ -234,6 +235,7 @@ abstract class Shortcode {
 	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
 	 * @return WP_REST_Response De response.
 	 * @throws Exception Onbekend object.
+	 * @codeCoverageIgnore
 	 */
 	public static function callback_getitem( WP_REST_Request $request ) : WP_REST_Response {
 		$shortcode = self::get_shortcode( $request );
@@ -259,6 +261,7 @@ abstract class Shortcode {
 	 * @param WP_REST_Request $request De informatie vanuit de client of het weer te geven item.
 	 * @return WP_REST_Response de response.
 	 * @throws Exception Onbekend object.
+	 * @codeCoverageIgnore
 	 */
 	public static function callback_download( WP_REST_Request $request ) : WP_REST_Response {
 		$shortcode = self::get_shortcode( $request );
