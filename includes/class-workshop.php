@@ -107,7 +107,7 @@ class Workshop extends Artikel {
 		$this->data     = [
 			'id'                => null,
 			'naam'              => '',
-			'datum'             => date( 'Y-m-d' ),
+			'datum'             => date( 'Y-m-d', strtotime( 'tomorrow' ) ),
 			'aanvraagdatum'     => date( 'Y-m-d' ),
 			'start_tijd'        => '10:00',
 			'eind_tijd'         => '12:00',
