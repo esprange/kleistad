@@ -39,7 +39,7 @@ class LosArtikel extends Artikel {
 	public function __construct( int|string $verkoop_id = 0 ) {
 		$this->betaling = new LosArtikelBetaling( $this );
 		if ( is_string( $verkoop_id ) ) {
-			$verkoop_id = sscanf( $verkoop_id, 'X%d' );
+			sscanf( $verkoop_id, 'X%d', $verkoop_id );
 		}
 		if ( $verkoop_id ) {
 			$this->code = "X$verkoop_id";
