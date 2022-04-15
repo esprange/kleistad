@@ -21,9 +21,8 @@ class Test_LosArtikel extends Kleistad_UnitTestCase {
 	 * @return LosArtikel
 	 */
 	private function maak_losartikel(): LosArtikel {
-		$koper_id          = $this->factory->user->create();
+		$koper             = $this->factory()->user->create_and_get();
 		$losartikel        = new LosArtikel();
-		$koper             = get_user_by( 'ID', $koper_id );
 		$losartikel->klant = [
 			'naam'  => $koper->display_name,
 			'adres' => 'nb',

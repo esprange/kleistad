@@ -61,7 +61,7 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 		$cursus                  = new Cursus();
 		$cursus->maximum         = 5;
 		$cursus_id               = $cursus->save();
-		$cursist_id              = $this->factory->user->create();
+		$cursist_id              = $this->factory()->user->create();
 		$inschrijving            = new Inschrijving( $cursus_id, $cursist_id );
 		$inschrijving->ingedeeld = true;
 		$inschrijving->save();
@@ -158,12 +158,11 @@ class Test_Cursus extends Kleistad_UnitTestCase {
 	 * Test docent_naam function
 	 */
 	public function test_docent_naam() {
-		$cursus      = new Cursus();
-		$docent_id   = $this->factory->user->create();
-		$docent_naam = get_user_by( 'ID', $docent_id )->display_name;
+		$cursus = new Cursus();
+		$docent = $this->factory()->user->create_and_get();
 
-		$cursus->docent = $docent_id;
-		$this->assertEquals( $docent_naam, $cursus->get_docent_naam(), 'numeriek docent is incorrect' );
+		$cursus->docent = $docent->ID;
+		$this->assertEquals( $docent->display_name, $cursus->get_docent_naam(), 'numeriek docent is incorrect' );
 
 		$cursus->docent = 'Test';
 		$this->assertEquals( 'Test', $cursus->get_docent_naam(), 'alphanumeriek docent is incorrect' );

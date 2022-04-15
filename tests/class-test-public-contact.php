@@ -29,10 +29,9 @@ class Test_Public_Contact extends Kleistad_UnitTestCase {
 	 * Test prepare maar nu met de simulatie van een bestaande gebruiker.
 	 */
 	public function test_prepare_ingelogd() {
-		$gebruiker_id = $this->factory->user->create();
-		wp_set_current_user( $gebruiker_id );
-		$gebruiker = get_user_by( 'ID', $gebruiker_id );
-		$result    = $this->public_display_actie( self::SHORTCODE, [] );
+		$gebruiker = $this->factory()->user->create_and_get();
+		wp_set_current_user( $gebruiker->ID );
+		$result = $this->public_display_actie( self::SHORTCODE, [] );
 		$this->assertStringContainsString( $gebruiker->user_email, $result, 'prepare ingelogde gebruiker leeg' );
 	}
 

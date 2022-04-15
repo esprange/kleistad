@@ -21,9 +21,8 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	 * @return Saldo
 	 */
 	private function maak_saldo(): Saldo {
-		$stoker_id = $this->factory->user->create();
-		$saldo     = new Saldo( $stoker_id );
-		return $saldo;
+		$stoker_id = $this->factory()->user->create();
+		return new Saldo( $stoker_id );
 	}
 
 	/**

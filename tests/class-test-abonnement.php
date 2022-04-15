@@ -34,7 +34,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		if ( is_object( $role ) ) {
 			$role->add_cap( RESERVEER, true );
 		}
-		$abonnee_id = $this->factory->user->create();
+		$abonnee_id = $this->factory()->user->create();
 		return new Abonnement( $abonnee_id ); // $abonnement;
 	}
 

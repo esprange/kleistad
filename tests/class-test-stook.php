@@ -17,10 +17,8 @@ class Test_Stook extends Kleistad_UnitTestCase {
 	 * Test het reserveren van een stook.
 	 */
 	public function test_stook() {
-		$oven           = new Oven();
-		$oven->naam     = 'test oven';
-		$oven_id        = $oven->save();
 		$hoofdstoker_id = $this->factory()->user->create();
+		$oven_id        = $this->factory()->oven->create();
 		wp_set_current_user( $hoofdstoker_id );
 		$stook = new Stook( $oven_id, strtotime( 'tomorrow' ) );
 		$this->assertEquals( Stook::RESERVEERBAAR, $stook->get_statustekst(), 'status reserveerbaar onjuist' );
@@ -32,10 +30,8 @@ class Test_Stook extends Kleistad_UnitTestCase {
 	 * Test meerdere stoken.
 	 */
 	public function test_stoken() {
-		$oven           = new Oven();
-		$oven->naam     = 'test oven';
-		$oven_id        = $oven->save();
 		$hoofdstoker_id = $this->factory()->user->create();
+		$oven_id        = $this->factory()->oven->create();
 		wp_set_current_user( $hoofdstoker_id );
 		$aantal = 5;
 		for ( $i = 0; $i < $aantal; $i++ ) {
@@ -51,10 +47,8 @@ class Test_Stook extends Kleistad_UnitTestCase {
 	 * Test de verwijder functie.
 	 */
 	public function test_verwijder() {
-		$oven           = new Oven();
-		$oven->naam     = 'test oven';
-		$oven_id        = $oven->save();
 		$hoofdstoker_id = $this->factory()->user->create();
+		$oven_id        = $this->factory()->oven->create();
 		wp_set_current_user( $hoofdstoker_id );
 		$stook = new Stook( $oven_id, strtotime( 'tomorrow' ) );
 		$stook->save();
@@ -66,10 +60,8 @@ class Test_Stook extends Kleistad_UnitTestCase {
 	 * Test de geef statustekst functie
 	 */
 	public function test_get_statustekst() {
-		$oven           = new Oven();
-		$oven->naam     = 'test oven';
-		$oven_id        = $oven->save();
 		$hoofdstoker_id = $this->factory()->user->create();
+		$oven_id        = $this->factory()->oven->create();
 		wp_set_current_user( $hoofdstoker_id );
 		$stook1 = new Stook( $oven_id, strtotime( 'tomorrow' ) );
 		$this->assertEquals( Stook::RESERVEERBAAR, $stook1->get_statustekst(), 'status reserveerbaar onjuist' );

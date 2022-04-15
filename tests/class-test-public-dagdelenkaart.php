@@ -28,9 +28,8 @@ class Test_Public_Dagdelenkaart extends Kleistad_UnitTestCase {
 	 * Maak een dagdelenkaart aan.
 	 */
 	private function maak_dagdelenkaart() {
-		$gebruiker_id = $this->factory->user->create();
-		$gebruiker    = get_user_by( 'ID', $gebruiker_id );
-		$this->input  = [
+		$gebruiker   = $this->factory()->user->create_and_get();
+		$this->input = [
 			'user_email'     => $gebruiker->user_email,
 			'email_controle' => $gebruiker->user_email,
 			'first_name'     => $gebruiker->first_name,
@@ -41,7 +40,7 @@ class Test_Public_Dagdelenkaart extends Kleistad_UnitTestCase {
 			'plaats'         => 'plaats',
 			'telnr'          => '0123456789',
 			'start_datum'    => date( 'd-m-Y', strtotime( '+ 1 month' ) ),
-			'gebruiker_id'   => $gebruiker_id,
+			'gebruiker_id'   => $gebruiker->ID,
 			'opmerking'      => '',
 			'betaal'         => 'ideal',
 		];

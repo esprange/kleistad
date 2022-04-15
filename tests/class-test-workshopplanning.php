@@ -21,7 +21,7 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 	 * @return Docent
 	 */
 	private function maak_docent(): Docent {
-		$docent_id = $this->factory->user->create();
+		$docent_id = $this->factory()->user->create();
 		$docent    = new Docent( $docent_id );
 		$docent->add_role( DOCENT );
 

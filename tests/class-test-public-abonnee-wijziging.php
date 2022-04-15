@@ -32,7 +32,7 @@ class Test_Public_Abonnee_Wijziging extends Kleistad_UnitTestCase {
 	 * @param bool   $beperkt           Of het een beperkt abonnement betreft.
 	 */
 	private function maak_wijziging( string $wijziging, bool $betaling_per_bank, bool $beperkt ) {
-		$abonnee_id = $this->factory->user->create();
+		$abonnee_id = $this->factory()->user->create();
 		wp_set_current_user( $abonnee_id );
 		$abonnement = new Abonnement( $abonnee_id );
 		$abonnement->actie->starten(

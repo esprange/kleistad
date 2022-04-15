@@ -21,7 +21,7 @@ class Test_Public_Abonnement_Overzicht extends Kleistad_UnitTestCase {
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
-		$abonnee_id = $this->factory->user->create();
+		$abonnee_id = $this->factory()->user->create();
 		$abonnee    = new Abonnee( $abonnee_id );
 		$abonnee->abonnement->save();
 
@@ -33,7 +33,7 @@ class Test_Public_Abonnement_Overzicht extends Kleistad_UnitTestCase {
 	 * Test functie abonnementen.
 	 */
 	public function test_abonnementen() {
-		$abonnee_id = $this->factory->user->create();
+		$abonnee_id = $this->factory()->user->create();
 		$abonnement = new Abonnement( $abonnee_id );
 		$abonnement->save();
 

@@ -15,35 +15,25 @@ namespace Kleistad;
  */
 class Test_Inschrijving extends Kleistad_UnitTestCase {
 
-	private const CURSUSNAAM = 'Testcursus';
-
 	/**
 	 * Maak een inschrijving
 	 *
 	 * @return Inschrijving
 	 */
 	private function maak_inschrijving(): Inschrijving {
-		$cursist_id              = $this->factory->user->create();
-		$cursus                  = new Cursus();
-		$cursus->naam            = self::CURSUSNAAM;
-		$cursus->start_datum     = strtotime( '+1 month' );
-		$cursus->inschrijfkosten = 25.0;
-		$cursus->cursuskosten    = 100.0;
-		$cursus_id               = $cursus->save();
-		$inschrijving            = new Inschrijving( $cursus_id, $cursist_id );
-		return $inschrijving;
+		$cursist_id = $this->factory()->user->create();
+		$cursus_id  = $this->factory()->cursus->create();
+		return new Inschrijving( $cursus_id, $cursist_id );
 	}
 
 	/**
 	 * Test creation and modification of an inschrijving.
 	 */
 	public function test_inschrijving() {
-		$cursist_id          = $this->factory->user->create();
-		$cursus              = new Cursus();
-		$cursus->start_datum = strtotime( 'now' );
-		$cursus_id           = $cursus->save();
+		$cursist_id = $this->factory()->user->create();
+		$cursus     = $this->factory()->cursus->create_and_get( [ 'start_datum' => strtotime( 'now' ) ] );
 
-		$inschrijving1                  = new Inschrijving( $cursus_id, $cursist_id );
+		$inschrijving1                  = new Inschrijving( $cursus->id, $cursist_id );
 		$inschrijving1->opmerking       = 'test inschrijving';
 		$inschrijving1->ingedeeld       = true;
 		$inschrijving1->technieken      = [ 'draaien' ];
@@ -52,7 +42,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1->extra_cursisten = [ 2, 3 ];
 		$inschrijving1->save();
 
-		$inschrijving2 = new Inschrijving( $cursus_id, $cursist_id );
+		$inschrijving2 = new Inschrijving( $cursus->id, $cursist_id );
 		$this->assertEquals( $inschrijving1->opmerking, $inschrijving2->opmerking, 'opmerking inschrijving not equal' );
 		$this->assertEquals( $inschrijving1->ingedeeld, $inschrijving2->ingedeeld, 'ingedeeld inschrijving not equal' );
 		$this->assertEquals( $inschrijving1->technieken, $inschrijving2->technieken, 'technieken inschrijving not equal' );
@@ -75,14 +65,16 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	 */
 	public function test_get_artikelnaam() {
 		$inschrijving1 = $this->maak_inschrijving();
-		$this->assertEquals( self::CURSUSNAAM, $inschrijving1->get_artikelnaam(), 'get_artikelnaam incorrect' );
+		$this->assertEquals( $inschrijving1->cursus->naam, $inschrijving1->get_artikelnaam(), 'get_artikelnaam incorrect' );
 	}
 
 	/**
 	 * Test heeft_restant function
 	 */
 	public function test_get_restant_melding() {
-		$inschrijving1 = $this->maak_inschrijving();
+		$inschrijving1                      = $this->maak_inschrijving();
+		$inschrijving1->cursus->start_datum = strtotime( '+1 month' );
+		$inschrijving1->cursus->eind_datum  = $inschrijving1->cursus->start_datum;
 		$this->assertNotEmpty( $inschrijving1->get_restant_melding(), 'heeft restant toekomst incorrect' );
 
 		$inschrijving1->cursus->start_datum = strtotime( 'tomorrow' );
@@ -162,7 +154,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving3                        = $this->maak_inschrijving();
 		$inschrijving3->aantal                = 2;
 		$inschrijving3->geannuleerd           = false;
-		$extra_cursist_id                     = $this->factory->user->create();
+		$extra_cursist_id                     = $this->factory()->user->create();
 		$inschrijving_extra                   = new Inschrijving( $inschrijving3->cursus->id, $extra_cursist_id );
 		$inschrijving_extra->hoofd_cursist_id = $inschrijving3->klant_id;
 		$inschrijving_extra->save();
@@ -210,26 +202,27 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$cursist      = new Cursist( $inschrijving->klant_id );
 		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
 
-		$cursus_nieuw               = new Cursus();
-		$cursus_nieuw->naam         = 'Nieuwe cursus';
-		$cursus_nieuw->cursuskosten = 67.00;
-		$cursus_nieuw->save();
+		$cursus_nieuw_id = $this->factory()->cursus->create(
+			[
+				'cursuskosten'    => 67.00,
+				'inschrijfkosten' => 25.00,
+			]
+		);
+		$inschrijving->actie->correctie( $cursus_nieuw_id, 1 );
 
-		$inschrijving->actie->correctie( $cursus_nieuw->id, 1 );
-
-		$inschrijving = new Inschrijving( $cursus_nieuw->id, $cursist->ID );
+		$inschrijving = new Inschrijving( $cursus_nieuw_id, $cursist->ID );
 		$order        = new Order( $inschrijving->get_referentie() );
 		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
 		$this->assertEquals( 25.00 + 67.00, $order->get_te_betalen(), 'correctie kosten te betalen onjuist' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
 
 		$inschrijving->betaling->verwerk( $order, 25.00, true, 'bank' );
-		$inschrijving->actie->correctie( $cursus_nieuw->id, 2 );
+		$inschrijving->actie->correctie( $cursus_nieuw_id, 2 );
 
 		/**
 		 * Aantal wijzigt maar de referentie blijft ongewijzigd. Dat betekent dat er twee orders openstaan.
 		 */
-		$inschrijving = new Inschrijving( $cursus_nieuw->id, $cursist->ID );
+		$inschrijving = new Inschrijving( $cursus_nieuw_id, $cursist->ID );
 		$order2       = new Order( $inschrijving->get_referentie() );
 		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
 		$this->assertEquals( 2 * ( 25.00 + 67.00 ) - 25.00, $order2->get_te_betalen(), 'correctie kosten te betalen onjuist' );
@@ -316,7 +309,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1->ingedeeld = true;
 		$inschrijving1->save();
 
-		$wachtlijst_cursist_id      = $this->factory->user->create();
+		$wachtlijst_cursist_id      = $this->factory()->user->create();
 		$inschrijving2              = new Inschrijving( $inschrijving1->cursus->id, $wachtlijst_cursist_id );
 		$inschrijving2->cursus->vol = true;
 		$inschrijving2->actie->aanvraag( '', 1, [], '' );
@@ -367,16 +360,13 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test creation and modification of multiple inschrijvingen.
 	 */
 	public function test_inschrijvingen() {
-		$cursist_ids = $this->factory->user->create_many( 10 );
-		$cursus      = new Cursus();
-		$cursus->save();
-
-		$teststring     = 'test inschrijvingen';
-		$inschrijvingen = [];
-		for ( $i = 0; $i < 3; $i ++ ) {
-			$inschrijvingen[ $i ]            = new Inschrijving( $cursus->id, $cursist_ids[ $i ] );
-			$inschrijvingen[ $i ]->opmerking = $teststring . $cursist_ids[ $i ];
-			$inschrijvingen[ $i ]->save();
+		$cursist_ids = $this->factory()->user->create_many( 10 );
+		$cursus      = $this->factory()->cursus->create_and_get();
+		$teststring  = 'test inschrijvingen';
+		foreach ( $cursist_ids  as $cursist_id ) {
+			$inschrijving            = new Inschrijving( $cursus->id, $cursist_id );
+			$inschrijving->opmerking = $teststring . $cursist_id;
+			$inschrijving->save();
 		}
 
 		$inschrijvingen = new Inschrijvingen( $cursus->id );
@@ -392,33 +382,35 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test de wachtlijst functie.
 	 */
 	public function test_plaatsbeschikbaar() {
-		$mailer               = tests_retrieve_phpmailer_instance();
-		$cursus1              = new Cursus();
-		$cursus1->maximum     = 3;
-		$cursus1->start_datum = strtotime( '+1 month' );
-		$cursus1->save();
+		$mailer     = tests_retrieve_phpmailer_instance();
+		$cursus1_id = $this->factory()->cursus->create(
+			[
+				'start_datum' => strtotime( '+1 month' ),
+				'maximum'     => 3,
+			]
+		);
 
 		/**
 		 * Maak eerst de cursus vol zodat er geen ruimte meer is.
 		 */
-		$cursist_ids = $this->factory->user->create_many( $cursus1->maximum );
-		for ( $i = 0; $i < 3; $i ++ ) {
-			$inschrijvingen[ $i ] = new Inschrijving( $cursus1->id, $cursist_ids[ $i ] );
-			$inschrijvingen[ $i ]->actie->aanvraag( 'ideal', 1, [], '' );
-			$order = new Order( $inschrijvingen[ $i ]->get_referentie() );
-			$inschrijvingen[ $i ]->betaling->verwerk( $order, 25, true, 'ideal' );
+		$cursist_ids = $this->factory()->user->create_many( 3 );
+		foreach ( $cursist_ids as $cursist_id ) {
+			$inschrijving = new Inschrijving( $cursus1_id, $cursist_id );
+			$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
+			$order = new Order( $inschrijving->get_referentie() );
+			$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
 		}
 
 		/**
 		 * Als gevolg van de inschrijvingen wordt de cursus op vol gezet.
 		 */
-		$cursus2 = new Cursus( $cursus1->id );
+		$cursus2 = new Cursus( $cursus1_id );
 		$this->assertTrue( $cursus2->vol, 'vol indicatie incorrect' );
 
 		/**
 		 * Een nieuwe cursist moet dus op de wachtlijst geplaatst worden.
 		 */
-		$wachtlijst_cursist      = new Cursist( $this->factory->user->create() );
+		$wachtlijst_cursist      = new Cursist( $this->factory()->user->create() );
 		$inschrijving_wachtlijst = new Inschrijving( $cursus2->id, $wachtlijst_cursist->ID );
 		$inschrijving_wachtlijst->actie->aanvraag( '', 1, [], '' );
 		$this->assertTrue( 0 < $inschrijving_wachtlijst->wacht_datum, 'Wacht datum incorrect' );
@@ -427,7 +419,10 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Maak een plek vrij door een annulering.
 		 */
-		$inschrijvingen[2]->actie->afzeggen();
+		foreach ( new Inschrijvingen() as $inschrijving ) {
+			$inschrijving->actie->afzeggen();
+			break;
+		}
 
 		/**
 		 * Dit loopt normaliter de volgende ochtend, maar nu dus even 1 seconde later.
@@ -456,7 +451,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Nu schrijft iemand anders in, dan wordt de cursus weer vol.
 		 */
-		$andere_cursist     = new Cursist( $this->factory->user->create() );
+		$andere_cursist     = new Cursist( $this->factory()->user->create() );
 		$inschrijving_ander = new Inschrijving( $cursus2->id, $andere_cursist->ID );
 		$inschrijving_ander->actie->aanvraag( 'ideal', 1, [], '' );
 		$order = new Order( $inschrijving_ander->get_referentie() );

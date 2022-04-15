@@ -20,9 +20,7 @@ class Test_Abonnee extends Kleistad_UnitTestCase {
 	 * Test de aantal actieve stook functie
 	 */
 	public function test_aantal_actieve_stook() {
-		$oven           = new Oven();
-		$oven->naam     = 'test oven';
-		$oven_id        = $oven->save();
+		$oven_id        = $this->factory()->oven->create();
 		$hoofdstoker_id = $this->factory()->user->create();
 		$abonnee        = new Abonnee( $hoofdstoker_id );
 		wp_set_current_user( $hoofdstoker_id );

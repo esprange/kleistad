@@ -107,16 +107,15 @@ class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 	 * Test functie verwijderen met inschrijving.
 	 */
 	public function test_verwijderen_met_inschrijving() {
-		$cursus = new Cursus();
-		$cursus->save();
-		$cursist_id              = $this->factory->user->create();
-		$inschrijving            = new Inschrijving( $cursus->id, $cursist_id );
+		$cursist_id              = $this->factory()->user->create();
+		$cursus_id               = $this->factory()->cursus->create();
+		$inschrijving            = new Inschrijving( $cursus_id, $cursist_id );
 		$inschrijving->ingedeeld = true;
 		$inschrijving->save();
 		/**
 		 * Verwijder cursus met inschrijvingen.
 		 */
-		$_POST  = [ 'id' => $cursus->id ];
+		$_POST  = [ 'id' => $cursus_id ];
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'verwijderen' );
 		$this->assertStringContainsString( 'Er zijn al cursisten inschrijvingen', $result['status'], 'verwijder met verwijzing incorrect' );
 	}

@@ -23,8 +23,8 @@ class Test_Public_Email extends Kleistad_UnitTestCase {
 	 * Test de prepare functie.
 	 */
 	public function test_prepare() {
-		$bestuurder = new WP_User( $this->factory->user->create() );
-		$docent     = new WP_User( $this->factory->user->create() );
+		$bestuurder = $this->factory()->user->create_and_get();
+		$docent     = $this->factory()->user->create_and_get();
 		$bestuurder->add_role( BESTUUR );
 		$docent->add_role( DOCENT );
 		wp_set_current_user( $bestuurder->ID );
@@ -37,8 +37,8 @@ class Test_Public_Email extends Kleistad_UnitTestCase {
 	 * Test test_mail functie.
 	 */
 	public function test_test_email() {
-		$bestuurder = new WP_User( $this->factory->user->create() );
-		$docent     = new WP_User( $this->factory->user->create() );
+		$bestuurder = $this->factory()->user->create_and_get();
+		$docent     = $this->factory()->user->create_and_get();
 		$bestuurder->add_role( BESTUUR );
 		$docent->add_role( DOCENT );
 		$_POST  = [
@@ -57,8 +57,8 @@ class Test_Public_Email extends Kleistad_UnitTestCase {
 	 */
 	public function test_verzenden() {
 		$mailer     = tests_retrieve_phpmailer_instance();
-		$bestuurder = new WP_User( $this->factory->user->create() );
-		$docent     = new WP_User( $this->factory->user->create() );
+		$bestuurder = $this->factory()->user->create_and_get();
+		$docent     = $this->factory()->user->create_and_get();
 		$bestuurder->add_role( BESTUUR );
 		$docent->add_role( DOCENT );
 		$_POST  = [

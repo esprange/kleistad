@@ -32,15 +32,13 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 	 * @return Inschrijving De inschrijving.
 	 */
 	private function maak_inschrijving( bool $wachtlijst ) : Inschrijving {
-		$cursist_id              = $this->factory->user->create();
-		$cursist                 = get_user_by( 'ID', $cursist_id );
-		$cursus                  = new Cursus();
-		$cursus->naam            = self::CURSUSNAAM;
-		$cursus->start_datum     = strtotime( '+1 month' );
-		$cursus->inschrijfkosten = 25.0;
-		$cursus->cursuskosten    = 100.0;
-		$cursus->maximum         = 3;
-		$cursus->save();
+		$cursist     = $this->factory()->user->create_and_get();
+		$cursus      = $this->factory()->cursus->create_and_get(
+			[
+				'start_datum' => strtotime( '+1 month' ),
+				'maximum'     => 3,
+			]
+		);
 		$this->input = [
 			'user_email'     => $cursist->user_email,
 			'email_controle' => $cursist->user_email,
@@ -52,7 +50,7 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 			'plaats'         => 'plaats',
 			'telnr'          => '0123456789',
 			'cursus_id'      => $cursus->id,
-			'gebruiker_id'   => $cursist_id,
+			'gebruiker_id'   => $cursist->ID,
 			'technieken'     => [],
 			'aantal'         => 1,
 			'opmerking'      => '',
@@ -62,19 +60,19 @@ class Test_Public_Cursus_Inschrijving extends Kleistad_UnitTestCase {
 			/**
 			 * Maak eerst de cursus vol zodat er geen ruimte meer is.
 			 */
-			$cursist_ids = $this->factory->user->create_many( $cursus->maximum );
-			for ( $i = 0; $i < 3; $i ++ ) {
-				$inschrijvingen[ $i ] = new Inschrijving( $cursus->id, $cursist_ids[ $i ] );
-				$inschrijvingen[ $i ]->actie->aanvraag( 'ideal', 1, [], '' );
-				$order = new Order( $inschrijvingen[ $i ]->get_referentie() );
-				$inschrijvingen[ $i ]->betaling->verwerk( $order, 25, true, 'ideal' );
+			$cursist_ids = $this->factory()->user->create_many( $cursus->maximum );
+			foreach ( $cursist_ids as $cursist_id ) {
+				$inschrijving = new Inschrijving( $cursus->id, $cursist_id );
+				$inschrijving->actie->aanvraag( 'ideal', 1, [], '' );
+				$order = new Order( $inschrijving->get_referentie() );
+				$inschrijving->betaling->verwerk( $order, 25, true, 'ideal' );
 			}
 		}
 
 		/**
 		 * Schrijf nu de cursist in.
 		 */
-		return new Inschrijving( $cursus->id, $cursist_id );
+		return new Inschrijving( $cursus->id, $cursist->ID );
 	}
 
 	/**

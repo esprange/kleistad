@@ -60,15 +60,13 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop->docent = 'Test tester';
 		$this->assertEquals( 'Test tester', $workshop->get_docent_naam(), 'enkele docent naam onjuist' );
 
-		$docent_id_1      = $this->factory->user->create();
-		$docent_naam_1    = get_user_by( 'ID', $docent_id_1 )->display_name;
-		$workshop->docent = "$docent_id_1";
-		$this->assertEquals( $docent_naam_1, $workshop->get_docent_naam(), 'enkele docent id onjuist' );
+		$docent_1         = $this->factory()->user->create_and_get();
+		$workshop->docent = "$docent_1->ID";
+		$this->assertEquals( $docent_1->display_name, $workshop->get_docent_naam(), 'enkele docent id onjuist' );
 
-		$docent_id_2      = $this->factory->user->create();
-		$docent_naam_2    = get_user_by( 'ID', $docent_id_2 )->display_name;
-		$workshop->docent = "$docent_id_1;$docent_id_2";
-		$this->assertEquals( "$docent_naam_1, $docent_naam_2", $workshop->get_docent_naam(), 'meerdere docent id onjuist' );
+		$docent_2         = $this->factory()->user->create_and_get();
+		$workshop->docent = "$docent_1->ID;$docent_2->ID";
+		$this->assertEquals( "$docent_1->display_name, $docent_2->display_name", $workshop->get_docent_naam(), 'meerdere docent id onjuist' );
 	}
 
 	/**

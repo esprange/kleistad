@@ -31,8 +31,7 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 	 * @return Abonnement Het abonnement.
 	 */
 	private function maak_inschrijving( bool $beperkt ) : Abonnement {
-		$abonnee_id  = $this->factory->user->create();
-		$abonnee     = get_user_by( 'ID', $abonnee_id );
+		$abonnee     = $this->factory()->user->create_and_get();
 		$this->input = [
 			'user_email'       => $abonnee->user_email,
 			'email_controle'   => $abonnee->user_email,
@@ -47,7 +46,7 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 			'extras'           => [],
 			'dag'              => 'maandag',
 			'start_datum'      => date( 'd-m-Y', strtotime( '+ 1 month' ) ),
-			'gebruiker_id'     => $abonnee_id,
+			'gebruiker_id'     => $abonnee->ID,
 			'opmerking'        => '',
 			'betaal'           => 'ideal',
 		];
@@ -55,7 +54,7 @@ class Test_Public_Abonnee_Inschrijving extends Kleistad_UnitTestCase {
 		/**
 		 * Schrijf nu de abonnee in.
 		 */
-		return new Abonnement( $abonnee_id );
+		return new Abonnement( $abonnee->ID );
 	}
 
 	/**

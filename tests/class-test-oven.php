@@ -57,7 +57,7 @@ class Test_Oven extends Kleistad_UnitTestCase {
 	 * Test de stooksaldo.
 	 */
 	public function test_saldo() {
-		$user_id = $this->factory->user->create(
+		$user_id = $this->factory()->user->create(
 			[
 				'role' => 'subscriber',
 			]

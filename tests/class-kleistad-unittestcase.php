@@ -8,6 +8,7 @@
 namespace Kleistad;
 
 use WP_UnitTestCase;
+use WP_UnitTest_Factory;
 use MockPHPMailer;
 use ReflectionObject;
 use ReflectionException;
@@ -56,6 +57,20 @@ function filter_input( int $type, string $var_name, int $filter = FILTER_DEFAULT
  * phpcs:disable WordPress.NamingConventions
  */
 abstract class Kleistad_UnitTestCase extends WP_UnitTestCase {
+
+	/**
+	 * Fetches the factory object for generating WordPress fixtures.
+	 *
+	 * @return WP_UnitTest_Factory The fixture factory.
+	 */
+	protected static function factory() {
+
+		static $factory = null;
+		if ( ! $factory ) {
+			$factory = new Kleistad_Factory();
+		}
+		return $factory;
+	}
 
 	/**
 	 * Mock de protected display actie
