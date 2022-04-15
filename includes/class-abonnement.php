@@ -160,7 +160,7 @@ class Abonnement extends Artikel {
 	public function get_overbrugging_fractie() : float {
 		$overbrugging_datum = strtotime( '+1 day', $this->start_eind_datum );
 		$aantal_dagen       = intval( ( $this->reguliere_datum - $overbrugging_datum ) / ( DAY_IN_SECONDS ) );
-		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / intval( date( 't', $this->start_eind_datum ) ), 2 ) : 0.00;
+		return ( 0 < $aantal_dagen ) ? round( $aantal_dagen / idate( 't', $this->start_eind_datum ), 2 ) : 0.00;
 	}
 
 	/**
@@ -169,11 +169,11 @@ class Abonnement extends Artikel {
 	 * @return float De fractie.
 	 */
 	public function get_pauze_fractie() : float {
-		$aantal_dagen = intval( date( 't' ) );
+		$aantal_dagen = idate( 't' );
 		$maand_start  = strtotime( 'first day of this month 00:00' );
 		$maand_eind   = strtotime( 'last day of this month 00:00' );
-		$begin_dagen  = $this->pauze_datum < $maand_start ? 0 : intval( date( 'd', $this->pauze_datum ) ) - 1;
-		$eind_dagen   = $this->herstart_datum > $maand_eind ? 0 : $aantal_dagen - intval( date( 'd', $this->herstart_datum ) ) + 1;
+		$begin_dagen  = $this->pauze_datum < $maand_start ? 0 : idate( 'd', $this->pauze_datum ) - 1;
+		$eind_dagen   = $this->herstart_datum > $maand_eind ? 0 : $aantal_dagen - idate( 'd', $this->herstart_datum ) + 1;
 		return round( ( $begin_dagen + $eind_dagen ) / $aantal_dagen, 2 );
 	}
 

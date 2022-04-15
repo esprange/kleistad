@@ -144,7 +144,7 @@ class Admin_Actions {
 	 * @internal Action for Kleistad_daily_gdpr.
 	 */
 	public function daily_gdpr() {
-		if ( intval( date( 'd' ) ) === intval( date( 't' ) ) ) {
+		if ( idate( 'd' ) === idate( 't' ) ) {
 			$gdpr = new Admin_GDPR_Erase();
 			$gdpr->erase_old_privacy_data();
 		}
