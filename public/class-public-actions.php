@@ -129,7 +129,6 @@ class Public_Actions {
 	public function register_endpoints() {
 		foreach (
 			[
-				'Adres',
 				'MollieClient',
 				'Public_Kalender',
 				'Public_Docent',

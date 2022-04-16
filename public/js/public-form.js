@@ -97,23 +97,34 @@
 	 * Zoek de postcode op via de server.
 	 */
 	$.fn.lookupPostcode = function( postcode, huisnr, callback ) {
+		let url = 'https://geodata.nationaalgeoregister.nl/locatieserver/free?fq=postcode: ' +
+			encodeURIComponent( postcode ) + '&fq=huisnr' + encodeURIComponent( '~' + huisnr + '*' );
 		if ( '' !== postcode && '' !== huisnr ) {
 			$.ajax(
 				{
-					url: kleistadData.base_url + '/adres/',
+					url: url,
 					method: 'GET',
-					data: {
-						postcode: postcode,
-						huisnr:   huisnr
-					}
 				}
 			).done(
-				function( data ) { // Als er niets gevonden kan worden dan code 204, data is dan undefined.
-					if ( 'undefined' !== typeof data ) {
-						callback( data );
+				/**
+				 * Verwerk de ontvangen informatie.
+				 *
+				 * @param {object} data
+				 * @param {string} data.response.docs.straatnaam
+				 * @param {string} data.response.docs.woonplaatsnaam
+				 * @param {int}    data.response.numFound
+				 */
+				function( data ) {
+					if ( 'undefined' !== typeof data && 0 < data.response.numFound ) {
+						callback(
+							{
+								straat: data.response.docs[0].straatnaam,
+								plaats: data.response.docs[0].woonplaatsnaam
+							}
+						);
 					}
 				}
-			); // Geen verdere actie ingeval van falen.
+			)
 		}
 	};
 
