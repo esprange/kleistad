@@ -37,13 +37,6 @@ class Stook {
 	const DEFINITIEF    = 'definitief';
 
 	/**
-	 * De oven
-	 *
-	 * @var int $oven_id Het id van de oven.
-	 */
-	public int $oven_id;
-
-	/**
 	 * De stook datum
 	 *
 	 * @var int $datum De datum van de stook.
@@ -117,20 +110,19 @@ class Stook {
 	 * Constructor
 	 *
 	 * @global object $wpdb wp database.
-	 * @param int        $oven_id Het oven id.
-	 * @param int        $datum   De datum van de stook.
-	 * @param array|null $load (optioneel) data waarmee het object geladen kan worden (ivm performance).
+	 * @param Oven       $oven  De oven.
+	 * @param int        $datum De datum van de stook.
+	 * @param array|null $load  (optioneel) data waarmee het object geladen kan worden (ivm performance).
 	 */
-	public function __construct( int $oven_id, int $datum, ?array $load = null ) {
+	public function __construct( Oven $oven, int $datum, ?array $load = null ) {
 		global $wpdb;
 
-		$this->oven_id = $oven_id;
-		$this->oven    = new Oven();
-		$this->datum   = $datum;
-		$resultaat     = $load ?? $wpdb->get_row(
+		$this->oven  = $oven;
+		$this->datum = $datum;
+		$resultaat   = $load ?? $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND datum BETWEEN %s AND %s",
-				$oven_id,
+				$oven->id,
 				date( 'Y-m-d 00:00:00', $datum ),
 				date( 'Y-m-d 23:59:59', $datum ),
 			),
@@ -172,7 +164,7 @@ class Stook {
 		}
 		$data =
 			[
-				'oven_id'      => $this->oven_id,
+				'oven_id'      => $this->oven->id,
 				'temperatuur'  => $this->temperatuur,
 				'soortstook'   => $this->soort,
 				'programma'    => $this->programma,
@@ -292,7 +284,7 @@ class Stook {
 					$stookdeel->prijs = $this->oven->get_stookkosten( $stookdeel->medestoker, $stookdeel->percentage, $this->temperatuur );
 					$medestoker       = get_userdata( $stookdeel->medestoker );
 					$saldo            = new Saldo( $stookdeel->medestoker );
-					$saldo->bedrag    = $saldo->bedrag - $stookdeel->prijs;
+					$saldo->bedrag   -= $stookdeel->prijs;
 					$saldo->reden     = 'stook op ' . date( 'd-m-Y', $this->datum ) . ' door ' . $stoker->display_name;
 					if ( false === $saldo->save() ) {
 						fout( __CLASS__, "stooksaldo van gebruiker $medestoker->display_name kon niet aangepast worden met kosten $stookdeel->prijs" );

@@ -191,12 +191,14 @@ class Saldo extends Artikel {
 		}
 		$huidig_saldo = $saldo['bedrag'] ?? 0.0;
 		if ( update_user_meta( $this->klant_id, self::META_KEY, $this->data ) ) {
-			$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
-			file_put_contents(  // phpcs:ignore
-				wp_upload_dir()['basedir'] . '/stooksaldo.log',
-				date( 'c' ) . " : $tekst\n",
-				FILE_APPEND
-			);
+			if ( $huidig_saldo !== $this->bedrag ) {
+				$tekst = get_userdata( $this->klant_id )->display_name . ' nu: ' . number_format_i18n( $huidig_saldo, 2 ) . ' naar: ' . number_format_i18n( $this->bedrag, 2 ) . ' vanwege ' . $this->reden;
+				file_put_contents(  // phpcs:ignore
+					wp_upload_dir()['basedir'] . '/stooksaldo.log',
+					date( 'c' ) . " : $tekst\n",
+					FILE_APPEND
+				);
+			}
 			return true;
 		}
 		return false;

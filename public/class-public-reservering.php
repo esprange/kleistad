@@ -225,7 +225,7 @@ class Public_Reservering extends Shortcode {
 		for ( $datum = $vanaf; $datum < $tot; $datum += DAY_IN_SECONDS ) {
 			$dagnaam = strftime( '%A', $datum );
 			if ( $oven->{$dagnaam} ) {
-				$stoken[] = new Stook( $oven_id, $datum );
+				$stoken[] = new Stook( $oven, $datum );
 			}
 		}
 		foreach ( $stoken as $stook ) {
@@ -271,7 +271,7 @@ class Public_Reservering extends Shortcode {
 		$maand   = intval( $input['maand'] );
 		$dag     = intval( $input['dag'] );
 		$datum   = mktime( 0, 0, 0, $maand, $dag, $jaar );
-		$stook   = new Stook( $oven_id, $datum );
+		$stook   = new Stook( new Oven( $oven_id ), $datum );
 		$method  = $request->get_method();
 		switch ( $method ) {
 			case 'DELETE':

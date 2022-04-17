@@ -59,9 +59,12 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 	 */
 	public function __construct( $factory = null ) {
 		parent::__construct( $factory );
+		$kosten_laag                          = wp_rand( 10.0, 20.0 );
 		$this->default_generation_definitions = [
-			'naam'        => new WP_UnitTest_Generator_Sequence( 'testoven %s' ),
-			'kosten_laag' => new WP_UnitTest_Generator_Sequence( '%s' ),
+			'naam'          => new WP_UnitTest_Generator_Sequence( 'testoven %s' ),
+			'kosten_laag'   => $kosten_laag,
+			'kosten_midden' => $kosten_laag + wp_rand( 2.0, 5.0 ),
+			'kosten_hoog'   => $kosten_laag + wp_rand( 5.0, 10.0 ),
 		];
 	}
 
@@ -76,6 +79,8 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 		$oven                  = new Oven();
 		$oven->naam            = $args['naam'];
 		$oven->kosten_laag     = $args['kosten_laag'];
+		$oven->kosten_midden   = $args['kosten_midden'];
+		$oven->kosten_hoog     = $args['kosten_hoog'];
 		$oven->beschikbaarheid = [ 'maandag', 'woensdag', 'vrijdag' ];
 		$id                    = $oven->save();
 		if ( ! $id ) {
@@ -96,6 +101,8 @@ class Kleistad_Factory_For_Oven extends WP_UnitTest_Factory_For_Thing {
 		$oven                  = new Oven( $id );
 		$oven->naam            = $args['naam'];
 		$oven->kosten_laag     = $args['kosten_laag'];
+		$oven->kosten_midden   = $args['kosten_midden'];
+		$oven->kosten_hoog     = $args['kosten_hoog'];
 		$oven->beschikbaarheid = $args['beschikbaarheid'];
 		$id                    = $oven->save();
 		return $id > 0;

@@ -39,23 +39,23 @@ class Stoken implements Countable, Iterator {
 	/**
 	 * De constructor
 	 *
-	 * @param int $oven_id     Het id van de oven.
-	 * @param int $vanaf_datum Vanaf datum dat de stoken gevuld moeten worden.
-	 * @param int $tot_datum   Tot datum dat de stoken gevuld moeten worden.
+	 * @param Oven $oven        De oven.
+	 * @param int  $vanaf_datum Vanaf datum dat de stoken gevuld moeten worden.
+	 * @param int  $tot_datum   Tot datum dat de stoken gevuld moeten worden.
 	 */
-	public function __construct( int $oven_id, int $vanaf_datum, int $tot_datum ) {
+	public function __construct( Oven $oven, int $vanaf_datum, int $tot_datum ) {
 		global $wpdb;
 		$data = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND datum BETWEEN %s AND %s",
-				$oven_id,
+				$oven->id,
 				date( 'Y-m-d 00:00:00', $vanaf_datum ),
 				date( 'Y-m-d 23:59:59', $tot_datum ),
 			),
 			ARRAY_A
 		);
 		foreach ( $data as $row ) {
-			$this->stoken[] = new Stook( $oven_id, strtotime( $row['datum'] ), $row );
+			$this->stoken[] = new Stook( $oven, strtotime( $row['datum'] ), $row );
 		}
 	}
 
@@ -132,7 +132,7 @@ class Stoken implements Countable, Iterator {
 		$ovens         = new Ovens();
 		$verwerk_datum = strtotime( '- ' . opties()['termijn'] . ' days 00:00' );
 		foreach ( $ovens as $oven ) {
-			$stoken = new Stoken( $oven->id, strtotime( '- 1 week' ), strtotime( 'today' ) );
+			$stoken = new Stoken( $oven, strtotime( '- 1 week' ), strtotime( 'today' ) );
 			foreach ( $stoken as $stook ) {
 				if ( ! $stook->is_gereserveerd() ) {
 					continue;
