@@ -40,41 +40,9 @@ get_header();
 	<main id="main" class="site-main" role="main">
 		<?php
 		// Start the loop.
-		$naam         = [];
-		$recepttermen = new ReceptTermen();
 		while ( have_posts() ) :
 			the_post();
-			$the_id = get_the_ID();
-			if ( false !== $the_id ) :
-				$recept_terms = get_the_terms( $the_id, Recept::CATEGORY );
-				if ( is_array( $recept_terms ) ) :
-					foreach ( $recept_terms as $recept_term ) :
-						foreach ( [ Recepttermen::GLAZUUR, Recepttermen::KLEUR, Recepttermen::UITERLIJK ] as $selector ) :
-							if ( intval( $recepttermen->lijst()[ $selector ]->term_id ) === $recept_term->parent ) :
-								$naam[ $selector ] = $recept_term->name;
-							endif;
-						endforeach;
-					endforeach;
-				endif;
-			endif;
-			$content = json_decode( get_the_content(), true );
-
-			$normeren = 0;
-			foreach ( $content['basis'] as $basis ) {
-				$normeren += $basis['gewicht'];
-			}
-			$som = 0;
-			foreach ( $content['basis'] as $basis ) {
-				$som += round( $basis['gewicht'] * 100 / $normeren, 2 );
-			}
-			$restant = 100.0 - $som;
-			foreach ( $content['basis'] as $index => $basis ) {
-				$content['basis'][ $index ]['norm_gewicht'] = round( $basis['gewicht'] * 100 / $normeren, 2 ) + $restant;
-				$restant                                    = 0;
-			}
-			foreach ( $content['toevoeging'] as $index => $toevoeging ) {
-				$content['toevoeging'][ $index ]['norm_gewicht'] = round( $toevoeging['gewicht'] * 100 / $normeren, 2 );
-			}
+			$recept = new Recept( get_the_ID() );
 			?>
 		<a id="kleistad_terug" onClick="window.history.back()">&lt; recepten</a><br/><br/>
 		<button class="kleistad-button" onClick="window.print()" >Afdrukken</button>
@@ -82,7 +50,7 @@ get_header();
 			<h2><?php the_title(); ?></h2>
 			<div style="width:100%">
 				<div style="float:left;width:50%;padding-bottom:25px;">
-					<img src="<?php echo esc_url( $content['foto'] ); ?>"
+					<img src="<?php echo esc_url( $recept->foto ); ?>"
 						style="max-width:100%;max-height:100%;border-radius:5px;cursor:zoom-in;transition: 0.3s;"
 						id="kleistad_recept_foto"
 						onMouseOver="this.style.opacity=0.7"
@@ -92,19 +60,19 @@ get_header();
 				<div style="float:left;width:50%;">
 					<div class="kleistad-row">
 						<div class="kleistad-col-5 kleistad-label"><label>Type glazuur</label></div>
-						<div class="kleistad-col-5"><?php echo esc_html( $naam[ ReceptTermen::GLAZUUR ] ); ?></div>
+						<div class="kleistad-col-5"><?php echo esc_html( $recept->glazuur_naam ); ?></div>
 					</div>
 					<div class="kleistad-row">
 						<div class="kleistad-col-5 kleistad-label"><label>Uiterlijk</label></div>
-						<div class="kleistad-col-5"><?php echo esc_html( $naam[ ReceptTermen::UITERLIJK ] ); ?></div>
+						<div class="kleistad-col-5"><?php echo esc_html( $recept->uiterlijk_naam ); ?></div>
 					</div>
 					<div class="kleistad-row">
 						<div class="kleistad-col-5 kleistad-label"><label>Kleur</label></div>
-						<div class="kleistad-col-5"><?php echo esc_html( $naam[ ReceptTermen::KLEUR ] ); ?></div>
+						<div class="kleistad-col-5"><?php echo esc_html( $recept->uiterlijk_naam ); ?></div>
 					</div>
 					<div class="kleistad-row">
 						<div class="kleistad-col-5 kleistad-label"><label>Stookschema</label></div>
-						<div class="kleistad-col-5"><?php echo $content['stookschema']; // phpcs:ignore ?></div>
+						<div class="kleistad-col-5"><?php echo $recept->stookschema; // phpcs:ignore ?></div>
 					</div>
 				</div>
 			</div>
@@ -119,7 +87,7 @@ get_header();
 					<div class="kleistad-col-5">
 						<div class="kleistad-label"><label>Basis recept</label></div>
 						<table>
-							<?php foreach ( $content['basis'] as $basis ) : ?>
+							<?php foreach ( $recept->basis as $basis ) : ?>
 							<tr>
 								<td><?php echo esc_html( $basis['component'] ); ?></td>
 								<td style="text-align:right;"><?php echo esc_html( number_format_i18n( $basis['norm_gewicht'], 2 ) ); ?> gr.</td>
@@ -130,7 +98,7 @@ get_header();
 					<div class="kleistad-col-5">
 						<div class="kleistad-label"><label>Toevoegingen</label></div>
 						<table>
-							<?php foreach ( $content['toevoeging'] as $toevoeging ) : ?>
+							<?php foreach ( $recept->toevoeging as $toevoeging ) : ?>
 							<tr>
 								<td><?php echo esc_html( $toevoeging['component'] ); ?></td>
 								<td style="text-align:right;"><?php echo esc_html( number_format_i18n( $toevoeging['norm_gewicht'], 2 ) ); ?> gr.</td>
@@ -143,13 +111,13 @@ get_header();
 					<div class="kleistad-col-2 kleistad-label"><label>Kenmerken</label></div>
 				</div>
 				<div class="kleistad-row">
-					<div class="kleistad-col-10"><?php echo $content['kenmerk']; //  phpcs:ignore ?></div>
+					<div class="kleistad-col-10"><?php echo $recept->kenmerk; //  phpcs:ignore ?></div>
 				</div>
 				<div class="kleistad-row">
 					<div class="kleistad-col-2 kleistad-label"><label>Oorsprong</label></div>
 				</div>
 				<div class="kleistad-row">
-					<div class="kleistad-col-10"><?php echo $content['herkomst']; //  phpcs:ignore ?></div>
+					<div class="kleistad-col-10"><?php echo $recept->herkomst; //  phpcs:ignore ?></div>
 				</div>
 			</div>
 		</div>
@@ -160,7 +128,7 @@ get_header();
 				onMouseOver="this.style.color='#bbb';this.style.cursor='pointer';this.style.textDecoration='none'"
 				>&times;</span>
 
-			<img style="margin:auto;display:block;width:80%;max-width:700px;" src="<?php echo esc_url( $content['foto'] ); ?>" alt="<?php the_title(); ?>">
+			<img style="margin:auto;display:block;width:80%;max-width:700px;" src="<?php echo esc_url( $recept->foto ); ?>" alt="<?php the_title(); ?>">
 
 			<div style="margin:auto;display:block;width:80%;max-width:700px;text-align:center;color:#ccc;padding:10px 0;height:150px;animation-name:zoom;animation-duration:0.6s;">
 				<?php the_title(); ?>

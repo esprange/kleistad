@@ -30,24 +30,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 */
 	protected function prepare_toevoegen() : string {
 		$this->data['id']     = 0;
-		$this->data['recept'] = [
-			'id'          => 0,
-			'titel'       => '',
-			'post_status' => 'draft',
-			'created'     => 0,
-			'modified'    => 0,
-			'content'     => [
-				'kenmerk'     => '',
-				'herkomst'    => '',
-				'basis'       => [],
-				'toevoeging'  => [],
-				'stookschema' => '',
-				'foto'        => '',
-			],
-			'glazuur'     => 0,
-			'kleur'       => 0,
-			'uiterlijk'   => 0,
-		];
+		$this->data['recept'] = new Recept();
 		return $this->content();
 	}
 
@@ -57,37 +40,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_wijzigen() : string {
-		$recept       = get_post( $this->data['id'] );
-		$recepttermen = new ReceptTermen();
-		$glazuur_id   = 0;
-		$kleur_id     = 0;
-		$uiterlijk_id = 0;
-		$termen       = get_the_terms( $recept->ID, Recept::CATEGORY );
-		if ( is_array( $termen ) ) {
-			foreach ( $termen as $term ) {
-				if ( intval( $recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id ) === $term->parent ) {
-					$glazuur_id = $term->term_id;
-				}
-				if ( intval( $recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id ) === $term->parent ) {
-					$kleur_id = $term->term_id;
-				}
-				if ( intval( $recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id ) === $term->parent ) {
-					$uiterlijk_id = $term->term_id;
-				}
-			}
-		}
-
-		$this->data['recept'] = [
-			'id'        => $recept->ID,
-			'titel'     => $recept->post_title,
-			'status'    => $recept->post_status,
-			'created'   => $recept->post_date,
-			'modified'  => $recept->post_modified,
-			'content'   => json_decode( $recept->post_content, true ),
-			'glazuur'   => $glazuur_id,
-			'kleur'     => $kleur_id,
-			'uiterlijk' => $uiterlijk_id,
-		];
+		$this->data['recept'] = new Recept( $this->data['id'] );
 		return $this->content();
 	}
 
@@ -97,34 +50,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
-		$query = [
-			'post_type'   => 'kleistad_recept',
-			'numberposts' => '-1',
-			'post_status' => [
-				'publish',
-				'pending',
-				'private',
-				'draft',
-			],
-			'orderby'     => 'date',
-		];
-		if ( ! is_super_admin() ) {
-			$query['author'] = get_current_user_id();
-		}
-
-		$recepten               = get_posts( $query );
-		$this->data['recepten'] = [];
-		foreach ( $recepten as $recept ) {
-			$recept_content           = json_decode( $recept->post_content, true );
-			$this->data['recepten'][] = [
-				'id'       => $recept->ID,
-				'titel'    => $recept->post_title,
-				'status'   => $recept->post_status,
-				'created'  => strtotime( $recept->post_date ),
-				'modified' => strtotime( $recept->post_modified ),
-				'foto'     => $recept_content['foto'],
-			];
-		}
+		$this->data['recepten'] = new Recepten( ! is_super_admin() ? [ 'author' => get_current_user_id() ] : [] );
 		return $this->content();
 	}
 
@@ -136,7 +62,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	public function process() : array {
-		$this->data['recept']                           = filter_input_array(
+		$this->data['recept']                = filter_input_array(
 			INPUT_POST,
 			[
 				'id'        => FILTER_SANITIZE_NUMBER_INT,
@@ -146,19 +72,18 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				'uiterlijk' => FILTER_SANITIZE_NUMBER_INT,
 			]
 		);
-		$this->data['recept']['content']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
-		$this->data['recept']['content']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
-		$this->data['recept']['content']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
-		$this->data['recept']['content']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
-		$this->data['recept']['content']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
-		$this->data['recept']['content']['foto']        = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
+		$this->data['recept']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
+		$this->data['recept']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
+		$this->data['recept']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
+		$this->data['recept']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
+		$this->data['recept']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
+		$this->data['recept']['foto']        = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
 
 		if ( 'bewaren' === $this->form_actie ) {
 			if ( UPLOAD_ERR_INI_SIZE === $this->files()['foto']['error'] ) {
 				return $this->melding( new WP_Error( 'foto', 'De foto is te groot qua omvang !' ) );
 			}
 		}
-
 		return $this->save();
 	}
 
@@ -168,7 +93,8 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function verwijderen(): array {
-		wp_delete_post( $this->data['recept']['id'] );
+		$recept = new Recept( $this->data['recept']['id'] );
+		$recept->erase();
 		return [
 			'status'  => $this->status( 'Het recept is verwijderd' ),
 			'content' => $this->display(),
@@ -181,10 +107,9 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function publiceren(): array {
-		$recept              = get_post( $this->data['recept']['id'] );
-		$recept->post_status = 'publish';
-		wp_update_post( $recept, true );
-
+		$recept         = new Recept( $this->data['recept']['id'] );
+		$recept->status = 'publish';
+		$recept->save();
 		return [
 			'status'  => $this->status( 'Het recept is aangepast' ),
 			'content' => $this->display(),
@@ -197,10 +122,9 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function verbergen(): array {
-		$recept              = get_post( $this->data['recept']['id'] );
-		$recept->post_status = 'private';
-		wp_update_post( $recept, true );
-
+		$recept         = new Recept( $this->data['recept']['id'] );
+		$recept->status = 'private';
+		$recept->save();
 		return [
 			'status'  => $this->status( 'Het recept is aangepast' ),
 			'content' => $this->display(),
@@ -222,7 +146,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			if ( is_array( $file ) && ! isset( $file['error'] ) ) {
 				$result = $this->foto( $file['file'] );
 				if ( true === $result ) {
-					$this->data['recept']['content']['foto'] = $file['url'];
+					$this->data['recept']['foto'] = $file['url'];
 				} else {
 					return [ 'status' => $this->status( $result ) ];
 				}
@@ -232,53 +156,20 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				];
 			}
 		}
-		if ( ! $this->data['recept']['id'] ) {
-			$result = wp_insert_post(
-				[
-					'post_status' => 'draft', // Initiële publicatie status is prive.
-					'post_type'   => 'kleistad_recept',
-				]
-			);
-			if ( $result ) {
-				$this->data['recept']['id'] = $result;
-			} else {
-				return [
-					'status' => $this->status( new WP_Error( 'fout', 'Recept kon niet worden toegevoegd' ) ),
-				];
-			}
-		}
-		$recept = get_post( $this->data['recept']['id'] );
-		if ( ! is_null( $recept ) ) {
-			$recept->post_title   = (string) $this->data['recept']['titel'];
-			$recept->post_excerpt = 'keramiek recept : ' . $this->data['recept']['content']['kenmerk'];
-			$json_content         = wp_json_encode( $this->data['recept']['content'], JSON_UNESCAPED_UNICODE );
-			if ( is_string( $json_content ) ) {
-				$recept->post_content = $json_content;
-			} else {
-				return [
-					'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het opnieuw' ) ),
-				];
-			}
-			$recept_id = wp_update_post( $recept, true );
-			if ( is_int( $recept_id ) ) {
-				wp_set_object_terms(
-					$recept_id,
-					[
-						intval( $this->data['recept']['glazuur'] ),
-						intval( $this->data['recept']['kleur'] ),
-						intval( $this->data['recept']['uiterlijk'] ),
-					],
-					Recept::CATEGORY
-				);
-
-				return [
-					'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
-					'content' => $this->display(),
-				];
-			}
-		}
+		$recept              = new Recept( $this->data['recept']['id'] );
+		$recept->titel       = $this->data['recept']['titel'];
+		$recept->kenmerk     = $this->data['recept']['kenmerk'];
+		$recept->toevoeging  = $this->data['recept']['toevoeging'];
+		$recept->basis       = $this->data['recept']['basis'];
+		$recept->stookschema = $this->data['recept']['stookschema'];
+		$recept->herkomst    = $this->data['recept']['herkomst'];
+		$recept->glazuur     = $this->data['recept']['glazuur'];
+		$recept->uiterlijk   = $this->data['recept']['uiterlijk'];
+		$recept->kleur       = $this->data['recept']['kleur'];
+		$recept->save();
 		return [
-			'status' => $this->status( new WP_Error( 'database', 'De gegevens konden niet worden opgeslagen vanwege een interne fout!' ) ),
+			'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
+			'content' => $this->display(),
 		];
 	}
 

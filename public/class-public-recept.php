@@ -58,8 +58,6 @@ class Public_Recept extends Shortcode {
 	public static function callback_recept( WP_REST_Request $request ) : WP_REST_Response {
 		$data  = [];
 		$query = [
-			'post_type'   => Recept::POST_TYPE,
-			'numberposts' => '-1',
 			'post_status' => [
 				'publish',
 			],
@@ -101,63 +99,11 @@ class Public_Recept extends Shortcode {
 				$query['order']   = 'ASC';
 				break;
 		}
-
-		$recepten       = get_posts( $query );
-		$recepttermen   = new ReceptTermen();
-		$object_ids     = wp_list_pluck( $recepten, 'ID' );
-		$auteur_ids     = array_unique( wp_list_pluck( $recepten, 'post_author' ) );
-		$auteurs        = get_users(
-			[
-				'include' => $auteur_ids,
-				'fields'  => [
-					'display_name',
-					'ID',
-				],
-			]
-		);
-		$data['auteur'] = wp_list_pluck( $auteurs, 'display_name', 'ID' );
-
-		$data['recepten'] = [];
-		foreach ( $recepten as $recept ) {
-			$content            = json_decode( $recept->post_content, true );
-			$data['recepten'][] = [
-				'id'    => $recept->ID,
-				'titel' => $recept->post_title,
-				'foto'  => $content['foto'],
-			];
-		}
-
-		$data['glazuur']   = get_terms(
-			[
-				'taxonomy'   => Recept::CATEGORY,
-				'hide_empty' => true,
-				'orderby'    => 'name',
-				'object_ids' => $object_ids,
-				'parent'     => $recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id,
-				'fields'     => 'id=>name',
-			]
-		);
-		$data['kleur']     = get_terms(
-			[
-				'taxonomy'   => Recept::CATEGORY,
-				'hide_empty' => true,
-				'orderby'    => 'name',
-				'object_ids' => $object_ids,
-				'parent'     => $recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id,
-				'fields'     => 'id=>name',
-			]
-		);
-		$data['uiterlijk'] = get_terms(
-			[
-				'taxonomy'   => Recept::CATEGORY,
-				'hide_empty' => true,
-				'orderby'    => 'name',
-				'object_ids' => $object_ids,
-				'parent'     => $recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id,
-				'fields'     => 'id=>name',
-			]
-		);
-
+		$data['recepten']  = new Recepten( $query );
+		$data['auteur']    = $data['recepten']->get_auteurs();
+		$data['glazuur']   = $data['recepten']->get_glazuren();
+		$data['kleur']     = $data['recepten']->get_kleuren();
+		$data['uiterlijk'] = $data['recepten']->get_uiterlijkheden();
 		return new WP_REST_Response(
 			[
 				'content' => self::render( $data ),
@@ -240,12 +186,12 @@ class Public_Recept extends Shortcode {
 			if ( ++$index > 24 ) {
 				break;
 			}
-			$permalink = get_post_permalink( $recept['id'] );
+			$permalink = get_post_permalink( $recept->id );
 			if ( is_string( $permalink ) ) {
 				$html .= '<div style="width:250px;float:left;padding:15px;border:0;"><a href="' . $permalink . '" >' .
-						'<div class="kleistad-recept-img" style="/* noinspection CssUnknownTarget */ background-image:url(' . "'{$recept['foto']}'" . ');" >' .
+						'<div class="kleistad-recept-img" style="/* noinspection CssUnknownTarget */ background-image:url(' . "'$recept->foto'" . ');" >' .
 						'</div><div class="kleistad-recept-titel" >';
-				$html .= self::truncate_string( $recept['titel'] );
+				$html .= self::truncate_string( $recept->titel );
 				$html .= '</div></a></div>';
 			}
 		}

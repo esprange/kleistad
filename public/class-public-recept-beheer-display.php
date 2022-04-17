@@ -40,14 +40,14 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function form_content() {
 		?>
-		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['recept']['id'] ); ?>" />
+		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['recept']->id ); ?>" />
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_titel">Recept naam</label>
 			</div>
 			<div class="kleistad-col-7">
 				<input class="kleistad-input" type="text" size="20" name="titel" tabindex="1" required id="kleistad_titel"
-					value="<?php echo esc_attr( $this->data['recept']['titel'] ); ?>"/>
+					value="<?php echo esc_attr( $this->data['recept']->titel ); ?>"/>
 			</div>
 		</div>
 		<?php $this->categorien(); ?>
@@ -61,10 +61,10 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top:15px">
 			<div class="kleistad-col-5">
-				<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['recept']['content']['kenmerk'] ); ?></textarea>
+				<textarea name="kenmerk" id="kleistad_kenmerk" tabindex="5" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['recept']->kenmerk ); ?></textarea>
 			</div>
 			<div class="kleistad-col-5">
-				<textarea name="herkomst" id="kleistad_herkomst" tabindex="6" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['recept']['content']['herkomst'] ); ?></textarea>
+				<textarea name="herkomst" id="kleistad_herkomst" tabindex="6" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['recept']->herkomst ); ?></textarea>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -77,20 +77,20 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top:15px">
 			<div class="kleistad-col-5">
-				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['recept']['content']['stookschema'] ); ?></textarea>
+				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['recept']->stookschema ); ?></textarea>
 			</div>
 			<div class="kleistad-col-5">
 				<input type="file" name="foto" id="kleistad_foto_input" accept=".jpeg,.jpg,.tiff,.tif" /><br />
-				<img id="kleistad_foto" src="<?php echo esc_url( $this->data['recept']['content']['foto'] ); ?>" alt=" " >
-				<input type="hidden" name="foto_url" value="<?php echo esc_url( $this->data['recept']['content']['foto'] ); ?>" >
+				<img id="kleistad_foto" src="<?php echo esc_url( $this->data['recept']->foto ); ?>" alt=" " >
+				<input type="hidden" name="foto_url" value="<?php echo esc_url( $this->data['recept']->foto ); ?>" >
 			</div>
 		</div>
 		<?php $this->grondstoffen(); ?>
 		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_bewaren" value="bewaren">Opslaan</button>
 		<?php
-		if ( 0 < $this->data['recept']['id'] ) :
-			if ( 'publish' !== $this->data['recept']['status'] ) :
+		if ( 0 < $this->data['recept']->id ) :
+			if ( 'publish' !== $this->data['recept']->status ) :
 				?>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_publiceren" value="publiceren" >Publiceren</button>
 		<?php else : ?>
@@ -125,16 +125,16 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 			<?php foreach ( $this->data['recepten'] as $recept ) : ?>
 			<tr>
 				<td>
-				<?php if ( '' !== $recept['foto'] ) : ?>
-					<img src="<?php echo esc_url( $recept['foto'] ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept['titel'] ); ?>" >
+				<?php if ( '' !== $recept->foto ) : ?>
+					<img src="<?php echo esc_url( $recept->foto ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept->titel ); ?>" >
 					<?php else : ?>
 					&nbsp;
 				<?php endif; ?></td>
-				<td><?php echo esc_html( $recept['titel'] ); ?></td>
-				<td data-sort="<?php echo esc_attr( $recept['modified'] ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept['modified'] ) ); ?></td>
-				<td><?php echo esc_html( 'private' === $recept['status'] ? 'prive' : ( 'publish' === $recept['status'] ? 'gepubliceerd' : ( 'draft' === $recept['status'] ? 'concept' : '' ) ) ); ?></td>
+				<td><?php echo esc_html( $recept->titel ); ?></td>
+				<td data-sort="<?php echo esc_attr( $recept->modified ); ?>"><?php echo esc_html( date_i18n( 'd-m-Y H:i', $recept->modified ) ); ?></td>
+				<td><?php echo esc_html( 'private' === $recept->status ? 'prive' : ( 'publish' === $recept->status ? 'gepubliceerd' : ( 'draft' === $recept->status ? 'concept' : '' ) ) ); ?></td>
 				<td>
-					<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $recept['id'] ); ?>" data-actie="wijzigen" >&nbsp;</a>
+					<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $recept->id ); ?>" data-actie="wijzigen" >&nbsp;</a>
 				</td>
 			</tr>
 			<?php endforeach ?>
@@ -161,10 +161,10 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<datalist id="kleistad_recept_grondstof">
 			<?php
-			$grondstof_parent = get_term_by( 'name', '_grondstof', 'kleistad_recept_cat' );
+			$grondstof_parent = get_term_by( 'name', '_grondstof', Recept::CATEGORY );
 			$recept_terms     = get_terms(
 				[
-					'taxonomy'   => 'kleistad_recept_cat',
+					'taxonomy'   => Recept::CATEGORY,
 					'hide_empty' => false,
 					'orderby'    => 'name',
 					'parent'     => $grondstof_parent->term_id,
@@ -184,10 +184,10 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				<table>
 			<?php
 			$index = 0;
-			$count = count( $this->data['recept']['content']['basis'] );
+			$count = count( $this->data['recept']->basis );
 			do {
-				$component = $index < $count ? $this->data['recept']['content']['basis'][ $index ]['component'] : '';
-				$gewicht   = $index < $count ? $this->data['recept']['content']['basis'][ $index ]['gewicht'] * 1.0 : 0.0;
+				$component = $index < $count ? $this->data['recept']->basis[ $index ]['component'] : '';
+				$gewicht   = $index < $count ? $this->data['recept']->basis[ $index ]['gewicht'] * 1.0 : 0.0;
 				?>
 				<tr>
 					<td><!--suppress HtmlFormInputWithoutLabel --><input type="text" name="basis_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
@@ -205,10 +205,10 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				<table>
 			<?php
 			$index = 0;
-			$count = count( $this->data['recept']['content']['toevoeging'] );
+			$count = count( $this->data['recept']->toevoeging );
 			do {
-				$component = $index < $count ? $this->data['recept']['content']['toevoeging'][ $index ]['component'] : '';
-				$gewicht   = $index < $count ? $this->data['recept']['content']['toevoeging'][ $index ]['gewicht'] * 1.0 : 0.0;
+				$component = $index < $count ? $this->data['recept']->toevoeging[ $index ]['component'] : '';
+				$gewicht   = $index < $count ? $this->data['recept']->toevoeging[ $index ]['gewicht'] * 1.0 : 0.0;
 				?>
 				<tr>
 					<td><!--suppress HtmlFormInputWithoutLabel --><input type="text" name="toevoeging_component[]" list="kleistad_recept_grondstof" autocomplete="off" value="<?php echo esc_attr( $component ); ?>" ></td>
@@ -256,11 +256,11 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 						'show_option_none'  => 'Kies soort glazuur',
 						'option_none_value' => '',
 						'class'             => 'cat',
-						'taxonomy'          => 'kleistad_recept_cat',
+						'taxonomy'          => Recept::CATEGORY,
 						'hierarchical'      => 1,
 						'id'                => 'kleistad_glazuur',
 						'name'              => 'glazuur',
-						'selected'          => $this->data['recept']['glazuur'],
+						'selected'          => $this->data['recept']->glazuur,
 						'child_of'          => $recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id,
 						'tabindex'          => 2,
 					]
@@ -277,11 +277,11 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 						'show_option_none'  => 'Kies kleur',
 						'option_none_value' => '',
 						'class'             => 'cat',
-						'taxonomy'          => 'kleistad_recept_cat',
+						'taxonomy'          => Recept::CATEGORY,
 						'hierarchical'      => 1,
 						'id'                => 'kleistad_kleur',
 						'name'              => 'kleur',
-						'selected'          => $this->data['recept']['kleur'],
+						'selected'          => $this->data['recept']->kleur,
 						'child_of'          => $recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id,
 						'tabindex'          => 3,
 					]
@@ -298,11 +298,11 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 						'show_option_none'  => 'Kies uiterlijk',
 						'option_none_value' => '',
 						'class'             => 'cat',
-						'taxonomy'          => 'kleistad_recept_cat',
+						'taxonomy'          => Recept::CATEGORY,
 						'hierarchical'      => 1,
 						'id'                => 'kleistad_uiterlijk',
 						'name'              => 'uiterlijk',
-						'selected'          => $this->data['recept']['uiterlijk'],
+						'selected'          => $this->data['recept']->uiterlijk,
 						'child_of'          => $recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id,
 						'tabindex'          => 4,
 					]
