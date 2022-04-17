@@ -1,3 +1,6 @@
+// phpcs:disable
+// noinspection JSUnresolvedFunction,JSUnusedGlobalSymbols
+
 /**
  * Grunt build file voor Kleistad.
  *
