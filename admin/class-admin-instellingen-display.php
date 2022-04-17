@@ -25,6 +25,7 @@ class Admin_Instellingen_Display {
 		<!--suppress HtmlUnknownTarget -->
 		<form method="POST" action="options.php" >
 		<?php settings_fields( 'kleistad-opties' ); ?>
+		<div style="height: 80vh;overflow-y: scroll;" >
 		<table class="form-table" >
 		<?php
 			$this->instellingen_prijzen();
@@ -32,6 +33,7 @@ class Admin_Instellingen_Display {
 			$this->setup_lijst_parameters();
 		?>
 		</table>
+		</div>
 		<?php submit_button(); ?>
 		<p>&nbsp;</p>
 		</form>
@@ -49,10 +51,12 @@ class Admin_Instellingen_Display {
 		<div style="float:left;width:50%;">
 		<form method="POST" action="options.php" >
 			<?php settings_fields( 'kleistad-setup' ); ?>
+			<div style="height: 80vh;overflow-y: scroll;" >
 			<table class="form-table">
 				<?php $this->setup_switch_parameters(); ?>
 				<?php $this->setup_tekst_parameters(); ?>
 			</table>
+			</div>
 			<?php submit_button(); ?>
 			<p>&nbsp;</p>
 		</form>
@@ -66,7 +70,6 @@ class Admin_Instellingen_Display {
 			Open daarvoor de cursus of workshop en sla deze op (er hoeven geen parameters gewijzigd te worden).</p>
 			<p>Met onderstaande knop wordt gelinkt naar Google. Zorg dan dat je ingelogd bent op het juiste Google account en geef dan toestemming tot de toegang van Kleistad tot de kalender</p>
 			<?php submit_button( 'Google Kalender koppelen', 'primary', 'connect', true, disabled( $googleconnect->is_authorized(), true, false ) ); ?>
-			<p>&nbsp;</p>
 		</form>
 		</div>
 		<div class="card" style="float:right;width:50%;" >
@@ -77,7 +80,6 @@ class Admin_Instellingen_Display {
 			<p>Met onderstaande knop kan deze handeling op elk moment geforceerd worden. De job bevat logica die er voor zorgt dat een handeling niet dubbel wordt verricht,
 			hoe vaak de job ook per dag gestart wordt.</p>
 			<?php submit_button( 'Dagelijkse job uitvoeren', 'primary', 'dagelijks' ); ?>
-			<p>&nbsp;</p>
 		</form>
 		</div>
 		<?php
@@ -243,16 +245,14 @@ class Admin_Instellingen_Display {
 			<tr>
 				<th scope="row"><?php echo esc_html( $naam ); ?></th>
 				<td>
-					<p>
-						<label>
-							<input type="radio" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]"
-								value="0" <?php checked( 0, setup()[ $id ] ); ?>/>Uit
-						</label><br>
-						<label>
-							<input type="radio" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]"
-								value="1" <?php checked( 1, setup()[ $id ] ); ?>/>Aan
-						</label>
-					</p>
+					<label>
+						<input type="radio" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]"
+							value="0" <?php checked( 0, setup()[ $id ] ); ?>/>Uit
+					</label>
+					<label style="margin-left: 50px">
+						<input type="radio" name="kleistad-setup[<?php echo esc_attr( $id ); ?>]"
+							value="1" <?php checked( 1, setup()[ $id ] ); ?>/>Aan
+					</label>
 				</td>
 			</tr>
 			<?php
