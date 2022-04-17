@@ -63,10 +63,10 @@ class Recept {
 	/**
 	 * Constructor
 	 *
-	 * @param int|null $id   Het recept id.
-	 * @param ?WP_Post $load Eventueel al geladen post.
+	 * @param int|null $recept_id Het recept id.
+	 * @param ?WP_Post $load      Eventueel al geladen post.
 	 */
-	public function __construct( int $id = null, ? WP_Post $load = null ) {
+	public function __construct( int $recept_id = null, ? WP_Post $load = null ) {
 		$this->data = [
 			'id'          => 0,
 			'titel'       => '',
@@ -86,39 +86,21 @@ class Recept {
 		if ( is_null( self::$recepttermen ) ) {
 			self::$recepttermen = new ReceptTermen();
 		}
-		if ( $id ) {
-			$recept = $load ?: get_post( $id );
+		if ( $recept_id ) {
+			$recept = $load ?: get_post( $recept_id );
 			if ( $recept ) {
 				$this->auteur_id = $recept->post_author;
-				$glazuur_id      = 0;
-				$kleur_id        = 0;
-				$uiterlijk_id    = 0;
-				$termen          = get_the_terms( $recept->ID, self::CATEGORY );
-				if ( is_array( $termen ) ) {
-					foreach ( $termen as $term ) {
-						if ( intval( self::$recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id ) === $term->parent ) {
-							$glazuur_id = $term->term_id;
-						}
-						if ( intval( self::$recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id ) === $term->parent ) {
-							$kleur_id = $term->term_id;
-						}
-						if ( intval( self::$recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id ) === $term->parent ) {
-							$uiterlijk_id = $term->term_id;
-						}
-					}
-				}
-				$content    = json_decode( $recept->post_content, true );
-				$this->data = array_merge(
-					$content,
+				$this->data      = array_merge(
+					json_decode( $recept->post_content, true ),
 					[
 						'id'        => $recept->ID,
 						'titel'     => $recept->post_title,
 						'status'    => $recept->post_status,
 						'created'   => $recept->post_date,
 						'modified'  => $recept->post_modified,
-						'glazuur'   => $glazuur_id,
-						'kleur'     => $kleur_id,
-						'uiterlijk' => $uiterlijk_id,
+						'glazuur'   => $this->eigenschap_id( ReceptTermen::GLAZUUR ),
+						'kleur'     => $this->eigenschap_id( ReceptTermen::KLEUR ),
+						'uiterlijk' => $this->eigenschap_id( ReceptTermen::UITERLIJK ),
 					]
 				);
 			}
@@ -312,4 +294,18 @@ class Recept {
 		);
 	}
 
+	/**
+	 * Bepaal het term id.
+	 *
+	 * @param string $selector De eigenschap.
+	 *
+	 * @return int|void
+	 */
+	private function eigenschap_id( string $selector ) {
+		foreach ( get_the_terms( $this->id, self::CATEGORY ) ?: [] as $term ) {
+			if ( intval( self::$recepttermen->lijst()[ $selector ]->term_id ) === $term->parent ) {
+				return $term->term_id;
+			}
+		}
+	}
 }
