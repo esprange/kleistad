@@ -47,13 +47,6 @@ class Recept {
 	private array $data;
 
 	/**
-	 * De recept teremn
-	 *
-	 * @var ReceptTermen|null  $recepttermen De termen.
-	 */
-	private static ?ReceptTermen $recepttermen = null;
-
-	/**
 	 * De auteur van het recept.
 	 *
 	 * @var int $auteur_id Het id van de auteur.
@@ -83,9 +76,6 @@ class Recept {
 			'kleur'       => 0,
 			'uiterlijk'   => 0,
 		];
-		if ( is_null( self::$recepttermen ) ) {
-			self::$recepttermen = new ReceptTermen();
-		}
 		if ( $recept_id ) {
 			$recept = $load ?: get_post( $recept_id );
 			if ( $recept ) {
@@ -116,9 +106,10 @@ class Recept {
 	 */
 	public function __get( string $attribuut ) {
 		if ( str_contains( $attribuut, '_naam' ) ) {
-			$selector = strtok( $attribuut, '_' );
-			foreach ( self::$recepttermen as $receptterm ) {
-				if ( intval( self::$recepttermen->lijst()[ $selector ]->term_id ) === $receptterm->parent ) {
+			$selector     = strtok( $attribuut, '_' );
+			$recepttermen = new ReceptTermen();
+			foreach ( $recepttermen as $receptterm ) {
+				if ( intval( $recepttermen->lijst()[ $selector ]->term_id ) === $receptterm->parent ) {
 					return $receptterm->name;
 				}
 			}
@@ -302,8 +293,9 @@ class Recept {
 	 * @return int|void
 	 */
 	private function eigenschap_id( string $selector ) {
+		$recepttermen = new ReceptTermen();
 		foreach ( get_the_terms( $this->id, self::CATEGORY ) ?: [] as $term ) {
-			if ( intval( self::$recepttermen->lijst()[ $selector ]->term_id ) === $term->parent ) {
+			if ( intval( $recepttermen->lijst()[ $selector ]->term_id ) === $term->parent ) {
 				return $term->term_id;
 			}
 		}
