@@ -256,13 +256,13 @@ final class Files {
 	 *
 	 * @var array $data De files data
 	 */
-	public array $data;
+	public array $data = [];
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->data = $_FILES;
+		$this->data = &$_FILES;
 	}
 
 }
