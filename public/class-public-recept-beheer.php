@@ -260,6 +260,8 @@ final class Files {
 
 	/**
 	 * Constructor
+	 *
+	 * @suppressWarnings(PHPMD.Superglobals)
 	 */
 	public function __construct() {
 		$this->data = &$_FILES;
