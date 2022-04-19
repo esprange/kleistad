@@ -16,10 +16,11 @@ namespace Kleistad;
  */
 class ReceptTermen {
 
-	const KLEUR     = '_kleur';
-	const GRONDSTOF = '_grondstof';
-	const UITERLIJK = '_uiterlijk';
-	const GLAZUUR   = '_glazuur';
+	const KLEUR         = '_kleur';
+	const GRONDSTOF     = '_grondstof';
+	const UITERLIJK     = '_uiterlijk';
+	const GLAZUUR       = '_glazuur';
+	const EIGENSCHAPPEN = [ self::GRONDSTOF, self::KLEUR, self::UITERLIJK, self::GLAZUUR ];
 
 	/**
 	 * Maak eenmalig de hoofdtermen aan.
@@ -33,13 +34,14 @@ class ReceptTermen {
 	 */
 	public function __construct() {
 		if ( empty( self::$hoofdtermen ) ) {
-			foreach ( [ self::GRONDSTOF, self::KLEUR, self::UITERLIJK, self::GLAZUUR ] as $hoofdterm_naam ) {
+			foreach ( self::EIGENSCHAPPEN as $hoofdterm_naam ) {
 				$term = get_term_by( 'name', $hoofdterm_naam, Recept::CATEGORY );
 				if ( false === $term ) {
 					$result = wp_insert_term( $hoofdterm_naam, Recept::CATEGORY );
 					if ( is_array( $result ) ) {
 						self::$hoofdtermen[ $hoofdterm_naam ] = get_term( $result['term_id'] );
 					}
+					continue;
 				}
 				self::$hoofdtermen[ $hoofdterm_naam ] = $term;
 			}

@@ -59,11 +59,10 @@ class Recept {
 	 * @param int|null $recept_id Het recept id.
 	 * @param ?WP_Post $load      Eventueel al geladen post.
 	 */
-	public function __construct( int $recept_id = null, ? WP_Post $load = null ) {
+	public function __construct( ?int $recept_id = null, ? WP_Post $load = null ) {
 		$this->data = [
-			'id'          => 0,
+			'id'          => $recept_id,
 			'titel'       => '',
-			'post_status' => 'draft',
 			'created'     => 0,
 			'modified'    => 0,
 			'kenmerk'     => '',
@@ -71,23 +70,24 @@ class Recept {
 			'basis'       => [],
 			'toevoeging'  => [],
 			'stookschema' => '',
+			'status'      => '',
 			'foto'        => '',
 			'glazuur'     => 0,
 			'kleur'       => 0,
 			'uiterlijk'   => 0,
 		];
 		if ( $recept_id ) {
-			$recept = $load ?: get_post( $recept_id );
-			if ( $recept ) {
-				$this->auteur_id = $recept->post_author;
+			$recept_post = $load ?: get_post( $recept_id );
+			if ( $recept_post ) {
+				$this->auteur_id = $recept_post->post_author;
 				$this->data      = array_merge(
-					json_decode( $recept->post_content, true ),
+					json_decode( $recept_post->post_content, true ),
 					[
-						'id'        => $recept->ID,
-						'titel'     => $recept->post_title,
-						'status'    => $recept->post_status,
-						'created'   => $recept->post_date,
-						'modified'  => $recept->post_modified,
+						'id'        => $recept_post->ID,
+						'titel'     => $recept_post->post_title,
+						'status'    => $recept_post->post_status,
+						'created'   => $recept_post->post_date,
+						'modified'  => $recept_post->post_modified,
 						'glazuur'   => $this->eigenschap_id( ReceptTermen::GLAZUUR ),
 						'kleur'     => $this->eigenschap_id( ReceptTermen::KLEUR ),
 						'uiterlijk' => $this->eigenschap_id( ReceptTermen::UITERLIJK ),
@@ -127,9 +127,7 @@ class Recept {
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( string $attribuut, mixed $waarde ) {
-		if ( isset( $this->data[ $attribuut ] ) ) {
-			$this->data[ $attribuut ] = $waarde;
-		}
+		$this->data[ $attribuut ] = $waarde;
 		$this->normering();
 	}
 
@@ -152,13 +150,11 @@ class Recept {
 		if ( ! $this->id ) {
 			$this->id = wp_insert_post(
 				[
-					'post_status' => 'draft', // Initiële publicatie status is prive.
-					'post_type'   => self::POST_TYPE,
+					'post_type' => self::POST_TYPE,
 				]
 			);
 		}
-		$recept               = get_post( $this->id );
-		$json_content         = wp_json_encode(
+		$json_content = wp_json_encode(
 			[
 				'kenmerk'     => $this->data['kenmerk'],
 				'herkomst'    => $this->data['herkomst'],
@@ -169,11 +165,16 @@ class Recept {
 			],
 			JSON_UNESCAPED_UNICODE
 		);
-		$recept->post_content = $json_content;
-		$recept->post_title   = $this->titel;
-		$recept->post_status  = $this->status;
-		$recept->post_excerpt = 'keramiek recept : ' . $this->kenmerk;
-		$this->id             = wp_update_post( $recept, true );
+		wp_update_post(
+			[
+				'ID'           => $this->id,
+				'post_content' => $json_content,
+				'post_title'   => $this->titel,
+				'post_status'  => $this->status,
+				'post_excerpt' => 'keramiek recept : ' . $this->kenmerk,
+				'post_type'    => self::POST_TYPE,
+			]
+		);
 		wp_set_object_terms(
 			$this->id,
 			[
@@ -184,28 +185,6 @@ class Recept {
 			self::CATEGORY
 		);
 		return $this->id;
-	}
-
-	/**
-	 * Bepaal de genormeerde verdeling van componenten.
-	 */
-	private function normering() {
-		$normeren = 0.0;
-		foreach ( $this->basis as $basis ) {
-			$normeren += $basis['gewicht'];
-		}
-		$som = 0.0;
-		foreach ( $this->basis as $basis ) {
-			$som += round( $basis['gewicht'] * 100 / $normeren, 2 );
-		}
-		$restant = 100.0 - $som;
-		foreach ( $this->basis as $index => $basis ) {
-			$this->data['basis'][ $index ]['norm_gewicht'] = round( $basis['gewicht'] * 100 / $normeren, 2 ) + $restant;
-			$restant                                       = 0;
-		}
-		foreach ( $this->toevoeging as $index => $toevoeging ) {
-			$this->data['toevoeging'][ $index ]['norm_gewicht'] = round( $toevoeging['gewicht'] * 100 / $normeren, 2 );
-		}
 	}
 
 	/**
@@ -286,6 +265,29 @@ class Recept {
 	}
 
 	/**
+	 * Bepaal de genormeerde verdeling van componenten.
+	 */
+	private function normering() {
+		$normeren = 0.0;
+		foreach ( $this->basis as $basis ) {
+			$normeren += $basis['gewicht'];
+		}
+		$som = 0.0;
+		foreach ( $this->basis as $basis ) {
+			$som += round( $basis['gewicht'] * 100 / $normeren, 2 );
+		}
+		$restant = 100.0 - $som;
+		foreach ( $this->basis as $index => $basis ) {
+			$this->data['basis'][ $index ]['norm_gewicht'] = round( $basis['gewicht'] * 100 / $normeren, 2 ) + $restant;
+			$restant                                       = 0;
+		}
+		$normeren = $normeren ?: 1.0; // Stel dat er alleen toevoegingen zijn opgevoerd, dan is normen nul.
+		foreach ( $this->toevoeging as $index => $toevoeging ) {
+			$this->data['toevoeging'][ $index ]['norm_gewicht'] = round( $toevoeging['gewicht'] * 100 / $normeren, 2 );
+		}
+	}
+
+	/**
 	 * Bepaal het term id.
 	 *
 	 * @param string $selector De eigenschap.
@@ -295,7 +297,7 @@ class Recept {
 	private function eigenschap_id( string $selector ) {
 		$recepttermen = new ReceptTermen();
 		foreach ( get_the_terms( $this->id, self::CATEGORY ) ?: [] as $term ) {
-			if ( intval( $recepttermen->lijst()[ $selector ]->term_id ) === $term->parent ) {
+			if ( $recepttermen->lijst()[ $selector ]->term_id === $term->parent ) {
 				return $term->term_id;
 			}
 		}

@@ -36,13 +36,6 @@ class Recepten implements Countable, Iterator {
 	private int $current_index = 0;
 
 	/**
-	 * De recept termen
-	 *
-	 * @var ReceptTermen $recepttermen De termen.
-	 */
-	private ReceptTermen $recepttermen;
-
-	/**
 	 * De constructor
 	 *
 	 * @param array $query Eventueel aanvullende query parameters.
@@ -66,7 +59,6 @@ class Recepten implements Countable, Iterator {
 		foreach ( $posts as $post ) {
 			$this->recepten[] = new Recept( $post->ID, $post );
 		}
-		$this->recepttermen = new ReceptTermen();
 	}
 
 	/**
@@ -132,7 +124,7 @@ class Recepten implements Countable, Iterator {
 		$result = [];
 		foreach ( array_unique( $auteur_ids ) as $auteur_id ) {
 			$result[ $auteur_id ] = get_user_by( 'ID', $auteur_id )->display_name;
-		};
+		}
 		return $result;
 	}
 
@@ -142,14 +134,15 @@ class Recepten implements Countable, Iterator {
 	 * @return array
 	 */
 	public function get_glazuren(): array {
-		$result = [];
+		$result       = [];
+		$recepttermen = new ReceptTermen();
 		foreach ( get_terms(
 			[
 				'taxonomy'   => Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $this->get_recept_ids(),
-				'parent'     => $this->recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id,
+				'parent'     => $recepttermen->lijst()[ ReceptTermen::GLAZUUR ]->term_id,
 			]
 		) as $term ) {
 			$result[ $term->term_id ] = $term->name;
@@ -163,14 +156,15 @@ class Recepten implements Countable, Iterator {
 	 * @return array
 	 */
 	public function get_kleuren(): array {
-		$result = [];
+		$result       = [];
+		$recepttermen = new ReceptTermen();
 		foreach ( get_terms(
 			[
 				'taxonomy'   => Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $this->get_recept_ids(),
-				'parent'     => $this->recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id,
+				'parent'     => $recepttermen->lijst()[ ReceptTermen::KLEUR ]->term_id,
 			]
 		) as $term ) {
 			$result[ $term->term_id ] = $term->name;
@@ -184,14 +178,15 @@ class Recepten implements Countable, Iterator {
 	 * @return array
 	 */
 	public function get_uiterlijkheden(): array {
-		$result = [];
+		$result       = [];
+		$recepttermen = new ReceptTermen();
 		foreach ( get_terms(
 			[
 				'taxonomy'   => Recept::CATEGORY,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 				'object_ids' => $this->get_recept_ids(),
-				'parent'     => $this->recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id,
+				'parent'     => $recepttermen->lijst()[ ReceptTermen::UITERLIJK ]->term_id,
 			]
 		) as $term ) {
 			$result[ $term->term_id ] = $term->name;

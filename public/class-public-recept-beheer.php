@@ -70,6 +70,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				'glazuur'   => FILTER_SANITIZE_NUMBER_INT,
 				'kleur'     => FILTER_SANITIZE_NUMBER_INT,
 				'uiterlijk' => FILTER_SANITIZE_NUMBER_INT,
+				'foto_url'  => FILTER_SANITIZE_URL,
 			]
 		);
 		$this->data['recept']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
@@ -77,10 +78,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$this->data['recept']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
 		$this->data['recept']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
 		$this->data['recept']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
-		$this->data['recept']['foto']        = filter_input( INPUT_POST, 'foto_url', FILTER_SANITIZE_URL );
 
+		$files = new Files();
 		if ( 'bewaren' === $this->form_actie ) {
-			if ( UPLOAD_ERR_INI_SIZE === $this->files()['foto']['error'] ) {
+			if ( UPLOAD_ERR_INI_SIZE === $files->data['foto']['error'] ) {
 				return $this->melding( new WP_Error( 'foto', 'De foto is te groot qua omvang !' ) );
 			}
 		}
@@ -138,9 +139,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function bewaren(): array {
-		if ( ! empty( $this->files()['foto']['name'] ) ) {
+		$files = new Files();
+		if ( ! empty( $files->data['foto']['name'] ) ) {
 			$file = wp_handle_upload(
-				$this->files()['foto'],
+				$files->data['foto'],
 				[ 'test_form' => false ]
 			);
 			if ( is_array( $file ) && ! isset( $file['error'] ) ) {
@@ -163,9 +165,10 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		$recept->basis       = $this->data['recept']['basis'];
 		$recept->stookschema = $this->data['recept']['stookschema'];
 		$recept->herkomst    = $this->data['recept']['herkomst'];
-		$recept->glazuur     = $this->data['recept']['glazuur'];
-		$recept->uiterlijk   = $this->data['recept']['uiterlijk'];
-		$recept->kleur       = $this->data['recept']['kleur'];
+		$recept->glazuur     = (int) $this->data['recept']['glazuur'];
+		$recept->uiterlijk   = (int) $this->data['recept']['uiterlijk'];
+		$recept->kleur       = (int) $this->data['recept']['kleur'];
+		$recept->foto        = $this->data['recept']['foto'];
 		$recept->save();
 		return [
 			'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
@@ -229,7 +232,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				6 => -90,
 				8 => 90,
 			];
-			$image  = imagerotate( $image, $rotate[ $exif['Orientation'] ], 0 );
+			$image  = imagerotate( $image, $rotate[ $exif['Orientation'] ] ?? 0, 0 );
 			if ( ! is_object( $image ) ) {
 				return new WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
 			}
@@ -240,12 +243,26 @@ class Public_Recept_Beheer extends ShortcodeForm {
 		return true;
 	}
 
+}
+
+/**
+ * Encapsulate de Files variabele
+ * phpcs:disable
+ */
+final class Files {
+
 	/**
-	 * Geef de global $_FILES variabele.
+	 * Inhoud van de global var.
 	 *
-	 * @return array
+	 * @var array $data De files data
 	 */
-	private function files() : array {
-		return ( $_FILES );
+	public array $data;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->data = $_FILES;
 	}
+
 }
