@@ -105,12 +105,12 @@ class Public_Docent extends ShortcodeForm {
 	 *
 	 * @return array Het overzicht.
 	 */
-	private static function docent_beschikbaarheid( int $maandag, Docent $docent, Cursussen $cursussen, Workshops $workshops ) : array {
-		$reserveringen = self::docent_op_cursussen( $maandag, $docent, $cursussen ) + self::docent_op_workshops( $maandag, $docent, $workshops );
+	private static function get_docent_beschikbaarheid( int $maandag, Docent $docent, Cursussen $cursussen, Workshops $workshops ) : array {
+		$reserveringen = self::get_docent_op_cursussen( $maandag, $docent, $cursussen ) + self::get_docent_op_workshops( $maandag, $docent, $workshops );
 		foreach ( Docent::DOCENT_DAGDEEL as $dagdeel ) {
 			for ( $datum = $maandag;  $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
 				if ( ! isset( $reserveringen[ $datum ][ $dagdeel ] ) ) {
-					$reserveringen[ $datum ][ $dagdeel ] = $docent->beschikbaarheid( $datum, $dagdeel );
+					$reserveringen[ $datum ][ $dagdeel ] = $docent->get_beschikbaarheid( $datum, $dagdeel );
 				}
 			}
 		}
@@ -126,7 +126,7 @@ class Public_Docent extends ShortcodeForm {
 	 *
 	 * @return array De reserveringen
 	 */
-	private static function docent_op_cursussen( int $maandag, Docent $docent, Cursussen $cursussen ) : array {
+	private static function get_docent_op_cursussen( int $maandag, Docent $docent, Cursussen $cursussen ) : array {
 		$reserveringen = [];
 		foreach ( $cursussen as $cursus ) {
 			if ( intval( $cursus->docent ) !== $docent->ID || $cursus->vervallen ) {
@@ -152,7 +152,7 @@ class Public_Docent extends ShortcodeForm {
 	 *
 	 * @return array De reserveringen
 	 */
-	private static function docent_op_workshops( int $maandag, Docent $docent, Workshops $workshops ) : array {
+	private static function get_docent_op_workshops( int $maandag, Docent $docent, Workshops $workshops ) : array {
 		$reserveringen = [];
 		foreach ( $workshops as $workshop ) {
 			$docent_ids = array_map( 'intval', explode( ';', $workshop->docent ) );
@@ -203,8 +203,8 @@ EOT;
 		<td class="kleistad-cell_center">
 EOT;
 				$html .= match ( $functie ) {
-					'overzicht' => self::show_overzicht_cell( $datum, $dagdeel, $args ),
-					'planning'  => self::show_planning_cell( $datum, $dagdeel, $args ),
+					'overzicht' => self::get_overzicht_cell( $datum, $dagdeel, $args ),
+					'planning'  => self::get_planning_cell( $datum, $dagdeel, $args ),
 				};
 				$html .= <<<EOT
 		</td>
@@ -234,7 +234,7 @@ EOT;
 			$maandag,
 			'planning',
 			[
-				'reserveringen' => self::docent_beschikbaarheid( $maandag, new Docent( $docent_id ), new Cursussen( $vandaag ), new Workshops( $vandaag ) ),
+				'reserveringen' => self::get_docent_beschikbaarheid( $maandag, new Docent( $docent_id ), new Cursussen( $vandaag ), new Workshops( $vandaag ) ),
 			]
 		);
 	}
@@ -248,7 +248,7 @@ EOT;
 	 *
 	 * @return string
 	 */
-	private static function show_planning_cell( int $datum, string $dagdeel, array $args ) : string {
+	private static function get_planning_cell( int $datum, string $dagdeel, array $args ) : string {
 		$reservering = $args['reserveringen'][ $datum ][ $dagdeel ] ?? Docent::NIET_BESCHIKBAAR;
 		$formats     = [
 			Docent::NIET_BESCHIKBAAR => '<input type="checkbox" name="planning" class="kleistad-checkbox" data-datum="%s" data-dagdeel="%s" >',
@@ -274,7 +274,7 @@ EOT;
 		$workshops     = new Workshops( $vandaag );
 		$docenten      = new Docenten();
 		foreach ( $docenten as $docent ) {
-			$reserveringen[ $docent->ID ] = self::docent_beschikbaarheid( $maandag, $docent, $cursussen, $workshops );
+			$reserveringen[ $docent->ID ] = self::get_docent_beschikbaarheid( $maandag, $docent, $cursussen, $workshops );
 		}
 		return self::tabel(
 			$maandag,
@@ -295,7 +295,7 @@ EOT;
 	 *
 	 * @return string
 	 */
-	private static function show_overzicht_cell( int $datum, string $dagdeel, array $args ) : string {
+	private static function get_overzicht_cell( int $datum, string $dagdeel, array $args ) : string {
 		$html    = '';
 		$formats = [
 			Docent::NIET_BESCHIKBAAR => '',
@@ -316,9 +316,9 @@ EOT;
 	 *
 	 * @param array $planning De planning.
 	 */
-	private static function wijzig( array $planning ) {
+	private static function set_beschikbaar( array $planning ) {
 		$docent = new Docent( get_current_user_id() );
-		$docent->beschikbaarlijst( $planning );
+		$docent->set_beschikbaarlijst( $planning );
 	}
 
 	/**
@@ -326,12 +326,12 @@ EOT;
 	 *
 	 * @param array $planning De planning.
 	 */
-	private static function default( array $planning ) {
+	private static function set_default( array $planning ) {
 		$docent = new Docent( get_current_user_id() );
 		foreach ( $planning as $key => $item ) {
 			$planning[ $key ]['datum'] = intval( date( 'N', $item['datum'] ) ) - 1;
 		}
-		$docent->beschikbaarlijst( $planning );
+		$docent->set_beschikbaarlijst( $planning );
 	}
 
 	/**
@@ -373,10 +373,10 @@ EOT;
 			$maandag = strtotime( 'Monday this week', strtotime( $datum_str ) );
 			$method  = $request->get_method();
 			if ( 'POST' === $method ) {
-				self::default( $planning );
+				self::set_default( $planning );
 			}
 			if ( 'PUT' === $method ) {
-				self::wijzig( $planning );
+				self::set_beschikbaar( $planning );
 			}
 			return new WP_REST_Response(
 				[

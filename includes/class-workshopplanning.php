@@ -102,7 +102,7 @@ class Workshopplanning {
 		for ( $datum = $start; $datum <= $eind; $datum = $datum + DAY_IN_SECONDS ) {
 			foreach ( self::WORKSHOP_DAGDEEL as $dagdeel ) {
 				foreach ( $docenten as $docent ) {
-					$status = $docent->beschikbaarheid( $datum, $dagdeel );
+					$status = $docent->get_beschikbaarheid( $datum, $dagdeel );
 					if ( Docent::BESCHIKBAAR === $status || Docent::STANDAARD === $status ) {
 						$this->beschikbaarheid[ $this->index( $datum, $dagdeel ) ]['docent'] = true;
 						break;

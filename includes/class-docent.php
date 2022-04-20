@@ -60,7 +60,7 @@ class Docent extends Gebruiker {
 	 *
 	 * @return int
 	 */
-	public function beschikbaarheid( int $datum, string $dagdeel ) : int {
+	public function get_beschikbaarheid( int $datum, string $dagdeel ) : int {
 		return $this->beschikbaardata[ $datum ][ $dagdeel ] ?? ( $this->beschikbaardata[ intval( date( 'N', $datum ) ) - 1 ][ $dagdeel ] ?? self::NIET_BESCHIKBAAR );
 	}
 
@@ -69,7 +69,7 @@ class Docent extends Gebruiker {
 	 *
 	 * @param array $lijst De lijst van dagen.
 	 */
-	public function beschikbaarlijst( array $lijst ) {
+	public function set_beschikbaarlijst( array $lijst ) {
 		foreach ( $lijst as $item ) {
 			$datum = intval( $item['datum'] );
 			$this->beschikbaardata[ $datum ][ $item['dagdeel'] ] = $item['status'] ?

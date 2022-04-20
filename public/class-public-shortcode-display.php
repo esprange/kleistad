@@ -15,6 +15,8 @@ use Mollie\Api\Exceptions\ApiException;
 
 /**
  * De abstract class voor shortcodes
+ *
+ * @suppressWarnings(PHPMD.TooManyPublicMethods)
  */
 abstract class Public_Shortcode_Display {
 

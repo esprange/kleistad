@@ -34,7 +34,7 @@ class Test_Docent extends Kleistad_UnitTestCase {
 		/**
 		 * Als er nog geen beschikbaarheid aangegeven is moet dit false zijn
 		 */
-		$this->assertEquals( Docent::NIET_BESCHIKBAAR, $docent->beschikbaarheid( strtotime( 'today' ), OCHTEND ), 'initiële beschikbaarheid fout' );
+		$this->assertEquals( Docent::NIET_BESCHIKBAAR, $docent->get_beschikbaarheid( strtotime( 'today' ), OCHTEND ), 'initiële beschikbaarheid fout' );
 
 		$lijst = [
 			[
@@ -48,17 +48,17 @@ class Test_Docent extends Kleistad_UnitTestCase {
 				'status'  => Docent::STANDAARD,
 			],
 		];
-		$docent->beschikbaarlijst( $lijst );
+		$docent->set_beschikbaarlijst( $lijst );
 
 		/**
 		 * Nu is er een beschikbaarheid dus true.
 		 */
-		$this->assertEquals( Docent::BESCHIKBAAR, $docent->beschikbaarheid( strtotime( 'today' ), OCHTEND ), 'beschikbaarheid vandaag fout' );
+		$this->assertEquals( Docent::BESCHIKBAAR, $docent->get_beschikbaarheid( strtotime( 'today' ), OCHTEND ), 'beschikbaarheid vandaag fout' );
 
 		/**
 		 * Nu is er een beschikbaarheid dus true.
 		 */
-		$this->assertEquals( Docent::STANDAARD, $docent->beschikbaarheid( strtotime( 'tomorrow' ), MIDDAG ), 'beschikbaarheid morgen fout' );
+		$this->assertEquals( Docent::STANDAARD, $docent->get_beschikbaarheid( strtotime( 'tomorrow' ), MIDDAG ), 'beschikbaarheid morgen fout' );
 	}
 
 }
