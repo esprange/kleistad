@@ -248,6 +248,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 /**
  * Encapsulate de Files variabele
  * phpcs:disable
+ * @suppressWarnings(PHPMD.Superglobals)
  */
 final class Files {
 
