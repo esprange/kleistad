@@ -144,24 +144,16 @@ class Order {
 	 * @param mixed  $waarde    Attribuut waarde.
 	 */
 	public function __set( string $attribuut, mixed $waarde ) : void {
-		switch ( $attribuut ) {
-			case 'klant':
-				$this->data[ $attribuut ] = wp_json_encode( $waarde );
-				break;
-			case 'historie':
-				break;
-			case 'datum':
-			case 'mutatie_datum':
-			case 'verval_datum':
-				$this->data[ $attribuut ] = date( 'Y-m-d H:i:s', $waarde );
-				break;
-			case 'gesloten':
-			case 'credit':
-				$this->data[ $attribuut ] = (int) $waarde;
-				break;
-			default:
-				$this->data[ $attribuut ] = $waarde;
-		}
+		$this->data[ $attribuut ] = match ( $attribuut ) {
+			'historie',
+			'klant'        => wp_json_encode( $waarde ),
+			'datum',
+			'mutatie_datum',
+			'verval_datum' => date( 'Y-m-d H:i:s', $waarde ),
+			'gesloten',
+			'credit'       => (int) $waarde,
+			default        => $waarde,
+		};
 	}
 
 	/**
@@ -234,9 +226,9 @@ class Order {
 	public function save( string $reden = '' ) : int {
 		global $wpdb;
 		if ( ! empty( $reden ) ) {
-			$historie               = $this->historie;
-			$historie[]             = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
-			$this->data['historie'] = wp_json_encode( $historie );
+			$historie       = $this->historie;
+			$historie[]     = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
+			$this->historie = $historie;
 		}
 		$this->gesloten = $this->credit_id || ( 0.01 >= abs( $this->get_te_betalen() ) );
 		$this->regels   = $this->orderregels->get_json_export();

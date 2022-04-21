@@ -175,27 +175,16 @@ class Workshop extends Artikel {
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
 	public function __set( string $attribuut, mixed $waarde ) {
-		switch ( $attribuut ) {
-			case 'technieken':
-				$this->data[ $attribuut ] = wp_json_encode( $waarde );
-				break;
-			case 'datum':
-			case 'datum_betalen':
-				$this->data[ $attribuut ] = date( 'Y-m-d', $waarde );
-				break;
-			case 'start_tijd':
-			case 'eind_tijd':
-				$this->data[ $attribuut ] = date( 'H:i', $waarde );
-				break;
-			case 'telnr':
-				$this->data['telefoon'] = $waarde;
-				break;
-			case 'communicatie':
-				$this->data['communicatie'] = maybe_serialize( $waarde );
-				break;
-			default:
-				$this->data[ $attribuut ] = is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde );
-		}
+		$this->data[ $attribuut ] = match ( $attribuut ) {
+			'technieken'    => wp_json_encode( $waarde ),
+			'datum',
+			'datum_betalen' => date( 'Y-m-d', $waarde ),
+			'start_tijd',
+			'eind_tijd'     => date( 'H:i', $waarde ),
+			'telnr'         => $waarde,
+			'communicatie'  => maybe_serialize( $waarde ),
+			default         => is_string( $waarde ) ? trim( $waarde ) : ( is_bool( $waarde ) ? (int) $waarde : $waarde ),
+		};
 	}
 
 	/**
