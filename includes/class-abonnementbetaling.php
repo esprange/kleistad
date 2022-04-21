@@ -54,39 +54,48 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 * @return bool|string De redirect url ingeval van een ideal betaling of leeg als het niet lukt.
 	 */
 	public function doe_ideal( string $bericht, float $bedrag, string $referentie ): bool|string {
-		$artikel_type = explode( '-', $referentie )[1];
-		$vermelding   = '';
-		$mandaat      = false;
-		switch ( $artikel_type ) {
-			case 'start':
-				$vermelding = sprintf(
+		$parameters = match ( explode( '-', $referentie )[1] ) {
+			'start'        => [
+				'vermelding' => sprintf(
 					' vanaf %s tot %s',
 					strftime( '%d-%m-%Y', $this->abonnement->start_datum ),
 					strftime( '%d-%m-%Y', $this->abonnement->start_eind_datum )
-				);
-				break;
-			case 'overbrugging':
-				$vermelding = sprintf(
+				),
+				'mandaat'    => false,
+			],
+			'overbrugging' => [
+				'vermelding' => sprintf(
 					' vanaf %s tot %s',
 					strftime( '%d-%m-%Y', $this->abonnement->start_eind_datum + DAY_IN_SECONDS ),
 					strftime( '%d-%m-%Y', $this->abonnement->reguliere_datum - DAY_IN_SECONDS )
-				);
-				$mandaat    = true;
-				break;
-			case 'mandaat':
-				$vermelding = ' machtiging tot sepa-incasso';
-				$mandaat    = true;
-				break;
-			case 'regulier':
-			case 'pauze':
-		}
+				),
+				'mandaat'    => true,
+			],
+			'mandaat'     => [
+				'vermelding' => ' machtiging tot sepa-incasso',
+				'mandaat'    => true,
+			],
+			'pauze'       => [
+				'vermelding' => sprintf(
+					' %s, pauze van %s tot %s',
+					explode( '-', $referentie )[2],
+					strftime( '%d-%m-%Y', $this->abonnement->pauze_datum ),
+					strftime( '%d-%m-%Y', $this->abonnement->herstart_datum )
+				),
+				'mandaat'    => false,
+			],
+			'regulier'    => [
+				'vermelding' => sprintf( ' %s', explode( '-', $referentie )[2] ),
+				'mandaat'    => false,
+			],
+		};
 		return $this->betalen->order(
 			$this->abonnement->klant_id,
 			$referentie,
 			$bedrag,
-			"Kleistad abonnement {$this->abonnement->code}$vermelding",
+			"Kleistad abonnement {$this->abonnement->code}{$parameters['vermelding']}",
 			$bericht,
-			$mandaat
+			$parameters['mandaat']
 		);
 	}
 
