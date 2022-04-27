@@ -118,7 +118,7 @@ class Workshop extends Artikel {
 			'organisatie_email' => '',
 			'contact'           => '',
 			'email'             => '',
-			'telefoon'          => '',
+			'telnr'             => '',
 			'programma'         => '',
 			'vervallen'         => 0,
 			'kosten'            => opties()['workshopprijs'],
@@ -160,7 +160,6 @@ class Workshop extends Artikel {
 			'aanvraagdatum' => strtotime( $this->data['aanvraagdatum'] ),
 			'technieken'    => json_decode( $this->data['technieken'], true ),
 			'code'          => "W{$this->data['id']}",
-			'telnr'         => $this->data['telefoon'],
 			'communicatie'  => maybe_unserialize( $this->data['communicatie'] ) ?: [],
 			default         => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
 		};

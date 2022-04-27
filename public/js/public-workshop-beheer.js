@@ -11,7 +11,7 @@
 ( function( $ ) {
 	'use strict';
 
-	let verberg_vervallen;
+	let verberg_vervallen = true;
 
 	/**
 	 * Vouw alle communicatie samen en verwijder de buttons als de tekst volledig in het venster past.
@@ -19,8 +19,8 @@
 	function fold_all() {
 		$( 'div[id^=kleistad_communicatie_]' ).each(
 			function() {
-				let $comm_veld = $( this ).find( 'div.kleistad-workshop-communicatie' ),
-					overflow   = $comm_veld.prop( 'scrollHeight' ) > $comm_veld.prop( 'clientHeight' );
+				const $comm_veld = $( this ).find( 'div.kleistad-workshop-communicatie' );
+				let	overflow     = $comm_veld.prop( 'scrollHeight' ) > $comm_veld.prop( 'clientHeight' );
 				$( this ).find( 'button.kleistad-workshop-unfold' ).toggle( overflow ).html( 'Meer...' );
 				$comm_veld.toggleClass( 'kleistad-workshop-communicatie-folded', overflow );
 			}
@@ -29,29 +29,26 @@
 
 	/**
 	 * Toon of verberg de vervallen workshops.
-	 *
-	 * @param initieel Initieel moeten de workshops verborgen zijn.
 	 */
-	function toon_vervallen( initieel = false ) {
-		if ( initieel ) {
-			verberg_vervallen = false;
-		}
-		$( '#kleistad_workshops' ).DataTable().column( ':contains(Status)' ).search( verberg_vervallen ? '' : '^((?!vervallen).)*$', true ).draw();
-		verberg_vervallen = ! verberg_vervallen;
+	function toon_vervallen() {
+		verberg_vervallen = 'hide' === window.sessionStorage.getItem( 'workshop_filter' );
+		$( '#kleistad_workshops' ).DataTable().column( ':contains(Status)' ).search( verberg_vervallen ? '^((?!vervallen).)*$' : '', true ).draw();
 	}
 
 	/**
 	 * Initialisatie
 	 */
 	function onLoad() {
+		if ( ! window.sessionStorage.getItem( 'workshop_filter' ) ) {
+			window.sessionStorage.setItem( 'workshop_filter', 'hide' );
+		}
 		$( '#kleistad_workshops' ).DataTable().on(
 			'draw',
 			function() {
-				let $filter = $( '#kleistad_workshops_filter' ),
-					current = $filter.html();
+				const $filter = $( '#kleistad_workshops_filter' );
+				let	current   = $filter.html();
 				if ( ! $( '#kleistad_toon_vervallen' ).length ) {
 					$filter.html( current + '<div><label for="kleistad_toon_vervallen"> toon vervallen <input type="checkbox" id="kleistad_toon_vervallen"></label></div>' );
-					toon_vervallen( true );
 				}
 			}
 		)
@@ -62,6 +59,8 @@
 				}
 			}
 		);
+		$( '#kleistad_toon_vervallen' ).prop( 'checked', 'show' === window.sessionStorage.getItem( 'workshop_filter' ) );
+		toon_vervallen();
 	}
 
 	/**
@@ -89,6 +88,7 @@
 				'change',
 				'#kleistad_toon_vervallen',
 				function () {
+					window.sessionStorage.setItem( 'workshop_filter', this.checked ? 'show' : 'hide' );
 					toon_vervallen();
 				}
 			)
@@ -109,9 +109,9 @@
 				'change',
 				'#kleistad_start_tijd',
 				function() {
-					let $eind_tijd = $( '#kleistad_eind_tijd' ),
-						startTijd  = strtotime( $( this ).val() ),
-						eindTijd   = strtotime( $eind_tijd.val() );
+					const $eind_tijd = $( '#kleistad_eind_tijd' );
+					let	startTijd    = strtotime( $( this ).val() ),
+						eindTijd     = strtotime( $eind_tijd.val() );
 					if ( startTijd + 60 > eindTijd ) {
 						$eind_tijd.val( timetostr( Math.min( startTijd + 60, 24 * 60 ) ) );
 					}
@@ -124,9 +124,9 @@
 				'change',
 				'#kleistad_eind_tijd',
 				function() {
-					let $start_tijd = $( '#kleistad_start_tijd' ),
-						startTijd   = strtotime( $start_tijd.val() ),
-						eindTijd    = strtotime( $( this ).val() );
+					const $start_tijd = $( '#kleistad_start_tijd' );
+					let	startTijd     = strtotime( $start_tijd.val() ),
+						eindTijd      = strtotime( $( this ).val() );
 					if ( startTijd > eindTijd - 60 ) {
 						$start_tijd.val( timetostr( Math.max( eindTijd - 60, 0 ) ) );
 					}
@@ -165,9 +165,9 @@
 				'click',
 				'.kleistad-workshop-unfold',
 				function() {
-					let $communicatie = $( this ).parents( 'div[id^=kleistad_communicatie_]' ),
-						$comm_veld    = $communicatie.find( '.kleistad-workshop-communicatie' ),
-						folded        = $comm_veld.hasClass( 'kleistad-workshop-communicatie-folded' );
+					const $communicatie = $( this ).parents( 'div[id^=kleistad_communicatie_]' ),
+						$comm_veld      = $communicatie.find( '.kleistad-workshop-communicatie' );
+					let	folded          = $comm_veld.hasClass( 'kleistad-workshop-communicatie-folded' );
 					$comm_veld.toggleClass( 'kleistad-workshop-communicatie-folded', ! folded );
 					$( this ).html( folded ? 'Minder...' : 'Meer...' );
 					return false;

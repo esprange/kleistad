@@ -12,9 +12,9 @@
 	'use strict';
 
 	// noinspection JSJQueryEfficiency .
-	let $reserveringen = $( '#kleistad_reserveringen' ),
-		$formulier     = $( '#kleistad_reservering' ),
-		$soortstook    = $( '#kleistad_soortstook' );
+	const $reserveringen = $( '#kleistad_reserveringen' ),
+		$formulier       = $( '#kleistad_reservering' ),
+		$soortstook      = $( '#kleistad_soortstook' );
 
 	/**
 	 * Vind de stoker's naam op basis van het wordpress id in de lijst van stokers.

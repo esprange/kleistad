@@ -11,12 +11,12 @@
 ( function( $ ) {
 	'use strict';
 
-	let $werkplek         = $( '#kleistad_werkplek' ),
+	const $werkplek       = $( '#kleistad_werkplek' ),
 		$wachten          = $( '#kleistad_wachten' ),
 		$meester_selectie = $( '#kleistad_meester_selectie' ),
 		$meester          = $( '#kleistad_meester' ),
-		$datum            = $( '#kleistad_datum' ),
-		datums            = $werkplek.data( 'datums' ),
+		$datum            = $( '#kleistad_datum' );
+	let	datums            = $werkplek.data( 'datums' ),
 		gebruiker_id      = $werkplek.data( 'id' ),
 		datumIndex        = 0;
 
@@ -201,8 +201,8 @@
 					{
 						text: 'OK',
 						click: function() {
-							let datum   = $.datepicker.formatDate( 'dd-mm-yy', $datum.datepicker( 'getDate' ) ),
-								id      = $meester_selectie.val(),
+							const datum = $.datepicker.formatDate( 'dd-mm-yy', $datum.datepicker( 'getDate' ) );
+							let	id      = $meester_selectie.val(),
 								dagdeel = $meester_selectie.data( 'dagdeel' );
 							muteerMeester( datum, id, dagdeel );
 							$( this ).dialog( 'close' );
@@ -225,8 +225,8 @@
 					{
 						text: 'OK',
 						click: function () {
-							let datum        = $.datepicker.formatDate( 'dd-mm-yy',  $datum.datepicker( 'getDate' ) ),
-								gebruiker_id = $( '#kleistad_gebruiker_selectie' ).val();
+							const datum      = $.datepicker.formatDate( 'dd-mm-yy',  $datum.datepicker( 'getDate' ) );
+							let	gebruiker_id = $( '#kleistad_gebruiker_selectie' ).val();
 							$( '#kleistad_wijzig_gebruiker' ).text( $( '#kleistad_gebruiker_selectie option:selected' ).text() );
 							toonWerkplek( datum, gebruiker_id );
 							$( this ).dialog( 'close' );

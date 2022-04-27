@@ -11,9 +11,9 @@
 ( function( $ ) {
 	'use strict';
 
-	let $planning  = $( '#kleistad_planning' ),
-		$overzicht = $( '#kleistad_overzicht' ),
-		$wachten   = $( '#kleistad_wachten' );
+	const $planning = $( '#kleistad_planning' ),
+		$overzicht  = $( '#kleistad_overzicht' ),
+		$wachten    = $( '#kleistad_wachten' );
 
 	/**
 	 * Haal de inhoud van de tabel met reserveringen bij de server op.
@@ -65,7 +65,7 @@
 	 * @returns {undefined}
 	 */
 	function muteerPlanning( datum, defaultOpslaan ) {
-		let planning = [];
+		const planning = [];
 		$( 'input[name=planning]:checkbox:checked' ).each(
 			function() {
 				planning.push(
@@ -123,7 +123,7 @@
 	 */
 	$(
 		function() {
-			let $datum = $( '#kleistad_plandatum' );
+			const $datum = $( '#kleistad_plandatum' );
 
 			if ( window.navigator.userAgent === 'msie' ) {
 				$planning.hide();
@@ -159,7 +159,7 @@
 				'click',
 				'#kleistad_eerder',
 				function() {
-					let datum = $datum.datepicker( 'getDate' );
+					const datum = $datum.datepicker( 'getDate' );
 					$datum.datepicker( 'setDate', new Date( datum.getFullYear(), datum.getMonth(), datum.getDate() - 7 ) );
 					toonTabel( $datum.val() );
 				}
@@ -168,7 +168,7 @@
 				'click',
 				'#kleistad_later',
 				function() {
-					let datum = $datum.datepicker( 'getDate' );
+					const datum = $datum.datepicker( 'getDate' );
 					$datum.datepicker( 'setDate', new Date( datum.getFullYear(), datum.getMonth(), datum.getDate() + 7 ) );
 					toonTabel( $datum.val() );
 				}

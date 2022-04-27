@@ -15,6 +15,7 @@ use DateTime;
 use DateTimeZone;
 use DateTimeInterface;
 use Google;
+use Google\Service\Calendar;
 use Google\Service\Calendar\Event;
 use Google\Service\Calendar\EventDateTime;
 use Google\Service\Calendar\EventOrganizer;
@@ -51,18 +52,18 @@ class Afspraak {
 	protected array $properties = [];
 
 	/**
-	 * De connect naar Google
+	 * De kalender
 	 *
-	 * @var Googleconnect $googleconnect Het google connectie object.
+	 * @var Calendar De google kalendar object.
 	 */
-	protected Googleconnect $googleconnect;
+	protected Calendar $calendar;
 
 	/**
-	 * Het Google kalender id.
+	 * Het Google calendar id.
 	 *
-	 * @var string $kalender_id De google kalender id.
+	 * @var string $calendar_id De google kalender id.
 	 */
-	protected string $kalender_id = '';
+	protected string $calendar_id = '';
 
 	/**
 	 * De deelnemers aan de afspraak
@@ -74,7 +75,8 @@ class Afspraak {
 	/**
 	 * Constructor
 	 *
-	 * @param string $afspraak_id afspraak id welke geladen moet worden.
+	 * @param string     $afspraak_id Afspraak id welke geladen moet worden.
+	 * @param Event|null $event       Google event (optioneel).
 	 *
 	 * @throws Kleistad_Exception Op hoger nivo af te handelen.
 	 * @since 5.0.0
@@ -82,7 +84,11 @@ class Afspraak {
 	 * Het onderstaande omdat PHPStorm hier in de fout gaat
 	 * @noinspection PhpRedundantCatchClauseInspection
 	 */
-	public function __construct( string $afspraak_id ) {
+	public function __construct( string $afspraak_id, ?Event $event = null ) {
+		if ( ! is_null( $event ) ) {
+			$this->event = $event;
+			return;
+		}
 		$organizer = new EventOrganizer();
 		$organizer->setDisplayName( wp_get_current_user()->display_name );
 		$organizer->setEmail( wp_get_current_user()->user_email );
@@ -95,10 +101,10 @@ class Afspraak {
 			]
 		);
 		if ( ! defined( 'KLEISTAD_TEST' ) ) {
-			$this->googleconnect = new Googleconnect();
-			$this->kalender_id   = setup()['google_kalender_id'];
+			$this->calendar_id = setup()['google_kalender_id'];
+			$this->calendar    = ( new Googleconnect() )->calendar_service();
 			try {
-				$bestaand_event = $this->googleconnect->calendar_service()->events->get( $this->kalender_id, $afspraak_id );
+				$bestaand_event = $this->calendar->events->get( $this->calendar_id, $afspraak_id );
 				$this->event    = $bestaand_event;
 			} catch ( Google\Service\Exception ) { // phpcs:ignore
 				/**
@@ -191,7 +197,6 @@ class Afspraak {
 	/**
 	 * Bewaar de afspraak in de kalender.
 	 *
-	 * @throws Kleistad_Exception Op hoger nivo af te handelen.
 	 * @since 5.0.0
 	 */
 	public function save() : void {
@@ -202,21 +207,19 @@ class Afspraak {
 				$opt_params = [ 'sendNotifications' => true ];
 			}
 			if ( is_null( $this->event->getCreated() ) ) {
-				$this->event = $this->googleconnect->calendar_service()->events->insert( $this->kalender_id, $this->event, $opt_params );
+				$this->event = $this->calendar->events->insert( $this->calendar_id, $this->event, $opt_params );
 				return;
 			}
-			$this->event = $this->googleconnect->calendar_service()->events->update( $this->kalender_id, $this->event->getId(), $this->event, $opt_params );
+			$this->event = $this->calendar->events->update( $this->calendar_id, $this->event->getId(), $this->event, $opt_params );
 		}
 	}
 
 	/**
 	 * Delete de afspraak.
-	 *
-	 * @throws Kleistad_Exception Op hoger nivo af te handelen.
 	 */
 	public function delete() : void {
 		if ( ! defined( 'KLEISTAD_TEST' ) ) {
-			$this->googleconnect->calendar_service()->events->delete( $this->kalender_id, $this->event->getId() );
+			$this->calendar->events->delete( $this->calendar_id, $this->event->getId() );
 		}
 	}
 

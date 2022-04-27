@@ -50,16 +50,6 @@ class Workshops implements Countable, Iterator {
 	}
 
 	/**
-	 * Voeg een workshop toe.
-	 *
-	 * @param Workshop $workshoptoetevoegen Toe te voegen workshop.
-	 */
-	public function toevoegen( Workshop $workshoptoetevoegen ) {
-		$workshoptoetevoegen->save();
-		$this->workshops[] = $workshoptoetevoegen;
-	}
-
-	/**
 	 * Geef het aantal workshops terug.
 	 *
 	 * @return int Het aantal.
@@ -132,7 +122,7 @@ class Workshops implements Countable, Iterator {
 	 * @return void
 	 */
 	private static function doe_concept_vervallen( Workshop $workshop ) {
-		if ( $workshop->definitief ) {
+		if ( $workshop->definitief || $workshop->vervallen ) {
 			return;
 		}
 		$workshop->vervallen = $workshop->aanvraagdatum + opties()['verloopaanvraag'] * WEEK_IN_SECONDS < strtotime( 'today' );

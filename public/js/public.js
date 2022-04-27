@@ -70,7 +70,7 @@ function strtodate( value ) {
 	 * Definieer de tabellen.
 	 */
 	function defineDatatables() {
-		let $datatable = $( '.kleistad-datatable' );
+		const $datatable = $( '.kleistad-datatable' );
 		if ( ! $datatable[0] ) {
 			return;
 		}
@@ -97,7 +97,7 @@ function strtodate( value ) {
 	 * Definieer de datum velden.
 	 */
 	function defineDatums() {
-		let $datum = $( '.kleistad-datum' );
+		const $datum = $( '.kleistad-datum' );
 		if ( $datum[0] && ! $datum.is( ':data("ui-datepicker")' ) ) {
 			$datum.datepicker(
 				{
@@ -125,7 +125,7 @@ function strtodate( value ) {
 	 * Definieer de timespinners.
 	 */
 	function defineTimespinners() {
-		let $tijd = $( '.kleistad-tijd' );
+		const $tijd = $( '.kleistad-tijd' );
 		if ( $tijd[0] ) {
 			// noinspection JSUnusedGlobalSymbols .
 			$.widget(
@@ -160,7 +160,7 @@ function strtodate( value ) {
 	 * Definieer selecties met icons.
 	 */
 	function defineSelectMenus() {
-		let $selectMenu = $( '.kleistad-selectmenu' );
+		const $selectMenu = $( '.kleistad-selectmenu' );
 		if ( $selectMenu[0] ) {
 			// noinspection JSUnusedGlobalSymbols .
 			$.widget(
@@ -168,8 +168,7 @@ function strtodate( value ) {
 				$.ui.selectmenu,
 				{
 					_renderItem: function( ul, item ) {
-						let li  = $( '<li>' ),
-						wrapper = $( '<div>', { text: item.label } );
+						const $wrapper = $( '<div>', { text: item.label } );
 						$(
 							'<span>',
 							{
@@ -177,8 +176,8 @@ function strtodate( value ) {
 								'class': 'ui-icon ' + item.element.attr( 'data-class' )
 							}
 						)
-						.appendTo( wrapper );
-						return li.append( wrapper ).appendTo( ul );
+						.appendTo( $wrapper );
+						return $( '<li>' ).append( $wrapper ).appendTo( ul );
 					}
 				}
 			);
@@ -262,7 +261,7 @@ function strtodate( value ) {
 	 * @param { jQuery} $element
 	 */
 	$.fn.shortcode = function shortcode( $element ) {
-		let $shortcode    = $element.closest( '.kleistad-shortcode' );
+		const $shortcode  = $element.closest( '.kleistad-shortcode' );
 		let shortcodeData = { tag:   $shortcode.data( 'tag' ) };
 		if ( 'undefined' !== typeof $shortcode.data( 'atts' ) ) {
 			shortcodeData.atts = JSON.stringify( $shortcode.data( 'atts' ) );
@@ -301,7 +300,7 @@ function strtodate( value ) {
 				'click',
 				'.kleistad-edit-link',
 				function() {
-					let $anchor = $( this );
+					const $anchor = $( this );
 					// noinspection JSUnresolvedFunction .
 					let shortcodeData = $.fn.shortcode( $anchor );
 					getContent( $anchor.closest( '.kleistad-shortcode' ), shortcodeData, 'getitem' );
@@ -315,7 +314,7 @@ function strtodate( value ) {
 				'click',
 				'.kleistad-terug-link',
 				function() {
-					let $button = $( this );
+					const $button = $( this );
 					// noinspection JSUnresolvedFunction .
 					let shortcodeData = $.fn.shortcode( $button );
 					getContent( $button.closest( '.kleistad-shortcode' ), shortcodeData, 'getitems' );
@@ -329,7 +328,7 @@ function strtodate( value ) {
 				'click',
 				'.kleistad-download-link',
 				function() {
-					let $button = $( this );
+					const $button = $( this );
 					// noinspection JSUnresolvedFunction .
 					let shortcodeData = $.fn.shortcode( $button );
 					$( 'input,select' ).each(

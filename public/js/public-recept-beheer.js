@@ -25,7 +25,7 @@
 				'change',
 				'#kleistad_foto_input',
 				function() {
-					let reader = new FileReader();
+					const reader = new FileReader();
 
 					if ( this.files && this.files[0] ) {
 						if ( this.files[0].size > 2000000 ) {
@@ -48,9 +48,8 @@
 				'click',
 				'#kleistad_extra_basis, #kleistad_extra_toevoeging',
 				function() {
-					let $oldRow, $newRow;
-					$oldRow = $( this ).closest( 'tr' ).prev();
-					$newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
+					const $oldRow = $( this ).closest( 'tr' ).prev();
+					const $newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
 					$oldRow.after( $newRow );
 					return false;
 				}

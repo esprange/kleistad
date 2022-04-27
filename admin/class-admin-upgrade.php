@@ -199,7 +199,7 @@ class Admin_Upgrade {
 			organisatie_email tinytext DEFAULT '',
 			contact tinytext,
 			email tinytext,
-			telefoon tinytext,
+			telnr tinytext,
 			programma text,
 			vervallen tinyint(1) DEFAULT 0,
 			kosten numeric(10,2),
@@ -274,10 +274,24 @@ class Admin_Upgrade {
 	}
 
 	/**
+	 * Speciale functie om de maand juni over te slaan.
+	 * @return void
+	 */
+	private function convert_abonnementen() {
+		foreach ( new Abonnementen() as $abonnement  ) {
+			if ( 202205 === $abonnement->factuur_maand ) {
+				$abonnement->factuur_maand = 202206;
+				$abonnement->save();
+			}
+		}
+	}
+
+	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
 		$this->convert_orders();
+		$this->convert_abonnementen();
 	}
 
 }

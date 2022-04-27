@@ -31,9 +31,8 @@
 				'click',
 				'#kleistad_extra_regel',
 				function() {
-					let $oldRow, $newRow;
-					$oldRow = $( this ).closest( '.kleistad-row' ).prev();
-					$newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
+					const $oldRow = $( this ).closest( '.kleistad-row' ).prev();
+					const $newRow = $oldRow.clone().find( 'input' ).val( '' ).end();
 					$oldRow.after( $newRow );
 					return false;
 				}

@@ -82,9 +82,9 @@
 					'change',
 					'#kleistad_datum',
 					function () {
-						let datum       = $( this ).datepicker( 'getDate' ),
-							beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) ),
+						const datum     = $( this ).datepicker( 'getDate' ),
 							$dagdeel    = $( 'input[name=dagdeel]' );
+						let	beschikbaar = beschikbareData.filter( o => o.datum === $.datepicker.formatDate( 'yy-mm-dd', datum ) );
 						$( 'div[id^="kleistad-dagdeel"]' ).hide();
 						$dagdeel.prop( 'checked', false );
 						beschikbaar.forEach(

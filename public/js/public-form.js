@@ -22,8 +22,8 @@
 	 * Initialiseer een multiform tab.
 	 */
 	function initTab() {
-		let $tab = $( '.kleistad-tab' );
-		let html = '<div style="overflow:auto;float:right;margin-top: 20px;">' +
+		const $tab = $( '.kleistad-tab' );
+		let html   = '<div style="overflow:auto;float:right;margin-top: 20px;">' +
 			'<button type="button" class="kleistad-button" id="kleistad_tab_prev" >Terug</button>&nbsp;' +
 			'<button type="button" class="kleistad-button" id="kleistad_tab_next" >Verder</button>' +
 			'<button type="submit" class="kleistad-button" id="kleistad_submit" >Verzenden</button>' +
@@ -42,8 +42,8 @@
 	 * Valideer de tab van een multistep form
 	 */
 	function validateTab() {
-		let $stap = $( '.kleistad-stap' );
-		let valid = true;
+		const $stap = $( '.kleistad-stap' );
+		let valid   = true;
 		$( '.kleistad-tab' ).eq( currentTab ).find( '[required]' ).each(
 			function() {
 				if ( ! ( ( null === this.offsetParent  ) ? this.checkValidity() : this.reportValidity() ) ) {
@@ -62,9 +62,9 @@
 	 * @param {int} direction
 	 */
 	function showTab( direction ) {
-		let $tab   = $( '.kleistad-tab' ),
-			$stap  = $( '.kleistad-stap' ),
-			maxTab = $tab.length,
+		const $tab = $( '.kleistad-tab' ),
+			$stap  = $( '.kleistad-stap' );
+		let	maxTab = $tab.length,
 			show   = false;
 		if ( ! $tab[0] ) {
 			return;
@@ -230,7 +230,7 @@
 			/**
 			 * Definieer de bank selectie.
 			 */
-			let $bank = $( '#kleistad_bank' );
+			const $bank = $( '#kleistad_bank' );
 			if ( $bank[0] ) {
 				$bank.iconselectmenu().iconselectmenu( 'menuWidget' ).addClass( 'ui-menu-icons kleistad-bank' );
 			}
@@ -266,11 +266,11 @@
 				'submit',
 				'form',
 				function( event ) {
-					let $form = $( this );
+					const $form  = $( this ),
+						formData = new FormData( this );
 					// noinspection JSUnresolvedFunction .
-					let shortcodeData = $.fn.shortcode( $form );
-					let formData      = new FormData( this );
-					let clicked       = $form.data( 'clicked' );
+					let shortcodeData = $.fn.shortcode( $form ),
+						clicked       = $form.data( 'clicked' );
 					let confirm       = $( '#' + clicked.id ).data( 'confirm' );
 					let tekst         = 'undefined' === typeof confirm ? [] : confirm.split( '|' );
 					formData.append( 'form_actie', clicked.value );

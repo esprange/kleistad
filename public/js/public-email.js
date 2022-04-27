@@ -47,8 +47,8 @@
 			$( '#kleistad_gebruikers' ).on(
 				'changed.jstree',
 				function() {
-					let gebruikerIds  = [],
-						selectIndexes = $( this ).jstree( 'get_selected', true );
+					const gebruikerIds = [],
+						selectIndexes  = $( this ).jstree( 'get_selected', true );
 					$.each(
 						selectIndexes,
 						function() {

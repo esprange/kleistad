@@ -20,7 +20,7 @@
 			/**
 			 * Site inner is de pagina inhoud, exclusief eventuele banner voor gebruikers met adminrechten.
 			 */
-			let $page = $( '.site-inner' );
+			const $page = $( '.site-inner' );
 
 			/**
 			 * Plak de profiel div als eerste regel in de normale pagina.

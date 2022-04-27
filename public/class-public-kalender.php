@@ -135,7 +135,7 @@ class Public_Kalender extends Shortcode {
 	 * @return WP_REST_Response
 	 */
 	public static function callback_kalender( WP_REST_Request $request ) : WP_REST_Response {
-		$afspraken = new Afspraken(
+		$afspraken = ( new Afspraken() )->query(
 			[
 				'timeMin' => $request->get_param( 'start' ),
 				'timeMax' => $request->get_param( 'eind' ),

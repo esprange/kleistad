@@ -20,7 +20,8 @@
 	 * Maak het lijstje van de datums, gesorteerd van laag naar hoog, zichtbaar in het formulier.
 	 */
 	function listLesDatums() {
-		let datums = [], lesDatumsLijst = '';
+		const datums         = [];
+		let   lesDatumsLijst = '';
 		if ( 0 === lesDatums.length ) {
 			return;
 		}
@@ -59,7 +60,7 @@
 	function updateLesDatums() {
 		lesDatums = lesDatums.filter(
 			function( item ) {
-				let datum = strtodate( item );
+				const datum = strtodate( item );
 				return datum <= eindDatum && datum >= startDatum;
 			}
 		);

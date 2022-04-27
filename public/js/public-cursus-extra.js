@@ -17,12 +17,12 @@
 			$( 'input[name^=extra_cursist]' ).on(
 				'change',
 				function() {
-					let $inputs = $( this ).parents( '[id^=kleistad_medecursist]' ).find( 'input' ),
-						values  = $inputs.map(
-							function() {
-								return $( this ).val();
-							}
-						).get().join( '' );
+					const $inputs = $( this ).parents( '[id^=kleistad_medecursist]' ).find( 'input' );
+					let	values    = $inputs.map(
+						function() {
+							return $( this ).val();
+						}
+					).get().join( '' );
 					$inputs.prop( 'required', '' !== values );
 				}
 			);

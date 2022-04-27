@@ -17,10 +17,10 @@
 	$(
 		function()
 		{
-			let nuDatum         = new Date(),
-				dag             = 24 * 60 * 60 * 1000,
-				$pauze_datum    = $( '#kleistad_pauze_datum' ),
+			const $pauze_datum  = $( '#kleistad_pauze_datum' ),
 				$herstart_datum = $( '#kleistad_herstart_datum' ),
+				nuDatum         = new Date();
+			let	dag             = 24 * 60 * 60 * 1000,
 				minPauze        = $pauze_datum.data( 'min_pauze' ),
 				maxPauze        = $pauze_datum.data( 'max_pauze' );
 

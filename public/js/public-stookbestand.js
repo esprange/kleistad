@@ -17,8 +17,8 @@
 	$(
 		function()
 		{
-			let $vanaf_datum = $( '#kleistad_vanaf_datum' ),
-				$tot_datum   = $( '#kleistad_tot_datum' );
+			const $vanaf_datum = $( '#kleistad_vanaf_datum' ),
+				$tot_datum     = $( '#kleistad_tot_datum' );
 			/**
 			 * Initieer de startdatum.
 			 */
@@ -40,7 +40,7 @@
 				'option',
 				{
 					minDate: new Date( $vanaf_datum.val() ),
-					maxDate: 0,
+					maxDate: null,
 					onSelect: function( datum ) {
 						$vanaf_datum.datepicker( 'option', { maxDate: strtodate( datum ) } );
 					}

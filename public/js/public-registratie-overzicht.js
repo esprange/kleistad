@@ -72,7 +72,7 @@
 				'click touchend',
 				'tr',
 				function() {
-					let $wachten = $( '#kleistad_wachten' );
+					const $wachten = $( '#kleistad_wachten' );
 					$wachten.addClass( 'kleistad-wachten' ).show();
 					$.ajax(
 						{

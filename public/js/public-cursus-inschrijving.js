@@ -22,8 +22,8 @@
 	 * @param {string}  cursus.naam
 	 */
 	function wijzigTeksten( cursus ) {
-		let $spin  = $( '#kleistad_aantal' ),
-			aantal = $spin.spinner( 'value' ),
+		const $spin = $( '#kleistad_aantal' );
+		let	aantal  = $spin.spinner( 'value' ),
 			bedrag;
 		if ( aantal > cursus.ruimte ) {
 			aantal = cursus.ruimte;
@@ -152,8 +152,8 @@
 				'change',
 				'#kleistad_draaien, #kleistad_handvormen, #kleistad_boetseren',
 				function() {
-					let $lijst = $( '#kleistad_cursus_technieklijst' ),
-					lijst      = '';
+					const $lijst = $( '#kleistad_cursus_technieklijst' );
+					let lijst    = '';
 					$( 'input[name^=technieken]' ).each(
 						function() {
 							if ( $( this ).is( ':checked' ) ) {

@@ -219,4 +219,23 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop->actie->reactie( 'dit is een reactie' );
 		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Reactie op workshop~', $mailer->get_last_sent()->subject, 'email reactie aanvraag incorrect' );
 	}
+
+	/**
+	 * Test concept vervallen
+	 */
+	public function test_concept_vervallen() {
+		$workshop1                = $this->maak_workshop();
+		$workshop1->aanvraagdatum = strtotime( '-7 days' );
+		$workshop1->datum         = strtotime( '7 days' );
+		$workshop1->actie->bevestig();
+		$workshop2                = $this->maak_workshop();
+		$workshop2->aanvraagdatum = strtotime( '-7 days' );
+		$workshop2->datum         = strtotime( '7 days' );
+		$workshop2->save();
+		Workshops::doe_dagelijks();
+		$workshop1 = new Workshop( $workshop1->id );
+		$workshop2 = new Workshop( $workshop2->id );
+		$this->assertTrue( $workshop2->vervallen, 'vervallen 2 onjuist' );
+		$this->assertFalse( $workshop1->vervallen, 'vervallen 1 onjuist' );
+	}
 }

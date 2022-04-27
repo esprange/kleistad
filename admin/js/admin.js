@@ -25,7 +25,7 @@
 	 * Definieer de datum velden.
 	 */
 	function defineDatumpickers() {
-		let $datum = $( '.kleistad-datum' );
+		const $datum = $( '.kleistad-datum' );
 		if ( $datum[0] && ! $datum.is( ':data("ui-datepicker")' ) ) {
 			$datum.datepicker(
 				{
@@ -49,7 +49,7 @@
 	 * Initialiseer de eventuele color pickers.
 	 */
 	function defineColorpickers() {
-		let $color = $( '.kleistad-color' );
+		const $color = $( '.kleistad-color' );
 		if ( $color[0] ) {
 			$color.wpColorPicker();
 		}
@@ -61,7 +61,7 @@
 	$(
 		function()
 		{
-			let $saldo                 = $( '#saldo' ),
+			const $saldo               = $( '#saldo' ),
 				$werkplek_start_config = $( '#kleistad_start_config' ),
 				$werkplek_eind_config  = $( '#kleistad_eind_config' );
 
@@ -107,9 +107,9 @@
 				'click',
 				'button[id^=kleistad_voegtoe_]',
 				function() {
-					const parameters = $( this ).data( 'parameters' );
-					const key        = $( this ).data( 'key' );
-					const index      = $( '#kleistad_lijst_' + key + ' tbody tr' ).length;
+					const parameters = $( this ).data( 'parameters' ),
+						key          = $( this ).data( 'key' ),
+						index        = $( '#kleistad_lijst_' + key + ' tbody tr' ).length;
 					let template     =
 						'<td><input type="text" class="regular-text" name="kleistad-opties[' + key + '][' + index + '][naam]" required /></td>';
 					parameters.forEach(
