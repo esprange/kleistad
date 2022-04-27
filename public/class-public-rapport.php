@@ -73,9 +73,8 @@ class Public_Rapport extends Shortcode {
 		$data['naam']  = $gebruiker->display_name;
 		$data['saldo'] = number_format_i18n( $saldo->bedrag, 2 );
 		$data['items'] = [];
-		$ovens         = new Ovens();
-		foreach ( $ovens as $oven ) {
-			$stoken = new Stoken( $oven->id, 0, time() );
+		foreach ( new Ovens() as $oven ) {
+			$stoken = new Stoken( $oven, 0 );
 			foreach ( $stoken as $stook ) {
 				if ( ! $stook->is_gereserveerd() ) {
 					continue;

@@ -206,7 +206,7 @@ class Admin_GDPR_Export {
 		$items = [];
 		$ovens = new Ovens();
 		foreach ( $ovens as $oven ) {
-			$stoken = new Stoken( $oven->id, 0, time() );
+			$stoken = new Stoken( $oven, 0, time() );
 			foreach ( $stoken as $stook ) {
 				foreach ( $stook->stookdelen as $stookdeel ) {
 					if ( $stookdeel->medestoker === $gebruiker_id ) {

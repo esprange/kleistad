@@ -37,8 +37,16 @@ class Public_Reservering extends Shortcode {
 		if ( ! $oven->id ) {
 			return $this->status( new WP_Error( 'fout', 'oven met id ' . $this->data['oven'] . ' is niet bekend in de database !' ) );
 		}
+		$stooksoorten = [
+			Stook::BISCUIT,
+			Stook::GLAZUUR,
+			Stook::OVERIG,
+		];
+		if ( current_user_can( BESTUUR ) ) {
+			$stooksoorten[] = Stook::ONDERHOUD;
+		}
 		$this->data = [
-			'stokers'  => get_users(
+			'stokers'      => get_users(
 				[
 					'fields'       => [ 'ID', 'display_name' ],
 					'orderby'      => 'display_name',
@@ -46,11 +54,12 @@ class Public_Reservering extends Shortcode {
 					'role__not_in' => [ INTERN ],
 				]
 			),
-			'oven'     => [
+			'oven'         => [
 				'id'   => $oven->id,
 				'naam' => $oven->naam,
 			],
-			'override' => current_user_can( OVERRIDE ),
+			'override'     => current_user_can( OVERRIDE ),
+			'stooksoorten' => $stooksoorten,
 		];
 		return $this->content();
 	}

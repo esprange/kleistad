@@ -265,14 +265,6 @@ class Admin_Upgrade {
 
 	// phpcs:disable
 
-	private function convert_orders() {
-		global $wpdb;
-		$database_version = intval( get_option( 'kleistad-database-versie', 0 ) );
-		if ( $database_version < 166 ) { // Persé maar eenmalig doen !
-			$wpdb->query( "UPDATE {$wpdb->prefix}kleistad_orders SET credit=1 WHERE origineel_id > 0" );
-		}
-	}
-
 	/**
 	 * Speciale functie om de maand juni over te slaan.
 	 * @return void
@@ -290,7 +282,6 @@ class Admin_Upgrade {
 	 * Converteer data
 	 */
 	private function convert_data() {
-		$this->convert_orders();
 		$this->convert_abonnementen();
 	}
 

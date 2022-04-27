@@ -43,14 +43,14 @@ class Stoken implements Countable, Iterator {
 	 * @param int  $vanaf_datum Vanaf datum dat de stoken gevuld moeten worden.
 	 * @param int  $tot_datum   Tot datum dat de stoken gevuld moeten worden.
 	 */
-	public function __construct( Oven $oven, int $vanaf_datum, int $tot_datum ) {
+	public function __construct( Oven $oven, int $vanaf_datum, int $tot_datum = 0 ) {
 		global $wpdb;
 		$data = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}kleistad_reserveringen WHERE oven_id = %d AND datum BETWEEN %s AND %s",
 				$oven->id,
 				date( 'Y-m-d 00:00:00', $vanaf_datum ),
-				date( 'Y-m-d 23:59:59', $tot_datum ),
+				date( 'Y-m-d 23:59:59', $tot_datum ?: strtotime( '+1 year' ) ),
 			),
 			ARRAY_A
 		);

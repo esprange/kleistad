@@ -21,8 +21,9 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 	 * @return void
 	 */
 	protected function overzicht() {
-		$stokers_json = wp_json_encode( $this->data['stokers'] );
-		if ( false === $stokers_json ) {
+		$stokers_json      = wp_json_encode( $this->data['stokers'] );
+		$stooksoorten_json = wp_json_encode( $this->data['stooksoorten'] );
+		if ( false === $stokers_json || false === $stooksoorten_json ) {
 			return;
 		}
 		?>
@@ -35,6 +36,7 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 			data-jaar="<?php echo esc_attr( date( 'Y' ) ); ?>"
 			data-oven-naam="<?php echo esc_attr( $this->data['oven']['naam'] ); ?>"
 			data-stokers='<?php echo $stokers_json; // phpcs:ignore ?>'
+		    data-stooksoorten='<?php echo $stooksoorten_json; // phpcs:ignore ?>'
 			data-override="<?php echo (int) current_user_can( OVERRIDE ); ?>" >
 			<thead>
 				<tr>

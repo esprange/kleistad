@@ -51,7 +51,7 @@ class Stoker extends Gebruiker {
 	public function annuleer_stook( int $vanaf_datum, int $tot_datum = 253402210800 ) {
 		$vanaf_datum = max( $vanaf_datum, strtotime( 'today' ) );
 		foreach ( new Ovens() as $oven ) {
-			foreach ( new Stoken( $oven->id, $vanaf_datum, $tot_datum ) as $stook ) {
+			foreach ( new Stoken( $oven, $vanaf_datum, $tot_datum ) as $stook ) {
 				if ( ! $stook->verwijder() ) {
 					fout( __CLASS__, 'reservering kon niet verwijderd worden' );
 				}

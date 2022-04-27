@@ -109,7 +109,7 @@ class Public_Stookbestand extends Shortcode {
 	 */
 	private function bepaal_medestokers() : array {
 		foreach ( $this->ovens as $oven ) {
-			$this->stoken[ $oven->id ] = new Stoken( $oven->id, $this->vanaf_datum, $this->tot_datum );
+			$this->stoken[ $oven->id ] = new Stoken( $oven, $this->vanaf_datum, $this->tot_datum );
 			foreach ( $this->stoken[ $oven->id ] as $stook ) {
 				foreach ( $stook->stookdelen as $stookdeel ) {
 					$medestokers[ "$stookdeel->medestoker" ] = get_userdata( $stookdeel->medestoker )->display_name;

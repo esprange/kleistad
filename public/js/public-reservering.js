@@ -56,11 +56,8 @@
 	 * @returns {string}
 	 */
 	function stookopties( soort ) {
-		let opties    = [ 'Biscuit', 'Glazuur', 'Overig' ],
-			optieHtml = '<select id="kleistad_soortstook">';
-		if ( $reserveringen.data( 'override' ) ) {
-			opties.push( 'Onderhoud' );
-		}
+		const opties  = $reserveringen.data( 'stooksoorten' );
+		let	optieHtml = '<select id="kleistad_soortstook">';
 		opties.forEach(
 			function( optie ) {
 				optieHtml += '<option value="' + optie + '" ' + ( optie === soort ? 'selected' : '' ) + ' >' + optie + '</option>';
@@ -85,7 +82,7 @@
 		let stook, stokerVeld, percVeld;
 		$( '#kleistad_reservering table > thead' ).append(
 			'<tr><th><label>Soort stook</label></th><td colspan="2">' + stookopties( formData.soortstook ) + '</td></tr>' +
-			'<tr><th colspan="2"><label>Temperatuur &nbsp; &deg;C</label></th><td><input id="kleistad_temperatuur" name="temperatuur" type="number" min="100" max="1400" required value="' + formData.temperatuur + '" ></td></tr>' +
+			'<tr><th colspan="2"><label>Temperatuur &nbsp; &deg;C</label></th><td><input id="kleistad_temperatuur" name="temperatuur" type="number" min="100" max="1500" required value="' + formData.temperatuur + '" ></td></tr>' +
 			'<tr><th colspan="2"><label>Programma</label></th><td><input id="kleistad_programma" type="number" min="0" max="99" value="' + formData.programma + '" ></td></tr>'
 		);
 
@@ -144,7 +141,7 @@
 	 * @param {string} formData.status
 	 * @param {string} formData.kleur
 	 */
-	function kleistadForm( formData ) {
+	function stookForm( formData ) {
 		const logica =
 		{
 			ongebruikt: {},
@@ -388,7 +385,7 @@
 				function( event ) {
 					if ( 'click' === event.type || detectTap ) {
 						$formulier.dialog( 'open' );
-						kleistadForm( $( this ).data( 'form' ) );
+						stookForm( $( this ).data( 'form' ) );
 					}
 					return false;
 				}
