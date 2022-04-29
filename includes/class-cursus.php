@@ -161,6 +161,10 @@ class Cursus {
 	 * @return int nog beschikbare ruimte.
 	 */
 	public function get_ruimte() : int {
+		static $ruimte = [];
+		if ( isset( $ruimte[ $this->id ] ) ) {
+			return $ruimte[ $this->id ];
+		}
 		$aantal = $this->maximum;
 		if ( 0 < $this->id ) {
 			foreach ( new Inschrijvingen( $this->id, true ) as $inschrijving ) {
@@ -169,7 +173,8 @@ class Cursus {
 				}
 			}
 		}
-		return max( $aantal, 0 );
+		$ruimte[ $this->id ] = max( $aantal, 0 );
+		return $ruimte [ $this->id ];
 	}
 
 	/**
