@@ -111,7 +111,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		if ( isset( $this->data['verbergen'] ) ) :
 			?>
 			<input name="cursus_id" type="hidden" value="<?php echo esc_attr( $this->data['cursussen'][0]->id ); ?>"
-				   data-cursus='<?php echo $this->cursus_json( $this->data['cursussen'][0] ); // phpcs:ignore ?>' />
+				   data-cursus='<?php echo $this->get_cursus_json( $this->data['cursussen'][0] ); // phpcs:ignore ?>' />
 			<?php
 			return;
 			endif;
@@ -135,10 +135,10 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 			<div class="kleistad-row" style="overflow-x:auto;white-space:nowrap;">
 				<div class="kleistad-col-10">
 					<input class="kleistad-radio" name="cursus_id" id="kleistad_cursus_<?php echo esc_attr( $cursus->id ); ?>" type="radio" value="<?php echo esc_attr( $cursus->id ); ?>"
-						data-cursus='<?php echo $this->cursus_json( $cursus ); // phpcs:ignore ?>' <?php disabled( ! $cursus->is_open() ); ?>
+						data-cursus='<?php echo $this->get_cursus_json( $cursus ); // phpcs:ignore ?>' <?php disabled( ! $cursus->is_open() ); ?>
 						<?php checked( $checked ); ?> required />
 					<label title="<?php echo $tooltip; // phpcs:ignore ?>" for="kleistad_cursus_<?php echo esc_attr( $cursus->id ); ?>">
-						<span style="<?php echo esc_attr( $style ); ?>"><?php echo esc_html( $this->cursus_titel( $cursus ) ); ?></span></label>
+						<span style="<?php echo esc_attr( $style ); ?>"><?php echo esc_html( $this->get_cursus_titel( $cursus ) ); ?></span></label>
 				</div>
 			</div>
 			<?php
@@ -307,7 +307,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 *
 	 * @return string
 	 */
-	private function cursus_titel( Cursus $cursus ) : string {
+	private function get_cursus_titel( Cursus $cursus ) : string {
 		$ruimte       = $cursus->get_ruimte();
 		$ruimte_tekst = ", nog ruimte voor $ruimte deelnemer" . ( $ruimte > 1 ? 's' : '' );
 		return $cursus->naam . ( $cursus->vervallen ? ' VERVALLEN' : ( $cursus->vol ? ' VOL' : $ruimte_tekst ) );
@@ -320,7 +320,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 *
 	 * @return string
 	 */
-	private function cursus_json( Cursus $cursus ) : string {
+	private function get_cursus_json( Cursus $cursus ) : string {
 		return wp_json_encode(
 			[
 				'technieken' => $cursus->technieken,
