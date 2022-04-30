@@ -97,14 +97,14 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 				'betaal'         => 'ideal',
 			];
 		}
-		$this->data['gebruikers']     = get_users(
+		$this->data['gebruikers'] = get_users(
 			[
 				'fields'  => [ 'ID', 'display_name' ],
 				'orderby' => 'display_name',
 			]
 		);
-		$this->data['open_cursussen'] = [];
-		$cursus_selecties             = empty( $this->data['cursus'] ) ? [] : explode( ',', preg_replace( '/\s+|C/', '', $this->data['cursus'] ) );
+		$this->data['cursussen']  = [];
+		$cursus_selecties         = empty( $this->data['cursus'] ) ? [] : explode( ',', preg_replace( '/\s+|C/', '', $this->data['cursus'] ) );
 		if ( 1 === count( $cursus_selecties ) ) {
 			$this->data['input']['cursus_id'] = $cursus_selecties[0];
 		}

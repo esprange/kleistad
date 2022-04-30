@@ -10,14 +10,14 @@
  * Plugin Name:       Kleistad
  * Plugin URI:        https://github.com/esprange/kleistad
  * Description:       Een plugin voor vereniging Kleistad. Oven reserveringen, stooksaldo administratie, cursus adminstratie en keramiek recepten.
- * Version:           7.3.7
+ * Version:           7.3.8
  * Author:            Eric Sprangers
  * Author URI:        https://www.kleistad.nl
  * License:           GPL-3.0+
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       kleistad
  * Requires at least: 4.8.0
- * Requires PHP:      7.4
+ * Requires PHP:      8.0
  * GitHub Plugin URI: https://github.com/esprange/kleistad
  */
 

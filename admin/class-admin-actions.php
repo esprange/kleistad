@@ -53,7 +53,8 @@ class Admin_Actions {
 	 * @internal Action for admin_enqueue_scripts.
 	 */
 	public function enqueue_scripts_and_styles() {
-		wp_enqueue_style( 'jqueryui', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], '1.12.1' );
+		$jquery_ui_version = wp_scripts()->registered['jquery-ui-core']->ver;
+		wp_enqueue_style( 'jqueryui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_ui_version ), [], $jquery_ui_version );
 		wp_enqueue_script( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', [ 'jquery', 'jquery-ui-datepicker', 'wp-color-picker' ], versie(), false );
 	}
 
