@@ -60,20 +60,6 @@ class Stoken implements Countable, Iterator {
 	}
 
 	/**
-	 * Verwijder een stook.
-	 *
-	 * @param Stook $stookverwijderen Te vervangen stook.
-	 */
-	public function verwijderen( Stook $stookverwijderen ) {
-		foreach ( $this->stoken as $key => $stook ) {
-			if ( $stookverwijderen->datum === $stook->datum ) {
-				$stookverwijderen->verwijder();
-				$this->stoken[ $key ] = $stookverwijderen;
-			}
-		}
-	}
-
-	/**
 	 * Geef het aantal stoken terug.
 	 *
 	 * @return int Het aantal.

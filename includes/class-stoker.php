@@ -52,8 +52,10 @@ class Stoker extends Gebruiker {
 		$vanaf_datum = max( $vanaf_datum, strtotime( 'today' ) );
 		foreach ( new Ovens() as $oven ) {
 			foreach ( new Stoken( $oven, $vanaf_datum, $tot_datum ) as $stook ) {
-				if ( ! $stook->verwijder() ) {
-					fout( __CLASS__, 'reservering kon niet verwijderd worden' );
+				if ( $this->ID === $stook->hoofdstoker_id ) {
+					if ( ! $stook->verwijder() ) {
+						fout( __CLASS__, 'reservering kon niet verwijderd worden' );
+					}
 				}
 			}
 		}
