@@ -162,7 +162,7 @@ class Cursus {
 	 */
 	public function get_ruimte() : int {
 		static $ruimte = [];
-		if ( isset( $ruimte[ $this->id ] ) ) {
+		if ( ! defined( 'KLEISTAD_TEST' ) && isset( $ruimte[ $this->id ] ) ) {
 			return $ruimte[ $this->id ];
 		}
 		$aantal = $this->maximum;
