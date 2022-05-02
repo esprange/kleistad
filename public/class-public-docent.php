@@ -183,7 +183,7 @@ class Public_Docent extends ShortcodeForm {
 		<th></th>
 EOT;
 		for ( $datum = $maandag; $datum < $maandag + WEEK_IN_SECONDS; $datum += DAY_IN_SECONDS ) {
-			$weekdag = strftime( '%A<br/>%d-%m-%Y', $datum );
+			$weekdag = wp_date( 'l', $datum ) . '<br/>' . wp_date( 'd-m-Y', $datum );
 			$html   .= <<<EOT
 		<th class="kleistad-cell_center">$weekdag</th>
 EOT;

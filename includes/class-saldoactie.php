@@ -42,7 +42,7 @@ class SaldoActie {
 	 * @return bool|string redirect url of true.
 	 */
 	public function nieuw( float $bedrag, string $betaalwijze ): bool|string {
-		$datum                     = strftime( '%y%m%d', strtotime( 'today' ) );
+		$datum                     = wp_date( 'ymd', strtotime( 'today' ) );
 		$volgnr                    = count( $this->saldo->storting );
 		$this->saldo->storting     = [
 			'code'  => "S{$this->saldo->klant_id}-$datum-$volgnr",

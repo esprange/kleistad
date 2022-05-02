@@ -89,9 +89,9 @@ class Public_Abonnement_Overzicht extends Shortcode {
 			$abonnee_gegevens,
 			[
 				$abonnee->abonnement->get_statustekst( false ),
-				$abonnee->abonnement->start_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->start_datum ) : '',
-				$abonnee->abonnement->pauze_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->pauze_datum ) : '',
-				$abonnee->abonnement->herstart_datum ? strftime( '%d-%m-%Y', $abonnee->abonnement->herstart_datum ) : '',
+				$abonnee->abonnement->start_datum ? wp_date( 'd-m-Y', $abonnee->abonnement->start_datum ) : '',
+				$abonnee->abonnement->pauze_datum ? wp_date( 'd-m-Y', $abonnee->abonnement->pauze_datum ) : '',
+				$abonnee->abonnement->herstart_datum ? wp_date( 'd-m-Y', $abonnee->abonnement->herstart_datum ) : '',
 				$abonnee->abonnement->betaling->incasso_actief() ? 'ja' : 'nee',
 				$abonnee->abonnement->overbrugging_email ? 'ja' : 'nee',
 			]

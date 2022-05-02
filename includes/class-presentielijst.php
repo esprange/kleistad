@@ -30,7 +30,7 @@ class Presentielijst extends PDF {
 		$this->Cell( 50, $fontheight, 'Cursist', 1, 0, 'L' );
 		sort( $lesdatums );
 		foreach ( $lesdatums as $lesdatum ) {
-			$this->Cell( 12, $fontheight, strftime( '%d-%m', $lesdatum ), 1, 0, 'C' );
+			$this->Cell( 12, $fontheight, wp_date( 'd-m', $lesdatum ), 1, 0, 'C' );
 		}
 		$this->setFont( self::CSET );
 		$this->Ln();

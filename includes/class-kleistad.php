@@ -11,10 +11,7 @@
 
 namespace Kleistad;
 
-use Exception;
 use WP_Error;
-use DateTime;
-use DateTimeZone;
 
 /**
  * Custom capabilities van kleistad gebruikers.
@@ -31,25 +28,6 @@ const MIDDAG    = 'Middag';
 const NAMIDDAG  = 'Namiddag';
 const AVOND     = 'Avond';
 const BTW       = 21;
-
-/**
- * Omdat strftime obsoleet wordt, deze functie.
- *
- * @param bool $inclusief_tijd Al dan niet inclusief de tijd.
- *
- * @return string
- */
-function datumtijd( bool $inclusief_tijd = false ) : string {
-	try {
-		$tijd = new DateTime( 'now', new DateTimeZone( 'Europe/Amsterdam' ) );
-		if ( $inclusief_tijd ) {
-			return $tijd->format( 'd-m-Y, H:i' );
-		}
-		return $tijd->format( 'd-m-Y' );
-	} catch ( Exception ) {
-		return '';
-	}
-}
 
 /**
  * Hulpfunctie, bepaald in welk dagdeel een activiteit valt.

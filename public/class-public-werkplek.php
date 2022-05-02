@@ -235,7 +235,7 @@ EOT;
 		return new WP_REST_Response(
 			[
 				'content' => self::toon_werkplekken( $gebruiker_id, $datum ),
-				'datum'   => strftime( '%A %e %B', $datum ),
+				'datum'   => wp_date( 'l j F', $datum ),
 			]
 		);
 	}
@@ -330,11 +330,11 @@ EOT;
 				$werkplekconfigs->next();
 				$werkplekconfig = $werkplekconfigs->current();
 			}
-			foreach ( $werkplekconfig->config[ strftime( '%A', $dagteller ) ] as $dagdeel ) {
+			foreach ( $werkplekconfig->config[ wp_date( 'l', $dagteller ) ] as $dagdeel ) {
 				$werkplekken += array_sum( $dagdeel );
 			}
 			if ( $werkplekken ) {
-				$datums[] = date( 'd-m-Y', $dagteller );
+				$datums[] = wp_date( 'd-m-Y', $dagteller );
 			}
 		}
 		return $datums;

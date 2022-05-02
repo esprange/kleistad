@@ -135,7 +135,7 @@ class Dagdelenkaart extends Artikel {
 				'parameters'  => [
 					'voornaam'                => $gebruiker->first_name,
 					'achternaam'              => $gebruiker->last_name,
-					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
+					'start_datum'             => wp_date( 'd-m-Y', $this->start_datum ),
 					'dagdelenkaart_code'      => $this->code,
 					'dagdelenkaart_opmerking' => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking",
 					'dagdelenkaart_prijs'     => number_format_i18n( opties()['dagdelenkaart'], 2 ),
@@ -153,7 +153,7 @@ class Dagdelenkaart extends Artikel {
 	public function get_factuurregels() : Orderregels {
 		$orderregels               = new Orderregels();
 		$orderregels->verval_datum = $this->start_datum;
-		$orderregels->toevoegen( new Orderregel( 'dagdelenkaart, start datum ' . strftime( '%d-%m-%Y', $this->start_datum ), 1, opties()['dagdelenkaart'] ) );
+		$orderregels->toevoegen( new Orderregel( 'dagdelenkaart, start datum ' . wp_date( 'd-m-Y', $this->start_datum ), 1, opties()['dagdelenkaart'] ) );
 		return $orderregels;
 	}
 
@@ -177,7 +177,7 @@ class Dagdelenkaart extends Artikel {
 		$this->datum       = strtotime( 'today' );
 		$this->start_datum = $start_datum;
 		$this->opmerking   = $opmerking;
-		$datum             = strftime( '%y%m%d', $this->datum );
+		$datum             = wp_date( 'ymd', $this->datum );
 		$this->code        = "K$this->klant_id-$datum-$this->volgnr";
 		$this->save();
 	}
@@ -191,11 +191,11 @@ class Dagdelenkaart extends Artikel {
 	public function get_statustekst( bool $uitgebreid ) : string {
 		$vandaag = strtotime( 'today' );
 		if ( $this->start_datum > $vandaag ) {
-			return $uitgebreid ? 'gaat starten per ' . strftime( '%d-%m-%Y', $this->start_datum ) : 'nieuw';
+			return $uitgebreid ? 'gaat starten per ' . wp_date( 'd-m-Y', $this->start_datum ) : 'nieuw';
 		} elseif ( strtotime( self::KAART_DUUR . ' month', $this->start_datum ) <= $vandaag ) {
-			return $uitgebreid ? 'actief tot ' . strftime( '%d-%m-%Y', strtotime( self::KAART_DUUR . ' month', $this->start_datum ) ) : 'actief';
+			return $uitgebreid ? 'actief tot ' . wp_date( 'd-m-Y', strtotime( self::KAART_DUUR . ' month', $this->start_datum ) ) : 'actief';
 		}
-		return $uitgebreid ? 'voltooid per ' . strftime( '%d-%m-%Y', strtotime( self::KAART_DUUR . ' month', $this->start_datum ) ) : 'voltooid';
+		return $uitgebreid ? 'voltooid per ' . wp_date( 'd-m-Y', strtotime( self::KAART_DUUR . ' month', $this->start_datum ) ) : 'voltooid';
 	}
 
 }

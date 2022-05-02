@@ -124,7 +124,7 @@ class Factuur extends PDF {
 	 */
 	private function info( string $factuurnr, int $datum, string $referentie ) : void {
 		$info = [
-			'Factuurdatum'  => strftime( '%d-%m-%Y', $datum ),
+			'Factuurdatum'  => wp_date( 'd-m-Y', $datum ),
 			'Factuurnummer' => $factuurnr,
 			'Referentie'    => $referentie,
 		];

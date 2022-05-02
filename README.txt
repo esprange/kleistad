@@ -4,7 +4,7 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.9.2
-Stable tag: 7.3.8
+Stable tag: 7.3.9
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -33,10 +33,11 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.3.8 =
+= 7.3.9 =
 * Diverse bugs en refactoring
 * Stookbestand ook in de toekomst, vasthouden workshop beheer filter status
 * Verbetering email template
+* strftime, deprecated functie vanaf PHP 8.1 verwijderd
 = 7.3.4 =
 * Orders kunnen voortaan altijd gewijzigd worden. De bestaande order vervalt (wordt gecrediteerd) en een nieuwe wordt aangemaakt.
 * Extra werkplekrapport optie reserveringen. Toont toekomstig werkplek gebruik van de ingelogde gebruiker.

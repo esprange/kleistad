@@ -86,8 +86,8 @@ class AbonnementActie {
 		$thans_gepauzeerd                 = $this->abonnement->is_gepauzeerd();
 		$this->abonnement->pauze_datum    = $pauze_datum;
 		$this->abonnement->herstart_datum = $herstart_datum;
-		$pauze_datum_str                  = strftime( '%d-%m-%Y', $this->abonnement->pauze_datum );
-		$herstart_datum_str               = strftime( '%d-%m-%Y', $this->abonnement->herstart_datum );
+		$pauze_datum_str                  = wp_date( 'd-m-Y', $this->abonnement->pauze_datum );
+		$herstart_datum_str               = wp_date( 'd-m-Y', $this->abonnement->herstart_datum );
 		$this->log( "gepauzeerd per $pauze_datum_str en hervat per $herstart_datum_str" );
 		$this->abonnement->save();
 		$this->abonnement->bericht = ( $thans_gepauzeerd ) ?
@@ -147,7 +147,7 @@ class AbonnementActie {
 		$stoker->annuleer_stook( $eind_datum );
 
 		$this->abonnement->eind_datum = $eind_datum;
-		$eind_datum_str               = strftime( '%d-%m-%Y', $this->abonnement->eind_datum );
+		$eind_datum_str               = wp_date( 'd-m-Y', $this->abonnement->eind_datum );
 		try {
 			$betalen = new Betalen();
 			$betalen->verwijder_mandaat( $this->abonnement->klant_id );
@@ -173,7 +173,7 @@ class AbonnementActie {
 	 */
 	public function wijzigen( int $wijzig_datum, string $type, string|array $soort ) : bool {
 		$gewijzigd        = false;
-		$wijzig_datum_str = strftime( '%d-%m-%Y', $wijzig_datum );
+		$wijzig_datum_str = wp_date( 'd-m-Y', $wijzig_datum );
 		switch ( $type ) {
 			case 'soort':
 				$gewijzigd               = $this->abonnement->soort !== $soort;
@@ -266,7 +266,7 @@ class AbonnementActie {
 	 * @param string $tekst De handeling.
 	 */
 	private function log( string $tekst ) : void {
-		$this->abonnement->historie = array_merge( $this->abonnement->historie, [ strftime( '%c' ) . " $tekst" ] );
+		$this->abonnement->historie = array_merge( $this->abonnement->historie, [ wp_date( 'D, j M H:i Y' ) . " $tekst" ] );
 	}
 
 }

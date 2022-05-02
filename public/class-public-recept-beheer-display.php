@@ -131,7 +131,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 					&nbsp;
 				<?php endif; ?></td>
 				<td><?php echo esc_html( $recept->titel ); ?></td>
-				<td data-sort="<?php echo esc_attr( $recept->modified ); ?>"><?php echo esc_html( strftime( $recept->modified ) ); ?></td>
+				<td data-sort="<?php echo esc_attr( strtotime( $recept->modified ) ); ?>"><?php echo esc_html( wp_date( 'd-m-Y H:i', strtotime( $recept->modified ) ) ); ?></td>
 				<td><?php echo esc_html( 'private' === $recept->status ? 'prive' : ( 'publish' === $recept->status ? 'gepubliceerd' : ( 'draft' === $recept->status ? 'concept' : '' ) ) ); ?></td>
 				<td>
 					<a href="#" title="wijzig recept" class="kleistad-edit kleistad-edit-link" data-id="<?php echo esc_attr( $recept->id ); ?>" data-actie="wijzigen" >&nbsp;</a>

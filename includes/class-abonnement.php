@@ -206,8 +206,8 @@ class Abonnement extends Artikel {
 					'%s abonnement %s vanaf %s tot %s',
 					$this->soort,
 					$this->code,
-					strftime( '%d-%m-%Y', $this->start_datum ),
-					strftime( '%d-%m-%Y', $this->start_eind_datum )
+					wp_date( 'd-m-Y', $this->start_datum ),
+					wp_date( 'd-m-Y', $this->start_eind_datum )
 				),
 				'aantal'       => opties()['start_maanden'],
 				'verval_datum' => $this->start_datum,
@@ -217,8 +217,8 @@ class Abonnement extends Artikel {
 					'%s abonnement %s vanaf %s tot %s',
 					$this->soort,
 					$this->code,
-					strftime( '%d-%m-%Y', strtotime( '+1 day', $this->start_eind_datum ) ),
-					strftime( '%d-%m-%Y', strtotime( '-1 day', $this->reguliere_datum ) )
+					wp_date( 'd-m-Y', strtotime( '+1 day', $this->start_eind_datum ) ),
+					wp_date( 'd-m-Y', strtotime( '-1 day', $this->reguliere_datum ) )
 				),
 				'aantal'       => $this->get_overbrugging_fractie(),
 				'verval_datum' => strtotime( '+7 days 0:00', $this->start_eind_datum ),
@@ -228,7 +228,7 @@ class Abonnement extends Artikel {
 					'%s abonnement %s periode %s',
 					$this->soort,
 					$this->code,
-					strftime( '%B %Y', strtotime( 'today' ) )
+					wp_date( 'F Y', strtotime( 'today' ) )
 				),
 				'aantal' => 1,
 			],
@@ -237,7 +237,7 @@ class Abonnement extends Artikel {
 					'%s abonnement %s periode %s (deels gepauzeerd)',
 					$this->soort,
 					$this->code,
-					strftime( '%B %Y', strtotime( 'today' ) )
+					wp_date( 'F Y', strtotime( 'today' ) )
 				),
 				'aantal' => $this->get_pauze_fractie(),
 			],
@@ -277,10 +277,10 @@ class Abonnement extends Artikel {
 					'voornaam'                => $abonnee->first_name,
 					'achternaam'              => $abonnee->last_name,
 					'wachtwoord_reset'        => $abonnee->geef_pwd_reset_anchor(),
-					'start_datum'             => strftime( '%d-%m-%Y', $this->start_datum ),
-					'pauze_datum'             => $this->pauze_datum ? strftime( '%d-%m-%Y', $this->pauze_datum ) : '',
-					'eind_datum'              => $this->eind_datum ? strftime( '%d-%m-%Y', $this->eind_datum ) : '',
-					'herstart_datum'          => $this->herstart_datum ? strftime( '%d-%m-%Y', $this->herstart_datum ) : '',
+					'start_datum'             => wp_date( 'd-m-Y', $this->start_datum ),
+					'pauze_datum'             => $this->pauze_datum ? wp_date( 'd-m-Y', $this->pauze_datum ) : '',
+					'eind_datum'              => $this->eind_datum ? wp_date( 'd-m-Y', $this->eind_datum ) : '',
+					'herstart_datum'          => $this->herstart_datum ? wp_date( 'd-m-Y', $this->herstart_datum ) : '',
 					'abonnement'              => $this->soort,
 					'abonnement_code'         => $this->code,
 					'abonnement_opmerking'    => empty( $this->opmerking ) ? '' : "De volgende opmerking heb je doorgegeven: $this->opmerking ",
@@ -314,22 +314,22 @@ class Abonnement extends Artikel {
 	private function status_uitgebreid() : string {
 		$vandaag = strtotime( 'today' );
 		if ( $this->is_geannuleerd() ) {
-			return 'gestopt sinds ' . strftime( '%x', $this->eind_datum );
+			return 'gestopt sinds ' . wp_date( 'd-m-Y', $this->eind_datum );
 		} elseif ( $this->is_gepauzeerd() ) {
-			return 'gepauzeerd sinds ' . strftime( '%x', $this->pauze_datum ) . ' tot ' . strftime( '%x', $this->herstart_datum );
+			return 'gepauzeerd sinds ' . wp_date( 'd-m-Y', $this->pauze_datum ) . ' tot ' . wp_date( 'd-m-Y', $this->herstart_datum );
 		} elseif ( $vandaag > $this->start_datum ) {
 			if ( $vandaag < $this->pauze_datum ) {
-				return 'pauze gepland per ' . strftime( '%x', $this->pauze_datum ) . ' tot ' . strftime( '%x', $this->herstart_datum );
+				return 'pauze gepland per ' . wp_date( 'd-m-Y', $this->pauze_datum ) . ' tot ' . wp_date( 'd-m-Y', $this->herstart_datum );
 			} elseif ( $vandaag <= $this->eind_datum ) {
-				return 'stop gepland per ' . strftime( '%x', $this->eind_datum );
+				return 'stop gepland per ' . wp_date( 'd-m-Y', $this->eind_datum );
 			} elseif ( $vandaag < $this->start_eind_datum ) {
-				return 'gestart sinds ' . strftime( '%x', $this->start_datum );
+				return 'gestart sinds ' . wp_date( 'd-m-Y', $this->start_datum );
 			} elseif ( $vandaag < $this->reguliere_datum ) {
 				return 'overbrugging';
 			}
-			return 'actief sinds ' . strftime( '%x', $this->start_datum );
+			return 'actief sinds ' . wp_date( 'd-m-Y', $this->start_datum );
 		}
-		return 'aangemeld per ' . strftime( '%x', $this->datum ) . ', start per ' . strftime( '%x', $this->start_datum );
+		return 'aangemeld per ' . wp_date( 'd-m-Y', $this->datum ) . ', start per ' . wp_date( 'd-m-Y', $this->start_datum );
 	}
 
 	/**

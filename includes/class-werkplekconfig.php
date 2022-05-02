@@ -85,7 +85,7 @@ class WerkplekConfig {
 	 * @param int $datum De datum van de wijziging.
 	 */
 	public function adhoc_meesters( int $datum ) {
-		$atelierdag       = strftime( '%A', $datum );
+		$atelierdag       = wp_date( 'l', $datum );
 		$werkplekmeesters = new WerkplekMeesters( $datum );
 		$meester_ids      = $werkplekmeesters->get_ids();
 		foreach ( array_keys( $this->meesters[ $atelierdag ] ) as $dagdeel ) {
@@ -103,7 +103,7 @@ class WerkplekConfig {
 	private function get_atelierdagen() : array {
 		$dagen = [];
 		for ( $dagteller = 0; $dagteller < 7; $dagteller++ ) {
-			$dagen[] = strftime( '%A', strtotime( "next Monday +$dagteller days" ) );
+			$dagen[] = wp_date( 'l', strtotime( "next Monday +$dagteller days" ) );
 		}
 		return $dagen;
 	}

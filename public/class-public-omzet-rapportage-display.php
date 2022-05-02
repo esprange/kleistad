@@ -23,7 +23,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="maand" value="<?php echo esc_attr( $this->data['maand'] ); ?>">
 		<input type="hidden" name="jaar" value="<?php echo esc_attr( $this->data['jaar'] ); ?>">
 		<p>Omzet in
-			<?php echo esc_html( $this->data['maand'] ? strftime( '%B %Y', mktime( 0, 0, 0, $this->data['maand'], 1, $this->data['jaar'] ) ) : $this->data['jaar'] ); ?>
+			<?php echo esc_html( $this->data['maand'] ? wp_date( 'F Y', mktime( 0, 0, 0, $this->data['maand'], 1, $this->data['jaar'] ) ) : $this->data['jaar'] ); ?>
 			voor <?php echo esc_html( $this->data['artikel'] ); ?></p>.
 
 		<table class="kleistad-datatable display compact nowrap" >
@@ -48,7 +48,7 @@ class Public_Omzet_Rapportage_Display extends Public_Shortcode_Display {
 				<tr>
 					<td><?php echo esc_html( $detail['code'] ); ?></td>
 					<td><?php echo esc_html( $detail['klant'] ); ?></td>
-					<td data-sort="<?php echo esc_attr( $detail['datum'] ); ?>" ><?php echo esc_html( strftime( '%d-%m-%Y', $detail['datum'] ) ); ?></td>
+					<td data-sort="<?php echo esc_attr( $detail['datum'] ); ?>" ><?php echo esc_html( wp_date( 'd-m-Y', $detail['datum'] ) ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['netto'], 2 ) ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['btw'], 2 ) ); ?></td>
 					<td style="text-align:right">&euro; <?php echo esc_html( number_format_i18n( $detail['netto'] + $detail['btw'], 2 ) ); ?></td>

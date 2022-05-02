@@ -71,7 +71,7 @@ class OmzetRapport extends PDF {
 		foreach ( $omzetdetails as $omzetdetail ) {
 			$this->Cell( 40, $hoogte, substr( $omzetdetail['code'], 0, 20 ), 0, 0, 'L' );
 			$this->Cell( 50, $hoogte, utf8_decode( substr( $omzetdetail['klant'], 0, 25 ) ), 0, 0, 'L' );
-			$this->Cell( 20, $hoogte, strftime( '%d-%m-%Y', $omzetdetail['datum'] ), 0, 0, 'L' );
+			$this->Cell( 20, $hoogte, wp_date( 'd-m-Y', $omzetdetail['datum'] ), 0, 0, 'L' );
 			$this->Cell( 20, $hoogte, number_format_i18n( $omzetdetail['netto'], 2 ), 0, 0, 'R' );
 			$this->Cell( 20, $hoogte, number_format_i18n( $omzetdetail['btw'], 2 ), 0, 0, 'R' );
 			$this->Ln();
@@ -89,7 +89,7 @@ class OmzetRapport extends PDF {
 		$upload_dir = wp_get_upload_dir();
 		$rapportage = new Orderrapportage();
 		$file       = sprintf( 'omzet_%d-%d-%s.pdf', $jaar, $maand, uniqid() );
-		$this->init( $file, 'Omzet rapport periode ' . strftime( '%B', mktime( 0, 0, 0, $maand, 1, 2020 ) ) . " $jaar" );
+		$this->init( $file, 'Omzet rapport periode ' . wp_date( 'F', mktime( 0, 0, 0, $maand, 1, 2020 ) ) . " $jaar" );
 		$omzet = $rapportage->maandrapport( $maand, $jaar );
 		$this->tabel( $omzet );
 		foreach ( $omzet as $naam => $omzetregel ) {

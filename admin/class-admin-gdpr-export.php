@@ -102,7 +102,7 @@ class Admin_GDPR_Export {
 					],
 					[
 						'name'  => 'Aanmeld datum',
-						'value' => strftime( '%d-%m-%y', $inschrijving->datum ),
+						'value' => wp_date( 'd-m-y', $inschrijving->datum ),
 					],
 					[
 						'name'  => 'Opmerking',
@@ -140,23 +140,23 @@ class Admin_GDPR_Export {
 			'data'        => [
 				[
 					'name'  => 'Aanmeld datum',
-					'value' => strftime( '%d-%m-%y', $abonnement->datum ),
+					'value' => wp_date( 'd-m-y', $abonnement->datum ),
 				],
 				[
 					'name'  => 'Start datum',
-					'value' => $abonnement->start_datum > 0 ? strftime( '%d-%m-%y', $abonnement->start_datum ) : '',
+					'value' => $abonnement->start_datum > 0 ? wp_date( 'd-m-y', $abonnement->start_datum ) : '',
 				],
 				[
 					'name'  => 'Eind datum',
-					'value' => $abonnement->eind_datum > 0 ? strftime( '%d-%m-%y', $abonnement->eind_datum ) : '',
+					'value' => $abonnement->eind_datum > 0 ? wp_date( 'd-m-y', $abonnement->eind_datum ) : '',
 				],
 				[
 					'name'  => 'Pauze datum',
-					'value' => $abonnement->pauze_datum > 0 ? strftime( '%d-%m-%y', $abonnement->pauze_datum ) : '',
+					'value' => $abonnement->pauze_datum > 0 ? wp_date( 'd-m-y', $abonnement->pauze_datum ) : '',
 				],
 				[
 					'name'  => 'Herstart datum',
-					'value' => $abonnement->herstart_datum > 0 ? strftime( '%d-%m-%y', $abonnement->herstart_datum ) : '',
+					'value' => $abonnement->herstart_datum > 0 ? wp_date( 'd-m-y', $abonnement->herstart_datum ) : '',
 				],
 				[
 					'name'  => 'Opmerking',
@@ -213,11 +213,11 @@ class Admin_GDPR_Export {
 						$items[] = [
 							'group_id'    => 'stook',
 							'group_label' => 'Stook informatie',
-							'item_id'     => 'stook-' . $oven->id . date( 'm-d-Y', $stook->datum ),
+							'item_id'     => 'stook-' . $oven->id . date( 'Y-m-d', $stook->datum ),
 							'data'        => [
 								[
 									'name'  => 'Datum',
-									'value' => strftime( $stook->datum ),
+									'value' => wp_date( 'd-m-Y', $stook->datum ),
 								],
 								[
 									'name'  => 'Oven',
@@ -249,7 +249,7 @@ class Admin_GDPR_Export {
 			'data'        => [
 				[
 					'name'  => 'Datum',
-					'value' => strftime( $dagdelenkaart->start_datum ),
+					'value' => wp_date( 'd-m-Y', $dagdelenkaart->start_datum ),
 				],
 			],
 		];

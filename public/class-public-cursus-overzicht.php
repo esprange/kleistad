@@ -237,7 +237,7 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 					'code'                 => "C$cursus->id",
 					'naam'                 => $cursus->naam,
 					'docent'               => $cursus->get_docent_naam(),
-					'start_datum'          => strftime( '%d-%m-%Y', $cursus->start_datum ),
+					'start_datum'          => wp_date( 'd-m-Y', $cursus->start_datum ),
 					'heeft_inschrijvingen' => $this->heeft_inschrijvingen( $cursus->id ),
 				];
 			}

@@ -150,8 +150,8 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 		$werkplekconfigs = new WerkplekConfigs();
 		$werkplekconfig  = $bestaatreeds ? $werkplekconfigs->find( intval( $params['start_datum'] ), intval( $params['eind_datum'] ) ) : new WerkplekConfig();
 		return [
-			'start_datum' => strftime( '%d-%m-%Y', $werkplekconfig->start_datum ),
-			'eind_datum'  => $werkplekconfig->eind_datum ? strftime( '%d-%m-%Y', $werkplekconfig->eind_datum ) : '',
+			'start_datum' => wp_date( 'd-m-Y', $werkplekconfig->start_datum ),
+			'eind_datum'  => $werkplekconfig->eind_datum ? wp_date( 'd-m-Y', $werkplekconfig->eind_datum ) : '',
 			'config'      => $werkplekconfig->config,
 			'meesters'    => $werkplekconfig->meesters,
 			'config_eind' => 0 === count( $werkplekconfigs ) || ( $bestaatreeds && 0 === $werkplekconfig->eind_datum ),

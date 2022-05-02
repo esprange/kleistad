@@ -227,7 +227,7 @@ class Order {
 		global $wpdb;
 		if ( ! empty( $reden ) ) {
 			$historie       = $this->historie;
-			$historie[]     = sprintf( '%s %s', strftime( '%x %H:%M' ), $reden );
+			$historie[]     = sprintf( '%s %s', wp_date( 'd-m-Y H:i' ), $reden );
 			$this->historie = $historie;
 		}
 		$this->gesloten = $this->credit_id || ( 0.01 >= abs( $this->get_te_betalen() ) );

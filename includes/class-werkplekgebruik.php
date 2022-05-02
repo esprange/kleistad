@@ -53,7 +53,7 @@ class WerkplekGebruik {
 		$this->datum     = $datum;
 		$werkplekconfigs = new WerkplekConfigs();
 		$werkplekconfig  = $werkplekconfigs->find( $this->datum ) ?: new WerkplekConfig();
-		$this->dagconfig = $werkplekconfig->config[ strftime( '%A', $this->datum ) ];
+		$this->dagconfig = $werkplekconfig->config[ wp_date( 'l', $this->datum ) ];
 		$gebruik         = get_option( 'kleistad_werkplek_' . date( 'Ymd', $this->datum ) );
 		if ( false === $gebruik ) {
 			foreach ( self::WERKPLEK_DAGDEEL as $dagdeel ) {
@@ -66,7 +66,7 @@ class WerkplekGebruik {
 			$this->gebruik = $gebruik;
 		}
 		foreach ( self::WERKPLEK_DAGDEEL as $dagdeel ) {
-			$meester_id                                   = $werkplekconfig->meesters[ strftime( '%A', $this->datum ) ][ $dagdeel ];
+			$meester_id                                   = $werkplekconfig->meesters[ wp_date( 'l', $this->datum ) ][ $dagdeel ];
 			$this->gebruik[ $dagdeel ][ self::MEESTER ] ??= [ $meester_id ];
 		}
 	}

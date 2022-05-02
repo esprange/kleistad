@@ -53,7 +53,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	 * @return string
 	 */
 	private function per() : string {
-		return date( 'j', $this->per_datum ) . strftime( ' %B %Y', $this->per_datum );
+		return wp_date( 'j F Y', $this->per_datum );
 	}
 
 	/**

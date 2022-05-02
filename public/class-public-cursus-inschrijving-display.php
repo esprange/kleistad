@@ -125,8 +125,8 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 		<?php
 		foreach ( $this->data['cursussen'] as $cursus ) {
 			$tooltip  = 0 < $cursus->inschrijfkosten ?
-				sprintf( 'cursus %s start per %s|%d lessen', $cursus->naam, strftime( '%x', $cursus->start_datum ), count( $cursus->lesdatums ) ) :
-				sprintf( 'workshop op %s', strftime( '%x', $cursus->start_datum ) );
+				sprintf( 'cursus %s start per %s|%d lessen', $cursus->naam, wp_date( 'd-m-Y', $cursus->start_datum ), count( $cursus->lesdatums ) ) :
+				sprintf( 'workshop op %s', wp_date( 'd-m-Y', $cursus->start_datum ) );
 			$tooltip .=
 				sprintf( '|docent is %s|kosten &euro;%01.2f p.p.', $cursus->get_docent_naam(), $cursus->inschrijfkosten + $cursus->cursuskosten );
 			$style    = $cursus->is_open() ? '' : 'color: gray;';

@@ -213,7 +213,7 @@ class Public_Reservering extends Shortcode {
 			}
 			$html .= "data-form='" . htmlspecialchars( $json_selectie, ENT_QUOTES ) . "' ";
 		}
-		$html .= '><td>' . strftime( '%d %A', $stook->datum ) . "</td><td> {$status['wie']}</td><td>{$status['soortstook']}</td><td>{$status['temperatuur']}</td></tr>";
+		$html .= '><td>' . wp_date( 'd l', $stook->datum ) . "</td><td> {$status['wie']}</td><td>{$status['soortstook']}</td><td>{$status['temperatuur']}</td></tr>";
 		return $html;
 	}
 
@@ -232,7 +232,7 @@ class Public_Reservering extends Shortcode {
 		$body   = '';
 		$stoken = [];
 		for ( $datum = $vanaf; $datum < $tot; $datum += DAY_IN_SECONDS ) {
-			$dagnaam = strftime( '%A', $datum );
+			$dagnaam = wp_date( 'l', $datum );
 			if ( $oven->{$dagnaam} ) {
 				$stoken[] = new Stook( $oven, $datum );
 			}
@@ -259,7 +259,7 @@ class Public_Reservering extends Shortcode {
 				'oven_id' => $oven_id,
 				'maand'   => $maand,
 				'jaar'    => $jaar,
-				'periode' => strftime( '%B-%Y', mktime( 0, 0, 0, $maand, 1, $jaar ) ),
+				'periode' => wp_date( 'F-Y', mktime( 0, 0, 0, $maand, 1, $jaar ) ),
 			]
 		);
 	}
@@ -310,7 +310,7 @@ class Public_Reservering extends Shortcode {
 				'oven_id' => $oven_id,
 				'maand'   => $maand,
 				'jaar'    => $jaar,
-				'periode' => strftime( '%B-%Y', mktime( 0, 0, 0, $maand, 1, $jaar ) ),
+				'periode' => wp_date( 'F-Y', mktime( 0, 0, 0, $maand, 1, $jaar ) ),
 			]
 		);
 	}

@@ -58,16 +58,16 @@ class AbonnementBetaling extends ArtikelBetaling {
 			'start'        => [
 				'vermelding' => sprintf(
 					' vanaf %s tot %s',
-					strftime( '%d-%m-%Y', $this->abonnement->start_datum ),
-					strftime( '%d-%m-%Y', $this->abonnement->start_eind_datum )
+					wp_date( 'd-m-Y', $this->abonnement->start_datum ),
+					wp_date( 'd-m-Y', $this->abonnement->start_eind_datum )
 				),
 				'mandaat'    => false,
 			],
 			'overbrugging' => [
 				'vermelding' => sprintf(
 					' vanaf %s tot %s',
-					strftime( '%d-%m-%Y', $this->abonnement->start_eind_datum + DAY_IN_SECONDS ),
-					strftime( '%d-%m-%Y', $this->abonnement->reguliere_datum - DAY_IN_SECONDS )
+					wp_date( 'd-m-Y', $this->abonnement->start_eind_datum + DAY_IN_SECONDS ),
+					wp_date( 'd-m-Y', $this->abonnement->reguliere_datum - DAY_IN_SECONDS )
 				),
 				'mandaat'    => true,
 			],
@@ -79,8 +79,8 @@ class AbonnementBetaling extends ArtikelBetaling {
 				'vermelding' => sprintf(
 					' %s, pauze van %s tot %s',
 					explode( '-', $referentie )[2],
-					strftime( '%d-%m-%Y', $this->abonnement->pauze_datum ),
-					strftime( '%d-%m-%Y', $this->abonnement->herstart_datum )
+					wp_date( 'd-m-Y', $this->abonnement->pauze_datum ),
+					wp_date( 'd-m-Y', $this->abonnement->herstart_datum )
 				),
 				'mandaat'    => false,
 			],
@@ -112,7 +112,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 					$this->abonnement->klant_id,
 					$this->abonnement->get_referentie(),
 					$bedrag,
-					"Kleistad abonnement {$this->abonnement->code} " . strftime( '%B %Y', strtotime( 'today' ) ),
+					"Kleistad abonnement {$this->abonnement->code} " . wp_date( 'F Y', strtotime( 'today' ) ),
 				);
 			} catch ( Exception ) { // phpcs:ignore
 				// geen verdere actie.

@@ -48,7 +48,7 @@ class PDF extends FPDF {
 	 * @return void
 	 */
 	public function init( string $filenaam, string $titel ) {
-		$this->footer = "Pagina %d \n" . sprintf( 'bestand %s aangemaakt op %s', $filenaam, datumtijd( true ) );
+		$this->footer = "Pagina %d \n" . sprintf( 'bestand %s aangemaakt op %s', $filenaam, wp_date( 'd-m-Y, H:i' ) );
 		$this->titel  = $titel;
 		$this->SetCreator( get_site_url() );
 		$this->SetAuthor( 'Kleistad' );

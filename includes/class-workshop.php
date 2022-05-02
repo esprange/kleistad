@@ -312,7 +312,7 @@ class Workshop extends Artikel {
 	public function get_factuurregels() : Orderregels {
 		$orderregels               = new Orderregels();
 		$orderregels->verval_datum = $this->datum;
-		$orderregels->toevoegen( new Orderregel( "$this->naam op " . strftime( '%A %d-%m-%y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten ) );
+		$orderregels->toevoegen( new Orderregel( "$this->naam op " . wp_date( 'l d-m-y', $this->datum ) . ", $this->aantal deelnemers", 1, $this->kosten ) );
 		return $orderregels;
 	}
 
@@ -346,9 +346,9 @@ class Workshop extends Artikel {
 				'organisatie'         => $this->organisatie,
 				'aantal'              => $this->aantal,
 				'workshop_code'       => $this->code,
-				'workshop_datum'      => strftime( '%A %d-%m-%y', $this->datum ),
-				'workshop_start_tijd' => strftime( '%H:%M', $this->start_tijd ),
-				'workshop_eind_tijd'  => strftime( '%H:%M', $this->eind_tijd ),
+				'workshop_datum'      => wp_date( 'l d-m-y', $this->datum ),
+				'workshop_start_tijd' => wp_date( 'H:i', $this->start_tijd ),
+				'workshop_eind_tijd'  => wp_date( 'H:i', $this->eind_tijd ),
 				'workshop_docent'     => str_replace( ', ', ' en ', $this->get_docent_naam() ),
 				'workshop_technieken' => implode( ', ', $this->technieken ),
 				'workshop_programma'  => $this->programma,

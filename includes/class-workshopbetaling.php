@@ -61,7 +61,7 @@ class WorkshopBetaling extends ArtikelBetaling {
 			],
 			$referentie,
 			$bedrag,
-			sprintf( 'Kleistad workshop %s op %s', $this->workshop->code, strftime( '%d-%m-%Y', $this->workshop->datum ) ),
+			sprintf( 'Kleistad workshop %s op %s', $this->workshop->code, wp_date( 'd-m-Y', $this->workshop->datum ) ),
 			$bericht,
 			false
 		);
