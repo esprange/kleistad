@@ -46,9 +46,8 @@
 			'draw',
 			function() {
 				const $filter = $( '#kleistad_workshops_filter' );
-				let	current   = $filter.html();
 				if ( ! $( '#kleistad_toon_vervallen' ).length ) {
-					$filter.html( current + '<div><label for="kleistad_toon_vervallen"> toon vervallen <input type="checkbox" id="kleistad_toon_vervallen"></label></div>' );
+					$filter.append( '<div><label for="kleistad_toon_vervallen"> toon vervallen <input type="checkbox" id="kleistad_toon_vervallen"></label></div>' );
 				}
 			}
 		)
