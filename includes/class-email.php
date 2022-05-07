@@ -287,7 +287,7 @@ class Email {
 		}
 		$footer   = 'noreply' === $this->mailparams['auto'] ? 'Deze e-mail is automatisch gegenereerd en kan niet beantwoord worden.' :
 			( 'reply' === $this->mailparams['auto'] ? 'Deze e-mail is automatisch gegenereerd.' : '' );
-		$template = file_get_contents( __DIR__ . '\mailtemplate.html', 'r' ); // phpcs:ignore
+		$template = file_get_contents( __DIR__ . '/mailtemplate.html', 'r' ); // phpcs:ignore
 
 		return str_replace(
 			[

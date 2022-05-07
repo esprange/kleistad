@@ -81,7 +81,7 @@ class Recept {
 			if ( $recept_post ) {
 				$this->auteur_id = $recept_post->post_author;
 				$this->data      = array_merge(
-					json_decode( $recept_post->post_content, true ),
+					json_decode( $recept_post->post_content, true ) ?? [],
 					[
 						'id'        => $recept_post->ID,
 						'titel'     => $recept_post->post_title,
