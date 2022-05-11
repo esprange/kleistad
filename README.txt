@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.9.2
-Stable tag: 7.3.10
+Stable tag: 7.3.11
+
 
 
 
@@ -34,6 +35,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 7.3.11 =
+* Extra instelling om alleen betalingen per ideal vanuit de inschrijfformulieren mogelijk te maken
+* Aanpassing dat beheerder een cursist op wachtlijst opnieuw kan inschrijven en na bankbetaling kan inschrijven
+* Zowel bij workshop beheer als bij cursus beheer het overzicht aangepast dat alleen de voornaam van de docent getoond wordt
 = 7.3.10 =
 * Diverse bugs en refactoring
 * Stookbestand ook in de toekomst, vasthouden workshop beheer filter status

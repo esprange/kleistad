@@ -69,7 +69,8 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 * @return Public_Saldo_Display
 	 */
 	protected function betaal_info() : Public_Saldo_Display {
-		?>
+		if ( setup()['stort'] ) :
+			?>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
 				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" checked />
@@ -85,6 +86,16 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-10">
 				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" />
 				<label for="kleistad_betaal_stort"></label>
+			</div>
+		</div>
+			<?php
+			return $this;
+		endif;
+		?>
+		<div class ="kleistad-row">
+			<input name="betaal" value="ideal" type="hidden">
+			<div class="kleistad-col-10">
+				<?php $this->ideal(); ?>
 			</div>
 		</div>
 		<?php

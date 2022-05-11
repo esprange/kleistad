@@ -307,7 +307,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			array_walk(
 				$docenten,
 				function( &$docent ) {
-					$docent = substr( $docent, 0, 14 );
+					$docent = strstr( $docent . ' ', ' ', true );
 				}
 			);
 			$this->data['workshops'][] = [

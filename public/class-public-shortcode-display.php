@@ -315,7 +315,8 @@ abstract class Public_Shortcode_Display {
 	 * Render de betaal sectie
 	 */
 	protected function betaal_info() {
-		?>
+		if ( setup()['stort'] ) :
+			?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
 				<label class="kleistad-label">Bepaal de wijze van betalen.</label>
@@ -336,6 +337,21 @@ abstract class Public_Shortcode_Display {
 			<div class="kleistad-col-10">
 				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" <?php checked( $this->data['input']['betaal'], 'stort' ); ?> />
 				<label for="kleistad_betaal_stort"></label>
+			</div>
+		</div>
+			<?php
+			return;
+		endif;
+		?>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<label class="kleistad-label">Voer de betaling uit</label>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<input name="betaal" value="ideal" type="hidden">
+				<?php $this->ideal(); ?>
 			</div>
 		</div>
 		<?php

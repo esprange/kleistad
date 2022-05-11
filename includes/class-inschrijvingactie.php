@@ -167,7 +167,8 @@ class InschrijvingActie {
 		if ( 'ideal' === $betaalwijze ) {
 			return $this->inschrijving->betaling->doe_ideal( 'Bedankt voor de betaling! Er wordt een email verzonden met bevestiging', $this->inschrijving->aantal * $this->inschrijving->cursus->get_bedrag(), $this->inschrijving->get_referentie() );
 		}
-		$order = new Order( $this->inschrijving->get_referentie() );
+		$order             = new Order( '' ); // Forceer een nieuwe order, zodat iemand die op de wachtlijst staat alsnog opnieuw kan inschrijven.
+		$order->referentie = $this->inschrijving->get_referentie();
 		$this->inschrijving->verzend_email( 'inschrijving', $order->bestel( 0.0, $this->inschrijving->get_restant_melding() ) );
 		return true;
 	}

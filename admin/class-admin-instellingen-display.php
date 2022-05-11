@@ -239,6 +239,7 @@ class Admin_Instellingen_Display {
 		$parameters = [
 			'profiel' => 'Gebruikersprofiel actief',
 			'betalen' => 'Mollie betalen actief',
+			'stort'   => 'Betalingen per bank toegestaan',
 		];
 		foreach ( $parameters as $id => $naam ) {
 			?>

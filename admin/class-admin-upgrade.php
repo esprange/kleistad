@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 166;
+	const DBVERSIE = 167;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -95,6 +95,7 @@ class Admin_Upgrade {
 			'imap_adres'         => '',
 			'imap_pwd'           => '',
 			'betalen'            => 0,
+			'stort'              => 1,
 			'profiel'            => 0,
 		];
 		$current_options = get_option( 'kleistad-opties', [] );
@@ -266,23 +267,9 @@ class Admin_Upgrade {
 	// phpcs:disable
 
 	/**
-	 * Speciale functie om de maand juni over te slaan.
-	 * @return void
-	 */
-	private function convert_abonnementen() {
-		foreach ( new Abonnementen() as $abonnement  ) {
-			if ( 202205 === $abonnement->factuur_maand ) {
-				$abonnement->factuur_maand = 202206;
-				$abonnement->save();
-			}
-		}
-	}
-
-	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
-		$this->convert_abonnementen();
 	}
 
 }
