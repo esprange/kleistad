@@ -78,7 +78,7 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-3">
-				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" id="kleistad_submit" type="submit" value="indelen" >Bevestigen</button>
+				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" id="kleistad_submit" type="submit" value="indelen_lopend" >Bevestigen</button>
 			</div>
 			<div class="kleistad-col-4">
 			</div>
@@ -92,18 +92,18 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 	/**
 	 * Render het uitschrijven formulier
 	 */
-	protected function uitschrijven() {
-		$this->form( 'form_uitschrijven' );
+	protected function uitschrijven_indelen() {
+		$this->form( 'form_uitschrijven_indelen' );
 	}
 
 	/**
 	 * Maak het uitschrijven formulier aan
 	 */
-	protected function form_uitschrijven() {
+	protected function form_uitschrijven_indelen() {
 		?>
 		<input type="hidden" name="cursus_id" value="<?php echo esc_attr( $this->data['cursus']['id'] ); ?>">
 		<input type="hidden" name="cursist_id" value="<?php echo esc_attr( $this->data['cursist']['id'] ); ?>">
-		<h2>Verwijderen uit cursus wachtlijst</h2>
+		<h2>Indelen op cursus of uitschrijven van wachtlijst</h2>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
 				<label>Cursist</label>
@@ -114,9 +114,10 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-3">
-				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" type="submit" id="kleistad_submit" value="uitschrijven" >Bevestigen</button>
+				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" type="submit" id="kleistad_submit" value="uitschrijven" >Uitschrijven</button>
 			</div>
 			<div class="kleistad-col-4">
+				<button class="kleistad-button" name="kleistad_submit_cursus_overzicht" type="submit" id="kleistad_submit" value="indelen" >Indelen</button>
 			</div>
 			<div class="kleistad-col-3">
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
@@ -204,9 +205,9 @@ class Public_Cursus_Overzicht_Display extends Public_Shortcode_Display {
 							if ( ! $cursist['ingedeeld'] ) :
 								if ( $cursist['wachtlopend'] || $cursist['wachtlijst'] ) :
 									?>
-									<a href="#" title="<?php echo $cursist['wachtlijst'] ? 'uitschrijven' : 'indelen'; ?>" class="kleistad-edit-link"
+									<a href="#" title="<?php echo $cursist['wachtlijst'] ? 'uitschrijven of indelen' : 'indelen'; ?>" class="kleistad-edit-link"
 									data-id="<?php echo esc_attr( $cursist['code'] ); ?>"
-									data-actie="<?php echo $cursist['wachtlijst'] ? 'uitschrijven' : 'indelen'; ?>" >
+									data-actie="<?php echo $cursist['wachtlijst'] ? 'uitschrijven_indelen' : 'indelen'; ?>" >
 									<?php echo $cursist['wachtlijst'] ? 'wachtlijst' : 'wacht op factuur'; ?> </a>
 								<?php else : ?>
 									nog niet betaald !

@@ -61,11 +61,11 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
-	 * Prepareer 'cursus_overzicht' uitschrijven form
+	 * Prepareer 'cursus_overzicht' uitschrijven en geforceerd indelen form
 	 *
 	 * @return string
 	 */
-	protected function prepare_uitschrijven() : string {
+	protected function prepare_uitschrijven_indelen() : string {
 		return $this->prepare_indelen();
 	}
 
@@ -158,14 +158,28 @@ class Public_Cursus_Overzicht extends ShortcodeForm {
 	}
 
 	/**
-	 * Deel een cursist in
+	 * Deel een cursist in op een lopende cursus.
+	 *
+	 * @return array
+	 */
+	protected function indelen_lopend() : array {
+		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $this->data['input']['cursist_id'] );
+		$inschrijving->actie->indelen_lopend( (float) $this->data['input']['kosten'] );
+
+		return [
+			'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
+	 * Deel een wachtlijst cursist in.
 	 *
 	 * @return array
 	 */
 	protected function indelen() : array {
 		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $this->data['input']['cursist_id'] );
-		$inschrijving->actie->indelen_lopend( (float) $this->data['input']['kosten'] );
-
+		$inschrijving->actie->indelen_geforceerd();
 		return [
 			'status'  => $this->status( 'De order is aangemaakt en een email met factuur is naar de cursist verstuurd' ),
 			'content' => $this->display(),

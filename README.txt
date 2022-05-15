@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 5.9.2
-Stable tag: 7.3.11
+Stable tag: 7.3.12
+
 
 
 
@@ -35,6 +36,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 7.3.12 =
+* Mogelijkheid tot geforceerd indelen van een cursist op de wachtlijst
 = 7.3.11 =
 * Extra instelling om alleen betalingen per ideal vanuit de inschrijfformulieren mogelijk te maken
 * Aanpassing dat beheerder een cursist op wachtlijst opnieuw kan inschrijven en na bankbetaling kan inschrijven

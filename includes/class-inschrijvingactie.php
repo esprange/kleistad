@@ -191,6 +191,20 @@ class InschrijvingActie {
 	}
 
 	/**
+	 * Geforceerd indelen op een cursus
+	 *
+	 * @return void
+	 */
+	public function indelen_geforceerd() {
+		$this->inschrijving->ingedeeld    = true;
+		$this->inschrijving->wacht_datum  = 0;
+		$this->inschrijving->artikel_type = 'inschrijving';
+		$this->inschrijving->save();
+		$order = new Order( $this->inschrijving->get_referentie() );
+		$this->inschrijving->verzend_email( 'inschrijving', $order->bestel() );
+	}
+
+	/**
 	 * Deel de cursist in nadat deze op de wachtlijst gestaan heeft.
 	 *
 	 * @return bool|string De betaal URI of het resultaat.
