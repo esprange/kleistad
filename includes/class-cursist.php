@@ -81,7 +81,7 @@ class Cursist extends Gebruiker {
 	public function is_actief() : bool {
 		$vandaag = strtotime( 'today' );
 		foreach ( $this->inschrijvingen as $inschrijving ) {
-			if ( $vandaag <= $inschrijving->cursus->eind_datum ) {
+			if ( $inschrijving->ingedeeld && $vandaag <= $inschrijving->cursus->eind_datum && $vandaag >= $inschrijving->cursus->start_datum ) {
 				return true;
 			}
 		}

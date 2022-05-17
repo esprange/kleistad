@@ -85,4 +85,29 @@ class SaldoActie {
 		];
 		$this->saldo->save();
 	}
+
+	/**
+	 * Registreer een materialen verbruik
+	 *
+	 * @param int    $verbruik Het verbruik in gram.
+	 * @param string $reden    De reden van het verbruik.
+	 *
+	 * @return void
+	 */
+	public function verbruik( int $verbruik, string $reden ) {
+		$kosten = opties()['materiaalprijs'] * $verbruik / 1000;
+		if ( 0.01 > $kosten ) {
+			return;
+		}
+		$this->saldo->bedrag  -= $kosten;
+		$this->saldo->reden    = 'verbruik materialen geregisteerd door ' . wp_get_current_user()->display_name;
+		$this->saldo->storting = [
+			'code'    => "S{$this->saldo->klant_id}-verbruik",
+			'datum'   => date( 'Y-m-d', strtotime( 'today' ) ),
+			'prijs'   => - $kosten,
+			'gewicht' => $verbruik,
+			'status'  => "$verbruik gram materialen: $reden",
+		];
+		$this->saldo->save();
+	}
 }

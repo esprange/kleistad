@@ -256,11 +256,13 @@ class Public_Cursus_Inschrijving extends Public_Bestelling {
 	 * @return array
 	 */
 	protected function inschrijven() : array {
-		$gebruiker_id = registreren( $this->data['input'] );
-		if ( ! is_int( $gebruiker_id ) ) {
+		$cursist_id = registreren( $this->data['input'] );
+		if ( ! is_int( $cursist_id ) ) {
 			return [ 'status' => $this->status( new WP_Error( 'intern', 'Er is iets fout gegaan, probeer het later opnieuw' ) ) ];
 		}
-		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $gebruiker_id );
+		$cursist = get_user_by( 'ID', $cursist_id );
+		$cursist->add_role( CURSIST );
+		$inschrijving = new Inschrijving( $this->data['input']['cursus_id'], $cursist_id );
 		if ( $inschrijving->ingedeeld && ! $inschrijving->geannuleerd ) {
 			return [
 				'status' => $this->status( new WP_Error( 'dubbel', 'Volgens onze administratie ben je al ingedeeld op deze cursus. Neem eventueel contact op met Kleistad.' ) ),

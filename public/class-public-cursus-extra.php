@@ -128,7 +128,9 @@ class Public_Cursus_Extra extends ShortcodeForm {
 					'status' => $this->status( new WP_Error( 'intern', 'Er is een interne fout opgetreden, probeer het eventueel later opnieuw.' ) ),
 				];
 			}
-			$extra_cursisten[]  = $extra_cursist_id;
+			$extra_cursisten[] = $extra_cursist_id;
+			$cursist           = get_user_by( 'ID', $extra_cursist_id );
+			$cursist->add_role( CURSIST );
 			$extra_inschrijving = new Inschrijving( $this->data['inschrijving']->cursus->id, $extra_cursist_id );
 			if ( $extra_inschrijving->ingedeeld && 0 < $extra_inschrijving->aantal ) {
 				return [

@@ -28,12 +28,19 @@ class Public_Werkplek extends Shortcode {
 	 * @return string
 	 */
 	protected function prepare() : string {
-		$this->data['datums']    = $this->geef_mogelijke_datums();
+		$gebruiker = wp_get_current_user();
+		if ( ! array_intersect( [ BESTUUR, DOCENT, LID ], $gebruiker->roles ) ) {
+			$cursist = new Cursist( $gebruiker->ID );
+			if ( ! $cursist->is_actief() ) {
+				return $this->status( new WP_Error( 'werkplek', 'Een werkplek is alleen tijdens de cursusperiode te reserveren' ) );
+			}
+		}
+		$this->data['datums'] = $this->geef_mogelijke_datums();
+		if ( 0 === count( $this->data['datums'] ) ) {
+			return $this->status( new WP_Error( 'werkplek', 'Er zijn geen datums beschikbaar' ) );
+		}
 		$this->data['meesters']  = $this->get_meesters();
 		$this->data['cursisten'] = $this->geef_cursisten();
-		if ( 0 === count( $this->data['datums'] ) ) {
-			return $this->status( new WP_Error( 'config', 'Er zijn geen datums beschikbaar' ) );
-		}
 		return $this->content();
 	}
 

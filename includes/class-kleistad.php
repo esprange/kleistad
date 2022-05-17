@@ -21,6 +21,7 @@ const RESERVEER = 'kleistad_reservering_aanmaken';
 const BESTUUR   = 'bestuur';
 const DOCENT    = 'docenten';
 const LID       = 'leden';
+const CURSIST   = 'cursisten';
 const BOEKHOUD  = 'boekhouding';
 const INTERN    = 'intern';
 const OCHTEND   = 'Ochtend';

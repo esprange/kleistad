@@ -1,6 +1,6 @@
 <?php
 /**
- * De class voor de rendering van stooksaldo functies van de plugin.
+ * De class voor de rendering van saldo functies van de plugin.
  *
  * @link https://www.kleistad.nl
  *
@@ -13,7 +13,7 @@ namespace Kleistad;
 /**
  * Admin display class
  */
-class Admin_Stooksaldo_Display extends Admin_Display {
+class Admin_Saldo_Display extends Admin_Display {
 
 	/**
 	 * Toon de metabox
@@ -61,12 +61,12 @@ class Admin_Stooksaldo_Display extends Admin_Display {
 	 * @return void
 	 */
 	public function page() : void {
-		$table = new Admin_Stooksaldo();
+		$table = new Admin_Saldo();
 		?>
 		<div class="wrap">
 			<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
-			<h2>Stooksaldo</h2>
-			<form id="stooksaldo-table" method="GET">
+			<h2>Saldo</h2>
+			<form id="saldo-table" method="GET">
 				<input type="hidden" name="page" value="<?php echo filter_input( INPUT_GET, 'page' ); ?>"/>
 				<?php
 				$table->prepare_items();

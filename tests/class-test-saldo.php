@@ -71,7 +71,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 
 		$saldo = new Saldo( $stoker->ID );
 		$saldo->betaling->verwerk( $order, $bedrag, true, 'bank' );
-		$this->assertEquals( 'Bijstorting stooksaldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
+		$this->assertEquals( 'Betaling saldo per bankstorting', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk mail attachment incorrect' );
 
 		$saldo = new Saldo( $stoker->ID );
@@ -97,7 +97,7 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 
 		$saldo = new Saldo( $stoker->ID );
 		$this->assertEquals( $bedrag, $saldo->bedrag, 'bedrag incorrect' );
-		$this->assertEquals( 'Bijstorting stooksaldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
+		$this->assertEquals( 'Betaling saldo per ideal', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk attachment incorrect' );
 		$this->assertEquals( 1, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 
@@ -107,9 +107,40 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 
 		$saldo = new Saldo( $stoker->ID );
 		$this->assertEquals( 2 * $bedrag, $saldo->bedrag, 'bedrag incorrect' );
-		$this->assertEquals( 'Bijstorting stooksaldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
+		$this->assertEquals( 'Betaling saldo per ideal', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 		$this->assertFalse( $mailer->get_last_sent( $stoker->user_email )->attachment, 'verwerk attachment incorrect' );
 		$this->assertEquals( 3, $mailer->get_sent_count(), 'verwerk aantal mail incorrect' );
 
+	}
+
+	/**
+	 * Test de verbruik functie
+	 */
+	public function test_verbruik() {
+		$saldo         = $this->maak_saldo();
+		$saldo->bedrag = 10;
+		$saldo->reden  = 'test';
+		$saldo->save();
+		$saldo->actie->verbruik( 1000, 'test' );
+
+		$saldo = new Saldo( $saldo->klant_id );
+		$this->assertEquals( 10 - 1000 * opties()['materiaalprijs'] / 1000, $saldo->bedrag, 'verbruik onjuist' );
+	}
+
+	/**
+	 * Test terugboeken
+	 */
+	public function test_terugboeken() {
+		$mailer = tests_retrieve_phpmailer_instance();
+		$saldo  = $this->maak_saldo();
+		$stoker = new Stoker( $saldo->klant_id );
+
+		$saldo->actie->nieuw( 10, 'ideal' );
+		$order = new Order( $saldo->get_referentie() );
+		$saldo->betaling->verwerk( $order, 10, true, 'ideal' );
+		$this->assertTrue( $saldo->betaling->doe_terugboeken(), 'terugboeken onjuist' );
+		$saldo = new Saldo( $saldo->klant_id );
+		$this->assertEquals( 0, $saldo->bedrag, 'saldo na terugboeken ongelijk 0' );
+		$this->assertEquals( 'Terugboeking restant saldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 	}
 }

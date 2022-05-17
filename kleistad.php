@@ -9,8 +9,8 @@
  * @wordpress-plugin
  * Plugin Name:       Kleistad
  * Plugin URI:        https://github.com/esprange/kleistad
- * Description:       Een plugin voor vereniging Kleistad. Oven reserveringen, stooksaldo administratie, cursus adminstratie en keramiek recepten.
- * Version:           7.3.12
+ * Description:       Een plugin voor vereniging Kleistad. Oven reserveringen, saldo administratie, cursus adminstratie en keramiek recepten.
+ * Version:           7.4.1
  * Author:            Eric Sprangers
  * Author URI:        https://www.kleistad.nl
  * License:           GPL-3.0+

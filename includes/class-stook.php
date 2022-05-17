@@ -287,14 +287,14 @@ class Stook {
 					$saldo->bedrag   -= $stookdeel->prijs;
 					$saldo->reden     = 'stook op ' . date( 'd-m-Y', $this->datum ) . ' door ' . $stoker->display_name;
 					if ( false === $saldo->save() ) {
-						fout( __CLASS__, "stooksaldo van gebruiker $medestoker->display_name kon niet aangepast worden met kosten $stookdeel->prijs" );
+						fout( __CLASS__, "saldo van gebruiker $medestoker->display_name kon niet aangepast worden met kosten $stookdeel->prijs" );
 						continue;
 					}
 					if ( 0 < $stookdeel->prijs ) {
 						$emailer->send(
 							[
 								'to'         => "$medestoker->display_name <$medestoker->user_email>",
-								'subject'    => 'Kleistad kosten zijn verwerkt op het stooksaldo',
+								'subject'    => 'Kleistad kosten zijn verwerkt op het saldo',
 								'slug'       => 'stookkosten_verwerkt',
 								'parameters' => [
 									'voornaam'   => $medestoker->first_name,

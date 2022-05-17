@@ -12,15 +12,15 @@
 namespace Kleistad;
 
 /**
- * De admin-specifieke functies van de plugin voor stooksaldo beheer.
+ * De admin-specifieke functies van de plugin voor saldo beheer.
  */
-class Admin_Stooksaldo_Handler extends Admin_Handler {
+class Admin_Saldo_Handler extends Admin_Handler {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->display = new Admin_Stooksaldo_Display();
+		$this->display = new Admin_Saldo_Display();
 	}
 
 	/**
@@ -29,32 +29,32 @@ class Admin_Stooksaldo_Handler extends Admin_Handler {
 	 * @since    5.2.0
 	 */
 	public function add_pages() {
-		add_submenu_page( 'kleistad', 'Stooksaldo beheer', 'Stooksaldo beheer', 'manage_options', 'stooksaldo', [ $this->display, 'page' ] );
-		add_submenu_page( 'stooksaldo', 'Wijzigen stooksaldo', 'Wijzigen stooksaldo', 'manage_options', 'stooksaldo_form', [ $this, 'form_handler' ] );
+		add_submenu_page( 'kleistad', 'Saldo beheer', 'Saldo beheer', 'manage_options', 'saldo', [ $this->display, 'page' ] );
+		add_submenu_page( 'saldo', 'Wijzigen saldo', 'Wijzigen saldo', 'manage_options', 'saldo_form', [ $this, 'form_handler' ] );
 	}
 
 	/**
-	 * Toon en verwerk stooksaldo
+	 * Toon en verwerk saldo
 	 *
 	 * @since    5.2.0
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function form_handler() {
-		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_stooksaldo' ) ? $this->update_saldo() : $this->saldo();
-		add_meta_box( 'stooksaldo_form_meta_box', 'Stooksaldo', [ $this->display, 'form_meta_box' ], 'stooksaldo', 'normal' );
-		$this->display->form_page( $item, 'stooksaldo', 'stooksaldo', $this->notice, $this->message, false );
+		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_saldo' ) ? $this->update_saldo() : $this->saldo();
+		add_meta_box( 'saldo_form_meta_box', 'Saldo', [ $this->display, 'form_meta_box' ], 'saldo', 'normal' );
+		$this->display->form_page( $item, 'saldo', 'saldo', $this->notice, $this->message, false );
 	}
 
 	/**
-	 * Valideer de stooksaldo
+	 * Valideer de saldo
 	 *
 	 * @since    5.2.0
 	 *
-	 * @param array $item de stooksaldo.
+	 * @param array $item de saldo.
 	 * @return string
 	 */
-	private function validate_stooksaldo( array $item ): string {
+	private function validate_saldo( array $item ): string {
 		$messages = [];
 		if ( ! empty( $item['saldo'] ) && ! is_numeric( $item['saldo'] ) ) {
 			$messages[] = 'Kosten format is fout';
@@ -79,7 +79,7 @@ class Admin_Stooksaldo_Handler extends Admin_Handler {
 				'naam'  => FILTER_SANITIZE_STRING,
 			]
 		);
-		$this->notice = $this->validate_stooksaldo( $item );
+		$this->notice = $this->validate_saldo( $item );
 		if ( empty( $this->notice ) ) {
 			$saldo = new Saldo( $item['id'] );
 			$saldo->actie->correctie( $item['saldo'] );

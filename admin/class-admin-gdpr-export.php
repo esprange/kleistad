@@ -172,20 +172,20 @@ class Admin_GDPR_Export {
 	}
 
 	/**
-	 * Export stooksaldo.
+	 * Export saldo.
 	 *
 	 * @since      4.3.0
 	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return array De persoonlijke data (stooksaldo).
+	 * @return array De persoonlijke data (saldo).
 	 */
 	private function export_saldo( int $gebruiker_id ) : array {
 		$saldo   = new Saldo( $gebruiker_id );
 		$items   = [];
 		$items[] = [
-			'group_id'    => 'stooksaldo',
-			'group_label' => 'Stooksaldo informatie',
-			'item_id'     => 'stooksaldo-1',
+			'group_id'    => 'saldo',
+			'group_label' => 'Saldo informatie',
+			'item_id'     => 'saldo-1',
 			'data'        => [
 				[
 					'name'  => 'Saldo',
@@ -200,7 +200,7 @@ class Admin_GDPR_Export {
 	 * Export functie privacy gevoelige data.
 	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return array De persoonlijke data (stooksaldo).
+	 * @return array De persoonlijke data (saldo).
 	 */
 	private function export_reservering( int $gebruiker_id ) : array {
 		$items = [];
@@ -237,7 +237,7 @@ class Admin_GDPR_Export {
 	 * Export functie privacy gevoelige data.
 	 *
 	 * @param  int $gebruiker_id Het gebruiker id.
-	 * @return array De persoonlijke data (stooksaldo).
+	 * @return array De persoonlijke data (saldo).
 	 */
 	private function export_dagdelenkaart( int $gebruiker_id ) : array {
 		$dagdelenkaart = new Dagdelenkaart( $gebruiker_id );

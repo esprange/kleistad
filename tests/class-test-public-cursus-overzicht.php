@@ -69,8 +69,8 @@ class Test_Public_Cursus_Overzicht extends Kleistad_UnitTestCase {
 		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
 		$inschrijving->save();
 
-		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => "C$cursus_id-$cursist_id" ], 'uitschrijven' );
-		$this->assertStringContainsString( 'Verwijderen uit cursus wachtlijst', $result, 'prepare uitschrijven cursist incorrect' );
+		$result = $this->public_display_actie( self::SHORTCODE, [ 'id' => "C$cursus_id-$cursist_id" ], 'uitschrijven_indelen' );
+		$this->assertStringContainsString( 'Indelen op cursus of uitschrijven van wachtlijst', $result, 'prepare uitschrijven cursist incorrect' );
 		$this->assertStringContainsString( get_user_by( 'ID', $cursist_id )->display_name, $result, 'prepare uitschrijven cursist naam ontbreekt' );
 	}
 

@@ -123,6 +123,15 @@ class Shortcodes {
 				'access' => [ DOCENT, BESTUUR ],
 			],
 			/**
+			 * Verbruik registreren cursussen
+			 */
+			'cursus_verbruik'       => (object) [
+				'script' => true,
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'kleistad-form' ],
+				'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
+				'access' => [ DOCENT ],
+			],
+			/**
 			 * Dagdelenkaart kopen
 			 */
 			'dagdelenkaart'         => (object) [
@@ -170,7 +179,7 @@ class Shortcodes {
 				'script' => true,
 				'js'     => [ 'jquery', 'fullcalendar', 'kleistad' ],
 				'css'    => [ 'fullcalendar' ],
-				'access' => [ DOCENT, LID, BESTUUR ],
+				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
 			],
 			/**
 			 * Toon omzet rapportage
@@ -190,7 +199,7 @@ class Shortcodes {
 				'script' => false,
 				'js'     => [ 'jquery', 'datatables', 'kleistad' ],
 				'css'    => [ 'datatables', 'dashicons' ],
-				'access' => [ DOCENT, LID, BESTUUR ],
+				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
 			],
 			/**
 			 * Beheer recepten
@@ -229,7 +238,7 @@ class Shortcodes {
 				'script' => true,
 				'js'     => [ 'jquery', 'password-strength-meter', 'kleistad-form' ],
 				'css'    => [],
-				'access' => [ DOCENT, LID, BESTUUR ],
+				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
 			],
 			/**
 			 * Reservering stook
@@ -247,7 +256,7 @@ class Shortcodes {
 				'script' => true,
 				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
-				'access' => [ DOCENT, LID, BESTUUR ],
+				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
 			],
 			/**
 			 * Overzicht alle stokers
@@ -274,7 +283,7 @@ class Shortcodes {
 				'script' => true,
 				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'jquery-ui-dialog', 'kleistad' ],
 				'css'    => [ 'jquery-ui', 'dashicons' ],
-				'access' => [ DOCENT, LID, BESTUUR, 'cursist-1' ],
+				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
 			],
 			/**
 			 * Rapportage Werkplekgebruik
@@ -285,7 +294,7 @@ class Shortcodes {
 				'script' => false,
 				'js'     => [ 'jquery', 'jquery-ui-datepicker', 'datatables', 'kleistad' ],
 				'css'    => [ 'jquery-ui', 'datatables' ],
-				'access' => [ DOCENT, LID, BESTUUR, 'cursist-1' ],
+				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
 			],
 			/**
 			 * Aanvraag workshop

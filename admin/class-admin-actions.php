@@ -16,7 +16,7 @@ namespace Kleistad;
  */
 class Admin_Actions {
 
-	private const FUNCTIES = [ 'ovens', 'cursisten', 'abonnees', 'stooksaldo', 'regelingen', 'recepttermen', 'werkplekken' ];
+	private const FUNCTIES = [ 'ovens', 'cursisten', 'abonnees', 'saldo', 'regelingen', 'recepttermen', 'werkplekken' ];
 
 	/**
 	 *  Instellingen beheer

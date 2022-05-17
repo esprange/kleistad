@@ -74,6 +74,18 @@ class Public_Saldo extends Public_Bestelling {
 	 * @since   4.0.87
 	 */
 	protected function save() : array {
+		if ( 'terugboeking' === $this->data['input']['betaal'] ) {
+			return $this->terugboeken();
+		}
+		return $this->verhogen();
+	}
+
+	/**
+	 * Verhoog het saldo
+	 *
+	 * @return array
+	 */
+	private function verhogen() : array {
 		$saldo  = new Saldo( intval( $this->data['input']['gebruiker_id'] ) );
 		$result = $saldo->actie->nieuw( floatval( $this->data['input']['bedrag'] ), $this->data['input']['betaal'] );
 		if ( false === $result ) {
@@ -85,6 +97,26 @@ class Public_Saldo extends Public_Bestelling {
 		return [
 			'content' => $this->goto_home(),
 			'status'  => $this->status( 'Er is een email verzonden met nadere informatie over de betaling' ),
+		];
+	}
+
+	/**
+	 * Storneer het openstaand bedrag
+	 *
+	 * @return array
+	 */
+	private function terugboeken() : array {
+		$saldo = new Saldo( intval( $this->data['input']['gebruiker_id'] ) );
+		if ( 1.00 > $saldo->bedrag ) {
+			return [ 'status' => $this->status( new WP_Error( 'saldo', 'Het openstaand bedrag is kleiner dan 1 euro, vanwege de administratiekosten is terugstorting niet mogelijk' ) ) ];
+		}
+		$result = $saldo->betaling->doe_terugboeken();
+		if ( false === $result ) {
+			return [ 'status' => $this->status( new WP_Error( 'saldo', 'Terugstorting was niet mogelijk, neem eventueel contact op met Kleistad' ) ) ];
+		}
+		return [
+			'content' => $this->goto_home(),
+			'status'  => $this->status( 'Er is een email verzonden met nadere informatie over het terug te storten bedrag' ),
 		];
 	}
 }

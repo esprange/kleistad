@@ -71,11 +71,13 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function rapport() {
+		$ovenstook = count( array_column( $this->data['items'], 'oven' ) );
 		?>
-		<p>Stookrapport voor <?php echo esc_html( $this->data['naam'] ); ?> (het huidig saldo is &euro; <?php echo esc_html( $this->data['saldo'] ); ?>)</p>
+		<p>Saldorapport voor <?php echo esc_html( $this->data['naam'] ); ?> (het huidig saldo is &euro; <?php echo esc_html( $this->data['saldo'] ); ?>)</p>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "desc" ]]' >
 			<thead>
 				<tr>
+				<?php if ( $ovenstook ) : ?>
 					<th>Datum</th>
 					<th>Oven</th>
 					<th>Stoker</th>
@@ -85,29 +87,39 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 					<th data-class-name="dt-body-right">%</th>
 					<th data-class-name="dt-body-right">Bedrag</th>
 					<th data-class-name="dt-body-center">Voorlopig</th>
+				<?php else : ?>
+					<th>Datum</th>
+					<th>Actie</th>
+					<th data-class-name="dt-body-right">Bedrag</th>
+				<?php endif; ?>
 				</tr>
 			</thead>
 			<tbody>
 				<?php foreach ( $this->data['items'] as $item ) : ?>
 				<tr>
 					<td data-sort=<?php echo esc_attr( $item['datum'] ); ?> ><?php echo esc_html( date( 'd-m-Y', $item['datum'] ) ); ?></td>
-					<?php if ( isset( $item['oven'] ) ) : ?>
-						<td><?php echo esc_html( $item['oven'] ); ?></td>
-						<td><?php echo esc_html( $item['stoker'] ); ?></td>
-						<td><?php echo esc_html( $item['stook'] ); ?></td>
-						<td><?php echo esc_html( $item['temp'] ); ?></td>
-						<td><?php echo esc_html( $item['prog'] ); ?></td>
-						<td><?php echo esc_html( $item['perc'] ); ?></td>
+					<?php if ( $ovenstook ) : ?>
+						<?php if ( isset( $item['oven'] ) ) : ?>
+							<td><?php echo esc_html( $item['oven'] ); ?></td>
+							<td><?php echo esc_html( $item['stoker'] ); ?></td>
+							<td><?php echo esc_html( $item['stook'] ); ?></td>
+							<td><?php echo esc_html( $item['temp'] ); ?></td>
+							<td><?php echo esc_html( $item['prog'] ); ?></td>
+							<td><?php echo esc_html( $item['perc'] ); ?></td>
+						<?php else : ?>
+							<td colspan="6"><?php echo esc_html( $item['status'] ); ?></td>
+							<td style="display:none">
+							<td style="display:none">
+							<td style="display:none">
+							<td style="display:none">
+							<td style="display:none">
+						<?php endif ?>
+						<td>&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
+						<td data-sort="<?php echo (int) $item['voorlopig']; ?>"><span <?php echo $item['voorlopig'] ? 'class="dashicons dashicons-yes"' : ''; ?> ></span></td>
 					<?php else : ?>
-						<td colspan="6"><?php echo esc_html( $item['status'] ); ?></td>
-						<td style="display:none">
-						<td style="display:none">
-						<td style="display:none">
-						<td style="display:none">
-						<td style="display:none">
-					<?php endif ?>
-					<td>&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
-					<td data-sort="<?php echo (int) $item['voorlopig']; ?>"><span <?php echo $item['voorlopig'] ? 'class="dashicons dashicons-yes"' : ''; ?> ></span></td>
+						<td><?php echo esc_html( $item['status'] ); ?></td>
+						<td>&euro; <?php echo esc_html( $item['bedrag'] ); ?></td>
+					<?php endif; ?>
 				</tr>
 				<?php endforeach ?>
 			</tbody>

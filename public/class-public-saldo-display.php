@@ -1,6 +1,6 @@
 <?php
 /**
- * Toon het stooksaldo bijstorten formulier
+ * Toon het saldo bijstorten formulier
  *
  * @link       https://www.kleistad.nl
  * @since      4.0.87
@@ -38,7 +38,7 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 */
 	private function bijstorten() : Public_Saldo_Display {
 		?>
-		<p>Je huidige stooksaldo is <strong>&euro; <?php echo esc_html( $this->data['saldo'] ); ?></strong></p>
+		<p>Je huidige saldo is <strong>&euro; <?php echo esc_html( $this->data['saldo'] ); ?></strong></p>
 		<input type="hidden" name="gebruiker_id" value="<?php echo esc_attr( $this->data['gebruiker_id'] ); ?>" />
 		<div class="kleistad-row">
 			<div class="kleistad-col-2">
@@ -69,8 +69,7 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 * @return Public_Saldo_Display
 	 */
 	protected function betaal_info() : Public_Saldo_Display {
-		if ( setup()['stort'] ) :
-			?>
+		?>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
 				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_ideal" value="ideal" checked />
@@ -82,20 +81,19 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 				<?php $this->ideal(); ?>
 			</div>
 		</div>
+		<?php if ( setup()['stort'] ) : ?>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
 				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_stort" required value="stort" />
 				<label for="kleistad_betaal_stort"></label>
 			</div>
 		</div>
-			<?php
-			return $this;
-		endif;
-		?>
+		<?php endif; ?>
 		<div class ="kleistad-row">
-			<input name="betaal" value="ideal" type="hidden">
 			<div class="kleistad-col-10">
-				<?php $this->ideal(); ?>
+				<input class="kleistad-radio" type="radio" name="betaal" id="kleistad_betaal_terugboeking" required value="terugboeking"
+				<?php disabled( $this->data['saldo'] <= opties()['administratiekosten'] ); ?> />
+				<label for="kleistad_betaal_terugboeking"></label>
 			</div>
 		</div>
 		<?php
@@ -107,9 +105,9 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 */
 	private function submit() {
 		?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-10" style="padding-top: 20px;">
-				<button class="kleistad-button" type="submit" name="kleistad_submit_saldo" id="kleistad_submit" >Betalen</button><br />
+		<div class="kleistad-row" style="padding-top: 20px;">
+			<div class="kleistad-col-5" >
+				<button class="kleistad-button" type="submit" name="kleistad_submit_saldo" value="storten" id="kleistad_submit" >Betalen</button><br />
 			</div>
 		</div>
 		<?php

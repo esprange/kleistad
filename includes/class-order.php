@@ -329,6 +329,30 @@ class Order {
 	}
 
 	/**
+	 * Boek een bedrag terug
+	 *
+	 * @param float  $bedrag     Het bedrag.
+	 * @param float  $kosten     De kosten die in rekening worden gebracht.
+	 * @param string $vermelding De vermelding van het terug te storten bedrag.
+	 * @param string $opmerking  Een eventuele opmerking op de factuur.
+	 *
+	 * @return string
+	 */
+	public function terugboeken( float $bedrag, float $kosten, string $vermelding, string $opmerking = '' ) : string {
+		$nieuwe_order              = clone $this;
+		$nieuwe_order->gesloten    = false;
+		$nieuwe_order->orderregels = new Orderregels();
+		$nieuwe_order->orderregels->toevoegen( new Orderregel( $vermelding, 1, - $bedrag ) );
+		$nieuwe_order->orderregels->toevoegen( new Orderregel( 'administratie kosten', 1, $kosten ) );
+		$nieuwe_order->betaald = 0.0;
+		$nieuwe_order->save( sprintf( "Terugboeken bedrag\n%s", $opmerking ) );
+		do_action( 'kleistad_order_stornering', $nieuwe_order ); // Er zou stornering nodig kunnen zijn.
+		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
+		$factuur = new Factuur();
+		return $factuur->run( $nieuwe_order );
+	}
+
+	/**
 	 * Een bestelling wijzigen. In dit geval wordt de complete factuur gecrediteerd en wordt een nieuwe factuur verstuurd, het eerder betaalde bedrag wordt op de
 	 * nieuwe order geboekt. Als het te veel is dan wordt dit automatisch gestorneerd.
 	 * Als er al wel betaald is, dan wordt dit overgenomen op de nieuwe factuur.

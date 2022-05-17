@@ -55,10 +55,31 @@ class SaldoBetaling extends ArtikelBetaling {
 			$this->saldo->klant_id,
 			$referentie,
 			$bedrag,
-			sprintf( 'Kleistad stooksaldo %s', $this->saldo->code ),
+			sprintf( 'Kleistad saldo %s', $this->saldo->code ),
 			$bericht,
 			false
 		);
+	}
+
+	/**
+	 * Stort het saldo terug.
+	 *
+	 * @return bool
+	 */
+	public function doe_terugboeken() : bool {
+		$order = new Order( $this->saldo->get_referentie() );
+		if ( $order->id ) {
+			$result = $this->saldo->verzend_email(
+				'_terugboeking',
+				$order->terugboeken( $this->saldo->bedrag, opties()['administratiekosten'], 'terugstorting restant saldo' )
+			);
+			if ( $result ) {
+				$this->saldo->bedrag = 0.0;
+				$this->saldo->save();
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -75,8 +96,8 @@ class SaldoBetaling extends ArtikelBetaling {
 	public function verwerk( Order $order, float $bedrag, bool $betaald, string $type, string $transactie_id = '' ) {
 		if ( $betaald ) {
 			$this->saldo->bedrag = round( $this->saldo->bedrag + $bedrag, 2 );
-			$this->saldo->reden  = $bedrag > 0 ? 'storting' : 'stornering';
-			$this->saldo->update_storting( $this->saldo->get_referentie(), "{$this->saldo->reden} per $type op " . date( 'd-m-Y' ) );
+			$this->saldo->reden  = $bedrag > 0 ? 'storting' : 'terugboeking';
+			$this->saldo->update_storting( $this->saldo->get_referentie(), "{$this->saldo->reden} per $type" );
 			$this->saldo->save();
 			if ( $order->id ) {
 				/**

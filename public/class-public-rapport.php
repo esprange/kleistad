@@ -105,6 +105,7 @@ class Public_Rapport extends Shortcode {
 				'datum'     => strtotime( $storting['datum'] ),
 				'bedrag'    => number_format_i18n( $storting['prijs'], 2 ),
 				'status'    => $storting['status'] ?? '',
+				'gewicht'   => $storting['gewicht'] ?? '',
 				'voorlopig' => ! isset( $storting['status'] ),
 			];
 		}

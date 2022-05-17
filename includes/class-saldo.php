@@ -28,6 +28,13 @@ class Saldo extends Artikel {
 	];
 	public const META_KEY  = 'kleistad_stooksaldo';
 
+	private const EMAIL_SUBJECT = [
+		'_bank'          => 'Betaling saldo per bankstorting',
+		'_ideal'         => 'Betaling saldo per ideal', // In dit geval wordt een factuur meegezonden.
+		'_ideal_betaald' => 'Betaling saldo per ideal',
+		'_terugboeking'  => 'Terugboeking restant saldo',
+	];
+
 	/**
 	 * De beginwaarden van een dagdelenkaart.
 	 *
@@ -163,7 +170,7 @@ class Saldo extends Artikel {
 		return $emailer->send(
 			[
 				'to'          => "$gebruiker->display_name <$gebruiker->user_email>",
-				'subject'     => 'Bijstorting stooksaldo',
+				'subject'     => self::EMAIL_SUBJECT[ $type ],
 				'slug'        => 'saldo' . $type,
 				'attachments' => $factuur ?: [],
 				'parameters'  => [
@@ -227,7 +234,7 @@ class Saldo extends Artikel {
 	 */
 	public function get_factuurregels() : Orderregels {
 		$orderregels = new Orderregels();
-		$orderregels->toevoegen( new Orderregel( 'stooksaldo', 1, $this->prijs ) );
+		$orderregels->toevoegen( new Orderregel( 'stook of materialen saldo', 1, $this->prijs ) );
 		return $orderregels;
 	}
 

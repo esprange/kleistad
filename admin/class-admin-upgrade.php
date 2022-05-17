@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 167;
+	const DBVERSIE = 169;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -52,6 +52,8 @@ class Admin_Upgrade {
 			'cursusinschrijfprijs' => 25,
 			'cursusmaximum'        => 12,
 			'workshopprijs'        => 120,
+			'materiaalprijs'       => 2.50,
+			'administratiekosten'  => 1.00,
 			'termijn'              => 4,
 			'start_maanden'        => 3,
 			'min_pauze_weken'      => 2,
@@ -267,9 +269,26 @@ class Admin_Upgrade {
 	// phpcs:disable
 
 	/**
+	 * Geef alle cursisten van lopende en toekomstige cursussen de CURSIST rol.
+	 */
+	private function convert_cursisten() {
+		$cursisten = new Cursisten();
+		$vandaag   = strtotime( 'today' );
+		foreach ( $cursisten as $cursist ) {
+			foreach ( $cursist->inschrijvingen as $inschrijving ) {
+				if ( $inschrijving->ingedeeld && $vandaag <= $inschrijving->cursus->eind_datum ) {
+					$cursist->add_role( CURSIST );
+					break;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
+		$this->convert_cursisten();
 	}
 
 }

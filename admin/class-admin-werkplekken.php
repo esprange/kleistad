@@ -12,7 +12,7 @@
 namespace Kleistad;
 
 /**
- * Beheer stooksaldo van leden
+ * Beheer saldo van leden
  */
 class Admin_Werkplekken extends Admin_List_Table {
 

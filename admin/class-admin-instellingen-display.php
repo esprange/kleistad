@@ -273,6 +273,8 @@ class Admin_Instellingen_Display {
 			'cursusprijs'          => 'Prijs standaard cursus excl. inschrijving',
 			'cursusinschrijfprijs' => 'Prijs cursus inschrijving',
 			'workshopprijs'        => 'Prijs standaard workshop',
+			'materiaalprijs'       => 'Prijs materiaal verbruik per kilo',
+			'administratiekosten'  => 'Administratie kosten bij terugstorting',
 		];
 		foreach ( $prijzen as $id => $naam ) {
 			?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * De admin-specifieke functies voor beheer van de stooksaldo.
+ * De admin-specifieke functies voor beheer van de saldo.
  *
  * @link       https://www.kleistad.nl
  * @since      4.0.87
@@ -12,9 +12,9 @@
 namespace Kleistad;
 
 /**
- * Beheer stooksaldo van leden
+ * Beheer saldo van leden
  */
-class Admin_Stooksaldo extends Admin_List_Table {
+class Admin_Saldo extends Admin_List_Table {
 
 	/**
 	 * Constructor
@@ -22,7 +22,7 @@ class Admin_Stooksaldo extends Admin_List_Table {
 	public function __construct() {
 		parent::__construct(
 			[
-				'singular' => 'stooksaldo',
+				'singular' => 'saldo',
 				'plural'   => 'stooksaldi',
 			]
 		);
@@ -36,7 +36,7 @@ class Admin_Stooksaldo extends Admin_List_Table {
 	 */
 	public function column_naam( array $item ) : string {
 		$actions = [
-			'edit' => sprintf( '<a href="?page=stooksaldo_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
+			'edit' => sprintf( '<a href="?page=saldo_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 		];
 
 		return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );

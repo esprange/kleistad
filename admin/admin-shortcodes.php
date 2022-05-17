@@ -62,7 +62,7 @@
 					</li>
 				</ul>
 			</li>
-			<li>[kleistad_saldo] wijzigen stooksaldo</li>
+			<li>[kleistad_saldo] wijzigen saldo</li>
 			<li>[kleistad_werkplek] reserveren van een werkplek</li>
 			<li>[kleistad_werkplekrapport] overzichten werkplekgebruik
 				<ul style="list-style-type:square;margin-left:25px">
@@ -82,6 +82,7 @@
 		<ol>
 			<li>[kleistad_email] formulier om emails naar abonnees en/of cursisten te sturen</li>
 			<li>[kleistad_cursus_overzicht] overzicht cursussen en cursist per cursus</li>
+			<li>[kleistad_cursus_verbruik] formulier om materialen verbruik cursist te registreren</li>
 		</ol>
 	</li>
 	<li><h3>toegankelijk voor bestuur</h3>
@@ -90,7 +91,7 @@
 			<li>[kleistad_cursus_beheer] formulier om cursussen te beheren</li>
 			<li>[kleistad_omzet_rapportage] overzicht omzet op maandbasis</li>
 			<li>[kleistad_registratie_overzicht] overzicht van alle cursisten en leden</li>
-			<li>[kleistad_saldo_overzicht] overzicht stooksaldo leden</li>
+			<li>[kleistad_saldo_overzicht] overzicht saldo cursisten en leden</li>
 			<li>[kleistad_stookbestand] opvragen stookbestand</li>
 			<li>[kleistad_verkoop] verkoop overige artikelen invoeren</li>
 			<li>[kleistad_workshop_beheer] formulier om workshops te beheren</li>
