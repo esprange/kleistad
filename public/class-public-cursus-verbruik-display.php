@@ -32,6 +32,7 @@ class Public_Cursus_Verbruik_Display extends Public_Shortcode_Display {
 			<tr>
 				<th>Code</th>
 				<th>Naam</th>
+				<th>Docent</th>
 				<th>Start</th>
 				<th data-orderable="false"></th>
 			</tr>
@@ -43,6 +44,7 @@ class Public_Cursus_Verbruik_Display extends Public_Shortcode_Display {
 				<tr>
 					<td data-sort="<?php echo esc_attr( $cursus_id ); ?>"><?php echo esc_html( $cursus_info['code'] ); ?></td>
 					<td><?php echo esc_html( $cursus_info['naam'] ); ?></td>
+					<td><?php echo esc_html( $cursus_info['docent'] ); ?></td>
 					<td data-sort="<?php echo esc_attr( $cursus_info['start_dt'] ); ?>"><?php echo esc_html( $cursus_info['start_datum'] ); ?></td>
 					<td>
 						<a href="#" title="toon cursisten" class="kleistad-view kleistad-edit-link"	data-id="<?php echo esc_attr( $cursus_id ); ?>" data-actie="cursisten" >

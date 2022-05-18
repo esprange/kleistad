@@ -23,8 +23,9 @@
 				'change paste keyup',
 				'input[name^=verbruik]',
 				function() {
-					const materiaalprijs = $( '#materiaalprijs' ).val();
-					$( this ).parent().next().html( '€ ' + ( $( this ).val() * materiaalprijs / 1000 ).toFixed( 2 ) );
+					const materiaalprijs = parseFloat( $( '#materiaalprijs' ).val() );
+					let   kosten         = '€ ' + ( $( this ).val() * materiaalprijs / 1000 ).toFixed( 2 );
+					$( this ).closest( 'td' ).next( 'td' ).html( kosten );
 				}
 			);
 		}

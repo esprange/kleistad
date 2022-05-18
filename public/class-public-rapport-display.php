@@ -30,7 +30,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 	protected function rapport_gebruiker() {
 		$this->rapport();
 		?>
-		<button class="kleistad-button kleistad-terug-link" type="button" data-xactie="gebruikers" style="float:right" >Terug</button>
+		<button class="kleistad-button kleistad-terug-link" type="button" data-actie="gebruikers" style="float:right" >Terug</button>
 		<?php
 	}
 

@@ -20,6 +20,7 @@ use Exception;
  *
  * @since 5.0.0
  *
+ * @property string code
  * @property int    id
  * @property string naam
  * @property int    datum

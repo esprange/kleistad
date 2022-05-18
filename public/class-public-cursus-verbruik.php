@@ -39,12 +39,12 @@ class Public_Cursus_Verbruik extends ShortcodeForm {
 	 */
 	protected function prepare_overzicht() : string {
 		$this->data['cursus_info'] = [];
-		$docent_id                 = get_current_user_id();
 		foreach ( new Cursussen( strtotime( '-3 month 0:00' ) ) as $cursus ) {
-			if ( ! $cursus->vervallen && intval( $cursus->docent ) === $docent_id ) {
+			if ( ! $cursus->vervallen ) {
 				$this->data['cursus_info'][ $cursus->id ] = [
 					'code'        => "C$cursus->id",
 					'naam'        => $cursus->naam,
+					'docent'      => $cursus->get_docent_naam(),
 					'start_dt'    => $cursus->start_datum,
 					'start_datum' => wp_date( 'd-m-Y', $cursus->start_datum ),
 				];

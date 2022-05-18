@@ -14,6 +14,7 @@ namespace Kleistad;
 /**
  * Klasse voor het beheren van de stook saldo.
  *
+ * @property string code
  * @property float  bedrag
  * @property array  storting
  * @property float  prijs

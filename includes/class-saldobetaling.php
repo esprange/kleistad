@@ -67,14 +67,27 @@ class SaldoBetaling extends ArtikelBetaling {
 	 * @return bool
 	 */
 	public function doe_terugboeken() : bool {
-		$order = new Order( $this->saldo->get_referentie() );
+		$referentie = '';
+		foreach ( $this->saldo->storting as $storting ) {
+			$code_elementen = explode( '-', $storting['code'] );
+			if ( isset( $code_elementen[2] ) && is_numeric( $code_elementen[2] ) ) {
+				$referentie = $storting['code'];
+			}
+		}
+		$order = new Order( $referentie );
 		if ( $order->id ) {
 			$result = $this->saldo->verzend_email(
 				'_terugboeking',
 				$order->terugboeken( $this->saldo->bedrag, opties()['administratiekosten'], 'terugstorting restant saldo' )
 			);
 			if ( $result ) {
-				$this->saldo->bedrag = 0.0;
+				$this->saldo->storting = [
+					'code'   => "S{$this->saldo->klant_id}-terugboeking",
+					'datum'  => date( 'Y-m-d', strtotime( 'today' ) ),
+					'prijs'  => - $this->saldo->bedrag,
+					'status' => 'terugboeking saldo',
+				];
+				$this->saldo->bedrag   = 0.0;
 				$this->saldo->save();
 			}
 			return true;

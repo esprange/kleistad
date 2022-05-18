@@ -16,6 +16,8 @@ namespace Kleistad;
  *
  * @since 4.0.87
  *
+ * @property string code
+ * @property int    datum
  * @property array  technieken
  * @property array  extra_cursisten
  * @property int    hoofd_cursist_id

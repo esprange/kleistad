@@ -14,6 +14,8 @@ namespace Kleistad;
 /**
  * Class abonnement, alle acties voor het aanmaken en beheren van abonnementen
  *
+ * @property string code
+ * @property int    datum
  * @property int    start_datum
  * @property int    start_eind_datum
  * @property string opmerking

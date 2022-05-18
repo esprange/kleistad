@@ -14,9 +14,6 @@ namespace Kleistad;
 /**
  * Kleistad Artikel class.
  *
- * @property string code
- * @property int    datum
- *
  * @since 6.1.0
  */
 abstract class Artikel {
