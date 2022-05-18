@@ -117,7 +117,9 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 	 * Test de verbruik functie
 	 */
 	public function test_verbruik() {
+		$mailer        = tests_retrieve_phpmailer_instance();
 		$saldo         = $this->maak_saldo();
+		$stoker        = new Stoker( $saldo->klant_id );
 		$saldo->bedrag = 10;
 		$saldo->reden  = 'test';
 		$saldo->save();
@@ -125,6 +127,9 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 
 		$saldo = new Saldo( $saldo->klant_id );
 		$this->assertEquals( 10 - 1000 * opties()['materiaalprijs'] / 1000, $saldo->bedrag, 'verbruik onjuist' );
+
+		$saldo->actie->verbruik( 4000, 'test' );
+		$this->assertEquals( 'Saldo tekort', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 	}
 
 	/**

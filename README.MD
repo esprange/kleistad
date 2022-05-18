@@ -4,7 +4,8 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 5.9.2  
-**Stable tag:** 7.4.1  
+**Stable tag:** 7.4.2  
+
 
 
 
@@ -34,7 +35,7 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 7.4.1 ###
+### 7.4.2 ###
 * Mogelijkheid tot registratie materialen verbruik per cursist
 * Nieuwe rol voor cursisten
 ### 7.3.12 ###

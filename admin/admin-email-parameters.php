@@ -119,7 +119,8 @@
 	<li><h3>saldo_* emails</h3>
 		<ol>
 			<li>saldo_bank : aanvraag saldo met factuur</li>
-			<li>saldo_terugboeking: terugboeken saldo</li>
+			<li>saldo_terugboeking : terugboeken saldo</li>
+			<li>saldo_negatief : melding saldo tekort</li>
 			<li>saldo_ideal : bevestiging betaling saldo per ideal met factuur</li>
 			<li>saldo_ideal_betaald : bevesting betaling saldo per ideal
 				<ul style="list-style-type:square;margin-left:25px">

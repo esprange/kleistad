@@ -109,5 +109,8 @@ class SaldoActie {
 			'status'  => "$verbruik gram materialen: $reden",
 		];
 		$this->saldo->save();
+		if ( 0 > $this->saldo->bedrag ) {
+			$this->saldo->verzend_email( '_negatief' );
+		}
 	}
 }

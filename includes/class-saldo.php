@@ -33,6 +33,7 @@ class Saldo extends Artikel {
 		'_ideal'         => 'Betaling saldo per ideal', // In dit geval wordt een factuur meegezonden.
 		'_ideal_betaald' => 'Betaling saldo per ideal',
 		'_terugboeking'  => 'Terugboeking restant saldo',
+		'_negatief'      => 'Saldo tekort',
 	];
 
 	/**
