@@ -3,8 +3,9 @@
 **Donate link:** https://www.kleistad.nl  
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
-**Tested up to:** 5.9.2  
-**Stable tag:** 7.4.3  
+**Tested up to:** 5.9.3  
+**Stable tag:** 7.4.4  
+
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -33,7 +34,7 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 7.4.3 ###
+### 7.4.4 ###
 * Mogelijkheid tot registratie materialen verbruik per cursist
 * Nieuwe rol voor cursisten
 ### 7.3.12 ###

@@ -125,6 +125,12 @@ class Public_Cursus_Verbruik extends ShortcodeForm {
 				'saldo'      => $saldo->bedrag,
 				'verbruiken' => $verbruiken,
 			];
+			usort(
+				$cursisten,
+				function( $links, $rechts ) {
+					return $links['naam'] <=> $rechts['naam'];
+				}
+			);
 		}
 		return $cursisten;
 	}

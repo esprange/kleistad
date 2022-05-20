@@ -123,8 +123,18 @@ class Common {
 	 */
 	public function login_redirect( string $url, string $requested_url, WP_User|WP_Error $user ) : string {
 		if ( is_a( $user, 'WP_User' ) && $requested_url ) {
-			$url = ( $user->has_cap( BESTUUR ) ) ? home_url( '/bestuur/' ) : (
-				$user->has_cap( LID ) ? home_url( '/leden/' ) : home_url( '/werkplek/' ) );
+			foreach (
+				[
+					BESTUUR => 'bestuur',
+					DOCENT  => 'docenten',
+					LID     => 'leden',
+					CURSIST => 'cursisten',
+				] as $role => $dir ) {
+				if ( $user->has_cap( $role ) && get_page_by_path( $dir ) ) {
+					$url = home_url( "\\$dir\\" );
+					break;
+				}
+			}
 		}
 		return $url;
 	}

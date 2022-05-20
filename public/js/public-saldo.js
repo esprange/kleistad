@@ -68,6 +68,21 @@
 					$( '#kleistad_submit' ).prop( 'disabled', 15 > bedrag || 100 < bedrag );
 					wijzigTeksten( bedrag );
 				}
+			)
+			/**
+			 * Als er voor terugstorten wordt gekozen, moet er een bevestiging gevraagd worden.
+			 */
+			.on(
+				'change',
+				'input[name=betaal]',
+				function() {
+					const $submit = $( '#kleistad_submit' );
+					if ( 'terugboeking' === $( this ).val() ) {
+						$submit.data( 'confirm',  'Saldo terugstorten|Weet je zeker dat je het saldo wil laten terugboeken ?' );
+						return;
+					}
+					$submit.removeData( 'confirm' );
+				}
 			);
 		}
 	);
