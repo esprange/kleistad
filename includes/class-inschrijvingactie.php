@@ -186,7 +186,8 @@ class InschrijvingActie {
 		$this->inschrijving->restant_email  = true; // We willen geen restant email naar deze cursist.
 		$this->inschrijving->artikel_type   = 'inschrijving';
 		$this->inschrijving->save();
-		$order = new Order( $this->inschrijving->get_referentie() );
+		$order             = new Order( '' );  // Forceer een nieuwe order, zodat iemand die op de wachtlijst staat alsnog opnieuw kan inschrijven.
+		$order->referentie = $this->inschrijving->get_referentie();
 		$this->inschrijving->verzend_email( '_lopend_betalen', $order->bestel() );
 	}
 
@@ -200,7 +201,8 @@ class InschrijvingActie {
 		$this->inschrijving->wacht_datum  = 0;
 		$this->inschrijving->artikel_type = 'inschrijving';
 		$this->inschrijving->save();
-		$order = new Order( $this->inschrijving->get_referentie() );
+		$order             = new Order( '' );  // Forceer een nieuwe order, zodat iemand die op de wachtlijst staat alsnog opnieuw kan inschrijven.
+		$order->referentie = $this->inschrijving->get_referentie();
 		$this->inschrijving->verzend_email( 'inschrijving', $order->bestel() );
 	}
 
