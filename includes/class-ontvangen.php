@@ -132,7 +132,11 @@ class Ontvangen {
 				unset( $refund_ids[ $refund->id ] );
 			}
 		}
-		set_transient( $transient, $refund_ids, $this->expiratie( $betaling->createdAt ) );
+		if ( count( $refund_ids ) ) {
+			set_transient( $transient, $refund_ids, $this->expiratie( $betaling->createdAt ) );
+			return;
+		}
+		delete_transient( $transient );
 	}
 
 	/**
@@ -142,7 +146,7 @@ class Ontvangen {
 	 * @param Artikel $artikel  Het artikel waarop de chargeback betrekking heeft.
 	 * @param Order   $order    De order.
 	 * @return void
-	 */
+]	 */
 	private function chargebacks( object $betaling, Artikel $artikel, Order $order ) {
 		$transient      = $betaling->id . self::CHARGEBACKS;
 		$chargeback_ids = get_transient( $transient ) ?: [];
