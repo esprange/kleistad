@@ -272,6 +272,7 @@ class Order {
 			$this->orderregels->toevoegen( $orderregel );
 		}
 		$this->save( sprintf( 'Order en factuur aangemaakt, nieuwe status betaald is € %01.2f', $this->betaald ) );
+		do_action( 'kleistad_order_stornering', $this );
 		do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 		$factuur = new Factuur();
 		return $factuur->run( $this );
@@ -370,23 +371,12 @@ class Order {
 			$artikel->get_referentie() !== $this->referentie ||
 			$artikel->get_factuurregels()->get_bruto() !== $this->orderregels->get_bruto()
 		) {
-			// Een nieuwe order wordt aangemaakt, eventuele bestaande kortingen en de betaald status worden overgenomen.
-			$nieuwe_order             = clone $this;
-			$nieuwe_order->gesloten   = false;
+			$betaald       = $this->betaald;
+			$this->betaald = 0.0;
+			$this->annuleer( 0.0, 'creditering ivm wijziging order' );
+			$nieuwe_order             = new Order( '' );  // Forceer een nieuwe order.
 			$nieuwe_order->referentie = $artikel->get_referentie();
-			$nieuwe_order->orderregels->reset();
-			// Crediteer nu de volledige order, omdat die gesloten wordt bevat deze geen stornering.
-			$credit_order    = $this->crediteer( 'creditering ivm wijziging order', true );
-			$this->credit_id = $credit_order->id;
-			// En sluit de huidige order. De betaling is overgeboekt naar de nieuwe order.
-			$this->betaald  = 0.0;
-			$this->gesloten = true; // En de order wordt gesloten omdat deze vervangen wordt.
-			$this->save( 'gecrediteerd i.v.m. wijziging' );
-			do_action( 'kleistad_order_stornering', $nieuwe_order ); // Het zou kunnen zijn dat er a.g.v. de wijziging stornering nodig is.
-			do_action( 'kleistad_betaalinfo_update', $this->klant_id );
-			$factuur = new Factuur();
-			$factuur->run( $credit_order ); // Wordt niet standaard verstuurd.
-			return $nieuwe_order->bestel( 0.0, sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ), $this->transactie_id );
+			return $nieuwe_order->bestel( $betaald, sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ), $this->transactie_id );
 		}
 		return '';
 	}

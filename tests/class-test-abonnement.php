@@ -208,7 +208,7 @@ class Test_Abonnement extends Kleistad_UnitTestCase {
 		$mailer     = tests_retrieve_phpmailer_instance();
 		$abonnement = $this->maak_abonnement();
 		$abonnee_id = $abonnement->klant_id;
-		$abonnement->actie->starten( $this->set_date( 5 + (int) date( 'j' ), -3 ), 'beperkt', 'Dit is een test', 'bank' );
+		$abonnement->actie->starten( $this->set_date( 3 + (int) date( 'j' ), -3 ), 'beperkt', 'Dit is een test', 'bank' );
 		$abonnement->factuur_maand = date( 'Ym', strtotime( '-1 month' ) );
 		$abonnement->save();
 		Abonnementen::doe_dagelijks(); // Voert actie->overbrugging uit en verstuurt email 1.

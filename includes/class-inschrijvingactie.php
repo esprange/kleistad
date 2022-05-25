@@ -115,7 +115,6 @@ class InschrijvingActie {
 			$this->inschrijving->save();
 		} else {
 			$nieuwe_cursus              = new Cursus( $cursus_id );
-			$oude_cursus_id             = $this->inschrijving->cursus->id;
 			$this->inschrijving->code   = "C$cursus_id-{$this->inschrijving->klant_id}";
 			$this->inschrijving->aantal = $aantal;
 			$this->inschrijving->cursus = $nieuwe_cursus;
@@ -124,8 +123,6 @@ class InschrijvingActie {
 				$extra_inschrijving = new Inschrijving( $this->inschrijving->cursus->id, $extra_cursist_id );
 				$extra_inschrijving->save();
 			}
-			$oude_inschrijving = new Inschrijving( $oude_cursus_id, $this->inschrijving->klant_id );
-			$oude_inschrijving->actie->afzeggen();
 		}
 		$factuur = $order->wijzig( $this->inschrijving->get_referentie() );
 		if ( empty( $factuur ) ) {
