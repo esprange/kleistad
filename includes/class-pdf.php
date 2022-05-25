@@ -107,6 +107,6 @@ class PDF extends FPDF {
 		$matches = [];
 		preg_match( '/\s/', $_tekst, $matches );
 		$_tekst = strrev( substr( $_tekst, strpos( $_tekst, $matches[0] ) ) );
-		return $_tekst . chr( 133 );
+		return $_tekst . '...';
 	}
 }
