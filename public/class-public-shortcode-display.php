@@ -63,12 +63,19 @@ abstract class Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	public function home() : Public_Shortcode_Display {
-		if ( ! is_user_logged_in() ) {
-			$url = home_url();
-		} elseif ( current_user_can( BESTUUR ) ) {
-			$url = home_url( '/bestuur/' );
-		} else {
-			$url = home_url( '/leden/' );
+		$url  = home_url();
+		$user = wp_get_current_user();
+		foreach (
+			[
+				BESTUUR => 'bestuur',
+				DOCENT  => 'docenten',
+				LID     => 'leden',
+				CURSIST => 'cursisten',
+			] as $role => $dir ) {
+			if ( $user->has_cap( $role ) && get_page_by_path( $dir ) ) {
+				$url = home_url( "\\$dir\\" );
+				break;
+			}
 		}
 		?>
 		<br/><br/>
