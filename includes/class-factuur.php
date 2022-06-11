@@ -143,7 +143,7 @@ class Factuur extends PDF {
 		$this->Cell( 0, self::H_NORMAAL, 'Stichting Kleistad', 0, 1 );
 		$this->SetX( 135 );
 		$this->SetFont( self::CSET, '', self::KLEIN );
-		$this->MultiCell( 45, self::H_KLEIN, "Neonweg 12\n3812 RH Amersfoort\n\nKvK 68731248\nBTW nr NL857567044B01\nIBAN NL10 RABO 0191913308" );
+		$this->MultiCell( 45, self::H_KLEIN, "Brabantesestraat 14\n3812 PJ Amersfoort\n\nKvK 68731248\nBTW nr NL857567044B01\nIBAN NL10 RABO 0191913308" );
 	}
 
 	/**

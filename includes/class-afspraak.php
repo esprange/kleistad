@@ -95,7 +95,7 @@ class Afspraak {
 		$this->event = new Event(
 			[
 				'Id'        => $afspraak_id,
-				'location'  => get_option( 'kleistad_adres', 'Kleistad, Neonweg 12, 3812 RH Amersfoort' ),
+				'location'  => get_option( 'kleistad_adres', 'Kleistad, Brabantsestraat 14, 3812 PJ Amersfoort' ),
 				'organizer' => $organizer,
 				'status'    => 'tentative',
 			]
