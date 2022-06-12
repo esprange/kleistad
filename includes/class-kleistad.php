@@ -74,7 +74,7 @@ function bepaal_dagdelen( int $start_tijd, int $eind_tijd ) : array {
  */
 function opties() : array {
 	static $opties = [];
-	if ( empty( $opties ) ) {
+	if ( empty( $opties ) || defined( 'KLEISTAD_TEST' ) ) {
 		$opties = get_option( 'kleistad-opties', [] );
 	}
 	return $opties;
