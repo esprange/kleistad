@@ -114,7 +114,7 @@ class WorkshopActie {
 				'type'    => self::NIEUW,
 				'from'    => $this->workshop->email,
 				'subject' => "Aanvraag {$this->workshop->naam} op " . date( 'd-m-Y', $this->workshop->datum ),
-				'tekst'   => $parameters['opmerking'] ?? '',
+				'tekst'   => $this->workshop->vraag,
 				'tijd'    => current_time( 'd-m-Y H:i' ),
 			],
 		];
