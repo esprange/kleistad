@@ -148,4 +148,58 @@ class Test_Workshopplanning extends Kleistad_UnitTestCase {
 		$this->assertGreaterThanOrEqual( $aantal_weken - 3, count( $this->maak_planning() ), 'Na nieuwe cursus geef beschikbaarheid fout' );
 	}
 
+	/**
+	 * Test meerdere activiteiten parallel.
+	 */
+	public function test_meer_activiteiten() {
+		$opties                   = opties();
+		$opties['max_activiteit'] = 2;
+		update_option( 'kleistad-opties', $opties );
+		$docent1 = $this->maak_docent();
+		$docent2 = $this->maak_docent();
+		$docent1->set_beschikbaarlijst( $this->standaard_beschikbaarheid() );
+		$docent2->set_beschikbaarlijst( $this->standaard_beschikbaarheid() );
+		$planning     = $this->maak_planning();
+		$aantal_weken = count( $planning );
+		/**
+		 * Maak voor elke mogelijkheid een reservering. Dan moeten er nog steeds hetzelfde aantal weken openstaan.
+		 */
+		foreach ( $planning as $plan ) {
+			$workshop = new Workshop();
+			$workshop->actie->aanvraag(
+				[
+					'naam'       => 'Test',
+					'datum'      => strtotime( $plan['datum'] ),
+					'dagdeel'    => $plan['dagdeel'],
+					'contact'    => 'tester',
+					'user_email' => 'tester@test.nl',
+					'aantal'     => 5,
+					'telnr'      => '',
+					'technieken' => [],
+					'opmerking'  => '',
+				]
+			);
+		}
+		$this->assertEquals( $aantal_weken, count( $this->maak_planning() ), 'Na vulling met standaard en dubbel activiteit geef beschikbaarheid fout' );
+		/**
+		 * Maak nu ook voor de tweede reservering voor elke week aan. Daarna moet alles bezet zijn.
+		 */
+		foreach ( $planning as $plan ) {
+			$workshop = new Workshop();
+			$workshop->actie->aanvraag(
+				[
+					'naam'       => 'Test',
+					'datum'      => strtotime( $plan['datum'] ),
+					'dagdeel'    => $plan['dagdeel'],
+					'contact'    => 'tester',
+					'user_email' => 'tester@test.nl',
+					'aantal'     => 5,
+					'telnr'      => '',
+					'technieken' => [],
+					'opmerking'  => '',
+				]
+			);
+		}
+		$this->assertEquals( 0, count( $this->maak_planning() ), 'Na vulling met standaard en dubbel activiteit geef beschikbaarheid fout' );
+	}
 }
