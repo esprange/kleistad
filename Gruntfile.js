@@ -97,7 +97,7 @@ module.exports = function( grunt ) {
 		}
 	);
 	grunt.registerTask(
-		'oplevering',
+		'default',
 		[
 			'versie_check',
 			'wp_readme_to_markdown',

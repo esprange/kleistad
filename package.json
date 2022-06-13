@@ -1,6 +1,6 @@
 {
   "name": "kleistad",
-  "version": "7.4.5",
+  "version": "7.5.0",
   "main": "Gruntfile.js",
   "author": "Eric Sprangers",
   "license": "GPL-3.0",
@@ -10,13 +10,13 @@
   },
   "devDependencies": {
     "@wordpress/stylelint-config": "^20.0.0",
-    "eslint": "^8.6.0",
+    "eslint": "^8.17.0",
     "grunt-composer": "^0.4.5",
     "grunt-contrib-cssmin": "^3.0.0",
-    "grunt-contrib-uglify": "^4.0.1",
-    "grunt-shell": "^3.0.0",
-    "grunt-wp-readme-to-markdown": "^2.0.1",
-    "grunt-zip": "^0.14.0"
+    "grunt-contrib-uglify": "^5.2.0",
+    "grunt-shell": "^4.0.0",
+    "grunt-wp-readme-to-markdown": "^2.1.0",
+    "grunt-zip": "^0.18.2"
   },
   "dependencies": {
     "@types/datatables.net": "^1.10.20",
