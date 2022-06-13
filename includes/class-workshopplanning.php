@@ -43,6 +43,9 @@ class Workshopplanning {
 	 * @return array De beschikbaarheid.
 	 */
 	public function get_beschikbaarheid() : array {
+		if ( is_array( self::$planning ) ) {
+			return self::$planning;
+		}
 		$start = strtotime( 'tomorrow 0:00' );
 		$eind  = strtotime( '+ ' . opties()['weken_workshop'] . ' week 0:00' );
 		$this->start( $start, $eind );
@@ -77,7 +80,7 @@ class Workshopplanning {
 	private function bepaal_activiteit_beschikbaarheid( int $start, int $eind ) {
 		foreach ( new Cursussen( $start ) as $cursus ) {
 			foreach ( $cursus->lesdatums as $lesdatum ) {
-				if ( ( $cursus->start_datum > $eind ) || $cursus->vervallen ) {
+				if ( $lesdatum < $start || $lesdatum > $eind || $cursus->vervallen ) {
 					continue;
 				}
 				$this->verhoog( $lesdatum, bepaal_dagdelen( $cursus->start_tijd, $cursus->eind_tijd ) );
@@ -136,7 +139,7 @@ class Workshopplanning {
 	 * @return string
 	 */
 	private function index( int $datum, string $dagdeel ) : string {
-		return "$datum-" . strtolower( $dagdeel );
+		return strtolower( "$datum-$dagdeel" );
 	}
 
 	/**
@@ -145,9 +148,6 @@ class Workshopplanning {
 	 * @return array De beschikbaarheid.
 	 */
 	private function schoon_beschikbaarheid() : array {
-		if ( is_array( self::$planning ) ) {
-			return self::$planning;
-		}
 		$maximum         = opties()['max_activiteit'] ?? 1;
 		$activiteitpauze = opties()['actpauze'] ?? [];
 		self::$planning  = [];
