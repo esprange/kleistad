@@ -198,7 +198,8 @@ class Admin_Instellingen_Display {
 			</thead>
 			<tbody>
 				<?php
-				foreach ( opties()[ $key ] ?? [] as $index => $optie ) :
+				$index = 0;
+				foreach ( opties()[ $key ] ?? [] as $optie ) :
 					?>
 				<tr>
 					<td><!--suppress HtmlFormInputWithoutLabel -->
@@ -210,7 +211,8 @@ class Admin_Instellingen_Display {
 					<td><span id="kleistad_verwijder_<?php echo esc_attr( $key . '_' . $index ); ?>" class="dashicons dashicons-trash" style="cursor: pointer;"></span></td>
 				</tr>
 					<?php
-			endforeach;
+						$index++;
+				endforeach;
 				?>
 			</tbody>
 			<tfoot>
