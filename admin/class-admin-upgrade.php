@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 169;
+	const DBVERSIE = 170;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -269,26 +269,9 @@ class Admin_Upgrade {
 	// phpcs:disable
 
 	/**
-	 * Geef alle cursisten van lopende en toekomstige cursussen de CURSIST rol.
-	 */
-	private function convert_cursisten() {
-		$cursisten = new Cursisten();
-		$vandaag   = strtotime( 'today' );
-		foreach ( $cursisten as $cursist ) {
-			foreach ( $cursist->inschrijvingen as $inschrijving ) {
-				if ( $inschrijving->ingedeeld && $vandaag <= $inschrijving->cursus->eind_datum ) {
-					$cursist->add_role( CURSIST );
-					break;
-				}
-			}
-		}
-	}
-
-	/**
 	 * Converteer data
 	 */
 	private function convert_data() {
-		$this->convert_cursisten();
 	}
 
 }

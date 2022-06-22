@@ -105,6 +105,9 @@ class Public_Cursus_Verbruik extends ShortcodeForm {
 	private function cursistenlijst( Cursus $cursus ) : array {
 		$cursisten = [];
 		foreach ( new Inschrijvingen( $cursus->id, true ) as $inschrijving ) {
+			if ( ! $inschrijving->ingedeeld ) {
+				continue;
+			}
 			$cursist    = get_userdata( $inschrijving->klant_id );
 			$saldo      = new Saldo( $inschrijving->klant_id );
 			$verbruiken = array_filter(
