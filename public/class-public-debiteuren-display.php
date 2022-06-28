@@ -149,6 +149,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 			<thead>
 			<tr>
 				<th>Code</th>
+				<th>Factuur</th>
 				<th>Naam</th>
 				<th>Betreft</th>
 				<th>Openstaand</th>
@@ -165,6 +166,7 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 				?>
 				<tr style="<?php echo $debiteur['verval_datum'] <= strtotime( 'today' ) && ! $debiteur['gesloten'] ? 'color:#b30000' : ''; ?>" >
 					<td><?php echo esc_html( $debiteur['referentie'] . ( $debiteur['credit'] ? '(C)' : '' ) ); ?></td>
+					<td><?php echo esc_html( $debiteur['factuurnr'] ); ?></td>
 					<td><?php echo esc_html( $debiteur['naam'] ); ?></td>
 					<td><?php echo esc_html( $debiteur['betreft'] ); ?></td>
 					<td style="text-align:right;" data-sort="<?php echo esc_attr( $debiteur['openstaand'] ); ?>">&euro; <?php echo esc_html( number_format_i18n( $debiteur['openstaand'], 2 ) ); ?></td>

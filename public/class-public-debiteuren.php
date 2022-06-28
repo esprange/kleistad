@@ -300,6 +300,7 @@ class Public_Debiteuren extends ShortcodeForm {
 				'naam'         => $order->klant['naam'],
 				'betreft'      => $artikelregister->get_naam( $order->referentie ),
 				'referentie'   => $order->referentie,
+				'factuurnr'    => $order->get_factuurnummer(),
 				'openstaand'   => $openstaand,
 				'credit'       => $order->credit,
 				'sinds'        => $order->datum,
