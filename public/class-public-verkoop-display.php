@@ -20,7 +20,7 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		$this->form();
 	}
 
@@ -61,11 +61,19 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 						<label for="kleistad_klant_id">Klant naam</label>
 					</div>
 					<div class="kleistad-col-7">
-						<select name="klant_id" id="kleistad_klant_id" required >
+						<select class="kleistad-input" name="klant_id" id="kleistad_klant_id" required >
 							<?php foreach ( $this->data['gebruikers'] as $gebruiker ) : ?>
 								<option value="<?php echo esc_attr( $gebruiker->id ); ?>" <?php selected( $gebruiker->id, $this->data['input']['klant_id'] ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
 							<?php endforeach ?>
 						</select>
+					</div>
+				</div>
+				<div class="kleistad-row">
+					<div class="kleistad-col-3 kleistad-label">
+						<label for="kleistad_via_saldo">Koop op saldo</label>
+					</div>
+					<div class="kleistad-col-1">
+						<input name="saldo_verkoop" id="kleistad_via_saldo" type="checkbox" class="kleistad-checkbox" >
 					</div>
 				</div>
 			</div>

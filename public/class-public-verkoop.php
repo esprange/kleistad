@@ -55,19 +55,20 @@ class Public_Verkoop extends Public_Bestelling {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'klant'        => FILTER_SANITIZE_STRING,
-				'klant_id'     => FILTER_SANITIZE_NUMBER_INT,
-				'klant_type'   => FILTER_SANITIZE_STRING,
-				'email'        => FILTER_SANITIZE_EMAIL,
-				'omschrijving' => [
+				'klant'         => FILTER_SANITIZE_STRING,
+				'klant_id'      => FILTER_SANITIZE_NUMBER_INT,
+				'klant_type'    => FILTER_SANITIZE_STRING,
+				'email'         => FILTER_SANITIZE_EMAIL,
+				'saldo_verkoop' => FILTER_SANITIZE_STRING,
+				'omschrijving'  => [
 					'filter' => FILTER_SANITIZE_STRING,
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				],
-				'aantal'       => [
+				'aantal'        => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY,
 				],
-				'prijs'        => [
+				'prijs'         => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
 					'flags'  => FILTER_FLAG_ALLOW_FRACTION | FILTER_REQUIRE_ARRAY,
 				],
@@ -85,6 +86,38 @@ class Public_Verkoop extends Public_Bestelling {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function save() : array {
+		if ( $this->data['input']['saldo_verkoop'] && 'bestaand' === $this->data['input']['klant_type'] ) {
+			return $this->saldo_verkoop();
+		}
+		return $this->losartikel_verkoop();
+	}
+
+	/**
+	 * Voor een saldo verkoop in.
+	 *
+	 * @return array
+	 */
+	private function saldo_verkoop() : array {
+		$klant = get_user_by( 'id', $this->data['input']['klant_id'] );
+		$saldo = new Saldo( $klant->ID );
+		foreach ( array_keys( $this->data['input']['omschrijving'] ) as $index ) {
+			$saldo->actie->verkoop(
+				$this->data['input']['aantal'][ $index ] * $this->data['input']['prijs'][ $index ],
+				$this->data['input']['omschrijving'][ $index ]
+			);
+		}
+		return [
+			'content' => $this->goto_home(),
+			'status'  => $this->status( 'De aankoop is verwerkt op het stook/materialen saldo' ),
+		];
+	}
+
+	/**
+	 * Voor een losartikel verkoop in.
+	 *
+	 * @return array
+	 */
+	private function losartikel_verkoop() : array {
 		$verkoop = new LosArtikel();
 		if ( 'bestaand' === $this->data['input']['klant_type'] ) {
 			$klant = get_user_by( 'id', $this->data['input']['klant_id'] );

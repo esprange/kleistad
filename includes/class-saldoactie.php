@@ -62,7 +62,7 @@ class SaldoActie {
 	/**
 	 * Annulering van de storting.
 	 */
-	public function afzeggen() {
+	public function afzeggen() : void {
 		$this->saldo->update_storting( $this->saldo->get_referentie(), 'geannuleerd' );
 		$this->saldo->save();
 	}
@@ -72,7 +72,7 @@ class SaldoActie {
 	 *
 	 * @param float $nieuw_saldo Nieuw saldo.
 	 */
-	public function correctie( float $nieuw_saldo ) {
+	public function correctie( float $nieuw_saldo ) : void {
 		$verschil              = $nieuw_saldo - $this->saldo->bedrag;
 		$corrector             = wp_get_current_user()->display_name;
 		$this->saldo->bedrag   = $nieuw_saldo;
@@ -94,7 +94,7 @@ class SaldoActie {
 	 *
 	 * @return void
 	 */
-	public function verbruik( int $verbruik, string $reden ) {
+	public function verbruik( int $verbruik, string $reden ) : void {
 		$kosten = opties()['materiaalprijs'] * $verbruik / 1000;
 		if ( 0.01 > $kosten ) {
 			return;
@@ -107,6 +107,32 @@ class SaldoActie {
 			'prijs'   => - $kosten,
 			'gewicht' => $verbruik,
 			'status'  => "$verbruik gram materialen: $reden",
+		];
+		$this->saldo->save();
+		if ( 0 > $this->saldo->bedrag ) {
+			$this->saldo->verzend_email( '_negatief' );
+		}
+	}
+
+	/**
+	 * Registreer een aankoop op saldo
+	 *
+	 * @param float  $bedrag Het bedrag van de aankoop.
+	 * @param string $reden  Het artikel.
+	 *
+	 * @return void
+	 */
+	public function verkoop( float $bedrag, string $reden ) : void {
+		if ( 0.01 > $bedrag ) {
+			return;
+		}
+		$this->saldo->bedrag  -= $bedrag;
+		$this->saldo->reden    = $reden;
+		$this->saldo->storting = [
+			'code'   => "S{$this->saldo->klant_id}-overig",
+			'datum'  => date( 'Y-m-d', strtotime( 'today' ) ),
+			'prijs'  => - $bedrag,
+			'status' => "koop $reden",
 		];
 		$this->saldo->save();
 		if ( 0 > $this->saldo->bedrag ) {

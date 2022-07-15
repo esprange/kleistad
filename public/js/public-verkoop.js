@@ -16,8 +16,8 @@
 				{
 					heightStyle: 'auto',
 					activate: function( event, ui ) {
-						ui.newPanel.find( 'input,select' ).prop( 'required', true );
-						ui.oldPanel.find( 'input,select' ).prop( 'required', false );
+						ui.newPanel.find( '.kleistad-input' ).prop( 'required', true );
+						ui.oldPanel.find( '.kleistad-input' ).prop( 'required', false );
 						$( '#kleistad_klant_type' ).val( $( this ).tabs( 'option', 'active' ) ? 'bestaand' : 'nieuw' );
 					}
 				}
