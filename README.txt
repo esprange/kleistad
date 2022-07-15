@@ -3,8 +3,9 @@ Contributors: Eric Sprangers
 Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
-Tested up to: 5.9.3
-Stable tag: 7.5.2
+Tested up to: 6.0.1
+Stable tag: 7.5.3
+
 
 
 
@@ -34,7 +35,7 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.5.2 =
+= 7.5.3 =
 * Verkoop losse artikelen ook op saldo mogelijk
 * Factuur nummer zichtbaar in debiteuren overzicht
 * Bugfix, bij materiaal verbruik alleen ingedeelde cursisten tonen
