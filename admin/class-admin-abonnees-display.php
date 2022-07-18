@@ -22,7 +22,7 @@ class Admin_Abonnees_Display extends Admin_Display {
 	 * @param array $metabox De metabox argumenten.
 	 * @return void
 	 */
-	public function form_meta_box( array $item, array $metabox ) : void {
+	public function form_meta_box( array $item, array $metabox ) {
 		$actie = $metabox['args']['actie'];
 		?>
 		<table class="form-table">
@@ -57,7 +57,7 @@ class Admin_Abonnees_Display extends Admin_Display {
 	 *
 	 * @return void
 	 */
-	public function page() : void {
+	public function page() {
 		$table = new Admin_Abonnees();
 		?>
 		<div class="wrap">
@@ -81,7 +81,7 @@ class Admin_Abonnees_Display extends Admin_Display {
 	 * @param array $item De abonnee.
 	 * @return void
 	 */
-	private function render_status( array $item ) : void {
+	private function render_status( array $item ) {
 		?>
 			<tr>
 				<th scope="row"><label for="kleistad_soort">Soort</label></th>
@@ -184,7 +184,7 @@ class Admin_Abonnees_Display extends Admin_Display {
 	 * @param array $item De abonnee.
 	 * @return void
 	 */
-	private function render_historie( array $item ) : void {
+	private function render_historie( array $item ) {
 		?>
 			<tr>
 				<td colspan="2">

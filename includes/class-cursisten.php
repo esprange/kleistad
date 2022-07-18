@@ -102,4 +102,24 @@ class Cursisten implements Countable, Iterator {
 	public function valid(): bool {
 		return isset( $this->cursisten[ $this->current_index ] );
 	}
+
+	/**
+	 * Dagelijkse job
+	 */
+	public static function doe_dagelijks() {
+		$vandaag = strtotime( '- 2 weeks' );
+		$actief  = false;
+		foreach ( new self() as $cursist ) {
+			foreach ( $cursist->get_cursus_inschrijvingen() as $inschrijving ) {
+				if ( $vandaag <= $inschrijving->cursus->eind_datum ) {
+					$actief = true;
+					break;
+				}
+			}
+			if ( ! $actief ) {
+				$cursist->remove_role( CURSIST );
+			}
+		}
+	}
+
 }

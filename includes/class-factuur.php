@@ -107,7 +107,7 @@ class Factuur extends PDF {
 	 *
 	 * @param array $args De te tonen informatie.
 	 */
-	private function klant( array $args ) : void {
+	private function klant( array $args ) {
 		$this->SetY( 65 );
 		$this->SetFont( self::CSET, 'B', self::NORMAAL );
 		$this->Cell( 0, self::H_NORMAAL, utf8_decode( $args['naam'] ), 0, 1 );
@@ -122,7 +122,7 @@ class Factuur extends PDF {
 	 * @param int    $datum      De factuur datum.
 	 * @param string $referentie De referentie.
 	 */
-	private function info( string $factuurnr, int $datum, string $referentie ) : void {
+	private function info( string $factuurnr, int $datum, string $referentie ) {
 		$info = [
 			'Factuurdatum'  => wp_date( 'd-m-Y', $datum ),
 			'Factuurnummer' => $factuurnr,
@@ -153,7 +153,7 @@ class Factuur extends PDF {
 	 * @param float       $betaald        Wat er al betaald is.
 	 * @param float       $nog_te_betalen Wat er nog betaald moet worden ingeval van een credit_factuur.
 	 */
-	private function order_info( Orderregels $orderregels, float $betaald, float $nog_te_betalen ) : void {
+	private function order_info( Orderregels $orderregels, float $betaald, float $nog_te_betalen ) {
 		$this->SetY( 120 );
 		$breedte = [
 			'aantal'       => 15,
@@ -199,7 +199,7 @@ class Factuur extends PDF {
 	 *
 	 * @param string $arg De te tonen tekst.
 	 */
-	private function opmerking( string $arg ) : void {
+	private function opmerking( string $arg ) {
 		if ( ! empty( $arg ) ) {
 			$this->Ln( 2 * self::H_NORMAAL );
 			$this->SetFont( self::CSET, 'B', self::NORMAAL );

@@ -110,7 +110,7 @@ class Abonnement extends Artikel {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde Attribuut waarde.
 	 */
-	public function __set( string $attribuut, mixed $waarde ) : void {
+	public function __set( string $attribuut, mixed $waarde ) {
 		$this->data[ $attribuut ] = $waarde;
 	}
 

@@ -61,16 +61,12 @@ class Cursist extends Gebruiker {
 	}
 
 	/**
-	 * Haal de lijst met ids op.
+	 * Haal de lijst met inschrijvingen op.
 	 *
 	 * @return array
 	 */
-	public function get_cursus_ids(): array {
-		$ids = [];
-		foreach ( $this->inschrijvingen as $inschrijving ) {
-			$ids[] = $inschrijving->code;
-		}
-		return $ids;
+	public function get_cursus_inschrijvingen(): array {
+		return $this->inschrijvingen;
 	}
 
 	/**

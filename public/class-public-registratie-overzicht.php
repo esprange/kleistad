@@ -244,7 +244,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 			$registraties[ $gebruiker->ID ] = [
 				'is_abonnee'       => boolval( $abonnement->start_datum ),
 				'is_dagdelenkaart' => boolval( $dagdelenkaart->start_datum ),
-				'is_cursist'       => $cursist->get_cursus_ids(),
+				'is_cursist'       => count( $cursist->inschrijvingen ),
 				'voornaam'         => $gebruiker->first_name,
 				'achternaam'       => $gebruiker->last_name,
 				'telnr'            => $gebruiker->telnr,

@@ -25,7 +25,7 @@ class Admin_Regelingen_Display extends Admin_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
-	public function form_meta_box( array $item, array $metabox ) : void {
+	public function form_meta_box( array $item, array $metabox ) {
 		$gebruikers = get_users(
 			[
 				'fields'   => [ 'ID', 'display_name' ],
@@ -90,7 +90,7 @@ class Admin_Regelingen_Display extends Admin_Display {
 	 *
 	 * @return void
 	 */
-	public function page() : void {
+	public function page() {
 		$table = new Admin_Regelingen();
 		?>
 		<div class="wrap">

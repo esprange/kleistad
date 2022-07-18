@@ -35,6 +35,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 7.5.4 =
+* Verkoop losse artikelen aan bekende klant, toon alleen actieve leden, actieve cursisten, docenten en bestuur
+* Verwijder cursist rol twee weken na einde laatste cursus deelname
 = 7.5.3 =
 * Verkoop losse artikelen ook op saldo mogelijk
 * Factuur nummer zichtbaar in debiteuren overzicht

@@ -70,7 +70,7 @@ class Orderregels implements Countable, Iterator {
 	 *
 	 * @return void
 	 */
-	public function reset() : void {
+	public function reset() {
 		foreach ( $this->regels as $key => $regel ) {
 			if ( Orderregel::KORTING !== $regel->artikel ) {
 				unset( $this->regels[ $key ] );

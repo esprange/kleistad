@@ -265,7 +265,7 @@ class AbonnementActie {
 	 *
 	 * @param string $tekst De handeling.
 	 */
-	private function log( string $tekst ) : void {
+	private function log( string $tekst ) {
 		$this->abonnement->historie = array_merge( $this->abonnement->historie, [ wp_date( 'D, j M H:i Y' ) . " $tekst" ] );
 	}
 

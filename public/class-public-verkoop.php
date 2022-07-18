@@ -34,11 +34,12 @@ class Public_Verkoop extends Public_Bestelling {
 				],
 				'gebruikers' => get_users(
 					[
-						'orderby' => 'display_name',
-						'fields'  => [
+						'orderby'  => 'display_name',
+						'fields'   => [
 							'display_name',
 							'id',
 						],
+						'role__in' => [ LID, DOCENT, BESTUUR, CURSIST ],
 					]
 				),
 			];
@@ -83,7 +84,6 @@ class Public_Verkoop extends Public_Bestelling {
 	 * @return array
 	 *
 	 * @since   6.2.0
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function save() : array {
 		if ( $this->data['input']['saldo_verkoop'] && 'bestaand' === $this->data['input']['klant_type'] ) {
@@ -116,6 +116,7 @@ class Public_Verkoop extends Public_Bestelling {
 	 * Voor een losartikel verkoop in.
 	 *
 	 * @return array
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function losartikel_verkoop() : array {
 		$verkoop = new LosArtikel();

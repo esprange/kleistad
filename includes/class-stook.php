@@ -151,7 +151,7 @@ class Stook {
 	 * @global object $wpdb WP database.
 	 * @throws Kleistad_Exception Bewaren gaat niet.
 	 */
-	public function save() : void {
+	public function save() {
 		global $wpdb;
 
 		$stookdelen = [];
@@ -250,7 +250,7 @@ class Stook {
 	 * @return string De status tekst.
 	 */
 	public function get_statustekst() : string {
-		if ( ! boolval( $this->stook_id ) ) {
+		if ( ! $this->stook_id ) {
 			if ( $this->datum >= strtotime( 'today' ) || is_super_admin() ) {
 				return self::RESERVEERBAAR;
 			}

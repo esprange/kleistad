@@ -62,7 +62,7 @@ class SaldoActie {
 	/**
 	 * Annulering van de storting.
 	 */
-	public function afzeggen() : void {
+	public function afzeggen() {
 		$this->saldo->update_storting( $this->saldo->get_referentie(), 'geannuleerd' );
 		$this->saldo->save();
 	}
@@ -72,7 +72,7 @@ class SaldoActie {
 	 *
 	 * @param float $nieuw_saldo Nieuw saldo.
 	 */
-	public function correctie( float $nieuw_saldo ) : void {
+	public function correctie( float $nieuw_saldo ) {
 		$verschil              = $nieuw_saldo - $this->saldo->bedrag;
 		$corrector             = wp_get_current_user()->display_name;
 		$this->saldo->bedrag   = $nieuw_saldo;
@@ -94,7 +94,7 @@ class SaldoActie {
 	 *
 	 * @return void
 	 */
-	public function verbruik( int $verbruik, string $reden ) : void {
+	public function verbruik( int $verbruik, string $reden ) {
 		$kosten = opties()['materiaalprijs'] * $verbruik / 1000;
 		if ( 0.01 > $kosten ) {
 			return;
@@ -122,7 +122,7 @@ class SaldoActie {
 	 *
 	 * @return void
 	 */
-	public function verkoop( float $bedrag, string $reden ) : void {
+	public function verkoop( float $bedrag, string $reden ) {
 		if ( 0.01 > $bedrag ) {
 			return;
 		}

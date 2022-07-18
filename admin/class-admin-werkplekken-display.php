@@ -24,7 +24,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 	 *
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
-	public function form_meta_box( array $item, array $metabox ) : void {
+	public function form_meta_box( array $item, array $metabox ) {
 		?>
 		<table style="width: 100%;border-spacing: 2px; padding: 5px" >
 			<tbody>
@@ -82,7 +82,7 @@ class Admin_Werkplekken_Display extends Admin_Display {
 	 *
 	 * @return void
 	 */
-	public function page() : void {
+	public function page() {
 		$table = new Admin_Werkplekken();
 		?>
 		<div class="wrap">

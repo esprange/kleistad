@@ -143,7 +143,7 @@ class Order {
 	 * @param string $attribuut Attribuut naam.
 	 * @param mixed  $waarde    Attribuut waarde.
 	 */
-	public function __set( string $attribuut, mixed $waarde ) : void {
+	public function __set( string $attribuut, mixed $waarde ) {
 		$this->data[ $attribuut ] = match ( $attribuut ) {
 			'historie',
 			'klant'        => wp_json_encode( $waarde ),
@@ -168,7 +168,7 @@ class Order {
 	 * Bepaal of de order nog annuleerbaar is. Order mag niet al gecrediteerd zijn.
 	 */
 	public function is_annuleerbaar() : bool {
-		return ! boolval( $this->credit_id ) && '@' !== $this->referentie[0];
+		return ! $this->credit_id && '@' !== $this->referentie[0];
 	}
 
 	/**

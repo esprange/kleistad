@@ -19,7 +19,6 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	 * Render het formulier
 	 *
 	 * @return void
-	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function overzicht() {
 		$this->form();
