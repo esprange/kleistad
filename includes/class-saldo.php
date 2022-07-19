@@ -23,7 +23,7 @@ class Saldo extends Artikel {
 
 	public const DEFINITIE = [
 		'prefix'       => 'S',
-		'naam'         => 'stooksaldo',
+		'naam'         => 'stook en materialen',
 		'pcount'       => 1,
 		'annuleerbaar' => true,
 	];
