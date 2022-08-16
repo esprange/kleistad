@@ -99,7 +99,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de details
 	 */
-	private function wachtwoord() {
+	protected function wachtwoord() {
 		?>
 		<div id="kleistad_wachtwoord_succes" style="display:none" >
 			<?php echo melding( 1, 'Het wachtwoord is gewijzigd' ); // phpcs:ignore ?>
