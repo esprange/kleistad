@@ -55,8 +55,8 @@ class Public_Actions {
 	public function register_styles_and_scripts() {
 		$dev                  = 'development' === wp_get_environment_type() ? '' : '.min';
 		$jquery_ui_version    = wp_scripts()->registered['jquery-ui-core']->ver;
-		$fullcalendar_version = '5.11.0';
-		$datatables_version   = '1.12.0';
+		$fullcalendar_version = '5.11.2';
+		$datatables_version   = '1.12.1';
 		$jstree_version       = '3.3.12';
 		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_ui_version ), [], $jquery_ui_version );
 		wp_register_style( 'datatables', sprintf( '//cdn.datatables.net/%s/css/jquery.dataTables.min.css', $datatables_version ), [], $datatables_version );

@@ -322,14 +322,4 @@ class Kleistad {
 		$this->loader->run();
 	}
 
-	/**
-	 * Referentie naar de class die de hooks laadt.
-	 *
-	 * @since     4.0.87
-	 * @return    Loader    de loader.
-	 */
-	public function get_loader() : Loader {
-		return $this->loader;
-	}
-
 }

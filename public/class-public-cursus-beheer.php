@@ -91,8 +91,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	public function process() :array {
-		$error               = new WP_Error();
-		$this->data['input'] = filter_input_array(
+		$error                = new WP_Error();
+		$this->data['input']  = filter_input_array(
 			INPUT_POST,
 			[
 				'cursus_id'       => FILTER_SANITIZE_NUMBER_INT,
@@ -124,6 +124,8 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'tonen'           => FILTER_SANITIZE_STRING,
 			]
 		);
+		$cursus_id            = $this->data['input']['cursus_id'];
+		$this->data['cursus'] = $cursus_id > 0 ? new Cursus( $cursus_id ) : new Cursus();
 		if ( 'verwijderen' === $this->form_actie ) {
 			return $this->save();
 		}
@@ -139,6 +141,9 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 					$error->add( 'Invoerfout', 'Er bestaat nog geen pagina met de naam ' . $this->data['input']['inschrijfslug'] );
 				}
 			}
+		}
+		if ( ! is_null( $this->data['input']['vervallen'] ) && $this->data['cursus']->maximum !== $this->data['cursus']->get_ruimte() ) {
+			$error->add( 'Invoerfout', 'Er zijn nog cursisten ingedeeld op de cursus. Annuleer de inschrijvingen eerst' );
 		}
 		if ( ! empty( $error->get_error_codes() ) ) {
 			return $this->melding( $error );

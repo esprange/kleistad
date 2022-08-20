@@ -7,8 +7,6 @@ Tested up to: 6.0.1
 Stable tag: 7.5.3
 
 
-
-
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0c21c0e2b3d548079260b477857b179b)](https://www.codacy.com/gh/esprange/kleistad/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=esprange/kleistad&amp;utm_campaign=Badge_Grade)
 
@@ -36,6 +34,10 @@ Plaats de shortcodes in de pagina's
 
 == Changelog ==
 = 7.5.4 =
+* Als vanuit dashboard een inschrijving correctie plaatsvindt wordt de cursus zonodig op vol gezet
+* Bij cursusbeheer kan een cursus pas op vervallen worden gezet nadat er geen actieve inschrijvingen meer zijn
+* Updates van externe pakketten
+* Bugfix voor wachtwoord wijziging door gebruiker en beperkte refactoring.
 * Verkoop losse artikelen aan bekende klant, toon alleen actieve leden, actieve cursisten, docenten en bestuur
 * Verwijder cursist rol twee weken na einde laatste cursus deelname
 = 7.5.3 =
