@@ -51,6 +51,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 			'Voornaam',
 			'Email',
 			'Soort',
+			'Opmerking',
 		];
 		foreach ( opties()['extra'] as $extra ) {
 			$abonnees_fields[] = ucfirst( $extra['naam'] );
@@ -81,6 +82,7 @@ class Public_Abonnement_Overzicht extends Shortcode {
 			$abonnee->last_name,
 			$abonnee->user_email,
 			$abonnee->abonnement->soort,
+			$abonnee->abonnement->opmerking,
 		];
 		foreach ( opties()['extra']  as $extra ) {
 			$abonnee_gegevens[] = array_search( $extra['naam'], $abonnee->abonnement->extras, true ) ? 'ja' : '';
