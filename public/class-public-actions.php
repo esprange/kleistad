@@ -156,6 +156,7 @@ class Public_Actions {
 	public static function register_post_types() {
 		Recept::create_type();
 		Email::create_type();
+		Showcase::create_type();
 	}
 
 	/**

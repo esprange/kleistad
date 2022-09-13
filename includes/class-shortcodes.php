@@ -179,7 +179,7 @@ class Shortcodes {
 				'script' => true,
 				'js'     => [ 'jquery', 'fullcalendar', 'kleistad' ],
 				'css'    => [ 'fullcalendar' ],
-				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
+				'access' => [],
 			],
 			/**
 			 * Toon omzet rapportage
@@ -257,6 +257,15 @@ class Shortcodes {
 				'js'     => [ 'jquery', 'jquery-ui-selectmenu', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui' ],
 				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
+			],
+			/**
+			 * Showcase beheer
+			 */
+			'showcase_beheer'       => (object) [
+				'script' => true,
+				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'kleistad-form' ],
+				'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
+				'access' => [ LID, VERKOOP, BESTUUR ],
 			],
 			/**
 			 * Overzicht alle stokers

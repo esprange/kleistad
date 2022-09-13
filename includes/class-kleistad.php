@@ -23,6 +23,7 @@ const DOCENT    = 'docenten';
 const LID       = 'leden';
 const CURSIST   = 'cursisten';
 const BOEKHOUD  = 'boekhouding';
+const VERKOOP   = 'verkoper';
 const INTERN    = 'intern';
 const OCHTEND   = 'Ochtend';
 const MIDDAG    = 'Middag';
