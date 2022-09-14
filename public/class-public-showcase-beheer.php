@@ -55,7 +55,6 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 				'post_status' => [
 					Showcase::VERKOCHT,
 					Showcase::BESCHIKBAAR,
-					Showcase::CONCEPT,
 				],
 			]
 		);
@@ -130,15 +129,6 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 * Showcase aanmelden
-	 *
-	 * @return array
-	 */
-	protected function aanmelden(): array {
-		return $this->wijzigen( Showcase::BESCHIKBAAR, 'Het werkstuk is aangemeld' );
-	}
-
-	/**
 	 * Showcase tentoonstellen
 	 *
 	 * @return array
@@ -159,16 +149,14 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function verkochtmelden(): array {
-		return $this->wijzigen( Showcase::VERKOCHT, 'Het werkstuk is verkocht' );
-	}
-
-	/**
-	 * Showcase afvoeren
-	 *
-	 * @return array
-	 */
-	protected function afvoeren(): array {
-		return $this->wijzigen( Showcase::BESCHIKBAAR, 'Het werkstuk is terug naar keramist' );
+		$showcase                = new Showcase( $this->data['showcase']['id'] );
+		$showcase->status        = Showcase::VERKOCHT;
+		$showcase->verkoop_datum = strtotime( 'now' );
+		$showcase->save();
+		return [
+			'status'  => $this->status( 'Het werkstuk is verkocht' ),
+			'content' => $this->display(),
+		];
 	}
 
 	/**
@@ -176,7 +164,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 *
 	 * @return array
 	 */
-	protected function bewaren(): array {
+	protected function aanmelden(): array {
 		$showcase               = new Showcase( $this->data['showcase']['id'] );
 		$showcase->titel        = $this->data['showcase']['titel'];
 		$showcase->beschrijving = $this->data['showcase']['beschrijving'] ?? '';
@@ -199,21 +187,77 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 * Showcase status moet gewijzigd worden.
-	 *
-	 * @param string $status  De nieuwe status.
-	 * @param string $melding De de tonen melding.
-	 *
-	 * @return array
+	 * Schrijf de verkochte showcases naar het bestand.
 	 */
-	private function wijzigen( string $status, string $melding ): array {
-		$showcase         = new Showcase( $this->data['showcase']['id'] );
-		$showcase->status = $status;
-		$showcase->save();
-		return [
-			'status'  => $this->status( $melding ),
-			'content' => $this->display(),
-		];
+	protected function verkoop() {
+		$showcases = new Showcases(
+			[
+				'post_status' => [
+					Showcase::VERKOCHT,
+				],
+			]
+		);
+		$showcases->sort_by_verkoop_datum();
+		fputcsv(
+			$this->filehandle,
+			[
+				'keramist',
+				'werkstuk',
+				'verkoop datum',
+				'prijs',
+			],
+			';'
+		);
+		foreach ( $showcases as $showcase ) {
+			fputcsv(
+				$this->filehandle,
+				[
+					$showcase->keramist,
+					$showcase->titel,
+					date( 'd-m-Y', $showcase->verkoop_datum ),
+					$showcase->prijs,
+				],
+				';'
+			);
+		}
+	}
+
+	/**
+	 * Schrijf de beschikbare showcases naar het bestand.
+	 */
+	protected function beschikbaar() {
+		$showcases = new Showcases(
+			[
+				'post_status' => [
+					Showcase::BESCHIKBAAR,
+				],
+			]
+		);
+		$showcases->sort_by_aanmeld_datum();
+		fputcsv(
+			$this->filehandle,
+			[
+				'keramist',
+				'werkstuk',
+				'positie',
+				'aangemeld',
+				'status',
+			],
+			';'
+		);
+		foreach ( $showcases as $showcase ) {
+			fputcsv(
+				$this->filehandle,
+				[
+					$showcase->keramist,
+					$showcase->titel,
+					$showcase->positie,
+					date( 'd-m-Y', $showcase->aanmeld_datum ),
+					$showcase->show_status(),
+				],
+				';'
+			);
+		}
 	}
 
 }

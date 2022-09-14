@@ -61,7 +61,7 @@ class Public_Verkoop_Display extends Public_Shortcode_Display {
 						<label for="kleistad_klant_id">Klant naam</label>
 					</div>
 					<div class="kleistad-col-7">
-						<select class="kleistad-input" name="klant_id" id="kleistad_klant_id" required >
+						<select class="kleistad-select" name="klant_id" id="kleistad_klant_id" required >
 							<?php foreach ( $this->data['gebruikers'] as $gebruiker ) : ?>
 								<option value="<?php echo esc_attr( $gebruiker->id ); ?>" <?php selected( $gebruiker->id, $this->data['input']['klant_id'] ); ?> ><?php echo esc_html( $gebruiker->display_name ); ?></option>
 							<?php endforeach ?>

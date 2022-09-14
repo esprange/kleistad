@@ -105,4 +105,32 @@ class Showcases implements Countable, Iterator {
 		return isset( $this->showcases[ $this->current_index ] );
 	}
 
+	/**
+	 * Sorteer op verkoop datum, descending.
+	 *
+	 * @return void
+	 */
+	public function sort_by_verkoop_datum() : void {
+		usort(
+			$this->showcases,
+			function( $links, $rechts ) {
+				return $rechts->verkoop_datum <=> $links->verkoop_datum;
+			}
+		);
+	}
+
+	/**
+	 * Sorteer op aanmeld datum, descending.
+	 *
+	 * @return void
+	 */
+	public function sort_by_aanmeld_datum() : void {
+		usort(
+			$this->showcases,
+			function( $links, $rechts ) {
+				return $rechts->aanmeld_datum <=> $links->aanmeld_datum;
+			}
+		);
+	}
+
 }

@@ -23,7 +23,7 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 		<div id="kleistad_deelnemer_info" style="font-size: small">
 		</div>
 		<p><label for="kleistad_deelnemer_selectie">Selectie</label>
-			<select id="kleistad_deelnemer_selectie" name="selectie" >
+			<select class="kleistad-select" id="kleistad_deelnemer_selectie" name="selectie" >
 				<option value="*" >&nbsp;</option>
 				<option value="A" >Actieve abonnees</option>
 				<option value="K" >Actieve dagdelenkaart gebruikers</option>
@@ -51,7 +51,7 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 					<tr data-id="<?php echo esc_attr( $id ); ?>">
 						<td><?php echo esc_html( $registratie['is_abonnee'] ); ?></td>
 						<td><?php echo esc_html( $registratie['is_dagdelenkaart'] ); ?></td>
-						<td><?php echo esc_html( implode( ';', $registratie['is_cursist'] ) ); ?></td>
+						<td><?php echo esc_html( $registratie['is_cursist'] ); ?></td>
 						<td><?php echo esc_html( $registratie['achternaam'] ); ?></td>
 						<td><?php echo esc_html( $registratie['voornaam'] ); ?></td>
 						<td><?php echo esc_html( $registratie['email'] ); ?></td>

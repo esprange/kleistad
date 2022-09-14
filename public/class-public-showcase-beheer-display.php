@@ -65,7 +65,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 					value="<?php echo esc_attr( $this->data['showcase']->titel ); ?>"/>
 			</div>
 			<div class="kleistad-col-4">
-				<?php echo esc_html( $this->data['showcase']->show_status() ); ?>
+				<strong><?php echo $this->data['showcase']->id ? esc_html( $this->data['showcase']->show_status() ) : ''; ?></strong>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -75,9 +75,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top:15px">
 			<div class="kleistad-col-10">
-				<textarea name="beschrijving" id="kleistad_beschrijving" maxlength="1000" rows="5">
-					<?php echo esc_textarea( $this->data['showcase']->beschrijving ); ?>
-				</textarea>
+				<textarea name="beschrijving" id="kleistad_beschrijving" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['showcase']->beschrijving ); ?></textarea>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -102,16 +100,20 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				<input name="hoogte" id="kleistad_hoogte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->hoogte ); ?>" />
 			</div>
 		</div>
-		<?php if ( $tentoongesteld ) : ?>
-		<div class="kleistad-row">
-			<div class="kleistad-col-10">
-				<strong>Het werkstuk staat nu tentoongesteld. De prijs <?php echo intval( $this->data['showcase']->prijs ); ?> euro is nu niet te wijzigen.</strong>
-			</div>
-		</div>
-	<?php elseif ( $verkocht ) : ?>
+		<?php if ( $verkocht ) : ?>
+		<input type="hidden" name="prijs" value="<?php echo esc_attr( $this->data['showcase']->prijs ); ?>" />
+		<input type="hidden" name="positie" value="<?php echo esc_attr( $this->data['showcase']->positie ); ?>" />
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
 				<strong>Het werkstuk is verkocht. De prijs waarvoor het werkstuk was aangeboden bedroeg <?php echo intval( $this->data['showcase']->prijs ); ?> euro.</strong>
+			</div>
+		</div>
+		<?php elseif ( $tentoongesteld ) : ?>
+		<input type="hidden" name="prijs" value="<?php echo esc_attr( $this->data['showcase']->prijs ); ?>" />
+		<input type="hidden" name="positie" value="<?php echo esc_attr( $this->data['showcase']->positie ); ?>" />
+		<div class="kleistad-row">
+			<div class="kleistad-col-10">
+				<strong>Het werkstuk staat nu tentoongesteld. De prijs <?php echo intval( $this->data['showcase']->prijs ); ?> euro is nu niet te wijzigen.</strong>
 			</div>
 		</div>
 		<?php else : ?>
@@ -128,7 +130,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				<input name="prijs" id="kleistad_prijs" type="number" min="1" required value="<?php echo esc_attr( intval( $this->data['showcase']->prijs ) ); ?>" />
 			</div>
 			<div class="kleistad-col-5">
-				<select name="positie" id="kleistad_positie">
+				<select name="positie" id="kleistad_positie" class="kleistad-select">
 					<?php
 					foreach (
 						[
@@ -159,21 +161,17 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				?>
 			</div>
 		</div>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_bewaren" value="bewaren">Opslaan</button>
-		<?php
-		if ( Showcase::BESCHIKBAAR === $this->data['showcase']->status ) :
-			?>
-			<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_verbergen" value="verbergen" >Verbergen</button>
-		<?php elseif ( Showcase::CONCEPT === $this->data['showcase']->status ) : ?>
-			<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_aanmelden" value="aanmelden" >Aanmelden</button>
-		<?php endif; ?>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_aanmelden" value="aanmelden" >
+			<?php echo $this->data['showcase']->id ? 'Bewaren' : 'Aanmelden'; ?></button>
+		<?php if ( ! $verkocht ) : ?>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_verwijderen" data-confirm="Showcase beheer|weet je zeker dat je dit werkstuk wilt verwijderen" value="verwijderen">Verwijderen</button>
+		<?php endif; ?>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 	}
 
 	/**
-	 * Render de details
+	 * Render het formulier voor de verkoop commissie
 	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
@@ -182,7 +180,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['showcase']->id ); ?>" />
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
-				<h2><?php echo esc_html( $this->data['showcase']->titel ); ?></h2>
+				<h2><?php echo esc_html( "{$this->data['showcase']->titel} ({$this->data['showcase']->keramist})" ); ?></h2>
 			</div>
 		</div>
 		<?php if ( $this->data['showcase']->beschrijving ) : ?>
@@ -241,15 +239,17 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				endif;
 			endforeach;
 			?>
-			<div class="kleistad-col-3">
-				<label class="kleistad-label"><?php echo esc_html( date_i18n( 'M', $vanaf_datum ) . '-' . date_i18n( 'M', $tot_datum ) ); ?>
-					&nbsp;
-				<input name="shows[]" type="checkbox" value="<?php echo esc_attr( $vanaf_datum . ';' . $tot_datum ); ?>" <?php checked( $checked ); ?> class="kleistad-checkbox" />
+			<div class="kleistad-col-2">
+				<label for="kleistad_show_<?php echo esc_attr( $index ); ?>" class="kleistad-label"><?php echo esc_html( date_i18n( 'M', $vanaf_datum ) . '-' . date_i18n( 'M', $tot_datum ) ); ?>
 				</label>
+			</div>
+			<div class="kleistad-col-1">
+				<input name="shows[]" id="kleistad_show_<?php echo esc_attr( $index ); ?>" type="checkbox" value="<?php echo esc_attr( $vanaf_datum . ';' . $tot_datum ); ?>" <?php checked( $checked ); ?> class="kleistad-checkbox" />
 			</div>
 		<?php endfor; ?>
 		</div>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_tentoonstellen" value="tentoonstellen">Opslaan</button>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_verkochtmelden" value="verkochtmelden">Verkocht</button>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 	}
@@ -322,7 +322,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 							&nbsp;
 						<?php endif; ?></td>
 					<td><?php echo esc_html( $showcase->titel ); ?></td>
-					<td><?php the_author_meta( 'display_name', $showcase->post_author_id ); ?></td>
+					<td><?php echo esc_html( $showcase->keramist ); ?></td>
 					<td><?php echo esc_html( $showcase->show_status() ); ?></td>
 					<td>
 						<a href="#" title="wijzig werkstuk" class="kleistad-view kleistad-edit-link" data-id="<?php echo esc_attr( $showcase->id ); ?>" data-actie="wijzigen" >&nbsp;</a>
@@ -331,6 +331,8 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
+		<button class="kleistad-button kleistad-download-link" type="button" data-actie="beschikbaar" >Download beschikbaar</button>
+		<button class="kleistad-button kleistad-download-link" type="button" data-actie="verkoop" >Download verkoop</button>
 		<?php
 	}
 }

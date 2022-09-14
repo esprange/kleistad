@@ -330,6 +330,15 @@ a.kleistad-schedule {
 	width: 9em;
 }
 
+.kleistad-select { /* style overgenomen van input element */
+	background: #f7f7f7 -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+	border: 1px solid #d1d1d1;
+	border-radius: 2px;
+	line-height: normal;
+	padding: 0.625em 0.4375em;
+	width: 100%;
+}
+
 .kleistad-label,
 .kleistad-label + span {
 	font-weight: bold;

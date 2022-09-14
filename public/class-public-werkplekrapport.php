@@ -93,6 +93,12 @@ class Public_Werkplekrapport extends Shortcode {
 			$werkplekgebruik = new WerkplekGebruik( $datum );
 			$gebruikers      = array_merge( $gebruikers, $werkplekgebruik->geef() );
 		}
+		usort(
+			$gebruikers,
+			function( $links, $rechts ) {
+				return $links->display_name <=> $rechts->display_name;
+			}
+		);
 		return array_map(
 			'unserialize',
 			array_unique(

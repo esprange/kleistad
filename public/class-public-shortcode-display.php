@@ -118,7 +118,7 @@ abstract class Public_Shortcode_Display {
 				<label for="kleistad_gebruiker_id"><?php echo esc_html( $label ); ?></label>
 			</div>
 			<div class="kleistad-col-7">
-				<select class="kleistad-input" name="gebruiker_id" id="kleistad_gebruiker_id" >
+				<select class="kleistad-select" name="gebruiker_id" id="kleistad_gebruiker_id" >
 					<?php foreach ( $this->data['gebruikers'] as $gebruiker ) { ?>
 						<option value="<?php echo esc_attr( $gebruiker->ID ); ?>"><?php echo esc_html( $gebruiker->display_name ); ?></option>
 					<?php } ?>

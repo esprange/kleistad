@@ -26,19 +26,19 @@ use WP_Post;
  * @property float  $prijs
  * @property int    $jaar
  * @property string $status
- * @property int    $created
- * @property int    $modified
+ * @property int    $verkoop_datum
+ * @property int    $aanmeld_datum
  * @property int    $foto_id
  * @property array  $shows
+ * @property string $keramist
  */
 class Showcase {
 
 	const POST_TYPE      = 'kleistad_showcase';
 	const BESCHIKBAAR    = 'pending';
-	const CONCEPT        = 'draft';
 	const INGEPLAND      = 'ingepland';
 	const TENTOONGESTELD = 'tentoongesteld';
-	const VERKOCHT       = 'future';
+	const VERKOCHT       = 'publish';
 	const VERWIJDERD     = 'trash';
 
 	/**
@@ -56,39 +56,41 @@ class Showcase {
 	 */
 	public function __construct( ?int $showcase_id = null, ? WP_Post $load = null ) {
 		$this->data = [
-			'id'           => $showcase_id,
-			'titel'        => '',
-			'beschrijving' => '',
-			'breedte'      => 0,
-			'diepte'       => 0,
-			'hoogte'       => 0,
-			'prijs'        => 0,
-			'positie'      => '',
-			'jaar'         => 0,
-			'created'      => 0,
-			'modified'     => 0,
-			'status'       => 'draft',
-			'foto_id'      => 0,
-			'shows'        => [],
+			'id'            => $showcase_id,
+			'titel'         => '',
+			'beschrijving'  => '',
+			'breedte'       => 0,
+			'diepte'        => 0,
+			'hoogte'        => 0,
+			'prijs'         => 0,
+			'positie'       => '',
+			'jaar'          => 0,
+			'aanmeld_datum' => 0,
+			'verkoop_datum' => 0,
+			'status'        => self::BESCHIKBAAR,
+			'foto_id'       => 0,
+			'shows'         => [],
+			'keramist'      => '',
 		];
 		if ( $showcase_id ) {
 			$showcase_post = $load ?: get_post( $showcase_id );
 			if ( $showcase_post ) {
 				$showcase_specs = maybe_unserialize( $showcase_post->post_excerpt );
 				$this->data     = [
-					'id'           => $showcase_post->ID,
-					'titel'        => $showcase_post->post_title,
-					'status'       => $showcase_post->post_status,
-					'created'      => $showcase_post->post_date,
-					'modified'     => $showcase_post->post_modified,
-					'beschrijving' => $showcase_post->post_content,
-					'breedte'      => $showcase_specs['breedte'],
-					'diepte'       => $showcase_specs['diepte'],
-					'hoogte'       => $showcase_specs['hoogte'],
-					'prijs'        => round( $showcase_specs['prijs'], 2 ),
-					'positie'      => $showcase_specs['positie'],
-					'jaar'         => $showcase_specs['jaar'],
-					'shows'        => $showcase_specs['shows'],
+					'id'            => $showcase_post->ID,
+					'titel'         => $showcase_post->post_title,
+					'status'        => $showcase_post->post_status,
+					'aanmeld_datum' => strtotime( $showcase_post->post_date ),
+					'beschrijving'  => $showcase_post->post_content,
+					'keramist'      => get_user_by( 'id', $showcase_post->post_author )->display_name,
+					'breedte'       => $showcase_specs['breedte'],
+					'diepte'        => $showcase_specs['diepte'],
+					'hoogte'        => $showcase_specs['hoogte'],
+					'prijs'         => round( $showcase_specs['prijs'], 2 ),
+					'positie'       => $showcase_specs['positie'],
+					'jaar'          => $showcase_specs['jaar'],
+					'shows'         => $showcase_specs['shows'],
+					'verkoop_datum' => $showcase_specs['verkoop_datum'],
 				];
 			}
 			$images = get_attached_media( 'image', $showcase_id );
@@ -127,12 +129,11 @@ class Showcase {
 	 * @return string
 	 */
 	public function show_status() : string {
-		if ( in_array( $this->status, [ self::CONCEPT, self::VERKOCHT, self::VERWIJDERD ], true ) ) {
-			return match ( $this->status ) {
-				self::CONCEPT        => 'concept',
-				self::VERKOCHT       => 'verkocht',
-				self::VERWIJDERD     => 'verwijderd'
-			};
+		if ( self::VERKOCHT === $this->status ) {
+			return 'verkocht';
+		}
+		if ( self::VERWIJDERD === $this->status ) {
+			return 'verwijderd';
 		}
 		$vandaag = strtotime( 'today' );
 		foreach ( $this->shows as $show ) {
@@ -197,13 +198,14 @@ class Showcase {
 				'post_content' => $this->beschrijving,
 				'post_excerpt' => maybe_serialize(
 					[
-						'breedte' => $this->breedte,
-						'hoogte'  => $this->hoogte,
-						'diepte'  => $this->diepte,
-						'prijs'   => $this->prijs,
-						'positie' => $this->positie,
-						'jaar'    => $this->jaar,
-						'shows'   => $this->shows,
+						'breedte'       => $this->breedte,
+						'hoogte'        => $this->hoogte,
+						'diepte'        => $this->diepte,
+						'prijs'         => $this->prijs,
+						'positie'       => $this->positie,
+						'jaar'          => $this->jaar,
+						'shows'         => $this->shows,
+						'verkoop_datum' => $this->verkoop_datum,
 					]
 				),
 				'post_type'    => self::POST_TYPE,

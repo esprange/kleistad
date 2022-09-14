@@ -177,7 +177,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-2 kleistad-label"><label for="kleistad_naam">Soort workshop</label></div>
 			<div class="kleistad-col-3">
-				<select name="naam" required id="kleistad_naam" <?php wp_readonly( $readonly ); ?> style="width:100%" >
+				<select name="naam" required id="kleistad_naam" <?php wp_readonly( $readonly ); ?> class="kleistad-select" >
 					<?php foreach ( opties()['activiteit'] as $activiteit ) : ?>
 					<option value="<?php echo esc_attr( sanitize_title( $activiteit['naam'] ) ); ?>" <?php selected( 0 === strcasecmp( $this->data['workshop']['naam'], $activiteit['naam'] ) ); ?> >
 						<?php echo esc_html( ucfirst( $activiteit['naam'] ) ); ?>
@@ -253,7 +253,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 				<?php if ( $readonly ) : ?>
 					<span id="kleistad_docent"><?php echo esc_html( $this->data['workshop']['docent_naam'] ); ?></span>
 				<?php else : ?>
-					<select style="width:100%" name="docent[]" id="kleistad_docent" multiple >
+					<select class="kleistad-select" name="docent[]" id="kleistad_docent" multiple >
 						<?php foreach ( $this->data['docenten'] as $docent ) : ?>
 							<option value="<?php echo esc_attr( $docent->ID ); ?>" <?php selected( in_array( $docent->ID, $this->data['workshop']['docent'], true ) ); ?> ><?php echo esc_html( $docent->display_name ); ?></option>
 						<?php endforeach ?>

@@ -125,7 +125,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 			<?php if ( $readonly ) : ?>
 				<span id="kleistad_docent"><?php echo esc_html( is_numeric( $this->data['cursus']['docent'] ) ? get_user_by( 'id', $this->data['cursus']['docent'] )->display_name : $this->data['cursus']['docent'] ); ?></span>
 			<?php else : ?>
-				<select style="width:100%" name="docent" id="kleistad_docent" required >
+				<select class="kleistad-select" name="docent" id="kleistad_docent" required >
 				<?php foreach ( $this->data['docenten'] as $docent ) : ?>
 					<option value="<?php echo esc_attr( $docent->ID ); ?>" <?php selected( $docent->ID, $this->data['cursus']['docent'] ); ?> ><?php echo esc_html( $docent->display_name ); ?></option>
 				<?php endforeach ?>
