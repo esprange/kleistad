@@ -49,6 +49,15 @@
 			<li>[kleistad_abonnee_wijziging] wijzigen abonnement door lid</li>
 		</ol>
 	</li>
+	<li><h3>toegankelijk voor leden, verkoop en bestuur</h3>
+		<ol>
+			<li>[kleistad_showcase_beheer] aanmelden werkstukken voor verkoop door lid
+			<ul style="list-style-type:square;margin-left:25px">
+				<li>actie=verkoop. Inplannen tentoonstellen werkstukken door verkoop commissie</li>
+			</ul>
+			</li>
+		</ol>
+	</li>
 	<li><h3>toegankelijk voor leden, docenten en bestuur</h3>
 		<ol>
 			<li>[kleistad_kalender] overzicht workshops en cursussen</li>

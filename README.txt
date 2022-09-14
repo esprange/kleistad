@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 6.0.1
-Stable tag: 7.5.3
+Stable tag: 7.6.0
+
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -33,7 +34,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.5.4 =
+= 7.6.0 =
+* Nieuwe functie voor verkoop van werkstukken
 * Als vanuit dashboard een inschrijving correctie plaatsvindt wordt de cursus zonodig op vol gezet
 * Bij cursusbeheer kan een cursus pas op vervallen worden gezet nadat er geen actieve inschrijvingen meer zijn
 * Updates van externe pakketten

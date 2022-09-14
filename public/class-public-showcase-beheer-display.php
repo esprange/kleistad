@@ -248,8 +248,10 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		<?php endfor; ?>
 		</div>
+		<?php if ( Showcase::VERKOCHT !== $this->data['showcase']->status ) : ?>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_tentoonstellen" value="tentoonstellen">Opslaan</button>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_verkochtmelden" value="verkochtmelden">Verkocht</button>
+		<?php endif; ?>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
 		<?php
 	}
