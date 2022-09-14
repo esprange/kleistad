@@ -91,13 +91,13 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
-				<input name="breedte" id="kleistad_breedte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->breedte ); ?>" />
+				<input class="kleistad-input" name="breedte" id="kleistad_breedte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->breedte ); ?>" />
 			</div>
 			<div class="kleistad-col-3">
-				<input name="diepte" id="kleistad_diepte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->diepte ); ?>" />
+				<input class="kleistad-input" name="diepte" id="kleistad_diepte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->diepte ); ?>" />
 			</div>
 			<div class="kleistad-col-3">
-				<input name="hoogte" id="kleistad_hoogte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->hoogte ); ?>" />
+				<input class="kleistad-input" name="hoogte" id="kleistad_hoogte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->hoogte ); ?>" />
 			</div>
 		</div>
 		<?php if ( $verkocht ) : ?>
@@ -127,7 +127,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-5">
-				<input name="prijs" id="kleistad_prijs" type="number" min="1" required value="<?php echo esc_attr( intval( $this->data['showcase']->prijs ) ); ?>" />
+				<input class="kleistad-input" name="prijs" id="kleistad_prijs" type="number" min="1" required value="<?php echo esc_attr( intval( $this->data['showcase']->prijs ) ); ?>" />
 			</div>
 			<div class="kleistad-col-5">
 				<select name="positie" id="kleistad_positie" class="kleistad-select">
@@ -249,7 +249,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		<?php endfor; ?>
 		</div>
 		<?php if ( Showcase::VERKOCHT !== $this->data['showcase']->status ) : ?>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_tentoonstellen" value="tentoonstellen">Opslaan</button>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_tentoonstellen" value="tentoonstellen">Bewaren</button>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_verkochtmelden" value="verkochtmelden">Verkocht</button>
 		<?php endif; ?>
 		<button class="kleistad-button kleistad-terug-link" type="button" style="float:right" >Terug</button>
