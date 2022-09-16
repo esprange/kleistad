@@ -64,39 +64,24 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				<input class="kleistad-input" type="text" size="20" name="titel" required id="kleistad_titel"
 					value="<?php echo esc_attr( $this->data['showcase']->titel ); ?>"/>
 			</div>
-			<div class="kleistad-col-4">
-				<strong><?php echo $this->data['showcase']->id ? esc_html( $this->data['showcase']->show_status() ) : ''; ?></strong>
-			</div>
 		</div>
 		<div class="kleistad-row">
-			<div class="kleistad-col-10 kleistad-label">
-				<label for="kleistad_beschrijving">Beschrijving</label>
-			</div>
-		</div>
-		<div class="kleistad-row" style="padding-top:15px">
 			<div class="kleistad-col-10">
-				<textarea name="beschrijving" id="kleistad_beschrijving" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['showcase']->beschrijving ); ?></textarea>
-			</div>
-		</div>
-		<div class="kleistad-row">
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_breedte">Breedte (cm)</label>
-			</div>
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_diepte">Diepte (cm)</label>
-			</div>
-			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_hoogte">Hoogte (cm)</label>
+				<label for="kleistad_beschrijving" class="kleistad-label">Beschrijving</label>
+				<textarea name="beschrijving" id="kleistad_beschrijving" maxlength="200" rows="3"><?php echo esc_textarea( $this->data['showcase']->beschrijving ); ?></textarea>
 			</div>
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">
+				<label for="kleistad_breedte" class="kleistad-label">Breedte (cm)</label>
 				<input class="kleistad-input" name="breedte" id="kleistad_breedte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->breedte ); ?>" />
 			</div>
 			<div class="kleistad-col-3">
+				<label for="kleistad_diepte" class=" kleistad-label">Diepte (cm)</label>
 				<input class="kleistad-input" name="diepte" id="kleistad_diepte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->diepte ); ?>" />
 			</div>
 			<div class="kleistad-col-3">
+				<label for="kleistad_hoogte" class="kleistad-label">Hoogte (cm)</label>
 				<input class="kleistad-input" name="hoogte" id="kleistad_hoogte" type="number" required value="<?php echo esc_attr( $this->data['showcase']->hoogte ); ?>" />
 			</div>
 		</div>
@@ -118,18 +103,12 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<?php else : ?>
 		<div class="kleistad-row">
-			<div class="kleistad-col-5 kleistad-label">
-				<label for="kleistad_prijs">Prijs (euro)</label>
-			</div>
-			<div class="kleistad-col-5 kleistad-label">
-				<label for="kleistad_positie">Voorkeur positie</label>
-			</div>
-		</div>
-		<div class="kleistad-row">
 			<div class="kleistad-col-5">
+				<label for="kleistad_prijs" class="kleistad-label">Prijs (euro)</label>
 				<input class="kleistad-input" name="prijs" id="kleistad_prijs" type="number" min="1" required value="<?php echo esc_attr( intval( $this->data['showcase']->prijs ) ); ?>" />
 			</div>
 			<div class="kleistad-col-5">
+				<label for="kleistad_positie" class="kleistad-label">Voorkeur positie</label>
 				<select name="positie" id="kleistad_positie" class="kleistad-select">
 					<?php
 					foreach (
@@ -140,20 +119,20 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 							'stellingkast' => 'Stellingkast',
 						] as $key => $value ) :
 						?>
-					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $this->data['showcase']->positie, $key ); ?> ><?php echo esc_html( $value ); ?></option>
+						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $this->data['showcase']->positie, $key ); ?> ><?php echo esc_html( $value ); ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>
 		</div>
 		<?php endif; ?>
 		<div class="kleistad-row">
-			<div class="kleistad-col-5 kleistad-label">
-				<label for="kleistad_foto">Foto (max 2M bytes)</label>
+			<div class="kleistad-col-5">
+				<label for="kleistad_foto" class="kleistad-label">Foto (max 2M bytes)</label>
+				<input type="file" name="foto" id="kleistad_foto" accept=".jpeg,.jpg,.tiff,.tif" /><br />
 			</div>
 		</div>
-		<div class="kleistad-row" style="padding-top:15px">
+		<div class="kleistad-row" style="padding-top:15px;padding-bottom:15px;">
 			<div class="kleistad-col-5">
-				<input type="file" name="foto" id="kleistad_foto" accept=".jpeg,.jpg,.tiff,.tif" /><br />
 				<?php
 				if ( $this->data['showcase']->foto_id ) :
 					echo wp_get_attachment_image( $this->data['showcase']->foto_id, 'medium' );
@@ -235,12 +214,10 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				endif;
 			endforeach;
 			?>
-			<div class="kleistad-col-2">
+			<div class="kleistad-col-3" style="padding-top: 20px;padding-bottom: 20px">
 				<label for="kleistad_show_<?php echo esc_attr( $index ); ?>" class="kleistad-label"><?php echo esc_html( date_i18n( 'M', $show_datum['start'] ) . '-' . date_i18n( 'M', $show_datum['eind'] ) ); ?>
-				</label>
-			</div>
-			<div class="kleistad-col-1">
 				<input name="shows[]" id="kleistad_show_<?php echo esc_attr( $index ); ?>" type="checkbox" value="<?php echo esc_attr( $show_datum['start'] . ';' . $show_datum['eind'] ); ?>" <?php checked( $checked ); ?> class="kleistad-checkbox" />
+				</label>
 			</div>
 		<?php endforeach; ?>
 		</div>
@@ -290,7 +267,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 			</tbody>
 		</table>
 		<?php else : ?>
-		<strong>Je hebt nog geen werkstukken aangeboden voor verkoop. Klik op 'toevoegen werkstuk' om een werkstuk aan te melden.</strong>
+		<p><strong>Je hebt nog geen werkstukken aangeboden voor verkoop. Klik op 'toevoegen werkstuk' om een werkstuk aan te melden.</strong></p>
 		<?php endif; ?>
 		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen werkstuk</button>
 		<?php
