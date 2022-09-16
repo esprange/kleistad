@@ -26,11 +26,12 @@ use WP_Post;
  * @property float  $prijs
  * @property int    $jaar
  * @property string $status
+ * @property int    $keramist_id
  * @property int    $verkoop_datum
  * @property int    $aanmeld_datum
+ * @property int    $mail_datum
  * @property int    $foto_id
  * @property array  $shows
- * @property string $keramist
  */
 class Showcase {
 
@@ -67,10 +68,11 @@ class Showcase {
 			'jaar'          => 0,
 			'aanmeld_datum' => 0,
 			'verkoop_datum' => 0,
+			'mail_datum'    => 0,
 			'status'        => self::BESCHIKBAAR,
 			'foto_id'       => 0,
 			'shows'         => [],
-			'keramist'      => '',
+			'keramist_id'   => 0,
 		];
 		if ( $showcase_id ) {
 			$showcase_post = $load ?: get_post( $showcase_id );
@@ -82,15 +84,16 @@ class Showcase {
 					'status'        => $showcase_post->post_status,
 					'aanmeld_datum' => strtotime( $showcase_post->post_date ),
 					'beschrijving'  => $showcase_post->post_content,
-					'keramist'      => get_user_by( 'id', $showcase_post->post_author )->display_name,
+					'keramist_id'   => intval( $showcase_post->post_author ),
 					'breedte'       => $showcase_specs['breedte'],
 					'diepte'        => $showcase_specs['diepte'],
 					'hoogte'        => $showcase_specs['hoogte'],
 					'prijs'         => round( $showcase_specs['prijs'], 2 ),
 					'positie'       => $showcase_specs['positie'],
 					'jaar'          => $showcase_specs['jaar'],
-					'shows'         => $showcase_specs['shows'],
-					'verkoop_datum' => $showcase_specs['verkoop_datum'],
+					'shows'         => $showcase_specs['shows'] ?? [],
+					'verkoop_datum' => $showcase_specs['verkoop_datum'] ?? [],
+					'mail_datum'    => $showcase_specs['mail_datum'] ?? 0,
 				];
 			}
 			$images = get_attached_media( 'image', $showcase_id );
@@ -178,6 +181,27 @@ class Showcase {
 	}
 
 	/**
+	 * Pas de shows aan.
+	 *
+	 * @param array $shows De nieuwe shows.
+	 *
+	 * @return void
+	 */
+	public function tentoonstellen( array $shows ) : void {
+		$vandaag = strtotime( 'today' );
+		foreach ( $this->shows as $key => $show ) {
+			if ( $vandaag >= $show['eind'] ) {
+				continue;
+			}
+			unset( $this->data['shows'][ $key ] );
+		}
+		foreach ( $shows as $nieuwe_show ) {
+			$this->data['shows'][] = $nieuwe_show;
+		}
+		$this->save();
+	}
+
+	/**
 	 * Bewaar de showcase
 	 *
 	 * @return int Het showcase id.
@@ -206,6 +230,7 @@ class Showcase {
 						'jaar'          => $this->jaar,
 						'shows'         => $this->shows,
 						'verkoop_datum' => $this->verkoop_datum,
+						'mail_datum'    => $this->mail_datum,
 					]
 				),
 				'post_type'    => self::POST_TYPE,
@@ -250,4 +275,21 @@ class Showcase {
 		);
 	}
 
+	/**
+	 * Bepaal de datums van de huidige en komende shows.
+	 *
+	 * @return array
+	 */
+	public static function show_datums() : array {
+		$offset = ( intval( date( 'm' ) ) - 1 ) % 2;
+		$shows  = [];
+		for ( $index = 0; $index < 3; $index ++ ) {
+			$periode = $offset + $index * 2;
+			$shows[] = [
+				'start' => strtotime( "first monday of $periode month 0:00" ),
+				'eind'  => strtotime( 'first monday of ' . $periode + 2 . ' month 0:00' ),
+			];
+		}
+		return $shows;
+	}
 }

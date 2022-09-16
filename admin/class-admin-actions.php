@@ -135,6 +135,7 @@ class Admin_Actions {
 		$this->background->push_to_queue( 'Cursisten::doe_dagelijks' );
 		$this->background->push_to_queue( 'Inschrijvingen::doe_dagelijks' );
 		$this->background->push_to_queue( 'Dagdelenkaarten::doe_dagelijks' );
+		$this->background->push_to_queue( 'Showcases::doe_dagelijks' );
 		$this->background->push_to_queue( 'Blokkade::doe_dagelijks' );
 		// phpcs:ignore $this->background->push_to_queue( 'Gebruiker::doe_dagelijks' );
 		$this->background->save()->dispatch();

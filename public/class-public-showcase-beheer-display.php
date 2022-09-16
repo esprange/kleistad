@@ -122,7 +122,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				<label for="kleistad_prijs">Prijs (euro)</label>
 			</div>
 			<div class="kleistad-col-5 kleistad-label">
-				<label for="kleistad_positie">Gewenste positie</label>
+				<label for="kleistad_positie">Voorkeur positie</label>
 			</div>
 		</div>
 		<div class="kleistad-row">
@@ -180,7 +180,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		<input type="hidden" name="id" value="<?php echo esc_attr( $this->data['showcase']->id ); ?>" />
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
-				<h2><?php echo esc_html( "{$this->data['showcase']->titel} ({$this->data['showcase']->keramist})" ); ?></h2>
+				<h2><?php echo esc_html( $this->data['showcase']->titel . ' (' . get_user_by( 'ID', $this->data['showcase']->keramist_id )->display_name . ')' ); ?></h2>
 			</div>
 		</div>
 		<?php if ( $this->data['showcase']->beschrijving ) : ?>
@@ -226,27 +226,23 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 		<?php
-		$offset = ( intval( date( 'm' ) ) - 1 ) % 2;
-		for ( $index = 0; $index < 3; $index ++ ) :
-			$periode     = $offset + $index * 2;
-			$vanaf_datum = strtotime( "first monday of $periode month 0:00" );
-			$tot_datum   = strtotime( 'first monday of ' . $periode + 2 . ' month 0:00' );
-			$checked     = false;
+		foreach ( Showcase::show_datums() as $index => $show_datum ) :
+			$checked = false;
 			foreach ( $this->data['showcase']->shows as $show ) :
-				if ( $show['start'] >= $vanaf_datum && $show['eind'] <= $tot_datum ) :
+				if ( $show['start'] >= $show_datum['start'] && $show['eind'] <= $show_datum['eind'] ) :
 					$checked = true;
 					break;
 				endif;
 			endforeach;
 			?>
 			<div class="kleistad-col-2">
-				<label for="kleistad_show_<?php echo esc_attr( $index ); ?>" class="kleistad-label"><?php echo esc_html( date_i18n( 'M', $vanaf_datum ) . '-' . date_i18n( 'M', $tot_datum ) ); ?>
+				<label for="kleistad_show_<?php echo esc_attr( $index ); ?>" class="kleistad-label"><?php echo esc_html( date_i18n( 'M', $show_datum['start'] ) . '-' . date_i18n( 'M', $show_datum['eind'] ) ); ?>
 				</label>
 			</div>
 			<div class="kleistad-col-1">
-				<input name="shows[]" id="kleistad_show_<?php echo esc_attr( $index ); ?>" type="checkbox" value="<?php echo esc_attr( $vanaf_datum . ';' . $tot_datum ); ?>" <?php checked( $checked ); ?> class="kleistad-checkbox" />
+				<input name="shows[]" id="kleistad_show_<?php echo esc_attr( $index ); ?>" type="checkbox" value="<?php echo esc_attr( $show_datum['start'] . ';' . $show_datum['eind'] ); ?>" <?php checked( $checked ); ?> class="kleistad-checkbox" />
 			</div>
-		<?php endfor; ?>
+		<?php endforeach; ?>
 		</div>
 		<?php if ( Showcase::VERKOCHT !== $this->data['showcase']->status ) : ?>
 		<button class="kleistad-button" type="submit" name="kleistad_submit_showcase_beheer" id="kleistad_submit_tentoonstellen" value="tentoonstellen">Bewaren</button>
@@ -262,7 +258,8 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function overzicht() {
-		?>
+		if ( count( $this->data['showcases'] ) ) :
+			?>
 		<table class="kleistad-datatable display" data-page-length="10" data-order='[[ 2, "desc" ]]'>
 			<thead>
 			<tr>
@@ -292,7 +289,10 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
-		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen</button>
+		<?php else : ?>
+		<strong>Je hebt nog geen werkstukken aangeboden voor verkoop. Klik op 'toevoegen werkstuk' om een werkstuk aan te melden.</strong>
+		<?php endif; ?>
+		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen werkstuk</button>
 		<?php
 	}
 
@@ -324,7 +324,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 							&nbsp;
 						<?php endif; ?></td>
 					<td><?php echo esc_html( $showcase->titel ); ?></td>
-					<td><?php echo esc_html( $showcase->keramist ); ?></td>
+					<td><?php echo esc_html( get_user_by( 'ID', $showcase->keramist_id )->display_name ); ?></td>
 					<td><?php echo esc_html( $showcase->show_status() ); ?></td>
 					<td>
 						<a href="#" title="wijzig werkstuk" class="kleistad-view kleistad-edit-link" data-id="<?php echo esc_attr( $showcase->id ); ?>" data-actie="wijzigen" >&nbsp;</a>

@@ -133,4 +133,42 @@ class Showcases implements Countable, Iterator {
 		);
 	}
 
+	/**
+	 * Controleer of er emails moeten worden verstuurd voor werkstukken die tentoongesteld gaan worden
+	 */
+	public static function doe_dagelijks() {
+		$show_datums = Showcase::show_datums();
+		$keramisten  = [];
+		$vandaag     = strtotime( 'today' );
+		foreach ( new self( [ 'post_status' => [ Showcase::BESCHIKBAAR ] ] ) as $showcase ) {
+			foreach ( [ 0, 1 ] as $index ) { // Alleen de huidige show en eerstkomende zijn relevant.
+				if ( in_array( $show_datums[ $index ], $showcase->shows, true ) ) {
+					$alert_datum = $show_datums[ $index ]['start'] - WEEK_IN_SECONDS;
+					if ( $showcase->mail_datum < $alert_datum && $vandaag >= $alert_datum ) {
+						$showcase->mail_datum = $vandaag;
+						$showcase->save();
+						$keramisten[ $showcase->keramist_id ][] = $showcase->titel;
+						break;
+					}
+				}
+			}
+		}
+		foreach ( $keramisten as $keramist_id => $keramist_werkstukken ) {
+			$emailer  = new Email();
+			$keramist = get_userdata( $keramist_id );
+			$emailer->send(
+				[
+					'to'         => "$keramist->display_name <$keramist->user_email>",
+					'subject'    => 'Tentoonstellen werkstukken',
+					'slug'       => 'showcase_tentoonstellen',
+					'parameters' => [
+						'voornaam'    => $keramist->first_name,
+						'achternaam'  => $keramist->last_name,
+						'werkstukken' => implode( '<br/>', $keramist_werkstukken ),
+					],
+				]
+			);
+		}
+	}
+
 }

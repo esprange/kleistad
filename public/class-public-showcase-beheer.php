@@ -107,8 +107,8 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 		foreach ( $this->data['showcase']['shows'] ?? [] as $key => $show ) {
 			list( $start, $eind )                    = explode( ';', $show );
 			$this->data['showcase']['shows'][ $key ] = [
-				'start' => $start,
-				'eind'  => $eind,
+				'start' => intval( $start ),
+				'eind'  => intval( $eind ),
 			];
 		}
 		return $this->save();
@@ -134,9 +134,8 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function tentoonstellen(): array {
-		$showcase        = new Showcase( $this->data['showcase']['id'] );
-		$showcase->shows = $this->data['showcase']['shows'] ?? [];
-		$showcase->save();
+		$showcase = new Showcase( $this->data['showcase']['id'] );
+		$showcase->tentoonstellen( $this->data['showcase']['shows'] ?? [] );
 		return [
 			'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
 			'content' => $this->display(),
@@ -212,7 +211,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 			fputcsv(
 				$this->filehandle,
 				[
-					$showcase->keramist,
+					get_user_by( 'ID', $showcase->keramist_id )->display_name,
 					$showcase->titel,
 					date( 'd-m-Y', $showcase->verkoop_datum ),
 					$showcase->prijs,
@@ -249,7 +248,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 			fputcsv(
 				$this->filehandle,
 				[
-					$showcase->keramist,
+					get_user_by( 'ID', $showcase->keramist_id )->display_name,
 					$showcase->titel,
 					$showcase->positie,
 					date( 'd-m-Y', $showcase->aanmeld_datum ),
