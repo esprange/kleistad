@@ -24,6 +24,7 @@ use WP_Post;
  * @property int    $diepte
  * @property int    $hoogte
  * @property float  $prijs
+ * @property float  $btw_percentage
  * @property int    $jaar
  * @property string $status
  * @property int    $keramist_id
@@ -57,43 +58,45 @@ class Showcase {
 	 */
 	public function __construct( ?int $showcase_id = null, ? WP_Post $load = null ) {
 		$this->data = [
-			'id'            => $showcase_id,
-			'titel'         => '',
-			'beschrijving'  => '',
-			'breedte'       => 0,
-			'diepte'        => 0,
-			'hoogte'        => 0,
-			'prijs'         => 0,
-			'positie'       => '',
-			'jaar'          => 0,
-			'aanmeld_datum' => 0,
-			'verkoop_datum' => 0,
-			'mail_datum'    => 0,
-			'status'        => self::BESCHIKBAAR,
-			'foto_id'       => 0,
-			'shows'         => [],
-			'keramist_id'   => 0,
+			'id'             => $showcase_id,
+			'titel'          => '',
+			'beschrijving'   => '',
+			'breedte'        => 0,
+			'diepte'         => 0,
+			'hoogte'         => 0,
+			'prijs'          => 0,
+			'btw_percentage' => 0,
+			'positie'        => '',
+			'jaar'           => 0,
+			'aanmeld_datum'  => 0,
+			'verkoop_datum'  => 0,
+			'mail_datum'     => 0,
+			'status'         => self::BESCHIKBAAR,
+			'foto_id'        => 0,
+			'shows'          => [],
+			'keramist_id'    => 0,
 		];
 		if ( $showcase_id ) {
 			$showcase_post = $load ?: get_post( $showcase_id );
 			if ( $showcase_post ) {
 				$showcase_specs = maybe_unserialize( $showcase_post->post_excerpt );
 				$this->data     = [
-					'id'            => $showcase_post->ID,
-					'titel'         => $showcase_post->post_title,
-					'status'        => $showcase_post->post_status,
-					'aanmeld_datum' => strtotime( $showcase_post->post_date ),
-					'beschrijving'  => $showcase_post->post_content,
-					'keramist_id'   => intval( $showcase_post->post_author ),
-					'breedte'       => $showcase_specs['breedte'],
-					'diepte'        => $showcase_specs['diepte'],
-					'hoogte'        => $showcase_specs['hoogte'],
-					'prijs'         => round( $showcase_specs['prijs'], 2 ),
-					'positie'       => $showcase_specs['positie'],
-					'jaar'          => $showcase_specs['jaar'],
-					'shows'         => $showcase_specs['shows'] ?? [],
-					'verkoop_datum' => $showcase_specs['verkoop_datum'] ?? [],
-					'mail_datum'    => $showcase_specs['mail_datum'] ?? 0,
+					'id'             => $showcase_post->ID,
+					'titel'          => $showcase_post->post_title,
+					'status'         => $showcase_post->post_status,
+					'aanmeld_datum'  => strtotime( $showcase_post->post_date ),
+					'beschrijving'   => $showcase_post->post_content,
+					'keramist_id'    => intval( $showcase_post->post_author ),
+					'breedte'        => $showcase_specs['breedte'],
+					'diepte'         => $showcase_specs['diepte'],
+					'hoogte'         => $showcase_specs['hoogte'],
+					'prijs'          => round( $showcase_specs['prijs'], 2 ),
+					'btw_percentage' => intval( $showcase_specs['btw_percentage'] ?? 0 ),
+					'positie'        => $showcase_specs['positie'],
+					'jaar'           => $showcase_specs['jaar'],
+					'shows'          => $showcase_specs['shows'] ?? [],
+					'verkoop_datum'  => $showcase_specs['verkoop_datum'] ?? [],
+					'mail_datum'     => $showcase_specs['mail_datum'] ?? 0,
 				];
 			}
 			$images = get_attached_media( 'image', $showcase_id );
@@ -222,15 +225,16 @@ class Showcase {
 				'post_content' => $this->beschrijving,
 				'post_excerpt' => maybe_serialize(
 					[
-						'breedte'       => $this->breedte,
-						'hoogte'        => $this->hoogte,
-						'diepte'        => $this->diepte,
-						'prijs'         => $this->prijs,
-						'positie'       => $this->positie,
-						'jaar'          => $this->jaar,
-						'shows'         => $this->shows,
-						'verkoop_datum' => $this->verkoop_datum,
-						'mail_datum'    => $this->mail_datum,
+						'breedte'        => $this->breedte,
+						'hoogte'         => $this->hoogte,
+						'diepte'         => $this->diepte,
+						'prijs'          => $this->prijs,
+						'btw_percentage' => $this->btw_percentage,
+						'positie'        => $this->positie,
+						'jaar'           => $this->jaar,
+						'shows'          => $this->shows,
+						'verkoop_datum'  => $this->verkoop_datum,
+						'mail_datum'     => $this->mail_datum,
 					]
 				),
 				'post_type'    => self::POST_TYPE,

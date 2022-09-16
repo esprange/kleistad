@@ -108,6 +108,16 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				<input class="kleistad-input" name="prijs" id="kleistad_prijs" type="number" min="1" required value="<?php echo esc_attr( intval( $this->data['showcase']->prijs ) ); ?>" />
 			</div>
 			<div class="kleistad-col-5">
+				<label for="kleistad_btw" class="kleistad-label">BTW percentage</label>
+				<select name="btw_percentage" id="kleistad_btw" class="kleistad-select">
+					<?php foreach ( [ 0, 9, 21 ] as $percent ) : ?>
+						<option value="<?php echo esc_attr( $percent ); ?>" <?php selected( $this->data['showcase']->btw_percentage, $percent ); ?> ><?php echo esc_html( $percent ); ?> %</option>						?>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-5">
 				<label for="kleistad_positie" class="kleistad-label">Voorkeur positie</label>
 				<select name="positie" id="kleistad_positie" class="kleistad-select">
 					<?php
@@ -171,23 +181,26 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		<?php endif ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_breedte">Breedte </label><?php echo esc_html( $this->data['showcase']->breedte ); ?> cm
+				<label>Breedte </label><?php echo esc_html( $this->data['showcase']->breedte ); ?> cm
 			</div>
 			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_diepte">Diepte </label><?php echo esc_html( $this->data['showcase']->diepte ); ?> cm
+				<label>Diepte </label><?php echo esc_html( $this->data['showcase']->diepte ); ?> cm
 			</div>
 			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_hoogte">Hoogte </label><?php echo esc_attr( $this->data['showcase']->hoogte ); ?> cm
+				<label>Hoogte </label><?php echo esc_attr( $this->data['showcase']->hoogte ); ?> cm
 			</div>
 		</div>
 		<div class="kleistad-row">
-			<div class="kleistad-col-5 kleistad-label">
-				<label for="kleistad_prijs">Prijs </label> <?php echo esc_html( intval( $this->data['showcase']->prijs ) ); ?> euro
+			<div class="kleistad-col-3 kleistad-label">
+				<label>Prijs </label> <?php echo esc_html( intval( $this->data['showcase']->prijs ) ); ?> euro
+			</div>
+			<div class="kleistad-col-3 kleistad-label">
+				<label>BTW </label> <?php echo esc_html( intval( $this->data['showcase']->btw_percentage ) ); ?> %
 			</div>
 		</div>
 		<?php if ( $this->data['showcase']->positie ) : ?>
 		<div class="kleistad-row">
-			<div class="kleistad-col-5 kleistad-label">
+			<div class="kleistad-col-3 kleistad-label">
 				<label for="kleistad_positie">Gewenste positie </label><?php echo esc_html( $this->data['showcase']->positie ); ?>
 			</div>
 		</div>
@@ -286,6 +299,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 				<th data-orderable="false"></th>
 				<th>Titel</th>
 				<th>Keramist</th>
+				<th>Nummer</th>
 				<th>Status</th>
 				<th data-orderable="false">&nbsp;</th>
 			</tr>
@@ -296,12 +310,12 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 					<td>
 						<?php if ( $showcase->foto_id ) : ?>
 							<?php echo wp_get_attachment_image( $showcase->foto_id ); ?>
-							<!--" height="100" width="100" alt="< ?php echo esc_attr( $showcase->titel ); ?-->
 						<?php else : ?>
 							&nbsp;
 						<?php endif; ?></td>
 					<td><?php echo esc_html( $showcase->titel ); ?></td>
 					<td><?php echo esc_html( get_user_by( 'ID', $showcase->keramist_id )->display_name ); ?></td>
+					<td><?php echo esc_html( sprintf( '%04d', $showcase->keramist_id ) ); ?></td>
 					<td><?php echo esc_html( $showcase->show_status() ); ?></td>
 					<td>
 						<a href="#" title="wijzig werkstuk" class="kleistad-view kleistad-edit-link" data-id="<?php echo esc_attr( $showcase->id ); ?>" data-actie="wijzigen" >&nbsp;</a>

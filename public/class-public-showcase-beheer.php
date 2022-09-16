@@ -87,16 +87,17 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 		$this->data['showcase']       = filter_input_array(
 			INPUT_POST,
 			[
-				'id'           => FILTER_SANITIZE_NUMBER_INT,
-				'titel'        => FILTER_SANITIZE_STRING,
-				'positie'      => FILTER_SANITIZE_STRING,
-				'breedte'      => FILTER_SANITIZE_NUMBER_INT,
-				'diepte'       => FILTER_SANITIZE_NUMBER_INT,
-				'hoogte'       => FILTER_SANITIZE_NUMBER_INT,
-				'prijs'        => FILTER_SANITIZE_NUMBER_FLOAT,
-				'jaar'         => FILTER_SANITIZE_NUMBER_INT,
-				'beschrijving' => FILTER_SANITIZE_STRING,
-				'shows'        => [
+				'id'             => FILTER_SANITIZE_NUMBER_INT,
+				'titel'          => FILTER_SANITIZE_STRING,
+				'positie'        => FILTER_SANITIZE_STRING,
+				'breedte'        => FILTER_SANITIZE_NUMBER_INT,
+				'diepte'         => FILTER_SANITIZE_NUMBER_INT,
+				'hoogte'         => FILTER_SANITIZE_NUMBER_INT,
+				'prijs'          => FILTER_SANITIZE_NUMBER_FLOAT,
+				'btw_percentage' => FILTER_SANITIZE_NUMBER_FLOAT,
+				'jaar'           => FILTER_SANITIZE_NUMBER_INT,
+				'beschrijving'   => FILTER_SANITIZE_STRING,
+				'shows'          => [
 					'filter'  => FILTER_SANITIZE_STRING,
 					'flags'   => FILTER_FORCE_ARRAY,
 					'options' => [ 'default' => [] ],
@@ -164,14 +165,15 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * @return array
 	 */
 	protected function aanmelden(): array {
-		$showcase               = new Showcase( $this->data['showcase']['id'] );
-		$showcase->titel        = $this->data['showcase']['titel'];
-		$showcase->beschrijving = $this->data['showcase']['beschrijving'] ?? '';
-		$showcase->breedte      = intval( $this->data['showcase']['breedte'] ) ?? 0;
-		$showcase->diepte       = intval( $this->data['showcase']['diepte'] ) ?? 0;
-		$showcase->hoogte       = intval( $this->data['showcase']['hoogte'] ) ?? 0;
-		$showcase->positie      = $this->data['showcase']['positie'] ?? $showcase->positie;
-		$showcase->prijs        = floatval( $this->data['showcase']['prijs'] ) ?? $showcase->prijs;
+		$showcase                 = new Showcase( $this->data['showcase']['id'] );
+		$showcase->titel          = $this->data['showcase']['titel'];
+		$showcase->beschrijving   = $this->data['showcase']['beschrijving'] ?? '';
+		$showcase->breedte        = intval( $this->data['showcase']['breedte'] ) ?? 0;
+		$showcase->diepte         = intval( $this->data['showcase']['diepte'] ) ?? 0;
+		$showcase->hoogte         = intval( $this->data['showcase']['hoogte'] ) ?? 0;
+		$showcase->positie        = $this->data['showcase']['positie'] ?? $showcase->positie;
+		$showcase->prijs          = floatval( $this->data['showcase']['prijs'] ) ?? $showcase->prijs;
+		$showcase->btw_percentage = floatval( $this->data['showcase']['btw_percentage'] ) ?? $showcase->btw_percentage;
 		$showcase->save();
 		if ( $_FILES['foto']['size'] ) {
 			$result = media_handle_upload( 'foto', $showcase->id );
@@ -201,9 +203,11 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 			$this->filehandle,
 			[
 				'keramist',
+				'nummer',
 				'werkstuk',
 				'verkoop datum',
 				'prijs',
+				'btw_percentage',
 			],
 			';'
 		);
@@ -212,9 +216,11 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 				$this->filehandle,
 				[
 					get_user_by( 'ID', $showcase->keramist_id )->display_name,
+					$showcase->keramist_id,
 					$showcase->titel,
 					date( 'd-m-Y', $showcase->verkoop_datum ),
-					$showcase->prijs,
+					number_format_i18n( $showcase->prijs, 2 ),
+					number_format_i18n( $showcase->btw_percentage ),
 				],
 				';'
 			);
@@ -237,8 +243,11 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 			$this->filehandle,
 			[
 				'keramist',
+				'nummer',
 				'werkstuk',
 				'positie',
+				'prijs',
+				'btw_percentage',
 				'aangemeld',
 				'status',
 			],
@@ -249,8 +258,11 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 				$this->filehandle,
 				[
 					get_user_by( 'ID', $showcase->keramist_id )->display_name,
+					$showcase->keramist_id,
 					$showcase->titel,
 					$showcase->positie,
+					number_format_i18n( $showcase->prijs, 2 ),
+					number_format_i18n( $showcase->btw_percentage ),
 					date( 'd-m-Y', $showcase->aanmeld_datum ),
 					$showcase->show_status(),
 				],
