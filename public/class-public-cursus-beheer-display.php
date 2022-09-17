@@ -38,16 +38,16 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function overzicht() {
 		?>
-		<table class="kleistad-datatable display compact nowrap" id="kleistad_cursussen" data-page-length="10" data-order='[[ 0, "desc" ]]' >
+		<table class="kleistad-datatable display compact nowrap responsive" id="kleistad_cursussen" data-page-length="10" data-order='[[ 0, "desc" ]]' >
 			<thead>
 			<tr>
 				<th>Code</th>
-				<th>Naam</th>
+				<th data-priority="2">Naam</th>
 				<th>Docent</th>
-				<th>Periode</th>
-				<th>Tijd</th>
+				<th class="wrap" data-priority="3">Periode</th>
+				<th class="wrap">Tijd</th>
 				<th>Status</th>
-				<th data-orderable="false"></th>
+				<th data-orderable="false" data-priority="1"></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -56,8 +56,8 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 					<td data-sort="<?php echo esc_attr( $cursus['id'] ); ?>">C<?php echo esc_html( $cursus['id'] ); ?></td>
 					<td><?php echo esc_html( $cursus['naam'] ); ?></td>
 					<td><?php echo esc_html( $cursus['docent'] ); ?></td>
-					<td><?php echo esc_html( $cursus['start_datum'] ); ?><br/><?php echo esc_html( $cursus['eind_datum'] ); ?></td>
-					<td><?php echo esc_html( $cursus['start_tijd'] ); ?><br/><?php echo esc_html( $cursus['eind_tijd'] ); ?></td>
+					<td><?php echo esc_html( $cursus['start_datum'] ); ?> <?php echo esc_html( $cursus['eind_datum'] ); ?></td>
+					<td><?php echo esc_html( $cursus['start_tijd'] ); ?> <?php echo esc_html( $cursus['eind_tijd'] ); ?></td>
 					<td><?php echo esc_html( $cursus['status'] ); ?></td>
 					<td>
 						<a href="#" title="wijzig cursus" class="kleistad-edit kleistad-edit-link" style="padding:.4em .8em;"

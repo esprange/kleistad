@@ -59,18 +59,18 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			echo melding( -1, 'Morgen gaan een of meer concept workshops vervallen !' ); // phpcs:ignore
 		}
 		?>
-		<table id="kleistad_workshops" class="kleistad-datatable display compact nowrap" data-page-length="10" data-order='[[ 8, "desc" ]]' >
+		<table id="kleistad_workshops" class="kleistad-datatable display compact responsive nowrap" data-page-length="10" data-order='[[ 8, "desc" ]]' >
 			<thead>
 			<tr>
 				<th>Code</th>
-				<th>Datum</th>
-				<th>Contact</th>
+				<th data-priority="1">Datum</th>
+				<th data-priority="4">Contact</th>
 				<th>Docent</th>
 				<th>Aantal</th>
-				<th>Tijd</th>
-				<th>Status</th>
+				<th class="wrap">Tijd</th>
+				<th data-priority="3">Status</th>
 				<th>Mail</th>
-				<th></th>
+				<th data-priority="2"></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -83,7 +83,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 					<td><?php echo esc_html( $workshop['contact'] ); ?></td>
 					<td><?php echo $workshop['docent']; // phpcs:ignore ?></td>
 					<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
-					<td><?php echo esc_html( $workshop['start_tijd'] ); ?><br/><?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
+					<td><?php echo esc_html( $workshop['start_tijd'] ); ?> <?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
 					<td><?php echo esc_html( $workshop['status'] ); ?></td>
 					<td><?php echo esc_html( $workshop['cstatus'] ); ?></td>
 					<td data-sort="<?php echo esc_attr( $workshop['update'] ); ?>" >

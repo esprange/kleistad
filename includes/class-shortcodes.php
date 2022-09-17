@@ -262,7 +262,7 @@ class Shortcodes {
 			 * Showcase beheer
 			 */
 			'showcase_beheer'       => (object) [
-				'script' => true,
+				'script' => false,
 				'js'     => [ 'jquery', 'jquery-ui-dialog', 'datatables', 'kleistad-form' ],
 				'css'    => [ 'jquery-ui', 'datatables', 'dashicons' ],
 				'access' => [ LID, VERKOOP, BESTUUR ],

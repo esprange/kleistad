@@ -138,7 +138,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-5">
 				<label for="kleistad_foto" class="kleistad-label">Foto (max 2M bytes)</label>
-				<input type="file" name="foto" id="kleistad_foto" accept=".jpeg,.jpg,.tiff,.tif" /><br />
+				<input type="file" name="foto" id="kleistad_foto" accept=".jpeg,.jpg,.tiff,.tif;capture=camera" /><br />
 			</div>
 		</div>
 		<div class="kleistad-row" style="padding-top:15px;padding-bottom:15px;">
@@ -282,7 +282,9 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		<?php else : ?>
 		<p><strong>Je hebt nog geen werkstukken aangeboden voor verkoop. Klik op 'toevoegen werkstuk' om een werkstuk aan te melden.</strong></p>
 		<?php endif; ?>
+		<div class="kleistad-row" style="padding-top: 15px;">
 		<button class="kleistad-button kleistad-edit-link" type="button" data-id="0" data-actie="toevoegen" >Toevoegen werkstuk</button>
+		</div>
 		<?php
 	}
 
@@ -293,20 +295,20 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function verkoop() : void {
 		?>
-		<table class="kleistad-datatable display" data-page-length="10" data-order='[[ 2, "desc" ]]'>
+		<table class="kleistad-datatable responsive display" data-page-length="10" data-order='[[ 2, "desc" ]]'>
 			<thead>
 			<tr>
 				<th data-orderable="false"></th>
-				<th>Titel</th>
+				<th data-priority="1">Titel</th>
 				<th>Keramist</th>
 				<th>Nummer</th>
-				<th>Status</th>
-				<th data-orderable="false">&nbsp;</th>
+				<th data-priority="3">Status</th>
+				<th data-orderable="false" data-priority="2">&nbsp;</th>
 			</tr>
 			</thead>
 			<tbody>
 			<?php foreach ( $this->data['showcases'] as $showcase ) : ?>
-				<tr>
+				<tr style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" >
 					<td>
 						<?php if ( $showcase->foto_id ) : ?>
 							<?php echo wp_get_attachment_image( $showcase->foto_id ); ?>
@@ -324,8 +326,10 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 			<?php endforeach ?>
 			</tbody>
 		</table>
-		<button class="kleistad-button kleistad-download-link" type="button" data-actie="beschikbaar" >Download beschikbaar</button>
-		<button class="kleistad-button kleistad-download-link" type="button" data-actie="verkoop" >Download verkoop</button>
+		<div class="kleistad-row" style="padding-top: 15px;">
+			<button class="kleistad-button kleistad-download-link" type="button" data-actie="beschikbaar" >Download beschikbaar</button>
+			<button class="kleistad-button kleistad-download-link" type="button" data-actie="verkoop" >Download verkoop</button>
+		</div>
 		<?php
 	}
 }

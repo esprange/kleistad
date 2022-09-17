@@ -53,17 +53,20 @@ class Public_Actions {
 	 * @return void
 	 */
 	public function register_styles_and_scripts() {
-		$dev                  = 'development' === wp_get_environment_type() ? '' : '.min';
-		$jquery_ui_version    = wp_scripts()->registered['jquery-ui-core']->ver;
-		$fullcalendar_version = '5.11.2';
-		$datatables_version   = '1.12.1';
-		$jstree_version       = '3.3.12';
+		$dev                     = 'development' === wp_get_environment_type() ? '' : '.min';
+		$jquery_ui_version       = wp_scripts()->registered['jquery-ui-core']->ver;
+		$fullcalendar_version    = '5.11.2';
+		$datatables_version      = '1.12.1';
+		$datatables_resp_version = '2.3.0';
+		$jstree_version          = '3.3.12';
 		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_ui_version ), [], $jquery_ui_version );
-		wp_register_style( 'datatables', sprintf( '//cdn.datatables.net/%s/css/jquery.dataTables.min.css', $datatables_version ), [], $datatables_version );
+		wp_register_style( 'datatables-core', sprintf( '//cdn.datatables.net/%s/css/jquery.dataTables.min.css', $datatables_version ), [], $datatables_version );
+		wp_register_style( 'datatables', sprintf( '//cdn.datatables.net/responsive/%s/css/responsive.dataTables.min.css', $datatables_resp_version ), [ 'datatables-core' ], $datatables_resp_version );
 		wp_register_style( 'fullcalendar', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/main.min.css', $fullcalendar_version ), [], $fullcalendar_version );
 		wp_register_style( 'jstree', sprintf( '//cdn.jsdelivr.net/npm/jstree@%s/dist/themes/default/style.min.css', $jstree_version ), [], $jstree_version );
 
-		wp_register_script( 'datatables', sprintf( '//cdn.datatables.net/%s/js/jquery.dataTables.min.js', $datatables_version ), [ 'jquery' ], $datatables_version, true );
+		wp_register_script( 'datatables-core', sprintf( '//cdn.datatables.net/%s/js/jquery.dataTables.min.js', $datatables_version ), [ 'jquery' ], $datatables_version, true );
+		wp_register_script( 'datatables', sprintf( '//cdn.datatables.net/responsive/%s/js/dataTables.responsive.min.js', $datatables_resp_version ), [ 'datatables-core' ], $datatables_resp_version, true );
 		wp_register_script( 'fullcalendar-core', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/main.min.js', $fullcalendar_version ), [], $fullcalendar_version, true );
 		wp_register_script( 'fullcalendar', sprintf( '//cdn.jsdelivr.net/npm/fullcalendar@%s/locales-all.min.js', $fullcalendar_version ), [ 'fullcalendar-core' ], $fullcalendar_version, true );
 		wp_register_script( 'jstree', sprintf( '//cdn.jsdelivr.net/npm/jstree@%s/dist/jstree.min.js', $jstree_version ), [ 'jquery' ], $jstree_version, true );
