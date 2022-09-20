@@ -25,8 +25,8 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 		<p><label for="kleistad_deelnemer_selectie">Selectie</label>
 			<select class="kleistad-select" id="kleistad_deelnemer_selectie" name="selectie" >
 				<option value="*" >&nbsp;</option>
-				<option value="A" >Actieve abonnees</option>
-				<option value="K" >Actieve dagdelenkaart gebruikers</option>
+				<option value="A" >Abonnees</option>
+				<option value="K" >Dagdelenkaart gebruikers</option>
 				<?php foreach ( $this->data['cursussen'] as $cursus ) : ?>
 				<option value="<?php echo esc_attr( $cursus['code'] ); ?>" ><?php echo esc_html( "{$cursus['code']} {$cursus['naam']}" ); ?></option>
 				<?php endforeach; ?>

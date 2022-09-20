@@ -238,13 +238,11 @@ class Public_Registratie_Overzicht extends Shortcode {
 	private function get_registraties() : array {
 		$registraties = [];
 		foreach ( get_users( [ 'orderby' => 'display_name' ] ) as $gebruiker ) {
-			$abonnement                     = new Abonnement( $gebruiker->ID );
-			$dagdelenkaart                  = new Dagdelenkaart( $gebruiker->ID );
 			$cursist                        = new Cursist( $gebruiker->ID );
 			$registraties[ $gebruiker->ID ] = [
-				'is_abonnee'       => boolval( $abonnement->start_datum ),
-				'is_dagdelenkaart' => boolval( $dagdelenkaart->start_datum ),
-				'is_cursist'       => count( $cursist->inschrijvingen ),
+				'is_abonnee'       => ! empty( get_user_meta( $gebruiker->ID, Abonnement::META_KEY ) ),
+				'is_dagdelenkaart' => ! empty( get_user_meta( $gebruiker->ID, Dagdelenkaart::META_KEY ) ),
+				'is_cursist'       => implode( ';', $cursist->get_cursus_ids() ),
 				'voornaam'         => $gebruiker->first_name,
 				'achternaam'       => $gebruiker->last_name,
 				'telnr'            => $gebruiker->telnr,
