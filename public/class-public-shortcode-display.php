@@ -322,7 +322,7 @@ abstract class Public_Shortcode_Display {
 	 * Render de betaal sectie
 	 */
 	protected function betaal_info() {
-		if ( setup()['stort'] ) :
+		if ( setup()['stort'] || isset( $this->data['stort'] ) ) :
 			?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
