@@ -14,7 +14,7 @@ License: GPL3.0
 	--border: lightgray;
 	--disabled: ghostwhite;
 	--kleistad-color: #f60083;
-	--disabled-inner: darkseagreen; /* whitesmoke; */
+	--disabled-inner: darkseagreen;
 	--focus: 2px greenyellow;
 	--tab-height: 460px;
 }
@@ -332,7 +332,7 @@ a.kleistad-schedule {
 }
 
 .kleistad-select { /* style overgenomen van input element */
-	background: #f7f7f7 -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+	background: whitesmoke -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
 	border: 1px solid var(--border);
 	border-radius: 2px;
 	line-height: normal;
@@ -667,7 +667,7 @@ div.kleistad-gallerij {
 	gap: var(--gallerij-gap);
 	grid-auto-flow: dense;
 	grid-auto-rows: var(--gallerij-height);
-	grid-template-columns: repeat( var(--gallerij-num-cols), 1fr );
+	grid-template-columns: repeat(var(--gallerij-num-cols), 1fr);
 	padding: var(--gallerij-gap);
 }
 
