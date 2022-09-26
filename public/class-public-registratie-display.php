@@ -20,7 +20,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		if ( 'wachtwoord' === $this->display_actie ) {
 			$this->wachtwoord();
 			return;
@@ -31,7 +31,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de details
 	 */
-	protected function form_content() {
+	protected function form_content() : void {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
@@ -88,6 +88,22 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_url">Jouw website (optioneel)</label>/
+			</div>
+			<div class="kleistad-col-7">
+				<input class="kleistad-input" name="user_url" id="kleistad_url" type="text" value="<?php echo esc_attr( $this->data['input']['user_url'] ); ?>" />
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_description">Vertel iets over jouzelf (optioneel)</label>
+			</div>
+			<div class="kleistad-col-7">
+				<textarea name="description" id="kleistad_description" type="text" rows="3" maxlength="300"><?php echo esc_html( $this->data['input']['description'] ); ?></textarea>
+			</div>
+		</div>
+		<div class="kleistad-row" style="padding-top: 15px">
 			<div class="kleistad-col-10">
 				<button class="kleistad-button" name="kleistad_submit_registratie" value="wijzigen" type="submit" id="kleistad_submit">Opslaan</button>
 				<button class="kleistad-button kleistad-edit-link" data-actie="wachtwoord" type="button" >Wachtwoord wijzigen</button>
@@ -99,7 +115,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de details
 	 */
-	protected function wachtwoord() {
+	protected function wachtwoord() : void {
 		?>
 		<div id="kleistad_wachtwoord_succes" style="display:none" >
 			<?php echo melding( 1, 'Het wachtwoord is gewijzigd' ); // phpcs:ignore ?>

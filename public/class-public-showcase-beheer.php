@@ -44,7 +44,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 * Prepareer 'showcase' overzicht
+	 * Prepareer 'showcase' aanmelden overzicht
 	 *
 	 * @return string
 	 */
@@ -62,7 +62,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	}
 
 	/**
-	 * Prepareer 'showcase' overzicht
+	 * Prepareer 'showcase' verkoop overzicht
 	 *
 	 * @return string
 	 */

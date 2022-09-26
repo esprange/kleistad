@@ -42,6 +42,7 @@
 			<li>[kleistad_workshop_aanvraag] aanvraag voor workshops, kinderfeestjes, etc.</li>
 			<li>[kleistad_betaling] het betalen van een uitstaand bedrag per iDeal (via link vanuit email)</li>
 			<li>[kleistad_contact] het contact formulier</li>
+			<li>[kleistad_showcase_gallerij] de gallerij van voor verkoop aangeboden werkstukken</li>
 		</ol>
 	</li>
 	<li><h3>toegankelijk voor leden</h3>

@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 170;
+	const DBVERSIE = 171;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -272,6 +272,16 @@ class Admin_Upgrade {
 	 * Converteer data
 	 */
 	private function convert_data() {
+		$showcases = new Showcases(
+			[
+				'post_status' => [ 'pending' ],
+				'orderby'     => 'rand',
+			]
+		);
+		foreach ( $showcases as $showcase ) {
+			$showcase->status = Showcase::BESCHIKBAAR;
+			$showcase->save();
+		}
 	}
 
 }

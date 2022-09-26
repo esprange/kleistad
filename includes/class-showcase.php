@@ -37,7 +37,7 @@ use WP_Post;
 class Showcase {
 
 	const POST_TYPE      = 'kleistad_showcase';
-	const BESCHIKBAAR    = 'pending';
+	const BESCHIKBAAR    = 'beschikbaar';
 	const INGEPLAND      = 'ingepland';
 	const TENTOONGESTELD = 'tentoongesteld';
 	const VERKOCHT       = 'publish';
@@ -275,6 +275,17 @@ class Showcase {
 				'show_ui'           => false,
 				'show_in_admin_bar' => false,
 				'show_in_nav_menus' => false,
+			]
+		);
+		register_post_status(
+			self::BESCHIKBAAR,
+			[
+				'label'                     => self::POST_TYPE,
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				'label_count'               => _n_noop( 'Unread (%s)', 'Unread (%s)' ),
 			]
 		);
 	}

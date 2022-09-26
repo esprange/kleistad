@@ -268,6 +268,15 @@ class Shortcodes {
 				'access' => [ LID, VERKOOP, BESTUUR ],
 			],
 			/**
+			 * Showcase_gallerij
+			 */
+			'showcase_gallerij'     => (object) [
+				'script' => false,
+				'js'     => [],
+				'css'    => [],
+				'access' => [],
+			],
+			/**
 			 * Overzicht alle stokers
 			 */
 			'stookbestand'          => (object) [

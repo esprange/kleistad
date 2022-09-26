@@ -40,6 +40,8 @@ class Public_Registratie extends ShortcodeForm {
 				'plaats'       => $gebruiker->plaats,
 				'telnr'        => $gebruiker->telnr,
 				'user_email'   => $gebruiker->user_email,
+				'user_url'     => $gebruiker->user_url,
+				'description'  => $gebruiker->description,
 			];
 		}
 		return $this->content();
@@ -56,14 +58,16 @@ class Public_Registratie extends ShortcodeForm {
 		$this->data['input'] = filter_input_array(
 			INPUT_POST,
 			[
-				'first_name' => FILTER_SANITIZE_STRING,
-				'last_name'  => FILTER_SANITIZE_STRING,
-				'straat'     => FILTER_SANITIZE_STRING,
-				'huisnr'     => FILTER_SANITIZE_STRING,
-				'pcode'      => FILTER_SANITIZE_STRING,
-				'plaats'     => FILTER_SANITIZE_STRING,
-				'telnr'      => FILTER_SANITIZE_STRING,
-				'user_email' => FILTER_SANITIZE_EMAIL,
+				'first_name'  => FILTER_SANITIZE_STRING,
+				'last_name'   => FILTER_SANITIZE_STRING,
+				'straat'      => FILTER_SANITIZE_STRING,
+				'huisnr'      => FILTER_SANITIZE_STRING,
+				'pcode'       => FILTER_SANITIZE_STRING,
+				'plaats'      => FILTER_SANITIZE_STRING,
+				'telnr'       => FILTER_SANITIZE_STRING,
+				'user_email'  => FILTER_SANITIZE_EMAIL,
+				'user_url'    => FILTER_SANITIZE_STRING,
+				'description' => FILTER_SANITIZE_STRING,
 			]
 		);
 		if ( is_array( $this->data['input'] ) ) {
@@ -95,15 +99,17 @@ class Public_Registratie extends ShortcodeForm {
 	protected function save() : array {
 		$result = wp_update_user(
 			(object) [
-				'ID'         => $this->data['gebruiker_id'],
-				'first_name' => $this->data['input']['first_name'],
-				'last_name'  => $this->data['input']['last_name'],
-				'telnr'      => $this->data['input']['telnr'],
-				'straat'     => $this->data['input']['straat'],
-				'huisnr'     => $this->data['input']['huisnr'],
-				'pcode'      => $this->data['input']['pcode'],
-				'plaats'     => $this->data['input']['plaats'],
-				'user_email' => $this->data['input']['user_email'],
+				'ID'          => $this->data['gebruiker_id'],
+				'first_name'  => $this->data['input']['first_name'],
+				'last_name'   => $this->data['input']['last_name'],
+				'telnr'       => $this->data['input']['telnr'],
+				'straat'      => $this->data['input']['straat'],
+				'huisnr'      => $this->data['input']['huisnr'],
+				'pcode'       => $this->data['input']['pcode'],
+				'plaats'      => $this->data['input']['plaats'],
+				'user_email'  => $this->data['input']['user_email'],
+				'user_url'    => $this->data['input']['user_url'],
+				'description' => $this->data['input']['description'],
 			]
 		);
 		if ( ! is_wp_error( $result ) ) {

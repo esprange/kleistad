@@ -3,7 +3,7 @@
  * Toon het showcase beheer formulier
  *
  * @link       https://www.kleistad.nl
- * @since      4.0.87
+ * @since      7.6.0
  *
  * @package    Kleistad
  */
@@ -123,10 +123,10 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 					<?php
 					foreach (
 						[
-							''             => 'Geen voorkeur',
-							'vitrine'      => 'Vitrine',
-							'sokkel'       => 'Sokkel',
-							'stellingkast' => 'Stellingkast',
+							''              => 'Geen voorkeur',
+							'vitrine'       => 'Vitrine',
+							'sokkel'        => 'Sokkel',
+							'stelltingkast' => 'Stellingkast',
 						] as $key => $value ) :
 						?>
 						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $this->data['showcase']->positie, $key ); ?> ><?php echo esc_html( $value ); ?></option>

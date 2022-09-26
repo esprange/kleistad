@@ -4,8 +4,7 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 6.0.1  
-**Stable tag:** 7.6.3  
-
+**Stable tag:** 7.7.3  
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -34,6 +33,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
+### 7.7.0 ###
+* Registratie voor leden uitgebreid met verwijzing naar eigen website en biografie
+* Nieuwe shortcode voor gallerij showcase
 ### 7.6.2 ###
 * Nieuwe functie voor verkoop van werkstukken
 * Als vanuit dashboard een inschrijving correctie plaatsvindt wordt de cursus zonodig op vol gezet

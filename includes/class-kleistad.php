@@ -292,8 +292,8 @@ class Kleistad {
 		$plugin_actions = new Public_Actions();
 
 		$this->loader->add_action( 'rest_api_init', $plugin_actions, 'register_endpoints' );
-		$this->loader->add_action( 'init', $plugin_actions, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $plugin_actions, 'register_post_types' );
+		$this->loader->add_action( 'init', $plugin_actions, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $plugin_actions, 'register_styles_and_scripts' );
 		$this->loader->add_action( 'init', $plugin_actions, 'inline_style', 100 );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'enqueue_styles_and_scripts', 99 );
@@ -302,7 +302,7 @@ class Kleistad {
 		$this->loader->add_action( 'wp_ajax_nopriv_kleistad_wachtwoord', $plugin_actions, 'wachtwoord', 100 );
 		$this->loader->add_action( 'profile_update', $plugin_actions, 'profile_update' );
 
-		$this->loader->add_filter( 'single_template', $plugin_filters, 'single_template' );
+		$this->loader->add_filter( 'single_template', $plugin_filters, 'single_template', 99 );
 		$this->loader->add_filter( 'comments_template', $plugin_filters, 'comments_template' );
 		$this->loader->add_filter( 'comment_form_default_fields', $plugin_filters, 'comment_fields' );
 		$this->loader->add_filter( 'user_contactmethods', $plugin_filters, 'user_contact_methods', 10, 2 );
