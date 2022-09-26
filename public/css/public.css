@@ -661,17 +661,18 @@ div.kleistad-gallerij {
 	--gallerij-gap: 1rem;
 	--gallerij-num-cols: 3;
 	--gallerij-radius: 7px;
+
 	box-sizing: border-box;
 	display: grid;
-	gap: var( --gallerij-gap );
+	gap: var(--gallerij-gap);
 	grid-auto-flow: dense;
 	grid-auto-rows: var(--gallerij-height);
-	grid-template-columns: repeat( var( --gallerij-num-cols ), 1fr );
-	padding: var( --gallerij-gap );
+	grid-template-columns: repeat( var(--gallerij-num-cols), 1fr );
+	padding: var(--gallerij-gap);
 }
 
 div.kleistad-gallerij-item {
-	border-radius: var( --gallerij-radius );
+	border-radius: var(--gallerij-radius);
 	box-shadow: 7px 7px 3px darkgray;
 }
 
@@ -691,7 +692,7 @@ div.kleistad-gallerij-item:active {
 }
 
 img.kleistad-gallerij {
-	border-radius: var( --gallerij-radius );
+	border-radius: var(--gallerij-radius);
 	display: block;
 	height: 100%;
 	object-fit: cover;
@@ -709,8 +710,9 @@ img.kleistad-gallerij {
 div.kleistad-showcase {
 	--showcase-radius: 10px;
 	--showcase-gap: 15px;
+
 	background-color: lightgray;
-	border-radius: var( --showcase-radius );
+	border-radius: var(--showcase-radius);
 	box-shadow: 10px 10px 6px darkgray;
 	box-sizing: border-box;
 	display: grid;
@@ -720,14 +722,14 @@ div.kleistad-showcase {
 
 div.kleistad-showcase-item {
 	background-color: white;
-	border-radius:  var( --showcase-radius );
-	margin: var( --showcase-gap );
+	border-radius: var(--showcase-radius);
+	margin: var(--showcase-gap);
 	overflow-y: auto;
-	padding: var( --showcase-gap );
+	padding: var(--showcase-gap);
 }
 
 img.kleistad-showcase {
-	border-radius:  var( --showcase-radius );
+	border-radius: var(--showcase-radius);
 	display: block;
 	height: auto;
 	object-fit: cover;
@@ -735,7 +737,7 @@ img.kleistad-showcase {
 }
 
 div.kleistad-showcase-titel {
-	color: var( --kleistad-color );
+	color: var(--kleistad-color);
 	font-size: x-large;
 	font-weight: bold;
 	text-align: center;

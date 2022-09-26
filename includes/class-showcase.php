@@ -285,6 +285,7 @@ class Showcase {
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
+				/* translators: zie wpdoc voor invulling */
 				'label_count'               => _n_noop( 'Unread (%s)', 'Unread (%s)' ),
 			]
 		);
