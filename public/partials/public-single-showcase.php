@@ -59,7 +59,7 @@ wp_enqueue_style( 'dashicons' );
 					$keramist = get_user_by( 'ID', $showcases->current()->keramist_id );
 					?>
 				<div class="kleistad kleistad-showcase" >
-					<?php if ( $showcases->count() ) : ?>
+					<?php if ( 1 < $showcases->count() ) : ?>
 						<a class="kleistad-showcase-prev dashicons dashicons-arrow-left-alt2"
 							href="<?php echo esc_url( get_post_permalink( $showcases->get_prev()->id ) ); ?>">
 						</a>
