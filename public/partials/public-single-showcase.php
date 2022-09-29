@@ -9,6 +9,7 @@
 
 namespace Kleistad;
 
+wp_enqueue_style( 'dashicons' );
 ?>
 <!DOCTYPE html>
 <!--suppress HtmlRequiredLangAttribute -->
@@ -38,18 +39,38 @@ namespace Kleistad;
 		</header><!-- .site-header -->
 		<div id="content" class="site-content">
 			<main id="main" class="site-main" role="main">
-				<?php
-				// Start the loop.
-				while ( have_posts() ) :
-					the_post();
-					$showcase = new Showcase( get_the_ID() );
-					$keramist = get_user_by( 'ID', $showcase->keramist_id );
+			<?php
+				$showcase_id = get_the_ID();
+				$showcases   = new Showcases(
+					[
+						'post_status' => [ Showcase::BESCHIKBAAR ],
+						'orderby'     => 'ID',
+					]
+				);
+				while ( $showcases->current()->id !== $showcase_id ) {
+					$showcases->next();
+				}
+				if ( ! $showcases->valid() ) :
+					// De showcase is waarschijnlijk niet meer beschikbaar en al verkocht. Dan een soort 404 tonen.
+					?>
+						<strong>Het werkstuk is helaas niet meer beschikbaar</strong>
+					<?php
+				else :
+					$keramist = get_user_by( 'ID', $showcases->current()->keramist_id );
 					?>
 				<div class="kleistad kleistad-showcase" >
+					<?php if ( $showcases->count() ) : ?>
+						<a class="kleistad-showcase-prev dashicons dashicons-arrow-left-alt2"
+							href="<?php echo esc_url( get_post_permalink( $showcases->get_prev()->id ) ); ?>">
+						</a>
+						<a class="kleistad-showcase-next dashicons dashicons-arrow-right-alt2"
+							href="<?php echo esc_url( get_post_permalink( $showcases->get_next()->id ) ); ?>">
+						</a>
+					<?php endif; ?>
 					<div class="kleistad-showcase-item"> <!-- first container -->
 						<?php
 						echo wp_get_attachment_image(
-							$showcase->foto_id,
+							$showcases->current()->foto_id,
 							'large',
 							false,
 							[ 'class' => 'kleistad-showcase' ]
@@ -60,12 +81,12 @@ namespace Kleistad;
 						<div class="kleistad-showcase-item">
 							<div class="kleistad-showcase-titel"><?php the_title(); ?></div>
 							<div class="kleistad-label"><label>Prijs</label></div>
-							<div style="padding-left:15px">&euro; <?php echo esc_html( number_format_i18n( $showcase->prijs, 2 ) ); ?>
-								<?php echo $showcase->is_tentoongesteld() ? ' (nu tentoongesteld)' : ''; ?>
+							<div style="padding-left:15px">&euro; <?php echo esc_html( number_format_i18n( $showcases->current()->prijs, 2 ) ); ?>
+								<?php echo $showcases->current()->is_tentoongesteld() ? ' (nu tentoongesteld)' : ''; ?>
 							</div>
-							<?php if ( $showcase->beschrijving ) : ?>
+							<?php if ( $showcases->current()->beschrijving ) : ?>
 								<div class="kleistad-label"><label>Beschrijving</label></div>
-								<div style="padding-left:15px"><?php echo esc_html( $showcase->beschrijving ); ?></div>
+								<div style="padding-left:15px"><?php echo esc_html( $showcases->current()->beschrijving ); ?></div>
 							<?php endif; ?>
 						</div>
 						<div class="kleistad-showcase-item">
@@ -82,10 +103,7 @@ namespace Kleistad;
 						</div>
 					</div>
 				</div>
-					<?php
-					// End of the loop.
-				endwhile;
-				?>
+				<?php endif ?>
 			</main><!-- .site-main -->
 		</div>
 	</div>

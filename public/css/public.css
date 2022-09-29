@@ -743,6 +743,24 @@ div.kleistad-showcase-titel {
 	text-align: center;
 }
 
+a.kleistad-showcase-prev {
+	font-size: 60px;
+	height: 60px;
+	left: 5%;
+	position: fixed;
+	top: 50%;
+	width: 60px;
+}
+
+a.kleistad-showcase-next {
+	font-size: 60px;
+	height: 60px;
+	position: fixed;
+	right: 5%;
+	top: 50%;
+	width: 60px;
+}
+
 /**
  * Layout elementen
  */

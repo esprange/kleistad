@@ -106,6 +106,26 @@ class Showcases implements Countable, Iterator {
 	}
 
 	/**
+	 * Get the previous showcase in a loop without changing the current index.
+	 *
+	 * @return Showcase
+	 */
+	public function get_prev() : Showcase {
+		$index = 0 > $this->current_index - 1 ? $this->count() - 1 : $this->current_index - 1;
+		return $this->showcases[ $index ];
+	}
+
+	/**
+	 * Get the next showcase in a loop without changing the current index.
+	 *
+	 * @return Showcase
+	 */
+	public function get_next() : Showcase {
+		$index = $this->current_index + 1 === $this->count() ? 0 : $this->current_index + 1;
+		return $this->showcases[ $index ];
+	}
+
+	/**
 	 * Sorteer op verkoop datum, descending.
 	 *
 	 * @return void

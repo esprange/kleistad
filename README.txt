@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 6.0.1
-Stable tag: 7.7.3
+Stable tag: 7.7.4
+
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/kleistad/badge)](https://www.codefactor.io/repository/github/esprange/kleistad)
@@ -33,6 +34,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 7.7.4 -
+* Bladerfunctie toegevoegd aan gallerij showcase
 = 7.7.0 =
 * Registratie voor leden uitgebreid met verwijzing naar eigen website en biografie
 * Nieuwe shortcode voor gallerij showcase
