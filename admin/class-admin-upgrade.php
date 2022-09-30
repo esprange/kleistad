@@ -272,16 +272,6 @@ class Admin_Upgrade {
 	 * Converteer data
 	 */
 	private function convert_data() {
-		$showcases = new Showcases(
-			[
-				'post_status' => [ 'pending' ],
-				'orderby'     => 'rand',
-			]
-		);
-		foreach ( $showcases as $showcase ) {
-			$showcase->status = Showcase::BESCHIKBAAR;
-			$showcase->save();
-		}
 	}
 
 }
