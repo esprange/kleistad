@@ -15,13 +15,15 @@ namespace Kleistad;
  */
 class Public_Showcase_Gallerij_Display extends Public_Shortcode_Display {
 
+	const GROOT_RATIO = 6;
+
 	/**
 	 * Render de gallerij
 	 *
 	 * @return void
 	 */
 	protected function overzicht() : void {
-		$teller = (int) count( $this->data['showcases'] ) / 5;
+		$teller = max( 1, intval( $this->data['showcases']->count() / ( self::GROOT_RATIO - 1 ) ) );
 		?>
 		<div class="kleistad-gallerij">
 		<?php
@@ -30,10 +32,9 @@ class Public_Showcase_Gallerij_Display extends Public_Shortcode_Display {
 				continue;
 			endif;
 			$class = 'kleistad-gallerij-item';
-			if ( 6 === wp_rand( 1, 6 ) ) :
-				if ( $teller-- ) :
-					$class .= ' kleistad-gallerij-itemx2';
-				endif;
+			if ( 0 < $teller && 1 === wp_rand( 1, self::GROOT_RATIO ) ) :
+				$teller--;
+				$class .= ' kleistad-gallerij-itemx2';
 			endif;
 			?>
 			<div class="<?php echo esc_attr( $class ); ?>" >
