@@ -114,7 +114,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<?php $this->activiteit_details( $readonly )->contact_details( $readonly )->planning_details( $readonly )->kosten_details( $readonly )->status_details(); ?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-7">
-				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $this->data['workshop']['definitief'] ); ?> >Opslaan</button>
+				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bewaren" value="bewaren" <?php disabled( $readonly || $this->data['workshop']['definitief'] ); ?> >Bewaren</button>
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_bevestigen" value="bevestigen" <?php disabled( $readonly ); ?>
 					data-confirm="Workshop beheer|weet je zeker dat je <?php echo $this->data['workshop']['definitief'] ? 'opnieuw' : 'nu'; ?> de bevesting wilt versturen" >Bevestigen</button>
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_afzeggen" value="afzeggen" <?php disabled( $readonly || 'toevoegen' === $this->display_actie ); ?>

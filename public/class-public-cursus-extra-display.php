@@ -97,7 +97,7 @@ class Public_Cursus_Extra_Display extends Public_Shortcode_Display {
 		<?php endforeach ?>
 		<div class="kleistad-row" style="padding-top:20px;">
 			<div class="kleistad-col-10">
-				<button class="kleistad-button" name="kleistad_submit_cursus_extra" id="kleistad_submit" type="submit" >Opslaan</button>
+				<button class="kleistad-button" name="kleistad_submit_cursus_extra" id="kleistad_submit" type="submit" >Bewaren</button>
 			</div>
 		</div>
 		<?php

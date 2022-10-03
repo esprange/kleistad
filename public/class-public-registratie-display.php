@@ -105,7 +105,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row" style="padding-top: 15px">
 			<div class="kleistad-col-10">
-				<button class="kleistad-button" name="kleistad_submit_registratie" value="wijzigen" type="submit" id="kleistad_submit">Opslaan</button>
+				<button class="kleistad-button" name="kleistad_submit_registratie" value="wijzigen" type="submit" id="kleistad_submit">Bewaren</button>
 				<button class="kleistad-button kleistad-edit-link" data-actie="wachtwoord" type="button" >Wachtwoord wijzigen</button>
 			</div>
 		</div>

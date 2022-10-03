@@ -87,7 +87,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 		</div>
 		<?php $this->grondstoffen(); ?>
 		<p style="font-size:small;text-align:center;">Bij weergave van het recept op de website worden de basis ingrediënten genormeerd naar 100 gram</p>
-		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_bewaren" value="bewaren">Opslaan</button>
+		<button class="kleistad-button" type="submit" name="kleistad_submit_recept_beheer" id="kleistad_submit_bewaren" value="bewaren">Bewaren</button>
 		<?php
 		if ( 0 < $this->data['recept']->id ) :
 			if ( 'publish' !== $this->data['recept']->status ) :

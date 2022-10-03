@@ -92,7 +92,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-5">
-				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $readonly ); ?> >Opslaan</button>
+				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_bewaren" name="kleistad_submit_cursus_beheer" value="bewaren" <?php disabled( $readonly ); ?> >Bewaren</button>
 				<button class="kleistad-button" type="submit" id="kleistad_submit_cursus_verwijderen" name="kleistad_submit_cursus_beheer" value="verwijderen" <?php disabled( 'toevoegen' === $this->display_actie ); ?> >Verwijderen</button>
 			</div>
 			<div class="kleistad-col-5">
