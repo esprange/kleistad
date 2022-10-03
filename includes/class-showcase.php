@@ -297,10 +297,10 @@ class Showcase {
 	 * @return array
 	 */
 	public static function show_datums() : array {
-		$offset = ( intval( date( 'm' ) ) - 1 ) % 2;
+		$offset = ( intval( date( 'n' ) ) - 1 ) % 2;
 		$shows  = [];
 		for ( $index = 0; $index < 3; $index ++ ) {
-			$periode = $offset + $index * 2;
+			$periode = - $offset + $index * 2;
 			$shows[] = [
 				'start' => strtotime( "first monday of $periode month 0:00" ),
 				'eind'  => strtotime( 'first monday of ' . $periode + 2 . ' month 0:00' ),
