@@ -56,7 +56,7 @@ class Blokkade {
 	/**
 	 * Controleer dagelijks of de blokkadedatum gewijzigd moet worden.
 	 */
-	public static function doe_dagelijks() {
+	public static function doe_dagelijks() : void {
 		/**
 		 * Bepaal de laatste blokkade.
 		 */

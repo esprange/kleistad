@@ -50,7 +50,7 @@ class WorkshopActie {
 	 *
 	 * @since 5.0.0
 	 */
-	public function afzeggen() {
+	public function afzeggen() : void {
 		$this->workshop->vervallen = true;
 		$this->workshop->save();
 	}
@@ -60,7 +60,7 @@ class WorkshopActie {
 	 *
 	 * @return void
 	 */
-	public function annuleer() {
+	public function annuleer() : void {
 		$order = new Order( $this->workshop->get_referentie() );
 		if ( $order->id ) {
 			$this->workshop->verzend_email( '_afzegging', $order->annuleer( 0, 'Annulering workshop' ) );
@@ -79,7 +79,7 @@ class WorkshopActie {
 	 *
 	 * @return void
 	 */
-	public function aanvraag( array $parameters ) {
+	public function aanvraag( array $parameters ) : void {
 		$dagdelen                     = [
 			strtolower( OCHTEND )  => [
 				'start' => '09:30',
@@ -127,7 +127,7 @@ class WorkshopActie {
 	 *
 	 * @param string $reactie     De reactie op de vraag.
 	 */
-	public function reactie( string $reactie ) {
+	public function reactie( string $reactie ) : void {
 		$this->workshop->reactie      = nl2br( $reactie );
 		$this->workshop->communicatie = array_merge(
 			[
@@ -148,7 +148,7 @@ class WorkshopActie {
 	/**
 	 * Geef aan dat de workshop betaald moet worden
 	 */
-	public function vraag_betaling() {
+	public function vraag_betaling() : void {
 		$this->workshop->betaling_email = true;
 		$this->workshop->save();
 		$order = new Order( $this->workshop->get_referentie() );
@@ -194,7 +194,7 @@ class WorkshopActie {
 	 *
 	 * @param array $email De ontvangen email.
 	 */
-	public static function verwerk( array $email ) {
+	public static function verwerk( array $email ) : void {
 		$emailer = new Email();
 		/**
 		 * Zoek eerst op basis van het case nummer in subject.

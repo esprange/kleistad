@@ -121,7 +121,7 @@ class Workshops implements Countable, Iterator {
 	 *
 	 * @return void
 	 */
-	private static function doe_concept_vervallen( Workshop $workshop ) {
+	private static function doe_concept_vervallen( Workshop $workshop ) : void {
 		if ( $workshop->definitief || $workshop->vervallen ) {
 			return;
 		}
@@ -136,7 +136,7 @@ class Workshops implements Countable, Iterator {
 	 *
 	 * @return void
 	 */
-	private static function doe_vraag_betaling( Workshop $workshop ) {
+	private static function doe_vraag_betaling( Workshop $workshop ) : void {
 		if (
 			! $workshop->definitief ||
 			$workshop->betaling_email ||

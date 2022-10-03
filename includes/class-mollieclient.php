@@ -124,7 +124,7 @@ class MollieClient {
 	/**
 	 * Register rest URI's.
 	 */
-	public static function register_rest_routes() {
+	public static function register_rest_routes() : void {
 		$ontvangen = new Ontvangen();
 		register_rest_route(
 			KLEISTAD_API,

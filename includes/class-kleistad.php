@@ -104,7 +104,7 @@ function melding( int $status, string $bericht ) : string {
  * @param string $object  Object waar de fout geconstateerd wordt.
  * @param string $bericht Het fout bericht.
  */
-function fout( string $object, string $bericht ) {
+function fout( string $object, string $bericht ) : void {
 	error_log( "kleistad $object: $bericht" ); // phpcs:ignore
 }
 
@@ -213,7 +213,7 @@ class Kleistad {
 	 * @since    4.0.87
 	 * @access   private
 	 */
-	private function load_dependencies() {
+	private function load_dependencies() : void {
 		$this->loader = new Loader();
 	}
 
@@ -223,7 +223,7 @@ class Kleistad {
 	 * @since    4.0.87
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
+	private function define_admin_hooks() : void {
 		$plugin_filters = new Admin_Filters();
 		$plugin_actions = new Admin_Actions();
 
@@ -251,7 +251,7 @@ class Kleistad {
 	 * @since   5.5.1
 	 * @access  private
 	 */
-	private function define_common_hooks() {
+	private function define_common_hooks() : void {
 		$plugin_common = new Common();
 
 		$this->loader->add_action( 'wp_login', $plugin_common, 'user_login', 10, 2 );
@@ -272,7 +272,7 @@ class Kleistad {
 	 * @since 7.3.0
 	 * @return void
 	 */
-	private function define_shop_hooks() {
+	private function define_shop_hooks() : void {
 		$plugin_actions = new Shop();
 
 		$this->loader->add_action( 'init', $plugin_actions, 'shop_init' );
@@ -287,7 +287,7 @@ class Kleistad {
 	 * @since    4.0.87
 	 * @access   private
 	 */
-	private function define_public_hooks() {
+	private function define_public_hooks() : void {
 		$plugin_filters = new Public_Filters();
 		$plugin_actions = new Public_Actions();
 
@@ -319,7 +319,7 @@ class Kleistad {
 	 *
 	 * @since    4.0.87
 	 */
-	public function run() {
+	public function run() : void {
 		$this->loader->run();
 	}
 

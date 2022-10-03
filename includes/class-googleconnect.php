@@ -63,7 +63,7 @@ class Googleconnect {
 	 * @param  string $redirect_url De url welke gebruikt moet worden na authenticatie.
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
-	public function vraag_service_aan( string $redirect_url ) {
+	public function vraag_service_aan( string $redirect_url ) : void {
 		update_option( self::REDIRECT_URI, $redirect_url );
 		delete_option( self::REFRESH_TOKEN );
 		// 13-09-2020 i.p.v. update_option naar lege string.

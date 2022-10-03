@@ -95,7 +95,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	 *
 	 * @return void
 	 */
-	private function verwerk_betaald( Order $order, float $bedrag, string $type, string $transactie_id ) {
+	private function verwerk_betaald( Order $order, float $bedrag, string $type, string $transactie_id ) : void {
 		if ( ! $this->inschrijving->ingedeeld && 0 < $bedrag ) {
 			if ( $this->indelen() ) {
 				if ( ! $order->id ) {
@@ -136,7 +136,7 @@ class InschrijvingBetaling extends ArtikelBetaling {
 	 *
 	 * @return void
 	 */
-	private function verwerk_mislukt( Order $order, string $type ) {
+	private function verwerk_mislukt( Order $order, string $type ) : void {
 		if ( 'ideal' === $type && ! $order->id ) {
 			/**
 			 * De betaling is fout gegaan, dus als er nog niet ingedeeld is, dan de inschrijving laten vervallen.

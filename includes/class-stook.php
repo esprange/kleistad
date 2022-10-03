@@ -151,7 +151,7 @@ class Stook {
 	 * @global object $wpdb WP database.
 	 * @throws Kleistad_Exception Bewaren gaat niet.
 	 */
-	public function save() {
+	public function save() : void {
 		global $wpdb;
 
 		$stookdelen = [];
@@ -273,7 +273,7 @@ class Stook {
 	 *
 	 * @global object $wpdb WordPress database.
 	 */
-	public function verwerk() {
+	public function verwerk() : void {
 		global $wpdb;
 		$emailer = new Email();
 		try {
@@ -323,7 +323,7 @@ class Stook {
 	/**
 	 * Meld een stook
 	 */
-	public function meld() {
+	public function meld() : void {
 		$emailer = new Email();
 		if ( self::ONDERHOUD !== $this->soort ) {
 			try {

@@ -52,7 +52,7 @@ class Email {
 	/**
 	 * Initialiseer de aanvragen als custom post type.
 	 */
-	public static function create_type() {
+	public static function create_type() : void {
 		register_post_type(
 			self::POST_TYPE,
 			[

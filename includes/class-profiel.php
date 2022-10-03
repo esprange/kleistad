@@ -24,7 +24,7 @@ class Profiel {
 	 *
 	 * @since 6.20.3
 	 */
-	public static function register_rest_routes() {
+	public static function register_rest_routes() : void {
 		register_rest_route(
 			KLEISTAD_API,
 			'/profiel',

@@ -37,7 +37,7 @@ class InschrijvingActie {
 	/**
 	 * Zeg de gemaakte afspraak voor de cursus af.
 	 */
-	public function afzeggen() {
+	public function afzeggen() : void {
 		if ( ! $this->inschrijving->geannuleerd ) {
 			$this->inschrijving->geannuleerd = true;
 			$this->inschrijving->wacht_datum = 0;
@@ -78,7 +78,7 @@ class InschrijvingActie {
 	/**
 	 * Verstuur de melding dat het restant betaald moet worden als dat nog niet betaald is
 	 */
-	public function restant_betaling() {
+	public function restant_betaling() : void {
 		$order = new Order( $this->inschrijving->get_referentie() );
 		if ( $order->id && ! $order->gesloten ) {
 			$this->inschrijving->artikel_type  = 'cursus';
@@ -91,7 +91,7 @@ class InschrijvingActie {
 	/**
 	 * Geef de cursist aan dat er ruimte beschikbaar is gekomen
 	 */
-	public function plaatsbeschikbaar() {
+	public function plaatsbeschikbaar() : void {
 		$this->inschrijving->wacht_datum = $this->inschrijving->cursus->ruimte_datum;
 		$this->inschrijving->save();
 		$this->inschrijving->verzend_email( '_ruimte' );
@@ -179,7 +179,7 @@ class InschrijvingActie {
 	 * @param float $prijs De prijs van de cursus.
 	 * @return void
 	 */
-	public function indelen_lopend( float $prijs ) {
+	public function indelen_lopend( float $prijs ) : void {
 		$this->inschrijving->maatwerkkosten = $prijs;
 		$this->inschrijving->ingedeeld      = true;
 		$this->inschrijving->wacht_datum    = 0;
@@ -196,7 +196,7 @@ class InschrijvingActie {
 	 *
 	 * @return void
 	 */
-	public function indelen_geforceerd() {
+	public function indelen_geforceerd() : void {
 		$this->inschrijving->ingedeeld    = true;
 		$this->inschrijving->wacht_datum  = 0;
 		$this->inschrijving->artikel_type = 'inschrijving';
@@ -222,7 +222,7 @@ class InschrijvingActie {
 	 *
 	 * @return void
 	 */
-	public function uitschrijven_wachtlijst() {
+	public function uitschrijven_wachtlijst() : void {
 		$this->inschrijving->geannuleerd = true;
 		$this->inschrijving->save();
 	}
@@ -232,7 +232,7 @@ class InschrijvingActie {
 	 *
 	 * @return void
 	 */
-	public function naar_wachtlijst() {
+	public function naar_wachtlijst() : void {
 		if ( $this->inschrijving->wacht_datum || $this->inschrijving->ingedeeld || $this->inschrijving->geannuleerd || $this->inschrijving->cursus->is_lopend() ) {
 			return; // Niets doen als de inschrijving al op de wachtlijst staat of is ingedeeld of geannuleerd of de cursus al gestart is.
 		}

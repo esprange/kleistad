@@ -60,7 +60,7 @@ class Workshopplanning {
 	 * @param int $start De start datum.
 	 * @param int $eind  De eind datum.
 	 */
-	private function start( int $start, int $eind ) {
+	private function start( int $start, int $eind ) : void {
 		for ( $datum = $start; $datum <= $eind; $datum += DAY_IN_SECONDS ) {
 			foreach ( self::WORKSHOP_DAGDEEL as $dagdeel ) {
 				$this->beschikbaarheid[ $this->index( $datum, $dagdeel ) ] = [
@@ -77,7 +77,7 @@ class Workshopplanning {
 	 * @param int $start De start datum.
 	 * @param int $eind  De eind datum.
 	 */
-	private function bepaal_activiteit_beschikbaarheid( int $start, int $eind ) {
+	private function bepaal_activiteit_beschikbaarheid( int $start, int $eind ) : void {
 		foreach ( new Cursussen( $start ) as $cursus ) {
 			foreach ( $cursus->lesdatums as $lesdatum ) {
 				if ( $lesdatum < $start || $lesdatum > $eind || $cursus->vervallen ) {
@@ -100,7 +100,7 @@ class Workshopplanning {
 	 * @param int $start De start datum.
 	 * @param int $eind  De eind datum.
 	 */
-	private function bepaal_docent_beschikbaarheid( int $start, int $eind ) {
+	private function bepaal_docent_beschikbaarheid( int $start, int $eind ) : void {
 		$docenten = new Docenten();
 		for ( $datum = $start; $datum <= $eind; $datum = $datum + DAY_IN_SECONDS ) {
 			foreach ( self::WORKSHOP_DAGDEEL as $dagdeel ) {
@@ -121,7 +121,7 @@ class Workshopplanning {
 	 * @param int   $datum    De datum.
 	 * @param array $dagdelen Het dagdeel.
 	 */
-	private function verhoog( int $datum, array $dagdelen ) {
+	private function verhoog( int $datum, array $dagdelen ) : void {
 		foreach ( $dagdelen as $dagdeel ) {
 			if ( in_array( $dagdeel, self::WORKSHOP_DAGDEEL, true ) ) {
 				$index                                     = $this->index( $datum, $dagdeel );

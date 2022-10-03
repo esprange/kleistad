@@ -64,7 +64,7 @@ class WerkplekMeesters {
 	 * @param string $dagdeel    Het dagdeel.
 	 * @param int    $meester_id Het id van de meester.
 	 */
-	public function wijzig( string $dagdeel, int $meester_id ) {
+	public function wijzig( string $dagdeel, int $meester_id ) : void {
 		$this->meesters[ $dagdeel ] = $meester_id;
 		$this->save();
 	}
@@ -74,7 +74,7 @@ class WerkplekMeesters {
 	 *
 	 * @param string $dagdeel    Het dagdeel.
 	 */
-	public function verwijder( string $dagdeel ) {
+	public function verwijder( string $dagdeel ) : void {
 		unset( $this->meesters[ $dagdeel ] );
 		$this->save();
 	}
@@ -82,7 +82,7 @@ class WerkplekMeesters {
 	/**
 	 * Bewaar de ad hoc meesters
 	 */
-	private function save() {
+	private function save() : void {
 		if ( count( $this->meesters ) ) {
 			update_option( 'kleistad_adhoc_' . date( 'Ymd', $this->datum ), $this->meesters );
 			return;

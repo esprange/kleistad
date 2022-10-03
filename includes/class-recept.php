@@ -136,7 +136,7 @@ class Recept {
 	 *
 	 * @return void
 	 */
-	public function erase() {
+	public function erase() : void {
 		wp_delete_post( $this->id );
 		$this->id = null;
 	}
@@ -190,7 +190,7 @@ class Recept {
 	/**
 	 * Initialiseer de recepten als custom post type.
 	 */
-	public static function create_type() {
+	public static function create_type() : void {
 		register_post_type(
 			self::POST_TYPE,
 			[
@@ -267,7 +267,7 @@ class Recept {
 	/**
 	 * Bepaal de genormeerde verdeling van componenten.
 	 */
-	private function normering() {
+	private function normering() : void {
 		$normeren = 0.0;
 		foreach ( $this->basis as $basis ) {
 			$normeren += $basis['gewicht'];

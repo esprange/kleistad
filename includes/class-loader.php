@@ -55,7 +55,7 @@ class Loader {
 	 * @param    int    $priority         Optioneel. De prioriteit. Default is 10.
 	 * @param    int    $accepted_args    Optioneel. Het aantal argumenten dat door wordt gegeven aan de callback. Default is 1.
 	 */
-	public function add_action( string $hook, object $component, string $callback, int $priority = 10, int $accepted_args = 1 ) {
+	public function add_action( string $hook, object $component, string $callback, int $priority = 10, int $accepted_args = 1 ) : void {
 		$this->actions = $this->add( $this->actions, $hook, $component, $callback, $priority, $accepted_args );
 	}
 
@@ -69,7 +69,7 @@ class Loader {
 	 * @param    int    $priority         Optioneel. De prioriteit. Default is 10.
 	 * @param    int    $accepted_args    Optioneel. Het aantal argumenten dat door wordt gegeven aan de callback. Default is 1.
 	 */
-	public function add_filter( string $hook, object $component, string $callback, int $priority = 10, int $accepted_args = 1 ) {
+	public function add_filter( string $hook, object $component, string $callback, int $priority = 10, int $accepted_args = 1 ) : void {
 		$this->filters = $this->add( $this->filters, $hook, $component, $callback, $priority, $accepted_args );
 	}
 
@@ -101,7 +101,7 @@ class Loader {
 	 *
 	 * @since    4.0.87
 	 */
-	public function run() {
+	public function run() : void {
 		foreach ( $this->filters as $hook ) {
 			add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}

@@ -31,7 +31,7 @@ class EmailReceiver {
 	 * @param callable $verwerk Functie die het ontvangen bericht verwerkt.
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
-	public function ontvang( callable $verwerk ) {
+	public function ontvang( callable $verwerk ) : void {
 		if ( empty( setup()['imap_server'] ) ) {
 			exit( 0 );
 		}

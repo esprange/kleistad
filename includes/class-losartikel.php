@@ -158,7 +158,7 @@ class LosArtikel extends Artikel {
 	 *
 	 * @return void
 	 */
-	public function save() {
+	public function save() : void {
 		set_transient( self::META . $this->code, $this->data, YEAR_IN_SECONDS );
 	}
 

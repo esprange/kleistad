@@ -29,7 +29,7 @@ class Common {
 	 * @internal Action for wp_login.
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
-	public function user_login( string $user_login, ?WP_User $user = null ) {
+	public function user_login( string $user_login, ?WP_User $user = null ) : void {
 
 		if ( ! $user ) {
 			$user = get_user_by( 'login', $user_login );
@@ -55,7 +55,7 @@ class Common {
 	 *
 	 * @internal Action for login_enqueue_scripts.
 	 */
-	public function login_enqueue_scripts() {
+	public function login_enqueue_scripts() : void {
 		?>
 		<style>
 			#login h1 a, .login h1 a {
@@ -144,7 +144,7 @@ class Common {
 	 *
 	 * @internal Filter for after_setup_theme.
 	 */
-	public function verberg_toolbar() {
+	public function verberg_toolbar() : void {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			if ( is_admin_bar_showing() ) {
 				show_admin_bar( false );

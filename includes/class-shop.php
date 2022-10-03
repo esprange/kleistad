@@ -30,7 +30,7 @@ class Shop {
 	 *
 	 * @internal Action for init.
 	 */
-	public function shop_init() {
+	public function shop_init() : void {
 		$this->register = new Artikelregister( [ 'Abonnement', 'Afboeking', 'Dagdelenkaart', 'Inschrijving', 'LosArtikel', 'Saldo', 'Workshop' ] );
 	}
 
@@ -41,7 +41,7 @@ class Shop {
 	 *
 	 * @internal Action for kleistad_order_annulering.
 	 */
-	public function order_annulering( string $referentie ) {
+	public function order_annulering( string $referentie ) : void {
 		$artikel = $this->register->get_object( $referentie );
 		if ( property_exists( $artikel, 'actie' ) && method_exists( $artikel->actie, 'afzeggen' ) ) {
 			$artikel->actie->afzeggen();
@@ -55,7 +55,7 @@ class Shop {
 	 *
 	 * @internal Action for kleistad_order_stornering.
 	 */
-	public function order_stornering( Order $order ) {
+	public function order_stornering( Order $order ) : void {
 		if ( $order->transactie_id && -0.01 > $order->get_te_betalen() ) {
 			if ( defined( 'KLEISTAD_TEST' ) ) {
 				return;
@@ -79,7 +79,7 @@ class Shop {
 	 *
 	 * @internal Action for kleistad_betaalinfo_update
 	 */
-	public function betaalinfo_update( int $gebruiker_id ) {
+	public function betaalinfo_update( int $gebruiker_id ) : void {
 		if ( $gebruiker_id ) {
 			$profiel = new Profiel();
 			$profiel->reset( $gebruiker_id );

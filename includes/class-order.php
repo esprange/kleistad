@@ -159,7 +159,7 @@ class Order {
 	/**
 	 * Erase de order
 	 */
-	public function erase() {
+	public function erase() : void {
 		global $wpdb;
 		$wpdb->delete( "{$wpdb->prefix}kleistad_orders", [ 'id' => $this->id ] );
 	}
@@ -399,7 +399,7 @@ class Order {
 	/**
 	 * Afboeken van een order.
 	 */
-	public function afboeken() {
+	public function afboeken() : void {
 		$te_betalen            = $this->get_te_betalen();
 		$afboek_order          = new Order( '@-' . $this->referentie );
 		$afboek_order->betaald = $te_betalen;

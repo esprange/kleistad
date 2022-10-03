@@ -99,7 +99,7 @@ class Ontvangen {
 	 * @param Order   $order    De order.
 	 * @return void
 	 */
-	private function payment( object $betaling, Artikel $artikel, Order $order ) {
+	private function payment( object $betaling, Artikel $artikel, Order $order ) : void {
 		$artikel->betaling->verwerk(
 			$order,
 			$betaling->amount->value,
@@ -117,7 +117,7 @@ class Ontvangen {
 	 * @param Order   $order    De order.
 	 * @return void
 	 */
-	private function refunds( object $betaling, Artikel $artikel, Order $order ) {
+	private function refunds( object $betaling, Artikel $artikel, Order $order ) : void {
 		$transient  = $betaling->id . self::REFUNDS;
 		$refund_ids = get_transient( $transient ) ?: [];
 		foreach ( $betaling->refunds() as $refund ) {
@@ -147,7 +147,7 @@ class Ontvangen {
 	 * @param Order   $order    De order.
 	 * @return void
 ]	 */
-	private function chargebacks( object $betaling, Artikel $artikel, Order $order ) {
+	private function chargebacks( object $betaling, Artikel $artikel, Order $order ) : void {
 		$transient      = $betaling->id . self::CHARGEBACKS;
 		$chargeback_ids = get_transient( $transient ) ?: [];
 		foreach ( $betaling->chargebacks() as $chargeback ) {

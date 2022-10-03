@@ -19,7 +19,7 @@ class Deactivator {
 	/**
 	 * Deactiveer de plugin.
 	 */
-	public static function deactivate() {
+	public static function deactivate() : void {
 		wp_clear_scheduled_hook( 'kleistad_rcv_email' );
 	}
 

@@ -47,7 +47,7 @@ class PDF extends FPDF {
 	 *
 	 * @return void
 	 */
-	public function init( string $filenaam, string $titel ) {
+	public function init( string $filenaam, string $titel ) : void {
 		$this->footer = "Pagina %d \n" . sprintf( 'bestand %s aangemaakt op %s', $filenaam, wp_date( 'd-m-Y, H:i' ) );
 		$this->titel  = $titel;
 		$this->SetCreator( get_site_url() );
@@ -63,7 +63,7 @@ class PDF extends FPDF {
 	 *
 	 * @return void
 	 */
-	public function Header() {
+	public function Header() : void {
 		$this->SetFont( self::CSET, 'B', self::GROOT );
 		$this->Text( 25, 30, $this->titel );
 		$this->SetXY( -60, 15 ); // Relatief t.o.v. rechterkant, voor portrait en landscape modus.
@@ -75,7 +75,7 @@ class PDF extends FPDF {
 	 *
 	 * @return void
 	 */
-	public function Footer() {
+	public function Footer() : void {
 		$this->SetY( -25 );
 		$this->SetFont( self::CSET, 'I', self::KLEIN );
 		$this->MultiCell( 0, self::H_KLEIN, sprintf( $this->footer, $this->PageNo() ), 0, 'C' );

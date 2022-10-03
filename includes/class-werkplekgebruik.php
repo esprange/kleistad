@@ -143,7 +143,7 @@ class WerkplekGebruik {
 	 * @param string $dagdeel     Het dagdeel.
 	 * @param int    $meester_id  Het id van de meester.
 	 */
-	public function wijzig_meester( string $dagdeel, int $meester_id ) {
+	public function wijzig_meester( string $dagdeel, int $meester_id ) : void {
 		$this->gebruik[ $dagdeel ][ self::MEESTER ] = [ $meester_id ];
 		$this->save();
 	}
@@ -176,7 +176,7 @@ class WerkplekGebruik {
 	/**
 	 * Bewaar het gebruik
 	 */
-	private function save() {
+	private function save() : void {
 		update_option( 'kleistad_werkplek_' . date( 'Ymd', $this->datum ), $this->gebruik );
 	}
 }

@@ -84,7 +84,7 @@ class WerkplekConfig {
 	 *
 	 * @param int $datum De datum van de wijziging.
 	 */
-	public function adhoc_meesters( int $datum ) {
+	public function adhoc_meesters( int $datum ) : void {
 		$atelierdag       = wp_date( 'l', $datum );
 		$werkplekmeesters = new WerkplekMeesters( $datum );
 		$meester_ids      = $werkplekmeesters->get_ids();

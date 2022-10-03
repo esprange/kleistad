@@ -187,7 +187,7 @@ abstract class Shortcode {
 	 * @since 5.7.0
 	 * @codeCoverageIgnore
 	 */
-	public static function register_rest_routes() {
+	public static function register_rest_routes() : void {
 		register_rest_route(
 			KLEISTAD_API,
 			'/getitem', // /(?P<id>\d+)',
@@ -285,7 +285,7 @@ abstract class Shortcode {
 	/**
 	 * Ruim eventuele download files op.
 	 */
-	public static function cleanup_downloads() {
+	public static function cleanup_downloads() : void {
 		$upload_dir = wp_upload_dir();
 		$files      = glob( $upload_dir['basedir'] . '/kleistad_tmp_*.csv' );
 		$now        = time();
@@ -354,7 +354,7 @@ abstract class Shortcode {
 	 * prio 3: actie vanuit de actie parameter in de tag
 	 * prio 4: de default actie
 	 */
-	private function bepaal_actie() {
+	private function bepaal_actie() : void {
 		foreach ( [ filter_input( INPUT_GET, 'actie', FILTER_SANITIZE_STRING ), $this->data['actie'] ?? null, self::STANDAARD_ACTIE ] as $actie ) {
 			if ( ! empty( $actie ) ) {
 				$this->display_actie = $actie;

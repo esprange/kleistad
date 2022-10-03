@@ -119,7 +119,7 @@ class Afspraak {
 	 *
 	 * @param DateTime $eind Einddatum.
 	 */
-	public function set_herhalen( DateTime $eind ) {
+	public function set_herhalen( DateTime $eind ) : void {
 		$until = $eind->format( 'Ymd\THis\Z' );
 		$this->event->setRecurrence( [ "RRULE:FREQ=WEEKLY;UNTIL=$until" ] );
 	}
@@ -129,7 +129,7 @@ class Afspraak {
 	 *
 	 * @param array $datums Datums als DateTime object.
 	 */
-	public function set_patroon( array $datums ) {
+	public function set_patroon( array $datums ) : void {
 		unset( $datums[0] );
 		$datumteksten = array_map(
 			function( $datum ) {
@@ -199,7 +199,7 @@ class Afspraak {
 	 *
 	 * @since 5.0.0
 	 */
-	public function save() {
+	public function save() : void {
 		if ( ! defined( 'KLEISTAD_TEST' ) ) {
 			$opt_params = [];
 			if ( $this->deelnemers ) {
@@ -217,7 +217,7 @@ class Afspraak {
 	/**
 	 * Delete de afspraak.
 	 */
-	public function delete() {
+	public function delete() : void {
 		if ( ! defined( 'KLEISTAD_TEST' ) ) {
 			$this->calendar->events->delete( $this->calendar_id, $this->event->getId() );
 		}
