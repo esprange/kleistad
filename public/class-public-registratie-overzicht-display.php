@@ -48,7 +48,7 @@ class Public_Registratie_Overzicht_Display extends Public_Shortcode_Display {
 				<?php
 				foreach ( $this->data['registraties'] as $id => $registratie ) :
 					?>
-					<tr data-id="<?php echo esc_attr( $id ); ?>">
+					<tr data-id="<?php echo esc_attr( $id ); ?>" title="<?php echo esc_attr( $id ); ?>">
 						<td><?php echo esc_html( $registratie['is_abonnee'] ); ?></td>
 						<td><?php echo esc_html( $registratie['is_dagdelenkaart'] ); ?></td>
 						<td><?php echo esc_html( $registratie['is_cursist'] ); ?></td>
