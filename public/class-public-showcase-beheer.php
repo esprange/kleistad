@@ -14,8 +14,9 @@ namespace Kleistad;
 /**
  * Include voor image file upload.
  */
+require_once ABSPATH . 'wp-admin/includes/image.php';
 require_once ABSPATH . 'wp-admin/includes/file.php';
-require_once ABSPATH . 'wp-admin/includes/admin.php';
+require_once ABSPATH . 'wp-admin/includes/media.php';
 
 /**
  * De kleistad showcase beheer class.
