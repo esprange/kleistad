@@ -20,7 +20,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function toevoegen() {
+	protected function toevoegen() : void {
 		$this->form();
 	}
 
@@ -29,7 +29,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function wijzigen() {
+	protected function wijzigen() : void {
 		$this->form();
 	}
 
@@ -149,7 +149,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	private function grondstoffen() {
+	private function grondstoffen() : void {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-5">
@@ -231,7 +231,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	private function categorien() {
+	private function categorien() : void {
 		$recepttermen = new ReceptTermen();
 		?>
 		<div class="kleistad-row">

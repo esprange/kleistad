@@ -20,7 +20,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		$this->form();
 	}
 
@@ -52,7 +52,7 @@ class Public_Dagdelenkaart_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	private function dagdelenkaart_info() {
+	private function dagdelenkaart_info() : void {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-6">

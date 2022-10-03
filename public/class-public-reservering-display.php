@@ -20,7 +20,7 @@ class Public_Reservering_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		$stokers_json      = wp_json_encode( $this->data['stokers'] );
 		$stooksoorten_json = wp_json_encode( $this->data['stooksoorten'] );
 		if ( false === $stokers_json || false === $stooksoorten_json ) {

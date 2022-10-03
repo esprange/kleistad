@@ -20,7 +20,7 @@ class Public_Abonnement_Overzicht_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		?>
 		<table class="kleistad-datatable display compact nowrap" data-order='[[ 0, "asc" ]]'>
 			<thead>

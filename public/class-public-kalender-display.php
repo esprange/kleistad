@@ -20,7 +20,7 @@ class Public_Kalender_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		?>
 		<div id="kleistad_fullcalendar"></div>
 		<?php

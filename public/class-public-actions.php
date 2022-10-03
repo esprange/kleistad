@@ -39,7 +39,7 @@ class Public_Actions {
 	 *
 	 * @internal Action for init.
 	 */
-	public function register_shortcodes() {
+	public function register_shortcodes() : void {
 		$this->shortcode_handler->register();
 	}
 
@@ -52,7 +52,7 @@ class Public_Actions {
 	 *
 	 * @return void
 	 */
-	public function register_styles_and_scripts() {
+	public function register_styles_and_scripts() : void {
 		$dev                     = 'development' === wp_get_environment_type() ? '' : '.min';
 		$jquery_ui_version       = wp_scripts()->registered['jquery-ui-core']->ver;
 		$fullcalendar_version    = '5.11.2';
@@ -99,7 +99,7 @@ class Public_Actions {
 	 *
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function enqueue_styles_and_scripts() {
+	public function enqueue_styles_and_scripts() : void {
 		$dev           = 'development' === wp_get_environment_type() ? '' : '.min';
 		$shortcodes    = new Shortcodes();
 		$shortcode_tag = $shortcodes->heeft_shortcode();
@@ -129,7 +129,7 @@ class Public_Actions {
 	 * @internal Action for rest_api_init.
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
-	public function register_endpoints() {
+	public function register_endpoints() : void {
 		foreach (
 			[
 				'MollieClient',
@@ -156,7 +156,7 @@ class Public_Actions {
 	 * @internal Action for init.
 	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
-	public static function register_post_types() {
+	public static function register_post_types() : void {
 		Recept::create_type();
 		Email::create_type();
 		Showcase::create_type();
@@ -167,7 +167,7 @@ class Public_Actions {
 	 *
 	 * @internal Action for init.
 	 */
-	public function inline_style() {
+	public function inline_style() : void {
 		wp_add_inline_style( 'login', '.pw-weak {display:none !important;}' );
 	}
 
@@ -176,7 +176,7 @@ class Public_Actions {
 	 *
 	 * @internal Action for rcv_email.
 	 */
-	public function rcv_email() {
+	public function rcv_email() : void {
 		$receiver = new EmailReceiver();
 		$receiver->ontvang( [ '\\' . __NAMESPACE__ . '\\WorkshopActie', 'verwerk' ] );
 	}
@@ -187,7 +187,7 @@ class Public_Actions {
 	 * @internal Action for wp_ajax_kleistad_wachtwoord, wp_ajax_nopriv_kleistad_wachtwoord.
 	 * @suppressWarnings(PHPMD.ExitExpression)
 	 */
-	public function wachtwoord() {
+	public function wachtwoord() : void {
 		check_ajax_referer( 'wp_rest', 'security' );
 		global $current_user;
 		$actie = filter_input( INPUT_POST, 'actie', FILTER_SANITIZE_STRING );
@@ -210,7 +210,7 @@ class Public_Actions {
 	 *
 	 * @internal Action for user_register.
 	 */
-	public function user_register( int $gebruiker_id ) {
+	public function user_register( int $gebruiker_id ) : void {
 		$userdata = get_userdata( $gebruiker_id );
 		if ( false !== $userdata ) {
 			$user_login = sanitize_user( strtolower( preg_replace( '/\s+/', '', $userdata->first_name . $userdata->last_name ) ), true );
@@ -229,7 +229,7 @@ class Public_Actions {
 	 *
 	 * @internal Action for profile_update.
 	 */
-	public function profile_update( int $gebruiker_id ) {
+	public function profile_update( int $gebruiker_id ) : void {
 		$userdata = get_userdata( $gebruiker_id );
 		if ( false !== $userdata ) {
 			remove_action( 'profile_update', [ $this, __FUNCTION__ ] ); // Voorkom dat na de update deze actie opnieuw aangeroepen wordt.

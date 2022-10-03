@@ -93,7 +93,7 @@ abstract class Public_Shortcode_Display {
 	 *
 	 * @param string $form_content De formulier functie.
 	 */
-	protected function form( string $form_content = 'form_content' ) {
+	protected function form( string $form_content = 'form_content' ) : void {
 		if ( method_exists( $this, $form_content ) ) {
 			?>
 		<form action="#" autocomplete="off" enctype="multipart/form-data" class="kleistad-form" >
@@ -279,7 +279,7 @@ abstract class Public_Shortcode_Display {
 	/**
 	 * Invoegen contact in tekst.
 	 */
-	protected function contact() {
+	protected function contact() : void {
 		if ( empty( $this->data['contact'] ) ) {
 			?>
 			contact
@@ -294,7 +294,7 @@ abstract class Public_Shortcode_Display {
 	/**
 	 * Render de ideal betaal sectie
 	 */
-	protected function ideal() {
+	protected function ideal() : void {
 		try {
 			$service = new MollieClient();
 			$banks   = $service->get_banks();
@@ -321,7 +321,7 @@ abstract class Public_Shortcode_Display {
 	/**
 	 * Render de betaal sectie
 	 */
-	protected function betaal_info() {
+	protected function betaal_info() : void {
 		if ( setup()['stort'] || isset( $this->data['stort'] ) ) :
 			?>
 		<div class="kleistad-row">

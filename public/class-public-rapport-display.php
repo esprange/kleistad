@@ -20,7 +20,7 @@ class Public_Rapport_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		$this->rapport();
 	}
 

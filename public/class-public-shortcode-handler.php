@@ -21,7 +21,7 @@ class Public_Shortcode_Handler {
 	/**
 	 * Voeg de shortcodes toe.
 	 */
-	public function register() {
+	public function register() : void {
 		$shortcodes = new Shortcodes();
 		foreach ( array_keys( $shortcodes->definities ) as $tag ) {
 			add_shortcode( "kleistad_$tag", [ $this, 'handler' ] );

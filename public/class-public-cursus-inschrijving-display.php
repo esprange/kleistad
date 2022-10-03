@@ -21,7 +21,7 @@ class Public_Cursus_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @return void
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function inschrijven() {
+	protected function inschrijven() : void {
 		$this->form();
 	}
 

@@ -27,7 +27,7 @@ class Public_Docent_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function planning() {
+	protected function planning() : void {
 		$this->tabelframe( 'kleistad_planning' );
 		?>
 		<div style="float: left">
@@ -45,7 +45,7 @@ class Public_Docent_Display extends Public_Shortcode_Display {
 	 * @param string $tabel Het type tabel.
 	 * @return void
 	 */
-	private function tabelframe( string $tabel ) {
+	private function tabelframe( string $tabel ) : void {
 		$maandag = date( 'd-m-Y', strtotime( 'Monday this week' ) );
 		?>
 		<div id="kleistad_geen_ie" style="display:none">

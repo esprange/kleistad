@@ -20,7 +20,7 @@ class Public_Recept_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		?>
 		<div class="kleistad-row" style="padding-bottom:15px;">
 			<div class="kleistad-col-2">

@@ -20,7 +20,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function toevoegen() {
+	protected function toevoegen() : void {
 		$this->form();
 	}
 
@@ -29,7 +29,7 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function wijzigen() {
+	protected function wijzigen() : void {
 		$this->form();
 	}
 

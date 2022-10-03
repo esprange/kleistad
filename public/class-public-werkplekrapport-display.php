@@ -44,7 +44,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function reserveringen() {
+	protected function reserveringen() : void {
 		?>
 		<h2>Overzicht werkplek reserveringen</h2>
 		<?php
@@ -156,7 +156,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	private function tabel_individueel() {
+	private function tabel_individueel() : void {
 		?>
 		<table class="kleistad-datatable display compact" data-order= '[[ 0, "asc" ]]' data-searching="false" >
 			<thead>

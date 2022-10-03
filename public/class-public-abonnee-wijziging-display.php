@@ -27,7 +27,7 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		$in_startperiode = strtotime( 'today' ) < $this->data['abonnement']->start_eind_datum;
 		$this->per_datum = $in_startperiode ? $this->data['abonnement']->start_eind_datum : strtotime( 'first day of next month 00:00' );
 		$this->abonnement_info()->abonnement_extra_info();

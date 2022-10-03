@@ -34,7 +34,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 *
 	 * @return void
 	 */
-	protected function form_content() {
+	protected function form_content() :void {
 		?>
 		<div id="kleistad_workshopbeheer" style="background-color: gainsboro;">
 			<ul>
@@ -328,7 +328,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 * @return void
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	private function status_details() {
+	private function status_details() : void {
 		?>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3">

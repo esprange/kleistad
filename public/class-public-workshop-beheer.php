@@ -294,7 +294,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 *
 	 * @return void.
 	 */
-	private function planning() {
+	private function planning() : void {
 		$verloop                      = strtotime( 'tomorrow' ) - opties()['verloopaanvraag'] * WEEK_IN_SECONDS;
 		$workshops                    = new Workshops();
 		$this->data['workshops']      = [];

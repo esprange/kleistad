@@ -22,7 +22,7 @@ class Public_Abonnee_Inschrijving_Display extends Public_Shortcode_Display {
 	 * @return void
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	protected function overzicht() {
+	protected function overzicht() : void {
 		$this->form();
 	}
 
