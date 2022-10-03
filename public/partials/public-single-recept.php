@@ -15,7 +15,7 @@ wp_add_inline_script(
 			$(
 				function()
 				{
-					$( "#kleistad_recept_foto" ).on(
+					$( ".recept_foto" ).on(
 						"click",
 						function() {
 							$( "#kleistad_recept_modal" ).show();
@@ -50,12 +50,11 @@ get_header();
 			<h2><?php the_title(); ?></h2>
 			<div style="width:100%">
 				<div style="float:left;width:50%;padding-bottom:25px;">
-					<img src="<?php echo esc_url( $recept->foto ); ?>"
-						style="max-width:100%;max-height:100%;border-radius:5px;cursor:zoom-in;transition: 0.3s;"
-						id="kleistad_recept_foto"
-						onMouseOver="this.style.opacity=0.7"
-						onMouseOut="this.style.opacity=1"
-						alt="<?php the_title(); ?>" >
+					<?php
+					if ( $recept->foto_id ) :
+						echo wp_get_attachment_image( $recept->foto_id, 'medium', false, [ 'class' => 'recept_foto' ] );
+					endif;
+					?>
 				</div>
 				<div style="float:left;width:50%;">
 					<div class="kleistad-row">
@@ -128,8 +127,11 @@ get_header();
 				onMouseOver="this.style.color='#bbb';this.style.cursor='pointer';this.style.textDecoration='none'"
 				>&times;</span>
 
-			<img style="margin:auto;display:block;width:80%;max-width:700px;" src="<?php echo esc_url( $recept->foto ); ?>" alt="<?php the_title(); ?>">
-
+			<?php
+			if ( $recept->foto_id ) :
+				echo wp_get_attachment_image( $recept->foto_id, 'large' );
+			endif;
+			?>
 			<div style="margin:auto;display:block;width:80%;max-width:700px;text-align:center;color:#ccc;padding:10px 0;height:150px;animation-name:zoom;animation-duration:0.6s;">
 				<?php the_title(); ?>
 			</div>

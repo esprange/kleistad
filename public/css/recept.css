@@ -10,7 +10,7 @@ table {
 	cursor: pointer;
 }
 
-#kleistad_recept_foto {
+.recept_foto {
 	border-radius: 5px;
 	cursor: zoom-in;
 	max-width: 100%;

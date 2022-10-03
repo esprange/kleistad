@@ -26,7 +26,7 @@ use WP_Post;
  * @property array  $basis
  * @property array  $toevoeging
  * @property string $stookschema
- * @property string $foto
+ * @property int    $foto_id
  * @property int    $glazuur
  * @property int    $kleur
  * @property int    $uiterlijk
@@ -71,7 +71,7 @@ class Recept {
 			'toevoeging'  => [],
 			'stookschema' => '',
 			'status'      => '',
-			'foto'        => '',
+			'foto_id'     => 0,
 			'glazuur'     => 0,
 			'kleur'       => 0,
 			'uiterlijk'   => 0,
@@ -93,6 +93,10 @@ class Recept {
 						'uiterlijk' => $this->eigenschap_id( ReceptTermen::UITERLIJK ),
 					]
 				);
+			}
+			$images = get_attached_media( 'image', $recept_id );
+			if ( $images ) { // Haal het laatste (= meest recente) plaatje op.
+				$this->data['foto_id'] = end( $images )->ID;
 			}
 		}
 		$this->normering();
@@ -161,7 +165,6 @@ class Recept {
 				'basis'       => $this->data['basis'],
 				'toevoeging'  => $this->data['toevoeging'],
 				'stookschema' => $this->data['stookschema'],
-				'foto'        => $this->data['foto'],
 			],
 			JSON_UNESCAPED_UNICODE
 		);

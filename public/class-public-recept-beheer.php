@@ -11,12 +11,12 @@
 
 namespace Kleistad;
 
-use WP_Error;
-
 /**
  * Include voor image file upload.
  */
+require_once ABSPATH . 'wp-admin/includes/image.php';
 require_once ABSPATH . 'wp-admin/includes/file.php';
+require_once ABSPATH . 'wp-admin/includes/media.php';
 
 /**
  * De kleistad recept beheer class.
@@ -73,18 +73,12 @@ class Public_Recept_Beheer extends ShortcodeForm {
 				'foto_url'  => FILTER_SANITIZE_URL,
 			]
 		);
+		$this->data['recept']['id']          = intval( $this->data['recept']['id'] );
 		$this->data['recept']['kenmerk']     = sanitize_textarea_field( filter_input( INPUT_POST, 'kenmerk' ) );
 		$this->data['recept']['herkomst']    = sanitize_textarea_field( filter_input( INPUT_POST, 'herkomst' ) );
 		$this->data['recept']['stookschema'] = sanitize_textarea_field( filter_input( INPUT_POST, 'stookschema' ) );
 		$this->data['recept']['basis']       = $this->component( 'basis_component', 'basis_gewicht' );
 		$this->data['recept']['toevoeging']  = $this->component( 'toevoeging_component', 'toevoeging_gewicht' );
-
-		$files = new Files();
-		if ( 'bewaren' === $this->form_actie ) {
-			if ( UPLOAD_ERR_INI_SIZE === $files->data['foto']['error'] ) {
-				return $this->melding( new WP_Error( 'foto', 'De foto is te groot qua omvang !' ) );
-			}
-		}
 		return $this->save();
 	}
 
@@ -139,37 +133,23 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function bewaren(): array {
-		$files = new Files();
-		if ( ! empty( $files->data['foto']['name'] ) ) {
-			$file = wp_handle_upload(
-				$files->data['foto'],
-				[ 'test_form' => false ]
-			);
-			if ( is_array( $file ) && ! isset( $file['error'] ) ) {
-				$result = $this->foto( $file['file'] );
-				if ( true === $result ) {
-					$this->data['recept']['foto'] = $file['url'];
-				} else {
-					return [ 'status' => $this->status( $result ) ];
-				}
-			} else {
-				return [
-					'status' => $this->status( new WP_Error( 'fout', 'Foto kon niet worden opgeslagen: ' . $file['error'] ) ),
-				];
-			}
-		}
 		$recept              = new Recept( $this->data['recept']['id'] );
 		$recept->titel       = $this->data['recept']['titel'];
-		$recept->kenmerk     = $this->data['recept']['kenmerk'];
+		$recept->kenmerk     = $this->data['recept']['kenmerk'] ?? '';
 		$recept->toevoeging  = $this->data['recept']['toevoeging'];
 		$recept->basis       = $this->data['recept']['basis'];
-		$recept->stookschema = $this->data['recept']['stookschema'];
-		$recept->herkomst    = $this->data['recept']['herkomst'];
+		$recept->stookschema = $this->data['recept']['stookschema'] ?? '';
+		$recept->herkomst    = $this->data['recept']['herkomst'] ?? '';
 		$recept->glazuur     = (int) $this->data['recept']['glazuur'];
 		$recept->uiterlijk   = (int) $this->data['recept']['uiterlijk'];
 		$recept->kleur       = (int) $this->data['recept']['kleur'];
-		$recept->foto        = $this->data['recept']['foto'];
 		$recept->save();
+		if ( $_FILES['foto']['size'] ) {
+			$result = media_handle_upload( 'foto', $recept->id );
+			if ( is_wp_error( $result ) ) {
+				return [ 'status' => $this->status( $result ) ];
+			}
+		}
 		return [
 			'status'  => $this->status( 'Gegevens zijn opgeslagen' ),
 			'content' => $this->display(),
@@ -209,63 +189,6 @@ class Public_Recept_Beheer extends ShortcodeForm {
 			}
 		}
 		return $componenten;
-	}
-
-	/**
-	 * Verwerk foto.
-	 *
-	 * @param string $image_file Path naar een image file.
-	 * @return WP_Error|bool True als verwerkt of error als er iets fout is gegaan.
-	 */
-	private function foto( string $image_file ): WP_Error|bool {
-		$exif = @exif_read_data( $image_file ); // phpcs:ignore
-		if ( false === $exif ) {
-			return new WP_Error( 'fout', 'Foto moet een jpeg, jpg, tif of tiff bestand zijn' );
-		}
-		$image = imagecreatefromjpeg( $image_file );
-		if ( false === $image ) {
-			return new WP_Error( 'fout', 'Foto lijkt niet een geldig dataformaat te bevatten' );
-		}
-		if ( ! empty( $exif['Orientation'] ) ) {
-			$rotate = [
-				3 => 180,
-				6 => -90,
-				8 => 90,
-			];
-			$image  = imagerotate( $image, $rotate[ $exif['Orientation'] ] ?? 0, 0 );
-			if ( ! is_object( $image ) ) {
-				return new WP_Error( 'fout', 'Foto kon niet naar juiste positie gedraaid worden' );
-			}
-		}
-		$quality = intval( min( 75000 / filesize( $image_file ) * 100, 100 ) );
-		imagejpeg( $image, $image_file, $quality );
-		imagedestroy( $image );
-		return true;
-	}
-
-}
-
-/**
- * Encapsulate de Files variabele
- * phpcs:disable
- * @suppressWarnings(PHPMD.Superglobals)
- */
-final class Files {
-
-	/**
-	 * Inhoud van de global var.
-	 *
-	 * @var array $data De files data
-	 */
-	public array $data = [];
-
-	/**
-	 * Constructor
-	 *
-	 * @suppressWarnings(PHPMD.Superglobals)
-	 */
-	public function __construct() {
-		$this->data = &$_FILES;
 	}
 
 }

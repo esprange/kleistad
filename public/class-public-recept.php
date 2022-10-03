@@ -35,7 +35,7 @@ class Public_Recept extends Shortcode {
 	 *
 	 * @since 4.5.3
 	 */
-	public static function register_rest_routes() : void{
+	public static function register_rest_routes() : void {
 		register_rest_route(
 			KLEISTAD_API,
 			'/recept',
@@ -188,11 +188,15 @@ class Public_Recept extends Shortcode {
 			}
 			$permalink = get_post_permalink( $recept->id );
 			if ( is_string( $permalink ) ) {
-				$html .= '<div style="width:250px;float:left;padding:15px;border:0;"><a href="' . $permalink . '" >' .
-						'<div class="kleistad-recept-img" style="/* noinspection CssUnknownTarget */ background-image:url(' . "'$recept->foto'" . ');" >' .
+				$foto_url = wp_get_attachment_image_url(
+					$recept->foto_id,
+					'medium'
+				);
+				$html    .= '<div style="width:250px;float:left;padding:15px;border:0;"><a href="' . $permalink . '" >' .
+						'<div class="kleistad-recept-img" style="/* noinspection CssUnknownTarget */ background-image:url(' . "'$foto_url'" . ');" >' .
 						'</div><div class="kleistad-recept-titel" >';
-				$html .= self::truncate_string( $recept->titel );
-				$html .= '</div></a></div>';
+				$html    .= self::truncate_string( $recept->titel );
+				$html    .= '</div></a></div>';
 			}
 		}
 		$html .= '</div>';

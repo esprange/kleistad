@@ -72,7 +72,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				<label for="kleistad_stookschema">Stookschema</label>
 			</div>
 			<div class="kleistad-col-5 kleistad-label">
-				<label for="kleistad_foto_input">Foto (max 2M bytes)</label>
+				<label for="kleistad_foto">Foto (max 2M bytes)</label>
 			</div>
 		</div>
 		<div class="kleistad-row" style="padding-top:15px">
@@ -80,9 +80,16 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 				<textarea name="stookschema" id="kleistad_stookschema" tabindex="7" maxlength="1000" rows="5"><?php echo esc_textarea( $this->data['recept']->stookschema ); ?></textarea>
 			</div>
 			<div class="kleistad-col-5">
-				<input type="file" name="foto" id="kleistad_foto_input" accept=".jpeg,.jpg,.tiff,.tif" /><br />
-				<img id="kleistad_foto" src="<?php echo esc_url( $this->data['recept']->foto ); ?>" alt=" " >
-				<input type="hidden" name="foto_url" value="<?php echo esc_url( $this->data['recept']->foto ); ?>" >
+				<input type="file" name="foto" id="kleistad_foto" accept=".jpeg,.jpg,.tiff,.tif;capture=camera" /><br />
+			</div>
+		</div>
+		<div class="kleistad-row" style="padding-top:15px;padding-bottom:15px;">
+			<div class="kleistad-col-5">
+				<?php
+				if ( $this->data['recept']->foto_id ) :
+					echo wp_get_attachment_image( $this->data['recept']->foto_id, 'medium' );
+				endif
+				?>
 			</div>
 		</div>
 		<?php $this->grondstoffen(); ?>
@@ -125,9 +132,11 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 			<?php foreach ( $this->data['recepten'] as $recept ) : ?>
 			<tr>
 				<td>
-				<?php if ( '' !== $recept->foto ) : ?>
-					<img src="<?php echo esc_url( $recept->foto ); ?>" height="100" width="100" alt="<?php echo esc_attr( $recept->titel ); ?>" >
-					<?php else : ?>
+				<?php
+				if ( $recept->foto_id ) :
+					echo wp_get_attachment_image( $recept->foto_id );
+				else :
+					?>
 					&nbsp;
 				<?php endif; ?></td>
 				<td><?php echo esc_html( $recept->titel ); ?></td>
