@@ -28,7 +28,7 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 	 *
 	 * @since    6.4.0
 	 */
-	public function add_pages() {
+	public function add_pages() : void {
 		add_submenu_page( 'kleistad', 'Recept termen', 'Recept termen', 'manage_options', 'recepttermen', [ $this, 'page_handler' ] );
 		add_submenu_page( 'receptterm', 'Toevoegen/Wijzigen recept term', 'Toevoegen/Wijzigen recept term', 'manage_options', 'recepttermen_form', [ $this, 'form_handler' ] );
 	}
@@ -36,7 +36,7 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 	/**
 	 * Overzicht regelingen page handler
 	 */
-	public function page_handler() {
+	public function page_handler() : void {
 		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_receptterm' ) && 'delete' === filter_input( INPUT_GET, 'action' ) ) {
 			$receptterm_id = filter_input( INPUT_GET, 'id' );
 			if ( ! is_null( $receptterm_id ) ) {
@@ -52,7 +52,7 @@ class Admin_Recepttermen_Handler extends Admin_Handler {
 	 *
 	 * @since    6.4.0
 	 */
-	public function form_handler() {
+	public function form_handler() : void {
 		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_receptterm' ) ? $this->update_receptterm() : $this->receptterm();
 		add_meta_box( 'receptterm_form_meta_box', 'Receptterm', [ $this->display, 'form_meta_box' ], 'receptterm', 'normal' );
 		$this->display->form_page( $item, 'receptterm', 'recepttermen', $this->notice, $this->message, false, [ 'hoofdterm_id' => $item['hoofdterm_id'] ] );

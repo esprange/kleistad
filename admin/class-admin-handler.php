@@ -42,21 +42,21 @@ abstract class Admin_Handler {
 	 *
 	 * @since    7.2.0
 	 */
-	abstract public function add_pages();
+	abstract public function add_pages() : void;
 
 	/**
 	 * Toon en verwerk ingevoerde cursist gegevens
 	 *
 	 * @since    7.2.0
 	 */
-	abstract public function form_handler();
+	abstract public function form_handler() : void;
 
 	/**
 	 * Toon en verwerk ingevoerde cursist gegevens
 	 *
 	 * @since    7.2.0
 	 */
-	public function page_handler() {
+	public function page_handler() : void {
 		$this->display->page();
 	}
 }

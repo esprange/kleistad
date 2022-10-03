@@ -52,7 +52,7 @@ class Admin_Actions {
 	 *
 	 * @internal Action for admin_enqueue_scripts.
 	 */
-	public function enqueue_scripts_and_styles() {
+	public function enqueue_scripts_and_styles() : void {
 		$jquery_ui_version = wp_scripts()->registered['jquery-ui-core']->ver;
 		wp_enqueue_style( 'jqueryui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_ui_version ), [], $jquery_ui_version );
 		wp_enqueue_script( 'kleistad_admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', [ 'jquery', 'jquery-ui-datepicker', 'wp-color-picker' ], versie(), false );
@@ -66,7 +66,7 @@ class Admin_Actions {
 	 *
 	 * @internal Action for manage_kleistad_email_posts_custom_column.
 	 */
-	public function email_posts_custom_column( string $column, int $post_id ) {
+	public function email_posts_custom_column( string $column, int $post_id ) : void {
 		if ( 'wijziging' === $column ) {
 			$date = get_the_modified_date( '', $post_id ) ?: '';
 			$time = get_the_modified_time( '', $post_id ) ?: '';
@@ -81,7 +81,7 @@ class Admin_Actions {
 	 *
 	 * @internal Action for admin_menu.
 	 */
-	public function add_plugin_admin_menu() {
+	public function add_plugin_admin_menu() : void {
 		add_menu_page( 'Instellingen', 'Kleistad', 'manage_options', 'kleistad', [ $this->instellingen_handler, 'display_settings_page' ], plugins_url( '/images/kleistad_icon.png', __FILE__ ), 30 );
 		add_submenu_page( 'kleistad', 'Instellingen', 'Instellingen', 'manage_options', 'kleistad', null );
 		foreach ( self::FUNCTIES as $functie ) {
@@ -100,7 +100,7 @@ class Admin_Actions {
 	 *
 	 * @internal Action for update_option_kleistad-setup.
 	 */
-	public function setup_gewijzigd( array $oud, array $nieuw ) {
+	public function setup_gewijzigd( array $oud, array $nieuw ) : void {
 		if ( $oud['google_sleutel'] !== $nieuw['google_sleutel'] ||
 			$oud['google_client_id'] !== $nieuw['google_client_id'] ) {
 			delete_option( Googleconnect::ACCESS_TOKEN );
@@ -112,7 +112,7 @@ class Admin_Actions {
 	 *
 	 * @internal Action for plugins_loaded.
 	 */
-	public function instantiate_background() {
+	public function instantiate_background() : void {
 		if ( is_null( $this->background ) ) {
 			$this->background = new Background();
 		}
@@ -123,7 +123,7 @@ class Admin_Actions {
 	 *
 	 * @internal Action for Kleistad_daily_jobs.
 	 */
-	public function daily_jobs() {
+	public function daily_jobs() : void {
 		if ( is_null( $this->background ) ) {
 			return;
 		}
@@ -146,7 +146,7 @@ class Admin_Actions {
 	 *
 	 * @internal Action for Kleistad_daily_gdpr.
 	 */
-	public function daily_gdpr() {
+	public function daily_gdpr() : void {
 		if ( idate( 'd' ) === idate( 't' ) ) {
 			$gdpr = new Admin_GDPR_Erase();
 			$gdpr->erase_old_privacy_data();
@@ -160,7 +160,7 @@ class Admin_Actions {
 	 *
 	 * @internal Action for admin_init.
 	 */
-	public function initialize() {
+	public function initialize() : void {
 		$upgrade = new Admin_Upgrade();
 		$upgrade->run();
 		$time = time();

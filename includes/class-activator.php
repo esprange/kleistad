@@ -19,7 +19,7 @@ class Activator {
 	/**
 	 * Activeer de plugin.
 	 */
-	public static function activate() {
+	public static function activate() : void {
 		$upgrade = new Admin_Upgrade();
 		$upgrade->run();
 

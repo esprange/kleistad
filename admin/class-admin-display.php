@@ -23,14 +23,14 @@ abstract class Admin_Display {
 	 * @param array $metabox De metabox argumenten.
 	 * @return void
 	 */
-	abstract public function form_meta_box( array $item, array $metabox );
+	abstract public function form_meta_box( array $item, array $metabox ) : void;
 
 	/**
 	 * Toon de pagina
 	 *
 	 * @return void
 	 */
-	abstract public function page();
+	abstract public function page() : void;
 
 	/**
 	 * Toon het overzicht
@@ -44,7 +44,7 @@ abstract class Admin_Display {
 	 * @param array  $args         Eventuele argumenten voor pagina.
 	 * @return void
 	 */
-	public function form_page( array $item, string $single, string $multiple, string $notice, string $message, bool $display_only, array $args = [] ) {
+	public function form_page( array $item, string $single, string $multiple, string $notice, string $message, bool $display_only, array $args = [] ) : void {
 		$parameters = '';
 		foreach ( $args as $key => $arg ) {
 			$parameters .= "&$key=$arg";

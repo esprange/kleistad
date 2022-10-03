@@ -67,8 +67,8 @@ class Validator {
 			return true;
 		}
 		$telnr = str_replace( [ ' ', '-' ], [ '', '' ], $telnr );
-		return 1 === preg_match( '/^(((0)[1-9]{2}[0-9][-]?[1-9][0-9]{5})|((\\+31|0|0031)[1-9][0-9][-]?[1-9][0-9]{6}))$/', $telnr ) ||
-				1 === preg_match( '/^(((\\+31|0|0031)6)[1-9][0-9]{7})$/i', $telnr );
+		return 1 === preg_match( '/^(((0)[1-9]{2}\d-?[1-9]\d{5})|((\\+31|0|0031)[1-9]\d-?[1-9]\d{6}))$/', $telnr ) ||
+				1 === preg_match( '/^(((\\+31|0|0031)6)[1-9]\d{7})$/i', $telnr );
 	}
 
 	/**
@@ -83,7 +83,7 @@ class Validator {
 			return true;
 		}
 		$pcode = strtoupper( str_replace( ' ', '', $pcode ) );
-		return 1 === preg_match( '/^[1-9][0-9]{3} ?[a-zA-Z]{2}$/', $pcode );
+		return 1 === preg_match( '/^[1-9]\d{3} ?[a-zA-Z]{2}$/', $pcode );
 	}
 
 	/**

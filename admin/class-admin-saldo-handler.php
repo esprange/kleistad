@@ -28,7 +28,7 @@ class Admin_Saldo_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function add_pages() {
+	public function add_pages() : void {
 		add_submenu_page( 'kleistad', 'Saldo beheer', 'Saldo beheer', 'manage_options', 'saldo', [ $this->display, 'page' ] );
 		add_submenu_page( 'saldo', 'Wijzigen saldo', 'Wijzigen saldo', 'manage_options', 'saldo_form', [ $this, 'form_handler' ] );
 	}
@@ -40,7 +40,7 @@ class Admin_Saldo_Handler extends Admin_Handler {
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
-	public function form_handler() {
+	public function form_handler() : void {
 		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_saldo' ) ? $this->update_saldo() : $this->saldo();
 		add_meta_box( 'saldo_form_meta_box', 'Saldo', [ $this->display, 'form_meta_box' ], 'saldo', 'normal' );
 		$this->display->form_page( $item, 'saldo', 'saldo', $this->notice, $this->message, false );

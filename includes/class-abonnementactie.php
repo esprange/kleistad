@@ -201,7 +201,7 @@ class AbonnementActie {
 	/**
 	 * Geef aan dat er een overbrugging betaald moet worden
 	 */
-	public function overbrugging() {
+	public function overbrugging() : void {
 		$this->abonnement->artikel_type = 'overbrugging';
 		$order                          = new Order( $this->abonnement->get_referentie() );
 		$this->abonnement->verzend_email( '_vervolg', $order->bestel() );
@@ -215,7 +215,7 @@ class AbonnementActie {
 	 *
 	 * @SuppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function factureer() {
+	public function factureer() : void {
 		$vandaag        = strtotime( 'today' );
 		$factuur_maand  = (int) date( 'Ym', $vandaag );
 		$volgende_maand = strtotime( 'first day of next month 00:00' );
@@ -247,7 +247,7 @@ class AbonnementActie {
 	 *
 	 * @param bool $valid Als true, geef de autorisatie, als false haal de autorisatie weg.
 	 */
-	public function set_autorisatie( bool $valid ) {
+	public function set_autorisatie( bool $valid ) : void {
 		$abonnee = new WP_User( $this->abonnement->klant_id );
 		if ( is_super_admin( $this->abonnement->klant_id ) ) {
 			// Voorkom dat de admin enige rol kwijtraakt.
@@ -265,7 +265,7 @@ class AbonnementActie {
 	 *
 	 * @param string $tekst De handeling.
 	 */
-	private function log( string $tekst ) {
+	private function log( string $tekst ) : void {
 		$this->abonnement->historie = array_merge( $this->abonnement->historie, [ wp_date( 'D, j M H:i Y' ) . " $tekst" ] );
 	}
 

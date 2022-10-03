@@ -28,7 +28,7 @@ class Admin_Ovens_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function add_pages() {
+	public function add_pages() : void {
 		add_submenu_page( 'kleistad', 'Ovens', 'Ovens', 'manage_options', 'ovens', [ $this->display, 'page' ] );
 		add_submenu_page( 'ovens', 'Toevoegen oven', 'Toevoegen oven', 'manage_options', 'ovens_form', [ $this, 'form_handler' ] );
 	}
@@ -38,7 +38,7 @@ class Admin_Ovens_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function form_handler() {
+	public function form_handler() : void {
 		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_oven' ) ? $this->update_oven() : $this->oven();
 		add_meta_box( 'ovens_form_meta_box', 'Ovens', [ $this->display, 'form_meta_box' ], 'oven', 'normal' );
 		$this->display->form_page( $item, 'oven', 'ovens', $this->notice, $this->message, false );

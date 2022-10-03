@@ -24,7 +24,7 @@ class Admin_Recepttermen_Display extends Admin_Display {
 	 *
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
-	public function form_meta_box( array $item, array $metabox ) {
+	public function form_meta_box( array $item, array $metabox ) : void {
 		$hoofdterm = (array) get_term( filter_input( INPUT_GET, 'hoofdterm_id', FILTER_SANITIZE_NUMBER_INT ) );
 		?>
 		<h2><?php echo esc_html( $hoofdterm['description'] ); ?></h2>
@@ -50,7 +50,7 @@ class Admin_Recepttermen_Display extends Admin_Display {
 	 *
 	 * @return void
 	 */
-	public function page() {
+	public function page() : void {
 		$recepttermen = new ReceptTermen();
 		$hoofdterm_id = filter_input(
 			INPUT_GET,

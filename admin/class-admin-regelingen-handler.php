@@ -28,7 +28,7 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function add_pages() {
+	public function add_pages() : void {
 		add_submenu_page( 'kleistad', 'Regeling stookkosten', 'Regeling stookkosten', 'manage_options', 'regelingen', [ $this, 'page_handler' ] );
 		add_submenu_page( 'regelingen', 'Toevoegen regeling', 'Toevoegen regeling', 'manage_options', 'regelingen_form', [ $this, 'form_handler' ] );
 	}
@@ -38,7 +38,7 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function page_handler() {
+	public function page_handler() : void {
 		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_regeling' ) &&
 			'delete' === filter_input( INPUT_GET, 'action' ) ) {
 			$regeling_id = filter_input( INPUT_GET, 'id' );
@@ -57,7 +57,7 @@ class Admin_Regelingen_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function form_handler() {
+	public function form_handler() : void {
 		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_regeling' ) ? $this->update_regeling() : $this->regeling();
 		add_meta_box( 'regelingen_form_meta_box', 'Regelingen', [ $this->display, 'form_meta_box' ], 'regeling', 'normal' );
 		$this->display->form_page( $item, 'regeling', 'regelingen', $this->notice, $this->message, false );

@@ -20,7 +20,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	public function instellingen() {
+	public function instellingen() : void {
 		?>
 		<!--suppress HtmlUnknownTarget -->
 		<form method="POST" action="options.php" >
@@ -45,7 +45,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	public function setup() {
+	public function setup() : void {
 		$googleconnect = new Googleconnect();
 		?>
 		<div style="float:left;width:50%;">
@@ -90,7 +90,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	public function email_parameters() {
+	public function email_parameters() : void {
 		require 'admin-email-parameters.php';
 	}
 
@@ -99,7 +99,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	public function shortcodes() {
+	public function shortcodes() : void {
 		require 'admin-shortcodes.php';
 	}
 
@@ -108,7 +108,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	private function setup_tekst_parameters() {
+	private function setup_tekst_parameters() : void {
 		$parameters = [
 			'sleutel'            => 'Mollie geheime sleutel',
 			'sleutel_test'       => 'Mollie geheime sleutel voor test',
@@ -137,7 +137,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	private function setup_lijst_parameters() {
+	private function setup_lijst_parameters() : void {
 		$parameters = [
 			'extra'      => [
 				'titel'  => 'Abonnement extra',
@@ -237,7 +237,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	private function setup_switch_parameters() {
+	private function setup_switch_parameters() : void {
 		$parameters = [
 			'profiel' => 'Gebruikersprofiel actief',
 			'betalen' => 'Mollie betalen actief',
@@ -267,7 +267,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	private function instellingen_prijzen() {
+	private function instellingen_prijzen() : void {
 		$prijzen = [
 			'onbeperkt_abonnement' => 'Prijs onbeperkt abonnement',
 			'beperkt_abonnement'   => 'Prijs beperkt abonnement',
@@ -294,7 +294,7 @@ class Admin_Instellingen_Display {
 	 *
 	 * @return void
 	 */
-	private function instellingen_parameters() {
+	private function instellingen_parameters() : void {
 		$parameters = [
 			'cursusmaximum'       => [
 				'min'   => 1,

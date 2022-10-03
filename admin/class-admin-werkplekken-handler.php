@@ -28,7 +28,7 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 	 *
 	 * @since    6.11.0
 	 */
-	public function add_pages() {
+	public function add_pages() : void {
 		add_submenu_page( 'kleistad', 'Werkplekken', 'Werkplekken', 'manage_options', 'werkplekken', [ $this, 'page_handler' ] );
 		add_submenu_page( 'werkplekken', 'Toevoegen werkplekbeschikbaarheid', 'Toevoegen werkplekbeschikbaarheid', 'manage_options', 'werkplekken_form', [ $this, 'form_handler' ] );
 	}
@@ -38,7 +38,7 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 	 *
 	 * @since    6.11.0
 	 */
-	public function page_handler() {
+	public function page_handler() : void {
 		if ( wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ) ?? '', 'kleistad_werkplek' ) &&
 			'delete' === filter_input( INPUT_GET, 'action' ) ) {
 			$start_datum = filter_input( INPUT_GET, 'start_datum' );
@@ -59,7 +59,7 @@ class Admin_Werkplekken_Handler extends Admin_Handler {
 	 *
 	 * @since    6.11.0
 	 */
-	public function form_handler() {
+	public function form_handler() : void {
 		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_werkplek' ) ? $this->update_werkplek() : $this->werkplek();
 		add_meta_box( 'werkplekken_form_meta_box', 'Werkplekken', [ $this->display, 'form_meta_box' ], 'werkplek', 'normal' );
 		$this->display->form_page( $item, 'werkplek', 'werkplekken', $this->notice, $this->message, false );

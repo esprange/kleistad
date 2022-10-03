@@ -24,7 +24,7 @@ class Admin_Cursisten_Display extends Admin_Display {
 	 *
 	 * @suppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
-	public function form_meta_box( array $item, array $metabox ) {
+	public function form_meta_box( array $item, array $metabox ) : void {
 		?>
 		<table class="form-table">
 		<tbody>
@@ -71,7 +71,7 @@ class Admin_Cursisten_Display extends Admin_Display {
 	 *
 	 * @return void
 	 */
-	public function page() {
+	public function page() : void {
 		$table = new Admin_Cursisten();
 		?>
 		<div class="wrap">

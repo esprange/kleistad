@@ -66,7 +66,7 @@ class Admin_Filters {
 	 *
 	 * @internal Filter for pre_get_posts.
 	 */
-	public function email_get_posts_order( WP_Query $wp_query ) {
+	public function email_get_posts_order( WP_Query $wp_query ) : void {
 		if ( isset( $wp_query->query['post_type'] ) && Email::POST_TYPE === $wp_query->query['post_type'] ) {
 			$wp_query->set( 'orderby', 'modified' );
 		}

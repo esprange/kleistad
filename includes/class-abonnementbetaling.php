@@ -198,7 +198,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 *
 	 * @return void
 	 */
-	private function verwerk_betaald( Order $order, float $bedrag, string $type, string $transactie_id ) {
+	private function verwerk_betaald( Order $order, float $bedrag, string $type, string $transactie_id ) : void {
 		if ( $order->id ) {
 			/**
 			 * Er bestaat blijkbaar al een order voor deze referentie. Het komt dan vanaf een email betaal link of incasso of betaling per bank.
@@ -257,7 +257,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 	 *
 	 * @return void
 	 */
-	private function verwerk_mislukt( Order $order, string $type ) {
+	private function verwerk_mislukt( Order $order, string $type ) : void {
 		if ( 'directdebit' === $type && $order->id ) {
 			/**
 			 * Als het een incasso betreft die gefaald is dan is het bedrag 0 en moet de factuur alsnog aangemaakt worden.

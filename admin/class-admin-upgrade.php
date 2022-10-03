@@ -28,7 +28,7 @@ class Admin_Upgrade {
 	 *
 	 * @since 6.1.0
 	 */
-	public function run() {
+	public function run() : void {
 		$data = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'kleistad.php', false, false );
 		update_option( 'kleistad-plugin-versie', $data['Version'] );
 		$database_version = intval( get_option( 'kleistad-database-versie', 0 ) );
@@ -43,7 +43,7 @@ class Admin_Upgrade {
 	/**
 	 * Converteer opties.
 	 */
-	private function convert_opties() {
+	private function convert_opties() : void {
 		$default_options = [
 			'onbeperkt_abonnement' => 50,
 			'beperkt_abonnement'   => 30,
@@ -125,7 +125,7 @@ class Admin_Upgrade {
 	 *
 	 * @suppressWarnings(PHPMD.ExcessiveMethodLength)
 	 */
-	public function convert_database() {
+	public function convert_database() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -271,7 +271,7 @@ class Admin_Upgrade {
 	/**
 	 * Converteer data
 	 */
-	private function convert_data() {
+	private function convert_data() : void {
 	}
 
 }

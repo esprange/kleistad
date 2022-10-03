@@ -45,7 +45,7 @@ class Admin_GDPR_Erase {
 	 *
 	 * @since 6.4.0
 	 */
-	public function erase_old_privacy_data() {
+	public function erase_old_privacy_data() : void {
 		$erase_agv     = strtotime( '-5 years' ); // Persoonlijke gegevens worden 5 jaar bewaard.
 		$erase_fiscaal = strtotime( '-7 years' ); // Order gegevens worden 7 jaar bewaard.
 		$this->erase_cursussen( $erase_agv );
@@ -60,7 +60,7 @@ class Admin_GDPR_Erase {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_cursussen( int $datum ) {
+	private function erase_cursussen( int $datum ) : void {
 		foreach ( new Cursussen() as $cursus ) {
 			if ( $cursus->eind_datum && $datum > $cursus->eind_datum ) {
 				foreach ( new Inschrijvingen( $cursus->id ) as $inschrijving ) {
@@ -76,7 +76,7 @@ class Admin_GDPR_Erase {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_dagdelenkaarten( int $datum ) {
+	private function erase_dagdelenkaarten( int $datum ) : void {
 		foreach ( new Dagdelenkaarten() as $dagdelenkaart ) {
 			if ( $dagdelenkaart->eind_datum && $datum > $dagdelenkaart->eind_datum ) {
 				$dagdelenkaart->erase();
@@ -89,7 +89,7 @@ class Admin_GDPR_Erase {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_abonnementen( int $datum ) {
+	private function erase_abonnementen( int $datum ) : void {
 		foreach ( new Abonnementen() as $abonnement ) {
 			if ( $abonnement->eind_datum && $datum > $abonnement->eind_datum ) {
 				$saldo = new Saldo( $abonnement->klant_id );
@@ -104,7 +104,7 @@ class Admin_GDPR_Erase {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_workshops( int $datum ) {
+	private function erase_workshops( int $datum ) : void {
 		foreach ( new Workshops() as $workshop ) {
 			if ( $datum > $workshop->datum ) {
 				$workshop->erase();
@@ -117,7 +117,7 @@ class Admin_GDPR_Erase {
 	 *
 	 * @param int $datum Het criterium.
 	 */
-	private function erase_orders( int $datum ) {
+	private function erase_orders( int $datum ) : void {
 		$orders = new Orders();
 		foreach ( $orders as $order ) {
 			if ( $datum > $order->datum ) {

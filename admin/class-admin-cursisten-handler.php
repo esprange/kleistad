@@ -28,7 +28,7 @@ class Admin_Cursisten_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function add_pages() {
+	public function add_pages() : void {
 		add_submenu_page( 'kleistad', 'Cursisten', 'Cursisten', 'manage_options', 'cursisten', [ $this->display, 'page' ] );
 		add_submenu_page( 'cursisten', 'Wijzigen cursist', 'Wijzigen cursist', 'manage_options', 'cursisten_form', [ $this, 'form_handler' ] );
 	}
@@ -38,7 +38,7 @@ class Admin_Cursisten_Handler extends Admin_Handler {
 	 *
 	 * @since    5.2.0
 	 */
-	public function form_handler() {
+	public function form_handler() : void {
 		$item = wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ) ?? '', 'kleistad_cursist' ) ? $this->update_cursist() : $this->cursist();
 		add_meta_box( 'cursisten_form_meta_box', 'Cursisten', [ $this->display, 'form_meta_box' ], 'cursist', 'normal' );
 		$this->display->form_page( $item, 'cursist', 'cursisten', $this->notice, $this->message, false );

@@ -126,7 +126,7 @@ class InschrijvingActie {
 		}
 		if ( 0 === $this->inschrijving->cursus->get_ruimte() ) {
 			$this->inschrijving->cursus->set_vol();
-		};
+		}
 		$factuur = $order->wijzig( $this->inschrijving->get_referentie() );
 		if ( empty( $factuur ) ) {
 			return false; // Er is niets gewijzigd.
