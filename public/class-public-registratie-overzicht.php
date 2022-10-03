@@ -24,7 +24,7 @@ class Public_Registratie_Overzicht extends Shortcode {
 	 *
 	 * @since 7.2.4
 	 */
-	public static function register_rest_routes() {
+	public static function register_rest_routes() : void {
 		register_rest_route(
 			KLEISTAD_API,
 			'/registratie',

@@ -122,7 +122,7 @@ class Public_Workshop_Aanvraag extends Public_Bestelling {
 	 *
 	 * @since 7.0.0
 	 */
-	public static function register_rest_routes() {
+	public static function register_rest_routes() : void {
 		register_rest_route(
 			KLEISTAD_API,
 			'/aanvraag',

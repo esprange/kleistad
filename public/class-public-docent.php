@@ -33,7 +33,7 @@ class Public_Docent extends ShortcodeForm {
 	/**
 	 * Register rest URI's.
 	 */
-	public static function register_rest_routes() {
+	public static function register_rest_routes() : void {
 		register_rest_route(
 			KLEISTAD_API,
 			'/docent_planning',

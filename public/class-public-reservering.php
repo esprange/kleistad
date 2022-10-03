@@ -69,7 +69,7 @@ class Public_Reservering extends Shortcode {
 	 *
 	 * @since 4.5.3
 	 */
-	public static function register_rest_routes() {
+	public static function register_rest_routes() : void {
 		register_rest_route(
 			KLEISTAD_API,
 			'/reserveer',

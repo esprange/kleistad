@@ -28,7 +28,8 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	 * Maak de formulier inhoud aan
 	 */
 	protected function form_content() {
-		$this->bijstorten()->betaal_info()->submit();
+		$this->bijstorten()->betaal_info();
+		$this->submit();
 	}
 
 	/**
@@ -66,9 +67,9 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 	/**
 	 * Render de betaal sectie
 	 *
-	 * @return Public_Saldo_Display
+	 * @return void
 	 */
-	protected function betaal_info() : Public_Saldo_Display {
+	protected function betaal_info() : void {
 		?>
 		<div class ="kleistad-row">
 			<div class="kleistad-col-10">
@@ -97,7 +98,6 @@ class Public_Saldo_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<?php
-		return $this;
 	}
 
 	/**

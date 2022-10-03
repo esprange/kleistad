@@ -34,7 +34,7 @@ class Public_Kalender extends Shortcode {
 	 *
 	 * @since 5.0.0
 	 */
-	public static function register_rest_routes() {
+	public static function register_rest_routes() : void {
 		register_rest_route(
 			KLEISTAD_API,
 			'/kalender',
