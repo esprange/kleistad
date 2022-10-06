@@ -49,13 +49,15 @@ wp_enqueue_style( 'dashicons' );
 				);
 				while ( $showcases->current()->id !== $showcase_id ) {
 					$showcases->next();
-				}
-				if ( ! $showcases->valid() ) :
-					// De showcase is waarschijnlijk niet meer beschikbaar en al verkocht. Dan een soort 404 tonen.
-					?>
+					if ( ! $showcases->valid() ) :
+						// De showcase is waarschijnlijk niet meer beschikbaar en al verkocht. Dan een soort 404 tonen.
+						?>
 						<strong>Het werkstuk is helaas niet meer beschikbaar</strong>
-					<?php
-				else :
+						<?php
+						break;
+					endif;
+				}
+				if ( $showcases->valid() ) :
 					$keramist = get_user_by( 'ID', $showcases->current()->keramist_id );
 					?>
 				<div class="kleistad kleistad-showcase" >
