@@ -63,6 +63,10 @@ class Workshop extends Artikel {
 		'_reactie'              => '[WS#%08d] Reactie op ',
 		'_aanvraag_bevestiging' => '[WS#%08d] Bevestiging van aanvraag ',
 	];
+	public const VERVALT         = 'vervalt';
+	public const DEFINITIEF      = 'definitief';
+	public const VERVALLEN       = 'vervallen';
+	public const CONCEPT         = 'concept';
 
 	/**
 	 * Het actie object
@@ -301,7 +305,19 @@ class Workshop extends Artikel {
 	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	public function get_statustekst( bool $uitgebreid = false ) : string {
-		$status = $this->vervallen ? 'vervallen' : ( ( $this->definitief ? 'definitief ' : 'concept' ) );
+		static $verloop = 0;
+		if ( ! $verloop ) {
+			$verloop = strtotime( 'tomorrow' ) - opties()['verloopaanvraag'] * WEEK_IN_SECONDS;
+		}
+		if ( $this->vervallen ) {
+			$status = self::VERVALLEN;
+		} elseif ( $this->definitief ) {
+			$status = self::DEFINITIEF;
+		} elseif ( $this->aanvraagdatum < $verloop ) {
+			$status = self::VERVALT;
+		} else {
+			$status = self::CONCEPT;
+		}
 		return $uitgebreid ? "$this->naam $status" : $status;
 	}
 

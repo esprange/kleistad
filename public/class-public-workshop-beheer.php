@@ -300,7 +300,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$this->data['workshops']      = [];
 		$this->data['gaat_vervallen'] = false;
 		foreach ( $workshops as $workshop ) {
-			if ( ! $workshop->definitief && ! $workshop->vervallen && $workshop->aanvraagdatum < $verloop ) {
+			$status = $workshop->get_statustekst();
+			if ( Workshop::VERVALT === $status ) {
 				$this->data['gaat_vervallen'] = true;
 			}
 			$docenten = explode( ', ', $workshop->get_docent_naam() );
