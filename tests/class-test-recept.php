@@ -15,6 +15,11 @@ use ReflectionClass;
  */
 class Test_Recept extends Kleistad_UnitTestCase {
 
+	/**
+	 * De recept termen.
+	 *
+	 * @var array $termen
+	 */
 	private array $termen;
 
 	/**
@@ -50,7 +55,6 @@ class Test_Recept extends Kleistad_UnitTestCase {
 		$recept1             = new Recept();
 		$recept1->titel      = 'test recept 1';
 		$recept1->kenmerk    = 'test recept kenmerk';
-		$recept1->foto       = 'test foto.jpg';
 		$recept1->glazuur    = $this->termen[ ReceptTermen::GLAZUUR ][ wp_rand( 0, 2 ) ];
 		$recept1->kleur      = $this->termen[ ReceptTermen::KLEUR ][ wp_rand( 0, 2 ) ];
 		$recept1->uiterlijk  = $this->termen[ ReceptTermen::UITERLIJK ][ wp_rand( 0, 2 ) ];
@@ -74,7 +78,6 @@ class Test_Recept extends Kleistad_UnitTestCase {
 		$this->assertGreaterThan( 0, $recept1->id, 'geen id na save' );
 		$recept2 = new Recept( $recept1->id );
 		$this->assertEquals( $recept1->titel, $recept2->titel, 'titel niet opgeslagen' );
-		$this->assertEquals( $recept1->foto, $recept2->foto, 'foto niet opgeslagen' );
 		$this->assertEquals( $recept1->kenmerk, $recept2->kenmerk, 'kenmerk niet opgeslagen' );
 		$this->assertEquals( $recept1->glazuur, $recept2->glazuur, 'glazuur niet opgeslagen' );
 		$this->assertEquals( $recept1->kleur, $recept2->kleur, 'kleur niet opgeslagen' );

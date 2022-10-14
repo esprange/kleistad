@@ -182,9 +182,7 @@ class WorkshopActie {
 		}
 		$order = new Order( $this->workshop->get_referentie() );
 		if ( $order->id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-			if ( $order->orderregels->get_bruto() !== $this->workshop->get_factuurregels()->get_bruto() ) {
-				return $this->workshop->verzend_email( '_betaling', $order->wijzig( $this->workshop->get_referentie(), 'Correctie op eerdere factuur ' ) );
-			}
+			return $this->workshop->verzend_email( '_betaling', $order->wijzig( $this->workshop->get_referentie(), 'Correctie op eerdere factuur ' ) );
 		}
 		return $this->workshop->verzend_email( '_herbevestiging' );
 	}

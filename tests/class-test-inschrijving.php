@@ -187,7 +187,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving1->save();
 		$order = new Order( $inschrijving1->get_referentie() );
 		$order->bestel();
-		$order->annuleer( 24.0, '' );
+		$order->annuleer( 24.0 );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 		$inschrijving2 = new Inschrijving( $inschrijving1->cursus->id, $inschrijving1->klant_id );
 		$this->assertTrue( $inschrijving2->geannuleerd, 'annuleer status incorrect' );
@@ -197,11 +197,13 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 	 * Test correctie cursus inschrijving, verandering cursus
 	 */
 	public function test_correctie_1() {
-		$mailer       = tests_retrieve_phpmailer_instance();
-		$inschrijving = $this->maak_inschrijving();
-		$cursist      = new Cursist( $inschrijving->klant_id );
+		$mailer        = tests_retrieve_phpmailer_instance();
+		$inschrijving  = $this->maak_inschrijving();
+		$cursus_oud_id = $inschrijving->cursus->id;
+		$cursist       = new Cursist( $inschrijving->klant_id );
 		$inschrijving->actie->aanvraag( 'bank', 1, [], '' );
-
+		$order = new Order( $inschrijving->get_referentie() );
+		$inschrijving->betaling->verwerk( $order, 25.00, true, 'bank' );
 		$cursus_nieuw_id = $this->factory()->cursus->create(
 			[
 				'cursuskosten'    => 67.00,
@@ -213,8 +215,12 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$inschrijving = new Inschrijving( $cursus_nieuw_id, $cursist->ID );
 		$order        = new Order( $inschrijving->get_referentie() );
 		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
-		$this->assertEquals( 25.00 + 67.00, $order->get_te_betalen(), 'correctie kosten te betalen onjuist' );
+		$this->assertEquals( 67.00, $order->get_te_betalen(), 'correctie kosten te betalen onjuist' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
+		$this->assertTrue( $inschrijving->ingedeeld, 'correctie cursist onjuist nieuwe cursus ingedeeld' );
+		$this->assertFalse( $inschrijving->geannuleerd, 'correctie cursist onjuist nieuwe cursus geannuleerd' );
+		$inschrijving = new Inschrijving( $cursus_oud_id, $cursist->ID );
+		$this->assertTrue( $inschrijving->geannuleerd, 'correctie cursist onjuist geannuleerd oude cursus' );
 	}
 
 	/**
@@ -239,6 +245,49 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$this->assertEquals( 'Wijziging inschrijving cursus', $mailer->get_last_sent( $cursist->user_email )->subject, 'correctie email incorrect' );
 		$this->assertEquals( 2 * $cursuskosten - 25.00, $order2->get_te_betalen(), 'correctie kosten te betalen onjuist' );
 		$this->assertNotEmpty( $mailer->get_last_sent( $cursist->user_email )->attachment, 'correctie email attachment ontbreekt' );
+		$this->assertFalse( $inschrijving->geannuleerd, 'correctie onjuist geannuleerd' );
+	}
+
+	/**
+	 * Test correcties met meerdere medecursisten
+	 */
+	public function test_correctie_3() {
+		$inschrijving  = $this->maak_inschrijving();
+		$cursus_oud_id = $inschrijving->cursus->id;
+		$cursist       = new Cursist( $inschrijving->klant_id );
+		$inschrijving->actie->aanvraag( 'ideal', 3, [], '' );
+		$order = new Order( $inschrijving->get_referentie() );
+		$inschrijving->betaling->verwerk( $order, 75.00, true, 'ideal' );
+
+		$inschrijving    = new Inschrijving( $inschrijving->cursus->id, $cursist->ID );
+		$extra_cursisten = [];
+		for ( $i = 0; $i < 2; $i ++ ) {
+			$extra_cursist_id                     = $this->factory()->user->create();
+			$inschrijving_extra                   = new Inschrijving( $inschrijving->cursus->id, $extra_cursist_id );
+			$inschrijving_extra->hoofd_cursist_id = $inschrijving->klant_id;
+			$inschrijving_extra->ingedeeld        = $inschrijving->ingedeeld;
+			$inschrijving_extra->save();
+			$extra_cursisten[] = $extra_cursist_id;
+		}
+		$inschrijving->extra_cursisten = $extra_cursisten;
+		$inschrijving->save();
+
+		$cursus_nieuw_id = $this->factory()->cursus->create(
+			[
+				'cursuskosten'    => 67.00,
+				'inschrijfkosten' => 25.00,
+			]
+		);
+		$inschrijving->actie->correctie( $cursus_nieuw_id, 3 );
+
+		$this->assertTrue( $inschrijving->ingedeeld, 'correctie hoofdcursist niet ingedeeld' );
+		foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
+			$inschrijving_extra_nieuw = new Inschrijving( $cursus_nieuw_id, $extra_cursist_id );
+			$this->assertTrue( $inschrijving_extra_nieuw->ingedeeld, 'correctie extra cursist niet ingedeeld' );
+			$this->assertFalse( $inschrijving_extra_nieuw->geannuleerd, 'correctie extra cursist geannuleerd' );
+			$inschrijving_extra_oud = new Inschrijving( $cursus_oud_id, $extra_cursist_id );
+			$this->assertTrue( $inschrijving_extra_oud->geannuleerd, 'correctie extra cursist oude cursus niet geannuleerd' );
+		}
 	}
 
 	/**

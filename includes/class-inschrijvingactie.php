@@ -114,13 +114,17 @@ class InschrijvingActie {
 			$this->inschrijving->aantal = $aantal;
 			$this->inschrijving->save();
 		} else {
-			$nieuwe_cursus              = new Cursus( $cursus_id );
+			$inschrijving = clone $this->inschrijving;
+			$this->afzeggen();
+			$this->inschrijving         = $inschrijving;
 			$this->inschrijving->code   = "C$cursus_id-{$this->inschrijving->klant_id}";
 			$this->inschrijving->aantal = $aantal;
-			$this->inschrijving->cursus = $nieuwe_cursus;
+			$this->inschrijving->cursus = new Cursus( $cursus_id );
 			$this->inschrijving->save();
 			foreach ( $this->inschrijving->extra_cursisten as $extra_cursist_id ) {
-				$extra_inschrijving = new Inschrijving( $this->inschrijving->cursus->id, $extra_cursist_id );
+				$extra_inschrijving                   = new Inschrijving( $this->inschrijving->cursus->id, $extra_cursist_id );
+				$extra_inschrijving->ingedeeld        = $this->inschrijving->ingedeeld;
+				$extra_inschrijving->hoofd_cursist_id = $this->inschrijving->klant_id;
 				$extra_inschrijving->save();
 			}
 		}

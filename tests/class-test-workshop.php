@@ -44,11 +44,66 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop = $this->maak_workshop();
 
 		$this->assertTrue( $workshop->actie->bevestig(), 'bevestig actie incorrect' );
-		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestig email incorrect' );
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestig email incorrect' );
 
 		$workshop->datum = strtotime( '21 days' );
 		$this->assertTrue( $workshop->actie->bevestig(), 'workshop herbevestig incorrect' );
-		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Bevestiging na correctie van workshop~', $mailer->get_last_sent()->subject, 'herbevestig email incorrect' );
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging na correctie van workshop~', $mailer->get_last_sent()->subject, 'herbevestig email incorrect' );
+	}
+
+	/**
+	 * Test correctie van een workshop die al heeft plaatsgevonden
+	 */
+	public function test_workshop_correctie_1() {
+		$mailer          = tests_retrieve_phpmailer_instance();
+		$workshop        = $this->maak_workshop();
+		$workshop_kosten = $workshop->kosten;
+		$workshop->datum = strtotime( 'yesterday' );
+		$workshop->actie->bevestig();
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestig email incorrect' );
+		Workshops::doe_dagelijks();
+		$this->assertMatchesRegularExpression( '~Betaling van workshop~', $mailer->get_last_sent()->subject, 'betaling email incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+
+		$workshop          = new Workshop( $workshop->id );
+		$workshop->aantal += 2;
+		$workshop->kosten += 30.0;
+		$workshop->actie->bevestig();
+
+		$workshop = new Workshop( $workshop->id );
+		$order    = new Order( $workshop->get_referentie() );
+		$this->assertEquals( $workshop_kosten + 30.0, $order->get_te_betalen(), 'correctie kosten onjuist' );
+		$this->assertFalse( $workshop->vervallen, 'correctie workshop onjuist vervallen' );
+		$this->assertMatchesRegularExpression( '~Betaling van workshop~', $mailer->get_last_sent()->subject, 'betaling email incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+	}
+
+	/**
+	 * Test correctie van een workshop die al heeft plaatsgevonden
+	 */
+	public function test_workshop_correctie_2() {
+		$mailer          = tests_retrieve_phpmailer_instance();
+		$workshop        = $this->maak_workshop();
+		$workshop_kosten = $workshop->kosten;
+		$workshop->datum = strtotime( 'yesterday' );
+		$workshop->actie->bevestig();
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestig email incorrect' );
+		Workshops::doe_dagelijks();
+		$this->assertMatchesRegularExpression( '~Betaling van workshop~', $mailer->get_last_sent()->subject, 'betaling email incorrect' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
+
+		$workshop                    = new Workshop( $workshop->id );
+		$workshop->organisatie       = 'Bedrijf x';
+		$workshop->organisatie_email = 'bedrijf@test.nl';
+		$workshop->actie->bevestig();
+
+		$workshop = new Workshop( $workshop->id );
+		$order    = new Order( $workshop->get_referentie() );
+		$this->assertEquals( $workshop_kosten, $order->get_te_betalen(), 'correctie kosten onjuist' );
+		$this->assertFalse( $workshop->vervallen, 'correctie workshop onjuist vervallen' );
+		$this->assertMatchesRegularExpression( '~Betaling van workshop~', $mailer->get_last_sent()->subject, 'betaling email incorrect' );
+		$this->assertArrayHasKey( $workshop->organisatie_email, $mailer->getAllRecipientAddresses(), 'organisatie email adres ontbreekt' );
+		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'factuur betaling incorrect' );
 	}
 
 	/**
@@ -87,7 +142,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 	public function test_get_referentie() {
 		$workshop = $this->maak_workshop();
 		$workshop->save();
-		$this->assertMatchesRegularExpression( '~W[0-9]+~', $workshop->get_referentie(), 'referentie incorrect' );
+		$this->assertMatchesRegularExpression( '~W\d+~', $workshop->get_referentie(), 'referentie incorrect' );
 	}
 
 	/**
@@ -139,9 +194,9 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop        = $this->maak_workshop();
 		$workshop->datum = strtotime( '10 days' );
 		$workshop->actie->bevestig();
-		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestigd mail incorrect' );
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestigd mail incorrect' );
 		$workshop->actie->annuleer();
-		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
 		$this->assertEmpty( $mailer->get_last_sent()->attachment, 'mail credit factuur onnodig' );
 
 		$workshop        = $this->maak_workshop();
@@ -149,7 +204,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$workshop->actie->bevestig();
 		Workshops::doe_dagelijks();
 		$workshop->actie->annuleer();
-		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
 		$this->assertEmpty( $mailer->get_last_sent()->attachment, 'mail credit factuur onnodig' );
 
 		$workshop        = $this->maak_workshop();
@@ -159,7 +214,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$this->assertEquals( 'Betaling van workshop', $mailer->get_last_sent()->subject, 'mail betalen incorrect' );
 		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'mail betalen factuur ontbreekt' );
 		$workshop->actie->annuleer();
-		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Annulering van workshop~', $mailer->get_last_sent()->subject, 'afzeggen bevestigd mail incorrect' );
 		$this->assertNotEmpty( $mailer->get_last_sent()->attachment, 'mail credit factuur ontbreekt' );
 	}
 
@@ -173,7 +228,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		Workshops::doe_dagelijks();
 
 		$order = new Order( $workshop1->get_referentie() );
-		$order->annuleer( 24.0, '' );
+		$order->annuleer( 24.0 );
 		$this->assertTrue( $order->id > 0, 'bestel_order incorrect' );
 		$workshop2 = new Workshop( $workshop1->id );
 		$this->assertTrue( $workshop2->vervallen, 'vervallen status incorrect' );
@@ -217,7 +272,7 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$mailer   = tests_retrieve_phpmailer_instance();
 		$workshop = $this->maak_workshop();
 		$workshop->actie->reactie( 'dit is een reactie' );
-		$this->assertMatchesRegularExpression( '~[WS#[0-9]{8}] Reactie op workshop~', $mailer->get_last_sent()->subject, 'email reactie aanvraag incorrect' );
+		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Reactie op workshop~', $mailer->get_last_sent()->subject, 'email reactie aanvraag incorrect' );
 	}
 
 	/**

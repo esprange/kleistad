@@ -371,9 +371,13 @@ class Order {
 			$artikel->get_referentie() !== $this->referentie ||
 			$artikel->get_factuurregels()->get_bruto() !== $this->orderregels->get_bruto()
 		) {
-			$betaald       = $this->betaald;
-			$this->betaald = 0.0;
-			$this->annuleer( 0.0, 'creditering ivm wijziging order' );
+			$betaald         = $this->betaald;
+			$this->betaald   = 0.0;
+			$credit_order    = $this->crediteer( 'creditering ivm wijziging order', false );
+			$this->credit_id = $credit_order->id;
+			$this->save( 'Geannuleerd, credit factuur aangemaakt' );
+			do_action( 'kleistad_order_stornering', $credit_order );
+			do_action( 'kleistad_betaalinfo_update', $this->klant_id );
 			$nieuwe_order             = new Order( '' );  // Forceer een nieuwe order.
 			$nieuwe_order->referentie = $artikel->get_referentie();
 			return $nieuwe_order->bestel( $betaald, sprintf( "Deze factuur vervangt %s\n%s", $this->get_factuurnummer(), $opmerking ), $this->transactie_id );

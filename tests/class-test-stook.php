@@ -121,7 +121,7 @@ class Test_Stook extends Kleistad_UnitTestCase {
 		$this->assertStringContainsString( 'Kleistad kosten zijn verwerkt', $mailer->get_last_sent( $medestoker->user_email )->subject, 'meld incorrecte email' );
 		$saldo1 = new Saldo( $hoofdstoker->ID );
 		$saldo2 = new Saldo( $medestoker->ID );
-		$this->assertEquals( - 0.6 * $oven->kosten_laag, $saldo1->bedrag, 'stookkosten niet verwerkt' );
-		$this->assertEquals( - 0.4 * $oven->kosten_laag, $saldo2->bedrag, 'stookkosten niet verwerkt' );
+		$this->assertEquals( round( - 0.6 * $oven->kosten_laag, 2 ), round( $saldo1->bedrag, 2 ), 'stookkosten niet verwerkt' );
+		$this->assertEquals( round( - 0.4 * $oven->kosten_laag, 2 ), round( $saldo2->bedrag, 2 ), 'stookkosten niet verwerkt' );
 	}
 }

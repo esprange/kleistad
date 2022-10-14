@@ -35,7 +35,7 @@ class Admin_Cursisten extends Admin_List_Table {
 	 * @return string
 	 */
 	public function column_naam( array $item ) : string {
-		if ( empty( $item['geannuleerd'] ) ) {
+		if ( empty( $item['geannuleerd'] && empty( $item['medecursist'] ) ) ) {
 			$actions = [
 				'edit' => sprintf( '<a href="?page=cursisten_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
 			];
@@ -64,6 +64,7 @@ class Admin_Cursisten extends Admin_List_Table {
 			'naam'        => 'Naam',
 			'id'          => 'Code',
 			'cursus'      => 'Cursus',
+			'medecursist' => 'Medecursist',
 			'geannuleerd' => 'Geannuleerd',
 		];
 	}
@@ -78,6 +79,7 @@ class Admin_Cursisten extends Admin_List_Table {
 			'naam'        => [ 'naam', true ],
 			'cursus'      => [ 'cursus', true ],
 			'id'          => [ 'id', true ],
+			'medecursist' => [ 'medecursist', true ],
 			'geannuleerd' => [ 'geannuleerd', true ],
 		];
 	}
@@ -99,7 +101,7 @@ class Admin_Cursisten extends Admin_List_Table {
 				continue;
 			}
 			foreach ( $cursist->inschrijvingen as $inschrijving ) {
-				if ( $vandaag > $inschrijving->cursus->eind_datum ) {
+				if ( $vandaag > $inschrijving->cursus->eind_datum || ! $inschrijving->ingedeeld ) {
 					continue;
 				}
 				$cursisten[] = [
@@ -107,6 +109,7 @@ class Admin_Cursisten extends Admin_List_Table {
 					'naam'        => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
 					'cursus'      => $inschrijving->cursus->naam,
 					'geannuleerd' => $inschrijving->geannuleerd ? 'X' : '',
+					'medecursist' => $inschrijving->hoofd_cursist_id ? 'X' : '',
 				];
 			}
 		}
