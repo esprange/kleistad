@@ -123,6 +123,27 @@ class WorkshopActie {
 	}
 
 	/**
+	 * Zet de status naar reactie zonder iets te verzenden.
+	 *
+	 * @return void
+	 */
+	public function nulactie() : void {
+		$this->workshop->communicatie = array_merge(
+			[
+				[
+					'type'    => self::GEREAGEERD,
+					'from'    => wp_get_current_user()->display_name,
+					'subject' => "Reactie op {$this->workshop->naam} vraag",
+					'tekst'   => 'Geen reactie nodig',
+					'tijd'    => current_time( 'd-m-Y H:i' ),
+				],
+			],
+			$this->workshop->communicatie
+		);
+		$this->workshop->save();
+	}
+
+	/**
 	 * Voeg een reactie toe en email de aanvrager.
 	 *
 	 * @param string $reactie     De reactie op de vraag.

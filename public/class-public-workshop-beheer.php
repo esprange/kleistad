@@ -204,6 +204,20 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	}
 
 	/**
+	 * Negeer een vraag en zet de status terug naar reactie.
+	 *
+	 * @return array
+	 */
+	protected function negeren() : array {
+		$workshop = new Workshop( $this->data['workshop']['workshop_id'] );
+		$workshop->actie->reactie( $this->data['workshop']['reactie'] );
+		return [
+			'status'  => $this->status( 'De status is aangepast' ),
+			'content' => $this->display(),
+		];
+	}
+
+	/**
 	 * Zeg een workshop af
 	 *
 	 * @return array

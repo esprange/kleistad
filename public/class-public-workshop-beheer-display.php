@@ -145,6 +145,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
+				<?php if ( in_array( $this->data['workshop']['communicatie'][0]['type'], [ WorkshopActie::NIEUW, WorkshopActie::VRAAG ], true ) ) : ?>
+				<button class="kleistad-button" type="submit"  name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="negeren" >Geen reactie nodig</button>
+				<?php endif ?>
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right">Terug</button>
 			</div>
 		</div>
