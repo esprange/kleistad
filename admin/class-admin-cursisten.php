@@ -101,7 +101,7 @@ class Admin_Cursisten extends Admin_List_Table {
 				continue;
 			}
 			foreach ( $cursist->inschrijvingen as $inschrijving ) {
-				if ( $vandaag > $inschrijving->cursus->eind_datum || ! $inschrijving->ingedeeld ) {
+				if ( $vandaag > $inschrijving->cursus->eind_datum ) {
 					continue;
 				}
 				$cursisten[] = [
