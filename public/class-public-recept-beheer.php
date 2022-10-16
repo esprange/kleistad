@@ -50,7 +50,7 @@ class Public_Recept_Beheer extends ShortcodeForm {
 	 * @return string
 	 */
 	protected function prepare_overzicht() : string {
-		$this->data['recepten'] = new Recepten( ! is_super_admin() ? [ 'author' => get_current_user_id() ] : [] );
+		$this->data['recepten'] = new Recepten( is_super_admin() ? [] : [ 'author' => get_current_user_id() ] );
 		return $this->content();
 	}
 
