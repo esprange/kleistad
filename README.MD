@@ -4,7 +4,8 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 6.0.1  
-**Stable tag:** 7.7.4  
+**Stable tag:** 7.8.0  
+
 
 
 
@@ -34,8 +35,17 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 7.7.4 -
-* Bladerfunctie toegevoegd aan gallerij showcase###
+### 7.8.0 ###
+* Workshop beheer, 'geen reactie nodig' button toegevoegd.
+* Workshop beheer, reservering van werkplekken toegevoegd.
+* Verbetering correctie achteraf in workshop beheer
+* Toon welke concept workshop aanvraag gaat vervallen
+* Aanpassing prioriteiten kolommen workshop beheer in responsive mode
+* Verbetering correctie cursus inschrijving
+* Refactor recept beheer
+* Toon in inschrijvingen overzicht gebruiker id bij hover
+### 7.7.4 ###
+* Bladerfunctie toegevoegd aan gallerij showcase
 ### 7.7.0 ###
 * Registratie voor leden uitgebreid met verwijzing naar eigen website en biografie
 * Nieuwe shortcode voor gallerij showcase

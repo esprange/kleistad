@@ -43,11 +43,11 @@ class Test_Workshop extends Kleistad_UnitTestCase {
 		$mailer   = tests_retrieve_phpmailer_instance();
 		$workshop = $this->maak_workshop();
 
-		$this->assertTrue( $workshop->actie->bevestig(), 'bevestig actie incorrect' );
+		$workshop->actie->bevestig();
 		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging van workshop~', $mailer->get_last_sent()->subject, 'bevestig email incorrect' );
 
 		$workshop->datum = strtotime( '21 days' );
-		$this->assertTrue( $workshop->actie->bevestig(), 'workshop herbevestig incorrect' );
+		$workshop->actie->bevestig();
 		$this->assertMatchesRegularExpression( '~[WS#[\d]{8}] Bevestiging na correctie van workshop~', $mailer->get_last_sent()->subject, 'herbevestig email incorrect' );
 	}
 

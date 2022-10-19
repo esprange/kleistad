@@ -89,9 +89,8 @@ class Public_Werkplekrapport extends Shortcode {
 		$start_datum = strtotime( '- 3 month' );
 		$eind_datum  = strtotime( '+ 3 month' );
 		$gebruikers  = [];
-		for ( $datum = $start_datum; $datum <= $eind_datum; $datum += DAY_IN_SECONDS ) {
-			$werkplekgebruik = new WerkplekGebruik( $datum );
-			$gebruikers      = array_merge( $gebruikers, $werkplekgebruik->geef() );
+		foreach ( new Werkplekken( $start_datum, $eind_datum ) as $werkplek ) {
+			$gebruikers = array_merge( $gebruikers, $werkplek->geef() );
 		}
 		usort(
 			$gebruikers,
@@ -122,12 +121,11 @@ class Public_Werkplekrapport extends Shortcode {
 	 */
 	private function individueelgebruik( int $vanaf_datum, int $tot_datum, int $gebruiker_id ) : array {
 		$rapport = [];
-		for ( $datum = $vanaf_datum; $datum <= $tot_datum; $datum += DAY_IN_SECONDS ) {
-			$werkplekgebruik = new WerkplekGebruik( $datum );
-			foreach ( $werkplekgebruik->get_gebruik() as $dagdeel => $gebruik ) {
-				foreach ( $gebruik as $activiteit => $werkplek ) {
-					if ( in_array( $gebruiker_id, $werkplek, true ) ) {
-						$rapport[ $datum ][ $dagdeel ] = $activiteit;
+		foreach ( new Werkplekken( $vanaf_datum, $tot_datum ) as $werkplek ) {
+			foreach ( $werkplek->get_gebruik() as $dagdeel => $gebruik ) {
+				foreach ( $gebruik as $activiteit => $posities ) {
+					if ( in_array( $gebruiker_id, $posities, true ) ) {
+						$rapport[ $werkplek->datum ][ $dagdeel ] = $activiteit;
 					}
 				}
 			}
@@ -144,9 +142,8 @@ class Public_Werkplekrapport extends Shortcode {
 	 */
 	private function groepsgebruik( int $vanaf_datum, int $tot_datum ) : array {
 		$rapport = [];
-		for ( $datum = $vanaf_datum; $datum <= $tot_datum; $datum += DAY_IN_SECONDS ) {
-			$werkplekgebruik   = new WerkplekGebruik( $datum );
-			$rapport[ $datum ] = $werkplekgebruik->get_gebruik();
+		foreach ( new Werkplekken( $vanaf_datum, $tot_datum ) as $werkplek ) {
+			$rapport[ $werkplek->datum ] = $werkplek->get_gebruik();
 		}
 		return $rapport;
 	}

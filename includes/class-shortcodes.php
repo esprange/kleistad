@@ -304,7 +304,7 @@ class Shortcodes {
 				'access' => [ DOCENT, LID, BESTUUR, CURSIST ],
 			],
 			/**
-			 * Rapportage Werkplekgebruik
+			 * Rapportage werkplek
 			 *    Individueel
 			 *    Overzicht
 			 */

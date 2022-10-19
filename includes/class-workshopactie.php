@@ -68,6 +68,7 @@ class WorkshopActie {
 		}
 		$this->workshop->actie->afzeggen();
 		if ( $this->workshop->definitief ) {
+			$this->workshop->verwijder_werkplekken();
 			$this->workshop->verzend_email( '_afzegging' );
 		}
 	}
@@ -179,10 +180,10 @@ class WorkshopActie {
 	/**
 	 * Bevestig de workshop.
 	 *
-	 * @return bool
+	 * @return string Eventueel bericht voor de gebruiker.
 	 * @since 5.0.0
 	 */
-	public function bevestig(): bool {
+	public function bevestig(): string {
 		$herbevestiging               = $this->workshop->definitief;
 		$this->workshop->definitief   = true;
 		$this->workshop->communicatie = array_merge(
@@ -198,14 +199,19 @@ class WorkshopActie {
 			$this->workshop->communicatie
 		);
 		$this->workshop->save();
+		$this->workshop->verwijder_werkplekken();
+		$bericht = $this->workshop->reserveer_werkplekken();
 		if ( ! $herbevestiging ) {
-			return $this->workshop->verzend_email( '_bevestiging' );
+			$this->workshop->verzend_email( '_bevestiging' );
+			return $bericht;
 		}
 		$order = new Order( $this->workshop->get_referentie() );
 		if ( $order->id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
-			return $this->workshop->verzend_email( '_betaling', $order->wijzig( $this->workshop->get_referentie(), 'Correctie op eerdere factuur ' ) );
+			$this->workshop->verzend_email( '_betaling', $order->wijzig( $this->workshop->get_referentie(), 'Correctie op eerdere factuur ' ) );
+			return $bericht;
 		}
-		return $this->workshop->verzend_email( '_herbevestiging' );
+		$this->workshop->verzend_email( '_herbevestiging' );
+		return $bericht;
 	}
 
 	/**

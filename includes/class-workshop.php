@@ -36,6 +36,7 @@ use Exception;
  * @property string email
  * @property string telnr
  * @property string programma
+ * @property array  werkplekken
  * @property bool   vervallen
  * @property float  kosten
  * @property int    aantal
@@ -132,6 +133,7 @@ class Workshop extends Artikel {
 			'betaling_email'    => 0,
 			'aanvraag_id'       => 0,
 			'communicatie'      => maybe_serialize( [] ),
+			'werkplekken'       => wp_json_encode( [] ),
 		];
 		if ( is_null( $workshop_id ) ) {
 			return;
@@ -164,6 +166,7 @@ class Workshop extends Artikel {
 			'datum'         => strtotime( $this->data['datum'] ),
 			'aanvraagdatum' => strtotime( $this->data['aanvraagdatum'] ),
 			'technieken'    => json_decode( $this->data['technieken'], true ),
+			'werkplekken'   => json_decode( $this->data['werkplekken'] ?? '[]', true ),
 			'code'          => "W{$this->data['id']}",
 			'communicatie'  => maybe_unserialize( $this->data['communicatie'] ) ?: [],
 			default         => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
@@ -180,7 +183,8 @@ class Workshop extends Artikel {
 	 */
 	public function __set( string $attribuut, mixed $waarde ) {
 		$this->data[ $attribuut ] = match ( $attribuut ) {
-			'technieken'    => wp_json_encode( $waarde ),
+			'technieken',
+			'werkplekken'    => wp_json_encode( $waarde ),
 			'datum',
 			'datum_betalen' => date( 'Y-m-d', $waarde ),
 			'start_tijd',
@@ -391,6 +395,60 @@ class Workshop extends Artikel {
 			$email_parameters['to'] .= ", $this->organisatie <$this->organisatie_email>";
 		}
 		return $emailer->send( $email_parameters );
+	}
+
+	/**
+	 * Verwijder eventuele werkplek reserveringen.
+	 */
+	public function verwijder_werkplekken() {
+		$werkplekken = new Werkplekken( strtotime( '- ' . opties()['workshop_wijzigbaar'] . ' day 0:00' ) );
+		foreach ( $werkplekken as $werkplek ) {
+			foreach ( $werkplek->get_gebruik() as $dagdeel => $gebruik ) {
+				foreach ( $gebruik as $activiteit => $posities ) {
+					$nieuwe_posities = array_filter(
+						$posities,
+						function ( $positie ) {
+							return ! str_starts_with( $positie, "{$this->code}_" );
+						}
+					);
+					if ( count( $posities ) !== count( $nieuwe_posities ) ) {
+						$werkplek->wijzig( $dagdeel, $activiteit, $nieuwe_posities );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Reserveer de werkplekken
+	 *
+	 * @return string Eventueel bericht.
+	 */
+	public function reserveer_werkplekken() : string {
+		$bericht  = '';
+		$totaal   = 0;
+		$werkplek = new Werkplek( $this->datum );
+		$dagdeel  = bepaal_dagdelen( $this->start_tijd, $this->eind_tijd )[0];
+		foreach ( opties()['werkruimte'] as $activiteit ) {
+			$aantal = $this->werkplekken[ $activiteit['naam'] ] ?? 0;
+			if ( $aantal ) {
+				$totaal       += $aantal;
+				$ruimte        = $werkplek->get_ruimte( $dagdeel, $activiteit['naam'] );
+				$gebruiker_ids = array_column( $werkplek->geef( $dagdeel, $activiteit['naam'] ), 'id' );
+				if ( $ruimte < $aantal ) {
+					$bericht = 'Niet alle werkplekken konden gereserveerd worden';
+					$aantal  = $ruimte;
+				}
+				for ( $index = 1; $index <= $aantal; $index++ ) {
+					$gebruiker_ids[] = "{$this->code}_{$this->naam}_$index";
+				}
+				$werkplek->wijzig( $dagdeel, $activiteit['naam'], $gebruiker_ids );
+			}
+		}
+		if ( $totaal ) {
+			return $bericht;
+		}
+		return 'Er zijn nog geen werkplekken gereserveerd !';
 	}
 
 }

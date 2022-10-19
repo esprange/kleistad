@@ -83,7 +83,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 				foreach ( $regel as $dagdeel => $activiteiten ) :
 					foreach ( $activiteiten as $activiteit => $gebruiker_ids ) :
 						foreach ( $gebruiker_ids as $gebruiker_id ) :
-							if ( $gebruiker_id ) :
+							if ( intval( $gebruiker_id ) ) :
 								?>
 				<tr>
 					<td data-sort="<?php echo esc_attr( $datum ); ?>" ><?php echo esc_html( date( 'd-m-Y', $datum ) ); ?></td>

@@ -12,11 +12,11 @@
 namespace Kleistad;
 
 /**
- * Kleistad WerkplekGebruik class.
+ * Kleistad Werkplek class.
  *
  * @since 6.11.0
  */
-class WerkplekGebruik {
+class Werkplek {
 
 	const WERKPLEK_DAGDEEL = [ OCHTEND, MIDDAG, AVOND ];
 	const MEESTER          = 'Beheerder';
@@ -26,7 +26,7 @@ class WerkplekGebruik {
 	 *
 	 * @var int $datum De atelier dag.
 	 */
-	private int $datum;
+	public int $datum;
 
 	/**
 	 * De werkplekdata
@@ -45,16 +45,29 @@ class WerkplekGebruik {
 	/**
 	 * Constructor, laad het gebruik
 	 *
-	 * @param int $datum De datum waar het gebruik van opgevraagd wordt.
+	 * @param int     $datum De datum waar het gebruik van opgevraagd wordt.
+	 * @param ?string $load  Data waarmee het object geladen kan worden (optioneel).
 	 *
 	 * @since 6.11.0
 	 */
-	public function __construct( int $datum ) {
-		$this->datum     = $datum;
-		$werkplekconfigs = new WerkplekConfigs();
+	public function __construct( int $datum, string $load = null ) {
+		static $werkplekconfigs = null;
+		global $wpdb;
+		$this->datum = $datum;
+		if ( is_null( $werkplekconfigs ) ) {
+			$werkplekconfigs = new WerkplekConfigs();
+		}
 		$werkplekconfig  = $werkplekconfigs->find( $this->datum ) ?: new WerkplekConfig();
 		$this->dagconfig = $werkplekconfig->config[ wp_date( 'l', $this->datum ) ];
-		$gebruik         = get_option( 'kleistad_werkplek_' . date( 'Ymd', $this->datum ) );
+		if ( $load ) {
+			$this->gebruik = maybe_unserialize( $load );
+			return;
+		}
+		$result  = $wpdb->get_row(
+			$wpdb->prepare( "SELECT * from {$wpdb->prefix}kleistad_werkplekken WHERE datum=%s", date( 'Y-m-d', $datum ) ),
+			ARRAY_A
+		);
+		$gebruik = ! is_null( $result ) ? maybe_unserialize( $result['gebruik'] ) : false;
 		if ( false === $gebruik ) {
 			foreach ( self::WERKPLEK_DAGDEEL as $dagdeel ) {
 				foreach ( opties()['werkruimte'] as $activiteit ) {
@@ -80,22 +93,62 @@ class WerkplekGebruik {
 	 */
 	public function geef( string $dagdeel = '', string $activiteit = '' ) : array {
 		$gebruiker_ids = [];
+		$workshop_ids  = [];
 		foreach ( $this->gebruik as $dagdeel_key => $gebruik ) {
 			if ( empty( $dagdeel ) || $dagdeel === $dagdeel_key ) {
-				foreach ( $gebruik as $activiteit_key => $werkplek ) {
+				foreach ( $gebruik as $activiteit_key => $posities ) {
 					if ( empty( $activiteit ) || $activiteit === $activiteit_key ) {
-						$gebruiker_ids = array_merge( $gebruiker_ids, $werkplek );
+						$gebruiker_ids = array_merge(
+							$gebruiker_ids,
+							array_filter( $posities, 'is_numeric' )
+						);
+						$workshop_ids  = array_merge(
+							$workshop_ids,
+							array_filter(
+								$posities,
+								function( $positie ) {
+									return str_starts_with( $positie, Workshop::DEFINITIE['prefix'] );
+								}
+							)
+						);
 					}
 				}
 			}
 		}
-		return empty( $gebruiker_ids ) ? [] : get_users(
-			[
-				'include' => array_unique( $gebruiker_ids ),
-				'orderby' => 'display_name',
-				'fields'  => [ 'ID', 'display_name' ],
-			]
-		);
+		$gebruikers = [];
+		if ( ! empty( $gebruiker_ids ) ) {
+			$gebruikers = array_map(
+				function( $gebruiker ) {
+					return [
+						'id'   => $gebruiker->ID,
+						'naam' => $gebruiker->display_name,
+					];
+				},
+				get_users(
+					[
+						'include' => array_unique( $gebruiker_ids ),
+						'orderby' => 'display_name',
+						'fields'  => [ 'ID', 'display_name' ],
+					]
+				)
+			);
+		}
+		if ( ! empty( $workshop_ids ) ) {
+			$gebruikers = array_merge(
+				$gebruikers,
+				array_map(
+					function( $workshop_id ) {
+						$workshop_params = explode( '_', substr( $workshop_id, 1 ) );
+						return [
+							'id'   => $workshop_id,
+							'naam' => $workshop_params[1],
+						];
+					},
+					$workshop_ids
+				)
+			);
+		}
+		return $gebruikers;
 	}
 
 	/**
@@ -118,6 +171,18 @@ class WerkplekGebruik {
 			$meesters[ $dagdeel ] = get_user_by( 'id', $activiteiten[ self::MEESTER ][0] );
 		}
 		return $meesters;
+	}
+
+	/**
+	 * Geef aan hoeveel ruimte er nog is voor het dagdeel en activiteit.
+	 *
+	 * @param string $dagdeel    Het dagdeel.
+	 * @param string $activiteit De activiteit.
+	 *
+	 * @return int
+	 */
+	public function get_ruimte( string $dagdeel, string $activiteit ) : int {
+		return max( 0, $this->dagconfig[ $dagdeel ][ $activiteit ] - count( $this->gebruik[ $dagdeel ][ $activiteit ] ) );
 	}
 
 	/**
@@ -177,6 +242,13 @@ class WerkplekGebruik {
 	 * Bewaar het gebruik
 	 */
 	private function save() : void {
-		update_option( 'kleistad_werkplek_' . date( 'Ymd', $this->datum ), $this->gebruik );
+		global $wpdb;
+		$wpdb->replace(
+			"{$wpdb->prefix}kleistad_werkplekken",
+			[
+				'datum'   => date( 'Y-m-d', $this->datum ),
+				'gebruik' => maybe_serialize( $this->gebruik ),
+			]
+		);
 	}
 }

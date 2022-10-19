@@ -6,7 +6,7 @@
  *
  * @package Kleistad
  *
- * @covers \Kleistad\WerkplekConfig, \Kleistad\WerkplekConfigs, \Kleistad\WerkplekGebruik, \Kleistad\WerkplekMeesters
+ * @covers \Kleistad\WerkplekConfig, \Kleistad\WerkplekConfigs, \Kleistad\Werkplek, \Kleistad\WerkplekMeesters
  */
 
 namespace Kleistad;

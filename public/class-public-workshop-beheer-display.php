@@ -281,13 +281,13 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			</div>
 		</div>
 		<div class="kleistad-row">
-			<div class="kleistad-col-2 kleistad-label"><label>Technieken</label></div>
 			<?php foreach ( [ 'Draaien', 'Handvormen' ] as $techniek ) : ?>
+				<div class="kleistad-col-2 kleistad-label"><label for="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>"><?php echo esc_html( $techniek ); ?></label></div>
 				<div class="kleistad-col-3" >
-				<span>
 					<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" class="kleistad-checkbox" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>" <?php checked( in_array( $techniek, $this->data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
-					<label for="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" style="padding-right:2em"><?php echo esc_html( $techniek ); ?></label>
-				</span>
+					<!--suppress HtmlFormInputWithoutLabel -->
+					<input name="werkplekken[<?php echo esc_attr( $techniek ); ?>]" min="0" max="99" type="number"
+						value="<?php echo esc_attr( $this->data['workshop']['werkplekken'][ $techniek ] ?? 0 ); ?>" style="width: auto"/> werkplekken
 				</div>
 			<?php endforeach; ?>
 		</div>

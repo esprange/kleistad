@@ -88,6 +88,11 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 					'flags'   => FILTER_REQUIRE_ARRAY,
 					'options' => [ 'default' => [] ],
 				],
+				'werkplekken'       => [
+					'filter'  => FILTER_SANITIZE_STRING,
+					'flags'   => FILTER_REQUIRE_ARRAY,
+					'options' => [ 'default' => [] ],
+				],
 				'organisatie'       => FILTER_SANITIZE_STRING,
 				'organisatie_adres' => FILTER_SANITIZE_STRING,
 				'organisatie_email' => FILTER_SANITIZE_EMAIL,
@@ -115,6 +120,9 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$this->data['workshop']['programma'] = sanitize_textarea_field( $this->data['workshop']['programma'] );
 		if ( is_null( $this->data['workshop']['technieken'] ) ) {
 			$this->data['workshop']['technieken'] = [];
+		}
+		if ( is_null( $this->data['workshop']['werkplekken'] ) ) {
+			$this->data['workshop']['werkplekken'] = [];
 		}
 		$this->data['workshop']['docent'] = implode( ';', $this->data['workshop']['docent'] ?? [] );
 		if ( in_array( $this->form_actie, [ 'bewaren', 'bevestigen' ], true ) ) {
@@ -252,9 +260,10 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	protected function bevestigen() : array {
 		$workshop = $this->update_workshop();
-		if ( ! $workshop->actie->bevestig() ) {
+		$result   = $workshop->actie->bevestig();
+		if ( ! empty( $result ) ) {
 			return [
-				'status'  => $this->status( new WP_Error( 'factuur', 'De factuur kan niet meer gewijzigd worden' ) ),
+				'status'  => $this->status( new WP_Error( 'bevestig', $result ) ),
 				'content' => $this->display(),
 			];
 		}
@@ -300,6 +309,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 		$workshop->kosten            = floatval( $this->data['workshop']['kosten'] );
 		$workshop->aantal            = intval( $this->data['workshop']['aantal'] );
 		$workshop->aanvraag_id       = intval( $this->data['workshop']['aanvraag_id'] );
+		$workshop->werkplekken       = $this->data['workshop']['werkplekken'];
 		return $workshop;
 	}
 
@@ -309,7 +319,6 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 * @return void.
 	 */
 	private function planning() : void {
-		$verloop                      = strtotime( 'tomorrow' ) - opties()['verloopaanvraag'] * WEEK_IN_SECONDS;
 		$workshops                    = new Workshops();
 		$this->data['workshops']      = [];
 		$this->data['gaat_vervallen'] = false;
@@ -374,6 +383,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 			'aanvraag_id'       => $workshop->aanvraag_id,
 			'gefactureerd'      => $workshop->betaling_email,
 			'communicatie'      => $workshop->communicatie,
+			'werkplekken'       => $workshop->werkplekken,
 		];
 	}
 
