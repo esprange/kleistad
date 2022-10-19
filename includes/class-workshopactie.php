@@ -185,7 +185,7 @@ class WorkshopActie {
 	 */
 	public function bevestig(): array {
 		$informeer_klant = true;
-		if ( $this->workshop->id ) {
+		if ( $this->workshop->id && $this->workshop->definitief ) {
 			$workshop_ref = new Workshop( $this->workshop->id );
 			$verschillend = false;
 			$relevant     = [
@@ -251,7 +251,7 @@ class WorkshopActie {
 			$this->workshop->verzend_email( '_betaling', $order->wijzig( $this->workshop->get_referentie(), 'Correctie op eerdere factuur ' ) );
 			return [
 				'level'  => $level,
-				'status' => $bericht . 'een bevestiging inclusief eventueel aangepaste factuur is verstuurd',
+				'status' => $bericht . 'een herbevestiging inclusief eventueel aangepaste factuur is verstuurd',
 			];
 		}
 		$this->workshop->verzend_email( '_herbevestiging' );
