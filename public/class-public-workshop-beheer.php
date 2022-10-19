@@ -260,15 +260,8 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	protected function bevestigen() : array {
 		$workshop = $this->update_workshop();
-		$result   = $workshop->actie->bevestig();
-		if ( ! empty( $result ) ) {
-			return [
-				'status'  => $this->status( new WP_Error( 'bevestig', $result ) ),
-				'content' => $this->display(),
-			];
-		}
 		return [
-			'status'  => $this->status( 'Gegevens zijn opgeslagen en een bevestigingsemail is verstuurd' ),
+			'status'  => $this->status( $workshop->actie->bevestig() ),
 			'content' => $this->display(),
 		];
 	}

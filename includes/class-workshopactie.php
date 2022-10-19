@@ -180,38 +180,85 @@ class WorkshopActie {
 	/**
 	 * Bevestig de workshop.
 	 *
-	 * @return string Eventueel bericht voor de gebruiker.
+	 * @return array Eventueel bericht voor de gebruiker.
 	 * @since 5.0.0
 	 */
-	public function bevestig(): string {
-		$herbevestiging               = $this->workshop->definitief;
-		$this->workshop->definitief   = true;
-		$this->workshop->communicatie = array_merge(
-			[
+	public function bevestig(): array {
+		$informeer_klant = true;
+		if ( $this->workshop->id ) {
+			$workshop_ref = new Workshop( $this->workshop->id );
+			$verschillend = false;
+			$relevant     = [
+				'datum',
+				'start_tijd',
+				'eind_tijd',
+				'organisatie',
+				'organisatie_adres',
+				'organisatie_email',
+				'contact',
+				'email',
+				'programma',
+				'kosten',
+				'aantal',
+			];
+			foreach ( $relevant as $property ) {
+				if ( $workshop_ref->$property !== $this->workshop->$property ) {
+					$verschillend = true;
+					break;
+				}
+			}
+			$informeer_klant = $verschillend;
+		}
+		$herbevestiging             = $this->workshop->definitief;
+		$this->workshop->definitief = true;
+		if ( $informeer_klant ) {
+			$this->workshop->communicatie = array_merge(
 				[
-					'type'    => self::GEREAGEERD,
-					'from'    => wp_get_current_user()->display_name,
-					'subject' => "Reactie op {$this->workshop->naam} vraag",
-					'tekst'   => 'Bevestiging afspraak verstuurd',
-					'tijd'    => current_time( 'd-m-Y H:i' ),
+					[
+						'type'    => self::GEREAGEERD,
+						'from'    => wp_get_current_user()->display_name,
+						'subject' => "Reactie op {$this->workshop->naam} vraag",
+						'tekst'   => 'Bevestiging afspraak verstuurd',
+						'tijd'    => current_time( 'd-m-Y H:i' ),
+					],
 				],
-			],
-			$this->workshop->communicatie
-		);
+				$this->workshop->communicatie
+			);
+		}
 		$this->workshop->save();
 		$this->workshop->verwijder_werkplekken();
+		$level   = 1;
 		$bericht = $this->workshop->reserveer_werkplekken();
+		if ( $bericht ) {
+			$level    = -1;
+			$bericht .= ', ';
+		}
+		if ( ! $informeer_klant ) {
+			return [
+				'level'  => $level,
+				'status' => $bericht . 'de gegevens zijn opgeslagen',
+			];
+		}
 		if ( ! $herbevestiging ) {
 			$this->workshop->verzend_email( '_bevestiging' );
-			return $bericht;
+			return [
+				'level'  => $level,
+				'status' => $bericht . 'een bevestiging is verstuurd',
+			];
 		}
 		$order = new Order( $this->workshop->get_referentie() );
 		if ( $order->id ) { // Als er al een factuur is aangemaakt, pas dan de order en factuur aan.
 			$this->workshop->verzend_email( '_betaling', $order->wijzig( $this->workshop->get_referentie(), 'Correctie op eerdere factuur ' ) );
-			return $bericht;
+			return [
+				'level'  => $level,
+				'status' => $bericht . 'een bevestiging inclusief eventueel aangepaste factuur is verstuurd',
+			];
 		}
 		$this->workshop->verzend_email( '_herbevestiging' );
-		return $bericht;
+		return [
+			'level'  => $level,
+			'status' => $bericht . 'een herbevestiging is verstuurd',
+		];
 	}
 
 	/**

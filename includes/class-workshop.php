@@ -169,6 +169,8 @@ class Workshop extends Artikel {
 			'werkplekken'   => json_decode( $this->data['werkplekken'] ?? '[]', true ),
 			'code'          => "W{$this->data['id']}",
 			'communicatie'  => maybe_unserialize( $this->data['communicatie'] ) ?: [],
+			'kosten'        => floatval( $this->data['kosten'] ),
+			'aantal'        => intval( $this->data['aantal'] ),
 			default         => is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ],
 		};
 	}

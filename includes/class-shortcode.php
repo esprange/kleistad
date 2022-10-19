@@ -92,9 +92,11 @@ abstract class Shortcode {
 			}
 			return $html;
 		}
-		$succes = $result['status'] ?? ( is_string( $result ) ? $result : '' );
-		if ( ! empty( $succes ) ) {
-			$html = melding( 1, $succes );
+		if ( is_array( $result ) ) {
+			return melding( $result['level'], $result['status'] );
+		}
+		if ( ! empty( $result ) ) {
+			return melding( 1, $result );
 		}
 		return $html;
 	}
