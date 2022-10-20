@@ -335,10 +335,11 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 				'contact'    => substr( $workshop->contact, 0, 14 ),
 				'start_tijd' => date( 'H:i', $workshop->start_tijd ),
 				'eind_tijd'  => date( 'H:i', $workshop->eind_tijd ),
-				'docent'     => implode( '<br/>', $docenten ),
+				'docent'     => implode( ', ', $docenten ),
 				'aantal'     => $workshop->aantal,
 				'status'     => $workshop->get_statustekst(),
 				'cstatus'    => $workshop->communicatie[0]['type'] ?? '',
+				'technieken' => implode( ', ', $workshop->technieken ),
 				'update'     => strtotime( $workshop->communicatie[0]['tijd'] ?? '' ),
 			];
 		}

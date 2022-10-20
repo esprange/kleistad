@@ -36,17 +36,21 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 	 */
 	protected function form_content() :void {
 		?>
-		<div id="kleistad_workshopbeheer" style="background-color: gainsboro;">
+		<div id="kleistad_workshopbeheer" style="background-color: gainsboro;font-size: medium">
 			<ul>
 				<li><a href="#tabs_detail">Details</a></li>
+				<?php if ( $this->data['workshop']['workshop_id'] ) : ?>
 				<li><a href="#tabs_communicatie">Communicatie</a></li>
+				<?php endif; ?>
 			</ul>
 			<div id="tabs_detail">
 				<?php $this->form_details(); ?>
 			</div>
+			<?php if ( $this->data['workshop']['workshop_id'] ) : ?>
 			<div id="tabs_communicatie">
 				<?php $this->form_communicatie(); ?>
 			</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -59,15 +63,16 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 			echo melding( -1, 'Morgen gaan een of meer concept workshops vervallen !' ); // phpcs:ignore
 		}
 		?>
-		<table id="kleistad_workshops" class="kleistad-datatable display compact responsive nowrap" data-page-length="10" data-order='[[ 8, "desc" ]]' >
+		<table id="kleistad_workshops" style="width:100%" class="kleistad-datatable display compact responsive nowrap" data-page-length="10" data-order='[[ 9, "desc" ]]' >
 			<thead>
 			<tr>
-				<th data-priority="8" >Code</th>
+				<th data-priority="8">Code</th>
 				<th data-priority="1">Datum</th>
-				<th data-priority="7" class="wrap">Tijd</th>
+				<th data-priority="7">Tijd</th>
 				<th data-priority="4">Contact</th>
 				<th data-priority="6">Docent</th>
 				<th data-priority="9">Aantal</th>
+				<th data-priority="10">Technieken</th>
 				<th data-priority="5">Status</th>
 				<th data-priority="3">Mail</th>
 				<th data-priority="2"></th>
@@ -82,8 +87,9 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 					<td data-sort="<?php echo esc_attr( $workshop['datum_ux'] ); ?>"><?php echo esc_html( $workshop['datum'] ); ?></td>
 					<td><?php echo esc_html( $workshop['start_tijd'] ); ?> <?php echo esc_html( $workshop['eind_tijd'] ); ?></td>
 					<td><?php echo esc_html( $workshop['contact'] ); ?></td>
-					<td><?php echo $workshop['docent']; // phpcs:ignore ?></td>
+					<td><?php echo esc_html( $workshop['docent'] ); ?></td>
 					<td><?php echo esc_html( $workshop['aantal'] ); ?></td>
+					<td><?php echo esc_html( $workshop['technieken'] ); ?></td>
 					<td><?php echo esc_html( $workshop['status'] ); ?></td>
 					<td><?php echo esc_html( $workshop['cstatus'] ); ?></td>
 					<td data-sort="<?php echo esc_attr( $workshop['update'] ); ?>" >
@@ -145,7 +151,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 		<div class="kleistad-row">
 			<div class="kleistad-col-10">
 				<button class="kleistad-button" type="submit" name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="reageren" >Reageren</button>
-				<?php if ( in_array( $this->data['workshop']['communicatie'][0]['type'], [ WorkshopActie::NIEUW, WorkshopActie::VRAAG ], true ) ) : ?>
+				<?php if ( $this->data['workshop']['workshop_id'] && in_array( $this->data['workshop']['communicatie'][0]['type'], [ WorkshopActie::NIEUW, WorkshopActie::VRAAG ], true ) ) : ?>
 				<button class="kleistad-button" type="submit"  name="kleistad_submit_workshop_beheer" id="kleistad_workshop_reageren" value="negeren" >Geen reactie nodig</button>
 				<?php endif ?>
 				<button class="kleistad-button kleistad-terug-link" type="button" style="float:right">Terug</button>
@@ -287,7 +293,7 @@ class Public_Workshop_Beheer_Display extends Public_Shortcode_Display {
 					<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" class="kleistad-checkbox" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>" <?php checked( in_array( $techniek, $this->data['workshop']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
 					<!--suppress HtmlFormInputWithoutLabel -->
 					<input name="werkplekken[<?php echo esc_attr( $techniek ); ?>]" min="0" max="99" type="number"
-						value="<?php echo esc_attr( $this->data['workshop']['werkplekken'][ $techniek ] ?? 0 ); ?>" style="width: auto"/> werkplekken
+						value="<?php echo esc_attr( $this->data['workshop']['werkplekken'][ $techniek ] ?? 0 ); ?>" style="width: 4em;"/> werkplekken
 				</div>
 			<?php endforeach; ?>
 		</div>

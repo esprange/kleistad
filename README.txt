@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 6.0.1
-Stable tag: 7.8.1
+Stable tag: 7.8.2
+
 
 
 
@@ -35,9 +36,10 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
-= 7.8.0 =
+= 7.8.2 =
 * Workshop beheer, 'geen reactie nodig' button toegevoegd.
 * Workshop beheer, reservering van werkplekken toegevoegd.
+* Workshop beheer, kolom technieken toegevoegd.
 * Verbetering correctie achteraf in workshop beheer
 * Toon welke concept workshop aanvraag gaat vervallen
 * Aanpassing prioriteiten kolommen workshop beheer in responsive mode
