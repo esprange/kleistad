@@ -210,7 +210,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 				'inschrijfkosten' => 25.00,
 			]
 		);
-		$inschrijving->actie->correctie( $cursus_nieuw_id, 1 );
+		$inschrijving->actie->correctie( $cursus_nieuw_id, 1, [] );
 
 		$inschrijving = new Inschrijving( $cursus_nieuw_id, $cursist->ID );
 		$order        = new Order( $inschrijving->get_referentie() );
@@ -235,7 +235,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 		$order        = new Order( $inschrijving->get_referentie() );
 		$cursuskosten = $order->get_te_betalen();
 		$inschrijving->betaling->verwerk( $order, 25.00, true, 'bank' );
-		$inschrijving->actie->correctie( $inschrijving->cursus->id, 2 );
+		$inschrijving->actie->correctie( $inschrijving->cursus->id, 2, [] );
 
 		/**
 		 * Aantal wijzigt maar de referentie blijft ongewijzigd. Dat betekent dat er twee orders openstaan.
@@ -278,7 +278,7 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 				'inschrijfkosten' => 25.00,
 			]
 		);
-		$inschrijving->actie->correctie( $cursus_nieuw_id, 3 );
+		$inschrijving->actie->correctie( $cursus_nieuw_id, 3, $extra_cursisten );
 
 		$this->assertTrue( $inschrijving->ingedeeld, 'correctie hoofdcursist niet ingedeeld' );
 		foreach ( $inschrijving->extra_cursisten as $extra_cursist_id ) {
@@ -288,6 +288,12 @@ class Test_Inschrijving extends Kleistad_UnitTestCase {
 			$inschrijving_extra_oud = new Inschrijving( $cursus_oud_id, $extra_cursist_id );
 			$this->assertTrue( $inschrijving_extra_oud->geannuleerd, 'correctie extra cursist oude cursus niet geannuleerd' );
 		}
+		$te_annuleren = $extra_cursisten[1];
+		unset( $extra_cursisten[1] );
+
+		$inschrijving->actie->correctie( $cursus_nieuw_id, 3, $extra_cursisten );
+		$inschrijving_extra_annulering = new Inschrijving( $cursus_nieuw_id, $te_annuleren );
+		$this->assertTrue( $inschrijving_extra_annulering->geannuleerd, 'correctie extra cursist niet geannuleerd' );
 	}
 
 	/**

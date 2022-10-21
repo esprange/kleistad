@@ -100,26 +100,36 @@ class InschrijvingActie {
 	/**
 	 * Corrigeer de inschrijving naar nieuwe cursus.
 	 *
-	 * @param int $cursus_id nieuw cursus_id.
-	 * @param int $aantal    aantal.
+	 * @param int   $cursus_id nieuw cursus_id.
+	 * @param int   $aantal    aantal.
+	 * @param array $extra_cursisten De user_id's van de extra cursisten.
 	 * @return bool
 	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
-	public function correctie( int $cursus_id, int $aantal ) : bool {
+	public function correctie( int $cursus_id, int $aantal, array $extra_cursisten ) : bool {
 		$order = new Order( $this->inschrijving->get_referentie() );
 		if ( $cursus_id === $this->inschrijving->cursus->id ) {
-			if ( $aantal === $this->inschrijving->aantal ) {
+			if ( count( $extra_cursisten ) === count( $this->inschrijving->extra_cursisten ) && $aantal === $this->inschrijving->aantal ) {
 				return false; // Geen wijzigingen.
 			}
-			$this->inschrijving->aantal = $aantal;
+			foreach ( $this->inschrijving->extra_cursisten as $extra_cursist_id ) {
+				if ( ! in_array( $extra_cursist_id, $extra_cursisten, true ) ) {
+					$inschrijving              = new Inschrijving( $this->inschrijving->cursus->id, $extra_cursist_id );
+					$inschrijving->geannuleerd = true;
+					$inschrijving->save();
+				}
+			}
+			$this->inschrijving->extra_cursisten = $extra_cursisten;
+			$this->inschrijving->aantal          = $aantal;
 			$this->inschrijving->save();
 		} else {
 			$inschrijving = clone $this->inschrijving;
 			$this->afzeggen();
-			$this->inschrijving         = $inschrijving;
-			$this->inschrijving->code   = "C$cursus_id-{$this->inschrijving->klant_id}";
-			$this->inschrijving->aantal = $aantal;
-			$this->inschrijving->cursus = new Cursus( $cursus_id );
+			$this->inschrijving                  = $inschrijving;
+			$this->inschrijving->code            = "C$cursus_id-{$this->inschrijving->klant_id}";
+			$this->inschrijving->cursus          = new Cursus( $cursus_id );
+			$this->inschrijving->aantal          = $aantal;
+			$this->inschrijving->extra_cursisten = $extra_cursisten;
 			$this->inschrijving->save();
 			foreach ( $this->inschrijving->extra_cursisten as $extra_cursist_id ) {
 				$extra_inschrijving                   = new Inschrijving( $this->inschrijving->cursus->id, $extra_cursist_id );

@@ -45,6 +45,25 @@ class Admin_Cursisten_Handler extends Admin_Handler {
 	}
 
 	/**
+	 * Validate de cursist input data
+	 *
+	 * @param array $item De cursist.
+	 *
+	 * @return string
+	 */
+	private function validate_cursist( array $item ) : string {
+		$messages = [];
+		if ( $item['aantal'] < count( $item['extra_cursisten'] ) + 1 ) {
+			$messages[] = sprintf(
+				'Er zijn %d medecursisten aangemeld, hetgeen meer is dan het gewenste aantal van %d',
+				count( $item['extra_cursisten'] ),
+				$item['aantal'] - 1
+			);
+		}
+		return implode( '<br />', $messages );
+	}
+
+	/**
 	 * Verwerk de nieuwe gegevens.
 	 *
 	 * @return array Het item.
@@ -53,19 +72,27 @@ class Admin_Cursisten_Handler extends Admin_Handler {
 		$item = filter_input_array(
 			INPUT_POST,
 			[
-				'id'        => FILTER_SANITIZE_STRING,
-				'naam'      => FILTER_SANITIZE_STRING,
-				'cursus_id' => FILTER_SANITIZE_NUMBER_INT,
-				'aantal'    => FILTER_SANITIZE_NUMBER_INT,
+				'id'              => FILTER_SANITIZE_STRING,
+				'naam'            => FILTER_SANITIZE_STRING,
+				'cursus_id'       => FILTER_SANITIZE_NUMBER_INT,
+				'aantal'          => FILTER_SANITIZE_NUMBER_INT,
+				'extra_cursisten' => [
+					'filter' => FILTER_SANITIZE_NUMBER_INT,
+					'flags'  => FILTER_FORCE_ARRAY,
+				],
 			]
 		) ?: [];
 		sscanf( $item['id'] ?? 'C0-0', 'C%d-%d', $cursus_id, $cursist_id );
-		$nieuw_cursus_id = intval( $item['cursus_id'] );
-		$nieuw_aantal    = intval( $item['aantal'] );
-		$this->message   = '';
-		$inschrijving    = new Inschrijving( $cursus_id, $cursist_id );
-		if ( $inschrijving->actie->correctie( $nieuw_cursus_id, $nieuw_aantal ) ) {
-			$this->message = 'De gegevens zijn opgeslagen';
+		$item['extra_cursisten'] = array_map( 'intval', $item['extra_cursisten'] ?? [] );
+		$nieuw_cursus_id         = intval( $item['cursus_id'] );
+		$nieuw_aantal            = intval( $item['aantal'] );
+		$this->notice            = $this->validate_cursist( $item );
+		if ( empty( $this->notice ) ) {
+			$this->message = '';
+			$inschrijving  = new Inschrijving( $cursus_id, $cursist_id );
+			if ( $inschrijving->actie->correctie( $nieuw_cursus_id, $nieuw_aantal, $item['extra_cursisten'] ) ) {
+				$this->message = 'De gegevens zijn opgeslagen';
+			}
 		}
 		return $item;
 	}
@@ -80,12 +107,12 @@ class Admin_Cursisten_Handler extends Admin_Handler {
 		$cursist      = get_userdata( $cursist_id );
 		$inschrijving = new Inschrijving( $cursus_id, $cursist_id );
 		return [
-			'id'          => $inschrijving->code,
-			'naam'        => $cursist->display_name,
-			'aantal'      => $inschrijving->aantal,
-			'geannuleerd' => $inschrijving->geannuleerd,
-			'cursist_id'  => $cursist_id,
-			'cursus_id'   => $cursus_id,
+			'id'              => $inschrijving->code,
+			'naam'            => $cursist->display_name,
+			'aantal'          => $inschrijving->aantal,
+			'extra_cursisten' => $inschrijving->extra_cursisten,
+			'cursist_id'      => $cursist_id,
+			'cursus_id'       => $cursus_id,
 		];
 	}
 }

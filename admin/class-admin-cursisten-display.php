@@ -61,6 +61,18 @@ class Admin_Cursisten_Display extends Admin_Display {
 					<input name="aantal" id="aantal" type="number" size="2" required value="<?php echo esc_attr( $item['aantal'] ); ?>">
 				</td>
 			</tr>
+			<?php if ( count( $item['extra_cursisten'] ) ) : ?>
+				<?php foreach ( $item['extra_cursisten'] as $extra_cursist ) : ?>
+				<tr>
+					<th scope="row"><label for="extra_cursist_<?php echo esc_attr( $extra_cursist ); ?>">Medecursist</label></th>
+					<td>
+						<input name="extra_cursisten[]" type="checkbox" id="extra_cursist_<?php echo esc_attr( $extra_cursist ); ?>"
+							value="<?php echo esc_attr( $extra_cursist ); ?>"  checked >
+							<?php echo esc_html( get_user_by( 'id', $extra_cursist )->display_name ); ?>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			<?php endif; ?>
 		</tbody>
 		</table>
 		<?php

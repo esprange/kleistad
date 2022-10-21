@@ -35,13 +35,24 @@ class Admin_Cursisten extends Admin_List_Table {
 	 * @return string
 	 */
 	public function column_naam( array $item ) : string {
-		if ( empty( $item['geannuleerd'] && empty( $item['medecursist'] ) ) ) {
-			$actions = [
-				'edit' => sprintf( '<a href="?page=cursisten_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
-			];
-			return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );
+		if ( $item['geannuleerd'] || $item['hoofd_cursist'] ) {
+			return sprintf( '<strong>%s</strong>', $item['naam'] );
 		}
-		return sprintf( '<strong>%s</strong>', $item['naam'] );
+		$actions = [
+			'edit' => sprintf( '<a href="?page=cursisten_form&id=%s">%s</a>', $item['id'], 'Wijzigen' ),
+		];
+		return sprintf( '<strong>%s</strong> %s', $item['naam'], $this->row_actions( $actions ) );
+	}
+
+	/**
+	 * Toon de kolom naam
+	 *
+	 * @param array $item row(key, value).
+	 *
+	 * @return string
+	 */
+	public function column_medecursist( array $item ) : string {
+		return $item['hoofd_cursist'] ? 'X' : '';
 	}
 
 	/**
@@ -51,7 +62,7 @@ class Admin_Cursisten extends Admin_List_Table {
 	 * @return string
 	 */
 	public function column_geannuleerd( array $item ) : string {
-		return $item['geannuleerd'];
+		return $item['geannuleerd'] ? 'X' : '';
 	}
 
 	/**
@@ -105,11 +116,12 @@ class Admin_Cursisten extends Admin_List_Table {
 					continue;
 				}
 				$cursisten[] = [
-					'id'          => $inschrijving->code,
-					'naam'        => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
-					'cursus'      => $inschrijving->cursus->naam,
-					'geannuleerd' => $inschrijving->geannuleerd ? 'X' : '',
-					'medecursist' => $inschrijving->hoofd_cursist_id ? 'X' : '',
+					'id'              => $inschrijving->code,
+					'naam'            => $cursist->display_name . ( 1 < $inschrijving->aantal ? ' (' . $inschrijving->aantal . ')' : '' ),
+					'cursus'          => $inschrijving->cursus->naam,
+					'geannuleerd'     => $inschrijving->geannuleerd,
+					'hoofd_cursist'   => $inschrijving->hoofd_cursist_id,
+					'extra_cursisten' => $inschrijving->extra_cursisten,
 				];
 			}
 		}
