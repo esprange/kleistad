@@ -274,7 +274,7 @@ EOT;
 			}
 		}
 		if ( 'DELETE' === $request->get_method() ) {
-			$key = array_search( $gebruiker_id, $gebruiker_ids, true );
+			$key = array_search( "$gebruiker_id", $gebruiker_ids, true );
 			if ( false !== $key ) {
 				unset( $gebruiker_ids[ $key ] );
 				$werkplek->wijzig( $dagdeel, $activiteit, $gebruiker_ids );
