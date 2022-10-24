@@ -218,7 +218,7 @@ class Public_Workshop_Beheer extends ShortcodeForm {
 	 */
 	protected function negeren() : array {
 		$workshop = new Workshop( $this->data['workshop']['workshop_id'] );
-		$workshop->actie->reactie( $this->data['workshop']['reactie'] );
+		$workshop->actie->reactie();
 		return [
 			'status'  => $this->status( 'De status is aangepast' ),
 			'content' => $this->display(),

@@ -147,16 +147,17 @@ class WorkshopActie {
 	/**
 	 * Voeg een reactie toe en email de aanvrager.
 	 *
-	 * @param string $reactie     De reactie op de vraag.
+	 * @param null|string $reactie     De reactie op de vraag.
 	 */
-	public function reactie( string $reactie ) : void {
-		$this->workshop->reactie      = nl2br( $reactie );
+	public function reactie( ?string $reactie = null ) : void {
+		$subject                      = is_null( $reactie ) ? 'Geen reactie nodig' : "Reactie op {$this->workshop->naam} vraag";
+		$this->workshop->reactie      = nl2br( $reactie ?? '' );
 		$this->workshop->communicatie = array_merge(
 			[
 				[
 					'type'    => self::GEREAGEERD,
 					'from'    => wp_get_current_user()->display_name,
-					'subject' => "Reactie op {$this->workshop->naam} vraag",
+					'subject' => $subject,
 					'tekst'   => $reactie,
 					'tijd'    => current_time( 'd-m-Y H:i' ),
 				],
@@ -164,7 +165,9 @@ class WorkshopActie {
 			$this->workshop->communicatie
 		);
 		$this->workshop->save();
-		$this->workshop->verzend_email( '_reactie' );
+		if ( ! is_null( $reactie ) ) {
+			$this->workshop->verzend_email( '_reactie' );
+		}
 	}
 
 	/**
