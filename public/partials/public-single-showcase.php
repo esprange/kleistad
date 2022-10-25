@@ -82,25 +82,37 @@ wp_enqueue_style( 'dashicons' );
 					<div>  <!-- second container -->
 						<div class="kleistad-showcase-item">
 							<div class="kleistad-showcase-titel"><?php the_title(); ?></div>
-							<div class="kleistad-label"><label>Prijs</label></div>
+							<strong>Prijs</strong>
 							<div style="padding-left:15px">&euro; <?php echo esc_html( number_format_i18n( $showcases->current()->prijs, 2 ) ); ?>
 								<?php echo $showcases->current()->is_tentoongesteld() ? ' (nu tentoongesteld)' : ''; ?>
 							</div>
 							<?php if ( $showcases->current()->beschrijving ) : ?>
-								<div class="kleistad-label"><label>Beschrijving</label></div>
+								<strong>Beschrijving</strong>
 								<div style="padding-left:15px"><?php echo esc_html( $showcases->current()->beschrijving ); ?></div>
 							<?php endif; ?>
 						</div>
 						<div class="kleistad-showcase-item">
-							<div class="kleistad-label"><label>Keramist</label></div>
+							<strong>Keramist</strong>
 							<div style="padding-left:10px"><?php echo esc_html( $keramist->display_name ); ?></div>
 							<?php if ( $keramist->description ) : ?>
-								<div class="kleistad-label"><label>Over de keramist</label></div>
-								<div style="padding-left:15px"><?php echo esc_html( $keramist->description ); ?></div>
+								<strong>Over de keramist</strong>
+								<?php
+								$profiel_foto_id = get_user_meta( $keramist->ID, 'profiel_foto', true );
+								if ( $profiel_foto_id ) :
+									?>
+									<div>
+										<div style="padding-left:15px;width:70%;float:left"><?php echo $keramist->description; // phpcs:ignore ?></div>
+										<?php echo wp_get_attachment_image( $profiel_foto_id ); ?>
+									</div>
+								<?php else : ?>
+									<div style="padding-left:15px"><?php echo $keramist->description; // phpcs:ignore ?></div>
+								<?php endif ?>
 							<?php endif; ?>
 							<?php if ( $keramist->user_url ) : ?>
-								<div class="kleistad-label"><label>Website van de keramist</label></div>
-								<div style="padding-left:15px"><a href="<?php echo esc_url( $keramist->user_url ); ?>"><?php echo esc_url( $keramist->user_url ); ?></a></div>
+								<div style="clear: left">
+									<strong>Website van de keramist</strong>
+									<div style="padding-left:15px"><a href="<?php echo esc_url( $keramist->user_url ); ?>"><?php echo esc_url( $keramist->user_url ); ?></a></div>
+								</div>
 							<?php endif; ?>
 						</div>
 					</div>

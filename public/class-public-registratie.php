@@ -14,6 +14,13 @@ namespace Kleistad;
 use WP_Error;
 
 /**
+ * Include voor image file upload.
+ */
+require_once ABSPATH . 'wp-admin/includes/image.php';
+require_once ABSPATH . 'wp-admin/includes/file.php';
+require_once ABSPATH . 'wp-admin/includes/media.php';
+
+/**
  * De kleistad registratie class.
  */
 class Public_Registratie extends ShortcodeForm {
@@ -67,7 +74,7 @@ class Public_Registratie extends ShortcodeForm {
 				'telnr'       => FILTER_SANITIZE_STRING,
 				'user_email'  => FILTER_SANITIZE_EMAIL,
 				'user_url'    => FILTER_SANITIZE_STRING,
-				'description' => FILTER_SANITIZE_STRING,
+				'description' => FILTER_DEFAULT,
 			]
 		);
 		if ( is_array( $this->data['input'] ) ) {
@@ -97,6 +104,8 @@ class Public_Registratie extends ShortcodeForm {
 	 * @since   4.0.87
 	 */
 	protected function save() : array {
+		remove_filter( 'pre_user_description', 'wp_filter_kses' );
+		add_filter( 'pre_user_description', 'wp_filter_post_kses' );
 		$result = wp_update_user(
 			(object) [
 				'ID'          => $this->data['gebruiker_id'],
@@ -113,6 +122,13 @@ class Public_Registratie extends ShortcodeForm {
 			]
 		);
 		if ( ! is_wp_error( $result ) ) {
+			if ( $_FILES['profiel_foto']['size'] ) {
+				$result = media_handle_upload( 'profiel_foto', 0 );
+				if ( is_wp_error( $result ) ) {
+					return [ 'status' => $this->status( $result ) ];
+				}
+				update_user_meta( $this->data['gebruiker_id'], 'profiel_foto', $result );
+			}
 			return [
 				'content' => $this->goto_home(),
 				'status'  => $this->status( 'Gegevens zijn opgeslagen' ),

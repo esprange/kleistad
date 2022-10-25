@@ -100,7 +100,36 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 				<label for="kleistad_description">Vertel iets over jouzelf (optioneel)</label>
 			</div>
 			<div class="kleistad-col-7">
-				<textarea name="description" id="kleistad_description" type="text" rows="3" maxlength="300"><?php echo esc_html( $this->data['input']['description'] ); ?></textarea>
+				<?php
+				wp_editor(
+					$this->data['input']['description'],
+					'kleistad_description',
+					[
+						'textarea_name' => 'description',
+						'textarea_rows' => 6,
+						'quicktags'     => false,
+						'media_buttons' => false,
+					]
+				);
+				?>
+			</div>
+		</div>
+		<div class="kleistad-row">
+			<div class="kleistad-col-3 kleistad-label">
+				<label for="kleistad_profiel_foto">Een foto van jouzelf (optioneel)</label>
+			</div>
+			<div class="kleistad-col-7">
+				<?php
+				$foto_id = get_user_meta( $this->data['input']['gebruiker_id'], 'profiel_foto', true );
+				if ( $foto_id ) :
+					echo wp_get_attachment_image(
+						$foto_id,
+						'small',
+						false
+					);
+				endif;
+				?>
+				<input type="file" name="profiel_foto" id="kleistad_profiel_foto" accept=".jpeg,.jpg,.tiff,.tif;capture=camera" >
 			</div>
 		</div>
 		<div class="kleistad-row" style="padding-top: 15px">
