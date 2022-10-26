@@ -148,7 +148,7 @@ class Abonnement extends Artikel {
 	 * @return string
 	 */
 	public function get_referentie() : string {
-		if ( str_contains( 'regulier,pauze,start', $this->artikel_type ) ) {
+		if ( str_contains( 'regulier,pauze,start,overbrugging', $this->artikel_type ) ) {
 			return "$this->code-$this->artikel_type-" . date( 'Ym' );
 		}
 		return "$this->code-$this->artikel_type";
