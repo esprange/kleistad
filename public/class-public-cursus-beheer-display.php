@@ -190,16 +190,16 @@ class Public_Cursus_Beheer_Display extends Public_Shortcode_Display {
 	private function technieken( bool $readonly ) : Public_Cursus_Beheer_Display {
 		?>
 		<div class="kleistad-row">
-			<div class="kleistad-col-2 kleistad-label"><label>Technieken</label></div>
-			<div class="kleistad-col-8" style="display:flex;justify-content: space-between;">
-				<?php foreach ( [ 'Draaien', 'Handvormen', 'Boetseren' ] as $techniek ) : ?>
-					<span>
-				<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" class="kleistad-checkbox" name="technieken[]" value="<?php echo esc_attr( $techniek ); ?>"
-					<?php checked( in_array( 'Draaien', $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
-				<label for="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" style="padding-right:2em"><?php echo esc_html( $techniek ); ?></label>
-				</span>
-				<?php endforeach; ?>
-			</div>
+			<?php foreach ( [ 'Draaien', 'Handvormen' ] as $techniek ) : ?>
+				<div class="kleistad-col-2 kleistad-label"><label for="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>"><?php echo esc_html( $techniek ); ?></label></div>
+				<div class="kleistad-col-3" >
+					<input type="checkbox" id="kleistad_<?php echo esc_attr( strtolower( $techniek ) ); ?>" class="kleistad-checkbox" name="technieken[]"
+						value="<?php echo esc_attr( $techniek ); ?>" <?php checked( in_array( $techniek, $this->data['cursus']['technieken'], true ) ); ?> <?php disabled( $readonly ); ?> >
+					<!--suppress HtmlFormInputWithoutLabel -->
+					<input name="werkplekken[<?php echo esc_attr( $techniek ); ?>]" min="0" max="99" type="number"
+						value="<?php echo esc_attr( $this->data['cursus']['werkplekken'][ $techniek ] ?? 0 ); ?>" style="width: 4em;"/> werkplekken
+				</div>
+			<?php endforeach; ?>
 		</div>
 		<?php
 		return $this;

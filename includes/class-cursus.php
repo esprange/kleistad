@@ -32,6 +32,7 @@ use Exception;
  * @property bool   vervallen
  * @property bool   vol
  * @property bool   techniekkeuze
+ * @property array  werkplekken
  * @property float  inschrijfkosten
  * @property float  cursuskosten
  * @property string inschrijfslug
@@ -74,6 +75,7 @@ class Cursus {
 			'vervallen'       => 0,
 			'vol'             => 0,
 			'techniekkeuze'   => 0,
+			'werkplekken'     => wp_json_encode( [] ),
 			'inschrijfkosten' => opties()['cursusinschrijfprijs'],
 			'cursuskosten'    => opties()['cursusprijs'],
 			'inschrijfslug'   => 'cursus_aanvraag',
@@ -115,16 +117,17 @@ class Cursus {
 		}
 
 		return match ( $attribuut ) {
-			'technieken' => json_decode( $this->data[ $attribuut ], true ),
-			'lesdatums'  => array_map(
+			'technieken',
+			'werkplekken' => json_decode( $this->data[ $attribuut ] ?? '[]', true ),
+			'lesdatums'   => array_map(
 				function ( $item ) {
 					return strtotime( $item );
 				},
 				json_decode( $this->data[ $attribuut ], true )
 			),
-			'code'       => "C{$this->data['id']}",
-			'meer'       => $this->data[ $attribuut ] && ( strtotime( 'today' ) < $this->start_datum ),
-			default      => is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) :
+			'code'        => "C{$this->data['id']}",
+			'meer'        => $this->data[ $attribuut ] && ( strtotime( 'today' ) < $this->start_datum ),
+			default       => is_numeric( $this->data[ $attribuut ] ) ? intval( $this->data[ $attribuut ] ) :
 				( is_string( $this->data[ $attribuut ] ) ? htmlspecialchars_decode( $this->data[ $attribuut ] ) : $this->data[ $attribuut ] ),
 		};
 	}
@@ -137,8 +140,9 @@ class Cursus {
 	 */
 	public function __set( string $attribuut, mixed $waarde ) {
 		$this->data[ $attribuut ] = match ( $attribuut ) {
-			'technieken' => wp_json_encode( $waarde ),
-			'lesdatums'  => wp_json_encode(
+			'technieken',
+			'werkplekken'  => wp_json_encode( $waarde ),
+			'lesdatums'    => wp_json_encode(
 				array_map(
 					function ( $item ) {
 						return date( 'Y-m-d', $item );
@@ -285,7 +289,6 @@ class Cursus {
 		$wpdb->replace( "{$wpdb->prefix}kleistad_cursussen", $this->data );
 		$this->id = $wpdb->insert_id;
 		$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'Europe/Amsterdam' );
-
 		try {
 			$afspraak             = new Afspraak( sprintf( '%s%06d', self::AFSPRAAK_PREFIX, $this->id ) );
 			$afspraak->titel      = $this->naam;
@@ -327,5 +330,24 @@ class Cursus {
 		$this->ruimte_datum = time();
 		$this->vol          = false;
 		$this->save();
+	}
+
+	/**
+	 * Update de werkplek reserveringen
+	 *
+	 * @return string
+	 */
+	public function update_werkplekken() : string {
+		if ( $this->vervallen ) {
+			Werkplekken::verwijder_werkplekken( $this->code, $this->start_datum, $this->eind_datum );
+			return '';
+		}
+		$bericht = '';
+		$dagdeel = bepaal_dagdelen( $this->start_tijd, $this->eind_tijd )[0];
+		foreach ( $this->lesdatums as $datum ) {
+			$result  = Werkplekken::reserveer_werkplekken( $this->code, 'cursus', $this->werkplekken, $datum, $dagdeel );
+			$bericht = $bericht ?: $result;
+		}
+		return $bericht;
 	}
 }

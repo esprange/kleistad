@@ -93,7 +93,7 @@ class Werkplek {
 	 */
 	public function geef( string $dagdeel = '', string $activiteit = '' ) : array {
 		$gebruiker_ids = [];
-		$workshop_ids  = [];
+		$event_ids     = [];
 		foreach ( $this->gebruik as $dagdeel_key => $gebruik ) {
 			if ( empty( $dagdeel ) || $dagdeel === $dagdeel_key ) {
 				foreach ( $gebruik as $activiteit_key => $posities ) {
@@ -102,12 +102,12 @@ class Werkplek {
 							$gebruiker_ids,
 							array_filter( $posities, 'is_numeric' )
 						);
-						$workshop_ids  = array_merge(
-							$workshop_ids,
+						$event_ids     = array_merge(
+							$event_ids,
 							array_filter(
 								$posities,
-								function( $positie ) {
-									return str_starts_with( $positie, Workshop::DEFINITIE['prefix'] );
+								function ( $positie ) {
+									return preg_match( '/[A-Z]/', $positie );
 								}
 							)
 						);
@@ -133,18 +133,18 @@ class Werkplek {
 				)
 			);
 		}
-		if ( ! empty( $workshop_ids ) ) {
+		if ( ! empty( $event_ids ) ) {
 			$gebruikers = array_merge(
 				$gebruikers,
 				array_map(
-					function( $workshop_id ) {
-						$workshop_params = explode( '_', substr( $workshop_id, 1 ) );
+					function( $event_id ) {
+						$params = explode( '_', substr( $event_id, 1 ) );
 						return [
-							'id'   => $workshop_id,
-							'naam' => $workshop_params[1],
+							'id'   => $event_id,
+							'naam' => $params[1] ?? 'onbekend',
 						];
 					},
-					$workshop_ids
+					$event_ids
 				)
 			);
 		}

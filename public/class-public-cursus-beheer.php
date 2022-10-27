@@ -104,6 +104,11 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'start_tijd'      => FILTER_SANITIZE_STRING,
 				'eind_tijd'       => FILTER_SANITIZE_STRING,
 				'techniekkeuze'   => FILTER_SANITIZE_STRING,
+				'werkplekken'     => [
+					'filter'  => FILTER_SANITIZE_STRING,
+					'flags'   => FILTER_REQUIRE_ARRAY,
+					'options' => [ 'default' => [] ],
+				],
 				'vervallen'       => FILTER_SANITIZE_STRING,
 				'inschrijfkosten' => [
 					'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
@@ -131,6 +136,9 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		}
 		if ( is_null( $this->data['input']['technieken'] ) ) {
 			$this->data['input']['technieken'] = [];
+		}
+		if ( is_null( $this->data['input']['werkplekken'] ) ) {
+			$this->data['input']['werkplekken'] = [];
 		}
 		if ( $this->data['input']['cursuskosten'] < $this->data['input']['inschrijfkosten'] ) {
 			$error->add( 'Invoerfout', 'Als er inschrijfkosten zijn dan kunnen de cursuskosten niet lager zijn' );
@@ -163,6 +171,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 				'status' => $this->status( new WP_Error( 'ingedeeld', 'Er zijn al cursisten inschrijvingen, de cursus kan niet verwijderd worden' ) ),
 			];
 		}
+		Werkplekken::verwijder_werkplekken( $cursus->code, $cursus->start_datum, $cursus->eind_datum );
 		$cursus->erase();
 		return [
 			'status'  => $this->status( 'De cursus informatie is verwijderd' ),
@@ -197,12 +206,17 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 		$cursus->inschrijfslug   = $this->data['input']['inschrijfslug'];
 		$cursus->indelingslug    = $this->data['input']['indelingslug'];
 		$cursus->technieken      = $this->data['input']['technieken'];
+		$cursus->werkplekken     = $this->data['input']['werkplekken'];
 		$cursus->maximum         = $this->data['input']['maximum'];
 		$cursus->meer            = '' != $this->data['input']['meer']; // phpcs:ignore
 		$cursus->tonen           = '' != $this->data['input']['tonen']; // phpcs:ignore
 		$cursus->save();
+		$bericht = $cursus->update_werkplekken();
 		return [
-			'status'  => $this->status( 'De cursus informatie is opgeslagen' ),
+			'status'  => [
+				'level'  => $bericht ? -1 : 1,
+				'status' => $bericht ? "$bericht, de gegevens zijn opgeslagen" : 'De gegevens zijn opgeslagen',
+			],
 			'content' => $this->display(),
 		];
 	}
@@ -234,6 +248,7 @@ class Public_Cursus_Beheer extends ShortcodeForm {
 			'eind_tijd'       => $cursus->eind_tijd,
 			'docent'          => $cursus->docent,
 			'technieken'      => $cursus->technieken,
+			'werkplekken'     => $cursus->werkplekken,
 			'vervallen'       => $cursus->vervallen,
 			'techniekkeuze'   => $cursus->techniekkeuze,
 			'inschrijfkosten' => $cursus->inschrijfkosten,

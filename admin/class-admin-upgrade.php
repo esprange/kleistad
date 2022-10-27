@@ -21,7 +21,7 @@ class Admin_Upgrade {
 	/**
 	 * Plugin-database-versie
 	 */
-	const DBVERSIE = 179;
+	const DBVERSIE = 180;
 
 	/**
 	 * Voer de upgrade acties uit indien nodig.
@@ -176,6 +176,7 @@ class Admin_Upgrade {
 			vervallen tinyint(1) DEFAULT 0,
 			vol tinyint(1) DEFAULT 0,
 			techniekkeuze tinyint(1) DEFAULT 0,
+			werkplekken tinytext DEFAULT '',
 			inschrijfkosten numeric(10,2),
 			cursuskosten numeric(10,2),
 			inschrijfslug tinytext,
@@ -280,30 +281,6 @@ class Admin_Upgrade {
 	 * Converteer data
 	 */
 	private function convert_data() : void {
-		global $wpdb;
-		$result = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}options WHERE option_name LIKE 'kleistad_werkplek_%' ", ARRAY_A );
-		foreach( $result as $oud_gebruik ) {
-			$datum_string = strtok( $oud_gebruik['option_name'], 'kleistad_werkplek_' );
-			if ( ! is_numeric( $datum_string ) ) {
-				continue;
-			}
-			$datum        = implode(
-				'-',
-				[
-					str_split( $datum_string, 4 )[0],
-					str_split( $datum_string, 2)[2],
-					str_split( $datum_string, 2)[3],
-				]
-			);
-			$wpdb->insert(
-				"{$wpdb->prefix}kleistad_werkplekken",
-				[
-					'datum'   => $datum,
-					'gebruik' => $oud_gebruik['option_value'],
-				]
-			);
-			delete_option( $oud_gebruik['option_name'] );
-		}
 	}
 
 }
