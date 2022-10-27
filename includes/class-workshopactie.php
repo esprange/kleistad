@@ -68,7 +68,7 @@ class WorkshopActie {
 		}
 		$this->workshop->actie->afzeggen();
 		if ( $this->workshop->definitief ) {
-			$this->workshop->verwijder_werkplekken( $this->workshop->code, $this->workshop->datum );
+			$this->workshop->verwijder_werkplekken( $this->workshop->code );
 			$this->workshop->verzend_email( '_afzegging' );
 		}
 	}
@@ -229,7 +229,7 @@ class WorkshopActie {
 			);
 		}
 		$this->workshop->save();
-		$this->workshop->verwijder_werkplekken( $this->workshop->code, $this->workshop->datum );
+		$this->workshop->verwijder_werkplekken( $this->workshop->code );
 		$level   = 1;
 		$bericht = $this->workshop->reserveer_werkplekken(
 			$this->workshop->code,

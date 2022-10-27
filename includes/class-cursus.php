@@ -341,7 +341,7 @@ class Cursus {
 	 */
 	public function update_werkplekken() : string {
 		if ( $this->vervallen ) {
-			$this->verwijder_werkplekken( $this->code, $this->start_datum, $this->eind_datum );
+			$this->verwijder_werkplekken( $this->code );
 			return '';
 		}
 		$bericht = '';

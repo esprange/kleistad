@@ -1,18 +1,28 @@
 <?php
+/**
+ * Trait voor het reserveren van werkplekken voor o.a. cursussen en workshops
+ *
+ * @link       https://www.kleistad.nl
+ * @since      7.5.8
+ *
+ * @package    Kleistad
+ * @subpackage Kleistad/includes
+ */
 
 namespace Kleistad;
 
+/**
+ * Trait voor werkplek reservering.
+ */
 trait WerkplekReservering {
 
 	/**
-	 * Verwijder eventuele werkplek reserveringen.
+	 * Verwijder eventuele werkplek reserveringen vanaf vandaag. Reserveringen in het verleden kunnen blijven staan.
 	 *
 	 * @param string $code  De code waarmee de reservering start.
-	 * @param int    $vanaf De begin datum.
-	 * @param int    $tot   De eventuele eind datum.
 	 */
-	public function verwijder_werkplekken( string $code, int $vanaf, int $tot = 0 ) : void {
-		$werkplekken = new Werkplekken( $vanaf, $tot );
+	public function verwijder_werkplekken( string $code ) : void {
+		$werkplekken = new Werkplekken( strtotime( 'today' ) );
 		foreach ( $werkplekken as $werkplek ) {
 			foreach ( $werkplek->get_gebruik() as $dagdeel => $gebruik ) {
 				foreach ( $gebruik as $activiteit => $posities ) {
