@@ -89,7 +89,7 @@ class Public_Registratie_Display extends Public_Shortcode_Display {
 		</div>
 		<div class="kleistad-row">
 			<div class="kleistad-col-3 kleistad-label">
-				<label for="kleistad_url">Jouw website (optioneel)</label>/
+				<label for="kleistad_url">Jouw website (optioneel)</label>
 			</div>
 			<div class="kleistad-col-7">
 				<input class="kleistad-input" name="user_url" id="kleistad_url" type="text" value="<?php echo esc_attr( $this->data['input']['user_url'] ); ?>" />
