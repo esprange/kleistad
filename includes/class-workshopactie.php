@@ -68,7 +68,7 @@ class WorkshopActie {
 		}
 		$this->workshop->actie->afzeggen();
 		if ( $this->workshop->definitief ) {
-			Werkplekken::verwijder_werkplekken( $this->workshop->code, $this->workshop->datum );
+			$this->workshop->verwijder_werkplekken( $this->workshop->code, $this->workshop->datum );
 			$this->workshop->verzend_email( '_afzegging' );
 		}
 	}
@@ -229,9 +229,9 @@ class WorkshopActie {
 			);
 		}
 		$this->workshop->save();
-		Werkplekken::verwijder_werkplekken( $this->workshop->code, $this->workshop->datum );
+		$this->workshop->verwijder_werkplekken( $this->workshop->code, $this->workshop->datum );
 		$level   = 1;
-		$bericht = Werkplekken::reserveer_werkplekken(
+		$bericht = $this->workshop->reserveer_werkplekken(
 			$this->workshop->code,
 			$this->workshop->naam,
 			$this->workshop->werkplekken,

@@ -4,7 +4,8 @@ Donate link: https://www.kleistad.nl
 Tags: kleistad, ceramics
 Requires at least: 4.8.0
 Tested up to: 6.0.1
-Stable tag: 7.8.5
+Stable tag: 7.8.6
+
 
 
 
@@ -39,6 +40,8 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 == Changelog ==
+= 7.8.6 =
+* Cursus beheer, reservering van werkplekken toegevoegd.
 = 7.8.5 =
 * Beschrijving gebruiker kan nu in html (dus met links e.d.).
 = 7.8.4 =

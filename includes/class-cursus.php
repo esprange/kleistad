@@ -43,6 +43,8 @@ use Exception;
  */
 class Cursus {
 
+	use WerkplekReservering;
+
 	public const AFSPRAAK_PREFIX = 'kleistadcursus';
 
 	/**
@@ -339,13 +341,13 @@ class Cursus {
 	 */
 	public function update_werkplekken() : string {
 		if ( $this->vervallen ) {
-			Werkplekken::verwijder_werkplekken( $this->code, $this->start_datum, $this->eind_datum );
+			$this->verwijder_werkplekken( $this->code, $this->start_datum, $this->eind_datum );
 			return '';
 		}
 		$bericht = '';
 		$dagdeel = bepaal_dagdelen( $this->start_tijd, $this->eind_tijd )[0];
 		foreach ( $this->lesdatums as $datum ) {
-			$result  = Werkplekken::reserveer_werkplekken( $this->code, 'cursus', $this->werkplekken, $datum, $dagdeel );
+			$result  = $this->reserveer_werkplekken( $this->code, 'cursus', $this->werkplekken, $datum, $dagdeel );
 			$bericht = $bericht ?: $result;
 		}
 		return $bericht;

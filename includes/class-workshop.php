@@ -47,6 +47,8 @@ use Exception;
  */
 class Workshop extends Artikel {
 
+	use WerkplekReservering;
+
 	public const DEFINITIE       = [
 		'prefix'       => 'W',
 		'naam'         => 'workshop',
