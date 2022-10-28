@@ -4,7 +4,9 @@
 **Tags:** kleistad, ceramics  
 **Requires at least:** 4.8.0  
 **Tested up to:** 6.0.1  
-**Stable tag:** 7.8.6  
+**Stable tag:** 7.8.8  
+
+
 
 
 
@@ -40,8 +42,9 @@ Plaats de shortcodes in de pagina's
 * None yet *
 
 ## Changelog ##
-### 7.8.6 ###
+### 7.8.8 ###
 * Cursus beheer, reservering van werkplekken toegevoegd.
+* Abonnement wijziging (stop) verbeterd, ook in dashboard
 ### 7.8.5 ###
 * Beschrijving gebruiker kan nu in html (dus met links e.d.).
 ### 7.8.4 ###

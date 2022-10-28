@@ -214,6 +214,20 @@
 	$(
 		function() {
 			onLoad();
+
+			$( '.kleistad-shortcode' )
+			/**
+			 * Toggle de techniek als het aantal werkplekken groter is dan 0.
+			 */
+			.on(
+				'change',
+				'.kleistad-techniek',
+				function() {
+					if ( 0 < $( this ).val() ) {
+						$( this ).prev( 'input' ).prop( 'checked', true );
+					}
+				}
+			);
 		}
 	);
 

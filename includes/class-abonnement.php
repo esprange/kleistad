@@ -320,10 +320,10 @@ class Abonnement extends Artikel {
 		} elseif ( $this->is_gepauzeerd() ) {
 			return 'gepauzeerd sinds ' . wp_date( 'd-m-Y', $this->pauze_datum ) . ' tot ' . wp_date( 'd-m-Y', $this->herstart_datum );
 		} elseif ( $vandaag > $this->start_datum ) {
-			if ( $vandaag < $this->pauze_datum ) {
-				return 'pauze gepland per ' . wp_date( 'd-m-Y', $this->pauze_datum ) . ' tot ' . wp_date( 'd-m-Y', $this->herstart_datum );
-			} elseif ( $vandaag <= $this->eind_datum ) {
+			if ( $vandaag <= $this->eind_datum ) {
 				return 'stop gepland per ' . wp_date( 'd-m-Y', $this->eind_datum );
+			} elseif ( $vandaag < $this->pauze_datum ) {
+				return 'pauze gepland per ' . wp_date( 'd-m-Y', $this->pauze_datum ) . ' tot ' . wp_date( 'd-m-Y', $this->herstart_datum );
 			} elseif ( $vandaag < $this->start_eind_datum ) {
 				return 'gestart sinds ' . wp_date( 'd-m-Y', $this->start_datum );
 			} elseif ( $vandaag < $this->reguliere_datum ) {

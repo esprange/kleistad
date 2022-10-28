@@ -142,6 +142,13 @@ class Admin_Abonnees_Handler extends  Admin_Handler {
 		foreach ( [ 'start_datum', 'start_eind_datum', 'pauze_datum', 'herstart_datum', 'eind_datum', 'soort' ] as $veld ) {
 			if ( ! empty( $item[ $veld ] ) ) {
 				$abonnement->$veld = str_contains( $veld, 'datum' ) ? strtotime( $item[ $veld ] ) : $item[ $veld ];
+				continue;
+			}
+			if ( 'eind_datum' === $veld ) {
+				$abonnement->eind_datum = 0;
+			} elseif ( in_array( $veld, [ 'pauze_datum', 'herstart_datum' ], true ) ) {
+				$abonnement->pauze_datum    = 0;
+				$abonnement->herstart_datum = 0;
 			}
 		}
 		// Omdat alleen de eind datum van de start periode gewijzigd kan worden, hier dan de reguliere datum meteen aanpassen.

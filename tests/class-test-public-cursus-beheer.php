@@ -128,6 +128,7 @@ class Test_Public_Cursus_Beheer extends Kleistad_UnitTestCase {
 		$cursus->save();
 		$_POST  = $this->input;
 		$result = $this->public_form_actie( self::SHORTCODE, [], 'bewaren' );
-		$this->assertStringContainsString( 'De cursus informatie is opgeslagen', $result['status'], 'bewaren incorrect' );
+		$tekst  = is_array( $result['status'] ) ? $result['status']['status'] : $result['status'];
+		$this->assertStringContainsString( 'De gegevens zijn opgeslagen', $tekst, 'bewaren incorrect' );
 	}
 }

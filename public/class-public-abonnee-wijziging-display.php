@@ -44,6 +44,13 @@ class Public_Abonnee_Wijziging_Display extends Public_Shortcode_Display {
 			$this->abonnement_soort()->eindigen()->submit();
 			return;
 		}
+		if ( $this->data['abonnement']->eind_datum ) {
+			?>
+			<br>
+			<p>Omdat een beëindiging van dit abonnement gepland is zijn er nu geen wijzigingen meer mogelijk</p>
+			<?php
+			return;
+		}
 		$this->abonnement_soort()->abonnement_extra()->pauze()->eindigen()->betaalwijze()->submit();
 	}
 
