@@ -86,7 +86,6 @@ class SaldoBetaling extends ArtikelBetaling {
 				'prijs'  => - $this->saldo->bedrag,
 				'status' => 'terugboeking saldo',
 			];
-			$this->saldo->bedrag   = 0.0;
 			$this->saldo->save();
 			return true;
 		}
