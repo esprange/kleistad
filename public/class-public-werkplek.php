@@ -195,8 +195,21 @@ EOT;
 				for ( $positie = 0; $positie < $posities[ $activiteit['naam'] ]; $positie++ ) {
 					if ( isset( $gebruikers[ $positie ] ) ) {
 						if ( intval( $gebruikers[ $positie ]['id'] ) !== $gebruiker_id ) {
+							$verzamel       = 1;
+							$gebruiker_naam = $gebruikers[ $positie ]['naam'];
+							while ( isset( $gebruikers[ $positie + 1 ] ) ) {
+								if ( $gebruiker_naam === $gebruikers[ $positie + 1 ]['naam'] ) {
+									$verzamel++;
+									$positie++;
+									continue;
+								}
+								break;
+							}
+							if ( 1 < $verzamel ) {
+								$gebruiker_naam .= " ( $verzamel )";
+							}
 							$html .= <<<EOT
-				<div class="kleistad-werkplek-bezet" >{$gebruikers[$positie]['naam']}</div>
+				<div class="kleistad-werkplek-bezet" >$gebruiker_naam</div>
 EOT;
 							continue;
 						}
@@ -211,11 +224,7 @@ EOT;
 						$html                                     .= <<<EOT
 				<button class="kleistad-button kleistad-werkplek kleistad-werkplek-reserveerbaar" type="button" name="werkplek" value="$gebruiker_id" data-dagdeel="$dagdeel" data-activiteit="{$activiteit['naam']}" >reserveren</button>
 EOT;
-						continue;
 					}
-					$html .= <<<EOT
-				<div class="kleistad-werkplek-vrij" >&nbsp;</div>
-EOT;
 				}
 				$html .= <<<EOT
 	</div>
