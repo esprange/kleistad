@@ -144,8 +144,6 @@ class Test_Saldo extends Kleistad_UnitTestCase {
 		$order = new Order( $saldo->get_referentie() );
 		$saldo->betaling->verwerk( $order, 10, true, 'ideal' );
 		$this->assertTrue( $saldo->betaling->doe_terugboeken(), 'terugboeken onjuist' );
-		$saldo = new Saldo( $saldo->klant_id );
-		$this->assertEquals( 0, $saldo->bedrag, 'saldo na terugboeken ongelijk 0' );
 		$this->assertEquals( 'Terugboeking restant saldo', $mailer->get_last_sent( $stoker->user_email )->subject, 'verwerk incorrecte email' );
 	}
 }
