@@ -269,7 +269,7 @@ class AbonnementBetaling extends ArtikelBetaling {
 			/**
 			 * Een inschrijving die niet voltooid wordt.
 			 */
-			if ( ! $order->id ) {
+			if ( ! $order->id && 'mandaat' !== $this->abonnement->artikel_type ) {
 				$this->abonnement->erase();
 			}
 			return;
