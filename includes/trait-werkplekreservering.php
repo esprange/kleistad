@@ -51,6 +51,7 @@ trait WerkplekReservering {
 	 * @return string Eventueel bericht of false als er geen werkplekken gereserveerd zijn.
 	 */
 	public function reserveer_werkplekken( string $code, string $naam, array $aantallen, int $datum, string $dagdeel ) : string {
+		$dagdeel  = NAMIDDAG === $dagdeel ? MIDDAG : $dagdeel;
 		$bericht  = '';
 		$totaal   = 0;
 		$werkplek = new Werkplek( $datum );
