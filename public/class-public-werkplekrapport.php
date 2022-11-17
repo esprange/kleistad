@@ -90,20 +90,20 @@ class Public_Werkplekrapport extends Shortcode {
 		$eind_datum  = strtotime( '+ 3 month' );
 		$gebruikers  = [];
 		foreach ( new Werkplekken( $start_datum, $eind_datum ) as $werkplek ) {
-			$gebruikers = array_merge( $gebruikers, $werkplek->geef() );
+			$gebruikers = array_merge( $gebruikers, $werkplek->geef( '', '', false ) );
 		}
 		usort(
 			$gebruikers,
 			function( $links, $rechts ) {
-				return $links->display_name <=> $rechts->display_name;
+				return $links['naam'] <=> $rechts['naam'];
 			}
 		);
 		return array_map(
 			'unserialize',
 			array_unique(
 				array_map(
-					function( $element ) {
-						return serialize( (array) $element ); // phpcs:ignore
+					function( $gebruiker ) {
+						return serialize( $gebruiker ); // phpcs:ignore
 					},
 					$gebruikers
 				)

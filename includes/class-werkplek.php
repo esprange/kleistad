@@ -89,9 +89,10 @@ class Werkplek {
 	 *
 	 * @param string $dagdeel    Het dagdeel.
 	 * @param string $activiteit De activiteit.
+	 * @param bool   $met_events Of de events ook meegenomen moeten worden.
 	 * @return array array van WP_User objects, gesorteerd op display naam.
 	 */
-	public function geef( string $dagdeel = '', string $activiteit = '' ) : array {
+	public function geef( string $dagdeel = '', string $activiteit = '', bool $met_events = true ) : array {
 		$gebruiker_ids = [];
 		$event_ids     = [];
 		foreach ( $this->gebruik as $dagdeel_key => $gebruik ) {
@@ -102,7 +103,7 @@ class Werkplek {
 							$gebruiker_ids,
 							array_filter( $posities, 'is_numeric' )
 						);
-						$event_ids     = array_merge(
+						$event_ids     = $met_events ? array_merge(
 							$event_ids,
 							array_filter(
 								$posities,
@@ -110,7 +111,7 @@ class Werkplek {
 									return preg_match( '/[A-Z]/', $positie );
 								}
 							)
-						);
+						) : [];
 					}
 				}
 			}

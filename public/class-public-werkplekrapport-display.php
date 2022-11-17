@@ -143,7 +143,7 @@ class Public_Werkplekrapport_Display extends Public_Shortcode_Display {
 			<div class="kleistad-col-3">
 				<select class="kleistad-select" name="gebruiker_id" id="kleistad_gebruiker">
 				<?php foreach ( $this->data['gebruikers'] as $gebruiker ) : ?>
-					<option value="<?php echo esc_attr( $gebruiker['ID'] ); ?>" ><?php echo esc_html( $gebruiker['display_name'] ); ?></option>
+					<option value="<?php echo esc_attr( $gebruiker['id'] ); ?>" ><?php echo esc_html( $gebruiker['naam'] ); ?></option>
 				<?php endforeach ?>
 				</select>
 			</div>
