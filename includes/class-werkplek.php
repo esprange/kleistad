@@ -90,7 +90,7 @@ class Werkplek {
 	 * @param string $dagdeel    Het dagdeel.
 	 * @param string $activiteit De activiteit.
 	 * @param bool   $met_events Of de events ook meegenomen moeten worden.
-	 * @return array array van WP_User objects, gesorteerd op display naam.
+	 * @return array array van arrays(naam, id), gesorteerd op naam.
 	 */
 	public function geef( string $dagdeel = '', string $activiteit = '', bool $met_events = true ) : array {
 		$gebruiker_ids = [];
