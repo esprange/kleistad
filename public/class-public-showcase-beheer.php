@@ -11,6 +11,9 @@
 
 namespace Kleistad;
 
+use FileBird\Model\Folder as FolderModel;
+use Exception;
+
 /**
  * Include voor image file upload.
  */
@@ -180,6 +183,12 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 			$result = media_handle_upload( 'foto', $showcase->id );
 			if ( is_wp_error( $result ) ) {
 				return [ 'status' => $this->status( $result ) ];
+			}
+			try {
+				FolderModel::setFoldersForPosts( [ $result ], 1 );
+			} catch ( Exception ) {
+				// Geen actie nodig.
+				fout( __CLASS__, 'FileBird ontbreekt om foto in mediafolder op te slaan' );
 			}
 		}
 		return [
