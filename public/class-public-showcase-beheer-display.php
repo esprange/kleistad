@@ -298,7 +298,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 		<table class="kleistad-datatable responsive display" data-page-length="10" data-order='[[ 2, "desc" ]]'>
 			<thead>
 			<tr>
-				<th data-orderable="false"></th>
+				<th data-orderable="false" data-priority="4">Foto &nbsp; &nbsp;</th>
 				<th data-priority="1">Titel</th>
 				<th>Keramist</th>
 				<th>Nummer</th>
