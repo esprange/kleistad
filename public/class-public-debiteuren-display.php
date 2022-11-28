@@ -39,6 +39,8 @@ class Public_Debiteuren_Display extends Public_Shortcode_Display {
 
 	/**
 	 * Render het blokkade formulier
+	 *
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function blokkade() {
 		$this->form(

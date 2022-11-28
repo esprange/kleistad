@@ -19,6 +19,7 @@ class Public_Cursus_Extra_Display extends Public_Shortcode_Display {
 	 * Render het formulier
 	 *
 	 * @return void
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function overzicht() : void {
 		$this->form(

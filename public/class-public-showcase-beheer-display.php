@@ -137,6 +137,7 @@ class Public_Showcase_Beheer_Display extends Public_Shortcode_Display {
 	 * Formulier voor het lid om een werkstuk aan te melden.
 	 *
 	 * @return void
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	private function aanmelden() : void {
 		$tentoongesteld = $this->data['showcase']->is_tentoongesteld();

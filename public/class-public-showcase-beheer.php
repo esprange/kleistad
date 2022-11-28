@@ -167,6 +167,7 @@ class Public_Showcase_Beheer extends ShortcodeForm {
 	 * Showcase moet worden opgeslagen
 	 *
 	 * @return array
+	 * @suppressWarnings(PHPMD.StaticAccess)
 	 */
 	protected function aanmelden(): array {
 		$showcase                 = new Showcase( $this->data['input']['id'] );

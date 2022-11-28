@@ -28,6 +28,7 @@ class Public_Recept_Beheer_Display extends Public_Shortcode_Display {
 	 * Render het formulier
 	 *
 	 * @return void
+	 * @suppressWarnings(PHPMD.ElseExpression)
 	 */
 	protected function wijzigen() : void {
 		$this->form(

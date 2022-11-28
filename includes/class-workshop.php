@@ -448,7 +448,7 @@ class Workshop extends Artikel {
 	 *
 	 * @param bool $uitgebreid Of er een uitgebreide versie geleverd moet worden.
 	 * @return string
-	 * @suppressWarnings(PHPMD.BooleanArgumentFlag)
+	 * @suppressWarnings(PHPMD.BooleanArgumentFlag,PHPMD.ElseExpression)
 	 */
 	public function get_statustekst( bool $uitgebreid = false ) : string {
 		static $verloop = 0;
